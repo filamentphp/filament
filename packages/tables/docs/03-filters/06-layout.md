@@ -25,7 +25,7 @@ public function table(Table $table): Table
 To customize the dropdown width, you may use the `filtersFormWidth()` method, and specify a width - `ExtraSmall`, `Small`, `Medium`, `Large`, `ExtraLarge`, `TwoExtraLarge`, `ThreeExtraLarge`, `FourExtraLarge`, `FiveExtraLarge`, `SixExtraLarge` or `SevenExtraLarge`. By default, the width is `ExtraSmall`:
 
 ```php
-use Filament\Support\Enums\MaxWidth;
+use Filament\Support\Enums\Width;
 use Filament\Tables\Table;
 
 public function table(Table $table): Table
@@ -34,7 +34,7 @@ public function table(Table $table): Table
         ->filters([
             // ...
         ])
-        ->filtersFormWidth(MaxWidth::FourExtraLarge);
+        ->filtersFormWidth(Width::FourExtraLarge);
 }
 ```
 

@@ -1,0 +1,57 @@
+.fi-fo-key-value {
+    & .fi-fo-key-value-table-ctn {
+        @apply divide-y divide-gray-200 dark:divide-white/10;
+    }
+
+    & .fi-fo-key-value-table {
+        @apply w-full table-auto divide-y divide-gray-200 dark:divide-white/5;
+
+        & > thead {
+            & > tr {
+                & > th {
+                    @apply px-3 py-2 text-start text-sm font-medium text-gray-700 dark:text-gray-200;
+
+                    &.fi-has-action {
+                        @apply w-9 p-0;
+                    }
+                }
+            }
+        }
+
+        & > tbody {
+            @apply divide-y divide-gray-200 dark:divide-white/5;
+
+            & > tr {
+                @apply divide-x divide-gray-200 rtl:divide-x-reverse dark:divide-white/5;
+
+                & > td {
+                    @apply w-1/2 p-0;
+
+                    &.fi-has-action {
+                        @apply w-auto p-0.5;
+
+                        & .fi-fo-key-value-table-row-sortable-handle {
+                            @apply flex;
+                        }
+                    }
+
+                    & .fi-input {
+                        @apply font-mono;
+                    }
+                }
+            }
+        }
+    }
+
+    & .fi-fo-key-value-add-action-ctn {
+        @apply flex justify-center px-3 py-2;
+    }
+}
+
+.fi-fo-key-value-wrp {
+    &.fi-fo-field-has-inline-label {
+        & .fi-fo-field-label-col {
+            @apply sm:pt-1.5;
+        }
+    }
+}

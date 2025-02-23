@@ -1,73 +1,154 @@
-@import 'cropperjs/dist/cropper.min.css';
-@import 'filepond/dist/filepond.min.css';
-@import 'filepond-plugin-image-edit/dist/filepond-plugin-image-edit.css';
-@import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css';
-@import 'filepond-plugin-media-preview/dist/filepond-plugin-media-preview.css';
+.fi-fo-file-upload {
+    @apply flex flex-col gap-y-2;
 
-.filepond--root {
-    @apply mb-0 rounded-lg bg-white shadow-sm ring-1 ring-gray-950/10 dark:bg-white/5 dark:ring-white/20;
-}
-
-.filepond--root[data-disabled='disabled'] {
-    @apply bg-gray-50 dark:bg-transparent dark:ring-white/10;
-}
-
-.filepond--panel-root {
-    @apply bg-transparent;
-}
-
-.filepond--drop-label label {
-    @apply !p-3 text-sm text-gray-600 dark:text-gray-400;
-}
-
-.filepond--label-action {
-    @apply font-medium text-primary-600 no-underline transition duration-75 hover:text-primary-500 dark:text-white dark:hover:text-primary-500;
-}
-
-.filepond--drip-blob {
-    @apply bg-gray-400 dark:bg-gray-500;
-}
-
-.filepond--root[data-style-panel-layout='grid'] .filepond--item {
-    @apply inline;
-    width: calc(50% - 0.5rem);
-}
-
-@media screen(lg) {
-    .filepond--root[data-style-panel-layout='grid'] .filepond--item {
-        width: calc(33.33% - 0.5rem);
+    &.fi-align-start,
+    &.fi-align-left {
+        @apply items-start;
     }
-}
 
-.filepond--download-icon {
-    @apply pointer-events-auto me-1 inline-block h-4 w-4 bg-white align-bottom hover:bg-white/70;
-    -webkit-mask-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJmZWF0aGVyIGZlYXRoZXItZG93bmxvYWQiPjxwYXRoIGQ9Ik0yMSAxNXY0YTIgMiAwIDAgMS0yIDJINWEyIDIgMCAwIDEtMi0ydi00Ij48L3BhdGg+PHBvbHlsaW5lIHBvaW50cz0iNyAxMCAxMiAxNSAxNyAxMCI+PC9wb2x5bGluZT48bGluZSB4MT0iMTIiIHkxPSIxNSIgeDI9IjEyIiB5Mj0iMyI+PC9saW5lPjwvc3ZnPg==');
-    mask-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJmZWF0aGVyIGZlYXRoZXItZG93bmxvYWQiPjxwYXRoIGQ9Ik0yMSAxNXY0YTIgMiAwIDAgMS0yIDJINWEyIDIgMCAwIDEtMi0ydi00Ij48L3BhdGg+PHBvbHlsaW5lIHBvaW50cz0iNyAxMCAxMiAxNSAxNyAxMCI+PC9wb2x5bGluZT48bGluZSB4MT0iMTIiIHkxPSIxNSIgeDI9IjEyIiB5Mj0iMyI+PC9saW5lPjwvc3ZnPg==');
-    -webkit-mask-repeat: no-repeat;
-    mask-repeat: no-repeat;
-    -webkit-mask-size: 100%;
-    mask-size: 100%;
-}
+    &.fi-align-center {
+        @apply items-center;
+    }
 
-.filepond--open-icon {
-    @apply pointer-events-auto me-1 inline-block h-4 w-4 bg-white align-bottom hover:bg-white/70;
-    -webkit-mask-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGNsYXNzPSJoLTYgdy02IiBmaWxsPSJub25lIiB2aWV3Qm94PSIwIDAgMjQgMjQiIHN0cm9rZT0iY3VycmVudENvbG9yIiBzdHJva2Utd2lkdGg9IjIiPgogIDxwYXRoIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgZD0iTTEwIDZINmEyIDIgMCAwMC0yIDJ2MTBhMiAyIDAgMDAyIDJoMTBhMiAyIDAgMDAyLTJ2LTRNMTQgNGg2bTAgMHY2bTAtNkwxMCAxNCIgLz4KPC9zdmc+Cg==);
-    mask-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGNsYXNzPSJoLTYgdy02IiBmaWxsPSJub25lIiB2aWV3Qm94PSIwIDAgMjQgMjQiIHN0cm9rZT0iY3VycmVudENvbG9yIiBzdHJva2Utd2lkdGg9IjIiPgogIDxwYXRoIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgZD0iTTEwIDZINmEyIDIgMCAwMC0yIDJ2MTBhMiAyIDAgMDAyIDJoMTBhMiAyIDAgMDAyLTJ2LTRNMTQgNGg2bTAgMHY2bTAtNkwxMCAxNCIgLz4KPC9zdmc+Cg==);
-    -webkit-mask-repeat: no-repeat;
-    mask-repeat: no-repeat;
-    -webkit-mask-size: 100%;
-    mask-size: 100%;
-}
+    &.fi-align-end,
+    &.fi-align-right {
+        @apply items-end;
+    }
 
-.filepond--file-action-button.filepond--action-edit-item {
-    @apply bg-black/50;
-}
+    & .fi-fo-file-upload-input-ctn {
+        @apply h-full w-full;
+    }
 
-.cropper-drag-box.cropper-crop.cropper-modal {
-    @apply bg-gray-100/50 opacity-100 dark:bg-gray-900/80;
-}
+    &.fi-fo-file-upload-avatar {
+        & .fi-fo-file-upload-input-ctn {
+            @apply h-full w-32;
+        }
+    }
 
-.fi-fo-file-upload-circle-cropper .cropper-view-box,
-.fi-fo-file-upload-circle-cropper .cropper-face {
-    border-radius: 50%;
+    & .fi-fo-file-upload-error-message {
+        @apply text-danger-600 dark:text-danger-400 text-sm;
+    }
+
+    & .filepond--root {
+        @apply mb-0 rounded-lg bg-white font-sans ring-1 shadow-sm ring-gray-950/10 dark:bg-white/5 dark:ring-white/20;
+    }
+
+    & .filepond--root[data-disabled='disabled'] {
+        @apply bg-gray-50 dark:bg-transparent dark:ring-white/10;
+    }
+
+    & .filepond--panel-root {
+        @apply bg-transparent;
+    }
+
+    & .filepond--drop-label label {
+        @apply p-3! text-sm text-gray-600 dark:text-gray-400;
+    }
+
+    & .filepond--label-action {
+        @apply text-primary-600 hover:text-primary-500 dark:hover:text-primary-500 font-medium no-underline transition duration-75 dark:text-white;
+    }
+
+    & .filepond--drip-blob {
+        @apply bg-gray-400 dark:bg-gray-500;
+    }
+
+    & .filepond--root[data-style-panel-layout='grid'] .filepond--item {
+        @apply inline;
+        width: calc(50% - 0.5rem);
+    }
+
+    @media screen(lg) {
+        & .filepond--root[data-style-panel-layout='grid'] .filepond--item {
+            width: calc(33.33% - 0.5rem);
+        }
+    }
+
+    & .filepond--download-icon {
+        @apply pointer-events-auto me-1 inline-block h-4 w-4 bg-white align-bottom hover:bg-white/70;
+        -webkit-mask-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJmZWF0aGVyIGZlYXRoZXItZG93bmxvYWQiPjxwYXRoIGQ9Ik0yMSAxNXY0YTIgMiAwIDAgMS0yIDJINWEyIDIgMCAwIDEtMi0ydi00Ij48L3BhdGg+PHBvbHlsaW5lIHBvaW50cz0iNyAxMCAxMiAxNSAxNyAxMCI+PC9wb2x5bGluZT48bGluZSB4MT0iMTIiIHkxPSIxNSIgeDI9IjEyIiB5Mj0iMyI+PC9saW5lPjwvc3ZnPg==');
+        mask-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJmZWF0aGVyIGZlYXRoZXItZG93bmxvYWQiPjxwYXRoIGQ9Ik0yMSAxNXY0YTIgMiAwIDAgMS0yIDJINWEyIDIgMCAwIDEtMi0ydi00Ij48L3BhdGg+PHBvbHlsaW5lIHBvaW50cz0iNyAxMCAxMiAxNSAxNyAxMCI+PC9wb2x5bGluZT48bGluZSB4MT0iMTIiIHkxPSIxNSIgeDI9IjEyIiB5Mj0iMyI+PC9saW5lPjwvc3ZnPg==');
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        -webkit-mask-size: 100%;
+        mask-size: 100%;
+    }
+
+    & .filepond--open-icon {
+        @apply pointer-events-auto me-1 inline-block h-4 w-4 bg-white align-bottom hover:bg-white/70;
+        -webkit-mask-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGNsYXNzPSJoLTYgdy02IiBmaWxsPSJub25lIiB2aWV3Qm94PSIwIDAgMjQgMjQiIHN0cm9rZT0iY3VycmVudENvbG9yIiBzdHJva2Utd2lkdGg9IjIiPgogIDxwYXRoIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgZD0iTTEwIDZINmEyIDIgMCAwMC0yIDJ2MTBhMiAyIDAgMDAyIDJoMTBhMiAyIDAgMDAyLTJ2LTRNMTQgNGg2bTAgMHY2bTAtNkwxMCAxNCIgLz4KPC9zdmc+Cg==);
+        mask-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGNsYXNzPSJoLTYgdy02IiBmaWxsPSJub25lIiB2aWV3Qm94PSIwIDAgMjQgMjQiIHN0cm9rZT0iY3VycmVudENvbG9yIiBzdHJva2Utd2lkdGg9IjIiPgogIDxwYXRoIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgZD0iTTEwIDZINmEyIDIgMCAwMC0yIDJ2MTBhMiAyIDAgMDAyIDJoMTBhMiAyIDAgMDAyLTJ2LTRNMTQgNGg2bTAgMHY2bTAtNkwxMCAxNCIgLz4KPC9zdmc+Cg==);
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        -webkit-mask-size: 100%;
+        mask-size: 100%;
+    }
+
+    & .filepond--file-action-button.filepond--action-edit-item {
+        @apply bg-black/50;
+    }
+
+    & .fi-fo-file-upload-editor {
+        @apply fixed inset-0 isolate z-50 h-[100dvh] w-screen p-2 sm:p-10 md:p-20;
+
+        & .fi-fo-file-upload-editor-overlay {
+            @apply fixed inset-0 h-full w-full cursor-pointer bg-gray-950/50 dark:bg-gray-950/75;
+            will-change: transform;
+        }
+
+        & .fi-fo-file-upload-editor-window {
+            @apply isolate mx-auto flex h-full w-full flex-col overflow-hidden rounded-xl bg-white ring-1 ring-gray-900/10 lg:flex-row dark:bg-gray-800 dark:ring-gray-50/10;
+        }
+
+        & .fi-fo-file-upload-editor-image-ctn {
+            @apply h-full w-full flex-1 overflow-auto p-4;
+        }
+
+        & .fi-fo-file-upload-editor-image {
+            @apply h-full w-auto;
+        }
+
+        & .fi-fo-file-upload-editor-control-panel {
+            @apply flex h-full w-full flex-1 flex-col overflow-y-auto bg-gray-50 lg:max-w-xs dark:bg-gray-900/30;
+
+            & .fi-fo-file-upload-editor-control-panel-main {
+                @apply flex-1 space-y-6 overflow-auto p-4;
+            }
+
+            & .fi-fo-file-upload-editor-control-panel-group {
+                @apply grid gap-3;
+
+                & .fi-btn-group {
+                    @apply w-full;
+                }
+
+                & .fi-btn.fi-active {
+                    @apply bg-gray-50 dark:bg-gray-700;
+                }
+
+                & .fi-fo-file-upload-editor-control-panel-group-title {
+                    @apply text-xs text-gray-950 dark:text-white;
+                }
+            }
+
+            & .fi-fo-file-upload-editor-control-panel-footer {
+                @apply flex items-center gap-3 px-4 py-3;
+            }
+
+            & .fi-fo-file-upload-editor-control-panel-reset-action {
+                @apply ml-auto;
+            }
+        }
+
+        & .cropper-drag-box.cropper-crop.cropper-modal {
+            @apply bg-gray-100/50 opacity-100 dark:bg-gray-900/80;
+        }
+
+        &.fi-fo-file-upload-editor-circle-cropper {
+            & .cropper-view-box,
+            & .cropper-face {
+                border-radius: 50%;
+            }
+        }
+    }
 }

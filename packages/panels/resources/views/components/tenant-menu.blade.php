@@ -17,6 +17,8 @@
         ->all();
     $itemsBeforeTenantSwitcher = $itemsBeforeAndAfterTenantSwitcher[true] ?? collect();
     $itemsAfterTenantSwitcher = $itemsBeforeAndAfterTenantSwitcher[false] ?? collect();
+
+    $isSidebarCollapsibleOnDesktop = filament()->isSidebarCollapsibleOnDesktop();
 @endphp
 
 {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::TENANT_MENU_BEFORE) }}
@@ -32,7 +34,7 @@
 >
     <x-slot name="trigger">
         <button
-            @if (filament()->isSidebarCollapsibleOnDesktop())
+            @if ($isSidebarCollapsibleOnDesktop)
                 x-data="{ tooltip: false }"
                 x-effect="
                     tooltip = $store.sidebar.isOpen
@@ -46,36 +48,32 @@
                 x-tooltip.html="tooltip"
             @endif
             type="button"
-            class="fi-tenant-menu-trigger group flex w-full items-center justify-center gap-x-3 rounded-lg p-2 text-sm font-medium outline-none transition duration-75 hover:bg-gray-100 focus-visible:bg-gray-100 dark:hover:bg-white/5 dark:focus-visible:bg-white/5"
+            class="fi-tenant-menu-trigger"
         >
-            <x-filament-panels::avatar.tenant
-                :tenant="$currentTenant"
-                class="shrink-0"
-            />
+            <x-filament-panels::avatar.tenant :tenant="$currentTenant" />
 
             <span
-                @if (filament()->isSidebarCollapsibleOnDesktop())
+                @if ($isSidebarCollapsibleOnDesktop)
                     x-show="$store.sidebar.isOpen"
                 @endif
-                class="grid justify-items-start text-start"
+                class="fi-tenant-menu-trigger-text"
             >
                 @if ($currentTenant instanceof \Filament\Models\Contracts\HasCurrentTenantLabel)
-                    <span class="text-xs text-gray-500 dark:text-gray-400">
+                    <span class="fi-tenant-menu-trigger-current-tenant-label">
                         {{ $currentTenant->getCurrentTenantLabel() }}
                     </span>
                 @endif
 
-                <span class="text-gray-950 dark:text-white">
+                <span class="fi-tenant-menu-trigger-tenant-name">
                     {{ $currentTenantName }}
                 </span>
             </span>
 
-            <x-filament::icon
-                icon="heroicon-m-chevron-down"
-                icon-alias="panels::tenant-menu.toggle-button"
-                :x-show="filament()->isSidebarCollapsibleOnDesktop() ? '$store.sidebar.isOpen' : null"
-                class="ms-auto size-5 shrink-0 text-gray-400 transition duration-75 group-hover:text-gray-500 group-focus-visible:text-gray-500 dark:text-gray-500 dark:group-hover:text-gray-400 dark:group-focus-visible:text-gray-400"
-            />
+            {{
+                \Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::ChevronDown, alias: 'panels::tenant-menu.toggle-button', attributes: new \Illuminate\View\ComponentAttributeBag([
+                    'x-show' => $isSidebarCollapsibleOnDesktop ? '$store.sidebar.isOpen' : null,
+                ]))
+            }}
         </button>
     </x-slot>
 
@@ -90,9 +88,14 @@
     @if ($canSwitchTenants)
         <x-filament::dropdown.list>
             @foreach ($tenants as $tenant)
+                @php
+                    $tenantUrl = filament()->getUrl($tenant);
+                    $tenantImage = filament()->getTenantAvatarUrl($tenant);
+                @endphp
+
                 <x-filament::dropdown.list.item
-                    :href="filament()->getUrl($tenant)"
-                    :image="filament()->getTenantAvatarUrl($tenant)"
+                    :href="$tenantUrl"
+                    :image="$tenantImage"
                     tag="a"
                 >
                     {{ filament()->getTenantName($tenant) }}

@@ -1,5 +1,5 @@
 .fi-link {
-    @apply relative inline-flex items-center justify-center gap-1.5 text-gray-700 outline-none dark:text-gray-200;
+    @apply relative inline-flex items-center justify-center gap-1.5 font-medium text-gray-700 outline-none dark:text-gray-200;
 
     &:not(.fi-disabled):not([disabled]) {
         @apply hover:underline focus-visible:underline;
@@ -15,31 +15,15 @@
     }
 
     & > .fi-icon {
-        @apply size-5 font-normal text-gray-400 dark:text-gray-500;
-
-        &.fi-size-sm {
-            @apply size-4;
-        }
-
-        &.fi-size-lg {
-            @apply size-6;
-        }
+        @apply text-gray-400 dark:text-gray-500;
     }
 
     &.fi-size-xs {
         @apply gap-1 text-xs;
-
-        & > .fi-icon {
-            @apply size-4;
-        }
     }
 
     &.fi-size-sm {
         @apply gap-1 text-sm;
-
-        & > .fi-icon {
-            @apply size-4;
-        }
     }
 
     &.fi-size-md,
@@ -64,10 +48,6 @@
         @apply font-normal;
     }
 
-    &.fi-font-medium {
-        @apply font-medium;
-    }
-
     &.fi-font-semibold {
         @apply font-semibold;
     }
@@ -84,15 +64,24 @@
         @apply font-black;
     }
 
-    &.fi-color-custom {
-        @apply text-custom-600 dark:text-custom-400;
+    &.fi-color {
+        @apply text-(--text) dark:text-(--dark-text);
 
         & > .fi-icon {
-            @apply text-custom-600 dark:text-custom-400;
+            @apply text-color-600 dark:text-color-400;
         }
     }
 
     & .fi-link-badge-ctn {
-        @apply absolute start-full top-0 z-[1] w-max -translate-x-1/4 -translate-y-3/4 rounded-md bg-white font-normal hover:no-underline focus-visible:no-underline dark:bg-gray-900 rtl:translate-x-1/4;
+        @apply absolute start-full top-0 z-[1] w-max -translate-x-1/4 -translate-y-3/4 rounded-md bg-white font-normal hover:no-underline focus-visible:no-underline rtl:translate-x-1/4 dark:bg-gray-900;
     }
+}
+
+/**
+ * Align links embedded within text.
+ */
+p > .fi-link,
+span > .fi-link {
+    @apply pb-[2px] align-middle;
+    text-align: inherit;
 }

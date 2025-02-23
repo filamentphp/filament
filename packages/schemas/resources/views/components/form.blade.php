@@ -6,12 +6,15 @@
                 'wire:submit' => $getLivewireSubmitHandler(),
             ], escape: false)
             ->merge($getExtraAttributes(), escape: false)
-            ->class(['fi-fo-form flex flex-col gap-6'])
+            ->class([
+                'fi-sc-form',
+                'fi-dense' => $isDense(),
+            ])
     }}
 >
-    {{ $getDecorations($schemaComponent::HEADER_DECORATIONS) }}
+    {{ $getChildSchema($schemaComponent::HEADER_SCHEMA_KEY) }}
 
-    {{ $getChildComponentContainer() }}
+    {{ $getChildSchema() }}
 
-    {{ $getDecorations($schemaComponent::FOOTER_DECORATIONS) }}
+    {{ $getChildSchema($schemaComponent::FOOTER_SCHEMA_KEY) }}
 </form>

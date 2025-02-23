@@ -7,7 +7,7 @@ use Filament\Pages\Page;
 
 class ManageSettings extends Page
 {
-    protected static string $view = 'filament.clusters.site.pages.manage-settings';
+    protected string $view = 'filament.clusters.site.pages.manage-settings';
 
     protected static ?string $cluster = Site::class;
 }

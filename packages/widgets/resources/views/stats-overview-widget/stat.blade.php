@@ -1,6 +1,8 @@
 @php
     use Filament\Support\Enums\IconPosition;
     use Filament\Support\Facades\FilamentView;
+    use Filament\Widgets\View\Components\StatsOverviewWidgetComponent\StatComponent\DescriptionComponent;
+    use Filament\Widgets\View\Components\StatsOverviewWidgetComponent\StatComponent\StatsOverviewWidgetStatChartComponent;
 
     $chartColor = $getChartColor() ?? 'gray';
     $descriptionColor = $getDescriptionColor() ?? 'gray';
@@ -9,14 +11,6 @@
     $url = $getUrl();
     $tag = $url ? 'a' : 'div';
     $chartDataChecksum = $generateChartDataChecksum();
-
-    $descriptionIconStyles = \Illuminate\Support\Arr::toCssStyles([
-        \Filament\Support\get_color_css_variables(
-            $descriptionColor,
-            shades: [500],
-            alias: 'widgets::stats-overview-widget.stat.description.icon',
-        ) => $descriptionColor !== 'gray',
-    ]);
 @endphp
 
 <{!! $tag !!}
@@ -32,7 +26,7 @@
 >
     <div class="fi-wi-stats-overview-stat-content">
         <div class="fi-wi-stats-overview-stat-label-ctn">
-            {{ \Filament\Support\generate_icon_html($getIcon(), attributes: (new \Illuminate\View\ComponentAttributeBag)->class(['fi-wi-stats-overview-stat-icon'])) }}
+            {{ \Filament\Support\generate_icon_html($getIcon()) }}
 
             <span class="fi-wi-stats-overview-stat-label">
                 {{ $getLabel() }}
@@ -47,22 +41,11 @@
             <div
                 @class([
                     'fi-wi-stats-overview-stat-description',
-                    match ($descriptionColor) {
-                        'gray' => null,
-                        default => 'fi-color-custom',
-                    },
-                    is_string($descriptionColor) ? "fi-color-{$descriptionColor}" : null,
-                ])
-                @style([
-                    \Filament\Support\get_color_css_variables(
-                        $descriptionColor,
-                        shades: [400, 600],
-                        alias: 'widgets::stats-overview-widget.stat.description',
-                    ) => $descriptionColor !== 'gray',
+                    ...\Filament\Support\get_component_color_classes(DescriptionComponent::class, $descriptionColor),
                 ])
             >
                 @if ($descriptionIcon && in_array($descriptionIconPosition, [IconPosition::Before, 'before']))
-                    {{ \Filament\Support\generate_icon_html($descriptionIcon, attributes: (new \Illuminate\View\ComponentAttributeBag)->class(['fi-wi-stats-overview-stat-description-icon'])->style([$descriptionIconStyles])) }}
+                    {{ \Filament\Support\generate_icon_html($descriptionIcon, attributes: (new \Illuminate\View\ComponentAttributeBag)) }}
                 @endif
 
                 <span>
@@ -70,7 +53,7 @@
                 </span>
 
                 @if ($descriptionIcon && in_array($descriptionIconPosition, [IconPosition::After, 'after']))
-                    {{ \Filament\Support\generate_icon_html($descriptionIcon, attributes: (new \Illuminate\View\ComponentAttributeBag)->class(['fi-wi-stats-overview-stat-description-icon'])->style([$descriptionIconStyles])) }}
+                    {{ \Filament\Support\generate_icon_html($descriptionIcon, attributes: (new \Illuminate\View\ComponentAttributeBag)) }}
                 @endif
             </div>
         @endif
@@ -93,18 +76,7 @@
                         })"
                 @class([
                     'fi-wi-stats-overview-stat-chart',
-                    match ($chartColor) {
-                        'gray' => null,
-                        default => 'fi-color-custom',
-                    },
-                    is_string($chartColor) ? "fi-color-{$chartColor}" : null,
-                ])
-                @style([
-                    \Filament\Support\get_color_css_variables(
-                        $chartColor,
-                        shades: [50, 400, 500],
-                        alias: 'widgets::stats-overview-widget.stat.chart',
-                    ) => $chartColor !== 'gray',
+                    ...\Filament\Support\get_component_color_classes(StatsOverviewWidgetStatChartComponent::class, $chartColor),
                 ])
             >
                 <canvas x-ref="canvas"></canvas>

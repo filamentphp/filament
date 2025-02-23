@@ -1,1 +1,2 @@
-@import 'index.css';
+@import 'tailwindcss' source(none);
+@import './index.css';

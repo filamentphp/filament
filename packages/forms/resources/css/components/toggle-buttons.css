@@ -1,0 +1,33 @@
+.fi-fo-toggle-buttons {
+    &.fi-btn-group {
+        @apply w-max;
+    }
+
+    &:not(.fi-btn-group) {
+        @apply gap-3;
+
+        &.fi-inline {
+            @apply flex flex-wrap;
+        }
+
+        &:not(.fi-inline).fi-grid-direction-col {
+            @apply -mt-3;
+
+            & .fi-fo-toggle-buttons-btn-ctn {
+                @apply break-inside-avoid pt-3;
+            }
+        }
+    }
+
+    & .fi-fo-toggle-buttons-input {
+        @apply pointer-events-none absolute opacity-0;
+    }
+}
+
+.fi-fo-toggle-buttons-wrp {
+    &.fi-fo-field-has-inline-label {
+        & .fi-fo-field-label-col {
+            @apply sm:pt-1.5;
+        }
+    }
+}

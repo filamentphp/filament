@@ -4,7 +4,7 @@ namespace Filament\Widgets\Concerns;
 
 use Livewire\Attributes\Reactive;
 
-trait InteractsWithPageFilters
+trait InteractsWithPageFilters /** @phpstan-ignore trait.unused */
 {
     /**
      * @var array<string, mixed> | null

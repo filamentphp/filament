@@ -6,6 +6,7 @@ use Exception;
 use Filament\Actions\Action;
 use Filament\Pages\Dashboard;
 use Filament\Support\Facades\FilamentIcon;
+use Filament\Support\Icons\Heroicon;
 use Livewire\Component;
 
 class FilterAction extends Action
@@ -25,7 +26,7 @@ class FilterAction extends Action
 
         $this->modalSubmitActionLabel(__('filament-panels::pages/dashboard.actions.filter.modal.actions.apply.label'));
 
-        $this->icon(FilamentIcon::resolve('panels::pages.dashboard.actions.filter') ?? 'heroicon-m-funnel');
+        $this->icon(FilamentIcon::resolve('panels::pages.dashboard.actions.filter') ?? Heroicon::Funnel);
 
         $this->color('gray');
 
@@ -37,7 +38,7 @@ class FilterAction extends Action
             return $livewire->filters;
         });
 
-        $this->action(function (array $data, Component $livewire) {
+        $this->action(function (array $data, Component $livewire): void {
             if (! property_exists($livewire, 'filters')) {
                 return;
             }

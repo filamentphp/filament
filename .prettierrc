@@ -1,6 +1,5 @@
 {
     "plugins": ["prettier-plugin-blade", "prettier-plugin-tailwindcss"],
     "semi": false,
-    "singleQuote": true,
-    "tailwindConfig": "./packages/panels/tailwind.config.js"
+    "singleQuote": true
 }

@@ -404,6 +404,8 @@ return [
 
             'create_option' => [
 
+                'label' => 'Створити',
+
                 'modal' => [
 
                     'heading' => 'Створити',
@@ -424,6 +426,8 @@ return [
             ],
 
             'edit_option' => [
+
+                'label' => 'Змінити',
 
                 'modal' => [
 

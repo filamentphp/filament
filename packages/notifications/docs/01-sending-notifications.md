@@ -112,7 +112,7 @@ use Filament\Notifications\Notification;
 
 Notification::make()
     ->title('Saved successfully')
-    ->color('success') // [tl! focus]
+    ->color('success')
     ->send();
 ```
 
@@ -121,7 +121,7 @@ Or with JavaScript:
 ```js
 new FilamentNotification()
     .title('Saved successfully')
-    .color('success') // [tl! focus]
+    .color('success')
     .send()
 ```
 

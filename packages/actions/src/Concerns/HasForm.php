@@ -3,6 +3,7 @@
 namespace Filament\Actions\Concerns;
 
 use Closure;
+use Filament\Actions\Action;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Schema;
 
@@ -14,6 +15,8 @@ trait HasForm
     protected array $formData = [];
 
     protected ?Closure $mutateFormDataUsing = null;
+
+    protected bool | Closure | null $hasFormWrapper = null;
 
     /**
      * @deprecated Use `disabledSchema() instead.
@@ -36,7 +39,9 @@ trait HasForm
     }
 
     /**
-     * @param  array<Component> | Closure | null  $form
+     * @deprecated Use `schema() instead.
+     *
+     * @param  array<Component| Action> | Closure | null  $form
      */
     public function form(array | Closure | null $form): static
     {
@@ -48,9 +53,9 @@ trait HasForm
     /**
      * @deprecated Use `getSchema()` instead.
      */
-    public function getForm(Schema $form): ?Schema
+    public function getForm(Schema $schema): ?Schema
     {
-        return $this->getSchema($form);
+        return $this->getSchema($schema);
     }
 
     public function mutateFormDataUsing(?Closure $callback): static
@@ -105,5 +110,17 @@ trait HasForm
     public function isFormDisabled(): bool
     {
         return $this->isSchemaDisabled();
+    }
+
+    public function formWrapper(bool | Closure | null $condition = true): static
+    {
+        $this->hasFormWrapper = $condition;
+
+        return $this;
+    }
+
+    public function hasFormWrapper(): bool
+    {
+        return (bool) ($this->evaluate($this->hasFormWrapper) ?? (! $this->isWizard()));
     }
 }

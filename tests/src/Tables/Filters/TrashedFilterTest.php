@@ -16,7 +16,7 @@ use function Pest\Laravel\assertSoftDeleted;
 
 uses(TestCase::class);
 
-it('can filter records by trashed status', function () {
+it('can filter records by trashed status', function (): void {
     $posts = Post::factory()->count(5)->create();
     $trashedPosts = Post::factory()->count(5)->trashed()->create();
 
@@ -34,7 +34,7 @@ it('can filter records by trashed status', function () {
         ->assertCanNotSeeTableRecords($trashedPosts);
 });
 
-it('can delete records that are not already deleted', function () {
+it('can delete records that are not already deleted', function (): void {
     $post = Post::factory()->create();
     $trashedPost = Post::factory()->trashed()->create();
 
@@ -57,7 +57,7 @@ it('can delete records that are not already deleted', function () {
     assertSoftDeleted($trashedPost);
 });
 
-it('can force delete records that are already deleted', function () {
+it('can force delete records that are already deleted', function (): void {
     $post = Post::factory()->create();
     $trashedPost = Post::factory()->trashed()->create();
 
@@ -80,7 +80,7 @@ it('can force delete records that are already deleted', function () {
     assertModelMissing($trashedPost);
 });
 
-it('can restore records that are already deleted', function () {
+it('can restore records that are already deleted', function (): void {
     $post = Post::factory()->create();
     $trashedPost = Post::factory()->trashed()->create();
 

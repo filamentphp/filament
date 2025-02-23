@@ -30,38 +30,38 @@ use function Pest\Laravel\assertSoftDeleted;
 
 uses(TestCase::class);
 
-it('can render posts page', function () {
+it('can render posts page', function (): void {
     $this->get(PostResource::getUrl('index'))
         ->assertSuccessful();
 });
 
-it('can render users page', function () {
+it('can render users page', function (): void {
     $this->get(UserResource::getUrl('index'))
         ->assertSuccessful();
 });
 
-it('can list posts', function () {
+it('can list posts', function (): void {
     $posts = Post::factory()->count(10)->create();
 
     livewire(ListPosts::class)
         ->assertCanSeeTableRecords($posts);
 });
 
-it('can render post titles', function () {
+it('can render post titles', function (): void {
     Post::factory()->count(10)->create();
 
     livewire(ListPosts::class)
         ->assertCanRenderTableColumn('title');
 });
 
-it('can render post authors', function () {
+it('can render post authors', function (): void {
     Post::factory()->count(10)->create();
 
     livewire(ListPosts::class)
         ->assertCanRenderTableColumn('author.name');
 });
 
-it('can sort posts by title', function () {
+it('can sort posts by title', function (): void {
     $posts = Post::factory()->count(10)->create();
 
     livewire(ListPosts::class)
@@ -71,7 +71,7 @@ it('can sort posts by title', function () {
         ->assertCanSeeTableRecords($posts->sortByDesc('title'), inOrder: true);
 });
 
-it('can sort posts by author', function () {
+it('can sort posts by author', function (): void {
     $posts = Post::factory()->count(10)->create();
 
     livewire(ListPosts::class)
@@ -81,7 +81,7 @@ it('can sort posts by author', function () {
         ->assertCanSeeTableRecords($posts->sortByDesc('author.name'), inOrder: true);
 });
 
-it('can search posts by title', function () {
+it('can search posts by title', function (): void {
     $posts = Post::factory()->count(10)->create();
 
     $title = $posts->first()->title;
@@ -92,7 +92,7 @@ it('can search posts by title', function () {
         ->assertCanNotSeeTableRecords($posts->where('title', '!=', $title));
 });
 
-it('can search posts by author', function () {
+it('can search posts by author', function (): void {
     $posts = Post::factory()->count(10)->create();
 
     $author = $posts->first()->author->name;
@@ -103,7 +103,7 @@ it('can search posts by author', function () {
         ->assertCanNotSeeTableRecords($posts->where('author.name', '!=', $author));
 });
 
-it('can filter posts by `is_published`', function () {
+it('can filter posts by `is_published`', function (): void {
     $posts = Post::factory()->count(10)->create();
 
     livewire(ListPosts::class)
@@ -113,7 +113,7 @@ it('can filter posts by `is_published`', function () {
         ->assertCanNotSeeTableRecords($posts->where('is_published', false));
 });
 
-it('can delete posts', function () {
+it('can delete posts', function (): void {
     $post = Post::factory()->create();
 
     livewire(ListPosts::class)
@@ -122,7 +122,7 @@ it('can delete posts', function () {
     assertSoftDeleted($post);
 });
 
-it('can bulk delete posts', function () {
+it('can bulk delete posts', function (): void {
     $posts = Post::factory()->count(10)->create();
 
     livewire(ListPosts::class)
@@ -133,7 +133,7 @@ it('can bulk delete posts', function () {
     }
 });
 
-it('can render ticket messages page without a policy', function () {
+it('can render ticket messages page without a policy', function (): void {
     TicketMessage::factory(10)
         ->create();
 
@@ -141,7 +141,7 @@ it('can render ticket messages page without a policy', function () {
         ->assertSuccessful();
 });
 
-it('can render tickets page if the policy viewAny returns true', function () {
+it('can render tickets page if the policy viewAny returns true', function (): void {
     Ticket::factory(10)
         ->create();
 
@@ -151,7 +151,7 @@ it('can render tickets page if the policy viewAny returns true', function () {
         ->assertSuccessful();
 });
 
-it('can render tickets page if the policy viewAny returns an allowed response', function () {
+it('can render tickets page if the policy viewAny returns an allowed response', function (): void {
     Ticket::factory(10)
         ->create();
 
@@ -163,7 +163,7 @@ it('can render tickets page if the policy viewAny returns an allowed response', 
     app()->bind(TicketPolicy::class . '::viewAny', fn (): bool => true);
 });
 
-it('does not render ticket messages page without a policy if authorization is strict', function () {
+it('does not render ticket messages page without a policy if authorization is strict', function (): void {
     Filament::getCurrentOrDefaultPanel()->strictAuthorization();
 
     TicketMessage::factory(10)
@@ -175,7 +175,7 @@ it('does not render ticket messages page without a policy if authorization is st
     Filament::getCurrentOrDefaultPanel()->strictAuthorization(false);
 });
 
-it('does not render tickets page if the policy viewAny returns false', function () {
+it('does not render tickets page if the policy viewAny returns false', function (): void {
     Ticket::factory(10)
         ->create();
 
@@ -187,7 +187,7 @@ it('does not render tickets page if the policy viewAny returns false', function 
     app()->bind(TicketPolicy::class . '::viewAny', fn (): bool => true);
 });
 
-it('does not render tickets page if the policy viewAny returns a denied response', function () {
+it('does not render tickets page if the policy viewAny returns a denied response', function (): void {
     Ticket::factory(10)
         ->create();
 
@@ -199,7 +199,7 @@ it('does not render tickets page if the policy viewAny returns a denied response
     app()->bind(TicketPolicy::class . '::viewAny', fn (): bool => true);
 });
 
-it('renders actions based on policy', function (string $action, string $policyMethod, bool | Response $policyResult, bool $isVisible, bool $isSoftDeleted = false, bool $isTableAction = false, bool $isBulkAction = false) {
+it('renders actions based on policy', function (string $action, string $policyMethod, bool | Response $policyResult, bool $isVisible, bool $isSoftDeleted = false, bool $isTableAction = false, bool $isBulkAction = false): void {
     app()->bind(TicketPolicy::class . '::' . $policyMethod, fn (): bool | Response => $policyResult);
 
     if ($isTableAction) {

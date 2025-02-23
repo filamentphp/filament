@@ -7,7 +7,7 @@ use Filament\Tests\TestCase;
 
 uses(TestCase::class);
 
-it('can get an enum from a string', function (string $string, StringBackedEnum $enum) {
+it('can get an enum from a string', function (string $string, StringBackedEnum $enum): void {
     $cast = app(EnumStateCast::class, ['enum' => StringBackedEnum::class]);
 
     expect($cast->get($string))
@@ -18,7 +18,7 @@ it('can get an enum from a string', function (string $string, StringBackedEnum $
     ['three', StringBackedEnum::Three],
 ]);
 
-it('can get an enum from an integer', function (int $integer, IntegerBackedEnum $enum) {
+it('can get an enum from an integer', function (int $integer, IntegerBackedEnum $enum): void {
     $cast = app(EnumStateCast::class, ['enum' => IntegerBackedEnum::class]);
 
     expect($cast->get($integer))
@@ -29,7 +29,7 @@ it('can get an enum from an integer', function (int $integer, IntegerBackedEnum 
     [3, IntegerBackedEnum::Three],
 ]);
 
-it('can ignore if an enum is passed to the getter already', function (StringBackedEnum $enum) {
+it('can ignore if an enum is passed to the getter already', function (StringBackedEnum $enum): void {
     $cast = app(EnumStateCast::class, ['enum' => StringBackedEnum::class]);
 
     expect($cast->get($enum))
@@ -40,7 +40,7 @@ it('can ignore if an enum is passed to the getter already', function (StringBack
     StringBackedEnum::Three,
 ]);
 
-it('can return null if a blank value is passed to the getter', function ($value) {
+it('can return null if a blank value is passed to the getter', function ($value): void {
     $cast = app(EnumStateCast::class, ['enum' => StringBackedEnum::class]);
 
     expect($cast->get($value))
@@ -50,7 +50,7 @@ it('can return null if a blank value is passed to the getter', function ($value)
     '',
 ]);
 
-it('can get the value from a string backed enum in the setter', function (StringBackedEnum $enum, string $string) {
+it('can get the value from a string backed enum in the setter', function (StringBackedEnum $enum, string $string): void {
     $cast = app(EnumStateCast::class, ['enum' => StringBackedEnum::class]);
 
     expect($cast->set($enum))
@@ -61,7 +61,7 @@ it('can get the value from a string backed enum in the setter', function (String
     [StringBackedEnum::Three, 'three'],
 ]);
 
-it('can get the value from an integer backed enum in the setter', function (IntegerBackedEnum $enum, int $integer) {
+it('can get the value from an integer backed enum in the setter', function (IntegerBackedEnum $enum, int $integer): void {
     $cast = app(EnumStateCast::class, ['enum' => IntegerBackedEnum::class]);
 
     expect($cast->set($enum))
@@ -72,7 +72,7 @@ it('can get the value from an integer backed enum in the setter', function (Inte
     [IntegerBackedEnum::Three, 3],
 ]);
 
-it('can ignore the value in the setter if it is not an enum', function ($value) {
+it('can ignore the value in the setter if it is not an enum', function ($value): void {
     $cast = app(EnumStateCast::class, ['enum' => StringBackedEnum::class]);
 
     expect($cast->set($value))

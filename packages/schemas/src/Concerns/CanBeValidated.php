@@ -14,7 +14,7 @@ trait CanBeValidated
     {
         $attributes = [];
 
-        foreach ($this->getComponents(withHidden: true) as $component) {
+        foreach ($this->getComponents(withActions: false, withHidden: true) as $component) {
             if ($component->isHiddenAndNotDehydratedWhenHidden()) {
                 continue;
             }
@@ -23,7 +23,7 @@ trait CanBeValidated
                 $component->dehydrateValidationAttributes($attributes);
             }
 
-            foreach ($component->getChildComponentContainers() as $container) {
+            foreach ($component->getChildSchemas() as $container) {
                 if ($container->isHidden()) {
                     continue;
                 }
@@ -45,7 +45,7 @@ trait CanBeValidated
     {
         $messages = [];
 
-        foreach ($this->getComponents(withHidden: true) as $component) {
+        foreach ($this->getComponents(withActions: false, withHidden: true) as $component) {
             if ($component->isHiddenAndNotDehydratedWhenHidden()) {
                 continue;
             }
@@ -54,7 +54,7 @@ trait CanBeValidated
                 $component->dehydrateValidationMessages($messages);
             }
 
-            foreach ($component->getChildComponentContainers() as $container) {
+            foreach ($component->getChildSchemas() as $container) {
                 if ($container->isHidden()) {
                     continue;
                 }
@@ -76,7 +76,7 @@ trait CanBeValidated
     {
         $rules = [];
 
-        foreach ($this->getComponents(withHidden: true) as $component) {
+        foreach ($this->getComponents(withActions: false, withHidden: true) as $component) {
             if ($component->isNeitherDehydratedNorValidated()) {
                 continue;
             }
@@ -85,7 +85,7 @@ trait CanBeValidated
                 $component->dehydrateValidationRules($rules);
             }
 
-            foreach ($component->getChildComponentContainers() as $container) {
+            foreach ($component->getChildSchemas() as $container) {
                 if ($container->isHidden()) {
                     continue;
                 }
@@ -106,7 +106,7 @@ trait CanBeValidated
     public function validate(): array
     {
         if (! count(array_filter(
-            $this->getComponents(withHidden: true),
+            $this->getComponents(withActions: false, withHidden: true),
             fn (Component $component): bool => ! $component->isHiddenAndNotDehydratedWhenHidden(),
         ))) {
             return [];

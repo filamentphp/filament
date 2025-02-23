@@ -135,10 +135,13 @@ trait CanGenerateModelTables
                     $columnData['searchable'] = [];
                 }
 
-                if (in_array($type['name'], [
-                    'date',
-                ])) {
+                if ($type['name'] === 'date') {
                     $columnData['date'] = [];
+                    $columnData['sortable'] = [];
+                }
+
+                if ($type['name'] === 'time') {
+                    $columnData['time'] = [];
                     $columnData['sortable'] = [];
                 }
 

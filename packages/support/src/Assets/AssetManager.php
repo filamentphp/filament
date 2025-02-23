@@ -3,6 +3,7 @@
 namespace Filament\Support\Assets;
 
 use Exception;
+use Filament\Support\Colors\ColorManager;
 use Filament\Support\Facades\FilamentColor;
 use Illuminate\Support\Arr;
 
@@ -123,7 +124,7 @@ class AssetManager
         foreach ($this->scriptData as $package => $packageData) {
             if (
                 ($packages !== null) &&
-                ($package !== null) &&
+                filled($package) &&
                 (! in_array($package, $packages))
             ) {
                 continue;
@@ -245,7 +246,7 @@ class AssetManager
         foreach ($this->cssVariables as $package => $packageVariables) {
             if (
                 ($packages !== null) &&
-                ($package !== null) &&
+                filled($package) &&
                 (! in_array($package, $packages))
             ) {
                 continue;
@@ -265,11 +266,18 @@ class AssetManager
      */
     public function renderStyles(?array $packages = null): string
     {
-        $variables = $this->getCssVariables($packages);
+        $cssVariables = $this->getCssVariables($packages);
+        $customColors = [];
 
-        foreach (FilamentColor::getColors() as $name => $shades) {
-            foreach ($shades as $shade => $color) {
-                $variables["{$name}-{$shade}"] = $color;
+        $defaultColorNames = array_keys(ColorManager::DEFAULT_COLORS);
+
+        foreach (FilamentColor::getColors() as $name => $palette) {
+            foreach (array_keys($palette) as $shade) {
+                $cssVariables["{$name}-{$shade}"] = $this->resolveColorShadeFromPalette($palette, $shade);
+            }
+
+            if (! in_array($name, $defaultColorNames)) {
+                $customColors[$name] = array_keys($palette);
             }
         }
 
@@ -281,8 +289,27 @@ class AssetManager
                     $this->getFonts($packages),
                 ),
             ],
-            'cssVariables' => $variables,
+            'cssVariables' => $cssVariables,
+            'customColors' => $customColors,
         ])->render();
+    }
+
+    /**
+     * @param  array<int | string, string | int>  $palette
+     */
+    protected function resolveColorShadeFromPalette(array $palette, string | int $shade): string
+    {
+        $color = $palette[$shade];
+
+        while (! str_starts_with($color, 'oklch(')) {
+            if ($color === 0) {
+                return 'oklch(1 0 0)';
+            }
+
+            $color = $palette[$color];
+        }
+
+        return $color;
     }
 
     public function getTheme(?string $id): ?Theme

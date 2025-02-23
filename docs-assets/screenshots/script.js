@@ -51,6 +51,15 @@ const processScreenshot = async (file, options, theme) => {
         ])
 
         await new Promise((resolve) => setTimeout(resolve, 500))
+    } else {
+        await page.emulateMediaFeatures([
+            {
+                name: 'prefers-color-scheme',
+                value: 'light'
+            }
+        ])
+
+        await new Promise((resolve) => setTimeout(resolve, 500))
     }
 
     if (options.before) {

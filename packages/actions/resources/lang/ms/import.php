@@ -78,6 +78,7 @@ return [
         'file_name' => 'import-:import_id-:csv_name-failed-rows',
         'error_header' => 'ralat',
         'system_error' => 'Ralat sistem, sila hubungi sokongan.',
+        'column_mapping_required_for_new_record' => 'Lajur :attribute tidak dipetakan ke lajur dalam fail, tetapi ia diperlukan untuk mencipta rekod baharu.',
     ],
 
 ];

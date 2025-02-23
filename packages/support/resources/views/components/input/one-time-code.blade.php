@@ -4,7 +4,12 @@
 
 <div
     x-data="{ currentNumberOfDigits: null }"
-    class="fi-one-time-code-input-ctn"
+    {{
+        $attributes
+            ->class([
+                'fi-one-time-code-input-ctn',
+            ])
+    }}
 >
     @foreach (range(1, $length) as $digit)
         <div
@@ -32,11 +37,6 @@
             currentNumberOfDigits = $el.value.length
         "
         x-bind:class="{ 'fi-valid': currentNumberOfDigits >= {{ $length }} }"
-        {{
-            $attributes
-                ->class([
-                    'fi-one-time-code-input',
-                ])
-        }}
+        class="fi-one-time-code-input"
     />
 </div>

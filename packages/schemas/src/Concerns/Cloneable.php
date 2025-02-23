@@ -2,20 +2,18 @@
 
 namespace Filament\Schemas\Concerns;
 
-use Filament\Schemas\Components\Component;
+use Closure;
 
 trait Cloneable
 {
-    protected function cloneComponents(): static
+    /**
+     * @var array<Closure>
+     */
+    protected array $afterCloned = [];
+
+    public function afterCloned(Closure $callback): static
     {
-        if (is_array($this->components)) {
-            $this->components = array_map(
-                fn (Component $component): Component => $component
-                    ->container($this)
-                    ->getClone(),
-                $this->components,
-            );
-        }
+        $this->afterCloned[] = $callback;
 
         return $this;
     }
@@ -27,6 +25,13 @@ trait Cloneable
         $clone->flushCachedAbsoluteStatePath();
         $clone->flushCachedInheritanceKey();
         $clone->cloneComponents();
+
+        foreach ($this->afterCloned as $callback) {
+            $clone->evaluate(
+                value: $callback->bindTo($clone),
+                namedInjections: ['clone' => $clone, 'original' => $this]
+            );
+        }
 
         return $clone;
     }

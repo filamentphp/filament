@@ -2,6 +2,7 @@
 
 namespace Filament\Resources\Resource\Concerns;
 
+use BackedEnum;
 use Filament\Facades\Filament;
 use Filament\Navigation\NavigationGroup;
 use Filament\Navigation\NavigationItem;
@@ -23,9 +24,9 @@ trait HasNavigation
 
     protected static ?string $navigationParentItem = null;
 
-    protected static ?string $navigationIcon = null;
+    protected static string | BackedEnum | null $navigationIcon = null;
 
-    protected static ?string $activeNavigationIcon = null;
+    protected static string | BackedEnum | null $activeNavigationIcon = null;
 
     protected static ?string $navigationLabel = null;
 
@@ -109,17 +110,17 @@ trait HasNavigation
         static::$navigationParentItem = $item;
     }
 
-    public static function getNavigationIcon(): string | Htmlable | null
+    public static function getNavigationIcon(): string | BackedEnum | Htmlable | null
     {
         return static::$navigationIcon;
     }
 
-    public static function navigationIcon(?string $icon): void
+    public static function navigationIcon(string | BackedEnum $icon): void
     {
         static::$navigationIcon = $icon;
     }
 
-    public static function getActiveNavigationIcon(): string | Htmlable | null
+    public static function getActiveNavigationIcon(): string | BackedEnum | Htmlable | null
     {
         return static::$activeNavigationIcon ?? static::getNavigationIcon();
     }
@@ -140,7 +141,7 @@ trait HasNavigation
     }
 
     /**
-     * @return string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null
+     * @return string | array<int | string, string | int> | null
      */
     public static function getNavigationBadgeColor(): string | array | null
     {

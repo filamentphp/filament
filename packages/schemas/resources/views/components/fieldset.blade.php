@@ -1,13 +1,21 @@
+@php
+    $extraAttributes = $getExtraAttributes();
+    $id = $getId();
+    $isLabelHidden = $isLabelHidden();
+    $label = $getLabel();
+@endphp
+
 <x-filament::fieldset
-    :label="$getLabel()"
-    :label-hidden="$isLabelHidden()"
+    :label="$label"
+    :label-hidden="$isLabelHidden"
     :attributes="
         \Filament\Support\prepare_inherited_attributes($attributes)
             ->merge([
-                'id' => $getId(),
+                'id' => $id,
             ], escape: false)
-            ->merge($getExtraAttributes(), escape: false)
+            ->merge($extraAttributes, escape: false)
+            ->class(['fi-sc-fieldset'])
     "
 >
-    {{ $getChildComponentContainer() }}
+    {{ $getChildSchema() }}
 </x-filament::fieldset>

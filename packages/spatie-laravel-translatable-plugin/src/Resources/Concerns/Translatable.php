@@ -5,7 +5,7 @@ namespace Filament\Resources\Concerns;
 use Exception;
 use Spatie\Translatable\HasTranslations;
 
-trait Translatable
+trait Translatable /** @phpstan-ignore trait.unused */
 {
     public static function getDefaultTranslatableLocale(): string
     {

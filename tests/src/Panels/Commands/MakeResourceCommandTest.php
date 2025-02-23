@@ -10,14 +10,14 @@ use function PHPUnit\Framework\assertFileExists;
 
 uses(TestCase::class);
 
-beforeEach(function () {
+beforeEach(function (): void {
     $this->withoutMockingConsoleOutput();
 
     MakeResourceCommand::$shouldCheckModelsForSoftDeletes = false;
 })
     ->skip((bool) Arr::get($_SERVER, 'PARATEST'), 'File generation tests cannot be run in parallel as they would share a filesystem and have the potential to conflict with each other.');
 
-it('can generate a resource class', function () {
+it('can generate a resource class', function (): void {
     $this->artisan('make:filament-resource', [
         'model' => 'Post',
         '--model-namespace' => 'Filament\Tests\Fixtures\Models',
@@ -30,7 +30,7 @@ it('can generate a resource class', function () {
         ->toMatchSnapshot();
 });
 
-it('can generate a resource form', function () {
+it('can generate a resource form', function (): void {
     $this->artisan('make:filament-resource', [
         'model' => 'Post',
         '--model-namespace' => 'Filament\Tests\Fixtures\Models',
@@ -43,7 +43,7 @@ it('can generate a resource form', function () {
         ->toMatchSnapshot();
 });
 
-it('can generate a resource infolist', function () {
+it('can generate a resource infolist', function (): void {
     $this->artisan('make:filament-resource', [
         'model' => 'Post',
         '--view' => true,
@@ -57,7 +57,7 @@ it('can generate a resource infolist', function () {
         ->toMatchSnapshot();
 });
 
-it('can generate a resource table', function () {
+it('can generate a resource table', function (): void {
     $this->artisan('make:filament-resource', [
         'model' => 'Post',
         '--model-namespace' => 'Filament\Tests\Fixtures\Models',
@@ -70,7 +70,7 @@ it('can generate a resource table', function () {
         ->toMatchSnapshot();
 });
 
-it('can generate a resource list page', function () {
+it('can generate a resource list page', function (): void {
     $this->artisan('make:filament-resource', [
         'model' => 'Post',
         '--model-namespace' => 'Filament\Tests\Fixtures\Models',
@@ -83,7 +83,7 @@ it('can generate a resource list page', function () {
         ->toMatchSnapshot();
 });
 
-it('can generate a resource create page', function () {
+it('can generate a resource create page', function (): void {
     $this->artisan('make:filament-resource', [
         'model' => 'Post',
         '--model-namespace' => 'Filament\Tests\Fixtures\Models',
@@ -96,7 +96,7 @@ it('can generate a resource create page', function () {
         ->toMatchSnapshot();
 });
 
-it('can generate a resource edit page', function () {
+it('can generate a resource edit page', function (): void {
     $this->artisan('make:filament-resource', [
         'model' => 'Post',
         '--model-namespace' => 'Filament\Tests\Fixtures\Models',
@@ -109,7 +109,7 @@ it('can generate a resource edit page', function () {
         ->toMatchSnapshot();
 });
 
-it('can generate a resource view page', function () {
+it('can generate a resource view page', function (): void {
     $this->artisan('make:filament-resource', [
         'model' => 'Post',
         '--view' => true,
@@ -123,7 +123,7 @@ it('can generate a resource view page', function () {
         ->toMatchSnapshot();
 });
 
-it('can generate a resource class with embedded form', function () {
+it('can generate a resource class with embedded form', function (): void {
     $this->artisan('make:filament-resource', [
         'model' => 'Post',
         '--embed-schemas' => true,
@@ -137,7 +137,7 @@ it('can generate a resource class with embedded form', function () {
         ->toMatchSnapshot();
 });
 
-it('can generate a resource class with embedded infolist', function () {
+it('can generate a resource class with embedded infolist', function (): void {
     $this->artisan('make:filament-resource', [
         'model' => 'Post',
         '--embed-schemas' => true,
@@ -152,7 +152,7 @@ it('can generate a resource class with embedded infolist', function () {
         ->toMatchSnapshot();
 });
 
-it('can generate a resource class with embedded table', function () {
+it('can generate a resource class with embedded table', function (): void {
     $this->artisan('make:filament-resource', [
         'model' => 'Post',
         '--embed-table' => true,
@@ -166,7 +166,7 @@ it('can generate a resource class with embedded table', function () {
         ->toMatchSnapshot();
 });
 
-it('can generate the resource form content', function () {
+it('can generate the resource form content', function (): void {
     $this->artisan('make:filament-resource', [
         'model' => 'Post',
         '--generate' => true,
@@ -180,7 +180,7 @@ it('can generate the resource form content', function () {
         ->toMatchSnapshot();
 });
 
-it('can generate the resource table content', function () {
+it('can generate the resource table content', function (): void {
     $this->artisan('make:filament-resource', [
         'model' => 'Post',
         '--generate' => true,
@@ -194,7 +194,7 @@ it('can generate the resource table content', function () {
         ->toMatchSnapshot();
 });
 
-it('can generate the form and table content embedded in a resource class', function () {
+it('can generate the form and table content embedded in a resource class', function (): void {
     $this->artisan('make:filament-resource', [
         'model' => 'Post',
         '--embed-schemas' => true,
@@ -210,7 +210,7 @@ it('can generate the form and table content embedded in a resource class', funct
         ->toMatchSnapshot();
 });
 
-it('can generate a resource class with soft deletes', function () {
+it('can generate a resource class with soft deletes', function (): void {
     $this->artisan('make:filament-resource', [
         'model' => 'Post',
         '--soft-deletes' => true,
@@ -224,7 +224,7 @@ it('can generate a resource class with soft deletes', function () {
         ->toMatchSnapshot();
 });
 
-it('can generate a resource table with soft deletes', function () {
+it('can generate a resource table with soft deletes', function (): void {
     $this->artisan('make:filament-resource', [
         'model' => 'Post',
         '--soft-deletes' => true,
@@ -238,7 +238,7 @@ it('can generate a resource table with soft deletes', function () {
         ->toMatchSnapshot();
 });
 
-it('can generate a resource edit page with soft deletes', function () {
+it('can generate a resource edit page with soft deletes', function (): void {
     $this->artisan('make:filament-resource', [
         'model' => 'Post',
         '--soft-deletes' => true,
@@ -252,7 +252,7 @@ it('can generate a resource edit page with soft deletes', function () {
         ->toMatchSnapshot();
 });
 
-it('can generate a simple resource class', function () {
+it('can generate a simple resource class', function (): void {
     foreach ([
         app_path('Filament/Resources/Posts/Schemas/PostForm.php'),
         app_path('Filament/Resources/Posts/Schemas/PostInfolist.php'),
@@ -282,7 +282,7 @@ it('can generate a simple resource class', function () {
     assertFileDoesNotExist(app_path('Filament/Resources/Posts/Tables/PostsTable.php'));
 });
 
-it('can generate a simple resource manage page', function () {
+it('can generate a simple resource manage page', function (): void {
     $this->artisan('make:filament-resource', [
         'model' => 'Post',
         '--simple' => true,
@@ -296,7 +296,7 @@ it('can generate a simple resource manage page', function () {
         ->toMatchSnapshot();
 });
 
-it('can generate a simple resource class without embedded schemas and table', function () {
+it('can generate a simple resource class without embedded schemas and table', function (): void {
     $this->artisan('make:filament-resource', [
         'model' => 'Post',
         '--not-embedded' => true,
@@ -312,7 +312,7 @@ it('can generate a simple resource class without embedded schemas and table', fu
         ->toMatchSnapshot();
 });
 
-it('can generate a resource class in a nested directory', function () {
+it('can generate a resource class in a nested directory', function (): void {
     $this->artisan('make:filament-resource', [
         'model' => 'Blog/Post',
         '--model-namespace' => 'Filament\Tests\Fixtures\Models',
@@ -325,7 +325,7 @@ it('can generate a resource class in a nested directory', function () {
         ->toMatchSnapshot();
 });
 
-it('can generate a resource form in a nested directory', function () {
+it('can generate a resource form in a nested directory', function (): void {
     $this->artisan('make:filament-resource', [
         'model' => 'Blog/Post',
         '--model-namespace' => 'Filament\Tests\Fixtures\Models',
@@ -338,7 +338,7 @@ it('can generate a resource form in a nested directory', function () {
         ->toMatchSnapshot();
 });
 
-it('can generate a resource infolist in a nested directory', function () {
+it('can generate a resource infolist in a nested directory', function (): void {
     $this->artisan('make:filament-resource', [
         'model' => 'Blog/Post',
         '--view' => true,
@@ -352,7 +352,7 @@ it('can generate a resource infolist in a nested directory', function () {
         ->toMatchSnapshot();
 });
 
-it('can generate a resource table in a nested directory', function () {
+it('can generate a resource table in a nested directory', function (): void {
     $this->artisan('make:filament-resource', [
         'model' => 'Blog/Post',
         '--model-namespace' => 'Filament\Tests\Fixtures\Models',
@@ -365,7 +365,7 @@ it('can generate a resource table in a nested directory', function () {
         ->toMatchSnapshot();
 });
 
-it('can generate a resource list page in a nested directory', function () {
+it('can generate a resource list page in a nested directory', function (): void {
     $this->artisan('make:filament-resource', [
         'model' => 'Blog/Post',
         '--model-namespace' => 'Filament\Tests\Fixtures\Models',
@@ -378,7 +378,7 @@ it('can generate a resource list page in a nested directory', function () {
         ->toMatchSnapshot();
 });
 
-it('can generate a resource create page in a nested directory', function () {
+it('can generate a resource create page in a nested directory', function (): void {
     $this->artisan('make:filament-resource', [
         'model' => 'Blog/Post',
         '--model-namespace' => 'Filament\Tests\Fixtures\Models',
@@ -391,7 +391,7 @@ it('can generate a resource create page in a nested directory', function () {
         ->toMatchSnapshot();
 });
 
-it('can generate a resource edit page in a nested directory', function () {
+it('can generate a resource edit page in a nested directory', function (): void {
     $this->artisan('make:filament-resource', [
         'model' => 'Blog/Post',
         '--model-namespace' => 'Filament\Tests\Fixtures\Models',
@@ -404,7 +404,7 @@ it('can generate a resource edit page in a nested directory', function () {
         ->toMatchSnapshot();
 });
 
-it('can generate a resource view page in a nested directory', function () {
+it('can generate a resource view page in a nested directory', function (): void {
     $this->artisan('make:filament-resource', [
         'model' => 'Blog/Post',
         '--view' => true,
@@ -418,7 +418,7 @@ it('can generate a resource view page in a nested directory', function () {
         ->toMatchSnapshot();
 });
 
-it('can generate a simple resource manage page in a nested directory', function () {
+it('can generate a simple resource manage page in a nested directory', function (): void {
     $this->artisan('make:filament-resource', [
         'model' => 'Blog/Post',
         '--simple' => true,
@@ -432,7 +432,7 @@ it('can generate a simple resource manage page in a nested directory', function 
         ->toMatchSnapshot();
 });
 
-it('can generate a nested resource class', function () {
+it('can generate a nested resource class', function (): void {
     $this->artisan('make:filament-resource', [
         'model' => 'User',
         '--panel' => 'admin',
@@ -462,7 +462,7 @@ it('can generate a nested resource class', function () {
         ->toMatchSnapshot();
 });
 
-it('can generate a nested resource class with a plural parent resource name', function () {
+it('can generate a nested resource class with a plural parent resource name', function (): void {
     $this->artisan('make:filament-resource', [
         'model' => 'User',
         '--panel' => 'admin',
@@ -492,7 +492,7 @@ it('can generate a nested resource class with a plural parent resource name', fu
         ->toMatchSnapshot();
 });
 
-it('can generate a nested resource class with a parent resource name with `Resource` at the end', function () {
+it('can generate a nested resource class with a parent resource name with `Resource` at the end', function (): void {
     $this->artisan('make:filament-resource', [
         'model' => 'User',
         '--panel' => 'admin',
@@ -522,7 +522,7 @@ it('can generate a nested resource class with a parent resource name with `Resou
         ->toMatchSnapshot();
 });
 
-it('can generate a nested resource form', function () {
+it('can generate a nested resource form', function (): void {
     $this->artisan('make:filament-resource', [
         'model' => 'User',
         '--panel' => 'admin',
@@ -552,7 +552,7 @@ it('can generate a nested resource form', function () {
         ->toMatchSnapshot();
 });
 
-it('can generate a nested resource infolist', function () {
+it('can generate a nested resource infolist', function (): void {
     $this->artisan('make:filament-resource', [
         'model' => 'User',
         '--panel' => 'admin',
@@ -583,7 +583,7 @@ it('can generate a nested resource infolist', function () {
         ->toMatchSnapshot();
 });
 
-it('can generate a nested resource create page', function () {
+it('can generate a nested resource create page', function (): void {
     $this->artisan('make:filament-resource', [
         'model' => 'User',
         '--panel' => 'admin',
@@ -613,7 +613,7 @@ it('can generate a nested resource create page', function () {
         ->toMatchSnapshot();
 });
 
-it('can generate a nested resource edit page', function () {
+it('can generate a nested resource edit page', function (): void {
     $this->artisan('make:filament-resource', [
         'model' => 'User',
         '--panel' => 'admin',
@@ -643,7 +643,7 @@ it('can generate a nested resource edit page', function () {
         ->toMatchSnapshot();
 });
 
-it('can generate a nested resource view page', function () {
+it('can generate a nested resource view page', function (): void {
     $this->artisan('make:filament-resource', [
         'model' => 'User',
         '--panel' => 'admin',
@@ -674,7 +674,7 @@ it('can generate a nested resource view page', function () {
         ->toMatchSnapshot();
 });
 
-it('can generate a nested resource class in a nested directory', function () {
+it('can generate a nested resource class in a nested directory', function (): void {
     $this->artisan('make:filament-resource', [
         'model' => 'User',
         '--panel' => 'admin',

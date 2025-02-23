@@ -12,7 +12,7 @@ class Grid extends Component implements CanEntangleWithSingularRelationships
     /**
      * @var view-string
      */
-    protected string $view = 'filament-schema::components.grid';
+    protected string $view = 'filament-schemas::components.grid';
 
     /**
      * @param  array<string, ?int> | int | null  $columns

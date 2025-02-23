@@ -52,7 +52,7 @@ class CreateXlsxFile implements ShouldQueue
 
         $csvDelimiter = $this->exporter::getCsvDelimiter();
 
-        $writeRowsFromFile = function (string $file, ?Style $style = null) use ($csvDelimiter, $disk, $writer) {
+        $writeRowsFromFile = function (string $file, ?Style $style = null) use ($csvDelimiter, $disk, $writer): void {
             $csvReader = CsvReader::createFromStream($disk->readStream($file));
             $csvReader->setDelimiter($csvDelimiter);
             $csvResults = Statement::create()->process($csvReader);

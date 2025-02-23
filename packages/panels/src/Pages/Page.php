@@ -2,6 +2,9 @@
 
 namespace Filament\Pages;
 
+use BackedEnum;
+use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Clusters\Cluster;
 use Filament\Facades\Filament;
 use Filament\Navigation\NavigationItem;
@@ -43,9 +46,9 @@ abstract class Page extends BasePage
 
     protected static ?string $navigationParentItem = null;
 
-    protected static ?string $navigationIcon = null;
+    protected static string | BackedEnum | null $navigationIcon = null;
 
-    protected static ?string $activeNavigationIcon = null;
+    protected static string | BackedEnum | null $activeNavigationIcon = null;
 
     protected static ?string $navigationLabel = null;
 
@@ -53,7 +56,7 @@ abstract class Page extends BasePage
 
     protected static bool $shouldRegisterNavigation = true;
 
-    protected static string $view = 'filament-panels::pages.page';
+    protected string $view = 'filament-panels::pages.page';
 
     public function getLayout(): string
     {
@@ -159,12 +162,12 @@ abstract class Page extends BasePage
         return static::$navigationParentItem;
     }
 
-    public static function getActiveNavigationIcon(): string | Htmlable | null
+    public static function getActiveNavigationIcon(): string | BackedEnum | Htmlable | null
     {
         return static::$activeNavigationIcon ?? static::getNavigationIcon();
     }
 
-    public static function getNavigationIcon(): string | Htmlable | null
+    public static function getNavigationIcon(): string | BackedEnum | Htmlable | null
     {
         return static::$navigationIcon;
     }
@@ -183,7 +186,7 @@ abstract class Page extends BasePage
     }
 
     /**
-     * @return string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null
+     * @return string | array<int | string, string | int> | null
      */
     public static function getNavigationBadgeColor(): string | array | null
     {
@@ -351,7 +354,7 @@ abstract class Page extends BasePage
     /**
      * @param  array<string | WidgetConfiguration>  $widgets
      * @param  array<string, mixed>  $data
-     * @return array<Component>
+     * @return array<Component | Action | ActionGroup>
      */
     public function getWidgetsSchemaComponents(array $widgets, array $data = []): array
     {

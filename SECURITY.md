@@ -1,6 +1,6 @@
 # Security Policy
 
-Please review the [Version Support Policy](https://filamentphp.com/docs/version-support-policy) on our website.
+Please review the [Version Support Policy](https://filamentphp.com/docs/introduction/version-support-policy) on our website.
 
 ## Reporting a Vulnerability
 

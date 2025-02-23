@@ -6,9 +6,10 @@ use Closure;
 use Filament\Actions\Action;
 use Filament\Schemas\Components\Group;
 use Filament\Schemas\Schema;
-use Filament\Support\Enums\ActionSize;
-use Filament\Support\Enums\MaxWidth;
+use Filament\Support\Enums\Size;
+use Filament\Support\Enums\Width;
 use Filament\Support\Facades\FilamentIcon;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\BaseFilter;
 
@@ -28,7 +29,7 @@ trait HasFilters
 
     protected string | Closure | null $filtersFormMaxHeight = null;
 
-    protected MaxWidth | string | Closure | null $filtersFormWidth = null;
+    protected Width | string | Closure | null $filtersFormWidth = null;
 
     protected FiltersLayout | Closure | null $filtersLayout = null;
 
@@ -114,7 +115,7 @@ trait HasFilters
         return $this;
     }
 
-    public function filtersFormWidth(MaxWidth | string | Closure | null $width): static
+    public function filtersFormWidth(Width | string | Closure | null $width): static
     {
         $this->filtersFormWidth = $width;
 
@@ -145,17 +146,21 @@ trait HasFilters
     /**
      * @return array<string, BaseFilter>
      */
-    public function getFilters(): array
+    public function getFilters(bool $withHidden = false): array
     {
+        if ($withHidden) {
+            return $this->filters;
+        }
+
         return array_filter(
             $this->filters,
             fn (BaseFilter $filter): bool => $filter->isVisible(),
         );
     }
 
-    public function getFilter(string $name): ?BaseFilter
+    public function getFilter(string $name, bool $withHidden = false): ?BaseFilter
     {
-        return $this->getFilters()[$name] ?? null;
+        return $this->getFilters($withHidden)[$name] ?? null;
     }
 
     public function getFiltersForm(): Schema
@@ -195,7 +200,7 @@ trait HasFilters
         $action = Action::make('openFilters')
             ->label(__('filament-tables::table.actions.filter.label'))
             ->iconButton()
-            ->icon(FilamentIcon::resolve('tables::actions.filter') ?? 'heroicon-m-funnel')
+            ->icon(FilamentIcon::resolve('tables::actions.filter') ?? Heroicon::Funnel)
             ->color('gray')
             ->livewireClickHandlerEnabled(false)
             ->modalSubmitAction(false)
@@ -218,7 +223,7 @@ trait HasFilters
         }
 
         if ($action->getView() === Action::BUTTON_VIEW) {
-            $action->defaultSize(ActionSize::Small);
+            $action->defaultSize(Size::Small);
         }
 
         return $action;
@@ -263,12 +268,12 @@ trait HasFilters
         return $this->evaluate($this->filtersFormMaxHeight);
     }
 
-    public function getFiltersFormWidth(): MaxWidth | string | null
+    public function getFiltersFormWidth(): Width | string | null
     {
         return $this->evaluate($this->filtersFormWidth) ?? match ($this->getFiltersFormColumns()) {
-            2 => MaxWidth::TwoExtraLarge,
-            3 => MaxWidth::FourExtraLarge,
-            4 => MaxWidth::SixExtraLarge,
+            2 => Width::TwoExtraLarge,
+            3 => Width::FourExtraLarge,
+            4 => Width::SixExtraLarge,
             default => null,
         };
     }

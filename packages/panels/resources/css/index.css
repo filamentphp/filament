@@ -1,6 +1,34 @@
-@import 'tailwindcss/base';
-@import 'tailwindcss/components';
-@import 'tailwindcss/utilities';
-@import 'tailwindcss/variants';
+@import '../../../support/resources/css/index.css';
+@import '../../../actions/resources/css/index.css';
+@import '../../../forms/resources/css/index.css';
+@import '../../../infolists/resources/css/index.css';
+@import '../../../notifications/resources/css/index.css';
+@import '../../../schemas/resources/css/index.css';
+@import '../../../tables/resources/css/index.css';
+@import '../../../widgets/resources/css/index.css';
 
-@import 'base.css';
+@import './base.css' layer(base);
+
+@import './components/global-search.css' layer(components);
+@import './components/header.css' layer(components);
+@import './components/layout.css' layer(components);
+@import './components/logo.css' layer(components);
+@import './components/page.css' layer(components);
+@import './components/sidebar.css' layer(components);
+@import './components/tenant-menu.css' layer(components);
+@import './components/theme-switcher.css' layer(components);
+@import './components/topbar.css' layer(components);
+@import './widgets/account-widget.css' layer(components);
+@import './widgets/filament-info-widget.css' layer(components);
+
+@variant dark (&:where(.dark, .dark *));
+
+@theme inline {
+    --font-mono: var(--mono-font-family), ui-monospace, SFMono-Regular, Menlo,
+        Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+    --font-sans: var(--font-family), ui-sans-serif, system-ui, sans-serif,
+        'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
+        'Noto Color Emoji';
+    --font-serif: var(--serif-font-family), ui-serif, Georgia, Cambria,
+        'Times New Roman', Times, serif;
+}

@@ -15,7 +15,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
-use League\Csv\ByteSequence;
+use League\Csv\Bom;
 use League\Csv\Writer;
 use SplTempFileObject;
 
@@ -53,7 +53,7 @@ class PrepareCsvExport implements ShouldQueue
     public function handle(): void
     {
         $csv = Writer::createFromFileObject(new SplTempFileObject);
-        $csv->setOutputBOM(ByteSequence::BOM_UTF8);
+        $csv->setOutputBOM(Bom::Utf8);
         $csv->setDelimiter($this->exporter::getCsvDelimiter());
         $csv->insertOne(array_values($this->columnMap));
 
@@ -69,13 +69,18 @@ class PrepareCsvExport implements ShouldQueue
 
         if ($databaseConnection->getDriverName() === 'pgsql') {
             $originalOrders = collect($query->getQuery()->orders)
-                ->reject(fn (array $order): bool => in_array($order['column'] ?? null, [$keyName, $qualifiedKeyName]))
+                ->reject(fn (array $order): bool => ($order['column'] ?? null) === $qualifiedKeyName)
                 ->unique('column');
 
             /** @var array<string, mixed> $originalBindings */
             $originalBindings = $query->getRawBindings();
 
-            $query->reorder($qualifiedKeyName);
+            if (! empty($originalOrders->all())) {
+                $query->reorder($originalOrders[0]['column'], $originalOrders[0]['direction']);
+                $originalOrders->forget(0);
+            } else {
+                $query->reorder($qualifiedKeyName);
+            }
 
             foreach ($originalOrders as $order) {
                 if (blank($order['column'] ?? null) || blank($order['direction'] ?? null)) {
@@ -103,7 +108,7 @@ class PrepareCsvExport implements ShouldQueue
         // in case it contains attributes that are not serializable, such as binary columns.
         $this->export->unsetRelation('user');
 
-        $dispatchRecords = function (array $records) use ($exportCsvJob, &$page, &$totalRows) {
+        $dispatchRecords = function (array $records) use ($exportCsvJob, &$page, &$totalRows): void {
             $recordsCount = count($records);
 
             if (($totalRows + $recordsCount) > $this->export->total_rows) {
@@ -144,7 +149,10 @@ class PrepareCsvExport implements ShouldQueue
         $chunkKeySize = $this->chunkSize * 10;
 
         $baseQuery = $query->toBase();
-        $baseQuery->distinct($qualifiedKeyName);
+
+        if (in_array($query->getQuery()->orders[0]['column'] ?? null, [$keyName, $qualifiedKeyName])) {
+            $baseQuery->distinct($qualifiedKeyName);
+        }
 
         /** @phpstan-ignore-next-line */
         $baseQueryOrders = $baseQuery->orders ?? [];

@@ -277,7 +277,7 @@ trait HasState
 
         if (! ($isDehydrated && $this->isDehydrated())) {
             if ($this->hasStatePath()) {
-                Arr::forget($state, $this->getStatePath());
+                Arr::forget($state, $this->getStatePath()); /** @phpstan-ignore parameterByRef.type */
 
                 return;
             }
@@ -286,7 +286,7 @@ trait HasState
             // we need to dehydrate the child component containers while
             // informing them that they are not dehydrated, so that their
             // child components get removed from the state.
-            foreach ($this->getChildComponentContainers() as $container) {
+            foreach ($this->getChildSchemas() as $container) {
                 $container->dehydrateState($state, isDehydrated: false);
             }
 
@@ -295,7 +295,7 @@ trait HasState
 
         if (filled($this->getStatePath(isAbsolute: false))) {
             foreach ($this->getStateToDehydrate() as $key => $value) {
-                Arr::set($state, $key, $value);
+                Arr::set($state, $key, $value); /** @phpstan-ignore parameterByRef.type */
             }
         }
 
@@ -303,7 +303,7 @@ trait HasState
             return;
         }
 
-        foreach ($this->getChildComponentContainers(withHidden: true) as $container) {
+        foreach ($this->getChildSchemas(withHidden: true) as $container) {
             $container->dehydrateState($state, $isDehydrated);
         }
     }
@@ -322,8 +322,82 @@ trait HasState
     {
         $this->hydrateDefaultState($hydratedDefaultState);
 
-        foreach ($this->getChildComponentContainers(withHidden: true) as $container) {
+        if ($hydratedDefaultState === null) {
+            $this->loadStateFromRelationships();
+
+            $rawState = $this->getRawState();
+
+            // Hydrate all arrayable state objects as arrays by converting
+            // them to collections, then using `toArray()`.
+            if (is_array($rawState) || $rawState instanceof Arrayable) {
+                $rawState = collect($rawState)->toArray();
+
+                $this->rawState($rawState);
+            }
+        }
+
+        foreach ($this->getChildSchemas(withHidden: true) as $container) {
             $container->hydrateState($hydratedDefaultState, $andCallHydrationHooks);
+        }
+
+        $rawState = $this->getRawState();
+        $originalRawState = $rawState;
+
+        foreach ($this->getStateCasts() as $stateCast) {
+            $rawState = $stateCast->set($rawState);
+        }
+
+        if ($rawState !== $originalRawState) {
+            $this->rawState($rawState);
+        }
+
+        if ($andCallHydrationHooks) {
+            $this->callAfterStateHydrated();
+        }
+    }
+
+    /**
+     * @param  array<string>  $statePaths
+     */
+    public function hydrateStatePartially(array $statePaths, bool $andCallHydrationHooks = true): void
+    {
+        if ($this->hasStatePath()) {
+            $statePathToCheck = $this->getStatePath();
+
+            $isStatePathMatching = in_array($statePathToCheck, $statePaths);
+
+            // Even if the current component's state path is not present in the array of state paths to hydrate,
+            // a parent state path may be present. In this case, we still need to hydrate the field as it is
+            // nested inside the parent state that was hydrated.
+            while ((! $isStatePathMatching) && str($statePathToCheck)->contains('.')) {
+                $statePathToCheck = (string) str($statePathToCheck)->beforeLast('.');
+
+                $isStatePathMatching = in_array($statePathToCheck, $statePaths);
+            }
+        }
+
+        if (! ($isStatePathMatching ?? false)) {
+            foreach ($this->getChildSchemas(withHidden: true) as $container) {
+                $container->hydrateStatePartially($statePaths, $andCallHydrationHooks);
+            }
+
+            return;
+        }
+
+        $this->loadStateFromRelationships();
+
+        $rawState = $this->getRawState();
+
+        // Hydrate all arrayable state objects as arrays by converting
+        // them to collections, then using `toArray()`.
+        if (is_array($rawState) || $rawState instanceof Arrayable) {
+            $rawState = collect($rawState)->toArray();
+
+            $this->rawState($rawState);
+        }
+
+        foreach ($this->getChildSchemas(withHidden: true) as $container) {
+            $container->hydrateStatePartially($statePaths, $andCallHydrationHooks);
         }
 
         $rawState = $this->getRawState();
@@ -348,16 +422,6 @@ trait HasState
     public function hydrateDefaultState(?array &$hydratedDefaultState): void
     {
         if ($hydratedDefaultState === null) {
-            $this->loadStateFromRelationships();
-
-            $state = $this->getState();
-
-            // Hydrate all arrayable state objects as arrays by converting
-            // them to collections, then using `toArray()`.
-            if (is_array($state) || $state instanceof Arrayable) {
-                $this->state(collect($state)->toArray());
-            }
-
             return;
         }
 
@@ -377,7 +441,7 @@ trait HasState
 
         $this->state($defaultState);
 
-        Arr::set($hydratedDefaultState, $statePath, $defaultState);
+        Arr::set($hydratedDefaultState, $statePath, $defaultState); /** @phpstan-ignore parameterByRef.type */
     }
 
     public function fillStateWithNull(): void
@@ -389,7 +453,7 @@ trait HasState
             $this->state(null);
         }
 
-        foreach ($this->getChildComponentContainers(withHidden: true) as $container) {
+        foreach ($this->getChildSchemas(withHidden: true) as $container) {
             $container->fillStateWithNull();
         }
     }
@@ -604,11 +668,11 @@ trait HasState
 
     public function isNeitherDehydratedNorValidated(): bool
     {
-        if ($this->isDehydrated()) {
-            return false;
+        if ($this->isHiddenAndNotDehydratedWhenHidden()) {
+            return true;
         }
 
-        if ($this->isHiddenAndNotDehydratedWhenHidden()) {
+        if ($this->isDehydrated()) {
             return false;
         }
 

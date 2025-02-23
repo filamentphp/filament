@@ -3,16 +3,35 @@
 namespace Filament\Infolists\Components;
 
 use Closure;
-use Filament\Infolists\Components\TextEntry\Enums\TextEntrySize;
+use Filament\Actions\Action;
+use Filament\Infolists\View\Components\TextEntryComponent\ItemComponent;
+use Filament\Infolists\View\Components\TextEntryComponent\ItemComponent\IconComponent;
 use Filament\Schemas\Components\Contracts\HasAffixActions;
+use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Concerns\CanBeCopied;
+use Filament\Support\Concerns\CanWrap;
 use Filament\Support\Concerns\HasFontFamily;
 use Filament\Support\Concerns\HasLineClamp;
 use Filament\Support\Concerns\HasWeight;
+use Filament\Support\Enums\Alignment;
+use Filament\Support\Enums\FontFamily;
+use Filament\Support\Enums\FontWeight;
+use Filament\Support\Enums\IconPosition;
+use Filament\Support\Enums\IconSize;
+use Filament\Support\Enums\TextSize;
+use Filament\Support\View\Components\BadgeComponent;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Js;
+use Illuminate\View\ComponentAttributeBag;
 
-class TextEntry extends Entry implements HasAffixActions
+use function Filament\Support\generate_href_html;
+use function Filament\Support\generate_icon_html;
+
+class TextEntry extends Entry implements HasAffixActions, HasEmbeddedView
 {
     use CanBeCopied;
+    use CanWrap;
     use Concerns\CanFormatState;
     use Concerns\HasAffixes;
     use Concerns\HasColor;
@@ -21,11 +40,6 @@ class TextEntry extends Entry implements HasAffixActions
     use HasFontFamily;
     use HasLineClamp;
     use HasWeight;
-
-    /**
-     * @var view-string
-     */
-    protected string $view = 'filament-infolists::components.text-entry';
 
     protected bool | Closure $isBadge = false;
 
@@ -37,7 +51,7 @@ class TextEntry extends Entry implements HasAffixActions
 
     protected int | Closure | null $listLimit = null;
 
-    protected TextEntrySize | string | Closure | null $size = null;
+    protected TextSize | string | Closure | null $size = null;
 
     protected bool | Closure $isLimitedListExpandable = false;
 
@@ -76,18 +90,32 @@ class TextEntry extends Entry implements HasAffixActions
         return $this;
     }
 
-    public function size(TextEntrySize | string | Closure | null $size): static
+    public function size(TextSize | string | Closure | null $size): static
     {
         $this->size = $size;
 
         return $this;
     }
 
-    public function getSize(mixed $state): TextEntrySize | string | null
+    public function getSize(mixed $state): TextSize | string
     {
-        return $this->evaluate($this->size, [
+        $size = $this->evaluate($this->size, [
             'state' => $state,
         ]);
+
+        if (blank($size)) {
+            return TextSize::Small;
+        }
+
+        if (is_string($size)) {
+            $size = TextSize::tryFrom($size) ?? $size;
+        }
+
+        if ($size === 'base') {
+            return TextSize::Medium;
+        }
+
+        return $size;
     }
 
     public function isBadge(): bool
@@ -125,5 +153,378 @@ class TextEntry extends Entry implements HasAffixActions
     public function isLimitedListExpandable(): bool
     {
         return (bool) $this->evaluate($this->isLimitedListExpandable);
+    }
+
+    public function toEmbeddedHtml(): string
+    {
+        $isBadge = $this->isBadge();
+        $isListWithLineBreaks = $this->isListWithLineBreaks();
+        $isLimitedListExpandable = $this->isLimitedListExpandable();
+
+        $state = $this->getState();
+
+        if ($state instanceof Collection) {
+            $state = $state->all();
+        }
+
+        $attributes = $this->getExtraAttributeBag()
+            ->class([
+                'fi-in-text',
+            ]);
+
+        if (blank($state)) {
+            $attributes = $attributes
+                ->merge([
+                    'x-tooltip' => filled($tooltip = $this->getEmptyTooltip())
+                        ? '{
+                            content: ' . Js::from($tooltip) . ',
+                            theme: $store.theme,
+                        }'
+                        : null,
+                ], escape: false);
+
+            $placeholder = $this->getPlaceholder();
+
+            ob_start(); ?>
+
+            <div <?= $attributes->toHtml() ?>>
+                <?php if (filled($placeholder !== null)) { ?>
+                    <p class="fi-in-placeholder">
+                        <?= e($placeholder) ?>
+                    </p>
+                <?php } ?>
+            </div>
+
+            <?php return $this->wrapEmbeddedHtml(ob_get_clean());
+        }
+
+        $shouldOpenUrlInNewTab = $this->shouldOpenUrlInNewTab();
+
+        $formatState = function (mixed $stateItem) use ($shouldOpenUrlInNewTab): string {
+            $url = $this->getUrl($stateItem);
+
+            $item = '';
+
+            if (filled($url)) {
+                $item .= '<a ' . generate_href_html($url, $shouldOpenUrlInNewTab)->toHtml() . '>';
+            }
+
+            $item .= e($this->formatState($stateItem));
+
+            if (filled($url)) {
+                $item .= '</a>';
+            }
+
+            return $item;
+        };
+
+        $state = Arr::wrap($state);
+        $stateCount = count($state);
+
+        $listLimit = $this->getListLimit() ?? $stateCount;
+        $stateOverListLimitCount = 0;
+
+        if ($listLimit && ($stateCount > $listLimit)) {
+            $stateOverListLimitCount = $stateCount - $listLimit;
+
+            if (
+                (! $isListWithLineBreaks) ||
+                (! $isLimitedListExpandable)
+            ) {
+                $state = array_slice($state, 0, $listLimit);
+            }
+        }
+
+        if (($stateCount > 1) && (! $isListWithLineBreaks) && (! $isBadge)) {
+            $state = [
+                implode(
+                    ', ',
+                    array_map(
+                        fn (mixed $stateItem): string => $formatState($stateItem),
+                        $state,
+                    ),
+                ),
+            ];
+
+            $stateCount = 1;
+            $formatState = fn (mixed $stateItem): string => $stateItem;
+        }
+
+        $alignment = $this->getAlignment();
+
+        $attributes = $attributes
+            ->class([
+                'fi-in-text-has-badges' => $isBadge,
+                'fi-wrapped' => $this->canWrap(),
+                ($alignment instanceof Alignment) ? "fi-align-{$alignment->value}" : (is_string($alignment) ? $alignment : ''),
+            ]);
+
+        $lineClamp = $this->getLineClamp();
+        $iconPosition = $this->getIconPosition();
+        $isBulleted = $this->isBulleted();
+        $isProse = $this->isProse();
+        $isMarkdown = $this->isMarkdown();
+
+        $getStateItem = function (mixed $stateItem) use ($iconPosition, $isBadge, $isMarkdown, $isProse, $lineClamp): array {
+            $color = $this->getColor($stateItem) ?? ($isBadge ? 'primary' : null);
+            $iconColor = $this->getIconColor($stateItem);
+
+            $size = $this->getSize($stateItem);
+
+            $iconHtml = generate_icon_html($this->getIcon($stateItem), attributes: (new ComponentAttributeBag)
+                ->color(IconComponent::class, $iconColor), size: match ($size) {
+                    TextSize::Medium => IconSize::Medium,
+                    TextSize::Large => IconSize::Large,
+                    default => IconSize::Small,
+                })?->toHtml();
+
+            $isCopyable = $this->isCopyable($stateItem);
+
+            if ($isCopyable) {
+                $copyableStateJs = Js::from($this->getCopyableState($stateItem) ?? $this->formatState($stateItem));
+                $copyMessageJs = Js::from($this->getCopyMessage($stateItem));
+                $copyMessageDurationJs = Js::from($this->getCopyMessageDuration($stateItem));
+            }
+
+            return [
+                'attributes' => (new ComponentAttributeBag)
+                    ->merge([
+                        'x-on:click' => $isCopyable
+                            ? <<<JS
+                                window.navigator.clipboard.writeText({$copyableStateJs})
+                                \$tooltip({$copyMessageJs}, {
+                                    theme: \$store.theme,
+                                    timeout: {$copyMessageDurationJs},
+                                })
+                                JS
+                            : null,
+                        'x-tooltip' => filled($tooltip = $this->getTooltip($stateItem))
+                            ? '{
+                                content: ' . Js::from($tooltip) . ',
+                                theme: $store.theme,
+                            }'
+                            : null,
+                    ], escape: false)
+                    ->class([
+                        'fi-in-text-item',
+                        'fi-in-text-item-prose' => $isProse || $isMarkdown,
+                        (($fontFamily = $this->getFontFamily($stateItem)) instanceof FontFamily) ? "fi-font-{$fontFamily->value}" : (is_string($fontFamily) ? $fontFamily : ''),
+                        'fi-copyable' => $isCopyable,
+                    ])
+                    ->when(
+                        ! $isBadge,
+                        fn (ComponentAttributeBag $attributes) => $attributes
+                            ->class([
+                                ($size instanceof TextSize) ? "fi-size-{$size->value}" : $size,
+                                (($weight = $this->getWeight($stateItem)) instanceof FontWeight) ? "fi-font-{$weight->value}" : (is_string($weight) ? $weight : ''),
+                            ])
+                            ->when($lineClamp, fn (ComponentAttributeBag $attributes) => $attributes->style([
+                                "--line-clamp: {$lineClamp}",
+                            ]))
+                            ->color(ItemComponent::class, $color)
+                    ),
+                'badgeAttributes' => $isBadge
+                    ? (new ComponentAttributeBag)
+                        ->class([
+                            'fi-badge',
+                            ($size instanceof TextSize) ? "fi-size-{$size->value}" : $size,
+                        ])
+                        ->color(BadgeComponent::class, $color ?? 'primary')
+                    : null,
+                'iconAfterHtml' => ($iconPosition === IconPosition::After) ? $iconHtml : '',
+                'iconBeforeHtml' => ($iconPosition === IconPosition::Before) ? $iconHtml : '',
+            ];
+        };
+
+        $prefixActions = array_filter(
+            $this->getPrefixActions(),
+            fn (Action $prefixAction): bool => $prefixAction->isVisible(),
+        );
+
+        $suffixActions = array_filter(
+            $this->getSuffixActions(),
+            fn (Action $suffixAction): bool => $suffixAction->isVisible(),
+        );
+
+        if (
+            ($stateCount === 1) &&
+            (! $isBulleted) &&
+            empty($prefixActions) &&
+            empty($suffixActions)
+        ) {
+            $stateItem = Arr::first($state);
+            [
+                'attributes' => $stateItemAttributes,
+                'badgeAttributes' => $stateItemBadgeAttributes,
+                'iconAfterHtml' => $stateItemIconAfterHtml,
+                'iconBeforeHtml' => $stateItemIconBeforeHtml,
+            ] = $getStateItem($stateItem);
+
+            ob_start(); ?>
+
+            <div <?= $attributes
+                ->merge($stateItemAttributes->getAttributes(), escape: false)
+                ->toHtml() ?>>
+                <?php if ($isBadge) { ?>
+                <span <?= $stateItemBadgeAttributes->toHtml() ?>>
+                <?php } ?>
+
+                <?= $stateItemIconBeforeHtml ?>
+                <?= $formatState($stateItem) ?>
+                <?= $stateItemIconAfterHtml ?>
+
+                <?php if ($isBadge) { ?>
+                    </span>
+            <?php } ?>
+            </div>
+
+            <?php return $this->wrapEmbeddedHtml(ob_get_clean());
+        }
+
+        $attributes = $attributes
+            ->class([
+                'fi-bulleted' => $isBulleted,
+                'fi-in-text-has-line-breaks' => $isListWithLineBreaks,
+            ]);
+
+        if ($stateOverListLimitCount || $prefixActions || $suffixActions) {
+            $attributes = $attributes
+                ->merge([
+                    'x-data' => $isLimitedListExpandable
+                        ? '{ isLimited: true }'
+                        : null,
+                ], escape: false)
+                ->class([
+                    'fi-in-text-affixed' => $prefixActions || $suffixActions,
+                    'fi-in-text-list-limited' => $stateOverListLimitCount,
+                ]);
+
+            ob_start(); ?>
+
+            <div <?= $attributes->toHtml() ?>>
+                <?php if ($prefixActions) { ?>
+                    <div class="fi-in-text-affix">
+                        <?php foreach ($prefixActions as $prefixAction) { ?>
+                            <?= $prefixAction->toHtml() ?>
+                        <?php } ?>
+                    </div>
+                <?php } ?>
+
+                <?php if ($prefixActions || $suffixActions) { ?>
+                    <div class="fi-in-text-affixed-content">
+                <?php } ?>
+
+                <ul>
+                    <?php $stateIteration = 1; ?>
+
+                    <?php foreach ($state as $stateItem) { ?>
+                        <?php [
+                            'attributes' => $stateItemAttributes,
+                            'badgeAttributes' => $stateItemBadgeAttributes,
+                            'iconAfterHtml' => $stateItemIconAfterHtml,
+                            'iconBeforeHtml' => $stateItemIconBeforeHtml,
+                        ] = $getStateItem($stateItem); ?>
+
+                        <li
+                            <?php if ($stateIteration > $listLimit) { ?>
+                                x-show="! isLimited"
+                                x-cloak
+                                x-transition
+                            <?php } ?>
+                            <?= $stateItemAttributes->toHtml() ?>
+                        >
+                            <?php if ($isBadge) { ?>
+                            <span <?= $stateItemBadgeAttributes->toHtml() ?>>
+                            <?php } ?>
+
+                            <?= $stateItemIconBeforeHtml ?>
+                            <?= $formatState($stateItem) ?>
+                            <?= $stateItemIconAfterHtml ?>
+
+                            <?php if ($isBadge) { ?>
+                                </span>
+                        <?php } ?>
+                        </li>
+
+                        <?php $stateIteration++ ?>
+                    <?php } ?>
+                </ul>
+
+                <?php if ($stateOverListLimitCount) { ?>
+                    <p class="fi-in-text-list-limited-message">
+                        <?php if ($isLimitedListExpandable) { ?>
+                            <button
+                                type="button"
+                                x-on:click.prevent="isLimited = false"
+                                x-show="isLimited"
+                                class="fi-link fi-size-xs"
+                            >
+                                <?= trans_choice('filament-infolists::components.entries.text.actions.expand_list', $stateOverListLimitCount) ?>
+                            </button>
+
+                            <button
+                                type="button"
+                                x-on:click.prevent="isLimited = true"
+                                x-cloak
+                                x-show="! isLimited"
+                                class="fi-link fi-size-xs"
+                            >
+                                <?= trans_choice('filament-infolists::components.entries.text.actions.collapse_list', $stateOverListLimitCount) ?>
+                            </button>
+                        <?php } else { ?>
+                            <?= trans_choice('filament-infolists::components.entries.text.more_list_items', $stateOverListLimitCount) ?>
+                        <?php } ?>
+                    </p>
+                <?php } ?>
+
+                <?php if ($prefixActions || $suffixActions) { ?>
+                    </div>
+                <?php } ?>
+
+                <?php if ($suffixActions) { ?>
+                    <div class="fi-in-text-affix">
+                        <?php foreach ($suffixActions as $suffixAction) { ?>
+                            <?= $suffixAction->toHtml() ?>
+                        <?php } ?>
+                    </div>
+                <?php } ?>
+            </div>
+
+            <?php return $this->wrapEmbeddedHtml(ob_get_clean());
+        }
+
+        ob_start(); ?>
+
+        <ul <?= $attributes->toHtml() ?>>
+            <?php foreach ($state as $stateItem) { ?>
+                <?php [
+                    'attributes' => $stateItemAttributes,
+                    'badgeAttributes' => $stateItemBadgeAttributes,
+                    'iconAfterHtml' => $stateItemIconAfterHtml,
+                    'iconBeforeHtml' => $stateItemIconBeforeHtml,
+                ] = $getStateItem($stateItem); ?>
+
+                <li <?= $stateItemAttributes->toHtml() ?>>
+                    <?php if ($isBadge) { ?>
+                    <span <?= $stateItemBadgeAttributes->toHtml() ?>>
+                    <?php } ?>
+
+                    <?= $stateItemIconBeforeHtml ?>
+                    <?= $formatState($stateItem) ?>
+                    <?= $stateItemIconAfterHtml ?>
+
+                    <?php if ($isBadge) { ?>
+                        </span>
+                <?php } ?>
+                </li>
+            <?php } ?>
+        </ul>
+
+        <?php return $this->wrapEmbeddedHtml(ob_get_clean());
+    }
+
+    public function canWrapByDefault(): bool
+    {
+        return true;
     }
 }

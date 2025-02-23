@@ -4,6 +4,7 @@ namespace Filament\Actions;
 
 use Filament\Actions\Concerns\CanCustomizeProcess;
 use Filament\Support\Facades\FilamentIcon;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -32,11 +33,11 @@ class DetachBulkAction extends BulkAction
 
         $this->color('danger');
 
-        $this->icon(FilamentIcon::resolve('actions::detach-action') ?? 'heroicon-m-x-mark');
+        $this->icon(FilamentIcon::resolve('actions::detach-action') ?? Heroicon::XMark);
 
         $this->requiresConfirmation();
 
-        $this->modalIcon(FilamentIcon::resolve('actions::detach-action.modal') ?? 'heroicon-o-x-mark');
+        $this->modalIcon(FilamentIcon::resolve('actions::detach-action.modal') ?? Heroicon::OutlinedXMark);
 
         $this->action(function (): void {
             $this->process(function (Collection $records, Table $table): void {

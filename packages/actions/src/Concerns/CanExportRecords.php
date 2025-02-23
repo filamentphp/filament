@@ -6,6 +6,7 @@ use AnourValar\EloquentSerialize\Facades\EloquentSerializeFacade;
 use Closure;
 use Filament\Actions\ExportAction;
 use Filament\Actions\ExportBulkAction;
+use Filament\Actions\Exports\Enums\Contracts\ExportFormat as ExportFormatInterface;
 use Filament\Actions\Exports\Enums\ExportFormat;
 use Filament\Actions\Exports\ExportColumn;
 use Filament\Actions\Exports\Exporter;
@@ -20,6 +21,7 @@ use Filament\Schemas\Components\Fieldset;
 use Filament\Schemas\Components\Split;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Support\Facades\FilamentIcon;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Contracts\HasTable;
 use Illuminate\Bus\PendingBatch;
 use Illuminate\Foundation\Bus\PendingChain;
@@ -55,7 +57,7 @@ trait CanExportRecords
     protected string | Closure | null $fileName = null;
 
     /**
-     * @var array<ExportFormat> | Closure | null
+     * @var array<ExportFormatInterface> | Closure | null
      */
     protected array | Closure | null $formats = null;
 
@@ -75,7 +77,7 @@ trait CanExportRecords
 
         $this->modalSubmitActionLabel(__('filament-actions::export.modal.actions.export.label'));
 
-        $this->groupedIcon(FilamentIcon::resolve('actions::export-action.grouped') ?? 'heroicon-m-arrow-down-tray');
+        $this->groupedIcon(FilamentIcon::resolve('actions::export-action.grouped') ?? Heroicon::ArrowDownTray);
 
         $this->form(fn (ExportAction | ExportBulkAction $action): array => [
             ...($action->hasColumnMapping() ? [Fieldset::make(__('filament-actions::export.modal.form.columns.label'))
@@ -107,7 +109,7 @@ trait CanExportRecords
             ...$action->getExporter()::getOptionsFormComponents(),
         ]);
 
-        $this->action(function (ExportAction | ExportBulkAction $action, array $data, Component $livewire) {
+        $this->action(function (ExportAction | ExportBulkAction $action, array $data, Component $livewire): void {
             $exporter = $action->getExporter();
 
             if ($livewire instanceof HasTable) {
@@ -388,7 +390,7 @@ trait CanExportRecords
     }
 
     /**
-     * @param  array<ExportFormat> | Closure | null  $formats
+     * @param  array<ExportFormatInterface> | Closure | null  $formats
      */
     public function formats(array | Closure | null $formats): static
     {
@@ -398,7 +400,7 @@ trait CanExportRecords
     }
 
     /**
-     * @return array<ExportFormat> | null
+     * @return array<ExportFormatInterface> | null
      */
     public function getFormats(): ?array
     {

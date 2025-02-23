@@ -2,22 +2,26 @@
 
 namespace Filament;
 
+use Filament\Auth\Http\Responses\BlockEmailChangeVerificationResponse;
+use Filament\Auth\Http\Responses\Contracts\BlockEmailChangeVerificationResponse as BlockEmailChangeVerificationResponseContract;
+use Filament\Auth\Http\Responses\Contracts\EmailChangeVerificationResponse as EmailChangeVerificationResponseContract;
+use Filament\Auth\Http\Responses\Contracts\EmailVerificationResponse as EmailVerificationResponseContract;
+use Filament\Auth\Http\Responses\Contracts\LoginResponse as LoginResponseContract;
+use Filament\Auth\Http\Responses\Contracts\LogoutResponse as LogoutResponseContract;
+use Filament\Auth\Http\Responses\Contracts\PasswordResetResponse as PasswordResetResponseContract;
+use Filament\Auth\Http\Responses\Contracts\RegistrationResponse as RegistrationResponseContract;
+use Filament\Auth\Http\Responses\EmailChangeVerificationResponse;
+use Filament\Auth\Http\Responses\EmailVerificationResponse;
+use Filament\Auth\Http\Responses\LoginResponse;
+use Filament\Auth\Http\Responses\LogoutResponse;
+use Filament\Auth\Http\Responses\PasswordResetResponse;
+use Filament\Auth\Http\Responses\RegistrationResponse;
 use Filament\Facades\Filament;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Http\Middleware\IdentifyTenant;
 use Filament\Http\Middleware\SetUpPanel;
-use Filament\Http\Responses\Auth\Contracts\EmailVerificationResponse as EmailVerificationResponseContract;
-use Filament\Http\Responses\Auth\Contracts\LoginResponse as LoginResponseContract;
-use Filament\Http\Responses\Auth\Contracts\LogoutResponse as LogoutResponseContract;
-use Filament\Http\Responses\Auth\Contracts\PasswordResetResponse as PasswordResetResponseContract;
-use Filament\Http\Responses\Auth\Contracts\RegistrationResponse as RegistrationResponseContract;
-use Filament\Http\Responses\Auth\EmailVerificationResponse;
-use Filament\Http\Responses\Auth\LoginResponse;
-use Filament\Http\Responses\Auth\LogoutResponse;
-use Filament\Http\Responses\Auth\PasswordResetResponse;
-use Filament\Http\Responses\Auth\RegistrationResponse;
 use Filament\Navigation\NavigationManager;
 use Filament\Support\Assets\Font;
 use Filament\Support\Assets\Js;
@@ -67,6 +71,8 @@ class FilamentServiceProvider extends PackageServiceProvider
             return new NavigationManager;
         });
 
+        $this->app->bind(BlockEmailChangeVerificationResponseContract::class, BlockEmailChangeVerificationResponse::class);
+        $this->app->bind(EmailChangeVerificationResponseContract::class, EmailChangeVerificationResponse::class);
         $this->app->bind(EmailVerificationResponseContract::class, EmailVerificationResponse::class);
         $this->app->bind(LoginResponseContract::class, LoginResponse::class);
         $this->app->bind(LogoutResponseContract::class, LogoutResponse::class);
@@ -79,8 +85,8 @@ class FilamentServiceProvider extends PackageServiceProvider
     public function packageBooted(): void
     {
         Blade::components([
-            LegacyComponents\Page::class => 'filament::page',
-            LegacyComponents\Widget::class => 'filament::widget',
+            LegacyComponents\PageComponent::class => 'filament::page',
+            LegacyComponents\WidgetComponent::class => 'filament::widget',
         ]);
 
         FilamentAsset::register([
@@ -98,7 +104,7 @@ class FilamentServiceProvider extends PackageServiceProvider
             SetUpPanel::class,
         ]);
 
-        Filament::serving(function () {
+        Filament::serving(function (): void {
             Filament::setServingStatus();
         });
 

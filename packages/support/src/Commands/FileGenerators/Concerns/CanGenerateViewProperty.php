@@ -11,7 +11,6 @@ trait CanGenerateViewProperty
     {
         $property = $class->addProperty('view', $this->getView())
             ->setProtected()
-            ->setStatic()
             ->setType('string');
         $this->configureViewProperty($property);
     }

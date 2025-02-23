@@ -8,6 +8,7 @@ use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\TimePicker;
 use Filament\Forms\Components\Toggle;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
@@ -89,11 +90,41 @@ trait CanGenerateModelForms
             $componentData['type'] = match (true) {
                 $type['name'] === 'boolean' => Toggle::class,
                 $type['name'] === 'date' => DatePicker::class,
+                $type['name'] === 'time' => TimePicker::class,
                 in_array($type['name'], ['datetime', 'timestamp']) => DateTimePicker::class,
                 $type['name'] === 'text' => Textarea::class,
                 $componentName === 'image', str($componentName)->startsWith('image_'), str($componentName)->contains('_image_'), str($componentName)->endsWith('_image') => FileUpload::class,
                 default => TextInput::class,
             };
+
+            $enumCasts = $this->getEnumCasts($model);
+
+            if (isset($type['name']) && (($type['name'] === 'enum') || array_key_exists($componentName, $enumCasts))) {
+                $componentData['type'] = Select::class;
+
+                if (array_key_exists($componentName, $enumCasts)) {
+                    $enumClass = $enumCasts[$componentName];
+
+                    $this->namespace->addUse($enumClass);
+
+                    $componentData['options'] = [new Literal(class_basename($enumClass) . '::class')];
+                } else {
+                    $componentData['options'] = [array_combine(
+                        $type['values'],
+                        array_map(
+                            fn (string $value): string => (string) str($value)
+                                ->kebab()
+                                ->replace(['-', '_'], ' ')
+                                ->ucfirst(),
+                            $type['values'],
+                        ),
+                    )];
+                }
+
+                if ($column['default']) {
+                    $componentData['default'] = [$this->parseDefaultExpression($column, $model)];
+                }
+            }
 
             if (str($componentName)->endsWith('_id')) {
                 $guessedRelationshipName = $this->guessBelongsToRelationshipName($componentName, $model);

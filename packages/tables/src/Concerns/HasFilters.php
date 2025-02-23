@@ -31,9 +31,9 @@ trait HasFilters
         $table = $this->getTable();
 
         return $this->makeSchema()
-            ->schema($table->getFiltersFormSchema())
             ->columns($table->getFiltersFormColumns())
             ->model($table->getModel())
+            ->schema($table->getFiltersFormSchema())
             ->when(
                 $table->hasDeferredFilters(),
                 fn (Schema $schema) => $schema
@@ -76,7 +76,7 @@ trait HasFilters
         $filterResetState = $filter->getResetState();
 
         $filterFormGroup = $this->getTableFiltersForm()->getComponent($filterName);
-        $filterFields = $filterFormGroup?->getChildComponentContainer()->getFlatFields();
+        $filterFields = $filterFormGroup?->getChildSchema()->getFlatFields();
 
         if (filled($field) && array_key_exists($field, $filterFields)) {
             $filterFields = [$field => $filterFields[$field]];
@@ -157,7 +157,7 @@ trait HasFilters
             );
         }
 
-        return $query->where(function (Builder $query) {
+        return $query->where(function (Builder $query): void {
             foreach ($this->getTable()->getFilters() as $filter) {
                 $filter->apply(
                     $query,

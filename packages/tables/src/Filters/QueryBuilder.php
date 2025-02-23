@@ -38,11 +38,11 @@ class QueryBuilder extends BaseFilter
                 ->live(onBlur: true),
         ]);
 
-        $this->query(function (Builder $query, array $data) {
+        $this->query(function (Builder $query, array $data): void {
             $this->applyRulesToQuery($query, $data['rules'], $this->getRuleBuilder());
         });
 
-        $this->baseQuery(function (Builder $query, array $data) {
+        $this->baseQuery(function (Builder $query, array $data): void {
             $this->applyRulesToBaseQuery($query, $data['rules'], $this->getRuleBuilder());
         });
 
@@ -67,7 +67,7 @@ class QueryBuilder extends BaseFilter
         $count = 0;
 
         foreach ($rules as $ruleIndex => $rule) {
-            $ruleBuilderBlockContainer = $ruleBuilder->getChildComponentContainer($ruleIndex);
+            $ruleBuilderBlockContainer = $ruleBuilder->getChildSchema($ruleIndex);
 
             if ($rule['type'] === RuleBuilder::OR_BLOCK_NAME) {
                 foreach ($rule['data'][RuleBuilder::OR_BLOCK_GROUPS_REPEATER_NAME] as $orGroupIndex => $orGroup) {
@@ -98,14 +98,14 @@ class QueryBuilder extends BaseFilter
     public function applyRulesToQuery(Builder $query, array $rules, RuleBuilder $ruleBuilder): Builder
     {
         foreach ($rules as $ruleIndex => $rule) {
-            $ruleBuilderBlockContainer = $ruleBuilder->getChildComponentContainer($ruleIndex);
+            $ruleBuilderBlockContainer = $ruleBuilder->getChildSchema($ruleIndex);
 
             if ($rule['type'] === RuleBuilder::OR_BLOCK_NAME) {
-                $query->where(function (Builder $query) use ($rule, $ruleBuilderBlockContainer) {
+                $query->where(function (Builder $query) use ($rule, $ruleBuilderBlockContainer): void {
                     $isFirst = true;
 
                     foreach ($rule['data'][RuleBuilder::OR_BLOCK_GROUPS_REPEATER_NAME] as $orGroupIndex => $orGroup) {
-                        $query->{$isFirst ? 'where' : 'orWhere'}(function (Builder $query) use ($orGroup, $orGroupIndex, $ruleBuilderBlockContainer) {
+                        $query->{$isFirst ? 'where' : 'orWhere'}(function (Builder $query) use ($orGroup, $orGroupIndex, $ruleBuilderBlockContainer): void {
                             $this->applyRulesToQuery(
                                 $query,
                                 $orGroup['rules'],
@@ -136,7 +136,7 @@ class QueryBuilder extends BaseFilter
     public function applyRulesToBaseQuery(Builder $query, array $rules, RuleBuilder $ruleBuilder): Builder
     {
         foreach ($rules as $ruleIndex => $rule) {
-            $ruleBuilderBlockContainer = $ruleBuilder->getChildComponentContainer($ruleIndex);
+            $ruleBuilderBlockContainer = $ruleBuilder->getChildSchema($ruleIndex);
 
             if ($rule['type'] === RuleBuilder::OR_BLOCK_NAME) {
                 foreach ($rule['data'][RuleBuilder::OR_BLOCK_GROUPS_REPEATER_NAME] as $orGroupIndex => $orGroup) {
@@ -223,11 +223,11 @@ class QueryBuilder extends BaseFilter
         return $builder;
     }
 
-    protected function getNestedRuleBuilder(Schema $ruleBuilderBlockContainer, string $orGroupIndex): RuleBuilder
+    protected function getNestedRuleBuilder(Schema $schema, string $orGroupIndex): RuleBuilder
     {
-        $builder = $ruleBuilderBlockContainer
+        $builder = $schema
             ->getComponent(fn (Component $component): bool => $component instanceof Repeater)
-            ->getChildComponentContainer($orGroupIndex)
+            ->getChildSchema($orGroupIndex)
             ->getComponent(fn (Component $component): bool => $component instanceof RuleBuilder);
 
         if (! ($builder instanceof RuleBuilder)) {
@@ -240,7 +240,7 @@ class QueryBuilder extends BaseFilter
     /**
      * @param  array<string, mixed>  $rule
      */
-    protected function tapOperatorFromRule(array $rule, Schema $ruleBuilderBlockContainer, Closure $callback): void
+    protected function tapOperatorFromRule(array $rule, Schema $schema, Closure $callback): void
     {
         $constraint = $this->getConstraint($rule['type']);
 
@@ -263,7 +263,7 @@ class QueryBuilder extends BaseFilter
         }
 
         try {
-            $ruleBuilderBlockContainer->validate();
+            $schema->validate();
         } catch (ValidationException) {
             return;
         }

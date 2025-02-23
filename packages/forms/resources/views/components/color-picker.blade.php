@@ -1,6 +1,8 @@
 @php
     use Filament\Support\Facades\FilamentView;
 
+    $fieldWrapperView = $getFieldWrapperView();
+    $extraAttributeBag = $getExtraAttributeBag();
     $isDisabled = $isDisabled();
     $isLive = $isLive();
     $isLiveOnBlur = $isLiveOnBlur();
@@ -10,15 +12,17 @@
     $liveDebounce = $getLiveDebounce();
     $prefixActions = $getPrefixActions();
     $prefixIcon = $getPrefixIcon();
+    $prefixIconColor = $getPrefixIconColor();
     $prefixLabel = $getPrefixLabel();
     $suffixActions = $getSuffixActions();
     $suffixIcon = $getSuffixIcon();
+    $suffixIconColor = $getSuffixIconColor();
     $suffixLabel = $getSuffixLabel();
     $statePath = $getStatePath();
 @endphp
 
 <x-dynamic-component
-    :component="$getFieldWrapperView()"
+    :component="$fieldWrapperView"
     :field="$field"
     :inline-label-vertical-alignment="\Filament\Support\Enums\VerticalAlignment::Center"
 >
@@ -29,14 +33,14 @@
         :prefix="$prefixLabel"
         :prefix-actions="$prefixActions"
         :prefix-icon="$prefixIcon"
-        :prefix-icon-color="$getPrefixIconColor()"
+        :prefix-icon-color="$prefixIconColor"
         :suffix="$suffixLabel"
         :suffix-actions="$suffixActions"
         :suffix-icon="$suffixIcon"
-        :suffix-icon-color="$getSuffixIconColor()"
+        :suffix-icon-color="$suffixIconColor"
         :valid="! $errors->has($statePath)"
         :attributes="
-            \Filament\Support\prepare_inherited_attributes($getExtraAttributeBag())
+            \Filament\Support\prepare_inherited_attributes($extraAttributeBag)
                 ->class('fi-fo-color-picker')
         "
     >
@@ -57,34 +61,35 @@
                         state: $wire.$entangle('{{ $statePath }}'),
                     })"
             x-on:keydown.esc="isOpen() && $event.stopPropagation()"
-            {{ $getExtraAlpineAttributeBag()->class(['flex']) }}
+            {{ $getExtraAlpineAttributeBag()->class(['fi-input-wrp-content']) }}
         >
-            <x-filament::input
+            <input
                 x-on:focus="$refs.panel.open($refs.input)"
                 x-on:keydown.enter.stop.prevent="togglePanelVisibility()"
                 x-ref="input"
-                :attributes="
-                    \Filament\Support\prepare_inherited_attributes($getExtraInputAttributeBag())
+                {{ $getExtraInputAttributeBag()
                         ->merge([
                             'autocomplete' => 'off',
                             'disabled' => $isDisabled,
                             'id' => $getId(),
-                            'inlinePrefix' => $isPrefixInline && (count($prefixActions) || $prefixIcon || filled($prefixLabel)),
-                            'inlineSuffix' => $isSuffixInline && (count($suffixActions) || $suffixIcon || filled($suffixLabel)),
                             'placeholder' => $getPlaceholder(),
                             'required' => $isRequired() && (! $isConcealed()),
                             'type' => 'text',
                             'x-model' . ($isLiveDebounced ? '.debounce.' . $liveDebounce : null) => 'state',
                             'x-on:blur' => $isLiveOnBlur ? 'isOpen() ? null : commitState()' : null,
                         ], escape: false)
-                "
+                         ->class([
+                            'fi-input',
+                            'fi-input-has-inline-prefix' => $isPrefixInline && (count($prefixActions) || $prefixIcon || filled($prefixLabel)),
+                            'fi-input-has-inline-suffix' => $isSuffixInline && (count($suffixActions) || $suffixIcon || filled($suffixLabel)),
+                         ) }}
             />
 
             <div
-                class="fi-fo-color-picker-preview my-auto me-3 size-5 shrink-0 select-none rounded-full"
+                class="fi-fo-color-picker-preview my-auto me-3 size-5 shrink-0 rounded-full select-none"
                 x-on:click="togglePanelVisibility()"
                 x-bind:class="{
-                    'ring-1 ring-inset ring-gray-200 dark:ring-white/10': ! state,
+                    'fi-empty': ! state,
                 }"
                 x-bind:style="{ 'background-color': state }"
             ></div>
@@ -95,7 +100,7 @@
                 x-cloak
                 x-float.placement.bottom-start.offset.flip.shift="{ offset: 8 }"
                 x-ref="panel"
-                class="fi-fo-color-picker-panel absolute z-10 hidden rounded-lg shadow-lg"
+                class="fi-fo-color-picker-panel"
             >
                 @php
                     $tag = match ($getFormat()) {

@@ -29,7 +29,7 @@
     }
 
     & .fi-pagination-items {
-        @apply hidden justify-self-end rounded-lg bg-white shadow-sm ring-1 ring-gray-950/10 dark:bg-white/5 dark:ring-white/20;
+        @apply hidden justify-self-end rounded-lg bg-white ring-1 shadow-sm ring-gray-950/10 dark:bg-white/5 dark:ring-white/20;
     }
 
     & .fi-pagination-item {
@@ -41,7 +41,7 @@
             }
 
             & .fi-pagination-item-label {
-                @apply text-primary-600 dark:text-primary-400;
+                @apply text-primary-700 dark:text-primary-400;
             }
         }
 
@@ -53,7 +53,7 @@
     }
 
     & .fi-pagination-item-btn {
-        @apply relative flex overflow-hidden p-2 outline-none transition duration-75;
+        @apply relative flex overflow-hidden p-2 transition duration-75 outline-none;
 
         &:first-of-type {
             @apply rounded-s-lg;
@@ -64,7 +64,7 @@
         }
 
         &:enabled {
-            @apply hover:bg-gray-50 focus-visible:z-10 focus-visible:ring-2 focus-visible:ring-primary-600 dark:hover:bg-white/5 dark:focus-visible:ring-primary-500;
+            @apply focus-visible:ring-primary-600 dark:focus-visible:ring-primary-500 hover:bg-gray-50 focus-visible:z-10 focus-visible:ring-2 dark:hover:bg-white/5;
         }
 
         &:hover {
@@ -74,7 +74,7 @@
         }
 
         & .fi-icon {
-            @apply size-5 text-gray-400 transition duration-75 dark:text-gray-500;
+            @apply text-gray-400 transition duration-75 dark:text-gray-500;
         }
 
         & .fi-pagination-item-label {
@@ -83,35 +83,31 @@
     }
 
     @supports (container-type: inline-size) {
-        @apply contain-inline-size;
+        @apply @container;
 
-        @container (min-width: 28rem) {
-            & .fi-pagination-records-per-page-select {
-                &:not(.fi-compact) {
-                    @apply inline;
-                }
+        & .fi-pagination-records-per-page-select {
+            &:not(.fi-compact) {
+                @apply @md:inline;
+            }
 
-                &.fi-compact {
-                    @apply hidden;
-                }
+            &.fi-compact {
+                @apply @md:hidden;
             }
         }
 
-        @container (min-width: 56rem) {
-            &:not(.fi-simple) {
-                & .fi-pagination-previous-btn,
-                & .fi-pagination-next-btn {
-                    @apply hidden;
-                }
+        &:not(.fi-simple) {
+            & .fi-pagination-previous-btn,
+            & .fi-pagination-next-btn {
+                @apply @4xl:hidden;
             }
+        }
 
-            & .fi-pagination-overview {
-                @apply inline;
-            }
+        & .fi-pagination-overview {
+            @apply @4xl:inline;
+        }
 
-            & .fi-pagination-items {
-                @apply flex;
-            }
+        & .fi-pagination-items {
+            @apply @4xl:flex;
         }
     }
 

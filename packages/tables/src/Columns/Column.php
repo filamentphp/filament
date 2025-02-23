@@ -168,9 +168,9 @@ class Column extends ViewComponent
                 'wire:target' => $wireClickAction,
             ], escape: false)
             ->class([
-                'fi-ta-col-wrp',
+                'fi-ta-col',
                 ((($alignment = $this->getAlignment()) instanceof Alignment) ? "fi-align-{$alignment->value}" : (is_string($alignment) ? $alignment : '')),
-                'fi-ta-col-wrap-has-column-url' => ($wrapperTag === 'a') && filled($url),
+                'fi-ta-col-has-column-url' => ($wrapperTag === 'a') && filled($url),
             ]);
 
         ob_start(); ?>

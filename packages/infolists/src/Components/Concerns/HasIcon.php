@@ -2,6 +2,7 @@
 
 namespace Filament\Infolists\Components\Concerns;
 
+use BackedEnum;
 use Closure;
 use Filament\Schemas\Components\Component;
 use Filament\Support\Contracts\HasIcon as IconInterface;
@@ -9,11 +10,11 @@ use Filament\Support\Enums\IconPosition;
 
 trait HasIcon
 {
-    protected string | bool | Closure | null $icon = null;
+    protected string | BackedEnum | bool | Closure | null $icon = null;
 
     protected IconPosition | string | Closure | null $iconPosition = null;
 
-    public function icon(string | bool | Closure | null $icon): static
+    public function icon(string | BackedEnum | bool | Closure | null $icon): static
     {
         $this->icon = $icon;
 
@@ -53,7 +54,7 @@ trait HasIcon
         return $this;
     }
 
-    public function getIcon(mixed $state): ?string
+    public function getIcon(mixed $state): string | BackedEnum | null
     {
         $icon = $this->evaluate($this->icon, [
             'state' => $state,

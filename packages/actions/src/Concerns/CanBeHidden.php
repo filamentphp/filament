@@ -3,6 +3,7 @@
 namespace Filament\Actions\Concerns;
 
 use Closure;
+use Filament\Actions\ActionGroup;
 
 trait CanBeHidden
 {
@@ -43,7 +44,7 @@ trait CanBeHidden
             return true;
         }
 
-        if (! method_exists($this, 'isAuthorizedOrNotHiddenWhenUnauthorized')) {
+        if ($this instanceof ActionGroup) {
             return false;
         }
 

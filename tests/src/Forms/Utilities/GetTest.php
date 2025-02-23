@@ -12,13 +12,13 @@ use function Filament\Tests\livewire;
 
 uses(TestCase::class);
 
-it('can get the value of a field', function () {
+it('can get the value of a field', function (): void {
     livewire(new class extends Livewire
     {
         public function form(Schema $form): Schema
         {
             return $form
-                ->schema([
+                ->components([
                     TextInput::make('foo')
                         ->live(),
                     TextInput::make('bar')
@@ -33,13 +33,13 @@ it('can get the value of a field', function () {
         ->assertSeeText("Label {$foo}");
 });
 
-it('can get the value of a nested field', function () {
+it('can get the value of a nested field', function (): void {
     livewire(new class extends Livewire
     {
         public function form(Schema $form): Schema
         {
             return $form
-                ->schema([
+                ->components([
                     Section::make()
                         ->statePath('nested')
                         ->schema([
@@ -58,13 +58,13 @@ it('can get the value of a nested field', function () {
         ->assertSeeText("Label {$foo}");
 });
 
-it('can get the value from a parent level field', function () {
+it('can get the value from a parent level field', function (): void {
     livewire(new class extends Livewire
     {
         public function form(Schema $form): Schema
         {
             return $form
-                ->schema([
+                ->components([
                     TextInput::make('foo')
                         ->live(),
                     Section::make()
@@ -83,13 +83,13 @@ it('can get the value from a parent level field', function () {
         ->assertSeeText("Label {$foo}");
 });
 
-it('can get the value from a parent level field with a nested field', function () {
+it('can get the value from a parent level field with a nested field', function (): void {
     livewire(new class extends Livewire
     {
         public function form(Schema $form): Schema
         {
             return $form
-                ->schema([
+                ->components([
                     Section::make()
                         ->statePath('nestedOne')
                         ->schema([

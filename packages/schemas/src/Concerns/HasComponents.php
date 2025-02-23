@@ -3,31 +3,30 @@
 namespace Filament\Schemas\Concerns;
 
 use Closure;
+use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Forms\Components\Field;
 use Filament\Schemas\Components\Component;
+use Filament\Schemas\Components\Text;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 
 trait HasComponents
 {
     /**
-     * @var array<Component> | Closure
+     * @var array<Component | Action | ActionGroup | string> | Component | Action | ActionGroup | string | Closure
      */
-    protected array | Closure $components = [];
+    protected array | Component | Action | ActionGroup | string | Closure $components = [];
 
     /**
-     * @var array<string, Component>
-     */
-    protected array $cachedVisibleComponents;
-
-    /**
-     * @var array<array<array<array<string, Component>>>>
+     * @var array<array<array<array<array<string, Component| Action | ActionGroup>>>>>
      */
     protected array $cachedFlatComponents = [];
 
     /**
-     * @param  array<Component> | Closure  $components
+     * @param  array<Component | Action | ActionGroup | string> | Component | Action | ActionGroup | string | Closure  $components
      */
-    public function components(array | Closure $components): static
+    public function components(array | Component | Action | ActionGroup | string | Closure $components): static
     {
         $this->components = $components;
 
@@ -35,73 +34,176 @@ trait HasComponents
     }
 
     /**
-     * @param  array<Component> | Closure  $components
+     * @param  array<Component | Action | ActionGroup | string> | Component | Action | ActionGroup | string | Closure  $components
      */
-    public function schema(array | Closure $components): static
+    public function schema(array | Component | Action | ActionGroup | string | Closure $components): static
     {
         $this->components($components);
 
         return $this;
     }
 
-    public function getComponent(string | Closure $findComponentUsing, bool $withHidden = false, bool $isAbsoluteKey = false): ?Component
+    public function getAction(string $actionName, ?string $nestedContainerKey = null): ?Action
     {
-        if (! is_string($findComponentUsing)) {
-            return collect($this->getFlatComponents($withHidden))->first($findComponentUsing);
-        }
-
-        if ($withHidden) {
-            return $this->getFlatComponents($withHidden)[$findComponentUsing] ?? null;
-        }
-
-        if ((! $isAbsoluteKey) && filled($key = $this->getKey())) {
-            $findComponentUsing = "{$key}.{$findComponentUsing}";
-        }
-
-        return $this->getCachedVisibleComponents()[$findComponentUsing] ?? null;
-    }
-
-    /**
-     * @return array<string, Component>
-     */
-    public function cacheVisibleComponents(): array
-    {
-        $this->cachedVisibleComponents = [];
-
         foreach ($this->getComponents() as $component) {
-            if (filled($componentKey = $component->getKey())) {
-                $this->cachedVisibleComponents[$componentKey] = $component;
+            if (blank($nestedContainerKey)) {
+                if (
+                    ($component instanceof Action) &&
+                    ($component->getName() === $actionName)
+                ) {
+                    return $component;
+                }
+
+                if (
+                    ($component instanceof ActionGroup) &&
+                    ($action = ($component->getFlatActions()[$actionName] ?? null))
+                ) {
+                    return $action;
+                }
             }
 
-            foreach ($component->getChildComponentContainers() as $childComponentContainer) {
-                $this->cachedVisibleComponents = [
-                    ...$this->cachedVisibleComponents,
-                    ...$childComponentContainer->getCachedVisibleComponents(),
-                ];
+            if (($component instanceof Action) || ($component instanceof ActionGroup)) {
+                continue;
+            }
+
+            $componentKey = $component->getKey(isAbsolute: false);
+
+            if (filled($componentKey)) {
+                if (blank($nestedContainerKey)) {
+                    continue;
+                }
+
+                if (
+                    ($nestedContainerKey !== $componentKey) &&
+                    (! str($nestedContainerKey)->startsWith("{$componentKey}."))
+                ) {
+                    continue;
+                }
+
+                if ($nestedContainerKey === $componentKey) {
+                    if ($action = $component->getAction($actionName)) {
+                        return $action;
+                    }
+
+                    $componentNestedContainerKey = null;
+                } else {
+                    $componentNestedContainerKey = (string) str($nestedContainerKey)->after("{$componentKey}.");
+                }
+            } else {
+                $componentNestedContainerKey = $nestedContainerKey;
+            }
+
+            foreach ($component->getChildSchemas() as $childSchema) {
+                $childSchemaKey = $childSchema->getKey(isAbsolute: false);
+
+                if (filled($childSchemaKey)) {
+                    if (blank($componentNestedContainerKey)) {
+                        continue;
+                    }
+
+                    if (
+                        ($componentNestedContainerKey !== $childSchemaKey)
+                        && (! str($componentNestedContainerKey)->startsWith("{$childSchemaKey}."))
+                    ) {
+                        continue;
+                    }
+
+                    $childSchemaNestedContainerKey = ($componentNestedContainerKey === $childSchemaKey)
+                        ? null
+                        : (string) str($componentNestedContainerKey)->after("{$childSchemaKey}.");
+                } else {
+                    $childSchemaNestedContainerKey = $componentNestedContainerKey;
+                }
+
+                if ($action = $childSchema->getAction($actionName, $childSchemaNestedContainerKey)) {
+                    return $action;
+                }
             }
         }
 
-        return $this->cachedVisibleComponents;
+        return null;
     }
 
-    /**
-     * @return array<string, Component>
-     */
-    public function getCachedVisibleComponents(): array
+    public function getComponent(string | Closure $findComponentUsing, bool $withActions = true, bool $withHidden = false, bool $isAbsoluteKey = false, ?Component $skipComponentChildContainersWhileSearching = null): Component | Action | ActionGroup | null
     {
-        return $this->cachedVisibleComponents ??= $this->cacheVisibleComponents();
+        if (is_string($findComponentUsing) && (! $isAbsoluteKey) && filled($key = $this->getKey())) {
+            $findComponentUsing = "{$key}.$findComponentUsing";
+            $isAbsoluteKey = true;
+        }
+
+        if ($skipComponentChildContainersWhileSearching) {
+            foreach ($this->getComponents($withActions, $withHidden) as $component) {
+                if ($findComponentUsing instanceof Closure) {
+                    if ($findComponentUsing($component)) {
+                        return $component;
+                    }
+
+                    if ($component === $skipComponentChildContainersWhileSearching) {
+                        continue;
+                    }
+
+                    foreach ($component->getChildSchemas($withHidden) as $childSchema) {
+                        if ($foundComponent = $childSchema->getComponent($findComponentUsing, $withActions, $withHidden, $isAbsoluteKey, skipComponentChildContainersWhileSearching: $skipComponentChildContainersWhileSearching)) {
+                            return $foundComponent;
+                        }
+                    }
+
+                    continue;
+                }
+
+                $componentKey = $component->getKey();
+
+                if (filled($componentKey) && ($componentKey === $findComponentUsing)) {
+                    return $component;
+                }
+
+                if ($component === $skipComponentChildContainersWhileSearching) {
+                    continue;
+                }
+
+                if (blank($componentKey) || str_starts_with($findComponentUsing, "{$componentKey}.")) {
+                    foreach ($component->getChildSchemas($withHidden) as $childSchema) {
+                        if ($foundComponent = $childSchema->getComponent($findComponentUsing, $withActions, $withHidden, $isAbsoluteKey, $skipComponentChildContainersWhileSearching)) {
+                            return $foundComponent;
+                        }
+                    }
+                }
+            }
+        }
+
+        if (! is_string($findComponentUsing)) {
+            return collect($this->getFlatComponents($withActions, $withHidden))->first($findComponentUsing);
+        }
+
+        return $this->getFlatComponents($withActions, $withHidden, withAbsoluteKeys: true)[$findComponentUsing] ?? null;
     }
 
     /**
-     * @return array<Component>
+     * @return array<Field>
      */
-    public function getFlatComponents(bool $withHidden = false, bool $withAbsoluteKeys = false, ?string $containerKey = null): array
+    public function getFlatFields(bool $withHidden = false, bool $withAbsoluteKeys = false): array
+    {
+        return collect($this->getFlatComponents(withActions: false, withHidden: $withHidden, withAbsoluteKeys: $withAbsoluteKeys))
+            ->whereInstanceOf(Field::class)
+            ->all();
+    }
+
+    /**
+     * @return array<Component | Action | ActionGroup | string>
+     */
+    public function getFlatComponents(bool $withActions = true, bool $withHidden = false, bool $withAbsoluteKeys = false, ?string $containerKey = null): array
     {
         $containerKey ??= $this->getKey();
 
-        return $this->cachedFlatComponents[$withHidden][$withAbsoluteKeys][$containerKey] ??= array_reduce(
-            $this->getComponents($withHidden),
-            function (array $carry, Component $component) use ($containerKey, $withHidden, $withAbsoluteKeys): array {
+        return $this->cachedFlatComponents[$withActions][$withHidden][$withAbsoluteKeys][$containerKey] ??= array_reduce(
+            $this->getComponents($withActions, $withHidden),
+            function (array $carry, Component | Action | ActionGroup $component) use ($containerKey, $withActions, $withHidden, $withAbsoluteKeys): array {
+                if (($component instanceof Action) || ($component instanceof ActionGroup)) {
+                    $carry[] = $component;
+
+                    return $carry;
+                }
+
                 $componentKey = $component->getKey();
 
                 if (blank($componentKey)) {
@@ -112,10 +214,10 @@ trait HasComponents
                     $carry[$componentKey] = $component;
                 }
 
-                foreach ($component->getChildComponentContainers($withHidden) as $childComponentContainer) {
+                foreach ($component->getChildSchemas($withHidden) as $childSchema) {
                     $carry = [
                         ...$carry,
-                        ...$childComponentContainer->getFlatComponents($withHidden, $withAbsoluteKeys, $containerKey),
+                        ...$childSchema->getFlatComponents($withActions, $withHidden, $withAbsoluteKeys, $containerKey),
                     ];
                 }
 
@@ -126,36 +228,69 @@ trait HasComponents
     }
 
     /**
-     * @return array<Field>
+     * @return array<Component | Action | ActionGroup | string>
      */
-    public function getFlatFields(bool $withHidden = false, bool $withAbsoluteKeys = false): array
+    public function getComponents(bool $withActions = true, bool $withHidden = false, bool $withOriginalKeys = false): array
     {
-        return collect($this->getFlatComponents($withHidden, $withAbsoluteKeys))
-            ->whereInstanceOf(Field::class)
-            ->all();
-    }
+        $components = array_map(function (Component | Action | ActionGroup | string $component): Component | Action | ActionGroup {
+            if ($component instanceof Action) {
+                $this->configureAction($component);
+            }
 
-    /**
-     * @return array<Component>
-     */
-    public function getComponents(bool $withHidden = false, bool $withOriginalKeys = false): array
-    {
-        $components = array_map(function (Component $component): Component {
-            $component->container($this);
+            if ($component instanceof ActionGroup) {
+                $this->configureActionGroup($component);
+            }
 
-            return $component;
-        }, $this->evaluate($this->components));
+            if (($component instanceof Action) || ($component instanceof ActionGroup)) {
+                return $component->schemaContainer($this);
+            }
 
-        if ($withHidden) {
+            if (is_string($component)) {
+                $component = Text::make($component);
+            }
+
+            return $component->container($this);
+        }, Arr::wrap($this->evaluate($this->components)));
+
+        if ($withActions && $withHidden) {
             return $components;
         }
 
         return collect($components)
-            ->filter(fn (Component $component) => $component->isVisible())
+            ->filter(function (Component | Action | ActionGroup $component) use ($withActions, $withHidden) {
+                if ((! $withActions) && (($component instanceof Action) || ($component instanceof ActionGroup))) {
+                    return false;
+                }
+
+                if ((! $withHidden) && $component->isHidden()) {
+                    return false;
+                }
+
+                return true;
+            })
             ->when(
                 ! $withOriginalKeys,
                 fn (Collection $collection): Collection => $collection->values(),
             )
             ->all();
+    }
+
+    protected function cloneComponents(): static
+    {
+        if (! ($this->components instanceof Closure)) {
+            $this->components = array_map(
+                fn (Component | Action | ActionGroup | string $component): Component | Action | ActionGroup | string => match (true) {
+                    $component instanceof Action, $component instanceof ActionGroup => (clone $component)
+                        ->schemaContainer($this),
+                    $component instanceof Component => $component
+                        ->container($this)
+                        ->getClone(),
+                    default => $component,
+                },
+                Arr::wrap($this->components),
+            );
+        }
+
+        return $this;
     }
 }

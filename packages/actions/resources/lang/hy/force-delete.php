@@ -8,7 +8,7 @@ return [
 
         'modal' => [
 
-            'heading' => 'Հարկադրված ջնջել :label',
+            'heading' => 'Հարկադրված ջնջել :labelը',
 
             'actions' => [
 
@@ -36,7 +36,7 @@ return [
 
         'modal' => [
 
-            'heading' => 'Հարկադրված ջնջել ընտրված :label',
+            'heading' => 'Հարկադրված ջնջել ընտրված :labelը',
 
             'actions' => [
 

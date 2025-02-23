@@ -24,13 +24,13 @@ use function Filament\Tests\livewire;
 
 uses(TestCase::class);
 
-it('can render page', function () {
+it('can render page', function (): void {
     $this->get(PostResource::getUrl('view', [
         'record' => Post::factory()->create(),
     ]))->assertSuccessful();
 });
 
-it('can retrieve data', function () {
+it('can retrieve data', function (): void {
     $post = Post::factory()->create();
 
     livewire(ViewPost::class, [
@@ -44,7 +44,7 @@ it('can retrieve data', function () {
         ]);
 });
 
-it('can refresh data', function () {
+it('can refresh data', function (): void {
     $post = Post::factory()->create();
 
     $page = livewire(ViewPost::class, [
@@ -73,7 +73,7 @@ it('can refresh data', function () {
     ]);
 });
 
-it('can ticket messages page without a policy', function () {
+it('can ticket messages page without a policy', function (): void {
     $message = TicketMessage::factory()
         ->create();
 
@@ -81,7 +81,7 @@ it('can ticket messages page without a policy', function () {
         ->assertSuccessful();
 });
 
-it('can render tickets page if the policy viewAny returns true', function () {
+it('can render tickets page if the policy viewAny returns true', function (): void {
     app()->bind(TicketPolicy::class . '::viewAny', fn (): bool => true);
 
     $ticket = Ticket::factory()
@@ -91,7 +91,7 @@ it('can render tickets page if the policy viewAny returns true', function () {
         ->assertSuccessful();
 });
 
-it('can render tickets page if the policy viewAny returns an allowed response', function () {
+it('can render tickets page if the policy viewAny returns an allowed response', function (): void {
     app()->bind(TicketPolicy::class . '::viewAny', fn (): Response => Response::allow());
 
     $ticket = Ticket::factory()
@@ -103,7 +103,7 @@ it('can render tickets page if the policy viewAny returns an allowed response', 
     app()->bind(TicketPolicy::class . '::viewAny', fn (): bool => true);
 });
 
-it('does not render ticket messages page without a policy if authorization is strict', function () {
+it('does not render ticket messages page without a policy if authorization is strict', function (): void {
     Filament::getCurrentOrDefaultPanel()->strictAuthorization();
 
     $message = TicketMessage::factory()
@@ -115,7 +115,7 @@ it('does not render ticket messages page without a policy if authorization is st
     Filament::getCurrentOrDefaultPanel()->strictAuthorization(false);
 });
 
-it('does not render tickets page if the policy viewAny returns false', function () {
+it('does not render tickets page if the policy viewAny returns false', function (): void {
     app()->bind(TicketPolicy::class . '::viewAny', fn (): bool => false);
 
     $ticket = Ticket::factory()
@@ -127,7 +127,7 @@ it('does not render tickets page if the policy viewAny returns false', function 
     app()->bind(TicketPolicy::class . '::viewAny', fn (): bool => true);
 });
 
-it('does not render tickets page if the policy viewAny returns a denied response', function () {
+it('does not render tickets page if the policy viewAny returns a denied response', function (): void {
     app()->bind(TicketPolicy::class . '::viewAny', fn (): Response => Response::deny());
 
     $ticket = Ticket::factory()
@@ -139,7 +139,7 @@ it('does not render tickets page if the policy viewAny returns a denied response
     app()->bind(TicketPolicy::class . '::viewAny', fn (): bool => true);
 });
 
-it('can render tickets page if the policy view returns true', function () {
+it('can render tickets page if the policy view returns true', function (): void {
     app()->bind(TicketPolicy::class . '::view', fn (): bool => true);
 
     $ticket = Ticket::factory()
@@ -149,7 +149,7 @@ it('can render tickets page if the policy view returns true', function () {
         ->assertSuccessful();
 });
 
-it('can render tickets page if the policy view returns an allowed response', function () {
+it('can render tickets page if the policy view returns an allowed response', function (): void {
     app()->bind(TicketPolicy::class . '::view', fn (): Response => Response::allow());
 
     $ticket = Ticket::factory()
@@ -161,7 +161,7 @@ it('can render tickets page if the policy view returns an allowed response', fun
     app()->bind(TicketPolicy::class . '::view', fn (): bool => true);
 });
 
-it('does not render tickets page if the policy view returns false', function () {
+it('does not render tickets page if the policy view returns false', function (): void {
     app()->bind(TicketPolicy::class . '::view', fn (): bool => false);
 
     $ticket = Ticket::factory()
@@ -173,7 +173,7 @@ it('does not render tickets page if the policy view returns false', function () 
     app()->bind(TicketPolicy::class . '::view', fn (): bool => true);
 });
 
-it('does not render tickets page if the policy view returns a denied response', function () {
+it('does not render tickets page if the policy view returns a denied response', function (): void {
     app()->bind(TicketPolicy::class . '::view', fn (): Response => Response::deny());
 
     $ticket = Ticket::factory()
@@ -185,7 +185,7 @@ it('does not render tickets page if the policy view returns a denied response', 
     app()->bind(TicketPolicy::class . '::view', fn (): bool => true);
 });
 
-it('renders actions based on policy', function (string $action, string $policyMethod, bool | Response $policyResult, bool $isVisible, bool $isSoftDeleted = false) {
+it('renders actions based on policy', function (string $action, string $policyMethod, bool | Response $policyResult, bool $isVisible, bool $isSoftDeleted = false): void {
     app()->bind(TicketPolicy::class . '::' . $policyMethod, fn (): bool | Response => $policyResult);
 
     $ticket = Ticket::factory()

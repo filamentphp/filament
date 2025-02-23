@@ -1,7 +1,7 @@
 <x-filament::icon-button
-    :badge="$unreadNotificationsCount"
+    :badge="$unreadNotificationsCount ?: null"
     color="gray"
-    icon="heroicon-o-bell"
+    :icon="\Filament\Support\Icons\Heroicon::OutlinedBell"
     icon-alias="panels::topbar.open-database-notifications-button"
     icon-size="lg"
     :label="__('filament-panels::layout.actions.open_database_notifications.label')"

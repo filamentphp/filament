@@ -30,7 +30,7 @@ trait EntanglesStateWithSingularRelationship
         $this->relationship = $name;
         $this->statePath($name);
 
-        $this->loadStateFromRelationshipsUsing(static function (Component | CanEntangleWithSingularRelationships $component) {
+        $this->loadStateFromRelationshipsUsing(static function (Component | CanEntangleWithSingularRelationships $component): void {
             $component->clearCachedExistingRecord();
 
             $component->fillFromRelationship();
@@ -55,7 +55,7 @@ trait EntanglesStateWithSingularRelationship
                 return;
             }
 
-            $data = $component->getChildComponentContainer()->getState(shouldCallHooksBefore: false);
+            $data = $component->getChildSchema()->getState(shouldCallHooksBefore: false);
             $data = $component->mutateRelationshipDataBeforeCreate($data);
 
             $relatedModel = $component->getRelatedModel();
@@ -79,7 +79,7 @@ trait EntanglesStateWithSingularRelationship
                 return;
             }
 
-            $data = $component->getChildComponentContainer()->getState(shouldCallHooksBefore: false);
+            $data = $component->getChildSchema()->getState(shouldCallHooksBefore: false);
 
             $record = $component->getCachedExistingRecord();
 
@@ -130,7 +130,7 @@ trait EntanglesStateWithSingularRelationship
         $record = $this->getCachedExistingRecord();
 
         if (! $record) {
-            $this->getChildComponentContainer()->fill(andCallHydrationHooks: false, andFillStateWithNull: false);
+            $this->getChildSchema()->fill(andCallHydrationHooks: false, andFillStateWithNull: false);
 
             return;
         }
@@ -139,7 +139,7 @@ trait EntanglesStateWithSingularRelationship
             $this->getStateFromRelatedRecord($record),
         );
 
-        $this->getChildComponentContainer()->fill($data, andCallHydrationHooks: false, andFillStateWithNull: false);
+        $this->getChildSchema()->fill($data, andCallHydrationHooks: false, andFillStateWithNull: false);
     }
 
     /**
@@ -157,9 +157,13 @@ trait EntanglesStateWithSingularRelationship
     /**
      * @param  array-key  $key
      */
-    public function getChildComponentContainer($key = null): Schema
+    public function getChildSchema($key = null): ?Schema
     {
-        $container = parent::getChildComponentContainer($key);
+        $container = parent::getChildSchema($key);
+
+        if (! $container) {
+            return null;
+        }
 
         $relationship = $this->getRelationship();
 

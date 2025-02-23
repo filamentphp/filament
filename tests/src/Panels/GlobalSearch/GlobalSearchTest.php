@@ -14,12 +14,12 @@ use function Filament\Tests\livewire;
 
 uses(TestCase::class);
 
-it('can render', function () {
+it('can render', function (): void {
     livewire(GlobalSearch::class)
         ->assertSeeHtml('search');
 });
 
-it('can retrieve search results', function () {
+it('can retrieve search results', function (): void {
     $post = Post::factory()->create();
 
     livewire(GlobalSearch::class)
@@ -28,7 +28,7 @@ it('can retrieve search results', function () {
         ->assertSee($post->title);
 });
 
-it('can retrieve limited search results', function () {
+it('can retrieve limited search results', function (): void {
     $title = Str::random();
 
     $posts = Post::factory()
@@ -50,7 +50,7 @@ it('can retrieve limited search results', function () {
         ->assertDontSee($posts[3]->title);
 });
 
-it('can retrieve results via custom search provider', function () {
+it('can retrieve results via custom search provider', function (): void {
     Filament::getCurrentOrDefaultPanel()->globalSearch(CustomSearchProvider::class);
 
     livewire(GlobalSearch::class)

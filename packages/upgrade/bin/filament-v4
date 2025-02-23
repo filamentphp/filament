@@ -2,7 +2,7 @@
 <?php
 
 use Composer\InstalledVersions;
-use Filament\Support\Enums\MaxWidth;
+use Filament\Support\Enums\Width;
 use Illuminate\Support\Str;
 use function Termwind\{ask, render};
 
@@ -48,7 +48,7 @@ $isReady = strtolower(trim(ask(<<<HTML
     <span class="bg-amber-600 text-amber-50 mr-1">
         Are you ready to continue? y/n
     </span>
-HTML))) === 'y';
+HTML) ?? 'y')) === 'y';
 
 if (! $isReady) {
     render(<<<HTML
@@ -81,29 +81,6 @@ render(<<<HTML
         Starting upgrade...
     </p>
 HTML);
-
-foreach ([
-    ...glob('*.php'),
-    ...glob('**/*.php'),
-] as $file) {
-    if (str_starts_with($file, 'vendor' . DIRECTORY_SEPARATOR)) {
-        continue;
-    }
-
-    $fileContents = file_get_contents($file);
-
-    if (str_contains($fileContents, 'protected ?string $maxContentWidth = ')) {
-        $fileContents = str_replace('protected ?string $maxContentWidth = ', 'protected \Filament\Support\Enums\MaxWidth | string | null $maxContentWidth = ', $fileContents);
-
-        render(<<<HTML
-            <p>
-                Added <strong>MaxWidth</strong> type to <strong>\$maxContentWidth</strong> <strong>{$file}</strong>.
-            </p>
-        HTML);
-    }
-
-    file_put_contents($file, $fileContents);
-}
 
 $appDirectory = $argv[1] ?? 'app';
 

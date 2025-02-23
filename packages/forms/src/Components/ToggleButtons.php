@@ -7,6 +7,7 @@ use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
 use Filament\Schemas\Components\StateCasts\EnumArrayStateCast;
 use Filament\Schemas\Components\StateCasts\EnumStateCast;
 use Filament\Support\Facades\FilamentIcon;
+use Filament\Support\Icons\Heroicon;
 
 class ToggleButtons extends Field implements Contracts\CanDisableOptions
 {
@@ -30,6 +31,8 @@ class ToggleButtons extends Field implements Contracts\CanDisableOptions
     protected string $view = 'filament-forms::components.toggle-buttons.index';
 
     protected bool | Closure $isInline = false;
+
+    protected bool | Closure $areButtonLabelsHidden = false;
 
     protected function setUp(): void
     {
@@ -68,8 +71,8 @@ class ToggleButtons extends Field implements Contracts\CanDisableOptions
         ]);
 
         $this->icons([
-            1 => FilamentIcon::resolve('forms::components.toggle-buttons.boolean.true') ?? 'heroicon-m-check',
-            0 => FilamentIcon::resolve('forms::components.toggle-buttons.boolean.false') ?? 'heroicon-m-x-mark',
+            1 => FilamentIcon::resolve('forms::components.toggle-buttons.boolean.true') ?? Heroicon::Check,
+            0 => FilamentIcon::resolve('forms::components.toggle-buttons.boolean.false') ?? Heroicon::XMark,
         ]);
 
         return $this;
@@ -85,6 +88,18 @@ class ToggleButtons extends Field implements Contracts\CanDisableOptions
     public function isInline(): bool
     {
         return (bool) $this->evaluate($this->isInline);
+    }
+
+    public function hiddenButtonLabels(bool | Closure $condition = true): static
+    {
+        $this->areButtonLabelsHidden = $condition;
+
+        return $this;
+    }
+
+    public function areButtonLabelsHidden(): bool
+    {
+        return (bool) $this->evaluate($this->areButtonLabelsHidden);
     }
 
     public function multiple(bool | Closure $condition = true): static

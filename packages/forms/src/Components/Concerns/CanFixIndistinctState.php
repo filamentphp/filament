@@ -14,7 +14,7 @@ trait CanFixIndistinctState
         $this->distinct($condition);
         $this->live(condition: $condition);
 
-        $this->afterStateUpdated(static function (Component $component, mixed $state, Set $set) use ($condition) {
+        $this->afterStateUpdated(static function (Component $component, mixed $state, Set $set) use ($condition): void {
             if (! $component->evaluate($condition)) {
                 return;
             }

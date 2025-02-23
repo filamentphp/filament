@@ -7,7 +7,7 @@ use Filament\Resources\Pages\Concerns\HasTranslatableFormWithExistingRecordData;
 use Filament\Resources\Pages\Concerns\HasTranslatableRecord;
 use Illuminate\Support\Arr;
 
-trait Translatable
+trait Translatable /** @phpstan-ignore trait.unused */
 {
     use HasActiveLocaleSwitcher;
     use HasTranslatableFormWithExistingRecordData;

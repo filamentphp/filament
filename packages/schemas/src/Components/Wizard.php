@@ -4,8 +4,9 @@ namespace Filament\Schemas\Components;
 
 use Closure;
 use Filament\Actions\Action;
-use Filament\Schemas\Components\Attributes\Exposed;
 use Filament\Schemas\Components\Wizard\Step;
+use Filament\Schemas\Contracts\HasSchemas;
+use Filament\Support\Components\Attributes\ExposedLivewireMethod;
 use Filament\Support\Concerns;
 use Filament\Support\Enums\IconPosition;
 use Filament\Support\Exceptions\Halt;
@@ -33,10 +34,12 @@ class Wizard extends Component
 
     protected int $currentStepIndex = 0;
 
+    protected string | Closure | null $alpineSubmitHandler = null;
+
     /**
      * @var view-string
      */
-    protected string $view = 'filament-schema::components.wizard';
+    protected string $view = 'filament-schemas::components.wizard';
 
     /**
      * @param  array<Step> | Closure  $steps
@@ -71,13 +74,13 @@ class Wizard extends Component
         ]);
     }
 
-    #[Exposed]
+    #[ExposedLivewireMethod]
     public function nextStep(int $currentStepIndex): void
     {
         if (! $this->isSkippable()) {
             $steps = array_values(
                 $this
-                    ->getChildComponentContainer()
+                    ->getChildSchema()
                     ->getComponents()
             );
 
@@ -90,7 +93,7 @@ class Wizard extends Component
 
             try {
                 $currentStep->callBeforeValidation();
-                $currentStep->getChildComponentContainer()->validate();
+                $currentStep->getChildSchema()->validate();
                 $currentStep->callAfterValidation();
                 $nextStep?->fillStateWithNull();
             } catch (Halt $exception) {
@@ -98,12 +101,12 @@ class Wizard extends Component
             }
         }
 
-        /** @var LivewireComponent $livewire */
+        /** @var HasSchemas&LivewireComponent $livewire */
         $livewire = $this->getLivewire();
         $livewire->dispatch('next-wizard-step', key: $this->getKey());
     }
 
-    #[Exposed]
+    #[ExposedLivewireMethod]
     public function previousStep(int $currentStepIndex): void
     {
         if ($currentStepIndex < 1) {
@@ -116,7 +119,7 @@ class Wizard extends Component
     public function getNextAction(): Action
     {
         $action = Action::make($this->getNextActionName())
-            ->label(__('filament-schema::components.wizard.actions.next_step.label'))
+            ->label(__('filament-schemas::components.wizard.actions.next_step.label'))
             ->iconPosition(IconPosition::After)
             ->livewireClickHandlerEnabled(false)
             ->livewireTarget('callSchemaComponentMethod')
@@ -146,7 +149,7 @@ class Wizard extends Component
     public function getPreviousAction(): Action
     {
         $action = Action::make($this->getPreviousActionName())
-            ->label(__('filament-schema::components.wizard.actions.previous_step.label'))
+            ->label(__('filament-schemas::components.wizard.actions.previous_step.label'))
             ->color('gray')
             ->livewireClickHandlerEnabled(false)
             ->button();
@@ -177,7 +180,7 @@ class Wizard extends Component
      */
     public function steps(array | Closure $steps): static
     {
-        $this->childComponents($steps);
+        $this->components($steps);
 
         return $this;
     }
@@ -232,7 +235,7 @@ class Wizard extends Component
         if ($this->isStepPersistedInQueryString()) {
             $queryStringStep = request()->query($this->getStepQueryStringKey());
 
-            foreach ($this->getChildComponentContainer()->getComponents() as $index => $step) {
+            foreach ($this->getChildSchema()->getComponents() as $index => $step) {
                 if ($step->getId() !== $queryStringStep) {
                     continue;
                 }
@@ -269,5 +272,17 @@ class Wizard extends Component
         $this->currentStepIndex = $index;
 
         return $this;
+    }
+
+    public function alpineSubmitHandler(string | Closure | null $handler): static
+    {
+        $this->alpineSubmitHandler = $handler;
+
+        return $this;
+    }
+
+    public function getAlpineSubmitHandler(): ?string
+    {
+        return $this->evaluate($this->alpineSubmitHandler);
     }
 }

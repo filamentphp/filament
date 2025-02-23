@@ -3,6 +3,7 @@
 namespace Filament\Tables\Filters\QueryBuilder\Constraints;
 
 use Filament\Support\Facades\FilamentIcon;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Filters\QueryBuilder\Constraints\DateConstraint\Operators\IsAfterOperator;
 use Filament\Tables\Filters\QueryBuilder\Constraints\DateConstraint\Operators\IsBeforeOperator;
 use Filament\Tables\Filters\QueryBuilder\Constraints\DateConstraint\Operators\IsDateOperator;
@@ -18,7 +19,7 @@ class DateConstraint extends Constraint
     {
         parent::setUp();
 
-        $this->icon(FilamentIcon::resolve('tables::filters.query-builder.constraints.date') ?? 'heroicon-m-calendar');
+        $this->icon(FilamentIcon::resolve('tables::filters.query-builder.constraints.date') ?? Heroicon::Calendar);
 
         $this->operators([
             IsAfterOperator::class,

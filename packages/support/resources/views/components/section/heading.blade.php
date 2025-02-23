@@ -1,5 +1,5 @@
-<h3
+<h2
     {{ $attributes->class(['fi-section-header-heading']) }}
 >
     {{ $slot }}
-</h3>
+</h2>

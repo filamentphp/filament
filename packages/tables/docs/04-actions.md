@@ -392,11 +392,11 @@ Buttons come in 3 sizes - `sm`, `md` or `lg`. You may set the size of the action
 
 ```php
 use Filament\Actions\ActionGroup;
-use Filament\Support\Enums\ActionSize;
+use Filament\Support\Enums\Size;
 
 ActionGroup::make([
     // ...
-])->size(ActionSize::Small);
+])->size(Size::Small);
 ```
 
 <AutoScreenshot name="tables/actions/group-small" alt="Table with small action group" version="4.x" />

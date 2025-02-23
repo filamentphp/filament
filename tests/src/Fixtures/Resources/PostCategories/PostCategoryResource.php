@@ -2,12 +2,10 @@
 
 namespace Filament\Tests\Fixtures\Resources\PostCategories;
 
+use BackedEnum;
 use Filament\Resources\Resource;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tests\Fixtures\Models\PostCategory;
-use Filament\Tests\Fixtures\Resources\PostCategories\Pages\CreatePostCategory;
-use Filament\Tests\Fixtures\Resources\PostCategories\Pages\EditPostCategory;
-use Filament\Tests\Fixtures\Resources\PostCategories\Pages\ListPostCategories;
-use Filament\Tests\Fixtures\Resources\PostCategories\Pages\ViewPostCategory;
 
 class PostCategoryResource extends Resource
 {
@@ -15,15 +13,15 @@ class PostCategoryResource extends Resource
 
     protected static ?string $navigationGroup = 'Blog';
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string | BackedEnum | null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
     public static function getPages(): array
     {
         return [
-            'index' => ListPostCategories::route('/'),
-            'create' => CreatePostCategory::route('/create'),
-            'view' => ViewPostCategory::route('/{record}'),
-            'edit' => EditPostCategory::route('/{record}/edit'),
+            'index' => Pages\ListPostCategories::route('/'),
+            'create' => Pages\CreatePostCategory::route('/create'),
+            'view' => Pages\ViewPostCategory::route('/{record}'),
+            'edit' => Pages\EditPostCategory::route('/{record}/edit'),
         ];
     }
 }

@@ -3,11 +3,12 @@
 use Filament\Facades\Filament;
 use Filament\Navigation\NavigationGroup;
 use Filament\Navigation\NavigationItem;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tests\Panels\Navigation\TestCase;
 
 uses(TestCase::class);
 
-it('can register navigation items from resources and pages', function () {
+it('can register navigation items from resources and pages', function (): void {
     expect(Filament::getNavigation())
         ->sequence(
             fn ($group) => $group
@@ -17,24 +18,24 @@ it('can register navigation items from resources and pages', function () {
                 ->sequence(
                     fn ($item) => $item
                         ->getLabel()->toBe('Dashboard')
-                        ->getIcon()->toBe('heroicon-o-home'),
+                        ->getIcon()->toBe(Heroicon::OutlinedHome),
                     fn ($item) => $item
                         ->getLabel()->toBe('Actions'),
                     fn ($item) => $item
                         ->getLabel()->toBe('Departments')
-                        ->getIcon()->toBe('heroicon-o-rectangle-stack'),
+                        ->getIcon()->toBe(Heroicon::OutlinedRectangleStack),
                     fn ($item) => $item
                         ->getLabel()->toBe('Tickets')
-                        ->getIcon()->toBe('heroicon-o-rectangle-stack'),
+                        ->getIcon()->toBe(Heroicon::OutlinedRectangleStack),
                     fn ($item) => $item
                         ->getLabel()->toBe('Ticket Messages')
-                        ->getIcon()->toBe('heroicon-o-rectangle-stack'),
+                        ->getIcon()->toBe(Heroicon::OutlinedRectangleStack),
                     fn ($item) => $item
                         ->getLabel()->toBe('Users')
-                        ->getIcon()->toBe('heroicon-o-user'),
+                        ->getIcon()->toBe(Heroicon::OutlinedUser),
                     fn ($item) => $item
                         ->getLabel()->toBe('Settings')
-                        ->getIcon()->toBe('heroicon-o-cog-6-tooth'),
+                        ->getIcon()->toBe(Heroicon::OutlinedCog6Tooth),
                 )
                 ->each->toBeInstanceOf(NavigationItem::class),
             fn ($group) => $group
@@ -44,10 +45,10 @@ it('can register navigation items from resources and pages', function () {
                 ->sequence(
                     fn ($item) => $item
                         ->getLabel()->toBe('Posts')
-                        ->getIcon()->toBe('heroicon-o-document-text'),
+                        ->getIcon()->toBe(Heroicon::OutlinedDocumentText),
                     fn ($item) => $item
                         ->getLabel()->toBe('Post Categories')
-                        ->getIcon()->toBe('heroicon-o-rectangle-stack'),
+                        ->getIcon()->toBe(Heroicon::OutlinedRectangleStack),
                 )
                 ->each->toBeInstanceOf(NavigationItem::class),
             fn ($group) => $group
@@ -57,13 +58,13 @@ it('can register navigation items from resources and pages', function () {
                 ->sequence(
                     fn ($item) => $item
                         ->getLabel()->toBe('Products')
-                        ->getIcon()->toBe('heroicon-o-shopping-bag'),
+                        ->getIcon()->toBe(Heroicon::OutlinedShoppingBag),
                 )
                 ->each->toBeInstanceOf(NavigationItem::class),
         );
 });
 
-it('can reorder navigation groups by registering them', function () {
+it('can reorder navigation groups by registering them', function (): void {
     Filament::getCurrentOrDefaultPanel()->navigationGroups([
         NavigationGroup::make()->label('Shop'),
         NavigationGroup::make()->label('Blog'),
@@ -83,7 +84,7 @@ it('can reorder navigation groups by registering them', function () {
         );
 });
 
-it('can reorder navigation groups by registering them with different labels', function () {
+it('can reorder navigation groups by registering them with different labels', function (): void {
     Filament::getCurrentOrDefaultPanel()->navigationGroups([
         'Shop' => NavigationGroup::make()->label('Store'),
         'Blog' => NavigationGroup::make()->label('Posts'),
@@ -103,7 +104,7 @@ it('can reorder navigation groups by registering them with different labels', fu
         );
 });
 
-it('can reorder navigation groups by registering their labels', function () {
+it('can reorder navigation groups by registering their labels', function (): void {
     Filament::getCurrentOrDefaultPanel()->navigationGroups([
         'Shop',
         'Blog',

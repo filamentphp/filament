@@ -37,14 +37,14 @@ abstract class Resource
      */
     protected static ?string $model = null;
 
-    public static function form(Schema $form): Schema
+    public static function form(Schema $schema): Schema
     {
-        return $form;
+        return $schema;
     }
 
-    public static function infolist(Schema $infolist): Schema
+    public static function infolist(Schema $schema): Schema
     {
-        return $infolist;
+        return $schema;
     }
 
     public static function table(Table $table): Table
@@ -61,7 +61,7 @@ abstract class Resource
             ->recordTitle(static::getRecordTitle(...))
             ->authorizeReorder(static::canReorder(...));
 
-        static::table($table);
+        static::table($table); /** @phpstan-ignore staticMethod.resultUnused */
     }
 
     public static function getEloquentQuery(): Builder

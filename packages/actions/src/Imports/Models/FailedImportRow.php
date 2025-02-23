@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Prunable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * @property array $data
+ * @property array<string, mixed> $data
  * @property string | null $validation_error
  * @property-read Import $import
  */

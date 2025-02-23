@@ -2,14 +2,17 @@
 
 namespace Filament\Tests\Fixtures\Livewire;
 
-use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Forms\Contracts\HasForms;
+use Filament\Actions\Concerns\InteractsWithActions;
+use Filament\Actions\Contracts\HasActions;
+use Filament\Schemas\Concerns\InteractsWithSchemas;
+use Filament\Schemas\Contracts\HasSchemas;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
 
-class Livewire extends Component implements HasForms
+class Livewire extends Component implements HasActions, HasSchemas
 {
-    use InteractsWithForms;
+    use InteractsWithActions;
+    use InteractsWithSchemas;
 
     public $data;
 

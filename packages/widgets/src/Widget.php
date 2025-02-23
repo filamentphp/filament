@@ -17,7 +17,7 @@ abstract class Widget extends Component
     /**
      * @var view-string
      */
-    protected static string $view;
+    protected string $view;
 
     /**
      * @var int | string | array<string, int | null>
@@ -70,7 +70,7 @@ abstract class Widget extends Component
 
     public function render(): View
     {
-        return view(static::$view, $this->getViewData());
+        return view($this->view, $this->getViewData());
     }
 
     /**

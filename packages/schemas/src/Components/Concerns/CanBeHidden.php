@@ -47,8 +47,8 @@ trait CanBeHidden
     public function hiddenWhenAllChildComponentsHidden(): static
     {
         $this->hidden(static function (Component $component): bool {
-            foreach ($component->getChildComponentContainers() as $childComponentContainer) {
-                foreach ($childComponentContainer->getComponents(withHidden: false) as $childComponent) {
+            foreach ($component->getChildSchemas() as $childSchema) {
+                foreach ($childSchema->getComponents(withHidden: false) as $childComponent) {
                     return false;
                 }
             }

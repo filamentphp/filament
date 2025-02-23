@@ -24,9 +24,9 @@ trait CanBeCollapsed
         return $this;
     }
 
-    public function isCollapsed(?Schema $item = null): bool
+    public function isCollapsed(?Schema $schema = null): bool
     {
-        return (bool) $this->evaluate($this->isCollapsed, ['item' => $item]);
+        return (bool) $this->evaluate($this->isCollapsed, ['item' => $schema]);
     }
 
     public function collapsible(bool | Closure | null $condition = true): static

@@ -1,22 +1,34 @@
 @php
     use Filament\Support\Facades\FilamentView;
 
+    $fieldWrapperView = $getFieldWrapperView();
+    $extraInputAttributeBag = $getExtraInputAttributeBag();
     $canSelectPlaceholder = $canSelectPlaceholder();
+    $isAutofocused = $isAutofocused();
     $isDisabled = $isDisabled();
+    $isMultiple = $isMultiple();
+    $isSearchable = $isSearchable();
+    $isRequired = $isRequired();
+    $isConcealed = $isConcealed();
+    $isHtmlAllowed = $isHtmlAllowed();
+    $isNative = (! ($isSearchable || $isMultiple) && $isNative());
     $isPrefixInline = $isPrefixInline();
     $isSuffixInline = $isSuffixInline();
     $key = $getKey();
+    $id = $getId();
     $prefixActions = $getPrefixActions();
     $prefixIcon = $getPrefixIcon();
+    $prefixIconColor = $getPrefixIconColor();
     $prefixLabel = $getPrefixLabel();
     $suffixActions = $getSuffixActions();
     $suffixIcon = $getSuffixIcon();
+    $suffixIconColor = $getSuffixIconColor();
     $suffixLabel = $getSuffixLabel();
     $statePath = $getStatePath();
 @endphp
 
 <x-dynamic-component
-    :component="$getFieldWrapperView()"
+    :component="$fieldWrapperView"
     :field="$field"
     :inline-label-vertical-alignment="\Filament\Support\Enums\VerticalAlignment::Center"
 >
@@ -27,36 +39,38 @@
         :prefix="$prefixLabel"
         :prefix-actions="$prefixActions"
         :prefix-icon="$prefixIcon"
-        :prefix-icon-color="$getPrefixIconColor()"
+        :prefix-icon-color="$prefixIconColor"
         :suffix="$suffixLabel"
         :suffix-actions="$suffixActions"
         :suffix-icon="$suffixIcon"
-        :suffix-icon-color="$getSuffixIconColor()"
+        :suffix-icon-color="$suffixIconColor"
         :valid="! $errors->has($statePath)"
         :attributes="
             \Filament\Support\prepare_inherited_attributes($getExtraAttributeBag())
-                ->class(['fi-fo-select'])
+                ->class([
+                    'fi-fo-select',
+                    'fi-fo-select-has-inline-prefix' => $isPrefixInline && (count($prefixActions) || $prefixIcon || filled($prefixLabel)),
+                    'fi-fo-select-native' => $isNative,
+                ])
         "
     >
-        @if ((! ($isSearchable() || $isMultiple()) && $isNative()))
-            <x-filament::input.select
-                :autofocus="$isAutofocused()"
-                :disabled="$isDisabled"
-                :id="$getId()"
-                :inline-prefix="$isPrefixInline && (count($prefixActions) || $prefixIcon || filled($prefixLabel))"
-                :inline-suffix="$isSuffixInline && (count($suffixActions) || $suffixIcon || filled($suffixLabel))"
-                :required="$isRequired() && (! $isConcealed())"
-                :attributes="
-                    $getExtraInputAttributeBag()
+        @if ($isNative)
+            <select
+                {{
+                    $extraInputAttributeBag
                         ->merge([
+                            'autofocus' => $isAutofocused,
+                            'disabled' => $isDisabled,
+                            'id' => $id,
+                            'required' => $isRequired && (! $isConcealed),
                             $applyStateBindingModifiers('wire:model') => $statePath,
                         ], escape: false)
-                "
+                        ->class([
+                            'fi-select-input',
+                            'fi-select-input-has-inline-prefix' => $isPrefixInline && (count($prefixActions) || $prefixIcon || filled($prefixLabel)),
+                        ])
+                }}
             >
-                @php
-                    $isHtmlAllowed = $isHtmlAllowed();
-                @endphp
-
                 @if ($canSelectPlaceholder)
                     <option value="">
                         @if (! $isDisabled)
@@ -94,10 +108,10 @@
                         </option>
                     @endif
                 @endforeach
-            </x-filament::input.select>
+            </select>
         @else
             <div
-                class="hidden"
+                class="fi-hidden"
                 x-data="{
                     isDisabled: @js($isDisabled),
                     init: function () {
@@ -119,7 +133,7 @@
                 x-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('select', 'filament/forms') }}"
                 x-data="selectFormComponent({
                             canSelectPlaceholder: @js($canSelectPlaceholder),
-                            isHtmlAllowed: @js($isHtmlAllowed()),
+                            isHtmlAllowed: @js($isHtmlAllowed),
                             getOptionLabelUsing: async () => {
                                 return await $wire.callSchemaComponentMethod(@js($key), 'getOptionLabel')
                             },
@@ -142,9 +156,9 @@
                                     { search },
                                 )
                             },
-                            isAutofocused: @js($isAutofocused()),
-                            isMultiple: @js($isMultiple()),
-                            isSearchable: @js($isSearchable()),
+                            isAutofocused: @js($isAutofocused),
+                            isMultiple: @js($isMultiple),
+                            isSearchable: @js($isSearchable),
                             livewireId: @js($this->getId()),
                             hasDynamicOptions: @js($hasDynamicOptions()),
                             hasDynamicSearchResults: @js($hasDynamicSearchResults()),
@@ -169,23 +183,17 @@
                 {{
                     $attributes
                         ->merge($getExtraAlpineAttributes(), escape: false)
-                        ->class([
-                            '[&_.choices\_\_inner]:ps-0' => $isPrefixInline && (count($prefixActions) || $prefixIcon || filled($prefixLabel)),
-                        ])
                 }}
             >
                 <select
                     x-ref="input"
                     {{
-                        $getExtraInputAttributeBag()
+                        $extraInputAttributeBag
                             ->merge([
                                 'disabled' => $isDisabled,
-                                'id' => $getId(),
-                                'multiple' => $isMultiple(),
+                                'id' => $id,
+                                'multiple' => $isMultiple,
                             ], escape: false)
-                            ->class([
-                                'h-9 w-full rounded-lg border-none bg-transparent !bg-none',
-                            ])
                     }}
                 ></select>
             </div>

@@ -4,7 +4,6 @@ namespace Filament\Pages\Concerns;
 
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
-use InvalidArgumentException;
 
 trait InteractsWithHeaderActions
 {
@@ -32,10 +31,6 @@ trait InteractsWithHeaderActions
                 $this->cachedHeaderActions[] = $action;
 
                 continue;
-            }
-
-            if (! $action instanceof Action) {
-                throw new InvalidArgumentException('Header actions must be an instance of ' . Action::class . ', or ' . ActionGroup::class . '.');
             }
 
             $this->cacheAction($action);

@@ -2,16 +2,17 @@
 
 namespace Filament\Tests\Fixtures\Models;
 
+use Filament\Auth\MultiFactor\EmailCode\Contracts\HasEmailCodeAuthentication;
+use Filament\Auth\MultiFactor\GoogleTwoFactor\Contracts\HasGoogleTwoFactorAuthentication;
+use Filament\Auth\MultiFactor\GoogleTwoFactor\Contracts\HasGoogleTwoFactorAuthenticationRecovery;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasTenants;
-use Filament\MultiFactorAuthentication\EmailCode\Contracts\HasEmailCodeAuthentication;
-use Filament\MultiFactorAuthentication\GoogleTwoFactor\Contracts\HasGoogleTwoFactorAuthentication;
-use Filament\MultiFactorAuthentication\GoogleTwoFactor\Contracts\HasGoogleTwoFactorAuthenticationRecovery;
 use Filament\Panel;
 use Filament\Tests\Database\Factories\UserFactory;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -36,6 +37,7 @@ class User extends Authenticatable implements FilamentUser, HasEmailCodeAuthenti
      * @var array<string, string>
      */
     protected $casts = [
+        'json' => 'array',
         'email_verified_at' => 'datetime',
         'google_two_factor_authentication_secret' => 'encrypted',
         'google_two_factor_authentication_recovery_codes' => 'encrypted:array',
@@ -44,7 +46,7 @@ class User extends Authenticatable implements FilamentUser, HasEmailCodeAuthenti
 
     public function canAccessPanel(Panel $panel): bool
     {
-        return in_array($panel->getId(), ['admin', 'slugs', 'google-two-factor-authentication', 'email-code-authentication']);
+        return in_array($panel->getId(), ['admin', 'slugs', 'google-two-factor-authentication', 'email-code-authentication', 'required-multi-factor-authentication']);
     }
 
     public function posts(): HasMany
@@ -113,5 +115,10 @@ class User extends Authenticatable implements FilamentUser, HasEmailCodeAuthenti
     {
         $this->email_code_authentication_secret = $secret;
         $this->save();
+    }
+
+    public function teams(): BelongsToMany
+    {
+        return $this->belongsToMany(Team::class);
     }
 }

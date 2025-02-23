@@ -55,14 +55,14 @@ class SelectAction extends Action implements HasEmbeddedView
         ) {
             if (is_a($enum, LabelInterface::class, allow_string: true)) {
                 return array_reduce($enum::cases(), function (array $carry, LabelInterface & UnitEnum $case): array {
-                    $carry[$case?->value ?? $case->name] = $case->getLabel() ?? $case->name;
+                    $carry[$case->value ?? $case->name] = $case->getLabel() ?? $case->name;
 
                     return $carry;
                 }, []);
             }
 
             return array_reduce($enum::cases(), function (array $carry, UnitEnum $case): array {
-                $carry[$case?->value ?? $case->name] = $case->name;
+                $carry[$case->value ?? $case->name] = $case->name;
 
                 return $carry;
             }, []);

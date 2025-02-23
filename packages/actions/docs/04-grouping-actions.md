@@ -28,14 +28,14 @@ The button which opens the dropdown may be customized in the same way as a norma
 
 ```php
 use Filament\Actions\ActionGroup;
-use Filament\Support\Enums\ActionSize;
+use Filament\Support\Enums\Size;
 
 ActionGroup::make([
     // Array of actions
 ])
     ->label('More actions')
     ->icon('heroicon-m-ellipsis-vertical')
-    ->size(ActionSize::Small)
+    ->size(Size::Small)
     ->color('primary')
     ->button()
 ```
@@ -82,12 +82,12 @@ The dropdown may be set to a width by using the `dropdownWidth()` method. Option
 
 ```php
 use Filament\Actions\ActionGroup;
-use Filament\Support\Enums\MaxWidth;
+use Filament\Support\Enums\Width;
 
 ActionGroup::make([
     // Array of actions
 ])
-    ->dropdownWidth(MaxWidth::ExtraSmall)
+    ->dropdownWidth(Width::ExtraSmall)
 ```
 
 ## Controlling the maximum height of the dropdown

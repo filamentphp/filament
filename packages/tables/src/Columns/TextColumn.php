@@ -4,6 +4,7 @@ namespace Filament\Tables\Columns;
 
 use Closure;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
+use Filament\Support\Concerns\CanWrap;
 use Filament\Support\Concerns\HasFontFamily;
 use Filament\Support\Concerns\HasLineClamp;
 use Filament\Support\Concerns\HasWeight;
@@ -11,19 +12,24 @@ use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\FontFamily;
 use Filament\Support\Enums\FontWeight;
 use Filament\Support\Enums\IconPosition;
-use Filament\Tables\Columns\TextColumn\Enums\TextColumnSize;
+use Filament\Support\Enums\IconSize;
+use Filament\Support\Enums\TextSize;
+use Filament\Support\View\Components\BadgeComponent;
 use Filament\Tables\Contracts\HasTable;
+use Filament\Tables\View\Components\Columns\TextColumnComponent\ItemComponent;
+use Filament\Tables\View\Components\Columns\TextColumnComponent\ItemComponent\IconComponent;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Js;
 use Illuminate\View\ComponentAttributeBag;
 use stdClass;
 
+use function Filament\Support\generate_href_html;
 use function Filament\Support\generate_icon_html;
-use function Filament\Support\get_color_css_variables;
 
 class TextColumn extends Column implements HasEmbeddedView
 {
+    use CanWrap;
     use Concerns\CanBeCopied;
     use Concerns\CanFormatState;
     use Concerns\HasColor;
@@ -34,8 +40,6 @@ class TextColumn extends Column implements HasEmbeddedView
     use HasLineClamp;
     use HasWeight;
 
-    protected bool | Closure $canWrap = false;
-
     protected bool | Closure $isBadge = false;
 
     protected bool | Closure $isBulleted = false;
@@ -44,7 +48,7 @@ class TextColumn extends Column implements HasEmbeddedView
 
     protected int | Closure | null $listLimit = null;
 
-    protected TextColumnSize | string | Closure | null $size = null;
+    protected TextSize | string | Closure | null $size = null;
 
     protected bool | Closure $isLimitedListExpandable = false;
 
@@ -93,44 +97,32 @@ class TextColumn extends Column implements HasEmbeddedView
         return $this;
     }
 
-    public function wrap(bool | Closure $condition = true): static
-    {
-        $this->canWrap = $condition;
-
-        return $this;
-    }
-
-    public function size(TextColumnSize | string | Closure | null $size): static
+    public function size(TextSize | string | Closure | null $size): static
     {
         $this->size = $size;
 
         return $this;
     }
 
-    public function getSize(mixed $state): TextColumnSize | string
+    public function getSize(mixed $state): TextSize | string
     {
         $size = $this->evaluate($this->size, [
             'state' => $state,
         ]);
 
         if (blank($size)) {
-            return TextColumnSize::Small;
+            return TextSize::Small;
         }
 
         if (is_string($size)) {
-            $size = TextColumnSize::tryFrom($size) ?? $size;
+            $size = TextSize::tryFrom($size) ?? $size;
         }
 
         if ($size === 'base') {
-            return TextColumnSize::Medium;
+            return TextSize::Medium;
         }
 
         return $size;
-    }
-
-    public function canWrap(): bool
-    {
-        return (bool) $this->evaluate($this->canWrap);
     }
 
     public function isBadge(): bool
@@ -209,7 +201,25 @@ class TextColumn extends Column implements HasEmbeddedView
             <?php return ob_get_clean();
         }
 
-        $formatState = fn (mixed $stateItem): string => e($this->formatState($stateItem));
+        $shouldOpenUrlInNewTab = $this->shouldOpenUrlInNewTab();
+
+        $formatState = function (mixed $stateItem) use ($shouldOpenUrlInNewTab): string {
+            $url = $this->getUrl($stateItem);
+
+            $item = '';
+
+            if (filled($url)) {
+                $item .= '<a ' . generate_href_html($url, $shouldOpenUrlInNewTab)->toHtml() . '>';
+            }
+
+            $item .= e($this->formatState($stateItem));
+
+            if (filled($url)) {
+                $item .= '</a>';
+            }
+
+            return $item;
+        };
 
         $state = Arr::wrap($state);
         $stateCount = count($state);
@@ -240,7 +250,7 @@ class TextColumn extends Column implements HasEmbeddedView
             ];
 
             $stateCount = 1;
-            $formatState = fn (mixed $stateItem): string => e($stateItem);
+            $formatState = fn (mixed $stateItem): string => $stateItem;
         }
 
         $alignment = $this->getAlignment();
@@ -260,38 +270,14 @@ class TextColumn extends Column implements HasEmbeddedView
             $color = $this->getColor($stateItem) ?? ($isBadge ? 'primary' : null);
             $iconColor = $this->getIconColor($stateItem);
 
+            $size = $this->getSize($stateItem);
+
             $iconHtml = generate_icon_html($this->getIcon($stateItem), attributes: (new ComponentAttributeBag)
-                ->class([
-                    match ($iconColor) {
-                        null, 'gray' => null,
-                        default => 'fi-color-custom',
-                    } => filled($iconColor),
-                    is_string($iconColor) ? "fi-color-{$iconColor}" : null,
-                ])
-                ->style([
-                    ...(
-                        $isBadge
-                        ? [
-                            get_color_css_variables(
-                                $color,
-                                shades: [500],
-                                alias: 'badge.icon',
-                            ) => $color !== 'gray',
-                        ]
-                        : []
-                    ),
-                    ...(
-                        ((! $isBadge) && $iconColor)
-                        ? [
-                            get_color_css_variables(
-                                $iconColor,
-                                shades: [400, 500],
-                                alias: 'tables::columns.text-column.item.icon',
-                            ) => ! in_array($iconColor, [null, 'gray']),
-                        ]
-                        : []
-                    ),
-                ]))?->toHtml();
+                ->color(IconComponent::class, $iconColor), size: match ($size) {
+                    TextSize::Medium => IconSize::Medium,
+                    TextSize::Large => IconSize::Large,
+                    default => IconSize::Small,
+                })?->toHtml();
 
             $isCopyable = $this->isCopyable($stateItem);
 
@@ -322,50 +308,28 @@ class TextColumn extends Column implements HasEmbeddedView
                     ], escape: false)
                     ->class([
                         'fi-ta-text-item',
-                        ...((! $isBadge) ? [
-                            match ($color) {
-                                null, 'gray' => null,
-                                default => 'fi-color-custom',
-                            },
-                            is_string($color) ? "fi-color-{$color}" : null,
-                            (($size = $this->getSize($stateItem)) instanceof TextColumnSize) ? "fi-size-{$size->value}" : $size,
-                            (($weight = $this->getWeight($stateItem)) instanceof FontWeight) ? "fi-font-{$weight->value}" : (is_string($weight) ? $weight : ''),
-                        ] : []),
                         (($fontFamily = $this->getFontFamily($stateItem)) instanceof FontFamily) ? "fi-font-{$fontFamily->value}" : (is_string($fontFamily) ? $fontFamily : ''),
                         'fi-copyable' => $isCopyable,
                     ])
-                    ->style([
-                        ...((! $isBadge) ? [
-                            get_color_css_variables(
-                                $color,
-                                shades: [400, 600],
-                                alias: 'tables::columns.text-column.item',
-                            ) => ! in_array($color, [null, 'gray']),
-                            "--line-clamp: {$lineClamp}" => $lineClamp,
-                        ] : []),
-                    ]),
+                    ->when(
+                        ! $isBadge,
+                        fn (ComponentAttributeBag $attributes) => $attributes
+                            ->class([
+                                ($size instanceof TextSize) ? "fi-size-{$size->value}" : $size,
+                                (($weight = $this->getWeight($stateItem)) instanceof FontWeight) ? "fi-font-{$weight->value}" : (is_string($weight) ? $weight : ''),
+                            ])
+                            ->when($lineClamp, fn (ComponentAttributeBag $attributes) => $attributes->style([
+                                "--line-clamp: {$lineClamp}",
+                            ]))
+                            ->color(ItemComponent::class, $color)
+                    ),
                 'badgeAttributes' => $isBadge
                     ? (new ComponentAttributeBag)
                         ->class([
                             'fi-badge',
-                            match ($color ?? 'primary') {
-                                'gray' => null,
-                                default => 'fi-color-custom',
-                            },
-                            is_string($color) ? "fi-color-{$color}" : null,
-                            (($size = $this->getSize($stateItem)) instanceof TextColumnSize) ? "fi-size-{$size->value}" : $size,
+                            ($size instanceof TextSize) ? "fi-size-{$size->value}" : $size,
                         ])
-                        ->style([
-                            get_color_css_variables(
-                                $color,
-                                shades: [
-                                    50,
-                                    400,
-                                    600,
-                                ],
-                                alias: 'badge',
-                            ) => $color !== 'gray',
-                        ])
+                        ->color(BadgeComponent::class, $color ?? 'primary')
                     : null,
                 'iconAfterHtml' => ($iconPosition === IconPosition::After) ? $iconHtml : '',
                 'iconBeforeHtml' => ($iconPosition === IconPosition::Before) ? $iconHtml : '',

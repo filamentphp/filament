@@ -5,7 +5,6 @@ namespace Filament\Forms;
 use Filament\Forms\Testing\TestsFormComponentActions;
 use Filament\Forms\Testing\TestsForms;
 use Filament\Support\Assets\AlpineComponent;
-use Filament\Support\Assets\Css;
 use Filament\Support\Facades\FilamentAsset;
 use Illuminate\Filesystem\Filesystem;
 use Livewire\Features\SupportTesting\Testable;
@@ -30,6 +29,7 @@ class FormsServiceProvider extends PackageServiceProvider
     public function packageBooted(): void
     {
         FilamentAsset::register([
+            AlpineComponent::make('checkbox-list', __DIR__ . '/../dist/components/checkbox-list.js'),
             AlpineComponent::make('color-picker', __DIR__ . '/../dist/components/color-picker.js'),
             AlpineComponent::make('date-time-picker', __DIR__ . '/../dist/components/date-time-picker.js'),
             AlpineComponent::make('file-upload', __DIR__ . '/../dist/components/file-upload.js'),
@@ -39,7 +39,6 @@ class FormsServiceProvider extends PackageServiceProvider
             AlpineComponent::make('select', __DIR__ . '/../dist/components/select.js'),
             AlpineComponent::make('tags-input', __DIR__ . '/../dist/components/tags-input.js'),
             AlpineComponent::make('textarea', __DIR__ . '/../dist/components/textarea.js'),
-            Css::make('forms', __DIR__ . '/../dist/index.css'),
         ], 'filament/forms');
 
         if ($this->app->runningInConsole()) {

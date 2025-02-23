@@ -1,3 +1,33 @@
-.webkit-calendar-picker-indicator\:opacity-0::-webkit-calendar-picker-indicator {
-    @apply opacity-0;
+.fi-fo-tags-input {
+    &.fi-disabled {
+        & .fi-badge-delete-btn {
+            @apply hidden;
+        }
+    }
+
+    & .fi-fo-tags-input-tags-ctn {
+        @apply flex w-full flex-wrap gap-1.5 border-t border-t-gray-200 p-2 dark:border-t-white/10;
+
+        & > template {
+            @apply hidden;
+        }
+
+        & > .fi-badge {
+            &.fi-reorderable {
+                @apply cursor-move;
+            }
+
+            & .fi-badge-label-ctn {
+                @apply text-start select-none;
+            }
+        }
+    }
+}
+
+.fi-fo-tags-input-wrp {
+    &.fi-fo-field-has-inline-label {
+        & .fi-fo-field-label-col {
+            @apply sm:pt-1.5;
+        }
+    }
 }

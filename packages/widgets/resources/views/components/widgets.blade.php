@@ -1,3 +1,5 @@
+{{-- @deprecated Use a schema to render widgets. --}}
+
 @props([
     'columns' => [
         'lg' => 2,

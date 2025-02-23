@@ -5,7 +5,7 @@ namespace Filament\Infolists\Concerns;
 use Filament\Actions\Action;
 use Filament\Schemas\Schema;
 
-trait InteractsWithInfolists
+trait InteractsWithInfolists /** @phpstan-ignore trait.unused */
 {
     /**
      * @deprecated Use `getSchema()` instead.
@@ -18,9 +18,9 @@ trait InteractsWithInfolists
     /**
      * @deprecated Use `cacheSchema()` instead.
      */
-    protected function cacheInfolist(string $name, Schema $infolist): ?Schema
+    protected function cacheInfolist(string $name, Schema $schema): ?Schema
     {
-        return $this->cacheSchema($name, $infolist);
+        return $this->cacheSchema($name, $schema);
     }
 
     /**

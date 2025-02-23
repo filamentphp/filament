@@ -118,7 +118,7 @@ class ImportColumn extends Component
             ->label($this->getLabel())
             ->placeholder(__('filament-actions::import.modal.form.columns.placeholder'))
             ->required($this->isMappingRequired())
-            ->helperText($this->helperText);
+            ->belowContent($this->helperText);
     }
 
     public function name(string $name): static
@@ -405,7 +405,7 @@ class ImportColumn extends Component
         $rules = $this->evaluate($this->dataValidationRules);
 
         if ($this->hasRelationship()) {
-            $rules[] = function (string $attribute, mixed $state, Closure $fail) {
+            $rules[] = function (string $attribute, mixed $state, Closure $fail): void {
                 if (blank($state)) {
                     return;
                 }

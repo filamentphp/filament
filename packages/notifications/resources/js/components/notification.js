@@ -86,38 +86,43 @@ export default (Alpine) => {
                         return
                     }
 
-                    const getTop = () => this.$el.getBoundingClientRect().top
-                    const oldTop = getTop()
+                    // Calling `el.getBoundingClientRect()` from outside `requestAnimationFrame()` can
+                    // occasionally cause the page to scroll to the top.
+                    requestAnimationFrame(() => {
+                        const getTop = () =>
+                            this.$el.getBoundingClientRect().top
+                        const oldTop = getTop()
 
-                    respond(() => {
-                        animation = () => {
-                            if (!this.isShown) {
-                                return
+                        respond(() => {
+                            animation = () => {
+                                if (!this.isShown) {
+                                    return
+                                }
+
+                                this.$el.animate(
+                                    [
+                                        {
+                                            transform: `translateY(${
+                                                oldTop - getTop()
+                                            }px)`,
+                                        },
+                                        { transform: 'translateY(0px)' },
+                                    ],
+                                    {
+                                        duration: this.transitionDuration,
+                                        easing: this.transitionEasing,
+                                    },
+                                )
                             }
 
-                            this.$el.animate(
-                                [
-                                    {
-                                        transform: `translateY(${
-                                            oldTop - getTop()
-                                        }px)`,
-                                    },
-                                    { transform: 'translateY(0px)' },
-                                ],
-                                {
-                                    duration: this.transitionDuration,
-                                    easing: this.transitionEasing,
-                                },
-                            )
-                        }
+                            this.$el
+                                .getAnimations()
+                                .forEach((animation) => animation.finish())
+                        })
 
-                        this.$el
-                            .getAnimations()
-                            .forEach((animation) => animation.finish())
-                    })
-
-                    succeed(({ snapshot, effect }) => {
-                        animation()
+                        succeed(({ snapshot, effect }) => {
+                            animation()
+                        })
                     })
                 },
             )

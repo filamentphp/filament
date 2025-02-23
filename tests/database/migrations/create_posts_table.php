@@ -16,7 +16,9 @@ return new class extends Migration
             $table->unsignedTinyInteger('rating')->default(0);
             $table->json('tags')->nullable();
             $table->string('title');
+            $table->json('json')->nullable();
             $table->json('json_array_of_objects')->nullable();
+            $table->string('string_backed_enum')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

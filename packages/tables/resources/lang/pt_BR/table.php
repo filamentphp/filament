@@ -10,6 +10,10 @@ return [
 
     'columns' => [
 
+        'actions' => [
+            'label' => 'Ação|Ações',
+        ],
+
         'text' => [
 
             'actions' => [

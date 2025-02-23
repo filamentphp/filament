@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages;
 
+use BackedEnum;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
@@ -9,12 +10,13 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Pages\SettingsPage;
 use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tests\Panels\Commands\Settings;
 use Filament\Tests\Panels\Commands\SettingsPropertyEnum;
 
 class ManageSettings extends SettingsPage
 {
-    protected static ?string $navigationIcon = 'heroicon-o-cog-6-tooth';
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCog6Tooth;
 
     protected static string $settings = Settings::class;
 

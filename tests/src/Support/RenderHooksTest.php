@@ -8,7 +8,7 @@ use Illuminate\Support\HtmlString;
 
 uses(TestCase::class);
 
-test('render hooks can be registered', function () {
+test('render hooks can be registered', function (): void {
     FilamentView::registerRenderHook('foo', function (): string {
         return Blade::render('bar');
     });
@@ -18,7 +18,7 @@ test('render hooks can be registered', function () {
         ->toHtml()->toBe('bar');
 });
 
-test('render hooks can render view files', function () {
+test('render hooks can render view files', function (): void {
     FilamentView::registerRenderHook('view-foo', function (): View {
         return view('pages.render-hooks.foo');
     });
@@ -28,7 +28,7 @@ test('render hooks can render view files', function () {
         ->toHtml()->toContain('bar');
 });
 
-test('render hooks can be scopes:d', function () {
+test('render hooks can be scopes:d', function (): void {
     FilamentView::registerRenderHook('foo', function (): string {
         return Blade::render('bar');
     });
@@ -42,7 +42,7 @@ test('render hooks can be scopes:d', function () {
         ->toHtml()->toBe('barbar');
 });
 
-test('render hooks can be scopes:d to multiple scopes:s', function () {
+test('render hooks can be scopes:d to multiple scopes:s', function (): void {
     FilamentView::registerRenderHook('foo', function (): string {
         return Blade::render('bar');
     });
@@ -60,7 +60,7 @@ test('render hooks can be scopes:d to multiple scopes:s', function () {
         ->toHtml()->toBe('barbar');
 });
 
-test('render hooks can be scopes:d to multiple scopes:s but only ever output once', function () {
+test('render hooks can be scopes:d to multiple scopes:s but only ever output once', function (): void {
     FilamentView::registerRenderHook('foo', function (): string {
         return Blade::render('bar');
     });

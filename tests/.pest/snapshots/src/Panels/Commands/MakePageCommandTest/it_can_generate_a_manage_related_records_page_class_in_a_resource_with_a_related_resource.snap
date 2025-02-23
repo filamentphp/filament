@@ -4,7 +4,9 @@ namespace App\Filament\Resources\Users\Pages;
 
 use App\Filament\Resources\Teams\TeamResource;
 use App\Filament\Resources\Users\UserResource;
+use BackedEnum;
 use Filament\Resources\Pages\ManageRelatedRecords;
+use Filament\Support\Icons\Heroicon;
 
 class ManageUserTeams extends ManageRelatedRecords
 {
@@ -12,12 +14,7 @@ class ManageUserTeams extends ManageRelatedRecords
 
     protected static string $relationship = 'teams';
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
     protected static ?string $relatedResource = TeamResource::class;
-
-    protected static function getNavigationLabel(): string
-    {
-        return 'Teams';
-    }
 }

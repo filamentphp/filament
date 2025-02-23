@@ -3,6 +3,7 @@
 namespace Filament\Tables\Filters\QueryBuilder\Constraints;
 
 use Filament\Support\Facades\FilamentIcon;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Filters\QueryBuilder\Constraints\Operators\IsFilledOperator;
 use Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint\Operators\ContainsOperator;
 use Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint\Operators\EndsWithOperator;
@@ -17,7 +18,7 @@ class TextConstraint extends Constraint
     {
         parent::setUp();
 
-        $this->icon(FilamentIcon::resolve('tables::filters.query-builder.constraints.text') ?? 'heroicon-m-language');
+        $this->icon(FilamentIcon::resolve('tables::filters.query-builder.constraints.text') ?? Heroicon::Language);
 
         $this->operators([
             ContainsOperator::class,

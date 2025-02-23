@@ -349,6 +349,46 @@ it('can remove all table filters', function () {
 });
 ```
 
+### Hidden filters
+
+To ensure that a particular user cannot see a filter, you can use the `assertTableFilterVisible()` and `assertTableFilterHidden()` methods:
+
+```php
+use function Pest\Livewire\livewire;
+
+it('shows the correct filters', function () {
+    livewire(PostsTable::class)
+        ->assertTableFilterVisible('created_at')
+        ->assertTableFilterHidden('author');
+```
+
+### Filter existence
+
+To ensure that a filter exists, you can use the `assertTableFilterExists()` method:
+
+```php
+use function Pest\Livewire\livewire;
+
+it('has an author filter', function () {
+    livewire(PostResource\Pages\ListPosts::class)
+        ->assertTableFilterExists('author');
+});
+```
+
+You may pass a function as an additional argument in order to assert that a filter passes a given "truth test". This is useful for asserting that a filter has a specific configuration:
+
+```php
+use function Pest\Livewire\livewire;
+use Filament\Tables\Filters\SelectFilter;
+
+it('has an author filter', function () {    
+    livewire(PostResource\Pages\ListPosts::class)
+        ->assertTableFilterExists('author', function (SelectFilter $column): bool {
+            return $column->getLabel() === 'Select author';
+        });
+});
+```
+
 ## Actions
 
 ### Calling actions

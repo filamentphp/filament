@@ -3,6 +3,7 @@
 namespace Filament\Forms\Components\Concerns;
 
 use Closure;
+use Filament\Support\Components\Attributes\ExposedLivewireMethod;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Support\Facades\Storage;
@@ -37,8 +38,19 @@ trait HasFileAttachments
         return $this;
     }
 
-    public function saveUploadedFileAttachment(TemporaryUploadedFile $attachment): ?string
+    #[ExposedLivewireMethod]
+    public function saveUploadedFileAttachment(TemporaryUploadedFile | string | null $attachment = null): ?string
     {
+        if (is_string($attachment)) {
+            $attachment = data_get($this->getLivewire(), "componentFileAttachments.{$this->getStatePath()}.{$attachment}");
+        } elseif (! $attachment) {
+            $attachment = data_get($this->getLivewire(), "componentFileAttachments.{$this->getStatePath()}");
+        }
+
+        if (! $attachment) {
+            return null;
+        }
+
         if ($callback = $this->saveUploadedFileAttachmentsUsing) {
             $file = $this->evaluate($callback, [
                 'file' => $attachment,

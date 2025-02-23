@@ -1,0 +1,15 @@
+.fi-theme-switcher {
+    @apply grid grid-flow-col gap-x-1;
+}
+
+.fi-theme-switcher-btn {
+    @apply flex justify-center rounded-md p-2 outline-hidden transition duration-75 hover:bg-gray-50 focus-visible:bg-gray-50 dark:hover:bg-white/5 dark:focus-visible:bg-white/5;
+
+    &.fi-active {
+        @apply text-primary-500 dark:text-primary-400 bg-gray-50 dark:bg-white/5;
+    }
+
+    &:not(.fi-active) {
+        @apply text-gray-400 hover:text-gray-500 focus-visible:text-gray-500 dark:text-gray-500 dark:hover:text-gray-400 dark:focus-visible:text-gray-400;
+    }
+}

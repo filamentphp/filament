@@ -96,7 +96,7 @@ class CheckTranslationsCommand extends Command implements PromptsForMissingInput
                 $locales = $this->argument('locales'),
                 fn (Collection $availableLocales): Collection => $availableLocales->filter(fn (string $locale): bool => in_array($locale, $locales))
             )
-            ->each(function (string $locale, string $localeDir) use ($filesystem, $localeRootDirectory, $package) {
+            ->each(function (string $locale, string $localeDir) use ($filesystem, $localeRootDirectory, $package): void {
                 $files = $filesystem->allFiles($localeDir);
                 $baseFiles = $filesystem->allFiles(implode(DIRECTORY_SEPARATOR, [$localeRootDirectory, 'en']));
 
@@ -145,7 +145,7 @@ class CheckTranslationsCommand extends Command implements PromptsForMissingInput
                             ],
                         ];
                     })
-                    ->tap(function (Collection $files) use ($locale, $package) {
+                    ->tap(function (Collection $files) use ($locale, $package): void {
                         $missingKeysCount = $files->sum(fn ($file): int => count($file['missing']));
                         $removedKeysCount = $files->sum(fn ($file): int => count($file['removed']));
 
@@ -162,7 +162,7 @@ class CheckTranslationsCommand extends Command implements PromptsForMissingInput
                         }
                     })
                     ->filter(static fn ($keys): bool => count($keys['missing']) || count($keys['removed']))
-                    ->each(function ($keys, string $file) {
+                    ->each(function ($keys, string $file): void {
                         table(
                             [$file, ''],
                             [

@@ -2,6 +2,7 @@
 
 namespace Filament\Schemas;
 
+use Filament\Support\Assets\AlpineComponent;
 use Filament\Support\Assets\Js;
 use Filament\Support\Facades\FilamentAsset;
 use Illuminate\Filesystem\Filesystem;
@@ -13,7 +14,7 @@ class SchemaServiceProvider extends PackageServiceProvider
     public function configurePackage(Package $package): void
     {
         $package
-            ->name('filament-schema')
+            ->name('filament-schemas')
             ->hasCommands([
                 Commands\MakeLayoutComponentCommand::class,
                 Commands\MakeLivewireSchemaCommand::class,
@@ -26,8 +27,11 @@ class SchemaServiceProvider extends PackageServiceProvider
     public function packageBooted(): void
     {
         FilamentAsset::register([
-            Js::make('schema', __DIR__ . '/../dist/index.js'),
-        ], 'filament/support');
+            AlpineComponent::make('actions', __DIR__ . '/../dist/components/actions.js'),
+            AlpineComponent::make('tabs', __DIR__ . '/../dist/components/tabs.js'),
+            AlpineComponent::make('wizard', __DIR__ . '/../dist/components/wizard.js'),
+            Js::make('schemas', __DIR__ . '/../dist/index.js'),
+        ], 'filament/schemas');
 
         if ($this->app->runningInConsole()) {
             foreach (app(Filesystem::class)->files(__DIR__ . '/../stubs/') as $file) {

@@ -3,6 +3,8 @@
 namespace App\Livewire\Forms;
 
 use Filament\Actions\Action;
+use Filament\Actions\Concerns\InteractsWithActions;
+use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\CheckboxList;
@@ -22,16 +24,18 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\TimePicker;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\ToggleButtons;
-use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Forms\Contracts\HasForms;
 use Filament\Schemas\Components\Group;
+use Filament\Schemas\Concerns\InteractsWithSchemas;
+use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\HtmlString;
 use Livewire\Component;
 
-class FieldsDemo extends Component implements HasForms
+class FieldsDemo extends Component implements HasActions, HasSchemas
 {
-    use InteractsWithForms;
+    use InteractsWithActions;
+    use InteractsWithSchemas;
 
     public $data = [];
 
@@ -44,7 +48,7 @@ class FieldsDemo extends Component implements HasForms
     {
         return $form
             ->statePath('data')
-            ->schema([
+            ->components([
                 Group::make()
                     ->id('simple')
                     ->extraAttributes([
@@ -107,7 +111,7 @@ class FieldsDemo extends Component implements HasForms
                         TextInput::make('textInputSuffixIcon')
                             ->label('Domain')
                             ->default('https://filamentphp.com')
-                            ->suffixIcon('heroicon-m-globe-alt'),
+                            ->suffixIcon(Heroicon::GlobeAlt),
                     ]),
                 Group::make()
                     ->id('textInputRevealablePassword')
@@ -261,7 +265,7 @@ class FieldsDemo extends Component implements HasForms
                             ->options([
                                 'filament' => 'filamentphp',
                             ])
-                            ->suffixIcon('heroicon-m-globe-alt'),
+                            ->suffixIcon(Heroicon::GlobeAlt),
                     ]),
                 Group::make()
                     ->id('checkbox')
@@ -309,8 +313,8 @@ class FieldsDemo extends Component implements HasForms
                     ->schema([
                         Toggle::make('toggleIcons')
                             ->label('Is admin')
-                            ->onIcon('heroicon-m-bolt')
-                            ->offIcon('heroicon-m-user'),
+                            ->onIcon(Heroicon::Bolt)
+                            ->offIcon(Heroicon::User),
                     ]),
                 Group::make()
                     ->id('toggleOffColor')
@@ -625,7 +629,7 @@ class FieldsDemo extends Component implements HasForms
                     ->schema([
                         TimePicker::make('dateTimePickerPrefixIcon')
                             ->label('At')
-                            ->prefixIcon('heroicon-m-play')
+                            ->prefixIcon(Heroicon::Play)
                             ->default('2000-01-01'),
                     ]),
                 Group::make()
@@ -975,9 +979,9 @@ class FieldsDemo extends Component implements HasForms
                                             ->label('Paragraph')
                                             ->required(),
                                     ])
-                                    ->icon('heroicon-m-bars-3-bottom-left'),
+                                    ->icon(Heroicon::Bars3BottomLeft),
                                 Builder\Block::make('image')
-                                    ->icon('heroicon-m-photo'),
+                                    ->icon(Heroicon::Photo),
                             ])
                             ->default([
                                 [
@@ -1003,7 +1007,7 @@ class FieldsDemo extends Component implements HasForms
                                             ->label('Paragraph')
                                             ->required(),
                                     ])
-                                    ->icon('heroicon-m-bars-3-bottom-left'),
+                                    ->icon(Heroicon::Bars3BottomLeft),
                             ])
                             ->default([
                                 [
@@ -1042,7 +1046,7 @@ class FieldsDemo extends Component implements HasForms
                                             ->label('Paragraph')
                                             ->required(),
                                     ])
-                                    ->icon('heroicon-m-bars-3-bottom-left'),
+                                    ->icon(Heroicon::Bars3BottomLeft),
                             ])
                             ->default([
                                 [
@@ -1081,7 +1085,7 @@ class FieldsDemo extends Component implements HasForms
                                             ->label('Paragraph')
                                             ->required(),
                                     ])
-                                    ->icon('heroicon-m-bars-3-bottom-left'),
+                                    ->icon(Heroicon::Bars3BottomLeft),
                             ])
                             ->default([
                                 [
@@ -1213,9 +1217,9 @@ class FieldsDemo extends Component implements HasForms
                                 'published' => 'Published',
                             ])
                             ->icons([
-                                'draft' => 'heroicon-o-pencil',
-                                'scheduled' => 'heroicon-o-clock',
-                                'published' => 'heroicon-o-check-circle',
+                                'draft' => Heroicon::OutlinedPencil,
+                                'scheduled' => Heroicon::OutlinedClock,
+                                'published' => Heroicon::OutlinedCheckCircle,
                             ])
                             ->default('scheduled'),
                     ]),
@@ -1334,7 +1338,7 @@ class FieldsDemo extends Component implements HasForms
                             ->default('22.66')
                             ->suffixAction(
                                 Action::make('copyCostToPrice')
-                                    ->icon('heroicon-m-clipboard'),
+                                    ->icon(Heroicon::Clipboard),
                             ),
                     ]),
             ]);

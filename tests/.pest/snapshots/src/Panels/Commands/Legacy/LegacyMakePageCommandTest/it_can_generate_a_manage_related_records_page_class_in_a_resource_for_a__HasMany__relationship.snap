@@ -3,10 +3,12 @@
 namespace App\Filament\Resources\UserResource\Pages;
 
 use App\Filament\Resources\UserResource;
+use BackedEnum;
 use Filament\Actions;
 use Filament\Forms;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables;
 use Filament\Tables\Table;
 
@@ -16,12 +18,7 @@ class ManageUserTeams extends ManageRelatedRecords
 
     protected static string $relationship = 'teams';
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-
-    protected static function getNavigationLabel(): string
-    {
-        return 'Teams';
-    }
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
     public function form(Schema $schema): Schema
     {

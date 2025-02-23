@@ -2,27 +2,28 @@
 
 namespace Filament\Widgets;
 
-use Filament\Actions;
-use Filament\Forms;
-use Filament\Infolists;
-use Filament\Tables;
+use Filament\Actions\Concerns\InteractsWithActions;
+use Filament\Actions\Contracts\HasActions;
+use Filament\Schemas\Concerns\InteractsWithSchemas;
+use Filament\Schemas\Contracts\HasSchemas;
+use Filament\Tables\Concerns\InteractsWithTable;
+use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Enums\PaginationMode;
 use Filament\Tables\Table;
 use Illuminate\Contracts\Support\Htmlable;
 
-class TableWidget extends Widget implements Actions\Contracts\HasActions, Forms\Contracts\HasForms, Infolists\Contracts\HasInfolists, Tables\Contracts\HasTable
+class TableWidget extends Widget implements HasActions, HasSchemas, HasTable
 {
-    use Actions\Concerns\InteractsWithActions;
-    use Forms\Concerns\InteractsWithForms;
-    use Infolists\Concerns\InteractsWithInfolists;
-    use Tables\Concerns\InteractsWithTable {
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+    use InteractsWithTable {
         makeTable as makeBaseTable;
     }
 
     /**
      * @var view-string
      */
-    protected static string $view = 'filament-widgets::table-widget';
+    protected string $view = 'filament-widgets::table-widget';
 
     /**
      * @deprecated Override the `table()` method to configure the table.

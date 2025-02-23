@@ -6,4 +6,12 @@ return [
 
     'breadcrumb' => 'Դիտել',
 
+    'content' => [
+
+        'tab' => [
+            'label' => 'Դիտել',
+        ],
+
+    ],
+
 ];

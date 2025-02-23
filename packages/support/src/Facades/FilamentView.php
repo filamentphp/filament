@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Facade;
 
 /**
  * @method static bool hasSpaMode(?string $url = null)
- * @method static Htmlable renderHook(string $name, string | array | null $scopes = null)
+ * @method static Htmlable renderHook(string $name, string | array<string> | null $scopes = null)
  *
  * @see ViewManager
  */
@@ -25,14 +25,14 @@ class FilamentView extends Facade
      */
     public static function registerRenderHook(string $name, Closure $hook, string | array | null $scopes = null): void
     {
-        static::resolved(function (ViewManager $viewManager) use ($name, $hook, $scopes) {
+        static::resolved(function (ViewManager $viewManager) use ($name, $hook, $scopes): void {
             $viewManager->registerRenderHook($name, $hook, $scopes);
         });
     }
 
     public static function spa(bool $condition = true): void
     {
-        static::resolved(function (ViewManager $viewManager) use ($condition) {
+        static::resolved(function (ViewManager $viewManager) use ($condition): void {
             $viewManager->spa($condition);
         });
     }
@@ -42,7 +42,7 @@ class FilamentView extends Facade
      */
     public static function spaUrlExceptions(array $exceptions): void
     {
-        static::resolved(function (ViewManager $viewManager) use ($exceptions) {
+        static::resolved(function (ViewManager $viewManager) use ($exceptions): void {
             $viewManager->spaUrlExceptions($exceptions);
         });
     }

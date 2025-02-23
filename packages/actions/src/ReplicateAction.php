@@ -5,6 +5,7 @@ namespace Filament\Actions;
 use Closure;
 use Filament\Actions\Concerns\CanCustomizeProcess;
 use Filament\Support\Facades\FilamentIcon;
+use Filament\Support\Icons\Heroicon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 
@@ -51,7 +52,7 @@ class ReplicateAction extends Action
         });
 
         $this->action(function () {
-            $result = $this->process(function (array $data, Model $record) {
+            $result = $this->process(function (array $data, Model $record): void {
                 $this->replica = $record->replicate($this->getExcludedAttributes());
 
                 $this->replica->fill($data);
@@ -68,8 +69,8 @@ class ReplicateAction extends Action
             }
         });
 
-        $this->tableIcon(FilamentIcon::resolve('actions::replicate-action') ?? 'heroicon-m-square-2-stack');
-        $this->groupedIcon(FilamentIcon::resolve('actions::replicate-action.grouped') ?? 'heroicon-m-square-2-stack');
+        $this->tableIcon(FilamentIcon::resolve('actions::replicate-action') ?? Heroicon::Square2Stack);
+        $this->groupedIcon(FilamentIcon::resolve('actions::replicate-action.grouped') ?? Heroicon::Square2Stack);
     }
 
     public function beforeReplicaSaved(?Closure $callback): static

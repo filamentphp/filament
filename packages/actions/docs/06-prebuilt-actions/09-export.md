@@ -743,7 +743,7 @@ public function getJobBatchName(): ?string
 
 ## Authorization
 
-By default, only the user who started the export may download files that get generated. If you'd like to customize the authorization logic, you may create an `ExportPolicy` class, and [register it in your `AuthServiceProvider`](https://laravel.com/docs/10.x/authorization#registering-policies):
+By default, only the user who started the export may download files that get generated. If you'd like to customize the authorization logic, you may create an `ExportPolicy` class, and [register it in your `AuthServiceProvider`](https://laravel.com/docs/authorization#registering-policies):
 
 ```php
 use App\Policies\ExportPolicy;

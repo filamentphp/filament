@@ -25,6 +25,8 @@ class PostsTable
                     ->sortable(),
                 TextColumn::make('title')
                     ->searchable(),
+                TextColumn::make('string_backed_enum')
+                    ->searchable(),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

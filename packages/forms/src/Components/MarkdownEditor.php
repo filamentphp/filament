@@ -3,10 +3,12 @@
 namespace Filament\Forms\Components;
 
 use Closure;
+use Filament\Support\Concerns\CanConfigureCommonMark;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 
 class MarkdownEditor extends Field implements Contracts\CanBeLengthConstrained, Contracts\HasFileAttachments
 {
+    use CanConfigureCommonMark;
     use Concerns\CanBeLengthConstrained;
     use Concerns\HasFileAttachments;
     use Concerns\HasMaxHeight;

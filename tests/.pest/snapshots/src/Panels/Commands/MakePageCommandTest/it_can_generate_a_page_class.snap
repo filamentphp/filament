@@ -6,5 +6,5 @@ use Filament\Pages\Page;
 
 class ManageSettings extends Page
 {
-    protected static string $view = 'filament.pages.manage-settings';
+    protected string $view = 'filament.pages.manage-settings';
 }

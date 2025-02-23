@@ -2,16 +2,18 @@
 
 namespace Filament\Tests\Fixtures\Pages;
 
+use BackedEnum;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
 
 class Settings extends Page
 {
-    protected static string $view = 'pages.settings';
+    protected string $view = 'pages.settings';
 
-    protected static ?string $navigationIcon = 'heroicon-o-cog-6-tooth';
+    protected static string | BackedEnum | null $navigationIcon = Heroicon::OutlinedCog6Tooth;
 
     protected static ?int $navigationSort = 2;
 
@@ -32,7 +34,7 @@ class Settings extends Page
     public function form(Schema $form): Schema
     {
         return $form
-            ->schema([
+            ->components([
                 TextInput::make('name')->required(),
             ]);
     }

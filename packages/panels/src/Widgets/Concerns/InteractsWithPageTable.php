@@ -13,7 +13,7 @@ use Livewire\Attributes\Reactive;
 
 use function Livewire\trigger;
 
-trait InteractsWithPageTable
+trait InteractsWithPageTable /** @phpstan-ignore trait.unused */
 {
     /** @var array<string, int> */
     #[Reactive]
@@ -65,6 +65,14 @@ trait InteractsWithPageTable
         throw new Exception('You must define a `getTablePage()` method on your widget that returns the name of a Livewire component.');
     }
 
+    /**
+     * @return array<string, mixed>
+     */
+    protected function getTablePageMountParameters(): array
+    {
+        return [];
+    }
+
     protected function getTablePageInstance(): HasTable
     {
         if (isset($this->tablePage)) {
@@ -85,6 +93,7 @@ trait InteractsWithPageTable
             'tableSearch' => $this->tableSearch,
             'tableSortColumn' => $this->tableSortColumn,
             'tableSortDirection' => $this->tableSortDirection,
+            ...$this->getTablePageMountParameters(),
         ], null, null);
 
         return $this->tablePage = $page;

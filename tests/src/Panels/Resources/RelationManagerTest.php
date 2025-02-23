@@ -23,7 +23,7 @@ use function Filament\Tests\livewire;
 
 uses(TestCase::class);
 
-it('can render relation manager', function () {
+it('can render relation manager', function (): void {
     $ticket = Ticket::factory()
         ->create();
 
@@ -31,7 +31,7 @@ it('can render relation manager', function () {
         ->assertSuccessful();
 });
 
-it('can list departments', function () {
+it('can list departments', function (): void {
     $ticket = Ticket::factory()
         ->hasAttached(Department::factory(10))
         ->create();
@@ -40,7 +40,7 @@ it('can list departments', function () {
         ->assertCanSeeTableRecords($ticket->departments);
 });
 
-it('can render relation manager if the policy viewAny returns true', function () {
+it('can render relation manager if the policy viewAny returns true', function (): void {
     app()->bind(DepartmentPolicy::class . '::viewAny', fn (): bool => true);
 
     $ticket = Ticket::factory()
@@ -51,7 +51,7 @@ it('can render relation manager if the policy viewAny returns true', function ()
     )->toBeTrue();
 });
 
-it('can render relation manager if the policy viewAny returns an allowed response', function () {
+it('can render relation manager if the policy viewAny returns an allowed response', function (): void {
     app()->bind(DepartmentPolicy::class . '::viewAny', fn (): Response => Response::allow());
 
     $ticket = Ticket::factory()
@@ -64,7 +64,7 @@ it('can render relation manager if the policy viewAny returns an allowed respons
     app()->bind(DepartmentPolicy::class . '::viewAny', fn (): bool => true);
 });
 
-it('does not render relation manager if the policy viewAny returns false', function () {
+it('does not render relation manager if the policy viewAny returns false', function (): void {
     app()->bind(DepartmentPolicy::class . '::viewAny', fn (): bool => false);
 
     $ticket = Ticket::factory()
@@ -77,7 +77,7 @@ it('does not render relation manager if the policy viewAny returns false', funct
     app()->bind(DepartmentPolicy::class . '::viewAny', fn (): bool => true);
 });
 
-it('does not render relation manager if the policy viewAny returns a denied response', function () {
+it('does not render relation manager if the policy viewAny returns a denied response', function (): void {
     app()->bind(DepartmentPolicy::class . '::viewAny', fn (): Response => Response::deny());
 
     $ticket = Ticket::factory()
@@ -90,7 +90,7 @@ it('does not render relation manager if the policy viewAny returns a denied resp
     app()->bind(DepartmentPolicy::class . '::viewAny', fn (): bool => true);
 });
 
-it('renders actions based on policy', function (string $action, string $policyMethod, bool | Response $policyResult, bool $isVisible, bool $isSoftDeleted = false, bool $isBulkAction = false) {
+it('renders actions based on policy', function (string $action, string $policyMethod, bool | Response $policyResult, bool $isVisible, bool $isSoftDeleted = false, bool $isBulkAction = false): void {
     app()->bind(DepartmentPolicy::class . '::' . $policyMethod, fn (): bool | Response => $policyResult);
 
     $ticket = Ticket::factory()

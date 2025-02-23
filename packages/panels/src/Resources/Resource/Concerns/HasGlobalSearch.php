@@ -163,12 +163,12 @@ trait HasGlobalSearch
         }
 
         $searchWords = array_filter(
-            str_getcsv(preg_replace('/\s+/', ' ', $search), ' '),
+            str_getcsv(preg_replace('/\s+/', ' ', $search), separator: ' ', escape: '\\'),
             fn ($word): bool => filled($word),
         );
 
         foreach ($searchWords as $searchWord) {
-            $query->where(function (Builder $query) use ($searchWord) {
+            $query->where(function (Builder $query) use ($searchWord): void {
                 $isFirst = true;
 
                 foreach (static::getGloballySearchableAttributes() as $attributes) {

@@ -8,7 +8,7 @@ return [
 
         'modal' => [
 
-            'heading' => 'Կրկնօրինակել :label',
+            'heading' => 'Կրկնօրինակել :labelը',
 
             'actions' => [
 

@@ -1,36 +1,35 @@
 @php
     use Filament\Support\Facades\FilamentView;
 
+    $fieldWrapperView = $getFieldWrapperView();
+    $extraAttributes = $getExtraAttributes();
+    $extraInputAttributeBag = $getExtraInputAttributeBag();
     $color = $getColor() ?? 'primary';
     $hasInlineLabel = $hasInlineLabel();
     $id = $getId();
+    $isAutofocused = $isAutofocused();
     $isDisabled = $isDisabled();
     $isPrefixInline = $isPrefixInline();
     $isReorderable = (! $isDisabled) && $isReorderable();
     $isSuffixInline = $isSuffixInline();
+    $placeholder = $getPlaceholder();
     $prefixActions = $getPrefixActions();
     $prefixIcon = $getPrefixIcon();
+    $prefixIconColor = $getPrefixIconColor();
     $prefixLabel = $getPrefixLabel();
     $statePath = $getStatePath();
     $suffixActions = $getSuffixActions();
     $suffixIcon = $getSuffixIcon();
+    $suffixIconColor = $getSuffixIconColor();
     $suffixLabel = $getSuffixLabel();
 @endphp
 
 <x-dynamic-component
-    :component="$getFieldWrapperView()"
+    :component="$fieldWrapperView"
     :field="$field"
     :has-inline-label="$hasInlineLabel"
+    class="fi-fo-tags-input-wrp"
 >
-    <x-slot
-        name="label"
-        @class([
-            'sm:pt-1.5' => $hasInlineLabel,
-        ])
-    >
-        {{ $getLabel() }}
-    </x-slot>
-
     <x-filament::input.wrapper
         :disabled="$isDisabled"
         :inline-prefix="$isPrefixInline"
@@ -38,16 +37,19 @@
         :prefix="$prefixLabel"
         :prefix-actions="$prefixActions"
         :prefix-icon="$prefixIcon"
-        :prefix-icon-color="$getPrefixIconColor()"
+        :prefix-icon-color="$prefixIconColor"
         :suffix="$suffixLabel"
         :suffix-actions="$suffixActions"
         :suffix-icon="$suffixIcon"
-        :suffix-icon-color="$getSuffixIconColor()"
+        :suffix-icon-color="$suffixIconColor"
         :valid="! $errors->has($statePath)"
         :attributes="
             \Filament\Support\prepare_inherited_attributes($attributes)
-                ->merge($getExtraAttributes(), escape: false)
-                ->class(['fi-fo-tags-input'])
+                ->merge($extraAttributes, escape: false)
+                ->class([
+                    'fi-fo-tags-input',
+                    'fi-disabled' => $isDisabled,
+                ])
         "
     >
         <div
@@ -63,18 +65,25 @@
                     })"
             {{ $getExtraAlpineAttributeBag() }}
         >
-            <x-filament::input
-                autocomplete="off"
-                :autofocus="$isAutofocused()"
-                :disabled="$isDisabled"
-                :id="$id"
-                :inline-prefix="$isPrefixInline && (count($prefixActions) || $prefixIcon || filled($prefixLabel))"
-                :inline-suffix="$isSuffixInline && (count($suffixActions) || $suffixIcon || filled($suffixLabel))"
-                :list="$id . '-suggestions'"
-                :placeholder="$getPlaceholder()"
-                type="text"
-                x-bind="input"
-                :attributes="\Filament\Support\prepare_inherited_attributes($getExtraInputAttributeBag())"
+            <input
+                {{
+                    $extraInputAttributeBag
+                        ->merge([
+                            'autocomplete' => 'off',
+                            'autofocus' => $isAutofocused,
+                            'disabled' => $isDisabled,
+                            'id' => $id,
+                            'list' => $id . '-suggestions',
+                            'placeholder' => $placeholder,
+                            'type' => 'text',
+                            'x-bind' => 'input',
+                        ], escape: false)
+                        ->class([
+                            'fi-input',
+                            'fi-input-has-inline-prefix' => $isPrefixInline && (count($prefixActions) || $prefixIcon || filled($prefixLabel)),
+                            'fi-input-has-inline-suffix' => $isSuffixInline && (count($suffixActions) || $suffixIcon || filled($suffixLabel)),
+                        ])
+                }}
             />
 
             <datalist id="{{ $id }}-suggestions">
@@ -88,52 +97,42 @@
                 @endforeach
             </datalist>
 
-            <div
-                @class([
-                    '[&_.fi-badge-delete-btn]:hidden' => $isDisabled,
-                ])
-            >
-                <div wire:ignore>
-                    <template x-cloak x-if="state?.length">
-                        <div
-                            @if ($isReorderable)
-                                x-on:end.stop="reorderTags($event)"
-                                x-sortable
-                                data-sortable-animation-duration="{{ $getReorderAnimationDuration() }}"
-                            @endif
-                            class="fi-fo-tags-input-tags-ctn flex w-full flex-wrap gap-1.5 border-t border-t-gray-200 p-2 dark:border-t-white/10"
+            <div wire:ignore>
+                <template x-cloak x-if="state?.length">
+                    <div
+                        @if ($isReorderable)
+                            x-on:end.stop="reorderTags($event)"
+                            x-sortable
+                            data-sortable-animation-duration="{{ $getReorderAnimationDuration() }}"
+                        @endif
+                        class="fi-fo-tags-input-tags-ctn"
+                    >
+                        <template
+                            x-for="(tag, index) in state"
+                            x-bind:key="`${tag}-${index}`"
                         >
-                            <template
-                                x-for="(tag, index) in state"
-                                x-bind:key="`${tag}-${index}`"
-                                class="hidden"
+                            <x-filament::badge
+                                :color="$color"
+                                :x-bind:x-sortable-item="$isReorderable ? 'index' : null"
+                                :x-sortable-handle="$isReorderable ? '' : null"
+                                @class([
+                                    'fi-reorderable' => $isReorderable,
+                                ])
                             >
-                                <x-filament::badge
-                                    :color="$color"
-                                    :x-bind:x-sortable-item="$isReorderable ? 'index' : null"
-                                    :x-sortable-handle="$isReorderable ? '' : null"
-                                    @class([
-                                        'cursor-move' => $isReorderable,
-                                    ])
-                                >
-                                    {{ $getTagPrefix() }}
+                                {{ $getTagPrefix() }}
 
-                                    <span
-                                        x-text="tag"
-                                        class="select-none text-start"
-                                    ></span>
+                                <span x-text="tag"></span>
 
-                                    {{ $getTagSuffix() }}
+                                {{ $getTagSuffix() }}
 
-                                    <x-slot
-                                        name="deleteButton"
-                                        x-on:click.stop="deleteTag(tag)"
-                                    ></x-slot>
-                                </x-filament::badge>
-                            </template>
-                        </div>
-                    </template>
-                </div>
+                                <x-slot
+                                    name="deleteButton"
+                                    x-on:click.stop="deleteTag(tag)"
+                                ></x-slot>
+                            </x-filament::badge>
+                        </template>
+                    </div>
+                </template>
             </div>
         </div>
     </x-filament::input.wrapper>

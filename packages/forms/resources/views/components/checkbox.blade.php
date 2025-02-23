@@ -1,36 +1,34 @@
 @php
+    $fieldWrapperView = $getFieldWrapperView();
     $statePath = $getStatePath();
+    $attributes = $attributes
+        ->merge([
+            'autofocus' => $isAutofocused(),
+            'disabled' => $isDisabled(),
+            'id' => $getId(),
+            'required' => $isRequired() && (! $isConcealed()),
+            'wire:loading.attr' => 'disabled',
+            $applyStateBindingModifiers('wire:model') => $statePath,
+        ], escape: false)
+        ->merge($getExtraAttributes(), escape: false)
+        ->merge($getExtraInputAttributes(), escape: false)
+        ->class([
+            'fi-checkbox-input',
+            'fi-valid' => ! $errors->has($statePath),
+            'fi-invalid' => $errors->has($statePath),
+        ]);
 @endphp
 
 <x-dynamic-component
-    :component="$getFieldWrapperView()"
+    :component="$fieldWrapperView"
     :field="$field"
     :inline-label-vertical-alignment="\Filament\Support\Enums\VerticalAlignment::Center"
 >
-    @capture($content)
-        <x-filament::input.checkbox
-            :valid="! $errors->has($statePath)"
-            :attributes="
-                $attributes
-                    ->merge([
-                        'autofocus' => $isAutofocused(),
-                        'disabled' => $isDisabled(),
-                        'id' => $getId(),
-                        'required' => $isRequired() && (! $isConcealed()),
-                        'wire:loading.attr' => 'disabled',
-                        $applyStateBindingModifiers('wire:model') => $statePath,
-                    ], escape: false)
-                    ->merge($getExtraAttributes(), escape: false)
-                    ->merge($getExtraInputAttributes(), escape: false)
-            "
-        />
-    @endcapture
-
     @if ($isInline())
         <x-slot name="labelPrefix">
-            {{ $content() }}
+            <input type="checkbox" {{ $attributes }} />
         </x-slot>
     @else
-        {{ $content() }}
+        <input type="checkbox" {{ $attributes }} />
     @endif
 </x-dynamic-component>

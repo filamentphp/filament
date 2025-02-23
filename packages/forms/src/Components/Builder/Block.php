@@ -2,6 +2,7 @@
 
 namespace Filament\Forms\Components\Builder;
 
+use BackedEnum;
 use Closure;
 use Exception;
 use Filament\Forms\Components\Concerns;
@@ -15,7 +16,7 @@ class Block extends Component
     }
     use Concerns\HasPreview;
 
-    protected string | Closure | null $icon = null;
+    protected string | BackedEnum | Closure | null $icon = null;
 
     protected int | Closure | null $maxItems = null;
 
@@ -45,14 +46,14 @@ class Block extends Component
         return null;
     }
 
-    public function icon(string | Closure | null $icon): static
+    public function icon(string | BackedEnum | Closure | null $icon): static
     {
         $this->icon = $icon;
 
         return $this;
     }
 
-    public function getIcon(): ?string
+    public function getIcon(): string | BackedEnum
     {
         return $this->evaluate($this->icon);
     }

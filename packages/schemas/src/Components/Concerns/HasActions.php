@@ -57,8 +57,6 @@ trait HasActions
      */
     public function getAction(string | array | null $name = null): ?Action
     {
-        $actions = $this->cacheActions();
-
         if (blank($name)) {
             return $this->action;
         }
@@ -74,24 +72,20 @@ trait HasActions
             $name = $firstName;
         }
 
-        $action = $actions[$name] ?? null;
+        $action = $this->cacheActions()[$name] ?? null;
 
         if (! $action) {
             return null;
         }
 
         foreach ($modalActionNames ?? [] as $modalActionName) {
-            $action = $action->getMountableModalAction($modalActionName);
+            $action = $action->getModalAction($modalActionName);
 
             if (! $action) {
                 return null;
             }
 
             $name = $modalActionName;
-        }
-
-        if (! $action instanceof Action) {
-            return null;
         }
 
         return $action;
@@ -110,7 +104,7 @@ trait HasActions
      */
     public function cacheActions(): array
     {
-        $this->cachedActions = $this->getDecorationActions();
+        $this->cachedActions = [];
 
         if ($this instanceof HasAffixActions) {
             $this->cachedActions = [

@@ -2,7 +2,7 @@
 
 namespace Filament\Pages\Dashboard\Concerns;
 
-trait HasFiltersAction
+trait HasFiltersAction /** @phpstan-ignore trait.unused */
 {
     use HasFilters;
 }

@@ -25,14 +25,14 @@ trait HasKey
 
     public function getKey(bool $isAbsolute = true): ?string
     {
+        if ($isAbsolute && $this->hasCachedAbsoluteKey) {
+            return $this->cachedAbsoluteKey;
+        }
+
         $key = $this->evaluate($this->key) ?? $this->getStatePath(isAbsolute: false);
 
         if (! $isAbsolute) {
             return $key;
-        }
-
-        if ($this->hasCachedAbsoluteKey) {
-            return $this->cachedAbsoluteKey;
         }
 
         $keyComponents = [];

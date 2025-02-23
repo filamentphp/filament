@@ -11,8 +11,15 @@ return [
         'form' => [
 
             'file' => [
+
                 'label' => 'Arquivo',
+
                 'placeholder' => 'Enviar um arquivo CSV',
+
+                'rules' => [
+                    'duplicate_columns' => '{0} O arquivo não deve possuir mais de uma coluna sem cabeçalho.|{1,*} O arquivo não pode conter colunas com cabeçalhos iguais: :columns.',
+                ],
+
             ],
 
             'columns' => [
@@ -72,6 +79,7 @@ return [
         'file_name' => 'import-:import_id-:csv_name-failed-rows',
         'error_header' => 'erro',
         'system_error' => 'Erro de sistema, por favor, entre em contato com o suporte.',
+        'column_mapping_required_for_new_record' => 'A coluna :attribute não foi mapeada para uma coluna no arquivo, mas é necessária para criar novos registros.',
     ],
 
 ];

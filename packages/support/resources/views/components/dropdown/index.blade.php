@@ -14,7 +14,7 @@
 ])
 
 @php
-    use Filament\Support\Enums\MaxWidth;
+    use Filament\Support\Enums\Width;
 
     $sizeConfig = collect([
         'availableHeight' => $availableHeight,
@@ -22,8 +22,8 @@
         'padding' => $sizePadding,
     ])->filter()->toJson();
 
-    if (! ($width instanceof MaxWidth)) {
-        $width = MaxWidth::tryFrom($width) ?? $width;
+    if (! ($width instanceof Width)) {
+        $width = Width::tryFrom($width) ?? $width;
     }
 @endphp
 
@@ -51,7 +51,7 @@
             @endif
             @class([
                 'fi-dropdown-panel',
-                ($width instanceof MaxWidth) ? "fi-width-{$width->value}" : (is_string($width) ? $width : 'fi-width-default'),
+                ($width instanceof Width) ? "fi-width-{$width->value}" : (is_string($width) ? $width : 'fi-width-default'),
                 'fi-scrollable' => $maxHeight || $size,
             ])
             @style([

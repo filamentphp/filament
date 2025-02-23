@@ -10,8 +10,8 @@ use Filament\Actions\ViewAction;
 use Filament\Navigation\NavigationGroup;
 use Filament\Navigation\NavigationItem;
 use Filament\Resources\Concerns\HasTabs;
+use Filament\Schemas\Components\EmbeddedTable;
 use Filament\Schemas\Components\RenderHook;
-use Filament\Schemas\Components\TableBuilder;
 use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -82,14 +82,14 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
         return static::$title ?? static::getResource()::getTitleCasePluralModelLabel();
     }
 
-    public function form(Schema $form): Schema
+    public function form(Schema $schema): Schema
     {
-        return static::getResource()::form($form);
+        return static::getResource()::form($schema);
     }
 
-    public function infolist(Schema $infolist): Schema
+    public function infolist(Schema $schema): Schema
     {
-        return static::getResource()::infolist($infolist);
+        return static::getResource()::infolist($schema);
     }
 
     public function getDefaultActionSchemaResolver(Action $action): ?Closure
@@ -211,14 +211,6 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
     }
 
     /**
-     * @return array<int | string, string | Schema>
-     */
-    protected function getForms(): array
-    {
-        return [];
-    }
-
-    /**
      * @return array<NavigationItem | NavigationGroup>
      */
     public function getSubNavigation(): array
@@ -236,7 +228,7 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
             ->components([
                 $this->getTabsContentComponent(),
                 RenderHook::make(PanelsRenderHook::RESOURCE_PAGES_LIST_RECORDS_TABLE_BEFORE),
-                TableBuilder::make(),
+                EmbeddedTable::make(),
                 RenderHook::make(PanelsRenderHook::RESOURCE_PAGES_LIST_RECORDS_TABLE_AFTER),
             ]);
     }

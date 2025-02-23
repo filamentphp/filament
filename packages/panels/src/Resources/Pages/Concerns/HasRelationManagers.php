@@ -2,6 +2,7 @@
 
 namespace Filament\Resources\Pages\Concerns;
 
+use BackedEnum;
 use Filament\Resources\Pages\Enums\ContentTabPosition;
 use Filament\Resources\RelationManagers\RelationGroup;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -82,7 +83,7 @@ trait HasRelationManagers
         return null;
     }
 
-    public function getContentTabIcon(): ?string
+    public function getContentTabIcon(): string | BackedEnum | null
     {
         return null;
     }
@@ -90,14 +91,6 @@ trait HasRelationManagers
     public function getContentTabPosition(): ?ContentTabPosition
     {
         return null;
-    }
-
-    /**
-     * @return array<Component>
-     */
-    public function getContentComponents(): array
-    {
-        return [];
     }
 
     public function getRelationManagersContentComponent(): Component
@@ -127,8 +120,7 @@ trait HasRelationManagers
                     $tabKey = strval($tabKey);
 
                     if (blank($tabKey) && $hasCombinedRelationManagerTabsWithContent) {
-                        return $this->getContentTabComponent()
-                            ->schema($this->getContentComponents());
+                        return $this->getContentTabComponent();
                     }
 
                     if ($manager instanceof RelationGroup) {

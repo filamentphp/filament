@@ -105,13 +105,13 @@ By default, Filament will restrict the width of the content on the page, so it d
 
 ```php
 use Filament\Panel;
-use Filament\Support\Enums\MaxWidth;
+use Filament\Support\Enums\Width;
 
 public function panel(Panel $panel): Panel
 {
     return $panel
         // ...
-        ->maxContentWidth(MaxWidth::Full);
+        ->maxContentWidth(Width::Full);
 }
 ```
 
@@ -119,13 +119,13 @@ If you'd like to set the max content width for pages of the type `SimplePage`, l
 
 ```php
 use Filament\Panel;
-use Filament\Support\Enums\MaxWidth;
+use Filament\Support\Enums\Width;
 
 public function panel(Panel $panel): Panel
 {
     return $panel
         // ...
-        ->simplePageMaxContentWidth(MaxWidth::Small);
+        ->simplePageMaxContentWidth(Width::Small);
 }
 ```
 

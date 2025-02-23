@@ -15,7 +15,11 @@
 
 <x-filament::dropdown
     :width="$width"
-    {{ $attributes->class(['fi-fo-builder-block-picker']) }}
+    :attributes="
+        \Filament\Support\prepare_inherited_attributes(
+            $attributes->class(['fi-fo-builder-block-picker']),
+        )
+    "
 >
     <x-slot name="trigger">
         {{ $trigger }}
@@ -27,6 +31,8 @@
         >
             @foreach ($blocks as $block)
                 @php
+                    $blockIcon = $block->getIcon();
+
                     $wireClickActionArguments = ['block' => $block->getName()];
 
                     if (filled($afterItem)) {
@@ -39,7 +45,7 @@
                 @endphp
 
                 <x-filament::dropdown.list.item
-                    :icon="$block->getIcon()"
+                    :icon="$blockIcon"
                     x-on:click="close"
                     :wire:click="$wireClickAction"
                 >

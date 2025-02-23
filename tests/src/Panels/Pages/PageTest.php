@@ -10,18 +10,18 @@ use function Filament\Tests\livewire;
 
 uses(TestCase::class);
 
-it('can render page', function () {
+it('can render page', function (): void {
     $this->get(Settings::getUrl())
         ->assertSuccessful();
 });
 
-it('can generate a slug based on the page name', function () {
+it('can generate a slug based on the page name', function (): void {
     expect(Settings::getSlug())
         ->toBe('settings');
 });
 
-it('can report validation errors', function () {
-    Page::$reportValidationErrorUsing = function (ValidationException $exception) {
+it('can report validation errors', function (): void {
+    Page::$reportValidationErrorUsing = function (ValidationException $exception): void {
         Notification::make()
             ->danger()
             ->title($exception->getMessage())

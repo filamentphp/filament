@@ -6,5 +6,5 @@ use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 interface HasFileAttachments
 {
-    public function saveUploadedFileAttachment(TemporaryUploadedFile $attachment): ?string;
+    public function saveUploadedFileAttachment(?TemporaryUploadedFile $attachment = null): ?string;
 }

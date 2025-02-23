@@ -12,48 +12,48 @@ use Illuminate\Database\Eloquent\Builder;
 
 uses(TestCase::class);
 
-it('can retrieve Eloquent query for model', function () {
+it('can retrieve Eloquent query for model', function (): void {
     expect(PostResource::getEloquentQuery())
         ->toBeInstanceOf(Builder::class)
         ->getModel()->toBeInstanceOf(Post::class);
 });
 
-it('can generate a slug based on the model name', function () {
+it('can generate a slug based on the model name', function (): void {
     expect(PostResource::getSlug())
         ->toBe('posts');
 });
 
-it('can generate a slug based on the multi-word model name', function () {
+it('can generate a slug based on the multi-word model name', function (): void {
     expect(PostCategoryResource::getSlug())
         ->toBe('post-categories');
 });
 
-it('can generate a nested slug based on the model name', function () {
+it('can generate a nested slug based on the model name', function (): void {
     expect(ProductResource::getSlug())
         ->toBe('shop/products');
 });
 
-it('can generate a nested slug based on the model name with a resource outside of its directory', function () {
+it('can generate a nested slug based on the model name with a resource outside of its directory', function (): void {
     expect(OrderResource::getSlug())
         ->toBe('shop/orders');
 });
 
-it('can generate a nested slug based on the multi-word model name', function () {
+it('can generate a nested slug based on the multi-word model name', function (): void {
     expect(OrderInvoiceResource::getSlug())
         ->toBe('shop/order-invoices');
 });
 
-it('can generate a label based on the model name', function () {
+it('can generate a label based on the model name', function (): void {
     expect(PostResource::getModelLabel())
         ->toBe('post');
 });
 
-it('can generate a label based on the multi-word model name', function () {
+it('can generate a label based on the multi-word model name', function (): void {
     expect(PostCategoryResource::getModelLabel())
         ->toBe('post category');
 });
 
-it('can generate a plural label based on the model name and locale', function () {
+it('can generate a plural label based on the model name and locale', function (): void {
     $originalLocale = app()->getLocale();
 
     app()->setLocale('en');
@@ -67,7 +67,7 @@ it('can generate a plural label based on the model name and locale', function ()
     app()->setLocale($originalLocale);
 });
 
-it('can generate a plural label based on the multi-word model name and locale', function () {
+it('can generate a plural label based on the multi-word model name and locale', function (): void {
     $originalLocale = app()->getLocale();
 
     app()->setLocale('en');
@@ -81,21 +81,21 @@ it('can generate a plural label based on the multi-word model name and locale', 
     app()->setLocale($originalLocale);
 });
 
-it('can retrieve a record\'s title', function () {
+it('can retrieve a record\'s title', function (): void {
     $post = Post::factory()->create();
 
     expect(PostResource::getRecordTitle($post))
         ->toBe($post->title);
 });
 
-it('can resolve record route binding', function () {
+it('can resolve record route binding', function (): void {
     $post = Post::factory()->create();
 
     expect(PostResource::resolveRecordRouteBinding($post->getKey()))
         ->toBeSameModel($post);
 });
 
-it('can retrieve a page\'s URL', function () {
+it('can retrieve a page\'s URL', function (): void {
     $post = Post::factory()->create();
     $resourceSlug = PostResource::getSlug();
 
@@ -111,7 +111,7 @@ it('can retrieve a page\'s URL', function () {
         ->toContain(strval($post->getRouteKey()));
 });
 
-it('can retrieve a page\'s URL from its model', function () {
+it('can retrieve a page\'s URL from its model', function (): void {
     $post = Post::factory()->create();
 
     expect(Filament::getResourceUrl($post, 'edit'))

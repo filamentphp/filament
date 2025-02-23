@@ -65,11 +65,11 @@ return [
     ],
 
     'example_csv' => [
-        'file_name' => ':importatore-esempio',
+        'file_name' => ':importer-example',
     ],
 
     'failure_csv' => [
-        'file_name' => 'import-:import_id-:csv_nome-righe-fallite',
+        'file_name' => 'import-:import_id-:csv_name-failed-rows',
         'error_header' => 'errore',
         'system_error' => 'Errore di sistema, per favore contatta il supporto.',
     ],

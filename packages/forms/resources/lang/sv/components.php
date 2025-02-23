@@ -11,15 +11,67 @@ return [
             ],
 
             'add' => [
+
                 'label' => 'Lägg till i :label',
+
+                'modal' => [
+
+                    'heading' => 'Lägg till i :label',
+
+                    'actions' => [
+
+                        'add' => [
+                            'label' => 'Lägg till',
+                        ],
+
+                    ],
+
+                ],
+
             ],
 
             'add_between' => [
+
                 'label' => 'Infoga mellan block',
+
+                'modal' => [
+
+                    'heading' => 'Lägg till i :label',
+
+                    'actions' => [
+
+                        'add' => [
+                            'label' => 'Lägg till',
+                        ],
+
+                    ],
+
+                ],
+
             ],
 
             'delete' => [
                 'label' => 'Radera',
+            ],
+
+            'edit' => [
+
+                'label' => 'Redigera',
+
+                'modal' => [
+
+                    'heading' => 'Redigera block',
+
+                    'actions' => [
+
+                        'save' => [
+                            'label' => 'Spara ändringar',
+                        ],
+
+                    ],
+
+                ],
+
             ],
 
             'reorder' => [
@@ -356,6 +408,8 @@ return [
 
             'create_option' => [
 
+                'label' => 'Skapa',
+
                 'modal' => [
 
                     'heading' => 'Skapa',
@@ -377,6 +431,8 @@ return [
             ],
 
             'edit_option' => [
+
+                'label' => 'Redigera',
 
                 'modal' => [
 

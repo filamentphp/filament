@@ -537,7 +537,7 @@ trait CanBeValidated
     public function distinct(bool | Closure $condition = true): static
     {
         $this->rule(static function (Field $component, mixed $state) {
-            return function (string $attribute, mixed $value, Closure $fail) use ($component, $state) {
+            return function (string $attribute, mixed $value, Closure $fail) use ($component, $state): void {
                 if (blank($state)) {
                     return;
                 }
@@ -707,7 +707,7 @@ trait CanBeValidated
         $rules = [
             $this->getRequiredValidationRule(),
             ...($this instanceof CanBeLengthConstrained ? $this->getLengthValidationRules() : []),
-            ...(($inRule = $this->getInValidationRule()) ? [$inRule] : []),
+            ...(((! $this->hasInValidationOnMultipleValues()) && ($inRule = $this->getInValidationRule())) ? [$inRule] : []),
         ];
 
         if (filled($regexPattern = $this->getRegexPattern())) {
@@ -751,7 +751,7 @@ trait CanBeValidated
 
         if (count($componentMessages = $this->getValidationMessages())) {
             foreach ($componentMessages as $rule => $message) {
-                $messages["{$statePath}.{$rule}"] = $message;
+                $messages["{$statePath}.{$rule}"] = $message; /** @phpstan-ignore parameterByRef.type */
             }
         }
     }
@@ -769,9 +769,9 @@ trait CanBeValidated
 
         if (
             $this->hasInValidationOnMultipleValues() &&
-            filled($inValidationRuleValues = $this->getInValidationRuleValues())
+            ($inRule = $this->getInValidationRule())
         ) {
-            $rules["{$statePath}.*"] = [Rule::in($inValidationRuleValues)];
+            $rules["{$statePath}.*"] = [$inRule];
         }
 
         if (! $this instanceof HasNestedRecursiveValidationRules) {

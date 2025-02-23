@@ -3,11 +3,12 @@
 namespace Filament\Tables\Filters\Concerns;
 
 use Closure;
+use Exception;
 use Filament\Support\Services\RelationshipJoiner;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Database\Eloquent\Relations\HasOneOrManyThrough;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Znck\Eloquent\Relations\BelongsToThrough;
 
@@ -49,11 +50,15 @@ trait HasRelationship
 
     public function getRelationship(): Relation | Builder
     {
-        $record = app($this->getTable()->getModel());
+        $model = $this->getTable()->getModel();
+
+        $record = app($model);
 
         $relationship = null;
 
-        foreach (explode('.', $this->getRelationshipName()) as $nestedRelationshipName) {
+        $relationshipName = $this->getRelationshipName();
+
+        foreach (explode('.', $relationshipName) as $nestedRelationshipName) {
             if (! $record->isRelation($nestedRelationshipName)) {
                 $relationship = null;
 
@@ -62,6 +67,10 @@ trait HasRelationship
 
             $relationship = $record->{$nestedRelationshipName}();
             $record = $relationship->getRelated();
+        }
+
+        if (! $relationship) {
+            throw new Exception("The relationship [{$relationshipName}] does not exist on the model [{$model}].");
         }
 
         return $relationship;
@@ -110,7 +119,7 @@ trait HasRelationship
                 $relationship->getQualifiedRelatedKeyName();
         }
 
-        if ($relationship instanceof HasManyThrough) {
+        if ($relationship instanceof HasOneOrManyThrough) {
             return $query?->getModel()->qualifyColumn($relationship->getForeignKeyName()) ??
                 $relationship->getQualifiedForeignKeyName();
         }

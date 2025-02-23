@@ -6,8 +6,12 @@ use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Notifications\Events\DatabaseNotificationsSent;
 use Filament\Notifications\Livewire\Notifications;
+use Filament\Notifications\View\Components\NotificationComponent;
+use Filament\Notifications\View\Components\NotificationComponent\IconComponent;
+use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Components\ViewComponent;
 use Filament\Support\Concerns\HasColor;
+use Filament\Support\Icons\Heroicon;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Model;
@@ -15,10 +19,14 @@ use Illuminate\Notifications\DatabaseNotification as DatabaseNotificationModel;
 use Illuminate\Notifications\Messages\BroadcastMessage;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Js;
 use Illuminate\Support\Str;
+use Illuminate\View\ComponentAttributeBag;
 use PHPUnit\Framework\Assert;
 
-class Notification extends ViewComponent implements Arrayable
+use function Filament\Support\generate_icon_html;
+
+class Notification extends ViewComponent implements Arrayable, HasEmbeddedView
 {
     use Concerns\CanBeInline;
     use Concerns\HasActions;
@@ -31,11 +39,6 @@ class Notification extends ViewComponent implements Arrayable
     use Concerns\HasStatus;
     use Concerns\HasTitle;
     use HasColor;
-
-    /**
-     * @var view-string
-     */
-    protected string $view = 'filament-notifications::notification';
 
     protected string $viewIdentifier = 'notification';
 
@@ -77,7 +80,7 @@ class Notification extends ViewComponent implements Arrayable
             'iconColor' => $this->getIconColor(),
             'status' => $this->getStatus(),
             'title' => $this->getTitle(),
-            'view' => $this->getView(),
+            'view' => $this->hasView() ? $this->getView() : null,
             'viewData' => $this->getViewData(),
         ];
     }
@@ -309,5 +312,85 @@ class Notification extends ViewComponent implements Arrayable
                 'The notification with the given title was sent'
             );
         }
+    }
+
+    public function toEmbeddedHtml(): string
+    {
+        $status = $this->getStatus();
+        $title = $this->getTitle();
+        $hasTitle = filled($title);
+        $date = $this->getDate();
+        $hasDate = filled($date);
+        $body = $this->getBody();
+        $hasBody = filled($body);
+
+        $attributes = (new ComponentAttributeBag)
+            ->merge([
+                'wire:key' => "{$this->getId()}.notifications.{$this->getId()}",
+                'x-on:close-notification.window' => "if (\$event.detail.id == '{$this->getId()}') close()",
+            ], escape: false)
+            ->color(NotificationComponent::class, $this->getColor() ?? 'gray')
+            ->class([
+                'fi-no-notification',
+                'fi-inline' => $this->isInline,
+                "fi-status-{$status}" => $status,
+            ]);
+
+        ob_start(); ?>
+
+        <div
+            x-data="notificationComponent({ notification: <?= Js::from($this) ?> })"
+            x-transition:enter-start="fi-transition-enter-start"
+            x-transition:leave-end="fi-transition-leave-end"
+            <?= $attributes ?>
+        >
+            <?= generate_icon_html(
+                $this->getIcon(),
+                attributes: (new ComponentAttributeBag)->color(IconComponent::class, $this->getIconColor())->class(['fi-no-notification-icon']),
+                size: $this->getIconSize(),
+            )?->toHtml() ?>
+
+            <div class="fi-no-notification-main">
+                <?php if ($hasTitle || $hasDate || $hasBody) { ?>
+                    <div class="fi-no-notification-text">
+                        <?php if ($hasTitle) { ?>
+                            <h3 class="fi-no-notification-title">
+                                <?= str($title)->sanitizeHtml() ?>
+                            </h3>
+                        <?php } ?>
+
+                        <?php if ($hasDate) { ?>
+                            <time class="fi-no-notification-date">
+                                <?= e($date) ?>
+                            </time>
+                        <?php } ?>
+
+                        <?php if ($hasBody) { ?>
+                            <div class="fi-no-notification-body">
+                                <?= str($body)->sanitizeHtml() ?>
+                            </div>
+                        <?php } ?>
+                    </div>
+                <?php } ?>
+
+                <?php if ($actions = $this->getActions()) { ?>
+                    <div class="fi-ac fi-no-notification-actions">
+                        <?php foreach ($actions as $action) { ?>
+                            <?= $action->toHtml() ?>
+                        <?php } ?>
+                    </div>
+                <?php } ?>
+            </div>
+
+            <button
+                type="button"
+                x-on:click="close"
+                class="fi-icon-btn fi-no-notification-close-btn"
+            >
+                <?= generate_icon_html(Heroicon::XMark, alias: 'notifications::notification.close-button')->toHtml() ?>
+            </button>
+        </div>
+
+        <?php return ob_get_clean();
     }
 }

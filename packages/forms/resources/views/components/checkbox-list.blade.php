@@ -1,135 +1,59 @@
 @php
     use Filament\Support\Enums\GridDirection;
 
+    $fieldWrapperView = $getFieldWrapperView();
+    $extraInputAttributeBag = $getExtraInputAttributeBag();
+    $isHtmlAllowed = $isHtmlAllowed();
     $gridDirection = $getGridDirection() ?? GridDirection::Column;
     $isBulkToggleable = $isBulkToggleable();
     $isDisabled = $isDisabled();
     $isSearchable = $isSearchable();
     $statePath = $getStatePath();
+    $options = $getOptions();
+    $livewireKey = $getLivewireKey();
+    $wireModelAttribute = $applyStateBindingModifiers('wire:model');
 @endphp
 
-<x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
+<x-dynamic-component :component="$fieldWrapperView" :field="$field">
     <div
-        x-data="{
-            areAllCheckboxesChecked: false,
-
-            checkboxListOptions: Array.from(
-                $root.querySelectorAll('.fi-fo-checkbox-list-option-label'),
-            ),
-
-            search: '',
-
-            visibleCheckboxListOptions: [],
-
-            checkIfAllCheckboxesAreChecked: function () {
-                this.areAllCheckboxesChecked =
-                    this.visibleCheckboxListOptions.length ===
-                    this.visibleCheckboxListOptions.filter((checkboxLabel) =>
-                        checkboxLabel.querySelector('input[type=checkbox]:checked'),
-                    ).length
-            },
-
-            toggleAllCheckboxes: function () {
-                state = ! this.areAllCheckboxesChecked
-
-                this.visibleCheckboxListOptions.forEach((checkboxLabel) => {
-                    checkbox = checkboxLabel.querySelector('input[type=checkbox]')
-
-                    if (checkbox.disabled) {
-                        return
-                    }
-
-                    checkbox.checked = state
-                    checkbox.dispatchEvent(new Event('change'))
-                })
-
-                this.areAllCheckboxesChecked = state
-            },
-
-            updateVisibleCheckboxListOptions: function () {
-                this.visibleCheckboxListOptions = this.checkboxListOptions.filter(
-                    (checkboxListItem) => {
-                        if (
-                            checkboxListItem
-                                .querySelector('.fi-fo-checkbox-list-option-label')
-                                ?.innerText.toLowerCase()
-                                .includes(this.search.toLowerCase())
-                        ) {
-                            return true
-                        }
-
-                        return checkboxListItem
-                            .querySelector('.fi-fo-checkbox-list-option-description')
-                            ?.innerText.toLowerCase()
-                            .includes(this.search.toLowerCase())
-                    },
-                )
-            },
-        }"
-        x-init="
-            updateVisibleCheckboxListOptions()
-
-            $nextTick(() => {
-                checkIfAllCheckboxesAreChecked()
-            })
-
-            Livewire.hook('commit', ({ component, commit, succeed, fail, respond }) => {
-                succeed(({ snapshot, effect }) => {
-                    $nextTick(() => {
-                        if (component.id !== @js($this->getId())) {
-                            return
-                        }
-
-                        checkboxListOptions = Array.from(
-                            $root.querySelectorAll('.fi-fo-checkbox-list-option-label'),
-                        )
-
-                        updateVisibleCheckboxListOptions()
-
-                        checkIfAllCheckboxesAreChecked()
-                    })
-                })
-            })
-
-            $watch('search', () => {
-                updateVisibleCheckboxListOptions()
-                checkIfAllCheckboxesAreChecked()
-            })
-        "
+        @if (FilamentView::hasSpaMode())
+            {{-- format-ignore-start --}}x-load="visible || event (x-modal-opened)"{{-- format-ignore-end --}}
+        @else
+            x-load
+        @endif
+        x-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('checkbox-list', 'filament/forms') }}"
+        x-data="checkboxListFormComponent({
+                    livewireId: @js($this->getId()),
+                })"
+        {{ $getExtraAlpineAttributeBag()->class(['fi-fo-checkbox-list']) }}
     >
         @if (! $isDisabled)
             @if ($isSearchable)
                 <x-filament::input.wrapper
                     inline-prefix
-                    prefix-icon="heroicon-m-magnifying-glass"
+                    :prefix-icon="\Filament\Support\Icons\Heroicon::MagnifyingGlass"
                     prefix-icon-alias="forms:components.checkbox-list.search-field"
-                    class="mb-4"
+                    class="fi-fo-checkbox-list-search-input-wrp"
                 >
-                    <x-filament::input
-                        inline-prefix
-                        :placeholder="$getSearchPrompt()"
+                    <input
+                        placeholder="{{ $getSearchPrompt() }}"
                         type="search"
-                        :attributes="
-                            \Filament\Support\prepare_inherited_attributes(
-                                new \Illuminate\View\ComponentAttributeBag([
-                                    'x-model.debounce.' . $getSearchDebounce() => 'search',
-                                ])
-                            )
-                        "
+                        x-model.debounce.{{ $getSearchDebounce() }}="search"
+                        class="fi-input fi-input-has-inline-prefix"
                     />
                 </x-filament::input.wrapper>
             @endif
 
-            @if ($isBulkToggleable && count($getOptions()))
+            @if ($isBulkToggleable && count($options))
                 <div
                     x-cloak
-                    class="mb-2"
-                    wire:key="{{ $getLivewireKey() }}.actions"
+                    class="fi-fo-checkbox-list-actions"
+                    wire:key="{{ $livewireKey }}.actions"
                 >
                     <span
                         x-show="! areAllCheckboxesChecked"
                         x-on:click="toggleAllCheckboxes()"
-                        wire:key="{{ $getLivewireKey() }}.actions.select-all"
+                        wire:key="{{ $livewireKey }}.actions.select-all"
                     >
                         {{ $getAction('selectAll') }}
                     </span>
@@ -137,7 +61,7 @@
                     <span
                         x-show="areAllCheckboxesChecked"
                         x-on:click="toggleAllCheckboxes()"
-                        wire:key="{{ $getLivewireKey() }}.actions.deselect-all"
+                        wire:key="{{ $livewireKey }}.actions.deselect-all"
                     >
                         {{ $getAction('deselectAll') }}
                     </span>
@@ -153,14 +77,13 @@
                         'x-show' => $isSearchable ? 'visibleCheckboxListOptions.length' : null,
                     ], escape: false)
                     ->class([
-                        'fi-fo-checkbox-list gap-4',
-                        '-mt-4' => $gridDirection === GridDirection::Column,
+                        'fi-fo-checkbox-list-options',
                     ])
             }}
         >
-            @forelse ($getOptions() as $value => $label)
+            @forelse ($options as $value => $label)
                 <div
-                    wire:key="{{ $getLivewireKey() }}.options.{{ $value }}"
+                    wire:key="{{ $livewireKey }}.options.{{ $value }}"
                     @if ($isSearchable)
                         x-show="
                             $el
@@ -173,33 +96,31 @@
                                     .includes(search.toLowerCase())
                         "
                     @endif
-                    @class([
-                        'break-inside-avoid pt-4' => $gridDirection === GridDirection::Column,
-                    ])
+                    class="fi-fo-checkbox-list-option-ctn"
                 >
-                    <label
-                        class="fi-fo-checkbox-list-option-label flex gap-x-3"
-                    >
-                        <x-filament::input.checkbox
-                            :valid="! $errors->has($statePath)"
-                            :attributes="
-                                \Filament\Support\prepare_inherited_attributes($getExtraInputAttributeBag())
+                    <label class="fi-fo-checkbox-list-option">
+                        <input
+                            type="checkbox"
+                            {{
+                                $extraInputAttributeBag
                                     ->merge([
                                         'disabled' => $isDisabled || $isOptionDisabled($value, $label),
                                         'value' => $value,
                                         'wire:loading.attr' => 'disabled',
-                                        $applyStateBindingModifiers('wire:model') => $statePath,
+                                        $wireModelAttribute => $statePath,
                                         'x-on:change' => $isBulkToggleable ? 'checkIfAllCheckboxesAreChecked()' : null,
                                     ], escape: false)
-                                    ->class(['mt-1'])
-                            "
+                                    ->class([
+                                        'fi-checkbox-input',
+                                        'fi-valid' => ! $errors->has($statePath),
+                                        'fi-invalid' => $errors->has($statePath),
+                                    ])
+                            }}
                         />
 
-                        <div class="grid text-sm leading-6">
-                            <span
-                                class="fi-fo-checkbox-list-option-label overflow-hidden break-words font-medium text-gray-950 dark:text-white"
-                            >
-                                @if ($isHtmlAllowed())
+                        <div class="fi-fo-checkbox-list-option-text">
+                            <span class="fi-fo-checkbox-list-option-label">
+                                @if ($isHtmlAllowed)
                                     {!! $label !!}
                                 @else
                                     {{ $label }}
@@ -208,7 +129,7 @@
 
                             @if ($hasDescription($value))
                                 <p
-                                    class="fi-fo-checkbox-list-option-description text-gray-500 dark:text-gray-400"
+                                    class="fi-fo-checkbox-list-option-description"
                                 >
                                     {{ $getDescription($value) }}
                                 </p>
@@ -217,7 +138,7 @@
                     </label>
                 </div>
             @empty
-                <div wire:key="{{ $getLivewireKey() }}.empty"></div>
+                <div wire:key="{{ $livewireKey }}.empty"></div>
             @endforelse
         </div>
 
@@ -225,7 +146,7 @@
             <div
                 x-cloak
                 x-show="search && ! visibleCheckboxListOptions.length"
-                class="fi-fo-checkbox-list-no-search-results-message text-sm text-gray-500 dark:text-gray-400"
+                class="fi-fo-checkbox-list-no-search-results-message"
             >
                 {{ $getNoSearchResultsMessage() }}
             </div>

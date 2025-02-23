@@ -8,7 +8,7 @@ return [
 
         'modal' => [
 
-            'heading' => 'Վերականգնել :label',
+            'heading' => 'Վերականգնել :labelը',
 
             'actions' => [
 
@@ -23,7 +23,7 @@ return [
         'notifications' => [
 
             'restored' => [
-                'title' => 'Գրառումը վերականգնել է',
+                'title' => 'Գրառումը վերականգնվել է',
             ],
 
         ],
@@ -36,7 +36,7 @@ return [
 
         'modal' => [
 
-            'heading' => 'Վերականգնել ընտրված :label',
+            'heading' => 'Վերականգնել ընտրված :labelը',
 
             'actions' => [
 
@@ -51,7 +51,7 @@ return [
         'notifications' => [
 
             'restored' => [
-                'title' => 'Գրառումները վերականգնել են',
+                'title' => 'Գրառումները վերականգնվել են։',
             ],
 
         ],

@@ -18,6 +18,8 @@
 ])
 
 @php
+    use Filament\Support\View\Components\InputComponent\WrapperComponent\IconComponent;
+
     $prefixActions = array_filter(
         $prefixActions,
         fn (\Filament\Actions\Action $prefixAction): bool => $prefixAction->isVisible(),
@@ -35,21 +37,8 @@
     $hasAlpineValidClasses = filled($alpineValid);
     $hasAlpineClasses = $hasAlpineDisabledClasses || $hasAlpineValidClasses;
 
-    $getIconClasses = fn (string | array $color = 'gray'): string => \Illuminate\Support\Arr::toCssClasses([
-        'fi-input-wrp-icon',
-        match ($color) {
-            'gray' => '',
-            default => 'fi-color-custom',
-        },
-        is_string($color) ? "fi-color-{$color}" : null,
-    ]);
-
-    $getIconStyles = fn (string | array $color = 'gray'): string => \Illuminate\Support\Arr::toCssStyles([
-        \Filament\Support\get_color_css_variables(
-            $color,
-            shades: [500],
-            alias: 'input-wrapper.icon',
-        ) => $color !== 'gray',
+    $getIconClasses = fn (string $color = 'gray'): string => \Illuminate\Support\Arr::toCssClasses([
+        ...\Filament\Support\get_component_color_classes(IconComponent::class, $color),
     ]);
 
     $wireTarget = $attributes->whereStartsWith(['wire:target'])->first();
@@ -106,8 +95,7 @@
                         'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator,
                         'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
                     ], escape: false)
-                    ->class([$getIconClasses($prefixIconColor)])
-                    ->style([$getIconStyles($prefixIconColor)]))
+                    ->class([$getIconClasses($prefixIconColor)]))
             }}
 
             @if ($hasLoadingIndicator)
@@ -163,8 +151,7 @@
                         'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator,
                         'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
                     ], escape: false)
-                    ->class([$getIconClasses($suffixIconColor)])
-                    ->style([$getIconStyles($suffixIconColor)]))
+                    ->class([$getIconClasses($suffixIconColor)]))
             }}
 
             @if (count($suffixActions))

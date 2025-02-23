@@ -19,7 +19,7 @@ class Tabs extends Component
     /**
      * @var view-string
      */
-    protected string $view = 'filament-schema::components.tabs';
+    protected string $view = 'filament-schemas::components.tabs';
 
     protected int | Closure $activeTab = 1;
 
@@ -70,7 +70,7 @@ class Tabs extends Component
      */
     public function tabs(array | Closure $tabs): static
     {
-        $this->childComponents($tabs);
+        $this->components($tabs);
 
         return $this;
     }
@@ -94,7 +94,7 @@ class Tabs extends Component
         if ($this->isTabPersistedInQueryString()) {
             $queryStringTab = request()->query($this->getTabQueryStringKey());
 
-            foreach ($this->getChildComponentContainer()->getComponents() as $index => $tab) {
+            foreach ($this->getChildSchema()->getComponents() as $index => $tab) {
                 if ($tab->getId() !== $queryStringTab) {
                     continue;
                 }

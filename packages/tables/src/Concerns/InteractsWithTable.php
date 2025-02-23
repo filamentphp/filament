@@ -288,8 +288,6 @@ trait InteractsWithTable
 
     public function resetTable(): void
     {
-        $this->cacheForms();
-
         $this->bootedInteractsWithTable();
 
         $this->resetTableFiltersForm();

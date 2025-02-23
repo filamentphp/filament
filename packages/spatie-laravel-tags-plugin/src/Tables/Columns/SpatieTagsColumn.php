@@ -91,7 +91,7 @@ class SpatieTagsColumn extends TextColumn
         }
 
         if ($this->hasRelationship($query->getModel())) {
-            return $query->with(["{$this->getRelationshipName()}.tags"]);
+            return $query->with(["{$this->getRelationshipName($query->getModel())}.tags"]);
         }
 
         return $query->with(['tags']);

@@ -18,6 +18,7 @@ use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Support\ChunkIterator;
 use Filament\Support\Facades\FilamentIcon;
+use Filament\Support\Icons\Heroicon;
 use Illuminate\Bus\PendingBatch;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Support\Htmlable;
@@ -30,7 +31,7 @@ use Illuminate\Support\Number;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\File;
 use Illuminate\Validation\ValidationException;
-use League\Csv\ByteSequence;
+use League\Csv\Bom;
 use League\Csv\CharsetConverter;
 use League\Csv\Info;
 use League\Csv\Reader as CsvReader;
@@ -82,15 +83,15 @@ class ImportAction extends Action
 
         $this->modalSubmitActionLabel(__('filament-actions::import.modal.actions.import.label'));
 
-        $this->groupedIcon(FilamentIcon::resolve('actions::import-action.grouped') ?? 'heroicon-m-arrow-up-tray');
+        $this->groupedIcon(FilamentIcon::resolve('actions::import-action.grouped') ?? Heroicon::ArrowUpTray);
 
-        $this->form(fn (ImportAction $action): array => array_merge([
+        $this->schema(fn (ImportAction $action): array => array_merge([
             FileUpload::make('file')
                 ->label(__('filament-actions::import.modal.form.file.label'))
                 ->placeholder(__('filament-actions::import.modal.form.file.placeholder'))
                 ->acceptedFileTypes(['text/csv', 'text/x-csv', 'application/csv', 'application/x-csv', 'text/comma-separated-values', 'text/x-comma-separated-values', 'text/plain', 'application/vnd.ms-excel'])
                 ->rules($action->getFileValidationRules())
-                ->afterStateUpdated(function (FileUpload $component, Component $livewire, Set $set, ?TemporaryUploadedFile $state) use ($action) {
+                ->afterStateUpdated(function (FileUpload $component, Component $livewire, Set $set, ?TemporaryUploadedFile $state) use ($action): void {
                     if (! $state instanceof TemporaryUploadedFile) {
                         return;
                     }
@@ -178,7 +179,7 @@ class ImportAction extends Action
                 ->visible(fn (Get $get): bool => $get('file') instanceof TemporaryUploadedFile),
         ], $action->getImporter()::getOptionsFormComponents()));
 
-        $this->action(function (ImportAction $action, array $data) {
+        $this->action(function (ImportAction $action, array $data): void {
             /** @var TemporaryUploadedFile $csvFile */
             $csvFile = $data['file'];
 
@@ -227,8 +228,7 @@ class ImportAction extends Action
             $importChunkIterator = new ChunkIterator($csvResults->getRecords(), chunkSize: $action->getChunkSize());
 
             /** @var array<array<array<string, string>>> $importChunks */
-            $importChunks = $importChunkIterator->get();
-
+            $importChunks = $importChunkIterator->get(); /** @phpstan-ignore varTag.nativeType */
             $job = $action->getJob();
 
             $options = array_merge(
@@ -271,12 +271,12 @@ class ImportAction extends Action
                     filled($jobBatchName = $importer->getJobBatchName()),
                     fn (PendingBatch $batch) => $batch->name($jobBatchName),
                 )
-                ->finally(function () use ($authGuard, $columnMap, $import, $jobConnection, $options) {
+                ->finally(function () use ($authGuard, $columnMap, $import, $jobConnection, $options): void {
                     $import->touch('completed_at');
 
                     event(new ImportCompleted($import, $columnMap, $options));
 
-                    if (! $import->user instanceof Authenticatable) {
+                    if (! $import->user instanceof Authenticatable) { /** @phpstan-ignore instanceof.alwaysTrue */
                         return;
                     }
 
@@ -373,8 +373,8 @@ class ImportAction extends Action
 
                     $csv->insertAll($exampleRows);
 
-                    return response()->streamDownload(function () use ($csv) {
-                        $csv->setOutputBOM(ByteSequence::BOM_UTF8);
+                    return response()->streamDownload(function () use ($csv): void {
+                        $csv->setOutputBOM(Bom::Utf8);
 
                         echo $csv->toString();
                     }, __('filament-actions::import.example_csv.file_name', ['importer' => (string) str($this->getImporter())->classBasename()->kebab()]), [
@@ -398,16 +398,14 @@ class ImportAction extends Action
     public function getUploadedFileStream(TemporaryUploadedFile $file)
     {
         $fileDisk = invade($file)->disk; /** @phpstan-ignore-line */
-        $filePath = $file->getRealPath();
-
         if (config("filesystems.disks.{$fileDisk}.driver") !== 's3') {
-            $resource = fopen($filePath, mode: 'r');
+            $resource = $file->readStream();
         } else {
             /** @var AwsS3V3Adapter $s3Adapter */
             $s3Adapter = Storage::disk($fileDisk)->getAdapter();
 
             invade($s3Adapter)->client->registerStreamWrapper(); /** @phpstan-ignore-line */
-            $fileS3Path = (string) str('s3://' . config("filesystems.disks.{$fileDisk}.bucket") . '/' . $filePath)->replace('\\', '/');
+            $fileS3Path = (string) str('s3://' . config("filesystems.disks.{$fileDisk}.bucket") . '/' . $file->getRealPath())->replace('\\', '/');
 
             $resource = fopen($fileS3Path, mode: 'r', context: stream_context_create([
                 's3' => [
@@ -601,7 +599,7 @@ class ImportAction extends Action
         $fileRules = [
             'extensions:csv,txt',
             File::types(['csv', 'txt'])->rules([
-                function (string $attribute, mixed $value, Closure $fail) {
+                function (string $attribute, mixed $value, Closure $fail): void {
                     $csvStream = $this->getUploadedFileStream($value);
 
                     if (! $csvStream) {

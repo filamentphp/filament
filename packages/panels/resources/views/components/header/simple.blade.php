@@ -4,23 +4,19 @@
     'subheading' => null,
 ])
 
-<header class="fi-simple-header flex flex-col items-center">
+<header class="fi-simple-header">
     @if ($logo)
-        <x-filament-panels::logo class="mb-4" />
+        <x-filament-panels::logo />
     @endif
 
     @if (filled($heading))
-        <h1
-            class="fi-simple-header-heading text-center text-2xl font-bold tracking-tight text-gray-950 dark:text-white"
-        >
+        <h1 class="fi-simple-header-heading">
             {{ $heading }}
         </h1>
     @endif
 
     @if (filled($subheading))
-        <p
-            class="fi-simple-header-subheading mt-2 text-center text-sm text-gray-500 dark:text-gray-400"
-        >
+        <p class="fi-simple-header-subheading">
             {{ $subheading }}
         </p>
     @endif

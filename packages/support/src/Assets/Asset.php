@@ -9,11 +9,11 @@ abstract class Asset
 {
     protected string $id;
 
+    protected ?string $path = null;
+
     protected bool $isLoadedOnRequest = false;
 
     protected string $package;
-
-    protected ?string $path = null;
 
     final public function __construct(string $id, ?string $path = null)
     {
@@ -50,7 +50,7 @@ abstract class Asset
         return $this->package;
     }
 
-    public function getPath(): string
+    public function getPath(): ?string
     {
         return $this->path;
     }

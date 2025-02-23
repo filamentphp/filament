@@ -2,6 +2,7 @@
 
 namespace Filament\Resources\Pages;
 
+use BackedEnum;
 use Closure;
 use Filament\Actions\Action;
 use Filament\Actions\CreateAction;
@@ -18,11 +19,12 @@ use Filament\Resources\Concerns\InteractsWithRelationshipTable;
 use Filament\Resources\RelationManagers\RelationGroup;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\RelationManagers\RelationManagerConfiguration;
+use Filament\Schemas\Components\EmbeddedTable;
 use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\RenderHook;
-use Filament\Schemas\Components\TableBuilder;
 use Filament\Schemas\Schema;
 use Filament\Support\Facades\FilamentIcon;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables;
 use Filament\View\PanelsRenderHook;
 use Illuminate\Auth\Access\AuthorizationException;
@@ -71,11 +73,11 @@ class ManageRelatedRecords extends Page implements Tables\Contracts\HasTable
     #[Url]
     public ?string $activeTab = null;
 
-    public static function getNavigationIcon(): string | Htmlable | null
+    public static function getNavigationIcon(): string | BackedEnum | Htmlable | null
     {
         return static::$navigationIcon
             ?? FilamentIcon::resolve('panels::resources.pages.manage-related-records.navigation-item')
-            ?? 'heroicon-o-rectangle-stack';
+            ?? Heroicon::OutlinedRectangleStack;
     }
 
     public function mount(int | string $record): void
@@ -153,28 +155,10 @@ class ManageRelatedRecords extends Page implements Tables\Contracts\HasTable
         return $this->getRecord();
     }
 
-    public function form(Schema $form): Schema
-    {
-        return $form;
-    }
-
-    public function infolist(Schema $infolist): Schema
-    {
-        return $infolist;
-    }
-
     /**
      * @return array<class-string<RelationManager> | RelationGroup | RelationManagerConfiguration>
      */
     public function getRelationManagers(): array
-    {
-        return [];
-    }
-
-    /**
-     * @return array<int | string, string | Schema>
-     */
-    protected function getForms(): array
     {
         return [];
     }
@@ -186,9 +170,9 @@ class ManageRelatedRecords extends Page implements Tables\Contracts\HasTable
                 Group::make([
                     $this->getTabsContentComponent(),
                     RenderHook::make(PanelsRenderHook::RESOURCE_PAGES_MANAGE_RELATED_RECORDS_TABLE_BEFORE),
-                    TableBuilder::make(),
+                    EmbeddedTable::make(),
                     RenderHook::make(PanelsRenderHook::RESOURCE_PAGES_MANAGE_RELATED_RECORDS_TABLE_AFTER),
-                ])->visible(! empty($this->table->getColumns())),
+                ])->visible(! empty($this->getTable()->getColumns())),
                 $this->getRelationManagersContentComponent(),
             ]);
     }
@@ -269,8 +253,8 @@ class ManageRelatedRecords extends Page implements Tables\Contracts\HasTable
     public function getDefaultActionSchemaResolver(Action $action): ?Closure
     {
         return match (true) {
-            $action instanceof CreateAction, $action instanceof EditAction => fn (Schema $schema): Schema => $this->configureForm($schema),
-            $action instanceof ViewAction => fn (Schema $schema): Schema => $this->configureInfolist($this->configureForm($schema)),
+            $action instanceof CreateAction, $action instanceof EditAction => fn (Schema $schema): Schema => $this->form($this->defaultForm($schema)),
+            $action instanceof ViewAction => fn (Schema $schema): Schema => $this->infolist($this->defaultInfolist($this->form($this->defaultForm($schema)))),
             default => null,
         };
     }

@@ -8,10 +8,10 @@ use Filament\Facades\Filament;
 use Filament\Pages\Concerns;
 use Filament\Pages\SimplePage;
 use Filament\Panel;
+use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Component;
-use Filament\Schemas\Components\Decorations\FormActionsDecorations;
+use Filament\Schemas\Components\EmbeddedSchema;
 use Filament\Schemas\Components\Form;
-use Filament\Schemas\Components\NestedSchema;
 use Filament\Schemas\Schema;
 use Filament\Support\Exceptions\Halt;
 use Filament\Support\Facades\FilamentView;
@@ -120,23 +120,16 @@ abstract class RegisterTenant extends SimplePage
         return Filament::getUrl($this->tenant);
     }
 
-    public function form(Schema $form): Schema
+    public function defaultForm(Schema $schema): Schema
     {
-        return $form;
+        return $schema
+            ->model($this->getModel())
+            ->statePath('data');
     }
 
-    /**
-     * @return array<int | string, string | Schema>
-     */
-    protected function getForms(): array
+    public function form(Schema $schema): Schema
     {
-        return [
-            'form' => $this->form(
-                $this->makeSchema()
-                    ->model($this->getModel())
-                    ->statePath('data'),
-            ),
-        ];
+        return $schema;
     }
 
     /**
@@ -203,12 +196,14 @@ abstract class RegisterTenant extends SimplePage
 
     public function getFormContentComponent(): Component
     {
-        return Form::make([NestedSchema::make('form')])
+        return Form::make([EmbeddedSchema::make('form')])
             ->id('form')
             ->livewireSubmitHandler('register')
-            ->footer(FormActionsDecorations::make($this->getFormActions())
-                ->alignment($this->getFormActionsAlignment())
-                ->fullWidth($this->hasFullWidthFormActions())
-                ->sticky($this->areFormActionsSticky()));
+            ->footer([
+                Actions::make($this->getFormActions())
+                    ->alignment($this->getFormActionsAlignment())
+                    ->fullWidth($this->hasFullWidthFormActions())
+                    ->sticky($this->areFormActionsSticky()),
+            ]);
     }
 }

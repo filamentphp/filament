@@ -3,6 +3,8 @@
 namespace Filament\Actions;
 
 use Filament\Actions\Testing\TestsActions;
+use Filament\Support\Assets\Js;
+use Filament\Support\Facades\FilamentAsset;
 use Illuminate\Routing\Router;
 use Livewire\Features\SupportTesting\Testable;
 use Spatie\LaravelPackageTools\Package;
@@ -35,6 +37,10 @@ class ActionsServiceProvider extends PackageServiceProvider
 
     public function packageBooted(): void
     {
+        FilamentAsset::register([
+            Js::make('actions', __DIR__ . '/../dist/index.js'),
+        ], 'filament/actions');
+
         Testable::mixin(new TestsActions);
     }
 }

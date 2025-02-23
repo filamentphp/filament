@@ -1,4 +1,5 @@
 @php
+    use Filament\Support\View\Components\ToggleComponent;
     use Illuminate\Support\Arr;
 @endphp
 
@@ -17,30 +18,11 @@
     x-bind:class="
         state ? @js(Arr::toCssClasses([
                     'fi-toggle-on',
-                    match ($onColor) {
-                        null, 'gray' => null,
-                        default => 'fi-color-custom',
-                    },
-                    is_string($onColor) ? "fi-color-{$onColor}" : null,
+                    ...\Filament\Support\get_component_color_classes(ToggleComponent::class, $onColor),
                 ])) : @js(Arr::toCssClasses([
                             'fi-toggle-off',
-                            match ($offColor) {
-                                null, 'gray' => null,
-                                default => 'fi-color-custom bg-custom-600',
-                            },
-                            is_string($offColor) ? "fi-color-{$offColor}" : null,
+                            ...\Filament\Support\get_component_color_classes(ToggleComponent::class, $offColor),
                         ]))
-    "
-    x-bind:style="
-        state ? @js(\Filament\Support\get_color_css_variables(
-                    $onColor,
-                    shades: [600],
-                    alias: 'toggle.on',
-                )) : @js(\Filament\Support\get_color_css_variables(
-                            $offColor,
-                            shades: [600],
-                            alias: 'toggle.off',
-                        ))
     "
     {{
         $attributes
@@ -53,13 +35,17 @@
 >
     <div>
         <div aria-hidden="true">
-            {{ \Filament\Support\generate_icon_html($offIcon) }}
+            {{ \Filament\Support\generate_icon_html($offIcon, size: \Filament\Support\Enums\IconSize::ExtraSmall) }}
         </div>
 
         <div aria-hidden="true">
-            {{ \Filament\Support\generate_icon_html(
-                $onIcon,
-                attributes: (new \Illuminate\View\ComponentattributeBag())->merge(['x-cloak' => true], escape: false)), }}
+            {{
+                \Filament\Support\generate_icon_html(
+                    $onIcon,
+                    attributes: (new \Illuminate\View\ComponentattributeBag)->merge(['x-cloak' => 'x-cloak'], escape: false),
+                    size: \Filament\Support\Enums\IconSize::ExtraSmall,
+                )
+            }}
         </div>
     </div>
 </button>

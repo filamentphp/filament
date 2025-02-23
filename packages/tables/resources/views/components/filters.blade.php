@@ -1,13 +1,14 @@
 @props([
     'applyAction',
     'form',
+    'headingTag' => 'h3',
 ])
 
 <div {{ $attributes->class(['fi-ta-filters']) }}>
     <div class="fi-ta-filters-header">
-        <h4 class="fi-ta-filters-heading">
+        <{{ $headingTag }} class="fi-ta-filters-heading">
             {{ __('filament-tables::table.filters.heading') }}
-        </h4>
+        </{{ $headingTag }}>
 
         <div>
             <x-filament::link

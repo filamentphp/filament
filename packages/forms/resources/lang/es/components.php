@@ -408,6 +408,8 @@ return [
 
             'create_option' => [
 
+                'label' => 'Crear',
+
                 'modal' => [
 
                     'heading' => 'Nuevo',
@@ -429,6 +431,8 @@ return [
             ],
 
             'edit_option' => [
+
+                'label' => 'Editar',
 
                 'modal' => [
 

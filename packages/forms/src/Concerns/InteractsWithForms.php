@@ -5,16 +5,16 @@ namespace Filament\Forms\Concerns;
 use Closure;
 use Exception;
 use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Model;
-use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
-trait InteractsWithForms
+trait InteractsWithForms /** @phpstan-ignore trait.unused */
 {
     use InteractsWithSchemas {
-        getCachedSchemas as baseGetCachedSchemas;
+        getCachedSchemas as getBaseCachedSchemas;
     }
 
     protected bool $hasCachedForms = false;
@@ -28,7 +28,7 @@ trait InteractsWithForms
             $this->cacheForms();
         }
 
-        return $this->baseGetCachedSchemas();
+        return $this->getBaseCachedSchemas();
     }
 
     /**
@@ -70,7 +70,7 @@ trait InteractsWithForms
                     return [$form => $this->{$form}($this->makeSchema())];
                 })
                 ->forget('')
-                ->map(fn (Schema $form, string $formName) => $form->key($formName))
+                ->map(fn (Schema $schema, string $formName) => $schema->key($formName))
                 ->all(),
         ];
 
@@ -139,10 +139,10 @@ trait InteractsWithForms
         ];
     }
 
-    public function form(Schema $form): Schema
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema($this->getFormSchema())
+        return $schema
+            ->components($this->getFormSchema())
             ->model($this->getFormModel())
             ->statePath($this->getFormStatePath())
             ->operation($this->getFormContext());
@@ -161,7 +161,7 @@ trait InteractsWithForms
     /**
      * @deprecated Override the `form()` method to configure the default form.
      *
-     * @return array<Component>
+     * @return array<Component | Action | ActionGroup>
      */
     protected function getFormSchema(): array
     {
@@ -190,14 +190,6 @@ trait InteractsWithForms
     public function isCachingForms(): bool
     {
         return $this->isCachingSchemas();
-    }
-
-    /**
-     * @deprecated Use `getSchemaComponentFileAttachment()` instead.
-     */
-    public function getFormComponentFileAttachment(string $statePath): ?TemporaryUploadedFile
-    {
-        return $this->getSchemaComponentFileAttachment($statePath);
     }
 
     /**

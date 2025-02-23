@@ -6,7 +6,7 @@ use Closure;
 use Filament\Actions\Concerns\CanCustomizeProcess;
 use Filament\Forms\Components\Select;
 use Filament\Schemas\Schema;
-use Filament\Support\Enums\MaxWidth;
+use Filament\Support\Enums\Width;
 use Filament\Support\Services\RelationshipJoiner;
 use Filament\Tables\Table;
 use Illuminate\Database\Connection;
@@ -55,7 +55,7 @@ class AttachAction extends Action
 
         $this->modalSubmitActionLabel(__('filament-actions::attach.single.modal.actions.attach.label'));
 
-        $this->modalWidth(MaxWidth::Large);
+        $this->modalWidth(Width::Large);
 
         $this->extraModalFooterActions(function (): array {
             return $this->canAttachAnother() ? [
@@ -68,9 +68,9 @@ class AttachAction extends Action
 
         $this->color('gray');
 
-        $this->form(fn (): array => [$this->getRecordSelect()]);
+        $this->schema(fn (): array => [$this->getRecordSelect()]);
 
-        $this->action(function (array $arguments, array $data, Schema $form, Table $table): void {
+        $this->action(function (array $arguments, array $data, Schema $schema, Table $table): void {
             /** @var BelongsToMany $relationship */
             $relationship = Relation::noConstraints(fn () => $table->getRelationship());
 
@@ -86,7 +86,7 @@ class AttachAction extends Action
                 $this->record($record);
             }
 
-            $this->process(function () use ($data, $record, $relationship) {
+            $this->process(function () use ($data, $record, $relationship): void {
                 $relationship->attach(
                     $record,
                     Arr::only($data, $relationship->getPivotColumns()),
@@ -101,7 +101,7 @@ class AttachAction extends Action
 
                 $this->record(null);
 
-                $form->fill();
+                $schema->fill();
 
                 $this->halt();
 

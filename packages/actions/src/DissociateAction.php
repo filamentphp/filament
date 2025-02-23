@@ -4,6 +4,7 @@ namespace Filament\Actions;
 
 use Filament\Actions\Concerns\CanCustomizeProcess;
 use Filament\Support\Facades\FilamentIcon;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -31,11 +32,11 @@ class DissociateAction extends Action
 
         $this->color('danger');
 
-        $this->icon(FilamentIcon::resolve('actions::dissociate-action') ?? 'heroicon-m-x-mark');
+        $this->icon(FilamentIcon::resolve('actions::dissociate-action') ?? Heroicon::XMark);
 
         $this->requiresConfirmation();
 
-        $this->modalIcon(FilamentIcon::resolve('actions::dissociate-action.modal') ?? 'heroicon-o-x-mark');
+        $this->modalIcon(FilamentIcon::resolve('actions::dissociate-action.modal') ?? Heroicon::OutlinedXMark);
 
         $this->action(function (): void {
             $this->process(function (Model $record, Table $table): void {

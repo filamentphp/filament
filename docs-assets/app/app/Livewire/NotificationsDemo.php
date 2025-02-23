@@ -5,6 +5,7 @@ namespace App\Livewire;
 use App\Models\User;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
+use Filament\Support\Icons\Heroicon;
 use Illuminate\Notifications\DatabaseNotification;
 use Livewire\Component;
 
@@ -31,7 +32,7 @@ class NotificationsDemo extends Component
     {
         Notification::make()
             ->title('Saved successfully')
-            ->icon('heroicon-o-document-text')
+            ->icon(Heroicon::OutlinedDocumentText)
             ->iconColor('success')
             ->send();
     }

@@ -1,15 +1,17 @@
 @php
-    use Filament\Support\Enums\ActionSize;
     use Filament\Support\Enums\FontWeight;
     use Filament\Support\Enums\IconPosition;
     use Filament\Support\Enums\IconSize;
+    use Filament\Support\Enums\Size;
+    use Filament\Support\View\Components\BadgeComponent;
+    use Filament\Support\View\Components\LinkComponent;
     use Illuminate\View\ComponentAttributeBag;
 @endphp
 
 @props([
     'badge' => null,
     'badgeColor' => 'primary',
-    'badgeSize' => 'xs',
+    'badgeSize' => Size::ExtraSmall,
     'color' => 'primary',
     'disabled' => false,
     'form' => null,
@@ -22,46 +24,40 @@
     'keyBindings' => null,
     'labelSrOnly' => false,
     'loadingIndicator' => true,
-    'size' => ActionSize::Medium,
+    'size' => Size::Medium,
     'spaMode' => null,
     'tag' => 'a',
     'target' => null,
     'tooltip' => null,
     'type' => 'button',
-    'weight' => FontWeight::SemiBold,
+    'weight' => null,
 ])
 
 @php
-    if (! $weight instanceof FontWeight) {
-        $weight = filled($weight) ? (FontWeight::tryFrom($weight) ?? $weight) : null;
-    }
-
     if (! $iconPosition instanceof IconPosition) {
         $iconPosition = filled($iconPosition) ? (IconPosition::tryFrom($iconPosition) ?? $iconPosition) : null;
     }
 
-    if (! $size instanceof ActionSize) {
-        $size = filled($size) ? (ActionSize::tryFrom($size) ?? $size) : null;
+    if (! $badgeSize instanceof Size) {
+        $badgeSize = filled($badgeSize) ? (Size::tryFrom($badgeSize) ?? $badgeSize) : null;
+    }
+
+    if (! $size instanceof Size) {
+        $size = filled($size) ? (Size::tryFrom($size) ?? $size) : null;
+    }
+
+    if (filled($iconSize) && (! $iconSize instanceof IconSize)) {
+        $iconSize = IconSize::tryFrom($iconSize) ?? $iconSize;
     }
 
     $iconSize ??= match ($size) {
-        ActionSize::ExtraSmall, ActionSize::Small => IconSize::Small,
-        default => IconSize::Medium,
+        Size::ExtraSmall, Size::Small => IconSize::Small,
+        default => null,
     };
 
-    if (! $iconSize instanceof IconSize) {
-        $iconSize = filled($iconSize) ? (IconSize::tryFrom($iconSize) ?? $iconSize) : null;
+    if (! $weight instanceof FontWeight) {
+        $weight = filled($weight) ? (FontWeight::tryFrom($weight) ?? $weight) : null;
     }
-
-    $iconClasses = ($iconSize instanceof IconSize) ? ('fi-size-' . $iconSize->value) : (is_string($iconSize) ? $iconSize : '');
-
-    $iconStyles = \Illuminate\Support\Arr::toCssStyles([
-        \Filament\Support\get_color_css_variables(
-            $color,
-            shades: [400, 600],
-            alias: 'link.icon',
-        ) => $color !== 'gray',
-    ]);
 
     $wireTarget = $loadingIndicator ? $attributes->whereStartsWith(['wire:target', 'wire:click'])->filter(fn ($value): bool => filled($value))->first() : null;
 
@@ -75,11 +71,8 @@
 @endphp
 
 <{{ $tag }}
-    @if (($tag === 'a') && (! ($disabled && filled($tooltip))))
+    @if (($tag === 'a') && (! ($disabled && $hasTooltip)))
         {{ \Filament\Support\generate_href_html($href, $target === '_blank', $spaMode) }}
-    @endif
-    @if ($keyBindings || $hasTooltip)
-        x-data="{}"
     @endif
     @if ($keyBindings)
         x-bind:id="$id('key-bindings')"
@@ -102,7 +95,7 @@
                 'wire:target' => ($hasLoadingIndicator && $loadingIndicatorTarget) ? $loadingIndicatorTarget : null,
             ], escape: false)
             ->when(
-                $disabled && filled($tooltip),
+                $disabled && $hasTooltip,
                 fn (ComponentAttributeBag $attributes) => $attributes->filter(
                     fn (mixed $value, string $key): bool => ! str($key)->startsWith(['href', 'x-on:', 'wire:click']),
                 ),
@@ -110,21 +103,10 @@
             ->class([
                 'fi-link',
                 'fi-disabled' => $disabled,
-                match ($color) {
-                    'gray' => '',
-                    default => 'fi-color-custom',
-                },
-                is_string($color) ? "fi-color-{$color}" : null,
-                ($size instanceof ActionSize) ? "fi-size-{$size->value}" : (is_string($size) ? $size : ''),
-                ($weight instanceof FontWeight) ? "fi-font-{$weight->value}" : (is_string($size) ? $size : ''),
+                ($size instanceof Size) ? "fi-size-{$size->value}" : (is_string($size) ? $size : ''),
+                ($weight instanceof FontWeight) ? "fi-font-{$weight->value}" : (is_string($weight) ? $weight : ''),
             ])
-            ->style([
-                \Filament\Support\get_color_css_variables(
-                    $color,
-                    shades: [400, 600],
-                    alias: 'link.label',
-                ) => $color !== 'gray',
-            ])
+            ->color(LinkComponent::class, $color)
     }}
 >
     @if ($iconPosition === IconPosition::Before)
@@ -133,7 +115,7 @@
                 \Filament\Support\generate_icon_html($icon, $iconAlias, (new \Illuminate\View\ComponentAttributeBag([
                     'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator,
                     'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
-                ]))->class([$iconClasses])->style([$iconStyles]))
+                ])), size: $iconSize)
             }}
         @endif
 
@@ -142,7 +124,7 @@
                 \Filament\Support\generate_loading_indicator_html((new \Illuminate\View\ComponentAttributeBag([
                     'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
                     'wire:target' => $loadingIndicatorTarget,
-                ]))->class([$iconClasses])->style([$iconStyles]))
+                ])), size: $iconSize)
             }}
         @endif
     @endif
@@ -157,7 +139,7 @@
                 \Filament\Support\generate_icon_html($icon, $iconAlias, (new \Illuminate\View\ComponentAttributeBag([
                     'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator,
                     'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
-                ]))->class([$iconClasses])->style([$iconStyles]))
+                ])), size: $iconSize)
             }}
         @endif
 
@@ -166,37 +148,26 @@
                 \Filament\Support\generate_loading_indicator_html((new \Illuminate\View\ComponentAttributeBag([
                     'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
                     'wire:target' => $loadingIndicatorTarget,
-                ]))->class([$iconClasses])->style([$iconStyles]))
+                ])), size: $iconSize)
             }}
         @endif
     @endif
 
     @if (filled($badge))
         <div class="fi-link-badge-ctn">
-            <span
-                @class([
-                    'fi-badge',
-                    match ($badgeColor) {
-                        'gray' => '',
-                        default => 'fi-color-custom',
-                    },
-                    is_string($badgeColor) ? "fi-color-{$badgeColor}" : null,
-                    ($badgeSize instanceof ActionSize) ? "fi-size-{$badgeSize->value}" : (is_string($badgeSize) ? $badgeSize : ''),
-                ])
-                @style([
-                    \Filament\Support\get_color_css_variables(
-                        $badgeColor,
-                        shades: [
-                            50,
-                            400,
-                            600,
-                        ],
-                        alias: 'badge',
-                    ) => $badgeColor !== 'gray',
-                ])
-            >
+            @if ($badge instanceof \Illuminate\View\ComponentSlot)
                 {{ $badge }}
-            </span>
+            @else
+                <span
+                    @class([
+                        'fi-badge',
+                        ...\Filament\Support\get_component_color_classes(BadgeComponent::class, $badgeColor),
+                        ($badgeSize instanceof Size) ? "fi-size-{$badgeSize->value}" : (is_string($badgeSize) ? $badgeSize : ''),
+                    ])
+                >
+                    {{ $badge }}
+                </span>
+            @endif
         </div>
     @endif
 </{{ $tag }}>

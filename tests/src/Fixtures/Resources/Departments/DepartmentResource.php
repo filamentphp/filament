@@ -2,8 +2,10 @@
 
 namespace Filament\Tests\Fixtures\Resources\Departments;
 
+use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Filament\Tests\Fixtures\Models\Department;
 use Filament\Tests\Fixtures\Resources\Departments\Pages\CreateDepartment;
@@ -20,7 +22,7 @@ class DepartmentResource extends Resource
 {
     protected static ?string $model = Department::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string | BackedEnum | null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
     public static function form(Schema $schema): Schema
     {

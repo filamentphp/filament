@@ -4,7 +4,7 @@ namespace Filament\Resources\Pages\ListRecords\Concerns;
 
 use Filament\Resources\Concerns\HasActiveLocaleSwitcher;
 
-trait Translatable
+trait Translatable /** @phpstan-ignore trait.unused */
 {
     use HasActiveLocaleSwitcher;
 

@@ -16,12 +16,12 @@ use function PHPUnit\Framework\assertFileExists;
 
 uses(TestCase::class);
 
-beforeEach(function () {
+beforeEach(function (): void {
     $this->withoutMockingConsoleOutput();
 })
     ->skip((bool) Arr::get($_SERVER, 'PARATEST'), 'File generation tests cannot be run in parallel as they would share a filesystem and have the potential to conflict with each other.');
 
-it('can generate a page class', function () {
+it('can generate a page class', function (): void {
     $this->artisan('make:filament-settings-page', [
         'name' => 'ManageSettings',
         'settings' => Settings::class,
@@ -34,7 +34,7 @@ it('can generate a page class', function () {
         ->toMatchSnapshot();
 });
 
-it('can generate a page class in a nested directory', function () {
+it('can generate a page class in a nested directory', function (): void {
     $this->artisan('make:filament-settings-page', [
         'name' => 'Site/ManageSettings',
         'settings' => Settings::class,
@@ -47,7 +47,7 @@ it('can generate a page class in a nested directory', function () {
         ->toMatchSnapshot();
 });
 
-it('can generate a page class in a cluster', function () {
+it('can generate a page class in a cluster', function (): void {
     $this->artisan('make:filament-cluster', [
         'name' => 'Site',
         '--panel' => 'admin',
@@ -69,7 +69,7 @@ it('can generate a page class in a cluster', function () {
         ->toMatchSnapshot();
 });
 
-it('can generate a page class with a generated form schema', function () {
+it('can generate a page class with a generated form schema', function (): void {
     $this->artisan('make:filament-settings-page', [
         'name' => 'ManageSettings',
         'settings' => Settings::class,

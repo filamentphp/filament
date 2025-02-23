@@ -2,17 +2,18 @@
 
 namespace Filament\Tables\Testing;
 
+use BackedEnum;
 use Closure;
 use Filament\Actions\BulkAction;
 use Filament\Tables\Contracts\HasTable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
+use Livewire\Component;
 use Livewire\Features\SupportTesting\Testable;
 
 /**
- * @method HasTable instance()
+ * @method Component&HasTable instance()
  *
- * @mixin Testable
  * @mixin Testable
  */
 class TestsBulkActions
@@ -188,7 +189,7 @@ class TestsBulkActions
 
     public function assertTableBulkActionHasIcon(): Closure
     {
-        return function (string | array $actions, string $icon): static {
+        return function (string | array $actions, string | BackedEnum $icon): static {
             /** @var array<array<string, mixed>> $actions */
             /** @phpstan-ignore-next-line */
             $actions = $this->parseNestedTableBulkActions($actions);
@@ -201,7 +202,7 @@ class TestsBulkActions
 
     public function assertTableBulkActionDoesNotHaveIcon(): Closure
     {
-        return function (string | array $actions, string $icon): static {
+        return function (string | array $actions, string | BackedEnum $icon): static {
             /** @var array<array<string, mixed>> $actions */
             /** @phpstan-ignore-next-line */
             $actions = $this->parseNestedTableBulkActions($actions);

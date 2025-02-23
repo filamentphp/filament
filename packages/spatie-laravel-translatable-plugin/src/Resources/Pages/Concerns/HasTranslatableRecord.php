@@ -4,7 +4,7 @@ namespace Filament\Resources\Pages\Concerns;
 
 use Illuminate\Database\Eloquent\Model;
 
-trait HasTranslatableRecord
+trait HasTranslatableRecord /** @phpstan-ignore trait.unused */
 {
     public function getRecord(): Model
     {

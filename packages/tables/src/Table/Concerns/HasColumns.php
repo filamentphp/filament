@@ -3,11 +3,9 @@
 namespace Filament\Tables\Table\Concerns;
 
 use Closure;
-use Filament\Actions\Action;
 use Filament\Tables\Columns\Column;
 use Filament\Tables\Columns\ColumnGroup;
 use Filament\Tables\Columns\Layout\Component as ColumnLayoutComponent;
-use InvalidArgumentException;
 
 trait HasColumns
 {
@@ -91,10 +89,6 @@ trait HasColumns
                 continue;
             }
 
-            if (! $action instanceof Action) {
-                throw new InvalidArgumentException('Table column actions must be an instance of ' . Action::class . '.');
-            }
-
             $this->cacheAction($action->table($this));
         }
 
@@ -140,7 +134,25 @@ trait HasColumns
 
     public function hasColumnGroups(): bool
     {
-        return $this->hasColumnGroups;
+        if (! $this->hasColumnGroups) {
+            return false;
+        }
+
+        foreach ($this->getVisibleColumns() as $column) {
+            $columnGroup = $column->getGroup();
+
+            if (! $columnGroup) {
+                continue;
+            }
+
+            if (empty($columnGroup->getVisibleColumns())) {
+                continue;
+            }
+
+            return true;
+        }
+
+        return false;
     }
 
     public function hasColumnsLayout(): bool

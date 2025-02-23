@@ -5,6 +5,7 @@ namespace Filament;
 use Closure;
 use Exception;
 use Filament\Actions\Action;
+use Filament\Auth\MultiFactor\Contracts\MultiFactorAuthenticationProvider;
 use Filament\Contracts\Plugin;
 use Filament\Enums\ThemeMode;
 use Filament\Events\ServingFilament;
@@ -15,13 +16,12 @@ use Filament\Models\Contracts\HasAvatar;
 use Filament\Models\Contracts\HasDefaultTenant;
 use Filament\Models\Contracts\HasName;
 use Filament\Models\Contracts\HasTenants;
-use Filament\MultiFactorAuthentication\Contracts\MultiFactorAuthenticationProvider;
 use Filament\Navigation\MenuItem;
 use Filament\Navigation\NavigationGroup;
 use Filament\Navigation\NavigationItem;
 use Filament\Pages\Enums\SubNavigationPosition;
 use Filament\Support\Assets\Theme;
-use Filament\Support\Enums\MaxWidth;
+use Filament\Support\Enums\Width;
 use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Facades\FilamentView;
 use Filament\Widgets\Widget;
@@ -143,6 +143,14 @@ class FilamentManager
     public function getEmailVerificationPromptUrl(array $parameters = []): ?string
     {
         return $this->getCurrentOrDefaultPanel()->getEmailVerificationPromptUrl($parameters);
+    }
+
+    /**
+     * @param  array<mixed>  $parameters
+     */
+    public function getSetUpRequiredMultiFactorAuthenticationUrl(array $parameters = []): ?string
+    {
+        return $this->getCurrentOrDefaultPanel()->getSetUpRequiredMultiFactorAuthenticationUrl($parameters);
     }
 
     public function getEmailVerifiedMiddleware(): string
@@ -269,12 +277,12 @@ class FilamentManager
         return $this->getCurrentOrDefaultPanel()->getLogoutUrl($parameters);
     }
 
-    public function getMaxContentWidth(): MaxWidth | string | null
+    public function getMaxContentWidth(): Width | string | null
     {
         return $this->getCurrentOrDefaultPanel()->getMaxContentWidth();
     }
 
-    public function getSimplePageMaxContentWidth(): MaxWidth | string | null
+    public function getSimplePageMaxContentWidth(): Width | string | null
     {
         return $this->getCurrentOrDefaultPanel()->getSimplePageMaxContentWidth();
     }
@@ -589,6 +597,22 @@ class FilamentManager
     }
 
     /**
+     * @param  array<mixed>  $parameters
+     */
+    public function getVerifyEmailChangeUrl(MustVerifyEmail | Model | Authenticatable $user, string $newEmail, array $parameters = []): string
+    {
+        return $this->getCurrentOrDefaultPanel()->getVerifyEmailChangeUrl($user, $newEmail, $parameters);
+    }
+
+    /**
+     * @param  array<mixed>  $parameters
+     */
+    public function getBlockEmailChangeVerificationUrl(MustVerifyEmail | Model | Authenticatable $user, string $newEmail, string $verificationSignature, array $parameters = []): string
+    {
+        return $this->getCurrentOrDefaultPanel()->getBlockEmailChangeVerificationUrl($user, $newEmail, $verificationSignature, $parameters);
+    }
+
+    /**
      * @return array<class-string<Widget>>
      */
     public function getWidgets(): array
@@ -631,9 +655,19 @@ class FilamentManager
         return $this->getCurrentOrDefaultPanel()->hasLazyLoadedDatabaseNotifications();
     }
 
+    public function hasMultiFactorAuthentication(): bool
+    {
+        return $this->getCurrentOrDefaultPanel()->hasMultiFactorAuthentication();
+    }
+
     public function hasEmailVerification(): bool
     {
         return $this->getCurrentOrDefaultPanel()->hasEmailVerification();
+    }
+
+    public function hasEmailChangeVerification(): bool
+    {
+        return $this->getCurrentOrDefaultPanel()->hasEmailChangeVerification();
     }
 
     public function hasLogin(): bool
@@ -963,7 +997,7 @@ class FilamentManager
     }
 
     /**
-     * @return array<MultiFactorAuthenticationProvider>
+     * @return array<string, MultiFactorAuthenticationProvider>
      */
     public function getMultiFactorAuthenticationProviders(): array
     {

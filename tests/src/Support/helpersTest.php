@@ -4,7 +4,7 @@ use Illuminate\View\ComponentAttributeBag;
 
 use function Filament\Support\prepare_inherited_attributes;
 
-it('will prepare attributes', function () {
+it('will prepare attributes', function (): void {
     $bag = new ComponentAttributeBag([
         'style' => 'color:red',
     ]);
@@ -16,7 +16,7 @@ it('will prepare attributes', function () {
     ]);
 });
 
-it('will prepare Alpine attributes', function () {
+it('will prepare Alpine attributes', function (): void {
     $bag = new ComponentAttributeBag([
         'x-data' => '{foo:bar}',
     ]);
@@ -28,7 +28,7 @@ it('will prepare Alpine attributes', function () {
     ]);
 });
 
-it('will prepare data attributes', function () {
+it('will prepare data attributes', function (): void {
     $bag = new ComponentAttributeBag([
         'data-foo' => 'bar',
     ]);

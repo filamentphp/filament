@@ -3,8 +3,8 @@
 namespace Filament\Forms\Components;
 
 use Closure;
-use Filament\Schemas\Components\Attributes\Exposed;
 use Filament\Schemas\Components\StateCasts\FileUploadStateCast;
+use Filament\Support\Components\Attributes\ExposedLivewireMethod;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Filesystem\FilesystemAdapter;
@@ -46,6 +46,8 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
     protected int | Closure | null $maxSize = null;
 
     protected int | Closure | null $minSize = null;
+
+    protected int | Closure | null $maxParallelUploads = null;
 
     protected int | Closure | null $maxFiles = null;
 
@@ -345,6 +347,13 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
         return $this;
     }
 
+    public function maxParallelUploads(int | Closure | null $count): static
+    {
+        $this->maxParallelUploads = $count;
+
+        return $this;
+    }
+
     public function maxFiles(int | Closure | null $count): static
     {
         $this->maxFiles = $count;
@@ -492,6 +501,11 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
         return $this->evaluate($this->minSize);
     }
 
+    public function getMaxParallelUploads(): ?int
+    {
+        return $this->evaluate($this->maxParallelUploads);
+    }
+
     public function getVisibility(): string
     {
         return $this->evaluate($this->visibility);
@@ -568,7 +582,7 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
         return $rules;
     }
 
-    #[Exposed]
+    #[ExposedLivewireMethod]
     #[Renderless]
     public function deleteUploadedFile(string $fileKey): static
     {
@@ -591,7 +605,7 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
         return $this;
     }
 
-    #[Exposed]
+    #[ExposedLivewireMethod]
     #[Renderless]
     public function removeUploadedFile(string $fileKey): string | TemporaryUploadedFile | null
     {
@@ -645,7 +659,7 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
     /**
      * @param  array<array-key>  $fileKeys
      */
-    #[Exposed]
+    #[ExposedLivewireMethod]
     #[Renderless]
     public function reorderUploadedFiles(array $fileKeys): void
     {
@@ -665,7 +679,7 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
     /**
      * @return array<array{name: string, size: int, type: string, url: string} | null> | null
      */
-    #[Exposed]
+    #[ExposedLivewireMethod]
     #[Renderless]
     public function getUploadedFiles(): ?array
     {

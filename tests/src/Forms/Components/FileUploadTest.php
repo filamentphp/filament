@@ -12,7 +12,7 @@ use function Filament\Tests\livewire;
 
 uses(TestCase::class);
 
-it('UploadedFile should be converted to TemporaryUploadedFile', function () {
+it('UploadedFile should be converted to TemporaryUploadedFile', function (): void {
     try {
         livewire(TestComponentWithFileUpload::class)
             ->fillForm([
@@ -22,7 +22,7 @@ it('UploadedFile should be converted to TemporaryUploadedFile', function () {
                     UploadedFile::fake()->image('multiple-file2.jpg'),
                 ],
             ])
-            ->assertFormSet(function (array $data) {
+            ->assertFormSet(function (array $data): void {
                 expect($data['single-file'][0])->toBeInstanceOf(TemporaryUploadedFile::class)
                     ->and($data['multiple-files'][0])->toBeInstanceOf(TemporaryUploadedFile::class)
                     ->and($data['multiple-files'][1])->toBeInstanceOf(TemporaryUploadedFile::class);
@@ -37,7 +37,7 @@ class TestComponentWithFileUpload extends Livewire
     public function form(Schema $form): Schema
     {
         return $form
-            ->schema([
+            ->components([
                 FileUpload::make('single-file'),
                 FileUpload::make('multiple-files')->multiple(),
             ])

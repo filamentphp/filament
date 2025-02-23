@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Validation\ValidationException;
 
-trait Translatable
+trait Translatable /** @phpstan-ignore trait.unused */
 {
     use HasActiveLocaleSwitcher;
     use HasTranslatableFormWithExistingRecordData;

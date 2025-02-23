@@ -8,6 +8,7 @@ use Filament\Billing\Providers\Contracts\BillingProvider;
 use Filament\Facades\Filament;
 use Filament\Navigation\MenuItem;
 use Filament\Support\Facades\FilamentIcon;
+use Filament\Support\Icons\Heroicon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Collection;
@@ -270,7 +271,7 @@ trait HasTenancy
 
         $action = Action::make('profile')
             ->label($page ? $page::getLabel() : Filament::getTenantName($currentTenant))
-            ->icon(FilamentIcon::resolve('panels::tenant-menu.profile-button') ?? 'heroicon-m-cog-6-tooth')
+            ->icon(FilamentIcon::resolve('panels::tenant-menu.profile-button') ?? Heroicon::Cog6Tooth)
             ->url($url = Filament::getTenantProfileUrl())
             ->visible(filament()->hasTenantProfile() && filled($url) && (blank($page) || $page::canView($currentTenant)))
             ->sort(-2);
@@ -289,7 +290,7 @@ trait HasTenancy
         $action = Action::make('billing')
             ->label(__('filament-panels::layout.actions.billing.label'))
             ->color('gray')
-            ->icon(FilamentIcon::resolve('panels::tenant-menu.billing-button') ?? 'heroicon-m-credit-card')
+            ->icon(FilamentIcon::resolve('panels::tenant-menu.billing-button') ?? Heroicon::CreditCard)
             ->url($url = Filament::getTenantBillingUrl())
             ->visible(filament()->hasTenantBilling() && filled($url))
             ->sort(-1);
@@ -309,7 +310,7 @@ trait HasTenancy
 
         $action = Action::make('register')
             ->label($page ? $page::getLabel() : null)
-            ->icon(FilamentIcon::resolve('panels::tenant-menu.registration-button') ?? 'heroicon-m-plus')
+            ->icon(FilamentIcon::resolve('panels::tenant-menu.registration-button') ?? Heroicon::Plus)
             ->url($url = Filament::getTenantRegistrationUrl())
             ->visible(filament()->hasTenantRegistration() && filled($url) && (blank($page) || $page::canView(Filament::getTenant())))
             ->sort(PHP_INT_MAX);

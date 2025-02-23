@@ -7,8 +7,8 @@ use Filament\Tests\TestCase;
 
 uses(TestCase::class);
 
-test('can get number of container columns at all breakpoints', function () {
-    $container = Schema::make(Livewire::make())
+test('can get number of container columns at all breakpoints', function (): void {
+    $schema = Schema::make(Livewire::make())
         ->columns([
             'default' => $defaultColumns = rand(1, 12),
             'sm' => $columnsAtSm = rand(1, 12),
@@ -18,7 +18,7 @@ test('can get number of container columns at all breakpoints', function () {
             '2xl' => $columnsAt2xl = rand(1, 12),
         ]);
 
-    expect($container)
+    expect($schema)
         ->getColumns()
         ->toHaveKey('default', $defaultColumns)
         ->toHaveKey('sm', $columnsAtSm)
@@ -28,18 +28,18 @@ test('can get number of container columns at all breakpoints', function () {
         ->toHaveKey('2xl', $columnsAt2xl);
 });
 
-test('can get number of container columns at one breakpoint', function () {
-    $container = Schema::make(Livewire::make())
+test('can get number of container columns at one breakpoint', function (): void {
+    $schema = Schema::make(Livewire::make())
         ->columns([
             '2xl' => $columnsAt2xl = rand(1, 12),
         ]);
 
-    expect($container)
+    expect($schema)
         ->getColumns('2xl')->toBe($columnsAt2xl);
 });
 
-test('can get number of container columns from parent component', function () {
-    $container = Schema::make(Livewire::make())
+test('can get number of container columns from parent component', function (): void {
+    $schema = Schema::make(Livewire::make())
         ->parentComponent((new Component)->columns([
             'default' => $defaultColumns = rand(1, 12),
             'sm' => $columnsAtSm = rand(1, 12),
@@ -49,7 +49,7 @@ test('can get number of container columns from parent component', function () {
             '2xl' => $columnsAt2xl = rand(1, 12),
         ]));
 
-    expect($container)
+    expect($schema)
         ->getColumns()
         ->toHaveKey('default', $defaultColumns)
         ->toHaveKey('sm', $columnsAtSm)
@@ -59,15 +59,15 @@ test('can get number of container columns from parent component', function () {
         ->toHaveKey('2xl', $columnsAt2xl);
 });
 
-test('can set number of container columns at `lg` breakpoint', function () {
-    $container = Schema::make(Livewire::make())
+test('can set number of container columns at `lg` breakpoint', function (): void {
+    $schema = Schema::make(Livewire::make())
         ->columns($columnsAtLg = rand(1, 12));
 
-    expect($container)
+    expect($schema)
         ->getColumns('lg')->toBe($columnsAtLg);
 });
 
-test('can get component column span at all breakpoints', function () {
+test('can get component column span at all breakpoints', function (): void {
     $component = (new Component)
         ->container(Schema::make(Livewire::make()))
         ->columnSpan([
@@ -89,7 +89,7 @@ test('can get component column span at all breakpoints', function () {
         ->toHaveKey('2xl', $spanAt2xl);
 });
 
-test('can get component column span at one breakpoint', function () {
+test('can get component column span at one breakpoint', function (): void {
     $component = (new Component)
         ->container(Schema::make(Livewire::make()))
         ->columnSpan([
@@ -100,7 +100,7 @@ test('can get component column span at one breakpoint', function () {
         ->getColumnSpan('2xl')->toBe($spanAt2xl);
 });
 
-test('can set component column span at `default` breakpoint', function () {
+test('can set component column span at `default` breakpoint', function (): void {
     $component = (new Component)
         ->container(Schema::make(Livewire::make()))
         ->columnSpan($defaultSpan = rand(1, 12));

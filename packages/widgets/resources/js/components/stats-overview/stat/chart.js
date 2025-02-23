@@ -41,6 +41,14 @@ export default function statsOverviewStatChart({
         },
 
         initChart: function () {
+            if (
+                !this.$refs.canvas ||
+                !this.$refs.backgroundColorElement ||
+                !this.$refs.borderColorElement
+            ) {
+                return
+            }
+
             return new Chart(this.$refs.canvas, {
                 type: 'line',
                 data: {
@@ -91,6 +99,10 @@ export default function statsOverviewStatChart({
         },
 
         getChart: function () {
+            if (!this.$refs.canvas) {
+                return null
+            }
+
             return Chart.getChart(this.$refs.canvas)
         },
     }

@@ -5,8 +5,10 @@ namespace Filament\Tables\Columns;
 use Filament\Forms\Components\Concerns\HasToggleColors;
 use Filament\Forms\Components\Concerns\HasToggleIcons;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
+use Filament\Support\Enums\IconSize;
 use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Facades\FilamentView;
+use Filament\Support\View\Components\ToggleComponent;
 use Filament\Tables\Columns\Contracts\Editable;
 use Filament\Tables\Table;
 use Illuminate\Support\Arr;
@@ -14,7 +16,7 @@ use Illuminate\Support\Js;
 use Illuminate\View\ComponentAttributeBag;
 
 use function Filament\Support\generate_icon_html;
-use function Filament\Support\get_color_css_variables;
+use function Filament\Support\get_component_color_classes;
 
 class ToggleColumn extends Column implements Editable, HasEmbeddedView
 {
@@ -75,39 +77,21 @@ class ToggleColumn extends Column implements Editable, HasEmbeddedView
         ob_start(); ?>
 
         <div
-            x-ignore
             wire:ignore.self
             <?= $attributes->toHtml() ?>
         >
             <input type="hidden" value="<?= $state ? 1 : 0 ?>" x-ref="serverState" />
 
-            <button
+            <div
                 x-bind:aria-checked="state?.toString()"
-                x-on:click="state = ! state"
+                x-on:click="if (! $el.hasAttribute('disabled')) state = ! state"
                 x-bind:class="state ? '<?= Arr::toCssClasses([
                     'fi-toggle-on',
-                    match ($onColor) {
-                        'gray' => null,
-                        default => 'fi-color-custom',
-                    },
-                    is_string($onColor) ? "fi-color-{$onColor}" : null,
+                    ...get_component_color_classes(ToggleComponent::class, $onColor),
                 ]) ?>' : '<?= Arr::toCssClasses([
                     'fi-toggle-off',
-                    match ($offColor) {
-                        'gray' => null,
-                        default => 'fi-color-custom bg-custom-600',
-                    },
-                    is_string($offColor) ? "fi-color-{$offColor}" : null,
+                    ...get_component_color_classes(ToggleComponent::class, $offColor),
                 ]) ?>'"
-                x-bind:style="state ? '<?= get_color_css_variables(
-                    $onColor,
-                    shades: [600],
-                    alias: 'toggle.on',
-                ) ?>' : '<?= get_color_css_variables(
-                    $offColor,
-                    shades: [600],
-                    alias: 'toggle.off',
-                ) ?>'"
                 x-tooltip="
                     error === undefined
                         ? false
@@ -117,22 +101,22 @@ class ToggleColumn extends Column implements Editable, HasEmbeddedView
                         }
                 "
                 role="switch"
-                type="button"
                 <?= $buttonAttributes->toHtml() ?>
             >
                 <div>
                     <div aria-hidden="true">
-                        <?= generate_icon_html($offIcon)?->toHtml() ?>
+                        <?= generate_icon_html($offIcon, size: IconSize::ExtraSmall)?->toHtml() ?>
                     </div>
 
                     <div aria-hidden="true">
                         <?= generate_icon_html(
                             $onIcon,
-                            attributes: (new ComponentAttributeBag)->merge(['x-cloak' => true], escape: false),
+                            attributes: (new ComponentAttributeBag)->merge(['x-cloak' => 'x-cloak'], escape: false),
+                            size: IconSize::ExtraSmall,
                         )?->toHtml() ?>
                     </div>
                 </div>
-            </button>
+            </div>
         </div>
 
         <?php return ob_get_clean();

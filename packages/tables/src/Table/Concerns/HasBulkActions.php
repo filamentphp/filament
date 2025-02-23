@@ -76,7 +76,7 @@ trait HasBulkActions
             } elseif ($action instanceof BulkAction) {
                 $this->cacheBulkAction($action);
             } else {
-                throw new InvalidArgumentException('Table bulk actions must be an instance of ' . BulkAction::class . ' or ' . ActionGroup::class . '.');
+                throw new InvalidArgumentException('Table bulk actions must be an instance of [' . BulkAction::class . '] or [' . ActionGroup::class . '].');
             }
 
             $this->bulkActions[] = $action;

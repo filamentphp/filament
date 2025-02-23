@@ -10,8 +10,19 @@ return [
 
     'columns' => [
 
+        'actions' => [
+            'label' => 'Akcija|Akcije',
+        ],
+
         'text' => [
-            'more_list_items' => 'i :count još',
+
+            'actions' => [
+                'collapse_list' => 'Prikaži :count manje',
+                'expand_list' => 'Prikaži :count više',
+            ],
+
+            'more_list_items' => 'i još :count',
+
         ],
 
     ],
@@ -51,7 +62,7 @@ return [
         'summarizers' => [
 
             'average' => [
-                'label' => 'Prosijek',
+                'label' => 'Prosjek',
             ],
 
             'count' => [
@@ -69,11 +80,11 @@ return [
     'actions' => [
 
         'disable_reordering' => [
-            'label' => 'Završi mijenjanje redolijeda zapisa',
+            'label' => 'Završi mijenjanje redoslijeda zapisa',
         ],
 
         'enable_reordering' => [
-            'label' => 'Mijenjanje redolijeda zapisa',
+            'label' => 'Mijenjanje redoslijeda zapisa',
         ],
 
         'filter' => [
@@ -89,7 +100,7 @@ return [
         ],
 
         'toggle_columns' => [
-            'label' => 'Prikaži/sakrij kolone',
+            'label' => 'Prikaži/sakrij stupce',
         ],
 
     ],
@@ -98,13 +109,17 @@ return [
 
         'heading' => 'Nema :model',
 
-        'description' => 'Stvorite :model kako biste počeli.',
+        'description' => 'Stvori :model kako bi započeo.',
 
     ],
 
     'filters' => [
 
         'actions' => [
+
+            'apply' => [
+                'label' => 'Primijeni filter',
+            ],
 
             'remove' => [
                 'label' => 'Ukloni filter',
@@ -139,7 +154,7 @@ return [
 
             'only_trashed' => 'Samo obrisani zapisi',
 
-            'with_trashed' => 'Sa obrisanih zapisa',
+            'with_trashed' => 'S obrisanih zapisa',
 
             'without_trashed' => 'Bez obrisanih zapisa',
 
@@ -171,7 +186,7 @@ return [
 
     ],
 
-    'reorder_indicator' => 'Povucite i ispustite zapise u redoslijed.',
+    'reorder_indicator' => 'Povuci i ispusti zapise u redoslijed.',
 
     'selection_indicator' => [
 

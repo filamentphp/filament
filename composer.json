@@ -3,7 +3,7 @@
     "description": "A collection of full-stack components for accelerated Laravel development.",
     "license": "MIT",
     "require": {
-        "php": "^8.1",
+        "php": "^8.2",
         "ext-intl": "*",
         "composer-runtime-api": "^2.1"
     },
@@ -12,27 +12,28 @@
         "chillerlan/php-qrcode": "^5.0",
         "danharrin/livewire-rate-limiting": "^0.3|^1.0",
         "filament/support": "*",
-        "larastan/larastan": "^2.2",
+        "larastan/larastan": "^3.0",
         "laravel/pint": "^1.0",
-        "league/csv": "^9.14",
+        "league/csv": "^9.16",
         "league/flysystem-aws-s3-v3": "^3.0",
-        "nunomaduro/termwind": "^1.0|^2.0",
+        "nunomaduro/termwind": "^2.0",
         "openspout/openspout": "^4.23",
-        "orchestra/testbench": "^8.20|^9.0",
+        "orchestra/testbench": "^9.0",
         "pestphp/pest": "^2.0",
         "pestphp/pest-plugin-laravel": "^2.0",
         "phpstan/extension-installer": "^1.1",
-        "phpstan/phpstan": "v1.11.1",
+        "phpstan/phpstan": "^2.1",
         "pragmarx/google2fa": "^8.0",
         "pragmarx/google2fa-qrcode": "^3.0",
-        "rector/rector": "^1.0",
+        "rector/rector": "^2.0",
         "spatie/laravel-medialibrary": "^10.0|^11.0",
         "spatie/laravel-ray": "^1.29",
         "spatie/laravel-settings": "^2.2|^3.0",
         "spatie/laravel-tags": "^4.2",
         "staudenmeir/belongs-to-through": "^2.5",
         "staudenmeir/eloquent-has-many-deep": "^1.7",
-        "symplify/monorepo-builder": "^10.0"
+        "symplify/monorepo-builder": "^10.0",
+        "ueberdosis/tiptap-php": "^1.4"
     },
     "autoload": {
         "files": [
@@ -74,10 +75,12 @@
     },
     "scripts": {
         "cs": [
+            "rector",
             "pint",
             "npm run prettier"
         ],
         "pint": "pint --config pint-strict-imports.json",
+        "rector": "rector",
         "test:pest": "pest --parallel",
         "test:phpstan": "phpstan analyse",
         "test": [

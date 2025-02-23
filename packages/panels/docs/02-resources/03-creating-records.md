@@ -473,7 +473,7 @@ protected function getFormActions(): array
 For further customization opportunities, you can override the static `$view` property on the page class to a custom view in your app:
 
 ```php
-protected static string $view = 'filament.resources.users.pages.create-user';
+protected string $view = 'filament.resources.users.pages.create-user';
 ```
 
 This assumes that you have created a view at `resources/views/filament/resources/users/pages/create-user.blade.php`.

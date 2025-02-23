@@ -2,9 +2,11 @@
 
 namespace Filament\Resources\RelationManagers;
 
+use BackedEnum;
 use Closure;
-use Filament\Actions;
 use Filament\Actions\Action;
+use Filament\Actions\Concerns\InteractsWithActions;
+use Filament\Actions\Contracts\HasActions;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
@@ -16,18 +18,18 @@ use Filament\Actions\RestoreAction;
 use Filament\Actions\RestoreBulkAction;
 use Filament\Actions\ViewAction;
 use Filament\Facades\Filament;
-use Filament\Forms;
-use Filament\Infolists;
 use Filament\Pages\Page;
 use Filament\Resources\Concerns\InteractsWithRelationshipTable;
 use Filament\Resources\Pages\ViewRecord;
+use Filament\Schemas\Components\EmbeddedTable;
 use Filament\Schemas\Components\RenderHook;
-use Filament\Schemas\Components\TableBuilder;
 use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Concerns\InteractsWithSchemas;
+use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
 use Filament\Support\Concerns\CanBeLazy;
 use Filament\Support\Enums\IconPosition;
-use Filament\Tables;
+use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
 use Filament\View\PanelsRenderHook;
 use Illuminate\Auth\Access\AuthorizationException;
@@ -39,20 +41,19 @@ use Livewire\Component;
 
 use function Filament\authorize;
 
-class RelationManager extends Component implements Actions\Contracts\HasActions, Forms\Contracts\HasForms, Infolists\Contracts\HasInfolists, Tables\Contracts\HasTable
+class RelationManager extends Component implements HasActions, HasSchemas, HasTable
 {
-    use Actions\Concerns\InteractsWithActions;
     use CanBeLazy;
-    use Forms\Concerns\InteractsWithForms;
-    use Infolists\Concerns\InteractsWithInfolists;
+    use InteractsWithActions;
     use InteractsWithRelationshipTable {
         InteractsWithRelationshipTable::makeTable as makeBaseRelationshipTable;
     }
+    use InteractsWithSchemas;
 
     /**
      * @var view-string
      */
-    protected static string $view = 'filament-panels::resources.relation-manager';
+    protected string $view = 'filament-panels::resources.relation-manager';
 
     #[Locked]
     public Model $ownerRecord;
@@ -92,7 +93,7 @@ class RelationManager extends Component implements Actions\Contracts\HasActions,
 
     protected static ?string $title = null;
 
-    protected static ?string $icon = null;
+    protected static string | BackedEnum | null $icon = null;
 
     protected static IconPosition $iconPosition = IconPosition::Before;
 
@@ -105,14 +106,6 @@ class RelationManager extends Component implements Actions\Contracts\HasActions,
     public function mount(): void
     {
         $this->loadDefaultActiveTab();
-    }
-
-    /**
-     * @return array<int | string, string | Schema>
-     */
-    protected function getForms(): array
-    {
-        return [];
     }
 
     /**
@@ -136,7 +129,7 @@ class RelationManager extends Component implements Actions\Contracts\HasActions,
 
     public function render(): View
     {
-        return view(static::$view, $this->getViewData());
+        return view($this->view, $this->getViewData());
     }
 
     /**
@@ -198,16 +191,6 @@ class RelationManager extends Component implements Actions\Contracts\HasActions,
     public function getOwnerRecord(): Model
     {
         return $this->ownerRecord;
-    }
-
-    public function form(Schema $form): Schema
-    {
-        return $form;
-    }
-
-    public function infolist(Schema $infolist): Schema
-    {
-        return $infolist;
     }
 
     public function isReadOnly(): bool
@@ -330,7 +313,7 @@ class RelationManager extends Component implements Actions\Contracts\HasActions,
             ->components([
                 $this->getTabsContentComponent(),
                 RenderHook::make(PanelsRenderHook::RESOURCE_RELATION_MANAGER_BEFORE),
-                TableBuilder::make(),
+                EmbeddedTable::make(),
                 RenderHook::make(PanelsRenderHook::RESOURCE_RELATION_MANAGER_AFTER),
             ]);
     }
@@ -372,8 +355,8 @@ class RelationManager extends Component implements Actions\Contracts\HasActions,
     public function getDefaultActionSchemaResolver(Action $action): ?Closure
     {
         return match (true) {
-            $action instanceof CreateAction, $action instanceof EditAction => fn (Schema $schema): Schema => $this->configureForm($schema),
-            $action instanceof ViewAction => fn (Schema $schema): Schema => $this->configureInfolist($this->configureForm($schema)),
+            $action instanceof CreateAction, $action instanceof EditAction => fn (Schema $schema): Schema => $this->form($this->defaultForm($schema)),
+            $action instanceof ViewAction => fn (Schema $schema): Schema => $this->infolist($this->defaultInfolist($this->form($this->defaultForm($schema)))),
             default => null,
         };
     }

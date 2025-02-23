@@ -1641,7 +1641,7 @@ export default {
         },
     },
     'panels/navigation/user-menu': {
-        url: 'topbar',
+        url: 'panels/navigation/user-menu-customization',
         selector: 'body',
         viewport: {
             width: 1080,
@@ -1655,6 +1655,194 @@ export default {
             await page.click('.fi-user-menu button')
 
             await new Promise((resolve) => setTimeout(resolve, 500))
+        },
+    },
+    'panels/navigation/disabled-navigation': {
+        url: 'panels/navigation/disabled-navigation',
+        selector: 'body',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 0,
+        },
+        crop: (image) => {
+            return image.extract({ width: 1080, height: 540, left: 0, top: 0 })
+        },
+    },
+    'panels/navigation/active-icon': {
+        url: 'panels/navigation/active-icon',
+        selector: 'body',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 0,
+        },
+        crop: (image) => {
+            return image.extract({ width: 1080, height: 540, left: 0, top: 0 })
+        },
+    },
+    'panels/navigation/change-icon': {
+        url: 'panels/navigation/change-icon',
+        selector: 'body',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 0,
+        },
+        crop: (image) => {
+            return image.extract({ width: 600, height: 440, left: 0, top: 0 })
+        },
+    },
+    'panels/navigation/custom-items': {
+        url: 'panels/navigation/custom-items',
+        selector: 'body',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 0,
+        },
+        crop: (image) => {
+            return image.extract({ width: 650, height: 540, left: 0, top: 0 })
+        },
+    },
+    'panels/navigation/sidebar-collapsible-on-desktop': {
+        url: 'panels/navigation/sidebar-collapsible-on-desktop',
+        selector: 'body',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 0,
+        },
+        crop: (image) => {
+            return image.extract({ width: 650, height: 540, left: 0, top: 0 })
+        },
+        before: async (page) => {
+            await page.click('.fi-sidebar-header button[title="Collapse sidebar"]')
+
+            await new Promise((resolve) => setTimeout(resolve, 500))
+        },
+    },
+    'panels/navigation/sidebar-fully-collapsible-on-desktop': {
+        url: 'panels/navigation/sidebar-fully-collapsible-on-desktop',
+        selector: 'body',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 0,
+        },
+        crop: (image) => {
+            return image.extract({ width: 650, height: 300, left: 0, top: 0 })
+        },
+        before: async (page) => {
+            await page.click('.fi-sidebar-header button[title="Collapse sidebar"]')
+
+            await new Promise((resolve) => setTimeout(resolve, 500))
+        },
+    },
+    'panels/navigation/sort-items': {
+        url: 'panels/navigation/sort-items',
+        selector: 'body',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 0,
+        },
+        crop: (image) => {
+            return image.extract({ width: 650, height: 500, left: 0, top: 0 })
+        },
+    },
+    'panels/navigation/top-navigation': {
+        url: 'panels/navigation/top-navigation',
+        selector: 'body',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 0,
+        },
+        crop: (image) => {
+            return image.extract({ width: 1000, height: 300, left: 0, top: 0 })
+        },
+        before: async (page) => {
+            await page.click('.fi-dropdown-trigger')
+
+            await new Promise((resolve) => setTimeout(resolve, 500))
+        },
+    },
+    'panels/navigation/badge': {
+        url: 'panels/navigation/badge',
+        selector: 'body',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 0,
+        },
+        crop: (image) => {
+            return image.extract({ width: 650, height: 500, left: 0, top: 0 })
+        },
+    },
+    'panels/navigation/badge-color': {
+        url: 'panels/navigation/badge-color',
+        selector: 'body',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 0,
+        },
+        crop: (image) => {
+            return image.extract({ width: 650, height: 500, left: 0, top: 0 })
+        },
+    },
+    'panels/navigation/badge-tooltip': {
+        url: 'panels/navigation/badge-tooltip',
+        selector: 'body',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 0,
+        },
+        crop: (image) => {
+            return image.extract({ width: 750, height: 500, left: 0, top: 0 })
+        },
+        before: async (page) => {
+            await page.hover('.fi-badge')
+
+            await new Promise((resolve) => setTimeout(resolve, 500))
+        },
+    },
+    'panels/navigation/group': {
+        url: 'panels/navigation/group',
+        selector: 'body',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 0,
+        },
+        crop: (image) => {
+            return image.extract({ width: 650, height: 550, left: 0, top: 0 })
+        },
+    },
+    'panels/navigation/group-collapsible': {
+        url: 'panels/navigation/group-collapsible',
+        selector: 'body',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 0,
+        },
+        crop: (image) => {
+            return image.extract({ width: 650, height: 550, left: 0, top: 0 })
+        },
+    },
+    'panels/navigation/group-not-collapsible': {
+        url: 'panels/navigation/group-not-collapsible',
+        selector: 'body',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 0,
+        },
+        crop: (image) => {
+            return image.extract({ width: 650, height: 550, left: 0, top: 0 })
         },
     },
     'tables/example': {

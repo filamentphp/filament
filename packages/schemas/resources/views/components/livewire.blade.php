@@ -1,12 +1,17 @@
-@if (filled($id = $getId()) || filled($extraAttributes = $getExtraAttributes()))
+@php
+    $extraAttributes = $getExtraAttributes();
+    $id = $getId();
+@endphp
+
+@if (filled($id) || filled($extraAttributes))
     {!! '<div' !!}
     {{-- Avoid formatting issues with unclosed elements --}}
     {{
         $attributes
             ->merge([
-                'id' => $getId(),
+                'id' => $id,
             ], escape: false)
-            ->merge($getExtraAttributes(), escape: false)
+            ->merge($extraAttributes, escape: false)
     }}
     >
 @endif

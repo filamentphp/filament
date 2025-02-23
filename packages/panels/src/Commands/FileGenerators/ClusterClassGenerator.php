@@ -2,9 +2,12 @@
 
 namespace Filament\Commands\FileGenerators;
 
+use BackedEnum;
 use Filament\Clusters\Cluster;
 use Filament\Support\Commands\FileGenerators\ClassGenerator;
+use Filament\Support\Icons\Heroicon;
 use Nette\PhpGenerator\ClassType;
+use Nette\PhpGenerator\Literal;
 use Nette\PhpGenerator\Property;
 
 class ClusterClassGenerator extends ClassGenerator
@@ -45,10 +48,13 @@ class ClusterClassGenerator extends ClassGenerator
 
     protected function addNavigationIconPropertyToClass(ClassType $class): void
     {
-        $property = $class->addProperty('navigationIcon', 'heroicon-o-squares-2x2')
+        $this->namespace->addUse(BackedEnum::class);
+        $this->namespace->addUse(Heroicon::class);
+
+        $property = $class->addProperty('navigationIcon', new Literal('Heroicon::OutlinedSquares2x2'))
             ->setProtected()
             ->setStatic()
-            ->setType('?string');
+            ->setType('string|BackedEnum|null');
         $this->configureNavigationIconProperty($property);
     }
 

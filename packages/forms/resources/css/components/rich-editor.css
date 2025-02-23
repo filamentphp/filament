@@ -1,52 +1,33 @@
-.fi-fo-rich-editor trix-toolbar .trix-dialogs {
-    position: relative;
-}
+.fi-fo-rich-editor {
+    &.fi-fo-rich-editor-uploading-file {
+        @apply pointer-events-none cursor-wait opacity-50;
+    }
 
-.fi-fo-rich-editor trix-toolbar .trix-dialog {
-    @apply absolute inset-x-0 bottom-auto top-4 rounded-lg bg-gray-50 p-2 shadow-md dark:bg-gray-800;
-}
+    & .fi-fo-rich-editor-toolbar {
+        @apply relative flex gap-x-3 overflow-x-auto border-b border-gray-200 px-2.5 py-2 dark:border-white/10;
 
-.fi-fo-rich-editor trix-toolbar .trix-dialog__link-fields {
-    @apply flex w-full flex-col gap-2;
-}
+        & .fi-fo-rich-editor-toolbar-group {
+            @apply flex gap-x-1;
+        }
 
-.fi-fo-rich-editor trix-toolbar .trix-dialog__link-fields .trix-button-group {
-    @apply flex gap-2;
-}
+        & .fi-fo-rich-editor-toolbar-btn {
+            @apply flex h-8 min-w-8 cursor-pointer items-center justify-center rounded-lg text-sm font-semibold text-gray-700 transition duration-75 hover:bg-gray-50 focus-visible:bg-gray-50 dark:text-gray-200 dark:hover:bg-white/5 dark:focus-visible:bg-white/5;
 
-.fi-fo-rich-editor trix-toolbar .trix-dialog__link-fields .trix-input {
-    @apply block w-full rounded-md border-none bg-white py-1.5 pe-3 ps-3 text-sm text-gray-950 outline-none ring-1 ring-gray-950/10 transition duration-75 placeholder:text-gray-400 focus-within:ring-primary-600 dark:bg-gray-700 dark:text-white dark:ring-white/20 dark:placeholder:text-gray-500 dark:focus-within:ring-primary-600 sm:text-sm sm:leading-6;
-}
+            &.fi-active {
+                @apply text-primary-600 dark:text-primary-400 bg-gray-50 dark:bg-white/5;
+            }
+        }
+    }
 
-.fi-fo-rich-editor
-    trix-toolbar
-    .trix-dialog__link-fields
-    .trix-button-group
-    .trix-button {
-    @apply rounded-md bg-gray-50 px-2 py-0.5 text-xs ring-1 ring-gray-200 dark:bg-gray-700 dark:ring-gray-600;
-}
+    & .fi-fo-rich-editor-content {
+        @apply prose dark:prose-invert min-h-full w-full max-w-none px-5;
+    }
 
-.fi-fo-rich-editor trix-editor:empty::before {
-    @apply text-gray-400 dark:text-gray-500;
-    content: attr(placeholder);
-}
+    & .tiptap:focus {
+        @apply outline-none;
+    }
 
-/* Add RTL support */
-/* https://github.com/tailwindlabs/tailwindcss-typography/pull/306 */
-
-.fi-fo-rich-editor
-    trix-editor.prose
-    :where(ul):not(:where([class~='not-prose'] *)),
-.fi-fo-rich-editor
-    trix-editor.prose
-    :where(ol):not(:where([class~='not-prose'] *)) {
-    padding-inline-start: 1.625em !important;
-    padding-inline-end: 0 !important;
-}
-
-.fi-fo-rich-editor
-    trix-editor.prose
-    :where(ul > li):not(:where([class~='not-prose'] *)) {
-    padding-inline-start: 0.375em !important;
-    padding-inline-end: 0 !important;
+    & img.fi-loading {
+        @apply animate-pulse;
+    }
 }

@@ -2,15 +2,17 @@
 
 namespace Filament\Panel\Concerns;
 
+use BackedEnum;
+
 trait HasIcons
 {
     /**
-     * @var array<string, string>
+     * @var array<string, string | BackedEnum>
      */
     protected array $icons = [];
 
     /**
-     * @param  array<string, string>  $icons
+     * @param  array<string, string | BackedEnum>  $icons
      */
     public function icons(array $icons): static
     {
@@ -23,7 +25,7 @@ trait HasIcons
     }
 
     /**
-     * @return array<string, string>
+     * @return array<string, string | BackedEnum>
      */
     public function getIcons(): array
     {

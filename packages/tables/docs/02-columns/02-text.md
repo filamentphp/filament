@@ -73,6 +73,15 @@ TextColumn::make('created_at')
     ->dateTime()
 ```
 
+You may use also the `isoDate()` and `isoDateTime()` methods to format the column's state using [PHP date formatting macro-formats](https://carbon.nesbot.com/docs/#available-macro-formats):
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('created_at')
+    ->isoDateTime()
+```
+
 You may use the `since()` method to format the column's state using [Carbon's `diffForHumans()`](https://carbon.nesbot.com/docs/#api-humandiff):
 
 ```php
@@ -82,7 +91,7 @@ TextColumn::make('created_at')
     ->since()
 ```
 
-Additionally, you can use the `dateTooltip()`, `dateTimeTooltip()` or `timeTooltip()` method to display a formatted date in a tooltip, often to provide extra information:
+Additionally, you can use the `dateTooltip()`, `dateTimeTooltip()`, `timeTooltip()`, `isoDateTooltip()`, `isoDateTimeTooltip()`, `isoTime()` or `isoTimeTooltip()` method to display a formatted date in a tooltip, often to provide extra information:
 
 ```php
 use Filament\Tables\Columns\TextColumn;
@@ -417,10 +426,10 @@ Text columns have small font size by default, but you may change this to `TextCo
 For instance, you may make the text larger using `size(TextColumnSize::Large)`:
 
 ```php
-use Filament\Tables\Columns\TextColumn;
+use Filament\Support\Enums\TextSize;
 
 TextColumn::make('title')
-    ->size(TextColumn\Enums\TextColumnSize::Large)
+    ->size(TextSize::Large)
 ```
 
 <AutoScreenshot name="tables/columns/text/large" alt="Text column in a large font size" version="4.x" />

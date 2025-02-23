@@ -62,7 +62,7 @@ class NavigationManager
                 $items = $parentItems->get('')
                     ->keyBy(fn (NavigationItem $item): string => $item->getLabel());
 
-                $parentItems->except([''])->each(function (Collection $parentItemItems, string $parentItemLabel) use ($items) {
+                $parentItems->except([''])->each(function (Collection $parentItemItems, string $parentItemLabel) use ($items): void {
                     if (! $items->has($parentItemLabel)) {
                         return;
                     }

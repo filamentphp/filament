@@ -9,5 +9,5 @@ class ManageUserPermissions extends Page
 {
     protected static string $resource = UserResource::class;
 
-    protected static string $view = 'filament.resources.users.pages.manage-user-permissions';
+    protected string $view = 'filament.resources.users.pages.manage-user-permissions';
 }

@@ -407,6 +407,7 @@ return [
         'actions' => [
 
             'create_option' => [
+                'label' => 'Cipta',
 
                 'modal' => [
 
@@ -429,6 +430,7 @@ return [
             ],
 
             'edit_option' => [
+                'label' => 'Sunting',
 
                 'modal' => [
 

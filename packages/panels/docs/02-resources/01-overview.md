@@ -303,15 +303,18 @@ public static function getNavigationLabel(): string
 The `$navigationIcon` property supports the name of any Blade component. By default, [Heroicons](https://heroicons.com) are installed. However, you may create your own custom icon components or install an alternative library if you wish.
 
 ```php
-protected static ?string $navigationIcon = 'heroicon-o-user-group';
+use BackedEnum;
+
+protected static string | BackedEnum | null $navigationIcon = 'heroicon-o-user-group';
 ```
 
 Alternatively, you may set a dynamic navigation icon in the `getNavigationIcon()` method:
 
 ```php
+use BackedEnum;
 use Illuminate\Contracts\Support\Htmlable;
 
-public static function getNavigationIcon(): string | Htmlable | null
+public static function getNavigationIcon(): string | BackedEnum | Htmlable | null
 {
     return 'heroicon-o-user-group';
 }

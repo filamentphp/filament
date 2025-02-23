@@ -6,7 +6,7 @@ use Filament\Tests\TestCase;
 
 uses(TestCase::class);
 
-it('can verify an email', function () {
+it('can verify an email', function (): void {
     $userToVerify = User::factory()->create([
         'email_verified_at' => null,
     ]);
@@ -23,7 +23,7 @@ it('can verify an email', function () {
         ->hasVerifiedEmail()->toBeTrue();
 });
 
-it('can verify an email with a custom slug', function () {
+it('can verify an email with a custom slug', function (): void {
     Filament::setCurrentPanel('slugs');
 
     $userToVerify = User::factory()->create([
@@ -43,7 +43,7 @@ it('can verify an email with a custom slug', function () {
         ->hasVerifiedEmail()->toBeTrue();
 });
 
-it('cannot verify an email when signed in as another user', function () {
+it('cannot verify an email when signed in as another user', function (): void {
     $userToVerify = User::factory()->create([
         'email_verified_at' => null,
     ]);

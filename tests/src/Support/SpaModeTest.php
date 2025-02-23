@@ -7,7 +7,7 @@ use function Filament\Support\generate_href_html;
 
 uses(TestCase::class);
 
-test('SPA mode can be toggled', function () {
+test('SPA mode can be toggled', function (): void {
     expect(FilamentView::hasSpaMode())->toBeFalse();
 
     FilamentView::spa();
@@ -17,7 +17,7 @@ test('SPA mode can be toggled', function () {
     expect(FilamentView::hasSpaMode())->toBeFalse();
 });
 
-test('`href` HTML can be generated with `wire:navigate` based on SPA mode', function () {
+test('`href` HTML can be generated with `wire:navigate` based on SPA mode', function (): void {
     FilamentView::spa();
     expect(generate_href_html('http://localhost/page'))
         ->toHtml()->toBe('href="http://localhost/page" wire:navigate');
@@ -27,7 +27,7 @@ test('`href` HTML can be generated with `wire:navigate` based on SPA mode', func
         ->toHtml()->toBe('href="http://localhost/page"');
 });
 
-test('`wire:navigate` is not used in the `href` HTML if it doesn\'t match the request\'s domain', function () {
+test('`wire:navigate` is not used in the `href` HTML if it doesn\'t match the request\'s domain', function (): void {
     FilamentView::spa();
     expect(generate_href_html('http://another-localhost/page'))
         ->toHtml()->toBe('href="http://another-localhost/page"');
@@ -37,7 +37,7 @@ test('`wire:navigate` is not used in the `href` HTML if it doesn\'t match the re
         ->toHtml()->toBe('href="http://another-localhost/page"');
 });
 
-test('`target` HTML can be generated if the URL should open in a new tab', function () {
+test('`target` HTML can be generated if the URL should open in a new tab', function (): void {
     FilamentView::spa();
     expect(generate_href_html('http://localhost/page', shouldOpenInNewTab: true))
         ->toHtml()->toBe('href="http://localhost/page" target="_blank"');

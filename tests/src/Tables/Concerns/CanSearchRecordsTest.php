@@ -7,7 +7,7 @@ use function PHPUnit\Framework\assertCount;
 
 uses(TestCase::class);
 
-it('can extract the search into words using whitespace', function () {
+it('can extract the search into words using whitespace', function (): void {
     $trait = new class
     {
         use CanSearchRecords {
@@ -39,7 +39,7 @@ it('can extract the search into words using whitespace', function () {
     $this->assertSame([], $trait->extractTableSearchWords(''));
 });
 
-it('can trim the search query', function () {
+it('can trim the search query', function (): void {
     $trait = new class
     {
         use CanSearchRecords;

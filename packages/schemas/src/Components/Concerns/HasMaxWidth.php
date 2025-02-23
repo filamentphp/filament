@@ -3,21 +3,31 @@
 namespace Filament\Schemas\Components\Concerns;
 
 use Closure;
-use Filament\Support\Enums\MaxWidth;
+use Filament\Support\Enums\Width;
 
 trait HasMaxWidth
 {
-    protected MaxWidth | string | Closure | null $maxWidth = null;
+    protected Width | string | Closure | null $maxWidth = null;
 
-    public function maxWidth(MaxWidth | string | Closure | null $width): static
+    public function maxWidth(Width | string | Closure | null $width): static
     {
         $this->maxWidth = $width;
 
         return $this;
     }
 
-    public function getMaxWidth(): MaxWidth | string | null
+    public function getMaxWidth(): Width | string | null
     {
-        return $this->evaluate($this->maxWidth);
+        $width = $this->evaluate($this->maxWidth);
+
+        if (blank($width)) {
+            return null;
+        }
+
+        if (is_string($width)) {
+            $width = Width::tryFrom($width) ?? $width;
+        }
+
+        return $width;
     }
 }

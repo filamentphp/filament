@@ -26,7 +26,7 @@ trait HasGlobalSearch
     public function globalSearch(string | bool $provider = true): static
     {
         if (is_string($provider) && (! in_array(GlobalSearchProvider::class, class_implements($provider)))) {
-            throw new Exception("Global search provider {$provider} does not implement the " . GlobalSearchProvider::class . ' interface.');
+            throw new Exception("Global search provider {$provider} does not implement the [" . GlobalSearchProvider::class . '] interface.');
         }
 
         $this->globalSearchProvider = $provider;

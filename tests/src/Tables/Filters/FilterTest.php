@@ -1,5 +1,6 @@
 <?php
 
+use Filament\Tables\Filters\Filter;
 use Filament\Tests\Fixtures\Livewire\PostsTable;
 use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Tables\TestCase;
@@ -8,7 +9,7 @@ use function Filament\Tests\livewire;
 
 uses(TestCase::class);
 
-it('can filter records by boolean column', function () {
+it('can filter records by boolean column', function (): void {
     $posts = Post::factory()->count(10)->create();
 
     livewire(PostsTable::class)
@@ -18,7 +19,7 @@ it('can filter records by boolean column', function () {
         ->assertCanNotSeeTableRecords($posts->where('is_published', false));
 });
 
-it('can filter records by relationship', function () {
+it('can filter records by relationship', function (): void {
     $posts = Post::factory()->count(10)->create();
 
     $author = $posts->first()->author;
@@ -30,7 +31,7 @@ it('can filter records by relationship', function () {
         ->assertCanNotSeeTableRecords($posts->where('author_id', '!=', $author->getKey()));
 });
 
-it('can persist filters in the user\'s session', function () {
+it('can persist filters in the user\'s session', function (): void {
     $posts = Post::factory()->count(10)->create();
 
     $unpublishedPosts = $posts->where('is_published', false);
@@ -51,7 +52,7 @@ it('can persist filters in the user\'s session', function () {
         ->assertCanSeeTableRecords($unpublishedPosts);
 });
 
-it('can reset filters', function () {
+it('can reset filters', function (): void {
     $posts = Post::factory()->count(10)->create();
 
     $unpublishedPosts = $posts->where('is_published', false);
@@ -63,7 +64,7 @@ it('can reset filters', function () {
         ->assertCanSeeTableRecords($unpublishedPosts);
 });
 
-it('can remove a filter', function () {
+it('can remove a filter', function (): void {
     $posts = Post::factory()->count(10)->create();
 
     $unpublishedPosts = $posts->where('is_published', false);
@@ -76,7 +77,7 @@ it('can remove a filter', function () {
         ->assertCanSeeTableRecords($posts);
 });
 
-it('can remove all table filters', function () {
+it('can remove all table filters', function (): void {
     $posts = Post::factory()->count(10)->create();
 
     $unpublishedPosts = $posts->where('is_published', false);
@@ -89,7 +90,7 @@ it('can remove all table filters', function () {
         ->assertCanSeeTableRecords($posts);
 });
 
-it('can use a custom attribute for the `SelectFilter`', function () {
+it('can use a custom attribute for the `SelectFilter`', function (): void {
     $posts = Post::factory()->count(10)->create();
 
     $unpublishedPosts = $posts->where('is_published', false);
@@ -100,4 +101,21 @@ it('can use a custom attribute for the `SelectFilter`', function () {
         ->assertCanSeeTableRecords($unpublishedPosts)
         ->filterTable('select_filter_attribute', true)
         ->assertCanNotSeeTableRecords($unpublishedPosts);
+});
+
+it('can assert a filter exists with a given configuration', function (): void {
+    livewire(PostsTable::class)
+        ->assertTableFilterExists('is_published', function (Filter $filter): bool {
+            return $filter->getLabel() === 'Is published';
+        });
+});
+
+it('can check if a filter is visible', function (): void {
+    livewire(PostsTable::class)
+        ->assertTableFilterVisible('is_published');
+});
+
+it('can check if a filter is hidden', function (): void {
+    livewire(PostsTable::class)
+        ->assertTableFilterHidden('hidden');
 });

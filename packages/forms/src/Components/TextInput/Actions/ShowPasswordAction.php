@@ -4,6 +4,7 @@ namespace Filament\Forms\Components\TextInput\Actions;
 
 use Filament\Actions\Action;
 use Filament\Support\Facades\FilamentIcon;
+use Filament\Support\Icons\Heroicon;
 
 class ShowPasswordAction extends Action
 {
@@ -18,7 +19,7 @@ class ShowPasswordAction extends Action
 
         $this->label(__('filament-forms::components.text_input.actions.show_password.label'));
 
-        $this->icon(FilamentIcon::resolve('forms::components.text-input.actions.show-password') ?? 'heroicon-m-eye');
+        $this->icon(FilamentIcon::resolve('forms::components.text-input.actions.show-password') ?? Heroicon::Eye);
 
         $this->color('gray');
 

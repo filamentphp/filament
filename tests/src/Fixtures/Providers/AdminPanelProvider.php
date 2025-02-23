@@ -35,7 +35,9 @@ class AdminPanelProvider extends PanelProvider
             ->login()
             ->registration()
             ->passwordReset()
+            ->emailChangeVerification()
             ->emailVerification()
+            ->profile()
             ->resources([
                 DepartmentResource::class,
                 PostResource::class,

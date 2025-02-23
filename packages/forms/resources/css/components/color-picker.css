@@ -1,0 +1,17 @@
+.fi-fo-color-picker {
+    & .fi-input-wrp-content {
+        @apply flex;
+    }
+
+    & .fi-fo-color-picker-preview {
+        @apply my-auto me-3 size-5 shrink-0 rounded-full select-none;
+
+        &.fi-empty {
+            @apply ring-1 ring-gray-200 ring-inset dark:ring-white/10;
+        }
+    }
+
+    & .fi-fo-color-picker-panel {
+        @apply absolute z-10 hidden rounded-lg shadow-lg;
+    }
+}

@@ -1,0 +1,23 @@
+.fi-ta-icon-count-summary {
+    @apply grid gap-y-1.5 px-3 py-4 text-sm text-gray-500 dark:text-gray-400;
+
+    & > .fi-ta-icon-count-summary-label {
+        @apply font-medium text-gray-950 dark:text-white;
+    }
+
+    & > ul {
+        @apply grid gap-y-1.5;
+
+        & > li {
+            @apply flex items-center justify-end gap-x-1.5;
+
+            & > .fi-icon {
+                @apply text-gray-400 dark:text-gray-500;
+
+                &.fi-color {
+                    @apply text-(--text) dark:text-(--dark-text);
+                }
+            }
+        }
+    }
+}

@@ -96,14 +96,14 @@ class PanelProviderClassGenerator extends ClassGenerator
         $defaultOutput = $isDefault
             ? <<<'PHP'
 
-                ->default()
+                    ->default()
                 PHP
             : '';
 
         $loginOutput = $isDefault
             ? <<<'PHP'
 
-                ->login()
+                    ->login()
                 PHP
             : '';
 

@@ -7,8 +7,10 @@ use App\Filament\Resources\Users\Resources\Blog\Posts\Pages\EditPost;
 use App\Filament\Resources\Users\Resources\Blog\Posts\Schemas\PostForm;
 use App\Filament\Resources\Users\Resources\Blog\Posts\Tables\PostsTable;
 use App\Filament\Resources\Users\UserResource;
+use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Filament\Tests\Fixtures\Models\Blog\Post;
 
@@ -16,7 +18,7 @@ class PostResource extends Resource
 {
     protected static ?string $model = Post::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
     protected static ?string $parentResource = UserResource::class;
 

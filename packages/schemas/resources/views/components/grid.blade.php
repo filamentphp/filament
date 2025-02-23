@@ -7,5 +7,5 @@
             ->merge($getExtraAttributes(), escape: false)
     }}
 >
-    {{ $getChildComponentContainer() }}
+    {{ $getChildSchema() }}
 </div>

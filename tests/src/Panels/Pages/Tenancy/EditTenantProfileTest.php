@@ -11,7 +11,7 @@ use function Filament\Tests\livewire;
 
 uses(TestCase::class);
 
-it('allows the user access to the tenant profile page if the user is authorized', function () {
+it('allows the user access to the tenant profile page if the user is authorized', function (): void {
     Filament::setTenant(Team::factory()->create());
 
     Gate::policy(Team::class, TeamPolicyWithAccess::class);
@@ -20,7 +20,7 @@ it('allows the user access to the tenant profile page if the user is authorized'
         ->assertSuccessful();
 });
 
-it('denies the user access to the tenant profile page if the user is unauthorized', function () {
+it('denies the user access to the tenant profile page if the user is unauthorized', function (): void {
     Filament::setTenant(Team::factory()->create());
 
     Gate::policy(Team::class, TeamPolicyWithoutAccess::class);

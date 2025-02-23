@@ -9,7 +9,7 @@ class Livewire extends Component
     /**
      * @var view-string
      */
-    protected string $view = 'filament-schema::components.livewire';
+    protected string $view = 'filament-schemas::components.livewire';
 
     protected bool | Closure $isLazy = false;
 

@@ -3,6 +3,7 @@
 namespace Filament\Actions\Concerns;
 
 use Closure;
+use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;
 use Filament\Notifications\Notification;
 use Illuminate\Auth\Access\Response;
 
@@ -14,11 +15,15 @@ trait CanNotify
 
     protected Notification | Closure | null $unauthorizedNotification = null;
 
+    protected Notification | Closure | null $rateLimitedNotification = null;
+
     protected string | Closure | null $failureNotificationTitle = null;
 
     protected string | Closure | null $successNotificationTitle = null;
 
     protected string | Closure | null $unauthorizedNotificationTitle = null;
+
+    protected string | Closure | null $rateLimitedNotificationTitle = null;
 
     protected string | Closure | null $failureNotificationBody = null;
 
@@ -131,8 +136,9 @@ trait CanNotify
         $notification = $this->evaluate($this->unauthorizedNotification, [
             'notification' => $notification = Notification::make()
                 ->danger()
-                ->title($this->getUnauthorizedNotificationTitle() ?? $response->message())
+                ->title($this->getUnauthorizedNotificationTitle($response) ?? $response->message())
                 ->persistent(),
+            'response' => $response,
         ]) ?? $notification;
 
         if (filled($notification?->getTitle())) {
@@ -152,6 +158,43 @@ trait CanNotify
     public function unauthorizedNotificationTitle(string | Closure | null $title): static
     {
         $this->unauthorizedNotificationTitle = $title;
+
+        return $this;
+    }
+
+    public function sendRateLimitedNotification(TooManyRequestsException $exception): static
+    {
+        $notification = $this->evaluate($this->rateLimitedNotification, [
+            'exception' => $exception,
+            'minutes' => $exception->minutesUntilAvailable,
+            'notification' => $notification = Notification::make()
+                ->danger()
+                ->title($this->getRateLimitedNotificationTitle($exception) ?? __('filament-actions::notifications.throttled.title', [
+                    'seconds' => $exception->secondsUntilAvailable,
+                    'minutes' => $exception->minutesUntilAvailable,
+                ]))
+                ->body(__('filament-actions::notifications.throttled.body', [
+                    'seconds' => $exception->secondsUntilAvailable,
+                    'minutes' => $exception->minutesUntilAvailable,
+                ])),
+            'seconds' => $exception->secondsUntilAvailable,
+        ]) ?? $notification;
+
+        $notification->send();
+
+        return $this;
+    }
+
+    public function rateLimitedNotification(Notification | Closure | null $notification): static
+    {
+        $this->rateLimitedNotification = $notification;
+
+        return $this;
+    }
+
+    public function rateLimitedNotificationTitle(string | Closure | null $title): static
+    {
+        $this->rateLimitedNotificationTitle = $title;
 
         return $this;
     }
@@ -209,8 +252,19 @@ trait CanNotify
         ]);
     }
 
-    public function getUnauthorizedNotificationTitle(): ?string
+    public function getUnauthorizedNotificationTitle(Response $response): ?string
     {
-        return $this->evaluate($this->unauthorizedNotificationTitle);
+        return $this->evaluate($this->unauthorizedNotificationTitle, [
+            'response' => $response,
+        ]);
+    }
+
+    public function getRateLimitedNotificationTitle(TooManyRequestsException $exception): ?string
+    {
+        return $this->evaluate($this->rateLimitedNotificationTitle, [
+            'exception' => $exception,
+            'minutes' => $exception->minutesUntilAvailable,
+            'seconds' => $exception->secondsUntilAvailable,
+        ]);
     }
 }

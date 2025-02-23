@@ -2,6 +2,7 @@
 
 namespace Filament\Widgets\StatsOverviewWidget;
 
+use BackedEnum;
 use Closure;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Concerns\CanOpenUrl;
@@ -24,18 +25,18 @@ class Stat extends Component
     protected ?array $chart = null;
 
     /**
-     * @var string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null
+     * @var string | array<int | string, string | int> | null
      */
     protected string | array | null $chartColor = null;
 
-    protected ?string $icon = null;
+    protected string | BackedEnum | null $icon = null;
 
-    protected ?string $descriptionIcon = null;
+    protected string | BackedEnum | null $descriptionIcon = null;
 
     protected IconPosition | string | null $descriptionIconPosition = null;
 
     /**
-     * @var string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null
+     * @var string | array<int | string, string | int> | null
      */
     protected string | array | null $descriptionColor = null;
 
@@ -62,7 +63,7 @@ class Stat extends Component
     }
 
     /**
-     * @param  string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null  $color
+     * @param  string | array<int | string, string | int> | null  $color
      */
     public function chartColor(string | array | null $color): static
     {
@@ -71,7 +72,7 @@ class Stat extends Component
         return $this;
     }
 
-    public function icon(?string $icon): static
+    public function icon(string | BackedEnum | null $icon): static
     {
         $this->icon = $icon;
 
@@ -79,7 +80,7 @@ class Stat extends Component
     }
 
     /**
-     * @param  string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null  $color
+     * @param  string | array<int | string, string | int> | null  $color
      */
     public function descriptionColor(string | array | null $color): static
     {
@@ -88,7 +89,7 @@ class Stat extends Component
         return $this;
     }
 
-    public function descriptionIcon(?string $icon, IconPosition | string | null $position = null): static
+    public function descriptionIcon(string | BackedEnum | null $icon, IconPosition | string | null $position = null): static
     {
         $this->descriptionIcon = $icon;
         $this->descriptionIconPosition = $position;
@@ -125,27 +126,27 @@ class Stat extends Component
     }
 
     /**
-     * @return string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null
+     * @return string | array<int | string, string | int> | null
      */
     public function getChartColor(): string | array | null
     {
         return $this->chartColor ?? $this->getColor();
     }
 
-    public function getIcon(): ?string
+    public function getIcon(): string | BackedEnum | null
     {
         return $this->icon;
     }
 
     /**
-     * @return string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null
+     * @return string | array<int | string, string | int> | null
      */
     public function getDescriptionColor(): string | array | null
     {
         return $this->descriptionColor ?? $this->getColor();
     }
 
-    public function getDescriptionIcon(): ?string
+    public function getDescriptionIcon(): string | BackedEnum | null
     {
         return $this->descriptionIcon;
     }

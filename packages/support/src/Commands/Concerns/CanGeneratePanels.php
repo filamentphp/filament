@@ -55,15 +55,11 @@ trait CanGeneratePanels
             ]));
         }
 
-        $isLaravel11OrHigherWithBootstrapProvidersFile = version_compare(App::version(), '11.0', '>=') &&
-            /** @phpstan-ignore-next-line */
-            file_exists($bootstrapProvidersPath = App::getBootstrapProvidersPath());
+        $hasBootstrapProvidersFile = file_exists($bootstrapProvidersPath = App::getBootstrapProvidersPath());
 
-        if ($isLaravel11OrHigherWithBootstrapProvidersFile) {
-            /** @phpstan-ignore-next-line */
+        if ($hasBootstrapProvidersFile) {
             ServiceProvider::addProviderToBootstrapFile(
                 $fqn,
-                /** @phpstan-ignore-next-line */
                 $bootstrapProvidersPath,
             );
         } else {
@@ -80,7 +76,7 @@ trait CanGeneratePanels
 
         $this->components->info("Filament panel [{$path}] created successfully.");
 
-        if ($isLaravel11OrHigherWithBootstrapProvidersFile) {
+        if ($hasBootstrapProvidersFile) {
             $this->components->warn("We've attempted to register the {$basename} in your [bootstrap/providers.php] file. If you get an error while trying to access your panel then this process has probably failed. You can manually register the service provider by adding it to the array.");
         } else {
             $this->components->warn("We've attempted to register the {$basename} in your [config/app.php] file as a service provider.  If you get an error while trying to access your panel then this process has probably failed. You can manually register the service provider by adding it to the [providers] array.");

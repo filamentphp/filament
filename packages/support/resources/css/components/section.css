@@ -1,7 +1,17 @@
 .fi-section {
     &:not(.fi-section-not-contained) {
-        & .fi-section-content {
-            @apply p-6;
+        &:not(.fi-divided) {
+            & .fi-section-content {
+                @apply p-6;
+            }
+        }
+
+        &.fi-divided {
+            & .fi-section-content {
+                & > * {
+                    @apply p-6;
+                }
+            }
         }
 
         & .fi-section-footer {
@@ -9,7 +19,15 @@
         }
 
         &:not(.fi-aside) {
-            @apply rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10;
+            @apply rounded-xl bg-white ring-1 shadow-sm ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10;
+
+            &.fi-compact {
+                @apply rounded-lg;
+            }
+
+            &.fi-secondary {
+                @apply bg-gray-50 dark:bg-white/5;
+            }
 
             & .fi-section-header {
                 @apply px-6 py-4;
@@ -24,7 +42,19 @@
 
         &.fi-aside {
             & .fi-section-content-ctn {
-                @apply rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10 md:col-span-2;
+                @apply rounded-xl bg-white ring-1 shadow-sm ring-gray-950/5 md:col-span-2 dark:bg-gray-900 dark:ring-white/10;
+            }
+
+            &.fi-compact {
+                & .fi-section-content-ctn {
+                    @apply rounded-lg;
+                }
+            }
+
+            &.fi-secondary {
+                & .fi-section-content-ctn {
+                    @apply bg-gray-50 dark:bg-white/5;
+                }
             }
         }
 
@@ -35,8 +65,18 @@
                 }
             }
 
-            & .fi-section-content {
-                @apply p-4;
+            &:not(.fi-divided) {
+                & .fi-section-content {
+                    @apply p-4;
+                }
+            }
+
+            &.fi-divided {
+                & .fi-section-content {
+                    & > * {
+                        @apply p-4;
+                    }
+                }
             }
 
             & .fi-section-footer {
@@ -52,12 +92,34 @@
             @apply grid gap-y-4;
         }
 
+        &.fi-divided {
+            & .fi-section-content {
+                & > * {
+                    @apply py-6;
+                }
+            }
+        }
+
         &.fi-compact {
             @apply gap-y-2.5;
 
             & .fi-section-content-ctn {
                 @apply gap-y-2.5;
             }
+
+            &.fi-divided {
+                & .fi-section-content {
+                    & > * {
+                        @apply py-4;
+                    }
+                }
+            }
+        }
+    }
+
+    &.fi-divided {
+        & .fi-section-content {
+            @apply divide-y divide-gray-200 dark:divide-white/10;
         }
     }
 
@@ -89,21 +151,21 @@
 
     & .fi-section-header {
         @apply flex items-center gap-3;
-    }
 
-    & .fi-section-header-icon {
-        @apply size-6 self-start text-gray-400 dark:text-gray-500;
+        & .fi-icon {
+            @apply self-start text-gray-400 dark:text-gray-500;
 
-        &.fi-color-custom {
-            @apply text-custom-500 dark:text-custom-400;
-        }
+            &.fi-color {
+                @apply text-color-500 dark:text-color-400;
+            }
 
-        &.fi-size-sm {
-            @apply mt-1 size-4;
-        }
+            &.fi-size-sm {
+                @apply mt-1;
+            }
 
-        &.fi-size-md {
-            @apply mt-0.5 size-5;
+            &.fi-size-md {
+                @apply mt-0.5;
+            }
         }
     }
 
@@ -112,10 +174,10 @@
     }
 
     & .fi-section-header-heading {
-        @apply text-base font-semibold leading-6 text-gray-950 dark:text-white;
+        @apply text-base leading-6 font-semibold text-gray-950 dark:text-white;
     }
 
     & .fi-section-header-description {
-        @apply overflow-hidden break-words text-sm text-gray-500 dark:text-gray-400;
+        @apply overflow-hidden text-sm break-words text-gray-500 dark:text-gray-400;
     }
 }

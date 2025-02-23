@@ -7,42 +7,43 @@ use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
 
 class Actions extends Page
 {
-    protected static string $view = 'pages.actions';
+    protected string $view = 'pages.actions';
 
     protected function getHeaderActions(): array
     {
         return [
             Action::make('simple')
-                ->action(function () {
+                ->action(function (): void {
                     $this->dispatch('simple-called');
                 }),
             Action::make('data')
                 ->mountUsing(fn (Schema $form) => $form->fill(['foo' => 'bar']))
-                ->form([
+                ->schema([
                     TextInput::make('payload')->required(),
                 ])
-                ->action(function (array $data) {
+                ->action(function (array $data): void {
                     $this->dispatch('data-called', data: $data);
                 }),
             Action::make('before-hook-data')
-                ->form([
+                ->schema([
                     TextInput::make('payload')->required(),
                 ])
-                ->before(function (Action $action) {
+                ->before(function (Action $action): void {
                     $this->dispatch('before-hook-called', data: $action->getFormData());
                 }),
             Action::make('arguments')
                 ->requiresConfirmation()
-                ->action(function (array $arguments) {
+                ->action(function (array $arguments): void {
                     $this->dispatch('arguments-called', arguments: $arguments);
                 })
                 ->extraModalFooterActions(fn (): array => [
                     Action::make('nested')
                         ->requiresConfirmation()
-                        ->action(function (array $arguments) {
+                        ->action(function (array $arguments): void {
                             $this->dispatch('nested-called', arguments: $arguments);
                         }),
                 ]),
@@ -66,7 +67,7 @@ class Actions extends Page
                                 ->cancelParentActions(),
                         ]),
                 ])
-                ->action(function (array $data) {
+                ->action(function (array $data): void {
                     $this->dispatch('parent-called', foo: $data['foo']);
                 })
                 ->extraModalFooterActions([
@@ -96,7 +97,7 @@ class Actions extends Page
                                     baz: $mountedActions[2]->getRawFormData()['baz'],
                                 )),
                             Action::make('testArguments')
-                                ->action(function (array $mountedActions, Action $action) {
+                                ->action(function (array $mountedActions): void {
                                     $this->dispatch(
                                         'arguments-test-called',
                                         foo: $mountedActions[0]->getArguments()['foo'],
@@ -109,7 +110,7 @@ class Actions extends Page
                 ]),
             Action::make('halt')
                 ->requiresConfirmation()
-                ->action(function (Action $action) {
+                ->action(function (Action $action): void {
                     $this->dispatch('halt-called');
 
                     $action->halt();
@@ -121,7 +122,7 @@ class Actions extends Page
             Action::make('disabled')
                 ->disabled(),
             Action::make('hasIcon')
-                ->icon('heroicon-m-pencil-square'),
+                ->icon(Heroicon::PencilSquare),
             Action::make('hasLabel')
                 ->label('My Action'),
             Action::make('hasColor')
@@ -134,7 +135,7 @@ class Actions extends Page
             Action::make('urlNotInNewTab')
                 ->url('https://filamentphp.com', false),
             Action::make('shows-notification')
-                ->action(function () {
+                ->action(function (): void {
                     Notification::make()
                         ->title('A notification')
                         ->success()
@@ -142,14 +143,14 @@ class Actions extends Page
                 }),
             Action::make('does-not-show-notification'),
             Action::make('shows-notification-with-id')
-                ->action(function () {
+                ->action(function (): void {
                     Notification::make('notification_with_id')
                         ->title('A notification')
                         ->success()
                         ->send();
                 }),
             Action::make('two-notifications')
-                ->action(function () {
+                ->action(function (): void {
                     Notification::make('first_notification')
                         ->title('First notification')
                         ->success()
@@ -159,6 +160,11 @@ class Actions extends Page
                         ->success()
                         ->send();
                 }),
+            Action::make('rate-limited')
+                ->rateLimit(5)
+                ->action(fn () => $this->dispatch(
+                    'rate-limited-called',
+                )),
         ];
     }
 }

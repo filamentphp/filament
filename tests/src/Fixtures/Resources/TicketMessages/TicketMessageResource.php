@@ -2,8 +2,10 @@
 
 namespace Filament\Tests\Fixtures\Resources\TicketMessages;
 
+use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Filament\Tests\Fixtures\Models\TicketMessage;
 use Filament\Tests\Fixtures\Resources\TicketMessages\Pages\CreateTicketMessage;
@@ -20,7 +22,7 @@ class TicketMessageResource extends Resource
 {
     protected static ?string $model = TicketMessage::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string | BackedEnum | null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
     public static function form(Schema $schema): Schema
     {

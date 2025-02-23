@@ -1,0 +1,155 @@
+.fi-fo-repeater {
+    @apply grid gap-y-4;
+
+    & .fi-fo-repeater-actions {
+        @apply flex gap-x-3;
+
+        &.fi-hidden {
+            @apply hidden;
+        }
+    }
+
+    & .fi-fo-repeater-items {
+        @apply items-start gap-4;
+    }
+
+    & .fi-fo-repeater-item {
+        @apply divide-y divide-gray-100 rounded-xl bg-white ring-1 shadow-xs ring-gray-950/5 dark:divide-white/10 dark:bg-white/5 dark:ring-white/10;
+
+        &.fi-collapsed {
+            @apply overflow-hidden;
+
+            & .fi-fo-repeater-item-header-collapsible-actions {
+                @apply -rotate-180;
+            }
+
+            & .fi-fo-repeater-item-header-collapse-action {
+                @apply pointer-events-none opacity-0;
+            }
+        }
+
+        &:not(.fi-collapsed) {
+            & .fi-fo-repeater-item-header-expand-action {
+                @apply pointer-events-none opacity-0;
+            }
+        }
+    }
+
+    & .fi-fo-repeater-item-header {
+        @apply flex items-center gap-x-3 overflow-hidden px-4 py-3;
+    }
+
+    &.fi-collapsible {
+        & .fi-fo-repeater-item-header {
+            @apply cursor-pointer select-none;
+        }
+    }
+
+    & .fi-fo-repeater-item-header-start-actions {
+        @apply flex items-center gap-x-3;
+    }
+
+    & .fi-fo-repeater-item-header-icon {
+        @apply text-gray-400 dark:text-gray-500;
+    }
+
+    & .fi-fo-repeater-item-header-label {
+        @apply text-sm font-medium text-gray-950 dark:text-white;
+
+        &.fi-truncated {
+            @apply truncate;
+        }
+    }
+
+    & .fi-fo-repeater-item-header-end-actions {
+        @apply ms-auto flex items-center gap-x-3;
+    }
+
+    & .fi-fo-repeater-item-header-collapsible-actions {
+        @apply relative transition;
+    }
+
+    & .fi-fo-repeater-item-header-collapse-action {
+        @apply transition;
+    }
+
+    & .fi-fo-repeater-item-header-expand-action {
+        @apply absolute inset-0 rotate-180 transition;
+    }
+
+    & .fi-fo-repeater-item-content {
+        @apply p-4;
+    }
+
+    & .fi-fo-repeater-add-between-items-ctn {
+        @apply flex w-full justify-center;
+    }
+
+    & .fi-fo-repeater-add-between-items {
+        @apply rounded-lg bg-white dark:bg-gray-900;
+    }
+
+    & .fi-fo-repeater-label-between-items-ctn {
+        @apply relative border-t border-gray-200 dark:border-white/10;
+    }
+
+    & .fi-fo-repeater-label-between-items {
+        @apply absolute -top-3 left-3 px-1 text-sm font-medium;
+    }
+
+    & .fi-fo-repeater-add {
+        @apply flex w-full;
+
+        &.fi-align-start,
+        &.fi-align-left {
+            @apply justify-start;
+        }
+
+        &.fi-align-center {
+            @apply justify-center;
+        }
+
+        &.fi-align-end,
+        &.fi-align-right {
+            @apply justify-end;
+        }
+    }
+}
+
+.fi-fo-simple-repeater {
+    @apply grid gap-y-4;
+
+    & .fi-fo-repeater-items {
+        @apply gap-4;
+    }
+
+    & .fi-fo-repeater-item {
+        @apply flex justify-start gap-x-3;
+    }
+
+    & .fi-fo-repeater-item-content {
+        @apply flex-1;
+    }
+
+    & .fi-fo-repeater-item-actions {
+        @apply flex items-center gap-x-1;
+    }
+
+    & .fi-fo-repeater-add {
+        @apply flex w-full;
+
+        &.fi-align-start,
+        &.fi-align-left {
+            @apply justify-start;
+        }
+
+        &.fi-align-center {
+            @apply justify-center;
+        }
+
+        &.fi-align-end,
+        &.fi-align-right {
+            @apply justify-end;
+        }
+    }
+}

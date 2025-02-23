@@ -3,10 +3,21 @@
 namespace Filament\Upgrade\Rector;
 
 use Closure;
+use Filament\Auth\Pages\EditProfile;
+use Filament\Pages\BasePage;
+use Filament\Pages\Page;
+use Filament\Pages\SimplePage;
+use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Resources\Resource;
+use Filament\Widgets\ChartWidget;
+use Filament\Widgets\StatsOverviewWidget;
+use Filament\Widgets\Widget;
+use PhpParser\Modifiers;
 use PhpParser\Node;
 use PhpParser\Node\Name;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\Property;
+use PHPStan\Type\ObjectType;
 use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -24,9 +35,95 @@ class SimplePropertyChangesRector extends AbstractRector
     {
         return [
             [
+                'class' => [
+                    BasePage::class,
+                    RelationManager::class,
+                    Widget::class,
+                ],
                 'changes' => [
-                    'subNavigationPosition' => function (Property $node) {
+                    'view' => function (Property $node): void {
+                        $node->flags &= ~Modifiers::STATIC;
+                    },
+                ],
+            ],
+            [
+                'class' => [
+                    SimplePage::class,
+                    EditProfile::class,
+                ],
+                'changes' => [
+                    'maxWidth' => function (Property $node): void {
+                        $node->type = new Name('\Filament\Support\Enums\Width | string | null');
+                    },
+                ],
+            ],
+            [
+                'class' => [
+                    BasePage::class,
+                ],
+                'changes' => [
+                    'maxContentWidth' => function (Property $node): void {
+                        $node->type = new Name('\Filament\Support\Enums\Width | string | null');
+                    },
+                ],
+            ],
+            [
+                'class' => [
+                    Resource::class,
+                    Page::class,
+                ],
+                'changes' => [
+                    'activeNavigationIcon' => function (Property $node): void {
+                        $node->type = new Name('string | \BackedEnum | null');
+                    },
+                    'navigationIcon' => function (Property $node): void {
+                        $node->type = new Name('string | \BackedEnum | null');
+                    },
+                    'subNavigationPosition' => function (Property $node): void {
                         $node->type = new Name('?\Filament\Pages\Enums\SubNavigationPosition');
+                    },
+                ],
+            ],
+            [
+                'class' => [
+                    RelationManager::class,
+                ],
+                'changes' => [
+                    'icon' => function (Property $node): void {
+                        $node->type = new Name('string | \BackedEnum | null');
+                    },
+                ],
+            ],
+            [
+                'class' => [
+                    ChartWidget::class,
+                    StatsOverviewWidget::class,
+                ],
+                'changes' => [
+                    'pollingInterval' => function (Property $node): void {
+                        $node->flags &= ~Modifiers::STATIC;
+                    },
+                ],
+            ],
+            [
+                'class' => [
+                    ChartWidget::class,
+                ],
+                'changes' => [
+                    'color' => function (Property $node): void {
+                        $node->flags &= ~Modifiers::STATIC;
+                    },
+                    'heading' => function (Property $node): void {
+                        $node->flags &= ~Modifiers::STATIC;
+                    },
+                    'description' => function (Property $node): void {
+                        $node->flags &= ~Modifiers::STATIC;
+                    },
+                    'maxHeight' => function (Property $node): void {
+                        $node->flags &= ~Modifiers::STATIC;
+                    },
+                    'options' => function (Property $node): void {
+                        $node->flags &= ~Modifiers::STATIC;
                     },
                 ],
             ],
@@ -95,22 +192,14 @@ class SimplePropertyChangesRector extends AbstractRector
             $change['class'] :
             [$change['class']];
 
-        $classes = [
-            ...array_map(fn (string $class): string => ltrim($class, '\\'), $classes),
-            ...array_map(fn (string $class): string => '\\' . ltrim($class, '\\'), $classes),
-        ];
+        $classes = array_map(fn (string $class): string => ltrim($class, '\\'), $classes);
 
-        if ($change['classIdentifier'] === 'extends') {
-            return $class->extends && $this->isNames($class->extends, $classes);
+        foreach ($classes as $classToCheck) {
+            if ($this->isObjectType($class, new ObjectType($classToCheck))) {
+                return true;
+            }
         }
 
-        if ($change['classIdentifier'] !== 'implements') {
-            return false;
-        }
-
-        return (bool) count(array_filter(
-            $class->implements,
-            fn (Name $interface): bool => $this->isNames($interface, $classes),
-        ));
+        return false;
     }
 }

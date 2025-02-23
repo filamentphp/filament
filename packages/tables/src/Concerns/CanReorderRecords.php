@@ -21,7 +21,7 @@ trait CanReorderRecords
 
         $orderColumn = (string) str($this->getTable()->getReorderColumn())->afterLast('.');
 
-        DB::transaction(function () use ($order, $orderColumn) {
+        DB::transaction(function () use ($order, $orderColumn): void {
             if (
                 (($relationship = $this->getTable()->getRelationship()) instanceof BelongsToMany) &&
                 in_array($orderColumn, $relationship->getPivotColumns())

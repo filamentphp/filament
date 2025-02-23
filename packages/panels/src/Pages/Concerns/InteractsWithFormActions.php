@@ -4,9 +4,8 @@ namespace Filament\Pages\Concerns;
 
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
-use InvalidArgumentException;
 
-trait InteractsWithFormActions
+trait InteractsWithFormActions /** @phpstan-ignore trait.unused */
 {
     /**
      * @var array<Action | ActionGroup>
@@ -28,10 +27,6 @@ trait InteractsWithFormActions
                 $this->cachedFormActions[] = $action;
 
                 continue;
-            }
-
-            if (! $action instanceof Action) {
-                throw new InvalidArgumentException('Form actions must be an instance of ' . Action::class . ', or ' . ActionGroup::class . '.');
             }
 
             $this->cacheAction($action);

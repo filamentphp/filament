@@ -5,7 +5,7 @@ namespace Filament\Resources\Concerns;
 use Filament\SpatieLaravelTranslatableContentDriver;
 use Filament\Support\Contracts\TranslatableContentDriver;
 
-trait HasActiveLocaleSwitcher
+trait HasActiveLocaleSwitcher /** @phpstan-ignore trait.unused */
 {
     public ?string $activeLocale = null;
 

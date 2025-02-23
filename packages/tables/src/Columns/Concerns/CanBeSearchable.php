@@ -3,6 +3,7 @@
 namespace Filament\Tables\Columns\Concerns;
 
 use Closure;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 
 trait CanBeSearchable
@@ -56,9 +57,9 @@ trait CanBeSearchable
     /**
      * @return array<string>
      */
-    public function getSearchColumns(): array
+    public function getSearchColumns(Model $record): array
     {
-        return $this->searchColumns ?? $this->getDefaultSearchColumns();
+        return $this->searchColumns ?? $this->getDefaultSearchColumns($record);
     }
 
     public function isSearchable(): bool
@@ -84,8 +85,8 @@ trait CanBeSearchable
     /**
      * @return array{0: string}
      */
-    public function getDefaultSearchColumns(): array
+    public function getDefaultSearchColumns(Model $record): array
     {
-        return [(string) str($this->getName())->afterLast('.')];
+        return [$this->getFullAttributeName($record)];
     }
 }

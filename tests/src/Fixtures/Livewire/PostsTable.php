@@ -15,9 +15,10 @@ use Filament\Actions\ForceDeleteAction;
 use Filament\Actions\ReplicateAction;
 use Filament\Actions\RestoreAction;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Forms\Contracts\HasForms;
+use Filament\Schemas\Concerns\InteractsWithSchemas;
+use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Tests\Fixtures\Models\Post;
@@ -27,16 +28,20 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Builder;
 use Livewire\Component;
 
-class PostsTable extends Component implements HasActions, HasForms, Tables\Contracts\HasTable
+class PostsTable extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
 {
     use InteractsWithActions;
-    use InteractsWithForms;
+    use InteractsWithSchemas;
     use Tables\Concerns\InteractsWithTable;
 
     public function table(Table $table): Table
     {
         return $table
             ->query(Post::query())
+            ->groups(fn () => [
+                Tables\Grouping\Group::make('author.name')
+                    ->label(fn (Table $table, self $livewire) => 'Dynamic label'),
+            ])
             ->columns([
                 Tables\Columns\TextColumn::make('title')
                     ->sortable()
@@ -85,7 +90,19 @@ class PostsTable extends Component implements HasActions, HasForms, Tables\Contr
                     ->state('correct state'),
                 Tables\Columns\TextColumn::make('formatted_state')
                     ->formatStateUsing(fn () => 'formatted state'),
+                Tables\Columns\TextColumn::make('json.foo')
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('json.bar.baz')
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('json_array_of_objects.*.value'),
+                Tables\Columns\TextColumn::make('author.json.foo')
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('author.json.bar.baz')
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('extra_attributes')
                     ->extraAttributes([
                         'class' => 'text-danger-500',
@@ -116,25 +133,27 @@ class PostsTable extends Component implements HasActions, HasForms, Tables\Contr
                     ])
                     ->attribute('is_published'),
                 Tables\Filters\TrashedFilter::make(),
+                Tables\Filters\Filter::make('hidden')
+                    ->hidden(),
             ])
             ->persistFiltersInSession()
             ->headerActions([
                 Action::make('data')
                     ->mountUsing(fn (Schema $form) => $form->fill(['foo' => 'bar']))
-                    ->form([
+                    ->schema([
                         TextInput::make('payload')->required(),
                     ])
-                    ->action(function (array $data) {
+                    ->action(function (array $data): void {
                         $this->dispatch('data-called', data: $data);
                     }),
                 Action::make('arguments')
                     ->requiresConfirmation()
-                    ->action(function (array $arguments) {
+                    ->action(function (array $arguments): void {
                         $this->dispatch('arguments-called', arguments: $arguments);
                     }),
                 Action::make('halt')
                     ->requiresConfirmation()
-                    ->action(function (Action $action) {
+                    ->action(function (Action $action): void {
                         $this->dispatch('halt-called');
 
                         $action->halt();
@@ -152,7 +171,7 @@ class PostsTable extends Component implements HasActions, HasForms, Tables\Contr
                     Action::make('groupedWithHiddenGroupCondition'),
                 ])->hidden(fn (?Model $record): bool => $record !== null),
                 Action::make('hasIcon')
-                    ->icon('heroicon-m-pencil-square'),
+                    ->icon(Heroicon::PencilSquare),
                 Action::make('hasLabel')
                     ->label('My Action'),
                 Action::make('hasColor')
@@ -176,11 +195,11 @@ class PostsTable extends Component implements HasActions, HasForms, Tables\Contr
                 RestoreAction::make(),
                 ReplicateAction::make()
                     ->mutateRecordDataUsing(function (array $data): array {
-                        $data['title'] = $data['title'] . ' (Copy)';
+                        $data['title'] .= ' (Copy)';
 
                         return $data;
                     })
-                    ->form([
+                    ->schema([
                         TextInput::make('title')
                             ->required(),
                     ]),
@@ -204,7 +223,7 @@ class PostsTable extends Component implements HasActions, HasForms, Tables\Contr
                                     ->cancelParentActions(),
                             ]),
                     ])
-                    ->action(function (array $data, Post $record) {
+                    ->action(function (array $data, Post $record): void {
                         $this->dispatch('parent-called', foo: $data['foo'], recordKey: $record->getKey());
                     })
                     ->extraModalFooterActions([
@@ -247,7 +266,7 @@ class PostsTable extends Component implements HasActions, HasForms, Tables\Contr
                                         ->cancelParentActions(),
                                 ]),
                         ])
-                        ->action(function (array $data, Post $record) {
+                        ->action(function (array $data, Post $record): void {
                             $this->dispatch('grouped-parent-called', foo: $data['foo'], recordKey: $record->getKey());
                         })
                         ->extraModalFooterActions([
@@ -272,20 +291,20 @@ class PostsTable extends Component implements HasActions, HasForms, Tables\Contr
                 DeleteBulkAction::make(),
                 BulkAction::make('data')
                     ->mountUsing(fn (Schema $form) => $form->fill(['foo' => 'bar']))
-                    ->form([
+                    ->schema([
                         TextInput::make('payload')->required(),
                     ])
-                    ->action(function (array $data) {
+                    ->action(function (array $data): void {
                         $this->dispatch('data-called', data: $data);
                     }),
                 BulkAction::make('arguments')
                     ->requiresConfirmation()
-                    ->action(function (array $arguments) {
+                    ->action(function (array $arguments): void {
                         $this->dispatch('arguments-called', arguments: $arguments);
                     }),
                 BulkAction::make('halt')
                     ->requiresConfirmation()
-                    ->action(function (BulkAction $action) {
+                    ->action(function (BulkAction $action): void {
                         $this->dispatch('halt-called');
 
                         $action->halt();
@@ -297,7 +316,7 @@ class PostsTable extends Component implements HasActions, HasForms, Tables\Contr
                 BulkAction::make('disabled')
                     ->disabled(),
                 BulkAction::make('hasIcon')
-                    ->icon('heroicon-m-pencil-square'),
+                    ->icon(Heroicon::PencilSquare),
                 BulkAction::make('hasLabel')
                     ->label('My Action'),
                 BulkAction::make('hasColor')

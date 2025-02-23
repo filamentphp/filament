@@ -3,10 +3,12 @@
 namespace Filament\Forms\Components;
 
 use Closure;
+use Exception;
 use Filament\Actions\Action;
 use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
 use Filament\Schemas\Components\StateCasts\EnumArrayStateCast;
-use Filament\Support\Enums\ActionSize;
+use Filament\Support\Concerns\HasExtraAlpineAttributes;
+use Filament\Support\Enums\Size;
 use Filament\Support\Services\RelationshipJoiner;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Collection;
@@ -29,6 +31,7 @@ class CheckboxList extends Field implements Contracts\CanDisableOptions, Contrac
     use Concerns\HasNestedRecursiveValidationRules;
     use Concerns\HasOptions;
     use Concerns\HasPivotData;
+    use HasExtraAlpineAttributes;
 
     /**
      * @var view-string
@@ -53,7 +56,7 @@ class CheckboxList extends Field implements Contracts\CanDisableOptions, Contrac
 
         $this->default([]);
 
-        $this->afterStateHydrated(static function (CheckboxList $component, $state) {
+        $this->afterStateHydrated(static function (CheckboxList $component, $state): void {
             if (is_array($state)) {
                 return;
             }
@@ -75,7 +78,7 @@ class CheckboxList extends Field implements Contracts\CanDisableOptions, Contrac
             ->label(__('filament-forms::components.checkbox_list.actions.select_all.label'))
             ->livewireClickHandlerEnabled(false)
             ->link()
-            ->size(ActionSize::Small);
+            ->size(Size::Small);
 
         if ($this->modifySelectAllActionUsing) {
             $action = $this->evaluate($this->modifySelectAllActionUsing, [
@@ -104,7 +107,7 @@ class CheckboxList extends Field implements Contracts\CanDisableOptions, Contrac
             ->label(__('filament-forms::components.checkbox_list.actions.deselect_all.label'))
             ->livewireClickHandlerEnabled(false)
             ->link()
-            ->size(ActionSize::Small);
+            ->size(Size::Small);
 
         if ($this->modifyDeselectAllActionUsing) {
             $action = $this->evaluate($this->modifyDeselectAllActionUsing, [
@@ -195,7 +198,7 @@ class CheckboxList extends Field implements Contracts\CanDisableOptions, Contrac
             );
         });
 
-        $this->saveRelationshipsUsing(static function (CheckboxList $component, ?array $state) use ($modifyQueryUsing) {
+        $this->saveRelationshipsUsing(static function (CheckboxList $component, ?array $state) use ($modifyQueryUsing): void {
             $relationship = $component->getRelationship();
 
             if ($modifyQueryUsing) {
@@ -296,7 +299,13 @@ class CheckboxList extends Field implements Contracts\CanDisableOptions, Contrac
             return null;
         }
 
-        return $this->getModelInstance()->{$name}();
+        $record = $this->getModelInstance();
+
+        if (! $record->isRelation($name)) {
+            throw new Exception("The relationship [{$name}] does not exist on the model [{$this->getModel()}].");
+        }
+
+        return $record->{$name}();
     }
 
     public function getRelationshipName(): ?string

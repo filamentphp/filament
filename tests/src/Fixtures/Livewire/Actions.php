@@ -6,16 +6,17 @@ use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Forms\Contracts\HasForms;
+use Filament\Schemas\Concerns\InteractsWithSchemas;
+use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
 
-class Actions extends Component implements HasActions, HasForms
+class Actions extends Component implements HasActions, HasSchemas
 {
     use InteractsWithActions;
-    use InteractsWithForms;
+    use InteractsWithSchemas;
 
     public $data;
 
@@ -27,25 +28,25 @@ class Actions extends Component implements HasActions, HasForms
     public function form(Schema $form): Schema
     {
         return $form
-            ->schema([
+            ->components([
                 TextInput::make('textInput')
                     ->registerActions([
                         Action::make('setValue')
-                            ->form([
+                            ->schema([
                                 TextInput::make('value')
                                     ->default('foo')
                                     ->required(),
                             ])
-                            ->action(function (TextInput $component, array $data) {
+                            ->action(function (TextInput $component, array $data): void {
                                 $component->state($data['value']);
                             }),
                         Action::make('setValueFromArguments')
-                            ->action(function (TextInput $component, array $arguments) {
+                            ->action(function (TextInput $component, array $arguments): void {
                                 $component->state($arguments['value']);
                             }),
                         Action::make('halt')
                             ->requiresConfirmation()
-                            ->action(function (Action $action) {
+                            ->action(function (Action $action): void {
                                 $action->halt();
                             }),
                         Action::make('hidden')
@@ -55,7 +56,7 @@ class Actions extends Component implements HasActions, HasForms
                             ->disabled(),
                         Action::make('enabled'),
                         Action::make('hasIcon')
-                            ->icon('heroicon-m-pencil-square'),
+                            ->icon(Heroicon::PencilSquare),
                         Action::make('hasLabel')
                             ->label('My Action'),
                         Action::make('hasColor')

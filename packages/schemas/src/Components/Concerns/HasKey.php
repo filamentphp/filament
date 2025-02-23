@@ -25,14 +25,18 @@ trait HasKey
 
     public function getKey(bool $isAbsolute = true): ?string
     {
+        if ($isAbsolute && $this->hasCachedAbsoluteKey) {
+            return $this->cachedAbsoluteKey;
+        }
+
         $key = $this->evaluate($this->key) ?? $this->getStatePath(isAbsolute: false);
 
         if (! $isAbsolute) {
             return $key;
         }
 
-        if ($this->hasCachedAbsoluteKey) {
-            return $this->cachedAbsoluteKey;
+        if (blank($key)) {
+            return $this->cacheAbsoluteKey(null);
         }
 
         $keyComponents = [];
@@ -41,9 +45,7 @@ trait HasKey
             $keyComponents[] = $containerInheritanceKey;
         }
 
-        if (filled($key)) {
-            $keyComponents[] = $key;
-        }
+        $keyComponents[] = $key;
 
         return $this->cacheAbsoluteKey(implode('.', $keyComponents));
     }

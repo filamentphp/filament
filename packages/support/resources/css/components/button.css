@@ -1,5 +1,5 @@
 .fi-btn {
-    @apply relative inline-grid grid-flow-col items-center justify-center gap-1.5 rounded-lg px-3 py-2 text-sm font-semibold outline-none transition duration-75;
+    @apply relative inline-grid grid-flow-col items-center justify-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium transition duration-75 outline-none;
 
     &:not(.fi-disabled):not([disabled]) {
         @apply focus-visible:ring-2;
@@ -15,23 +15,15 @@
     }
 
     & > .fi-icon {
-        @apply size-5 text-gray-400 transition duration-75 dark:text-gray-500;
+        @apply text-gray-400 transition duration-75 dark:text-gray-500;
     }
 
     &.fi-size-xs {
         @apply gap-1 px-2 py-1.5 text-xs;
-
-        & > .fi-icon {
-            @apply size-4;
-        }
     }
 
     &.fi-size-sm {
         @apply gap-1 px-2.5 py-1.5 text-sm;
-
-        & > .fi-icon {
-            @apply size-4;
-        }
     }
 
     &.fi-size-lg {
@@ -43,21 +35,21 @@
     }
 
     &.fi-outlined {
-        @apply text-gray-950 shadow-sm ring-1 ring-gray-300 dark:text-white dark:ring-gray-700;
+        @apply text-gray-950 ring-1 shadow-sm ring-gray-300 dark:text-white dark:ring-gray-700;
 
         &:not(.fi-disabled):not([disabled]) {
             @apply hover:bg-gray-400/10 focus-visible:ring-gray-400/40;
         }
 
-        &.fi-color-custom {
-            @apply text-custom-600 ring-custom-600 dark:text-custom-400 dark:ring-custom-500;
+        &.fi-color {
+            @apply ring-color-600 dark:ring-color-500 text-(--text) dark:text-(--dark-text);
 
             &:not(.fi-disabled):not([disabled]) {
-                @apply hover:bg-custom-400/10;
+                @apply focus-visible:ring-color-500/40 dark:focus-visible:ring-color-400/40 hover:bg-color-500/10 dark:hover:bg-color-600/10;
             }
 
             & > .fi-icon {
-                @apply text-custom-600 dark:text-custom-400;
+                @apply text-color-600 dark:text-color-400;
             }
         }
     }
@@ -69,32 +61,44 @@
             @apply hover:bg-gray-50 dark:hover:bg-white/10;
         }
 
-        &label {
-            @apply [input:checked+&]:bg-gray-400 [input:checked+&]:text-white [input:checked+&]:ring-0 dark:[input:checked+&]:bg-gray-600;
+        input:checked + &label {
+            @apply bg-gray-400 text-white ring-0 dark:bg-gray-600;
 
             &:not(.fi-disabled):not([disabled]) {
-                @apply [input:checked+&]:hover:bg-gray-300 dark:[input:checked+&]:hover:bg-gray-500;
+                @apply hover:bg-gray-300 dark:hover:bg-gray-500;
             }
         }
 
-        &.fi-color-custom {
+        &.fi-color {
             &:not(label) {
-                @apply bg-custom-600 text-white dark:bg-custom-500;
+                @apply bg-(--bg) text-(--text) dark:bg-(--dark-bg) dark:text-(--dark-text);
 
                 &:not(.fi-disabled):not([disabled]) {
-                    @apply hover:bg-custom-500 focus-visible:ring-custom-500/50 dark:hover:bg-custom-400 dark:focus-visible:ring-custom-400/50;
+                    @apply focus-visible:ring-color-500/50 dark:focus-visible:ring-color-400/50 hover:bg-(--hover-bg) hover:text-(--hover-text) dark:hover:bg-(--dark-hover-bg) dark:hover:text-(--dark-hover-text);
                 }
 
                 & > .fi-icon {
-                    @apply text-white;
+                    @apply text-(--text) dark:text-(--dark-text);
                 }
             }
 
             &label {
-                @apply [input:checked+&]:bg-custom-600 [input:checked+&]:text-white [input:checked+&]:ring-0 dark:[input:checked+&]:bg-custom-500;
+                input:checked + & {
+                    @apply bg-(--bg) text-(--text) ring-0 dark:bg-(--dark-bg) dark:text-(--dark-text);
+                }
 
                 &:not(.fi-disabled):not([disabled]) {
-                    @apply [input:checked+&]:hover:bg-custom-500 dark:[input:checked+&]:hover:bg-custom-400 [input:checked:focus-visible+&]:ring-custom-500/50 dark:[input:checked:focus-visible+&]:ring-custom-400/50 [input:focus-visible+&]:z-10 [input:focus-visible+&]:ring-2 [input:focus-visible+&]:ring-gray-950/10 dark:[input:focus-visible+&]:ring-white/20;
+                    input:checked + & {
+                        @apply hover:bg-(--hover-bg) hover:text-(--hover-text) dark:hover:bg-(--dark-hover-bg) dark:hover:text-(--dark-hover-text);
+                    }
+
+                    input:focus-visible + & {
+                        @apply z-10 ring-2 ring-gray-950/10 dark:ring-white/20;
+                    }
+
+                    input:checked:focus-visible + & {
+                        @apply ring-color-500/50 dark:ring-color-400/50;
+                    }
                 }
             }
         }
@@ -104,11 +108,11 @@
         @apply cursor-pointer;
 
         & > .fi-icon:is(:checked + label > .fi-icon) {
-            @apply text-white;
+            @apply text-(--text) dark:text-(--dark-text);
         }
     }
 
-    &:not(.fi-color-custom),
+    &:not(.fi-color),
     &label {
         @apply ring-1 ring-gray-950/10 dark:ring-white/20;
     }
@@ -141,23 +145,13 @@
         @apply 2xl:inline-grid;
     }
 
-    & > .fi-icon {
-        &.fi-size-sm {
-            @apply size-4;
-        }
-
-        &.fi-size-lg {
-            @apply size-6;
-        }
-    }
-
     & .fi-btn-badge-ctn {
-        @apply absolute start-full top-0 z-[1] w-max -translate-x-1/2 -translate-y-1/2 rounded-md bg-white dark:bg-gray-900 rtl:translate-x-1/2;
+        @apply absolute start-full top-0 z-[1] w-max -translate-x-1/2 -translate-y-1/2 rounded-md bg-white rtl:translate-x-1/2 dark:bg-gray-900;
     }
 }
 
 .fi-btn-group {
-    @apply grid grid-flow-col rounded-lg shadow-sm ring-1 ring-gray-950/10 dark:ring-white/20;
+    @apply grid grid-flow-col rounded-lg ring-1 shadow-sm ring-gray-950/10 dark:ring-white/20;
 
     & > .fi-btn {
         @apply flex-1 rounded-none;
@@ -171,11 +165,11 @@
         }
 
         &:not(:nth-child(1 of .fi-btn)) {
-            @apply shadow-[-1px_0_0_0_theme(colors.gray.200)];
+            @apply shadow-[-1px_0_0_0_var(--color-gray-200)] dark:shadow-[-1px_0_0_0_rgba(255,255,255,0.2)];
         }
 
         &:not(:nth-last-child(1 of .fi-btn)) {
-            @apply me-px dark:shadow-[-1px_0_0_0_theme(colors.white/20%)];
+            @apply me-px;
         }
 
         &.fi-processing:enabled {
@@ -186,7 +180,7 @@
             @apply shadow-none;
         }
 
-        &:not(.fi-color-custom),
+        &:not(.fi-color),
         &label {
             @apply ring-0;
         }

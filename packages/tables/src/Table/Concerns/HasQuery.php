@@ -6,8 +6,8 @@ use Closure;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
+use Illuminate\Database\Eloquent\Relations\HasOneOrManyThrough;
 use Illuminate\Database\Eloquent\Relations\Relation;
 
 use function Livewire\invade;
@@ -85,7 +85,7 @@ trait HasQuery
 
         $query = $relationship->getQuery();
 
-        if ($relationship instanceof HasManyThrough) {
+        if ($relationship instanceof HasOneOrManyThrough) {
             // https://github.com/laravel/framework/issues/4962
             $query->select($query->getModel()->getTable() . '.*');
 

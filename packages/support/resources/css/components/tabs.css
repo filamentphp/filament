@@ -6,22 +6,19 @@
     }
 
     &:not(.fi-contained) {
-        @apply mx-auto rounded-xl bg-white p-2 shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10;
+        @apply mx-auto rounded-xl bg-white p-2 ring-1 shadow-sm ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10;
     }
 }
 
 .fi-tabs-item {
-    @apply flex items-center justify-center gap-x-2 rounded-lg px-3 py-2 text-sm font-medium outline-none transition duration-75 hover:bg-gray-50 focus-visible:bg-gray-50 dark:hover:bg-white/5 dark:focus-visible:bg-white/5;
+    @apply flex items-center justify-center gap-x-2 rounded-lg px-3 py-2 text-sm font-medium whitespace-nowrap transition duration-75 outline-none hover:bg-gray-50 focus-visible:bg-gray-50 dark:hover:bg-white/5 dark:focus-visible:bg-white/5;
 
     &.fi-active {
         @apply bg-gray-50 dark:bg-white/5;
 
-        & .fi-tabs-item-label {
-            @apply text-primary-600 dark:text-primary-400;
-        }
-
-        & .fi-tabs-item-icon {
-            @apply text-primary-600 dark:text-primary-400;
+        & .fi-tabs-item-label,
+        & .fi-icon {
+            @apply text-primary-700 dark:text-primary-400;
         }
     }
 
@@ -43,8 +40,8 @@
         @apply text-gray-500 transition duration-75 dark:text-gray-400;
     }
 
-    & .fi-tabs-item-icon {
-        @apply size-5 shrink-0 text-gray-400 transition duration-75 dark:text-gray-500;
+    & .fi-icon {
+        @apply shrink-0 text-gray-400 transition duration-75 dark:text-gray-500;
     }
 
     & .fi-badge {

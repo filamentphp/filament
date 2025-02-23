@@ -31,8 +31,12 @@ public static function getNavigationLabel(): string
 To customize a navigation item's [icon](../styling/icons), you may override the `$navigationIcon` property on the [resource](resources) or [page](pages) class:
 
 ```php
-protected static ?string $navigationIcon = 'heroicon-o-document-text';
+use BackedEnum;
+
+protected static string | BackedEnum | null $navigationIcon = 'heroicon-o-document-text';
 ```
+
+<AutoScreenshot name="panels/navigation/change-icon" alt="Changed navigation item icon" version="3.x" />
 
 If you set `$navigationIcon = null` on all items within the same navigation group, those items will be joined with a vertical bar below the group label.
 
@@ -44,6 +48,8 @@ You may assign a navigation [icon](../styling/icons) which will only be used for
 protected static ?string $activeNavigationIcon = 'heroicon-o-document-text';
 ```
 
+<AutoScreenshot name="panels/navigation/active-icon" alt="Different navigation item icon when active" version="3.x" />
+
 ## Sorting navigation items
 
 By default, navigation items are sorted alphabetically. You may customize this using the `$navigationSort` property:
@@ -53,6 +59,8 @@ protected static ?int $navigationSort = 3;
 ```
 
 Now, navigation items with a lower sort value will appear before those with a higher sort value - the order is ascending.
+
+<AutoScreenshot name="panels/navigation/sort-items" alt="Sort navigation items" version="3.x" />
 
 ## Adding a badge to a navigation item
 
@@ -65,7 +73,9 @@ public static function getNavigationBadge(): ?string
 }
 ```
 
-If a badge value is returned by `getNavigationBadge()`, it will display using the primary color by default. To style the badge contextually, return a [color](../styling/colors) from the `getNavigationBadgeColor()` method:
+<AutoScreenshot name="panels/navigation/badge" alt="Navigation item with badge" version="3.x" />
+
+If a badge value is returned by `getNavigationBadge()`, it will display using the primary color by default. To style the badge contextually, return either `danger`, `gray`, `info`, `primary`, `success` or `warning` from the `getNavigationBadgeColor()` method:
 
 ```php
 public static function getNavigationBadgeColor(): ?string
@@ -73,6 +83,8 @@ public static function getNavigationBadgeColor(): ?string
     return static::getModel()::count() > 10 ? 'warning' : 'primary';
 }
 ```
+
+<AutoScreenshot name="panels/navigation/badge-color" alt="Navigation item with badge color" version="3.x" />
 
 A custom tooltip for the navigation badge can be set in `$navigationBadgeTooltip`:
 
@@ -89,6 +101,8 @@ public static function getNavigationBadgeTooltip(): ?string
 }
 ```
 
+<AutoScreenshot name="panels/navigation/badge-tooltip" alt="Navigation item with badge tooltip" version="3.x" />
+
 ## Grouping navigation items
 
 You may group navigation items by specifying a `$navigationGroup` property on a [resource](resources) and [custom page](pages):
@@ -96,6 +110,8 @@ You may group navigation items by specifying a `$navigationGroup` property on a 
 ```php
 protected static ?string $navigationGroup = 'Settings';
 ```
+
+<AutoScreenshot name="panels/navigation/group" alt="Grouped navigation items" version="3.x" />
 
 All items in the same navigation group will be displayed together under the same group label, "Settings" in this case. Ungrouped items will remain at the start of the navigation.
 
@@ -166,7 +182,11 @@ $panel
 
 #### Making navigation groups not collapsible
 
-By default, navigation groups are collapsible. You may disable this behavior by calling `collapsible(false)` on the `NavigationGroup` object:
+By default, navigation groups are collapsible.
+
+<AutoScreenshot name="panels/navigation/group-collapsible" alt="Collapsible navigation groups" version="3.x" />
+
+You may disable this behavior by calling `collapsible(false)` on the `NavigationGroup` object:
 
 ```php
 use Filament\Navigation\NavigationGroup;
@@ -176,6 +196,8 @@ NavigationGroup::make()
     ->icon('heroicon-o-cog-6-tooth')
     ->collapsible(false);
 ```
+
+<AutoScreenshot name="panels/navigation/group-not-collapsible" alt="Not collapsible navigation groups" version="3.x" />
 
 Or, you can do it globally for all groups in the [configuration](configuration):
 
@@ -217,6 +239,8 @@ public function panel(Panel $panel): Panel
 }
 ```
 
+<AutoScreenshot name="panels/navigation/sidebar-collapsible-on-desktop" alt="Collapsible sidebar on desktop" version="3.x" />
+
 By default, when you collapse the sidebar on desktop, the navigation icons still show. You can fully collapse the sidebar using the `sidebarFullyCollapsibleOnDesktop()` method:
 
 ```php
@@ -229,6 +253,8 @@ public function panel(Panel $panel): Panel
         ->sidebarFullyCollapsibleOnDesktop();
 }
 ```
+
+<AutoScreenshot name="panels/navigation/sidebar-fully-collapsible-on-desktop" alt="Fully collapsible sidebar on desktop" version="3.x" />
 
 ### Navigation groups in a collapsible sidebar on desktop
 
@@ -316,6 +342,8 @@ public function panel(Panel $panel): Panel
 }
 ```
 
+<AutoScreenshot name="panels/navigation/top-navigation" alt="Top navigation" version="3.x" />
+
 ## Customizing the width of the sidebar
 
 You can customize the width of the sidebar by passing it to the `sidebarWidth()` method in the [configuration](configuration):
@@ -379,6 +407,8 @@ public function panel(Panel $panel): Panel
 }
 ```
 
+<AutoScreenshot name="panels/navigation/custom-items" alt="Custom navigation items" version="3.x" />
+
 ### Registering custom navigation groups
 
 If you want to register groups, you can call the `groups()` method:
@@ -422,6 +452,8 @@ public function panel(Panel $panel): Panel
         ->navigation(false);
 }
 ```
+
+<AutoScreenshot name="panels/navigation/disabled-navigation" alt="Disabled navigation sidebar" version="3.x" />
 
 ### Disabling the topbar
 

@@ -95,7 +95,7 @@ class ExportCsv implements ShouldQueue
 
         $filePath = $this->export->getFileDirectory() . DIRECTORY_SEPARATOR . str_pad(strval($this->page), 16, '0', STR_PAD_LEFT) . '.csv';
 
-        DB::transaction(function () use ($csv, $filePath, $processedRows, $successfulRows) {
+        DB::transaction(function () use ($csv, $filePath, $processedRows, $successfulRows): void {
             $this->export::query()
                 ->whereKey($this->export->getKey())
                 ->lockForUpdate()

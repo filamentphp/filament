@@ -73,7 +73,7 @@ export default function toggleTableColumn({ name, recordKey, state }) {
                 return undefined
             }
 
-            return this.$refs.serverState.value ? true : false
+            return [1, '1'].includes(this.$refs.serverState.value)
         },
     }
 }

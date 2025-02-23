@@ -1,8 +1,10 @@
 <?php
 
+use Filament\Actions\Action;
 use Filament\Actions\AttachAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\Testing\Fixtures\TestAction;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tests\Fixtures\Livewire\PostsTable;
 use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Tables\TestCase;
@@ -14,7 +16,7 @@ use function Pest\Laravel\assertSoftDeleted;
 
 uses(TestCase::class);
 
-it('can call action', function () {
+it('can call action', function (): void {
     $post = Post::factory()->create();
 
     livewire(PostsTable::class)
@@ -30,7 +32,7 @@ it('can call action', function () {
     assertSoftDeleted($post);
 });
 
-it('can call an action with data', function () {
+it('can call an action with data', function (): void {
     livewire(PostsTable::class)
         ->callAction(TestAction::make('data')->table(), data: [
             'payload' => $payload = Str::random(),
@@ -50,7 +52,7 @@ it('can call an action with data', function () {
         ]);
 });
 
-it('can call action inside group', function () {
+it('can call action inside group', function (): void {
     $post = Post::factory()->create();
 
     livewire(PostsTable::class)
@@ -66,7 +68,7 @@ it('can call action inside group', function () {
     assertSoftDeleted($post);
 });
 
-it('can validate an action\'s data', function () {
+it('can validate an action\'s data', function (): void {
     livewire(PostsTable::class)
         ->callAction(TestAction::make('data')->table(), data: [
             'payload' => null,
@@ -82,7 +84,7 @@ it('can validate an action\'s data', function () {
         ->assertNotDispatched('data-called');
 });
 
-it('can set default action data when mounted', function () {
+it('can set default action data when mounted', function (): void {
     livewire(PostsTable::class)
         ->mountAction(TestAction::make('data')->table())
         ->assertActionDataSet([
@@ -99,7 +101,7 @@ it('can set default action data when mounted', function () {
         });
 });
 
-it('can call a nested action registered in the modal footer', function () {
+it('can call a nested action registered in the modal footer', function (): void {
     $post = Post::factory()->create();
 
     livewire(PostsTable::class)
@@ -119,7 +121,7 @@ it('can call a nested action registered in the modal footer', function () {
         ->assertDispatched('parent-called', foo: $foo, recordKey: $post->getKey());
 });
 
-it('can call a manually modal registered nested action', function () {
+it('can call a manually modal registered nested action', function (): void {
     $post = Post::factory()->create();
 
     livewire(PostsTable::class)
@@ -139,7 +141,7 @@ it('can call a manually modal registered nested action', function () {
         ->assertDispatched('parent-called', foo: $foo, recordKey: $post->getKey());
 });
 
-it('can call a nested action registered on a schema component', function () {
+it('can call a nested action registered on a schema component', function (): void {
     $post = Post::factory()->create();
 
     livewire(PostsTable::class)
@@ -159,7 +161,7 @@ it('can call a nested action registered on a schema component', function () {
         ->assertDispatched('parent-called', foo: $foo, recordKey: $post->getKey());
 });
 
-it('can cancel a parent action when calling a nested action', function () {
+it('can cancel a parent action when calling a nested action', function (): void {
     $post = Post::factory()->create();
 
     livewire(PostsTable::class)
@@ -175,7 +177,7 @@ it('can cancel a parent action when calling a nested action', function () {
         ->assertNotDispatched('parent-called');
 });
 
-it('can call a grouped nested action registered in the modal footer', function () {
+it('can call a grouped nested action registered in the modal footer', function (): void {
     $post = Post::factory()->create();
 
     livewire(PostsTable::class)
@@ -195,7 +197,7 @@ it('can call a grouped nested action registered in the modal footer', function (
         ->assertDispatched('grouped-parent-called', foo: $foo, recordKey: $post->getKey());
 });
 
-it('can call a grouped manually modal registered nested action', function () {
+it('can call a grouped manually modal registered nested action', function (): void {
     $post = Post::factory()->create();
 
     livewire(PostsTable::class)
@@ -215,7 +217,7 @@ it('can call a grouped manually modal registered nested action', function () {
         ->assertDispatched('grouped-parent-called', foo: $foo, recordKey: $post->getKey());
 });
 
-it('can call a grouped nested action registered on a schema component', function () {
+it('can call a grouped nested action registered on a schema component', function (): void {
     $post = Post::factory()->create();
 
     livewire(PostsTable::class)
@@ -235,7 +237,7 @@ it('can call a grouped nested action registered on a schema component', function
         ->assertDispatched('grouped-parent-called', foo: $foo, recordKey: $post->getKey());
 });
 
-it('can cancel a grouped parent action when calling a nested action', function () {
+it('can cancel a grouped parent action when calling a nested action', function (): void {
     $post = Post::factory()->create();
 
     livewire(PostsTable::class)
@@ -251,7 +253,7 @@ it('can cancel a grouped parent action when calling a nested action', function (
         ->assertNotDispatched('grouped-parent-called');
 });
 
-it('can call an action with arguments', function () {
+it('can call an action with arguments', function (): void {
     livewire(PostsTable::class)
         ->callAction(TestAction::make('arguments')->table()->arguments([
             'payload' => $payload = Str::random(),
@@ -269,7 +271,7 @@ it('can call an action with arguments', function () {
         ]);
 });
 
-it('can call an action and halt', function () {
+it('can call an action and halt', function (): void {
     livewire(PostsTable::class)
         ->callAction(TestAction::make('halt')->table())
         ->assertDispatched('halt-called')
@@ -281,21 +283,33 @@ it('can call an action and halt', function () {
         ->assertTableActionHalted('halt');
 });
 
-it('can hide an action', function () {
+it('can hide an action', function (): void {
     $post = Post::factory()->create();
 
     livewire(PostsTable::class)
         ->assertActionVisible(TestAction::make('visible')->table())
-        ->assertActionHidden(TestAction::make('hidden')->table());
+        ->assertActionHidden(TestAction::make('hidden')->table())
+        ->assertActionExists(TestAction::make('visible')->table(), fn (Action $action): bool => $action->isVisible())
+        ->assertActionExists(TestAction::make('hidden')->table(), fn (Action $action): bool => $action->isHidden())
+        ->assertActionDoesNotExist(TestAction::make('visible')->table(), fn (Action $action): bool => $action->isHidden())
+        ->assertActionDoesNotExist(TestAction::make('hidden')->table(), fn (Action $action): bool => $action->isVisible());
 
     livewire(PostsTable::class)
         ->assertTableActionVisible('visible')
         ->assertTableActionHidden('hidden')
         ->assertTableActionVisible('groupedWithVisibleGroupCondition', $post)
-        ->assertTableActionHidden('groupedWithHiddenGroupCondition', $post);
+        ->assertTableActionHidden('groupedWithHiddenGroupCondition', $post)
+        ->assertTableActionExists('visible', fn (Action $action): bool => $action->isVisible())
+        ->assertTableActionExists('hidden', fn (Action $action): bool => $action->isHidden())
+        ->assertTableActionDoesNotExist('visible', fn (Action $action): bool => $action->isHidden())
+        ->assertTableActionDoesNotExist('hidden', fn (Action $action): bool => $action->isVisible())
+        ->assertTableActionExists('groupedWithVisibleGroupCondition', fn (Action $action): bool => $action->isVisible(), $post)
+        ->assertTableActionExists('groupedWithHiddenGroupCondition', fn (Action $action): bool => $action->isHidden(), $post)
+        ->assertTableActionDoesNotExist('groupedWithVisibleGroupCondition', fn (Action $action): bool => $action->isHidden(), $post)
+        ->assertTableActionDoesNotExist('groupedWithHiddenGroupCondition', fn (Action $action): bool => $action->isVisible(), $post);
 });
 
-it('can disable an action', function () {
+it('can disable an action', function (): void {
     livewire(PostsTable::class)
         ->assertActionEnabled(TestAction::make('enabled')->table())
         ->assertActionDisabled(TestAction::make('disabled')->table());
@@ -305,17 +319,17 @@ it('can disable an action', function () {
         ->assertTableActionDisabled('disabled');
 });
 
-it('can have an icon', function () {
+it('can have an icon', function (): void {
     livewire(PostsTable::class)
-        ->assertActionHasIcon(TestAction::make('hasIcon')->table(), 'heroicon-m-pencil-square')
-        ->assertActionDoesNotHaveIcon(TestAction::make('hasIcon')->table(), 'heroicon-m-trash');
+        ->assertActionHasIcon(TestAction::make('hasIcon')->table(), Heroicon::PencilSquare)
+        ->assertActionDoesNotHaveIcon(TestAction::make('hasIcon')->table(), Heroicon::Trash);
 
     livewire(PostsTable::class)
-        ->assertTableActionHasIcon('hasIcon', 'heroicon-m-pencil-square')
-        ->assertTableActionDoesNotHaveIcon('hasIcon', 'heroicon-m-trash');
+        ->assertTableActionHasIcon('hasIcon', Heroicon::PencilSquare)
+        ->assertTableActionDoesNotHaveIcon('hasIcon', Heroicon::Trash);
 });
 
-it('can have a label', function () {
+it('can have a label', function (): void {
     livewire(PostsTable::class)
         ->assertActionHasLabel(TestAction::make('hasLabel')->table(), 'My Action')
         ->assertActionDoesNotHaveLabel(TestAction::make('hasLabel')->table(), 'My Other Action');
@@ -325,7 +339,7 @@ it('can have a label', function () {
         ->assertTableActionDoesNotHaveLabel('hasLabel', 'My Other Action');
 });
 
-it('can have a color', function () {
+it('can have a color', function (): void {
     livewire(PostsTable::class)
         ->assertActionHasColor(TestAction::make('hasColor')->table(), 'primary')
         ->assertActionDoesNotHaveColor(TestAction::make('hasColor')->table(), 'gray');
@@ -335,7 +349,7 @@ it('can have a color', function () {
         ->assertTableActionDoesNotHaveColor('hasColor', 'gray');
 });
 
-it('can have a URL', function () {
+it('can have a URL', function (): void {
     livewire(PostsTable::class)
         ->assertActionHasUrl(TestAction::make('url')->table(), 'https://filamentphp.com')
         ->assertActionDoesNotHaveUrl(TestAction::make('url')->table(), 'https://google.com');
@@ -345,7 +359,7 @@ it('can have a URL', function () {
         ->assertTableActionDoesNotHaveUrl('url', 'https://google.com');
 });
 
-it('can open a URL in a new tab', function () {
+it('can open a URL in a new tab', function (): void {
     livewire(PostsTable::class)
         ->assertActionShouldOpenUrlInNewTab(TestAction::make('urlInNewTab')->table())
         ->assertActionShouldNotOpenUrlInNewTab(TestAction::make('urlNotInNewTab')->table());
@@ -355,7 +369,7 @@ it('can open a URL in a new tab', function () {
         ->assertTableActionShouldNotOpenUrlInNewTab('urlNotInNewTab');
 });
 
-it('can state whether a table action exists', function () {
+it('can state whether a table action exists', function (): void {
     livewire(PostsTable::class)
         ->assertActionExists(TestAction::make('exists')->table())
         ->assertActionDoesNotExist(TestAction::make('doesNotExist')->table());
@@ -365,14 +379,14 @@ it('can state whether a table action exists', function () {
         ->assertTableActionDoesNotExist('doesNotExist');
 });
 
-it('can state whether table actions exist in order', function () {
+it('can state whether table actions exist in order', function (): void {
     livewire(PostsTable::class)
         ->assertTableActionsExistInOrder(['edit', 'delete'])
         ->assertTableHeaderActionsExistInOrder(['exists', 'existsInOrder'])
         ->assertTableEmptyStateActionsExistInOrder(['emptyExists', 'emptyExistsInOrder']);
 });
 
-it('can state whether a table action exists with a given configuration', function () {
+it('can state whether a table action exists with a given configuration', function (): void {
     livewire(PostsTable::class)
         ->assertActionExists(TestAction::make('attachMultiple')->table(), fn (AttachAction $action) => $action->isMultiple())
         ->assertActionDoesNotExist(TestAction::make(AttachAction::class)->table(), fn (AttachAction $action) => $action->isMultiple());
@@ -382,7 +396,7 @@ it('can state whether a table action exists with a given configuration', functio
         ->assertTableActionDoesNotExist(AttachAction::class, fn (AttachAction $action) => $action->isMultiple());
 });
 
-it('can replicate a record', function () {
+it('can replicate a record', function (): void {
     $post = Post::factory()->create();
 
     livewire(PostsTable::class)

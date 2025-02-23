@@ -7,8 +7,9 @@ use Filament\Actions\Action;
 use Filament\Schemas\Components\StateCasts\KeyValueStateCast;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Filament\Support\Concerns\HasReorderAnimationDuration;
-use Filament\Support\Enums\ActionSize;
+use Filament\Support\Enums\Size;
 use Filament\Support\Facades\FilamentIcon;
+use Filament\Support\Icons\Heroicon;
 
 class KeyValue extends Field
 {
@@ -97,11 +98,11 @@ class KeyValue extends Field
     {
         $action = Action::make($this->getDeleteActionName())
             ->label(__('filament-forms::components.key_value.actions.delete.label'))
-            ->icon(FilamentIcon::resolve('forms::components.key-value.actions.delete') ?? 'heroicon-m-trash')
+            ->icon(FilamentIcon::resolve('forms::components.key-value.actions.delete') ?? Heroicon::Trash)
             ->color('danger')
             ->livewireClickHandlerEnabled(false)
             ->iconButton()
-            ->size(ActionSize::Small)
+            ->size(Size::Small)
             ->visible(fn (): bool => $this->isDeletable());
 
         if ($this->modifyDeleteActionUsing) {
@@ -129,11 +130,11 @@ class KeyValue extends Field
     {
         $action = Action::make($this->getReorderActionName())
             ->label(__('filament-forms::components.key_value.actions.reorder.label'))
-            ->icon(FilamentIcon::resolve('forms::components.key-value.actions.reorder') ?? 'heroicon-m-arrows-up-down')
+            ->icon(FilamentIcon::resolve('forms::components.key-value.actions.reorder') ?? Heroicon::ArrowsUpDown)
             ->color('gray')
             ->livewireClickHandlerEnabled(false)
             ->iconButton()
-            ->size(ActionSize::Small)
+            ->size(Size::Small)
             ->visible(fn (): bool => $this->isReorderable());
 
         if ($this->modifyReorderActionUsing) {

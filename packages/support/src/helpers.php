@@ -2,9 +2,13 @@
 
 namespace Filament\Support;
 
+use BackedEnum;
+use Filament\Support\Contracts\ScalableIcon;
+use Filament\Support\Enums\IconSize;
 use Filament\Support\Facades\FilamentColor;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Facades\FilamentView;
+use Filament\Support\View\Components\Contracts\HasColor;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Model;
@@ -61,9 +65,24 @@ if (! function_exists('Filament\Support\locale_has_pluralization')) {
     }
 }
 
+if (! function_exists('Filament\Support\get_component_color_classes')) {
+    /**
+     * @param  class-string<HasColor>  $component
+     * @return array<string>
+     */
+    function get_component_color_classes(string | HasColor $component, ?string $color): array
+    {
+        if (blank($color)) {
+            return [];
+        }
+
+        return FilamentColor::getComponentClasses($component, $color);
+    }
+}
+
 if (! function_exists('Filament\Support\get_color_css_variables')) {
     /**
-     * @param  string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null  $color
+     * @param  string | array<int | string, string | int> | null  $color
      * @param  array<int>  $shades
      */
     function get_color_css_variables(string | array | null $color, array $shades, ?string $alias = null): ?string
@@ -90,13 +109,13 @@ if (! function_exists('Filament\Support\get_color_css_variables')) {
 
         if (is_string($color)) {
             foreach ($shades as $shade) {
-                $variables[] = "--c-{$shade}:var(--{$color}-{$shade})";
+                $variables[] = "--color-{$shade}:var(--{$color}-{$shade})";
             }
         }
 
         if (is_array($color)) {
             foreach ($shades as $shade) {
-                $variables[] = "--c-{$shade}:{$color[$shade]}";
+                $variables[] = "--color-{$shade}:{$color[$shade]}";
             }
         }
 
@@ -163,7 +182,7 @@ if (! function_exists('Filament\Support\generate_href_html')) {
 }
 
 if (! function_exists('Filament\Support\generate_icon_html')) {
-    function generate_icon_html(string | Htmlable | null $icon, ?string $alias = null, ?ComponentAttributeBag $attributes = null): ?Htmlable
+    function generate_icon_html(string | BackedEnum | Htmlable | null $icon, ?string $alias = null, ?ComponentAttributeBag $attributes = null, ?IconSize $size = null): ?Htmlable
     {
         if (filled($alias)) {
             $icon = FilamentIcon::resolve($alias) ?: $icon;
@@ -173,7 +192,12 @@ if (! function_exists('Filament\Support\generate_icon_html')) {
             return null;
         }
 
-        $attributes = ($attributes ?? new ComponentAttributeBag)->class(['fi-icon']);
+        $size ??= IconSize::Medium;
+
+        $attributes = ($attributes ?? new ComponentAttributeBag)->class([
+            'fi-icon',
+            "fi-size-{$size->value}",
+        ]);
 
         if ($icon instanceof Htmlable) {
             return new HtmlString(<<<HTML
@@ -183,10 +207,16 @@ if (! function_exists('Filament\Support\generate_icon_html')) {
                 HTML);
         }
 
-        if (str_contains($icon, '/')) {
+        if (is_string($icon) && str_contains($icon, '/')) {
             return new HtmlString(<<<HTML
                 <img src="{$icon}" {$attributes->toHtml()} />
                 HTML);
+        }
+
+        if ($icon instanceof ScalableIcon) {
+            $icon = $icon->getIconForSize($size);
+        } elseif ($icon instanceof BackedEnum) {
+            $icon = $icon->value;
         }
 
         return svg($icon, $attributes->get('class'), array_filter($attributes->except('class')->getAttributes()));
@@ -194,9 +224,14 @@ if (! function_exists('Filament\Support\generate_icon_html')) {
 }
 
 if (! function_exists('Filament\Support\generate_loading_indicator_html')) {
-    function generate_loading_indicator_html(?ComponentAttributeBag $attributes = null): Htmlable
+    function generate_loading_indicator_html(?ComponentAttributeBag $attributes = null, ?IconSize $size = null): Htmlable
     {
-        $attributes = ($attributes ?? new ComponentAttributeBag)->class(['fi-icon fi-loading-indicator']);
+        $size ??= IconSize::Medium;
+
+        $attributes = ($attributes ?? new ComponentAttributeBag)->class([
+            'fi-icon fi-loading-indicator',
+            "fi-size-{$size->value}",
+        ]);
 
         return new HtmlString(<<<HTML
             <svg
@@ -247,6 +282,11 @@ if (! function_exists('Filament\Support\generate_search_column_expression')) {
         };
 
         if ($isSearchForcedCaseInsensitive) {
+            if (in_array($driverName, ['mysql', 'mariadb'], true) && str($column)->contains('->') && ! str($column)->startsWith('json_extract(')) {
+                [$field, $path] = invade($databaseConnection->getQueryGrammar())->wrapJsonFieldAndPath($column); /** @phpstan-ignore-line */
+                $column = "json_extract({$field}{$path})";
+            }
+
             $column = "lower({$column})";
         }
 

@@ -1,6 +1,7 @@
 @php
     use Filament\Support\Enums\Alignment;
     use Filament\Support\Enums\IconSize;
+    use Filament\Support\View\Components\SectionComponent\IconComponent;
 
     use function Filament\Support\is_slot_empty;
 @endphp
@@ -14,15 +15,23 @@
     'contained' => true,
     'contentBefore' => false,
     'description' => null,
+    'divided' => false,
     'footer' => null,
+    'hasContentEl' => true,
     'heading' => null,
+    'headingTag' => 'h2',
     'icon' => null,
     'iconColor' => 'gray',
-    'iconSize' => IconSize::Large,
+    'iconSize' => null,
     'persistCollapsed' => false,
+    'secondary' => false,
 ])
 
 @php
+    if (filled($iconSize) && (! $iconSize instanceof IconSize)) {
+        $iconSize = IconSize::tryFrom($iconSize) ?? $iconSize;
+    }
+
     $hasDescription = filled((string) $description);
     $hasHeading = filled($heading);
     $hasIcon = filled($icon);
@@ -50,6 +59,8 @@
             'fi-aside' => $aside,
             'fi-compact' => $compact,
             'fi-collapsible' => $collapsible,
+            'fi-divided' => $divided,
+            'fi-secondary' => $secondary,
         ])
     }}
 >
@@ -63,29 +74,16 @@
             {{
                 \Filament\Support\generate_icon_html($icon, attributes: (new \Illuminate\View\ComponentAttributeBag)
                     ->class([
-                        'fi-section-header-icon',
-                        match ($iconColor) {
-                            'gray' => null,
-                            default => 'fi-color-custom',
-                        },
-                        is_string($iconColor) ? "fi-color-{$iconColor}" : null,
-                        ($iconSize instanceof IconSize) ? "fi-size-{$iconSize->value}" : (is_string($iconSize) ? $iconSize : null),
-                    ])
-                    ->style([
-                        \Filament\Support\get_color_css_variables(
-                            $iconColor,
-                            shades: [400, 500],
-                            alias: 'section.header.icon',
-                        ) => $iconColor !== 'gray',
-                    ]))
+                        ...\Filament\Support\get_component_color_classes(IconComponent::class, $iconColor),
+                    ]), size: $iconSize ?? IconSize::Large)
             }}
 
             @if ($hasHeading || $hasDescription)
                 <div class="fi-section-header-text-ctn">
                     @if ($hasHeading)
-                        <h3 class="fi-section-header-heading">
+                        <{{ $headingTag }} class="fi-section-header-heading">
                             {{ $heading }}
-                        </h3>
+                        </{{ $headingTag }}>
                     @endif
 
                     @if ($hasDescription)
@@ -101,7 +99,7 @@
             @if ($collapsible)
                 <x-filament::icon-button
                     color="gray"
-                    icon="heroicon-m-chevron-down"
+                    :icon="\Filament\Support\Icons\Heroicon::ChevronDown"
                     icon-alias="section.collapse-button"
                     x-on:click.stop="isCollapsed = ! isCollapsed"
                     class="fi-section-collapse-btn"
@@ -119,9 +117,13 @@
         @endif
         class="fi-section-content-ctn"
     >
-        <div class="fi-section-content">
+        @if ($hasContentEl)
+            <div class="fi-section-content">
+                {{ $slot }}
+            </div>
+        @else
             {{ $slot }}
-        </div>
+        @endif
 
         @if (! is_slot_empty($footer))
             <footer class="fi-section-footer">

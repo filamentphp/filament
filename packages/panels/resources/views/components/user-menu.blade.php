@@ -31,7 +31,7 @@
         <button
             aria-label="{{ __('filament-panels::layout.actions.open_user_menu.label') }}"
             type="button"
-            class="shrink-0"
+            class="fi-user-menu-trigger"
         >
             <x-filament-panels::avatar.user :user="$user" />
         </button>
@@ -40,14 +40,13 @@
     @if ($hasProfileHeader)
         @php
             $item = $itemsBeforeThemeSwitcher['profile'];
+            $itemColor = $item->getColor();
+            $itemIcon = $item->getIcon();
 
             unset($itemsBeforeThemeSwitcher['profile']);
         @endphp
 
-        <x-filament::dropdown.header
-            :color="$item->getColor()"
-            :icon="$item->getIcon()"
-        >
+        <x-filament::dropdown.header :color="$itemColor" :icon="$itemIcon">
             {{ $item->getLabel() }}
         </x-filament::dropdown.header>
     @endif

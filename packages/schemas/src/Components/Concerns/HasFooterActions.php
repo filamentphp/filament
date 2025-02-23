@@ -4,8 +4,7 @@ namespace Filament\Schemas\Components\Concerns;
 
 use Closure;
 use Filament\Actions\Action;
-use Filament\Schemas\Components\Decorations\Layouts\AlignDecorations;
-use Filament\Support\Enums\Alignment;
+use Illuminate\Support\Arr;
 
 trait HasFooterActions
 {
@@ -15,19 +14,6 @@ trait HasFooterActions
      * @var array<Action | Closure>
      */
     protected array $footerActions = [];
-
-    protected function setUpFooterActions(): void
-    {
-        $this->footer(function (\Filament\Schemas\Components\Contracts\HasFooterActions $component): AlignDecorations {
-            $actions = $component->getFooterActions();
-            $alignment = $component->getFooterActionsAlignment();
-
-            return match ($alignment) {
-                Alignment::End, Alignment::Right => AlignDecorations::end($actions),
-                default => AlignDecorations::start($actions),
-            };
-        });
-    }
 
     /**
      * @param  array<Action | Closure>  $actions
@@ -47,6 +33,14 @@ trait HasFooterActions
      */
     public function getFooterActions(): array
     {
-        return $this->footerActions;
+        $actions = [];
+
+        foreach ($this->footerActions as $footerAction) {
+            foreach (Arr::wrap($this->evaluate($footerAction)) as $action) {
+                $actions[] = $this->prepareAction($action);
+            }
+        }
+
+        return $actions;
     }
 }

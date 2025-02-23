@@ -4,7 +4,7 @@ namespace Filament\Resources\Pages\Concerns;
 
 use Livewire\Attributes\Locked;
 
-trait HasTranslatableFormWithExistingRecordData
+trait HasTranslatableFormWithExistingRecordData /** @phpstan-ignore trait.unused */
 {
     #[Locked]
     public $otherLocaleData = [];

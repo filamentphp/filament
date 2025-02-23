@@ -6,24 +6,14 @@
     $isVertical = $tabs->isVertical();
     $livewireProperty = $tabs->getLivewireProperty();
 
-    $activeTabClasses = \Illuminate\Support\Arr::toCssClasses([
-        'fi-active',
-        'p-6' => $isContained,
-        'mt-6' => ! $isContained,
-        'flex-1 px-6' => $isVertical,
-    ]);
-
-    $inactiveTabClasses = 'invisible absolute h-0 overflow-hidden p-0';
-
-    $childComponentContainer = $getChildComponentContainer();
+    $childSchema = $getChildSchema();
 @endphp
 
-@if (! empty($childComponentContainer->getCachedVisibleComponents()))
+@if (! empty($childSchema->getComponents()))
     @if (blank($livewireProperty))
         <div
             x-bind:class="{
-                @js($activeTabClasses): tab === @js($key),
-                @js($inactiveTabClasses): tab !== @js($key),
+                'fi-active': tab === @js($key),
             }"
             x-on:expand="tab = @js($key)"
             {{
@@ -36,10 +26,10 @@
                         'wire:key' => $getLivewireKey() . '.container',
                     ], escape: false)
                     ->merge($getExtraAttributes(), escape: false)
-                    ->class(['fi-fo-tabs-tab outline-none'])
+                    ->class(['fi-sc-tabs-tab'])
             }}
         >
-            {{ $getChildComponentContainer() }}
+            {{ $childSchema }}
         </div>
     @elseif (strval($this->{$livewireProperty}) === strval($key))
         <div
@@ -53,13 +43,10 @@
                         'wire:key' => $getLivewireKey() . '.container',
                     ], escape: false)
                     ->merge($getExtraAttributes(), escape: false)
-                    ->class([
-                        'fi-fo-tabs-tab outline-none',
-                        $activeTabClasses,
-                    ])
+                    ->class(['fi-sc-tabs-tab fi-active'])
             }}
         >
-            {{ $getChildComponentContainer() }}
+            {{ $childSchema }}
         </div>
     @endif
 @endif

@@ -1,0 +1,39 @@
+.fi-wi-chart {
+    & .fi-wi-chart-filter {
+        &.fi-input-wrp {
+            @apply w-max sm:-my-2;
+        }
+
+        &.fi-dropdown {
+            & .fi-wi-chart-filter-content {
+                @apply p-6;
+            }
+        }
+    }
+
+    & .fi-color {
+        & .fi-wi-chart-bg-color {
+            @apply text-color-50 dark:text-color-400/10;
+        }
+
+        & .fi-wi-chart-border-color {
+            @apply text-color-500 dark:text-color-400;
+        }
+    }
+
+    & .fi-wi-chart-bg-color {
+        @apply text-gray-100 dark:text-gray-800;
+    }
+
+    & .fi-wi-chart-border-color {
+        @apply text-gray-400;
+    }
+
+    & .fi-wi-chart-grid-color {
+        @apply text-gray-200 dark:text-gray-800;
+    }
+
+    & .fi-wi-chart-text-color {
+        @apply text-gray-500 dark:text-gray-400;
+    }
+}

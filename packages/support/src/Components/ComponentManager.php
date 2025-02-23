@@ -65,7 +65,7 @@ class ComponentManager implements ScopedComponentManager
                 array_key_last($this->importantConfigurations[$component]) :
                 array_key_last($this->configurations[$component]);
 
-            return function () use ($component, $configurationKey, $isImportant) {
+            return function () use ($component, $configurationKey, $isImportant): void {
                 if ($isImportant) {
                     unset($this->importantConfigurations[$component][$configurationKey]);
 

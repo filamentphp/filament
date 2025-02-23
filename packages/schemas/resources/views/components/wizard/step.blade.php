@@ -1,22 +1,15 @@
 @php
     $id = $getId();
     $key = $getKey();
-    $isContained = $getContainer()->getParentComponent()->isContained();
-
-    $activeStepClasses = \Illuminate\Support\Arr::toCssClasses([
-        'fi-active',
-        'p-6' => $isContained,
-        'mt-6' => ! $isContained,
-    ]);
-
-    $inactiveStepClasses = 'invisible absolute h-0 overflow-hidden p-0';
+    $wizard = $getContainer()->getParentComponent();
+    $isContained = $wizard->isContained();
+    $alpineSubmitHandler = $hasFormWrapper() ? $wizard->getAlpineSubmitHandler() : null;
 @endphp
 
-<div
+<{{ filled($alpineSubmitHandler) ? 'form' : 'div' }}
     x-bind:tabindex="$el.querySelector('[autofocus]') ? '-1' : '0'"
     x-bind:class="{
-        @js($activeStepClasses): step === @js($key),
-        @js($inactiveStepClasses): step !== @js($key),
+        'fi-active': step === @js($key),
     }"
     x-on:expand="
         if (! isStepAccessible(@js($key))) {
@@ -25,6 +18,9 @@
 
         step = @js($key)
     "
+    @if (filled($alpineSubmitHandler))
+        x-on:submit.prevent="isLastStep() ? {!! $alpineSubmitHandler !!} : requestNextStep()"
+    @endif
     x-ref="step-{{ $key }}"
     {{
         $attributes
@@ -34,8 +30,13 @@
                 'role' => 'tabpanel',
             ], escape: false)
             ->merge($getExtraAttributes(), escape: false)
-            ->class(['fi-fo-wizard-step outline-none'])
+            ->class(['fi-sc-wizard-step'])
     }}
 >
-    {{ $getChildComponentContainer() }}
-</div>
+    {{ $getChildSchema() }}
+
+    @if (filled($alpineSubmitHandler))
+        {{-- This is a hack to allow the form to submit when the user presses the enter key, even if there is no other submit button in the form. --}}
+        <input type="submit" hidden />
+    @endif
+</{{ filled($alpineSubmitHandler) ? 'form' : 'div' }}>

@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Users\Pages;
 
 use App\Filament\Resources\Users\UserResource;
+use BackedEnum;
 use Filament\Actions\AttachAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
@@ -15,6 +16,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -24,12 +26,7 @@ class ManageUserTeams extends ManageRelatedRecords
 
     protected static string $relationship = 'teams';
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-
-    protected static function getNavigationLabel(): string
-    {
-        return 'Teams';
-    }
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
     public function form(Schema $schema): Schema
     {

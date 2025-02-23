@@ -3,6 +3,8 @@
 namespace Filament\Actions\Concerns;
 
 use Closure;
+use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Wizard;
 use Filament\Schemas\Schema;
@@ -10,18 +12,28 @@ use Filament\Schemas\Schema;
 trait HasSchema
 {
     /**
-     * @var array<Component> | Closure | null
+     * @var array<Component | Action | ActionGroup> | Closure | null
      */
     protected array | Closure | null $schema = null;
 
     protected bool | Closure $isSchemaDisabled = false;
 
     /**
-     * @param  array<Component> | Closure | null  $schema
+     * @param  array<Component | Action | ActionGroup> | Closure | null  $schema
+     */
+    public function components(array | Closure | null $schema): static
+    {
+        $this->schema = $schema;
+
+        return $this;
+    }
+
+    /**
+     * @param  array<Component | Action | ActionGroup> | Closure | null  $schema
      */
     public function schema(array | Closure | null $schema): static
     {
-        $this->schema = $schema;
+        $this->components($schema);
 
         return $this;
     }
@@ -60,6 +72,7 @@ trait HasSchema
                 ->startOnStep($this->getWizardStartStep())
                 ->cancelAction($this->getModalCancelAction())
                 ->submitAction($this->getModalSubmitAction())
+                ->alpineSubmitHandler("\$wire.{$this->getLivewireCallMountedActionName()}()")
                 ->skippable($this->isWizardSkippable())
                 ->disabled($this->isSchemaDisabled());
 
@@ -73,7 +86,7 @@ trait HasSchema
         }
 
         if (is_array($modifiedSchema)) {
-            $modifiedSchema = $schema->schema($modifiedSchema);
+            $modifiedSchema = $schema->components($modifiedSchema);
         }
 
         if ($this->isSchemaDisabled()) {

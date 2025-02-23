@@ -5,6 +5,7 @@ namespace Filament\Infolists\Components\Concerns;
 use Closure;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Schema;
+use Filament\Support\Concerns\CanConfigureCommonMark;
 use Filament\Support\Contracts\HasLabel as LabelInterface;
 use Filament\Support\Enums\ArgumentValue;
 use Illuminate\Contracts\Support\Htmlable;
@@ -15,6 +16,8 @@ use Illuminate\Support\Str;
 
 trait CanFormatState
 {
+    use CanConfigureCommonMark;
+
     protected ?Closure $formatStateUsing = null;
 
     protected int | Closure | null $characterLimit = null;
@@ -82,6 +85,35 @@ trait CanFormatState
         return $this;
     }
 
+    public function isoDate(?string $format = null): static
+    {
+        $this->isDate = true;
+
+        $format ??= Schema::$defaultIsoDateDisplayFormat;
+
+        $this->formatStateUsing(static function (TextEntry $component, $state) use ($format): ?string {
+            if (blank($state)) {
+                return null;
+            }
+
+            return Carbon::parse($state)
+                ->isoFormat($format);
+        });
+
+        return $this;
+    }
+
+    public function isoDateTime(?string $format = null): static
+    {
+        $this->isDateTime = true;
+
+        $format ??= Schema::$defaultIsoDateTimeDisplayFormat;
+
+        $this->isoDate($format);
+
+        return $this;
+    }
+
     public function since(?string $timezone = null): static
     {
         $this->isDateTime = true;
@@ -145,6 +177,40 @@ trait CanFormatState
                 ->setTimezone($timezone ?? $component->getTimezone())
                 ->diffForHumans();
         });
+
+        return $this;
+    }
+
+    public function isoDateTooltip(?string $format = null): static
+    {
+        $format ??= Schema::$defaultIsoDateDisplayFormat;
+
+        $this->tooltip(static function (TextEntry $component, mixed $state) use ($format): ?string {
+            if (blank($state)) {
+                return null;
+            }
+
+            return Carbon::parse($state)
+                ->isoFormat($format);
+        });
+
+        return $this;
+    }
+
+    public function isoDateTimeTooltip(?string $format = null): static
+    {
+        $format ??= Schema::$defaultIsoDateTimeDisplayFormat;
+
+        $this->isoDateTooltip($format);
+
+        return $this;
+    }
+
+    public function isoTimeTooltip(?string $format = null): static
+    {
+        $format ??= Schema::$defaultIsoTimeDisplayFormat;
+
+        $this->isoDateTooltip($format);
 
         return $this;
     }
@@ -219,6 +285,17 @@ trait CanFormatState
         $format ??= Schema::$defaultTimeDisplayFormat;
 
         $this->date($format, $timezone);
+
+        return $this;
+    }
+
+    public function isoTime(?string $format = null): static
+    {
+        $this->isTime = true;
+
+        $format ??= Schema::$defaultIsoTimeDisplayFormat;
+
+        $this->isoDate($format);
 
         return $this;
     }
@@ -304,7 +381,7 @@ trait CanFormatState
         }
 
         if ($isHtml && $this->isMarkdown()) {
-            $state = Str::markdown($state);
+            $state = Str::markdown($state, $this->getCommonMarkOptions(), $this->getCommonMarkExtensions());
         }
 
         $prefix = $this->getPrefix();
@@ -335,7 +412,7 @@ trait CanFormatState
                 $suffix = e($suffix);
             }
 
-            $state = $state . $suffix;
+            $state .= $suffix;
         }
 
         return $isHtml ? new HtmlString($state) : $state;

@@ -4,15 +4,18 @@ namespace Filament\Upgrade\Rector;
 
 use Closure;
 use Filament\Pages\Dashboard;
+use Filament\Pages\Page;
 use Filament\Resources\Pages\CreateRecord;
+use Filament\Resources\Pages\ViewRecord;
+use Filament\Schemas\Components\Component;
 use PhpParser\Modifiers;
 use PhpParser\Node;
 use PhpParser\Node\Identifier;
-use PhpParser\Node\Name;
 use PhpParser\Node\Param;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\UnionType;
+use PHPStan\Type\ObjectType;
 use Rector\Naming\VariableRenamer;
 use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
@@ -38,14 +41,17 @@ class SimpleMethodChangesRector extends AbstractRector
     {
         return [
             [
+                'class' => [
+                    Page::class,
+                ],
                 'changes' => [
-                    'getFooterWidgetsColumns' => function (ClassMethod $node) {
+                    'getFooterWidgetsColumns' => function (ClassMethod $node): void {
                         $node->returnType = new UnionType([new Identifier('int'), new Identifier('array')]);
                     },
-                    'getHeaderWidgetsColumns' => function (ClassMethod $node) {
+                    'getHeaderWidgetsColumns' => function (ClassMethod $node): void {
                         $node->returnType = new UnionType([new Identifier('int'), new Identifier('array')]);
                     },
-                    'getSubNavigationPosition' => function (ClassMethod $node) {
+                    'getSubNavigationPosition' => function (ClassMethod $node): void {
                         $node->flags &= Modifiers::STATIC;
                     },
                 ],
@@ -54,10 +60,22 @@ class SimpleMethodChangesRector extends AbstractRector
                 'class' => [
                     CreateRecord::class,
                 ],
-                'classIdentifier' => 'extends',
                 'changes' => [
-                    'canCreateAnother' => function (ClassMethod $node) {
+                    'canCreateAnother' => function (ClassMethod $node): void {
                         $node->flags &= ~Modifiers::STATIC;
+                    },
+                ],
+            ],
+            [
+                'class' => [
+                    ViewRecord::class,
+                ],
+                'changes' => [
+                    'infolist' => function (ClassMethod $node): void {
+                        $param = new Param(new Variable('schema'));
+                        $param->type = new Name('\\Filament\\Schemas\\Schema');
+
+                        $node->params = [$param];
                     },
                 ],
             ],
@@ -65,10 +83,19 @@ class SimpleMethodChangesRector extends AbstractRector
                 'class' => [
                     Dashboard::class,
                 ],
-                'classIdentifier' => 'extends',
                 'changes' => [
-                    'getColumns' => function (ClassMethod $node) {
+                    'getColumns' => function (ClassMethod $node): void {
                         $node->returnType = new UnionType([new Identifier('int'), new Identifier('array')]);
+                    },
+                ],
+            ],
+            [
+                'class' => [
+                    Component::class,
+                ],
+                'changes' => [
+                    'getChildComponents' => function (ClassMethod $node): void {
+                        $node->name = new Identifier('getDefaultChildComponents');
                     },
                 ],
             ],
@@ -86,6 +113,7 @@ class SimpleMethodChangesRector extends AbstractRector
     public function refactor(Node $node): ?Node
     {
         $touched = false;
+
         foreach ($this->getChanges() as $change) {
             if (! $this->isClassMatchingChange($node, $change)) {
                 continue;
@@ -136,22 +164,14 @@ class SimpleMethodChangesRector extends AbstractRector
             $change['class'] :
             [$change['class']];
 
-        $classes = [
-            ...array_map(fn (string $class): string => ltrim($class, '\\'), $classes),
-            ...array_map(fn (string $class): string => '\\' . ltrim($class, '\\'), $classes),
-        ];
+        $classes = array_map(fn (string $class): string => ltrim($class, '\\'), $classes);
 
-        if ($change['classIdentifier'] === 'extends') {
-            return $class->extends && $this->isNames($class->extends, $classes);
+        foreach ($classes as $classToCheck) {
+            if ($this->isObjectType($class, new ObjectType($classToCheck))) {
+                return true;
+            }
         }
 
-        if ($change['classIdentifier'] !== 'implements') {
-            return false;
-        }
-
-        return (bool) count(array_filter(
-            $class->implements,
-            fn (Name $interface): bool => $this->isNames($interface, $classes),
-        ));
+        return false;
     }
 }

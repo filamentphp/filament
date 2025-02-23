@@ -2,7 +2,10 @@
 
 namespace Filament\Infolists\Testing;
 
+use BackedEnum;
 use Closure;
+use Filament\Schemas\Contracts\HasSchemas;
+use Livewire\Component;
 use Livewire\Features\SupportTesting\Testable;
 
 /**
@@ -154,7 +157,7 @@ class TestsInfolistActions
 
     public function assertInfolistActionHasIcon(): Closure
     {
-        return function (string $component, string | array $actions, string $icon, string $infolistName = 'infolist'): static {
+        return function (string $component, string | array $actions, string | BackedEnum $icon, string $infolistName = 'infolist'): static {
             /** @var array<array<string, mixed>> $actions */
             /** @phpstan-ignore-next-line */
             $actions = $this->parseNestedInfolistActions($component, $actions, $infolistName);
@@ -167,7 +170,7 @@ class TestsInfolistActions
 
     public function assertInfolistActionDoesNotHaveIcon(): Closure
     {
-        return function (string $component, string | array $actions, string $icon, string $infolistName = 'infolist'): static {
+        return function (string $component, string | array $actions, string | BackedEnum $icon, string $infolistName = 'infolist'): static {
             /** @var array<array<string, mixed>> $actions */
             /** @phpstan-ignore-next-line */
             $actions = $this->parseNestedInfolistActions($component, $actions, $infolistName);

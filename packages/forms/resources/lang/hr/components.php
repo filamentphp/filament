@@ -12,14 +12,62 @@ return [
 
             'add' => [
                 'label' => 'Dodaj na :label',
+
+                'modal' => [
+
+                    'heading' => 'Dodaj na :label',
+
+                    'actions' => [
+
+                        'add' => [
+                            'label' => 'Dodaj',
+                        ],
+
+                    ],
+
+                ],
             ],
 
             'add_between' => [
                 'label' => 'Umetni između blokova',
+
+                'modal' => [
+
+                    'heading' => 'Dodaj na :label',
+
+                    'actions' => [
+
+                        'add' => [
+                            'label' => 'Dodaj',
+                        ],
+
+                    ],
+
+                ],
             ],
 
             'delete' => [
                 'label' => 'Obriši',
+            ],
+
+            'edit' => [
+
+                'label' => 'Uredi',
+
+                'modal' => [
+
+                    'heading' => 'Uredi blok',
+
+                    'actions' => [
+
+                        'save' => [
+                            'label' => 'Spremi promjene',
+                        ],
+
+                    ],
+
+                ],
+
             ],
 
             'reorder' => [
@@ -117,11 +165,11 @@ return [
                 ],
 
                 'rotate_left' => [
-                    'label' => 'Rotiraj sliku ulijevo',
+                    'label' => 'Zaokreni sliku ulijevo',
                 ],
 
                 'rotate_right' => [
-                    'label' => 'Rotiraj sliku udesno',
+                    'label' => 'Zaokreni sliku udesno',
                 ],
 
                 'set_aspect_ratio' => [
@@ -133,7 +181,7 @@ return [
                 ],
 
                 'zoom_100' => [
-                    'label' => 'Zumiraj sliku na 100%',
+                    'label' => 'Uvećaj sliku na 100%',
                 ],
 
                 'zoom_in' => [
@@ -185,6 +233,15 @@ return [
 
             ],
 
+            'svg' => [
+
+                'messages' => [
+                    'confirmation' => 'Obrađivanje SVG datoteka nije preporučljivo i može dovesti do gubitka kvalitete kada se skalira.\n Jesi li siguran da želiš nastaviti?',
+                    'disabled' => 'Onemogućena je obrada SVG datoteka jer može dovesti do gubitka kvalitete kada se skalira.',
+                ],
+
+            ],
+
         ],
 
     ],
@@ -225,10 +282,10 @@ return [
 
         'toolbar_buttons' => [
             'attach_files' => 'Dodaj datoteke',
-            'blockquote' => 'Blockquote',
+            'blockquote' => 'Blok citat',
             'bold' => 'Podebljano',
             'bullet_list' => 'Lista',
-            'code_block' => 'Blok koda',
+            'code_block' => 'Blok kôda',
             'heading' => 'Zaglavlje',
             'italic' => 'Kurziv',
             'link' => 'Poveznica',
@@ -241,12 +298,25 @@ return [
 
     ],
 
+    'radio' => [
+
+        'boolean' => [
+            'true' => 'Da',
+            'false' => 'Ne',
+        ],
+
+    ],
+
     'repeater' => [
 
         'actions' => [
 
             'add' => [
                 'label' => 'Dodaj na :label',
+            ],
+
+            'add_between' => [
+                'label' => 'Umetni između',
             ],
 
             'delete' => [
@@ -310,10 +380,10 @@ return [
 
         'toolbar_buttons' => [
             'attach_files' => 'Dodaj datoteke',
-            'blockquote' => 'Blockquote',
+            'blockquote' => 'Blok citat',
             'bold' => 'Podebljano',
             'bullet_list' => 'Lista',
-            'code_block' => 'Blok koda',
+            'code_block' => 'Blok kôda',
             'h1' => 'Naslov',
             'h2' => 'Zaglavlje',
             'h3' => 'Podnaslov',
@@ -345,7 +415,7 @@ return [
                         ],
 
                         'create_another' => [
-                            'label' => 'Napravi i napravi drugi',
+                            'label' => 'Napravi i dodaj još jedan',
                         ],
 
                     ],
@@ -383,18 +453,43 @@ return [
 
         'max_items_message' => 'Samo :count može biti odabrano.',
 
-        'no_search_results_message' => 'Nema opcija koje odgovaraju vašem pretraživanju.',
+        'no_search_results_message' => 'Nema opcija koje odgovaraju tvojem pretraživanju.',
 
         'placeholder' => 'Odaberi opciju',
 
         'searching_message' => 'Pretraživanje...',
 
-        'search_prompt' => 'Počnite tipkati za pretragu...',
+        'search_prompt' => 'Počni tipkati za pretragu...',
 
     ],
 
     'tags_input' => [
-        'placeholder' => 'Novi tag',
+        'placeholder' => 'Nova oznaka',
+    ],
+
+    'text_input' => [
+
+        'actions' => [
+
+            'hide_password' => [
+                'label' => 'Sakrij lozinku',
+            ],
+
+            'show_password' => [
+                'label' => 'Prikaži lozinku',
+            ],
+
+        ],
+
+    ],
+
+    'toggle_buttons' => [
+
+        'boolean' => [
+            'true' => 'Da',
+            'false' => 'Ne',
+        ],
+
     ],
 
 ];

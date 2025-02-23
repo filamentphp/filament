@@ -9,12 +9,12 @@ use Filament\Tables\Columns\Column;
 trait HasColor
 {
     /**
-     * @var string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | bool | Closure | null
+     * @var string | array<int | string, string | int> | bool | Closure | null
      */
     protected string | array | bool | Closure | null $color = null;
 
     /**
-     * @param  string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | bool | Closure | null  $color
+     * @param  string | array<int | string, string | int> | bool | Closure | null  $color
      */
     public function color(string | array | bool | Closure | null $color): static
     {
@@ -50,7 +50,7 @@ trait HasColor
     }
 
     /**
-     * @return string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null
+     * @return string | array<int | string, string | int> | null
      */
     public function getColor(mixed $state): string | array | null
     {

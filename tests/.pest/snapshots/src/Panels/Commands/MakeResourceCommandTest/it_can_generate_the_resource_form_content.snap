@@ -7,6 +7,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Schema;
+use Filament\Tests\Fixtures\Enums\StringBackedEnum;
 
 class PostForm
 {
@@ -29,8 +30,12 @@ class PostForm
                     ->columnSpanFull(),
                 TextInput::make('title')
                     ->required(),
+                Textarea::make('json')
+                    ->columnSpanFull(),
                 Textarea::make('json_array_of_objects')
                     ->columnSpanFull(),
+                Select::make('string_backed_enum')
+                    ->options(StringBackedEnum::class),
             ]);
     }
 }

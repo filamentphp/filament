@@ -9,7 +9,6 @@ use Filament\Support\Concerns\HasExtraAttributes;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Query\Builder;
-use Illuminate\Support\Facades\DB;
 
 class Summarizer extends ViewComponent implements HasEmbeddedView
 {
@@ -82,7 +81,7 @@ class Summarizer extends ViewComponent implements HasEmbeddedView
 
         if ($column->hasRelationship($query->getModel())) {
             $relationship = $column->getRelationship($query->getModel());
-            $attribute = $column->getRelationshipAttribute();
+            $attribute = $column->getFullAttributeName($query->getModel());
 
             $inverseRelationship = $column->getInverseRelationshipName($query->getModel());
 
@@ -127,7 +126,7 @@ class Summarizer extends ViewComponent implements HasEmbeddedView
 
         $asName = (string) str($query->getModel()->getTable())->afterLast('.');
 
-        $query = DB::connection($query->getModel()->getConnectionName())
+        $query = $query->getModel()->resolveConnection($query->getModel()->getConnectionName())
             ->table($query->toBase(), $asName);
 
         if ($this->hasQueryModification()) {

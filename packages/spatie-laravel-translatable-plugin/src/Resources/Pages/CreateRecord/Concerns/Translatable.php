@@ -8,7 +8,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Locked;
 
-trait Translatable
+trait Translatable /** @phpstan-ignore trait.unused */
 {
     use HasActiveLocaleSwitcher;
 

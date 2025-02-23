@@ -59,7 +59,7 @@ trait HasDescriptions
         ) {
             $descriptions = array_reduce($enum::cases(), function (array $carry, HasDescription & UnitEnum $case): array {
                 if (filled($description = $case->getDescription())) {
-                    $carry[$case?->value ?? $case->name] = $description;
+                    $carry[$case->value ?? $case->name] = $description;
                 }
 
                 return $carry;

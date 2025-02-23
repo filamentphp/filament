@@ -22,6 +22,17 @@ trait HasEntryWrapper
             'filament-infolists::entry-wrapper';
     }
 
+    public function getEntryWrapperAbsoluteView(): string
+    {
+        $view = $this->getEntryWrapperView();
+
+        if (str($view)->contains('::')) {
+            return str($view)->replaceFirst('::', '::components.');
+        }
+
+        return "components.{$view}";
+    }
+
     public function getCustomEntryWrapperView(): ?string
     {
         return $this->evaluate($this->entryWrapperView);

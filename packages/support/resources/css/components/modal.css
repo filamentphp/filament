@@ -1,6 +1,4 @@
 .fi-modal {
-    @apply inline-block;
-
     &.fi-modal-slide-over,
     &.fi-width-screen {
         & .fi-modal-window {
@@ -34,7 +32,7 @@
 
     &:not(.fi-modal-slide-over) {
         &:not(.fi-width-screen) {
-            & .fi-modal-overlay {
+            & .fi-modal-window-ctn {
                 @apply overflow-y-auto;
             }
 
@@ -66,12 +64,12 @@
         & .fi-modal-window-has-icon {
             &:not(.fi-modal-window-has-sticky-header) {
                 & .fi-modal-content {
-                    @apply pe-6 ps-[5.25rem];
+                    @apply ps-[5.25rem] pe-6;
                 }
 
                 & .fi-modal-footer {
                     &:not(.fi-align-center) {
-                        @apply pe-6 ps-[5.25rem];
+                        @apply ps-[5.25rem] pe-6;
                     }
                 }
             }
@@ -85,20 +83,8 @@
         }
     }
 
-    & .fi-modal-trigger {
-        @apply flex cursor-pointer;
-    }
-
     & .fi-modal-close-overlay {
         @apply fixed inset-0 z-40 bg-gray-950/50 dark:bg-gray-950/75;
-    }
-
-    & .fi-modal-overlay {
-        @apply fixed inset-0 z-40;
-
-        &.fi-clickable {
-            @apply cursor-pointer;
-        }
     }
 
     & .fi-modal-header {
@@ -114,7 +100,7 @@
     }
 
     & .fi-modal-heading {
-        @apply text-base font-semibold leading-6 text-gray-950 dark:text-white;
+        @apply text-base leading-6 font-semibold text-gray-950 dark:text-white;
     }
 
     & .fi-modal-description {
@@ -122,7 +108,11 @@
     }
 
     & .fi-modal-window-ctn {
-        @apply relative grid min-h-full grid-rows-[1fr_auto_1fr] justify-items-center sm:grid-rows-[1fr_auto_3fr];
+        @apply fixed inset-0 z-40 grid min-h-full grid-rows-[1fr_auto_1fr] justify-items-center sm:grid-rows-[1fr_auto_3fr];
+
+        &.fi-clickable {
+            @apply cursor-pointer;
+        }
     }
 
     & .fi-modal-content {
@@ -146,7 +136,7 @@
     }
 
     & .fi-modal-window {
-        @apply pointer-events-auto relative row-start-2 flex w-full cursor-default flex-col bg-white shadow-xl ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10;
+        @apply pointer-events-auto relative row-start-2 flex w-full cursor-default flex-col bg-white ring-1 shadow-xl ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10;
 
         &.fi-align-start,
         &.fi-align-left {
@@ -154,7 +144,7 @@
                 @apply gap-x-5;
             }
 
-            & .fi-modal-icon-wrp {
+            & .fi-modal-icon-bg {
                 @apply p-2;
             }
         }
@@ -164,11 +154,11 @@
                 @apply flex-col text-center;
             }
 
-            & .fi-modal-icon-wrp-ctn {
+            & .fi-modal-icon-ctn {
                 @apply mb-5 flex items-center justify-center;
             }
 
-            & .fi-modal-icon-wrp {
+            & .fi-modal-icon-bg {
                 @apply p-3;
             }
         }
@@ -293,8 +283,18 @@
         }
 
         &.fi-modal-window-has-close-button {
-            & .fi-modal-heading {
-                @apply me-5;
+            &.fi-align-center:not(.fi-modal-window-has-icon) {
+                & .fi-modal-heading {
+                    @apply ms-6;
+                }
+            }
+
+            &:not(.fi-modal-window-has-icon),
+            &.fi-align-start,
+            &.fi-align-left {
+                & .fi-modal-heading {
+                    @apply me-6;
+                }
             }
         }
     }
@@ -333,7 +333,7 @@
             @apply px-6;
 
             & .fi-modal-footer-actions {
-                @apply flex flex-col-reverse sm:grid sm:grid-cols-[repeat(auto-fit,minmax(0,1fr))];
+                @apply flex flex-col-reverse;
             }
         }
 
@@ -345,19 +345,47 @@
         }
     }
 
-    & .fi-modal-icon-wrp {
+    & .fi-modal-icon-bg {
         @apply rounded-full bg-gray-100 dark:bg-gray-500/20;
 
         & > .fi-icon {
-            @apply size-6 text-gray-500 dark:text-gray-400;
+            @apply text-gray-500 dark:text-gray-400;
         }
 
-        &.fi-color-custom {
-            @apply bg-custom-100 dark:bg-custom-500/20;
+        &.fi-color {
+            @apply bg-color-100 dark:bg-color-500/20;
 
             & > .fi-icon {
-                @apply text-custom-600 dark:text-custom-400;
+                @apply text-color-600 dark:text-color-400;
             }
         }
     }
+
+    @supports (container-type: inline-size) {
+        & .fi-modal-window {
+            @apply @container;
+        }
+
+        & .fi-modal-footer {
+            &.fi-align-center {
+                & .fi-modal-footer-actions {
+                    @apply @sm:grid @sm:grid-cols-[repeat(auto-fit,minmax(0,1fr))];
+                }
+            }
+        }
+    }
+
+    @supports not (container-type: inline-size) {
+        & .fi-modal-footer {
+            &.fi-align-center {
+                & .fi-modal-footer-actions {
+                    @apply sm:grid sm:grid-cols-[repeat(auto-fit,minmax(0,1fr))];
+                }
+            }
+        }
+    }
+}
+
+& .fi-modal-trigger {
+    @apply flex;
 }

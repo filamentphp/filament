@@ -4,58 +4,58 @@
     }
 
     & .fi-dropdown-panel {
-        @apply absolute z-10 w-screen divide-y divide-gray-100 rounded-lg bg-white shadow-lg ring-1 ring-gray-950/5 transition dark:divide-white/5 dark:bg-gray-900 dark:ring-white/10;
+        @apply absolute z-10 w-screen divide-y divide-gray-100 rounded-lg bg-white ring-1 shadow-lg ring-gray-950/5 transition dark:divide-white/5 dark:bg-gray-900 dark:ring-white/10;
 
         &.fi-opacity-0 {
             @apply opacity-0;
         }
 
         &.fi-width-default {
-            @apply !max-w-[14rem];
+            @apply max-w-[14rem]!;
         }
 
         &.fi-width-xs {
-            @apply !max-w-xs;
+            @apply max-w-xs!;
         }
 
         &.fi-width-sm {
-            @apply !max-w-sm;
+            @apply max-w-sm!;
         }
 
         &.fi-width-md {
-            @apply !max-w-md;
+            @apply max-w-md!;
         }
 
         &.fi-width-lg {
-            @apply !max-w-lg;
+            @apply max-w-lg!;
         }
 
         &.fi-width-xl {
-            @apply !max-w-xl;
+            @apply max-w-xl!;
         }
 
         &.fi-width-2xl {
-            @apply !max-w-2xl;
+            @apply max-w-2xl!;
         }
 
         &.fi-width-3xl {
-            @apply !max-w-3xl;
+            @apply max-w-3xl!;
         }
 
         &.fi-width-4xl {
-            @apply !max-w-4xl;
+            @apply max-w-4xl!;
         }
 
         &.fi-width-5xl {
-            @apply !max-w-5xl;
+            @apply max-w-5xl!;
         }
 
         &.fi-width-6xl {
-            @apply !max-w-6xl;
+            @apply max-w-6xl!;
         }
 
         &.fi-width-7xl {
-            @apply !max-w-7xl;
+            @apply max-w-7xl!;
         }
 
         &.fi-scrollable {

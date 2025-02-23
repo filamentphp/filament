@@ -7,7 +7,6 @@ use Filament\Support\Services\RelationshipJoiner;
 use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Expression;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use stdClass;
 
@@ -40,7 +39,7 @@ trait CanSummarizeRecords
                 continue;
             }
 
-            if (filled($column->getRelationshipName())) {
+            if ($column->hasRelationship($query->getModel())) {
                 continue;
             }
 
@@ -71,7 +70,7 @@ trait CanSummarizeRecords
         $queryToJoin = $query->clone();
         $joins = [];
 
-        $query = DB::connection($query->getModel()->getConnectionName())
+        $query = $query->getModel()->resolveConnection($query->getModel()->getConnectionName())
             ->table($query->toBase(), $query->getModel()->getTable());
 
         if ($modifyQueryUsing) {

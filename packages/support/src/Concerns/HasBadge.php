@@ -2,6 +2,7 @@
 
 namespace Filament\Support\Concerns;
 
+use BackedEnum;
 use Closure;
 use Filament\Support\Enums\IconPosition;
 
@@ -10,11 +11,11 @@ trait HasBadge
     protected string | int | float | Closure | null $badge = null;
 
     /**
-     * @var string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | Closure | null
+     * @var string | array<int | string, string | int> | Closure | null
      */
     protected string | array | Closure | null $badgeColor = null;
 
-    protected string | Closure | null $badgeIcon = null;
+    protected string | BackedEnum | Closure | null $badgeIcon = null;
 
     protected string | Closure | null $badgeTooltip = null;
 
@@ -36,7 +37,7 @@ trait HasBadge
     }
 
     /**
-     * @param  string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | Closure | null  $color
+     * @param  string | array<int | string, string | int> | Closure | null  $color
      */
     public function badgeColor(string | array | Closure | null $color): static
     {
@@ -45,7 +46,7 @@ trait HasBadge
         return $this;
     }
 
-    public function badgeIcon(string | Closure | null $icon): static
+    public function badgeIcon(string | BackedEnum | Closure | null $icon): static
     {
         $this->badgeIcon = $icon;
 
@@ -69,7 +70,7 @@ trait HasBadge
     /**
      * @deprecated Use `badgeColor()` instead.
      *
-     * @param  string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | Closure | null  $color
+     * @param  string | array<int | string, string | int> | Closure | null  $color
      */
     public function indicatorColor(string | array | Closure | null $color): static
     {
@@ -82,14 +83,14 @@ trait HasBadge
     }
 
     /**
-     * @return string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null
+     * @return string | array<int | string, string | int> | null
      */
     public function getBadgeColor(): string | array | null
     {
         return $this->evaluate($this->badgeColor);
     }
 
-    public function getBadgeIcon(): ?string
+    public function getBadgeIcon(): string | BackedEnum | null
     {
         return $this->evaluate($this->badgeIcon);
     }

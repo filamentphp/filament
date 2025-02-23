@@ -29,8 +29,8 @@ trait CanBeMounted
      */
     public function fillForm(array | Closure $data): static
     {
-        $this->mountUsing(function (?Schema $form) use ($data) {
-            $form?->fill($this->evaluate($data));
+        $this->mountUsing(function (?Schema $schema) use ($data): void {
+            $schema?->fill($this->evaluate($data));
         });
 
         return $this;
@@ -38,12 +38,12 @@ trait CanBeMounted
 
     public function getMountUsing(): Closure
     {
-        return $this->mountUsing ?? static function (?Schema $form = null): void {
-            if (! $form) {
+        return $this->mountUsing ?? static function (?Schema $schema = null): void {
+            if (! $schema) {
                 return;
             }
 
-            $form->fill();
+            $schema->fill();
         };
     }
 }

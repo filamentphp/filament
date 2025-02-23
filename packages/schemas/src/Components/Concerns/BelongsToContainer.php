@@ -10,9 +10,9 @@ trait BelongsToContainer
 {
     protected Schema $container;
 
-    public function container(Schema $container): static
+    public function container(Schema $schema): static
     {
-        $this->container = $container;
+        $this->container = $schema;
 
         return $this;
     }

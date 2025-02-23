@@ -902,7 +902,7 @@ The current record (if it exists yet) is accessible in `$this->record`, and the 
 
 ## Authorization
 
-By default, only the user who started the import may access the failure CSV file that gets generated if part of an import fails. If you'd like to customize the authorization logic, you may create an `ImportPolicy` class, and [register it in your `AuthServiceProvider`](https://laravel.com/docs/10.x/authorization#registering-policies):
+By default, only the user who started the import may access the failure CSV file that gets generated if part of an import fails. If you'd like to customize the authorization logic, you may create an `ImportPolicy` class, and [register it in your `AuthServiceProvider`](https://laravel.com/docs/authorization#registering-policies):
 
 ```php
 use App\Policies\ImportPolicy;

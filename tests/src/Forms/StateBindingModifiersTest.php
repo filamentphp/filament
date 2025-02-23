@@ -9,7 +9,7 @@ use Illuminate\Support\Str;
 
 uses(TestCase::class);
 
-test('fields can have state binding modifiers', function () {
+test('fields can have state binding modifiers', function (): void {
     $field = (new Field(Str::random()))
         ->container(Schema::make(Livewire::make()))
         ->stateBindingModifiers($modifiers = [Str::random(), Str::random()]);
@@ -27,14 +27,14 @@ test('fields can have state binding modifiers', function () {
         );
 });
 
-test('component state binding is deferred by default', function () {
+test('component state binding is deferred by default', function (): void {
     $component = (new Component)->container(Schema::make(Livewire::make()));
 
     expect($component)
         ->getStateBindingModifiers()->toBe([]);
 });
 
-test('component state binding can be live', function () {
+test('component state binding can be live', function (): void {
     $component = (new Component)
         ->container(Schema::make(Livewire::make()))
         ->live();
@@ -43,7 +43,7 @@ test('component state binding can be live', function () {
         ->getStateBindingModifiers()->toBe(['live']);
 });
 
-test('component state binding can be triggered on blur', function () {
+test('component state binding can be triggered on blur', function (): void {
     $component = (new Component)
         ->container(Schema::make(Livewire::make()))
         ->live(onBlur: true);
@@ -52,7 +52,7 @@ test('component state binding can be triggered on blur', function () {
         ->getStateBindingModifiers()->toBe(['blur']);
 });
 
-test('component state binding can be debounced', function () {
+test('component state binding can be debounced', function (): void {
     $component = (new Component)
         ->container(Schema::make(Livewire::make()))
         ->live(debounce: '750ms');
@@ -61,7 +61,7 @@ test('component state binding can be debounced', function () {
         ->getStateBindingModifiers()->toBe(['live', 'debounce', '750ms']);
 });
 
-test('components inherit their state binding modifiers', function () {
+test('components inherit their state binding modifiers', function (): void {
     $component = (new Component)
         ->container(
             Schema::make(Livewire::make())

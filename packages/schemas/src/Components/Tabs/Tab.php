@@ -20,7 +20,7 @@ class Tab extends Component implements CanConcealComponents
     /**
      * @var view-string
      */
-    protected string $view = 'filament-schema::components.tabs.tab';
+    protected string $view = 'filament-schemas::components.tabs.tab';
 
     final public function __construct(?string $label = null)
     {

@@ -2,7 +2,7 @@
 
 namespace Filament\Pages\Concerns;
 
-trait ExposesTableToWidgets
+trait ExposesTableToWidgets /** @phpstan-ignore trait.unused */
 {
     public function getWidgetData(): array
     {

@@ -1,16 +1,16 @@
 <?php
 
+use Filament\Actions\Action;
+use Filament\Schemas\Components\Component;
+use Filament\Schemas\Schema;
 use Filament\Upgrade\Rector;
 use Rector\Config\RectorConfig;
+use Rector\Renaming\Rector\MethodCall\RenameMethodRector;
 use Rector\Renaming\Rector\Name\RenameClassRector;
 use Rector\Renaming\Rector\String_\RenameStringRector;
+use Rector\Renaming\ValueObject\MethodCallRename;
 
 return static function (RectorConfig $rectorConfig): void {
-    $rectorConfig->rules([
-        Rector\SimpleMethodChangesRector::class,
-        Rector\SimplePropertyChangesRector::class,
-    ]);
-
     $rectorConfig->ruleWithConfiguration(
         RenameClassRector::class,
         // @todo Alphabetical
@@ -28,7 +28,7 @@ return static function (RectorConfig $rectorConfig): void {
             'Filament\\Forms\\Components\\Concerns\\HasExtraAlpineAttributes' => 'Filament\\Support\\Concerns\\HasExtraAlpineAttributes',
             'Filament\\Forms\\Components\\Concerns\\HasExtraAttributes' => 'Filament\\Support\\Concerns\\HasExtraAttributes',
             'Filament\\Infolists\\Components\\Card' => 'Filament\\Schemas\\Components\\Section',
-            'Filament\\Http\\Livewire\\Auth\\Login' => 'Filament\\Pages\\Auth\\Login',
+            'Filament\\Http\\Livewire\\Auth\\Login' => 'Filament\\Auth\\Pages\\Login',
             'Filament\\Navigation\\UserMenuItem' => 'Filament\\Navigation\\MenuItem',
             'Filament\\Pages\\Actions\\Modal\\Actions\\Action' => 'Filament\\Actions\\Action',
             'Filament\\Pages\\Actions\\Modal\\Actions\\ButtonAction' => 'Filament\\Actions\\Action',
@@ -89,7 +89,6 @@ return static function (RectorConfig $rectorConfig): void {
             'Filament\\Forms\\Components\\Actions\\Concerns\\BelongsToComponent' => 'Filament\\Actions\\Concerns\\BelongsToSchemaComponent',
             'Filament\\Forms\\Components\\Actions' => 'Filament\\Schemas\\Components\\Actions',
             'Filament\\Forms\\Components\\Actions\\Action' => 'Filament\\Actions\\Action',
-            'Filament\\Forms\\Components\\Actions\\ActionContainer' => 'Filament\\Schemas\\Components\\Actions\\ActionContainer',
             'Filament\\Forms\\Components\\Tabs' => 'Filament\\Schemas\\Components\\Tabs',
             'Filament\\Forms\\Components\\Tabs\\Tab' => 'Filament\\Schemas\\Components\\Tabs\\Tab',
             'Filament\\Forms\\Components\\Contracts\\CanConcealComponents' => 'Filament\\Schemas\\Components\\Contracts\\CanConcealComponents',
@@ -105,11 +104,10 @@ return static function (RectorConfig $rectorConfig): void {
             'Filament\\Forms\\Components\\Split' => 'Filament\\Schemas\\Components\\Split',
             'Filament\\Forms\\Components\\View' => 'Filament\\Schemas\\Components\\View',
             'Filament\\Forms\\Components\\Concerns\\CanBeCollapsed' => 'Filament\\Schemas\\Components\\Concerns\\CanBeCollapsed',
-            'Filament\\Forms\\Components\\Concerns\\CanBeCompacted' => 'Filament\\Schemas\\Components\\Concerns\\CanBeCompacted',
+            'Filament\\Forms\\Components\\Concerns\\CanBeCompacted' => 'Filament\\Schemas\\Components\\Concerns\\CanBeCompact',
             'Filament\\Forms\\Components\\Concerns\\HasFooterActions' => 'Filament\\Schemas\\Components\\Concerns\\HasFooterActions',
             'Filament\\Forms\\Components\\Concerns\\HasHeaderActions' => 'Filament\\Schemas\\Components\\Concerns\\HasHeaderActions',
-            'Filament\\Forms\\Components\\Contracts\\HasFooterActions' => 'Filament\\Schemas\\Components\\Contracts\\HasFooterActions',
-            'Filament\\Forms\\Components\\Contracts\\HasHeaderActions' => 'Filament\\Schemas\\Components\\Contracts\\HasHeaderActions',
+            'Filament\\Forms\\ComponentContainer' => 'Filament\\Schemas\\Schema',
             'Filament\\Infolists\\ComponentContainer' => 'Filament\\Schemas\\Schema',
             'Filament\\Infolists\\Concerns\\BelongsToLivewire' => 'Filament\\Schemas\\Concerns\\BelongsToLivewire',
             'Filament\\Infolists\\Concerns\\BelongsToParentComponent' => 'Filament\\Schemas\\Concerns\\BelongsToParentComponent',
@@ -142,7 +140,6 @@ return static function (RectorConfig $rectorConfig): void {
             'Filament\\Forms\\Components\\Contracts\\HasExtraItemActions' => 'Filament\\Schemas\\Components\\Contracts\\HasExtraItemActions',
             'Filament\\Infolists\\Commands\\MakeLayoutComponentCommand' => 'Filament\\Schemas\\Commands\\MakeLayoutComponentCommand',
             'Filament\\Infolists\\Components\\Actions' => 'Filament\\Schemas\\Components\\Actions',
-            'Filament\\Infolists\\Components\\Actions\\ActionContainer' => 'Filament\\Schemas\\Components\\Actions\\ActionContainer',
             'Filament\\Infolists\\Components\\Tabs' => 'Filament\\Schemas\\Components\\Tabs',
             'Filament\\Infolists\\Components\\Tabs\\Tab' => 'Filament\\Schemas\\Components\\Tabs\\Tab',
             'Filament\\Infolists\\Components\\Fieldset' => 'Filament\\Schemas\\Components\\Fieldset',
@@ -154,7 +151,7 @@ return static function (RectorConfig $rectorConfig): void {
             'Filament\\Infolists\\Components\\Split' => 'Filament\\Schemas\\Components\\Split',
             'Filament\\Infolists\\Components\\View' => 'Filament\\Schemas\\Components\\View',
             'Filament\\Infolists\\Components\\Concerns\\CanBeCollapsed' => 'Filament\\Schemas\\Components\\Concerns\\CanBeCollapsed',
-            'Filament\\Infolists\\Components\\Concerns\\CanBeCompacted' => 'Filament\\Schemas\\Components\\Concerns\\CanBeCompacted',
+            'Filament\\Infolists\\Components\\Concerns\\CanBeCompacted' => 'Filament\\Schemas\\Components\\Concerns\\CanBeCompact',
             'Filament\\Infolists\\Components\\Concerns\\HasFooterActions' => 'Filament\\Schemas\\Components\\Concerns\\HasFooterActions',
             'Filament\\Infolists\\Components\\Concerns\\HasHeaderActions' => 'Filament\\Schemas\\Components\\Concerns\\HasHeaderActions',
             'Filament\\Actions\\MountableAction' => 'Filament\\Actions\\Action',
@@ -195,10 +192,6 @@ return static function (RectorConfig $rectorConfig): void {
             'Filament\\Support\\Concerns\\HasFooterActionsAlignment' => 'Filament\\Schemas\\Components\\Concerns\\HasFooterActionsAlignment',
             'Filament\\Support\\Concerns\\HasHeading' => 'Filament\\Schemas\\Components\\Concerns\\HasHeading',
             'Filament\\Support\\Concerns\\ResolvesDynamicLivewireProperties' => 'Filament\\Schemas\\Concerns\\ResolvesDynamicLivewireProperties',
-            'Filament\\Infolists\\Components\\IconEntry\\IconEntrySize' => 'Filament\\Infolists\\Components\\IconEntry\\Enums\\IconEntrySize',
-            'Filament\\Infolists\\Components\\TextEntry\\TextEntrySize' => 'Filament\\Infolists\\Components\\TextEntry\\Enums\\TextEntrySize',
-            'Filament\\Tables\\Columns\\IconColumn\\IconColumnSize' => 'Filament\\Tables\\Columns\\IconColumn\\Enums\\IconColumnSize',
-            'Filament\\Tables\\Columns\\TextColumn\\TextColumnSize' => 'Filament\\Tables\\Columns\\TextColumn\\Enums\\TextColumnSize',
             'Filament\\Pages\\SubNavigationPosition' => 'Filament\\Pages\\Enums\\SubNavigationPosition',
             'Filament\\Resources\\Pages\\ContentTabPosition' => 'Filament\\Resources\\Pages\\Enums\\ContentTabPosition',
             'Filament\\Tables\\Columns\\Concerns\\HasTooltip' => 'Filament\\Support\\Concerns\\HasTooltip',
@@ -212,36 +205,74 @@ return static function (RectorConfig $rectorConfig): void {
             'Filament\\Billing\\Providers\\Contracts\\Provider' => 'Filament\\Billing\\Providers\\Contracts\\BillingProvider',
             'Filament\\GlobalSearch\\Contracts\\GlobalSearchProvider' => 'Filament\\GlobalSearch\\Providers\\Contracts\\GlobalSearchProvider',
             'Filament\\GlobalSearch\\DefaultGlobalSearchProvider' => 'Filament\\GlobalSearch\\Providers\\DefaultGlobalSearchProvider',
+            'Filament\\Events\\Auth\\Registered' => 'Filament\\Auth\\Events\\Registered',
+            'Filament\\Http\\Controllers\\Auth\\EmailVerificationController' => 'Filament\\Auth\\Http\\Controllers\\EmailVerificationController',
+            'Filament\\Http\\Controllers\\Auth\\LogoutController' => 'Filament\\Auth\\Http\\Controllers\\LogoutController',
+            'Filament\\Http\\Responses\\Auth\\Contracts\\EmailVerificationResponse' => 'Filament\\Auth\\Http\\Responses\\Contracts\\EmailVerificationResponse',
+            'Filament\\Http\\Responses\\Auth\\Contracts\\LoginResponse' => 'Filament\\Auth\\Http\\Responses\\Contracts\\LoginResponse',
+            'Filament\\Http\\Responses\\Auth\\Contracts\\LogoutResponse' => 'Filament\\Auth\\Http\\Responses\\Contracts\\LogoutResponse',
+            'Filament\\Http\\Responses\\Auth\\Contracts\\PasswordResetResponse' => 'Filament\\Auth\\Http\\Responses\\Contracts\\PasswordResetResponse',
+            'Filament\\Http\\Responses\\Auth\\Contracts\\RegistrationResponse' => 'Filament\\Auth\\Http\\Responses\\Contracts\\RegistrationResponse',
+            'Filament\\Http\\Responses\\Auth\\EmailVerificationResponse' => 'Filament\\Auth\\Http\\Responses\\EmailVerificationResponse',
+            'Filament\\Http\\Responses\\Auth\\LoginResponse' => 'Filament\\Auth\\Http\\Responses\\LoginResponse',
+            'Filament\\Http\\Responses\\Auth\\LogoutResponse' => 'Filament\\Auth\\Http\\Responses\\LogoutResponse',
+            'Filament\\Http\\Responses\\Auth\\PasswordResetResponse' => 'Filament\\Auth\\Http\\Responses\\PasswordResetResponse',
+            'Filament\\Http\\Responses\\Auth\\RegistrationResponse' => 'Filament\\Auth\\Http\\Responses\\RegistrationResponse',
+            'Filament\\Notifications\\Auth\\ResetPassword' => 'Filament\\Auth\\Notifications\\ResetPassword',
+            'Filament\\Notifications\\Auth\\VerifyEmail' => 'Filament\\Auth\\Notifications\\VerifyEmail',
+            'Filament\\Pages\\Auth\\EditProfile' => 'Filament\\Auth\\Pages\\EditProfile',
+            'Filament\\Pages\\Auth\\EmailVerification\\EmailVerificationPrompt' => 'Filament\\Auth\\Pages\\EmailVerification\\EmailVerificationPrompt',
+            'Filament\\Pages\\Auth\\Login' => 'Filament\\Auth\\Pages\\Login',
+            'Filament\\Pages\\Auth\\PasswordReset\\RequestPasswordReset' => 'Filament\\Auth\\Pages\\PasswordReset\\RequestPasswordReset',
+            'Filament\\Pages\\Auth\\PasswordReset\\ResetPassword' => 'Filament\\Auth\\Pages\\PasswordReset\\ResetPassword',
+            'Filament\\Pages\\Auth\\Register' => 'Filament\\Auth\\Pages\\Register',
+            'Filament\\Support\\Enums\\MaxWidth' => 'Filament\\Support\\Enums\\Width',
+            'Filament\\Infolists\\Components\\IconEntry\\IconEntrySize' => 'Filament\\Support\\Enums\\IconSize',
+            'Filament\\Infolists\\Components\\TextEntry\\TextEntrySize' => 'Filament\\Support\\Enums\\TextSize',
+            'Filament\\Tables\\Columns\\IconColumn\\IconColumnSize' => 'Filament\\Support\\Enums\\IconSize',
+            'Filament\\Tables\\Columns\\TextColumn\\TextColumnSize' => 'Filament\\Support\\Enums\\TextSize',
+            'Filament\\Support\\View\\Components\\Modal' => 'Filament\\Support\\View\\Components\\ModalComponent',
+            'Filament\\Support\\Enums\\ActionSize' => 'Filament\\Support\\Enums\\Size',
         ],
     );
 
     $rectorConfig->ruleWithConfiguration(
         RenameStringRector::class,
         [
-            'filament-forms::component-container' => 'filament-schema::schema',
-            'filament-infolists::component-container' => 'filament-schema::schema',
-            'filament-forms::components.actions' => 'filament-schema::components.actions',
-            'filament-forms::components.actions.action-container' => 'filament-schema::components.actions.action-container',
-            'filament-forms::components.tabs' => 'filament-schema::components.tabs',
-            'filament-forms::components.tabs.tab' => 'filament-schema::components.tabs.tab',
-            'filament-forms::components.wizard' => 'filament-schema::components.wizard',
-            'filament-forms::components.wizard.step' => 'filament-schema::components.wizard.step',
-            'filament-forms::components.fieldset' => 'filament-schema::components.fieldset',
-            'filament-forms::components.grid' => 'filament-schema::components.grid',
-            'filament-forms::components.group' => 'filament-schema::components.grid',
-            'filament-forms::components.livewire' => 'filament-schema::components.livewire',
-            'filament-forms::components.section' => 'filament-schema::components.section',
-            'filament-forms::components.split' => 'filament-schema::components.split',
-            'filament-infolists::components.actions' => 'filament-schema::components.actions',
-            'filament-infolists::components.actions.action-container' => 'filament-schema::components.actions.action-container',
-            'filament-infolists::components.tabs' => 'filament-schema::components.tabs',
-            'filament-infolists::components.tabs.tab' => 'filament-schema::components.tabs.tab',
-            'filament-infolists::components.fieldset' => 'filament-schema::components.fieldset',
-            'filament-infolists::components.grid' => 'filament-schema::components.grid',
-            'filament-infolists::components.group' => 'filament-schema::components.grid',
-            'filament-infolists::components.livewire' => 'filament-schema::components.livewire',
-            'filament-infolists::components.section' => 'filament-schema::components.section',
-            'filament-infolists::components.split' => 'filament-schema::components.split',
+            'filament-forms::components.actions' => 'filament-schemas::components.actions',
+            'filament-forms::components.tabs' => 'filament-schemas::components.tabs',
+            'filament-forms::components.tabs.tab' => 'filament-schemas::components.tabs.tab',
+            'filament-forms::components.wizard' => 'filament-schemas::components.wizard',
+            'filament-forms::components.wizard.step' => 'filament-schemas::components.wizard.step',
+            'filament-forms::components.fieldset' => 'filament-schemas::components.fieldset',
+            'filament-forms::components.grid' => 'filament-schemas::components.grid',
+            'filament-forms::components.group' => 'filament-schemas::components.grid',
+            'filament-forms::components.livewire' => 'filament-schemas::components.livewire',
+            'filament-forms::components.section' => 'filament-schemas::components.section',
+            'filament-forms::components.split' => 'filament-schemas::components.split',
+            'filament-infolists::components.actions' => 'filament-schemas::components.actions',
+            'filament-infolists::components.tabs' => 'filament-schemas::components.tabs',
+            'filament-infolists::components.tabs.tab' => 'filament-schemas::components.tabs.tab',
+            'filament-infolists::components.fieldset' => 'filament-schemas::components.fieldset',
+            'filament-infolists::components.grid' => 'filament-schemas::components.grid',
+            'filament-infolists::components.group' => 'filament-schemas::components.grid',
+            'filament-infolists::components.livewire' => 'filament-schemas::components.livewire',
+            'filament-infolists::components.section' => 'filament-schemas::components.section',
+            'filament-infolists::components.split' => 'filament-schemas::components.split',
         ],
     );
+
+    $rectorConfig->rules([
+        Rector\SimpleMethodChangesRector::class,
+        Rector\SimplePropertyChangesRector::class,
+        Rector\RenameSchemaParamToMatchTypeRector::class,
+    ]);
+
+    $rectorConfig->ruleWithConfiguration(RenameMethodRector::class, [
+        new MethodCallRename(Action::class, 'infolist', 'schema'),
+        new MethodCallRename(Action::class, 'form', 'schema'),
+        new MethodCallRename(Component::class, 'getChildComponentContainer', 'getChildSchema'),
+        new MethodCallRename(Component::class, 'getChildComponentContainers', 'getChildSchemas'),
+        new MethodCallRename(Schema::class, 'schema', 'components'),
+    ]);
 };

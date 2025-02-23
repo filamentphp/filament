@@ -29,13 +29,13 @@ export default function selectFormComponent({
     statePath,
 }) {
     return {
-        isSearching: false,
-
         select: null,
 
         selectedOptions: [],
 
         isStateBeingUpdated: false,
+
+        isEmpty: true,
 
         state,
 
@@ -90,45 +90,36 @@ export default function selectFormComponent({
 
             if (hasDynamicOptions) {
                 this.$refs.input.addEventListener('showDropdown', async () => {
-                    this.select.clearChoices()
-                    await this.select.setChoices([
-                        {
-                            label: loadingMessage,
-                            value: '',
-                            disabled: true,
-                        },
-                    ])
-
+                    this.select._displayNotice(loadingMessage)
                     await this.refreshChoices()
                 })
             }
 
             if (hasDynamicSearchResults) {
-                this.$refs.input.addEventListener('search', async (event) => {
+                this.$refs.input.addEventListener('search', (event) => {
+                    if (!this.select._isSearching) {
+                        return
+                    }
+
                     let search = event.detail.value?.trim()
 
-                    this.isSearching = true
-
-                    this.select.clearChoices()
-                    await this.select.setChoices([
-                        {
-                            label: [null, undefined, ''].includes(search)
-                                ? loadingMessage
-                                : searchingMessage,
-                            value: '',
-                            disabled: true,
-                        },
-                    ])
+                    this.select._displayNotice(
+                        [null, undefined, ''].includes(search)
+                            ? loadingMessage
+                            : searchingMessage,
+                    )
                 })
 
                 this.$refs.input.addEventListener(
                     'search',
                     Alpine.debounce(async (event) => {
-                        await this.refreshChoices({
-                            search: event.detail.value?.trim(),
-                        })
+                        if (!this.select._isSearching) {
+                            return
+                        }
 
-                        this.isSearching = false
+                        let search = event.detail.value?.trim()
+
+                        await this.refreshChoices({ search })
                     }, searchDebounce),
                 )
             }
@@ -181,6 +172,10 @@ export default function selectFormComponent({
                 return
             }
 
+            if (!this.isEmpty) {
+                this.select._clearNotice()
+            }
+
             this.select.clearStore()
 
             this.refreshPlaceholder()
@@ -190,6 +185,13 @@ export default function selectFormComponent({
             if (![null, undefined, ''].includes(this.state)) {
                 this.select.setChoiceByValue(this.formatState(this.state))
             }
+
+            if (
+                this.isEmpty &&
+                ![null, undefined, ''].includes(config.search)
+            ) {
+                this.select._displayNotice(noSearchResultsMessage)
+            }
         },
 
         setChoices: function (choices) {
@@ -198,6 +200,8 @@ export default function selectFormComponent({
 
         getChoices: async function (config = {}) {
             const existingOptions = await this.getExistingOptions(config)
+
+            this.isEmpty = existingOptions.length === 0
 
             return existingOptions.concat(
                 await this.getMissingOptions(existingOptions),
@@ -211,7 +215,7 @@ export default function selectFormComponent({
 
             let results = []
 
-            if (search !== '' && search !== null && search !== undefined) {
+            if (![null, undefined, ''].includes(search)) {
                 results = await getSearchResultsUsing(search)
             } else {
                 results = await getOptionsUsing()
@@ -267,7 +271,7 @@ export default function selectFormComponent({
             let state = this.formatState(this.state)
 
             if ([null, undefined, '', [], {}].includes(state)) {
-                return {}
+                return []
             }
 
             const existingOptionValues = new Set()
@@ -286,7 +290,7 @@ export default function selectFormComponent({
 
             if (isMultiple) {
                 if (state.every((value) => existingOptionValues.has(value))) {
-                    return {}
+                    return []
                 }
 
                 return (await getOptionLabelsUsing())

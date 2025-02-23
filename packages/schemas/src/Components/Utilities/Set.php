@@ -16,6 +16,7 @@ class Set
 
         $component = $livewire->getSchemaComponent(
             $this->component->resolveRelativeKey($key),
+            withHidden: true,
         );
 
         $state = $this->component->evaluate($state);

@@ -3,13 +3,14 @@
 namespace Filament\Tables\Columns\Summarizers;
 
 use Exception;
+use Filament\Support\Enums\IconSize;
 use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\View\Components\Columns\Summarizers\CountComponent\IconComponent;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Str;
 use Illuminate\View\ComponentAttributeBag;
 
 use function Filament\Support\generate_icon_html;
-use function Filament\Support\get_color_css_variables;
 
 class Count extends Summarizer
 {
@@ -136,21 +137,8 @@ class Count extends Summarizer
 
                                     <?= generate_icon_html(
                                         $icon,
-                                        attributes: (new ComponentAttributeBag)
-                                            ->class([
-                                                match ($color) {
-                                                    null, 'gray' => null,
-                                                    default => 'fi-color-custom',
-                                                },
-                                                is_string($color) ? "fi-color-{$color}" : null,
-                                            ])
-                                            ->style([
-                                                get_color_css_variables(
-                                                    $color,
-                                                    shades: [400, 500],
-                                                    alias: 'tables::columns.summaries.icon-count.icon',
-                                                ) => $color !== 'gray',
-                    ])
+                                        attributes: (new ComponentAttributeBag)->color(IconComponent::class, $color),
+                                        size: IconSize::Large,
                                     )->toHtml() ?>
                                 </li>
                             <?php } ?>

@@ -1,7 +1,9 @@
 <?php
 
+use Filament\Actions\Action;
 use Filament\Actions\Testing\Fixtures\TestAction;
 use Filament\Notifications\Notification;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tests\Actions\TestCase;
 use Filament\Tests\Fixtures\Pages\Actions;
 use Illuminate\Support\Str;
@@ -10,13 +12,13 @@ use function Filament\Tests\livewire;
 
 uses(TestCase::class);
 
-it('can call an action', function () {
+it('can call an action', function (): void {
     livewire(Actions::class)
         ->callAction('simple')
         ->assertDispatched('simple-called');
 });
 
-it('can call an action with data', function () {
+it('can call an action with data', function (): void {
     livewire(Actions::class)
         ->callAction('data', data: [
             'payload' => $payload = Str::random(),
@@ -27,7 +29,7 @@ it('can call an action with data', function () {
         ]);
 });
 
-it('can validate an action\'s data', function () {
+it('can validate an action\'s data', function (): void {
     livewire(Actions::class)
         ->callAction('data', data: [
             'payload' => null,
@@ -36,7 +38,7 @@ it('can validate an action\'s data', function () {
         ->assertNotDispatched('data-called');
 });
 
-it('can access form data in before hook', function () {
+it('can access form data in before hook', function (): void {
     livewire(Actions::class)
         ->callAction('before-hook-data', data: [
             'payload' => $payload = Str::random(),
@@ -47,7 +49,7 @@ it('can access form data in before hook', function () {
         ]);
 });
 
-it('can set default action data when mounted', function () {
+it('can set default action data when mounted', function (): void {
     livewire(Actions::class)
         ->mountAction('data')
         ->assertActionDataSet([
@@ -55,7 +57,7 @@ it('can set default action data when mounted', function () {
         ]);
 });
 
-it('can call a nested action registered in the modal footer', function () {
+it('can call a nested action registered in the modal footer', function (): void {
     livewire(Actions::class)
         ->callAction([
             'parent',
@@ -72,7 +74,7 @@ it('can call a nested action registered in the modal footer', function () {
         ->assertDispatched('parent-called', foo: $foo);
 });
 
-it('can call a manually modal registered nested action', function () {
+it('can call a manually modal registered nested action', function (): void {
     livewire(Actions::class)
         ->callAction([
             'parent',
@@ -89,7 +91,7 @@ it('can call a manually modal registered nested action', function () {
         ->assertDispatched('parent-called', foo: $foo);
 });
 
-it('can call a nested action registered on a schema component', function () {
+it('can call a nested action registered on a schema component', function (): void {
     livewire(Actions::class)
         ->callAction([
             'parent',
@@ -106,7 +108,7 @@ it('can call a nested action registered on a schema component', function () {
         ->assertDispatched('parent-called', foo: $foo);
 });
 
-it('can cancel a parent action when calling a nested action', function () {
+it('can cancel a parent action when calling a nested action', function (): void {
     livewire(Actions::class)
         ->callAction([
             'parent',
@@ -119,7 +121,7 @@ it('can cancel a parent action when calling a nested action', function () {
         ->assertNotDispatched('parent-called');
 });
 
-it('can mount an action with arguments', function () {
+it('can mount an action with arguments', function (): void {
     livewire(Actions::class)
         ->mountAction('arguments', arguments: [
             'payload' => $payload = Str::random(),
@@ -130,7 +132,7 @@ it('can mount an action with arguments', function () {
         ]);
 });
 
-it('can mount a nested action with parent arguments', function () {
+it('can mount a nested action with parent arguments', function (): void {
     livewire(Actions::class)
         ->mountAction([
             TestAction::make('arguments')->arguments(['payload' => Str::random()]),
@@ -147,7 +149,7 @@ it('can mount a nested action with parent arguments', function () {
         ->assertDispatched('nested-called', arguments: []);
 });
 
-it('can mount a nested action with nested arguments', function () {
+it('can mount a nested action with nested arguments', function (): void {
     livewire(Actions::class)
         ->mountAction([
             'arguments',
@@ -168,7 +170,7 @@ it('can mount a nested action with nested arguments', function () {
         ]);
 });
 
-it('can get the raw data from parent actions', function () {
+it('can get the raw data from parent actions', function (): void {
     livewire(Actions::class)
         ->mountAction('parent')
         ->setActionData([
@@ -184,7 +186,7 @@ it('can get the raw data from parent actions', function () {
         ->assertDispatched('data-test-called', foo: $foo, bar: $bar, baz: $baz);
 });
 
-it('can get the arguments from parent actions', function () {
+it('can get the arguments from parent actions', function (): void {
     livewire(Actions::class)
         ->callAction([
             TestAction::make('parent')->arguments([
@@ -200,7 +202,7 @@ it('can get the arguments from parent actions', function () {
         ->assertDispatched('arguments-test-called', foo: $foo, bar: $bar, baz: $baz);
 });
 
-it('can call an action with arguments', function () {
+it('can call an action with arguments', function (): void {
     livewire(Actions::class)
         ->callAction('arguments', arguments: [
             'payload' => $payload = Str::random(),
@@ -210,62 +212,66 @@ it('can call an action with arguments', function () {
         ]);
 });
 
-it('can call an action and halt', function () {
+it('can call an action and halt', function (): void {
     livewire(Actions::class)
         ->callAction('halt')
         ->assertDispatched('halt-called')
         ->assertActionHalted('halt');
 });
 
-it('can hide an action', function () {
+it('can hide an action', function (): void {
     livewire(Actions::class)
         ->assertActionVisible('visible')
-        ->assertActionHidden('hidden');
+        ->assertActionHidden('hidden')
+        ->assertActionExists('visible', fn (Action $action): bool => $action->isVisible())
+        ->assertActionExists('hidden', fn (Action $action): bool => $action->isHidden())
+        ->assertActionDoesNotExist('visible', fn (Action $action): bool => $action->isHidden())
+        ->assertActionDoesNotExist('hidden', fn (Action $action): bool => $action->isVisible());
 });
 
-it('can disable an action', function () {
+it('can disable an action', function (): void {
     livewire(Actions::class)
         ->assertActionEnabled('enabled')
         ->assertActionDisabled('disabled');
 });
 
-it('can have an icon', function () {
+it('can have an icon', function (): void {
     livewire(Actions::class)
-        ->assertActionHasIcon('hasIcon', 'heroicon-m-pencil-square')
-        ->assertActionDoesNotHaveIcon('hasIcon', 'heroicon-m-trash');
+        ->assertActionHasIcon('hasIcon', Heroicon::PencilSquare)
+        ->assertActionDoesNotHaveIcon('hasIcon', Heroicon::Trash);
 });
 
-it('can have a label', function () {
+it('can have a label', function (): void {
     livewire(Actions::class)
         ->assertActionHasLabel('hasLabel', 'My Action')
         ->assertActionDoesNotHaveLabel('hasLabel', 'My Other Action');
 });
 
-it('can have a color', function () {
+it('can have a color', function (): void {
     livewire(Actions::class)
         ->assertActionHasColor('hasColor', 'primary')
         ->assertActionDoesNotHaveColor('hasColor', 'gray');
 });
 
-it('can have a URL', function () {
+it('can have a URL', function (): void {
     livewire(Actions::class)
         ->assertActionHasUrl('url', 'https://filamentphp.com')
         ->assertActionDoesNotHaveUrl('url', 'https://google.com');
 });
 
-it('can open a URL in a new tab', function () {
+it('can open a URL in a new tab', function (): void {
     livewire(Actions::class)
         ->assertActionShouldOpenUrlInNewTab('urlInNewTab')
         ->assertActionShouldNotOpenUrlInNewTab('urlNotInNewTab');
 });
 
-it('can state whether a page action exists', function () {
+it('can state whether a page action exists', function (): void {
     livewire(Actions::class)
         ->assertActionExists('exists')
         ->assertActionDoesNotExist('doesNotExist');
 });
 
-it('can show a notification', function () {
+it('can show a notification', function (): void {
     livewire(Actions::class)
         ->callAction('shows-notification')
         ->assertNotified();
@@ -283,7 +289,7 @@ it('can show a notification', function () {
         );
 });
 
-it('will raise an exception if a notification was not sent checking notification object', function () {
+it('will raise an exception if a notification was not sent checking notification object', function (): void {
     $this->expectException('PHPUnit\Framework\ExpectationFailedException');
     $this->expectExceptionMessage('A notification was not sent');
 
@@ -296,7 +302,7 @@ it('will raise an exception if a notification was not sent checking notification
         );
 });
 
-it('will raise an exception if a notification was not sent checking notification title', function () {
+it('will raise an exception if a notification was not sent checking notification title', function (): void {
     $this->expectException('PHPUnit\Framework\ExpectationFailedException');
     $this->expectExceptionMessage('A notification was not sent');
 
@@ -305,7 +311,7 @@ it('will raise an exception if a notification was not sent checking notification
         ->assertNotified('A notification');
 });
 
-it('can assert that a notification without an ID was sent', function () {
+it('can assert that a notification without an ID was sent', function (): void {
     livewire(Actions::class)
         ->callAction('shows-notification')
         ->assertNotified();
@@ -323,7 +329,7 @@ it('can assert that a notification without an ID was sent', function () {
         );
 });
 
-it('can assert that a notification with an ID was sent', function () {
+it('can assert that a notification with an ID was sent', function (): void {
     livewire(Actions::class)
         ->callAction('shows-notification-with-id')
         ->assertNotified();
@@ -341,7 +347,7 @@ it('can assert that a notification with an ID was sent', function () {
         );
 });
 
-it('will raise an exception if a notification was sent checking with a different notification title', function () {
+it('will raise an exception if a notification was sent checking with a different notification title', function (): void {
     $this->expectException('PHPUnit\Framework\ExpectationFailedException');
     $this->expectExceptionMessage('Failed asserting that two arrays are identical.');
 
@@ -354,7 +360,7 @@ it('will raise an exception if a notification was sent checking with a different
         );
 });
 
-it('will raise an exception if a notification is not sent but a previous notification was sent', function () {
+it('will raise an exception if a notification is not sent but a previous notification was sent', function (): void {
     livewire(Actions::class)
         ->callAction('shows-notification-with-id')
         ->assertNotified(
@@ -375,7 +381,7 @@ it('will raise an exception if a notification is not sent but a previous notific
         );
 });
 
-test('can assert that notifications are sent in any order', function () {
+test('can assert that notifications are sent in any order', function (): void {
     livewire(Actions::class)
         ->callAction('two-notifications')
         ->assertNotified('Second notification');
@@ -392,7 +398,7 @@ test('can assert that notifications are sent in any order', function () {
         ->assertNotified('Third notification');
 });
 
-it('will assert that a notification was not sent', function () {
+it('will assert that a notification was not sent', function (): void {
 
     livewire(Actions::class)
         ->callAction('does-not-show-notification')

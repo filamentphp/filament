@@ -26,11 +26,13 @@ use Filament\Tests\Fixtures\Providers\EmailCodeAuthenticationPanelProvider;
 use Filament\Tests\Fixtures\Providers\Fixtures\Providers\SingleDomainPanel;
 use Filament\Tests\Fixtures\Providers\GoogleTwoFactorAuthenticationPanelProvider;
 use Filament\Tests\Fixtures\Providers\MultiDomainPanel;
+use Filament\Tests\Fixtures\Providers\RequiredMultiFactorAuthenticationPanelProvider;
 use Filament\Tests\Fixtures\Providers\SlugsPanelProvider;
 use Filament\Tests\Fixtures\Providers\TenancyPanelProvider;
 use Filament\Widgets\WidgetsServiceProvider;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
 use Illuminate\Support\Facades\Gate;
+use Kirschbaum\PowerJoins\PowerJoinsServiceProvider;
 use Livewire\LivewireServiceProvider;
 use Orchestra\Testbench\Concerns\WithWorkbench;
 use Orchestra\Testbench\TestCase as BaseTestCase;
@@ -63,11 +65,13 @@ abstract class TestCase extends BaseTestCase
             CustomPanelProvider::class,
             EmailCodeAuthenticationPanelProvider::class,
             GoogleTwoFactorAuthenticationPanelProvider::class,
+            RequiredMultiFactorAuthenticationPanelProvider::class,
             DomainTenancyPanelProvider::class,
             MultiDomainPanel::class,
             SingleDomainPanel::class,
             SlugsPanelProvider::class,
             TenancyPanelProvider::class,
+            PowerJoinsServiceProvider::class,
         ];
 
         sort($providers);

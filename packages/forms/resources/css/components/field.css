@@ -1,0 +1,55 @@
+.fi-fo-field {
+    @apply grid gap-y-2;
+
+    &.fi-fo-field-has-inline-label {
+        @apply sm:grid-cols-3 sm:items-start sm:gap-x-4;
+
+        & .fi-fo-field-content-col {
+            @apply sm:col-span-2;
+        }
+    }
+
+    & .fi-fo-field-label-ctn {
+        @apply flex items-center gap-x-3;
+    }
+
+    & .fi-fo-field-label {
+        @apply text-sm leading-6 font-medium text-gray-950 dark:text-white;
+
+        & .fi-fo-field-label-required-mark {
+            @apply text-danger-600 dark:text-danger-400 font-medium;
+        }
+    }
+
+    & .fi-fo-field-label-col {
+        @apply grid auto-cols-fr gap-y-2;
+
+        &.fi-vertical-align-start {
+            @apply sm:items-start;
+        }
+
+        &.fi-vertical-align-center {
+            @apply sm:items-center;
+        }
+
+        &.fi-vertical-align-end {
+            @apply sm:items-end;
+        }
+    }
+
+    & .fi-fo-field-content-col {
+        @apply grid auto-cols-fr gap-y-2;
+    }
+
+    & .fi-fo-field-content-ctn {
+        @apply flex w-full items-center gap-x-3;
+    }
+
+    & .fi-fo-field-content {
+        @apply w-full;
+    }
+
+    & .fi-fo-field-wrp-error-message {
+        @apply text-danger-600 dark:text-danger-400 text-sm;
+    }
+}

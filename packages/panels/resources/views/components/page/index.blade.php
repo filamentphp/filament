@@ -14,29 +14,28 @@
     {{
         $attributes->class([
             'fi-page',
-            'h-full' => $fullHeight,
+            'fi-height-full' => $fullHeight,
+            'fi-page-has-sub-navigation' => $subNavigation,
+            "fi-page-has-sub-navigation-{$subNavigationPosition->value}" => $subNavigation,
             ...$this->getPageClasses(),
         ])
     }}
 >
     {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_START, scopes: $this->getRenderHookScopes()) }}
 
-    <section
-        @class([
-            'flex flex-col gap-y-8 py-8',
-            'h-full' => $fullHeight,
-        ])
-    >
+    <div class="fi-page-header-main-ctn">
         @if ($header = $this->getHeader())
             {{ $header }}
         @elseif ($heading = $this->getHeading())
             @php
+                $headerActions = $this->getCachedHeaderActions();
+                $breadcrumbs = filament()->hasBreadcrumbs() ? $this->getBreadcrumbs() : [];
                 $subheading = $this->getSubheading();
             @endphp
 
             <x-filament-panels::header
-                :actions="$this->getCachedHeaderActions()"
-                :breadcrumbs="filament()->hasBreadcrumbs() ? $this->getBreadcrumbs() : []"
+                :actions="$headerActions"
+                :breadcrumbs="$breadcrumbs"
                 :heading="$heading"
                 :subheading="$subheading"
             >
@@ -54,18 +53,9 @@
             </x-filament-panels::header>
         @endif
 
-        <div
-            @class([
-                'flex flex-col gap-8' => $subNavigation,
-                match ($subNavigationPosition) {
-                    SubNavigationPosition::Start, SubNavigationPosition::End => 'md:flex-row md:items-start',
-                    default => null,
-                } => $subNavigation,
-                'h-full' => $fullHeight,
-            ])
-        >
+        <div class="fi-page-main">
             @if ($subNavigation)
-                <div class="contents md:hidden">
+                <div class="fi-page-main-sub-navigation-select-render-hook-ctn">
                     {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_SUB_NAVIGATION_SELECT_BEFORE, scopes: $this->getRenderHookScopes()) }}
                 </div>
 
@@ -73,7 +63,7 @@
                     :navigation="$subNavigation"
                 />
 
-                <div class="contents md:hidden">
+                <div class="fi-page-main-sub-navigation-select-render-hook-ctn">
                     {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_SUB_NAVIGATION_SELECT_AFTER, scopes: $this->getRenderHookScopes()) }}
                 </div>
 
@@ -98,12 +88,7 @@
                 @endif
             @endif
 
-            <div
-                @class([
-                    'grid flex-1 auto-cols-fr gap-y-8',
-                    'h-full' => $fullHeight,
-                ])
-            >
+            <div class="fi-page-content">
                 {{ $this->headerWidgets }}
 
                 {{ $slot }}
@@ -125,7 +110,7 @@
         @if ($footer = $this->getFooter())
             {{ $footer }}
         @endif
-    </section>
+    </div>
 
     @if (! ($this instanceof \Filament\Tables\Contracts\HasTable))
         <x-filament-actions::modals />
@@ -143,70 +128,17 @@
         @if (\Filament\Support\Facades\FilamentView::hasSpaMode())
             @script
                 <script>
-                    let formSubmitted = false
-
-                    document.addEventListener(
-                        'submit',
-                        () => (formSubmitted = true),
-                    )
-
-                    shouldPreventNavigation = () => {
-                        if (formSubmitted) {
-                            return
-                        }
-
-                        return (
-                            window.jsMd5(
-                                JSON.stringify($wire.data).replace(/\\/g, ''),
-                            ) !== $wire.savedDataHash ||
-                            $wire?.__instance?.effects?.redirect
-                        )
-                    }
-
-                    const showUnsavedChangesAlert = () => {
-                        return confirm(@js(__('filament-panels::unsaved-changes-alert.body')))
-                    }
-
-                    document.addEventListener('livewire:navigate', (event) => {
-                        if (typeof @this !== 'undefined') {
-                            if (!shouldPreventNavigation()) {
-                                return
-                            }
-
-                            if (showUnsavedChangesAlert()) {
-                                return
-                            }
-
-                            event.preventDefault()
-                        }
-                    })
-
-                    window.addEventListener('beforeunload', (event) => {
-                        if (!shouldPreventNavigation()) {
-                            return
-                        }
-
-                        event.preventDefault()
-                        event.returnValue = true
+                    setUpSpaModeUnsavedDataChangesAlert({
+                        body: @js(__('filament-panels::unsaved-changes-alert.body')),
+                        resolveLivewireComponentUsing: () => @this,
+                        $wire,
                     })
                 </script>
             @endscript
         @else
             @script
                 <script>
-                    window.addEventListener('beforeunload', (event) => {
-                        if (
-                            window.jsMd5(
-                                JSON.stringify($wire.data).replace(/\\/g, ''),
-                            ) === $wire.savedDataHash ||
-                            $wire?.__instance?.effects?.redirect
-                        ) {
-                            return
-                        }
-
-                        event.preventDefault()
-                        event.returnValue = true
-                    })
+                    setUpUnsavedDataChangesAlert({ $wire })
                 </script>
             @endscript
         @endif

@@ -12,6 +12,8 @@ parameters:
     ignoreErrors:
         - '#Unable to resolve the template type TKey in call to function collect#'
         - '#Unable to resolve the template type TValue in call to function collect#'
+        - '#Call to static method PHPUnit\\Framework\\Assert::assert#'
+        - '#.*Illuminate\\Database\\Eloquent\\Relations\\HasOneOrManyThrough.*#'
         -
             message: "#^Parameter \\#1 \\$value of method Filament\\\\Support\\\\Components\\\\Component\\:\\:evaluate\\(\\) expects \\(callable\\(\\)\\: void\\)\\|void, Closure\\(Filament\\\\Forms\\\\Components\\\\BaseFileUpload, Filament\\\\Schema\\\\Components\\\\Utilities\\\\Get, Filament\\\\Schema\\\\Components\\\\Utilities\\\\Set\\)\\: void given\\.$#"
             count: 2
@@ -20,5 +22,14 @@ parameters:
             message: "#^Parameter \\#1 \\$value of method Filament\\\\Support\\\\Components\\\\Component\\:\\:evaluate\\(\\) expects \\(callable\\(\\)\\: \\(string\\|null\\)\\)\\|string\\|null, Closure\\(Filament\\\\Schema\\\\Components\\\\Utilities\\\\Get\\)\\: \\(string\\|null\\) given\\.$#"
             count: 1
             path: packages/forms/src/Components/MorphToSelect.php
+        -
+            identifier: property.notFound
+            path: packages/actions/src/Testing/TestsActions.php
+        -
+            identifier: method.notFound
+            path: packages/actions/src/Testing/TestsActions.php
+        -
+            identifier: larastan.noEnvCallsOutsideOfConfig
+            path: packages/support/config/filament.php
         -
             identifier: missingType.generics

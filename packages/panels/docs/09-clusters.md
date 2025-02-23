@@ -42,11 +42,12 @@ This will create a new cluster class in the `app/Filament/Clusters` directory:
 
 namespace App\Filament\Clusters;
 
+use BackedEnum;
 use Filament\Clusters\Cluster;
 
 class Settings extends Cluster
 {
-    protected static ?string $navigationIcon = 'heroicon-o-squares-2x2';
+    protected static string | BackedEnum | null $navigationIcon = 'heroicon-o-squares-2x2';
 }
 ```
 

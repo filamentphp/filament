@@ -29,6 +29,9 @@
     $contentGrid = $getContentGrid();
     $contentFooter = $getContentFooter();
     $filterIndicators = $getFilterIndicators();
+    $filtersApplyAction = $getFiltersApplyAction();
+    $filtersForm = $getFiltersForm();
+    $filtersFormWidth = $getFiltersFormWidth();
     $hasColumnGroups = $hasColumnGroups();
     $hasColumnsLayout = $hasColumnsLayout();
     $hasSummary = $hasSummary();
@@ -70,6 +73,8 @@
     $hasColumnToggleDropdown = $hasToggleableColumns();
     $hasHeader = $header || $heading || $description || ($headerActions && (! $isReordering)) || $isReorderable || $areGroupingSettingsVisible || $isGlobalSearchVisible || $hasFilters || count($filterIndicators) || $hasColumnToggleDropdown;
     $hasHeaderToolbar = $isReorderable || $areGroupingSettingsVisible || $isGlobalSearchVisible || $hasFiltersDialog || $hasColumnToggleDropdown;
+    $headingTag = $getHeadingTag();
+    $secondLevelHeadingTag = $heading ? $getHeadingTag(1) : $headingTag;
     $pluralModelLabel = $getPluralModelLabel();
     $records = $isLoaded ? $getRecords() : null;
     $searchDebounce = $getSearchDebounce();
@@ -135,9 +140,11 @@
                     @if ($heading || $description)
                         <div>
                             @if ($heading)
-                                <h3 class="fi-ta-header-heading">
+                                <{{ $headingTag }}
+                                    class="fi-ta-header-heading"
+                                >
                                     {{ $heading }}
-                                </h3>
+                                </{{ $headingTag }}>
                             @endif
 
                             @if ($description)
@@ -169,8 +176,9 @@
                     ])
                 >
                     <x-filament-tables::filters
-                        :apply-action="$getFiltersApplyAction()"
-                        :form="$getFiltersForm()"
+                        :apply-action="$filtersApplyAction"
+                        :form="$filtersForm"
+                        :heading-tag="$secondLevelHeadingTag"
                         x-cloak
                         x-show="areFiltersOpen"
                     />
@@ -311,7 +319,7 @@
                             @if (! $areGroupingSettingsInDropdownOnDesktop)
                                 <div class="fi-ta-grouping-settings-fields">
                                     <label>
-                                        <span class="sr-only">
+                                        <span class="fi-sr-only">
                                             {{ __('filament-tables::table.grouping.fields.group.label') }}
                                         </span>
 
@@ -337,7 +345,7 @@
 
                                     @if (! $isGroupingDirectionSettingHidden)
                                         <label x-cloak x-show="group">
-                                            <span class="sr-only">
+                                            <span class="fi-sr-only">
                                                 {{ __('filament-tables::table.grouping.fields.direction.label') }}
                                             </span>
 
@@ -369,10 +377,14 @@
                         {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Tables\View\TablesRenderHook::TOOLBAR_SEARCH_BEFORE, scopes: static::class) }}
 
                         @if ($isGlobalSearchVisible)
+                            @php
+                                $searchPlaceholder = $getSearchPlaceholder();
+                            @endphp
+
                             <x-filament-tables::search-field
                                 :debounce="$searchDebounce"
                                 :on-blur="$isSearchOnBlur"
-                                :placeholder="$getSearchPlaceholder()"
+                                :placeholder="$searchPlaceholder"
                             />
                         @endif
 
@@ -381,23 +393,40 @@
                         @if ($hasFiltersDialog || $hasColumnToggleDropdown)
                             @if ($hasFiltersDialog)
                                 @if (($filtersLayout === FiltersLayout::Modal) || $filtersTriggerAction->isModalSlideOver())
+                                    @php
+                                        $filtersTriggerActionModalAlignment = $filtersTriggerAction->getModalAlignment();
+                                        $filtersTriggerActionIsModalAutofocused = $filtersTriggerAction->isModalAutofocused();
+                                        $filtersTriggerActionHasModalCloseButton = $filtersTriggerAction->hasModalCloseButton();
+                                        $filtersTriggerActionIsModalClosedByClickingAway = $filtersTriggerAction->isModalClosedByClickingAway();
+                                        $filtersTriggerActionIsModalClosedByEscaping = $filtersTriggerAction->isModalClosedByEscaping();
+                                        $filtersTriggerActionModalDescription = $filtersTriggerAction->getModalDescription();
+                                        $filtersTriggerActionVisibleModalFooterActions = $filtersTriggerAction->getVisibleModalFooterActions();
+                                        $filtersTriggerActionModalFooterActionsAlignment = $filtersTriggerAction->getModalFooterActionsAlignment();
+                                        $filtersTriggerActionModalHeading = $filtersTriggerAction->getCustomModalHeading() ?? __('filament-tables::table.filters.heading');
+                                        $filtersTriggerActionModalIcon = $filtersTriggerAction->getModalIcon();
+                                        $filtersTriggerActionModalIconColor = $filtersTriggerAction->getModalIconColor();
+                                        $filtersTriggerActionIsModalSlideOver = $filtersTriggerAction->isModalSlideOver();
+                                        $filtersTriggerActionIsModalFooterSticky = $filtersTriggerAction->isModalFooterSticky();
+                                        $filtersTriggerActionIsModalHeaderSticky = $filtersTriggerAction->isModalHeaderSticky();
+                                    @endphp
+
                                     <x-filament::modal
-                                        :alignment="$filtersTriggerAction->getModalAlignment()"
-                                        :autofocus="$filtersTriggerAction->isModalAutofocused()"
-                                        :close-button="$filtersTriggerAction->hasModalCloseButton()"
-                                        :close-by-clicking-away="$filtersTriggerAction->isModalClosedByClickingAway()"
-                                        :close-by-escaping="$filtersTriggerAction?->isModalClosedByEscaping()"
-                                        :description="$filtersTriggerAction->getModalDescription()"
-                                        :footer-actions="$filtersTriggerAction->getVisibleModalFooterActions()"
-                                        :footer-actions-alignment="$filtersTriggerAction->getModalFooterActionsAlignment()"
-                                        :heading="$filtersTriggerAction->getCustomModalHeading() ?? __('filament-tables::table.filters.heading')"
-                                        :icon="$filtersTriggerAction->getModalIcon()"
-                                        :icon-color="$filtersTriggerAction->getModalIconColor()"
-                                        :slide-over="$filtersTriggerAction->isModalSlideOver()"
-                                        :sticky-footer="$filtersTriggerAction->isModalFooterSticky()"
-                                        :sticky-header="$filtersTriggerAction->isModalHeaderSticky()"
-                                        :width="$getFiltersFormWidth()"
-                                        wire:key="{{ $this->getId() }}.table.filters"
+                                        :alignment="$filtersTriggerActionModalAlignment"
+                                        :autofocus="$filtersTriggerActionIsModalAutofocused"
+                                        :close-button="$filtersTriggerActionHasModalCloseButton"
+                                        :close-by-clicking-away="$filtersTriggerActionIsModalClosedByClickingAway"
+                                        :close-by-escaping="$filtersTriggerActionIsModalClosedByEscaping"
+                                        :description="$filtersTriggerActionModalDescription"
+                                        :footer-actions="$filtersTriggerActionVisibleModalFooterActions"
+                                        :footer-actions-alignment="$filtersTriggerActionModalFooterActionsAlignment"
+                                        :heading="$filtersTriggerActionModalHeading"
+                                        :icon="$filtersTriggerActionModalIcon"
+                                        :icon-color="$filtersTriggerActionModalIconColor"
+                                        :slide-over="$filtersTriggerActionIsModalSlideOver"
+                                        :sticky-footer="$filtersTriggerActionIsModalFooterSticky"
+                                        :sticky-header="$filtersTriggerActionIsModalHeaderSticky"
+                                        :width="$filtersFormWidth"
+                                        :wire:key="$this->getId() . '.table.filters'"
                                         class="fi-ta-filters-modal"
                                     >
                                         <x-slot name="trigger">
@@ -406,17 +435,21 @@
 
                                         {{ $filtersTriggerAction->getModalContent() }}
 
-                                        {{ $getFiltersForm() }}
+                                        {{ $filtersForm }}
 
                                         {{ $filtersTriggerAction->getModalContentFooter() }}
                                     </x-filament::modal>
                                 @else
+                                    @php
+                                        $filtersFormMaxHeight = $getFiltersFormMaxHeight();
+                                    @endphp
+
                                     <x-filament::dropdown
-                                        :max-height="$getFiltersFormMaxHeight()"
+                                        :max-height="$filtersFormMaxHeight"
                                         placement="bottom-end"
                                         shift
-                                        :width="$getFiltersFormWidth()"
-                                        wire:key="{{ $this->getId() }}.table.filters"
+                                        :width="$filtersFormWidth"
+                                        :wire:key="$this->getId() . '.table.filters'"
                                         class="fi-ta-filters-dropdown"
                                     >
                                         <x-slot name="trigger">
@@ -424,8 +457,9 @@
                                         </x-slot>
 
                                         <x-filament-tables::filters
-                                            :apply-action="$getFiltersApplyAction()"
-                                            :form="$getFiltersForm()"
+                                            :apply-action="$filtersApplyAction"
+                                            :form="$filtersForm"
+                                            :heading-tag="$secondLevelHeadingTag"
                                         />
                                     </x-filament::dropdown>
                                 @endif
@@ -434,12 +468,17 @@
                             {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Tables\View\TablesRenderHook::TOOLBAR_TOGGLE_COLUMN_TRIGGER_BEFORE, scopes: static::class) }}
 
                             @if ($hasColumnToggleDropdown)
+                                @php
+                                    $columnToggleFormMaxHeight = $getColumnToggleFormMaxHeight();
+                                    $columnToggleFormWidth = $getColumnToggleFormWidth();
+                                @endphp
+
                                 <x-filament::dropdown
-                                    :max-height="$getColumnToggleFormMaxHeight()"
+                                    :max-height="$columnToggleFormMaxHeight"
                                     placement="bottom-end"
                                     shift
-                                    :width="$getColumnToggleFormWidth()"
-                                    wire:key="{{ $this->getId() }}.table.column-toggle"
+                                    :width="$columnToggleFormWidth"
+                                    :wire:key="$this->getId() . '.table.column-toggle'"
                                     class="fi-ta-col-toggle"
                                 >
                                     <x-slot name="trigger">
@@ -447,9 +486,11 @@
                                     </x-slot>
 
                                     <div class="fi-ta-col-toggle-form-ctn">
-                                        <h4 class="fi-ta-col-toggle-heading">
+                                        <{{ $secondLevelHeadingTag }}
+                                            class="fi-ta-col-toggle-heading"
+                                        >
                                             {{ __('filament-tables::table.column_toggle.heading') }}
-                                        </h4>
+                                        </{{ $secondLevelHeadingTag }}>
 
                                         {{ $getColumnToggleForm() }}
                                     </div>
@@ -544,14 +585,22 @@
 
                     <div class="fi-ta-filter-indicators-badges-ctn">
                         @foreach ($filterIndicators as $indicator)
-                            <x-filament::badge :color="$indicator->getColor()">
+                            @php
+                                $indicatorColor = $indicator->getColor();
+                            @endphp
+
+                            <x-filament::badge :color="$indicatorColor">
                                 {{ $indicator->getLabel() }}
 
                                 @if ($indicator->isRemovable())
+                                    @php
+                                        $indicatorRemoveLivewireClickHandler = $indicator->getRemoveLivewireClickHandler();
+                                    @endphp
+
                                     <x-slot
                                         name="deleteButton"
                                         :label="__('filament-tables::table.filters.actions.remove.label')"
-                                        wire:click="{{ $indicator->getRemoveLivewireClickHandler() }}"
+                                        :wire:click="$indicatorRemoveLivewireClickHandler"
                                         wire:loading.attr="disabled"
                                         wire:target="removeTableFilter"
                                     ></x-slot>
@@ -573,7 +622,7 @@
                         wire:target="removeTableFilters,removeTableFilter"
                         class="fi-icon-btn fi-size-sm"
                     >
-                        {{ \Filament\Support\generate_icon_html('heroicon-m-x-mark', alias: 'tables::filters.remove-all-button') }}
+                        {{ \Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::XMark, alias: 'tables::filters.remove-all-button', size: \Filament\Support\Enums\IconSize::Small) }}
                     </button>
                 @endif
             </div>
@@ -669,7 +718,7 @@
                                         </label>
 
                                         <label x-cloak x-show="column">
-                                            <span class="sr-only">
+                                            <span class="fi-sr-only">
                                                 {{ __('filament-tables::table.sorting.fields.direction.label') }}
                                             </span>
 
@@ -768,6 +817,10 @@
                                             ])
                                         >
                                             <tbody>
+                                                @php
+                                                    $groupScopedAllTableSummaryQuery = $group->scopeQuery($this->getAllTableSummaryQuery(), $previousRecord);
+                                                @endphp
+
                                                 <x-filament-tables::summary.row
                                                     :columns="$columns"
                                                     extra-heading-column
@@ -778,7 +831,7 @@
                                                         ])
                                                     "
                                                     :placeholder-columns="false"
-                                                    :query="$group->scopeQuery($this->getAllTableSummaryQuery(), $previousRecord)"
+                                                    :query="$groupScopedAllTableSummaryQuery"
                                                     :selected-state="$groupedSummarySelectedState[$previousRecordGroupKey] ?? []"
                                                 />
                                             </tbody>
@@ -823,13 +876,15 @@
                                         @endif
 
                                         <div>
-                                            <h4 class="fi-ta-group-heading">
+                                            <{{ $secondLevelHeadingTag }}
+                                                class="fi-ta-group-heading"
+                                            >
                                                 @if (filled($recordGroupLabel = ($group->isTitlePrefixedWithLabel() ? $group->getLabel() : null)))
                                                         {{ $recordGroupLabel }}:
                                                 @endif
 
                                                 {{ $recordGroupTitle }}
-                                            </h4>
+                                            </{{ $secondLevelHeadingTag }}>
 
                                             @if (filled($recordGroupDescription = $group->getDescription($record, $recordGroupTitle)))
                                                 <p
@@ -847,7 +902,7 @@
                                                 type="button"
                                                 class="fi-icon-btn fi-size-sm"
                                             >
-                                                {{ \Filament\Support\generate_icon_html('heroicon-m-chevron-up', alias: 'tables::grouping.collapse-button') }}
+                                                {{ \Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::ChevronUp, alias: 'tables::grouping.collapse-button', size: \Filament\Support\Enums\IconSize::Small) }}
                                             </button>
                                         @endif
                                     </div>
@@ -888,7 +943,7 @@
                                             class="fi-ta-reorder-handle fi-icon-btn"
                                             type="button"
                                         >
-                                            {{ \Filament\Support\generate_icon_html('heroicon-m-bars-2', alias: 'tables::reorder.handle') }}
+                                            {{ \Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::Bars2, alias: 'tables::reorder.handle') }}
                                         </button>
                                     @elseif ($isSelectionEnabled && $isRecordSelectable($record))
                                         <input
@@ -993,7 +1048,7 @@
                                             x-on:click="isCollapsed = ! isCollapsed"
                                             class="fi-ta-record-collapse-btn fi-icon-btn"
                                         >
-                                            {{ \Filament\Support\generate_icon_html('heroicon-m-chevron-down', alias: 'tables::columns.collapse-button') }}
+                                            {{ \Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::ChevronDown, alias: 'tables::columns.collapse-button') }}
                                         </button>
                                     @endif
                                 </div>
@@ -1008,12 +1063,16 @@
                             @if ($hasSummary && (! $isReordering) && filled($previousRecordGroupTitle) && ((! $records instanceof \Illuminate\Contracts\Pagination\Paginator) || (! $records->hasMorePages())))
                                 <table class="fi-ta-table">
                                     <tbody>
+                                        @php
+                                            $groupScopedAllTableSummaryQuery = $group->scopeQuery($this->getAllTableSummaryQuery(), $previousRecord);
+                                        @endphp
+
                                         <x-filament-tables::summary.row
                                             :columns="$columns"
                                             extra-heading-column
                                             :heading="__('filament-tables::table.summary.subheadings.group', ['group' => $previousRecordGroupTitle, 'label' => $pluralModelLabel])"
                                             :placeholder-columns="false"
-                                            :query="$group->scopeQuery($this->getAllTableSummaryQuery(), $previousRecord)"
+                                            :query="$groupScopedAllTableSummaryQuery"
                                             :selected-state="$groupedSummarySelectedState[$previousRecordGroupKey] ?? []"
                                         />
                                     </tbody>
@@ -1222,7 +1281,7 @@
                                                 {{ $columnLabel }}
 
                                                 {{
-                                                    \Filament\Support\generate_icon_html(($isColumnActivelySorted && $sortDirection === 'asc') ? 'heroicon-m-chevron-up' : 'heroicon-m-chevron-down', alias: match (true) {
+                                                    \Filament\Support\generate_icon_html(($isColumnActivelySorted && $sortDirection === 'asc') ? \Filament\Support\Icons\Heroicon::ChevronUp : \Filament\Support\Icons\Heroicon::ChevronDown, alias: match (true) {
                                                         $isColumnActivelySorted && ($sortDirection === 'asc') => 'tables::header-cell.sort-asc-button',
                                                         $isColumnActivelySorted && ($sortDirection === 'desc') => 'tables::header-cell.sort-desc-button',
                                                         default => 'tables::header-cell.sort-button',
@@ -1317,17 +1376,22 @@
                                     @endif
 
                                     @foreach ($columns as $column)
+                                        @php
+                                            $columnName = $column->getName();
+                                        @endphp
+
                                         <td
                                             @class([
-                                                'fi-ta-cell fi-ta-individual-search-cell',
-                                                'fi-ta-individual-search-cell-' . str($column->getName())->camel()->kebab(),
+                                                'fi-ta-cell',
+                                                'fi-ta-individual-search-cell' => $isIndividuallySearchable = $column->isIndividuallySearchable(),
+                                                'fi-ta-individual-search-cell-' . str($columnName)->camel()->kebab() => $isIndividuallySearchable,
                                             ])
                                         >
-                                            @if ($column->isIndividuallySearchable())
+                                            @if ($isIndividuallySearchable)
                                                 <x-filament-tables::search-field
                                                     :debounce="$searchDebounce"
                                                     :on-blur="$isSearchOnBlur"
-                                                    wire-model="tableColumnSearches.{{ $column->getName() }}"
+                                                    :wire-model="'tableColumnSearches.' . $columnName"
                                                 />
                                             @endif
                                         </td>
@@ -1387,14 +1451,19 @@
 
                                     @if ($recordGroupTitle !== $previousRecordGroupTitle)
                                         @if ($hasSummary && (! $isReordering) && filled($previousRecordGroupTitle))
+                                            @php
+                                                $groupColumn = $group->getColumn();
+                                                $groupScopedAllTableSummaryQuery = $group->scopeQuery($this->getAllTableSummaryQuery(), $previousRecord);
+                                            @endphp
+
                                             <x-filament-tables::summary.row
                                                 :actions="count($actions)"
                                                 :actions-position="$actionsPosition"
                                                 :columns="$columns"
-                                                :group-column="$group?->getColumn()"
+                                                :group-column="$groupColumn"
                                                 :groups-only="$isGroupsOnly"
                                                 :heading="$isGroupsOnly ? $previousRecordGroupTitle : __('filament-tables::table.summary.subheadings.group', ['group' => $previousRecordGroupTitle, 'label' => $pluralModelLabel])"
-                                                :query="$group->scopeQuery($this->getAllTableSummaryQuery(), $previousRecord)"
+                                                :query="$groupScopedAllTableSummaryQuery"
                                                 :record-checkbox-position="$recordCheckboxPosition"
                                                 :selected-state="$groupedSummarySelectedState[$previousRecordGroupKey] ?? []"
                                                 :selection-enabled="$isSelectionEnabled"
@@ -1470,7 +1539,7 @@
                                                         ])
                                                     >
                                                         <div>
-                                                            <h4
+                                                            <{{ $secondLevelHeadingTag }}
                                                                 class="fi-ta-group-heading"
                                                             >
                                                                 @if (filled($recordGroupLabel = ($group->isTitlePrefixedWithLabel() ? $group->getLabel() : null)))
@@ -1478,7 +1547,7 @@
                                                                 @endif
 
                                                                 {{ $recordGroupTitle }}
-                                                            </h4>
+                                                            </{{ $secondLevelHeadingTag }}>
 
                                                             @if (filled($recordGroupDescription = $group->getDescription($record, $recordGroupTitle)))
                                                                 <p
@@ -1496,7 +1565,7 @@
                                                                 type="button"
                                                                 class="fi-icon-btn fi-size-sm"
                                                             >
-                                                                {{ \Filament\Support\generate_icon_html('heroicon-m-chevron-up', alias: 'tables::grouping.collapse-button') }}
+                                                                {{ \Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::ChevronUp, alias: 'tables::grouping.collapse-button', size: \Filament\Support\Enums\IconSize::Small) }}
                                                             </button>
                                                         @endif
                                                     </div>
@@ -1560,7 +1629,7 @@
                                                         class="fi-ta-reorder-handle fi-icon-btn"
                                                         type="button"
                                                     >
-                                                        {{ \Filament\Support\generate_icon_html('heroicon-m-bars-2', alias: 'tables::reorder.handle') }}
+                                                        {{ \Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::Bars2, alias: 'tables::reorder.handle') }}
                                                     </button>
                                                 </td>
                                             @endif
@@ -1632,11 +1701,12 @@
 
                                                     $columnAction = $column->getAction();
                                                     $columnUrl = $column->getUrl();
+                                                    $columnHasStateBasedUrls = $column->hasStateBasedUrls();
                                                     $isColumnClickDisabled = $column->isClickDisabled() || $isReordering;
 
                                                     $columnWrapperTag = match (true) {
-                                                        ($columnUrl || ($recordUrl && $columnAction === null)) && (! $isColumnClickDisabled) => 'a',
-                                                        ($columnAction || $recordAction) && (! $isColumnClickDisabled) => 'button',
+                                                        ($columnUrl || ($recordUrl && $columnAction === null)) && (! $columnHasStateBasedUrls) && (! $isColumnClickDisabled) => 'a',
+                                                        ($columnAction || $recordAction) && (! $columnHasStateBasedUrls) && (! $isColumnClickDisabled) => 'button',
                                                         default => 'div',
                                                     };
 
@@ -1673,13 +1743,13 @@
                                                             {{ \Filament\Support\generate_href_html($columnUrl ?: $recordUrl, $columnUrl ? $column->shouldOpenUrlInNewTab() : $openRecordUrlInNewTab) }}
                                                         @elseif ($columnWrapperTag === 'button')
                                                             type="button"
-                                                            wire:click="{{ $columnWireClickAction }}"
+                                                            wire:click.stop.prevent="{{ $columnWireClickAction }}"
                                                             wire:loading.attr="disabled"
                                                             wire:target="{{ $columnWireClickAction }}"
                                                         @endif
                                                         @class([
-                                                            'fi-ta-col-wrp',
-                                                            'fi-ta-col-wrap-has-column-url' => ($columnWrapperTag === 'a') && filled($columnUrl),
+                                                            'fi-ta-col',
+                                                            'fi-ta-col-has-column-url' => ($columnWrapperTag === 'a') && filled($columnUrl),
                                                         ])
                                                     >
                                                         {{ $column }}
@@ -1757,14 +1827,19 @@
                                 @endforeach
 
                                 @if ($hasSummary && (! $isReordering) && filled($previousRecordGroupTitle) && ((! $records instanceof \Illuminate\Contracts\Pagination\Paginator) || (! $records->hasMorePages())))
+                                    @php
+                                        $groupColumn = $group->getColumn();
+                                        $groupScopedAllTableSummaryQuery = $group->scopeQuery($this->getAllTableSummaryQuery(), $previousRecord);
+                                    @endphp
+
                                     <x-filament-tables::summary.row
                                         :actions="count($actions)"
                                         :actions-position="$actionsPosition"
                                         :columns="$columns"
-                                        :group-column="$group?->getColumn()"
+                                        :group-column="$groupColumn"
                                         :groups-only="$isGroupsOnly"
                                         :heading="$isGroupsOnly ? $previousRecordGroupTitle : __('filament-tables::table.summary.subheadings.group', ['group' => $previousRecordGroupTitle, 'label' => $pluralModelLabel])"
-                                        :query="$group->scopeQuery($this->getAllTableSummaryQuery(), $previousRecord)"
+                                        :query="$groupScopedAllTableSummaryQuery"
                                         :record-checkbox-position="$recordCheckboxPosition"
                                         :selected-state="$groupedSummarySelectedState[$previousRecordGroupKey] ?? []"
                                         :selection-enabled="$isSelectionEnabled"
@@ -1772,11 +1847,15 @@
                                 @endif
 
                                 @if ($hasSummary && (! $isReordering))
+                                    @php
+                                        $groupColumn = $group?->getColumn();
+                                    @endphp
+
                                     <x-filament-tables::summary
                                         :actions="count($actions)"
                                         :actions-position="$actionsPosition"
                                         :columns="$columns"
-                                        :group-column="$group?->getColumn()"
+                                        :group-column="$groupColumn"
                                         :groups-only="$isGroupsOnly"
                                         :plural-model-label="$pluralModelLabel"
                                         :record-checkbox-position="$recordCheckboxPosition"
@@ -1812,13 +1891,15 @@
             @else
                 <div class="fi-ta-empty-state">
                     <div class="fi-ta-empty-state-content">
-                        <div class="fi-ta-empty-state-icon-ctn">
-                            {{ \Filament\Support\generate_icon_html($getEmptyStateIcon()) }}
+                        <div class="fi-ta-empty-state-icon-bg">
+                            {{ \Filament\Support\generate_icon_html($getEmptyStateIcon(), size: \Filament\Support\Enums\IconSize::Large) }}
                         </div>
 
-                        <h4 class="fi-ta-empty-state-heading">
+                        <{{ $secondLevelHeadingTag }}
+                            class="fi-ta-empty-state-heading"
+                        >
                             {{ $getEmptyStateHeading() }}
-                        </h4>
+                        </{{ $secondLevelHeadingTag }}>
 
                         @if ($emptyStateDescription = $getEmptyStateDescription())
                             <p class="fi-ta-empty-state-description">
@@ -1845,17 +1926,23 @@
 
         @if ((($records instanceof \Illuminate\Contracts\Pagination\Paginator) || ($records instanceof \Illuminate\Contracts\Pagination\CursorPaginator)) &&
              ((! ($records instanceof \Illuminate\Contracts\Pagination\LengthAwarePaginator)) || $records->total()))
+            @php
+                $hasExtremePaginationLinks = $hasExtremePaginationLinks();
+                $paginationPageOptions = $getPaginationPageOptions();
+            @endphp
+
             <x-filament::pagination
-                :extreme-links="$hasExtremePaginationLinks()"
-                :page-options="$getPaginationPageOptions()"
+                :extreme-links="$hasExtremePaginationLinks"
+                :page-options="$paginationPageOptions"
                 :paginator="$records"
             />
         @endif
 
         @if ($hasFiltersBelowContent)
             <x-filament-tables::filters
-                :apply-action="$getFiltersApplyAction()"
-                :form="$getFiltersForm()"
+                :apply-action="$filtersApplyAction"
+                :form="$filtersForm"
+                :heading-tag="$secondLevelHeadingTag"
                 class="fi-ta-filters-below-content"
             />
         @endif

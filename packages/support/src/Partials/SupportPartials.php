@@ -106,7 +106,7 @@ class SupportPartials extends ComponentHook
 
                 $viewContext = app(ViewContext::class);
 
-                $html = $view->render(function (View $view) use ($viewContext) {
+                $html = $view->render(function (View $view) use ($viewContext): void {
                     $viewContext->extractFromEnvironment($view->getFactory());
                 });
 
@@ -118,7 +118,7 @@ class SupportPartials extends ComponentHook
                     ]);
                 }
 
-                $replaceHtml = function ($newHtml) use (&$html) {
+                $replaceHtml = function ($newHtml) use (&$html): void {
                     $html = $newHtml;
                 };
 

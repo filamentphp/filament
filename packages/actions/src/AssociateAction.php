@@ -6,7 +6,7 @@ use Closure;
 use Filament\Actions\Concerns\CanCustomizeProcess;
 use Filament\Forms\Components\Select;
 use Filament\Schemas\Schema;
-use Filament\Support\Enums\MaxWidth;
+use Filament\Support\Enums\Width;
 use Filament\Tables\Table;
 use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder;
@@ -55,7 +55,7 @@ class AssociateAction extends Action
 
         $this->modalSubmitActionLabel(__('filament-actions::associate.single.modal.actions.associate.label'));
 
-        $this->modalWidth(MaxWidth::Large);
+        $this->modalWidth(Width::Large);
 
         $this->extraModalFooterActions(function (): array {
             return $this->canAssociateAnother ? [
@@ -68,9 +68,9 @@ class AssociateAction extends Action
 
         $this->color('gray');
 
-        $this->form(fn (): array => [$this->getRecordSelect()]);
+        $this->schema(fn (): array => [$this->getRecordSelect()]);
 
-        $this->action(function (array $arguments, array $data, Schema $form, Table $table): void {
+        $this->action(function (array $arguments, array $data, Schema $schema, Table $table): void {
             /** @var HasMany | MorphMany $relationship */
             $relationship = Relation::noConstraints(fn () => $table->getRelationship());
 
@@ -84,7 +84,7 @@ class AssociateAction extends Action
                 /** @var BelongsTo $inverseRelationship */
                 $inverseRelationship = $table->getInverseRelationshipFor($record);
 
-                $this->process(function () use ($inverseRelationship, $record, $relationship) {
+                $this->process(function () use ($inverseRelationship, $record, $relationship): void {
                     $inverseRelationship->associate($relationship->getParent());
                     $record->save();
                 }, [
@@ -99,7 +99,7 @@ class AssociateAction extends Action
 
                 $this->record(null);
 
-                $form->fill();
+                $schema->fill();
 
                 $this->halt();
 
@@ -288,7 +288,7 @@ class AssociateAction extends Action
             ->getOptionLabelsUsing(function (array $values) use ($table): array {
                 $relationship = Relation::noConstraints(fn () => $table->getRelationship());
 
-                return $relationship->getQuery()->find($values)
+                return $relationship->getQuery()->findMany($values)
                     ->mapWithKeys(fn (Model $record): array => [$record->getKey() => $this->getRecordTitle($record)])
                     ->all();
             })

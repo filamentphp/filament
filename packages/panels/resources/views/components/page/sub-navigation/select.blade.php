@@ -6,10 +6,10 @@
     wire:ignore
     :attributes="
         \Filament\Support\prepare_inherited_attributes($attributes)
-            ->class(['fi-page-sub-navigation-select md:hidden'])
+            ->class(['fi-page-sub-navigation-select'])
     "
 >
-    <x-filament::input.select
+    <select
         x-on:change="
             if ($event.target.options[$event.target.selectedIndex].dataset.spaMode) {
                 Livewire.navigate($event.target.value)
@@ -17,6 +17,7 @@
                 window.location.href = $event.target.value
             }
         "
+        class="fi-select-input"
     >
         @foreach ($navigation as $navigationGroup)
             @capture($options)
@@ -47,5 +48,5 @@
                 {{ $options() }}
             @endif
         @endforeach
-    </x-filament::input.select>
+    </select>
 </x-filament::input.wrapper>

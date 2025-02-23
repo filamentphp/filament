@@ -3,7 +3,7 @@
 namespace Filament\GlobalSearch;
 
 use Filament\Actions\Action;
-use Filament\Support\Enums\ActionSize;
+use Filament\Support\Enums\Size;
 use Illuminate\Contracts\Support\Htmlable;
 
 class GlobalSearchResult
@@ -26,7 +26,7 @@ class GlobalSearchResult
         $this->actions = array_map(
             fn (Action $action) => $action
                 ->defaultView(Action::LINK_VIEW)
-                ->defaultSize(ActionSize::Small),
+                ->defaultSize(Size::Small),
             $actions,
         );
     }

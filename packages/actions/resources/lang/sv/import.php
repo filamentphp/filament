@@ -11,8 +11,15 @@ return [
         'form' => [
 
             'file' => [
+
                 'label' => 'Fil',
+
                 'placeholder' => 'Ladda upp en CSV-fil',
+
+                'rules' => [
+                    'duplicate_columns' => '{0} Filen kan inte innehålla fler än en tom kolumn i rubrikraden.|{1,*} Filen kan inte innehålla identiska kolumner i rubrikraden: :columns.',
+                ],
+
             ],
 
             'columns' => [
@@ -72,6 +79,7 @@ return [
         'file_name' => 'import-:import_id-:csv_name-misslyckade-rader',
         'error_header' => 'fel',
         'system_error' => 'Systemfel, vänligen kontakta support.',
+        'column_mapping_required_for_new_record' => 'Kolumnen :attribute är inte mappad till någon kolumn i filen, men den krävs för att skapa nya objekt.',
     ],
 
 ];

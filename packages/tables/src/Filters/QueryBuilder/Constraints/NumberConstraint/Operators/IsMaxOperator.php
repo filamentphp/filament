@@ -2,6 +2,8 @@
 
 namespace Filament\Tables\Filters\QueryBuilder\Constraints\NumberConstraint\Operators;
 
+use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Component;
 use Filament\Tables\Filters\QueryBuilder\Constraints\Operators\Operator;
@@ -40,7 +42,7 @@ class IsMaxOperator extends Operator
     }
 
     /**
-     * @return array<Component>
+     * @return array<Component | Action | ActionGroup>
      */
     public function getFormSchema(): array
     {

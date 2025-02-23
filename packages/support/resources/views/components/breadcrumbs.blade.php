@@ -14,13 +14,13 @@
             <li class="fi-breadcrumbs-item">
                 @if (! $loop->first)
                     {{
-                        generate_icon_html('heroicon-m-chevron-right', alias: 'breadcrumbs.separator', attributes: (new ComponentAttributeBag)->class([
+                        generate_icon_html(\Filament\Support\Icons\Heroicon::ChevronRight, alias: 'breadcrumbs.separator', attributes: (new ComponentAttributeBag)->class([
                             'fi-breadcrumbs-item-separator fi-ltr',
                         ]))
                     }}
 
                     {{
-                        generate_icon_html('heroicon-m-chevron-left', alias: 'breadcrubs.separator.rtl', attributes: (new ComponentAttributeBag)->class([
+                        generate_icon_html(\Filament\Support\Icons\Heroicon::ChevronLeft, alias: 'breadcrubs.separator.rtl', attributes: (new ComponentAttributeBag)->class([
                             'fi-breadcrumbs-item-separator fi-rtl',
                         ]))
                     }}

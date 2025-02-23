@@ -7,12 +7,12 @@ use Closure;
 trait HasColors
 {
     /**
-     * @var array<array<string, array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | string> | Closure>
+     * @var array<array<string, array<int | string, string | int> | string> | Closure>
      */
     protected array $colors = [];
 
     /**
-     * @param  array<string, array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | string> | Closure  $colors
+     * @param  array<string, array<int | string, string | int> | string> | Closure  $colors
      */
     public function colors(array | Closure $colors): static
     {
@@ -22,7 +22,7 @@ trait HasColors
     }
 
     /**
-     * @return array<string, array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | string>
+     * @return array<string, array<int | string, string | int> | string>
      */
     public function getColors(): array
     {

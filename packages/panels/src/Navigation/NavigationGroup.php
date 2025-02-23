@@ -2,6 +2,7 @@
 
 namespace Filament\Navigation;
 
+use BackedEnum;
 use Closure;
 use Filament\Navigation\Concerns\HasExtraSidebarAttributes;
 use Filament\Navigation\Concerns\HasExtraTopbarAttributes;
@@ -17,7 +18,7 @@ class NavigationGroup extends Component
 
     protected bool | Closure | null $isCollapsible = null;
 
-    protected string | Closure | null $icon = null;
+    protected string | BackedEnum | Closure | null $icon = null;
 
     /**
      * @var array<NavigationItem> | Arrayable
@@ -55,7 +56,7 @@ class NavigationGroup extends Component
         return $this;
     }
 
-    public function icon(string | Closure | null $icon): static
+    public function icon(string | BackedEnum | Closure | null $icon): static
     {
         $this->icon = $icon;
 
@@ -79,7 +80,7 @@ class NavigationGroup extends Component
         return $this;
     }
 
-    public function getIcon(): ?string
+    public function getIcon(): string | BackedEnum | null
     {
         return $this->evaluate($this->icon);
     }

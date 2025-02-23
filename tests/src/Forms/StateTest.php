@@ -14,28 +14,28 @@ use function Filament\Tests\livewire;
 
 uses(TestCase::class);
 
-test('container has state path', function () {
-    $container = Schema::make(Livewire::make())
-        ->statePath($containerStatePath = Str::random());
+test('container has state path', function (): void {
+    $schema = Schema::make(Livewire::make())
+        ->statePath($schemaStatePath = Str::random());
 
-    expect($container)
-        ->getStatePath()->toBe($containerStatePath);
+    expect($schema)
+        ->getStatePath()->toBe($schemaStatePath);
 });
 
-test('container has state path and inherits state path from parent component', function () {
-    $container = Schema::make(Livewire::make())
+test('container has state path and inherits state path from parent component', function (): void {
+    $schema = Schema::make(Livewire::make())
         ->parentComponent(
             (new Component)
                 ->container(Schema::make(Livewire::make()))
                 ->statePath($parentComponentStatePath = Str::random()),
         )
-        ->statePath($containerStatePath = Str::random());
+        ->statePath($schemaStatePath = Str::random());
 
-    expect($container)
-        ->getStatePath()->toBe("{$parentComponentStatePath}.{$containerStatePath}");
+    expect($schema)
+        ->getStatePath()->toBe("{$parentComponentStatePath}.{$schemaStatePath}");
 });
 
-test('component has state path', function () {
+test('component has state path', function (): void {
     $component = (new Component)
         ->container(Schema::make(Livewire::make()))
         ->statePath($componentStatePath = Str::random());
@@ -44,30 +44,30 @@ test('component has state path', function () {
         ->getStatePath()->toBe($componentStatePath);
 });
 
-test('component inherits state path from container', function () {
+test('component inherits state path from container', function (): void {
     $component = (new Component)
         ->container(
             Schema::make(Livewire::make())
-                ->statePath($containerStatePath = Str::random()),
+                ->statePath($schemaStatePath = Str::random()),
         );
 
     expect($component)
-        ->getStatePath()->toBe($containerStatePath);
+        ->getStatePath()->toBe($schemaStatePath);
 });
 
-test('component has state path and inherits state path from container', function () {
+test('component has state path and inherits state path from container', function (): void {
     $component = (new Component)
         ->container(
             Schema::make(Livewire::make())
-                ->statePath($containerStatePath = Str::random()),
+                ->statePath($schemaStatePath = Str::random()),
         )
         ->statePath($componentStatePath = Str::random());
 
     expect($component)
-        ->getStatePath()->toBe("{$containerStatePath}.{$componentStatePath}");
+        ->getStatePath()->toBe("{$schemaStatePath}.{$componentStatePath}");
 });
 
-test('state can be hydrated from array', function () {
+test('state can be hydrated from array', function (): void {
     Schema::make($livewire = Livewire::make())
         ->statePath('data')
         ->components([
@@ -80,7 +80,7 @@ test('state can be hydrated from array', function () {
         ->getData()->toBe([$statePath => $state]);
 });
 
-test('hydrating array state can overwrite existing state', function () {
+test('hydrating array state can overwrite existing state', function (): void {
     $statePath = Str::random();
 
     Schema::make(
@@ -100,7 +100,7 @@ test('hydrating array state can overwrite existing state', function () {
         ->getData()->toBe([$statePath => null]);
 });
 
-test('state can be hydrated from defaults', function () {
+test('state can be hydrated from defaults', function (): void {
     Schema::make($livewire = Livewire::make())
         ->statePath('data')
         ->components([
@@ -114,7 +114,7 @@ test('state can be hydrated from defaults', function () {
         ->getData()->toBe([$statePath => $state]);
 });
 
-test('hydrating default state can overwrite existing state', function () {
+test('hydrating default state can overwrite existing state', function (): void {
     $statePath = Str::random();
 
     Schema::make(
@@ -134,7 +134,7 @@ test('hydrating default state can overwrite existing state', function () {
         ->getData()->toBe([$statePath => null]);
 });
 
-test('child component state is not lost by hydrating parent component', function () {
+test('child component state is not lost by hydrating parent component', function (): void {
     Schema::make($livewire = Livewire::make())
         ->statePath('data')
         ->components([
@@ -152,7 +152,7 @@ test('child component state is not lost by hydrating parent component', function
         ->getData()->toBe([$parentStatePath => [$statePath => $state]]);
 });
 
-test('child component state is not lost by hydrating parent component defaults', function () {
+test('child component state is not lost by hydrating parent component defaults', function (): void {
     Schema::make($livewire = Livewire::make())
         ->statePath('data')
         ->components([
@@ -171,7 +171,7 @@ test('child component state is not lost by hydrating parent component defaults',
         ->getData()->toBe([$parentStatePath => [$statePath => $state]]);
 });
 
-test('child component state can be hydrated by parent component defaults', function () {
+test('child component state can be hydrated by parent component defaults', function (): void {
     Schema::make($livewire = Livewire::make())
         ->statePath('data')
         ->components([
@@ -189,7 +189,7 @@ test('child component state can be hydrated by parent component defaults', funct
         ->getData()->toBe([$parentStatePath => [$statePath => $state]]);
 });
 
-test('child component defaults are overwritten by parent component defaults', function () {
+test('child component defaults are overwritten by parent component defaults', function (): void {
     Schema::make($livewire = Livewire::make())
         ->statePath('data')
         ->components([
@@ -208,7 +208,7 @@ test('child component defaults are overwritten by parent component defaults', fu
         ->getData()->toBe([$parentStatePath => [$statePath => $state]]);
 });
 
-test('missing child component state can be filled with null', function () {
+test('missing child component state can be filled with null', function (): void {
     Schema::make($livewire = Livewire::make())
         ->statePath('data')
         ->components([
@@ -225,7 +225,7 @@ test('missing child component state can be filled with null', function () {
         ->getData()->toBe([$parentStatePath => [$statePath => null]]);
 });
 
-test('missing hidden child component state can be filled with null', function () {
+test('missing hidden child component state can be filled with null', function (): void {
     Schema::make($livewire = Livewire::make())
         ->statePath('data')
         ->components([
@@ -241,7 +241,7 @@ test('missing hidden child component state can be filled with null', function ()
         ->getData()->toBe([$statePath => null]);
 });
 
-test('custom logic can be executed after state is hydrated', function () {
+test('custom logic can be executed after state is hydrated', function (): void {
     Schema::make($livewire = Livewire::make())
         ->statePath('data')
         ->components([
@@ -255,7 +255,101 @@ test('custom logic can be executed after state is hydrated', function () {
         ->getData()->toBe([$statePath => strrev($value)]);
 });
 
-test('custom logic can be executed after state is updated', function () {
+test('state can be hydrated partially', function (): void {
+    Schema::make($livewire = Livewire::make())
+        ->statePath('data')
+        ->components([
+            (new Component)
+                ->statePath($statePath = Str::random()),
+            (new Component)
+                ->statePath($statePath2 = Str::random()),
+        ])
+        ->fill([
+            $statePath => Str::random(),
+            $statePath2 => ($state2 = Str::random()),
+        ])
+        ->fillPartially([
+            $statePath => ($state = Str::random()),
+            $statePath2 => Str::random(),
+        ], statePaths: [$statePath]);
+
+    expect($livewire)
+        ->getData()->toBe([
+            $statePath => $state,
+            $statePath2 => $state2,
+        ]);
+});
+
+test('child state can be hydrated partially', function (): void {
+    Schema::make($livewire = Livewire::make())
+        ->statePath('data')
+        ->components([
+            (new Component)
+                ->statePath($parentStatePath = Str::random())
+                ->schema([
+                    (new Component)
+                        ->statePath($statePath = Str::random()),
+                    (new Component)
+                        ->statePath($statePath2 = Str::random()),
+                ]),
+        ])
+        ->fill([
+            $parentStatePath => [
+                $statePath => Str::random(),
+                $statePath2 => ($state2 = Str::random()),
+            ],
+        ])
+        ->fillPartially([
+            $parentStatePath => [
+                $statePath => ($state = Str::random()),
+                $statePath2 => Str::random(),
+            ],
+        ], statePaths: ["{$parentStatePath}.{$statePath}"]);
+
+    expect($livewire)
+        ->getData()->toBe([
+            $parentStatePath => [
+                $statePath => $state,
+                $statePath2 => $state2,
+            ],
+        ]);
+});
+
+test('custom logic can be executed after state hydrated partially, only for components that are hydrated partially', function (): void {
+    $schema = Schema::make($livewire = Livewire::make())
+        ->statePath('data')
+        ->components([
+            (new Component)
+                ->statePath($statePath = Str::random())
+                ->afterStateHydrated(fn (Component $component, $state) => $component->state(strrev($state))),
+            (new Component)
+                ->statePath($statePath2 = Str::random())
+                ->afterStateHydrated(fn (Component $component, $state) => $component->state(strrev($state))),
+        ])
+        ->fill([
+            $statePath => $state = Str::random(),
+            $statePath2 => ($state2 = Str::random()),
+        ]);
+
+    expect($livewire)
+        ->getData()->toBe([
+            $statePath => strrev($state),
+            $statePath2 => strrev($state2),
+        ]);
+
+    $schema->fillPartially([
+        $statePath => ($state = Str::random()),
+        $statePath2 => Str::random(),
+    ], statePaths: [$statePath]);
+
+    expect($livewire)
+        ->getData()->toBe([
+            $statePath => strrev($state),
+            $statePath2 => strrev($state2),
+        ]);
+});
+
+test('custom logic can be executed after state is updated', function (): void {
     Schema::make($livewire = Livewire::make())
         ->statePath('data')
         ->components([
@@ -264,13 +358,13 @@ test('custom logic can be executed after state is updated', function () {
                 ->afterStateUpdated(fn (Component $component, $state) => $component->state(strrev($state))),
         ])
         ->fill([$statePath => ($state = Str::random())])
-        ->tap(fn (Schema $container) => $container->callAfterStateUpdated("data.{$statePath}"));
+        ->tap(fn (Schema $schema) => $schema->callAfterStateUpdated("data.{$statePath}"));
 
     expect($livewire)
         ->getData()->toBe([$statePath => strrev($state)]);
 });
 
-test('custom logic can be executed after nested state is updated', function () {
+test('custom logic can be executed after nested state is updated', function (): void {
     Schema::make($livewire = Livewire::make())
         ->statePath('data')
         ->components([
@@ -279,13 +373,13 @@ test('custom logic can be executed after nested state is updated', function () {
                 ->afterStateUpdated(fn (Component $component, $state) => $component->state([strrev($state[0])])),
         ])
         ->fill([$statePath => [$state = Str::random()]])
-        ->tap(fn (Schema $container) => $container->callAfterStateUpdated("data.{$statePath}.0"));
+        ->tap(fn (Schema $schema) => $schema->callAfterStateUpdated("data.{$statePath}.0"));
 
     expect($livewire)
         ->getData()->toBe([$statePath => [strrev($state)]]);
 });
 
-test('custom logic can be executed after child component state is updated', function () {
+test('custom logic can be executed after child component state is updated', function (): void {
     Schema::make($livewire = Livewire::make())
         ->statePath('data')
         ->components([
@@ -298,13 +392,13 @@ test('custom logic can be executed after child component state is updated', func
                 ]),
         ])
         ->fill([$statePath => [$childComponentStatePath => $state = Str::random()]])
-        ->tap(fn (Schema $container) => $container->callAfterStateUpdated("data.{$statePath}.{$childComponentStatePath}"));
+        ->tap(fn (Schema $schema) => $schema->callAfterStateUpdated("data.{$statePath}.{$childComponentStatePath}"));
 
     expect($livewire)
         ->getData()->toBe([$statePath => [$childComponentStatePath => strrev($state)]]);
 });
 
-test('custom logic can be executed only once after nested state is updated', function () {
+test('custom logic can be executed only once after nested state is updated', function (): void {
     $calls = 0;
 
     Schema::make($livewire = Livewire::make())
@@ -312,17 +406,17 @@ test('custom logic can be executed only once after nested state is updated', fun
         ->components([
             (new Component)
                 ->statePath($statePath = Str::random())
-                ->afterStateUpdated(function () use (&$calls) {
+                ->afterStateUpdated(function () use (&$calls): void {
                     $calls++;
                 }),
         ])
-        ->tap(fn (Schema $container) => $container->callAfterStateUpdated("data.{$statePath}.0"))
-        ->tap(fn (Schema $container) => $container->callAfterStateUpdated("data.{$statePath}.1"));
+        ->tap(fn (Schema $schema) => $schema->callAfterStateUpdated("data.{$statePath}.0"))
+        ->tap(fn (Schema $schema) => $schema->callAfterStateUpdated("data.{$statePath}.1"));
 
     expect($calls)->toEqual(1);
 });
 
-test('custom logic can be executed more than once after nested state is updated if the state changes', function () {
+test('custom logic can be executed more than once after nested state is updated if the state changes', function (): void {
     Schema::make($livewire = Livewire::make())
         ->statePath('data')
         ->components([
@@ -331,14 +425,14 @@ test('custom logic can be executed more than once after nested state is updated 
                 ->afterStateUpdated(fn (Component $component, $state) => $component->state([$state[0] + 1])),
         ])
         ->fill([$statePath => [0]])
-        ->tap(fn (Schema $container) => $container->callAfterStateUpdated("data.{$statePath}.0"))
-        ->tap(fn (Schema $container) => $container->callAfterStateUpdated("data.{$statePath}.1"));
+        ->tap(fn (Schema $schema) => $schema->callAfterStateUpdated("data.{$statePath}.0"))
+        ->tap(fn (Schema $schema) => $schema->callAfterStateUpdated("data.{$statePath}.1"));
 
     expect($livewire)
         ->getData()->toBe([$statePath => [2]]);
 });
 
-test('custom logic on parent component can be executed after child component state is updated', function () {
+test('custom logic on parent component can be executed after child component state is updated', function (): void {
     Schema::make($livewire = Livewire::make())
         ->statePath('data')
         ->components([
@@ -353,14 +447,14 @@ test('custom logic on parent component can be executed after child component sta
                 ])),
         ])
         ->fill([$statePath => [$childComponentStatePath => $state = Str::random()]])
-        ->tap(fn (Schema $container) => $container->callAfterStateUpdated("data.{$statePath}.{$childComponentStatePath}"));
+        ->tap(fn (Schema $schema) => $schema->callAfterStateUpdated("data.{$statePath}.{$childComponentStatePath}"));
 
     expect($livewire)
         ->getData()->toBe([$statePath => [$childComponentStatePath => strrev($state)]]);
 });
 
-test('state can be dehydrated', function () {
-    $container = Schema::make(Livewire::make())
+test('state can be dehydrated', function (): void {
+    $schema = Schema::make(Livewire::make())
         ->statePath('data')
         ->components([
             (new Component)
@@ -369,14 +463,14 @@ test('state can be dehydrated', function () {
         ])
         ->fill();
 
-    expect($container)
+    expect($schema)
         ->dehydrateState()->toBe([
             'data' => [$statePath => $state],
         ]);
 });
 
-test('state can be dehydrated using custom logic', function () {
-    $container = Schema::make(Livewire::make())
+test('state can be dehydrated using custom logic', function (): void {
+    $schema = Schema::make(Livewire::make())
         ->statePath('data')
         ->components([
             (new Component)
@@ -386,14 +480,14 @@ test('state can be dehydrated using custom logic', function () {
         ])
         ->fill();
 
-    expect($container)
+    expect($schema)
         ->dehydrateState()->toBe([
             'data' => [$statePath => strrev($state)],
         ]);
 });
 
-test('custom logic can be executed before state is dehydrated', function () {
-    $container = Schema::make(Livewire::make())
+test('custom logic can be executed before state is dehydrated', function (): void {
+    $schema = Schema::make(Livewire::make())
         ->statePath('data')
         ->components([
             (new Component)
@@ -403,16 +497,16 @@ test('custom logic can be executed before state is dehydrated', function () {
         ])
         ->fill();
 
-    $container->callBeforeStateDehydrated();
+    $schema->callBeforeStateDehydrated();
 
-    expect($container)
+    expect($schema)
         ->dehydrateState()->toBe([
             'data' => [$statePath => strrev($state)],
         ]);
 });
 
-test('components can be excluded from state dehydration', function () {
-    $container = Schema::make(Livewire::make())
+test('components can be excluded from state dehydration', function (): void {
+    $schema = Schema::make(Livewire::make())
         ->statePath('data')
         ->components([
             (new Component)
@@ -422,12 +516,12 @@ test('components can be excluded from state dehydration', function () {
         ])
         ->fill();
 
-    expect($container)
+    expect($schema)
         ->dehydrateState()->toBe([]);
 });
 
-test('components can be excluded from state dehydration if their parent component is', function () {
-    $container = Schema::make(Livewire::make())
+test('components can be excluded from state dehydration if their parent component is', function (): void {
+    $schema = Schema::make(Livewire::make())
         ->statePath('data')
         ->components([
             (new Component)
@@ -440,12 +534,12 @@ test('components can be excluded from state dehydration if their parent componen
         ])
         ->fill();
 
-    expect($container)
+    expect($schema)
         ->dehydrateState()->toBe([]);
 });
 
-test('hidden components are excluded from state dehydration', function () {
-    $container = Schema::make(Livewire::make())
+test('hidden components are excluded from state dehydration', function (): void {
+    $schema = Schema::make(Livewire::make())
         ->statePath('data')
         ->components([
             (new Component)
@@ -455,12 +549,12 @@ test('hidden components are excluded from state dehydration', function () {
         ])
         ->fill();
 
-    expect($container)
+    expect($schema)
         ->dehydrateState()->toBe([]);
 });
 
-test('hidden components are excluded from state dehydration if their parent component is', function () {
-    $container = Schema::make(Livewire::make())
+test('hidden components are excluded from state dehydration if their parent component is', function (): void {
+    $schema = Schema::make(Livewire::make())
         ->statePath('data')
         ->components([
             (new Component)
@@ -473,12 +567,12 @@ test('hidden components are excluded from state dehydration if their parent comp
         ])
         ->fill();
 
-    expect($container)
+    expect($schema)
         ->dehydrateState()->toBe([]);
 });
 
-test('hidden components are excluded from state dehydration except if they are marked as dehydrated', function () {
-    $container = Schema::make(Livewire::make())
+test('hidden components are excluded from state dehydration except if they are marked as dehydrated', function (): void {
+    $schema = Schema::make(Livewire::make())
         ->statePath('data')
         ->components([
             (new Component)
@@ -489,10 +583,10 @@ test('hidden components are excluded from state dehydration except if they are m
         ])
         ->fill();
 
-    expect($container)
+    expect($schema)
         ->dehydrateState()->not()->toBe([]);
 
-    $container = Schema::make(Livewire::make())
+    $schema = Schema::make(Livewire::make())
         ->statePath('data')
         ->components([
             (new Component)
@@ -508,12 +602,12 @@ test('hidden components are excluded from state dehydration except if they are m
         ])
         ->fill();
 
-    expect($container)
+    expect($schema)
         ->dehydrateState()->not()->toBe([]);
 });
 
-test('disabled components are excluded from state dehydration', function () {
-    $container = Schema::make(Livewire::make())
+test('disabled components are excluded from state dehydration', function (): void {
+    $schema = Schema::make(Livewire::make())
         ->statePath('data')
         ->components([
             (new Component)
@@ -523,12 +617,12 @@ test('disabled components are excluded from state dehydration', function () {
         ])
         ->fill();
 
-    expect($container)
+    expect($schema)
         ->dehydrateState()->toBe([]);
 });
 
-test('disabled components are excluded from state dehydration if their parent component is', function () {
-    $container = Schema::make(Livewire::make())
+test('disabled components are excluded from state dehydration if their parent component is', function (): void {
+    $schema = Schema::make(Livewire::make())
         ->statePath('data')
         ->components([
             (new Component)
@@ -541,12 +635,12 @@ test('disabled components are excluded from state dehydration if their parent co
         ])
         ->fill();
 
-    expect($container)
+    expect($schema)
         ->dehydrateState()->toBe([]);
 });
 
-test('disabled components are excluded from state dehydration except if they are marked as dehydrated', function () {
-    $container = Schema::make(Livewire::make())
+test('disabled components are excluded from state dehydration except if they are marked as dehydrated', function (): void {
+    $schema = Schema::make(Livewire::make())
         ->statePath('data')
         ->components([
             (new Component)
@@ -557,12 +651,12 @@ test('disabled components are excluded from state dehydration except if they are
         ])
         ->fill();
 
-    expect($container)
+    expect($schema)
         ->dehydrateState()->not()->toBe([]);
 });
 
-test('disabled components are excluded from state dehydration if their parent component is disabled and not marked as dehydrated', function () {
-    $container = Schema::make(Livewire::make())
+test('disabled components are excluded from state dehydration if their parent component is disabled and not marked as dehydrated', function (): void {
+    $schema = Schema::make(Livewire::make())
         ->statePath('data')
         ->components([
             (new Component)
@@ -576,12 +670,12 @@ test('disabled components are excluded from state dehydration if their parent co
         ])
         ->fill();
 
-    expect($container)
+    expect($schema)
         ->dehydrateState()->toBe([]);
 });
 
-test('dehydrated state can be mutated', function () {
-    $container = Schema::make(Livewire::make())
+test('dehydrated state can be mutated', function (): void {
+    $schema = Schema::make(Livewire::make())
         ->statePath('data')
         ->components([
             (new Component)
@@ -591,15 +685,15 @@ test('dehydrated state can be mutated', function () {
         ])
         ->fill();
 
-    $containerState = $container->dehydrateState();
+    $schemaState = $schema->dehydrateState();
 
-    expect($container->mutateDehydratedState($containerState))
+    expect($schema->mutateDehydratedState($schemaState))
         ->toBe([
             'data' => [$statePath => strrev($state)],
         ]);
 });
 
-test('sibling state can be retrieved relatively from another component', function () {
+test('sibling state can be retrieved relatively from another component', function (): void {
     Schema::make(Livewire::make())
         ->statePath('data')
         ->components([
@@ -615,7 +709,7 @@ test('sibling state can be retrieved relatively from another component', functio
         ->getContent()->toBe($state);
 });
 
-test('sibling nested state can be retrieved relatively from another component', function () {
+test('sibling nested state can be retrieved relatively from another component', function (): void {
     Schema::make(Livewire::make())
         ->statePath('data')
         ->components([
@@ -635,7 +729,7 @@ test('sibling nested state can be retrieved relatively from another component', 
         ->getContent()->toBe($state);
 });
 
-test('parent sibling state can be retrieved relatively from another component', function () {
+test('parent sibling state can be retrieved relatively from another component', function (): void {
     Schema::make(Livewire::make())
         ->statePath('data')
         ->components([
@@ -655,7 +749,7 @@ test('parent sibling state can be retrieved relatively from another component', 
         ->getContent()->toBe($state);
 });
 
-test('sibling state can be retrieved absolutely from another component', function () {
+test('sibling state can be retrieved absolutely from another component', function (): void {
     Schema::make(Livewire::make())
         ->statePath('data')
         ->components([
@@ -671,7 +765,7 @@ test('sibling state can be retrieved absolutely from another component', functio
         ->getContent()->toBe($state);
 });
 
-test('sibling nested state can be retrieved absolutely from another component', function () {
+test('sibling nested state can be retrieved absolutely from another component', function (): void {
     Schema::make(Livewire::make())
         ->statePath('data')
         ->components([
@@ -691,7 +785,7 @@ test('sibling nested state can be retrieved absolutely from another component', 
         ->getContent()->toBe($state);
 });
 
-test('parent sibling state can be retrieved absolutely from another component', function () {
+test('parent sibling state can be retrieved absolutely from another component', function (): void {
     Schema::make(Livewire::make())
         ->statePath('data')
         ->components([
@@ -711,13 +805,13 @@ test('parent sibling state can be retrieved absolutely from another component', 
         ->getContent()->toBe($state);
 });
 
-test('components can set their own state after they are hydrated', function () {
+test('components can set their own state after they are hydrated', function (): void {
     livewire(new class extends Livewire
     {
         public function form(Schema $form): Schema
         {
             return $form
-                ->schema([
+                ->components([
                     TextInput::make('foo')
                         ->afterStateHydrated(fn (TextInput $component) => $component->state('bar')),
                 ])
@@ -729,13 +823,13 @@ test('components can set their own state after they are hydrated', function () {
         ]);
 });
 
-test('components can set their own state after they are updated', function () {
+test('components can set their own state after they are updated', function (): void {
     livewire(new class extends Livewire
     {
         public function form(Schema $form): Schema
         {
             return $form
-                ->schema([
+                ->components([
                     TextInput::make('foo')
                         ->afterStateUpdated(fn (TextInput $component) => $component->state('bar')),
                 ])
@@ -750,13 +844,13 @@ test('components can set their own state after they are updated', function () {
         ]);
 });
 
-test('components can inject their own state after they are updated', function () {
+test('components can inject their own state after they are updated', function (): void {
     livewire(new class extends Livewire
     {
         public function form(Schema $form): Schema
         {
             return $form
-                ->schema([
+                ->components([
                     TextInput::make('foo')
                         ->afterStateUpdated(fn (TextInput $component, $state) => $component->state(strrev($state))),
                 ])
@@ -771,13 +865,13 @@ test('components can inject their own state after they are updated', function ()
         ]);
 });
 
-test('components can get their own state from the component object', function () {
+test('components can get their own state from the component object', function (): void {
     livewire(new class extends Livewire
     {
         public function form(Schema $form): Schema
         {
             return $form
-                ->schema([
+                ->components([
                     TextInput::make('foo')
                         ->afterStateUpdated(fn (TextInput $component) => $component->state(strrev($component->getState()))),
                 ])
@@ -792,13 +886,13 @@ test('components can get their own state from the component object', function ()
         ]);
 });
 
-test('layout components can get their state from the component object', function () {
+test('layout components can get their state from the component object', function (): void {
     livewire(new class extends Livewire
     {
         public function form(Schema $form): Schema
         {
             return $form
-                ->schema([
+                ->components([
                     Section::make(fn (Section $component) => 'Heading ' . ($component->getState()['foo'] ?? null))
                         ->schema([
                             TextInput::make('foo'),
@@ -813,7 +907,7 @@ test('layout components can get their state from the component object', function
         ->assertSeeText('Heading ' . $state);
 });
 
-test('components can inject their old state after it is updated', function () {
+test('components can inject their old state after it is updated', function (): void {
     livewire(new class extends Livewire
     {
         public $storedOldState = null;
@@ -821,7 +915,7 @@ test('components can inject their old state after it is updated', function () {
         public function form(Schema $form): Schema
         {
             return $form
-                ->schema([
+                ->components([
                     TextInput::make('foo')
                         ->afterStateUpdated(fn ($old) => $this->storedOldState = $old),
                 ])

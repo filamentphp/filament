@@ -147,7 +147,7 @@ public static function table(Table $table): Table
 For further customization opportunities, you can override the static `$view` property on the page class to a custom view in your app:
 
 ```php
-protected static string $view = 'filament.resources.users.pages.list-users';
+protected string $view = 'filament.resources.users.pages.list-users';
 ```
 
 This assumes that you have created a view at `resources/views/filament/resources/users/pages/list-users.blade.php`.

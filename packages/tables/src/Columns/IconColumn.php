@@ -2,11 +2,15 @@
 
 namespace Filament\Tables\Columns;
 
+use BackedEnum;
 use Closure;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
+use Filament\Support\Concerns\CanWrap;
 use Filament\Support\Enums\Alignment;
+use Filament\Support\Enums\IconSize;
 use Filament\Support\Facades\FilamentIcon;
-use Filament\Tables\Columns\IconColumn\Enums\IconColumnSize;
+use Filament\Support\Icons\Heroicon;
+use Filament\Tables\View\Components\Columns\IconColumnComponent\IconComponent;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
@@ -14,11 +18,10 @@ use Illuminate\Support\Js;
 use Illuminate\View\ComponentAttributeBag;
 
 use function Filament\Support\generate_icon_html;
-use function Filament\Support\get_color_css_variables;
 
 class IconColumn extends Column implements HasEmbeddedView
 {
-    use Concerns\CanWrap;
+    use CanWrap;
     use Concerns\HasColor {
         getColor as getBaseColor;
     }
@@ -29,22 +32,22 @@ class IconColumn extends Column implements HasEmbeddedView
     protected bool | Closure | null $isBoolean = null;
 
     /**
-     * @var string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | Closure | null
+     * @var string | array<int | string, string | int> | Closure | null
      */
     protected string | array | Closure | null $falseColor = null;
 
-    protected string | Closure | null $falseIcon = null;
+    protected string | BackedEnum | Closure | null $falseIcon = null;
 
     /**
-     * @var string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | Closure | null
+     * @var string | array<int | string, string | int> | Closure | null
      */
     protected string | array | Closure | null $trueColor = null;
 
-    protected string | Closure | null $trueIcon = null;
+    protected string | BackedEnum | Closure | null $trueIcon = null;
 
     protected bool | Closure $isListWithLineBreaks = false;
 
-    protected IconColumnSize | string | Closure | null $size = null;
+    protected IconSize | string | Closure | null $size = null;
 
     public function boolean(bool | Closure $condition = true): static
     {
@@ -61,9 +64,9 @@ class IconColumn extends Column implements HasEmbeddedView
     }
 
     /**
-     * @param  string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | Closure | null  $color
+     * @param  string | array<int | string, string | int> | Closure | null  $color
      */
-    public function false(string | Closure | null $icon = null, string | array | Closure | null $color = null): static
+    public function false(string | BackedEnum | Closure | null $icon = null, string | array | Closure | null $color = null): static
     {
         $this->falseIcon($icon);
         $this->falseColor($color);
@@ -72,7 +75,7 @@ class IconColumn extends Column implements HasEmbeddedView
     }
 
     /**
-     * @param  string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | Closure | null  $color
+     * @param  string | array<int | string, string | int> | Closure | null  $color
      */
     public function falseColor(string | array | Closure | null $color): static
     {
@@ -82,7 +85,7 @@ class IconColumn extends Column implements HasEmbeddedView
         return $this;
     }
 
-    public function falseIcon(string | Closure | null $icon): static
+    public function falseIcon(string | BackedEnum | Closure | null $icon): static
     {
         $this->boolean();
         $this->falseIcon = $icon;
@@ -91,9 +94,9 @@ class IconColumn extends Column implements HasEmbeddedView
     }
 
     /**
-     * @param  string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | Closure | null  $color
+     * @param  string | array<int | string, string | int> | Closure | null  $color
      */
-    public function true(string | Closure | null $icon = null, string | array | Closure | null $color = null): static
+    public function true(string | BackedEnum | Closure | null $icon = null, string | array | Closure | null $color = null): static
     {
         $this->trueIcon($icon);
         $this->trueColor($color);
@@ -102,7 +105,7 @@ class IconColumn extends Column implements HasEmbeddedView
     }
 
     /**
-     * @param  string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | Closure | null  $color
+     * @param  string | array<int | string, string | int> | Closure | null  $color
      */
     public function trueColor(string | array | Closure | null $color): static
     {
@@ -112,7 +115,7 @@ class IconColumn extends Column implements HasEmbeddedView
         return $this;
     }
 
-    public function trueIcon(string | Closure | null $icon): static
+    public function trueIcon(string | BackedEnum | Closure | null $icon): static
     {
         $this->boolean();
         $this->trueIcon = $icon;
@@ -132,35 +135,35 @@ class IconColumn extends Column implements HasEmbeddedView
         return $this;
     }
 
-    public function size(IconColumnSize | string | Closure | null $size): static
+    public function size(IconSize | string | Closure | null $size): static
     {
         $this->size = $size;
 
         return $this;
     }
 
-    public function getSize(mixed $state): IconColumnSize | string
+    public function getSize(mixed $state): IconSize | string | null
     {
         $size = $this->evaluate($this->size, [
             'state' => $state,
         ]);
 
         if (blank($size)) {
-            return IconColumnSize::Large;
-        }
-
-        if (is_string($size)) {
-            $size = IconColumnSize::tryFrom($size) ?? $size;
+            return null;
         }
 
         if ($size === 'base') {
-            return IconColumnSize::Large;
+            return null;
+        }
+
+        if (is_string($size)) {
+            $size = IconSize::tryFrom($size) ?? $size;
         }
 
         return $size;
     }
 
-    public function getIcon(mixed $state): ?string
+    public function getIcon(mixed $state): string | BackedEnum | null
     {
         if (filled($icon = $this->getBaseIcon($state))) {
             return $icon;
@@ -178,7 +181,7 @@ class IconColumn extends Column implements HasEmbeddedView
     }
 
     /**
-     * @return string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null
+     * @return string | array<int | string, string | int> | null
      */
     public function getColor(mixed $state): string | array | null
     {
@@ -198,33 +201,33 @@ class IconColumn extends Column implements HasEmbeddedView
     }
 
     /**
-     * @return string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string}
+     * @return string | array<int | string, string | int>
      */
     public function getFalseColor(): string | array
     {
         return $this->evaluate($this->falseColor) ?? 'danger';
     }
 
-    public function getFalseIcon(): string
+    public function getFalseIcon(): string | BackedEnum
     {
         return $this->evaluate($this->falseIcon)
             ?? FilamentIcon::resolve('tables::columns.icon-column.false')
-            ?? 'heroicon-o-x-circle';
+            ?? Heroicon::OutlinedXCircle;
     }
 
     /**
-     * @return string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string}
+     * @return string | array<int | string, string | int>
      */
     public function getTrueColor(): string | array
     {
         return $this->evaluate($this->trueColor) ?? 'success';
     }
 
-    public function getTrueIcon(): string
+    public function getTrueIcon(): string | BackedEnum
     {
         return $this->evaluate($this->trueIcon)
             ?? FilamentIcon::resolve('tables::columns.icon-column.true')
-            ?? 'heroicon-o-check-circle';
+            ?? Heroicon::OutlinedCheckCircle;
     }
 
     public function isBoolean(): bool
@@ -298,6 +301,7 @@ class IconColumn extends Column implements HasEmbeddedView
             <?php foreach ($state as $stateItem) { ?>
                 <?php
                     $color = $this->getColor($stateItem);
+                $size = $this->getSize($stateItem);
                 ?>
 
                 <?= generate_icon_html($this->getIcon($stateItem), attributes: (new ComponentAttributeBag)
@@ -309,21 +313,7 @@ class IconColumn extends Column implements HasEmbeddedView
                             }'
                             : null,
                     ], escape: false)
-                    ->class([
-                        match ($color) {
-                            null, 'gray' => null,
-                            default => 'fi-color-custom',
-                        } => filled($color),
-                        is_string($color) ? "fi-color-{$color}" : null,
-                        (($size = $this->getSize($stateItem)) instanceof IconColumnSize) ? "fi-size-{$size->value}" : $size,
-                    ])
-                    ->style([
-                        get_color_css_variables(
-                            $color,
-                            shades: [400, 500],
-                            alias: 'tables::columns.icon-column.item',
-                        ) => $color !== 'gray',
-                    ]))
+                    ->color(IconComponent::class, $color), size: $size ?? IconSize::Large)
                     ->toHtml() ?>
             <?php } ?>
         </div>

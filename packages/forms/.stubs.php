@@ -19,13 +19,15 @@ namespace Livewire\Features\SupportTesting {
 
         public function assertFormFieldDoesNotExist(string $fieldName, string $formName = 'form'): static {}
 
-        public function assertFormFieldIsDisabled(string $fieldName, string $formName = 'form'): static {}
+        public function assertFormFieldDisabled(string $fieldName, string $formName = 'form'): static {}
 
-        public function assertFormFieldIsEnabled(string $fieldName, string $formName = 'form'): static {}
+        public function assertFormFieldEnabled(string $fieldName, string $formName = 'form'): static {}
 
-        public function assertFormFieldIsHidden(string $fieldName, string $formName = 'form'): static {}
+        public function assertFormFieldHidden(string $fieldName, string $formName = 'form'): static {}
 
-        public function assertFormFieldIsVisible(string $fieldName, string $formName = 'form'): static {}
+        public function assertFormFieldVisible(string $fieldName, string $formName = 'form'): static {}
+
+        public function assertFormFieldReadOnly(string $fieldName, string $formName = 'form'): static {}
 
         public function assertFormComponentExists(string $componentKey, string | Closure $formName = 'form', ?Closure $checkComponentUsing = null): static {}
 

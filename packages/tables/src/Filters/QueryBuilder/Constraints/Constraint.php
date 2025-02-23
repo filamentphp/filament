@@ -85,9 +85,9 @@ class Constraint extends Component
 
                 try {
                     $component->getContainer()->getParentComponent()
-                        ->getChildComponentContainer($uuid)
+                        ->getChildSchema($uuid)
                         ->getComponent('settings')
-                        ->getChildComponentContainer()
+                        ->getChildSchema()
                         ->validate();
                 } catch (ValidationException $exception) {
                     return $this->getLabel();
@@ -128,7 +128,7 @@ class Constraint extends Component
                         ->afterStateUpdated(fn (Select $component, Get $get) => $component
                             ->getContainer()
                             ->getComponent('settings')
-                            ->getChildComponentContainer()
+                            ->getChildSchema()
                             ->fill($get('settings'))),
                     Group::make(function ($component, Get $get): array {
                         $operator = $get(static::OPERATOR_SELECT_NAME);

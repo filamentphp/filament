@@ -76,7 +76,7 @@ it('does not send a notification', function () {
         // or
         ->assertNotNotified('Unable to create post')
         // or
-        ->assertNotified(
+        ->assertNotNotified(
             Notification::make()
                 ->danger()
                 ->title('Unable to create post')
