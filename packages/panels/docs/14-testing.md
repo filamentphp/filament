@@ -59,7 +59,7 @@ To use a table [testing helper](../tables/testing), make assertions on the resou
 use function Pest\Livewire\livewire;
 
 it('can list posts', function () {
-    $posts = Post::factory()->count(10)->create();
+    $posts = Post::factory(10)->create();
 
     livewire(PostResource\Pages\ListPosts::class)
         ->assertCanSeeTableRecords($posts);
@@ -296,7 +296,7 @@ use function Pest\Livewire\livewire;
 
 it('can render relation manager', function () {
     $category = Category::factory()
-        ->has(Post::factory()->count(10))
+        ->has(Post::factory(10))
         ->create();
 
     livewire(CategoryResource\RelationManagers\PostsRelationManager::class, [
@@ -319,7 +319,7 @@ use function Pest\Livewire\livewire;
 
 it('can list posts', function () {
     $category = Category::factory()
-        ->has(Post::factory()->count(10))
+        ->has(Post::factory(10))
         ->create();
 
     livewire(CategoryResource\RelationManagers\PostsRelationManager::class, [

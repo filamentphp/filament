@@ -26,7 +26,7 @@ To test which records are shown, you can use `assertCanSeeTableRecords()`, `asse
 use function Pest\Livewire\livewire;
 
 it('cannot display trashed posts by default', function () {
-    $posts = Post::factory()->count(4)->create();
+    $posts = Post::factory(4)->create();
     $trashedPosts = Post::factory()->trashed()->count(6)->create();
 
     livewire(PostResource\Pages\ListPosts::class)
@@ -48,7 +48,7 @@ To ensure that a certain column is rendered, pass the column name to `assertCanR
 use function Pest\Livewire\livewire;
 
 it('can render post titles', function () {
-    Post::factory()->count(10)->create();
+    Post::factory(10)->create();
 
     livewire(PostResource\Pages\ListPosts::class)
         ->assertCanRenderTableColumn('title');
@@ -63,7 +63,7 @@ For testing that a column is not rendered, you can use `assertCanNotRenderTableC
 use function Pest\Livewire\livewire;
 
 it('can not render post comments', function () {
-    Post::factory()->count(10)->create()
+    Post::factory(10)->create()
 
     livewire(PostResource\Pages\ListPosts::class)
         ->assertCanNotRenderTableColumn('comments');
@@ -82,7 +82,7 @@ Once the table is sorted, you can ensure that the table records are rendered in 
 use function Pest\Livewire\livewire;
 
 it('can sort posts by title', function () {
-    $posts = Post::factory()->count(10)->create();
+    $posts = Post::factory(10)->create();
 
     livewire(PostResource\Pages\ListPosts::class)
         ->sortTable('title')
@@ -102,7 +102,7 @@ You can then use `assertCanSeeTableRecords()` to check your filtered table recor
 use function Pest\Livewire\livewire;
 
 it('can search posts by title', function () {
-    $posts = Post::factory()->count(10)->create();
+    $posts = Post::factory(10)->create();
 
     $title = $posts->first()->title;
 
@@ -119,7 +119,7 @@ To search individual columns, you can pass an array of searches to `searchTableC
 use function Pest\Livewire\livewire;
 
 it('can search posts by title column', function () {
-    $posts = Post::factory()->count(10)->create();
+    $posts = Post::factory(10)->create();
 
     $title = $posts->first()->title;
 
@@ -138,7 +138,7 @@ To assert that a certain column has a state or does not have a state for a recor
 use function Pest\Livewire\livewire;
 
 it('can get post author names', function () {
-    $posts = Post::factory()->count(10)->create();
+    $posts = Post::factory(10)->create();
 
     $post = $posts->first();
 
@@ -263,7 +263,7 @@ To filter the table records, you can use the `filterTable()` method, along with 
 use function Pest\Livewire\livewire;
 
 it('can filter posts by `is_published`', function () {
-    $posts = Post::factory()->count(10)->create();
+    $posts = Post::factory(10)->create();
 
     livewire(PostResource\Pages\ListPosts::class)
         ->assertCanSeeTableRecords($posts)
@@ -281,7 +281,7 @@ If you'd like to set the value of a `SelectFilter` or `TernaryFilter`, pass the 
 use function Pest\Livewire\livewire;
 
 it('can filter posts by `author_id`', function () {
-    $posts = Post::factory()->count(10)->create();
+    $posts = Post::factory(10)->create();
 
     $authorId = $posts->first()->author_id;
 
@@ -301,7 +301,7 @@ To reset all filters to their original state, call `resetTableFilters()`:
 use function Pest\Livewire\livewire;
 
 it('can reset table filters', function () {
-    $posts = Post::factory()->count(10)->create();
+    $posts = Post::factory(10)->create();
 
     livewire(PostResource\Pages\ListPosts::class)
         ->resetTableFilters();
@@ -316,7 +316,7 @@ To remove a single filter you can use `removeTableFilter()`:
 use function Pest\Livewire\livewire;
 
 it('filters list by published', function () {
-    $posts = Post::factory()->count(10)->create();
+    $posts = Post::factory(10)->create();
 
     $unpublishedPosts = $posts->where('is_published', false)->get();
 
@@ -334,7 +334,7 @@ To remove all filters you can use `removeTableFilters()`:
 use function Pest\Livewire\livewire;
 
 it('can remove all table filters', function () {
-    $posts = Post::factory()->count(10)->forAuthor()->create();
+    $posts = Post::factory(10)->forAuthor()->create();
 
     $unpublishedPosts = $posts
         ->where('is_published', false)
@@ -431,7 +431,7 @@ For bulk actions, you may do the same, passing in multiple records to execute th
 use function Pest\Livewire\livewire;
 
 it('can bulk delete posts', function () {
-    $posts = Post::factory()->count(10)->create();
+    $posts = Post::factory(10)->create();
 
     livewire(PostResource\Pages\ListPosts::class)
         ->callTableBulkAction(DeleteBulkAction::class, $posts);
@@ -469,7 +469,7 @@ To check if an action or bulk action has been halted, you can use `assertTableAc
 use function Pest\Livewire\livewire;
 
 it('will halt delete if post is flagged', function () {
-    $posts= Post::factory()->count(2)->flagged()->create();
+    $posts= Post::factory(2)->flagged()->create();
 
     livewire(PostResource\Pages\ListPosts::class)
         ->callTableAction('delete', $posts->first())
@@ -690,7 +690,7 @@ To test that a summary calculation is working, you may use the `assertTableColum
 use function Pest\Livewire\livewire;
 
 it('can average values in a column', function () {
-    $posts = Post::factory()->count(10)->create();
+    $posts = Post::factory(10)->create();
 
     livewire(PostResource\Pages\ListPosts::class)
         ->assertCanSeeTableRecords($posts)
@@ -722,7 +722,7 @@ To calculate the average for only one pagination page, use the `isCurrentPaginat
 use function Pest\Livewire\livewire;
 
 it('can average values in a column', function () {
-    $posts = Post::factory()->count(20)->create();
+    $posts = Post::factory(20)->create();
 
     livewire(PostResource\Pages\ListPosts::class)
         ->assertCanSeeTableRecords($posts->take(10))
@@ -738,7 +738,7 @@ To test a range, pass the minimum and maximum value into a tuple-style `[$minimu
 use function Pest\Livewire\livewire;
 
 it('can average values in a column', function () {
-    $posts = Post::factory()->count(10)->create();
+    $posts = Post::factory(10)->create();
 
     livewire(PostResource\Pages\ListPosts::class)
         ->assertCanSeeTableRecords($posts)
