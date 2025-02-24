@@ -14,11 +14,11 @@ class PostFactory extends Factory
     {
         return [
             'author_id' => User::factory(),
-            'content' => $this->faker->paragraph(),
-            'is_published' => $this->faker->boolean(),
-            'tags' => $this->faker->words(),
-            'title' => $this->faker->sentence(),
-            'rating' => $this->faker->numberBetween(1, 10),
+            'content' => fake()->paragraph(),
+            'is_published' => fake()->boolean(),
+            'tags' => fake()->words(),
+            'title' => fake()->sentence(),
+            'rating' => fake()->numberBetween(1, 10),
         ];
     }
 }

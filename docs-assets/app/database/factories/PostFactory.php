@@ -19,13 +19,13 @@ class PostFactory extends Factory
     public function definition(): array
     {
         return [
-            'title' => $this->faker->words(asText: true),
-            'slug' => $this->faker->slug(),
-            'description' => $this->faker->sentence(),
-            'status' => $this->faker->randomElement(['draft', 'reviewing', 'published']),
-            'is_featured' => $this->faker->boolean(),
+            'title' => fake()->words(asText: true),
+            'slug' => fake()->slug(),
+            'description' => fake()->sentence(),
+            'status' => fake()->randomElement(['draft', 'reviewing', 'published']),
+            'is_featured' => fake()->boolean(),
             'author_id' => User::factory(),
-            'rating' => $this->faker->numberBetween(1, 10),
+            'rating' => fake()->numberBetween(1, 10),
         ];
     }
 }

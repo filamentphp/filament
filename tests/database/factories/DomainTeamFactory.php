@@ -12,8 +12,8 @@ class DomainTeamFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => $this->faker->company(),
-            'domain' => $this->faker->domainName(),
+            'name' => fake()->company(),
+            'domain' => fake()->domainName(),
         ];
     }
 }
