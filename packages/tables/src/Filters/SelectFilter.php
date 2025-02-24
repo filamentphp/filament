@@ -3,6 +3,7 @@
 namespace Filament\Tables\Filters;
 
 use Closure;
+use Filament\Forms\Components\Concerns\CanAllowHtml;
 use Filament\Forms\Components\Select;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
@@ -13,6 +14,7 @@ class SelectFilter extends BaseFilter
     use Concerns\HasOptions;
     use Concerns\HasPlaceholder;
     use Concerns\HasRelationship;
+    use CanAllowHtml;
 
     protected string | Closure | null $attribute = null;
 
@@ -268,6 +270,10 @@ class SelectFilter extends BaseFilter
             ->preload($this->isPreloaded())
             ->native($this->isNative())
             ->optionsLimit($this->getOptionsLimit());
+
+        if ($this->isHtmlAllowed()){
+            $field->allowHtml();
+        }
 
         if ($this->queriesRelationships()) {
             $field
