@@ -1449,7 +1449,7 @@ class TablesDemo extends Component implements HasForms, HasTable
         ]);
 
         if ($hasSeededPosts) {
-            Post::factory()->count(45)->create();
+            Post::factory(45)->create();
         }
 
         return $table
@@ -1552,7 +1552,7 @@ class TablesDemo extends Component implements HasForms, HasTable
                 ]),
             ],
         ]);
-        User::factory()->count(45)->create();
+        User::factory(45)->create();
 
         return $table
             ->query(User::query())

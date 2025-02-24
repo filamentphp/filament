@@ -11,21 +11,21 @@ use function Filament\Tests\livewire;
 uses(TestCase::class);
 
 it('can render text column', function () {
-    Post::factory()->count(10)->create();
+    Post::factory(10)->create();
 
     livewire(PostsTable::class)
         ->assertCanRenderTableColumn('title');
 });
 
 it('can render text column with relationship', function () {
-    Post::factory()->count(10)->create();
+    Post::factory(10)->create();
 
     livewire(PostsTable::class)
         ->assertCanRenderTableColumn('author.name');
 });
 
 it('can sort records', function () {
-    $posts = Post::factory()->count(10)->create();
+    $posts = Post::factory(10)->create();
 
     livewire(PostsTable::class)
         ->sortTable('title')
@@ -35,7 +35,7 @@ it('can sort records', function () {
 });
 
 it('can sort records with relationship', function () {
-    $posts = Post::factory()->count(10)->create();
+    $posts = Post::factory(10)->create();
 
     livewire(PostsTable::class)
         ->sortTable('author.name')
@@ -45,7 +45,7 @@ it('can sort records with relationship', function () {
 });
 
 it('can search records', function () {
-    $posts = Post::factory()->count(10)->create();
+    $posts = Post::factory(10)->create();
 
     $title = $posts->first()->title;
 
@@ -56,7 +56,7 @@ it('can search records', function () {
 });
 
 it('can search individual column records', function () {
-    $posts = Post::factory()->count(10)->create();
+    $posts = Post::factory(10)->create();
 
     $content = $posts->first()->content;
 
@@ -67,7 +67,7 @@ it('can search individual column records', function () {
 });
 
 it('can search posts with relationship', function () {
-    $posts = Post::factory()->count(10)->create();
+    $posts = Post::factory(10)->create();
 
     $author = $posts->first()->author->name;
 
@@ -78,7 +78,7 @@ it('can search posts with relationship', function () {
 });
 
 it('can search individual column records with relationship', function () {
-    $posts = Post::factory()->count(10)->create();
+    $posts = Post::factory(10)->create();
 
     $authorEmail = $posts->first()->author->email;
 
@@ -89,7 +89,7 @@ it('can search individual column records with relationship', function () {
 });
 
 it('can search multiple individual columns', function () {
-    $posts = Post::factory()->count(10)->create();
+    $posts = Post::factory(10)->create();
 
     $content = $posts->first()->content;
     $authorEmail = $posts->first()->author->email;

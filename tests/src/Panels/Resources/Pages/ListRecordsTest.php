@@ -24,28 +24,28 @@ it('can render users page', function () {
 });
 
 it('can list posts', function () {
-    $posts = Post::factory()->count(10)->create();
+    $posts = Post::factory(10)->create();
 
     livewire(ListPosts::class)
         ->assertCanSeeTableRecords($posts);
 });
 
 it('can render post titles', function () {
-    Post::factory()->count(10)->create();
+    Post::factory(10)->create();
 
     livewire(ListPosts::class)
         ->assertCanRenderTableColumn('title');
 });
 
 it('can render post authors', function () {
-    Post::factory()->count(10)->create();
+    Post::factory(10)->create();
 
     livewire(ListPosts::class)
         ->assertCanRenderTableColumn('author.name');
 });
 
 it('can sort posts by title', function () {
-    $posts = Post::factory()->count(10)->create();
+    $posts = Post::factory(10)->create();
 
     livewire(ListPosts::class)
         ->sortTable('title')
@@ -55,7 +55,7 @@ it('can sort posts by title', function () {
 });
 
 it('can sort posts by author', function () {
-    $posts = Post::factory()->count(10)->create();
+    $posts = Post::factory(10)->create();
 
     livewire(ListPosts::class)
         ->sortTable('author.name')
@@ -65,7 +65,7 @@ it('can sort posts by author', function () {
 });
 
 it('can search posts by title', function () {
-    $posts = Post::factory()->count(10)->create();
+    $posts = Post::factory(10)->create();
 
     $title = $posts->first()->title;
 
@@ -76,7 +76,7 @@ it('can search posts by title', function () {
 });
 
 it('can search posts by author', function () {
-    $posts = Post::factory()->count(10)->create();
+    $posts = Post::factory(10)->create();
 
     $author = $posts->first()->author->name;
 
@@ -87,7 +87,7 @@ it('can search posts by author', function () {
 });
 
 it('can filter posts by `is_published`', function () {
-    $posts = Post::factory()->count(10)->create();
+    $posts = Post::factory(10)->create();
 
     livewire(ListPosts::class)
         ->assertCanSeeTableRecords($posts)
@@ -106,7 +106,7 @@ it('can delete posts', function () {
 });
 
 it('can bulk delete posts', function () {
-    $posts = Post::factory()->count(10)->create();
+    $posts = Post::factory(10)->create();
 
     livewire(ListPosts::class)
         ->callTableBulkAction(DeleteBulkAction::class, $posts);

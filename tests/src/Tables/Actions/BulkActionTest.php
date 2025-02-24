@@ -12,7 +12,7 @@ use function Pest\Laravel\assertSoftDeleted;
 uses(TestCase::class);
 
 it('can call bulk action', function () {
-    $posts = Post::factory()->count(10)->create();
+    $posts = Post::factory(10)->create();
 
     livewire(PostsTable::class)
         ->callTableBulkAction(DeleteBulkAction::class, $posts);
@@ -23,7 +23,7 @@ it('can call bulk action', function () {
 });
 
 it('can call a bulk action with data', function () {
-    $posts = Post::factory()->count(10)->create();
+    $posts = Post::factory(10)->create();
 
     livewire(PostsTable::class)
         ->callTableBulkAction('data', records: $posts, data: [
@@ -36,7 +36,7 @@ it('can call a bulk action with data', function () {
 });
 
 it('can validate a bulk action\'s data', function () {
-    $posts = Post::factory()->count(10)->create();
+    $posts = Post::factory(10)->create();
 
     livewire(PostsTable::class)
         ->callTableBulkAction('data', records: $posts, data: [
@@ -47,7 +47,7 @@ it('can validate a bulk action\'s data', function () {
 });
 
 it('can set default bulk action data when mounted', function () {
-    $posts = Post::factory()->count(10)->create();
+    $posts = Post::factory(10)->create();
 
     livewire(PostsTable::class)
         ->mountTableBulkAction('data', records: $posts)
@@ -60,7 +60,7 @@ it('can set default bulk action data when mounted', function () {
 });
 
 it('can call a bulk action with arguments', function () {
-    $posts = Post::factory()->count(10)->create();
+    $posts = Post::factory(10)->create();
 
     livewire(PostsTable::class)
         ->callTableBulkAction('arguments', records: $posts, arguments: [
@@ -72,7 +72,7 @@ it('can call a bulk action with arguments', function () {
 });
 
 it('can call a bulk action and halt', function () {
-    $posts = Post::factory()->count(10)->create();
+    $posts = Post::factory(10)->create();
 
     livewire(PostsTable::class)
         ->callTableBulkAction('halt', records: $posts)

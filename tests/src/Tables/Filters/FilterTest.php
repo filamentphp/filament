@@ -10,7 +10,7 @@ use function Filament\Tests\livewire;
 uses(TestCase::class);
 
 it('can filter records by boolean column', function () {
-    $posts = Post::factory()->count(10)->create();
+    $posts = Post::factory(10)->create();
 
     livewire(PostsTable::class)
         ->assertCanSeeTableRecords($posts)
@@ -20,7 +20,7 @@ it('can filter records by boolean column', function () {
 });
 
 it('can filter records by relationship', function () {
-    $posts = Post::factory()->count(10)->create();
+    $posts = Post::factory(10)->create();
 
     $author = $posts->first()->author;
 
@@ -32,7 +32,7 @@ it('can filter records by relationship', function () {
 });
 
 it('can persist filters in the user\'s session', function () {
-    $posts = Post::factory()->count(10)->create();
+    $posts = Post::factory(10)->create();
 
     $unpublishedPosts = $posts->where('is_published', false);
 
@@ -53,7 +53,7 @@ it('can persist filters in the user\'s session', function () {
 });
 
 it('can reset filters', function () {
-    $posts = Post::factory()->count(10)->create();
+    $posts = Post::factory(10)->create();
 
     $unpublishedPosts = $posts->where('is_published', false);
 
@@ -65,7 +65,7 @@ it('can reset filters', function () {
 });
 
 it('can remove a filter', function () {
-    $posts = Post::factory()->count(10)->create();
+    $posts = Post::factory(10)->create();
 
     $unpublishedPosts = $posts->where('is_published', false);
 
@@ -78,7 +78,7 @@ it('can remove a filter', function () {
 });
 
 it('can remove all table filters', function () {
-    $posts = Post::factory()->count(10)->create();
+    $posts = Post::factory(10)->create();
 
     $unpublishedPosts = $posts->where('is_published', false);
 
@@ -91,7 +91,7 @@ it('can remove all table filters', function () {
 });
 
 it('can use a custom attribute for the `SelectFilter`', function () {
-    $posts = Post::factory()->count(10)->create();
+    $posts = Post::factory(10)->create();
 
     $unpublishedPosts = $posts->where('is_published', false);
 

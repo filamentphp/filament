@@ -9,7 +9,7 @@ use function Filament\Tests\livewire;
 uses(TestCase::class);
 
 it('can average values in a column', function () {
-    $posts = Post::factory()->count(20)->create();
+    $posts = Post::factory(20)->create();
 
     livewire(PostsTable::class)
         ->assertCanSeeTableRecords($posts->take(10))
@@ -17,7 +17,7 @@ it('can average values in a column', function () {
 });
 
 it('can average values in a column on this pagination page', function () {
-    $posts = Post::factory()->count(20)->create();
+    $posts = Post::factory(20)->create();
 
     livewire(PostsTable::class)
         ->assertCanSeeTableRecords($posts->take(10))
@@ -25,7 +25,7 @@ it('can average values in a column on this pagination page', function () {
 });
 
 it('can average subset of values in a column', function () {
-    $posts = Post::factory()->count(20)->create();
+    $posts = Post::factory(20)->create();
 
     livewire(PostsTable::class)
         ->assertCanSeeTableRecords($posts->take(10))
@@ -33,7 +33,7 @@ it('can average subset of values in a column', function () {
 });
 
 it('can average subset of values in a column on this pagination page', function () {
-    $posts = Post::factory()->count(20)->create();
+    $posts = Post::factory(20)->create();
 
     livewire(PostsTable::class)
         ->assertCanSeeTableRecords($posts->take(10))
@@ -41,7 +41,7 @@ it('can average subset of values in a column on this pagination page', function 
 });
 
 it('can count rows', function () {
-    $posts = Post::factory()->count(20)->create();
+    $posts = Post::factory(20)->create();
 
     livewire(PostsTable::class)
         ->assertCanSeeTableRecords($posts->take(10))
@@ -49,7 +49,7 @@ it('can count rows', function () {
 });
 
 it('can count rows on this pagination page', function () {
-    $posts = Post::factory()->count(20)->create();
+    $posts = Post::factory(20)->create();
 
     livewire(PostsTable::class)
         ->assertCanSeeTableRecords($posts->take(10))
@@ -57,7 +57,7 @@ it('can count rows on this pagination page', function () {
 });
 
 it('can count subset of rows', function () {
-    $posts = Post::factory()->count(20)->create();
+    $posts = Post::factory(20)->create();
 
     livewire(PostsTable::class)
         ->assertCanSeeTableRecords($posts->take(10))
@@ -65,7 +65,7 @@ it('can count subset of rows', function () {
 });
 
 it('can count subset of rows on this pagination page', function () {
-    $posts = Post::factory()->count(20)->create();
+    $posts = Post::factory(20)->create();
 
     livewire(PostsTable::class)
         ->assertCanSeeTableRecords($posts->take(10))
@@ -73,7 +73,7 @@ it('can count subset of rows on this pagination page', function () {
 });
 
 it('can get the range of values in a column', function () {
-    $posts = Post::factory()->count(20)->create();
+    $posts = Post::factory(20)->create();
 
     livewire(PostsTable::class)
         ->assertCanSeeTableRecords($posts->take(10))
@@ -81,7 +81,7 @@ it('can get the range of values in a column', function () {
 });
 
 it('can get the range of values in a column on this pagination page', function () {
-    $posts = Post::factory()->count(20)->create();
+    $posts = Post::factory(20)->create();
 
     livewire(PostsTable::class)
         ->assertCanSeeTableRecords($posts->take(10))
@@ -89,7 +89,7 @@ it('can get the range of values in a column on this pagination page', function (
 });
 
 it('can get the range of a subset of values in a column', function () {
-    $posts = Post::factory()->count(20)->create();
+    $posts = Post::factory(20)->create();
 
     livewire(PostsTable::class)
         ->assertCanSeeTableRecords($posts->take(10))
@@ -97,7 +97,7 @@ it('can get the range of a subset of values in a column', function () {
 });
 
 it('can get the range of a subset of values in a column on this pagination page', function () {
-    $posts = Post::factory()->count(20)->create();
+    $posts = Post::factory(20)->create();
 
     livewire(PostsTable::class)
         ->assertCanSeeTableRecords($posts->take(10))
@@ -105,7 +105,7 @@ it('can get the range of a subset of values in a column on this pagination page'
 });
 
 it('can get the range of values from a relationship in a column', function () {
-    $posts = Post::factory()->count(20)->create();
+    $posts = Post::factory(20)->create();
 
     livewire(PostsTable::class)
         ->assertCanSeeTableRecords($posts->take(10))
@@ -113,7 +113,7 @@ it('can get the range of values from a relationship in a column', function () {
 });
 
 it('can get the range of values from a relationship in a column on this pagination page', function () {
-    $posts = Post::factory()->count(20)->create();
+    $posts = Post::factory(20)->create();
 
     livewire(PostsTable::class)
         ->assertCanSeeTableRecords($posts->take(10))
@@ -121,7 +121,7 @@ it('can get the range of values from a relationship in a column on this paginati
 });
 
 it('can sum values in a column', function () {
-    $posts = Post::factory()->count(20)->create();
+    $posts = Post::factory(20)->create();
 
     livewire(PostsTable::class)
         ->assertCanSeeTableRecords($posts->take(10))
@@ -129,7 +129,7 @@ it('can sum values in a column', function () {
 });
 
 it('can sum values in a column on this pagination page', function () {
-    $posts = Post::factory()->count(20)->create();
+    $posts = Post::factory(20)->create();
 
     livewire(PostsTable::class)
         ->assertCanSeeTableRecords($posts->take(10))
@@ -137,7 +137,7 @@ it('can sum values in a column on this pagination page', function () {
 });
 
 it('can sum subset of values in a column', function () {
-    $posts = Post::factory()->count(20)->create();
+    $posts = Post::factory(20)->create();
 
     livewire(PostsTable::class)
         ->assertCanSeeTableRecords($posts->take(10))
@@ -145,7 +145,7 @@ it('can sum subset of values in a column', function () {
 });
 
 it('can sum subset of values in a column on this pagination page', function () {
-    $posts = Post::factory()->count(20)->create();
+    $posts = Post::factory(20)->create();
 
     livewire(PostsTable::class)
         ->assertCanSeeTableRecords($posts->take(10))

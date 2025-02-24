@@ -9,7 +9,7 @@ use function Filament\Tests\livewire;
 uses(TestCase::class);
 
 it('can list records', function () {
-    $posts = Post::factory()->count(10)->create();
+    $posts = Post::factory(10)->create();
 
     livewire(PostsTable::class)
         ->assertCanSeeTableRecords($posts);

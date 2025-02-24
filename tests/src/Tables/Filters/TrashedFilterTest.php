@@ -17,8 +17,8 @@ use function Pest\Laravel\assertSoftDeleted;
 uses(TestCase::class);
 
 it('can filter records by trashed status', function () {
-    $posts = Post::factory()->count(5)->create();
-    $trashedPosts = Post::factory()->count(5)->trashed()->create();
+    $posts = Post::factory(5)->create();
+    $trashedPosts = Post::factory(5)->trashed()->create();
 
     livewire(PostsTable::class)
         ->assertCanSeeTableRecords($posts)

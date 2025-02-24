@@ -11,7 +11,7 @@ use function Filament\Tests\livewire;
 uses(TestCase::class);
 
 it('can group a table', function () {
-    $posts = Post::factory()->count(20)->create();
+    $posts = Post::factory(20)->create();
 
     livewire(PostsTable::class)
         ->tap(function (Testable $testable) {
