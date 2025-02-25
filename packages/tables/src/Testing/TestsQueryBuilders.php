@@ -3,7 +3,7 @@
 namespace Filament\Tables\Testing;
 
 use Closure;
-use Filament\Tables\Filters\QueryBuilder\Concerns\HasConstraints;
+use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Filters\QueryBuilder\Constraints\Constraint;
 use Filament\Tables\Filters\QueryBuilder\Constraints\DateConstraint;
 use Filament\Tables\Filters\QueryBuilder\Constraints\NumberConstraint;
@@ -13,7 +13,7 @@ use Illuminate\Testing\Assert;
 use Livewire\Features\SupportTesting\Testable;
 
 /**
- * @method HasConstraints instance()
+ * @method HasTable instance()
  *
  * @mixin Testable
  */
