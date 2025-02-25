@@ -7,7 +7,7 @@ use function Filament\Tests\livewire;
 
 uses(TestCase::class);
 
-it('can filter text constraint for `contains`', function () {
+it('can filter text constraint by `contains`', function () {
     $posts = Post::factory(10)->create();
     $content = $posts->random()->content;
     $start = fake()->numberBetween(0, strlen($content));
@@ -20,7 +20,7 @@ it('can filter text constraint for `contains`', function () {
         ->assertCanNotSeeTableRecords(Post::where('content', 'not like', '%' . $filter . '%')->get());
 });
 
-it('can filter text constraint for `startsWith`', function () {
+it('can filter text constraint by `startsWith`', function () {
     $posts = Post::factory(10)->create();
     $content = $posts->random()->content;
     $filter = substr($content, 0, fake()->numberBetween(1, strlen($content)));
@@ -32,7 +32,7 @@ it('can filter text constraint for `startsWith`', function () {
         ->assertCanNotSeeTableRecords(Post::where('content', 'not like', $filter . '%')->get());
 });
 
-it('can filter text constraint for `endsWith`', function () {
+it('can filter text constraint by `endsWith`', function () {
     $posts = Post::factory(10)->create();
     $content = $posts->random()->content;
     $filter = substr($content, -(fake()->numberBetween(1, strlen($content))));
@@ -44,7 +44,7 @@ it('can filter text constraint for `endsWith`', function () {
         ->assertCanNotSeeTableRecords(Post::where('content', 'not like', '%' . $filter)->get());
 });
 
-it('can filter text constraint for `equals`', function () {
+it('can filter text constraint by `equals`', function () {
     $posts = Post::factory(10)->create();
     $content = $posts->random()->content;
 
@@ -55,7 +55,7 @@ it('can filter text constraint for `equals`', function () {
         ->assertCanNotSeeTableRecords(Post::where('content', '<>', $content)->get());
 });
 
-it('can filter text constraint for `isFilled`', function () {
+it('can filter text constraint by `isFilled`', function () {
     Post::factory()->create();
     Post::factory()->create(['content' => null]);
     Post::factory()->create(['content' => '']);
