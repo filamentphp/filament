@@ -25,6 +25,7 @@ class TestsQueryBuilders
             /** @phpstan-ignore-next-line */
             $this->assertTableConstraintExists($filter);
 
+            /** @phpstan-ignore-next-line */
             $constraint = $this->instance()->getTable()->getFilter('queryBuilder')->getConstraint($filter);
 
             $queryBuilder = [
@@ -61,6 +62,7 @@ class TestsQueryBuilders
     public function assertTableConstraintExists(): Closure
     {
         return function (string $name): static {
+            /** @phpstan-ignore-next-line */
             $filter = $this->instance()->getTable()->getFilter('queryBuilder')->getConstraint($name);
 
             $livewireClass = $this->instance()::class;
