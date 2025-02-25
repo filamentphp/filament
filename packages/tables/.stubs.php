@@ -177,6 +177,8 @@ namespace Livewire\Features\SupportTesting {
 
         public function assertCanNotSeeTableRecords(array | Collection $records): static {}
 
+        public function queryBuilderTable(string $column, string $operator, $data = null): static {}
+
         public function assertCountTableRecords(int $count): static {}
 
         public function loadTable(): static {}
