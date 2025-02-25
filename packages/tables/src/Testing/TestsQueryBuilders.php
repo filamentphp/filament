@@ -32,7 +32,7 @@ class TestsQueryBuilders
                 'data' => [
                     'operator' => $operator,
                     'settings' => [],
-                ]
+                ],
             ];
             if ($constraint instanceof TextConstraint) {
                 if ($data) {
