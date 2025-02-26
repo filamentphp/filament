@@ -80,6 +80,7 @@
                 'fi-inline' => $inlinePrefix,
                 'fi-input-wrp-prefix-has-label' => filled($prefix),
             ])
+            x-on:click="$el.closest('.fi-input-wrp').querySelector('input').focus()"
         >
             @if (count($prefixActions))
                 <div class="fi-input-wrp-actions">
@@ -138,6 +139,7 @@
                 'fi-inline' => $inlineSuffix,
                 'fi-input-wrp-suffix-has-label' => filled($suffix),
             ])
+            x-on:click="$el.closest('.fi-input-wrp').querySelector('input').focus()"
         >
             @if (filled($suffix))
                 <span class="fi-input-wrp-label">
