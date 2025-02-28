@@ -71,6 +71,8 @@
     $toggleColumnsTriggerAction = $getToggleColumnsTriggerAction();
     $page = $this->getTablePage();
     $defaultSortOptionLabel = $getDefaultSortOptionLabel();
+    $isSearchOnEnter = $isSearchOnEnter();
+    $suffixSearchOnEnter = $getSuffixSearchEnter();
 
     if (count($actions) && (! $isReordering)) {
         $columnsCount++;
@@ -223,6 +225,8 @@
                             <x-filament-tables::search-field
                                 :debounce="$searchDebounce"
                                 :on-blur="$isSearchOnBlur"
+                                :on-enter="$isSearchOnEnter"
+                                :suffix-on-enter="$suffixSearchOnEnter"
                                 :placeholder="$getSearchPlaceholder()"
                             />
                         @endif

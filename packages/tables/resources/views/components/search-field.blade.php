@@ -5,12 +5,21 @@
 @props([
     'debounce' => '500ms',
     'onBlur' => false,
+    'onEnter' => false,
+    'suffixOnEnter' => null,
     'placeholder' => __('filament-tables::table.fields.search.placeholder'),
     'wireModel' => 'tableSearch',
 ])
 
 @php
     $wireModelAttribute = $onBlur ? 'wire:model.blur' : "wire:model.live.debounce.{$debounce}";
+    $suffixOnEnterKdb = '';
+
+    if ($onEnter) {
+        $suffixOnEnterKdb = ! empty($suffixOnEnter) ? $suffixOnEnter : '⏎';
+        $wireModelAttribute = 'wire:model.lazy';
+    }
+
 @endphp
 
 <div
@@ -25,6 +34,7 @@
         inline-prefix
         prefix-icon="heroicon-m-magnifying-glass"
         prefix-icon-alias="tables::search-field"
+        :suffix="$suffixOnEnterKdb"
         :wire:target="$wireModel"
     >
         <x-filament::input

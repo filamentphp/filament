@@ -4,6 +4,7 @@ namespace Filament\Tables\Table\Concerns;
 
 use Closure;
 use Filament\Tables\Filters\Indicator;
+use Illuminate\Contracts\Support\Htmlable;
 
 trait CanSearchRecords
 {
@@ -18,6 +19,10 @@ trait CanSearchRecords
     protected ?string $searchDebounce = null;
 
     protected bool | Closure $isSearchOnBlur = false;
+
+    protected bool | Closure $isSearchOnEnter = false;
+
+    protected string | Htmlable | Closure | null $suffixSearchOnEnter = null;
 
     public function persistSearchInSession(bool | Closure $condition = true): static
     {
@@ -86,6 +91,7 @@ trait CanSearchRecords
         return (bool) $this->evaluate($this->persistsSearchInSession);
     }
 
+
     public function persistsColumnSearchesInSession(): bool
     {
         return (bool) $this->evaluate($this->persistsColumnSearchesInSession);
@@ -136,5 +142,29 @@ trait CanSearchRecords
     public function isSearchOnBlur(): bool
     {
         return (bool) $this->evaluate($this->isSearchOnBlur);
+    }
+
+    public function searchOnEnter(bool | Closure $condition = true): static
+    {
+        $this->isSearchOnEnter = $condition;
+
+        return $this;
+    }
+
+    public function isSearchOnEnter(): bool
+    {
+        return (bool) $this->evaluate($this->isSearchOnEnter);
+    }
+
+    public function suffixSearchOnEnter(string | Htmlable | Closure | null $suffixSearchOnEnter): static
+    {
+        $this->suffixSearchOnEnter = $suffixSearchOnEnter;
+
+        return $this;
+    }
+
+    public function getSuffixSearchEnter(): string | Htmlable | null
+    {
+        return $this->evaluate($this->suffixSearchOnEnter) ?? '';
     }
 }
