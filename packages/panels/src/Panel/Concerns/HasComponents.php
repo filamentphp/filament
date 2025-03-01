@@ -8,6 +8,7 @@ use Filament\Livewire\DatabaseNotifications;
 use Filament\Livewire\GlobalSearch;
 use Filament\Livewire\Notifications;
 use Filament\Pages\Auth\EditProfile;
+use Filament\Pages\BasePage;
 use Filament\Pages\Page;
 use Filament\Resources\Pages\Page as ResourcePage;
 use Filament\Resources\RelationManagers\RelationGroup;
@@ -232,6 +233,22 @@ trait HasComponents
             ...array_map(fn (string $namespace): string => "{$namespace}\Pages", array_values($this->clusters)),
             ...$this->pageNamespaces,
         ];
+    }
+
+    /**
+     * @return string | null
+     */
+    public function getCurrentPage(): ?string
+    {
+        if (! $route = app('router')->current()) {
+            return null;
+        }
+
+        $controllerClass = $route->getControllerClass();
+
+        return $controllerClass && is_subclass_of($controllerClass, BasePage::class)
+            ? $controllerClass
+            : null;
     }
 
     public function discoverClusters(string $in, string $for): static

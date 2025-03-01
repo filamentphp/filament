@@ -284,6 +284,14 @@ class FilamentManager
         return $this->getCurrentPanel()->getPages();
     }
 
+    /**
+     * @return string | null
+     */
+    public function getCurrentPage(): ?string
+    {
+        return $this->getCurrentPanel()?->getCurrentPage();
+    }
+
     public function getPanel(?string $id = null, bool $isStrict = true): Panel
     {
         return app(PanelRegistry::class)->get($id, $isStrict);
