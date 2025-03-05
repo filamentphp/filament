@@ -7,6 +7,7 @@
     $isMultiple = $isMultiple();
     $statePath = $getStatePath();
     $areButtonLabelsHidden = $areButtonLabelsHidden();
+    $nullable = $isNullable();
 @endphp
 
 <x-dynamic-component
@@ -73,6 +74,16 @@
                     :icon="$getIcon($value)"
                     :label-sr-only="$areButtonLabelsHidden"
                     tag="label"
+                    x-on:click="
+                        if ({{ json_encode($nullable) }}) {
+                            let current = $wire.get('{{ $statePath }}');
+                            if (current == {{ json_encode($value) }}) {
+                                $wire.set('{{ $statePath }}', null);
+                                $event.stopPropagation();
+                                $event.preventDefault();
+                            }
+                        }
+                    "
                 >
                     {{ $label }}
                 </x-filament::button>

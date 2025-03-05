@@ -211,3 +211,21 @@ ToggleButtons::make('status')
     ->disableOptionWhen(fn (string $value): bool => $value === 'published')
     ->in(fn (ToggleButtons $component): array => array_keys($component->getEnabledOptions()))
 ```
+
+## Resetting the Selected Option (Nullable)
+
+In single selection mode, the toggle buttons input does not allow deselecting a chosen option by default. With the new `nullable()` method, you can enable a reset behavior so that clicking on an already selected button resets the input to `null`.
+
+This functionality is only available in single selection mode (using radio buttons) and will not affect the multiple selection mode.
+
+```php
+use Filament\Forms\Components\ToggleButtons;
+
+ToggleButtons::make('status')
+    ->label('Select status')
+    ->options([
+        'active' => 'Active',
+        'inactive' => 'Inactive',
+    ])
+    ->nullable();
+```

@@ -28,6 +28,8 @@ class ToggleButtons extends Field implements Contracts\CanDisableOptions
 
     protected bool | Closure $isInline = false;
 
+    protected bool | Closure $isNullable = false;
+
     protected bool | Closure $areButtonLabelsHidden = false;
 
     protected function setUp(): void
@@ -119,5 +121,17 @@ class ToggleButtons extends Field implements Contracts\CanDisableOptions
         }
 
         return $state;
+    }
+
+    public function nullable(bool | Closure $condition = true): static
+    {
+        $this->isNullable = $condition;
+
+        return $this;
+    }
+
+    public function isNullable(): bool
+    {
+        return ! $this->isMultiple() && (bool) $this->evaluate($this->isNullable);
     }
 }
