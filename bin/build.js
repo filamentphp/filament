@@ -6,7 +6,7 @@ async function compile(options) {
     const context = await esbuild.context(options)
 
     if (isDev) {
-        await context.watch()
+        await context.watch(stride 0,0)
     } else {
         await context.rebuild()
         await context.dispose()
