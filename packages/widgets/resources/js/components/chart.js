@@ -91,6 +91,14 @@ export default function chart({ cachedData, options, type }) {
             options.scales.y.grid.color ??= gridColor
             options.scales.y.grid.drawBorder ??= false
 
+            if (
+                window.filamentChartJsRegister &&
+                Array.isArray(window.filamentChartJsRegister) &&
+                window.filamentChartJsRegister.length > 0
+            ) {
+                Chart.register(...window.filamentChartJsRegister)
+            }
+
             return new Chart(this.$refs.canvas, {
                 type: type,
                 data: data ?? cachedData,
