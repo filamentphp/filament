@@ -11,7 +11,7 @@
     }
 
     & .fi-fo-date-time-picker-display-text-input {
-        @apply w-full border-none bg-transparent px-3 py-1.5 text-base text-gray-950 outline-hidden transition duration-75 placeholder:text-gray-400 focus:ring-0 disabled:text-gray-500 disabled:[-webkit-text-fill-color:var(--color-gray-500)] sm:text-sm sm:leading-6 dark:text-white dark:placeholder:text-gray-500 dark:disabled:text-gray-400 dark:disabled:[-webkit-text-fill-color:var(--color-gray-400)];
+        @apply w-full border-none bg-transparent px-3 py-1.5 text-base text-gray-950 transition duration-75 placeholder:text-gray-400 focus:outline-0 disabled:text-gray-500 disabled:[-webkit-text-fill-color:var(--color-gray-500)] sm:text-sm sm:leading-6 dark:text-white dark:placeholder:text-gray-500 dark:disabled:text-gray-400 dark:disabled:[-webkit-text-fill-color:var(--color-gray-400)];
     }
 
     & .fi-fo-date-time-picker-panel {
@@ -23,11 +23,11 @@
     }
 
     & .fi-fo-date-time-picker-month-select {
-        @apply grow cursor-pointer border-none bg-transparent p-0 text-sm font-medium text-gray-950 focus:ring-0 dark:bg-gray-900 dark:text-white;
+        @apply grow cursor-pointer border-none bg-transparent p-0 text-sm font-medium text-gray-950 focus:outline-2 dark:bg-gray-900 dark:text-white focus:outline-primary-600 dark:focus:outline-primary-500;
     }
 
     & .fi-fo-date-time-picker-year-input {
-        @apply w-16 border-none bg-transparent p-0 text-right text-sm text-gray-950 focus:ring-0 dark:text-white;
+        @apply w-16 border-none bg-transparent p-0 text-right text-sm text-gray-950 focus:outline-2 dark:text-white focus:outline-primary-600 dark:focus:outline-primary-500;
     }
 
     & .fi-fo-date-time-picker-calendar-header {
@@ -78,7 +78,7 @@
         @apply flex items-center justify-center rtl:flex-row-reverse;
 
         & input {
-            @apply me-1 w-10 border-none bg-transparent p-0 text-center text-sm text-gray-950 focus:ring-0 dark:text-white;
+            @apply me-1 w-10 border-none bg-transparent p-0 text-center text-sm text-gray-950 focus:outline-2 dark:text-white focus:outline-primary-600 dark:focus:outline-primary-500;
         }
 
         & .fi-fo-date-time-picker-time-input-separator {
