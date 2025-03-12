@@ -23,11 +23,11 @@
     }
 
     & .fi-fo-date-time-picker-month-select {
-        @apply grow cursor-pointer border-none bg-transparent p-0 text-sm font-medium text-gray-950 focus:outline-2 dark:bg-gray-900 dark:text-white focus:outline-primary-600 dark:focus:outline-primary-500;
+        @apply focus:outline-primary-600 dark:focus:outline-primary-500 grow cursor-pointer border-none bg-transparent p-0 text-sm font-medium text-gray-950 focus:outline-2 dark:bg-gray-900 dark:text-white;
     }
 
     & .fi-fo-date-time-picker-year-input {
-        @apply w-16 border-none bg-transparent p-0 text-right text-sm text-gray-950 focus:outline-2 dark:text-white focus:outline-primary-600 dark:focus:outline-primary-500;
+        @apply focus:outline-primary-600 dark:focus:outline-primary-500 w-16 border-none bg-transparent p-0 text-right text-sm text-gray-950 focus:outline-2 dark:text-white;
     }
 
     & .fi-fo-date-time-picker-calendar-header {
@@ -78,7 +78,7 @@
         @apply flex items-center justify-center rtl:flex-row-reverse;
 
         & input {
-            @apply me-1 w-10 border-none bg-transparent p-0 text-center text-sm text-gray-950 focus:outline-2 dark:text-white focus:outline-primary-600 dark:focus:outline-primary-500;
+            @apply focus:outline-primary-600 dark:focus:outline-primary-500 me-1 w-10 border-none bg-transparent p-0 text-center text-sm text-gray-950 focus:outline-2 dark:text-white;
         }
 
         & .fi-fo-date-time-picker-time-input-separator {
