@@ -64,7 +64,7 @@
         }
 
         &:enabled {
-            @apply focus-visible:outline-primary-600 dark:focus-visible:outline-primary-500 outline-transparent hover:bg-gray-50 focus-visible:z-10 focus-visible:outline-2 dark:hover:bg-white/5;
+            @apply focus-visible:outline-primary-600 dark:focus-visible:outline-primary-500 outline-primary-600 dark:outline-primary-500 hover:bg-gray-50 focus-visible:z-10 focus-visible:outline-2 dark:hover:bg-white/5;
         }
 
         &:hover {
