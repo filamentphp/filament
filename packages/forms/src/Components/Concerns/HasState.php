@@ -10,12 +10,14 @@ use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Livewire\Livewire;
-
 use function Livewire\store;
 
 trait HasState
 {
-    protected ?Closure $afterStateHydrated = null;
+    /**
+     * @var array<Closure>
+     */
+    protected array $afterStateHydrated = [];
 
     /**
      * @var array<Closure>
@@ -52,9 +54,16 @@ trait HasState
      */
     protected array $cachedStripCharacters;
 
-    public function afterStateHydrated(?Closure $callback): static
+    public function afterStateHydrated(Closure $callback): static
     {
-        $this->afterStateHydrated = $callback;
+        $this->afterStateHydrated[] = $callback;
+
+        return $this;
+    }
+
+    public function clearAfterStateHydratedHooks(): static
+    {
+        $this->afterStateHydrated = [];
 
         return $this;
     }
@@ -82,7 +91,7 @@ trait HasState
 
     public function callAfterStateHydrated(): static
     {
-        if ($callback = $this->afterStateHydrated) {
+        foreach ($this->afterStateHydrated as $callback) {
             $this->evaluate($callback);
         }
 
