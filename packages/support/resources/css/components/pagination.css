@@ -53,7 +53,7 @@
     }
 
     & .fi-pagination-item-btn {
-        @apply relative flex overflow-hidden p-2 transition duration-75 outline-none;
+        @apply relative flex overflow-hidden p-2 transition duration-75;
 
         &:first-of-type {
             @apply rounded-s-lg;
@@ -64,7 +64,7 @@
         }
 
         &:enabled {
-            @apply focus-visible:ring-primary-600 dark:focus-visible:ring-primary-500 hover:bg-gray-50 focus-visible:z-10 focus-visible:ring-2 dark:hover:bg-white/5;
+            @apply focus-visible:outline-primary-600 dark:focus-visible:outline-primary-500 hover:bg-gray-50 focus-visible:z-10 focus-visible:outline-2 dark:hover:bg-white/5;
         }
 
         &:hover {
