@@ -1,8 +1,8 @@
 .fi-icon-btn {
-    @apply relative -m-2 flex size-9 items-center justify-center rounded-lg text-gray-500 transition duration-75 outline-none dark:text-gray-500;
+    @apply relative -m-2 flex size-9 items-center justify-center rounded-lg text-gray-500 transition duration-75 dark:text-gray-500;
 
     &:not(.fi-disabled):not([disabled]) {
-        @apply focus-visible:ring-primary-600 dark:focus-visible:ring-primary-500 hover:text-gray-600 focus-visible:ring-2 dark:hover:text-gray-400;
+        @apply focus-visible:outline-primary-600 dark:focus-visible:outline-primary-500 hover:text-gray-600 focus-visible:outline-2 dark:hover:text-gray-400;
     }
 
     &.fi-disabled,
@@ -92,7 +92,7 @@
         @apply text-(--text) dark:text-(--dark-text);
 
         &:not(.fi-disabled):not([disabled]) {
-            @apply focus-visible:ring-color-600 dark:focus-visible:ring-color-500 hover:text-(--hover-text) dark:hover:text-(--dark-hover-text);
+            @apply focus-visible:outline-color-600 dark:focus-visible:outline-color-500 hover:text-(--hover-text) dark:hover:text-(--dark-hover-text);
         }
     }
 
