@@ -1,8 +1,8 @@
 .fi-btn {
-    @apply relative inline-grid grid-flow-col items-center justify-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium transition duration-75 outline-none;
+    @apply relative inline-grid grid-flow-col items-center justify-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium transition duration-75;
 
     &:not(.fi-disabled):not([disabled]) {
-        @apply focus-visible:ring-2;
+        @apply focus-visible:outline-2;
     }
 
     &.fi-disabled,
@@ -35,17 +35,17 @@
     }
 
     &.fi-outlined {
-        @apply text-gray-950 shadow-sm ring-1 ring-gray-300 dark:text-white dark:ring-gray-700;
+        @apply text-gray-950 shadow-sm outline-1 outline-gray-300 dark:text-white dark:outline-gray-700;
 
         &:not(.fi-disabled):not([disabled]) {
-            @apply hover:bg-gray-400/10 focus-visible:ring-gray-400/40;
+            @apply hover:bg-gray-400/10 focus-visible:outline-gray-400/40;
         }
 
         &.fi-color {
-            @apply ring-color-600 dark:ring-color-500 text-(--text) dark:text-(--dark-text);
+            @apply outline-color-600 dark:outline-color-500 text-(--text) dark:text-(--dark-text);
 
             &:not(.fi-disabled):not([disabled]) {
-                @apply focus-visible:ring-color-500/40 dark:focus-visible:ring-color-400/40 hover:bg-color-500/10 dark:hover:bg-color-600/10;
+                @apply focus-visible:outline-color-500/40 dark:focus-visible:outline-color-400/40 hover:bg-color-500/10 dark:hover:bg-color-600/10;
             }
 
             & > .fi-icon {
@@ -62,7 +62,7 @@
         }
 
         input:checked + &label {
-            @apply bg-gray-400 text-white ring-0 dark:bg-gray-600;
+            @apply bg-gray-400 text-white outline-0 dark:bg-gray-600;
 
             &:not(.fi-disabled):not([disabled]) {
                 @apply hover:bg-gray-300 dark:hover:bg-gray-500;
@@ -74,7 +74,7 @@
                 @apply bg-(--bg) text-(--text) dark:bg-(--dark-bg) dark:text-(--dark-text);
 
                 &:not(.fi-disabled):not([disabled]) {
-                    @apply focus-visible:ring-color-500/50 dark:focus-visible:ring-color-400/50 hover:bg-(--hover-bg) hover:text-(--hover-text) dark:hover:bg-(--dark-hover-bg) dark:hover:text-(--dark-hover-text);
+                    @apply focus-visible:outline-color-500/50 dark:focus-visible:outline-color-400/50 hover:bg-(--hover-bg) hover:text-(--hover-text) dark:hover:bg-(--dark-hover-bg) dark:hover:text-(--dark-hover-text);
                 }
 
                 & > .fi-icon {
@@ -84,7 +84,7 @@
 
             &label {
                 input:checked + & {
-                    @apply bg-(--bg) text-(--text) ring-0 dark:bg-(--dark-bg) dark:text-(--dark-text);
+                    @apply bg-(--bg) text-(--text) outline-0 dark:bg-(--dark-bg) dark:text-(--dark-text);
                 }
 
                 &:not(.fi-disabled):not([disabled]) {
@@ -93,11 +93,11 @@
                     }
 
                     input:focus-visible + & {
-                        @apply z-10 ring-2 ring-gray-950/10 dark:ring-white/20;
+                        @apply z-10 outline-2 outline-gray-950/10 dark:outline-white/20;
                     }
 
                     input:checked:focus-visible + & {
-                        @apply ring-color-500/50 dark:ring-color-400/50;
+                        @apply outline-color-500/50 dark:outline-color-400/50;
                     }
                 }
             }
@@ -114,7 +114,7 @@
 
     &:not(.fi-color),
     &label {
-        @apply ring-1 ring-gray-950/10 dark:ring-white/20;
+        @apply outline-1 outline-gray-950/10 dark:outline-white/20;
     }
 
     &.fi-labeled-from-sm,
@@ -151,7 +151,7 @@
 }
 
 .fi-btn-group {
-    @apply grid grid-flow-col rounded-lg shadow-sm ring-1 ring-gray-950/10 dark:ring-white/20;
+    @apply grid grid-flow-col rounded-lg shadow-sm outline-1 outline-gray-950/10 dark:outline-white/20;
 
     & > .fi-btn {
         @apply flex-1 rounded-none;
@@ -182,7 +182,7 @@
 
         &:not(.fi-color),
         &label {
-            @apply ring-0;
+            @apply outline-0;
         }
     }
 }
