@@ -3,8 +3,9 @@
 namespace Filament\Tests\Commands;
 
 use Filament\Tests\TestCase;
-use function Pest\Laravel\artisan;
 use Illuminate\Support\Facades\File;
+
+use function Pest\Laravel\artisan;
 
 uses(TestCase::class)
     ->group('integration')
