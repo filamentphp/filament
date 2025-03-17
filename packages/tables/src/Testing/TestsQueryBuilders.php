@@ -70,7 +70,7 @@ class TestsQueryBuilders
             Assert::assertInstanceOf(
                 Constraint::class,
                 $filter,
-                message: "Failed asserting that a query builder with name [{$name}] exists on the [{$livewireClass}] component.",
+                "Failed asserting that a query builder with name [{$name}] exists on the [{$livewireClass}] component.",
             );
 
             return $this;
