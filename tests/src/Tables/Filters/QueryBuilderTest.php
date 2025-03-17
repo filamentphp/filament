@@ -79,5 +79,5 @@ it('can modal actions during text constraint', function () {
         ->queryBuilderTable('content', 'contains', $content)
         ->assertCanSeeTableRecords($post->get())
         ->callTableAction(DeleteAction::class, $post->first())
-        ->assertCanNotSeeTableRecords([$posts->first()]);
+        ->assertCanNotSeeTableRecords($post->get());
 });
