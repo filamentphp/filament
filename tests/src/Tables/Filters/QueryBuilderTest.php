@@ -4,7 +4,9 @@ use Filament\Tests\Models\Post;
 use Filament\Tests\Tables\Fixtures\PostsQueryBuilderTable;
 use Filament\Tests\Tables\TestCase;
 
+use Filament\Tables\Actions\DeleteAction;
 use function Filament\Tests\livewire;
+use function Pest\Laravel\assertSoftDeleted;
 
 uses(TestCase::class);
 
@@ -66,4 +68,17 @@ it('can filter text constraint by `isFilled`', function () {
         ->queryBuilderTable('content', 'isFilled')
         ->assertCanSeeTableRecords(Post::where('content', '<>', null)->where('content', '<>', '')->get())
         ->assertCanNotSeeTableRecords(Post::where('content', null)->orWhere('content', '')->get());
+});
+
+it('can modal actions during text constraint', function () {
+    $posts = Post::factory()->count(10)->create();
+    $content = $posts->first()->content;
+    $post = Post::where('content', $content);
+
+    livewire(PostsQueryBuilderTable::class)
+        ->assertCanSeeTableRecords($posts)
+        ->queryBuilderTable('content', 'contains', $content)
+        ->assertCanSeeTableRecords($post->get())
+        ->callTableAction(DeleteAction::class, $post->first())
+        ->assertCanNotSeeTableRecords([$posts->first()]);
 });
