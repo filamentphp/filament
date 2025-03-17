@@ -326,7 +326,7 @@ trait InteractsWithForms
      */
     protected function cacheForms(): array
     {
-        if($this->isCachingForms()){
+        if ($this->isCachingForms()) {
             return [];
         }
         $this->isCachingForms = true;

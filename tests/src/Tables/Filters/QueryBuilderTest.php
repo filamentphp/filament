@@ -1,12 +1,11 @@
 <?php
 
+use Filament\Tables\Actions\DeleteAction;
 use Filament\Tests\Models\Post;
 use Filament\Tests\Tables\Fixtures\PostsQueryBuilderTable;
 use Filament\Tests\Tables\TestCase;
 
-use Filament\Tables\Actions\DeleteAction;
 use function Filament\Tests\livewire;
-use function Pest\Laravel\assertSoftDeleted;
 
 uses(TestCase::class);
 
