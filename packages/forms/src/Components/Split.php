@@ -4,13 +4,17 @@ namespace Filament\Forms\Components;
 
 use Closure;
 use Filament\Support\Concerns\HasFromBreakpoint;
+use Filament\Support\Concerns\HasGap;
+use Filament\Support\Concerns\HasHorizontalAlignment;
 use Filament\Support\Concerns\HasVerticalAlignment;
 
 class Split extends Component
 {
     use Concerns\EntanglesStateWithSingularRelationship;
     use HasFromBreakpoint;
+    use HasGap;
     use HasVerticalAlignment;
+    use HasHorizontalAlignment;
 
     /**
      * @var view-string
