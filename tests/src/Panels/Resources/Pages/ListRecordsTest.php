@@ -123,7 +123,7 @@ test('table actions will not interfere with database transactions on an error', 
     $transactionLevel = DB::transactionLevel();
 
     try {
-        livewire(PostResource\Pages\ListPosts::class)
+        livewire(ListPosts::class)
             ->callTableAction('randomize_title', $post);
     } catch (Exception $e) {
         // This can be catched and handled somewhere else, code continues...

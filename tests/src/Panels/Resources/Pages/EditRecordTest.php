@@ -117,7 +117,7 @@ test('actions will not interfere with database transactions on an error', functi
     $transactionLevel = DB::transactionLevel();
 
     try {
-        livewire(PostResource\Pages\EditPost::class, [
+        livewire(EditPost::class, [
             'record' => $post->getKey(),
         ])
             ->callAction('randomize_title');
