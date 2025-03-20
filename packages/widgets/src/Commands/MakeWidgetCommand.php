@@ -165,7 +165,7 @@ class MakeWidgetCommand extends Command
             ->prepend('/')
             ->prepend(
                 ! $panel
-                    ? app_path('Livewire/')  // Always use Livewire path when no panel is selected
+                    ? app_path('Livewire/')
                     : ($resource === null ? $path : "{$resourcePath}\\{$resource}\\Widgets\\")
             )
             ->replace('\\', '/')
