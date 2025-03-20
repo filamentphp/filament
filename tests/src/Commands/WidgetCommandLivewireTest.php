@@ -7,22 +7,25 @@ use Illuminate\Support\Facades\File;
 
 use function Pest\Laravel\artisan;
 
-uses(TestCase::class)
-    ->group('integration')
-    ->beforeEach(function () {
-        File::deleteDirectory($this->app->basePath('app/Livewire'));
-    });
+uses(TestCase::class);
 
-it('can create a table widget in livewire directory', function () {
+test('can create a table widget in livewire directory', function () {
+    $widgetPath = $this->app->basePath('app/Livewire/TestWidget.php');
+    
+    if (file_exists($widgetPath)) {
+        unlink($widgetPath);
+    }
+
+    expect(file_exists($widgetPath))->toBeFalse();
+
     artisan('make:filament-widget', [
         'name' => 'TestWidget',
         '--force' => true,
-        '--resource' => 'InvoiceResource',
     ])
         ->expectsQuestion('What type of widget do you want to create?', 'Table')
+        ->expectsQuestion('What is the resource you would like to create this in?', '')
         ->expectsQuestion('Where would you like to create this?', 'App\\Livewire alongside other Livewire components')
         ->assertSuccessful();
 
-    $widgetPath = $this->app->basePath('app/Livewire/TestWidget.php');
     expect(file_exists($widgetPath))->toBeTrue();
 });
