@@ -98,7 +98,7 @@
             >
                 @foreach ($limitedState as $stateItem)
                     <img
-                        src="{{ filled($stateItem) ? $getImageUrl($stateItem) : $defaultImageUrl }}"
+                        src="{{ filled($stateItem) ? ($getImageUrl($stateItem) ?? $defaultImageUrl) : $defaultImageUrl }}"
                         {{
                             $getExtraImgAttributeBag()
                                 ->class([

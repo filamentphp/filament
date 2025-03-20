@@ -81,8 +81,6 @@ trait HasFormComponentActions
             ]);
 
             $result = $action->callAfter() ?? $result;
-
-            $action->commitDatabaseTransaction();
         } catch (Halt $exception) {
             $exception->shouldRollbackDatabaseTransaction() ?
                 $action->rollBackDatabaseTransaction() :
@@ -109,6 +107,8 @@ trait HasFormComponentActions
 
             throw $exception;
         }
+
+        $action->commitDatabaseTransaction();
 
         if (store($this)->has('redirect')) {
             return $result;

@@ -10,6 +10,9 @@ use Filament\Tables\Table;
 use Filament\Tests\Models\Post;
 use Filament\Tests\Panels\Fixtures\Resources\PostResource\Pages;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+use RuntimeException;
 
 class PostResource extends Resource
 {
@@ -57,6 +60,16 @@ class PostResource extends Resource
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\Action::make('randomize_title')
+                    ->databaseTransaction()
+                    ->action(action: function (Post $record) {
+                        DB::afterCommit(function () {
+                            throw new RuntimeException('This exception, happening after the successful commit of the current transaction, should not trigger a rollback by Filament.');
+                        });
+
+                        $record->title = Str::random(10);
+                        $record->save();
+                    }),
                 Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([

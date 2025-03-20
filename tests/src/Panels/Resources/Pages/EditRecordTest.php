@@ -5,6 +5,7 @@ use Filament\Tests\Models\Post;
 use Filament\Tests\Panels\Fixtures\Resources\PostResource;
 use Filament\Tests\Panels\Fixtures\Resources\PostResource\Pages\EditPost;
 use Filament\Tests\Panels\Resources\TestCase;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 use function Filament\Tests\livewire;
@@ -108,4 +109,24 @@ it('can refresh data', function () {
     $page->assertFormSet([
         'title' => $newPostTitle,
     ]);
+});
+
+test('actions will not interfere with database transactions on an error', function () {
+    $post = Post::factory()->create();
+
+    $transactionLevel = DB::transactionLevel();
+
+    try {
+        livewire(PostResource\Pages\EditPost::class, [
+            'record' => $post->getKey(),
+        ])
+            ->callAction('randomize_title');
+    } catch (Exception $e) {
+        // This can be catched and handled somewhere else, code continues...
+    }
+
+    // Original transaction level should be unaffected...
+
+    expect(DB::transactionLevel())
+        ->toBe($transactionLevel);
 });

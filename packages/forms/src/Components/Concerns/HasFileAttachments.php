@@ -117,15 +117,15 @@ trait HasFileAttachments
             return null;
         }
 
-        if ($storage->getVisibility($file) === 'private') {
-            try {
+        try {
+            if ($storage->getVisibility($file) === 'private') {
                 return $storage->temporaryUrl(
                     $file,
                     now()->addMinutes(5),
                 );
-            } catch (Throwable $exception) {
-                // This driver does not support creating temporary URLs.
             }
+        } catch (Throwable $exception) {
+            // This driver does not support creating temporary URLs.
         }
 
         return $storage->url($file);
