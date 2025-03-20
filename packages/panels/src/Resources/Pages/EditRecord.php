@@ -153,8 +153,6 @@ class EditRecord extends Page
             $this->handleRecordUpdate($this->getRecord(), $data);
 
             $this->callHook('afterSave');
-
-            $this->commitDatabaseTransaction();
         } catch (Halt $exception) {
             $exception->shouldRollbackDatabaseTransaction() ?
                 $this->rollBackDatabaseTransaction() :
@@ -166,6 +164,8 @@ class EditRecord extends Page
 
             throw $exception;
         }
+
+        $this->commitDatabaseTransaction();
 
         $this->rememberData();
 
@@ -202,8 +202,6 @@ class EditRecord extends Page
             $this->handleRecordUpdate($this->getRecord(), $data);
 
             $this->callHook('afterSave');
-
-            $this->commitDatabaseTransaction();
         } catch (Halt $exception) {
             $exception->shouldRollbackDatabaseTransaction() ?
                 $this->rollBackDatabaseTransaction() :
@@ -215,6 +213,8 @@ class EditRecord extends Page
 
             throw $exception;
         }
+
+        $this->commitDatabaseTransaction();
 
         $this->rememberData();
     }

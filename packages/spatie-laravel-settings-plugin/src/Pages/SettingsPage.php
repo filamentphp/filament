@@ -81,8 +81,6 @@ class SettingsPage extends Page
             $settings->save();
 
             $this->callHook('afterSave');
-
-            $this->commitDatabaseTransaction();
         } catch (Halt $exception) {
             $exception->shouldRollbackDatabaseTransaction() ?
                 $this->rollBackDatabaseTransaction() :
@@ -94,6 +92,8 @@ class SettingsPage extends Page
 
             throw $exception;
         }
+
+        $this->commitDatabaseTransaction();
 
         $this->rememberData();
 

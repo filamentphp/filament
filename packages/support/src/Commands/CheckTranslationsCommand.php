@@ -126,7 +126,7 @@ class CheckTranslationsCommand extends Command implements PromptsForMissingInput
                             warning("[!] Package filament/{$package} has {$missingKeysCount} missing translation " . Str::plural('key', $missingKeysCount) . " and {$removedKeysCount} removed translation " . Str::plural('key', $removedKeysCount) . " for {$locale}.\n");
                         } elseif ($missingKeysCount > 0) {
                             warning("[!] Package filament/{$package} has {$missingKeysCount} missing translation " . Str::plural('key', $missingKeysCount) . " for {$locale}.\n");
-                        } elseif ($removedKeysCount > 0) {
+                        } else {
                             warning("[!] Package filament/{$package} has {$removedKeysCount} removed translation " . Str::plural('key', $removedKeysCount) . " for {$locale}.\n");
                         }
                     })

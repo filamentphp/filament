@@ -124,8 +124,6 @@ trait InteractsWithInfolists
             ]);
 
             $result = $action->callAfter() ?? $result;
-
-            $action->commitDatabaseTransaction();
         } catch (Halt $exception) {
             $exception->shouldRollbackDatabaseTransaction() ?
                 $action->rollBackDatabaseTransaction() :
@@ -152,6 +150,8 @@ trait InteractsWithInfolists
 
             throw $exception;
         }
+
+        $action->commitDatabaseTransaction();
 
         if (store($this)->has('redirect')) {
             return $result;

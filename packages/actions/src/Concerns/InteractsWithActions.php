@@ -102,8 +102,6 @@ trait InteractsWithActions
             $result = $action->callAfter() ?? $result;
 
             $this->afterActionCalled();
-
-            $action->commitDatabaseTransaction();
         } catch (Halt $exception) {
             $exception->shouldRollbackDatabaseTransaction() ?
                 $action->rollBackDatabaseTransaction() :
@@ -130,6 +128,8 @@ trait InteractsWithActions
 
             throw $exception;
         }
+
+        $action->commitDatabaseTransaction();
 
         if (store($this)->has('redirect')) {
             return $result;
