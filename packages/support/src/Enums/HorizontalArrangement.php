@@ -2,7 +2,7 @@
 
 namespace Filament\Support\Enums;
 
-enum HorizontalAlignment: string
+enum HorizontalArrangement: string
 {
     case Start = 'start';
 

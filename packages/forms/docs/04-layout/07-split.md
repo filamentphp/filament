@@ -32,13 +32,13 @@ The `from()` method is used to control the [Tailwind breakpoint](https://tailwin
 
 ### Horizontal Placement
 
-The `Split` component will act as a **flexbox** when all its children are non-growable (`->grow(false)`) and the Horizontal placement can be managed using `->horizontalAlignment( Filament\Support\Enums\HorizontalAlignment::Evenly )` method. 
-- `HorizontalAlignment::Start` - Justify content to the start of the container.
-- `HorizontalAlignment::Center` - Justify content to the center of the container.
-- `HorizontalAlignment::End` - Justify content to the end of the container.
-- `HorizontalAlignment::Evenly` - Justify content with even spacing between them.
-- `HorizontalAlignment::Between` - Justify content with space between them.
-- `HorizontalAlignment::Around` - Justify content with space around them.
+The `Split` component will act as a **flexbox** when all its children are non-growable (`->grow(false)`) and the Horizontal placement can be managed using `->horizontalArrangement( Filament\Support\Enums\HorizontalArrangement::Evenly )` method.
+- `HorizontalArrangement::Start` - Justify content to the start of the container.
+- `HorizontalArrangement::Center` - Justify content to the center of the container.
+- `HorizontalArrangement::End` - Justify content to the end of the container.
+- `HorizontalArrangement::Evenly` - Justify content with even spacing between them.
+- `HorizontalArrangement::Between` - Justify content with space between them.
+- `HorizontalArrangement::Around` - Justify content with space around them.
 
 ### Gap
 

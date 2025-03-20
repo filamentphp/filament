@@ -5,7 +5,7 @@ namespace Filament\Forms\Components;
 use Closure;
 use Filament\Support\Concerns\HasFromBreakpoint;
 use Filament\Support\Concerns\HasGap;
-use Filament\Support\Concerns\HasHorizontalAlignment;
+use Filament\Support\Concerns\HasHorizontalArrangement;
 use Filament\Support\Concerns\HasVerticalAlignment;
 
 class Split extends Component
@@ -14,7 +14,7 @@ class Split extends Component
     use HasFromBreakpoint;
     use HasGap;
     use HasVerticalAlignment;
-    use HasHorizontalAlignment;
+    use HasHorizontalArrangement;
 
     /**
      * @var view-string

@@ -1,16 +1,16 @@
 @php
     use Filament\Support\Enums\VerticalAlignment;
-    use Filament\Support\Enums\HorizontalAlignment;
+    use Filament\Support\Enums\HorizontalArrangement;
 
     $verticalAlignment = $getVerticalAlignment();
-    $horizontalAlignment = $getHorizontalAlignment();
+    $horizontalArrangement = $getHorizontalArrangement();
 
     if (! $verticalAlignment instanceof VerticalAlignment) {
         $verticalAlignment = filled($verticalAlignment) ? (VerticalAlignment::tryFrom($verticalAlignment) ?? $verticalAlignment) : null;
     }
 
-    if (! $horizontalAlignment instanceof HorizontalAlignment) {
-        $horizontalAlignment = filled($horizontalAlignment) ? (HorizontalAlignment::tryFrom($horizontalAlignment) ?? $horizontalAlignment) : null;
+    if (! $horizontalArrangement instanceof HorizontalArrangement) {
+        $horizontalArrangement = filled($horizontalArrangement) ? (HorizontalArrangement::tryFrom($horizontalArrangement) ?? $horizontalArrangement) : null;
     }
 @endphp
 
@@ -26,90 +26,90 @@
                         VerticalAlignment::Center => 'sm:items-center ',
                         VerticalAlignment::End => 'sm:items-end ',
                         default => 'sm:items-start ',
-                    } . match ($horizontalAlignment) {
-                        HorizontalAlignment::Start => 'sm:justify-start ',
-                        HorizontalAlignment::Center => 'sm:justify-center ',
-                        HorizontalAlignment::End => 'sm:justify-end ',
-                        HorizontalAlignment::Between => 'sm:justify-between ',
-                        HorizontalAlignment::Around => 'sm:justify-around ',
-                        HorizontalAlignment::Evenly => 'sm:justify-evenly ',
-                        HorizontalAlignment::Stretch => 'sm:justify-stretch ',
-                        HorizontalAlignment::Baseline => 'sm:justify-baseline ',
+                    } . match ($horizontalArrangement) {
+                        HorizontalArrangement::Start => 'sm:justify-start ',
+                        HorizontalArrangement::Center => 'sm:justify-center ',
+                        HorizontalArrangement::End => 'sm:justify-end ',
+                        HorizontalArrangement::Between => 'sm:justify-between ',
+                        HorizontalArrangement::Around => 'sm:justify-around ',
+                        HorizontalArrangement::Evenly => 'sm:justify-evenly ',
+                        HorizontalArrangement::Stretch => 'sm:justify-stretch ',
+                        HorizontalArrangement::Baseline => 'sm:justify-baseline ',
                         default => 'sm:justify-normal '
                     },
                     'md' => 'flex-col md:flex-row ' . match ($verticalAlignment) {
                         VerticalAlignment::Center => 'md:items-center ',
                         VerticalAlignment::End => 'md:items-end ',
                         default => 'md:items-start ',
-                    } . match ($horizontalAlignment) {
-                        HorizontalAlignment::Start => 'md:justify-start ',
-                        HorizontalAlignment::Center => 'md:justify-center ',
-                        HorizontalAlignment::End => 'md:justify-end ',
-                        HorizontalAlignment::Between => 'md:justify-between ',
-                        HorizontalAlignment::Around => 'md:justify-around ',
-                        HorizontalAlignment::Evenly => 'md:justify-evenly ',
-                        HorizontalAlignment::Stretch => 'md:justify-stretch ',
-                        HorizontalAlignment::Baseline => 'md:justify-baseline ',
+                    } . match ($horizontalArrangement) {
+                        HorizontalArrangement::Start => 'md:justify-start ',
+                        HorizontalArrangement::Center => 'md:justify-center ',
+                        HorizontalArrangement::End => 'md:justify-end ',
+                        HorizontalArrangement::Between => 'md:justify-between ',
+                        HorizontalArrangement::Around => 'md:justify-around ',
+                        HorizontalArrangement::Evenly => 'md:justify-evenly ',
+                        HorizontalArrangement::Stretch => 'md:justify-stretch ',
+                        HorizontalArrangement::Baseline => 'md:justify-baseline ',
                         default => 'md:justify-normal '
                     },
                     'lg' => 'flex-col lg:flex-row ' . match ($verticalAlignment) {
                         VerticalAlignment::Center => 'lg:items-center ',
                         VerticalAlignment::End => 'lg:items-end ',
                         default => 'lg:items-start ',
-                    } . match ($horizontalAlignment) {
-                        HorizontalAlignment::Start => 'lg:justify-start ',
-                        HorizontalAlignment::Center => 'lg:justify-center ',
-                        HorizontalAlignment::End => 'lg:justify-end ',
-                        HorizontalAlignment::Between => 'lg:justify-between ',
-                        HorizontalAlignment::Around => 'lg:justify-around ',
-                        HorizontalAlignment::Evenly => 'lg:justify-evenly ',
-                        HorizontalAlignment::Stretch => 'lg:justify-stretch ',
-                        HorizontalAlignment::Baseline => 'lg:justify-baseline ',
+                    } . match ($horizontalArrangement) {
+                        HorizontalArrangement::Start => 'lg:justify-start ',
+                        HorizontalArrangement::Center => 'lg:justify-center ',
+                        HorizontalArrangement::End => 'lg:justify-end ',
+                        HorizontalArrangement::Between => 'lg:justify-between ',
+                        HorizontalArrangement::Around => 'lg:justify-around ',
+                        HorizontalArrangement::Evenly => 'lg:justify-evenly ',
+                        HorizontalArrangement::Stretch => 'lg:justify-stretch ',
+                        HorizontalArrangement::Baseline => 'lg:justify-baseline ',
                         default => 'lg:justify-normal '
                     },
                     'xl' => 'flex-col xl:flex-row ' . match ($verticalAlignment) {
                         VerticalAlignment::Center => 'xl:items-center ',
                         VerticalAlignment::End => 'xl:items-end ',
                         default => 'xl:items-start ',
-                    } . match ($horizontalAlignment) {
-                        HorizontalAlignment::Start => 'xl:justify-start ',
-                        HorizontalAlignment::Center => 'xl:justify-center ',
-                        HorizontalAlignment::End => 'xl:justify-end ',
-                        HorizontalAlignment::Between => 'xl:justify-between ',
-                        HorizontalAlignment::Around => 'xl:justify-around ',
-                        HorizontalAlignment::Evenly => 'xl:justify-evenly ',
-                        HorizontalAlignment::Stretch => 'xl:justify-stretch ',
-                        HorizontalAlignment::Baseline => 'xl:justify-baseline ',
+                    } . match ($horizontalArrangement) {
+                        HorizontalArrangement::Start => 'xl:justify-start ',
+                        HorizontalArrangement::Center => 'xl:justify-center ',
+                        HorizontalArrangement::End => 'xl:justify-end ',
+                        HorizontalArrangement::Between => 'xl:justify-between ',
+                        HorizontalArrangement::Around => 'xl:justify-around ',
+                        HorizontalArrangement::Evenly => 'xl:justify-evenly ',
+                        HorizontalArrangement::Stretch => 'xl:justify-stretch ',
+                        HorizontalArrangement::Baseline => 'xl:justify-baseline ',
                         default => 'xl:justify-normal '
                     },
                     '2xl' => 'flex-col 2xl:flex-row ' . match ($verticalAlignment) {
                         VerticalAlignment::Center => '2xl:items-center ',
                         VerticalAlignment::End => '2xl:items-end ',
                         default => '2xl:items-start ',
-                    } . match ($horizontalAlignment) {
-                        HorizontalAlignment::Start => '2xl:justify-start ',
-                        HorizontalAlignment::Center => '2xl:justify-center ',
-                        HorizontalAlignment::End => '2xl:justify-end ',
-                        HorizontalAlignment::Between => '2xl:justify-between ',
-                        HorizontalAlignment::Around => '2xl:justify-around ',
-                        HorizontalAlignment::Evenly => '2xl:justify-evenly ',
-                        HorizontalAlignment::Stretch => '2xl:justify-stretch ',
-                        HorizontalAlignment::Baseline => '2xl:justify-baseline ',
+                    } . match ($horizontalArrangement) {
+                        HorizontalArrangement::Start => '2xl:justify-start ',
+                        HorizontalArrangement::Center => '2xl:justify-center ',
+                        HorizontalArrangement::End => '2xl:justify-end ',
+                        HorizontalArrangement::Between => '2xl:justify-between ',
+                        HorizontalArrangement::Around => '2xl:justify-around ',
+                        HorizontalArrangement::Evenly => '2xl:justify-evenly ',
+                        HorizontalArrangement::Stretch => '2xl:justify-stretch ',
+                        HorizontalArrangement::Baseline => '2xl:justify-baseline ',
                         default => '2xl:justify-normal '
                     },
                     default => match ($verticalAlignment) {
                         VerticalAlignment::Center => 'items-center ',
                         VerticalAlignment::End => 'items-end ',
                         default => 'items-start ',
-                    } . match ($horizontalAlignment) {
-                        HorizontalAlignment::Start => 'justify-start ',
-                        HorizontalAlignment::Center => 'justify-center ',
-                        HorizontalAlignment::End => 'justify-end ',
-                        HorizontalAlignment::Between => 'justify-between ',
-                        HorizontalAlignment::Around => 'justify-around ',
-                        HorizontalAlignment::Evenly => 'justify-evenly ',
-                        HorizontalAlignment::Stretch => 'justify-stretch ',
-                        HorizontalAlignment::Baseline => 'justify-baseline ',
+                    } . match ($horizontalArrangement) {
+                        HorizontalArrangement::Start => 'justify-start ',
+                        HorizontalArrangement::Center => 'justify-center ',
+                        HorizontalArrangement::End => 'justify-end ',
+                        HorizontalArrangement::Between => 'justify-between ',
+                        HorizontalArrangement::Around => 'justify-around ',
+                        HorizontalArrangement::Evenly => 'justify-evenly ',
+                        HorizontalArrangement::Stretch => 'justify-stretch ',
+                        HorizontalArrangement::Baseline => 'justify-baseline ',
                         default => 'justify-normal '
                     },
                 },
