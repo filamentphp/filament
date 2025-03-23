@@ -252,20 +252,8 @@ export default function fileUploadFormComponent({
                 this.pond.files = await this.getFiles()
             })
 
-            this.pond.on('reorderfiles', async (files) => {
-                const orderedFileKeys = files
-                    .map((file) =>
-                        file.source instanceof File
-                            ? file.serverId
-                            : (this.uploadedFileIndex[file.source] ?? null),
-                    ) // file.serverId is null for a file that is not yet uploaded
-                    .filter((fileKey) => fileKey)
-
-                await reorderUploadedFilesUsing(
-                    shouldAppendFiles
-                        ? orderedFileKeys
-                        : orderedFileKeys.reverse(),
-                )
+            this.pond.on('reorderfiles', async () => {
+                await this.updateFileOrder()
             })
 
             this.pond.on('initfile', async (fileItem) => {
@@ -318,22 +306,8 @@ export default function fileUploadFormComponent({
                     return
                 }
 
-                // Get the current order as displayed in FilePond.
-                const orderedFileKeys = this.pond
-                    .getFiles()
-                    .map((file) => {
-                        return file.source instanceof File
-                            ? file.serverId
-                            : (this.uploadedFileIndex[file.source] ?? null)
-                    })
-                    .filter((fileKey) => fileKey)
-
-                // Pass the correct order to the backend.
-                await reorderUploadedFilesUsing(
-                    shouldAppendFiles
-                        ? orderedFileKeys
-                        : orderedFileKeys.reverse(),
-                )
+                // Get the current order as displayed in FilePond and pass it to the backend.
+                await this.updateFileOrder()
 
                 this.dispatchFormEvent('form-processing-finished')
             }
@@ -426,6 +400,21 @@ export default function fileUploadFormComponent({
             }
 
             return shouldAppendFiles ? files : files.reverse()
+        },
+
+        updateFileOrder: async function () {
+            const orderedFileKeys = this.pond
+                .getFiles()
+                .map((file) =>
+                    file.source instanceof File
+                        ? file.serverId
+                        : (this.uploadedFileIndex[file.source] ?? null),
+                )
+                .filter((fileKey) => fileKey)
+
+            await reorderUploadedFilesUsing(
+                shouldAppendFiles ? orderedFileKeys : orderedFileKeys.reverse(),
+            )
         },
 
         insertDownloadLink: function (file) {
