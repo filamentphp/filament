@@ -303,6 +303,7 @@ export default function fileUploadFormComponent({
             })
 
             const handleFileProcessing = async () => {
+                // Wait until all files have finished processing
                 if (
                     this.pond
                         .getFiles()
@@ -317,6 +318,18 @@ export default function fileUploadFormComponent({
                     return
                 }
 
+                // Get the current order as displayed in FilePond.
+                const orderedFileKeys = this.pond.getFiles().map((file) => {
+                    return file.source instanceof File
+                        ? file.serverId
+                        : (this.uploadedFileIndex[file.source] ?? null)
+                }).filter(fileKey => fileKey)
+                
+                // Pass the correct order to the backend.
+                await reorderUploadedFilesUsing(
+                    shouldAppendFiles ? orderedFileKeys : orderedFileKeys.reverse()
+                )
+                
                 this.dispatchFormEvent('form-processing-finished')
             }
 
