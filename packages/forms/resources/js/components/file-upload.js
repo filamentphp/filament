@@ -319,17 +319,22 @@ export default function fileUploadFormComponent({
                 }
 
                 // Get the current order as displayed in FilePond.
-                const orderedFileKeys = this.pond.getFiles().map((file) => {
-                    return file.source instanceof File
-                        ? file.serverId
-                        : (this.uploadedFileIndex[file.source] ?? null)
-                }).filter(fileKey => fileKey)
-                
+                const orderedFileKeys = this.pond
+                    .getFiles()
+                    .map((file) => {
+                        return file.source instanceof File
+                            ? file.serverId
+                            : (this.uploadedFileIndex[file.source] ?? null)
+                    })
+                    .filter((fileKey) => fileKey)
+
                 // Pass the correct order to the backend.
                 await reorderUploadedFilesUsing(
-                    shouldAppendFiles ? orderedFileKeys : orderedFileKeys.reverse()
+                    shouldAppendFiles
+                        ? orderedFileKeys
+                        : orderedFileKeys.reverse(),
                 )
-                
+
                 this.dispatchFormEvent('form-processing-finished')
             }
 
