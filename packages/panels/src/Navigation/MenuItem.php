@@ -3,19 +3,19 @@
 namespace Filament\Navigation;
 
 use Closure;
+use Filament\Forms\Components\Concerns\CanBeHidden;
+use Filament\Forms\Components\Concerns\HasLabel;
 use Filament\Support\Components\Component;
+use Filament\Support\Concerns\HasColor;
+use Filament\Support\Concerns\HasIcon;
 use Laravel\SerializableClosure\Serializers\Native;
 
 class MenuItem extends Component
 {
-    /**
-     * @var string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | Closure | null
-     */
-    protected string | array | Closure | null $color = null;
-
-    protected string | Closure | null $icon = null;
-
-    protected string | Closure | null $label = null;
+    use HasColor;
+    use HasIcon;
+    use HasLabel;
+    use CanBeHidden;
 
     protected string | Closure | null $postAction = null;
 
@@ -25,10 +25,6 @@ class MenuItem extends Component
 
     protected bool | Closure $shouldOpenUrlInNewTab = false;
 
-    protected bool | Closure $isHidden = false;
-
-    protected bool | Closure $isVisible = true;
-
     final public function __construct() {}
 
     public static function make(): static
@@ -37,30 +33,6 @@ class MenuItem extends Component
         $static->configure();
 
         return $static;
-    }
-
-    /**
-     * @param  string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | Closure | null  $color
-     */
-    public function color(string | array | Closure | null $color): static
-    {
-        $this->color = $color;
-
-        return $this;
-    }
-
-    public function icon(string | Closure | null $icon): static
-    {
-        $this->icon = $icon;
-
-        return $this;
-    }
-
-    public function label(string | Closure | null $label): static
-    {
-        $this->label = $label;
-
-        return $this;
     }
 
     public function postAction(string | Closure | null $action): static
@@ -90,52 +62,6 @@ class MenuItem extends Component
         $this->shouldOpenUrlInNewTab = $condition;
 
         return $this;
-    }
-
-    public function hidden(bool | Closure $condition = true): static
-    {
-        $this->isHidden = $condition;
-
-        return $this;
-    }
-
-    public function visible(bool | Closure $condition = true): static
-    {
-        $this->isVisible = $condition;
-
-        return $this;
-    }
-
-    public function isVisible(): bool
-    {
-        return ! $this->isHidden();
-    }
-
-    public function isHidden(): bool
-    {
-        if ($this->evaluate($this->isHidden)) {
-            return true;
-        }
-
-        return ! $this->evaluate($this->isVisible);
-    }
-
-    /**
-     * @return string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null
-     */
-    public function getColor(): string | array | null
-    {
-        return $this->evaluate($this->color);
-    }
-
-    public function getIcon(): ?string
-    {
-        return $this->evaluate($this->icon);
-    }
-
-    public function getLabel(): ?string
-    {
-        return $this->evaluate($this->label);
     }
 
     public function getPostAction(): ?string
