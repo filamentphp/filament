@@ -118,6 +118,13 @@ Filament has a storage disk defined in the [configuration](#publishing-configura
 
 The `public` disk, while great for easy local development, is not suitable for production. It does not support file visibility, so features of Filament such as [file uploads](../forms/fields/file-upload) will create public files. In production, you need to use a production-ready disk such as `s3` with a private access policy, to prevent unauthorized access to the uploaded files.
 
+### In case you cannot access the panel in production due to an error in livewire.js file
+
+In case you are on production and you encounter a 404 error in **livewire.js** file, run the following command:
+```
+php artisan livewire:publish --assets
+```
+
 ## Publishing configuration
 
 You can publish the Filament package configuration (if needed) using the following command:
