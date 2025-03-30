@@ -45,6 +45,8 @@ class Group extends Component
 
     protected bool $isDate = false;
 
+    protected bool $shouldTranslateLabel = false;
+
     protected string $evaluationIdentifier = 'group';
 
     final public function __construct(?string $id = null)
@@ -84,6 +86,13 @@ class Group extends Component
     public function id(string $id): static
     {
         $this->id = $id;
+
+        return $this;
+    }
+
+    public function translateLabel(bool $shouldTranslateLabel = true): static
+    {
+        $this->shouldTranslateLabel = $shouldTranslateLabel;
 
         return $this;
     }
@@ -183,12 +192,14 @@ class Group extends Component
 
     public function getLabel(): string
     {
-        return $this->evaluate($this->label) ?? (string) str($this->getId())
+        $label = $this->evaluate($this->label) ?? (string) str($this->getId())
             ->beforeLast('.')
             ->afterLast('.')
             ->kebab()
             ->replace(['-', '_'], ' ')
             ->ucfirst();
+
+        return $this->shouldTranslateLabel ? __($label) : $label;
     }
 
     public function getDescription(Model $record, ?string $title): ?string
