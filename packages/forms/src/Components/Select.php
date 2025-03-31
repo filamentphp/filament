@@ -988,7 +988,8 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         $this->saveRelationshipsUsing(static function (Select $component, Model $record, $state) use ($modifyQueryUsing) {
             $relationship = $component->getRelationship();
 
-            if (($relationship instanceof HasOne) || ($relationship instanceof HasMany)) {
+            if (str($component->getStatePath())->substrCount('.') <= 1
+                && ($relationship instanceof HasOne) || ($relationship instanceof HasMany)) {
                 $query = $relationship->getQuery();
 
                 if ($modifyQueryUsing) {
