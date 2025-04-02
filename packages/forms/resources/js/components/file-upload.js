@@ -409,7 +409,7 @@ export default function fileUploadFormComponent({
                     file.source instanceof File
                         ? file.serverId
                         : (this.uploadedFileIndex[file.source] ?? null),
-                )
+                ) // `file.serverId` is `null` for a file that is not yet uploaded
                 .filter((fileKey) => fileKey)
 
             await reorderUploadedFilesUsing(
