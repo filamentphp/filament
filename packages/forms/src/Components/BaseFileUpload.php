@@ -703,10 +703,6 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
      */
     public function reorderUploadedFiles(array $fileKeys): void
     {
-        if (! $this->isReorderable) {
-            return;
-        }
-
         $fileKeys = array_flip($fileKeys);
 
         $state = collect($this->getState())
