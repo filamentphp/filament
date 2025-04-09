@@ -1,5 +1,6 @@
 @props([
     'collapsible' => false,
+    'collapsed' => false,
     'description' => null,
     'label' => null,
     'start' => null,
@@ -9,6 +10,9 @@
 <div
     @if ($collapsible)
         x-on:click="toggleCollapseGroup(@js($title))"
+        @if ($collapsed)
+            x-init="collapsedGroups.push(@js($title))"
+        @endif
     @endif
     {{
         $attributes->class([
@@ -43,7 +47,10 @@
             :label="filled($label) ? ($label . ': ' . $title) : $title"
             size="sm"
             :x-bind:aria-expanded="'! isGroupCollapsed(' . \Illuminate\Support\Js::from($title) . ')'"
-            :x-bind:class="'isGroupCollapsed(' . \Illuminate\Support\Js::from($title) . ') && \'-rotate-180\''"
+            :x-bind:class="'{\'-rotate-180\' : isGroupCollapsed(' . \Illuminate\Support\Js::from($title) . ')}'"
+            @class([
+                '-rotate-180' => $collapsed,
+            ])
         />
     @endif
 </div>
