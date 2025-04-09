@@ -62,7 +62,6 @@ class Group extends Component
         return $static;
     }
 
-
     public function collapsible(bool $condition = true): static
     {
         $this->isCollapsible = $condition;
