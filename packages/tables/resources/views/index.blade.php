@@ -459,6 +459,7 @@
 
                                 <x-filament-tables::group.header
                                     :collapsible="$group->isCollapsible()"
+                                    :collapsed="$group->isCollapsed()"
                                     :description="$group->getDescription($record, $recordGroupTitle)"
                                     :label="$group->isTitlePrefixedWithLabel() ? $group->getLabel() : null"
                                     :title="$recordGroupTitle"
@@ -1042,6 +1043,7 @@
                                         >
                                             <x-filament-tables::group.header
                                                 :collapsible="$group->isCollapsible()"
+                                                :collapsed="$group->isCollapsed()"
                                                 :description="$group->getDescription($record, $recordGroupTitle)"
                                                 :label="$group->isTitlePrefixedWithLabel() ? $group->getLabel() : null"
                                                 :title="$recordGroupTitle"
@@ -1077,6 +1079,7 @@
                                     :x-sortable-item="$isReordering ? $recordKey : null"
                                     @class([
                                         'group cursor-move' => $isReordering,
+                                        'hidden' => $group?->isCollapsed(),
                                         ...$getRecordClasses($record),
                                     ])
                                 >
