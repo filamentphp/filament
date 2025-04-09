@@ -41,7 +41,7 @@ class Group extends Component
 
     protected bool $isCollapsible = false;
 
-    protected bool | Closure $isCollapsed = true;
+    protected bool | Closure $isCollapsed = false;
 
     protected bool $isTitlePrefixedWithLabel = true;
 
