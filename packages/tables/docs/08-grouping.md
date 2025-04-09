@@ -202,6 +202,25 @@ public function table(Table $table): Table
 }
 ```
 
+### Collapsing groups by default
+
+By default, the groups will be expanded to show each individual item within the group.  To default a specific group to showing only the headers use the `collapsed()` method:
+
+```php
+use Filament\Tables\Grouping\Group;
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->groups([
+            Group::make('author.name')
+                ->collapsible()
+                ->collapsed(),
+        ]);
+}
+```
+
 ## Summarising groups
 
 You can use [summaries](summaries) with groups to display a summary of the records inside a group. This works automatically if you choose to add a summariser to a column in a grouped table.
