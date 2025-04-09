@@ -41,6 +41,8 @@ class Group extends Component
 
     protected bool $isCollapsible = false;
 
+    protected bool | Closure $isCollapsed = true;
+
     protected bool $isTitlePrefixedWithLabel = true;
 
     protected bool $isDate = false;
@@ -60,11 +62,25 @@ class Group extends Component
         return $static;
     }
 
+
     public function collapsible(bool $condition = true): static
     {
         $this->isCollapsible = $condition;
 
         return $this;
+    }
+
+    public function collapsed(bool | Closure $condition = true): static
+    {
+        $this->collapsible();
+        $this->isCollapsed = $condition;
+
+        return $this;
+    }
+
+    public function isCollapsed(): bool
+    {
+        return (bool) $this->evaluate($this->isCollapsed);
     }
 
     public function column(?string $column): static
