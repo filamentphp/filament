@@ -3,6 +3,7 @@
 namespace Filament\Tables\Columns\Concerns;
 
 use Closure;
+use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Contracts\HasTable;
 use Illuminate\Support\Arr;
 
@@ -39,6 +40,24 @@ trait CanBeHidden
         return $this;
     }
 
+    /**
+     * @param  string|array<string>  $tabs
+     */
+    public function hiddenOnTab(string | array $tabs): static
+    {
+        $this->hidden(static function (ListRecords $livewire) use ($tabs): bool {
+            foreach (Arr::wrap($tabs) as $tab) {
+                if ($livewire->activeTab === $tab) {
+                    return true;
+                }
+            }
+
+            return false;
+        });
+
+        return $this;
+    }
+
     public function visible(bool | Closure $condition = true): static
     {
         $this->isVisible = $condition;
@@ -54,6 +73,24 @@ trait CanBeHidden
         $this->visible(static function (HasTable $livewire) use ($livewireComponents): bool {
             foreach (Arr::wrap($livewireComponents) as $livewireComponent) {
                 if ($livewire instanceof $livewireComponent) {
+                    return true;
+                }
+            }
+
+            return false;
+        });
+
+        return $this;
+    }
+
+    /**
+     * @param  string|array<string>  $tabs
+     */
+    public function visibleOnTab(string | array $tabs): static
+    {
+        $this->visible(static function (ListRecords $livewire) use ($tabs): bool {
+            foreach (Arr::wrap($tabs) as $tab) {
+                if ($livewire->activeTab === $tab) {
                     return true;
                 }
             }
