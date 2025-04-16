@@ -660,7 +660,7 @@ public function getXlsxWriterOptions(): ?Options
 
 ### Writer before close
 
-If you want to customize the XLSX writer before it is closed, you can override the `configureXlsxWriterBeforeClosing()` method on the exporter class. This method receives the `Writer` instance as a parameter, and you can modify it before it is closed:
+If you want to customize the XLSX writer before it is closed, you can override the `configureXlsxWriterBeforeClose()` method on the exporter class. This method receives the `Writer` instance as a parameter, and you can modify it before it is closed:
 
 ```php
 use OpenSpout\Writer\XLSX\Entity\SheetView;
