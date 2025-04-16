@@ -225,6 +225,13 @@ class CheckboxList extends Field implements Contracts\CanDisableOptions, Contrac
                 return;
             }
 
+            // For multiple state with personal pivotData
+            if (static::isPersonalPivotData($pivotData, $state ?? [])) {
+                $relationship->sync($pivotData, detaching: false);
+
+                return;
+            }
+
             $relationship->syncWithPivotValues($state ?? [], $pivotData, detaching: false);
         });
 

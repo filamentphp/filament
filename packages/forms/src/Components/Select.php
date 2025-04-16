@@ -1045,6 +1045,13 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
                 return;
             }
 
+            // For multiple state with personal pivotData
+            if (static::isPersonalPivotData($pivotData, $state)) {
+                $relationship->sync($pivotData, detaching: false);
+
+                return;
+            }
+
             $relationship->syncWithPivotValues($state, $pivotData, detaching: false);
         });
 
