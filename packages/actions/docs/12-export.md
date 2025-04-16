@@ -602,6 +602,8 @@ You can only specify a single character, otherwise an exception will be thrown.
 
 ## Customizing XLSX files
 
+### Styling all cells
+
 If you want to style the cells of the XLSX file, you may override the `getXlsxCellStyle()` method on the exporter class, returning an [OpenSpout `Style` object](https://github.com/openspout/openspout/blob/4.x/docs/documentation.md#styling):
 
 ```php
@@ -614,6 +616,8 @@ public function getXlsxCellStyle(): ?Style
         ->setFontName('Consolas');
 }
 ```
+
+### Styling all header cells
 
 If you want to use a different style for the header cells of the XLSX file only, you may override the `getXlsxHeaderCellStyle()` method on the exporter class, returning an [OpenSpout `Style` object](https://github.com/openspout/openspout/blob/4.x/docs/documentation.md#styling):
 
@@ -637,6 +641,8 @@ public function getXlsxHeaderCellStyle(): ?Style
 }
 ```
 
+### Writer options (creating)
+
 Alternatively, if you want to pass "options" to the [OpenSpout XLSX `Writer`](https://github.com/openspout/openspout/blob/4.x/docs/documentation.md#column-widths), you can return an `OpenSpout\Writer\XLSX\Options` instance from the `getXlsxWriterOptions()` method of the exporter class:
 
 ```php
@@ -651,6 +657,8 @@ public function getXlsxWriterOptions(): ?Options
     return $options;
 }
 ```
+
+### Writer before close
 
 If you want to customize the XLSX writer before it is closed, you can override the `configureXlsxWriterBeforeClosing()` method on the exporter class. This method receives the `Writer` instance as a parameter, and you can modify it before it is closed:
 
@@ -671,6 +679,63 @@ public function configureXlsxWriterBeforeClose(Writer $writer): Writer
     return $writer;
 }
 ```
+
+### Styling an entire column
+
+To apply a consistent style to all cells in a column, use the `xlsxCellColumnStyleUsing()` method:
+
+```php
+use Filament\Actions\Exports\ExportColumn;
+use OpenSpout\Common\Entity\Style\Style;
+
+ExportColumn::make('price')
+    ->xlsxCellColumnStyleUsing(fn (): Style => (new Style())
+        ->setFontBold()
+        ->setFontSize(12)
+        ->setFontColor(Color::rgb(255, 0, 0)) // Red
+    )
+```
+
+### Styling a cell based on its value
+
+To dynamically style cells based on their values, use the `xlsxCellColumnStyleFromStateUsing()` method:
+
+```php
+use Filament\Actions\Exports\ExportColumn;
+use OpenSpout\Common\Entity\Style\Style;
+
+ExportColumn::make('status')
+    ->xlsxCellColumnStyleFromStateUsing(fn (string $state): ?Style => match ($state) {
+        'active' => (new Style())->setFontColor(Color::rgb(0, 255, 0)), // Green
+        'inactive' => (new Style())->setFontColor(Color::rgb(255, 0, 0)), // Red
+        default => null,
+    })
+```
+
+### Combining styles
+
+If you define both a general column style and a value-based style, the styles will be merged automatically. In cases where the same styles are defined with different values, the value-based style takes precedence over the general column style.
+
+```php
+use Filament\Actions\Exports\ExportColumn;
+use OpenSpout\Common\Entity\Style\Style;
+
+ExportColumn::make('quantity')
+    ->xlsxCellColumnStyleUsing(fn (): Style => (new Style())->setFontBold()->setFontColor(Color::rgb(0, 0, 255))) // Blue
+    ->xlsxCellColumnStyleFromStateUsing(fn ($state): ?Style => match (true) {
+            $state > 30 => (new Style())->setFontColor(Color::rgb(0, 255, 0)), // Green
+            $state > 20 => (new Style())->setFontColor(Color::rgb(255, 0, 0)), // Red
+            default => null,
+        }
+    )
+```
+
+|id|name|quantity|
+|--|----|--------|
+|1 |Product A|**<span style="color:red">25</span>**|
+|2 |Product B|**<span style="color:green">35</span>**|
+|3 |Product C|**<span style="color:blue">15</span>**|
+
 
 ## Customizing the export job
 
