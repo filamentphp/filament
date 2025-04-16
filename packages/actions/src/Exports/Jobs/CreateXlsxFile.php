@@ -11,6 +11,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Http\File;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Arr;
 use League\Csv\Reader as CsvReader;
 use League\Csv\Statement;
 use OpenSpout\Common\Entity\Row;
@@ -52,13 +53,23 @@ class CreateXlsxFile implements ShouldQueue
 
         $csvDelimiter = $this->exporter::getCsvDelimiter();
 
-        $writeRowsFromFile = function (string $file, ?Style $style = null) use ($csvDelimiter, $disk, $writer): void {
+        $exportColumnsByIndex = array_values($this->exporter->getCachedColumns());
+
+        $writeRowsFromFile = function (string $file, bool $isHeader, ?Style $style = null) use ($csvDelimiter, $disk, $writer, $exportColumnsByIndex): void {
             $csvReader = CsvReader::createFromStream($disk->readStream($file));
             $csvReader->setDelimiter($csvDelimiter);
             $csvResults = (new Statement)->process($csvReader);
 
             foreach ($csvResults->getRecords() as $row) {
-                $writer->addRow(Row::fromValues($row, $style));
+                if ($isHeader) {
+                    $writer->addRow(Row::fromValues($row, $style));
+                } else {
+                    $columnsFormats = Arr::map(
+                        $row,
+                        fn (string $value, $index) => $exportColumnsByIndex[$index]->getXlsxCellColumnStyle($value)
+                    );
+                    $writer->addRow(Row::fromValuesWithStyles($row, $style, $columnsFormats));
+                }
             }
         };
 
@@ -66,6 +77,7 @@ class CreateXlsxFile implements ShouldQueue
 
         $writeRowsFromFile(
             $this->export->getFileDirectory() . DIRECTORY_SEPARATOR . 'headers.csv',
+            true,
             $this->exporter->getXlsxHeaderCellStyle() ?? $cellStyle,
         );
 
@@ -78,7 +90,7 @@ class CreateXlsxFile implements ShouldQueue
                 continue;
             }
 
-            $writeRowsFromFile($file, $cellStyle);
+            $writeRowsFromFile($file, false, $cellStyle);
         }
 
         $this->exporter->configureXlsxWriterBeforeClose($writer);

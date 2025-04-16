@@ -15,6 +15,7 @@ class ExportColumn extends Component
 {
     use CanAggregateRelatedModels;
     use Concerns\CanFormatState;
+    use Concerns\CanStyleXlsxCellColumn;
     use HasCellState;
 
     protected string $name;
