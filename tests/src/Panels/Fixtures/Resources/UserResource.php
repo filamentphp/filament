@@ -26,6 +26,44 @@ class UserResource extends Resource
             ->schema([
                 Forms\Components\TextInput::make('name')->required(),
                 Forms\Components\TextInput::make('email')->required(),
+                Forms\Components\TextInput::make('password')->required()->hiddenOn(Pages\EditUser::class),
+
+                Forms\Components\Section::make('Teams')
+                    ->hiddenOn(Pages\EditUser::class)
+                    ->schema([
+                        Forms\Components\Select::make('team_id')
+                            ->multiple()
+                            ->hiddenOn(Pages\CreateUser::class)
+                            ->relationship(
+                                name          : 'teams',
+                                titleAttribute: 'name',
+                            )
+                            ->pivotData(
+                                fn (Forms\Get $get, array $state): array => collect($state)
+                                    ->mapWithKeys(fn ($team, $index) => [
+                                        $team => [
+                                            'role' => $get('role') === 'admin' && $index === 0 ? 'owner' : $get('role'),
+                                            'created_at' => now(),
+                                        ],
+                                    ])
+                                    ->toArray()
+                            ),
+
+                        Forms\Components\Select::make('team_id')
+                            ->multiple()
+                            ->hiddenOn(Pages\CreateUserWithPersonalPivotData::class)
+                            ->relationship(
+                                name          : 'teams',
+                                titleAttribute: 'name',
+                            )
+                            ->pivotData([
+                                'role' => 'admin',
+                            ]),
+
+                        Forms\Components\Select::make('role')
+                            ->options(['admin', 'user'])
+                            ->dehydrated(false),
+                    ]),
             ]);
     }
 

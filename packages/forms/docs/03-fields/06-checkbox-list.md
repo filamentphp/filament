@@ -274,6 +274,24 @@ CheckboxList::make('primaryTechnologies')
     ])
 ```
 
+Or you can specify personalized pivot data values
+
+```php
+use Filament\Forms\Components\Select;
+
+CheckboxList::make('technologies')
+    ->relationship(name: 'technologies', titleAttribute: 'name')
+    ->pivotData(
+        fn (array $state): array => collect($state)
+            ->mapWithKeys(fn ($technology, $index) => [
+                $technology => [
+                    'is_primary' => $index === 0, // set `is_primary` only for first technology
+                ],
+            ])
+            ->toArray()
+    )
+```
+
 ## Setting a custom no search results message
 
 When you're using a searchable checkbox list, you may want to display a custom message when no search results are found. You can do this using the `noSearchResultsMessage()` method:

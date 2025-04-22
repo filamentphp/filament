@@ -281,6 +281,25 @@ Select::make('primaryTechnologies')
     ])
 ```
 
+Or you can specify personalized pivot data values
+
+```php
+use Filament\Forms\Components\Select;
+
+Select::make('technologies')
+    ->relationship(name: 'technologies', titleAttribute: 'name')
+    ->multiple()
+    ->pivotData(
+        fn (array $state): array => collect($state)
+            ->mapWithKeys(fn ($technology, $index) => [
+                $technology => [
+                    'is_primary' => $index === 0, // set `is_primary` only for first technology
+                ],
+            ])
+            ->toArray()
+    )
+```
+
 ### Creating a new option in a modal
 
 You may define a custom form that can be used to create a new record and attach it to the `BelongsTo` relationship:
