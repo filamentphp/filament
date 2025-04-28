@@ -4,21 +4,23 @@ namespace Filament\Tables\Table\Concerns;
 
 use Closure;
 use Illuminate\Database\Eloquent\Model;
-
+use Illuminate\View\ComponentAttributeBag;
 trait HasRecordUrl
 {
-    protected bool | Closure $shouldOpenRecordUrlInNewTab = false;
+    protected bool|Closure $shouldOpenRecordUrlInNewTab = false;
 
-    protected string | Closure | null $recordUrl = null;
+    protected string|Closure|null $recordUrl = null;
 
-    public function openRecordUrlInNewTab(bool | Closure $condition = true): static
+    protected array $recordUrlExtraAttributes = [];
+
+    public function openRecordUrlInNewTab(bool|Closure $condition = true): static
     {
         $this->shouldOpenRecordUrlInNewTab = $condition;
 
         return $this;
     }
 
-    public function recordUrl(string | Closure | null $url, bool | Closure $shouldOpenInNewTab = false): static
+    public function recordUrl(string|Closure|null $url, bool|Closure $shouldOpenInNewTab = false): static
     {
         $this->openRecordUrlInNewTab($shouldOpenInNewTab);
         $this->recordUrl = $url;
@@ -35,7 +37,7 @@ trait HasRecordUrl
             ],
             typedInjections: [
                 Model::class => $record,
-                $record::class => $record,
+                    $record::class => $record,
             ],
         );
     }
@@ -49,8 +51,36 @@ trait HasRecordUrl
             ],
             typedInjections: [
                 Model::class => $record,
-                $record::class => $record,
+                    $record::class => $record,
             ],
         );
+    }
+
+    public function recordUrlextraAttributes(array|Closure $attributes, bool $merge = false): static
+    {
+        if ($merge) {
+            $this->recordUrlextraAttributes[] = $attributes;
+        } else {
+            $this->recordUrlextraAttributes = [$attributes];
+        }
+
+        return $this;
+    }
+
+
+    public function getRecordUrlExtraAttributes(): array
+    {
+        $temporaryAttributeBag = new ComponentAttributeBag;
+
+        foreach ($this->recordUrlextraAttributes as $recordUrlextraAttributes) {
+            $temporaryAttributeBag = $temporaryAttributeBag->merge($this->evaluate($recordUrlextraAttributes));
+        }
+
+        return $temporaryAttributeBag->getAttributes();
+    }
+
+    public function getExtraAttributeBag(): ComponentAttributeBag
+    {
+        return new ComponentAttributeBag($this->getExtraAttributes());
     }
 }
