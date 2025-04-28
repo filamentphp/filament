@@ -140,6 +140,21 @@ public function table(Table $table): Table
 }
 ```
 
+You may adding extra attributes to the record URL
+
+```php
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->recordUrlExtraAttributes([
+            'class' => 'underline',
+            'wire:navigate.hover' => true,
+        ]);
+}
+```
+
 If you'd like to [override the URL](columns/getting-started#opening-urls) for a specific column, or instead [run an action](columns/getting-started#running-actions) when a column is clicked, see the [columns documentation](columns/getting-started#opening-urls).
 
 ## Reordering records
