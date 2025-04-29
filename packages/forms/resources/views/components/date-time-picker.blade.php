@@ -23,6 +23,7 @@
     :component="$getFieldWrapperView()"
     :field="$field"
     :inline-label-vertical-alignment="\Filament\Support\Enums\VerticalAlignment::Center"
+    :isReadOnly="$isReadOnly()"
 >
     <x-filament::input.wrapper
         :disabled="$isDisabled"

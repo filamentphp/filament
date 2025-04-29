@@ -15,6 +15,7 @@
     'id' => null,
     'inlineLabelVerticalAlignment' => VerticalAlignment::Start,
     'isDisabled' => null,
+    'isReadOnly' => null,
     'label' => null,
     'labelPrefix' => null,
     'labelSrOnly' => null,
@@ -35,6 +36,7 @@
         $hintIconTooltip ??= $field->getHintIconTooltip();
         $id ??= $field->getId();
         $isDisabled ??= $field->isDisabled();
+        $isReadOnly ??= false;
         $label ??= $field->getLabel();
         $labelSrOnly ??= $field->isLabelHidden();
         $required ??= $field->isMarkedAsRequired();
@@ -88,6 +90,7 @@
                         :for="$id"
                         :disabled="$isDisabled"
                         :prefix="$labelPrefix"
+                        :readOnly="$isReadOnly"
                         :required="$required"
                         :suffix="$labelSuffix"
                     >

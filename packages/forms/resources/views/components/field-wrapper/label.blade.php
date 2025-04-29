@@ -1,9 +1,16 @@
 @props([
     'disabled' => false,
     'prefix' => null,
+    'readOnly' => false,
     'required' => false,
     'suffix' => null,
 ])
+
+@php
+    if ($readOnly) {
+        $attributes = $attributes->exceptProps(['for']);
+    }
+@endphp
 
 <label
     {{ $attributes->class(['fi-fo-field-wrp-label inline-flex items-center gap-x-3']) }}
