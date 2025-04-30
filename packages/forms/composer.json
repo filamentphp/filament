@@ -19,6 +19,7 @@
         "illuminate/support": "^10.45|^11.0|^12.0",
         "illuminate/validation": "^10.45|^11.0|^12.0",
         "illuminate/view": "^10.45|^11.0|^12.0",
+        "staudenmeir/belongs-to-through": "^2.17",
         "spatie/laravel-package-tools": "^1.9"
     },
     "autoload": {
