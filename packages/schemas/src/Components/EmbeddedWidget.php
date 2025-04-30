@@ -14,14 +14,7 @@ class EmbeddedWidget extends Component
      */
     public static function make(string | Closure $livewireComponent, array | Closure $livewireComponentData = []): static | Livewire
     {
-        if (filled($livewireComponent)) {
-            return Livewire::make($livewireComponent, $livewireComponentData);
-        }
-
-        $static = app(static::class);
-        $static->configure();
-
-        return $static;
+        return Livewire::make($livewireComponent, $livewireComponentData);
     }
 
     public function render(): View
