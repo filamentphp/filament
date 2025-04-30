@@ -92,8 +92,8 @@ Sometimes you may want to display placeholder text for columns with an empty sta
 ```php
 use Filament\Tables\Components\TextColumn;
 
-TextColumn::make('title')
-    ->placeholder('Untitled')
+TextColumn::make('description')
+    ->placeholder('No description.')
 ```
 
 <AutoScreenshot name="tables/columns/placeholder" alt="Column with a placeholder for empty state" version="4.x" />
@@ -611,8 +611,8 @@ You may specify a tooltip to display when you hover over a cell:
 ```php
 use Filament\Tables\Columns\TextColumn;
 
-TextColumn::make('title')
-    ->tooltip('Title')
+TextColumn::make('verified')
+    ->tooltip('Aug 1, 2023')
 ```
 
 <UtilityInjection set="tableColumns" version="4.x">As well as allowing a static value, the `tooltip()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
