@@ -12,7 +12,7 @@ class EmbeddedWidget extends Component
     /**
      * @param  array<string, mixed> | Closure  $livewireComponentData
      */
-    public static function make(string | Closure | null $livewireComponent = null, array | Closure $livewireComponentData = []): static | Livewire
+    public static function make(string | Closure $livewireComponent, array | Closure $livewireComponentData = []): static | Livewire
     {
         if (filled($livewireComponent)) {
             return Livewire::make($livewireComponent, $livewireComponentData);
