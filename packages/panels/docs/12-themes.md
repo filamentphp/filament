@@ -112,7 +112,9 @@ Filament allows you to change the CSS used to render the UI by compiling a custo
 Themes use [Tailwind CSS](https://tailwindcss.com), the Tailwind Forms plugin, the Tailwind Typography plugin, the [PostCSS Nesting plugin](https://www.npmjs.com/package/postcss-nesting), and [Autoprefixer](https://github.com/postcss/autoprefixer).
 
 > Filament v3 uses Tailwind CSS v3 for styling. As such, when creating a theme, you need to use Tailwind CSS v3. The `php artisan make:filament-theme` command will install Tailwind CSS v3 if you do not have it installed already. If you have Tailwind CSS v4 installed, it will not fully install the necessary Vite configuration to compile the theme. We suggest that you either use the Tailwind CLI to compile the theme, or downgrade your project to Tailwind CSS v3. The command to compile the theme with the Tailwind CLI will be output when you run the `make:filament-theme` command. You could save this command into a script in `package.json` for easy use.
-> 
+>
+> If you're looking to continue using Vite with Tailwind CSS v4 for your application while simultaneously using Tailwind CSS v3 to compile your Filament theme, [please follow this guide](https://filamentthemes.com/guides/how-to-use-filament-with-tailwind-css-v4).
+>
 > Filament v4 will support Tailwind CSS v4.
 
 To create a custom theme for a panel, you can use the `php artisan make:filament-theme` command:
