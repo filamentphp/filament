@@ -16,6 +16,7 @@ class MorphToSelect extends Component
     use Concerns\CanBeSearchable;
     use Concerns\HasLoadingMessage;
     use Concerns\HasName;
+    use Concerns\HasAffixes;
 
     /**
      * @var view-string
@@ -93,6 +94,10 @@ class MorphToSelect extends Component
                 ->allowHtml($this->isHtmlAllowed())
                 ->optionsLimit($this->getOptionsLimit())
                 ->preload($this->isPreloaded())
+                ->suffixActions($this->getSuffixActions())
+                ->prefixActions($this->getPrefixActions())
+                ->prefixIcon($this->getPrefixIcon())
+                ->suffixIcon($this->getSuffixIcon())
                 ->when(
                     $this->isLive(),
                     fn (Select $component) => $component->live(onBlur: $this->isLiveOnBlur()),
