@@ -11,7 +11,7 @@
         "danharrin/livewire-rate-limiting": "^0.3|^1.0|^2.0",
         "filament/support": "*",
         "larastan/larastan": "^2.2|^3.0",
-        "laravel/pint": "^1.0",
+        "laravel/pint": "^1.22",
         "league/csv": "^9.16",
         "league/flysystem-aws-s3-v3": "^3.0",
         "nunomaduro/termwind": "^1.0|^2.0",
