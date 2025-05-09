@@ -47,6 +47,7 @@ export default function fileUploadFormComponent({
     confirmSvgEditingMessage,
     disabledSvgEditingMessage,
     isDownloadable,
+    isPasteable,
     isMultiple,
     isOpenable,
     isPreviewable,
@@ -98,12 +99,13 @@ export default function fileUploadFormComponent({
         editor: {},
 
         init: async function () {
+            console.log('Testing')
             FilePond.setOptions(locales[locale] ?? locales['en'])
 
             this.pond = FilePond.create(this.$refs.input, {
                 acceptedFileTypes,
                 allowImageExifOrientation: shouldOrientImageFromExif,
-                allowPaste: false,
+                allowPaste: isPasteable,
                 allowRemove: isDeletable,
                 allowReorder: isReorderable,
                 allowImagePreview: isPreviewable,

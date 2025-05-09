@@ -30,6 +30,8 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
 
     protected bool | Closure $isDownloadable = false;
 
+    protected bool | Closure $isPasteable = false;
+
     protected bool | Closure $isOpenable = false;
 
     protected bool | Closure $isPreviewable = true;
@@ -270,6 +272,13 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
         return $this;
     }
 
+    public function pasteable(bool | Closure $condition = true): static
+    {
+        $this->isPasteable = $condition;
+
+        return $this;
+    }
+
     public function openable(bool | Closure $condition = true): static
     {
         $this->isOpenable = $condition;
@@ -483,6 +492,11 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
     public function isDownloadable(): bool
     {
         return (bool) $this->evaluate($this->isDownloadable);
+    }
+
+    public function isPasteable(): bool
+    {
+        return (bool) $this->evaluate($this->isPasteable);
     }
 
     public function isOpenable(): bool
