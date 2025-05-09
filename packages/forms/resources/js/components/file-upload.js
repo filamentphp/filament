@@ -99,7 +99,6 @@ export default function fileUploadFormComponent({
         editor: {},
 
         init: async function () {
-            console.log('Testing')
             FilePond.setOptions(locales[locale] ?? locales['en'])
 
             this.pond = FilePond.create(this.$refs.input, {
