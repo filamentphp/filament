@@ -14,7 +14,7 @@ use Filament\Tables\Filters\Filter;
 use Illuminate\Database\Eloquent\Builder;
 
 Filter::make('created_at')
-    ->schema([
+    ->form([
         DatePicker::make('created_from'),
         DatePicker::make('created_until'),
     ])
@@ -44,7 +44,7 @@ use Filament\Forms\Components\DatePicker;
 use Filament\Tables\Filters\Filter;
 
 Filter::make('created_at')
-    ->schema([
+    ->form([
         DatePicker::make('created_from'),
         DatePicker::make('created_until')
             ->default(now()),
@@ -83,7 +83,7 @@ use Filament\Forms\Components\DatePicker;
 use Filament\Tables\Filters\Filter;
 
 Filter::make('created_at')
-    ->schema([DatePicker::make('date')])
+    ->form([DatePicker::make('date')])
     // ...
     ->indicateUsing(function (array $data): ?string {
         if (! $data['date']) {
@@ -105,7 +105,7 @@ use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\Indicator;
 
 Filter::make('created_at')
-    ->schema([
+    ->form([
         DatePicker::make('from'),
         DatePicker::make('until'),
     ])
