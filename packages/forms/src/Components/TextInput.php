@@ -213,7 +213,9 @@ class TextInput extends Field implements CanHaveNumericState, Contracts\CanBeLen
 
     public function getType(): string
     {
-        if ($type = $this->evaluate($this->type)) {
+        $type = $this->evaluate($this->type);
+        
+        if (is_string($type) && $type !== '') {
             return $type;
         } elseif ($this->isEmail()) {
             return 'email';
