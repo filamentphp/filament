@@ -601,6 +601,16 @@ ImportAction::make()
 
 If you are encountering memory or timeout issues when importing large CSV files, you may wish to reduce the chunk size.
 
+## Deleting all existing data before an import
+
+To remove all existing records before running an import, enable the `truncateBeforeImport()` option on the import action:
+
+```php
+ImportAction::make()
+    ->importer(ProductImporter::class)
+    ->truncateBeforeImport(true)
+```
+
 ## Changing the CSV delimiter
 
 The default delimiter for CSVs is the comma (`,`). If your import uses a different delimiter, you may call the `csvDelimiter()` method on the action, passing a new one:
