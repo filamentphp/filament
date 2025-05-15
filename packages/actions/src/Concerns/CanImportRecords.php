@@ -70,6 +70,11 @@ trait CanImportRecords
      */
     protected array $fileValidationRules = [];
 
+    /**
+     * @var bool | Closure
+     */
+    protected bool | Closure $truncateBeforeImport = false;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -210,6 +215,12 @@ trait CanImportRecords
                     ->send();
 
                 return;
+            }
+
+            // Check if truncateBeforeImport is set and truncate the model
+            if ($this->truncateBeforeImport) {
+                $model = $action->getImporter()::getModel();
+                $model::truncate();
             }
 
             $user = auth()->user();
@@ -499,6 +510,13 @@ trait CanImportRecords
     public function job(?string $job): static
     {
         $this->job = $job;
+
+        return $this;
+    }
+
+    public function truncateBeforeImport(bool | Closure $truncate): static
+    {
+        $this->truncateBeforeImport = $truncate;
 
         return $this;
     }
