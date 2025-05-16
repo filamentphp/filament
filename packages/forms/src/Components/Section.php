@@ -83,7 +83,9 @@ class Section extends Component implements Contracts\CanConcealComponents, Contr
         }
 
         $id = Str::slug($heading);
-
+        if (empty($id)) {
+            $id = substr(md5($heading), 0, 8);
+        }
         if ($statePath = $this->getStatePath()) {
             $id = "{$statePath}.{$id}";
         }
