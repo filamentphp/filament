@@ -153,9 +153,9 @@
 
         <div
             @if (filament()->hasTenancy())
-                x-persist="topbar.end.tenant-{{ filament()->getTenant()?->getKey() }}"
+                x-persist="topbar.end.panel-{{ filament()->getId() }}.tenant-{{ filament()->getTenant()?->getKey() }}"
             @else
-                x-persist="topbar.end"
+                x-persist="topbar.end.panel-{{ filament()->getId() }}"
             @endif
             class="ms-auto flex items-center gap-x-4"
         >

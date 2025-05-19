@@ -31,6 +31,10 @@ class MorphToSelect extends Component
      */
     protected array | Closure $types = [];
 
+    protected ?Closure $modifyTypeSelectUsing = null;
+
+    protected ?Closure $modifyKeySelectUsing = null;
+
     final public function __construct(string $name)
     {
         $this->name($name);
@@ -59,48 +63,75 @@ class MorphToSelect extends Component
         /** @var ?Type $selectedType */
         $selectedType = $types[$this->evaluate(fn (Get $get): ?string => $get($typeColumn))] ?? null;
 
-        return [
-            Select::make($typeColumn)
-                ->label($this->getLabel())
-                ->hiddenLabel()
-                ->options(array_map(
-                    fn (Type $type): string => $type->getLabel(),
-                    $types,
-                ))
-                ->native($this->isNative())
-                ->required($isRequired)
-                ->live()
-                ->afterStateUpdated(function (Set $set) use ($keyColumn) {
-                    $set($keyColumn, null);
-                    $this->callAfterStateUpdated();
-                }),
-            Select::make($keyColumn)
-                ->label($selectedType?->getLabel())
-                ->hiddenLabel()
-                ->options($selectedType?->getOptionsUsing)
-                ->getSearchResultsUsing($selectedType?->getSearchResultsUsing)
-                ->getOptionLabelUsing($selectedType?->getOptionLabelUsing)
-                ->native($this->isNative())
-                ->required(filled($selectedType))
-                ->hidden(blank($selectedType))
-                ->dehydratedWhenHidden()
-                ->searchable($this->isSearchable())
-                ->searchDebounce($this->getSearchDebounce())
-                ->searchPrompt($this->getSearchPrompt())
-                ->searchingMessage($this->getSearchingMessage())
-                ->noSearchResultsMessage($this->getNoSearchResultsMessage())
-                ->loadingMessage($this->getLoadingMessage())
-                ->allowHtml($this->isHtmlAllowed())
-                ->optionsLimit($this->getOptionsLimit())
-                ->preload($this->isPreloaded())
-                ->when(
-                    $this->isLive(),
-                    fn (Select $component) => $component->live(onBlur: $this->isLiveOnBlur()),
-                )
-                ->afterStateUpdated(function () {
-                    $this->callAfterStateUpdated();
-                }),
-        ];
+        $typeSelect = Select::make($typeColumn)
+            ->label($this->getLabel())
+            ->hiddenLabel()
+            ->options(array_map(
+                fn (Type $type): string => $type->getLabel(),
+                $types,
+            ))
+            ->native($this->isNative())
+            ->required($isRequired)
+            ->live()
+            ->afterStateUpdated(function (Set $set) use ($keyColumn) {
+                $set($keyColumn, null);
+                $this->callAfterStateUpdated();
+            });
+
+        $keySelect = Select::make($keyColumn)
+            ->label($selectedType?->getLabel())
+            ->hiddenLabel()
+            ->options($selectedType?->getOptionsUsing)
+            ->getSearchResultsUsing($selectedType?->getSearchResultsUsing)
+            ->getOptionLabelUsing($selectedType?->getOptionLabelUsing)
+            ->native($this->isNative())
+            ->required(filled($selectedType))
+            ->hidden(blank($selectedType))
+            ->dehydratedWhenHidden()
+            ->searchable($this->isSearchable())
+            ->searchDebounce($this->getSearchDebounce())
+            ->searchPrompt($this->getSearchPrompt())
+            ->searchingMessage($this->getSearchingMessage())
+            ->noSearchResultsMessage($this->getNoSearchResultsMessage())
+            ->loadingMessage($this->getLoadingMessage())
+            ->allowHtml($this->isHtmlAllowed())
+            ->optionsLimit($this->getOptionsLimit())
+            ->preload($this->isPreloaded())
+            ->when(
+                $this->isLive(),
+                fn (Select $component) => $component->live(onBlur: $this->isLiveOnBlur()),
+            )
+            ->afterStateUpdated(function () {
+                $this->callAfterStateUpdated();
+            });
+
+        if ($this->modifyTypeSelectUsing) {
+            $typeSelect = $this->evaluate($this->modifyTypeSelectUsing, [
+                'select' => $typeSelect,
+            ]) ?? $typeSelect;
+        }
+
+        if ($this->modifyKeySelectUsing) {
+            $keySelect = $this->evaluate($this->modifyKeySelectUsing, [
+                'select' => $keySelect,
+            ]) ?? $keySelect;
+        }
+
+        return [$typeSelect, $keySelect];
+    }
+
+    public function modifyTypeSelectUsing(?Closure $callback): static
+    {
+        $this->modifyTypeSelectUsing = $callback;
+
+        return $this;
+    }
+
+    public function modifyKeySelectUsing(?Closure $callback): static
+    {
+        $this->modifyKeySelectUsing = $callback;
+
+        return $this;
     }
 
     public function optionsLimit(int | Closure $limit): static

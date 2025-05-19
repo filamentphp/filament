@@ -1,6 +1,7 @@
 <?php
 
 use Filament\Facades\Filament;
+use Filament\Notifications\Notification;
 use Filament\Pages\Auth\PasswordReset\ResetPassword;
 use Filament\Tests\Models\User;
 use Filament\Tests\TestCase;
@@ -58,7 +59,11 @@ it('can reset password', function () {
         ->set('password', 'new-password')
         ->set('passwordConfirmation', 'new-password')
         ->call('resetPassword')
-        ->assertNotified()
+        ->assertNotified(
+            Notification::make()
+                ->success()
+                ->title(__('passwords.reset'))
+        )
         ->assertRedirect(Filament::getLoginUrl());
 
     Event::assertDispatched(PasswordReset::class);
@@ -66,6 +71,37 @@ it('can reset password', function () {
     $this->assertCredentials([
         'email' => $userToResetPassword->email,
         'password' => 'new-password',
+    ]);
+});
+
+it('cannot reset password without panel access', function () {
+    Event::fake();
+
+    $this->assertGuest();
+
+    $userToResetPassword = User::factory()->create();
+    $token = Password::createToken($userToResetPassword);
+
+    Filament::setCurrentPanel(Filament::getPanel('custom'));
+
+    livewire(ResetPassword::class, [
+        'email' => $userToResetPassword->email,
+        'token' => $token,
+    ])
+        ->set('password', 'new-password')
+        ->set('passwordConfirmation', 'new-password')
+        ->call('resetPassword')
+        ->assertNotified(
+            Notification::make()
+                ->danger()
+                ->title(__('passwords.user'))
+        );
+
+    Event::assertNotDispatched(PasswordReset::class);
+
+    $this->assertCredentials([
+        'email' => $userToResetPassword->email,
+        'password' => 'password',
     ]);
 });
 
