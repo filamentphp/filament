@@ -79,13 +79,21 @@ export default function keyValueFormComponent({ state }) {
 
             const extraRows = this.rows.filter((row, index, arr) => {
                 if (row.key === '' || row.key === null) return true
-                const isDuplicate = arr.findIndex(r => r.key === row.key) !== index
-                return isDuplicate;
+                const isDuplicate =
+                    arr.findIndex((r) => r.key === row.key) !== index
+                return isDuplicate
             })
 
-            const currentRows = this.rows.filter(row => row.key !== '' && row.key !== null)
-            const rowsMatchState = currentRows.length === stateRows.length &&
-                currentRows.every((row, i) => row.key === stateRows[i].key && row.value === stateRows[i].value)
+            const currentRows = this.rows.filter(
+                (row) => row.key !== '' && row.key !== null,
+            )
+            const rowsMatchState =
+                currentRows.length === stateRows.length &&
+                currentRows.every(
+                    (row, i) =>
+                        row.key === stateRows[i].key &&
+                        row.value === stateRows[i].value,
+                )
 
             if (!rowsMatchState) {
                 this.rows = [...stateRows, ...extraRows]
@@ -99,9 +107,11 @@ export default function keyValueFormComponent({ state }) {
             let seenKeys = new Set()
 
             this.rows.forEach((row) => {
-                if (row.key === '' ||
+                if (
+                    row.key === '' ||
                     row.key === null ||
-                    seenKeys.has(row.key)) {
+                    seenKeys.has(row.key)
+                ) {
                     return
                 }
 
