@@ -4,8 +4,6 @@ export default function keyValueFormComponent({ state }) {
 
         rows: [],
 
-        shouldUpdateRows: true,
-
         init: function () {
             this.updateRows()
 
@@ -71,42 +69,45 @@ export default function keyValueFormComponent({ state }) {
             })
         },
 
+        // Only update the rows if something has changed and include even invalid rows for live editing.
+        // Issues 1107 and 12824
         updateRows: function () {
-            if (!this.shouldUpdateRows) {
-                this.shouldUpdateRows = true
-
-                return
-            }
-
-            let rows = []
-
+            let stateRows = []
             for (let [key, value] of Object.entries(this.state ?? {})) {
-                rows.push({
-                    key,
-                    value,
-                })
+                stateRows.push({ key, value })
             }
 
-            this.rows = rows
+            const extraRows = this.rows.filter((row, index, arr) => {
+                if (row.key === '' || row.key === null) return true
+                const isDuplicate = arr.findIndex(r => r.key === row.key) !== index
+                return isDuplicate;
+            })
+
+            const currentRows = this.rows.filter(row => row.key !== '' && row.key !== null)
+            const rowsMatchState = currentRows.length === stateRows.length &&
+                currentRows.every((row, i) => row.key === stateRows[i].key && row.value === stateRows[i].value)
+
+            if (!rowsMatchState) {
+                this.rows = [...stateRows, ...extraRows]
+            }
         },
 
+        // Only update the items that are not empty or not a duplicate
+        // Issues 1107 and 12824
         updateState: function () {
             let state = {}
+            let seenKeys = new Set()
 
             this.rows.forEach((row) => {
-                if (row.key === '' || row.key === null) {
+                if (row.key === '' ||
+                    row.key === null ||
+                    seenKeys.has(row.key)) {
                     return
                 }
 
+                seenKeys.add(row.key)
                 state[row.key] = row.value
             })
-
-            // This is a hack to prevent the component from updating rows again
-            // after a state update, which would otherwise be done by the `state`
-            // watcher. If rows are updated again, duplicate keys are removed.
-            //
-            // https://github.com/filamentphp/filament/issues/1107
-            this.shouldUpdateRows = false
 
             this.state = state
         },
