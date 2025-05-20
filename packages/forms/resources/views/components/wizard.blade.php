@@ -151,7 +151,7 @@
                     type="button"
                     x-bind:aria-current="getStepIndex(step) === {{ $loop->index }} ? 'step' : null"
                     x-on:click="step = @js($step->getId())"
-                    x-bind:disabled="! isStepAccessible(@js($step->getId()))"
+                    x-bind:disabled="! isStepAccessible(@js($step->getId())) || @js($previousAction->isDisabled())"
                     role="step"
                     class="fi-fo-wizard-header-step-button flex h-full items-center gap-x-4 px-6 py-4 text-start"
                 >
@@ -293,6 +293,7 @@
                 "
             @endif
             x-bind:class="{ 'hidden': isLastStep(), 'block': ! isLastStep() }"
+            wire:loading.class="pointer-events-none opacity-70"
         >
             {{ $nextAction }}
         </span>

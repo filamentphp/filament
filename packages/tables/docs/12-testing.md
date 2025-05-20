@@ -625,10 +625,10 @@ it('delete actions have correct labels', function () {
     $post = Post::factory()->create();
 
     livewire(PostResource\Pages\ListPosts::class)
-        ->assertTableActionHasLabel('delete', 'Archive Post')
-        ->assertTableActionDoesNotHaveLabel('delete', 'Delete');
-        ->assertTableBulkActionHasLabel('delete', 'Archive Post')
-        ->assertTableBulkActionDoesNotHaveLabel('delete', 'Delete');
+        ->assertTableActionHasLabel('delete', 'Archive Post', $post)
+        ->assertTableActionDoesNotHaveLabel('delete', 'Delete', $post);
+        ->assertTableBulkActionHasLabel('delete', 'Archive Post', $post)
+        ->assertTableBulkActionDoesNotHaveLabel('delete', 'Delete', $post);
 });
 ```
 
@@ -641,10 +641,10 @@ it('delete actions have correct icons', function () {
     $post = Post::factory()->create();
 
     livewire(PostResource\Pages\ListPosts::class)
-        ->assertTableActionHasIcon('delete', 'heroicon-m-archive-box')
-        ->assertTableActionDoesNotHaveIcon('delete', 'heroicon-m-trash');
-        ->assertTableBulkActionHasIcon('delete', 'heroicon-m-archive-box')
-        ->assertTableBulkActionDoesNotHaveIcon('delete', 'heroicon-m-trash');
+        ->assertTableActionHasIcon('delete', 'heroicon-m-archive-box', $post)
+        ->assertTableActionDoesNotHaveIcon('delete', 'heroicon-m-trash', $post);
+        ->assertTableBulkActionHasIcon('delete', 'heroicon-m-archive-box', $post)
+        ->assertTableBulkActionDoesNotHaveIcon('delete', 'heroicon-m-trash', $post);
 });
 ```
 
@@ -657,10 +657,10 @@ it('delete actions have correct colors', function () {
     $post = Post::factory()->create();
 
     livewire(PostResource\Pages\ListPosts::class)
-        ->assertTableActionHasColor('delete', 'warning')
-        ->assertTableActionDoesNotHaveColor('delete', 'danger');
-        ->assertTableBulkActionHasColor('delete', 'warning')
-        ->assertTableBulkActionDoesNotHaveColor('delete', 'danger');
+        ->assertTableActionHasColor('delete', 'warning', $post)
+        ->assertTableActionDoesNotHaveColor('delete', 'danger', $post);
+        ->assertTableBulkActionHasColor('delete', 'warning', $post)
+        ->assertTableBulkActionDoesNotHaveColor('delete', 'danger', $post);
 });
 ```
 
@@ -675,10 +675,10 @@ it('links to the correct Filament sites', function () {
     $post = Post::factory()->create();
 
     livewire(PostResource\Pages\ListPosts::class)
-        ->assertTableActionHasUrl('filament', 'https://filamentphp.com/')
-        ->assertTableActionDoesNotHaveUrl('filament', 'https://github.com/filamentphp/filament')
-        ->assertTableActionShouldOpenUrlInNewTab('filament')
-        ->assertTableActionShouldNotOpenUrlInNewTab('github');
+        ->assertTableActionHasUrl('filament', 'https://filamentphp.com/', $post)
+        ->assertTableActionDoesNotHaveUrl('filament', 'https://github.com/filamentphp/filament', $post)
+        ->assertTableActionShouldOpenUrlInNewTab('filament', $post)
+        ->assertTableActionShouldNotOpenUrlInNewTab('github', $post);
 });
 ```
 

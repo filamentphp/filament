@@ -2,6 +2,7 @@
  * Source: https://github.com/Ionaru/easy-markdown-editor/blob/master/src/js/easymde.js
  * Changes:
  * - Removal of line 1 to 15, awaiting https://github.com/Ionaru/easy-markdown-editor/pull/263
+ * - Added `moveToNextField()` and `moveToPreviousField()` functions, and changed `Tab` and `Shift-Tab` key bindings to only indent the content when there is a selection in the editor. See https://github.com/filamentphp/filament/pull/16144.
  */
 
 // Some variables
@@ -2339,6 +2340,42 @@ EasyMDE.prototype.render = function (el) {
     var self = this
     var keyMaps = {}
 
+    function moveToNextField(cm) {
+        const form = cm.getInputField().form
+        if (form) {
+            const elements = Array.from(form.elements)
+            const index = elements.indexOf(cm.getInputField())
+            if (
+                index !== -1 &&
+                index + 1 < elements.length &&
+                elements[index + 1]
+            ) {
+                elements[index + 1].focus()
+            }
+        }
+    }
+
+    function moveToPreviousField(cm) {
+        const form = cm.getInputField().form
+        if (form) {
+            const elements = Array.from(form.elements)
+            const index = elements.indexOf(cm.getInputField())
+            if (index !== -1) {
+                for (let i = index - 1; i >= 0; i--) {
+                    const element = elements[i]
+                    if (
+                        element &&
+                        element.tagName === 'INPUT' &&
+                        !element.closest('.editor-toolbar')
+                    ) {
+                        element.focus()
+                        break
+                    }
+                }
+            }
+        }
+    }
+
     for (var key in options.shortcuts) {
         // null stands for "do not bind this command"
         if (options.shortcuts[key] !== null && bindings[key] !== null) {
@@ -2356,8 +2393,22 @@ EasyMDE.prototype.render = function (el) {
     }
 
     keyMaps['Enter'] = 'newlineAndIndentContinueMarkdownList'
-    keyMaps['Tab'] = 'tabAndIndentMarkdownList'
-    keyMaps['Shift-Tab'] = 'shiftTabAndUnindentMarkdownList'
+    keyMaps['Tab'] = (cm) => {
+        const selection = cm.getSelection()
+        if (selection && selection.length > 0) {
+            cm.execCommand('indentMore')
+        } else {
+            moveToNextField(cm)
+        }
+    }
+    keyMaps['Shift-Tab'] = (cm) => {
+        const selection = cm.getSelection()
+        if (selection && selection.length > 0) {
+            cm.execCommand('indentLess')
+        } else {
+            moveToPreviousField(cm)
+        }
+    }
     keyMaps['Esc'] = function (cm) {
         if (cm.getOption('fullScreen')) toggleFullScreen(self)
     }

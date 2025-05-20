@@ -71,10 +71,6 @@ trait HasCellState
 
     public function getState(): mixed
     {
-        if (! $this->getRecord()) {
-            return null;
-        }
-
         $state = ($this->getStateUsing !== null) ?
             $this->evaluate($this->getStateUsing) :
             $this->getStateFromRecord();

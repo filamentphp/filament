@@ -170,6 +170,45 @@ public function infolist(Infolist $infolist): Infolist
 }
 ```
 
+## Customizing relation managers for a specific view page
+
+You can specify which relation managers should appear on a view page by defining a `getAllRelationManagers()` method:
+
+```php
+protected function getAllRelationManagers(): array
+{
+    return [
+        CustomerAddressesRelationManager::class,
+        CustomerContactsRelationManager::class,
+    ];
+}
+```
+
+This is useful when you have [multiple view pages](#creating-another-view-page) and need different relation managers on
+each page:
+
+```php
+// ViewCustomer.php
+protected function getAllRelationManagers(): array
+{
+    return [
+        RelationManagers\OrdersRelationManager::class,
+        RelationManagers\SubscriptionsRelationManager::class,
+    ];
+}
+
+// ViewCustomerContact.php 
+protected function getAllRelationManagers(): array
+{
+    return [
+        RelationManagers\ContactsRelationManager::class,
+        RelationManagers\AddressesRelationManager::class,
+    ];
+}
+```
+
+If `getAllRelationManagers()` isn't defined, any relation managers defined in the resource will be used.
+
 ## Adding view pages to resource sub-navigation
 
 If you're using [resource sub-navigation](getting-started#resource-sub-navigation), you can register this page as normal in `getRecordSubNavigation()` of the resource:

@@ -27,7 +27,7 @@ class ViewAction extends Action
         $this->modalSubmitAction(false);
         $this->modalCancelAction(fn (StaticAction $action) => $action->label(__('filament-actions::view.single.modal.actions.close.label')));
 
-        $this->color('gray');
+        $this->defaultColor('gray');
 
         $this->groupedIcon(FilamentIcon::resolve('actions::view-action.grouped') ?? 'heroicon-m-eye');
 

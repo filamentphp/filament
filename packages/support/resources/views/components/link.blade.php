@@ -301,4 +301,53 @@
         @endif
     </button>
     @trim
+@elseif ($tag === 'div')
+    <div
+        role="button"
+        @if ($keyBindings || $hasTooltip)
+            x-data="{}"
+        @endif
+        @if ($keyBindings)
+            x-bind:id="$id('key-bindings')"
+            x-mousetrap.global.{{ collect($keyBindings)->map(fn (string $keyBinding): string => str_replace('+', '-', $keyBinding))->implode('.') }}="document.getElementById($el.id).click()"
+        @endif
+        @if ($hasTooltip)
+            x-tooltip="{
+                content: @js($tooltip),
+                theme: $store.theme,
+            }"
+        @endif
+        {{ $attributes->class([$linkClasses]) }}
+    >
+        @if ($icon && $iconPosition === IconPosition::Before)
+            <x-filament::icon
+                :alias="$iconAlias"
+                :icon="$icon"
+                :class="$iconClasses"
+                :style="$iconStyles"
+            />
+        @endif
+
+        <span class="{{ $labelClasses }}" style="{{ $labelStyles }}">
+            {{ $slot }}
+        </span>
+
+        @if ($icon && $iconPosition === IconPosition::After)
+            <x-filament::icon
+                :alias="$iconAlias"
+                :icon="$icon"
+                :class="$iconClasses"
+                :style="$iconStyles"
+            />
+        @endif
+
+        @if (filled($badge))
+            <div class="{{ $badgeContainerClasses }}">
+                <x-filament::badge :color="$badgeColor" :size="$badgeSize">
+                    {{ $badge }}
+                </x-filament::badge>
+            </div>
+        @endif
+    </div>
+    @trim
 @endif

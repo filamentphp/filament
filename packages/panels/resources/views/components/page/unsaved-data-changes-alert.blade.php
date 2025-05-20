@@ -6,23 +6,15 @@
     @if (FilamentView::hasSpaMode())
         @script
             <script>
-                let formSubmitted = false
-
-                document.addEventListener(
-                    'submit',
-                    () => (formSubmitted = true),
-                )
-
                 shouldPreventNavigation = () => {
-                    if (formSubmitted) {
+                    if ($wire?.__instance?.effects?.redirect) {
                         return
                     }
 
                     return (
                         window.jsMd5(
                             JSON.stringify($wire.data).replace(/\\/g, ''),
-                        ) !== $wire.savedDataHash ||
-                        $wire?.__instance?.effects?.redirect
+                        ) !== $wire.savedDataHash
                     )
                 }
 

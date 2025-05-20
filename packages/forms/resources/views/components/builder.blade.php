@@ -110,7 +110,7 @@
                         x-on:expand="isCollapsed = false"
                         x-sortable-item="{{ $uuid }}"
                         class="fi-fo-builder-item rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-white/5 dark:ring-white/10"
-                        x-bind:class="{ 'fi-collapsed overflow-hidden': isCollapsed }"
+                        x-bind:class="{ 'fi-collapsed': isCollapsed }"
                     >
                         @if ($reorderActionIsVisible || $moveUpActionIsVisible || $moveDownActionIsVisible || $hasBlockIcons || $hasBlockLabels || $editActionIsVisible || $cloneActionIsVisible || $deleteActionIsVisible || $isCollapsible || $visibleExtraItemActions)
                             <div

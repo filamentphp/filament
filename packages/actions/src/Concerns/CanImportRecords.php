@@ -195,7 +195,7 @@ trait CanImportRecords
             }
 
             $csvReader->setHeaderOffset($action->getHeaderOffset() ?? 0);
-            $csvResults = Statement::create()->process($csvReader);
+            $csvResults = (new Statement)->process($csvReader);
 
             $totalRows = $csvResults->count();
             $maxRows = $action->getMaxRows() ?? $totalRows;
@@ -383,7 +383,7 @@ trait CanImportRecords
                 }),
         ]);
 
-        $this->color('gray');
+        $this->defaultColor('gray');
 
         $this->modalWidth('xl');
 
@@ -439,7 +439,21 @@ trait CanImportRecords
 
     protected function detectCsvEncoding(mixed $resource): ?string
     {
-        $fileHeader = fgets($resource);
+        rewind($resource);
+
+        $lineCount = 0;
+        $contentSample = '';
+
+        while ((! feof($resource)) && ($lineCount < 20)) {
+            $line = fgets($resource);
+
+            if ($line === false) {
+                break;
+            }
+
+            $contentSample .= $line;
+            $lineCount++;
+        }
 
         // The encoding of a subset should be declared before the encoding of its superset.
         $encodings = [
@@ -454,7 +468,7 @@ trait CanImportRecords
         ];
 
         foreach ($encodings as $encoding) {
-            if (! mb_check_encoding($fileHeader, $encoding)) {
+            if (! mb_check_encoding($contentSample, $encoding)) {
                 continue;
             }
 

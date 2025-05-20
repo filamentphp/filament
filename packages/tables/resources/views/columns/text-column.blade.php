@@ -281,8 +281,8 @@
                     @if ($isLimitedListExpandable)
                         <x-filament::link
                             color="gray"
-                            tag="button"
-                            x-on:click.prevent="isLimited = false"
+                            tag="div"
+                            x-on:click.prevent.stop="isLimited = false"
                             x-show="isLimited"
                         >
                             {{ trans_choice('filament-tables::table.columns.text.actions.expand_list', $limitedArrayStateCount) }}
@@ -290,9 +290,9 @@
 
                         <x-filament::link
                             color="gray"
-                            tag="button"
+                            tag="div"
                             x-cloak
-                            x-on:click.prevent="isLimited = true"
+                            x-on:click.prevent.stop="isLimited = true"
                             x-show="! isLimited"
                         >
                             {{ trans_choice('filament-tables::table.columns.text.actions.collapse_list', $limitedArrayStateCount) }}

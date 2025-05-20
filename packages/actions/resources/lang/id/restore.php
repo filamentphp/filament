@@ -4,16 +4,16 @@ return [
 
     'single' => [
 
-        'label' => 'Kembalikan data',
+        'label' => 'Pulihkan data',
 
         'modal' => [
 
-            'heading' => 'Kembalikan :label',
+            'heading' => 'Pulihkan :label',
 
             'actions' => [
 
                 'restore' => [
-                    'label' => 'Kembalikan',
+                    'label' => 'Pulihkan',
                 ],
 
             ],
@@ -23,7 +23,7 @@ return [
         'notifications' => [
 
             'restored' => [
-                'title' => 'Data berhasil dikembalikan',
+                'title' => 'Data berhasil dipulihkan',
             ],
 
         ],
@@ -32,16 +32,16 @@ return [
 
     'multiple' => [
 
-        'label' => 'Kembalikan data yang dipilih',
+        'label' => 'Pulihkan data yang dipilih',
 
         'modal' => [
 
-            'heading' => 'Kembalikan :label yang dipilih',
+            'heading' => 'Pulihkan :label yang dipilih',
 
             'actions' => [
 
                 'restore' => [
-                    'label' => 'Kembalikan',
+                    'label' => 'Pulihkan',
                 ],
 
             ],
@@ -51,7 +51,7 @@ return [
         'notifications' => [
 
             'restored' => [
-                'title' => 'Data berhasil dikembalikan',
+                'title' => 'Data berhasil dipulihkan',
             ],
 
         ],

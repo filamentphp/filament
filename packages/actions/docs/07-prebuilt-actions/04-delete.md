@@ -39,7 +39,7 @@ public function table(Table $table): Table
 
 ## Redirecting after deleting
 
-You may set up a custom redirect when the form is submitted using the `successRedirectUrl()` method:
+You may set up a custom redirect when the record is deleted using the `successRedirectUrl()` method:
 
 ```php
 DeleteAction::make()

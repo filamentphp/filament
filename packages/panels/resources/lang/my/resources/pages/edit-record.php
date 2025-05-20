@@ -2,22 +2,30 @@
 
 return [
 
-    'title' => ':label ကိုတည်းဖြတ်ပါ',
+    'title' => ':label ပြင်ဆင်ရန်',
 
-    'breadcrumb' => 'တည်းဖြတ်ပါ',
+    'breadcrumb' => 'ပြင်ဆင်ရန်',
 
     'form' => [
 
         'actions' => [
 
             'cancel' => [
-                'label' => 'မလုပ်တော့ပါ',
+                'label' => 'ပယ်ဖျက်ရန်',
             ],
 
             'save' => [
-                'label' => 'မှတ်ပါ',
+                'label' => 'သိမ်းဆည်းရန်',
             ],
 
+        ],
+
+    ],
+
+    'content' => [
+
+        'tab' => [
+            'label' => 'ပြင်ဆင်ရန်',
         ],
 
     ],
@@ -25,7 +33,7 @@ return [
     'notifications' => [
 
         'saved' => [
-            'title' => 'သိမ်းဆည်းထားသည်',
+            'title' => 'သိမ်းဆည်းပြီးပါပြီ',
         ],
 
     ],

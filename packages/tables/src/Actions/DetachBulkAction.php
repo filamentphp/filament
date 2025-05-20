@@ -30,7 +30,7 @@ class DetachBulkAction extends BulkAction
 
         $this->successNotificationTitle(__('filament-actions::detach.multiple.notifications.detached.title'));
 
-        $this->color('danger');
+        $this->defaultColor('danger');
 
         $this->icon(FilamentIcon::resolve('actions::detach-action') ?? 'heroicon-m-x-mark');
 
@@ -45,7 +45,7 @@ class DetachBulkAction extends BulkAction
 
                 if ($table->allowsDuplicates()) {
                     $records->each(
-                        fn (Model $record) => $record->{$relationship->getPivotAccessor()}->delete(),
+                        fn (Model $record) => $record->getRelationValue($relationship->getPivotAccessor())->delete(),
                     );
                 } else {
                     $relationship->detach($records);

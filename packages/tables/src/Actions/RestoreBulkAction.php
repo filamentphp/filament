@@ -30,7 +30,7 @@ class RestoreBulkAction extends BulkAction
 
         $this->successNotificationTitle(__('filament-actions::restore.multiple.notifications.restored.title'));
 
-        $this->color('gray');
+        $this->defaultColor('gray');
 
         $this->icon(FilamentIcon::resolve('actions::restore-action') ?? 'heroicon-m-arrow-uturn-left');
 

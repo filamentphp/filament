@@ -29,7 +29,7 @@ class DetachAction extends Action
 
         $this->successNotificationTitle(__('filament-actions::detach.single.notifications.detached.title'));
 
-        $this->color('danger');
+        $this->defaultColor('danger');
 
         $this->icon(FilamentIcon::resolve('actions::detach-action') ?? 'heroicon-m-x-mark');
 
@@ -43,7 +43,7 @@ class DetachAction extends Action
                 $relationship = $table->getRelationship();
 
                 if ($table->allowsDuplicates()) {
-                    $record->{$relationship->getPivotAccessor()}->delete();
+                    $record->getRelationValue($relationship->getPivotAccessor())->delete();
                 } else {
                     $relationship->detach($record);
                 }

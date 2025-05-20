@@ -186,7 +186,7 @@ return [
 
     'selection_indicator' => [
 
-        'selected_count' => '1 izbran zapis|2 izbrana zapisa|:count izbranih zapisov',
+        'selected_count' => '{1}1 izbran zapis|{2}2 izbrana zapisa|{3,4}:count izbrani zapisi|{5,*}:count izbranih zapisov',
 
         'actions' => [
 

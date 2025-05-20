@@ -27,7 +27,7 @@ class DeleteAction extends Action
 
         $this->successNotificationTitle(__('filament-actions::delete.single.notifications.deleted.title'));
 
-        $this->color('danger');
+        $this->defaultColor('danger');
 
         $this->icon(FilamentIcon::resolve('actions::delete-action') ?? 'heroicon-m-trash');
 

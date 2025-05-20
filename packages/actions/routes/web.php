@@ -4,10 +4,15 @@ use Filament\Actions\Exports\Http\Controllers\DownloadExport;
 use Filament\Actions\Imports\Http\Controllers\DownloadImportFailureCsv;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/filament/exports/{export}/download', DownloadExport::class)
-    ->name('filament.exports.download')
-    ->middleware('filament.actions');
+$prefix = config('filament.system_route_prefix', 'filament');
 
-Route::get('/filament/imports/{import}/failed-rows/download', DownloadImportFailureCsv::class)
-    ->name('filament.imports.failed-rows.download')
-    ->middleware('filament.actions');
+Route::middleware('filament.actions')
+    ->name('filament.')
+    ->prefix($prefix)
+    ->group(function () {
+        Route::get('/exports/{export}/download', DownloadExport::class)
+            ->name('exports.download');
+
+        Route::get('/imports/{import}/failed-rows/download', DownloadImportFailureCsv::class)
+            ->name('imports.failed-rows.download');
+    });

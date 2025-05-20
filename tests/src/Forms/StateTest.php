@@ -3,6 +3,9 @@
 use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Components\Radio;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Get;
 use Filament\Tests\Forms\Fixtures\Livewire;
 use Filament\Tests\TestCase;
@@ -506,6 +509,29 @@ test('hidden components are excluded from state dehydration except if they are m
 
     expect($container)
         ->dehydrateState()->not()->toBe([]);
+});
+
+test('hidden components are excluded from state dehydration even if their parent component has a state path', function () {
+    $container = ComponentContainer::make(Livewire::make())
+        ->statePath('data')
+        ->components([
+            (new Component)
+                ->statePath('nested')
+                ->schema([
+                    (new Component)
+                        ->statePath(Str::random())
+                        ->default(Str::random())
+                        ->hidden(),
+                ]),
+        ])
+        ->fill();
+
+    expect($container)
+        ->dehydrateState()->toBe([
+            'data' => [
+                'nested' => [],
+            ],
+        ]);
 });
 
 test('disabled components are excluded from state dehydration', function () {

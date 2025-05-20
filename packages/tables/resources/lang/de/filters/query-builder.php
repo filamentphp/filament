@@ -33,7 +33,7 @@ return [
 
     ],
 
-    'no_rules' => '(Keine Bedinungen)',
+    'no_rules' => '(Keine Bedingungen)',
 
     'item_separators' => [
         'and' => 'UND',
@@ -79,13 +79,13 @@ return [
             'is_after' => [
 
                 'label' => [
-                    'direct' => 'nach',
-                    'inverse' => 'vor',
+                    'direct' => 'ist nach',
+                    'inverse' => 'ist nicht nach',
                 ],
 
                 'summary' => [
-                    'direct' => ':attribute is after :date',
-                    'inverse' => ':attribute is not after :date',
+                    'direct' => ':attribute ist nach :date',
+                    'inverse' => ':attribute ist nicht nach :date',
                 ],
 
             ],
@@ -94,7 +94,7 @@ return [
 
                 'label' => [
                     'direct' => 'ist vor',
-                    'inverse' => 'ist nach',
+                    'inverse' => 'ist nicht vor',
                 ],
 
                 'summary' => [
@@ -107,7 +107,7 @@ return [
             'is_date' => [
 
                 'label' => [
-                    'direct' => 'ist Datum',
+                    'direct' => 'ist ein Datum',
                     'inverse' => 'ist kein Datum',
                 ],
 
@@ -121,7 +121,7 @@ return [
             'is_month' => [
 
                 'label' => [
-                    'direct' => 'ist ein ',
+                    'direct' => 'ist ein Monat',
                     'inverse' => 'ist kein Monat',
                 ],
 

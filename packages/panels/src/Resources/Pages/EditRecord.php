@@ -26,8 +26,6 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Js;
 use Throwable;
 
-use function Filament\Support\is_app_url;
-
 /**
  * @property Form $form
  */
@@ -174,7 +172,7 @@ class EditRecord extends Page
         }
 
         if ($shouldRedirect && ($redirectUrl = $this->getRedirectUrl())) {
-            $this->redirect($redirectUrl, navigate: FilamentView::hasSpaMode() && is_app_url($redirectUrl));
+            $this->redirect($redirectUrl, navigate: FilamentView::hasSpaMode($redirectUrl));
         }
     }
 
@@ -229,7 +227,7 @@ class EditRecord extends Page
 
         return Notification::make()
             ->success()
-            ->title($this->getSavedNotificationTitle());
+            ->title($title);
     }
 
     protected function getSavedNotificationTitle(): ?string

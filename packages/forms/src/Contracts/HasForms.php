@@ -2,6 +2,7 @@
 
 namespace Filament\Forms\Contracts;
 
+use Filament\Forms\ComponentContainer;
 use Filament\Forms\Form;
 use Filament\Support\Contracts\TranslatableContentDriver;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
@@ -60,4 +61,6 @@ interface HasForms
      * @return array<string, mixed>
      */
     public function validate($rules = null, $messages = [], $attributes = []);
+
+    public function currentlyValidatingForm(?ComponentContainer $form): void;
 }
