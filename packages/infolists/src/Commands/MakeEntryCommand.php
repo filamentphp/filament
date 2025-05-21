@@ -123,7 +123,7 @@ class MakeEntryCommand extends Command
             $path,
             $viewNamespace,
         ] = $this->askForComponentLocation(
-            path: 'Infolists/Components',
+            path: 'Filament/Infolists/Components',
             question: 'Where would you like to create the entry?',
         );
 

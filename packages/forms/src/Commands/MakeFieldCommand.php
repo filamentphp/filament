@@ -123,7 +123,7 @@ class MakeFieldCommand extends Command
             $path,
             $viewNamespace,
         ] = $this->askForComponentLocation(
-            path: 'Forms/Components',
+            path: 'Filament/Forms/Components',
             question: 'Where would you like to create the field?',
         );
 
