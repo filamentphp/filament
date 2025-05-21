@@ -87,12 +87,18 @@ class DatabaseNotifications extends Component implements HasActions, HasSchemas
         return static::$isPaginated;
     }
 
+    /**
+     * @return Builder<Model>|Relation
+     */
     public function getNotificationsQuery(): Builder | Relation
     {
         /** @phpstan-ignore-next-line */
         return $this->getUser()->notifications()->where('data->format', 'filament');
     }
 
+    /**
+     * @return Builder<Model>|Relation
+     */
     public function getUnreadNotificationsQuery(): Builder | Relation
     {
         /** @phpstan-ignore-next-line */

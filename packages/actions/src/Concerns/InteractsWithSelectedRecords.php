@@ -7,6 +7,7 @@ use Exception;
 use Filament\Support\Authorization\DenyResponse;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Support\LazyCollection;
 
@@ -58,6 +59,9 @@ trait InteractsWithSelectedRecords
         return $records;
     }
 
+    /**
+     * @return Builder<Model>
+     */
     public function getSelectedRecordsQuery(): Builder
     {
         if (! $this->canAccessSelectedRecords()) {

@@ -242,6 +242,9 @@ trait HasBulkActions
         return $this->cachedSelectedTableRecords = $query->get();
     }
 
+    /**
+     * @return Builder<Model>
+     */
     public function getSelectedTableRecordsQuery(bool $shouldFetchSelectedRecords = true, ?int $chunkSize = null): Builder
     {
         $table = $this->getTable();

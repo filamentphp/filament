@@ -99,6 +99,9 @@ trait InteractsWithPageTable /** @phpstan-ignore trait.unused */
         return $this->tablePage = $page;
     }
 
+    /**
+     * @return Builder<Model>
+     */
     protected function getPageTableQuery(): Builder
     {
         return $this->getTablePageInstance()->getFilteredSortedTableQuery();

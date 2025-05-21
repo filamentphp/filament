@@ -3,6 +3,7 @@
 namespace Filament\Tables\Concerns;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 
 trait CanSortRecords
 {
@@ -68,6 +69,10 @@ trait CanSortRecords
         $this->resetPage();
     }
 
+    /**
+     * @param  Builder<Model>  $query
+     * @return Builder<Model>
+     */
     protected function applySortingToTableQuery(Builder $query): Builder
     {
         if ($this->getTable()->isGroupsOnly()) {
@@ -95,6 +100,10 @@ trait CanSortRecords
         return $query;
     }
 
+    /**
+     * @param  Builder<Model>  $query
+     * @return Builder<Model>
+     */
     protected function applyDefaultSortingToTableQuery(Builder $query): Builder
     {
         $sortDirection = ($this->getTable()->getDefaultSortDirection() ?? $this->tableSortDirection) === 'desc' ? 'desc' : 'asc';

@@ -6,6 +6,7 @@ use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 
 trait HasTabs
 {
@@ -60,6 +61,10 @@ trait HasTabs
             ->ucfirst();
     }
 
+    /**
+     * @param  Builder<Model>  $query
+     * @return Builder<Model>
+     */
     protected function modifyQueryWithActiveTab(Builder $query): Builder
     {
         if (blank(filled($this->activeTab))) {

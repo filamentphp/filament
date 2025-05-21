@@ -5,6 +5,7 @@ namespace Filament\Tables\Concerns;
 use Filament\Schemas\Schema;
 use Filament\Tables\Filters\BaseFilter;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 
 /**
@@ -148,6 +149,10 @@ trait HasFilters
         $this->handleTableFilterUpdates();
     }
 
+    /**
+     * @param  Builder<Model>  $query
+     * @return Builder<Model>
+     */
     protected function applyFiltersToTableQuery(Builder $query): Builder
     {
         foreach ($this->getTable()->getFilters() as $filter) {

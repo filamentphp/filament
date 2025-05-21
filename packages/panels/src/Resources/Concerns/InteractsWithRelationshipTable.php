@@ -53,6 +53,9 @@ trait InteractsWithRelationshipTable
         return static::$shouldSkipAuthorization;
     }
 
+    /**
+     * @return Relation|Builder<Model>
+     */
     public function getRelationship(): Relation | Builder
     {
         return $this->getOwnerRecord()->{static::getRelationshipName()}();

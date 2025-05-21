@@ -27,6 +27,9 @@ class FailedImportRow extends Model
         return $this->belongsTo(app(Import::class)::class);
     }
 
+    /**
+     * @return Builder<FailedImportRow>
+     */
     public function prunable(): Builder
     {
         return static::where(

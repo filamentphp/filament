@@ -4,6 +4,7 @@ namespace Filament\Tables\Filters\QueryBuilder\Constraints\BooleanConstraint\Ope
 
 use Filament\Tables\Filters\QueryBuilder\Constraints\Operators\Operator;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 
 class IsTrueOperator extends Operator
 {
@@ -31,6 +32,10 @@ class IsTrueOperator extends Operator
         );
     }
 
+    /**
+     * @param  Builder<Model>  $query
+     * @return Builder<Model>
+     */
     public function apply(Builder $query, string $qualifiedColumn): Builder
     {
         return $query->where($qualifiedColumn, ! $this->isInverse());

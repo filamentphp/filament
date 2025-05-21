@@ -36,6 +36,10 @@ trait BelongsToParent
         return $parentResource;
     }
 
+    /**
+     * @param  Builder<Model>  $query
+     * @return Builder<Model>
+     */
     public static function scopeEloquentQueryToParent(Builder $query, Model $parentRecord): Builder
     {
         $parentResourceRegistration = static::getParentResourceRegistration();

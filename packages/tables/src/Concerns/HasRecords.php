@@ -24,6 +24,9 @@ trait HasRecords
 
     protected Collection | Paginator | CursorPaginator | null $cachedTableRecords = null;
 
+    /**
+     * @return ?Builder<Model>
+     */
     public function getFilteredTableQuery(): ?Builder
     {
         $query = $this->getTable()->getQuery();
@@ -35,6 +38,10 @@ trait HasRecords
         return $this->filterTableQuery($query);
     }
 
+    /**
+     * @param  Builder<Model>  $query
+     * @return Builder<Model>
+     */
     public function filterTableQuery(Builder $query): Builder
     {
         $this->applyFiltersToTableQuery($query);
@@ -58,6 +65,9 @@ trait HasRecords
         return $query;
     }
 
+    /**
+     * @return ?Builder<Model>
+     */
     public function getFilteredSortedTableQuery(): ?Builder
     {
         $query = $this->getFilteredTableQuery();
@@ -73,6 +83,9 @@ trait HasRecords
         return $query;
     }
 
+    /**
+     * @return Builder<Model>
+     */
     public function getTableQueryForExport(): Builder
     {
         $query = $this->getTable()->getQuery();

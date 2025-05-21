@@ -6,6 +6,7 @@ use Filament\Tables\Enums\PaginationMode;
 use Illuminate\Contracts\Pagination\CursorPaginator;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 trait CanPaginateRecords
@@ -26,6 +27,9 @@ trait CanPaginateRecords
         $this->resetPage();
     }
 
+    /**
+     * @param  Builder<Model>  $query
+     */
     protected function paginateTableQuery(Builder $query): Paginator | CursorPaginator
     {
         $perPage = $this->getTableRecordsPerPage();

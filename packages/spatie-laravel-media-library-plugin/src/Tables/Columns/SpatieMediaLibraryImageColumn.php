@@ -164,6 +164,10 @@ class SpatieMediaLibraryImageColumn extends ImageColumn
         });
     }
 
+    /**
+     * @param  Builder<Model>|Relation  $query
+     * @return Builder<Model>|Relation
+     */
     public function applyEagerLoading(Builder | Relation $query): Builder | Relation
     {
         if ($this->isHidden()) {

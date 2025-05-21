@@ -64,6 +64,9 @@ abstract class Resource
         static::table($table); /** @phpstan-ignore staticMethod.resultUnused */
     }
 
+    /**
+     * @return Builder<Model>
+     */
     public static function getEloquentQuery(): Builder
     {
         return static::getModel()::query();

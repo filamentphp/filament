@@ -19,6 +19,10 @@ trait BelongsToTenant
 
     protected static ?string $tenantRelationshipName = null;
 
+    /**
+     * @param  Builder<Model>  $query
+     * @return Builder<Model>
+     */
     public static function scopeEloquentQueryToTenant(Builder $query, ?Model $tenant): Builder
     {
         $tenant ??= Filament::getTenant();

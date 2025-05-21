@@ -4,6 +4,7 @@ namespace Filament\Tables\Concerns;
 
 use Filament\Tables\Grouping\Group;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 
 trait CanGroupRecords
 {
@@ -45,6 +46,10 @@ trait CanGroupRecords
         };
     }
 
+    /**
+     * @param  Builder<Model>  $query
+     * @return Builder<Model>
+     */
     protected function applyGroupingToTableQuery(Builder $query): Builder
     {
         $group = $this->getTableGrouping();

@@ -111,6 +111,10 @@ class ExportColumn extends Component
             ->ucfirst();
     }
 
+    /**
+     * @param  EloquentBuilder<Model>  $query
+     * @return EloquentBuilder<Model>
+     */
     public function applyRelationshipAggregates(EloquentBuilder $query): EloquentBuilder
     {
         return $query->when(
@@ -134,6 +138,10 @@ class ExportColumn extends Component
         );
     }
 
+    /**
+     * @param  EloquentBuilder<Model>  $query
+     * @return EloquentBuilder<Model>
+     */
     public function applyEagerLoading(EloquentBuilder $query): EloquentBuilder
     {
         if (! $this->hasRelationship($query->getModel())) {

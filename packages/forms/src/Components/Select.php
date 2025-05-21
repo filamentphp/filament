@@ -1130,6 +1130,10 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         return $this;
     }
 
+    /**
+     * @param  Builder<Model>  $query
+     * @return Builder<Model>
+     */
     protected function applySearchConstraint(Builder $query, string $search): Builder
     {
         /** @var Connection $databaseConnection */

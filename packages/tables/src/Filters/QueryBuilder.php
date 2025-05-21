@@ -10,6 +10,7 @@ use Filament\Schemas\Schema;
 use Filament\Tables\Filters\QueryBuilder\Concerns\HasConstraints;
 use Filament\Tables\Filters\QueryBuilder\Forms\Components\RuleBuilder;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\ValidationException;
 
 class QueryBuilder extends BaseFilter
@@ -93,7 +94,9 @@ class QueryBuilder extends BaseFilter
     }
 
     /**
+     * @param  Builder<Model>  $query
      * @param  array<string, mixed>  $rules
+     * @return Builder<Model>
      */
     public function applyRulesToQuery(Builder $query, array $rules, RuleBuilder $ruleBuilder): Builder
     {
@@ -131,7 +134,9 @@ class QueryBuilder extends BaseFilter
     }
 
     /**
+     * @param  Builder<Model>  $query
      * @param  array<string, mixed>  $rules
+     * @return Builder<Model>
      */
     public function applyRulesToBaseQuery(Builder $query, array $rules, RuleBuilder $ruleBuilder): Builder
     {

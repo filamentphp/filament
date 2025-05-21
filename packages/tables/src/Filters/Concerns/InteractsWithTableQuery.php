@@ -4,6 +4,7 @@ namespace Filament\Tables\Filters\Concerns;
 
 use Closure;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 
 trait InteractsWithTableQuery
 {
@@ -12,7 +13,9 @@ trait InteractsWithTableQuery
     protected ?Closure $modifyBaseQueryUsing = null;
 
     /**
+     * @param  Builder<Model>  $query
      * @param  array<string, mixed>  $data
+     * @return Builder<Model>
      */
     public function apply(Builder $query, array $data = []): Builder
     {
@@ -38,7 +41,9 @@ trait InteractsWithTableQuery
     }
 
     /**
+     * @param  Builder<Model>  $query
      * @param  array<string, mixed>  $data
+     * @return Builder<Model>
      */
     public function applyToBaseQuery(Builder $query, array $data = []): Builder
     {

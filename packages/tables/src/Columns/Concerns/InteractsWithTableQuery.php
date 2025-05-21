@@ -4,6 +4,7 @@ namespace Filament\Tables\Columns\Concerns;
 
 use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Arr;
@@ -13,6 +14,10 @@ use function Filament\Support\generate_search_term_expression;
 
 trait InteractsWithTableQuery
 {
+    /**
+     * @param  EloquentBuilder<Model>|Relation  $query
+     * @return EloquentBuilder<Model>|Relation
+     */
     public function applyRelationshipAggregates(EloquentBuilder | Relation $query): EloquentBuilder | Relation
     {
         return $query->when(
@@ -36,6 +41,10 @@ trait InteractsWithTableQuery
         );
     }
 
+    /**
+     * @param  EloquentBuilder<Model>|Relation  $query
+     * @return EloquentBuilder<Model>|Relation
+     */
     public function applyEagerLoading(EloquentBuilder | Relation $query): EloquentBuilder | Relation
     {
         if (! $this->hasRelationship($query->getModel())) {
@@ -51,6 +60,10 @@ trait InteractsWithTableQuery
         return $query->with([$relationshipName]);
     }
 
+    /**
+     * @param  EloquentBuilder<Model>  $query
+     * @return EloquentBuilder<Model>
+     */
     public function applySearchConstraint(EloquentBuilder $query, string $search, bool &$isFirst): EloquentBuilder
     {
         if ($this->searchQuery) {
@@ -108,6 +121,10 @@ trait InteractsWithTableQuery
         return $query;
     }
 
+    /**
+     * @param  EloquentBuilder<Model>  $query
+     * @return EloquentBuilder<Model>
+     */
     public function applySort(EloquentBuilder $query, string $direction = 'asc'): EloquentBuilder
     {
         if ($this->sortQuery) {
@@ -127,6 +144,7 @@ trait InteractsWithTableQuery
     }
 
     /**
+     * @param  EloquentBuilder<Model>  $query
      * @param  array<string> | null  $relationships
      */
     protected function getSortColumnForQuery(EloquentBuilder $query, string $sortColumn, ?array $relationships = null): string | Builder

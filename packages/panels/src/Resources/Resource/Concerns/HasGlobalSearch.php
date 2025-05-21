@@ -100,6 +100,9 @@ trait HasGlobalSearch
         return static::$globalSearchResultsLimit;
     }
 
+    /**
+     * @param  Builder<Model>  $query
+     */
     public static function modifyGlobalSearchQuery(Builder $query, string $search): void {}
 
     public static function getGlobalSearchResults(string $search): Collection
@@ -140,6 +143,9 @@ trait HasGlobalSearch
         return static::$shouldSplitGlobalSearchTerms ?? true;
     }
 
+    /**
+     * @param  Builder<Model>  $query
+     */
     protected static function applyGlobalSearchAttributeConstraints(Builder $query, string $search): void
     {
         /** @var Connection $databaseConnection */
@@ -184,7 +190,9 @@ trait HasGlobalSearch
     }
 
     /**
+     * @param  Builder<Model>  $query
      * @param  array<string>  $searchAttributes
+     * @return Builder<Model>
      */
     protected static function applyGlobalSearchAttributeConstraint(Builder $query, string $search, array $searchAttributes, bool &$isFirst): Builder
     {
@@ -221,6 +229,9 @@ trait HasGlobalSearch
         return $query;
     }
 
+    /**
+     * @return Builder<Model>
+     */
     public static function getGlobalSearchEloquentQuery(): Builder
     {
         return static::getEloquentQuery();

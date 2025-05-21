@@ -86,6 +86,10 @@ class SpatieTagsColumn extends TextColumn
         return $this->getType() instanceof AllTagTypes;
     }
 
+    /**
+     * @param  Builder<Model>|Relation  $query
+     * @return Builder<Model>|Relation
+     */
     public function applyEagerLoading(Builder | Relation $query): Builder | Relation
     {
         if ($this->isHidden()) {

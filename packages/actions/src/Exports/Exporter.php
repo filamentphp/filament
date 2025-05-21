@@ -215,6 +215,10 @@ abstract class Exporter
         return $writer;
     }
 
+    /**
+     * @param  Builder<Model>  $query
+     * @return Builder<Model>
+     */
     public static function modifyQuery(Builder $query): Builder
     {
         return $query;

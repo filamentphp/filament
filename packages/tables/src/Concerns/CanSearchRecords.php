@@ -4,6 +4,7 @@ namespace Filament\Tables\Concerns;
 
 use Filament\Tables\Filters\Indicator;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use RecursiveArrayIterator;
 use RecursiveIteratorIterator;
@@ -59,6 +60,10 @@ trait CanSearchRecords
         $this->resetPage();
     }
 
+    /**
+     * @param  Builder<Model>  $query
+     * @return Builder<Model>
+     */
     protected function applySearchToTableQuery(Builder $query): Builder
     {
         $this->applyColumnSearchesToTableQuery($query);
@@ -67,6 +72,10 @@ trait CanSearchRecords
         return $query;
     }
 
+    /**
+     * @param  Builder<Model>  $query
+     * @return Builder<Model>
+     */
     protected function applyColumnSearchesToTableQuery(Builder $query): Builder
     {
         $table = $this->getTable();
@@ -130,6 +139,10 @@ trait CanSearchRecords
         );
     }
 
+    /**
+     * @param  Builder<Model>  $query
+     * @return Builder<Model>
+     */
     protected function applyGlobalSearchToTableQuery(Builder $query): Builder
     {
         $search = $this->getTableSearch();

@@ -177,6 +177,9 @@ class CreateAction extends Action
         return true;
     }
 
+    /**
+     * @return Relation|Builder<Model>|null
+     */
     public function getRelationship(): Relation | Builder | null
     {
         return $this->evaluate($this->getRelationshipUsing) ?? $this->getTable()?->getRelationship() ?? $this->getHasActionsLivewire()?->getDefaultActionRelationship($this);

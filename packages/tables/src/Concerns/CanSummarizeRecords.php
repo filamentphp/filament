@@ -6,17 +6,24 @@ use Closure;
 use Filament\Support\Services\RelationshipJoiner;
 use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Str;
 use stdClass;
 
 trait CanSummarizeRecords
 {
+    /**
+     * @return Builder<Model>
+     */
     public function getAllTableSummaryQuery(): Builder
     {
         return $this->getFilteredTableQuery();
     }
 
+    /**
+     * @return Builder<Model>
+     */
     public function getPageTableSummaryQuery(): Builder
     {
         return $this->getFilteredSortedTableQuery()->forPage(
@@ -26,6 +33,7 @@ trait CanSummarizeRecords
     }
 
     /**
+     * @param  Builder<Model>  $query
      * @return array<string, mixed>
      */
     public function getTableSummarySelectedState(Builder $query, ?Closure $modifyQueryUsing = null): array

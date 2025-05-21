@@ -40,6 +40,9 @@ interface HasTable
 
     public function getSelectedTableRecords(bool $shouldFetchSelectedRecords = true, ?int $chunkSize = null): EloquentCollection | Collection | LazyCollection;
 
+    /**
+     * @return Builder<Model>
+     */
     public function getSelectedTableRecordsQuery(bool $shouldFetchSelectedRecords = true, ?int $chunkSize = null): Builder;
 
     public function parseTableFilterName(string $name): string;
@@ -70,8 +73,14 @@ interface HasTable
 
     public function getTableSortDirection(): ?string;
 
+    /**
+     * @return Builder<Model>
+     */
     public function getAllTableSummaryQuery(): Builder;
 
+    /**
+     * @return Builder<Model>
+     */
     public function getPageTableSummaryQuery(): Builder;
 
     public function isTableColumnToggledHidden(string $name): bool;
@@ -107,10 +116,19 @@ interface HasTable
      */
     public function getTableColumnSearchIndicators(): array;
 
+    /**
+     * @return ?Builder<Model>
+     */
     public function getFilteredTableQuery(): ?Builder;
 
+    /**
+     * @return ?Builder<Model>
+     */
     public function getFilteredSortedTableQuery(): ?Builder;
 
+    /**
+     * @return Builder<Model>
+     */
     public function getTableQueryForExport(): Builder;
 
     public function makeFilamentTranslatableContentDriver(): ?TranslatableContentDriver;

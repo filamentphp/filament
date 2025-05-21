@@ -6,6 +6,7 @@ use Closure;
 use Exception;
 use Filament\Support\Services\RelationshipJoiner;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasOneOrManyThrough;
@@ -48,6 +49,9 @@ trait HasRelationship
         return filled($this->getRelationshipName());
     }
 
+    /**
+     * @return Relation|Builder<Model>
+     */
     public function getRelationship(): Relation | Builder
     {
         $model = $this->getTable()->getModel();
@@ -91,6 +95,9 @@ trait HasRelationship
         return $this->modifyRelationshipQueryUsing;
     }
 
+    /**
+     * @return ?Builder<Model>
+     */
     public function getRelationshipQuery(): ?Builder
     {
         $relationship = Relation::noConstraints(fn () => $this->getRelationship());
@@ -110,6 +117,9 @@ trait HasRelationship
         return $relationshipQuery;
     }
 
+    /**
+     * @param  ?Builder<Model>  $query
+     */
     public function getRelationshipKey(?Builder $query = null): ?string
     {
         $relationship = $this->getRelationship();

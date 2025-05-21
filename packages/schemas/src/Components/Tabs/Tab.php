@@ -14,6 +14,7 @@ use Filament\Support\Concerns\HasIconPosition;
 use Filament\Support\Enums\IconPosition;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
 class Tab extends Component implements CanConcealComponents
@@ -82,6 +83,10 @@ class Tab extends Component implements CanConcealComponents
         return $this;
     }
 
+    /**
+     * @param  Builder<Model>  $query
+     * @return Builder<Model>
+     */
     public function modifyQuery(Builder $query): Builder
     {
         return $this->evaluate($this->modifyQueryUsing, [

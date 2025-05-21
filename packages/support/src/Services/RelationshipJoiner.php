@@ -3,6 +3,7 @@
 namespace Filament\Support\Services;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Query\Expression;
@@ -13,6 +14,10 @@ use Kirschbaum\PowerJoins\JoinsHelper;
 
 class RelationshipJoiner
 {
+    /**
+     * @param  Builder<Model>  $query
+     * @return Builder<Model>
+     */
     public function leftJoinRelationship(Builder $query, string $relationship): Builder
     {
         if (str($relationship)->contains('.')) {
@@ -37,6 +42,7 @@ class RelationshipJoiner
     }
 
     /**
+     * @param  Builder<Model>  $query
      * @return array<JoinClause>
      */
     public function getLeftJoinsForRelationship(Builder $query, string $relationship): array
@@ -47,6 +53,9 @@ class RelationshipJoiner
         return $query->toBase()->joins;
     }
 
+    /**
+     * @return Builder<Model>
+     */
     public function prepareQueryForNoConstraints(Relation $relationship): Builder
     {
         $relationshipQuery = $relationship->getQuery();
