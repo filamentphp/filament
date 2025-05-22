@@ -49,10 +49,6 @@ abstract class Exporter
         return $data;
     }
 
-    /**
-     * @param array $options
-     * @return array
-     */
     abstract public static function getColumns(array $options = []): array;
 
     /**
