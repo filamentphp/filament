@@ -98,7 +98,7 @@ trait CanExportRecords
                         ])
                             ->verticallyAlignCenter()
                             ->statePath($column->getName()),
-                        $action->getExporter()::getColumns(),
+                        $action->getExporter()::getColumns($this->getOptions()),
                     );
                 })
                 ->statePath('columnMap')] : []),
@@ -157,7 +157,7 @@ trait CanExportRecords
                     ->mapWithKeys(fn (array $column, string $columnName): array => [$columnName => $column['label']])
                     ->all();
             } else {
-                $columnMap = collect($exporter::getColumns())
+                $columnMap = collect($exporter::getColumns($options))
                     ->mapWithKeys(fn (ExportColumn $column): array => [$column->getName() => $column->getLabel()])
                     ->all();
             }

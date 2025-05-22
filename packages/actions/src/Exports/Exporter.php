@@ -50,9 +50,10 @@ abstract class Exporter
     }
 
     /**
-     * @return array<ExportColumn>
+     * @param array $options
+     * @return array
      */
-    abstract public static function getColumns(): array;
+    abstract public static function getColumns(array $options = []): array;
 
     /**
      * @return array<Component>
@@ -122,7 +123,7 @@ abstract class Exporter
      */
     public function getCachedColumns(): array
     {
-        return $this->cachedColumns ??= array_reduce(static::getColumns(), function (array $carry, ExportColumn $column): array {
+        return $this->cachedColumns ??= array_reduce(static::getColumns($this->getOptions()), function (array $carry, ExportColumn $column): array {
             $carry[$column->getName()] = $column->exporter($this);
 
             return $carry;

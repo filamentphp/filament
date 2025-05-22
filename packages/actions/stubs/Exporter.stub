@@ -11,7 +11,7 @@ class {{ exporterClass }} extends Exporter
 {
     protected static ?string $model = {{ modelClass }}::class;
 
-    public static function getColumns(): array
+    public static function getColumns(array $options = []): array
     {
         return [
 {{ columns }}
