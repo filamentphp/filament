@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 class MorphToSelect extends Component
 {
     use Concerns\CanAllowHtml;
+    use Concerns\CanBeMarkedAsRequired;
     use Concerns\CanBeNative;
     use Concerns\CanBePreloaded;
     use Concerns\CanBeSearchable;

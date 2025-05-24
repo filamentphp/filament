@@ -124,7 +124,7 @@ use App\Models\Post;
 
 public function mount(Post $post): void
 {
-    $this->form->fill($post->toArray());
+    $this->form->fill($post->attributesToArray());
 }
 ```
 
