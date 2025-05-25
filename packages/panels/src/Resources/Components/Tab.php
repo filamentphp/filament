@@ -8,6 +8,7 @@ use Filament\Support\Concerns\HasBadge;
 use Filament\Support\Concerns\HasExtraAttributes;
 use Filament\Support\Concerns\HasIcon;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 
 class Tab extends Component
 {
@@ -58,6 +59,12 @@ class Tab extends Component
         return $this->evaluate($this->label);
     }
 
+    /**
+     * @template TModel of Model
+     *
+     * @param  Builder<TModel>  $query
+     * @return Builder<TModel>
+     */
     public function modifyQuery(Builder $query): Builder
     {
         return $this->evaluate($this->modifyQueryUsing, [

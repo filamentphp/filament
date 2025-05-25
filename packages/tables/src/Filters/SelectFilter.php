@@ -5,6 +5,7 @@ namespace Filament\Tables\Filters;
 use Closure;
 use Filament\Forms\Components\Select;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Znck\Eloquent\Relations\BelongsToThrough;
 
@@ -131,7 +132,11 @@ class SelectFilter extends BaseFilter
     }
 
     /**
+     * @template TModel of Model
+     *
+     * @param  Builder<TModel>  $query
      * @param  array<string, mixed>  $data
+     * @return Builder<TModel>
      */
     public function apply(Builder $query, array $data = []): Builder
     {
