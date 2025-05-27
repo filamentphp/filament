@@ -255,7 +255,7 @@ return [
             ],
 
             'delete' => [
-                'label' => 'Обриши ред',
+                'label' => 'Избриши ред',
             ],
 
             'reorder' => [
@@ -320,7 +320,7 @@ return [
             ],
 
             'delete' => [
-                'label' => 'Обриши',
+                'label' => 'Избриши',
             ],
 
             'clone' => [

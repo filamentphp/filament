@@ -4,16 +4,16 @@ return [
 
     'single' => [
 
-        'label' => 'Обриши',
+        'label' => 'Избриши',
 
         'modal' => [
 
-            'heading' => 'Обриши :label',
+            'heading' => 'Избриши :label',
 
             'actions' => [
 
                 'delete' => [
-                    'label' => 'Обриши',
+                    'label' => 'Избриши',
                 ],
 
             ],
@@ -23,7 +23,7 @@ return [
         'notifications' => [
 
             'deleted' => [
-                'title' => 'Обрисано',
+                'title' => 'Избрисано',
             ],
 
         ],
@@ -32,16 +32,16 @@ return [
 
     'multiple' => [
 
-        'label' => 'Обриши изабрано',
+        'label' => 'Избриши изабрано',
 
         'modal' => [
 
-            'heading' => 'Обриши изабрано',
+            'heading' => 'Избриши изабрано',
 
             'actions' => [
 
                 'delete' => [
-                    'label' => 'Обриши',
+                    'label' => 'Избриши',
                 ],
 
             ],
@@ -51,7 +51,7 @@ return [
         'notifications' => [
 
             'deleted' => [
-                'title' => 'Обрисано',
+                'title' => 'Избрисано',
             ],
 
         ],
