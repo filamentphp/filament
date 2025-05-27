@@ -32,11 +32,11 @@ return [
 
     'multiple' => [
 
-        'label' => 'Врати одабрано',
+        'label' => 'Врати изабрано',
 
         'modal' => [
 
-            'heading' => 'Врати одабрано :label',
+            'heading' => 'Врати изабрано :label',
 
             'actions' => [
 
