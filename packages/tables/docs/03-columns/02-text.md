@@ -149,6 +149,15 @@ TextColumn::make('price')
     ->money('EUR', divideBy: 100)
 ```
 
+There is also a `precision` argument for `money()` that allows you to dispaly the original value in Integer format. This could be useful if you stores the price with integer, for example:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('price')
+    ->money('EUR', precision: 2)
+```
+
 By default, your app's locale will be used to format the money suitably. If you would like to customize the locale used, you can pass it to the `locale` argument:
 
 ```php
