@@ -275,6 +275,16 @@ TextColumn::make('price')
     ->summarize(Sum::make()->money('EUR'))
 ```
 
+There is also a `precision` argument for `money()` that allows you to dispaly the original value in Integer format. This could be useful if you stores the price with integer, for example:
+
+```php
+use Filament\Tables\Columns\Summarizers\Sum;
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('price')
+    ->summarize(Sum::make()->money('EUR', precision: 2))
+```
+
 There is also a `divideBy` argument for `money()` that allows you to divide the original value by a number before formatting it. This could be useful if your database stores the price in cents, for example:
 
 ```php

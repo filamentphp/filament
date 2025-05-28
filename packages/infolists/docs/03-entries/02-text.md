@@ -113,6 +113,14 @@ use Filament\Infolists\Components\TextEntry;
 TextEntry::make('price')
     ->money('EUR')
 ```
+There is also a `precision` argument for `money()` that allows you to dispaly the original value in Integer format. This could be useful if you stores the price with integer, for example:
+
+```php
+use Filament\Infolists\Components\TextEntry;
+
+TextEntry::make('price')
+    ->money('EUR', precision: 2)
+```
 
 There is also a `divideBy` argument for `money()` that allows you to divide the original value by a number before formatting it. This could be useful if your database stores the price in cents, for example:
 
