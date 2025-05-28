@@ -70,6 +70,7 @@
                     isDownloadable: @js($isDownloadable()),
                     isMultiple: @js($isMultiple),
                     isOpenable: @js($isOpenable()),
+                    isPasteable: @js($isPasteable()),
                     isPreviewable: @js($isPreviewable()),
                     isReorderable: @js($isReorderable()),
                     itemPanelAspectRatio: @js($getItemPanelAspectRatio()),
