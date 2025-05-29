@@ -545,7 +545,13 @@ trait CanBeValidated
     {
         $modifyRuleUsing = Filament::hasTenancy() ?
             function (Field $component, Unique $rule) {
-                $tenantOwnershipRelationship = $component->getLivewire()::getResource()::getTenantOwnershipRelationship($component->getModelInstance());
+                if (method_exists($component->getLivewire(), 'getResource')) {
+                    $resource = $component->getLivewire()::getResource();
+
+                    $tenantOwnershipRelationship = $resource::getTenantOwnershipRelationship($component->getModelInstance());
+                } else {
+                    $tenantOwnershipRelationship = Filament::getTenantOwnershipRelationship($component->getModelInstance());
+                }
 
                 return $rule->where($tenantOwnershipRelationship->getForeignKeyName(), Filament::getTenant()->getKey());
             } :
