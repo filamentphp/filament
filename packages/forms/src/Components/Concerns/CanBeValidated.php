@@ -3,6 +3,7 @@
 namespace Filament\Forms\Components\Concerns;
 
 use Closure;
+use Exception;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Contracts\CanBeLengthConstrained;
 use Filament\Forms\Components\Contracts\HasNestedRecursiveValidationRules;
@@ -550,7 +551,16 @@ trait CanBeValidated
 
                     $tenantOwnershipRelationship = $resource::getTenantOwnershipRelationship($component->getModelInstance());
                 } else {
-                    $tenantOwnershipRelationship = Filament::getTenantOwnershipRelationship($component->getModelInstance());
+                    $relationshipName = Filament::getTenantOwnershipRelationshipName();
+                    $model = $component->getModelInstance();
+
+                    if (! $model->isRelation($relationshipName)) {
+                        $recordClass = $model::class;
+
+                        throw new Exception("The model [{$recordClass}] does not have a relationship named [{$relationshipName}]. You can change the relationship being used by passing it to the [ownershipRelationship] argument of the [tenant()] method in configuration.");
+                    }
+
+                    $tenantOwnershipRelationship = $model->{$relationshipName}();
                 }
 
                 return $rule->where($tenantOwnershipRelationship->getForeignKeyName(), Filament::getTenant()->getKey());
@@ -560,6 +570,20 @@ trait CanBeValidated
         $this->unique($table, $column, $ignorable, $ignoreRecord, $modifyRuleUsing);
 
         return $this;
+    }
+
+    public static function getTenantOwnershipRelationship(Model $record): Relation
+    {
+        $relationshipName = static::getTenantOwnershipRelationshipName();
+
+        if (! $record->isRelation($relationshipName)) {
+            $resourceClass = static::class;
+            $recordClass = $record::class;
+
+            throw new Exception("The model [{$recordClass}] does not have a relationship named [{$relationshipName}]. You can change the relationship being used by passing it to the [ownershipRelationship] argument of the [tenant()] method in configuration. You can change the relationship being used per-resource by setting it as the [\$tenantOwnershipRelationshipName] static property on the [{$resourceClass}] resource class.");
+        }
+
+        return $record->{$relationshipName}();
     }
 
     public function uniqueValidationIgnoresRecordByDefault(bool | Closure $condition = true): static
