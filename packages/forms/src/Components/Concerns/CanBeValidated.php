@@ -572,20 +572,6 @@ trait CanBeValidated
         return $this;
     }
 
-    public static function getTenantOwnershipRelationship(Model $record): Relation
-    {
-        $relationshipName = static::getTenantOwnershipRelationshipName();
-
-        if (! $record->isRelation($relationshipName)) {
-            $resourceClass = static::class;
-            $recordClass = $record::class;
-
-            throw new Exception("The model [{$recordClass}] does not have a relationship named [{$relationshipName}]. You can change the relationship being used by passing it to the [ownershipRelationship] argument of the [tenant()] method in configuration. You can change the relationship being used per-resource by setting it as the [\$tenantOwnershipRelationshipName] static property on the [{$resourceClass}] resource class.");
-        }
-
-        return $record->{$relationshipName}();
-    }
-
     public function uniqueValidationIgnoresRecordByDefault(bool | Closure $condition = true): static
     {
         $this->shouldUniqueValidationIgnoreRecordByDefault = $condition;
