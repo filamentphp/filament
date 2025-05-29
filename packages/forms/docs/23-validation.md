@@ -510,6 +510,13 @@ Field::make('email')
     })
 ```
 
+### Unique for Tenant
+
+In multi-tenant applications, you may want a field to be unique only within the current tenant's scope.
+
+```php
+Field::make('email')->uniqueForTenant()
+```
 
 ### ULID
 

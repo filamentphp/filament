@@ -3,6 +3,7 @@
 namespace Filament\Forms\Components\Concerns;
 
 use Closure;
+use Filament\Facades\Filament;
 use Filament\Forms\Components\Contracts\CanBeLengthConstrained;
 use Filament\Forms\Components\Contracts\HasNestedRecursiveValidationRules;
 use Filament\Forms\Components\Field;
@@ -536,6 +537,21 @@ trait CanBeValidated
 
             return $rule;
         }, fn (Field $component, ?string $model): bool => (bool) ($component->evaluate($table) ?? $model));
+
+        return $this;
+    }
+
+    public function uniqueForTenant(string | Closure | null $table = null, string | Closure | null $column = null, Model | Closure | null $ignorable = null, ?bool $ignoreRecord = null): static
+    {
+        $modifyRuleUsing = Filament::hasTenancy() ?
+            function (Field $component, Unique $rule) {
+                $tenantOwnershipRelationship = $component->getLivewire()::getResource()::getTenantOwnershipRelationship($component->getModelInstance());
+
+                return $rule->where($tenantOwnershipRelationship->getForeignKeyName(), Filament::getTenant()->getKey());
+            } :
+            null;
+
+        $this->unique($table, $column, $ignorable, $ignoreRecord, $modifyRuleUsing);
 
         return $this;
     }
