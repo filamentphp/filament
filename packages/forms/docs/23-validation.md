@@ -517,6 +517,7 @@ In multi-tenant applications, you may want a field to be unique only within the 
 ```php
 Field::make('email')->uniqueForTenant()
 ```
+This method accepts the same parameters as `Field::unique()`, such as `table`, `column`, `ignoreRecord`, `ignorable`, and `modifyRuleUsing`.
 
 ### ULID
 
