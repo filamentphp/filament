@@ -547,7 +547,7 @@ trait CanBeValidated
         $modifyRuleUsing = Filament::hasTenancy() ?
             function (Field $component, Unique $rule) use ($modifyRuleUsing) {
                 if (method_exists($component->getLivewire(), 'getResource')) {
-                    $resource = $component->getLivewire()::getResource();
+                    $resource = $component->getLivewire()->getResource();
 
                     $tenantOwnershipRelationship = $resource::getTenantOwnershipRelationship($component->getModelInstance());
                 } else {
