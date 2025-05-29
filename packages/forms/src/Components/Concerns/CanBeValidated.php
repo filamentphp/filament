@@ -542,10 +542,10 @@ trait CanBeValidated
         return $this;
     }
 
-    public function uniqueForTenant(string | Closure | null $table = null, string | Closure | null $column = null, Model | Closure | null $ignorable = null, ?bool $ignoreRecord = null): static
+    public function uniqueForTenant(string | Closure | null $table = null, string | Closure | null $column = null, Model | Closure | null $ignorable = null, ?bool $ignoreRecord = null, ?Closure $modifyRuleUsing = null): static
     {
         $modifyRuleUsing = Filament::hasTenancy() ?
-            function (Field $component, Unique $rule) {
+            function (Field $component, Unique $rule) use ($modifyRuleUsing) {
                 if (method_exists($component->getLivewire(), 'getResource')) {
                     $resource = $component->getLivewire()::getResource();
 
@@ -563,9 +563,17 @@ trait CanBeValidated
                     $tenantOwnershipRelationship = $model->{$relationshipName}();
                 }
 
-                return $rule->where($tenantOwnershipRelationship->getForeignKeyName(), Filament::getTenant()->getKey());
+                $rule = $rule->where($tenantOwnershipRelationship->getForeignKeyName(), Filament::getTenant()->getKey());
+
+                if ($modifyRuleUsing) {
+                    $rule = $component->evaluate($modifyRuleUsing, [
+                        'rule' => $rule,
+                    ]) ?? $rule;
+                }
+
+                return $rule;
             } :
-            null;
+            $modifyRuleUsing;
 
         $this->unique($table, $column, $ignorable, $ignoreRecord, $modifyRuleUsing);
 
