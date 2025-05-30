@@ -27,13 +27,13 @@ class Table extends ViewComponent
     use Table\Concerns\HasFilters;
     use Table\Concerns\HasHeader;
     use Table\Concerns\HasHeaderActions;
-    use Table\Concerns\HasToolbarActions;
     use Table\Concerns\HasQuery;
     use Table\Concerns\HasQueryStringIdentifier;
     use Table\Concerns\HasRecordAction;
     use Table\Concerns\HasRecordClasses;
     use Table\Concerns\HasRecords;
     use Table\Concerns\HasRecordUrl;
+    use Table\Concerns\HasToolbarActions;
 
     /**
      * @var view-string
