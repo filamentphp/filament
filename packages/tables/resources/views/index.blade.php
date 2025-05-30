@@ -2,6 +2,7 @@
     use Filament\Support\Enums\Alignment;
     use Filament\Support\Enums\VerticalAlignment;
     use Filament\Support\Facades\FilamentView;
+    use Filament\Tables\Actions\ToolbarActionsPosition;
     use Filament\Tables\Columns\Column;
     use Filament\Tables\Columns\ColumnGroup;
     use Filament\Tables\Enums\ActionsPosition;
@@ -31,6 +32,11 @@
         fn (\Filament\Tables\Actions\Action | \Filament\Tables\Actions\BulkAction | \Filament\Tables\Actions\ActionGroup $action): bool => $action->isVisible(),
     );
     $headerActionsPosition = $getHeaderActionsPosition();
+    $toolbarActions = array_filter(
+        $getToolbarActions(),
+        fn (\Filament\Tables\Actions\Action | \Filament\Tables\Actions\BulkAction | \Filament\Tables\Actions\ActionGroup $action): bool => $action->isVisible(),
+    );
+    $toolbarActionsPosition = $getToolbarActionsPosition();
     $heading = $getHeading();
     $group = $getGrouping();
     $bulkActions = array_filter(
@@ -182,6 +188,13 @@
             >
                 {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Tables\View\TablesRenderHook::TOOLBAR_START, scopes: static::class) }}
 
+                @if ($toolbarActions && $toolbarActionsPosition === ToolbarActionsPosition::Start)
+                    <x-filament-tables::actions
+                        :actions="$toolbarActions"
+                        wrap
+                    />
+                @endif
+
                 <div class="flex shrink-0 items-center gap-x-4">
                     {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Tables\View\TablesRenderHook::TOOLBAR_REORDER_TRIGGER_BEFORE, scopes: static::class) }}
 
@@ -256,6 +269,13 @@
                             {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Tables\View\TablesRenderHook::TOOLBAR_TOGGLE_COLUMN_TRIGGER_AFTER, scopes: static::class) }}
                         @endif
                     </div>
+                @endif
+
+                @if ($toolbarActions && $toolbarActionsPosition === ToolbarActionsPosition::End)
+                    <x-filament-tables::actions
+                        :actions="$toolbarActions"
+                        wrap
+                    />
                 @endif
 
                 {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Tables\View\TablesRenderHook::TOOLBAR_END) }}
