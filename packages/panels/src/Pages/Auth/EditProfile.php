@@ -246,7 +246,6 @@ class EditProfile extends Page
             ->label(__('filament-panels::pages/auth/edit-profile.form.password.label'))
             ->password()
             ->revealable(filament()->arePasswordsRevealable())
-            ->rule(Password::default())
             ->autocomplete('new-password')
             ->dehydrated(fn ($state): bool => filled($state))
             ->dehydrateStateUsing(fn ($state): string => Hash::make($state))
