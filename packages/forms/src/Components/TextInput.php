@@ -7,6 +7,8 @@ use Exception;
 use Filament\Forms\Components\Contracts\CanHaveNumericState;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Filament\Support\RawJs;
+use Illuminate\Validation\Rules\Email;
+use Illuminate\Validation\Rules\Password;
 
 class TextInput extends Field implements CanHaveNumericState, Contracts\CanBeLengthConstrained, Contracts\HasAffixActions
 {
@@ -66,7 +68,7 @@ class TextInput extends Field implements CanHaveNumericState, Contracts\CanBeLen
     {
         $this->isEmail = $condition;
 
-        $this->rule('email', $condition);
+        $this->rule(class_exists(Email::class) ? Email::default() : 'email', $condition);
 
         return $this;
     }
@@ -134,6 +136,8 @@ class TextInput extends Field implements CanHaveNumericState, Contracts\CanBeLen
     public function password(bool | Closure $condition = true): static
     {
         $this->isPassword = $condition;
+
+        $this->rule(Password::default(), $condition);
 
         return $this;
     }
