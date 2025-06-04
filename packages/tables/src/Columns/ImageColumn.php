@@ -4,6 +4,7 @@ namespace Filament\Tables\Columns;
 
 use Closure;
 use Illuminate\Contracts\Filesystem\Filesystem;
+use Illuminate\Filesystem\AwsS3V3Adapter;
 use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\ComponentAttributeBag;
@@ -163,9 +164,11 @@ class ImageColumn extends Column
             }
         }
 
+        $url = null;
+
         if ($this->getVisibility() === 'private') {
             try {
-                return $storage->temporaryUrl(
+                $url = $storage->temporaryUrl(
                     $state,
                     now()->addMinutes(5),
                 );
@@ -174,7 +177,15 @@ class ImageColumn extends Column
             }
         }
 
-        return $storage->url($state);
+        if (! $url && $storage instanceof AwsS3V3Adapter) {
+            try {
+                $url = $storage->publicUrl($state);
+            } catch (Throwable $exception) {
+                // This driver does not support creating public URLs.
+            }
+        }
+
+        return $url ?? $storage->url($state);
     }
 
     public function getDefaultImageUrl(): ?string
