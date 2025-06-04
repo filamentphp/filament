@@ -70,6 +70,8 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
 
     protected ?Closure $getUploadedFileUsing = null;
 
+    protected ?Closure $getFileUrlUsing = null;
+
     protected ?Closure $reorderUploadedFilesUsing = null;
 
     protected ?Closure $saveUploadedFileUsing = null;
@@ -157,7 +159,16 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
 
             $url = null;
 
-            if ($component->getVisibility() === 'private') {
+            $getFileUrlUsing = $this->getFileUrlUsing;
+
+            if ($getFileUrlUsing) {
+                $url = $this->evaluate($getFileUrlUsing, [
+                    'disk' => $component->getDiskName(),
+                    'file' => $file,
+                ]);
+            }
+
+            if (! $url && $component->getVisibility() === 'private') {
                 try {
                     $url = $storage->temporaryUrl(
                         $file,
@@ -457,6 +468,13 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
     public function getUploadedFileUsing(?Closure $callback): static
     {
         $this->getUploadedFileUsing = $callback;
+
+        return $this;
+    }
+
+    public function getFileUrlUsing(?Closure $callback): static
+    {
+        $this->getFileUrlUsing = $callback;
 
         return $this;
     }
