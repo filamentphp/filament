@@ -131,7 +131,7 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
             ->modifyQueryUsing($this->modifyQueryWithActiveTab(...))
             ->when($this->getModelLabel(), fn (Table $table, string $modelLabel): Table => $table->modelLabel($modelLabel))
             ->when($this->getPluralModelLabel(), fn (Table $table, string $pluralModelLabel): Table => $table->pluralModelLabel($pluralModelLabel))
-            ->recordAction(function (Model $record, Table $table): ?string {
+            ->recordAction(function (Model | array $record, Table $table): ?string {
                 foreach (['view', 'edit'] as $action) {
                     $action = $table->getAction($action);
 
@@ -155,7 +155,7 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
 
                 return null;
             })
-            ->recordUrl($this->getTableRecordUrlUsing() ?? function (Model $record, Table $table): ?string {
+            ->recordUrl($this->getTableRecordUrlUsing() ?? function (Model | array $record, Table $table): ?string {
                 foreach (['view', 'edit'] as $action) {
                     $action = $table->getAction($action);
 
