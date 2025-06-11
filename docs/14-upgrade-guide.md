@@ -186,7 +186,7 @@ In v4, the default disk for Filament is set to `local`, and the visibility of fi
     You can preserve the old default behavior across your entire app by adding the following code in the `boot()` method of a service provider like `AppServiceProvider`:
 
     ```php
-    use Filament\Forms\Components\FileUpload;
+    use Filament\Schemas\Components\FileUpload;
     use Filament\Infolists\Components\ImageEntry;
     use Filament\Tables\Columns\ImageColumn;
     
@@ -286,9 +286,9 @@ Section::make()
     You can preserve the old default behavior across your entire app by adding the following code in the `boot()` method of a service provider like `AppServiceProvider`:
 
     ```php
-    use Filament\Forms\Components\Fieldset;
-    use Filament\Forms\Components\Grid;
-    use Filament\Forms\Components\Section;
+    use Filament\Schemas\Components\Fieldset;
+    use Filament\Schemas\Components\Grid;
+    use Filament\Schemas\Components\Section;
 
     Fieldset::configureUsing(fn (Fieldset $fieldset) => $fieldset
         ->columnSpanFull());
@@ -315,7 +315,7 @@ If you were previously using `unique()` validation rule without the `ignoreRecor
     You can preserve the old default behavior across your entire app by adding the following code in the `boot()` method of a service provider like `AppServiceProvider`:
 
     ```php
-    use Filament\Forms\Components\Field;
+    use Filament\Schemas\Components\Field;
 
     Field::configureUsing(fn (Field $field) => $field
         ->uniqueValidationIgnoresRecordByDefault(false));
@@ -385,7 +385,7 @@ If you were previously using `inline()->inlineLabel(false)` to achieve the v4 be
     You can preserve the old default behavior across your entire app by adding the following code in the `boot()` method of a service provider like `AppServiceProvider`:
 
     ```php
-    use Filament\Forms\Components\Radio;
+    use Filament\Schemas\Components\Radio;
     
     Radio::configureUsing(fn (Radio $radio) => $radio
         ->inlineLabel(fn (): bool => $radio->isInline()));
