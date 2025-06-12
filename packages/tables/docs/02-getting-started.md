@@ -38,6 +38,68 @@ public function table(Table $table): Table
 
 In this example, there are 3 columns in the table. The first two display [text](columns/text) - the title and slug of each row in the table. The third column displays an [icon](columns/icon), either a green check or a red cross depending on if the row is featured or not.
 
+### Extending columns with global configurations
+
+While the `columns()` method defines all columns for a table, you may sometimes want to add columns to an existing configuration without overriding it completely. This is particularly useful when you have global column configurations that should appear across multiple tables.
+
+Filament provides the `pushColumns()` method for this purpose. Unlike `columns()`, which replaces the entire column configuration, `pushColumns()` appends new columns to any existing ones.
+
+This is especially powerful when combined with global table configurations in your `AppServiceProvider`:
+
+```php
+<?php
+
+namespace App\Providers;
+
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
+use Illuminate\Support\ServiceProvider;
+
+class AppServiceProvider extends ServiceProvider
+{
+    public function boot(): void
+    {
+        Table::configureUsing(function (Table $table) {
+            $table
+                ->pushColumns([
+                    TextColumn::make('created_at')
+                        ->label('Created')
+                        ->sortable()
+                        ->toggleable(isToggledHiddenByDefault: true),
+
+                    TextColumn::make('updated_at')
+                        ->label('Updated')
+                        ->sortable()
+                        ->toggleable(isToggledHiddenByDefault: true),
+                ]);
+        });
+    }
+}
+```
+
+With this global configuration in place, you can use `pushColumns()` in your individual table definitions to preserve these global columns while adding table-specific ones:
+
+```php
+use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->pushColumns([
+            TextColumn::make('title'),
+            TextColumn::make('slug'),
+            IconColumn::make('is_featured')
+                ->boolean(),
+            // The global created_at and updated_at columns 
+            // will be automatically appended after these
+        ]);
+}
+```
+
+This approach ensures consistency across your application while maintaining flexibility for table-specific requirements.
+
 ### Making columns sortable and searchable
 
 You can easily modify columns by chaining methods onto them. For example, you can make a column [searchable](columns/getting-started#searching) using the `searchable()` method. Now, there will be a search field in the table, and you will be able to filter rows by the value of that column:
