@@ -53,14 +53,6 @@ Your resource will have a "Manage" page, which is a List page with modals added.
 
 Additionally, your simple resource will have no `getRelations()` method, as [relation managers](managing-relationships) are only displayed on the Edit and View pages, which are not present in simple resources. Everything else is the same.
 
-### Automatically generating forms and tables
-
-If you'd like to save time, Filament can automatically generate the [form](#resource-forms) and [table](#resource-tables) for you, based on your model's database columns, using `--generate`:
-
-```bash
-php artisan make:filament-resource Customer --generate
-```
-
 ### Handling soft-deletes
 
 By default, you will not be able to interact with deleted records in the app. If you'd like to add functionality to restore, force-delete and filter trashed records in your resource, use the `--soft-deletes` flag when generating the resource:
