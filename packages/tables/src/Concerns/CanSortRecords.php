@@ -101,7 +101,7 @@ trait CanSortRecords
         }
 
         if ($defaultSort instanceof Builder) {
-            $query = $defaultSort;
+            return $defaultSort;
         }
 
         $qualifiedKeyName = $query->getModel()->getQualifiedKeyName();
