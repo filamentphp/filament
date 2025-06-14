@@ -215,7 +215,7 @@ trait InteractsWithTable
             ->poll($this->getTablePollingInterval())
             ->recordAction($this->getTableRecordActionUsing())
             ->recordClasses($this->getTableRecordClassesUsing())
-            ->recordTitle(fn(Model $record): ?string => $this->getTableRecordTitle($record))
+            ->recordTitle(fn (Model $record): ?string => $this->getTableRecordTitle($record))
             ->recordUrl($this->getTableRecordUrlUsing())
             ->reorderable($this->getTableReorderColumn())
             ->selectCurrentPageOnly($this->shouldSelectCurrentPageOnly())
