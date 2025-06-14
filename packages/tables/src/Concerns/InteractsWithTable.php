@@ -177,18 +177,7 @@ trait InteractsWithTable
 
     public function table(Table $table): Table
     {
-        return $table;
-    }
-
-    public function getTable(): Table
-    {
-        return $this->table;
-    }
-
-    protected function makeTable(): Table
-    {
-        return Table::make($this)
-            ->query($this->getTableQuery())
+        return $table->query($this->getTableQuery())
             ->actions($this->getTableActions())
             ->actionsColumnLabel($this->getTableActionsColumnLabel())
             ->checkIfRecordIsSelectableUsing($this->isTableRecordSelectable())
@@ -226,11 +215,21 @@ trait InteractsWithTable
             ->poll($this->getTablePollingInterval())
             ->recordAction($this->getTableRecordActionUsing())
             ->recordClasses($this->getTableRecordClassesUsing())
-            ->recordTitle(fn (Model $record): ?string => $this->getTableRecordTitle($record))
+            ->recordTitle(fn(Model $record): ?string => $this->getTableRecordTitle($record))
             ->recordUrl($this->getTableRecordUrlUsing())
             ->reorderable($this->getTableReorderColumn())
             ->selectCurrentPageOnly($this->shouldSelectCurrentPageOnly())
             ->striped($this->isTableStriped());
+    }
+
+    public function getTable(): Table
+    {
+        return $this->table;
+    }
+
+    protected function makeTable(): Table
+    {
+        return Table::make($this);
     }
 
     protected function getTableQueryStringIdentifier(): ?string
