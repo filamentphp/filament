@@ -61,14 +61,6 @@
             @apply hover:bg-gray-50 dark:hover:bg-white/10;
         }
 
-        input:checked + &label {
-            @apply bg-gray-400 text-white ring-0 dark:bg-gray-600;
-
-            &:not(.fi-disabled):not([disabled]) {
-                @apply hover:bg-gray-300 dark:hover:bg-gray-500;
-            }
-        }
-
         &.fi-color {
             &:not(label) {
                 @apply bg-(--bg) text-(--text) dark:bg-(--dark-bg) dark:text-(--dark-text);
@@ -81,39 +73,18 @@
                     @apply text-(--text) dark:text-(--dark-text);
                 }
             }
-
-            &label {
-                input:checked + & {
-                    @apply bg-(--bg) text-(--text) ring-0 dark:bg-(--dark-bg) dark:text-(--dark-text);
-                }
-
-                &:not(.fi-disabled):not([disabled]) {
-                    input:checked + & {
-                        @apply hover:bg-(--hover-bg) hover:text-(--hover-text) dark:hover:bg-(--dark-hover-bg) dark:hover:text-(--dark-hover-text);
-                    }
-
-                    input:focus-visible + & {
-                        @apply z-10 ring-2 ring-gray-950/10 dark:ring-white/20;
-                    }
-
-                    input:checked:focus-visible + & {
-                        @apply ring-color-500/50 dark:ring-color-400/50;
-                    }
-                }
-            }
         }
     }
 
     &label {
         @apply cursor-pointer;
-
-        & > .fi-icon:is(:checked + label > .fi-icon) {
-            @apply text-(--text) dark:text-(--dark-text);
-        }
     }
 
-    &:not(.fi-color),
-    &label {
+    &:not(.fi-color) {
+        @apply ring-1 ring-gray-950/10 dark:ring-white/20;
+    }
+
+    &:is(label) {
         @apply ring-1 ring-gray-950/10 dark:ring-white/20;
     }
 
@@ -150,6 +121,38 @@
     }
 }
 
+input:checked + .fi-btn:is(label):not(.fi-outlined) {
+    @apply bg-gray-400 text-white ring-0 dark:bg-gray-600;
+
+    &:not(.fi-disabled):not([disabled]) {
+        @apply hover:bg-gray-300 dark:hover:bg-gray-500;
+    }
+}
+
+input:checked + .fi-btn:is(label):not(.fi-outlined).fi-color {
+    @apply bg-(--bg) text-(--text) ring-0 dark:bg-(--dark-bg) dark:text-(--dark-text);
+}
+
+input:checked
+    + .fi-btn:is(label):not(.fi-outlined).fi-color:not(.fi-disabled):not(
+        [disabled]
+    ) {
+    @apply hover:bg-(--hover-bg) hover:text-(--hover-text) dark:hover:bg-(--dark-hover-bg) dark:hover:text-(--dark-hover-text);
+}
+
+input:focus-visible + .fi-btn:is(label):not(.fi-disabled):not([disabled]) {
+    @apply z-10 ring-2 ring-gray-950/10 dark:ring-white/20;
+}
+
+input:checked:focus-visible
+    + .fi-btn:is(label):not(.fi-disabled):not([disabled]).fi-color {
+    @apply ring-color-500/50 dark:ring-color-400/50;
+}
+
+input:checked + label > .fi-icon {
+    @apply text-(--text) dark:text-(--dark-text);
+}
+
 .fi-btn-group {
     @apply grid grid-flow-col rounded-lg shadow-sm ring-1 ring-gray-950/10 dark:ring-white/20;
 
@@ -180,8 +183,11 @@
             @apply shadow-none;
         }
 
-        &:not(.fi-color),
-        &label {
+        &:not(.fi-color) {
+            @apply ring-0;
+        }
+
+        &:is(label) {
             @apply ring-0;
         }
     }
