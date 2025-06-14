@@ -149,7 +149,7 @@
         @apply flex items-center gap-3;
 
         & > .fi-icon {
-            @apply self-start text-gray-400 dark:text-gray-500;
+            @apply text-gray-400 dark:text-gray-500;
 
             &.fi-color {
                 @apply text-color-500 dark:text-color-400;
