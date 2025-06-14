@@ -92,7 +92,7 @@
                     <x-filament::icon
                         :icon="$icon"
                         @class([
-                            'fi-section-header-icon self-start',
+                            'fi-section-header-icon self-center',
                             match ($iconColor) {
                                 'gray' => 'text-gray-400 dark:text-gray-500',
                                 default => 'fi-color-custom text-custom-500 dark:text-custom-400',
