@@ -3,6 +3,7 @@
 namespace Filament\Actions;
 
 use Closure;
+use Exception;
 use Filament\Actions\Concerns\HasTooltip;
 use Filament\Actions\Enums\ActionStatus;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
@@ -34,6 +35,9 @@ use Illuminate\Support\Str;
 use Illuminate\View\ComponentAttributeBag;
 use Livewire\Drawer\Utils;
 
+/**
+ * @implements Arrayable<string, mixed>
+ */
 class Action extends ViewComponent implements Arrayable
 {
     use CanGenerateBadgeHtml;
@@ -159,6 +163,8 @@ class Action extends ViewComponent implements Arrayable
 
     /**
      * @return array<string, mixed>
+     *
+     * @throws Exception
      */
     public function toArray(): array
     {

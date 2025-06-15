@@ -34,7 +34,7 @@ class TagsInput extends Field implements Contracts\HasNestedRecursiveValidationR
     protected array | Closure $splitKeys = [];
 
     /**
-     * @var array<string> | Arrayable | Closure | null
+     * @var array<string> | Arrayable<array-key, string> | Closure | null
      */
     protected array | Arrayable | Closure | null $suggestions = null;
 
@@ -120,7 +120,7 @@ class TagsInput extends Field implements Contracts\HasNestedRecursiveValidationR
     }
 
     /**
-     * @param  array<string> | Arrayable | Closure  $suggestions
+     * @param  array<string> | Arrayable<array-key, string> | Closure  $suggestions
      */
     public function suggestions(array | Arrayable | Closure $suggestions): static
     {

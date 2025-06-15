@@ -45,7 +45,7 @@ class NavigationItem extends Component
     protected bool | Closure $isVisible = true;
 
     /**
-     * @var array<NavigationItem> | Arrayable
+     * @var array<NavigationItem> | Arrayable<array-key, NavigationItem>
      */
     protected array | Arrayable $childItems = [];
 
@@ -250,7 +250,7 @@ class NavigationItem extends Component
     }
 
     /**
-     * @param  array<NavigationItem> | Arrayable  $items
+     * @param  array<NavigationItem> | Arrayable<array-key, NavigationItem>  $items
      */
     public function childItems(array | Arrayable $items): static
     {
@@ -260,7 +260,7 @@ class NavigationItem extends Component
     }
 
     /**
-     * @return array<NavigationItem> | Arrayable
+     * @return array<NavigationItem> | Arrayable<array-key, NavigationItem>
      */
     public function getChildItems(): array | Arrayable
     {

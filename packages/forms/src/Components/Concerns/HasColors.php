@@ -10,12 +10,12 @@ use UnitEnum;
 trait HasColors
 {
     /**
-     * @var array<string | array<int | string, string | int> | null> | Arrayable | Closure | null
+     * @var array<string | array<int | string, string | int> | null> | Arrayable<array-key, string | array<int | string, string | int> | null> | Closure | null
      */
     protected array | Arrayable | Closure | null $colors = null;
 
     /**
-     * @param  array<string | array<int | string, string | int> | null> | Arrayable | Closure | null  $colors
+     * @param  array<string | array<int | string, string | int> | null> | Arrayable<array-key, string | array<int | string, string | int> | null> | Closure | null  $colors
      */
     public function colors(array | Arrayable | Closure | null $colors): static
     {

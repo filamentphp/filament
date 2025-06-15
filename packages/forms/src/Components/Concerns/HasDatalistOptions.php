@@ -8,12 +8,12 @@ use Illuminate\Contracts\Support\Arrayable;
 trait HasDatalistOptions
 {
     /**
-     * @var array<string> | Arrayable | Closure | null
+     * @var array<string> | Arrayable<array-key, string> | Closure | null
      */
     protected array | Arrayable | Closure | null $datalistOptions = null;
 
     /**
-     * @param  array<string> | Arrayable | Closure | null  $options
+     * @param  array<string> | Arrayable<array-key, string> | Closure | null  $options
      */
     public function datalist(array | Arrayable | Closure | null $options): static
     {

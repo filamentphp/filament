@@ -25,7 +25,7 @@ trait CanBeValidated
     protected string | Closure | null $regexPattern = null;
 
     /**
-     * @var array<string> | Arrayable | string | Closure | null
+     * @var array<string> | Arrayable<array-key, mixed> | string | Closure | null
      */
     protected array | Arrayable | string | Closure | null $inValidationRuleValues = null;
 
@@ -88,7 +88,7 @@ trait CanBeValidated
     }
 
     /**
-     * @param  array<scalar> | Arrayable | string | Closure  $values
+     * @param  array<scalar> | Arrayable<array-key, mixed> | string | Closure  $values
      */
     public function doesntStartWith(array | Arrayable | string | Closure $values, bool | Closure $condition = true): static
     {
@@ -110,7 +110,7 @@ trait CanBeValidated
     }
 
     /**
-     * @param  array<scalar> | Arrayable | string | Closure  $values
+     * @param  array<scalar> | Arrayable<array-key, mixed> | string | Closure  $values
      */
     public function doesntEndWith(array | Arrayable | string | Closure $values, bool | Closure $condition = true): static
     {
@@ -132,7 +132,7 @@ trait CanBeValidated
     }
 
     /**
-     * @param  array<scalar> | Arrayable | string | Closure  $values
+     * @param  array<scalar> | Arrayable<array-key, mixed> | string | Closure  $values
      */
     public function endsWith(array | Arrayable | string | Closure $values, bool | Closure $condition = true): static
     {
@@ -237,7 +237,7 @@ trait CanBeValidated
     }
 
     /**
-     * @param  array<scalar> | Arrayable | string | Closure  $values
+     * @param  array<scalar> | Arrayable<array-key, mixed> | string | Closure  $values
      */
     public function in(array | Arrayable | string | Closure | null $values, bool | Closure $condition = true): static
     {
@@ -305,7 +305,7 @@ trait CanBeValidated
     }
 
     /**
-     * @param  array<scalar> | Arrayable | string | Closure  $values
+     * @param  array<scalar> | Arrayable<array-key, mixed> | string | Closure  $values
      */
     public function notIn(array | Arrayable | string | Closure $values, bool | Closure $condition = true): static
     {
@@ -436,7 +436,7 @@ trait CanBeValidated
     }
 
     /**
-     * @param  array<scalar> | Arrayable | string | Closure  $values
+     * @param  array<scalar> | Arrayable<array-key, mixed> | string | Closure  $values
      */
     public function startsWith(array | Arrayable | string | Closure $values, bool | Closure $condition = true): static
     {

@@ -12,12 +12,12 @@ use UnitEnum;
 trait HasIcons
 {
     /**
-     * @var array<string| BackedEnum | Htmlable | null> | Arrayable | Closure | null
+     * @var array<string| BackedEnum | Htmlable | null> | Arrayable<array-key, string| BackedEnum | Htmlable | null>  | Closure | null
      */
     protected array | Arrayable | Closure | null $icons = null;
 
     /**
-     * @param  array<string | BackedEnum | Htmlable | null> | Arrayable | Closure | null  $icons
+     * @param  array<string | BackedEnum | Htmlable | null> | Arrayable<array-key, string| BackedEnum | Htmlable | null> | Closure | null  $icons
      */
     public function icons(array | Arrayable | Closure | null $icons): static
     {

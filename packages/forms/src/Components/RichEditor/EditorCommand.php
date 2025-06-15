@@ -4,6 +4,9 @@ namespace Filament\Forms\Components\RichEditor;
 
 use Illuminate\Contracts\Support\Arrayable;
 
+/**
+ * @implements Arrayable<string, string | array<mixed>>
+ */
 class EditorCommand implements Arrayable
 {
     /**

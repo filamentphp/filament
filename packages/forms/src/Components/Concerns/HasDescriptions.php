@@ -11,12 +11,12 @@ use UnitEnum;
 trait HasDescriptions
 {
     /**
-     * @var array<string | Htmlable> | Arrayable | Closure
+     * @var array<string | Htmlable> | Arrayable<array-key, string> | Closure
      */
     protected array | Arrayable | Closure $descriptions = [];
 
     /**
-     * @param  array<string | Htmlable> | Arrayable | Closure  $descriptions
+     * @param  array<string | Htmlable> | Arrayable<array-key, string> | Closure  $descriptions
      */
     public function descriptions(array | Arrayable | Closure $descriptions): static
     {

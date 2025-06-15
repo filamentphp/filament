@@ -19,14 +19,14 @@ class SelectAction extends Action implements HasEmbeddedView
     protected string $view = self::SELECT_VIEW;
 
     /**
-     * @var array<string> | Arrayable | string | Closure
+     * @var array<string> | Arrayable<int, string> | string | Closure
      */
     protected array | Arrayable | string | Closure $options = [];
 
     protected ?string $placeholder = null;
 
     /**
-     * @param  array<string> | Arrayable | string | Closure  $options
+     * @param  array<string> | Arrayable<int, string> | string | Closure  $options
      */
     public function options(array | Arrayable | string | Closure $options): static
     {

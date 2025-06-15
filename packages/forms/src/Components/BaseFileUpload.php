@@ -23,7 +23,7 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
     use Concerns\HasUploadingMessage;
 
     /**
-     * @var array<string> | Arrayable | Closure | null
+     * @var array<string> | Arrayable<int, string> | Closure | null
      */
     protected array | Arrayable | Closure | null $acceptedFileTypes = null;
 
@@ -181,7 +181,7 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
     }
 
     /**
-     * @param  array<string> | Arrayable | Closure  $types
+     * @param  array<string> | Arrayable<array-key, mixed> | Closure  $types
      */
     public function acceptedFileTypes(array | Arrayable | Closure $types): static
     {

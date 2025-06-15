@@ -10,12 +10,12 @@ use UnitEnum;
 trait HasOptions
 {
     /**
-     * @var array<string | array<string>> | Arrayable | string | Closure | null
+     * @var array<string | array<string>> | Arrayable<array-key, string> | string | Closure | null
      */
     protected array | Arrayable | string | Closure | null $options = null;
 
     /**
-     * @param  array<string | array<string>> | Arrayable | string | Closure | null  $options
+     * @param  array<string | array<string>> | Arrayable<array-key, string> | string | Closure | null  $options
      */
     public function options(array | Arrayable | string | Closure | null $options): static
     {

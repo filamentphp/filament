@@ -126,7 +126,7 @@ class IconColumn extends Column implements HasEmbeddedView
     /**
      * @deprecated Use `icons()` instead.
      *
-     * @param  array<mixed> | Arrayable | Closure  $options
+     * @param  array<mixed> | Arrayable<array-key, mixed> | Closure  $options
      */
     public function options(array | Arrayable | Closure $options): static
     {

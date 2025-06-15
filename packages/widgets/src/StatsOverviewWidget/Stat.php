@@ -101,7 +101,7 @@ class Stat extends Component
     }
 
     /**
-     * @param  array<float> | Arrayable | null  $chart
+     * @param  array<float> | Arrayable<array-key, float> | null  $chart
      */
     public function chart(array | Arrayable | null $chart): static
     {

@@ -7,6 +7,7 @@ use Exception;
 use Filament\Support\Authorization\DenyResponse;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Support\LazyCollection;
 
@@ -44,6 +45,11 @@ trait InteractsWithSelectedRecords
         return (bool) $this->evaluate($this->canAccessSelectedRecords);
     }
 
+    /**
+     * @return EloquentCollection<int, Model>|Collection<int, Model>|LazyCollection<int, Model>
+     *
+     * @throws Exception
+     */
     public function getSelectedRecords(): EloquentCollection | Collection | LazyCollection
     {
         if (! $this->canAccessSelectedRecords()) {
@@ -69,6 +75,11 @@ trait InteractsWithSelectedRecords
         return $this->getLivewire()->getSelectedTableRecordsQuery($this->shouldFetchSelectedRecords(), $this->getSelectedRecordsChunkSize());
     }
 
+    /**
+     * @return EloquentCollection<int, Model>|Collection<int, Model>|LazyCollection<int, Model>
+     *
+     * @throws Exception
+     */
     public function getIndividuallyAuthorizedSelectedRecords(): EloquentCollection | Collection | LazyCollection
     {
         if (! $this->shouldAuthorizeIndividualRecords()) {

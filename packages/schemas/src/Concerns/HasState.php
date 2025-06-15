@@ -419,7 +419,7 @@ trait HasState
     }
 
     /**
-     * @return array<string, mixed> | Arrayable
+     * @return array<string, mixed> | Arrayable<string, mixed>
      */
     public function getRawState(): array | Arrayable
     {

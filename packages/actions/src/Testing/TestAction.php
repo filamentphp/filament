@@ -7,6 +7,9 @@ use Filament\Support\ArrayRecord;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @implements Arrayable<string, mixed>
+ */
 class TestAction implements Arrayable
 {
     /** @var array<string, mixed> | Closure | null */

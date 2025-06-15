@@ -25,7 +25,7 @@ class NavigationGroup extends Component
     protected string | BackedEnum | Closure | null $icon = null;
 
     /**
-     * @var array<NavigationItem> | Arrayable
+     * @var array<NavigationItem> | Arrayable<array-key, NavigationItem>
      */
     protected array | Arrayable $items = [];
 
@@ -68,7 +68,7 @@ class NavigationGroup extends Component
     }
 
     /**
-     * @param  array<NavigationItem> | Arrayable  $items
+     * @param  array<NavigationItem> | Arrayable<array-key, NavigationItem>  $items
      */
     public function items(array | Arrayable $items): static
     {
@@ -90,7 +90,7 @@ class NavigationGroup extends Component
     }
 
     /**
-     * @return array<NavigationItem> | Arrayable
+     * @return array<NavigationItem> | Arrayable<array-key, NavigationItem>
      */
     public function getItems(): array | Arrayable
     {

@@ -3,6 +3,7 @@
 namespace Filament\Notifications;
 
 use BackedEnum;
+use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Notifications\Events\DatabaseNotificationsSent;
@@ -30,6 +31,9 @@ use PHPUnit\Framework\Assert;
 
 use function Filament\Support\generate_icon_html;
 
+/**
+ * @implements Arrayable<string, mixed>
+ */
 class Notification extends ViewComponent implements Arrayable, HasEmbeddedView
 {
     use Concerns\CanBeInline;
@@ -65,6 +69,11 @@ class Notification extends ViewComponent implements Arrayable, HasEmbeddedView
         return $static;
     }
 
+    /**
+     * @return array<string, mixed>
+     *
+     * @throws Exception
+     */
     public function toArray(): array
     {
         $icon = $this->getIcon();
@@ -92,6 +101,8 @@ class Notification extends ViewComponent implements Arrayable, HasEmbeddedView
 
     /**
      * @param  array<string, mixed>  $data
+     *
+     * @throws Exception
      */
     public static function fromArray(array $data): static
     {

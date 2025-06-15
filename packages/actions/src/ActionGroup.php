@@ -30,6 +30,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use Illuminate\View\ComponentAttributeBag;
 
+/**
+ * @implements Arrayable<string, mixed>
+ */
 class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
 {
     use CanGenerateBadgeHtml;
@@ -269,6 +272,8 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
 
     /**
      * @return array<string, mixed>
+     *
+     * @throws Exception
      */
     public function toArray(): array
     {
