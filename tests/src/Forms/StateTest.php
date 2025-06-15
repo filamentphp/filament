@@ -1,12 +1,16 @@
 <?php
 
-use Filament\Forms\ComponentContainer;
-use Filament\Forms\Components\Component;
-use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Get;
-use Filament\Tests\Forms\Fixtures\Livewire;
-use Filament\Tests\TestCase;
 use Illuminate\Support\Str;
+use Filament\Tests\TestCase;
+use Filament\Forms\Components\Wizard;
+use Filament\Forms\ComponentContainer;
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Component;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Components\Wizard\Step;
+use Filament\Tests\Forms\Fixtures\Livewire;
 
 uses(TestCase::class);
 
@@ -818,4 +822,43 @@ test('parent sibling state can be retrieved absolutely from another component', 
 
     expect($placeholder)
         ->getContent()->toBe($state);
+});
+
+test('when repeaters share the same id across wizard steps data is filled only once', function () {
+    $container = ComponentContainer::make(Livewire::make())
+        ->statePath('data')
+        ->components([
+            Wizard::make()
+                ->steps([
+                    Step::make('step1')
+                        ->schema([
+                            Repeater::make('repeater')
+                                ->schema([
+                                    TextInput::make('name'),
+                                ]),
+                        ]),
+                    Step::make('step2')
+                        ->schema([
+                            Repeater::make('repeater')
+                                ->schema([
+                                    TextInput::make('name2'),
+                                ]),
+                        ]),
+                ]),
+        ])
+        ->fill([
+            'repeater' => [
+                'name' => 'lorem ipsum',
+                'name2' => 'lorem ipsum',
+            ],
+        ]);
+
+    $dehydratedState = $container->dehydrateState();
+
+    expect($dehydratedState['data']['repeater'])
+        ->toHaveCount(1)
+        ->each(fn($item) => $item->toBe([
+            'name' => 'lorem ipsum',
+            'name2' => 'lorem ipsum',
+        ]));
 });
