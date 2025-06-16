@@ -2,6 +2,8 @@
 
 namespace Filament\Tables\Concerns;
 
+use Closure;
+use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\BulkAction;
 use Filament\Schemas\Schema;
@@ -12,6 +14,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\LazyCollection;
+use Throwable;
 
 trait HasBulkActions
 {
@@ -27,12 +30,17 @@ trait HasBulkActions
 
     public bool $isTrackingDeselectedTableRecords = false;
 
+    /**
+     * @var EloquentCollection<array-key, Model> | Collection<array-key, Model> | LazyCollection<array-key, Model>
+     */
     protected EloquentCollection | Collection | LazyCollection $cachedSelectedTableRecords;
 
     /**
-     * @deprecated Use the `callMountedAction()` method instead.
-     *
      * @param  array<string, mixed>  $arguments
+     *
+     * @throws Throwable
+     *
+     * @deprecated Use the `callMountedAction()` method instead.
      */
     public function callMountedTableBulkAction(array $arguments = []): mixed
     {
@@ -90,6 +98,8 @@ trait HasBulkActions
 
     /**
      * @return array<string>
+     *
+     * @throws Exception
      */
     public function getAllSelectableTableRecordKeys(): array
     {
@@ -174,7 +184,7 @@ trait HasBulkActions
     public function getAllSelectableTableRecordsCount(): int
     {
         if ($this->getTable()->checksIfRecordIsSelectable()) {
-            /** @var Collection $records */
+            /** @var Collection<array-key, Model> $records */
             $records = $this->getTable()->selectsCurrentPageOnly() ?
                 $this->getTableRecords() :
                 $this->getFilteredTableQuery()->get();
@@ -195,6 +205,11 @@ trait HasBulkActions
         return $this->getFilteredTableQuery()?->count() ?? $this->cachedTableRecords->count();
     }
 
+    /**
+     * @return EloquentCollection<array-key, Model>|Collection<array-key, Model>|LazyCollection<array-key, Model>
+     *
+     * @throws Exception
+     */
     public function getSelectedTableRecords(bool $shouldFetchSelectedRecords = true, ?int $chunkSize = null): EloquentCollection | Collection | LazyCollection
     {
         if (isset($this->cachedSelectedTableRecords)) {

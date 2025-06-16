@@ -4,6 +4,7 @@ namespace Filament\Support\Concerns;
 
 use Closure;
 use Illuminate\Support\Collection;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 trait HasMediaFilter
 {
@@ -16,6 +17,10 @@ trait HasMediaFilter
         return $this;
     }
 
+    /**
+     * @param  Collection<array-key, Media>  $media
+     * @return Collection<array-key, Media>
+     */
     public function filterMedia(Collection $media): Collection
     {
         return $this->evaluate($this->filterMediaUsing, [

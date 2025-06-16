@@ -102,6 +102,9 @@ trait HasGlobalSearch
 
     public static function modifyGlobalSearchQuery(Builder $query, string $search): void {}
 
+    /**
+     * @return Collection<int, GlobalSearchResult>
+     */
     public static function getGlobalSearchResults(string $search): Collection
     {
         $query = static::getGlobalSearchEloquentQuery();

@@ -22,6 +22,7 @@ trait HasRecords
      */
     protected bool $allowsDuplicates = false;
 
+    /** @var Collection<array-key, Model> | Paginator<array-key, Model> | CursorPaginator<array-key, Model> | null */
     protected Collection | Paginator | CursorPaginator | null $cachedTableRecords = null;
 
     public function getFilteredTableQuery(): ?Builder
@@ -80,6 +81,10 @@ trait HasRecords
         return $query;
     }
 
+    /**
+     * @param  EloquentCollection<array-key, Model> | Paginator<array-key, Model> | CursorPaginator<array-key, Model>  $records
+     * @return EloquentCollection<array-key, Model> | Paginator<array-key, Model> | CursorPaginator<array-key, Model>
+     */
     protected function hydratePivotRelationForTableRecords(EloquentCollection | Paginator | CursorPaginator $records): EloquentCollection | Paginator | CursorPaginator
     {
         $table = $this->getTable();
@@ -92,6 +97,11 @@ trait HasRecords
         return $records;
     }
 
+    /**
+     * @return Collection<array-key, Model> | Paginator<array-key, Model> | CursorPaginator<array-key, Model>
+     *
+     * @throws Exception
+     */
     public function getTableRecords(): Collection | Paginator | CursorPaginator
     {
         if (! $this->getTable()->hasQuery()) {
@@ -143,6 +153,10 @@ trait HasRecords
         }
 
         if ($translatableContentDriver = $this->makeFilamentTranslatableContentDriver()) {
+            /**
+             * @param  EloquentCollection<array-key, Model> | Paginator | CursorPaginator  $records
+             * @return EloquentCollection<array-key, Model> | Paginator | CursorPaginator
+             */
             $setRecordLocales = function (EloquentCollection | Paginator | CursorPaginator $records) use ($translatableContentDriver): EloquentCollection | Paginator | CursorPaginator {
                 $records->transform(fn (Model $record) => $translatableContentDriver->setRecordLocale($record));
 
@@ -226,6 +240,8 @@ trait HasRecords
 
     /**
      * @param  Model | array<string, mixed>  $record
+     *
+     * @throws Exception
      */
     public function getTableRecordKey(Model | array $record): string
     {

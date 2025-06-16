@@ -74,7 +74,7 @@ class ImportColumn extends Component
     protected string | array | Closure | null $resolveRelationshipUsing = null;
 
     /**
-     * @var array<Model | Collection>
+     * @var array<Model | Collection<array-key, Model>>
      */
     protected array $resolvedRelatedRecords = [];
 
@@ -485,6 +485,7 @@ class ImportColumn extends Component
 
     /**
      * @param  array<mixed>  $state
+     * @return Collection<array-key, Model> | null
      */
     public function resolveRelatedRecords(array $state): ?Collection
     {

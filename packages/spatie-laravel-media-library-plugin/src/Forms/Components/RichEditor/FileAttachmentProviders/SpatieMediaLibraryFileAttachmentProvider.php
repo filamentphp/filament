@@ -10,10 +10,12 @@ use Illuminate\Support\Str;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Throwable;
 
 class SpatieMediaLibraryFileAttachmentProvider implements FileAttachmentProvider
 {
+    /** @var MediaCollection<array-key, Media> */
     protected MediaCollection $media;
 
     protected RichContentAttribute $attribute;
@@ -54,13 +56,18 @@ class SpatieMediaLibraryFileAttachmentProvider implements FileAttachmentProvider
         return $model;
     }
 
+    /**
+     * @return MediaCollection<string, Media>|null
+     *
+     * @throws Exception
+     */
     public function getMedia(): ?MediaCollection
     {
         if (isset($this->media)) {
             return $this->media;
         }
 
-        /** @var MediaCollection $media */
+        /** @var MediaCollection<string, Media> $media */
         $media = $this->getExistingModel()?->getMedia($this->getCollection())->keyBy('uuid');
 
         return $this->media = $media;

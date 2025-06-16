@@ -183,7 +183,7 @@ class CheckboxList extends Field implements Contracts\CanDisableOptions, Contrac
                 ]);
             }
 
-            /** @var Collection $relatedRecords */
+            /** @var Collection<array-key, Model> $relatedRecords */
             $relatedRecords = $relationship->getResults();
 
             $component->state(
@@ -207,7 +207,7 @@ class CheckboxList extends Field implements Contracts\CanDisableOptions, Contrac
                 ]);
             }
 
-            /** @var Collection $relatedRecords */
+            /** @var Collection<array-key, Model> $relatedRecords */
             $relatedRecords = $relationship->getResults();
 
             $recordsToDetach = array_diff(

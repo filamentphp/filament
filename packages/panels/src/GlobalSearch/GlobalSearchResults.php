@@ -7,6 +7,9 @@ use Illuminate\Support\Collection;
 
 class GlobalSearchResults
 {
+    /**
+     * @var Collection<string, array<GlobalSearchResult> | Arrayable<array-key, GlobalSearchResult>>
+     */
     protected Collection $categories;
 
     final public function __construct()
@@ -29,6 +32,9 @@ class GlobalSearchResults
         return $this;
     }
 
+    /**
+     * @return Collection<string, array<GlobalSearchResult> | Arrayable<array-key, GlobalSearchResult>>
+     */
     public function getCategories(): Collection
     {
         return $this->categories;

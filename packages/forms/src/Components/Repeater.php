@@ -52,6 +52,9 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
 
     protected bool | Closure $isReorderableWithButtons = false;
 
+    /**
+     * @var Collection<array-key, Model> | null
+     */
     protected ?Collection $cachedExistingRecords = null;
 
     protected string | Closure | null $orderColumn = null;
@@ -1046,6 +1049,7 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
     }
 
     /**
+     * @param  Collection<array-key, Model>  $records
      * @return array<array<string, mixed>>
      */
     protected function getStateFromRelatedRecords(Collection $records): array
@@ -1109,6 +1113,11 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
         return $this->evaluate($this->relationship);
     }
 
+    /**
+     * @return Collection<array-key, Model>
+     *
+     * @throws Exception
+     */
     public function getCachedExistingRecords(): Collection
     {
         if ($this->cachedExistingRecords) {

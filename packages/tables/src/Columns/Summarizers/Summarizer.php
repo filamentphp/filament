@@ -8,6 +8,7 @@ use Filament\Support\Components\ViewComponent;
 use Filament\Support\Concerns\HasExtraAttributes;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Builder;
 
 class Summarizer extends ViewComponent implements HasEmbeddedView
@@ -94,7 +95,7 @@ class Summarizer extends ViewComponent implements HasEmbeddedView
                         $relatedQuery->mergeConstraintsFrom($query);
 
                         if ($baseQuery->limit !== null) {
-                            /** @var Collection $records */
+                            /** @var Collection<array-key, Model> $records */
                             $records = $this->getTable()->getRecords();
 
                             $relatedQuery->whereKey($records->modelKeys());

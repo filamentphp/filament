@@ -72,6 +72,9 @@ class DatabaseNotifications extends Component implements HasActions, HasSchemas
         $this->getUnreadNotificationsQuery()->update(['read_at' => now()]);
     }
 
+    /**
+     * @return DatabaseNotificationCollection<array-key, DatabaseNotification>|Paginator
+     */
     public function getNotifications(): DatabaseNotificationCollection | Paginator
     {
         if (! $this->isPaginated()) {

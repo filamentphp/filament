@@ -38,6 +38,9 @@ interface HasTable
      */
     public function getTableFilterState(string $name): ?array;
 
+    /**
+     * @return EloquentCollection<array-key, Model> | Collection<array-key, Model> | LazyCollection<array-key, Model>
+     */
     public function getSelectedTableRecords(bool $shouldFetchSelectedRecords = true, ?int $chunkSize = null): EloquentCollection | Collection | LazyCollection;
 
     public function getSelectedTableRecordsQuery(bool $shouldFetchSelectedRecords = true, ?int $chunkSize = null): Builder;
@@ -60,6 +63,9 @@ interface HasTable
 
     public function getTableFiltersForm(): Schema;
 
+    /**
+     * @return Collection<array-key, Model> | Paginator<array-key, Model> | CursorPaginator<array-key, Model>
+     */
     public function getTableRecords(): Collection | Paginator | CursorPaginator;
 
     public function getTableRecordsPerPage(): int | string | null;

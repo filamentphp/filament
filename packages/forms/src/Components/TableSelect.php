@@ -58,7 +58,7 @@ class TableSelect extends Field
                 ($relationship instanceof BelongsToMany) ||
                 ($relationship instanceof HasOneOrManyThrough)
             ) {
-                /** @var Collection $relatedRecords */
+                /** @var Collection<array-key, Model> $relatedRecords */
                 $relatedRecords = $relationship->getResults();
 
                 $component->state(
@@ -89,7 +89,7 @@ class TableSelect extends Field
             }
 
             if ($relationship instanceof HasMany) {
-                /** @var Collection $relatedRecords */
+                /** @var Collection<array-key, Model> $relatedRecords */
                 $relatedRecords = $relationship->getResults();
 
                 $component->state(
@@ -173,7 +173,7 @@ class TableSelect extends Field
                 return;
             }
 
-            /** @var Collection $relatedRecords */
+            /** @var Collection<array-key, Model> $relatedRecords */
             $relatedRecords = $relationship->getResults();
 
             $state = Arr::wrap($state ?? []);

@@ -11,7 +11,7 @@ interface HasTenants
     public function canAccessTenant(Model $tenant): bool;
 
     /**
-     * @return array<Model> | Collection
+     * @return array<Model> | Collection<array-key, Model>
      */
     public function getTenants(Panel $panel): array | Collection;
 }

@@ -79,6 +79,9 @@ trait HasRecords
         return $this;
     }
 
+    /**
+     * @return Collection<array-key, Model> | Paginator<array-key, Model> | CursorPaginator<array-key, Model>
+     */
     public function getRecords(): Collection | Paginator | CursorPaginator
     {
         return $this->getLivewire()->getTableRecords();

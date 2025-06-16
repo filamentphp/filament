@@ -175,7 +175,7 @@ class Notification extends ViewComponent implements Arrayable, HasEmbeddedView
     }
 
     /**
-     * @param  Model | Authenticatable | Collection | array<Model | Authenticatable>  $users
+     * @param  Model | Authenticatable | Collection<array-key, Model | Authenticatable> | array<Model | Authenticatable>  $users
      */
     public function broadcast(Model | Authenticatable | Collection | array $users): static
     {
@@ -191,7 +191,7 @@ class Notification extends ViewComponent implements Arrayable, HasEmbeddedView
     }
 
     /**
-     * @param  Model | Authenticatable | Collection | array<Model | Authenticatable>  $users
+     * @param  Model | Authenticatable | Collection<array-key, Model | Authenticatable> | array<Model | Authenticatable>  $users
      */
     public function sendToDatabase(Model | Authenticatable | Collection | array $users, bool $isEventDispatched = false): static
     {
@@ -279,8 +279,8 @@ class Notification extends ViewComponent implements Arrayable, HasEmbeddedView
 
         if ($notification instanceof Notification) {
             Assert::assertSame(
-                collect($expectedNotification)->except(['id'])->toArray(),
-                collect($notification->toArray())->except(['id'])->toArray()
+                collect($expectedNotification)->except('id')->toArray(),
+                collect($notification->toArray())->except('id')->toArray()
             );
 
             return;
@@ -313,8 +313,8 @@ class Notification extends ViewComponent implements Arrayable, HasEmbeddedView
 
         if ($notification instanceof Notification) {
             Assert::assertNotSame(
-                collect($expectedNotification)->except(['id'])->toArray(),
-                collect($notification->toArray())->except(['id'])->toArray(),
+                collect($expectedNotification)->except('id')->toArray(),
+                collect($notification->toArray())->except('id')->toArray(),
                 'The notification with the given configuration was sent'
             );
 

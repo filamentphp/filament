@@ -21,7 +21,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property int $processed_rows
  * @property int $total_rows
  * @property int $successful_rows
- * @property-read Collection<FailedImportRow> $failedRows
+ * @property-read Collection<array-key, FailedImportRow> $failedRows
  * @property-read Authenticatable $user
  */
 class Import extends Model

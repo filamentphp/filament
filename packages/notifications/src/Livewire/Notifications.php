@@ -2,7 +2,8 @@
 
 namespace Filament\Notifications\Livewire;
 
-use Filament\Notifications\Collection;
+use Exception;
+use Filament\Notifications\Collection as NotificationsCollection;
 use Filament\Notifications\Notification;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\VerticalAlignment;
@@ -17,7 +18,7 @@ class Notifications extends Component
     // Used to check if Livewire messages should trigger notification animations.
     public bool $isFilamentNotificationsComponent = true;
 
-    public Collection $notifications;
+    public NotificationsCollection $notifications;
 
     public static Alignment $alignment = Alignment::Right;
 
@@ -27,7 +28,7 @@ class Notifications extends Component
 
     public function mount(): void
     {
-        $this->notifications = new Collection;
+        $this->notifications = new NotificationsCollection;
         $this->pullNotificationsFromSession();
     }
 
@@ -43,6 +44,8 @@ class Notifications extends Component
 
     /**
      * @param  array<string, mixed>  $notification
+     *
+     * @throws Exception
      */
     #[On('notificationSent')]
     public function pushNotificationFromEvent(array $notification): void
@@ -64,6 +67,8 @@ class Notifications extends Component
 
     /**
      * @param  array<string, mixed>  $notification
+     *
+     * @throws Exception
      */
     public function handleBroadcastNotification(array $notification): void
     {

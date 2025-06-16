@@ -247,7 +247,7 @@ class ModalTableSelect extends Field
                     ]);
                 }
 
-                /** @var Collection $relatedRecords */
+                /** @var Collection<array-key, Model> $relatedRecords */
                 $relatedRecords = $relationship->getResults();
 
                 $component->state(
@@ -278,7 +278,7 @@ class ModalTableSelect extends Field
             }
 
             if ($relationship instanceof HasMany) {
-                /** @var Collection $relatedRecords */
+                /** @var Collection<array-key, Model> $relatedRecords */
                 $relatedRecords = $relationship->getResults();
 
                 $component->state(
@@ -460,7 +460,7 @@ class ModalTableSelect extends Field
                 ]);
             }
 
-            /** @var Collection $relatedRecords */
+            /** @var Collection<array-key, Model> $relatedRecords */
             $relatedRecords = $relationship->getResults();
 
             $state = Arr::wrap($state ?? []);

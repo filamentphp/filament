@@ -5,10 +5,13 @@ namespace Filament\Notifications;
 use Illuminate\Support\Collection as BaseCollection;
 use Livewire\Wireable;
 
+/**
+ * @extends BaseCollection<array-key, Notification>
+ */
 class Collection extends BaseCollection implements Wireable
 {
     /**
-     * @param  array<array<string, mixed>>  $items
+     * @param  array<array-key, Notification>  $items
      */
     final public function __construct($items = [])
     {

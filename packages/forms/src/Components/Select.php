@@ -880,7 +880,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
                     ]);
                 }
 
-                /** @var Collection $relatedRecords */
+                /** @var Collection<array-key, Model> $relatedRecords */
                 $relatedRecords = $relationship->getResults();
 
                 $component->state(
@@ -911,7 +911,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
             }
 
             if ($relationship instanceof HasMany) {
-                /** @var Collection $relatedRecords */
+                /** @var Collection<array-key, Model> $relatedRecords */
                 $relatedRecords = $relationship->getResults();
 
                 $component->state(
@@ -1093,7 +1093,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
                 ]);
             }
 
-            /** @var Collection $relatedRecords */
+            /** @var Collection<array-key, Model> $relatedRecords */
             $relatedRecords = $relationship->getResults();
 
             $state = Arr::wrap($state ?? []);
