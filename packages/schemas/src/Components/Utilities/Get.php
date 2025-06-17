@@ -27,6 +27,6 @@ class Get
             );
         }
 
-        return $component->getState();
+        return data_get($component->getState(),  $key);
     }
 }
