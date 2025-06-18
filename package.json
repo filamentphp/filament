@@ -61,7 +61,7 @@
         "choices.js": "^11.0.0",
         "codemirror": "^5.65.8",
         "codemirror-v6": "npm:codemirror@^6.0.0",
-        "cropperjs": "^1.5.13",
+        "cropperjs": "^2.0.0",
         "dayjs": "^1.10.6",
         "easymde": "^2.18.0",
         "esbuild": "^0.25.0",
