@@ -193,31 +193,31 @@
                                         'label' => __('filament-forms::components.file_upload.editor.fields.x_position.label'),
                                         'ref' => 'xPositionInput',
                                         'unit' => __('filament-forms::components.file_upload.editor.fields.x_position.unit'),
-                                        'alpineSaveHandler' => 'editor.setData({...editor.getData(true), x: +$el.value})',
+                                        'alpineSaveHandler' => 'editor.getCropperSelection()?.$change(+$el.value, null, null, null)',
                                     ],
                                     [
                                         'label' => __('filament-forms::components.file_upload.editor.fields.y_position.label'),
                                         'ref' => 'yPositionInput',
                                         'unit' => __('filament-forms::components.file_upload.editor.fields.y_position.unit'),
-                                        'alpineSaveHandler' => 'editor.setData({...editor.getData(true), y: +$el.value})',
+                                        'alpineSaveHandler' => 'editor.getCropperSelection()?.$change(null, +$el.value, null, null)',
                                     ],
                                     [
                                         'label' => __('filament-forms::components.file_upload.editor.fields.width.label'),
                                         'ref' => 'widthInput',
                                         'unit' => __('filament-forms::components.file_upload.editor.fields.width.unit'),
-                                        'alpineSaveHandler' => 'editor.setData({...editor.getData(true), width: +$el.value})',
+                                        'alpineSaveHandler' => 'editor.getCropperSelection()?.$change(null, null, +$el.value, null)',
                                     ],
                                     [
                                         'label' => __('filament-forms::components.file_upload.editor.fields.height.label'),
                                         'ref' => 'heightInput',
                                         'unit' => __('filament-forms::components.file_upload.editor.fields.height.unit'),
-                                        'alpineSaveHandler' => 'editor.setData({...editor.getData(true), height: +$el.value})',
+                                        'alpineSaveHandler' => 'editor.getCropperSelection()?.$change(null, null, null, +$el.value)',
                                     ],
                                     [
                                         'label' => __('filament-forms::components.file_upload.editor.fields.rotation.label'),
                                         'ref' => 'rotationInput',
                                         'unit' => __('filament-forms::components.file_upload.editor.fields.rotation.unit'),
-                                        'alpineSaveHandler' => 'editor.rotateTo(+$el.value)',
+                                        'alpineSaveHandler' => 'editor.getCropperImage()?.$rotate(+$el.value)',
                                     ],
                                 ] as $input)
                                     <label>
@@ -280,7 +280,7 @@
                                                     type="button"
                                                     x-on:click.prevent.stop="
                                                         currentRatio = @js($label) {!! ';' !!}
-                                                        editor.setAspectRatio(@js($ratio))
+                                                        editor.getCropperSelection()?.aspectRatio = @js($ratio)
                                                     "
                                                     x-tooltip="{ content: @js(__('filament-forms::components.file_upload.editor.actions.set_aspect_ratio.label', ['ratio' => $label])), theme: $store.theme }"
                                                     x-bind:class="{ 'fi-active': currentRatio === @js($label) }"
@@ -308,7 +308,7 @@
 
                             <button
                                 type="button"
-                                x-on:click.prevent.stop="editor.reset()"
+                                x-on:click.prevent.stop="editor.getCropperSelection()?.$reset()"
                                 {{
                                     (new \Illuminate\View\ComponentAttributeBag)
                                         ->color(\Filament\Support\View\Components\ButtonComponent::class, 'danger')
