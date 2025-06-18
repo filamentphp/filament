@@ -25,6 +25,7 @@
     $suffixIconColor = $getSuffixIconColor();
     $suffixLabel = $getSuffixLabel();
     $statePath = $getStatePath();
+    $livewireKey = $getLivewireKey();
 @endphp
 
 <x-dynamic-component
@@ -159,7 +160,7 @@
                             isAutofocused: @js($isAutofocused),
                             isMultiple: @js($isMultiple),
                             isSearchable: @js($isSearchable),
-                            livewireId: @js($this->getId()),
+                            livewireId: @js($livewireKey),
                             hasDynamicOptions: @js($hasDynamicOptions()),
                             hasDynamicSearchResults: @js($hasDynamicSearchResults()),
                             loadingMessage: @js($getLoadingMessage()),
