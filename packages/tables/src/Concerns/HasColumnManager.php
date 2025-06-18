@@ -6,7 +6,6 @@ use Filament\Schemas\Schema;
 use Filament\Support\Components\Component;
 use Filament\Tables\Columns\Column;
 use Filament\Tables\Columns\ColumnGroup;
-use Illuminate\Support\Collection;
 
 /**
  * @property-read Schema $toggleTableColumnForm
@@ -215,18 +214,13 @@ trait HasColumnManager
     protected function syncTableColumnManagerWithDefaultState(): void
     {
         $defaultState = $this->getDefaultTableColumnManagerState();
-        $newTableColumnManagerItems = $this->getNewTableColumnManagerItems($defaultState);
 
         $this->tableColumns = collect($this->tableColumns)
             ->map(fn (array $item) => $this->syncTableColumnManagerItemWithDefaultState($item, $defaultState))
             ->filter()
             ->values()
-            ->when(
-                count($newTableColumnManagerItems),
-                fn (Collection $items) => $items
-                    ->merge($newTableColumnManagerItems)
-                    ->sortBy(fn (array $item): int => (int) array_search($item['name'], array_column($defaultState, 'name')))
-            )
+            ->merge($this->getNewTableColumnManagerItems($defaultState))
+            ->sortBy(fn (array $item): int => (int) array_search($item['name'], array_column($defaultState, 'name')))
             ->all();
     }
 
