@@ -539,7 +539,7 @@ class FileUpload extends BaseFileUpload
                         'fi-s-drag-crop',
                         alias: 'forms::components.file-upload.editor.actions.drag-crop',
                     ),
-                    'alpineClickHandler' => 'console.log(editor.getCropperCanvas()) && editor.getCropperCanvas().$setAction(\'crop\')',
+                    'alpineClickHandler' => 'editor.getCropperCanvas().$setAction(\'crop\')',
                 ],
                 [
                     'label' => __('filament-forms::components.file_upload.editor.actions.zoom_in.label'),
@@ -573,7 +573,7 @@ class FileUpload extends BaseFileUpload
                         Heroicon::ArrowLeftCircle,
                         alias: 'forms::components.file-upload.editor.actions.move-left',
                     ),
-                    'alpineClickHandler' => 'editor.getCropperImage().$.move(-10, 0)',
+                    'alpineClickHandler' => 'editor.getCropperImage().$move(-10, 0)',
                 ],
                 [
                     'label' => __('filament-forms::components.file_upload.editor.actions.move_right.label'),
@@ -597,7 +597,7 @@ class FileUpload extends BaseFileUpload
                         Heroicon::ArrowDownCircle,
                         alias: 'forms::components.file-upload.editor.actions.move-down',
                     ),
-                    'alpineClickHandler' => 'image.$move(0, 10)',
+                    'alpineClickHandler' => 'editor.getCropperImage().$move(0, 10)',
                 ],
             ],
             'transform' => [

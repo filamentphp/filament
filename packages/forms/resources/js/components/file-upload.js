@@ -637,7 +637,7 @@ export default function fileUploadFormComponent({
 
                     this.image.$ready((e) => {
                         console.log('Image ready:', e)
-                        this.image.$center('contain')
+
                         const selection = this.editor.getCropperSelection()
                         if (selection) {
                             this.$refs.xPositionInput.value = Math.round(
@@ -654,6 +654,9 @@ export default function fileUploadFormComponent({
                             )
                             this.$refs.rotationInput.value = 0 // Initial rotation is 0
                         }
+                        setTimeout(() => {
+                            this.image.$center('contain')
+                        }, 200)
                     })
 
                     this.image.src = event.target.result
