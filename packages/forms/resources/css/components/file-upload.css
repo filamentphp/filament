@@ -155,4 +155,7 @@
             }
         }
     }
+    cropper-canvas{
+        min-height: 100%;
+    }
 }

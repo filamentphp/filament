@@ -531,7 +531,7 @@ class FileUpload extends BaseFileUpload
                         'fi-s-drag-move',
                         alias: 'forms::components.file-upload.editor.actions.drag-move',
                     ),
-                    'alpineClickHandler' => "editor.setDragMode('move')",
+                    'alpineClickHandler' => 'editor.getCropperCanvas().$setAction(\'move\')',
                 ],
                 [
                     'label' => __('filament-forms::components.file_upload.editor.actions.drag_crop.label'),
@@ -539,7 +539,7 @@ class FileUpload extends BaseFileUpload
                         'fi-s-drag-crop',
                         alias: 'forms::components.file-upload.editor.actions.drag-crop',
                     ),
-                    'alpineClickHandler' => "editor.setDragMode('crop')",
+                    'alpineClickHandler' => 'console.log(editor.getCropperCanvas()) && editor.getCropperCanvas().$setAction(\'crop\')',
                 ],
                 [
                     'label' => __('filament-forms::components.file_upload.editor.actions.zoom_in.label'),
@@ -547,7 +547,7 @@ class FileUpload extends BaseFileUpload
                         Heroicon::MagnifyingGlassPlus,
                         alias: 'forms::components.file-upload.editor.actions.zoom-in',
                     ),
-                    'alpineClickHandler' => 'editor.zoom(0.1)',
+                    'alpineClickHandler' => 'editor.getCropperImage().$zoom(0.1)',
                 ],
                 [
                     'label' => __('filament-forms::components.file_upload.editor.actions.zoom_out.label'),
@@ -555,7 +555,7 @@ class FileUpload extends BaseFileUpload
                         Heroicon::MagnifyingGlassMinus,
                         alias: 'forms::components.file-upload.editor.actions.zoom-out',
                     ),
-                    'alpineClickHandler' => 'editor.zoom(-0.1)',
+                    'alpineClickHandler' => 'editor.getCropperImage().$zoom(-0.1)',
                 ],
                 [
                     'label' => __('filament-forms::components.file_upload.editor.actions.zoom_100.label'),
@@ -563,7 +563,7 @@ class FileUpload extends BaseFileUpload
                         Heroicon::ArrowsPointingOut,
                         alias: 'forms::components.file-upload.editor.actions.zoom-100',
                     ),
-                    'alpineClickHandler' => 'editor.zoomTo(1)',
+                    'alpineClickHandler' => 'editor.getCropperImage().$center(\'cover\')',
                 ],
             ],
             'move' => [
@@ -573,7 +573,7 @@ class FileUpload extends BaseFileUpload
                         Heroicon::ArrowLeftCircle,
                         alias: 'forms::components.file-upload.editor.actions.move-left',
                     ),
-                    'alpineClickHandler' => 'editor.move(-10, 0)',
+                    'alpineClickHandler' => 'editor.getCropperImage().$.move(-10, 0)',
                 ],
                 [
                     'label' => __('filament-forms::components.file_upload.editor.actions.move_right.label'),
@@ -581,7 +581,7 @@ class FileUpload extends BaseFileUpload
                         Heroicon::ArrowRightCircle,
                         alias: 'forms::components.file-upload.editor.actions.move-right',
                     ),
-                    'alpineClickHandler' => 'editor.move(10, 0)',
+                    'alpineClickHandler' => 'editor.getCropperImage().$move(10, 0)',
                 ],
                 [
                     'label' => __('filament-forms::components.file_upload.editor.actions.move_up.label'),
@@ -589,7 +589,7 @@ class FileUpload extends BaseFileUpload
                         Heroicon::ArrowUpCircle,
                         alias: 'forms::components.file-upload.editor.actions.move-up',
                     ),
-                    'alpineClickHandler' => 'editor.move(0, -10)',
+                    'alpineClickHandler' => 'editor.getCropperImage().$move(0, -10)',
                 ],
                 [
                     'label' => __('filament-forms::components.file_upload.editor.actions.move_down.label'),
@@ -597,7 +597,7 @@ class FileUpload extends BaseFileUpload
                         Heroicon::ArrowDownCircle,
                         alias: 'forms::components.file-upload.editor.actions.move-down',
                     ),
-                    'alpineClickHandler' => 'editor.move(0, 10)',
+                    'alpineClickHandler' => 'image.$move(0, 10)',
                 ],
             ],
             'transform' => [
@@ -607,7 +607,7 @@ class FileUpload extends BaseFileUpload
                         Heroicon::ArrowUturnLeft,
                         alias: 'forms::components.file-upload.editor.actions.rotate-left',
                     ),
-                    'alpineClickHandler' => 'editor.rotate(-90)',
+                    'alpineClickHandler' => 'editor.getCropperImage().$rotate(-90)',
                 ],
                 [
                     'label' => __('filament-forms::components.file_upload.editor.actions.rotate_right.label'),
@@ -615,7 +615,7 @@ class FileUpload extends BaseFileUpload
                         Heroicon::ArrowUturnRight,
                         alias: 'forms::components.file-upload.editor.actions.rotate-right',
                     ),
-                    'alpineClickHandler' => 'editor.rotate(90)',
+                    'alpineClickHandler' => 'editor.getCropperImage().$rotate(90)',
                 ],
                 [
                     'label' => __('filament-forms::components.file_upload.editor.actions.flip_horizontal.label'),
@@ -623,7 +623,7 @@ class FileUpload extends BaseFileUpload
                         'fi-s-flip-horizontal',
                         alias: 'forms::components.file-upload.editor.actions.flip-horizontal',
                     ),
-                    'alpineClickHandler' => 'editor.scaleX(-editor.getData().scaleX || -1)',
+                    'alpineClickHandler' => 'editor.getCropperImage().$scale(-1, 1)',
                 ],
                 [
                     'label' => __('filament-forms::components.file_upload.editor.actions.flip_vertical.label'),
@@ -631,7 +631,7 @@ class FileUpload extends BaseFileUpload
                         'fi-s-flip-vertical',
                         alias: 'forms::components.file-upload.editor.actions.flip-vertical',
                     ),
-                    'alpineClickHandler' => 'editor.scaleY(-editor.getData().scaleY || -1)',
+                    'alpineClickHandler' => 'editor.getCropperImage().$scale(1,-1)',
                 ],
             ],
         ];

@@ -98,6 +98,8 @@ export default function fileUploadFormComponent({
 
         editor: {},
 
+        image: {},
+
         async init() {
             FilePond.setOptions(locales[locale] ?? locales['en'])
 
@@ -509,14 +511,19 @@ export default function fileUploadFormComponent({
 
             this.editor
                 .getCropperSelection()
-                .addEventListener('change', (event) => {
-                    this.$refs.xPositionInput.value = Math.round(event.detail.x)
-                    this.$refs.yPositionInput.value = Math.round(event.detail.y)
-                    this.$refs.heightInput.value = Math.round(
-                        event.detail.height,
-                    )
-                    this.$refs.widthInput.value = Math.round(event.detail.width)
-                    this.$refs.rotationInput.value = event.detail.rotate
+                .addEventListener('change', (e) => {
+                    this.$refs.xPositionInput.value = Math.round(e.detail.x)
+                    this.$refs.yPositionInput.value = Math.round(e.detail.y)
+                    this.$refs.heightInput.value = Math.round(e.detail.height)
+                    this.$refs.widthInput.value = Math.round(e.detail.width)
+                })
+
+            this.editor
+                .getCropperCanvas()
+                .addEventListener('action', (event) => {
+                    if (event.detail.rotate) {
+                        this.$refs.rotationInput.value = event.detail.rotate
+                    }
                 })
         },
 
@@ -626,31 +633,30 @@ export default function fileUploadFormComponent({
                 reader.onload = (event) => {
                     this.isEditorOpen = true
 
-                    setTimeout(() => {
-                        const image = this.editor.getCropperImage()
-                        if (image) {
-                            image.src = event.target.result
+                    this.image = this.editor.getCropperImage()
 
-                            // Set initial values for input fields after image is loaded
-                            setTimeout(() => {
-                                const selection =
-                                    this.editor.getCropperSelection()
-                                if (selection) {
-                                    this.$refs.xPositionInput.value =
-                                        Math.round(selection.x)
-                                    this.$refs.yPositionInput.value =
-                                        Math.round(selection.y)
-                                    this.$refs.widthInput.value = Math.round(
-                                        selection.width,
-                                    )
-                                    this.$refs.heightInput.value = Math.round(
-                                        selection.height,
-                                    )
-                                    this.$refs.rotationInput.value = 0 // Initial rotation is 0
-                                }
-                            }, 300) // Wait a bit longer for the selection to be fully initialized
+                    this.image.$ready((e) => {
+                        console.log('Image ready:', e)
+                        this.image.$center('contain')
+                        const selection = this.editor.getCropperSelection()
+                        if (selection) {
+                            this.$refs.xPositionInput.value = Math.round(
+                                selection.x,
+                            )
+                            this.$refs.yPositionInput.value = Math.round(
+                                selection.y,
+                            )
+                            this.$refs.widthInput.value = Math.round(
+                                selection.width,
+                            )
+                            this.$refs.heightInput.value = Math.round(
+                                selection.height,
+                            )
+                            this.$refs.rotationInput.value = 0 // Initial rotation is 0
                         }
-                    }, 200)
+                    })
+
+                    this.image.src = event.target.result
                 }
 
                 reader.readAsDataURL(file)
