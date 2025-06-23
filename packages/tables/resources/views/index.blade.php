@@ -37,7 +37,7 @@
     $filtersFormWidth = $getFiltersFormWidth();
     $hasColumnGroups = $hasColumnGroups();
     $hasColumnsLayout = $hasColumnsLayout();
-    $hasSummary = $hasSummary($this->getAllTableSummaryQuery());
+    $hasSummary = $hasQuery() ? $hasSummary($this->getAllTableSummaryQuery()) : false;
     $header = $getHeader();
     $headerActions = array_filter(
         $getHeaderActions(),

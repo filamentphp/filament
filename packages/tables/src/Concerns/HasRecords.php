@@ -24,6 +24,11 @@ trait HasRecords
 
     protected Collection | Paginator | CursorPaginator | null $cachedTableRecords = null;
 
+    public function hasQuery(): bool
+    {
+        return $this->getTable()->hasQuery();
+    }
+
     public function getFilteredTableQuery(): ?Builder
     {
         $query = $this->getTable()->getQuery();

@@ -26,7 +26,7 @@
 
     $hasPageSummary = (! $groupsOnly) && $records instanceof \Illuminate\Contracts\Pagination\Paginator && $records->hasPages();
 
-    $pageTableSummaryQuery = $hasPageSummary ? $this->getPageTableSummaryQuery() : null;
+    $pageTableSummaryQuery = $this->hasQuery() && $hasPageSummary ? $this->getPageTableSummaryQuery() : null;
     $allTableSummaryQuery = $this->getAllTableSummaryQuery();
 @endphp
 
