@@ -24,20 +24,28 @@ trait HasRecordActions
 
     protected RecordActionsPosition | Closure | null $recordActionsPosition = null;
 
-    protected Size | Closure | null $recordActionsDefaultSize = Size::Small;
+    protected Size | string | Closure | null $recordActionsDefaultSize = Size::Small;
 
     protected string | Closure | null $recordActionsDefaultView = Action::LINK_VIEW;
 
     /**
      * @param  array<Action | ActionGroup> | ActionGroup  $actions
      */
-    public function recordActions(array | ActionGroup $actions, RecordActionsPosition | string | Closure | null $position = null): static
+    public function recordActions(array | ActionGroup $actions, RecordActionsPosition | string | Closure | null $position = null, string | Closure | null $defaultView = null, Size | string | Closure | null $defaultSize = null): static
     {
         $this->recordActions = [];
         $this->pushRecordActions($actions);
 
         if ($position) {
             $this->recordActionsPosition($position);
+        }
+
+        if ($defaultView) {
+            $this->recordActionsDefaultView($defaultView);
+        }
+
+        if ($defaultSize) {
+            $this->recordActionsDefaultSize($defaultSize);
         }
 
         return $this;
@@ -103,7 +111,7 @@ trait HasRecordActions
         return $this;
     }
 
-    public function recordActionsDefaultSize(Size | Closure | null $size = null): static
+    public function recordActionsDefaultSize(Size | string | Closure | null $size = null): static
     {
         $this->recordActionsDefaultSize = $size;
 
@@ -138,14 +146,14 @@ trait HasRecordActions
         return $this->evaluate($this->recordActionsAlignment);
     }
 
-    public function getRecordActionsDefaultSize(): ?Size
+    public function getRecordActionsDefaultSize(): Size | string | Closure | null
     {
-        return $this->evaluate($this->recordActionsDefaultSize);
+        return $this->recordActionsDefaultSize;
     }
 
-    public function getRecordActionsDefaultView(): ?string
+    public function getRecordActionsDefaultView(): string | Closure | null
     {
-        return $this->evaluate($this->recordActionsDefaultView);
+        return $this->recordActionsDefaultView;
     }
 
     public function getRecordActionsColumnLabel(): string | Htmlable | null
