@@ -61,8 +61,8 @@ trait HasRecordActions
 
                 $this->mergeCachedFlatActions($flatActions);
             } elseif ($action instanceof Action) {
-                $action->defaultSize($this->getRecordActionsSize());
-                $action->defaultView($this->getRecordActionsView());
+                $action->defaultSize($this->getRecordActionsDefaultSize());
+                $action->defaultView($this->getRecordActionsDefaultView());
 
                 $this->cacheAction($action);
             } else {
