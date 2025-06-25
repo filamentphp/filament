@@ -24,9 +24,9 @@ trait HasRecordActions
 
     protected RecordActionsPosition | Closure | null $recordActionsPosition = null;
 
-    protected Size | Closure | null $recordActionsSize = Size::Small;
+    protected Size | Closure | null $recordActionsDefaultSize = Size::Small;
 
-    protected string | Closure | null $recordActionsView = Action::LINK_VIEW;
+    protected string | Closure | null $recordActionsDefaultView = Action::LINK_VIEW;
 
     /**
      * @param  array<Action | ActionGroup> | ActionGroup  $actions
@@ -96,16 +96,16 @@ trait HasRecordActions
         return $this;
     }
 
-    public function recordActionsView(string | Closure | null $view = null): static
+    public function recordActionsDefaultView(string | Closure | null $view = null): static
     {
-        $this->recordActionsView = $view;
+        $this->recordActionsDefaultView = $view;
 
         return $this;
     }
 
-    public function recordActionsSize(Size | Closure | null $size = null): static
+    public function recordActionsDefaultSize(Size | Closure | null $size = null): static
     {
-        $this->recordActionsSize = $size;
+        $this->recordActionsDefaultSize = $size;
 
         return $this;
     }
@@ -138,14 +138,14 @@ trait HasRecordActions
         return $this->evaluate($this->recordActionsAlignment);
     }
 
-    public function getRecordActionsSize(): ?Size
+    public function getRecordActionsDefaultSize(): ?Size
     {
-        return $this->evaluate($this->recordActionsSize);
+        return $this->evaluate($this->recordActionsDefaultSize);
     }
 
-    public function getRecordActionsView(): ?string
+    public function getRecordActionsDefaultView(): ?string
     {
-        return $this->evaluate($this->recordActionsView);
+        return $this->evaluate($this->recordActionsDefaultView);
     }
 
     public function getRecordActionsColumnLabel(): string | Htmlable | null
