@@ -2,7 +2,7 @@
 
 return [
 
-    'label' => 'Construtor de Consultas',
+    'label' => 'Constructor de Consultas',
 
     'form' => [
 

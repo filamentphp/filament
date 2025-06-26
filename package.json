@@ -35,7 +35,7 @@
         "easymde": "^2.18.0",
         "esbuild": "^0.25.0",
         "esbuild-postcss": "^0.0.4",
-        "filepond": "^4.31.1",
+        "filepond": "^4.32.8",
         "filepond-plugin-file-validate-size": "^2.2.4",
         "filepond-plugin-file-validate-type": "^1.2.6",
         "filepond-plugin-image-crop": "^2.0.6",

@@ -2,7 +2,9 @@
 
 namespace Filament\Tables\Columns\Concerns;
 
+use Closure;
 use Filament\Tables\Columns\Summarizers\Summarizer;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
 
 trait CanBeSummarized
@@ -38,13 +40,20 @@ trait CanBeSummarized
     /**
      * @return array<string | int, Summarizer>
      */
-    public function getSummarizers(): array
+    public function getSummarizers(Builder | Closure | null $query = null): array
     {
+        if ($query) {
+            return array_filter(
+                $this->summarizers,
+                fn (Summarizer $summarizer): bool => $summarizer->query($query)->isVisible(),
+            );
+        }
+
         return $this->summarizers;
     }
 
-    public function hasSummary(): bool
+    public function hasSummary(Builder | Closure | null $query = null): bool
     {
-        return (bool) count($this->getSummarizers());
+        return (bool) count($this->getSummarizers($query));
     }
 }

@@ -72,7 +72,7 @@
             this.isOpen = false
 
             this.$refs.modalContainer.dispatchEvent(
-                new CustomEvent('modal-closed', { id: '{{ $id }}' }),
+                new CustomEvent('modal-closed', { detail: { id: '{{ $id }}' } }),
             )
         },
 
@@ -85,7 +85,7 @@
                 @endif
 
                 this.$refs.modalContainer.dispatchEvent(
-                    new CustomEvent('modal-opened', { id: '{{ $id }}' }),
+                    new CustomEvent('modal-opened', { detail: { id: '{{ $id }}' } }),
                 )
             })
         },
@@ -176,6 +176,9 @@
                         x-transition:leave-start="scale-100 opacity-100"
                         x-transition:leave-end="scale-95 opacity-0"
                     @endif
+                    @if (filled($id))
+                        wire:key="{{ isset($this) ? "{$this->getId()}." : '' }}modal.{{ $id }}.window"
+                    @endif
                     {{
                         ($extraModalWindowAttributeBag ?? new \Illuminate\View\ComponentAttributeBag)->class([
                             'fi-modal-window pointer-events-auto relative row-start-2 flex w-full cursor-default flex-col bg-white shadow-xl ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10',
@@ -215,6 +218,9 @@
                 >
                     @if ($heading || $header)
                         <div
+                            @if (filled($id))
+                                wire:key="{{ isset($this) ? "{$this->getId()}." : '' }}modal.{{ $id }}.header"
+                            @endif
                             @class([
                                 'fi-modal-header flex px-6 pt-6',
                                 'pb-6' => (! $hasSlot) && (! $hasFooter),
@@ -323,6 +329,9 @@
 
                     @if ($hasSlot)
                         <div
+                            @if (filled($id))
+                                wire:key="{{ isset($this) ? "{$this->getId()}." : '' }}modal.{{ $id }}.content"
+                            @endif
                             @class([
                                 'fi-modal-content flex flex-col gap-y-4 py-6',
                                 'flex-1' => ($width === MaxWidth::Screen) || $slideOver,
@@ -336,6 +345,9 @@
 
                     @if ($hasFooter)
                         <div
+                            @if (filled($id))
+                                wire:key="{{ isset($this) ? "{$this->getId()}." : '' }}modal.{{ $id }}.footer"
+                            @endif
                             @class([
                                 'fi-modal-footer w-full',
                                 'pe-6 ps-[5.25rem]' => $hasIcon && ($alignment === Alignment::Start) && ($footerActionsAlignment !== Alignment::Center) && (! $stickyFooter),

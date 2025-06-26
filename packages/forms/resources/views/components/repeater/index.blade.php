@@ -95,6 +95,7 @@
                         @endphp
 
                         <li
+                            wire:ignore.self
                             wire:key="{{ $this->getId() }}.{{ $item->getStatePath() }}.{{ $field::class }}.item"
                             x-data="{
                                 isCollapsed: @js($isCollapsed($item)),

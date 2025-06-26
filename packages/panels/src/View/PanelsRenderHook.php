@@ -24,6 +24,10 @@ class PanelsRenderHook
 
     const BODY_START = 'panels::body.start';
 
+    const CONTENT_AFTER = 'panels::content.after';
+
+    const CONTENT_BEFORE = 'panels::content.before';
+
     const CONTENT_END = 'panels::content.end';
 
     const CONTENT_START = 'panels::content.start';

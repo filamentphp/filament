@@ -89,7 +89,7 @@ trait HasState
         return $this;
     }
 
-    public function callAfterStateUpdated(): static
+    public function callAfterStateUpdated(bool $shouldBubbleToParents = true): static
     {
         foreach ($this->afterStateUpdated as $callback) {
             $runId = spl_object_id($callback) . md5(json_encode($this->getState()));
@@ -101,6 +101,10 @@ trait HasState
             $this->callAfterStateUpdatedHook($callback);
 
             store($this)->push('executedAfterStateUpdatedCallbacks', value: $runId, iKey: $runId);
+        }
+
+        if ($shouldBubbleToParents) {
+            $this->getContainer()->getParentComponent()?->callAfterStateUpdated();
         }
 
         return $this;
@@ -189,7 +193,7 @@ trait HasState
             // we need to dehydrate the child component containers while
             // informing them that they are not dehydrated, so that their
             // child components get removed from the state.
-            foreach ($this->getChildComponentContainers() as $container) {
+            foreach ($this->getChildComponentContainers(withHidden: true) as $container) {
                 $container->dehydrateState($state, isDehydrated: false);
             }
 

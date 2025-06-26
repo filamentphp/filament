@@ -49,6 +49,7 @@ export default function fileUploadFormComponent({
     isDownloadable,
     isMultiple,
     isOpenable,
+    isPasteable,
     isPreviewable,
     isReorderable,
     itemPanelAspectRatio,
@@ -103,7 +104,7 @@ export default function fileUploadFormComponent({
             this.pond = FilePond.create(this.$refs.input, {
                 acceptedFileTypes,
                 allowImageExifOrientation: shouldOrientImageFromExif,
-                allowPaste: false,
+                allowPaste: isPasteable,
                 allowRemove: isDeletable,
                 allowReorder: isReorderable,
                 allowImagePreview: isPreviewable,

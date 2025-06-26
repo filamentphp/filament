@@ -408,6 +408,8 @@ return [
 
             'create_option' => [
 
+                'label' => 'Criar',
+
                 'modal' => [
 
                     'heading' => 'Criar',
@@ -429,6 +431,8 @@ return [
             ],
 
             'edit_option' => [
+
+                'label' => 'Editar',
 
                 'modal' => [
 
@@ -476,11 +480,11 @@ return [
         'actions' => [
 
             'hide_password' => [
-                'label' => 'Esconder palavra-passe',
+                'label' => 'Esconder a palavra-passe',
             ],
 
             'show_password' => [
-                'label' => 'Mostrar palavra-passe',
+                'label' => 'Mostrar a palavra-passe',
             ],
 
         ],

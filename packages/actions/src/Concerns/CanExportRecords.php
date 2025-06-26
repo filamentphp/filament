@@ -176,6 +176,9 @@ trait CanExportRecords
             // Temporary save to obtain the sequence number of the export file.
             $export->save();
 
+            // Delete the export directory to prevent data contamination from previous exports with the same ID.
+            $export->deleteFileDirectory();
+
             $export->file_name = $action->getFileName($export) ?? $exporter->getFileName($export);
             $export->save();
 

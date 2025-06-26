@@ -55,6 +55,17 @@ There are a few differences, compared to [`disabled()`](getting-started#disablin
 - There are no styling changes, such as less opacity, when using `readOnly()`.
 - The field is still focusable when using `readOnly()`.
 
+## Disabling Grammarly checks
+
+If the user has Grammarly installed and you would like to prevent it from analyzing the contents of the textarea, you can use the `disableGrammarly()` method:
+
+```php
+use Filament\Forms\Components\Textarea;
+
+Textarea::make('description')
+    ->disableGrammarly()
+```
+
 ## Textarea validation
 
 As well as all rules listed on the [validation](../validation) page, there are additional rules that are specific to textareas.

@@ -52,6 +52,8 @@ FilamentView::registerRenderHook(
 - `PanelsRenderHook::AUTH_REGISTER_FORM_BEFORE` - Before register form
 - `PanelsRenderHook::BODY_END` - Before `</body>`
 - `PanelsRenderHook::BODY_START` - After `<body>`
+- `PanelsRenderHook::CONTENT_AFTER` - After page content
+- `PanelsRenderHook::CONTENT_BEFORE` - Before page content
 - `PanelsRenderHook::CONTENT_END` - After page content, inside `<main>`
 - `PanelsRenderHook::CONTENT_START` - Before page content, inside `<main>`
 - `PanelsRenderHook::FOOTER` - Footer of the page

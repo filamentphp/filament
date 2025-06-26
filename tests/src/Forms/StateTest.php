@@ -599,6 +599,28 @@ test('hidden components are not excluded from state dehydration if there is anot
         ->dehydrateState()->data->not()->toBe([]);
 });
 
+test('components in a hidden parent component with a grandparent component with a state path are excluded from state dehydration', function () {
+    $container = ComponentContainer::make(Livewire::make())
+        ->statePath('data')
+        ->components([
+            (new Component)
+                ->statePath('data')
+                ->schema([
+                    (new Component)
+                        ->schema([
+                            (new Component)
+                                ->statePath(Str::random())
+                                ->default(Str::random()),
+                        ])
+                        ->hidden(),
+                ]),
+        ])
+        ->fill();
+
+    expect($container)
+        ->dehydrateState()->toBe(['data' => ['data' => []]]);
+});
+
 test('disabled components are excluded from state dehydration', function () {
     $container = ComponentContainer::make(Livewire::make())
         ->statePath('data')

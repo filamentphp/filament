@@ -23,7 +23,7 @@ return [
         'actions' => [
 
             'request' => [
-                'label' => 'Skicka mejlmeddelande',
+                'label' => 'Skicka meddelande',
             ],
 
         ],
@@ -31,6 +31,10 @@ return [
     ],
 
     'notifications' => [
+
+        'sent' => [
+            'body' => 'Om ditt konto inte finns, kommer du inte att få något meddelande.',
+        ],
 
         'throttled' => [
             'title' => 'För många förfrågningar',

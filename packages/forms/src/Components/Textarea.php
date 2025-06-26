@@ -3,10 +3,12 @@
 namespace Filament\Forms\Components;
 
 use Closure;
+use Filament\Forms\Components\Concerns\CanDisableGrammarly;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 
 class Textarea extends Field implements Contracts\CanBeLengthConstrained
 {
+    use CanDisableGrammarly;
     use Concerns\CanBeAutocompleted;
     use Concerns\CanBeLengthConstrained;
     use Concerns\CanBeReadOnly;

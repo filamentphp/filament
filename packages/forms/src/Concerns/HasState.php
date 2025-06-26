@@ -27,13 +27,13 @@ trait HasState
     {
         foreach ($this->getComponents(withHidden: true) as $component) {
             if ($component->getStatePath() === $path) {
-                $component->callAfterStateUpdated();
+                $component->callAfterStateUpdated(shouldBubbleToParents: false);
 
                 return true;
             }
 
             if (str($path)->startsWith("{$component->getStatePath()}.")) {
-                $component->callAfterStateUpdated();
+                $component->callAfterStateUpdated(shouldBubbleToParents: false);
             }
 
             foreach ($component->getChildComponentContainers() as $container) {

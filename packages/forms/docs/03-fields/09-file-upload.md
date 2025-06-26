@@ -412,6 +412,17 @@ FileUpload::make('attachment')
     ->deletable(false)
 ```
 
+## Preventing pasting files
+
+You can disable the ability to paste files via the clipboard using the `pasteable(false)` method:
+
+```php
+use Filament\Forms\Components\FileUpload;
+
+FileUpload::make('attachment')
+    ->pasteable(false)
+```
+
 ## Prevent file information fetching
 
 While the form is loaded, it will automatically detect whether the files exist, what size they are, and what type of files they are. This is all done on the backend. When using remote storage with many files, this can be time-consuming. You can use the `fetchFileInformation(false)` method to disable this feature:

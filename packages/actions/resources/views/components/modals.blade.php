@@ -27,6 +27,10 @@
             :wire:key="$action ? $this->getId() . '.actions.' . $action->getName() . '.modal' : null"
             x-on:closed-form-component-action-modal.window="if (($event.detail.id === '{{ $this->getId() }}') && $wire.mountedActions.length) open()"
             x-on:modal-closed.stop="
+                if (!$event.detail?.id?.startsWith('{{ $this->getId() }}-')) {
+                    return
+                }
+
                 const mountedActionShouldOpenModal = {{ \Illuminate\Support\Js::from($action && $this->mountedActionShouldOpenModal(mountedAction: $action)) }}
 
                 if (! mountedActionShouldOpenModal) {
@@ -89,6 +93,10 @@
             :wire:key="$action ? $this->getId() . '.table.actions.' . $action->getName() . '.modal' : null"
             x-on:closed-form-component-action-modal.window="if (($event.detail.id === '{{ $this->getId() }}') && $wire.mountedTableActions.length) open()"
             x-on:modal-closed.stop="
+                if (!$event.detail?.id?.startsWith('{{ $this->getId() }}-')) {
+                    return
+                }
+
                 const mountedTableActionShouldOpenModal = {{ \Illuminate\Support\Js::from($action && $this->mountedTableActionShouldOpenModal(mountedAction: $action)) }}
 
                 if (! mountedTableActionShouldOpenModal) {
@@ -145,6 +153,10 @@
             :wire:key="$action ? $this->getId() . '.table.bulk-actions.' . $action->getName() . '.modal' : null"
             x-on:closed-form-component-action-modal.window="if (($event.detail.id === '{{ $this->getId() }}') && $wire.mountedTableBulkAction) open()"
             x-on:modal-closed.stop="
+                if (!$event.detail?.id?.startsWith('{{ $this->getId() }}-')) {
+                    return
+                }
+
                 const mountedTableBulkActionShouldOpenModal = {{ \Illuminate\Support\Js::from($action && $this->mountedTableBulkActionShouldOpenModal(mountedBulkAction: $action)) }}
 
                 if (! mountedTableBulkActionShouldOpenModal) {
@@ -207,6 +219,10 @@
             :wire:key="$action ? $this->getId() . '.infolist.actions.' . $action->getName() . '.modal' : null"
             x-on:closed-form-component-action-modal.window="if (($event.detail.id === '{{ $this->getId() }}') && $wire.mountedInfolistActions.length) open()"
             x-on:modal-closed.stop="
+                if (!$event.detail?.id?.startsWith('{{ $this->getId() }}-')) {
+                    return
+                }
+
                 const mountedInfolistActionShouldOpenModal = {{ \Illuminate\Support\Js::from($action && $this->mountedInfolistActionShouldOpenModal(mountedAction: $action)) }}
 
                 if (! mountedInfolistActionShouldOpenModal) {
@@ -268,6 +284,10 @@
             :width="$action?->getModalWidth()"
             :wire:key="$action ? $this->getId() . '.' . $action->getComponent()->getStatePath() . '.actions.' . $action->getName() . '.modal' : null"
             x-on:modal-closed.stop="
+                if (!$event.detail?.id?.startsWith('{{ $this->getId() }}-')) {
+                    return
+                }
+
                 const mountedFormComponentActionShouldOpenModal = {{ \Illuminate\Support\Js::from($action && $this->mountedFormComponentActionShouldOpenModal()) }}
 
                 if (mountedFormComponentActionShouldOpenModal) {

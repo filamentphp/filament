@@ -42,9 +42,9 @@ return [
         ],
 
         'search' => [
-            'label' => 'Etsi',
-            'placeholder' => 'Etsi',
-            'indicator' => 'Etsi',
+            'label' => 'Haku',
+            'placeholder' => 'Hae',
+            'indicator' => 'Haku',
         ],
 
     ],
@@ -118,7 +118,7 @@ return [
         'actions' => [
 
             'apply' => [
-                'label' => 'Käytä suodattimet',
+                'label' => 'Aseta suodattimet',
             ],
 
             'remove' => [
@@ -126,12 +126,12 @@ return [
             ],
 
             'remove_all' => [
-                'label' => 'Poista suodattimet',
-                'tooltip' => 'Poista suodattimet',
+                'label' => 'Tyhjennä suodattimet',
+                'tooltip' => 'Tyhjennä suodattimet',
             ],
 
             'reset' => [
-                'label' => 'Tyhjennä suodattimet',
+                'label' => 'Palauta',
             ],
 
         ],
@@ -173,7 +173,7 @@ return [
 
             'direction' => [
 
-                'label' => 'Ryhmittelyn suunta',
+                'label' => 'Ryhmitys',
 
                 'options' => [
                     'asc' => 'Nousevasti',
@@ -199,7 +199,7 @@ return [
             ],
 
             'deselect_all' => [
-                'label' => 'Poista valinta kaikista',
+                'label' => 'Poista valinnat',
             ],
 
         ],
@@ -216,7 +216,7 @@ return [
 
             'direction' => [
 
-                'label' => 'Järjestyksen suunta',
+                'label' => 'Järjestys',
 
                 'options' => [
                     'asc' => 'Nousevasti',

@@ -2,12 +2,19 @@
 
 namespace Filament\Tables\Table\Concerns;
 
+use Closure;
+use Illuminate\Database\Eloquent\Builder;
+
 trait CanSummarizeRecords
 {
-    protected bool $hasSummary = false;
-
-    public function hasSummary(): bool
+    public function hasSummary(Builder | Closure | null $query): bool
     {
-        return $this->hasSummary;
+        foreach ($this->getColumns() as $column) {
+            if ($column->hasSummary($query)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

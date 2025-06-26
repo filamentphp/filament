@@ -36,10 +36,32 @@ class EditAction extends Action
         $this->icon(FilamentIcon::resolve('actions::edit-action') ?? 'heroicon-m-pencil-square');
 
         $this->fillForm(function (Model $record, Table $table): array {
-            if ($translatableContentDriver = $table->makeTranslatableContentDriver()) {
+            $translatableContentDriver = $table->makeTranslatableContentDriver();
+
+            if ($translatableContentDriver) {
                 $data = $translatableContentDriver->getRecordAttributesToArray($record);
             } else {
                 $data = $record->attributesToArray();
+            }
+
+            $relationship = $table->getRelationship();
+
+            if ($relationship instanceof BelongsToMany) {
+                $pivot = $record->getRelationValue($relationship->getPivotAccessor());
+
+                $pivotColumns = $relationship->getPivotColumns();
+
+                if ($translatableContentDriver) {
+                    $data = [
+                        ...$data,
+                        ...Arr::only($translatableContentDriver->getRecordAttributesToArray($pivot), $pivotColumns),
+                    ];
+                } else {
+                    $data = [
+                        ...$data,
+                        ...Arr::only($pivot->attributesToArray(), $pivotColumns),
+                    ];
+                }
             }
 
             if ($this->mutateRecordDataUsing) {

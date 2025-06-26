@@ -778,6 +778,14 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
                 ]) ?? $relationshipQuery;
             }
 
+            $baseRelationshipQuery = $relationshipQuery->getQuery();
+
+            if (isset($baseRelationshipQuery->limit)) {
+                $component->optionsLimit($baseRelationshipQuery->limit);
+            } elseif ($component->isSearchable() && filled($component->getSearchColumns())) {
+                $relationshipQuery->limit($component->getOptionsLimit());
+            }
+
             $qualifiedRelatedKeyName = $component->getQualifiedRelatedKeyNameForRelationship($relationship);
 
             if ($component->hasOptionLabelFromRecordUsingCallback()) {
@@ -1081,7 +1089,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         $query->where(function (Builder $query) use ($databaseConnection, $isForcedCaseInsensitive, $search): Builder {
             $isFirst = true;
 
-            foreach ($this->getSearchColumns() as $searchColumn) {
+            foreach ($this->getSearchColumns() ?? [] as $searchColumn) {
                 $whereClause = $isFirst ? 'where' : 'orWhere';
 
                 $query->{$whereClause}(
@@ -1207,8 +1215,8 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
 
     public function hasDynamicSearchResults(): bool
     {
-        if ($this->hasRelationship() && empty($this->searchColumns)) {
-            return ! $this->isPreloaded();
+        if ($this->hasRelationship() && blank($this->getSearchColumns())) {
+            return false;
         }
 
         return $this->getSearchResultsUsing instanceof Closure;

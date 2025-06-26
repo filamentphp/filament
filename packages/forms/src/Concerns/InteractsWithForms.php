@@ -13,6 +13,7 @@ use Filament\Support\Contracts\TranslatableContentDriver;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Validation\ValidationException;
+use Livewire\Attributes\Locked;
 use Livewire\Attributes\Renderless;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Livewire\WithFileUploads;
@@ -27,6 +28,9 @@ trait InteractsWithForms
      * @var array <string, TemporaryUploadedFile | null>
      */
     public array $componentFileAttachments = [];
+
+    #[Locked]
+    public bool $areFormStateUpdateHooksDisabledForTesting = false;
 
     /**
      * @var array<string, Form>
@@ -306,9 +310,31 @@ trait InteractsWithForms
 
     public function updatedInteractsWithForms(string $statePath): void
     {
+        if (app()->runningUnitTests() && $this->areFormStateUpdateHooksDisabledForTesting) {
+            return;
+        }
+
         foreach ($this->getCachedForms() as $form) {
             $form->callAfterStateUpdated($statePath);
         }
+    }
+
+    public function disableFormStateUpdateHooksForTesting(): void
+    {
+        if (! app()->runningUnitTests()) {
+            return;
+        }
+
+        $this->areFormStateUpdateHooksDisabledForTesting = true;
+    }
+
+    public function enableFormStateUpdateHooksForTesting(): void
+    {
+        if (! app()->runningUnitTests()) {
+            return;
+        }
+
+        $this->areFormStateUpdateHooksDisabledForTesting = false;
     }
 
     protected function cacheForm(string $name, Form | Closure | null $form): ?Form

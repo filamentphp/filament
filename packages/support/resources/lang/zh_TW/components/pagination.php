@@ -9,15 +9,29 @@ return [
     'fields' => [
 
         'records_per_page' => [
+
             'label' => '每頁顯示',
+
+            'options' => [
+                'all' => '全部',
+            ],
+
         ],
 
     ],
 
     'actions' => [
 
+        'first' => [
+            'label' => '第一頁',
+        ],
+
         'go_to_page' => [
             'label' => '前往第 :page 頁',
+        ],
+
+        'last' => [
+            'label' => '最後一頁',
         ],
 
         'next' => [

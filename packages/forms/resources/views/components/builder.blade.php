@@ -40,7 +40,7 @@
         {{
             $attributes
                 ->merge($getExtraAttributes(), escape: false)
-                ->class(['fi-fo-builder grid gap-y-4'])
+                ->class(['fi-fo-builder grid grid-cols-1 gap-y-4'])
         }}
     >
         @if ($collapseAllActionIsVisible || $expandAllActionIsVisible)
@@ -101,6 +101,7 @@
                     @endphp
 
                     <li
+                        wire:ignore.self
                         wire:key="{{ $this->getId() }}.{{ $item->getStatePath() }}.{{ $field::class }}.item"
                         x-data="{
                             isCollapsed: @js($isCollapsed($item)),

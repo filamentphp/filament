@@ -51,6 +51,11 @@
                     x-on:resize.window="resize()"
                 @endif
                 x-model="state"
+                @if ($isGrammarlyDisabled())
+                    data-gramm="false"
+                    data-gramm_editor="false"
+                    data-enable-grammarly="false"
+                @endif
                 {{ $getExtraAlpineAttributeBag() }}
                 {{
                     $getExtraInputAttributeBag()

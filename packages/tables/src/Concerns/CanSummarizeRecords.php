@@ -33,7 +33,7 @@ trait CanSummarizeRecords
         $selects = [];
 
         foreach ($this->getTable()->getVisibleColumns() as $column) {
-            $summarizers = $column->getSummarizers();
+            $summarizers = $column->getSummarizers($query);
 
             if (! count($summarizers)) {
                 continue;

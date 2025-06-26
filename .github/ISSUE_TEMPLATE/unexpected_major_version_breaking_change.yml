@@ -1,4 +1,4 @@
-name: Unexpected v4 breaking change
+name: Missing v4 upgrade guide step
 description: If a breaking change is not documented in the upgrade guide and not automatically upgraded by the script, report it here
 labels: unexpected major version breaking change,unconfirmed,high priority
 projects: ['filamentphp/2']

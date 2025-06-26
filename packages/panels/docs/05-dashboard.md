@@ -215,6 +215,39 @@ class Dashboard extends BaseDashboard
 
 Handling data from the filter action is the same as handling data from the filters header form, except that the data is validated before being passed to the widget. The `InteractsWithPageFilters` trait still applies.
 
+### Persisting widget filters in the user's session
+
+By default, the dashboard filters applied will persist in the user's session between page loads. To disable this, override the `$persistsFiltersInSession` property in the dashboard page class:
+
+```php
+use Filament\Pages\Dashboard as BaseDashboard;
+use Filament\Pages\Dashboard\Concerns\HasFiltersForm;
+
+class Dashboard extends BaseDashboard
+{
+    use HasFiltersForm;
+
+    protected bool $persistsFiltersInSession = false;
+}
+```
+
+Alternatively, override the `persistsFiltersInSession()` method in the dashboard page class:
+
+```php
+use Filament\Pages\Dashboard as BaseDashboard;
+use Filament\Pages\Dashboard\Concerns\HasFiltersForm;
+
+class Dashboard extends BaseDashboard
+{
+    use HasFiltersForm;
+
+    public function persistsFiltersInSession(): bool
+    {
+        return false;
+    }
+}
+```
+
 ## Disabling the default widgets
 
 By default, two widgets are displayed on the dashboard. These widgets can be disabled by updating the `widgets()` array of the [configuration](configuration):

@@ -10,6 +10,11 @@ trait CanBeHidden
 
     protected bool | Closure $isVisible = true;
 
+    /**
+     * @var array<string, bool>
+     */
+    protected array $visibilityCache = [];
+
     public function hidden(bool | Closure $condition = true): static
     {
         $this->isHidden = $condition;
@@ -26,11 +31,18 @@ trait CanBeHidden
 
     public function isHidden(): bool
     {
-        if ($this->evaluate($this->isHidden)) {
-            return true;
+        $query = $this->getQuery();
+        $querySql = $query ? md5($query->toRawSql()) : '';
+
+        if (array_key_exists($querySql, $this->visibilityCache)) {
+            return $this->visibilityCache[$querySql];
         }
 
-        return ! $this->evaluate($this->isVisible);
+        if ($this->evaluate($this->isHidden)) {
+            return $this->visibilityCache[$querySql] = true;
+        }
+
+        return $this->visibilityCache[$querySql] = ! $this->evaluate($this->isVisible);
     }
 
     public function isVisible(): bool

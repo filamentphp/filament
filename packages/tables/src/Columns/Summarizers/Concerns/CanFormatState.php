@@ -148,16 +148,16 @@ trait CanFormatState
         ]);
 
         if ($isHtml) {
+            if ($this->isMarkdown()) {
+                $state = Str::markdown($state);
+            }
+
             $state = Str::sanitizeHtml($state);
         }
 
         if ($state instanceof Htmlable) {
             $isHtml = true;
             $state = $state->toHtml();
-        }
-
-        if ($isHtml && $this->isMarkdown()) {
-            $state = Str::markdown($state);
         }
 
         $prefix = $this->getPrefix();
