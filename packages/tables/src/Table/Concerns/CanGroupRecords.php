@@ -31,6 +31,8 @@ trait CanGroupRecords
 
     protected bool | Closure $isGroupingDirectionSettingHidden = false;
 
+    protected bool | Closure $areAllGroupsCollapsed = false;
+
     protected ?Closure $modifyGroupRecordsTriggerActionUsing = null;
 
     public function groupRecordsTriggerAction(?Closure $callback): static
@@ -67,6 +69,17 @@ trait CanGroupRecords
     public function groupingDirectionSettingHidden(bool | Closure $condition = true): static
     {
         $this->isGroupingDirectionSettingHidden = $condition;
+
+        return $this;
+    }
+
+    public function allGroupsCollapsed(bool | Closure $condition = true): static
+    {
+        $this->areAllGroupsCollapsed = $condition;
+
+        if ($condition) {
+            array_map(fn (Group $group) => $group->collapsible(), $this->getGroups());
+        }
 
         return $this;
     }
@@ -142,6 +155,11 @@ trait CanGroupRecords
     public function isGroupingDirectionSettingHidden(): bool
     {
         return (bool) $this->evaluate($this->isGroupingDirectionSettingHidden);
+    }
+
+    public function areAllGroupsCollapsed(): bool
+    {
+        return (bool) $this->evaluate($this->areAllGroupsCollapsed);
     }
 
     public function getDefaultGroup(): ?Group

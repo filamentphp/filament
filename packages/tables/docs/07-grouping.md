@@ -202,6 +202,28 @@ public function table(Table $table): Table
 }
 ```
 
+## Collapsing all groups by default
+
+You can set all groups to be collapsed by default when the page loads using the `allGroupsCollapsed()` method:
+
+```php
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->groups([
+            Group::make('author.name')
+                ->collapsible(),
+            Group::make('status')
+                ->collapsible(),
+        ])
+        ->allGroupsCollapsed();
+}
+```
+
+This will automatically collapse all groups when the table is first loaded, and when users change the grouping selection.
+
 ## Summarising groups
 
 You can use [summaries](summaries) with groups to display a summary of the records inside a group. This works automatically if you choose to add a summariser to a column in a grouped table.

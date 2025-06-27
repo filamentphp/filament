@@ -2,11 +2,12 @@ export default ({
     canSelectMultipleRecords,
     canTrackDeselectedRecords,
     currentSelectionLivewireProperty,
+    areAllGroupsCollapsed = false,
     $wire,
 }) => ({
     checkboxClickController: null,
 
-    collapsedGroups: [],
+    collapsedGroups: areAllGroupsCollapsed ? [] : [],
 
     isLoading: false,
 
@@ -44,7 +45,13 @@ export default ({
             }
         }
 
-        this.$nextTick(() => this.watchForCheckboxClicks())
+        this.$nextTick(() => {
+            this.watchForCheckboxClicks()
+            
+            if (areAllGroupsCollapsed) {
+                this.collapsedGroups = this.getAllGroupTitles()
+            }
+        })
 
         Livewire.hook('element.init', ({ component }) => {
             if (component.id === this.livewireId) {
@@ -247,7 +254,24 @@ export default ({
     },
 
     resetCollapsedGroups() {
-        this.collapsedGroups = []
+        if (areAllGroupsCollapsed) {
+            this.collapsedGroups = this.getAllGroupTitles()
+        } else {
+            this.collapsedGroups = []
+        }
+    },
+
+    getAllGroupTitles() {
+        const groupTitles = []
+        
+        for (let groupHeader of this.$root?.getElementsByClassName('fi-ta-group-heading') ?? []) {
+            const title = groupHeader.textContent?.trim()
+            if (title) {
+                groupTitles.push(title)
+            }
+        }
+        
+        return groupTitles
     },
 
     watchForCheckboxClicks() {

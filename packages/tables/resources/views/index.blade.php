@@ -113,6 +113,7 @@
                 canSelectMultipleRecords: @js($canSelectMultipleRecords),
                 canTrackDeselectedRecords: @js($canTrackDeselectedRecords()),
                 currentSelectionLivewireProperty: @js($getCurrentSelectionLivewireProperty()),
+                areAllGroupsCollapsed: @js($areAllGroupsCollapsed()),
                 $wire,
             })"
     @class([

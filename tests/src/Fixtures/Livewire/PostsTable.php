@@ -40,8 +40,10 @@ class PostsTable extends Component implements HasActions, HasSchemas, Tables\Con
             ->query(Post::query())
             ->groups(fn () => [
                 Tables\Grouping\Group::make('author.name')
-                    ->label(fn (Table $table, self $livewire) => 'Dynamic label'),
+                    ->label(fn (Table $table, self $livewire) => 'Dynamic label')
+                    ->collapsible(),
             ])
+            ->allGroupsCollapsed()
             ->columns([
                 Tables\Columns\TextColumn::make('title')
                     ->sortable()

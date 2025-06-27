@@ -41,3 +41,30 @@ it('can group a table', function (): void {
                 ->getLabel()->toBe('Dynamic label');
         });
 });
+
+it('can collapse all groups by default', function (): void {
+    $posts = Post::factory()->count(20)->create();
+
+    livewire(PostsTable::class)
+        ->tap(function (Testable $testable): void {
+            /** @var PostsTable $livewire */
+            $livewire = $testable->instance();
+
+            $table = $livewire->getTable();
+
+            expect($table)
+                ->areAllGroupsCollapsed()->toBeTrue();
+        })
+        ->set('tableGrouping', 'author.name')
+        ->tap(function (Testable $testable): void {
+            /** @var PostsTable $livewire */
+            $livewire = $testable->instance();
+
+            $table = $livewire->getTable();
+
+            expect($table)
+                ->getGrouping()->toBeInstanceOf(Tables\Grouping\Group::class)
+                ->and($table->getGrouping())
+                ->isCollapsible()->toBeTrue();
+        });
+});
