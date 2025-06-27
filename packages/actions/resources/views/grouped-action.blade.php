@@ -3,7 +3,7 @@
     :badge="$getBadge()"
     :badge-color="$getBadgeColor()"
     dynamic-component="filament::dropdown.list.item"
-    :icon="$getGroupedIcon()"
+    :icon="$getIcon()"
     class="fi-ac-grouped-action"
 >
     {{ $getLabel() }}
