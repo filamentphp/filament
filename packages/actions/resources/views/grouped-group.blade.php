@@ -5,6 +5,6 @@
     :group="$group"
     :icon="$getGroupedIcon()"
     class="fi-ac-grouped-group"
->
+> 
     {{ $getLabel() }}
 </x-filament-actions::group>
