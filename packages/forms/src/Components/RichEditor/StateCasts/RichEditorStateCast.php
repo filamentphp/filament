@@ -59,6 +59,9 @@ class RichEditorStateCast implements StateCast
      */
     public function set(mixed $state): array
     {
+        if (is_array($state) && array_is_list($state)) {
+            $state = reset($state);
+        }
         $editor = $this->richEditor->getTipTapEditor()
             ->setContent($state ?? [
                 'type' => 'doc',
