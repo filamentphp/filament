@@ -10,6 +10,7 @@ use Filament\Actions\ActionGroup;
 use Filament\Auth\Events\Registered;
 use Filament\Auth\Http\Responses\Contracts\RegistrationResponse;
 use Filament\Auth\Notifications\VerifyEmail;
+use Filament\Auth\Rules\PasswordStrength;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
@@ -191,7 +192,13 @@ class Register extends SimplePage
             ->password()
             ->revealable(filament()->arePasswordsRevealable())
             ->required()
-            ->rule(Password::default())
+            ->rule(PasswordStrength::make()
+                ->min(8)
+                ->letters()
+                ->numbers()
+                ->symbols()
+                ->mixedCase()
+            )
             ->dehydrateStateUsing(fn ($state) => Hash::make($state))
             ->same('passwordConfirmation')
             ->validationAttribute(__('filament-panels::auth/pages/register.form.password.validation_attribute'));

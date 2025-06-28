@@ -44,8 +44,8 @@ it('can register', function (): void {
         ->fillForm([
             'name' => $userToRegister->name,
             'email' => $userToRegister->email,
-            'password' => 'password',
-            'passwordConfirmation' => 'password',
+            'password' => 'Str0ng!Pass123',
+            'passwordConfirmation' => 'Str0ng!Pass123',
         ])
         ->call('register')
         ->assertRedirect(Filament::getUrl());
@@ -57,7 +57,7 @@ it('can register', function (): void {
 
     $this->assertCredentials([
         'email' => $userToRegister->email,
-        'password' => 'password',
+        'password' => 'Str0ng!Pass123',
     ]);
 });
 
@@ -75,8 +75,8 @@ it('can register and redirect user to their intended URL', function (): void {
         ->fillForm([
             'name' => $userToRegister->name,
             'email' => $userToRegister->email,
-            'password' => 'password',
-            'passwordConfirmation' => 'password',
+            'password' => 'Str0ng!Pass123',
+            'passwordConfirmation' => 'Str0ng!Pass123',
         ])
         ->call('register')
         ->assertRedirect($intendedUrl);
@@ -95,8 +95,8 @@ it('can throttle registration attempts', function (): void {
             ->fillForm([
                 'name' => $userToRegister->name,
                 'email' => $userToRegister->email,
-                'password' => 'password',
-                'passwordConfirmation' => 'password',
+                'password' => 'Str0ng!Pass123',
+                'passwordConfirmation' => 'Str0ng!Pass123',
             ])
             ->call('register')
             ->assertRedirect(Filament::getUrl());
@@ -131,6 +131,18 @@ it('can validate `name` is required', function (): void {
         ->fillForm(['name' => ''])
         ->call('register')
         ->assertHasFormErrors(['name' => ['required']]);
+});
+
+it('can validate weak password fails with multiple messages', function (): void {
+    livewire(Register::class)
+        ->fillForm([
+            'name' => 'Test User',
+            'email' => 'weak@example.com',
+            'password' => 'weak',  
+            'passwordConfirmation' => 'weak',
+        ])
+        ->call('register')
+        ->assertHasFormErrors(['password']);
 });
 
 it('can validate `name` is max 255 characters', function (): void {
