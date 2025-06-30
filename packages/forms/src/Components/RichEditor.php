@@ -6,6 +6,7 @@ use Closure;
 use Filament\Actions\Action;
 use Filament\Forms\Components\RichEditor\Actions\AttachFilesAction;
 use Filament\Forms\Components\RichEditor\Actions\CustomBlockAction;
+use Filament\Forms\Components\RichEditor\Actions\GridAction;
 use Filament\Forms\Components\RichEditor\Actions\LinkAction;
 use Filament\Forms\Components\RichEditor\EditorCommand;
 use Filament\Forms\Components\RichEditor\FileAttachmentProviders\Contracts\FileAttachmentProvider;
@@ -222,6 +223,12 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
                 ->jsHandler('$getEditor()?.chain().focus().setTextAlign(\'justify\').run()')
                 ->icon('fi-s-align-justify')
                 ->iconAlias('forms:components.rich-editor.toolbar.align-justify'),
+            RichEditorTool::make('grid')
+                ->label(__('filament-forms::components.rich_editor.tools.grid'))
+                ->action(arguments: '{columns: $getEditor().getAttributes(\'grid\')?.[\'data-columns\'], stackAt: $getEditor().getAttributes(\'grid\')?.[\'data-stack-at\'], asymmetric: $getEditor().getAttributes(\'grid\')?.[\'data-asymmetric\'], leftSpan: $getEditor().getAttributes(\'grid\')?.[\'left-span\'], rightSpan: $getEditor().getAttributes(\'grid\')?.[\'right-span\'] }')
+                ->activeKey('grid')
+                ->icon(Heroicon::Squares2x2)
+                ->iconAlias('forms:components.rich-editor.toolbar.grid'),
         ]);
 
         $this->beforeStateDehydrated(function (RichEditor $component, ?array $rawState, ?Model $record): void {
@@ -569,7 +576,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
         return [
             ['bold', 'italic', 'underline', 'strike', 'subscript', 'superscript', 'link'],
             ['h2', 'h3', 'alignStart', 'alignCenter', 'alignEnd'],
-            ['blockquote', 'codeBlock', 'bulletList', 'orderedList'],
+            ['blockquote', 'codeBlock', 'bulletList', 'orderedList', 'grid'],
             [
                 'attachFiles',
                 ...(filled($this->getCustomBlocks()) ? ['customBlocks'] : []),
@@ -616,6 +623,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
             AttachFilesAction::make(),
             CustomBlockAction::make(),
             LinkAction::make(),
+            GridAction::make(),
             ...array_reduce(
                 $this->getPlugins(),
                 fn (array $carry, RichContentPlugin $plugin): array => [

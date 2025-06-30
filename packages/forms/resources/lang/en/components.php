@@ -467,6 +467,43 @@ return [
 
             ],
 
+            'grid' => [
+
+                'label' => 'Grid',
+
+                'modal' => [
+
+                    'heading' => 'Grid',
+
+                    'form' => [
+
+                        'columns' => [
+                            'label' => 'Columns',
+                        ],
+
+                        'stack_at' => [
+                            'label' => 'Stack at',
+                            'dont_stack' => [
+                                'label' => 'Don\'t stack',
+                            ],
+                        ],
+
+                        'asymmetric' => [
+                            'label' => 'Asymmetric',
+                        ],
+
+                        'left_span' => [
+                            'label' => 'Left span',
+                        ],
+
+                        'right_span' => [
+                            'label' => 'Right span',
+                        ],
+
+                    ],
+
+            ],
+
         ],
 
         'no_merge_tag_search_results_message' => 'No merge tag results.',
@@ -485,6 +522,7 @@ return [
             'h1' => 'Title',
             'h2' => 'Heading',
             'h3' => 'Subheading',
+            'grid' => 'Grid',
             'highlight' => 'Highlight',
             'horizontal_rule' => 'Horizontal rule',
             'italic' => 'Italic',
@@ -500,6 +538,8 @@ return [
             'underline' => 'Underline',
             'undo' => 'Undo',
         ],
+
+    ],
 
     ],
 

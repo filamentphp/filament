@@ -83,7 +83,8 @@
 
             & .ProseMirror-selectednode {
                 &div[data-type='customBlock'],
-                &img {
+                &img,
+                &.fi-re-grid {
                     @apply ring-primary-600 dark:ring-primary-500 ring-2;
                 }
             }
@@ -98,6 +99,46 @@
             @variant dark {
                 &::before {
                     @apply text-gray-500;
+                }
+            }
+        }
+
+        & .fi-re-grid {
+            @apply grid gap-4;
+
+            .fi-re-grid-column {
+                @apply !mt-0 border border-dashed border-gray-950/30 p-2 rounded-lg dark:border-white/20;
+
+                > * + * {
+                    @apply mt-4;
+                }
+            }
+        }
+
+        @supports (container-type: inline-size) {
+            @apply @container;
+
+            & .fi-re-grid[data-stack-at='sm'] {
+                @apply @max-sm:!grid-cols-1;
+
+                .fi-re-grid-column {
+                    @apply @max-sm:!col-span-1;
+                }
+            }
+
+            & .fi-re-grid[data-stack-at='md'] {
+                @apply @max-md:!grid-cols-1;
+
+                .fi-re-grid-column {
+                    @apply @max-md:!col-span-1;
+                }
+            }
+
+            & .fi-re-grid[data-stack-at='lg'] {
+                @apply @max-lg:!grid-cols-1;
+
+                .fi-re-grid-column {
+                    @apply @max-lg:!col-span-1;
                 }
             }
         }
