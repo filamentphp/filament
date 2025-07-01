@@ -48,7 +48,7 @@ abstract class Asset
 
     public function getPackage(): string
     {
-        return $this->package;
+        return $this->package ?? '';
     }
 
     public function getPath(): ?string
