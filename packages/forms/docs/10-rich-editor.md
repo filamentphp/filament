@@ -68,6 +68,7 @@ Additional tools available in the toolbar include:
 
 - `h1` - Applies the "h1" tag to the text.
 - `alignJustify` - Justifies the text.
+- `clearFormatting` - Clears all formatting from the selected text.
 - `highlight` - Highlights the selected text with a `<mark>` tag around it.
 - `horizontalRule` - Inserts a horizontal rule.
 - `lead` - Applies a `lead` class around the text, which is typically used for the first paragraph of an article.

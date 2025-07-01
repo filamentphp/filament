@@ -481,6 +481,7 @@ return [
             'blockquote' => 'Blockquote',
             'bold' => 'Bold',
             'bullet_list' => 'Bullet list',
+            'clear_formatting' => 'Clear formatting',
             'code_block' => 'Code block',
             'custom_blocks' => 'Blocks',
             'h1' => 'Title',
