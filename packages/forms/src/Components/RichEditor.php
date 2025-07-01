@@ -282,6 +282,12 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
                 ->jsHandler('$getEditor()?.chain().focus().setTextAlign(\'justify\').run()')
                 ->icon('fi-s-align-justify')
                 ->iconAlias('forms:components.rich-editor.toolbar.align-justify'),
+            RichEditorTool::make('toggleInvisibleCharacters')
+                ->label(__('filament-forms::components.rich_editor.tools.toggle_invisible_characters'))
+                ->jsHandler('$getEditor()?.commands.toggleInvisibleCharacters()')
+                ->activeJsExpression('$getEditor()?.storage.invisibleCharacters.visibility()')
+                ->icon('fi-s-toggle-invisible-characters')
+                ->iconAlias('forms:components.rich-editor.toolbar.toggle_invisible_characters'),
         ]);
 
         $this->beforeStateDehydrated(function (RichEditor $component, ?array $rawState, ?Model $record): void {

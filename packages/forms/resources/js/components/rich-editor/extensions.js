@@ -11,6 +11,7 @@ import Highlight from '@tiptap/extension-highlight'
 import HorizontalRule from '@tiptap/extension-horizontal-rule'
 import Italic from '@tiptap/extension-italic'
 import Image from './extension-image.js'
+import InvisibleCharacters from '@tiptap/extension-invisible-characters'
 import Lead from './extension-lead.js'
 import Link from '@tiptap/extension-link'
 import { BulletList, ListItem, OrderedList } from '@tiptap/extension-list'
@@ -63,6 +64,9 @@ export default async ({
     HorizontalRule,
     Italic,
     Image,
+    InvisibleCharacters.configure({
+        visible: false,
+    }),
     Lead,
     Link.configure({
         autolink: true,

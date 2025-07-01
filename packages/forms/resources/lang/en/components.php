@@ -509,6 +509,7 @@ return [
             'table_merge_cells' => 'Merge cells',
             'table_split_cell' => 'Split cell',
             'table_toggle_header_row' => 'Toggle header row',
+            'toggle_invisible_characters' => 'Toggle invisible characters',
             'underline' => 'Underline',
             'undo' => 'Undo',
         ],

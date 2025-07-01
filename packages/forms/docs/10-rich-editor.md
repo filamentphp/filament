@@ -83,6 +83,7 @@ Additional tools available in the toolbar include:
 - `tableSplitCell` - Splits the selected cell into multiple cells.
 - `tableToggleHeaderRow` - Toggles the header row of the table.
 - `tableDelete` - Deletes the table.
+- `toggleInvisibleCharacters` - Toggles the visibility of invisible characters in the editor, such as spaces, hard breaks, and paragraphs.
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `toolbarButtons()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
