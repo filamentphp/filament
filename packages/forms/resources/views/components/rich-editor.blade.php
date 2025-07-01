@@ -2,7 +2,14 @@
     use Filament\Support\Facades\FilamentView;
 
     $customBlocks = $getCustomBlocks();
-    $extraInputAttributeBag = $getExtraAttributeBag();
+    $extraAttributeBag = $getExtraAttributeBag();
+    $extraInputAttributeBag = $getExtraInputAttributeBag();
+    $editorProps = [
+        'attributes' => [
+            'class' => 'fi-prose',
+            ...$extraInputAttributeBag->all(),
+        ],
+    ];
     $fieldWrapperView = $getFieldWrapperView();
     $id = $getId();
     $isDisabled = $isDisabled();
@@ -19,10 +26,7 @@
     <x-filament::input.wrapper
         :valid="! $errors->has($statePath)"
         x-cloak
-        :attributes="
-            \Filament\Support\prepare_inherited_attributes($extraInputAttributeBag)
-                ->class(['fi-fo-rich-editor'])
-        "
+        :attributes="new \Illuminate\View\ComponentAttributeBag(['class' => 'fi-fo-rich-editor'])"
     >
         <div
             @if (FilamentView::hasSpaMode())
@@ -33,6 +37,7 @@
             x-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('rich-editor', 'filament/forms') }}"
             x-data="richEditorFormComponent({
                         activePanel: @js($getActivePanel()),
+                        editorProps: @js($editorProps),
                         deleteCustomBlockButtonIconHtml: @js(\Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::Trash, alias: 'forms:components.rich-editor.panels.custom-block.delete-button')->toHtml()),
                         editCustomBlockButtonIconHtml: @js(\Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::PencilSquare, alias: 'forms:components.rich-editor.panels.custom-block.edit-button')->toHtml()),
                         extensions: @js($getTipTapJsExtensions()),
@@ -69,7 +74,10 @@
             @endif
 
             <div class="fi-fo-rich-editor-main">
-                <div class="fi-fo-rich-editor-content fi-prose" x-ref="editor">
+                <div
+                    {{ \Filament\Support\prepare_inherited_attributes($extraAttributeBag)->class(['fi-fo-rich-editor-content']) }}
+                    x-ref="editor"
+                >
                     @foreach ($floatingToolbars as $nodeName => $buttons)
                         <div
                             x-ref="floatingToolbar::{{ $nodeName }}"

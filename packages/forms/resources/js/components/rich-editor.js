@@ -5,6 +5,7 @@ import { BubbleMenuPlugin } from '@tiptap/extension-bubble-menu'
 
 export default function richEditorFormComponent({
     activePanel,
+    editorProps,
     deleteCustomBlockButtonIconHtml,
     editCustomBlockButtonIconHtml,
     extensions,
@@ -38,6 +39,7 @@ export default function richEditorFormComponent({
         editorUpdatedAt: Date.now(),
 
         async init() {
+            console.log(editorProps);
             editor = new Editor({
                 editable: !isDisabled,
                 element: this.$refs.editor,
@@ -71,6 +73,7 @@ export default function richEditorFormComponent({
                     $wire: this.$wire,
                     floatingToolbars,
                 }),
+                editorProps,
                 content: this.state,
             })
 
