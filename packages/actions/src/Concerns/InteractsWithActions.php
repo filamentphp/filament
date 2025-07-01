@@ -36,6 +36,11 @@ trait InteractsWithActions
      */
     public ?array $mountedActions = [];
 
+    /**
+     * @var array<array<string, mixed>> | null
+     */
+    public ?array $mountedActionsData = [];
+
     protected ?int $originallyMountedActionIndex = null;
 
     /**
@@ -621,7 +626,7 @@ trait InteractsWithActions
             $this->makeSchema()
                 ->model(fn (): Model | array | string | null => $mountedAction->getRecord() ?? $mountedAction->getModel() ?? $mountedAction->getSchemaComponent()?->getActionSchemaModel() ?? $this->getMountedActionSchemaModel())
                 ->key("mountedActionSchema{$actionNestingIndex}")
-                ->statePath("mountedActions.{$actionNestingIndex}.data")
+                ->statePath("mountedActionsData.{$actionNestingIndex}.data")
                 ->operation(
                     collect($this->mountedActions)
                         ->take($actionNestingIndex + 1)
