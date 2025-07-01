@@ -291,7 +291,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
                 ->label(__('filament-forms::components.rich_editor.tools.toggle_invisible_characters'))
                 ->jsHandler('$getEditor()?.commands.toggleInvisibleCharacters()')
                 ->activeJsExpression('$getEditor()?.storage.invisibleCharacters.visibility()')
-                ->icon('fi-s-toggle-invisible-characters')
+                ->icon('fi-o-toggle-invisible-characters')
                 ->iconAlias('forms:components.rich-editor.toolbar.toggle_invisible_characters'),
         ]);
 
