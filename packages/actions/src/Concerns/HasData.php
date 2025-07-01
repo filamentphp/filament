@@ -98,7 +98,7 @@ trait HasData
      */
     public function getRawData(): array
     {
-        return $this->getLivewire()->mountedActions[$this->getNestingIndex()]['data'] ?? [];
+        return $this->getLivewire()->mountedActionsData[$this->getNestingIndex()]['data'] ?? [];
     }
 
     /**
