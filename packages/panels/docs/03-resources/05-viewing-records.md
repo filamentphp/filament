@@ -125,6 +125,18 @@ class ViewUser extends ViewRecord
 }
 ```
 
+A hook can also be added using the `macro` method, this is useful if you want to add hooks to pages you do not control
+e.g. a page from a package:
+
+```php
+
+ThirdPartyPackge\EditSettings::class::macro('afterSave', function () {
+    // runs after the record is saved
+    // if the package implements the afterSave hook and extends BasePage, this will be called as though it were defined in the page class
+});
+
+```
+
 ## Authorization
 
 For authorization, Filament will observe any [model policies](https://laravel.com/docs/authorization#creating-policies) that are registered in your app.
