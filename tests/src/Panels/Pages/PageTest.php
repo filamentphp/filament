@@ -2,6 +2,7 @@
 
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
+use Filament\Tests\Panels\Fixtures\Pages\HookPage;
 use Filament\Tests\Panels\Fixtures\Pages\Settings;
 use Filament\Tests\Panels\Pages\TestCase;
 use Illuminate\Validation\ValidationException;
@@ -34,4 +35,23 @@ it('can report validation errors', function () {
         ->call('save')
         ->assertHasErrors(['name' => ['required']])
         ->assertNotified();
+});
+
+it('can call macro hooks', function () {
+
+    $internalVar = null;
+
+    // apply the macro to the HookPage class here
+    // i.e. pretend we don't control the page definition
+    HookPage::macro('afterSave', function () use (&$internalVar) {
+        $internalVar = 'macro called';
+    });
+
+    livewire(HookPage::class)
+        ->fill([
+            'name' => 'Macro User',
+        ])
+        ->call('save');
+
+    expect($internalVar)->toBe('macro called');
 });

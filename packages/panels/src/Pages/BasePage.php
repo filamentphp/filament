@@ -131,7 +131,7 @@ abstract class BasePage extends Component implements HasActions, HasForms, HasIn
 
     protected function callHook(string $hook): void
     {
-        if (! method_exists($this, $hook)) {
+        if (! method_exists($this, $hook) && ! $this->hasMacro($hook)) {
             return;
         }
 
