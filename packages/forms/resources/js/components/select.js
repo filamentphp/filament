@@ -1278,9 +1278,9 @@ class CustomSelect {
         this.dropdown.style.display = 'block'
         this.dropdown.style.opacity = '0'
 
-        // Check if the select is inside a modal
-        const isInModal = this.selectButton.closest('.fi-modal') !== null
-        this.dropdown.style.position = isInModal ? 'absolute' : 'fixed'
+        // Check if the select is inside a modal or a table repeater
+        const positionShouldBeAbsolute = this.selectButton.closest('.fi-modal') !== null || this.selectButton.closest('.fi-fo-table-repeater') !== null
+        this.dropdown.style.position = positionShouldBeAbsolute ? 'absolute' : 'fixed'
         // Set width immediately to match the select button
         this.dropdown.style.width = `${this.selectButton.offsetWidth}px`
         this.selectButton.setAttribute('aria-expanded', 'true')
@@ -1401,13 +1401,13 @@ class CustomSelect {
             middleware.push(flip()) // Flip to top if not enough space at bottom
         }
 
-        // Check if the select is inside a modal
-        const isInModal = this.selectButton.closest('.fi-modal') !== null
+        // Check if the select is inside a modal or a table repeater
+        const strategyShouldBeAbsolute = this.selectButton.closest('.fi-modal') !== null || this.selectButton.closest('.fi-fo-table-repeater') !== null
 
         computePosition(this.selectButton, this.dropdown, {
             placement: placement,
             middleware: middleware,
-            strategy: isInModal ? 'absolute' : 'fixed',
+            strategy: strategyShouldBeAbsolute ? 'absolute' : 'fixed',
         }).then(({ x, y }) => {
             Object.assign(this.dropdown.style, {
                 left: `${x}px`,
