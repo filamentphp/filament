@@ -39,7 +39,6 @@ export default function richEditorFormComponent({
         editorUpdatedAt: Date.now(),
 
         async init() {
-            console.log(editorProps);
             editor = new Editor({
                 editable: !isDisabled,
                 element: this.$refs.editor,
