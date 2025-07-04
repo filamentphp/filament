@@ -244,7 +244,7 @@ class Schema extends ViewComponent implements HasEmbeddedView
                             x-data="filamentSchemaComponent({
                                 path: <?= Js::from($schemaComponentStatePath) ?>,
                                 containerPath: <?= Js::from($statePath) ?>,
-                                isLive: <?= Js::from($schemaComponent->isLive()) ?>,
+                                isLive: <?= Js::from($schemaComponent->isLive() && !$schemaComponent->isLiveOnBlur()) ?>,
                                 $wire,
                             })"
                             <?php if ($afterStateUpdatedJs = $schemaComponent->getAfterStateUpdatedJs()) { ?>
