@@ -306,6 +306,7 @@ trait HasActions
         try {
             return array_pop($this->mountedTableActions);
         } finally {
+            array_pop($this->mountedTableActionsArguments);
             array_pop($this->mountedTableActionsData);
         }
     }
