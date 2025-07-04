@@ -63,8 +63,7 @@ trait EntanglesStateWithSingularRelationship
 
                     if (
                         ($childComponent instanceof CanEntangleWithSingularRelationships) &&
-                        ($childComponent->getRelationshipName() === $component->getRelationshipName()) &&
-                        ($childComponent->hasRelationship())
+                        ($childComponent->getRelationshipName() === $component->getRelationshipName())
                     ) {
                         $componentsWithThisRelationship[] = $childComponent;
 
