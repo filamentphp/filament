@@ -63,10 +63,10 @@ trait HasColumnManager
      */
     public function applyTableColumnManager(?array $state = null): void
     {
-        if (!$this->getTable()->hasReorderableColumns()) {
+        if (! $this->getTable()->hasReorderableColumns()) {
             return;
         }
-        
+
         if (filled($state)) {
             $this->tableColumns = $state;
         }
