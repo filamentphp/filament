@@ -2,7 +2,6 @@
 
 namespace Filament\Tables\Concerns;
 
-use Closure;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\BulkAction;
@@ -129,6 +128,7 @@ trait HasBulkActions
                     return $carry;
                 }
 
+                /** @phpstan-ignore instanceof.alwaysTrue (depending on usage, $record is always a model) */
                 $carry[] = ($record instanceof Model) ? ((string) $record->getKey()) : $key;
 
                 return $carry;
@@ -139,6 +139,8 @@ trait HasBulkActions
 
     /**
      * @return array<string>
+     *
+     * @throws Exception
      */
     public function getGroupedSelectableTableRecordKeys(string $group): array
     {
