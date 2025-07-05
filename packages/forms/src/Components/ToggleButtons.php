@@ -5,9 +5,10 @@ namespace Filament\Forms\Components;
 use Closure;
 use Filament\Support\Facades\FilamentIcon;
 
-class ToggleButtons extends Field implements Contracts\CanDisableOptions
+class ToggleButtons extends Field implements Contracts\CanDisableOptions, Contracts\CanHideOptions
 {
     use Concerns\CanDisableOptions;
+    use Concerns\CanHideOptions;
     use Concerns\CanDisableOptionsWhenSelectedInSiblingRepeaterItems;
     use Concerns\CanFixIndistinctState;
     use Concerns\HasColors;

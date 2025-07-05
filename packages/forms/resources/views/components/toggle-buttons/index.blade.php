@@ -42,7 +42,7 @@
                 ])
         "
     >
-        @foreach ($getOptions() as $value => $label)
+        @foreach ($getVisibleOptions() as $value => $label)
             @php
                 $inputId = "{$id}-{$value}";
                 $shouldOptionBeDisabled = $isDisabled || $isOptionDisabled($value, $label);

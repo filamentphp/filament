@@ -26,7 +26,7 @@
                 ])
         "
     >
-        @foreach ($getOptions() as $value => $label)
+        @foreach ($getVisibleOptions() as $value => $label)
             <div
                 @class([
                     'break-inside-avoid pt-4' => (! $isInline) && ($gridDirection === 'column'),

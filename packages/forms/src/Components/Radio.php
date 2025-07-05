@@ -4,9 +4,10 @@ namespace Filament\Forms\Components;
 
 use Closure;
 
-class Radio extends Field implements Contracts\CanDisableOptions
+class Radio extends Field implements Contracts\CanDisableOptions, Contracts\CanHideOptions
 {
     use Concerns\CanDisableOptions;
+    use Concerns\CanHideOptions;
     use Concerns\CanDisableOptionsWhenSelectedInSiblingRepeaterItems;
     use Concerns\CanFixIndistinctState;
     use Concerns\HasDescriptions;

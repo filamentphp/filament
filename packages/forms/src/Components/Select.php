@@ -34,13 +34,14 @@ use Znck\Eloquent\Relations\BelongsToThrough;
 use function Filament\Support\generate_search_column_expression;
 use function Filament\Support\generate_search_term_expression;
 
-class Select extends Field implements Contracts\CanDisableOptions, Contracts\HasAffixActions, Contracts\HasNestedRecursiveValidationRules
+class Select extends Field implements Contracts\CanDisableOptions, Contracts\CanHideOptions, Contracts\HasAffixActions, Contracts\HasNestedRecursiveValidationRules
 {
     use Concerns\CanAllowHtml;
     use Concerns\CanBeNative;
     use Concerns\CanBePreloaded;
     use Concerns\CanBeSearchable;
     use Concerns\CanDisableOptions;
+    use Concerns\CanHideOptions;
     use Concerns\CanDisableOptionsWhenSelectedInSiblingRepeaterItems;
     use Concerns\CanFixIndistinctState;
     use Concerns\CanLimitItemsLength;
@@ -186,6 +187,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
 
         $this->transformOptionsForJsUsing(static function (Select $component, array $options): array {
             return collect($options)
+                ->filter(fn ($label, $value): bool => is_array($label) || ! $component->isOptionHidden($value, $label))
                 ->map(fn ($label, $value): array => is_array($label)
                     ? ['label' => $value, 'choices' => $component->transformOptionsForJs($label)]
                     : ['label' => $label, 'value' => strval($value), 'disabled' => $component->isOptionDisabled($value, $label)])
@@ -1203,6 +1205,10 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
     public function hasDynamicOptions(): bool
     {
         if ($this->hasDynamicDisabledOptions()) {
+            return true;
+        }
+
+        if ($this->hasDynamicHiddenOptions()) {
             return true;
         }
 

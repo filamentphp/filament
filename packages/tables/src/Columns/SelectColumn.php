@@ -3,15 +3,19 @@
 namespace Filament\Tables\Columns;
 
 use Filament\Forms\Components\Concerns\CanDisableOptions;
+use Filament\Forms\Components\Concerns\CanHideOptions;
 use Filament\Forms\Components\Concerns\CanSelectPlaceholder;
 use Filament\Forms\Components\Concerns\HasExtraInputAttributes;
 use Filament\Forms\Components\Concerns\HasOptions;
+use Filament\Forms\Components\Contracts\CanDisableOptions as CanDisableOptionsContract;
+use Filament\Forms\Components\Contracts\CanHideOptions as CanHideOptionsContract;
 use Filament\Tables\Columns\Contracts\Editable;
 use Illuminate\Validation\Rule;
 
-class SelectColumn extends Column implements Editable
+class SelectColumn extends Column implements CanDisableOptionsContract, CanHideOptionsContract, Editable
 {
     use CanDisableOptions;
+    use CanHideOptions;
     use CanSelectPlaceholder;
     use Concerns\CanBeValidated {
         getRules as baseGetRules;
@@ -41,7 +45,7 @@ class SelectColumn extends Column implements Editable
     {
         return [
             ...$this->baseGetRules(),
-            Rule::in(array_keys($this->getOptions())),
+            Rule::in(array_keys($this->getVisibleOptions())),
         ];
     }
 }

@@ -161,7 +161,7 @@
                     ])
             "
         >
-            @forelse ($getOptions() as $value => $label)
+            @forelse ($getVisibleOptions() as $value => $label)
                 <div
                     wire:key="{{ $this->getId() }}.{{ $statePath }}.{{ $field::class }}.options.{{ $value }}"
                     @if ($isSearchable)

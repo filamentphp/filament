@@ -101,7 +101,7 @@
                 <option value="">{{ $getPlaceholder() }}</option>
             @endif
 
-            @foreach ($getOptions() as $value => $label)
+            @foreach ($getVisibleOptions() as $value => $label)
                 <option
                     @disabled($isOptionDisabled($value, $label))
                     value="{{ $value }}"
