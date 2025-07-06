@@ -10,7 +10,7 @@ trait CanHideOptions
 {
     protected array $isOptionHidden = [];
 
-    public function hiddenOptionWhen(bool | Closure | null $callback, bool $merge = false): static
+    public function hideOptionWhen(bool | Closure | null $callback, bool $merge = false): static
     {
         if ($merge) {
             $this->isOptionHidden[] = $callback;

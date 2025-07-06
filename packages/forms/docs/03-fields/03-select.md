@@ -471,6 +471,92 @@ Select::make('status')
     ->in(fn (Select $component): array => array_keys($component->getEnabledOptions()))
 ```
 
+## Hiding specific options
+
+You can hide specific options using the `hideOptionWhen()` method. It accepts a closure, in which you can check if the option with a specific `$value` should be hidden:
+
+```php
+use Filament\Forms\Components\Select;
+
+Select::make('status')
+    ->options([
+        'draft' => 'Draft',
+        'reviewing' => 'Reviewing',
+        'published' => 'Published',
+    ])
+    ->default('draft')
+    ->hideOptionWhen(fn (string $value): bool => $value === 'published')
+```
+
+Hidden options are completely removed from the dropdown and are not rendered in the DOM, providing a cleaner user experience compared to disabled options.
+
+If you want to retrieve the options that have not been hidden, e.g. for validation purposes, you can do so using `getVisibleOptions()`:
+
+```php
+use Filament\Forms\Components\Select;
+
+Select::make('status')
+    ->options([
+        'draft' => 'Draft',
+        'reviewing' => 'Reviewing',
+        'published' => 'Published',
+    ])
+    ->default('draft')
+    ->hideOptionWhen(fn (string $value): bool => $value === 'published')
+    ->in(fn (Select $component): array => array_keys($component->getVisibleOptions()))
+```
+
+You can also combine `disableOptionWhen()` and `hideOptionWhen()` for more complex scenarios:
+
+```php
+use Filament\Forms\Components\Select;
+
+Select::make('status')
+    ->options([
+        'draft' => 'Draft',
+        'reviewing' => 'Reviewing',
+        'published' => 'Published',
+        'archived' => 'Archived',
+    ])
+    ->disableOptionWhen(fn (string $value): bool => $value === 'reviewing')
+    ->hideOptionWhen(fn (string $value): bool => $value === 'archived')
+```
+
+### Multiple hide conditions
+
+You can add multiple conditions using the `merge` parameter:
+
+```php
+use Filament\Forms\Components\Select;
+
+Select::make('status')
+    ->options([
+        'draft' => 'Draft',
+        'reviewing' => 'Reviewing',
+        'published' => 'Published',
+        'archived' => 'Archived',
+        'deleted' => 'Deleted',
+    ])
+    ->hideOptionWhen(fn (string $value): bool => $value === 'archived')
+    ->hideOptionWhen(fn (string $value): bool => $value === 'deleted', merge: true)
+```
+
+### Accessing option label
+
+The closure also receives the option label as a second parameter:
+
+```php
+use Filament\Forms\Components\Select;
+
+Select::make('status')
+    ->options([
+        'draft' => 'Draft',
+        'reviewing' => 'Reviewing',
+        'published' => 'Published',
+    ])
+    ->hideOptionWhen(fn (string $value, string $label): bool => $label === 'Published')
+```
+
 ## Adding affix text aside the field
 
 You may place text before and after the input using the `prefix()` and `suffix()` methods:

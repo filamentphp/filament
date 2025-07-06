@@ -6,5 +6,5 @@ use Closure;
 
 interface CanHideOptions
 {
-    public function hiddenOptionWhen(bool | Closure $callback): static;
+    public function hideOptionWhen(bool | Closure $callback): static;
 }

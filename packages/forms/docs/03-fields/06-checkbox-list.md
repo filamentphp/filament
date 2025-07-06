@@ -161,6 +161,96 @@ CheckboxList::make('technologies')
     ->in(fn (CheckboxList $component): array => array_keys($component->getEnabledOptions()))
 ```
 
+## Hiding specific options
+
+You can hide specific options using the `hideOptionWhen()` method. It accepts a closure, in which you can check if the option with a specific `$value` should be hidden:
+
+```php
+use Filament\Forms\Components\CheckboxList;
+
+CheckboxList::make('technologies')
+    ->options([
+        'tailwind' => 'Tailwind CSS',
+        'alpine' => 'Alpine.js',
+        'laravel' => 'Laravel',
+        'livewire' => 'Laravel Livewire',
+    ])
+    ->hideOptionWhen(fn (string $value): bool => $value === 'livewire')
+```
+
+Hidden options are completely removed from the checkbox list and are not rendered in the DOM, providing a cleaner user experience compared to disabled options.
+
+If you want to retrieve the options that have not been hidden, e.g. for validation purposes, you can do so using `getVisibleOptions()`:
+
+```php
+use Filament\Forms\Components\CheckboxList;
+
+CheckboxList::make('technologies')
+    ->options([
+        'tailwind' => 'Tailwind CSS',
+        'alpine' => 'Alpine.js',
+        'laravel' => 'Laravel',
+        'livewire' => 'Laravel Livewire',
+        'heroicons' => 'SVG icons',
+    ])
+    ->hideOptionWhen(fn (string $value): bool => $value === 'heroicons')
+    ->in(fn (CheckboxList $component): array => array_keys($component->getVisibleOptions()))
+```
+
+You can also combine `disableOptionWhen()` and `hideOptionWhen()` for more complex scenarios:
+
+```php
+use Filament\Forms\Components\CheckboxList;
+
+CheckboxList::make('technologies')
+    ->options([
+        'tailwind' => 'Tailwind CSS',
+        'alpine' => 'Alpine.js',
+        'laravel' => 'Laravel',
+        'livewire' => 'Laravel Livewire',
+        'heroicons' => 'SVG icons',
+    ])
+    ->disableOptionWhen(fn (string $value): bool => $value === 'livewire')
+    ->hideOptionWhen(fn (string $value): bool => $value === 'heroicons')
+```
+
+### Multiple hide conditions
+
+You can add multiple conditions using the `merge` parameter:
+
+```php
+use Filament\Forms\Components\CheckboxList;
+
+CheckboxList::make('technologies')
+    ->options([
+        'tailwind' => 'Tailwind CSS',
+        'alpine' => 'Alpine.js',
+        'laravel' => 'Laravel',
+        'livewire' => 'Laravel Livewire',
+        'heroicons' => 'SVG icons',
+        'alpinejs' => 'Alpine.js v3',
+    ])
+    ->hideOptionWhen(fn (string $value): bool => $value === 'heroicons')
+    ->hideOptionWhen(fn (string $value): bool => $value === 'alpinejs', merge: true)
+```
+
+### Accessing option label
+
+The closure also receives the option label as a second parameter:
+
+```php
+use Filament\Forms\Components\CheckboxList;
+
+CheckboxList::make('technologies')
+    ->options([
+        'tailwind' => 'Tailwind CSS',
+        'alpine' => 'Alpine.js',
+        'laravel' => 'Laravel',
+        'livewire' => 'Laravel Livewire',
+    ])
+    ->hideOptionWhen(fn (string $value, string $label): bool => str_contains($label, 'Laravel'))
+```
+
 ## Searching options
 
 You may enable a search input to allow easier access to many options, using the `searchable()` method:

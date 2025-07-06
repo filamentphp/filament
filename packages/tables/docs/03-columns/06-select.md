@@ -54,6 +54,91 @@ SelectColumn::make('status')
     ->selectablePlaceholder(false)
 ```
 
+## Disabling specific options
+
+You can disable specific options using the `disableOptionWhen()` method. It accepts a closure, in which you can check if the option with a specific `$value` should be disabled:
+
+```php
+use Filament\Tables\Columns\SelectColumn;
+
+SelectColumn::make('status')
+    ->options([
+        'draft' => 'Draft',
+        'reviewing' => 'Reviewing',
+        'published' => 'Published',
+    ])
+    ->disableOptionWhen(fn (string $value): bool => $value === 'published')
+```
+
+## Hiding specific options
+
+You can hide specific options using the `hideOptionWhen()` method. It accepts a closure, in which you can check if the option with a specific `$value` should be hidden:
+
+```php
+use Filament\Tables\Columns\SelectColumn;
+
+SelectColumn::make('status')
+    ->options([
+        'draft' => 'Draft',
+        'reviewing' => 'Reviewing',
+        'published' => 'Published',
+    ])
+    ->hideOptionWhen(fn (string $value): bool => $value === 'published')
+```
+
+Hidden options are completely removed from the select dropdown and are not rendered in the DOM, providing a cleaner user experience compared to disabled options.
+
+You can also combine `disableOptionWhen()` and `hideOptionWhen()` for more complex scenarios:
+
+```php
+use Filament\Tables\Columns\SelectColumn;
+
+SelectColumn::make('status')
+    ->options([
+        'draft' => 'Draft',
+        'reviewing' => 'Reviewing',
+        'published' => 'Published',
+        'archived' => 'Archived',
+    ])
+    ->disableOptionWhen(fn (string $value): bool => $value === 'reviewing')
+    ->hideOptionWhen(fn (string $value): bool => $value === 'archived')
+```
+
+### Multiple hide conditions
+
+You can add multiple conditions using the `merge` parameter:
+
+```php
+use Filament\Tables\Columns\SelectColumn;
+
+SelectColumn::make('status')
+    ->options([
+        'draft' => 'Draft',
+        'reviewing' => 'Reviewing',
+        'published' => 'Published',
+        'archived' => 'Archived',
+        'deleted' => 'Deleted',
+    ])
+    ->hideOptionWhen(fn (string $value): bool => $value === 'archived')
+    ->hideOptionWhen(fn (string $value): bool => $value === 'deleted', merge: true)
+```
+
+### Accessing option label
+
+The closure also receives the option label as a second parameter:
+
+```php
+use Filament\Tables\Columns\SelectColumn;
+
+SelectColumn::make('status')
+    ->options([
+        'draft' => 'Draft',
+        'reviewing' => 'Reviewing',
+        'published' => 'Published',
+    ])
+    ->hideOptionWhen(fn (string $value, string $label): bool => $label === 'Published')
+```
+
 ## Lifecycle hooks
 
 Hooks may be used to execute code at various points within the select's lifecycle:

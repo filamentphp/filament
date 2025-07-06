@@ -19,7 +19,7 @@ it('can hide options in Radio component using boolean callback', function () {
             'published' => 'Published',
             'archived' => 'Archived',
         ])
-        ->hiddenOptionWhen(fn (string $value): bool => $value === 'archived')
+        ->hideOptionWhen(fn (string $value): bool => $value === 'archived')
         ->container(ComponentContainer::make(Livewire::make()));
 
     $visibleOptions = $component->getVisibleOptions();
@@ -38,7 +38,7 @@ it('can hide options in Radio component using closure with value and label', fun
             'published' => 'Published',
             'archived' => 'Archived',
         ])
-        ->hiddenOptionWhen(fn (string $value, string $label): bool => $label === 'Archived')
+        ->hideOptionWhen(fn (string $value, string $label): bool => $label === 'Archived')
         ->container(ComponentContainer::make(Livewire::make()));
 
     $visibleOptions = $component->getVisibleOptions();
@@ -58,8 +58,8 @@ it('can hide multiple options in Radio component using merge', function () {
             'archived' => 'Archived',
             'deleted' => 'Deleted',
         ])
-        ->hiddenOptionWhen(fn (string $value): bool => $value === 'archived')
-        ->hiddenOptionWhen(fn (string $value): bool => $value === 'deleted', merge: true)
+        ->hideOptionWhen(fn (string $value): bool => $value === 'archived')
+        ->hideOptionWhen(fn (string $value): bool => $value === 'deleted', merge: true)
         ->container(ComponentContainer::make(Livewire::make()));
 
     $visibleOptions = $component->getVisibleOptions();
@@ -79,7 +79,7 @@ it('correctly identifies when option is hidden in Radio component', function () 
             'published' => 'Published',
             'archived' => 'Archived',
         ])
-        ->hiddenOptionWhen(fn (string $value): bool => $value === 'archived')
+        ->hideOptionWhen(fn (string $value): bool => $value === 'archived')
         ->container(ComponentContainer::make(Livewire::make()));
 
     expect($component->isOptionHidden('draft', 'Draft'))->toBeFalse();
@@ -93,7 +93,7 @@ it('can detect dynamic hidden options in Radio component', function () {
             'draft' => 'Draft',
             'published' => 'Published',
         ])
-        ->hiddenOptionWhen(fn (string $value): bool => $value === 'draft')
+        ->hideOptionWhen(fn (string $value): bool => $value === 'draft')
         ->container(ComponentContainer::make(Livewire::make()));
 
     expect($component->hasDynamicHiddenOptions())->toBeTrue();
@@ -107,7 +107,7 @@ it('can hide options in CheckboxList component', function () {
             'blue' => 'Blue',
             'yellow' => 'Yellow',
         ])
-        ->hiddenOptionWhen(fn (string $value): bool => in_array($value, ['blue', 'yellow']))
+        ->hideOptionWhen(fn (string $value): bool => in_array($value, ['blue', 'yellow']))
         ->container(ComponentContainer::make(Livewire::make()));
 
     $visibleOptions = $component->getVisibleOptions();
@@ -127,7 +127,7 @@ it('can hide options in ToggleButtons component', function () {
             'option2' => 'Option 2',
             'option3' => 'Option 3',
         ])
-        ->hiddenOptionWhen(fn (string $value): bool => $value === 'option2')
+        ->hideOptionWhen(fn (string $value): bool => $value === 'option2')
         ->container(ComponentContainer::make(Livewire::make()));
 
     $visibleOptions = $component->getVisibleOptions();
@@ -147,7 +147,7 @@ it('can hide options in Select component', function () {
             'mx' => 'Mexico',
             'uk' => 'United Kingdom',
         ])
-        ->hiddenOptionWhen(fn (string $value): bool => in_array($value, ['mx', 'uk']))
+        ->hideOptionWhen(fn (string $value): bool => in_array($value, ['mx', 'uk']))
         ->container(ComponentContainer::make(Livewire::make()));
 
     $visibleOptions = $component->getVisibleOptions();
@@ -167,7 +167,7 @@ it('filters hidden options in Select component JavaScript transformation', funct
             'ca' => 'Canada',
             'mx' => 'Mexico',
         ])
-        ->hiddenOptionWhen(fn (string $value): bool => $value === 'mx')
+        ->hideOptionWhen(fn (string $value): bool => $value === 'mx')
         ->container(ComponentContainer::make(Livewire::make()));
 
     $jsOptions = $component->getOptionsForJs();
@@ -188,7 +188,7 @@ it('considers dynamic hidden options in Select component hasDynamicOptions', fun
             'draft' => 'Draft',
             'published' => 'Published',
         ])
-        ->hiddenOptionWhen(fn (string $value): bool => $value === 'draft')
+        ->hideOptionWhen(fn (string $value): bool => $value === 'draft')
         ->container(ComponentContainer::make(Livewire::make()));
 
     expect($component->hasDynamicOptions())->toBeTrue();
@@ -201,7 +201,7 @@ it('can hide options in SelectColumn component', function () {
             'inactive' => 'Inactive',
             'suspended' => 'Suspended',
         ])
-        ->hiddenOptionWhen(fn (string $value): bool => $value === 'suspended');
+        ->hideOptionWhen(fn (string $value): bool => $value === 'suspended');
 
     $visibleOptions = $column->getVisibleOptions();
 
@@ -219,7 +219,7 @@ it('uses visible options for validation rules in SelectColumn', function () {
             'inactive' => 'Inactive',
             'suspended' => 'Suspended',
         ])
-        ->hiddenOptionWhen(fn (string $value): bool => $value === 'suspended');
+        ->hideOptionWhen(fn (string $value): bool => $value === 'suspended');
 
     $rules = $column->getRules();
 
@@ -243,7 +243,7 @@ it('uses visible options for validation rules in SelectColumn', function () {
 it('handles boolean hidden option callbacks correctly', function () {
     $component = Radio::make('test')
         ->options(['a' => 'A', 'b' => 'B'])
-        ->hiddenOptionWhen(true)
+        ->hideOptionWhen(true)
         ->container(ComponentContainer::make(Livewire::make()));
 
     expect($component->getVisibleOptions())->toBeEmpty();
@@ -252,7 +252,7 @@ it('handles boolean hidden option callbacks correctly', function () {
 it('handles false hidden option callbacks correctly', function () {
     $component = Radio::make('test')
         ->options(['a' => 'A', 'b' => 'B'])
-        ->hiddenOptionWhen(false)
+        ->hideOptionWhen(false)
         ->container(ComponentContainer::make(Livewire::make()));
 
     expect($component->getVisibleOptions())
@@ -273,7 +273,7 @@ it('handles grouped options correctly when some groups are hidden', function () 
                 'd' => 'Option D',
             ],
         ])
-        ->hiddenOptionWhen(fn (string $value): bool => in_array($value, ['a', 'c']))
+        ->hideOptionWhen(fn (string $value): bool => in_array($value, ['a', 'c']))
         ->container(ComponentContainer::make(Livewire::make()));
 
     $visibleOptions = $component->getVisibleOptions();
@@ -294,7 +294,7 @@ it('preserves disabled option functionality when using hidden options', function
             'archived' => 'Archived',
         ])
         ->disableOptionWhen(fn (string $value): bool => $value === 'published')
-        ->hiddenOptionWhen(fn (string $value): bool => $value === 'archived')
+        ->hideOptionWhen(fn (string $value): bool => $value === 'archived')
         ->container(ComponentContainer::make(Livewire::make()));
 
     $visibleOptions = $component->getVisibleOptions();
