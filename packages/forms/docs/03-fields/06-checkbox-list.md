@@ -180,6 +180,22 @@ CheckboxList::make('technologies')
 
 Hidden options are completely removed from the checkbox list and are not rendered in the DOM, providing a cleaner user experience compared to disabled options.
 
+If you want to retrieve the options that have not been hidden, e.g. for validation purposes, you can do so using `getVisibleOptions()`:
+
+```php
+use Filament\Forms\Components\CheckboxList;
+
+CheckboxList::make('technologies')
+    ->options([
+        'tailwind' => 'Tailwind CSS',
+        'alpine' => 'Alpine.js',
+        'laravel' => 'Laravel',
+        'livewire' => 'Laravel Livewire',
+    ])
+    ->hideOptionWhen(fn (string $value): bool => $value === 'livewire')
+    ->in(fn (CheckboxList $component): array => array_keys($component->getVisibleOptions()))
+```
+
 ## Searching options
 
 You may enable a search input to allow easier access to many options, using the `searchable()` method:

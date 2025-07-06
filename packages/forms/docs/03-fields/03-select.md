@@ -490,6 +490,22 @@ Select::make('status')
 
 Hidden options are completely removed from the dropdown and are not rendered in the DOM, providing a cleaner user experience compared to disabled options.
 
+If you want to retrieve the options that have not been hidden, e.g. for validation purposes, you can do so using `getVisibleOptions()`:
+
+```php
+use Filament\Forms\Components\Select;
+
+Select::make('status')
+    ->options([
+        'draft' => 'Draft',
+        'reviewing' => 'Reviewing',
+        'published' => 'Published',
+    ])
+    ->default('draft')
+    ->hideOptionWhen(fn (string $value): bool => $value === 'published')
+    ->in(fn (Select $component): array => array_keys($component->getVisibleOptions()))
+```
+
 ## Adding affix text aside the field
 
 You may place text before and after the input using the `prefix()` and `suffix()` methods:

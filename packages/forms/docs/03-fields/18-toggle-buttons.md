@@ -229,3 +229,18 @@ ToggleButtons::make('status')
 ```
 
 Hidden options are completely removed from the toggle button group and are not rendered in the DOM, providing a cleaner user experience compared to disabled options.
+
+If you want to retrieve the options that have not been hidden, e.g. for validation purposes, you can do so using `getVisibleOptions()`:
+
+```php
+use Filament\Forms\Components\ToggleButtons;
+
+ToggleButtons::make('status')
+    ->options([
+        'draft' => 'Draft',
+        'scheduled' => 'Scheduled',
+        'published' => 'Published',
+    ])
+    ->hideOptionWhen(fn (string $value): bool => $value === 'published')
+    ->in(fn (ToggleButtons $component): array => array_keys($component->getVisibleOptions()))
+```

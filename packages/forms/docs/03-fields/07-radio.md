@@ -133,3 +133,18 @@ Radio::make('status')
 ```
 
 Hidden options are completely removed from the radio button group and are not rendered in the DOM, providing a cleaner user experience compared to disabled options.
+
+If you want to retrieve the options that have not been hidden, e.g. for validation purposes, you can do so using `getVisibleOptions()`:
+
+```php
+use Filament\Forms\Components\Radio;
+
+Radio::make('status')
+    ->options([
+        'draft' => 'Draft',
+        'scheduled' => 'Scheduled',
+        'published' => 'Published',
+    ])
+    ->hideOptionWhen(fn (string $value): bool => $value === 'published')
+    ->in(fn (Radio $component): array => array_keys($component->getVisibleOptions()))
+```
