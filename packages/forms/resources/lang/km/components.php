@@ -30,7 +30,7 @@ return [
 
             'add_between' => [
                 'label' => 'បញ្ចូលរវាងប្លុក',
-                
+
                 'modal' => [
 
                     'heading' => 'បន្ថែម​លើ :label',

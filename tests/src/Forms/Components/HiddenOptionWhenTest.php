@@ -1,13 +1,14 @@
 <?php
 
+use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\ToggleButtons;
-use Filament\Forms\ComponentContainer;
 use Filament\Tables\Columns\SelectColumn;
 use Filament\Tests\Forms\Fixtures\Livewire;
 use Filament\Tests\TestCase;
+use Illuminate\Validation\Rules\In;
 
 uses(TestCase::class);
 
@@ -224,12 +225,12 @@ it('uses visible options for validation rules in SelectColumn', function () {
 
     // Find the validation rule that contains allowed values
     $validationRule = collect($rules)
-        ->first(fn ($rule) => $rule instanceof \Illuminate\Validation\Rules\In);
+        ->first(fn ($rule) => $rule instanceof In);
 
     expect($validationRule)->not->toBeNull();
 
     // The In rule should only allow visible options
-    $reflection = new \ReflectionClass($validationRule);
+    $reflection = new ReflectionClass($validationRule);
     $valuesProperty = $reflection->getProperty('values');
     $valuesProperty->setAccessible(true);
     $allowedValues = $valuesProperty->getValue($validationRule);

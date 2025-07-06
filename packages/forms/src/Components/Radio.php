@@ -7,9 +7,9 @@ use Closure;
 class Radio extends Field implements Contracts\CanDisableOptions, Contracts\CanHideOptions
 {
     use Concerns\CanDisableOptions;
-    use Concerns\CanHideOptions;
     use Concerns\CanDisableOptionsWhenSelectedInSiblingRepeaterItems;
     use Concerns\CanFixIndistinctState;
+    use Concerns\CanHideOptions;
     use Concerns\HasDescriptions;
     use Concerns\HasExtraInputAttributes;
     use Concerns\HasGridDirection;
