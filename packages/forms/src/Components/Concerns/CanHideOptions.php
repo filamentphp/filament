@@ -8,6 +8,9 @@ use Illuminate\Support\Collection;
 
 trait CanHideOptions
 {
+    /**
+     * @var array<bool | Closure>
+     */
     protected array $isOptionHidden = [];
 
     public function hideOptionWhen(bool | Closure | null $callback, bool $merge = false): static
@@ -21,6 +24,9 @@ trait CanHideOptions
         return $this;
     }
 
+    /**
+     * @return array<string>
+     */
     public function getVisibleOptions(): array
     {
         return collect($this->getOptions())
@@ -39,6 +45,9 @@ trait CanHideOptions
             ->all();
     }
 
+    /**
+     * @param  array-key  $value
+     */
     public function isOptionHidden($value, string $label): bool
     {
         return collect($this->isOptionHidden)
