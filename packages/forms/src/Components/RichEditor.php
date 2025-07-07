@@ -84,7 +84,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     /**
      * @var array<string | array<string>> | Closure | null
      */
-    protected array | Closure | null $editorProps = null;
+    protected array | Closure | null $editorAttributes = null;
 
     protected function setUp(): void
     {
@@ -822,11 +822,11 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     }
 
     /**
-     * @param  array<string | array<string>> | Closure | null  $editorProps
+     * @param  array<string | array<string>> | Closure | null  $editorAttributes
      */
-    public function editorProps(array | Closure | null $editorProps): static
+    public function editorAttributes(array | Closure | null $editorAttributes): static
     {
-        $this->editorProps = $editorProps;
+        $this->editorAttributes = $editorAttributes;
 
         return $this;
     }
@@ -834,8 +834,8 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     /**
      * @return array<string, array<string>>
      */
-    public function getEditorProps(): array
+    public function getEditorAttributes(): array
     {
-        return $this->evaluate($this->editorProps) ?? [];
+        return $this->evaluate($this->editorAttributes) ?? [];
     }
 }

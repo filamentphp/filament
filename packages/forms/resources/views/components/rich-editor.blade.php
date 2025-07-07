@@ -13,6 +13,9 @@
     $tools = $getTools();
     $toolbarButtons = $getToolbarButtons();
     $floatingToolbars = $getFloatingToolbars();
+    $editorProps = [
+        'attributes' => $getEditorAttributes(),
+    ];
 @endphp
 
 <x-dynamic-component :component="$fieldWrapperView" :field="$field">
@@ -33,7 +36,7 @@
             x-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('rich-editor', 'filament/forms') }}"
             x-data="richEditorFormComponent({
                         activePanel: @js($getActivePanel()),
-                        editorProps: @js($getEditorProps()),
+                        editorProps: @js($editorProps),
                         deleteCustomBlockButtonIconHtml: @js(\Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::Trash, alias: 'forms:components.rich-editor.panels.custom-block.delete-button')->toHtml()),
                         editCustomBlockButtonIconHtml: @js(\Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::PencilSquare, alias: 'forms:components.rich-editor.panels.custom-block.edit-button')->toHtml()),
                         extensions: @js($getTipTapJsExtensions()),
