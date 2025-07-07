@@ -14,7 +14,7 @@
     $toolbarButtons = $getToolbarButtons();
     $floatingToolbars = $getFloatingToolbars();
     $editorProps = [
-        'attributes' => $getEditorAttributes(),
+        'attributes' => $getEditorPropsAttributes(),
     ];
 @endphp
 
