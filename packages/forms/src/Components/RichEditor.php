@@ -28,7 +28,6 @@ use Tiptap\Editor;
 class RichEditor extends Field implements Contracts\CanBeLengthConstrained
 {
     use Concerns\CanBeLengthConstrained;
-    use Concerns\HasExtraFieldWrapperAttributes;
     use Concerns\HasExtraInputAttributes;
     use Concerns\HasFileAttachments;
     use Concerns\HasPlaceholder;
@@ -81,6 +80,11 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
      * @var array<string | array<string>> | Closure | null
      */
     protected array | Closure | null $floatingToolbars = null;
+
+    /**
+     * @var array<string | array<string>> | Closure | null
+     */
+    protected array | Closure | null $editorProps = null;
 
     protected function setUp(): void
     {
@@ -805,5 +809,23 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     public function getFloatingToolbars(): array
     {
         return $this->evaluate($this->floatingToolbars) ?? $this->getDefaultFloatingToolbars();
+    }
+
+    /**
+     * @param  array<string | array<string>> | Closure | null  $editorProps
+     */
+    public function editorProps(array | Closure | null $editorProps): static
+    {
+        $this->editorProps = $editorProps;
+
+        return $this;
+    }
+
+    /**
+     * @return array<string, array<string>>
+     */
+    public function getEditorProps(): array
+    {
+        return $this->evaluate($this->editorProps) ?? [];
     }
 }
