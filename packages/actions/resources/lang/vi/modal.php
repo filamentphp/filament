@@ -7,7 +7,7 @@ return [
     'actions' => [
 
         'cancel' => [
-            'label' => 'Huỷ bỏ',
+            'label' => 'Huỷ thao tác',
         ],
 
         'confirm' => [

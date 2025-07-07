@@ -528,7 +528,7 @@ class FileUpload extends BaseFileUpload
                 [
                     'label' => __('filament-forms::components.file_upload.editor.actions.drag_move.label'),
                     'iconHtml' => generate_icon_html(
-                        'fi-s-drag-move',
+                        'fi-o-arrows-move',
                         alias: 'forms::components.file-upload.editor.actions.drag-move',
                     ),
                     'alpineClickHandler' => "editor.setDragMode('move')",
@@ -536,7 +536,7 @@ class FileUpload extends BaseFileUpload
                 [
                     'label' => __('filament-forms::components.file_upload.editor.actions.drag_crop.label'),
                     'iconHtml' => generate_icon_html(
-                        'fi-s-drag-crop',
+                        'fi-o-crop',
                         alias: 'forms::components.file-upload.editor.actions.drag-crop',
                     ),
                     'alpineClickHandler' => "editor.setDragMode('crop')",
@@ -620,7 +620,7 @@ class FileUpload extends BaseFileUpload
                 [
                     'label' => __('filament-forms::components.file_upload.editor.actions.flip_horizontal.label'),
                     'iconHtml' => generate_icon_html(
-                        'fi-s-flip-horizontal',
+                        'fi-o-flip-horizontal',
                         alias: 'forms::components.file-upload.editor.actions.flip-horizontal',
                     ),
                     'alpineClickHandler' => 'editor.scaleX(-editor.getData().scaleX || -1)',
@@ -628,7 +628,7 @@ class FileUpload extends BaseFileUpload
                 [
                     'label' => __('filament-forms::components.file_upload.editor.actions.flip_vertical.label'),
                     'iconHtml' => generate_icon_html(
-                        'fi-s-flip-vertical',
+                        'fi-o-flip-vertical',
                         alias: 'forms::components.file-upload.editor.actions.flip-vertical',
                     ),
                     'alpineClickHandler' => 'editor.scaleY(-editor.getData().scaleY || -1)',

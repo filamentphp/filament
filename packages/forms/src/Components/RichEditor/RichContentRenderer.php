@@ -6,6 +6,9 @@ use Closure;
 use Filament\Forms\Components\RichEditor\FileAttachmentProviders\Contracts\FileAttachmentProvider;
 use Filament\Forms\Components\RichEditor\Plugins\Contracts\RichContentPlugin;
 use Filament\Forms\Components\RichEditor\TipTapExtensions\CustomBlockExtension;
+use Filament\Forms\Components\RichEditor\TipTapExtensions\DetailsContentExtension;
+use Filament\Forms\Components\RichEditor\TipTapExtensions\DetailsExtension;
+use Filament\Forms\Components\RichEditor\TipTapExtensions\DetailsSummaryExtension;
 use Filament\Forms\Components\RichEditor\TipTapExtensions\ImageExtension;
 use Filament\Forms\Components\RichEditor\TipTapExtensions\LeadExtension;
 use Filament\Forms\Components\RichEditor\TipTapExtensions\MergeTagExtension;
@@ -250,6 +253,9 @@ class RichContentRenderer implements Htmlable
             app(Code::class),
             app(CodeBlock::class),
             app(CustomBlockExtension::class),
+            app(DetailsContentExtension::class),
+            app(DetailsExtension::class),
+            app(DetailsSummaryExtension::class),
             app(Document::class),
             app(HardBreak::class),
             app(Heading::class),

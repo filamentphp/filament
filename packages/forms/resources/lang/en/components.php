@@ -297,7 +297,6 @@ return [
             'redo' => 'Redo',
             'strike' => 'Strikethrough',
             'table' => 'Table',
-
             'undo' => 'Undo',
         ],
 
@@ -481,8 +480,10 @@ return [
             'blockquote' => 'Blockquote',
             'bold' => 'Bold',
             'bullet_list' => 'Bullet list',
+            'clear_formatting' => 'Clear formatting',
             'code_block' => 'Code block',
             'custom_blocks' => 'Blocks',
+            'details' => 'Details',
             'h1' => 'Title',
             'h2' => 'Heading',
             'h3' => 'Subheading',

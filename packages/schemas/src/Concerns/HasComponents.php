@@ -242,11 +242,11 @@ trait HasComponents
     {
         $components = array_map(function (Component | Action | ActionGroup | string | Htmlable $component): Component | Action | ActionGroup {
             if ($component instanceof Action) {
-                $this->configureAction($component);
+                $this->modifyAction($component);
             }
 
             if ($component instanceof ActionGroup) {
-                $this->configureActionGroup($component);
+                $this->modifyActionGroup($component);
             }
 
             if (($component instanceof Action) || ($component instanceof ActionGroup)) {

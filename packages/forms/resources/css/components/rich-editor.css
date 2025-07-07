@@ -106,32 +106,76 @@
             }
         }
 
-        table {
+        & [data-type='details'] {
+            @apply my-6 flex gap-1 rounded-md border border-gray-950/20 p-4 dark:border-white/20;
+
+            & > div:first-of-type {
+                @apply !mt-0;
+            }
+
+            & summary {
+                @apply list-none font-medium;
+            }
+
+            & > button {
+                @apply mt-px mr-2 flex size-5 items-center justify-center rounded-sm bg-transparent p-1 text-xs leading-none hover:bg-gray-950/5 dark:hover:bg-white/5;
+
+                &::before {
+                    content: '\25B6';
+                }
+            }
+
+            &.is-open > button::before {
+                transform: rotate(90deg);
+            }
+
+            & > div {
+                @apply flex w-full flex-col gap-4;
+
+                & > [data-type='detailsContent'] {
+                    @apply !mt-0;
+
+                    & > :last-child {
+                        @apply mb-4;
+                    }
+                }
+            }
+        }
+
+        & table {
             @apply m-0 w-full table-fixed border-collapse overflow-hidden first:mt-0;
 
-            td,
-            th {
+            & td,
+            & th {
                 @apply relative min-w-[1em] border border-gray-300 !px-2 py-2 align-top dark:border-gray-600;
 
-                > * {
+                & > * {
                     @apply mb-0;
                 }
             }
 
-            th {
+            & th {
                 @apply bg-gray-100 text-start font-bold dark:bg-gray-800 dark:text-white;
             }
 
-            .selectedCell {
-                @apply after:pointer-events-none after:absolute after:start-0 after:end-0 after:top-0 after:bottom-0 after:z-2 after:bg-gray-200/80 after:content-[''] after:dark:bg-gray-800/80;
+            & .selectedCell {
+                &::after {
+                    @apply pointer-events-none absolute start-0 end-0 top-0 bottom-0 z-2 bg-gray-200/80 content-[''];
+                }
+
+                @variant dark {
+                    &::after {
+                        @apply bg-gray-800/80;
+                    }
+                }
             }
 
-            .column-resize-handle {
+            & .column-resize-handle {
                 @apply bg-primary-600 pointer-events-none absolute end-0 top-0 bottom-0 !m-0 w-1;
             }
         }
 
-        .tableWrapper {
+        & .tableWrapper {
             @apply overflow-x-auto;
         }
 

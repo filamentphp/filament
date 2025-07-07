@@ -36,7 +36,7 @@
                 ->class(['fi-fo-table-repeater']) }}
     >
         @if (count($items))
-            <table>
+            <table class="fi-absolute-positioning-context">
                 <thead>
                     <tr>
                         @if ((count($items) > 1) && ($isReorderableWithButtons || $isReorderableWithDragAndDrop))

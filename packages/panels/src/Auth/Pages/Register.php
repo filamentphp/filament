@@ -192,6 +192,7 @@ class Register extends SimplePage
             ->revealable(filament()->arePasswordsRevealable())
             ->required()
             ->rule(Password::default())
+            ->showAllValidationMessages()
             ->dehydrateStateUsing(fn ($state) => Hash::make($state))
             ->same('passwordConfirmation')
             ->validationAttribute(__('filament-panels::auth/pages/register.form.password.validation_attribute'));

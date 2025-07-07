@@ -214,7 +214,8 @@ trait HasFilters
                     ->button(),
             ])
             ->modalCancelActionLabel(__('filament::components/modal.actions.close.label'))
-            ->table($this);
+            ->table($this)
+            ->authorize(true);
 
         if ($this->modifyFiltersTriggerActionUsing) {
             $action = $this->evaluate($this->modifyFiltersTriggerActionUsing, [
@@ -236,6 +237,7 @@ trait HasFilters
             ->action('applyTableFilters')
             ->table($this)
             ->visible($this->hasDeferredFilters())
+            ->authorize(true)
             ->button();
 
         if ($this->modifyFiltersApplyActionUsing) {

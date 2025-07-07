@@ -806,6 +806,7 @@ trait HasState
 
     protected function flushCachedAbsoluteStatePath(): void
     {
+        /** @phpstan-ignore unset.possiblyHookedProperty */
         unset($this->cachedAbsoluteStatePath);
     }
 

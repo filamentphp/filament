@@ -103,7 +103,7 @@
     x-trap.noscroll{{ $autofocus ? '' : '.noautofocus' }}="isOpen"
     {{
         $attributes->class([
-            'fi-modal',
+            'fi-modal fi-absolute-positioning-context',
             'fi-modal-slide-over' => $slideOver,
             'fi-width-screen' => $width === Width::Screen,
         ])

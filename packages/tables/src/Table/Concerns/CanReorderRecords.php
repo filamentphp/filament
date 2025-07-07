@@ -53,7 +53,8 @@ trait CanReorderRecords
             ->icon($isReordering ? (FilamentIcon::resolve('tables::actions.disable-reordering') ?? Heroicon::Check) : (FilamentIcon::resolve('tables::actions.enable-reordering') ?? Heroicon::ArrowsUpDown))
             ->color('gray')
             ->action('toggleTableReordering')
-            ->table($this);
+            ->table($this)
+            ->authorize(true);
 
         if ($this->modifyReorderRecordsTriggerActionUsing) {
             $action = $this->evaluate($this->modifyReorderRecordsTriggerActionUsing, [

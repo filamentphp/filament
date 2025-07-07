@@ -52,7 +52,7 @@ return [
             'actions' => [
 
                 'download_failed_rows_csv' => [
-                    'label' => 'Tải xuống thông tin hàng bị lỗi',
+                    'label' => 'Tải xuống thông tin về hàng bị lỗi|Tải xuống thông tin về những hàng bị lỗi',
                 ],
 
             ],
@@ -61,7 +61,7 @@ return [
 
         'max_rows' => [
             'title' => 'Tệp CSV đã tải lên quá lớn',
-            'body' => 'Bạn không thể nhập hơn 1 hàng cùng một lúc.|Bạn không thể nhập hơn :count hàng cùng một lúc.',
+            'body' => 'Bạn không thể nhập nhiều hơn 1 hàng cùng một lúc.|Bạn không thể nhập nhiều hơn :count hàng cùng một lúc.',
         ],
 
         'started' => [
@@ -76,10 +76,10 @@ return [
     ],
 
     'failure_csv' => [
-        'file_name' => 'import-:import_id-:csv_name-hàng-lỗi',
+        'file_name' => 'import-:import_id-:csv_name-failed-rows',
         'error_header' => 'lỗi',
         'system_error' => 'Lỗi hệ thống, vui lòng liên hệ bộ phận hỗ trợ.',
-        'column_mapping_required_for_new_record' => 'Cột :attribute không được ánh xạ với cột nào trong tệp, nhưng nó là bắt buộc để tạo bản ghi mới.',
+        'column_mapping_required_for_new_record' => 'Cột :attribute không được ánh xạ với cột nào trong tệp, nhưng cột này là bắt buộc để tạo bản ghi mới.',
     ],
 
 ];

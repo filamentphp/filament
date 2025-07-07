@@ -1,6 +1,10 @@
 .fi-ta-actions {
     @apply flex max-w-full shrink-0 items-center justify-end gap-3;
 
+    & > * {
+        @apply shrink-0;
+    }
+
     &.fi-wrapped {
         @apply flex-wrap;
     }

@@ -301,6 +301,7 @@ class EditProfile extends Page
             ->password()
             ->revealable(filament()->arePasswordsRevealable())
             ->rule(Password::default())
+            ->showAllValidationMessages()
             ->autocomplete('new-password')
             ->dehydrated(fn ($state): bool => filled($state))
             ->dehydrateStateUsing(fn ($state): string => Hash::make($state))
