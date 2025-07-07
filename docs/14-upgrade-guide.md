@@ -434,6 +434,23 @@ The `disableGrammarly()` method has been removed from the `RichEditor` component
 </Disclosure>
 
 <Disclosure x-show="packages.includes('forms')">
+<span slot="summary">The `toolbarButtons()` now requires array with groups for `RichEditor`</span>
+
+The `toolbarButtons()` method for the `RichEditor` now needs an group of arrays with toolbar buttons. Previous versions only required a flat array, but in Filament v4 buttons are now grouped.
+
+```php
+Richeditor::make('content')
+    ->toolbarButtons([
+        ['bold', 'italic', 'underline', 'strike', 'subscript', 'superscript', 'link'],
+        ['h2', 'h3', 'alignStart', 'alignCenter', 'alignEnd'],
+        ['blockquote', 'codeBlock', 'bulletList', 'orderedList'],
+        ['table', 'attachFiles'], // The `customBlocks` and `mergeTags` tools are also added here if those features are used.
+        ['undo', 'redo'],
+    ]);
+```
+</Disclosure>
+
+<Disclosure x-show="packages.includes('forms')">
 <span slot="summary">Overriding the `Field::make()`, `MorphToSelect::make()`, `Placeholder::make()`, or `Builder\Block::make()` methods</span>
 
 The signature for the `Field::make()`, `MorphToSelect::make()`, `Placeholder::make()`, and `Builder\Block::make()` methods has changed. Any classes that extend the `Field`, `MorphToSelect`, `Placeholder`, or `Builder\Block` class and override the `make()` method must update the method signature to match the new signature. The new signature is as follows:
