@@ -6,6 +6,7 @@ use Closure;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Forms\Components\Concerns\CanBeMarkedAsRequired;
+use Filament\Forms\Components\Concerns\CanBeValidated;
 use Filament\Forms\Components\Concerns\HasExtraFieldWrapperAttributes;
 use Filament\Forms\Components\Field;
 use Filament\Schemas\Components\Concerns\EntanglesStateWithSingularRelationship;
@@ -17,6 +18,7 @@ use Illuminate\Contracts\Support\Htmlable;
 
 class FusedGroup extends Component implements CanEntangleWithSingularRelationships
 {
+    use CanBeValidated;
     use CanBeMarkedAsRequired;
     use EntanglesStateWithSingularRelationship;
     use HasExtraFieldWrapperAttributes;
