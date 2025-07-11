@@ -159,7 +159,7 @@
                             isDisabled: @js($isDisabled),
                             isMultiple: @js($isMultiple),
                             isSearchable: @js($isSearchable),
-                            livewireId: @js($this->getId()),
+                            livewireId: @js($id),
                             hasDynamicOptions: @js($hasDynamicOptions()),
                             hasDynamicSearchResults: @js($hasDynamicSearchResults()),
                             loadingMessage: @js($getLoadingMessage()),
