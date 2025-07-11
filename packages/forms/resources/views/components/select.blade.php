@@ -25,6 +25,7 @@
     $statePath = $getStatePath();
     $state = $getState();
     $livewireKey = $getLivewireKey();
+    $livewireId = $getLivewire()->getId();
 @endphp
 
 <x-dynamic-component
@@ -159,7 +160,7 @@
                             isDisabled: @js($isDisabled),
                             isMultiple: @js($isMultiple),
                             isSearchable: @js($isSearchable),
-                            livewireId: @js($id),
+                            livewireId: @js($livewireId),
                             hasDynamicOptions: @js($hasDynamicOptions()),
                             hasDynamicSearchResults: @js($hasDynamicSearchResults()),
                             loadingMessage: @js($getLoadingMessage()),
