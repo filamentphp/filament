@@ -1,6 +1,5 @@
 @php
     use Filament\Support\Enums\Alignment;
-    use Filament\Support\Facades\FilamentView;
 
     $id = $getId();
     $imageCropAspectRatio = $getImageCropAspectRatio();
@@ -25,11 +24,7 @@
     label-tag="div"
 >
     <div
-        @if (FilamentView::hasSpaMode())
-            {{-- format-ignore-start --}}x-load="visible || event (ax-modal-opened)"{{-- format-ignore-end --}}
-        @else
-            x-load
-        @endif
+        x-load
         x-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('file-upload', 'filament/forms') }}"
         x-data="fileUploadFormComponent({
                     acceptedFileTypes: @js($getAcceptedFileTypes()),

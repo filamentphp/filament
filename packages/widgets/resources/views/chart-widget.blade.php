@@ -1,6 +1,4 @@
 @php
-    use Filament\Support\Facades\FilamentView;
-
     $color = $this->getColor();
     $heading = $this->getHeading();
     $description = $this->getDescription();
@@ -36,11 +34,7 @@
             @endif
         >
             <div
-                @if (FilamentView::hasSpaMode())
-                    x-load="visible"
-                @else
-                    x-load
-                @endif
+                x-load
                 x-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('chart', 'filament/widgets') }}"
                 wire:ignore
                 x-data="chart({

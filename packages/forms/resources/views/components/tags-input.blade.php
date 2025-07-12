@@ -1,6 +1,4 @@
 @php
-    use Filament\Support\Facades\FilamentView;
-
     $color = $getColor() ?? 'primary';
     $hasInlineLabel = $hasInlineLabel();
     $id = $getId();
@@ -51,11 +49,7 @@
         "
     >
         <div
-            @if (FilamentView::hasSpaMode())
-                {{-- format-ignore-start --}}x-load="visible || event (ax-modal-opened)"{{-- format-ignore-end --}}
-            @else
-                x-load
-            @endif
+            x-load
             x-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('tags-input', 'filament/forms') }}"
             x-data="tagsInputFormComponent({
                         state: $wire.{{ $applyStateBindingModifiers("\$entangle('{$statePath}')") }},

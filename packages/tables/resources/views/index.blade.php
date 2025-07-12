@@ -113,11 +113,7 @@
     @if (! $isLoaded)
         wire:init="loadTable"
     @endif
-    @if (FilamentView::hasSpaMode())
-        x-load="visible"
-    @else
-        x-load
-    @endif
+    x-load
     x-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('table', 'filament/tables') }}"
     x-data="table"
     @class([
