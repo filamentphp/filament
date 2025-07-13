@@ -139,7 +139,7 @@
                         placeholder="{{ $getPlaceholder() }}"
                         wire:key="{{ $this->getId() }}.{{ $statePath }}.{{ $field::class }}.display-text"
                         x-model="displayText"
-                        @if ($id = $getId()) id="{{ $id }}" @endif
+                        id="{{ $id }}"
                         @class([
                             'fi-fo-date-time-picker-display-text-input w-full border-none bg-transparent px-3 py-1.5 text-base text-gray-950 outline-none transition duration-75 placeholder:text-gray-400 focus:ring-0 disabled:text-gray-500 disabled:[-webkit-text-fill-color:theme(colors.gray.500)] dark:text-white dark:placeholder:text-gray-500 dark:disabled:text-gray-400 dark:disabled:[-webkit-text-fill-color:theme(colors.gray.400)] sm:text-sm sm:leading-6',
                         ])
@@ -161,6 +161,7 @@
                             <div class="flex items-center justify-between">
                                 <select
                                     x-model="focusedMonth"
+                                    id="{{ $id }}-month"
                                     class="grow cursor-pointer border-none bg-transparent p-0 text-sm font-medium text-gray-950 focus:ring-0 dark:bg-gray-900 dark:text-white"
                                 >
                                     <template
@@ -177,6 +178,7 @@
                                     type="number"
                                     inputmode="numeric"
                                     x-model.debounce="focusedYear"
+                                    id="{{ $id }}-year"
                                     class="w-16 border-none bg-transparent p-0 text-right text-sm text-gray-950 focus:ring-0 dark:text-white"
                                 />
                             </div>
@@ -248,6 +250,7 @@
                                     type="number"
                                     inputmode="numeric"
                                     x-model.debounce="hour"
+                                    id="{{ $id }}-hour"
                                     class="me-1 w-10 border-none bg-transparent p-0 text-center text-sm text-gray-950 focus:ring-0 dark:text-white"
                                 />
 
@@ -264,6 +267,7 @@
                                     type="number"
                                     inputmode="numeric"
                                     x-model.debounce="minute"
+                                    id="{{ $id }}-minute"
                                     class="me-1 w-10 border-none bg-transparent p-0 text-center text-sm text-gray-950 focus:ring-0 dark:text-white"
                                 />
 
@@ -281,6 +285,7 @@
                                         type="number"
                                         inputmode="numeric"
                                         x-model.debounce="second"
+                                        id="{{ $id }}-second"
                                         class="me-1 w-10 border-none bg-transparent p-0 text-center text-sm text-gray-950 focus:ring-0 dark:text-white"
                                     />
                                 @endif
