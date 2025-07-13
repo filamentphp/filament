@@ -10,7 +10,7 @@ use Filament\Support\View\Components\Contracts\HasDefaultGrayColor;
 class ButtonComponent implements HasColor, HasDefaultGrayColor
 {
     public function __construct(
-        readonly public bool $isOutlined = false,
+        public readonly bool $isOutlined = false,
     ) {}
 
     /**

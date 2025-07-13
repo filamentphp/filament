@@ -30,7 +30,7 @@
     }
 
     & .filepond--root {
-        @apply mb-0 rounded-lg bg-white font-sans shadow-sm ring-1 ring-gray-950/10 dark:bg-white/5 dark:ring-white/20 overflow-hidden;
+        @apply mb-0 overflow-hidden rounded-lg bg-white font-sans shadow-sm ring-1 ring-gray-950/10 dark:bg-white/5 dark:ring-white/20;
     }
 
     & .filepond--root[data-disabled='disabled'] {

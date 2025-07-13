@@ -10,8 +10,8 @@ class EditorCommand implements Arrayable
      * @param  array<mixed>  $arguments
      */
     public function __construct(
-        readonly public string $name,
-        readonly public array $arguments = [],
+        public readonly string $name,
+        public readonly array $arguments = [],
     ) {}
 
     /**
