@@ -52,7 +52,10 @@ export default ({ livewireId }) => ({
     openModal() {
         const id = this.generateModalId(this.actionNestingIndex)
 
-        this.$dispatch('open-modal', { id })
+        // Ensure Alpine has initialised the modal before dispatching the event
+        setTimeout(() => {
+            this.$dispatch('open-modal', { id })
+        })
     },
 
     closeModal() {
