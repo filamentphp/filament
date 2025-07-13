@@ -71,6 +71,7 @@
 
                         <th
                             scope="col"
+                            id="{{ $id }}-key-header"
                             class="px-3 py-2 text-start text-sm font-medium text-gray-700 dark:text-gray-200"
                         >
                             {{ $getKeyLabel() }}
@@ -78,6 +79,7 @@
 
                         <th
                             scope="col"
+                            id="{{ $id }}-value-header"
                             class="px-3 py-2 text-start text-sm font-medium text-gray-700 dark:text-gray-200"
                         >
                             {{ $getValueLabel() }}
@@ -126,6 +128,8 @@
                                     type="text"
                                     x-model="row.key"
                                     x-bind:id="'{{ $id }}-key-' + index"
+                                    x-bind:aria-label="'{{ $getKeyLabel() }} ' + index"
+                                    aria-describedby="{{ $id }}-key-header"
                                     :attributes="
                                         \Filament\Support\prepare_inherited_attributes(
                                             new \Illuminate\View\ComponentAttributeBag([
@@ -144,6 +148,8 @@
                                     type="text"
                                     x-model="row.value"
                                     x-bind:id="'{{ $id }}-value-' + index"
+                                    x-bind:aria-label="'{{ $getValueLabel() }} ' + index"
+                                    aria-describedby="{{ $id }}-value-header"
                                     :attributes="
                                         \Filament\Support\prepare_inherited_attributes(
                                             new \Illuminate\View\ComponentAttributeBag([
