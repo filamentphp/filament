@@ -1,5 +1,6 @@
 @php
     $gridDirection = $getGridDirection() ?? 'column';
+    $id = $getId();
     $isBulkToggleable = $isBulkToggleable();
     $isDisabled = $isDisabled();
     $isSearchable = $isSearchable();
@@ -15,8 +16,8 @@
         {{
             $attributes
                 ->merge([
-                    'aria-labelledby' => "{$getId()}-label",
-                    'id' => $getId(),
+                    'aria-labelledby' => "{$id}-label",
+                    'id' => $id,
                     'role' => 'group',
                 ], escape: false)
         }}
@@ -174,6 +175,10 @@
             "
         >
             @forelse ($getOptions() as $value => $label)
+                @php
+                    $inputId = "{$id}-{$value}";
+                @endphp
+
                 <div
                     wire:key="{{ $this->getId() }}.{{ $statePath }}.{{ $field::class }}.options.{{ $value }}"
                     @if ($isSearchable)
@@ -194,6 +199,7 @@
                 >
                     <label
                         class="fi-fo-checkbox-list-option-label flex gap-x-3"
+                        for="{{ $inputId }}"
                     >
                         <x-filament::input.checkbox
                             :valid="! $errors->has($statePath)"
@@ -201,6 +207,7 @@
                                 \Filament\Support\prepare_inherited_attributes($getExtraInputAttributeBag())
                                     ->merge([
                                         'disabled' => $isDisabled || $isOptionDisabled($value, $label),
+                                        'id' => $inputId,
                                         'value' => $value,
                                         'wire:loading.attr' => 'disabled',
                                         $applyStateBindingModifiers('wire:model') => $statePath,

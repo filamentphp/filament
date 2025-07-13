@@ -8,6 +8,7 @@
     $isDisabled = $isDisabled();
     $isReorderable = $isReorderable();
     $statePath = $getStatePath();
+    $id = $getId();
 @endphp
 
 <x-dynamic-component
@@ -47,8 +48,8 @@
             {{
                 $attributes
                     ->merge([
-                        'aria-labelledby' => "{$getId()}-label",
-                        'id' => $getId(),
+                        'aria-labelledby' => "{$id}-label",
+                        'id' => $id,
                         'role' => 'group',
                     ], escape: false)
                     ->merge($getExtraAlpineAttributes(), escape: false)
@@ -124,6 +125,7 @@
                                     :placeholder="filled($placeholder = $getKeyPlaceholder()) ? $placeholder : null"
                                     type="text"
                                     x-model="row.key"
+                                    x-bind:id="'{{ $id }}-key-' + index"
                                     :attributes="
                                         \Filament\Support\prepare_inherited_attributes(
                                             new \Illuminate\View\ComponentAttributeBag([
@@ -141,6 +143,7 @@
                                     :placeholder="filled($placeholder = $getValuePlaceholder()) ? $placeholder : null"
                                     type="text"
                                     x-model="row.value"
+                                    x-bind:id="'{{ $id }}-value-' + index"
                                     :attributes="
                                         \Filament\Support\prepare_inherited_attributes(
                                             new \Illuminate\View\ComponentAttributeBag([
