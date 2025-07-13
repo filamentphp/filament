@@ -34,7 +34,11 @@
     $statePath = $getStatePath();
 @endphp
 
-<x-dynamic-component :component="$getFieldWrapperView()" :field="$field" label-tag="div">
+<x-dynamic-component
+    :component="$getFieldWrapperView()"
+    :field="$field"
+    label-tag="div"
+>
     <div
         x-data="{}"
         {{

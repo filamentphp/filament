@@ -5,7 +5,11 @@
     $statePath = $getStatePath();
 @endphp
 
-<x-dynamic-component :component="$getFieldWrapperView()" :field="$field" label-tag="div">
+<x-dynamic-component
+    :component="$getFieldWrapperView()"
+    :field="$field"
+    label-tag="div"
+>
     @if ($isDisabled())
         <div
             x-data="{
