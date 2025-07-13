@@ -6,7 +6,7 @@
     $statePath = $getStatePath();
 @endphp
 
-<x-dynamic-component :component="$getFieldWrapperView()" :field="$field" labelTag="div">
+<x-dynamic-component :component="$getFieldWrapperView()" :field="$field" label-tag="div">
     <x-filament::grid
         :default="$getColumns('default')"
         :sm="$getColumns('sm')"
@@ -18,6 +18,11 @@
         :direction="$gridDirection"
         :attributes="
             \Filament\Support\prepare_inherited_attributes($attributes)
+                ->merge([
+                    'aria-labelledby' => '{$getId()}-label',
+                    'id' => $getId(),
+                    'role' => 'radiogroup',
+                ], escape: false)
                 ->merge($getExtraAttributes(), escape: false)
                 ->class([
                     'fi-fo-radio gap-4',

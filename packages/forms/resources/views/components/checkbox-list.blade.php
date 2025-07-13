@@ -6,8 +6,16 @@
     $statePath = $getStatePath();
 @endphp
 
-<x-dynamic-component :component="$getFieldWrapperView()" :field="$field" labelTag="div">
+<x-dynamic-component :component="$getFieldWrapperView()" :field="$field" label-tag="div">
     <div
+        {{
+            $attributes
+                ->merge([
+                    'aria-labelledby' => "{$getId()}-label",
+                    'id' => $getId(),
+                    'role' => 'group',
+                ], escape: false)
+        }}
         x-data="{
             areAllCheckboxesChecked: false,
 

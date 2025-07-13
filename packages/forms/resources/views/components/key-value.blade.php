@@ -14,7 +14,7 @@
     :component="$getFieldWrapperView()"
     :field="$field"
     :has-inline-label="$hasInlineLabel"
-    labelTag="div"
+    label-tag="div"
 >
     <x-slot
         name="label"
@@ -46,6 +46,11 @@
                     })"
             {{
                 $attributes
+                    ->merge([
+                        'aria-labelledby' => "{$getId()}-label",
+                        'id' => $getId(),
+                        'role' => 'group',
+                    ], escape: false)
                     ->merge($getExtraAlpineAttributes(), escape: false)
                     ->class(['divide-y divide-gray-200 dark:divide-white/10'])
             }}

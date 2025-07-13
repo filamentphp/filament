@@ -5,7 +5,7 @@
     $statePath = $getStatePath();
 @endphp
 
-<x-dynamic-component :component="$getFieldWrapperView()" :field="$field" labelTag="div">
+<x-dynamic-component :component="$getFieldWrapperView()" :field="$field" label-tag="div">
     @if ($isDisabled())
         <div
             x-data="{
@@ -32,6 +32,14 @@
                 x-data="richEditorFormComponent({
                             state: $wire.{{ $applyStateBindingModifiers("\$entangle('{$statePath}')", isOptimisticallyLive: false) }},
                         })"
+                {{
+                    $getExtraAlpineAttributeBag()
+                        ->merge([
+                            'aria-labelledby' => "{$getId()}-label",
+                            'id' => $getId(),
+                            'role' => 'group',
+                        ], escape: false)
+                }}
                 x-on:trix-attachment-add="
                     if (! $event.attachment.file) return
 

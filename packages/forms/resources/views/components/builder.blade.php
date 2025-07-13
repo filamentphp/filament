@@ -34,11 +34,16 @@
     $statePath = $getStatePath();
 @endphp
 
-<x-dynamic-component :component="$getFieldWrapperView()" :field="$field" labelTag="div">
+<x-dynamic-component :component="$getFieldWrapperView()" :field="$field" label-tag="div">
     <div
         x-data="{}"
         {{
             $attributes
+                ->merge([
+                    'aria-labelledby' => "{$getId()}-label",
+                    'id' => $getId(),
+                    'role' => 'group',
+                ], escape: false)
                 ->merge($getExtraAttributes(), escape: false)
                 ->class(['fi-fo-builder grid grid-cols-1 gap-y-4'])
         }}
