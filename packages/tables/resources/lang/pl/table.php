@@ -6,6 +6,18 @@ return [
 
         'heading' => 'Kolumny',
 
+        'actions' => [
+
+            'apply' => [
+                'label' => 'Zastosuj kolumny',
+            ],
+
+            'reset' => [
+                'label' => 'Zresetuj',
+            ],
+
+        ],
+
     ],
 
     'columns' => [
@@ -146,6 +158,10 @@ return [
 
         'select' => [
             'placeholder' => 'Wszystkie',
+
+            'relationship' => [
+                'empty_option_label' => 'Brak',
+            ],
         ],
 
         'trashed' => [
@@ -228,5 +244,7 @@ return [
         ],
 
     ],
+
+    'default_model_label' => 'rekord',
 
 ];

@@ -162,9 +162,11 @@ class RichEditorTool extends ViewComponent implements HasEmbeddedView
         $attributes = $this->getExtraAttributeBag()
             ->merge([
                 'tabindex' => -1,
-                'title' => $this->getLabel(),
                 'type' => 'button',
                 'x-on:click' => $this->getJsHandler(),
+                'x-tooltip' => filled($label = $this->getLabel())
+                    ? '{ content: ' . Js::from($label) . ', theme: $store.theme }'
+                    : null,
             ], escape: false)
             ->class(['fi-fo-rich-editor-tool']);
 

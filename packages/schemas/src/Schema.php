@@ -31,7 +31,7 @@ class Schema extends ViewComponent implements HasEmbeddedView
     use Concerns\CanBeHidden;
     use Concerns\CanBeInline;
     use Concerns\CanBeValidated;
-    use Concerns\CanConfigureActions;
+    use Concerns\CanModifyActions;
     use Concerns\Cloneable;
     use Concerns\HasColumns;
     use Concerns\HasComponents;
@@ -118,6 +118,16 @@ class Schema extends ViewComponent implements HasEmbeddedView
         return static::make()
             ->components($components)
             ->alignEnd();
+    }
+
+    /**
+     * @param  array<Component | Action | ActionGroup | string | Htmlable> | Schema | Component | Action | ActionGroup | string | Htmlable | Closure  $components
+     */
+    public static function center(array | Schema | Component | Action | ActionGroup | string | Htmlable | Closure $components): static
+    {
+        return static::make()
+            ->components($components)
+            ->alignCenter();
     }
 
     /**
@@ -239,7 +249,7 @@ class Schema extends ViewComponent implements HasEmbeddedView
                             })"
                             <?php if ($afterStateUpdatedJs = $schemaComponent->getAfterStateUpdatedJs()) { ?>
                                 x-init="<?= implode(';', array_map(
-                                    fn (string $js): string => '$wire.watch(' . Js::from($schemaComponentStatePath) . ', ($state, $old) => eval(' . Js::from($js) . '))',
+                                    fn (string $js): string => '$wire.watch(' . Js::from($schemaComponentStatePath) . ', ($state, $old) => ($state !== undefined) && eval(' . Js::from($js) . '))',
                                     $afterStateUpdatedJs,
                                 )) ?>"
                             <?php } ?>

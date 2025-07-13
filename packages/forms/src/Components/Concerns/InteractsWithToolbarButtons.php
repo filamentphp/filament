@@ -107,6 +107,10 @@ trait InteractsWithToolbarButtons
             $toolbar[] = $buttonGroup;
         }
 
+        if (filled($newButtonGroup)) {
+            $toolbar[] = $newButtonGroup;
+        }
+
         return $toolbar;
     }
 

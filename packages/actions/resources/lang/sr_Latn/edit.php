@@ -13,7 +13,7 @@ return [
             'actions' => [
 
                 'save' => [
-                    'label' => 'Snimi promjene',
+                    'label' => 'Snimi izmene',
                 ],
 
             ],

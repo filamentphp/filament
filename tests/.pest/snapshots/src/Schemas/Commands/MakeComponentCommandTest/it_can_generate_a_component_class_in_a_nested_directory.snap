@@ -1,0 +1,15 @@
+<?php
+
+namespace App\Filament\Schemas\Components\Custom;
+
+use Filament\Schemas\Components\Component;
+
+class NestedComponent extends Component
+{
+    protected string $view = 'filament.schemas.components.custom.nested-component';
+
+    public static function make(): static
+    {
+        return app(static::class);
+    }
+}

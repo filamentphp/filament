@@ -259,11 +259,14 @@ Field::make('color')->hexColor()
 ```
 
 ### In
+
 The field must be included in the given list of values. [See the Laravel documentation.](https://laravel.com/docs/validation#rule-in)
 
 ```php
 Field::make('status')->in(['pending', 'completed'])
 ```
+
+The [toggle buttons](toggle-buttons), [checkbox list](checkbox-list), [radio](radio) and [select](select#valid-options-validation-in-rule) fields automatically apply the `in()` rule based on their available options, so you do not need to add it manually.
 
 ### Ip Address
 

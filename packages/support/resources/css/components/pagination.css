@@ -44,6 +44,18 @@
             }
         }
 
+        &:first-of-type {
+            & .fi-pagination-item-btn {
+                @apply rounded-s-lg;
+            }
+        }
+
+        &:last-of-type {
+            & .fi-pagination-item-btn {
+                @apply rounded-e-lg;
+            }
+        }
+
         &.fi-disabled {
             & .fi-pagination-item-label {
                 @apply text-gray-500 dark:text-gray-400;
@@ -53,14 +65,6 @@
 
     & .fi-pagination-item-btn {
         @apply relative flex overflow-hidden p-2 transition duration-75 outline-none;
-
-        &:first-of-type {
-            @apply rounded-s-lg;
-        }
-
-        &:last-of-type {
-            @apply rounded-e-lg;
-        }
 
         &:enabled {
             @apply focus-visible:ring-primary-600 dark:focus-visible:ring-primary-500 hover:bg-gray-50 focus-visible:z-10 focus-visible:ring-2 dark:hover:bg-white/5;

@@ -60,9 +60,9 @@ public static function table(Table $table): Table
         ]);
 }
 
-public static function getEloquentQuery(): Builder
+public static function getRecordRouteBindingEloquentQuery(): Builder
 {
-    return parent::getEloquentQuery()
+    return parent::getRecordRouteBindingEloquentQuery()
         ->withoutGlobalScopes([
             SoftDeletingScope::class,
         ]);

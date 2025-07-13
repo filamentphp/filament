@@ -4,6 +4,11 @@ import Bold from '@tiptap/extension-bold'
 import Code from '@tiptap/extension-code'
 import CodeBlock from '@tiptap/extension-code-block'
 import CustomBlock from './extension-custom-block.js'
+import {
+    Details,
+    DetailsSummary,
+    DetailsContent,
+} from '@tiptap/extension-details'
 import Document from '@tiptap/extension-document'
 import HardBreak from '@tiptap/extension-hard-break'
 import Heading from '@tiptap/extension-heading'
@@ -22,6 +27,7 @@ import Small from './extension-small.js'
 import Strike from '@tiptap/extension-strike'
 import Subscript from '@tiptap/extension-subscript'
 import Superscript from '@tiptap/extension-superscript'
+import { TableKit } from '@tiptap/extension-table'
 import Text from '@tiptap/extension-text'
 import TextAlign from '@tiptap/extension-text-align'
 import Underline from '@tiptap/extension-underline'
@@ -53,6 +59,9 @@ export default async ({
         editCustomBlockUsing,
         insertCustomBlockUsing,
     }),
+    Details,
+    DetailsSummary,
+    DetailsContent,
     Document,
     Dropcursor,
     Gapcursor,
@@ -94,6 +103,11 @@ export default async ({
     Strike,
     Subscript,
     Superscript,
+    TableKit.configure({
+        table: {
+            resizable: true,
+        },
+    }),
     Text,
     TextAlign.configure({
         types: ['heading', 'paragraph'],

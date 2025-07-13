@@ -23,7 +23,9 @@ class Range extends Summarizer
         $minSelectAlias = Str::random();
         $maxSelectAlias = Str::random();
 
-        $state = $query->selectRaw("min({$attribute}) as \"{$minSelectAlias}\", max({$attribute}) as \"{$maxSelectAlias}\"")->get()[0];
+        $column = $query->getGrammar()->wrap($attribute);
+
+        $state = $query->selectRaw("min({$column}) as \"{$minSelectAlias}\", max({$column}) as \"{$maxSelectAlias}\"")->get()[0];
 
         return [$state->{$minSelectAlias}, $state->{$maxSelectAlias}];
     }

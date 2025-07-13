@@ -5,6 +5,7 @@ namespace Filament\Resources\Resource\Concerns;
 use Closure;
 use Filament\Facades\Filament;
 use Filament\Panel;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Stringable;
@@ -25,9 +26,14 @@ trait HasRoutes
      */
     protected static string | array $withoutRouteMiddleware = [];
 
+    public static function getRecordRouteBindingEloquentQuery(): Builder
+    {
+        return static::getEloquentQuery();
+    }
+
     public static function resolveRecordRouteBinding(int | string $key, ?Closure $modifyQuery = null): ?Model
     {
-        $query = static::getEloquentQuery();
+        $query = static::getRecordRouteBindingEloquentQuery();
 
         if ($modifyQuery) {
             $query = $modifyQuery($query) ?? $query;

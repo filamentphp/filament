@@ -176,8 +176,10 @@ trait CanFormatState
         return $this;
     }
 
-    public function isoDateTooltip(string | Closure | null $format, string | Closure | null $timezone = null): static
+    public function isoDateTooltip(string | Closure | null $format = null, string | Closure | null $timezone = null): static
     {
+        $format ??= fn (TextColumn $column): string => $column->getTable()->getDefaultIsoDateDisplayFormat();
+
         $this->tooltip(static function (TextColumn $column, mixed $state) use ($format, $timezone): ?string {
             if (blank($state)) {
                 return null;
@@ -191,7 +193,7 @@ trait CanFormatState
         return $this;
     }
 
-    public function isoDateTimeTooltip(string | Closure | null $format, string | Closure | null $timezone = null): static
+    public function isoDateTimeTooltip(string | Closure | null $format = null, string | Closure | null $timezone = null): static
     {
         $format ??= fn (TextColumn $column): string => $column->getTable()->getDefaultIsoDateTimeDisplayFormat();
 
@@ -200,7 +202,7 @@ trait CanFormatState
         return $this;
     }
 
-    public function isoTimeTooltip(string | Closure | null $format, string | Closure | null $timezone = null): static
+    public function isoTimeTooltip(string | Closure | null $format = null, string | Closure | null $timezone = null): static
     {
         $format ??= fn (TextColumn $column): string => $column->getTable()->getDefaultIsoTimeDisplayFormat();
 

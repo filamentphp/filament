@@ -2,7 +2,6 @@
 
 namespace Filament\Forms\Components\RichEditor\FileAttachmentProviders;
 
-use Closure;
 use Exception;
 use Filament\Forms\Components\RichEditor\FileAttachmentProviders\Contracts\FileAttachmentProvider;
 use Filament\Forms\Components\RichEditor\RichContentAttribute;

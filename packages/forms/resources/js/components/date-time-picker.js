@@ -522,6 +522,7 @@ const locales = {
     th: require('dayjs/locale/th'),
     tr: require('dayjs/locale/tr'),
     uk: require('dayjs/locale/uk'),
+    ur: require('dayjs/locale/ur'),
     vi: require('dayjs/locale/vi'),
     zh_CN: require('dayjs/locale/zh-cn'),
     zh_TW: require('dayjs/locale/zh-tw'),

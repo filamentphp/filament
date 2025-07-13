@@ -103,7 +103,8 @@ trait CanGroupRecords
             ->icon(FilamentIcon::resolve('tables::actions.group') ?? Heroicon::RectangleStack)
             ->color('gray')
             ->livewireClickHandlerEnabled(false)
-            ->table($this);
+            ->table($this)
+            ->authorize(true);
 
         if ($this->modifyGroupRecordsTriggerActionUsing) {
             $action = $this->evaluate($this->modifyGroupRecordsTriggerActionUsing, [

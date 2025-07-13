@@ -30,7 +30,7 @@
     }
 
     & .filepond--root {
-        @apply mb-0 rounded-lg bg-white font-sans shadow-sm ring-1 ring-gray-950/10 dark:bg-white/5 dark:ring-white/20;
+        @apply mb-0 rounded-lg bg-white font-sans shadow-sm ring-1 ring-gray-950/10 dark:bg-white/5 dark:ring-white/20 overflow-hidden;
     }
 
     & .filepond--root[data-disabled='disabled'] {
@@ -62,7 +62,7 @@
         width: calc(50% - 0.5rem);
     }
 
-    @media screen(lg) {
+    @variant lg {
         & .filepond--root[data-style-panel-layout='grid'] .filepond--item {
             width: calc(33.33% - 0.5rem);
         }

@@ -1,0 +1,74 @@
+<?php
+
+namespace App\Livewire;
+
+use Filament\Actions\Concerns\InteractsWithActions;
+use Filament\Actions\Contracts\HasActions;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\Toggle;
+use Filament\Schemas\Concerns\InteractsWithSchemas;
+use Filament\Schemas\Contracts\HasSchemas;
+use Filament\Schemas\Schema;
+use Filament\Tests\Fixtures\Enums\StringBackedEnum;
+use Filament\Tests\Fixtures\Models\Post;
+use Illuminate\Contracts\View\View;
+use Livewire\Component;
+
+class CreatePostWithFields extends Component implements HasActions, HasSchemas
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+
+    public ?array $data = [];
+
+    public function mount(): void
+    {
+        $this->form->fill();
+    }
+
+    public function form(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+                Select::make('author_id')
+                    ->relationship('author', 'name')
+                    ->required(),
+                Textarea::make('content')
+                    ->columnSpanFull(),
+                Toggle::make('is_published')
+                    ->required(),
+                TextInput::make('rating')
+                    ->required()
+                    ->numeric()
+                    ->default(0),
+                Textarea::make('tags')
+                    ->columnSpanFull(),
+                TextInput::make('title')
+                    ->required(),
+                Textarea::make('json')
+                    ->columnSpanFull(),
+                Textarea::make('json_array_of_objects')
+                    ->columnSpanFull(),
+                Select::make('string_backed_enum')
+                    ->options(StringBackedEnum::class),
+            ])
+            ->statePath('data')
+            ->model(Post::class);
+    }
+
+    public function create(): void
+    {
+        $data = $this->form->getState();
+
+        $record = Post::create($data);
+
+        $this->form->model($record)->saveRelationships();
+    }
+
+    public function render(): View
+    {
+        return view('livewire.create-post-with-fields');
+    }
+}

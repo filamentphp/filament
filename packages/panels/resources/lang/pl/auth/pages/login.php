@@ -43,6 +43,30 @@ return [
 
     ],
 
+    'multi_factor' => [
+
+        'heading' => 'Zweryfikuj swoją tożsamość',
+
+        'subheading' => 'Aby kontynuować logowanie, musisz zweryfikować swoją tożsamość.',
+
+        'form' => [
+
+            'provider' => [
+                'label' => 'Wybierz metodę weryfikacji',
+            ],
+
+            'actions' => [
+
+                'authenticate' => [
+                    'label' => 'Potwierdź logowanie',
+                ],
+
+            ],
+
+        ],
+
+    ],
+
     'messages' => [
 
         'failed' => 'Błędny login lub hasło.',

@@ -68,10 +68,14 @@ use Filament\View\PanelsRenderHook;
 - `PanelsRenderHook::PAGE_END` - End of the page content container, also [can be scoped](#scoping-render-hooks) to the page or resource class
 - `PanelsRenderHook::PAGE_FOOTER_WIDGETS_AFTER` - After the page footer widgets, also [can be scoped](#scoping-render-hooks) to the page or resource class
 - `PanelsRenderHook::PAGE_FOOTER_WIDGETS_BEFORE` - Before the page footer widgets, also [can be scoped](#scoping-render-hooks) to the page or resource class
+- `PanelsRenderHook::PAGE_FOOTER_WIDGETS_END` - End of the page footer widgets, also [can be scoped](#scoping-render-hooks) to the page or resource class
+- `PanelsRenderHook::PAGE_FOOTER_WIDGETS_START` - Start of the page footer widgets, also [can be scoped](#scoping-render-hooks) to the page or resource class
 - `PanelsRenderHook::PAGE_HEADER_ACTIONS_AFTER` - After the page header actions, also [can be scoped](#scoping-render-hooks) to the page or resource class
 - `PanelsRenderHook::PAGE_HEADER_ACTIONS_BEFORE` - Before the page header actions, also [can be scoped](#scoping-render-hooks) to the page or resource class
 - `PanelsRenderHook::PAGE_HEADER_WIDGETS_AFTER` - After the page header widgets, also [can be scoped](#scoping-render-hooks) to the page or resource class
 - `PanelsRenderHook::PAGE_HEADER_WIDGETS_BEFORE` - Before the page header widgets, also [can be scoped](#scoping-render-hooks) to the page or resource class
+- `PanelsRenderHook::PAGE_HEADER_WIDGETS_END` - End of the page header widgets, also [can be scoped](#scoping-render-hooks) to the page or resource class
+- `PanelsRenderHook::PAGE_HEADER_WIDGETS_START` - Start of the page header widgets, also [can be scoped](#scoping-render-hooks) to the page or resource class
 - `PanelsRenderHook::PAGE_START` - Start of the page content container, also [can be scoped](#scoping-render-hooks) to the page or resource class
 - `PanelsRenderHook::PAGE_SUB_NAVIGATION_END_AFTER` - After the page sub navigation "end" sidebar position, also [can be scoped](#scoping-render-hooks) to the page or resource class
 - `PanelsRenderHook::PAGE_SUB_NAVIGATION_END_BEFORE` - Before the page sub navigation "end" sidebar position, also [can be scoped](#scoping-render-hooks) to the page or resource class
@@ -95,6 +99,8 @@ use Filament\View\PanelsRenderHook;
 - `PanelsRenderHook::RESOURCE_TABS_START` - The start of the resource tabs (before the first tab), also [can be scoped](#scoping-render-hooks) to the page or resource class
 - `PanelsRenderHook::SCRIPTS_AFTER` - After scripts are defined
 - `PanelsRenderHook::SCRIPTS_BEFORE` - Before scripts are defined
+- `PanelsRenderHook::SIDEBAR_LOGO_AFTER` - After the logo in the sidebar
+- `PanelsRenderHook::SIDEBAR_LOGO_BEFORE` - Before the logo in the sidebar
 - `PanelsRenderHook::SIDEBAR_NAV_END` - In the [sidebar](../panels/navigation), before `</nav>`
 - `PanelsRenderHook::SIDEBAR_NAV_START` - In the [sidebar](../panels/navigation), after `<nav>`
 - `PanelsRenderHook::SIMPLE_LAYOUT_END` - End of the simple layout container, also [can be scoped](#scoping-render-hooks) to the page class
@@ -109,6 +115,8 @@ use Filament\View\PanelsRenderHook;
 - `PanelsRenderHook::TOPBAR_AFTER` - Below the topbar
 - `PanelsRenderHook::TOPBAR_BEFORE` - Above the topbar
 - `PanelsRenderHook::TOPBAR_END` - End of the topbar container
+- `PanelsRenderHook::TOPBAR_LOGO_AFTER` - After the logo in the topbar
+- `PanelsRenderHook::TOPBAR_LOGO_BEFORE` - Before the logo in the topbar
 - `PanelsRenderHook::TOPBAR_START` - Start of the topbar container
 - `PanelsRenderHook::USER_MENU_AFTER` - After the [user menu](../navigation/user-menu)
 - `PanelsRenderHook::USER_MENU_BEFORE` - Before the [user menu](../navigation/user-menu)

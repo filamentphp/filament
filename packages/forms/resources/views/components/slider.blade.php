@@ -2,6 +2,7 @@
     $fieldWrapperView = $getFieldWrapperView();
     $isVertical = $isVertical();
     $pipsMode = $getPipsMode();
+    $livewireKey = $getLivewireKey();
 @endphp
 
 <x-dynamic-component :component="$fieldWrapperView" :field="$field">
@@ -13,6 +14,7 @@
                     behavior: @js($getBehaviorForJs()),
                     decimalPlaces: @js($getDecimalPlaces()),
                     fillTrack: @js($getFillTrack()),
+                    isDisabled: @js($isDisabled()),
                     isRtl: @js($isRtl()),
                     isVertical: @js($isVertical),
                     maxDifference: @js($getMaxDifference()),
@@ -31,10 +33,14 @@
                     tooltips: @js($getTooltipsForJs()),
                 })"
         wire:ignore
+        wire:key="{{ $livewireKey }}.{{
+            substr(md5(serialize([
+                $isDisabled,
+            ])), 0, 64)
+        }}"
         {{
             $attributes
                 ->merge([
-                    'disabled' => $isDisabled(),
                     'id' => $getId(),
                 ], escape: false)
                 ->merge($getExtraAttributes(), escape: false)

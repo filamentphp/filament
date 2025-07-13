@@ -42,7 +42,10 @@ trait CanDisableOptions
 
                 return $carry->put($value, $label);
             }, collect())
-            ->filter(fn ($label, $value) => ! $this->isOptionDisabled($value, $label))
+            ->when(
+                $this->hasDisabledOptions(),
+                fn (Collection $options): Collection => $options->filter(fn ($label, $value) => ! $this->isOptionDisabled($value, $label)),
+            )
             ->all();
     }
 
@@ -51,16 +54,37 @@ trait CanDisableOptions
      */
     public function isOptionDisabled($value, string | Htmlable $label): bool
     {
-        return collect($this->isOptionDisabled)
-            ->contains(fn (bool | Closure $isOptionDisabled): bool => (bool) $this->evaluate($isOptionDisabled, [
+        foreach ($this->isOptionDisabled as $isOptionDisabled) {
+            if ($this->evaluate($isOptionDisabled, [
                 'label' => $label,
                 'value' => $value,
-            ]));
+            ])) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public function hasDisabledOptions(): bool
+    {
+        foreach ($this->isOptionDisabled as $isOptionDisabled) {
+            if ($isOptionDisabled !== false) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public function hasDynamicDisabledOptions(): bool
     {
-        return collect($this->isOptionDisabled)
-            ->contains(fn (bool | Closure $isOptionDisabled): bool => $isOptionDisabled instanceof Closure);
+        foreach ($this->isOptionDisabled as $isOptionDisabled) {
+            if ($isOptionDisabled instanceof Closure) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

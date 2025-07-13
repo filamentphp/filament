@@ -61,7 +61,7 @@ return [
                     'actions' => [
 
                         'save' => [
-                            'label' => 'Сачувај промене',
+                            'label' => 'Сачувај измене',
                         ],
 
                     ],
@@ -468,6 +468,10 @@ return [
         'no_merge_tag_search_results_message' => 'Без резултата спојених ознака.',
 
         'tools' => [
+            'align_center' => 'Центрирано',
+            'align_end' => 'Десно поравнање',
+            'align_justify' => 'Обострано поравнање',
+            'align_start' => 'Лево поравнање',
             'attach_files' => 'Додај датотеке',
             'blockquote' => 'Цитат',
             'bold' => 'Подебљано',
@@ -477,14 +481,18 @@ return [
             'h1' => 'Наслов',
             'h2' => 'Заглавље',
             'h3' => 'Поднаслов',
+            'highlight' => 'Означи',
+            'horizontal_rule' => 'Хоризонтална линија',
             'italic' => 'Накошено',
+            'lead' => 'Уводни текст',
             'link' => 'Веза',
             'merge_tags' => 'Спојене ознаке',
             'ordered_list' => 'Нумерисана листа',
             'redo' => 'Понови',
+            'small' => 'Мали текст',
             'strike' => 'Прецртано',
             'subscript' => 'Индекс',
-            'superscript' => 'Степен',
+            'superscript' => 'Експонент',
             'underline' => 'Подвучено',
             'undo' => 'Поништи',
         ],

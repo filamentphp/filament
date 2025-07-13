@@ -1,6 +1,4 @@
 @php
-    use Filament\Support\Facades\FilamentView;
-
     $isContained = $isContained();
     $key = $getKey();
     $previousAction = $getAction('previous');
@@ -10,11 +8,7 @@
 @endphp
 
 <div
-    @if (FilamentView::hasSpaMode())
-        {{-- format-ignore-start --}}x-load="visible || event (x-modal-opened)"{{-- format-ignore-end --}}
-    @else
-        x-load
-    @endif
+    x-load
     x-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('wizard', 'filament/schemas') }}"
     x-data="wizardSchemaComponent({
                 isSkippable: @js($isSkippable()),

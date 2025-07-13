@@ -9,7 +9,6 @@
 
 @php
     use Filament\Support\Enums\GridDirection;
-    use Filament\Support\Facades\FilamentView;
     use Illuminate\View\ComponentAttributeBag;
 @endphp
 
@@ -25,6 +24,24 @@
             <{{ $headingTag }} class="fi-ta-col-manager-heading">
                 {{ __('filament-tables::table.column_manager.heading') }}
             </{{ $headingTag }}>
+
+            <div>
+                <x-filament::link
+                    :attributes="
+                        \Filament\Support\prepare_inherited_attributes(
+                            new ComponentAttributeBag([
+                                'color' => 'danger',
+                                'tag' => 'button',
+                                'wire:click' => 'resetTableColumnManager',
+                                'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => '',
+                                'wire:target' => 'resetTableColumnManager',
+                            ])
+                        )
+                    "
+                >
+                    {{ __('filament-tables::table.column_manager.actions.reset.label') }}
+                </x-filament::link>
+            </div>
         </div>
 
         <div

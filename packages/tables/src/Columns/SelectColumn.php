@@ -10,7 +10,6 @@ use Filament\Forms\Components\Concerns\HasExtraInputAttributes;
 use Filament\Forms\Components\Concerns\HasOptions;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Facades\FilamentAsset;
-use Filament\Support\Facades\FilamentView;
 use Filament\Tables\Columns\Contracts\Editable;
 use Filament\Tables\Table;
 use Illuminate\Support\Js;
@@ -58,9 +57,7 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
 
         $attributes = $this->getExtraAttributeBag()
             ->merge([
-                'x-load' => FilamentView::hasSpaMode()
-                    ? 'visible || event (x-modal-opened)'
-                    : true,
+                'x-load' => true,
                 'x-load-src' => FilamentAsset::getAlpineComponentSrc('columns/select', 'filament/tables'),
                 'x-data' => 'selectTableColumn({
                     name: ' . Js::from($this->getName()) . ',

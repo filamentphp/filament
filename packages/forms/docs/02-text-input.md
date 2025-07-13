@@ -261,6 +261,27 @@ TextInput::make('amount')
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `stripCharacters()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
+## Trimming whitespace
+
+You can automatically trim whitespace from the beginning and end of the input value using the `trim()` method:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('name')
+    ->trim()
+```
+
+You may want to enable trimming globally for all text inputs, similar to Laravel's `TrimStrings` middleware. You can do this in a service provider using the `configureUsing()` method:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::configureUsing(function (TextInput $component): void {
+    $component->trim();
+});
+```
+
 ## Making the field read-only
 
 Not to be confused with [disabling the field](overview#disabling-a-field), you may make the field "read-only" using the `readOnly()` method:

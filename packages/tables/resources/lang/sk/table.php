@@ -12,6 +12,10 @@ return [
                 'label' => 'Použiť stĺpce',
             ],
 
+            'reset' => [
+                'label' => 'Resetovať stĺpce',
+            ],
+
         ],
 
     ],
@@ -139,7 +143,7 @@ return [
             ],
 
             'reset' => [
-                'label' => 'Resetovať',
+                'label' => 'Resetovať filtre',
             ],
 
         ],

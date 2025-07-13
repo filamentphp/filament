@@ -1,0 +1,10 @@
+<?php
+
+namespace App\Filament\Infolists\Components\Custom;
+
+use Filament\Infolists\Components\Entry;
+
+class NestedEntry extends Entry
+{
+    protected string $view = 'filament.infolists.components.custom.nested-entry';
+}

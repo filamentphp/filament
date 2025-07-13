@@ -11,8 +11,15 @@ return [
         'form' => [
 
             'file' => [
+
                 'label' => 'Файл',
+
                 'placeholder' => 'Загрузить CSV-файл',
+
+                'rules' => [
+                    'duplicate_columns' => '{0} Файл не должен содержать более одного пустого заголовка столбца.|{1,*} Файл не должен содержать повторяющихся заголовков столбцов: :columns.',
+                ],
+
             ],
 
             'columns' => [
@@ -72,6 +79,7 @@ return [
         'file_name' => 'import-:import_id-:csv_name-failed-rows',
         'error_header' => 'Ошибка',
         'system_error' => 'Системная ошибка, обратитесь в службу поддержки.',
+        'column_mapping_required_for_new_record' => 'Для :attribute необходимо указать соответствие столбца в файле, так как он требуется при создании записей.',
     ],
 
 ];

@@ -6,6 +6,18 @@ return [
 
         'heading' => 'Kolom',
 
+        'actions' => [
+
+            'apply' => [
+                'label' => 'Terapkan kolom',
+            ],
+
+            'reset' => [
+                'label' => 'Atur ulang',
+            ],
+
+        ],
+
     ],
 
     'columns' => [
@@ -145,7 +157,13 @@ return [
         ],
 
         'select' => [
+
             'placeholder' => 'Semua',
+
+            'relationship' => [
+                'empty_option_label' => 'Tidak ada',
+            ],
+
         ],
 
         'trashed' => [
@@ -228,5 +246,7 @@ return [
         ],
 
     ],
+
+    'default_model_label' => 'data',
 
 ];

@@ -9,7 +9,6 @@ use Filament\Forms\Components\Concerns\HasStep;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Facades\FilamentAsset;
-use Filament\Support\Facades\FilamentView;
 use Filament\Support\RawJs;
 use Filament\Tables\Columns\Contracts\Editable;
 use Filament\Tables\Table;
@@ -74,9 +73,7 @@ class TextInputColumn extends Column implements Editable, HasEmbeddedView
 
         $attributes = $this->getExtraAttributeBag()
             ->merge([
-                'x-load' => FilamentView::hasSpaMode()
-                    ? 'visible || event (x-modal-opened)'
-                    : true,
+                'x-load' => true,
                 'x-load-src' => FilamentAsset::getAlpineComponentSrc('columns/text-input', 'filament/tables'),
                 'x-data' => 'textInputTableColumn({
                     name: ' . Js::from($this->getName()) . ',

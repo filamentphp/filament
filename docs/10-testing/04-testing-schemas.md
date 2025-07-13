@@ -65,7 +65,7 @@ it('can automatically generate a slug from the title without any spaces', functi
 });
 ```
 
-You can return an array from the function if you want Filament to continue to assert the achema state after the function has been run.
+You can return an array from the function if you want Filament to continue to assert the schema state after the function has been run.
 
 ## Testing form validation
 

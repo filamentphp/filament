@@ -6,7 +6,6 @@ use Filament\Forms\Components\Concerns\HasExtraInputAttributes;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Facades\FilamentAsset;
-use Filament\Support\Facades\FilamentView;
 use Filament\Tables\Columns\Contracts\Editable;
 use Filament\Tables\Table;
 use Illuminate\Support\Js;
@@ -33,9 +32,7 @@ class CheckboxColumn extends Column implements Editable, HasEmbeddedView
 
         $attributes = $this->getExtraAttributeBag()
             ->merge([
-                'x-load' => FilamentView::hasSpaMode()
-                    ? 'visible || event (x-modal-opened)'
-                    : true,
+                'x-load' => true,
                 'x-load-src' => FilamentAsset::getAlpineComponentSrc('columns/checkbox', 'filament/tables'),
                 'x-data' => 'checkboxTableColumn({
                     name: ' . Js::from($this->getName()) . ',

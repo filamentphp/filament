@@ -1,6 +1,5 @@
 @php
     use Filament\Support\Enums\GridDirection;
-    use Filament\Support\Facades\FilamentView;
 
     $fieldWrapperView = $getFieldWrapperView();
     $extraInputAttributeBag = $getExtraInputAttributeBag();
@@ -17,11 +16,7 @@
 
 <x-dynamic-component :component="$fieldWrapperView" :field="$field">
     <div
-        @if (FilamentView::hasSpaMode())
-            {{-- format-ignore-start --}}x-load="visible || event (x-modal-opened)"{{-- format-ignore-end --}}
-        @else
-            x-load
-        @endif
+        x-load
         x-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('checkbox-list', 'filament/forms') }}"
         x-data="checkboxListFormComponent({
                     livewireId: @js($this->getId()),

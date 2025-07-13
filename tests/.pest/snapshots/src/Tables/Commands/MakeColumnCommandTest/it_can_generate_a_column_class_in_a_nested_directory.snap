@@ -1,0 +1,10 @@
+<?php
+
+namespace App\Filament\Tables\Columns\Custom;
+
+use Filament\Tables\Columns\Column;
+
+class NestedColumn extends Column
+{
+    protected string $view = 'filament.tables.columns.custom.nested-column';
+}

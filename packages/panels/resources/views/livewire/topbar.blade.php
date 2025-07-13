@@ -73,6 +73,8 @@
                 />
             @endif
 
+            {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::TOPBAR_LOGO_BEFORE) }}
+
             @if ($homeUrl = filament()->getHomeUrl())
                 <a {{ \Filament\Support\generate_href_html($homeUrl) }}>
                     <x-filament-panels::logo />
@@ -80,6 +82,8 @@
             @else
                 <x-filament-panels::logo />
             @endif
+
+            {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::TOPBAR_LOGO_AFTER) }}
         </div>
 
         @if ($hasTopNavigation || (! $hasNavigation))

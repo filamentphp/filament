@@ -1,6 +1,4 @@
 @php
-    use Filament\Support\Facades\FilamentView;
-
     $fieldWrapperView = $getFieldWrapperView();
     $datalistOptions = $getDatalistOptions();
     $disabledDates = $getDisabledDates();
@@ -82,11 +80,7 @@
             />
         @else
             <div
-                @if (FilamentView::hasSpaMode())
-                    {{-- format-ignore-start --}}x-load="visible || event (x-modal-opened)"{{-- format-ignore-end --}}
-                @else
-                    x-load
-                @endif
+                x-load
                 x-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('date-time-picker', 'filament/forms') }}"
                 x-data="dateTimePickerFormComponent({
                             displayFormat:
@@ -100,9 +94,11 @@
                 wire:ignore
                 wire:key="{{ $livewireKey }}.{{
                     substr(md5(serialize([
-                        'disabledDates' => $disabledDates,
-                        'maxDate' => $maxDate,
-                        'minDate' => $minDate,
+                        $disabledDates,
+                        $isDisabled,
+                        $isReadonly,
+                        $maxDate,
+                        $minDate,
                     ])), 0, 64)
                 }}"
                 x-on:keydown.esc="isOpen() && $event.stopPropagation()"

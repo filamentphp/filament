@@ -43,6 +43,30 @@ return [
 
     ],
 
+    'multi_factor' => [
+
+        'heading' => 'Verifikasi identitas Anda',
+
+        'subheading' => 'Untuk melanjutkan login, Anda perlu memverifikasi identitas Anda.',
+
+        'form' => [
+
+            'provider' => [
+                'label' => 'Bagaimana Anda ingin memverifikasi?',
+            ],
+
+            'actions' => [
+
+                'authenticate' => [
+                    'label' => 'Konfirmasi login',
+                ],
+
+            ],
+
+        ],
+
+    ],
+
     'messages' => [
 
         'failed' => 'Kredensial yang diberikan tidak dapat ditemukan.',

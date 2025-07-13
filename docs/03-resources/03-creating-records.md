@@ -118,13 +118,13 @@ protected function getCreatedNotification(): ?Notification
 To disable the "create and create another" feature, define the `$canCreateAnother` property as `false` on the Create page class:
 
 ```php
-protected bool $canCreateAnother = false;
+protected static bool $canCreateAnother = false;
 ```
 
 Alternatively, if you'd like to specify a dynamic condition when the feature is disabled, you may override the `canCreateAnother()` method on the Create page class:
 
 ```php
-protected function canCreateAnother(): bool
+public function canCreateAnother(): bool
 {
     return false;
 }

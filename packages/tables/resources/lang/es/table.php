@@ -12,6 +12,10 @@ return [
                 'label' => 'Aplicar columnas',
             ],
 
+            'reset' => [
+                'label' => 'Resetear las columnas',
+            ],
+
         ],
 
     ],

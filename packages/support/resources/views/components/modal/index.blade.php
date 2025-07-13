@@ -1,7 +1,6 @@
 @php
     use Filament\Support\Enums\Alignment;
     use Filament\Support\Enums\Width;
-    use Filament\Support\Facades\FilamentView;
     use Filament\Support\View\Components\ModalComponent\IconComponent;
     use Illuminate\View\ComponentAttributeBag;
 @endphp
@@ -103,7 +102,7 @@
     x-trap.noscroll{{ $autofocus ? '' : '.noautofocus' }}="isOpen"
     {{
         $attributes->class([
-            'fi-modal',
+            'fi-modal fi-absolute-positioning-context',
             'fi-modal-slide-over' => $slideOver,
             'fi-width-screen' => $width === Width::Screen,
         ])

@@ -6,6 +6,18 @@
     & .fi-sc {
         @apply gap-px rounded-lg bg-gray-950/10 dark:bg-white/20;
 
+        & .fi-sc-component {
+            @apply h-full;
+
+            & .fi-fo-field {
+                @apply h-full;
+            }
+
+            & .fi-input {
+                @apply h-full;
+            }
+        }
+
         & > :first-child .fi-input-wrp {
             @apply rounded-t-lg;
         }

@@ -5,6 +5,7 @@ export default function sliderFormComponent({
     behavior,
     decimalPlaces,
     fillTrack,
+    isDisabled,
     isRtl,
     isVertical,
     maxDifference,
@@ -62,6 +63,10 @@ export default function sliderFormComponent({
                 step,
                 tooltips,
             })
+
+            if (isDisabled) {
+                this.slider.disable()
+            }
 
             this.slider.on('change', (values) => {
                 this.state = values.length > 1 ? values : values[0]

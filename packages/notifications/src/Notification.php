@@ -344,7 +344,7 @@ class Notification extends ViewComponent implements Arrayable, HasEmbeddedView
         ob_start(); ?>
 
         <div
-            x-data="notificationComponent({ notification: <?= Js::from($this) ?> })"
+            x-data="notificationComponent({ notification: <?= Js::from($this->toArray()) ?> })"
             x-transition:enter-start="fi-transition-enter-start"
             x-transition:leave-end="fi-transition-leave-end"
             <?= $attributes ?>

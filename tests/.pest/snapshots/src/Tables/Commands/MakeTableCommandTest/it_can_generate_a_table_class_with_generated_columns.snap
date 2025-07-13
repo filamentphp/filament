@@ -1,0 +1,34 @@
+<?php
+
+namespace App\Filament\Tables;
+
+use App\Models\Post;
+use Filament\Actions\BulkActionGroup;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+
+class PostsTable
+{
+    public static function configure(Table $table): Table
+    {
+        return $table
+            ->query(fn (): Builder => Post::query())
+            ->columns([
+                //
+            ])
+            ->filters([
+                //
+            ])
+            ->headerActions([
+                //
+            ])
+            ->recordActions([
+                //
+            ])
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    //
+                ]),
+            ]);
+    }
+}

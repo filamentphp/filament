@@ -114,7 +114,7 @@ class ResourceClassGenerator extends ClassGenerator
         $this->addTableMethodToClass($class);
         $this->addGetRelationsMethodToClass($class);
         $this->addGetPagesMethodToClass($class);
-        $this->addGetEloquentQueryMethodToClass($class);
+        $this->addGetRecordRouteBindingEloquentQueryMethodToClass($class);
     }
 
     protected function addModelPropertyToClass(ClassType $class): void
@@ -328,28 +328,28 @@ class ResourceClassGenerator extends ClassGenerator
 
     protected function configureGetPagesMethod(Method $method): void {}
 
-    protected function addGetEloquentQueryMethodToClass(ClassType $class): void
+    protected function addGetRecordRouteBindingEloquentQueryMethodToClass(ClassType $class): void
     {
         if (! $this->isSoftDeletable()) {
             return;
         }
 
-        $method = $class->addMethod('getEloquentQuery')
+        $method = $class->addMethod('getRecordRouteBindingEloquentQuery')
             ->setPublic()
             ->setStatic()
             ->setReturnType(Builder::class)
             ->setBody(
                 <<<PHP
-                return parent::getEloquentQuery()
+                return parent::getRecordRouteBindingEloquentQuery()
                     ->withoutGlobalScopes([
                         {$this->simplifyFqn(SoftDeletingScope::class)}::class,
                     ]);
                 PHP
             );
-        $this->configureGetEloquentQueryMethod($method);
+        $this->configureGetRecordRouteBindingEloquentQueryMethod($method);
     }
 
-    protected function configureGetEloquentQueryMethod(Method $method): void {}
+    protected function configureGetRecordRouteBindingEloquentQueryMethod(Method $method): void {}
 
     public function getFqn(): string
     {

@@ -1,6 +1,5 @@
 @php
     use Filament\Support\Enums\VerticalAlignment;
-    use Filament\Support\Facades\FilamentView;
 
     $actions = $getChildSchema()->getComponents();
     $alignment = $getAlignment();

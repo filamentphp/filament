@@ -1,6 +1,4 @@
 @php
-    use Filament\Support\Facades\FilamentView;
-
     $fieldWrapperView = $getFieldWrapperView();
     $extraInputAttributeBag = $getExtraInputAttributeBag();
     $canSelectPlaceholder = $canSelectPlaceholder();
@@ -26,6 +24,7 @@
     $suffixLabel = $getSuffixLabel();
     $statePath = $getStatePath();
     $state = $getState();
+    $livewireKey = $getLivewireKey();
 @endphp
 
 <x-dynamic-component
@@ -126,11 +125,7 @@
                 }"
             ></div>
             <div
-                @if (FilamentView::hasSpaMode())
-                    {{-- format-ignore-start --}}x-load="visible || event (x-modal-opened)"{{-- format-ignore-end --}}
-                @else
-                    x-load
-                @endif
+                x-load
                 x-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('select', 'filament/forms') }}"
                 x-data="selectFormComponent({
                             canSelectPlaceholder: @js($canSelectPlaceholder),
@@ -183,6 +178,11 @@
                             statePath: @js($statePath),
                         })"
                 wire:ignore
+                wire:key="{{ $livewireKey }}.{{
+                    substr(md5(serialize([
+                        $isDisabled,
+                    ])), 0, 64)
+                }}"
                 x-on:keydown.esc="select.dropdown.isActive && $event.stopPropagation()"
                 x-on:set-select-property="$event.detail.isDisabled ? select.disable() : select.enable()"
                 {{

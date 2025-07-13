@@ -6,6 +6,18 @@ return [
 
         'heading' => 'Spalten',
 
+        'actions' => [
+
+            'apply' => [
+                'label' => 'Spalten anwenden',
+            ],
+
+            'reset' => [
+                'label' => 'Zurücksetzen',
+            ],
+
+        ],
+
     ],
 
     'columns' => [
@@ -22,6 +34,7 @@ return [
             ],
 
             'more_list_items' => 'und :count weitere',
+
         ],
 
     ],
@@ -144,7 +157,13 @@ return [
         ],
 
         'select' => [
+
             'placeholder' => 'Alle',
+
+            'relationship' => [
+                'empty_option_label' => 'Keine',
+            ],
+
         ],
 
         'trashed' => [
@@ -227,5 +246,7 @@ return [
         ],
 
     ],
+
+    'default_model_label' => 'Datensatz',
 
 ];

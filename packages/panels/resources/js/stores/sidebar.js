@@ -1,7 +1,47 @@
+const breakpoint = 1024
+
 export default () => ({
-    isOpen: window.Alpine.$persist(false).as('isOpen'),
+    isOpen: window.Alpine.$persist(true).as('isOpen'),
+    isOpenDesktop: window.Alpine.$persist(true).as('isOpenDesktop'),
 
     collapsedGroups: window.Alpine.$persist(null).as('collapsedGroups'),
+
+    init() {
+        let previousWidth = window.innerWidth
+
+        const resizeObserver = new ResizeObserver(() => {
+            const currentWidth = window.innerWidth
+            const wasDesktop = previousWidth >= breakpoint
+            const isMobile = currentWidth < breakpoint
+            const isDesktop = currentWidth >= breakpoint
+
+            // Resize desktop to mobile
+            if (wasDesktop && isMobile) {
+                this.isOpenDesktop = this.isOpen
+
+                if (this.isOpen) {
+                    this.close()
+                }
+            }
+            // Resize mobile to desktop
+            else if (!wasDesktop && isDesktop) {
+                this.isOpen = this.isOpenDesktop
+            }
+
+            previousWidth = currentWidth
+        })
+
+        resizeObserver.observe(document.body)
+
+        if (window.innerWidth < breakpoint) {
+            if (this.isOpen) {
+                this.isOpenDesktop = true
+                this.close()
+            }
+        } else {
+            this.isOpenDesktop = this.isOpen
+        }
+    },
 
     groupIsCollapsed(group) {
         return this.collapsedGroups.includes(group)
@@ -25,9 +65,17 @@ export default () => ({
 
     close() {
         this.isOpen = false
+
+        if (window.innerWidth >= breakpoint) {
+            this.isOpenDesktop = false
+        }
     },
 
     open() {
         this.isOpen = true
+
+        if (window.innerWidth >= breakpoint) {
+            this.isOpenDesktop = true
+        }
     },
 })

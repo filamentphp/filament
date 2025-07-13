@@ -45,6 +45,10 @@ export default function codeEditorFormComponent({
             })
 
             this.$watch('state', () => {
+                if (this.state === undefined) {
+                    return
+                }
+
                 if (this.editor.state.doc.toString() === this.state) {
                     return
                 }

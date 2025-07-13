@@ -373,7 +373,7 @@ Be aware when using `all` as it will cause performance issues when dealing with 
 
 Last year, the Filament team decided to hand over maintenance of the Spatie Translatable Plugin to the team at [Lara Zeus](https://larazeus.com), who are trusted developers of many Filament plugins. They have maintained a fork of the plugin ever since.
 
-The official Spatie Translatable Plugin will not recieve v4 support, and is now deprecated. You can use the [Lara Zeus Translatable Plugin](https://github.com/lara-zeus/spatie-translatable) as a direct replacement. The plugin is compatible with the same version of Spatie Translatable as the official plugin, and has been tested with Filament v4. It also fixes some long-standing bugs in the official plugin.
+The official Spatie Translatable Plugin will not receive v4 support, and is now deprecated. You can use the [Lara Zeus Translatable Plugin](https://github.com/lara-zeus/spatie-translatable) as a direct replacement. The plugin is compatible with the same version of Spatie Translatable as the official plugin, and has been tested with Filament v4. It also fixes some long-standing bugs in the official plugin.
 
 The [automated upgrade script](#running-the-automated-upgrade-script) suggests commands that uninstall the official plugin and install the Lara Zeus plugin, and replaces any references in your code to the official plugin with the Lara Zeus plugin.
 </Disclosure>

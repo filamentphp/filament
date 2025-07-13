@@ -5,6 +5,8 @@ namespace Filament\Forms\Components;
 use Closure;
 use Exception;
 use Filament\Forms\Components\Contracts\CanHaveNumericState;
+use Filament\Schemas\Components\Concerns\CanStripCharactersFromState;
+use Filament\Schemas\Components\Concerns\CanTrimState;
 use Filament\Schemas\Components\Contracts\HasAffixActions;
 use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
 use Filament\Schemas\Components\StateCasts\NumberStateCast;
@@ -13,6 +15,8 @@ use Filament\Support\RawJs;
 
 class TextInput extends Field implements CanHaveNumericState, Contracts\CanBeLengthConstrained, HasAffixActions
 {
+    use CanStripCharactersFromState;
+    use CanTrimState;
     use Concerns\CanBeAutocapitalized;
     use Concerns\CanBeAutocompleted;
     use Concerns\CanBeLengthConstrained;
@@ -276,5 +280,31 @@ class TextInput extends Field implements CanHaveNumericState, Contracts\CanBeLen
             ...parent::getDefaultStateCasts(),
             ...($this->isNumeric() ? [app(NumberStateCast::class, ['isNullable' => true])] : []),
         ];
+    }
+
+    public function mutateDehydratedState(mixed $state): mixed
+    {
+        $state = $this->stripCharactersFromState($state);
+        $state = $this->trimState($state);
+
+        return parent::mutateDehydratedState($state);
+    }
+
+    public function mutateStateForValidation(mixed $state): mixed
+    {
+        $state = $this->stripCharactersFromState($state);
+        $state = $this->trimState($state);
+
+        return parent::mutateStateForValidation($state);
+    }
+
+    public function mutatesDehydratedState(): bool
+    {
+        return parent::mutatesDehydratedState() || $this->hasStripCharacters() || $this->isTrimmed();
+    }
+
+    public function mutatesStateForValidation(): bool
+    {
+        return parent::mutatesStateForValidation() || $this->hasStripCharacters() || $this->isTrimmed();
     }
 }

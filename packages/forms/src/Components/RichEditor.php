@@ -76,6 +76,11 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
      */
     protected array $cachedCustomBlocks;
 
+    /**
+     * @var array<string | array<string>> | Closure | null
+     */
+    protected array | Closure | null $floatingToolbars = null;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -104,12 +109,12 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
             RichEditorTool::make('subscript')
                 ->label(__('filament-forms::components.rich_editor.tools.subscript'))
                 ->jsHandler('$getEditor()?.chain().focus().toggleSubscript().run()')
-                ->icon('fi-s-subscript')
+                ->icon('fi-o-subscript')
                 ->iconAlias('forms:components.rich-editor.toolbar.subscript'),
             RichEditorTool::make('superscript')
                 ->label(__('filament-forms::components.rich_editor.tools.superscript'))
                 ->jsHandler('$getEditor()?.chain().focus().toggleSuperscript().run()')
-                ->icon('fi-s-superscript')
+                ->icon('fi-o-superscript')
                 ->iconAlias('forms:components.rich-editor.toolbar.superscript'),
             RichEditorTool::make('link')
                 ->label(__('filament-forms::components.rich_editor.tools.link'))
@@ -154,6 +159,61 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
                 ->jsHandler('$getEditor()?.chain().focus().toggleOrderedList().run()')
                 ->icon(Heroicon::NumberedList)
                 ->iconAlias('forms:components.rich-editor.toolbar.ordered-list'),
+            RichEditorTool::make('table')
+                ->label(__('filament-forms::components.rich_editor.tools.table'))
+                ->jsHandler('$getEditor()?.commands.insertTable({ rows: 2, cols: 3, withHeaderRow: true })')
+                ->icon('fi-o-table')
+                ->iconAlias('forms:components.rich-editor.toolbar.table'),
+            RichEditorTool::make('tableAddColumnBefore')
+                ->label(__('filament-forms::components.rich_editor.tools.table_add_column_before'))
+                ->jsHandler('$getEditor()?.chain().focus().addColumnBefore().run()')
+                ->icon('fi-o-table-add-column-before')
+                ->iconAlias('forms:components.rich-editor.toolbar.table_add_column_before'),
+            RichEditorTool::make('tableAddColumnAfter')
+                ->label(__('filament-forms::components.rich_editor.tools.table_add_column_after'))
+                ->jsHandler('$getEditor()?.chain().focus().addColumnAfter().run()')
+                ->icon('fi-o-table-add-column-after')
+                ->iconAlias('forms:components.rich-editor.toolbar.table_add_column_after'),
+            RichEditorTool::make('tableDeleteColumn')
+                ->label(__('filament-forms::components.rich_editor.tools.table_delete_column'))
+                ->jsHandler('$getEditor()?.chain().focus().deleteColumn().run()')
+                ->icon('fi-o-table-delete-column')
+                ->iconAlias('forms:components.rich-editor.toolbar.table_delete_column'),
+            RichEditorTool::make('tableAddRowBefore')
+                ->label(__('filament-forms::components.rich_editor.tools.table_add_row_before'))
+                ->jsHandler('$getEditor()?.chain().focus().addRowBefore().run()')
+                ->icon('fi-o-table-add-row-before')
+                ->iconAlias('forms:components.rich-editor.toolbar.table_add_row_before'),
+            RichEditorTool::make('tableAddRowAfter')
+                ->label(__('filament-forms::components.rich_editor.tools.table_add_row_after'))
+                ->jsHandler('$getEditor()?.chain().focus().addRowAfter().run()')
+                ->icon('fi-o-table-add-row-after')
+                ->iconAlias('forms:components.rich-editor.toolbar.table_add_row_after'),
+            RichEditorTool::make('tableDeleteRow')
+                ->label(__('filament-forms::components.rich_editor.tools.table_delete_row'))
+                ->jsHandler('$getEditor()?.chain().focus().deleteRow().run()')
+                ->icon('fi-o-table-delete-row')
+                ->iconAlias('forms:components.rich-editor.toolbar.table_delete_row'),
+            RichEditorTool::make('tableMergeCells')
+                ->label(__('filament-forms::components.rich_editor.tools.table_merge_cells'))
+                ->jsHandler('$getEditor()?.chain().focus().mergeCells().run()')
+                ->icon('fi-o-table-merge-cells')
+                ->iconAlias('forms:components.rich-editor.toolbar.table_merge_cells'),
+            RichEditorTool::make('tableSplitCell')
+                ->label(__('filament-forms::components.rich_editor.tools.table_split_cell'))
+                ->jsHandler('$getEditor()?.chain().focus().splitCell().run()')
+                ->icon('fi-o-table-split-cell')
+                ->iconAlias('forms:components.rich-editor.toolbar.table_split_cell'),
+            RichEditorTool::make('tableToggleHeaderRow')
+                ->label(__('filament-forms::components.rich_editor.tools.table_toggle_header_row'))
+                ->jsHandler('$getEditor()?.chain().focus().toggleHeaderRow().run()')
+                ->icon('fi-o-table-toggle-header-row')
+                ->iconAlias('forms:components.rich-editor.toolbar.table_toggle_header_row'),
+            RichEditorTool::make('tableDelete')
+                ->label(__('filament-forms::components.rich_editor.tools.table_delete'))
+                ->jsHandler('$getEditor()?.chain().focus().deleteTable().run()')
+                ->icon('fi-o-table-delete')
+                ->iconAlias('forms:components.rich-editor.toolbar.table_delete'),
             RichEditorTool::make('attachFiles')
                 ->label(__('filament-forms::components.rich_editor.tools.attach_files'))
                 ->action(arguments: '{ alt: $getEditor().getAttributes(\'image\')?.alt, id: $getEditor().getAttributes(\'image\')?.id, src: $getEditor().getAttributes(\'image\')?.src }')
@@ -170,7 +230,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
                 ->label(__('filament-forms::components.rich_editor.tools.merge_tags'))
                 ->jsHandler('togglePanel(\'mergeTags\')')
                 ->activeJsExpression('isPanelActive(\'mergeTags\')')
-                ->icon('fi-s-merge-tag')
+                ->icon('fi-o-merge-tag')
                 ->iconAlias('forms:components.rich-editor.toolbar.merge-tags'),
             RichEditorTool::make('horizontalRule')
                 ->label(__('filament-forms::components.rich_editor.tools.horizontal_rule'))
@@ -180,17 +240,17 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
             RichEditorTool::make('highlight')
                 ->label(__('filament-forms::components.rich_editor.tools.highlight'))
                 ->jsHandler('$getEditor()?.chain().focus().toggleHighlight().run()')
-                ->icon('fi-s-highlight')
+                ->icon('fi-o-highlight')
                 ->iconAlias('forms:components.rich-editor.toolbar.highlight'),
             RichEditorTool::make('small')
                 ->label(__('filament-forms::components.rich_editor.tools.small'))
                 ->jsHandler('$getEditor()?.chain().focus().toggleSmall().run()')
-                ->icon('fi-s-small')
+                ->icon('fi-o-small')
                 ->iconAlias('forms:components.rich-editor.toolbar.small'),
             RichEditorTool::make('lead')
                 ->label(__('filament-forms::components.rich_editor.tools.lead'))
                 ->jsHandler('$getEditor()?.chain().focus().toggleLead().run()')
-                ->icon('fi-s-lead')
+                ->icon('fi-o-lead')
                 ->iconAlias('forms:components.rich-editor.toolbar.lead'),
             RichEditorTool::make('undo')
                 ->label(__('filament-forms::components.rich_editor.tools.undo'))
@@ -205,23 +265,33 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
             RichEditorTool::make('alignStart')
                 ->label(__('filament-forms::components.rich_editor.tools.align_start'))
                 ->jsHandler('$getEditor()?.chain().focus().setTextAlign(\'start\').run()')
-                ->icon('fi-s-align-start')
+                ->icon('fi-o-align-start')
                 ->iconAlias('forms:components.rich-editor.toolbar.align-start'),
             RichEditorTool::make('alignCenter')
                 ->label(__('filament-forms::components.rich_editor.tools.align_center'))
                 ->jsHandler('$getEditor()?.chain().focus().setTextAlign(\'center\').run()')
-                ->icon('fi-s-align-center')
+                ->icon('fi-o-align-center')
                 ->iconAlias('forms:components.rich-editor.toolbar.align-center'),
             RichEditorTool::make('alignEnd')
                 ->label(__('filament-forms::components.rich_editor.tools.align_end'))
                 ->jsHandler('$getEditor()?.chain().focus().setTextAlign(\'end\').run()')
-                ->icon('fi-s-align-end')
+                ->icon('fi-o-align-end')
                 ->iconAlias('forms:components.rich-editor.toolbar.align-end'),
             RichEditorTool::make('alignJustify')
                 ->label(__('filament-forms::components.rich_editor.tools.align_justify'))
                 ->jsHandler('$getEditor()?.chain().focus().setTextAlign(\'justify\').run()')
-                ->icon('fi-s-align-justify')
+                ->icon('fi-o-align-justify')
                 ->iconAlias('forms:components.rich-editor.toolbar.align-justify'),
+            RichEditorTool::make('details')
+                ->label(__('filament-forms::components.rich_editor.tools.details'))
+                ->jsHandler('$getEditor()?.chain().focus().setDetails().run()')
+                ->icon('fi-o-details')
+                ->iconAlias('forms:components.rich-editor.toolbar.details'),
+            RichEditorTool::make('clearFormatting')
+                ->label(__('filament-forms::components.rich_editor.tools.clear_formatting'))
+                ->jsHandler('$getEditor()?.chain().focus().clearNodes().unsetAllMarks().run()')
+                ->icon('fi-o-clear-formatting')
+                ->iconAlias('forms:components.rich-editor.toolbar.clear_formatting'),
         ]);
 
         $this->beforeStateDehydrated(function (RichEditor $component, ?array $rawState, ?Model $record): void {
@@ -562,6 +632,22 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     }
 
     /**
+     * @return array<string, array<string>>
+     */
+    public function getDefaultFloatingToolbars(): array
+    {
+        return [
+            'table' => [
+                'tableAddColumnBefore', 'tableAddColumnAfter', 'tableDeleteColumn',
+                'tableAddRowBefore', 'tableAddRowAfter', 'tableDeleteRow',
+                'tableMergeCells', 'tableSplitCell',
+                'tableToggleHeaderRow',
+                'tableDelete',
+            ],
+        ];
+    }
+
+    /**
      * @return array<string | array<string>>
      */
     public function getDefaultToolbarButtons(): array
@@ -571,6 +657,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
             ['h2', 'h3', 'alignStart', 'alignCenter', 'alignEnd'],
             ['blockquote', 'codeBlock', 'bulletList', 'orderedList'],
             [
+                'table',
                 'attachFiles',
                 ...(filled($this->getCustomBlocks()) ? ['customBlocks'] : []),
                 ...(filled($this->getMergeTags()) ? ['mergeTags'] : []),
@@ -709,5 +796,23 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     public function getCustomBlock(string $id): ?string
     {
         return $this->getCachedCustomBlocks()[$id] ?? null;
+    }
+
+    /**
+     * @param  array<string | array<string>> | Closure | null  $toolbars
+     */
+    public function floatingToolbars(array | Closure | null $toolbars): static
+    {
+        $this->floatingToolbars = $toolbars;
+
+        return $this;
+    }
+
+    /**
+     * @return array<string, array<string>>
+     */
+    public function getFloatingToolbars(): array
+    {
+        return $this->evaluate($this->floatingToolbars) ?? $this->getDefaultFloatingToolbars();
     }
 }

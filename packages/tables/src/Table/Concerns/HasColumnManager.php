@@ -209,7 +209,8 @@ trait HasColumnManager
             ->icon(FilamentIcon::resolve('tables::actions.column-manager') ?? Heroicon::ViewColumns)
             ->color('gray')
             ->livewireClickHandlerEnabled(false)
-            ->table($this);
+            ->table($this)
+            ->authorize(true);
 
         if ($this->modifyColumnManagerTriggerActionUsing) {
             $action = $this->evaluate($this->modifyColumnManagerTriggerActionUsing, [
@@ -231,7 +232,8 @@ trait HasColumnManager
             ->button()
             ->visible($this->hasDeferredColumnManager())
             ->alpineClickHandler('applyTableColumnManager')
-            ->table($this);
+            ->table($this)
+            ->authorize(true);
 
         if ($this->modifyColumnManagerApplyActionUsing) {
             $action = $this->evaluate($this->modifyColumnManagerApplyActionUsing, [

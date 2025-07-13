@@ -72,6 +72,7 @@
         /* If the content has badges, and they have line breaks, setting `whitespace-normal` sometimes pushes the badge
              onto the line below the bullet point if there is one, and badge content does not need to wrap anyway. */
         @apply whitespace-normal;
+        @apply wrap-break-word;
 
         & .fi-badge,
         & .fi-in-text-list-limited-message {

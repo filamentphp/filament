@@ -12,6 +12,10 @@ return [
                 'label' => 'Použít sloupce',
             ],
 
+            'reset' => [
+                'label' => 'Resetovat sloupce',
+            ],
+
         ],
 
     ],
