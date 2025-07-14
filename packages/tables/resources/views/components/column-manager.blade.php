@@ -91,7 +91,7 @@
                                         class="fi-ta-col-manager-reorder-handle fi-icon-btn"
                                         type="button"
                                     >
-                                        {{ \Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::Bars2, alias: 'tables::columns.reorder.handle') }}
+                                        {{ \Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::Bars2, alias: \Filament\Tables\View\TablesIconAlias::COLUMNS_REORDER_HANDLE) }}
                                     </button>
                                 @endif
                             </div>
@@ -139,7 +139,7 @@
                                                     class="fi-ta-col-manager-reorder-handle fi-icon-btn"
                                                     type="button"
                                                 >
-                                                    {{ \Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::Bars2, alias: 'tables::columns.reorder.handle') }}
+                                                    {{ \Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::Bars2, alias: \Filament\Tables\View\TablesIconAlias::COLUMNS_REORDER_HANDLE) }}
                                                 </button>
                                             @endif
                                         </div>
@@ -172,7 +172,7 @@
                                     class="fi-ta-col-manager-reorder-handle fi-icon-btn"
                                     type="button"
                                 >
-                                    {{ \Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::Bars2, alias: 'tables::columns.reorder.handle') }}
+                                    {{ \Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::Bars2, alias: \Filament\Tables\View\TablesIconAlias::COLUMNS_REORDER_HANDLE) }}
                                 </button>
                             @endif
                         </div>

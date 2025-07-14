@@ -28,7 +28,7 @@
                 <x-filament::input.wrapper
                     inline-prefix
                     :prefix-icon="\Filament\Support\Icons\Heroicon::MagnifyingGlass"
-                    prefix-icon-alias="forms:components.checkbox-list.search-field"
+                    :prefix-icon-alias="\Filament\Forms\View\FormsIconAlias::COMPONENTS_CHECKBOX_LIST_SEARCH_FIELD"
                     class="fi-fo-checkbox-list-search-input-wrp"
                 >
                     <input

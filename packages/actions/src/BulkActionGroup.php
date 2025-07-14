@@ -4,6 +4,7 @@ namespace Filament\Actions;
 
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
+use Filament\Tables\View\TablesIconAlias;
 
 class BulkActionGroup extends ActionGroup
 {
@@ -13,7 +14,7 @@ class BulkActionGroup extends ActionGroup
 
         $this->label(__('filament-tables::table.actions.open_bulk_actions.label'));
 
-        $this->icon(FilamentIcon::resolve('tables::actions.open-bulk-actions') ?? Heroicon::EllipsisVertical);
+        $this->icon(FilamentIcon::resolve(TablesIconAlias::ACTIONS_OPEN_BULK_ACTIONS) ?? Heroicon::EllipsisVertical);
 
         $this->defaultColor('gray');
 

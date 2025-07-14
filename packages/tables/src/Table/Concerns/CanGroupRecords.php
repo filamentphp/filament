@@ -8,6 +8,7 @@ use Filament\Support\Enums\Size;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Grouping\Group;
+use Filament\Tables\View\TablesIconAlias;
 
 trait CanGroupRecords
 {
@@ -100,7 +101,7 @@ trait CanGroupRecords
         $action = Action::make('groupRecords')
             ->label(__('filament-tables::table.actions.group.label'))
             ->iconButton()
-            ->icon(FilamentIcon::resolve('tables::actions.group') ?? Heroicon::RectangleStack)
+            ->icon(FilamentIcon::resolve(TablesIconAlias::ACTIONS_GROUP) ?? Heroicon::RectangleStack)
             ->color('gray')
             ->livewireClickHandlerEnabled(false)
             ->table($this)

@@ -33,7 +33,7 @@
                 color="gray"
                 href="https://filamentphp.com/docs"
                 :icon="\Filament\Support\Icons\Heroicon::BookOpen"
-                icon-alias="panels::widgets.filament-info.open-documentation-button"
+                :icon-alias="\Filament\View\PanelsIconAlias::WIDGETS_FILAMENT_INFO_OPEN_DOCUMENTATION_BUTTON"
                 rel="noopener noreferrer"
                 target="_blank"
             >
@@ -43,7 +43,7 @@
             <x-filament::link
                 color="gray"
                 href="https://github.com/filamentphp/filament"
-                icon-alias="panels::widgets.filament-info.open-github-button"
+                :icon-alias="\Filament\View\PanelsIconAlias::WIDGETS_FILAMENT_INFO_OPEN_GITHUB_BUTTON"
                 rel="noopener noreferrer"
                 target="_blank"
             >

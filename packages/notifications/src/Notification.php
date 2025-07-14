@@ -392,7 +392,7 @@ class Notification extends ViewComponent implements Arrayable, HasEmbeddedView
                 x-on:click="close"
                 class="fi-icon-btn fi-no-notification-close-btn"
             >
-                <?= generate_icon_html(Heroicon::XMark, alias: 'notifications::notification.close-button')->toHtml() ?>
+                <?= generate_icon_html(Heroicon::XMark, alias: \Filament\Notifications\View\NotificationsIconAlias::NOTIFICATION_CLOSE_BUTTON)->toHtml() ?>
             </button>
         </div>
 

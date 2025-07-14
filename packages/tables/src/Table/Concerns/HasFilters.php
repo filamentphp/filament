@@ -12,6 +12,7 @@ use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\BaseFilter;
+use Filament\Tables\View\TablesIconAlias;
 
 trait HasFilters
 {
@@ -200,7 +201,7 @@ trait HasFilters
         $action = Action::make('openFilters')
             ->label(__('filament-tables::table.actions.filter.label'))
             ->iconButton()
-            ->icon(FilamentIcon::resolve('tables::actions.filter') ?? Heroicon::Funnel)
+            ->icon(FilamentIcon::resolve(TablesIconAlias::ACTIONS_FILTER) ?? Heroicon::Funnel)
             ->color('gray')
             ->livewireClickHandlerEnabled(false)
             ->modalSubmitAction(false)

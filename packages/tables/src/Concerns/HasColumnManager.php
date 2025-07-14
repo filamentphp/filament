@@ -192,28 +192,39 @@ trait HasColumnManager
     }
 
     /**
-     * @return array{type: string, name: string, label: string, isToggled: bool, isToggleable: bool, columns: array<int, array{type: string, name: string, label: string, isToggled: bool, isToggleable: bool}>}
+     * @return ?array{type: string, name: string, label: string, isToggled: bool, isToggleable: bool, columns: array<int, array{type: string, name: string, label: string, isToggled: bool, isToggleable: bool}>}
      */
-    protected function mapTableColumnGroupToArray(ColumnGroup $group): array
+    protected function mapTableColumnGroupToArray(ColumnGroup $group): ?array
     {
+        $columns = collect($group->getColumns())
+            ->map(fn (Column $column): ?array => $this->mapTableColumnToArray($column))
+            ->filter()
+            ->values()
+            ->all();
+
+        if (empty($columns)) {
+            return null;
+        }
+
         return [
             'type' => self::TABLE_COLUMN_MANAGER_GROUP_TYPE,
             'name' => (string) $group->getLabel(),
             'label' => (string) $group->getLabel(),
             'isToggled' => true,
             'isToggleable' => true,
-            'columns' => collect($group->getColumns())
-                ->map(fn (Column $column): array => $this->mapTableColumnToArray($column))
-                ->values()
-                ->all(),
+            'columns' => $columns,
         ];
     }
 
     /**
-     * @return array{type: string, name: string, label: string, isToggled: bool, isToggleable: bool}
+     * @return ?array{type: string, name: string, label: string, isToggled: bool, isToggleable: bool}
      */
-    protected function mapTableColumnToArray(Column $column): array
+    protected function mapTableColumnToArray(Column $column): ?array
     {
+        if ($column->isHidden()) {
+            return null;
+        }
+
         return [
             'type' => self::TABLE_COLUMN_MANAGER_COLUMN_TYPE,
             'name' => $column->getName(),

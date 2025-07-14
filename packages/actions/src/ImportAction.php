@@ -9,6 +9,7 @@ use Filament\Actions\Imports\ImportColumn;
 use Filament\Actions\Imports\Importer;
 use Filament\Actions\Imports\Jobs\ImportCsv;
 use Filament\Actions\Imports\Models\Import;
+use Filament\Actions\View\ActionsIconAlias;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
@@ -82,7 +83,7 @@ class ImportAction extends Action
 
         $this->modalSubmitActionLabel(__('filament-actions::import.modal.actions.import.label'));
 
-        $this->groupedIcon(FilamentIcon::resolve('actions::import-action.grouped') ?? Heroicon::ArrowUpTray);
+        $this->groupedIcon(FilamentIcon::resolve(ActionsIconAlias::IMPORT_ACTION_GROUPED) ?? Heroicon::ArrowUpTray);
 
         $this->schema(fn (ImportAction $action): array => array_merge([
             FileUpload::make('file')

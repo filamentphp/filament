@@ -4,6 +4,7 @@ namespace Filament\Actions;
 
 use Closure;
 use Filament\Actions\Concerns\CanCustomizeProcess;
+use Filament\Actions\View\ActionsIconAlias;
 use Filament\Schemas\Schema;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
@@ -77,8 +78,8 @@ class ReplicateAction extends Action
             }
         });
 
-        $this->tableIcon(FilamentIcon::resolve('actions::replicate-action') ?? Heroicon::Square2Stack);
-        $this->groupedIcon(FilamentIcon::resolve('actions::replicate-action.grouped') ?? Heroicon::Square2Stack);
+        $this->tableIcon(FilamentIcon::resolve(ActionsIconAlias::REPLICATE_ACTION) ?? Heroicon::Square2Stack);
+        $this->groupedIcon(FilamentIcon::resolve(ActionsIconAlias::REPLICATE_ACTION_GROUPED) ?? Heroicon::Square2Stack);
     }
 
     public function beforeReplicaSaved(?Closure $callback): static

@@ -5,6 +5,7 @@ namespace Filament\Actions\Concerns;
 use BackedEnum;
 use Closure;
 use Filament\Actions\Action;
+use Filament\Actions\View\ActionsIconAlias;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\Width;
 use Filament\Support\Facades\FilamentIcon;
@@ -688,7 +689,7 @@ trait CanOpenModal
         }
 
         if ($this->isConfirmationRequired()) {
-            return FilamentIcon::resolve('actions::modal.confirmation') ?? Heroicon::OutlinedExclamationTriangle;
+            return FilamentIcon::resolve(ActionsIconAlias::MODAL_CONFIRMATION) ?? Heroicon::OutlinedExclamationTriangle;
         }
 
         return null;

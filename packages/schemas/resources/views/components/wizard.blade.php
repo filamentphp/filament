@@ -79,7 +79,7 @@
                             {{
                                 \Filament\Support\generate_icon_html(
                                     $completedIcon ?? \Filament\Support\Icons\Heroicon::OutlinedCheck,
-                                    alias: filled($completedIcon) ? null : 'schema::components.wizard.completed-step',
+                                    alias: filled($completedIcon) ? null : \Filament\Schemas\View\SchemaIconAlias::COMPONENTS_WIZARD_COMPLETED_STEP,
                                     attributes: new \Illuminate\View\ComponentAttributeBag([
                                         'x-cloak' => 'x-cloak',
                                         'x-show' => "getStepIndex(step) > {$loop->index}",

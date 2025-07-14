@@ -5,6 +5,7 @@ namespace Filament\Infolists\Components;
 use BackedEnum;
 use Closure;
 use Filament\Infolists\View\Components\IconEntryComponent\IconComponent;
+use Filament\Infolists\View\InfolistsIconAlias;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Concerns\CanWrap;
 use Filament\Support\Enums\Alignment;
@@ -177,7 +178,7 @@ class IconEntry extends Entry implements HasEmbeddedView
     public function getFalseIcon(): string | BackedEnum
     {
         return $this->evaluate($this->falseIcon)
-            ?? FilamentIcon::resolve('infolists::components.icon-entry.false')
+            ?? FilamentIcon::resolve(InfolistsIconAlias::COMPONENTS_ICON_ENTRY_FALSE)
             ?? Heroicon::OutlinedXCircle;
     }
 
@@ -192,7 +193,7 @@ class IconEntry extends Entry implements HasEmbeddedView
     public function getTrueIcon(): string | BackedEnum
     {
         return $this->evaluate($this->trueIcon)
-            ?? FilamentIcon::resolve('infolists::components.icon-entry.true')
+            ?? FilamentIcon::resolve(InfolistsIconAlias::COMPONENTS_ICON_ENTRY_TRUE)
             ?? Heroicon::OutlinedCheckCircle;
     }
 

@@ -83,9 +83,11 @@ trait CanFormatState
         return $this;
     }
 
-    public function isoDate(string | Closure | null $format, string | Closure | null $timezone = null): static
+    public function isoDate(string | Closure | null $format = null, string | Closure | null $timezone = null): static
     {
         $this->isDate = true;
+
+        $format ??= fn (TextColumn $column): string => $column->getTable()->getDefaultIsoDateDisplayFormat();
 
         $this->formatStateUsing(static function (TextColumn $column, $state) use ($format, $timezone): ?string {
             if (blank($state)) {
@@ -100,7 +102,7 @@ trait CanFormatState
         return $this;
     }
 
-    public function isoDateTime(string | Closure | null $format, string | Closure | null $timezone = null): static
+    public function isoDateTime(string | Closure | null $format = null, string | Closure | null $timezone = null): static
     {
         $this->isDateTime = true;
 

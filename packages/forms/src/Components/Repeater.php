@@ -6,6 +6,7 @@ use Closure;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Repeater\TableColumn;
+use Filament\Forms\View\FormsIconAlias;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Concerns\CanBeCollapsed;
 use Filament\Schemas\Components\Concerns\HasContainerGridLayout;
@@ -319,7 +320,7 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
     {
         $action = Action::make($this->getCloneActionName())
             ->label(__('filament-forms::components.repeater.actions.clone.label'))
-            ->icon(FilamentIcon::resolve('forms::components.repeater.actions.clone') ?? Heroicon::Square2Stack)
+            ->icon(FilamentIcon::resolve(FormsIconAlias::COMPONENTS_REPEATER_ACTIONS_CLONE) ?? Heroicon::Square2Stack)
             ->color('gray')
             ->action(function (array $arguments, Repeater $component): void {
                 $newUuid = $component->generateUuid();
@@ -369,7 +370,7 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
     {
         $action = Action::make($this->getDeleteActionName())
             ->label(__('filament-forms::components.repeater.actions.delete.label'))
-            ->icon(FilamentIcon::resolve('forms::components.repeater.actions.delete') ?? Heroicon::Trash)
+            ->icon(FilamentIcon::resolve(FormsIconAlias::COMPONENTS_REPEATER_ACTIONS_DELETE) ?? Heroicon::Trash)
             ->color('danger')
             ->action(function (array $arguments, Repeater $component): void {
                 $items = $component->getRawState();
@@ -410,7 +411,7 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
     {
         $action = Action::make($this->getMoveDownActionName())
             ->label(__('filament-forms::components.repeater.actions.move_down.label'))
-            ->icon(FilamentIcon::resolve('forms::components.repeater.actions.move-down') ?? Heroicon::ArrowDown)
+            ->icon(FilamentIcon::resolve(FormsIconAlias::COMPONENTS_REPEATER_ACTIONS_MOVE_DOWN) ?? Heroicon::ArrowDown)
             ->color('gray')
             ->action(function (array $arguments, Repeater $component): void {
                 $items = array_move_after($component->getRawState(), $arguments['item']);
@@ -450,7 +451,7 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
     {
         $action = Action::make($this->getMoveUpActionName())
             ->label(__('filament-forms::components.repeater.actions.move_up.label'))
-            ->icon(FilamentIcon::resolve('forms::components.repeater.actions.move-up') ?? Heroicon::ArrowUp)
+            ->icon(FilamentIcon::resolve(FormsIconAlias::COMPONENTS_REPEATER_ACTIONS_MOVE_UP) ?? Heroicon::ArrowUp)
             ->color('gray')
             ->action(function (array $arguments, Repeater $component): void {
                 $items = array_move_before($component->getRawState(), $arguments['item']);
@@ -490,7 +491,7 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
     {
         $action = Action::make($this->getReorderActionName())
             ->label(__('filament-forms::components.repeater.actions.reorder.label'))
-            ->icon(FilamentIcon::resolve('forms::components.repeater.actions.reorder') ?? Heroicon::ArrowsUpDown)
+            ->icon(FilamentIcon::resolve(FormsIconAlias::COMPONENTS_REPEATER_ACTIONS_REORDER) ?? Heroicon::ArrowsUpDown)
             ->color('gray')
             ->action(function (array $arguments, Repeater $component): void {
                 $items = [
@@ -534,7 +535,7 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
     {
         $action = Action::make($this->getCollapseActionName())
             ->label(__('filament-forms::components.repeater.actions.collapse.label'))
-            ->icon(FilamentIcon::resolve('forms::components.repeater.actions.collapse') ?? Heroicon::ChevronUp)
+            ->icon(FilamentIcon::resolve(FormsIconAlias::COMPONENTS_REPEATER_ACTIONS_COLLAPSE) ?? Heroicon::ChevronUp)
             ->color('gray')
             ->livewireClickHandlerEnabled(false)
             ->iconButton()
@@ -565,7 +566,7 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
     {
         $action = Action::make($this->getExpandActionName())
             ->label(__('filament-forms::components.repeater.actions.expand.label'))
-            ->icon(FilamentIcon::resolve('forms::components.repeater.actions.expand') ?? Heroicon::ChevronDown)
+            ->icon(FilamentIcon::resolve(FormsIconAlias::COMPONENTS_REPEATER_ACTIONS_EXPAND) ?? Heroicon::ChevronDown)
             ->color('gray')
             ->livewireClickHandlerEnabled(false)
             ->iconButton()

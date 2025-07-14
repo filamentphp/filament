@@ -5,6 +5,7 @@ namespace Filament\Actions;
 use Closure;
 use Filament\Actions\Concerns\CanCustomizeProcess;
 use Filament\Actions\Contracts\HasActions;
+use Filament\Actions\View\ActionsIconAlias;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
@@ -36,8 +37,8 @@ class EditAction extends Action
 
         $this->successNotificationTitle(__('filament-actions::edit.single.notifications.saved.title'));
 
-        $this->tableIcon(FilamentIcon::resolve('actions::edit-action') ?? Heroicon::PencilSquare);
-        $this->groupedIcon(FilamentIcon::resolve('actions::edit-action.grouped') ?? Heroicon::PencilSquare);
+        $this->tableIcon(FilamentIcon::resolve(ActionsIconAlias::EDIT_ACTION) ?? Heroicon::PencilSquare);
+        $this->groupedIcon(FilamentIcon::resolve(ActionsIconAlias::EDIT_ACTION_GROUPED) ?? Heroicon::PencilSquare);
 
         $this->fillForm(function (HasActions & HasSchemas $livewire, Model $record, ?Table $table): array {
             $translatableContentDriver = $livewire->makeFilamentTranslatableContentDriver();

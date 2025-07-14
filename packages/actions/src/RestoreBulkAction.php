@@ -3,6 +3,7 @@
 namespace Filament\Actions;
 
 use Filament\Actions\Concerns\CanCustomizeProcess;
+use Filament\Actions\View\ActionsIconAlias;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Contracts\HasTable;
@@ -71,11 +72,11 @@ class RestoreBulkAction extends BulkAction
 
         $this->defaultColor('gray');
 
-        $this->icon(FilamentIcon::resolve('actions::restore-action') ?? Heroicon::ArrowUturnLeft);
+        $this->icon(FilamentIcon::resolve(ActionsIconAlias::RESTORE_ACTION) ?? Heroicon::ArrowUturnLeft);
 
         $this->requiresConfirmation();
 
-        $this->modalIcon(FilamentIcon::resolve('actions::restore-action.modal') ?? Heroicon::OutlinedArrowUturnLeft);
+        $this->modalIcon(FilamentIcon::resolve(ActionsIconAlias::RESTORE_ACTION_MODAL) ?? Heroicon::OutlinedArrowUturnLeft);
 
         $this->action(function (): void {
             $this->process(static function (RestoreBulkAction $action, EloquentCollection | Collection | LazyCollection $records): void {

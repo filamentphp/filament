@@ -15,6 +15,7 @@ use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Schema;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
+use Filament\View\PanelsIconAlias;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 
@@ -36,7 +37,7 @@ class ViewRecord extends Page
     public static function getNavigationIcon(): string | BackedEnum | Htmlable | null
     {
         return static::$navigationIcon
-            ?? FilamentIcon::resolve('panels::resources.pages.view-record.navigation-item')
+            ?? FilamentIcon::resolve(PanelsIconAlias::RESOURCES_PAGES_VIEW_RECORD_NAVIGATION_ITEM)
             ?? Heroicon::OutlinedEye;
     }
 

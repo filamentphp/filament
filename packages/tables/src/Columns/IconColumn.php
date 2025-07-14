@@ -11,6 +11,7 @@ use Filament\Support\Enums\IconSize;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\View\Components\Columns\IconColumnComponent\IconComponent;
+use Filament\Tables\View\TablesIconAlias;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
@@ -211,7 +212,7 @@ class IconColumn extends Column implements HasEmbeddedView
     public function getFalseIcon(): string | BackedEnum
     {
         return $this->evaluate($this->falseIcon)
-            ?? FilamentIcon::resolve('tables::columns.icon-column.false')
+            ?? FilamentIcon::resolve(TablesIconAlias::COLUMNS_ICON_COLUMN_FALSE)
             ?? Heroicon::OutlinedXCircle;
     }
 
@@ -226,7 +227,7 @@ class IconColumn extends Column implements HasEmbeddedView
     public function getTrueIcon(): string | BackedEnum
     {
         return $this->evaluate($this->trueIcon)
-            ?? FilamentIcon::resolve('tables::columns.icon-column.true')
+            ?? FilamentIcon::resolve(TablesIconAlias::COLUMNS_ICON_COLUMN_TRUE)
             ?? Heroicon::OutlinedCheckCircle;
     }
 

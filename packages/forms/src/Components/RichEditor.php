@@ -144,10 +144,15 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
                 ->jsHandler('$getEditor()?.chain().focus().toggleBlockquote().run()')
                 ->icon(Heroicon::ChatBubbleBottomCenterText)
                 ->iconAlias('forms:components.rich-editor.toolbar.blockquote'),
+            RichEditorTool::make('code')
+                ->label(__('filament-forms::components.rich_editor.tools.code'))
+                ->jsHandler('$getEditor()?.chain().focus().toggleCode().run()')
+                ->icon('fi-o-code')
+                ->iconAlias('forms:components.rich-editor.toolbar.code'),
             RichEditorTool::make('codeBlock')
                 ->label(__('filament-forms::components.rich_editor.tools.code_block'))
                 ->jsHandler('$getEditor()?.chain().focus().toggleCodeBlock().run()')
-                ->icon(Heroicon::CodeBracket)
+                ->icon('fi-o-code-block')
                 ->iconAlias('forms:components.rich-editor.toolbar.code-block'),
             RichEditorTool::make('bulletList')
                 ->label(__('filament-forms::components.rich_editor.tools.bullet_list'))

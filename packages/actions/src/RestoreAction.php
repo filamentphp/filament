@@ -3,6 +3,7 @@
 namespace Filament\Actions;
 
 use Filament\Actions\Concerns\CanCustomizeProcess;
+use Filament\Actions\View\ActionsIconAlias;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Database\Eloquent\Model;
@@ -30,12 +31,12 @@ class RestoreAction extends Action
 
         $this->defaultColor('gray');
 
-        $this->tableIcon(FilamentIcon::resolve('actions::restore-action') ?? Heroicon::ArrowUturnLeft);
-        $this->groupedIcon(FilamentIcon::resolve('actions::restore-action.grouped') ?? Heroicon::ArrowUturnLeft);
+        $this->tableIcon(FilamentIcon::resolve(ActionsIconAlias::RESTORE_ACTION) ?? Heroicon::ArrowUturnLeft);
+        $this->groupedIcon(FilamentIcon::resolve(ActionsIconAlias::RESTORE_ACTION_GROUPED) ?? Heroicon::ArrowUturnLeft);
 
         $this->requiresConfirmation();
 
-        $this->modalIcon(FilamentIcon::resolve('actions::restore-action.modal') ?? Heroicon::OutlinedArrowUturnLeft);
+        $this->modalIcon(FilamentIcon::resolve(ActionsIconAlias::RESTORE_ACTION_MODAL) ?? Heroicon::OutlinedArrowUturnLeft);
 
         $this->action(function (Model $record): void {
             if (! method_exists($record, 'restore')) {

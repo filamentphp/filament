@@ -17,6 +17,8 @@ use Illuminate\View\ComponentAttributeBag;
 use League\Flysystem\UnableToCheckFileExistence;
 use Throwable;
 
+use function Filament\Support\generate_href_html;
+
 class ImageColumn extends Column implements HasEmbeddedView
 {
     use CanWrap;
@@ -481,27 +483,38 @@ class ImageColumn extends Column implements HasEmbeddedView
                 ($alignment instanceof Alignment) ? "fi-align-{$alignment->value}" : (is_string($alignment) ? $alignment : ''),
             ]);
 
+        $shouldOpenUrlInNewTab = $this->shouldOpenUrlInNewTab();
+
+        $formatState = function (mixed $stateItem) use ($defaultImageUrl, $width, $height, $shouldOpenUrlInNewTab): string {
+            $item = '<img ' . $this->getExtraImgAttributeBag()
+                ->merge([
+                    'src' => filled($stateItem) ? ($this->getImageUrl($stateItem) ?? $defaultImageUrl) : $defaultImageUrl,
+                    'x-tooltip' => filled($tooltip = $this->getTooltip($stateItem))
+                        ? '{
+                                content: ' . Js::from($tooltip) . ',
+                                theme: $store.theme,
+                            }'
+                        : null,
+                ], escape: false)
+                ->style([
+                    "height: {$height}" => $height,
+                    "width: {$width}" => $width,
+                ])
+                ->toHtml()
+                . ' />';
+
+            if (filled($url = $this->getUrl($stateItem))) {
+                $item = '<a ' . generate_href_html($url, $shouldOpenUrlInNewTab)->toHtml() . '>' . $item . '</a>';
+            }
+
+            return $item;
+        };
+
         ob_start(); ?>
 
         <div <?= $attributes->toHtml() ?>>
             <?php foreach ($state as $stateItem) { ?>
-                <img
-                    <?= $this->getExtraImgAttributeBag()
-                        ->merge([
-                            'src' => filled($stateItem) ? ($this->getImageUrl($stateItem) ?? $defaultImageUrl) : $defaultImageUrl,
-                            'x-tooltip' => filled($tooltip = $this->getTooltip($stateItem))
-                                ? '{
-                                    content: ' . Js::from($tooltip) . ',
-                                    theme: $store.theme,
-                                }'
-                                : null,
-                        ], escape: false)
-                        ->style([
-                            "height: {$height}" => $height,
-                            "width: {$width}" => $width,
-                        ])
-                        ->toHtml() ?>
-                />
+                <?= $formatState($stateItem) ?>
             <?php } ?>
 
             <?php if ($hasLimitedRemainingText) { ?>

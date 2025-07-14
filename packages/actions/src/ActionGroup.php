@@ -6,6 +6,7 @@ use BackedEnum;
 use Closure;
 use Exception;
 use Filament\Actions\Concerns\InteractsWithRecord;
+use Filament\Actions\View\ActionsIconAlias;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Components\ViewComponent;
 use Filament\Support\Concerns\HasBadge;
@@ -247,7 +248,7 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
 
     public function getIcon(): string | BackedEnum
     {
-        return $this->getBaseIcon() ?? FilamentIcon::resolve('actions::action-group') ?? Heroicon::EllipsisVertical;
+        return $this->getBaseIcon() ?? FilamentIcon::resolve(ActionsIconAlias::ACTION_GROUP) ?? Heroicon::EllipsisVertical;
     }
 
     public function isHidden(): bool
