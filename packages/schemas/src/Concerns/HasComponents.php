@@ -12,6 +12,7 @@ use Filament\Schemas\Components\Text;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 
 trait HasComponents
 {
@@ -151,11 +152,16 @@ trait HasComponents
 
             $targetRelativeKey = $findComponentUsing;
             if ($isAbsoluteKey) {
-                $targetRelativeKey = str($findComponentUsing)->replaceStart($this->getKey(true) . '.', '');
+                $targetRelativeKey = Str::replaceStart($this->getKey(true) . '.', '', $findComponentUsing);
             }
 
-            $targetLocalKey = str($targetRelativeKey)->before('.');
-            $targetNestedKey = str($targetRelativeKey)->after('.');
+            if (Str::contains($targetRelativeKey, '.')) {
+                $targetLocalKey = Str::before($targetRelativeKey, '.');
+                $targetNestedKey = Str::after($targetRelativeKey, '.');
+            } else {
+                $targetLocalKey = $targetRelativeKey;
+                $targetNestedKey = null;
+            }
 
             foreach ($this->getComponents($withActions, $withHidden) as $component) {
                 if (! ($component instanceof Component)) {
