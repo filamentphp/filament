@@ -128,14 +128,9 @@ trait HasComponents
 
     public function getComponent(string | Closure $findComponentUsing, bool $withActions = true, bool $withHidden = false, bool $isAbsoluteKey = false, ?Component $skipComponentChildContainersWhileSearching = null): Component | Action | ActionGroup | null
     {
-        if (is_string($findComponentUsing) && (! $isAbsoluteKey) && filled($key = $this->getKey())) {
-            $findComponentUsing = "{$key}.$findComponentUsing";
-            $isAbsoluteKey = true;
-        }
-
         if ($skipComponentChildContainersWhileSearching) {
-            foreach ($this->getComponents($withActions, $withHidden) as $component) {
-                if ($findComponentUsing instanceof Closure) {
+            if ($findComponentUsing instanceof Closure) {
+                foreach ($this->getComponents($withActions, $withHidden) as $component) {
                     if ($findComponentUsing($component)) {
                         return $component;
                     }
@@ -149,34 +144,55 @@ trait HasComponents
                             return $foundComponent;
                         }
                     }
-
-                    continue;
                 }
 
+                return null;
+            }
+
+            $targetRelativeKey = $findComponentUsing;
+            if ($isAbsoluteKey) {
+                $targetRelativeKey = str($findComponentUsing)->replaceStart($this->getKey(true) . '.', '');
+            }
+
+            $targetLocalKey = str($targetRelativeKey)->before('.');
+            $targetNestedKey = str($targetRelativeKey)->after('.');
+
+            foreach ($this->getComponents($withActions, $withHidden) as $component) {
                 if (! ($component instanceof Component)) {
                     continue;
                 }
-
-                $componentKey = $component->getKey();
-
-                if (filled($componentKey) && ($componentKey === $findComponentUsing)) {
-                    return $component;
-                }
-
                 if ($component === $skipComponentChildContainersWhileSearching) {
                     continue;
                 }
 
-                if (blank($componentKey) || str_starts_with($findComponentUsing, "{$componentKey}.")) {
-                    foreach ($component->getChildSchemas($withHidden) as $childSchema) {
-                        if ($foundComponent = $childSchema->getComponent($findComponentUsing, $withActions, $withHidden, $isAbsoluteKey, $skipComponentChildContainersWhileSearching)) {
-                            return $foundComponent;
-                        }
+                $componentLocalKey = $component->getKey(isAbsolute: false);
+                if (filled($componentLocalKey)) {
+                    if ($componentLocalKey !== $targetLocalKey) {
+                        continue;
+                    }
+
+                    if (empty($targetNestedKey)) {
+                        return $component;
                     }
                 }
+
+                $nestedRelativeKey = filled($componentLocalKey) ? $targetNestedKey : $targetRelativeKey;
+
+                foreach ($component->getChildSchemas($withHidden) as $childSchema) {
+                    if ($foundComponent = $childSchema->getComponent($nestedRelativeKey, $withActions, $withHidden, false, $skipComponentChildContainersWhileSearching)) {
+                        return $foundComponent;
+                    }
+                }
+
+                break;
             }
 
             return null;
+        }
+
+        if (is_string($findComponentUsing) && (! $isAbsoluteKey) && filled($key = $this->getKey())) {
+            $findComponentUsing = "{$key}.$findComponentUsing";
+            $isAbsoluteKey = true;
         }
 
         if (! is_string($findComponentUsing)) {
