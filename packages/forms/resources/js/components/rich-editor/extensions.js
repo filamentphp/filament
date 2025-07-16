@@ -3,6 +3,7 @@ import Blockquote from '@tiptap/extension-blockquote'
 import Bold from '@tiptap/extension-bold'
 import Code from '@tiptap/extension-code'
 import CodeBlock from '@tiptap/extension-code-block'
+import { Color, TextStyle } from '@tiptap/extension-text-style'
 import CustomBlock from './extension-custom-block.js'
 import {
     Details,
@@ -53,6 +54,7 @@ export default async ({
     BulletList,
     Code,
     CodeBlock,
+    Color,
     CustomBlock.configure({
         deleteCustomBlockButtonIconHtml,
         editCustomBlockButtonIconHtml,
@@ -114,6 +116,7 @@ export default async ({
         alignments: ['start', 'center', 'end', 'justify'],
         defaultAlignment: 'start',
     }),
+    TextStyle,
     Underline,
     UndoRedo,
     ...(

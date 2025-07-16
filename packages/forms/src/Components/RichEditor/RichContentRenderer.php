@@ -22,6 +22,7 @@ use League\Flysystem\UnableToCheckFileExistence;
 use Throwable;
 use Tiptap\Core\Extension;
 use Tiptap\Editor;
+use Tiptap\Extensions\Color;
 use Tiptap\Extensions\TextAlign;
 use Tiptap\Marks\Bold;
 use Tiptap\Marks\Code;
@@ -31,6 +32,7 @@ use Tiptap\Marks\Link;
 use Tiptap\Marks\Strike;
 use Tiptap\Marks\Subscript;
 use Tiptap\Marks\Superscript;
+use Tiptap\Marks\TextStyle;
 use Tiptap\Marks\Underline;
 use Tiptap\Nodes\Blockquote;
 use Tiptap\Nodes\BulletList;
@@ -255,6 +257,7 @@ class RichContentRenderer implements Htmlable
             app(BulletList::class),
             app(Code::class),
             app(CodeBlock::class),
+            app(Color::class),
             app(CustomBlockExtension::class),
             app(DetailsContentExtension::class),
             app(DetailsExtension::class),
@@ -289,6 +292,7 @@ class RichContentRenderer implements Htmlable
                     'defaultAlignment' => 'start',
                 ],
             ]),
+            app(TextStyle::class),
             app(Underline::class),
             ...array_reduce(
                 $this->getPlugins(),

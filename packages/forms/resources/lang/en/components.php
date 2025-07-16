@@ -468,6 +468,26 @@ return [
 
             ],
 
+            'color' => [
+
+                'label' => 'Color',
+
+                'modal' => [
+
+                    'heading' => 'Color',
+
+                    'form' => [
+
+                        'color' => [
+                            'label' => 'Color',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
         ],
 
         'no_merge_tag_search_results_message' => 'No merge tag results.',
@@ -484,6 +504,7 @@ return [
             'clear_formatting' => 'Clear formatting',
             'code' => 'Code',
             'code_block' => 'Code block',
+            'color' => 'Color',
             'custom_blocks' => 'Blocks',
             'details' => 'Details',
             'h1' => 'Title',

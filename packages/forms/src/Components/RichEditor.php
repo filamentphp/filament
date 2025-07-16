@@ -5,6 +5,7 @@ namespace Filament\Forms\Components;
 use Closure;
 use Filament\Actions\Action;
 use Filament\Forms\Components\RichEditor\Actions\AttachFilesAction;
+use Filament\Forms\Components\RichEditor\Actions\ColorAction;
 use Filament\Forms\Components\RichEditor\Actions\CustomBlockAction;
 use Filament\Forms\Components\RichEditor\Actions\LinkAction;
 use Filament\Forms\Components\RichEditor\EditorCommand;
@@ -17,6 +18,7 @@ use Filament\Forms\Components\RichEditor\RichContentRenderer;
 use Filament\Forms\Components\RichEditor\RichEditorTool;
 use Filament\Forms\Components\RichEditor\StateCasts\RichEditorStateCast;
 use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
+use Filament\Support\Colors\Color;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Contracts\Support\Htmlable;
@@ -70,6 +72,11 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     protected ?Closure $saveFileAttachmentFromAnotherRecordUsing = null;
 
     protected string | Closure | null $activePanel = null;
+
+    /**
+     * @var array<string,string> | Closure | null
+     */
+    protected array | Closure | null $customColors = null;
 
     /**
      * @var array<string, class-string<RichContentCustomBlock>>
@@ -297,6 +304,11 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
                 ->jsHandler('$getEditor()?.chain().focus().clearNodes().unsetAllMarks().run()')
                 ->icon('fi-o-clear-formatting')
                 ->iconAlias('forms:components.rich-editor.toolbar.clear_formatting'),
+            RichEditorTool::make('color')
+                ->label(__('filament-forms::components.rich_editor.tools.color'))
+                ->action(arguments: '{ color: $getEditor().getAttributes(\'textStyle\')?.color }')
+                ->icon(Heroicon::OutlinedSwatch)
+                ->iconAlias('forms:components.rich-editor.toolbar.color'),
         ]);
 
         $this->beforeStateDehydrated(function (RichEditor $component, ?array $rawState, ?Model $record): void {
@@ -667,6 +679,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
                 ...(filled($this->getCustomBlocks()) ? ['customBlocks'] : []),
                 ...(filled($this->getMergeTags()) ? ['mergeTags'] : []),
             ],
+            ['color'],
             ['undo', 'redo'],
         ];
     }
@@ -706,6 +719,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     {
         return [
             AttachFilesAction::make(),
+            ColorAction::make(),
             CustomBlockAction::make(),
             LinkAction::make(),
             ...array_reduce(
@@ -819,5 +833,34 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     public function getFloatingToolbars(): array
     {
         return $this->evaluate($this->floatingToolbars) ?? $this->getDefaultFloatingToolbars();
+    }
+
+    /**
+     * @param  array<string,string> | Closure | null  $colors
+     */
+    public function colors(array | Closure | null $colors): static
+    {
+        $this->customColors = $colors;
+
+        return $this;
+    }
+
+    /**
+     * @return array<string,string>
+     */
+    public function getColors(): array
+    {
+        return $this->evaluate($this->customColors) ?? $this->getDefaultColors();
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public function getDefaultColors(): array
+    {
+        return collect(Color::all())
+            ->mapWithKeys(fn (array $color, string $key): array => [
+                $color[500] => ucwords($key),
+            ])->toArray();
     }
 }

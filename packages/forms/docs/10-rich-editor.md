@@ -75,6 +75,7 @@ Additional tools available in the toolbar include:
 - `lead` - Applies a `lead` class around the text, which is typically used for the first paragraph of an article.
 - `small` - Applies the `<small>` tag to the text, which is typically used for small print or disclaimers.
 - `code` - Format the selected text as inline code.
+- `color` - Opens a color picker to change the text color.
 - `table` - Creates a table in the editor with a default layout of 3 columns and 2 rows, with the first row configured as a header row.
 - `tableAddColumnBefore` - Adds a new column before the current column.
 - `tableAddColumnAfter` - Adds a new column after the current column.
@@ -115,6 +116,22 @@ RichEditor::make('content')
             'tableToggleHeaderRow',
             'tableDelete',
         ],
+    ])
+```
+
+### Customizing color options
+
+By default, the color tool includes a set of predefined colors, but you can override these with your own choices using the `colors()` method. This allows you to define a set of colors that users can choose from when changing the text color. 
+
+```php
+use Filament\Forms\Components\RichEditor;
+
+RichEditor::make('content')
+    ->colors([
+        '#bada55' => 'Badass Green',
+        '#ff6347' => 'Tomato Red',
+        '#1e90ff' => 'Dodger Blue',
+        '#ff69b4' => 'Hot Pink',
     ])
 ```
 
