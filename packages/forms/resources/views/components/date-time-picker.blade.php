@@ -96,7 +96,7 @@
                     substr(md5(serialize([
                         $disabledDates,
                         $isDisabled,
-                        $isReadonly,
+                        $isReadOnly,
                         $maxDate,
                         $minDate,
                     ])), 0, 64)

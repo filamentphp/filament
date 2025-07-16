@@ -52,7 +52,9 @@ export default function checkboxListFormComponent({ livewireId }) {
             this.areAllCheckboxesChecked =
                 this.visibleCheckboxListOptions.length ===
                 this.visibleCheckboxListOptions.filter((checkboxLabel) =>
-                    checkboxLabel.querySelector('input[type=checkbox]:checked'),
+                    checkboxLabel.querySelector(
+                        'input[type=checkbox]:checked, input[type=checkbox]:disabled',
+                    ),
                 ).length
         },
 

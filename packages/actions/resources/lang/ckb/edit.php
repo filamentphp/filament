@@ -4,16 +4,16 @@ return [
 
     'single' => [
 
-        'label' => 'دەستکارکردن',
+        'label' => 'دەستکاریکردن',
 
         'modal' => [
 
-            'heading' => 'دەستکارکردنی :label',
+            'heading' => 'دەستکاریکردنی :label',
 
             'actions' => [
 
                 'save' => [
-                    'label' => 'نوێکردنەوە',
+                    'label' => 'پاشەکەوتکردن',
                 ],
 
             ],
@@ -23,7 +23,7 @@ return [
         'notifications' => [
 
             'saved' => [
-                'title' => 'نوێکرایەوە',
+                'title' => 'پاشەکەوتکرا',
             ],
 
         ],
