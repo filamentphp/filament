@@ -289,7 +289,6 @@ return [
             'blockquote' => 'Blockquote',
             'bold' => 'Bold',
             'bullet_list' => 'Bullet list',
-            'code' => 'Code',
             'code_block' => 'Code block',
             'heading' => 'Heading',
             'italic' => 'Italic',

@@ -66,7 +66,7 @@
                     {{
                         $column->getExtraHeaderAttributeBag()->class([
                             'fi-ta-cell fi-ta-summary-header-cell',
-                            'fi-wrapped' => $column->isHeaderWrapped(),
+                            'fi-wrapped' => $column->canHeaderWrap(),
                             (($alignment instanceof Alignment) ? "fi-align-{$alignment->value}" : (is_string($alignment) ? $alignment : '')) => (! ($loop->first && (! $extraHeadingColumn))) && $hasColumnHeaderLabel,
                         ])
                     }}

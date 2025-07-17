@@ -481,6 +481,7 @@ return [
             'bold' => 'Negrita',
             'bullet_list' => 'Viñetas',
             'clear_formatting' => 'Limpiar formato',
+            'code' => 'Código',
             'code_block' => 'Bloque de código',
             'custom_blocks' => 'Bloques',
             'details' => 'Detalles',

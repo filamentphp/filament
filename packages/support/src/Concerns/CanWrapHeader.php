@@ -6,17 +6,17 @@ use Closure;
 
 trait CanWrapHeader
 {
-    protected bool | Closure $isHeaderWrapped = false;
+    protected bool | Closure $canHeaderWrap = false;
 
     public function wrapHeader(bool | Closure $condition = true): static
     {
-        $this->isHeaderWrapped = $condition;
+        $this->canHeaderWrap = $condition;
 
         return $this;
     }
 
-    public function isHeaderWrapped(): bool
+    public function canHeaderWrap(): bool
     {
-        return (bool) $this->evaluate($this->isHeaderWrapped);
+        return (bool) $this->evaluate($this->canHeaderWrap);
     }
 }

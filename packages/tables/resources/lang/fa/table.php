@@ -6,9 +6,24 @@ return [
 
         'heading' => 'ستون‌ها',
 
+        'actions' => [
+
+            'apply' => [
+                'label' => 'اعمال ستون‌ها',
+            ],
+
+            'reset' => [
+                'label' => 'بازنشانی ستون‌ها',
+            ],
+
+        ],
     ],
 
     'columns' => [
+
+        'actions' => [
+            'label' => 'عملیات|عملیات‌ها',
+        ],
 
         'text' => [
 
@@ -141,7 +156,12 @@ return [
         ],
 
         'select' => [
+
             'placeholder' => 'همه',
+
+            'relationship' => [
+                'empty_option_label' => 'هیچ',
+            ],
         ],
 
         'trashed' => [
@@ -224,5 +244,7 @@ return [
         ],
 
     ],
+
+    'default_model_label' => 'رکورد',
 
 ];

@@ -1150,7 +1150,7 @@
                                                     {{
                                                         $columnGroup->getExtraHeaderAttributeBag()->class([
                                                             'fi-ta-header-group-cell',
-                                                            'fi-wrapped' => $columnGroup->isHeaderWrapped(),
+                                                            'fi-wrapped' => $columnGroup->canHeaderWrap(),
                                                             ((($columnGroupAlignment = $columnGroup->getAlignment()) instanceof \Filament\Support\Enums\Alignment) ? "fi-align-{$columnGroupAlignment->value}" : (is_string($columnGroupAlignment) ? $columnGroupAlignment : '')),
                                                             (filled($columnGroupHiddenFrom = $columnGroup->getHiddenFrom()) ? "{$columnGroupHiddenFrom}:fi-hidden" : ''),
                                                             (filled($columnGroupVisibleFrom = $columnGroup->getVisibleFrom()) ? "{$columnGroupVisibleFrom}:fi-visible" : ''),
@@ -1262,7 +1262,7 @@
                                                     'fi-ta-header-cell-' . str($columnName)->camel()->kebab(),
                                                     'fi-growable' => blank($columnWidth) && $column->canGrow(default: false),
                                                     'fi-grouped' => $column->getGroup(),
-                                                    'fi-wrapped' => $column->isHeaderWrapped(),
+                                                    'fi-wrapped' => $column->canHeaderWrap(),
                                                     'fi-ta-header-cell-sorted' => $isColumnActivelySorted,
                                                     ((($columnAlignment = $column->getAlignment()) instanceof \Filament\Support\Enums\Alignment) ? "fi-align-{$columnAlignment->value}" : (is_string($columnAlignment) ? $columnAlignment : '')),
                                                     (filled($columnHiddenFrom = $column->getHiddenFrom()) ? "{$columnHiddenFrom}:fi-hidden" : ''),

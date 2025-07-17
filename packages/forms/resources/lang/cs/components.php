@@ -289,7 +289,6 @@ return [
             'blockquote' => 'Bloková citace',
             'bold' => 'Tučně',
             'bullet_list' => 'Seznam s odrážkami',
-            'code' => 'Kód',
             'code_block' => 'Blok kódu',
             'heading' => 'Nadpis',
             'italic' => 'Kurzíva',

@@ -48,7 +48,7 @@
                         @foreach ($tableColumns as $column)
                             <th
                                 @class([
-                                    'fi-wrapped' => $column->isHeaderWrapped(),
+                                    'fi-wrapped' => $column->canHeaderWrap(),
                                     (($columnAlignment = $column->getAlignment()) instanceof Alignment) ? ('fi-align-' . $columnAlignment->value) : $columnAlignment,
                                 ])
                                 @style([

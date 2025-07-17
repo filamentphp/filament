@@ -289,7 +289,6 @@ return [
             'blockquote' => 'Citát',
             'bold' => 'Tučné písmo',
             'bullet_list' => 'Odrážkový zoznam',
-            'code' => 'Kód',
             'code_block' => 'Blok kódu',
             'heading' => 'Nadpis',
             'italic' => 'Kurzíva',
