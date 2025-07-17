@@ -1427,9 +1427,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         }
 
         if ($this->isMultiple()) {
-            if ((! $this->getOptionLabelsUsing) && (! $this->options)) {
-                throw new Exception("Filament failed to validate the [{$this->getStatePath()}] field\'s selected options because it did not have an [options()] or [getOptionLabelsUsing()] configuration. Please use one of these methods to inform Filament which options are valid for this field.");
-            }
+            $this->validateOptionsConfig();
 
             $state = $this->getState();
             $optionLabels = $this->getOptionLabels(withDefaults: false);
@@ -1458,9 +1456,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
             return null;
         }
 
-        if ((! $this->getOptionLabelUsing) && (! $this->options)) {
-            throw new Exception("Filament failed to validate the [{$this->getStatePath()}] field\'s selected options because it did not have an [options()] or [getOptionLabelUsing()] configuration. Please use one of these methods to inform Filament which options are valid for this field.");
-        }
+        $this->validateOptionsConfig();
 
         $optionLabel = $this->getOptionLabel(withDefault: false);
 
@@ -1489,5 +1485,12 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
     public function hasNullableBooleanState(): bool
     {
         return true;
+    }
+
+    protected function validateOptionsConfig(): void
+    {
+        if ((! $this->getOptionLabelUsing) && (! $this->options) && (! $this->getSearchResultsUsing)) {
+            throw new Exception("Filament failed to validate the [{$this->getStatePath()}] field\'s selected options because it did not have an [options()] or [getOptionLabelUsing()] configuration. Please use one of these methods to inform Filament which options are valid for this field.");
+        }
     }
 }
