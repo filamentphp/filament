@@ -25,7 +25,7 @@ trait CanGetStateFromRelationships
             if (! $record->isRelation($nestedRelationshipName)) {
                 $relationship = null;
 
-                break;
+                continue;
             }
 
             $relationship = $record->{$nestedRelationshipName}();
@@ -74,7 +74,7 @@ trait CanGetStateFromRelationships
             }
 
             if (! $currentRelationshipValue instanceof Model) {
-                break;
+                continue;
             }
 
             if (! count($relationships)) {
