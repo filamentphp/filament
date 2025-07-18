@@ -401,6 +401,36 @@ MorphToSelect::make('commentable')
 
 > Many of the same options in the select field are available for `MorphToSelect`, including `searchable()`, `preload()`, `native()`, `allowHtml()`, and `optionsLimit()`.
 
+#### Customizing the select component for each morphed type
+
+You may further customize any of the aspects of the select component using the `modifySelect()` method:
+
+```php
+use Filament\Forms\Components\MorphToSelect;
+use Illuminate\Database\Eloquent\Builder;
+
+MorphToSelect::make('commentable')
+    ->searchable()
+    ->types([
+        MorphToSelect\Type::make(Product::class)
+            ->titleAttribute('name')
+            ->modifySelect(function($select) {
+                return $select->preload()
+                    ->createOptionForm([
+                        TextInput::make('title')
+                            ->required(),
+                    ])
+                    ->createoptionusing(function (array $data) {
+                        return Product::create($data)->getKey();
+                    });
+            }),
+        MorphToSelect\Type::make(Post::class)
+            ->titleAttribute('title'),
+    ])
+```
+
+> This can be useful, if for example you want to allow all the options to appear by default for only one type or you want to allow users to add a new option for only one type.
+
 ## Allowing HTML in the option labels
 
 By default, Filament will escape any HTML in the option labels. If you'd like to allow HTML, you can use the `allowHtml()` method:

@@ -24,6 +24,8 @@ class Type
 
     public Closure $getOptionsUsing;
 
+    public ?Closure $modifySelect = null;
+
     protected ?Closure $modifyOptionsQueryUsing = null;
 
     /**
@@ -216,6 +218,13 @@ class Type
     public function searchColumns(?array $columns): static
     {
         $this->searchColumns = $columns;
+
+        return $this;
+    }
+
+    public function modifySelect(?Closure $callback): static
+    {
+        $this->modifySelect = $callback;
 
         return $this;
     }
