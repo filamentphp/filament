@@ -54,6 +54,18 @@ return [
                 'title' => 'Đã khôi phục',
             ],
 
+            'restored_partial' => [
+                'title' => 'Đã khôi phục :count của :total',
+                'missing_authorization_failure_message' => 'Bạn không có quyền khôi phục :count.',
+                'missing_processing_failure_message' => ':count không thể khôi phục.',
+            ],
+
+            'restored_none' => [
+                'title' => 'Không thể khôi phục',
+                'missing_authorization_failure_message' => 'Bạn không có quyền khôi phục :count.',
+                'missing_processing_failure_message' => ':count không thể khôi phục.',
+            ],
+
         ],
 
     ],

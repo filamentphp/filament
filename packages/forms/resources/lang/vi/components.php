@@ -297,7 +297,30 @@ return [
             'redo' => 'Làm lại',
             'strike' => 'Gạch ngang',
             'table' => 'Bảng',
+
             'undo' => 'Hoàn tác',
+        ],
+
+    ],
+
+    'modal_table_select' => [
+
+        'actions' => [
+
+            'select' => [
+
+                'label' => 'Chọn',
+
+                'actions' => [
+
+                    'select' => [
+                        'label' => 'Chọn',
+                    ],
+
+                ],
+
+            ],
+
         ],
 
     ],
@@ -365,38 +388,129 @@ return [
 
     'rich_editor' => [
 
-        'dialogs' => [
+        'actions' => [
+
+            'attach_files' => [
+
+                'label' => 'Tải lên tệp',
+
+                'modal' => [
+
+                    'heading' => 'Tải lên tệp',
+
+                    'form' => [
+
+                        'file' => [
+
+                            'label' => [
+                                'new' => 'Tệp',
+                                'existing' => 'Thay thế tệp',
+                            ],
+
+                        ],
+
+                        'alt' => [
+
+                            'label' => [
+                                'new' => 'Văn bản thay thế',
+                                'existing' => 'Thay đổi văn bản thay thế',
+                            ],
+
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
+            'custom_block' => [
+
+                'modal' => [
+
+                    'actions' => [
+
+                        'insert' => [
+                            'label' => 'Chèn',
+                        ],
+
+                        'save' => [
+                            'label' => 'Lưu',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
 
             'link' => [
 
-                'actions' => [
-                    'link' => 'Liên kết',
-                    'unlink' => 'Bỏ liên kết',
+                'label' => 'Chỉnh sửa',
+
+                'modal' => [
+
+                    'heading' => 'Liên kết',
+
+                    'form' => [
+
+                        'url' => [
+                            'label' => 'Đường dẫn',
+                        ],
+
+                        'should_open_in_new_tab' => [
+                            'label' => 'Mở trong tab mới',
+                        ],
+
+                    ],
+
                 ],
-
-                'label' => 'URL',
-
-                'placeholder' => 'Nhập URL',
 
             ],
 
         ],
 
+        'no_merge_tag_search_results_message' => 'Không có kết quả tìm kiếm cộng thêm.',
+
         'tools' => [
+            'align_center' => 'Căn giữa',
+            'align_end' => 'Căn phải',
+            'align_justify' => 'Căn giữa',
+            'align_start' => 'Căn trái',
             'attach_files' => 'Đính kèm tệp',
             'blockquote' => 'Trích dẫn',
             'bold' => 'In đậm',
             'bullet_list' => 'Danh sách đánh dấu',
+            'clear_formatting' => 'Xóa định dạng',
             'code_block' => 'Khối mã',
-            'h1' => 'Tiêu đề chính',
+            'custom_blocks' => 'Khối',
+            'h1' => 'Tiêu đề',
             'h2' => 'Tiêu đề',
-            'h3' => 'Tiêu đề phụ',
+            'h3' => 'Tiêu đề con',
+            'highlight' => 'Nổi bật',
+            'horizontal_rule' => 'Dòng ngang',
             'italic' => 'In nghiêng',
-            'link' => 'Liên kết',
+            'lead' => 'Văn bản dẫn',
+            'link' => 'Link',
+            'merge_tags' => 'Cộng thêm',
             'ordered_list' => 'Danh sách đánh số',
             'redo' => 'Làm lại',
+            'small' => 'Văn bản nhỏ',
             'strike' => 'Gạch ngang',
-            'underline' => 'Gạch chân',
+            'subscript' => 'Chỉ số dưới',
+            'superscript' => 'Chỉ số trên',
+            'table' => 'Bảng',
+            'table_delete' => 'Xóa bảng',
+            'table_add_column_before' => 'Thêm cột trước',
+            'table_add_column_after' => 'Thêm cột sau',
+            'table_delete_column' => 'Xóa cột',
+            'table_add_row_before' => 'Thêm hàng trên',
+            'table_add_row_after' => 'Thêm hàng dưới',
+            'table_delete_row' => 'Xóa hàng',
+            'table_merge_cells' => 'Ghép ô',
+            'table_split_cell' => 'Chia ô',
+            'table_toggle_header_row' => 'Chuyển đổi hàng tiêu đề',
+            'underline' => 'Gạch dưới',
             'undo' => 'Hoàn tác',
         ],
 

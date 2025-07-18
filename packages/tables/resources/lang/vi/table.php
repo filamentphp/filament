@@ -6,6 +6,14 @@ return [
 
         'heading' => 'Cột',
 
+        'actions' => [
+
+            'apply' => [
+                'label' => 'Áp dụng cột',
+            ],
+
+        ],
+
     ],
 
     'columns' => [
@@ -145,7 +153,14 @@ return [
         ],
 
         'select' => [
+
             'placeholder' => 'Tất cả',
+
+
+            'relationship' => [
+                'empty_option_label' => 'Không có',
+            ],
+
         ],
 
         'trashed' => [

@@ -43,6 +43,30 @@ return [
 
     ],
 
+    'multi_factor' => [
+
+        'heading' => 'Xác thực định danh',
+
+        'subheading' => 'Để tiếp tục đăng nhập, bạn cần xác thực định danh của mình.',
+
+        'form' => [
+
+            'provider' => [
+                'label' => 'Bạn muốn xác thực bằng cách nào?',
+            ],
+
+            'actions' => [
+
+                'authenticate' => [
+                    'label' => 'Xác nhận đăng nhập',
+                ],
+
+            ],
+
+        ],
+
+    ],
+
     'messages' => [
 
         'failed' => 'Thông tin đăng nhập không chính xác.',
