@@ -285,7 +285,7 @@ return [
     'markdown_editor' => [
 
         'tools' => [
-            'attach_files' => 'Đính kèm tệp',
+            'attach_files' => 'Đính kèm tập tin',
             'blockquote' => 'Trích dẫn',
             'bold' => 'In đậm',
             'bullet_list' => 'Danh sách đánh dấu',
@@ -392,19 +392,19 @@ return [
 
             'attach_files' => [
 
-                'label' => 'Tải lên tệp',
+                'label' => 'Tải lên tập tin',
 
                 'modal' => [
 
-                    'heading' => 'Tải lên tệp',
+                    'heading' => 'Tải lên tập tin',
 
                     'form' => [
 
                         'file' => [
 
                             'label' => [
-                                'new' => 'Tệp',
-                                'existing' => 'Thay thế tệp',
+                                'new' => 'Tập tin',
+                                'existing' => 'Thay thế tập tin',
                             ],
 
                         ],
@@ -455,7 +455,7 @@ return [
                     'form' => [
 
                         'url' => [
-                            'label' => 'Đường dẫn',
+                            'label' => 'Liên kết',
                         ],
 
                         'should_open_in_new_tab' => [
@@ -477,7 +477,7 @@ return [
             'align_end' => 'Căn phải',
             'align_justify' => 'Căn giữa',
             'align_start' => 'Căn trái',
-            'attach_files' => 'Đính kèm tệp',
+            'attach_files' => 'Đính kèm tập tin',
             'blockquote' => 'Trích dẫn',
             'bold' => 'In đậm',
             'bullet_list' => 'Danh sách đánh dấu',
@@ -491,8 +491,8 @@ return [
             'horizontal_rule' => 'Dòng ngang',
             'italic' => 'In nghiêng',
             'lead' => 'Văn bản dẫn',
-            'link' => 'Link',
-            'merge_tags' => 'Cộng thêm',
+            'link' => 'Liên kết',
+            'merge_tags' => 'Thẻ nội dung',
             'ordered_list' => 'Danh sách đánh số',
             'redo' => 'Làm lại',
             'small' => 'Văn bản nhỏ',

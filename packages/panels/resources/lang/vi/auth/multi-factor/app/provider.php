@@ -39,7 +39,7 @@ return [
 
             'messages' => [
 
-                'invalid' => 'Mã bạn nhập không hợp lệ.',
+                'invalid' => 'Mã bạn đã nhập không hợp lệ.',
 
             ],
 

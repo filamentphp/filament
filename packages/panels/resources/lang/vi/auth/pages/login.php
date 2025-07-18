@@ -45,14 +45,14 @@ return [
 
     'multi_factor' => [
 
-        'heading' => 'Xác thực định danh',
+        'heading' => 'Xác minh danh tính',
 
-        'subheading' => 'Để tiếp tục đăng nhập, bạn cần xác thực định danh của mình.',
+        'subheading' => 'Để tiếp tục đăng nhập, bạn cần xác minh danh tính của mình.',
 
         'form' => [
 
             'provider' => [
-                'label' => 'Bạn muốn xác thực bằng cách nào?',
+                'label' => 'Bạn muốn xác minh bằng cách nào?',
             ],
 
             'actions' => [

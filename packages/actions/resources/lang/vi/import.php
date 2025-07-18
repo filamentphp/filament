@@ -12,12 +12,12 @@ return [
 
             'file' => [
 
-                'label' => 'Tệp',
+                'label' => 'Tập tin',
 
-                'placeholder' => 'Tải lên tệp CSV',
+                'placeholder' => 'Tải lên tập tin CSV',
 
                 'rules' => [
-                    'duplicate_columns' => '{0} Tệp không được chứa nhiều hơn một tiêu đề cột trống.|{1,*} Tệp không được chứa các tiêu đề cột trùng lặp: :columns.',
+                    'duplicate_columns' => '{0} Tập tin không được chứa nhiều hơn một tiêu đề cột trống.|{1,*} Tập tin không được chứa các tiêu đề cột trùng lặp: :columns.',
                 ],
 
             ],
@@ -32,7 +32,7 @@ return [
         'actions' => [
 
             'download_example' => [
-                'label' => 'Tải xuống tệp CSV mẫu',
+                'label' => 'Tải xuống tập tin CSV mẫu',
             ],
 
             'import' => [
@@ -60,7 +60,7 @@ return [
         ],
 
         'max_rows' => [
-            'title' => 'Tệp CSV đã tải lên quá lớn',
+            'title' => 'Tập tin CSV đã tải lên quá lớn',
             'body' => 'Bạn không thể nhập hơn 1 hàng cùng một lúc.|Bạn không thể nhập hơn :count hàng cùng một lúc.',
         ],
 
@@ -79,7 +79,7 @@ return [
         'file_name' => 'import-:import_id-:csv_name-hàng-lỗi',
         'error_header' => 'lỗi',
         'system_error' => 'Lỗi hệ thống, vui lòng liên hệ bộ phận hỗ trợ.',
-        'column_mapping_required_for_new_record' => 'Cột :attribute không được ánh xạ với cột nào trong tệp, nhưng nó là bắt buộc để tạo bản ghi mới.',
+        'column_mapping_required_for_new_record' => 'Cột :attribute không được ánh xạ với cột nào trong tập tin, nhưng nó là bắt buộc để tạo bản ghi mới.',
     ],
 
 ];

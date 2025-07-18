@@ -22,12 +22,12 @@ return [
 
                     'resend' => [
 
-                        'label' => 'Gửi mã mới qua email',
+                        'label' => 'Gửi lại mã qua email',
 
                         'notifications' => [
 
                             'resent' => [
-                                'title' => 'Chúng tôi đã gửi cho bạn mã mới qua email',
+                                'title' => 'Chúng tôi đã gửi lại mã cho bạn qua email',
                             ],
 
                         ],
@@ -38,7 +38,7 @@ return [
 
                 'messages' => [
 
-                    'invalid' => 'Mã bạn nhập không hợp lệ.',
+                    'invalid' => 'Mã bạn đã nhập không hợp lệ.',
 
                 ],
 

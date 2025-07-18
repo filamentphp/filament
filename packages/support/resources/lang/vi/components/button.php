@@ -3,7 +3,7 @@
 return [
 
     'messages' => [
-        'uploading_file' => 'Đang tải tệp lên...',
+        'uploading_file' => 'Đang tải tập tin lên...',
     ],
 
 ];

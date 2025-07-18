@@ -28,7 +28,7 @@ return [
 
                 'messages' => [
 
-                    'invalid' => 'Mã bạn nhập không hợp lệ.',
+                    'invalid' => 'Mã bạn đã nhập không hợp lệ.',
 
                 ],
 
@@ -42,7 +42,7 @@ return [
 
                 'messages' => [
 
-                    'invalid' => 'Mã khôi phục bạn nhập không hợp lệ.',
+                    'invalid' => 'Mã khôi phục bạn đã nhập không hợp lệ.',
 
                 ],
 
