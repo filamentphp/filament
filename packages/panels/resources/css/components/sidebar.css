@@ -247,5 +247,13 @@
 }
 
 .fi-sidebar-user-menu-ctn {
-    @apply mt-auto pt-4;
+    @apply mt-auto -mx-2 pt-4;
+}
+
+.fi-sidebar-open-collapse-sidebar-btn {
+    @apply mx-0!;
+}
+
+.fi-sidebar-close-collapse-sidebar-btn {
+    @apply mx-0! hidden lg:flex;
 }

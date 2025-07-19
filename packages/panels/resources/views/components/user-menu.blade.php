@@ -42,19 +42,21 @@
             <x-filament-panels::avatar.user :user="$user" />
 
             @if ($location === 'sidebar')
-                <div class="fi-user-menu-details">
-                    <h3 class="fi-user-menu-details-title">{{ $user->name }}</h3>
-                    <p class="fi-user-menu-details-body">
-                        {{ $user->email }}
-                    </p>
-                </div>
+                <div x-show="$store.sidebar.isOpen" class="fi-user-menu-details-ctn">
+                    <div class="fi-user-menu-details">
+                        <h3 class="fi-user-menu-details-title">{{ $user->name }}</h3>
+                        <p class="fi-user-menu-details-body">
+                            {{ $user->email }}
+                        </p>
+                    </div>
 
-                {{
-                    \Filament\Support\generate_icon_html(
-                        \Filament\Support\Icons\Heroicon::ChevronDown,
-                        alias: \Filament\View\PanelsIconAlias::USER_MENU_TOGGLE_BUTTON
-                    )
-                }}
+                    {{
+                        \Filament\Support\generate_icon_html(
+                            \Filament\Support\Icons\Heroicon::ChevronDown,
+                            alias: \Filament\View\PanelsIconAlias::USER_MENU_TOGGLE_BUTTON
+                        )
+                    }}
+                </div>
             @endif
         </button>
     </x-slot>

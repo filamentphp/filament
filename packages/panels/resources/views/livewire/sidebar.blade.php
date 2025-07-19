@@ -19,9 +19,9 @@
         x-bind:class="{ 'fi-sidebar-open': $store.sidebar.isOpen }"
         class="fi-sidebar fi-main-sidebar"
     >
-        <div class="fi-sidebar-header-ctn">
-            {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::TOPBAR_START) }}
+        {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::SIDEBAR_START) }}
 
+        <div class="fi-sidebar-header-ctn">
             {{-- TODO: This isn't working yet WIP --}}
             @if (!$hasTopbar && $hasNavigation)
                 <x-filament::icon-button
@@ -73,7 +73,7 @@
                         x-data="{}"
                         x-on:click="$store.sidebar.open()"
                         x-show="! $store.sidebar.isOpen"
-                        class="fi-topbar-open-collapse-sidebar-btn"
+                        class="fi-sidebar-open-collapse-sidebar-btn"
                     />
                 @endif
 
@@ -96,7 +96,7 @@
                         x-data="{}"
                         x-on:click="$store.sidebar.close()"
                         x-show="$store.sidebar.isOpen"
-                        class="fi-topbar-close-collapse-sidebar-btn"
+                        class="fi-sidebar-close-collapse-sidebar-btn"
                     />
                 @endif
 

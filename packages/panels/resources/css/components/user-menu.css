@@ -7,7 +7,7 @@
 }
 
 .fi-sidebar .fi-user-menu-trigger {
-    @apply flex w-full items-center justify-center gap-x-3 rounded-lg p-2 text-sm font-medium outline-hidden transition duration-75 hover:bg-gray-100 focus-visible:bg-gray-100 dark:hover:bg-white/5 dark:focus-visible:bg-white/5;
+    @apply flex w-full items-center justify-center gap-x-3 rounded-lg text-sm font-medium outline-hidden transition duration-75 hover:bg-gray-100 focus-visible:bg-gray-100 dark:hover:bg-white/5 dark:focus-visible:bg-white/5;
 
     .fi-user-menu-details {
         @apply flex flex-col items-start gap-y-1 min-w-0 flex-1;
@@ -20,4 +20,12 @@
     .fi-user-menu-details-body {
         @apply text-xs text-gray-500 dark:text-gray-400 truncate w-full max-w-full text-left;
     }
+}
+
+.fi-sidebar.fi-sidebar-open .fi-user-menu-trigger {
+    @apply p-2;
+}
+
+.fi-user-menu-details-ctn {
+    @apply flex flex-1;
 }
