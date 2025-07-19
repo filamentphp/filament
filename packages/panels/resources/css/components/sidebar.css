@@ -56,7 +56,7 @@
 }
 
 .fi-sidebar {
-    @apply fixed inset-y-0 start-0 z-30 flex h-screen flex-col content-start bg-white transition-all lg:top-[4rem] lg:z-20 lg:bg-transparent lg:transition-none dark:bg-gray-900 dark:lg:bg-transparent;
+    @apply fixed inset-y-0 start-0 z-30 flex h-screen flex-col content-start bg-white transition-all lg:z-20 lg:bg-transparent lg:transition-none dark:bg-gray-900 dark:lg:bg-transparent;
 
     &.fi-sidebar-open {
         @apply w-(--sidebar-width) translate-x-0 shadow-xl ring-1 ring-gray-950/5 lg:shadow-none lg:ring-0 rtl:-translate-x-0 dark:ring-white/10;
@@ -65,6 +65,10 @@
     &:not(.fi-sidebar-open) {
         @apply -translate-x-full rtl:translate-x-full;
     }
+}
+
+.fi-body-has-topbar .fi-sidebar {
+    @apply lg:top-[4rem] lg:h-[calc(100dvh-4rem)];
 }
 
 .fi-sidebar-close-overlay {
@@ -130,11 +134,23 @@
 }
 
 .fi-sidebar-header-ctn {
-    @apply overflow-x-clip lg:hidden;
+    @apply overflow-x-clip;
 }
 
 .fi-sidebar-header {
-    @apply flex h-16 items-center bg-white px-6 ring-1 ring-gray-950/5 lg:shadow-xs dark:bg-gray-900 dark:ring-white/10;
+    @apply flex h-16 items-center;
+}
+
+.fi-body-has-topbar .fi-sidebar-header {
+    @apply lg:hidden px-6 bg-white ring-1 ring-gray-950/5 lg:shadow-xs dark:bg-gray-900 dark:ring-white/10;
+}
+
+:not(.fi-body-has-topbar) .fi-sidebar-header {
+    @apply bg-transparent px-4 ring-0 shadow-none;
+
+    .fi-logo {
+        @apply ms-3;
+    }
 }
 
 .fi-sidebar-nav {
