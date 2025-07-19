@@ -3,6 +3,7 @@
     use Illuminate\Support\Arr;
 
     $user = filament()->auth()->user();
+    $location = $attributes->get('location', 'topbar'); // Default to 'topbar' for backward compatibility
 
     $items = $this->getUserMenuItems();
 
@@ -24,10 +25,11 @@
 {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::USER_MENU_BEFORE) }}
 
 <x-filament::dropdown
-    placement="bottom-end"
+    placement="{{ $location === 'topbar' ? 'bottom-end' : 'top-end' }}"
     teleport
     :attributes="
         \Filament\Support\prepare_inherited_attributes($attributes)
+            ->except('location')
             ->class(['fi-user-menu'])
     "
 >
@@ -38,6 +40,22 @@
             class="fi-user-menu-trigger"
         >
             <x-filament-panels::avatar.user :user="$user" />
+
+            @if ($location === 'sidebar')
+                <div class="fi-user-menu-details">
+                    <h3 class="fi-user-menu-details-title">{{ $user->name }}</h3>
+                    <p class="fi-user-menu-details-body">
+                        {{ $user->email }}
+                    </p>
+                </div>
+
+                {{
+                    \Filament\Support\generate_icon_html(
+                        \Filament\Support\Icons\Heroicon::ChevronDown,
+                        alias: \Filament\View\PanelsIconAlias::USER_MENU_TOGGLE_BUTTON
+                    )
+                }}
+            @endif
         </button>
     </x-slot>
 

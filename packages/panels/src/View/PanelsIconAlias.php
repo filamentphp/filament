@@ -56,6 +56,8 @@ class PanelsIconAlias
 
     const USER_MENU_LOGOUT_BUTTON = 'panels::user-menu.logout-button';
 
+    const USER_MENU_TOGGLE_BUTTON = 'panels::user-menu.toggle-button';
+
     const WIDGETS_ACCOUNT_LOGOUT_BUTTON = 'panels::widgets.account.logout-button';
 
     const WIDGETS_FILAMENT_INFO_OPEN_DOCUMENTATION_BUTTON = 'panels::widgets.filament-info.open-documentation-button';
