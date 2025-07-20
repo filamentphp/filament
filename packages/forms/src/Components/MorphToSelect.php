@@ -118,8 +118,8 @@ class MorphToSelect extends Component
             ]) ?? $keySelect;
         }
 
-        if ($selectedType?->modifySelect) {
-            $keySelect = $this->evaluate($selectedType->modifySelect, [
+        if ($selectedType?->modifyKeySelectUsing) {
+            $keySelect = $this->evaluate($selectedType->modifyKeySelectUsing, [
                 'select' => $keySelect,
             ]) ?? $keySelect;
         }

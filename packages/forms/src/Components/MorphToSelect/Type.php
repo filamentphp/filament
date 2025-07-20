@@ -24,7 +24,7 @@ class Type
 
     public Closure $getOptionsUsing;
 
-    public ?Closure $modifySelect = null;
+    public ?Closure $modifyKeySelectUsing = null;
 
     protected ?Closure $modifyOptionsQueryUsing = null;
 
@@ -222,9 +222,9 @@ class Type
         return $this;
     }
 
-    public function modifySelect(?Closure $callback): static
+    public function modifyKeySelectUsing(?Closure $callback): static
     {
-        $this->modifySelect = $callback;
+        $this->modifyKeySelectUsing = $callback;
 
         return $this;
     }

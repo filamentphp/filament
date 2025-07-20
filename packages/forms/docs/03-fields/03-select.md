@@ -401,35 +401,63 @@ MorphToSelect::make('commentable')
 
 > Many of the same options in the select field are available for `MorphToSelect`, including `searchable()`, `preload()`, `native()`, `allowHtml()`, and `optionsLimit()`.
 
-#### Customizing the select component for each morphed type
+#### Customizing the morph select fields
 
-You may further customize any of the aspects of the select component using the `modifySelect()` method:
+You may further customize the "key" select field for a specific morph type using the `modifyKeySelectUsing()` method:
 
 ```php
 use Filament\Forms\Components\MorphToSelect;
-use Illuminate\Database\Eloquent\Builder;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 
 MorphToSelect::make('commentable')
-    ->searchable()
     ->types([
         MorphToSelect\Type::make(Product::class)
             ->titleAttribute('name')
-            ->modifySelect(function($select) {
-                return $select->preload()
-                    ->createOptionForm([
-                        TextInput::make('title')
-                            ->required(),
-                    ])
-                    ->createoptionusing(function (array $data) {
-                        return Product::create($data)->getKey();
-                    });
-            }),
+            ->modifyKeySelectUsing(fn (Select $select): Select => $select
+                ->createOptionForm([
+                    TextInput::make('title')
+                        ->required(),
+                ])
+                ->createOptionUsing(function (array $data): int {
+                    return Product::create($data)->getKey();
+                })),
         MorphToSelect\Type::make(Post::class)
             ->titleAttribute('title'),
     ])
 ```
 
-> This can be useful, if for example you want to allow all the options to appear by default for only one type or you want to allow users to add a new option for only one type.
+This is useful if you want to customize the "key" select field for each morphed type individually. If you want to customize the key select for all types, you can use the `modifyKeySelectUsing()` method on the `MorphToSelect` component itself:
+
+```php
+use Filament\Forms\Components\MorphToSelect;
+use Filament\Forms\Components\Select;
+
+MorphToSelect::make('commentable')
+    ->types([
+        MorphToSelect\Type::make(Product::class)
+            ->titleAttribute('name'),
+        MorphToSelect\Type::make(Post::class)
+            ->titleAttribute('title'),
+    ])
+    ->modifyKeySelectUsing(fn (Select $select): Select => $select->native())
+```
+
+You can also modify the "type" select field using the `modifyTypeSelectUsing()` method:
+
+```php
+use Filament\Forms\Components\MorphToSelect;
+use Filament\Forms\Components\Select;
+
+MorphToSelect::make('commentable')
+    ->types([
+        MorphToSelect\Type::make(Product::class)
+            ->titleAttribute('name'),
+        MorphToSelect\Type::make(Post::class)
+            ->titleAttribute('title'),
+    ])
+    ->modifyTypeSelectUsing(fn (Select $select): Select => $select->native())
+```
 
 ## Allowing HTML in the option labels
 
