@@ -32,12 +32,12 @@
         @livewire(\Filament\Livewire\Topbar::class)
 
         {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::TOPBAR_AFTER, scopes: $renderHookScopes) }}
-    @elseif ($isSidebarCollapsibleOnDesktop || $isSidebarFullyCollapsibleOnDesktop)
+    @else
         <div
             x-data="{}"
             x-show="! $store.sidebar.isOpen"
             @class([
-                'fi-layout-sidebar-collapse-toggle-btn-ctn' => $isSidebarCollapsibleOnDesktop,
+                'fi-layout-sidebar-collapse-toggle-btn-ctn' => !$isSidebarFullyCollapsibleOnDesktop,
                 'fi-layout-sidebar-fully-collapse-toggle-btn-ctn' => $isSidebarFullyCollapsibleOnDesktop,
             ])
         >
