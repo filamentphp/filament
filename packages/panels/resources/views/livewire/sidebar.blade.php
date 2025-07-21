@@ -99,7 +99,9 @@
             @endif
 
             @if (!$hasTopbar && filament()->isGlobalSearchEnabled())
-                @livewire(Filament\Livewire\GlobalSearch::class)
+                <div x-show="$store.sidebar.isOpen">
+                    @livewire(Filament\Livewire\GlobalSearch::class)
+                </div>
             @endif
 
             <ul class="fi-sidebar-nav-groups">
@@ -123,6 +125,12 @@
                     />
                 @endforeach
             </ul>
+
+            @if (! filament()->hasTopbar() && filament()->hasUserMenu())
+                <div class="fi-sidebar-user-menu-ctn">
+                    <x-filament-panels::user-menu location="sidebar" />
+                </div>
+            @endif
 
             <script>
                 var collapsedGroups = JSON.parse(
@@ -165,12 +173,6 @@
                             .classList.add('rotate-180')
                     })
             </script>
-
-            @if (! filament()->hasTopbar() && filament()->hasUserMenu())
-                <div class="fi-sidebar-user-menu-ctn">
-                    <x-filament-panels::user-menu location="sidebar" />
-                </div>
-            @endif
 
             {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::SIDEBAR_NAV_END) }}
         </nav>

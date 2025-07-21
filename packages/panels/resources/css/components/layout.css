@@ -149,10 +149,14 @@ html.fi {
     @apply my-16 w-full bg-white px-6 py-12 shadow-xs ring-1 ring-gray-950/5 sm:rounded-xl sm:px-12 dark:bg-gray-900 dark:ring-white/10;
 }
 
-.fi-layout-sidebar-toggle-btn-ctn {
+.fi-layout-sidebar-collapse-toggle-btn-ctn {
+    @apply lg:hidden px-4 flex items-center bg-white h-16 border-b border-gray-200 dark:border-gray-800;
+}
+
+.fi-layout-sidebar-fully-collapse-toggle-btn-ctn {
     @apply px-4 flex items-center bg-white h-16 border-b border-gray-200 dark:border-gray-800;
 }
 
-.fi-layout-open-fully-collapse-sidebar-btn {
+.fi-layout-sidebar-toggle-btn {
     @apply mx-0!;
 }
