@@ -22,6 +22,8 @@ class PanelsIconAlias
 
     const RESOURCES_PAGES_VIEW_RECORD_NAVIGATION_ITEM = 'panels::resources.pages.view-record.navigation-item';
 
+    const SIDEBAR_COLLAPSE_BUTTON = 'panels::sidebar.collapse-button';
+
     const SIDEBAR_COLLAPSE_BUTTON_RTL = 'panels::sidebar.collapse-button.rtl';
 
     const SIDEBAR_EXPAND_BUTTON = 'panels::sidebar.expand-button';
