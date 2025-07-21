@@ -98,6 +98,10 @@
                 </div>
             @endif
 
+            @if (!$hasTopbar && filament()->isGlobalSearchEnabled())
+                @livewire(Filament\Livewire\GlobalSearch::class)
+            @endif
+
             <ul class="fi-sidebar-nav-groups">
                 @foreach ($navigation as $group)
                     @php
