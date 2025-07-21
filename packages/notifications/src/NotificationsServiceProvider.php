@@ -49,6 +49,13 @@ class NotificationsServiceProvider extends PackageServiceProvider
                 return;
             }
 
+            // Prevent multiple dispatches in the same request
+            $requestKey = 'filament.notifications.dispatched.' . request()->fingerprint();
+            if (app()->has($requestKey)) {
+                return;
+            }
+
+            app()->instance($requestKey, true);
             $component->dispatch('notificationsSent');
         });
 
