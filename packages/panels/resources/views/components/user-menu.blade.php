@@ -42,9 +42,14 @@
             <x-filament-panels::avatar.user :user="$user" />
 
             @if ($location === 'sidebar')
-                <div x-show="$store.sidebar.isOpen" class="fi-user-menu-details-ctn">
+                <div
+                    x-show="$store.sidebar.isOpen"
+                    class="fi-user-menu-details-ctn"
+                >
                     <div class="fi-user-menu-details">
-                        <h3 class="fi-user-menu-details-title">{{ $user->name }}</h3>
+                        <h3 class="fi-user-menu-details-title">
+                            {{ $user->name }}
+                        </h3>
                         <p class="fi-user-menu-details-body">
                             {{ $user->email }}
                         </p>

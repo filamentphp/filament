@@ -150,11 +150,11 @@ html.fi {
 }
 
 .fi-layout-sidebar-collapse-toggle-btn-ctn {
-    @apply lg:hidden px-4 flex items-center bg-white h-16 border-b border-gray-200 dark:border-gray-800;
+    @apply flex h-16 items-center border-b border-gray-200 bg-white px-4 lg:hidden dark:border-gray-800;
 }
 
 .fi-layout-sidebar-fully-collapse-toggle-btn-ctn {
-    @apply px-4 flex items-center bg-white h-16 border-b border-gray-200 dark:border-gray-800;
+    @apply flex h-16 items-center border-b border-gray-200 bg-white px-4 dark:border-gray-800;
 }
 
 .fi-layout-sidebar-toggle-btn {

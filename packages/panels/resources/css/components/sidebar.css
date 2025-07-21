@@ -142,11 +142,11 @@
 }
 
 .fi-body-has-topbar .fi-sidebar-header {
-    @apply lg:hidden px-6 bg-white ring-1 ring-gray-950/5 lg:shadow-xs dark:bg-gray-900 dark:ring-white/10;
+    @apply bg-white px-6 ring-1 ring-gray-950/5 lg:hidden lg:shadow-xs dark:bg-gray-900 dark:ring-white/10;
 }
 
 :not(.fi-body-has-topbar) .fi-sidebar-header {
-    @apply bg-transparent px-4 ring-0 shadow-none;
+    @apply bg-transparent px-4 shadow-none ring-0;
 
     .fi-logo {
         @apply ms-3;
@@ -247,7 +247,7 @@
 }
 
 .fi-sidebar-user-menu-ctn {
-    @apply mt-auto -mx-2 pt-4;
+    @apply -mx-2 mt-auto pt-4;
 }
 
 .fi-sidebar-open-sidebar-btn,

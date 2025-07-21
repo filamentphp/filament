@@ -33,24 +33,27 @@
 
         {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::TOPBAR_AFTER, scopes: $renderHookScopes) }}
     @elseif ($isSidebarCollapsibleOnDesktop || $isSidebarFullyCollapsibleOnDesktop)
-        @if ($isSidebarCollapsibleOnDesktop)
-            <div x-data="{}" x-show="! $store.sidebar.isOpen" class="fi-layout-sidebar-collapse-toggle-btn-ctn">
-        @elseif ($isSidebarFullyCollapsibleOnDesktop)
-            <div x-data="{}" x-show="! $store.sidebar.isOpen" class="fi-layout-sidebar-fully-collapse-toggle-btn-ctn">
-        @endif
-                <x-filament::icon-button
-                    color="gray"
-                    :icon="\Filament\Support\Icons\Heroicon::OutlinedBars3"
-                    :icon-alias="\Filament\View\PanelsIconAlias::LAYOUT_OPEN_SIDEBAR_BUTTON"
-                    icon-size="lg"
-                    :label="__('filament-panels::layout.actions.sidebar.expand.label')"
-                    x-cloak
-                    x-data="{}"
-                    x-on:click="$store.sidebar.open()"
-                    x-show="! $store.sidebar.isOpen"
-                    class="fi-layout-sidebar-toggle-btn"
-                />
-            </div>
+        <div
+            x-data="{}"
+            x-show="! $store.sidebar.isOpen"
+            @class([
+                'fi-layout-sidebar-collapse-toggle-btn-ctn' => $isSidebarCollapsibleOnDesktop,
+                'fi-layout-sidebar-fully-collapse-toggle-btn-ctn' => $isSidebarFullyCollapsibleOnDesktop,
+            ])
+        >
+            <x-filament::icon-button
+                color="gray"
+                :icon="\Filament\Support\Icons\Heroicon::OutlinedBars3"
+                :icon-alias="\Filament\View\PanelsIconAlias::LAYOUT_OPEN_SIDEBAR_BUTTON"
+                icon-size="lg"
+                :label="__('filament-panels::layout.actions.sidebar.expand.label')"
+                x-cloak
+                x-data="{}"
+                x-on:click="$store.sidebar.open()"
+                x-show="! $store.sidebar.isOpen"
+                class="fi-layout-sidebar-toggle-btn"
+            />
+        </div>
     @endif
 
     {{-- The sidebar is after the page content in the markup to fix issues with page content overlapping dropdown content from the sidebar. --}}
