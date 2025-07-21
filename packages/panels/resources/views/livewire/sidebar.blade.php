@@ -22,35 +22,6 @@
         {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::SIDEBAR_START) }}
 
         <div class="fi-sidebar-header-ctn">
-            {{-- TODO: This isn't working yet WIP --}}
-            @if (!$hasTopbar && $hasNavigation)
-                <x-filament::icon-button
-                    color="gray"
-                    :icon="\Filament\Support\Icons\Heroicon::OutlinedBars3"
-                    :icon-alias="\Filament\View\PanelsIconAlias::TOPBAR_OPEN_SIDEBAR_BUTTON"
-                    icon-size="lg"
-                    :label="__('filament-panels::layout.actions.sidebar.expand.label')"
-                    x-cloak
-                    x-data="{}"
-                    x-on:click="$store.sidebar.open()"
-                    x-show="! $store.sidebar.isOpen"
-                    class="fi-topbar-open-sidebar-btn"
-                />
-
-                <x-filament::icon-button
-                    color="gray"
-                    :icon="\Filament\Support\Icons\Heroicon::OutlinedXMark"
-                    :icon-alias="\Filament\View\PanelsIconAlias::TOPBAR_CLOSE_SIDEBAR_BUTTON"
-                    icon-size="lg"
-                    :label="__('filament-panels::layout.actions.sidebar.collapse.label')"
-                    x-cloak
-                    x-data="{}"
-                    x-on:click="$store.sidebar.close()"
-                    x-show="$store.sidebar.isOpen"
-                    class="fi-topbar-close-sidebar-btn"
-                />
-            @endif
-
             <header
                 class="fi-sidebar-header"
             >

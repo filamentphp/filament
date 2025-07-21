@@ -6,6 +6,8 @@ class PanelsIconAlias
 {
     const GLOBAL_SEARCH_FIELD = 'panels::global-search.field';
 
+    const LAYOUT_OPEN_SIDEBAR_BUTTON = 'panels::layout.open-sidebar-button';
+
     const PAGES_DASHBOARD_ACTIONS_FILTER = 'panels::pages.dashboard.actions.filter';
 
     const PAGES_DASHBOARD_NAVIGATION_ITEM = 'panels::pages.dashboard.navigation-item';
@@ -19,8 +21,6 @@ class PanelsIconAlias
     const RESOURCES_PAGES_MANAGE_RELATED_RECORDS_NAVIGATION_ITEM = 'panels::resources.pages.manage-related-records.navigation-item';
 
     const RESOURCES_PAGES_VIEW_RECORD_NAVIGATION_ITEM = 'panels::resources.pages.view-record.navigation-item';
-
-    const SIDEBAR_COLLAPSE_BUTTON = 'panels::sidebar.collapse-button';
 
     const SIDEBAR_COLLAPSE_BUTTON_RTL = 'panels::sidebar.collapse-button.rtl';
 

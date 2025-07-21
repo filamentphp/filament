@@ -250,10 +250,24 @@
     @apply mt-auto -mx-2 pt-4;
 }
 
+.fi-sidebar-open-sidebar-btn,
 .fi-sidebar-open-collapse-sidebar-btn {
     @apply mx-0!;
 }
 
 .fi-sidebar-close-collapse-sidebar-btn {
     @apply mx-0! hidden lg:flex;
+}
+
+.fi-body {
+    &.fi-body-has-sidebar-collapsible-on-desktop,
+    &:not(.fi-body-has-sidebar-fully-collapsible-on-desktop) {
+        & .fi-sidebar-open-sidebar-btn {
+            @apply lg:hidden;
+        }
+    }
+}
+
+.fi-sidebar-close-sidebar-btn {
+    @apply mx-0! lg:hidden;
 }
