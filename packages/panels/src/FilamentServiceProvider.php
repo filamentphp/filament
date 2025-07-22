@@ -52,7 +52,7 @@ class FilamentServiceProvider extends PackageServiceProvider
                 Commands\MakeThemeCommand::class,
                 Commands\MakeUserCommand::class,
             ])
-            ->hasRoutes('web')
+            ->hasRoute('web')
             ->hasTranslations()
             ->hasViews();
     }
