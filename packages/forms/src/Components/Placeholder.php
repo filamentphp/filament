@@ -2,12 +2,14 @@
 
 namespace Filament\Forms\Components;
 
+use Filament\Support\Concerns\CanBeCopied;
+
 class Placeholder extends Component implements Contracts\HasHintActions
 {
     use Concerns\HasHelperText;
     use Concerns\HasHint;
     use Concerns\HasName;
-    use Concerns\CanBeCopied;
+    use CanBeCopied;
 
     /**
      * @var view-string
