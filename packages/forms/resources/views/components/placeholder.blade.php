@@ -12,12 +12,31 @@
     :hint-icon-tooltip="$getHintIconTooltip()"
     :state-path="$getStatePath()"
 >
+    @php
+        $copyableState = $getContent();
+        $copyMessage = $getCopyMessage($state);
+        $copyMessageDuration = $getCopyMessageDuration($state);
+        $itemIsCopyable = $isCopyable($state);
+    @endphp
     <div
         {{
             $attributes
                 ->merge($getExtraAttributes(), escape: false)
-                ->class(['fi-fo-placeholder text-sm leading-6'])
+                ->class([
+                    'fi-fo-placeholder text-sm leading-6',
+                    'cursor-pointer' => $itemIsCopyable,
+                ])
         }}
+
+        @if ($itemIsCopyable)
+            x-on:click="
+                window.navigator.clipboard.writeText(@js($copyableState))
+                $tooltip(@js($copyMessage), {
+                    theme: $store.theme,
+                    timeout: @js($copyMessageDuration),
+                })
+            "
+        @endif
     >
         {{ $getContent() }}
     </div>

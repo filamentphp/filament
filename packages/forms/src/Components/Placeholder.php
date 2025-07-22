@@ -7,6 +7,7 @@ class Placeholder extends Component implements Contracts\HasHintActions
     use Concerns\HasHelperText;
     use Concerns\HasHint;
     use Concerns\HasName;
+    use Concerns\CanBeCopied;
 
     /**
      * @var view-string

@@ -44,3 +44,42 @@ Placeholder::make('total')
         return '€' . number_format($get('cost') * $get('quantity'), 2);
     })
 ```
+
+## Allowing the content to be copied to the clipboard
+
+You may make the content copyable, such that clicking on content the value to the clipboard, and optionally specify a custom confirmation message and duration in milliseconds. This feature only works when SSL is enabled for the app.
+
+```php
+use Filament\Forms\Components\Placeholder;
+
+Placeholder::make('placeholder')
+    ->content('My content')
+    ->copyable()
+    ->copyMessage('Content copied')
+    ->copyMessageDuration(1500)
+```
+
+### Customizing the text that is copied to the clipboard
+
+You can customize the text that gets copied to the clipboard using the `copyableState()` method:
+
+```php
+use Filament\Forms\Components\Placeholder;
+
+Placeholder::make('placeholder')
+    ->content('My content')
+    ->copyable()
+    ->copyableState(fn (string $state): string => "Placeholder: {$state}")
+```
+
+In this function, you can access the whole table row with `$record`:
+
+```php
+use App\Models\Post;
+use Filament\Forms\Components\Placeholder;
+
+Placeholder::make('placeholder')
+    ->content('My content')
+    ->copyable()
+    ->copyableState(fn (Post $record): string => "Record: {$record->name}")
+```
