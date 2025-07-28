@@ -29,8 +29,6 @@ class ReplicateAction extends Action
 
     protected array $replicateFilesUsing = [];
 
-    protected array $replicateFileNamesUsing = [];
-
     public static function getDefaultName(): ?string
     {
         return 'replicate';
@@ -69,11 +67,7 @@ class ReplicateAction extends Action
 
                 $this->replica = $record->replicate($this->getExcludedAttributes());
 
-                $this->replica->fill(array_merge(
-                    $data,
-                    $this->getReplicatedFiles(),
-                    $this->getReplicatedFileNames(),
-                ));
+                $this->replica->fill(array_merge($data, $this->getReplicatedFiles()));
 
                 $this->callBeforeReplicaSaved();
 
@@ -143,34 +137,38 @@ class ReplicateAction extends Action
         return $this->replica;
     }
 
-    public function copyFile(string $file, string | Closure $directory, string | Closure | null $disk = null): string
+    public function copyFile(string $file, string $directory, ?string $disk = null): string
     {
-        $fileName = basename($file);
-        $directory = $this->evaluate($directory);
-        $disk = $this->evaluate($disk) ?: config('filesystems.default', 'local');
-        Storage::disk($disk)->copy($file, $path = "{$directory}/{$fileName}");
+        Storage::disk($disk)->copy($file, $path = $directory.'/'.basename($file));
         return $path;
     }
 
     public function replicateFiles(string | Closure $column, string | Closure $directory, string | Closure | null $disk = null): static
     {
         $column = $this->evaluate($column);
+        $directory = $this->evaluate($directory);
+        $disk = $this->evaluate($disk);
         $this->replicateFilesUsing[] = fn (Model $record): array => [
             $column => is_iterable($record->{$column})
                 ? collect($record->{$column})->map(fn (string $file): string => $this->copyFile($file, $directory, $disk))->toArray()
-                : $this->copyFile($record->{$column}, $directory, $disk)
+                : $this->copyFile($record->{$column}, $directory, $disk),
         ];
         return $this;
     }
 
-    public function replicateFileNames(string | Closure $column, string | Closure $directory): static
+    public function replicateFilesWithNames(string | Closure $column, string | Closure $namesColumn, string | Closure $directory, string | Closure | null $disk = null): static
     {
         $column = $this->evaluate($column);
+        $namesColumn = $this->evaluate($namesColumn);
         $directory = $this->evaluate($directory);
-        $this->replicateFileNamesUsing[] = fn (Model $record): array => [
+        $disk = $this->evaluate($disk);
+        $this->replicateFilesUsing[] = fn (Model $record): array => [
             $column => is_iterable($record->{$column})
-                ? collect($record->{$column})->mapWithKeys(fn (string $name, string $file): array => [$directory.'/'.basename($file) => $name])->toArray()
-                : $record->{$column}
+                ? collect($record->{$column})->map(fn (string $file): string => $this->copyFile($file, $directory, $disk))->toArray()
+                : $this->copyFile($record->{$column}, $directory, $disk),
+            $namesColumn => is_iterable($record->{$namesColumn})
+                ? collect($record->{$namesColumn})->mapWithKeys(fn (string $name, string $file): array => [$directory.'/'.basename($file) => $name])->toArray()
+                : $record->{$namesColumn},
         ];
         return $this;
     }
@@ -178,11 +176,6 @@ class ReplicateAction extends Action
     public function getReplicatedFiles(): array
     {
         return collect($this->replicateFilesUsing)->mapWithKeys(fn (Closure $callback) => $this->evaluate($callback))->toArray();
-    }
-
-    public function getReplicatedFileNames(): array
-    {
-        return collect($this->replicateFileNamesUsing)->mapWithKeys(fn (Closure $callback) => $this->evaluate($callback))->toArray();
     }
 
     /**
