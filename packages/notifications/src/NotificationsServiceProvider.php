@@ -55,7 +55,7 @@ class NotificationsServiceProvider extends PackageServiceProvider
                 return;
             }
 
-            app()->instance($requestKey, true);
+            app()->scoped($requestKey, fn () => true);
             $component->dispatch('notificationsSent');
         });
 
