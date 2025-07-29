@@ -14,7 +14,7 @@
 <div
     @if ($isSticky())
         x-data="filamentActionsSchemaComponent()"
-        x-on:scroll.window.throttle="evaluatePageScrollPosition"
+        x-on:scroll.window="evaluatePageScrollPosition"
         x-bind:class="{
             'fi-sticky': isSticky,
         }"
