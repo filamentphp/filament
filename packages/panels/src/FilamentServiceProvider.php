@@ -59,6 +59,22 @@ class FilamentServiceProvider extends PackageServiceProvider
 
     public function packageRegistered(): void
     {
+        $this->registerCoreServices();
+        $this->registerResponseContracts();
+        $this->registerMiddleware();
+    }
+
+    public function packageBooted(): void
+    {
+        $this->registerBladeComponents();
+        $this->registerAssets();
+        $this->registerLivewireMiddleware();
+        $this->registerServingCallback();
+        $this->publishStubs();
+    }
+
+    protected function registerCoreServices(): void
+    {
         $this->app->scoped('filament', function (): FilamentManager {
             return new FilamentManager;
         });
@@ -72,7 +88,10 @@ class FilamentServiceProvider extends PackageServiceProvider
         $this->app->scoped(NavigationManager::class, function (): NavigationManager {
             return new NavigationManager;
         });
+    }
 
+    protected function registerResponseContracts(): void
+    {
         $this->app->bind(BlockEmailChangeVerificationResponseContract::class, BlockEmailChangeVerificationResponse::class);
         $this->app->bind(EmailChangeVerificationResponseContract::class, EmailChangeVerificationResponse::class);
         $this->app->bind(EmailVerificationResponseContract::class, EmailVerificationResponse::class);
@@ -80,24 +99,33 @@ class FilamentServiceProvider extends PackageServiceProvider
         $this->app->bind(LogoutResponseContract::class, LogoutResponse::class);
         $this->app->bind(PasswordResetResponseContract::class, PasswordResetResponse::class);
         $this->app->bind(RegistrationResponseContract::class, RegistrationResponse::class);
+    }
 
+    protected function registerMiddleware(): void
+    {
         app(Router::class)->aliasMiddleware('panel', SetUpPanel::class);
     }
 
-    public function packageBooted(): void
+    protected function registerBladeComponents(): void
     {
         Blade::components([
             LegacyComponents\PageComponent::class => 'filament::page',
             LegacyComponents\WidgetComponent::class => 'filament::widget',
         ]);
+    }
 
+    protected function registerAssets(): void
+    {
         FilamentAsset::register([
             Font::make('inter', __DIR__ . '/../dist/fonts/inter'),
             Js::make('app', __DIR__ . '/../dist/index.js')->core(),
             Js::make('echo', __DIR__ . '/../dist/echo.js')->core(),
             Theme::make('app', __DIR__ . '/../dist/theme.css'),
         ], 'filament/filament');
+    }
 
+    protected function registerLivewireMiddleware(): void
+    {
         Livewire::addPersistentMiddleware([
             Authenticate::class,
             DisableBladeIconComponents::class,
@@ -105,16 +133,27 @@ class FilamentServiceProvider extends PackageServiceProvider
             IdentifyTenant::class,
             SetUpPanel::class,
         ]);
+    }
 
+    protected function registerServingCallback(): void
+    {
         Filament::serving(function (): void {
             Filament::setServingStatus();
         });
+    }
 
+    protected function publishStubs(): void
+    {
         if ($this->app->runningInConsole()) {
-            foreach (app(Filesystem::class)->files(__DIR__ . '/../stubs/') as $file) {
-                $this->publishes([
-                    $file->getRealPath() => base_path("stubs/filament/{$file->getFilename()}"),
-                ], 'filament-stubs');
+            $filesystem = app(Filesystem::class);
+            $stubsPath = __DIR__ . '/../stubs/';
+
+            if ($filesystem->exists($stubsPath)) {
+                foreach ($filesystem->files($stubsPath) as $file) {
+                    $this->publishes([
+                        $file->getRealPath() => base_path("stubs/filament/{$file->getFilename()}"),
+                    ], 'filament-stubs');
+                }
             }
         }
     }
