@@ -80,6 +80,7 @@ trait CanGenerateDropdownItemHtml
                 'wire:loading.attr' => $tag === 'button' ? 'disabled' : null,
                 'wire:target' => ($hasLoadingIndicator && $loadingIndicatorTarget) ? $loadingIndicatorTarget : null,
             ], escape: false)
+            ->merge($this->getExtraAttributes(), escape: false)
             ->when(
                 $isDisabled && $hasTooltip,
                 fn (ComponentAttributeBag $attributes) => $attributes->filter(
