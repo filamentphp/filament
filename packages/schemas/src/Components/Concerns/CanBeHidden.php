@@ -20,6 +20,13 @@ trait CanBeHidden
 
     protected string | Closure | null $hiddenJs = null;
 
+    protected static bool $isCachingVisibility = false;
+
+    /**
+     * @var array<string, bool>
+     */
+    protected static array $visibilityCache = [];
+
     public function hidden(bool | Closure $condition = true): static
     {
         $this->isHidden = $condition;
@@ -135,6 +142,42 @@ trait CanBeHidden
 
     public function isHidden(): bool
     {
+        if (static::isVisibilityCacheEnabled()) {
+            $componentKey = $this->getKey() ?? spl_object_id($this);
+
+            if ($this->isHidden instanceof Closure) {
+                $hiddenClosureKey = $componentKey . '.hidden.' . spl_object_id($this->isHidden);
+
+                if (! static::hasVisibilityCacheKey($hiddenClosureKey)) {
+                    static::setVisibilityCacheValue(
+                        $hiddenClosureKey,
+                        ! $this->evaluate($this->isHidden),
+                    );
+                }
+
+                if (! static::getVisibilityCacheValue($hiddenClosureKey)) {
+                    return true;
+                }
+            } elseif ($this->isHidden) {
+                return true;
+            }
+
+            if ($this->isVisible instanceof Closure) {
+                $visibleClosureKey = $componentKey . '.visible.' . spl_object_id($this->isVisible);
+
+                if (! static::hasVisibilityCacheKey($visibleClosureKey)) {
+                    static::setVisibilityCacheValue(
+                        $visibleClosureKey,
+                        $this->evaluate($this->isVisible)
+                    );
+                }
+
+                return ! static::getVisibilityCacheValue($visibleClosureKey);
+            }
+
+            return ! $this->isVisible;
+        }
+
         if ($this->evaluate($this->isHidden)) {
             return true;
         }
@@ -169,5 +212,60 @@ trait CanBeHidden
     public function getHiddenJs(): ?string
     {
         return $this->evaluate($this->hiddenJs);
+    }
+
+    public static function isVisibilityCacheEnabled(): bool
+    {
+        return static::$isCachingVisibility;
+    }
+
+    public static function getVisibilityCacheValue(string $key): bool
+    {
+        return static::$visibilityCache[$key] ?? false;
+    }
+
+    public static function setVisibilityCacheValue(string $key, bool $value): void
+    {
+        static::$visibilityCache[$key] = $value;
+    }
+
+    public static function hasVisibilityCacheKey(string $key): bool
+    {
+        return array_key_exists($key, static::$visibilityCache);
+    }
+
+    public static function enableVisibilityCache(): void
+    {
+        static::$isCachingVisibility = true;
+        static::$visibilityCache = [];
+    }
+
+    public static function disableVisibilityCache(): void
+    {
+        static::$isCachingVisibility = false;
+        static::$visibilityCache = [];
+    }
+
+    /**
+     * @template T
+     *
+     * @param  callable(): T  $callback
+     * @return T
+     */
+    public static function withVisibilityCache(callable $callback): mixed
+    {
+        $wasEnabled = static::isVisibilityCacheEnabled();
+
+        if (! $wasEnabled) {
+            static::enableVisibilityCache();
+        }
+
+        try {
+            return $callback();
+        } finally {
+            if (! $wasEnabled) {
+                static::disableVisibilityCache();
+            }
+        }
     }
 }

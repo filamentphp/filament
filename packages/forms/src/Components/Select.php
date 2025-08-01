@@ -125,6 +125,8 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
 
     protected bool | Closure | null $isSearchForcedCaseInsensitive = null;
 
+    protected bool | Closure $canOptionLabelsWrap = true;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -238,7 +240,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
 
         $action = Action::make($this->getCreateOptionActionName())
             ->label(__('filament-forms::components.select.actions.create_option.label'))
-            ->schema(function (Select $component, Schema $schema): array | Schema | null {
+            ->schema(static function (Select $component, Schema $schema): array | Schema | null {
                 return $component->getCreateOptionActionForm($schema->model(
                     $component->getRelationship() ? $component->getRelationship()->getModel()::class : null,
                 ));
@@ -390,12 +392,12 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
 
         $action = Action::make($this->getEditOptionActionName())
             ->label(__('filament-forms::components.select.actions.edit_option.label'))
-            ->schema(function (Select $component, Schema $schema): array | Schema | null {
+            ->schema(static function (Select $component, Schema $schema): array | Schema | null {
                 return $component->getEditOptionActionForm(
                     $schema->model($component->getSelectedRecord()),
                 );
             })
-            ->fillForm($this->getEditOptionActionFormData())
+            ->fillForm(static fn (Select $component): ?array => $component->getEditOptionActionFormData())
             ->action(static function (Action $action, array $arguments, Select $component, array $data, Schema $schema): void {
                 if (! $component->getUpdateOptionUsing()) {
                     throw new Exception("Select field [{$component->getStatePath()}] must have a [updateOptionUsing()] closure set.");
@@ -1351,6 +1353,18 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
     public function isSearchForcedCaseInsensitive(): ?bool
     {
         return $this->evaluate($this->isSearchForcedCaseInsensitive);
+    }
+
+    public function wrapOptionLabels(bool | Closure $condition = true): static
+    {
+        $this->canOptionLabelsWrap = $condition;
+
+        return $this;
+    }
+
+    public function canOptionLabelsWrap(): bool
+    {
+        return (bool) $this->evaluate($this->canOptionLabelsWrap);
     }
 
     public function hydrateDefaultState(?array &$hydratedDefaultState): void

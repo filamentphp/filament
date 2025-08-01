@@ -5,14 +5,21 @@ namespace Filament\Resources\RelationManagers;
 use BackedEnum;
 use Closure;
 use Filament\Actions\Action;
+use Filament\Actions\AssociateAction;
+use Filament\Actions\AttachAction;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\DetachAction;
+use Filament\Actions\DetachBulkAction;
+use Filament\Actions\DissociateAction;
+use Filament\Actions\DissociateBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ForceDeleteAction;
 use Filament\Actions\ForceDeleteBulkAction;
+use Filament\Actions\ImportAction;
 use Filament\Actions\ReplicateAction;
 use Filament\Actions\RestoreAction;
 use Filament\Actions\RestoreBulkAction;
@@ -320,20 +327,17 @@ class RelationManager extends Component implements HasActions, HasSchemas, HasTa
             return $this->getViewAuthorizationResponse($action->getRecord());
         }
 
-        if ($this->isReadOnly()) {
-            return Response::deny();
-        }
-
         return match (true) {
-            $action instanceof CreateAction => $this->getCreateAuthorizationResponse(),
-            $action instanceof DeleteAction => $this->getDeleteAuthorizationResponse($action->getRecord()),
-            $action instanceof EditAction => $this->getEditAuthorizationResponse($action->getRecord()),
-            $action instanceof ForceDeleteAction => $this->getForceDeleteAuthorizationResponse($action->getRecord()),
-            $action instanceof ReplicateAction => $this->getReplicateAuthorizationResponse($action->getRecord()),
-            $action instanceof RestoreAction => $this->getRestoreAuthorizationResponse($action->getRecord()),
-            $action instanceof DeleteBulkAction => $this->getDeleteAnyAuthorizationResponse(),
-            $action instanceof ForceDeleteBulkAction => $this->getForceDeleteAnyAuthorizationResponse(),
-            $action instanceof RestoreBulkAction => $this->getRestoreAnyAuthorizationResponse(),
+            $action instanceof AssociateAction, $action instanceof AttachAction, $action instanceof DetachAction, $action instanceof DetachBulkAction, $action instanceof DissociateAction, $action instanceof DissociateBulkAction, $action instanceof ImportAction => $this->isReadOnly() ? Response::deny() : null,
+            $action instanceof CreateAction => $this->isReadOnly() ? Response::deny() : $this->getCreateAuthorizationResponse(),
+            $action instanceof DeleteAction => $this->isReadOnly() ? Response::deny() : $this->getDeleteAuthorizationResponse($action->getRecord()),
+            $action instanceof DeleteBulkAction => $this->isReadOnly() ? Response::deny() : $this->getDeleteAnyAuthorizationResponse(),
+            $action instanceof EditAction => $this->isReadOnly() ? Response::deny() : $this->getEditAuthorizationResponse($action->getRecord()),
+            $action instanceof ForceDeleteAction => $this->isReadOnly() ? Response::deny() : $this->getForceDeleteAuthorizationResponse($action->getRecord()),
+            $action instanceof ForceDeleteBulkAction => $this->isReadOnly() ? Response::deny() : $this->getForceDeleteAnyAuthorizationResponse(),
+            $action instanceof ReplicateAction => $this->isReadOnly() ? Response::deny() : $this->getReplicateAuthorizationResponse($action->getRecord()),
+            $action instanceof RestoreAction => $this->isReadOnly() ? Response::deny() : $this->getRestoreAuthorizationResponse($action->getRecord()),
+            $action instanceof RestoreBulkAction => $this->isReadOnly() ? Response::deny() : $this->getRestoreAnyAuthorizationResponse(),
             default => null,
         };
     }

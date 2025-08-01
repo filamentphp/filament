@@ -53,6 +53,8 @@ class DateTimePicker extends Field implements HasAffixActions
 
     protected CarbonInterface | string | Closure | null $minDate = null;
 
+    protected CarbonInterface | string | Closure | null $defaultFocusedDate = null;
+
     protected string | Closure | null $timezone = null;
 
     protected string | Closure | null $locale = null;
@@ -216,6 +218,13 @@ class DateTimePicker extends Field implements HasAffixActions
         $this->rule(static function (DateTimePicker $component) {
             return "after_or_equal:{$component->getMinDate()}";
         }, static fn (DateTimePicker $component): bool => (bool) $component->getMinDate());
+
+        return $this;
+    }
+
+    public function defaultFocusedDate(CarbonInterface | string | Closure | null $date): static
+    {
+        $this->defaultFocusedDate = $date;
 
         return $this;
     }
@@ -482,6 +491,29 @@ class DateTimePicker extends Field implements HasAffixActions
     public function getMinDate(): ?string
     {
         return $this->evaluate($this->minDate);
+    }
+
+    public function getDefaultFocusedDate(): ?string
+    {
+        $defaultFocusedDate = $this->evaluate($this->defaultFocusedDate);
+
+        if (filled($defaultFocusedDate)) {
+            if (! $defaultFocusedDate instanceof CarbonInterface) {
+                try {
+                    $defaultFocusedDate = Carbon::createFromFormat($this->getFormat(), (string) $defaultFocusedDate, config('app.timezone'));
+                } catch (InvalidFormatException $exception) {
+                    try {
+                        $defaultFocusedDate = Carbon::parse($defaultFocusedDate, config('app.timezone'));
+                    } catch (InvalidFormatException $exception) {
+                        return null;
+                    }
+                }
+            }
+
+            $defaultFocusedDate = $defaultFocusedDate->setTimezone($this->getTimezone());
+        }
+
+        return $defaultFocusedDate;
     }
 
     /**

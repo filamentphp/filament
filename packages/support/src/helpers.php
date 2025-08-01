@@ -133,6 +133,10 @@ if (! function_exists('Filament\Support\generate_href_html')) {
             $html .= ' target="_blank"';
         } elseif ($shouldOpenInSpaMode ?? (FilamentView::hasSpaMode($url))) {
             $html .= ' wire:navigate';
+
+            if (FilamentView::hasSpaPrefetching()) {
+                $html .= '.hover';
+            }
         }
 
         return new HtmlString($html);

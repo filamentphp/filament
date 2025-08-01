@@ -39,7 +39,7 @@
             type="button"
             class="fi-user-menu-trigger"
         >
-            <x-filament-panels::avatar.user :user="$user" />
+            <x-filament-panels::avatar.user :user="$user" loading="lazy" />
 
             @if ($location === 'sidebar')
                 <div

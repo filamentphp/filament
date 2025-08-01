@@ -4,7 +4,11 @@
 
 <x-filament-widgets::widget class="fi-account-widget">
     <x-filament::section>
-        <x-filament-panels::avatar.user size="lg" :user="$user" />
+        <x-filament-panels::avatar.user
+            size="lg"
+            :user="$user"
+            loading="lazy"
+        />
 
         <div class="fi-account-widget-main">
             <h2 class="fi-account-widget-heading">

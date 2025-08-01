@@ -233,7 +233,7 @@ use Filament\Actions\Action;
 public function editAction(): Action
 {
     return Action::make('edit')
-        ->form([
+        ->schema([
             // ...
         ])
         // ...

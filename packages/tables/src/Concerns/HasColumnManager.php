@@ -17,12 +17,12 @@ trait HasColumnManager
     public const TABLE_COLUMN_MANAGER_COLUMN_TYPE = 'column';
 
     /**
-     * @var array<int, array{type: string, name: string, label: string, isToggled: bool, isToggleable: bool, columns?: array<int, array{type: string, name: string, label: string, isToggled: bool, isToggleable: bool}>}>
+     * @var array<int, array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool, columns?: array<int, array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool}>}>
      */
     public array $tableColumns = [];
 
     /**
-     * @var ?array<int, array{type: string, name: string, label: string, isToggled: bool, isToggleable: bool, columns?: array<int, array{type: string, name: string, label: string, isToggled: bool, isToggleable: bool}>}>
+     * @var ?array<int, array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool,columns?: array<int, array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool}>}>
      */
     protected ?array $cachedDefaultTableColumnState = null;
 
@@ -40,7 +40,7 @@ trait HasColumnManager
     }
 
     /**
-     * @return array<int, array{type: string, name: string, label: string, isToggled: bool, isToggleable: bool, columns?: array<int, array{type: string, name: string, label: string, isToggled: bool, isToggleable: bool}>}>
+     * @return array<int, array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool, columns?: array<int, array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool}>}>
      */
     public function getDefaultTableColumnState(): array
     {
@@ -64,7 +64,7 @@ trait HasColumnManager
     }
 
     /**
-     * @param  array<int, array{type: string, name: string, label: string, isToggled: bool, isToggleable: bool, columns?: array<int, array{type: string, name: string, label: string, isToggled: bool, isToggleable: bool}>}>|null  $state
+     * @param  array<int, array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool, columns?: array<int, array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool}>}>|null  $state
      */
     public function applyTableColumnManager(?array $state = null): void
     {
@@ -139,7 +139,7 @@ trait HasColumnManager
     }
 
     /**
-     * @return array<int, array{type: string, name: string, label: string, isToggled: bool, isToggleable: bool, columns?: array<int, array{type: string, name: string, label: string, isToggled: bool, isToggleable: bool}>}>
+     * @return array<int, array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool, columns?: array<int, array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool}>}>
      */
     protected function loadTableColumnsFromSession(): array
     {
@@ -192,45 +192,40 @@ trait HasColumnManager
     }
 
     /**
-     * @return ?array{type: string, name: string, label: string, isToggled: bool, isToggleable: bool, columns: array<int, array{type: string, name: string, label: string, isToggled: bool, isToggleable: bool}>}
+     * @return array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool, columns: array<int, array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool}>}
      */
-    protected function mapTableColumnGroupToArray(ColumnGroup $group): ?array
+    protected function mapTableColumnGroupToArray(ColumnGroup $group): array
     {
-        $columns = collect($group->getColumns())
-            ->map(fn (Column $column): ?array => $this->mapTableColumnToArray($column))
-            ->filter()
-            ->values()
-            ->all();
-
-        if (empty($columns)) {
-            return null;
-        }
-
         return [
             'type' => self::TABLE_COLUMN_MANAGER_GROUP_TYPE,
             'name' => (string) $group->getLabel(),
             'label' => (string) $group->getLabel(),
+            'isHidden' => empty(array_filter($group->getColumns(), fn (Column $column): bool => ! $column->isHidden())),
             'isToggled' => true,
             'isToggleable' => true,
-            'columns' => $columns,
+            'isToggledHiddenByDefault' => null,
+            'columns' => array_values(
+                array_map(
+                    fn (Column $column): array => $this->mapTableColumnToArray($column),
+                    $group->getColumns()
+                )
+            ),
         ];
     }
 
     /**
-     * @return ?array{type: string, name: string, label: string, isToggled: bool, isToggleable: bool}
+     * @return array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool}
      */
-    protected function mapTableColumnToArray(Column $column): ?array
+    protected function mapTableColumnToArray(Column $column): array
     {
-        if ($column->isHidden()) {
-            return null;
-        }
-
         return [
             'type' => self::TABLE_COLUMN_MANAGER_COLUMN_TYPE,
             'name' => $column->getName(),
             'label' => (string) $column->getLabel(),
+            'isHidden' => $column->isHidden(),
             'isToggled' => ! $column->isToggleable() || ! $column->isToggledHiddenByDefault(),
             'isToggleable' => $column->isToggleable(),
+            'isToggledHiddenByDefault' => $column->isToggleable() ? $column->isToggledHiddenByDefault() : null,
         ];
     }
 
@@ -287,9 +282,9 @@ trait HasColumnManager
     }
 
     /**
-     * @param  array{type: string, name: string, label: string, isToggled: bool, isToggleable: bool, columns?: array<int, array{type: string, name: string, label: string, isToggled: bool, isToggleable: bool}>}  $item
-     * @param  array<int, array{type: string, name: string, label: string, isToggled: bool, isToggleable: bool, columns?: array<int, array{type: string, name: string, label: string, isToggled: bool, isToggleable: bool}>}>  $defaultColumnState
-     * @return array{type: string, name: string, label: string, isToggled: bool, isToggleable: bool, columns?: array<int, array{type: string, name: string, label: string, isToggled: bool, isToggleable: bool}>}|null
+     * @param  array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool, columns?: array<int, array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool}>}  $item
+     * @param  array<int, array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool, columns?: array<int, array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool}>}>  $defaultColumnState
+     * @return array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool, columns?: array<int, array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool}>}|null
      */
     protected function syncItemFromDefaultTableColumnState(array $item, array $defaultColumnState): ?array
     {
@@ -318,9 +313,9 @@ trait HasColumnManager
     }
 
     /**
-     * @param  array{type: string, name: string, label: string, isToggled: bool, isToggleable: bool, columns?: array<int, array{type: string, name: string, label: string, isToggled: bool, isToggleable: bool}>}  $item
-     * @param  array<int, array{type: string, name: string, label: string, isToggled: bool, isToggleable: bool, columns?: array<int, array{type: string, name: string, label: string, isToggled: bool, isToggleable: bool}>}>  $tableColumnState
-     * @return array{type: string, name: string, label: string, isToggled: bool, isToggleable: bool, columns?: array<int, array{type: string, name: string, label: string, isToggled: bool, isToggleable: bool}>}
+     * @param  array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool, columns?: array<int, array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool}>}  $item
+     * @param  array<int, array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool, columns?: array<int, array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool}>}>  $tableColumnState
+     * @return array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool, columns?: array<int, array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool}>}
      */
     protected function syncItemFromTableColumnState(array $item, array $tableColumnState): array
     {
@@ -347,9 +342,9 @@ trait HasColumnManager
     }
 
     /**
-     * @param  array<int, array{type: string, name: string, label: string, isToggled: bool, isToggleable: bool}>  $existingColumns
-     * @param  array<int, array{type: string, name: string, label: string, isToggled: bool, isToggleable: bool}>  $defaultColumns
-     * @return array<int, array{type: string, name: string, label: string, isToggled: bool, isToggleable: bool}>
+     * @param  array<int, array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool}>  $existingColumns
+     * @param  array<int, array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool}>  $defaultColumns
+     * @return array<int, array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool}>
      */
     protected function syncGroupFromDefaultTableColumnState(array $existingColumns, array $defaultColumns): array
     {
@@ -380,25 +375,38 @@ trait HasColumnManager
     }
 
     /**
-     * @param  array{type: string, name: string, label: string, isToggled: bool, isToggleable: bool, columns?: array<int, array{type: string, name: string, label: string, isToggled: bool, isToggleable: bool}>}  $item
-     * @param  array{type: string, name: string, label: string, isToggled: bool, isToggleable: bool, columns?: array<int, array{type: string, name: string, label: string, isToggled: bool, isToggleable: bool}>}  $default
-     * @return array{type: string, name: string, label: string, isToggled: bool, isToggleable: bool, columns?: array<int, array{type: string, name: string, label: string, isToggled: bool, isToggleable: bool}>}
+     * @param  array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool, columns?: array<int, array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool}>}  $item
+     * @param  array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool, columns?: array<int, array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool}>}  $default
+     * @return array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool, columns?: array<int, array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool}>}
      */
     protected function syncTableColumnStateItemAttributes(array $item, array $default): array
     {
         $item['label'] = $default['label'];
         $item['isToggleable'] = $default['isToggleable'];
+        $item['isHidden'] = $default['isHidden'];
 
-        if (! $item['isToggleable']) {
+        if (! $default['isToggleable']) {
             $item['isToggled'] = true;
+        }
+
+        if ($item['type'] === self::TABLE_COLUMN_MANAGER_COLUMN_TYPE) {
+            if (
+                $default['isToggleable'] &&
+                is_null($item['isToggledHiddenByDefault'] ?? null) &&
+                is_bool($default['isToggledHiddenByDefault'])
+            ) {
+                $item['isToggled'] = ! $default['isToggledHiddenByDefault'];
+            }
+
+            $item['isToggledHiddenByDefault'] = $default['isToggleable'] ? $default['isToggledHiddenByDefault'] : null;
         }
 
         return $item;
     }
 
     /**
-     * @param  array<int, array{type: string, name: string, label: string, isToggled: bool, isToggleable: bool, columns?: array<int, array{type: string, name: string, label: string, isToggled: bool, isToggleable: bool}>}>  $defaultState
-     * @return array<int, array{type: string, name: string, label: string, isToggled: bool, isToggleable: bool, columns?: array<int, array{type: string, name: string, label: string, isToggled: bool, isToggleable: bool}>}>
+     * @param  array<int, array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool, columns?: array<int, array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool}>}>  $defaultState
+     * @return array<int, array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool, columns?: array<int, array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool}>}>
      */
     protected function getNewDefaultColumnStateItems(array $defaultState): array
     {
@@ -413,9 +421,9 @@ trait HasColumnManager
     }
 
     /**
-     * @param  array{type: string, name: string, label: string, isToggled: bool, isToggleable: bool, columns?: array<int, array{type: string, name: string, label: string, isToggled: bool, isToggleable: bool}>}  $item
-     * @param  array<int, array{type: string, name: string, label: string, isToggled: bool, isToggleable: bool, columns?: array<int, array{type: string, name: string, label: string, isToggled: bool, isToggleable: bool}>}>  $items
-     * @return array{type: string, name: string, label: string, isToggled: bool, isToggleable: bool, columns?: array<int, array{type: string, name: string, label: string, isToggled: bool, isToggleable: bool}>}|null
+     * @param  array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool, columns?: array<int, array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool}>}  $item
+     * @param  array<int, array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool, columns?: array<int, array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool}>}>  $items
+     * @return array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool, columns?: array<int, array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool}>}|null
      */
     protected function findMatchingTableColumnStateItem(array $item, array $items): ?array
     {
@@ -440,7 +448,7 @@ trait HasColumnManager
     }
 
     /**
-     * @param  array<int, array{type: string, name: string, label: string, isToggled: bool, isToggleable: bool, columns?: array<int, array{type: string, name: string, label: string, isToggled: bool, isToggleable: bool}>}>  $items
+     * @param  array<int, array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool, columns?: array<int, array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool}>}>  $items
      * @return array<int, string>
      */
     protected function flattenTableColumnStateItems(array $items): array

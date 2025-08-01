@@ -46,12 +46,17 @@ class ToggleColumn extends Column implements Editable, HasEmbeddedView
             ->merge([
                 'x-load' => true,
                 'x-load-src' => FilamentAsset::getAlpineComponentSrc('columns/toggle', 'filament/tables'),
-                'disabled' => $this->isDisabled(),
                 'x-data' => 'toggleTableColumn({
                     name: ' . Js::from($this->getName()) . ',
                     recordKey: ' . Js::from($this->getRecordKey()) . ',
                     state: ' . Js::from($state) . ',
                 })',
+                'x-tooltip' => filled($tooltip = $this->getTooltip($state))
+                    ? '{
+                        content: ' . Js::from($tooltip) . ',
+                        theme: $store.theme,
+                    }'
+                    : null,
             ], escape: false)
             ->class([
                 'fi-ta-toggle',
@@ -64,12 +69,6 @@ class ToggleColumn extends Column implements Editable, HasEmbeddedView
                 'disabled' => $this->isDisabled(),
                 'wire:loading.attr' => 'disabled',
                 'wire:target' => implode(',', Table::LOADING_TARGETS),
-                'x-tooltip' => filled($tooltip = $this->getTooltip($state))
-                    ? '{
-                        content: ' . Js::from($tooltip) . ',
-                        theme: $store.theme,
-                    }'
-                    : null,
             ], escape: false)
             ->class(['fi-toggle']);
 

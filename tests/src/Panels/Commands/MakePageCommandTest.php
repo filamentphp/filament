@@ -125,6 +125,7 @@ it('can generate a page class in a resource', function (): void {
 
     $this->artisan('make:filament-resource', [
         'model' => 'User',
+        '--record-title-attribute' => 'name',
         '--panel' => 'admin',
         '--no-interaction' => true,
     ]);
@@ -157,6 +158,7 @@ it('can generate a page view in a resource', function (): void {
 
     $this->artisan('make:filament-resource', [
         'model' => 'User',
+        '--record-title-attribute' => 'name',
         '--panel' => 'admin',
         '--no-interaction' => true,
     ]);
@@ -189,6 +191,7 @@ it('can generate a create page class in a resource', function (): void {
 
     $this->artisan('make:filament-resource', [
         'model' => 'User',
+        '--record-title-attribute' => 'name',
         '--panel' => 'admin',
         '--no-interaction' => true,
     ]);
@@ -223,6 +226,7 @@ it('can generate an edit page class in a resource', function (): void {
 
     $this->artisan('make:filament-resource', [
         'model' => 'User',
+        '--record-title-attribute' => 'name',
         '--panel' => 'admin',
         '--no-interaction' => true,
     ]);
@@ -257,6 +261,7 @@ it('can generate a view page class in a resource', function (): void {
 
     $this->artisan('make:filament-resource', [
         'model' => 'User',
+        '--record-title-attribute' => 'name',
         '--panel' => 'admin',
         '--no-interaction' => true,
     ]);
@@ -289,6 +294,7 @@ it('can generate a view page class in a resource', function (): void {
 $runGenerateManageRelatedRecordsPageCommand = function (TestCase $testCase): PendingCommand {
     $testCase->artisan('make:filament-resource', [
         'model' => 'Team',
+        '--record-title-attribute' => 'name',
         '--view' => true,
         '--panel' => 'admin',
         '--no-interaction' => true,
@@ -298,6 +304,7 @@ $runGenerateManageRelatedRecordsPageCommand = function (TestCase $testCase): Pen
 
     $testCase->artisan('make:filament-resource', [
         'model' => 'User',
+        '--record-title-attribute' => 'name',
         '--panel' => 'admin',
         '--no-interaction' => true,
     ])
@@ -527,6 +534,7 @@ it('can generate a custom record page class in a resource', function (): void {
 
     $this->artisan('make:filament-resource', [
         'model' => 'User',
+        '--record-title-attribute' => 'name',
         '--panel' => 'admin',
         '--no-interaction' => true,
     ]);

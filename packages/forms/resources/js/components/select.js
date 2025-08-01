@@ -16,6 +16,7 @@ function filled(value) {
 }
 
 export default function selectFormComponent({
+    canOptionLabelsWrap,
     canSelectPlaceholder,
     isHtmlAllowed,
     getOptionLabelUsing,
@@ -57,6 +58,7 @@ export default function selectFormComponent({
                 options,
                 placeholder,
                 state: this.state,
+                canOptionLabelsWrap,
                 canSelectPlaceholder,
                 initialOptionLabel,
                 initialOptionLabels,
@@ -113,6 +115,7 @@ class CustomSelect {
         options,
         placeholder,
         state,
+        canOptionLabelsWrap = true,
         canSelectPlaceholder = true,
         initialOptionLabel = null,
         initialOptionLabels = null,
@@ -147,6 +150,7 @@ class CustomSelect {
         this.originalOptions = JSON.parse(JSON.stringify(options)) // Keep a copy of original options
         this.placeholder = placeholder
         this.state = state
+        this.canOptionLabelsWrap = canOptionLabelsWrap
         this.canSelectPlaceholder = canSelectPlaceholder
         this.initialOptionLabel = initialOptionLabel
         this.initialOptionLabels = initialOptionLabels
@@ -221,6 +225,13 @@ class CustomSelect {
         // Create the main container
         this.container = document.createElement('div')
         this.container.className = 'fi-fo-select-ctn'
+
+        if (!this.canOptionLabelsWrap) {
+            this.container.classList.add(
+                'fi-fo-select-ctn-option-labels-not-wrapped',
+            )
+        }
+
         this.container.setAttribute('aria-haspopup', 'listbox')
 
         // Create the button that toggles the dropdown
@@ -576,14 +587,16 @@ class CustomSelect {
             option.classList.add('fi-selected')
         }
 
+        const labelSpan = document.createElement('span')
+
         // Handle HTML content if allowed
         if (this.isHtmlAllowed) {
-            const labelSpan = document.createElement('span')
             labelSpan.innerHTML = optionLabel
-            option.appendChild(labelSpan)
         } else {
-            option.appendChild(document.createTextNode(optionLabel))
+            labelSpan.textContent = optionLabel
         }
+
+        option.appendChild(labelSpan)
 
         // Add click event only if not disabled
         if (!isDisabled) {
@@ -620,7 +633,11 @@ class CustomSelect {
         if (this.isMultiple) {
             // If no items selected, show placeholder
             if (!Array.isArray(this.state) || this.state.length === 0) {
-                this.selectedDisplay.textContent = this.placeholder
+                const placeholderSpan = document.createElement('span')
+                placeholderSpan.textContent = this.placeholder
+
+                this.selectedDisplay.appendChild(placeholderSpan)
+
                 return
             }
 
@@ -641,7 +658,11 @@ class CustomSelect {
 
         // If no value selected, show placeholder
         if (this.state === null || this.state === '') {
-            this.selectedDisplay.textContent = this.placeholder
+            const placeholderSpan = document.createElement('span')
+            placeholderSpan.textContent = this.placeholder
+
+            this.selectedDisplay.appendChild(placeholderSpan)
+
             return
         }
 
@@ -761,6 +782,10 @@ class CustomSelect {
         // Create an element for the label text
         const labelElement = document.createElement('span')
         labelElement.className = 'fi-badge-label'
+
+        if (this.canOptionLabelsWrap) {
+            labelElement.classList.add('fi-wrapped')
+        }
 
         if (this.isHtmlAllowed) {
             labelElement.innerHTML = label

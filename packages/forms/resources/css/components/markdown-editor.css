@@ -279,39 +279,39 @@
     & .EasyMDEContainer .editor-statusbar {
         @apply hidden;
     }
-}
 
-.dark .fi-fo-markdown-editor {
-    --color-cm-red: #f87171;
-    --color-cm-orange: #fb923c;
-    --color-cm-amber: #fbbf24;
-    --color-cm-yellow: #facc15;
-    --color-cm-lime: #a3e635;
-    --color-cm-green: #4ade80;
-    --color-cm-emerald: #4ade80;
-    --color-cm-teal: #2dd4bf;
-    --color-cm-cyan: #22d3ee;
-    --color-cm-sky: #38bdf8;
-    --color-cm-blue: #60a5fa;
-    --color-cm-indigo: #818cf8;
-    --color-cm-violet: #a78bfa;
-    --color-cm-purple: #c084fc;
-    --color-cm-fuchsia: #e879f9;
-    --color-cm-pink: #f472b6;
-    --color-cm-rose: #fb7185;
-    --color-cm-gray: #fafafa;
-    --color-cm-gray-muted: #a1a1aa;
-    --color-cm-gray-background: #52525b;
+    @variant dark {
+        --color-cm-red: #f87171;
+        --color-cm-orange: #fb923c;
+        --color-cm-amber: #fbbf24;
+        --color-cm-yellow: #facc15;
+        --color-cm-lime: #a3e635;
+        --color-cm-green: #4ade80;
+        --color-cm-emerald: #4ade80;
+        --color-cm-teal: #2dd4bf;
+        --color-cm-cyan: #22d3ee;
+        --color-cm-sky: #38bdf8;
+        --color-cm-blue: #60a5fa;
+        --color-cm-indigo: #818cf8;
+        --color-cm-violet: #a78bfa;
+        --color-cm-purple: #c084fc;
+        --color-cm-fuchsia: #e879f9;
+        --color-cm-pink: #f472b6;
+        --color-cm-rose: #fb7185;
+        --color-cm-gray: #fafafa;
+        --color-cm-gray-muted: #a1a1aa;
+        --color-cm-gray-background: #52525b;
 
-    & .EasyMDEContainer .cm-s-easymde span.CodeMirror-selectedtext {
-        filter: invert(100%);
-    }
+        & .EasyMDEContainer .cm-s-easymde span.CodeMirror-selectedtext {
+            filter: invert(100%);
+        }
 
-    & .EasyMDEContainer .editor-toolbar button::before {
-        @apply bg-gray-300;
-    }
+        & .EasyMDEContainer .editor-toolbar button::before {
+            @apply bg-gray-300;
+        }
 
-    & .EasyMDEContainer .editor-toolbar button.active::before {
-        @apply bg-primary-400;
+        & .EasyMDEContainer .editor-toolbar button.active::before {
+            @apply bg-primary-400;
+        }
     }
 }

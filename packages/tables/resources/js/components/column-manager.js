@@ -30,12 +30,20 @@ export default function filamentTableColumnManager({ columns, isLive }) {
         },
 
         calculateGroupedColumns(group) {
-            if (!group?.columns) {
-                return { checked: false, disabled: true, indeterminate: false }
+            const visibleChildren =
+                group?.columns?.filter((column) => !column.isHidden) ?? []
+
+            if (visibleChildren.length === 0) {
+                return {
+                    hidden: true,
+                    checked: false,
+                    disabled: false,
+                    indeterminate: false,
+                }
             }
 
             const toggleableChildren = group.columns.filter(
-                (column) => column.isToggleable !== false,
+                (column) => !column.isHidden && column.isToggleable !== false,
             )
 
             if (toggleableChildren.length === 0) {
@@ -46,7 +54,7 @@ export default function filamentTableColumnManager({ columns, isLive }) {
                 (column) => column.isToggled,
             ).length
             const nonToggleableChildren = group.columns.filter(
-                (column) => column.isToggleable === false,
+                (column) => !column.isHidden && column.isToggleable === false,
             )
 
             if (toggledChildren === 0 && nonToggleableChildren.length > 0) {

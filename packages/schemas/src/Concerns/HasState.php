@@ -5,6 +5,7 @@ namespace Filament\Schemas\Concerns;
 use Closure;
 use Exception;
 use Filament\Infolists\Components\Entry;
+use Filament\Schemas\Components\Component;
 use Filament\Support\Livewire\Partials\PartialsComponentHook;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Model;
@@ -22,6 +23,11 @@ trait HasState
     protected ?array $constantState = null;
 
     protected bool | Closure $shouldPartiallyRender = false;
+
+    /**
+     * @var array<string, bool> | null
+     */
+    protected ?array $dehydratedComponentsCache = null;
 
     /**
      * @param  array<string, mixed> | null  $state
@@ -126,7 +132,7 @@ trait HasState
         } finally {
             if ($this->shouldPartiallyRender($path)) {
                 app(PartialsComponentHook::class)->renderPartial($this->getLivewire(), fn (): array => [
-                    "schema.{$this->getKey()}" => $this->toHtml(),
+                    "schema.{$this->getKey()}" => $this->toHtml(...),
                 ]);
             }
         }
@@ -154,25 +160,40 @@ trait HasState
         }
     }
 
-    public function hasDehydratedComponent(string $statePath): bool
+    /**
+     * @return array<string, bool>
+     */
+    protected function buildDehydratedComponentsCache(): array
     {
+        $cache = [];
+
         foreach ($this->getComponents(withActions: false, withHidden: true) as $component) {
             if (! $component->isDehydrated()) {
                 continue;
             }
 
-            if ($component->hasStatePath() && ($component->getStatePath() === $statePath)) {
-                return true;
+            if ($component->hasStatePath()) {
+                $cache[$component->getStatePath()] = true;
             }
 
-            foreach ($component->getChildSchemas(withHidden: true) as $container) {
-                if ($container->hasDehydratedComponent($statePath)) {
-                    return true;
-                }
+            foreach ($component->getChildSchemas(withHidden: true) as $childSchema) {
+                $cache = [
+                    ...$cache,
+                    ...$childSchema->buildDehydratedComponentsCache(),
+                ];
             }
         }
 
-        return false;
+        return $cache;
+    }
+
+    public function hasDehydratedComponent(string $statePath): bool
+    {
+        if ($this->dehydratedComponentsCache === null) {
+            $this->dehydratedComponentsCache = $this->buildDehydratedComponentsCache();
+        }
+
+        return $this->dehydratedComponentsCache[$statePath] ?? false;
     }
 
     /**
@@ -392,30 +413,32 @@ trait HasState
      */
     public function getState(bool $shouldCallHooksBefore = true, ?Closure $afterValidate = null): array
     {
-        $state = $this->validate();
+        return Component::withVisibilityCache(function () use ($shouldCallHooksBefore, $afterValidate): array {
+            $state = $this->validate();
 
-        if ($shouldCallHooksBefore) {
-            $this->callBeforeStateDehydrated($state);
+            if ($shouldCallHooksBefore) {
+                $this->callBeforeStateDehydrated($state);
 
-            $afterValidate || $this->saveRelationships();
-            $afterValidate || $this->loadStateFromRelationships(shouldHydrate: true);
-        }
+                $afterValidate || $this->saveRelationships();
+                $afterValidate || $this->loadStateFromRelationships(shouldHydrate: true);
+            }
 
-        $this->dehydrateState($state);
-        $this->mutateDehydratedState($state);
+            $this->dehydrateState($state);
+            $this->mutateDehydratedState($state);
 
-        if ($statePath = $this->getStatePath()) {
-            $state = data_get($state, $statePath) ?? [];
-        }
+            if ($statePath = $this->getStatePath()) {
+                $state = data_get($state, $statePath) ?? [];
+            }
 
-        if ($afterValidate) {
-            value($afterValidate, $state);
+            if ($afterValidate) {
+                value($afterValidate, $state);
 
-            $shouldCallHooksBefore && $this->saveRelationships();
-            $shouldCallHooksBefore && $this->loadStateFromRelationships(shouldHydrate: true);
-        }
+                $shouldCallHooksBefore && $this->saveRelationships();
+                $shouldCallHooksBefore && $this->loadStateFromRelationships(shouldHydrate: true);
+            }
 
-        return $state;
+            return $state;
+        });
     }
 
     /**

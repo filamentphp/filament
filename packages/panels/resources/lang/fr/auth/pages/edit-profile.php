@@ -33,7 +33,7 @@ return [
         'actions' => [
 
             'save' => [
-                'label' => 'Sauvegarder',
+                'label' => 'Sauvegarder les modifications',
             ],
 
         ],
@@ -60,7 +60,7 @@ return [
     'actions' => [
 
         'cancel' => [
-            'label' => 'Retour',
+            'label' => 'Annuler',
         ],
 
     ],

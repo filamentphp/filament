@@ -1,5 +1,9 @@
 .fi-badge {
-    @apply inline-flex min-w-[theme(spacing.6)] items-center justify-center gap-x-1 truncate rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-gray-600/10 ring-inset dark:bg-gray-400/10 dark:text-gray-200 dark:ring-gray-400/20;
+    @apply inline-flex min-w-[theme(spacing.6)] items-center justify-center gap-x-1 rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-gray-600/10 ring-inset dark:bg-gray-400/10 dark:text-gray-200 dark:ring-gray-400/20;
+
+    &:not(.fi-wrapped) {
+        @apply truncate;
+    }
 
     &.fi-disabled,
     &[disabled] {
@@ -15,7 +19,14 @@
     }
 
     & .fi-badge-label {
-        @apply truncate;
+        &.fi-wrapped {
+            @apply text-wrap;
+            word-break: break-word;
+        }
+
+        &:not(.fi-wrapped) {
+            @apply truncate;
+        }
     }
 
     & .fi-icon {

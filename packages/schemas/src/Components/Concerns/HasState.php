@@ -956,6 +956,11 @@ trait HasState
         return $state->all();
     }
 
+    public function getStatePathForRelationship(): ?string
+    {
+        return $this->getConstantStatePath();
+    }
+
     public function shouldUpdateValidatedStateAfterBeforeStateDehydratedRuns(): bool
     {
         return $this->shouldUpdateValidatedStateAfterBeforeStateDehydratedRuns;

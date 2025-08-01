@@ -6,6 +6,7 @@
     $isDisabled = $isDisabled();
     $isMultiple = $isMultiple();
     $isSearchable = $isSearchable();
+    $canOptionLabelsWrap = $canOptionLabelsWrap();
     $isRequired = $isRequired();
     $isConcealed = $isConcealed();
     $isHtmlAllowed = $isHtmlAllowed();
@@ -128,6 +129,7 @@
                 x-load
                 x-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('select', 'filament/forms') }}"
                 x-data="selectFormComponent({
+                            canOptionLabelsWrap: @js($canOptionLabelsWrap),
                             canSelectPlaceholder: @js($canSelectPlaceholder),
                             isHtmlAllowed: @js($isHtmlAllowed),
                             getOptionLabelUsing: async () => {

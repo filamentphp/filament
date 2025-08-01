@@ -1,9 +1,9 @@
 html.fi {
-    @apply min-h-screen;
+    @apply min-h-dvh;
 }
 
 .fi-body {
-    @apply min-h-screen bg-gray-50 font-normal text-gray-950 antialiased dark:bg-gray-950 dark:text-white;
+    @apply min-h-dvh bg-gray-50 font-normal text-gray-950 antialiased dark:bg-gray-950 dark:text-white;
 
     &.fi-body-has-sidebar-collapsible-on-desktop,
     &.fi-body-has-sidebar-fully-collapsible-on-desktop {
@@ -134,7 +134,7 @@ html.fi {
 }
 
 .fi-simple-layout {
-    @apply flex min-h-screen flex-col items-center;
+    @apply flex min-h-dvh flex-col items-center;
 }
 
 .fi-simple-layout-header {

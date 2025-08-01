@@ -1,6 +1,7 @@
 <?php
 
 use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
 use Filament\Tests\Fixtures\Livewire\Livewire;
@@ -183,6 +184,26 @@ it('throws an exception for a missing relationship', function (): void {
         ->saveRelationships();
 })->throws(Exception::class, 'The relationship [missing] does not exist on the model [Filament\Tests\Fixtures\Models\Post].');
 
+it('can use select options from an enum with `disableOptionsWhenSelectedInSiblingRepeaterItems()`', function (): void {
+    $undoRepeaterFake = Repeater::fake();
+
+    livewire(TestComponentWithEnumSelectRepeater::class)
+        ->fillForm([
+            'alternatives' => [
+                ['letter' => TestLetterEnum::A],
+                ['letter' => TestLetterEnum::B],
+            ],
+        ])
+        ->assertFormSet([
+            'alternatives' => [
+                ['letter' => TestLetterEnum::A],
+                ['letter' => TestLetterEnum::B],
+            ],
+        ]);
+
+    $undoRepeaterFake();
+});
+
 class TestComponentWithRepeater extends Livewire
 {
     public function form(Schema $form): Schema
@@ -215,4 +236,28 @@ class TestComponentWithRepeater extends Livewire
             ])
             ->statePath('data');
     }
+}
+
+class TestComponentWithEnumSelectRepeater extends Livewire
+{
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                Repeater::make('alternatives')
+                    ->schema([
+                        Select::make('letter')
+                            ->options(TestLetterEnum::class)
+                            ->disableOptionsWhenSelectedInSiblingRepeaterItems(),
+                    ]),
+            ])
+            ->statePath('data');
+    }
+}
+
+enum TestLetterEnum: string
+{
+    case A = 'A';
+    case B = 'B';
+    case C = 'C';
 }

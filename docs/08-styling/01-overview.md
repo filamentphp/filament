@@ -1,6 +1,7 @@
 ---
 title: Overview
 ---
+import Aside from "@components/Aside.astro"
 
 ## Changing the colors
 
@@ -127,15 +128,41 @@ By default, this command will use NPM to install dependencies. If you want to us
 php artisan make:filament-theme --pm=bun
 ````
 
-The command will create a CSS file and Tailwind Configuration file in the `/resources/css/filament` directory. You can then customize the theme by editing these files. It will also give you instructions on how to compile the theme and register it in Filament. **Please follow the instructions in the command to complete the setup process:**
+This command generates a CSS file in the `resources/css/filament` directory.
 
-```
-⇂ First, add a new item to the `input` array of `vite.config.js`: `resources/css/filament/admin/theme.css`
-⇂ Next, register the theme in the admin panel provider using `->viteTheme('resources/css/filament/admin/theme.css')`
-⇂ Finally, run `npm run build` to compile the theme
+Add the theme's CSS file to the input array in `vite.config.js`:
+
+```js
+input: [
+    // ...
+    'resources/css/filament/admin/theme.css',
+]
 ```
 
-Please reference the command to see the exact file names that you need to register, they may not be `admin/theme.css`.
+Now, register the Vite-compiled theme CSS file in the panel's provider:
+
+```php
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->viteTheme('resources/css/filament/admin/theme.css');
+}
+```
+
+Finally, compile the theme with Vite:
+
+```bash
+npm run build
+```
+
+<Aside variant="info">
+    Check the command output for the exact file path (e.g., `app/theme.css`), as it may vary depending on your panel's ID.
+</Aside>
+
+You can now customize the theme by editing the CSS file in `resources/css/filament`.
 
 ## Using Tailwind CSS classes in your Blade views or PHP files
 

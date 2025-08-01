@@ -18,10 +18,12 @@
     >
         @livewire(TableSelectLivewireComponent::class, [
             'isDisabled' => $isDisabled(),
+            'maxSelectableRecords' => $getMaxItems(),
             'model' => $getModel(),
             'record' => $getRecord(),
             'relationshipName' => $getRelationshipName(),
             'tableConfiguration' => base64_encode($getTableConfiguration()),
+            'tableArguments' => $getTableArguments(),
             'wire:model' => $getStatePath(),
         ], key($getLivewireKey()))
     </div>

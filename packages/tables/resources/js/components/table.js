@@ -1,7 +1,7 @@
 export default ({
-    canSelectMultipleRecords,
     canTrackDeselectedRecords,
     currentSelectionLivewireProperty,
+    maxSelectableRecords,
     $wire,
 }) => ({
     checkboxClickController: null,
@@ -33,7 +33,7 @@ export default ({
         $wire.$on('deselectAllTableRecords', () => this.deselectAllRecords())
 
         if (currentSelectionLivewireProperty) {
-            if (canSelectMultipleRecords) {
+            if (maxSelectableRecords !== 1) {
                 this.selectedRecords = new Set(this.entangledSelectedRecords)
             } else {
                 this.selectedRecords = new Set(
@@ -77,36 +77,12 @@ export default ({
         this.selectRecords(keys)
     },
 
-    async toggleSelectRecordsInGroup(group) {
-        this.isLoading = true
-
-        if (this.areRecordsSelected(this.getRecordsInGroupOnPage(group))) {
-            this.deselectRecords(
-                await $wire.getGroupedSelectableTableRecordKeys(group),
-            )
+    toggleSelectRecords(keys) {
+        if (this.areRecordsSelected(keys)) {
+            this.deselectRecords(keys)
         } else {
-            this.selectRecords(
-                await $wire.getGroupedSelectableTableRecordKeys(group),
-            )
+            this.selectRecords(keys)
         }
-
-        this.isLoading = false
-    },
-
-    getRecordsInGroupOnPage(group) {
-        const keys = []
-
-        for (let checkbox of this.$root?.getElementsByClassName(
-            'fi-ta-record-checkbox',
-        ) ?? []) {
-            if (checkbox.dataset.group !== group) {
-                continue
-            }
-
-            keys.push(checkbox.value)
-        }
-
-        return keys
     },
 
     getSelectedRecordsCount() {
@@ -133,7 +109,7 @@ export default ({
     },
 
     selectRecords(keys) {
-        if (!canSelectMultipleRecords) {
+        if (maxSelectableRecords === 1) {
             this.deselectAllRecords()
 
             keys = keys.slice(0, 1)
@@ -171,7 +147,7 @@ export default ({
     },
 
     updatedSelectedRecords() {
-        if (canSelectMultipleRecords) {
+        if (maxSelectableRecords !== 1) {
             this.entangledSelectedRecords = [...this.selectedRecords]
 
             return
@@ -212,6 +188,36 @@ export default ({
         this.updatedSelectedRecords()
     },
 
+    canSelectAllRecords(selectsCurrentPageOnly) {
+        if (selectsCurrentPageOnly) {
+            const recordsOnPage = this.getRecordsOnPage()
+
+            return (
+                !this.areRecordsSelected(recordsOnPage) &&
+                this.areRecordsToggleable(recordsOnPage)
+            )
+        }
+
+        const allSelectableRecordsCount = parseInt(
+            this.$refs.allSelectableRecordsCount?.value,
+        )
+
+        if (!allSelectableRecordsCount) {
+            return false
+        }
+
+        const selectedRecordsCount = this.getSelectedRecordsCount()
+
+        if (allSelectableRecordsCount === selectedRecordsCount) {
+            return false
+        }
+
+        return (
+            maxSelectableRecords === null ||
+            allSelectableRecordsCount <= maxSelectableRecords
+        )
+    },
+
     deselectAllRecords() {
         this.isTrackingDeselectedRecords = false
         this.selectedRecords = new Set()
@@ -230,6 +236,28 @@ export default ({
 
     areRecordsSelected(keys) {
         return keys.every((key) => this.isRecordSelected(key))
+    },
+
+    areRecordsToggleable(keys) {
+        if (maxSelectableRecords === null) {
+            return true
+        }
+
+        if (maxSelectableRecords === 1) {
+            return true
+        }
+
+        const selectedRecords = keys.filter((key) => this.isRecordSelected(key))
+
+        if (selectedRecords.length === keys.length) {
+            return true
+        }
+
+        return (
+            this.getSelectedRecordsCount() +
+                (keys.length - selectedRecords.length) <=
+            maxSelectableRecords
+        )
     },
 
     toggleCollapseGroup(group) {
@@ -294,12 +322,17 @@ export default ({
             let values = []
 
             for (let i = range[0]; i <= range[1]; i++) {
-                checkboxes[i].checked = checkbox.checked
-
                 values.push(checkboxes[i].value)
             }
 
             if (checkbox.checked) {
+                if (!this.areRecordsToggleable(values)) {
+                    checkbox.checked = false
+                    this.deselectRecords([checkbox.value])
+
+                    return
+                }
+
                 this.selectRecords(values)
             } else {
                 this.deselectRecords(values)

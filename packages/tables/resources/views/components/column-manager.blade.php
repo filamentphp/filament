@@ -57,7 +57,7 @@
             }}
         >
             <template
-                x-for="(column, index) in columns"
+                x-for="(column, index) in columns.filter((column) => ! column.isHidden)"
                 x-bind:key="(column.type === 'group' ? 'group::' : 'column::') + column.name + '_' + index"
             >
                 <div
@@ -104,7 +104,7 @@
                                 class="fi-ta-col-manager-group-items"
                             >
                                 <template
-                                    x-for="(groupColumn, index) in column.columns"
+                                    x-for="(groupColumn, index) in column.columns.filter((column) => ! column.isHidden)"
                                     x-bind:key="'column::' + groupColumn.name + '_' + index"
                                 >
                                     <div

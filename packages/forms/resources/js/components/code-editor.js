@@ -1,13 +1,21 @@
+import { EditorState, Compartment } from '@codemirror/state'
 import { EditorView, basicSetup } from 'codemirror-v6'
 import { indentWithTab } from '@codemirror/commands'
+import { oneDark } from '@codemirror/theme-one-dark'
+import { keymap } from '@codemirror/view'
+
+import { cpp } from '@codemirror/lang-cpp'
 import { css } from '@codemirror/lang-css'
+import { go } from '@codemirror/lang-go'
 import { html } from '@codemirror/lang-html'
+import { java } from '@codemirror/lang-java'
 import { javascript } from '@codemirror/lang-javascript'
 import { json } from '@codemirror/lang-json'
+import { markdown } from '@codemirror/lang-markdown'
 import { php } from '@codemirror/lang-php'
-import { EditorState, Compartment } from '@codemirror/state'
-import { keymap } from '@codemirror/view'
-import { oneDark } from '@codemirror/theme-one-dark'
+import { python } from '@codemirror/lang-python'
+import { xml } from '@codemirror/lang-xml'
+import { yaml } from '@codemirror/lang-yaml'
 
 export default function codeEditorFormComponent({
     isDisabled,
@@ -90,11 +98,18 @@ export default function codeEditorFormComponent({
             }
 
             const extensions = {
+                cpp,
                 css,
+                go,
                 html,
+                java,
                 javascript,
                 json,
+                markdown,
                 php,
+                python,
+                xml,
+                yaml,
             }
 
             return extensions[language]?.() || null

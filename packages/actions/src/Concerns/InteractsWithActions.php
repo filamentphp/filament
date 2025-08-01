@@ -470,6 +470,7 @@ trait InteractsWithActions
             }
 
             $resolvedAction->nestingIndex($actionNestingIndex);
+            $resolvedAction->boot();
 
             $resolvedActions[] = $resolvedAction;
 
@@ -477,8 +478,6 @@ trait InteractsWithActions
                 "mountedActionSchema{$actionNestingIndex}",
                 $this->getMountedActionSchema($actionNestingIndex, $resolvedAction),
             );
-
-            $resolvedAction->boot();
         }
 
         return $resolvedActions;

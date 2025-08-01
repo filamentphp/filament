@@ -28,6 +28,8 @@ trait InteractsWithRelationshipTable
 
     protected static ?string $relatedResource = null;
 
+    protected static ?string $relationshipTitle = null;
+
     public static function getRelatedResource(): ?string
     {
         return static::$relatedResource;
@@ -365,6 +367,10 @@ trait InteractsWithRelationshipTable
 
     public static function getRelationshipTitle(): string
     {
+        if (filled(static::$relationshipTitle)) {
+            return static::$relationshipTitle;
+        }
+
         if ($relatedResource = static::getRelatedResource()) {
             return $relatedResource::getTitleCasePluralModelLabel();
         }

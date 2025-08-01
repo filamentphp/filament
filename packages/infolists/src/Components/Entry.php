@@ -16,8 +16,10 @@ use Filament\Support\Concerns\HasPlaceholder;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\Size;
 use Illuminate\Contracts\Support\Htmlable;
-use Illuminate\Support\Arr;
+use Illuminate\View\ComponentAttributeBag;
 use Illuminate\View\ComponentSlot;
+
+use function Filament\Support\generate_href_html;
 
 class Entry extends Component
 {
@@ -244,6 +246,14 @@ class Entry extends Component
         $alignment = $this->getAlignment();
         $label = $this->getLabel();
         $labelSrOnly = $this->isLabelHidden();
+        $action = $this->getAction();
+        $url = $this->getUrl();
+
+        $wrapperTag = match (true) {
+            filled($url) => 'a',
+            filled($action) => 'button',
+            default => 'div',
+        };
 
         if (! $alignment instanceof Alignment) {
             $alignment = filled($alignment) ? (Alignment::tryFrom($alignment) ?? $alignment) : null;
@@ -260,6 +270,18 @@ class Entry extends Component
             ->class([
                 'fi-in-entry',
                 'fi-in-entry-has-inline-label' => $hasInlineLabel,
+            ]);
+
+        $contentAttributes = (new ComponentAttributeBag)
+            ->merge([
+                'type' => ($wrapperTag === 'button') ? 'button' : null,
+                'wire:click' => $wireClickAction = $action?->getLivewireClickHandler(),
+                'wire:loading.attr' => ($wrapperTag === 'button') ? 'disabled' : null,
+                'wire:target' => $wireClickAction,
+            ], escape: false)
+            ->class([
+                'fi-in-entry-content',
+                (($alignment instanceof Alignment) ? "fi-align-{$alignment->value}" : (is_string($alignment) ? $alignment : '')),
             ]);
 
         ob_start(); ?>
@@ -296,18 +318,17 @@ class Entry extends Component
             <div class="fi-in-entry-content-col">
                 <?= $this->getChildSchema($this::ABOVE_CONTENT_SCHEMA_KEY)?->toHtml() ?>
 
-                <div class="fi-in-entry-content-ctn">
+                <dd class="fi-in-entry-content-ctn">
                     <?= $beforeContentSchema?->toHtml() ?>
 
-                    <dd class="<?= Arr::toCssClasses([
-                        'fi-in-entry-content',
-                        (($alignment instanceof Alignment) ? "fi-align-{$alignment->value}" : (is_string($alignment) ? $alignment : '')),
-                    ])?>">
+                    <<?= $wrapperTag ?> <?php if ($wrapperTag === 'a') {
+                        echo generate_href_html($url, $this->shouldOpenUrlInNewTab())->toHtml();
+                    } ?> <?= $contentAttributes->toHtml() ?>>
                         <?= $html ?>
-                    </dd>
+                    </<?= $wrapperTag ?>>
 
                     <?= $afterContentSchema?->toHtml() ?>
-                </div>
+                </dd>
 
                 <?= $this->getChildSchema($this::BELOW_CONTENT_SCHEMA_KEY)?->toHtml() ?>
             </div>

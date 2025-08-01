@@ -100,6 +100,10 @@ trait CanGenerateModelInfolists
                 $componentData['label'] = [Str::upper($componentName)];
             }
 
+            if ($componentName === 'email') {
+                $componentData['label'] = ['Email address'];
+            }
+
             if ($type['name'] === 'boolean') {
                 $componentData['type'] = IconEntry::class;
                 $componentData['boolean'] = [];

@@ -83,6 +83,7 @@
                 x-load
                 x-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('date-time-picker', 'filament/forms') }}"
                 x-data="dateTimePickerFormComponent({
+                            defaultFocusedDate: @js($defaultFocusedDate),
                             displayFormat:
                                 '{{ convert_date_format($getDisplayFormat())->to('day.js') }}',
                             firstDayOfWeek: {{ $getFirstDayOfWeek() }},

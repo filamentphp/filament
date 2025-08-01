@@ -72,7 +72,7 @@ class EditProfile extends Page
 
     public static function getLabel(): string
     {
-        return __('filament-panels::auth/pages/edit-profile.label');
+        return static::$title ?? __('filament-panels::auth/pages/edit-profile.label');
     }
 
     public static function getRelativeRouteName(Panel $panel): string

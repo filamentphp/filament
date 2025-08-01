@@ -7,9 +7,23 @@ export default () => ({
     collapsedGroups: window.Alpine.$persist(null).as('collapsedGroups'),
 
     init() {
+        this.resizeObserver = null
+
+        this.setUpResizeObserver()
+
+        document.addEventListener('livewire:navigated', () => {
+            this.setUpResizeObserver()
+        })
+    },
+
+    setUpResizeObserver() {
+        if (this.resizeObserver) {
+            this.resizeObserver.disconnect()
+        }
+
         let previousWidth = window.innerWidth
 
-        const resizeObserver = new ResizeObserver(() => {
+        this.resizeObserver = new ResizeObserver(() => {
             const currentWidth = window.innerWidth
             const wasDesktop = previousWidth >= breakpoint
             const isMobile = currentWidth < breakpoint
@@ -31,7 +45,7 @@ export default () => ({
             previousWidth = currentWidth
         })
 
-        resizeObserver.observe(document.body)
+        this.resizeObserver.observe(document.body)
 
         if (window.innerWidth < breakpoint) {
             if (this.isOpen) {

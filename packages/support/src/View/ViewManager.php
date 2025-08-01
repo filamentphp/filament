@@ -18,6 +18,8 @@ class ViewManager
 
     protected bool $hasSpaMode = false;
 
+    protected bool $hasSpaPrefetching = false;
+
     /**
      * @var array<string>
      */
@@ -76,9 +78,10 @@ class ViewManager
         return new HtmlString(implode('', $hooks));
     }
 
-    public function spa(bool $condition = true): void
+    public function spa(bool $condition = true, bool $hasPrefetching = false): void
     {
         $this->hasSpaMode = $condition;
+        $this->hasSpaPrefetching = $hasPrefetching;
     }
 
     /**
@@ -107,5 +110,10 @@ class ViewManager
         }
 
         return is_app_url($url);
+    }
+
+    public function hasSpaPrefetching(): bool
+    {
+        return $this->hasSpaPrefetching;
     }
 }

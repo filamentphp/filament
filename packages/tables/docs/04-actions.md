@@ -364,6 +364,24 @@ public function table(Table $table): Table
 }
 ```
 
+### Limiting the number of selectable records
+
+You may restrict how many records the user can select in total:
+
+```php
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->toolbarActions([
+            // ...
+        ])
+        ->maxSelectableRecords(4);
+}
+```
+
 ### Preventing bulk-selection of all pages
 
 The `selectCurrentPageOnly()` method can be used to prevent the user from easily bulk-selecting all records in the table at once, and instead only allows them to select one page at a time:

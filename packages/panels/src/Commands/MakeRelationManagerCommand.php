@@ -30,6 +30,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 
 use function Laravel\Prompts\confirm;
+use function Laravel\Prompts\info;
 use function Laravel\Prompts\select;
 use function Laravel\Prompts\suggest;
 use function Laravel\Prompts\text;
@@ -204,7 +205,7 @@ class MakeRelationManagerCommand extends Command
             new InputOption(
                 name: 'resource-namespace',
                 shortcut: null,
-                mode: InputOption::VALUE_NONE,
+                mode: InputOption::VALUE_OPTIONAL,
                 description: 'The namespace of the resource class, such as [App\\Filament\\Resources]',
             ),
             new InputOption(

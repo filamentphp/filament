@@ -32,6 +32,10 @@ return [
 
     ],
 
+    'multi_factor_authentication' => [
+        'label' => 'Twee-factor-authenticatie (2FA)',
+    ],
+
     'notifications' => [
 
         'saved' => [

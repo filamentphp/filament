@@ -57,7 +57,7 @@
             }
 
             &.fi-focused:not(.fi-selected):not(.fi-disabled) {
-                @apply bg-gray-50 dark:bg-white/5;
+                @apply bg-gray-100 dark:bg-white/10;
             }
 
             &.fi-fo-date-time-picker-calendar-day-today:not(.fi-focused):not(

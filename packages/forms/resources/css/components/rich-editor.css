@@ -118,7 +118,7 @@
             }
 
             & > button {
-                @apply mt-px mr-2 flex size-5 items-center justify-center rounded-sm bg-transparent p-1 text-xs leading-none hover:bg-gray-950/5 dark:hover:bg-white/5;
+                @apply mt-px mr-2 flex size-5 items-center justify-center rounded-md bg-transparent p-1 text-xs leading-none hover:bg-gray-950/5 dark:hover:bg-white/5;
 
                 &::before {
                     content: '\25B6';
@@ -184,8 +184,12 @@
         }
     }
 
-    & img.fi-loading {
-        @apply animate-pulse;
+    & img {
+        @apply inline-block;
+
+        &.fi-loading {
+            @apply animate-pulse;
+        }
     }
 
     & div[data-type='customBlock'] {

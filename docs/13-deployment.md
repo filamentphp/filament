@@ -7,6 +7,8 @@ import Aside from "@components/Aside.astro"
 
 Deploying a Laravel app using Filament to production is similar to deploying any other Laravel app. However, there are a few additional steps you should take to ensure that your Filament panel is optimized for performance and security.
 
+For tips focused on local development performance, see [Optimizing local dev](introduction/optimizing-local-dev).
+
 ## Ensure that users are authorized to access panels
 
 When Filament detects that your app's `APP_ENV` is not `local`, it will require you to set up authorization for your users. This is to ensure that only authorized users can access your Filament panel in production, while keeping the local environment easy to get started with.
@@ -48,6 +50,18 @@ You can clear the cache at any time without rebuilding it by running `php artisa
 If you're not using the [`filament:optimize` command](#optimizing-filament-for-production), you may wish to consider running `php artisan icons:cache` locally, and also in your deployment script. This is because Filament uses the [Blade Icons](https://blade-ui-kit.com/blade-icons) package, which can be much more performant when cached.
 
 ### Enabling OPcache on your server
+
+To check if [OPcache](https://www.php.net/manual/en/book.opcache.php) is enabled, run:
+
+```bash
+php -r "echo 'opcache.enable => ' . ini_get('opcache.enable') . PHP_EOL;"
+```
+
+You should see `opcache.enable => 1`. If not, enable it by adding the following line to your `php.ini`:
+
+```ini
+opcache.enable=1 # Enable OPcache
+```
 
 From the [Laravel Forge documentation](https://forge.laravel.com/docs/servers/php.html#opcache):
 

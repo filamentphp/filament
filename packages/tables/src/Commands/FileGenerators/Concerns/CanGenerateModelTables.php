@@ -119,6 +119,10 @@ trait CanGenerateModelTables
                 $columnData['label'] = [Str::upper($columnName)];
             }
 
+            if ($columnName === 'email') {
+                $columnData['label'] = ['Email address'];
+            }
+
             if ($type['name'] === 'boolean') {
                 $columnData['type'] = IconColumn::class;
                 $columnData['boolean'] = [];

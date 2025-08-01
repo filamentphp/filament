@@ -2,31 +2,32 @@
 
 namespace Filament\Panel\Concerns;
 
+use Closure;
 use Filament\FontProviders\BunnyFontProvider;
 use Filament\FontProviders\LocalFontProvider;
 use Illuminate\Contracts\Support\Htmlable;
 
 trait HasFont
 {
-    protected ?string $fontFamily = null;
+    protected string | Closure | null $fontFamily = null;
 
-    protected ?string $fontProvider = null;
+    protected string | Closure | null $fontProvider = null;
 
-    protected ?string $fontUrl = null;
+    protected string | Closure | null $fontUrl = null;
 
-    protected ?string $monoFontFamily = null;
+    protected string | Closure | null $monoFontFamily = null;
 
-    protected ?string $monoFontProvider = null;
+    protected string | Closure | null $monoFontProvider = null;
 
-    protected ?string $monoFontUrl = null;
+    protected string | Closure | null $monoFontUrl = null;
 
-    protected ?string $serifFontFamily = null;
+    protected string | Closure | null $serifFontFamily = null;
 
-    protected ?string $serifFontProvider = null;
+    protected string | Closure | null $serifFontProvider = null;
 
-    protected ?string $serifFontUrl = null;
+    protected string | Closure | null $serifFontUrl = null;
 
-    public function font(string $family, ?string $url = null, ?string $provider = null): static
+    public function font(string | Closure | null $family, string | Closure | null $url = null, string | Closure | null $provider = null): static
     {
         $this->fontFamily = $family;
         $this->fontUrl = $url;
@@ -40,7 +41,7 @@ trait HasFont
 
     public function getFontFamily(): string
     {
-        return $this->fontFamily ?? 'Inter Variable';
+        return $this->evaluate($this->fontFamily) ?? 'Inter Variable';
     }
 
     public function hasCustomFontFamily(): bool
@@ -58,15 +59,15 @@ trait HasFont
 
     public function getFontProvider(): string
     {
-        return $this->fontProvider ?? (($this->hasCustomFontFamily()) ? BunnyFontProvider::class : LocalFontProvider::class);
+        return $this->evaluate($this->fontProvider) ?? (($this->hasCustomFontFamily()) ? BunnyFontProvider::class : LocalFontProvider::class);
     }
 
     public function getFontUrl(): ?string
     {
-        return $this->fontUrl;
+        return $this->evaluate($this->fontUrl);
     }
 
-    public function monoFont(string $family, ?string $url = null, ?string $provider = null): static
+    public function monoFont(string | Closure | null $family, string | Closure | null $url = null, string | Closure | null $provider = null): static
     {
         $this->monoFontFamily = $family;
         $this->monoFontUrl = $url;
@@ -80,7 +81,7 @@ trait HasFont
 
     public function getMonoFontFamily(): string
     {
-        return $this->monoFontFamily ?? 'ui-monospace';
+        return $this->evaluate($this->monoFontFamily) ?? 'ui-monospace';
     }
 
     public function hasCustomMonoFontFamily(): bool
@@ -98,15 +99,15 @@ trait HasFont
 
     public function getMonoFontProvider(): string
     {
-        return $this->monoFontProvider ?? (($this->hasCustomMonoFontFamily()) ? BunnyFontProvider::class : LocalFontProvider::class);
+        return $this->evaluate($this->monoFontProvider) ?? (($this->hasCustomMonoFontFamily()) ? BunnyFontProvider::class : LocalFontProvider::class);
     }
 
     public function getMonoFontUrl(): ?string
     {
-        return $this->monoFontUrl;
+        return $this->evaluate($this->monoFontUrl);
     }
 
-    public function serifFont(string $family, ?string $url = null, ?string $provider = null): static
+    public function serifFont(string | Closure | null $family, string | Closure | null $url = null, string | Closure | null $provider = null): static
     {
         $this->serifFontFamily = $family;
         $this->serifFontUrl = $url;
@@ -120,7 +121,7 @@ trait HasFont
 
     public function getSerifFontFamily(): string
     {
-        return $this->serifFontFamily ?? 'ui-serif';
+        return $this->evaluate($this->serifFontFamily) ?? 'ui-serif';
     }
 
     public function hasCustomSerifFontFamily(): bool
@@ -138,11 +139,11 @@ trait HasFont
 
     public function getSerifFontProvider(): string
     {
-        return $this->serifFontProvider ?? (($this->hasCustomSerifFontFamily()) ? BunnyFontProvider::class : LocalFontProvider::class);
+        return $this->evaluate($this->serifFontProvider) ?? (($this->hasCustomSerifFontFamily()) ? BunnyFontProvider::class : LocalFontProvider::class);
     }
 
     public function getSerifFontUrl(): ?string
     {
-        return $this->serifFontUrl;
+        return $this->evaluate($this->serifFontUrl);
     }
 }

@@ -30,6 +30,20 @@ it('can generate a resource class', function (): void {
         ->toMatchSnapshot();
 });
 
+it('can generate a resource class with a record title attribute', function (): void {
+    $this->artisan('make:filament-resource', [
+        'model' => 'Post',
+        '--model-namespace' => 'Filament\Tests\Fixtures\Models',
+        '--panel' => 'admin',
+        '--record-title-attribute' => 'title',
+        '--no-interaction' => true,
+    ]);
+
+    assertFileExists($path = app_path('Filament/Resources/Posts/PostResource.php'));
+    expect(file_get_contents($path))
+        ->toMatchSnapshot();
+});
+
 it('can generate a resource form', function (): void {
     $this->artisan('make:filament-resource', [
         'model' => 'Post',

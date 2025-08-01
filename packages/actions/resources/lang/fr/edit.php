@@ -13,7 +13,7 @@ return [
             'actions' => [
 
                 'save' => [
-                    'label' => 'Sauvegarder',
+                    'label' => 'Sauvegarder les modifications',
                 ],
 
             ],
@@ -23,7 +23,7 @@ return [
         'notifications' => [
 
             'saved' => [
-                'title' => 'Sauvegardé(e)',
+                'title' => 'Sauvegardé',
             ],
 
         ],

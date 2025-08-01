@@ -11,10 +11,12 @@
     use Illuminate\View\ComponentAttributeBag;
 
     if ($entry) {
+        $action ??= $entry->getAction();
         $alignment ??= $entry->getAlignment();
         $hasInlineLabel ??= $entry->hasInlineLabel();
         $label ??= $entry->getLabel();
         $labelSrOnly ??= $entry->isLabelHidden();
+        $url ??= $entry->getUrl();
     }
 
     if (! $alignment instanceof Alignment) {
@@ -80,20 +82,49 @@
     <div class="fi-in-entry-content-col">
         {{ $entry?->getChildSchema($entry::ABOVE_CONTENT_SCHEMA_KEY) }}
 
-        <div class="fi-in-entry-content-ctn">
+        <dd class="fi-in-entry-content-ctn">
             {{ $beforeContentContainer }}
 
-            <dd
-                @class([
-                    'fi-in-entry-content',
-                    (($alignment instanceof Alignment) ? "fi-align-{$alignment->value}" : (is_string($alignment) ? $alignment : '')),
-                ])
-            >
-                {{ $slot }}
-            </dd>
+            @if (filled($url))
+                <a
+                    {{ \Filament\Support\generate_href_html($url, $shouldOpenUrlInNewTab) }}
+                    @class([
+                        'fi-in-entry-content',
+                        (($alignment instanceof Alignment) ? "fi-align-{$alignment->value}" : (is_string($alignment) ? $alignment : '')),
+                    ])
+                >
+                    {{ $slot }}
+                </a>
+            @elseif (filled($action))
+                @php
+                    $wireClickAction = $action->getLivewireClickHandler();
+                @endphp
+
+                <button
+                    type="button"
+                    wire:click="{{ $wireClickAction }}"
+                    wire:loading.attr="disabled"
+                    wire:target="{{ $wireClickAction }}"
+                    @class([
+                        'fi-in-entry-content',
+                        (($alignment instanceof Alignment) ? "fi-align-{$alignment->value}" : (is_string($alignment) ? $alignment : '')),
+                    ])
+                >
+                    {{ $slot }}
+                </button>
+            @else
+                <div
+                    @class([
+                        'fi-in-entry-content',
+                        (($alignment instanceof Alignment) ? "fi-align-{$alignment->value}" : (is_string($alignment) ? $alignment : '')),
+                    ])
+                >
+                    {{ $slot }}
+                </div>
+            @endif
 
             {{ $afterContentContainer }}
-        </div>
+        </dd>
 
         {{ $entry?->getChildSchema($entry::BELOW_CONTENT_SCHEMA_KEY) }}
     </div>

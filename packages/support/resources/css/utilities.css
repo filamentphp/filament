@@ -475,7 +475,7 @@
     );
     --prose-blockquote-border-color: var(--color-gray-300);
 
-    &:where(.dark, .dark *) {
+    @variant dark {
         --prose-color: var(--color-gray-300);
         --prose-heading-color: var(--color-white);
         --prose-strong-color: var(--color-white);

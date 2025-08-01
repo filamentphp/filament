@@ -27,14 +27,17 @@ use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\Alignment;
 use Filament\View\PanelsRenderHook;
+use Illuminate\Auth\Events\Failed;
 use Illuminate\Auth\SessionGuard;
 use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\HtmlString;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Locked;
+use SensitiveParameter;
 
 /**
  * @property-read Action $registerAction
@@ -74,7 +77,10 @@ class Login extends SimplePage
 
         $data = $this->form->getState();
 
-        $authProvider = Filament::auth()->getProvider(); /** @phpstan-ignore-line */
+        /** @var SessionGuard $authGuard */
+        $authGuard = Filament::auth();
+
+        $authProvider = $authGuard->getProvider(); /** @phpstan-ignore-line */
         $credentials = $this->getCredentialsFromFormData($data);
 
         $user = $authProvider->retrieveByCredentials($credentials);
@@ -82,6 +88,7 @@ class Login extends SimplePage
         if ((! $user) || (! $authProvider->validateCredentials($user, $credentials))) {
             $this->userUndertakingMultiFactorAuthentication = null;
 
+            $this->fireFailedEvent($authGuard, $user, $credentials);
             $this->throwFailureValidationException();
         }
 
@@ -112,9 +119,6 @@ class Login extends SimplePage
             }
         }
 
-        /** @var SessionGuard $authGuard */
-        $authGuard = Filament::auth();
-
         if (! $authGuard->attemptWhen($credentials, function (Authenticatable $user): bool {
             if (! ($user instanceof FilamentUser)) {
                 return true;
@@ -122,6 +126,7 @@ class Login extends SimplePage
 
             return $user->canAccessPanel(Filament::getCurrentOrDefaultPanel());
         }, $data['remember'] ?? false)) {
+            $this->fireFailedEvent($authGuard, $user, $credentials);
             $this->throwFailureValidationException();
         }
 
@@ -142,6 +147,14 @@ class Login extends SimplePage
                 'minutes' => $exception->minutesUntilAvailable,
             ]) : null)
             ->danger();
+    }
+
+    /**
+     * @param  array<string, mixed>  $credentials
+     */
+    protected function fireFailedEvent(Guard $guard, ?Authenticatable $user, #[SensitiveParameter] array $credentials): void
+    {
+        event(app(Failed::class, ['guard' => property_exists($guard, 'name') ? $guard->name : '', 'user' => $user, 'credentials' => $credentials]));
     }
 
     protected function throwFailureValidationException(): never
@@ -352,7 +365,7 @@ class Login extends SimplePage
      * @param  array<string, mixed>  $data
      * @return array<string, mixed>
      */
-    protected function getCredentialsFromFormData(array $data): array
+    protected function getCredentialsFromFormData(#[SensitiveParameter] array $data): array
     {
         return [
             'email' => $data['email'],

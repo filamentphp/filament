@@ -49,7 +49,10 @@
             type="button"
             class="fi-tenant-menu-trigger"
         >
-            <x-filament-panels::avatar.tenant :tenant="$currentTenant" />
+            <x-filament-panels::avatar.tenant
+                :tenant="$currentTenant"
+                loading="lazy"
+            />
 
             <span
                 @if ($isSidebarCollapsibleOnDesktop)
