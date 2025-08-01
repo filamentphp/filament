@@ -60,6 +60,12 @@
     <div class="fi-layout">
         {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::LAYOUT_START, scopes: $renderHookScopes) }}
 
+        @if (! $hasTopbar)
+            @livewire(Filament\Livewire\DatabaseNotifications::class, [
+                'lazy' => filament()->hasLazyLoadedDatabaseNotifications(),
+            ])
+        @endif
+
         @if ($hasNavigation)
             <div
                 x-cloak

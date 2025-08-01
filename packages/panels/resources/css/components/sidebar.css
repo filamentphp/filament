@@ -271,3 +271,15 @@
 .fi-sidebar-close-sidebar-btn {
     @apply mx-0! lg:hidden;
 }
+
+.fi-sidebar-database-notifications-btn {
+    @apply w-full hover:bg-gray-100 focus-visible:bg-gray-100 dark:hover:bg-white/5 dark:focus-visible:bg-white/5;
+}
+
+.fi-sidebar-database-notifications-btn .fi-icon {
+    @apply mx-0.5;
+}
+
+.fi-sidebar-database-notifications-btn .fi-sidebar-item-label {
+    @apply text-left;
+}
