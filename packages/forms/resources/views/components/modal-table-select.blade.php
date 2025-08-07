@@ -6,6 +6,7 @@
     $id = $getId();
     $isDisabled = $isDisabled();
     $isMultiple = $isMultiple();
+    $isHtmlAllowed = $isHtmlAllowed();
 @endphp
 
 <x-dynamic-component :component="$fieldWrapperView" :field="$field">
@@ -28,7 +29,11 @@
                 <div class="fi-fo-modal-table-select-badges-ctn">
                     @foreach ($optionLabels as $optionLabel)
                         <x-filament::badge>
-                            {{ $optionLabel }}
+                            @if ($isHtmlAllowed)
+                                {!! $optionLabel !!}
+                            @else
+                                {{ $optionLabel }}
+                            @endif
                         </x-filament::badge>
                     @endforeach
                 </div>
@@ -45,7 +50,11 @@
             @endif
         @else
             @if (filled($optionLabel = $getOptionLabel()))
-                {{ $optionLabel }}
+                @if ($isHtmlAllowed)
+                    {!! $optionLabel !!}
+                @else
+                    {{ $optionLabel }}
+                @endif
             @elseif (filled($placeholder = $getPlaceholder()))
                 <div class="fi-fo-modal-table-select-placeholder">
                     {{ $placeholder }}

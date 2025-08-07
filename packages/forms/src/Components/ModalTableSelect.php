@@ -25,6 +25,7 @@ use Znck\Eloquent\Relations\BelongsToThrough;
 
 class ModalTableSelect extends Field
 {
+    use Concerns\CanAllowHtml;
     use Concerns\CanLimitItemsLength;
     use Concerns\HasPivotData;
     use Concerns\HasPlaceholder;
