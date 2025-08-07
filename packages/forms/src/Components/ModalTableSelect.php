@@ -523,7 +523,7 @@ class ModalTableSelect extends Field
         return $this->getOptionLabelFromRecordUsing !== null;
     }
 
-    public function getOptionLabelFromRecord(Model $record): string
+    public function getOptionLabelFromRecord(Model $record): string | Htmlable | null
     {
         return $this->evaluate(
             $this->getOptionLabelFromRecordUsing,
