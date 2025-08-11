@@ -20,8 +20,8 @@
         x-load
         x-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('checkbox-list', 'filament/forms') }}"
         x-data="checkboxListFormComponent({
-            livewireId: @js($livewireId),
-        })"
+                    livewireId: @js($livewireId),
+                })"
         {{ $getExtraAlpineAttributeBag()->class(['fi-fo-checkbox-list']) }}
     >
         @if (! $isDisabled)

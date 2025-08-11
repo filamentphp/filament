@@ -37,7 +37,7 @@ trait BelongsToContainer
         })();
     }
 
-    public function getLivewire(): Component&HasSchemas
+    public function getLivewire(): Component & HasSchemas
     {
         return $this->getContainer()->getLivewire();
     }
