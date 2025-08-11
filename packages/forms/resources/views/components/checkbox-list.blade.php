@@ -12,6 +12,7 @@
     $options = $getOptions();
     $livewireKey = $getLivewireKey();
     $wireModelAttribute = $applyStateBindingModifiers('wire:model');
+    $livewireId = $getLivewireId();
 @endphp
 
 <x-dynamic-component :component="$fieldWrapperView" :field="$field">
@@ -19,8 +20,8 @@
         x-load
         x-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('checkbox-list', 'filament/forms') }}"
         x-data="checkboxListFormComponent({
-                    livewireId: @js($this->getId()),
-                })"
+            livewireId: @js($livewireId),
+        })"
         {{ $getExtraAlpineAttributeBag()->class(['fi-fo-checkbox-list']) }}
     >
         @if (! $isDisabled)
