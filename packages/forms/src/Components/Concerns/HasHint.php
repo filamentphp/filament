@@ -27,6 +27,8 @@ trait HasHint
 
     protected string | BackedEnum | Closure | null $hintIcon = null;
 
+    protected string | array | Closure | null $hintIconColor = null;
+
     protected string | Closure | null $hintIconTooltip = null;
 
     protected function setUpHint(): void
@@ -62,6 +64,12 @@ trait HasHint
 
                     return $parentComponent->getHintIcon();
                 })
+                    ->color(static function (Icon $component): string | array | null {
+                        /** @var self $parentComponent */
+                        $parentComponent = $component->getContainer()->getParentComponent();
+
+                        return $parentComponent->getHintIconColor();
+                    })
                     ->tooltip(static function (Icon $component): ?string {
                         /** @var self $parentComponent */
                         $parentComponent = $component->getContainer()->getParentComponent();
@@ -104,6 +112,13 @@ trait HasHint
     {
         $this->hintIcon = $icon;
         $this->hintIconTooltip($tooltip);
+
+        return $this;
+    }
+
+    public function hintIconColor(string | array | Closure | null $color): static
+    {
+        $this->hintIconColor = $color;
 
         return $this;
     }
@@ -161,6 +176,11 @@ trait HasHint
     public function getHintIcon(): string | BackedEnum | null
     {
         return $this->evaluate($this->hintIcon);
+    }
+
+    public function getHintIconColor(): string | array | null
+    {
+        return $this->evaluate($this->hintIconColor);
     }
 
     public function getHintIconTooltip(): ?string
