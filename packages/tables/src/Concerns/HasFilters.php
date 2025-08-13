@@ -37,10 +37,10 @@ trait HasFilters
             ->schema($table->getFiltersFormSchema())
             ->when(
                 $table->hasDeferredFilters(),
-                fn (Schema $schema) => $schema
+                fn(Schema $schema) => $schema
                     ->statePath('tableDeferredFilters')
                     ->partiallyRender(),
-                fn (Schema $schema) => $schema
+                fn(Schema $schema) => $schema
                     ->statePath('tableFilters')
                     ->live(),
             );
@@ -76,7 +76,8 @@ trait HasFilters
         $filter = $this->getTable()->getFilter($filterName);
         $filterResetState = $filter->getResetState();
 
-        $filterFormGroup = $this->getTableFiltersForm()->getComponent($filterName);
+        $filterFormGroup = $this->getTableFiltersForm()
+            ->getComponent(fn($value, $key) => preg_match("/(?:\.|^)$filterName\$/", $key));
 
         if (($filter instanceof QueryBuilder) && blank($field)) {
             $filterFormGroup->getChildSchema()->fill();
