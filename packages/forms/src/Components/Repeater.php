@@ -113,6 +113,8 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
 
     protected bool $shouldMergeHydratedDefaultStateWithItemsStateAfterStateHydrated = true;
 
+    protected string|Closure|null $color = null;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -180,7 +182,7 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
     {
         $action = Action::make($this->getAddActionName())
             ->label(fn (Repeater $component) => $component->getAddActionLabel())
-            ->color('gray')
+            ->color(fn (Repeater $component) => $component->getColor() ?? 'gray')
             ->action(function (Repeater $component): void {
                 $newUuid = $component->generateUuid();
 
@@ -1360,5 +1362,16 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
         }
 
         return 1;
+    }
+
+    public function color(string|Closure|null $color): static
+    {
+        $this->color = $color;
+        return $this;
+    }
+
+    public function getColor(): string|Closure|null
+    {
+        return $this->evaluate($this->color);
     }
 }
