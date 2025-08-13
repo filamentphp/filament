@@ -113,7 +113,7 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
 
     protected bool $shouldMergeHydratedDefaultStateWithItemsStateAfterStateHydrated = true;
 
-    protected string|Closure|null $color = null;
+    protected string | Closure | null $color = null;
 
     protected function setUp(): void
     {
@@ -1364,13 +1364,14 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
         return 1;
     }
 
-    public function color(string|Closure|null $color): static
+    public function color(string | Closure | null $color): static
     {
         $this->color = $color;
+
         return $this;
     }
 
-    public function getColor(): string|Closure|null
+    public function getColor(): string | Closure | null
     {
         return $this->evaluate($this->color);
     }

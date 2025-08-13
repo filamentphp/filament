@@ -881,3 +881,14 @@ $state[Str::uuid()] = [
 // Set the new data for the repeater
 $component->state($state);
 ```
+
+
+## Customizing the color of the Repeater Action button
+
+You may also customize the color representing the Action button of the Repeater. To add a color, use the `color()` method. Default color is 'gray':
+
+```php
+use Filament\Forms\Components\Toggle;
+
+Repeater::make('members')
+    ->color('primary')
