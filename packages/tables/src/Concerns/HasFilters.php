@@ -76,7 +76,8 @@ trait HasFilters
         $filter = $this->getTable()->getFilter($filterName);
         $filterResetState = $filter->getResetState();
 
-        $filterFormGroup = $this->getTableFiltersForm()->getComponent($filterName);
+        $filterFormGroup = $this->getTableFiltersForm()
+            ->getComponent(fn($component) => $filterName === $component->getKey(isAbsolute: false));
 
         if (($filter instanceof QueryBuilder) && blank($field)) {
             $filterFormGroup->getChildSchema()->fill();
