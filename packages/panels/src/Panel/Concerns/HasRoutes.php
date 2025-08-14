@@ -172,6 +172,9 @@ trait HasRoutes
 
         if ((! $tenant) && $hasTenancy && $this->auth()->hasUser()) {
             $tenant = Filament::getUserDefaultTenant($this->auth()->user());
+            if (! $tenant) {
+                return $this->getTenantRegistrationUrl();
+            }
         }
 
         if (Route::has($homeRouteName = $this->generateRouteName('home'))) {
