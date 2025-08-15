@@ -149,12 +149,37 @@
                                         @if ($component instanceof \Filament\Forms\Components\Hidden)
                                             {{ $component }}
                                         @else
-                                            @php
-                                                $counter++
-                                            @endphp
-
                                             @if ($component->isVisible())
-                                                <td>
+                                                @php
+                                                    $counter++;
+
+                                                    $componentStatePath = null;
+                                                    $canUseAlpineIntegration = false;
+
+                                                    try {
+                                                        $name = $component->getName();
+                                                        $componentStatePath = $component->getStatePath();
+                                                        $canUseAlpineIntegration = filled($componentStatePath) && $component->getLivewire();
+                                                    } catch (\Exception $e) {
+                                                        $canUseAlpineIntegration = false;
+                                                    }
+                                                @endphp
+                                                <td
+                                                    @if ($canUseAlpineIntegration)
+                                                        x-data="filamentSchemaComponent({
+                                                            path: @js($componentStatePath),
+                                                            containerPath: @js(str_replace('.'. $name, '', $componentStatePath)),
+                                                            isLive: @js(method_exists($component, 'isLive') ? $component->isLive() : false),
+                                                            $wire,
+                                                        })"
+                                                        @if (method_exists($component, 'getAfterStateUpdatedJs') && ($afterStateUpdatedJs = $component->getAfterStateUpdatedJs()))
+                                                            x-init="{{ implode(';', array_map(
+                                                                fn (string $js): string => '$wire.watch(' . \Illuminate\Support\Js::from($componentStatePath) . ', ($state, $old) => ($state !== undefined) && eval(' . \Illuminate\Support\Js::from($js) . '))',
+                                                                $afterStateUpdatedJs,
+                                                            )) }}"
+                                                        @endif
+                                                    @endif
+                                                >
                                                     {{ $component }}
                                                 </td>
                                             @else
