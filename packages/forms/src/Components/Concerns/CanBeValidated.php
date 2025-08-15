@@ -599,7 +599,7 @@ trait CanBeValidated
         return $this;
     }
 
-    public function scopedUnique(string | Closure | null $model = null, string | Closure | null $column = null, Model | Closure | null $ignorable = null, ?bool $ignoreRecord = null, ?Closure $modifyQueryUsing = null): static
+    public function scopedUnique(string | Closure | null $model = null, string | Closure | null $column = null, Model | Closure | null $ignorable = null, ?bool $ignoreRecord = true, ?Closure $modifyQueryUsing = null): static
     {
         $this->rule(static function (Field $component) use ($column, $ignorable, $ignoreRecord, $modifyQueryUsing, $model) {
             $ignoreRecord ??= $component->shouldUniqueValidationIgnoreRecordByDefault();
