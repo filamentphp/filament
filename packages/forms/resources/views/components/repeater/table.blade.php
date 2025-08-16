@@ -149,10 +149,12 @@
                                         @if ($component instanceof \Filament\Forms\Components\Hidden)
                                             {{ $component }}
                                         @else
+                                            @php
+                                                $counter++;
+                                            @endphp
+
                                             @if ($component->isVisible())
                                                 @php
-                                                    $counter++;
-
                                                     $componentStatePath = null;
                                                     $canUseAlpineIntegration = false;
 
