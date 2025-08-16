@@ -24,7 +24,7 @@ class Toggle extends Field
     {
         parent::setUp();
 
-        $this->default(false);
+        $this->default(null);
 
         $this->rule('boolean');
     }
@@ -36,7 +36,7 @@ class Toggle extends Field
     {
         return [
             ...parent::getDefaultStateCasts(),
-            app(BooleanStateCast::class, ['isNullable' => false]),
+            app(BooleanStateCast::class, ['isNullable' => true]),
         ];
     }
 }
