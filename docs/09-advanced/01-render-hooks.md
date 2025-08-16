@@ -151,6 +151,23 @@ use Filament\Tables\View\TablesRenderHook;
 - `TablesRenderHook::TOOLBAR_COLUMN_MANAGER_TRIGGER_BEFORE` - Before the [column manager](../tables/columns/getting-started#toggling-column-visibility) trigger
 
 
+### Actions render hooks
+
+All these render hooks [can be scoped](#scoping-render-hooks) to any table Livewire component class. When using the Panel Builder, these classes might be the List or Manage page of a resource, or a relation manager.
+Additionally, all of these render hooks receive `action` data as `Filament\Actions\Action`. This represents the currently mounted action.
+
+```php
+use Filament\Actions\View\ActionsRenderHook;
+```
+
+- `ActionsRenderHook::MODAL_CONTENT_AFTER` - After the [modal content](../actions/modals#custom-modal-content)
+- `ActionsRenderHook::MODAL_CONTENT_BEFORE` - Before the [modal content](../actions/modals#custom-modal-content)
+- `ActionsRenderHook::MODAL_SCHEMA_AFTER` - After the [modal schema](../actions/modals#rendering-a-schema-in-a-modal)
+- `ActionsRenderHook::MODAL_SCHEMA_BEFORE` - Before the [modal schema](../actions/modals#rendering-a-schema-in-a-modal)
+- `ActionsRenderHook::MODAL_CONTENT_FOOTER_AFTER` - After the [modal content footer](../actions/modals#adding-custom-modal-content-below-the-form) 
+- `ActionsRenderHook::MODAL_CONTENT_FOOTER_BEFORE` - Before the [modal content footer](../actions/modals#adding-custom-modal-content-below-the-form)
+
+
 ### Widgets render hooks
 
 ```php
