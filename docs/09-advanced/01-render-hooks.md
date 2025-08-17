@@ -154,7 +154,7 @@ use Filament\Tables\View\TablesRenderHook;
 ### Actions render hooks
 
 All these render hooks [can be scoped](#scoping-render-hooks) to any table Livewire component class. When using the Panel Builder, these classes might be the List or Manage page of a resource, or a relation manager.
-Scoping is typically not enough in this case, as Livewire components can have multiple action modals, so you can access the `action` data as `Filament\Actions\Action` to identify the specific action in all these render hooks.
+Scoping is typically not enough in this case, as Livewire components can have multiple actions, so you can access the `action` data as `Filament\Actions\Action` to identify the specific action in all these render hooks.
 
 ```php
 use Filament\Actions\View\ActionsRenderHook;
