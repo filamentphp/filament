@@ -11,12 +11,12 @@ return [
         'form' => [
 
             'file' => [
-                    'label' => 'Fil',
-                    'placeholder' => 'Last opp en CSV fil',
-                    'rules' => [
-                        'duplicate_columns' => '{0} Filen kan ikke inneholde mer enn én tom kolonneoverskrift.|{1,*} Filen kan ikke inneholde dupliserte kolonneoverskrifter: :columns.',
-                    ],
+                'label' => 'Fil',
+                'placeholder' => 'Last opp en CSV fil',
+                'rules' => [
+                    'duplicate_columns' => '{0} Filen kan ikke inneholde mer enn én tom kolonneoverskrift.|{1,*} Filen kan ikke inneholde dupliserte kolonneoverskrifter: :columns.',
                 ],
+            ],
 
             'columns' => [
                 'label' => 'Kolonner',

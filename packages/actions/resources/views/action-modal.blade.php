@@ -1,6 +1,6 @@
 @php
-    use Filament\Support\Facades\FilamentView;
     use Filament\Actions\View\ActionsRenderHook;
+    use Filament\Support\Facades\FilamentView;
 
     $actionModalAlignment = $action->getModalAlignment();
     $actionIsModalAutofocused = $action->isModalAutofocused();
