@@ -2192,6 +2192,15 @@ export default {
             deviceScaleFactor: 3,
         },
     },
+    'infolists/entries/table/simple': {
+        url: 'infolists/entries',
+        selector: '#table',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
     'infolists/entries/repeatable/simple': {
         url: 'infolists/entries',
         selector: '#repeatable',

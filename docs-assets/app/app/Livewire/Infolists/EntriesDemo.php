@@ -9,6 +9,7 @@ use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\ImageEntry;
 use Filament\Infolists\Components\KeyValueEntry;
 use Filament\Infolists\Components\RepeatableEntry;
+use Filament\Infolists\Components\TableEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Flex;
 use Filament\Schemas\Components\Group;
@@ -681,6 +682,21 @@ class EntriesDemo extends Component implements HasSchemas
                                 'description' => 'Filament is a collection of Laravel packages',
                                 'og:type' => 'website',
                                 'og:site_name' => 'Filament',
+                            ]),
+                    ]),
+                Group::make()
+                    ->id('table')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        TableEntry::make('users')
+                            ->columnLabels([
+                                'Name', 'Email', 'Role',
+                            ])
+                            ->state([
+                                ['Dan Harrin', 'dan@filamentphp.com', 'Admin'],
+                                ['Jane Doe', 'jane@example.com', 'Editor'],
                             ]),
                     ]),
                 Group::make()
