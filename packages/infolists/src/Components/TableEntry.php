@@ -21,7 +21,7 @@ class TableEntry extends Entry implements HasEmbeddedView
     }
 
     /**
-     * @param array<int,string>|Closure|null $columns
+     * @param  array<int,string>|Closure|null  $columns
      */
     public function columnLabels(array | Closure | null $columns): static
     {
