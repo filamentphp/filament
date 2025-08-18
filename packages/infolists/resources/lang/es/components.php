@@ -33,6 +33,12 @@ return [
 
         ],
 
+        'table' => [
+
+            'placeholder' => 'No hay entradas',
+
+        ],
+
     ],
 
 ];

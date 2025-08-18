@@ -28,5 +28,9 @@ return [
             ],
             'placeholder' => 'ምንም ግበኣቶች የሉም',
         ],
+        'table' => [
+
+            'placeholder' => 'ምንም ግበኣቶች የሉም',
+        ],
     ],
 ];

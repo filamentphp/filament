@@ -17,7 +17,7 @@ class TableEntry extends Entry implements HasEmbeddedView
     {
         parent::setUp();
 
-        $this->placeholder(__('filament-infolists::components.entries.key_value.placeholder'));
+        $this->placeholder(__('filament-infolists::components.entries.table.placeholder'));
     }
 
     /**
@@ -48,7 +48,7 @@ class TableEntry extends Entry implements HasEmbeddedView
 
         $attributes = $this->getExtraAttributeBag()
             ->class([
-                'fi-in-key-value',
+                'fi-in-table',
             ]);
 
         ob_start(); ?>

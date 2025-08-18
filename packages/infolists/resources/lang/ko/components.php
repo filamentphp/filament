@@ -33,6 +33,12 @@ return [
 
         ],
 
+        'table' => [
+
+            'placeholder' => '항목 없음',
+
+        ],
+
     ],
 
 ];
