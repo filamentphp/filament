@@ -57,7 +57,30 @@ class PostObserver
 
 ## Setting up tenancy
 
-To set up tenancy, you'll need to specify the "tenant" (like team or organization) model in the [configuration](../panel-configuration):
+To set up tenancy, first you must create a model which represents tenants, e.g. `Team`:
+
+```php
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+
+class Team extends Model
+{
+    /** @use HasFactory<\Database\Factories\TeamFactory> */
+    use HasFactory;
+
+    public function members(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class);
+    }
+}
+```
+
+By default, Filament will attempt to use a relation called `members` to get tenant users.
+
+Now, you'll need to specify the "tenant" model in the [configuration](../panel-configuration):
 
 ```php
 use App\Models\Team;
@@ -105,6 +128,38 @@ class User extends Authenticatable implements FilamentUser, HasTenants
         return $this->teams()->whereKey($tenant)->exists();
     }
 }
+```
+
+Then, you'll need to create a pivot table for the tenant (e.g. `Team`) and user relations:
+
+```php
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('team_user', function (Blueprint $table) {
+            $table->id();
+            $table->integer('team_id')->index();
+            $table->integer('user_id')->index();
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('team_user');
+    }
+};
 ```
 
 In this example, users belong to many teams, so there is a `teams()` relationship. The `getTenants()` method returns the teams that the user belongs to. Filament uses this to list the tenants that the user has access to.
