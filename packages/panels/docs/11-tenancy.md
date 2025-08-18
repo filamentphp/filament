@@ -52,7 +52,28 @@ class PostObserver
 
 ## Setting up tenancy
 
-To set up tenancy, you'll need to specify the "tenant" (like team or organization) model in the [configuration](configuration):
+To set up tenancy, first you'll need to create a model which represents tenants, e.g. `Team`:
+
+```php
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+
+class Team extends Model
+{
+    /** @use HasFactory<\Database\Factories\TeamFactory> */
+    use HasFactory;
+
+    public function members(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class);
+    }
+}
+```
+
+Then you'll need to specify this "tenant" (like team or organization) model in the [configuration](configuration):
 
 ```php
 use App\Models\Team;
