@@ -31,7 +31,7 @@ trait InteractsWithToolbarButtons
         }
 
         $this->toolbarButtons = array_reduce(
-            $this->toolbarButtons ?? [],
+            $this->toolbarButtons ?? $this->getDefaultToolbarButtons(),
             function ($carry, $button) use ($buttonsToDisable) {
                 if (is_array($button)) {
                     $carry[] = array_values(array_filter(
