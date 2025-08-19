@@ -111,6 +111,8 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
      */
     protected array | Closure | null $tableColumns = null;
 
+    protected bool | Closure | null $isStreamlined = null;
+
     protected bool $shouldMergeHydratedDefaultStateWithItemsStateAfterStateHydrated = true;
 
     protected function setUp(): void
@@ -1189,9 +1191,20 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
     /**
      * @param  array<TableColumn> | Closure | null  $columns
      */
-    public function table(array | Closure | null $columns): static
+    public function table(array | Closure | null $columns, bool | Closure | null $streamlined = null): static
     {
         $this->tableColumns = $columns;
+        $this->isStreamlined = $streamlined;
+
+        return $this;
+    }
+
+    /**
+     * @param  array<TableColumn> | Closure | null  $columns
+     */
+    public function streamlinedTable(array | Closure | null $columns): static
+    {
+        $this->table($columns, true);
 
         return $this;
     }
@@ -1207,6 +1220,11 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
     public function isTable(): bool
     {
         return filled($this->getTableColumns());
+    }
+
+    public function isStreamlined(): bool
+    {
+        return (bool) $this->evaluate($this->isStreamlined);
     }
 
     public function getSimpleField(): ?Field

@@ -314,4 +314,36 @@
             @apply justify-end;
         }
     }
+
+    &.fi-fo-streamlined-table-repeater {
+        & > table {
+            & > tbody {
+                & > tr {
+                    & > td {
+                        @apply lg:px-0 lg:py-0 @xl:px-0 @xl:py-0;
+                    }
+
+                    &:last-child {
+                        & > td {
+                            &:first-child .fi-input-wrp {
+                                @apply @xl:rounded-bl-lg;
+                            }
+                            &:last-child .fi-input-wrp {
+                                @apply @xl:rounded-br-lg;
+                            }
+                        }
+                    }
+                }
+            }
+
+            & .fi-fo-table-repeater-actions {
+                @apply @xl:px-2 @xl:py-0;
+            }
+        }
+
+        /* Remove border radius from common form controls inside the table */
+        & .fi-input-wrp {
+            @apply @xl:rounded-none @xl:border-0 @xl:ring-0;
+        }
+    }
 }

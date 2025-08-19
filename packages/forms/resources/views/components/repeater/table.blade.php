@@ -29,13 +29,18 @@
     $statePath = $getStatePath();
 
     $tableColumns = $getTableColumns();
+
+    $isStreamlined = $isStreamlined();
 @endphp
 
 <x-dynamic-component :component="$fieldWrapperView" :field="$field">
     <div
         {{ $attributes
                 ->merge($getExtraAttributes(), escape: false)
-                ->class(['fi-fo-table-repeater']) }}
+                ->class([
+                                'fi-fo-table-repeater',
+                                'fi-fo-streamlined-table-repeater' => $isStreamlined,
+                            ]) }}
     >
         @if (count($items))
             <table class="fi-absolute-positioning-context">

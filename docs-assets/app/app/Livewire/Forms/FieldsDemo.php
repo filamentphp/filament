@@ -1031,6 +1031,48 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                             ]),
                     ]),
                 Group::make()
+                    ->id('repeaterTableStreamlined')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-5xl',
+                    ])
+                    ->schema([
+                        Repeater::make('repeaterTable')
+                            ->label('Members')
+                            ->streamlinedTable([
+                                Repeater\TableColumn::make('Name'),
+                                Repeater\TableColumn::make('Role'),
+                            ])
+                            ->schema([
+                                TextInput::make('name')->required(),
+                                Select::make('role')
+                                    ->options([
+                                        'member' => 'Member',
+                                        'administrator' => 'Administrator',
+                                        'owner' => 'Owner',
+                                    ])
+                                    ->required(),
+                            ])
+                            ->columns(2)
+                            ->default([
+                                [
+                                    'name' => 'Dan Harrin',
+                                    'role' => 'owner',
+                                ],
+                                [
+                                    'name' => 'Ryan Chandler',
+                                    'role' => 'administrator',
+                                ],
+                                [
+                                    'name' => 'Zep Fietje',
+                                    'role' => 'member',
+                                ],
+                                [
+                                    'name' => null,
+                                    'role' => null,
+                                ],
+                            ]),
+                    ]),
+                Group::make()
                     ->id('repeaterReorderableWithButtons')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-5xl',
