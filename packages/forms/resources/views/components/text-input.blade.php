@@ -95,6 +95,7 @@
                 ->class(['fi-fo-text-input'])
         "
     >
+    <div data-input-root class="fi-fo-text-input flex items-center">
         <input
             {{
                 $inputAttributes->class([
@@ -104,6 +105,29 @@
                 ])
             }}
         />
+        <button
+            type="button"
+            x-data="{ shown: false }"
+            x-on:click="shown = !shown; $dispatch('filament-forms::password-visibility-toggled', { shown })"
+            x-bind:aria-pressed="shown.toString()"
+            x-bind:aria-label="shown ? '{{ __('Hide password') }}' : '{{ __('Show password') }}'"
+            x-bind:title="shown ? '{{ __('Hide password') }}' : '{{ __('Show password') }}'"
+            class="fi-fo-text-input-toggle inline-flex items-center justify-center"
+        >
+            <template x-if="!shown">
+                <x-filament::icon icon="heroicon-m-eye" class="fi-fo-text-input-icon" />
+            </template>
+            <template x-if="shown">
+                <x-filament::icon icon="heroicon-m-eye-slash" class="fi-fo-text-input-icon" />
+            </template>
+            <span x-init="
+                const input = $el.closest('[data-input-root]')?.querySelector('input');
+                if (input) {
+                    $watch('shown', value => { input.type = value ? 'text' : 'password' })
+                }
+            " class="sr-only"></span>
+        </button>
+        </div>
     </x-filament::input.wrapper>
 
     @if ($datalistOptions)
