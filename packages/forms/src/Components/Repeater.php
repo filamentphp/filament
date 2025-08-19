@@ -53,6 +53,8 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
 
     protected bool | Closure $isReorderableWithButtons = false;
 
+    protected bool | Closure $isShowingHidden = true;
+
     protected ?Collection $cachedExistingRecords = null;
 
     protected string | Closure | null $orderColumn = null;
@@ -797,6 +799,13 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
         return $this;
     }
 
+    public function showHidden(bool | Closure $condition = true): static
+    {
+        $this->isShowingHidden = $condition;
+
+        return $this;
+    }
+
     /**
      * @deprecated No longer part of the design system.
      */
@@ -861,6 +870,11 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
     public function isReorderableWithButtons(): bool
     {
         return $this->evaluate($this->isReorderableWithButtons) && $this->isReorderable();
+    }
+
+    public function isShowingHidden(): bool
+    {
+        return (bool) $this->evaluate($this->isShowingHidden);
     }
 
     public function isAddable(): bool

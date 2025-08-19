@@ -22,6 +22,7 @@
     $isDeletable = $isDeletable();
     $isReorderableWithButtons = $isReorderableWithButtons();
     $isReorderableWithDragAndDrop = $isReorderableWithDragAndDrop();
+    $isShowingHidden = $isShowingHidden();
 
     $key = $getKey();
     $statePath = $getStatePath();
@@ -137,7 +138,7 @@
                                     $counter = 0
                                 @endphp
 
-                                @foreach ($item->getComponents(withHidden: true) as $component)
+                                @foreach ($item->getComponents(withHidden: $isShowingHidden) as $component)
                                     @php
                                         throw_unless(
                                             $component instanceof \Filament\Forms\Components\Field || $component instanceof \Filament\Infolists\Components\Entry,
