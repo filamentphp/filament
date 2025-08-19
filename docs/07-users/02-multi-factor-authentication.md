@@ -75,6 +75,7 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
 ```
 
 Next, you should implement the `HasAppAuthentication` interface on the `User` model. This provides Filament with the necessary methods to interact with the secret code and other information about the integration:
+To use the default column name `app_authentication_secret`, you can import `Filament\Auth\MultiFactor\App\Concerns\InteractsWithAppAuthentication` trait and use it in your `User` model. This trait provides the necessary methods to interact with the app authentication secret:
 
 ```php
 use Filament\Auth\MultiFactor\App\Contracts\HasAppAuthentication;
@@ -183,6 +184,8 @@ class User extends Authenticatable implements FilamentUser, HasAppAuthentication
 ```
 
 Next, you should implement the `HasAppAuthenticationRecovery` interface on the `User` model. This provides Filament with the necessary methods to interact with the recovery codes:
+To use the default column name `app_authentication_recovery_codes`, you can import `Filament\Auth\MultiFactor\App\Concerns\InteractsWithAppAuthenticationRecovery` trait and use it in your `User` model. This trait provides the necessary methods to interact with the app authentication recovery codes:
+
 
 ```php
 use Filament\Auth\MultiFactor\App\Contracts\HasAppAuthentication;
@@ -359,6 +362,7 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
 ```
 
 Next, you should implement the `HasEmailAuthentication` interface on the `User` model. This provides Filament with the necessary methods to interact with the column that indicates whether or not email authentication is enabled:
+To use the default column name `has_email_authentication`, you can import `Filament\Auth\MultiFactor\App\Concerns\InteractsWithEmailAuthentication` trait and use it in your `User` model. This trait provides the necessary methods to interact with the email authentication:
 
 ```php
 use Filament\Auth\MultiFactor\Email\Contracts\HasEmailAuthentication;
