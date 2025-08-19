@@ -645,6 +645,61 @@ TableColumn::make('Name')
     ->width('200px')
 ```
 
+### Hidden components
+
+By default, hiding a field using the `visible()` method will still have the invisible field occupy one column in the table.
+
+To configure the repeater table so that invisible form fields do not occupy table columns, you can use the repeater's `showHidden()` method.
+
+```php
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Repeater\TableColumn;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\DatePicker;
+
+Repeater::make('data')
+    ->columnSpanFull()
+    ->showHidden(false)
+    ->table([
+        // We have three columns
+        TableColumn::make('type'),
+        TableColumn::make('value'),
+        TableColumn::make('date'),
+    ])
+    ->schema([
+        // There are 4 fields but in reality,
+        // only 3 of them are visible at a time.
+        Select::make('data')
+            ->options([
+                '1' => 'Height',
+                '2' => 'Blood type',
+            ])
+            ->default('1')
+            ->required()
+            ->live(),
+        TextInput::make('int_value')
+            ->numeric()
+            ->visible(fn (Get $get) => $get('data') === '1')
+            ->required(),
+        Select::make('str_value')
+            ->visible(fn (Get $get) => $get('data') === '2')
+            ->options([
+                "A+"  => "A+",
+                "A-"  => "A-",
+                "B+"  => "B+",
+                "B-"  => "B-",
+                "AB+" => "AB+",
+                "AB-" => "AB-",
+                "O+"  => "O+",
+                "O-"  => "O-"
+            ])
+            ->required(),
+        DatePicker::make('date')
+            ->required(),
+    ]);
+```
+
 ## Repeater validation
 
 As well as all rules listed on the [validation](validation) page, there are additional rules that are specific to repeaters.
