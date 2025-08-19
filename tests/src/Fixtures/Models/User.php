@@ -75,11 +75,6 @@ class User extends Authenticatable implements FilamentUser, HasAppAuthentication
         return Team::all();
     }
 
-    public function getAppAuthenticationHolderName(): string
-    {
-        return $this->email;
-    }
-
     public function hasEmailAuthentication(): bool
     {
         return (bool) $this->has_email_authentication;
