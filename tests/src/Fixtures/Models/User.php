@@ -4,6 +4,7 @@ namespace Filament\Tests\Fixtures\Models;
 
 use Filament\Auth\MultiFactor\App\Concerns\InteractsWithAppAuthentication;
 use Filament\Auth\MultiFactor\App\Concerns\InteractsWithAppAuthenticationRecovery;
+use Filament\Auth\MultiFactor\App\Concerns\InteractsWithEmailAuthentication;
 use Filament\Auth\MultiFactor\App\Contracts\HasAppAuthentication;
 use Filament\Auth\MultiFactor\App\Contracts\HasAppAuthenticationRecovery;
 use Filament\Auth\MultiFactor\Email\Contracts\HasEmailAuthentication;
@@ -25,6 +26,7 @@ class User extends Authenticatable implements FilamentUser, HasAppAuthentication
     use HasFactory;
     use InteractsWithAppAuthentication;
     use InteractsWithAppAuthenticationRecovery;
+    use InteractsWithEmailAuthentication;
     use Notifiable;
 
     protected $guarded = [];
@@ -73,17 +75,6 @@ class User extends Authenticatable implements FilamentUser, HasAppAuthentication
     public function getTenants(Panel $panel): array | Collection
     {
         return Team::all();
-    }
-
-    public function hasEmailAuthentication(): bool
-    {
-        return (bool) $this->has_email_authentication;
-    }
-
-    public function toggleEmailAuthentication(bool $condition): void
-    {
-        $this->has_email_authentication = $condition;
-        $this->save();
     }
 
     public function teams(): BelongsToMany
