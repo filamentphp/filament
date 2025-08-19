@@ -2,6 +2,8 @@
 
 namespace Filament\Tests\Fixtures\Models;
 
+use Filament\Auth\MultiFactor\App\Concerns\InteractsWithAppAuthentication;
+use Filament\Auth\MultiFactor\App\Concerns\InteractsWithAppAuthenticationRecovery;
 use Filament\Auth\MultiFactor\App\Contracts\HasAppAuthentication;
 use Filament\Auth\MultiFactor\App\Contracts\HasAppAuthenticationRecovery;
 use Filament\Auth\MultiFactor\Email\Contracts\HasEmailAuthentication;
@@ -21,6 +23,8 @@ use Illuminate\Support\Collection;
 class User extends Authenticatable implements FilamentUser, HasAppAuthentication, HasAppAuthenticationRecovery, HasEmailAuthentication, HasTenants, MustVerifyEmail
 {
     use HasFactory;
+    use InteractsWithAppAuthentication;
+    use InteractsWithAppAuthenticationRecovery;
     use Notifiable;
 
     protected $guarded = [];
@@ -69,28 +73,6 @@ class User extends Authenticatable implements FilamentUser, HasAppAuthentication
     public function getTenants(Panel $panel): array | Collection
     {
         return Team::all();
-    }
-
-    public function getAppAuthenticationSecret(): ?string
-    {
-        return $this->app_authentication_secret;
-    }
-
-    public function saveAppAuthenticationSecret(?string $secret): void
-    {
-        $this->app_authentication_secret = $secret;
-        $this->save();
-    }
-
-    public function getAppAuthenticationRecoveryCodes(): ?array
-    {
-        return $this->app_authentication_recovery_codes;
-    }
-
-    public function saveAppAuthenticationRecoveryCodes(?array $codes): void
-    {
-        $this->app_authentication_recovery_codes = $codes;
-        $this->save();
     }
 
     public function getAppAuthenticationHolderName(): string
