@@ -645,7 +645,7 @@ TableColumn::make('Name')
     ->width('200px')
 ```
 
-### Hidden components
+### Hidden fields
 
 By default, hiding a field using the `visible()` method will still have the invisible field occupy one column in the table.
 
