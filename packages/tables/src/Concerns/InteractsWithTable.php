@@ -33,6 +33,7 @@ trait InteractsWithTable
     use HasRecords;
     use WithPagination {
         WithPagination::resetPage as resetLivewirePage;
+        WithPagination::setPage as setLivewirePage;
     }
 
     protected Table $table;
@@ -242,6 +243,22 @@ trait InteractsWithTable
     public function resetPage($pageName = null): void
     {
         $this->resetLivewirePage($pageName ?? $this->getTablePaginationPageName());
+    }
+
+    /**
+     * Leitet setPage von Livewire weiter und dispatcht ggf. ein Browser-Event,
+     * um nach einem Tabellen-Seitenwechsel nach oben zu scrollen.
+     *
+     * @param  ?string  $pageName
+     */
+    public function setPage($page, $pageName = 'page'): void
+    {
+        $this->setLivewirePage($page, $pageName);
+
+        if ($pageName === $this->getTablePaginationPageName() && $this->getTable()->shouldScrollToTopOnPageChange()) {
+            // Livewire v3 Browser-Event
+            $this->dispatch('filament-tables-scroll-to-top');
+        }
     }
 
     /**

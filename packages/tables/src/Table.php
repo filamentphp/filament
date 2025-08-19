@@ -41,6 +41,7 @@ class Table extends ViewComponent
     use Table\Concerns\HasRecords;
     use Table\Concerns\HasRecordUrl;
     use Table\Concerns\HasToolbarActions;
+    use Table\Concerns\CanScrollToTop;
 
     /**
      * @var view-string
