@@ -15,8 +15,8 @@ trait InteractsWithAppAuthentication
         $this->save();
     }
 
-    public function getAppAuthenticationRecoveryCodes(): ?array
+    public function getAppAuthenticationHolderName(): string
     {
-        return $this->app_authentication_recovery_codes;
+        return $this->email;
     }
 }
