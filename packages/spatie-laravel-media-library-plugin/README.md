@@ -220,6 +220,74 @@ class Post extends Model implements HasRichContent
 }
 ```
 
+You may want to preserve the original filenames of the uploaded files, use the preserveFilenames() method:
+
+```php
+use Filament\Forms\Components\RichEditor\FileAttachmentProviders\SpatieMediaLibraryFileAttachmentProvider;
+use Filament\Forms\Components\RichEditor\Models\Concerns\InteractsWithRichContent;
+use Filament\Forms\Components\RichEditor\Models\Contracts\HasRichContent;
+use Illuminate\Database\Eloquent\Model;
+
+class Post extends Model implements HasRichContent
+{
+    use InteractsWithRichContent;
+
+    public function setUpRichContent(): void
+    {
+        $this->registerRichContent('content')
+            ->fileAttachmentProvider(SpatieMediaLibraryFileAttachmentProvider::make()
+                ->preserveFilenames(true)
+            );
+    }
+}
+```
+
+You may want to change the media name, use mediaName() method:
+
+```php
+use Filament\Forms\Components\RichEditor\FileAttachmentProviders\SpatieMediaLibraryFileAttachmentProvider;
+use Filament\Forms\Components\RichEditor\Models\Concerns\InteractsWithRichContent;
+use Filament\Forms\Components\RichEditor\Models\Contracts\HasRichContent;
+use Illuminate\Database\Eloquent\Model;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
+use Illuminate\Support\Str;
+
+class Post extends Model implements HasRichContent
+{
+    use InteractsWithRichContent;
+
+    public function setUpRichContent(): void
+    {
+        $this->registerRichContent('content')
+            ->fileAttachmentProvider(SpatieMediaLibraryFileAttachmentProvider::make()
+                ->mediaName(fn (TemporaryUploadedFile $file) => Str::random() . '_' . $file->getClientOriginalName())
+            );
+    }
+}
+```
+
+You may want to add custom properties to media, use customProperties() method:
+
+```php
+use Filament\Forms\Components\RichEditor\FileAttachmentProviders\SpatieMediaLibraryFileAttachmentProvider;
+use Filament\Forms\Components\RichEditor\Models\Concerns\InteractsWithRichContent;
+use Filament\Forms\Components\RichEditor\Models\Contracts\HasRichContent;
+use Illuminate\Database\Eloquent\Model;
+
+class Post extends Model implements HasRichContent
+{
+    use InteractsWithRichContent;
+
+    public function setUpRichContent(): void
+    {
+        $this->registerRichContent('content')
+            ->fileAttachmentProvider(SpatieMediaLibraryFileAttachmentProvider::make()
+                ->customProperties(['archived' => false])
+            );
+    }
+}
+```
+
 ## Table column
 
 To use the media library image column:
