@@ -911,7 +911,7 @@
                                                     :columns="$columns"
                                                     extra-heading-column
                                                     :heading="
-                                                        $this->getSummaryHeaderLabel() ?? __('filament-tables::table.summary.subheadings.group', [
+                                                        $this->getTable()->getSummaryHeaderLabel() ?? __('filament-tables::table.summary.subheadings.group', [
                                                             'group' => $previousRecordGroupTitle,
                                                             'label' => $pluralModelLabel,
                                                         ])
@@ -1178,7 +1178,7 @@
                                         <x-filament-tables::summary.row
                                             :columns="$columns"
                                             extra-heading-column
-                                            :heading="$this->getSummaryHeaderLabel() ?? __('filament-tables::table.summary.subheadings.group', ['group' => $previousRecordGroupTitle, 'label' => $pluralModelLabel])"
+                                            :heading="$this->getTable()->getSummaryHeaderLabel() ?? __('filament-tables::table.summary.subheadings.group', ['group' => $previousRecordGroupTitle, 'label' => $pluralModelLabel])"
                                             :placeholder-columns="false"
                                             :query="$groupScopedAllTableSummaryQuery"
                                             :selected-state="$groupedSummarySelectedState[$previousRecordGroupKey] ?? []"
@@ -1203,7 +1203,7 @@
                             <tbody>
                                 <x-filament-tables::summary
                                     :columns="$columns"
-                                    :custom-summary-header-label="$this->getSummaryHeaderLabel()"
+                                    :custom-summary-header-label="$this->getTable()->getSummaryHeaderLabel()"
                                     extra-heading-column
                                     :placeholder-columns="false"
                                     :plural-model-label="$pluralModelLabel"
@@ -1596,7 +1596,7 @@
                                                     :columns="$columns"
                                                     :group-column="$groupColumn"
                                                     :groups-only="$isGroupsOnly"
-                                                    :heading="$this->getSummaryHeaderLabel() ?? ($isGroupsOnly ? $previousRecordGroupTitle : __('filament-tables::table.summary.subheadings.group', ['group' => $previousRecordGroupTitle, 'label' => $pluralModelLabel]))"
+                                                    :heading="$this->getTable()->getSummaryHeaderLabel() ?? ($isGroupsOnly ? $previousRecordGroupTitle : __('filament-tables::table.summary.subheadings.group', ['group' => $previousRecordGroupTitle, 'label' => $pluralModelLabel]))"
                                                     :query="$groupScopedAllTableSummaryQuery"
                                                     :record-checkbox-position="$recordCheckboxPosition"
                                                     :selected-state="$groupedSummarySelectedState[$previousRecordGroupKey] ?? []"
@@ -2017,7 +2017,7 @@
                                             :columns="$columns"
                                             :group-column="$groupColumn"
                                             :groups-only="$isGroupsOnly"
-                                            :heading="$this->getSummaryHeaderLabel() ?? ($isGroupsOnly ? $previousRecordGroupTitle : __('filament-tables::table.summary.subheadings.group', ['group' => $previousRecordGroupTitle, 'label' => $pluralModelLabel]))"
+                                            :heading="$this->getTable()->getSummaryHeaderLabel() ?? ($isGroupsOnly ? $previousRecordGroupTitle : __('filament-tables::table.summary.subheadings.group', ['group' => $previousRecordGroupTitle, 'label' => $pluralModelLabel]))"
                                             :query="$groupScopedAllTableSummaryQuery"
                                             :record-checkbox-position="$recordCheckboxPosition"
                                             :selected-state="$groupedSummarySelectedState[$previousRecordGroupKey] ?? []"
@@ -2034,7 +2034,7 @@
                                             :actions="count($defaultRecordActions)"
                                             :actions-position="$recordActionsPosition"
                                             :columns="$columns"
-                                            :custom-summary-header-label="$this->getSummaryHeaderLabel()"
+                                            :custom-summary-header-label="$this->getTable()->getSummaryHeaderLabel()"
                                             :group-column="$groupColumn"
                                             :groups-only="$isGroupsOnly"
                                             :plural-model-label="$pluralModelLabel"
