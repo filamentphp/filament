@@ -986,9 +986,9 @@ export default {
             deviceScaleFactor: 3,
         },
     },
-    'forms/fields/repeater/table-streamlined': {
+    'forms/fields/repeater/table-compact': {
         url: 'forms/fields',
-        selector: '#repeaterTableStreamlined',
+        selector: '#repeaterTableCompact',
         viewport: {
             width: 1920,
             height: 640,

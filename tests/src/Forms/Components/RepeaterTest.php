@@ -293,6 +293,34 @@ it('can use select options from an enum with `disableOptionsWhenSelectedInSiblin
     $undoRepeaterFake();
 });
 
+it('can be compact', function (): void {
+    $repeater = Repeater::make('members')
+        ->schema([
+            TextInput::make('name'),
+        ])
+        ->compact();
+
+    expect($repeater->isCompact())->toBeTrue();
+});
+
+it('can conditionally be compact', function (): void {
+    $repeater = Repeater::make('members')
+        ->schema([
+            TextInput::make('name'),
+        ])
+        ->compact(fn () => true);
+
+    expect($repeater->isCompact())->toBeTrue();
+
+    $repeater = Repeater::make('members')
+        ->schema([
+            TextInput::make('name'),
+        ])
+        ->compact(fn () => false);
+
+    expect($repeater->isCompact())->toBeFalse();
+});
+
 class TestComponentWithRepeater extends Livewire
 {
     public function mount(): void

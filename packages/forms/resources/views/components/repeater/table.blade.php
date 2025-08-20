@@ -30,7 +30,7 @@
 
     $tableColumns = $getTableColumns();
 
-    $isStreamlined = $isStreamlined();
+    $isCompact = $isCompact();
 @endphp
 
 <x-dynamic-component :component="$fieldWrapperView" :field="$field">
@@ -39,7 +39,7 @@
                 ->merge($getExtraAttributes(), escape: false)
                 ->class([
                                 'fi-fo-table-repeater',
-                                'fi-fo-streamlined-table-repeater' => $isStreamlined,
+                                'fi-compact' => $isCompact,
                             ]) }}
     >
         @if (count($items))

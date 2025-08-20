@@ -8,6 +8,7 @@ use Filament\Forms\Components\Repeater\TableColumn;
 use Filament\Forms\View\FormsIconAlias;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Concerns\CanBeCollapsed;
+use Filament\Schemas\Components\Concerns\CanBeCompact;
 use Filament\Schemas\Components\Concerns\HasContainerGridLayout;
 use Filament\Schemas\Components\Contracts\CanConcealComponents;
 use Filament\Schemas\Components\Contracts\HasExtraItemActions;
@@ -32,6 +33,7 @@ use function Filament\Forms\array_move_before;
 class Repeater extends Field implements CanConcealComponents, HasExtraItemActions
 {
     use CanBeCollapsed;
+    use CanBeCompact;
     use Concerns\CanBeCloned;
     use Concerns\CanGenerateUuids;
     use Concerns\CanLimitItemsLength;
@@ -110,8 +112,6 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
      * @var array<TableColumn> | Closure | null
      */
     protected array | Closure | null $tableColumns = null;
-
-    protected bool | Closure | null $isStreamlined = null;
 
     protected bool $shouldMergeHydratedDefaultStateWithItemsStateAfterStateHydrated = true;
 
@@ -1191,20 +1191,9 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
     /**
      * @param  array<TableColumn> | Closure | null  $columns
      */
-    public function table(array | Closure | null $columns, bool | Closure | null $streamlined = null): static
+    public function table(array | Closure | null $columns): static
     {
         $this->tableColumns = $columns;
-        $this->isStreamlined = $streamlined;
-
-        return $this;
-    }
-
-    /**
-     * @param  array<TableColumn> | Closure | null  $columns
-     */
-    public function streamlinedTable(array | Closure | null $columns): static
-    {
-        $this->table($columns, true);
 
         return $this;
     }
@@ -1220,11 +1209,6 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
     public function isTable(): bool
     {
         return filled($this->getTableColumns());
-    }
-
-    public function isStreamlined(): bool
-    {
-        return (bool) $this->evaluate($this->isStreamlined);
     }
 
     public function getSimpleField(): ?Field

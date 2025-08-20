@@ -1031,17 +1031,18 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                             ]),
                     ]),
                 Group::make()
-                    ->id('repeaterTableStreamlined')
+                    ->id('repeaterTableCompact')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-5xl',
                     ])
                     ->schema([
                         Repeater::make('repeaterTable')
                             ->label('Members')
-                            ->streamlinedTable([
+                            ->table([
                                 Repeater\TableColumn::make('Name'),
                                 Repeater\TableColumn::make('Role'),
                             ])
+                            ->compact()
                             ->schema([
                                 TextInput::make('name')->required(),
                                 Select::make('role')

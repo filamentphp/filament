@@ -571,7 +571,7 @@ The special case of `$get()` with no arguments, or `$get('')` or `$get('./')`, w
 
 ## Table repeaters
 
-You can present repeater items in a table format using the `table()` method, which accepts an array of `TableColumn` objects. These objects represent the columns of the table, which correspond to any components in the schema of the repeater. Optionally, you may pass a second boolean (or closure) parameter to enable a streamlined layout with tighter spacing: 
+You can present repeater items in a table format using the `table()` method, which accepts an array of `TableColumn` objects. These objects represent the columns of the table, which correspond to any components in the schema of the repeater:
 
 ```php
 use Filament\Forms\Components\Repeater;
@@ -599,35 +599,44 @@ Repeater::make('members')
 
 <AutoScreenshot name="forms/fields/repeater/table" alt="Repeater with a table layout" version="4.x" />
 
-### Streamlined table layout
+### Compact table repeaters
 
-If you prefer a denser appearance in the table layout, you can enable a streamlined mode by using `streamlinedTable()` or passing a second argument to `table()`:
+You can make table repeaters more compact by using the `compact()` method. This reduces the padding and font sizes to fit more data in a smaller space:
 
 ```php
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Repeater\TableColumn;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 
 Repeater::make('members')
-    ->streamlinedTable([
-        TableColumn::make('Name'),
-        TableColumn::make('Role'),
+    ->compact()
+    ->table([
+        // ...
     ])
     ->schema([
-        // fields...
-    ]);
+        // ...
+    ])
 ```
 
-When streamlined is enabled, table body cell padding is reduced and the default border radius on common form controls inside the table is removed, creating a tighter, more compact layout. You can also determine this dynamically with a closure:
+Optionally, you may pass a boolean value to control if the table repeater should be compact or not:
 
 ```php
+use Filament\Forms\Components\Repeater;
+
 Repeater::make('members')
+    ->compact(FeatureFlag::active())
     ->table([
-        TableColumn::make('Name'),
-        TableColumn::make('Role'),
-    ], streamlined: fn () => auth()->user()->prefersCompactTables());
+        // ...
+    ])
+    ->schema([
+        // ...
+    ])
 ```
 
-<AutoScreenshot name="forms/fields/repeater/table-streamlined" alt="Repeater with a streamlined table layout" version="4.x" />
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `compact()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+<AutoScreenshot name="forms/fields/repeater/table-compact" alt="Repeater with a compact table layout" version="4.x" />
 
 The labels displayed in the header of the table are passed to the `TableColumn::make()` method. If you want to provide an accessible label for a column but do not wish to display it, you can use the `hiddenHeaderLabel()` method:
 
