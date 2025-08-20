@@ -2,6 +2,7 @@
 
 namespace Filament\Tables\Concerns;
 
+use Exception;
 use Filament\Schemas\Schema;
 use Filament\Support\Components\Component;
 use Filament\Tables\Columns\Column;
@@ -25,6 +26,8 @@ trait HasColumnManager
      * @var ?array<int, array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool,columns?: array<int, array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool}>}>
      */
     protected ?array $cachedDefaultTableColumnState = null;
+
+    protected ?bool $hasReorderableTableColumns = null;
 
     public function initTableColumnManager(): void
     {
@@ -68,17 +71,15 @@ trait HasColumnManager
      */
     public function applyTableColumnManager(?array $state = null): void
     {
-        $hasReorderableColumns = $this->getTable()->hasReorderableColumns();
-
         if (filled($state)) {
             $this->tableColumns = $state;
 
-            if ($hasReorderableColumns) {
+            if ($this->hasReorderableTableColumns()) {
                 $this->persistHasReorderedTableColumns();
             }
         }
 
-        $hasReorderableColumns && session()->get($this->getHasReorderedTableColumnsSessionKey())
+        $this->hasReorderableTableColumns() && session()->get($this->getHasReorderedTableColumnsSessionKey())
             ? $this->syncReorderableColumnsFromDefaultTableColumnState()
             : $this->syncStaticColumnsFromTableColumnState();
 
@@ -89,7 +90,7 @@ trait HasColumnManager
     {
         $this->tableColumns = $this->getDefaultTableColumnState();
 
-        if ($this->getTable()->hasReorderableColumns()) {
+        if ($this->hasReorderableTableColumns()) {
             $this->updateTableColumns();
             $this->persistHasReorderedTableColumns();
         }
@@ -218,10 +219,16 @@ trait HasColumnManager
      */
     protected function mapTableColumnToArray(Column $column): array
     {
+        $label = (string) $column->getLabel();
+
+        if (blank($label) && $this->hasReorderableTableColumns()) {
+            throw new Exception("The column [{$column->getName()}] has a blank label. Columns must have labels when reorderable columns is enabled.");
+        }
+
         return [
             'type' => self::TABLE_COLUMN_MANAGER_COLUMN_TYPE,
             'name' => $column->getName(),
-            'label' => (string) $column->getLabel(),
+            'label' => $label,
             'isHidden' => $column->isHidden(),
             'isToggled' => ! $column->isToggleable() || ! $column->isToggledHiddenByDefault(),
             'isToggleable' => $column->isToggleable(),
@@ -432,6 +439,11 @@ trait HasColumnManager
                 fn (array $candidate) => $candidate['type'] === $item['type'] &&
                 $candidate['name'] === $item['name']
             );
+    }
+
+    protected function hasReorderableTableColumns(): bool
+    {
+        return $this->hasReorderableTableColumns ??= $this->getTable()->hasReorderableColumns();
     }
 
     protected function hasReorderedTableColumns(): bool
