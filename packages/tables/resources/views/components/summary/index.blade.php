@@ -112,19 +112,19 @@
     $selectedState = $this->getTableSummarySelectedState($allTableSummaryQuery)[0] ?? [];
 @endphp
 
-    <x-filament-tables::summary.row
-        :actions="$actions"
-        :actions-position="$actionsPosition"
-        :columns="$columns"
-        :extra-heading-column="$extraHeadingColumn"
-        :groups-only="$groupsOnly"
-        :heading="$customSummaryHeaderLabel ?? __(($hasPageSummary ? 'filament-tables::table.summary.subheadings.all' : 'filament-tables::table.summary.heading'), ['label' => $pluralModelLabel])"
-        :placeholder-columns="$placeholderColumns"
-        :query="$allTableSummaryQuery"
-        :record-checkbox-position="$recordCheckboxPosition"
-        :selected-state="$selectedState"
-        :selection-enabled="$selectionEnabled"
-        @class([
-            'fi-striped' => ! $hasPageSummary,
-        ])
-    />
+<x-filament-tables::summary.row
+    :actions="$actions"
+    :actions-position="$actionsPosition"
+    :columns="$columns"
+    :extra-heading-column="$extraHeadingColumn"
+    :groups-only="$groupsOnly"
+    :heading="$customSummaryHeaderLabel ?? __(($hasPageSummary ? 'filament-tables::table.summary.subheadings.all' : 'filament-tables::table.summary.heading'), ['label' => $pluralModelLabel])"
+    :placeholder-columns="$placeholderColumns"
+    :query="$allTableSummaryQuery"
+    :record-checkbox-position="$recordCheckboxPosition"
+    :selected-state="$selectedState"
+    :selection-enabled="$selectionEnabled"
+    @class([
+        'fi-striped' => ! $hasPageSummary,
+    ])
+/>
