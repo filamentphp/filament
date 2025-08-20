@@ -107,6 +107,7 @@ class SupportServiceProvider extends PackageServiceProvider
                     ->allowRelativeMedias()
                     ->allowAttribute('class', allowedElements: '*')
                     ->allowAttribute('style', allowedElements: '*')
+                    ->allowAttribute('dir', allowedElements: '*')
                     ->withMaxInputLength(500000),
             ),
         );

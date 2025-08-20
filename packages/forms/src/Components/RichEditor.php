@@ -288,6 +288,18 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
                 ->jsHandler('$getEditor()?.chain().focus().setTextAlign(\'justify\').run()')
                 ->icon('fi-o-align-justify')
                 ->iconAlias('forms:components.rich-editor.toolbar.align-justify'),
+            RichEditorTool::make('directionLtr')
+                ->label(__('filament-forms::components.rich_editor.tools.direction_ltr'))
+                ->jsHandler('$getEditor()?.chain().focus().setTextDirection(\'ltr\').run()')
+                ->activeJsExpression('isTextDirection(\'ltr\')')
+                ->icon(Heroicon::Language)
+                ->iconAlias('forms:components.rich-editor.toolbar.direction_ltr'),
+            RichEditorTool::make('directionRtl')
+                ->label(__('filament-forms::components.rich_editor.tools.direction_rtl'))
+                ->jsHandler('$getEditor()?.chain().focus().setTextDirection(\'rtl\').run()')
+                ->activeJsExpression('isTextDirection(\'rtl\')')
+                ->icon(Heroicon::Language)
+                ->iconAlias('forms:components.rich-editor.toolbar.direction_rtl'),
             RichEditorTool::make('details')
                 ->label(__('filament-forms::components.rich_editor.tools.details'))
                 ->jsHandler('$getEditor()?.chain().focus().setDetails().run()')
@@ -660,7 +672,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     {
         return [
             ['bold', 'italic', 'underline', 'strike', 'subscript', 'superscript', 'link'],
-            ['h2', 'h3', 'alignStart', 'alignCenter', 'alignEnd'],
+            ['h2', 'h3', 'alignStart', 'alignCenter', 'alignEnd', 'directionLtr', 'directionRtl'],
             ['blockquote', 'codeBlock', 'bulletList', 'orderedList'],
             [
                 'table',

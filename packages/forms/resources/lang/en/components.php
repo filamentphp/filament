@@ -476,6 +476,8 @@ return [
             'align_end' => 'Align end',
             'align_justify' => 'Align justify',
             'align_start' => 'Align start',
+            'direction_ltr' => 'Text direction left-to-right',
+            'direction_rtl' => 'Text direction right-to-left',
             'attach_files' => 'Attach files',
             'blockquote' => 'Blockquote',
             'bold' => 'Bold',

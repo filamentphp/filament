@@ -476,6 +476,8 @@ return [
             'align_end' => 'محاذاة للنهاية',
             'align_justify' => 'محاذاة للضبط',
             'align_start' => 'محاذاة للبداية',
+            'direction_ltr' => 'اتجاه الكتابة من اليسار إلى اليمين',
+            'direction_rtl' => 'اتجاه الكتابة من اليمين إلى اليسار',
             'attach_files' => 'إرفاق ملفات',
             'blockquote' => 'إقتباس',
             'bold' => 'عريض',

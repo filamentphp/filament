@@ -246,6 +246,12 @@ export default function richEditorFormComponent({
             return this.activePanel === id
         },
 
+        isTextDirection(dir) {
+            const e = this.$getEditor()
+            if (!e) return false
+            return ['paragraph', 'heading'].some((t) => e.isActive(t, { dir }))
+        },
+
         insertMergeTag(id) {
             editor
                 .chain()

@@ -31,6 +31,7 @@ import { TableKit } from '@tiptap/extension-table'
 import Text from '@tiptap/extension-text'
 import TextAlign from '@tiptap/extension-text-align'
 import Underline from '@tiptap/extension-underline'
+import TextDirection from './extension-text-direction.js'
 
 import getMergeTagSuggestion from './merge-tag-suggestion.js'
 
@@ -116,6 +117,7 @@ export default async ({
         alignments: ['start', 'center', 'end', 'justify'],
         defaultAlignment: 'start',
     }),
+    TextDirection,
     Underline,
     UndoRedo,
     ...(
