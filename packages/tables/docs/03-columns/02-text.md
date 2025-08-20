@@ -410,6 +410,19 @@ TextColumn::make('email')
 
 <AutoScreenshot name="tables/columns/text/icon-color" alt="Text column with icon in the primary color" version="3.x" />
 
+## Handling null values
+
+A nullable text column will ordinarily display nothing when its value is null. You can customize this behavior using `placeholder()`:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('last_login_at')
+    ->label('Last Login')
+    ->dateTime()
+    ->placeholder('Never')
+```
+
 ## Customizing the text size
 
 Text columns have small font size by default, but you may change this to `TextColumnSize::ExtraSmall`, `TextColumnSize::Medium`, or `TextColumnSize::Large`.
