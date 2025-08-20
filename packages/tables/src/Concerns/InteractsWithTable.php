@@ -256,8 +256,8 @@ trait InteractsWithTable
         $this->setLivewirePage($page, $pageName);
 
         if ($pageName === $this->getTablePaginationPageName() && $this->getTable()->shouldScrollToTopOnPageChange()) {
-            // Livewire v3 Browser-Event
-            $this->dispatch('filament-tables-scroll-to-top');
+            // Livewire v3 Browser-Event: nur die betroffene Tabelle soll reagieren
+            $this->dispatch('filament-tables-scroll-to-top', id: $this->getId(), pageName: $this->getTablePaginationPageName());
         }
     }
 

@@ -144,7 +144,11 @@
                 $wire,
             })"
     @if ($shouldScrollToTopOnPageChange)
-        x-on:filament-tables-scroll-to-top.window="window.scrollTo(0, 0)"
+        x-on:filament-tables-scroll-to-top.window="
+            if (($event.detail?.id ?? null) !== @js($this->getId())) return;
+            if (($event.detail?.pageName ?? null) !== @js($this->getTablePaginationPageName())) return;
+            $el.scrollIntoView({ block: 'start', inline: 'nearest' })
+        "
     @endif
     {{
         $getExtraAttributeBag()->class([
@@ -1253,7 +1257,7 @@
                                                             'fi-wrapped' => $columnGroup->canHeaderWrap(),
                                                             ((($columnGroupAlignment = $columnGroup->getAlignment()) instanceof \Filament\Support\Enums\Alignment) ? "fi-align-{$columnGroupAlignment->value}" : (is_string($columnGroupAlignment) ? $columnGroupAlignment : '')),
                                                             (filled($columnGroupHiddenFrom = $columnGroup->getHiddenFrom()) ? "{$columnGroupHiddenFrom}:fi-hidden" : ''),
-                                                            (filled($columnGroupVisibleFrom = $columnGroup->getVisibleFrom()) ? "{$columnGroupVisibleFrom}:fi-visible" : ''),
+                                                            (filled($columnGroupVisibleFrom = $columnGroup->getVisibleFrom()) ? "{$columnVisibleFrom}:fi-visible" : ''),
                                                         ])
                                                     }}
                                                 >
