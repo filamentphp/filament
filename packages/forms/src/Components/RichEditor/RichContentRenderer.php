@@ -12,6 +12,7 @@ use Filament\Forms\Components\RichEditor\TipTapExtensions\DetailsSummaryExtensio
 use Filament\Forms\Components\RichEditor\TipTapExtensions\ImageExtension;
 use Filament\Forms\Components\RichEditor\TipTapExtensions\LeadExtension;
 use Filament\Forms\Components\RichEditor\TipTapExtensions\MergeTagExtension;
+use Filament\Forms\Components\RichEditor\TipTapExtensions\RawHtmlMergeTagExtension;
 use Filament\Forms\Components\RichEditor\TipTapExtensions\RenderedCustomBlockExtension;
 use Filament\Forms\Components\RichEditor\TipTapExtensions\SmallExtension;
 use Illuminate\Contracts\Support\Htmlable;
@@ -227,10 +228,19 @@ class RichContentRenderer implements Htmlable
                 return;
             }
 
+            $value = $this->getMergeTagValue($node->attrs->id);
+
+            if ($value instanceof Htmlable) {
+                $node->type = 'renderedCustomBlock';
+                $node->html = $value->toHtml();
+
+                return;
+            }
+
             $node->content = [
                 (object) [
                     'type' => 'text',
-                    'text' => $this->getMergeTagValue($node->attrs->id),
+                    'text' => $value,
                 ],
             ];
         });
@@ -272,6 +282,7 @@ class RichContentRenderer implements Htmlable
             app(MergeTagExtension::class),
             app(OrderedList::class),
             app(Paragraph::class),
+            app(RawHtmlMergeTagExtension::class),
             app(RenderedCustomBlockExtension::class),
             app(SmallExtension::class),
             app(Strike::class),
