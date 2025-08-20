@@ -231,7 +231,7 @@ class RichContentRenderer implements Htmlable
             $value = $this->getMergeTagValue($node->attrs->id);
 
             if ($value instanceof Htmlable) {
-                $node->type = 'renderedCustomBlock';
+                $node->type = 'rawHtmlMergeTag';
                 $node->html = $value->toHtml();
 
                 return;
