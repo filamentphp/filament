@@ -61,7 +61,7 @@ describe('uploader test', function (): void {
             expect($uploader2->getVisibility())->toBe('private');
         });
     });
-})->only();
+});
 
 it('UploadedFile should be converted to TemporaryUploadedFile', function (): void {
     try {
