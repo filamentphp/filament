@@ -32,7 +32,7 @@
     {{ $attributes->class(['fi-dropdown']) }}
 >
     <div
-        x-on:mousedown="toggle"
+        x-on:click="toggle"
         {{ $trigger->attributes->class(['fi-dropdown-trigger']) }}
     >
         {{ $trigger }}
