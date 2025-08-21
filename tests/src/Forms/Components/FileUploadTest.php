@@ -13,7 +13,7 @@ use function Filament\Tests\livewire;
 uses(TestCase::class);
 
 describe('uploader test', function (): void {
-    describe('disk', function () {
+    describe('disk', function (): void {
         it('should have local disk by default', function (): void {
             $uploader = FileUpload::make('test_file');
             expect($uploader->getDiskName())->toBe('local');
