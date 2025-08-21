@@ -158,14 +158,14 @@
                                             @if ($component->isVisible())
                                                 @if (! (($component instanceof Action) || ($component instanceof ActionGroup)))
                                                     @php
-                                                        $name = $component->getName();
+                                                        $itemStatePath = $item->getStatePath();
                                                         $componentStatePath = $component->getStatePath();
                                                     @endphp
                                                     <td
                                                         @if (filled($componentStatePath))
                                                             x-data="filamentSchemaComponent({
                                                                 path: @js($componentStatePath),
-                                                                containerPath: @js(str_replace('.'. $name, '', $componentStatePath)),
+                                                                containerPath: @js($itemStatePath),
                                                                 isLive: @js(method_exists($component, 'isLive') ? $component->isLive() : false),
                                                                 $wire,
                                                             })"
