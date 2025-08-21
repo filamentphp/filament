@@ -422,6 +422,24 @@ Merge tags are surrounded by double curly braces, like `{{ name }}`. When the co
 
 To insert a merge tag into the content, users can start typing `{{` to search for a tag to insert. Alternatively, they can click on the "merge tags" tool in the editor's toolbar, which opens a panel containing all the merge tags. They can then drag a merge tag from the editor's side panel into the content or click to insert it.
 
+You can also use a different display name. The array must contain the following indexes:
+
+```php
+use Filament\Forms\Components\RichEditor;
+
+RichEditor::make('content')
+    ->mergeTags([
+        [
+            'id' => 'name',
+            'label' => 'Full Name'
+        ],
+        [
+            'id' => 'today',
+            'label' => 'Date of Today'
+        ],
+    ])
+```
+
 ### Rendering content with merge tags
 
 When rendering the rich content, you can pass an array of values to replace the merge tags with:

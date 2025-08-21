@@ -240,8 +240,9 @@ export default Node.create({
                             return false
                         }
 
-                        const { id, label } =
-                            JSON.parse(event.dataTransfer.getData('mergeTag'))
+                        const { id, label } = JSON.parse(
+                            event.dataTransfer.getData('mergeTag'),
+                        )
 
                         view.dispatch(
                             view.state.tr.insert(
@@ -250,7 +251,8 @@ export default Node.create({
                                     top: event.clientY,
                                 }).pos,
                                 view.state.schema.nodes.mergeTag.create({
-                                    id, label,
+                                    id,
+                                    label,
                                 }),
                             ),
                         )
