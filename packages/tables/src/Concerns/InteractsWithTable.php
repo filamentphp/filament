@@ -246,9 +246,10 @@ trait InteractsWithTable
     }
 
     /**
-     * @param  ?string  $pageName
-     */
-    public function setPage($page, $pageName = 'page'): void
+     * @param  ?int|string  $page
+     * @param  string  $pageName
+    */
+    public function setPage(int|string $page, ?string $pageName = 'page'): void
     {
         $this->setLivewirePage($page, $pageName);
 
