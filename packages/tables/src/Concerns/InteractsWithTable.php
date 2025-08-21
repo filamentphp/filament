@@ -245,10 +245,6 @@ trait InteractsWithTable
         $this->resetLivewirePage($pageName ?? $this->getTablePaginationPageName());
     }
 
-    /**
-     * @param  ?int|string  $page
-     * @param  string  $pageName
-    */
     public function setPage(int|string $page, ?string $pageName = 'page'): void
     {
         $this->setLivewirePage($page, $pageName);
