@@ -35,7 +35,7 @@ const updatePosition = (editor, element) => {
 export default ({ mergeTags, noMergeTagSearchResultsMessage }) => ({
     items: ({ query }) => {
         return mergeTags.filter((item) =>
-            (item.label || item)
+            item.label
                 .toLowerCase()
                 .replace(/\s/g, '')
                 .includes(query.toLowerCase()),
@@ -66,7 +66,7 @@ export default ({ mergeTags, noMergeTagSearchResultsMessage }) => ({
                 items.forEach((item, index) => {
                     const button = document.createElement('button')
                     button.className = `fi-dropdown-list-item fi-dropdown-list-item-label ${index === selectedIndex ? 'fi-selected' : ''}`
-                    button.textContent = item?.label || item
+                    button.textContent = item.label
                     button.type = 'button'
                     button.addEventListener('click', () => selectItem(index))
                     element.appendChild(button)
@@ -88,8 +88,7 @@ export default ({ mergeTags, noMergeTagSearchResultsMessage }) => ({
 
             if (item) {
                 currentProps.command({
-                    id: item?.id || item,
-                    label: item?.label || item,
+                    id: item.id,
                 })
             }
         }

@@ -62,6 +62,7 @@ export default Node.create({
 
     addStorage() {
         return {
+            mergeTags: [],
             suggestions: [],
             getSuggestionFromChar: () => null,
         }
@@ -71,7 +72,7 @@ export default Node.create({
         return {
             HTMLAttributes: {},
             renderText({ node }) {
-                return `{{ ${node.attrs.label ?? node.attrs.id} }}`
+                return `{{ ${this.mergeTags.find((tag) => tag.id === node.attrs.id).label}}`
             },
             deleteTriggerWithBackspace: false,
             renderHTML({ options, node }) {
@@ -81,7 +82,7 @@ export default Node.create({
                         this.HTMLAttributes,
                         options.HTMLAttributes,
                     ),
-                    `${node.attrs.label ?? node.attrs.id}`,
+                    `${this.mergeTags.find((tag) => tag.id === node.attrs.id).label}`,
                 ]
             },
             suggestions: [],
@@ -240,9 +241,7 @@ export default Node.create({
                             return false
                         }
 
-                        const { id, label } = JSON.parse(
-                            event.dataTransfer.getData('mergeTag'),
-                        )
+                        const tagId = event.dataTransfer.getData('mergeTag')
 
                         view.dispatch(
                             view.state.tr.insert(
@@ -251,8 +250,7 @@ export default Node.create({
                                     top: event.clientY,
                                 }).pos,
                                 view.state.schema.nodes.mergeTag.create({
-                                    id,
-                                    label,
+                                    tagId,
                                 }),
                             ),
                         )

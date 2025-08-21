@@ -173,21 +173,16 @@
                                     <button
                                         draggable="true"
                                         type="button"
-                                        x-on:click="insertMergeTag(@js($tag['id'] ?? $tag), @js($tag['label'] ?? $tag))"
-                                        x-on:dragstart="
-                                            $event.dataTransfer.setData(
-                                                'mergeTag',
-                                                JSON.stringify({ id: @js($tag['id'] ?? $tag), label: @js($tag['label'] ?? $tag) }),
-                                            )
-                                        "
+                                        x-on:click="insertMergeTag(@js($tag['id']))"
+                                        x-on:dragstart="$event.dataTransfer.setData('mergeTag', @js($tag['id']))"
                                         class="fi-fo-rich-editor-merge-tag-btn"
                                     >
                                         <span
                                             data-type="mergeTag"
-                                            data-id="{{ $tag['id'] ?? $tag }}"
-                                            data-label="{{ $tag['label'] ?? $tag }}"
+                                            data-id="{{ $tag['id'] }}"
+                                            data-label="{{ $tag['label'] }}"
                                         >
-                                            {{ $tag['label'] ?? $tag }}
+                                            {{ $tag['label'] }}
                                         </span>
                                     </button>
                                 @endforeach

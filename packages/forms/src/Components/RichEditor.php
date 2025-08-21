@@ -731,11 +731,20 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     }
 
     /**
-     * @return array<string>
+     * @return array<array<string,string>>
      */
     public function getMergeTags(): array
     {
-        return $this->evaluate($this->mergeTags) ?? $this->getContentAttribute()?->getMergeTags() ?? [];
+        $mergeTags = $this->evaluate($this->mergeTags) ?? $this->getContentAttribute()?->getMergeTags() ?? [];
+
+        return array_map(
+            fn (string $label, int | string $id) => [
+                'id' => is_string($id) ? $id : $label,
+                'label' => $label,
+            ],
+            $mergeTags,
+            array_keys($mergeTags)
+        );
     }
 
     public function noMergeTagSearchResultsMessage(string | Closure | null $message): static

@@ -429,14 +429,8 @@ use Filament\Forms\Components\RichEditor;
 
 RichEditor::make('content')
     ->mergeTags([
-        [
-            'id' => 'name',
-            'label' => 'Full Name'
-        ],
-        [
-            'id' => 'today',
-            'label' => 'Date of Today'
-        ],
+        'name' => 'Full Name'
+        'today' => 'Date of Today'
     ])
 ```
 

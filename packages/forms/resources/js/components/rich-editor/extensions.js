@@ -93,6 +93,7 @@ export default async ({
                       mergeTags,
                       noMergeTagSearchResultsMessage,
                   }),
+                  mergeTags,
               }),
           ]
         : []),

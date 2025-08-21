@@ -246,14 +246,14 @@ export default function richEditorFormComponent({
             return this.activePanel === id
         },
 
-        insertMergeTag(id, label = null) {
+        insertMergeTag(id) {
             editor
                 .chain()
                 .focus()
                 .insertContent([
                     {
                         type: 'mergeTag',
-                        attrs: { id, label: label || id },
+                        attrs: { id },
                     },
                     {
                         type: 'text',
