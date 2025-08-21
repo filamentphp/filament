@@ -32,6 +32,7 @@ use Filament\Schemas\Components\EmbeddedTable;
 use Filament\Schemas\Components\RenderHook;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
+use Filament\Schemas\Contracts\HasRenderHookScopes;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
 use Filament\Support\Concerns\CanBeLazy;
@@ -48,7 +49,7 @@ use Livewire\Component;
 
 use function Filament\authorize;
 
-class RelationManager extends Component implements HasActions, HasSchemas, HasTable
+class RelationManager extends Component implements HasActions, HasRenderHookScopes, HasSchemas, HasTable
 {
     use CanBeLazy;
     use InteractsWithActions;

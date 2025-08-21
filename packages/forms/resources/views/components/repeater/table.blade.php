@@ -140,8 +140,8 @@
                                 @foreach ($item->getComponents(withHidden: true) as $component)
                                     @php
                                         throw_unless(
-                                            $component instanceof \Filament\Forms\Components\Field || $component instanceof \Filament\Infolists\Components\Entry,
-                                            new \Exception('Table repeaters must only contain form fields and infolist entries, but [' . $component::class . '] was used.'),
+                                            $component instanceof \Filament\Schemas\Components\Component,
+                                            new \Exception('Table repeaters must only contain schema components, but [' . $component::class . '] was used.'),
                                         );
                                     @endphp
 

@@ -14,7 +14,7 @@ use Filament\Tables\Columns\IconColumn;
 use Filament\Support\Icons\Heroicon;
 
 IconColumn::make('status')
-    ->icon(fn (string $state): Herocicon => match ($state) {
+    ->icon(fn (string $state): Heroicon => match ($state) {
         'draft' => Heroicon::OutlinedPencil,
         'reviewing' => Heroicon::OutlinedClock,
         'published' => Heroicon::OutlinedCheckCircle,
