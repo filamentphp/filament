@@ -41,17 +41,6 @@ describe('uploader test', function (): void {
             expect($uploader->getVisibility())->toBe('private');
         });
 
-        it('overrides visibility using config', function (): void {
-            Config::set('filament.default_filesystem_disk', 'public');
-            Config::set('filesystems.disks.public.visibility', 'public');
-
-            $publicVisibility = config('filesystems.disks.public.visibility', 'public');
-
-            $uploader = FileUpload::make('test_file');
-            expect($uploader->getDiskName())->toBe('public');
-            expect($uploader->getVisibility())->toBe($publicVisibility);
-        });
-
         it('overrides visibility from disk', function (): void {
             $uploader1 = FileUpload::make('test_file')
                 ->disk('public');

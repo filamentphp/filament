@@ -539,7 +539,7 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
             return $visibility;
         }
 
-        if ($this->getCustomDiskName() !== 'public') {
+        if ($this->getDiskName() !== 'public') {
             return $visibility;
         }
 
