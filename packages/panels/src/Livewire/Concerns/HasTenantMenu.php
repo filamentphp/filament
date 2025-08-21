@@ -12,6 +12,19 @@ trait HasTenantMenu
      */
     protected ?array $tenantMenuItems;
 
+    public function bootHasTenantMenu(): void
+    {
+        if (! Filament::hasTenancy()) {
+            return;
+        }
+
+        if (! Filament::hasTenantMenu()) {
+            return;
+        }
+
+        $this->getTenantMenuItems();
+    }
+
     /**
      * @return array<Action>
      */
@@ -29,6 +42,10 @@ trait HasTenantMenu
             $this->cacheAction($action);
         }
 
-        return $this->tenantMenuItems;
+        if (blank($this->tenantMenuItems)) {
+            $this->tenantMenuItems = null;
+        }
+
+        return $this->tenantMenuItems ?? [];
     }
 }
