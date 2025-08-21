@@ -498,17 +498,7 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
             return $name;
         }
 
-        $name = config('filament.default_filesystem_disk');
-
-        if ($name !== 'public') {
-            return $name;
-        }
-
-        if ($this->getVisibility() !== 'private') {
-            return $name;
-        }
-
-        return 'local';
+        return config('filament.default_filesystem_disk');
     }
 
     public function getCustomDiskName(): ?string
