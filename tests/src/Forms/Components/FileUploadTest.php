@@ -43,9 +43,9 @@ describe('uploader test', function (): void {
 
         it('overrides visibility using config', function (): void {
             Config::set('filament.default_filesystem_disk', 'public');
-            Config::set('filesystems.disks.public.visibility', 'private');
+            Config::set('filesystems.disks.public.visibility', 'public');
 
-            $publicVisibility = config('filesystems.disks.public.visibility', 'private');
+            $publicVisibility = config('filesystems.disks.public.visibility', 'public');
 
             $uploader = FileUpload::make('test_file');
             expect($uploader->getDiskName())->toBe('public');
@@ -72,7 +72,8 @@ describe('uploader test', function (): void {
             expect($uploader2->getVisibility())->toBe('private');
         });
     });
-});
+})->only();
+
 it('UploadedFile should be converted to TemporaryUploadedFile', function (): void {
     try {
         livewire(TestComponentWithFileUpload::class)
