@@ -52,6 +52,12 @@ describe('upload disk & visibility', function (): void {
             expect($uploader->getDiskName())->toBe('public');
             expect($uploader->getVisibility())->toBe($publicVisibility);
         });
+
+        it('prioritizes visibility from method', function (): void {
+            $uploader = FileUpload::make('test_file')
+                ->visibility('public');
+            expect($uploader->getVisibility())->toBe('public');
+        });
     });
 })->only();
 it('UploadedFile should be converted to TemporaryUploadedFile', function (): void {
