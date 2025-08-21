@@ -12,13 +12,11 @@ use function Filament\Tests\livewire;
 
 uses(TestCase::class);
 
-describe('upload disk & visibility', function (): void {
+describe('uploader test', function (): void {
     describe('disk', function () {
         it('should have local disk by default', function (): void {
-            $disk = config('filament.default_filesystem_disk');
-
             $uploader = FileUpload::make('test_file');
-            expect($uploader->getDiskName())->toBe($disk);
+            expect($uploader->getDiskName())->toBe('local');
         });
 
         it('overrides disk name using config', function (): void {
@@ -45,21 +43,36 @@ describe('upload disk & visibility', function (): void {
 
         it('overrides visibility using config', function (): void {
             Config::set('filament.default_filesystem_disk', 'public');
+            Config::set('filesystems.disks.public.visibility', 'private');
 
-            $publicVisibility = config('filesystems.disks.public.visibility', 'public');
+            $publicVisibility = config('filesystems.disks.public.visibility', 'private');
 
             $uploader = FileUpload::make('test_file');
             expect($uploader->getDiskName())->toBe('public');
             expect($uploader->getVisibility())->toBe($publicVisibility);
         });
 
+        it('overrides visibility from disk', function (): void {
+            $uploader1 = FileUpload::make('test_file')
+                ->disk('public');
+            expect($uploader1->getVisibility())->toBe('public');
+
+            $uploader2 = FileUpload::make('test_file')
+                ->disk('local');
+            expect($uploader2->getVisibility())->toBe('private');
+        });
+
         it('prioritizes visibility from method', function (): void {
-            $uploader = FileUpload::make('test_file')
+            $uploader1 = FileUpload::make('test_file')
                 ->visibility('public');
-            expect($uploader->getVisibility())->toBe('public');
+            expect($uploader1->getVisibility())->toBe('public');
+
+            $uploader2 = FileUpload::make('test_file')
+                ->visibility('private');
+            expect($uploader2->getVisibility())->toBe('private');
         });
     });
-})->only();
+});
 it('UploadedFile should be converted to TemporaryUploadedFile', function (): void {
     try {
         livewire(TestComponentWithFileUpload::class)
