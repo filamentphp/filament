@@ -1,7 +1,9 @@
 @php
     use Filament\Actions\Action;
+    use Filament\Actions\ActionGroup;
     use Filament\Support\Enums\Alignment;
     use Illuminate\View\ComponentAttributeBag;
+    use Illuminate\Support\Js;
 
     $fieldWrapperView = $getFieldWrapperView();
 
@@ -154,26 +156,30 @@
                                             @endphp
 
                                             @if ($component->isVisible())
-                                                @php
-                                                    $name = $component->getName();
-                                                    $componentStatePath = $component->getStatePath();
-                                                @endphp
-                                                <td
-                                                    @if (filled($componentStatePath))
-                                                        x-data="filamentSchemaComponent({
-                                                            path: @js($componentStatePath),
-                                                            containerPath: @js(str_replace('.'. $name, '', $componentStatePath)),
-                                                            isLive: @js(method_exists($component, 'isLive') ? $component->isLive() : false),
-                                                            $wire,
-                                                        })"
-                                                        @if (method_exists($component, 'getAfterStateUpdatedJs') && ($afterStateUpdatedJs = $component->getAfterStateUpdatedJs()))
-                                                            x-init="{{ implode(';', array_map(
-                                                                fn (string $js): string => '$wire.watch(' . \Illuminate\Support\Js::from($componentStatePath) . ', ($state, $old) => ($state !== undefined) && eval(' . \Illuminate\Support\Js::from($js) . '))',
-                                                                $afterStateUpdatedJs,
-                                                            )) }}"
+                                                @if (! (($component instanceof Action) || ($component instanceof ActionGroup)))
+                                                    @php
+                                                        $name = $component->getName();
+                                                        $componentStatePath = $component->getStatePath();
+                                                    @endphp
+                                                    <td
+                                                        @if (filled($componentStatePath))
+                                                            x-data="filamentSchemaComponent({
+                                                                path: @js($componentStatePath),
+                                                                containerPath: @js(str_replace('.'. $name, '', $componentStatePath)),
+                                                                isLive: @js(method_exists($component, 'isLive') ? $component->isLive() : false),
+                                                                $wire,
+                                                            })"
+                                                            @if ($afterStateUpdatedJs = $component->getAfterStateUpdatedJs())
+                                                                x-init="{{ implode(';', array_map(
+                                                                    fn (string $js): string => '$wire.watch(' . Js::from($componentStatePath) . ', ($state, $old) => ($state !== undefined) && eval(' . \Illuminate\Support\Js::from($js) . '))',
+                                                                    $afterStateUpdatedJs,
+                                                                )) }}"
+                                                            @endif
                                                         @endif
-                                                    @endif
-                                                >
+                                                    >
+                                                @else
+                                                    <td>
+                                                @endif
                                                     {{ $component }}
                                                 </td>
                                             @else
