@@ -171,7 +171,7 @@
                                                             })"
                                                             @if ($afterStateUpdatedJs = $component->getAfterStateUpdatedJs())
                                                                 x-init="{{ implode(';', array_map(
-                                                                    fn (string $js): string => '$wire.watch(' . Js::from($componentStatePath) . ', ($state, $old) => ($state !== undefined) && eval(' . \Illuminate\Support\Js::from($js) . '))',
+                                                                    fn (string $js): string => '$wire.watch(' . Js::from($componentStatePath) . ', ($state, $old) => ($state !== undefined) && eval(' . Js::from($js) . '))',
                                                                     $afterStateUpdatedJs,
                                                                 )) }}"
                                                             @endif
