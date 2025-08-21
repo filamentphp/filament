@@ -29,6 +29,12 @@ describe('upload disk & visibility', function (): void {
             $uploader = FileUpload::make('test_file');
             expect($uploader->getDiskName())->toBe($disk);
         });
+
+        it('prioritizes disk name from method', function (): void {
+            $uploader = FileUpload::make('test_file')
+                ->disk('s3');
+            expect($uploader->getDiskName())->toBe('s3');
+        });
     });
 
     describe('visibility', function (): void {
