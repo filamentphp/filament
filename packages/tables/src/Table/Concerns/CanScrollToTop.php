@@ -8,7 +8,7 @@ trait CanScrollToTop
 {
     protected bool | Closure $shouldScrollToTopOnPageChange = false;
 
-    public function scrollToTop(bool | Closure $condition = true): static
+    public function scrollToTopOnPageChange(bool | Closure $condition = true): static
     {
         $this->shouldScrollToTopOnPageChange = $condition;
 

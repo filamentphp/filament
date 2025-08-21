@@ -246,9 +246,6 @@ trait InteractsWithTable
     }
 
     /**
-     * Leitet setPage von Livewire weiter und dispatcht ggf. ein Browser-Event,
-     * um nach einem Tabellen-Seitenwechsel nach oben zu scrollen.
-     *
      * @param  ?string  $pageName
      */
     public function setPage($page, $pageName = 'page'): void
