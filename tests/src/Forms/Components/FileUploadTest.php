@@ -12,6 +12,23 @@ use function Filament\Tests\livewire;
 
 uses(TestCase::class);
 
+describe('upload filesystem', function (): void {
+    it('should have local filesystem by default', function (): void {
+        $disk = config('filament.default_filesystem_disk');
+
+        $uploader = FileUpload::make('test_file');
+        expect($uploader->getDiskName())->toBe($disk);
+    });
+
+    it('overrides local filesystem using config', function (): void {
+        Config::set('filament.default_filesystem_disk', 'public');
+
+        $disk = config('filament.default_filesystem_disk');
+
+        $uploader = FileUpload::make('test_file');
+        expect($uploader->getDiskName())->toBe($disk);
+    });
+});
 it('UploadedFile should be converted to TemporaryUploadedFile', function (): void {
     try {
         livewire(TestComponentWithFileUpload::class)
