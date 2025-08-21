@@ -100,6 +100,7 @@
                                 $moveUpAction = $moveUpAction(['item' => $itemKey])->disabled($loop->first);
                                 $moveUpActionIsVisible = $isReorderableWithButtons && $moveUpAction->isVisible();
                                 $reorderActionIsVisible = $isReorderableWithDragAndDrop && $reorderAction->isVisible();
+                                $itemStatePath = $item->getStatePath();
                             @endphp
 
                             <tr
@@ -158,7 +159,6 @@
                                             @if ($component->isVisible())
                                                 @if (! (($component instanceof Action) || ($component instanceof ActionGroup)))
                                                     @php
-                                                        $itemStatePath = $item->getStatePath();
                                                         $componentStatePath = $component->getStatePath();
                                                     @endphp
                                                     <td
