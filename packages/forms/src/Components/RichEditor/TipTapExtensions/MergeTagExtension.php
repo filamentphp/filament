@@ -44,6 +44,10 @@ class MergeTagExtension extends Node
                 'parseHTML' => fn ($DOMNode) => $DOMNode->getAttribute('data-id') ?: null,
                 'renderHTML' => fn ($attributes) => ['data-id' => $attributes->id ?? null],
             ],
+            'label' => [
+                'parseHTML' => fn ($DOMNode) => $DOMNode->getAttribute('data-label') ?: null,
+                'renderHTML' => fn ($attributes) => ['data-label' => $attributes->label ?? null],
+            ],
         ];
     }
 
