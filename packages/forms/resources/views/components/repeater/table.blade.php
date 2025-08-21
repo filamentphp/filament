@@ -155,19 +155,11 @@
 
                                             @if ($component->isVisible())
                                                 @php
-                                                    $componentStatePath = null;
-                                                    $canUseAlpineIntegration = false;
-
-                                                    try {
-                                                        $name = $component->getName();
-                                                        $componentStatePath = $component->getStatePath();
-                                                        $canUseAlpineIntegration = filled($componentStatePath) && $component->getLivewire();
-                                                    } catch (\Exception $e) {
-                                                        $canUseAlpineIntegration = false;
-                                                    }
+                                                    $name = $component->getName();
+                                                    $componentStatePath = $component->getStatePath();
                                                 @endphp
                                                 <td
-                                                    @if ($canUseAlpineIntegration)
+                                                    @if (filled($componentStatePath))
                                                         x-data="filamentSchemaComponent({
                                                             path: @js($componentStatePath),
                                                             containerPath: @js(str_replace('.'. $name, '', $componentStatePath)),
