@@ -222,7 +222,7 @@ trait HasColumnManager
         $label = (string) $column->getLabel();
 
         if (blank($label) && $this->hasReorderableTableColumns()) {
-            throw new Exception("The column [{$column->getName()}] has a blank label. Columns must have labels when reorderable columns is enabled.");
+            throw new Exception("The table column [{$column->getName()}] has a blank label. All columns must have labels when they are reorderable.");
         }
 
         return [
