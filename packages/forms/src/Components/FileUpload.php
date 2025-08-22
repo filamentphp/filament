@@ -3,12 +3,12 @@
 namespace Filament\Forms\Components;
 
 use Closure;
-use Exception;
 use Filament\Forms\View\FormsIconAlias;
 use Filament\Support\Concerns\HasAlignment;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Collection;
+use InvalidArgumentException;
 
 use function Filament\Support\generate_icon_html;
 
@@ -372,7 +372,7 @@ class FileUpload extends BaseFileUpload
     public function imageEditorMode(int $mode): static
     {
         if (! in_array($mode, [1, 2, 3])) {
-            throw new Exception("The file upload editor mode must be either 1, 2 or 3. [{$mode}] given, which is unsupported. See https://github.com/fengyuanchen/cropperjs#viewmode for more information on the available modes. Mode 0 is not supported, as it does not allow configuration via manual inputs.");
+            throw new InvalidArgumentException("The file upload editor mode must be either 1, 2 or 3. [{$mode}] given, which is unsupported. See https://github.com/fengyuanchen/cropperjs#viewmode for more information on the available modes. Mode 0 is not supported, as it does not allow configuration via manual inputs.");
         }
 
         $this->imageEditorMode = $mode;

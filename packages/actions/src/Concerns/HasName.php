@@ -2,7 +2,7 @@
 
 namespace Filament\Actions\Concerns;
 
-use Exception;
+use LogicException;
 
 trait HasName
 {
@@ -20,7 +20,7 @@ trait HasName
         if (blank($this->name)) {
             $actionClass = static::class;
 
-            throw new Exception("Action of class [$actionClass] must have a unique name, passed to the [make()] method.");
+            throw new LogicException("Action of class [$actionClass] must have a unique name, passed to the [make()] method.");
         }
 
         return $this->name;
