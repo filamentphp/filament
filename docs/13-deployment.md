@@ -13,7 +13,7 @@ For tips focused on local development performance, see [Optimizing local dev](in
 
 When Filament detects that your app's `APP_ENV` is not `local`, it will require you to set up authorization for your users. This is to ensure that only authorized users can access your Filament panel in production, while keeping the local environment easy to get started with.
 
-To authorize users to access a panel, you should follow the [guide in the users section](users/overview#uthorizing-access-to-the-panel).
+To authorize users to access a panel, you should follow the [guide in the users section](users/overview#authorizing-access-to-the-panel).
 
 <Aside variant="warning">
     If you do not follow these steps and your user model does not implement the `FilamentUser` interface, no users will be able to sign in to your panel in production.
