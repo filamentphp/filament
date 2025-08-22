@@ -482,7 +482,10 @@ RichEditor::make('content')
         // Or objects with an id and label (recommended)
         ['id' => 1, 'label' => 'Jane Doe'],
         ['id' => 2, 'label' => 'John Smith'],
+
     ])
+    // or Model Query
+    ->mentionItems(fn () => User::all()->map(fn ($item) => ['id' => $item['id'], 'label' => $item['name']])->toArray())
 ```
 
 - Typing `@` opens a dropdown that filters as you type.
