@@ -3,7 +3,6 @@
 namespace Filament\Forms\Components;
 
 use Closure;
-use Exception;
 use Filament\Actions\Action;
 use Filament\Support\Enums\IconPosition;
 use Filament\Support\Icons\Heroicon;
@@ -21,6 +20,7 @@ use Illuminate\Database\Eloquent\Relations\HasOneOrManyThrough;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use LogicException;
 use Znck\Eloquent\Relations\BelongsToThrough;
 
 class ModalTableSelect extends Field
@@ -586,7 +586,7 @@ class ModalTableSelect extends Field
         }
 
         if (! $relationship) {
-            throw new Exception("The relationship [{$relationshipName}] does not exist on the model [{$this->getModel()}].");
+            throw new LogicException("The relationship [{$relationshipName}] does not exist on the model [{$this->getModel()}].");
         }
 
         return $relationship;
@@ -669,7 +669,7 @@ class ModalTableSelect extends Field
 
     public function getTableConfiguration(): string
     {
-        return $this->evaluate($this->tableConfiguration) ?? throw new Exception('The [tableConfiguration()] method must be set when using a [TableSelect] component.');
+        return $this->evaluate($this->tableConfiguration) ?? throw new LogicException('The [tableConfiguration()] method must be set when using a [TableSelect] component.');
     }
 
     /**

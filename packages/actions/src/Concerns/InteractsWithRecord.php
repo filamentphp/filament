@@ -8,6 +8,7 @@ use Filament\Actions\Action;
 use Filament\Support\ArrayRecord;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+use LogicException;
 
 use function Filament\Support\get_model_label;
 use function Filament\Support\locale_has_pluralization;
@@ -152,7 +153,7 @@ trait InteractsWithRecord
     public function resolveRecordKey(Model | array $record): string
     {
         if (is_array($record)) {
-            return $record[ArrayRecord::getKeyName()] ?? throw new Exception('Record arrays must have a unique [' . ArrayRecord::getKeyName() . '] entry for identification.');
+            return $record[ArrayRecord::getKeyName()] ?? throw new LogicException('Record arrays must have a unique [' . ArrayRecord::getKeyName() . '] entry for identification.');
         }
 
         return $record->getKey();

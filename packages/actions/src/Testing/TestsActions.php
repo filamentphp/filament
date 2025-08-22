@@ -4,7 +4,6 @@ namespace Filament\Actions\Testing;
 
 use BackedEnum;
 use Closure;
-use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\ActionName;
@@ -15,6 +14,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Testing\Assert;
 use Livewire\Component;
 use Livewire\Features\SupportTesting\Testable;
+use LogicException;
 use ReflectionClass;
 
 use function Livewire\store;
@@ -631,7 +631,7 @@ class TestsActions
                     $action = $action->toArray(defaultSchema: ($initialMountedActionsCount + $actionNestingIndex) ? ('mountedActionSchema' . ($initialMountedActionsCount + $actionNestingIndex - 1)) : $this->instance()->getDefaultTestingSchemaName());
                 }
 
-                $actionName = $action['name'] ?? throw new Exception("Action name at index [{$actionNestingIndex}] is not specified.");
+                $actionName = $action['name'] ?? throw new LogicException("Action name at index [{$actionNestingIndex}] is not specified.");
 
                 if (
                     class_exists($actionName) &&
