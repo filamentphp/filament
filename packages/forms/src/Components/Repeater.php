@@ -3,7 +3,6 @@
 namespace Filament\Forms\Components;
 
 use Closure;
-use Exception;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Repeater\TableColumn;
 use Filament\Forms\View\FormsIconAlias;
@@ -25,6 +24,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
 use Illuminate\Support\Str;
+use LogicException;
 
 use function Filament\Forms\array_move_after;
 use function Filament\Forms\array_move_before;
@@ -1096,7 +1096,7 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
         $relationshipName = $this->getRelationshipName();
 
         if (! $record->isRelation($relationshipName)) {
-            throw new Exception("The relationship [{$relationshipName}] does not exist on the model [{$this->getModel()}].");
+            throw new LogicException("The relationship [{$relationshipName}] does not exist on the model [{$this->getModel()}].");
         }
 
         return $this->getModelInstance()->{$relationshipName}();

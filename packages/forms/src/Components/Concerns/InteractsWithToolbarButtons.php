@@ -3,7 +3,7 @@
 namespace Filament\Forms\Components\Concerns;
 
 use Closure;
-use Exception;
+use LogicException;
 
 trait InteractsWithToolbarButtons
 {
@@ -27,7 +27,7 @@ trait InteractsWithToolbarButtons
     public function disableToolbarButtons(array $buttonsToDisable = []): static
     {
         if ($this->toolbarButtons instanceof Closure) {
-            throw new Exception('You cannot use the `disableToolbarButtons()` method when the toolbar buttons are dynamically returned from a function. Instead, do not return the disabled buttons from the function.');
+            throw new LogicException('You cannot use the `disableToolbarButtons()` method when the toolbar buttons are dynamically returned from a function. Instead, do not return the disabled buttons from the function.');
         }
 
         $this->toolbarButtons = array_reduce(
@@ -56,7 +56,7 @@ trait InteractsWithToolbarButtons
     public function enableToolbarButtons(array $buttonsToEnable = []): static
     {
         if ($this->toolbarButtons instanceof Closure) {
-            throw new Exception('You cannot use the `enableToolbarButtons()` method when the toolbar buttons are dynamically returned from a function. Instead, return the enabled buttons from the function.');
+            throw new LogicException('You cannot use the `enableToolbarButtons()` method when the toolbar buttons are dynamically returned from a function. Instead, return the enabled buttons from the function.');
         }
 
         $this->toolbarButtons = [
