@@ -250,7 +250,7 @@ export default Node.create({
                                     top: event.clientY,
                                 }).pos,
                                 view.state.schema.nodes.mergeTag.create({
-                                    tagId,
+                                    id: tagId,
                                 }),
                             ),
                         )
