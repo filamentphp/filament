@@ -758,7 +758,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
      */
     public function getMergeTags(): array
     {
-        return Arr::wrap($this->evaluate($this->mergeTags) ?? $this->getContentAttribute()?->getMergeTags() ?? []);
+        return $this->evaluate($this->mergeTags) ?? $this->getContentAttribute()?->getMergeTags() ?? [];
     }
 
     public function noMergeTagSearchResultsMessage(string | Closure | null $message): static
@@ -800,7 +800,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
      */
     public function getCustomBlocks(): array
     {
-        return Arr::wrap($this->evaluate($this->customBlocks) ?? $this->getContentAttribute()?->getCustomBlocks() ?? []);
+        return $this->evaluate($this->customBlocks) ?? $this->getContentAttribute()?->getCustomBlocks() ?? [];
     }
 
     /**
