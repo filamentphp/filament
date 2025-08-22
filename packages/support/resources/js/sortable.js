@@ -18,30 +18,16 @@ export default (Alpine) => {
             animation: animation,
             ghostClass: 'fi-sortable-ghost',
             onEnd(evt) {
-                const dragged = evt.item
-                const parent = dragged.parentNode
-                const children = Array.from(parent.childNodes)
+                const { item: draggedNode, to: parentNode, newIndex } = evt
+                const draggableSelector = this.options.draggable
+                const previousNode =
+                    parentNode.querySelectorAll(draggableSelector)[newIndex - 1]
 
-                const draggedIndex = children.indexOf(dragged)
-
-                if (draggedIndex === children.length - 1) {
-                    const commentNode = children
-                        .slice(0, draggedIndex)
-                        .reverse()
-                        .find(
-                            (node) =>
-                                node.nodeType === Node.COMMENT_NODE &&
-                                (node.nodeValue
-                                    .trim()
-                                    .startsWith('[if ENDBLOCK]') ||
-                                    node.nodeValue
-                                        .trim()
-                                        .startsWith('[if BLOCK]')),
-                        )
-
-                    if (commentNode) {
-                        parent.insertBefore(dragged, commentNode)
-                    }
+                if (previousNode) {
+                    parentNode.insertBefore(
+                        draggedNode,
+                        previousNode.nextSibling,
+                    )
                 }
             },
         })
