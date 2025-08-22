@@ -11,7 +11,7 @@
     $tools = $getTools();
     $toolbarButtons = $getToolbarButtons();
     $floatingToolbars = $getFloatingToolbars();
-    $mentionItems = method_exists($field, 'getMentionItems') ? $getMentionItems() : [];
+    $mentionItems = $getMentionItems();
 @endphp
 
 <x-dynamic-component :component="$fieldWrapperView" :field="$field">
