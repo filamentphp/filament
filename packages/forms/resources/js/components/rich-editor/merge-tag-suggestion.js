@@ -87,9 +87,7 @@ export default ({ mergeTags, noMergeTagSearchResultsMessage }) => ({
             const item = items[index]
 
             if (item) {
-                currentProps.command({
-                    id: item.id,
-                })
+                currentProps.command({ id: item.id })
             }
         }
 
