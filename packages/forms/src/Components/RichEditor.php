@@ -82,6 +82,11 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
      */
     protected array | Closure | null $floatingToolbars = null;
 
+    /**
+     * @var array<mixed> | Closure | null
+     */
+    protected array | Closure | null $mentionItems = null;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -438,6 +443,24 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     }
 
     /**
+     * @param  array<mixed> | Closure | null  $items
+     */
+    public function mentionItems(array | Closure | null $items): static
+    {
+        $this->mentionItems = $items;
+
+        return $this;
+    }
+
+    /**
+     * @return array<mixed>
+     */
+    public function getMentionItems(): array
+    {
+        return $this->evaluate($this->mentionItems) ?? [];
+    }
+
+    /**
      * @param  array<RichContentPlugin> | Closure  $extensions
      */
     public function plugins(array | Closure $extensions): static
@@ -735,7 +758,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
      */
     public function getMergeTags(): array
     {
-        return $this->evaluate($this->mergeTags) ?? $this->getContentAttribute()?->getMergeTags() ?? [];
+        return Arr::wrap($this->evaluate($this->mergeTags) ?? $this->getContentAttribute()?->getMergeTags() ?? []);
     }
 
     public function noMergeTagSearchResultsMessage(string | Closure | null $message): static
@@ -777,7 +800,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
      */
     public function getCustomBlocks(): array
     {
-        return $this->evaluate($this->customBlocks) ?? $this->getContentAttribute()?->getCustomBlocks() ?? [];
+        return Arr::wrap($this->evaluate($this->customBlocks) ?? $this->getContentAttribute()?->getCustomBlocks() ?? []);
     }
 
     /**

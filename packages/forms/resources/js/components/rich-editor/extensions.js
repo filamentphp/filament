@@ -33,6 +33,8 @@ import TextAlign from '@tiptap/extension-text-align'
 import Underline from '@tiptap/extension-underline'
 
 import getMergeTagSuggestion from './merge-tag-suggestion.js'
+import Mention from './extension-mention.js'
+import getMentionSuggestion from './mention-suggestion.js'
 
 export default async ({
     customExtensionUrls,
@@ -43,6 +45,7 @@ export default async ({
     key,
     mergeTags,
     noMergeTagSearchResultsMessage,
+    mentions = [],
     placeholder,
     statePath,
     uploadingFileMessage,
@@ -93,6 +96,14 @@ export default async ({
                       mergeTags,
                       noMergeTagSearchResultsMessage,
                   }),
+              }),
+          ]
+        : []),
+    ...(mentions.length 
+        ? [
+              Mention.configure({
+                  HTMLAttributes: { class: 'fi-fo-rich-editor-mention' },
+                  suggestion: getMentionSuggestion({ items: mentions }),
               }),
           ]
         : []),

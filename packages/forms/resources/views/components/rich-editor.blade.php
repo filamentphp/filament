@@ -11,6 +11,7 @@
     $tools = $getTools();
     $toolbarButtons = $getToolbarButtons();
     $floatingToolbars = $getFloatingToolbars();
+    $mentionItems = method_exists($field, 'getMentionItems') ? $getMentionItems() : [];
 @endphp
 
 <x-dynamic-component :component="$fieldWrapperView" :field="$field">
@@ -37,6 +38,7 @@
                         liveDebounce: @js($getNormalizedLiveDebounce()),
                         livewireId: @js($this->getId()),
                         mergeTags: @js($mergeTags),
+                        mentions: @js($mentionItems),
                         noMergeTagSearchResultsMessage: @js($getNoMergeTagSearchResultsMessage()),
                         placeholder: @js($getPlaceholder()),
                         state: $wire.{{ $applyStateBindingModifiers("\$entangle('{$statePath}')", isOptimisticallyLive: false) }},
