@@ -373,6 +373,8 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
 
             if ($state instanceof BackedEnum) {
                 $state = $state->value;
+            } elseif (is_object($state)) {
+                $state = (string) $state;
             }
 
             foreach ($options as $groupedOptions) {
