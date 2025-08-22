@@ -725,7 +725,7 @@ Action::make('updateAuthor')
 
 <UtilityInjection set="actions" version="4.x">The `modalCloseButton()` method also accepts a function to dynamically calculate the value. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-If you'd like to hide the close button for all modals in the application, you can do so by calling `Modal::closeButton(false)` inside a service provider or middleware:
+If you'd like to hide the close button for all modals in the application, you can do so by calling `ModalComponent::closeButton(false)` inside a service provider or middleware:
 
 ```php
 use Filament\Support\View\Components\ModalComponent;
