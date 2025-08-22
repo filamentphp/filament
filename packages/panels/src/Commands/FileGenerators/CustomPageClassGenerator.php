@@ -4,6 +4,7 @@ namespace Filament\Commands\FileGenerators;
 
 use Filament\Clusters\Cluster;
 use Filament\Pages\Page;
+use Filament\Schemas\Schema;
 use Filament\Support\Commands\FileGenerators\ClassGenerator;
 use Filament\Support\Commands\FileGenerators\Concerns\CanGenerateViewProperty;
 use Nette\PhpGenerator\ClassType;
@@ -37,6 +38,7 @@ class CustomPageClassGenerator extends ClassGenerator
         $extendsBasename = class_basename($extends);
 
         return [
+            Schema::class,
             ...(($extendsBasename === class_basename($this->getFqn())) ? [$extends => "Base{$extendsBasename}"] : [$extends]),
             ...($this->hasCluster() ? (($this->getClusterBasename() === 'Page') ? [$this->getClusterFqn() => 'PageCluster'] : [$this->getClusterFqn()]) : []),
         ];
@@ -99,5 +101,25 @@ class CustomPageClassGenerator extends ClassGenerator
     public function hasCluster(): bool
     {
         return filled($this->getClusterFqn());
+    }
+
+    protected function addMethodsToClass(ClassType $class): void
+    {
+        $this->addContentMethodToClass($class);
+    }
+
+    protected function addContentMethodToClass(ClassType $class): void
+    {
+        $method = $class->addMethod('content')
+            ->setPublic()
+            ->setReturnType(Schema::class)
+            ->setBody(<<<'PHP'
+                return $schema
+                    ->components([
+                        //
+                    ]);
+                PHP);
+        $method->addParameter('schema')
+            ->setType(Schema::class);
     }
 }
