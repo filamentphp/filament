@@ -465,6 +465,33 @@ RichEditor::make('content')
     ->activePanel('mergeTags')
 ```
 
+## Using mentions
+
+Mentions let users type `@` to search and insert inline references (e.g., users, teams). The inserted mention is an inline, non-editable token rendered as text like `@Jane Doe`.
+
+Mentions are built into the rich editor. To enable them, provide a list of items using `mentionItems()`:
+
+```php
+use Filament\Forms\Components\RichEditor;
+
+RichEditor::make('content')
+    ->mentionItems([
+        // Strings
+        'Marketing', 'Sales', 'Support',
+
+        // Or objects with an id and label (recommended)
+        ['id' => 1, 'label' => 'Jane Doe'],
+        ['id' => 2, 'label' => 'John Smith'],
+    ])
+```
+
+- Typing `@` opens a dropdown that filters as you type.
+- Selecting an item inserts an inline span with a ```data-type="mention"``` attribute at the cursor.
+- Items can be simple strings or associative arrays with `id` and `label` (or `name`). When both are present, the label is displayed and the id is stored.
+- You may pass a closure to `mentionItems()` to compute items dynamically.
+
+When rendering, mentions are output as inline text. If you output raw HTML from the editor yourself, remember to sanitize it.
+
 ## Registering rich content attributes
 
 There are elements of the rich editor configuration that apply to both the editor and the renderer. For example, if you are using [private images](#using-private-images-in-the-editor), [custom blocks](#using-custom-blocks), [merge tags](#using-merge-tags), or [plugins](#extending-the-rich-editor), you need to ensure that the same configuration is used in both places. To do this, Filament provides you with a way to register rich content attributes that can be used in both the editor and the renderer.
