@@ -181,7 +181,7 @@
                             icon-size="lg"
                             :label="__('filament::components/modal.actions.close.label')"
                             tabindex="-1"
-                            :x-on:click="$closeEventHandler"
+                            :x-on:mousedown="$closeEventHandler"
                             class="fi-modal-close-btn"
                         />
                     @endif
@@ -230,6 +230,13 @@
                     @if (filled($id))
                         wire:key="{{ isset($this) ? "{$this->getId()}." : '' }}modal.{{ $id }}.footer"
                     @endif
+                    x-on:mousedown.capture="
+                        if ($event.target.closest('button, .fi-btn')) {
+                            $event.preventDefault();
+                            $event.stopPropagation();
+                            $event.target.closest('button, .fi-btn').click();
+                        }
+                    "
                     @class([
                         'fi-modal-footer',
                         'fi-sticky' => $stickyFooter,
