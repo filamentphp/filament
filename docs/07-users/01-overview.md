@@ -230,11 +230,11 @@ class EditProfile extends BaseEditProfile
 
 This class extends the base profile page class from the Filament codebase. Other page classes you could extend include:
 
-- `Filament\Pages\Auth\Login`
-- `Filament\Pages\Auth\Register`
-- `Filament\Pages\Auth\EmailVerification\EmailVerificationPrompt`
-- `Filament\Pages\Auth\PasswordReset\RequestPasswordReset`
-- `Filament\Pages\Auth\PasswordReset\ResetPassword`
+- `Filament\Auth\Pages\Login`
+- `Filament\Auth\Pages\Register`
+- `Filament\Auth\Pages\EmailVerification\EmailVerificationPrompt`
+- `Filament\Auth\Pages\PasswordReset\RequestPasswordReset`
+- `Filament\Auth\Pages\PasswordReset\ResetPassword`
 
 In the `form()` method of the example, we call methods like `getNameFormComponent()` to get the default form components for the page. You can customize these components as required. For all the available customization options, see the base `EditProfile` page class in the Filament codebase - it contains all the methods that you can override to make changes.
 
