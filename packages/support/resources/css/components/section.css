@@ -85,6 +85,12 @@
         }
     }
 
+    &.fi-section-not-contained {
+        & > .fi-section-content-ctn {
+            @apply md:col-span-2;
+        }
+    }
+    
     &.fi-section-not-contained:not(.fi-aside) {
         @apply grid gap-y-4;
 
