@@ -76,7 +76,7 @@
     }
 
     & .fi-fo-repeater-item-content {
-        @apply p-4 border-t border-gray-100 dark:border-white/10;
+        @apply border-t border-gray-100 p-4 dark:border-white/10;
     }
 
     & .fi-fo-repeater-add-between-items-ctn {
