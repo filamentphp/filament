@@ -159,6 +159,21 @@ public function panel(Panel $panel): Panel
 }
 ```
 
+## Configuring the global search placeholder
+
+You can customize the placeholder text of the global search input field by using the `globalSearchPlaceholder()` method in the [configuration](../panel-configuration):
+
+```php
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->globalSearchPlaceholder('Search all records...');
+}
+```
+
 ## Configuring the global search debounce
 
 Global search has a default debounce time of 500ms, to limit the number of requests that are made while the user is typing. You can alter this by using the `globalSearchDebounce()` method in the [configuration](../panel-configuration):
