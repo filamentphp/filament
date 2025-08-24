@@ -86,6 +86,10 @@
     }
 
     &.fi-section-not-contained {
+        .fi-sc-section .fi-section-header {
+            @apply md:col-span-2;
+        }
+
         & > .fi-section-content-ctn {
             @apply md:col-span-2;
         }
