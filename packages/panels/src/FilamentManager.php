@@ -242,6 +242,11 @@ class FilamentManager
         return $this->getCurrentOrDefaultPanel()->getGlobalSearchFieldSuffix();
     }
 
+    public function getGlobalSearchFieldPlaceholder(): ?string
+    {
+        return $this->getCurrentOrDefaultPanel()->getGlobalSearchFieldPlaceholder();
+    }
+
     public function getGlobalSearchProvider(): ?GlobalSearchProvider
     {
         return $this->getCurrentOrDefaultPanel()->getGlobalSearchProvider();

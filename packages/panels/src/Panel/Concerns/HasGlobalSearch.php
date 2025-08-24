@@ -23,6 +23,8 @@ trait HasGlobalSearch
 
     protected string | Closure | null $globalSearchFieldSuffix = null;
 
+    protected string | Closure | null $globalSearchFieldPlaceholder = null;
+
     public function globalSearch(string | bool $provider = true): static
     {
         if (is_string($provider) && (! in_array(GlobalSearchProvider::class, class_implements($provider)))) {
@@ -54,6 +56,13 @@ trait HasGlobalSearch
     public function globalSearchFieldSuffix(string | Closure | null $suffix): static
     {
         $this->globalSearchFieldSuffix = $suffix;
+
+        return $this;
+    }
+
+    public function globalSearchFieldPlaceholder(string | Closure | null $placeholder): static
+    {
+        $this->globalSearchFieldPlaceholder = $placeholder;
 
         return $this;
     }
@@ -110,6 +119,11 @@ trait HasGlobalSearch
     public function getGlobalSearchFieldSuffix(): ?string
     {
         return $this->evaluate($this->globalSearchFieldSuffix);
+    }
+
+    public function getGlobalSearchFieldPlaceholder(): ?string
+    {
+        return $this->evaluate($this->globalSearchFieldPlaceholder);
     }
 
     public function getGlobalSearchProvider(): ?GlobalSearchProvider
