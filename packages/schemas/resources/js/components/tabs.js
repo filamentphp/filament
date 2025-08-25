@@ -9,9 +9,19 @@ export default function tabsSchemaComponent({
         tab,
 
         init() {
-            this.$watch('tab', () => this.updateQueryString())
-
             const tabs = this.getTabs()
+
+            const queryString = new URLSearchParams(window.location.search)
+
+            if (
+                isTabPersistedInQueryString &&
+                queryString.has(tabQueryStringKey) &&
+                tabs.includes(queryString.get(tabQueryStringKey))
+            ) {
+                this.tab = queryString.get(tabQueryStringKey)
+            }
+
+            this.$watch('tab', () => this.updateQueryString())
 
             if (!this.tab || !tabs.includes(this.tab)) {
                 this.tab = tabs[activeTab - 1]

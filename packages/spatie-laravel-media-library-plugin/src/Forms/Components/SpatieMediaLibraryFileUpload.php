@@ -70,7 +70,7 @@ class SpatieMediaLibraryFileUpload extends FileUpload
                 })
                 ->toArray();
 
-            $component->state($media);
+            $component->rawState($media);
         });
 
         $this->afterStateHydrated(null);
@@ -153,8 +153,8 @@ class SpatieMediaLibraryFileUpload extends FileUpload
             return $media->getAttributeValue('uuid');
         });
 
-        $this->reorderUploadedFilesUsing(static function (SpatieMediaLibraryFileUpload $component, ?Model $record, array $state): array {
-            $uuids = array_filter(array_values($state));
+        $this->reorderUploadedFilesUsing(static function (SpatieMediaLibraryFileUpload $component, ?Model $record, array $rawState): array {
+            $uuids = array_filter(array_keys($rawState));
 
             $mediaClass = ($record && method_exists($record, 'getMediaModel')) ? $record->getMediaModel() : null;
             $mediaClass ??= config('media-library.media_model', Media::class);
@@ -166,7 +166,7 @@ class SpatieMediaLibraryFileUpload extends FileUpload
                 ...$mappedIds,
             ]);
 
-            return $state;
+            return $rawState;
         });
     }
 

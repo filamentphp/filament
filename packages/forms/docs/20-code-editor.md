@@ -18,7 +18,22 @@ CodeEditor::make('code')
 
 ## Using language syntax highlighting
 
-You may change the language syntax highlighting of the code editor using the `language()` method. The editor supports CSS, HTML, JavaScript, JSON and PHP. You can open the `Filament\Forms\Components\CodeEditor\Enums\Language` enum class to see the full list. To switch to using JavaScript syntax highlighting, you can use the `Language::JavaScript` enum value:
+You may change the language syntax highlighting of the code editor using the `language()` method. The editor supports the following languages:
+
+- C++
+- CSS
+- Go
+- HTML
+- Java
+- JavaScript
+- JSON
+- Markdown
+- PHP
+- Python
+- XML
+- YAML
+
+You can open the `Filament\Forms\Components\CodeEditor\Enums\Language` enum class to see this list. To switch to using JavaScript syntax highlighting, you can use the `Language::JavaScript` enum value:
 
 ```php
 use Filament\Forms\Components\CodeEditor;

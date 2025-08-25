@@ -14,7 +14,7 @@
     }
 
     & td {
-        @apply w-1/2 px-3 py-1.5;
+        @apply w-1/2 px-3 py-1.5 wrap-anywhere;
 
         &.fi-in-placeholder {
             @apply w-full py-2 text-center font-sans;

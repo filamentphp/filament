@@ -80,7 +80,7 @@ trait EntanglesStateWithSingularRelationship
             $findComponentsWithThisRelationship($component->getRootContainer());
 
             // The first layout component using this relationship is the one that will save the relationship for all of them.
-            if (Arr::first($componentsWithThisRelationship) !== $component) {
+            if (filled($componentsWithThisRelationship) && (Arr::first($componentsWithThisRelationship) !== $component)) {
                 return;
             }
 

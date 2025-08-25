@@ -12,8 +12,7 @@ class PostInfolist
     {
         return $schema
             ->components([
-                TextEntry::make('author.name')
-                    ->numeric(),
+                TextEntry::make('author.name'),
                 IconEntry::make('is_published')
                     ->boolean(),
                 TextEntry::make('rating')

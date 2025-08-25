@@ -2,6 +2,7 @@
 
 namespace Filament\Tables\Concerns;
 
+use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\BulkAction;
 use Filament\Schemas\Schema;
@@ -103,7 +104,7 @@ trait HasBulkActions
 
             $records = $this->getTable()->selectsCurrentPageOnly() ?
                 $this->getTableRecords()->pluck($query->getModel()->getKeyName()) :
-                $query->pluck($query->getModel()->getQualifiedKeyName());
+                $query->toBase()->pluck($query->getModel()->getQualifiedKeyName());
 
             /** @phpstan-ignore-next-line */
             return $records->map(fn ($key): string => (string) $key)->all();
@@ -144,7 +145,7 @@ trait HasBulkActions
                 $this->getTableRecords()
                     ->filter(fn (Model $record): bool => $tableGrouping->getStringKey($record) === $group)
                     ->pluck($query->getModel()->getKeyName()) :
-                $query->pluck($query->getModel()->getQualifiedKeyName());
+                $query->toBase()->pluck($query->getModel()->getQualifiedKeyName());
 
             return $records
                 ->map(fn ($key): string => (string) $key)
@@ -212,7 +213,7 @@ trait HasBulkActions
         if (! $table->hasQuery()) {
             $resolveSelectedRecords = $table->getResolveSelectedRecordsCallback();
 
-            return $this->cachedSelectedTableRecords = $resolveSelectedRecords ?
+            $resolvedSelectedRecords = $resolveSelectedRecords ?
                 $table->evaluate($resolveSelectedRecords, [
                     'keys' => $this->selectedTableRecords,
                     'records' => $this->selectedTableRecords,
@@ -222,6 +223,14 @@ trait HasBulkActions
                     'isTrackingDeselectedRecords' => $this->isTrackingDeselectedTableRecords,
                 ]) :
                 ($this->isTrackingDeselectedTableRecords ? $this->getTableRecords()->except($this->deselectedTableRecords) : $this->getTableRecords()->only($this->selectedTableRecords));
+
+            $maxSelectableRecords = $table->getMaxSelectableRecords();
+
+            if ($maxSelectableRecords && ($resolvedSelectedRecords->count() > $maxSelectableRecords)) {
+                throw new Exception("The total count of selected records [{$resolvedSelectedRecords->count()}] must not exceed the maximum selectable records limit [{$maxSelectableRecords}].");
+            }
+
+            return $this->cachedSelectedTableRecords = $resolvedSelectedRecords;
         }
 
         $query = $this->getSelectedTableRecordsQuery($shouldFetchSelectedRecords, $chunkSize);
@@ -231,7 +240,7 @@ trait HasBulkActions
         }
 
         if (! $shouldFetchSelectedRecords) {
-            return $this->cachedSelectedTableRecords = $query->pluck($query->getModel()->getQualifiedKeyName());
+            return $this->cachedSelectedTableRecords = $query->toBase()->pluck($query->getModel()->getQualifiedKeyName());
         }
 
         if ($chunkSize) {
@@ -244,12 +253,17 @@ trait HasBulkActions
     public function getSelectedTableRecordsQuery(bool $shouldFetchSelectedRecords = true, ?int $chunkSize = null): Builder
     {
         $table = $this->getTable();
+        $maxSelectableRecords = $table->getMaxSelectableRecords();
 
         if (! ($table->getRelationship() instanceof BelongsToMany && $table->allowsDuplicates())) {
             if ($this->isTrackingDeselectedTableRecords) {
                 $query = $table->getQuery()->whereKeyNot($this->deselectedTableRecords);
             } else {
                 $query = $table->getQuery()->whereKey($this->selectedTableRecords);
+            }
+
+            if ($maxSelectableRecords) {
+                $query->limit($maxSelectableRecords);
             }
 
             if (! $chunkSize) {
@@ -280,6 +294,10 @@ trait HasBulkActions
             $relationship->wherePivotNotIn($pivotKeyName, $this->deselectedTableRecords);
         } else {
             $relationship->wherePivotIn($pivotKeyName, $this->selectedTableRecords);
+        }
+
+        if ($maxSelectableRecords) {
+            $relationship->limit($maxSelectableRecords);
         }
 
         if ($shouldFetchSelectedRecords) {

@@ -8,7 +8,6 @@ use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\IconSize;
 use Filament\Support\Facades\FilamentAsset;
-use Filament\Support\Facades\FilamentView;
 use Filament\Support\View\Components\ToggleComponent;
 use Filament\Tables\Columns\Contracts\Editable;
 use Filament\Tables\Table;
@@ -45,16 +44,19 @@ class ToggleColumn extends Column implements Editable, HasEmbeddedView
 
         $attributes = (new ComponentAttributeBag)
             ->merge([
-                'x-load' => FilamentView::hasSpaMode()
-                    ? 'visible || event (x-modal-opened)'
-                    : true,
+                'x-load' => true,
                 'x-load-src' => FilamentAsset::getAlpineComponentSrc('columns/toggle', 'filament/tables'),
-                'disabled' => $this->isDisabled(),
                 'x-data' => 'toggleTableColumn({
                     name: ' . Js::from($this->getName()) . ',
                     recordKey: ' . Js::from($this->getRecordKey()) . ',
                     state: ' . Js::from($state) . ',
                 })',
+                'x-tooltip' => filled($tooltip = $this->getTooltip($state))
+                    ? '{
+                        content: ' . Js::from($tooltip) . ',
+                        theme: $store.theme,
+                    }'
+                    : null,
             ], escape: false)
             ->class([
                 'fi-ta-toggle',
@@ -67,12 +69,6 @@ class ToggleColumn extends Column implements Editable, HasEmbeddedView
                 'disabled' => $this->isDisabled(),
                 'wire:loading.attr' => 'disabled',
                 'wire:target' => implode(',', Table::LOADING_TARGETS),
-                'x-tooltip' => filled($tooltip = $this->getTooltip($state))
-                    ? '{
-                        content: ' . Js::from($tooltip) . ',
-                        theme: $store.theme,
-                    }'
-                    : null,
             ], escape: false)
             ->class(['fi-toggle']);
 

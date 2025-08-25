@@ -2,6 +2,7 @@
 
 namespace Filament\Tables\Concerns;
 
+use Exception;
 use Filament\Schemas\Schema;
 use Filament\Support\Components\Component;
 use Filament\Tables\Columns\Column;
@@ -17,9 +18,16 @@ trait HasColumnManager
     public const TABLE_COLUMN_MANAGER_COLUMN_TYPE = 'column';
 
     /**
-     * @var array<int, array{type: string, name: string, label: string, isToggled: bool, isToggleable: bool, columns?: array<int, array{type: string, name: string, label: string, isToggled: bool, isToggleable: bool}>}>
+     * @var array<int, array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool, columns?: array<int, array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool}>}>
      */
     public array $tableColumns = [];
+
+    /**
+     * @var ?array<int, array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool,columns?: array<int, array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool}>}>
+     */
+    protected ?array $cachedDefaultTableColumnState = null;
+
+    protected ?bool $hasReorderableTableColumns = null;
 
     public function initTableColumnManager(): void
     {
@@ -35,11 +43,11 @@ trait HasColumnManager
     }
 
     /**
-     * @return array<int, array{type: string, name: string, label: string, isToggled: bool, isToggleable: bool, columns?: array<int, array{type: string, name: string, label: string, isToggled: bool, isToggleable: bool}>}>
+     * @return array<int, array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool, columns?: array<int, array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool}>}>
      */
-    public function getDefaultTableColumnManagerState(): array
+    public function getDefaultTableColumnState(): array
     {
-        return collect($this->getTable()->getColumnsLayout())
+        return $this->cachedDefaultTableColumnState ??= collect($this->getTable()->getColumnsLayout())
             ->map(fn (Component $component): ?array => match (true) {
                 $component instanceof ColumnGroup => $this->mapTableColumnGroupToArray($component),
                 $component instanceof Column => $this->mapTableColumnToArray($component),
@@ -59,43 +67,33 @@ trait HasColumnManager
     }
 
     /**
-     * @param  array<int, array{type: string, name: string, label: string, isToggled: bool, isToggleable: bool, columns?: array<int, array{type: string, name: string, label: string, isToggled: bool, isToggleable: bool}>}>|null  $state
+     * @param  array<int, array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool, columns?: array<int, array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool}>}>|null  $state
      */
     public function applyTableColumnManager(?array $state = null): void
     {
         if (filled($state)) {
             $this->tableColumns = $state;
+
+            if ($this->hasReorderableTableColumns()) {
+                $this->persistHasReorderedTableColumns();
+            }
         }
 
-        $this->syncTableColumnManagerWithDefaultState();
+        $this->hasReorderableTableColumns() && session()->get($this->getHasReorderedTableColumnsSessionKey())
+            ? $this->syncReorderableColumnsFromDefaultTableColumnState()
+            : $this->syncStaticColumnsFromTableColumnState();
 
-        $reorderedColumns = collect($this->tableColumns)
-            ->map(function (array $item): Column | ColumnGroup | null {
-                if ($item['type'] === self::TABLE_COLUMN_MANAGER_COLUMN_TYPE) {
-                    return $this->getTable()->getColumn($item['name']);
-                }
+        $this->persistTableColumns();
+    }
 
-                if ($item['type'] !== self::TABLE_COLUMN_MANAGER_GROUP_TYPE || ! isset($item['columns'])) {
-                    return null;
-                }
+    public function resetTableColumnManager(): void
+    {
+        $this->tableColumns = $this->getDefaultTableColumnState();
 
-                $columns = collect($item['columns'])
-                    ->map(fn (array $column): ?Column => $this->getTable()->getColumn($column['name']))
-                    ->filter()
-                    ->all();
-
-                if (empty($columns)) {
-                    return null;
-                }
-
-                return $this->getTable()
-                    ->getColumnGroup($item['name'])
-                    ->columns($columns);
-            })
-            ->filter()
-            ->all();
-
-        $this->getTable()->columns($reorderedColumns);
+        if ($this->hasReorderableTableColumns()) {
+            $this->updateTableColumns();
+            $this->persistHasReorderedTableColumns();
+        }
 
         $this->persistTableColumns();
     }
@@ -134,14 +132,21 @@ trait HasColumnManager
         return "tables.{$table}_columns";
     }
 
+    public function getHasReorderedTableColumnsSessionKey(): string
+    {
+        $table = md5($this::class);
+
+        return "tables.{$table}_has_reordered_columns";
+    }
+
     /**
-     * @return array<int, array{type: string, name: string, label: string, isToggled: bool, isToggleable: bool, columns?: array<int, array{type: string, name: string, label: string, isToggled: bool, isToggleable: bool}>}>
+     * @return array<int, array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool, columns?: array<int, array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool}>}>
      */
     protected function loadTableColumnsFromSession(): array
     {
         return session()->get(
             $this->getTableColumnsSessionKey(),
-            $this->getDefaultTableColumnManagerState(),
+            $this->getDefaultTableColumnState(),
         );
     }
 
@@ -150,6 +155,14 @@ trait HasColumnManager
         session()->put(
             $this->getTableColumnsSessionKey(),
             $this->tableColumns
+        );
+    }
+
+    protected function persistHasReorderedTableColumns(): void
+    {
+        session()->put(
+            $this->getHasReorderedTableColumnsSessionKey(),
+            $this->hasReorderedTableColumns()
         );
     }
 
@@ -180,7 +193,7 @@ trait HasColumnManager
     }
 
     /**
-     * @return array{type: string, name: string, label: string, isToggled: bool, isToggleable: bool, columns: array<int, array{type: string, name: string, label: string, isToggled: bool, isToggleable: bool}>}
+     * @return array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool, columns: array<int, array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool}>}
      */
     protected function mapTableColumnGroupToArray(ColumnGroup $group): array
     {
@@ -188,88 +201,169 @@ trait HasColumnManager
             'type' => self::TABLE_COLUMN_MANAGER_GROUP_TYPE,
             'name' => (string) $group->getLabel(),
             'label' => (string) $group->getLabel(),
+            'isHidden' => empty(array_filter($group->getColumns(), fn (Column $column): bool => ! $column->isHidden())),
             'isToggled' => true,
             'isToggleable' => true,
-            'columns' => collect($group->getColumns())
-                ->map(fn (Column $column): array => $this->mapTableColumnToArray($column))
-                ->values()
-                ->all(),
+            'isToggledHiddenByDefault' => null,
+            'columns' => array_values(
+                array_map(
+                    fn (Column $column): array => $this->mapTableColumnToArray($column),
+                    $group->getColumns()
+                )
+            ),
         ];
     }
 
     /**
-     * @return array{type: string, name: string, label: string, isToggled: bool, isToggleable: bool}
+     * @return array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool}
      */
     protected function mapTableColumnToArray(Column $column): array
     {
+        $label = (string) $column->getLabel();
+
+        if (blank($label) && $this->hasReorderableTableColumns()) {
+            throw new Exception("The table column [{$column->getName()}] has a blank label. All columns must have labels when they are reorderable.");
+        }
+
         return [
             'type' => self::TABLE_COLUMN_MANAGER_COLUMN_TYPE,
             'name' => $column->getName(),
-            'label' => (string) $column->getLabel(),
+            'label' => $label,
+            'isHidden' => $column->isHidden(),
             'isToggled' => ! $column->isToggleable() || ! $column->isToggledHiddenByDefault(),
             'isToggleable' => $column->isToggleable(),
+            'isToggledHiddenByDefault' => $column->isToggleable() ? $column->isToggledHiddenByDefault() : null,
         ];
     }
 
-    protected function syncTableColumnManagerWithDefaultState(): void
+    protected function syncReorderableColumnsFromDefaultTableColumnState(): void
     {
-        $defaultState = $this->getDefaultTableColumnManagerState();
+        $defaultColumnState = $this->getDefaultTableColumnState();
 
         $this->tableColumns = collect($this->tableColumns)
-            ->map(fn (array $item) => $this->syncTableColumnManagerItemWithDefaultState($item, $defaultState))
+            ->map(fn (array $item) => $this->syncItemFromDefaultTableColumnState($item, $defaultColumnState))
             ->filter()
             ->values()
-            ->merge($this->getNewTableColumnManagerItems($defaultState))
+            ->merge($this->getNewDefaultColumnStateItems($defaultColumnState))
+            ->all();
+
+        $this->updateTableColumns();
+    }
+
+    protected function updateTableColumns(): void
+    {
+        $reorderedColumns = collect($this->tableColumns)
+            ->map(function (array $item): Column | ColumnGroup | null {
+                if ($item['type'] === self::TABLE_COLUMN_MANAGER_COLUMN_TYPE) {
+                    return $this->getTable()->getColumn($item['name']);
+                }
+
+                if ($item['type'] !== self::TABLE_COLUMN_MANAGER_GROUP_TYPE || ! isset($item['columns'])) {
+                    return null;
+                }
+
+                $columns = collect($item['columns'])
+                    ->map(fn (array $column): ?Column => $this->getTable()->getColumn($column['name']))
+                    ->filter()
+                    ->all();
+
+                if (empty($columns)) {
+                    return null;
+                }
+
+                return $this->getTable()
+                    ->getColumnGroup($item['name'])
+                    ->columns($columns);
+            })
+            ->filter()
+            ->all();
+
+        $this->getTable()->columns($reorderedColumns);
+    }
+
+    protected function syncStaticColumnsFromTableColumnState(): void
+    {
+        $this->tableColumns = collect($this->getDefaultTableColumnState())
+            ->map(fn (array $item) => $this->syncItemFromTableColumnState($item, $this->tableColumns))
             ->all();
     }
 
     /**
-     * @param  array{type: string, name: string, label: string, isToggled: bool, isToggleable: bool, columns?: array<int, array{type: string, name: string, label: string, isToggled: bool, isToggleable: bool}>}  $item
-     * @param  array<int, array{type: string, name: string, label: string, isToggled: bool, isToggleable: bool, columns?: array<int, array{type: string, name: string, label: string, isToggled: bool, isToggleable: bool}>}>  $defaultState
-     * @return array{type: string, name: string, label: string, isToggled: bool, isToggleable: bool, columns?: array<int, array{type: string, name: string, label: string, isToggled: bool, isToggleable: bool}>}|null
+     * @param  array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool, columns?: array<int, array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool}>}  $item
+     * @param  array<int, array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool, columns?: array<int, array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool}>}>  $defaultColumnState
+     * @return array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool, columns?: array<int, array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool}>}|null
      */
-    protected function syncTableColumnManagerItemWithDefaultState(array $item, array $defaultState): ?array
+    protected function syncItemFromDefaultTableColumnState(array $item, array $defaultColumnState): ?array
     {
-        $matchingDefault = $this->findMatchingTableColumnManagerItem($item, $defaultState);
+        $matchingItem = $this->findMatchingTableColumnStateItem($item, $defaultColumnState);
 
-        if ($matchingDefault === null) {
+        if ($matchingItem === null) {
             return null;
         }
 
-        $item = $this->applyDefaultStateToTableColumnManagerColumn($item, $matchingDefault);
+        $syncedItem = $this->syncTableColumnStateItemAttributes($item, $matchingItem);
 
-        if ($item['type'] !== self::TABLE_COLUMN_MANAGER_GROUP_TYPE || ! isset($item['columns'])) {
-            return $item;
+        if ($syncedItem['type'] !== self::TABLE_COLUMN_MANAGER_GROUP_TYPE || ! isset($syncedItem['columns'])) {
+            return $syncedItem;
         }
 
-        $item['columns'] = $this->syncTableColumnManagerGroupColumnsWithDefaultState(
-            $item['columns'],
-            $matchingDefault['columns'] ?? []
+        $syncedItem['columns'] = $this->syncGroupFromDefaultTableColumnState(
+            $syncedItem['columns'],
+            $matchingItem['columns'] ?? []
         );
 
-        if (empty($item['columns'])) {
+        if (empty($syncedItem['columns'])) {
             return null;
         }
 
-        return $item;
+        return $syncedItem;
     }
 
     /**
-     * @param  array<int, array{type: string, name: string, label: string, isToggled: bool, isToggleable: bool}>  $existingColumns
-     * @param  array<int, array{type: string, name: string, label: string, isToggled: bool, isToggleable: bool}>  $defaultColumns
-     * @return array<int, array{type: string, name: string, label: string, isToggled: bool, isToggleable: bool}>
+     * @param  array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool, columns?: array<int, array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool}>}  $item
+     * @param  array<int, array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool, columns?: array<int, array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool}>}>  $tableColumnState
+     * @return array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool, columns?: array<int, array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool}>}
      */
-    protected function syncTableColumnManagerGroupColumnsWithDefaultState(array $existingColumns, array $defaultColumns): array
+    protected function syncItemFromTableColumnState(array $item, array $tableColumnState): array
+    {
+        $matchingItem = $this->findMatchingTableColumnStateItem($item, $tableColumnState);
+
+        if ($matchingItem === null) {
+            return $item;
+        }
+
+        $syncedItem = $this->syncTableColumnStateItemAttributes($matchingItem, $item);
+
+        if ($syncedItem['type'] !== self::TABLE_COLUMN_MANAGER_GROUP_TYPE || ! isset($syncedItem['columns'])) {
+            return $syncedItem;
+        }
+
+        $syncedItem['columns'] = collect($item['columns'])
+            ->map(fn (array $item) => $this->syncItemFromTableColumnState(
+                $item,
+                $matchingItem['columns'] ?? []
+            ))
+            ->all();
+
+        return $syncedItem;
+    }
+
+    /**
+     * @param  array<int, array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool}>  $existingColumns
+     * @param  array<int, array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool}>  $defaultColumns
+     * @return array<int, array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool}>
+     */
+    protected function syncGroupFromDefaultTableColumnState(array $existingColumns, array $defaultColumns): array
     {
         $updatedColumns = collect($existingColumns)
             ->map(function (array $column) use ($defaultColumns): ?array {
-                $matchingDefault = $this->findMatchingTableColumnManagerItem($column, $defaultColumns);
+                $matchingDefault = $this->findMatchingTableColumnStateItem($column, $defaultColumns);
 
                 if ($matchingDefault === null) {
                     return null;
                 }
 
-                return $this->applyDefaultStateToTableColumnManagerColumn($column, $matchingDefault);
+                return $this->syncTableColumnStateItemAttributes($column, $matchingDefault);
             })
             ->filter()
             ->values();
@@ -288,27 +382,40 @@ trait HasColumnManager
     }
 
     /**
-     * @param  array{type: string, name: string, label: string, isToggled: bool, isToggleable: bool, columns?: array<int, array{type: string, name: string, label: string, isToggled: bool, isToggleable: bool}>}  $item
-     * @param  array{type: string, name: string, label: string, isToggled: bool, isToggleable: bool, columns?: array<int, array{type: string, name: string, label: string, isToggled: bool, isToggleable: bool}>}  $default
-     * @return array{type: string, name: string, label: string, isToggled: bool, isToggleable: bool, columns?: array<int, array{type: string, name: string, label: string, isToggled: bool, isToggleable: bool}>}
+     * @param  array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool, columns?: array<int, array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool}>}  $item
+     * @param  array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool, columns?: array<int, array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool}>}  $default
+     * @return array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool, columns?: array<int, array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool}>}
      */
-    protected function applyDefaultStateToTableColumnManagerColumn(array $item, array $default): array
+    protected function syncTableColumnStateItemAttributes(array $item, array $default): array
     {
         $item['label'] = $default['label'];
         $item['isToggleable'] = $default['isToggleable'];
+        $item['isHidden'] = $default['isHidden'];
 
-        if (! $item['isToggleable']) {
+        if (! $default['isToggleable']) {
             $item['isToggled'] = true;
+        }
+
+        if ($item['type'] === self::TABLE_COLUMN_MANAGER_COLUMN_TYPE) {
+            if (
+                $default['isToggleable'] &&
+                is_null($item['isToggledHiddenByDefault'] ?? null) &&
+                is_bool($default['isToggledHiddenByDefault'])
+            ) {
+                $item['isToggled'] = ! $default['isToggledHiddenByDefault'];
+            }
+
+            $item['isToggledHiddenByDefault'] = $default['isToggleable'] ? $default['isToggledHiddenByDefault'] : null;
         }
 
         return $item;
     }
 
     /**
-     * @param  array<int, array{type: string, name: string, label: string, isToggled: bool, isToggleable: bool, columns?: array<int, array{type: string, name: string, label: string, isToggled: bool, isToggleable: bool}>}>  $defaultState
-     * @return array<int, array{type: string, name: string, label: string, isToggled: bool, isToggleable: bool, columns?: array<int, array{type: string, name: string, label: string, isToggled: bool, isToggleable: bool}>}>
+     * @param  array<int, array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool, columns?: array<int, array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool}>}>  $defaultState
+     * @return array<int, array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool, columns?: array<int, array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool}>}>
      */
-    protected function getNewTableColumnManagerItems(array $defaultState): array
+    protected function getNewDefaultColumnStateItems(array $defaultState): array
     {
         $existingKeys = collect($this->tableColumns)
             ->map(fn (array $item) => $item['type'] . ':' . $item['name'])
@@ -321,16 +428,56 @@ trait HasColumnManager
     }
 
     /**
-     * @param  array{type: string, name: string, label: string, isToggled: bool, isToggleable: bool, columns?: array<int, array{type: string, name: string, label: string, isToggled: bool, isToggleable: bool}>}  $item
-     * @param  array<int, array{type: string, name: string, label: string, isToggled: bool, isToggleable: bool, columns?: array<int, array{type: string, name: string, label: string, isToggled: bool, isToggleable: bool}>}>  $items
-     * @return array{type: string, name: string, label: string, isToggled: bool, isToggleable: bool, columns?: array<int, array{type: string, name: string, label: string, isToggled: bool, isToggleable: bool}>}|null
+     * @param  array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool, columns?: array<int, array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool}>}  $item
+     * @param  array<int, array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool, columns?: array<int, array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool}>}>  $items
+     * @return array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool, columns?: array<int, array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool}>}|null
      */
-    protected function findMatchingTableColumnManagerItem(array $item, array $items): ?array
+    protected function findMatchingTableColumnStateItem(array $item, array $items): ?array
     {
         return collect($items)
             ->first(
                 fn (array $candidate) => $candidate['type'] === $item['type'] &&
                 $candidate['name'] === $item['name']
             );
+    }
+
+    protected function hasReorderableTableColumns(): bool
+    {
+        return $this->hasReorderableTableColumns ??= $this->getTable()->hasReorderableColumns();
+    }
+
+    protected function hasReorderedTableColumns(): bool
+    {
+        $flattenedDefaultColumnState = $this->flattenTableColumnStateItems($this->getDefaultTableColumnState());
+        $flattenedColumnState = $this->flattenTableColumnStateItems($this->tableColumns);
+
+        $matchingDefaultColumns = collect($flattenedDefaultColumnState)
+            ->filter(fn (string $key) => in_array($key, $flattenedColumnState))
+            ->values()
+            ->all();
+
+        return $flattenedColumnState !== $matchingDefaultColumns;
+    }
+
+    /**
+     * @param  array<int, array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool, columns?: array<int, array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool}>}>  $items
+     * @return array<int, string>
+     */
+    protected function flattenTableColumnStateItems(array $items): array
+    {
+        $flattenedItems = [];
+
+        foreach ($items as $item) {
+            $prefix = $item['type'] . ':' . $item['name'];
+            $flattenedItems[] = $prefix;
+
+            if ($item['type'] === self::TABLE_COLUMN_MANAGER_GROUP_TYPE && isset($item['columns'])) {
+                foreach ($item['columns'] as $column) {
+                    $flattenedItems[] = $prefix . ':' . $column['name'];
+                }
+            }
+        }
+
+        return $flattenedItems;
     }
 }

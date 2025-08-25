@@ -5,6 +5,8 @@ namespace Filament\Forms\Components;
 use Closure;
 use Exception;
 use Filament\Forms\Components\Contracts\CanHaveNumericState;
+use Filament\Schemas\Components\Concerns\CanStripCharactersFromState;
+use Filament\Schemas\Components\Concerns\CanTrimState;
 use Filament\Schemas\Components\Contracts\HasAffixActions;
 use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
 use Filament\Schemas\Components\StateCasts\NumberStateCast;
@@ -13,6 +15,8 @@ use Filament\Support\RawJs;
 
 class TextInput extends Field implements CanHaveNumericState, Contracts\CanBeLengthConstrained, HasAffixActions
 {
+    use CanStripCharactersFromState;
+    use CanTrimState;
     use Concerns\CanBeAutocapitalized;
     use Concerns\CanBeAutocompleted;
     use Concerns\CanBeLengthConstrained;
@@ -39,6 +43,8 @@ class TextInput extends Field implements CanHaveNumericState, Contracts\CanBeLen
     protected bool | Closure $isPassword = false;
 
     protected bool | Closure $isRevealable = false;
+
+    protected bool | Closure $isCopyable = false;
 
     protected bool | Closure $isTel = false;
 
@@ -165,6 +171,28 @@ class TextInput extends Field implements CanHaveNumericState, Contracts\CanBeLen
         return $this->isPassword() ?: throw new Exception("The text input [{$this->getStatePath()}] is not a [password()], so it cannot be [revealable()].");
     }
 
+    public function copyable(
+        bool | Closure $condition = true,
+        string | Closure | null $copyMessage = null,
+        int | Closure | null $copyMessageDuration = null
+    ): static {
+        $this->isCopyable = $condition;
+
+        $this->suffixAction(
+            TextInput\Actions\CopyAction::make()
+                ->copyMessage($copyMessage)
+                ->copyMessageDuration($copyMessageDuration)
+                ->visible($condition),
+        );
+
+        return $this;
+    }
+
+    public function isCopyable(): bool
+    {
+        return (bool) $this->evaluate($this->isCopyable);
+    }
+
     public function tel(bool | Closure $condition = true): static
     {
         $this->isTel = $condition;
@@ -276,5 +304,31 @@ class TextInput extends Field implements CanHaveNumericState, Contracts\CanBeLen
             ...parent::getDefaultStateCasts(),
             ...($this->isNumeric() ? [app(NumberStateCast::class, ['isNullable' => true])] : []),
         ];
+    }
+
+    public function mutateDehydratedState(mixed $state): mixed
+    {
+        $state = $this->stripCharactersFromState($state);
+        $state = $this->trimState($state);
+
+        return parent::mutateDehydratedState($state);
+    }
+
+    public function mutateStateForValidation(mixed $state): mixed
+    {
+        $state = $this->stripCharactersFromState($state);
+        $state = $this->trimState($state);
+
+        return parent::mutateStateForValidation($state);
+    }
+
+    public function mutatesDehydratedState(): bool
+    {
+        return parent::mutatesDehydratedState() || $this->hasStripCharacters() || $this->isTrimmed();
+    }
+
+    public function mutatesStateForValidation(): bool
+    {
+        return parent::mutatesStateForValidation() || $this->hasStripCharacters() || $this->isTrimmed();
     }
 }

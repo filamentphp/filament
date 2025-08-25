@@ -1,6 +1,5 @@
 @php
     use Filament\Schemas\Components\Tabs\Tab;
-    use Filament\Support\Facades\FilamentView;
 
     $activeTab = $getActiveTab();
     $isContained = $isContained();
@@ -12,11 +11,7 @@
 
 @if (blank($livewireProperty))
     <div
-        @if (FilamentView::hasSpaMode())
-            {{-- format-ignore-start --}}x-load="visible || event (x-modal-opened)"{{-- format-ignore-end --}}
-        @else
-            x-load
-        @endif
+        x-load
         x-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('tabs', 'filament/schemas') }}"
         x-data="tabsSchemaComponent({
             activeTab: @js($activeTab),

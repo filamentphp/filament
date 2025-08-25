@@ -4,6 +4,8 @@ use Filament\Auth\Pages\Login;
 use Filament\Facades\Filament;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
+use Illuminate\Auth\Events\Failed;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Str;
 
 use function Filament\Tests\livewire;
@@ -61,6 +63,8 @@ it('can redirect unauthenticated app requests', function (): void {
 });
 
 it('cannot authenticate with incorrect credentials', function (): void {
+    Event::fake([Failed::class]);
+
     $userToAuthenticate = User::factory()->create();
 
     livewire(Login::class)
@@ -72,9 +76,30 @@ it('cannot authenticate with incorrect credentials', function (): void {
         ->assertHasFormErrors(['email']);
 
     $this->assertGuest();
+
+    Event::assertDispatched(function (Failed $event) use ($userToAuthenticate) {
+        if ($event->guard !== 'web') {
+            return false;
+        }
+
+        if (! $event->user->is($userToAuthenticate)) {
+            return false;
+        }
+
+        if ($event->credentials !== [
+            'email' => $userToAuthenticate->email,
+            'password' => 'incorrect-password',
+        ]) {
+            return false;
+        }
+
+        return true;
+    });
 });
 
 it('cannot authenticate on unauthorized panel', function (): void {
+    Event::fake([Failed::class]);
+
     $userToAuthenticate = User::factory()->create();
 
     Filament::setCurrentPanel('custom');
@@ -88,6 +113,25 @@ it('cannot authenticate on unauthorized panel', function (): void {
         ->assertHasFormErrors(['email']);
 
     $this->assertGuest();
+
+    Event::assertDispatched(function (Failed $event) use ($userToAuthenticate) {
+        if ($event->guard !== 'web') {
+            return false;
+        }
+
+        if (! $event->user->is($userToAuthenticate)) {
+            return false;
+        }
+
+        if ($event->credentials !== [
+            'email' => $userToAuthenticate->email,
+            'password' => 'password',
+        ]) {
+            return false;
+        }
+
+        return true;
+    });
 });
 
 it('can throttle authentication attempts', function (): void {

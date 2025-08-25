@@ -14,12 +14,14 @@ use Filament\Actions\Exports\Jobs\CreateXlsxFile;
 use Filament\Actions\Exports\Jobs\ExportCompletion;
 use Filament\Actions\Exports\Jobs\PrepareCsvExport;
 use Filament\Actions\Exports\Models\Export;
+use Filament\Actions\View\ActionsIconAlias;
 use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Fieldset;
 use Filament\Schemas\Components\Flex;
 use Filament\Schemas\Components\Utilities\Get;
+use Filament\Support\Enums\Width;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Contracts\HasTable;
@@ -42,6 +44,8 @@ trait CanExportRecords
     protected ?string $job = null;
 
     protected int | Closure $chunkSize = 100;
+
+    protected int | Closure $columnMappingColumns = 1;
 
     protected int | Closure | null $maxRows = null;
 
@@ -77,12 +81,26 @@ trait CanExportRecords
 
         $this->modalSubmitActionLabel(__('filament-actions::export.modal.actions.export.label'));
 
-        $this->groupedIcon(FilamentIcon::resolve('actions::export-action.grouped') ?? Heroicon::ArrowDownTray);
+        $this->groupedIcon(FilamentIcon::resolve(ActionsIconAlias::EXPORT_ACTION_GROUPED) ?? Heroicon::ArrowDownTray);
 
-        $this->form(fn (ExportAction | ExportBulkAction $action): array => [
+        $this->schema(fn (ExportAction | ExportBulkAction $action): array => [
             ...($action->hasColumnMapping() ? [Fieldset::make(__('filament-actions::export.modal.form.columns.label'))
-                ->columns(1)
-                ->inlineLabel()
+                ->columns(match ($columns = $action->getColumnMappingColumns()) {
+                    1 => 1,
+                    2 => [
+                        'sm' => 2,
+                        'lg' => 2,
+                    ],
+                    3 => [
+                        'sm' => 2,
+                        'lg' => 3,
+                    ],
+                    default => [
+                        'sm' => 2,
+                        'md' => 3,
+                        'lg' => $columns,
+                    ],
+                })
                 ->schema(function () use ($action): array {
                     return array_map(
                         fn (ExportColumn $column): Flex => Flex::make([
@@ -267,7 +285,12 @@ trait CanExportRecords
 
         $this->defaultColor('gray');
 
-        $this->modalWidth('xl');
+        $this->modalWidth(static fn (ExportAction | ExportBulkAction $action): Width => match ($action->getColumnMappingColumns()) {
+            1 => Width::Medium,
+            2 => Width::ThreeExtraLarge,
+            3 => Width::FiveExtraLarge,
+            default => Width::SevenExtraLarge,
+        });
 
         $this->successNotificationTitle(__('filament-actions::export.notifications.started.title'));
 
@@ -279,6 +302,18 @@ trait CanExportRecords
     public static function getDefaultName(): ?string
     {
         return 'export';
+    }
+
+    public function columnMappingColumns(int | Closure $columns): static
+    {
+        $this->columnMappingColumns = $columns;
+
+        return $this;
+    }
+
+    public function getColumnMappingColumns(): int
+    {
+        return $this->evaluate($this->columnMappingColumns);
     }
 
     /**

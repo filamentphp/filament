@@ -9,6 +9,12 @@ import UtilityInjection from "@components/UtilityInjection.astro"
 
 <AutoScreenshot name="forms/overview" alt="Account settings form example" version="4.x" />
 
+Filament's forms package allows you to easily build dynamic forms in your app. It's used within other Filament packages to render forms within [panel resources](../panels/resources), [action modals](../actions/modals), [table filters](../tables/filters), and more. Learning how to build forms is essential to learning how to use these Filament packages.
+
+This guide will walk you through the basics of building forms with Filament's form package. If you're planning to add a new form to your own Livewire component, you should [do that first](../components/form) and then come back. If you're adding a form to a [panel resource](../panels/resources), or another Filament package, you're ready to go!
+
+## Form fields
+
 Form field classes can be found in the `Filament\Form\Components` namespace. They reside within the schema array of components. Filament ships with many types of field, suitable for editing different types of data:
 
 - [Text input](text-input)
@@ -299,6 +305,10 @@ Toggle::make('is_admin')
 
 Although the code passed to `hiddenJs()` looks very similar to PHP, it is actually JavaScript. Filament provides the `$get()` utility function to JavaScript that behaves very similar to its PHP equivalent, but without requiring the depended-on field to be `live()`.
 
+<Aside variant="danger">
+    Any JS string passed to the `hiddenJs()` method will be executed in the browser, so you should never add user input directly into the string, as it could lead to cross-site scripting (XSS) vulnerabilities. User input from `$state` or `$get()` should never be evaluated as JavaScript code, but is safe to use as a string value, like in the example above.
+</Aside>
+
 The `visibleJs()` method is also available, which works in the same way as `hiddenJs()`, but controls if the field should be visible or not:
 
 ```php
@@ -316,6 +326,10 @@ Toggle::make('is_admin')
         $get('role') === 'staff'
         JS)
 ```
+
+<Aside variant="danger">
+    Any JS string passed to the `visibleJs()` method will be executed in the browser, so you should never add user input directly into the string, as it could lead to cross-site scripting (XSS) vulnerabilities. User input from `$state` or `$get()` should never be evaluated as JavaScript code, but is safe to use as a string value, like in the example above.
+</Aside>
 
 <Aside variant="info">
     If both `hiddenJs()` and `visibleJs()` are used, they both need to indicate that the field should be visible for it to be shown.
@@ -1336,6 +1350,10 @@ TextInput::make('name')
 TextInput::make('email')
     ->label('Email address')
 ```
+
+<Aside variant="danger">
+    Any JS string passed to the `afterStateUpdatedJs()` method will be executed in the browser, so you should never add user input directly into the string, as it could lead to cross-site scripting (XSS) vulnerabilities. User input from `$state` or `$get()` should never be evaluated as JavaScript code, but is safe to use as a string value, like in the example above.
+</Aside>
 
 ## Reactive forms cookbook
 

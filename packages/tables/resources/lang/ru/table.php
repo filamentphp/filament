@@ -6,9 +6,25 @@ return [
 
         'heading' => 'Столбцы',
 
+        'actions' => [
+
+            'apply' => [
+                'label' => 'Применить столбцы',
+            ],
+
+            'reset' => [
+                'label' => 'Сбросить',
+            ],
+
+        ],
+
     ],
 
     'columns' => [
+
+        'actions' => [
+            'label' => 'Действие|Действия',
+        ],
 
         'text' => [
 
@@ -141,7 +157,13 @@ return [
         ],
 
         'select' => [
+
             'placeholder' => 'Все',
+
+            'relationship' => [
+                'empty_option_label' => 'Нет',
+            ],
+
         ],
 
         'trashed' => [
@@ -224,5 +246,7 @@ return [
         ],
 
     ],
+
+    'default_model_label' => 'запись',
 
 ];

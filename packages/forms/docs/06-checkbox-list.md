@@ -32,9 +32,15 @@ use Illuminate\Database\Eloquent\Model;
 
 class App extends Model
 {
-    protected $casts = [
-        'technologies' => 'array',
-    ];
+    /**
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'technologies' => 'array',
+        ];
+    }
 
     // ...
 }
@@ -251,7 +257,7 @@ CheckboxList::make('technology')
 
 ## Integrating with an Eloquent relationship
 
-> If you're building a form inside your Livewire component, make sure you have set up the [form's model](../adding-a-form-to-a-livewire-component#setting-a-form-model). Otherwise, Filament doesn't know which model to use to retrieve the relationship from.
+> If you're building a form inside your Livewire component, make sure you have set up the [form's model](../components/form#setting-a-form-model). Otherwise, Filament doesn't know which model to use to retrieve the relationship from.
 
 You may employ the `relationship()` method of the `CheckboxList` to point to a `BelongsToMany` relationship. Filament will load the options from the relationship, and save them back to the relationship's pivot table when the form is submitted. The `titleAttribute` is the name of a column that will be used to generate a label for each option:
 

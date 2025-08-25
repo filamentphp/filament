@@ -32,6 +32,10 @@ return [
 
     'notifications' => [
 
+        'sent' => [
+            'body' => 'Jika akun Anda tidak terdaftar, Anda tidak akan menerima email.',
+        ],
+
         'throttled' => [
             'title' => 'Terlalu banyak permintaan',
             'body' => 'Silakan coba lagi dalam :seconds detik.',

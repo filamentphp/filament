@@ -3,7 +3,7 @@
 return [
 
     'messages' => [
-        'copied' => 'Disalin',
+        'copied' => 'Berhasil disalin',
     ],
 
 ];

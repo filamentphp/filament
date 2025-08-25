@@ -14,13 +14,19 @@ class Post extends Model
     use HasFactory;
     use SoftDeletes;
 
-    protected $casts = [
-        'string_backed_enum' => StringBackedEnum::class,
-        'is_published' => 'boolean',
-        'tags' => 'array',
-        'json' => 'array',
-        'json_array_of_objects' => 'array',
-    ];
+    /**
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'string_backed_enum' => StringBackedEnum::class,
+            'is_published' => 'boolean',
+            'tags' => 'array',
+            'json' => 'array',
+            'json_array_of_objects' => 'array',
+        ];
+    }
 
     protected $guarded = [];
 

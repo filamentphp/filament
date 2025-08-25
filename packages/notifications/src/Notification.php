@@ -9,6 +9,7 @@ use Filament\Notifications\Events\DatabaseNotificationsSent;
 use Filament\Notifications\Livewire\Notifications;
 use Filament\Notifications\View\Components\NotificationComponent;
 use Filament\Notifications\View\Components\NotificationComponent\IconComponent;
+use Filament\Notifications\View\NotificationsIconAlias;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Components\ViewComponent;
 use Filament\Support\Concerns\HasColor;
@@ -204,7 +205,7 @@ class Notification extends ViewComponent implements Arrayable, HasEmbeddedView
         $data = $this->toArray();
         $data['format'] = 'filament';
 
-        return new BroadcastNotification($data);
+        return app(BroadcastNotification::class, ['data' => $data]);
     }
 
     public function toDatabase(): DatabaseNotification
@@ -344,7 +345,7 @@ class Notification extends ViewComponent implements Arrayable, HasEmbeddedView
         ob_start(); ?>
 
         <div
-            x-data="notificationComponent({ notification: <?= Js::from($this) ?> })"
+            x-data="notificationComponent({ notification: <?= Js::from($this->toArray()) ?> })"
             x-transition:enter-start="fi-transition-enter-start"
             x-transition:leave-end="fi-transition-leave-end"
             <?= $attributes ?>
@@ -392,7 +393,7 @@ class Notification extends ViewComponent implements Arrayable, HasEmbeddedView
                 x-on:click="close"
                 class="fi-icon-btn fi-no-notification-close-btn"
             >
-                <?= generate_icon_html(Heroicon::XMark, alias: 'notifications::notification.close-button')->toHtml() ?>
+                <?= generate_icon_html(Heroicon::XMark, alias: NotificationsIconAlias::NOTIFICATION_CLOSE_BUTTON)->toHtml() ?>
             </button>
         </div>
 

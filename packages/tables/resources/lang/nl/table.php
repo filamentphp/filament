@@ -6,6 +6,18 @@ return [
 
         'heading' => 'Kolommen',
 
+        'actions' => [
+
+            'apply' => [
+                'label' => 'Kolommen toepassen',
+            ],
+
+            'reset' => [
+                'label' => 'Resetten',
+            ],
+
+        ],
+
     ],
 
     'columns' => [

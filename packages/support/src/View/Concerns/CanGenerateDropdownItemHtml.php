@@ -43,6 +43,7 @@ trait CanGenerateDropdownItemHtml
         string $tag = 'button',
         ?string $target = null,
         ?string $tooltip = null,
+        ?string $type = 'button',
     ): string {
         $color ??= 'gray';
 
@@ -73,7 +74,7 @@ trait CanGenerateDropdownItemHtml
                 'aria-disabled' => $isDisabled ? 'true' : null,
                 'disabled' => $isDisabled && blank($tooltip),
                 'type' => match ($tag) {
-                    'button' => 'button',
+                    'button' => $type,
                     'form' => 'submit',
                     default => null,
                 },

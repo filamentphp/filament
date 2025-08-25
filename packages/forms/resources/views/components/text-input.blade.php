@@ -23,6 +23,7 @@
     $suffixIconColor = $getSuffixIconColor();
     $suffixLabel = $getSuffixLabel();
     $statePath = $getStatePath();
+    $placeholder = $getPlaceholder();
 
     if ($isPasswordRevealable) {
         $xData = '{ isPasswordRevealed: false }';
@@ -56,7 +57,7 @@
             'maxlength' => (! $isConcealed) ? $getMaxLength() : null,
             'min' => (! $isConcealed) ? $getMinValue() : null,
             'minlength' => (! $isConcealed) ? $getMinLength() : null,
-            'placeholder' => $getPlaceholder(),
+            'placeholder' => filled($placeholder) ? e($placeholder) : null,
             'readonly' => $isReadOnly(),
             'required' => $isRequired() && (! $isConcealed),
             'step' => $getStep(),

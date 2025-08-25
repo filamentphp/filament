@@ -53,8 +53,7 @@ class PostResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('author.name')
-                    ->numeric()
-                    ->sortable(),
+                    ->searchable(),
                 Tables\Columns\IconColumn::make('is_published')
                     ->boolean(),
                 Tables\Columns\TextColumn::make('rating')

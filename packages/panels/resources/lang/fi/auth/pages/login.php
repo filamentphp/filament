@@ -43,6 +43,30 @@ return [
 
     ],
 
+    'multi_factor' => [
+
+        'heading' => 'Vahvista identiteetti',
+
+        'subheading' => 'Kirjautumista varten sinun tulee vahvistaa identiteettisi.',
+
+        'form' => [
+
+            'provider' => [
+                'label' => 'Miten haluaisit vahvistaa?',
+            ],
+
+            'actions' => [
+
+                'authenticate' => [
+                    'label' => 'Vahvista kirjautuminen',
+                ],
+
+            ],
+
+        ],
+
+    ],
+
     'messages' => [
 
         'failed' => 'Kirjautuminen epäonnistui.',

@@ -108,6 +108,7 @@ class Section extends Component implements CanConcealComponents, CanEntangleWith
         $this->footer(function (Section $component): Schema {
             return match ($component->getFooterActionsAlignment()) {
                 Alignment::End, Alignment::Right => Schema::end($component->getFooterActions()),
+                Alignment::Center, => Schema::center($component->getFooterActions()),
                 default => Schema::start($component->getFooterActions()),
             };
         });
@@ -237,10 +238,10 @@ class Section extends Component implements CanConcealComponents, CanEntangleWith
             static::BELOW_CONTENT_SCHEMA_KEY,
         ])) {
             $schema
-                ->configureActionsUsing(fn (Action $action) => $action
+                ->modifyActionsUsing(fn (Action $action) => $action
                     ->defaultSize(Size::Small)
                     ->defaultView(Action::LINK_VIEW))
-                ->configureActionGroupsUsing(fn (ActionGroup $actionGroup) => $actionGroup->defaultSize(Size::Small));
+                ->modifyActionGroupsUsing(fn (ActionGroup $actionGroup) => $actionGroup->defaultSize(Size::Small));
         }
 
         return $schema;

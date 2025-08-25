@@ -29,7 +29,7 @@ class PanelRegistry
         return $this->defaultPanel ??= Arr::first(
             $this->panels,
             fn (Panel $panel): bool => $panel->isDefault(),
-            fn () => new NoDefaultPanelSetException('No default Filament panel is set. You may do this with the `default()` method inside a Filament provider\'s `panel()` configuration.'),
+            fn () => throw new NoDefaultPanelSetException('No default Filament panel is set. You may do this with the `default()` method inside a Filament provider\'s `panel()` configuration.'),
         );
     }
 

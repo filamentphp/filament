@@ -31,7 +31,7 @@ trait InteractsWithToolbarButtons
         }
 
         $this->toolbarButtons = array_reduce(
-            $this->toolbarButtons,
+            $this->toolbarButtons ?? [],
             function ($carry, $button) use ($buttonsToDisable) {
                 if (is_array($button)) {
                     $carry[] = array_values(array_filter(
@@ -60,7 +60,7 @@ trait InteractsWithToolbarButtons
         }
 
         $this->toolbarButtons = [
-            ...$this->toolbarButtons,
+            ...$this->toolbarButtons ?? [],
             ...$buttonsToEnable,
         ];
 
@@ -105,6 +105,10 @@ trait InteractsWithToolbarButtons
             }
 
             $toolbar[] = $buttonGroup;
+        }
+
+        if (filled($newButtonGroup)) {
+            $toolbar[] = $newButtonGroup;
         }
 
         return $toolbar;

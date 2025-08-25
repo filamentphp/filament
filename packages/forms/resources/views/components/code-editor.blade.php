@@ -1,12 +1,11 @@
 @php
-    use Filament\Support\Facades\FilamentView;
-
     $fieldWrapperView = $getFieldWrapperView();
-    $extraInputAttributeBag = $getExtraAttributeBag();
+    $extraAttributeBag = $getExtraAttributeBag();
     $isDisabled = $isDisabled();
     $key = $getKey();
     $language = $getLanguage();
     $statePath = $getStatePath();
+    $livewireKey = $getLivewireKey();
 @endphp
 
 <x-dynamic-component :component="$fieldWrapperView" :field="$field">
@@ -14,13 +13,12 @@
         :disabled="$isDisabled"
         :valid="! $errors->has($statePath)"
         :attributes="
-            \Filament\Support\prepare_inherited_attributes($extraInputAttributeBag)
+            \Filament\Support\prepare_inherited_attributes($extraAttributeBag)
                 ->class(['fi-fo-code-editor'])
         "
     >
         <div
-            {{-- prettier-ignore-start --}}x-load="visible || event (x-modal-opened)"
-            {{-- prettier-ignore-end --}}
+            x-load
             x-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('code-editor', 'filament/forms') }}"
             x-data="codeEditorFormComponent({
                         isDisabled: @js($isDisabled),
@@ -28,6 +26,12 @@
                         state: $wire.{{ $applyStateBindingModifiers("\$entangle('{$statePath}')") }},
                     })"
             wire:ignore
+            wire:key="{{ $livewireKey }}.{{
+                substr(md5(serialize([
+                    $isDisabled,
+                    $language?->value,
+                ])), 0, 64)
+            }}"
             {{ $getExtraAlpineAttributeBag() }}
         >
             <div x-ref="editor" x-cloak></div>

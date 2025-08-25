@@ -14,7 +14,7 @@
             }
         }
 
-        & > .fi-section-footer {
+        & > .fi-section-content-ctn > .fi-section-footer {
             @apply border-t border-gray-200 px-6 py-4 dark:border-white/10;
         }
 
@@ -134,7 +134,7 @@
     }
 
     &.fi-collapsed {
-        & > .fi-section-collapse-btn {
+        & > .fi-section-header > .fi-section-collapse-btn {
             @apply rotate-180;
         }
 
@@ -150,7 +150,7 @@
     }
 
     & > .fi-section-header {
-        @apply flex items-start gap-3;
+        @apply flex items-center gap-3;
 
         & > .fi-icon {
             @apply shrink-0 text-gray-400 dark:text-gray-500;

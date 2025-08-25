@@ -24,6 +24,8 @@ class Type
 
     public Closure $getOptionsUsing;
 
+    public ?Closure $modifyKeySelectUsing = null;
+
     protected ?Closure $modifyOptionsQueryUsing = null;
 
     /**
@@ -238,6 +240,13 @@ class Type
         return $this;
     }
 
+    public function modifyKeySelectUsing(?Closure $callback): static
+    {
+        $this->modifyKeySelectUsing = $callback;
+
+        return $this;
+    }
+
     public function modifyOptionsQueryUsing(?Closure $callback): static
     {
         $this->modifyOptionsQueryUsing = $callback;
@@ -281,6 +290,11 @@ class Type
     public function hasOptionLabelFromRecordUsingCallback(): bool
     {
         return $this->getOptionLabelFromRecordUsing !== null;
+    }
+
+    public function getModifyKeySelectUsingCallback(): ?Closure
+    {
+        return $this->modifyKeySelectUsing;
     }
 
     /**

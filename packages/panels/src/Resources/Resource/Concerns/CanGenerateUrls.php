@@ -81,7 +81,7 @@ trait CanGenerateUrls
 
             if ($parentResource::hasPage('view')) {
                 return $parentResource::getUrl('view', [
-                    'activeRelationManager' => $parentResourceRegistration->getRelationshipName(),
+                    'relation' => $parentResourceRegistration->getRelationshipName(),
                     ...$parameters,
                     'record' => $record,
                 ], $isAbsolute, $panel, $tenant, $shouldGuessMissingParameters);
@@ -89,7 +89,7 @@ trait CanGenerateUrls
 
             if ($parentResource::hasPage('edit')) {
                 return $parentResource::getUrl('edit', [
-                    'activeRelationManager' => $parentResourceRegistration->getRelationshipName(),
+                    'relation' => $parentResourceRegistration->getRelationshipName(),
                     ...$parameters,
                     'record' => $record,
                 ], $isAbsolute, $panel, $tenant, $shouldGuessMissingParameters);

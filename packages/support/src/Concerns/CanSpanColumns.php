@@ -29,7 +29,8 @@ trait CanSpanColumns
 
         if (! is_array($span)) {
             $span = [
-                'default' => $span,
+                'default' => 1,
+                'lg' => $span,
             ];
         }
 
@@ -61,7 +62,7 @@ trait CanSpanColumns
 
         if (! is_array($start)) {
             $start = [
-                'default' => $start,
+                'lg' => $start,
             ];
         }
 

@@ -32,6 +32,10 @@ return [
 
     'notifications' => [
 
+        'sent' => [
+            'body' => 'Si votre compte n\'existe pas, vous ne recevrez pas l\'email.',
+        ],
+
         'throttled' => [
             'title' => 'Trop de requêtes',
             'body' => 'Merci de réessayer dans :seconds secondes.',

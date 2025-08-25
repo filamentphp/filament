@@ -1,7 +1,6 @@
 @php
     use Filament\Support\Enums\Alignment;
     use Filament\Support\Enums\Width;
-    use Filament\Support\Facades\FilamentView;
     use Filament\Support\View\Components\ModalComponent\IconComponent;
     use Illuminate\View\ComponentAttributeBag;
 @endphp
@@ -158,7 +157,7 @@
                     'fi-modal-window-has-icon' => $hasIcon,
                     'fi-modal-window-has-sticky-header' => $stickyHeader,
                     'fi-hidden' => ! $visible,
-                    (($alignment instanceof Alignment) && (! $slideOver)) ? "fi-align-{$alignment->value}" : null,
+                    ($alignment instanceof Alignment) ? "fi-align-{$alignment->value}" : null,
                     ($width instanceof Width) ? "fi-width-{$width->value}" : (is_string($width) ? $width : null),
                 ])
             }}
@@ -178,7 +177,7 @@
                         <x-filament::icon-button
                             color="gray"
                             :icon="\Filament\Support\Icons\Heroicon::OutlinedXMark"
-                            icon-alias="modal.close-button"
+                            :icon-alias="\Filament\Support\View\SupportIconAlias::MODAL_CLOSE_BUTTON"
                             icon-size="lg"
                             :label="__('filament::components/modal.actions.close.label')"
                             tabindex="-1"

@@ -107,6 +107,8 @@ trait CanGenerateModelTables
 
                     $columnName = "{$guessedRelationshipName}.{$guessedRelationshipTitleColumnName}";
                 }
+            } else {
+                $guessedRelationshipName = null;
             }
 
             $columnData = [];
@@ -119,6 +121,10 @@ trait CanGenerateModelTables
                 $columnData['label'] = [Str::upper($columnName)];
             }
 
+            if ($columnName === 'email') {
+                $columnData['label'] = ['Email address'];
+            }
+
             if ($type['name'] === 'boolean') {
                 $columnData['type'] = IconColumn::class;
                 $columnData['boolean'] = [];
@@ -128,10 +134,10 @@ trait CanGenerateModelTables
                     default => TextColumn::class,
                 };
 
-                if (in_array($type['name'], [
+                if ((in_array($type['name'], [
                     'string',
                     'char',
-                ]) && ($columnData['type'] === TextColumn::class)) {
+                ]) && ($columnData['type'] === TextColumn::class)) || filled($guessedRelationshipName)) {
                     $columnData['searchable'] = [];
                 }
 
@@ -159,7 +165,7 @@ trait CanGenerateModelTables
                     'float',
                     'double',
                     'money',
-                ])) {
+                ]) && blank($guessedRelationshipName)) {
                     $columnData[in_array($columnName, [
                         'cost',
                         'money',

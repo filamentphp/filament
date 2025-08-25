@@ -4,6 +4,7 @@ namespace Filament\Forms\Components;
 
 use Closure;
 use Filament\Actions\Action;
+use Filament\Forms\View\FormsIconAlias;
 use Filament\Schemas\Components\StateCasts\KeyValueStateCast;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Filament\Support\Concerns\HasReorderAnimationDuration;
@@ -98,7 +99,7 @@ class KeyValue extends Field
     {
         $action = Action::make($this->getDeleteActionName())
             ->label(__('filament-forms::components.key_value.actions.delete.label'))
-            ->icon(FilamentIcon::resolve('forms::components.key-value.actions.delete') ?? Heroicon::Trash)
+            ->icon(FilamentIcon::resolve(FormsIconAlias::COMPONENTS_KEY_VALUE_ACTIONS_DELETE) ?? Heroicon::Trash)
             ->color('danger')
             ->livewireClickHandlerEnabled(false)
             ->iconButton()
@@ -130,7 +131,7 @@ class KeyValue extends Field
     {
         $action = Action::make($this->getReorderActionName())
             ->label(__('filament-forms::components.key_value.actions.reorder.label'))
-            ->icon(FilamentIcon::resolve('forms::components.key-value.actions.reorder') ?? Heroicon::ArrowsUpDown)
+            ->icon(FilamentIcon::resolve(FormsIconAlias::COMPONENTS_KEY_VALUE_ACTIONS_REORDER) ?? Heroicon::ArrowsUpDown)
             ->color('gray')
             ->livewireClickHandlerEnabled(false)
             ->iconButton()

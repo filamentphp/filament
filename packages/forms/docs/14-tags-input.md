@@ -26,9 +26,15 @@ use Illuminate\Database\Eloquent\Model;
 
 class Post extends Model
 {
-    protected $casts = [
-        'tags' => 'array',
-    ];
+    /**
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'tags' => 'array',
+        ];
+    }
 
     // ...
 }
@@ -131,6 +137,27 @@ TagsInput::make('tags')
 ```
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `color()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+## Trimming whitespace
+
+You can automatically trim whitespace from the beginning and end of each tag using the `trim()` method:
+
+```php
+use Filament\Forms\Components\TagsInput;
+
+TagsInput::make('tags')
+    ->trim()
+```
+
+You may want to enable trimming globally for all tags inputs, similar to Laravel's `TrimStrings` middleware. You can do this in a service provider using the `configureUsing()` method:
+
+```php
+use Filament\Forms\Components\TagsInput;
+
+TagsInput::configureUsing(function (TagsInput $component): void {
+    $component->trim();
+});
+```
 
 ## Tags validation
 

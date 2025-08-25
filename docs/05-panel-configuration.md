@@ -65,7 +65,7 @@ Make sure your `routes/web.php` file doesn't already define the `''` or `'/'` ro
 
 ## Render hooks
 
-[Render hooks](../advanced/render-hooks) allow you to render Blade content at various points in the framework views. You can [register global render hooks](../support/render-hooks#registering-render-hooks) in a service provider or middleware, but it also allows you to register render hooks that are specific to a panel. To do that, you can use the `renderHook()` method on the panel configuration object. Here's an example, integrating [`wire-elements/modal`](https://github.com/wire-elements/modal) with Filament:
+[Render hooks](advanced/render-hooks) allow you to render Blade content at various points in the framework views. You can [register global render hooks](advanced/render-hooks#registering-render-hooks) in a service provider or middleware, but it also allows you to register render hooks that are specific to a panel. To do that, you can use the `renderHook()` method on the panel configuration object. Here's an example, integrating [`wire-elements/modal`](https://github.com/wire-elements/modal) with Filament:
 
 ```php
 use Filament\Panel;
@@ -83,7 +83,7 @@ public function panel(Panel $panel): Panel
 }
 ```
 
-A full list of available render hooks can be found [here](../advanced/render-hooks#available-render-hooks).
+A full list of available render hooks can be found [here](advanced/render-hooks#available-render-hooks).
 
 ## Setting a domain
 
@@ -217,6 +217,33 @@ public function panel(Panel $panel): Panel
         ]);
 }
 ```
+
+### Enabling SPA prefetching
+
+SPA prefetching enhances the user experience by automatically prefetching pages when users hover over links, making navigation feel even more responsive. This feature utilizes [Livewire's `wire:navigate.hover` functionality](https://livewire.laravel.com/docs/navigate#prefetching-links).
+
+To enable SPA mode with prefetching, you can pass the `hasPrefetching: true` parameter to the `spa()` method:
+
+```php
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->spa(hasPrefetching: true);
+}
+```
+
+When prefetching is enabled, all links within your panel will automatically include `wire:navigate.hover`, which prefetches the page content when users hover over the link. This works seamlessly with [URL exceptions](#disabling-spa-navigation-for-specific-urls) - any URLs excluded from SPA mode will also be excluded from prefetching.
+
+<Aside variant="info">
+    Prefetching only works when SPA mode is enabled. If you disable SPA mode, prefetching will also be disabled automatically.
+</Aside>
+
+<Aside variant="warning">
+    Prefetching heavy pages can lead to increased bandwidth usage and server load, especially if users hover over many links in quick succession. Use this feature judiciously, particularly if your app has pages with large amounts of data or complex queries.
+</Aside>
 
 ## Unsaved changes alerts
 

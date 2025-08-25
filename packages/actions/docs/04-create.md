@@ -246,6 +246,17 @@ CreateAction::make()
 
 ## Creating another record
 
+### Modifying the create another action
+
+If you'd like to modify the "create another" action, you may use the `createAnotherAction()` method, passing a function that returns an action. All methods that are available to [customize action trigger buttons](overview) can be used:
+
+```php
+use Filament\Actions\CreateAction;
+
+CreateAction::make()
+    ->createAnotherAction(fn (Action $action): Action => $aciton->label('Custom create another label'))
+```
+
 ### Disabling create another
 
 If you'd like to remove the "create another" button from the modal, you can use the `createAnother(false)` method:

@@ -2,9 +2,9 @@
 
 return [
 
-    'title' => 'دروستکردنی :label',
+    'title' => 'زیادکردنی :label',
 
-    'breadcrumb' => 'دروستکردن',
+    'breadcrumb' => 'زیادکردن',
 
     'form' => [
 
@@ -15,11 +15,11 @@ return [
             ],
 
             'create' => [
-                'label' => 'دروستکردن',
+                'label' => 'زیادکردن',
             ],
 
             'create_another' => [
-                'label' => 'دروستکردن و تۆمارێکی تر',
+                'label' => 'زیادکردن و تۆمارێکی تر',
             ],
 
         ],
@@ -29,7 +29,7 @@ return [
     'notifications' => [
 
         'created' => [
-            'title' => 'دروستکرا',
+            'title' => 'زیادکرا',
         ],
 
     ],

@@ -302,6 +302,28 @@ return [
 
     ],
 
+    'modal_table_select' => [
+
+        'actions' => [
+
+            'select' => [
+
+                'label' => 'Pilih',
+
+                'actions' => [
+
+                    'select' => [
+                        'label' => 'Pilih',
+                    ],
+
+                ],
+
+            ],
+
+        ],
+
+    ],
+
     'radio' => [
 
         'boolean' => [
@@ -365,37 +387,130 @@ return [
 
     'rich_editor' => [
 
-        'dialogs' => [
+        'actions' => [
+
+            'attach_files' => [
+
+                'label' => 'Unggah berkas',
+
+                'modal' => [
+
+                    'heading' => 'Unggah berkas',
+
+                    'form' => [
+
+                        'file' => [
+
+                            'label' => [
+                                'new' => 'Berkas',
+                                'existing' => 'Timpa berkas',
+                            ],
+
+                        ],
+
+                        'alt' => [
+
+                            'label' => [
+                                'new' => 'Teks alternatif',
+                                'existing' => 'Ganti teks alternatif',
+                            ],
+
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
+            'custom_block' => [
+
+                'modal' => [
+
+                    'actions' => [
+
+                        'insert' => [
+                            'label' => 'Masukkan',
+                        ],
+
+                        'save' => [
+                            'label' => 'Simpan',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
 
             'link' => [
 
-                'actions' => [
-                    'link' => 'Buat tautan',
-                    'unlink' => 'Batalkan tautan',
+                'label' => 'Ubah',
+
+                'modal' => [
+
+                    'heading' => 'Tautan',
+
+                    'form' => [
+
+                        'url' => [
+                            'label' => 'URL',
+                        ],
+
+                        'should_open_in_new_tab' => [
+                            'label' => 'Buka pada tab baru',
+                        ],
+
+                    ],
+
                 ],
-
-                'label' => 'Tautan',
-
-                'placeholder' => 'Masukkan tautan',
 
             ],
 
         ],
 
+        'no_merge_tag_search_results_message' => 'Tidak ada tag gabungan yang ditemukan.',
+
         'tools' => [
+            'align_center' => 'Rata tengah',
+            'align_end' => 'Rata akhir',
+            'align_justify' => 'Rata penuh',
+            'align_start' => 'Rata awal',
             'attach_files' => 'Lampirkan berkas',
             'blockquote' => 'Kutipan',
             'bold' => 'Tebal',
             'bullet_list' => 'Daftar',
-            'code_block' => 'Kode',
+            'clear_formatting' => 'hapus format',
+            'code' => 'Kode',
+            'code_block' => 'Blok kode',
+            'custom_blocks' => 'Blok',
+            'details' => 'Detail',
             'h1' => 'Judul',
             'h2' => 'Sub judul',
             'h3' => 'Anak judul',
+            'highlight' => 'Sorot',
+            'horizontal_rule' => 'Garis horizontal',
             'italic' => 'Miring',
+            'lead' => 'Teks utama',
             'link' => 'Tautan',
+            'merge_tags' => 'Tag gabungan',
             'ordered_list' => 'Daftar berurut',
             'redo' => 'Kembalikan',
+            'small' => 'Teks kecil',
             'strike' => 'Coret',
+            'subscript' => 'Aksara bawah',
+            'superscript' => 'Aksara atas',
+            'table' => 'Tabel',
+            'table_delete' => 'Hapus tabel',
+            'table_add_column_before' => 'Tambahkan kolom sebelum',
+            'table_add_column_after' => 'Tambahkan kolom sesudah',
+            'table_delete_column' => 'Hapus kolom',
+            'table_add_row_before' => 'Tambahkan baris diatas',
+            'table_add_row_after' => 'Tambahkan baris dibawah',
+            'table_delete_row' => 'Hapus baris',
+            'table_merge_cells' => 'Gabungkan sel',
+            'table_split_cell' => 'Pisahkan sel',
+            'table_toggle_header_row' => 'Alihkan Baris Judul',
             'underline' => 'Garis bawah',
             'undo' => 'Batalkan',
         ],
@@ -478,6 +593,11 @@ return [
     'text_input' => [
 
         'actions' => [
+
+            'copy' => [
+                'label' => 'Salin',
+                'message' => 'Berhasil disalin',
+            ],
 
             'hide_password' => [
                 'label' => 'Sembunyikan kata sandi',

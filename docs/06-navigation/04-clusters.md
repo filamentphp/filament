@@ -40,13 +40,13 @@ This will create a new cluster class in the `app/Filament/Clusters` directory:
 ```php
 <?php
 
-namespace App\Filament\Clusters;
+namespace App\Filament\Clusters\Settings;
 
 use BackedEnum;
 use Filament\Clusters\Cluster;
 use Filament\Support\Icons\Heroicon;
 
-class Settings extends Cluster
+class SettingsCluster extends Cluster
 {
     protected static string | BackedEnum | null $navigationIcon = Heroicon::OutlinedSquares2x2;
 }
@@ -61,7 +61,7 @@ To add resources and pages to a cluster, you just need to define the `$cluster` 
 ```php
 use App\Filament\Clusters\Settings;
 
-protected static ?string $cluster = Settings::class;
+protected static ?string $cluster = SettingsCluster::class;
 ```
 
 ## Code structure recommendations for panels using clusters
@@ -71,8 +71,8 @@ When using clusters, it is recommended that you move all of your resources and p
 ```
 .
 +-- Clusters
-|   +-- Settings.php
 |   +-- Settings
+|   |   +-- SettingsCluster.php
 |   |   +-- Pages
 |   |   |   +-- ManageBranding.php
 |   |   |   +-- ManageNotifications.php

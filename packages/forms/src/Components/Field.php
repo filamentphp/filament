@@ -244,10 +244,10 @@ class Field extends Component implements Contracts\HasValidationRules
             $schema
                 ->inline()
                 ->embeddedInParentComponent()
-                ->configureActionsUsing(fn (Action $action) => $action
+                ->modifyActionsUsing(fn (Action $action) => $action
                     ->defaultSize(Size::Small)
                     ->defaultView(Action::LINK_VIEW))
-                ->configureActionGroupsUsing(fn (ActionGroup $actionGroup) => $actionGroup->defaultSize(Size::Small));
+                ->modifyActionGroupsUsing(fn (ActionGroup $actionGroup) => $actionGroup->defaultSize(Size::Small));
         }
 
         return $schema;

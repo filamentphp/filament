@@ -9,6 +9,7 @@ use Filament\Tables\Filters\QueryBuilder\Constraints\NumberConstraint\Operators\
 use Filament\Tables\Filters\QueryBuilder\Constraints\NumberConstraint\Operators\IsMaxOperator;
 use Filament\Tables\Filters\QueryBuilder\Constraints\NumberConstraint\Operators\IsMinOperator;
 use Filament\Tables\Filters\QueryBuilder\Constraints\Operators\IsFilledOperator;
+use Filament\Tables\View\TablesIconAlias;
 
 class NumberConstraint extends Constraint
 {
@@ -25,7 +26,7 @@ class NumberConstraint extends Constraint
     {
         parent::setUp();
 
-        $this->icon(FilamentIcon::resolve('tables::filters.query-builder.constraints.number') ?? Heroicon::Variable);
+        $this->icon(FilamentIcon::resolve(TablesIconAlias::FILTERS_QUERY_BUILDER_CONSTRAINTS_NUMBER) ?? Heroicon::Variable);
 
         $this->operators([
             IsMinOperator::class,

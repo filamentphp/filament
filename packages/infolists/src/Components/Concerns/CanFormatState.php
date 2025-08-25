@@ -83,9 +83,11 @@ trait CanFormatState
         return $this;
     }
 
-    public function isoDate(string | Closure | null $format, string | Closure | null $timezone = null): static
+    public function isoDate(string | Closure | null $format = null, string | Closure | null $timezone = null): static
     {
         $this->isDate = true;
+
+        $format ??= fn (TextEntry $component): string => $component->getContainer()->getDefaultIsoDateDisplayFormat();
 
         $this->formatStateUsing(static function (TextEntry $component, $state) use ($format, $timezone): ?string {
             if (blank($state)) {
@@ -100,7 +102,7 @@ trait CanFormatState
         return $this;
     }
 
-    public function isoDateTime(string | Closure | null $format, string | Closure | null $timezone = null): static
+    public function isoDateTime(string | Closure | null $format = null, string | Closure | null $timezone = null): static
     {
         $this->isDateTime = true;
 
@@ -176,8 +178,10 @@ trait CanFormatState
         return $this;
     }
 
-    public function isoDateTooltip(string | Closure | null $format, string | Closure | null $timezone = null): static
+    public function isoDateTooltip(string | Closure | null $format = null, string | Closure | null $timezone = null): static
     {
+        $format ??= fn (TextEntry $component): string => $component->getContainer()->getDefaultIsoDateDisplayFormat();
+
         $this->tooltip(static function (TextEntry $component, mixed $state) use ($format, $timezone): ?string {
             if (blank($state)) {
                 return null;
@@ -191,7 +195,7 @@ trait CanFormatState
         return $this;
     }
 
-    public function isoDateTimeTooltip(string | Closure | null $format, string | Closure | null $timezone = null): static
+    public function isoDateTimeTooltip(string | Closure | null $format = null, string | Closure | null $timezone = null): static
     {
         $format ??= fn (TextEntry $component): string => $component->getContainer()->getDefaultIsoDateTimeDisplayFormat();
 
@@ -200,7 +204,7 @@ trait CanFormatState
         return $this;
     }
 
-    public function isoTimeTooltip(string | Closure | null $format, string | Closure | null $timezone = null): static
+    public function isoTimeTooltip(string | Closure | null $format = null, string | Closure | null $timezone = null): static
     {
         $format ??= fn (TextEntry $component): string => $component->getContainer()->getDefaultIsoTimeDisplayFormat();
 
@@ -371,12 +375,14 @@ trait CanFormatState
             $state = $state->getLabel();
         }
 
-        if ($characterLimit = $this->getCharacterLimit()) {
-            $state = Str::limit($state, $characterLimit, $this->getCharacterLimitEnd());
-        }
+        if (! $isHtml) {
+            if ($characterLimit = $this->getCharacterLimit()) {
+                $state = Str::limit($state, $characterLimit, $this->getCharacterLimitEnd());
+            }
 
-        if ($wordLimit = $this->getWordLimit()) {
-            $state = Str::words($state, $wordLimit, $this->getWordLimitEnd());
+            if ($wordLimit = $this->getWordLimit()) {
+                $state = Str::words($state, $wordLimit, $this->getWordLimitEnd());
+            }
         }
 
         $prefix = $this->getPrefix();

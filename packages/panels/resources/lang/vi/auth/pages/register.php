@@ -10,8 +10,9 @@ return [
 
         'login' => [
             'before' => 'hoặc',
-            'label' => 'đăng nhập tài khoản',
+            'label' => 'đăng nhập tài khoản của bạn',
         ],
+
     ],
 
     'form' => [
@@ -46,7 +47,7 @@ return [
     'notifications' => [
 
         'throttled' => [
-            'title' => 'Quá nhiều lần thử đăng ký.',
+            'title' => 'Quá nhiều lần đăng ký.',
             'body' => 'Vui lòng thử lại sau :seconds giây.',
         ],
 

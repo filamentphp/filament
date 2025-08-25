@@ -69,25 +69,45 @@ class PrepareCsvExport implements ShouldQueue
 
         if ($databaseConnection->getDriverName() === 'pgsql') {
             $originalOrders = collect($query->getQuery()->orders)
-                ->reject(fn (array $order): bool => ($order['column'] ?? null) === $qualifiedKeyName)
-                ->unique('column');
+                ->reject(function (array $order) use ($qualifiedKeyName): bool {
+                    if (($order['type'] ?? null) === 'Raw') {
+                        return false;
+                    }
+
+                    return ($order['column'] ?? null) === $qualifiedKeyName;
+                })
+                ->unique(function (array $order): string {
+                    if (($order['type'] ?? null) === 'Raw') {
+                        return 'raw:' . ($order['sql'] ?? '');
+                    }
+
+                    return 'column:' . ($order['column'] ?? '');
+                });
 
             /** @var array<string, mixed> $originalBindings */
             $originalBindings = $query->getRawBindings();
 
             if (! empty($originalOrders->all())) {
-                $query->reorder($originalOrders[0]['column'], $originalOrders[0]['direction']);
+                $firstOrder = $originalOrders->first();
+
+                if (($firstOrder['type'] ?? null) === 'Raw') {
+                    $query->reorder();
+                    $query->orderByRaw($firstOrder['sql']);
+                } else {
+                    $query->reorder($firstOrder['column'], $firstOrder['direction']);
+                }
+
                 $originalOrders->forget(0);
             } else {
                 $query->reorder($qualifiedKeyName);
             }
 
             foreach ($originalOrders as $order) {
-                if (blank($order['column'] ?? null) || blank($order['direction'] ?? null)) {
-                    continue;
+                if (($order['type'] ?? null) === 'Raw') {
+                    $query->orderByRaw($order['sql']);
+                } elseif (filled($order['column'] ?? null) && filled($order['direction'] ?? null)) {
+                    $query->orderBy($order['column'], $order['direction']);
                 }
-
-                $query->orderBy($order['column'], $order['direction']);
             }
 
             $newBindings = $query->getRawBindings();

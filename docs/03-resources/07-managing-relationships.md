@@ -114,6 +114,19 @@ public static function getRelations(): array
 
 Once a table and form have been defined for the relation manager, visit the [Edit](editing-records) or [View](viewing-records) page of your resource to see it in action.
 
+### Customizing the relation manager's URL parameter
+
+If you pass a key to the array returned from `getRelations()`, it will be used in the URL for that relation manager when switching been multiple relation managers. For example, you can pass `posts` to use `?relation=posts` in the URL instead of a numeric array index:
+
+```php
+public static function getRelations(): array
+{
+    return [
+        'posts' => RelationManagers\PostsRelationManager::class,
+    ];
+}
+```
+
 ### Read-only mode
 
 Relation managers are usually displayed on either the Edit or View page of a resource. On the View page, Filament will automatically hide all actions that modify the relationship, such as create, edit, and delete. We call this "read-only mode", and it is there by default to preserve the read-only behavior of the View page. However, you can disable this behavior, by overriding the `isReadOnly()` method on the relation manager class to return `false` all the time:
@@ -308,7 +321,7 @@ use Filament\Actions\AttachAction;
 use Filament\Forms;
 
 AttachAction::make()
-    ->form(fn (AttachAction $action): array => [
+    ->schema(fn (AttachAction $action): array => [
         $action->getRecordSelect(),
         Forms\Components\TextInput::make('role')->required(),
     ])

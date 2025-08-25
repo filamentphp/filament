@@ -5,6 +5,7 @@ namespace Filament\Forms\Components;
 use Closure;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Builder\Block;
+use Filament\Forms\View\FormsIconAlias;
 use Filament\Schemas\Components\Concerns\CanBeCollapsed;
 use Filament\Schemas\Components\Contracts\CanConcealComponents;
 use Filament\Schemas\Components\Contracts\HasExtraItemActions;
@@ -312,7 +313,7 @@ class Builder extends Field implements CanConcealComponents, HasExtraItemActions
     {
         $action = Action::make($this->getCloneActionName())
             ->label(__('filament-forms::components.builder.actions.clone.label'))
-            ->icon(FilamentIcon::resolve('forms::components.builder.actions.clone') ?? Heroicon::Square2Stack)
+            ->icon(FilamentIcon::resolve(FormsIconAlias::COMPONENTS_BUILDER_ACTIONS_CLONE) ?? Heroicon::Square2Stack)
             ->color('gray')
             ->action(function (array $arguments, Builder $component): void {
                 $newUuid = $component->generateUuid();
@@ -362,7 +363,7 @@ class Builder extends Field implements CanConcealComponents, HasExtraItemActions
     {
         $action = Action::make($this->getDeleteActionName())
             ->label(__('filament-forms::components.builder.actions.delete.label'))
-            ->icon(FilamentIcon::resolve('forms::components.builder.actions.delete') ?? Heroicon::Trash)
+            ->icon(FilamentIcon::resolve(FormsIconAlias::COMPONENTS_BUILDER_ACTIONS_DELETE) ?? Heroicon::Trash)
             ->color('danger')
             ->action(function (array $arguments, Builder $component): void {
                 $items = $component->getRawState();
@@ -403,7 +404,7 @@ class Builder extends Field implements CanConcealComponents, HasExtraItemActions
     {
         $action = Action::make($this->getMoveDownActionName())
             ->label(__('filament-forms::components.builder.actions.move_down.label'))
-            ->icon(FilamentIcon::resolve('forms::components.builder.actions.move-down') ?? Heroicon::ArrowDown)
+            ->icon(FilamentIcon::resolve(FormsIconAlias::COMPONENTS_BUILDER_ACTIONS_MOVE_DOWN) ?? Heroicon::ArrowDown)
             ->color('gray')
             ->action(function (array $arguments, Builder $component): void {
                 $items = array_move_after($component->getRawState(), $arguments['item']);
@@ -443,7 +444,7 @@ class Builder extends Field implements CanConcealComponents, HasExtraItemActions
     {
         $action = Action::make($this->getMoveUpActionName())
             ->label(__('filament-forms::components.builder.actions.move_up.label'))
-            ->icon(FilamentIcon::resolve('forms::components.builder.actions.move-up') ?? Heroicon::ArrowUp)
+            ->icon(FilamentIcon::resolve(FormsIconAlias::COMPONENTS_BUILDER_ACTIONS_MOVE_UP) ?? Heroicon::ArrowUp)
             ->color('gray')
             ->action(function (array $arguments, Builder $component): void {
                 $items = array_move_before($component->getRawState(), $arguments['item']);
@@ -490,7 +491,7 @@ class Builder extends Field implements CanConcealComponents, HasExtraItemActions
     {
         $action = Action::make($this->getReorderActionName())
             ->label(__('filament-forms::components.builder.actions.reorder.label'))
-            ->icon(FilamentIcon::resolve('forms::components.builder.actions.reorder') ?? Heroicon::ArrowsUpDown)
+            ->icon(FilamentIcon::resolve(FormsIconAlias::COMPONENTS_BUILDER_ACTIONS_REORDER) ?? Heroicon::ArrowsUpDown)
             ->color('gray')
             ->action(function (array $arguments, Builder $component): void {
                 $items = [
@@ -534,7 +535,7 @@ class Builder extends Field implements CanConcealComponents, HasExtraItemActions
     {
         $action = Action::make($this->getCollapseActionName())
             ->label(__('filament-forms::components.builder.actions.collapse.label'))
-            ->icon(FilamentIcon::resolve('forms::components.builder.actions.collapse') ?? Heroicon::ChevronUp)
+            ->icon(FilamentIcon::resolve(FormsIconAlias::COMPONENTS_BUILDER_ACTIONS_COLLAPSE) ?? Heroicon::ChevronUp)
             ->color('gray')
             ->livewireClickHandlerEnabled(false)
             ->iconButton()
@@ -565,7 +566,7 @@ class Builder extends Field implements CanConcealComponents, HasExtraItemActions
     {
         $action = Action::make($this->getExpandActionName())
             ->label(__('filament-forms::components.builder.actions.expand.label'))
-            ->icon(FilamentIcon::resolve('forms::components.builder.actions.expand') ?? Heroicon::ChevronDown)
+            ->icon(FilamentIcon::resolve(FormsIconAlias::COMPONENTS_BUILDER_ACTIONS_EXPAND) ?? Heroicon::ChevronDown)
             ->color('gray')
             ->livewireClickHandlerEnabled(false)
             ->iconButton()
@@ -911,6 +912,7 @@ class Builder extends Field implements CanConcealComponents, HasExtraItemActions
                     ->getBlock($itemData['type'])
                     ->getChildSchema()
                     ->statePath("{$itemIndex}.data")
+                    ->constantState($itemData['data'] ?? [])
                     ->inlineLabel(false)
                     ->getClone(),
             )

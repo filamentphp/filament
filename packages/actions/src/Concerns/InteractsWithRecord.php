@@ -94,7 +94,7 @@ trait InteractsWithRecord
      *
      * @throws Exception
      */
-    public function getRecord(): Model | array | null
+    public function getRecord(bool $withDefault = true): Model | array | null
     {
         $record = $this->evaluate($this->record);
 
@@ -118,11 +118,11 @@ trait InteractsWithRecord
             return $record;
         }
 
-        if ($this instanceof Action && ($record = $this->getHasActionsLivewire()?->getDefaultActionRecord($this))) {
+        if ($withDefault && ($this instanceof Action) && ($record = $this->getHasActionsLivewire()?->getDefaultActionRecord($this))) {
             return $record;
         }
 
-        return $this->getGroup()?->getRecord();
+        return $this->getGroup()?->getRecord($withDefault);
     }
 
     public function getRecordTitle(?Model $record = null): ?string
@@ -220,7 +220,7 @@ trait InteractsWithRecord
      *
      * @throws Exception
      */
-    public function getModel(): ?string
+    public function getModel(bool $withDefault = true): ?string
     {
         $model = $this->getCustomModel();
 
@@ -234,10 +234,10 @@ trait InteractsWithRecord
             return $model;
         }
 
-        $record = $this->getRecord();
+        $record = $this->getRecord($withDefault);
 
         if (! ($record instanceof Model)) {
-            return $this instanceof Action ? $this->getHasActionsLivewire()?->getDefaultActionModel($this) : null;
+            return ($withDefault && ($this instanceof Action)) ? $this->getHasActionsLivewire()?->getDefaultActionModel($this) : null;
         }
 
         return $record::class;

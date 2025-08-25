@@ -52,6 +52,7 @@ class ResourceClassGenerator extends ClassGenerator
         protected ?string $tableFqn,
         protected ?string $clusterFqn,
         protected ?string $parentResourceFqn,
+        protected ?string $recordTitleAttribute,
         protected bool $hasViewOperation,
         protected bool $isGenerated,
         protected bool $isSoftDeletable,
@@ -105,6 +106,7 @@ class ResourceClassGenerator extends ClassGenerator
         $this->addNavigationIconPropertyToClass($class);
         $this->addClusterPropertyToClass($class);
         $this->addParentResourcePropertyToClass($class);
+        $this->addRecordTitleAttributePropertyToClass($class);
     }
 
     protected function addMethodsToClass(ClassType $class): void
@@ -114,7 +116,7 @@ class ResourceClassGenerator extends ClassGenerator
         $this->addTableMethodToClass($class);
         $this->addGetRelationsMethodToClass($class);
         $this->addGetPagesMethodToClass($class);
-        $this->addGetEloquentQueryMethodToClass($class);
+        $this->addGetRecordRouteBindingEloquentQueryMethodToClass($class);
     }
 
     protected function addModelPropertyToClass(ClassType $class): void
@@ -171,6 +173,23 @@ class ResourceClassGenerator extends ClassGenerator
     }
 
     protected function configureParentResourceProperty(Property $property): void {}
+
+    protected function addRecordTitleAttributePropertyToClass(ClassType $class): void
+    {
+        $recordTitleAttribute = $this->getRecordTitleAttribute();
+
+        if (blank($recordTitleAttribute)) {
+            return;
+        }
+
+        $property = $class->addProperty('recordTitleAttribute', $recordTitleAttribute)
+            ->setProtected()
+            ->setStatic()
+            ->setType('?string');
+        $this->configureRecordTitleAttributeProperty($property);
+    }
+
+    protected function configureRecordTitleAttributeProperty(Property $property): void {}
 
     protected function addFormMethodToClass(ClassType $class): void
     {
@@ -328,28 +347,28 @@ class ResourceClassGenerator extends ClassGenerator
 
     protected function configureGetPagesMethod(Method $method): void {}
 
-    protected function addGetEloquentQueryMethodToClass(ClassType $class): void
+    protected function addGetRecordRouteBindingEloquentQueryMethodToClass(ClassType $class): void
     {
         if (! $this->isSoftDeletable()) {
             return;
         }
 
-        $method = $class->addMethod('getEloquentQuery')
+        $method = $class->addMethod('getRecordRouteBindingEloquentQuery')
             ->setPublic()
             ->setStatic()
             ->setReturnType(Builder::class)
             ->setBody(
                 <<<PHP
-                return parent::getEloquentQuery()
+                return parent::getRecordRouteBindingEloquentQuery()
                     ->withoutGlobalScopes([
                         {$this->simplifyFqn(SoftDeletingScope::class)}::class,
                     ]);
                 PHP
             );
-        $this->configureGetEloquentQueryMethod($method);
+        $this->configureGetRecordRouteBindingEloquentQueryMethod($method);
     }
 
-    protected function configureGetEloquentQueryMethod(Method $method): void {}
+    protected function configureGetRecordRouteBindingEloquentQueryMethod(Method $method): void {}
 
     public function getFqn(): string
     {
@@ -471,5 +490,10 @@ class ResourceClassGenerator extends ClassGenerator
     public function isSimple(): bool
     {
         return $this->isSimple;
+    }
+
+    public function getRecordTitleAttribute(): ?string
+    {
+        return $this->recordTitleAttribute;
     }
 }

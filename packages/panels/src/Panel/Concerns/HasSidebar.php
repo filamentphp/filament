@@ -3,6 +3,8 @@
 namespace Filament\Panel\Concerns;
 
 use Closure;
+use Filament\Livewire\Sidebar;
+use Livewire\Component;
 
 trait HasSidebar
 {
@@ -15,6 +17,8 @@ trait HasSidebar
     protected bool | Closure $isSidebarFullyCollapsibleOnDesktop = false;
 
     protected bool | Closure $hasCollapsibleNavigationGroups = true;
+
+    protected string | Closure | null $sidebarLivewireComponent = null;
 
     public function sidebarCollapsibleOnDesktop(bool | Closure $condition = true): static
     {
@@ -33,6 +37,16 @@ trait HasSidebar
     public function collapsibleNavigationGroups(bool | Closure $condition = true): static
     {
         $this->hasCollapsibleNavigationGroups = $condition;
+
+        return $this;
+    }
+
+    /**
+     * @param  class-string<Component> | Closure | null  $component
+     */
+    public function sidebarLivewireComponent(string | Closure | null $component): static
+    {
+        $this->sidebarLivewireComponent = $component;
 
         return $this;
     }
@@ -74,5 +88,13 @@ trait HasSidebar
     public function hasCollapsibleNavigationGroups(): bool
     {
         return (bool) $this->evaluate($this->hasCollapsibleNavigationGroups);
+    }
+
+    /**
+     * @return class-string<Component>
+     */
+    public function getSidebarLivewireComponent(): string
+    {
+        return $this->evaluate($this->sidebarLivewireComponent) ?? Sidebar::class;
     }
 }

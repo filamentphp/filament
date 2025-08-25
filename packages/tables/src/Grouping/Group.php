@@ -8,6 +8,7 @@ use Carbon\CarbonInterface;
 use Closure;
 use Filament\Support\Components\Component;
 use Filament\Support\Contracts\HasLabel as LabelInterface;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -249,7 +250,7 @@ class Group extends Component
         return Arr::get($record, $this->getColumn());
     }
 
-    public function getTitle(Model $record): ?string
+    public function getTitle(Model $record): string | Htmlable
     {
         $column = $this->getColumn();
 
@@ -271,6 +272,10 @@ class Group extends Component
 
         if ($title instanceof LabelInterface) {
             $title = $title->getLabel();
+        }
+
+        if ($title instanceof Htmlable) {
+            return $title;
         }
 
         if (filled($title) && $this->isDate()) {

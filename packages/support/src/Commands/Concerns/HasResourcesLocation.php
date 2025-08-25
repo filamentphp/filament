@@ -44,8 +44,15 @@ trait HasResourcesLocation
 
         if (count($namespaces) < 2) {
             return [
-                (Arr::first($namespaces) ?? 'App\\Filament\\Resources'),
+                (Arr::first($namespaces) ?? app()->getNamespace() . 'Filament\\Resources'),
                 (Arr::first($directories) ?? app_path('Filament/Resources/')),
+            ];
+        }
+
+        if ($this->option('resource-namespace')) {
+            return [
+                (string) $this->option('resource-namespace'),
+                $directories[array_search($this->option('resource-namespace'), $namespaces)],
             ];
         }
 

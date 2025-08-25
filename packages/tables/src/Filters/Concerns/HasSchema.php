@@ -80,7 +80,7 @@ trait HasSchema
     }
 
     /**
-     * @deprecated Use `getSchema()` instead.
+     * @deprecated Use `getSchemaComponents()` instead.
      *
      * @return array<Component | Action | ActionGroup>
      */

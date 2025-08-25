@@ -1,5 +1,5 @@
 .fi-in-repeatable {
-    &ul {
+    ul& {
         @apply gap-4;
     }
 

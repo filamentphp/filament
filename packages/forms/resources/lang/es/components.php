@@ -472,23 +472,45 @@ return [
         'no_merge_tag_search_results_message' => 'No se encontraron etiquetas dinámicas.',
 
         'tools' => [
+            'align_center' => 'Alinear al centro',
+            'align_end' => 'Alinear al final',
+            'align_justify' => 'Justificar',
+            'align_start' => 'Alinear al inicio',
             'attach_files' => 'Adjuntar archivos',
             'blockquote' => 'Cita',
             'bold' => 'Negrita',
             'bullet_list' => 'Viñetas',
+            'clear_formatting' => 'Limpiar formato',
+            'code' => 'Código',
             'code_block' => 'Bloque de código',
             'custom_blocks' => 'Bloques',
+            'details' => 'Detalles',
             'h1' => 'Título',
             'h2' => 'Encabezado',
             'h3' => 'Subencabezado',
+            'highlight' => 'Resaltar',
+            'horizontal_rule' => 'Línea horizontal',
             'italic' => 'Cursiva',
+            'lead' => 'Texto guía',
             'link' => 'Enlace',
             'merge_tags' => 'Etiquetas dinámicas',
             'ordered_list' => 'Lista numerada',
             'redo' => 'Rehacer',
+            'small' => 'Texto pequeño',
             'strike' => 'Tachar',
             'subscript' => 'Subíndice',
             'superscript' => 'Superíndice',
+            'table' => 'Tabla',
+            'table_delete' => 'Eliminar tabla',
+            'table_add_column_before' => 'Añadir columna antes',
+            'table_add_column_after' => 'Añadir columna después',
+            'table_delete_column' => 'Eliminar columna',
+            'table_add_row_before' => 'Añadir fila encima',
+            'table_add_row_after' => 'Añadir fila debajo',
+            'table_delete_row' => 'Eliminar fila',
+            'table_merge_cells' => 'Combinar celdas',
+            'table_split_cell' => 'Dividir celda',
+            'table_toggle_header_row' => 'Alternar fila de encabezado',
             'underline' => 'Subrayar',
             'undo' => 'Deshacer',
         ],
@@ -571,6 +593,11 @@ return [
     'text_input' => [
 
         'actions' => [
+
+            'copy' => [
+                'label' => 'Copiar',
+                'message' => 'Copiado',
+            ],
 
             'hide_password' => [
                 'label' => 'Ocultar contraseña',

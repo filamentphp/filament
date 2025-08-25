@@ -11,8 +11,7 @@
         "php": "^8.2",
         "filament/actions": "self.version",
         "filament/schemas": "self.version",
-        "filament/support": "self.version",
-        "phiki/phiki": "^1.1"
+        "filament/support": "self.version"
     },
     "autoload": {
         "psr-4": {

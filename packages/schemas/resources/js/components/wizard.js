@@ -50,7 +50,7 @@ export default function wizardSchemaComponent({
 
         scroll() {
             this.$nextTick(() => {
-                this.$refs.header.children[
+                this.$refs.header?.children[
                     this.getStepIndex(this.step)
                 ].scrollIntoView({ behavior: 'smooth', block: 'start' })
             })

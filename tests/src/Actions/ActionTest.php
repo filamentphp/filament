@@ -132,6 +132,17 @@ it('can mount an action with arguments', function (): void {
         ]);
 });
 
+it('can mount an action record with arguments', function (): void {
+    livewire(Actions::class)
+        ->mountAction([
+            TestAction::make('record-arguments')->arguments(['key' => 123]),
+        ])
+        ->callMountedAction()
+        ->assertDispatched('record-arguments-called', arguments: [
+            'key' => 123,
+        ]);
+});
+
 it('can mount a nested action with parent arguments', function (): void {
     livewire(Actions::class)
         ->mountAction([

@@ -23,26 +23,20 @@ import Disclosure from "@components/Disclosure.astro"
     The upgrade script is not a replacement for the upgrade guide. It handles many small changes that are not mentioned in the upgrade guide, but it does not handle all breaking changes. You should still read the [manual upgrade steps](#breaking-changes-that-must-be-handled-manually) to see what changes you need to make to your code.
 </Aside>
 
-The first step to upgrade your Filament app is to run the automated upgrade script. Since Filament v4 is in beta, you will need to set the `minimum-stability` in your `composer.json` file to be `beta` before installing any packages. Either adjust it manually or via CLI:
+<Aside variant="info">
+    Some plugins you're using may not be available in v4 just yet. You could temporarily remove them from your `composer.json` file until they've been upgraded, replace them with a similar plugins that are v4-compatible, wait for the plugins to be upgraded before upgrading your app, or even write PRs to help the authors upgrade them.
+</Aside>
 
-```bash
-composer config minimum-stability beta
-```
-
-Your `composer.json` should look like this:
-
-```json
-{
-    "minimum-stability": "beta"
-}
-```
-
-This script will automatically upgrade your application to the latest version of Filament and make changes to your code, which handles most breaking changes:
+The first step to upgrade your Filament app is to run the automated upgrade script. This script will automatically upgrade your application to the latest version of Filament and make changes to your code, which handles most breaking changes:
 
 ```bash
 composer require filament/upgrade:"^4.0" -W --dev
 
 vendor/bin/filament-v4
+
+# Run the commands output by the upgrade script, they are unique to your app
+composer require filament/filament:"^4.0" -W --no-update
+composer update
 ```
 
 <Aside variant="warning">
@@ -52,6 +46,10 @@ vendor/bin/filament-v4
     composer require filament/upgrade:"~4.0" -W --dev
 
     vendor/bin/filament-v4
+
+    # Run the commands output by the upgrade script, they are unique to your app
+    composer require filament/filament:"~4.0" -W --no-update
+    composer update
     ```
 </Aside>
 
@@ -61,11 +59,23 @@ vendor/bin/filament-v4
 
 Make sure to carefully follow the instructions, and review the changes made by the script. You may need to make some manual changes to your code afterwards, but the script should handle most of the repetitive work for you.
 
-You can now `composer remove filament/upgrade` as you don't need it anymore.
+Filament v4 introduces a new default directory structure for your Filament resources and clusters. If you are using Filament panels with resources and clusters, you can choose to keep the old directory structure, or migrate to the new one. If you want to migrate to the new directory structure, you can run the following command:
 
-<Aside variant="info">
-    Some plugins you're using may not be available in v4 just yet. You could temporarily remove them from your `composer.json` file until they've been upgraded, replace them with a similar plugins that are v4-compatible, wait for the plugins to be upgraded before upgrading your app, or even write PRs to help the authors upgrade them.
+```bash
+php artisan filament:upgrade-directory-structure-to-v4 --dry-run
+```
+
+The `--dry-run` option will show you what the command would do without actually making any changes. If you are happy with the changes, you can run the command without the `--dry-run` option to apply the changes:
+
+```bash
+php artisan filament:upgrade-directory-structure-to-v4
+```
+
+<Aside variant="warning">
+    This directory upgrade script is not able to perfectly update any references to classes in the same namespace that were present in resource and cluster files, and those references will need to be updated manually after the script has run. You should use tools like [PHPStan](https://phpstan.org) to identify references to classes that are broken after the upgrade.
 </Aside>
+
+You can now `composer remove filament/upgrade --dev` as you don't need it anymore.
 
 ## Publishing the configuration file
 
@@ -102,8 +112,8 @@ return [
         'flags' => [
             FileGenerationFlag::EMBEDDED_PANEL_RESOURCE_SCHEMAS, // Define new forms and infolists inside the resource class instead of a separate schema class.
             FileGenerationFlag::EMBEDDED_PANEL_RESOURCE_TABLES, // Define new tables inside the resource class instead of a separate table class.
-            FileGenerationFlag::PANEL_CLUSTER_CLASSES_OUTSIDE_DIRECTORIES, // Create new cluster classes outside of their directories.
-            FileGenerationFlag::PANEL_RESOURCE_CLASSES_OUTSIDE_DIRECTORIES, // Create new resource classes outside of their directories.
+            FileGenerationFlag::PANEL_CLUSTER_CLASSES_OUTSIDE_DIRECTORIES, // Create new cluster classes outside of their directories. Not required if you run `php artisan filament:upgrade-directory-structure-to-v4`.
+            FileGenerationFlag::PANEL_RESOURCE_CLASSES_OUTSIDE_DIRECTORIES, // Create new resource classes outside of their directories. Not required if you run `php artisan filament:upgrade-directory-structure-to-v4`.
             FileGenerationFlag::PARTIAL_IMPORTS, // Partially import components such as form fields and table columns instead of importing each component explicitly.
         ],
     ],
@@ -112,6 +122,24 @@ return [
 
 ]
 ```
+
+<Aside variant="tip">
+    The `filament/upgrade` package includes a command to help you move panel resources and clusters to the new directory structure, which is the default in v4:
+
+    ```bash
+    php artisan filament:upgrade-directory-structure-to-v4 --dry-run
+    ```
+
+    The `--dry-run` option will show you what the command would do without actually making any changes. If you are happy with the changes, you can run the command without the `--dry-run` option to apply the changes:
+
+    ```bash
+    php artisan filament:upgrade-directory-structure-to-v4
+    ```
+
+    This directory upgrade script is not able to perfectly update any references to classes in the same namespace that were present in resource and cluster files, and those references will need to be updated manually after the script has run. You should use tools like [PHPStan](https://phpstan.org) to identify references to classes that are broken after the upgrade.
+
+    Once you have run the command, you do not need to keep the `FileGenerationFlag::PANEL_CLUSTER_CLASSES_OUTSIDE_DIRECTORIES` or `FileGenerationFlag::PANEL_RESOURCE_CLASSES_OUTSIDE_DIRECTORIES` flags in your configuration file, as the new directory structure is now the default. You can remove them from the `file_generation.flags` array.
+</Aside>
 
 ## Breaking changes that must be handled manually
 
@@ -373,12 +401,60 @@ Be aware when using `all` as it will cause performance issues when dealing with 
 
 Last year, the Filament team decided to hand over maintenance of the Spatie Translatable Plugin to the team at [Lara Zeus](https://larazeus.com), who are trusted developers of many Filament plugins. They have maintained a fork of the plugin ever since.
 
-The official Spatie Translatable Plugin will not recieve v4 support, and is now deprecated. You can use the [Lara Zeus Translatable Plugin](https://github.com/lara-zeus/spatie-translatable) as a direct replacement. The plugin is compatible with the same version of Spatie Translatable as the official plugin, and has been tested with Filament v4. It also fixes some long-standing bugs in the official plugin.
+The official Spatie Translatable Plugin will not receive v4 support, and is now deprecated. You can use the [Lara Zeus Translatable Plugin](https://github.com/lara-zeus/spatie-translatable) as a direct replacement. The plugin is compatible with the same version of Spatie Translatable as the official plugin, and has been tested with Filament v4. It also fixes some long-standing bugs in the official plugin.
 
 The [automated upgrade script](#running-the-automated-upgrade-script) suggests commands that uninstall the official plugin and install the Lara Zeus plugin, and replaces any references in your code to the official plugin with the Lara Zeus plugin.
 </Disclosure>
 
 ### Medium-impact changes
+
+<Disclosure x-show="packages.includes('forms')">
+<span slot="summary">Enum field state</span>
+
+In v3, fields that wrote to an enum attribute on a model, such as a `Select`, `CheckboxList` or `Radio` field using `options(Enum::class)`, would inconsistently return the value of the field as either the enum value or the enum instance, depending on whether or not the field was last modified by the server or by the user. This was not useful, and you had to check the type of the value returned by the field to determine if it was an enum value or an enum instance.
+
+In v4, the field state is always returned as the enum instance. This means that you can always use the enum methods on field state. If you were not handling the possibility of the field state being an enum instance in your code previously, you now need to do so.
+
+The following code examples illustrate how field state may now return an enum instance:
+
+```php
+use App\Enums\Status;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Utilities\Get;
+
+Select::make('status')
+    ->options(Status::class)
+    ->afterStateUpdated(function (?Status $state) {
+        // `$state` is now always an instance of `Status`, or `null` if the field is empty.
+    });
+
+TextInput::make('...')
+    ->afterStateUpdated(function (Get $get) {
+        // `$get('status')` is now always an instance of `Status`, or `null` if the field is empty.
+    });
+
+$data = $this->form->getState();
+// `$data['status']` is now always an instance of `Status`, or `null` if the field is empty.
+```
+</Disclosure>
+
+<Disclosure x-show="packages.includes('panels')">
+<span slot="summary">URL parameter names have changed</span>
+
+Filament v4 has renamed some of the URL parameters that are used on resource pages, to make them cleaner in the URL and easier to remember:
+
+- `activeRelationManager` has been renamed to `relation` on Edit / View resource pages.
+- `activeTab` has been renamed to `tab` on List / Manage Relation resource pages.
+- `isTableReordering` has been renamed to `reordering` on List / Manage Relation resource pages.
+- `tableFilters` has been renamed to `filters` on List / Manage Relation resource pages.
+- `tableGrouping` has been renamed to `grouping` on List / Manage Relation resource pages.
+- `tableGroupingDirection` has been renamed to `groupingDirection` on List / Manage Relation resource pages.
+- `tableSearch` has been renamed to `search` on List / Manage Relation resource pages.
+- `tableSort` has been renamed to `sort` on List / Manage Relation resource pages.
+
+To find out if you are using this parameter in your code, try searching for `'activeRelationManager' => ` (etc.) in your code, and looking for areas where you are using `::getUrl()` or another method of generating a URL with a parameter.
+</Disclosure>
 
 <Disclosure x-show="packages.includes('panels')">
 <span slot="summary">Automatic tenancy global scoping and association</span>

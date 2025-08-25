@@ -43,6 +43,30 @@ return [
 
     ],
 
+    'multi_factor' => [
+
+        'heading' => 'Xác minh danh tính',
+
+        'subheading' => 'Để tiếp tục đăng nhập, bạn cần xác minh danh tính.',
+
+        'form' => [
+
+            'provider' => [
+                'label' => 'Bạn muốn xác minh như thế nào?',
+            ],
+
+            'actions' => [
+
+                'authenticate' => [
+                    'label' => 'Xác nhận đăng nhập',
+                ],
+
+            ],
+
+        ],
+
+    ],
+
     'messages' => [
 
         'failed' => 'Thông tin đăng nhập không chính xác.',

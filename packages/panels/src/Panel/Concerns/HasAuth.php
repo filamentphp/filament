@@ -312,7 +312,7 @@ trait HasAuth
 
     public function isMultiFactorAuthenticationRequired(): bool
     {
-        return $this->isMultiFactorAuthenticationRequired;
+        return (bool) $this->evaluate($this->isMultiFactorAuthenticationRequired);
     }
 
     public function hasProfile(): bool

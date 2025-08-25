@@ -14,10 +14,6 @@
         }
     }
 
-    & > .fi-icon {
-        @apply text-gray-400 dark:text-gray-500;
-    }
-
     &.fi-size-xs {
         @apply gap-1 text-xs;
     }
@@ -66,10 +62,10 @@
 
     &.fi-color {
         @apply text-(--text) dark:text-(--dark-text);
+    }
 
-        & > .fi-icon {
-            @apply text-color-600 dark:text-color-400;
-        }
+    &:not(.fi-color) > .fi-icon {
+        @apply text-gray-400 dark:text-gray-500;
     }
 
     & .fi-link-badge-ctn {

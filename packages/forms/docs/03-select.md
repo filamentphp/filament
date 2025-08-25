@@ -95,6 +95,8 @@ Select::make('author_id')
     ->getOptionLabelUsing(fn ($value): ?string => User::find($value)?->name),
 ```
 
+`getOptionLabelUsing()` is crucial, since it provides Filament with the label of the selected option, so it doesn't need to execute a full search to find it. If an option is not valid, it should return `null`.
+
 <UtilityInjection set="formFields" version="4.x" extras="Option value;;mixed;;$value;;[<code>getOptionLabelUsing()</code> only] The option value to retrieve the label for.||Option values;;array<mixed>;;$values;;[<code>getOptionLabelsUsing()</code> only] The option values to retrieve the labels for.||Search;;?string;;$search;;[<code>getSearchResultsUsing()</code> only] The current search input value, if the field is searchable.">You can inject various utilities into these functions as parameters.</UtilityInjection>
 
 ### Setting a custom loading message
@@ -217,9 +219,15 @@ use Illuminate\Database\Eloquent\Model;
 
 class App extends Model
 {
-    protected $casts = [
-        'technologies' => 'array',
-    ];
+    /**
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'technologies' => 'array',
+        ];
+    }
 
     // ...
 }
@@ -241,6 +249,8 @@ Select::make('technologies')
         ->pluck('name', 'id')
         ->all()),
 ```
+
+`getOptionLabelsUsing()` is crucial, since it provides Filament with the labels of already-selected options, so it doesn't need to execute a full search to find them. It is also used to [validate](#valid-options-validation-in-rule) that the options that the user has selected are valid. If an option is not valid, it should not be present in the array returned by `getOptionLabelsUsing()`.
 
 <UtilityInjection set="formFields" version="4.x" extras="Option values;;array<mixed>;;$values;;[<code>getOptionLabelsUsing()</code> only] The option values to retrieve the labels for.">The `getOptionLabelsUsing()` method can inject various utilities into the function as parameters.</UtilityInjection>
 
@@ -572,6 +582,64 @@ MorphToSelect::make('commentable')
     Many of the same options in the select field are available for `MorphToSelect`, including `searchable()`, `preload()`, `native()`, `allowHtml()`, and `optionsLimit()`.
 </Aside>
 
+#### Customizing the morph select fields
+
+You may further customize the "key" select field for a specific morph type using the `modifyKeySelectUsing()` method:
+
+```php
+use Filament\Forms\Components\MorphToSelect;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+
+MorphToSelect::make('commentable')
+    ->types([
+        MorphToSelect\Type::make(Product::class)
+            ->titleAttribute('name')
+            ->modifyKeySelectUsing(fn (Select $select): Select => $select
+                ->createOptionForm([
+                    TextInput::make('title')
+                        ->required(),
+                ])
+                ->createOptionUsing(function (array $data): int {
+                    return Product::create($data)->getKey();
+                })),
+        MorphToSelect\Type::make(Post::class)
+            ->titleAttribute('title'),
+    ])
+```
+
+This is useful if you want to customize the "key" select field for each morphed type individually. If you want to customize the key select for all types, you can use the `modifyKeySelectUsing()` method on the `MorphToSelect` component itself:
+
+```php
+use Filament\Forms\Components\MorphToSelect;
+use Filament\Forms\Components\Select;
+
+MorphToSelect::make('commentable')
+    ->types([
+        MorphToSelect\Type::make(Product::class)
+            ->titleAttribute('name'),
+        MorphToSelect\Type::make(Post::class)
+            ->titleAttribute('title'),
+    ])
+    ->modifyKeySelectUsing(fn (Select $select): Select => $select->native())
+```
+
+You can also modify the "type" select field using the `modifyTypeSelectUsing()` method:
+
+```php
+use Filament\Forms\Components\MorphToSelect;
+use Filament\Forms\Components\Select;
+
+MorphToSelect::make('commentable')
+    ->types([
+        MorphToSelect\Type::make(Product::class)
+            ->titleAttribute('name'),
+        MorphToSelect\Type::make(Post::class)
+            ->titleAttribute('title'),
+    ])
+    ->modifyTypeSelectUsing(fn (Select $select): Select => $select->native())
+```
+
 ## Allowing HTML in the option labels
 
 By default, Filament will escape any HTML in the option labels. If you'd like to allow HTML, you can use the `allowHtml()` method:
@@ -612,6 +680,19 @@ Select::make('technology')
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `allowHtml()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
+## Wrap or truncate option labels
+
+When using the JavaScript select, labels that exceed the width of the select element will wrap onto multiple lines by default. Alternatively, you may choose to truncate overflowing labels.
+
+```php
+use Filament\Forms\Components\Select;
+
+Select::make('truncate')
+    ->wrapOptionLabels(false)
+```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `wrapOptionLabels()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 ## Disable placeholder selection
 
 You can prevent the placeholder (null option) from being selected using the `selectablePlaceholder(false)` method:
@@ -649,24 +730,6 @@ Select::make('status')
 ```
 
 <UtilityInjection set="formFields" version="4.x" extras="Option value;;mixed;;$value;;The value of the option to disable.||Option label;;string | Illuminate\Contracts\Support\Htmlable;;$label;;The label of the option to disable.">You can inject various utilities into the function as parameters.</UtilityInjection>
-
-If you want to retrieve the options that have not been disabled, e.g. for validation purposes, you can do so using `getEnabledOptions()`:
-
-```php
-use Filament\Forms\Components\Select;
-
-Select::make('status')
-    ->options([
-        'draft' => 'Draft',
-        'reviewing' => 'Reviewing',
-        'published' => 'Published',
-    ])
-    ->default('draft')
-    ->disableOptionWhen(fn (string $value): bool => $value === 'published')
-    ->in(fn (Select $component): array => array_keys($component->getEnabledOptions()))
-```
-
-For more information about the `in()` function, please see the [Validation documentation](validation#in).
 
 ## Adding affix text aside the field
 
@@ -829,6 +892,8 @@ ModalTableSelect::make('categories')
 
 <UtilityInjection set="formFields" version="4.x">The `tableConfiguration()` method can inject various utilities into the function as parameters.</UtilityInjection>
 
+### Customizing the modal table select actions
+
 You can customize the "Select" button and modal using the [action](../actions) object configuration methods. Passing a function to the `selectAction()` method allows you to modify the `$action` object, for example, to change the button label and the modal heading:
 
 ```php
@@ -848,6 +913,8 @@ ModalTableSelect::make('category_id')
 
 <UtilityInjection set="formFields" version="4.x" extras="Action;;Filament\Actions\Action;;$action;;The action object to customize.">The `selectAction()` method can inject various utilities into the function as parameters.</UtilityInjection>
 
+### Customizing the option labels in the modal table select
+
 The `getOptionLabelFromRecordUsing()` method can be used to customize the label of each selected option. This is useful if you want to display a more descriptive label or concatenate two columns together:
 
 ```php
@@ -859,11 +926,119 @@ ModalTableSelect::make('category_id')
     ->getOptionLabelFromRecordUsing(fn (Category $record): string => "{$record->name} ({$record->slug})")
 ```
 
+### Passing additional arguments to the table in a modal select
+
+You can pass arguments from your form to the table configuration class using the `tableArguments()` method. For example, this can be used to modify the table's query based on previously filled form fields:
+
+```php
+use Filament\Actions\Action;
+use Filament\Forms\Components\ModalTableSelect;
+use Filament\Schemas\Components\Utilities\Get;
+
+ModalTableSelect::make('products')
+    ->relationship('products', 'name')
+    ->multiple()
+    ->tableConfiguration(ProductsTable::class)
+    ->tableArguments(function (Get $get): array {
+        return [
+            'category_id' => $get('category_id'),
+            'budget_limit' => $get('budget'),
+        ];
+    })
+```
+
+<UtilityInjection set="formFields" version="4.x">The `tableArguments()` method can inject various utilities into the function as parameters.</UtilityInjection>
+
+In your table configuration class, you can access these arguments using the `$table->getArguments()` method:
+
+```php
+use Filament\Forms\Components\TableSelect\Livewire\TableSelectLivewireComponent;
+use Filament\Tables\Columns\TextColumn;
+use Illuminate\Database\Eloquent\Builder;
+use Filament\Tables\Table;
+
+class ProductsTable
+{
+    public static function configure(Table $table): Table
+    {
+        return $table
+            ->modifyQueryUsing(function (Builder $query) use ($table): Builder {
+                $arguments = $table->getArguments();
+            
+                if ($categoryId = $arguments['category_id'] ?? null) {
+                    $query->where('category_id', $categoryId);
+                }
+                
+                if ($budgetLimit = $arguments['budget_limit'] ?? null) {
+                    $query->where('price', '<=', $budgetLimit);
+                }
+                
+                return $query;
+            })
+            ->columns([
+                TextColumn::make('name'),
+                TextColumn::make('price')
+                    ->money(),
+                TextColumn::make('category.name')
+                    ->hidden(filled($table->getArguments()['category_id'])),
+            ]);
+    }
+}
+```
+
 ## Select validation
 
 As well as all rules listed on the [validation](validation) page, there are additional rules that are specific to selects.
 
-### Selected items validation
+### Valid options validation (`in()` rule)
+
+The [`in()`](validation#in) rule ensures that users cannot select an option that is not in the list of options. This is an important rule for data integrity purposes, so Filament applies it by default to all select fields.
+
+<Aside variant="warning">
+    Selected option validation is crucial, so we strongly suggest that you [write automated tests](../testing/testing-schemas#testing-form-validation) for your forms to ensure that the validation works as expected.
+</Aside>
+
+Since there are many ways for a select field to populate its options, and in many cases the options are not all loaded into the select by default and require searching to retrieve them, Filament uses the presence of a valid "option label" to determine whether the selected value exists. It also checks if that option is [disabled](#disabling-specific-options) or not.
+
+If you are using a custom search query to retrieve options, you should ensure that the `getOptionLabelUsing()` method is defined, so that Filament can validate the selected value against the available options:
+
+```php
+use Filament\Forms\Components\Select;
+
+Select::make('author_id')
+    ->searchable()
+    ->getSearchResultsUsing(fn (string $search): array => Author::query()
+        ->where('name', 'like', "%{$search}%")
+        ->limit(50)
+        ->pluck('name', 'id')
+        ->all())
+    ->getOptionLabelUsing(fn (string $value): ?string => Author::find($value)?->name),
+```
+
+The `getOptionLabelUsing()` method should return `null` if the option is not valid, to allow Filament to determine that the selected value is not in the list of options. If the option is valid, it should return the label of the option.
+
+If you are using a `multiple()` select or multi-select, you should define `getOptionLabelsUsing()` instead of `getOptionLabelUsing()`. `$values` will be passed into the callback instead of `$value`, and you should return a `$key => $value` array of labels and their corresponding values:
+
+```php
+use Filament\Forms\Components\Select;
+
+Select::make('technologies')
+    ->multiple()
+    ->searchable()
+    ->getSearchResultsUsing(fn (string $search): array => Technology::query()
+        ->where('name', 'like', "%{$search}%")
+        ->limit(50)
+        ->pluck('name', 'id')
+        ->all())
+    ->getOptionLabelsUsing(fn (array $values): array => Technology::query()
+        ->whereIn('id', $values)
+        ->pluck('name', 'id')
+        ->all()),
+```
+
+If you are using the `relationship()` method, the `getOptionLabelUsing()` or `getOptionLabelsUsing()` methods will be automatically defined for you, so you don't need to worry about them.
+
+### Number of selected items validation
 
 You can validate the minimum and maximum number of items that you can select in a [multi-select](#multi-select) by setting the `minItems()` and `maxItems()` methods:
 

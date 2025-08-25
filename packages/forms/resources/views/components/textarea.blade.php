@@ -1,13 +1,13 @@
 @php
-    use Filament\Support\Facades\FilamentView;
-
     $fieldWrapperView = $getFieldWrapperView();
     $extraAttributeBag = $getExtraAttributeBag();
     $hasInlineLabel = $hasInlineLabel();
     $isConcealed = $isConcealed();
     $isDisabled = $isDisabled();
     $rows = $getRows();
+    $placeholder = $getPlaceholder();
     $shouldAutosize = $shouldAutosize();
+    $placeholder = $getPlaceholder();
     $statePath = $getStatePath();
 
     $initialHeight = (($rows ?? 2) * 1.5) + 0.75;
@@ -32,11 +32,7 @@
     >
         <div wire:ignore.self style="height: '{{ $initialHeight . 'rem' }}'">
             <textarea
-                @if (FilamentView::hasSpaMode())
-                    {{-- format-ignore-start --}}x-load="visible || event (x-modal-opened)"{{-- format-ignore-end --}}
-                @else
-                    x-load
-                @endif
+                x-load
                 x-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('textarea', 'filament/forms') }}"
                 x-data="textareaFormComponent({
                             initialHeight: @js($initialHeight),
@@ -64,7 +60,7 @@
                             'id' => $getId(),
                             'maxlength' => (! $isConcealed) ? $getMaxLength() : null,
                             'minlength' => (! $isConcealed) ? $getMinLength() : null,
-                            'placeholder' => $getPlaceholder(),
+                            'placeholder' => filled($placeholder) ? e($placeholder) : null,
                             'readonly' => $isReadOnly(),
                             'required' => $isRequired() && (! $isConcealed),
                             'rows' => $rows,

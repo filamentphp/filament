@@ -8,14 +8,26 @@ use Filament\Facades\Filament;
 trait HasUserMenu
 {
     /**
-     * @var array<Action>
+     * @var ?array<Action>
      */
-    protected array $userMenuItems = [];
+    protected ?array $userMenuItems = null;
 
     public function bootHasUserMenu(): void
     {
-        if (! Filament::auth()->check()) {
+        if (! Filament::hasUserMenu()) {
             return;
+        }
+
+        $this->getUserMenuItems();
+    }
+
+    /**
+     * @return array<Action>
+     */
+    protected function getUserMenuItems(): array
+    {
+        if (isset($this->userMenuItems)) {
+            return $this->userMenuItems;
         }
 
         $this->userMenuItems = Filament::getUserMenuItems();
@@ -25,13 +37,11 @@ trait HasUserMenu
 
             $this->cacheAction($action);
         }
-    }
 
-    /**
-     * @return array<Action>
-     */
-    protected function getUserMenuItems(): array
-    {
-        return $this->userMenuItems;
+        if (blank($this->userMenuItems)) {
+            $this->userMenuItems = null;
+        }
+
+        return $this->userMenuItems ?? [];
     }
 }

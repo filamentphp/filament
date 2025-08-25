@@ -6,6 +6,8 @@ return [
 
     'breadcrumb' => 'Прегледај',
 
+    'navigation_label' => 'Преглед',
+
     'content' => [
 
         'tab' => [

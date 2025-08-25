@@ -88,7 +88,7 @@ it('can generate a page class in a cluster', function (): void {
     $this->artisan('make:filament-page', [
         'name' => 'ManageSettings',
         '--panel' => 'admin',
-        '--cluster' => 'App\\Filament\\Clusters\\Site\\SiteCluster',
+        '--cluster' => app()->getNamespace() . 'Filament\\Clusters\\Site\\SiteCluster',
         '--no-interaction' => true,
     ]);
 
@@ -111,7 +111,7 @@ it('can generate a page view in a cluster', function (): void {
     $this->artisan('make:filament-page', [
         'name' => 'ManageSettings',
         '--panel' => 'admin',
-        '--cluster' => 'App\\Filament\\Clusters\\Site\\SiteCluster',
+        '--cluster' => app()->getNamespace() . 'Filament\\Clusters\\Site\\SiteCluster',
         '--no-interaction' => true,
     ]);
 
@@ -125,6 +125,7 @@ it('can generate a page class in a resource', function (): void {
 
     $this->artisan('make:filament-resource', [
         'model' => 'User',
+        '--record-title-attribute' => 'name',
         '--panel' => 'admin',
         '--no-interaction' => true,
     ]);
@@ -136,7 +137,7 @@ it('can generate a page class in a resource', function (): void {
 
     invade(Filament::getCurrentOrDefaultPanel())->resources = [
         ...invade(Filament::getCurrentOrDefaultPanel())->resources,
-        'App\\Filament\\Resources\\Users\\UserResource',
+        app()->getNamespace() . 'Filament\\Resources\\Users\\UserResource',
     ];
 
     $this->artisan('make:filament-page', [
@@ -157,6 +158,7 @@ it('can generate a page view in a resource', function (): void {
 
     $this->artisan('make:filament-resource', [
         'model' => 'User',
+        '--record-title-attribute' => 'name',
         '--panel' => 'admin',
         '--no-interaction' => true,
     ]);
@@ -168,7 +170,7 @@ it('can generate a page view in a resource', function (): void {
 
     invade(Filament::getCurrentOrDefaultPanel())->resources = [
         ...invade(Filament::getCurrentOrDefaultPanel())->resources,
-        'App\\Filament\\Resources\\Users\\UserResource',
+        app()->getNamespace() . 'Filament\\Resources\\Users\\UserResource',
     ];
 
     $this->artisan('make:filament-page', [
@@ -189,6 +191,7 @@ it('can generate a create page class in a resource', function (): void {
 
     $this->artisan('make:filament-resource', [
         'model' => 'User',
+        '--record-title-attribute' => 'name',
         '--panel' => 'admin',
         '--no-interaction' => true,
     ]);
@@ -200,7 +203,7 @@ it('can generate a create page class in a resource', function (): void {
 
     invade(Filament::getCurrentOrDefaultPanel())->resources = [
         ...invade(Filament::getCurrentOrDefaultPanel())->resources,
-        'App\\Filament\\Resources\\Users\\UserResource',
+        app()->getNamespace() . 'Filament\\Resources\\Users\\UserResource',
     ];
 
     $this->artisan('make:filament-page', [
@@ -223,6 +226,7 @@ it('can generate an edit page class in a resource', function (): void {
 
     $this->artisan('make:filament-resource', [
         'model' => 'User',
+        '--record-title-attribute' => 'name',
         '--panel' => 'admin',
         '--no-interaction' => true,
     ]);
@@ -234,7 +238,7 @@ it('can generate an edit page class in a resource', function (): void {
 
     invade(Filament::getCurrentOrDefaultPanel())->resources = [
         ...invade(Filament::getCurrentOrDefaultPanel())->resources,
-        'App\\Filament\\Resources\\Users\\UserResource',
+        app()->getNamespace() . 'Filament\\Resources\\Users\\UserResource',
     ];
 
     $this->artisan('make:filament-page', [
@@ -257,6 +261,7 @@ it('can generate a view page class in a resource', function (): void {
 
     $this->artisan('make:filament-resource', [
         'model' => 'User',
+        '--record-title-attribute' => 'name',
         '--panel' => 'admin',
         '--no-interaction' => true,
     ]);
@@ -268,7 +273,7 @@ it('can generate a view page class in a resource', function (): void {
 
     invade(Filament::getCurrentOrDefaultPanel())->resources = [
         ...invade(Filament::getCurrentOrDefaultPanel())->resources,
-        'App\\Filament\\Resources\\Users\\UserResource',
+        app()->getNamespace() . 'Filament\\Resources\\Users\\UserResource',
     ];
 
     $this->artisan('make:filament-page', [
@@ -289,6 +294,7 @@ it('can generate a view page class in a resource', function (): void {
 $runGenerateManageRelatedRecordsPageCommand = function (TestCase $testCase): PendingCommand {
     $testCase->artisan('make:filament-resource', [
         'model' => 'Team',
+        '--record-title-attribute' => 'name',
         '--view' => true,
         '--panel' => 'admin',
         '--no-interaction' => true,
@@ -298,6 +304,7 @@ $runGenerateManageRelatedRecordsPageCommand = function (TestCase $testCase): Pen
 
     $testCase->artisan('make:filament-resource', [
         'model' => 'User',
+        '--record-title-attribute' => 'name',
         '--panel' => 'admin',
         '--no-interaction' => true,
     ])
@@ -318,8 +325,8 @@ $runGenerateManageRelatedRecordsPageCommand = function (TestCase $testCase): Pen
 
     invade(Filament::getCurrentOrDefaultPanel())->resources = [
         ...invade(Filament::getCurrentOrDefaultPanel())->resources,
-        'App\\Filament\\Resources\\Teams\\TeamResource',
-        'App\\Filament\\Resources\\Users\\UserResource',
+        app()->getNamespace() . 'Filament\\Resources\\Teams\\TeamResource',
+        app()->getNamespace() . 'Filament\\Resources\\Users\\UserResource',
     ];
 
     return $testCase->artisan('make:filament-page', [
@@ -377,8 +384,8 @@ it('can generate a manage related records page class in a resource with a relate
     $runGenerateManageRelatedRecordsPageCommand($this)
         ->expectsQuestion($questions['relationship'], 'teams')
         ->expectsQuestion($questions['hasRelatedResource'], true)
-        ->expectsQuestion($questions['relatedResource'], 'App\\Filament\\Resources\\Teams\\TeamResource')
-        ->expectsQuestion($questions['relatedResource'], 'App\\Filament\\Resources\\Teams\\TeamResource'); // Repeat the question as there is a bug when testing `search()` in Prompts
+        ->expectsQuestion($questions['relatedResource'], app()->getNamespace() . 'Filament\\Resources\\Teams\\TeamResource')
+        ->expectsQuestion($questions['relatedResource'], app()->getNamespace() . 'Filament\\Resources\\Teams\\TeamResource'); // Repeat the question as there is a bug when testing `search()` in Prompts
 
     assertFileExists($path = app_path('Filament/Resources/Users/Pages/ManageUserTeams.php'));
     expect(file_get_contents($path))
@@ -392,7 +399,7 @@ it('can generate a manage related records page class in a resource with a form s
         ->expectsQuestion($questions['relationship'], 'teams')
         ->expectsQuestion($questions['hasRelatedResource'], false)
         ->expectsQuestion($questions['hasFormSchemaClass'], true)
-        ->expectsQuestion($questions['formSchemaClass'], 'App\\Filament\\Resources\\Teams\\Schemas\\TeamForm')
+        ->expectsQuestion($questions['formSchemaClass'], app()->getNamespace() . 'Filament\\Resources\\Teams\\Schemas\\TeamForm')
         ->expectsQuestion($questions['hasViewOperation'], false)
         ->expectsQuestion($questions['hasTableClass'], false)
         ->expectsQuestion($questions['titleAttribute'], 'name')
@@ -456,7 +463,7 @@ it('can generate a manage related records page class in a resource with an infol
         ->expectsQuestion($questions['titleAttribute'], 'name')
         ->expectsQuestion($questions['hasViewOperation'], true)
         ->expectsQuestion($questions['hasInfolistSchemaClass'], true)
-        ->expectsQuestion($questions['infolistSchemaClass'], 'App\\Filament\\Resources\\Teams\\Schemas\\TeamInfolist')
+        ->expectsQuestion($questions['infolistSchemaClass'], app()->getNamespace() . 'Filament\\Resources\\Teams\\Schemas\\TeamInfolist')
         ->expectsQuestion($questions['hasTableClass'], false)
         ->expectsQuestion($questions['isSoftDeletable'], false)
         ->expectsQuestion($questions['relationshipType'], BelongsToMany::class);
@@ -477,7 +484,7 @@ it('can generate a manage related records page class in a resource with a table 
         ->expectsQuestion($questions['titleAttribute'], 'name')
         ->expectsQuestion($questions['hasViewOperation'], false)
         ->expectsQuestion($questions['hasTableClass'], true)
-        ->expectsQuestion($questions['tableClass'], 'App\\Filament\\Resources\\Teams\\Tables\\TeamsTable');
+        ->expectsQuestion($questions['tableClass'], app()->getNamespace() . 'Filament\\Resources\\Teams\\Tables\\TeamsTable');
 
     assertFileExists($path = app_path('Filament/Resources/Users/Pages/ManageUserTeams.php'));
     expect(file_get_contents($path))
@@ -527,6 +534,7 @@ it('can generate a custom record page class in a resource', function (): void {
 
     $this->artisan('make:filament-resource', [
         'model' => 'User',
+        '--record-title-attribute' => 'name',
         '--panel' => 'admin',
         '--no-interaction' => true,
     ]);
@@ -538,7 +546,7 @@ it('can generate a custom record page class in a resource', function (): void {
 
     invade(Filament::getCurrentOrDefaultPanel())->resources = [
         ...invade(Filament::getCurrentOrDefaultPanel())->resources,
-        'App\\Filament\\Resources\\Users\\UserResource',
+        app()->getNamespace() . 'Filament\\Resources\\Users\\UserResource',
     ];
 
     $this->mockConsoleOutput = true;

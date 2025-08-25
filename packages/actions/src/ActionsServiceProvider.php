@@ -25,7 +25,7 @@ class ActionsServiceProvider extends PackageServiceProvider
                 'create_exports_table',
                 'create_failed_import_rows_table',
             ])
-            ->hasRoute('web')
+            ->hasRoutes('web')
             ->hasTranslations()
             ->hasViews();
     }

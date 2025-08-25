@@ -31,7 +31,7 @@ class Schema extends ViewComponent implements HasEmbeddedView
     use Concerns\CanBeHidden;
     use Concerns\CanBeInline;
     use Concerns\CanBeValidated;
-    use Concerns\CanConfigureActions;
+    use Concerns\CanModifyActions;
     use Concerns\Cloneable;
     use Concerns\HasColumns;
     use Concerns\HasComponents;
@@ -52,12 +52,18 @@ class Schema extends ViewComponent implements HasEmbeddedView
 
     protected string $viewIdentifier = 'schema';
 
-    final public function __construct((LivewireComponent & HasSchemas) | null $livewire = null)
+    /**
+     * @param  (LivewireComponent & HasSchemas) | null  $livewire
+     */
+    final public function __construct(?HasSchemas $livewire = null)
     {
         $this->livewire($livewire);
     }
 
-    public static function make((LivewireComponent & HasSchemas) | null $livewire = null): static
+    /**
+     * @param  (LivewireComponent & HasSchemas) | null  $livewire
+     */
+    public static function make(?HasSchemas $livewire = null): static
     {
         $static = app(static::class, ['livewire' => $livewire]);
         $static->configure();
@@ -118,6 +124,16 @@ class Schema extends ViewComponent implements HasEmbeddedView
         return static::make()
             ->components($components)
             ->alignEnd();
+    }
+
+    /**
+     * @param  array<Component | Action | ActionGroup | string | Htmlable> | Schema | Component | Action | ActionGroup | string | Htmlable | Closure  $components
+     */
+    public static function center(array | Schema | Component | Action | ActionGroup | string | Htmlable | Closure $components): static
+    {
+        return static::make()
+            ->components($components)
+            ->alignCenter();
     }
 
     /**
@@ -204,7 +220,7 @@ class Schema extends ViewComponent implements HasEmbeddedView
                          * diffing issues.
                          *
                          * Additionally, any `<div>` elements that wrap hidden
-                         * components need to have `class="hidden"`, so that they
+                         * components need to have `class="fi-hidden"`, so that they
                          * don't consume grid space.
                          */
                         $hiddenJs = $schemaComponent->getHiddenJs();
@@ -239,7 +255,7 @@ class Schema extends ViewComponent implements HasEmbeddedView
                             })"
                             <?php if ($afterStateUpdatedJs = $schemaComponent->getAfterStateUpdatedJs()) { ?>
                                 x-init="<?= implode(';', array_map(
-                                    fn (string $js): string => '$wire.watch(' . Js::from($schemaComponentStatePath) . ', ($state, $old) => eval(' . Js::from($js) . '))',
+                                    fn (string $js): string => '$wire.watch(' . Js::from($schemaComponentStatePath) . ', ($state, $old) => ($state !== undefined) && eval(' . Js::from($js) . '))',
                                     $afterStateUpdatedJs,
                                 )) ?>"
                             <?php } ?>

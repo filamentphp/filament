@@ -44,6 +44,18 @@ class AssetManager
      */
     protected array $themes = [];
 
+    protected ?string $appVersion = null;
+
+    public function appVersion(?string $version): void
+    {
+        $this->appVersion = $version;
+    }
+
+    public function getAppVersion(): ?string
+    {
+        return $this->appVersion;
+    }
+
     /**
      * @param  array<Asset>  $assets
      */

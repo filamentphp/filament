@@ -1,5 +1,5 @@
 @php
-    use Filament\Forms\Components\Actions\Action;
+    use Filament\Actions\Action;
     use Filament\Support\Enums\Alignment;
     use Illuminate\View\ComponentAttributeBag;
 

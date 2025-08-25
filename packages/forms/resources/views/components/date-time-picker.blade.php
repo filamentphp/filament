@@ -1,6 +1,4 @@
 @php
-    use Filament\Support\Facades\FilamentView;
-
     $fieldWrapperView = $getFieldWrapperView();
     $datalistOptions = $getDatalistOptions();
     $disabledDates = $getDisabledDates();
@@ -65,7 +63,7 @@
                             'list' => $datalistOptions ? $id . '-list' : null,
                             'max' => $hasTime ? $maxDate : ($maxDate ? \Carbon\Carbon::parse($maxDate)->toDateString() : null),
                             'min' => $hasTime ? $minDate : ($minDate ? \Carbon\Carbon::parse($minDate)->toDateString() : null),
-                            'placeholder' => $placeholder,
+                            'placeholder' => filled($placeholder) ? e($placeholder) : null,
                             'readonly' => $isReadOnly,
                             'required' => $isRequired && (! $isConcealed),
                             'step' => $step,
@@ -82,13 +80,10 @@
             />
         @else
             <div
-                @if (FilamentView::hasSpaMode())
-                    {{-- format-ignore-start --}}x-load="visible || event (x-modal-opened)"{{-- format-ignore-end --}}
-                @else
-                    x-load
-                @endif
+                x-load
                 x-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('date-time-picker', 'filament/forms') }}"
                 x-data="dateTimePickerFormComponent({
+                            defaultFocusedDate: @js($defaultFocusedDate),
                             displayFormat:
                                 '{{ convert_date_format($getDisplayFormat())->to('day.js') }}',
                             firstDayOfWeek: {{ $getFirstDayOfWeek() }},
@@ -100,9 +95,11 @@
                 wire:ignore
                 wire:key="{{ $livewireKey }}.{{
                     substr(md5(serialize([
-                        'disabledDates' => $disabledDates,
-                        'maxDate' => $maxDate,
-                        'minDate' => $minDate,
+                        $disabledDates,
+                        $isDisabled,
+                        $isReadOnly,
+                        $maxDate,
+                        $minDate,
                     ])), 0, 64)
                 }}"
                 x-on:keydown.esc="isOpen() && $event.stopPropagation()"

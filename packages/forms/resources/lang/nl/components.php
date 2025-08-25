@@ -302,6 +302,28 @@ return [
 
     ],
 
+    'modal_table_select' => [
+
+        'actions' => [
+
+            'select' => [
+
+                'label' => 'Selecteren',
+
+                'actions' => [
+
+                    'select' => [
+                        'label' => 'Selecteren',
+                    ],
+
+                ],
+
+            ],
+
+        ],
+
+    ],
+
     'radio' => [
 
         'boolean' => [
@@ -365,37 +387,130 @@ return [
 
     'rich_editor' => [
 
-        'dialogs' => [
+        'actions' => [
+
+            'attach_files' => [
+
+                'label' => 'Bestanden bijvoegen',
+
+                'modal' => [
+
+                    'heading' => 'Bestand bijvoegen',
+
+                    'form' => [
+
+                        'file' => [
+
+                            'label' => [
+                                'new' => 'Bestand',
+                                'existing' => 'Bestand vervangen',
+                            ],
+
+                        ],
+
+                        'alt' => [
+
+                            'label' => [
+                                'new' => 'Alt tekst',
+                                'existing' => 'Alt tekst veranderen',
+                            ],
+
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
+            'custom_block' => [
+
+                'modal' => [
+
+                    'actions' => [
+
+                        'insert' => [
+                            'label' => 'Invoegen',
+                        ],
+
+                        'save' => [
+                            'label' => 'Opslaan',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
 
             'link' => [
 
-                'actions' => [
-                    'link' => 'Link',
-                    'unlink' => 'Unlink',
+                'label' => 'Bewerken',
+
+                'modal' => [
+
+                    'heading' => 'Link',
+
+                    'form' => [
+
+                        'url' => [
+                            'label' => 'URL',
+                        ],
+
+                        'should_open_in_new_tab' => [
+                            'label' => 'Open in nieuwe tab',
+                        ],
+
+                    ],
+
                 ],
-
-                'label' => 'URL',
-
-                'placeholder' => 'Voer een URL in',
 
             ],
 
         ],
 
+        'no_merge_tag_search_results_message' => 'Geen merge tags gevonden.',
+
         'tools' => [
+            'align_center' => 'Centreren',
+            'align_end' => 'Rechts uitlijnen',
+            'align_justify' => 'Uitvullen',
+            'align_start' => 'Links uitlijnen',
             'attach_files' => 'Bestanden bijvoegen',
-            'blockquote' => 'Quote',
+            'blockquote' => 'Citaatblok',
             'bold' => 'Vet',
-            'bullet_list' => 'Ongeordende lijst',
+            'bullet_list' => 'Opsommingstekens',
+            'clear_formatting' => 'Opmaak wissen',
+            'code' => 'Code',
             'code_block' => 'Codeblok',
+            'custom_blocks' => 'Blokken',
+            'details' => 'Details',
             'h1' => 'Titel',
             'h2' => 'Kop',
-            'h3' => 'Tussenkop',
+            'h3' => 'Subkop',
+            'highlight' => 'Markeren',
+            'horizontal_rule' => 'Horizontale lijn',
             'italic' => 'Cursief',
+            'lead' => 'Inleidende tekst',
             'link' => 'Link',
+            'merge_tags' => 'Merge tags',
             'ordered_list' => 'Genummerde lijst',
-            'redo' => 'Opnieuw uitvoeren',
+            'redo' => 'Opnieuw',
+            'small' => 'Kleine tekst',
             'strike' => 'Doorhalen',
+            'subscript' => 'Subscript',
+            'superscript' => 'Superscript',
+            'table' => 'Tabel',
+            'table_delete' => 'Tabel verwijderen',
+            'table_add_column_before' => 'Kolom ervoor toevoegen',
+            'table_add_column_after' => 'Kolom erna toevoegen',
+            'table_delete_column' => 'Kolom verwijderen',
+            'table_add_row_before' => 'Rij erboven toevoegen',
+            'table_add_row_after' => 'Rij eronder toevoegen',
+            'table_delete_row' => 'Rij verwijderen',
+            'table_merge_cells' => 'Cellen samenvoegen',
+            'table_split_cell' => 'Cel splitsen',
+            'table_toggle_header_row' => 'Koprij wisselen',
             'underline' => 'Onderstrepen',
             'undo' => 'Ongedaan maken',
         ],

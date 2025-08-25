@@ -146,6 +146,12 @@ class MakePageCommand extends Command
                 description: 'The resource to create the page in',
             ),
             new InputOption(
+                name: 'resource-namespace',
+                shortcut: null,
+                mode: InputOption::VALUE_OPTIONAL,
+                description: 'The namespace of the resource class, such as [' . app()->getNamespace() . 'Filament\\Resources]',
+            ),
+            new InputOption(
                 name: 'type',
                 shortcut: 'T',
                 mode: InputOption::VALUE_REQUIRED,
@@ -330,7 +336,7 @@ class MakePageCommand extends Command
         }
 
         if (count($namespaces) < 2) {
-            $this->pagesNamespace = (Arr::first($namespaces) ?? 'App\\Filament\\Pages');
+            $this->pagesNamespace = (Arr::first($namespaces) ?? app()->getNamespace() . 'Filament\\Pages');
             $this->pagesDirectory = (Arr::first($directories) ?? app_path('Filament/Pages/'));
 
             return;
@@ -375,7 +381,7 @@ class MakePageCommand extends Command
                     ->whenContains(
                         'Filament\\',
                         fn (Stringable $fqn) => $fqn->after('Filament\\')->prepend('Filament\\'),
-                        fn (Stringable $fqn) => $fqn->replaceFirst('App\\', ''),
+                        fn (Stringable $fqn) => $fqn->replaceFirst(app()->getNamespace(), ''),
                     )
                     ->replace('\\', '/')
                     ->explode('/')
@@ -578,7 +584,7 @@ class MakePageCommand extends Command
                 $formSchemaFqn = $this->askForSchema(
                     intialQuestion: 'Should an existing form schema class be used?',
                     question: 'Which form schema class would you like to use?',
-                    questionPlaceholder: 'App\\Filament\\Resources\\Users\\Schemas\\UserForm',
+                    questionPlaceholder: app()->getNamespace() . 'Filament\\Resources\\Users\\Schemas\\UserForm',
                 );
             }
 
@@ -598,7 +604,7 @@ class MakePageCommand extends Command
                     $infolistSchemaFqn = $this->askForSchema(
                         intialQuestion: 'Would you like to use an existing infolist schema class?',
                         question: 'Which infolist schema class would you like to use?',
-                        questionPlaceholder: 'App\\Filament\\Resources\\Users\\Schemas\\UserInfolist',
+                        questionPlaceholder: app()->getNamespace() . 'Filament\\Resources\\Users\\Schemas\\UserInfolist',
                     );
                 }
 
@@ -615,7 +621,7 @@ class MakePageCommand extends Command
                 $tableFqn = $this->askForSchema(
                     intialQuestion: 'Would you like to use an existing table class?',
                     question: 'Which table class would you like to use?',
-                    questionPlaceholder: 'App\\Filament\\Resources\\Users\\Tables\\UsersTable',
+                    questionPlaceholder: app()->getNamespace() . 'Filament\\Resources\\Users\\Tables\\UsersTable',
                 );
             }
 

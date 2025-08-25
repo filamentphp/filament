@@ -136,6 +136,21 @@ ExportColumn::make('description')
     ->enabledByDefault(false)
 ```
 
+### Configuring the column selection form layout
+
+By default, the column selection form uses a single column layout. You can change this using the `columnMappingColumns()` method, passing the number of columns you would like to use for the layout on large screens:
+
+```php
+use App\Filament\Exports\ProductExporter;
+use Filament\Actions\ExportAction;
+
+ExportAction::make()
+    ->exporter(ProductExporter::class)
+    ->columnMappingColumns(3)
+```
+
+This will display the column selection checkboxes and label inputs in a 3-column layout, making better use of available space when you have many exportable columns. Note that while there will be three columns in the layout on large screens, the layout will still be responsive and there will be fewer columns displayed on smaller screens.
+
 ### Disabling column selection
 
 By default, user will be asked which columns they would like to export. You can disable this functionality using `columnMapping(false)`:

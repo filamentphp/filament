@@ -57,6 +57,24 @@ trait InteractsWithActions
     public $defaultActionContext = null;
 
     /**
+     * @var mixed
+     */
+    #[Url(as: 'tableAction')]
+    public $defaultTableAction = null;
+
+    /**
+     * @var mixed
+     */
+    #[Url(as: 'tableActionRecord')]
+    public $defaultTableActionRecord = null;
+
+    /**
+     * @var mixed
+     */
+    #[Url(as: 'tableActionArguments')]
+    public $defaultTableActionArguments = null;
+
+    /**
      * @var array<string, Action>
      */
     protected array $cachedActions = [];
@@ -452,6 +470,7 @@ trait InteractsWithActions
             }
 
             $resolvedAction->nestingIndex($actionNestingIndex);
+            $resolvedAction->boot();
 
             $resolvedActions[] = $resolvedAction;
 
@@ -459,8 +478,6 @@ trait InteractsWithActions
                 "mountedActionSchema{$actionNestingIndex}",
                 $this->getMountedActionSchema($actionNestingIndex, $resolvedAction),
             );
-
-            $resolvedAction->boot();
         }
 
         return $resolvedActions;
@@ -474,11 +491,7 @@ trait InteractsWithActions
     {
         if (count($parentActions)) {
             $parentAction = Arr::last($parentActions);
-            $resolvedAction = $parentAction->getModalAction($action['name']);
-
-            if (! $resolvedAction) {
-                throw new ActionNotResolvableException("Action [{$action['name']}] was not found for action [{$parentAction->getName()}].");
-            }
+            $resolvedAction = $parentAction->getModalAction($action['name']) ?? throw new ActionNotResolvableException("Action [{$action['name']}] was not found for action [{$parentAction->getName()}].");
         } elseif (array_key_exists($action['name'], $this->cachedActions)) {
             $resolvedAction = $this->cachedActions[$action['name']];
         } else {
@@ -533,11 +546,16 @@ trait InteractsWithActions
 
         $resolvedAction = null;
 
-        if ($action['context']['bulk'] ?? false) {
-            $resolvedAction = $this->getTable()->getBulkAction($action['name']);
-        }
+        if (count($parentActions)) {
+            $parentAction = Arr::last($parentActions);
+            $resolvedAction = $parentAction->getModalAction($action['name']) ?? throw new ActionNotResolvableException("Action [{$action['name']}] was not found for action [{$parentAction->getName()}].");
+        } else {
+            if ($action['context']['bulk'] ?? false) {
+                $resolvedAction = $this->getTable()->getBulkAction($action['name']);
+            }
 
-        $resolvedAction ??= $this->getTable()->getAction($action['name']) ?? throw new ActionNotResolvableException("Action [{$action['name']}] not found on table.");
+            $resolvedAction ??= $this->getTable()->getAction($action['name']) ?? throw new ActionNotResolvableException("Action [{$action['name']}] not found on table.");
+        }
 
         if (filled($action['context']['recordKey'] ?? null)) {
             $record = $this->getTableRecord($action['context']['recordKey']);
@@ -604,7 +622,7 @@ trait InteractsWithActions
 
     protected function getMountedActionSchema(?int $actionNestingIndex = null, ?Action $mountedAction = null): ?Schema
     {
-        $actionNestingIndex ??= array_key_last($this->mountedActions);
+        $actionNestingIndex ??= $mountedAction?->getNestingIndex() ?? array_key_last($this->mountedActions);
 
         $mountedAction ??= $this->getMountedAction($actionNestingIndex);
 
@@ -618,7 +636,11 @@ trait InteractsWithActions
 
         return $mountedAction->getSchema(
             $this->makeSchema()
-                ->model(fn (): Model | array | string | null => $mountedAction->getRecord() ?? $mountedAction->getModel() ?? $mountedAction->getSchemaComponent()?->getActionSchemaModel() ?? $this->getMountedActionSchemaModel())
+                ->model(function () use ($mountedAction): Model | array | string | null {
+                    $schemaComponent = $mountedAction->getSchemaComponent();
+
+                    return $mountedAction->getRecord(withDefault: blank($schemaComponent)) ?? $mountedAction->getModel(withDefault: blank($schemaComponent)) ?? $schemaComponent?->getActionSchemaModel() ?? $this->getMountedActionSchemaModel();
+                })
                 ->key("mountedActionSchema{$actionNestingIndex}")
                 ->statePath("mountedActions.{$actionNestingIndex}.data")
                 ->operation(

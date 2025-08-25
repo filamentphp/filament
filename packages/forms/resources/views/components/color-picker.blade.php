@@ -1,6 +1,4 @@
 @php
-    use Filament\Support\Facades\FilamentView;
-
     $fieldWrapperView = $getFieldWrapperView();
     $extraAttributeBag = $getExtraAttributeBag();
     $isDisabled = $isDisabled();
@@ -19,6 +17,7 @@
     $suffixIconColor = $getSuffixIconColor();
     $suffixLabel = $getSuffixLabel();
     $statePath = $getStatePath();
+    $placeholder = $getPlaceholder();
 @endphp
 
 <x-dynamic-component
@@ -45,11 +44,7 @@
         "
     >
         <div
-            @if (FilamentView::hasSpaMode())
-                {{-- format-ignore-start --}}x-load="visible || event (x-modal-opened)"{{-- format-ignore-end --}}
-            @else
-                x-load
-            @endif
+            x-load
             x-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('color-picker', 'filament/forms') }}"
             x-data="colorPickerFormComponent({
                         isAutofocused: @js($isAutofocused()),
@@ -73,7 +68,7 @@
                             'autocomplete' => 'off',
                             'disabled' => $isDisabled,
                             'id' => $getId(),
-                            'placeholder' => $getPlaceholder(),
+                            'placeholder' => filled($placeholder) ? e($placeholder) : null,
                             'required' => $isRequired() && (! $isConcealed()),
                             'type' => 'text',
                             'x-model' . ($isLiveDebounced ? '.debounce.' . $liveDebounce : null) => 'state',

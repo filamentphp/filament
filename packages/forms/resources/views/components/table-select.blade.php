@@ -18,11 +18,13 @@
     >
         @livewire(TableSelectLivewireComponent::class, [
             'isDisabled' => $isDisabled(),
+            'maxSelectableRecords' => $getMaxItems(),
             'model' => $getModel(),
             'record' => $getRecord(),
             'relationshipName' => $getRelationshipName(),
             'tableConfiguration' => base64_encode($getTableConfiguration()),
-            'wire:model' => $getStatePath(),
+            'tableArguments' => $getTableArguments(),
+            $applyStateBindingModifiers('wire:model') => $getStatePath(),
         ], key($getLivewireKey()))
     </div>
 </x-dynamic-component>

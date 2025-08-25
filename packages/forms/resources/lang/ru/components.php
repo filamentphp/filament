@@ -11,15 +11,67 @@ return [
             ],
 
             'add' => [
+
                 'label' => 'Добавить к :label',
+
+                'modal' => [
+
+                    'heading' => 'Добавить к :label',
+
+                    'actions' => [
+
+                        'add' => [
+                            'label' => 'Добавить',
+                        ],
+
+                    ],
+
+                ],
+
             ],
 
             'add_between' => [
+
                 'label' => 'Вставить между',
+
+                'modal' => [
+
+                    'heading' => 'Добавить к :label',
+
+                    'actions' => [
+
+                        'add' => [
+                            'label' => 'Добавить',
+                        ],
+
+                    ],
+
+                ],
+
             ],
 
             'delete' => [
                 'label' => 'Удалить',
+            ],
+
+            'edit' => [
+
+                'label' => 'Редактировать',
+
+                'modal' => [
+
+                    'heading' => 'Редактирование блока',
+
+                    'actions' => [
+
+                        'save' => [
+                            'label' => 'Сохранить изменения',
+                        ],
+
+                    ],
+
+                ],
+
             ],
 
             'reorder' => [
@@ -250,6 +302,28 @@ return [
 
     ],
 
+    'modal_table_select' => [
+
+        'actions' => [
+
+            'select' => [
+
+                'label' => 'Выбрать',
+
+                'actions' => [
+
+                    'select' => [
+                        'label' => 'Выбрать',
+                    ],
+
+                ],
+
+            ],
+
+        ],
+
+    ],
+
     'radio' => [
 
         'boolean' => [
@@ -313,37 +387,129 @@ return [
 
     'rich_editor' => [
 
-        'dialogs' => [
+        'actions' => [
+
+            'attach_files' => [
+
+                'label' => 'Загрузить файл',
+
+                'modal' => [
+
+                    'heading' => 'Загрузка файла',
+
+                    'form' => [
+
+                        'file' => [
+
+                            'label' => [
+                                'new' => 'Файл',
+                                'existing' => 'Заменить файл',
+                            ],
+
+                        ],
+
+                        'alt' => [
+
+                            'label' => [
+                                'new' => 'Альтернативный текст',
+                                'existing' => 'Изменить альтернативный текст',
+                            ],
+
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
+            'custom_block' => [
+
+                'modal' => [
+
+                    'actions' => [
+
+                        'insert' => [
+                            'label' => 'Вставить',
+                        ],
+
+                        'save' => [
+                            'label' => 'Сохранить',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
 
             'link' => [
 
-                'actions' => [
-                    'link' => 'Ссылка',
-                    'unlink' => 'Убрать ссылку',
+                'label' => 'Изменить',
+
+                'modal' => [
+
+                    'heading' => 'Ссылка',
+
+                    'form' => [
+
+                        'url' => [
+                            'label' => 'URL',
+                        ],
+
+                        'should_open_in_new_tab' => [
+                            'label' => 'Открывать в новой вкладке',
+                        ],
+
+                    ],
+
                 ],
-
-                'label' => 'URL',
-
-                'placeholder' => 'Введите URL',
 
             ],
 
         ],
 
+        'no_merge_tag_search_results_message' => 'Нет результатов по тегам слияния.',
+
         'tools' => [
+            'align_center' => 'По центру',
+            'align_end' => 'По правому краю',
+            'align_justify' => 'По ширине',
+            'align_start' => 'По левому краю',
             'attach_files' => 'Прикрепить файлы',
             'blockquote' => 'Цитата',
             'bold' => 'Жирный',
-            'bullet_list' => 'Маркировочный список',
+            'bullet_list' => 'Маркированный список',
+            'clear_formatting' => 'Очистить форматирование',
             'code_block' => 'Код',
+            'custom_blocks' => 'Блоки',
+            'details' => 'Детали',
             'h1' => 'Название',
             'h2' => 'Заголовок',
             'h3' => 'Подзаголовок',
+            'highlight' => 'Выделение',
+            'horizontal_rule' => 'Горизонтальная линия',
             'italic' => 'Курсив',
+            'lead' => 'Вводный текст',
             'link' => 'Ссылка',
+            'merge_tags' => 'Теги слияния',
             'ordered_list' => 'Нумерованный список',
             'redo' => 'Повторить',
+            'small' => 'Мелкий текст',
             'strike' => 'Зачеркнутый',
+            'subscript' => 'Подстрочный',
+            'superscript' => 'Надстрочный',
+            'table' => 'Таблица',
+            'table_delete' => 'Удалить таблицу',
+            'table_add_column_before' => 'Добавить столбец слева',
+            'table_add_column_after' => 'Добавить столбец справа',
+            'table_delete_column' => 'Удалить столбец',
+            'table_add_row_before' => 'Добавить строку выше',
+            'table_add_row_after' => 'Добавить строку ниже',
+            'table_delete_row' => 'Удалить строку',
+            'table_merge_cells' => 'Объединить ячейки',
+            'table_split_cell' => 'Разделить ячейку',
+            'table_toggle_header_row' => 'Переключить заголовок',
             'underline' => 'Подчеркнутый',
             'undo' => 'Отменить',
         ],
@@ -356,6 +522,8 @@ return [
 
             'create_option' => [
 
+                'label' => 'Создать',
+
                 'modal' => [
 
                     'heading' => 'Создать',
@@ -365,6 +533,7 @@ return [
                         'create' => [
                             'label' => 'Создать',
                         ],
+
                         'create_another' => [
                             'label' => 'Создать еще один',
                         ],
@@ -376,6 +545,8 @@ return [
             ],
 
             'edit_option' => [
+
+                'label' => 'Изменить',
 
                 'modal' => [
 

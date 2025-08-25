@@ -4,7 +4,11 @@
 
 <x-filament-widgets::widget class="fi-account-widget">
     <x-filament::section>
-        <x-filament-panels::avatar.user size="lg" :user="$user" />
+        <x-filament-panels::avatar.user
+            size="lg"
+            :user="$user"
+            loading="lazy"
+        />
 
         <div class="fi-account-widget-main">
             <h2 class="fi-account-widget-heading">
@@ -26,7 +30,7 @@
             <x-filament::button
                 color="gray"
                 :icon="\Filament\Support\Icons\Heroicon::ArrowLeftOnRectangle"
-                icon-alias="panels::widgets.account.logout-button"
+                :icon-alias="\Filament\View\PanelsIconAlias::WIDGETS_ACCOUNT_LOGOUT_BUTTON"
                 labeled-from="sm"
                 tag="button"
                 type="submit"

@@ -2,10 +2,14 @@
     @apply flex flex-col;
 
     & .fi-sc-wizard-header {
-        @apply grid divide-y divide-gray-200 md:grid-flow-col md:divide-y-0 md:overflow-x-auto dark:divide-white/5;
+        @apply grid md:grid-flow-col md:overflow-x-auto;
 
         & .fi-sc-wizard-header-step {
             @apply relative flex;
+
+            &:not(.fi-active) {
+                @apply hidden md:flex;
+            }
 
             & .fi-sc-wizard-header-step-btn {
                 @apply flex h-full items-center gap-x-4 px-6 py-4 text-start;

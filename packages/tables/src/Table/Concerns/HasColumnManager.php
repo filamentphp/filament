@@ -8,6 +8,7 @@ use Filament\Support\Enums\Size;
 use Filament\Support\Enums\Width;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
+use Filament\Tables\View\TablesIconAlias;
 
 trait HasColumnManager
 {
@@ -206,10 +207,11 @@ trait HasColumnManager
         $action = Action::make('openColumnManager')
             ->label(__('filament-tables::table.actions.column_manager.label'))
             ->iconButton()
-            ->icon(FilamentIcon::resolve('tables::actions.column-manager') ?? Heroicon::ViewColumns)
+            ->icon(FilamentIcon::resolve(TablesIconAlias::ACTIONS_COLUMN_MANAGER) ?? Heroicon::ViewColumns)
             ->color('gray')
             ->livewireClickHandlerEnabled(false)
-            ->table($this);
+            ->table($this)
+            ->authorize(true);
 
         if ($this->modifyColumnManagerTriggerActionUsing) {
             $action = $this->evaluate($this->modifyColumnManagerTriggerActionUsing, [
@@ -231,7 +233,8 @@ trait HasColumnManager
             ->button()
             ->visible($this->hasDeferredColumnManager())
             ->alpineClickHandler('applyTableColumnManager')
-            ->table($this);
+            ->table($this)
+            ->authorize(true);
 
         if ($this->modifyColumnManagerApplyActionUsing) {
             $action = $this->evaluate($this->modifyColumnManagerApplyActionUsing, [

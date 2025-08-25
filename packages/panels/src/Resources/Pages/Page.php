@@ -346,14 +346,16 @@ abstract class Page extends BasePage
 
         if (
             ($action instanceof EditAction) &&
-            (static::getResource()::hasPage('edit'))
+            (static::getResource()::hasPage('edit')) &&
+            (! $this instanceof EditRecord)
         ) {
             return $this->getResourceUrl('edit', ['record' => $action->getRecord()]);
         }
 
         if (
             ($action instanceof ViewAction) &&
-            (static::getResource()::hasPage('view'))
+            (static::getResource()::hasPage('view')) &&
+            (! $this instanceof ViewRecord)
         ) {
             return $this->getResourceUrl('view', ['record' => $action->getRecord()]);
         }

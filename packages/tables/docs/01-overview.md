@@ -387,6 +387,18 @@ public function table(Table $table): Table
 }
 ```
 
+You can pass a `direction` parameter as `desc` to reorder the records in descending order instead of ascending:
+
+```php
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->reorderable('sort', direction: 'desc');
+}
+```
+
 ### Enabling pagination while reordering
 
 Pagination will be disabled in reorder mode to allow you to move records between pages. It is generally a bad experience to have pagination while reordering, but if would like to override this use `$table->paginatedWhileReordering()`:

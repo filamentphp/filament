@@ -13,7 +13,7 @@ use Filament\Infolists\Components\IconEntry;
 use Filament\Support\Icons\Heroicon;
 
 IconEntry::make('status')
-    ->icon(fn (string $state): string => match ($state) {
+    ->icon(fn (string $state): Heroicon => match ($state) {
         'draft' => Heroicon::OutlinedPencil,
         'reviewing' => Heroicon::OutlinedClock,
         'published' => Heroicon::OutlinedCheckCircle,

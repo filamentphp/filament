@@ -1,12 +1,73 @@
-export default function selectTableColumn({ name, recordKey, state }) {
+import { Select } from '../../../../../support/resources/js/utilities/select.js'
+
+export default function selectTableColumn({
+    canOptionLabelsWrap,
+    canSelectPlaceholder,
+    getOptionLabelUsing,
+    getOptionsUsing,
+    getSearchResultsUsing,
+    hasDynamicOptions,
+    hasDynamicSearchResults,
+    initialOptionLabel,
+    isDisabled,
+    isHtmlAllowed,
+    isNative,
+    isSearchable,
+    loadingMessage,
+    name,
+    noSearchResultsMessage,
+    options,
+    optionsLimit,
+    placeholder,
+    position,
+    recordKey,
+    searchableOptionFields,
+    searchDebounce,
+    searchingMessage,
+    searchPrompt,
+    state,
+}) {
     return {
         error: undefined,
 
         isLoading: false,
 
+        select: null,
+
         state,
 
         init() {
+            if (!isNative) {
+                this.select = new Select({
+                    element: this.$refs.select,
+                    options,
+                    placeholder,
+                    state: this.state,
+                    canOptionLabelsWrap,
+                    canSelectPlaceholder,
+                    initialOptionLabel,
+                    isHtmlAllowed,
+                    isDisabled,
+                    isSearchable,
+                    getOptionLabelUsing,
+                    getOptionsUsing,
+                    getSearchResultsUsing,
+                    hasDynamicOptions,
+                    hasDynamicSearchResults,
+                    searchPrompt,
+                    searchDebounce,
+                    loadingMessage,
+                    searchingMessage,
+                    noSearchResultsMessage,
+                    optionsLimit,
+                    position,
+                    searchableOptionFields,
+                    onStateChange: (newState) => {
+                        this.state = newState
+                    },
+                })
+            }
+
             Livewire.hook(
                 'commit',
                 ({ component, commit, succeed, fail, respond }) => {
@@ -18,7 +79,7 @@ export default function selectTableColumn({ name, recordKey, state }) {
 
                             if (
                                 component.id !==
-                                this.$root.closest('[wire\\:id]').attributes[
+                                this.$root.closest('[wire\\:id]')?.attributes[
                                     'wire:id'
                                 ].value
                             ) {
@@ -40,7 +101,17 @@ export default function selectTableColumn({ name, recordKey, state }) {
                 },
             )
 
-            this.$watch('state', async () => {
+            this.$watch('state', async (newState) => {
+                if (
+                    !isNative &&
+                    this.select &&
+                    this.select.state !== newState
+                ) {
+                    this.select.state = newState
+                    this.select.updateSelectedDisplay()
+                    this.select.renderOptions()
+                }
+
                 const serverState = this.getServerState()
 
                 if (

@@ -43,6 +43,30 @@ return [
 
     ],
 
+    'multi_factor' => [
+
+        'heading' => 'Verifizieren Sie Ihre Identität',
+
+        'subheading' => 'Um mit der Anmeldung fortzufahren, müssen Sie Ihre Identität verifizieren.',
+
+        'form' => [
+
+            'provider' => [
+                'label' => 'Wie möchten Sie sich verifizieren?',
+            ],
+
+            'actions' => [
+
+                'authenticate' => [
+                    'label' => 'Anmeldung bestätigen',
+                ],
+
+            ],
+
+        ],
+
+    ],
+
     'messages' => [
 
         'failed' => 'Diese Kombination aus Zugangsdaten wurde nicht in unserer Datenbank gefunden.',

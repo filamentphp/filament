@@ -17,7 +17,7 @@ use Livewire\Attributes\Url;
 
 trait HasRelationManagers
 {
-    #[Url]
+    #[Url(as: 'relation')]
     public ?string $activeRelationManager = null;
 
     /**

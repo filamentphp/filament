@@ -68,10 +68,14 @@ use Filament\View\PanelsRenderHook;
 - `PanelsRenderHook::PAGE_END` - End of the page content container, also [can be scoped](#scoping-render-hooks) to the page or resource class
 - `PanelsRenderHook::PAGE_FOOTER_WIDGETS_AFTER` - After the page footer widgets, also [can be scoped](#scoping-render-hooks) to the page or resource class
 - `PanelsRenderHook::PAGE_FOOTER_WIDGETS_BEFORE` - Before the page footer widgets, also [can be scoped](#scoping-render-hooks) to the page or resource class
+- `PanelsRenderHook::PAGE_FOOTER_WIDGETS_END` - End of the page footer widgets, also [can be scoped](#scoping-render-hooks) to the page or resource class
+- `PanelsRenderHook::PAGE_FOOTER_WIDGETS_START` - Start of the page footer widgets, also [can be scoped](#scoping-render-hooks) to the page or resource class
 - `PanelsRenderHook::PAGE_HEADER_ACTIONS_AFTER` - After the page header actions, also [can be scoped](#scoping-render-hooks) to the page or resource class
 - `PanelsRenderHook::PAGE_HEADER_ACTIONS_BEFORE` - Before the page header actions, also [can be scoped](#scoping-render-hooks) to the page or resource class
 - `PanelsRenderHook::PAGE_HEADER_WIDGETS_AFTER` - After the page header widgets, also [can be scoped](#scoping-render-hooks) to the page or resource class
 - `PanelsRenderHook::PAGE_HEADER_WIDGETS_BEFORE` - Before the page header widgets, also [can be scoped](#scoping-render-hooks) to the page or resource class
+- `PanelsRenderHook::PAGE_HEADER_WIDGETS_END` - End of the page header widgets, also [can be scoped](#scoping-render-hooks) to the page or resource class
+- `PanelsRenderHook::PAGE_HEADER_WIDGETS_START` - Start of the page header widgets, also [can be scoped](#scoping-render-hooks) to the page or resource class
 - `PanelsRenderHook::PAGE_START` - Start of the page content container, also [can be scoped](#scoping-render-hooks) to the page or resource class
 - `PanelsRenderHook::PAGE_SUB_NAVIGATION_END_AFTER` - After the page sub navigation "end" sidebar position, also [can be scoped](#scoping-render-hooks) to the page or resource class
 - `PanelsRenderHook::PAGE_SUB_NAVIGATION_END_BEFORE` - Before the page sub navigation "end" sidebar position, also [can be scoped](#scoping-render-hooks) to the page or resource class
@@ -95,6 +99,8 @@ use Filament\View\PanelsRenderHook;
 - `PanelsRenderHook::RESOURCE_TABS_START` - The start of the resource tabs (before the first tab), also [can be scoped](#scoping-render-hooks) to the page or resource class
 - `PanelsRenderHook::SCRIPTS_AFTER` - After scripts are defined
 - `PanelsRenderHook::SCRIPTS_BEFORE` - Before scripts are defined
+- `PanelsRenderHook::SIDEBAR_LOGO_AFTER` - After the logo in the sidebar
+- `PanelsRenderHook::SIDEBAR_LOGO_BEFORE` - Before the logo in the sidebar
 - `PanelsRenderHook::SIDEBAR_NAV_END` - In the [sidebar](../panels/navigation), before `</nav>`
 - `PanelsRenderHook::SIDEBAR_NAV_START` - In the [sidebar](../panels/navigation), after `<nav>`
 - `PanelsRenderHook::SIMPLE_LAYOUT_END` - End of the simple layout container, also [can be scoped](#scoping-render-hooks) to the page class
@@ -109,6 +115,8 @@ use Filament\View\PanelsRenderHook;
 - `PanelsRenderHook::TOPBAR_AFTER` - Below the topbar
 - `PanelsRenderHook::TOPBAR_BEFORE` - Above the topbar
 - `PanelsRenderHook::TOPBAR_END` - End of the topbar container
+- `PanelsRenderHook::TOPBAR_LOGO_AFTER` - After the logo in the topbar
+- `PanelsRenderHook::TOPBAR_LOGO_BEFORE` - Before the logo in the topbar
 - `PanelsRenderHook::TOPBAR_START` - Start of the topbar container
 - `PanelsRenderHook::USER_MENU_AFTER` - After the [user menu](../navigation/user-menu)
 - `PanelsRenderHook::USER_MENU_BEFORE` - Before the [user menu](../navigation/user-menu)
@@ -124,6 +132,7 @@ All these render hooks [can be scoped](#scoping-render-hooks) to any table Livew
 use Filament\Tables\View\TablesRenderHook;
 ```
 
+- `TablesRenderHook::FILTER_INDICATORS` - Replace the existing filter indicators, receives `filterIndicators` data as `array<Filament\Tables\Filters\Indicator>`
 - `TablesRenderHook::SELECTION_INDICATOR_ACTIONS_AFTER` - After the "select all" and "deselect all" action buttons in the selection indicator bar
 - `TablesRenderHook::SELECTION_INDICATOR_ACTIONS_BEFORE` - Before the "select all" and "deselect all" action buttons in the selection indicator bar
 - `TablesRenderHook::HEADER_AFTER` - After the header container
@@ -212,6 +221,20 @@ FilamentView::registerRenderHook(
 );
 ```
 
+## Passing data to render hooks
+
+Render hooks can receive "data" from when the hook is rendered. To access data from a render hook, you can inject it using an `array $data` parameter to the hook's rendering function:
+
+```php
+use Filament\Support\Facades\FilamentView;
+use Filament\Tables\View\TablesRenderHook;
+
+FilamentView::registerRenderHook(
+    TablesRenderHook::FILTER_INDICATORS,
+    fn (array $data): View => view('filter-indicators', ['indicators' => $data['filterIndicators']]),
+);
+```
+
 ## Rendering hooks
 
 Plugin developers might find it useful to expose render hooks to their users. You do not need to register them anywhere, simply output them in Blade like so:
@@ -220,7 +243,7 @@ Plugin developers might find it useful to expose render hooks to their users. Yo
 {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_START) }}
 ```
 
-To provide scope your render hook, you can pass it as the second argument to `renderHook()`. For instance, if your hook is inside a Livewire component, you can pass the class of the component using `static::class`:
+To provide [scope](#scoping-render-hooks) your render hook, you can pass it as the second argument to `renderHook()`. For instance, if your hook is inside a Livewire component, you can pass the class of the component using `static::class`:
 
 ```blade
 {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_START, scopes: $this->getRenderHookScopes()) }}
@@ -230,4 +253,10 @@ You can even pass multiple scopes as an array, and all render hooks that match a
 
 ```blade
 {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_START, scopes: [static::class, \App\Filament\Resources\Users\UserResource::class]) }}
+```
+
+You can pass [data](#passing-data-to-render-hooks) to a render hook using a `data` argument to the `renderHook()` function:
+
+```blade
+{{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Tables\View\TablesRenderHook::FILTER_INDICATORS, data: ['filterIndicators' => $filterIndicators]) }}
 ```

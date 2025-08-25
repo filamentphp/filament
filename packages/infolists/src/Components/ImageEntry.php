@@ -17,6 +17,8 @@ use Illuminate\View\ComponentAttributeBag;
 use League\Flysystem\UnableToCheckFileExistence;
 use Throwable;
 
+use function Filament\Support\generate_href_html;
+
 class ImageEntry extends Entry implements HasEmbeddedView
 {
     use CanWrap;
@@ -429,6 +431,12 @@ class ImageEntry extends Entry implements HasEmbeddedView
                 'fi-in-image',
             ]);
 
+        $defaultImageUrl = $this->getDefaultImageUrl();
+
+        if (blank($state) && filled($defaultImageUrl)) {
+            $state = [null];
+        }
+
         if (blank($state)) {
             $attributes = $attributes
                 ->merge([
@@ -477,8 +485,6 @@ class ImageEntry extends Entry implements HasEmbeddedView
         $height = $this->getImageHeight() ?? ($isStacked ? '2.5rem' : '8rem');
         $width = $this->getImageWidth() ?? (($isCircular || $isSquare) ? $height : null);
 
-        $defaultImageUrl = $this->getDefaultImageUrl();
-
         $attributes = $attributes
             ->class([
                 'fi-circular' => $isCircular,
@@ -489,27 +495,38 @@ class ImageEntry extends Entry implements HasEmbeddedView
                 ($alignment instanceof Alignment) ? "fi-align-{$alignment->value}" : (is_string($alignment) ? $alignment : ''),
             ]);
 
+        $shouldOpenUrlInNewTab = $this->shouldOpenUrlInNewTab();
+
+        $formatState = function (mixed $stateItem) use ($defaultImageUrl, $width, $height, $shouldOpenUrlInNewTab): string {
+            $item = '<img ' . $this->getExtraImgAttributeBag()
+                ->merge([
+                    'src' => filled($stateItem) ? ($this->getImageUrl($stateItem) ?? $defaultImageUrl) : $defaultImageUrl,
+                    'x-tooltip' => filled($tooltip = $this->getTooltip($stateItem))
+                        ? '{
+                                content: ' . Js::from($tooltip) . ',
+                                theme: $store.theme,
+                            }'
+                        : null,
+                ], escape: false)
+                ->style([
+                    "height: {$height}" => $height,
+                    "width: {$width}" => $width,
+                ])
+                ->toHtml()
+                . ' />';
+
+            if (filled($url = $this->getUrl($stateItem))) {
+                $item = '<a ' . generate_href_html($url, $shouldOpenUrlInNewTab)->toHtml() . '>' . $item . '</a>';
+            }
+
+            return $item;
+        };
+
         ob_start(); ?>
 
         <div <?= $attributes->toHtml() ?>>
             <?php foreach ($state as $stateItem) { ?>
-                <img
-                    <?= $this->getExtraImgAttributeBag()
-                        ->merge([
-                            'src' => filled($stateItem) ? ($this->getImageUrl($stateItem) ?? $defaultImageUrl) : $defaultImageUrl,
-                            'x-tooltip' => filled($tooltip = $this->getTooltip($stateItem))
-                                ? '{
-                                    content: ' . Js::from($tooltip) . ',
-                                    theme: $store.theme,
-                                }'
-                                : null,
-                        ], escape: false)
-                        ->style([
-                            "height: {$height}" => $height,
-                            "width: {$width}" => $width,
-                        ])
-                        ->toHtml() ?>
-                />
+                <?= $formatState($stateItem) ?>
             <?php } ?>
 
             <?php if ($hasLimitedRemainingText) { ?>

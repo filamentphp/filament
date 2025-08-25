@@ -3,7 +3,7 @@
 }
 
 .fi-topbar {
-    @apply flex h-16 items-center bg-white px-4 shadow-xs ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10;
+    @apply flex min-h-16 items-center bg-white px-4 shadow-xs ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10;
 
     & .fi-tenant-menu {
         @apply hidden lg:block;
@@ -44,7 +44,7 @@
 }
 
 .fi-topbar-nav-groups {
-    @apply ms-4 me-4 hidden items-center gap-x-4 lg:flex;
+    @apply ms-4 me-4 hidden items-center gap-x-4 lg:my-2 lg:flex lg:flex-wrap lg:gap-y-1;
 }
 
 .fi-topbar-end {

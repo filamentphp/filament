@@ -18,7 +18,7 @@ export default function checkboxTableColumn({ name, recordKey, state }) {
 
                             if (
                                 component.id !==
-                                this.$root.closest('[wire\\:id]').attributes[
+                                this.$root.closest('[wire\\:id]')?.attributes[
                                     'wire:id'
                                 ].value
                             ) {

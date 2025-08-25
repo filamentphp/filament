@@ -25,9 +25,9 @@ trait CanBeMounted
     }
 
     /**
-     * @param  array<string, mixed> | Closure  $data
+     * @param  array<string, mixed> | Closure | null  $data
      */
-    public function fillForm(array | Closure $data): static
+    public function fillForm(array | Closure | null $data): static
     {
         $this->mountUsing(function (?Schema $schema) use ($data): void {
             $schema?->fill($this->evaluate($data));

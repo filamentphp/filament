@@ -2,7 +2,6 @@
 
 namespace Filament\Forms\Components\RichEditor\FileAttachmentProviders;
 
-use Closure;
 use Exception;
 use Filament\Forms\Components\RichEditor\FileAttachmentProviders\Contracts\FileAttachmentProvider;
 use Filament\Forms\Components\RichEditor\RichContentAttribute;
@@ -66,7 +65,7 @@ class SpatieMediaLibraryFileAttachmentProvider implements FileAttachmentProvider
         return $this->media = $media;
     }
 
-    public function getFileAttachmentUrl(mixed $file, ?Closure $allowedFileAttachmentsFromOtherRecords = null): ?string
+    public function getFileAttachmentUrl(mixed $file): ?string
     {
         $media = $this->getMedia();
 
@@ -95,11 +94,14 @@ class SpatieMediaLibraryFileAttachmentProvider implements FileAttachmentProvider
 
     public function saveUploadedFileAttachment(TemporaryUploadedFile $file): mixed
     {
-        return $this->getExistingModel() /** @phpstan-ignore method.notFound */
+        $media = $this->getExistingModel() /** @phpstan-ignore method.notFound */
             ->addMediaFromString($file->get())
             ->usingFileName(((string) Str::ulid()) . '.' . $file->getClientOriginalExtension())
-            ->toMediaCollection($this->getCollection(), diskName: $this->attribute->getFileAttachmentsDiskName() ?? '')
-            ->uuid;
+            ->toMediaCollection($this->getCollection(), diskName: $this->attribute->getFileAttachmentsDiskName() ?? '');
+
+        $this->getMedia()->put($media->uuid, $media);
+
+        return $media->uuid;
     }
 
     /**

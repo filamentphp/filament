@@ -12,14 +12,62 @@ return [
 
             'add' => [
                 'label' => 'បន្ថែម​លើ :label',
+
+                'modal' => [
+
+                    'heading' => 'បន្ថែម​លើ :label',
+
+                    'actions' => [
+
+                        'add' => [
+                            'label' => 'បន្ថែម',
+                        ],
+
+                    ],
+
+                ],
             ],
 
             'add_between' => [
                 'label' => 'បញ្ចូលរវាងប្លុក',
+
+                'modal' => [
+
+                    'heading' => 'បន្ថែម​លើ :label',
+
+                    'actions' => [
+
+                        'add' => [
+                            'label' => 'បន្ថែម',
+                        ],
+
+                    ],
+
+                ],
             ],
 
             'delete' => [
                 'label' => 'លុប',
+            ],
+
+            'edit' => [
+
+                'label' => 'កែសម្រួល',
+
+                'modal' => [
+
+                    'heading' => 'កែសម្រួលប្លុក',
+
+                    'actions' => [
+
+                        'save' => [
+                            'label' => 'រក្សាទុកការផ្លាស់ប្តូរ',
+                        ],
+
+                    ],
+
+                ],
+
             ],
 
             'reorder' => [
@@ -356,6 +404,8 @@ return [
 
             'create_option' => [
 
+                'label' => 'បង្កើត',
+
                 'modal' => [
 
                     'heading' => 'បង្កើត',
@@ -377,6 +427,8 @@ return [
             ],
 
             'edit_option' => [
+
+                'label' => 'កែសម្រួល',
 
                 'modal' => [
 

@@ -12,6 +12,10 @@ return [
                 'label' => 'Použít sloupce',
             ],
 
+            'reset' => [
+                'label' => 'Resetovat sloupce',
+            ],
+
         ],
 
     ],
@@ -20,6 +24,20 @@ return [
 
         'actions' => [
             'label' => 'Akce|Akce',
+        ],
+
+        'select' => [
+
+            'loading_message' => 'Načítává se...',
+
+            'no_search_results_message' => 'Žádné možnosti neodpovídají vašemu hledání.',
+
+            'placeholder' => 'Vyberte možnost',
+
+            'searching_message' => 'Vyhledává se...',
+
+            'search_prompt' => 'Začněte psát pro vyhledávání...',
+
         ],
 
         'text' => [
@@ -181,7 +199,6 @@ return [
 
             'group' => [
                 'label' => 'Seskupit podle',
-                'placeholder' => 'Seskupit podle',
             ],
 
             'direction' => [

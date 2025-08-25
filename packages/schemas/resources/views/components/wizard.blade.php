@@ -1,6 +1,4 @@
 @php
-    use Filament\Support\Facades\FilamentView;
-
     $isContained = $isContained();
     $key = $getKey();
     $previousAction = $getAction('previous');
@@ -10,11 +8,7 @@
 @endphp
 
 <div
-    @if (FilamentView::hasSpaMode())
-        {{-- format-ignore-start --}}x-load="visible || event (x-modal-opened)"{{-- format-ignore-end --}}
-    @else
-        x-load
-    @endif
+    x-load
     x-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('wizard', 'filament/schemas') }}"
     x-data="wizardSchemaComponent({
                 isSkippable: @js($isSkippable()),
@@ -85,7 +79,7 @@
                             {{
                                 \Filament\Support\generate_icon_html(
                                     $completedIcon ?? \Filament\Support\Icons\Heroicon::OutlinedCheck,
-                                    alias: filled($completedIcon) ? null : 'schema::components.wizard.completed-step',
+                                    alias: filled($completedIcon) ? null : \Filament\Schemas\View\SchemaIconAlias::COMPONENTS_WIZARD_COMPLETED_STEP,
                                     attributes: new \Illuminate\View\ComponentAttributeBag([
                                         'x-cloak' => 'x-cloak',
                                         'x-show' => "getStepIndex(step) > {$loop->index}",

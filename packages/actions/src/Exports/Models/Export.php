@@ -2,7 +2,6 @@
 
 namespace Filament\Actions\Exports\Models;
 
-use App\Models\User;
 use Carbon\CarbonInterface;
 use Exception;
 use Filament\Actions\Exports\Exporter;
@@ -27,12 +26,18 @@ class Export extends Model
 {
     use Prunable;
 
-    protected $casts = [
-        'completed_at' => 'timestamp',
-        'processed_rows' => 'integer',
-        'total_rows' => 'integer',
-        'successful_rows' => 'integer',
-    ];
+    /**
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'completed_at' => 'timestamp',
+            'processed_rows' => 'integer',
+            'total_rows' => 'integer',
+            'successful_rows' => 'integer',
+        ];
+    }
 
     protected $guarded = [];
 
@@ -52,12 +57,14 @@ class Export extends Model
             return $this->belongsTo($authenticatable::class);
         }
 
-        if (! class_exists(User::class)) {
-            throw new Exception('No [App\\Models\\User] model found. Please bind an authenticatable model to the [Illuminate\\Contracts\\Auth\\Authenticatable] interface in a service provider\'s [register()] method.');
+        $userClass = app()->getNamespace() . 'Models\\User';
+
+        if (! class_exists($userClass)) {
+            throw new Exception('No [' . $userClass . '] model found. Please bind an authenticatable model to the [Illuminate\\Contracts\\Auth\\Authenticatable] interface in a service provider\'s [register()] method.');
         }
 
         /** @phpstan-ignore-next-line */
-        return $this->belongsTo(User::class);
+        return $this->belongsTo($userClass);
     }
 
     /**

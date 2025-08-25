@@ -8,6 +8,7 @@ use Filament\Facades\Filament;
 use Filament\Navigation\MenuItem;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
+use Filament\View\PanelsIconAlias;
 use Illuminate\Support\Collection;
 
 trait HasUserMenu
@@ -50,7 +51,7 @@ trait HasUserMenu
 
         $action = Action::make('profile')
             ->label(($page ? $page::getLabel() : null) ?? Filament::getUserName(Filament::auth()->user()))
-            ->icon(FilamentIcon::resolve('panels::user-menu.profile-item') ?? Heroicon::UserCircle)
+            ->icon(FilamentIcon::resolve(PanelsIconAlias::USER_MENU_PROFILE_ITEM) ?? Heroicon::UserCircle)
             ->url(Filament::getProfileUrl())
             ->sort(-1);
 
@@ -67,7 +68,7 @@ trait HasUserMenu
     {
         $action = Action::make('logout')
             ->label(__('filament-panels::layout.actions.logout.label'))
-            ->icon(FilamentIcon::resolve('panels::user-menu.logout-button') ?? Heroicon::ArrowLeftOnRectangle)
+            ->icon(FilamentIcon::resolve(PanelsIconAlias::USER_MENU_LOGOUT_BUTTON) ?? Heroicon::ArrowLeftOnRectangle)
             ->url(Filament::getLogoutUrl())
             ->postToUrl()
             ->sort(PHP_INT_MAX);

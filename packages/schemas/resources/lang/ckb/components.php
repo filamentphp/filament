@@ -7,7 +7,7 @@ return [
         'actions' => [
 
             'previous_step' => [
-                'label' => 'پێشوو',
+                'label' => 'پێشتر',
             ],
 
             'next_step' => [

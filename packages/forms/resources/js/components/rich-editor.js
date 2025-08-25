@@ -1,6 +1,7 @@
 import { Editor } from '@tiptap/core'
 import getExtensions from './rich-editor/extensions'
 import { Selection } from '@tiptap/pm/state'
+import { BubbleMenuPlugin } from '@tiptap/extension-bubble-menu'
 
 export default function richEditorFormComponent({
     activePanel,
@@ -19,6 +20,7 @@ export default function richEditorFormComponent({
     state,
     statePath,
     uploadingFileMessage,
+    floatingToolbars,
 }) {
     let editor
 
@@ -67,17 +69,41 @@ export default function richEditorFormComponent({
                     statePath,
                     uploadingFileMessage,
                     $wire: this.$wire,
+                    floatingToolbars,
                 }),
                 content: this.state,
+            })
+
+            Object.keys(floatingToolbars).forEach((key) => {
+                const element = this.$refs[`floatingToolbar::${key}`]
+
+                if (!element) {
+                    console.warn(`Floating toolbar [${key}] not found.`)
+
+                    return
+                }
+
+                editor.registerPlugin(
+                    BubbleMenuPlugin({
+                        editor,
+                        element,
+                        pluginKey: `floatingToolbar::${key}`,
+                        shouldShow: ({ editor }) =>
+                            editor.isFocused && editor.isActive(key),
+                        options: {
+                            placement: 'bottom',
+                            offset: 15,
+                        },
+                    }),
+                )
             })
 
             editor.on('create', () => {
                 this.editorUpdatedAt = Date.now()
             })
 
-            editor.on(
-                'update',
-                Alpine.debounce(({ editor }) => {
+            editor.on('update', ({ editor }) =>
+                this.$nextTick(() => {
                     this.editorUpdatedAt = Date.now()
 
                     this.state = editor.getJSON()
@@ -85,9 +111,12 @@ export default function richEditorFormComponent({
                     this.shouldUpdateState = false
 
                     if (isLiveDebounced) {
-                        this.$wire.commit()
+                        Alpine.debounce(
+                            () => this.$wire.commit(),
+                            liveDebounce ?? 300,
+                        )
                     }
-                }, liveDebounce ?? 300),
+                }),
             )
 
             editor.on('selectionUpdate', ({ transaction }) => {

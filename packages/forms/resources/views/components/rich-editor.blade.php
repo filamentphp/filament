@@ -1,8 +1,6 @@
 @php
-    use Filament\Support\Facades\FilamentView;
-
     $customBlocks = $getCustomBlocks();
-    $extraInputAttributeBag = $getExtraAttributeBag();
+    $extraAttributeBag = $getExtraAttributeBag();
     $fieldWrapperView = $getFieldWrapperView();
     $id = $getId();
     $isDisabled = $isDisabled();
@@ -12,6 +10,7 @@
     $statePath = $getStatePath();
     $tools = $getTools();
     $toolbarButtons = $getToolbarButtons();
+    $floatingToolbars = $getFloatingToolbars();
 @endphp
 
 <x-dynamic-component :component="$fieldWrapperView" :field="$field">
@@ -19,21 +18,17 @@
         :valid="! $errors->has($statePath)"
         x-cloak
         :attributes="
-            \Filament\Support\prepare_inherited_attributes($extraInputAttributeBag)
+            \Filament\Support\prepare_inherited_attributes($extraAttributeBag)
                 ->class(['fi-fo-rich-editor'])
         "
     >
         <div
-            @if (FilamentView::hasSpaMode())
-                {{-- format-ignore-start --}}x-load="visible || event (x-modal-opened)"{{-- format-ignore-end --}}
-            @else
-                x-load
-            @endif
+            x-load
             x-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('rich-editor', 'filament/forms') }}"
             x-data="richEditorFormComponent({
                         activePanel: @js($getActivePanel()),
-                        deleteCustomBlockButtonIconHtml: @js(\Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::Trash, alias: 'forms:components.rich-editor.panels.custom-block.delete-button')->toHtml()),
-                        editCustomBlockButtonIconHtml: @js(\Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::PencilSquare, alias: 'forms:components.rich-editor.panels.custom-block.edit-button')->toHtml()),
+                        deleteCustomBlockButtonIconHtml: @js(\Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::Trash, alias: \Filament\Forms\View\FormsIconAlias::COMPONENTS_RICH_EDITOR_PANELS_CUSTOM_BLOCK_DELETE_BUTTON)->toHtml()),
+                        editCustomBlockButtonIconHtml: @js(\Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::PencilSquare, alias: \Filament\Forms\View\FormsIconAlias::COMPONENTS_RICH_EDITOR_PANELS_CUSTOM_BLOCK_EDIT_BUTTON)->toHtml()),
                         extensions: @js($getTipTapJsExtensions()),
                         key: @js($key),
                         isDisabled: @js($isDisabled),
@@ -47,16 +42,21 @@
                         state: $wire.{{ $applyStateBindingModifiers("\$entangle('{$statePath}')", isOptimisticallyLive: false) }},
                         statePath: @js($statePath),
                         uploadingFileMessage: @js($getUploadingFileMessage()),
+                        floatingToolbars: @js($floatingToolbars),
                     })"
             x-bind:class="{
                 'fi-fo-rich-editor-uploading-file': isUploadingFile,
             }"
             wire:ignore
-            wire:key="{{ $livewireKey }}.editor{{ $isDisabled ? '.disabled' : '' }}"
+            wire:key="{{ $livewireKey }}.{{
+                substr(md5(serialize([
+                    $isDisabled,
+                ])), 0, 64)
+            }}"
         >
             @if ((! $isDisabled) && filled($toolbarButtons))
                 <div class="fi-fo-rich-editor-toolbar">
-                    @foreach ($toolbarButtons as $buttonGroup)
+                    @foreach ($toolbarButtons as $button => $buttonGroup)
                         <div class="fi-fo-rich-editor-toolbar-group">
                             @foreach ($buttonGroup as $button)
                                 {{ $tools[$button] ?? throw new Exception("Toolbar button [{$button}] cannot be found.") }}
@@ -67,18 +67,28 @@
             @endif
 
             <div class="fi-fo-rich-editor-main">
-                <div
-                    class="fi-fo-rich-editor-content fi-prose"
-                    x-ref="editor"
-                ></div>
+                <div class="fi-fo-rich-editor-content fi-prose" x-ref="editor">
+                    @foreach ($floatingToolbars as $nodeName => $buttons)
+                        <div
+                            x-ref="floatingToolbar::{{ $nodeName }}"
+                            class="fi-fo-rich-editor-floating-toolbar fi-not-prose"
+                        >
+                            @foreach ($buttons as $button)
+                                {{ $tools[$button] }}
+                            @endforeach
+                        </div>
+                    @endforeach
+                </div>
 
                 @if (! $isDisabled)
                     <div
                         x-show="isPanelActive()"
+                        x-cloak
                         class="fi-fo-rich-editor-panels"
                     >
                         <div
                             x-show="isPanelActive('customBlocks')"
+                            x-cloak
                             class="fi-fo-rich-editor-panel"
                         >
                             <div class="fi-fo-rich-editor-panel-header">
@@ -94,7 +104,7 @@
                                         x-on:click="togglePanel()"
                                         class="fi-icon-btn"
                                     >
-                                        {{ \Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::XMark, alias: 'forms:components.rich-editor.panels.custom-blocks.close-button') }}
+                                        {{ \Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::XMark, alias: \Filament\Forms\View\FormsIconAlias::COMPONENTS_RICH_EDITOR_PANELS_CUSTOM_BLOCKS_CLOSE_BUTTON) }}
                                     </button>
                                 </div>
                             </div>
@@ -137,6 +147,7 @@
 
                         <div
                             x-show="isPanelActive('mergeTags')"
+                            x-cloak
                             class="fi-fo-rich-editor-panel"
                         >
                             <div class="fi-fo-rich-editor-panel-header">
@@ -152,7 +163,7 @@
                                         x-on:click="togglePanel()"
                                         class="fi-icon-btn"
                                     >
-                                        {{ \Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::XMark, alias: 'forms:components.rich-editor.panels.merge-tags.close-button') }}
+                                        {{ \Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::XMark, alias: \Filament\Forms\View\FormsIconAlias::COMPONENTS_RICH_EDITOR_PANELS_MERGE_TAGS_CLOSE_BUTTON) }}
                                     </button>
                                 </div>
                             </div>

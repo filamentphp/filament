@@ -92,10 +92,11 @@ To replace an icon, you can use the `FilamentIcon` facade. It has a `register()`
 
 ```php
 use Filament\Support\Facades\FilamentIcon;
+use Filament\View\PanelsIconAlias;
 
 FilamentIcon::register([
-    'panels::topbar.global-search.field' => 'fas-magnifying-glass',
-    'panels::sidebar.group.collapse-button' => view('icons.chevron-up'),
+    PanelsIconAlias::GLOBAL_SEARCH_FIELD => 'fas-magnifying-glass',
+    PanelsIconAlias::SIDEBAR_GROUP_COLLAPSE_BUTTON => view('icons.chevron-up'),
 ]);
 ```
 
@@ -103,158 +104,184 @@ FilamentIcon::register([
 
 ### Actions icon aliases
 
-- `actions::action-group` - Trigger button of an action group
-- `actions::create-action.grouped` - Trigger button of a grouped create action
-- `actions::delete-action` - Trigger button of a delete action
-- `actions::delete-action.grouped` - Trigger button of a grouped delete action
-- `actions::delete-action.modal` - Modal of a delete action
-- `actions::detach-action` - Trigger button of a detach action
-- `actions::detach-action.modal` - Modal of a detach action
-- `actions::dissociate-action` - Trigger button of a dissociate action
-- `actions::dissociate-action.modal` - Modal of a dissociate action
-- `actions::edit-action` - Trigger button of an edit action
-- `actions::edit-action.grouped` - Trigger button of a grouped edit action
-- `actions::export-action.grouped` - Trigger button of a grouped export action
-- `actions::force-delete-action` - Trigger button of a force-delete action
-- `actions::force-delete-action.grouped` - Trigger button of a grouped force-delete action
-- `actions::force-delete-action.modal` - Modal of a force-delete action
-- `actions::import-action.grouped` - Trigger button of a grouped import action
-- `actions::modal.confirmation` - Modal of an action that requires confirmation
-- `actions::replicate-action` - Trigger button of a replicate action
-- `actions::replicate-action.grouped` - Trigger button of a grouped replicate action
-- `actions::restore-action` - Trigger button of a restore action
-- `actions::restore-action.grouped` - Trigger button of a grouped restore action
-- `actions::restore-action.modal` - Modal of a restore action
-- `actions::view-action` - Trigger button of a view action
-- `actions::view-action.grouped` - Trigger button of a grouped view action
+Using class `Filament\Actions\View\ActionsIconAlias`
+
+- `ActionsIconAlias::ACTION_GROUP` - Trigger button of an action group
+- `ActionsIconAlias::CREATE_ACTION_GROUPED` - Trigger button of a grouped create action
+- `ActionsIconAlias::DELETE_ACTION` - Trigger button of a delete action
+- `ActionsIconAlias::DELETE_ACTION_GROUPED` - Trigger button of a grouped delete action
+- `ActionsIconAlias::DELETE_ACTION_MODAL` - Modal of a delete action
+- `ActionsIconAlias::DETACH_ACTION` - Trigger button of a detach action
+- `ActionsIconAlias::DETACH_ACTION_MODAL` - Modal of a detach action
+- `ActionsIconAlias::DISSOCIATE_ACTION` - Trigger button of a dissociate action
+- `ActionsIconAlias::DISSOCIATE_ACTION_MODAL` - Modal of a dissociate action
+- `ActionsIconAlias::EDIT_ACTION` - Trigger button of an edit action
+- `ActionsIconAlias::EDIT_ACTION_GROUPED` - Trigger button of a grouped edit action
+- `ActionsIconAlias::EXPORT_ACTION_GROUPED` - Trigger button of a grouped export action
+- `ActionsIconAlias::FORCE_DELETE_ACTION` - Trigger button of a force-delete action
+- `ActionsIconAlias::FORCE_DELETE_ACTION_GROUPED` - Trigger button of a grouped force-delete action
+- `ActionsIconAlias::FORCE_DELETE_ACTION_MODAL` - Modal of a force-delete action
+- `ActionsIconAlias::IMPORT_ACTION_GROUPED` - Trigger button of a grouped import action
+- `ActionsIconAlias::MODAL_CONFIRMATION` - Modal of an action that requires confirmation
+- `ActionsIconAlias::REPLICATE_ACTION` - Trigger button of a replicate action
+- `ActionsIconAlias::REPLICATE_ACTION_GROUPED` - Trigger button of a grouped replicate action
+- `ActionsIconAlias::RESTORE_ACTION` - Trigger button of a restore action
+- `ActionsIconAlias::RESTORE_ACTION_GROUPED` - Trigger button of a grouped restore action
+- `ActionsIconAlias::RESTORE_ACTION_MODAL` - Modal of a restore action
+- `ActionsIconAlias::VIEW_ACTION` - Trigger button of a view action
+- `ActionsIconAlias::VIEW_ACTION_GROUPED` - Trigger button of a grouped view action
 
 ### Forms icon aliases
 
-- `forms::components.builder.actions.clone` - Trigger button of a clone action in a builder item
-- `forms::components.builder.actions.collapse` - Trigger button of a collapse action in a builder item
-- `forms::components.builder.actions.delete` - Trigger button of a delete action in a builder item
-- `forms::components.builder.actions.expand` - Trigger button of an expand action in a builder item
-- `forms::components.builder.actions.move-down` - Trigger button of a move down action in a builder item
-- `forms::components.builder.actions.move-up` - Trigger button of a move up action in a builder item
-- `forms::components.builder.actions.reorder` - Trigger button of a reorder action in a builder item
-- `forms::components.checkbox-list.search-field` - Search input in a checkbox list
-- `forms::components.file-upload.editor.actions.drag-crop` - Trigger button of a drag crop action in a file upload editor
-- `forms::components.file-upload.editor.actions.drag-move` - Trigger button of a drag move action in a file upload editor
-- `forms::components.file-upload.editor.actions.flip-horizontal` - Trigger button of a flip horizontal action in a file upload editor
-- `forms::components.file-upload.editor.actions.flip-vertical` - Trigger button of a flip vertical action in a file upload editor
-- `forms::components.file-upload.editor.actions.move-down` - Trigger button of a move down action in a file upload editor
-- `forms::components.file-upload.editor.actions.move-left` - Trigger button of a move left action in a file upload editor
-- `forms::components.file-upload.editor.actions.move-right` - Trigger button of a move right action in a file upload editor
-- `forms::components.file-upload.editor.actions.move-up` - Trigger button of a move up action in a file upload editor
-- `forms::components.file-upload.editor.actions.rotate-left` - Trigger button of a rotate left action in a file upload editor
-- `forms::components.file-upload.editor.actions.rotate-right` - Trigger button of a rotate right action in a file upload editor
-- `forms::components.file-upload.editor.actions.zoom-100` - Trigger button of a zoom 100 action in a file upload editor
-- `forms::components.file-upload.editor.actions.zoom-in` - Trigger button of a zoom in action in a file upload editor
-- `forms::components.file-upload.editor.actions.zoom-out` - Trigger button of a zoom out action in a file upload editor
-- `forms::components.key-value.actions.delete` - Trigger button of a delete action in a key-value field item
-- `forms::components.key-value.actions.reorder` - Trigger button of a reorder action in a key-value field item
-- `forms::components.repeater.actions.clone` - Trigger button of a clone action in a repeater item
-- `forms::components.repeater.actions.collapse` - Trigger button of a collapse action in a repeater item
-- `forms::components.repeater.actions.delete` - Trigger button of a delete action in a repeater item
-- `forms::components.repeater.actions.expand` - Trigger button of an expand action in a repeater item
-- `forms::components.repeater.actions.move-down` - Trigger button of a move down action in a repeater item
-- `forms::components.repeater.actions.move-up` - Trigger button of a move up action in a repeater item
-- `forms::components.repeater.actions.reorder` - Trigger button of a reorder action in a repeater item
-- `forms::components.select.actions.create-option` - Trigger button of a create option action in a select field
-- `forms::components.select.actions.edit-option` - Trigger button of an edit option action in a select field
-- `forms::components.text-input.actions.hide-password` - Trigger button of a hide password action in a text input field
-- `forms::components.text-input.actions.show-password` - Trigger button of a show password action in a text input field
-- `forms::components.toggle-buttons.boolean.false` - "False" option of a `boolean()` toggle buttons field
-- `forms::components.toggle-buttons.boolean.true` - "True" option of a `boolean()` toggle buttons field
+Using class `Filament\Forms\View\FormsIconAlias`
+
+- `FormsIconAlias::COMPONENTS_BUILDER_ACTIONS_CLONE` - Trigger button of a clone action in a builder item
+- `FormsIconAlias::COMPONENTS_BUILDER_ACTIONS_COLLAPSE` - Trigger button of a collapse action in a builder item
+- `FormsIconAlias::COMPONENTS_BUILDER_ACTIONS_DELETE` - Trigger button of a delete action in a builder item
+- `FormsIconAlias::COMPONENTS_BUILDER_ACTIONS_EXPAND` - Trigger button of an expand action in a builder item
+- `FormsIconAlias::COMPONENTS_BUILDER_ACTIONS_MOVE_DOWN` - Trigger button of a move down action in a builder item
+- `FormsIconAlias::COMPONENTS_BUILDER_ACTIONS_MOVE_UP` - Trigger button of a move up action in a builder item
+- `FormsIconAlias::COMPONENTS_BUILDER_ACTIONS_REORDER` - Trigger button of a reorder action in a builder item
+- `FormsIconAlias::COMPONENTS_CHECKBOX_LIST_SEARCH_FIELD` - Search input in a checkbox list
+- `FormsIconAlias::COMPONENTS_FILE_UPLOAD_EDITOR_ACTIONS_DRAG_CROP` - Trigger button of a drag crop action in a file upload editor
+- `FormsIconAlias::COMPONENTS_FILE_UPLOAD_EDITOR_ACTIONS_DRAG_MOVE` - Trigger button of a drag move action in a file upload editor
+- `FormsIconAlias::COMPONENTS_FILE_UPLOAD_EDITOR_ACTIONS_FLIP_HORIZONTAL` - Trigger button of a flip horizontal action in a file upload editor
+- `FormsIconAlias::COMPONENTS_FILE_UPLOAD_EDITOR_ACTIONS_FLIP_VERTICAL` - Trigger button of a flip vertical action in a file upload editor
+- `FormsIconAlias::COMPONENTS_FILE_UPLOAD_EDITOR_ACTIONS_MOVE_DOWN` - Trigger button of a move down action in a file upload editor
+- `FormsIconAlias::COMPONENTS_FILE_UPLOAD_EDITOR_ACTIONS_MOVE_LEFT` - Trigger button of a move left action in a file upload editor
+- `FormsIconAlias::COMPONENTS_FILE_UPLOAD_EDITOR_ACTIONS_MOVE_RIGHT` - Trigger button of a move right action in a file upload editor
+- `FormsIconAlias::COMPONENTS_FILE_UPLOAD_EDITOR_ACTIONS_MOVE_UP` - Trigger button of a move up action in a file upload editor
+- `FormsIconAlias::COMPONENTS_FILE_UPLOAD_EDITOR_ACTIONS_ROTATE_LEFT` - Trigger button of a rotate left action in a file upload editor
+- `FormsIconAlias::COMPONENTS_FILE_UPLOAD_EDITOR_ACTIONS_ROTATE_RIGHT` - Trigger button of a rotate right action in a file upload editor
+- `FormsIconAlias::COMPONENTS_FILE_UPLOAD_EDITOR_ACTIONS_ZOOM_100` - Trigger button of a zoom 100 action in a file upload editor
+- `FormsIconAlias::COMPONENTS_FILE_UPLOAD_EDITOR_ACTIONS_ZOOM_IN` - Trigger button of a zoom in action in a file upload editor
+- `FormsIconAlias::COMPONENTS_FILE_UPLOAD_EDITOR_ACTIONS_ZOOM_OUT` - Trigger button of a zoom out action in a file upload editor
+- `FormsIconAlias::COMPONENTS_KEY_VALUE_ACTIONS_DELETE` - Trigger button of a delete action in a key-value field item
+- `FormsIconAlias::COMPONENTS_KEY_VALUE_ACTIONS_REORDER` - Trigger button of a reorder action in a key-value field item
+- `FormsIconAlias::COMPONENTS_REPEATER_ACTIONS_CLONE` - Trigger button of a clone action in a repeater item
+- `FormsIconAlias::COMPONENTS_REPEATER_ACTIONS_COLLAPSE` - Trigger button of a collapse action in a repeater item
+- `FormsIconAlias::COMPONENTS_REPEATER_ACTIONS_DELETE` - Trigger button of a delete action in a repeater item
+- `FormsIconAlias::COMPONENTS_REPEATER_ACTIONS_EXPAND` - Trigger button of an expand action in a repeater item
+- `FormsIconAlias::COMPONENTS_REPEATER_ACTIONS_MOVE_DOWN` - Trigger button of a move down action in a repeater item
+- `FormsIconAlias::COMPONENTS_REPEATER_ACTIONS_MOVE_UP` - Trigger button of a move up action in a repeater item
+- `FormsIconAlias::COMPONENTS_REPEATER_ACTIONS_REORDER` - Trigger button of a reorder action in a repeater item
+- `FormsIconAlias::COMPONENTS_RICH_EDITOR_PANELS_CUSTOM_BLOCKS_CLOSE_BUTTON` - Close button for custom blocks panel in a rich editor
+- `FormsIconAlias::COMPONENTS_RICH_EDITOR_PANELS_CUSTOM_BLOCK_DELETE_BUTTON` - Delete button for a custom block in a rich editor
+- `FormsIconAlias::COMPONENTS_RICH_EDITOR_PANELS_CUSTOM_BLOCK_EDIT_BUTTON` - Edit button for a custom block in a rich editor
+- `FormsIconAlias::COMPONENTS_RICH_EDITOR_PANELS_MERGE_TAGS_CLOSE_BUTTON` - Close button for merge tags panel in a rich editor
+- `FormsIconAlias::COMPONENTS_SELECT_ACTIONS_CREATE_OPTION` - Trigger button of a create option action in a select field
+- `FormsIconAlias::COMPONENTS_SELECT_ACTIONS_EDIT_OPTION` - Trigger button of an edit option action in a select field
+- `FormsIconAlias::COMPONENTS_TEXT_INPUT_ACTIONS_HIDE_PASSWORD` - Trigger button of a hide password action in a text input field
+- `FormsIconAlias::COMPONENTS_TEXT_INPUT_ACTIONS_SHOW_PASSWORD` - Trigger button of a show password action in a text input field
+- `FormsIconAlias::COMPONENTS_TOGGLE_BUTTONS_BOOLEAN_FALSE` - "False" option of a `boolean()` toggle buttons field
+- `FormsIconAlias::COMPONENTS_TOGGLE_BUTTONS_BOOLEAN_TRUE` - "True" option of a `boolean()` toggle buttons field
 
 ### Infolists icon aliases
 
-- `infolists::components.icon-entry.false` - Falsy state of an icon entry
-- `infolists::components.icon-entry.true` - Truthy state of an icon entry
+Using class `Filament\Infolists\View\InfolistsIconAlias`
+
+- `InfolistsIconAlias::COMPONENTS_ICON_ENTRY_FALSE` - Falsy state of an icon entry
+- `InfolistsIconAlias::COMPONENTS_ICON_ENTRY_TRUE` - Truthy state of an icon entry
 
 ### Notifications icon aliases
 
-- `notifications::database.modal.empty-state` - Empty state of the database notifications modal
-- `notifications::notification.close-button` - Button to close a notification
-- `notifications::notification.danger` - Danger notification
-- `notifications::notification.info` - Info notification
-- `notifications::notification.success` - Success notification
-- `notifications::notification.warning` - Warning notification
+Using class `Filament\Notifications\View\NotificationsIconAlias`
+
+- `NotificationsIconAlias::DATABASE_MODAL_EMPTY_STATE` - Empty state of the database notifications modal
+- `NotificationsIconAlias::NOTIFICATION_CLOSE_BUTTON` - Button to close a notification
+- `NotificationsIconAlias::NOTIFICATION_DANGER` - Danger notification
+- `NotificationsIconAlias::NOTIFICATION_INFO` - Info notification
+- `NotificationsIconAlias::NOTIFICATION_SUCCESS` - Success notification
+- `NotificationsIconAlias::NOTIFICATION_WARNING` - Warning notification
 
 ### Panels icon aliases
 
-- `panels::global-search.field` - Global search field
-- `panels::pages.dashboard.actions.filter` - Trigger button of the dashboard filter action
-- `panels::pages.dashboard.navigation-item` - Dashboard page navigation item
-- `panels::pages.password-reset.request-password-reset.actions.login` - Trigger button of the login action on the request password reset page
-- `panels::pages.password-reset.request-password-reset.actions.login.rtl` - Trigger button of the login action on the request password reset page (right-to-left direction)
-- `panels::resources.pages.edit-record.navigation-item` - Resource edit record page navigation item
-- `panels::resources.pages.manage-related-records.navigation-item` - Resource manage related records page navigation item
-- `panels::resources.pages.view-record.navigation-item` - Resource view record page navigation item
-- `panels::sidebar.collapse-button` - Button to collapse the sidebar
-- `panels::sidebar.collapse-button.rtl` - Button to collapse the sidebar (right-to-left direction)
-- `panels::sidebar.expand-button` - Button to expand the sidebar
-- `panels::sidebar.expand-button.rtl` - Button to expand the sidebar (right-to-left direction)
-- `panels::sidebar.group.collapse-button` - Collapse button for a sidebar group
-- `panels::tenant-menu.billing-button` - Billing button in the tenant menu
-- `panels::tenant-menu.profile-button` - Profile button in the tenant menu
-- `panels::tenant-menu.registration-button` - Registration button in the tenant menu
-- `panels::tenant-menu.toggle-button` - Button to toggle the tenant menu
-- `panels::theme-switcher.light-button` - Button to switch to the light theme from the theme switcher
-- `panels::theme-switcher.dark-button` - Button to switch to the dark theme from the theme switcher
-- `panels::theme-switcher.system-button` - Button to switch to the system theme from the theme switcher
-- `panels::topbar.close-sidebar-button` - Button to close the sidebar
-- `panels::topbar.open-sidebar-button` - Button to open the sidebar
-- `panels::topbar.group.toggle-button` - Toggle button for a topbar group
-- `panels::topbar.open-database-notifications-button` - Button to open the database notifications modal
-- `panels::user-menu.profile-item` - Profile item in the user menu
-- `panels::user-menu.logout-button` - Button in the user menu to log out
-- `panels::widgets.account.logout-button` - Button in the account widget to log out
-- `panels::widgets.filament-info.open-documentation-button` - Button to open the documentation from the Filament info widget
-- `panels::widgets.filament-info.open-github-button` - Button to open GitHub from the Filament info widget
+Using class `Filament\View\PanelsIconAlias`
+
+- `PanelsIconAlias::GLOBAL_SEARCH_FIELD` - Global search field
+- `PanelsIconAlias::PAGES_DASHBOARD_ACTIONS_FILTER` - Trigger button of the dashboard filter action
+- `PanelsIconAlias::PAGES_DASHBOARD_NAVIGATION_ITEM` - Dashboard page navigation item
+- `PanelsIconAlias::PAGES_PASSWORD_RESET_REQUEST_PASSWORD_RESET_ACTIONS_LOGIN` - Trigger button of the login action on the request password reset page
+- `PanelsIconAlias::PAGES_PASSWORD_RESET_REQUEST_PASSWORD_RESET_ACTIONS_LOGIN_RTL` - Trigger button of the login action on the request password reset page (right-to-left direction)
+- `PanelsIconAlias::RESOURCES_PAGES_EDIT_RECORD_NAVIGATION_ITEM` - Resource edit record page navigation item
+- `PanelsIconAlias::RESOURCES_PAGES_MANAGE_RELATED_RECORDS_NAVIGATION_ITEM` - Resource manage related records page navigation item
+- `PanelsIconAlias::RESOURCES_PAGES_VIEW_RECORD_NAVIGATION_ITEM` - Resource view record page navigation item
+- `PanelsIconAlias::SIDEBAR_COLLAPSE_BUTTON` - Button to collapse the sidebar
+- `PanelsIconAlias::SIDEBAR_COLLAPSE_BUTTON_RTL` - Button to collapse the sidebar (right-to-left direction)
+- `PanelsIconAlias::SIDEBAR_EXPAND_BUTTON` - Button to expand the sidebar
+- `PanelsIconAlias::SIDEBAR_EXPAND_BUTTON_RTL` - Button to expand the sidebar (right-to-left direction)
+- `PanelsIconAlias::SIDEBAR_GROUP_COLLAPSE_BUTTON` - Collapse button for a sidebar group
+- `PanelsIconAlias::TENANT_MENU_BILLING_BUTTON` - Billing button in the tenant menu
+- `PanelsIconAlias::TENANT_MENU_PROFILE_BUTTON` - Profile button in the tenant menu
+- `PanelsIconAlias::TENANT_MENU_REGISTRATION_BUTTON` - Registration button in the tenant menu
+- `PanelsIconAlias::TENANT_MENU_TOGGLE_BUTTON` - Button to toggle the tenant menu
+- `PanelsIconAlias::THEME_SWITCHER_LIGHT_BUTTON` - Button to switch to the light theme from the theme switcher
+- `PanelsIconAlias::THEME_SWITCHER_DARK_BUTTON` - Button to switch to the dark theme from the theme switcher
+- `PanelsIconAlias::THEME_SWITCHER_SYSTEM_BUTTON` - Button to switch to the system theme from the theme switcher
+- `PanelsIconAlias::TOPBAR_CLOSE_SIDEBAR_BUTTON` - Button to close the sidebar
+- `PanelsIconAlias::TOPBAR_OPEN_SIDEBAR_BUTTON` - Button to open the sidebar
+- `PanelsIconAlias::TOPBAR_GROUP_TOGGLE_BUTTON` - Toggle button for a topbar group
+- `PanelsIconAlias::TOPBAR_OPEN_DATABASE_NOTIFICATIONS_BUTTON` - Button to open the database notifications modal
+- `PanelsIconAlias::USER_MENU_PROFILE_ITEM` - Profile item in the user menu
+- `PanelsIconAlias::USER_MENU_LOGOUT_BUTTON` - Button in the user menu to log out
+- `PanelsIconAlias::WIDGETS_ACCOUNT_LOGOUT_BUTTON` - Button in the account widget to log out
+- `PanelsIconAlias::WIDGETS_FILAMENT_INFO_OPEN_DOCUMENTATION_BUTTON` - Button to open the documentation from the Filament info widget
+- `PanelsIconAlias::WIDGETS_FILAMENT_INFO_OPEN_GITHUB_BUTTON` - Button to open GitHub from the Filament info widget
 
 ### Schema icon aliases
 
-- `schema::components.wizard.completed-step` - Completed step in a wizard
+Using class `Filament\Schemas\View\SchemaIconAlias`
+
+- `SchemaIconAlias::COMPONENTS_WIZARD_COMPLETED_STEP` - Completed step in a wizard
 
 ### Tables icon aliases
 
-- `tables::actions.disable-reordering` - Trigger button of the disable reordering action
-- `tables::actions.enable-reordering` - Trigger button of the enable reordering action
-- `tables::actions.filter` - Trigger button of the filter action
-- `tables::actions.group` - Trigger button of a group records action
-- `tables::actions.open-bulk-actions` - Trigger button of an open bulk actions action
-- `tables::actions.column-manager` - Trigger button of the column manager action
-- `tables::columns.collapse-button` - Button to collapse a column
-- `tables::columns.icon-column.false` - Falsy state of an icon column
-- `tables::columns.icon-column.true` - Truthy state of an icon column
-- `tables::empty-state` - Empty state icon
-- `tables::filters.query-builder.constraints.boolean` - Default icon for a boolean constraint in the query builder
-- `tables::filters.query-builder.constraints.date` - Default icon for a date constraint in the query builder
-- `tables::filters.query-builder.constraints.number` - Default icon for a number constraint in the query builder
-- `tables::filters.query-builder.constraints.relationship` - Default icon for a relationship constraint in the query builder
-- `tables::filters.query-builder.constraints.select` - Default icon for a select constraint in the query builder
-- `tables::filters.query-builder.constraints.text` - Default icon for a text constraint in the query builder
-- `tables::filters.remove-all-button` - Button to remove all filters
-- `tables::grouping.collapse-button` - Button to collapse a group of records
-- `tables::header-cell.sort-asc-button` - Sort button of a column sorted in ascending order
-- `tables::header-cell.sort-button` - Sort button of a column when it is currently not sorted
-- `tables::header-cell.sort-desc-button` - Sort button of a column sorted in descending order
-- `tables::reorder.handle` - Handle to grab in order to reorder a record with drag and drop
-- `tables::search-field` - Search input
+Using class `Filament\Tables\View\TablesIconAlias`
+
+- `TablesIconAlias::ACTIONS_DISABLE_REORDERING` - Trigger button of the disable reordering action
+- `TablesIconAlias::ACTIONS_ENABLE_REORDERING` - Trigger button of the enable reordering action
+- `TablesIconAlias::ACTIONS_FILTER` - Trigger button of the filter action
+- `TablesIconAlias::ACTIONS_GROUP` - Trigger button of a group records action
+- `TablesIconAlias::ACTIONS_OPEN_BULK_ACTIONS` - Trigger button of an open bulk actions action
+- `TablesIconAlias::ACTIONS_COLUMN_MANAGER` - Trigger button of the column manager action
+- `TablesIconAlias::COLUMNS_COLLAPSE_BUTTON` - Button to collapse a column
+- `TablesIconAlias::COLUMNS_ICON_COLUMN_FALSE` - Falsy state of an icon column
+- `TablesIconAlias::COLUMNS_ICON_COLUMN_TRUE` - Truthy state of an icon column
+- `TablesIconAlias::EMPTY_STATE` - Empty state icon
+- `TablesIconAlias::FILTERS_QUERY_BUILDER_CONSTRAINTS_BOOLEAN` - Default icon for a boolean constraint in the query builder
+- `TablesIconAlias::FILTERS_QUERY_BUILDER_CONSTRAINTS_DATE` - Default icon for a date constraint in the query builder
+- `TablesIconAlias::FILTERS_QUERY_BUILDER_CONSTRAINTS_NUMBER` - Default icon for a number constraint in the query builder
+- `TablesIconAlias::FILTERS_QUERY_BUILDER_CONSTRAINTS_RELATIONSHIP` - Default icon for a relationship constraint in the query builder
+- `TablesIconAlias::FILTERS_QUERY_BUILDER_CONSTRAINTS_SELECT` - Default icon for a select constraint in the query builder
+- `TablesIconAlias::FILTERS_QUERY_BUILDER_CONSTRAINTS_TEXT` - Default icon for a text constraint in the query builder
+- `TablesIconAlias::FILTERS_REMOVE_ALL_BUTTON` - Button to remove all filters
+- `TablesIconAlias::GROUPING_COLLAPSE_BUTTON` - Button to collapse a group of records
+- `TablesIconAlias::HEADER_CELL_SORT_ASC_BUTTON` - Sort button of a column sorted in ascending order
+- `TablesIconAlias::HEADER_CELL_SORT_BUTTON` - Sort button of a column when it is currently not sorted
+- `TablesIconAlias::HEADER_CELL_SORT_DESC_BUTTON` - Sort button of a column sorted in descending order
+- `TablesIconAlias::REORDER_HANDLE` - Handle to grab in order to reorder a record with drag and drop
+- `TablesIconAlias::SEARCH_FIELD` - Search input
 
 ### UI components icon aliases
 
-- `badge.delete-button` - Button to delete a badge
-- `breadcrumbs.separator` - Separator between breadcrumbs
-- `breadcrumbs.separator.rtl` - Separator between breadcrumbs (right-to-left direction)
-- `modal.close-button` - Button to close a modal
-- `pagination.first-button` - Button to go to the first page
-- `pagination.first-button.rtl` - Button to go to the first page (right-to-left direction)
-- `pagination.last-button` - Button to go to the last page
-- `pagination.last-button.rtl` - Button to go to the last page (right-to-left direction)
-- `pagination.next-button` - Button to go to the next page
-- `pagination.next-button.rtl` - Button to go to the next page (right-to-left direction)
-- `pagination.previous-button` - Button to go to the previous page
-- `pagination.previous-button.rtl` - Button to go to the previous page (right-to-left direction)
-- `section.collapse-button` - Button to collapse a section
+Using class `Filament\Support\View\SupportIconAlias`
+
+- `SupportIconAlias::BADGE_DELETE_BUTTON` - Button to delete a badge
+- `SupportIconAlias::BREADCRUMBS_SEPARATOR` - Separator between breadcrumbs
+- `SupportIconAlias::BREADCRUMBS_SEPARATOR_RTL` - Separator between breadcrumbs (right-to-left direction)
+- `SupportIconAlias::MODAL_CLOSE_BUTTON` - Button to close a modal
+- `SupportIconAlias::PAGINATION_FIRST_BUTTON` - Button to go to the first page
+- `SupportIconAlias::PAGINATION_FIRST_BUTTON_RTL` - Button to go to the first page (right-to-left direction)
+- `SupportIconAlias::PAGINATION_LAST_BUTTON` - Button to go to the last page
+- `SupportIconAlias::PAGINATION_LAST_BUTTON_RTL` - Button to go to the last page (right-to-left direction)
+- `SupportIconAlias::PAGINATION_NEXT_BUTTON` - Button to go to the next page
+- `SupportIconAlias::PAGINATION_NEXT_BUTTON_RTL` - Button to go to the next page (right-to-left direction)
+- `SupportIconAlias::PAGINATION_PREVIOUS_BUTTON` - Button to go to the previous page
+- `SupportIconAlias::PAGINATION_PREVIOUS_BUTTON_RTL` - Button to go to the previous page (right-to-left direction)
+- `SupportIconAlias::SECTION_COLLAPSE_BUTTON` - Button to collapse a section
+
+### Widgets icon aliases
+
+Using class `Filament\Widgets\View\WidgetsIconAlias`
+
+- `WidgetsIconAlias::CHART_WIDGET_FILTER` - Button of the filter action

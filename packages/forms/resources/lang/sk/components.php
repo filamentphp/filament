@@ -386,6 +386,7 @@ return [
     ],
 
     'rich_editor' => [
+
         'actions' => [
 
             'attach_files' => [
@@ -471,23 +472,45 @@ return [
         'no_merge_tag_search_results_message' => 'Nenašli sa žiadne výsledky pre značky zlúčenia.',
 
         'tools' => [
+            'align_center' => 'Zarovnať na stred',
+            'align_end' => 'Zarovnať vpravo',
+            'align_justify' => 'Zarovnať do bloku',
+            'align_start' => 'Zarovnať vľavo',
             'attach_files' => 'Pripojiť súbory',
             'blockquote' => 'Citát',
             'bold' => 'Tučné písmo',
             'bullet_list' => 'Odrážkový zoznam',
+            'clear_formatting' => 'Vymazať formátovanie',
+            'code' => 'Kód',
             'code_block' => 'Blok kódu',
             'custom_blocks' => 'Bloky',
+            'details' => 'Detaily',
             'h1' => 'Názov',
             'h2' => 'Nadpis',
             'h3' => 'Podnadpis',
+            'highlight' => 'Zvýrazniť',
+            'horizontal_rule' => 'Vodorovná čiara',
             'italic' => 'Kurzíva',
+            'lead' => 'Úvodný text',
             'link' => 'Odkaz',
             'merge_tags' => 'Zlúčiť značky',
             'ordered_list' => 'Číslovaný zoznam',
             'redo' => 'Prerobiť',
+            'small' => 'Malý text',
             'strike' => 'Prečiarknutie',
             'subscript' => 'Dolný index',
             'superscript' => 'Horný index',
+            'table' => 'Tabuľka',
+            'table_delete' => 'Odstrániť tabuľku',
+            'table_add_column_before' => 'Pridať stĺpec pred',
+            'table_add_column_after' => 'Pridať stĺpec za',
+            'table_delete_column' => 'Odstrániť stĺpec',
+            'table_add_row_before' => 'Pridať riadok nad',
+            'table_add_row_after' => 'Pridať riadok pod',
+            'table_delete_row' => 'Odstrániť riadok',
+            'table_merge_cells' => 'Zlúčiť bunky',
+            'table_split_cell' => 'Rozdeliť bunku',
+            'table_toggle_header_row' => 'Prepnúť riadok hlavičky',
             'underline' => 'Podčiarknutie',
             'undo' => 'Späť',
         ],
@@ -570,6 +593,11 @@ return [
     'text_input' => [
 
         'actions' => [
+
+            'copy' => [
+                'label' => 'Kopírovať',
+                'message' => 'Skopírované',
+            ],
 
             'hide_password' => [
                 'label' => 'Skryť heslo',

@@ -57,7 +57,7 @@ trait HasCluster
         if (empty($clusterFqns)) {
             $clusterFqn = (string) str(text(
                 label: "No clusters were found within the [{$this->panel->getId()}] panel. {$question}",
-                placeholder: 'App\\Filament\\Clusters\\Blog',
+                placeholder: app()->getNamespace() . 'Filament\\Clusters\\Blog',
                 required: true,
                 validate: function (string $value): ?string {
                     $value = (string) str($value)

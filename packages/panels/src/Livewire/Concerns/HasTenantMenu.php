@@ -8,9 +8,9 @@ use Filament\Facades\Filament;
 trait HasTenantMenu
 {
     /**
-     * @var array<Action>
+     * @var ?array<Action>
      */
-    protected array $tenantMenuItems = [];
+    protected ?array $tenantMenuItems;
 
     public function bootHasTenantMenu(): void
     {
@@ -22,13 +22,7 @@ trait HasTenantMenu
             return;
         }
 
-        $this->tenantMenuItems = Filament::getTenantMenuItems();
-
-        foreach ($this->tenantMenuItems as $action) {
-            $action->defaultView($action::GROUPED_VIEW);
-
-            $this->cacheAction($action);
-        }
+        $this->getTenantMenuItems();
     }
 
     /**
@@ -36,6 +30,22 @@ trait HasTenantMenu
      */
     protected function getTenantMenuItems(): array
     {
-        return $this->tenantMenuItems;
+        if (isset($this->tenantMenuItems)) {
+            return $this->tenantMenuItems;
+        }
+
+        $this->tenantMenuItems = Filament::getTenantMenuItems();
+
+        foreach ($this->tenantMenuItems as $action) {
+            $action->defaultView($action::GROUPED_VIEW);
+
+            $this->cacheAction($action);
+        }
+
+        if (blank($this->tenantMenuItems)) {
+            $this->tenantMenuItems = null;
+        }
+
+        return $this->tenantMenuItems ?? [];
     }
 }

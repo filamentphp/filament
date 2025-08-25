@@ -464,7 +464,7 @@ class TextColumn extends Column implements HasEmbeddedView
                 <?php } ?>
 
                 <?php if ($stateOverListLimitCount) { ?>
-                    <p class="fi-ta-text-list-limited-message">
+                    <div class="fi-ta-text-list-limited-message">
                         <?php if ($isLimitedListExpandable) { ?>
                             <div
                                 role="button"
@@ -487,7 +487,7 @@ class TextColumn extends Column implements HasEmbeddedView
                         <?php } else { ?>
                             <?= trans_choice('filament-tables::table.columns.text.more_list_items', $stateOverListLimitCount) ?>
                         <?php } ?>
-                    </p>
+                    </div>
                 <?php } ?>
 
                 <?php if (filled($descriptionBelow)) { ?>

@@ -2,6 +2,7 @@
     'field' => null,
     'id' => null,
     'label' => null,
+    'labelTag' => 'label',
 ])
 
 @php
@@ -24,9 +25,16 @@
     }}
 >
     @if (filled($label))
-        <label for="{{ $id }}" class="fi-fo-field-label fi-sr-only">
+        <{{ $labelTag }}
+            @if ($labelTag === 'label')
+                for="{{ $id }}"
+            @else
+                id="{{ $id }}-label"
+            @endif
+            class="fi-fo-field-label fi-sr-only"
+        >
             {{ $label }}
-        </label>
+        </{{ $labelTag }}>
     @endif
 
     {{ $slot }}

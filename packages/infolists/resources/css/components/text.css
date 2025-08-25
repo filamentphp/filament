@@ -28,13 +28,13 @@
         }
     }
 
-    &ul.fi-bulleted,
+    ul&.fi-bulleted,
     &.fi-bulleted ul {
         @apply list-inside list-disc;
     }
 
     &:not(.fi-in-text-has-line-breaks) {
-        &ul.fi-in-text-has-badges,
+        ul&.fi-in-text-has-badges,
         &.fi-in-text-has-badges ul {
             /* A list of badges without line breaks need to remain on the same line, not wrap */
             @apply flex gap-x-1.5;
@@ -47,7 +47,7 @@
         }
     }
 
-    &ul.fi-in-text-has-badges,
+    ul&.fi-in-text-has-badges,
     &.fi-in-text-has-badges ul {
         &.fi-in-text-has-line-breaks,
         &:is(.fi-in-text-has-line-breaks ul) {
@@ -72,6 +72,7 @@
         /* If the content has badges, and they have line breaks, setting `whitespace-normal` sometimes pushes the badge
              onto the line below the bullet point if there is one, and badge content does not need to wrap anyway. */
         @apply whitespace-normal;
+        @apply wrap-break-word;
 
         & .fi-badge,
         & .fi-in-text-list-limited-message {
@@ -87,7 +88,7 @@
     &.fi-align-center {
         @apply text-center;
 
-        &ul,
+        ul&,
         & ul {
             @apply justify-center;
         }
@@ -97,7 +98,7 @@
     &.fi-align-right {
         @apply text-end;
 
-        &ul,
+        ul&,
         & ul {
             @apply justify-end;
         }
@@ -107,7 +108,7 @@
     &.fi-align-between {
         @apply text-justify;
 
-        &ul,
+        ul&,
         & ul {
             @apply justify-between;
         }
@@ -197,12 +198,12 @@
     &.fi-color {
         @apply text-(--text) dark:text-(--dark-text);
 
-        &li::marker {
+        li&::marker {
             @apply text-gray-950;
         }
 
         @variant dark {
-            &li::marker {
+            li&::marker {
                 @apply text-white;
             }
         }
@@ -211,7 +212,7 @@
     &.fi-color-gray {
         @apply text-gray-500 dark:text-gray-400;
 
-        &li::marker {
+        li&::marker {
             @apply text-gray-950;
         }
     }

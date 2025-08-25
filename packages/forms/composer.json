@@ -13,7 +13,7 @@
         "filament/actions": "self.version",
         "filament/schemas": "self.version",
         "filament/support": "self.version",
-        "ueberdosis/tiptap-php": "^1.4"
+        "ueberdosis/tiptap-php": "^2.0"
     },
     "autoload": {
         "files": [

@@ -14,6 +14,7 @@ use Filament\Support\Exceptions\Halt;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Validation\ValidationException;
+use Livewire\Attributes\On;
 use Livewire\Component;
 
 abstract class BasePage extends Component implements HasActions, HasRenderHookScopes, HasSchemas
@@ -45,6 +46,9 @@ abstract class BasePage extends Component implements HasActions, HasRenderHookSc
     public static bool $formActionsAreSticky = false;
 
     public static bool $hasInlineLabels = false;
+
+    #[On('refresh-page')]
+    public function refresh(): void {}
 
     public function render(): View
     {
@@ -122,9 +126,9 @@ abstract class BasePage extends Component implements HasActions, HasRenderHookSc
         (static::$reportValidationErrorUsing)($exception);
     }
 
-    protected function halt(): void
+    protected function halt(bool $shouldRollbackDatabaseTransaction = false): void
     {
-        throw new Halt;
+        throw (new Halt)->rollBackDatabaseTransaction($shouldRollbackDatabaseTransaction);
     }
 
     protected function callHook(string $hook): void

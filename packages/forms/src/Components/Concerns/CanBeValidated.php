@@ -2,6 +2,7 @@
 
 namespace Filament\Forms\Components\Concerns;
 
+use BackedEnum;
 use Closure;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Contracts\CanBeLengthConstrained;
@@ -44,6 +45,8 @@ trait CanBeValidated
     protected bool | Closure $areHtmlValidationMessagesAllowed = false;
 
     protected string | Closure | null $validationAttribute = null;
+
+    protected bool | Closure $shouldShowAllValidationMessages = false;
 
     public function activeUrl(bool | Closure $condition = true): static
     {
@@ -317,7 +320,7 @@ trait CanBeValidated
             }
 
             if (is_string($values)) {
-                $values = array_map('trim', explode(',', $values));
+                $values = array_map(trim(...), explode(',', $values));
             }
 
             return Rule::notIn($values);
@@ -747,6 +750,13 @@ trait CanBeValidated
         return $this;
     }
 
+    public function showAllValidationMessages(bool | Closure $condition = true): static
+    {
+        $this->shouldShowAllValidationMessages = $condition;
+
+        return $this;
+    }
+
     public function getRegexPattern(): ?string
     {
         return $this->evaluate($this->regexPattern);
@@ -781,6 +791,11 @@ trait CanBeValidated
         return (bool) $this->evaluate($this->areHtmlValidationMessagesAllowed);
     }
 
+    public function shouldShowAllValidationMessages(): bool
+    {
+        return (bool) $this->evaluate($this->shouldShowAllValidationMessages);
+    }
+
     public function getInValidationRule(): In | Enum | null
     {
         $values = $this->getInValidationRuleValues();
@@ -808,7 +823,7 @@ trait CanBeValidated
         }
 
         if (is_string($values)) {
-            $values = array_map('trim', explode(',', $values));
+            $values = array_map(trim(...), explode(',', $values));
         }
 
         return $values;
@@ -1016,5 +1031,31 @@ trait CanBeValidated
         }, fn (Field $component): bool => (bool) $component->evaluate($statePath));
 
         return $this;
+    }
+
+    public function mutatesStateForValidation(): bool
+    {
+        return true;
+    }
+
+    public function mutateStateForValidation(mixed $state): mixed
+    {
+        if (parent::mutatesStateForValidation()) {
+            $state = parent::mutateStateForValidation($state);
+        }
+
+        // Laravel's `in` validation rule expects state values to be scalar, so we need to convert any
+        // enum objects to their backed values before they are passed to the Laravel validator.
+        if (is_array($state)) {
+            foreach ($state as $key => $value) {
+                if ($value instanceof BackedEnum) {
+                    $state[$key] = $value->value;
+                }
+            }
+        } elseif ($state instanceof BackedEnum) {
+            $state = $state->value;
+        }
+
+        return $state;
     }
 }

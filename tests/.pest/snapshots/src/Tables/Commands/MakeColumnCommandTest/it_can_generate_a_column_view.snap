@@ -1,0 +1,3 @@
+<div {{ $getExtraAttributeBag() }}>
+    {{ $getState() }}
+</div>

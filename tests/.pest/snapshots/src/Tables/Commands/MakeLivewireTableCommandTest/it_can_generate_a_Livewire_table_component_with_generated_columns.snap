@@ -1,0 +1,75 @@
+<?php
+
+namespace App\Livewire;
+
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\Concerns\InteractsWithActions;
+use Filament\Actions\Contracts\HasActions;
+use Filament\Schemas\Concerns\InteractsWithSchemas;
+use Filament\Schemas\Contracts\HasSchemas;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Concerns\InteractsWithTable;
+use Filament\Tables\Contracts\HasTable;
+use Filament\Tables\Table;
+use Filament\Tests\Fixtures\Models\Post;
+use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Builder;
+use Livewire\Component;
+
+class ListPostsWithColumns extends Component implements HasActions, HasSchemas, HasTable
+{
+    use InteractsWithActions;
+    use InteractsWithTable;
+    use InteractsWithSchemas;
+
+    public function table(Table $table): Table
+    {
+        return $table
+            ->query(fn (): Builder => Post::query())
+            ->columns([
+                TextColumn::make('author.name')
+                    ->searchable(),
+                IconColumn::make('is_published')
+                    ->boolean(),
+                TextColumn::make('rating')
+                    ->numeric()
+                    ->sortable(),
+                TextColumn::make('title')
+                    ->searchable(),
+                TextColumn::make('string_backed_enum')
+                    ->searchable(),
+                TextColumn::make('created_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('updated_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('deleted_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+            ])
+            ->filters([
+                //
+            ])
+            ->headerActions([
+                //
+            ])
+            ->recordActions([
+                //
+            ])
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    //
+                ]),
+            ]);
+    }
+
+    public function render(): View
+    {
+        return view('livewire.list-posts-with-columns');
+    }
+}

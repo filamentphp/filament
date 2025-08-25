@@ -51,6 +51,10 @@ trait HasTabs
     public function updatedActiveTab(): void
     {
         $this->resetPage();
+
+        $this->cachedDefaultTableColumnState = null;
+
+        $this->applyTableColumnManager();
     }
 
     public function generateTabLabel(string $key): string

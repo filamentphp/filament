@@ -12,6 +12,7 @@ use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\BaseFilter;
+use Filament\Tables\View\TablesIconAlias;
 
 trait HasFilters
 {
@@ -200,7 +201,7 @@ trait HasFilters
         $action = Action::make('openFilters')
             ->label(__('filament-tables::table.actions.filter.label'))
             ->iconButton()
-            ->icon(FilamentIcon::resolve('tables::actions.filter') ?? Heroicon::Funnel)
+            ->icon(FilamentIcon::resolve(TablesIconAlias::ACTIONS_FILTER) ?? Heroicon::Funnel)
             ->color('gray')
             ->livewireClickHandlerEnabled(false)
             ->modalSubmitAction(false)
@@ -214,7 +215,8 @@ trait HasFilters
                     ->button(),
             ])
             ->modalCancelActionLabel(__('filament::components/modal.actions.close.label'))
-            ->table($this);
+            ->table($this)
+            ->authorize(true);
 
         if ($this->modifyFiltersTriggerActionUsing) {
             $action = $this->evaluate($this->modifyFiltersTriggerActionUsing, [
@@ -236,6 +238,7 @@ trait HasFilters
             ->action('applyTableFilters')
             ->table($this)
             ->visible($this->hasDeferredFilters())
+            ->authorize(true)
             ->button();
 
         if ($this->modifyFiltersApplyActionUsing) {

@@ -82,6 +82,20 @@ public function table(Table $table): Table
 }
 ```
 
+### Global record action settings
+
+To customize the default configuration used for ungrouped record actions, you can use `modifyUngroupedRecordActionsUsing()` from a [`Table::configureUsing()` function](overview#global-settings) in the `boot()` method of a service provider:
+
+```php
+use Filament\Actions\Action;
+use Filament\Tables\Table;
+
+Table::configureUsing(function (Table $table): void {
+    $table
+        ->modifyUngroupedRecordActionsUsing(fn (Action $action) => $action->iconButton());
+});
+```
+
 <AutoScreenshot name="tables/actions/before-cells" alt="Table with actions before cells" version="4.x" />
 
 ### Accessing the selected table rows
@@ -347,6 +361,24 @@ public function table(Table $table): Table
         ->checkIfRecordIsSelectableUsing(
             fn (Model $record): bool => $record->status === Status::Enabled,
         );
+}
+```
+
+### Limiting the number of selectable records
+
+You may restrict how many records the user can select in total:
+
+```php
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->toolbarActions([
+            // ...
+        ])
+        ->maxSelectableRecords(4);
 }
 ```
 

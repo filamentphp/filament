@@ -540,7 +540,7 @@ function (Model $record) {
 
 ### Injecting the current arguments
 
-If you wish to access the [current arguments](adding-an-action-to-a-livewire-component#passing-action-arguments) that have been passed to the action, define an `$arguments` parameter:
+If you wish to access the [current arguments](../components/action#passing-action-arguments) that have been passed to the action, define an `$arguments` parameter:
 
 ```php
 function (array $arguments) {

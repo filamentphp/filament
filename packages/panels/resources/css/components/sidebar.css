@@ -56,7 +56,7 @@
 }
 
 .fi-sidebar {
-    @apply fixed inset-y-0 start-0 z-30 flex h-screen flex-col content-start bg-white transition-all lg:top-[4rem] lg:z-20 lg:h-[calc(100dvh-4rem)] lg:bg-transparent lg:transition-none dark:bg-gray-900 dark:lg:bg-transparent;
+    @apply fixed inset-y-0 start-0 z-30 flex h-dvh flex-col content-start bg-white transition-all lg:top-[4rem] lg:z-20 lg:h-[calc(100dvh-4rem)] lg:bg-transparent lg:transition-none dark:bg-gray-900 dark:lg:bg-transparent;
 
     &.fi-sidebar-open {
         @apply w-(--sidebar-width) translate-x-0 shadow-xl ring-1 ring-gray-950/5 lg:shadow-none lg:ring-0 rtl:-translate-x-0 dark:ring-white/10;

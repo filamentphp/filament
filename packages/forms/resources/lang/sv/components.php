@@ -302,6 +302,28 @@ return [
 
     ],
 
+    'modal_table_select' => [
+
+        'actions' => [
+
+            'select' => [
+
+                'label' => 'Välj',
+
+                'actions' => [
+
+                    'select' => [
+                        'label' => 'Välj',
+                    ],
+
+                ],
+
+            ],
+
+        ],
+
+    ],
+
     'radio' => [
 
         'boolean' => [
@@ -365,37 +387,130 @@ return [
 
     'rich_editor' => [
 
-        'dialogs' => [
+        'actions' => [
+
+            'attach_files' => [
+
+                'label' => 'Ladda upp fil',
+
+                'modal' => [
+
+                    'heading' => 'Ladda upp fil',
+
+                    'form' => [
+
+                        'file' => [
+
+                            'label' => [
+                                'new' => 'Fil',
+                                'existing' => 'Ersätt fil',
+                            ],
+
+                        ],
+
+                        'alt' => [
+
+                            'label' => [
+                                'new' => 'Alt-text',
+                                'existing' => 'Ändra alt-text',
+                            ],
+
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
+            'custom_block' => [
+
+                'modal' => [
+
+                    'actions' => [
+
+                        'insert' => [
+                            'label' => 'Infoga',
+                        ],
+
+                        'save' => [
+                            'label' => 'Spara',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
 
             'link' => [
 
-                'actions' => [
-                    'link' => 'Länka',
-                    'unlink' => 'Ta bort länk',
+                'label' => 'Redigera',
+
+                'modal' => [
+
+                    'heading' => 'Länk',
+
+                    'form' => [
+
+                        'url' => [
+                            'label' => 'URL',
+                        ],
+
+                        'should_open_in_new_tab' => [
+                            'label' => 'Öppna i ny flik',
+                        ],
+
+                    ],
+
                 ],
-
-                'label' => 'URL',
-
-                'placeholder' => 'Ange en URL',
 
             ],
 
         ],
 
+        'no_merge_tag_search_results_message' => 'Kunde inte matcha mallvariabler.',
+
         'tools' => [
+            'align_center' => 'Centrera',
+            'align_end' => 'Justera slutet',
+            'align_justify' => 'Marginaljustera',
+            'align_start' => 'Justera början',
             'attach_files' => 'Lägg till filer',
             'blockquote' => 'Citat',
             'bold' => 'Fet',
             'bullet_list' => 'Punktlista',
-            'code_block' => 'Kod',
+            'clear_formatting' => 'Rensa formatering',
+            'code' => 'Kod',
+            'code_block' => 'Kodblock',
+            'custom_blocks' => 'Block',
+            'details' => 'Detaljer',
             'h1' => 'Titel',
             'h2' => 'Rubrik',
             'h3' => 'Underrubrik',
+            'highlight' => 'Markera',
+            'horizontal_rule' => 'Horisontell linje',
             'italic' => 'Kursiv',
+            'lead' => 'Ingress',
             'link' => 'Länk',
+            'merge_tags' => 'Mallvariabel',
             'ordered_list' => 'Nummerlista',
             'redo' => 'Gör om',
+            'small' => 'Liten text',
             'strike' => 'Genomstruken',
+            'subscript' => 'Nedsänkt',
+            'superscript' => 'Upphöjd',
+            'table' => 'Tabell',
+            'table_delete' => 'Radera tabell',
+            'table_add_column_before' => 'Lägg till kolumn före',
+            'table_add_column_after' => 'Lägg till kolumn efter',
+            'table_delete_column' => 'Radera kolumn',
+            'table_add_row_before' => 'Lägg till rad ovan',
+            'table_add_row_after' => 'Lägg till rad nedan',
+            'table_delete_row' => 'Radera rad',
+            'table_merge_cells' => 'Sammanfoga celler',
+            'table_split_cell' => 'Dela cell',
+            'table_toggle_header_row' => 'Växla rubrikrad',
             'underline' => 'Understruken',
             'undo' => 'Ångra',
         ],
@@ -478,6 +593,11 @@ return [
     'text_input' => [
 
         'actions' => [
+
+            'copy' => [
+                'label' => 'Kopiera',
+                'message' => 'Kopierat',
+            ],
 
             'hide_password' => [
                 'label' => 'Dölj lösenord',

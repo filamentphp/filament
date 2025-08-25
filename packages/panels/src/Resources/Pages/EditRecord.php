@@ -24,6 +24,7 @@ use Filament\Support\Exceptions\Halt;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Facades\FilamentView;
 use Filament\Support\Icons\Heroicon;
+use Filament\View\PanelsIconAlias;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
@@ -53,13 +54,22 @@ class EditRecord extends Page
     public static function getNavigationIcon(): string | BackedEnum | Htmlable | null
     {
         return static::$navigationIcon
-            ?? FilamentIcon::resolve('panels::resources.pages.edit-record.navigation-item')
+            ?? FilamentIcon::resolve(PanelsIconAlias::RESOURCES_PAGES_EDIT_RECORD_NAVIGATION_ITEM)
             ?? Heroicon::OutlinedPencilSquare;
     }
 
     public function getBreadcrumb(): string
     {
         return static::$breadcrumb ?? __('filament-panels::resources/pages/edit-record.breadcrumb');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        if (filled(static::$navigationLabel)) {
+            return static::$navigationLabel;
+        }
+
+        return __('filament-panels::resources/pages/edit-record.navigation_label');
     }
 
     public function getContentTabLabel(): ?string

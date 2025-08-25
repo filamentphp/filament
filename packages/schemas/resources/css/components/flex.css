@@ -5,6 +5,10 @@
         @apply gap-3;
     }
 
+    & > .fi-hidden {
+        @apply hidden;
+    }
+
     & > .fi-growable {
         @apply w-full flex-1;
     }

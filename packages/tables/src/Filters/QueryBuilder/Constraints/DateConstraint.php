@@ -10,6 +10,7 @@ use Filament\Tables\Filters\QueryBuilder\Constraints\DateConstraint\Operators\Is
 use Filament\Tables\Filters\QueryBuilder\Constraints\DateConstraint\Operators\IsMonthOperator;
 use Filament\Tables\Filters\QueryBuilder\Constraints\DateConstraint\Operators\IsYearOperator;
 use Filament\Tables\Filters\QueryBuilder\Constraints\Operators\IsFilledOperator;
+use Filament\Tables\View\TablesIconAlias;
 
 class DateConstraint extends Constraint
 {
@@ -19,7 +20,7 @@ class DateConstraint extends Constraint
     {
         parent::setUp();
 
-        $this->icon(FilamentIcon::resolve('tables::filters.query-builder.constraints.date') ?? Heroicon::Calendar);
+        $this->icon(FilamentIcon::resolve(TablesIconAlias::FILTERS_QUERY_BUILDER_CONSTRAINTS_DATE) ?? Heroicon::Calendar);
 
         $this->operators([
             IsAfterOperator::class,

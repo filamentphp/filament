@@ -6,6 +6,18 @@ return [
 
         'heading' => 'Cột',
 
+        'actions' => [
+
+            'apply' => [
+                'label' => 'Áp dụng cột',
+            ],
+
+            'reset' => [
+                'label' => 'Đặt lại',
+            ],
+
+        ],
+
     ],
 
     'columns' => [
@@ -17,11 +29,11 @@ return [
         'text' => [
 
             'actions' => [
-                'collapse_list' => 'Hiển thị :count ít hơn',
-                'expand_list' => 'Hiển thị :count nhiều hơn',
+                'collapse_list' => 'Hiển thị giảm :count',
+                'expand_list' => 'Hiển thị thêm :count',
             ],
 
-            'more_list_items' => 'và :count cột khác',
+            'more_list_items' => 'và thêm :count',
 
         ],
 
@@ -38,7 +50,7 @@ return [
         ],
 
         'bulk_select_group' => [
-            'label' => 'Chọn/bỏ chọn nhóm :title để thực hiện các hành động hàng loạt.',
+            'label' => 'Chọn/bỏ chọn nhóm :title để thực hiện tác vụ hàng loạt.',
         ],
 
         'search' => [
@@ -100,7 +112,7 @@ return [
         ],
 
         'column_manager' => [
-            'label' => 'Chuyển đổi cột',
+            'label' => 'Quản lý cột',
         ],
 
     ],
@@ -138,14 +150,20 @@ return [
 
         'heading' => 'Bộ lọc',
 
-        'indicator' => 'Bộ lọc hoạt động',
+        'indicator' => 'Bộ lọc đang áp dụng',
 
         'multi_select' => [
             'placeholder' => 'Tất cả',
         ],
 
         'select' => [
+
             'placeholder' => 'Tất cả',
+
+            'relationship' => [
+                'empty_option_label' => 'Không có',
+            ],
+
         ],
 
         'trashed' => [
@@ -190,7 +208,7 @@ return [
 
     'selection_indicator' => [
 
-        'selected_count' => '1 bản ghi đã chọn|:count bản ghi đã chọn',
+        'selected_count' => 'Đã chọn 1 bản ghi|Đã chọn :count bản ghi',
 
         'actions' => [
 

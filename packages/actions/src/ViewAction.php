@@ -4,6 +4,7 @@ namespace Filament\Actions;
 
 use Closure;
 use Filament\Actions\Contracts\HasActions;
+use Filament\Actions\View\ActionsIconAlias;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
@@ -31,8 +32,8 @@ class ViewAction extends Action
 
         $this->defaultColor('gray');
 
-        $this->tableIcon(FilamentIcon::resolve('actions::view-action') ?? Heroicon::Eye);
-        $this->groupedIcon(FilamentIcon::resolve('actions::view-action.grouped') ?? Heroicon::Eye);
+        $this->tableIcon(FilamentIcon::resolve(ActionsIconAlias::VIEW_ACTION) ?? Heroicon::Eye);
+        $this->groupedIcon(FilamentIcon::resolve(ActionsIconAlias::VIEW_ACTION_GROUPED) ?? Heroicon::Eye);
 
         $this->disabledSchema();
 

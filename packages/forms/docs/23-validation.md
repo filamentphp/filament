@@ -135,7 +135,7 @@ The field value must be different to another. [See the Laravel documentation.](h
 Field::make('backup_email')->different('email')
 ```
 
-### Doesnt Start With
+### Doesn't Start With
 
 The field must not start with one of the given values. [See the Laravel documentation.](https://laravel.com/docs/validation#rule-doesnt-start-with)
 
@@ -143,7 +143,7 @@ The field must not start with one of the given values. [See the Laravel document
 Field::make('name')->doesntStartWith(['admin'])
 ```
 
-### Doesnt End With
+### Doesn't End With
 
 The field must not end with one of the given values. [See the Laravel documentation.](https://laravel.com/docs/validation#rule-doesnt-end-with)
 
@@ -175,7 +175,7 @@ The field value must exist in the database. [See the Laravel documentation.](htt
 Field::make('invitation')->exists()
 ```
 
-By default, the form's model will be searched, [if it is registered](adding-a-form-to-a-livewire-component#setting-a-form-model). You may specify a custom table name or model to search:
+By default, the form's model will be searched, [if it is registered](../components/form#setting-a-form-model). You may specify a custom table name or model to search:
 
 ```php
 use App\Models\Invitation;
@@ -259,11 +259,14 @@ Field::make('color')->hexColor()
 ```
 
 ### In
+
 The field must be included in the given list of values. [See the Laravel documentation.](https://laravel.com/docs/validation#rule-in)
 
 ```php
 Field::make('status')->in(['pending', 'completed'])
 ```
+
+The [toggle buttons](toggle-buttons), [checkbox list](checkbox-list), [radio](radio) and [select](select#valid-options-validation-in-rule) fields automatically apply the `in()` rule based on their available options, so you do not need to add it manually.
 
 ### Ip Address
 

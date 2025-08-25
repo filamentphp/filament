@@ -24,6 +24,10 @@ const resolveRelativeStatePath = function (containerPath, path, isAbsolute) {
         return path
     }
 
+    if (['', null, undefined].includes(path)) {
+        return containerPathCopy
+    }
+
     return `${containerPathCopy}.${path}`
 }
 

@@ -3,6 +3,7 @@
 namespace Filament\Actions;
 
 use Filament\Actions\Concerns\CanCustomizeProcess;
+use Filament\Actions\View\ActionsIconAlias;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Contracts\HasTable;
@@ -71,11 +72,11 @@ class DeleteBulkAction extends BulkAction
 
         $this->defaultColor('danger');
 
-        $this->icon(FilamentIcon::resolve('actions::delete-action') ?? Heroicon::Trash);
+        $this->icon(FilamentIcon::resolve(ActionsIconAlias::DELETE_ACTION) ?? Heroicon::Trash);
 
         $this->requiresConfirmation();
 
-        $this->modalIcon(FilamentIcon::resolve('actions::delete-action.modal') ?? Heroicon::OutlinedTrash);
+        $this->modalIcon(FilamentIcon::resolve(ActionsIconAlias::DELETE_ACTION_MODAL) ?? Heroicon::OutlinedTrash);
 
         $this->action(function (): void {
             $this->process(static function (DeleteBulkAction $action, EloquentCollection | Collection | LazyCollection $records): void {

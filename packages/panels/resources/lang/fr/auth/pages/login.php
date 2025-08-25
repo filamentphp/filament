@@ -43,6 +43,30 @@ return [
 
     ],
 
+    'multi_factor' => [
+
+        'heading' => 'Vérifier votre identité',
+
+        'subheading' => 'Pour continuer à vous connecter, vous devez vérifier votre identité.',
+
+        'form' => [
+
+            'provider' => [
+                'label' => 'Comment souhaitez-vous vérifier ?',
+            ],
+
+            'actions' => [
+
+                'authenticate' => [
+                    'label' => 'Confirmer la connexion',
+                ],
+
+            ],
+
+        ],
+
+    ],
+
     'messages' => [
 
         'failed' => 'Ces identifiants ne correspondent pas à nos enregistrements.',
@@ -52,7 +76,7 @@ return [
     'notifications' => [
 
         'throttled' => [
-            'title' => 'Tentatives de connexion trop nombreuses. Veuillez essayer de nouveau dans :seconds secondes.',
+            'title' => 'Trop de tentatives de connexion',
             'body' => 'Merci de réessayer dans :seconds secondes.',
         ],
 

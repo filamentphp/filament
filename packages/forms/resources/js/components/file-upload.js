@@ -56,6 +56,7 @@ export default function fileUploadFormComponent({
     loadingIndicatorPosition,
     locale,
     maxFiles,
+    maxFilesValidationMessage,
     maxSize,
     minSize,
     maxParallelUploads,
@@ -294,6 +295,8 @@ export default function fileUploadFormComponent({
             })
 
             this.pond.on('addfilestart', async (file) => {
+                this.error = null
+
                 if (file.status !== FilePond.FileStatus.PROCESSING_QUEUED) {
                     return
                 }
@@ -327,6 +330,12 @@ export default function fileUploadFormComponent({
 
             this.pond.on('processfilerevert', handleFileProcessing)
 
+            this.pond.on('warning', (warning) => {
+                if (warning.body === 'Max files') {
+                    this.error = maxFilesValidationMessage
+                }
+            })
+
             if (panelLayout === 'compact circle') {
                 // The compact circle layout does not have enough space to render an error message inside the input.
                 // As such, we need to display the error message outside of the input, using the `error` Alpine.js
@@ -341,9 +350,9 @@ export default function fileUploadFormComponent({
                         'Expects',
                     )
                 })
-
-                this.pond.on('removefile', () => (this.error = null))
             }
+
+            this.pond.on('removefile', () => (this.error = null))
         },
 
         destroy() {

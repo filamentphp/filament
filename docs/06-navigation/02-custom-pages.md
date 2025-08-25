@@ -33,7 +33,7 @@ public static function canAccess(): bool
 
 Actions are buttons that can perform tasks on the page, or visit a URL. You can read more about their capabilities [here](../actions).
 
-Since all pages are Livewire components, you can [add actions](../actions/adding-an-action-to-a-livewire-component#adding-the-action) anywhere. Pages already have the `InteractsWithActions` trait, `HasActions` interface, and `<x-filament-actions::modals />` Blade component all set up for you.
+Since all pages are Livewire components, you can [add actions](../components/action#adding-the-action) anywhere. Pages already have the `InteractsWithActions` trait, `HasActions` interface, and `<x-filament-actions::modals />` Blade component all set up for you.
 
 ### Header actions
 
@@ -155,7 +155,7 @@ This pairs well with [responsive widget widths](dashboard#responsive-widget-widt
 
 #### Passing data to widgets from the page
 
-You may pass data to widgets from the page using the `getWidgetsData()` method:
+You may pass data to widgets from the page using the `getWidgetData()` method:
 
 ```php
 public function getWidgetData(): array

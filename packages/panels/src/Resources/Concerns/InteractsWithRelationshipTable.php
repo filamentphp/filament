@@ -28,6 +28,8 @@ trait InteractsWithRelationshipTable
 
     protected static ?string $relatedResource = null;
 
+    protected static ?string $relationshipTitle = null;
+
     public static function getRelatedResource(): ?string
     {
         return static::$relatedResource;
@@ -152,6 +154,9 @@ trait InteractsWithRelationshipTable
             ->authorizeReorder(fn (): bool => $this->canReorder());
 
         if ($relatedResource = static::getRelatedResource()) {
+            $table->modelLabel($relatedResource::getModelLabel());
+            $table->pluralModelLabel($relatedResource::getPluralModelLabel());
+
             $relatedResource::configureTable($table);
         }
 
@@ -365,6 +370,10 @@ trait InteractsWithRelationshipTable
 
     public static function getRelationshipTitle(): string
     {
+        if (filled(static::$relationshipTitle)) {
+            return static::$relationshipTitle;
+        }
+
         if ($relatedResource = static::getRelatedResource()) {
             return $relatedResource::getTitleCasePluralModelLabel();
         }

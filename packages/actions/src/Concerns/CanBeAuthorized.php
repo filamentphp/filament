@@ -125,7 +125,7 @@ trait CanBeAuthorized
         $type = $this->authorization['type'] ?? null;
 
         foreach ($abilities as $ability) {
-            $response = Gate::inspect($ability, $arguments);
+            $response = Gate::inspect($ability, Arr::wrap($arguments));
 
             if (($type === 'any') && $response->allowed()) {
                 return $response;
@@ -221,7 +221,7 @@ trait CanBeAuthorized
     public function getIndividualRecordAuthorizationResponse(Model $record): Response
     {
         if (is_string($this->authorizeIndividualRecords)) {
-            return Gate::inspect($this->authorizeIndividualRecords, $record);
+            return Gate::inspect($this->authorizeIndividualRecords, Arr::wrap($record));
         }
 
         $resolver = ($this->authorizeIndividualRecords instanceof Closure)

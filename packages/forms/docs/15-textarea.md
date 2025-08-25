@@ -102,6 +102,27 @@ Textarea::make('description')
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `disableGrammarly()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
+## Trimming whitespace
+
+You can automatically trim whitespace from the beginning and end of the textarea value using the `trim()` method:
+
+```php
+use Filament\Forms\Components\Textarea;
+
+Textarea::make('description')
+    ->trim()
+```
+
+You may want to enable trimming globally for all textareas, similar to Laravel's `TrimStrings` middleware. You can do this in a service provider using the `configureUsing()` method:
+
+```php
+use Filament\Forms\Components\Textarea;
+
+Textarea::configureUsing(function (Textarea $component): void {
+    $component->trim();
+});
+```
+
 ## Textarea validation
 
 As well as all rules listed on the [validation](validation) page, there are additional rules that are specific to textareas.

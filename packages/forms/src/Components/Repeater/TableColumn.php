@@ -24,7 +24,11 @@ class TableColumn extends Component
 
     public static function make(string | Closure $label): static
     {
-        return app(static::class, ['label' => $label]);
+        $static = app(static::class, ['label' => $label]);
+
+        $static->configure();
+
+        return $static;
     }
 
     public function hiddenHeaderLabel(bool | Closure $condition = true): static

@@ -8,6 +8,7 @@ use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
+use Filament\Tables\View\TablesIconAlias;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Arr;
@@ -120,7 +121,7 @@ trait HasEmptyState
     public function getEmptyStateIcon(): string | BackedEnum
     {
         return $this->evaluate($this->emptyStateIcon)
-            ?? FilamentIcon::resolve('tables::empty-state')
+            ?? FilamentIcon::resolve(TablesIconAlias::EMPTY_STATE)
             ?? Heroicon::OutlinedXMark;
     }
 }

@@ -72,7 +72,7 @@ class EditProfile extends Page
 
     public static function getLabel(): string
     {
-        return __('filament-panels::auth/pages/edit-profile.label');
+        return static::$title ?? __('filament-panels::auth/pages/edit-profile.label');
     }
 
     public static function getRelativeRouteName(Panel $panel): string
@@ -301,6 +301,7 @@ class EditProfile extends Page
             ->password()
             ->revealable(filament()->arePasswordsRevealable())
             ->rule(Password::default())
+            ->showAllValidationMessages()
             ->autocomplete('new-password')
             ->dehydrated(fn ($state): bool => filled($state))
             ->dehydrateStateUsing(fn ($state): string => Hash::make($state))

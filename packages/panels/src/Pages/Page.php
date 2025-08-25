@@ -382,10 +382,10 @@ abstract class Page extends BasePage
     {
         return $schema
             ->components([
-                RenderHook::make(PanelsRenderHook::PAGE_HEADER_WIDGETS_BEFORE),
+                RenderHook::make(PanelsRenderHook::PAGE_HEADER_WIDGETS_START),
                 Grid::make($this->getHeaderWidgetsColumns())
                     ->schema($widgets = $this->getWidgetsSchemaComponents($this->getHeaderWidgets())),
-                RenderHook::make(PanelsRenderHook::PAGE_HEADER_WIDGETS_AFTER),
+                RenderHook::make(PanelsRenderHook::PAGE_HEADER_WIDGETS_END),
             ])
             ->hidden(empty($widgets));
     }
@@ -394,10 +394,10 @@ abstract class Page extends BasePage
     {
         return $schema
             ->components([
-                RenderHook::make(PanelsRenderHook::PAGE_FOOTER_WIDGETS_BEFORE),
+                RenderHook::make(PanelsRenderHook::PAGE_FOOTER_WIDGETS_START),
                 Grid::make($this->getFooterWidgetsColumns())
                     ->schema($widgets = $this->getWidgetsSchemaComponents($this->getFooterWidgets())),
-                RenderHook::make(PanelsRenderHook::PAGE_FOOTER_WIDGETS_AFTER),
+                RenderHook::make(PanelsRenderHook::PAGE_FOOTER_WIDGETS_END),
             ])
             ->hidden(empty($widgets));
     }

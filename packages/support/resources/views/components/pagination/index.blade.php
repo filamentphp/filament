@@ -123,7 +123,11 @@
                     <x-filament::pagination.item
                         :aria-label="__('filament::components/pagination.actions.first.label')"
                         :icon="$isRtl ? \Filament\Support\Icons\Heroicon::ChevronDoubleRight : \Filament\Support\Icons\Heroicon::ChevronDoubleLeft"
-                        :icon-alias="$isRtl ? 'pagination.first-button.rtl' : 'pagination.first-button'"
+                        :icon-alias="
+                            $isRtl
+                            ? \Filament\Support\View\SupportIconAlias::PAGINATION_FIRST_BUTTON_RTL
+                            : \Filament\Support\View\SupportIconAlias::PAGINATION_FIRST_BUTTON
+                        "
                         rel="first"
                         :wire:click="'gotoPage(1, \'' . $paginator->getPageName() . '\')'"
                         :wire:key="$this->getId() . '.pagination.first'"
@@ -133,8 +137,15 @@
                 <x-filament::pagination.item
                     :aria-label="__('filament::components/pagination.actions.previous.label')"
                     :icon="$isRtl ? \Filament\Support\Icons\Heroicon::ChevronRight : \Filament\Support\Icons\Heroicon::ChevronLeft"
-                    {{-- @deprecated Use `pagination.previous-button.rtl` instead of `pagination.previous-button` for RTL. --}}
-                    :icon-alias="$isRtl ? ['pagination.previous-button.rtl', 'pagination.previous-button'] : 'pagination.previous-button'"
+                    {{-- @deprecated Use `SupportIconAlias::PAGINATION_PREVIOUS_BUTTON_RTL` instead of `SupportIconAlias::PAGINATION_PREVIOUS_BUTTON` for RTL. --}}
+                    :icon-alias="
+                        $isRtl
+                        ? [
+                            \Filament\Support\View\SupportIconAlias::PAGINATION_PREVIOUS_BUTTON_RTL,
+                            \Filament\Support\View\SupportIconAlias::PAGINATION_PREVIOUS_BUTTON,
+                        ]
+                        : \Filament\Support\View\SupportIconAlias::PAGINATION_PREVIOUS_BUTTON
+                    "
                     rel="prev"
                     :wire:click="'previousPage(\'' . $paginator->getPageName() . '\')'"
                     :wire:key="$this->getId() . '.pagination.previous'"
@@ -163,8 +174,15 @@
                 <x-filament::pagination.item
                     :aria-label="__('filament::components/pagination.actions.next.label')"
                     :icon="$isRtl ? \Filament\Support\Icons\Heroicon::ChevronLeft : \Filament\Support\Icons\Heroicon::ChevronRight"
-                    {{-- @deprecated Use `pagination.next-button.rtl` instead of `pagination.next-button` for RTL. --}}
-                    :icon-alias="$isRtl ? ['pagination.next-button.rtl', 'pagination.next-button'] : 'pagination.next-button'"
+                    {{-- @deprecated Use `SupportIconAlias::PAGINATION_NEXT_BUTTON_RTL` instead of `SupportIconAlias::PAGINATION_NEXT_BUTTON` for RTL. --}}
+                    :icon-alias="
+                        $isRtl
+                        ? [
+                            \Filament\Support\View\SupportIconAlias::PAGINATION_NEXT_BUTTON_RTL,
+                            \Filament\Support\View\SupportIconAlias::PAGINATION_NEXT_BUTTON,
+                        ]
+                        : \Filament\Support\View\SupportIconAlias::PAGINATION_NEXT_BUTTON
+                    "
                     rel="next"
                     :wire:click="'nextPage(\'' . $paginator->getPageName() . '\')'"
                     :wire:key="$this->getId() . '.pagination.next'"
@@ -174,7 +192,11 @@
                     <x-filament::pagination.item
                         :aria-label="__('filament::components/pagination.actions.last.label')"
                         :icon="$isRtl ? \Filament\Support\Icons\Heroicon::ChevronDoubleLeft : \Filament\Support\Icons\Heroicon::ChevronDoubleRight"
-                        :icon-alias="$isRtl ? 'pagination.last-button.rtl' : 'pagination.last-button'"
+                        :icon-alias="
+                            $isRtl
+                            ? \Filament\Support\View\SupportIconAlias::PAGINATION_LAST_BUTTON_RTL
+                            : \Filament\Support\View\SupportIconAlias::PAGINATION_LAST_BUTTON
+                        "
                         rel="last"
                         :wire:click="'gotoPage(' . $paginator->lastPage() . ', \'' . $paginator->getPageName() . '\')'"
                         :wire:key="$this->getId() . '.pagination.last'"

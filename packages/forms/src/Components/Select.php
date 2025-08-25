@@ -7,6 +7,7 @@ use Closure;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
+use Filament\Forms\View\FormsIconAlias;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Contracts\HasAffixActions;
 use Filament\Schemas\Components\StateCasts\BooleanStateCast;
@@ -95,9 +96,9 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
 
     protected bool | Closure $isMultiple = false;
 
-    protected ?Closure $getOptionLabelUsing;
+    protected ?Closure $getOptionLabelUsing = null;
 
-    protected ?Closure $getOptionLabelsUsing;
+    protected ?Closure $getOptionLabelsUsing = null;
 
     protected ?Closure $getSearchResultsUsing = null;
 
@@ -124,6 +125,8 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
 
     protected bool | Closure | null $isSearchForcedCaseInsensitive = null;
 
+    protected bool | Closure $canOptionLabelsWrap = true;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -140,62 +143,6 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
             }
 
             $component->state([]);
-        });
-
-        $this->getOptionLabelUsing(static function (Select $component, $value): ?string {
-            $options = $component->getOptions();
-
-            foreach ($options as $groupedOptions) {
-                if (! is_array($groupedOptions)) {
-                    continue;
-                }
-
-                if (! array_key_exists($value, $groupedOptions)) {
-                    continue;
-                }
-
-                return $groupedOptions[$value];
-            }
-
-            if ($value instanceof BackedEnum) {
-                $value = $value->value;
-            }
-
-            if (! array_key_exists($value, $options)) {
-                return null;
-            }
-
-            return $options[$value];
-        });
-
-        $this->getOptionLabelsUsing(static function (Select $component, array $values): array {
-            $options = $component->getOptions();
-
-            $labels = [];
-
-            foreach ($values as $value) {
-                if ($value instanceof BackedEnum) {
-                    $value = $value->value;
-                }
-
-                foreach ($options as $groupedOptions) {
-                    if (! is_array($groupedOptions)) {
-                        continue;
-                    }
-
-                    if (! array_key_exists($value, $groupedOptions)) {
-                        continue;
-                    }
-
-                    $labels[$value] = $groupedOptions[$value];
-
-                    continue 2;
-                }
-
-                $labels[$value] = $options[$value] ?? null;
-            }
-
-            return $labels;
         });
 
         $this->transformOptionsForJsUsing(static function (Select $component, array $options): array {
@@ -293,7 +240,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
 
         $action = Action::make($this->getCreateOptionActionName())
             ->label(__('filament-forms::components.select.actions.create_option.label'))
-            ->schema(function (Select $component, Schema $schema): array | Schema | null {
+            ->schema(static function (Select $component, Schema $schema): array | Schema | null {
                 return $component->getCreateOptionActionForm($schema->model(
                     $component->getRelationship() ? $component->getRelationship()->getModel()::class : null,
                 ));
@@ -330,7 +277,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
                 $action->halt();
             })
             ->color('gray')
-            ->icon(FilamentIcon::resolve('forms::components.select.actions.create-option') ?? Heroicon::Plus)
+            ->icon(FilamentIcon::resolve(FormsIconAlias::COMPONENTS_SELECT_ACTIONS_CREATE_OPTION) ?? Heroicon::Plus)
             ->iconButton()
             ->modalHeading($this->getCreateOptionModalHeading() ?? __('filament-forms::components.select.actions.create_option.modal.heading'))
             ->modalSubmitActionLabel(__('filament-forms::components.select.actions.create_option.modal.actions.create.label'))
@@ -439,22 +386,18 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
             return null;
         }
 
-        if (blank($this->getState())) {
-            return null;
-        }
-
         if (! $this->hasEditOptionActionFormSchema()) {
             return null;
         }
 
         $action = Action::make($this->getEditOptionActionName())
             ->label(__('filament-forms::components.select.actions.edit_option.label'))
-            ->schema(function (Select $component, Schema $schema): array | Schema | null {
+            ->schema(static function (Select $component, Schema $schema): array | Schema | null {
                 return $component->getEditOptionActionForm(
                     $schema->model($component->getSelectedRecord()),
                 );
             })
-            ->fillForm($this->getEditOptionActionFormData())
+            ->fillForm(static fn (Select $component): ?array => $component->getEditOptionActionFormData())
             ->action(static function (Action $action, array $arguments, Select $component, array $data, Schema $schema): void {
                 if (! $component->getUpdateOptionUsing()) {
                     throw new Exception("Select field [{$component->getStatePath()}] must have a [updateOptionUsing()] closure set.");
@@ -469,10 +412,11 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
                 $component->refreshSelectedOptionLabel();
             })
             ->color('gray')
-            ->icon(FilamentIcon::resolve('forms::components.select.actions.edit-option') ?? Heroicon::PencilSquare)
+            ->icon(FilamentIcon::resolve(FormsIconAlias::COMPONENTS_SELECT_ACTIONS_EDIT_OPTION) ?? Heroicon::PencilSquare)
             ->iconButton()
             ->modalHeading($this->getEditOptionModalHeading() ?? __('filament-forms::components.select.actions.edit_option.modal.heading'))
-            ->modalSubmitActionLabel(__('filament-forms::components.select.actions.edit_option.modal.actions.save.label'));
+            ->modalSubmitActionLabel(__('filament-forms::components.select.actions.edit_option.modal.actions.save.label'))
+            ->visible(fn (): bool => filled($this->getState()));
 
         if ($this->modifyManageOptionActionsUsing) {
             $action = $this->evaluate($this->modifyManageOptionActionsUsing, [
@@ -490,9 +434,9 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
     }
 
     /**
-     * @return array<string, mixed>
+     * @return ?array<string, mixed>
      */
-    public function getEditOptionActionFormData(): array
+    public function getEditOptionActionFormData(): ?array
     {
         return $this->evaluate($this->fillEditOptionActionFormUsing);
     }
@@ -602,6 +546,37 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
     #[Renderless]
     public function getOptionLabel(bool $withDefault = true): ?string
     {
+        if (! $this->getOptionLabelUsing) {
+            $state = $this->getState();
+            $options = $this->getOptions();
+
+            if ($state instanceof BackedEnum) {
+                $state = $state->value;
+            }
+
+            foreach ($options as $groupedOptions) {
+                if (! is_array($groupedOptions)) {
+                    continue;
+                }
+
+                if (blank($groupedOptions[$state] ?? null)) {
+                    continue;
+                }
+
+                return $groupedOptions[$state];
+            }
+
+            if (filled($options[$state] ?? null) && (! is_array($options[$state]))) {
+                return $options[$state];
+            }
+
+            if ($withDefault) {
+                return $state;
+            }
+
+            return null;
+        }
+
         $state = null;
 
         $label = $this->evaluate($this->getOptionLabelUsing, [
@@ -622,6 +597,48 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
      */
     public function getOptionLabels(bool $withDefaults = true): array
     {
+        if (! $this->getOptionLabelsUsing) {
+            $state = $this->getState();
+            $options = $this->getOptions();
+
+            $labels = [];
+
+            foreach ($state as $value) {
+                if ($value instanceof BackedEnum) {
+                    $value = $value->value;
+                }
+
+                foreach ($options as $groupedOptions) {
+                    if (! is_array($groupedOptions)) {
+                        continue;
+                    }
+
+                    if (blank($groupedOptions[$value] ?? null)) {
+                        continue;
+                    }
+
+                    $labels[$value] = $groupedOptions[$value];
+
+                    continue 2;
+                }
+
+                if (
+                    filled($options[$value] ?? null)
+                    && (! is_array($options[$value]))
+                ) {
+                    $labels[$value] = $options[$value];
+
+                    continue;
+                }
+
+                if ($withDefaults) {
+                    $labels[$value] = $value;
+                }
+            }
+
+            return $labels;
+        }
+
         $labels = $this->evaluate($this->getOptionLabelsUsing, [
             'values' => fn (): array => $this->getState(),
         ]);
@@ -1338,6 +1355,18 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         return $this->evaluate($this->isSearchForcedCaseInsensitive);
     }
 
+    public function wrapOptionLabels(bool | Closure $condition = true): static
+    {
+        $this->canOptionLabelsWrap = $condition;
+
+        return $this;
+    }
+
+    public function canOptionLabelsWrap(): bool
+    {
+        return (bool) $this->evaluate($this->canOptionLabelsWrap);
+    }
+
     public function hydrateDefaultState(?array &$hydratedDefaultState): void
     {
         parent::hydrateDefaultState($hydratedDefaultState);
@@ -1412,10 +1441,58 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         }
 
         if ($this->isMultiple()) {
-            return array_keys($this->getOptionLabels(withDefaults: false));
+            if ((! $this->getOptionLabelsUsing) && (! $this->options)) {
+                throw new Exception("Filament failed to validate the [{$this->getStatePath()}] field\'s selected options because it did not have an [options()] or [getOptionLabelsUsing()] configuration. Please use one of these methods to inform Filament which options are valid for this field.");
+            }
+
+            $state = $this->getState();
+            $optionLabels = $this->getOptionLabels(withDefaults: false);
+
+            if (count($state) > count($optionLabels)) {
+                return [];
+            }
+
+            $state = array_map(
+                static fn (mixed $value): mixed => ($value instanceof BackedEnum) ? $value->value : $value,
+                $state,
+            );
+
+            if (count(array_diff($state, array_keys($optionLabels)))) {
+                return [];
+            }
+
+            if ($this->hasDisabledOptions()) {
+                foreach ($optionLabels as $optionValue => $optionLabel) {
+                    if ($this->isOptionDisabled($optionValue, $optionLabel)) {
+                        return [];
+                    }
+                }
+            }
+
+            return null;
         }
 
-        return blank($this->getOptionLabel(withDefault: false)) ? [] : null;
+        if ((! $this->getOptionLabelUsing) && (! $this->options)) {
+            throw new Exception("Filament failed to validate the [{$this->getStatePath()}] field\'s selected options because it did not have an [options()] or [getOptionLabelUsing()] configuration. Please use one of these methods to inform Filament which options are valid for this field.");
+        }
+
+        $optionLabel = $this->getOptionLabel(withDefault: false);
+
+        if (blank($optionLabel)) {
+            return [];
+        }
+
+        $state = $this->getState();
+
+        if ($state instanceof BackedEnum) {
+            $state = $state->value;
+        }
+
+        if ($this->hasDisabledOptions() && $this->isOptionDisabled($state, $optionLabel)) {
+            return [];
+        }
+
+        return null;
     }
 
     public function hasInValidationOnMultipleValues(): bool

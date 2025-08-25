@@ -17,7 +17,11 @@
         :description="$hasNotifications ? null : __('filament-notifications::database.modal.empty.description')"
         :heading="$hasNotifications ? null : __('filament-notifications::database.modal.empty.heading')"
         :icon="$hasNotifications ? null : \Filament\Support\Icons\Heroicon::OutlinedBellSlash"
-        :icon-alias="$hasNotifications ? null : 'notifications::database.modal.empty-state'"
+        :icon-alias="
+            $hasNotifications
+            ? null
+            : \Filament\Notifications\View\NotificationsIconAlias::DATABASE_MODAL_EMPTY_STATE
+        "
         :icon-color="$hasNotifications ? null : 'gray'"
         id="database-notifications"
         slide-over

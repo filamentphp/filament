@@ -10,9 +10,15 @@ class Post extends Model
 {
     use HasFactory;
 
-    protected $casts = [
-        'is_featured' => 'boolean',
-    ];
+    /**
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'is_featured' => 'boolean',
+        ];
+    }
 
     public function author(): BelongsTo
     {

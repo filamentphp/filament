@@ -90,11 +90,6 @@ class ParentResourceRegistration
             ->snake();
     }
 
-    public function getSlug(): string
-    {
-        return Str::slug($this->relationshipName);
-    }
-
     public function getRouteName(): string
     {
         return Str::kebab($this->relationshipName);

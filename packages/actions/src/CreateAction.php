@@ -5,6 +5,7 @@ namespace Filament\Actions;
 use Closure;
 use Filament\Actions\Concerns\CanCustomizeProcess;
 use Filament\Actions\Contracts\HasActions;
+use Filament\Actions\View\ActionsIconAlias;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
 use Filament\Support\Facades\FilamentIcon;
@@ -21,6 +22,8 @@ class CreateAction extends Action
     use CanCustomizeProcess;
 
     protected bool | Closure $canCreateAnother = true;
+
+    protected ?Closure $modifyCreateAnotherActionUsing = null;
 
     protected ?Closure $preserveFormDataWhenCreatingAnotherUsing = null;
 
@@ -42,15 +45,12 @@ class CreateAction extends Action
         $this->modalSubmitActionLabel(__('filament-actions::create.single.modal.actions.create.label'));
 
         $this->extraModalFooterActions(function (): array {
-            return $this->canCreateAnother() ? [
-                $this->makeModalSubmitAction('createAnother', arguments: ['another' => true])
-                    ->label(__('filament-actions::create.single.modal.actions.create_another.label')),
-            ] : [];
+            return $this->canCreateAnother() ? [$this->getCreateAnotherAction()] : [];
         });
 
         $this->successNotificationTitle(__('filament-actions::create.single.notifications.created.title'));
 
-        $this->groupedIcon(FilamentIcon::resolve('actions::create-action.grouped') ?? Heroicon::Plus);
+        $this->groupedIcon(FilamentIcon::resolve(ActionsIconAlias::CREATE_ACTION_GROUPED) ?? Heroicon::Plus);
 
         $this->record(null);
 
@@ -170,6 +170,21 @@ class CreateAction extends Action
     public function canCreateAnother(): bool
     {
         return (bool) $this->evaluate($this->canCreateAnother);
+    }
+
+    public function createAnotherAction(Closure $callback): static
+    {
+        $this->modifyCreateAnotherActionUsing = $callback;
+
+        return $this;
+    }
+
+    public function getCreateAnotherAction(): Action
+    {
+        $action = $this->makeModalSubmitAction('createAnother', arguments: ['another' => true])
+            ->label(__('filament-actions::create.single.modal.actions.create_another.label'));
+
+        return $this->evaluate($this->modifyCreateAnotherActionUsing, ['action' => $action]) ?? $action;
     }
 
     public function shouldClearRecordAfter(): bool
