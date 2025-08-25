@@ -1,5 +1,5 @@
 .fi-no-notification {
-    @apply pointer-events-auto invisible flex w-full shrink-0 gap-3 overflow-hidden p-4 transition duration-300;
+    @apply pointer-events-auto invisible flex w-full shrink-0 gap-3 overflow-hidden p-4 transition-[opacity,scale,transform,translate] duration-300;
 
     & .fi-no-notification-icon {
         @apply text-gray-400;
