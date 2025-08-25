@@ -14,7 +14,7 @@
     }
 
     & .fi-fo-repeater-item {
-        @apply rounded-xl bg-white shadow-xs ring-1 ring-gray-950/5 dark:divide-white/10 dark:bg-white/5 dark:ring-white/10;
+        @apply rounded-xl bg-white shadow-xs ring-1 ring-gray-950/5 dark:bg-white/5 dark:ring-white/10;
 
         &.fi-collapsed {
             & .fi-fo-repeater-item-header-collapsible-actions {
