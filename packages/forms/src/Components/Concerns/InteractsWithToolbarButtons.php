@@ -60,7 +60,7 @@ trait InteractsWithToolbarButtons
         }
 
         $this->toolbarButtons = [
-            ...$this->toolbarButtons ?? [],
+            ...$this->toolbarButtons ?? $this->getDefaultToolbarButtons(),
             ...$buttonsToEnable,
         ];
 
