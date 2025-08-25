@@ -140,47 +140,44 @@
                                     $counter = 0
                                 @endphp
 
-                                @foreach ($item->getComponents(withHidden: true) as $component)
+                                @foreach ($item->getComponents(withHidden: true) as $schemaComponent)
                                     @php
                                         throw_unless(
-                                            $component instanceof \Filament\Schemas\Components\Component,
-                                            new \Exception('Table repeaters must only contain schema components, but [' . $component::class . '] was used.'),
+                                            $schemaComponent instanceof \Filament\Schemas\Components\Component,
+                                            new \Exception('Table repeaters must only contain schema components, but [' . $schemaComponent::class . '] was used.'),
                                         );
                                     @endphp
 
                                     @if (count($tableColumns) > $counter)
-                                        @if ($component instanceof \Filament\Forms\Components\Hidden)
-                                            {{ $component }}
+                                        @if ($schemaComponent instanceof \Filament\Forms\Components\Hidden)
+                                            {{ $schemaComponent }}
                                         @else
                                             @php
-                                                $counter++;
+                                                $counter++
                                             @endphp
 
-                                            @if ($component->isVisible())
-                                                @if (! (($component instanceof Action) || ($component instanceof ActionGroup)))
-                                                    @php
-                                                        $componentStatePath = $component->getStatePath();
-                                                    @endphp
-                                                    <td
-                                                        @if (filled($componentStatePath))
-                                                            x-data="filamentSchemaComponent({
-                                                                path: @js($componentStatePath),
-                                                                containerPath: @js($itemStatePath),
-                                                                isLive: @js(method_exists($component, 'isLive') ? $component->isLive() : false),
-                                                                $wire,
-                                                            })"
-                                                            @if ($afterStateUpdatedJs = $component->getAfterStateUpdatedJs())
-                                                                x-init="{{ implode(';', array_map(
-                                                                    fn (string $js): string => '$wire.watch(' . Js::from($componentStatePath) . ', ($state, $old) => ($state !== undefined) && eval(' . Js::from($js) . '))',
-                                                                    $afterStateUpdatedJs,
-                                                                )) }}"
-                                                            @endif
+                                            @if ($schemaComponent->isVisible())
+                                                <td
+                                                    @if (! (($schemaComponent instanceof Action) || ($schemaComponent instanceof ActionGroup)))
+                                                        @php
+                                                            $schemaComponentStatePath = $schemaComponent->getStatePath();
+                                                        @endphp
+
+                                                        x-data="filamentSchemaComponent({
+                                                            path: @js($schemaComponentStatePath),
+                                                            containerPath: @js($itemStatePath),
+                                                            isLive: @js($schemaComponent->isLive()),
+                                                            $wire,
+                                                        })"
+                                                        @if ($afterStateUpdatedJs = $schemaComponent->getAfterStateUpdatedJs())
+                                                            x-init="{{ implode(';', array_map(
+                                                                fn (string $js): string => '$wire.watch(' . Js::from($schemaComponentStatePath) . ', ($state, $old) => ($state !== undefined) && eval(' . Js::from($js) . '))',
+                                                                $afterStateUpdatedJs,
+                                                            )) }}"
                                                         @endif
-                                                    >
-                                                @else
-                                                    <td>
-                                                @endif
-                                                    {{ $component }}
+                                                    @endif
+                                                >
+                                                    {{ $schemaComponent }}
                                                 </td>
                                             @else
                                                 <td class="fi-hidden"></td>
