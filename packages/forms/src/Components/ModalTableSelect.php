@@ -269,9 +269,8 @@ class ModalTableSelect extends Field
                 $relatedRecords = $relationship->getResults();
 
                 $component->state(
-                    // @js() in the frontend casts numbers to strings.
-                    // Therefore, we need to cast array values to strings, too.
-                    // Otherwise, selection and deselection will break.
+                    // Cast the related keys to a string, otherwise JavaScript does not
+                    // know how to handle deselection.
                     //
                     // https://github.com/filamentphp/filament/issues/1111
                     $relatedRecords
@@ -301,9 +300,8 @@ class ModalTableSelect extends Field
                 $relatedRecords = $relationship->getResults();
 
                 $component->state(
-                    // @js() in the frontend casts numbers to strings.
-                    // Therefore, we need to cast array values to strings, too.
-                    // Otherwise, selection and deselection will break.
+                    // Cast the related keys to a string, otherwise JavaScript does not
+                    // know how to handle deselection.
                     //
                     // https://github.com/filamentphp/filament/issues/1111
                     $relatedRecords
