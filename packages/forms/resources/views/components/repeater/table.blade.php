@@ -2,8 +2,8 @@
     use Filament\Actions\Action;
     use Filament\Actions\ActionGroup;
     use Filament\Support\Enums\Alignment;
-    use Illuminate\View\ComponentAttributeBag;
     use Illuminate\Support\Js;
+    use Illuminate\View\ComponentAttributeBag;
 
     $fieldWrapperView = $getFieldWrapperView();
 
