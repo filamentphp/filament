@@ -502,6 +502,8 @@ return [
 
                     ],
 
+                ],
+
             ],
 
         ],
@@ -552,8 +554,6 @@ return [
             'underline' => 'Underline',
             'undo' => 'Undo',
         ],
-
-    ],
 
     ],
 
