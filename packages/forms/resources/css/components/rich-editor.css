@@ -182,6 +182,10 @@
         &.resize-cursor {
             @apply cursor-col-resize cursor-ew-resize;
         }
+
+        & pre {
+            @apply bg-gray-100 p-3 rounded-lg dark:bg-gray-900/40;
+        }
     }
 
     & img {
