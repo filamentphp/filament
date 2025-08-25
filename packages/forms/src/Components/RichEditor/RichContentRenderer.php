@@ -61,6 +61,8 @@ class RichContentRenderer implements Htmlable
 
     protected ?string $fileAttachmentsVisibility = null;
 
+    protected bool $lazyLoadImages = false;
+
     /**
      * @var array<RichContentPlugin>
      */
@@ -161,6 +163,18 @@ class RichContentRenderer implements Htmlable
         return $storage->url($file);
     }
 
+    public function lazyLoadImages(bool $lazyLoadImages = true): static
+    {
+        $this->lazyLoadImages = $lazyLoadImages;
+
+        return $this;
+    }
+
+    public function getLazyLoadImages(): bool
+    {
+        return $this->lazyLoadImages;
+    }
+
     /**
      * @param  array<RichContentPlugin>  $plugins
      */
@@ -209,6 +223,10 @@ class RichContentRenderer implements Htmlable
             }
 
             $node->attrs->src = $this->getFileAttachmentUrl($node->attrs->id);
+
+            if($this->lazyLoadImages) {
+                $node->attrs->loading = 'lazy';
+            }
         });
     }
 
