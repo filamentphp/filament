@@ -224,7 +224,7 @@ class RichContentRenderer implements Htmlable
 
             $node->attrs->src = $this->getFileAttachmentUrl($node->attrs->id);
 
-            if($this->lazyLoadImages) {
+            if ($this->lazyLoadImages) {
                 $node->attrs->loading = 'lazy';
             }
         });
