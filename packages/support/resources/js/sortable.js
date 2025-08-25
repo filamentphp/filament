@@ -22,7 +22,8 @@ export default (Alpine) => {
 
                 const { item: draggedNode, to: parentNode, newIndex } = event
                 const draggableSelector = this.options.draggable
-                const previousNode = parentNode.querySelectorAll(draggableSelector)[newIndex - 1]
+                const previousNode =
+                    parentNode.querySelectorAll(draggableSelector)[newIndex - 1]
 
                 if (previousNode) {
                     parentNode.insertBefore(
