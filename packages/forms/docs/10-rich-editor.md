@@ -151,6 +151,16 @@ RichContentRenderer::make($record->content)
     ->toHtml()
 ```
 
+If you want to lazy-load images, you can pass the `lazyLoadImages` option to the renderer:
+
+```php
+use Filament\Forms\Components\RichEditor\RichContentRenderer;
+
+RichContentRenderer::make($record->content)
+    ->lazyLoadImages()
+    ->toHtml()
+```
+
 If you are using [custom blocks](#using-custom-blocks) in the rich editor, you can pass an array of custom blocks to the renderer to ensure that they are rendered correctly:
 
 ```php
