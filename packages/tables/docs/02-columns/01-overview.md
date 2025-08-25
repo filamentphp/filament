@@ -40,7 +40,7 @@ Columns may feel a bit magic at first, but they’re designed to be simple to us
 The data that a column displays is called its "state". When using a [panel resource](../resources), the table is aware of the records it is displaying. This means that the state of the column is set based on the value of the attribute on the record. For example, if the column is used in the table of a `PostResource`, then the `title` attribute value of the current post will be displayed.
 
 ```php
-use Filament\Tables\Components\TextColumn;
+use Filament\Tables\Columns\TextColumn;
 
 TextColumn::make('title')
 ```
@@ -48,7 +48,7 @@ TextColumn::make('title')
 If you want to access the value stored in a relationship, you can use "dot notation". The name of the relationship that you would like to access data from comes first, followed by a dot, and then the name of the attribute:
 
 ```php
-use Filament\Tables\Components\TextColumn;
+use Filament\Tables\Columns\TextColumn;
 
 TextColumn::make('author.name')
 ```
@@ -56,7 +56,7 @@ TextColumn::make('author.name')
 You can also use "dot notation" to access values within a JSON / array column on an Eloquent model. The name of the attribute comes first, followed by a dot, and then the key of the JSON object you want to read from:
 
 ```php
-use Filament\Tables\Components\TextColumn;
+use Filament\Tables\Columns\TextColumn;
 
 TextColumn::make('meta.title')
 ```
@@ -66,7 +66,7 @@ TextColumn::make('meta.title')
 You can pass your own state to a column by using the `state()` method:
 
 ```php
-use Filament\Tables\Components\TextColumn;
+use Filament\Tables\Columns\TextColumn;
 
 TextColumn::make('title')
     ->state('Hello, world!')
@@ -79,7 +79,7 @@ TextColumn::make('title')
 When a column is empty (its state is `null`), you can use the `default()` method to define alternative state to use instead. This method will treat the default state as if it were real, so columns like [image](image) or [color](color) will display the default image or color.
 
 ```php
-use Filament\Tables\Components\TextColumn;
+use Filament\Tables\Columns\TextColumn;
 
 TextColumn::make('title')
     ->default('Untitled')
@@ -90,7 +90,7 @@ TextColumn::make('title')
 Sometimes you may want to display placeholder text for columns with an empty state, which is styled as a lighter gray text. This differs from the [default value](#setting-the-default-state-of-an-column), as the placeholder is always text and not treated as if it were real state.
 
 ```php
-use Filament\Tables\Components\TextColumn;
+use Filament\Tables\Columns\TextColumn;
 
 TextColumn::make('title')
     ->placeholder('Untitled')
@@ -182,7 +182,7 @@ TextColumn::make('users_avg_age')->avg([
 By default, the label of the column, which is displayed in the header of the table, is generated from the name of the column. You may customize this using the `label()` method:
 
 ```php
-use Filament\Tables\Components\TextColumn;
+use Filament\Tables\Columns\TextColumn;
 
 TextColumn::make('name')
     ->label('Full name')
@@ -193,7 +193,7 @@ TextColumn::make('name')
 Customizing the label in this way is useful if you wish to use a [translation string for localization](https://laravel.com/docs/localization#retrieving-translation-strings):
 
 ```php
-use Filament\Tables\Components\TextColumn;
+use Filament\Tables\Columns\TextColumn;
 
 TextColumn::make('name')
     ->label(__('columns.name'))
