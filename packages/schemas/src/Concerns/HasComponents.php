@@ -163,7 +163,7 @@ trait HasComponents
                     continue;
                 }
 
-                $componentKey = $component->getKey();
+                $componentKey = $component->getKey($isAbsoluteKey);
 
                 if (filled($componentKey) && ($componentKey === $findComponentUsing)) {
                     return $component;
@@ -240,7 +240,7 @@ trait HasComponents
      */
     public function getFlatComponents(bool $withActions = true, bool $withHidden = false, bool $withAbsoluteKeys = false, ?string $containerKey = null): array
     {
-        $containerKey ??= $this->getKey();
+        $containerKey ??= $this->getKey($withAbsoluteKeys);
 
         return $this->cachedFlatComponents[$withActions][$withHidden][$withAbsoluteKeys][$containerKey] ??= array_reduce(
             $this->getComponents($withActions, $withHidden),
@@ -251,7 +251,7 @@ trait HasComponents
                     return $carry;
                 }
 
-                $componentKey = $component->getKey();
+                $componentKey = $component->getKey($withAbsoluteKeys);
 
                 if (blank($componentKey)) {
                     $carry[] = $component;

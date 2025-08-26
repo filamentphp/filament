@@ -742,7 +742,7 @@ trait HasState
     public function resolveRelativeKey(string | Component $key = '', bool $isAbsolute = false): string
     {
         if ($key instanceof Component) {
-            return $key->getKey();
+            return $key->getKey($isAbsolute);
         }
 
         if (str($key)->startsWith('/')) {
