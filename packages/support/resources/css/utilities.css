@@ -474,6 +474,7 @@
         transparent
     );
     --prose-blockquote-border-color: var(--color-gray-300);
+    --prose-pre-bg: var(--color-gray-100);
 
     @variant dark {
         --prose-color: var(--color-gray-300);
@@ -495,6 +496,11 @@
             transparent
         );
         --prose-blockquote-border-color: var(--color-gray-600);
+        --prose-pre-bg: color-mix(
+            in oklab,
+            var(--color-gray-900) 40%,
+            transparent
+        );
     }
 
     color: var(--prose-color);
@@ -614,6 +620,9 @@
     pre:where(:not(.fi-not-prose, .fi-not-prose *)) {
         margin-top: calc(var(--spacing) * 4);
         margin-bottom: calc(var(--spacing) * 10);
+        border-radius: var(--radius-lg);
+        padding: calc(var(--spacing) * 3);
+        background-color: var(--prose-pre-bg);
     }
 
     pre code * + *:where(:not(.fi-not-prose, .fi-not-prose *)) {
