@@ -78,7 +78,7 @@ class RequestPasswordReset extends SimplePage
                     throw new Exception("Model [{$userClass}] does not have a [notify()] method.");
                 }
 
-                $notification = app(ResetPasswordNotification::class, ['token' => $token]);
+                $notification = app($this->getResetPasswordNotificationClass(), ['token' => $token]);
                 $notification->url = Filament::getResetPasswordUrl($token, $user);
 
                 $user->notify($notification);
@@ -98,6 +98,11 @@ class RequestPasswordReset extends SimplePage
         $this->getSentNotification($status)?->send();
 
         $this->form->fill();
+    }
+
+    protected function getResetPasswordNotificationClass(): string
+    {
+        return ResetPasswordNotification::class;
     }
 
     protected function getRateLimitedNotification(TooManyRequestsException $exception): ?Notification
