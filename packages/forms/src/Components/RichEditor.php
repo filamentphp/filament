@@ -300,7 +300,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
                 ->iconAlias('forms:components.rich-editor.toolbar.clear_formatting'),
         ]);
 
-        $this->beforeStateDehydrated(function (RichEditor $component, ?array $rawState, ?Model $record): void {
+        $this->beforeStateDehydrated(function (RichEditor $component, array|string|null $rawState, ?Model $record): void {
             $fileAttachmentProvider = $component->getFileAttachmentProvider();
 
             if ($fileAttachmentProvider?->isExistingRecordRequiredToSaveNewFileAttachments() && (! $record)) {
