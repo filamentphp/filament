@@ -83,6 +83,10 @@ public function toDatabase(User $notifiable): array
 }
 ```
 
+## Setting queue on which the notifications are sent
+
+Without any setup, the queue is set to `default`. You can change it by setting the `DB_QUEUE` environment variable. You can also change the value of `connections.database.queue` in `config/queue.php`.
+
 ## Receiving database notifications
 
 Without any setup, new database notifications will only be received when the page is first loaded.
