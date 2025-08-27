@@ -170,8 +170,12 @@
                 Livewire.hook('request', ({ payload, fail }) => {
                     fail(({ status, preventDefault }) => {
                         if (JSON.parse(payload).components.length === 1) {
-                            for (const component of JSON.parse(payload).components) {
-                                if (JSON.parse(component.snapshot).data.isFilamentNotificationsComponent) {
+                            for (const component of JSON.parse(payload)
+                                .components) {
+                                if (
+                                    JSON.parse(component.snapshot).data
+                                        .isFilamentNotificationsComponent
+                                ) {
                                     return
                                 }
                             }
