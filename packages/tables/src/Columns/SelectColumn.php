@@ -146,7 +146,7 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
     {
         $optionLabel = $this->getOptionLabel(withDefault: false);
 
-        if (blank($optionLabel)) {
+        if (blank($optionLabel) && filled($this->getState())) {
             return [
                 ...$this->getBaseRules(),
                 Rule::in([]),
