@@ -273,7 +273,7 @@ class EditProfile extends Page
         return null;
     }
 
-    protected function getNameFormComponent(): Component
+    protected function getNameFormComponent(): TextInput
     {
         return TextInput::make('name')
             ->label(__('filament-panels::auth/pages/edit-profile.form.name.label'))
@@ -282,18 +282,19 @@ class EditProfile extends Page
             ->autofocus();
     }
 
-    protected function getEmailFormComponent(): Component
+    protected function getEmailFormComponent(): TextInput
     {
         return TextInput::make('email')
             ->label(__('filament-panels::auth/pages/edit-profile.form.email.label'))
             ->email()
+            ->autocomplete('username')
             ->required()
             ->maxLength(255)
             ->unique(ignoreRecord: true)
             ->live(debounce: 500);
     }
 
-    protected function getPasswordFormComponent(): Component
+    protected function getPasswordFormComponent(): TextInput
     {
         return TextInput::make('password')
             ->label(__('filament-panels::auth/pages/edit-profile.form.password.label'))
@@ -309,25 +310,27 @@ class EditProfile extends Page
             ->same('passwordConfirmation');
     }
 
-    protected function getPasswordConfirmationFormComponent(): Component
+    protected function getPasswordConfirmationFormComponent(): TextInput
     {
         return TextInput::make('passwordConfirmation')
             ->label(__('filament-panels::auth/pages/edit-profile.form.password_confirmation.label'))
             ->validationAttribute(__('filament-panels::auth/pages/edit-profile.form.password_confirmation.validation_attribute'))
             ->password()
+            ->autocomplete('new-password')
             ->revealable(filament()->arePasswordsRevealable())
             ->required()
             ->visible(fn (Get $get): bool => filled($get('password')))
             ->dehydrated(false);
     }
 
-    protected function getCurrentPasswordFormComponent(): Component
+    protected function getCurrentPasswordFormComponent(): TextInput
     {
         return TextInput::make('currentPassword')
             ->label(__('filament-panels::auth/pages/edit-profile.form.current_password.label'))
             ->validationAttribute(__('filament-panels::auth/pages/edit-profile.form.current_password.validation_attribute'))
             ->belowContent(__('filament-panels::auth/pages/edit-profile.form.current_password.below_content'))
             ->password()
+            ->autocomplete('current-password')
             ->currentPassword(guard: Filament::getAuthGuard())
             ->revealable(filament()->arePasswordsRevealable())
             ->required()

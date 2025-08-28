@@ -143,19 +143,21 @@ class ResetPassword extends SimplePage
             ]);
     }
 
-    protected function getEmailFormComponent(): Component
+    protected function getEmailFormComponent(): TextInput
     {
         return TextInput::make('email')
             ->label(__('filament-panels::auth/pages/password-reset/reset-password.form.email.label'))
             ->disabled()
+            ->autocomplete('username')
             ->autofocus();
     }
 
-    protected function getPasswordFormComponent(): Component
+    protected function getPasswordFormComponent(): TextInput
     {
         return TextInput::make('password')
             ->label(__('filament-panels::auth/pages/password-reset/reset-password.form.password.label'))
             ->password()
+            ->autocomplete('new-password')
             ->revealable(filament()->arePasswordsRevealable())
             ->required()
             ->rule(PasswordRule::default())
@@ -163,11 +165,12 @@ class ResetPassword extends SimplePage
             ->validationAttribute(__('filament-panels::auth/pages/password-reset/reset-password.form.password.validation_attribute'));
     }
 
-    protected function getPasswordConfirmationFormComponent(): Component
+    protected function getPasswordConfirmationFormComponent(): TextInput
     {
         return TextInput::make('passwordConfirmation')
             ->label(__('filament-panels::auth/pages/password-reset/reset-password.form.password_confirmation.label'))
             ->password()
+            ->autocomplete('new-password')
             ->revealable(filament()->arePasswordsRevealable())
             ->required()
             ->dehydrated(false);
