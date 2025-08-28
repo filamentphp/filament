@@ -143,7 +143,7 @@ class ResetPassword extends SimplePage
             ]);
     }
 
-    protected function getEmailFormComponent(): TextInput
+    protected function getEmailFormComponent(): Component
     {
         return TextInput::make('email')
             ->label(__('filament-panels::auth/pages/password-reset/reset-password.form.email.label'))
@@ -152,7 +152,7 @@ class ResetPassword extends SimplePage
             ->autofocus();
     }
 
-    protected function getPasswordFormComponent(): TextInput
+    protected function getPasswordFormComponent(): Component
     {
         return TextInput::make('password')
             ->label(__('filament-panels::auth/pages/password-reset/reset-password.form.password.label'))
@@ -165,7 +165,7 @@ class ResetPassword extends SimplePage
             ->validationAttribute(__('filament-panels::auth/pages/password-reset/reset-password.form.password.validation_attribute'));
     }
 
-    protected function getPasswordConfirmationFormComponent(): TextInput
+    protected function getPasswordConfirmationFormComponent(): Component
     {
         return TextInput::make('passwordConfirmation')
             ->label(__('filament-panels::auth/pages/password-reset/reset-password.form.password_confirmation.label'))

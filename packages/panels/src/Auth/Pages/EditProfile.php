@@ -273,7 +273,7 @@ class EditProfile extends Page
         return null;
     }
 
-    protected function getNameFormComponent(): TextInput
+    protected function getNameFormComponent(): Component
     {
         return TextInput::make('name')
             ->label(__('filament-panels::auth/pages/edit-profile.form.name.label'))
@@ -282,7 +282,7 @@ class EditProfile extends Page
             ->autofocus();
     }
 
-    protected function getEmailFormComponent(): TextInput
+    protected function getEmailFormComponent(): Component
     {
         return TextInput::make('email')
             ->label(__('filament-panels::auth/pages/edit-profile.form.email.label'))
@@ -294,7 +294,7 @@ class EditProfile extends Page
             ->live(debounce: 500);
     }
 
-    protected function getPasswordFormComponent(): TextInput
+    protected function getPasswordFormComponent(): Component
     {
         return TextInput::make('password')
             ->label(__('filament-panels::auth/pages/edit-profile.form.password.label'))
@@ -310,7 +310,7 @@ class EditProfile extends Page
             ->same('passwordConfirmation');
     }
 
-    protected function getPasswordConfirmationFormComponent(): TextInput
+    protected function getPasswordConfirmationFormComponent(): Component
     {
         return TextInput::make('passwordConfirmation')
             ->label(__('filament-panels::auth/pages/edit-profile.form.password_confirmation.label'))
@@ -323,7 +323,7 @@ class EditProfile extends Page
             ->dehydrated(false);
     }
 
-    protected function getCurrentPasswordFormComponent(): TextInput
+    protected function getCurrentPasswordFormComponent(): Component
     {
         return TextInput::make('currentPassword')
             ->label(__('filament-panels::auth/pages/edit-profile.form.current_password.label'))
