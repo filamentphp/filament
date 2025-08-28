@@ -28,7 +28,7 @@
         @if (FilamentView::hasSpaMode())
             {{-- format-ignore-start --}}x-load="visible || event (ax-modal-opened)"{{-- format-ignore-end --}}
         @else
-            x-load
+            x-load="visible"
         @endif
         x-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('file-upload', 'filament/forms') }}"
         x-data="fileUploadFormComponent({
