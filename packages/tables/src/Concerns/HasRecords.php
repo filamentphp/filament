@@ -121,11 +121,15 @@ trait HasRecords
                 $collection = $records;
             }
 
-            $collection = $collection->mapWithKeys(function (array $record, string | int $key): array {
-                $keyName = ArrayRecord::getKeyName();
-
-                $record[$keyName] ??= $key;
-                $record[$keyName] = (string) $record[$keyName];
+            $collection = $collection->mapWithKeys(function (array|Model $record, string | int $key): array {
+                if ($record instanceof Model) {
+                    $keyName = $record->getKeyName();
+                } else {
+                    $keyName = ArrayRecord::getKeyName();
+    
+                    $record[$keyName] ??= $key;
+                    $record[$keyName] = (string) $record[$keyName];
+                }
 
                 return [$record[$keyName] => $record];
             });
