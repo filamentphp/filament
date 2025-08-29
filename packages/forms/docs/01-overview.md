@@ -1247,14 +1247,14 @@ function (Set $set) {
 
 Dehydration is the process that gets data from the fields in your schemas, optionally transforms it, and returns it. It runs when you call the schema's `getState()` method, which is usually called when a form is submitted.
 
-You may customize how the state is transformed when it is dehydrated using the `dehydrateStateUsing()` function. In this example, the `name` field will always be dehydrated with the correctly capitalized name:
+You may customize how the state is transformed when it is dehydrated using the `mutateDehydratedStateUsing()` function. In this example, the `name` field will always be dehydrated with the correctly capitalized name:
 
 ```php
 use Filament\Forms\Components\TextInput;
 
 TextInput::make('name')
     ->required()
-    ->dehydrateStateUsing(fn (string $state): string => ucwords($state))
+    ->mutateDehydratedStateUsing(fn (string $state): string => ucwords($state))
 ```
 
 #### Preventing a field from being dehydrated
