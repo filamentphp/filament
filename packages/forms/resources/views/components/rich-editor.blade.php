@@ -59,7 +59,7 @@
                     @foreach ($toolbarButtons as $button => $buttonGroup)
                         <div class="fi-fo-rich-editor-toolbar-group">
                             @foreach ($buttonGroup as $button)
-                                {{ $tools[$button] ?? throw new Exception("Toolbar button [{$button}] cannot be found.") }}
+                                {{ $tools[$button] ?? throw new LogicException("Toolbar button [{$button}] cannot be found.") }}
                             @endforeach
                         </div>
                     @endforeach

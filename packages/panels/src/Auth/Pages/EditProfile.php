@@ -2,7 +2,6 @@
 
 namespace Filament\Auth\Pages;
 
-use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Auth\MultiFactor\Contracts\MultiFactorAuthenticationProvider;
@@ -35,6 +34,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Js;
 use Illuminate\Validation\Rules\Password;
 use League\Uri\Components\Query;
+use LogicException;
 use Throwable;
 
 /**
@@ -95,7 +95,7 @@ class EditProfile extends Page
         $user = Filament::auth()->user();
 
         if (! $user instanceof Model) {
-            throw new Exception('The authenticated user object must be an Eloquent model to allow the profile page to update it.');
+            throw new LogicException('The authenticated user object must be an Eloquent model to allow the profile page to update it.');
         }
 
         return $user;

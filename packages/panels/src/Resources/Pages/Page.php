@@ -3,7 +3,6 @@
 namespace Filament\Resources\Pages;
 
 use Closure;
-use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
@@ -28,6 +27,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Routing\Route;
 use Illuminate\Support\Facades\Route as RouteFacade;
+use LogicException;
 
 use function Filament\Support\original_request;
 
@@ -107,7 +107,7 @@ abstract class Page extends BasePage
             return $pageName;
         }
 
-        throw new Exception('Page [' . static::class . '] is not registered to the resource [' . static::getResource() . '].');
+        throw new LogicException('Page [' . static::class . '] is not registered to the resource [' . static::getResource() . '].');
     }
 
     public static function route(string $path): PageRegistration

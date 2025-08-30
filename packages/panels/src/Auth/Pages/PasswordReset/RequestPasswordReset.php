@@ -4,7 +4,6 @@ namespace Filament\Auth\Pages\PasswordReset;
 
 use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;
 use DanHarrin\LivewireRateLimiting\WithRateLimiting;
-use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Auth\Notifications\ResetPassword as ResetPasswordNotification;
@@ -27,6 +26,7 @@ use Illuminate\Auth\Events\PasswordResetLinkSent;
 use Illuminate\Contracts\Auth\CanResetPassword;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Facades\Password;
+use LogicException;
 
 /**
  * @property-read Action $loginAction
@@ -75,7 +75,7 @@ class RequestPasswordReset extends SimplePage
                 if (! method_exists($user, 'notify')) {
                     $userClass = $user::class;
 
-                    throw new Exception("Model [{$userClass}] does not have a [notify()] method.");
+                    throw new LogicException("Model [{$userClass}] does not have a [notify()] method.");
                 }
 
                 $notification = app(ResetPasswordNotification::class, ['token' => $token]);
