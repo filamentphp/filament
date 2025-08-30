@@ -2,7 +2,6 @@
 
 namespace Filament\Tables\Concerns;
 
-use Exception;
 use Filament\Support\ArrayRecord;
 use Illuminate\Contracts\Pagination\CursorPaginator;
 use Illuminate\Contracts\Pagination\Paginator;
@@ -12,6 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
+use LogicException;
 
 use function Livewire\invade;
 
@@ -165,7 +165,7 @@ trait HasRecords
         if (! $query) {
             $livewireClass = $this::class;
 
-            throw new Exception("Table [{$livewireClass}] must have a [query()], [relationship()], or [records()].");
+            throw new LogicException("Table [{$livewireClass}] must have a [query()], [relationship()], or [records()].");
         }
 
         if (
@@ -234,7 +234,7 @@ trait HasRecords
     public function getTableRecordKey(Model | array $record): string
     {
         if (is_array($record)) {
-            return $record[ArrayRecord::getKeyName()] ?? throw new Exception('Record arrays must have a unique [key] entry for identification.');
+            return $record[ArrayRecord::getKeyName()] ?? throw new LogicException('Record arrays must have a unique [key] entry for identification.');
         }
 
         $table = $this->getTable();

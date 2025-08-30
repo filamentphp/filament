@@ -4,7 +4,6 @@ namespace Filament\Tables\Columns;
 
 use BackedEnum;
 use Closure;
-use Exception;
 use Filament\Forms\Components\Concerns\CanDisableOptions;
 use Filament\Forms\Components\Concerns\CanSelectPlaceholder;
 use Filament\Forms\Components\Concerns\HasEnum;
@@ -31,6 +30,7 @@ use Illuminate\Support\Js;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Renderless;
+use LogicException;
 use Stringable;
 use Znck\Eloquent\Relations\BelongsToThrough;
 
@@ -785,7 +785,7 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
         if (! $relationship) {
             $model = $record::class;
 
-            throw new Exception("The relationship [{$relationshipName}] does not exist on the model [{$model}].");
+            throw new LogicException("The relationship [{$relationshipName}] does not exist on the model [{$model}].");
         }
 
         return $relationship;

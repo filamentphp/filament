@@ -3,7 +3,6 @@
 namespace Filament\Actions\Concerns;
 
 use Closure;
-use Exception;
 use Filament\Actions\Action;
 use Filament\Support\ArrayRecord;
 use Illuminate\Database\Eloquent\Model;
@@ -92,8 +91,6 @@ trait InteractsWithRecord
 
     /**
      * @return Model | array<string, mixed> | null
-     *
-     * @throws Exception
      */
     public function getRecord(bool $withDefault = true): Model | array | null
     {
@@ -102,7 +99,7 @@ trait InteractsWithRecord
         $isRecordKey = filled($record) && (! $record instanceof Model) && (! is_array($record));
 
         if ($isRecordKey && (! $this->resolveRecordUsing)) {
-            throw new Exception("Could not resolve record from key [{$record}] without a [resolveRecordUsing()] callback.");
+            throw new LogicException("Could not resolve record from key [{$record}] without a [resolveRecordUsing()] callback.");
         }
 
         if ($isRecordKey) {
@@ -218,8 +215,6 @@ trait InteractsWithRecord
 
     /**
      * @return class-string<Model>|null
-     *
-     * @throws Exception
      */
     public function getModel(bool $withDefault = true): ?string
     {

@@ -4,7 +4,6 @@ namespace Filament\Actions\Concerns;
 
 use BackedEnum;
 use Closure;
-use Exception;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
@@ -157,7 +156,7 @@ trait CanBeAuthorized
         }
 
         if (blank($response->message())) {
-            throw new Exception('An authorization was denied without a message.');
+            throw new LogicException('An authorization was denied without a message.');
         }
 
         return $response;

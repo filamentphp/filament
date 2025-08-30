@@ -2,7 +2,6 @@
 
 namespace Filament\Tables\Concerns;
 
-use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\BulkAction;
 use Filament\Schemas\Schema;
@@ -13,6 +12,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\LazyCollection;
+use LogicException;
 
 trait HasBulkActions
 {
@@ -227,7 +227,7 @@ trait HasBulkActions
             $maxSelectableRecords = $table->getMaxSelectableRecords();
 
             if ($maxSelectableRecords && ($resolvedSelectedRecords->count() > $maxSelectableRecords)) {
-                throw new Exception("The total count of selected records [{$resolvedSelectedRecords->count()}] must not exceed the maximum selectable records limit [{$maxSelectableRecords}].");
+                throw new LogicException("The total count of selected records [{$resolvedSelectedRecords->count()}] must not exceed the maximum selectable records limit [{$maxSelectableRecords}].");
             }
 
             return $this->cachedSelectedTableRecords = $resolvedSelectedRecords;
