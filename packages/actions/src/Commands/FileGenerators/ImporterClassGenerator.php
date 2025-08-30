@@ -274,7 +274,7 @@ class ImporterClassGenerator extends ClassGenerator
             ->setBody(<<<PHP
                 \$body = 'Your {$this->getModelLabel()} import has completed and ' . {$this->simplifyFqn(Number::class)}::format(\$import->successful_rows) . ' ' . str('row')->plural(\$import->successful_rows) . ' imported.';
 
-                if (\$failedRowsCount = \$import->getFailedRowsCount()) {
+                if ((\$failedRowsCount = \$import->getFailedRowsCount()) !== 0) {
                     \$body .= ' ' . {$this->simplifyFqn(Number::class)}::format(\$failedRowsCount) . ' ' . str('row')->plural(\$failedRowsCount) . ' failed to import.';
                 }
 
