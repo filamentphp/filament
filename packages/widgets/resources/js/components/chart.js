@@ -6,7 +6,6 @@ if (
     Array.isArray(window.filamentChartJsRegister) &&
     window.filamentChartJsRegister.length > 0
 ) {
-    console.log(window.filamentChartJsRegister)
     Chart.register(...window.filamentChartJsRegister)
 }
 
