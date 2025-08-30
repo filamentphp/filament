@@ -3,7 +3,6 @@
 namespace Filament\Auth\MultiFactor\Email;
 
 use Closure;
-use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Auth\MultiFactor\Contracts\HasBeforeChallengeHook;
@@ -22,6 +21,7 @@ use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\RateLimiter;
+use LogicException;
 
 class EmailAuthentication implements HasBeforeChallengeHook, MultiFactorAuthenticationProvider
 {
@@ -49,7 +49,7 @@ class EmailAuthentication implements HasBeforeChallengeHook, MultiFactorAuthenti
     public function isEnabled(Authenticatable $user): bool
     {
         if (! ($user instanceof HasEmailAuthentication)) {
-            throw new Exception('The user model must implement the [' . HasEmailAuthentication::class . '] interface to use email authentication.');
+            throw new LogicException('The user model must implement the [' . HasEmailAuthentication::class . '] interface to use email authentication.');
         }
 
         return $user->hasEmailAuthentication();
@@ -58,13 +58,13 @@ class EmailAuthentication implements HasBeforeChallengeHook, MultiFactorAuthenti
     public function sendCode(HasEmailAuthentication $user): void
     {
         if (! ($user instanceof Model)) {
-            throw new Exception('The [' . $user::class . '] class must be an instance of [' . Model::class . '] to use email authentication.');
+            throw new LogicException('The [' . $user::class . '] class must be an instance of [' . Model::class . '] to use email authentication.');
         }
 
         if (! method_exists($user, 'notify')) {
             $userClass = $user::class;
 
-            throw new Exception("Model [{$userClass}] does not have a [notify()] method.");
+            throw new LogicException("Model [{$userClass}] does not have a [notify()] method.");
         }
 
         $rateLimitingKey = "filament_email_authentication.{$user->getKey()}";
@@ -178,7 +178,7 @@ class EmailAuthentication implements HasBeforeChallengeHook, MultiFactorAuthenti
     public function beforeChallenge(Authenticatable $user): void
     {
         if (! ($user instanceof HasEmailAuthentication)) {
-            throw new Exception('The user model must implement the [' . HasEmailAuthentication::class . '] interface to use email authentication.');
+            throw new LogicException('The user model must implement the [' . HasEmailAuthentication::class . '] interface to use email authentication.');
         }
 
         $this->sendCode($user);

@@ -3,7 +3,6 @@
 namespace Filament\Tables\Filters;
 
 use Closure;
-use Exception;
 use Filament\Forms\Components\Repeater;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Schema;
@@ -12,6 +11,7 @@ use Filament\Tables\Filters\QueryBuilder\Forms\Components\RuleBuilder;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\ValidationException;
+use LogicException;
 
 class QueryBuilder extends BaseFilter
 {
@@ -226,7 +226,7 @@ class QueryBuilder extends BaseFilter
         $builder = $this->getSchema()->getComponent(fn (Component $component): bool => $component instanceof RuleBuilder);
 
         if (! ($builder instanceof RuleBuilder)) {
-            throw new Exception('No rule builder component found.');
+            throw new LogicException('No rule builder component found.');
         }
 
         return $builder;
@@ -240,7 +240,7 @@ class QueryBuilder extends BaseFilter
             ->getComponent(fn (Component $component): bool => $component instanceof RuleBuilder);
 
         if (! ($builder instanceof RuleBuilder)) {
-            throw new Exception('No nested rule builder component found.');
+            throw new LogicException('No nested rule builder component found.');
         }
 
         return $builder;

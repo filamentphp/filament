@@ -3,7 +3,6 @@
 namespace Filament\Infolists\Components;
 
 use Closure;
-use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Schemas\Components\Component;
@@ -19,6 +18,7 @@ use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\View\ComponentAttributeBag;
 use Illuminate\View\ComponentSlot;
 
+use LogicException;
 use function Filament\Support\generate_href_html;
 
 class Entry extends Component
@@ -66,7 +66,7 @@ class Entry extends Component
         $name ??= static::getDefaultName();
 
         if (blank($name)) {
-            throw new Exception("Entry of class [$entryClass] must have a unique name, passed to the [make()] method.");
+            throw new LogicException("Entry of class [$entryClass] must have a unique name, passed to the [make()] method.");
         }
 
         $static = app($entryClass, ['name' => $name]);

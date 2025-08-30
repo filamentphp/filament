@@ -3,7 +3,6 @@
 namespace Filament\Tables\Filters\QueryBuilder\Constraints;
 
 use Closure;
-use Exception;
 use Filament\Forms\Components\Builder\Block;
 use Filament\Forms\Components\Select;
 use Filament\Schemas\Components\Group;
@@ -12,6 +11,7 @@ use Filament\Support\Components\Component;
 use Filament\Support\Concerns\HasIcon;
 use Filament\Tables\Filters\QueryBuilder;
 use Illuminate\Validation\ValidationException;
+use LogicException;
 
 class Constraint extends Component
 {
@@ -53,7 +53,7 @@ class Constraint extends Component
         $name ??= static::getDefaultName();
 
         if (blank($name)) {
-            throw new Exception("Constraint of class [$constraintClass] must have a unique name, passed to the [make()] method.");
+            throw new LogicException("Constraint of class [$constraintClass] must have a unique name, passed to the [make()] method.");
         }
 
         $static = app($constraintClass, ['name' => $name]);
