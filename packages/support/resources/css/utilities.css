@@ -552,18 +552,18 @@
     }
 
     ol:where(:not(.fi-not-prose, .fi-not-prose *)) {
-        padding-left: calc(var(--spacing) * 6);
+        padding-inline-start: calc(var(--spacing) * 6);
         list-style-type: decimal;
     }
 
     ul:where(:not(.fi-not-prose, .fi-not-prose *)) {
-        padding-left: calc(var(--spacing) * 6);
+        padding-inline-start: calc(var(--spacing) * 6);
         list-style-type: disc;
     }
 
     ol li:where(:not(.fi-not-prose, .fi-not-prose *)),
     ul li:where(:not(.fi-not-prose, .fi-not-prose *)) {
-        padding-left: calc(var(--spacing) * 3);
+        padding-inline-start: calc(var(--spacing) * 3);
     }
 
     ol li + li:where(:not(.fi-not-prose, .fi-not-prose *)),
@@ -621,7 +621,10 @@
         margin-top: calc(var(--spacing) * 4);
         margin-bottom: calc(var(--spacing) * 10);
         border-radius: var(--radius-lg);
-        padding: calc(var(--spacing) * 3);
+        padding-top: calc(var(--spacing) * 3);
+        padding-inline-end: calc(var(--spacing) * 4);
+        padding-bottom: calc(var(--spacing) * 3);
+        padding-inline-start: calc(var(--spacing) * 4);
         background-color: var(--prose-pre-bg);
     }
 
