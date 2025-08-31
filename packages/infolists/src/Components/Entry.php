@@ -17,8 +17,8 @@ use Filament\Support\Enums\Size;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\View\ComponentAttributeBag;
 use Illuminate\View\ComponentSlot;
-
 use LogicException;
+
 use function Filament\Support\generate_href_html;
 
 class Entry extends Component

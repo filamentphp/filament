@@ -123,7 +123,7 @@ trait HasRecords
 
             $collection = $collection->mapWithKeys(function (array | Model $record, string | int $key): array {
                 if ($record instanceof Model) {
-                   return [$record->getKey() => $record];
+                    return [$record->getKey() => $record];
                 }
 
                 $keyName = ArrayRecord::getKeyName();
