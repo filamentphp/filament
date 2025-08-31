@@ -143,13 +143,13 @@ trait HasFileAttachments
 
     public function getFileAttachmentsDiskName(): string
     {
-        $name = $this->evaluate($this->fileAttachmentsDiskName);
+        $name = $this->evaluate($this->fileAttachmentsDiskName) ?? $this->getDefaultFileAttachmentsDiskName();
 
         if (filled($name)) {
             return $name;
         }
 
-        $name = $this->getDefaultFileAttachmentsDiskName() ?? config('filament.default_filesystem_disk');
+        $name = config('filament.default_filesystem_disk');
 
         if ($name !== 'local') {
             return $name;

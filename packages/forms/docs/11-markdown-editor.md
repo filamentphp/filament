@@ -49,7 +49,7 @@ Each nested array in the main array represents a group of buttons in the toolbar
 
 ## Uploading images to the editor
 
-You may customize how images are uploaded using configuration methods:
+Images may be uploaded to the editor. They will always be uploaded to a publicly available URL with public storage permissions, since generating temporary file upload URLs is not supported in static content. You may customize where images are uploaded using configuration methods:
 
 ```php
 use Filament\Forms\Components\MarkdownEditor;
