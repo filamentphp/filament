@@ -2,11 +2,11 @@
 
 namespace Filament\Tables\Concerns;
 
-use Exception;
 use Filament\Schemas\Schema;
 use Filament\Support\Components\Component;
 use Filament\Tables\Columns\Column;
 use Filament\Tables\Columns\ColumnGroup;
+use LogicException;
 
 /**
  * @property-read Schema $toggleTableColumnForm
@@ -222,7 +222,7 @@ trait HasColumnManager
         $label = (string) $column->getLabel();
 
         if (blank($label) && $this->hasReorderableTableColumns()) {
-            throw new Exception("The table column [{$column->getName()}] has a blank label. All columns must have labels when they are reorderable.");
+            throw new LogicException("The table column [{$column->getName()}] has a blank label. All columns must have labels when they are reorderable.");
         }
 
         return [
