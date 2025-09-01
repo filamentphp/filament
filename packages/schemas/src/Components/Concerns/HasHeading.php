@@ -9,6 +9,8 @@ trait HasHeading
 {
     protected string | Htmlable | Closure | null $heading = null;
 
+    protected bool $shouldTranslateHeading = false;
+
     public function heading(string | Htmlable | Closure | null $heading = null): static
     {
         $this->heading = $heading;
@@ -16,8 +18,19 @@ trait HasHeading
         return $this;
     }
 
+    public function translateHeading(bool $shouldTranslateHeading = true): static
+    {
+        $this->shouldTranslateHeading = $shouldTranslateHeading;
+
+        return $this;
+    }
+
     public function getHeading(): string | Htmlable | null
     {
-        return $this->evaluate($this->heading);
+        $heading = $this->evaluate($this->heading);
+
+        return (is_string($heading) && $this->shouldTranslateHeading) ?
+            __($heading) :
+            $heading;
     }
 }
