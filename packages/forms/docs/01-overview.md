@@ -1257,6 +1257,42 @@ TextInput::make('name')
     ->dehydrateStateUsing(fn (string $state): string => ucwords($state))
 ```
 
+#### Stacking dehydration functions
+
+You can also stack multiple dehydration functions using the `dehydrateStateUsing()` method.
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('name')
+    ->required()
+    ->dehydrateStateUsing(fn (string $state): string => trim($state))
+    ->dehydrateStateUsing(fn (string $state): string => ucwords($state))
+```
+
+This is useful if you want to extract common logic into component classes, and then stack them on top of each other. For example:
+
+```php
+use Illuminate\Support\Str;
+
+class CustomTextInput extends TextInput
+{
+    public function removeWhitespace(): static
+    {
+        return $this->dehydrateStateUsing(fn ($state) => Str::squish($state));
+    }
+
+    public function capitalise(): static
+    {
+        return $this->dehydrateStateUsing(fn ($state) => Str::upper($state));
+    }
+}
+```
+
+<Aside variant="info">
+    To read more about component classes, see the Code Quality Tips documentation in the resources section.
+</Aside>
+
 #### Preventing a field from being dehydrated
 
 You may also prevent a field from being dehydrated altogether using `dehydrated(false)`. In this example, the field will not be present in the array returned from `getState()`:
