@@ -41,7 +41,10 @@ trait HasState
 
     protected mixed $defaultState = null;
 
-    protected ?Closure $dehydrateStateUsing = null;
+    /**
+     * @var array<int, Closure>
+     */
+    protected array $dehydrateStateUsing = [];
 
     protected ?Closure $mutateDehydratedStateUsing = null;
 
@@ -271,10 +274,10 @@ trait HasState
             $state = $stateCast->get($state);
         }
 
-        if ($callback = $this->dehydrateStateUsing) {
-            return [$this->getStatePath() => $this->evaluate($callback, [
+        foreach ($this->dehydrateStateUsing as $callback) {
+            $state = $this->evaluate($callback, [
                 'state' => $state,
-            ])];
+            ]);
         }
 
         return [$this->getStatePath() => $state];
@@ -322,7 +325,7 @@ trait HasState
 
     public function dehydrateStateUsing(?Closure $callback): static
     {
-        $this->dehydrateStateUsing = $callback;
+        $this->dehydrateStateUsing[] = $callback;
 
         return $this;
     }
