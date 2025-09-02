@@ -28,7 +28,7 @@ it('can utilise multiple dehydrateStateUsing', function (mixed $input, mixed $ex
         ->call('save')
         ->assertSet('data.post_code', $expected);
 })->with([
-    ['  po12 9AJ  ', 'PO12 9AJ'],
+    ['  po12     9AJ  ', 'PO12 9AJ'],
     ['po12 9AJ', 'PO12 9AJ'],
     [null, null],
     ['', ''],
