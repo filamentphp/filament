@@ -71,6 +71,72 @@ public function panel(Panel $panel): Panel
 }
 ```
 
+### Setting up the 'Team' tenancy migrations and models
+
+We'll use 'Team' as our tenancy object (it could be anything). Here's the migrations needed to implement 'teams' and the 'team_user' many-to-many pivot table, which can be inside the same Team migration:
+```php
+Schema::create('teams', function (Blueprint $table) {
+    $table->id();
+    $table->string('name');
+    $table->string('description')->nullable();
+    $table->timestamps();
+});
+
+Schema::create('team_user', function (Blueprint $table) {
+    $table->id();
+    $table->foreignId('team_id')->constrained('teams')->onDelete('cascade');
+    $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+    $table->timestamps();
+});
+```
+
+Here's a sample Team model to get you started. We'll assume a many-to-many relationship to Users, which means a User can belong to multiple Teams:
+```php
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+
+class Team extends Model
+{
+    // Define fillable attributes for mass assignment
+    protected $fillable = [
+        'name',
+        'description',
+    ];
+
+    /**
+     * Define the many-to-many relationship with the User model.
+     *
+     * @return BelongsToMany
+     */
+    public function users(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class);
+    }
+}
+```
+
+As you add objects to tenancy, you should add a method to the Team model for each object. For example, if Posts are filtered by tenant Team, you need to add to the Team model:
+```php
+    /** ... existing Team tenancy methods */
+
+    /**
+     * Example relationship: Team has many Posts (or other resources).
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function posts()
+    {
+        return $this->hasMany(Post::class);
+    }
+    /** ... rest of Team model */
+```
+
+### Setting up the User model for tenancy
+
 You'll also need to tell Filament which tenants a user belongs to. You can do this by implementing the `HasTenants` interface on the `App\Models\User` model:
 
 ```php
@@ -97,7 +163,8 @@ class User extends Authenticatable implements FilamentUser, HasTenants
 
     public function getTenants(Panel $panel): Collection
     {
-        return $this->teams;
+        // make sure it returns a Collection
+        return $this->teams()->get();
     }
 
     public function canAccessTenant(Model $tenant): bool
@@ -119,10 +186,10 @@ A registration page will allow users to create a new tenant.
 
 When visiting your app after logging in, users will be redirected to this page if they don't already have a tenant.
 
-To set up a registration page, you'll need to create a new page class that extends `Filament\Pages\Tenancy\RegisterTenant`. This is a full-page Livewire component. You can put this anywhere you want, such as `app/Filament/Pages/Tenancy/RegisterTeam.php`:
+To set up a registration page, you'll need to create a new page class that extends `Filament\Pages\Tenancy\RegisterTenant`. This is a full-page Livewire component. You can put this anywhere you want, such as `app/Filament/Resources/Teams/Pages/RegisterTeam.php`:
 
 ```php
-namespace App\Filament\Pages\Tenancy;
+namespace App\Filament\Resources\Teams\Pages;
 
 use App\Models\Team;
 use Filament\Forms\Components\TextInput;
@@ -161,7 +228,7 @@ You may add any [form components](../forms) to the `form()` method, and create t
 Now, we need to tell Filament to use this page. We can do this in the [configuration](../panel-configuration):
 
 ```php
-use App\Filament\Pages\Tenancy\RegisterTeam;
+use App\Filament\Resources\Teams\Pages\RegisterTeam;
 use Filament\Panel;
 
 public function panel(Panel $panel): Panel
@@ -180,10 +247,10 @@ You can override any method you want on the base registration page class to make
 
 A profile page will allow users to edit information about the tenant.
 
-To set up a profile page, you'll need to create a new page class that extends `Filament\Pages\Tenancy\EditTenantProfile`. This is a full-page Livewire component. You can put this anywhere you want, such as `app/Filament/Pages/Tenancy/EditTeamProfile.php`:
+To set up a profile page, you'll need to create a new page class that extends `Filament\Pages\Tenancy\EditTenantProfile`. This is a full-page Livewire component. You can put this anywhere you want, such as `app/Filament/Resources/Teams/Pages/EditTeamProfile.php`:
 
 ```php
-namespace App\Filament\Pages\Tenancy;
+namespace App\Filament\Resources\Teams\Pages\;
 
 use Filament\Forms\Components\TextInput;
 use Filament\Pages\Tenancy\EditTenantProfile;
@@ -212,7 +279,7 @@ You may add any [form components](../forms) to the `form()` method. They will ge
 Now, we need to tell Filament to use this page. We can do this in the [configuration](../panel-configuration):
 
 ```php
-use App\Filament\Pages\Tenancy\EditTeamProfile;
+use App\Filament\Resources\Teams\Pages\EditTeamProfile;
 use Filament\Panel;
 
 public function panel(Panel $panel): Panel
