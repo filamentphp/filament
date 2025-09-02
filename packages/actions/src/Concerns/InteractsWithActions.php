@@ -523,7 +523,9 @@ trait InteractsWithActions
                 return null;
             }
 
-            $resolvedAction = $this->{$methodName}();
+            $methodArguments = $action['arguments'] ?? null;
+
+            $resolvedAction = $this->{$methodName}($methodArguments);
 
             if (! $resolvedAction instanceof Action) {
                 throw new ActionNotResolvableException('Actions must be an instance of ' . Action::class . ". The [{$methodName}] method on the Livewire component returned an instance of [" . get_class($resolvedAction) . '].');
