@@ -76,6 +76,7 @@ Additional tools available in the toolbar include:
 - `alignJustify` - Justifies the text.
 - `clearFormatting` - Clears all formatting from the selected text.
 - `details` - Inserts a `<details>` tag, which allows users to create collapsible sections in their content.
+- `grid` - Inserts a grid layout into the editor, allowing users to create complex layouts with columns.
 - `highlight` - Highlights the selected text with a `<mark>` tag around it.
 - `horizontalRule` - Inserts a horizontal rule.
 - `lead` - Applies a `lead` class around the text, which is typically used for the first paragraph of an article.

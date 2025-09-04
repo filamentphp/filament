@@ -291,9 +291,8 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
                 ->iconAlias('forms:components.rich-editor.toolbar.align-justify'),
             RichEditorTool::make('grid')
                 ->label(__('filament-forms::components.rich_editor.tools.grid'))
-                ->action(arguments: '{columns: $getEditor().getAttributes(\'grid\')?.[\'data-columns\'], stackAt: $getEditor().getAttributes(\'grid\')?.[\'data-stack-at\'], asymmetric: $getEditor().getAttributes(\'grid\')?.[\'data-asymmetric\'], leftSpan: $getEditor().getAttributes(\'grid\')?.[\'left-span\'], rightSpan: $getEditor().getAttributes(\'grid\')?.[\'right-span\'] }')
-                ->activeKey('grid')
-                ->icon(Heroicon::Squares2x2)
+                ->action()
+                ->icon(Heroicon::OutlinedSquares2x2)
                 ->iconAlias('forms:components.rich-editor.toolbar.grid'),
             RichEditorTool::make('details')
                 ->label(__('filament-forms::components.rich_editor.tools.details'))

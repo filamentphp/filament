@@ -52,7 +52,7 @@ export default Node.create({
                 parseHTML: (element) => element.getAttribute('style'),
                 renderHTML: (attributes) => {
                     return {
-                        style: `grid-template-columns: repeat(${attributes['data-columns']}, 1fr);`,
+                        style: `display: grid; gap: 1rem; grid-template-columns: repeat(${attributes['data-columns']}, 1fr);`,
                     }
                 },
             },
@@ -75,12 +75,12 @@ export default Node.create({
     addCommands() {
         return {
             insertGrid:
-                ({ columns = 2, stack_at, asymmetric, leftSpan = null, rightSpan = null, coordinates = null } = {}) =>
+                ({ columns = 2, stackAt, asymmetric, leftSpan = null, rightSpan = null, coordinates = null } = {}) =>
                     ({ tr, dispatch, editor }) => {
                         const node = createGrid(
                             editor.schema,
                             columns,
-                            stack_at,
+                            stackAt,
                             asymmetric,
                             leftSpan,
                             rightSpan

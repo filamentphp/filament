@@ -1,6 +1,6 @@
 <?php
 
-namespace Awcodes\Richie\Tiptap\Nodes;
+namespace Filament\Forms\Components\RichEditor\TipTapExtensions;
 
 use Tiptap\Core\Node;
 use Tiptap\Utils\HTML;
@@ -30,9 +30,9 @@ class GridExtension extends Node
     public function addAttributes(): array
     {
         return [
-            'data-type' => [
-                'default' => 'symmetric',
-                'parseHTML' => fn ($DOMNode) => $DOMNode->getAttribute('data-type'),
+            'data-asymmetric' => [
+                'default' => false,
+                'parseHTML' => fn ($DOMNode) => $DOMNode->getAttribute('data-asymmetric'),
             ],
             'data-columns' => [
                 'default' => '2',
@@ -42,13 +42,21 @@ class GridExtension extends Node
 
                     return [
                         'data-columns' => $attributes['data-columns'],
-                        'style' => 'grid-template-columns: repeat(' . $attributes['data-columns'] . ', 1fr);',
+                        'style' => 'display: grid; gap: 1rem; grid-template-columns: repeat(' . $attributes['data-columns'] . ', 1fr);',
                     ];
                 },
             ],
             'data-stack-at' => [
                 'default' => 'md',
                 'parseHTML' => fn ($DOMNode) => $DOMNode->getAttribute('data-stack-at'),
+            ],
+            'data-left-span' => [
+                'default' => null,
+                'parseHTML' => fn ($DOMNode) => $DOMNode->getAttribute('data-left-span'),
+            ],
+            'data-right-span' => [
+                'default' => null,
+                'parseHTML' => fn ($DOMNode) => $DOMNode->getAttribute('data-right-span'),
             ],
         ];
     }
@@ -72,7 +80,7 @@ class GridExtension extends Node
      * @param  array<string, mixed>  $HTMLAttributes
      * @return array<mixed>
      */
-    public function renderHTML($node, $HTMLAttributes = []): array
+    public function renderHTML($node, array $HTMLAttributes = []): array
     {
         return [
             'div',

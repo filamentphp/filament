@@ -477,6 +477,19 @@ return [
 
                     'form' => [
 
+                        'preset' => [
+                            'label' => 'Presets',
+                            'custom' => 'Custom',
+                            'two' => 'Two',
+                            'three' => 'Three',
+                            'four' => 'Four',
+                            'five' => 'Five',
+                            'asy_left_thirds' => 'Asymmetric Left Thirds',
+                            'asy_right_thirds' => 'Asymmetric Right Thirds',
+                            'asy_left_fourths' => 'Asymmetric Left Fourths',
+                            'asy_right_fourths' => 'Asymmetric Right Fourths',
+                        ],
+
                         'columns' => [
                             'label' => 'Columns',
                         ],
@@ -510,6 +523,7 @@ return [
 
         'messages' => [
             'uploading_file' => 'Uploading file...',
+            'invalid_col_spans' => 'The sum of left and right spans must equal the total number of columns',
         ],
 
         'no_merge_tag_search_results_message' => 'No merge tag results.',

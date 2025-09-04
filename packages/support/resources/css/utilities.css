@@ -769,4 +769,8 @@
     & .lead:where(:not(.fi-not-prose, .fi-not-prose *)) {
         font-size: var(--text-base);
     }
+
+    .fi-re-grid-column {
+        margin-top: 0;
+    }
 }

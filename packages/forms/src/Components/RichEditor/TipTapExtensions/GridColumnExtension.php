@@ -1,6 +1,6 @@
 <?php
 
-namespace Awcodes\Richie\Tiptap\Nodes;
+namespace Filament\Forms\Components\RichEditor\TipTapExtensions;
 
 use Tiptap\Core\Node;
 use Tiptap\Utils\HTML;
@@ -63,7 +63,7 @@ class GridColumnExtension extends Node
      * @param  array<string, mixed>  $HTMLAttributes
      * @return array<mixed>
      */
-    public function renderHTML($node, $HTMLAttributes = []): array
+    public function renderHTML($node, array $HTMLAttributes = []): array
     {
         return [
             'div',
