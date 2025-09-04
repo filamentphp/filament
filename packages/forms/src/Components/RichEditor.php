@@ -667,7 +667,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
         return [
             ['bold', 'italic', 'underline', 'strike', 'subscript', 'superscript', 'link'],
             ['h2', 'h3', 'alignStart', 'alignCenter', 'alignEnd'],
-            ['blockquote', 'codeBlock', 'bulletList', 'orderedList', 'grid'],
+            ['blockquote', 'codeBlock', 'bulletList', 'orderedList'],
             [
                 'table',
                 'attachFiles',
