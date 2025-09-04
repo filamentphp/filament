@@ -23,12 +23,20 @@
         }
     }
 
+    & .fi-fo-rich-editor-uploading-file-message {
+        @apply flex items-center gap-x-3 border-b border-gray-200 bg-gray-50 px-5 py-1.5 text-sm leading-6 font-medium text-gray-700 dark:border-white/10 dark:bg-white/5 dark:text-gray-200;
+
+        & .fi-loading-indicator {
+            @apply text-gray-400 dark:text-gray-500;
+        }
+    }
+
     & .fi-fo-rich-editor-main {
         @apply flex flex-col-reverse;
     }
 
     & .fi-fo-rich-editor-content {
-        @apply min-h-full w-full flex-1 px-5 py-3;
+        @apply min-h-12 w-full flex-1 px-5 py-3;
     }
 
     & span[data-type='mergeTag'] {
@@ -86,8 +94,8 @@
             @apply outline-none;
 
             & .ProseMirror-selectednode {
-                &div[data-type='customBlock'],
-                &img {
+                div&[data-type='customBlock'],
+                img& {
                     @apply ring-primary-600 dark:ring-primary-500 ring-2;
                 }
             }
@@ -118,7 +126,7 @@
             }
 
             & > button {
-                @apply mt-px mr-2 flex size-5 items-center justify-center rounded-sm bg-transparent p-1 text-xs leading-none hover:bg-gray-950/5 dark:hover:bg-white/5;
+                @apply mt-px mr-2 flex size-5 items-center justify-center rounded-md bg-transparent p-1 text-xs leading-none hover:bg-gray-950/5 dark:hover:bg-white/5;
 
                 &::before {
                     content: '\25B6';
@@ -184,8 +192,8 @@
         }
     }
 
-    & img.fi-loading {
-        @apply animate-pulse;
+    & img {
+        @apply inline-block;
     }
 
     & div[data-type='customBlock'] {

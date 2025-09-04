@@ -1,14 +1,18 @@
 <?php
 
 use Filament\Actions\Action;
+use Filament\Actions\Concerns\InteractsWithActions;
+use Filament\Actions\Contracts\HasActions;
 use Filament\Facades\Filament;
 use Filament\FilamentManager;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Schema;
 use Filament\Support\Colors\Color;
+use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Filters\BaseFilter;
 use Filament\Tables\Table;
 use Filament\Upgrade\Rector;
+use Filament\Upgrade\Rector\AddTraitByTraitRector;
 use Filament\Widgets\Widget;
 use Rector\Config\RectorConfig;
 use Rector\Renaming\Rector\MethodCall\RenameMethodRector;
@@ -17,6 +21,7 @@ use Rector\Renaming\Rector\PropertyFetch\RenamePropertyRector;
 use Rector\Renaming\Rector\String_\RenameStringRector;
 use Rector\Renaming\ValueObject\MethodCallRename;
 use Rector\Renaming\ValueObject\RenameProperty;
+use Rector\Transform\Rector\Class_\AddInterfaceByTraitRector;
 
 return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->importNames();
@@ -320,5 +325,13 @@ return static function (RectorConfig $rectorConfig): void {
         new MethodCallRename(Table::class, 'actionsPosition', 'recordActionsPosition'),
         new MethodCallRename(Table::class, 'bulkActions', 'toolbarActions'),
         new MethodCallRename(Table::class, 'pushBulkActions', 'pushToolbarActions'),
+    ]);
+
+    $rectorConfig->ruleWithConfiguration(AddInterfaceByTraitRector::class, [
+        InteractsWithTable::class => HasActions::class,
+    ]);
+
+    $rectorConfig->ruleWithConfiguration(AddTraitByTraitRector::class, [
+        InteractsWithTable::class => InteractsWithActions::class,
     ]);
 };

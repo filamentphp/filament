@@ -66,7 +66,7 @@ class CheckboxColumn extends Column implements Editable, HasEmbeddedView
         ob_start(); ?>
 
         <div
-            x-on:click.stop=""
+            x-on:click.stop
             wire:ignore.self
             <?= $attributes->toHtml() ?>
         >

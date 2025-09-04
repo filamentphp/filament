@@ -6,6 +6,8 @@ return [
 
     'breadcrumb' => 'Muokkaa',
 
+    'navigation_label' => 'Muokkaa',
+
     'form' => [
 
         'actions' => [

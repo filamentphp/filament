@@ -3,7 +3,6 @@
 namespace Filament\Forms\Components;
 
 use Closure;
-use Exception;
 use Filament\Actions\Action;
 use Filament\Support\Enums\IconPosition;
 use Filament\Support\Icons\Heroicon;
@@ -21,10 +20,12 @@ use Illuminate\Database\Eloquent\Relations\HasOneOrManyThrough;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use LogicException;
 use Znck\Eloquent\Relations\BelongsToThrough;
 
 class ModalTableSelect extends Field
 {
+    use Concerns\CanLimitItemsLength;
     use Concerns\HasPivotData;
     use Concerns\HasPlaceholder;
 
@@ -55,6 +56,11 @@ class ModalTableSelect extends Field
 
     protected ?Closure $modifySelectActionUsing = null;
 
+    /**
+     * @var array<mixed> | Closure
+     */
+    protected array | Closure $tableArguments = [];
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -74,7 +80,7 @@ class ModalTableSelect extends Field
         });
 
         $this->registerActions([
-            fn (ModalTableSelect $component): Action => $this->getSelectAction(),
+            fn (ModalTableSelect $component): Action => $component->getSelectAction(),
         ]);
     }
 
@@ -88,6 +94,16 @@ class ModalTableSelect extends Field
     public function selectAction(?Closure $callback): static
     {
         $this->modifySelectActionUsing = $callback;
+
+        return $this;
+    }
+
+    /**
+     * @param  array<mixed> | Closure  $arguments
+     */
+    public function tableArguments(array | Closure $arguments): static
+    {
+        $this->tableArguments = $arguments;
 
         return $this;
     }
@@ -127,7 +143,9 @@ class ModalTableSelect extends Field
             ->hiddenLabel()
             ->tableConfiguration($this->getTableConfiguration())
             ->relationshipName($this->getRelationshipName())
-            ->multiple();
+            ->multiple()
+            ->maxItems($this->getMaxItems())
+            ->tableArguments($this->getTableArguments());
 
         if ($this->modifyTableSelectUsing) {
             $select = $this->evaluate(
@@ -282,8 +300,13 @@ class ModalTableSelect extends Field
                 $relatedRecords = $relationship->getResults();
 
                 $component->state(
+                    // Cast the related keys to a string, otherwise JavaScript does not
+                    // know how to handle deselection.
+                    //
+                    // https://github.com/filamentphp/filament/issues/1111
                     $relatedRecords
                         ->pluck($relationship->getLocalKeyName())
+                        ->map(static fn ($key): string => strval($key))
                         ->all(),
                 );
 
@@ -505,7 +528,7 @@ class ModalTableSelect extends Field
         return $this->getOptionLabelFromRecordUsing !== null;
     }
 
-    public function getOptionLabelFromRecord(Model $record): string
+    public function getOptionLabelFromRecord(Model $record): string | Htmlable
     {
         return $this->evaluate(
             $this->getOptionLabelFromRecordUsing,
@@ -563,7 +586,7 @@ class ModalTableSelect extends Field
         }
 
         if (! $relationship) {
-            throw new Exception("The relationship [{$relationshipName}] does not exist on the model [{$this->getModel()}].");
+            throw new LogicException("The relationship [{$relationshipName}] does not exist on the model [{$this->getModel()}].");
         }
 
         return $relationship;
@@ -646,6 +669,14 @@ class ModalTableSelect extends Field
 
     public function getTableConfiguration(): string
     {
-        return $this->evaluate($this->tableConfiguration) ?? throw new Exception('The [tableConfiguration()] method must be set when using a [TableSelect] component.');
+        return $this->evaluate($this->tableConfiguration) ?? throw new LogicException('The [tableConfiguration()] method must be set when using a [TableSelect] component.');
+    }
+
+    /**
+     * @return array<mixed>
+     */
+    public function getTableArguments(): array
+    {
+        return $this->evaluate($this->tableArguments) ?? [];
     }
 }

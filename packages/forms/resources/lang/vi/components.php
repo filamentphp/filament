@@ -482,6 +482,7 @@ return [
             'bold' => 'In đậm',
             'bullet_list' => 'Danh sách đánh dấu',
             'clear_formatting' => 'Xóa định dạng',
+            'code' => 'Code',
             'code_block' => 'Khối code',
             'custom_blocks' => 'Khối tùy chỉnh',
             'details' => 'Khối chi tiết',

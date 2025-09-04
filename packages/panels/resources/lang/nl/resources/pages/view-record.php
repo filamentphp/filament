@@ -6,6 +6,8 @@ return [
 
     'breadcrumb' => 'Bekijken',
 
+    'navigation_label' => 'Bekijken',
+
     'content' => [
 
         'tab' => [

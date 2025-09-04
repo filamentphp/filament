@@ -6,6 +6,8 @@ return [
 
     'breadcrumb' => 'Uredi',
 
+    'navigation_label' => 'Uredi',
+
     'form' => [
 
         'actions' => [

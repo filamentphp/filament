@@ -3,7 +3,6 @@
 namespace Filament\Forms\Components;
 
 use Closure;
-use Exception;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -14,10 +13,12 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
 use Illuminate\Database\Eloquent\Relations\HasOneOrManyThrough;
 use Illuminate\Support\Arr;
+use LogicException;
 use Znck\Eloquent\Relations\BelongsToThrough;
 
 class TableSelect extends Field
 {
+    use Concerns\CanLimitItemsLength;
     use Concerns\HasPivotData;
 
     /**
@@ -31,6 +32,11 @@ class TableSelect extends Field
 
     protected bool | Closure $isMultiple = false;
 
+    /**
+     * @var array<mixed> | Closure
+     */
+    protected array | Closure $tableArguments = [];
+
     public function tableConfiguration(string | Closure $tableConfiguration): static
     {
         $this->tableConfiguration = $tableConfiguration;
@@ -38,9 +44,27 @@ class TableSelect extends Field
         return $this;
     }
 
+    /**
+     * @param  array<mixed> | Closure  $arguments
+     */
+    public function tableArguments(array | Closure $arguments): static
+    {
+        $this->tableArguments = $arguments;
+
+        return $this;
+    }
+
     public function getTableConfiguration(): string
     {
-        return $this->evaluate($this->tableConfiguration) ?? throw new Exception('The [tableConfiguration()] method must be set when using a [TableSelect] component.');
+        return $this->evaluate($this->tableConfiguration) ?? throw new LogicException('The [tableConfiguration()] method must be set when using a [TableSelect] component.');
+    }
+
+    /**
+     * @return array<mixed>
+     */
+    public function getTableArguments(): array
+    {
+        return $this->evaluate($this->tableArguments) ?? [];
     }
 
     public function relationship(string | Closure | null $name): static
@@ -237,7 +261,7 @@ class TableSelect extends Field
         }
 
         if (! $relationship) {
-            throw new Exception("The relationship [{$relationshipName}] does not exist on the model [{$this->getModel()}].");
+            throw new LogicException("The relationship [{$relationshipName}] does not exist on the model [{$this->getModel()}].");
         }
 
         return $relationship;

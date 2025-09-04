@@ -28,7 +28,7 @@ test('render hooks can render view files', function (): void {
         ->toHtml()->toContain('bar');
 });
 
-test('render hooks can be scopes:d', function (): void {
+test('render hooks can be scoped', function (): void {
     FilamentView::registerRenderHook('foo', function (): string {
         return Blade::render('bar');
     });
@@ -42,7 +42,7 @@ test('render hooks can be scopes:d', function (): void {
         ->toHtml()->toBe('barbar');
 });
 
-test('render hooks can be scopes:d to multiple scopes:s', function (): void {
+test('render hooks can be scoped to multiple scoped', function (): void {
     FilamentView::registerRenderHook('foo', function (): string {
         return Blade::render('bar');
     });
@@ -60,7 +60,7 @@ test('render hooks can be scopes:d to multiple scopes:s', function (): void {
         ->toHtml()->toBe('barbar');
 });
 
-test('render hooks can be scopes:d to multiple scopes:s but only ever output once', function (): void {
+test('render hooks can be scoped to multiple scoped but only ever output once', function (): void {
     FilamentView::registerRenderHook('foo', function (): string {
         return Blade::render('bar');
     });
@@ -72,4 +72,14 @@ test('render hooks can be scopes:d to multiple scopes:s but only ever output onc
     expect(FilamentView::renderHook('foo', scopes: ['baz', 'qux']))
         ->toBeInstanceOf(HtmlString::class)
         ->toHtml()->toBe('barbar');
+});
+
+test('render hooks can be passed data', function (): void {
+    FilamentView::registerRenderHook('foo', function ($data): string {
+        return $data['foo'];
+    });
+
+    expect(FilamentView::renderHook('foo', data: ['foo' => 'bar']))
+        ->toBeInstanceOf(HtmlString::class)
+        ->toHtml()->toBe('bar');
 });

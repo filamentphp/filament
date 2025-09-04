@@ -124,3 +124,51 @@ it('will generate a column expression for Postgres with colons in the table name
         ['blog:posts.title', 'lower("blog:posts"."title"::text)'],
         ['blog:posts:comments.author.name', 'lower("blog:posts:comments"."author"."name"::text)'],
     ]);
+
+it('will generate a JSON search column expression for Postgres with explicit ->> operator', function (): void {
+    $column = 'data->>name';
+    $isSearchForcedCaseInsensitive = true;
+
+    $databaseConnection = Mockery::mock(Connection::class);
+    $databaseConnection->shouldReceive('getDriverName')->andReturn('pgsql');
+    $databaseConnection->shouldReceive('getConfig')->with('search_collation')->andReturn(null);
+
+    $grammar = new PostgresGrammar($databaseConnection);
+
+    $expression = generate_search_column_expression($column, $isSearchForcedCaseInsensitive, $databaseConnection);
+
+    expect($expression->getValue($grammar))
+        ->toBe("lower(\"data\"->>'name'::text)");
+});
+
+it('will generate a nested JSON search column expression for Postgres with explicit ->> operator on the last segment', function (): void {
+    $column = 'data->name->>ar';
+    $isSearchForcedCaseInsensitive = true;
+
+    $databaseConnection = Mockery::mock(Connection::class);
+    $databaseConnection->shouldReceive('getDriverName')->andReturn('pgsql');
+    $databaseConnection->shouldReceive('getConfig')->with('search_collation')->andReturn(null);
+
+    $grammar = new PostgresGrammar($databaseConnection);
+
+    $expression = generate_search_column_expression($column, $isSearchForcedCaseInsensitive, $databaseConnection);
+
+    expect($expression->getValue($grammar))
+        ->toBe("lower(\"data\"->'name'->>'ar'::text)");
+});
+
+it('will generate a JSON search column expression for Postgres with explicit ->> operator and simple key', function (): void {
+    $column = 'name->>\'en\'';
+    $isSearchForcedCaseInsensitive = true;
+
+    $databaseConnection = Mockery::mock(Connection::class);
+    $databaseConnection->shouldReceive('getDriverName')->andReturn('pgsql');
+    $databaseConnection->shouldReceive('getConfig')->with('search_collation')->andReturn(null);
+
+    $grammar = new PostgresGrammar($databaseConnection);
+
+    $expression = generate_search_column_expression($column, $isSearchForcedCaseInsensitive, $databaseConnection);
+
+    expect($expression->getValue($grammar))
+        ->toBe("lower(\"name\"->>'en'::text)");
+});

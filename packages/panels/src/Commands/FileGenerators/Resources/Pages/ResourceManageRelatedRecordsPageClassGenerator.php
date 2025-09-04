@@ -128,6 +128,10 @@ class ResourceManageRelatedRecordsPageClassGenerator extends ClassGenerator
 
     protected function addNavigationIconPropertyToClass(ClassType $class): void
     {
+        if ($this->hasRelatedResource()) {
+            return;
+        }
+
         $this->namespace->addUse(BackedEnum::class);
         $this->namespace->addUse(Heroicon::class);
 

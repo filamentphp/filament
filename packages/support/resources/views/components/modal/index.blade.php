@@ -102,7 +102,7 @@
     x-trap.noscroll{{ $autofocus ? '' : '.noautofocus' }}="isOpen"
     {{
         $attributes->class([
-            'fi-modal fi-absolute-positioning-context',
+            'fi-modal',
             'fi-modal-slide-over' => $slideOver,
             'fi-width-screen' => $width === Width::Screen,
         ])
@@ -157,7 +157,7 @@
                     'fi-modal-window-has-icon' => $hasIcon,
                     'fi-modal-window-has-sticky-header' => $stickyHeader,
                     'fi-hidden' => ! $visible,
-                    (($alignment instanceof Alignment) && (! $slideOver)) ? "fi-align-{$alignment->value}" : null,
+                    ($alignment instanceof Alignment) ? "fi-align-{$alignment->value}" : null,
                     ($width instanceof Width) ? "fi-width-{$width->value}" : (is_string($width) ? $width : null),
                 ])
             }}

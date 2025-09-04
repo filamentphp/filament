@@ -29,13 +29,20 @@
         @endif
     </div>
 
-    <div class="fi-header-actions-ctn">
-        {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_HEADER_ACTIONS_BEFORE, scopes: $this->getRenderHookScopes()) }}
+    @php
+        $beforeActions = \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_HEADER_ACTIONS_BEFORE, scopes: $this->getRenderHookScopes());
+        $afterActions = \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_HEADER_ACTIONS_AFTER, scopes: $this->getRenderHookScopes());
+    @endphp
 
-        @if ($actions)
-            <x-filament::actions :actions="$actions" />
-        @endif
+    @if (filled($beforeActions) || $actions || filled($afterActions))
+        <div class="fi-header-actions-ctn">
+            {{ $beforeActions }}
 
-        {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_HEADER_ACTIONS_AFTER, scopes: $this->getRenderHookScopes()) }}
-    </div>
+            @if ($actions)
+                <x-filament::actions :actions="$actions" />
+            @endif
+
+            {{ $afterActions }}
+        </div>
+    @endif
 </header>

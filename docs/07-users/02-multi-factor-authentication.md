@@ -60,12 +60,15 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
     ];
 
     /**
-     * @var array<string, string>
+     * @return array<string, string>
      */
-    protected $casts = [
-        // ...
-        'app_authentication_secret' => 'encrypted',
-    ];
+    protected function casts(): array
+    {
+        return [
+            // ...
+            'app_authentication_secret' => 'encrypted',
+        ];
+    }
     
     // ...
 }
@@ -165,12 +168,15 @@ class User extends Authenticatable implements FilamentUser, HasAppAuthentication
     ];
 
     /**
-     * @var array<string, string>
+     * @return array<string, string>
      */
-    protected $casts = [
-        // ...
-        'app_authentication_recovery_codes' => 'encrypted:array',
-    ];
+    protected function casts(): array
+    {
+        return [
+            // ...
+            'app_authentication_recovery_codes' => 'encrypted:array',
+        ];
+    }
     
     // ...
 }
@@ -337,14 +343,16 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable implements FilamentUser, MustVerifyEmail
 {
-    // ...
     /**
-     * @var array<string, string>
+     * @return array<string, string>
      */
-    protected $casts = [
-        // ...
-        'has_email_authentication' => 'boolean',
-    ];
+    protected function casts(): array
+    {
+        return [
+            // ...
+            'has_email_authentication' => 'boolean',
+        ];
+    }
     
     // ...
 }

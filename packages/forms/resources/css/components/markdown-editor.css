@@ -21,11 +21,11 @@
     --color-cm-gray-background: #e4e4e7;
 
     &:not(.fi-disabled) {
-        @apply max-w-full overflow-hidden font-mono text-base text-gray-950 sm:text-sm dark:text-white;
+        @apply max-w-full overflow-hidden font-mono text-sm text-gray-950 dark:text-white;
     }
 
     &.fi-disabled {
-        @apply block w-full rounded-lg bg-gray-50 px-3 py-3 text-gray-500 shadow-xs ring-1 ring-gray-950/10 sm:text-sm dark:bg-transparent dark:text-gray-400 dark:ring-white/10;
+        @apply block w-full rounded-lg bg-gray-50 px-3 py-3 text-sm text-gray-500 shadow-xs ring-1 ring-gray-950/10 dark:bg-transparent dark:text-gray-400 dark:ring-white/10;
     }
 
     & .EasyMDEContainer .CodeMirror {
@@ -202,7 +202,7 @@
     }
 
     & .EasyMDEContainer .editor-toolbar button {
-        @apply grid h-8 w-8 place-content-center rounded-lg border-none p-0 transition duration-75 hover:bg-gray-50 focus-visible:bg-gray-50 dark:hover:bg-white/5 dark:focus-visible:bg-white/5;
+        @apply grid size-8 place-content-center rounded-lg border-none p-0 transition duration-75 hover:bg-gray-50 focus-visible:bg-gray-50 dark:hover:bg-white/5 dark:focus-visible:bg-white/5;
     }
 
     & .EasyMDEContainer .editor-toolbar button.active {
@@ -210,7 +210,7 @@
     }
 
     & .EasyMDEContainer .editor-toolbar button::before {
-        @apply block h-5 w-5 bg-gray-700;
+        @apply block size-5 bg-gray-700;
         content: '';
         mask-position: center;
         mask-repeat: no-repeat;
@@ -279,39 +279,39 @@
     & .EasyMDEContainer .editor-statusbar {
         @apply hidden;
     }
-}
 
-.dark .fi-fo-markdown-editor {
-    --color-cm-red: #f87171;
-    --color-cm-orange: #fb923c;
-    --color-cm-amber: #fbbf24;
-    --color-cm-yellow: #facc15;
-    --color-cm-lime: #a3e635;
-    --color-cm-green: #4ade80;
-    --color-cm-emerald: #4ade80;
-    --color-cm-teal: #2dd4bf;
-    --color-cm-cyan: #22d3ee;
-    --color-cm-sky: #38bdf8;
-    --color-cm-blue: #60a5fa;
-    --color-cm-indigo: #818cf8;
-    --color-cm-violet: #a78bfa;
-    --color-cm-purple: #c084fc;
-    --color-cm-fuchsia: #e879f9;
-    --color-cm-pink: #f472b6;
-    --color-cm-rose: #fb7185;
-    --color-cm-gray: #fafafa;
-    --color-cm-gray-muted: #a1a1aa;
-    --color-cm-gray-background: #52525b;
+    @variant dark {
+        --color-cm-red: #f87171;
+        --color-cm-orange: #fb923c;
+        --color-cm-amber: #fbbf24;
+        --color-cm-yellow: #facc15;
+        --color-cm-lime: #a3e635;
+        --color-cm-green: #4ade80;
+        --color-cm-emerald: #4ade80;
+        --color-cm-teal: #2dd4bf;
+        --color-cm-cyan: #22d3ee;
+        --color-cm-sky: #38bdf8;
+        --color-cm-blue: #60a5fa;
+        --color-cm-indigo: #818cf8;
+        --color-cm-violet: #a78bfa;
+        --color-cm-purple: #c084fc;
+        --color-cm-fuchsia: #e879f9;
+        --color-cm-pink: #f472b6;
+        --color-cm-rose: #fb7185;
+        --color-cm-gray: #fafafa;
+        --color-cm-gray-muted: #a1a1aa;
+        --color-cm-gray-background: #52525b;
 
-    & .EasyMDEContainer .cm-s-easymde span.CodeMirror-selectedtext {
-        filter: invert(100%);
-    }
+        & .EasyMDEContainer .cm-s-easymde span.CodeMirror-selectedtext {
+            filter: invert(100%);
+        }
 
-    & .EasyMDEContainer .editor-toolbar button::before {
-        @apply bg-gray-300;
-    }
+        & .EasyMDEContainer .editor-toolbar button::before {
+            @apply bg-gray-300;
+        }
 
-    & .EasyMDEContainer .editor-toolbar button.active::before {
-        @apply bg-primary-400;
+        & .EasyMDEContainer .editor-toolbar button.active::before {
+            @apply bg-primary-400;
+        }
     }
 }

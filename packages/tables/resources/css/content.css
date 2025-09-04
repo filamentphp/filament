@@ -5,7 +5,7 @@
         @apply flex items-center gap-4 gap-x-6 bg-gray-50 px-4 sm:px-6 dark:bg-white/5;
 
         & .fi-ta-page-checkbox {
-            @apply my-4;
+            @apply my-4 shrink-0;
         }
 
         & .fi-ta-sorting-settings {
@@ -133,14 +133,12 @@
         }
 
         & .fi-ta-group-header {
-            @apply col-span-full flex w-full items-center gap-x-3 bg-gray-50 px-3 py-2 dark:bg-white/5;
+            @apply col-span-full flex w-full items-center gap-x-3 bg-gray-50 px-1 py-2 sm:px-3 dark:bg-white/5;
 
             &.fi-collapsible {
                 @apply cursor-pointer;
 
                 &.fi-collapsed {
-                    @apply -mb-4 border-b-0;
-
                     & .fi-icon-btn {
                         @apply -rotate-180;
                     }
@@ -156,7 +154,7 @@
             }
 
             & .fi-ta-group-checkbox {
-                @apply px-3;
+                @apply mx-3;
             }
         }
 
@@ -192,7 +190,7 @@
             }
 
             & .fi-ta-record-checkbox {
-                @apply mx-3 my-4;
+                @apply mx-3 my-4 shrink-0;
             }
 
             & .fi-ta-record-content-ctn {

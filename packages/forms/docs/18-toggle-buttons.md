@@ -196,9 +196,15 @@ use Illuminate\Database\Eloquent\Model;
 
 class App extends Model
 {
-    protected $casts = [
-        'technologies' => 'array',
-    ];
+    /**
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    { 
+        return [
+            'technologies' => 'array',
+        ];
+    }
 
     // ...
 }

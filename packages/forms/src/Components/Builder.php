@@ -912,6 +912,7 @@ class Builder extends Field implements CanConcealComponents, HasExtraItemActions
                     ->getBlock($itemData['type'])
                     ->getChildSchema()
                     ->statePath("{$itemIndex}.data")
+                    ->constantState($itemData['data'] ?? [])
                     ->inlineLabel(false)
                     ->getClone(),
             )

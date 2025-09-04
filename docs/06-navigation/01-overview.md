@@ -552,6 +552,24 @@ public function panel(Panel $panel): Panel
 }
 ```
 
+### Replacing the sidebar and topbar Livewire components
+
+You may completely replace the Livewire components that are used to render the sidebar and topbar, passing your own Livewire component class name into the `sidebarLivewireComponent()` or `topbarLivewireComponent()` method:
+
+```php
+use App\Livewire\Sidebar;
+use App\Livewire\Topbar;
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->sidebarLivewireComponent(Sidebar::class)
+        ->topbarLivewireComponent(Topbar::class);
+}
+```
+
 ## Disabling breadcrumbs
 
 The default layout will show breadcrumbs to indicate the location of the current page within the hierarchy of the app.

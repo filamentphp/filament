@@ -2,7 +2,6 @@
 
 namespace Filament\Widgets\Concerns;
 
-use Exception;
 use Filament\Tables\Contracts\HasTable;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Builder;
@@ -10,6 +9,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\Reactive;
+use LogicException;
 
 use function Livewire\trigger;
 
@@ -28,9 +28,6 @@ trait InteractsWithPageTable /** @phpstan-ignore trait.unused */
     #[Reactive]
     public ?string $tableGrouping = null;
 
-    #[Reactive]
-    public ?string $tableGroupingDirection = null;
-
     /**
      * @var array<string, mixed> | null
      */
@@ -47,10 +44,7 @@ trait InteractsWithPageTable /** @phpstan-ignore trait.unused */
     public $tableSearch = '';
 
     #[Reactive]
-    public ?string $tableSortColumn = null;
-
-    #[Reactive]
-    public ?string $tableSortDirection = null;
+    public ?string $tableSort = null;
 
     #[Reactive]
     public ?string $activeTab = null;
@@ -62,7 +56,7 @@ trait InteractsWithPageTable /** @phpstan-ignore trait.unused */
 
     protected function getTablePage(): string
     {
-        throw new Exception('You must define a `getTablePage()` method on your widget that returns the name of a Livewire component.');
+        throw new LogicException('You must define a `getTablePage()` method on your widget that returns the name of a Livewire component.');
     }
 
     /**
@@ -88,11 +82,9 @@ trait InteractsWithPageTable /** @phpstan-ignore trait.unused */
             'tableColumnSearches' => $this->tableColumnSearches,
             'tableFilters' => $this->tableFilters,
             'tableGrouping' => $this->tableGrouping,
-            'tableGroupingDirection' => $this->tableGroupingDirection,
             'tableRecordsPerPage' => $this->tableRecordsPerPage,
             'tableSearch' => $this->tableSearch,
-            'tableSortColumn' => $this->tableSortColumn,
-            'tableSortDirection' => $this->tableSortDirection,
+            'tableSort' => $this->tableSort,
             ...$this->getTablePageMountParameters(),
         ], null, null);
 

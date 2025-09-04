@@ -3,12 +3,12 @@
 namespace Filament\Schemas\Concerns;
 
 use Closure;
-use Exception;
 use Filament\Infolists\Components\Entry;
+use Filament\Schemas\Components\Component;
 use Filament\Support\Livewire\Partials\PartialsComponentHook;
 use Illuminate\Contracts\Support\Arrayable;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
+use LogicException;
 
 trait HasState
 {
@@ -17,16 +17,21 @@ trait HasState
     protected string $cachedAbsoluteStatePath;
 
     /**
-     * @var array<string, mixed> | null
+     * @var array<string, mixed> | object | null
      */
-    protected ?array $constantState = null;
+    protected array | object | null $constantState = null;
 
     protected bool | Closure $shouldPartiallyRender = false;
 
     /**
-     * @param  array<string, mixed> | null  $state
+     * @var array<string, bool> | null
      */
-    public function state(?array $state): static
+    protected ?array $dehydratedComponentsCache = null;
+
+    /**
+     * @param  array<string, mixed> | object | null  $state
+     */
+    public function state(array | object | null $state): static
     {
         $this->constantState($state);
 
@@ -72,9 +77,9 @@ trait HasState
     }
 
     /**
-     * @param  array<string, mixed> | null  $state
+     * @param  array<string, mixed> | object | null  $state
      */
-    public function constantState(?array $state): static
+    public function constantState(array | object | null $state): static
     {
         $this->constantState = $state;
 
@@ -126,7 +131,7 @@ trait HasState
         } finally {
             if ($this->shouldPartiallyRender($path)) {
                 app(PartialsComponentHook::class)->renderPartial($this->getLivewire(), fn (): array => [
-                    "schema.{$this->getKey()}" => $this->toHtml(),
+                    "schema.{$this->getKey()}" => $this->toHtml(...),
                 ]);
             }
         }
@@ -154,25 +159,40 @@ trait HasState
         }
     }
 
-    public function hasDehydratedComponent(string $statePath): bool
+    /**
+     * @return array<string, bool>
+     */
+    protected function buildDehydratedComponentsCache(): array
     {
+        $cache = [];
+
         foreach ($this->getComponents(withActions: false, withHidden: true) as $component) {
             if (! $component->isDehydrated()) {
                 continue;
             }
 
-            if ($component->hasStatePath() && ($component->getStatePath() === $statePath)) {
-                return true;
+            if ($component->hasStatePath()) {
+                $cache[$component->getStatePath()] = true;
             }
 
-            foreach ($component->getChildSchemas(withHidden: true) as $container) {
-                if ($container->hasDehydratedComponent($statePath)) {
-                    return true;
-                }
+            foreach ($component->getChildSchemas(withHidden: true) as $childSchema) {
+                $cache = [
+                    ...$cache,
+                    ...$childSchema->buildDehydratedComponentsCache(),
+                ];
             }
         }
 
-        return false;
+        return $cache;
+    }
+
+    public function hasDehydratedComponent(string $statePath): bool
+    {
+        if ($this->dehydratedComponentsCache === null) {
+            $this->dehydratedComponentsCache = $this->buildDehydratedComponentsCache();
+        }
+
+        return $this->dehydratedComponentsCache[$statePath] ?? false;
     }
 
     /**
@@ -208,18 +228,22 @@ trait HasState
             }
 
             if (filled($component->getStatePath(isAbsolute: false))) {
+                $componentStatePath = $component->getStatePath();
+                $componentState = data_get($state, $componentStatePath);
+
+                if ($componentState === '') {
+                    data_set($state, $componentStatePath, null);
+                    $componentState = null;
+                }
+
                 if (! $component->mutatesDehydratedState()) {
                     continue;
                 }
 
-                $componentStatePath = $component->getStatePath();
-
                 data_set(
                     $state,
                     $componentStatePath,
-                    $component->mutateDehydratedState(
-                        data_get($state, $componentStatePath),
-                    ),
+                    $component->mutateDehydratedState($componentState),
                 );
             }
         }
@@ -360,11 +384,15 @@ trait HasState
     /**
      * @internal Do not use this method outside the internals of Filament. It is subject to breaking changes in minor and patch releases.
      *
-     * @return Model | array<string, mixed>
+     * @return array<string, mixed> | object
      */
-    public function getConstantState(): Model | array
+    public function getConstantState(): array | object
     {
-        return $this->constantState ?? $this->getRecord(withParentComponentRecord: false) ?? $this->getParentComponent()?->getContainer()->getConstantState() ?? $this->getRecord() ?? throw new Exception('Schema has no [record()] or [state()] set.');
+        return $this->constantState
+            ?? $this->getRecord(withParentComponentRecord: false)
+            ?? $this->getParentComponent()?->getContainer()->getConstantState()
+            ?? $this->getRecord()
+            ?? throw new LogicException('Schema has no [record()] or [state()] set.');
     }
 
     /**
@@ -392,30 +420,32 @@ trait HasState
      */
     public function getState(bool $shouldCallHooksBefore = true, ?Closure $afterValidate = null): array
     {
-        $state = $this->validate();
+        return Component::withVisibilityCache(function () use ($shouldCallHooksBefore, $afterValidate): array {
+            $state = $this->validate();
 
-        if ($shouldCallHooksBefore) {
-            $this->callBeforeStateDehydrated($state);
+            if ($shouldCallHooksBefore) {
+                $this->callBeforeStateDehydrated($state);
 
-            $afterValidate || $this->saveRelationships();
-            $afterValidate || $this->loadStateFromRelationships(shouldHydrate: true);
-        }
+                $afterValidate || $this->saveRelationships();
+                $afterValidate || $this->loadStateFromRelationships(shouldHydrate: true);
+            }
 
-        $this->dehydrateState($state);
-        $this->mutateDehydratedState($state);
+            $this->dehydrateState($state);
+            $this->mutateDehydratedState($state);
 
-        if ($statePath = $this->getStatePath()) {
-            $state = data_get($state, $statePath) ?? [];
-        }
+            if ($statePath = $this->getStatePath()) {
+                $state = data_get($state, $statePath) ?? [];
+            }
 
-        if ($afterValidate) {
-            value($afterValidate, $state);
+            if ($afterValidate) {
+                value($afterValidate, $state);
 
-            $shouldCallHooksBefore && $this->saveRelationships();
-            $shouldCallHooksBefore && $this->loadStateFromRelationships(shouldHydrate: true);
-        }
+                $shouldCallHooksBefore && $this->saveRelationships();
+                $shouldCallHooksBefore && $this->loadStateFromRelationships(shouldHydrate: true);
+            }
 
-        return $state;
+            return $state;
+        });
     }
 
     /**
@@ -480,7 +510,7 @@ trait HasState
         }
 
         if (blank($this->getKey())) {
-            throw new Exception('You cannot partially render a schema without a [key()] or [statePath()] defined.');
+            throw new LogicException('You cannot partially render a schema without a [key()] or [statePath()] defined.');
         }
 
         return blank($updatedStatePath) || str($updatedStatePath)->startsWith("{$this->getStatePath()}.");

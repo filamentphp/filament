@@ -23,6 +23,7 @@ use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Url;
 use ReflectionMethod;
 use ReflectionNamedType;
+use ReflectionUnionType;
 use Throwable;
 
 use function Livewire\store;
@@ -55,6 +56,24 @@ trait InteractsWithActions
      */
     #[Url(as: 'actionContext')]
     public $defaultActionContext = null;
+
+    /**
+     * @var mixed
+     */
+    #[Url(as: 'tableAction')]
+    public $defaultTableAction = null;
+
+    /**
+     * @var mixed
+     */
+    #[Url(as: 'tableActionRecord')]
+    public $defaultTableActionRecord = null;
+
+    /**
+     * @var mixed
+     */
+    #[Url(as: 'tableActionArguments')]
+    public $defaultTableActionArguments = null;
 
     /**
      * @var array<string, Action>
@@ -452,6 +471,7 @@ trait InteractsWithActions
             }
 
             $resolvedAction->nestingIndex($actionNestingIndex);
+            $resolvedAction->boot();
 
             $resolvedActions[] = $resolvedAction;
 
@@ -459,8 +479,6 @@ trait InteractsWithActions
                 "mountedActionSchema{$actionNestingIndex}",
                 $this->getMountedActionSchema($actionNestingIndex, $resolvedAction),
             );
-
-            $resolvedAction->boot();
         }
 
         return $resolvedActions;
@@ -495,13 +513,13 @@ trait InteractsWithActions
                 return null;
             }
 
-            if (! $returnTypeReflection instanceof ReflectionNamedType) {
-                return null;
-            }
+            $returnTypes = $returnTypeReflection instanceof ReflectionUnionType ? $returnTypeReflection->getTypes() : [$returnTypeReflection];
 
-            $type = $returnTypeReflection->getName();
+            $hasActionReturnType = collect($returnTypes)
+                ->filter(fn ($returnType) => $returnType instanceof ReflectionNamedType)
+                ->contains(fn (ReflectionNamedType $returnType) => is_a($returnType->getName(), Action::class, allow_string: true));
 
-            if (! is_a($type, Action::class, allow_string: true)) {
+            if (! $hasActionReturnType) {
                 return null;
             }
 
@@ -619,7 +637,11 @@ trait InteractsWithActions
 
         return $mountedAction->getSchema(
             $this->makeSchema()
-                ->model(fn (): Model | array | string | null => $mountedAction->getRecord() ?? $mountedAction->getModel() ?? $mountedAction->getSchemaComponent()?->getActionSchemaModel() ?? $this->getMountedActionSchemaModel())
+                ->model(function () use ($mountedAction): Model | array | string | null {
+                    $schemaComponent = $mountedAction->getSchemaComponent();
+
+                    return $mountedAction->getRecord(withDefault: blank($schemaComponent)) ?? $mountedAction->getModel(withDefault: blank($schemaComponent)) ?? $schemaComponent?->getActionSchemaModel() ?? $this->getMountedActionSchemaModel();
+                })
                 ->key("mountedActionSchema{$actionNestingIndex}")
                 ->statePath("mountedActions.{$actionNestingIndex}.data")
                 ->operation(

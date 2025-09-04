@@ -57,6 +57,8 @@ trait HasActions
      */
     public function getAction(string | array | null $name = null): ?Action
     {
+        $actions = $this->getActions();
+
         if (blank($name)) {
             return $this->action;
         }
@@ -72,7 +74,7 @@ trait HasActions
             $name = $firstName;
         }
 
-        $action = $this->cacheActions()[$name] ?? null;
+        $action = $actions[$name] ?? null;
 
         if (! $action) {
             return null;

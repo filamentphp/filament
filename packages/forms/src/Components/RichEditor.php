@@ -24,6 +24,7 @@ use Filament\Support\Icons\Heroicon;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Tiptap\Editor;
 
@@ -862,5 +863,89 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
             ->mapWithKeys(fn (array $color, string $key): array => [
                 $color[500] => ucwords($key),
             ])->toArray();
+    }
+    
+    public function getLengthValidationRules(): array
+    {
+        $rules = [];
+
+        if (filled($maxLength = $this->getMaxLength())) {
+            $rules[] = function (string $attribute, mixed $value, Closure $fail) use ($maxLength): void {
+                if (blank($value)) {
+                    return;
+                }
+
+                $textLength = Str::length($this->getTipTapEditor()
+                    ->setContent($value)
+                    ->getText());
+
+                if ($textLength > $maxLength) {
+                    $fail('validation.max.string')->translate([
+                        'max' => $maxLength,
+                    ]);
+                }
+            };
+        }
+
+        if (filled($minLength = $this->getMinLength())) {
+            $rules[] = function (string $attribute, mixed $value, Closure $fail) use ($minLength): void {
+                if (blank($value)) {
+                    return;
+                }
+
+                $textLength = Str::length($this->getTipTapEditor()
+                    ->setContent($value)
+                    ->getText());
+
+                if ($textLength < $minLength) {
+                    $fail('validation.min.string')->translate([
+                        'min' => $minLength,
+                    ]);
+                }
+            };
+        }
+
+        if (filled($length = $this->getLength())) {
+            $rules[] = function (string $attribute, mixed $value, Closure $fail) use ($length): void {
+                if (blank($value)) {
+                    return;
+                }
+
+                $textLength = Str::length($this->getTipTapEditor()
+                    ->setContent($value)
+                    ->getText());
+
+                if ($textLength !== $length) {
+                    $fail('validation.size.string')->translate([
+                        'size' => $length,
+                    ]);
+                }
+            };
+        }
+
+        return $rules;
+    }
+
+    public function getRequiredValidationRule(): string | Closure
+    {
+        if (! $this->isRequired()) {
+            return 'nullable';
+        }
+
+        return function (string $attribute, mixed $value, Closure $fail): void {
+            if (blank($value)) {
+                return;
+            }
+
+            $isEmpty = is_array($value)
+                && (($value['type'] ?? null) === 'doc')
+                && (count($value['content'] ?? []) === 1)
+                && (($value['content'][0]['type'] ?? null) === 'paragraph')
+                && blank($value['content'][0]['content'] ?? []);
+
+            if ($isEmpty) {
+                $fail('validation.required')->translate();
+            }
+        };
     }
 }

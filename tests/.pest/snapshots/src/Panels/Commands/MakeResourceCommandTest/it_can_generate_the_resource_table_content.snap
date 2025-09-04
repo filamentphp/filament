@@ -16,8 +16,7 @@ class PostsTable
         return $table
             ->columns([
                 TextColumn::make('author.name')
-                    ->numeric()
-                    ->sortable(),
+                    ->searchable(),
                 IconColumn::make('is_published')
                     ->boolean(),
                 TextColumn::make('rating')

@@ -132,6 +132,7 @@ All these render hooks [can be scoped](#scoping-render-hooks) to any table Livew
 use Filament\Tables\View\TablesRenderHook;
 ```
 
+- `TablesRenderHook::FILTER_INDICATORS` - Replace the existing filter indicators, receives `filterIndicators` data as `array<Filament\Tables\Filters\Indicator>`
 - `TablesRenderHook::SELECTION_INDICATOR_ACTIONS_AFTER` - After the "select all" and "deselect all" action buttons in the selection indicator bar
 - `TablesRenderHook::SELECTION_INDICATOR_ACTIONS_BEFORE` - Before the "select all" and "deselect all" action buttons in the selection indicator bar
 - `TablesRenderHook::HEADER_AFTER` - After the header container
@@ -220,6 +221,20 @@ FilamentView::registerRenderHook(
 );
 ```
 
+## Passing data to render hooks
+
+Render hooks can receive "data" from when the hook is rendered. To access data from a render hook, you can inject it using an `array $data` parameter to the hook's rendering function:
+
+```php
+use Filament\Support\Facades\FilamentView;
+use Filament\Tables\View\TablesRenderHook;
+
+FilamentView::registerRenderHook(
+    TablesRenderHook::FILTER_INDICATORS,
+    fn (array $data): View => view('filter-indicators', ['indicators' => $data['filterIndicators']]),
+);
+```
+
 ## Rendering hooks
 
 Plugin developers might find it useful to expose render hooks to their users. You do not need to register them anywhere, simply output them in Blade like so:
@@ -228,7 +243,7 @@ Plugin developers might find it useful to expose render hooks to their users. Yo
 {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_START) }}
 ```
 
-To provide scope your render hook, you can pass it as the second argument to `renderHook()`. For instance, if your hook is inside a Livewire component, you can pass the class of the component using `static::class`:
+To provide [scope](#scoping-render-hooks) your render hook, you can pass it as the second argument to `renderHook()`. For instance, if your hook is inside a Livewire component, you can pass the class of the component using `static::class`:
 
 ```blade
 {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_START, scopes: $this->getRenderHookScopes()) }}
@@ -238,4 +253,10 @@ You can even pass multiple scopes as an array, and all render hooks that match a
 
 ```blade
 {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_START, scopes: [static::class, \App\Filament\Resources\Users\UserResource::class]) }}
+```
+
+You can pass [data](#passing-data-to-render-hooks) to a render hook using a `data` argument to the `renderHook()` function:
+
+```blade
+{{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Tables\View\TablesRenderHook::FILTER_INDICATORS, data: ['filterIndicators' => $filterIndicators]) }}
 ```

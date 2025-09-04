@@ -130,7 +130,7 @@ class TextInputColumn extends Column implements Editable, HasEmbeddedView
                             theme: $store.theme,
                         }
                 "
-                x-on:click.stop=""
+                x-on:click.stop
                 class="fi-input-wrp"
             >
                 <input

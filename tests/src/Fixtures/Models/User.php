@@ -33,15 +33,18 @@ class User extends Authenticatable implements FilamentUser, HasAppAuthentication
     ];
 
     /**
-     * @var array<string, string>
+     * @return array<string, string>
      */
-    protected $casts = [
-        'json' => 'array',
-        'email_verified_at' => 'datetime',
-        'app_authentication_secret' => 'encrypted',
-        'app_authentication_recovery_codes' => 'encrypted:array',
-        'has_email_authentication' => 'boolean',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'json' => 'array',
+            'email_verified_at' => 'datetime',
+            'app_authentication_secret' => 'encrypted',
+            'app_authentication_recovery_codes' => 'encrypted:array',
+            'has_email_authentication' => 'boolean',
+        ];
+    }
 
     public function canAccessPanel(Panel $panel): bool
     {

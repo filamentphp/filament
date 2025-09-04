@@ -3,7 +3,6 @@
 namespace Filament\Actions\Imports;
 
 use Closure;
-use Exception;
 use Filament\Forms\Components\Select;
 use Filament\Support\Components\Component;
 use Filament\Support\Services\RelationshipJoiner;
@@ -15,6 +14,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use InvalidArgumentException;
 
 class ImportColumn extends Component
 {
@@ -98,7 +98,7 @@ class ImportColumn extends Component
         $name ??= static::getDefaultName();
 
         if (blank($name)) {
-            throw new Exception("Import column of class [$importColumnClass] must have a unique name, passed to the [make()] method.");
+            throw new InvalidArgumentException("Import column of class [$importColumnClass] must have a unique name, passed to the [make()] method.");
         }
 
         $static = app($importColumnClass, ['name' => $name]);

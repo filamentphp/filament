@@ -60,7 +60,7 @@ trait CanAskForResource
         if (! $resourceFqns) {
             return (string) str(text(
                 label: "No resources were found within [{$resourcesNamespace}]. {$question}",
-                placeholder: 'App\\Filament\\Resources\\Posts\\PostResource',
+                placeholder: app()->getNamespace() . 'Filament\\Resources\\Posts\\PostResource',
                 required: true,
                 validate: function (string $value): ?string {
                     $value = (string) str($value)

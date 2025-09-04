@@ -81,7 +81,14 @@
             <ul
                 x-sortable
                 data-sortable-animation-duration="{{ $getReorderAnimationDuration() }}"
-                wire:end.stop="mountAction('reorder', { items: $event.target.sortable.toArray() }, { schemaComponent: '{{ $key }}' })"
+                x-on:end.stop="
+                    $event.oldDraggableIndex !== $event.newDraggableIndex &&
+                        $wire.mountAction(
+                            'reorder',
+                            { items: $event.target.sortable.toArray() },
+                            { schemaComponent: '{{ $key }}' },
+                        )
+                "
                 class="fi-fo-builder-items"
             >
                 @php
@@ -137,11 +144,8 @@
                                         class="fi-fo-builder-item-header-start-actions"
                                     >
                                         @if ($reorderActionIsVisible)
-                                            <li
-                                                x-sortable-handle
-                                                x-on:click.stop
-                                            >
-                                                {{ $reorderAction }}
+                                            <li x-on:click.stop>
+                                                {{ $reorderAction->extraAttributes(['x-sortable-handle' => true], merge: true) }}
                                             </li>
                                         @endif
 
@@ -259,36 +263,46 @@
                                 {{ $item }}
                             @endif
                         </div>
-                    </li>
 
-                    @if (! $loop->last)
-                        @if ($isAddable && $addBetweenAction(['afterItem' => $itemKey])->isVisible())
-                            <li class="fi-fo-builder-add-between-items-ctn">
-                                <div class="fi-fo-builder-add-between-items">
-                                    <div class="fi-fo-builder-block-picker-ctn">
-                                        <x-filament-forms::builder.block-picker
-                                            :action="$addBetweenAction"
-                                            :after-item="$itemKey"
-                                            :columns="$blockPickerColumns"
-                                            :blocks="$blockPickerBlocks"
-                                            :key="$key"
-                                            :width="$blockPickerWidth"
+                        @if (! $loop->last)
+                            @if ($isAddable && $addBetweenAction(['afterItem' => $itemKey])->isVisible())
+                                <div
+                                    class="fi-fo-builder-add-between-items-ctn"
+                                >
+                                    <div
+                                        class="fi-fo-builder-add-between-items"
+                                    >
+                                        <div
+                                            class="fi-fo-builder-block-picker-ctn"
                                         >
-                                            <x-slot name="trigger">
-                                                {{ $addBetweenAction(['afterItem' => $itemKey]) }}
-                                            </x-slot>
-                                        </x-filament-forms::builder.block-picker>
+                                            <x-filament-forms::builder.block-picker
+                                                :action="$addBetweenAction"
+                                                :after-item="$itemKey"
+                                                :columns="$blockPickerColumns"
+                                                :blocks="$blockPickerBlocks"
+                                                :key="$key"
+                                                :width="$blockPickerWidth"
+                                            >
+                                                <x-slot name="trigger">
+                                                    {{ $addBetweenAction(['afterItem' => $itemKey]) }}
+                                                </x-slot>
+                                            </x-filament-forms::builder.block-picker>
+                                        </div>
                                     </div>
                                 </div>
-                            </li>
-                        @elseif (filled($labelBetweenItems))
-                            <li class="fi-fo-builder-label-between-items-ctn">
-                                <span class="fi-fo-builder-label-between-items">
-                                    {{ $labelBetweenItems }}
-                                </span>
-                            </li>
+                            @elseif (filled($labelBetweenItems))
+                                <div
+                                    class="fi-fo-builder-label-between-items-ctn"
+                                >
+                                    <span
+                                        class="fi-fo-builder-label-between-items"
+                                    >
+                                        {{ $labelBetweenItems }}
+                                    </span>
+                                </div>
+                            @endif
                         @endif
-                    @endif
+                    </li>
                 @endforeach
             </ul>
         @endif

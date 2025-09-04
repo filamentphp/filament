@@ -246,24 +246,16 @@ public function form(Schema $schema): Schema
 
 ## Using multiple forms
 
-By default, the `InteractsWithForms` trait only handles one form per Livewire component - `form()`. To add more forms to the Livewire component, you can define them in the `getForms()` method, and return an array containing the name of each form:
-
-```php
-protected function getForms(): array
-{
-    return [
-        'editPostForm',
-        'createCommentForm',
-    ];
-}
-```
-
-Each of these forms can now be defined within the Livewire component, using a method with the same name:
+Many forms can be defined using the `InteractsWithSchemas` trait. Each of the forms should use a method with the same name:
 
 ```php
 use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
+
+public ?array $postData = [];
+
+public ?array $commentData = [];
 
 public function editPostForm(Schema $schema): Schema
 {
@@ -298,12 +290,7 @@ public function createCommentForm(Schema $schema): Schema
 
 Now, each form is addressable by its name instead of `form`. For example, to fill the post form, you can use `$this->editPostForm->fill([...])`, or to get the data from the comment form you can use `$this->createCommentForm->getState()`.
 
-You'll notice that each form has its own unique `statePath()`. Each form will write its state to a different array on your Livewire component, so it's important to define these:
-
-```php
-public ?array $postData = [];
-public ?array $commentData = [];
-```
+You'll notice that each form has its own unique `statePath()`. Each form will write its state to a different array on your Livewire component, so it's important to define the public properties, `$postData` and `$commentData` in this example.
 
 ## Resetting a form's data
 

@@ -8,6 +8,7 @@ use Filament\Navigation\NavigationManager;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Str;
 use Laravel\SerializableClosure\Serializers\Native;
 
 trait HasRoutes
@@ -186,7 +187,7 @@ trait HasRoutes
                 $tenantRoutePrefix .= '/';
             }
 
-            return url($this->getPath() . '/' . $tenantRoutePrefix . (filled($tenantSlugAttribute) ? $tenant->getAttributeValue($tenantSlugAttribute) : $tenant->getRouteKey()));
+            return url(Str::replaceEnd('/', '', $this->getPath()) . '/' . $tenantRoutePrefix . (filled($tenantSlugAttribute) ? $tenant->getAttributeValue($tenantSlugAttribute) : $tenant->getRouteKey()));
         }
 
         return url($this->getPath());

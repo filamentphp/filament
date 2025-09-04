@@ -92,16 +92,19 @@ To replace an icon, you can use the `FilamentIcon` facade. It has a `register()`
 
 ```php
 use Filament\Support\Facades\FilamentIcon;
+use Filament\View\PanelsIconAlias;
 
 FilamentIcon::register([
-    'PanelsIconAlias::GLOBAL_SEARCH_FIELD' => 'fas-magnifying-glass',
-    'PanelsIconAlias::SIDEBAR_GROUP_COLLAPSE_BUTTON' => view('icons.chevron-up'),
+    PanelsIconAlias::GLOBAL_SEARCH_FIELD => 'fas-magnifying-glass',
+    PanelsIconAlias::SIDEBAR_GROUP_COLLAPSE_BUTTON => view('icons.chevron-up'),
 ]);
 ```
 
 ## Available icon aliases
 
 ### Actions icon aliases
+
+Using class `Filament\Actions\View\ActionsIconAlias`
 
 - `ActionsIconAlias::ACTION_GROUP` - Trigger button of an action group
 - `ActionsIconAlias::CREATE_ACTION_GROUPED` - Trigger button of a grouped create action
@@ -129,6 +132,8 @@ FilamentIcon::register([
 - `ActionsIconAlias::VIEW_ACTION_GROUPED` - Trigger button of a grouped view action
 
 ### Forms icon aliases
+
+Using class `Filament\Forms\View\FormsIconAlias`
 
 - `FormsIconAlias::COMPONENTS_BUILDER_ACTIONS_CLONE` - Trigger button of a clone action in a builder item
 - `FormsIconAlias::COMPONENTS_BUILDER_ACTIONS_COLLAPSE` - Trigger button of a collapse action in a builder item
@@ -173,10 +178,14 @@ FilamentIcon::register([
 
 ### Infolists icon aliases
 
+Using class `Filament\Infolists\View\InfolistsIconAlias`
+
 - `InfolistsIconAlias::COMPONENTS_ICON_ENTRY_FALSE` - Falsy state of an icon entry
 - `InfolistsIconAlias::COMPONENTS_ICON_ENTRY_TRUE` - Truthy state of an icon entry
 
 ### Notifications icon aliases
+
+Using class `Filament\Notifications\View\NotificationsIconAlias`
 
 - `NotificationsIconAlias::DATABASE_MODAL_EMPTY_STATE` - Empty state of the database notifications modal
 - `NotificationsIconAlias::NOTIFICATION_CLOSE_BUTTON` - Button to close a notification
@@ -186,6 +195,8 @@ FilamentIcon::register([
 - `NotificationsIconAlias::NOTIFICATION_WARNING` - Warning notification
 
 ### Panels icon aliases
+
+Using class `Filament\View\PanelsIconAlias`
 
 - `PanelsIconAlias::GLOBAL_SEARCH_FIELD` - Global search field
 - `PanelsIconAlias::PAGES_DASHBOARD_ACTIONS_FILTER` - Trigger button of the dashboard filter action
@@ -219,9 +230,13 @@ FilamentIcon::register([
 
 ### Schema icon aliases
 
+Using class `Filament\Schemas\View\SchemaIconAlias`
+
 - `SchemaIconAlias::COMPONENTS_WIZARD_COMPLETED_STEP` - Completed step in a wizard
 
 ### Tables icon aliases
+
+Using class `Filament\Tables\View\TablesIconAlias`
 
 - `TablesIconAlias::ACTIONS_DISABLE_REORDERING` - Trigger button of the disable reordering action
 - `TablesIconAlias::ACTIONS_ENABLE_REORDERING` - Trigger button of the enable reordering action
@@ -249,6 +264,8 @@ FilamentIcon::register([
 
 ### UI components icon aliases
 
+Using class `Filament\Support\View\SupportIconAlias`
+
 - `SupportIconAlias::BADGE_DELETE_BUTTON` - Button to delete a badge
 - `SupportIconAlias::BREADCRUMBS_SEPARATOR` - Separator between breadcrumbs
 - `SupportIconAlias::BREADCRUMBS_SEPARATOR_RTL` - Separator between breadcrumbs (right-to-left direction)
@@ -264,5 +281,7 @@ FilamentIcon::register([
 - `SupportIconAlias::SECTION_COLLAPSE_BUTTON` - Button to collapse a section
 
 ### Widgets icon aliases
+
+Using class `Filament\Widgets\View\WidgetsIconAlias`
 
 - `WidgetsIconAlias::CHART_WIDGET_FILTER` - Button of the filter action

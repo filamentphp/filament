@@ -6,6 +6,8 @@ return [
 
     'breadcrumb' => 'Ver',
 
+    'navigation_label' => 'Ver',
+
     'content' => [
 
         'tab' => [

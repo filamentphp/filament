@@ -22,6 +22,7 @@ class Table extends ViewComponent
     use Table\Concerns\CanSortRecords;
     use Table\Concerns\CanSummarizeRecords;
     use Table\Concerns\HasActions;
+    use Table\Concerns\HasArguments;
     use Table\Concerns\HasBulkActions;
     use Table\Concerns\HasColumnManager;
     use Table\Concerns\HasColumns;

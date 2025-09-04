@@ -15,7 +15,7 @@ return [
             ],
 
             'save' => [
-                'label' => 'Sauvegarder',
+                'label' => 'Sauvegarder les modifications',
             ],
 
         ],

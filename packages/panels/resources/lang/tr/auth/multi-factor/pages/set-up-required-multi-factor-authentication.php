@@ -2,16 +2,16 @@
 
 return [
 
-    'title' => 'Set up two-factor authentication (2FA)',
+    'title' => 'İki faktörlü kimlik doğrulamayı (2FA) kur',
 
-    'heading' => 'Set up two-factor authentication',
+    'heading' => 'İki faktörlü kimlik doğrulamayı kur',
 
-    'subheading' => '2FA adds an extra layer of security to your account by requiring a second form of verification when signing in.',
+    'subheading' => '2FA, giriş yaparken ikinci bir doğrulama formu gerektirerek hesabınıza ek bir güvenlik katmanı ekler.',
 
     'actions' => [
 
         'continue' => [
-            'label' => 'Continue',
+            'label' => 'Devam et',
         ],
 
     ],

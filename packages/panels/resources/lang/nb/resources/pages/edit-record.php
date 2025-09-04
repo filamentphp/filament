@@ -6,6 +6,8 @@ return [
 
     'breadcrumb' => 'Endre',
 
+    'navigation_label' => 'Endre',
+
     'form' => [
 
         'actions' => [

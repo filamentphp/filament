@@ -219,9 +219,15 @@ use Illuminate\Database\Eloquent\Model;
 
 class App extends Model
 {
-    protected $casts = [
-        'technologies' => 'array',
-    ];
+    /**
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'technologies' => 'array',
+        ];
+    }
 
     // ...
 }
@@ -576,6 +582,64 @@ MorphToSelect::make('commentable')
     Many of the same options in the select field are available for `MorphToSelect`, including `searchable()`, `preload()`, `native()`, `allowHtml()`, and `optionsLimit()`.
 </Aside>
 
+#### Customizing the morph select fields
+
+You may further customize the "key" select field for a specific morph type using the `modifyKeySelectUsing()` method:
+
+```php
+use Filament\Forms\Components\MorphToSelect;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+
+MorphToSelect::make('commentable')
+    ->types([
+        MorphToSelect\Type::make(Product::class)
+            ->titleAttribute('name')
+            ->modifyKeySelectUsing(fn (Select $select): Select => $select
+                ->createOptionForm([
+                    TextInput::make('title')
+                        ->required(),
+                ])
+                ->createOptionUsing(function (array $data): int {
+                    return Product::create($data)->getKey();
+                })),
+        MorphToSelect\Type::make(Post::class)
+            ->titleAttribute('title'),
+    ])
+```
+
+This is useful if you want to customize the "key" select field for each morphed type individually. If you want to customize the key select for all types, you can use the `modifyKeySelectUsing()` method on the `MorphToSelect` component itself:
+
+```php
+use Filament\Forms\Components\MorphToSelect;
+use Filament\Forms\Components\Select;
+
+MorphToSelect::make('commentable')
+    ->types([
+        MorphToSelect\Type::make(Product::class)
+            ->titleAttribute('name'),
+        MorphToSelect\Type::make(Post::class)
+            ->titleAttribute('title'),
+    ])
+    ->modifyKeySelectUsing(fn (Select $select): Select => $select->native())
+```
+
+You can also modify the "type" select field using the `modifyTypeSelectUsing()` method:
+
+```php
+use Filament\Forms\Components\MorphToSelect;
+use Filament\Forms\Components\Select;
+
+MorphToSelect::make('commentable')
+    ->types([
+        MorphToSelect\Type::make(Product::class)
+            ->titleAttribute('name'),
+        MorphToSelect\Type::make(Post::class)
+            ->titleAttribute('title'),
+    ])
+    ->modifyTypeSelectUsing(fn (Select $select): Select => $select->native())
+```
+
 ## Allowing HTML in the option labels
 
 By default, Filament will escape any HTML in the option labels. If you'd like to allow HTML, you can use the `allowHtml()` method:
@@ -615,6 +679,19 @@ Select::make('technology')
 ```
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `allowHtml()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+## Wrap or truncate option labels
+
+When using the JavaScript select, labels that exceed the width of the select element will wrap onto multiple lines by default. Alternatively, you may choose to truncate overflowing labels.
+
+```php
+use Filament\Forms\Components\Select;
+
+Select::make('truncate')
+    ->wrapOptionLabels(false)
+```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `wrapOptionLabels()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Disable placeholder selection
 
@@ -815,6 +892,8 @@ ModalTableSelect::make('categories')
 
 <UtilityInjection set="formFields" version="4.x">The `tableConfiguration()` method can inject various utilities into the function as parameters.</UtilityInjection>
 
+### Customizing the modal table select actions
+
 You can customize the "Select" button and modal using the [action](../actions) object configuration methods. Passing a function to the `selectAction()` method allows you to modify the `$action` object, for example, to change the button label and the modal heading:
 
 ```php
@@ -834,6 +913,8 @@ ModalTableSelect::make('category_id')
 
 <UtilityInjection set="formFields" version="4.x" extras="Action;;Filament\Actions\Action;;$action;;The action object to customize.">The `selectAction()` method can inject various utilities into the function as parameters.</UtilityInjection>
 
+### Customizing the option labels in the modal table select
+
 The `getOptionLabelFromRecordUsing()` method can be used to customize the label of each selected option. This is useful if you want to display a more descriptive label or concatenate two columns together:
 
 ```php
@@ -843,6 +924,66 @@ ModalTableSelect::make('category_id')
     ->relationship('category', 'name')
     ->tableConfiguration(CategoriesTable::class)
     ->getOptionLabelFromRecordUsing(fn (Category $record): string => "{$record->name} ({$record->slug})")
+```
+
+### Passing additional arguments to the table in a modal select
+
+You can pass arguments from your form to the table configuration class using the `tableArguments()` method. For example, this can be used to modify the table's query based on previously filled form fields:
+
+```php
+use Filament\Actions\Action;
+use Filament\Forms\Components\ModalTableSelect;
+use Filament\Schemas\Components\Utilities\Get;
+
+ModalTableSelect::make('products')
+    ->relationship('products', 'name')
+    ->multiple()
+    ->tableConfiguration(ProductsTable::class)
+    ->tableArguments(function (Get $get): array {
+        return [
+            'category_id' => $get('category_id'),
+            'budget_limit' => $get('budget'),
+        ];
+    })
+```
+
+<UtilityInjection set="formFields" version="4.x">The `tableArguments()` method can inject various utilities into the function as parameters.</UtilityInjection>
+
+In your table configuration class, you can access these arguments using the `$table->getArguments()` method:
+
+```php
+use Filament\Forms\Components\TableSelect\Livewire\TableSelectLivewireComponent;
+use Filament\Tables\Columns\TextColumn;
+use Illuminate\Database\Eloquent\Builder;
+use Filament\Tables\Table;
+
+class ProductsTable
+{
+    public static function configure(Table $table): Table
+    {
+        return $table
+            ->modifyQueryUsing(function (Builder $query) use ($table): Builder {
+                $arguments = $table->getArguments();
+            
+                if ($categoryId = $arguments['category_id'] ?? null) {
+                    $query->where('category_id', $categoryId);
+                }
+                
+                if ($budgetLimit = $arguments['budget_limit'] ?? null) {
+                    $query->where('price', '<=', $budgetLimit);
+                }
+                
+                return $query;
+            })
+            ->columns([
+                TextColumn::make('name'),
+                TextColumn::make('price')
+                    ->money(),
+                TextColumn::make('category.name')
+                    ->hidden(filled($table->getArguments()['category_id'])),
+            ]);
+    }
+}
 ```
 
 ## Select validation

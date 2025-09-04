@@ -100,13 +100,13 @@ test('can get component column span at one breakpoint', function (): void {
         ->getColumnSpan('2xl')->toBe($spanAt2xl);
 });
 
-test('can set component column span at `default` breakpoint', function (): void {
+test('can set component column span at `lg` breakpoint', function (): void {
     $component = (new Component)
         ->container(Schema::make(Livewire::make()))
-        ->columnSpan($defaultSpan = rand(1, 12));
+        ->columnSpan($spanAtLg = rand(1, 12));
 
     expect($component)
-        ->getColumnSpan('default')->toBe($defaultSpan);
+        ->getColumnSpan('lg')->toBe($spanAtLg);
 });
 
 test('can get component column order at all breakpoints', function (): void {

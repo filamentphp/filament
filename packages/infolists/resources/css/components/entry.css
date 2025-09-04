@@ -38,11 +38,7 @@
     }
 
     & .fi-in-entry-content {
-        @apply w-full;
-
-        &.fi-align-start {
-            @apply text-start;
-        }
+        @apply block w-full text-start;
 
         &.fi-align-center {
             @apply text-center;

@@ -145,6 +145,10 @@ trait CanGenerateModelForms
                 $componentData['label'] = [Str::upper($componentName)];
             }
 
+            if ($componentName === 'email') {
+                $componentData['label'] = ['Email address'];
+            }
+
             if ($componentData['type'] === TextInput::class) {
                 if (str($componentName)->contains(['email'])) {
                     $componentData['email'] = [];

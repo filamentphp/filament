@@ -12,6 +12,10 @@ return [
                 'label' => 'Primeni kolone',
             ],
 
+            'reset' => [
+                'label' => 'Poništi',
+            ],
+
         ],
 
     ],

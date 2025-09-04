@@ -144,4 +144,13 @@ class ReplicateAction extends Action
             default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
         };
     }
+
+    public function getSchema(Schema $schema): ?Schema
+    {
+        // By default, the schema's model will be set to the original record that is being replicated.
+        // However, since the schema is used to create a new replica, it is more appropriate to set
+        // the schema's model to the replica model FQN instead. This ensures that it does not
+        // behave as if the original record is edited instead of a new record being created.
+        return parent::getSchema($schema)?->model($this->getModel());
+    }
 }

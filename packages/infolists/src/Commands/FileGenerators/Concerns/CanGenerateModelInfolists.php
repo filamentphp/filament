@@ -88,6 +88,8 @@ trait CanGenerateModelInfolists
 
                     $componentName = "{$guessedRelationshipName}.{$guessedRelationshipTitleColumnName}";
                 }
+            } else {
+                $guessedRelationshipName = null;
             }
 
             $componentData = [];
@@ -98,6 +100,10 @@ trait CanGenerateModelInfolists
                 'uuid',
             ])) {
                 $componentData['label'] = [Str::upper($componentName)];
+            }
+
+            if ($componentName === 'email') {
+                $componentData['label'] = ['Email address'];
             }
 
             if ($type['name'] === 'boolean') {
@@ -130,7 +136,7 @@ trait CanGenerateModelInfolists
                     'float',
                     'double',
                     'money',
-                ])) {
+                ]) && blank($guessedRelationshipName)) {
                     $componentData[in_array($componentName, [
                         'cost',
                         'money',

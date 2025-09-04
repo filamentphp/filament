@@ -2,7 +2,6 @@
 
 namespace Filament\Forms\Components\TableSelect\Livewire;
 
-use Exception;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Concerns\InteractsWithForms;
@@ -19,6 +18,7 @@ use Livewire\Attributes\Locked;
 use Livewire\Attributes\Modelable;
 use Livewire\Component;
 use Livewire\WithoutUrlPagination;
+use LogicException;
 
 class TableSelectLivewireComponent extends Component implements HasActions, HasForms, HasTable
 {
@@ -29,6 +29,9 @@ class TableSelectLivewireComponent extends Component implements HasActions, HasF
 
     #[Locked]
     public bool $isDisabled = false;
+
+    #[Locked]
+    public ?int $maxSelectableRecords = null;
 
     #[Locked]
     public ?string $model = null;
@@ -43,6 +46,12 @@ class TableSelectLivewireComponent extends Component implements HasActions, HasF
     public string $tableConfiguration;
 
     /**
+     * @var array<mixed>
+     */
+    #[Locked]
+    public array $tableArguments = [];
+
+    /**
      * @var string | array<string> | null
      */
     #[Modelable]
@@ -53,11 +62,11 @@ class TableSelectLivewireComponent extends Component implements HasActions, HasF
         $tableConfiguration = base64_decode($this->tableConfiguration);
 
         if (! class_exists($tableConfiguration)) {
-            throw new Exception("Table configuration class [{$tableConfiguration}] does not exist.");
+            throw new LogicException("Table configuration class [{$tableConfiguration}] does not exist.");
         }
 
         if (! method_exists($tableConfiguration, 'configure')) {
-            throw new Exception("Table configuration class [{$tableConfiguration}] does not have a [configure(Table \$table): Table] method.");
+            throw new LogicException("Table configuration class [{$tableConfiguration}] does not have a [configure(Table \$table): Table] method.");
         }
 
         $tableConfiguration::configure($table);
@@ -70,9 +79,10 @@ class TableSelectLivewireComponent extends Component implements HasActions, HasF
             ->selectable()
             ->trackDeselectedRecords(false)
             ->currentSelectionLivewireProperty('state')
-            ->multipleRecordsSelectable(is_array($this->state))
+            ->maxSelectableRecords(is_array($this->state) ? $this->maxSelectableRecords : 1)
             ->deselectAllRecordsWhenFiltered(false)
-            ->disabledSelection($this->isDisabled);
+            ->disabledSelection($this->isDisabled)
+            ->arguments($this->getTableArguments());
 
         if (filled($this->relationshipName)) {
             $table->query(function (): Builder {
@@ -97,6 +107,14 @@ class TableSelectLivewireComponent extends Component implements HasActions, HasF
         }
 
         return $table;
+    }
+
+    /**
+     * @return array<mixed>
+     */
+    public function getTableArguments(): array
+    {
+        return $this->tableArguments;
     }
 
     public function render(): string

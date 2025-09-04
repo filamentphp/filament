@@ -5,7 +5,7 @@
 Install the plugin with Composer:
 
 ```bash
-composer require filament/spatie-laravel-media-library-plugin:"^3.2" -W
+composer require filament/spatie-laravel-media-library-plugin:"^4.0" -W
 ```
 
 If you haven't already done so, you need to publish the migration to create the media table:
@@ -194,6 +194,8 @@ class Post extends Model implements HasRichContent
     }
 }
 ```
+
+> Using `SpatieMediaLibraryFileAttachmentProvider` requires that the rich content attribute (`content` in this example) must be defined as nullable in database.
 
 A media collection with the same name as the attribute (`content` in this example) will be used for the file attachments. The collection must not contain any other media apart from file attachments for that attribute, since Filament will clear any unused media from the collection when the model is saved. To customize the name of the collection, you can pass it to the `collection()` method of the provider:
 

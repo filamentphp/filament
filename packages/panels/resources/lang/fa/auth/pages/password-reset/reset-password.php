@@ -13,7 +13,7 @@ return [
         ],
 
         'password' => [
-            'label' => 'رمر عبور',
+            'label' => 'رمز عبور',
             'validation_attribute' => 'رمز عبور',
         ],
 

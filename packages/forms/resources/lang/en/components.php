@@ -289,7 +289,6 @@ return [
             'blockquote' => 'Blockquote',
             'bold' => 'Bold',
             'bullet_list' => 'Bullet list',
-            'code' => 'Code',
             'code_block' => 'Code block',
             'heading' => 'Heading',
             'italic' => 'Italic',
@@ -490,6 +489,10 @@ return [
 
         ],
 
+        'messages' => [
+            'uploading_file' => 'Uploading file...',
+        ],
+
         'no_merge_tag_search_results_message' => 'No merge tag results.',
 
         'tools' => [
@@ -615,6 +618,11 @@ return [
     'text_input' => [
 
         'actions' => [
+
+            'copy' => [
+                'label' => 'Copy',
+                'message' => 'Copied',
+            ],
 
             'hide_password' => [
                 'label' => 'Hide password',

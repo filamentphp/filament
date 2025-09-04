@@ -30,6 +30,20 @@ it('can generate a resource class', function (): void {
         ->toMatchSnapshot();
 });
 
+it('can generate a resource class with a record title attribute', function (): void {
+    $this->artisan('make:filament-resource', [
+        'model' => 'Post',
+        '--model-namespace' => 'Filament\Tests\Fixtures\Models',
+        '--panel' => 'admin',
+        '--record-title-attribute' => 'title',
+        '--no-interaction' => true,
+    ]);
+
+    assertFileExists($path = app_path('Filament/Resources/Posts/PostResource.php'));
+    expect(file_get_contents($path))
+        ->toMatchSnapshot();
+});
+
 it('can generate a resource form', function (): void {
     $this->artisan('make:filament-resource', [
         'model' => 'Post',
@@ -462,7 +476,7 @@ it('can generate a nested resource class', function (): void {
 
     invade(Filament::getCurrentOrDefaultPanel())->resources = [
         ...invade(Filament::getCurrentOrDefaultPanel())->resources,
-        'App\\Filament\\Resources\\Users\\UserResource',
+        app()->getNamespace() . 'Filament\\Resources\\Users\\UserResource',
     ];
 
     $this->artisan('make:filament-resource', [
@@ -492,7 +506,7 @@ it('can generate a nested resource class with a plural parent resource name', fu
 
     invade(Filament::getCurrentOrDefaultPanel())->resources = [
         ...invade(Filament::getCurrentOrDefaultPanel())->resources,
-        'App\\Filament\\Resources\\Users\\UserResource',
+        app()->getNamespace() . 'Filament\\Resources\\Users\\UserResource',
     ];
 
     $this->artisan('make:filament-resource', [
@@ -522,7 +536,7 @@ it('can generate a nested resource class with a parent resource name with `Resou
 
     invade(Filament::getCurrentOrDefaultPanel())->resources = [
         ...invade(Filament::getCurrentOrDefaultPanel())->resources,
-        'App\\Filament\\Resources\\Users\\UserResource',
+        app()->getNamespace() . 'Filament\\Resources\\Users\\UserResource',
     ];
 
     $this->artisan('make:filament-resource', [
@@ -552,7 +566,7 @@ it('can generate a nested resource form', function (): void {
 
     invade(Filament::getCurrentOrDefaultPanel())->resources = [
         ...invade(Filament::getCurrentOrDefaultPanel())->resources,
-        'App\\Filament\\Resources\\Users\\UserResource',
+        app()->getNamespace() . 'Filament\\Resources\\Users\\UserResource',
     ];
 
     $this->artisan('make:filament-resource', [
@@ -582,7 +596,7 @@ it('can generate a nested resource infolist', function (): void {
 
     invade(Filament::getCurrentOrDefaultPanel())->resources = [
         ...invade(Filament::getCurrentOrDefaultPanel())->resources,
-        'App\\Filament\\Resources\\Users\\UserResource',
+        app()->getNamespace() . 'Filament\\Resources\\Users\\UserResource',
     ];
 
     $this->artisan('make:filament-resource', [
@@ -613,7 +627,7 @@ it('can generate a nested resource create page', function (): void {
 
     invade(Filament::getCurrentOrDefaultPanel())->resources = [
         ...invade(Filament::getCurrentOrDefaultPanel())->resources,
-        'App\\Filament\\Resources\\Users\\UserResource',
+        app()->getNamespace() . 'Filament\\Resources\\Users\\UserResource',
     ];
 
     $this->artisan('make:filament-resource', [
@@ -643,7 +657,7 @@ it('can generate a nested resource edit page', function (): void {
 
     invade(Filament::getCurrentOrDefaultPanel())->resources = [
         ...invade(Filament::getCurrentOrDefaultPanel())->resources,
-        'App\\Filament\\Resources\\Users\\UserResource',
+        app()->getNamespace() . 'Filament\\Resources\\Users\\UserResource',
     ];
 
     $this->artisan('make:filament-resource', [
@@ -673,7 +687,7 @@ it('can generate a nested resource view page', function (): void {
 
     invade(Filament::getCurrentOrDefaultPanel())->resources = [
         ...invade(Filament::getCurrentOrDefaultPanel())->resources,
-        'App\\Filament\\Resources\\Users\\UserResource',
+        app()->getNamespace() . 'Filament\\Resources\\Users\\UserResource',
     ];
 
     $this->artisan('make:filament-resource', [
@@ -704,7 +718,7 @@ it('can generate a nested resource class in a nested directory', function (): vo
 
     invade(Filament::getCurrentOrDefaultPanel())->resources = [
         ...invade(Filament::getCurrentOrDefaultPanel())->resources,
-        'App\\Filament\\Resources\\Users\\UserResource',
+        app()->getNamespace() . 'Filament\\Resources\\Users\\UserResource',
     ];
 
     $this->artisan('make:filament-resource', [

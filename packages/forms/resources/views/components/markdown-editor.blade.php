@@ -23,8 +23,7 @@
                 aria-labelledby="{{ $id }}-label"
                 id="{{ $id }}"
                 role="group"
-                {{-- prettier-ignore-start --}}x-load="visible || event (x-modal-opened)"
-                {{-- prettier-ignore-end --}}
+                x-load
                 x-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('markdown-editor', 'filament/forms') }}"
                 x-data="markdownEditorFormComponent({
                             canAttachFiles: @js($hasToolbarButton('attachFiles')),
@@ -38,7 +37,7 @@
                             toolbarButtons: @js($getToolbarButtons()),
                             translations: @js(__('filament-forms::components.markdown_editor')),
                             uploadFileAttachmentUsing: async (file, onSuccess, onError) => {
-                                $wire.upload(`componentFileAttachments.{{ $key }}`, file, () => {
+                                $wire.upload(`componentFileAttachments.{{ $statePath }}`, file, () => {
                                     $wire
                                         .callSchemaComponentMethod(
                                             '{{ $key }}',

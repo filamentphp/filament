@@ -19,6 +19,12 @@ CodeEntry::make('code')
 
 <AutoScreenshot name="infolists/entries/code/simple" alt="Code entry" version="4.x" />
 
+To use the code entry, you need to first install the [`phiki/phiki`](https://github.com/phikiphp/phiki) Composer package. Filament does not include it by default to allow you to choose which major version of Phiki to use explicitly, since major versions can have different grammars and themes available. You can install the latest version of Phiki using the following command:
+
+```bash
+composer require phiki/phiki
+```
+
 ## Changing the code's grammar (language)
 
 You may change the grammar (language) of the code using the `grammar()` method. Over 200 grammars are available, and you can open the `Phiki\Grammar\Grammar` enum class to see the full list. To switch to use JavaScript as the grammar, you can use the `Grammar::Javascript` enum value:
@@ -70,9 +76,9 @@ CodeEntry::make('code')
 Optionally, you may pass a boolean value to control if the code should be copyable or not:
 
 ```php
-use Filament\Infolists\Components\ColorEntry;
+use Filament\Infolists\Components\CodeEntry;
 
-ColorEntry::make('color')
+CodeEntry::make('code')
     ->copyable(FeatureFlag::active())
 ```
 

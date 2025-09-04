@@ -5,7 +5,7 @@
 Install the plugin with Composer:
 
 ```bash
-composer require filament/spatie-laravel-settings-plugin:"^3.2" -W
+composer require filament/spatie-laravel-settings-plugin:"^4.0" -W
 ```
 
 ## Preparing your page class

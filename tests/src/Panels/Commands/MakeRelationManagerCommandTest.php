@@ -42,8 +42,8 @@ beforeEach(function (): void {
 
     invade(Filament::getCurrentOrDefaultPanel())->resources = [
         ...invade(Filament::getCurrentOrDefaultPanel())->resources,
-        'App\\Filament\\Resources\\Teams\\TeamResource',
-        'App\\Filament\\Resources\\Users\\UserResource',
+        app()->getNamespace() . 'Filament\\Resources\\Teams\\TeamResource',
+        app()->getNamespace() . 'Filament\\Resources\\Users\\UserResource',
     ];
 
     MakeRelationManagerCommand::$shouldCheckModelsForSoftDeletes = false;
@@ -69,7 +69,7 @@ it('can generate a relation manager with a related resource', function (): void 
     $this->artisan('make:filament-relation-manager', [
         'resource' => 'Users',
         'relationship' => 'teams',
-        '--related-resource' => 'App\\Filament\\Resources\\Teams\\TeamResource',
+        '--related-resource' => app()->getNamespace() . 'Filament\\Resources\\Teams\\TeamResource',
         '--panel' => 'admin',
         '--no-interaction' => true,
     ]);
@@ -85,7 +85,7 @@ it('can generate a relation manager with a form schema class', function (): void
         'relationship' => 'teams',
         'recordTitleAttribute' => 'name',
         '--attach' => true,
-        '--form-schema' => 'App\\Filament\\Resources\\Teams\\Schemas\\TeamForm',
+        '--form-schema' => app()->getNamespace() . 'Filament\\Resources\\Teams\\Schemas\\TeamForm',
         '--panel' => 'admin',
         '--no-interaction' => true,
     ]);
@@ -134,7 +134,7 @@ it('can generate a relation manager with an infolist schema class', function ():
         'relationship' => 'teams',
         'recordTitleAttribute' => 'name',
         '--attach' => true,
-        '--infolist-schema' => 'App\\Filament\\Resources\\Teams\\Schemas\\TeamInfolist',
+        '--infolist-schema' => app()->getNamespace() . 'Filament\\Resources\\Teams\\Schemas\\TeamInfolist',
         '--view' => true,
         '--panel' => 'admin',
         '--no-interaction' => true,
@@ -151,7 +151,7 @@ it('can generate a relation manager with a table class', function (): void {
         'relationship' => 'teams',
         'recordTitleAttribute' => 'name',
         '--attach' => true,
-        '--table' => 'App\\Filament\\Resources\\Teams\\Tables\\TeamsTable',
+        '--table' => app()->getNamespace() . 'Filament\\Resources\\Teams\\Tables\\TeamsTable',
         '--panel' => 'admin',
         '--no-interaction' => true,
     ]);

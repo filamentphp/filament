@@ -18,9 +18,9 @@ class GlobalSearchResult
      * @param  array<Action>  $actions
      */
     public function __construct(
-        readonly public string | Htmlable $title,
-        readonly public string $url,
-        readonly public array $details = [],
+        public readonly string | Htmlable $title,
+        public readonly string $url,
+        public readonly array $details = [],
         array $actions = [],
     ) {
         $this->actions = array_map(

@@ -4,7 +4,6 @@ namespace Filament\Forms\Components;
 
 use BackedEnum;
 use Closure;
-use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Forms\View\FormsIconAlias;
@@ -36,6 +35,7 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Renderless;
+use LogicException;
 use Znck\Eloquent\Relations\BelongsToThrough;
 
 use function Filament\Support\generate_search_column_expression;
@@ -124,6 +124,8 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
     protected int | Closure $optionsLimit = 50;
 
     protected bool | Closure | null $isSearchForcedCaseInsensitive = null;
+
+    protected bool | Closure $canOptionLabelsWrap = true;
 
     protected function setUp(): void
     {
@@ -238,14 +240,14 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
 
         $action = Action::make($this->getCreateOptionActionName())
             ->label(__('filament-forms::components.select.actions.create_option.label'))
-            ->schema(function (Select $component, Schema $schema): array | Schema | null {
+            ->schema(static function (Select $component, Schema $schema): array | Schema | null {
                 return $component->getCreateOptionActionForm($schema->model(
                     $component->getRelationship() ? $component->getRelationship()->getModel()::class : null,
                 ));
             })
             ->action(static function (Action $action, array $arguments, Select $component, array $data, Schema $schema): void {
                 if (! $component->getCreateOptionUsing()) {
-                    throw new Exception("Select field [{$component->getStatePath()}] must have a [createOptionUsing()] closure set.");
+                    throw new LogicException("Select field [{$component->getStatePath()}] must have a [createOptionUsing()] closure set.");
                 }
 
                 $createdOptionKey = $component->evaluate($component->getCreateOptionUsing(), [
@@ -390,15 +392,15 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
 
         $action = Action::make($this->getEditOptionActionName())
             ->label(__('filament-forms::components.select.actions.edit_option.label'))
-            ->schema(function (Select $component, Schema $schema): array | Schema | null {
+            ->schema(static function (Select $component, Schema $schema): array | Schema | null {
                 return $component->getEditOptionActionForm(
                     $schema->model($component->getSelectedRecord()),
                 );
             })
-            ->fillForm($this->getEditOptionActionFormData())
+            ->fillForm(static fn (Select $component): ?array => $component->getEditOptionActionFormData())
             ->action(static function (Action $action, array $arguments, Select $component, array $data, Schema $schema): void {
                 if (! $component->getUpdateOptionUsing()) {
-                    throw new Exception("Select field [{$component->getStatePath()}] must have a [updateOptionUsing()] closure set.");
+                    throw new LogicException("Select field [{$component->getStatePath()}] must have a [updateOptionUsing()] closure set.");
                 }
 
                 $component->evaluate($component->getUpdateOptionUsing(), [
@@ -1264,7 +1266,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         }
 
         if (! $relationship) {
-            throw new Exception("The relationship [{$relationshipName}] does not exist on the model [{$this->getModel()}].");
+            throw new LogicException("The relationship [{$relationshipName}] does not exist on the model [{$this->getModel()}].");
         }
 
         return $relationship;
@@ -1353,6 +1355,18 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         return $this->evaluate($this->isSearchForcedCaseInsensitive);
     }
 
+    public function wrapOptionLabels(bool | Closure $condition = true): static
+    {
+        $this->canOptionLabelsWrap = $condition;
+
+        return $this;
+    }
+
+    public function canOptionLabelsWrap(): bool
+    {
+        return (bool) $this->evaluate($this->canOptionLabelsWrap);
+    }
+
     public function hydrateDefaultState(?array &$hydratedDefaultState): void
     {
         parent::hydrateDefaultState($hydratedDefaultState);
@@ -1428,7 +1442,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
 
         if ($this->isMultiple()) {
             if ((! $this->getOptionLabelsUsing) && (! $this->options)) {
-                throw new Exception("Filament failed to validate the [{$this->getStatePath()}] field\'s selected options because it did not have an [options()] or [getOptionLabelsUsing()] configuration. Please use one of these methods to inform Filament which options are valid for this field.");
+                throw new LogicException("Filament failed to validate the [{$this->getStatePath()}] field\'s selected options because it did not have an [options()] or [getOptionLabelsUsing()] configuration. Please use one of these methods to inform Filament which options are valid for this field.");
             }
 
             $state = $this->getState();
@@ -1459,7 +1473,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         }
 
         if ((! $this->getOptionLabelUsing) && (! $this->options)) {
-            throw new Exception("Filament failed to validate the [{$this->getStatePath()}] field\'s selected options because it did not have an [options()] or [getOptionLabelUsing()] configuration. Please use one of these methods to inform Filament which options are valid for this field.");
+            throw new LogicException("Filament failed to validate the [{$this->getStatePath()}] field\'s selected options because it did not have an [options()] or [getOptionLabelUsing()] configuration. Please use one of these methods to inform Filament which options are valid for this field.");
         }
 
         $optionLabel = $this->getOptionLabel(withDefault: false);

@@ -46,6 +46,15 @@ class ViewRecord extends Page
         return static::$breadcrumb ?? __('filament-panels::resources/pages/view-record.breadcrumb');
     }
 
+    public static function getNavigationLabel(): string
+    {
+        if (filled(static::$navigationLabel)) {
+            return static::$navigationLabel;
+        }
+
+        return __('filament-panels::resources/pages/view-record.navigation_label');
+    }
+
     public function getContentTabLabel(): ?string
     {
         return __('filament-panels::resources/pages/view-record.content.tab.label');

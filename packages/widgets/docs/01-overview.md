@@ -278,7 +278,7 @@ class Dashboard extends BaseDashboard
     {
         return [
             FilterAction::make()
-                ->form([
+                ->schema([
                     DatePicker::make('startDate'),
                     DatePicker::make('endDate'),
                     // ...

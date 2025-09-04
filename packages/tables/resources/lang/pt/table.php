@@ -6,6 +6,18 @@ return [
 
         'heading' => 'Colunas',
 
+        'actions' => [
+
+            'apply' => [
+                'label' => 'Aplicar colunas',
+            ],
+
+            'reset' => [
+                'label' => 'Repor',
+            ],
+
+        ],
+
     ],
 
     'columns' => [
@@ -234,5 +246,7 @@ return [
         ],
 
     ],
+
+    'default_model_label' => 'registo',
 
 ];

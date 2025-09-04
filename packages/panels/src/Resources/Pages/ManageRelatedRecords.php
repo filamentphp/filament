@@ -33,6 +33,7 @@ use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Livewire\Attributes\Url;
 
 use function Filament\authorize;
@@ -45,39 +46,34 @@ class ManageRelatedRecords extends Page implements Tables\Contracts\HasTable
 
     public ?string $previousUrl = null;
 
-    #[Url]
+    #[Url(as: 'reordering')]
     public bool $isTableReordering = false;
 
     /**
      * @var array<string, mixed> | null
      */
-    #[Url]
+    #[Url(as: 'filters')]
     public ?array $tableFilters = null;
 
-    #[Url]
+    #[Url(as: 'grouping')]
     public ?string $tableGrouping = null;
-
-    #[Url]
-    public ?string $tableGroupingDirection = null;
 
     /**
      * @var ?string
      */
-    #[Url]
+    #[Url(as: 'search')]
     public $tableSearch = '';
 
-    #[Url]
-    public ?string $tableSortColumn = null;
+    #[Url(as: 'sort')]
+    public ?string $tableSort = null;
 
-    #[Url]
-    public ?string $tableSortDirection = null;
-
-    #[Url]
+    #[Url(as: 'tab')]
     public ?string $activeTab = null;
 
     public static function getNavigationIcon(): string | BackedEnum | Htmlable | null
     {
         return static::$navigationIcon
+            ?? (filled($relatedResource = static::getRelatedResource()) ? $relatedResource::getNavigationIcon() : null)
             ?? FilamentIcon::resolve(PanelsIconAlias::RESOURCES_PAGES_MANAGE_RELATED_RECORDS_NAVIGATION_ITEM)
             ?? Heroicon::OutlinedRectangleStack;
     }
@@ -133,15 +129,7 @@ class ManageRelatedRecords extends Page implements Tables\Contracts\HasTable
 
     public static function getNavigationLabel(): string
     {
-        if (filled(static::$navigationLabel)) {
-            return static::$navigationLabel;
-        }
-
-        if ($relatedResource = static::getRelatedResource()) {
-            return $relatedResource::getTitleCasePluralModelLabel();
-        }
-
-        return static::getRelationshipTitle();
+        return static::$navigationLabel ?? static::getRelationshipTitle();
     }
 
     /**
@@ -193,6 +181,10 @@ class ManageRelatedRecords extends Page implements Tables\Contracts\HasTable
 
     public function getDefaultActionRecord(Action $action): ?Model
     {
+        if ($action instanceof CreateAction) {
+            return null;
+        }
+
         if ($action->getTable()) {
             return null;
         }
@@ -200,8 +192,42 @@ class ManageRelatedRecords extends Page implements Tables\Contracts\HasTable
         return $this->getRecord();
     }
 
+    public function getDefaultActionRelationship(Action $action): ?Relation
+    {
+        if ($action instanceof CreateAction) {
+            return $this->getRelationship();
+        }
+
+        return null;
+    }
+
+    /**
+     * @return ?class-string<Model>
+     */
+    public function getDefaultActionModel(Action $action): ?string
+    {
+        if ($action instanceof CreateAction) {
+            return $this->getTable()->getModel();
+        }
+
+        return parent::getDefaultActionModel($action);
+    }
+
+    public function getDefaultActionModelLabel(Action $action): ?string
+    {
+        if ($action instanceof CreateAction) {
+            return $this->getTable()->getModelLabel();
+        }
+
+        return parent::getDefaultActionModelLabel($action);
+    }
+
     public function getDefaultActionRecordTitle(Action $action): ?string
     {
+        if ($action instanceof CreateAction) {
+            return null;
+        }
+
         if ($action->getTable()) {
             return null;
         }
@@ -291,5 +317,17 @@ class ManageRelatedRecords extends Page implements Tables\Contracts\HasTable
         }
 
         return null;
+    }
+
+    public function getTitle(): string | Htmlable
+    {
+        if (filled(static::$title)) {
+            return static::$title;
+        }
+
+        return __('filament-panels::resources/pages/manage-related-records.title', [
+            'label' => $this->getRecordTitle(),
+            'relationship' => static::getRelationshipTitle(),
+        ]);
     }
 }

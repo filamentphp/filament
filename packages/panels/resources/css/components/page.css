@@ -1,5 +1,9 @@
-.fi-page-sub-navigation-select {
+.fi-page-sub-navigation-dropdown {
     @apply md:hidden;
+
+    & > .fi-dropdown-trigger > .fi-btn {
+        @apply w-full justify-between;
+    }
 }
 
 .fi-page-sub-navigation-sidebar-ctn {
@@ -43,7 +47,7 @@
     @apply flex flex-col gap-y-8 py-8;
 }
 
-.fi-page-main-sub-navigation-select-render-hook-ctn {
+.fi-page-main-sub-navigation-mobile-menu-render-hook-ctn {
     @apply contents md:hidden;
 }
 

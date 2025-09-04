@@ -64,8 +64,7 @@ class PostResource extends Resource
     {
         return $schema
             ->components([
-                TextEntry::make('author.name')
-                    ->numeric(),
+                TextEntry::make('author.name'),
                 IconEntry::make('is_published')
                     ->boolean(),
                 TextEntry::make('rating')
@@ -86,8 +85,7 @@ class PostResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('author.name')
-                    ->numeric()
-                    ->sortable(),
+                    ->searchable(),
                 IconColumn::make('is_published')
                     ->boolean(),
                 TextColumn::make('rating')

@@ -146,7 +146,7 @@ class SettingsPage extends Page
     {
         return static::$settings ?? (string) str(class_basename(static::class))
             ->beforeLast('Settings')
-            ->prepend('App\\Settings\\')
+            ->prepend(app()->getNamespace() . 'Settings\\')
             ->append('Settings');
     }
 

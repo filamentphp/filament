@@ -6,6 +6,8 @@ return [
 
     'breadcrumb' => 'Pregledaj',
 
+    'navigation_label' => 'Pregled',
+
     'content' => [
 
         'tab' => [

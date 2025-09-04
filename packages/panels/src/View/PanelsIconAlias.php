@@ -30,6 +30,8 @@ class PanelsIconAlias
 
     const SIDEBAR_GROUP_COLLAPSE_BUTTON = 'panels::sidebar.group.collapse-button';
 
+    const SUB_NAVIGATION_MOBILE_MENU_BUTTON = 'panels::sub-navigation.mobile-menu.button';
+
     const TENANT_MENU_BILLING_BUTTON = 'panels::tenant-menu.billing-button';
 
     const TENANT_MENU_PROFILE_BUTTON = 'panels::tenant-menu.profile-button';

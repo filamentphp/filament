@@ -3,7 +3,6 @@
 namespace Filament\Forms\Components;
 
 use Closure;
-use Exception;
 use Filament\Forms\Components\Contracts\CanHaveNumericState;
 use Filament\Schemas\Components\Concerns\CanStripCharactersFromState;
 use Filament\Schemas\Components\Concerns\CanTrimState;
@@ -12,6 +11,7 @@ use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
 use Filament\Schemas\Components\StateCasts\NumberStateCast;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Filament\Support\RawJs;
+use LogicException;
 
 class TextInput extends Field implements CanHaveNumericState, Contracts\CanBeLengthConstrained, HasAffixActions
 {
@@ -43,6 +43,8 @@ class TextInput extends Field implements CanHaveNumericState, Contracts\CanBeLen
     protected bool | Closure $isPassword = false;
 
     protected bool | Closure $isRevealable = false;
+
+    protected bool | Closure $isCopyable = false;
 
     protected bool | Closure $isTel = false;
 
@@ -166,7 +168,29 @@ class TextInput extends Field implements CanHaveNumericState, Contracts\CanBeLen
             return false;
         }
 
-        return $this->isPassword() ?: throw new Exception("The text input [{$this->getStatePath()}] is not a [password()], so it cannot be [revealable()].");
+        return $this->isPassword() ?: throw new LogicException("The text input [{$this->getStatePath()}] is not a [password()], so it cannot be [revealable()].");
+    }
+
+    public function copyable(
+        bool | Closure $condition = true,
+        string | Closure | null $copyMessage = null,
+        int | Closure | null $copyMessageDuration = null
+    ): static {
+        $this->isCopyable = $condition;
+
+        $this->suffixAction(
+            TextInput\Actions\CopyAction::make()
+                ->copyMessage($copyMessage)
+                ->copyMessageDuration($copyMessageDuration)
+                ->visible($condition),
+        );
+
+        return $this;
+    }
+
+    public function isCopyable(): bool
+    {
+        return (bool) $this->evaluate($this->isCopyable);
     }
 
     public function tel(bool | Closure $condition = true): static

@@ -3,7 +3,6 @@
 namespace Filament\Forms\Components;
 
 use Closure;
-use Exception;
 use Filament\Actions\Action;
 use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
 use Filament\Schemas\Components\StateCasts\EnumArrayStateCast;
@@ -16,6 +15,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Str;
+use LogicException;
 
 class CheckboxList extends Field implements Contracts\CanDisableOptions, Contracts\HasNestedRecursiveValidationRules
 {
@@ -302,7 +302,7 @@ class CheckboxList extends Field implements Contracts\CanDisableOptions, Contrac
         $record = $this->getModelInstance();
 
         if (! $record->isRelation($name)) {
-            throw new Exception("The relationship [{$name}] does not exist on the model [{$this->getModel()}].");
+            throw new LogicException("The relationship [{$name}] does not exist on the model [{$this->getModel()}].");
         }
 
         return $record->{$name}();

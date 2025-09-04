@@ -102,9 +102,8 @@ export default function richEditorFormComponent({
                 this.editorUpdatedAt = Date.now()
             })
 
-            editor.on(
-                'update',
-                Alpine.debounce(({ editor }) => {
+            editor.on('update', ({ editor }) =>
+                this.$nextTick(() => {
                     this.editorUpdatedAt = Date.now()
 
                     this.state = editor.getJSON()
@@ -112,9 +111,12 @@ export default function richEditorFormComponent({
                     this.shouldUpdateState = false
 
                     if (isLiveDebounced) {
-                        this.$wire.commit()
+                        Alpine.debounce(
+                            () => this.$wire.commit(),
+                            liveDebounce ?? 300,
+                        )
                     }
-                }, liveDebounce ?? 300),
+                }),
             )
 
             editor.on('selectionUpdate', ({ transaction }) => {

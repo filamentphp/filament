@@ -22,7 +22,7 @@
                 class="fi-sidebar-header"
             >
                 {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::SIDEBAR_LOGO_BEFORE) }}
-	            
+
 	            @if ($homeUrl = filament()->getHomeUrl())
                     <a {{ \Filament\Support\generate_href_html($homeUrl) }}>
                         <x-filament-panels::logo />
@@ -30,7 +30,7 @@
                 @else
                     <x-filament-panels::logo />
                 @endif
-	            
+
                 {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::SIDEBAR_LOGO_AFTER) }}
             </header>
         </div>
@@ -104,9 +104,7 @@
                         group.querySelector(
                             '.fi-sidebar-group-items',
                         ).style.display = 'none'
-                        group
-                            .querySelector('.fi-sidebar-group-collapse-btn')
-                            .classList.add('rotate-180')
+                        group.classList.add('fi-collapsed')
                     })
             </script>
 

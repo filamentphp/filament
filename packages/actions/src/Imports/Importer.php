@@ -293,7 +293,7 @@ abstract class Importer
     {
         return static::$model ?? (string) str(class_basename(static::class))
             ->beforeLast('Importer')
-            ->prepend('App\\Models\\');
+            ->prepend(app()->getNamespace() . 'Models\\');
     }
 
     abstract public static function getCompletedNotificationBody(Import $import): string;

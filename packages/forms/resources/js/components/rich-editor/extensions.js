@@ -72,7 +72,9 @@ export default async ({
     Highlight,
     HorizontalRule,
     Italic,
-    Image,
+    Image.configure({
+        inline: true,
+    }),
     Lead,
     Link.configure({
         autolink: true,

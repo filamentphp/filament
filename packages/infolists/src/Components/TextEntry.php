@@ -452,7 +452,7 @@ class TextEntry extends Entry implements HasAffixActions, HasEmbeddedView
                 </ul>
 
                 <?php if ($stateOverListLimitCount) { ?>
-                    <p class="fi-in-text-list-limited-message">
+                    <div class="fi-in-text-list-limited-message">
                         <?php if ($isLimitedListExpandable) { ?>
                             <div
                                 role="button"
@@ -475,7 +475,7 @@ class TextEntry extends Entry implements HasAffixActions, HasEmbeddedView
                         <?php } else { ?>
                             <?= trans_choice('filament-infolists::components.entries.text.more_list_items', $stateOverListLimitCount) ?>
                         <?php } ?>
-                    </p>
+                    </div>
                 <?php } ?>
 
                 <?php if ($prefixActions || $suffixActions) { ?>

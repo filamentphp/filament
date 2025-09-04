@@ -15,7 +15,7 @@ trait CanGetStateFromRelationships
 
     public function getStateRelationship(Model $record, ?string $statePath = null): ?Relation
     {
-        if (blank($statePath) && (! str($this->getStatePath())->contains('.'))) {
+        if (blank($statePath) && (! str($this->getStateRelationshipPath())->contains('.'))) {
             return null;
         }
 
@@ -91,7 +91,7 @@ trait CanGetStateFromRelationships
 
     public function getStateRelationshipAttribute(?string $statePath = null): string
     {
-        $statePath ??= $this->getStatePath();
+        $statePath ??= $this->getStateRelationshipPath();
 
         if (! str($statePath)->contains('.')) {
             return $statePath;
@@ -102,12 +102,17 @@ trait CanGetStateFromRelationships
 
     public function getStateRelationshipName(?string $statePath = null): ?string
     {
-        $statePath ??= $this->getStatePath();
+        $statePath ??= $this->getStateRelationshipPath();
 
         if (! str($statePath)->contains('.')) {
             return null;
         }
 
         return (string) str($statePath)->beforeLast('.');
+    }
+
+    public function getStateRelationshipPath(): ?string
+    {
+        return $this->getStatePath();
     }
 }

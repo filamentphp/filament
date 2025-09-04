@@ -29,8 +29,7 @@ class ListPostsWithColumns extends Component implements HasActions, HasSchemas, 
             ->query(fn (): Builder => Post::query())
             ->columns([
                 TextColumn::make('author.name')
-                    ->numeric()
-                    ->sortable(),
+                    ->searchable(),
                 IconColumn::make('is_published')
                     ->boolean(),
                 TextColumn::make('rating')

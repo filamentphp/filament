@@ -4,6 +4,7 @@ namespace Filament\Tables\Concerns;
 
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Query\Expression;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 trait CanReorderRecords
@@ -45,6 +46,7 @@ trait CanReorderRecords
                 ->update([
                     $orderColumn => new Expression(
                         'case ' . collect($order)
+                            ->when($this->getTable()->getReorderDirection() === 'desc', fn (Collection $order) => $order->reverse()->values())
                             ->map(fn ($recordKey, int $recordIndex): string => 'when ' . $wrappedModelKeyName . ' = ' . DB::getPdo()->quote($recordKey) . ' then ' . ($recordIndex + 1))
                             ->implode(' ') . ' end'
                     ),

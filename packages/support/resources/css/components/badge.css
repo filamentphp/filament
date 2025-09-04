@@ -1,5 +1,9 @@
 .fi-badge {
-    @apply inline-flex min-w-[theme(spacing.6)] items-center justify-center gap-x-1 truncate rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-gray-600/10 ring-inset dark:bg-gray-400/10 dark:text-gray-200 dark:ring-gray-400/20;
+    @apply inline-flex min-w-[theme(spacing.6)] items-center justify-center gap-x-1 rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-gray-600/10 ring-inset dark:bg-gray-400/10 dark:text-gray-200 dark:ring-gray-400/20;
+
+    &:not(.fi-wrapped) {
+        @apply truncate;
+    }
 
     &.fi-disabled,
     &[disabled] {
@@ -15,11 +19,18 @@
     }
 
     & .fi-badge-label {
-        @apply truncate;
+        &.fi-wrapped {
+            @apply text-wrap;
+            word-break: break-word;
+        }
+
+        &:not(.fi-wrapped) {
+            @apply truncate;
+        }
     }
 
     & .fi-icon {
-        @apply shrink-0 text-gray-400 dark:text-gray-500;
+        @apply shrink-0;
     }
 
     &.fi-size-xs {
@@ -33,13 +44,13 @@
     &.fi-color {
         @apply bg-color-50 ring-color-600/10 dark:bg-color-400/10 dark:ring-color-400/30 text-(--text) dark:text-(--dark-text);
 
-        & .fi-icon {
-            @apply text-color-500;
-        }
-
         & .fi-badge-delete-btn > .fi-icon {
             @apply text-color-700/50 dark:text-color-300/50;
         }
+    }
+
+    &:not(.fi-color) .fi-icon {
+        @apply text-gray-400 dark:text-gray-500;
     }
 
     & .fi-badge-delete-btn {

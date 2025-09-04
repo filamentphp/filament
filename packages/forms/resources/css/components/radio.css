@@ -17,7 +17,7 @@
         @apply flex gap-x-3 self-start;
 
         & > .fi-radio-input {
-            @apply mt-1;
+            @apply mt-1 shrink-0;
         }
 
         & > .fi-fo-radio-label-text {

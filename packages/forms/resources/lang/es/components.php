@@ -481,6 +481,7 @@ return [
             'bold' => 'Negrita',
             'bullet_list' => 'Viñetas',
             'clear_formatting' => 'Limpiar formato',
+            'code' => 'Código',
             'code_block' => 'Bloque de código',
             'custom_blocks' => 'Bloques',
             'details' => 'Detalles',
@@ -592,6 +593,11 @@ return [
     'text_input' => [
 
         'actions' => [
+
+            'copy' => [
+                'label' => 'Copiar',
+                'message' => 'Copiado',
+            ],
 
             'hide_password' => [
                 'label' => 'Ocultar contraseña',

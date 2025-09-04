@@ -37,7 +37,7 @@
             type="button"
             class="fi-user-menu-trigger"
         >
-            <x-filament-panels::avatar.user :user="$user" />
+            <x-filament-panels::avatar.user :user="$user" loading="lazy" />
         </button>
     </x-slot>
 
@@ -50,9 +50,13 @@
             unset($itemsBeforeThemeSwitcher['profile']);
         @endphp
 
+        {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::USER_MENU_PROFILE_BEFORE) }}
+
         <x-filament::dropdown.header :color="$itemColor" :icon="$itemIcon">
             {{ $item->getLabel() }}
         </x-filament::dropdown.header>
+
+        {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::USER_MENU_PROFILE_AFTER) }}
     @endif
 
     @if ($itemsBeforeThemeSwitcher->isNotEmpty())

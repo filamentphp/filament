@@ -42,7 +42,7 @@ You may use Laravel's validation rules to validate the values of the color picke
 use Filament\Forms\Components\ColorPicker;
 
 ColorPicker::make('hex_color')
-    ->regex('/^#([a-f0-9]{6}|[a-f0-9]{3})\b$/')
+    ->regex('/^#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})\b$/')
 
 ColorPicker::make('hsl_color')
     ->hsl()

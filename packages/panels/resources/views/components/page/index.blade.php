@@ -24,6 +24,24 @@
     {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_START, scopes: $this->getRenderHookScopes()) }}
 
     <div class="fi-page-header-main-ctn">
+        @if ($subNavigation)
+            <div
+                class="fi-page-main-sub-navigation-mobile-menu-render-hook-ctn"
+            >
+                {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_SUB_NAVIGATION_MOBILE_MENU_BEFORE, scopes: $this->getRenderHookScopes()) }}
+            </div>
+
+            <x-filament-panels::page.sub-navigation.mobile-menu
+                :navigation="$subNavigation"
+            />
+
+            <div
+                class="fi-page-main-sub-navigation-mobile-menu-render-hook-ctn"
+            >
+                {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_SUB_NAVIGATION_MOBILE_MENU_AFTER, scopes: $this->getRenderHookScopes()) }}
+            </div>
+        @endif
+
         @if ($header = $this->getHeader())
             {{ $header }}
         @elseif ($heading = $this->getHeading())
@@ -55,18 +73,6 @@
 
         <div class="fi-page-main">
             @if ($subNavigation)
-                <div class="fi-page-main-sub-navigation-select-render-hook-ctn">
-                    {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_SUB_NAVIGATION_SELECT_BEFORE, scopes: $this->getRenderHookScopes()) }}
-                </div>
-
-                <x-filament-panels::page.sub-navigation.select
-                    :navigation="$subNavigation"
-                />
-
-                <div class="fi-page-main-sub-navigation-select-render-hook-ctn">
-                    {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_SUB_NAVIGATION_SELECT_AFTER, scopes: $this->getRenderHookScopes()) }}
-                </div>
-
                 @if ($subNavigationPosition === SubNavigationPosition::Start)
                     {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_SUB_NAVIGATION_START_BEFORE, scopes: $this->getRenderHookScopes()) }}
 
@@ -122,11 +128,15 @@
 
     @if (! ($this instanceof \Filament\Tables\Contracts\HasTable))
         <x-filament-actions::modals />
+    @elseif ($this->isTableLoaded() && filled($this->defaultTableAction))
+        <div
+            wire:init="mountAction(@js($this->defaultTableAction) , @if (filled($this->defaultTableActionArguments)) @js($this->defaultTableActionArguments) @else {} @endif , @js(['table' => true, 'recordKey' => $this->defaultTableActionRecord]))"
+        ></div>
     @endif
 
     @if (filled($this->defaultAction))
         <div
-            wire:init="mountAction(@js($this->defaultAction) @if (filled($this->defaultActionArguments) || filled($this->defaultActionContext)) , @if (filled($this->defaultActionArguments)) @js($this->defaultActionArguments) @else {} @endif @endif @if (filled($this->defaultActionContext)) @js($this->defaultActionContext) @endif)"
+            wire:init="mountAction(@js($this->defaultAction) @if (filled($this->defaultActionArguments) || filled($this->defaultActionContext)) , @if (filled($this->defaultActionArguments)) @js($this->defaultActionArguments) @else {} @endif @endif @if (filled($this->defaultActionContext)) , @js($this->defaultActionContext) @endif)"
         ></div>
     @endif
 
@@ -157,8 +167,20 @@
             <script>
                 const errorNotifications = @js($this->getErrorNotifications())
 
-                Livewire.hook('request', ({ fail }) => {
+                Livewire.hook('request', ({ payload, fail }) => {
                     fail(({ status, preventDefault }) => {
+                        if (JSON.parse(payload).components.length === 1) {
+                            for (const component of JSON.parse(payload)
+                                .components) {
+                                if (
+                                    JSON.parse(component.snapshot).data
+                                        .isFilamentNotificationsComponent
+                                ) {
+                                    return
+                                }
+                            }
+                        }
+
                         preventDefault()
 
                         const errorNotification =

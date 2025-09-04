@@ -52,6 +52,7 @@ class ResourceClassGenerator extends ClassGenerator
         protected ?string $tableFqn,
         protected ?string $clusterFqn,
         protected ?string $parentResourceFqn,
+        protected ?string $recordTitleAttribute,
         protected bool $hasViewOperation,
         protected bool $isGenerated,
         protected bool $isSoftDeletable,
@@ -105,6 +106,7 @@ class ResourceClassGenerator extends ClassGenerator
         $this->addNavigationIconPropertyToClass($class);
         $this->addClusterPropertyToClass($class);
         $this->addParentResourcePropertyToClass($class);
+        $this->addRecordTitleAttributePropertyToClass($class);
     }
 
     protected function addMethodsToClass(ClassType $class): void
@@ -171,6 +173,23 @@ class ResourceClassGenerator extends ClassGenerator
     }
 
     protected function configureParentResourceProperty(Property $property): void {}
+
+    protected function addRecordTitleAttributePropertyToClass(ClassType $class): void
+    {
+        $recordTitleAttribute = $this->getRecordTitleAttribute();
+
+        if (blank($recordTitleAttribute)) {
+            return;
+        }
+
+        $property = $class->addProperty('recordTitleAttribute', $recordTitleAttribute)
+            ->setProtected()
+            ->setStatic()
+            ->setType('?string');
+        $this->configureRecordTitleAttributeProperty($property);
+    }
+
+    protected function configureRecordTitleAttributeProperty(Property $property): void {}
 
     protected function addFormMethodToClass(ClassType $class): void
     {
@@ -471,5 +490,10 @@ class ResourceClassGenerator extends ClassGenerator
     public function isSimple(): bool
     {
         return $this->isSimple;
+    }
+
+    public function getRecordTitleAttribute(): ?string
+    {
+        return $this->recordTitleAttribute;
     }
 }

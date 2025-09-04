@@ -77,7 +77,7 @@ abstract class Exporter
     {
         return static::$model ?? (string) str(class_basename(static::class))
             ->beforeLast('Exporter')
-            ->prepend('App\\Models\\');
+            ->prepend(app()->getNamespace() . 'Models\\');
     }
 
     abstract public static function getCompletedNotificationBody(Export $export): string;

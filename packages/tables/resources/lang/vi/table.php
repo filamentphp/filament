@@ -4,12 +4,16 @@ return [
 
     'column_manager' => [
 
-        'heading' => 'Columns',
+        'heading' => 'Cột',
 
         'actions' => [
 
             'apply' => [
-                'label' => 'Apply columns',
+                'label' => 'Áp dụng cột',
+            ],
+
+            'reset' => [
+                'label' => 'Đặt lại',
             ],
 
         ],

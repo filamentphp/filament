@@ -2,7 +2,6 @@
 
 namespace Filament\Tables\Columns;
 
-use Exception;
 use Filament\Actions\Action;
 use Filament\Support\Components\ViewComponent;
 use Filament\Support\Concerns\CanAggregateRelatedModels;
@@ -21,6 +20,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\HtmlString;
 use Illuminate\View\ComponentAttributeBag;
+use LogicException;
 
 use function Filament\Support\generate_href_html;
 
@@ -73,7 +73,7 @@ class Column extends ViewComponent
         $name ??= static::getDefaultName();
 
         if (blank($name)) {
-            throw new Exception("Column of class [$columnClass] must have a unique name, passed to the [make()] method.");
+            throw new LogicException("Column of class [$columnClass] must have a unique name, passed to the [make()] method.");
         }
 
         $static = app($columnClass, ['name' => $name]);
@@ -89,7 +89,7 @@ class Column extends ViewComponent
 
     public function getTable(): Table
     {
-        return $this->table ?? $this->getGroup()?->getTable() ?? $this->getLayout()?->getTable() ?? throw new Exception("The column [{$this->getName()}] is not mounted to a table.");
+        return $this->table ?? $this->getGroup()?->getTable() ?? $this->getLayout()?->getTable() ?? throw new LogicException("The column [{$this->getName()}] is not mounted to a table.");
     }
 
     /**

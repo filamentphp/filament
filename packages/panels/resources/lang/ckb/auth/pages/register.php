@@ -10,7 +10,7 @@ return [
 
         'login' => [
             'before' => 'یان',
-            'label' => 'چوونەژوورەوە',
+            'label' => 'چوونەژوورەوە بۆ هەژمارەکەت',
         ],
 
     ],
@@ -26,12 +26,12 @@ return [
         ],
 
         'password' => [
-            'label' => 'وشەی نهێنی',
-            'validation_attribute' => 'وشەی نهێنی',
+            'label' => 'تێپەڕەوشە',
+            'validation_attribute' => 'تێپەڕەوشە',
         ],
 
         'password_confirmation' => [
-            'label' => 'دڵنیابوونەوەی وشەی نهێنی',
+            'label' => 'دڵنیاکردنەوەی تێپەڕەوشە',
         ],
 
         'actions' => [
@@ -47,8 +47,8 @@ return [
     'notifications' => [
 
         'throttled' => [
-            'title' => 'هەوڵی دروستکردنی هەژمار زۆر نێردرا',
-            'body' => 'تکایە هەوڵ بدەرەوە دوای :seconds چرکە.',
+            'title' => 'زۆر هەوڵدرا بۆ دروستکردنی هەژمار',
+            'body' => 'تکایە دوای :seconds چرکە هەوڵ بدەرەوە.',
         ],
 
     ],

@@ -97,7 +97,7 @@ it('can generate a table widget class', function (): void {
         '--no-interaction' => true,
     ])
         ->expectsQuestion('Would you like to create this widget in a resource?', false)
-        ->expectsQuestion('What is the model?', 'App\\Models\\User')
+        ->expectsQuestion('What is the model?', app()->getNamespace() . 'Models\\User')
         ->expectsQuestion('Should the table columns be generated from the current database columns?', false);
 
     assertFileExists($path = app_path('Filament/Widgets/TableWidget.php'));

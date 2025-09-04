@@ -3,7 +3,6 @@
 namespace Filament\Schemas\Components\Concerns;
 
 use Closure;
-use Exception;
 use Filament\Forms\Components\RichEditor\Models\Contracts\HasRichContent;
 use Filament\Infolists\Components\Entry;
 use Filament\Schemas\Components\Component;
@@ -16,6 +15,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Livewire\Livewire;
+use LogicException;
 
 use function Livewire\store;
 
@@ -485,7 +485,6 @@ trait HasState
 
     public function mutateStateForValidation(mixed $state): mixed
     {
-
         if (! $this->mutateStateForValidationUsing) {
             return $state;
         }
@@ -880,7 +879,7 @@ trait HasState
         }
 
         if (! str($statePath)->startsWith("{$containerConstantStatePath}.")) {
-            throw new Exception("The current component\'s state path [$statePath] does not start with the container\'s constant state path [$containerConstantStatePath].");
+            throw new LogicException("The current component\'s state path [$statePath] does not start with the container\'s constant state path [$containerConstantStatePath].");
         }
 
         return (string) str($statePath)->after("{$containerConstantStatePath}.");
@@ -954,6 +953,11 @@ trait HasState
         }
 
         return $state->all();
+    }
+
+    public function getStatePathForRelationship(): ?string
+    {
+        return $this->getConstantStatePath();
     }
 
     public function shouldUpdateValidatedStateAfterBeforeStateDehydratedRuns(): bool

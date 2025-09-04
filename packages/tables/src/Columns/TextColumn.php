@@ -175,6 +175,13 @@ class TextColumn extends Column implements HasEmbeddedView
                 'fi-inline' => $this->isInline(),
             ]);
 
+        $alignment = $this->getAlignment();
+
+        $attributes = $attributes
+            ->class([
+                ($alignment instanceof Alignment) ? "fi-align-{$alignment->value}" : (is_string($alignment) ? $alignment : ''),
+            ]);
+
         if (blank($state)) {
             $attributes = $attributes
                 ->merge([
@@ -253,13 +260,10 @@ class TextColumn extends Column implements HasEmbeddedView
             $formatState = fn (mixed $stateItem): string => $stateItem;
         }
 
-        $alignment = $this->getAlignment();
-
         $attributes = $attributes
             ->class([
                 'fi-ta-text-has-badges' => $isBadge,
                 'fi-wrapped' => $this->canWrap(),
-                ($alignment instanceof Alignment) ? "fi-align-{$alignment->value}" : (is_string($alignment) ? $alignment : ''),
             ]);
 
         $lineClamp = $this->getLineClamp();
@@ -464,7 +468,7 @@ class TextColumn extends Column implements HasEmbeddedView
                 <?php } ?>
 
                 <?php if ($stateOverListLimitCount) { ?>
-                    <p class="fi-ta-text-list-limited-message">
+                    <div class="fi-ta-text-list-limited-message">
                         <?php if ($isLimitedListExpandable) { ?>
                             <div
                                 role="button"
@@ -487,7 +491,7 @@ class TextColumn extends Column implements HasEmbeddedView
                         <?php } else { ?>
                             <?= trans_choice('filament-tables::table.columns.text.more_list_items', $stateOverListLimitCount) ?>
                         <?php } ?>
-                    </p>
+                    </div>
                 <?php } ?>
 
                 <?php if (filled($descriptionBelow)) { ?>

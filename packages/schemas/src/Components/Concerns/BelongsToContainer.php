@@ -10,6 +10,8 @@ trait BelongsToContainer
 {
     protected Schema $container;
 
+    protected Schema $rootContainer;
+
     public function container(Schema $schema): static
     {
         $this->container = $schema;
@@ -24,13 +26,15 @@ trait BelongsToContainer
 
     public function getRootContainer(): Schema
     {
-        $container = $this->getContainer();
+        return $this->rootContainer ??= (function (): Schema {
+            $container = $this->getContainer();
 
-        while (($parentComponent = $container->getParentComponent()) !== null) {
-            $container = $parentComponent->getContainer();
-        }
+            while (($parentComponent = $container->getParentComponent()) !== null) {
+                $container = $parentComponent->getContainer();
+            }
 
-        return $container;
+            return $container;
+        })();
     }
 
     public function getLivewire(): Component & HasSchemas

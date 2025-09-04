@@ -26,6 +26,20 @@ return [
             'label' => 'Aksi|Aksi',
         ],
 
+        'select' => [
+
+            'loading_message' => 'Memuat...',
+
+            'no_search_results_message' => 'Tidak ada hasil yang sesuai dengan pencarian Anda.',
+
+            'placeholder' => 'Pilih salah satu opsi',
+
+            'searching_message' => 'Sedang mencari...',
+
+            'search_prompt' => 'Ketik untuk mencari...',
+
+        ],
+
         'text' => [
 
             'actions' => [
@@ -186,7 +200,6 @@ return [
 
             'group' => [
                 'label' => 'Kelompokkan berdasar',
-                'placeholder' => 'Kelompokkan berdasar',
             ],
 
             'direction' => [

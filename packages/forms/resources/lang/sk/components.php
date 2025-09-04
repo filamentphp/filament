@@ -289,7 +289,6 @@ return [
             'blockquote' => 'Citát',
             'bold' => 'Tučné písmo',
             'bullet_list' => 'Odrážkový zoznam',
-            'code' => 'Kód',
             'code_block' => 'Blok kódu',
             'heading' => 'Nadpis',
             'italic' => 'Kurzíva',
@@ -594,6 +593,11 @@ return [
     'text_input' => [
 
         'actions' => [
+
+            'copy' => [
+                'label' => 'Kopírovať',
+                'message' => 'Skopírované',
+            ],
 
             'hide_password' => [
                 'label' => 'Skryť heslo',

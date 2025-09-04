@@ -3,7 +3,6 @@
 namespace Filament\Tables\Columns\Layout;
 
 use Closure;
-use Exception;
 use Filament\Support\Components\ViewComponent;
 use Filament\Support\Concerns\CanGrow;
 use Filament\Support\Concerns\CanSpanColumns;
@@ -18,6 +17,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\HtmlString;
 use Illuminate\View\ComponentAttributeBag;
+use LogicException;
 
 class Component extends ViewComponent
 {
@@ -118,7 +118,7 @@ class Component extends ViewComponent
 
     public function getTable(): Table
     {
-        return $this->table ?? $this->getLayout()?->getTable() ?? throw new Exception('The column layout component is not mounted to a table.');
+        return $this->table ?? $this->getLayout()?->getTable() ?? throw new LogicException('The column layout component is not mounted to a table.');
     }
 
     public function isCollapsible(): bool

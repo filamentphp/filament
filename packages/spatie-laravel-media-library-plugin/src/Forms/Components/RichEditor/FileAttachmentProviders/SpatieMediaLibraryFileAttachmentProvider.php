@@ -2,11 +2,11 @@
 
 namespace Filament\Forms\Components\RichEditor\FileAttachmentProviders;
 
-use Exception;
 use Filament\Forms\Components\RichEditor\FileAttachmentProviders\Contracts\FileAttachmentProvider;
 use Filament\Forms\Components\RichEditor\RichContentAttribute;
 use Illuminate\Support\Str;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
+use LogicException;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection;
 use Throwable;
@@ -47,7 +47,7 @@ class SpatieMediaLibraryFileAttachmentProvider implements FileAttachmentProvider
         }
 
         if (! ($model instanceof HasMedia)) {
-            throw new Exception('The [' . static::class . '] requires the model to implement the [' . HasMedia::class . '] interface from the Spatie Media Library package.');
+            throw new LogicException('The [' . static::class . '] requires the model to implement the [' . HasMedia::class . '] interface from the Spatie Media Library package.');
         }
 
         return $model;
@@ -94,11 +94,14 @@ class SpatieMediaLibraryFileAttachmentProvider implements FileAttachmentProvider
 
     public function saveUploadedFileAttachment(TemporaryUploadedFile $file): mixed
     {
-        return $this->getExistingModel() /** @phpstan-ignore method.notFound */
+        $media = $this->getExistingModel() /** @phpstan-ignore method.notFound */
             ->addMediaFromString($file->get())
             ->usingFileName(((string) Str::ulid()) . '.' . $file->getClientOriginalExtension())
-            ->toMediaCollection($this->getCollection(), diskName: $this->attribute->getFileAttachmentsDiskName() ?? '')
-            ->uuid;
+            ->toMediaCollection($this->getCollection(), diskName: $this->attribute->getFileAttachmentsDiskName() ?? '');
+
+        $this->getMedia()->put($media->uuid, $media);
+
+        return $media->uuid;
     }
 
     /**

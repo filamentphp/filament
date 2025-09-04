@@ -30,7 +30,7 @@ class RepeatableEntry extends Entry implements HasEmbeddedView
 
             if ($itemData instanceof Model) {
                 $container->record($itemData);
-            } elseif (is_array($itemData)) {
+            } elseif (is_array($itemData) || is_object($itemData)) {
                 $container->constantState($itemData);
             }
 
