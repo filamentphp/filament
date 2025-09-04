@@ -680,7 +680,6 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
                 ...(filled($this->getCustomBlocks()) ? ['customBlocks'] : []),
                 ...(filled($this->getMergeTags()) ? ['mergeTags'] : []),
             ],
-            ['color'],
             ['undo', 'redo'],
         ];
     }
@@ -864,7 +863,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
                 $color[500] => ucwords($key),
             ])->toArray();
     }
-    
+
     public function getLengthValidationRules(): array
     {
         $rules = [];

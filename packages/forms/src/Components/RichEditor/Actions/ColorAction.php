@@ -59,27 +59,6 @@ class ColorAction
                     ],
                     editorSelection: $arguments['editorSelection'],
                 );
-            })
-            ->extraModalFooterActions([
-                Action::make('unsetColor')
-                    ->color('danger')
-                    ->label('Remove Color')
-                    ->action(function (array $arguments, RichEditor $component): void {
-                        $isSingleCharacterSelection = ($arguments['editorSelection']['head'] ?? null) === ($arguments['editorSelection']['anchor'] ?? null);
-
-                        $component->runCommands(
-                            [
-                                ...($isSingleCharacterSelection ? [EditorCommand::make(
-                                    'extendMarkRange',
-                                    arguments: ['textStyle'],
-                                )] : []),
-                                EditorCommand::make('unsetColor'),
-                            ],
-                            editorSelection: $arguments['editorSelection'],
-                        );
-
-                        return;
-                    }),
-            ]);
+            });
     }
 }

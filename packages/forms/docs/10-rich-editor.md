@@ -74,6 +74,7 @@ Additional tools available in the toolbar include:
 
 - `h1` - Applies the "h1" tag to the text.
 - `alignJustify` - Justifies the text.
+- `color` - Applies a chosen color to the selected text.
 - `clearFormatting` - Clears all formatting from the selected text.
 - `details` - Inserts a `<details>` tag, which allows users to create collapsible sections in their content.
 - `highlight` - Highlights the selected text with a `<mark>` tag around it.
@@ -81,7 +82,6 @@ Additional tools available in the toolbar include:
 - `lead` - Applies a `lead` class around the text, which is typically used for the first paragraph of an article.
 - `small` - Applies the `<small>` tag to the text, which is typically used for small print or disclaimers.
 - `code` - Format the selected text as inline code.
-- `color` - Opens a color picker to change the text color.
 - `table` - Creates a table in the editor with a default layout of 3 columns and 2 rows, with the first row configured as a header row.
 - `tableAddColumnBefore` - Adds a new column before the current column.
 - `tableAddColumnAfter` - Adds a new column after the current column.
@@ -127,7 +127,7 @@ RichEditor::make('content')
 
 ### Customizing color options
 
-By default, the color tool includes a set of predefined colors, but you can override these with your own choices using the `colors()` method. This allows you to define a set of colors that users can choose from when changing the text color. 
+By default, the color tool includes a set of predefined colors based on the Tailwind color palette, but you can override these with your own choices using the `colors()` method. This allows you to define a set of colors that users can choose from when changing the text color. The color's key should be a valid CSS color value, and the value is the label that will be shown in the color picker.
 
 ```php
 use Filament\Forms\Components\RichEditor;
