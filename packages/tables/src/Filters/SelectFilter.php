@@ -187,7 +187,7 @@ class SelectFilter extends BaseFilter
 
         if (! $this->queriesRelationships()) {
             return $query->{$isMultiple ? 'whereIn' : 'where'}(
-                $this->getAttribute(),
+                $query->qualifyColumn($this->getAttribute()),
                 $values,
             );
         }

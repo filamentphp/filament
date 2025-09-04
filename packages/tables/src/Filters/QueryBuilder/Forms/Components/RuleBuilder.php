@@ -2,7 +2,6 @@
 
 namespace Filament\Tables\Filters\QueryBuilder\Forms\Components;
 
-use Exception;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\Repeater;
@@ -12,6 +11,7 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Filters\QueryBuilder\Concerns\HasConstraints;
 use Filament\Tables\Filters\QueryBuilder\Constraints\Constraint;
 use Illuminate\Support\Str;
+use LogicException;
 
 class RuleBuilder extends Builder
 {
@@ -46,7 +46,7 @@ class RuleBuilder extends Builder
                                 ->getComponent(fn (Component $component): bool => $component instanceof Repeater);
 
                             if (! ($repeater instanceof Repeater)) {
-                                throw new Exception('No repeater component found.');
+                                throw new LogicException('No repeater component found.');
                             }
 
                             $itemLabels = collect($repeater->getItems())
@@ -79,7 +79,7 @@ class RuleBuilder extends Builder
                                     $builder = $schema->getComponent(fn (Component $component): bool => $component instanceof RuleBuilder);
 
                                     if (! ($builder instanceof RuleBuilder)) {
-                                        throw new Exception('No rule builder component found.');
+                                        throw new LogicException('No rule builder component found.');
                                     }
 
                                     $blockLabels = collect($builder->getItems())
@@ -87,7 +87,7 @@ class RuleBuilder extends Builder
                                             $block = $schema->getParentComponent();
 
                                             if (! ($block instanceof Builder\Block)) {
-                                                throw new Exception('No block component found.');
+                                                throw new LogicException('No block component found.');
                                             }
 
                                             return $block->getLabel($schema->getRawState(), $blockUuid);

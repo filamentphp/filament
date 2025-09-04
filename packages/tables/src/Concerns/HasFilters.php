@@ -76,12 +76,12 @@ trait HasFilters
         $filter = $this->getTable()->getFilter($filterName);
         $filterResetState = $filter->getResetState();
 
-        $filterFormGroup = $this->getTableFiltersForm()->getComponent($filterName);
+        $filterFormGroup = $this->getTableFiltersForm()->getComponentByStatePath($filterName);
 
         if (($filter instanceof QueryBuilder) && blank($field)) {
             $filterFormGroup->getChildSchema()->fill();
         } else {
-            $filterFields = $filterFormGroup?->getChildSchema()->getFlatFields();
+            $filterFields = $filterFormGroup?->getChildSchema()->getFlatFields() ?? [];
 
             if (filled($field) && array_key_exists($field, $filterFields)) {
                 $filterFields = [$field => $filterFields[$field]];

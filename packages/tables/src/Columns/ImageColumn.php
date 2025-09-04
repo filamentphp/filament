@@ -31,7 +31,7 @@ class ImageColumn extends Column implements HasEmbeddedView
 
     protected bool | Closure $isSquare = false;
 
-    protected string | Closure $visibility = 'private';
+    protected string | Closure | null $visibility = null;
 
     protected int | string | Closure | null $imageWidth = null;
 
@@ -120,7 +120,7 @@ class ImageColumn extends Column implements HasEmbeddedView
         return $this;
     }
 
-    public function visibility(string | Closure $visibility): static
+    public function visibility(string | Closure | null $visibility): static
     {
         $this->visibility = $visibility;
 
@@ -141,28 +141,22 @@ class ImageColumn extends Column implements HasEmbeddedView
 
     public function getDiskName(): string
     {
-        $name = $this->getCustomDiskName();
+        $name = $this->evaluate($this->diskName);
 
         if (filled($name)) {
             return $name;
         }
 
-        $name = config('filament.default_filesystem_disk');
+        $defaultName = config('filament.default_filesystem_disk');
 
-        if ($name !== 'public') {
-            return $name;
+        if (
+            ($defaultName === 'public')
+            && ($this->getCustomVisibility() === 'private')
+        ) {
+            return 'local';
         }
 
-        if ($this->getVisibility() !== 'private') {
-            return $name;
-        }
-
-        return 'local';
-    }
-
-    public function getCustomDiskName(): ?string
-    {
-        return $this->evaluate($this->diskName);
+        return $defaultName;
     }
 
     public function getImageHeight(): ?string
@@ -235,17 +229,18 @@ class ImageColumn extends Column implements HasEmbeddedView
 
     public function getVisibility(): string
     {
-        $visibility = $this->evaluate($this->visibility);
+        $visibility = $this->getCustomVisibility();
 
-        if ($visibility !== 'private') {
+        if (filled($visibility)) {
             return $visibility;
         }
 
-        if ($this->getCustomDiskName() !== 'public') {
-            return $visibility;
-        }
+        return ($this->getDiskName() === 'public') ? 'public' : 'private';
+    }
 
-        return 'public';
+    public function getCustomVisibility(): ?string
+    {
+        return $this->evaluate($this->visibility);
     }
 
     public function getImageWidth(): ?string
@@ -417,10 +412,13 @@ class ImageColumn extends Column implements HasEmbeddedView
             $state = $state->all();
         }
 
+        $alignment = $this->getAlignment();
+
         $attributes = $this->getExtraAttributeBag()
             ->class([
                 'fi-ta-image',
                 'fi-inline' => $this->isInline(),
+                ($alignment instanceof Alignment) ? "fi-align-{$alignment->value}" : (is_string($alignment) ? $alignment : ''),
             ]);
 
         $defaultImageUrl = $this->getDefaultImageUrl();
@@ -468,7 +466,6 @@ class ImageColumn extends Column implements HasEmbeddedView
             $state = array_slice($state, 0, $limit);
         }
 
-        $alignment = $this->getAlignment();
         $isCircular = $this->isCircular();
         $isSquare = $this->isSquare();
         $isStacked = $this->isStacked();
@@ -484,7 +481,6 @@ class ImageColumn extends Column implements HasEmbeddedView
                 'fi-stacked' => $isStacked,
                 ($isStacked && is_int($ring = $this->getRing())) ? "fi-ta-image-ring fi-ta-image-ring-{$ring}" : '',
                 ($isStacked && ($overlap = ($this->getOverlap() ?? 2))) ? "fi-ta-image-overlap-{$overlap}" : '',
-                ($alignment instanceof Alignment) ? "fi-align-{$alignment->value}" : (is_string($alignment) ? $alignment : ''),
             ]);
 
         $shouldOpenUrlInNewTab = $this->shouldOpenUrlInNewTab();

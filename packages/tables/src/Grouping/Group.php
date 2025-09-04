@@ -250,7 +250,7 @@ class Group extends Component
         return Arr::get($record, $this->getColumn());
     }
 
-    public function getTitle(Model $record): string | Htmlable
+    public function getTitle(Model $record): string | Htmlable | null
     {
         $column = $this->getColumn();
 

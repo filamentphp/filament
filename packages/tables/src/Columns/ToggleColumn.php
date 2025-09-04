@@ -42,7 +42,7 @@ class ToggleColumn extends Column implements Editable, HasEmbeddedView
         $onIcon = $this->getOnIcon();
         $state = (bool) $this->getState();
 
-        $attributes = (new ComponentAttributeBag)
+        $attributes = $this->getExtraAttributeBag()
             ->merge([
                 'x-load' => true,
                 'x-load-src' => FilamentAsset::getAlpineComponentSrc('columns/toggle', 'filament/tables'),

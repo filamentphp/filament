@@ -192,11 +192,15 @@ class EditRecord extends Page
 
             $this->callHook('beforeValidate');
 
+            $oldContainer = $component->getContainer();
+
             $data = Schema::make($component->getLivewire())
                 ->components([$component])
                 ->model($component->getRecord())
                 ->statePath('data')
                 ->getState();
+
+            $component->container($oldContainer);
 
             $this->callHook('afterValidate');
 

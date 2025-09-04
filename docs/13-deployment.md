@@ -7,7 +7,7 @@ import Aside from "@components/Aside.astro"
 
 Deploying a Laravel app using Filament to production is similar to deploying any other Laravel app. However, there are a few additional steps you should take to ensure that your Filament panel is optimized for performance and security.
 
-For tips focused on local development performance, see [Optimizing local dev](introduction/optimizing-local-dev).
+For tips focused on local development performance, see [Optimizing local development](introduction/optimizing-local-development).
 
 ## Ensure that users are authorized to access panels
 

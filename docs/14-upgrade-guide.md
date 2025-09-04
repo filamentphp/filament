@@ -7,20 +7,20 @@ import Checkboxes from "@components/Checkboxes.astro"
 import Disclosure from "@components/Disclosure.astro"
 
 <Aside variant="info">
-    If you see anything missing from this guide, please do not hesitate to [make a pull request](https://github.com/filamentphp/filament/edit/4.x/docs/14-upgrade-guide.md) to our repository! Any help is appreciated!
+    If you see anything missing from this guide, please don’t hesitate to [make a pull request](https://github.com/filamentphp/filament/edit/4.x/docs/14-upgrade-guide.md) to our repository! Any help is appreciated!
 </Aside>
 
 ## New requirements
 
 - PHP 8.2+
 - Laravel v11.28+
-- Tailwind CSS v4.0+, if you are currently using Tailwind CSS v3.0 with Filament. This does not apply if you are just using a Filament panel without a custom theme CSS file.
-- Filament no longer requires `doctrine/dbal`, but if your application still does, and you do not have it installed directly, you should add it to your `composer.json` file.
+- Tailwind CSS v4.0+, if you’re currently using Tailwind CSS v3.0 with Filament. This doesn’t apply if you’re just using a Filament panel without a custom theme CSS file.
+- Filament no longer requires `doctrine/dbal`, but if your application still does, and you don’t have it installed directly, you should add it to your `composer.json` file.
 
 ## Running the automated upgrade script
 
 <Aside variant="info">
-    The upgrade script is not a replacement for the upgrade guide. It handles many small changes that are not mentioned in the upgrade guide, but it does not handle all breaking changes. You should still read the [manual upgrade steps](#breaking-changes-that-must-be-handled-manually) to see what changes you need to make to your code.
+    The upgrade script is not a replacement for the upgrade guide. It handles many small changes that aren’t mentioned in the upgrade guide, but it doesn’t handle all breaking changes. You should still read the [manual upgrade steps](#breaking-changes-that-must-be-handled-manually) to see what changes you need to make to your code.
 </Aside>
 
 <Aside variant="info">
@@ -59,13 +59,13 @@ composer update
 
 Make sure to carefully follow the instructions, and review the changes made by the script. You may need to make some manual changes to your code afterwards, but the script should handle most of the repetitive work for you.
 
-Filament v4 introduces a new default directory structure for your Filament resources and clusters. If you are using Filament panels with resources and clusters, you can choose to keep the old directory structure, or migrate to the new one. If you want to migrate to the new directory structure, you can run the following command:
+Filament v4 introduces a new default directory structure for your Filament resources and clusters. If you’re using Filament panels with resources and clusters, you can choose to keep the old directory structure, or migrate to the new one. If you want to migrate to the new directory structure, you can run the following command:
 
 ```bash
 php artisan filament:upgrade-directory-structure-to-v4 --dry-run
 ```
 
-The `--dry-run` option will show you what the command would do without actually making any changes. If you are happy with the changes, you can run the command without the `--dry-run` option to apply the changes:
+The `--dry-run` option will show you what the command would do without actually making any changes. If you’re happy with the changes, you can run the command without the `--dry-run` option to apply the changes:
 
 ```bash
 php artisan filament:upgrade-directory-structure-to-v4
@@ -212,22 +212,16 @@ To begin, filter the upgrade guide for your specific needs by selecting only the
 ### High-impact changes
 
 <Disclosure open x-show="packages.includes('forms') || packages.includes('infolists') || packages.includes('tables')">
-<span slot="summary">File visibility is now private by default</span>
+<span slot="summary">File visibility is now private by default for non-local disks</span>
 
-In addition to the [default disk being changed to `local`](#publishing-the-configuration-file), the file visibility settings across various components have been changed to `private` instead of `public` by default.
-
-When Filament was first created, Laravel did not have a way to generate temporary signed URLs for local files. As such, the default disk for Filament was set to `public`, and the visibility of file uploads was set to `public` as well to ease the development experience without additional configuration.
-
-However, Laravel 11 introduced a new "Local Temporary URLs" feature which is enabled by default. Users who created their project before this feature was added may have to [update their `config/filesystems.php` file to enable it](https://laravel.com/docs/filesystem#enabling-local-temporary-urls).
-
-In v4, the default disk for Filament is set to `local`, and the visibility of file uploads is set to `private` by default. This means that files are not publicly accessible by default, and you need to generate a temporary signed URL to access them. This change affects the following components:
+In addition to the [default disk being changed to `local`](#publishing-the-configuration-file), the file visibility settings for non-local disks (such as `s3`, but not `public` or `local`) across various components have been changed to `private` instead of `public` by default. This means that files aren't publicly accessible by default, and you need to generate a temporary signed URL to access them. This change affects the following components:
 
 - `FileUpload` form field, including `SpatieMediaLibraryFileUpload`
 - `ImageColumn` table column, including `SpatieMediaLibraryImageColumn`
 - `ImageEntry` infolist entry, including `SpatieMediaLibraryImageEntry`
 
 <Aside variant="tip">
-    You can preserve the old default behavior across your entire app by adding the following code in the `boot()` method of a service provider like `AppServiceProvider`:
+    If you use a non-local disk such as `s3`, you can preserve the old default behavior across your entire app by adding the following code in the `boot()` method of a service provider like `AppServiceProvider`:
 
     ```php
     use Filament\Forms\Components\FileUpload;
@@ -349,7 +343,7 @@ Section::make()
 <Disclosure open x-show="packages.includes('forms')">
 <span slot="summary">The `unique()` validation rule behavior for ignoring Eloquent records</span>
 
-In v3, the `unique()` method did not ignore the current form's Eloquent record when validating by default. This behavior was enabled by the `ignoreRecord: true` parameter, or by passing a custom `ignorable` record.
+In v3, the `unique()` method didn’t ignore the current form's Eloquent record when validating by default. This behavior was enabled by the `ignoreRecord: true` parameter, or by passing a custom `ignorable` record.
 
 In v4, the `unique()` method's `ignoreRecord` parameter defaults to `true`.
 
@@ -399,7 +393,7 @@ Be aware when using `all` as it will cause performance issues when dealing with 
 <Disclosure open x-show="packages.includes('spatie-translatable-plugin')">
 <span slot="summary">The official Spatie Translatable Plugin is now deprecated</span>
 
-Last year, the Filament team decided to hand over maintenance of the Spatie Translatable Plugin to the team at [Lara Zeus](https://larazeus.com), who are trusted developers of many Filament plugins. They have maintained a fork of the plugin ever since.
+Last year, the Filament team decided to hand over maintenance of the Spatie Translatable Plugin to the team at [Lara Zeus](https://larazeus.com), who are trusted developers of many Filament plugins. They’ve maintained a fork of the plugin ever since.
 
 The official Spatie Translatable Plugin will not receive v4 support, and is now deprecated. You can use the [Lara Zeus Translatable Plugin](https://github.com/lara-zeus/spatie-translatable) as a direct replacement. The plugin is compatible with the same version of Spatie Translatable as the official plugin, and has been tested with Filament v4. It also fixes some long-standing bugs in the official plugin.
 
@@ -411,9 +405,9 @@ The [automated upgrade script](#running-the-automated-upgrade-script) suggests c
 <Disclosure x-show="packages.includes('forms')">
 <span slot="summary">Enum field state</span>
 
-In v3, fields that wrote to an enum attribute on a model, such as a `Select`, `CheckboxList` or `Radio` field using `options(Enum::class)`, would inconsistently return the value of the field as either the enum value or the enum instance, depending on whether or not the field was last modified by the server or by the user. This was not useful, and you had to check the type of the value returned by the field to determine if it was an enum value or an enum instance.
+In v3, fields that wrote to an enum attribute on a model, such as a `Select`, `CheckboxList` or `Radio` field using `options(Enum::class)`, would inconsistently return the value of the field as either the enum value or the enum instance, depending on whether or not the field was last modified by the server or by the user. This wasn’t useful, and you had to check the type of the value returned by the field to determine if it was an enum value or an enum instance.
 
-In v4, the field state is always returned as the enum instance. This means that you can always use the enum methods on field state. If you were not handling the possibility of the field state being an enum instance in your code previously, you now need to do so.
+In v4, the field state is always returned as the enum instance. This means that you can always use the enum methods on field state. If you weren’t handling the possibility of the field state being an enum instance in your code previously, you now need to do so.
 
 The following code examples illustrate how field state may now return an enum instance:
 
@@ -453,13 +447,13 @@ Filament v4 has renamed some of the URL parameters that are used on resource pag
 - `tableSearch` has been renamed to `search` on List / Manage Relation resource pages.
 - `tableSort` has been renamed to `sort` on List / Manage Relation resource pages.
 
-To find out if you are using this parameter in your code, try searching for `'activeRelationManager' => ` (etc.) in your code, and looking for areas where you are using `::getUrl()` or another method of generating a URL with a parameter.
+To find out if you’re using this parameter in your code, try searching for `'activeRelationManager' => ` (etc.) in your code, and looking for areas where you’re using `::getUrl()` or another method of generating a URL with a parameter.
 </Disclosure>
 
 <Disclosure x-show="packages.includes('panels')">
 <span slot="summary">Automatic tenancy global scoping and association</span>
 
-When using tenancy in v3, Filament only scoped resource queries to the current tenant: to render the resource table, resolve URL parameters, and fetch global search results. There were many situations where other queries in the panel were not scoped by default, and the developer had to manually scope them. While this was a documented feature, it created a lot of additional work for developers.
+When using tenancy in v3, Filament only scoped resource queries to the current tenant: to render the resource table, resolve URL parameters, and fetch global search results. There were many situations where other queries in the panel weren’t scoped by default, and the developer had to manually scope them. While this was a documented feature, it created a lot of additional work for developers.
 
 In v4, Filament automatically scopes all queries in a panel to the current tenant, and automatically associates new records with the current tenant using model events. This means that you no longer need to manually scope queries or associate new Eloquent records in most cases. There are still some important points to consider, so the [documentation](users/tenancy#tenancy-security) has been updated to reflect this.
 </Disclosure>
@@ -490,7 +484,7 @@ If you were previously using `inline()->inlineLabel(false)` to achieve the v4 be
 
 In Filament v3, import and export jobs were retries continuously for 24 hours if they failed, with no backoff between tries by default. This caused issues for some users, as there was no backoff period and the jobs could be retried too quickly, causing the queue to be flooded with continuously failing jobs.
 
-In v4, they are retried 3 times with a 60 second backoff between each retry.
+In v4, they’re retried 3 times with a 60 second backoff between each retry.
 
 This behavior can be customized in the [importer](import#customizing-the-import-job-retries) and [exporter](export#customizing-the-export-job-retries) classes.
 </Disclosure>
@@ -500,13 +494,13 @@ This behavior can be customized in the [importer](import#customizing-the-import-
 <Disclosure x-show="packages.includes('tables') || packages.includes('infolists')">
 <span slot="summary">The `isSeparate` parameter of `ImageColumn::limitedRemainingText()` and `ImageEntry::limitedRemainingText()` has been removed</span>
 
-Previously, users were able to display the number of limited images separately to an image stack using the `isSeparate` parameter. Now the parameter has been removed, and if a stack exists, the text will always be stacked on top and not separate. If the images are not stacked, the text will be separate.
+Previously, users were able to display the number of limited images separately to an image stack using the `isSeparate` parameter. Now the parameter has been removed, and if a stack exists, the text will always be stacked on top and not separate. If the images aren’t stacked, the text will be separate.
 </Disclosure>
 
 <Disclosure x-show="packages.includes('forms')">
 <span slot="summary">The `RichEditor` component's `disableGrammarly()` method has been removed</span>
 
-The `disableGrammarly()` method has been removed from the `RichEditor` component. This method was used to disable the Grammarly browser extension acting on the editor. Since moving the underlying implementation of the editor from Trix to TipTap, we have not found a way to disable Grammarly on the editor.
+The `disableGrammarly()` method has been removed from the `RichEditor` component. This method was used to disable the Grammarly browser extension acting on the editor. Since moving the underlying implementation of the editor from Trix to TipTap, we haven’t found a way to disable Grammarly on the editor.
 </Disclosure>
 
 <Disclosure x-show="packages.includes('forms')">
@@ -527,7 +521,7 @@ public static function getDefaultName(): ?string
 }
 ```
 
-If you are overriding the `make()` method to pass default configuration to the object once it is instantiated, please note that it is recommended to instead override the `setUp()` method, which is called immediately after the object is instantiated:
+If you’re overriding the `make()` method to pass default configuration to the object once it is instantiated, please note that it is recommended to instead override the `setUp()` method, which is called immediately after the object is instantiated:
 
 ```php
 protected function setUp(): void
@@ -559,7 +553,7 @@ public static function getDefaultName(): ?string
 }
 ```
 
-If you are overriding the `make()` method to pass default configuration to the object once it is instantiated, please note that it is recommended to instead override the `setUp()` method, which is called immediately after the object is instantiated:
+If you’re overriding the `make()` method to pass default configuration to the object once it is instantiated, please note that it is recommended to instead override the `setUp()` method, which is called immediately after the object is instantiated:
 
 ```php
 protected function setUp(): void
@@ -591,7 +585,7 @@ public static function getDefaultName(): ?string
 }
 ```
 
-If you are overriding the `make()` method to pass default configuration to the object once it is instantiated, please note that it is recommended to instead override the `setUp()` method, which is called immediately after the object is instantiated:
+If you’re overriding the `make()` method to pass default configuration to the object once it is instantiated, please note that it is recommended to instead override the `setUp()` method, which is called immediately after the object is instantiated:
 
 ```php
 protected function setUp(): void
@@ -623,7 +617,7 @@ public static function getDefaultName(): ?string
 }
 ```
 
-If you are overriding the `make()` method to pass default configuration to the object once it is instantiated, please note that it is recommended to instead override the `setUp()` method, which is called immediately after the object is instantiated:
+If you’re overriding the `make()` method to pass default configuration to the object once it is instantiated, please note that it is recommended to instead override the `setUp()` method, which is called immediately after the object is instantiated:
 
 ```php
 protected function setUp(): void
@@ -675,7 +669,7 @@ public function table(Table $table): Table
 <Disclosure x-show="packages.includes('panels')">
 <span slot="summary">Overriding the `can*()` authorization methods on a `Resource`, `RelationManager` or `ManageRelatedRecords` class</span>
 
-Although these methods, such as `canCreate()`, `canViewAny()` and `canDelete()` were not documented, if you are overriding those to provide custom authorization logic in v3, you should be aware that they are not always called in v4. The authorization logic has been improved to properly support [policy response objects](https://laravel.com/docs/authorization#policy-responses), and these methods were too simple as they are just able to return booleans.
+Although these methods, such as `canCreate()`, `canViewAny()` and `canDelete()`weren’t documented, if you’re overriding those to provide custom authorization logic in v3, you should be aware that they aren’t always called in v4. The authorization logic has been improved to properly support [policy response objects](https://laravel.com/docs/authorization#policy-responses), and these methods were too simple as they are just able to return booleans.
 
 If you can make the authorization customization inside the policy of the model instead, you should do that. If you need to customize the authorization logic in the resource or relation manager class, you should override the `get*AuthorizationResponse()` methods instead, such as `getCreateAuthorizationResponse()`, `getViewAnyAuthorizationResponse()` and `getDeleteAuthorizationResponse()`. These methods are called when the authorization logic is executed, and they return a [policy response object](https://laravel.com/docs/authorization#policy-responses). If you remove the override for the `can*()` methods, the `get*AuthorizationResponse()` methods will be used to determine the authorization response boolean, so you don't have to maintain the logic twice.
 </Disclosure>

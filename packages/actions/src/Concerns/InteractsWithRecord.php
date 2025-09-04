@@ -3,11 +3,11 @@
 namespace Filament\Actions\Concerns;
 
 use Closure;
-use Exception;
 use Filament\Actions\Action;
 use Filament\Support\ArrayRecord;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+use LogicException;
 
 use function Filament\Support\get_model_label;
 use function Filament\Support\locale_has_pluralization;
@@ -91,8 +91,6 @@ trait InteractsWithRecord
 
     /**
      * @return Model | array<string, mixed> | null
-     *
-     * @throws Exception
      */
     public function getRecord(bool $withDefault = true): Model | array | null
     {
@@ -101,7 +99,7 @@ trait InteractsWithRecord
         $isRecordKey = filled($record) && (! $record instanceof Model) && (! is_array($record));
 
         if ($isRecordKey && (! $this->resolveRecordUsing)) {
-            throw new Exception("Could not resolve record from key [{$record}] without a [resolveRecordUsing()] callback.");
+            throw new LogicException("Could not resolve record from key [{$record}] without a [resolveRecordUsing()] callback.");
         }
 
         if ($isRecordKey) {
@@ -152,7 +150,7 @@ trait InteractsWithRecord
     public function resolveRecordKey(Model | array $record): string
     {
         if (is_array($record)) {
-            return $record[ArrayRecord::getKeyName()] ?? throw new Exception('Record arrays must have a unique [' . ArrayRecord::getKeyName() . '] entry for identification.');
+            return $record[ArrayRecord::getKeyName()] ?? throw new LogicException('Record arrays must have a unique [' . ArrayRecord::getKeyName() . '] entry for identification.');
         }
 
         return $record->getKey();
@@ -217,8 +215,6 @@ trait InteractsWithRecord
 
     /**
      * @return class-string<Model>|null
-     *
-     * @throws Exception
      */
     public function getModel(bool $withDefault = true): ?string
     {

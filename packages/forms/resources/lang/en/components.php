@@ -508,6 +508,10 @@ return [
 
         ],
 
+        'messages' => [
+            'uploading_file' => 'Uploading file...',
+        ],
+
         'no_merge_tag_search_results_message' => 'No merge tag results.',
 
         'tools' => [

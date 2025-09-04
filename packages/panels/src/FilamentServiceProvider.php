@@ -106,6 +106,10 @@ class FilamentServiceProvider extends PackageServiceProvider
             SetUpPanel::class,
         ]);
 
+        // Register panels if they have not been registered already,
+        // by executing pending `resolving()` callbacks.
+        app(PanelRegistry::class);
+
         Filament::serving(function (): void {
             Filament::setServingStatus();
         });
