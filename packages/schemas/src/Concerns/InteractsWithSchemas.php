@@ -143,6 +143,8 @@ trait InteractsWithSchemas
         }
 
         $this->areSchemaStateUpdateHooksDisabledForTesting = true;
+
+        $this->skipRender();
     }
 
     public function enableSchemaStateUpdateHooksForTesting(): void
@@ -152,6 +154,8 @@ trait InteractsWithSchemas
         }
 
         $this->areSchemaStateUpdateHooksDisabledForTesting = false;
+
+        $this->skipRender();
     }
 
     public function getSchemaComponent(string $key, bool $withHidden = false, ?Component $skipComponentChildContainersWhileSearching = null): Component | Action | ActionGroup | null
@@ -430,6 +434,8 @@ trait InteractsWithSchemas
 
             $this->unsetMissingNumericArrayKeys($this->{$statePath}, $value, $statePath, $schemaStatePath);
         }
+
+        $this->skipRender();
     }
 
     /**

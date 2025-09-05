@@ -3,12 +3,12 @@
 namespace Filament\Schemas\Concerns;
 
 use Closure;
-use Exception;
 use Filament\Infolists\Components\Entry;
 use Filament\Schemas\Components\Component;
 use Filament\Support\Livewire\Partials\PartialsComponentHook;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Arr;
+use LogicException;
 
 trait HasState
 {
@@ -388,7 +388,11 @@ trait HasState
      */
     public function getConstantState(): array | object
     {
-        return $this->constantState ?? $this->getRecord(withParentComponentRecord: false) ?? $this->getParentComponent()?->getContainer()->getConstantState() ?? $this->getRecord() ?? throw new Exception('Schema has no [record()] or [state()] set.');
+        return $this->constantState
+            ?? $this->getRecord(withParentComponentRecord: false)
+            ?? $this->getParentComponent()?->getContainer()->getConstantState()
+            ?? $this->getRecord()
+            ?? throw new LogicException('Schema has no [record()] or [state()] set.');
     }
 
     /**
@@ -506,7 +510,7 @@ trait HasState
         }
 
         if (blank($this->getKey())) {
-            throw new Exception('You cannot partially render a schema without a [key()] or [statePath()] defined.');
+            throw new LogicException('You cannot partially render a schema without a [key()] or [statePath()] defined.');
         }
 
         return blank($updatedStatePath) || str($updatedStatePath)->startsWith("{$this->getStatePath()}.");

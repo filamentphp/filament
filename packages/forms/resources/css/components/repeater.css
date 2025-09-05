@@ -14,7 +14,7 @@
     }
 
     & .fi-fo-repeater-item {
-        @apply divide-y divide-gray-100 rounded-xl bg-white shadow-xs ring-1 ring-gray-950/5 dark:divide-white/10 dark:bg-white/5 dark:ring-white/10;
+        @apply rounded-xl bg-white shadow-xs ring-1 ring-gray-950/5 dark:bg-white/5 dark:ring-white/10;
 
         &.fi-collapsed {
             & .fi-fo-repeater-item-header-collapsible-actions {
@@ -76,7 +76,7 @@
     }
 
     & .fi-fo-repeater-item-content {
-        @apply p-4;
+        @apply border-t border-gray-100 p-4 dark:border-white/10;
     }
 
     & .fi-fo-repeater-add-between-items-ctn {
@@ -92,7 +92,7 @@
     }
 
     & .fi-fo-repeater-label-between-items {
-        @apply absolute -top-3 left-3 px-1 text-sm font-medium;
+        @apply absolute start-3 -top-2.5 px-1 text-sm font-medium;
     }
 
     & .fi-fo-repeater-add {

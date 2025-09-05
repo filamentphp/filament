@@ -11,7 +11,23 @@ return [
             ],
 
             'add' => [
-                'label' => 'הוסף ל :label',
+
+                'label' => 'הוסף :label',
+
+                'modal' => [
+
+                    'label' => 'הוספת :label',
+
+                    'actions' => [
+
+                        'add' => [
+                            'label' => 'הוסף',
+                        ],
+
+                    ],
+
+                ],
+
             ],
 
             'add_between' => [
@@ -129,7 +145,7 @@ return [
                 ],
 
                 'save' => [
-                    'label' => 'שמור',
+                    'label' => 'שמירה',
                 ],
 
                 'zoom_100' => [
@@ -243,7 +259,7 @@ return [
         'actions' => [
 
             'add' => [
-                'label' => 'הוסף ל :label',
+                'label' => 'הוסף :label',
             ],
 
             'delete' => [
@@ -288,37 +304,127 @@ return [
 
     'rich_editor' => [
 
-        'dialogs' => [
+        'actions' => [
 
-            'link' => [
+            'attach_files' => [
 
-                'actions' => [
-                    'link' => 'קישור',
-                    'unlink' => 'בטל קישור',
+                'label' => 'העלאת קובץ',
+
+                'modal' => [
+
+                    'heading' => 'העלאת קובץ',
+
+                    'form' => [
+
+                        'file' => [
+
+                            'label' => [
+                                'new' => 'קובץ',
+                                'existing' => 'החלף קובץ',
+                            ],
+
+                        ],
+
+                        'alt' => [
+
+                            'label' => [
+                                'new' => 'טקסט חלופי',
+                                'existing' => 'שנה טקסט חלופי',
+                            ],
+
+                        ],
+
+                    ],
+
                 ],
-
-                'label' => 'כתובת',
-
-                'placeholder' => 'הכנס כתובת',
 
             ],
 
+            'custom_block' => [
+
+                'modal' => [
+
+                    'actions' => [
+
+                        'insert' => [
+                            'label' => 'הכנס',
+                        ],
+
+                        'save' => [
+                            'label' => 'שמירה',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
+            'link' => [
+
+                'label' => 'עריכה',
+
+                'modal' => [
+
+                    'heading' => 'קישור',
+
+                    'form' => [
+
+                        'url' => [
+                            'label' => 'כתובת URL',
+                        ],
+
+                        'should_open_in_new_tab' => [
+                            'label' => 'פתח קישור בכרטיסיה חדשה',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
         ],
 
         'tools' => [
+            'align_center' => 'יישר למרכז',
+            'align_end' => 'יישר לשמאל',
+            'align_justify' => 'יישר לשני הצדדים',
+            'align_start' => 'יישר לימין',
             'attach_files' => 'הוסף קבצים',
             'blockquote' => 'בלוק ציטוט',
             'bold' => 'מודגש',
             'bullet_list' => 'רשימת נקודות',
+            'clear_formatting' => 'ניקוי עיצוב',
+            'code' => 'קוד',
             'code_block' => 'בלוק קוד',
+            'custom_blocks' => 'בלוקים מותאמים אישית',
+            'details' => 'פרטים',
             'h1' => 'כותרת 1',
             'h2' => 'כותרת 2',
             'h3' => 'כותרת 3',
+            'highlight' => 'הדגשה',
+            'horizontal_rule' => 'קו אופקי',
             'italic' => 'נטוי',
+            'lead' => 'טקסט גדול',
             'link' => 'קישור',
+            'merge_tags' => 'מזג תוויות',
             'ordered_list' => 'רשימה ממוספרת',
-            'redo' => 'חזור על',
-            'strike' => 'כתיב מחדל',
+            'redo' => 'בצע שוב',
+            'small' => 'טקסט קטן',
+            'strike' => 'קו חוצה',
+            'subscript' => 'כתב תחתי',
+            'superscript' => 'כתב עילי',
+            'table' => 'טבלה',
+            'table_delete' => 'מחק טבלה',
+            'table_add_column_before' => 'הוסף עמודה לפני',
+            'table_add_column_after' => 'הוסף עמודה אחרי',
+            'table_delete_column' => 'מחק עמודה',
+            'table_add_row_before' => 'הוסף שורה לפני',
+            'table_add_row_after' => 'הוסף שורה אחרי',
+            'table_delete_row' => 'מחק שורה',
+            'table_merge_cells' => 'מזג תאים',
+            'table_split_cell' => 'פצל תאים',
+            'table_toggle_header_row' => 'הפעל/הסתר שורת כותרת',
             'underline' => 'קו תחתון',
             'undo' => 'בטל',
         ],
@@ -331,6 +437,8 @@ return [
 
             'create_option' => [
 
+                'label' => 'יצירה',
+
                 'modal' => [
 
                     'heading' => 'יצירה',
@@ -338,10 +446,11 @@ return [
                     'actions' => [
 
                         'create' => [
-                            'label' => 'צור',
+                            'label' => 'יצירה',
                         ],
+
                         'create_another' => [
-                            'label' => 'צור וצור עוד אחת',
+                            'label' => 'צור וצור עוד אחד',
                         ],
 
                     ],
@@ -352,6 +461,8 @@ return [
 
             'edit_option' => [
 
+                'label' => 'עריכה',
+
                 'modal' => [
 
                     'heading' => 'עריכה',
@@ -359,7 +470,7 @@ return [
                     'actions' => [
 
                         'save' => [
-                            'label' => 'שמור',
+                            'label' => 'שמירה',
                         ],
 
                     ],
@@ -391,6 +502,15 @@ return [
 
     'tags_input' => [
         'placeholder' => 'תגית חדשה',
+    ],
+
+    'toggle_buttons' => [
+
+        'boolean' => [
+            'true' => 'כן',
+            'false' => 'לא',
+        ],
+
     ],
 
 ];

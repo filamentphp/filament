@@ -12,6 +12,19 @@ trait HasUserMenu
      */
     protected ?array $userMenuItems = null;
 
+    public function bootHasUserMenu(): void
+    {
+        if (Filament::auth()->guest()) {
+            return;
+        }
+
+        if (! Filament::hasUserMenu()) {
+            return;
+        }
+
+        $this->getUserMenuItems();
+    }
+
     /**
      * @return array<Action>
      */
@@ -29,6 +42,10 @@ trait HasUserMenu
             $this->cacheAction($action);
         }
 
-        return $this->userMenuItems;
+        if (blank($this->userMenuItems)) {
+            $this->userMenuItems = null;
+        }
+
+        return $this->userMenuItems ?? [];
     }
 }

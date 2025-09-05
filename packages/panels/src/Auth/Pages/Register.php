@@ -4,7 +4,6 @@ namespace Filament\Auth\Pages;
 
 use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;
 use DanHarrin\LivewireRateLimiting\WithRateLimiting;
-use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Auth\Events\Registered;
@@ -30,6 +29,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\HtmlString;
 use Illuminate\Validation\Rules\Password;
+use LogicException;
 
 /**
  * @property-read Action $loginAction
@@ -139,7 +139,7 @@ class Register extends SimplePage
         if (! method_exists($user, 'notify')) {
             $userClass = $user::class;
 
-            throw new Exception("Model [{$userClass}] does not have a [notify()] method.");
+            throw new LogicException("Model [{$userClass}] does not have a [notify()] method.");
         }
 
         $notification = app(VerifyEmail::class);

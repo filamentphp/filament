@@ -3,7 +3,6 @@
 namespace Filament\Support\Concerns;
 
 use Closure;
-use Exception;
 use Filament\Forms\Components\RichEditor\Models\Contracts\HasRichContent;
 use Filament\Support\ArrayRecord;
 use Filament\Tables\Columns\Column;
@@ -14,6 +13,7 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Stringable;
+use LogicException;
 use Znck\Eloquent\Relations\BelongsToThrough;
 
 trait HasCellState
@@ -347,7 +347,7 @@ trait HasCellState
                 if (! $record->isRelation($namePart)) {
                     $recordClass = $record::class;
 
-                    throw new Exception("When trying to guess the inverse relationship for column [{$this->getName()}], relationship [{$inverseNestedRelationshipName}] was not found on model [{$recordClass}]. Please define a custom [inverseRelationship()] for this column.");
+                    throw new LogicException("When trying to guess the inverse relationship for column [{$this->getName()}], relationship [{$inverseNestedRelationshipName}] was not found on model [{$recordClass}]. Please define a custom [inverseRelationship()] for this column.");
                 }
 
                 $inverseNestedRelationshipName = $namePart;
@@ -409,5 +409,10 @@ trait HasCellState
         }
 
         return $this->cachedState[$recordKey] = $state();
+    }
+
+    public function getGetStateUsingCallback(): mixed
+    {
+        return $this->getStateUsing;
     }
 }

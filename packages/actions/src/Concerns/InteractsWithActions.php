@@ -23,6 +23,7 @@ use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Url;
 use ReflectionMethod;
 use ReflectionNamedType;
+use ReflectionUnionType;
 use Throwable;
 
 use function Livewire\store;
@@ -512,13 +513,13 @@ trait InteractsWithActions
                 return null;
             }
 
-            if (! $returnTypeReflection instanceof ReflectionNamedType) {
-                return null;
-            }
+            $returnTypes = $returnTypeReflection instanceof ReflectionUnionType ? $returnTypeReflection->getTypes() : [$returnTypeReflection];
 
-            $type = $returnTypeReflection->getName();
+            $hasActionReturnType = collect($returnTypes)
+                ->filter(fn ($returnType) => $returnType instanceof ReflectionNamedType)
+                ->contains(fn (ReflectionNamedType $returnType) => is_a($returnType->getName(), Action::class, allow_string: true));
 
-            if (! is_a($type, Action::class, allow_string: true)) {
+            if (! $hasActionReturnType) {
                 return null;
             }
 

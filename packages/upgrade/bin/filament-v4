@@ -44,9 +44,15 @@ HTML);
 require __DIR__ . '/../src/check-compatibility.php';
 
 $directories = $argv[1] ?? ask(<<<HTML
-    <span class="bg-amber-600 text-amber-50 mr-1">
-        Please provide a comma-separated list of directories to process breaking changes in (e.g. app, app-modules, src):
-    </span>
+    <div>
+        Please provide a comma-separated list of directories containing Filament code to upgrade (e.g. <strong>app</strong>, <strong>app-modules</strong>, <strong>src</strong>).
+
+        <br />
+
+        <span class="bg-amber-600 text-amber-50 mr-1">
+             You can skip this if you have a normal Laravel app structure:
+        </span>
+    </div>
     HTML) ?: 'app';
 
 render(<<<HTML
@@ -59,6 +65,7 @@ $rectorScriptPath = implode(DIRECTORY_SEPARATOR, ['vendor', 'bin', 'rector']);
 
 foreach (explode(',', $directories) as $directory) {
     $directory = trim($directory);
+    $directory = trim($directory, DIRECTORY_SEPARATOR);
 
     render(<<<HTML
         <p>
@@ -273,6 +280,11 @@ try {
 
             $version = ltrim($compatibility['version'], 'v');
             $isPrerelease = $compatibility['isPrerelease'];
+
+            if ($version === 'unknown') {
+                // Skip suggesting install command for plugins with unknown version (e.g., private/non-Packagist)
+                continue;
+            }
 
             $constraint = null;
             if (! $isPrerelease) {

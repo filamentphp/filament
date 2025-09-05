@@ -23,6 +23,14 @@
         }
     }
 
+    & .fi-fo-rich-editor-uploading-file-message {
+        @apply flex items-center gap-x-3 border-b border-gray-200 bg-gray-50 px-5 py-1.5 text-sm leading-6 font-medium text-gray-700 dark:border-white/10 dark:bg-white/5 dark:text-gray-200;
+
+        & .fi-loading-indicator {
+            @apply text-gray-400 dark:text-gray-500;
+        }
+    }
+
     & .fi-fo-rich-editor-main {
         @apply flex flex-col-reverse;
     }
@@ -186,10 +194,6 @@
 
     & img {
         @apply inline-block;
-
-        &.fi-loading {
-            @apply animate-pulse;
-        }
     }
 
     & div[data-type='customBlock'] {

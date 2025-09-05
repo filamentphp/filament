@@ -4,7 +4,7 @@ return [
 
     'single' => [
 
-        'label' => 'הסר קישור',
+        'label' => 'הסרת קישור',
 
         'modal' => [
 

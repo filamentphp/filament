@@ -36,7 +36,6 @@ return [
         'throttled' => [
             'title' => 'Zu viele Versuche.',
             'body' => 'Bitte in :seconds Sekunden nochmal versuchen.',
-
         ],
 
     ],

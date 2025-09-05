@@ -4,7 +4,6 @@ namespace Filament\Auth\Pages\EmailVerification;
 
 use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;
 use DanHarrin\LivewireRateLimiting\WithRateLimiting;
-use Exception;
 use Filament\Actions\Action;
 use Filament\Auth\Notifications\VerifyEmail;
 use Filament\Facades\Filament;
@@ -15,6 +14,7 @@ use Filament\Schemas\Schema;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\HtmlString;
+use LogicException;
 
 /**
  * @property-read Action $resendNotificationAction
@@ -32,7 +32,7 @@ class EmailVerificationPrompt extends SimplePage
 
     protected function getVerifiable(): MustVerifyEmail
     {
-        /** @var MustVerifyEmail */
+        /** @var MustVerifyEmail $user */
         $user = Filament::auth()->user();
 
         return $user;
@@ -47,7 +47,7 @@ class EmailVerificationPrompt extends SimplePage
         if (! method_exists($user, 'notify')) {
             $userClass = $user::class;
 
-            throw new Exception("Model [{$userClass}] does not have a [notify()] method.");
+            throw new LogicException("Model [{$userClass}] does not have a [notify()] method.");
         }
 
         $notification = app(VerifyEmail::class);

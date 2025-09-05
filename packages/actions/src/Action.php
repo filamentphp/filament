@@ -195,7 +195,13 @@ class Action extends ViewComponent implements Arrayable
     {
         $static = static::make($data['name']);
 
-        $view = $data['view'] ?? null;
+        $view = match ($data['view'] ?? null) {
+            'filament-actions::button-action' => static::BUTTON_VIEW,
+            'filament-actions::grouped-action' => static::GROUPED_VIEW,
+            'filament-actions::icon-button-action' => static::ICON_BUTTON_VIEW,
+            'filament-actions::link-action' => static::LINK_VIEW,
+            default => $data['view'] ?? null,
+        };
 
         if (filled($view) && static::isViewSafe($view)) {
             $static->view($view);

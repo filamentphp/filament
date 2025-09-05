@@ -515,6 +515,8 @@ return [
             'undo' => 'Undo',
         ],
 
+        'uploading_file_message' => 'Uploading file...',
+
     ],
 
     'select' => [

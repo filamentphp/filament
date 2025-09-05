@@ -64,7 +64,7 @@ interface HasTable
 
     public function getTableRecordsPerPage(): int | string | null;
 
-    public function getTablePage(): int;
+    public function getTablePage(): int | string;
 
     public function getTableSortColumn(): ?string;
 
