@@ -13,4 +13,3 @@
 composer.phar
 Thumbs.db
 phpunit.xml
-/packages/**/dist
