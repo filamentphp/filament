@@ -323,6 +323,10 @@
                         @apply lg:px-0 lg:py-0 @xl:px-0 @xl:py-0;
                     }
 
+                    .fi-in-entry-content {
+                        @apply lg:px-2 lg:py-2 @xl:px-2 @xl:py-2;
+                    }
+
                     &:last-child {
                         & > td {
                             &:first-child .fi-input-wrp {
