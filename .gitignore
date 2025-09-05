@@ -13,6 +13,7 @@
 composer.phar
 Thumbs.db
 phpunit.xml
+packages/*/dist/*
 packages/actions/dist/index.js
 packages/forms/dist/index.css
 packages/forms/dist/index.js
