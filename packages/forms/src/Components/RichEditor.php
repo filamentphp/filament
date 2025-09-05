@@ -87,6 +87,8 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
      */
     protected array | Closure | null $mentionItems = null;
 
+    protected int | Closure | null $mentionItemsLimit = 5;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -458,6 +460,18 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     public function getMentionItems(): array
     {
         return $this->evaluate($this->mentionItems) ?? [];
+    }
+
+    public function mentionItemsLimit(int | Closure | null $limit): static
+    {
+        $this->mentionItemsLimit = $limit;
+
+        return $this;
+    }
+
+    public function getMentionItemsLimit(): int
+    {
+        return (int) ($this->evaluate($this->mentionItemsLimit) ?? 5);
     }
 
     /**

@@ -45,7 +45,8 @@ export default async ({
     key,
     mergeTags,
     noMergeTagSearchResultsMessage,
-    mentions = [],
+    mentions,
+    mentionsLimit,
     placeholder,
     statePath,
     uploadingFileMessage,
@@ -99,13 +100,26 @@ export default async ({
               }),
           ]
         : []),
-    ...(mentions.length 
-        ? [
-              Mention.configure({
-                  HTMLAttributes: { class: 'fi-fo-rich-editor-mention' },
-                  suggestion: getMentionSuggestion({ items: mentions }),
-              }),
-          ]
+    ...(mentions.length
+        ? (() => {
+              const isConfig = (m) => typeof m === 'object' && (m.char || m.items || m.render)
+
+              const suggestions = Array.isArray(mentions) && mentions.length && isConfig(mentions[0])
+                  ? mentions.map((m) => {
+                        if (typeof m.render === 'function' || typeof m.items === 'function') {
+                            return m
+                        }
+                        return { ...getMentionSuggestion({ items: m.items ?? [], limit: (typeof m.limit === 'number' && m.limit > 0) ? m.limit : mentionsLimit }), char: m.char ?? '@' }
+                    })
+                  : [{ ...getMentionSuggestion({ items: mentions, limit: mentionsLimit }), char: '@' }]
+
+              return [
+                  Mention.configure({
+                      HTMLAttributes: { class: 'fi-fo-rich-editor-mention' },
+                      suggestions,
+                  }),
+              ]
+          })()
         : []),
     OrderedList,
     Paragraph,

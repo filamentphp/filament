@@ -11,7 +11,8 @@
     $tools = $getTools();
     $toolbarButtons = $getToolbarButtons();
     $floatingToolbars = $getFloatingToolbars();
-    $mentionItems = method_exists($field, 'getMentionItems') ? $getMentionItems() : [];
+    $mentionItems = $getMentionItems();
+    $mentionItemsLimit = $getMentionItemsLimit();
 @endphp
 
 <x-dynamic-component :component="$fieldWrapperView" :field="$field">
@@ -39,6 +40,7 @@
                         livewireId: @js($this->getId()),
                         mergeTags: @js($mergeTags),
                         mentions: @js($mentionItems),
+                        mentionsLimit: @js($mentionItemsLimit),
                         noMergeTagSearchResultsMessage: @js($getNoMergeTagSearchResultsMessage()),
                         placeholder: @js($getPlaceholder()),
                         state: $wire.{{ $applyStateBindingModifiers("\$entangle('{$statePath}')", isOptimisticallyLive: false) }},

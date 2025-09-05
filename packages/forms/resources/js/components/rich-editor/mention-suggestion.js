@@ -32,14 +32,18 @@ const updatePosition = (editor, element) => {
     })
 }
 
-export default ({ items = [] }) => ({
+export default ({ items = [], limit = null }) => ({
     items: ({ query }) => {
-        if (!query) return items
+        const applyLimit = (arr) =>
+            (typeof limit === 'number' && limit > 0) ? arr.slice(0, limit) : arr
+
+        if (!query) return applyLimit(items)
         const q = query.toLowerCase()
-        return items.filter((item) => {
+        const filtered = items.filter((item) => {
             const label = typeof item === 'string' ? item : (item?.label ?? item?.name ?? '')
             return String(label).toLowerCase().includes(q)
         })
+        return applyLimit(filtered)
     },
 
     render: () => {

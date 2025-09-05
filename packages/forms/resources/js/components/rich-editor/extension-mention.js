@@ -11,9 +11,11 @@ const getSuggestionOptions = function ({
 }) {
     const pluginKey = new PluginKey()
 
+    const triggerChar = overrideSuggestionOptions?.char ?? '@'
+
     return {
         editor: tiptapEditor,
-        char: '@',
+        char: triggerChar,
         pluginKey,
         command: ({ editor, range, props }) => {
             const nodeAfter = editor.view.state.selection.$to.nodeAfter
@@ -29,7 +31,7 @@ const getSuggestionOptions = function ({
                 .insertContentAt(range, [
                     {
                         type: extensionName,
-                        attrs: { ...props },
+                        attrs: { ...props, char: triggerChar },
                     },
                     {
                         type: 'text',
@@ -69,14 +71,15 @@ export default Node.create({
         return {
             HTMLAttributes: {},
             renderText({ node }) {
-                return `@${node.attrs.label ?? node.attrs.id}`
+                const ch = node.attrs.char ?? '@'
+                return `${ch}${node.attrs.label ?? node.attrs.id}`
             },
             deleteTriggerWithBackspace: false,
             renderHTML({ options, node }) {
                 return [
                     'span',
                     mergeAttributes(this.HTMLAttributes, options.HTMLAttributes),
-                    `@${node.attrs.label ?? node.attrs.id}`,
+                    `${node.attrs.char ?? '@'}${node.attrs.label ?? node.attrs.id}`,
                 ]
             },
             suggestions: [],
@@ -121,6 +124,20 @@ export default Node.create({
                     }
                 },
             },
+
+            char: {
+                default: '@',
+                parseHTML: (element) => element.getAttribute('data-char') ?? '@',
+                renderHTML: (attributes) => {
+                    if (!attributes.char) {
+                        return {}
+                    }
+
+                    return {
+                        'data-char': attributes.char,
+                    }
+                },
+            },
         }
     },
 
@@ -133,7 +150,9 @@ export default Node.create({
     },
 
     renderHTML({ node, HTMLAttributes }) {
-        const suggestion = this.editor?.extensionStorage?.[this.name]?.getSuggestionFromChar('@')
+        const suggestion = this.editor?.extensionStorage?.[this.name]?.getSuggestionFromChar(
+            node?.attrs?.char ?? '@',
+        )
 
         const mergedOptions = { ...this.options }
 
@@ -167,7 +186,9 @@ export default Node.create({
         const args = {
             options: this.options,
             node,
-            suggestion: this.editor?.extensionStorage?.[this.name]?.getSuggestionFromChar('@'),
+            suggestion: this.editor?.extensionStorage?.[this.name]?.getSuggestionFromChar(
+                node?.attrs?.char ?? '@',
+            ),
         }
 
         return this.options.renderText(args)
@@ -198,8 +219,9 @@ export default Node.create({
                     })
 
                     if (isMention) {
+                        const trigger = mentionNode?.attrs?.char ?? '@'
                         tr.insertText(
-                            this.options.deleteTriggerWithBackspace ? '' : '@',
+                            this.options.deleteTriggerWithBackspace ? '' : trigger,
                             mentionPos,
                             mentionPos + mentionNode.nodeSize,
                         )
