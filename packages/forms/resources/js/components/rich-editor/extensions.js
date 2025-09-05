@@ -106,10 +106,35 @@ export default async ({
 
               const suggestions = Array.isArray(mentions) && mentions.length && isConfig(mentions[0])
                   ? mentions.map((m) => {
-                        if (typeof m.render === 'function' || typeof m.items === 'function') {
-                            return m
+                        const char = m?.char ?? '@'
+                        const effectiveLimit = mentionsLimit
+
+                        if (typeof m?.items === 'function') {
+                            const originalItems = m.items
+                            return {
+                                ...m,
+                                char,
+                                items: (ctx) => {
+                                    const result = originalItems(ctx)
+                                    if (result && typeof result.then === 'function') {
+                                        return result.then((arr) => Array.isArray(arr) ? arr.slice(0, effectiveLimit) : arr)
+                                    }
+                                    return Array.isArray(result) ? result.slice(0, effectiveLimit) : result
+                                },
+                            }
                         }
-                        return { ...getMentionSuggestion({ items: m.items ?? [], limit: (typeof m.limit === 'number' && m.limit > 0) ? m.limit : mentionsLimit }), char: m.char ?? '@' }
+
+                        if (typeof m?.render === 'function') {
+                            return { ...m, char }
+                        }
+
+                        return {
+                            ...getMentionSuggestion({
+                                items: m?.items ?? [],
+                                limit: effectiveLimit,
+                            }),
+                            char,
+                        }
                     })
                   : [{ ...getMentionSuggestion({ items: mentions, limit: mentionsLimit }), char: '@' }]
 

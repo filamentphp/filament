@@ -488,12 +488,50 @@ RichEditor::make('content')
     ->mentionItems(fn () => User::all()->map(fn ($item) => ['id' => $item['id'], 'label' => $item['name']])->toArray())
 ```
 
+- You can control how many suggestions are shown by default with `mentionItemsLimit()` (default is `5`):
+
+```php
+use Filament\Forms\Components\RichEditor;
+
+RichEditor::make('content')
+    ->mentionItemsLimit(15)
+    ->mentionItems([
+        ['id' => 1, 'label' => 'Jane Doe'],
+        ['id' => 2, 'label' => 'John Smith'],
+    ])
+```
+
+- You can register multiple mention triggers by passing configuration arrays with a `char` and `items`:
+
+```php
+use Filament\Forms\Components\RichEditor;
+
+RichEditor::make('content')
+    ->mentionItemsLimit(10)
+    ->mentionItems([
+        [
+            'char' => '@',
+            'items' => User::query()
+                ->orderBy('name')
+                ->get()
+                ->map(fn ($user) => ['id' => $user->id, 'label' => $user->name])
+                ->toArray(),
+        ],
+        [
+            'char' => '#',
+            'items' => ['Laravel', 'Filament', 'Livewire'],
+        ],
+    ])
+```
+
 - Typing `@` opens a dropdown that filters as you type.
 - Selecting an item inserts an inline span with a ```data-type="mention"``` attribute at the cursor.
 - Items can be simple strings or associative arrays with `id` and `label` (or `name`). When both are present, the label is displayed and the id is stored.
 - You may pass a closure to `mentionItems()` to compute items dynamically.
+- The number of suggestions can be limited globally with `mentionItemsLimit()`.
+- You can use different trigger characters by passing config arrays with a `char` and `items`.
 
-When rendering, mentions are output as inline text. If you output raw HTML from the editor yourself, remember to sanitize it.
+
 
 ## Registering rich content attributes
 

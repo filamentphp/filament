@@ -34,8 +34,10 @@ const updatePosition = (editor, element) => {
 
 export default ({ items = [], limit = null }) => ({
     items: ({ query }) => {
-        const applyLimit = (arr) =>
-            (typeof limit === 'number' && limit > 0) ? arr.slice(0, limit) : arr
+        const applyLimit = (arr) => {
+            const numericLimit = Number(limit)
+            return (Number.isFinite(numericLimit) && numericLimit > 0) ? arr.slice(0, numericLimit) : arr
+        }
 
         if (!query) return applyLimit(items)
         const q = query.toLowerCase()
