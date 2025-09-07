@@ -926,6 +926,28 @@ ModalTableSelect::make('category_id')
     ->getOptionLabelFromRecordUsing(fn (Category $record): string => "{$record->name} ({$record->slug})")
 ```
 
+The `badge()` method can be used to define whether the option should appear inside a badge:
+
+```php
+use Filament\Forms\Components\ModalTableSelect;
+
+ModalTableSelect::make('category_id')
+    ->relationship('category', 'name')
+    ->tableConfiguration(CategoriesTable::class)
+    ->badge(false)
+```
+
+The `badgeColor()` method can be used to set the badge color:
+
+```php
+use Filament\Forms\Components\ModalTableSelect;
+
+ModalTableSelect::make('category_id')
+    ->relationship('category', 'name')
+    ->tableConfiguration(CategoriesTable::class)
+    ->badgeColor('danger')
+```
+
 ### Passing additional arguments to the table in a modal select
 
 You can pass arguments from your form to the table configuration class using the `tableArguments()` method. For example, this can be used to modify the table's query based on previously filled form fields:

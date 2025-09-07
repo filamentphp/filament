@@ -6,6 +6,8 @@
     $id = $getId();
     $isDisabled = $isDisabled();
     $isMultiple = $isMultiple();
+    $hasBadge = $hasBadge();
+    $getBadgeColor = $getBadgeColor();
 @endphp
 
 <x-dynamic-component :component="$fieldWrapperView" :field="$field">
@@ -27,9 +29,13 @@
             @if (filled($optionLabels = $getOptionLabels()))
                 <div class="fi-fo-modal-table-select-badges-ctn">
                     @foreach ($optionLabels as $optionLabel)
-                        <x-filament::badge>
+                        @if ($hasBadge)
+                            <x-filament::badge :color="$getBadgeColor">
+                                {{ $optionLabel }}
+                            </x-filament::badge>
+                        @else
                             {{ $optionLabel }}
-                        </x-filament::badge>
+                        @endif
                     @endforeach
                 </div>
             @elseif (filled($placeholder = $getPlaceholder()))
@@ -45,7 +51,13 @@
             @endif
         @else
             @if (filled($optionLabel = $getOptionLabel()))
-                {{ $optionLabel }}
+                @if ($hasBadge)
+                    <x-filament::badge :color="$getBadgeColor">
+                        {{ $optionLabel }}
+                    </x-filament::badge>
+                @else
+                    {{ $optionLabel }}
+                @endif
             @elseif (filled($placeholder = $getPlaceholder()))
                 <div class="fi-fo-modal-table-select-placeholder">
                     {{ $placeholder }}
