@@ -95,6 +95,8 @@ class Action extends ViewComponent implements Arrayable
 
     protected bool | Closure $isBulk = false;
 
+    protected bool | Closure $isRowLevel = false;
+
     public const BADGE_VIEW = 'filament::components.badge';
 
     public const BUTTON_VIEW = 'filament::components.button.index';
@@ -479,6 +481,10 @@ class Action extends ViewComponent implements Arrayable
             $context['bulk'] = true;
         }
 
+        if ($table && $this->isRowLevel()) {
+            $context['rowLevel'] = true;
+        }
+
         return $context;
     }
 
@@ -609,6 +615,18 @@ class Action extends ViewComponent implements Arrayable
     public function isBulk(): bool
     {
         return (bool) $this->evaluate($this->isBulk);
+    }
+
+    public function rowLevel(bool | Closure $condition = true): static
+    {
+        $this->isRowLevel = $condition;
+
+        return $this;
+    }
+
+    public function isRowLevel(): bool
+    {
+        return (bool) $this->evaluate($this->isRowLevel);
     }
 
     /**

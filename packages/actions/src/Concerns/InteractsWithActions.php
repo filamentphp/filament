@@ -558,7 +558,7 @@ trait InteractsWithActions
             $resolvedAction ??= $this->getTable()->getAction($action['name']) ?? throw new ActionNotResolvableException("Action [{$action['name']}] not found on table.");
         }
 
-        if (filled($action['context']['recordKey'] ?? null)) {
+        if ($action['context']['rowLevel'] ?? false && filled($action['context']['recordKey'] ?? null)) {
             $record = $this->getTableRecord($action['context']['recordKey']);
 
             $resolvedAction->getRootGroup()?->record($record) ?? $resolvedAction->record($record);

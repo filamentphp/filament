@@ -56,12 +56,12 @@ trait HasRecordActions
 
                 /** @var array<string, Action> $flatActions */
                 $flatActions = $action->getFlatActions();
-
+                array_walk($flatActions, fn (Action $action) => $action->rowLevel());
                 $this->mergeCachedFlatActions($flatActions);
             } elseif ($action instanceof Action) {
                 $action->defaultSize(Size::Small);
                 $action->defaultView($action::LINK_VIEW);
-
+                $action->rowLevel();
                 if ($this->modifyUngroupedRecordActionsUsing) {
                     $this->evaluate($this->modifyUngroupedRecordActionsUsing, ['action' => $action]);
                 }
