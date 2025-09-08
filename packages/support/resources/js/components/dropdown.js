@@ -41,6 +41,16 @@ export default () => ({
             this.close(event)
             // Let the default Tab behavior continue to next focusable element
         }
+        // Handle Home key to focus first element
+        else if (event.key === 'Home') {
+            event.preventDefault()
+            this.focusFirstElement()
+        }
+        // Handle End key to focus last element
+        else if (event.key === 'End') {
+            event.preventDefault()
+            this.focusLastElement()
+        }
     },
 
     navigateItems(down = true) {
@@ -80,6 +90,14 @@ export default () => ({
         
         if (focusableElements.length > 0) {
             focusableElements[0].focus()
+        }
+    },
+
+    focusLastElement() {
+        const focusableElements = this.getFocusableElements()
+        
+        if (focusableElements.length > 0) {
+            focusableElements[focusableElements.length - 1].focus()
         }
     },
 })

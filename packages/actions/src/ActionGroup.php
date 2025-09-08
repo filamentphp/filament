@@ -457,6 +457,10 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
                 "max-height: {$maxHeight}" => $maxHeight,
             ]);
 
+        // Generate unique IDs for ARIA associations
+        $triggerId = 'dropdown-trigger-' . Str::random(8);
+        $panelId = 'dropdown-panel-' . Str::random(8);
+
         ob_start(); ?>
 
         <div
@@ -467,6 +471,10 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
                 x-on:mousedown="toggle"
                 x-on:keydown.enter="toggle"
                 x-on:keydown.space="toggle"
+                x-bind:aria-expanded="$refs.panel && ($refs.panel.hasAttribute('data-open') || $refs.panel.style.display !== 'none') ? 'true' : 'false'"
+                aria-haspopup="true"
+                aria-controls="<?= $panelId ?>"
+                id="<?= $triggerId ?>"
                 class="fi-dropdown-trigger"
             >
                 <?= $this->toTriggerHtml() ?>
@@ -480,6 +488,9 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
                 x-on:click="handleItemClick($event)"
                 x-transition:enter-start="fi-opacity-0"
                 x-transition:leave-end="fi-opacity-0"
+                role="menu"
+                aria-labelledby="<?= $triggerId ?>"
+                id="<?= $panelId ?>"
                 <?= $panelAttributes->toHtml() ?>
             >
                 <?php foreach ($actionLists as $actions) { ?>

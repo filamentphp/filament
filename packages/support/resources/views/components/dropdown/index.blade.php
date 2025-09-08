@@ -25,6 +25,10 @@
     if (is_string($width)) {
         $width = Width::tryFrom($width) ?? $width;
     }
+
+    // Generate unique IDs for ARIA associations
+    $triggerId = 'dropdown-trigger-' . str()->random(8);
+    $panelId = 'dropdown-panel-' . str()->random(8);
 @endphp
 
 <div
@@ -35,6 +39,10 @@
         x-on:mousedown="if ($event.button === 0) toggle($event)"
         x-on:keydown.enter="toggle($event)"
         x-on:keydown.space="toggle($event)"
+        x-bind:aria-expanded="$refs.panel && ($refs.panel.hasAttribute('data-open') || $refs.panel.style.display !== 'none') ? 'true' : 'false'"
+        aria-haspopup="true"
+        aria-controls="{{ $panelId }}"
+        id="{{ $triggerId }}"
         {{ $trigger->attributes->class(['fi-dropdown-trigger']) }}
     >
         {{ $trigger }}
@@ -49,6 +57,9 @@
             x-on:click="handleItemClick($event)"
             x-transition:enter-start="fi-opacity-0"
             x-transition:leave-end="fi-opacity-0"
+            role="menu"
+            aria-labelledby="{{ $triggerId }}"
+            id="{{ $panelId }}"
             @if ($attributes->has('wire:key'))
                 wire:ignore.self
                 wire:key="{{ $attributes->get('wire:key') }}.panel"
