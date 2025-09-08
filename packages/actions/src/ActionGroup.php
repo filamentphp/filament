@@ -476,6 +476,8 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
                 x-cloak
                 x-float.placement.<?= $this->getDropdownPlacement() ?? 'bottom-start' ?>.teleport.offset="{ offset: <?= $this->getDropdownOffset() ?? 8 ?> }"
                 x-ref="panel"
+                x-on:keydown="handleKeydown($event)"
+                x-on:click="handleItemClick($event)"
                 x-transition:enter-start="fi-opacity-0"
                 x-transition:leave-end="fi-opacity-0"
                 <?= $panelAttributes->toHtml() ?>

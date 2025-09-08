@@ -45,6 +45,8 @@
             x-cloak
             x-float{{ $placement ? ".placement.{$placement}" : '' }}{{ $size ? '.size' : '' }}{{ $flip ? '.flip' : '' }}{{ $shift ? '.shift' : '' }}{{ $teleport ? '.teleport' : '' }}{{ $offset ? '.offset' : '' }}="{ offset: {{ $offset }}, {{ $size ? ('size: ' . $sizeConfig) : '' }} }"
             x-ref="panel"
+            x-on:keydown="handleKeydown($event)"
+            x-on:click="handleItemClick($event)"
             x-transition:enter-start="fi-opacity-0"
             x-transition:leave-end="fi-opacity-0"
             @if ($attributes->has('wire:key'))
