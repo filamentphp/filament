@@ -36,6 +36,12 @@ trait CanBeToggled
             return false;
         }
 
+        // When a column label is blank, it must be toggleable so that
+        // column groups can be collectively toggled on/off.
+        if (blank($this->getLabel())) {
+            return true;
+        }
+
         return (bool) $this->evaluate($this->isToggleable);
     }
 

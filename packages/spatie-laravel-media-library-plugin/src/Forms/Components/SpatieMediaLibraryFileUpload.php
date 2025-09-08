@@ -252,8 +252,10 @@ class SpatieMediaLibraryFileUpload extends FileUpload
 
     public function getDiskName(): string
     {
-        if ($diskName = $this->evaluate($this->diskName)) {
-            return $diskName;
+        $name = $this->evaluate($this->diskName);
+
+        if (filled($name)) {
+            return $name;
         }
 
         /** @var Model&HasMedia $model */
@@ -268,7 +270,27 @@ class SpatieMediaLibraryFileUpload extends FileUpload
             ->first()
             ?->diskName;
 
-        return $diskNameFromRegisteredConversions ?? config('filament.default_filesystem_disk');
+        if (
+            ($diskNameFromRegisteredConversions === 'public')
+            && ($this->getCustomVisibility() === 'private')
+        ) {
+            return 'local';
+        }
+
+        if (filled($diskNameFromRegisteredConversions)) {
+            return $diskNameFromRegisteredConversions;
+        }
+
+        $defaultName = config('filament.default_filesystem_disk');
+
+        if (
+            ($defaultName === 'public')
+            && ($this->getCustomVisibility() === 'private')
+        ) {
+            return 'local';
+        }
+
+        return $defaultName;
     }
 
     public function getCollection(): ?string

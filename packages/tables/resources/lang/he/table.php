@@ -3,7 +3,21 @@
 return [
 
     'column_manager' => [
+
         'heading' => 'עמודות',
+
+        'actions' => [
+
+            'apply' => [
+                'label' => 'החל עמודות',
+            ],
+
+            'reset' => [
+                'label' => 'איפוס',
+            ],
+
+        ],
+
     ],
 
     'columns' => [
@@ -29,9 +43,9 @@ return [
     'summary' => [
         'heading' => 'סיכום',
         'subheadings' => [
-            'all' => 'כל ה-:label',
+            'all' => 'כל ה:label',
             'group' => 'סיכום של :group',
-            'page' => 'עמוד זה',
+            'page' => 'בעמוד זה',
         ],
         'summarizers' => [
             'average' => [
@@ -73,32 +87,58 @@ return [
     ],
 
     'filters' => [
+
         'actions' => [
+
+            'apply' => [
+                'label' => 'החל מסננים',
+            ],
+
             'remove' => [
-                'label' => 'הסר סנן',
+                'label' => 'הסר מסנן',
             ],
+
             'remove_all' => [
-                'label' => 'הסר את כל הסננים',
-                'tooltip' => 'הסר את כל הסננים',
+                'label' => 'הסר את כל המסננים',
+                'tooltip' => 'הסר את כל המסננים',
             ],
+
             'reset' => [
-                'label' => 'איפוס סננים',
+                'label' => 'איפוס מסננים',
             ],
+
         ],
-        'heading' => 'סננים',
-        'indicator' => 'סננים מופעלים',
+
+        'heading' => 'מסננים',
+
+        'indicator' => 'מסננים מופעלים',
+
         'multi_select' => [
             'placeholder' => 'הכל',
         ],
+
         'select' => [
+
             'placeholder' => 'הכל',
+
+            'relationship' => [
+                'empty_option_label' => 'ללא',
+            ],
+
         ],
+
         'trashed' => [
+
             'label' => 'רשומות שנמחקו',
+
             'only_trashed' => 'רק רשומות שנמחקו',
+
             'with_trashed' => 'כולל רשומות שנמחקו',
+
             'without_trashed' => 'ללא רשומות שנמחקו',
+
         ],
+
     ],
 
     'grouping' => [

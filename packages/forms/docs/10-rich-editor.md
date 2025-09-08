@@ -607,7 +607,7 @@ class HighlightRichContentPlugin implements RichContentPlugin
                 ->jsHandler('$getEditor()?.chain().focus().toggleHighlight().run()')
                 ->icon(Heroicon::CursorArrowRays),
             RichEditorTool::make('highlightWithCustomColor')
-                ->action(arguments: '{ color: $getEditor().getAttributes(\'mark\')?.data-color }')
+                ->action(arguments: '{ color: $getEditor().getAttributes(\'highlight\')?.[\'data-color\'] }')
                 ->icon(Heroicon::CursorArrowRipple),
         ];
     }

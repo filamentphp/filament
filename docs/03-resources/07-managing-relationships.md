@@ -116,7 +116,7 @@ Once a table and form have been defined for the relation manager, visit the [Edi
 
 ### Customizing the relation manager's URL parameter
 
-If you pass a key to the array returned from `getRelations()`, it will be used in the URL for that relation manager when switching been multiple relation managers. For example, you can pass `posts` to use `?relation=posts` in the URL instead of a numeric array index:
+If you pass a key to the array returned from `getRelations()`, it will be used in the URL for that relation manager when switching between multiple relation managers. For example, you can pass `posts` to use `?relation=posts` in the URL instead of a numeric array index:
 
 ```php
 public static function getRelations(): array

@@ -23,10 +23,13 @@ class ColorColumn extends Column implements HasEmbeddedView
             $state = $state->all();
         }
 
+        $alignment = $this->getAlignment();
+
         $attributes = $this->getExtraAttributeBag()
             ->class([
                 'fi-ta-color',
                 'fi-inline' => $this->isInline(),
+                ($alignment instanceof Alignment) ? "fi-align-{$alignment->value}" : (is_string($alignment) ? $alignment : ''),
             ]);
 
         if (blank($state)) {
@@ -57,12 +60,9 @@ class ColorColumn extends Column implements HasEmbeddedView
 
         $state = Arr::wrap($state);
 
-        $alignment = $this->getAlignment();
-
         $attributes = $attributes
             ->class([
                 'fi-wrapped' => $this->canWrap(),
-                ($alignment instanceof Alignment) ? "fi-align-{$alignment->value}" : (is_string($alignment) ? $alignment : ''),
             ]);
 
         ob_start(); ?>

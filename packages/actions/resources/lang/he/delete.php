@@ -8,7 +8,7 @@ return [
 
         'modal' => [
 
-            'heading' => 'מחק את :label',
+            'heading' => 'מחיקת :label',
 
             'actions' => [
 
@@ -36,7 +36,7 @@ return [
 
         'modal' => [
 
-            'heading' => 'מחק את הנבחרים של :label',
+            'heading' => 'מחק את ה:label שנבחרו',
 
             'actions' => [
 

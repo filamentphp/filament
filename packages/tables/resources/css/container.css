@@ -126,7 +126,7 @@
     }
 
     & .fi-ta-reorder-indicator {
-        @apply flex gap-x-3 bg-gray-50 px-3 py-1.5 text-sm leading-6 font-medium text-gray-700 sm:px-6 dark:bg-white/5 dark:text-gray-200;
+        @apply flex items-center gap-x-3 bg-gray-50 px-3 py-1.5 text-sm leading-6 font-medium text-gray-700 sm:px-6 dark:bg-white/5 dark:text-gray-200;
 
         & .fi-loading-indicator {
             @apply text-gray-400 dark:text-gray-500;

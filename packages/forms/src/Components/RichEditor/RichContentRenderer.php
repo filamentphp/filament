@@ -350,6 +350,30 @@ class RichContentRenderer implements Htmlable
         return Str::sanitizeHtml($this->toUnsafeHtml());
     }
 
+    public function toText(): string
+    {
+        $editor = $this->getEditor();
+
+        $this->processMergeTags($editor);
+
+        return $editor->getText();
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function toArray(): array
+    {
+        if (empty($this->content)) {
+            return [];
+        }
+
+        $editor = $this->getEditor();
+        $this->processMergeTags($editor);
+
+        return json_decode($editor->getJSON(), true);
+    }
+
     /**
      * @param  ?array<string, mixed>  $tags
      */

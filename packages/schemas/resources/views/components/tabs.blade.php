@@ -7,6 +7,7 @@
     $label = $getLabel();
     $livewireProperty = $getLivewireProperty();
     $renderHookScopes = $getRenderHookScopes();
+    $id = $getId();
 @endphp
 
 @if (blank($livewireProperty))
@@ -17,14 +18,14 @@
             activeTab: @js($activeTab),
             isTabPersistedInQueryString: @js($isTabPersistedInQueryString()),
             livewireId: @js($this->getId()),
-            tab: @if ($isTabPersisted() && filled($persistenceKey = $getKey())) $persist(null).as('tabs-{{ $persistenceKey }}') @else @js(null) @endif,
+            tab: @if ($isTabPersisted() && filled($id)) $persist(null).as(@js($id)) @else @js(null) @endif,
             tabQueryStringKey: @js($getTabQueryStringKey()),
         })"
         wire:ignore.self
         {{
             $attributes
                 ->merge([
-                    'id' => $getId(),
+                    'id' => $id,
                     'wire:key' => $getLivewireKey() . '.container',
                 ], escape: false)
                 ->merge($getExtraAttributes(), escape: false)
@@ -105,7 +106,7 @@
         {{
             $attributes
                 ->merge([
-                    'id' => $getId(),
+                    'id' => $id,
                     'wire:key' => $getLivewireKey() . '.container',
                 ], escape: false)
                 ->merge($getExtraAttributes(), escape: false)

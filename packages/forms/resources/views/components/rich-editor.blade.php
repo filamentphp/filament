@@ -59,14 +59,28 @@
                     @foreach ($toolbarButtons as $button => $buttonGroup)
                         <div class="fi-fo-rich-editor-toolbar-group">
                             @foreach ($buttonGroup as $button)
-                                {{ $tools[$button] ?? throw new Exception("Toolbar button [{$button}] cannot be found.") }}
+                                {{ $tools[$button] ?? throw new LogicException("Toolbar button [{$button}] cannot be found.") }}
                             @endforeach
                         </div>
                     @endforeach
                 </div>
             @endif
 
-            <div class="fi-fo-rich-editor-main">
+            <div
+                x-show="isUploadingFile"
+                x-cloak
+                class="fi-fo-rich-editor-uploading-file-message"
+            >
+                {{ \Filament\Support\generate_loading_indicator_html() }}
+
+                <span>
+                    {{ $getUploadingFileMessage() }}
+                </span>
+            </div>
+
+            <div
+                {{ $getExtraInputAttributeBag()->class(['fi-fo-rich-editor-main']) }}
+            >
                 <div class="fi-fo-rich-editor-content fi-prose" x-ref="editor">
                     @foreach ($floatingToolbars as $nodeName => $buttons)
                         <div

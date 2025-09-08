@@ -119,7 +119,7 @@ return [
 
     'empty' => [
 
-        'heading' => 'Aucun :model',
+        'heading' => 'Aucun(e) :model',
 
         'description' => 'Créer un(e) :model pour commencer.',
 
