@@ -39,7 +39,12 @@
         x-on:mousedown="if ($event.button === 0) toggle($event)"
         x-on:keydown.enter="toggle($event)"
         x-on:keydown.space="toggle($event)"
-        x-bind:aria-expanded="$refs.panel && ($refs.panel.hasAttribute('data-open') || $refs.panel.style.display !== 'none') ? 'true' : 'false'"
+        x-bind:aria-expanded="
+            $refs.panel &&
+            ($refs.panel.hasAttribute('data-open') || $refs.panel.style.display !== 'none')
+                ? 'true'
+                : 'false'
+        "
         aria-haspopup="true"
         aria-controls="{{ $panelId }}"
         id="{{ $triggerId }}"

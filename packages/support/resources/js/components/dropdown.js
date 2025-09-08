@@ -1,8 +1,10 @@
 export default () => ({
     toggle(event) {
-        const wasOpen = this.$refs.panel?.hasAttribute('data-open') || this.$refs.panel?.style.display !== 'none'
+        const wasOpen =
+            this.$refs.panel?.hasAttribute('data-open') ||
+            this.$refs.panel?.style.display !== 'none'
         this.$refs.panel?.toggle(event)
-        
+
         // If dropdown was closed and is now opening, focus first element
         if (!wasOpen) {
             this.$nextTick(() => this.focusFirstElement())
@@ -20,8 +22,10 @@ export default () => ({
 
     handleItemClick(event) {
         // Only close dropdown when clicking on actionable items (buttons, links, etc.)
-        const clickedElement = event.target.closest('button, [href], [role="button"], [role="menuitem"]')
-        
+        const clickedElement = event.target.closest(
+            'button, [href], [role="button"], [role="menuitem"]',
+        )
+
         if (clickedElement && !clickedElement.disabled) {
             // Small delay to allow the action to be processed first
             this.$nextTick(() => {
@@ -55,39 +59,49 @@ export default () => ({
 
     navigateItems(down = true) {
         if (!this.$refs.panel) return
-        
+
         const focusableElements = this.getFocusableElements()
         if (focusableElements.length === 0) return
-        
-        const currentIndex = focusableElements.findIndex(el => el === document.activeElement)
+
+        const currentIndex = focusableElements.findIndex(
+            (el) => el === document.activeElement,
+        )
         let nextIndex
-        
+
         if (currentIndex === -1) {
             // No element is focused, focus first or last based on direction
             nextIndex = down ? 0 : focusableElements.length - 1
         } else {
             // Navigate to next/previous item with wrapping
             if (down) {
-                nextIndex = currentIndex + 1 >= focusableElements.length ? 0 : currentIndex + 1
+                nextIndex =
+                    currentIndex + 1 >= focusableElements.length
+                        ? 0
+                        : currentIndex + 1
             } else {
-                nextIndex = currentIndex - 1 < 0 ? focusableElements.length - 1 : currentIndex - 1
+                nextIndex =
+                    currentIndex - 1 < 0
+                        ? focusableElements.length - 1
+                        : currentIndex - 1
             }
         }
-        
+
         focusableElements[nextIndex].focus()
     },
 
     getFocusableElements() {
         if (!this.$refs.panel) return []
-        
-        return Array.from(this.$refs.panel.querySelectorAll(
-            'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"]):not([disabled]), [contenteditable="true"]'
-        ))
+
+        return Array.from(
+            this.$refs.panel.querySelectorAll(
+                'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"]):not([disabled]), [contenteditable="true"]',
+            ),
+        )
     },
 
     focusFirstElement() {
         const focusableElements = this.getFocusableElements()
-        
+
         if (focusableElements.length > 0) {
             focusableElements[0].focus()
         }
@@ -95,7 +109,7 @@ export default () => ({
 
     focusLastElement() {
         const focusableElements = this.getFocusableElements()
-        
+
         if (focusableElements.length > 0) {
             focusableElements[focusableElements.length - 1].focus()
         }
