@@ -34,6 +34,7 @@
     <div
         x-on:mousedown="if ($event.button === 0) toggle($event)"
         x-on:keydown.enter="toggle($event)"
+        x-on:keydown.space="toggle($event)"
         {{ $trigger->attributes->class(['fi-dropdown-trigger']) }}
     >
         {{ $trigger }}

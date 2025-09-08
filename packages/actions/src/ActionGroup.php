@@ -466,6 +466,7 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
             <div
                 x-on:mousedown="toggle"
                 x-on:keydown.enter="toggle"
+                x-on:keydown.space="toggle"
                 class="fi-dropdown-trigger"
             >
                 <?= $this->toTriggerHtml() ?>
