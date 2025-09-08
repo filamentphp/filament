@@ -53,7 +53,7 @@ export default (Alpine) => {
             const hide = () => {
                 Alpine.mutateDom(() => {
                     this.$el._x_isShown
-                        ? this.$el.style.setProperty('visibility', 'hidden')
+                        ? this.$el.style.setProperty('opacity', 0)
                         : this.$el.style.setProperty('display', 'none')
                 })
             }
