@@ -27,10 +27,10 @@ test('SPA prefetching can be toggled', function (): void {
     expect(FilamentView::hasSpaPrefetching())->toBeFalse();
 });
 
-test('`href` HTML can be generated with `wire:navigate` based on SPA mode', function (): void {
+test('`href` HTML can be generated with Alpine navigation based on SPA mode', function (): void {
     FilamentView::spa();
     expect(generate_href_html('http://localhost/page'))
-        ->toHtml()->toBe('href="http://localhost/page" wire:navigate');
+        ->toHtml()->toBe('href="http://localhost/page" x-on:click.prevent="() => window.Alpine.navigate(\'http://localhost/page\')"');
 
     FilamentView::spa(false);
     expect(generate_href_html('http://localhost/page'))
@@ -44,7 +44,7 @@ test('`href` HTML can be generated with `wire:navigate.hover` when prefetching i
 
     FilamentView::spa(true, false);
     expect(generate_href_html('http://localhost/page'))
-        ->toHtml()->toBe('href="http://localhost/page" wire:navigate');
+        ->toHtml()->toBe('href="http://localhost/page" x-on:click.prevent="() => window.Alpine.navigate(\'http://localhost/page\')"');
 });
 
 test('`wire:navigate` is not used in the `href` HTML if it doesn\'t match the request\'s domain', function (): void {
@@ -102,7 +102,7 @@ test('`shouldOpenInSpaMode` parameter overrides default SPA mode behavior', func
     FilamentView::spa(false);
 
     expect(generate_href_html('http://localhost/page', shouldOpenInSpaMode: true))
-        ->toHtml()->toBe('href="http://localhost/page" wire:navigate');
+        ->toHtml()->toBe('href="http://localhost/page" x-on:click.prevent="() => window.Alpine.navigate(\'http://localhost/page\')"');
 
     expect(generate_href_html('http://localhost/page', shouldOpenInSpaMode: false))
         ->toHtml()->toBe('href="http://localhost/page"');
