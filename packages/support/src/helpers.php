@@ -20,6 +20,7 @@ use Illuminate\Support\Str;
 use Illuminate\Translation\MessageSelector;
 use Illuminate\View\ComponentAttributeBag;
 use Illuminate\View\ComponentSlot;
+use JsonException;
 use Throwable;
 
 if (! function_exists('Filament\Support\format_money')) {
@@ -121,6 +122,9 @@ if (! function_exists('Filament\Support\is_app_url')) {
 }
 
 if (! function_exists('Filament\Support\generate_href_html')) {
+    /**
+     * @throws JsonException
+     */
     function generate_href_html(?string $url, bool $shouldOpenInNewTab = false, ?bool $shouldOpenInSpaMode = null): Htmlable
     {
         if (blank($url)) {
@@ -132,10 +136,11 @@ if (! function_exists('Filament\Support\generate_href_html')) {
         if ($shouldOpenInNewTab) {
             $html .= ' target="_blank"';
         } elseif ($shouldOpenInSpaMode ?? (FilamentView::hasSpaMode($url))) {
-            $html .= ' wire:navigate';
 
             if (FilamentView::hasSpaPrefetching()) {
-                $html .= '.hover';
+                $html .= ' wire:navigate.hover';
+            } else {
+                $html .= ' x-on:click.prevent="() => window.Alpine.navigate(' . "'{$url}'" . ')"';
             }
         }
 
