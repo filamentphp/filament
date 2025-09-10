@@ -195,7 +195,7 @@ export class Select {
                 this.handleSearch(event)
             })
 
-            // Handle Tab, Arrow Up, and Arrow Down in search input
+            // Handle Tab, Arrow Up, Arrow Down, and Enter in search input
             this.searchInput.addEventListener('keydown', (event) => {
                 // If the select is disabled, don't handle keyboard events
                 if (this.isDisabled) {
@@ -259,6 +259,22 @@ export class Select {
                     }
 
                     this.scrollOptionIntoView(options[this.selectedIndex])
+                } else if (event.key === 'Enter') {
+                    event.preventDefault() // Prevent default form submission behavior
+
+                    // Check if search results are still loading
+                    if (this.isSearchResultsLoading()) {
+                        // Don't select anything while search is in progress
+                        return
+                    }
+
+                    const firstOption = this.getFirstAvailableOption()
+                    if (firstOption) {
+                        this.selectFirstAvailableOption(firstOption)
+                    } else {
+                        // No visible options available - close dropdown without selection
+                        this.closeDropdown()
+                    }
                 }
             })
         }
@@ -1494,6 +1510,79 @@ export class Select {
 
         // Combine and return all options
         return [...ungroupedOptions, ...groupOptions]
+    }
+
+    getFirstAvailableOption() {
+        const visibleOptions = this.getVisibleOptions()
+
+        for (const option of visibleOptions) {
+            if (this.isOptionEnabled(option)) {
+                // For multiple selection, skip already selected options
+                if (this.isMultiple) {
+                    const optionValue = option.getAttribute('data-value')
+                    if (
+                        Array.isArray(this.state) &&
+                        this.state.includes(optionValue)
+                    ) {
+                        continue // Skip already selected option
+                    }
+                }
+                return option
+            }
+        }
+
+        return null // No available options
+    }
+
+    isOptionEnabled(option) {
+        // Check for fi-disabled class or aria-disabled attribute
+        return (
+            !option.classList.contains('fi-disabled') &&
+            option.getAttribute('aria-disabled') !== 'true'
+        )
+    }
+
+    selectFirstAvailableOption(option) {
+        // Get the option value and trigger the same selection logic as clicking the option
+        const optionValue = option.getAttribute('data-value')
+        if (optionValue !== null) {
+            this.selectOption(optionValue)
+
+            // Handle selection mode specific behavior
+            if (this.isMultiple) {
+                // Focus search input after selection to allow continued interaction
+                // The selectOption method for multiple selection already handles keeping the dropdown open
+                // and calls maintainFocusInMultipleMode(), but we ensure search input focus here as well
+                if (this.isSearchable && this.searchInput) {
+                    setTimeout(() => {
+                        this.searchInput.focus()
+                    }, 0)
+                }
+            }
+        }
+    }
+
+    // Helper method to check if search results are currently loading
+    isSearchResultsLoading() {
+        // Check if there's a pending search timeout (indicates search is in progress)
+        if (this.searchTimeout) {
+            return true
+        }
+
+        // Check if dropdown is showing a loading/searching message
+        const loadingMessage = this.dropdown.querySelector(
+            '.fi-select-input-message',
+        )
+        if (loadingMessage) {
+            // Check if the message text indicates loading or searching
+            const messageText = loadingMessage.textContent
+            return (
+                messageText === this.loadingMessage ||
+                messageText === this.searchingMessage
+            )
+        }
+
+        return false
     }
 
     getSelectedOptionLabels() {
