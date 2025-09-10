@@ -122,6 +122,9 @@ trait EntanglesStateWithSingularRelationship
             $relationship = $component->getRelationship();
             $relatedModel = $component->getRelatedModel();
 
+            $data = $component->getChildSchema()->getState(shouldCallHooksBefore: false);
+            $data = $component->mutateRelationshipDataBeforeCreate($data);
+
             foreach ($componentsWithThisRelationship as $componentWithThisRelationship) {
                 $data = $componentWithThisRelationship->mutateRelationshipDataBeforeCreate($data);
             }
