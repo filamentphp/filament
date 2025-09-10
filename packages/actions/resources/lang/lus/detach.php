@@ -4,16 +4,16 @@ return [
 
     'single' => [
 
-        'label' => 'Paihna',
+        'label' => 'Thlawnna',
 
         'modal' => [
 
-            'heading' => ':Label paihna',
+            'heading' => ':Label thlawnna',
 
             'actions' => [
 
                 'detach' => [
-                    'label' => 'Paihna',
+                    'label' => 'Thlawnna',
                 ],
 
             ],
@@ -23,7 +23,7 @@ return [
         'notifications' => [
 
             'detached' => [
-                'title' => 'Paih a ni.',
+                'title' => 'Thlawn a ni e.',
             ],
 
         ],
@@ -32,16 +32,16 @@ return [
 
     'multiple' => [
 
-        'label' => 'Thlan ho paih thenna',
+        'label' => 'Thlan ho thlawn thenna',
 
         'modal' => [
 
-            'heading' => ':Label thlan ho paih thenna',
+            'heading' => ':Label thlan ho thlawn thenna',
 
             'actions' => [
 
                 'detach' => [
-                    'label' => 'Paihna',
+                    'label' => 'Thlawnna',
                 ],
 
             ],
@@ -51,7 +51,7 @@ return [
         'notifications' => [
 
             'detached' => [
-                'title' => 'Paih then a ni.',
+                'title' => 'Thlawn then a ni e.',
             ],
 
         ],

@@ -801,6 +801,7 @@ import tr from 'filepond/locale/tr-tr'
 import uk from 'filepond/locale/uk-ua'
 import vi from 'filepond/locale/vi-vi'
 import zh_CN from 'filepond/locale/zh-cn'
+import zh_HK from 'filepond/locale/zh-hk'
 import zh_TW from 'filepond/locale/zh-tw'
 
 const locales = {
@@ -841,5 +842,6 @@ const locales = {
     uk,
     vi,
     zh_CN,
+    zh_HK,
     zh_TW,
 }

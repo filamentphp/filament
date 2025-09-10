@@ -106,6 +106,11 @@ export default function richEditorFormComponent({
                 this.editorUpdatedAt = Date.now()
             })
 
+            const debouncedCommit = Alpine.debounce(
+                () => this.$wire.commit(),
+                liveDebounce ?? 300,
+            )
+
             editor.on('update', ({ editor }) =>
                 this.$nextTick(() => {
                     this.editorUpdatedAt = Date.now()
@@ -115,10 +120,7 @@ export default function richEditorFormComponent({
                     this.shouldUpdateState = false
 
                     if (isLiveDebounced) {
-                        Alpine.debounce(
-                            () => this.$wire.commit(),
-                            liveDebounce ?? 300,
-                        )
+                        debouncedCommit()
                     }
                 }),
             )

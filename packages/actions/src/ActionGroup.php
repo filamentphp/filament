@@ -143,7 +143,7 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
             $action->group($this);
 
             if ($action instanceof ActionGroup) {
-                $action->dropdownPlacement('right-top');
+                $action->defaultDropdownPlacement('right-top');
 
                 $this->flatActions = [
                     ...$this->flatActions,

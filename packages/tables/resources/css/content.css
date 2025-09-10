@@ -26,7 +26,12 @@
             }
 
             & .fi-ta-group-header {
-                @apply -mx-4 w-[calc(100%+2rem)] border-y border-gray-200 first:border-t-0 sm:-mx-6 sm:w-[calc(100%+3rem)] dark:border-white/5;
+                @apply -mx-4 border-y border-gray-200 first:border-t-0 sm:-mx-6 dark:border-white/5;
+                width: calc(100% + 2rem);
+
+                @variant sm {
+                    width: calc(100% + 3rem);
+                }
             }
 
             & .fi-ta-record {
