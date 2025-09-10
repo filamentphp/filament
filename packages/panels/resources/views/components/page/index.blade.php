@@ -1,5 +1,6 @@
 @props([
     'fullHeight' => false,
+    'headerPadding' => true,
 ])
 
 @php
@@ -23,7 +24,14 @@
 >
     {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_START, scopes: $this->getRenderHookScopes()) }}
 
-    <div class="fi-page-header-main-ctn">
+    <div
+        {{
+            $attributes->class([
+                'fi-page-header-main-ctn',
+                'p-0' => ! $headerPadding,
+            ])
+        }}
+    >
         @if ($subNavigation)
             <div
                 class="fi-page-main-sub-navigation-mobile-menu-render-hook-ctn"
