@@ -162,7 +162,7 @@ class NavigationManager
                 }
 
                 if ($sort === false) {
-                    return count($registeredGroups);
+                    return ord(strtolower($group->getLabel())[0] ?? 'a') - ord('a');
                 }
 
                 return $sort;
