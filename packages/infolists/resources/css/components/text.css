@@ -115,6 +115,24 @@
     }
 }
 
+/* Pointer only applied to in-text-content when copyable */
+.fi-copyable > .fi-in-text-content {
+    @apply cursor-pointer;
+}
+
+/* Tooltip alignment fix for child element */
+.fi-in-text-content {
+    @apply inline-flex items-center gap-1.5;
+
+    & > .fi-icon {
+        @apply shrink-0 text-gray-400 dark:text-gray-500;
+
+        &.fi-color {
+            @apply text-color-500;
+        }
+    }
+}
+
 .fi-in-text-item {
     @apply text-gray-950 dark:text-white;
 
@@ -125,10 +143,6 @@
     &:not(.fi-bulleted li.fi-in-text-item) {
         /* Line clamping sets the `display` property of the list item to `-webkit-box` instead of `list-item`, which hides the bullet point. */
         @apply line-clamp-(--line-clamp,none);
-    }
-
-    &.fi-copyable {
-        @apply cursor-pointer;
     }
 
     &.fi-size-xs {
