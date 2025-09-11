@@ -136,11 +136,22 @@ class AppAuthentication implements MultiFactorAuthenticationProvider
         /** @var HasAppAuthentication $user */
         $user = Filament::auth()->user();
 
-        return $this->google2FA->getQRCodeInline(
+        $inlineQrCode = $this->google2FA->getQRCodeInline(
             $this->getBrandName(),
             $this->getHolderName($user),
             $secret,
         );
+
+        // This is a fallback for when `bacon/bacon-qr-code` is installed but the `imagick` extension is not.
+        if (
+            class_exists(\BaconQrCode\Writer::class)
+            && class_exists(\BaconQrCode\Renderer\ImageRenderer::class)
+            && (! extension_loaded('imagick'))
+        ) {
+            $inlineQrCode = 'data:image/svg+xml;base64,' . base64_encode($inlineQrCode);
+        }
+
+        return $inlineQrCode;
     }
 
     /**

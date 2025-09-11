@@ -1441,7 +1441,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         }
 
         if ($this->isMultiple()) {
-            if ((! $this->getOptionLabelsUsing) && (! $this->options)) {
+            if ((! $this->getOptionLabelsUsing) && ($this->options === null)) {
                 throw new LogicException("Filament failed to validate the [{$this->getStatePath()}] field\'s selected options because it did not have an [options()] or [getOptionLabelsUsing()] configuration. Please use one of these methods to inform Filament which options are valid for this field.");
             }
 
@@ -1472,7 +1472,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
             return null;
         }
 
-        if ((! $this->getOptionLabelUsing) && (! $this->options)) {
+        if ((! $this->getOptionLabelUsing) && ($this->options === null)) {
             throw new LogicException("Filament failed to validate the [{$this->getStatePath()}] field\'s selected options because it did not have an [options()] or [getOptionLabelUsing()] configuration. Please use one of these methods to inform Filament which options are valid for this field.");
         }
 
