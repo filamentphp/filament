@@ -11,7 +11,7 @@
         <div class="fi-wi-stats-overview-header grid gap-y-1">
             @if ($hasHeading)
                 <h3
-                    class="fi-wi-stats-overview-header-heading col-span-full text-base font-semibold leading-6 text-gray-950 dark:text-white"
+                    class="fi-wi-stats-overview-header-heading col-span-full text-base leading-6 font-semibold text-gray-950 dark:text-white"
                 >
                     {{ $heading }}
                 </h3>
@@ -19,7 +19,7 @@
 
             @if ($hasDescription)
                 <p
-                    class="fi-wi-stats-overview-header-description overflow-hidden break-words text-sm text-gray-500 dark:text-gray-400"
+                    class="fi-wi-stats-overview-header-description overflow-hidden text-sm break-words text-gray-500 dark:text-gray-400"
                 >
                     {{ $description }}
                 </p>

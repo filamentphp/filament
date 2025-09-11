@@ -120,7 +120,7 @@
 
                                     <span
                                         x-text="tag"
-                                        class="select-none text-start"
+                                        class="text-start select-none"
                                     ></span>
 
                                     {{ $getTagSuffix() }}

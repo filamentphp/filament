@@ -28,11 +28,11 @@
             </thead>
 
             <tbody
-                class="divide-y divide-gray-200 font-mono text-base dark:divide-white/5 sm:text-sm sm:leading-6"
+                class="divide-y divide-gray-200 font-mono text-base sm:text-sm sm:leading-6 dark:divide-white/5"
             >
                 @forelse (($getState() ?? []) as $key => $value)
                     <tr
-                        class="divide-x divide-gray-200 dark:divide-white/5 rtl:divide-x-reverse"
+                        class="divide-x divide-gray-200 rtl:divide-x-reverse dark:divide-white/5"
                     >
                         <td class="w-1/2 px-3 py-1.5">
                             {{ $key }}

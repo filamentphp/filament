@@ -202,7 +202,7 @@
 
                         <div class="grid text-sm leading-6">
                             <span
-                                class="fi-fo-checkbox-list-option-label overflow-hidden break-words font-medium text-gray-950 dark:text-white"
+                                class="fi-fo-checkbox-list-option-label overflow-hidden font-medium break-words text-gray-950 dark:text-white"
                             >
                                 @if ($isHtmlAllowed())
                                     {!! $label !!}

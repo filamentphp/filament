@@ -47,7 +47,7 @@
             @foreach ($notifications as $notification)
                 <div
                     @class([
-                        'relative before:absolute before:start-0 before:h-full before:w-0.5 before:bg-primary-600 dark:before:bg-primary-500' => $notification->unread(),
+                        'before:bg-primary-600 dark:before:bg-primary-500 relative before:absolute before:start-0 before:h-full before:w-0.5' => $notification->unread(),
                     ])
                 >
                     {{ $this->getNotification($notification)->inline() }}

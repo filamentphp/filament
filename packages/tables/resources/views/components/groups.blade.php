@@ -6,7 +6,7 @@
 ])
 
 @php
-    $labelClasses = 'text-sm font-medium leading-6 text-gray-950 dark:text-white';
+    $labelClasses = 'text-sm leading-6 font-medium text-gray-950 dark:text-white';
 @endphp
 
 <div

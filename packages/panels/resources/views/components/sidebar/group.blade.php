@@ -47,7 +47,7 @@
             @endif
 
             <span
-                class="fi-sidebar-group-label flex-1 text-sm font-medium leading-6 text-gray-500 dark:text-gray-400"
+                class="fi-sidebar-group-label flex-1 text-sm leading-6 font-medium text-gray-500 dark:text-gray-400"
             >
                 {{ $label }}
             </span>
@@ -86,7 +86,7 @@
                               }
                     "
                     x-tooltip.html="tooltip"
-                    class="relative flex flex-1 items-center justify-center gap-x-3 rounded-lg px-2 py-2 outline-none transition duration-75 hover:bg-gray-100 focus-visible:bg-gray-100 dark:hover:bg-white/5 dark:focus-visible:bg-white/5"
+                    class="relative flex flex-1 items-center justify-center gap-x-3 rounded-lg px-2 py-2 transition duration-75 outline-none hover:bg-gray-100 focus-visible:bg-gray-100 dark:hover:bg-white/5 dark:focus-visible:bg-white/5"
                 >
                     <x-filament::icon
                         :icon="$icon"

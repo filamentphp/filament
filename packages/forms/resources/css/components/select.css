@@ -23,7 +23,7 @@ select:not(.choices) {
 }
 
 .choices__inner {
-    @apply bg-no-repeat py-1.5 pe-8 ps-3 outline-none sm:text-sm sm:leading-6;
+    @apply bg-no-repeat py-1.5 ps-3 pe-8 outline-none sm:text-sm sm:leading-6;
     background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3E%3C/svg%3E");
     background-position: right 0.5rem center;
     background-size: 1.5em 1.5em;
@@ -62,12 +62,12 @@ select:not(.choices) {
 }
 
 .choices__list--multiple .choices__item {
-    @apply inline-flex items-center gap-1 break-all rounded-md bg-primary-50 px-2 py-1 text-xs font-medium text-primary-600 ring-1 ring-inset ring-primary-600/10 dark:bg-primary-400/10 dark:text-primary-400 dark:ring-primary-400/30;
+    @apply bg-primary-50 text-primary-600 ring-primary-600/10 dark:bg-primary-400/10 dark:text-primary-400 dark:ring-primary-400/30 inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium break-all ring-1 ring-inset;
 }
 
 .choices__list--dropdown,
 .choices__list[aria-expanded] {
-    @apply absolute top-full z-10 mt-2 hidden w-full overflow-hidden break-words rounded-lg bg-white text-sm shadow-lg ring-1 ring-gray-950/5 will-change-[visibility] dark:bg-gray-900 dark:ring-white/10;
+    @apply absolute top-full z-10 mt-2 hidden w-full overflow-hidden rounded-lg bg-white text-sm break-words shadow-lg ring-1 ring-gray-950/5 will-change-[visibility] dark:bg-gray-900 dark:ring-white/10;
 }
 
 .is-active.choices__list--dropdown,
@@ -151,7 +151,7 @@ select:not(.choices) {
 /* !important is used to override default Tailwind input styling */
 
 .choices__input {
-    @apply border-none !bg-transparent !p-0 !text-base text-gray-950 transition duration-75 placeholder:text-gray-400 focus-visible:!ring-0 disabled:text-gray-500 disabled:[-webkit-text-fill-color:theme(colors.gray[500])] dark:text-white dark:placeholder:text-gray-500 dark:disabled:text-gray-400 dark:disabled:[-webkit-text-fill-color:theme(colors.gray[400])] sm:!text-sm sm:leading-6;
+    @apply border-none !bg-transparent !p-0 !text-base text-gray-950 transition duration-75 placeholder:text-gray-400 focus-visible:!ring-0 disabled:text-gray-500 disabled:[-webkit-text-fill-color:theme(colors.gray[500])] sm:!text-sm sm:leading-6 dark:text-white dark:placeholder:text-gray-500 dark:disabled:text-gray-400 dark:disabled:[-webkit-text-fill-color:theme(colors.gray[400])];
 }
 
 .choices__list--dropdown .choices__input {
@@ -171,5 +171,5 @@ select:not(.choices) {
 }
 
 .choices__group {
-    @apply px-2 pb-2 pt-4 text-gray-500 first:pt-2 dark:text-gray-400;
+    @apply px-2 pt-4 pb-2 text-gray-500 first:pt-2 dark:text-gray-400;
 }

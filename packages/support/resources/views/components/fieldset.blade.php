@@ -14,7 +14,7 @@
     @if (filled($label))
         <legend
             @class([
-                '-ms-2 px-2 text-sm font-medium leading-6 text-gray-950 dark:text-white',
+                '-ms-2 px-2 text-sm leading-6 font-medium text-gray-950 dark:text-white',
                 'sr-only' => $labelHidden,
             ])
         >

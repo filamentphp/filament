@@ -10,7 +10,7 @@
         class="sticky top-0 z-10 border-b border-gray-200 bg-gray-50 dark:border-white/10 dark:bg-gray-900"
     >
         <h3
-            class="px-4 py-2 text-sm font-semibold capitalize text-gray-950 dark:bg-white/5 dark:text-white"
+            class="px-4 py-2 text-sm font-semibold text-gray-950 capitalize dark:bg-white/5 dark:text-white"
         >
             {{ $label }}
         </h3>

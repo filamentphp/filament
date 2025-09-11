@@ -131,7 +131,7 @@
         ) => $color !== 'gray',
     ]);
 
-    $badgeContainerClasses = 'fi-link-badge-ctn absolute start-full top-0 z-[1] w-max -translate-x-1/4 -translate-y-3/4 rounded-md bg-white dark:bg-gray-900 rtl:translate-x-1/4';
+    $badgeContainerClasses = 'fi-link-badge-ctn absolute start-full top-0 z-[1] w-max -translate-x-1/4 -translate-y-3/4 rounded-md bg-white rtl:translate-x-1/4 dark:bg-gray-900';
 
     $wireTarget = $loadingIndicator ? $attributes->whereStartsWith(['wire:target', 'wire:click'])->filter(fn ($value): bool => filled($value))->first() : null;
 

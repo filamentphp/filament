@@ -15,7 +15,7 @@
         content: @js($label),
         theme: $store.theme,
     }"
-    class="fi-theme-switcher-btn flex justify-center rounded-md p-2 outline-none transition duration-75 hover:bg-gray-50 focus-visible:bg-gray-50 dark:hover:bg-white/5 dark:focus-visible:bg-white/5"
+    class="fi-theme-switcher-btn flex justify-center rounded-md p-2 transition duration-75 outline-none hover:bg-gray-50 focus-visible:bg-gray-50 dark:hover:bg-white/5 dark:focus-visible:bg-white/5"
     x-bind:class="
         theme === @js($theme)
             ? 'fi-active bg-gray-50 text-primary-500 dark:bg-white/5 dark:text-primary-400'
