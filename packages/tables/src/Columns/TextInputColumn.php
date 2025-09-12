@@ -426,7 +426,7 @@ class TextInputColumn extends Column implements Editable, HasEmbeddedView
                         <?php if (count($prefixActions)) { ?>
                             <div class="fi-input-wrp-actions">
                                 <?php foreach ($prefixActions as $prefixAction) { ?>
-                                    <?= $prefixAction->render() ?>
+                                    <?= $prefixAction->toHtml() ?>
                                 <?php } ?>
                             </div>
                         <?php } ?>
@@ -469,7 +469,7 @@ class TextInputColumn extends Column implements Editable, HasEmbeddedView
                         <?php if (count($suffixActions)) { ?>
                             <div class="fi-input-wrp-actions">
                                 <?php foreach ($suffixActions as $suffixAction) { ?>
-                                    <?= $suffixAction->render() ?>
+                                    <?= $suffixAction->toHtml() ?>
                                 <?php } ?>
                             </div>
                         <?php } ?>
