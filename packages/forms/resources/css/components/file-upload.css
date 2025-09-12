@@ -21,7 +21,7 @@
 }
 
 .filepond--label-action {
-    @apply text-primary-600 hover:text-primary-500 dark:hover:text-primary-500 font-medium no-underline transition duration-75 dark:text-white;
+    @apply font-medium text-primary-600 no-underline transition duration-75 hover:text-primary-500 dark:text-white dark:hover:text-primary-500;
 }
 
 .filepond--drip-blob {

@@ -4,7 +4,7 @@
             ->class(['fi-ta-actions-cell'])
     "
 >
-    <div class="px-3 py-4 whitespace-nowrap">
+    <div class="whitespace-nowrap px-3 py-4">
         {{ $slot }}
     </div>
 </x-filament-tables::cell>

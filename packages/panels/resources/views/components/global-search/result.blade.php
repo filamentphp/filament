@@ -13,7 +13,7 @@
         x-on:click="close()"
         @class([
             'fi-global-search-result-link block outline-none',
-            'ps-4 pe-4 pt-4' => $actions,
+            'pe-4 ps-4 pt-4' => $actions,
             'p-4' => ! $actions,
         ])
     >

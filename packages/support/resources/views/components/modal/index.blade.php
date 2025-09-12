@@ -335,7 +335,7 @@
                             @class([
                                 'fi-modal-content flex flex-col gap-y-4 py-6',
                                 'flex-1' => ($width === MaxWidth::Screen) || $slideOver,
-                                'ps-[5.25rem] pe-6' => $hasIcon && ($alignment === Alignment::Start) && (! $stickyHeader),
+                                'pe-6 ps-[5.25rem]' => $hasIcon && ($alignment === Alignment::Start) && (! $stickyHeader),
                                 'px-6' => ! ($hasIcon && ($alignment === Alignment::Start) && (! $stickyHeader)),
                             ])
                         >
@@ -350,7 +350,7 @@
                             @endif
                             @class([
                                 'fi-modal-footer w-full',
-                                'ps-[5.25rem] pe-6' => $hasIcon && ($alignment === Alignment::Start) && ($footerActionsAlignment !== Alignment::Center) && (! $stickyFooter),
+                                'pe-6 ps-[5.25rem]' => $hasIcon && ($alignment === Alignment::Start) && ($footerActionsAlignment !== Alignment::Center) && (! $stickyFooter),
                                 'px-6' => ! ($hasIcon && ($alignment === Alignment::Start) && ($footerActionsAlignment !== Alignment::Center) && (! $stickyFooter)),
                                 'fi-sticky sticky bottom-0 border-t border-gray-200 bg-white py-5 dark:border-white/10 dark:bg-gray-900' => $stickyFooter,
                                 'rounded-b-xl' => $stickyFooter && ! ($slideOver || ($width === MaxWidth::Screen)),

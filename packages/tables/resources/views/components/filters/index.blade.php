@@ -6,7 +6,7 @@
 <div {{ $attributes->class(['fi-ta-filters grid gap-y-4']) }}>
     <div class="flex items-center justify-between">
         <h4
-            class="text-base leading-6 font-semibold text-gray-950 dark:text-white"
+            class="text-base font-semibold leading-6 text-gray-950 dark:text-white"
         >
             {{ __('filament-tables::table.filters.heading') }}
         </h4>

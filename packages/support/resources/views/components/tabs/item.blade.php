@@ -62,7 +62,7 @@
                 'role' => 'tab',
             ])
             ->class([
-                'fi-tabs-item group flex items-center justify-center gap-x-2 rounded-lg px-3 py-2 text-sm font-medium whitespace-nowrap transition duration-75 outline-none',
+                'fi-tabs-item group flex items-center justify-center gap-x-2 whitespace-nowrap rounded-lg px-3 py-2 text-sm font-medium outline-none transition duration-75',
                 $inactiveItemClasses => (! $hasAlpineActiveClasses) && (! $active),
                 $activeItemClasses => (! $hasAlpineActiveClasses) && $active,
             ])

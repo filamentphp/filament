@@ -13,7 +13,7 @@
                 state: $wire.{{ $applyStateBindingModifiers("\$entangle('{$statePath}')") }},
             }"
             x-html="state"
-            class="fi-fo-rich-editor fi-disabled prose dark:prose-invert block w-full max-w-none rounded-lg bg-gray-50 px-3 py-3 text-gray-500 shadow-sm ring-1 ring-gray-950/10 sm:text-sm dark:bg-transparent dark:text-gray-400 dark:ring-white/10"
+            class="fi-fo-rich-editor fi-disabled prose block w-full max-w-none rounded-lg bg-gray-50 px-3 py-3 text-gray-500 shadow-sm ring-1 ring-gray-950/10 dark:prose-invert dark:bg-transparent dark:text-gray-400 dark:ring-white/10 sm:text-sm"
         ></div>
     @else
         <x-filament::input.wrapper
@@ -390,7 +390,7 @@
                     @endif
                     {{
                         $getExtraInputAttributeBag()->class([
-                            'fi-fo-rich-editor-editor prose dark:prose-invert min-h-[theme(spacing.48)] max-w-none !border-none px-3 py-1.5 text-base text-gray-950 focus-visible:outline-none sm:text-sm sm:leading-6 dark:text-white',
+                            'fi-fo-rich-editor-editor prose min-h-[theme(spacing.48)] max-w-none !border-none px-3 py-1.5 text-base text-gray-950 dark:prose-invert focus-visible:outline-none dark:text-white sm:text-sm sm:leading-6',
                         ])
                     }}
                 ></trix-editor>

@@ -82,7 +82,7 @@
             />
 
             <div
-                class="fi-fo-color-picker-preview my-auto me-3 h-5 w-5 shrink-0 rounded-full select-none"
+                class="fi-fo-color-picker-preview my-auto me-3 h-5 w-5 shrink-0 select-none rounded-full"
                 x-on:click="togglePanelVisibility()"
                 x-bind:class="{
                     'ring-1 ring-inset ring-gray-200 dark:ring-white/10': ! state,
