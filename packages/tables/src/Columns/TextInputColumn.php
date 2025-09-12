@@ -323,6 +323,11 @@ class TextInputColumn extends Column implements Editable, HasEmbeddedView
         return (bool) $this->evaluate($this->isSuffixInline);
     }
 
+    public function prepareAction(Action $action): Action
+    {
+        return $action;
+    }
+
     public function toEmbeddedHtml(): string
     {
         $isDisabled = $this->isDisabled();
@@ -421,7 +426,7 @@ class TextInputColumn extends Column implements Editable, HasEmbeddedView
                         <?php if (count($prefixActions)) { ?>
                             <div class="fi-input-wrp-actions">
                                 <?php foreach ($prefixActions as $prefixAction) { ?>
-                                    <?= $prefixAction ?>
+                                    <?= $prefixAction->render() ?>
                                 <?php } ?>
                             </div>
                         <?php } ?>
@@ -464,7 +469,7 @@ class TextInputColumn extends Column implements Editable, HasEmbeddedView
                         <?php if (count($suffixActions)) { ?>
                             <div class="fi-input-wrp-actions">
                                 <?php foreach ($suffixActions as $suffixAction) { ?>
-                                    <?= $suffixAction ?>
+                                    <?= $suffixAction->render() ?>
                                 <?php } ?>
                             </div>
                         <?php } ?>
