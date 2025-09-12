@@ -133,6 +133,7 @@ trait InteractsWithActions
 
         if (store($this)->has('redirect')) {
             $this->unmountAction();
+
             return $result;
         }
 
@@ -333,7 +334,7 @@ trait InteractsWithActions
 
         $action = Action::configureUsing(
             Closure::fromCallable([$this, 'configureAction']),
-            fn() => $this->{$methodName}(),
+            fn () => $this->{$methodName}(),
         );
 
         if (! $action instanceof Action) {
@@ -448,7 +449,7 @@ trait InteractsWithActions
     {
         $this->cacheForm(
             'mountedActionForm',
-            fn() => $this->getMountedActionForm($mountedAction),
+            fn () => $this->getMountedActionForm($mountedAction),
         );
     }
 
