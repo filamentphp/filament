@@ -52,11 +52,11 @@ TextInputColumn::make()
     })
 ```
 
-## Prefix and Suffix Support
+## Prefix and suffix support
 
 The text input column supports prefix and suffix elements including labels, icons, and actions:
 
-### Prefix and Suffix Labels
+### Prefix and suffix labels
 
 Add text labels to provide context for your input fields:
 
@@ -109,7 +109,7 @@ TextInputColumn::make('quantity')
     )
 ```
 
-### Inline Layout
+### Inline layout
 
 Control whether affixes are displayed inline with the input:
 
@@ -121,9 +121,9 @@ TextInputColumn::make('price')
     ->inlineSuffix(false) // Display suffix as separate element
 ```
 
-## Advanced Examples
+## Advanced examples
 
-### Currency Input with Actions
+### Currency input with actions
 
 ```php
 TextInputColumn::make('price')
@@ -139,7 +139,7 @@ TextInputColumn::make('price')
     ->step(0.01)
 ```
 
-### Search Input with Clear Action
+### Search input with clear action
 
 ```php
 TextInputColumn::make('search')
@@ -152,7 +152,7 @@ TextInputColumn::make('search')
     ->placeholder('Search...')
 ```
 
-### Status Input with Visual Indicators
+### Status input with visual indicators
 
 ```php
 TextInputColumn::make('status')
@@ -173,9 +173,9 @@ TextInputColumn::make('status')
     })
 ```
 
-## Available Methods
+## Available methods
 
-### Prefix Methods
+### Prefix methods
 - `prefix(string|Htmlable|Closure|null $label, bool|Closure $isInline = false)`
 - `prefixAction(Action|Closure $action, bool|Closure $isInline = false)`
 - `prefixActions(array $actions, bool|Closure $isInline = false)`
@@ -183,13 +183,10 @@ TextInputColumn::make('status')
 - `prefixIconColor(string|array|Closure|null $color = null)`
 - `inlinePrefix(bool|Closure $isInline = true)`
 
-### Suffix Methods
+### Suffix methods
 - `suffix(string|Htmlable|Closure|null $label, bool|Closure $isInline = false)`
 - `suffixAction(Action|Closure $action, bool|Closure $isInline = false)`
 - `suffixActions(array $actions, bool|Closure $isInline = false)`
 - `suffixIcon(string|BackedEnum|Closure|null $icon, bool|Closure $isInline = false)`
 - `suffixIconColor(string|array|Closure|null $color = null)`
 - `inlineSuffix(bool|Closure $isInline = true)`
-
-### Legacy Methods
-- `postfix(string|Htmlable|Closure|null $label, bool|Closure $isInline = false)` - Alias for `suffix()`
