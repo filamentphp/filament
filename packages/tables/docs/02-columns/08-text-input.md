@@ -1,9 +1,7 @@
 ---
 title: Text input column
 ---
-import Aside from "@components/Aside.astro"
 import AutoScreenshot from "@components/AutoScreenshot.astro"
-import UtilityInjection from "@components/UtilityInjection.astro"
 
 ## Introduction
 
@@ -19,7 +17,7 @@ TextInputColumn::make('email')
 
 ## Validation
 
-You can validate the input by passing any Laravel validation rules in an array:
+You can validate the input by passing any [Laravel validation rules](https://laravel.com/docs/validation#available-validation-rules) in an array:
 
 ```php
 use Filament\Tables\Columns\TextInputColumn;
@@ -30,7 +28,7 @@ TextInputColumn::make('name')
 
 ## Customizing the HTML input type
 
-You may use the `type()` method to pass a custom HTML input type:
+You may use the `type()` method to pass a custom [HTML input type](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#input_types):
 
 ```php
 use Filament\Tables\Columns\TextInputColumn;
