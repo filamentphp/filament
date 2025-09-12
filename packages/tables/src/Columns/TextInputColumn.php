@@ -14,11 +14,13 @@ use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\Size;
 use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\RawJs;
+use Filament\Support\View\Components\InputComponent\WrapperComponent\IconComponent;
 use Filament\Tables\Columns\Contracts\Editable;
 use Filament\Tables\Table;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Js;
+use Illuminate\View\ComponentAttributeBag;
 
 class TextInputColumn extends Column implements Editable, HasEmbeddedView
 {
@@ -43,7 +45,7 @@ class TextInputColumn extends Column implements Editable, HasEmbeddedView
      */
     protected array $suffixActions = [];
 
-    protected string|Htmlable|Closure|null $suffixLabel = null;
+    protected string | Htmlable | Closure | null $suffixLabel = null;
 
     /**
      * @var array<Action> | null
@@ -55,25 +57,25 @@ class TextInputColumn extends Column implements Editable, HasEmbeddedView
      */
     protected array $prefixActions = [];
 
-    protected string|Htmlable|Closure|null $prefixLabel = null;
+    protected string | Htmlable | Closure | null $prefixLabel = null;
 
-    protected string|BackedEnum|Closure|null $prefixIcon = null;
-
-    /**
-     * @var string | array<string> | Closure | null
-     */
-    protected string|array|Closure|null $prefixIconColor = null;
-
-    protected string|BackedEnum|Closure|null $suffixIcon = null;
+    protected string | BackedEnum | Closure | null $prefixIcon = null;
 
     /**
      * @var string | array<string> | Closure | null
      */
-    protected string|array|Closure|null $suffixIconColor = null;
+    protected string | array | Closure | null $prefixIconColor = null;
 
-    protected bool|Closure $isPrefixInline = false;
+    protected string | BackedEnum | Closure | null $suffixIcon = null;
 
-    protected bool|Closure $isSuffixInline = false;
+    /**
+     * @var string | array<string> | Closure | null
+     */
+    protected string | array | Closure | null $suffixIconColor = null;
+
+    protected bool | Closure $isPrefixInline = false;
+
+    protected bool | Closure $isSuffixInline = false;
 
     protected function setUp(): void
     {
@@ -106,7 +108,7 @@ class TextInputColumn extends Column implements Editable, HasEmbeddedView
         return $this->evaluate($this->mask);
     }
 
-    public function prefix(string|Htmlable|Closure|null $label, bool|Closure $isInline = false): static
+    public function prefix(string | Htmlable | Closure | null $label, bool | Closure $isInline = false): static
     {
         $this->prefixLabel = $label;
         $this->inlinePrefix($isInline);
@@ -114,12 +116,12 @@ class TextInputColumn extends Column implements Editable, HasEmbeddedView
         return $this;
     }
 
-    public function postfix(string|Htmlable|Closure|null $label, bool|Closure $isInline = false): static
+    public function postfix(string | Htmlable | Closure | null $label, bool | Closure $isInline = false): static
     {
         return $this->suffix($label, $isInline);
     }
 
-    public function prefixAction(Action|Closure $action, bool|Closure $isInline = false): static
+    public function prefixAction(Action | Closure $action, bool | Closure $isInline = false): static
     {
         $this->prefixActions([$action], $isInline);
 
@@ -129,7 +131,7 @@ class TextInputColumn extends Column implements Editable, HasEmbeddedView
     /**
      * @param  array<Action | Closure>  $actions
      */
-    public function prefixActions(array $actions, bool|Closure $isInline = false): static
+    public function prefixActions(array $actions, bool | Closure $isInline = false): static
     {
         $this->prefixActions = [
             ...$this->prefixActions,
@@ -140,7 +142,7 @@ class TextInputColumn extends Column implements Editable, HasEmbeddedView
         return $this;
     }
 
-    public function suffixAction(Action|Closure $action, bool|Closure $isInline = false): static
+    public function suffixAction(Action | Closure $action, bool | Closure $isInline = false): static
     {
         $this->suffixActions([$action], $isInline);
 
@@ -150,7 +152,7 @@ class TextInputColumn extends Column implements Editable, HasEmbeddedView
     /**
      * @param  array<Action | Closure>  $actions
      */
-    public function suffixActions(array $actions, bool|Closure $isInline = false): static
+    public function suffixActions(array $actions, bool | Closure $isInline = false): static
     {
         $this->suffixActions = [
             ...$this->suffixActions,
@@ -161,7 +163,7 @@ class TextInputColumn extends Column implements Editable, HasEmbeddedView
         return $this;
     }
 
-    public function suffix(string|Htmlable|Closure|null $label, bool|Closure $isInline = false): static
+    public function suffix(string | Htmlable | Closure | null $label, bool | Closure $isInline = false): static
     {
         $this->suffixLabel = $label;
         $this->inlineSuffix($isInline);
@@ -169,21 +171,21 @@ class TextInputColumn extends Column implements Editable, HasEmbeddedView
         return $this;
     }
 
-    public function inlinePrefix(bool|Closure $isInline = true): static
+    public function inlinePrefix(bool | Closure $isInline = true): static
     {
         $this->isPrefixInline = $isInline;
 
         return $this;
     }
 
-    public function inlineSuffix(bool|Closure $isInline = true): static
+    public function inlineSuffix(bool | Closure $isInline = true): static
     {
         $this->isSuffixInline = $isInline;
 
         return $this;
     }
 
-    public function prefixIcon(string|BackedEnum|Closure|null $icon, bool|Closure $isInline = false): static
+    public function prefixIcon(string | BackedEnum | Closure | null $icon, bool | Closure $isInline = false): static
     {
         $this->prefixIcon = $icon;
         $this->inlinePrefix($isInline);
@@ -194,14 +196,14 @@ class TextInputColumn extends Column implements Editable, HasEmbeddedView
     /**
      * @param  string | array<string> | Closure | null  $color
      */
-    public function prefixIconColor(string|array|Closure|null $color = null): static
+    public function prefixIconColor(string | array | Closure | null $color = null): static
     {
         $this->prefixIconColor = $color;
 
         return $this;
     }
 
-    public function suffixIcon(string|BackedEnum|Closure|null $icon, bool|Closure $isInline = false): static
+    public function suffixIcon(string | BackedEnum | Closure | null $icon, bool | Closure $isInline = false): static
     {
         $this->suffixIcon = $icon;
         $this->inlineSuffix($isInline);
@@ -212,7 +214,7 @@ class TextInputColumn extends Column implements Editable, HasEmbeddedView
     /**
      * @param  string | array<string> | Closure | null  $color
      */
-    public function suffixIconColor(string|array|Closure|null $color = null): static
+    public function suffixIconColor(string | array | Closure | null $color = null): static
     {
         $this->suffixIconColor = $color;
 
@@ -275,22 +277,22 @@ class TextInputColumn extends Column implements Editable, HasEmbeddedView
         return $this->cachedSuffixActions;
     }
 
-    public function getPrefixLabel(): string|Htmlable|null
+    public function getPrefixLabel(): string | Htmlable | null
     {
         return $this->evaluate($this->prefixLabel);
     }
 
-    public function getSuffixLabel(): string|Htmlable|null
+    public function getSuffixLabel(): string | Htmlable | null
     {
         return $this->evaluate($this->suffixLabel);
     }
 
-    public function getPrefixIcon(): string|BackedEnum|null
+    public function getPrefixIcon(): string | BackedEnum | null
     {
         return $this->evaluate($this->prefixIcon);
     }
 
-    public function getSuffixIcon(): string|BackedEnum|null
+    public function getSuffixIcon(): string | BackedEnum | null
     {
         return $this->evaluate($this->suffixIcon);
     }
@@ -298,7 +300,7 @@ class TextInputColumn extends Column implements Editable, HasEmbeddedView
     /**
      * @return string | array<string> | null
      */
-    public function getPrefixIconColor(): string|array|null
+    public function getPrefixIconColor(): string | array | null
     {
         return $this->evaluate($this->prefixIconColor);
     }
@@ -306,7 +308,7 @@ class TextInputColumn extends Column implements Editable, HasEmbeddedView
     /**
      * @return string | array<string> | null
      */
-    public function getSuffixIconColor(): string|array|null
+    public function getSuffixIconColor(): string | array | null
     {
         return $this->evaluate($this->suffixIconColor);
     }
@@ -425,8 +427,8 @@ class TextInputColumn extends Column implements Editable, HasEmbeddedView
                         <?php } ?>
 
                         <?php if ($prefixIcon) { ?>
-                            <?= \Filament\Support\generate_icon_html($prefixIcon, null, (new \Illuminate\View\ComponentAttributeBag)
-                            ->color(\Filament\Support\View\Components\InputComponent\WrapperComponent\IconComponent::class, $prefixIconColor)) ?>
+                            <?= \Filament\Support\generate_icon_html($prefixIcon, null, (new ComponentAttributeBag)
+                            ->color(IconComponent::class, $prefixIconColor)) ?>
                         <?php } ?>
 
                         <?php if (filled($prefixLabel)) { ?>
@@ -455,8 +457,8 @@ class TextInputColumn extends Column implements Editable, HasEmbeddedView
                         <?php } ?>
 
                         <?php if ($suffixIcon) { ?>
-                            <?= \Filament\Support\generate_icon_html($suffixIcon, null, (new \Illuminate\View\ComponentAttributeBag)
-                            ->color(\Filament\Support\View\Components\InputComponent\WrapperComponent\IconComponent::class, $suffixIconColor)) ?>
+                            <?= \Filament\Support\generate_icon_html($suffixIcon, null, (new ComponentAttributeBag)
+                            ->color(IconComponent::class, $suffixIconColor)) ?>
                         <?php } ?>
 
                         <?php if (count($suffixActions)) { ?>
