@@ -42,11 +42,11 @@ Inside the Blade view, you may access the [state](overview#column-content-state)
 
 ## Accessing the Eloquent record in the Blade view
 
-Inside the Blade view, you may access the current table row's Eloquent record using the `$record` variable:
+Inside the Blade view, you may access the current table row's Eloquent record using the `$getRecord()` function:
 
 ```blade
 <div>
-    {{ $record->name }}
+    {{ $getRecord()->name }}
 </div>
 ```
 
