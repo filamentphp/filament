@@ -168,7 +168,7 @@ trait HasState
 
         if (filled($components = $this->getComponentsToPartiallyRenderAfterStateUpdated())) {
             foreach ($components as $key) {
-                $this->getLivewire()->getSchemaComponent($this->resolveRelativeKey($key))->partiallyRender();
+                $this->getLivewire()->getSchemaComponent($this->resolveRelativeKey($key))?->partiallyRender();
             }
         }
 
