@@ -131,6 +131,12 @@ trait InteractsWithActions
 
         $action->commitDatabaseTransaction();
 
+        if (store($this)->has('redirect')) {
+            $this->unmountAction();
+
+            return $result;
+        }
+
         $action->resetArguments();
         $action->resetFormData();
 

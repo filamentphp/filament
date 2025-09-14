@@ -110,6 +110,10 @@ trait HasFormComponentActions
 
         $action->commitDatabaseTransaction();
 
+        if (store($this)->has('redirect')) {
+            return $result;
+        }
+
         $action->resetArguments();
         $action->resetFormData();
 
