@@ -14,10 +14,9 @@
 <div
     @if ($isSticky())
         x-data="filamentActionsSchemaComponent()"
-        x-on:scroll.window.throttle="evaluatePageScrollPosition"
-        x-bind:class="{
-            'fi-sticky': isSticky,
-        }"
+        x-bind:class="{ 'fi-sticky': isSticky }"
+        x-intersect:enter.half="isSticky = false"
+        x-intersect:leave="isSticky = $el.getBoundingClientRect().top > 0"
     @endif
     {{
         $attributes
