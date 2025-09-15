@@ -15,8 +15,8 @@
     @if ($isSticky())
         x-data="filamentActionsSchemaComponent()"
         x-bind:class="{ 'fi-sticky': isSticky }"
-        x-intersect:enter.half="isSticky = false"
-        x-intersect:leave="isSticky = $el.getBoundingClientRect().top > 0"
+        x-intersect:enter.half="disableSticky"
+        x-intersect:leave="enableSticky"
     @endif
     {{
         $attributes
