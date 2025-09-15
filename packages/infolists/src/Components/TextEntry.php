@@ -439,70 +439,77 @@ class TextEntry extends Entry implements HasAffixActions, HasEmbeddedView
 
                 <?php if ($prefixActions || $suffixActions) { ?>
                     <div class="fi-in-text-affixed-content">
-                    <?php } ?>
+                <?php } ?>
 
-                    <ul>
-                        <?php $stateIteration = 1; ?>
+                <ul>
+                    <?php $stateIteration = 1; ?>
 
-                        <?php foreach ($state as $stateItem) { ?>
-                            <?php [
-                                'attributes' => $stateItemAttributes,
-                                'innerAttributes' => $stateItemInnerAttributes,
-                                'badgeAttributes' => $stateItemBadgeAttributes,
-                                'iconAfterHtml' => $stateItemIconAfterHtml,
-                                'iconBeforeHtml' => $stateItemIconBeforeHtml,
-                            ] = $getStateItem($stateItem); ?>
+                    <?php foreach ($state as $stateItem) { ?>
+                        <?php [
+                            'attributes' => $stateItemAttributes,
+                            'innerAttributes' => $stateItemInnerAttributes,
+                            'badgeAttributes' => $stateItemBadgeAttributes,
+                            'iconAfterHtml' => $stateItemIconAfterHtml,
+                            'iconBeforeHtml' => $stateItemIconBeforeHtml,
+                        ] = $getStateItem($stateItem); ?>
 
-                            <li
-                                <?php if ($stateIteration > $listLimit) { ?>
+                        <li
+                            <?php if ($stateIteration > $listLimit) { ?>
                                 x-show="! isLimited"
                                 x-cloak
                                 x-transition
-                                <?php } ?>
-                                <?= $stateItemAttributes->toHtml() ?>>
-                                <?php if ($isBadge) { ?>
-                                    <span <?= $stateItemBadgeAttributes->toHtml() ?>>
-                                    <?php } else { ?>
-                                        <span <?= $stateItemInnerAttributes->toHtml() ?>>
-                                        <?php } ?>
-
-                                        <?= $stateItemIconBeforeHtml ?>
-                                        <?= $formatState($stateItem) ?>
-                                        <?= $stateItemIconAfterHtml ?>
-
-                                        </span>
-                            </li>
-
-                            <?php $stateIteration++ ?>
-                        <?php } ?>
-                    </ul>
-
-                    <?php if ($stateOverListLimitCount) { ?>
-                        <div class="fi-in-text-list-limited-message">
-                            <?php if ($isLimitedListExpandable) { ?>
-                                <div
-                                    role="button"
-                                    x-on:click.prevent.stop="isLimited = false"
-                                    x-show="isLimited"
-                                    class="fi-link fi-size-xs">
-                                    <?= trans_choice('filament-infolists::components.entries.text.actions.expand_list', $stateOverListLimitCount) ?>
-                                </div>
-
-                                <div
-                                    role="button"
-                                    x-on:click.prevent.stop="isLimited = true"
-                                    x-cloak
-                                    x-show="! isLimited"
-                                    class="fi-link fi-size-xs">
-                                    <?= trans_choice('filament-infolists::components.entries.text.actions.collapse_list', $stateOverListLimitCount) ?>
-                                </div>
-                            <?php } else { ?>
-                                <?= trans_choice('filament-infolists::components.entries.text.more_list_items', $stateOverListLimitCount) ?>
                             <?php } ?>
-                        </div>
-                    <?php } ?>
+                            <?= $stateItemAttributes->toHtml() ?>
+                        >
+                            <?php if ($isBadge) { ?>
+                                <span <?= $stateItemBadgeAttributes->toHtml() ?>>
+                            <?php } else { ?>
+                                <span <?= $stateItemInnerAttributes->toHtml() ?>>
+                            <?php } ?>
 
-                    <?php if ($prefixActions || $suffixActions) { ?>
+                            <?= $stateItemIconBeforeHtml ?>
+                            <?= $formatState($stateItem) ?>
+                            <?= $stateItemIconAfterHtml ?>
+
+                            <?php if ($isBadge) { ?>
+                                </span> 
+                            <?php } else { ?>
+                                </span>
+                            <?php } ?>
+                        </li>
+
+                        <?php $stateIteration++ ?>
+                    <?php } ?>
+                </ul>
+
+                <?php if ($stateOverListLimitCount) { ?>
+                    <div class="fi-in-text-list-limited-message">
+                        <?php if ($isLimitedListExpandable) { ?>
+                            <div
+                                role="button"
+                                x-on:click.prevent.stop="isLimited = false"
+                                x-show="isLimited"
+                                class="fi-link fi-size-xs"
+                            >
+                                <?= trans_choice('filament-infolists::components.entries.text.actions.expand_list', $stateOverListLimitCount) ?>
+                            </div>
+
+                            <div
+                                role="button"
+                                x-on:click.prevent.stop="isLimited = true"
+                                x-cloak
+                                x-show="! isLimited"
+                                class="fi-link fi-size-xs"
+                            >
+                                <?= trans_choice('filament-infolists::components.entries.text.actions.collapse_list', $stateOverListLimitCount) ?>
+                            </div>
+                        <?php } else { ?>
+                            <?= trans_choice('filament-infolists::components.entries.text.more_list_items', $stateOverListLimitCount) ?>
+                        <?php } ?>
+                    </div>
+                <?php } ?>
+
+                <?php if ($prefixActions || $suffixActions) { ?>
                     </div>
                 <?php } ?>
 
@@ -515,7 +522,7 @@ class TextEntry extends Entry implements HasAffixActions, HasEmbeddedView
                 <?php } ?>
             </div>
 
-        <?php return $this->wrapEmbeddedHtml(ob_get_clean());
+            <?php return $this->wrapEmbeddedHtml(ob_get_clean());
         }
 
         ob_start(); ?>
@@ -533,21 +540,24 @@ class TextEntry extends Entry implements HasAffixActions, HasEmbeddedView
                 <li <?= $stateItemAttributes->toHtml() ?>>
                     <?php if ($isBadge) { ?>
                         <span <?= $stateItemBadgeAttributes->toHtml() ?>>
-                        <?php } else { ?>
-                            <span <?= $stateItemInnerAttributes->toHtml() ?>>
-                            <?php } ?>
+                    <?php } else { ?>
+                        <span <?= $stateItemInnerAttributes->toHtml() ?>>
+                    <?php } ?>
 
-                            <?= $stateItemIconBeforeHtml ?>
-                            <?= $formatState($stateItem) ?>
-                            <?= $stateItemIconAfterHtml ?>
+                    <?= $stateItemIconBeforeHtml ?>
+                    <?= $formatState($stateItem) ?>
+                    <?= $stateItemIconAfterHtml ?>
 
-                            </span>
+                    <?php if ($isBadge) { ?>
+                        </span>
+                    <?php } else { ?>
+                        </span>
+                    <?php } ?>
                 </li>
-
             <?php } ?>
         </ul>
 
-<?php return $this->wrapEmbeddedHtml(ob_get_clean());
+        <?php return $this->wrapEmbeddedHtml(ob_get_clean());
     }
 
     public function canWrapByDefault(): bool

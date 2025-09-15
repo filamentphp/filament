@@ -205,7 +205,7 @@ class TextColumn extends Column implements HasEmbeddedView
                 <?php } ?>
             </div>
 
-        <?php return ob_get_clean();
+            <?php return ob_get_clean();
         }
 
         $shouldOpenUrlInNewTab = $this->shouldOpenUrlInNewTab();
@@ -250,14 +250,14 @@ class TextColumn extends Column implements HasEmbeddedView
                 implode(
                     ', ',
                     array_map(
-                        fn (mixed $stateItem): string => $formatState($stateItem),
+                        fn(mixed $stateItem): string => $formatState($stateItem),
                         $state,
                     ),
                 ),
             ];
 
             $stateCount = 1;
-            $formatState = fn (mixed $stateItem): string => $stateItem;
+            $formatState = fn(mixed $stateItem): string => $stateItem;
         }
 
         $attributes = $attributes
@@ -278,10 +278,10 @@ class TextColumn extends Column implements HasEmbeddedView
 
             $iconHtml = generate_icon_html($this->getIcon($stateItem), attributes: (new ComponentAttributeBag)
                 ->color(IconComponent::class, $iconColor), size: match ($size) {
-                    TextSize::Medium => IconSize::Medium,
-                    TextSize::Large => IconSize::Large,
-                    default => IconSize::Small,
-                })?->toHtml();
+                TextSize::Medium => IconSize::Medium,
+                TextSize::Large => IconSize::Large,
+                default => IconSize::Small,
+            })?->toHtml();
 
             $isCopyable = $this->isCopyable($stateItem);
 
@@ -326,7 +326,7 @@ class TextColumn extends Column implements HasEmbeddedView
                         ($size instanceof TextSize) ? "fi-size-{$size->value}" : $size,
                         (($weight = $this->getWeight($stateItem)) instanceof FontWeight) ? "fi-font-{$weight->value}" : (is_string($weight) ? $weight : ''),
                     ])
-                    ->when($lineClamp, fn (ComponentAttributeBag $attributes) => $attributes->style([
+                    ->when($lineClamp, fn(ComponentAttributeBag $attributes) => $attributes->style([
                         "--line-clamp: {$lineClamp}",
                     ]))
                     ->color(ItemComponent::class, $color);
@@ -337,28 +337,28 @@ class TextColumn extends Column implements HasEmbeddedView
                 'innerAttributes' => $innerAttributes,
                 'badgeAttributes' => $isBadge
                     ? (new ComponentAttributeBag)
-                        ->merge([
-                            'x-on:click' => $isCopyable
-                                ? <<<JS
+                    ->merge([
+                        'x-on:click' => $isCopyable
+                            ? <<<JS
                             window.navigator.clipboard.writeText({$copyableStateJs})
                             \$tooltip({$copyMessageJs}, {
                                 theme: \$store.theme,
                                 timeout: {$copyMessageDurationJs},
                             })
                             JS
-                                : null,
-                            'x-tooltip' => filled($tooltip = $this->getTooltip($stateItem))
-                                ? '{
+                            : null,
+                        'x-tooltip' => filled($tooltip = $this->getTooltip($stateItem))
+                            ? '{
                             content: ' . Js::from($tooltip) . ',
                             theme: $store.theme,
                         }'
-                                : null,
-                        ], escape: false)
-                        ->class([
-                            'fi-badge',
-                            ($size instanceof TextSize) ? "fi-size-{$size->value}" : $size,
-                        ])
-                        ->color(BadgeComponent::class, $color ?? 'primary')
+                            : null,
+                    ], escape: false)
+                    ->class([
+                        'fi-badge',
+                        ($size instanceof TextSize) ? "fi-size-{$size->value}" : $size,
+                    ])
+                    ->color(BadgeComponent::class, $color ?? 'primary')
                     : null,
                 'iconAfterHtml' => ($iconPosition === IconPosition::After) ? $iconHtml : '',
                 'iconBeforeHtml' => ($iconPosition === IconPosition::Before) ? $iconHtml : '',
@@ -386,26 +386,26 @@ class TextColumn extends Column implements HasEmbeddedView
             ob_start(); ?>
 
             <div <?= $attributes
-                ->merge($stateItemAttributes->getAttributes(), escape: false)
-                ->toHtml() ?>>
+                        ->merge($stateItemAttributes->getAttributes(), escape: false)
+                        ->toHtml() ?>>
                 <?php if ($isBadge) { ?>
                     <span <?= $stateItemBadgeAttributes->toHtml() ?>>
-                    <?php } else { ?>
-                        <span <?= $stateItemInnerAttributes->toHtml() ?>>
-                        <?php } ?>
+                <?php } else { ?>
+                    <span <?= $stateItemInnerAttributes->toHtml() ?>>
+                <?php } ?>
 
-                        <?= $stateItemIconBeforeHtml ?>
-                        <?= $formatState($stateItem) ?>
-                        <?= $stateItemIconAfterHtml ?>
+                <?= $stateItemIconBeforeHtml ?>
+                <?= $formatState($stateItem) ?>
+                <?= $stateItemIconAfterHtml ?>
 
-                        <?php if ($isBadge) { ?>
-                        </span>
-                    <?php } else { ?>
+                <?php if ($isBadge) { ?>
+                    </span>
+                <?php } else { ?>
                     </span>
                 <?php } ?>
             </div>
 
-        <?php return ob_get_clean();
+            <?php return ob_get_clean();
         }
 
         $attributes = $attributes
@@ -437,7 +437,7 @@ class TextColumn extends Column implements HasEmbeddedView
 
                 <?php if (($stateCount === 1) && (! $isBulleted)) { ?>
                     <?php
-                    $stateItem = Arr::first($state);
+                        $stateItem = Arr::first($state);
                     [
                         'attributes' => $stateItemAttributes,
                         'innerAttributes' => $stateItemInnerAttributes,
@@ -450,17 +450,17 @@ class TextColumn extends Column implements HasEmbeddedView
                     <p <?= $stateItemAttributes->toHtml() ?>>
                         <?php if ($isBadge) { ?>
                             <span <?= $stateItemBadgeAttributes->toHtml() ?>>
-                            <?php } else { ?>
-                                <span <?= $stateItemInnerAttributes->toHtml() ?>>
-                                <?php } ?>
+                        <?php } else { ?>
+                            <span <?= $stateItemInnerAttributes->toHtml() ?>>
+                        <?php } ?>
 
-                                <?= $stateItemIconBeforeHtml ?>
-                                <?= $formatState($stateItem) ?>
-                                <?= $stateItemIconAfterHtml ?>
+                        <?= $stateItemIconBeforeHtml ?>
+                        <?= $formatState($stateItem) ?>
+                        <?= $stateItemIconAfterHtml ?>
 
-                                <?php if ($isBadge) { ?>
-                                </span>
-                            <?php } else { ?>
+                        <?php if ($isBadge) { ?>
+                            </span>
+                        <?php } else { ?>
                             </span>
                         <?php } ?>
                     </p>
@@ -479,24 +479,25 @@ class TextColumn extends Column implements HasEmbeddedView
 
                             <li
                                 <?php if ($stateIteration > $listLimit) { ?>
-                                x-show="! isLimited"
-                                x-cloak
-                                x-transition
+                                    x-show="! isLimited"
+                                    x-cloak
+                                    x-transition
                                 <?php } ?>
-                                <?= $stateItemAttributes->toHtml() ?>>
+                                <?= $stateItemAttributes->toHtml() ?>
+                            >
                                 <?php if ($isBadge) { ?>
                                     <span <?= $stateItemBadgeAttributes->toHtml() ?>>
-                                    <?php } else { ?>
-                                        <span <?= $stateItemInnerAttributes->toHtml() ?>>
-                                        <?php } ?>
+                                <?php } else { ?>
+                                    <span <?= $stateItemInnerAttributes->toHtml() ?>>
+                                <?php } ?>
 
-                                        <?= $stateItemIconBeforeHtml ?>
-                                        <?= $formatState($stateItem) ?>
-                                        <?= $stateItemIconAfterHtml ?>
+                                <?= $stateItemIconBeforeHtml ?>
+                                <?= $formatState($stateItem) ?>
+                                <?= $stateItemIconAfterHtml ?>
 
-                                        <?php if ($isBadge) { ?>
-                                        </span>
-                                    <?php } else { ?>
+                                <?php if ($isBadge) { ?>
+                                    </span>
+                                <?php } else { ?>
                                     </span>
                                 <?php } ?>
                             </li>
@@ -513,7 +514,8 @@ class TextColumn extends Column implements HasEmbeddedView
                                 role="button"
                                 x-on:click.prevent.stop="isLimited = false"
                                 x-show="isLimited"
-                                class="fi-link fi-size-xs">
+                                class="fi-link fi-size-xs"
+                            >
                                 <?= trans_choice('filament-tables::table.columns.text.actions.expand_list', $stateOverListLimitCount) ?>
                             </div>
 
@@ -522,7 +524,8 @@ class TextColumn extends Column implements HasEmbeddedView
                                 x-on:click.prevent.stop="isLimited = true"
                                 x-cloak
                                 x-show="! isLimited"
-                                class="fi-link fi-size-xs">
+                                class="fi-link fi-size-xs"
+                            >
                                 <?= trans_choice('filament-tables::table.columns.text.actions.collapse_list', $stateOverListLimitCount) ?>
                             </div>
                         <?php } else { ?>
@@ -538,7 +541,7 @@ class TextColumn extends Column implements HasEmbeddedView
                 <?php } ?>
             </div>
 
-        <?php return ob_get_clean();
+            <?php return ob_get_clean();
         }
 
         ob_start(); ?>
@@ -556,17 +559,17 @@ class TextColumn extends Column implements HasEmbeddedView
                 <li <?= $stateItemAttributes->toHtml() ?>>
                     <?php if ($isBadge) { ?>
                         <span <?= $stateItemBadgeAttributes->toHtml() ?>>
-                        <?php } else { ?>
-                            <span <?= $stateItemInnerAttributes->toHtml() ?>>
-                            <?php } ?>
+                    <?php } else { ?>
+                        <span <?= $stateItemInnerAttributes->toHtml() ?>>
+                    <?php } ?>
 
-                            <?= $stateItemIconBeforeHtml ?>
-                            <?= $formatState($stateItem) ?>
-                            <?= $stateItemIconAfterHtml ?>
+                    <?= $stateItemIconBeforeHtml ?>
+                    <?= $formatState($stateItem) ?>
+                    <?= $stateItemIconAfterHtml ?>
 
-                            <?php if ($isBadge) { ?>
-                            </span>
-                        <?php } else { ?>
+                    <?php if ($isBadge) { ?>
+                        </span>
+                    <?php } else { ?>
                         </span>
                     <?php } ?>
                 </li>
