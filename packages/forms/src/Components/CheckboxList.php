@@ -6,6 +6,7 @@ use Closure;
 use Filament\Actions\Action;
 use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
 use Filament\Schemas\Components\StateCasts\EnumArrayStateCast;
+use Filament\Schemas\Components\StateCasts\StringArrayStateCast;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Filament\Support\Enums\Size;
 use Filament\Support\Services\RelationshipJoiner;
@@ -53,16 +54,6 @@ class CheckboxList extends Field implements Contracts\CanDisableOptions, Contrac
     protected function setUp(): void
     {
         parent::setUp();
-
-        $this->default([]);
-
-        $this->afterStateHydrated(static function (CheckboxList $component, $state): void {
-            if (is_array($state)) {
-                return;
-            }
-
-            $component->state([]);
-        });
 
         $this->searchDebounce(0);
 
@@ -330,6 +321,18 @@ class CheckboxList extends Field implements Contracts\CanDisableOptions, Contrac
             EnumArrayStateCast::class,
             ['enum' => $enum],
         );
+    }
+
+    /**
+     * @return array<StateCast>
+     */
+    public function getDefaultStateCasts(): array
+    {
+        if ($this->hasCustomStateCasts() || filled($this->getEnum())) {
+            return parent::getDefaultStateCasts();
+        }
+
+        return [app(StringArrayStateCast::class)];
     }
 
     /**

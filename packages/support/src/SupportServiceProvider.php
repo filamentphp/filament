@@ -189,7 +189,7 @@ class SupportServiceProvider extends PackageServiceProvider
                     'fi-grid-direction-col' => $direction === GridDirection::Column,
                     ...array_map(
                         fn (string $breakpoint): string => match ($breakpoint) {
-                            'default' => '',
+                            'default' => ($columns[$breakpoint] > 1) ? 'fi-grid-cols' : '',
                             default => "{$breakpoint}:fi-grid-cols",
                         },
                         array_keys($columns),

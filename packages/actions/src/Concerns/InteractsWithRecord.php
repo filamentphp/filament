@@ -155,13 +155,19 @@ trait InteractsWithRecord
     /**
      * @param  Model | array<string, mixed>  $record
      */
-    public function resolveRecordKey(Model | array $record): string
+    public function resolveRecordKey(Model | array $record): ?string
     {
         if (is_array($record)) {
-            return $record[ArrayRecord::getKeyName()] ?? throw new LogicException('Record arrays must have a unique [' . ArrayRecord::getKeyName() . '] entry for identification.');
+            return strval($record[ArrayRecord::getKeyName()] ?? throw new LogicException('Record arrays must have a unique [' . ArrayRecord::getKeyName() . '] entry for identification.'));
         }
 
-        return $record->getKey();
+        $key = $record->getKey();
+
+        if (blank($key)) {
+            return null;
+        }
+
+        return strval($key);
     }
 
     public function getCustomRecordTitle(?Model $record = null): ?string

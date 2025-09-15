@@ -18,6 +18,8 @@
     }
 
     & .fi-ta-content {
+        @apply grid;
+
         &.fi-ta-content-grid {
             @apply gap-4 p-4 sm:px-6;
 

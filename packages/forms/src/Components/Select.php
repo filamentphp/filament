@@ -13,6 +13,8 @@ use Filament\Schemas\Components\StateCasts\BooleanStateCast;
 use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
 use Filament\Schemas\Components\StateCasts\EnumArrayStateCast;
 use Filament\Schemas\Components\StateCasts\EnumStateCast;
+use Filament\Schemas\Components\StateCasts\StringArrayStateCast;
+use Filament\Schemas\Components\StateCasts\StringStateCast;
 use Filament\Schemas\Schema;
 use Filament\Support\Components\Attributes\ExposedLivewireMethod;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
@@ -130,20 +132,6 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
     protected function setUp(): void
     {
         parent::setUp();
-
-        $this->default(static fn (Select $component): ?array => $component->isMultiple() ? [] : null);
-
-        $this->afterStateHydrated(static function (Select $component, $state): void {
-            if (! $component->isMultiple()) {
-                return;
-            }
-
-            if (is_array($state)) {
-                return;
-            }
-
-            $component->state([]);
-        });
 
         $this->transformOptionsForJsUsing(static function (Select $component, array $options): array {
             return collect($options)
@@ -1412,6 +1400,22 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
             $this->isMultiple() ? EnumArrayStateCast::class : EnumStateCast::class,
             ['enum' => $enum],
         );
+    }
+
+    /**
+     * @return array<StateCast>
+     */
+    public function getDefaultStateCasts(): array
+    {
+        if ($this->hasCustomStateCasts() || filled($this->getEnum())) {
+            return parent::getDefaultStateCasts();
+        }
+
+        if ($this->isMultiple()) {
+            return [app(StringArrayStateCast::class)];
+        }
+
+        return [app(StringStateCast::class, ['isNullable' => true])];
     }
 
     /**

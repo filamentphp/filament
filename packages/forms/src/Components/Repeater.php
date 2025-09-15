@@ -908,7 +908,7 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
         $this->relationship = $name ?? $this->getName();
         $this->modifyRelationshipQueryUsing = $modifyQueryUsing;
 
-        $this->afterStateHydrated(function (Repeater $component): void {
+        $this->afterStateHydrated(static function (Repeater $component): void {
             if (! is_array($component->hydratedDefaultState)) {
                 return;
             }

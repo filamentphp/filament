@@ -94,6 +94,11 @@ trait HasState
         return $casts;
     }
 
+    public function hasCustomStateCasts(): bool
+    {
+        return filled($this->stateCasts);
+    }
+
     /**
      * @return array<StateCast>
      */

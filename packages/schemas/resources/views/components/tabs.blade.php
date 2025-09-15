@@ -70,6 +70,14 @@
                     $tabIcon = $tab->getIcon();
                     $tabIconPosition = $tab->getIconPosition();
                     $tabExtraAttributeBag = $tab->getExtraAttributeBag();
+                    $tabHiddenJs = $tab->getHiddenJs();
+                    $tabVisibleJs = $tab->getVisibleJs();
+                    $tabVisibilityJs = match ([filled($tabHiddenJs), filled($tabVisibleJs)]) {
+                        [true, true] => "(! ({$tabHiddenJs})) && ({$tabVisibleJs})",
+                        [true, false] => "! ({$tabHiddenJs})",
+                        [false, true] => $tabVisibleJs,
+                        default => null,
+                    };
                 @endphp
 
                 <x-filament::tabs.item
@@ -82,6 +90,8 @@
                     :icon="$tabIcon"
                     :icon-position="$tabIconPosition"
                     :x-on:click="'tab = \'' . $tabKey . '\''"
+                    :x-show="$tabVisibilityJs"
+                    :x-cloak="$tabVisibilityJs !== null"
                     :attributes="$tabExtraAttributeBag"
                 >
                     {{ $tab->getLabel() }}
@@ -94,7 +104,24 @@
         </x-filament::tabs>
 
         @foreach ($getChildSchema()->getComponents() as $tab)
-            {{ $tab }}
+            @php
+                $tabHiddenJs = $tab->getHiddenJs();
+                $tabVisibleJs = $tab->getVisibleJs();
+                $tabVisibilityJs = match ([filled($tabHiddenJs), filled($tabVisibleJs)]) {
+                    [true, true] => "(! ({$tabHiddenJs})) && ({$tabVisibleJs})",
+                    [true, false] => "! ({$tabHiddenJs})",
+                    [false, true] => $tabVisibleJs,
+                    default => null,
+                };
+            @endphp
+
+            @if ($tabVisibilityJs)
+                <div x-show="{!! $tabVisibilityJs !!}" x-cloak>
+                    {{ $tab }}
+                </div>
+            @else
+                {{ $tab }}
+            @endif
         @endforeach
     </div>
 @else
