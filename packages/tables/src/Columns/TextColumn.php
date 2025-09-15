@@ -278,10 +278,10 @@ class TextColumn extends Column implements HasEmbeddedView
 
             $iconHtml = generate_icon_html($this->getIcon($stateItem), attributes: (new ComponentAttributeBag)
                 ->color(IconComponent::class, $iconColor), size: match ($size) {
-                TextSize::Medium => IconSize::Medium,
-                TextSize::Large => IconSize::Large,
-                default => IconSize::Small,
-            })?->toHtml();
+                    TextSize::Medium => IconSize::Medium,
+                    TextSize::Large => IconSize::Large,
+                    default => IconSize::Small,
+                })?->toHtml();
 
             $isCopyable = $this->isCopyable($stateItem);
 
@@ -340,17 +340,17 @@ class TextColumn extends Column implements HasEmbeddedView
                     ->merge([
                         'x-on:click' => $isCopyable
                             ? <<<JS
-                            window.navigator.clipboard.writeText({$copyableStateJs})
-                            \$tooltip({$copyMessageJs}, {
-                                theme: \$store.theme,
-                                timeout: {$copyMessageDurationJs},
-                            })
-                            JS
+                                window.navigator.clipboard.writeText({$copyableStateJs})
+                                \$tooltip({$copyMessageJs}, {
+                                    theme: \$store.theme,
+                                    timeout: {$copyMessageDurationJs},
+                                })
+                                JS
                             : null,
                         'x-tooltip' => filled($tooltip = $this->getTooltip($stateItem))
                             ? '{
-                            content: ' . Js::from($tooltip) . ',
-                            theme: $store.theme,
+                                content: ' . Js::from($tooltip) . ',
+                                theme: $store.theme,
                         }'
                             : null,
                     ], escape: false)
@@ -386,8 +386,8 @@ class TextColumn extends Column implements HasEmbeddedView
             ob_start(); ?>
 
             <div <?= $attributes
-                        ->merge($stateItemAttributes->getAttributes(), escape: false)
-                        ->toHtml() ?>>
+                ->merge($stateItemAttributes->getAttributes(), escape: false)
+                ->toHtml() ?>>
                 <?php if ($isBadge) { ?>
                     <span <?= $stateItemBadgeAttributes->toHtml() ?>>
                 <?php } else { ?>
@@ -576,6 +576,6 @@ class TextColumn extends Column implements HasEmbeddedView
             <?php } ?>
         </ul>
 
-<?php return ob_get_clean();
+        <?php return ob_get_clean();
     }
 }

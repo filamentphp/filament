@@ -196,7 +196,7 @@ class TextEntry extends Entry implements HasAffixActions, HasEmbeddedView
                 <?php } ?>
             </div>
 
-        <?php return $this->wrapEmbeddedHtml(ob_get_clean());
+            <?php return $this->wrapEmbeddedHtml(ob_get_clean());
         }
 
         $shouldOpenUrlInNewTab = $this->shouldOpenUrlInNewTab();
@@ -337,17 +337,17 @@ class TextEntry extends Entry implements HasAffixActions, HasEmbeddedView
                         ->merge([
                             'x-on:click' => $isCopyable
                                 ? <<<JS
-                            window.navigator.clipboard.writeText({$copyableStateJs})
-                            \$tooltip({$copyMessageJs}, {
-                                theme: \$store.theme,
-                                timeout: {$copyMessageDurationJs},
-                            })
-                            JS
+                                    window.navigator.clipboard.writeText({$copyableStateJs})
+                                    \$tooltip({$copyMessageJs}, {
+                                        theme: \$store.theme,
+                                        timeout: {$copyMessageDurationJs},
+                                    })
+                                    JS
                                 : null,
                             'x-tooltip' => filled($tooltip = $this->getTooltip($stateItem))
                                 ? '{
-                            content: ' . Js::from($tooltip) . ',
-                            theme: $store.theme,
+                                    content: ' . Js::from($tooltip) . ',
+                                    theme: $store.theme,
                         }'
                                 : null,
                         ], escape: false)
@@ -394,18 +394,22 @@ class TextEntry extends Entry implements HasAffixActions, HasEmbeddedView
                 ->toHtml() ?>>
                 <?php if ($isBadge) { ?>
                     <span <?= $stateItemBadgeAttributes->toHtml() ?>>
-                    <?php } else { ?>
-                        <span <?= $stateItemInnerAttributes->toHtml() ?>>
-                        <?php } ?>
+                <?php } else { ?>
+                    < <?= $stateItemInnerAttributes->toHtml() ?>>
+                <?php } ?>
 
-                        <?= $stateItemIconBeforeHtml ?>
-                        <?= $formatState($stateItem) ?>
-                        <?= $stateItemIconAfterHtml ?>
+                <?= $stateItemIconBeforeHtml ?>
+                <?= $formatState($stateItem) ?>
+                <?= $stateItemIconAfterHtml ?>
 
-                        </span>
+                <?php if ($isBadge) { ?>
+                    </span>
+                <?php } else { ?>
+                    </span>
+                <?php } ?>
             </div>
 
-        <?php return $this->wrapEmbeddedHtml(ob_get_clean());
+            <?php return $this->wrapEmbeddedHtml(ob_get_clean());
         }
 
         $attributes = $attributes
