@@ -301,17 +301,17 @@ class TextEntry extends Entry implements HasAffixActions, HasEmbeddedView
                 ->merge([
                     'x-on:click' => $isCopyable
                         ? <<<JS
-                    window.navigator.clipboard.writeText({$copyableStateJs})
-                    \$tooltip({$copyMessageJs}, {
-                        theme: \$store.theme,
-                        timeout: {$copyMessageDurationJs},
-                    })
-                    JS
+                            window.navigator.clipboard.writeText({$copyableStateJs})
+                            \$tooltip({$copyMessageJs}, {
+                                theme: \$store.theme,
+                                timeout: {$copyMessageDurationJs},
+                            })
+                            JS
                         : null,
                     'x-tooltip' => filled($tooltip = $this->getTooltip($stateItem))
                         ? '{
-                    content: ' . Js::from($tooltip) . ',
-                    theme: $store.theme,
+                            content: ' . Js::from($tooltip) . ',
+                            theme: $store.theme,
                 }'
                         : null,
                 ], escape: false)
