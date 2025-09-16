@@ -11,11 +11,7 @@ import AutoScreenshot from "@components/AutoScreenshot.astro"
 Before we start, make sure that the [Laravel notifications table](https://laravel.com/docs/notifications#database-prerequisites) is added to your database:
 
 ```bash
-# Laravel 11 and higher
 php artisan make:notifications-table
-
-# Laravel 10
-php artisan notifications:table
 ```
 
 > If you're using PostgreSQL, make sure that the `data` column in the migration is using `json()`: `$table->json('data')`.

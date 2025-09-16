@@ -2,14 +2,14 @@
 
 return [
 
-    'title' => 'Reset your password',
+    'title' => 'I password reset na',
 
-    'heading' => 'Forgot password?',
+    'heading' => 'Password I theihnghilh em?',
 
     'actions' => [
 
         'login' => [
-            'label' => 'back to login',
+            'label' => 'login a letna',
         ],
 
     ],
@@ -23,7 +23,7 @@ return [
         'actions' => [
 
             'request' => [
-                'label' => 'Send email',
+                'label' => 'Email thawnna',
             ],
 
         ],

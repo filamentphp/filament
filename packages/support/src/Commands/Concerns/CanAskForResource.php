@@ -93,7 +93,31 @@ trait CanAskForResource
                         filled($search = (string) str($search)->trim()->replace(['\\', '/'], '')),
                         fn (Collection $resourceFqns) => $resourceFqns->filter(fn (string $fqn): bool => str($fqn)->replace(['\\', '/'], '')->contains($search, ignoreCase: true)),
                     )
-                    ->mapWithKeys(fn (string $fqn): array => [$fqn => (string) str($fqn)->after("{$resourcesNamespace}\\")])
+                    ->mapWithKeys(function (string $fqn) use ($resourcesNamespace): array {
+                        $label = (string) str($fqn)->after("{$resourcesNamespace}\\");
+
+                        if (str($label)->contains('\\')) {
+                            $finalSegment = (string) str($label)->afterLast('\\');
+
+                            $penultimateSegment = (string) str($label)->beforeLast('\\');
+
+                            if (str($penultimateSegment)->contains('\\')) {
+                                $penultimateSegment = (string) str($penultimateSegment)->afterLast('\\');
+                            }
+
+                            if (str($finalSegment)->endsWith('Resource') && ($finalSegment !== 'Resource')) {
+                                $expectedPenultimateSegment = (string) str($finalSegment)
+                                    ->beforeLast('Resource')
+                                    ->pluralStudly();
+                            }
+
+                            if ($penultimateSegment === ($expectedPenultimateSegment ?? null)) {
+                                $label = (string) str($label)->beforeLast('\\');
+                            }
+                        }
+
+                        return [$fqn => $label];
+                    })
                     ->all();
             },
         );

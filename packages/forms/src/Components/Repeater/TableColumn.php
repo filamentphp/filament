@@ -7,6 +7,7 @@ use Filament\Support\Components\Component;
 use Filament\Support\Concerns\CanWrapHeader;
 use Filament\Support\Concerns\HasAlignment;
 use Filament\Support\Concerns\HasWidth;
+use Illuminate\Contracts\Support\Htmlable;
 
 class TableColumn extends Component
 {
@@ -20,9 +21,9 @@ class TableColumn extends Component
 
     protected bool | Closure $isMarkedAsRequired = false;
 
-    public function __construct(protected string | Closure $label) {}
+    public function __construct(protected string | Htmlable | Closure $label) {}
 
-    public static function make(string | Closure $label): static
+    public static function make(string | Htmlable | Closure $label): static
     {
         $static = app(static::class, ['label' => $label]);
 
@@ -38,7 +39,7 @@ class TableColumn extends Component
         return $this;
     }
 
-    public function getLabel(): string
+    public function getLabel(): string | Htmlable
     {
         return $this->evaluate($this->label);
     }

@@ -65,7 +65,11 @@
 
     <div
         @if (! $trigger->attributes->get('disabled'))
-            x-on:click="$el.nextElementSibling.dispatchEvent(new CustomEvent(@js($openEventName)))"
+            @if ($id)
+                x-on:click="$dispatch(@js($openEventName), { id: @js($id) })"
+            @else
+                x-on:click="$el.nextElementSibling.dispatchEvent(new CustomEvent(@js($openEventName)))"
+            @endif
         @endif
         {{ $trigger->attributes->except(['disabled'])->class(['fi-modal-trigger']) }}
     >
@@ -90,10 +94,11 @@
         x-on:{{ $closeEventName }}.window="if (($event.detail.id === @js($id)) && isOpen) close()"
         x-on:{{ $closeQuietlyEventName }}.window="if (($event.detail.id === @js($id)) && isOpen) closeQuietly()"
         x-on:{{ $openEventName }}.window="if (($event.detail.id === @js($id)) && (! isOpen)) open()"
+    @else
+        x-on:{{ $closeEventName }}.stop="if (isOpen) close()"
+        x-on:{{ $closeQuietlyEventName }}.stop="if (isOpen) closeQuietly()"
+        x-on:{{ $openEventName }}.stop="if (! isOpen) open()"
     @endif
-    x-on:{{ $closeEventName }}.stop="if (isOpen) close()"
-    x-on:{{ $closeQuietlyEventName }}.stop="if (isOpen) closeQuietly()"
-    x-on:{{ $openEventName }}.stop="if (! isOpen) open()"
     x-bind:class="{
         'fi-modal-open': isOpen,
     }"
