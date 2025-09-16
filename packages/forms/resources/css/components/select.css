@@ -1,7 +1,4 @@
 .fi-fo-select {
-    @apply relative z-[1];
-    contain: layout;
-
     & .fi-hidden {
         @apply hidden;
     }

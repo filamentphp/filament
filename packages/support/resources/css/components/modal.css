@@ -396,6 +396,12 @@
             }
         }
     }
+
+    & .fi-fo-select,
+    & .fi-dropdown {
+        @apply relative z-[1];
+        contain: layout;
+    }
 }
 
 & .fi-modal-trigger {
