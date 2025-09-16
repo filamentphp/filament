@@ -1,3 +1,8 @@
+& .fi-dropdown {
+    @apply relative z-[1];
+    contain: layout;
+}
+
 & .fi-dropdown-trigger {
     @apply flex cursor-pointer;
 }
