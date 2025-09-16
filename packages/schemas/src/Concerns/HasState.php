@@ -228,22 +228,16 @@ trait HasState
             }
 
             if (filled($component->getStatePath(isAbsolute: false))) {
-                $componentStatePath = $component->getStatePath();
-                $componentState = data_get($state, $componentStatePath);
-
-                if ($componentState === '') {
-                    data_set($state, $componentStatePath, null);
-                    $componentState = null;
-                }
-
                 if (! $component->mutatesDehydratedState()) {
                     continue;
                 }
 
+                $componentStatePath = $component->getStatePath();
+
                 data_set(
                     $state,
                     $componentStatePath,
-                    $component->mutateDehydratedState($componentState),
+                    $component->mutateDehydratedState(data_get($state, $componentStatePath)),
                 );
             }
         }
@@ -392,7 +386,7 @@ trait HasState
             ?? $this->getRecord(withParentComponentRecord: false)
             ?? $this->getParentComponent()?->getContainer()->getConstantState()
             ?? $this->getRecord()
-            ?? throw new LogicException('Schema has no [record()] or [state()] set.');
+            ?? [];
     }
 
     /**
@@ -442,6 +436,34 @@ trait HasState
 
                 $shouldCallHooksBefore && $this->saveRelationships();
                 $shouldCallHooksBefore && $this->loadStateFromRelationships(shouldHydrate: true);
+            }
+
+            return $state;
+        });
+    }
+
+    /**
+     * @internal Do not use this method outside the internals of Filament. It is subject to breaking changes in minor and patch releases.
+     *
+     * @return array<string, mixed>
+     */
+    public function getStateSnapshot(): array
+    {
+        return Component::withVisibilityCache(function (): array {
+            $statePath = $this->getStatePath();
+
+            if (filled($statePath)) {
+                $state = [];
+                data_set($state, $statePath, $this->getRawState());
+            } else {
+                $state = $this->getRawState();
+            }
+
+            $this->dehydrateState($state);
+            $this->mutateDehydratedState($state);
+
+            if ($statePath) {
+                $state = data_get($state, $statePath) ?? [];
             }
 
             return $state;

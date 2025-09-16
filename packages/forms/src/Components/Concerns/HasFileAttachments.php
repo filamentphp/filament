@@ -8,6 +8,7 @@ use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Support\Facades\Storage;
 use League\Flysystem\UnableToCheckFileExistence;
+use Livewire\Attributes\Renderless;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Throwable;
 
@@ -38,6 +39,7 @@ trait HasFileAttachments
     }
 
     #[ExposedLivewireMethod]
+    #[Renderless]
     public function getUploadedFileAttachmentTemporaryUrl(TemporaryUploadedFile | string | null $attachment = null): ?string
     {
         return $this->getUploadedFileAttachment($attachment)?->temporaryUrl();
@@ -77,6 +79,7 @@ trait HasFileAttachments
     }
 
     #[ExposedLivewireMethod]
+    #[Renderless]
     public function saveUploadedFileAttachmentAndGetUrl(): ?string
     {
         $attachment = $this->getUploadedFileAttachment();

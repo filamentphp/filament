@@ -1,5 +1,7 @@
 <?php
 
+use Filament\Actions\Action;
+use Filament\Actions\Testing\TestAction;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -293,6 +295,24 @@ it('can use select options from an enum with `disableOptionsWhenSelectedInSiblin
     $undoRepeaterFake();
 });
 
+it('can use arguments to hide the delete action', function (): void {
+    $undoRepeaterFake = Repeater::fake();
+
+    $deleteAction1 = TestAction::make('delete')
+        ->schemaComponent('hiddenDelete')
+        ->arguments(['item' => 1]);
+
+    $deleteAction2 = TestAction::make('delete')
+        ->schemaComponent('hiddenDelete')
+        ->arguments(['item' => 2]);
+
+    livewire(TestComponentWithRepeater::class)
+        ->assertActionHidden($deleteAction1)
+        ->assertActionVisible($deleteAction2);
+
+    $undoRepeaterFake();
+});
+
 class TestComponentWithRepeater extends Livewire
 {
     public function mount(): void
@@ -393,6 +413,22 @@ class TestComponentWithRepeater extends Livewire
                             ],
                         ],
                     ]),
+                Repeater::make('hiddenDelete')
+                    ->schema([
+                        TextInput::make('title'),
+                    ])
+                    ->default([
+                        [
+                            'title' => 'title 1',
+                        ],
+                        [
+                            'title' => 'title 2',
+                        ],
+                        [
+                            'title' => 'title 3',
+                        ],
+                    ])
+                    ->deleteAction(fn (Action $action) => $action->hidden(fn (array $arguments): bool => $arguments['item'] === 1)),
             ])
             ->statePath('data');
     }

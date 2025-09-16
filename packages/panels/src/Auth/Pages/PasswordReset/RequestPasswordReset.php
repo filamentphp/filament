@@ -228,11 +228,6 @@ class RequestPasswordReset extends SimplePage
             ]);
     }
 
-    public function getDefaultTestingSchemaName(): ?string
-    {
-        return 'form';
-    }
-
     /**
      * @param  array<string, mixed>  $data
      * @return array<string, mixed>

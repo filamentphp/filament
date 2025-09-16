@@ -522,7 +522,6 @@ return [
         ],
 
         'messages' => [
-            'uploading_file' => 'Uploading file...',
             'invalid_col_spans' => 'The sum of left and right spans must equal the total number of columns',
         ],
 
@@ -572,6 +571,8 @@ return [
             'underline' => 'Underline',
             'undo' => 'Undo',
         ],
+
+        'uploading_file_message' => 'Uploading file...',
 
     ],
 

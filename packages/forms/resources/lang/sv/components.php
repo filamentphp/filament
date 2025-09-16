@@ -515,6 +515,8 @@ return [
             'undo' => 'Ångra',
         ],
 
+        'uploading_file_message' => 'Laddar upp fil...',
+
     ],
 
     'select' => [

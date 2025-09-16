@@ -81,7 +81,7 @@
                                         />
                                     @endif
 
-                                    <span x-text="column.label"></span>
+                                    <span x-html="column.label"></span>
                                 </label>
 
                                 @if ($hasReorderableColumns)
@@ -131,7 +131,7 @@
                                                 @endif
 
                                                 <span
-                                                    x-text="groupColumn.label"
+                                                    x-html="groupColumn.label"
                                                 ></span>
                                             </label>
 
@@ -165,7 +165,7 @@
                                     />
                                 @endif
 
-                                <span x-text="column.label"></span>
+                                <span x-html="column.label"></span>
                             </label>
 
                             @if ($hasReorderableColumns)

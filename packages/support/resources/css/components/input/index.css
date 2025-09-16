@@ -36,3 +36,8 @@ input.fi-input {
         @apply text-justify;
     }
 }
+
+input[type='range'].fi-input {
+    @apply mx-auto appearance-auto;
+    width: calc(100% - 1.5rem);
+}

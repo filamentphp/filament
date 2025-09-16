@@ -86,6 +86,11 @@ class RichContentRenderer implements Htmlable
     protected array $cachedMergeTagValues = [];
 
     /**
+     * @var array<Closure>
+     */
+    protected array $nodeProcessors = [];
+
+    /**
      * @param  string | array<string, mixed> | null  $content
      */
     public function __construct(string | array | null $content = null)
@@ -238,6 +243,20 @@ class RichContentRenderer implements Htmlable
         });
     }
 
+    public function processNodesUsing(Closure $callback): static
+    {
+        $this->nodeProcessors[] = $callback;
+
+        return $this;
+    }
+
+    protected function processNodes(Editor $editor): void
+    {
+        foreach ($this->nodeProcessors as $processor) {
+            $editor->descendants($processor);
+        }
+    }
+
     /**
      * @return array<RichContentPlugin>
      */
@@ -345,6 +364,7 @@ class RichContentRenderer implements Htmlable
         $this->processCustomBlocks($editor);
         $this->processFileAttachments($editor);
         $this->processMergeTags($editor);
+        $this->processNodes($editor);
 
         return $editor->getHTML();
     }
@@ -361,6 +381,21 @@ class RichContentRenderer implements Htmlable
         $this->processMergeTags($editor);
 
         return $editor->getText();
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function toArray(): array
+    {
+        if (empty($this->content)) {
+            return [];
+        }
+
+        $editor = $this->getEditor();
+        $this->processMergeTags($editor);
+
+        return json_decode($editor->getJSON(), true);
     }
 
     /**

@@ -74,7 +74,7 @@
                 {{ \Filament\Support\generate_loading_indicator_html() }}
 
                 <span>
-                    {{ __('filament-forms::components.rich_editor.messages.uploading_file') }}
+                    {{ $getUploadingFileMessage() }}
                 </span>
             </div>
 

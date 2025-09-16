@@ -50,10 +50,6 @@ trait HasRecordActions
             $action->table($this);
 
             if ($action instanceof ActionGroup) {
-                if (! $action->getDropdownPlacement()) {
-                    $action->dropdownPlacement('bottom-end');
-                }
-
                 /** @var array<string, Action> $flatActions */
                 $flatActions = $action->getFlatActions();
 
@@ -103,7 +99,14 @@ trait HasRecordActions
      */
     public function getRecordActions(): array
     {
-        return $this->recordActions;
+        $defaultGroupDropdownPlacement = in_array($this->getRecordActionsPosition(), [RecordActionsPosition::BeforeCells, RecordActionsPosition::BeforeColumns])
+            ? 'bottom-start'
+            : 'bottom-end';
+
+        return array_map(
+            fn (Action | ActionGroup $action) => $action instanceof ActionGroup ? $action->defaultDropdownPlacement($defaultGroupDropdownPlacement) : $action,
+            $this->recordActions,
+        );
     }
 
     public function getRecordActionsPosition(): RecordActionsPosition

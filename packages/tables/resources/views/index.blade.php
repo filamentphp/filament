@@ -498,6 +498,7 @@
                                         :max-height="$filtersFormMaxHeight"
                                         placement="bottom-end"
                                         shift
+                                        :flip="false"
                                         :width="$filtersFormWidth ?? Width::ExtraSmall"
                                         :wire:key="$this->getId() . '.table.filters'"
                                         class="fi-ta-filters-dropdown"
@@ -528,6 +529,7 @@
                                     :max-height="$columnManagerMaxHeight"
                                     placement="bottom-end"
                                     shift
+                                    :flip="false"
                                     :width="$columnManagerWidth"
                                     :wire:key="$this->getId() . '.table.column-manager'"
                                     class="fi-ta-col-manager-dropdown"
@@ -894,7 +896,7 @@
                                     );
                                 @endphp
 
-                                @if ($recordGroupTitle !== $previousRecordGroupTitle)
+                                @if ((string) $recordGroupTitle !== (string) $previousRecordGroupTitle)
                                     @if ($hasSummary && (! $isReordering) && filled($previousRecordGroupTitle))
                                         <table
                                             @class([
@@ -1582,7 +1584,7 @@
                                             );
                                         @endphp
 
-                                        @if ($recordGroupTitle !== $previousRecordGroupTitle)
+                                        @if ((string) $recordGroupTitle !== (string) $previousRecordGroupTitle)
                                             @if ($hasSummary && (! $isReordering) && filled($previousRecordGroupTitle))
                                                 @php
                                                     $groupColumn = $group->getColumn();
