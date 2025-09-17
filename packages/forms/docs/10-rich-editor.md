@@ -467,54 +467,32 @@ RichEditor::make('content')
 
 ## Using mentions
 
-Mentions let users type `@` to search and insert inline references (e.g., users, teams). The inserted mention is an inline, non-editable token rendered as text like `@Jane Doe`.
+Mentions let users type a trigger character (like `@`) to search and insert inline references (e.g., users, teams). Inserted mentions are inline, non-editable tokens rendered as text like `@Jane Doe`.
 
-Mentions are built into the rich editor. To enable them, provide a list of items using `mentionItems()`:
+There are two ways to provide mention data. Only one should be used at a time:
+
+1) Static lists with `mentionItems()` (fixed or query-time computed arrays)
 
 ```php
 use Filament\Forms\Components\RichEditor;
 
+// Simple list
 RichEditor::make('content')
     ->mentionItems([
-        // Strings
         'Marketing', 'Sales', 'Support',
-
-        // Or objects with an id and label (recommended)
-        ['id' => 1, 'label' => 'Jane Doe'],
-        ['id' => 2, 'label' => 'John Smith'],
-
-    ])
-    // or Model Query
-    ->mentionItems(fn () => User::all()->map(fn ($item) => ['id' => $item['id'], 'label' => $item['name']])->toArray())
-```
-
-- You can control how many suggestions are shown by default with `mentionItemsLimit()` (default is `5`):
-
-```php
-use Filament\Forms\Components\RichEditor;
-
-RichEditor::make('content')
-    ->mentionItemsLimit(15)
-    ->mentionItems([
         ['id' => 1, 'label' => 'Jane Doe'],
         ['id' => 2, 'label' => 'John Smith'],
     ])
-```
 
-- You can register multiple mention triggers by passing configuration arrays with a `char` and `items`:
-
-```php
-use Filament\Forms\Components\RichEditor;
-
+// Multiple triggers
 RichEditor::make('content')
-    ->mentionItemsLimit(10)
     ->mentionItems([
         [
             'char' => '@',
             'items' => User::query()
                 ->orderBy('name')
-                ->get()
-                ->map(fn ($user) => ['id' => $user->id, 'label' => $user->name])
+                ->get(['id', 'name'])
+                ->map(fn ($u) => ['id' => $u->id, 'label' => $u->name])
                 ->toArray(),
         ],
         [
@@ -524,12 +502,33 @@ RichEditor::make('content')
     ])
 ```
 
-- Typing `@` opens a dropdown that filters as you type.
-- Selecting an item inserts an inline span with a ```data-type="mention"``` attribute at the cursor.
-- Items can be simple strings or associative arrays with `id` and `label` (or `name`). When both are present, the label is displayed and the id is stored.
-- You may pass a closure to `mentionItems()` to compute items dynamically.
-- The number of suggestions can be limited globally with `mentionItemsLimit()`.
-- You can use different trigger characters by passing config arrays with a `char` and `items`.
+2) Async lists with `getMentionSearchResultsUsing()` (large datasets)
+
+Provide a callback that receives the user’s search string and returns results. The dropdown will appear once there are results (typically after typing at least one character after the trigger):
+
+```php
+use Filament\Forms\Components\RichEditor;
+
+RichEditor::make('content')
+    ->getMentionSearchResultsUsing(fn (string $search) => [
+        [
+            'char' => '@',
+            'items' => User::query()
+                ->where('name', 'like', "%{$search}%")
+                ->orderBy('name')
+                ->limit(10)
+                ->get(['id', 'name'])
+                ->map(fn ($u) => ['id' => $u->id, 'label' => $u->name])
+                ->toArray(),
+        ],
+    ])
+```
+
+Notes
+
+- Only one mechanism should be used: either `mentionItems()` or `getMentionSearchResultsUsing()`. If `getMentionSearchResultsUsing()` is defined, `mentionItems()` will be ignored.
+- Items can be strings or objects with `id` and `label`. When `id` and `label` are present, the label is displayed and the id is stored.
+- The `getMentionSearchResultsUsing()` is called with the current typed query; return an empty array when there are no results.
 
 
 
