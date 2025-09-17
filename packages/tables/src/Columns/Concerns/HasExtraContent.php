@@ -8,6 +8,9 @@ use Illuminate\Contracts\Support\Htmlable;
 
 trait HasExtraContent
 {
+    /**
+     * @var array<string, string|Htmlable|Closure|null>
+     */
     protected array $extraContent = [];
 
     public function aboveErrorMessage(string | Htmlable | Closure | null $content): static
