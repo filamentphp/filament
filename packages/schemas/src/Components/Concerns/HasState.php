@@ -930,6 +930,45 @@ trait HasState
      */
     public function getConstantStateFromRecord(Model $record): mixed
     {
+        $relationship = $this->getStateRelationship($record);
+
+        if ($relationship) {
+            $relationshipAttribute = $this->getStateRelationshipAttribute();
+
+            $state = collect($this->getStateRelationshipResults($record))
+                ->reduce(
+                    function (Collection $carry, Model $record) use ($relationshipAttribute): Collection {
+                        if (
+                            ($record instanceof HasRichContent) &&
+                            $record->hasRichContentAttribute($relationshipAttribute)
+                        ) {
+                            $state = $record->getRichContentAttribute($relationshipAttribute);
+                        } else {
+                            $state = data_get($record, $relationshipAttribute);
+                        }
+
+                        if (blank($state)) {
+                            return $carry;
+                        }
+
+                        return $carry->push($state);
+                    },
+                    initial: collect(),
+                )
+                ->when($this->isDistinctList(), fn (Collection $state) => $state->unique())
+                ->values();
+
+            if (! $state->count()) {
+                return null;
+            }
+
+            if (($state->count() < 2) && (! $this->hasMultipleStateRelationship($record))) {
+                return $state->first();
+            }
+
+            return $state->all();
+        }
+
         $name = $this->getConstantStatePath();
 
         if (
@@ -941,34 +980,7 @@ trait HasState
             $state = data_get($record, $name);
         }
 
-        if ($state !== null) {
-            return $state;
-        }
-
-        if (! $this->hasStateRelationship($record)) {
-            return null;
-        }
-
-        $relationship = $this->getStateRelationship($record);
-
-        if (! $relationship) {
-            return null;
-        }
-
-        $relationshipAttribute = $this->getStateRelationshipAttribute();
-
-        $state = collect($this->getStateRelationshipResults($record))
-            ->filter(fn (Model $record): bool => array_key_exists($relationshipAttribute, $record->attributesToArray()))
-            ->pluck($relationshipAttribute)
-            ->filter(fn ($state): bool => filled($state))
-            ->when($this->isDistinctList(), fn (Collection $state) => $state->unique())
-            ->values();
-
-        if (! $state->count()) {
-            return null;
-        }
-
-        return $state->all();
+        return $state;
     }
 
     public function getStatePathForRelationship(): ?string

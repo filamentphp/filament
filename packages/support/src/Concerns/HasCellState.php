@@ -33,6 +33,10 @@ trait HasCellState
      */
     protected array $cachedState = [];
 
+    protected ?bool $hasMultipleRelationshipCache = null;
+
+    protected ?Relation $relationshipCache = null;
+
     public function inverseRelationship(?string $name): static
     {
         $this->inverseRelationshipName = $name;
@@ -103,6 +107,48 @@ trait HasCellState
     public function getStateFromRecord(): mixed
     {
         $record = $this->getRecord();
+
+        if ($record instanceof Model) {
+            $relationship = $this->getRelationship($record);
+
+            if ($relationship) {
+                $relationshipAttribute = $this->getFullAttributeName($record);
+
+                $state = collect($this->getRelationshipResults($record))
+                    ->reduce(
+                        function (Collection $carry, Model $record) use ($relationshipAttribute): Collection {
+                            if (
+                                ($record instanceof HasRichContent) &&
+                                $record->hasRichContentAttribute($relationshipAttribute)
+                            ) {
+                                $state = $record->getRichContentAttribute($relationshipAttribute);
+                            } else {
+                                $state = data_get($record, $relationshipAttribute);
+                            }
+
+                            if (blank($state)) {
+                                return $carry;
+                            }
+
+                            return $carry->push($state);
+                        },
+                        initial: collect(),
+                    )
+                    ->when($this->isDistinctList(), fn (Collection $state) => $state->unique())
+                    ->values();
+
+                if (! $state->count()) {
+                    return null;
+                }
+
+                if (($state->count() < 2) && (! $this->hasMultipleRelationship($record))) {
+                    return $state->first();
+                }
+
+                return $state->all();
+            }
+        }
+
         $name = $this->getName();
 
         if (
@@ -114,39 +160,7 @@ trait HasCellState
             $state = data_get($record, $name);
         }
 
-        if ($state !== null) {
-            return $state;
-        }
-
-        if (($this instanceof Column) && is_array($record)) { /** @phpstan-ignore function.impossibleType, booleanAnd.alwaysFalse */
-            return null;
-        }
-
-        if (! $this->hasRelationship($record)) {
-            return null;
-        }
-
-        $relationship = $this->getRelationship($record);
-
-        if (! $relationship) {
-            return null;
-        }
-
-        $attributeName = $this->getAttributeName($record);
-        $fullAttributeName = $this->getFullAttributeName($record);
-
-        $state = collect($this->getRelationshipResults($record))
-            ->filter(fn (Model $record): bool => array_key_exists($attributeName, $record->attributesToArray()))
-            ->pluck($fullAttributeName)
-            ->filter(fn ($state): bool => filled($state))
-            ->when($this->isDistinctList(), fn (Collection $state) => $state->unique())
-            ->values();
-
-        if (! $state->count()) {
-            return null;
-        }
-
-        return $state->all();
+        return $state;
     }
 
     public function clearCachedState(): void
@@ -187,6 +201,10 @@ trait HasCellState
 
     public function getRelationship(Model $record, ?string $relationshipName = null): ?Relation
     {
+        if ($this->relationshipCache) {
+            return $this->relationshipCache;
+        }
+
         if (isset($relationshipName)) {
             $nameParts = explode('.', $relationshipName);
         } else {
@@ -211,7 +229,38 @@ trait HasCellState
             $record = $relationship->getRelated();
         }
 
-        return $relationship;
+        return $this->relationshipCache = $relationship;
+    }
+
+    public function hasMultipleRelationship(Model $record): bool
+    {
+        if (isset($this->hasMultipleRelationshipCache)) {
+            return $this->hasMultipleRelationshipCache;
+        }
+
+        $relationships = explode('.', $this->getRelationshipName($record));
+
+        while (count($relationships)) {
+            $currentRelationshipName = array_shift($relationships);
+
+            $currentRelationshipValue = $record->getRelationValue($currentRelationshipName);
+
+            if ($currentRelationshipValue instanceof Collection) {
+                return $this->hasMultipleRelationshipCache = true;
+            }
+
+            if (! $currentRelationshipValue instanceof Model) {
+                break;
+            }
+
+            if (! count($relationships)) {
+                break;
+            }
+
+            $record = $currentRelationshipValue;
+        }
+
+        return $this->hasMultipleRelationshipCache = false;
     }
 
     /**

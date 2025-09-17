@@ -14,6 +14,7 @@ use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
 use Filament\Support\Exceptions\Cancel;
 use Filament\Support\Exceptions\Halt;
+use Filament\Support\Livewire\Partials\PartialsComponentHook;
 use Filament\Tables\Contracts\HasTable;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Database\Eloquent\Model;
@@ -309,6 +310,8 @@ trait InteractsWithActions
             return $result;
         }
 
+        $this->partiallyRenderActionParentSchema($action);
+
         $action->resetArguments();
         $action->resetData();
 
@@ -327,6 +330,28 @@ trait InteractsWithActions
         $this->unmountAction();
 
         return $result;
+    }
+
+    protected function partiallyRenderActionParentSchema(Action $action): void
+    {
+        $actionSchema = $action->getSchemaContainer() ?? $action->getSchemaComponent()?->getContainer();
+        $schemaToPartiallyRender = null;
+
+        while ($actionSchema !== null) {
+            if ($actionSchema->shouldPartiallyRender()) {
+                $schemaToPartiallyRender = $actionSchema;
+            }
+
+            $actionSchema = $actionSchema->getParentComponent()?->getContainer();
+        }
+
+        if (! $schemaToPartiallyRender) {
+            return;
+        }
+
+        app(PartialsComponentHook::class)->renderPartial($this, fn (): array => [
+            "schema.{$schemaToPartiallyRender->getKey()}" => $schemaToPartiallyRender->toHtml(...),
+        ]);
     }
 
     protected function afterActionCalled(): void {}
@@ -470,7 +495,6 @@ trait InteractsWithActions
                 continue;
             }
 
-            $resolvedAction->mergeArguments($action['arguments'] ?? []);
             $resolvedAction->nestingIndex($actionNestingIndex);
             $resolvedAction->boot();
 
