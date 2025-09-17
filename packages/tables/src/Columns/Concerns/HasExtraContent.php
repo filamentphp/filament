@@ -3,6 +3,7 @@
 namespace Filament\Tables\Columns\Concerns;
 
 use Closure;
+use Exception;
 use Illuminate\Contracts\Support\Htmlable;
 
 trait HasExtraContent
@@ -100,7 +101,7 @@ trait HasExtraContent
                 $record = $this->getRecord();
 
                 return $content($record);
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 return $content();
             }
         }
