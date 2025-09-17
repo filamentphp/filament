@@ -1,0 +1,87 @@
+.fi-input-wrp {
+    @apply flex rounded-lg bg-white shadow-sm ring-1 ring-gray-950/10 transition duration-75 dark:bg-white/5 dark:ring-white/20;
+
+    &:not(.fi-disabled):not(:has(.fi-ac-action:focus)) {
+        @apply focus-within:ring-primary-600 dark:focus-within:ring-primary-500 focus-within:ring-2;
+
+        &.fi-invalid {
+            @apply focus-within:ring-danger-600 dark:focus-within:ring-danger-500;
+        }
+    }
+
+    &.fi-disabled {
+        @apply bg-gray-50 dark:bg-transparent;
+
+        &:not(.fi-invalid) {
+            @apply dark:ring-white/10;
+        }
+    }
+
+    &.fi-invalid {
+        @apply ring-danger-600 dark:ring-danger-500;
+    }
+
+    & .fi-input-wrp-prefix {
+        @apply hidden items-center gap-x-3 ps-3;
+
+        &.fi-input-wrp-prefix-has-content {
+            @apply flex;
+        }
+
+        &.fi-inline {
+            @apply pe-2;
+
+            &.fi-input-wrp-prefix-has-label {
+                @apply pe-1;
+            }
+        }
+
+        &:not(.fi-inline) {
+            @apply border-e border-gray-200 ps-3 pe-3 dark:border-white/10;
+        }
+    }
+
+    & .fi-input-wrp-content-ctn,
+    &:not(:has(.fi-input-wrp-content-ctn)) > * {
+        @apply min-w-0 flex-1;
+
+        &.fi-input-wrp-content-ctn-ps {
+            @apply ps-3;
+        }
+    }
+
+    & .fi-input-wrp-suffix {
+        @apply flex items-center gap-x-3 pe-3;
+
+        &.fi-inline {
+            @apply ps-2;
+
+            &.fi-input-wrp-suffix-has-label {
+                @apply ps-1;
+            }
+        }
+
+        &:not(.fi-inline) {
+            @apply border-s border-gray-200 ps-3 dark:border-white/10;
+        }
+    }
+
+    & .fi-input-wrp-actions {
+        @apply flex items-center gap-3;
+    }
+
+    & .fi-input-wrp-label {
+        @apply text-sm whitespace-nowrap text-gray-500 dark:text-gray-400;
+    }
+
+    & .fi-input-wrp-prefix,
+    & .fi-input-wrp-suffix {
+        & .fi-icon {
+            @apply text-gray-400 dark:text-gray-500;
+
+            &.fi-color {
+                @apply text-color-500;
+            }
+        }
+    }
+}

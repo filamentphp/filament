@@ -284,7 +284,7 @@ return [
 
     'markdown_editor' => [
 
-        'toolbar_buttons' => [
+        'tools' => [
             'attach_files' => 'Կցել ֆայլեր',
             'blockquote' => 'Մեջբերում',
             'bold' => 'Թավ',
@@ -382,7 +382,7 @@ return [
 
         ],
 
-        'toolbar_buttons' => [
+        'tools' => [
             'attach_files' => 'Կցել ֆայլեր',
             'blockquote' => 'Մեջբերում բլոկից',
             'bold' => 'Թավ',
@@ -496,22 +496,6 @@ return [
         'boolean' => [
             'true' => 'Այո',
             'false' => 'Ոչ',
-        ],
-
-    ],
-
-    'wizard' => [
-
-        'actions' => [
-
-            'previous_step' => [
-                'label' => 'Նախորդը',
-            ],
-
-            'next_step' => [
-                'label' => 'Հաջորդը',
-            ],
-
         ],
 
     ],

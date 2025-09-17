@@ -6,7 +6,7 @@ use Filament\Pages\Page;
 
 class DisabledNavigation extends Page
 {
-    protected static string $view = 'livewire.panels.navigation.empty';
+    protected string $view = 'livewire.panels.navigation.empty';
 
     public function mount()
     {

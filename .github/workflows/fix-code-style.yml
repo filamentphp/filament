@@ -21,6 +21,8 @@ jobs:
         run: |
           composer install --no-interaction
           npm ci
+      - name: Run Rector
+        run: composer rector
       - name: Run Pint
         run: composer pint
       - name: Run Prettier

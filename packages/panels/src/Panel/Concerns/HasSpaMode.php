@@ -8,14 +8,17 @@ trait HasSpaMode
 {
     protected bool | Closure $hasSpaMode = false;
 
+    protected bool | Closure $hasSpaPrefetching = false;
+
     /**
      * @var array<string> | Closure
      */
     protected array | Closure $spaModeUrlExceptions = [];
 
-    public function spa(bool | Closure $condition = true): static
+    public function spa(bool | Closure $condition = true, bool | Closure $hasPrefetching = false): static
     {
         $this->hasSpaMode = $condition;
+        $this->hasSpaPrefetching = $hasPrefetching;
 
         return $this;
     }
@@ -33,6 +36,11 @@ trait HasSpaMode
     public function hasSpaMode(): bool
     {
         return (bool) $this->evaluate($this->hasSpaMode);
+    }
+
+    public function hasSpaPrefetching(): bool
+    {
+        return (bool) $this->evaluate($this->hasSpaPrefetching);
     }
 
     /**

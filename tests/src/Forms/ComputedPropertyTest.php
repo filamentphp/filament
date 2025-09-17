@@ -1,16 +1,16 @@
 <?php
 
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
-use Filament\Tests\Forms\Fixtures\Livewire;
+use Filament\Schemas\Schema;
+use Filament\Tests\Fixtures\Livewire\Livewire;
 use Filament\Tests\TestCase;
 use Pest\Expectation;
 
 uses(TestCase::class);
 
-test('computed properties used to generate form schema can be accessed before caching forms', function () {
+test('computed properties used to generate form schema can be accessed before caching forms', function (): void {
     expect(ComputedPropertySchema::make())
-        ->getSchema()
+        ->getSchemaArray()
         ->toBeArray()
         ->sequence(
             fn (Expectation $expect) => $expect->toBeInstanceOf(TextInput::class)
@@ -19,10 +19,10 @@ test('computed properties used to generate form schema can be accessed before ca
 
 class ComputedPropertySchema extends Livewire
 {
-    public function form(Form $form): Form
+    public function form(Schema $form): Schema
     {
         return $form
-            ->schema($this->schema);
+            ->components($this->schema);
     }
 
     public function getSchemaProperty()
@@ -32,7 +32,7 @@ class ComputedPropertySchema extends Livewire
         ];
     }
 
-    public function getSchema()
+    public function getSchemaArray()
     {
         return $this->schema;
     }

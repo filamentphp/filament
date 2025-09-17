@@ -1,9 +1,9 @@
 <?php
 
+use Filament\Auth\Pages\PasswordReset\ResetPassword;
 use Filament\Facades\Filament;
 use Filament\Notifications\Notification;
-use Filament\Pages\Auth\PasswordReset\ResetPassword;
-use Filament\Tests\Models\User;
+use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Support\Facades\Event;
@@ -14,7 +14,7 @@ use function Filament\Tests\livewire;
 
 uses(TestCase::class);
 
-it('can render page', function () {
+it('can render page', function (): void {
     $userToResetPassword = User::factory()->make();
     $token = Password::createToken($userToResetPassword);
 
@@ -28,8 +28,8 @@ it('can render page', function () {
     $this->get($url)->assertSuccessful();
 });
 
-it('can render page with a custom slug', function () {
-    Filament::setCurrentPanel(Filament::getPanel('slugs'));
+it('can render page with a custom slug', function (): void {
+    Filament::setCurrentPanel('slugs');
 
     $userToResetPassword = User::factory()->make();
     $token = Password::createToken($userToResetPassword);
@@ -44,7 +44,7 @@ it('can render page with a custom slug', function () {
     $this->get($url)->assertSuccessful();
 });
 
-it('can reset password', function () {
+it('can reset password', function (): void {
     Event::fake();
 
     $this->assertGuest();
@@ -74,7 +74,7 @@ it('can reset password', function () {
     ]);
 });
 
-it('cannot reset password without panel access', function () {
+it('cannot reset password without panel access', function (): void {
     Event::fake();
 
     $this->assertGuest();
@@ -105,7 +105,7 @@ it('cannot reset password without panel access', function () {
     ]);
 });
 
-it('requires request signature', function () {
+it('requires request signature', function (): void {
     $userToResetPassword = User::factory()->make();
     $token = Password::createToken($userToResetPassword);
 
@@ -115,7 +115,7 @@ it('requires request signature', function () {
     ]))->assertForbidden();
 });
 
-it('requires valid email and token', function () {
+it('requires valid email and token', function (): void {
     Event::fake();
 
     $this->assertGuest();
@@ -148,7 +148,7 @@ it('requires valid email and token', function () {
     Event::assertNotDispatched(PasswordReset::class);
 });
 
-it('can throttle reset password attempts', function () {
+it('can throttle reset password attempts', function (): void {
     Event::fake();
 
     $this->assertGuest();
@@ -193,14 +193,14 @@ it('can throttle reset password attempts', function () {
     ]);
 });
 
-it('can validate `password` is required', function () {
+it('can validate `password` is required', function (): void {
     livewire(ResetPassword::class)
         ->set('password', '')
         ->call('resetPassword')
         ->assertHasErrors(['password' => ['required']]);
 });
 
-it('can validate `password` is confirmed', function () {
+it('can validate `password` is confirmed', function (): void {
     livewire(ResetPassword::class)
         ->set('password', Str::random())
         ->set('passwordConfirmation', Str::random())
@@ -208,7 +208,7 @@ it('can validate `password` is confirmed', function () {
         ->assertHasErrors(['password' => ['same']]);
 });
 
-it('can validate `passwordConfirmation` is required', function () {
+it('can validate `passwordConfirmation` is required', function (): void {
     livewire(ResetPassword::class)
         ->set('passwordConfirmation', '')
         ->call('resetPassword')

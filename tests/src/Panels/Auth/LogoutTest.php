@@ -1,14 +1,14 @@
 <?php
 
+use Filament\Auth\Http\Responses\Contracts\LogoutResponse;
 use Filament\Facades\Filament;
-use Filament\Http\Responses\Auth\Contracts\LogoutResponse;
-use Filament\Tests\Models\User;
+use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
 use Illuminate\Http\RedirectResponse;
 
 uses(TestCase::class);
 
-it('can log a user out', function () {
+it('can log a user out', function (): void {
     $this
         ->actingAs(User::factory()->create())
         ->post(Filament::getLogoutUrl())
@@ -17,7 +17,7 @@ it('can log a user out', function () {
     $this->assertGuest();
 });
 
-it('allows a user to override the logout response', function () {
+it('allows a user to override the logout response', function (): void {
     $logoutResponseFake = new class implements LogoutResponse
     {
         public function toResponse($request): RedirectResponse

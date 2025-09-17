@@ -1,0 +1,31 @@
+.fi-fo-radio {
+    @apply gap-4;
+
+    &.fi-inline {
+        @apply flex flex-wrap;
+    }
+
+    &:not(.fi-inline).fi-grid-direction-col {
+        @apply -mt-4;
+
+        & > .fi-fo-radio-label {
+            @apply break-inside-avoid pt-4;
+        }
+    }
+
+    & > .fi-fo-radio-label {
+        @apply flex gap-x-3 self-start;
+
+        & > .fi-radio-input {
+            @apply mt-1 shrink-0;
+        }
+
+        & > .fi-fo-radio-label-text {
+            @apply grid text-sm leading-6 font-medium text-gray-950 dark:text-white;
+        }
+
+        & .fi-fo-radio-label-description {
+            @apply font-normal text-gray-500 dark:text-gray-400;
+        }
+    }
+}

@@ -3,6 +3,7 @@
 namespace Filament\Tables\Columns\Concerns;
 
 use Closure;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 
 trait CanBeSearchable
@@ -11,7 +12,7 @@ trait CanBeSearchable
 
     protected bool $isIndividuallySearchable = false;
 
-    protected bool $isSearchable = false;
+    protected bool | Closure $isSearchable = false;
 
     /**
      * @var array<string> | null
@@ -23,10 +24,10 @@ trait CanBeSearchable
     protected bool | Closure | null $isSearchForcedCaseInsensitive = null;
 
     /**
-     * @param  bool | array<string> | string  $condition
+     * @param  bool | array<string> | string | Closure  $condition
      */
     public function searchable(
-        bool | array | string $condition = true,
+        bool | array | string | Closure $condition = true,
         ?Closure $query = null,
         bool $isIndividual = false,
         bool $isGlobal = true,
@@ -56,14 +57,14 @@ trait CanBeSearchable
     /**
      * @return array<string>
      */
-    public function getSearchColumns(): array
+    public function getSearchColumns(Model $record): array
     {
-        return $this->searchColumns ?? $this->getDefaultSearchColumns();
+        return $this->searchColumns ?? $this->getDefaultSearchColumns($record);
     }
 
     public function isSearchable(): bool
     {
-        return $this->isSearchable;
+        return $this->evaluate($this->isSearchable);
     }
 
     public function isGloballySearchable(): bool
@@ -84,8 +85,8 @@ trait CanBeSearchable
     /**
      * @return array{0: string}
      */
-    public function getDefaultSearchColumns(): array
+    public function getDefaultSearchColumns(Model $record): array
     {
-        return [(string) str($this->getName())->afterLast('.')];
+        return [$this->getFullAttributeName($record)];
     }
 }

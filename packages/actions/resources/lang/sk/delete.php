@@ -54,6 +54,18 @@ return [
                 'title' => 'Odstránené',
             ],
 
+            'deleted_partial' => [
+                'title' => 'Odstránených :count z :total',
+                'missing_authorization_failure_message' => 'Nemáte oprávnenie odstrániť :count.',
+                'missing_processing_failure_message' => ':count sa nepodarilo odstrániť.',
+            ],
+
+            'deleted_none' => [
+                'title' => 'Odstránenie zlyhalo',
+                'missing_authorization_failure_message' => 'Nemáte oprávnenie odstrániť :count.',
+                'missing_processing_failure_message' => ':count sa nepodarilo odstrániť.',
+            ],
+
         ],
 
     ],

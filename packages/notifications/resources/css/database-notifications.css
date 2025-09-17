@@ -1,0 +1,35 @@
+.fi-no-database {
+    @apply flex;
+
+    & .fi-modal-window-ctn > .fi-modal-window {
+        & .fi-modal-heading {
+            @apply relative inline-block;
+
+            & .fi-badge {
+                @apply absolute start-full -top-1 ms-1 w-max;
+            }
+        }
+
+        & .fi-modal-header {
+            & .fi-ac {
+                @apply mt-2;
+            }
+        }
+
+        & .fi-modal-content {
+            @apply -mx-6 -mt-6 gap-y-0 divide-y divide-gray-200 dark:divide-white/10;
+        }
+
+        &:not(.fi-modal-window-has-footer) .fi-modal-content {
+            @apply -mb-6;
+        }
+
+        &.fi-modal-window-has-footer .fi-modal-content {
+            @apply border-b border-gray-200 dark:border-white/10;
+        }
+    }
+
+    & .fi-no-notification-unread-ctn {
+        @apply before:bg-primary-600 dark:before:bg-primary-500 relative before:absolute before:start-0 before:h-full before:w-0.5;
+    }
+}

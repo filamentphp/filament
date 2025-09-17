@@ -4,7 +4,7 @@ export default function tagsInputFormComponent({ state, splitKeys }) {
 
         state,
 
-        createTag: function () {
+        createTag() {
             this.newTag = this.newTag.trim()
 
             if (this.newTag === '') {
@@ -22,11 +22,11 @@ export default function tagsInputFormComponent({ state, splitKeys }) {
             this.newTag = ''
         },
 
-        deleteTag: function (tagToDelete) {
+        deleteTag(tagToDelete) {
             this.state = this.state.filter((tag) => tag !== tagToDelete)
         },
 
-        reorderTags: function (event) {
+        reorderTags(event) {
             const reordered = this.state.splice(event.oldIndex, 1)[0]
             this.state.splice(event.newIndex, 0, reordered)
 

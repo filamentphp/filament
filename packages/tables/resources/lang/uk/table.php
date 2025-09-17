@@ -2,9 +2,20 @@
 
 return [
 
-    'column_toggle' => [
+    'column_manager' => [
 
         'heading' => 'Стовпці',
+
+        'actions' => [
+
+            'apply' => [
+                'label' => 'Застосувати стовпці',
+            ],
+
+            'reset' => [
+                'label' => 'Скинути',
+            ],
+        ],
 
     ],
 
@@ -99,7 +110,7 @@ return [
             'label' => 'Відкрити дії',
         ],
 
-        'toggle_columns' => [
+        'column_manager' => [
             'label' => 'Переключити стовпці',
         ],
 
@@ -110,6 +121,7 @@ return [
         'heading' => 'Не знайдено :model',
 
         'description' => 'Створити :model для початку.',
+
     ],
 
     'filters' => [
@@ -144,7 +156,13 @@ return [
         ],
 
         'select' => [
+
             'placeholder' => 'Всі',
+
+            'relationship' => [
+                'empty_option_label' => 'Немає',
+            ],
+
         ],
 
         'trashed' => [
@@ -227,5 +245,7 @@ return [
         ],
 
     ],
+
+    'default_model_label' => 'запис',
 
 ];

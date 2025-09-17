@@ -1,10 +1,14 @@
 @php
-    use Filament\Forms\Components\Actions\Action;
+    use Filament\Actions\Action;
     use Filament\Support\Enums\Alignment;
+    use Illuminate\View\ComponentAttributeBag;
 
-    $containers = $getChildComponentContainers();
+    $fieldWrapperView = $getFieldWrapperView();
+
+    $items = $getItems();
 
     $addAction = $getAction($getAddActionName());
+    $addActionAlignment = $getAddActionAlignment();
     $cloneAction = $getAction($getCloneActionName());
     $deleteAction = $getAction($getDeleteActionName());
     $moveDownAction = $getAction($getMoveDownActionName());
@@ -18,115 +22,104 @@
     $isReorderableWithButtons = $isReorderableWithButtons();
     $isReorderableWithDragAndDrop = $isReorderableWithDragAndDrop();
 
+    $key = $getKey();
     $statePath = $getStatePath();
 @endphp
 
-<x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
+<x-dynamic-component :component="$fieldWrapperView" :field="$field">
     <div
-        x-data="{}"
         {{
             $attributes
                 ->merge($getExtraAttributes(), escape: false)
-                ->class(['fi-fo-simple-repeater grid gap-y-4'])
+                ->class(['fi-fo-simple-repeater'])
         }}
     >
-        @if (count($containers))
-            <ul>
-                <x-filament::grid
-                    :default="$getGridColumns('default')"
-                    :sm="$getGridColumns('sm')"
-                    :md="$getGridColumns('md')"
-                    :lg="$getGridColumns('lg')"
-                    :xl="$getGridColumns('xl')"
-                    :two-xl="$getGridColumns('2xl')"
-                    :wire:end.stop="'mountFormComponentAction(\'' . $statePath . '\', \'reorder\', { items: $event.target.sortable.toArray() })'"
-                    x-sortable
-                    :data-sortable-animation-duration="$getReorderAnimationDuration()"
-                    class="gap-4"
-                >
-                    @foreach ($containers as $uuid => $item)
-                        @php
-                            $visibleExtraItemActions = array_filter(
-                                $extraItemActions,
-                                fn (Action $action): bool => $action(['item' => $uuid])->isVisible(),
-                            );
-                            $cloneAction = $cloneAction(['item' => $uuid]);
-                            $cloneActionIsVisible = $isCloneable && $cloneAction->isVisible();
-                            $deleteAction = $deleteAction(['item' => $uuid]);
-                            $deleteActionIsVisible = $isDeletable && $deleteAction->isVisible();
-                            $moveDownAction = $moveDownAction(['item' => $uuid])->disabled($loop->last);
-                            $moveDownActionIsVisible = $isReorderableWithButtons && $moveDownAction->isVisible();
-                            $moveUpAction = $moveUpAction(['item' => $uuid])->disabled($loop->first);
-                            $moveUpActionIsVisible = $isReorderableWithButtons && $moveUpAction->isVisible();
-                            $reorderActionIsVisible = $isReorderableWithDragAndDrop && $reorderAction->isVisible();
-                        @endphp
+        @if (count($items))
+            <ul
+                x-sortable
+                {{
+                    (new ComponentAttributeBag)
+                        ->grid($getGridColumns())
+                        ->merge([
+                            'data-sortable-animation-duration' => $getReorderAnimationDuration(),
+                            'x-on:end.stop' => '$event.oldDraggableIndex !== $event.newDraggableIndex && $wire.mountAction(\'reorder\', { items: $event.target.sortable.toArray() }, { schemaComponent: \'' . $key . '\' })',
+                        ], escape: false)
+                        ->class(['fi-fo-simple-repeater-items'])
+                }}
+            >
+                @foreach ($items as $itemKey => $item)
+                    @php
+                        $visibleExtraItemActions = array_filter(
+                            $extraItemActions,
+                            fn (Action $action): bool => $action(['item' => $itemKey])->isVisible(),
+                        );
+                        $cloneAction = $cloneAction(['item' => $itemKey]);
+                        $cloneActionIsVisible = $isCloneable && $cloneAction->isVisible();
+                        $deleteAction = $deleteAction(['item' => $itemKey]);
+                        $deleteActionIsVisible = $isDeletable && $deleteAction->isVisible();
+                        $moveDownAction = $moveDownAction(['item' => $itemKey])->disabled($loop->last);
+                        $moveDownActionIsVisible = $isReorderableWithButtons && $moveDownAction->isVisible();
+                        $moveUpAction = $moveUpAction(['item' => $itemKey])->disabled($loop->first);
+                        $moveUpActionIsVisible = $isReorderableWithButtons && $moveUpAction->isVisible();
+                        $reorderActionIsVisible = $isReorderableWithDragAndDrop && $reorderAction->isVisible();
+                    @endphp
 
-                        <li
-                            wire:key="{{ $this->getId() }}.{{ $item->getStatePath() }}.{{ $field::class }}.item"
-                            x-sortable-item="{{ $uuid }}"
-                            class="fi-fo-repeater-item simple flex justify-start gap-x-3"
-                        >
-                            <div class="flex-1">
-                                {{ $item }}
-                            </div>
+                    <li
+                        wire:key="{{ $item->getLivewireKey() }}.item"
+                        x-sortable-item="{{ $itemKey }}"
+                        class="fi-fo-simple-repeater-item"
+                    >
+                        <div class="fi-fo-simple-repeater-item-content">
+                            {{ $item }}
+                        </div>
 
-                            @if ($reorderActionIsVisible || $moveUpActionIsVisible || $moveDownActionIsVisible || $cloneActionIsVisible || $deleteActionIsVisible || $visibleExtraItemActions)
-                                <ul class="flex items-center gap-x-1">
-                                    @if ($reorderActionIsVisible)
-                                        <li x-sortable-handle>
-                                            {{ $reorderAction }}
-                                        </li>
-                                    @endif
+                        @if ($reorderActionIsVisible || $moveUpActionIsVisible || $moveDownActionIsVisible || $cloneActionIsVisible || $deleteActionIsVisible || $visibleExtraItemActions)
+                            <ul class="fi-fo-simple-repeater-item-actions">
+                                @if ($reorderActionIsVisible)
+                                    <li x-on:click.stop>
+                                        {{ $reorderAction->extraAttributes(['x-sortable-handle' => true], merge: true) }}
+                                    </li>
+                                @endif
 
-                                    @if ($moveUpActionIsVisible || $moveDownActionIsVisible)
-                                        <li
-                                            class="flex items-center justify-center"
-                                        >
-                                            {{ $moveUpAction }}
-                                        </li>
+                                @if ($moveUpActionIsVisible || $moveDownActionIsVisible)
+                                    <li x-on:click.stop>
+                                        {{ $moveUpAction }}
+                                    </li>
 
-                                        <li
-                                            class="flex items-center justify-center"
-                                        >
-                                            {{ $moveDownAction }}
-                                        </li>
-                                    @endif
+                                    <li x-on:click.stop>
+                                        {{ $moveDownAction }}
+                                    </li>
+                                @endif
 
-                                    @foreach ($visibleExtraItemActions as $extraItemAction)
-                                        <li>
-                                            {{ $extraItemAction(['item' => $uuid]) }}
-                                        </li>
-                                    @endforeach
+                                @foreach ($visibleExtraItemActions as $extraItemAction)
+                                    <li x-on:click.stop>
+                                        {{ $extraItemAction(['item' => $itemKey]) }}
+                                    </li>
+                                @endforeach
 
-                                    @if ($cloneActionIsVisible)
-                                        <li>
-                                            {{ $cloneAction }}
-                                        </li>
-                                    @endif
+                                @if ($cloneActionIsVisible)
+                                    <li x-on:click.stop>
+                                        {{ $cloneAction }}
+                                    </li>
+                                @endif
 
-                                    @if ($deleteActionIsVisible)
-                                        <li>
-                                            {{ $deleteAction }}
-                                        </li>
-                                    @endif
-                                </ul>
-                            @endif
-                        </li>
-                    @endforeach
-                </x-filament::grid>
+                                @if ($deleteActionIsVisible)
+                                    <li x-on:click.stop>
+                                        {{ $deleteAction }}
+                                    </li>
+                                @endif
+                            </ul>
+                        @endif
+                    </li>
+                @endforeach
             </ul>
         @endif
 
         @if ($isAddable && $addAction->isVisible())
             <div
                 @class([
-                    'flex',
-                    match ($getAddActionAlignment()) {
-                        Alignment::Start, Alignment::Left => 'justify-start',
-                        Alignment::Center, null => 'justify-center',
-                        Alignment::End, Alignment::Right => 'justify-end',
-                        default => $alignment,
-                    },
+                    'fi-fo-simple-repeater-add',
+                    ($addActionAlignment instanceof Alignment) ? ('fi-align-' . $addActionAlignment->value) : $addActionAlignment,
                 ])
             >
                 {{ $addAction }}

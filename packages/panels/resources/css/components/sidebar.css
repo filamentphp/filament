@@ -1,0 +1,231 @@
+.fi-sidebar-group {
+    @apply flex flex-col gap-y-1;
+
+    &.fi-collapsed {
+        & .fi-sidebar-group-collapse-btn {
+            @apply -rotate-180;
+        }
+    }
+
+    &.fi-active {
+        & .fi-sidebar-group-dropdown-trigger-btn {
+            & .fi-icon {
+                @apply text-primary-600 dark:text-primary-400;
+            }
+        }
+    }
+}
+
+.fi-sidebar-group-btn {
+    @apply flex items-center gap-x-3 px-2 py-2;
+
+    & .fi-icon {
+        @apply text-gray-400 dark:text-gray-500;
+    }
+}
+
+.fi-sidebar-group-label {
+    @apply flex-1 text-sm leading-6 font-medium text-gray-500 dark:text-gray-400;
+}
+
+.fi-sidebar-group-dropdown-trigger-btn {
+    @apply relative flex flex-1 items-center justify-center gap-x-3 rounded-lg px-2 py-2 outline-hidden transition duration-75 hover:bg-gray-100 focus-visible:bg-gray-100 dark:hover:bg-white/5 dark:focus-visible:bg-white/5;
+
+    & .fi-icon {
+        @apply text-gray-400 dark:text-gray-500;
+    }
+}
+
+.fi-sidebar-group-items {
+    @apply flex flex-col gap-y-1;
+}
+
+.fi-sidebar-group-btn,
+.fi-sidebar-group-items {
+    &.fi-transition-enter {
+        @apply delay-100 lg:transition;
+    }
+
+    &.fi-transition-enter-start {
+        @apply opacity-0;
+    }
+
+    &.fi-transition-enter-end {
+        @apply opacity-100;
+    }
+}
+
+.fi-sidebar {
+    @apply fixed inset-y-0 start-0 z-30 flex h-dvh flex-col content-start bg-white transition-all lg:top-[4rem] lg:z-20 lg:h-[calc(100dvh-4rem)] lg:bg-transparent lg:transition-none dark:bg-gray-900 dark:lg:bg-transparent;
+
+    &.fi-sidebar-open {
+        @apply w-(--sidebar-width) translate-x-0 shadow-xl ring-1 ring-gray-950/5 lg:shadow-none lg:ring-0 rtl:-translate-x-0 dark:ring-white/10;
+    }
+
+    &:not(.fi-sidebar-open) {
+        @apply -translate-x-full rtl:translate-x-full;
+    }
+}
+
+.fi-sidebar-close-overlay {
+    @apply fixed inset-0 z-30 bg-gray-950/50 transition duration-500 lg:hidden dark:bg-gray-950/75;
+}
+
+.fi-body {
+    &.fi-body-has-top-navigation {
+        & .fi-sidebar {
+            @apply lg:-translate-x-full lg:rtl:translate-x-full;
+        }
+    }
+
+    &:not(.fi-body-has-top-navigation) {
+        & .fi-sidebar {
+            &.fi-sidebar-open {
+                @apply lg:sticky;
+            }
+        }
+
+        &.fi-body-has-sidebar-collapsible-on-desktop {
+            & .fi-sidebar {
+                &:not(.fi-sidebar-open) {
+                    @apply lg:sticky lg:translate-x-0 lg:rtl:-translate-x-0;
+                }
+            }
+        }
+
+        &:not(.fi-body-has-sidebar-collapsible-on-desktop):not(
+                .fi-body-has-sidebar-fully-collapsible-on-desktop
+            ) {
+            & .fi-sidebar {
+                @apply lg:translate-x-0 lg:rtl:-translate-x-0;
+
+                &:not(.fi-sidebar-open) {
+                    @apply w-(--sidebar-width) lg:sticky;
+                }
+            }
+        }
+    }
+
+    &.fi-body-has-sidebar-collapsible-on-desktop {
+        & .fi-sidebar-nav-tenant-menu-ctn {
+            @apply -mx-2;
+        }
+    }
+
+    &:not(.fi-body-has-sidebar-collapsible-on-desktop) {
+        & .fi-sidebar {
+            &.fi-sidebar-open {
+                & .fi-sidebar-nav-tenant-menu-ctn {
+                    @apply -mx-2;
+                }
+            }
+
+            &:not(.fi-sidebar-open) {
+                & .fi-sidebar-nav-tenant-menu-ctn {
+                    @apply -mx-4;
+                }
+            }
+        }
+    }
+}
+
+.fi-sidebar-header-ctn {
+    @apply overflow-x-clip lg:hidden;
+}
+
+.fi-sidebar-header {
+    @apply flex h-16 items-center bg-white px-6 ring-1 ring-gray-950/5 lg:shadow-xs dark:bg-gray-900 dark:ring-white/10;
+}
+
+.fi-sidebar-nav {
+    @apply flex grow flex-col gap-y-7 overflow-x-hidden overflow-y-auto px-6 py-8;
+    scrollbar-gutter: stable;
+}
+
+.fi-sidebar-nav-groups {
+    @apply -mx-2 flex flex-col gap-y-7;
+}
+
+.fi-sidebar-item {
+    &.fi-active,
+    &.fi-sidebar-item-has-active-child-items {
+        @apply flex flex-col gap-y-1;
+    }
+
+    &.fi-active {
+        & > .fi-sidebar-item-btn {
+            @apply bg-gray-100 dark:bg-white/5;
+
+            & > .fi-icon {
+                @apply text-primary-600 dark:text-primary-400;
+            }
+
+            &
+                > .fi-sidebar-item-grouped-border
+                > .fi-sidebar-item-grouped-border-part {
+                @apply bg-primary-600 dark:bg-primary-400;
+            }
+
+            & > .fi-sidebar-item-label {
+                @apply text-primary-600 dark:text-primary-400;
+            }
+
+            .fi-sidebar-item-grouped-border-part {
+                @apply relative h-1.5 w-1.5 rounded-full;
+            }
+        }
+    }
+
+    &.fi-sidebar-item-has-url {
+        & > .fi-sidebar-item-btn {
+            @apply hover:bg-gray-100 focus-visible:bg-gray-100 dark:hover:bg-white/5 dark:focus-visible:bg-white/5;
+        }
+    }
+}
+
+.fi-sidebar-item-btn {
+    @apply relative flex items-center justify-center gap-x-3 rounded-lg px-2 py-2 outline-hidden transition duration-75;
+
+    & > .fi-icon {
+        @apply text-gray-400 dark:text-gray-500;
+    }
+}
+
+.fi-sidebar-item-grouped-border {
+    @apply relative flex size-6 items-center justify-center;
+}
+
+.fi-sidebar-item-grouped-border-part-not-first {
+    @apply absolute -top-1/2 bottom-1/2 w-px bg-gray-300 dark:bg-gray-600;
+}
+
+.fi-sidebar-item-grouped-border-part-not-last {
+    @apply absolute top-1/2 -bottom-1/2 w-px bg-gray-300 dark:bg-gray-600;
+}
+
+.fi-sidebar-item-grouped-border-part {
+    @apply relative h-1.5 w-1.5 rounded-full bg-gray-400 dark:bg-gray-500;
+}
+
+.fi-sidebar-item-label {
+    @apply flex-1 truncate text-sm font-medium text-gray-700 dark:text-gray-200;
+}
+
+.fi-sidebar-item-label,
+.fi-sidebar-item-badge-ctn {
+    &.fi-transition-enter {
+        @apply lg:transition lg:delay-100;
+    }
+
+    &.fi-transition-enter-start {
+        @apply opacity-0;
+    }
+
+    &.fi-transition-enter-end {
+        @apply opacity-100;
+    }
+}
+
+.fi-sidebar-sub-group-items {
+    @apply flex flex-col gap-y-1;
+}

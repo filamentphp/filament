@@ -104,7 +104,7 @@ return [
 
     'markdown_editor' => [
 
-        'toolbar_buttons' => [
+        'tools' => [
             'attach_files' => 'Priloži fajlove',
             'bold' => 'Bold',
             'bullet_list' => 'Bullet list',
@@ -186,7 +186,7 @@ return [
 
         ],
 
-        'toolbar_buttons' => [
+        'tools' => [
             'attach_files' => 'Priloži fajlove',
             'blockquote' => 'Blok citat',
             'bold' => 'Bold',
@@ -250,22 +250,6 @@ return [
 
     'tags_input' => [
         'placeholder' => 'Nova oznaka',
-    ],
-
-    'wizard' => [
-
-        'actions' => [
-
-            'previous_step' => [
-                'label' => 'Nazad',
-            ],
-
-            'next_step' => [
-                'label' => 'Dalje',
-            ],
-
-        ],
-
     ],
 
 ];

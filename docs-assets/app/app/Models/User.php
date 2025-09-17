@@ -37,14 +37,15 @@ class User extends Authenticatable implements FilamentUser
     ];
 
     /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
+     * @return array<string, string>
      */
-    protected $casts = [
-        'colleagues' => 'array',
-        'email_verified_at' => 'datetime',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'colleagues' => 'array',
+            'email_verified_at' => 'datetime',
+        ];
+    }
 
     public function canAccessPanel(Panel $panel): bool
     {

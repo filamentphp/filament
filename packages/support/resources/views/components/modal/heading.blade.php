@@ -1,5 +1,5 @@
 <h2
-    {{ $attributes->class(['fi-modal-heading text-base font-semibold leading-6 text-gray-950 dark:text-white']) }}
+    {{ $attributes->class(['fi-modal-heading']) }}
 >
     {{ $slot }}
 </h2>

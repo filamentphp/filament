@@ -1,0 +1,53 @@
+<?php
+
+namespace App\Filament\Resources\UserResource\RelationManagers;
+
+use Filament\Actions;
+use Filament\Forms;
+use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Schemas\Schema;
+use Filament\Tables;
+use Filament\Tables\Table;
+
+class TeamsRelationManager extends RelationManager
+{
+    protected static string $relationship = 'teams';
+
+    public function form(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+                Forms\Components\TextInput::make('name')
+                    ->required()
+                    ->maxLength(255),
+            ]);
+    }
+
+    public function table(Table $table): Table
+    {
+        return $table
+            ->recordTitleAttribute('name')
+            ->columns([
+                Tables\Columns\TextColumn::make('name')
+                    ->searchable(),
+            ])
+            ->filters([
+                //
+            ])
+            ->headerActions([
+                Actions\CreateAction::make(),
+                Actions\AttachAction::make(),
+            ])
+            ->recordActions([
+                Actions\EditAction::make(),
+                Actions\DetachAction::make(),
+                Actions\DeleteAction::make(),
+            ])
+            ->toolbarActions([
+                Actions\BulkActionGroup::make([
+                    Actions\DetachBulkAction::make(),
+                    Actions\DeleteBulkAction::make(),
+                ]),
+            ]);
+    }
+}

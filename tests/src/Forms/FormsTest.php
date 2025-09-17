@@ -1,30 +1,28 @@
 <?php
 
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Wizard;
-use Filament\Forms\Components\Wizard\Step;
-use Filament\Forms\Form;
-use Filament\Tests\Forms\Fixtures\Livewire;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Wizard;
+use Filament\Schemas\Schema;
+use Filament\Tests\Fixtures\Livewire\Livewire;
 use Filament\Tests\TestCase;
-use Illuminate\Contracts\View\View;
 
 use function Filament\Tests\livewire;
 
 uses(TestCase::class);
 
-it('has a form with the default name \'form\'', function () {
+it('has a form with the default name \'form\'', function (): void {
     livewire(TestComponentWithForm::class)
         ->assertFormExists();
 });
 
-it('can have forms with non-default names', function () {
+it('can have forms with non-default names', function (): void {
     livewire(TestComponentWithMultipleForms::class)
         ->assertFormExists('fooForm')
         ->assertFormExists('barForm');
 });
 
-it('has fields', function () {
+it('has fields', function (): void {
     livewire(TestComponentWithForm::class)
         ->assertFormFieldExists('title')
         ->assertFormFieldExists('nested.input')
@@ -33,12 +31,12 @@ it('has fields', function () {
         });
 });
 
-it('does not have fields', function () {
+it('does not have fields', function (): void {
     livewire(TestComponentWithForm::class)
         ->assertFormFieldDoesNotExist('not-such-field');
 });
 
-it('has fields on multiple forms', function () {
+it('has fields on multiple forms', function (): void {
     livewire(TestComponentWithMultipleForms::class)
         ->assertFormFieldExists('title', 'fooForm')
         ->assertFormFieldExists('title', 'barForm')
@@ -47,90 +45,87 @@ it('has fields on multiple forms', function () {
         });
 });
 
-it('can fill fields on multiple forms', function () {
+it('can fill fields on multiple forms', function (): void {
     livewire(TestComponentWithMultipleForms::class)
         ->fillForm(['title' => 'value'], 'fooForm')
-        ->assertFormSet(['title' => 'value'], 'fooForm');
+        ->assertSchemaStateSet(['title' => 'value'], 'fooForm');
 });
 
-it('can have disabled fields', function () {
+it('can have disabled fields', function (): void {
     livewire(TestComponentWithForm::class)
-        ->assertFormFieldIsDisabled('disabled');
+        ->assertFormFieldDisabled('disabled');
 });
 
-it('can have disabled fields on multiple forms', function () {
+it('can have disabled fields on multiple forms', function (): void {
     livewire(TestComponentWithMultipleForms::class)
-        ->assertFormFieldIsDisabled('disabled', 'fooForm')
-        ->assertFormFieldIsDisabled('disabled', 'barForm');
+        ->assertFormFieldDisabled('disabled', 'fooForm')
+        ->assertFormFieldDisabled('disabled', 'barForm');
 });
 
-it('can have enabled fields', function () {
+it('can have enabled fields', function (): void {
     livewire(TestComponentWithForm::class)
-        ->assertFormFieldIsEnabled('enabled');
+        ->assertFormFieldEnabled('enabled');
 });
 
-it('can have enabled fields on multiple forms', function () {
+it('can have enabled fields on multiple forms', function (): void {
     livewire(TestComponentWithMultipleForms::class)
-        ->assertFormFieldIsEnabled('enabled', 'fooForm')
-        ->assertFormFieldIsEnabled('enabled', 'barForm');
+        ->assertFormFieldEnabled('enabled', 'fooForm')
+        ->assertFormFieldEnabled('enabled', 'barForm');
 });
 
-it('can have hidden fields', function () {
+it('can have hidden fields', function (): void {
     livewire(TestComponentWithForm::class)
-        ->assertFormFieldIsHidden('hidden');
+        ->assertFormFieldHidden('hidden');
 });
 
-it('can have hidden fields on multiple forms', function () {
+it('can have hidden fields on multiple forms', function (): void {
     livewire(TestComponentWithMultipleForms::class)
-        ->assertFormFieldIsHidden('hidden', 'fooForm')
-        ->assertFormFieldIsHidden('hidden', 'barForm');
+        ->assertFormFieldHidden('hidden', 'fooForm')
+        ->assertFormFieldHidden('hidden', 'barForm');
 });
 
-it('can have visible fields', function () {
+it('can have visible fields', function (): void {
     livewire(TestComponentWithForm::class)
-        ->assertFormFieldIsVisible('visible');
+        ->assertFormFieldVisible('visible');
 });
 
-it('can have visible fields on multiple forms', function () {
+it('can have visible fields on multiple forms', function (): void {
     livewire(TestComponentWithMultipleForms::class)
-        ->assertFormFieldIsVisible('visible', 'fooForm')
-        ->assertFormFieldIsVisible('visible', 'barForm');
+        ->assertFormFieldVisible('visible', 'fooForm')
+        ->assertFormFieldVisible('visible', 'barForm');
 });
 
-it('has layout components', function () {
+it('has layout components', function (): void {
     livewire(TestComponentWithForm::class)
         ->assertFormComponentExists('section')
-        ->assertFormComponentExists('disabled-section', function (Section $section): bool {
-            return $section->isDisabled();
-        })
-        ->assertFormComponentExists('nested.section')
-        ->assertFormComponentExists('nested.section', function (Section $section): bool {
+        ->assertFormComponentExists('section.nested.section')
+        ->assertFormComponentExists('section.nested.section', function (Section $section): bool {
             return $section->getHeading() === 'I am nested';
         });
 });
 
-it('does not have layout components', function () {
+it('does not have layout components', function (): void {
     livewire(TestComponentWithForm::class)
         ->assertFormComponentDoesNotExist('no-such-section');
 });
 
-it('can go to next wizard step on multiple forms', function () {
+it('can go to next wizard step on multiple forms', function (): void {
     livewire(TestComponentWithMultipleWizardForms::class)
-        ->assertHasNoFormErrors(formName: 'fooForm')
-        ->assertHasNoFormErrors(formName: 'barForm')
+        ->assertHasNoFormErrors(form: 'fooForm')
+        ->assertHasNoFormErrors(form: 'barForm')
 
         ->assertWizardStepExists(2, 'fooForm')
-        ->goToWizardStep(2, formName: 'fooForm')
+        ->goToWizardStep(2, schema: 'fooForm')
         ->assertHasFormErrors(['title'], 'fooForm')
         ->assertHasNoFormErrors(['title'], 'barForm');
 });
 
 class TestComponentWithForm extends Livewire
 {
-    public function form(Form $form): Form
+    public function form(Schema $form): Schema
     {
         return $form
-            ->schema([
+            ->components([
                 TextInput::make('title'),
 
                 TextInput::make('nested.input'),
@@ -151,16 +146,8 @@ class TestComponentWithForm extends Livewire
                         Section::make('I am nested')
                             ->key('nested.section'),
                     ]),
-
-                Section::make()
-                    ->key('disabled-section')
-                    ->disabled(),
-            ]);
-    }
-
-    public function render(): View
-    {
-        return view('forms.fixtures.form');
+            ])
+            ->statePath('data');
     }
 }
 
@@ -180,17 +167,17 @@ class TestComponentWithMultipleForms extends Livewire
         ];
     }
 
-    public function fooForm(Form $form): Form
+    public function fooForm(Schema $form): Schema
     {
         return $form
-            ->schema($this->getSchemaForForms())
+            ->components($this->getSchemaForForms())
             ->statePath('data');
     }
 
-    public function barForm(Form $form): Form
+    public function barForm(Schema $form): Schema
     {
         return $form
-            ->schema($this->getSchemaForForms())
+            ->components($this->getSchemaForForms())
             ->statePath('data');
     }
 
@@ -209,11 +196,6 @@ class TestComponentWithMultipleForms extends Livewire
 
             TextInput::make('visible'),
         ];
-    }
-
-    public function render(): View
-    {
-        return view('forms.fixtures.form');
     }
 }
 
@@ -237,17 +219,17 @@ class TestComponentWithMultipleWizardForms extends Livewire
         ];
     }
 
-    public function fooForm(Form $form): Form
+    public function fooForm(Schema $form): Schema
     {
         return $form
-            ->schema($this->getSchemaForForms())
+            ->components($this->getSchemaForForms())
             ->statePath('fooData');
     }
 
-    public function barForm(Form $form): Form
+    public function barForm(Schema $form): Schema
     {
         return $form
-            ->schema($this->getSchemaForForms())
+            ->components($this->getSchemaForForms())
             ->statePath('barData');
     }
 
@@ -255,18 +237,13 @@ class TestComponentWithMultipleWizardForms extends Livewire
     {
         return [
             Wizard::make([
-                Step::make('step 1')->schema([
+                Wizard\Step::make('step 1')->schema([
                     TextInput::make('title')->required(),
                 ]),
-                Step::make('step 2')->schema([
+                Wizard\Step::make('step 2')->schema([
                     TextInput::make('content')->required(),
                 ]),
             ]),
         ];
-    }
-
-    public function render(): View
-    {
-        return view('forms.fixtures.form');
     }
 }

@@ -1,0 +1,49 @@
+.fi-ta-grid {
+    &.fi-gap-sm {
+        @apply gap-1;
+    }
+
+    &.sm\:fi-gap-sm {
+        @apply sm:gap-1;
+    }
+
+    &.md\:fi-gap-sm {
+        @apply md:gap-1;
+    }
+
+    &.lg\:fi-gap-sm {
+        @apply lg:gap-1;
+    }
+
+    &.xl\:fi-gap-sm {
+        @apply xl:gap-1;
+    }
+
+    &.\32xl\:fi-gap-sm {
+        @apply 2xl:gap-1;
+    }
+
+    &.fi-gap-lg {
+        @apply gap-3;
+    }
+
+    &.sm\:fi-gap-lg {
+        @apply sm:gap-3;
+    }
+
+    &.md\:fi-gap-lg {
+        @apply md:gap-3;
+    }
+
+    &.lg\:fi-gap-lg {
+        @apply lg:gap-3;
+    }
+
+    &.xl\:fi-gap-lg {
+        @apply xl:gap-3;
+    }
+
+    &.\32xl\:fi-gap-lg {
+        @apply 2xl:gap-3;
+    }
+}

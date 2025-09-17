@@ -1,0 +1,17 @@
+.fi-fo-text-input {
+    @apply overflow-hidden;
+
+    & input {
+        &.fi-revealable {
+            @apply [&::-ms-reveal]:hidden;
+        }
+    }
+}
+
+.fi-fo-text-input-wrp {
+    &.fi-fo-field-has-inline-label {
+        & .fi-fo-field-label-col {
+            @apply sm:pt-1.5;
+        }
+    }
+}

@@ -13,6 +13,6 @@ class Hidden extends Field
     {
         parent::setUp();
 
-        $this->columnSpan('hidden');
+        $this->columnSpan(['default' => 'hidden']);
     }
 }

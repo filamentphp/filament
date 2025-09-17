@@ -2,11 +2,9 @@
 
 namespace Filament\Tables\Concerns;
 
-use Closure;
-use Filament\Forms;
-use Filament\Tables\Actions\Action;
-use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Table;
+use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -23,18 +21,16 @@ trait InteractsWithTable
     use CanSearchRecords;
     use CanSortRecords;
     use CanSummarizeRecords;
-    use CanToggleColumns;
     use HasActions;
     use HasBulkActions;
+    use HasColumnManager;
     use HasColumns;
     use HasContent;
     use HasEmptyState;
     use HasFilters;
     use HasHeader;
     use HasRecordAction;
-    use HasRecordClasses;
     use HasRecords;
-    use HasRecordUrl;
     use WithPagination {
         WithPagination::resetPage as resetLivewirePage;
     }
@@ -47,27 +43,16 @@ trait InteractsWithTable
 
     public function bootedInteractsWithTable(): void
     {
-        $this->table = Action::configureUsing(
-            Closure::fromCallable([$this, 'configureTableAction']),
-            fn (): Table => BulkAction::configureUsing(
-                Closure::fromCallable([$this, 'configureTableBulkAction']),
-                fn (): Table => $this->table($this->makeTable()),
-            ),
-        );
+        $this->table = $this->table($this->makeTable());
 
-        $this->cacheForm('toggleTableColumnForm', $this->getTableColumnToggleForm());
+        $this->cacheSchema('tableFiltersForm', $this->getTableFiltersForm());
 
-        $this->cacheForm('tableFiltersForm', $this->getTableFiltersForm());
+        $this->cacheMountedActions($this->mountedActions);
+
+        $this->initTableColumnManager();
 
         if (! $this->shouldMountInteractsWithTable) {
             return;
-        }
-
-        if (! count($this->toggledTableColumns ?? [])) {
-            $this->getTableColumnToggleForm()->fill(session()->get(
-                $this->getTableColumnToggleFormStateSessionKey(),
-                $this->getDefaultTableColumnToggleState()
-            ));
         }
 
         $shouldPersistFiltersInSession = $this->getTable()->persistsFiltersInSession();
@@ -104,7 +89,7 @@ trait InteractsWithTable
         }
 
         if ($this->getTable()->isDefaultGroupSelectable()) {
-            $this->tableGrouping = $this->getTable()->getDefaultGroup()->getId();
+            $this->tableGrouping = "{$this->getTable()->getDefaultGroup()->getId()}:asc";
         }
 
         $shouldPersistSearchInSession = $this->getTable()->persistsSearchInSession();
@@ -153,23 +138,17 @@ trait InteractsWithTable
         $sortSessionKey = $this->getTableSortSessionKey();
 
         if (
-            blank($this->tableSortColumn) &&
+            blank($this->tableSort) &&
             $shouldPersistSortInSession &&
             session()->has($sortSessionKey)
         ) {
-            $sort = session()->get($sortSessionKey);
-
-            $this->tableSortColumn = $sort['column'] ?? null;
-            $this->tableSortDirection = $sort['direction'] ?? null;
+            $this->tableSort = session()->get($sortSessionKey);
         }
 
         if ($shouldPersistSortInSession) {
             session()->put(
                 $sortSessionKey,
-                [
-                    'column' => $this->tableSortColumn,
-                    'direction' => $this->tableSortDirection,
-                ],
+                $this->tableSort,
             );
         }
 
@@ -185,50 +164,7 @@ trait InteractsWithTable
 
     public function table(Table $table): Table
     {
-        return $table
-            ->query($this->getTableQuery())
-            ->actions($this->getTableActions())
-            ->actionsColumnLabel($this->getTableActionsColumnLabel())
-            ->checkIfRecordIsSelectableUsing($this->isTableRecordSelectable())
-            ->columns($this->getTableColumns())
-            ->columnToggleFormColumns($this->getTableColumnToggleFormColumns())
-            ->columnToggleFormMaxHeight($this->getTableColumnToggleFormMaxHeight())
-            ->columnToggleFormWidth($this->getTableColumnToggleFormWidth())
-            ->content($this->getTableContent())
-            ->contentFooter($this->getTableContentFooter())
-            ->contentGrid($this->getTableContentGrid())
-            ->defaultSort($this->getDefaultTableSortColumn(), $this->getDefaultTableSortDirection())
-            ->deferLoading($this->isTableLoadingDeferred())
-            ->description($this->getTableDescription())
-            ->deselectAllRecordsWhenFiltered($this->shouldDeselectAllRecordsWhenTableFiltered())
-            ->emptyState($this->getTableEmptyState())
-            ->emptyStateActions($this->getTableEmptyStateActions())
-            ->emptyStateDescription($this->getTableEmptyStateDescription())
-            ->emptyStateHeading($this->getTableEmptyStateHeading())
-            ->emptyStateIcon($this->getTableEmptyStateIcon())
-            ->filters($this->getTableFilters())
-            ->filtersFormMaxHeight($this->getTableFiltersFormMaxHeight())
-            ->filtersFormWidth($this->getTableFiltersFormWidth())
-            ->groupedBulkActions($this->getTableBulkActions())
-            ->header($this->getTableHeader())
-            ->headerActions($this->getTableHeaderActions())
-            ->modelLabel($this->getTableModelLabel())
-            ->paginated($this->isTablePaginationEnabled())
-            ->paginatedWhileReordering($this->isTablePaginationEnabledWhileReordering())
-            ->paginationPageOptions($this->getTableRecordsPerPageSelectOptions())
-            ->persistFiltersInSession($this->shouldPersistTableFiltersInSession())
-            ->persistSearchInSession($this->shouldPersistTableSearchInSession())
-            ->persistColumnSearchesInSession($this->shouldPersistTableColumnSearchInSession())
-            ->persistSortInSession($this->shouldPersistTableSortInSession())
-            ->pluralModelLabel($this->getTablePluralModelLabel())
-            ->poll($this->getTablePollingInterval())
-            ->recordAction($this->getTableRecordActionUsing())
-            ->recordClasses($this->getTableRecordClassesUsing())
-            ->recordTitle(fn (Model $record): ?string => $this->getTableRecordTitle($record))
-            ->recordUrl($this->getTableRecordUrlUsing())
-            ->reorderable($this->getTableReorderColumn())
-            ->selectCurrentPageOnly($this->shouldSelectCurrentPageOnly())
-            ->striped($this->isTableStriped());
+        return $table;
     }
 
     public function getTable(): Table
@@ -238,7 +174,47 @@ trait InteractsWithTable
 
     protected function makeTable(): Table
     {
-        return Table::make($this);
+        return Table::make($this)
+            ->query(fn (): Builder | Relation | null => $this->getTableQuery())
+            ->when($this->getTableActions(), fn (Table $table, array $actions): Table => $table->actions($actions))
+            ->when($this->getTableActionsColumnLabel(), fn (Table $table, string $actionsColumnLabel): Table => $table->actionsColumnLabel($actionsColumnLabel))
+            ->when($this->getTableColumns(), fn (Table $table, array $columns): Table => $table->columns($columns))
+            ->when(($columnManagerColumns = $this->getTableColumnToggleFormColumns()) !== 1, fn (Table $table): Table => $table->columnManagerColumns($columnManagerColumns))
+            ->when($this->getTableColumnToggleFormMaxHeight(), fn (Table $table, string $columnManagerMaxHeight): Table => $table->columnManagerMaxHeight($columnManagerMaxHeight))
+            ->when($this->getTableColumnToggleFormWidth(), fn (Table $table, string $columnManagerWidth): Table => $table->columnManagerWidth($columnManagerWidth))
+            ->when($this->getTableContent(), fn (Table $table, View $content): Table => $table->content($content))
+            ->when($this->getTableContentFooter(), fn (Table $table, View $contentFooter): Table => $table->contentFooter($contentFooter))
+            ->when($this->getTableContentGrid(), fn (Table $table, array $contentGrid): Table => $table->contentGrid($contentGrid))
+            ->when($this->getDefaultTableSortColumn(), fn (Table $table, string $defaultSortColumn): Table => $table->defaultSort($defaultSortColumn, $this->getDefaultTableSortDirection()))
+            ->when($this->isTableLoadingDeferred(), fn (Table $table): Table => $table->deferLoading())
+            ->when($this->getTableDescription(), fn (Table $table, string | Htmlable $description): Table => $table->description($description))
+            ->when(! $this->shouldDeselectAllRecordsWhenTableFiltered(), fn (Table $table): Table => $table->deselectAllRecordsWhenFiltered(false))
+            ->when($this->getTableEmptyState(), fn (Table $table, View $emptyState): Table => $table->emptyState($emptyState))
+            ->when($this->getTableEmptyStateActions(), fn (Table $table, array $emptyStateActions): Table => $table->emptyStateActions($emptyStateActions))
+            ->when($this->getTableEmptyStateDescription(), fn (Table $table, string $emptyStateDescription): Table => $table->emptyStateDescription($emptyStateDescription))
+            ->when($this->getTableEmptyStateHeading(), fn (Table $table, string $emptyStateHeading): Table => $table->emptyStateHeading($emptyStateHeading))
+            ->when($this->getTableEmptyStateIcon(), fn (Table $table, string $emptyStateIcon): Table => $table->emptyStateIcon($emptyStateIcon))
+            ->when($this->getTableFilters(), fn (Table $table, array $filters): Table => $table->filters($filters))
+            ->when($this->getTableFiltersFormMaxHeight(), fn (Table $table, string $filtersFormMaxHeight): Table => $table->filtersFormMaxHeight($filtersFormMaxHeight))
+            ->when($this->getTableFiltersFormWidth(), fn (Table $table, string $filtersFormWidth): Table => $table->filtersFormWidth($filtersFormWidth))
+            ->when($this->getTableBulkActions(), fn (Table $table, array $groupedBulkActions): Table => $table->groupedBulkActions($groupedBulkActions))
+            ->when($this->getTableHeader(), fn (Table $table, View | Htmlable $header): Table => $table->header($header))
+            ->when($this->getTableHeaderActions(), fn (Table $table, array $headerActions): Table => $table->headerActions($headerActions))
+            ->when($this->getTableModelLabel(), fn (Table $table, string $modelLabel): Table => $table->modelLabel($modelLabel))
+            ->when(! $this->isTablePaginationEnabled(), fn (Table $table): Table => $table->paginated(false))
+            ->when($this->isTablePaginationEnabledWhileReordering(), fn (Table $table): Table => $table->paginatedWhileReordering())
+            ->when($this->getTableRecordsPerPageSelectOptions(), fn (Table $table, array $paginationPageOptions): Table => $table->paginationPageOptions($paginationPageOptions))
+            ->when($this->shouldPersistTableFiltersInSession(), fn (Table $table): Table => $table->persistFiltersInSession())
+            ->when($this->shouldPersistTableSearchInSession(), fn (Table $table): Table => $table->persistSearchInSession())
+            ->when($this->shouldPersistTableColumnSearchInSession(), fn (Table $table): Table => $table->persistColumnSearchesInSession())
+            ->when($this->shouldPersistTableSortInSession(), fn (Table $table): Table => $table->persistSortInSession())
+            ->when($this->getTablePluralModelLabel(), fn (Table $table, string $pluralModelLabel): Table => $table->pluralModelLabel($pluralModelLabel))
+            ->when($this->getTablePollingInterval(), fn (Table $table, string $pollingInterval): Table => $table->poll($pollingInterval))
+            ->when($this->getTableRecordAction(), fn (Table $table, string $recordAction): Table => $table->recordAction($recordAction))
+            ->recordTitle(fn (Model $record): ?string => $this->getTableRecordTitle($record))
+            ->when($this->getTableReorderColumn(), fn (Table $table, string $reorderColumn): Table => $table->reorderable($reorderColumn))
+            ->when($this->shouldSelectCurrentPageOnly(), fn (Table $table): Table => $table->selectCurrentPageOnly())
+            ->when($this->isTableStriped(), fn (Table $table): Table => $table->striped());
     }
 
     protected function getTableQueryStringIdentifier(): ?string
@@ -253,17 +229,6 @@ trait InteractsWithTable
         }
 
         return $property;
-    }
-
-    /**
-     * @return array<string, Forms\Form>
-     */
-    protected function getInteractsWithTableForms(): array
-    {
-        return [
-            'mountedTableActionForm' => $this->getMountedTableActionForm(),
-            'mountedTableBulkActionForm' => $this->getMountedTableBulkActionForm(),
-        ];
     }
 
     public function getActiveTableLocale(): ?string
@@ -307,8 +272,6 @@ trait InteractsWithTable
 
     public function resetTable(): void
     {
-        $this->cacheForms();
-
         $this->bootedInteractsWithTable();
 
         $this->resetTableFiltersForm();

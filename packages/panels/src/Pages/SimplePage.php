@@ -7,6 +7,8 @@ abstract class SimplePage extends BasePage
     use Concerns\HasMaxWidth;
     use Concerns\HasTopbar;
 
+    protected string $view = 'filament-panels::pages.simple';
+
     protected static string $layout = 'filament-panels::components.layout.simple';
 
     protected function getLayoutData(): array

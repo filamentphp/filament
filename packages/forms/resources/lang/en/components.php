@@ -284,7 +284,11 @@ return [
 
     'markdown_editor' => [
 
-        'toolbar_buttons' => [
+        'file_attachments_accepted_file_types_message' => 'Uploaded files must be of type: :values.',
+
+        'file_attachments_max_size_message' => 'Uploaded files must not be greater than :max kilobytes.',
+
+        'tools' => [
             'attach_files' => 'Attach files',
             'blockquote' => 'Blockquote',
             'bold' => 'Bold',
@@ -298,6 +302,28 @@ return [
             'strike' => 'Strikethrough',
             'table' => 'Table',
             'undo' => 'Undo',
+        ],
+
+    ],
+
+    'modal_table_select' => [
+
+        'actions' => [
+
+            'select' => [
+
+                'label' => 'Select',
+
+                'actions' => [
+
+                    'select' => [
+                        'label' => 'Select',
+                    ],
+
+                ],
+
+            ],
+
         ],
 
     ],
@@ -365,40 +391,139 @@ return [
 
     'rich_editor' => [
 
-        'dialogs' => [
+        'actions' => [
+
+            'attach_files' => [
+
+                'label' => 'Upload file',
+
+                'modal' => [
+
+                    'heading' => 'Upload file',
+
+                    'form' => [
+
+                        'file' => [
+
+                            'label' => [
+                                'new' => 'File',
+                                'existing' => 'Replace file',
+                            ],
+
+                        ],
+
+                        'alt' => [
+
+                            'label' => [
+                                'new' => 'Alt text',
+                                'existing' => 'Change alt text',
+                            ],
+
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
+            'custom_block' => [
+
+                'modal' => [
+
+                    'actions' => [
+
+                        'insert' => [
+                            'label' => 'Insert',
+                        ],
+
+                        'save' => [
+                            'label' => 'Save',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
 
             'link' => [
 
-                'actions' => [
-                    'link' => 'Link',
-                    'unlink' => 'Unlink',
+                'label' => 'Edit',
+
+                'modal' => [
+
+                    'heading' => 'Link',
+
+                    'form' => [
+
+                        'url' => [
+                            'label' => 'URL',
+                        ],
+
+                        'should_open_in_new_tab' => [
+                            'label' => 'Open in new tab',
+                        ],
+
+                    ],
+
                 ],
-
-                'label' => 'URL',
-
-                'placeholder' => 'Enter a URL',
 
             ],
 
         ],
 
-        'toolbar_buttons' => [
+        'file_attachments_accepted_file_types_message' => 'Uploaded files must be of type: :values.',
+
+        'file_attachments_max_size_message' => 'Uploaded files must not be greater than :max kilobytes.',
+
+        'no_merge_tag_search_results_message' => 'No merge tag results.',
+
+        'tools' => [
+            'align_center' => 'Align center',
+            'align_end' => 'Align end',
+            'align_justify' => 'Align justify',
+            'align_start' => 'Align start',
             'attach_files' => 'Attach files',
             'blockquote' => 'Blockquote',
             'bold' => 'Bold',
             'bullet_list' => 'Bullet list',
+            'clear_formatting' => 'Clear formatting',
+            'code' => 'Code',
             'code_block' => 'Code block',
+            'custom_blocks' => 'Blocks',
+            'details' => 'Details',
             'h1' => 'Title',
             'h2' => 'Heading',
             'h3' => 'Subheading',
+            'highlight' => 'Highlight',
+            'horizontal_rule' => 'Horizontal rule',
             'italic' => 'Italic',
+            'lead' => 'Lead text',
             'link' => 'Link',
+            'merge_tags' => 'Merge tags',
             'ordered_list' => 'Numbered list',
             'redo' => 'Redo',
+            'small' => 'Small text',
             'strike' => 'Strikethrough',
+            'subscript' => 'Subscript',
+            'superscript' => 'Superscript',
+            'table' => 'Table',
+            'table_delete' => 'Delete table',
+            'table_add_column_before' => 'Add column before',
+            'table_add_column_after' => 'Add column after',
+            'table_delete_column' => 'Delete column',
+            'table_add_row_before' => 'Add row above',
+            'table_add_row_after' => 'Add row below',
+            'table_delete_row' => 'Delete row',
+            'table_merge_cells' => 'Merge cells',
+            'table_split_cell' => 'Split cell',
+            'table_toggle_header_row' => 'Toggle header row',
             'underline' => 'Underline',
             'undo' => 'Undo',
         ],
+
+        'uploading_file_message' => 'Uploading file...',
 
     ],
 
@@ -479,6 +604,11 @@ return [
 
         'actions' => [
 
+            'copy' => [
+                'label' => 'Copy',
+                'message' => 'Copied',
+            ],
+
             'hide_password' => [
                 'label' => 'Hide password',
             ],
@@ -496,22 +626,6 @@ return [
         'boolean' => [
             'true' => 'Yes',
             'false' => 'No',
-        ],
-
-    ],
-
-    'wizard' => [
-
-        'actions' => [
-
-            'previous_step' => [
-                'label' => 'Back',
-            ],
-
-            'next_step' => [
-                'label' => 'Next',
-            ],
-
         ],
 
     ],

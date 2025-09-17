@@ -1,0 +1,83 @@
+.fi-link {
+    @apply relative inline-flex items-center justify-center gap-1.5 font-medium text-gray-700 outline-none dark:text-gray-200;
+
+    &:not(.fi-disabled):not([disabled]) {
+        @apply hover:underline focus-visible:underline;
+    }
+
+    &.fi-disabled,
+    &[disabled] {
+        @apply cursor-default opacity-70;
+
+        &:not([x-tooltip]) {
+            @apply pointer-events-none;
+        }
+    }
+
+    &.fi-size-xs {
+        @apply gap-1 text-xs;
+    }
+
+    &.fi-size-sm {
+        @apply gap-1 text-sm;
+    }
+
+    &.fi-size-md,
+    &.fi-size-lg,
+    &.fi-size-xl {
+        @apply gap-1.5 text-sm;
+    }
+
+    &.fi-font-thin {
+        @apply font-thin;
+    }
+
+    &.fi-font-extralight {
+        @apply font-extralight;
+    }
+
+    &.fi-font-light {
+        @apply font-light;
+    }
+
+    &.fi-font-normal {
+        @apply font-normal;
+    }
+
+    &.fi-font-semibold {
+        @apply font-semibold;
+    }
+
+    &.fi-font-bold {
+        @apply font-bold;
+    }
+
+    &.fi-font-extrabold {
+        @apply font-extrabold;
+    }
+
+    &.fi-font-black {
+        @apply font-black;
+    }
+
+    &.fi-color {
+        @apply text-(--text) dark:text-(--dark-text);
+    }
+
+    &:not(.fi-color) > .fi-icon {
+        @apply text-gray-400 dark:text-gray-500;
+    }
+
+    & .fi-link-badge-ctn {
+        @apply absolute start-full top-0 z-[1] w-max -translate-x-1/4 -translate-y-3/4 rounded-md bg-white font-normal hover:no-underline focus-visible:no-underline rtl:translate-x-1/4 dark:bg-gray-900;
+    }
+}
+
+/**
+ * Align links embedded within text.
+ */
+p > .fi-link,
+span > .fi-link {
+    @apply pb-[2px] align-middle;
+    text-align: inherit;
+}

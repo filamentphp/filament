@@ -284,7 +284,7 @@ return [
 
     'markdown_editor' => [
 
-        'toolbar_buttons' => [
+        'tools' => [
             'attach_files' => 'Dołącz pliki',
             'blockquote' => 'Cytat blokowy',
             'bold' => 'Pogrubienie',
@@ -298,6 +298,28 @@ return [
             'strike' => 'Przekreślenie',
             'table' => 'Tabela',
             'undo' => 'Cofnij',
+        ],
+
+    ],
+
+    'modal_table_select' => [
+
+        'actions' => [
+
+            'select' => [
+
+                'label' => 'Wybierz',
+
+                'actions' => [
+
+                    'select' => [
+                        'label' => 'Wybierz',
+                    ],
+
+                ],
+
+            ],
+
         ],
 
     ],
@@ -365,37 +387,129 @@ return [
 
     'rich_editor' => [
 
-        'dialogs' => [
+        'actions' => [
+
+            'attach_files' => [
+
+                'label' => 'Prześlij plik',
+
+                'modal' => [
+
+                    'heading' => 'Prześlij plik',
+
+                    'form' => [
+
+                        'file' => [
+
+                            'label' => [
+                                'new' => 'Plik',
+                                'existing' => 'Zastąp plik',
+                            ],
+
+                        ],
+
+                        'alt' => [
+
+                            'label' => [
+                                'new' => 'Tekst alternatywny',
+                                'existing' => 'Zmień tekst alternatywny',
+                            ],
+
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
+            'custom_block' => [
+
+                'modal' => [
+
+                    'actions' => [
+
+                        'insert' => [
+                            'label' => 'Wstaw',
+                        ],
+
+                        'save' => [
+                            'label' => 'Zapisz',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
 
             'link' => [
 
-                'actions' => [
-                    'link' => 'Linkuj',
-                    'unlink' => 'Usuń link',
+                'label' => 'Edytuj',
+
+                'modal' => [
+
+                    'heading' => 'Link',
+
+                    'form' => [
+
+                        'url' => [
+                            'label' => 'URL',
+                        ],
+
+                        'should_open_in_new_tab' => [
+                            'label' => 'Otwórz w nowej karcie',
+                        ],
+
+                    ],
+
                 ],
-
-                'label' => 'URL',
-
-                'placeholder' => 'Wprowadź URL',
 
             ],
 
         ],
 
-        'toolbar_buttons' => [
+        'no_merge_tag_search_results_message' => 'Brak wyników.',
+
+        'tools' => [
+            'align_center' => 'Wyśrodkuj',
+            'align_end' => 'Wyrównaj do prawej',
+            'align_justify' => 'Justuj',
+            'align_start' => 'Wyrównaj do lewej',
             'attach_files' => 'Dołącz pliki',
             'blockquote' => 'Cytat',
             'bold' => 'Pogrubienie',
             'bullet_list' => 'Lista punktowana',
+            'clear_formatting' => 'Usuń formatowanie',
             'code_block' => 'Blok kodu',
+            'custom_blocks' => 'Bloki',
+            'details' => 'Szczegóły',
+            'highlight' => 'Podświetlenie',
+            'horizontal_rule' => 'Linia pozioma',
             'h1' => 'Tytuł',
             'h2' => 'Nagłówek',
             'h3' => 'Podtytuł',
             'italic' => 'Kursywa',
+            'lead' => 'Tekst wiodący',
             'link' => 'Adres',
+            'merge_tags' => 'Scal tagi',
             'ordered_list' => 'Lista numerowana',
             'redo' => 'Ponów',
+            'small' => 'Mniejsza czcionka',
             'strike' => 'Przekreślenie',
+            'subscript' => 'Indeks dolny',
+            'superscript' => 'Indeks górny',
+            'table' => 'Tabela',
+            'table_delete' => 'Usuń tabelę',
+            'table_add_column_before' => 'Dodaj kolumnę przed',
+            'table_add_column_after' => 'Dodaj kolumnę po',
+            'table_delete_column' => 'Usuń kolumnę',
+            'table_add_row_before' => 'Dodaj wiersz powyżej',
+            'table_add_row_after' => 'Dodaj wiersz poniżej',
+            'table_delete_row' => 'Usuń wiersz',
+            'table_merge_cells' => 'Scal komórki',
+            'table_split_cell' => 'Podziel komórkę',
+            'table_toggle_header_row' => 'Przełącz wiersz nagłówka',
             'underline' => 'Podkreślenie',
             'undo' => 'Cofnij',
         ],
@@ -496,22 +610,6 @@ return [
         'boolean' => [
             'true' => 'Tak',
             'false' => 'Nie',
-        ],
-
-    ],
-
-    'wizard' => [
-
-        'actions' => [
-
-            'previous_step' => [
-                'label' => 'Poprzedni',
-            ],
-
-            'next_step' => [
-                'label' => 'Następny',
-            ],
-
         ],
 
     ],

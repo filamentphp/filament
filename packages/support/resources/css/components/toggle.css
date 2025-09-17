@@ -1,0 +1,60 @@
+.fi-toggle {
+    @apply focus-visible:ring-primary-600 dark:focus-visible:ring-primary-500 relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-gray-200 transition-colors duration-200 ease-in-out outline-none focus-visible:ring-2 focus-visible:ring-offset-1 disabled:pointer-events-none disabled:opacity-70 dark:bg-gray-700 dark:focus-visible:ring-offset-gray-900;
+
+    &:disabled,
+    &[disabled] {
+        @apply pointer-events-none opacity-70;
+    }
+
+    &.fi-color {
+        @apply bg-(--bg) dark:bg-(--dark-bg);
+
+        & .fi-icon {
+            @apply text-(--text);
+        }
+    }
+
+    &.fi-hidden {
+        @apply hidden;
+    }
+
+    & > :first-child {
+        @apply pointer-events-none relative inline-block size-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out;
+
+        & > * {
+            @apply absolute inset-0 flex h-full w-full items-center justify-center transition-opacity;
+        }
+    }
+
+    & .fi-icon {
+        @apply text-gray-400 dark:text-gray-700;
+    }
+
+    &.fi-toggle-on {
+        & > :first-child {
+            @apply translate-x-5 rtl:-translate-x-5;
+
+            & > :first-child {
+                @apply opacity-0 duration-100 ease-out;
+            }
+
+            & > :last-child {
+                @apply opacity-100 duration-200 ease-in;
+            }
+        }
+    }
+
+    &.fi-toggle-off {
+        & > :first-child {
+            @apply translate-x-0;
+
+            & > :first-child {
+                @apply opacity-100 duration-200 ease-in;
+            }
+
+            & > :last-child {
+                @apply opacity-0 duration-100 ease-out;
+            }
+        }
+    }
+}

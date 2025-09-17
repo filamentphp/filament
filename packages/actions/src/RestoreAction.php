@@ -3,7 +3,9 @@
 namespace Filament\Actions;
 
 use Filament\Actions\Concerns\CanCustomizeProcess;
+use Filament\Actions\View\ActionsIconAlias;
 use Filament\Support\Facades\FilamentIcon;
+use Filament\Support\Icons\Heroicon;
 use Illuminate\Database\Eloquent\Model;
 
 class RestoreAction extends Action
@@ -19,8 +21,6 @@ class RestoreAction extends Action
     {
         parent::setUp();
 
-        $this->requiresConfirmation();
-
         $this->label(__('filament-actions::restore.single.label'));
 
         $this->modalHeading(fn (): string => __('filament-actions::restore.single.modal.heading', ['label' => $this->getRecordTitle()]));
@@ -31,9 +31,12 @@ class RestoreAction extends Action
 
         $this->defaultColor('gray');
 
-        $this->groupedIcon(FilamentIcon::resolve('actions::restore-action.grouped') ?? 'heroicon-m-arrow-uturn-left');
+        $this->tableIcon(FilamentIcon::resolve(ActionsIconAlias::RESTORE_ACTION) ?? Heroicon::ArrowUturnLeft);
+        $this->groupedIcon(FilamentIcon::resolve(ActionsIconAlias::RESTORE_ACTION_GROUPED) ?? Heroicon::ArrowUturnLeft);
 
-        $this->modalIcon(FilamentIcon::resolve('actions::restore-action.modal') ?? 'heroicon-o-arrow-uturn-left');
+        $this->requiresConfirmation();
+
+        $this->modalIcon(FilamentIcon::resolve(ActionsIconAlias::RESTORE_ACTION_MODAL) ?? Heroicon::OutlinedArrowUturnLeft);
 
         $this->action(function (Model $record): void {
             if (! method_exists($record, 'restore')) {
@@ -42,7 +45,7 @@ class RestoreAction extends Action
                 return;
             }
 
-            $result = $this->process(static fn () => $record->restore());
+            $result = $this->process(static fn (): ?bool => $record->restore());
 
             if (! $result) {
                 $this->failure();

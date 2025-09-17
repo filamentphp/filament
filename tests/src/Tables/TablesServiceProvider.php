@@ -2,7 +2,7 @@
 
 namespace Filament\Tests\Tables;
 
-use Filament\Tests\Tables\Fixtures\PostsTable;
+use Filament\Tests\Fixtures\Livewire\PostsTable;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
 use Livewire\Mechanisms\ComponentRegistry;

@@ -4,12 +4,13 @@ namespace Filament\Resources\Pages;
 
 class ManageRecords extends ListRecords
 {
-    public function getBreadcrumbs(): array
+    public function hasResourceBreadcrumbs(): bool
     {
-        if (filled($cluster = static::getCluster())) {
-            return $cluster::unshiftClusterBreadcrumbs([]);
-        }
+        return false;
+    }
 
-        return [];
+    public function getBreadcrumb(): ?string
+    {
+        return static::$breadcrumb;
     }
 }

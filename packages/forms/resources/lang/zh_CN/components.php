@@ -223,7 +223,7 @@ return [
 
     'markdown_editor' => [
 
-        'toolbar_buttons' => [
+        'tools' => [
             'attach_files' => '附件',
             'blockquote' => '引用',
             'bold' => '加粗',
@@ -317,7 +317,7 @@ return [
 
         ],
 
-        'toolbar_buttons' => [
+        'tools' => [
             'attach_files' => '附件',
             'blockquote' => '引用',
             'bold' => '加粗',
@@ -404,22 +404,6 @@ return [
 
     'tags_input' => [
         'placeholder' => '新标签',
-    ],
-
-    'wizard' => [
-
-        'actions' => [
-
-            'previous_step' => [
-                'label' => '上一步',
-            ],
-
-            'next_step' => [
-                'label' => '下一步',
-            ],
-
-        ],
-
     ],
 
 ];

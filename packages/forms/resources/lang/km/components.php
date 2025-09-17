@@ -280,7 +280,7 @@ return [
 
     'markdown_editor' => [
 
-        'toolbar_buttons' => [
+        'tools' => [
             'attach_files' => 'ភ្ជាប់ឯកសារ',
             'blockquote' => 'ប្លុកសម្រង់',
             'bold' => 'ដិត',
@@ -378,7 +378,7 @@ return [
 
         ],
 
-        'toolbar_buttons' => [
+        'tools' => [
             'attach_files' => 'ភ្ជាប់ឯកសារ',
             'blockquote' => 'ប្លុកសម្រង់',
             'bold' => 'ដិត',
@@ -492,22 +492,6 @@ return [
         'boolean' => [
             'true' => 'បាទ',
             'false' => 'ទេ',
-        ],
-
-    ],
-
-    'wizard' => [
-
-        'actions' => [
-
-            'previous_step' => [
-                'label' => 'ត្រឡប់មកវិញ',
-            ],
-
-            'next_step' => [
-                'label' => 'បន្ទាប់',
-            ],
-
         ],
 
     ],

@@ -27,23 +27,23 @@ trait HasRoutes
 
     public static function routes(Panel $panel): void
     {
-        Route::get(static::getRoutePath(), static::class)
+        Route::get(static::getRoutePath($panel), static::class)
             ->middleware(static::getRouteMiddleware($panel))
             ->withoutMiddleware(static::getWithoutRouteMiddleware($panel))
-            ->name(static::getRelativeRouteName());
+            ->name(static::getRelativeRouteName($panel));
     }
 
-    public static function getRoutePath(): string
+    public static function getRoutePath(Panel $panel): string
     {
-        return '/' . static::getSlug();
+        return '/' . static::getSlug($panel);
     }
 
-    public static function getRelativeRouteName(): string
+    public static function getRelativeRouteName(Panel $panel): string
     {
-        return (string) str(static::getSlug())->replace('/', '.');
+        return (string) str(static::getSlug($panel))->replace('/', '.');
     }
 
-    public static function getSlug(): string
+    public static function getSlug(?Panel $panel = null): string
     {
         if (filled(static::$slug)) {
             return static::$slug;
@@ -61,6 +61,7 @@ trait HasRoutes
     {
         return [
             ...(static::isEmailVerificationRequired($panel) ? [static::getEmailVerifiedMiddleware($panel)] : []),
+            ...(static::isMultiFactorAuthenticationRequired($panel) ? [static::getMultiFactorAuthenticationRequiredMiddleware($panel)] : []),
             ...(static::isTenantSubscriptionRequired($panel) ? [static::getTenantSubscribedMiddleware($panel)] : []),
             ...Arr::wrap(static::$routeMiddleware),
         ];
@@ -79,9 +80,19 @@ trait HasRoutes
         return $panel->getEmailVerifiedMiddleware();
     }
 
+    public static function getMultiFactorAuthenticationRequiredMiddleware(Panel $panel): string
+    {
+        return $panel->getMultiFactorAuthenticationRequiredMiddleware();
+    }
+
     public static function isEmailVerificationRequired(Panel $panel): bool
     {
         return $panel->isEmailVerificationRequired();
+    }
+
+    public static function isMultiFactorAuthenticationRequired(Panel $panel): bool
+    {
+        return $panel->isMultiFactorAuthenticationRequired();
     }
 
     public static function getTenantSubscribedMiddleware(Panel $panel): string

@@ -54,6 +54,18 @@ return [
                 'title' => 'Törölve',
             ],
 
+            'deleted_partial' => [
+                'title' => ':count elem törölve a :total-ból',
+                'missing_authorization_failure_message' => 'Nincs jogosultságod :count elem törléséhez.',
+                'missing_processing_failure_message' => ':count elem törlése nem sikerült.',
+            ],
+
+            'deleted_none' => [
+                'title' => 'Törlés sikertelen',
+                'missing_authorization_failure_message' => 'Nincs jogosultságod :count elem törléséhez.',
+                'missing_processing_failure_message' => ':count elem törlése nem sikerült.',
+            ],
+
         ],
 
     ],

@@ -4,27 +4,42 @@ namespace Filament\Actions\Imports\Http\Controllers;
 
 use Filament\Actions\Imports\Models\FailedImportRow;
 use Filament\Actions\Imports\Models\Import;
+use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Gate;
 use League\Csv\Bom;
 use League\Csv\Writer;
 use SplTempFileObject;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
-use function Filament\authorize;
-
 class DownloadImportFailureCsv
 {
-    public function __invoke(Import $import): StreamedResponse
+    public function __invoke(Request $request, Import $import): StreamedResponse
     {
-        if (filled(Gate::getPolicyFor($import::class))) {
-            authorize('view', $import);
+        abort_unless(auth(
+            $request->hasValidSignature(absolute: false)
+                ? $request->query('authGuard')
+                : null,
+        )->check(), 401);
+
+        $user = auth(
+            $request->hasValidSignature(absolute: false)
+                ? $request->query('authGuard')
+                : null,
+        )->user();
+
+        $importPolicy = Gate::getPolicyFor($import::class);
+
+        if (filled($importPolicy) && method_exists($importPolicy, 'view')) {
+            Gate::forUser($user)->authorize('view', Arr::wrap($import));
         } else {
-            abort_unless($import->user()->is(auth()->user()), 403);
+            abort_unless($import->user()->is($user), 403);
         }
 
         $csv = Writer::createFromFileObject(new SplTempFileObject);
         $csv->setOutputBOM(Bom::Utf8);
 
+        /** @var ?FailedImportRow $firstFailedRow */
         $firstFailedRow = $import->failedRows()->first();
 
         $columnHeaders = $firstFailedRow ? array_keys($firstFailedRow->data) : [];
@@ -34,12 +49,12 @@ class DownloadImportFailureCsv
 
         $import->failedRows()
             ->lazyById(100)
-            ->each(fn (FailedImportRow $failedImportRow) => $csv->insertOne([
+            ->each(fn (FailedImportRow $failedImportRow) => $csv->insertOne([/** @phpstan-ignore argument.type */
                 ...$failedImportRow->data,
                 'error' => $failedImportRow->validation_error ?? __('filament-actions::import.failure_csv.system_error'),
             ]));
 
-        return response()->streamDownload(function () use ($csv) {
+        return response()->streamDownload(function () use ($csv): void {
             foreach ($csv->chunk(1000) as $offset => $chunk) {
                 echo $chunk;
 

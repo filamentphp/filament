@@ -3,11 +3,9 @@
 namespace Filament\Tables\Table\Concerns;
 
 use Closure;
-use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
 use Illuminate\Database\Eloquent\Relations\HasOneOrManyThrough;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -64,7 +62,7 @@ trait HasQuery
         return $query;
     }
 
-    public function getQuery(): Builder | Relation
+    public function getQuery(): Builder | Relation | null
     {
         if ($query = $this->evaluate($this->query)) {
             return $this->applyQueryScopes($query->clone());
@@ -74,9 +72,7 @@ trait HasQuery
             return $this->applyQueryScopes($query->clone());
         }
 
-        $livewireClass = $this->getLivewire()::class;
-
-        throw new Exception("Table [{$livewireClass}] must have a [query()].");
+        return null;
     }
 
     public function getRelationshipQuery(): ?Builder
@@ -89,7 +85,7 @@ trait HasQuery
 
         $query = $relationship->getQuery();
 
-        if ($relationship instanceof (class_exists(HasOneOrManyThrough::class) ? HasOneOrManyThrough::class : HasManyThrough::class)) {
+        if ($relationship instanceof HasOneOrManyThrough) {
             // https://github.com/laravel/framework/issues/4962
             $query->select($query->getModel()->getTable() . '.*');
 

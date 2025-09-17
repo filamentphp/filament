@@ -46,11 +46,19 @@ class PanelsRenderHook
 
     const HEAD_START = 'panels::head.start';
 
+    const LAYOUT_END = 'panels::layout.end';
+
+    const LAYOUT_START = 'panels::layout.start';
+
     const PAGE_END = 'panels::page.end';
 
     const PAGE_FOOTER_WIDGETS_AFTER = 'panels::page.footer-widgets.after';
 
     const PAGE_FOOTER_WIDGETS_BEFORE = 'panels::page.footer-widgets.before';
+
+    const PAGE_FOOTER_WIDGETS_END = 'panels::page.footer-widgets.end';
+
+    const PAGE_FOOTER_WIDGETS_START = 'panels::page.footer-widgets.start';
 
     const PAGE_HEADER_ACTIONS_AFTER = 'panels::page.header.actions.after';
 
@@ -60,11 +68,15 @@ class PanelsRenderHook
 
     const PAGE_HEADER_WIDGETS_BEFORE = 'panels::page.header-widgets.before';
 
+    const PAGE_HEADER_WIDGETS_END = 'panels::page.header-widgets.end';
+
+    const PAGE_HEADER_WIDGETS_START = 'panels::page.header-widgets.start';
+
     const PAGE_START = 'panels::page.start';
 
-    const PAGE_SUB_NAVIGATION_SELECT_AFTER = 'panels::page.sub-navigation.select.after';
+    const PAGE_SUB_NAVIGATION_MOBILE_MENU_AFTER = 'panels::page.sub-navigation.module-menu.after';
 
-    const PAGE_SUB_NAVIGATION_SELECT_BEFORE = 'panels::page.sub-navigation.select.before';
+    const PAGE_SUB_NAVIGATION_MOBILE_MENU_BEFORE = 'panels::page.sub-navigation.module-menu.before';
 
     const PAGE_SUB_NAVIGATION_SIDEBAR_AFTER = 'panels::page.sub-navigation.sidebar.after';
 
@@ -106,11 +118,19 @@ class PanelsRenderHook
 
     const SCRIPTS_BEFORE = 'panels::scripts.before';
 
+    const SIDEBAR_FOOTER = 'panels::sidebar.footer';
+
+    const SIDEBAR_LOGO_AFTER = 'panels::sidebar.logo.after';
+
+    const SIDEBAR_LOGO_BEFORE = 'panels::sidebar.logo.before';
+
     const SIDEBAR_NAV_END = 'panels::sidebar.nav.end';
 
     const SIDEBAR_NAV_START = 'panels::sidebar.nav.start';
 
-    const SIDEBAR_FOOTER = 'panels::sidebar.footer';
+    const SIMPLE_LAYOUT_END = 'panels::simple-layout.end';
+
+    const SIMPLE_LAYOUT_START = 'panels::simple-layout.start';
 
     const SIMPLE_PAGE_END = 'panels::simple-page.end';
 
@@ -129,6 +149,10 @@ class PanelsRenderHook
     const TOPBAR_BEFORE = 'panels::topbar.before';
 
     const TOPBAR_END = 'panels::topbar.end';
+
+    const TOPBAR_LOGO_AFTER = 'panels::topbar.logo.after';
+
+    const TOPBAR_LOGO_BEFORE = 'panels::topbar.logo.before';
 
     const TOPBAR_START = 'panels::topbar.start';
 

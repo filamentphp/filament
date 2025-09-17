@@ -4,11 +4,11 @@ namespace App\Livewire\Panels\Navigation;
 
 use Filament\Navigation\NavigationItem;
 use Filament\Pages\Page;
-use Filament\Support\Colors\Color;
+use Filament\Support\Icons\Heroicon;
 
 class BadgeColor extends Page
 {
-    protected static string $view = 'livewire.panels.navigation.empty';
+    protected string $view = 'livewire.panels.navigation.empty';
 
     public function mount()
     {
@@ -18,8 +18,8 @@ class BadgeColor extends Page
                 NavigationItem::make()
                     ->label('Orders')
                     ->url(fn (): string => '#')
-                    ->icon('heroicon-o-shopping-cart')
-                    ->badge(32, Color::Red),
+                    ->icon(Heroicon::OutlinedShoppingCart)
+                    ->badge(32, 'danger'),
             ]);
     }
 }

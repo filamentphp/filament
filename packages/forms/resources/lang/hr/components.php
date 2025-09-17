@@ -280,7 +280,7 @@ return [
 
     'markdown_editor' => [
 
-        'toolbar_buttons' => [
+        'tools' => [
             'attach_files' => 'Dodaj datoteke',
             'blockquote' => 'Blok citat',
             'bold' => 'Podebljano',
@@ -378,7 +378,7 @@ return [
 
         ],
 
-        'toolbar_buttons' => [
+        'tools' => [
             'attach_files' => 'Dodaj datoteke',
             'blockquote' => 'Blok citat',
             'bold' => 'Podebljano',
@@ -488,22 +488,6 @@ return [
         'boolean' => [
             'true' => 'Da',
             'false' => 'Ne',
-        ],
-
-    ],
-
-    'wizard' => [
-
-        'actions' => [
-
-            'previous_step' => [
-                'label' => 'Natrag',
-            ],
-
-            'next_step' => [
-                'label' => 'Naprijed',
-            ],
-
         ],
 
     ],

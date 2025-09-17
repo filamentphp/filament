@@ -241,7 +241,7 @@ return [
 
     'markdown_editor' => [
 
-        'toolbar_buttons' => [
+        'tools' => [
             'attach_files' => 'Pridėti failus',
             'blockquote' => 'Citatos blokas',
             'bold' => 'Paryškinta',
@@ -330,7 +330,7 @@ return [
 
         ],
 
-        'toolbar_buttons' => [
+        'tools' => [
             'attach_files' => 'Pridėti failus',
             'blockquote' => 'Citatos blokas',
             'bold' => 'Paryškinta',
@@ -440,22 +440,6 @@ return [
         'boolean' => [
             'true' => 'Taip',
             'false' => 'Ne',
-        ],
-
-    ],
-
-    'wizard' => [
-
-        'actions' => [
-
-            'previous_step' => [
-                'label' => 'Atgal',
-            ],
-
-            'next_step' => [
-                'label' => 'Pirmyn',
-            ],
-
         ],
 
     ],

@@ -128,7 +128,7 @@ class PrepareCsvExport implements ShouldQueue
         // in case it contains attributes that are not serializable, such as binary columns.
         $this->export->unsetRelation('user');
 
-        $dispatchRecords = function (array $records) use ($exportCsvJob, &$page, &$totalRows) {
+        $dispatchRecords = function (array $records) use ($exportCsvJob, &$page, &$totalRows): void {
             $recordsCount = count($records);
 
             if (($totalRows + $recordsCount) > $this->export->total_rows) {

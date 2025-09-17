@@ -3,6 +3,9 @@
 namespace Filament\Forms\Components;
 
 use Closure;
+use Filament\Schemas\Components\StateCasts\BooleanStateCast;
+use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
+use Filament\Schemas\Components\StateCasts\StringStateCast;
 
 class Radio extends Field implements Contracts\CanDisableOptions
 {
@@ -21,11 +24,6 @@ class Radio extends Field implements Contracts\CanDisableOptions
 
     protected bool | Closure $isInline = false;
 
-    protected function setUp(): void
-    {
-        parent::setUp();
-    }
-
     public function boolean(?string $trueLabel = null, ?string $falseLabel = null): static
     {
         $this->options([
@@ -33,13 +31,14 @@ class Radio extends Field implements Contracts\CanDisableOptions
             0 => $falseLabel ?? __('filament-forms::components.radio.boolean.false'),
         ]);
 
+        $this->stateCast(app(BooleanStateCast::class, ['isStoredAsInt' => true]));
+
         return $this;
     }
 
     public function inline(bool | Closure $condition = true): static
     {
         $this->isInline = $condition;
-        $this->inlineLabel(fn (Radio $component): ?bool => $component->evaluate($condition) ? true : null);
 
         return $this;
     }
@@ -58,5 +57,36 @@ class Radio extends Field implements Contracts\CanDisableOptions
         }
 
         return $state;
+    }
+
+    /**
+     * @return array<StateCast>
+     */
+    public function getDefaultStateCasts(): array
+    {
+        if ($this->hasCustomStateCasts() || filled($this->getEnum())) {
+            return parent::getDefaultStateCasts();
+        }
+
+        return [app(StringStateCast::class, ['isNullable' => true])];
+    }
+
+    /**
+     * @return ?array<string>
+     */
+    public function getInValidationRuleValues(): ?array
+    {
+        $values = parent::getInValidationRuleValues();
+
+        if ($values !== null) {
+            return $values;
+        }
+
+        return array_keys($this->getEnabledOptions());
+    }
+
+    public function hasNullableBooleanState(): bool
+    {
+        return true;
     }
 }

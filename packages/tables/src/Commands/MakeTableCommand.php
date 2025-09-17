@@ -2,92 +2,211 @@
 
 namespace Filament\Tables\Commands;
 
-use Filament\Support\Commands\Concerns\CanIndentStrings;
+use Filament\Support\Commands\Concerns\CanAskForComponentLocation;
 use Filament\Support\Commands\Concerns\CanManipulateFiles;
-use Filament\Support\Commands\Concerns\CanReadModelSchemas;
-use Filament\Tables\Commands\Concerns\CanGenerateTables;
+use Filament\Support\Commands\Exceptions\FailureCommandOutput;
+use Filament\Tables\Commands\FileGenerators\TableClassGenerator;
 use Illuminate\Console\Command;
-use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Model;
 use Symfony\Component\Console\Attribute\AsCommand;
+use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputOption;
 
+use function Filament\Support\discover_app_classes;
+use function Laravel\Prompts\confirm;
+use function Laravel\Prompts\suggest;
 use function Laravel\Prompts\text;
 
-#[AsCommand(name: 'make:livewire-table')]
+#[AsCommand(name: 'make:filament-table', aliases: [
+    'filament:table',
+])]
 class MakeTableCommand extends Command
 {
-    use CanGenerateTables;
-    use CanIndentStrings;
+    use CanAskForComponentLocation;
     use CanManipulateFiles;
-    use CanReadModelSchemas;
 
-    protected $description = 'Create a new Livewire component containing a Filament table';
+    protected $description = 'Create a new Filament table class';
 
-    protected $signature = 'make:livewire-table {name?} {model?} {--G|generate} {--F|force}';
+    protected $name = 'make:filament-table';
+
+    /**
+     * @var class-string
+     */
+    protected string $fqn;
+
+    protected string $fqnEnd;
+
+    protected string $path;
+
+    /**
+     * @var class-string<Model>
+     */
+    protected string $modelFqn;
+
+    protected string $modelFqnEnd;
+
+    protected bool $isGenerated;
+
+    /**
+     * @var array<string>
+     */
+    protected $aliases = [
+        'filament:table',
+    ];
+
+    /**
+     * @return array<InputArgument>
+     */
+    protected function getArguments(): array
+    {
+        return [
+            new InputArgument(
+                name: 'name',
+                mode: InputArgument::OPTIONAL,
+                description: 'The name of the table class to generate, optionally prefixed with directories',
+            ),
+            new InputArgument(
+                name: 'model',
+                mode: InputArgument::OPTIONAL,
+                description: 'The name of the model to generate the table for, optionally prefixed with directories',
+            ),
+        ];
+    }
+
+    /**
+     * @return array<InputOption>
+     */
+    protected function getOptions(): array
+    {
+        return [
+            new InputOption(
+                name: 'generate',
+                shortcut: 'G',
+                mode: InputOption::VALUE_NONE,
+                description: 'Generate the table columns based on the attributes of a model',
+            ),
+            new InputOption(
+                name: 'model-namespace',
+                shortcut: null,
+                mode: InputOption::VALUE_REQUIRED,
+                description: 'The namespace of the model class, [' . app()->getNamespace() . 'Models] by default',
+            ),
+            new InputOption(
+                name: 'force',
+                shortcut: 'F',
+                mode: InputOption::VALUE_NONE,
+                description: 'Overwrite the contents of the files if they already exist',
+            ),
+        ];
+    }
 
     public function handle(): int
     {
-        $component = (string) str($this->argument('name') ?? text(
+        try {
+            $this->configureFqnEnd();
+            $this->configureModel();
+            $this->configureIsGenerated();
+
+            $this->configureLocation();
+
+            $this->createTable();
+        } catch (FailureCommandOutput) {
+            return static::FAILURE;
+        }
+
+        $this->components->info("Table [{$this->fqn}] created successfully.");
+
+        return static::SUCCESS;
+    }
+
+    protected function configureFqnEnd(): void
+    {
+        $this->fqnEnd = (string) str($this->argument('name') ?? text(
             label: 'What is the table name?',
-            placeholder: 'Products/ListProducts',
+            placeholder: 'BlogPostsTable',
             required: true,
         ))
             ->trim('/')
             ->trim('\\')
             ->trim(' ')
+            ->studly()
             ->replace('/', '\\');
-        $componentClass = (string) str($component)->afterLast('\\');
-        $componentNamespace = str($component)->contains('\\') ?
-            (string) str($component)->beforeLast('\\') :
-            '';
+    }
 
-        $view = str($component)
-            ->replace('\\', '/')
-            ->prepend('Livewire/')
-            ->explode('/')
-            ->map(fn ($segment) => Str::lower(Str::kebab($segment)))
-            ->implode('.');
+    protected function configureModel(): void
+    {
+        if ($this->argument('model')) {
+            $this->modelFqnEnd = (string) str($this->argument('model'))
+                ->trim('/')
+                ->trim('\\')
+                ->trim(' ')
+                ->studly()
+                ->replace('/', '\\');
 
-        $model = (string) str($this->argument('model') ?? text(
-            label: 'What is the model name?',
-            placeholder: 'Product',
-            required: true,
-        ))
-            ->replace('/', '\\');
-        $modelClass = (string) str($model)->afterLast('\\');
+            $modelNamespace = $this->option('model-namespace') ?? app()->getNamespace() . 'Models';
 
-        $path = (string) str($component)
-            ->prepend('/')
-            ->prepend(app_path('Livewire/'))
-            ->replace('\\', '/')
-            ->replace('//', '/')
-            ->append('.php');
+            $this->modelFqn = "{$modelNamespace}\\{$this->modelFqnEnd}";
 
-        $viewPath = resource_path(
-            (string) str($view)
-                ->replace('.', '/')
-                ->prepend('views/')
-                ->append('.blade.php'),
-        );
-
-        if ((! $this->option('force')) && $this->checkForCollision([$path, $viewPath])) {
-            return static::INVALID;
+            return;
         }
 
-        $this->copyStubToApp('Table', $path, [
-            'class' => $componentClass,
-            'columns' => $this->indentString($this->option('generate') ? $this->getResourceTableColumns(
-                'App\\Models\\' . $model,
-            ) : '//', 4),
-            'model' => $model,
-            'modelClass' => $modelClass,
-            'namespace' => 'App\\Livewire' . ($componentNamespace !== '' ? "\\{$componentNamespace}" : ''),
-            'view' => $view,
-        ]);
+        $modelFqns = discover_app_classes(parentClass: Model::class);
 
-        $this->copyStubToApp('TableView', $viewPath);
+        $this->modelFqn = suggest(
+            label: 'What is the model?',
+            options: function (string $search) use ($modelFqns): array {
+                $search = str($search)->trim()->replace(['\\', '/'], '');
 
-        $this->components->info("Filament table [{$path}] created successfully.");
+                if (blank($search)) {
+                    return $modelFqns;
+                }
 
-        return static::SUCCESS;
+                return array_filter(
+                    $modelFqns,
+                    fn (string $class): bool => str($class)->replace(['\\', '/'], '')->contains($search, ignoreCase: true),
+                );
+            },
+            placeholder: app()->getNamespace() . 'Models\\BlogPost',
+            required: true,
+        );
+
+        $this->modelFqnEnd = class_basename($this->modelFqn);
+    }
+
+    protected function configureIsGenerated(): void
+    {
+        $this->isGenerated = $this->option('generate') || confirm(
+            label: 'Should the table columns be generated from the current database columns?',
+            default: false,
+        );
+    }
+
+    protected function configureLocation(): void
+    {
+        [
+            $namespace,
+            $path,
+        ] = $this->askForComponentLocation(
+            path: 'Tables',
+            question: 'Where would you like to create the table?',
+        );
+
+        $this->fqn = "{$namespace}\\{$this->fqnEnd}";
+        $this->path = (string) str("{$path}\\{$this->fqnEnd}.php")
+            ->replace('\\', '/')
+            ->replace('//', '/');
+    }
+
+    protected function createTable(): void
+    {
+        if (! $this->option('force') && $this->checkForCollision($this->path)) {
+            throw new FailureCommandOutput;
+        }
+
+        $this->writeFile($this->path, app(TableClassGenerator::class, [
+            'fqn' => $this->fqn,
+            'modelFqn' => $this->modelFqn,
+            'isGenerated' => $this->isGenerated,
+        ]));
     }
 }

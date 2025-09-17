@@ -1,29 +1,24 @@
 @php
+    use Filament\Actions\Action;
+    use Illuminate\Support\Arr;
+
     $currentTenant = filament()->getTenant();
     $currentTenantName = filament()->getTenantName($currentTenant);
-    $items = filament()->getTenantMenuItems();
 
-    $billingItem = $items['billing'] ?? null;
-    $billingItemUrl = $billingItem?->getUrl();
-    $isBillingItemVisible = $billingItem?->isVisible() ?? true;
-    $hasBillingItem = (filament()->hasTenantBilling() || filled($billingItemUrl)) && $isBillingItemVisible;
-
-    $registrationItem = $items['register'] ?? null;
-    $registrationItemUrl = $registrationItem?->getUrl();
-    $isRegistrationItemVisible = $registrationItem?->isVisible() ?? true;
-    $hasRegistrationItem = ((filament()->hasTenantRegistration() && filament()->getTenantRegistrationPage()::canView()) || filled($registrationItemUrl)) && $isRegistrationItemVisible;
-
-    $profileItem = $items['profile'] ?? null;
-    $profileItemUrl = $profileItem?->getUrl();
-    $isProfileItemVisible = $profileItem?->isVisible() ?? true;
-    $hasProfileItem = ((filament()->hasTenantProfile() && filament()->getTenantProfilePage()::canView($currentTenant)) || filled($profileItemUrl)) && $isProfileItemVisible;
+    $items = $this->getTenantMenuItems();
 
     $canSwitchTenants = count($tenants = array_filter(
         filament()->getUserTenants(filament()->auth()->user()),
         fn (\Illuminate\Database\Eloquent\Model $tenant): bool => ! $tenant->is($currentTenant),
     ));
 
-    $items = \Illuminate\Support\Arr::except($items, ['billing', 'profile', 'register']);
+    $itemsBeforeAndAfterTenantSwitcher = collect($items)
+        ->groupBy(fn (Action $item): bool => $canSwitchTenants && ($item->getSort() < 0), preserveKeys: true)
+        ->all();
+    $itemsBeforeTenantSwitcher = $itemsBeforeAndAfterTenantSwitcher[true] ?? collect();
+    $itemsAfterTenantSwitcher = $itemsBeforeAndAfterTenantSwitcher[false] ?? collect();
+
+    $isSidebarCollapsibleOnDesktop = filament()->isSidebarCollapsibleOnDesktop();
 @endphp
 
 {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::TENANT_MENU_BEFORE) }}
@@ -31,7 +26,6 @@
 <x-filament::dropdown
     placement="bottom-start"
     size
-    teleport
     :attributes="
         \Filament\Support\prepare_inherited_attributes($attributes)
             ->class(['fi-tenant-menu'])
@@ -39,7 +33,7 @@
 >
     <x-slot name="trigger">
         <button
-            @if (filament()->isSidebarCollapsibleOnDesktop())
+            @if ($isSidebarCollapsibleOnDesktop)
                 x-data="{ tooltip: false }"
                 x-effect="
                     tooltip = $store.sidebar.isOpen
@@ -53,85 +47,42 @@
                 x-tooltip.html="tooltip"
             @endif
             type="button"
-            class="fi-tenant-menu-trigger group flex w-full items-center justify-center gap-x-3 rounded-lg p-2 text-sm font-medium outline-none transition duration-75 hover:bg-gray-100 focus-visible:bg-gray-100 dark:hover:bg-white/5 dark:focus-visible:bg-white/5"
+            class="fi-tenant-menu-trigger"
         >
             <x-filament-panels::avatar.tenant
                 :tenant="$currentTenant"
-                class="shrink-0"
+                loading="lazy"
             />
 
             <span
-                @if (filament()->isSidebarCollapsibleOnDesktop())
+                @if ($isSidebarCollapsibleOnDesktop)
                     x-show="$store.sidebar.isOpen"
                 @endif
-                class="grid justify-items-start text-start"
+                class="fi-tenant-menu-trigger-text"
             >
                 @if ($currentTenant instanceof \Filament\Models\Contracts\HasCurrentTenantLabel)
-                    <span class="text-xs text-gray-500 dark:text-gray-400">
+                    <span class="fi-tenant-menu-trigger-current-tenant-label">
                         {{ $currentTenant->getCurrentTenantLabel() }}
                     </span>
                 @endif
 
-                <span class="text-gray-950 dark:text-white">
+                <span class="fi-tenant-menu-trigger-tenant-name">
                     {{ $currentTenantName }}
                 </span>
             </span>
 
-            <x-filament::icon
-                icon="heroicon-m-chevron-down"
-                alias="panels::tenant-menu.toggle-button"
-                :x-show="filament()->isSidebarCollapsibleOnDesktop() ? '$store.sidebar.isOpen' : null"
-                class="ms-auto h-5 w-5 shrink-0 text-gray-400 transition duration-75 group-hover:text-gray-500 group-focus-visible:text-gray-500 dark:text-gray-500 dark:group-hover:text-gray-400 dark:group-focus-visible:text-gray-400"
-            />
+            {{
+                \Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::ChevronDown, alias: \Filament\View\PanelsIconAlias::TENANT_MENU_TOGGLE_BUTTON, attributes: new \Illuminate\View\ComponentAttributeBag([
+                    'x-show' => $isSidebarCollapsibleOnDesktop ? '$store.sidebar.isOpen' : null,
+                ]))
+            }}
         </button>
     </x-slot>
 
-    @if ($hasProfileItem || $hasBillingItem)
+    @if ($itemsBeforeTenantSwitcher->isNotEmpty())
         <x-filament::dropdown.list>
-            @if ($hasProfileItem)
-                <x-filament::dropdown.list.item
-                    :color="$profileItem?->getColor()"
-                    :href="$profileItemUrl ?? filament()->getTenantProfileUrl()"
-                    :icon="$profileItem?->getIcon() ?? \Filament\Support\Facades\FilamentIcon::resolve('panels::tenant-menu.profile-button') ?? 'heroicon-m-cog-6-tooth'"
-                    tag="a"
-                    :target="($profileItem?->shouldOpenUrlInNewTab() ?? false) ? '_blank' : null"
-                >
-                    {{ $profileItem?->getLabel() ?? filament()->getTenantProfilePage()::getLabel() }}
-                </x-filament::dropdown.list.item>
-            @endif
-
-            @if ($hasBillingItem)
-                <x-filament::dropdown.list.item
-                    :color="$billingItem?->getColor() ?? 'gray'"
-                    :href="$billingItemUrl ?? filament()->getTenantBillingUrl()"
-                    :icon="$billingItem?->getIcon() ?? \Filament\Support\Facades\FilamentIcon::resolve('panels::tenant-menu.billing-button') ?? 'heroicon-m-credit-card'"
-                    tag="a"
-                    :target="($billingItem?->shouldOpenUrlInNewTab() ?? false) ? '_blank' : null"
-                >
-                    {{ $billingItem?->getLabel() ?? __('filament-panels::layout.actions.billing.label') }}
-                </x-filament::dropdown.list.item>
-            @endif
-        </x-filament::dropdown.list>
-    @endif
-
-    @if (count($items))
-        <x-filament::dropdown.list>
-            @foreach ($items as $item)
-                @php
-                    $itemPostAction = $item->getPostAction();
-                @endphp
-
-                <x-filament::dropdown.list.item
-                    :action="$itemPostAction"
-                    :color="$item->getColor()"
-                    :href="$item->getUrl()"
-                    :icon="$item->getIcon()"
-                    :method="filled($itemPostAction) ? 'post' : null"
-                    :tag="filled($itemPostAction) ? 'form' : 'a'"
-                    :target="$item->shouldOpenUrlInNewTab() ? '_blank' : null"
-                >
-                    {{ $item->getLabel() }}
-                </x-filament::dropdown.list.item>
+            @foreach ($itemsBeforeTenantSwitcher as $item)
+                {{ $item }}
             @endforeach
         </x-filament::dropdown.list>
     @endif
@@ -139,9 +90,14 @@
     @if ($canSwitchTenants)
         <x-filament::dropdown.list>
             @foreach ($tenants as $tenant)
+                @php
+                    $tenantUrl = filament()->getUrl($tenant);
+                    $tenantImage = filament()->getTenantAvatarUrl($tenant);
+                @endphp
+
                 <x-filament::dropdown.list.item
-                    :href="filament()->getUrl($tenant)"
-                    :image="filament()->getTenantAvatarUrl($tenant)"
+                    :href="$tenantUrl"
+                    :image="$tenantImage"
                     tag="a"
                 >
                     {{ filament()->getTenantName($tenant) }}
@@ -150,17 +106,11 @@
         </x-filament::dropdown.list>
     @endif
 
-    @if ($hasRegistrationItem)
+    @if ($itemsAfterTenantSwitcher->isNotEmpty())
         <x-filament::dropdown.list>
-            <x-filament::dropdown.list.item
-                :color="$registrationItem?->getColor()"
-                :href="$registrationItemUrl ?? filament()->getTenantRegistrationUrl()"
-                :icon="$registrationItem?->getIcon() ?? \Filament\Support\Facades\FilamentIcon::resolve('panels::tenant-menu.registration-button') ?? 'heroicon-m-plus'"
-                tag="a"
-                :target="($registrationItem?->shouldOpenUrlInNewTab() ?? false) ? '_blank' : null"
-            >
-                {{ $registrationItem?->getLabel() ?? filament()->getTenantRegistrationPage()::getLabel() }}
-            </x-filament::dropdown.list.item>
+            @foreach ($itemsAfterTenantSwitcher as $item)
+                {{ $item }}
+            @endforeach
         </x-filament::dropdown.list>
     @endif
 </x-filament::dropdown>

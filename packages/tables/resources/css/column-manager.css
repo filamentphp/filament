@@ -1,0 +1,43 @@
+.fi-ta-col-manager {
+    @apply grid gap-y-4;
+
+    & .fi-ta-col-manager-ctn {
+        @apply grid gap-4;
+    }
+
+    & .fi-ta-col-manager-header {
+        @apply flex items-center justify-between;
+    }
+
+    & .fi-ta-col-manager-heading {
+        @apply text-base leading-6 font-semibold text-gray-950 dark:text-white;
+    }
+
+    & .fi-ta-col-manager-items {
+        @apply -mt-6 gap-x-6;
+    }
+
+    & .fi-ta-col-manager-item {
+        @apply flex break-inside-avoid items-center gap-3 pt-6;
+
+        & .fi-ta-col-manager-label {
+            @apply flex w-full flex-1 items-center gap-x-3 text-sm font-medium text-gray-950 dark:text-white;
+
+            & .fi-checkbox-input {
+                @apply shrink-0;
+            }
+        }
+
+        & .fi-ta-col-manager-reorder-handle {
+            @apply cursor-move;
+        }
+    }
+
+    & .fi-ta-col-manager-group {
+        @apply break-inside-avoid;
+
+        & .fi-ta-col-manager-group-items {
+            @apply ps-8;
+        }
+    }
+}

@@ -2,7 +2,7 @@
 
 return [
 
-    'column_toggle' => [
+    'column_manager' => [
 
         'heading' => 'Zutabeak',
 
@@ -84,7 +84,7 @@ return [
             'label' => 'Ireki ekintzak',
         ],
 
-        'toggle_columns' => [
+        'column_manager' => [
             'label' => 'Zutabeak aldatu',
         ],
 

@@ -1,0 +1,12 @@
+.fi-sc-image {
+    @apply rounded-lg border border-gray-300 dark:border-transparent;
+
+    &.fi-align-center {
+        @apply mx-auto;
+    }
+
+    &.fi-align-end,
+    &.fi-align-right {
+        @apply ms-auto;
+    }
+}

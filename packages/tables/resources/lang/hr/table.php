@@ -2,7 +2,7 @@
 
 return [
 
-    'column_toggle' => [
+    'column_manager' => [
 
         'heading' => 'Kolone',
 
@@ -99,7 +99,7 @@ return [
             'label' => 'Skupne radnje',
         ],
 
-        'toggle_columns' => [
+        'column_manager' => [
             'label' => 'Prikaži/sakrij stupce',
         ],
 

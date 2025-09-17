@@ -3,8 +3,9 @@
 namespace Filament\Notifications\Concerns;
 
 use Closure;
-use Filament\Notifications\Actions\Action;
-use Filament\Notifications\Actions\ActionGroup;
+use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
+use Filament\Support\Enums\Size;
 use Illuminate\Support\Arr;
 
 trait HasActions
@@ -29,6 +30,11 @@ trait HasActions
      */
     public function getActions(): array
     {
-        return Arr::wrap($this->evaluate($this->actions));
+        return array_map(
+            fn (Action $action) => $action
+                ->defaultView(Action::LINK_VIEW)
+                ->defaultSize(Size::Small),
+            Arr::wrap($this->evaluate($this->actions)),
+        );
     }
 }

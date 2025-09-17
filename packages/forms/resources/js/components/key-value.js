@@ -4,9 +4,7 @@ export default function keyValueFormComponent({ state }) {
 
         rows: [],
 
-        shouldUpdateRows: true,
-
-        init: function () {
+        init() {
             this.updateRows()
 
             if (this.rows.length <= 0) {
@@ -40,13 +38,13 @@ export default function keyValueFormComponent({ state }) {
             })
         },
 
-        addRow: function () {
+        addRow() {
             this.rows.push({ key: '', value: '' })
 
             this.updateState()
         },
 
-        deleteRow: function (index) {
+        deleteRow(index) {
             this.rows.splice(index, 1)
 
             if (this.rows.length <= 0) {
@@ -56,7 +54,7 @@ export default function keyValueFormComponent({ state }) {
             this.updateState()
         },
 
-        reorderRows: function (event) {
+        reorderRows(event) {
             const rows = Alpine.raw(this.rows)
 
             this.rows = []
@@ -71,44 +69,41 @@ export default function keyValueFormComponent({ state }) {
             })
         },
 
-        updateRows: function () {
-            if (!this.shouldUpdateRows) {
-                this.shouldUpdateRows = true
+        // https://github.com/filamentphp/filament/issues/1107
+        // https://github.com/filamentphp/filament/issues/12824
+        updateRows() {
+            const state = Alpine.raw(this.state)
+            const mergedRows = state.map(({ key, value }) => ({ key, value }))
 
-                return
-            }
+            this.rows.forEach((row) => {
+                if (row.key === '' || row.key === null) {
+                    mergedRows.push({
+                        key: '',
+                        value: row.value,
+                    })
+                }
+            })
 
-            let rows = []
-
-            for (let [key, value] of Object.entries(this.state ?? {})) {
-                rows.push({
-                    key,
-                    value,
-                })
-            }
-
-            this.rows = rows
+            this.rows = mergedRows
         },
 
-        updateState: function () {
-            let state = {}
+        updateState() {
+            let state = []
 
             this.rows.forEach((row) => {
                 if (row.key === '' || row.key === null) {
                     return
                 }
 
-                state[row.key] = row.value
+                state.push({
+                    key: row.key,
+                    value: row.value,
+                })
             })
 
-            // This is a hack to prevent the component from updating rows again
-            // after a state update, which would otherwise be done by the `state`
-            // watcher. If rows are updated again, duplicate keys are removed.
-            //
-            // https://github.com/filamentphp/filament/issues/1107
-            this.shouldUpdateRows = false
-
-            this.state = state
+            if (JSON.stringify(this.state) !== JSON.stringify(state)) {
+                this.state = state
+            }
         },
     }
 }

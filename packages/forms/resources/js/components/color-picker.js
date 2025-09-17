@@ -15,7 +15,7 @@ export default function colorPickerFormComponent({
     return {
         state,
 
-        init: function () {
+        init() {
             if (!(this.state === null || this.state === '')) {
                 this.setState(this.state)
             }
@@ -57,7 +57,7 @@ export default function colorPickerFormComponent({
             }
         },
 
-        togglePanelVisibility: function () {
+        togglePanelVisibility() {
             if (isDisabled) {
                 return
             }
@@ -65,18 +65,18 @@ export default function colorPickerFormComponent({
             this.$refs.panel.toggle(this.$refs.input)
         },
 
-        setState: function (value) {
+        setState(value) {
             this.state = value
 
             this.$refs.input.value = value
             this.$refs.panel.color = value
         },
 
-        isOpen: function () {
+        isOpen() {
             return this.$refs.panel.style.display === 'block'
         },
 
-        commitState: function () {
+        commitState() {
             if (
                 JSON.stringify(this.$wire.__instance.canonical) ===
                 JSON.stringify(this.$wire.__instance.ephemeral)

@@ -2,11 +2,13 @@
 
 namespace Filament\Infolists\Components\Concerns;
 
+use BackedEnum;
 use Closure;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Infolist;
+use Filament\Support\Concerns\CanConfigureCommonMark;
 use Filament\Support\Contracts\HasLabel as LabelInterface;
 use Filament\Support\Enums\ArgumentValue;
+use Filament\Support\Facades\FilamentTimezone;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\HtmlString;
@@ -15,6 +17,8 @@ use Illuminate\Support\Str;
 
 trait CanFormatState
 {
+    use CanConfigureCommonMark;
+
     protected ?Closure $formatStateUsing = null;
 
     protected int | Closure | null $characterLimit = null;
@@ -52,11 +56,9 @@ trait CanFormatState
         return $this;
     }
 
-    public function date(string | Closure | null $format = null, ?string $timezone = null): static
+    public function date(string | Closure | null $format = null, string | Closure | null $timezone = null): static
     {
         $this->isDate = true;
-
-        $format ??= Infolist::$defaultDateDisplayFormat;
 
         $this->formatStateUsing(static function (TextEntry $component, $state) use ($format, $timezone): ?string {
             if (blank($state)) {
@@ -64,25 +66,55 @@ trait CanFormatState
             }
 
             return Carbon::parse($state)
-                ->setTimezone($timezone ?? $component->getTimezone())
-                ->translatedFormat($component->evaluate($format));
+                ->setTimezone($component->evaluate($timezone) ?? $component->getTimezone())
+                ->translatedFormat($component->evaluate($format) ?? $component->getContainer()->getDefaultDateDisplayFormat());
         });
 
         return $this;
     }
 
-    public function dateTime(string | Closure | null $format = null, ?string $timezone = null): static
+    public function dateTime(string | Closure | null $format = null, string | Closure | null $timezone = null): static
     {
         $this->isDateTime = true;
 
-        $format ??= Infolist::$defaultDateTimeDisplayFormat;
+        $format ??= fn (TextEntry $component): string => $component->getContainer()->getDefaultDateTimeDisplayFormat();
 
         $this->date($format, $timezone);
 
         return $this;
     }
 
-    public function since(?string $timezone = null): static
+    public function isoDate(string | Closure | null $format = null, string | Closure | null $timezone = null): static
+    {
+        $this->isDate = true;
+
+        $format ??= fn (TextEntry $component): string => $component->getContainer()->getDefaultIsoDateDisplayFormat();
+
+        $this->formatStateUsing(static function (TextEntry $component, $state) use ($format, $timezone): ?string {
+            if (blank($state)) {
+                return null;
+            }
+
+            return Carbon::parse($state)
+                ->setTimezone($component->evaluate($timezone) ?? $component->getTimezone())
+                ->isoFormat($component->evaluate($format) ?? $component->getContainer()->getDefaultIsoDateDisplayFormat());
+        });
+
+        return $this;
+    }
+
+    public function isoDateTime(string | Closure | null $format = null, string | Closure | null $timezone = null): static
+    {
+        $this->isDateTime = true;
+
+        $format ??= fn (TextEntry $component): string => $component->getContainer()->getDefaultIsoDateTimeDisplayFormat();
+
+        $this->isoDate($format, $timezone);
+
+        return $this;
+    }
+
+    public function since(string | Closure | null $timezone = null): static
     {
         $this->isDateTime = true;
 
@@ -92,49 +124,47 @@ trait CanFormatState
             }
 
             return Carbon::parse($state)
-                ->setTimezone($timezone ?? $component->getTimezone())
+                ->setTimezone($component->evaluate($timezone) ?? $component->getTimezone())
                 ->diffForHumans();
         });
 
         return $this;
     }
 
-    public function dateTooltip(string | Closure | null $format = null, ?string $timezone = null): static
+    public function dateTooltip(string | Closure | null $format = null, string | Closure | null $timezone = null): static
     {
-        $format ??= Infolist::$defaultDateDisplayFormat;
-
         $this->tooltip(static function (TextEntry $component, mixed $state) use ($format, $timezone): ?string {
             if (blank($state)) {
                 return null;
             }
 
             return Carbon::parse($state)
-                ->setTimezone($timezone ?? $component->getTimezone())
-                ->translatedFormat($component->evaluate($format));
+                ->setTimezone($component->evaluate($timezone) ?? $component->getTimezone())
+                ->translatedFormat($component->evaluate($format) ?? $component->getContainer()->getDefaultDateDisplayFormat());
         });
 
         return $this;
     }
 
-    public function dateTimeTooltip(string | Closure | null $format = null, ?string $timezone = null): static
+    public function dateTimeTooltip(string | Closure | null $format = null, string | Closure | null $timezone = null): static
     {
-        $format ??= Infolist::$defaultDateTimeDisplayFormat;
+        $format ??= fn (TextEntry $component): string => $component->getContainer()->getDefaultDateTimeDisplayFormat();
 
         $this->dateTooltip($format, $timezone);
 
         return $this;
     }
 
-    public function timeTooltip(string | Closure | null $format = null, ?string $timezone = null): static
+    public function timeTooltip(string | Closure | null $format = null, string | Closure | null $timezone = null): static
     {
-        $format ??= Infolist::$defaultTimeDisplayFormat;
+        $format ??= fn (TextEntry $component): string => $component->getContainer()->getDefaultTimeDisplayFormat();
 
         $this->dateTooltip($format, $timezone);
 
         return $this;
     }
 
-    public function sinceTooltip(?string $timezone = null): static
+    public function sinceTooltip(string | Closure | null $timezone = null): static
     {
         $this->tooltip(static function (TextEntry $component, mixed $state) use ($timezone): ?string {
             if (blank($state)) {
@@ -142,18 +172,53 @@ trait CanFormatState
             }
 
             return Carbon::parse($state)
-                ->setTimezone($timezone ?? $component->getTimezone())
+                ->setTimezone($component->evaluate($timezone) ?? $component->getTimezone())
                 ->diffForHumans();
         });
 
         return $this;
     }
 
-    public function money(string | Closure | null $currency = null, int $divideBy = 0, string | Closure | null $locale = null): static
+    public function isoDateTooltip(string | Closure | null $format = null, string | Closure | null $timezone = null): static
+    {
+        $format ??= fn (TextEntry $component): string => $component->getContainer()->getDefaultIsoDateDisplayFormat();
+
+        $this->tooltip(static function (TextEntry $component, mixed $state) use ($format, $timezone): ?string {
+            if (blank($state)) {
+                return null;
+            }
+
+            return Carbon::parse($state)
+                ->setTimezone($component->evaluate($timezone) ?? $component->getTimezone())
+                ->isoFormat($component->evaluate($format) ?? $component->getContainer()->getDefaultIsoDateDisplayFormat());
+        });
+
+        return $this;
+    }
+
+    public function isoDateTimeTooltip(string | Closure | null $format = null, string | Closure | null $timezone = null): static
+    {
+        $format ??= fn (TextEntry $component): string => $component->getContainer()->getDefaultIsoDateTimeDisplayFormat();
+
+        $this->isoDateTooltip($format, $timezone);
+
+        return $this;
+    }
+
+    public function isoTimeTooltip(string | Closure | null $format = null, string | Closure | null $timezone = null): static
+    {
+        $format ??= fn (TextEntry $component): string => $component->getContainer()->getDefaultIsoTimeDisplayFormat();
+
+        $this->isoDateTooltip($format, $timezone);
+
+        return $this;
+    }
+
+    public function money(string | BackedEnum | Closure | null $currency = null, int | Closure $divideBy = 0, string | BackedEnum | Closure | null $locale = null, int | Closure | null $decimalPlaces = null): static
     {
         $this->isMoney = true;
 
-        $this->formatStateUsing(static function (TextEntry $component, $state) use ($currency, $divideBy, $locale): ?string {
+        $this->formatStateUsing(static function (TextEntry $component, $state) use ($currency, $divideBy, $locale, $decimalPlaces): ?string {
             if (blank($state)) {
                 return null;
             }
@@ -162,14 +227,23 @@ trait CanFormatState
                 return $state;
             }
 
-            $currency = $component->evaluate($currency) ?? Infolist::$defaultCurrency;
-            $locale = $component->evaluate($locale) ?? Infolist::$defaultNumberLocale ?? config('app.locale');
+            $currency = $component->evaluate($currency) ?? $component->getContainer()->getDefaultCurrency();
+            $locale = $component->evaluate($locale) ?? $component->getContainer()->getDefaultNumberLocale() ?? config('app.locale');
+            $decimalPlaces = $component->evaluate($decimalPlaces);
 
-            if ($divideBy) {
+            if ($divideBy = $component->evaluate($divideBy)) {
                 $state /= $divideBy;
             }
 
-            return Number::currency($state, $currency, $locale);
+            if ($currency instanceof BackedEnum) {
+                $currency = (string) $currency->value;
+            }
+
+            if ($locale instanceof BackedEnum) {
+                $locale = (string) $locale->value;
+            }
+
+            return Number::currency($state, $currency, $locale, $decimalPlaces);
         });
 
         return $this;
@@ -204,7 +278,7 @@ trait CanFormatState
                 );
             }
 
-            $locale = $component->evaluate($locale) ?? Infolist::$defaultNumberLocale ?? config('app.locale');
+            $locale = $component->evaluate($locale) ?? $component->getContainer()->getDefaultNumberLocale() ?? config('app.locale');
 
             return Number::format($state, $decimalPlaces, $component->evaluate($maxDecimalPlaces), $locale);
         });
@@ -212,13 +286,24 @@ trait CanFormatState
         return $this;
     }
 
-    public function time(string | Closure | null $format = null, ?string $timezone = null): static
+    public function time(string | Closure | null $format = null, string | Closure | null $timezone = null): static
     {
         $this->isTime = true;
 
-        $format ??= Infolist::$defaultTimeDisplayFormat;
+        $format ??= fn (TextEntry $component): string => $component->getContainer()->getDefaultTimeDisplayFormat();
 
         $this->date($format, $timezone);
+
+        return $this;
+    }
+
+    public function isoTime(string | Closure | null $format = null, string | Closure | null $timezone = null): static
+    {
+        $this->isTime = true;
+
+        $format ??= fn (TextEntry $component): string => $component->getContainer()->getDefaultIsoTimeDisplayFormat();
+
+        $this->isoDate($format, $timezone);
 
         return $this;
     }
@@ -284,7 +369,7 @@ trait CanFormatState
 
         if ($isHtml) {
             if ($this->isMarkdown()) {
-                $state = Str::markdown($state);
+                $state = Str::markdown($state, $this->getCommonMarkOptions(), $this->getCommonMarkExtensions());
             }
 
             $state = Str::sanitizeHtml($state);
@@ -299,12 +384,14 @@ trait CanFormatState
             $state = $state->getLabel();
         }
 
-        if ($characterLimit = $this->getCharacterLimit()) {
-            $state = Str::limit($state, $characterLimit, $this->getCharacterLimitEnd());
-        }
+        if (! $isHtml) {
+            if ($characterLimit = $this->getCharacterLimit()) {
+                $state = Str::limit($state, $characterLimit, $this->getCharacterLimitEnd());
+            }
 
-        if ($wordLimit = $this->getWordLimit()) {
-            $state = Str::words($state, $wordLimit, $this->getWordLimitEnd());
+            if ($wordLimit = $this->getWordLimit()) {
+                $state = Str::words($state, $wordLimit, $this->getWordLimitEnd());
+            }
         }
 
         $prefix = $this->getPrefix();
@@ -335,7 +422,7 @@ trait CanFormatState
                 $suffix = e($suffix);
             }
 
-            $state = $state . $suffix;
+            $state .= $suffix;
         }
 
         return $isHtml ? new HtmlString($state) : $state;
@@ -363,7 +450,7 @@ trait CanFormatState
 
     public function getTimezone(): string
     {
-        return $this->evaluate($this->timezone) ?? config('app.timezone');
+        return $this->evaluate($this->timezone) ?? ($this->isDateTime() ? FilamentTimezone::get() : config('app.timezone'));
     }
 
     public function isHtml(): bool

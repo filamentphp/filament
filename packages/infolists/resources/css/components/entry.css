@@ -1,0 +1,68 @@
+.fi-in-entry {
+    @apply grid gap-y-2;
+
+    &.fi-in-entry-has-inline-label {
+        @apply sm:grid-cols-3 sm:items-start sm:gap-x-4;
+
+        & .fi-in-entry-content-col {
+            @apply sm:col-span-2;
+        }
+    }
+
+    & .fi-in-entry-label-ctn {
+        @apply flex items-start gap-x-3;
+
+        & > .fi-sc:nth-child(1) {
+            @apply grow-0;
+        }
+    }
+
+    & .fi-in-entry-label {
+        @apply text-sm font-medium text-gray-950 dark:text-white;
+
+        &.fi-hidden {
+            @apply hidden;
+        }
+    }
+
+    & .fi-in-entry-label-col {
+        @apply grid auto-cols-fr gap-y-2;
+    }
+
+    & .fi-in-entry-content-col {
+        @apply grid auto-cols-fr gap-y-2;
+    }
+
+    & .fi-in-entry-content-ctn {
+        @apply flex w-full items-center gap-x-3;
+    }
+
+    & .fi-in-entry-content {
+        @apply block w-full text-start;
+
+        &.fi-align-center {
+            @apply text-center;
+        }
+
+        &.fi-align-end {
+            @apply text-end;
+        }
+
+        &.fi-align-left {
+            @apply text-left;
+        }
+
+        &.fi-align-right {
+            @apply text-right;
+        }
+
+        &.fi-align-justify,
+        &.fi-align-between {
+            @apply text-justify;
+        }
+    }
+
+    & .fi-in-placeholder {
+        @apply text-sm text-gray-400 dark:text-gray-500;
+    }
+}

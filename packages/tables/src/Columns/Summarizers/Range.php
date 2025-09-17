@@ -4,17 +4,11 @@ namespace Filament\Tables\Columns\Summarizers;
 
 use Carbon\CarbonImmutable;
 use Closure;
-use Filament\Tables\Table;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Str;
 
 class Range extends Summarizer
 {
-    /**
-     * @var view-string
-     */
-    protected string $view = 'filament-tables::columns.summaries.range';
-
     protected bool | Closure $shouldExcludeNull = true;
 
     /**
@@ -29,7 +23,9 @@ class Range extends Summarizer
         $minSelectAlias = Str::random();
         $maxSelectAlias = Str::random();
 
-        $state = $query->selectRaw("min({$attribute}) as \"{$minSelectAlias}\", max({$attribute}) as \"{$maxSelectAlias}\"")->get()[0];
+        $column = $query->getGrammar()->wrap($attribute);
+
+        $state = $query->selectRaw("min({$column}) as \"{$minSelectAlias}\", max({$column}) as \"{$maxSelectAlias}\"")->get()[0];
 
         return [$state->{$minSelectAlias}, $state->{$maxSelectAlias}];
     }
@@ -43,7 +39,7 @@ class Range extends Summarizer
 
     public function minimalDateTimeDifference(): static
     {
-        $this->formatStateUsing(static function (array $state): array {
+        $this->formatStateUsing(static function (Range $summarizer, array $state): array {
             if (blank($state[1])) {
                 unset($state[1]);
             }
@@ -59,15 +55,15 @@ class Range extends Summarizer
             $originalFrom = CarbonImmutable::make($state[0]);
             $originalTo = CarbonImmutable::make($state[1]);
 
-            $fromDate = $originalFrom->translatedFormat(Table::$defaultDateDisplayFormat);
-            $toDate = $originalTo->translatedFormat(Table::$defaultDateDisplayFormat);
+            $fromDate = $originalFrom->translatedFormat($defaultDateDisplayFormat = $summarizer->getTable()->getDefaultDateDisplayFormat());
+            $toDate = $originalTo->translatedFormat($defaultDateDisplayFormat);
 
             if ($fromDate !== $toDate) {
                 return [$fromDate, $toDate];
             }
 
-            $fromDateTime = $originalFrom->translatedFormat(Table::$defaultDateTimeDisplayFormat);
-            $toDateTime = $originalTo->translatedFormat(Table::$defaultDateTimeDisplayFormat);
+            $fromDateTime = $originalFrom->translatedFormat($defaultDateTimeDisplayFormat = $summarizer->getTable()->getDefaultDateTimeDisplayFormat());
+            $toDateTime = $originalTo->translatedFormat($defaultDateTimeDisplayFormat);
 
             if ($fromDateTime === $toDateTime) {
                 return [$fromDateTime];
@@ -137,5 +133,37 @@ class Range extends Summarizer
     public function shouldExcludeNull(): bool
     {
         return (bool) $this->evaluate($this->shouldExcludeNull);
+    }
+
+    public function toEmbeddedHtml(): string
+    {
+        $attributes = $this->getExtraAttributeBag()
+            ->class(['fi-ta-range-summary']);
+
+        $state = $this->formatState($this->getState());
+        $from = $state[0] ?? null;
+        $to = $state[1] ?? null;
+
+        ob_start(); ?>
+
+        <div <?= $attributes->toHtml() ?>>
+            <?php if (filled($label = $this->getLabel())) { ?>
+                <span class="fi-ta-range-summary-label">
+                    <?= $label ?>
+                </span>
+            <?php } ?>
+
+            <?php if (filled($from) || filled($to)) { ?>
+                <span>
+                    <?= $from ?>
+
+                    <?= (filled($from) && filled($to)) ? '-' : '' ?>
+
+                    <?= $to ?>
+                </span>
+            <?php } ?>
+        </div>
+
+        <?php return ob_get_clean();
     }
 }

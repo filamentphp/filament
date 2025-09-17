@@ -26,21 +26,6 @@
     }
 
     $hasAlpineActiveClasses = filled($alpineActive);
-
-    $inactiveItemClasses = 'hover:bg-gray-50 focus-visible:bg-gray-50 dark:hover:bg-white/5 dark:focus-visible:bg-white/5';
-
-    // @deprecated `fi-tabs-item-active` has been replaced by `fi-active`.
-    $activeItemClasses = 'fi-active fi-tabs-item-active bg-gray-50 dark:bg-white/5';
-
-    $inactiveLabelClasses = 'text-gray-500 group-hover:text-gray-700 group-focus-visible:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-200 dark:group-focus-visible:text-gray-200';
-
-    $activeLabelClasses = 'text-primary-600 dark:text-primary-400';
-
-    $iconClasses = 'fi-tabs-item-icon h-5 w-5 shrink-0 transition duration-75';
-
-    $inactiveIconClasses = 'text-gray-400 dark:text-gray-500';
-
-    $activeIconClasses = 'text-primary-600 dark:text-primary-400';
 @endphp
 
 <{{ $tag }}
@@ -51,8 +36,7 @@
     @endif
     @if ($hasAlpineActiveClasses)
         x-bind:class="{
-            @js($inactiveItemClasses): {{-- format-ignore-start --}} ! ({{ $alpineActive }}) {{-- format-ignore-end --}},
-            @js($activeItemClasses): {{ $alpineActive }},
+            'fi-active': {{ $alpineActive }},
         }"
     @endif
     {{
@@ -62,62 +46,36 @@
                 'role' => 'tab',
             ])
             ->class([
-                'fi-tabs-item group flex items-center justify-center gap-x-2 whitespace-nowrap rounded-lg px-3 py-2 text-sm font-medium outline-none transition duration-75',
-                $inactiveItemClasses => (! $hasAlpineActiveClasses) && (! $active),
-                $activeItemClasses => (! $hasAlpineActiveClasses) && $active,
+                'fi-tabs-item',
+                'fi-active' => (! $hasAlpineActiveClasses) && $active,
             ])
     }}
 >
     @if ($icon && $iconPosition === IconPosition::Before)
-        <x-filament::icon
-            :icon="$icon"
-            :x-bind:class="$hasAlpineActiveClasses ? '{ ' . \Illuminate\Support\Js::from($inactiveIconClasses) . ': ! (' . $alpineActive . '), ' . \Illuminate\Support\Js::from($activeIconClasses) . ': ' . $alpineActive . ' }' : null"
-            @class([
-                $iconClasses,
-                $inactiveIconClasses => (! $hasAlpineActiveClasses) && (! $active),
-                $activeIconClasses => (! $hasAlpineActiveClasses) && $active,
-            ])
-        />
+        {{ \Filament\Support\generate_icon_html($icon) }}
     @endif
 
-    <span
-        @if ($hasAlpineActiveClasses)
-            x-bind:class="{
-                @js($inactiveLabelClasses): {{-- format-ignore-start --}} ! ({{ $alpineActive }}) {{-- format-ignore-end --}},
-                @js($activeLabelClasses): {{ $alpineActive }},
-            }"
-        @endif
-        @class([
-            'fi-tabs-item-label transition duration-75',
-            $inactiveLabelClasses => (! $hasAlpineActiveClasses) && (! $active),
-            $activeLabelClasses => (! $hasAlpineActiveClasses) && $active,
-        ])
-    >
+    <span class="fi-tabs-item-label">
         {{ $slot }}
     </span>
 
     @if ($icon && $iconPosition === IconPosition::After)
-        <x-filament::icon
-            :icon="$icon"
-            :x-bind:class="$hasAlpineActiveClasses ? '{ ' . \Illuminate\Support\Js::from($inactiveIconClasses) . ': ! (' . $alpineActive . '), ' . \Illuminate\Support\Js::from($activeIconClasses) . ': ' . $alpineActive . ' }' : null"
-            @class([
-                $iconClasses,
-                $inactiveIconClasses => (! $hasAlpineActiveClasses) && (! $active),
-                $activeIconClasses => (! $hasAlpineActiveClasses) && $active,
-            ])
-        />
+        {{ \Filament\Support\generate_icon_html($icon) }}
     @endif
 
     @if (filled($badge))
-        <x-filament::badge
-            :color="$badgeColor"
-            :icon="$badgeIcon"
-            :icon-position="$badgeIconPosition"
-            size="sm"
-            :tooltip="$badgeTooltip"
-            class="w-max"
-        >
+        @if ($badge instanceof \Illuminate\View\ComponentSlot)
             {{ $badge }}
-        </x-filament::badge>
+        @else
+            <x-filament::badge
+                :color="$badgeColor"
+                :icon="$badgeIcon"
+                :icon-position="$badgeIconPosition"
+                size="sm"
+                :tooltip="$badgeTooltip"
+            >
+                {{ $badge }}
+            </x-filament::badge>
+        @endif
     @endif
 </{{ $tag }}>

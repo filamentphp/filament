@@ -67,7 +67,7 @@ class Filter extends BaseFilter
      */
     public function getResetState(): array
     {
-        if ($this->hasFormSchema()) {
+        if ($this->hasSchema()) {
             return parent::getResetState();
         }
 

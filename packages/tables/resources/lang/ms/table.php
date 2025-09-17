@@ -2,7 +2,7 @@
 
 return [
 
-    'column_toggle' => [
+    'column_manager' => [
 
         'heading' => 'Kolum',
 
@@ -98,7 +98,7 @@ return [
             'label' => 'Tindakan terbuka',
         ],
 
-        'toggle_columns' => [
+        'column_manager' => [
             'label' => 'Togol lajur',
         ],
 
@@ -145,6 +145,10 @@ return [
 
         'select' => [
             'placeholder' => 'Semua',
+
+            'relationship' => [
+                'empty_option_label' => 'Tiada',
+            ],
         ],
 
         'trashed' => [
@@ -227,5 +231,7 @@ return [
         ],
 
     ],
+
+    'default_model_label' => 'rekod',
 
 ];

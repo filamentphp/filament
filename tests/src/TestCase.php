@@ -9,13 +9,28 @@ use Filament\FilamentServiceProvider;
 use Filament\Forms\FormsServiceProvider;
 use Filament\Infolists\InfolistsServiceProvider;
 use Filament\Notifications\NotificationsServiceProvider;
+use Filament\Schemas\SchemasServiceProvider;
 use Filament\SpatieLaravelSettingsPluginServiceProvider;
-use Filament\SpatieLaravelTranslatablePluginServiceProvider;
 use Filament\Support\SupportServiceProvider;
 use Filament\Tables\TablesServiceProvider;
-use Filament\Tests\Models\User;
+use Filament\Tests\Fixtures\Models\Department;
+use Filament\Tests\Fixtures\Models\Ticket;
+use Filament\Tests\Fixtures\Models\User;
+use Filament\Tests\Fixtures\Policies\DepartmentPolicy;
+use Filament\Tests\Fixtures\Policies\TicketPolicy;
+use Filament\Tests\Fixtures\Providers\AdminPanelProvider;
+use Filament\Tests\Fixtures\Providers\AppAuthenticationPanelProvider;
+use Filament\Tests\Fixtures\Providers\CustomPanelProvider;
+use Filament\Tests\Fixtures\Providers\DomainTenancyPanelProvider;
+use Filament\Tests\Fixtures\Providers\EmailAuthenticationPanelProvider;
+use Filament\Tests\Fixtures\Providers\Fixtures\Providers\SingleDomainPanel;
+use Filament\Tests\Fixtures\Providers\MultiDomainPanel;
+use Filament\Tests\Fixtures\Providers\RequiredMultiFactorAuthenticationPanelProvider;
+use Filament\Tests\Fixtures\Providers\SlugsPanelProvider;
+use Filament\Tests\Fixtures\Providers\TenancyPanelProvider;
 use Filament\Widgets\WidgetsServiceProvider;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
+use Illuminate\Support\Facades\Gate;
 use Kirschbaum\PowerJoins\PowerJoinsServiceProvider;
 use Livewire\LivewireServiceProvider;
 use Orchestra\Testbench\Concerns\WithWorkbench;
@@ -29,7 +44,7 @@ abstract class TestCase extends BaseTestCase
 
     protected function getPackageProviders($app): array
     {
-        return [
+        $providers = [
             ActionsServiceProvider::class,
             BladeCaptureDirectiveServiceProvider::class,
             BladeHeroiconsServiceProvider::class,
@@ -39,24 +54,34 @@ abstract class TestCase extends BaseTestCase
             InfolistsServiceProvider::class,
             LivewireServiceProvider::class,
             NotificationsServiceProvider::class,
-            PowerJoinsServiceProvider::class,
+            SchemasServiceProvider::class,
             SpatieLaravelSettingsPluginServiceProvider::class,
-            SpatieLaravelTranslatablePluginServiceProvider::class,
             SupportServiceProvider::class,
             TablesServiceProvider::class,
             WidgetsServiceProvider::class,
             AdminPanelProvider::class,
             CustomPanelProvider::class,
-            SlugsPanelProvider::class,
-            SingleDomainPanel::class,
-            MultiDomainPanel::class,
-            TenancyPanelProvider::class,
+            EmailAuthenticationPanelProvider::class,
+            AppAuthenticationPanelProvider::class,
+            RequiredMultiFactorAuthenticationPanelProvider::class,
             DomainTenancyPanelProvider::class,
+            MultiDomainPanel::class,
+            SingleDomainPanel::class,
+            SlugsPanelProvider::class,
+            TenancyPanelProvider::class,
+            PowerJoinsServiceProvider::class,
         ];
+
+        sort($providers);
+
+        return $providers;
     }
 
     protected function defineEnvironment($app): void
     {
+        Gate::policy(Ticket::class, TicketPolicy::class);
+        Gate::policy(Department::class, DepartmentPolicy::class);
+
         $app['config']->set('auth.providers.users.model', User::class);
         $app['config']->set('view.paths', [
             ...$app['config']->get('view.paths'),

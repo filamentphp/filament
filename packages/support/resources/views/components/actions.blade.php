@@ -38,16 +38,9 @@
     <div
         {{
             $attributes->class([
-                'fi-ac gap-3',
-                'flex flex-wrap items-center' => ! $fullWidth,
-                match ($alignment) {
-                    Alignment::Start, Alignment::Left => 'justify-start',
-                    Alignment::Center => 'justify-center',
-                    Alignment::End, Alignment::Right => 'flex-row-reverse',
-                    Alignment::Between, Alignment::Justify => 'justify-between',
-                    default => $alignment,
-                } => ! $fullWidth,
-                'grid grid-cols-[repeat(auto-fit,minmax(0,1fr))]' => $fullWidth,
+                'fi-ac',
+                'fi-width-full' => $fullWidth,
+                ($alignment instanceof Alignment) ? "fi-align-{$alignment->value}" : (is_string($alignment) ? $alignment : null) => ! $fullWidth,
             ])
         }}
     >

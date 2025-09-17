@@ -101,7 +101,14 @@ export default function markdownEditorFormComponent({
 
         state,
 
-        init: async function () {
+        async init() {
+            // If the editor is inside a modal, wait for the modal transition to finish before initializing the editor.
+            // This is necessary to prevent the editor from being initialized before the modal is fully visible,
+            // which can cause it to render without any content.
+            if (this.$root.closest('.fi-modal')) {
+                await new Promise((resolve) => setTimeout(resolve, 300))
+            }
+
             if (this.$root._editor) {
                 this.$root._editor.toTextArea()
                 this.$root._editor = null
@@ -112,7 +119,8 @@ export default function markdownEditorFormComponent({
                 autoRefresh: true,
                 autoSave: false,
                 element: this.$refs.editor,
-                imageAccept: 'image/png, image/jpeg, image/gif, image/avif',
+                imageAccept:
+                    'image/png, image/jpeg, image/gif, image/avif, image/webp',
                 imageUploadFunction: uploadFileAttachmentUsing,
                 initialValue: this.state ?? '',
                 maxHeight,
@@ -189,15 +197,13 @@ export default function markdownEditorFormComponent({
                     this.state = this.editor.value()
 
                     if (isLiveDebounced) {
-                        this.$wire.call('$refresh')
+                        this.$wire.commit()
                     }
                 }, liveDebounce ?? 300),
             )
 
             if (isLiveOnBlur) {
-                this.editor.codemirror.on('blur', () =>
-                    this.$wire.call('$refresh'),
-                )
+                this.editor.codemirror.on('blur', () => this.$wire.commit())
             }
 
             this.$watch('state', () => {
@@ -217,159 +223,189 @@ export default function markdownEditorFormComponent({
             }
         },
 
-        destroy: function () {
+        destroy() {
             this.editor.cleanup()
             this.editor = null
         },
 
-        getToolbar: function () {
+        getToolbar() {
             let toolbar = []
 
-            if (toolbarButtons.includes('bold')) {
-                toolbar.push({
-                    name: 'bold',
-                    action: EasyMDE.toggleBold,
-                    title: translations.toolbar_buttons?.bold,
-                })
-            }
-
-            if (toolbarButtons.includes('italic')) {
-                toolbar.push({
-                    name: 'italic',
-                    action: EasyMDE.toggleItalic,
-                    title: translations.toolbar_buttons?.italic,
-                })
-            }
-
-            if (toolbarButtons.includes('strike')) {
-                toolbar.push({
-                    name: 'strikethrough',
-                    action: EasyMDE.toggleStrikethrough,
-                    title: translations.toolbar_buttons?.strike,
-                })
-            }
-
-            if (toolbarButtons.includes('link')) {
-                toolbar.push({
-                    name: 'link',
-                    action: EasyMDE.drawLink,
-                    title: translations.toolbar_buttons?.link,
-                })
-            }
-
-            if (
-                ['bold', 'italic', 'strike', 'link'].some((button) =>
-                    toolbarButtons.includes(button),
-                ) &&
-                ['heading'].some((button) => toolbarButtons.includes(button))
-            ) {
-                toolbar.push('|')
-            }
-
-            if (toolbarButtons.includes('heading')) {
-                toolbar.push({
-                    name: 'heading',
-                    action: EasyMDE.toggleHeadingSmaller,
-                    title: translations.toolbar_buttons?.heading,
-                })
-            }
-
-            if (
-                ['heading'].some((button) => toolbarButtons.includes(button)) &&
-                ['blockquote', 'codeBlock', 'bulletList', 'orderedList'].some(
-                    (button) => toolbarButtons.includes(button),
+            toolbarButtons.forEach((buttonGroup) => {
+                buttonGroup.forEach((button) =>
+                    toolbar.push(this.getToolbarButton(button)),
                 )
-            ) {
-                toolbar.push('|')
-            }
 
-            if (toolbarButtons.includes('blockquote')) {
-                toolbar.push({
-                    name: 'quote',
-                    action: EasyMDE.toggleBlockquote,
-                    title: translations.toolbar_buttons?.blockquote,
-                })
-            }
+                if (buttonGroup.length > 0) {
+                    toolbar.push('|')
+                }
+            })
 
-            if (toolbarButtons.includes('codeBlock')) {
-                toolbar.push({
-                    name: 'code',
-                    action: EasyMDE.toggleCodeBlock,
-                    title: translations.toolbar_buttons?.code_block,
-                })
-            }
-
-            if (toolbarButtons.includes('bulletList')) {
-                toolbar.push({
-                    name: 'unordered-list',
-                    action: EasyMDE.toggleUnorderedList,
-                    title: translations.toolbar_buttons?.bullet_list,
-                })
-            }
-
-            if (toolbarButtons.includes('orderedList')) {
-                toolbar.push({
-                    name: 'ordered-list',
-                    action: EasyMDE.toggleOrderedList,
-                    title: translations.toolbar_buttons?.ordered_list,
-                })
-            }
-
-            if (
-                ['blockquote', 'codeBlock', 'bulletList', 'orderedList'].some(
-                    (button) => toolbarButtons.includes(button),
-                ) &&
-                ['table', 'attachFiles'].some((button) =>
-                    toolbarButtons.includes(button),
-                )
-            ) {
-                toolbar.push('|')
-            }
-
-            if (toolbarButtons.includes('table')) {
-                toolbar.push({
-                    name: 'table',
-                    action: EasyMDE.drawTable,
-                    title: translations.toolbar_buttons?.table,
-                })
-            }
-
-            if (toolbarButtons.includes('attachFiles')) {
-                toolbar.push({
-                    name: 'upload-image',
-                    action: EasyMDE.drawUploadedImage,
-                    title: translations.toolbar_buttons?.attach_files,
-                })
-            }
-
-            if (
-                ['table', 'attachFiles'].some((button) =>
-                    toolbarButtons.includes(button),
-                ) &&
-                ['undo', 'redo'].some((button) =>
-                    toolbarButtons.includes(button),
-                )
-            ) {
-                toolbar.push('|')
-            }
-
-            if (toolbarButtons.includes('undo')) {
-                toolbar.push({
-                    name: 'undo',
-                    action: EasyMDE.undo,
-                    title: translations.toolbar_buttons?.undo,
-                })
-            }
-
-            if (toolbarButtons.includes('redo')) {
-                toolbar.push({
-                    name: 'redo',
-                    action: EasyMDE.redo,
-                    title: translations.toolbar_buttons?.redo,
-                })
+            if (toolbar[toolbar.length - 1] === '|') {
+                toolbar.pop()
             }
 
             return toolbar
+        },
+
+        getToolbarButton(name) {
+            if (name === 'bold') {
+                return this.getBoldToolbarButton()
+            }
+
+            if (name === 'italic') {
+                return this.getItalicToolbarButton()
+            }
+
+            if (name === 'strike') {
+                return this.getStrikeToolbarButton()
+            }
+
+            if (name === 'link') {
+                return this.getLinkToolbarButton()
+            }
+
+            if (name === 'heading') {
+                return this.getHeadingToolbarButton()
+            }
+
+            if (name === 'blockquote') {
+                return this.getBlockquoteToolbarButton()
+            }
+
+            if (name === 'codeBlock') {
+                return this.getCodeBlockToolbarButton()
+            }
+
+            if (name === 'bulletList') {
+                return this.getBulletListToolbarButton()
+            }
+
+            if (name === 'orderedList') {
+                return this.getOrderedListToolbarButton()
+            }
+
+            if (name === 'table') {
+                return this.getTableToolbarButton()
+            }
+
+            if (name === 'attachFiles') {
+                return this.getAttachFilesToolbarButton()
+            }
+
+            if (name === 'undo') {
+                return this.getUndoToolbarButton()
+            }
+
+            if (name === 'redo') {
+                return this.getRedoToolbarButton()
+            }
+
+            console.error(`Markdown editor toolbar button "${name}" not found.`)
+        },
+
+        getBoldToolbarButton() {
+            return {
+                name: 'bold',
+                action: EasyMDE.toggleBold,
+                title: translations.tools?.bold,
+            }
+        },
+
+        getItalicToolbarButton() {
+            return {
+                name: 'italic',
+                action: EasyMDE.toggleItalic,
+                title: translations.tools?.italic,
+            }
+        },
+
+        getStrikeToolbarButton() {
+            return {
+                name: 'strikethrough',
+                action: EasyMDE.toggleStrikethrough,
+                title: translations.tools?.strike,
+            }
+        },
+
+        getLinkToolbarButton() {
+            return {
+                name: 'link',
+                action: EasyMDE.drawLink,
+                title: translations.tools?.link,
+            }
+        },
+
+        getHeadingToolbarButton() {
+            return {
+                name: 'heading',
+                action: EasyMDE.toggleHeadingSmaller,
+                title: translations.tools?.heading,
+            }
+        },
+
+        getBlockquoteToolbarButton() {
+            return {
+                name: 'quote',
+                action: EasyMDE.toggleBlockquote,
+                title: translations.tools?.blockquote,
+            }
+        },
+
+        getCodeBlockToolbarButton() {
+            return {
+                name: 'code',
+                action: EasyMDE.toggleCodeBlock,
+                title: translations.tools?.code_block,
+            }
+        },
+
+        getBulletListToolbarButton() {
+            return {
+                name: 'unordered-list',
+                action: EasyMDE.toggleUnorderedList,
+                title: translations.tools?.bullet_list,
+            }
+        },
+
+        getOrderedListToolbarButton() {
+            return {
+                name: 'ordered-list',
+                action: EasyMDE.toggleOrderedList,
+                title: translations.tools?.ordered_list,
+            }
+        },
+
+        getTableToolbarButton() {
+            return {
+                name: 'table',
+                action: EasyMDE.drawTable,
+                title: translations.tools?.table,
+            }
+        },
+
+        getAttachFilesToolbarButton() {
+            return {
+                name: 'upload-image',
+                action: EasyMDE.drawUploadedImage,
+                title: translations.tools?.attach_files,
+            }
+        },
+
+        getUndoToolbarButton() {
+            return {
+                name: 'undo',
+                action: EasyMDE.undo,
+                title: translations.tools?.undo,
+            }
+        },
+
+        getRedoToolbarButton() {
+            return {
+                name: 'redo',
+                action: EasyMDE.redo,
+                title: translations.tools?.redo,
+            }
         },
     }
 }

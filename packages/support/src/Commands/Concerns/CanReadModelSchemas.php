@@ -12,7 +12,10 @@ use ReflectionException;
 
 trait CanReadModelSchemas
 {
-    protected function getModel(string $model): ?string
+    /**
+     * @return class-string<Model>|null
+     */
+    protected function parseModel(string $model): ?string
     {
         if (! class_exists($model)) {
             return null;
@@ -21,6 +24,9 @@ trait CanReadModelSchemas
         return $model;
     }
 
+    /**
+     * @param  class-string<Model>  $model
+     */
     protected function getModelSchema(string $model): Builder
     {
         return app($model)
@@ -28,11 +34,17 @@ trait CanReadModelSchemas
             ->getSchemaBuilder();
     }
 
+    /**
+     * @param  class-string<Model>  $model
+     */
     protected function getModelTable(string $model): string
     {
         return app($model)->getTable();
     }
 
+    /**
+     * @param  class-string<Model>  $model
+     */
     protected function guessBelongsToRelationshipName(string $column, string $model): ?string
     {
         /** @var Model $modelInstance */
@@ -82,6 +94,9 @@ trait CanReadModelSchemas
         return $tableName;
     }
 
+    /**
+     * @param  class-string<Model>  $model
+     */
     protected function guessBelongsToRelationshipTitleColumnName(string $column, string $model): string
     {
         $schema = $this->getModelSchema($model);
@@ -137,6 +152,7 @@ trait CanReadModelSchemas
 
         $values = is_null($values) ? [] : match ($type) {
             'string', 'char', 'binary', 'bit' => ['length' => (int) $values[0]],
+            'enum' => ['values' => array_map(fn (string $value): string => trim($value, '\''), $values)],
             default => [],
         };
 
@@ -145,6 +161,7 @@ trait CanReadModelSchemas
 
     /**
      * @param  array<string, mixed>  $column
+     * @param  class-string<Model>  $model
      */
     protected function parseDefaultExpression(array $column, string $model): mixed
     {
@@ -206,5 +223,24 @@ trait CanReadModelSchemas
         }
 
         return $default;
+    }
+
+    public function getRecordTitleAttribute(): ?string
+    {
+        return null;
+    }
+
+    /**
+     * @param  class-string<Model>  $model
+     * @return array<string>
+     */
+    protected function getEnumCasts(string $model): array
+    {
+        $casts = app($model)->getCasts();
+
+        return array_filter(
+            $casts,
+            fn (mixed $cast): bool => is_string($cast) ? enum_exists($cast) : false,
+        );
     }
 }

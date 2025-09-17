@@ -232,7 +232,7 @@ return [
 
     'markdown_editor' => [
 
-        'toolbar_buttons' => [
+        'tools' => [
             'attach_files' => 'Pievienot failus',
             'blockquote' => 'Citāts',
             'bold' => 'Treknraksts',
@@ -321,7 +321,7 @@ return [
 
         ],
 
-        'toolbar_buttons' => [
+        'tools' => [
             'attach_files' => 'Pievienot failus',
             'blockquote' => 'Citāts',
             'bold' => 'Treknraksts',
@@ -408,22 +408,6 @@ return [
 
     'tags_input' => [
         'placeholder' => 'Izveidot birku',
-    ],
-
-    'wizard' => [
-
-        'actions' => [
-
-            'previous_step' => [
-                'label' => 'Iepriekšējais',
-            ],
-
-            'next_step' => [
-                'label' => 'Nākamais',
-            ],
-
-        ],
-
     ],
 
 ];

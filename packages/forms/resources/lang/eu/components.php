@@ -104,7 +104,7 @@ return [
 
     'markdown_editor' => [
 
-        'toolbar_buttons' => [
+        'tools' => [
             'attach_files' => 'Erantsi agiriak',
             'blockquote' => 'Aipuak',
             'bold' => 'Lodia',
@@ -191,7 +191,7 @@ return [
 
         ],
 
-        'toolbar_buttons' => [
+        'tools' => [
             'attach_files' => 'Erantsi agiriak',
             'blockquote' => 'Aipuak',
             'bold' => 'Lodia',
@@ -272,22 +272,6 @@ return [
 
     'tags_input' => [
         'placeholder' => 'Etiketa berria',
-    ],
-
-    'wizard' => [
-
-        'actions' => [
-
-            'previous_step' => [
-                'label' => 'Aurrekoa',
-            ],
-
-            'next_step' => [
-                'label' => 'Hurrengoa',
-            ],
-
-        ],
-
     ],
 
 ];

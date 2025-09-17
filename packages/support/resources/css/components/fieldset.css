@@ -1,0 +1,23 @@
+.fi-fieldset {
+    & > legend {
+        @apply -ms-2 px-2 text-sm leading-6 font-medium text-gray-950 dark:text-white;
+
+        & .fi-fieldset-label-required-mark {
+            @apply text-danger-600 dark:text-danger-400 font-medium;
+        }
+    }
+
+    &.fi-fieldset-label-hidden {
+        & > legend {
+            @apply sr-only;
+        }
+    }
+
+    &:not(.fi-fieldset-not-contained) {
+        @apply rounded-xl border border-gray-200 p-6 dark:border-white/10;
+    }
+
+    &.fi-fieldset-not-contained {
+        @apply pt-6;
+    }
+}

@@ -6,18 +6,9 @@
 <div>
     <div
         @class([
-            'fi-no pointer-events-none fixed inset-4 z-50 mx-auto flex gap-3',
-            match (static::$alignment) {
-                Alignment::Start, Alignment::Left => 'items-start',
-                Alignment::Center => 'items-center',
-                Alignment::End, Alignment::Right => 'items-end',
-                default => null,
-            },
-            match (static::$verticalAlignment) {
-                VerticalAlignment::Start => 'flex-col-reverse justify-end',
-                VerticalAlignment::End => 'flex-col justify-end',
-                VerticalAlignment::Center => 'flex-col justify-center',
-            },
+            'fi-no',
+            'fi-align-' . static::$alignment->value,
+            'fi-vertical-align-' . static::$verticalAlignment->value,
         ])
         role="status"
     >
@@ -27,6 +18,26 @@
     </div>
 
     @if ($broadcastChannel = $this->getBroadcastChannel())
-        <x-filament-notifications::echo :channel="$broadcastChannel" />
+        @script
+            <script>
+                window.addEventListener('EchoLoaded', () => {
+                    window.Echo.private(@js($broadcastChannel)).notification(
+                        (notification) => {
+                            setTimeout(
+                                () =>
+                                    $wire.handleBroadcastNotification(
+                                        notification,
+                                    ),
+                                500,
+                            )
+                        },
+                    )
+                })
+
+                if (window.Echo) {
+                    window.dispatchEvent(new CustomEvent('EchoLoaded'))
+                }
+            </script>
+        @endscript
     @endif
 </div>

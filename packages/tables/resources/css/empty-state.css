@@ -1,0 +1,27 @@
+.fi-ta-empty-state {
+    @apply px-6 py-12;
+
+    & .fi-ta-empty-state-content {
+        @apply mx-auto grid max-w-lg justify-items-center text-center;
+    }
+
+    & .fi-ta-empty-state-icon-bg {
+        @apply mb-4 rounded-full bg-gray-100 p-3 dark:bg-gray-500/20;
+
+        & .fi-icon {
+            @apply text-gray-500 dark:text-gray-400;
+        }
+    }
+
+    & .fi-ta-empty-state-heading {
+        @apply text-base leading-6 font-semibold text-gray-950 dark:text-white;
+    }
+
+    & .fi-ta-empty-state-description {
+        @apply mt-1 text-sm text-gray-500 dark:text-gray-400;
+    }
+
+    & .fi-ta-actions {
+        @apply mt-6;
+    }
+}

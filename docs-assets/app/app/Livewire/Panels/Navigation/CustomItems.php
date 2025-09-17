@@ -5,10 +5,11 @@ namespace App\Livewire\Panels\Navigation;
 use Filament\Navigation\NavigationItem;
 use Filament\Pages\Dashboard;
 use Filament\Pages\Page;
+use Filament\Support\Icons\Heroicon;
 
 class CustomItems extends Page
 {
-    protected static string $view = 'livewire.panels.navigation.empty';
+    protected string $view = 'livewire.panels.navigation.empty';
 
     public function mount()
     {
@@ -17,7 +18,7 @@ class CustomItems extends Page
             ->navigationItems([
                 NavigationItem::make('Analytics')
                     ->url('https://filament.pirsch.io', shouldOpenInNewTab: true)
-                    ->icon('heroicon-o-presentation-chart-line')
+                    ->icon(Heroicon::OutlinedPresentationChartLine)
                     ->group('Reports')
                     ->sort(3),
                 NavigationItem::make('dashboard')

@@ -2,9 +2,21 @@
 
 return [
 
-    'column_toggle' => [
+    'column_manager' => [
 
         'heading' => 'Kolumny',
+
+        'actions' => [
+
+            'apply' => [
+                'label' => 'Zastosuj kolumny',
+            ],
+
+            'reset' => [
+                'label' => 'Zresetuj',
+            ],
+
+        ],
 
     ],
 
@@ -99,7 +111,7 @@ return [
             'label' => 'Akcje masowe',
         ],
 
-        'toggle_columns' => [
+        'column_manager' => [
             'label' => 'Wybierz kolumny',
         ],
 
@@ -146,6 +158,10 @@ return [
 
         'select' => [
             'placeholder' => 'Wszystkie',
+
+            'relationship' => [
+                'empty_option_label' => 'Brak',
+            ],
         ],
 
         'trashed' => [
@@ -228,5 +244,7 @@ return [
         ],
 
     ],
+
+    'default_model_label' => 'rekord',
 
 ];

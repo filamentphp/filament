@@ -4,7 +4,6 @@ namespace Filament\Tables\Concerns;
 
 use Closure;
 use Filament\Support\Services\RelationshipJoiner;
-use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Str;
@@ -12,14 +11,14 @@ use stdClass;
 
 trait CanSummarizeRecords
 {
-    public function getAllTableSummaryQuery(): Builder
+    public function getAllTableSummaryQuery(): ?Builder
     {
         return $this->getFilteredTableQuery();
     }
 
-    public function getPageTableSummaryQuery(): Builder
+    public function getPageTableSummaryQuery(): ?Builder
     {
-        return $this->getFilteredSortedTableQuery()->forPage(
+        return $this->getFilteredSortedTableQuery()?->forPage(
             page: $this->getTableRecords()->currentPage(),
             perPage: $this->getTableRecords()->perPage(),
         );
@@ -39,14 +38,11 @@ trait CanSummarizeRecords
                 continue;
             }
 
-            if (filled($column->getRelationshipName())) {
+            if ($column->hasRelationship($query->getModel())) {
                 continue;
             }
 
-            /** @var Connection $queryConnection */
-            $queryConnection = $query->getConnection();
-
-            $qualifiedAttribute = $queryConnection->getTablePrefix() . $query->getModel()->qualifyColumn($column->getName());
+            $qualifiedAttribute = $query->getModel()->qualifyColumn($column->getName());
 
             foreach ($summarizers as $summarizer) {
                 if ($summarizer->hasQueryModification()) {

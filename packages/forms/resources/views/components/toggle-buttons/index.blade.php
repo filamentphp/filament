@@ -1,5 +1,9 @@
 @php
-    $gridDirection = $getGridDirection() ?? 'column';
+    use Filament\Support\Enums\GridDirection;
+    use Illuminate\View\ComponentAttributeBag;
+
+    $fieldWrapperView = $getFieldWrapperView();
+    $gridDirection = $getGridDirection() ?? GridDirection::Column;
     $hasInlineLabel = $hasInlineLabel();
     $id = $getId();
     $isDisabled = $isDisabled();
@@ -7,52 +11,35 @@
     $isMultiple = $isMultiple();
     $statePath = $getStatePath();
     $areButtonLabelsHidden = $areButtonLabelsHidden();
+    $wireModelAttribute = $applyStateBindingModifiers('wire:model');
+    $extraInputAttributeBag = $getExtraInputAttributeBag()->class(['fi-fo-toggle-buttons-input']);
 @endphp
 
 <x-dynamic-component
-    :component="$getFieldWrapperView()"
+    :component="$fieldWrapperView"
     :field="$field"
     :has-inline-label="$hasInlineLabel"
+    class="fi-fo-toggle-buttons-wrp"
 >
-    <x-slot
-        name="label"
-        @class([
-            'sm:pt-1.5' => $hasInlineLabel,
-        ])
-    >
-        {{ $getLabel() }}
-    </x-slot>
-
-    <x-filament::grid
-        :default="$getColumns('default')"
-        :sm="$getColumns('sm')"
-        :md="$getColumns('md')"
-        :lg="$getColumns('lg')"
-        :xl="$getColumns('xl')"
-        :two-xl="$getColumns('2xl')"
-        :is-grid="! $isInline"
-        :direction="$gridDirection"
-        :attributes="
-            \Filament\Support\prepare_inherited_attributes($attributes)
-                ->merge($getExtraAttributes(), escape: false)
+    <div
+        {{
+            $getExtraAttributeBag()
+                ->when(! $isInline, fn (ComponentAttributeBag $attributes) => $attributes->grid($getColumns(), $gridDirection))
                 ->class([
-                    'fi-fo-toggle-buttons gap-3',
-                    '-mt-3' => (! $isInline) && ($gridDirection === 'column'),
-                    'flex flex-wrap' => $isInline,
+                    'fi-fo-toggle-buttons',
+                    'fi-inline' => $isInline,
                 ])
-        "
+        }}
     >
         @foreach ($getOptions() as $value => $label)
             @php
                 $inputId = "{$id}-{$value}";
                 $shouldOptionBeDisabled = $isDisabled || $isOptionDisabled($value, $label);
+                $color = $getColor($value);
+                $icon = $getIcon($value);
             @endphp
 
-            <div
-                @class([
-                    'break-inside-avoid pt-3' => (! $isInline) && ($gridDirection === 'column'),
-                ])
-            >
+            <div class="fi-fo-toggle-buttons-btn-ctn">
                 <input
                     @disabled($shouldOptionBeDisabled)
                     id="{{ $inputId }}"
@@ -62,15 +49,15 @@
                     type="{{ $isMultiple ? 'checkbox' : 'radio' }}"
                     value="{{ $value }}"
                     wire:loading.attr="disabled"
-                    {{ $applyStateBindingModifiers('wire:model') }}="{{ $statePath }}"
-                    {{ $getExtraInputAttributeBag()->class(['peer pointer-events-none absolute opacity-0']) }}
+                    {{ $wireModelAttribute }}="{{ $statePath }}"
+                    {{ $extraInputAttributeBag }}
                 />
 
                 <x-filament::button
-                    :color="$getColor($value)"
+                    :color="$color"
                     :disabled="$shouldOptionBeDisabled"
                     :for="$inputId"
-                    :icon="$getIcon($value)"
+                    :icon="$icon"
                     :label-sr-only="$areButtonLabelsHidden"
                     tag="label"
                 >
@@ -78,5 +65,5 @@
                 </x-filament::button>
             </div>
         @endforeach
-    </x-filament::grid>
+    </div>
 </x-dynamic-component>

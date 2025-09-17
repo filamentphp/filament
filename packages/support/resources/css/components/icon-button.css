@@ -1,0 +1,122 @@
+.fi-icon-btn {
+    @apply relative -m-2 flex size-9 items-center justify-center rounded-lg text-gray-500 transition duration-75 outline-none dark:text-gray-500;
+
+    &:not(.fi-disabled):not([disabled]) {
+        @apply focus-visible:ring-primary-600 dark:focus-visible:ring-primary-500 hover:text-gray-600 focus-visible:ring-2 dark:hover:text-gray-400;
+    }
+
+    &.fi-disabled,
+    &[disabled] {
+        @apply cursor-default opacity-70;
+
+        &:not([x-tooltip]) {
+            @apply pointer-events-none;
+        }
+    }
+
+    &.fi-size-xs {
+        @apply size-7;
+
+        &:has(.fi-icon.fi-size-sm) {
+            @apply -m-1.5;
+        }
+
+        &:has(.fi-icon.fi-size-md) {
+            @apply -m-1;
+        }
+
+        &:has(.fi-icon.fi-size-lg) {
+            @apply -m-0.5;
+        }
+    }
+
+    &.fi-size-sm {
+        @apply size-8;
+
+        &:has(.fi-icon.fi-size-sm) {
+            @apply -m-2;
+        }
+
+        &:has(.fi-icon.fi-size-md) {
+            @apply -m-1.5;
+        }
+
+        &:has(.fi-icon.fi-size-lg) {
+            @apply -m-1;
+        }
+    }
+
+    &.fi-size-md {
+        &:has(.fi-icon.fi-size-sm) {
+            @apply -m-2.5;
+        }
+
+        &:has(.fi-icon.fi-size-lg) {
+            @apply -m-1.5;
+        }
+    }
+
+    &.fi-size-lg {
+        @apply size-10;
+
+        &:has(.fi-icon.fi-size-sm) {
+            @apply -m-3;
+        }
+
+        &:has(.fi-icon.fi-size-md) {
+            @apply -m-2.5;
+        }
+
+        &:has(.fi-icon.fi-size-lg) {
+            @apply -m-2;
+        }
+    }
+
+    &.fi-size-xl {
+        @apply size-11;
+
+        &:has(.fi-icon.fi-size-sm) {
+            @apply -m-3.5;
+        }
+
+        &:has(.fi-icon.fi-size-md) {
+            @apply -m-3;
+        }
+
+        &:has(.fi-icon.fi-size-lg) {
+            @apply -m-2.5;
+        }
+    }
+
+    &.fi-color {
+        @apply text-(--text) dark:text-(--dark-text);
+
+        &:not(.fi-disabled):not([disabled]) {
+            @apply focus-visible:ring-color-600 dark:focus-visible:ring-color-500 hover:text-(--hover-text) dark:hover:text-(--dark-hover-text);
+        }
+    }
+
+    & > .fi-icon-btn-badge-ctn {
+        @apply absolute start-full top-1 z-[1] w-max -translate-x-1/2 -translate-y-1/2 rounded-md bg-white rtl:translate-x-1/2 dark:bg-gray-900;
+    }
+
+    &:has(+ .fi-btn.fi-labeled-from-sm) {
+        @apply sm:hidden;
+    }
+
+    &:has(+ .fi-btn.fi-labeled-from-md) {
+        @apply md:hidden;
+    }
+
+    &:has(+ .fi-btn.fi-labeled-from-lg) {
+        @apply lg:hidden;
+    }
+
+    &:has(+ .fi-btn.fi-labeled-from-xl) {
+        @apply xl:hidden;
+    }
+
+    &:has(+ .fi-btn.fi-labeled-from-2xl) {
+        @apply 2xl:hidden;
+    }
+}

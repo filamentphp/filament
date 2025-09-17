@@ -8,26 +8,18 @@
         "source": "https://github.com/filamentphp/filament"
     },
     "require": {
-        "php": "^8.1",
-        "danharrin/livewire-rate-limiting": "^0.3|^1.0|^2.0",
+        "php": "^8.2",
+        "chillerlan/php-qrcode": "^5.0",
         "filament/actions": "self.version",
         "filament/forms": "self.version",
         "filament/infolists": "self.version",
         "filament/notifications": "self.version",
+        "filament/schemas": "self.version",
         "filament/support": "self.version",
         "filament/tables": "self.version",
         "filament/widgets": "self.version",
-        "illuminate/auth": "^10.45|^11.0|^12.0",
-        "illuminate/console": "^10.45|^11.0|^12.0",
-        "illuminate/contracts": "^10.45|^11.0|^12.0",
-        "illuminate/cookie": "^10.45|^11.0|^12.0",
-        "illuminate/database": "^10.45|^11.0|^12.0",
-        "illuminate/http": "^10.45|^11.0|^12.0",
-        "illuminate/routing": "^10.45|^11.0|^12.0",
-        "illuminate/session": "^10.45|^11.0|^12.0",
-        "illuminate/support": "^10.45|^11.0|^12.0",
-        "illuminate/view": "^10.45|^11.0|^12.0",
-        "spatie/laravel-package-tools": "^1.9"
+        "pragmarx/google2fa": "^8.0",
+        "pragmarx/google2fa-qrcode": "^3.0"
     },
     "autoload": {
         "files": [

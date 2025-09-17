@@ -11,6 +11,7 @@ return [
             ],
 
             'add' => [
+
                 'label' => 'إضافة إلى :label',
 
                 'modal' => [
@@ -26,9 +27,11 @@ return [
                     ],
 
                 ],
+
             ],
 
             'add_between' => [
+
                 'label' => 'إدراج بين الوحدات',
 
                 'modal' => [
@@ -44,6 +47,7 @@ return [
                     ],
 
                 ],
+
             ],
 
             'delete' => [
@@ -280,7 +284,7 @@ return [
 
     'markdown_editor' => [
 
-        'toolbar_buttons' => [
+        'tools' => [
             'attach_files' => 'إرفاق ملفات',
             'blockquote' => 'اقتباس',
             'bold' => 'عريض',
@@ -294,6 +298,28 @@ return [
             'strike' => 'يتوسطه خط',
             'table' => 'جدول',
             'undo' => 'تراجع',
+        ],
+
+    ],
+
+    'modal_table_select' => [
+
+        'actions' => [
+
+            'select' => [
+
+                'label' => 'تحديد',
+
+                'actions' => [
+
+                    'select' => [
+                        'label' => 'تحديد',
+                    ],
+
+                ],
+
+            ],
+
         ],
 
     ],
@@ -361,37 +387,130 @@ return [
 
     'rich_editor' => [
 
-        'dialogs' => [
+        'actions' => [
+
+            'attach_files' => [
+
+                'label' => 'رفع ملف',
+
+                'modal' => [
+
+                    'heading' => 'رفع ملف',
+
+                    'form' => [
+
+                        'file' => [
+
+                            'label' => [
+                                'new' => 'الملف',
+                                'existing' => 'استبدال الملف',
+                            ],
+
+                        ],
+
+                        'alt' => [
+
+                            'label' => [
+                                'new' => 'النص البديل',
+                                'existing' => 'تعديل النص البديل',
+                            ],
+
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
+            'custom_block' => [
+
+                'modal' => [
+
+                    'actions' => [
+
+                        'insert' => [
+                            'label' => 'إدراج',
+                        ],
+
+                        'save' => [
+                            'label' => 'حفظ',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
 
             'link' => [
 
-                'actions' => [
-                    'link' => 'ربط',
-                    'unlink' => 'فصل',
+                'label' => 'تعديل',
+
+                'modal' => [
+
+                    'heading' => 'رابط',
+
+                    'form' => [
+
+                        'url' => [
+                            'label' => 'الرابط',
+                        ],
+
+                        'should_open_in_new_tab' => [
+                            'label' => 'فتح في تبويب جديد',
+                        ],
+
+                    ],
+
                 ],
-
-                'label' => 'عنوان url',
-
-                'placeholder' => 'أدخل عنوان url',
 
             ],
 
         ],
 
-        'toolbar_buttons' => [
+        'no_merge_tag_search_results_message' => 'لا توجد نتائج لوسوم الدمج.',
+
+        'tools' => [
+            'align_center' => 'محاذاة للوسط',
+            'align_end' => 'محاذاة للنهاية',
+            'align_justify' => 'محاذاة للضبط',
+            'align_start' => 'محاذاة للبداية',
             'attach_files' => 'إرفاق ملفات',
             'blockquote' => 'إقتباس',
             'bold' => 'عريض',
             'bullet_list' => 'قائمة نقطية',
+            'clear_formatting' => 'مسح التنسيق',
+            'code' => 'كود',
             'code_block' => 'نص برمجي',
+            'custom_blocks' => 'الكتل المخصصة',
+            'details' => 'التفاصيل',
             'h1' => 'عنوان',
             'h2' => 'عنوان رئيسي',
             'h3' => 'عنوان فرعي',
+            'highlight' => 'تظليل',
+            'horizontal_rule' => 'خط أفقي',
             'italic' => 'مائل',
+            'lead' => 'نص بارز',
             'link' => 'رابط تشعبي',
+            'merge_tags' => 'حقول الدمج',
             'ordered_list' => 'قائمة رقمية',
             'redo' => 'إعادة',
+            'small' => 'نص صغير',
             'strike' => 'خط في المنتصف',
+            'subscript' => 'نص سفلي',
+            'superscript' => 'نص علوي',
+            'table' => 'جدول',
+            'table_delete' => 'حذف الجدول',
+            'table_add_column_before' => 'إضافة عمود قبل',
+            'table_add_column_after' => 'إضافة عمود بعد',
+            'table_delete_column' => 'حذف العمود',
+            'table_add_row_before' => 'إضافة صف قبل',
+            'table_add_row_after' => 'إضافة صف بعد',
+            'table_delete_row' => 'حذف الصف',
+            'table_merge_cells' => 'دمج الخلايا',
+            'table_split_cell' => 'فصل الخلايا',
+            'table_toggle_header_row' => 'إظهار/إخفاء الترويسة',
             'underline' => 'خط اسفل النص',
             'undo' => 'تراجع',
         ],
@@ -475,6 +594,11 @@ return [
 
         'actions' => [
 
+            'copy' => [
+                'label' => 'نسخ',
+                'message' => 'تم النسخ',
+            ],
+
             'hide_password' => [
                 'label' => 'إخفاء كلمة المرور',
             ],
@@ -492,22 +616,6 @@ return [
         'boolean' => [
             'true' => 'نعم',
             'false' => 'لا',
-        ],
-
-    ],
-
-    'wizard' => [
-
-        'actions' => [
-
-            'previous_step' => [
-                'label' => 'الخطوة السابقة',
-            ],
-
-            'next_step' => [
-                'label' => 'الخطوة التالية',
-            ],
-
         ],
 
     ],

@@ -1,8 +1,9 @@
 @php
-    use Filament\Forms\Components\Actions\Action;
+    use Filament\Actions\Action;
     use Filament\Support\Enums\Alignment;
 
-    $containers = $getChildComponentContainers();
+    $fieldWrapperView = $getFieldWrapperView();
+    $items = $getItems();
     $blockPickerBlocks = $getBlockPickerBlocks();
     $blockPickerColumns = $getBlockPickerColumns();
     $blockPickerWidth = $getBlockPickerWidth();
@@ -10,6 +11,7 @@
     $hasInteractiveBlockPreviews = $hasInteractiveBlockPreviews();
 
     $addAction = $getAction($getAddActionName());
+    $addActionAlignment = $getAddActionAlignment();
     $addBetweenAction = $getAction($getAddBetweenActionName());
     $cloneAction = $getAction($getCloneActionName());
     $collapseAllAction = $getAction($getCollapseAllActionName());
@@ -31,23 +33,30 @@
     $collapseAllActionIsVisible = $isCollapsible && $collapseAllAction->isVisible();
     $expandAllActionIsVisible = $isCollapsible && $expandAllAction->isVisible();
 
+    $key = $getKey();
     $statePath = $getStatePath();
+
+    $blockLabelHeadingTag = $getHeadingTag();
+    $isBlockLabelTruncated = $isBlockLabelTruncated();
+    $labelBetweenItems = $getLabelBetweenItems();
 @endphp
 
-<x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
+<x-dynamic-component :component="$fieldWrapperView" :field="$field">
     <div
-        x-data="{}"
         {{
             $attributes
                 ->merge($getExtraAttributes(), escape: false)
-                ->class(['fi-fo-builder grid grid-cols-1 gap-y-4'])
+                ->class([
+                    'fi-fo-builder',
+                    'fi-collapsible' => $isCollapsible,
+                ])
         }}
     >
         @if ($collapseAllActionIsVisible || $expandAllActionIsVisible)
             <div
                 @class([
-                    'flex gap-x-3',
-                    'hidden' => count($containers) < 2,
+                    'fi-fo-builder-actions',
+                    'fi-hidden' => count($items) < 2,
                 ])
             >
                 @if ($collapseAllActionIsVisible)
@@ -68,12 +77,19 @@
             </div>
         @endif
 
-        @if (count($containers))
+        @if (count($items))
             <ul
                 x-sortable
                 data-sortable-animation-duration="{{ $getReorderAnimationDuration() }}"
-                wire:end.stop="{{ 'mountFormComponentAction(\'' . $statePath . '\', \'reorder\', { items: $event.target.sortable.toArray() })' }}"
-                class="space-y-4"
+                x-on:end.stop="
+                    $event.oldDraggableIndex !== $event.newDraggableIndex &&
+                        $wire.mountAction(
+                            'reorder',
+                            { items: $event.target.sortable.toArray() },
+                            { schemaComponent: '{{ $key }}' },
+                        )
+                "
+                class="fi-fo-builder-items"
             >
                 @php
                     $hasBlockLabels = $hasBlockLabels();
@@ -81,36 +97,39 @@
                     $hasBlockNumbers = $hasBlockNumbers();
                 @endphp
 
-                @foreach ($containers as $uuid => $item)
+                @foreach ($items as $itemKey => $item)
                     @php
                         $visibleExtraItemActions = array_filter(
                             $extraItemActions,
-                            fn (Action $action): bool => $action(['item' => $uuid])->isVisible(),
+                            fn (Action $action): bool => $action(['item' => $itemKey])->isVisible(),
                         );
-                        $cloneAction = $cloneAction(['item' => $uuid]);
+                        $cloneAction = $cloneAction(['item' => $itemKey]);
                         $cloneActionIsVisible = $isCloneable && $cloneAction->isVisible();
-                        $deleteAction = $deleteAction(['item' => $uuid]);
+                        $deleteAction = $deleteAction(['item' => $itemKey]);
                         $deleteActionIsVisible = $isDeletable && $deleteAction->isVisible();
-                        $editAction = $editAction(['item' => $uuid]);
+                        $editAction = $editAction(['item' => $itemKey]);
                         $editActionIsVisible = $hasBlockPreviews && $editAction->isVisible();
-                        $moveDownAction = $moveDownAction(['item' => $uuid])->disabled($loop->last);
+                        $moveDownAction = $moveDownAction(['item' => $itemKey])->disabled($loop->last);
                         $moveDownActionIsVisible = $isReorderableWithButtons && $moveDownAction->isVisible();
-                        $moveUpAction = $moveUpAction(['item' => $uuid])->disabled($loop->first);
+                        $moveUpAction = $moveUpAction(['item' => $itemKey])->disabled($loop->first);
                         $moveUpActionIsVisible = $isReorderableWithButtons && $moveUpAction->isVisible();
                         $reorderActionIsVisible = $isReorderableWithDragAndDrop && $reorderAction->isVisible();
                     @endphp
 
                     <li
                         wire:ignore.self
-                        wire:key="{{ $this->getId() }}.{{ $item->getStatePath() }}.{{ $field::class }}.item"
+                        wire:key="{{ $item->getLivewireKey() }}.item"
                         x-data="{
                             isCollapsed: @js($isCollapsed($item)),
                         }"
                         x-on:builder-expand.window="$event.detail === '{{ $statePath }}' && (isCollapsed = false)"
                         x-on:builder-collapse.window="$event.detail === '{{ $statePath }}' && (isCollapsed = true)"
                         x-on:expand="isCollapsed = false"
-                        x-sortable-item="{{ $uuid }}"
-                        class="fi-fo-builder-item rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-white/5 dark:ring-white/10"
+                        x-sortable-item="{{ $itemKey }}"
+                        {{
+                            $item->getParentComponent()->getExtraAttributeBag()
+                                ->class(['fi-fo-builder-item'])
+                        }}
                         x-bind:class="{ 'fi-collapsed': isCollapsed }"
                     >
                         @if ($reorderActionIsVisible || $moveUpActionIsVisible || $moveDownActionIsVisible || $hasBlockIcons || $hasBlockLabels || $editActionIsVisible || $cloneActionIsVisible || $deleteActionIsVisible || $isCollapsible || $visibleExtraItemActions)
@@ -118,19 +137,15 @@
                                 @if ($isCollapsible)
                                     x-on:click.stop="isCollapsed = !isCollapsed"
                                 @endif
-                                @class([
-                                    'fi-fo-builder-item-header flex items-center gap-x-3 overflow-hidden px-4 py-3',
-                                    'cursor-pointer select-none' => $isCollapsible,
-                                ])
+                                class="fi-fo-builder-item-header"
                             >
                                 @if ($reorderActionIsVisible || $moveUpActionIsVisible || $moveDownActionIsVisible)
-                                    <ul class="flex items-center gap-x-3">
+                                    <ul
+                                        class="fi-fo-builder-item-header-start-actions"
+                                    >
                                         @if ($reorderActionIsVisible)
-                                            <li
-                                                x-sortable-handle
-                                                x-on:click.stop
-                                            >
-                                                {{ $reorderAction }}
+                                            <li x-on:click.stop>
+                                                {{ $reorderAction->extraAttributes(['x-sortable-handle' => true], merge: true) }}
                                             </li>
                                         @endif
 
@@ -147,38 +162,35 @@
                                 @endif
 
                                 @php
-                                    $blockIcon = $item->getParentComponent()->getIcon($item->getRawState(), $uuid);
+                                    $blockIcon = $item->getParentComponent()->getIcon($item->getRawState(), $itemKey);
                                 @endphp
 
                                 @if ($hasBlockIcons && filled($blockIcon))
-                                    <x-filament::icon
-                                        :icon="$blockIcon"
-                                        class="fi-fo-builder-item-header-icon h-5 w-5 text-gray-400 dark:text-gray-500"
-                                    />
+                                    {{ \Filament\Support\generate_icon_html($blockIcon, (new \Illuminate\View\ComponentAttributeBag)->class(['fi-fo-builder-item-header-icon'])) }}
                                 @endif
 
                                 @if ($hasBlockLabels)
-                                    <h4
+                                    <{{ $blockLabelHeadingTag }}
                                         @class([
-                                            'text-sm font-medium text-gray-950 dark:text-white',
-                                            'truncate' => $isBlockLabelTruncated(),
+                                            'fi-fo-builder-item-header-label',
+                                            'fi-truncated' => $isBlockLabelTruncated,
                                         ])
                                     >
-                                        {{ $item->getParentComponent()->getLabel($item->getRawState(), $uuid) }}
+                                        {{ $item->getParentComponent()->getLabel($item->getRawState(), $itemKey) }}
 
                                         @if ($hasBlockNumbers)
                                             {{ $loop->iteration }}
                                         @endif
-                                    </h4>
+                                    </{{ $blockLabelHeadingTag }}>
                                 @endif
 
                                 @if ($editActionIsVisible || $cloneActionIsVisible || $deleteActionIsVisible || $isCollapsible || $visibleExtraItemActions)
                                     <ul
-                                        class="ms-auto flex items-center gap-x-3"
+                                        class="fi-fo-builder-item-header-end-actions"
                                     >
                                         @foreach ($visibleExtraItemActions as $extraItemAction)
                                             <li x-on:click.stop>
-                                                {{ $extraItemAction(['item' => $uuid]) }}
+                                                {{ $extraItemAction(['item' => $itemKey]) }}
                                             </li>
                                         @endforeach
 
@@ -202,20 +214,17 @@
 
                                         @if ($isCollapsible)
                                             <li
-                                                class="relative transition"
+                                                class="fi-fo-builder-item-header-collapsible-actions"
                                                 x-on:click.stop="isCollapsed = !isCollapsed"
-                                                x-bind:class="{ '-rotate-180': isCollapsed }"
                                             >
                                                 <div
-                                                    class="transition"
-                                                    x-bind:class="{ 'opacity-0 pointer-events-none': isCollapsed }"
+                                                    class="fi-fo-builder-item-header-collapse-action"
                                                 >
                                                     {{ $getAction('collapse') }}
                                                 </div>
 
                                                 <div
-                                                    class="absolute inset-0 rotate-180 transition"
-                                                    x-bind:class="{ 'opacity-0 pointer-events-none': ! isCollapsed }"
+                                                    class="fi-fo-builder-item-header-expand-action"
                                                 >
                                                     {{ $getAction('expand') }}
                                                 </div>
@@ -229,15 +238,15 @@
                         <div
                             x-show="! isCollapsed"
                             @class([
-                                'fi-fo-builder-item-content relative border-t border-gray-100 dark:border-white/10',
-                                'p-4' => ! ($hasBlockPreviews && $item->getParentComponent()->hasPreview()),
+                                'fi-fo-builder-item-content',
+                                'fi-fo-builder-item-content-has-preview' => $hasBlockPreviews && $item->getParentComponent()->hasPreview(),
                             ])
                         >
                             @if ($hasBlockPreviews && $item->getParentComponent()->hasPreview())
                                 <div
                                     @class([
                                         'fi-fo-builder-item-preview',
-                                        'pointer-events-none' => ! $hasInteractiveBlockPreviews,
+                                        'fi-interactive' => $hasInteractiveBlockPreviews,
                                     ])
                                 >
                                     {{ $item->getParentComponent()->renderPreview($item->getRawState()) }}
@@ -245,53 +254,55 @@
 
                                 @if ($editActionIsVisible && (! $hasInteractiveBlockPreviews))
                                     <div
-                                        class="absolute inset-0 z-[1] cursor-pointer"
+                                        class="fi-fo-builder-item-preview-edit-overlay"
                                         role="button"
-                                        x-on:click.stop="{{ '$wire.mountFormComponentAction(\'' . $statePath . '\', \'edit\', { item: \'' . $uuid . '\' })' }}"
+                                        x-on:click.stop="{{ '$wire.mountAction(\'edit\', { item: \'' . $itemKey . '\' }, { schemaComponent: \'' . $key . '\' })' }}"
                                     ></div>
                                 @endif
                             @else
                                 {{ $item }}
                             @endif
                         </div>
-                    </li>
 
-                    @if (! $loop->last)
-                        @if ($isAddable && $addBetweenAction(['afterItem' => $uuid])->isVisible())
-                            <li class="relative -top-2 !mt-0 h-0">
+                        @if (! $loop->last)
+                            @if ($isAddable && $addBetweenAction(['afterItem' => $itemKey])->isVisible())
                                 <div
-                                    class="flex w-full justify-center opacity-0 transition duration-75 hover:opacity-100"
+                                    class="fi-fo-builder-add-between-items-ctn"
                                 >
                                     <div
-                                        class="fi-fo-builder-block-picker-ctn rounded-lg bg-white dark:bg-gray-900"
+                                        class="fi-fo-builder-add-between-items"
                                     >
-                                        <x-filament-forms::builder.block-picker
-                                            :action="$addBetweenAction"
-                                            :after-item="$uuid"
-                                            :columns="$blockPickerColumns"
-                                            :blocks="$blockPickerBlocks"
-                                            :state-path="$statePath"
-                                            :width="$blockPickerWidth"
+                                        <div
+                                            class="fi-fo-builder-block-picker-ctn"
                                         >
-                                            <x-slot name="trigger">
-                                                {{ $addBetweenAction(['afterItem' => $uuid]) }}
-                                            </x-slot>
-                                        </x-filament-forms::builder.block-picker>
+                                            <x-filament-forms::builder.block-picker
+                                                :action="$addBetweenAction"
+                                                :after-item="$itemKey"
+                                                :columns="$blockPickerColumns"
+                                                :blocks="$blockPickerBlocks"
+                                                :key="$key"
+                                                :width="$blockPickerWidth"
+                                            >
+                                                <x-slot name="trigger">
+                                                    {{ $addBetweenAction(['afterItem' => $itemKey]) }}
+                                                </x-slot>
+                                            </x-filament-forms::builder.block-picker>
+                                        </div>
                                     </div>
                                 </div>
-                            </li>
-                        @elseif (filled($labelBetweenItems = $getLabelBetweenItems()))
-                            <li
-                                class="relative border-t border-gray-200 dark:border-white/10"
-                            >
-                                <span
-                                    class="absolute -top-3 left-3 px-1 text-sm font-medium"
+                            @elseif (filled($labelBetweenItems))
+                                <div
+                                    class="fi-fo-builder-label-between-items-ctn"
                                 >
-                                    {{ $labelBetweenItems }}
-                                </span>
-                            </li>
+                                    <span
+                                        class="fi-fo-builder-label-between-items"
+                                    >
+                                        {{ $labelBetweenItems }}
+                                    </span>
+                                </div>
+                            @endif
                         @endif
-                    @endif
+                    </li>
                 @endforeach
             </ul>
         @endif
@@ -301,17 +312,9 @@
                 :action="$addAction"
                 :blocks="$blockPickerBlocks"
                 :columns="$blockPickerColumns"
-                :state-path="$statePath"
+                :key="$key"
                 :width="$blockPickerWidth"
-                @class([
-                    'flex',
-                    match ($getAddActionAlignment()) {
-                        Alignment::Start, Alignment::Left => 'justify-start',
-                        Alignment::Center, null => 'justify-center',
-                        Alignment::End, Alignment::Right => 'justify-end',
-                        default => $alignment,
-                    },
-                ])
+                :class="($addActionAlignment instanceof Alignment) ? ('fi-align-' . $addActionAlignment->value) : $addActionAlignment"
             >
                 <x-slot name="trigger">
                     {{ $addAction }}

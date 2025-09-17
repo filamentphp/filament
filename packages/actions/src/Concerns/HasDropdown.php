@@ -3,7 +3,7 @@
 namespace Filament\Actions\Concerns;
 
 use Closure;
-use Filament\Support\Enums\MaxWidth;
+use Filament\Support\Enums\Width;
 
 trait HasDropdown
 {
@@ -11,11 +11,13 @@ trait HasDropdown
 
     protected string | Closure | null $dropdownPlacement = null;
 
+    protected string | Closure | null $defaultDropdownPlacement = null;
+
     protected string | Closure | null $dropdownMaxHeight = null;
 
     protected int | Closure | null $dropdownOffset = null;
 
-    protected MaxWidth | string | Closure | null $dropdownWidth = null;
+    protected Width | string | Closure | null $dropdownWidth = null;
 
     public function dropdown(bool | Closure $condition = true): static
     {
@@ -27,6 +29,13 @@ trait HasDropdown
     public function dropdownPlacement(string | Closure | null $placement): static
     {
         $this->dropdownPlacement = $placement;
+
+        return $this;
+    }
+
+    public function defaultDropdownPlacement(string | Closure | null $placement): static
+    {
+        $this->defaultDropdownPlacement = $placement;
 
         return $this;
     }
@@ -45,7 +54,7 @@ trait HasDropdown
         return $this;
     }
 
-    public function dropdownWidth(MaxWidth | string | Closure | null $width): static
+    public function dropdownWidth(Width | string | Closure | null $width): static
     {
         $this->dropdownWidth = $width;
 
@@ -54,7 +63,7 @@ trait HasDropdown
 
     public function getDropdownPlacement(): ?string
     {
-        return $this->evaluate($this->dropdownPlacement);
+        return $this->evaluate($this->dropdownPlacement) ?? $this->evaluate($this->defaultDropdownPlacement);
     }
 
     public function getDropdownMaxHeight(): ?string
@@ -67,9 +76,15 @@ trait HasDropdown
         return $this->evaluate($this->dropdownOffset);
     }
 
-    public function getDropdownWidth(): MaxWidth | string | null
+    public function getDropdownWidth(): Width | string | null
     {
-        return $this->evaluate($this->dropdownWidth);
+        $width = $this->evaluate($this->dropdownWidth);
+
+        if (is_string($width)) {
+            $width = Width::tryFrom($width) ?? $width;
+        }
+
+        return $width;
     }
 
     public function hasDropdown(): bool

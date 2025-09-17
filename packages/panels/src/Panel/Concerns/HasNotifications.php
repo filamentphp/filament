@@ -3,6 +3,8 @@
 namespace Filament\Panel\Concerns;
 
 use Closure;
+use Filament\Livewire\DatabaseNotifications;
+use Livewire\Component;
 
 trait HasNotifications
 {
@@ -10,12 +12,28 @@ trait HasNotifications
 
     protected bool | Closure $hasLazyLoadedDatabaseNotifications = true;
 
+    protected string | Closure | null $databaseNotificationsLivewireComponent = null;
+
     protected string | Closure | null $databaseNotificationsPolling = '30s';
 
-    public function databaseNotifications(bool | Closure $condition = true, bool | Closure $isLazy = true): static
+    /**
+     * @param  class-string<Component> | Closure | null  $livewireComponent
+     */
+    public function databaseNotifications(bool | Closure $condition = true, string | Closure | null $livewireComponent = null, bool | Closure $isLazy = true): static
     {
         $this->hasDatabaseNotifications = $condition;
+        $this->databaseNotificationsLivewireComponent($livewireComponent);
         $this->lazyLoadedDatabaseNotifications($isLazy);
+
+        return $this;
+    }
+
+    /**
+     * @param  class-string<Component> | Closure | null  $component
+     */
+    public function databaseNotificationsLivewireComponent(string | Closure | null $component): static
+    {
+        $this->databaseNotificationsLivewireComponent = $component;
 
         return $this;
     }
@@ -42,6 +60,14 @@ trait HasNotifications
     public function hasLazyLoadedDatabaseNotifications(): bool
     {
         return (bool) $this->evaluate($this->hasLazyLoadedDatabaseNotifications);
+    }
+
+    /**
+     * @return class-string<Component>
+     */
+    public function getDatabaseNotificationsLivewireComponent(): string
+    {
+        return $this->evaluate($this->databaseNotificationsLivewireComponent) ?? DatabaseNotifications::class;
     }
 
     public function getDatabaseNotificationsPollingInterval(): ?string

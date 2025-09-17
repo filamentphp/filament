@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('exports', function (Blueprint $table) {
+        Schema::create('exports', function (Blueprint $table): void {
             $table->id();
             $table->timestamp('completed_at')->nullable();
             $table->string('file_disk');

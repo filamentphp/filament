@@ -27,7 +27,6 @@ body:
         - filament/spatie-laravel-media-library-plugin
         - filament/spatie-laravel-settings-plugin
         - filament/spatie-laravel-tags-plugin
-        - filament/spatie-laravel-translatable-plugin
         - filament/support
         - filament/tables
         - filament/widgets

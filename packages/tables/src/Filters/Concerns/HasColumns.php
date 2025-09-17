@@ -5,14 +5,14 @@ namespace Filament\Tables\Filters\Concerns;
 trait HasColumns
 {
     /**
-     * @var array<string, int | string | null> | int | string | null
+     * @var array<string, ?int> | int | null
      */
-    protected array | int | string | null $columns = null;
+    protected array | int | null $columns = null;
 
     /**
-     * @param  array<string, int | string | null> | int | string | null  $columns
+     * @param  array<string, ?int> | int | null  $columns
      */
-    public function columns(array | int | string | null $columns = 2): static
+    public function columns(array | int | null $columns = 2): static
     {
         $this->columns = $columns;
 
@@ -20,9 +20,9 @@ trait HasColumns
     }
 
     /**
-     * @return array<string, int | string | null> | int | string | null
+     * @return array<string, ?int> | int | null
      */
-    public function getColumns(): array | int | string | null
+    public function getColumns(): array | int | null
     {
         return $this->columns;
     }

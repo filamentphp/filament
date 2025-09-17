@@ -1,0 +1,35 @@
+.fi-sc-tabs {
+    @apply flex flex-col;
+
+    & .fi-sc-tabs-tab {
+        @apply outline-hidden;
+
+        &.fi-active {
+            @apply mt-6;
+        }
+
+        &:not(.fi-active) {
+            @apply invisible absolute h-0 overflow-hidden p-0;
+        }
+    }
+
+    &.fi-contained {
+        @apply rounded-xl bg-white shadow-xs ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10;
+
+        & .fi-sc-tabs-tab {
+            &.fi-active {
+                @apply mt-0 p-6;
+            }
+        }
+    }
+
+    &.fi-vertical {
+        @apply flex-row;
+
+        & .fi-sc-tabs-tab {
+            &.fi-active {
+                @apply ms-6 mt-0 flex-1;
+            }
+        }
+    }
+}

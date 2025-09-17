@@ -376,7 +376,7 @@ return [
                     'direct' => ':attribute هو :values',
                     'inverse' => ':attribute ليس :values',
                     'values_glue' => [
-                        ', ' => '، ',
+                        '، ',
                         'final' => ' أو ',
                     ],
                 ],

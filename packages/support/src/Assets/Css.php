@@ -10,9 +10,18 @@ class Css extends Asset
 {
     protected string | Htmlable | Closure | null $html = null;
 
+    protected ?string $relativePublicPath = null;
+
     public function html(string | Htmlable | Closure | null $html): static
     {
         $this->html = $html;
+
+        return $this;
+    }
+
+    public function relativePublicPath(?string $relativePublicPath): static
+    {
+        $this->relativePublicPath = $relativePublicPath;
 
         return $this;
     }
@@ -45,6 +54,10 @@ class Css extends Asset
 
     public function getRelativePublicPath(): string
     {
+        if (filled($this->relativePublicPath)) {
+            return $this->relativePublicPath;
+        }
+
         $path = config('filament.assets_path', '');
 
         return ltrim("{$path}/css/{$this->getPackage()}/{$this->getId()}.css", '/');

@@ -2,7 +2,7 @@
 
 return [
 
-    'column_toggle' => [
+    'column_manager' => [
 
         'heading' => 'სვეტები',
 
@@ -95,7 +95,7 @@ return [
             'label' => 'საერთო ქმედებები',
         ],
 
-        'toggle_columns' => [
+        'column_manager' => [
             'label' => 'სვეტების გადართვა',
         ],
 

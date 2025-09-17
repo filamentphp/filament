@@ -1,0 +1,3 @@
+.fi-loading-section {
+    @apply animate-pulse;
+}

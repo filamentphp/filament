@@ -284,7 +284,7 @@ return [
 
     'markdown_editor' => [
 
-        'toolbar_buttons' => [
+        'tools' => [
             'attach_files' => 'Lampirkan fail',
             'blockquote' => 'Blok petikan',
             'bold' => 'Bold',
@@ -298,6 +298,28 @@ return [
             'strike' => 'Strikethrough',
             'table' => 'Jadual',
             'undo' => 'Buat asal',
+        ],
+
+    ],
+
+    'modal_table_select' => [
+
+        'actions' => [
+
+            'select' => [
+
+                'label' => 'Pilih',
+
+                'actions' => [
+
+                    'select' => [
+                        'label' => 'Pilih',
+                    ],
+
+                ],
+
+            ],
+
         ],
 
     ],
@@ -365,37 +387,108 @@ return [
 
     'rich_editor' => [
 
-        'dialogs' => [
+        'actions' => [
+
+            'attach_files' => [
+
+                'label' => 'Lampirkan fail',
+
+                'modal' => [
+
+                    'heading' => 'Lampirkan fail',
+
+                    'form' => [
+
+                        'file' => [
+
+                            'label' => [
+                                'new' => 'Fail baru',
+                                'existing' => 'Fail sedia ada',
+                            ],
+
+                        ],
+
+                        'alt' => [
+
+                            'label' => [
+                                'new' => 'Alt text baru',
+                                'existing' => 'Tukar alt text',
+                            ],
+
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
+            'custom_block' => [
+
+                'modal' => [
+
+                    'actions' => [
+
+                        'insert' => [
+                            'label' => 'Masukkan',
+                        ],
+
+                        'save' => [
+                            'label' => 'Simpan',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
 
             'link' => [
 
-                'actions' => [
-                    'link' => 'Pautkan',
-                    'unlink' => 'Nyahpaut',
+                'label' => 'Sunting',
+
+                'modal' => [
+
+                    'heading' => 'Pautan',
+
+                    'form' => [
+
+                        'url' => [
+                            'label' => 'URL',
+                        ],
+
+                        'should_open_in_new_tab' => [
+                            'label' => 'Buka pautan dalam tab baru',
+                        ],
+
+                    ],
+
                 ],
-
-                'label' => 'URL',
-
-                'placeholder' => 'Masukkan URL',
 
             ],
 
         ],
 
-        'toolbar_buttons' => [
+        'no_merge_tag_search_results_message' => 'Tiada hasil carian yang sepadan dengan tag penggabungan anda.',
+
+        'tools' => [
             'attach_files' => 'Lampirkan fail',
             'blockquote' => 'Blockquote',
             'bold' => 'Bold',
             'bullet_list' => 'Bullet list',
             'code_block' => 'Blok kod',
+            'custom_blocks' => 'Blok tersuai',
             'h1' => 'Title',
             'h2' => 'Heading',
             'h3' => 'Subheading',
             'italic' => 'Italic',
             'link' => 'Pautan',
+            'merge_tags' => 'Tag penggabungan',
             'ordered_list' => 'Senarai bernombor',
             'redo' => 'Buat semula',
             'strike' => 'Strikethrough',
+            'subscript' => 'Subscript',
+            'superscript' => 'Superscript',
             'underline' => 'Garis bawah',
             'undo' => 'Buat asal',
         ],
@@ -494,22 +587,6 @@ return [
         'boolean' => [
             'true' => 'Ya',
             'false' => 'Tidak',
-        ],
-
-    ],
-
-    'wizard' => [
-
-        'actions' => [
-
-            'previous_step' => [
-                'label' => 'Sebelum',
-            ],
-
-            'next_step' => [
-                'label' => 'Seterus',
-            ],
-
         ],
 
     ],

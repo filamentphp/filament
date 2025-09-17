@@ -2,7 +2,7 @@
 
 return [
 
-    'column_toggle' => [
+    'column_manager' => [
 
         'heading' => 'Stolpci',
 
@@ -95,7 +95,7 @@ return [
             'label' => 'Skupinska dejanja',
         ],
 
-        'toggle_columns' => [
+        'column_manager' => [
             'label' => 'Prikaži/skrij stolpce',
         ],
 

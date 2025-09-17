@@ -1,0 +1,36 @@
+<?php
+
+namespace App\Filament\Resources\Users\Pages;
+
+use App\Filament\Resources\Teams\Tables\TeamsTable;
+use App\Filament\Resources\Users\UserResource;
+use BackedEnum;
+use Filament\Forms\Components\TextInput;
+use Filament\Resources\Pages\ManageRelatedRecords;
+use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Table;
+
+class ManageUserTeams extends ManageRelatedRecords
+{
+    protected static string $resource = UserResource::class;
+
+    protected static string $relationship = 'teams';
+
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+
+    public function form(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+                TextInput::make('name')
+                    ->required()
+                    ->maxLength(255),
+            ]);
+    }
+
+    public function table(Table $table): Table
+    {
+        return TeamsTable::configure($table);
+    }
+}

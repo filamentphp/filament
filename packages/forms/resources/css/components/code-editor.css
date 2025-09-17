@@ -1,0 +1,71 @@
+.fi-fo-code-editor {
+    @apply overflow-hidden;
+
+    & .cm-editor {
+        &.cm-focused {
+            @apply outline-none!;
+        }
+
+        & .cm-gutters {
+            @apply min-h-48! border-e-gray-300! bg-gray-100! dark:border-e-gray-800! dark:bg-gray-950!;
+
+            & .cm-gutter {
+                &.cm-lineNumbers {
+                    & .cm-gutterElement {
+                        @apply ms-1 rounded-s-md;
+
+                        &.cm-activeLineGutter {
+                            @apply bg-gray-200! dark:bg-gray-800!;
+                        }
+                    }
+                }
+
+                &.cm-foldGutter {
+                    & .cm-gutterElement {
+                        &.cm-activeLineGutter {
+                            @apply bg-gray-200! dark:bg-gray-800!;
+                        }
+                    }
+                }
+            }
+        }
+
+        & .cm-scroller {
+            @apply min-h-48!;
+        }
+
+        & .cm-line {
+            @apply me-1 rounded-e-md;
+        }
+    }
+
+    &.fi-disabled {
+        & .cm-editor {
+            & .cm-gutters {
+                & .cm-gutter {
+                    &.cm-lineNumbers {
+                        & .cm-gutterElement {
+                            &.cm-activeLineGutter {
+                                @apply bg-transparent!;
+                            }
+                        }
+                    }
+
+                    &.cm-foldGutter {
+                        & .cm-gutterElement {
+                            &.cm-activeLineGutter {
+                                @apply bg-transparent!;
+                            }
+                        }
+                    }
+                }
+            }
+
+            & .cm-line {
+                &.cm-activeLine {
+                    @apply bg-transparent!;
+                }
+            }
+        }
+    }
+}

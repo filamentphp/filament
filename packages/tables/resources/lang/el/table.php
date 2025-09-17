@@ -2,7 +2,7 @@
 
 return [
 
-    'column_toggle' => [
+    'column_manager' => [
 
         'heading' => 'Στήλες',
 
@@ -95,8 +95,8 @@ return [
             'label' => 'Μαζικές ενέργειες',
         ],
 
-        'toggle_columns' => [
-            'label' => 'Toggle columns',
+        'column_manager' => [
+            'label' => 'Column manager',
         ],
 
     ],

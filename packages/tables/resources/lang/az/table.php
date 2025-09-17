@@ -2,7 +2,7 @@
 
 return [
 
-    'column_toggle' => [
+    'column_manager' => [
 
         'heading' => 'Sütunlar',
 
@@ -98,7 +98,7 @@ return [
             'label' => 'Çoxlu hərəkətlər',
         ],
 
-        'toggle_columns' => [
+        'column_manager' => [
             'label' => 'Sütunları göstər/gizlət',
         ],
 

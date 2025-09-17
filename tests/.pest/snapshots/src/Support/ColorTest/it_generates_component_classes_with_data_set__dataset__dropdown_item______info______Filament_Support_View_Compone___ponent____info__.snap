@@ -1,0 +1,8 @@
+[
+    "fi-color",
+    "fi-color-info",
+    "fi-text-color-600",
+    "hover:fi-text-color-600",
+    "dark:fi-text-color-400",
+    "dark:hover:fi-text-color-400"
+]

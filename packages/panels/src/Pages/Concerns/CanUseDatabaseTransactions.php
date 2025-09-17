@@ -12,7 +12,7 @@ trait CanUseDatabaseTransactions
 
     public function hasDatabaseTransactions(): bool
     {
-        return $this->hasDatabaseTransactions ?? Filament::getCurrentPanel()->hasDatabaseTransactions();
+        return $this->hasDatabaseTransactions ?? Filament::getCurrentOrDefaultPanel()->hasDatabaseTransactions();
     }
 
     protected function beginDatabaseTransaction(): void

@@ -54,6 +54,18 @@ return [
                 'title' => 'Borrados',
             ],
 
+            'deleted_partial' => [
+                'title' => 'Borrados :count de :total',
+                'missing_authorization_failure_message' => 'Usted no tiene permiso para eliminar :count.',
+                'missing_processing_failure_message' => ':count no se pudieron eliminar.',
+            ],
+
+            'deleted_none' => [
+                'title' => 'No se pudo eliminar',
+                'missing_authorization_failure_message' => 'Usted no tiene permiso para eliminar :count.',
+                'missing_processing_failure_message' => ':count no se pudieron eliminar.',
+            ],
+
         ],
 
     ],

@@ -1,0 +1,23 @@
+.fi-in-key-value {
+    @apply w-full table-auto divide-y divide-gray-200 rounded-lg bg-white shadow-xs ring-1 ring-gray-950/5 dark:divide-white/5 dark:bg-white/5 dark:ring-white/10;
+
+    & th {
+        @apply px-3 py-2 text-start text-sm font-medium text-gray-700 dark:text-gray-200;
+    }
+
+    & tbody {
+        @apply divide-y divide-gray-200 font-mono text-base sm:text-sm sm:leading-6 dark:divide-white/5;
+    }
+
+    & tr {
+        @apply divide-x divide-gray-200 rtl:divide-x-reverse dark:divide-white/5;
+    }
+
+    & td {
+        @apply w-1/2 px-3 py-1.5 wrap-anywhere;
+
+        &.fi-in-placeholder {
+            @apply w-full py-2 text-center font-sans;
+        }
+    }
+}

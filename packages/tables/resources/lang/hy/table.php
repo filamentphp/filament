@@ -2,7 +2,7 @@
 
 return [
 
-    'column_toggle' => [
+    'column_manager' => [
 
         'heading' => 'Սյունակներ',
 
@@ -99,7 +99,7 @@ return [
             'label' => 'Բացել գործողություններ',
         ],
 
-        'toggle_columns' => [
+        'column_manager' => [
             'label' => 'Փոխել սյունակները',
         ],
 

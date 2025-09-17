@@ -6,11 +6,16 @@ use Closure;
 use Filament\Forms\Components\Concerns\HasExtraInputAttributes;
 use Filament\Forms\Components\Concerns\HasInputMode;
 use Filament\Forms\Components\Concerns\HasStep;
+use Filament\Support\Components\Contracts\HasEmbeddedView;
+use Filament\Support\Enums\Alignment;
+use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\RawJs;
 use Filament\Tables\Columns\Concerns\HasExtraContent;
 use Filament\Tables\Columns\Contracts\Editable;
+use Filament\Tables\Table;
+use Illuminate\Support\Js;
 
-class TextInputColumn extends Column implements Editable
+class TextInputColumn extends Column implements Editable, HasEmbeddedView
 {
     use Concerns\CanBeValidated;
     use Concerns\CanUpdateState;
@@ -18,11 +23,6 @@ class TextInputColumn extends Column implements Editable
     use HasExtraInputAttributes;
     use HasInputMode;
     use HasStep;
-
-    /**
-     * @var view-string
-     */
-    protected string $view = 'filament-tables::columns.text-input-column';
 
     protected string | RawJs | Closure | null $mask = null;
 
@@ -65,10 +65,10 @@ class TextInputColumn extends Column implements Editable
         $state = $this->getState();
         $mask = $this->getMask();
 
-        $alignment = $this->getAlignment() ?? \Filament\Support\Enums\Alignment::Start;
+        $alignment = $this->getAlignment() ?? Alignment::Start;
 
-        if (! $alignment instanceof \Filament\Support\Enums\Alignment) {
-            $alignment = filled($alignment) ? (\Filament\Support\Enums\Alignment::tryFrom($alignment) ?? $alignment) : null;
+        if (! $alignment instanceof Alignment) {
+            $alignment = filled($alignment) ? (Alignment::tryFrom($alignment) ?? $alignment) : null;
         }
 
         $type = filled($mask) ? 'text' : $this->getType();
@@ -76,11 +76,11 @@ class TextInputColumn extends Column implements Editable
         $attributes = $this->getExtraAttributeBag()
             ->merge([
                 'x-load' => true,
-                'x-load-src' => \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('columns/text-input', 'filament/tables'),
+                'x-load-src' => FilamentAsset::getAlpineComponentSrc('columns/text-input', 'filament/tables'),
                 'x-data' => 'textInputTableColumn({
-                    name: ' . \Illuminate\Support\Js::from($this->getName()) . ',
-                    recordKey: ' . \Illuminate\Support\Js::from($this->getRecordKey()) . ',
-                    state: ' . \Illuminate\Support\Js::from($state) . ',
+                    name: ' . Js::from($this->getName()) . ',
+                    recordKey: ' . Js::from($this->getRecordKey()) . ',
+                    state: ' . Js::from($state) . ',
                 })',
             ], escape: false)
             ->class([
@@ -92,23 +92,23 @@ class TextInputColumn extends Column implements Editable
             ->merge([
                 'disabled' => $isDisabled,
                 'wire:loading.attr' => 'disabled',
-                'wire:target' => implode(',', \Filament\Tables\Table::LOADING_TARGETS),
+                'wire:target' => implode(',', Table::LOADING_TARGETS),
                 'x-bind:disabled' => $isDisabled ? null : 'isLoading',
                 'inputmode' => $this->getInputMode(),
                 'placeholder' => $this->getPlaceholder(),
                 'step' => $this->getStep(),
                 'type' => $type,
-                'x-mask' . ($mask instanceof \Filament\Support\RawJs ? ':dynamic' : '') => filled($mask) ? $mask : null,
+                'x-mask' . ($mask instanceof RawJs ? ':dynamic' : '') => filled($mask) ? $mask : null,
                 'x-tooltip' => filled($tooltip = $this->getTooltip($state))
                     ? '{
-                        content: ' . \Illuminate\Support\Js::from($tooltip) . ',
+                        content: ' . Js::from($tooltip) . ',
                         theme: $store.theme,
                     }'
                     : null,
             ], escape: false)
             ->class([
                 'fi-input',
-                ($alignment instanceof \Filament\Support\Enums\Alignment) ? "fi-align-{$alignment->value}" : (is_string($alignment) ? $alignment : ''),
+                ($alignment instanceof Alignment) ? "fi-align-{$alignment->value}" : (is_string($alignment) ? $alignment : ''),
             ]);
 
         ob_start(); ?>
@@ -117,7 +117,7 @@ class TextInputColumn extends Column implements Editable
             wire:ignore.self
             <?= $attributes->toHtml() ?>
         >
-            <input type="hidden" value="<?= e($state) ?>" x-ref="serverState" />
+            <input type="hidden" value="<?= str($state)->replace('"', '\\"') ?>" x-ref="serverState" />
 
             <?php if ($this->hasExtraContent('above_label')) { ?>
                 <div class="fi-ta-text-input-above-label mb-1">
@@ -163,7 +163,7 @@ class TextInputColumn extends Column implements Editable
 
             <div
                 x-bind:class="{
-                    'fi-disabled': isLoading || <?= \Illuminate\Support\Js::from($isDisabled) ?>,
+                    'fi-disabled': isLoading || <?= Js::from($isDisabled) ?>,
                     'fi-invalid': error !== undefined,
                 }"
                 x-tooltip="

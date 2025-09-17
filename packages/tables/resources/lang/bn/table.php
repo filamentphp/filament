@@ -37,7 +37,7 @@ return [
             'label' => 'কার্যক্রম গুলো দেখুন',
         ],
 
-        'toggle_columns' => [
+        'column_manager' => [
             'label' => 'কলাম টগল করুন',
         ],
 

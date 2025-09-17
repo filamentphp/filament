@@ -4,16 +4,16 @@ return [
 
     'single' => [
 
-        'label' => 'جوداکردن',
+        'label' => 'جیاکردنەوە',
 
         'modal' => [
 
-            'heading' => 'جوداکردنی :label',
+            'heading' => 'جیاکردنەوەی :label',
 
             'actions' => [
 
                 'dissociate' => [
-                    'label' => 'جوداکردن',
+                    'label' => 'جیاکردنەوە',
                 ],
 
             ],
@@ -23,7 +23,7 @@ return [
         'notifications' => [
 
             'dissociated' => [
-                'title' => 'جوداکرا',
+                'title' => 'جیاکرایەوە',
             ],
 
         ],
@@ -32,16 +32,16 @@ return [
 
     'multiple' => [
 
-        'label' => 'جوداکردنی دیاریکراوەکان',
+        'label' => 'جیاکردنەوەی هەڵبژێردراوەکان',
 
         'modal' => [
 
-            'heading' => 'جوداکردنی دیاریکراوەکانی :label',
+            'heading' => 'جیاکردنەوەی هەڵبژێردراوەکانی :label',
 
             'actions' => [
 
                 'dissociate' => [
-                    'label' => 'جوداکردن',
+                    'label' => 'جیاکردنەوە',
                 ],
 
             ],
@@ -51,7 +51,7 @@ return [
         'notifications' => [
 
             'dissociated' => [
-                'title' => 'جوداکرا',
+                'title' => 'جیاکرایەوە',
             ],
 
         ],

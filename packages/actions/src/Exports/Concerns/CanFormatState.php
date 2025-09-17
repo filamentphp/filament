@@ -82,7 +82,7 @@ trait CanFormatState
         }
 
         if (filled($suffix)) {
-            $state = $state . $suffix;
+            $state .= $suffix;
         }
 
         return $state;

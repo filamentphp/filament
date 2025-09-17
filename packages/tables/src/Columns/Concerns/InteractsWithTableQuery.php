@@ -42,7 +42,7 @@ trait InteractsWithTableQuery
             return $query;
         }
 
-        $relationshipName = $this->getRelationshipName();
+        $relationshipName = $this->getRelationshipName($query->getModel());
 
         if (array_key_exists($relationshipName, $query->getEagerLoads())) {
             return $query;
@@ -80,7 +80,7 @@ trait InteractsWithTableQuery
 
         $translatableContentDriver = $this->getLivewire()->makeFilamentTranslatableContentDriver();
 
-        foreach ($this->getSearchColumns() as $searchColumn) {
+        foreach ($this->getSearchColumns($query->getModel()) as $searchColumn) {
             $whereClause = $isFirst ? 'where' : 'orWhere';
 
             $query->when(
@@ -89,26 +89,16 @@ trait InteractsWithTableQuery
                 fn (EloquentBuilder $query) => $query->when(
                     $this->hasRelationship($query->getModel()),
                     fn (EloquentBuilder $query): EloquentBuilder => $query->{"{$whereClause}Relation"}(
-                        $this->getRelationshipName(),
-                        generate_search_column_expression($searchColumn, $isSearchForcedCaseInsensitive, $databaseConnection),
+                        $this->getRelationshipName($query->getModel()),
+                        generate_search_column_expression((string) str($searchColumn)->replace('.', '->'), $isSearchForcedCaseInsensitive, $databaseConnection),
                         'like',
                         "%{$nonTranslatableSearch}%",
                     ),
-                    function (EloquentBuilder $query) use ($databaseConnection, $isSearchForcedCaseInsensitive, $nonTranslatableSearch, $searchColumn, $whereClause): EloquentBuilder {
-                        // Treat the missing "relationship" as a JSON column if dot notation is used in the column name.
-                        if (filled($relationshipName = $this->getRelationshipName())) {
-                            $searchColumn = (string) str($relationshipName)
-                                ->append('.')
-                                ->append($searchColumn)
-                                ->replace('.', '->');
-                        }
-
-                        return $query->{$whereClause}(
-                            generate_search_column_expression($searchColumn, $isSearchForcedCaseInsensitive, $databaseConnection),
-                            'like',
-                            "%{$nonTranslatableSearch}%",
-                        );
-                    },
+                    fn (EloquentBuilder $query) => $query->{$whereClause}(
+                        generate_search_column_expression((string) str($searchColumn)->replace('.', '->'), $isSearchForcedCaseInsensitive, $databaseConnection),
+                        'like',
+                        "%{$nonTranslatableSearch}%",
+                    ),
                 ),
             );
 
@@ -129,7 +119,7 @@ trait InteractsWithTableQuery
             return $query;
         }
 
-        foreach (array_reverse($this->getSortColumns()) as $sortColumn) {
+        foreach (array_reverse($this->getSortColumns($query->getModel())) as $sortColumn) {
             $query->orderBy($this->getSortColumnForQuery($query, $sortColumn), $direction);
         }
 
@@ -141,25 +131,17 @@ trait InteractsWithTableQuery
      */
     protected function getSortColumnForQuery(EloquentBuilder $query, string $sortColumn, ?array $relationships = null): string | Builder
     {
-        $relationships ??= ($relationshipName = $this->getRelationshipName()) ?
+        $relationships ??= ($relationshipName = $this->getRelationshipName($query->getModel())) ?
             explode('.', $relationshipName) :
             [];
 
         if (! count($relationships)) {
-            return $sortColumn;
+            return (string) str($sortColumn)->replace('.', '->');
         }
 
         $currentRelationshipName = array_shift($relationships);
 
         $relationship = $this->getRelationship($query->getModel(), $currentRelationshipName);
-
-        if (! $relationship) {
-            // Treat the missing "relationship" as a JSON column if dot notation is used in the column name.
-            return (string) str($relationshipName ?? $this->getRelationshipName())
-                ->append('.')
-                ->append($sortColumn)
-                ->replace('.', '->');
-        }
 
         $relatedQuery = $relationship->getRelated()::query();
 

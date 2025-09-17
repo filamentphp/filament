@@ -22,8 +22,16 @@ return [
 
     'actions' => [
 
+        'first' => [
+            'label' => 'اولین',
+        ],
+
         'go_to_page' => [
             'label' => 'برو به صفحه :page',
+        ],
+
+        'last' => [
+            'label' => 'آخرین',
         ],
 
         'next' => [

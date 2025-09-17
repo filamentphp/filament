@@ -1,0 +1,11 @@
+.fi-sc-section {
+    @apply flex flex-col gap-2;
+
+    & .fi-sc-section-label-ctn {
+        @apply flex items-center gap-x-3;
+
+        & .fi-sc-section-label {
+            @apply text-sm leading-6 font-medium text-gray-950 dark:text-white;
+        }
+    }
+}

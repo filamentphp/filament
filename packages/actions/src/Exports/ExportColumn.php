@@ -9,6 +9,7 @@ use Filament\Support\Concerns\HasCellState;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
+use InvalidArgumentException;
 
 class ExportColumn extends Component
 {
@@ -31,12 +32,25 @@ class ExportColumn extends Component
         $this->name($name);
     }
 
-    public static function make(string $name): static
+    public static function make(?string $name = null): static
     {
-        $static = app(static::class, ['name' => $name]);
+        $exportColumnClass = static::class;
+
+        $name ??= static::getDefaultName();
+
+        if (blank($name)) {
+            throw new InvalidArgumentException("Export column of class [$exportColumnClass] must have a unique name, passed to the [make()] method.");
+        }
+
+        $static = app($exportColumnClass, ['name' => $name]);
         $static->configure();
 
         return $static;
+    }
+
+    public static function getDefaultName(): ?string
+    {
+        return null;
     }
 
     public function name(string $name): static
@@ -126,7 +140,7 @@ class ExportColumn extends Component
             return $query;
         }
 
-        $relationshipName = $this->getRelationshipName();
+        $relationshipName = $this->getRelationshipName($query->getModel());
 
         if (array_key_exists($relationshipName, $query->getEagerLoads())) {
             return $query;

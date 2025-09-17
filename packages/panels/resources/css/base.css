@@ -1,10 +1,8 @@
-@layer base {
-    :root.dark {
-        color-scheme: dark;
-    }
+:root.dark {
+    color-scheme: dark;
+}
 
-    /* When scrolling to validation error, do not hide element behind the top bar */
-    [data-field-wrapper] {
-        scroll-margin-top: 8rem;
-    }
+/* When scrolling to validation error, do not hide element behind the top bar */
+[data-field-wrapper] {
+    scroll-margin-top: 8rem;
 }

@@ -4,10 +4,12 @@ namespace Filament\Tables\Filters\QueryBuilder\Constraints;
 
 use Closure;
 use Filament\Support\Facades\FilamentIcon;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Filters\QueryBuilder\Constraints\NumberConstraint\Operators\EqualsOperator;
 use Filament\Tables\Filters\QueryBuilder\Constraints\NumberConstraint\Operators\IsMaxOperator;
 use Filament\Tables\Filters\QueryBuilder\Constraints\NumberConstraint\Operators\IsMinOperator;
 use Filament\Tables\Filters\QueryBuilder\Constraints\Operators\IsFilledOperator;
+use Filament\Tables\View\TablesIconAlias;
 
 class NumberConstraint extends Constraint
 {
@@ -24,7 +26,7 @@ class NumberConstraint extends Constraint
     {
         parent::setUp();
 
-        $this->icon(FilamentIcon::resolve('tables::filters.query-builder.constraints.number') ?? 'heroicon-m-variable');
+        $this->icon(FilamentIcon::resolve(TablesIconAlias::FILTERS_QUERY_BUILDER_CONSTRAINTS_NUMBER) ?? Heroicon::Variable);
 
         $this->operators([
             IsMinOperator::class,

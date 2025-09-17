@@ -3,12 +3,14 @@
 namespace Filament\Tables\Columns\Summarizers;
 
 use Closure;
+use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Components\ViewComponent;
 use Filament\Support\Concerns\HasExtraAttributes;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Query\Builder;
 
-class Summarizer extends ViewComponent
+class Summarizer extends ViewComponent implements HasEmbeddedView
 {
     use Concerns\BelongsToColumn;
     use Concerns\CanBeHidden;
@@ -20,11 +22,6 @@ class Summarizer extends ViewComponent
     protected string $evaluationIdentifier = 'summarizer';
 
     protected string $viewIdentifier = 'summarizer';
-
-    /**
-     * @var view-string
-     */
-    protected string $view = 'filament-tables::columns.summaries.text';
 
     protected ?string $id = null;
 
@@ -84,7 +81,7 @@ class Summarizer extends ViewComponent
 
         if ($column->hasRelationship($query->getModel())) {
             $relationship = $column->getRelationship($query->getModel());
-            $attribute = $column->getRelationshipAttribute();
+            $attribute = $column->getFullAttributeName($query->getModel());
 
             $inverseRelationship = $column->getInverseRelationshipName($query->getModel());
 
@@ -97,7 +94,10 @@ class Summarizer extends ViewComponent
                         $relatedQuery->mergeConstraintsFrom($query);
 
                         if ($baseQuery->limit !== null) {
-                            $relatedQuery->whereKey($this->getTable()->getRecords()->modelKeys());
+                            /** @var Collection $records */
+                            $records = $this->getTable()->getRecords();
+
+                            $relatedQuery->whereKey($records->modelKeys());
                         }
 
                         return $relatedQuery;
@@ -180,5 +180,27 @@ class Summarizer extends ViewComponent
             'query' => [$this->getQuery()],
             default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
         };
+    }
+
+    public function toEmbeddedHtml(): string
+    {
+        $attributes = $this->getExtraAttributeBag()
+            ->class(['fi-ta-text-summary']);
+
+        ob_start(); ?>
+
+        <div <?= $attributes->toHtml() ?>>
+            <?php if (filled($label = $this->getLabel())) { ?>
+                <span class="fi-ta-text-summary-label">
+                    <?= $label ?>
+                </span>
+            <?php } ?>
+
+            <span>
+                <?= $this->formatState($this->getState()) ?>
+            </span>
+        </div>
+
+        <?php return ob_get_clean();
     }
 }

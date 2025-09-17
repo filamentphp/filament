@@ -1,0 +1,15 @@
+.fi-in-repeatable {
+    ul& {
+        @apply gap-4;
+    }
+
+    & .fi-in-repeatable-item {
+        @apply block;
+    }
+
+    &.fi-contained {
+        & .fi-in-repeatable-item {
+            @apply rounded-xl bg-white p-4 shadow-xs ring-1 ring-gray-950/5 dark:bg-white/5 dark:ring-white/10;
+        }
+    }
+}

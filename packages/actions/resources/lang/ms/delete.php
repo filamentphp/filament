@@ -54,6 +54,18 @@ return [
                 'title' => 'Dipadamkan',
             ],
 
+            'deleted_partial' => [
+                'title' => 'Dipadamkan :count daripada :total',
+                'missing_authorization_failure_message' => 'Anda tidak mempunyai kebenaran untuk memadam :count.',
+                'missing_processing_failure_message' => ':count tidak dapat dipadamkan.',
+            ],
+
+            'deleted_none' => [
+                'title' => 'Tiada yang dipadamkan',
+                'missing_authorization_failure_message' => 'Anda tidak mempunyai kebenaran untuk memadam :count.',
+                'missing_processing_failure_message' => ':count tidak dapat dipadamkan.',
+            ],
+
         ],
 
     ],

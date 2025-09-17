@@ -3,8 +3,8 @@
 namespace Filament\Forms\Components\Concerns;
 
 use Closure;
-use Filament\Forms\Components\Component;
-use Filament\Forms\Set;
+use Filament\Schemas\Components\Component;
+use Filament\Schemas\Components\Utilities\Set;
 use Illuminate\Support\Arr;
 
 trait CanFixIndistinctState
@@ -14,7 +14,7 @@ trait CanFixIndistinctState
         $this->distinct($condition);
         $this->live(condition: $condition);
 
-        $this->afterStateUpdated(static function (Component $component, mixed $state, Set $set) use ($condition) {
+        $this->afterStateUpdated(static function (Component $component, mixed $state, Set $set) use ($condition): void {
             if (! $component->evaluate($condition)) {
                 return;
             }
@@ -39,7 +39,7 @@ trait CanFixIndistinctState
                 ->after("{$repeaterStatePath}.")
                 ->beforeLast(".{$componentItemStatePath}");
 
-            $repeaterSiblingState = Arr::except($repeater->getState(), [$repeaterItemKey]);
+            $repeaterSiblingState = Arr::except($repeater->getRawState(), [$repeaterItemKey]);
 
             if (empty($repeaterSiblingState)) {
                 return;

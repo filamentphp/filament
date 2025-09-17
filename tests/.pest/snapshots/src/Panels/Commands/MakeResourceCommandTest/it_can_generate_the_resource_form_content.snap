@@ -1,0 +1,41 @@
+<?php
+
+namespace App\Filament\Resources\Posts\Schemas;
+
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\Toggle;
+use Filament\Schemas\Schema;
+use Filament\Tests\Fixtures\Enums\StringBackedEnum;
+
+class PostForm
+{
+    public static function configure(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+                Select::make('author_id')
+                    ->relationship('author', 'name')
+                    ->required(),
+                Textarea::make('content')
+                    ->columnSpanFull(),
+                Toggle::make('is_published')
+                    ->required(),
+                TextInput::make('rating')
+                    ->required()
+                    ->numeric()
+                    ->default(0),
+                Textarea::make('tags')
+                    ->columnSpanFull(),
+                TextInput::make('title')
+                    ->required(),
+                Textarea::make('json')
+                    ->columnSpanFull(),
+                Textarea::make('json_array_of_objects')
+                    ->columnSpanFull(),
+                Select::make('string_backed_enum')
+                    ->options(StringBackedEnum::class),
+            ]);
+    }
+}

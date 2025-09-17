@@ -3,11 +3,9 @@
 namespace Filament\Tables\Table\Concerns;
 
 use Closure;
-use Filament\Tables\Actions\Action;
 use Filament\Tables\Columns\Column;
 use Filament\Tables\Columns\ColumnGroup;
 use Filament\Tables\Columns\Layout\Component as ColumnLayoutComponent;
-use InvalidArgumentException;
 
 trait HasColumns
 {
@@ -15,6 +13,11 @@ trait HasColumns
      * @var array<string, Column>
      */
     protected array $columns = [];
+
+    /**
+     * @var array<string, ColumnGroup>
+     */
+    protected array $columnGroups = [];
 
     /**
      * @var array<Column | ColumnLayoutComponent | ColumnGroup>
@@ -33,6 +36,7 @@ trait HasColumns
     public function columns(array $components): static
     {
         $this->columns = [];
+        $this->columnGroups = [];
         $this->columnsLayout = [];
         $this->collapsibleColumnsLayout = null;
         $this->hasColumnsLayout = false;
@@ -57,6 +61,8 @@ trait HasColumns
 
             if ($component instanceof ColumnGroup) {
                 $this->hasColumnGroups = true;
+
+                $this->columnGroups[$component->getLabel()] = $component;
 
                 $this->columns = [
                     ...$this->columns,
@@ -87,10 +93,6 @@ trait HasColumns
                 continue;
             }
 
-            if (! $action instanceof Action) {
-                throw new InvalidArgumentException('Table column actions must be an instance of ' . Action::class . '.');
-            }
-
             $this->cacheAction($action->table($this));
         }
 
@@ -103,6 +105,14 @@ trait HasColumns
     public function getColumns(): array
     {
         return $this->columns;
+    }
+
+    /**
+     * @return array<string, ColumnGroup>
+     */
+    public function getColumnGroups(): array
+    {
+        return $this->columnGroups;
     }
 
     /**
@@ -119,6 +129,11 @@ trait HasColumns
     public function getColumn(string $name): ?Column
     {
         return $this->getColumns()[$name] ?? null;
+    }
+
+    public function getColumnGroup(string $name): ?ColumnGroup
+    {
+        return $this->getColumnGroups()[$name] ?? null;
     }
 
     /**

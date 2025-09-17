@@ -3,12 +3,12 @@
 namespace Filament\Forms\Components\MorphToSelect;
 
 use Closure;
-use Exception;
 use Filament\Forms\Components\Select;
 use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+use LogicException;
 
 use function Filament\Support\generate_search_column_expression;
 use function Filament\Support\generate_search_term_expression;
@@ -24,6 +24,8 @@ class Type
 
     public Closure $getOptionsUsing;
 
+    public ?Closure $modifyKeySelectUsing = null;
+
     protected ?Closure $modifyOptionsQueryUsing = null;
 
     /**
@@ -37,10 +39,16 @@ class Type
 
     protected int $optionsLimit = 50;
 
+    /**
+     * @var class-string<Model>
+     */
     protected string $model;
 
     protected ?bool $isSearchForcedCaseInsensitive = null;
 
+    /**
+     * @param  class-string<Model>  $model
+     */
     final public function __construct(string $model)
     {
         $this->model($model);
@@ -48,6 +56,9 @@ class Type
         $this->setUp();
     }
 
+    /**
+     * @param  class-string<Model>  $model
+     */
     public static function make(string $model): static
     {
         return app(static::class, ['model' => $model]);
@@ -175,10 +186,19 @@ class Type
                 return $this->getOptionLabelFromRecord($record);
             }
 
-            return $record->getAttributeValue($this->getTitleAttribute());
+            $titleAttribute = $this->getTitleAttribute();
+
+            if (str_contains($titleAttribute, '->')) {
+                $titleAttribute = str_replace('->', '.', $titleAttribute);
+            }
+
+            return data_get($record, $titleAttribute);
         });
     }
 
+    /**
+     * @param  class-string<Model>  $model
+     */
     public function model(string $model): static
     {
         $this->model = $model;
@@ -216,6 +236,13 @@ class Type
     public function searchColumns(?array $columns): static
     {
         $this->searchColumns = $columns;
+
+        return $this;
+    }
+
+    public function modifyKeySelectUsing(?Closure $callback): static
+    {
+        $this->modifyKeySelectUsing = $callback;
 
         return $this;
     }
@@ -265,6 +292,14 @@ class Type
         return $this->getOptionLabelFromRecordUsing !== null;
     }
 
+    public function getModifyKeySelectUsingCallback(): ?Closure
+    {
+        return $this->modifyKeySelectUsing;
+    }
+
+    /**
+     * @return class-string<Model>
+     */
     public function getModel(): string
     {
         return $this->model;
@@ -291,7 +326,7 @@ class Type
     public function getTitleAttribute(): string
     {
         if (blank($this->titleAttribute)) {
-            throw new Exception("MorphToSelect type [{$this->getModel()}] must have a [titleAttribute()] set.");
+            throw new LogicException("MorphToSelect type [{$this->getModel()}] must have a [titleAttribute()] set.");
         }
 
         return $this->titleAttribute;

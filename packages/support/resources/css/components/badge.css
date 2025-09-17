@@ -1,0 +1,73 @@
+.fi-badge {
+    @apply inline-flex min-w-[theme(spacing.6)] items-center justify-center gap-x-1 rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-gray-600/10 ring-inset dark:bg-gray-400/10 dark:text-gray-200 dark:ring-gray-400/20;
+
+    &:not(.fi-wrapped) {
+        @apply truncate;
+    }
+
+    &.fi-disabled,
+    &[disabled] {
+        @apply cursor-default opacity-70;
+
+        &:not([x-tooltip]) {
+            @apply pointer-events-none;
+        }
+    }
+
+    & .fi-badge-label-ctn {
+        @apply grid;
+    }
+
+    & .fi-badge-label {
+        &.fi-wrapped {
+            @apply text-wrap;
+            word-break: break-word;
+        }
+
+        &:not(.fi-wrapped) {
+            @apply truncate;
+        }
+    }
+
+    & .fi-icon {
+        @apply shrink-0;
+    }
+
+    &.fi-size-xs {
+        @apply min-w-[theme(spacing.4)] px-0.5 py-0 tracking-tighter;
+    }
+
+    &.fi-size-sm {
+        @apply min-w-[theme(spacing.5)] px-1.5 py-0.5 tracking-tight;
+    }
+
+    &.fi-color {
+        @apply bg-color-50 ring-color-600/10 dark:bg-color-400/10 dark:ring-color-400/30 text-(--text) dark:text-(--dark-text);
+
+        & .fi-badge-delete-btn > .fi-icon {
+            @apply text-color-700/50 dark:text-color-300/50;
+        }
+    }
+
+    &:not(.fi-color) .fi-icon {
+        @apply text-gray-400 dark:text-gray-500;
+    }
+
+    & .fi-badge-delete-btn {
+        @apply -my-1 -ms-1 -me-2 flex items-center justify-center p-1 transition duration-75 outline-none;
+
+        & > .fi-icon {
+            @apply text-gray-700/50 dark:text-gray-300/50;
+        }
+    }
+
+    &:not(.fi-disabled):not([disabled]) {
+        & .fi-badge-delete-btn > .fi-icon {
+            @apply focus-visible:text-gray-700/75 dark:hover:text-gray-300/75 dark:focus-visible:text-gray-300/75;
+        }
+
+        &.fi-color .fi-badge-delete-btn > .fi-icon {
+            @apply hover:text-color-700/75 focus-visible:text-color-700/75 dark:hover:text-color-300/75 dark:focus-visible:text-color-300/75;
+        }
+    }
+}
