@@ -355,6 +355,7 @@ it('shows the correct filters', function () {
     livewire(PostsTable::class)
         ->assertTableFilterVisible('created_at')
         ->assertTableFilterHidden('author');
+});
 ```
 
 ### Testing the existence of a filter

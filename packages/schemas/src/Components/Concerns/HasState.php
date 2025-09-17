@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
+use InvalidArgumentException;
 use Livewire\Livewire;
 use LogicException;
 
@@ -93,6 +94,11 @@ trait HasState
         return $casts;
     }
 
+    public function hasCustomStateCasts(): bool
+    {
+        return filled($this->stateCasts);
+    }
+
     /**
      * @return array<StateCast>
      */
@@ -168,7 +174,13 @@ trait HasState
 
         if (filled($components = $this->getComponentsToPartiallyRenderAfterStateUpdated())) {
             foreach ($components as $key) {
-                $this->getLivewire()->getSchemaComponent($this->resolveRelativeKey($key))->partiallyRender();
+                $component = $this->getLivewire()->getSchemaComponent($this->resolveRelativeKey($key), withHidden: true);
+
+                if (! $component) {
+                    throw new InvalidArgumentException("Could not find component [{$key}] to partially render.");
+                }
+
+                $component->partiallyRender();
             }
         }
 
@@ -267,6 +279,10 @@ trait HasState
      */
     public function getStateToDehydrate(mixed $state): array
     {
+        if ($state === '') {
+            $state = null;
+        }
+
         foreach ($this->getStateCasts() as $stateCast) {
             $state = $stateCast->get($state);
         }
@@ -444,14 +460,14 @@ trait HasState
         }
 
         if (! $this->hasDefaultState()) {
-            $this->hasStatePath() && $this->state(null);
+            $this->hasStatePath() && $this->rawState(null);
 
             return;
         }
 
         $defaultState = $this->getDefaultState();
 
-        $this->state($defaultState);
+        $this->rawState($defaultState);
 
         Arr::set($hydratedDefaultState, $statePath, $defaultState); /** @phpstan-ignore parameterByRef.type */
     }
@@ -914,6 +930,45 @@ trait HasState
      */
     public function getConstantStateFromRecord(Model $record): mixed
     {
+        $relationship = $this->getStateRelationship($record);
+
+        if ($relationship) {
+            $relationshipAttribute = $this->getStateRelationshipAttribute();
+
+            $state = collect($this->getStateRelationshipResults($record))
+                ->reduce(
+                    function (Collection $carry, Model $record) use ($relationshipAttribute): Collection {
+                        if (
+                            ($record instanceof HasRichContent) &&
+                            $record->hasRichContentAttribute($relationshipAttribute)
+                        ) {
+                            $state = $record->getRichContentAttribute($relationshipAttribute);
+                        } else {
+                            $state = data_get($record, $relationshipAttribute);
+                        }
+
+                        if (blank($state)) {
+                            return $carry;
+                        }
+
+                        return $carry->push($state);
+                    },
+                    initial: collect(),
+                )
+                ->when($this->isDistinctList(), fn (Collection $state) => $state->unique())
+                ->values();
+
+            if (! $state->count()) {
+                return null;
+            }
+
+            if (($state->count() < 2) && (! $this->hasMultipleStateRelationship($record))) {
+                return $state->first();
+            }
+
+            return $state->all();
+        }
+
         $name = $this->getConstantStatePath();
 
         if (
@@ -925,34 +980,7 @@ trait HasState
             $state = data_get($record, $name);
         }
 
-        if ($state !== null) {
-            return $state;
-        }
-
-        if (! $this->hasStateRelationship($record)) {
-            return null;
-        }
-
-        $relationship = $this->getStateRelationship($record);
-
-        if (! $relationship) {
-            return null;
-        }
-
-        $relationshipAttribute = $this->getStateRelationshipAttribute();
-
-        $state = collect($this->getStateRelationshipResults($record))
-            ->filter(fn (Model $record): bool => array_key_exists($relationshipAttribute, $record->attributesToArray()))
-            ->pluck($relationshipAttribute)
-            ->filter(fn ($state): bool => filled($state))
-            ->when($this->isDistinctList(), fn (Collection $state) => $state->unique())
-            ->values();
-
-        if (! $state->count()) {
-            return null;
-        }
-
-        return $state->all();
+        return $state;
     }
 
     public function getStatePathForRelationship(): ?string

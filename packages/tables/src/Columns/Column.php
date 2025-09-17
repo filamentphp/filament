@@ -188,4 +188,14 @@ class Column extends ViewComponent
 
         <?php return new HtmlString(ob_get_clean());
     }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function getExtraViewData(): array
+    {
+        return [
+            'record' => $this->getRecord(),
+        ];
+    }
 }

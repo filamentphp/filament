@@ -13,6 +13,8 @@ use Filament\Schemas\Components\StateCasts\BooleanStateCast;
 use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
 use Filament\Schemas\Components\StateCasts\EnumArrayStateCast;
 use Filament\Schemas\Components\StateCasts\EnumStateCast;
+use Filament\Schemas\Components\StateCasts\StringArrayStateCast;
+use Filament\Schemas\Components\StateCasts\StringStateCast;
 use Filament\Schemas\Schema;
 use Filament\Support\Components\Attributes\ExposedLivewireMethod;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
@@ -130,20 +132,6 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
     protected function setUp(): void
     {
         parent::setUp();
-
-        $this->default(static fn (Select $component): ?array => $component->isMultiple() ? [] : null);
-
-        $this->afterStateHydrated(static function (Select $component, $state): void {
-            if (! $component->isMultiple()) {
-                return;
-            }
-
-            if (is_array($state)) {
-                return;
-            }
-
-            $component->state([]);
-        });
 
         $this->transformOptionsForJsUsing(static function (Select $component, array $options): array {
             return collect($options)
@@ -809,7 +797,13 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
             $relationshipTitleAttribute = $component->getRelationshipTitleAttribute();
 
             if (empty($relationshipQuery->getQuery()->orders)) {
-                $relationshipQuery->orderBy($relationshipQuery->qualifyColumn($relationshipTitleAttribute));
+                $relationshipOrderByAttribute = $relationshipTitleAttribute;
+
+                if (str_contains($relationshipOrderByAttribute, ' as ')) {
+                    $relationshipOrderByAttribute = (string) str($relationshipOrderByAttribute)->before(' as ');
+                }
+
+                $relationshipQuery->orderBy($relationshipQuery->qualifyColumn($relationshipOrderByAttribute));
             }
 
             if (str_contains($relationshipTitleAttribute, '->')) {
@@ -867,7 +861,13 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
             $relationshipTitleAttribute = $component->getRelationshipTitleAttribute();
 
             if (empty($relationshipQuery->getQuery()->orders)) {
-                $relationshipQuery->orderBy($relationshipQuery->qualifyColumn($relationshipTitleAttribute));
+                $relationshipOrderByAttribute = $relationshipTitleAttribute;
+
+                if (str_contains($relationshipOrderByAttribute, ' as ')) {
+                    $relationshipOrderByAttribute = (string) str($relationshipOrderByAttribute)->before(' as ');
+                }
+
+                $relationshipQuery->orderBy($relationshipQuery->qualifyColumn($relationshipOrderByAttribute));
             }
 
             if (str_contains($relationshipTitleAttribute, '->')) {
@@ -1367,21 +1367,6 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         return (bool) $this->evaluate($this->canOptionLabelsWrap);
     }
 
-    public function hydrateDefaultState(?array &$hydratedDefaultState): void
-    {
-        parent::hydrateDefaultState($hydratedDefaultState);
-
-        if (is_bool($state = $this->getState())) {
-            $state = $state ? 1 : 0;
-
-            $this->state($state);
-
-            if (is_array($hydratedDefaultState)) {
-                Arr::set($hydratedDefaultState, $this->getStatePath(), $state); /** @phpstan-ignore parameterByRef.type */
-            }
-        }
-    }
-
     public function getQualifiedRelatedKeyNameForRelationship(Relation $relationship): string
     {
         if ($relationship instanceof BelongsToMany) {
@@ -1427,6 +1412,22 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
             $this->isMultiple() ? EnumArrayStateCast::class : EnumStateCast::class,
             ['enum' => $enum],
         );
+    }
+
+    /**
+     * @return array<StateCast>
+     */
+    public function getDefaultStateCasts(): array
+    {
+        if ($this->hasCustomStateCasts() || filled($this->getEnum())) {
+            return parent::getDefaultStateCasts();
+        }
+
+        if ($this->isMultiple()) {
+            return [app(StringArrayStateCast::class)];
+        }
+
+        return [app(StringStateCast::class, ['isNullable' => true])];
     }
 
     /**

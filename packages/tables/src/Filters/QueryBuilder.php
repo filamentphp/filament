@@ -35,8 +35,7 @@ class QueryBuilder extends BaseFilter
                 ->label($filter->getLabel())
                 ->constraints($filter->getConstraints())
                 ->blockPickerColumns($filter->getConstraintPickerColumns())
-                ->blockPickerWidth($filter->getConstraintPickerWidth())
-                ->live(onBlur: true),
+                ->blockPickerWidth($filter->getConstraintPickerWidth()),
         ]);
 
         $this->query(function (Builder $query, array $data): void {
@@ -57,7 +56,7 @@ class QueryBuilder extends BaseFilter
 
     public function getActiveCount(): int
     {
-        return $this->countRules($this->getState()['rules'], $this->getRuleBuilder());
+        return $this->countRules($this->getFormState()['rules'], $this->getRuleBuilder());
     }
 
     /**

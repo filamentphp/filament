@@ -8,6 +8,8 @@ use Filament\Schemas\Components\StateCasts\BooleanStateCast;
 use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
 use Filament\Schemas\Components\StateCasts\EnumArrayStateCast;
 use Filament\Schemas\Components\StateCasts\EnumStateCast;
+use Filament\Schemas\Components\StateCasts\StringArrayStateCast;
+use Filament\Schemas\Components\StateCasts\StringStateCast;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
 
@@ -35,25 +37,6 @@ class ToggleButtons extends Field implements Contracts\CanDisableOptions
     protected bool | Closure $isInline = false;
 
     protected bool | Closure $areButtonLabelsHidden = false;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->default(fn (ToggleButtons $component): mixed => $component->isMultiple() ? [] : null);
-
-        $this->afterStateHydrated(static function (ToggleButtons $component, $state): void {
-            if (! $component->isMultiple()) {
-                return;
-            }
-
-            if (is_array($state)) {
-                return;
-            }
-
-            $component->state([]);
-        });
-    }
 
     public function grouped(): static
     {
@@ -141,6 +124,22 @@ class ToggleButtons extends Field implements Contracts\CanDisableOptions
             $this->isMultiple() ? EnumArrayStateCast::class : EnumStateCast::class,
             ['enum' => $enum],
         );
+    }
+
+    /**
+     * @return array<StateCast>
+     */
+    public function getDefaultStateCasts(): array
+    {
+        if ($this->hasCustomStateCasts() || filled($this->getEnum())) {
+            return parent::getDefaultStateCasts();
+        }
+
+        if ($this->isMultiple()) {
+            return [app(StringArrayStateCast::class)];
+        }
+
+        return [app(StringStateCast::class, ['isNullable' => true])];
     }
 
     /**
