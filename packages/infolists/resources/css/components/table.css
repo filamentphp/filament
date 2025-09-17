@@ -6,7 +6,7 @@
     }
 
     & tbody {
-        @apply divide-y divide-gray-200 font-mono text-base sm:text-sm sm:leading-6 dark:divide-white/5;
+        @apply divide-y divide-gray-200 text-base sm:text-sm sm:leading-6 dark:divide-white/5;
     }
 
     & tr {
