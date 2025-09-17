@@ -92,24 +92,19 @@ trait HasExtraContent
         }
 
         if (is_string($content)) {
-            return $content;
+            return e($content);
         }
 
         if ($content instanceof Htmlable) {
             return $content->toHtml();
         }
 
-        if ($content instanceof Closure) {
-            try {
-                $record = $this->getRecord();
-
-                return $content($record);
-            } catch (Exception $e) {
-                return $content();
-            }
+        try {
+            $record = $this->getRecord();
+            return $content($record);
+        } catch (Exception $e) {
+            return $content();
         }
-
-        return '';
     }
 
     protected function hasExtraContent(string $key): bool
