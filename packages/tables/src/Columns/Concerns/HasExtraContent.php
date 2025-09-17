@@ -89,7 +89,7 @@ trait HasExtraContent
         }
 
         if (is_string($content)) {
-            return e($content);
+            return $content;
         }
 
         if ($content instanceof Htmlable) {
