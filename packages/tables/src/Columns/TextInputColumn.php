@@ -3,18 +3,17 @@
 namespace Filament\Tables\Columns;
 
 use Closure;
-use Filament\Tables\Table;
-use Filament\Support\RawJs;
-use Illuminate\Support\Js;
-use Filament\Tables\Columns\Column;
+use Filament\Forms\Components\Concerns\HasExtraInputAttributes;
+use Filament\Forms\Components\Concerns\HasInputMode;
+use Filament\Forms\Components\Concerns\HasStep;
+use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Facades\FilamentAsset;
-use Filament\Forms\Components\Concerns\HasStep;
-use Filament\Tables\Columns\Contracts\Editable;
-use Filament\Forms\Components\Concerns\HasInputMode;
+use Filament\Support\RawJs;
 use Filament\Tables\Columns\Concerns\HasExtraContent;
-use Filament\Support\Components\Contracts\HasEmbeddedView;
-use Filament\Forms\Components\Concerns\HasExtraInputAttributes;
+use Filament\Tables\Columns\Contracts\Editable;
+use Filament\Tables\Table;
+use Illuminate\Support\Js;
 
 class TextInputColumn extends Column implements Editable, HasEmbeddedView
 {
@@ -60,7 +59,7 @@ class TextInputColumn extends Column implements Editable, HasEmbeddedView
         return $this->evaluate($this->mask);
     }
 
-   public function toEmbeddedHtml(): string
+    public function toEmbeddedHtml(): string
     {
         $isDisabled = $this->isDisabled();
         $state = $this->getState();
@@ -123,7 +122,7 @@ class TextInputColumn extends Column implements Editable, HasEmbeddedView
                 <div class="fi-ta-text-input-above-content mb-2">
                     <?= $this->renderExtraContent('above_content') ?>
                 </div>
-            <?php endif; ?>
+            <?php } ?>
 
             <div
                 x-bind:class="{
@@ -151,19 +150,19 @@ class TextInputColumn extends Column implements Editable, HasEmbeddedView
                 <div class="fi-ta-text-input-above-error text-xs text-gray-500 mb-2">
                     <?= $this->renderExtraContent('above_error') ?>
                 </div>
-            <?php endif; ?>
+            <?php } ?>
 
             <?php if ($this->hasExtraContent('below_error')): ?>
                 <div class="fi-ta-text-input-below-error text-xs text-gray-500 mt-2">
                     <?= $this->renderExtraContent('below_error') ?>
                 </div>
-            <?php endif; ?>
+            <?php } ?>
 
             <?php if ($this->hasExtraContent('below_content')): ?>
                 <div class="fi-ta-text-input-below-content mt-2">
                     <?= $this->renderExtraContent('below_content') ?>
                 </div>
-            <?php endif; ?>
+            <?php } ?>
         </div>
 
         <?php return ob_get_clean();
