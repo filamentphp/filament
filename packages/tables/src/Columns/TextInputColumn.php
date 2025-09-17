@@ -120,7 +120,7 @@ class TextInputColumn extends Column implements Editable, HasEmbeddedView
             <input type="hidden" value="<?= str($state)->replace('"', '\\"') ?>" x-ref="serverState" />
 
             <?php if ($this->hasExtraContent('above_content')): ?>
-                <div class="fi-ta-text-input-above-content mb-1">
+                <div class="fi-ta-text-input-above-content mb-2">
                     <?= $this->renderExtraContent('above_content') ?>
                 </div>
             <?php endif; ?>
@@ -148,19 +148,19 @@ class TextInputColumn extends Column implements Editable, HasEmbeddedView
             </div>
 
             <?php if ($this->hasExtraContent('above_error')): ?>
-                <div class="fi-ta-text-input-above-error text-xs text-gray-500 mb-1">
+                <div class="fi-ta-text-input-above-error text-xs text-gray-500 mb-2">
                     <?= $this->renderExtraContent('above_error') ?>
                 </div>
             <?php endif; ?>
 
             <?php if ($this->hasExtraContent('below_error')): ?>
-                <div class="fi-ta-text-input-below-error text-xs text-gray-500 mt-1">
+                <div class="fi-ta-text-input-below-error text-xs text-gray-500 mt-2">
                     <?= $this->renderExtraContent('below_error') ?>
                 </div>
             <?php endif; ?>
 
             <?php if ($this->hasExtraContent('below_content')): ?>
-                <div class="fi-ta-text-input-below-content mt-1">
+                <div class="fi-ta-text-input-below-content mt-2">
                     <?= $this->renderExtraContent('below_content') ?>
                 </div>
             <?php endif; ?>
