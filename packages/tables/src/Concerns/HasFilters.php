@@ -178,6 +178,11 @@ trait HasFilters
         return Arr::get($this->tableFilters, $this->parseTableFilterName($name));
     }
 
+    public function getTableFilterFormState(string $name): ?array
+    {
+        return Arr::get($this->getTable()->hasDeferredFilters() ? $this->tableDeferredFilters : $this->tableFilters, $this->parseTableFilterName($name));
+    }
+
     public function parseTableFilterName(string $name): string
     {
         if (! class_exists($name)) {

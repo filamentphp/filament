@@ -515,6 +515,8 @@ return [
             'undo' => 'Deshacer',
         ],
 
+        'uploading_file_message' => 'Cargando archivo...',
+
     ],
 
     'select' => [

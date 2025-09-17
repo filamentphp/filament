@@ -82,7 +82,7 @@ class Slider extends Field implements Contracts\HasNestedRecursiveValidationRule
     {
         parent::setUp();
 
-        $this->default(fn (Slider $component): float | int => $component->getMinValue());
+        $this->default(static fn (Slider $component): float | int => $component->getMinValue());
 
         $this->required();
 

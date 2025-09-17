@@ -37,12 +37,16 @@ import Mention from './extension-mention.js'
 import getMentionSuggestion from './mention-suggestion.js'
 
 export default async ({
+    acceptedFileTypes,
+    acceptedFileTypesValidationMessage,
     customExtensionUrls,
     deleteCustomBlockButtonIconHtml,
     editCustomBlockButtonIconHtml,
     editCustomBlockUsing,
     insertCustomBlockUsing,
     key,
+    maxFileSize,
+    maxFileSizeValidationMessage,
     mergeTags,
     noMergeTagSearchResultsMessage,
     mentions,
@@ -84,8 +88,12 @@ export default async ({
     }),
     ListItem,
     LocalFiles.configure({
+        acceptedTypes: acceptedFileTypes,
+        acceptedTypesValidationMessage: acceptedFileTypesValidationMessage,
         get$WireUsing: () => $wire,
         key,
+        maxSize: maxFileSize,
+        maxSizeValidationMessage: maxFileSizeValidationMessage,
         statePath,
         uploadingMessage: uploadingFileMessage,
     }),

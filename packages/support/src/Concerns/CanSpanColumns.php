@@ -44,7 +44,7 @@ trait CanSpanColumns
 
     public function columnSpanFull(): static
     {
-        $this->columnSpan('full');
+        $this->columnSpan(['default' => 'full']);
 
         return $this;
     }

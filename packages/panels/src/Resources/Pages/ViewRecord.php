@@ -232,6 +232,6 @@ class ViewRecord extends Page
 
     public function getDefaultTestingSchemaName(): ?string
     {
-        return $this->hasInfolist() ? 'infolist' : 'form';
+        return $this->hasInfolist() ? 'infolist' : parent::getDefaultTestingSchemaName();
     }
 }
