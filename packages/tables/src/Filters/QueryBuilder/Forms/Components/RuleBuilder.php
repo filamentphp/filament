@@ -90,7 +90,7 @@ class RuleBuilder extends Builder
                                                 throw new LogicException('No block component found.');
                                             }
 
-                                            return $block->getLabel($schema->getRawState(), $blockUuid);
+                                            return $block->getLabel($schema->getStateSnapshot(), $blockUuid);
                                         });
 
                                     if ($blockLabels->isEmpty()) {
@@ -107,7 +107,8 @@ class RuleBuilder extends Builder
                                 ->cloneable()
                                 ->reorderable(false)
                                 ->hiddenLabel()
-                                ->generateUuidUsing(fn (): string => Str::random(4)),
+                                ->generateUuidUsing(fn (): string => Str::random(4))
+                                ->partiallyRenderAfterActionsCalled($component->shouldPartiallyRenderAfterActionsCalled()),
                         ]),
                 ];
             })
@@ -125,6 +126,8 @@ class RuleBuilder extends Builder
             ->expandAllAction(fn (Action $action) => $action->hidden())
             ->collapseAllAction(fn (Action $action) => $action->hidden())
             ->truncateBlockLabel(false)
-            ->generateUuidUsing(fn (): string => Str::random(4));
+            ->generateUuidUsing(fn (): string => Str::random(4))
+            ->live(onBlur: true)
+            ->partiallyRenderAfterActionsCalled(false);
     }
 }

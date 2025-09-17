@@ -145,6 +145,10 @@ class TestsActions
                 ...$actions,
             ]);
 
+            if ($action && filled($arguments = Arr::last($actions)['arguments'] ?? [])) {
+                $action->mergeArguments($arguments);
+            }
+
             $livewireClass = $this->instance()::class;
             $prettyName = implode(' > ', Arr::pluck($actions, 'name'));
 
@@ -182,6 +186,10 @@ class TestsActions
                 Assert::assertNull(null);
 
                 return $this;
+            }
+
+            if ($action && filled($arguments = Arr::last($actions)['arguments'] ?? [])) {
+                $action->mergeArguments($arguments);
             }
 
             $livewireClass = $this->instance()::class;

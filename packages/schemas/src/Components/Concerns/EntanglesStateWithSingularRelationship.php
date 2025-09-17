@@ -53,15 +53,9 @@ trait EntanglesStateWithSingularRelationship
                         continue;
                     }
 
-                    if ($childComponent->getModel() !== $component->getModel()) {
-                        continue;
-                    }
-
-                    if ($childComponent->getRecord() !== $component->getRecord()) {
-                        continue;
-                    }
-
                     if (
+                        ($childComponent->getModel() === $component->getModel()) &&
+                        ($childComponent->getRecord() === $component->getRecord()) &&
                         ($childComponent instanceof CanEntangleWithSingularRelationships) &&
                         ($childComponent->getRelationshipName() === $component->getRelationshipName()) &&
                         ($childComponent->hasRelationship())

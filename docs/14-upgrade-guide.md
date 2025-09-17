@@ -402,6 +402,54 @@ The [automated upgrade script](#running-the-automated-upgrade-script) suggests c
 
 ### Medium-impact changes
 
+<Disclosure x-show="packages.includes('forms') || packages.includes('infolists')">
+<span slot="summary">`columnSpan()` now targets >= `lg` devices by default</span>
+
+Similar to the `columns()` method, which accepts a number and affects >= `lg` devices by default, the `columnSpan()` method has been changed to do the same. This improves consistency between the APIs, making them easier to use and less prone to causing layout issues.
+
+In v3, the following code might have been written. If you used `columnSpan(2)` instead of `columnSpan(['lg' => 2])`, the layout would have been a little broken on < `lg` devices:
+
+```php
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Section;
+
+Section::make()
+    ->columns(3)
+    ->schema([
+        TextInput::make()
+            ->columnSpan(['lg' => 2]),
+    ])
+```
+
+In v4, the `columnSpan()` affects >= `lg` devices by default, in the same way that `columns()` does, so the following code is required instead:
+
+```php
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Section;
+
+Section::make()
+    ->columns(3)
+    ->schema([
+        TextInput::make()
+            ->columnSpan(2),
+    ])
+```
+
+Of course, you can still continue to use an array to define how many columns a component should span at different breakpoints:
+
+```php
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Section;
+
+Section::make()
+    ->columns(3)
+    ->schema([
+        TextInput::make()
+            ->columnSpan(['lg' => 3, 'xl' => 2, '2xl' => 1]),
+    ])
+```
+</Disclosure>
+
 <Disclosure x-show="packages.includes('forms')">
 <span slot="summary">Enum field state</span>
 

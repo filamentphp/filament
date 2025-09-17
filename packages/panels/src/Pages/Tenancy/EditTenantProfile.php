@@ -251,9 +251,4 @@ abstract class EditTenantProfile extends Page
     {
         return false;
     }
-
-    public function getDefaultTestingSchemaName(): ?string
-    {
-        return 'form';
-    }
 }
