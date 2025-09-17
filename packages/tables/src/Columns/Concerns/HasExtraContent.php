@@ -101,6 +101,7 @@ trait HasExtraContent
 
         try {
             $record = $this->getRecord();
+
             return $content($record);
         } catch (Exception $e) {
             return $content();
