@@ -63,7 +63,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     protected array|Closure|null $mergeTags = null;
 
     /**
-     * @var array<MentionProvider | Closure | array> | Closure | null
+     * @var array<MentionProvider | Closure | array<string, mixed>> | Closure | null
      */
     protected array|Closure|null $mentions = null;
 
@@ -782,7 +782,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     }
 
     /**
-     * @param  array<MentionProvider | Closure | array> | Closure | null  $mentions
+     * @param  array<MentionProvider | Closure | array<string, mixed>> | Closure | null  $mentions
      */
     public function mentions(array|Closure|null $mentions): static
     {

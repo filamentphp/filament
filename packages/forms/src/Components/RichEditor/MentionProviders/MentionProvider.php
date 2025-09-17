@@ -7,6 +7,10 @@ use Closure;
 class MentionProvider
 {
 
+    /**
+     * @param  array<mixed>|null  $options
+     * @param  array<string, mixed>|Closure|null  $extraAttributes
+     */
     public function __construct(
         public string $char,
         protected ?Closure $getSearchResultsUsing = null,
@@ -28,6 +32,9 @@ class MentionProvider
         return $this;
     }
 
+    /**
+     * @param  array<mixed>  $options
+     */
     public function options(array $options): static
     {
         $this->options = $options;
@@ -63,6 +70,9 @@ class MentionProvider
     /**
      * @return array<string, mixed>
      */
+    /**
+     * @return array<string, mixed>
+     */
     public function getExtraAttributes(): array
     {
         $attributes = $this->extraAttributes;
@@ -82,22 +92,20 @@ class MentionProvider
 
         $items = $this->options ?? [];
 
-        if (is_array($items)) {
-            // Associative array: id => label
-            if (! empty($items) && array_keys($items) !== range(0, count($items) - 1)) {
-                return isset($items[$id]) ? strval($items[$id]) : null;
-            }
+        // Associative array: id => label
+        if (! empty($items) && array_keys($items) !== range(0, count($items) - 1)) {
+            return isset($items[$id]) ? strval($items[$id]) : null;
+        }
 
-            foreach ($items as $item) {
-                if (is_array($item)) {
-                    $itemId = $item['id'] ?? null;
-                    if ($itemId == $id) {
-                        $label = $item['label'] ?? ($item['name'] ?? null);
-                        return $label !== null ? strval($label) : null;
-                    }
-                } elseif (is_string($item) && $item === $id) {
-                    return $item;
+        foreach ($items as $item) {
+            if (is_array($item)) {
+                $itemId = $item['id'] ?? null;
+                if ($itemId == $id) {
+                    $label = $item['label'] ?? ($item['name'] ?? null);
+                    return $label !== null ? strval($label) : null;
                 }
+            } elseif (is_string($item) && $item === $id) {
+                return $item;
             }
         }
 
