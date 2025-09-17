@@ -23,6 +23,8 @@ use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use Filament\Support\Components\Attributes\ExposedLivewireMethod;
+use Livewire\Attributes\Renderless;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Tiptap\Editor;
 
@@ -40,9 +42,9 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
      */
     protected string $view = 'filament-forms::components.rich-editor';
 
-    protected string | Closure | null $uploadingFileMessage = null;
+    protected string|Closure|null $uploadingFileMessage = null;
 
-    protected bool | Closure | null $isJson = null;
+    protected bool|Closure|null $isJson = null;
 
     /**
      * @var array<RichContentPlugin | Closure>
@@ -57,20 +59,25 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     /**
      * @var array<string> | Closure | null
      */
-    protected array | Closure | null $mergeTags = null;
+    protected array|Closure|null $mergeTags = null;
+
+    /**
+     * @var array<string> | Closure | null
+     */
+    protected array|Closure|null $mentionItems = null;
 
     /**
      * @var array<class-string<RichContentCustomBlock>> | Closure | null
      */
-    protected array | Closure | null $customBlocks = null;
+    protected array|Closure|null $customBlocks = null;
 
-    protected string | Closure | null $noMergeTagSearchResultsMessage = null;
+    protected string|Closure|null $noMergeTagSearchResultsMessage = null;
 
     protected ?Closure $getFileAttachmentUrlFromAnotherRecordUsing = null;
 
     protected ?Closure $saveFileAttachmentFromAnotherRecordUsing = null;
 
-    protected string | Closure | null $activePanel = null;
+    protected string|Closure|null $activePanel = null;
 
     /**
      * @var array<string, class-string<RichContentCustomBlock>>
@@ -80,14 +87,9 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     /**
      * @var array<string | array<string>> | Closure | null
      */
-    protected array | Closure | null $floatingToolbars = null;
+    protected array|Closure|null $floatingToolbars = null;
 
-    /**
-     * @var array<mixed> | Closure | null
-     */
-    protected array | Closure | null $mentionItems = null;
-
-    protected int | Closure | null $mentionItemsLimit = 5;
+    protected ?Closure $getMentionSearchResultsUsing = null;
 
     protected function setUp(): void
     {
@@ -444,40 +446,12 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
         return parent::isDehydrated();
     }
 
-    /**
-     * @param  array<mixed> | Closure | null  $items
-     */
-    public function mentionItems(array | Closure | null $items): static
-    {
-        $this->mentionItems = $items;
 
-        return $this;
-    }
-
-    /**
-     * @return array<mixed>
-     */
-    public function getMentionItems(): array
-    {
-        return $this->evaluate($this->mentionItems) ?? [];
-    }
-
-    public function mentionItemsLimit(int | Closure | null $limit): static
-    {
-        $this->mentionItemsLimit = $limit;
-
-        return $this;
-    }
-
-    public function getMentionItemsLimit(): int
-    {
-        return (int) ($this->evaluate($this->mentionItemsLimit) ?? 5);
-    }
 
     /**
      * @param  array<RichContentPlugin> | Closure  $extensions
      */
-    public function plugins(array | Closure $extensions): static
+    public function plugins(array|Closure $extensions): static
     {
         $this->plugins = [
             ...$this->plugins,
@@ -490,7 +464,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     /**
      * @param  array<RichEditorTool> | Closure  $tools
      */
-    public function tools(array | Closure $tools): static
+    public function tools(array|Closure $tools): static
     {
         $this->tools = [
             ...$this->tools,
@@ -530,7 +504,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
         );
     }
 
-    public function uploadingFileMessage(string | Closure | null $message): static
+    public function uploadingFileMessage(string|Closure|null $message): static
     {
         $this->uploadingFileMessage = $message;
 
@@ -542,7 +516,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
         return $this->evaluate($this->uploadingFileMessage) ?? __('filament-forms::components.rich_editor.uploading_file_message');
     }
 
-    public function json(bool | Closure | null $condition = true): static
+    public function json(bool|Closure|null $condition = true): static
     {
         $this->isJson = $condition;
 
@@ -570,7 +544,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
             ...$this->getContentAttribute()?->getPlugins() ?? [],
             ...array_reduce(
                 $this->plugins,
-                function (array $carry, RichContentPlugin | Closure $plugin): array {
+                function (array $carry, RichContentPlugin|Closure $plugin): array {
                     if ($plugin instanceof Closure) {
                         $plugin = $this->evaluate($plugin);
                     }
@@ -617,7 +591,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
                 ),
                 ...array_reduce(
                     $this->tools,
-                    function (array $carry, RichEditorTool | Closure $tool): array {
+                    function (array $carry, RichEditorTool|Closure $tool): array {
                         if ($tool instanceof Closure) {
                             $tool = $this->evaluate($tool);
                         }
@@ -760,7 +734,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     /**
      * @param  array<string> | Closure | null  $tags
      */
-    public function mergeTags(array | Closure | null $tags): static
+    public function mergeTags(array|Closure|null $tags): static
     {
         $this->mergeTags = $tags;
 
@@ -775,19 +749,81 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
         return $this->evaluate($this->mergeTags) ?? $this->getContentAttribute()?->getMergeTags() ?? [];
     }
 
-    public function noMergeTagSearchResultsMessage(string | Closure | null $message): static
+    /**
+     * @param  array<string> | Closure | null  $mentions
+     */
+    public function mentionItems(array|Closure|null $mentions): static
+    {
+        $this->mentionItems = $mentions;
+
+        return $this;
+    }
+
+    public function getMentionSearchResultsUsing(?Closure $callback): static
+    {
+        $this->getMentionSearchResultsUsing = $callback;
+
+        return $this;
+    }
+
+    public function hasMentionSearchResultsUsing(): bool
+    {
+        return isset($this->getMentionSearchResultsUsing);
+    }
+
+    /**
+     * @return array<string>
+     */
+    public function getMentionItems(): array
+    {
+        return $this->evaluate($this->mentionItems) ?? [];
+    }
+
+    /**
+     * @return array<mixed>
+     */
+    public function getMentionSearchResults(string $search): array
+    {
+        if (! $this->getMentionSearchResultsUsing) {
+            return [];
+        }
+
+        $results = $this->evaluate($this->getMentionSearchResultsUsing, [
+            'query' => $search,
+            'search' => $search,
+            'searchQuery' => $search,
+        ]);
+
+        if ($results instanceof \Illuminate\Contracts\Support\Arrayable) {
+            $results = $results->toArray();
+        }
+
+        return is_array($results) ? $results : [];
+    }
+
+    /**
+     * @return array<mixed>
+     */
+    #[ExposedLivewireMethod]
+    #[Renderless]
+    public function getMentionSearchResultsForJs(string $search): array
+    {
+        return $this->getMentionSearchResults($search);
+    }
+
+    public function noMergeTagSearchResultsMessage(string|Closure|null $message): static
     {
         $this->noMergeTagSearchResultsMessage = $message;
 
         return $this;
     }
 
-    public function getNoMergeTagSearchResultsMessage(): string | Htmlable
+    public function getNoMergeTagSearchResultsMessage(): string|Htmlable
     {
         return $this->evaluate($this->noMergeTagSearchResultsMessage) ?? __('filament-forms::components.rich_editor.no_merge_tag_search_results_message');
     }
 
-    public function activePanel(string | Closure | null $panel): static
+    public function activePanel(string|Closure|null $panel): static
     {
         $this->activePanel = $panel;
 
@@ -802,7 +838,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     /**
      * @param  array<class-string<RichContentCustomBlock>> | Closure | null  $blocks
      */
-    public function customBlocks(array | Closure | null $blocks): static
+    public function customBlocks(array|Closure|null $blocks): static
     {
         $this->customBlocks = $blocks;
 
@@ -844,7 +880,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     /**
      * @param  array<string | array<string>> | Closure | null  $toolbars
      */
-    public function floatingToolbars(array | Closure | null $toolbars): static
+    public function floatingToolbars(array|Closure|null $toolbars): static
     {
         $this->floatingToolbars = $toolbars;
 
@@ -920,7 +956,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
         return $rules;
     }
 
-    public function getRequiredValidationRule(): string | Closure
+    public function getRequiredValidationRule(): string|Closure
     {
         if (! $this->isRequired()) {
             return 'nullable';

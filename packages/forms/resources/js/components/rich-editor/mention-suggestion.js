@@ -32,20 +32,27 @@ const updatePosition = (editor, element) => {
     })
 }
 
-export default ({ items = [], limit = null }) => ({
-    items: ({ query }) => {
-        const applyLimit = (arr) => {
-            const numericLimit = Number(limit)
-            return (Number.isFinite(numericLimit) && numericLimit > 0) ? arr.slice(0, numericLimit) : arr
+export default ({ items = [] }) => ({
+    // Support: items can be an array or a (async) function returning an array
+    items: async ({ query }) => {
+        // When items is a function, call it (it may return a Promise or array)
+        if (typeof items === 'function') {
+            try {
+                const result = items({ query })
+                return Array.isArray(result) ? result : await result
+            } catch (e) {
+                return []
+            }
         }
 
-        if (!query) return applyLimit(items)
-        const q = query.toLowerCase()
-        const filtered = items.filter((item) => {
+        // items is a static array - apply local filtering when query is provided
+        if (!query) return items
+
+        const q = String(query).toLowerCase()
+        return items.filter((item) => {
             const label = typeof item === 'string' ? item : (item?.label ?? item?.name ?? '')
             return String(label).toLowerCase().includes(q)
         })
-        return applyLimit(filtered)
     },
 
     render: () => {
@@ -59,10 +66,13 @@ export default ({ items = [], limit = null }) => ({
             return dropdown
         }
 
+        const handleSearch = () => {
+            // no-op: Suggestion already passes filtered items via props.items
+        }
         const renderItems = () => {
             if (!element || !currentProps) return
 
-            const list = currentProps.items || []
+            const list = Array.isArray(currentProps.items) ? currentProps.items : []
             element.innerHTML = ''
 
             if (list.length) {
@@ -87,7 +97,7 @@ export default ({ items = [], limit = null }) => ({
 
         const upHandler = () => {
             if (!currentProps) return
-            const list = currentProps.items || []
+            const list = Array.isArray(currentProps.items) ? currentProps.items : []
             if (!list.length) return
             selectedIndex = (selectedIndex + list.length - 1) % list.length
             renderItems()
@@ -127,6 +137,7 @@ export default ({ items = [], limit = null }) => ({
             onUpdate: (props) => {
                 currentProps = props
                 selectedIndex = 0
+                handleSearch()
                 renderItems()
                 if (!props.clientRect) return
                 updatePosition(props.editor, element)
@@ -160,5 +171,7 @@ export default ({ items = [], limit = null }) => ({
                 }
             },
         }
+
+
     },
 })

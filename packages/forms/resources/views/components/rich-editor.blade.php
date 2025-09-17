@@ -8,11 +8,10 @@
     $key = $getKey();
     $mergeTags = $getMergeTags();
     $statePath = $getStatePath();
+    $mentionItems = $getMentionItems();
     $tools = $getTools();
     $toolbarButtons = $getToolbarButtons();
     $floatingToolbars = $getFloatingToolbars();
-    $mentionItems = $getMentionItems();
-    $mentionItemsLimit = $getMentionItemsLimit();
 @endphp
 
 <x-dynamic-component :component="$fieldWrapperView" :field="$field">
@@ -32,6 +31,19 @@
                         deleteCustomBlockButtonIconHtml: @js(\Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::Trash, alias: \Filament\Forms\View\FormsIconAlias::COMPONENTS_RICH_EDITOR_PANELS_CUSTOM_BLOCK_DELETE_BUTTON)->toHtml()),
                         editCustomBlockButtonIconHtml: @js(\Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::PencilSquare, alias: \Filament\Forms\View\FormsIconAlias::COMPONENTS_RICH_EDITOR_PANELS_CUSTOM_BLOCK_EDIT_BUTTON)->toHtml()),
                         extensions: @js($getTipTapJsExtensions()),
+                        getOptionLabelsUsing: async () => {
+                            return await $wire.callSchemaComponentMethod(
+                                @js($key),
+                                'getOptionLabelsForJs',
+                            )
+                        },
+                        getSearchResultsUsing: async (search) => {
+                            return await $wire.callSchemaComponentMethod(
+                                @js($key),
+                                'getSearchResultsForJs',
+                                { search },
+                            )
+                        },
                         key: @js($key),
                         isDisabled: @js($isDisabled),
                         isLiveDebounced: @js($isLiveDebounced()),
@@ -39,8 +51,14 @@
                         liveDebounce: @js($getNormalizedLiveDebounce()),
                         livewireId: @js($this->getId()),
                         mergeTags: @js($mergeTags),
-                        mentions: @js($mentionItems),
-                        mentionsLimit: @js($mentionItemsLimit),
+                        mentions: @js($hasMentionSearchResultsUsing() ? [] : $mentionItems),
+                        getMentionSearchResultsUsing: @js($hasMentionSearchResultsUsing() ? true : false) ? async (search) => {
+                            return await $wire.callSchemaComponentMethod(
+                                @js($key),
+                                'getMentionSearchResultsForJs',
+                                { search },
+                            )
+                        } : null,
                         noMergeTagSearchResultsMessage: @js($getNoMergeTagSearchResultsMessage()),
                         placeholder: @js($getPlaceholder()),
                         state: $wire.{{ $applyStateBindingModifiers("\$entangle('{$statePath}')", isOptimisticallyLive: false) }},
