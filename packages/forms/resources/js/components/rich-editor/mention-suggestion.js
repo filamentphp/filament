@@ -66,9 +66,6 @@ export default ({ items = [] }) => ({
             return dropdown
         }
 
-        const handleSearch = () => {
-            // no-op: Suggestion already passes filtered items via props.items
-        }
         const renderItems = () => {
             if (!element || !currentProps) return
 
@@ -137,7 +134,6 @@ export default ({ items = [] }) => ({
             onUpdate: (props) => {
                 currentProps = props
                 selectedIndex = 0
-                handleSearch()
                 renderItems()
                 if (!props.clientRect) return
                 updatePosition(props.editor, element)

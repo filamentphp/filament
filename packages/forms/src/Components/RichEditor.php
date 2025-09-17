@@ -12,6 +12,7 @@ use Filament\Forms\Components\RichEditor\FileAttachmentProviders\Contracts\FileA
 use Filament\Forms\Components\RichEditor\Models\Contracts\HasRichContent;
 use Filament\Forms\Components\RichEditor\Plugins\Contracts\RichContentPlugin;
 use Filament\Forms\Components\RichEditor\RichContentAttribute;
+use Filament\Forms\Components\RichEditor\MentionProviders\MentionProvider;
 use Filament\Forms\Components\RichEditor\RichContentCustomBlock;
 use Filament\Forms\Components\RichEditor\RichContentRenderer;
 use Filament\Forms\Components\RichEditor\RichEditorTool;
@@ -62,9 +63,9 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     protected array|Closure|null $mergeTags = null;
 
     /**
-     * @var array<string> | Closure | null
+     * @var array<MentionProvider | Closure | array> | Closure | null
      */
-    protected array|Closure|null $mentionItems = null;
+    protected array|Closure|null $mentions = null;
 
     /**
      * @var array<class-string<RichContentCustomBlock>> | Closure | null
@@ -88,8 +89,6 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
      * @var array<string | array<string>> | Closure | null
      */
     protected array|Closure|null $floatingToolbars = null;
-
-    protected ?Closure $getMentionSearchResultsUsing = null;
 
     protected function setUp(): void
     {
@@ -325,6 +324,15 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
                         'content' => [],
                     ])
                     ->descendants(function (object &$node) use ($component, &$fileAttachmentIds): void {
+                        // Strip label from mentions before saving
+                        if (($node->type ?? null) === 'mention') {
+                            if (isset($node->attrs) && isset($node->attrs->label)) {
+                                unset($node->attrs->label);
+                            }
+
+                            return;
+                        }
+
                         if ($node->type !== 'image') {
                             return;
                         }
@@ -391,6 +399,15 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
                         'content' => [],
                     ])
                     ->descendants(function (object &$node) use ($component, &$fileAttachmentIds): void {
+                        // Strip label from mentions before saving
+                        if (($node->type ?? null) === 'mention') {
+                            if (isset($node->attrs) && isset($node->attrs->label)) {
+                                unset($node->attrs->label);
+                            }
+
+                            return;
+                        }
+
                         if ($node->type !== 'image') {
                             return;
                         }
@@ -753,59 +770,83 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
      */
     public function getMergeTags(): array
     {
-        return $this->evaluate($this->mergeTags) ?? $this->getContentAttribute()?->getMergeTags() ?? [];
+        $evaluated = $this->evaluate($this->mergeTags);
+
+        if (is_array($evaluated)) {
+            return $evaluated;
+        }
+
+        $fromAttribute = $this->getContentAttribute()?->getMergeTags();
+
+        return is_array($fromAttribute) ? $fromAttribute : [];
     }
 
     /**
-     * @param  array<string> | Closure | null  $mentions
+     * @param  array<MentionProvider | Closure | array> | Closure | null  $mentions
      */
-    public function mentionItems(array|Closure|null $mentions): static
+    public function mentions(array|Closure|null $mentions): static
     {
-        $this->mentionItems = $mentions;
+        $existing = $this->mentions;
+
+        $this->mentions = [
+            ...is_array($existing) ? $existing : Arr::wrap($existing),
+            ...is_array($mentions) ? $mentions : Arr::wrap($mentions),
+        ];
 
         return $this;
     }
 
-    public function getMentionSearchResultsUsing(?Closure $callback): static
+    /**
+     * @return array<MentionProvider>
+     */
+    public function getMentionProviders(): array
     {
-        $this->getMentionSearchResultsUsing = $callback;
+        $configured = $this->evaluate($this->mentions) ?? [];
 
-        return $this;
-    }
+        $providers = [];
 
-    public function hasMentionSearchResultsUsing(): bool
-    {
-        return isset($this->getMentionSearchResultsUsing);
+        foreach (Arr::wrap($configured) as $mention) {
+            if ($mention instanceof MentionProvider) {
+                $providers[] = $mention;
+
+                continue;
+            }
+
+            if (is_array($mention)) {
+                $char = strval($mention['char'] ?? '@');
+
+                $provider = MentionProvider::make($char);
+
+                if (array_key_exists('items', $mention) && is_array($mention['items'])) {
+                    $provider->options($mention['items']);
+                }
+
+                $providers[] = $provider;
+
+                continue;
+            }
+        }
+
+        return $providers;
     }
 
     /**
-     * @return array<string>
+     * Normalized for JS: [ { char: '@', items: [...] }, ... ]
+     *
+     * @return array<int, array{char: string, items: array<mixed>}> 
      */
-    public function getMentionItems(): array
+    public function getMentionsForJs(): array
     {
-        return $this->evaluate($this->mentionItems) ?? [];
-    }
-
-    /**
-     * @return array<mixed>
-     */
-    public function getMentionSearchResults(string $search): array
-    {
-        if (! $this->getMentionSearchResultsUsing) {
-            return [];
-        }
-
-        $results = $this->evaluate($this->getMentionSearchResultsUsing, [
-            'query' => $search,
-            'search' => $search,
-            'searchQuery' => $search,
-        ]);
-
-        if ($results instanceof \Illuminate\Contracts\Support\Arrayable) {
-            $results = $results->toArray();
-        }
-
-        return is_array($results) ? $results : [];
+        return array_map(
+            function (MentionProvider $provider): array {
+                return [
+                    'char' => $provider->getChar(),
+                    'items' => $provider->resolveItems(''),
+                    'extraAttributes' => $provider->getExtraAttributes(),
+                ];
+            },
+            $this->getMentionProviders(),
+        );
     }
 
     /**
@@ -813,10 +854,54 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
      */
     #[ExposedLivewireMethod]
     #[Renderless]
-    public function getMentionSearchResultsForJs(string $search): array
+    public function getMentionSearchResultsForJs(?string $search = null, ?string $char = '@'): array
     {
-        return $this->getMentionSearchResults($search);
+        $char = $char ?? '@';
+
+        $providers = $this->getMentionProviders();
+
+        $provider = collect($providers)->first(function (MentionProvider $p) use ($char): bool {
+            return $p->getChar() === $char;
+        }) ?? ($providers[0] ?? null);
+
+        if (! $provider) {
+            return [];
+        }
+
+        return $provider->resolveItems($search ?? '');
     }
+
+    /**
+     * Resolve the display label for a mention by id and char.
+     *
+     * @return array{label: ?string}
+     */
+    #[ExposedLivewireMethod]
+    #[Renderless]
+    public function getMentionLabelForJs(mixed $id = null, ?string $char = '@'): array
+    {
+        $char = $char ?? '@';
+
+        $providers = $this->getMentionProviders();
+
+        $provider = collect($providers)->first(function (MentionProvider $p) use ($char): bool {
+            return $p->getChar() === $char;
+        }) ?? ($providers[0] ?? null);
+
+        if (! $provider) {
+            return ['label' => null];
+        }
+
+        return [
+            'label' => $provider->getOptionLabelForId($id),
+        ];
+    }
+
+    public function hasMentions(): bool
+    {
+        return isset($this->mentions);
+    }
+
 
     public function noMergeTagSearchResultsMessage(string|Closure|null $message): static
     {

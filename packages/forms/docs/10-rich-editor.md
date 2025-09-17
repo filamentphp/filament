@@ -487,68 +487,66 @@ RichEditor::make('content')
 
 ## Using mentions
 
-Mentions let users type a trigger character (like `@`) to search and insert inline references (e.g., users, teams). Inserted mentions are inline, non-editable tokens rendered as text like `@Jane Doe`.
+Mentions let users type a trigger character (like `@`) to search and insert inline references (e.g., users, tasks). Mentions are rendered inline as non-editable tokens (e.g. `@ Jane Doe`).
 
-There are two ways to provide mention data. Only one should be used at a time:
-
-1) Static lists with `mentionItems()` (fixed or query-time computed arrays)
+Configure mentions with providers using `mentions()`. Each provider handles a trigger `char` and either static items or async search:
 
 ```php
 use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\RichEditor\MentionProviders\MentionProvider;
 
-// Simple list
+// Static items for multiple triggers
 RichEditor::make('content')
-    ->mentionItems([
-        'Marketing', 'Sales', 'Support',
-        ['id' => 1, 'label' => 'Jane Doe'],
-        ['id' => 2, 'label' => 'John Smith'],
-    ])
-
-// Multiple triggers
-RichEditor::make('content')
-    ->mentionItems([
-        [
-            'char' => '@',
-            'items' => User::query()
-                ->orderBy('name')
-                ->get(['id', 'name'])
-                ->map(fn ($u) => ['id' => $u->id, 'label' => $u->name])
-                ->toArray(),
-        ],
-        [
-            'char' => '#',
-            'items' => ['Laravel', 'Filament', 'Livewire'],
-        ],
+    ->mentions([
+        MentionProvider::make('@')
+            ->options([
+                ['id' => 1, 'label' => 'Jane Doe'],
+                ['id' => 2, 'label' => 'John Smith'],
+            ]),
+        MentionProvider::make('#')
+            ->options(['Laravel', 'Filament', 'Livewire']),
     ])
 ```
 
-2) Async lists with `getMentionSearchResultsUsing()` (large datasets)
-
-Provide a callback that receives the user’s search string and returns results. The dropdown will appear once there are results (typically after typing at least one character after the trigger):
+For large datasets, provide async results with `getSearchResultsUsing()`. The callback receives the search term and should return an array of items (strings, or objects with `id` and `label`).
 
 ```php
 use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\RichEditor\MentionProviders\MentionProvider;
 
 RichEditor::make('content')
-    ->getMentionSearchResultsUsing(fn (string $search) => [
-        [
-            'char' => '@',
-            'items' => User::query()
+    ->mentions([
+        MentionProvider::make('@')
+            ->getSearchResultsUsing(fn (string $search): array => User::query()
                 ->where('name', 'like', "%{$search}%")
                 ->orderBy('name')
                 ->limit(10)
-                ->get(['id', 'name'])
-                ->map(fn ($u) => ['id' => $u->id, 'label' => $u->name])
-                ->toArray(),
-        ],
+                ->pluck('name', 'id')
+                ->all())
+                ->getOptionLabelUsing(fn ($value): ?string => User::find($value)?->name),
     ])
 ```
 
-Notes
 
-- Only one mechanism should be used: either `mentionItems()` or `getMentionSearchResultsUsing()`. If `getMentionSearchResultsUsing()` is defined, `mentionItems()` will be ignored.
-- Items can be strings or objects with `id` and `label`. When `id` and `label` are present, the label is displayed and the id is stored.
-- The `getMentionSearchResultsUsing()` is called with the current typed query; return an empty array when there are no results.
+### Adding extra HTML attributes
+
+You may apply extra HTML attributes to the rendered mention element:
+
+```php
+MentionProvider::make('@')
+    ->options([
+        ['id' => 1, 'label' => 'Jane Doe'],
+    ])
+    ->extraAttributes([
+        'type' => 'user',
+        'class' => 'mention-user text-blue-600',
+    ])
+```
+
+### Notes
+
+- You can provide multiple providers, each with a different `char` (default `@`).
+
 
 
 

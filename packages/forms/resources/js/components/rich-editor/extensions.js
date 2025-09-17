@@ -51,6 +51,7 @@ export default async ({
     noMergeTagSearchResultsMessage,
     mentions,
     getMentionSearchResultsUsing,
+    getMentionLabelUsing,
     placeholder,
     statePath,
     uploadingFileMessage,
@@ -109,126 +110,14 @@ export default async ({
           ]
         : []),
     ...((mentions.length || typeof getMentionSearchResultsUsing === 'function')
-        ? (() => {
-              const isArrayOfSuggestionObjects = (arr) => Array.isArray(arr) && arr.length > 0 && typeof arr[0] === 'object' && (arr[0].items || arr[0].char)
-
-              const isArrayOfItems = (arr) => Array.isArray(arr) && (arr.length === 0 || (typeof arr[0] === 'string' || typeof arr[0] === 'object'))
-
-              const toItemsArray = (value) => {
-                  // Convert associative map {id: label} to [{id, label}]
-                  if (value && !Array.isArray(value) && typeof value === 'object') {
-                      return Object.entries(value).map(([id, label]) => ({ id, label }))
-                  }
-                  return value
-              }
-
-              const normalizeResults = (results, currentChar, baseItems, query) => {
-                  if (Array.isArray(results)) {
-                      if (isArrayOfSuggestionObjects(results)) {
-                          const match = results.find((r) => (r?.char ?? '@') === (currentChar ?? '@')) || (results.length === 1 ? results[0] : null)
-                          if (match?.items) return toItemsArray(match.items)
-                      }
-                      if (isArrayOfItems(results)) return toItemsArray(results)
-                  }
-                  if (results && typeof results === 'object') {
-                      // Single suggestion object {char, items}
-                      if (results.items) {
-                          if (!results.char || results.char === currentChar) {
-                              return toItemsArray(results.items)
-                          }
-                      }
-                      // Map of char => items
-                      const charKey = currentChar ?? '@'
-                      if (results[charKey]) return toItemsArray(results[charKey])
-                      const firstKey = Object.keys(results)[0]
-                      if (firstKey) return toItemsArray(results[firstKey])
-                  }
-                  // Fallback: filter baseItems by query if provided
-                  if (!query) return baseItems
-                  const q = String(query).toLowerCase()
-                  return (baseItems ?? []).filter((item) => {
-                      const label = typeof item === 'string' ? item : (item?.label ?? item?.name ?? '')
-                      return String(label).toLowerCase().includes(q)
-                  })
-              }
-
-              const isConfig = (m) => typeof m === 'object' && (m.char || m.items || m.render)
-
-              // If we have static mention configs, map them; otherwise build a default async-only config
-              const suggestions = (Array.isArray(mentions) && mentions.length && isConfig(mentions[0]))
-                  ? mentions.map((m) => {
-                        const char = m?.char ?? '@'
-
-                        // If user passed a custom items() function, prefer it but allow overriding via getMentionSearchResultsUsing
-                        if (typeof m?.items === 'function') {
-                            const originalItems = m.items
-                            return {
-                                ...m,
-                                char,
-                                items: async (ctx) => {
-                                    // Prefer async Livewire search when available
-                                    if (typeof getMentionSearchResultsUsing === 'function') {
-                                        try {
-                                            const asyncResults = await getMentionSearchResultsUsing(ctx?.query)
-                                            const base = await originalItems(ctx)
-                                            return normalizeResults(asyncResults, char, base, ctx?.query)
-                                        } catch (e) {}
-                                    }
-                                    return await originalItems(ctx)
-                                },
-                            }
-                        }
-
-                        if (typeof m?.render === 'function') {
-                            return { ...m, char }
-                        }
-
-                        // Static items, but allow async override when provided
-                        return {
-                            ...getMentionSuggestion({
-                                items: async ({ query }) => {
-                                    if (typeof getMentionSearchResultsUsing === 'function') {
-                                        try {
-                                            const asyncResults = await getMentionSearchResultsUsing(query)
-                                            const base = m?.items ?? []
-                                            return normalizeResults(asyncResults, char, base, query)
-                                        } catch (e) {}
-                                    }
-                                    const base = m?.items ?? []
-                                    if (!query) return base
-                                    const q = String(query).toLowerCase()
-                                    return base.filter((item) => {
-                                        const label = typeof item === 'string' ? item : (item?.label ?? item?.name ?? '')
-                                        return String(label).toLowerCase().includes(q)
-                                    })
-                                },
-                            }),
-                            char,
-                        }
-                    })
-                  : [{
-                        ...getMentionSuggestion({
-                            items: async ({ query }) => {
-                                // Pure async provider (no static mentions)
-                                if (typeof getMentionSearchResultsUsing === 'function') {
-                                    try {
-                                        const asyncResults = await getMentionSearchResultsUsing(query)
-                                        return normalizeResults(asyncResults, '@', [], query)
-                                    } catch (e) {}
-                                }
-                                return []
-                            },
-                        }),
-                        char: '@',
-                    }]
-
-              return [
-                  Mention.configure({
-                      HTMLAttributes: { class: 'fi-fo-rich-editor-mention' },
-                      suggestions,
-                  }),
-              ]
-          })()
+        ? [
+              Mention.configure({
+                  HTMLAttributes: { class: 'fi-fo-rich-editor-mention' },
+                  suggestions: mentions,
+                  getMentionSearchResultsUsing,
+                  getMentionLabelUsing,
+              }),
+          ]
         : []),
     OrderedList,
     Paragraph,

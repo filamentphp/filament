@@ -8,7 +8,7 @@
     $key = $getKey();
     $mergeTags = $getMergeTags();
     $statePath = $getStatePath();
-    $mentionItems = $getMentionItems();
+    $mentions = $field->getMentionsForJs();
     $tools = $getTools();
     $toolbarButtons = $getToolbarButtons();
     $floatingToolbars = $getFloatingToolbars();
@@ -35,19 +35,6 @@
                         deleteCustomBlockButtonIconHtml: @js(\Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::Trash, alias: \Filament\Forms\View\FormsIconAlias::COMPONENTS_RICH_EDITOR_PANELS_CUSTOM_BLOCK_DELETE_BUTTON)->toHtml()),
                         editCustomBlockButtonIconHtml: @js(\Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::PencilSquare, alias: \Filament\Forms\View\FormsIconAlias::COMPONENTS_RICH_EDITOR_PANELS_CUSTOM_BLOCK_EDIT_BUTTON)->toHtml()),
                         extensions: @js($getTipTapJsExtensions()),
-                        getOptionLabelsUsing: async () => {
-                            return await $wire.callSchemaComponentMethod(
-                                @js($key),
-                                'getOptionLabelsForJs',
-                            )
-                        },
-                        getSearchResultsUsing: async (search) => {
-                            return await $wire.callSchemaComponentMethod(
-                                @js($key),
-                                'getSearchResultsForJs',
-                                { search },
-                            )
-                        },
                         key: @js($key),
                         isDisabled: @js($isDisabled),
                         isLiveDebounced: @js($isLiveDebounced()),
@@ -57,14 +44,22 @@
                         maxFileSize: @js($fileAttachmentsMaxSize),
                         maxFileSizeValidationMessage: @js($fileAttachmentsMaxSize ? trans_choice('filament-forms::components.rich_editor.file_attachments_max_size_message', $fileAttachmentsMaxSize, ['max' => $fileAttachmentsMaxSize]) : null),
                         mergeTags: @js($mergeTags),
-                        mentions: @js($hasMentionSearchResultsUsing() ? [] : $mentionItems),
-                        getMentionSearchResultsUsing: @js($hasMentionSearchResultsUsing() ? true : false) ? async (search) => {
+                        mentions: @js($mentions),
+                        getMentionSearchResultsUsing: async (query, char) => {
                             return await $wire.callSchemaComponentMethod(
                                 @js($key),
                                 'getMentionSearchResultsForJs',
-                                { search },
+                                { search: query, char },
                             )
-                        } : null,
+                        },
+                        getMentionLabelUsing: async (id, char) => {
+                            const result = await $wire.callSchemaComponentMethod(
+                                @js($key),
+                                'getMentionLabelForJs',
+                                { id, char },
+                            )
+                            return result?.label ?? null
+                        },
                         noMergeTagSearchResultsMessage: @js($getNoMergeTagSearchResultsMessage()),
                         placeholder: @js($getPlaceholder()),
                         state: $wire.{{ $applyStateBindingModifiers("\$entangle('{$statePath}')", isOptimisticallyLive: false) }},
@@ -93,7 +88,6 @@
                     @endforeach
                 </div>
             @endif
-
             <div
                 x-show="isUploadingFile"
                 x-cloak

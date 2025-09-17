@@ -12,6 +12,7 @@ const getSuggestionOptions = function ({
     const pluginKey = new PluginKey()
 
     const triggerChar = overrideSuggestionOptions?.char ?? '@'
+    const extraAttributes = overrideSuggestionOptions?.extraAttributes ?? {}
 
     return {
         editor: tiptapEditor,
@@ -31,7 +32,7 @@ const getSuggestionOptions = function ({
                 .insertContentAt(range, [
                     {
                         type: extensionName,
-                        attrs: { ...props, char: triggerChar },
+                        attrs: { ...props, char: triggerChar, extra: extraAttributes },
                     },
                     {
                         type: 'text',
@@ -64,6 +65,7 @@ export default Node.create({
         return {
             suggestions: [],
             getSuggestionFromChar: () => null,
+            getLabelUsingFromChar: () => null,
         }
     },
 
@@ -72,18 +74,19 @@ export default Node.create({
             HTMLAttributes: {},
             renderText({ node }) {
                 const ch = node.attrs.char ?? '@'
-                return `${ch}${node.attrs.label ?? node.attrs.id}`
+                return `${ch}`
             },
-            deleteTriggerWithBackspace: false,
+            deleteTriggerWithBackspace: true,
             renderHTML({ options, node }) {
                 return [
                     'span',
                     mergeAttributes(this.HTMLAttributes, options.HTMLAttributes),
-                    `${node.attrs.char ?? '@'}${node.attrs.label ?? node.attrs.id}`,
+                    `${node.attrs.char ?? '@'} ${node.attrs.label ?? ''}`,
                 ]
             },
             suggestions: [],
             suggestion: {},
+            getMentionLabelUsing: null,
         }
     },
 
@@ -138,6 +141,15 @@ export default Node.create({
                     }
                 },
             },
+            // Arbitrary extra attributes to apply to the element
+            extra: {
+                default: null,
+                renderHTML: (attributes) => {
+                    const value = attributes?.extra
+                    if (!value || typeof value !== 'object') return {}
+                    return value
+                },
+            },
         }
     },
 
@@ -190,7 +202,6 @@ export default Node.create({
                 node?.attrs?.char ?? '@',
             ),
         }
-
         return this.options.renderText(args)
     },
 
@@ -233,23 +244,137 @@ export default Node.create({
     },
 
     addProseMirrorPlugins() {
+        const hydrateMentions = (view) => {
+            const { state, dispatch } = view
+            const pending = []
+            state.doc.descendants((node, pos) => {
+                if (node.type.name !== this.name) return
+                if (node.attrs?.label) return
+                const id = node.attrs?.id
+                const ch = node.attrs?.char ?? '@'
+                const getLabel = this.editor?.extensionStorage?.[this.name]?.getLabelUsingFromChar(ch) || this.options.getMentionLabelUsing
+                if (!id || typeof getLabel !== 'function') return
+                pending.push({ id, ch, pos, getLabel })
+            })
+            pending.forEach(({ id, ch, pos, getLabel }) => {
+                Promise.resolve(getLabel(id, ch)).then((label) => {
+                    if (!label) return
+                    const current = view.state.doc.nodeAt(pos)
+                    if (!current || current.type.name !== this.name) return
+                    const attrs = { ...current.attrs, label }
+                    const tr = view.state.tr.setNodeMarkup(pos, undefined, attrs)
+                    dispatch(tr)
+                })
+            })
+        }
+
         return [
             ...this.storage.suggestions.map(Suggestion),
-            new Plugin({}),
+            new Plugin({
+                view: (view) => {
+                    // Initial hydration
+                    setTimeout(() => hydrateMentions(view), 0)
+                    return {
+                        update: (view) => hydrateMentions(view),
+                    }
+                },
+            }),
         ]
     },
 
     onBeforeCreate() {
-        this.storage.suggestions = (
-            this.options.suggestions.length ? this.options.suggestions : [this.options.suggestion]
-        ).map((suggestion) => {
-            const normalized = typeof suggestion.items === 'function' || typeof suggestion.render === 'function'
-                ? suggestion
-                : getMentionSuggestion({ items: suggestion.items ?? [] })
+        const isArrayOfSuggestionObjects = (arr) => Array.isArray(arr) && arr.length > 0 && typeof arr[0] === 'object' && (arr[0].items || arr[0].char)
+        const isArrayOfItems = (arr) => Array.isArray(arr) && (arr.length === 0 || (typeof arr[0] === 'string' || typeof arr[0] === 'object'))
+        const toItemsArray = (value) => {
+            if (value && !Array.isArray(value) && typeof value === 'object') {
+                return Object.entries(value).map(([id, label]) => ({ id, label }))
+            }
+            return value
+        }
+        const normalizeResults = (results, currentChar, baseItems, query) => {
+            if (Array.isArray(results)) {
+                if (isArrayOfSuggestionObjects(results)) {
+                    const match = results.find((r) => (r?.char ?? '@') === (currentChar ?? '@')) || (results.length === 1 ? results[0] : null)
+                    if (match?.items) return toItemsArray(match.items)
+                }
+                if (isArrayOfItems(results)) return toItemsArray(results)
+            }
+            if (results && typeof results === 'object') {
+                if (results.items) {
+                    if (!results.char || results.char === currentChar) {
+                        return toItemsArray(results.items)
+                    }
+                }
+                const keys = Object.keys(results)
+                if (keys.length && typeof results[keys[0]] !== 'undefined' && !Array.isArray(results[keys[0]])) {
+                    return toItemsArray(results)
+                }
+                const charKey = currentChar ?? '@'
+                if (results[charKey]) return toItemsArray(results[charKey])
+                const firstKey = keys[0]
+                if (firstKey) return toItemsArray(results[firstKey])
+            }
+            if (!query) return baseItems
+            const q = String(query).toLowerCase()
+            return (baseItems ?? []).filter((item) => {
+                const label = typeof item === 'string' ? item : (item?.label ?? item?.name ?? '')
+                return String(label).toLowerCase().includes(q)
+            })
+        }
+
+        const configured = this.options.suggestions.length ? this.options.suggestions : [this.options.suggestion]
+
+        this.storage.suggestions = configured.map((s) => {
+            const char = s?.char ?? '@'
+            const baseItems = s?.items ?? []
+            const getMentionSearchResultsUsing = this.options.getMentionSearchResultsUsing
+
+            if (typeof s?.items === 'function') {
+                const originalItems = s.items
+                s = {
+                    ...s,
+                    items: async (ctx) => {
+                        if (typeof getMentionSearchResultsUsing === 'function') {
+                            try {
+                                const asyncResults = await getMentionSearchResultsUsing(ctx?.query, char)
+                                const base = await originalItems(ctx)
+                                return normalizeResults(asyncResults, char, base, ctx?.query)
+                            } catch (e) {}
+                        }
+                        return await originalItems(ctx)
+                    },
+                }
+            } else {
+                s = {
+                    ...getMentionSuggestion({
+                        items: async ({ query }) => {
+                            if (typeof getMentionSearchResultsUsing === 'function') {
+                                try {
+                                    const asyncResults = await getMentionSearchResultsUsing(query, char)
+                                    return normalizeResults(asyncResults, char, baseItems, query)
+                                } catch (e) {}
+                            }
+                            const base = baseItems
+                            if (!query) return base
+                            const q = String(query).toLowerCase()
+                            return (base ?? []).filter((item) => {
+                                const label = typeof item === 'string' ? item : (item?.label ?? item?.name ?? '')
+                                return String(label).toLowerCase().includes(q)
+                            })
+                        },
+                    }),
+                    char,
+                }
+            }
+
+            // Attach per-char label resolver if provided on options
+            if (typeof this.options.getMentionLabelUsing === 'function') {
+                s.getMentionLabelUsing = (id) => this.options.getMentionLabelUsing(id, char)
+            }
 
             return getSuggestionOptions({
                 editor: this.editor,
-                overrideSuggestionOptions: normalized,
+                overrideSuggestionOptions: s,
                 extensionName: this.name,
             })
         })
@@ -263,6 +388,14 @@ export default Node.create({
                 return this.storage.suggestions[0]
             }
 
+            return null
+        }
+
+        this.storage.getLabelUsingFromChar = (char) => {
+            const suggestion = this.storage.getSuggestionFromChar(char)
+            if (suggestion && typeof suggestion.getMentionLabelUsing === 'function') {
+                return suggestion.getMentionLabelUsing
+            }
             return null
         }
     },
