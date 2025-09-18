@@ -16,13 +16,14 @@
     $iconSize = $getIconSize();
     $shouldPersistCollapsed = $shouldPersistCollapsed();
     $isSecondary = $isSecondary();
+    $id = $getId();
 @endphp
 
 <div
     {{
         $attributes
             ->merge([
-                'id' => $getId(),
+                'id' => $id,
             ], escape: false)
             ->merge($getExtraAttributes(), escape: false)
             ->merge($getExtraAlpineAttributes(), escape: false)
@@ -49,6 +50,7 @@
         :after-header="$afterHeader"
         :aside="$isAside"
         :collapsed="$isCollapsed"
+        :collapse-id="$id"
         :collapsible="$isCollapsible && (! $isAside)"
         :compact="$isCompact"
         :contained="$isContained"

@@ -66,6 +66,13 @@ trait HasGlobalSearch
 
     public static function getGlobalSearchResultUrl(Model $record): ?string
     {
+        // In the future, Filament will support global search in nested resources.
+        // For now, you must specify custom global search result URLs to do so,
+        // since there are missing URL parameters from the parent records.
+        if (static::getParentResourceRegistration()) {
+            return null;
+        }
+
         $canView = static::canView($record);
 
         if (static::hasPage('view') && $canView) {

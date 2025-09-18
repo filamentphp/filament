@@ -2,6 +2,7 @@
 
 namespace Filament\Tables\Columns\Concerns;
 
+use BackedEnum;
 use Closure;
 use Filament\Support\Concerns\CanConfigureCommonMark;
 use Filament\Support\Contracts\HasLabel as LabelInterface;
@@ -213,7 +214,7 @@ trait CanFormatState
         return $this;
     }
 
-    public function money(string | Closure | null $currency = null, int | Closure $divideBy = 0, string | Closure | null $locale = null, int | Closure | null $decimalPlaces = null): static
+    public function money(string | BackedEnum | Closure | null $currency = null, int | Closure $divideBy = 0, string | BackedEnum | Closure | null $locale = null, int | Closure | null $decimalPlaces = null): static
     {
         $this->isMoney = true;
 
@@ -232,6 +233,14 @@ trait CanFormatState
 
             if ($divideBy = $column->evaluate($divideBy)) {
                 $state /= $divideBy;
+            }
+
+            if ($currency instanceof BackedEnum) {
+                $currency = (string) $currency->value;
+            }
+
+            if ($locale instanceof BackedEnum) {
+                $locale = (string) $locale->value;
             }
 
             return Number::currency($state, $currency, $locale, $decimalPlaces);

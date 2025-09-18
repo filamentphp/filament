@@ -4,7 +4,6 @@ namespace Filament\Actions;
 
 use BackedEnum;
 use Closure;
-use Exception;
 use Filament\Actions\Concerns\InteractsWithRecord;
 use Filament\Actions\View\ActionsIconAlias;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
@@ -31,6 +30,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use Illuminate\View\ComponentAttributeBag;
+use LogicException;
 
 class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
 {
@@ -143,7 +143,7 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
             $action->group($this);
 
             if ($action instanceof ActionGroup) {
-                $action->dropdownPlacement('right-top');
+                $action->defaultDropdownPlacement('right-top');
 
                 $this->flatActions = [
                     ...$this->flatActions,
@@ -299,6 +299,8 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
             'dropdownWidth' => $this->getDropdownWidth(),
             'extraAttributes' => $this->getExtraAttributes(),
             'hasDropdown' => $this->hasDropdown(),
+            'hasDropdownFlip' => $this->hasDropdownFlip(),
+            'hasDropdownTeleport' => $this->hasDropdownTeleport(),
             'icon' => $this->getIcon(),
             'iconPosition' => $this->getIconPosition(),
             'iconSize' => $this->getIconSize(),
@@ -344,6 +346,8 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
 
         $static->color($data['color'] ?? null);
         $static->dropdown($data['hasDropdown'] ?? false);
+        $static->dropdownFlip($data['hasDropdownFlip'] ?? false);
+        $static->dropdownTeleport($data['hasDropdownTeleport'] ?? false);
         $static->dropdownMaxHeight($data['dropdownMaxHeight'] ?? null);
         $static->dropdownOffset($data['dropdownOffset'] ?? null);
         $static->dropdownPlacement($data['dropdownPlacement'] ?? null);
@@ -371,9 +375,9 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
     {
         return match ($parameterName) {
             'livewire' => [$this->getLivewire()],
-            'model' => [$this->getModel() ?? $this->getSchemaContainer()?->getModel() ?? $this->getSchemaComponent()?->getModel()],
+            'model' => [$this->getModel()],
             'mountedActions' => [$this->getLivewire()->getMountedActions()],
-            'record' => [$this->getRecord() ?? $this->getSchemaContainer()?->getRecord() ?? $this->getSchemaComponent()?->getRecord()],
+            'record' => [$this->getRecord()],
             'schema' => [$this->getSchemaContainer()],
             'schemaComponent', 'component' => [$this->getSchemaComponent()],
             'schemaOperation', 'context', 'operation' => [$this->getSchemaContainer()?->getOperation() ?? $this->getSchemaComponent()?->getContainer()->getOperation()],
@@ -472,7 +476,7 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
 
             <div
                 x-cloak
-                x-float.placement.<?= $this->getDropdownPlacement() ?? 'bottom-start' ?>.teleport.offset="{ offset: <?= $this->getDropdownOffset() ?? 8 ?> }"
+                x-float.placement.<?= $this->getDropdownPlacement() ?? 'bottom-start' ?><?= $this->hasDropdownFlip() ? '.flip' : '' ?><?= $this->hasDropdownTeleport() ? '.teleport' : '' ?>.offset="{ offset: <?= $this->getDropdownOffset() ?? 8 ?> }"
                 x-ref="panel"
                 x-transition:enter-start="fi-opacity-0"
                 x-transition:leave-end="fi-opacity-0"
@@ -528,7 +532,7 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
             return $defaultView;
         }
 
-        throw new Exception('Class [' . static::class . '] extends [' . ActionGroup::class . '] but does not have a [$triggerView] property defined.');
+        throw new LogicException('Class [' . static::class . '] extends [' . ActionGroup::class . '] but does not have a [$triggerView] property defined.');
     }
 
     /**

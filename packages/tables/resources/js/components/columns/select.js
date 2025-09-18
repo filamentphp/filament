@@ -161,5 +161,12 @@ export default function selectTableColumn({
 
             return state
         },
+
+        destroy() {
+            if (this.select) {
+                this.select.destroy()
+                this.select = null
+            }
+        },
     }
 }

@@ -26,6 +26,16 @@
             @apply rounded-b-lg;
         }
 
+        &.fi-grid-cols {
+            & > :first-child .fi-input-wrp {
+                @apply rounded-se-none rounded-es-lg;
+            }
+
+            & > :last-child .fi-input-wrp {
+                @apply rounded-se-lg rounded-es-none;
+            }
+        }
+
         &.sm\:fi-grid-cols {
             & > :first-child .fi-input-wrp {
                 @apply sm:rounded-se-none sm:rounded-es-lg;

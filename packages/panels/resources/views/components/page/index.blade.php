@@ -167,18 +167,19 @@
             <script>
                 const errorNotifications = @js($this->getErrorNotifications())
 
-                let hasFatalRequestError = false
-
-                Livewire.hook('request', ({ fail }) => {
+                Livewire.hook('request', ({ payload, fail }) => {
                     fail(({ status, preventDefault }) => {
-                        if (
-                            [419, 502].includes(status) &&
-                            hasFatalRequestError
-                        ) {
-                            return
+                        if (JSON.parse(payload).components.length === 1) {
+                            for (const component of JSON.parse(payload)
+                                .components) {
+                                if (
+                                    JSON.parse(component.snapshot).data
+                                        .isFilamentNotificationsComponent
+                                ) {
+                                    return
+                                }
+                            }
                         }
-
-                        hasFatalRequestError = [419, 502].includes(status)
 
                         preventDefault()
 

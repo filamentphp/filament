@@ -2,16 +2,16 @@
 
 return [
 
-    'title' => ':Label view na',
+    'title' => ':Label enna',
 
-    'breadcrumb' => 'View',
+    'breadcrumb' => 'Enna',
 
-    'navigation_label' => 'View',
+    'navigation_label' => 'Enna',
 
     'content' => [
 
         'tab' => [
-            'label' => 'View',
+            'label' => 'Enna',
         ],
 
     ],

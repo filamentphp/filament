@@ -76,12 +76,12 @@ trait HasFilters
         $filter = $this->getTable()->getFilter($filterName);
         $filterResetState = $filter->getResetState();
 
-        $filterFormGroup = $this->getTableFiltersForm()->getComponent($filterName);
+        $filterFormGroup = $this->getTableFiltersForm()->getComponentByStatePath($filterName);
 
         if (($filter instanceof QueryBuilder) && blank($field)) {
             $filterFormGroup->getChildSchema()->fill();
         } else {
-            $filterFields = $filterFormGroup?->getChildSchema()->getFlatFields();
+            $filterFields = $filterFormGroup?->getChildSchema()->getFlatFields() ?? [];
 
             if (filled($field) && array_key_exists($field, $filterFields)) {
                 $filterFields = [$field => $filterFields[$field]];
@@ -176,6 +176,11 @@ trait HasFilters
     public function getTableFilterState(string $name): ?array
     {
         return Arr::get($this->tableFilters, $this->parseTableFilterName($name));
+    }
+
+    public function getTableFilterFormState(string $name): ?array
+    {
+        return Arr::get($this->getTable()->hasDeferredFilters() ? $this->tableDeferredFilters : $this->tableFilters, $this->parseTableFilterName($name));
     }
 
     public function parseTableFilterName(string $name): string

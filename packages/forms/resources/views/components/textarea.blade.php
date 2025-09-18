@@ -5,7 +5,9 @@
     $isConcealed = $isConcealed();
     $isDisabled = $isDisabled();
     $rows = $getRows();
+    $placeholder = $getPlaceholder();
     $shouldAutosize = $shouldAutosize();
+    $placeholder = $getPlaceholder();
     $statePath = $getStatePath();
 
     $initialHeight = (($rows ?? 2) * 1.5) + 0.75;
@@ -58,7 +60,7 @@
                             'id' => $getId(),
                             'maxlength' => (! $isConcealed) ? $getMaxLength() : null,
                             'minlength' => (! $isConcealed) ? $getMinLength() : null,
-                            'placeholder' => $getPlaceholder(),
+                            'placeholder' => filled($placeholder) ? e($placeholder) : null,
                             'readonly' => $isReadOnly(),
                             'required' => $isRequired() && (! $isConcealed),
                             'rows' => $rows,

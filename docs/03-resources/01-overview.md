@@ -206,7 +206,7 @@ Resource classes contain a `table()` method that is used to build the table on t
 By default, Filament creates a table file for you, which is referenced in the `table()` method. This is to keep your resource class clean and organized, otherwise it can get quite large:
 
 ```php
-use App\Filament\Resources\Customers\Schemas\CustomersTable;
+use App\Filament\Resources\Customers\Tables\CustomersTable;
 use Filament\Tables\Table;
 
 public static function table(Table $table): Table

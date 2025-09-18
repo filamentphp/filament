@@ -156,13 +156,16 @@ trait CanExportRecords
             $maxRows = $action->getMaxRows() ?? $totalRows;
 
             if ($maxRows < $totalRows) {
-                Notification::make()
-                    ->title(__('filament-actions::export.notifications.max_rows.title'))
-                    ->body(trans_choice('filament-actions::export.notifications.max_rows.body', $maxRows, [
-                        'count' => Number::format($maxRows),
-                    ]))
-                    ->danger()
-                    ->send();
+                $action->failureNotification(
+                    Notification::make()
+                        ->title(__('filament-actions::export.notifications.max_rows.title'))
+                        ->body(trans_choice('filament-actions::export.notifications.max_rows.body', $maxRows, [
+                            'count' => Number::format($maxRows),
+                        ]))
+                        ->danger(),
+                );
+
+                $action->failure();
 
                 return;
             }
@@ -270,17 +273,23 @@ trait CanExportRecords
                 ->dispatch();
 
             if (
-                (filled($jobConnection) && ($jobConnection !== 'sync')) ||
-                (blank($jobConnection) && (config('queue.default') !== 'sync'))
+                ($jobConnection === 'sync')
+                || (blank($jobConnection) && (config('queue.default') === 'sync'))
             ) {
+                $action->successNotification(null);
+                $action->successNotificationTitle(null);
+
+                return;
+            }
+
+            $action->successNotification(
                 Notification::make()
                     ->title($action->getSuccessNotificationTitle())
                     ->body(trans_choice('filament-actions::export.notifications.started.body', $export->total_rows, [
                         'count' => Number::format($export->total_rows),
                     ]))
-                    ->success()
-                    ->send();
-            }
+                    ->success(),
+            );
         });
 
         $this->defaultColor('gray');

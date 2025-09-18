@@ -33,4 +33,12 @@ trait BelongsToTable
     {
         return $this->getLivewire()->getTableFilterState($this->getName()) ?? [];
     }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function getFormState(): array
+    {
+        return $this->getLivewire()->getTableFilterFormState($this->getName()) ?? [];
+    }
 }

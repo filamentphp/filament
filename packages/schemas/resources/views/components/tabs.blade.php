@@ -7,6 +7,7 @@
     $label = $getLabel();
     $livewireProperty = $getLivewireProperty();
     $renderHookScopes = $getRenderHookScopes();
+    $id = $getId();
 @endphp
 
 @if (blank($livewireProperty))
@@ -17,14 +18,14 @@
             activeTab: @js($activeTab),
             isTabPersistedInQueryString: @js($isTabPersistedInQueryString()),
             livewireId: @js($this->getId()),
-            tab: @if ($isTabPersisted() && filled($persistenceKey = $getKey())) $persist(null).as('tabs-{{ $persistenceKey }}') @else @js(null) @endif,
+            tab: @if ($isTabPersisted() && filled($id)) $persist(null).as(@js($id)) @else @js(null) @endif,
             tabQueryStringKey: @js($getTabQueryStringKey()),
         })"
         wire:ignore.self
         {{
             $attributes
                 ->merge([
-                    'id' => $getId(),
+                    'id' => $id,
                     'wire:key' => $getLivewireKey() . '.container',
                 ], escape: false)
                 ->merge($getExtraAttributes(), escape: false)
@@ -69,6 +70,14 @@
                     $tabIcon = $tab->getIcon();
                     $tabIconPosition = $tab->getIconPosition();
                     $tabExtraAttributeBag = $tab->getExtraAttributeBag();
+                    $tabHiddenJs = $tab->getHiddenJs();
+                    $tabVisibleJs = $tab->getVisibleJs();
+                    $tabVisibilityJs = match ([filled($tabHiddenJs), filled($tabVisibleJs)]) {
+                        [true, true] => "(! ({$tabHiddenJs})) && ({$tabVisibleJs})",
+                        [true, false] => "! ({$tabHiddenJs})",
+                        [false, true] => $tabVisibleJs,
+                        default => null,
+                    };
                 @endphp
 
                 <x-filament::tabs.item
@@ -81,6 +90,8 @@
                     :icon="$tabIcon"
                     :icon-position="$tabIconPosition"
                     :x-on:click="'tab = \'' . $tabKey . '\''"
+                    :x-show="$tabVisibilityJs"
+                    :x-cloak="$tabVisibilityJs !== null"
                     :attributes="$tabExtraAttributeBag"
                 >
                     {{ $tab->getLabel() }}
@@ -93,7 +104,24 @@
         </x-filament::tabs>
 
         @foreach ($getChildSchema()->getComponents() as $tab)
-            {{ $tab }}
+            @php
+                $tabHiddenJs = $tab->getHiddenJs();
+                $tabVisibleJs = $tab->getVisibleJs();
+                $tabVisibilityJs = match ([filled($tabHiddenJs), filled($tabVisibleJs)]) {
+                    [true, true] => "(! ({$tabHiddenJs})) && ({$tabVisibleJs})",
+                    [true, false] => "! ({$tabHiddenJs})",
+                    [false, true] => $tabVisibleJs,
+                    default => null,
+                };
+            @endphp
+
+            @if ($tabVisibilityJs)
+                <div x-show="{!! $tabVisibilityJs !!}" x-cloak>
+                    {{ $tab }}
+                </div>
+            @else
+                {{ $tab }}
+            @endif
         @endforeach
     </div>
 @else
@@ -105,7 +133,7 @@
         {{
             $attributes
                 ->merge([
-                    'id' => $getId(),
+                    'id' => $id,
                     'wire:key' => $getLivewireKey() . '.container',
                 ], escape: false)
                 ->merge($getExtraAttributes(), escape: false)

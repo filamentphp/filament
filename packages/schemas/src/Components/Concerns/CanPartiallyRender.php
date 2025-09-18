@@ -3,8 +3,8 @@
 namespace Filament\Schemas\Components\Concerns;
 
 use Closure;
-use Exception;
 use Filament\Support\Livewire\Partials\PartialsComponentHook;
+use LogicException;
 
 trait CanPartiallyRender
 {
@@ -65,11 +65,11 @@ trait CanPartiallyRender
             $key = $this->getKey();
 
             if (blank($key)) {
-                throw new Exception('A [key()] or [statePath()] is required to partially render a component.');
+                throw new LogicException('A [key()] or [statePath()] is required to partially render a component.');
             }
 
             return [
-                "schema-component::{$key}" => $this->hasView() ? $this->render() : $this->toHtml(...),
+                "schema-component::{$key}" => $this->toSchemaHtml(...),
             ];
         });
     }

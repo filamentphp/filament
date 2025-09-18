@@ -762,7 +762,7 @@ trait CanBeValidated
         return $this->evaluate($this->regexPattern);
     }
 
-    public function getRequiredValidationRule(): string
+    public function getRequiredValidationRule(): string | Closure
     {
         return $this->isRequired() ? 'required' : 'nullable';
     }

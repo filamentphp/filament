@@ -68,7 +68,7 @@
                             'disabled' => $isDisabled,
                             'id' => $id,
                             'list' => $id . '-suggestions',
-                            'placeholder' => $placeholder,
+                            'placeholder' => filled($placeholder) ? e($placeholder) : null,
                             'type' => 'text',
                             'x-bind' => 'input',
                         ], escape: false)

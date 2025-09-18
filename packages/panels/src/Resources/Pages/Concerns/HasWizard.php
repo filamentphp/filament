@@ -14,15 +14,10 @@ trait HasWizard /** @phpstan-ignore trait.unused */
         return 1;
     }
 
-    public function defaultForm(Schema $schema): Schema
-    {
-        return parent::defaultForm($schema)
-            ->columns(null);
-    }
-
     public function form(Schema $schema): Schema
     {
         return parent::form($schema)
+            ->columns(null)
             ->components([
                 $this->getWizardComponent(),
             ]);
