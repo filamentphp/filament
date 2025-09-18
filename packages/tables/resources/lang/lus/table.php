@@ -32,11 +32,11 @@ return [
 
             'no_search_results_message' => 'I search hi a awmlo.',
 
-            'placeholder' => 'Option thlang rawh',
+            'placeholder' => 'I duh thlang rawh...',
 
-            'searching_message' => 'Searching...',
+            'searching_message' => 'Zawn mek ani...',
 
-            'search_prompt' => 'Search turin thil type rawh...',
+            'search_prompt' => 'Zawng turin thil chhu rawh...',
 
         ],
 
@@ -162,7 +162,7 @@ return [
 
         ],
 
-        'heading' => 'Filters',
+        'heading' => 'Thlit fîmna',
 
         'indicator' => 'Active filters',
 

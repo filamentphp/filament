@@ -6,7 +6,7 @@ select.fi-select-input {
     background-repeat: no-repeat;
     background-size: 1.5em 1.5em;
 
-    :dir(rtl) & {
+    @variant rtl {
         background-position: left 0.5rem center;
     }
 
@@ -32,7 +32,7 @@ select.fi-select-input {
         background-repeat: no-repeat;
         background-size: 1.5em 1.5em;
 
-        :dir(rtl) & {
+        @variant rtl {
             background-position: left 0.5rem center;
         }
     }

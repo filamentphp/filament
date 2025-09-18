@@ -31,6 +31,10 @@
         }
     }
 
+    & .fi-fo-rich-editor-file-validation-message {
+        @apply border-danger-200 bg-danger-50 text-danger-700 dark:text-danger-200 flex items-center gap-x-3 border-b px-5 py-1.5 text-sm leading-6 font-medium dark:border-white/10 dark:bg-white/5;
+    }
+
     & .fi-fo-rich-editor-main {
         @apply flex flex-col-reverse;
     }

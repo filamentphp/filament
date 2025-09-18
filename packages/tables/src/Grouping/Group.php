@@ -35,7 +35,7 @@ class Group extends Component
 
     protected ?Closure $scopeQueryByKeyUsing = null;
 
-    protected string | Closure | null $label = null;
+    protected string | Htmlable | Closure | null $label = null;
 
     protected string $id;
 
@@ -88,7 +88,7 @@ class Group extends Component
         return $this;
     }
 
-    public function label(string | Closure | null $label): static
+    public function label(string | Htmlable | Closure | null $label): static
     {
         $this->label = $label;
 
@@ -181,7 +181,7 @@ class Group extends Component
         return $this->id;
     }
 
-    public function getLabel(): string
+    public function getLabel(): string | Htmlable
     {
         return $this->evaluate($this->label) ?? (string) str($this->getId())
             ->beforeLast('.')
@@ -191,7 +191,7 @@ class Group extends Component
             ->ucfirst();
     }
 
-    public function getDescription(Model $record, ?string $title): ?string
+    public function getDescription(Model $record, string | Htmlable | null $title): string | Htmlable | null
     {
         if (! $this->getDescriptionFromRecordUsing) {
             return null;

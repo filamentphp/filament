@@ -603,6 +603,13 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
 
     public function getContentAttribute(): ?RichContentAttribute
     {
+        // Do not read content attributes from the model when the rich editor is nested
+        // inside a custom block action modal, since the content attribute should only
+        // be used to configure the parent rich editor.
+        if ($this->getRootContainer()->getOperation() === CustomBlockAction::NAME) {
+            return null;
+        }
+
         $model = $this->getModelInstance();
 
         if (! ($model instanceof HasRichContent)) {
@@ -904,5 +911,21 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
                 $fail('validation.required')->translate();
             }
         };
+    }
+
+    public function callAfterStateUpdated(bool $shouldBubbleToParents = true): static
+    {
+        $rawState = $this->getRawState();
+
+        // https://github.com/filamentphp/filament/issues/17472
+        if (! is_array($rawState)) {
+            foreach ($this->getStateCasts() as $stateCast) {
+                $rawState = $stateCast->set($rawState);
+            }
+
+            $this->rawState($rawState);
+        }
+
+        return parent::callAfterStateUpdated($shouldBubbleToParents);
     }
 }

@@ -78,7 +78,7 @@ TextEntry::make('title')
     ->state('Hello, world!')
 ```
 
-<UtilityInjection set="infolistEntries" version="4.x">The `state()` method also accepts a function to dynamically calculate the state. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="infolistEntries" except="$state" version="4.x">The `state()` method also accepts a function to dynamically calculate the state. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ### Setting the default state of an entry
 

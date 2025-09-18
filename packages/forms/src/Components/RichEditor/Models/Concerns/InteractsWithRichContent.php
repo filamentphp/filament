@@ -40,7 +40,7 @@ trait InteractsWithRichContent /** @phpstan-ignore trait.unused */
 
     public function getRichContentAttribute(string $attribute): ?RichContentAttribute
     {
-        return $this->getRichContentAttributes()[$attribute];
+        return $this->getRichContentAttributes()[$attribute] ?? null;
     }
 
     public function hasRichContentAttribute(string $attribute): bool
