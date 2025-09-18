@@ -90,8 +90,8 @@ class ResetPassword extends SimplePage
                 }
 
                 $user->forceFill([
-                    'password' => Hash::make($data['password']),
-                    'remember_token' => Str::random(60),
+                    $user->getAuthPasswordName() => Hash::make($data['password']),
+                    $user->getRememberTokenName() => Str::random(60),
                 ])->save();
 
                 event(new PasswordReset($user));
