@@ -220,72 +220,33 @@ class Post extends Model implements HasRichContent
 }
 ```
 
-You may want to preserve the original filenames of the uploaded files, use the preserveFilenames() method:
+You may want to preserve the original filenames of the uploaded files, using the `preserveFilenames()` method:
 
 ```php
 use Filament\Forms\Components\RichEditor\FileAttachmentProviders\SpatieMediaLibraryFileAttachmentProvider;
-use Filament\Forms\Components\RichEditor\Models\Concerns\InteractsWithRichContent;
-use Filament\Forms\Components\RichEditor\Models\Contracts\HasRichContent;
-use Illuminate\Database\Eloquent\Model;
 
-class Post extends Model implements HasRichContent
-{
-    use InteractsWithRichContent;
-
-    public function setUpRichContent(): void
-    {
-        $this->registerRichContent('content')
-            ->fileAttachmentProvider(SpatieMediaLibraryFileAttachmentProvider::make()
-                ->preserveFilenames(true)
-            );
-    }
-}
+SpatieMediaLibraryFileAttachmentProvider::make()
+    ->preserveFilenames()
 ```
 
-You may want to change the media name, use mediaName() method:
+You can customize the [media name](https://spatie.be/docs/laravel-medialibrary/api/adding-files#content-usingname) using the `mediaName()` method:
 
 ```php
 use Filament\Forms\Components\RichEditor\FileAttachmentProviders\SpatieMediaLibraryFileAttachmentProvider;
-use Filament\Forms\Components\RichEditor\Models\Concerns\InteractsWithRichContent;
-use Filament\Forms\Components\RichEditor\Models\Contracts\HasRichContent;
-use Illuminate\Database\Eloquent\Model;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Illuminate\Support\Str;
 
-class Post extends Model implements HasRichContent
-{
-    use InteractsWithRichContent;
-
-    public function setUpRichContent(): void
-    {
-        $this->registerRichContent('content')
-            ->fileAttachmentProvider(SpatieMediaLibraryFileAttachmentProvider::make()
-                ->mediaName(fn (TemporaryUploadedFile $file) => Str::random() . '_' . $file->getClientOriginalName())
-            );
-    }
-}
+SpatieMediaLibraryFileAttachmentProvider::make()
+    ->mediaName(fn (TemporaryUploadedFile $file): string => Str::random() . '_' . $file->getClientOriginalName())
 ```
 
-You may want to add custom properties to media, use customProperties() method:
+You may pass in [custom properties](https://spatie.be/docs/laravel-medialibrary/advanced-usage/using-custom-properties) when uploading files using the `customProperties()` method:
 
 ```php
 use Filament\Forms\Components\RichEditor\FileAttachmentProviders\SpatieMediaLibraryFileAttachmentProvider;
-use Filament\Forms\Components\RichEditor\Models\Concerns\InteractsWithRichContent;
-use Filament\Forms\Components\RichEditor\Models\Contracts\HasRichContent;
-use Illuminate\Database\Eloquent\Model;
 
-class Post extends Model implements HasRichContent
-{
-    use InteractsWithRichContent;
-
-    public function setUpRichContent(): void
-    {
-        $this->registerRichContent('content')
-            ->fileAttachmentProvider(SpatieMediaLibraryFileAttachmentProvider::make()
-                ->customProperties(['archived' => false])
-            );
-    }
-}
+SpatieMediaLibraryFileAttachmentProvider::make()
+    ->customProperties(['archived' => false])
 ```
 
 ## Table column
