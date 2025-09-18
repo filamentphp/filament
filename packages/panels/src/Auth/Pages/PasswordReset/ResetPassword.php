@@ -148,7 +148,6 @@ class ResetPassword extends SimplePage
         return TextInput::make('email')
             ->label(__('filament-panels::auth/pages/password-reset/reset-password.form.email.label'))
             ->disabled()
-            ->autocomplete('username')
             ->autofocus();
     }
 
