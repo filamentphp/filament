@@ -287,7 +287,6 @@ class EditProfile extends Page
         return TextInput::make('email')
             ->label(__('filament-panels::auth/pages/edit-profile.form.email.label'))
             ->email()
-            ->autocomplete('username')
             ->required()
             ->maxLength(255)
             ->unique(ignoreRecord: true)
