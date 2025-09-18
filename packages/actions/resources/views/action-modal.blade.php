@@ -45,11 +45,11 @@
     :wire:submit.prevent="$actionLivewireCallMountedActionName"
     :x-on:modal-closed="'if ($event.detail.id === ' . \Illuminate\Support\Js::from($actionModalId) . ') $wire.unmountAction(false)'"
 >
-    {{ FilamentView::renderHook(ActionsRenderHook::MODAL_CONTENT_BEFORE, scopes: static::class, data: ['action' => $action]) }}
+    {{ FilamentView::renderHook(ActionsRenderHook::MODAL_CUSTOM_CONTENT_BEFORE, scopes: static::class, data: ['action' => $action]) }}
 
     {{ $action->getModalContent() }}
 
-    {{ FilamentView::renderHook(ActionsRenderHook::MODAL_CONTENT_AFTER, scopes: static::class, data: ['action' => $action]) }}
+    {{ FilamentView::renderHook(ActionsRenderHook::MODAL_CUSTOM_CONTENT_AFTER, scopes: static::class, data: ['action' => $action]) }}
 
     @if ($this->mountedActionHasSchema(mountedAction: $action))
         {{ FilamentView::renderHook(ActionsRenderHook::MODAL_SCHEMA_BEFORE, scopes: static::class, data: ['action' => $action]) }}
@@ -59,9 +59,9 @@
         {{ FilamentView::renderHook(ActionsRenderHook::MODAL_SCHEMA_AFTER, scopes: static::class, data: ['action' => $action]) }}
     @endif
 
-    {{ FilamentView::renderHook(ActionsRenderHook::MODAL_CONTENT_FOOTER_BEFORE, scopes: static::class, data: ['action' => $action]) }}
+    {{ FilamentView::renderHook(ActionsRenderHook::MODAL_CUSTOM_CONTENT_FOOTER_BEFORE, scopes: static::class, data: ['action' => $action]) }}
 
     {{ $action->getModalContentFooter() }}
 
-    {{ FilamentView::renderHook(ActionsRenderHook::MODAL_CONTENT_FOOTER_AFTER, scopes: static::class, data: ['action' => $action]) }}
+    {{ FilamentView::renderHook(ActionsRenderHook::MODAL_CUSTOM_CONTENT_FOOTER_AFTER, scopes: static::class, data: ['action' => $action]) }}
 </x-filament::modal>

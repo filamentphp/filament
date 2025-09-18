@@ -153,19 +153,20 @@ use Filament\Tables\View\TablesRenderHook;
 
 ### Actions render hooks
 
-All these render hooks [can be scoped](#scoping-render-hooks) to any table Livewire component class. When using the Panel Builder, these classes might be the List or Manage page of a resource, or a relation manager.
+All these render hooks [can be scoped](#scoping-render-hooks) to any Livewire component class. When using the Panel Builder, these classes might be the List or Manage page of a resource, or a relation manager.
+
 Scoping is typically not enough in this case, as Livewire components can have multiple actions, so you can access the `action` data as `Filament\Actions\Action` to identify the specific action in all these render hooks.
 
 ```php
 use Filament\Actions\View\ActionsRenderHook;
 ```
 
-- `ActionsRenderHook::MODAL_CONTENT_AFTER` - After the [modal content](../actions/modals#custom-modal-content)
-- `ActionsRenderHook::MODAL_CONTENT_BEFORE` - Before the [modal content](../actions/modals#custom-modal-content)
+- `ActionsRenderHook::MODAL_CUSTOM_CONTENT_AFTER` - After the [modal content](../actions/modals#custom-modal-content)
+- `ActionsRenderHook::MODAL_CUSTOM_CONTENT_BEFORE` - Before the [modal content](../actions/modals#custom-modal-content)
+- `ActionsRenderHook::MODAL_CUSTOM_CONTENT_FOOTER_AFTER` - After the [modal content footer](../actions/modals#adding-custom-modal-content-below-the-form)
+- `ActionsRenderHook::MODAL_CUSTOM_CONTENT_FOOTER_BEFORE` - Before the [modal content footer](../actions/modals#adding-custom-modal-content-below-the-form)
 - `ActionsRenderHook::MODAL_SCHEMA_AFTER` - After the [modal schema](../actions/modals#rendering-a-schema-in-a-modal)
 - `ActionsRenderHook::MODAL_SCHEMA_BEFORE` - Before the [modal schema](../actions/modals#rendering-a-schema-in-a-modal)
-- `ActionsRenderHook::MODAL_CONTENT_FOOTER_AFTER` - After the [modal content footer](../actions/modals#adding-custom-modal-content-below-the-form) 
-- `ActionsRenderHook::MODAL_CONTENT_FOOTER_BEFORE` - Before the [modal content footer](../actions/modals#adding-custom-modal-content-below-the-form)
 
 
 ### Widgets render hooks
