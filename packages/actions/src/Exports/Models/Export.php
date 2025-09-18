@@ -3,7 +3,6 @@
 namespace Filament\Actions\Exports\Models;
 
 use Carbon\CarbonInterface;
-use Exception;
 use Filament\Actions\Exports\Exporter;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Filesystem\Filesystem;
@@ -11,6 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Prunable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Storage;
+use LogicException;
 
 /**
  * @property CarbonInterface | null $completed_at
@@ -60,7 +60,7 @@ class Export extends Model
         $userClass = app()->getNamespace() . 'Models\\User';
 
         if (! class_exists($userClass)) {
-            throw new Exception('No [' . $userClass . '] model found. Please bind an authenticatable model to the [Illuminate\\Contracts\\Auth\\Authenticatable] interface in a service provider\'s [register()] method.');
+            throw new LogicException('No [' . $userClass . '] model found. Please bind an authenticatable model to the [Illuminate\\Contracts\\Auth\\Authenticatable] interface in a service provider\'s [register()] method.');
         }
 
         /** @phpstan-ignore-next-line */

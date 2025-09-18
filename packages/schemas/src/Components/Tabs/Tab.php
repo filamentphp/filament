@@ -58,7 +58,7 @@ class Tab extends Component implements CanConcealComponents
             $statePath = $component->getStatePath();
 
             return Str::slug(Str::transliterate($label, strict: true)) . '::' . (filled($statePath) ? "{$statePath}::tab" : 'tab');
-        });
+        }, isInheritable: false);
     }
 
     /**

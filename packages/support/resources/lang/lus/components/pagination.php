@@ -13,7 +13,7 @@ return [
             'label' => 'Page tinah',
 
             'options' => [
-                'all' => 'All',
+                'all' => 'A vaiin',
             ],
 
         ],
@@ -23,7 +23,7 @@ return [
     'actions' => [
 
         'first' => [
-            'label' => 'First',
+            'label' => 'A hmasa ber',
         ],
 
         'go_to_page' => [
@@ -31,15 +31,15 @@ return [
         ],
 
         'last' => [
-            'label' => 'Last',
+            'label' => 'A tawpna',
         ],
 
         'next' => [
-            'label' => 'Next',
+            'label' => 'A dawttu',
         ],
 
         'previous' => [
-            'label' => 'Previous',
+            'label' => 'A hmasa',
         ],
 
     ],

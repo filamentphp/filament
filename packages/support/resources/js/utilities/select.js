@@ -541,6 +541,7 @@ export class Select {
             if (!Array.isArray(this.state) || this.state.length === 0) {
                 const placeholderSpan = document.createElement('span')
                 placeholderSpan.textContent = this.placeholder
+                placeholderSpan.classList.add('fi-select-input-placeholder')
 
                 this.selectedDisplay.appendChild(placeholderSpan)
 
@@ -566,6 +567,7 @@ export class Select {
         if (this.state === null || this.state === '') {
             const placeholderSpan = document.createElement('span')
             placeholderSpan.textContent = this.placeholder
+            placeholderSpan.classList.add('fi-select-input-placeholder')
 
             this.selectedDisplay.appendChild(placeholderSpan)
 
@@ -600,7 +602,7 @@ export class Select {
                 }
 
                 // If not found, add to missing values
-                missingValues.push(value)
+                missingValues.push(value.toString())
             }
         }
 

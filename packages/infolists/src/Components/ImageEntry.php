@@ -33,7 +33,7 @@ class ImageEntry extends Entry implements HasEmbeddedView
 
     protected bool | Closure $isSquare = false;
 
-    protected string | Closure $visibility = 'private';
+    protected string | Closure | null $visibility = null;
 
     protected int | string | Closure | null $width = null;
 
@@ -116,7 +116,7 @@ class ImageEntry extends Entry implements HasEmbeddedView
         return $this;
     }
 
-    public function visibility(string | Closure $visibility): static
+    public function visibility(string | Closure | null $visibility): static
     {
         $this->visibility = $visibility;
 
@@ -147,28 +147,22 @@ class ImageEntry extends Entry implements HasEmbeddedView
 
     public function getDiskName(): string
     {
-        $name = $this->getCustomDiskName();
+        $name = $this->evaluate($this->diskName);
 
         if (filled($name)) {
             return $name;
         }
 
-        $name = config('filament.default_filesystem_disk');
+        $defaultName = config('filament.default_filesystem_disk');
 
-        if ($name !== 'public') {
-            return $name;
+        if (
+            ($defaultName === 'public')
+            && ($this->getCustomVisibility() === 'private')
+        ) {
+            return 'local';
         }
 
-        if ($this->getVisibility() !== 'private') {
-            return $name;
-        }
-
-        return 'local';
-    }
-
-    public function getCustomDiskName(): ?string
-    {
-        return $this->evaluate($this->diskName);
+        return $defaultName;
     }
 
     public function getImageHeight(): ?string
@@ -241,17 +235,18 @@ class ImageEntry extends Entry implements HasEmbeddedView
 
     public function getVisibility(): string
     {
-        $visibility = $this->evaluate($this->visibility);
+        $visibility = $this->getCustomVisibility();
 
-        if ($visibility !== 'private') {
+        if (filled($visibility)) {
             return $visibility;
         }
 
-        if ($this->getCustomDiskName() !== 'public') {
-            return $visibility;
-        }
+        return ($this->getDiskName() === 'public') ? 'public' : 'private';
+    }
 
-        return 'public';
+    public function getCustomVisibility(): ?string
+    {
+        return $this->evaluate($this->visibility);
     }
 
     public function getImageWidth(): ?string

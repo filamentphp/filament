@@ -4,6 +4,8 @@
     $extraAttributeBag = $getExtraAttributeBag();
     $key = $getKey();
     $statePath = $getStatePath();
+    $fileAttachmentsMaxSize = $getFileAttachmentsMaxSize();
+    $fileAttachmentsAcceptedFileTypes = $getFileAttachmentsAcceptedFileTypes();
 @endphp
 
 <x-dynamic-component :component="$fieldWrapperView" :field="$field">
@@ -37,6 +39,18 @@
                             toolbarButtons: @js($getToolbarButtons()),
                             translations: @js(__('filament-forms::components.markdown_editor')),
                             uploadFileAttachmentUsing: async (file, onSuccess, onError) => {
+                                const acceptedTypes = @js($fileAttachmentsAcceptedFileTypes)
+
+                                if (acceptedTypes && ! acceptedTypes.includes(file.type)) {
+                                    return onError(@js($fileAttachmentsAcceptedFileTypes ? __('filament-forms::components.markdown_editor.file_attachments_accepted_file_types_message', ['values' => implode(', ', $fileAttachmentsAcceptedFileTypes)]) : null))
+                                }
+
+                                const maxSize = @js($fileAttachmentsMaxSize)
+
+                                if (maxSize && file.size > +maxSize * 1024) {
+                                    return onError(@js($fileAttachmentsMaxSize ? trans_choice('filament-forms::components.markdown_editor.file_attachments_max_size_message', $fileAttachmentsMaxSize, ['max' => $fileAttachmentsMaxSize]) : null))
+                                }
+
                                 $wire.upload(`componentFileAttachments.{{ $statePath }}`, file, () => {
                                     $wire
                                         .callSchemaComponentMethod(

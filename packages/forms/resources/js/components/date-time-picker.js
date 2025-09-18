@@ -545,5 +545,6 @@ const locales = {
     ur: require('dayjs/locale/ur'),
     vi: require('dayjs/locale/vi'),
     zh_CN: require('dayjs/locale/zh-cn'),
+    zh_HK: require('dayjs/locale/zh-hk'),
     zh_TW: require('dayjs/locale/zh-tw'),
 }

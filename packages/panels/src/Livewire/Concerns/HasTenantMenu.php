@@ -14,6 +14,10 @@ trait HasTenantMenu
 
     public function bootHasTenantMenu(): void
     {
+        if (Filament::auth()->guest()) {
+            return;
+        }
+
         if (! Filament::hasTenancy()) {
             return;
         }

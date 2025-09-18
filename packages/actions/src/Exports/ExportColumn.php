@@ -3,13 +3,13 @@
 namespace Filament\Actions\Exports;
 
 use Closure;
-use Exception;
 use Filament\Support\Components\Component;
 use Filament\Support\Concerns\CanAggregateRelatedModels;
 use Filament\Support\Concerns\HasCellState;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
+use InvalidArgumentException;
 
 class ExportColumn extends Component
 {
@@ -39,7 +39,7 @@ class ExportColumn extends Component
         $name ??= static::getDefaultName();
 
         if (blank($name)) {
-            throw new Exception("Export column of class [$exportColumnClass] must have a unique name, passed to the [make()] method.");
+            throw new InvalidArgumentException("Export column of class [$exportColumnClass] must have a unique name, passed to the [make()] method.");
         }
 
         $static = app($exportColumnClass, ['name' => $name]);

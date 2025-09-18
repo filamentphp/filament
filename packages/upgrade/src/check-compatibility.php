@@ -1,5 +1,6 @@
 <?php
 
+use function Laravel\Prompts\confirm;
 use function Termwind\render;
 
 render('<p class="text-blue font-bold">Checking PHP version compatibility with v4...</p>');
@@ -179,6 +180,22 @@ foreach ($plugins as $plugin) {
             }
         }
 
+        // If still unknown and we couldn't fetch any versions from Packagist, but the package exists locally in vendor,
+        // assume it's a private/non-Packagist package and do not block the upgrade.
+        if ($compatibility === null) {
+            $stableEmpty = empty($GLOBALS['FILAMENT_UPGRADE_PACKAGIST']['versions'][$plugin]['stable'] ?? []);
+            $devEmpty = empty($GLOBALS['FILAMENT_UPGRADE_PACKAGIST']['versions'][$plugin]['dev'] ?? []);
+            $isInstalledLocally = file_exists("vendor/{$plugin}/composer.json");
+
+            if ($stableEmpty && $devEmpty && $isInstalledLocally) {
+                // Mark as compatible (unknown) to avoid blocking; we cache this decision.
+                $compatibility = [
+                    'version' => 'unknown',
+                    'isPrerelease' => false,
+                ];
+            }
+        }
+
         if (! array_key_exists($plugin, $GLOBALS['FILAMENT_UPGRADE_PACKAGIST']['compatibility'])) {
             $GLOBALS['FILAMENT_UPGRADE_PACKAGIST']['compatibility'][$plugin] = $compatibility;
         }
@@ -199,11 +216,21 @@ if ($incompatiblePlugins) {
     render("<p class=\"text-red\">{$pluginList}</p>");
     render('<p>You could temporarily remove them from your composer.json file until they\'ve been upgraded, replace them with a similar plugin that is compatible with v4, wait for the plugins to be upgraded before upgrading your app, or even write PRs to help the authors upgrade them.</p>');
 
-    render(<<<'HTML'
-        <p class="bg-red-600 text-red-50 mt-1">
-            <strong>Upgrade aborted because of incompatible plugins</strong>
-        </p>
-    HTML);
+    $continue = confirm(
+        label: 'Do you want to continue even though there are incompatible plugins?',
+        default: false,
+        yes: 'Yes - Continue anyway',
+        no: 'No - Abort upgrade',
+        hint: 'You\'ll need to manually remove / fix the listed plugins.',
+    );
 
-    exit(1);
+    if (! $continue) {
+        render(<<<'HTML'
+            <p class="bg-red-600 text-red-50 mt-1">
+                <strong>Upgrade aborted because of incompatible plugins</strong>
+            </p>
+        HTML);
+
+        exit(1);
+    }
 }

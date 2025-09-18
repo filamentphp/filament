@@ -22,7 +22,7 @@ CreateAction::make()
 
 ## Customizing data before saving
 
-Sometimes, you may wish to modify form data before it is finally saved to the database. To do this, you may use the `mutateFormDataUsing()` method, which has access to the `$data` as an array, and returns the modified version:
+Sometimes, you may wish to modify form data before it is finally saved to the database. To do this, you may use the `mutateDataUsing()` method, which has access to the `$data` as an array, and returns the modified version:
 
 ```php
 use Filament\Actions\CreateAction;
