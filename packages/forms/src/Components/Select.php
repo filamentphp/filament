@@ -13,8 +13,8 @@ use Filament\Schemas\Components\StateCasts\BooleanStateCast;
 use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
 use Filament\Schemas\Components\StateCasts\EnumArrayStateCast;
 use Filament\Schemas\Components\StateCasts\EnumStateCast;
-use Filament\Schemas\Components\StateCasts\StringArrayStateCast;
-use Filament\Schemas\Components\StateCasts\StringStateCast;
+use Filament\Schemas\Components\StateCasts\OptionsArrayStateCast;
+use Filament\Schemas\Components\StateCasts\OptionStateCast;
 use Filament\Schemas\Schema;
 use Filament\Support\Components\Attributes\ExposedLivewireMethod;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
@@ -1424,10 +1424,10 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         }
 
         if ($this->isMultiple()) {
-            return [app(StringArrayStateCast::class)];
+            return [app(OptionsArrayStateCast::class)];
         }
 
-        return [app(StringStateCast::class, ['isNullable' => true])];
+        return [app(OptionStateCast::class, ['isNullable' => true])];
     }
 
     /**

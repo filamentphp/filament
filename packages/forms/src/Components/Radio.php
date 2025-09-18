@@ -5,7 +5,7 @@ namespace Filament\Forms\Components;
 use Closure;
 use Filament\Schemas\Components\StateCasts\BooleanStateCast;
 use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
-use Filament\Schemas\Components\StateCasts\StringStateCast;
+use Filament\Schemas\Components\StateCasts\OptionStateCast;
 
 class Radio extends Field implements Contracts\CanDisableOptions
 {
@@ -68,7 +68,7 @@ class Radio extends Field implements Contracts\CanDisableOptions
             return parent::getDefaultStateCasts();
         }
 
-        return [app(StringStateCast::class, ['isNullable' => true])];
+        return [app(OptionStateCast::class, ['isNullable' => true])];
     }
 
     /**
