@@ -23,7 +23,7 @@ Why rebuild dashboards, forms, and tables from scratch every time?
 
 ## Contributing
 
-Please see our [contributing guide](https://filamentphp.com/docs/support/contributing).
+Please see our [contributing guide](https://filamentphp.com/docs/4.x/introduction/contributing).
 
 ## Need Help?
 

@@ -52,12 +52,24 @@ export default ({ livewireId }) => ({
     openModal() {
         const id = this.generateModalId(this.actionNestingIndex)
 
-        this.$dispatch('open-modal', { id })
+        document.dispatchEvent(
+            new CustomEvent('open-modal', {
+                bubbles: true,
+                composed: true,
+                detail: { id },
+            }),
+        )
     },
 
     closeModal() {
         const id = this.generateModalId(this.actionNestingIndex)
 
-        this.$dispatch('close-modal-quietly', { id })
+        document.dispatchEvent(
+            new CustomEvent('close-modal-quietly', {
+                bubbles: true,
+                composed: true,
+                detail: { id },
+            }),
+        )
     },
 })

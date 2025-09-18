@@ -4,12 +4,12 @@ namespace Filament\Forms\Components\Builder;
 
 use BackedEnum;
 use Closure;
-use Exception;
 use Filament\Forms\Components\Concerns;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Concerns\HasLabel;
 use Filament\Schemas\Components\Concerns\HasName;
 use Illuminate\Contracts\Support\Htmlable;
+use InvalidArgumentException;
 
 class Block extends Component
 {
@@ -35,7 +35,7 @@ class Block extends Component
         $name ??= static::getDefaultName();
 
         if (blank($name)) {
-            throw new Exception("Block of class [$blockClass] must have a unique name, passed to the [make()] method.");
+            throw new InvalidArgumentException("Block of class [$blockClass] must have a unique name, passed to the [make()] method.");
         }
 
         $static = app($blockClass, ['name' => $name]);

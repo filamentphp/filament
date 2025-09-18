@@ -27,7 +27,13 @@ export default ({ id }) => ({
         this.$nextTick(() => {
             this.isOpen = true
 
-            this.$dispatch('x-modal-opened')
+            document.dispatchEvent(
+                new CustomEvent('x-modal-opened', {
+                    bubbles: true,
+                    composed: true,
+                    detail: { id },
+                }),
+            )
         })
     },
 })

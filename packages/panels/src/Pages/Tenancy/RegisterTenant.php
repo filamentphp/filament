@@ -205,9 +205,4 @@ abstract class RegisterTenant extends SimplePage
                     ->sticky($this->areFormActionsSticky()),
             ]);
     }
-
-    public function getDefaultTestingSchemaName(): ?string
-    {
-        return 'form';
-    }
 }

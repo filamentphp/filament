@@ -481,6 +481,7 @@ return [
             'bold' => 'عريض',
             'bullet_list' => 'قائمة نقطية',
             'clear_formatting' => 'مسح التنسيق',
+            'code' => 'كود',
             'code_block' => 'نص برمجي',
             'custom_blocks' => 'الكتل المخصصة',
             'details' => 'التفاصيل',
@@ -592,6 +593,11 @@ return [
     'text_input' => [
 
         'actions' => [
+
+            'copy' => [
+                'label' => 'نسخ',
+                'message' => 'تم النسخ',
+            ],
 
             'hide_password' => [
                 'label' => 'إخفاء كلمة المرور',

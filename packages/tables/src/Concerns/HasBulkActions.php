@@ -2,7 +2,6 @@
 
 namespace Filament\Tables\Concerns;
 
-use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\BulkAction;
 use Filament\Schemas\Schema;
@@ -13,6 +12,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\LazyCollection;
+use LogicException;
+
+use function Livewire\invade;
 
 trait HasBulkActions
 {
@@ -204,12 +206,6 @@ trait HasBulkActions
 
         $table = $this->getTable();
 
-        if ($shouldFetchSelectedRecords && $table->getRelationship() instanceof BelongsToMany && $table->allowsDuplicates()) {
-            return $this->cachedSelectedTableRecords = $this->hydratePivotRelationForTableRecords(
-                $this->getSelectedTableRecordsQuery($shouldFetchSelectedRecords, $chunkSize)->get(),
-            );
-        }
-
         if (! $table->hasQuery()) {
             $resolveSelectedRecords = $table->getResolveSelectedRecordsCallback();
 
@@ -227,7 +223,7 @@ trait HasBulkActions
             $maxSelectableRecords = $table->getMaxSelectableRecords();
 
             if ($maxSelectableRecords && ($resolvedSelectedRecords->count() > $maxSelectableRecords)) {
-                throw new Exception("The total count of selected records [{$resolvedSelectedRecords->count()}] must not exceed the maximum selectable records limit [{$maxSelectableRecords}].");
+                throw new LogicException("The total count of selected records [{$resolvedSelectedRecords->count()}] must not exceed the maximum selectable records limit [{$maxSelectableRecords}].");
             }
 
             return $this->cachedSelectedTableRecords = $resolvedSelectedRecords;
@@ -243,11 +239,18 @@ trait HasBulkActions
             return $this->cachedSelectedTableRecords = $query->toBase()->pluck($query->getModel()->getQualifiedKeyName());
         }
 
+        if ($chunkSize && $table->getRelationship() instanceof BelongsToMany && ! $table->allowsDuplicates()) {
+            $invadedRelationship = invade($table->getRelationship());
+
+            return $this->cachedSelectedTableRecords = $query->lazyById($chunkSize)
+                ->tapEach(fn (Model $record) => $invadedRelationship->hydratePivotRelation([$record]));
+        }
+
         if ($chunkSize) {
             return $this->cachedSelectedTableRecords = $query->lazyById($chunkSize);
         }
 
-        return $this->cachedSelectedTableRecords = $query->get();
+        return $this->cachedSelectedTableRecords = $this->hydratePivotRelationForTableRecords($query->get());
     }
 
     public function getSelectedTableRecordsQuery(bool $shouldFetchSelectedRecords = true, ?int $chunkSize = null): Builder

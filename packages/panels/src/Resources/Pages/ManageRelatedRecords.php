@@ -33,6 +33,7 @@ use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Livewire\Attributes\Url;
 
 use function Filament\authorize;
@@ -180,6 +181,10 @@ class ManageRelatedRecords extends Page implements Tables\Contracts\HasTable
 
     public function getDefaultActionRecord(Action $action): ?Model
     {
+        if ($action instanceof CreateAction) {
+            return null;
+        }
+
         if ($action->getTable()) {
             return null;
         }
@@ -187,8 +192,42 @@ class ManageRelatedRecords extends Page implements Tables\Contracts\HasTable
         return $this->getRecord();
     }
 
+    public function getDefaultActionRelationship(Action $action): ?Relation
+    {
+        if ($action instanceof CreateAction) {
+            return $this->getRelationship();
+        }
+
+        return null;
+    }
+
+    /**
+     * @return ?class-string<Model>
+     */
+    public function getDefaultActionModel(Action $action): ?string
+    {
+        if ($action instanceof CreateAction) {
+            return $this->getTable()->getModel();
+        }
+
+        return parent::getDefaultActionModel($action);
+    }
+
+    public function getDefaultActionModelLabel(Action $action): ?string
+    {
+        if ($action instanceof CreateAction) {
+            return $this->getTable()->getModelLabel();
+        }
+
+        return parent::getDefaultActionModelLabel($action);
+    }
+
     public function getDefaultActionRecordTitle(Action $action): ?string
     {
+        if ($action instanceof CreateAction) {
+            return null;
+        }
+
         if ($action->getTable()) {
             return null;
         }

@@ -15,7 +15,7 @@ return [
         ],
 
         'open_database_notifications' => [
-            'label' => 'Notifications hawnna',
+            'label' => 'Hriattîrna hawnna',
         ],
 
         'open_user_menu' => [
@@ -41,7 +41,7 @@ return [
             ],
 
             'light' => [
-                'label' => 'Theme eng hmanna',
+                'label' => 'Theme êng hmanna',
             ],
 
             'system' => [

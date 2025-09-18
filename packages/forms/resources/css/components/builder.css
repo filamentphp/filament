@@ -94,7 +94,7 @@
     }
 
     & .fi-fo-builder-add-between-items-ctn {
-        @apply relative -top-6 my-0 h-0;
+        @apply relative -top-2 my-0 h-0;
     }
 
     & .fi-fo-builder-add-between-items {
@@ -106,11 +106,11 @@
     }
 
     & .fi-fo-builder-label-between-items-ctn {
-        @apply relative border-t border-gray-200 dark:border-white/10;
+        @apply relative top-2 border-t border-gray-200 dark:border-white/10;
     }
 
     & .fi-fo-builder-label-between-items {
-        @apply absolute -top-3 left-3 px-1 text-sm font-medium;
+        @apply absolute start-3 -top-2.5 px-1 text-sm font-medium;
     }
 
     & .fi-fo-builder-block-picker {

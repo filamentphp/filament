@@ -161,6 +161,10 @@ trait CanGenerateModelForms
                 if (str($componentName)->contains(['phone', 'tel'])) {
                     $componentData['tel'] = [];
                 }
+
+                if (in_array($componentName, ['url', 'website']) || str($componentName)->endsWith(['_url', '_website'])) {
+                    $componentData['url'] = [];
+                }
             }
 
             if ($componentData['type'] === FileUpload::class) {

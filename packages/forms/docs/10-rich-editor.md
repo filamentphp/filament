@@ -225,6 +225,26 @@ RichContentRenderer::make($record->content)
     ->toHtml()
 ```
 
+### Validating uploaded images
+
+You may use the `fileAttachmentsAcceptedFileTypes()` method to control a list of accepted mime types for uploaded images. By default, `image/png`, `image/jpeg`, `image/gif`, and `image/webp` are accepted:
+
+```php
+use Filament\Forms\Components\RichEditor;
+
+RichEditor::make('content')
+    ->fileAttachmentsAcceptedFileTypes(['image/png', 'image/jpeg'])
+```
+
+You may use the `fileAttachmentsMaxSize()` method to control the maximum file size for uploaded images. The size is specified in kilobytes. By default, the maximum size is 12288 KB (12 MB):
+
+```php
+use Filament\Forms\Components\RichEditor;
+
+RichEditor::make('content')
+    ->fileAttachmentsMaxSize(5120) // 5 MB
+```
+
 ## Using custom blocks
 
 Custom blocks are elements that users can drag and drop into the rich editor. You can define custom blocks that user can insert into the rich editor using the `customBlocks()` method:
@@ -607,7 +627,7 @@ class HighlightRichContentPlugin implements RichContentPlugin
                 ->jsHandler('$getEditor()?.chain().focus().toggleHighlight().run()')
                 ->icon(Heroicon::CursorArrowRays),
             RichEditorTool::make('highlightWithCustomColor')
-                ->action(arguments: '{ color: $getEditor().getAttributes(\'mark\')?.data-color }')
+                ->action(arguments: '{ color: $getEditor().getAttributes(\'highlight\')?.[\'data-color\'] }')
                 ->icon(Heroicon::CursorArrowRipple),
         ];
     }

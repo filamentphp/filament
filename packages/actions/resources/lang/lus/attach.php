@@ -4,11 +4,11 @@ return [
 
     'single' => [
 
-        'label' => 'Attach',
+        'label' => 'Behtîrna',
 
         'modal' => [
 
-            'heading' => 'Attach :label',
+            'heading' => ':Label behtîrna',
 
             'fields' => [
 
@@ -21,11 +21,11 @@ return [
             'actions' => [
 
                 'attach' => [
-                    'label' => 'Attach',
+                    'label' => 'Behtîrna',
                 ],
 
                 'attach_another' => [
-                    'label' => 'Attach & attach another',
+                    'label' => 'Pakhat behtîra adang behtîr lehna',
                 ],
 
             ],
@@ -35,7 +35,7 @@ return [
         'notifications' => [
 
             'attached' => [
-                'title' => 'Attached',
+                'title' => 'Behtîr a ni e.',
             ],
 
         ],

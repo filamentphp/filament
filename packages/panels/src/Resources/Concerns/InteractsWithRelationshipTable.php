@@ -154,6 +154,9 @@ trait InteractsWithRelationshipTable
             ->authorizeReorder(fn (): bool => $this->canReorder());
 
         if ($relatedResource = static::getRelatedResource()) {
+            $table->modelLabel($relatedResource::getModelLabel());
+            $table->pluralModelLabel($relatedResource::getPluralModelLabel());
+
             $relatedResource::configureTable($table);
         }
 

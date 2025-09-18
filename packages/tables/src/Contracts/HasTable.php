@@ -38,6 +38,11 @@ interface HasTable
      */
     public function getTableFilterState(string $name): ?array;
 
+    /**
+     * @return array<string, mixed> | null
+     */
+    public function getTableFilterFormState(string $name): ?array;
+
     public function getSelectedTableRecords(bool $shouldFetchSelectedRecords = true, ?int $chunkSize = null): EloquentCollection | Collection | LazyCollection;
 
     public function getSelectedTableRecordsQuery(bool $shouldFetchSelectedRecords = true, ?int $chunkSize = null): Builder;
@@ -64,7 +69,7 @@ interface HasTable
 
     public function getTableRecordsPerPage(): int | string | null;
 
-    public function getTablePage(): int;
+    public function getTablePage(): int | string;
 
     public function getTableSortColumn(): ?string;
 

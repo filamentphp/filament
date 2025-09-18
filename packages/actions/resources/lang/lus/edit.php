@@ -4,16 +4,16 @@ return [
 
     'single' => [
 
-        'label' => 'Edit',
+        'label' => 'Tihdikna',
 
         'modal' => [
 
-            'heading' => 'Edit :label',
+            'heading' => ':Label tihdikna',
 
             'actions' => [
 
                 'save' => [
-                    'label' => 'Save changes',
+                    'label' => 'Thlâkthlengna',
                 ],
 
             ],
@@ -23,7 +23,7 @@ return [
         'notifications' => [
 
             'saved' => [
-                'title' => 'Saved',
+                'title' => 'A in save e.',
             ],
 
         ],

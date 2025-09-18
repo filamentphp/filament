@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Posts\Schemas;
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Schema;
+use Filament\Tests\Fixtures\Models\Post;
 
 class PostInfolist
 {
@@ -12,19 +13,37 @@ class PostInfolist
     {
         return $schema
             ->components([
-                TextEntry::make('author.name'),
+                TextEntry::make('author.name')
+                    ->label('Author'),
+                TextEntry::make('content')
+                    ->placeholder('-')
+                    ->columnSpanFull(),
                 IconEntry::make('is_published')
                     ->boolean(),
                 TextEntry::make('rating')
                     ->numeric(),
+                TextEntry::make('tags')
+                    ->placeholder('-')
+                    ->columnSpanFull(),
                 TextEntry::make('title'),
-                TextEntry::make('string_backed_enum'),
+                TextEntry::make('json')
+                    ->placeholder('-')
+                    ->columnSpanFull(),
+                TextEntry::make('json_array_of_objects')
+                    ->placeholder('-')
+                    ->columnSpanFull(),
+                TextEntry::make('string_backed_enum')
+                    ->badge()
+                    ->placeholder('-'),
                 TextEntry::make('created_at')
-                    ->dateTime(),
+                    ->dateTime()
+                    ->placeholder('-'),
                 TextEntry::make('updated_at')
-                    ->dateTime(),
+                    ->dateTime()
+                    ->placeholder('-'),
                 TextEntry::make('deleted_at')
-                    ->dateTime(),
+                    ->dateTime()
+                    ->visible(fn (Post $record): bool => $record->trashed()),
             ]);
     }
 }

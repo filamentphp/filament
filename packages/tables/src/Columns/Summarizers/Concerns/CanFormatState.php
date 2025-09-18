@@ -2,6 +2,7 @@
 
 namespace Filament\Tables\Columns\Summarizers\Concerns;
 
+use BackedEnum;
 use Closure;
 use Filament\Support\Concerns\CanConfigureCommonMark;
 use Filament\Support\Enums\ArgumentValue;
@@ -47,7 +48,7 @@ trait CanFormatState
         return $this;
     }
 
-    public function money(string | Closure | null $currency = null, int $divideBy = 0, string | Closure | null $locale = null, int | Closure | null $decimalPlaces = null): static
+    public function money(string | BackedEnum | Closure | null $currency = null, int $divideBy = 0, string | BackedEnum | Closure | null $locale = null, int | Closure | null $decimalPlaces = null): static
     {
         $this->formatStateUsing(static function ($state, Summarizer $summarizer) use ($currency, $divideBy, $locale, $decimalPlaces): ?string {
             if (blank($state)) {
@@ -64,6 +65,14 @@ trait CanFormatState
 
             if ($divideBy) {
                 $state /= $divideBy;
+            }
+
+            if ($currency instanceof BackedEnum) {
+                $currency = (string) $currency->value;
+            }
+
+            if ($locale instanceof BackedEnum) {
+                $locale = (string) $locale->value;
             }
 
             return Number::currency($state, $currency, $locale, $decimalPlaces);
