@@ -345,6 +345,7 @@ export default Node.create({
                     },
                 }
             } else {
+                const preservedExtraAttributes = s?.extraAttributes
                 s = {
                     ...getMentionSuggestion({
                         items: async ({ query }) => {
@@ -364,6 +365,8 @@ export default Node.create({
                         },
                     }),
                     char,
+                    // Preserve extraAttributes so it reaches the command insert attrs
+                    ...(preservedExtraAttributes ? { extraAttributes: preservedExtraAttributes } : {}),
                 }
             }
 
