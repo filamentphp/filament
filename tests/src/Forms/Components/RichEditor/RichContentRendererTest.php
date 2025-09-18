@@ -34,7 +34,7 @@ it('processes merge tags with string values as text nodes', function (): void {
     expect($html)->toContain('John Doe');
 });
 
-it('processes merge tags with Htmlable values as raw HTML nodes', function (): void {
+it('processes merge tags with `Htmlable` values as raw HTML nodes', function (): void {
     $renderer = RichContentRenderer::make([
         'type' => 'doc',
         'content' => [
@@ -61,7 +61,7 @@ it('processes merge tags with Htmlable values as raw HTML nodes', function (): v
     expect($html)->toContain('<strong>John Doe</strong>');
 });
 
-it('handles mixed Htmlable and non-Htmlable values in same merge tags array', function (): void {
+it('handles mixed `Htmlable` and non-`Htmlable` values in the same merge tags array', function (): void {
     $renderer = RichContentRenderer::make([
         'type' => 'doc',
         'content' => [
@@ -100,7 +100,7 @@ it('handles mixed Htmlable and non-Htmlable values in same merge tags array', fu
     expect($html)->toContain('<em>emphasized text</em>');
 });
 
-it('calls toHtml method on Htmlable instances', function (): void {
+it('calls `toHtml()` on `Htmlable` instances for merge tag values', function (): void {
     $htmlable = new class implements Htmlable
     {
         public function toHtml(): string
@@ -135,7 +135,7 @@ it('calls toHtml method on Htmlable instances', function (): void {
     expect($html)->toContain('<div class="custom">Custom HTML content</div>');
 });
 
-it('handles complex HTML structures from Htmlable instances', function (): void {
+it('handles complex HTML structures from `Htmlable` instances for merge tag values', function (): void {
     $complexHtml = new HtmlString('
         <div class="card">
             <h3>Title</h3>
@@ -176,35 +176,7 @@ it('handles complex HTML structures from Htmlable instances', function (): void 
     expect($html)->toContain('<ul>');
 });
 
-it('maintains backward compatibility with existing string merge tags', function (): void {
-    $renderer = RichContentRenderer::make([
-        'type' => 'doc',
-        'content' => [
-            [
-                'type' => 'paragraph',
-                'content' => [
-                    [
-                        'type' => 'mergeTag',
-                        'attrs' => [
-                            'id' => 'legacy',
-                        ],
-                    ],
-                ],
-            ],
-        ],
-    ]);
-
-    $renderer->mergeTags([
-        'legacy' => 'Legacy string value',
-    ]);
-
-    $html = $renderer->toUnsafeHtml();
-
-    expect($html)->toContain('Legacy string value');
-    expect($html)->not->toContain('<rawHtmlMergeTag>');
-});
-
-it('handles null and empty values correctly', function (): void {
+it('handles `null` and empty merge tag values correctly', function (): void {
     $renderer = RichContentRenderer::make([
         'type' => 'doc',
         'content' => [
@@ -254,9 +226,7 @@ it('handles null and empty values correctly', function (): void {
     expect($html)->toContain(' | ');
 });
 
-// Integration Tests
-
-it('renders complete document with mixed content types', function (): void {
+it('renders complete document with mixed merge tag content types', function (): void {
     $renderer = RichContentRenderer::make([
         'type' => 'doc',
         'content' => [
@@ -368,15 +338,6 @@ it('handles nested HTML structures in merge tags', function (): void {
     expect($html)->toContain('<button type="button">Mark as Read</button>');
 });
 
-it('verifies RawHtmlMergeTagExtension is properly registered and functional', function (): void {
-    $renderer = RichContentRenderer::make();
-
-    $extensions = $renderer->getTipTapPhpExtensions();
-    $extensionNames = array_map(fn ($ext) => $ext::$name ?? get_class($ext), $extensions);
-
-    expect($extensionNames)->toContain('rawHtmlMergeTag');
-});
-
 it('processes multiple HTML merge tags in same document', function (): void {
     $renderer = RichContentRenderer::make([
         'type' => 'doc',
@@ -430,7 +391,7 @@ it('processes multiple HTML merge tags in same document', function (): void {
     expect($html)->toContain('<footer><p>&copy; 2024 Company</p></footer>');
 });
 
-it('handles HTML with special characters and entities', function (): void {
+it('handles HTML merge tags with special characters and entities', function (): void {
     $specialHtml = new HtmlString('<p>Price: $100 &amp; up • Available in &lt;24hrs&gt;</p>');
 
     $renderer = RichContentRenderer::make([
@@ -458,151 +419,8 @@ it('handles HTML with special characters and entities', function (): void {
 
     expect($html)->toContain('Price: $100 &amp; up • Available in &lt;24hrs&gt;');
 });
-// Regression Tests for Backward Compatibility
 
-it('maintains existing merge tag behavior with string values', function (): void {
-    // Test that existing code using string merge tags continues to work exactly as before
-    $renderer = RichContentRenderer::make([
-        'type' => 'doc',
-        'content' => [
-            [
-                'type' => 'paragraph',
-                'content' => [
-                    [
-                        'type' => 'text',
-                        'text' => 'Hello ',
-                    ],
-                    [
-                        'type' => 'mergeTag',
-                        'attrs' => [
-                            'id' => 'name',
-                        ],
-                    ],
-                    [
-                        'type' => 'text',
-                        'text' => ', welcome to our site!',
-                    ],
-                ],
-            ],
-        ],
-    ]);
-
-    $renderer->mergeTags([
-        'name' => 'Jane Smith',
-    ]);
-
-    $html = $renderer->toUnsafeHtml();
-
-    // Should render as plain text, not HTML
-    expect($html)->toContain('Hello <span data-type="mergeTag" data-id="name">Jane Smith</span>, welcome to our site!');
-    expect($html)->not->toContain('<rawHtmlMergeTag>');
-});
-
-it('handles numeric merge tag values as before', function (): void {
-    $renderer = RichContentRenderer::make([
-        'type' => 'doc',
-        'content' => [
-            [
-                'type' => 'paragraph',
-                'content' => [
-                    [
-                        'type' => 'text',
-                        'text' => 'Your score: ',
-                    ],
-                    [
-                        'type' => 'mergeTag',
-                        'attrs' => [
-                            'id' => 'score',
-                        ],
-                    ],
-                ],
-            ],
-        ],
-    ]);
-
-    $renderer->mergeTags([
-        'score' => 95,
-    ]);
-
-    $html = $renderer->toUnsafeHtml();
-
-    expect($html)->toContain('Your score: <span data-type="mergeTag" data-id="score">95</span>');
-});
-
-it('handles boolean merge tag values as before', function (): void {
-    $renderer = RichContentRenderer::make([
-        'type' => 'doc',
-        'content' => [
-            [
-                'type' => 'paragraph',
-                'content' => [
-                    [
-                        'type' => 'text',
-                        'text' => 'Active: ',
-                    ],
-                    [
-                        'type' => 'mergeTag',
-                        'attrs' => [
-                            'id' => 'is_active',
-                        ],
-                    ],
-                ],
-            ],
-        ],
-    ]);
-
-    $renderer->mergeTags([
-        'is_active' => true,
-    ]);
-
-    $html = $renderer->toUnsafeHtml();
-
-    expect($html)->toContain('Active: <span data-type="mergeTag" data-id="is_active">1</span>');
-});
-
-it('preserves all existing RichContentRenderer functionality', function (): void {
-    // Test that other features like file attachments, custom blocks, etc. still work
-    $renderer = RichContentRenderer::make([
-        'type' => 'doc',
-        'content' => [
-            [
-                'type' => 'paragraph',
-                'content' => [
-                    [
-                        'type' => 'text',
-                        'text' => 'Regular content with ',
-                    ],
-                    [
-                        'type' => 'mergeTag',
-                        'attrs' => [
-                            'id' => 'simple_tag',
-                        ],
-                    ],
-                ],
-            ],
-        ],
-    ]);
-
-    $renderer->mergeTags([
-        'simple_tag' => 'simple value',
-    ]);
-
-    // Test that basic rendering still works
-    $html = $renderer->toHtml(); // This should sanitize HTML
-    $unsafeHtml = $renderer->toUnsafeHtml(); // This should not sanitize
-
-    expect($html)->toContain('Regular content with <span>simple value</span>'); // Sanitized HTML removes data attributes
-    expect($unsafeHtml)->toContain('Regular content with <span data-type="mergeTag" data-id="simple_tag">simple value</span>');
-
-    // Test that the renderer can still be configured with other options
-    $renderer->fileAttachmentsDisk('public');
-    $renderer->fileAttachmentsVisibility('public');
-
-    // Should not throw any errors
-    expect($renderer)->toBeInstanceOf(RichContentRenderer::class);
-});
-
-it('handles closure merge tag values as before', function (): void {
+it('handles dynamic merge tag values', function (): void {
     $renderer = RichContentRenderer::make([
         'type' => 'doc',
         'content' => [

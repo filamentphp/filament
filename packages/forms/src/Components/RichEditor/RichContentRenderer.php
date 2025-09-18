@@ -220,6 +220,15 @@ class RichContentRenderer implements Htmlable
 
     protected function processMergeTags(Editor $editor): void
     {
+        $editor->descendants(function (object &$node): void {
+            if ($node->type !== 'rawHtmlMergeTag') {
+                return;
+            }
+
+            $node->type = 'mergeTag';
+            unset($node->html);
+        });
+
         if (blank($this->mergeTags)) {
             return;
         }
