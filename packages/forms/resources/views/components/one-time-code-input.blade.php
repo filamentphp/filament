@@ -1,5 +1,6 @@
 @php
     $fieldWrapperView = $getFieldWrapperView();
+    $placeholder = $getPlaceholder();
     $extraAttributes = $getExtraAttributeBag()
         ->merge($getExtraInputAttributes(), escape: false)
         ->merge($getExtraAlpineAttributes(), escape: false)
@@ -9,7 +10,7 @@
             'disabled' => $isDisabled(),
             'id' => $getId(),
             'length' => $getLength(),
-            'placeholder' => $getPlaceholder(),
+            'placeholder' => filled($placeholder) ? e($placeholder) : null,
             'readonly' => $isReadOnly(),
             'required' => $isRequired() && (! $isConcealed()),
             $applyStateBindingModifiers('wire:model') => $getStatePath(),

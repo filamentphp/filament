@@ -68,7 +68,7 @@ trait HasUserMenu
     {
         $action = Action::make('logout')
             ->label(__('filament-panels::layout.actions.logout.label'))
-            ->icon(FilamentIcon::resolve(PanelsIconAlias::USER_MENU_LOGOUT_BUTTON) ?? Heroicon::ArrowLeftOnRectangle)
+            ->icon(FilamentIcon::resolve(PanelsIconAlias::USER_MENU_LOGOUT_BUTTON) ?? Heroicon::ArrowLeftEndOnRectangle)
             ->url(Filament::getLogoutUrl())
             ->postToUrl()
             ->sort(PHP_INT_MAX);

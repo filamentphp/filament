@@ -78,7 +78,7 @@ class Wizard extends Component
             }
 
             return Str::slug(Str::transliterate($label, strict: true)) . '::' . (filled($statePath) ? "{$statePath}::wizard" : 'wizard');
-        });
+        }, isInheritable: false);
 
         $this->registerActions([
             fn (Wizard $component): Action => $component->getNextAction(),

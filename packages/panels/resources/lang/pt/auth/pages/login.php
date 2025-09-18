@@ -43,6 +43,30 @@ return [
 
     ],
 
+    'multi_factor' => [
+
+        'heading' => 'Verificar a sua identidade',
+
+        'subheading' => 'Para continuar a iniciar sessão, tem de verificar a sua identidade.',
+
+        'form' => [
+
+            'provider' => [
+                'label' => 'Como pretende verificar?',
+            ],
+
+            'actions' => [
+
+                'authenticate' => [
+                    'label' => 'Confirmar início de sessão',
+                ],
+
+            ],
+
+        ],
+
+    ],
+
     'messages' => [
 
         'failed' => 'As credênciais não correspondem aos nossos registos.',

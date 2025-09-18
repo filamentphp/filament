@@ -109,7 +109,13 @@ class RichContentAttribute implements Htmlable
 
     public function toHtml(): string
     {
-        return RichContentRenderer::make($this->model->getAttribute($this->name))
+        $content = $this->model->getAttribute($this->name);
+
+        if (blank($content)) {
+            return '';
+        }
+
+        return RichContentRenderer::make($content)
             ->plugins($this->getPlugins())
             ->customBlocks($this->customBlocks)
             ->mergeTags($this->mergeTags)

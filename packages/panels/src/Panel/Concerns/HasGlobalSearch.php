@@ -3,12 +3,12 @@
 namespace Filament\Panel\Concerns;
 
 use Closure;
-use Exception;
 use Filament\GlobalSearch\Providers\Contracts\GlobalSearchProvider;
 use Filament\GlobalSearch\Providers\DefaultGlobalSearchProvider;
 use Filament\Support\Enums\Platform;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Stringable;
+use InvalidArgumentException;
 
 trait HasGlobalSearch
 {
@@ -26,7 +26,7 @@ trait HasGlobalSearch
     public function globalSearch(string | bool $provider = true): static
     {
         if (is_string($provider) && (! in_array(GlobalSearchProvider::class, class_implements($provider)))) {
-            throw new Exception("Global search provider {$provider} does not implement the [" . GlobalSearchProvider::class . '] interface.');
+            throw new InvalidArgumentException("Global search provider {$provider} does not implement the [" . GlobalSearchProvider::class . '] interface.');
         }
 
         $this->globalSearchProvider = $provider;

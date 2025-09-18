@@ -986,6 +986,15 @@ export default {
             deviceScaleFactor: 3,
         },
     },
+    'forms/fields/repeater/table-compact': {
+        url: 'forms/fields',
+        selector: '#repeaterTableCompact',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
     'forms/fields/repeater/reorderable-with-buttons': {
         url: 'forms/fields',
         selector: '#repeaterReorderableWithButtons',

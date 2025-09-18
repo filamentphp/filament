@@ -10,6 +10,7 @@
     'afterHeader' => null,
     'aside' => false,
     'collapsed' => false,
+    'collapseId' => null,
     'collapsible' => false,
     'compact' => false,
     'contained' => true,
@@ -41,14 +42,14 @@
 <section
     {{-- TODO: Investigate Livewire bug - https://github.com/filamentphp/filament/pull/8511 --}}
     x-data="{
-        isCollapsed: @if ($persistCollapsed) $persist(@js($collapsed)).as(`section-${$el.id}-isCollapsed`) @else @js($collapsed) @endif,
+        isCollapsed: @if ($persistCollapsed) $persist(@js($collapsed)).as(`section-${@js($collapseId) ?? $el.id}-isCollapsed`) @else @js($collapsed) @endif,
     }"
     @if ($collapsible)
-        x-on:collapse-section.window="if ($event.detail.id == $el.id) isCollapsed = true"
+        x-on:collapse-section.window="if ($event.detail.id == @js($collapseId) ?? $el.id) isCollapsed = true"
         x-on:expand="isCollapsed = false"
-        x-on:expand-section.window="if ($event.detail.id == $el.id) isCollapsed = false"
-        x-on:open-section.window="if ($event.detail.id == $el.id) isCollapsed = false"
-        x-on:toggle-section.window="if ($event.detail.id == $el.id) isCollapsed = ! isCollapsed"
+        x-on:expand-section.window="if ($event.detail.id == @js($collapseId) ?? $el.id) isCollapsed = false"
+        x-on:open-section.window="if ($event.detail.id == @js($collapseId) ?? $el.id) isCollapsed = false"
+        x-on:toggle-section.window="if ($event.detail.id == @js($collapseId) ?? $el.id) isCollapsed = ! isCollapsed"
         x-bind:class="isCollapsed && 'fi-collapsed'"
     @endif
     {{

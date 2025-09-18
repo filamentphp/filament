@@ -4,16 +4,16 @@ return [
 
     'single' => [
 
-        'label' => 'Edit',
+        'label' => 'Tihdikna',
 
         'modal' => [
 
-            'heading' => ':Label edit na',
+            'heading' => ':Label tihdikna',
 
             'actions' => [
 
                 'save' => [
-                    'label' => 'Thlak danglamna',
+                    'label' => 'Thlâkthlengna',
                 ],
 
             ],

@@ -28,6 +28,7 @@ use ReflectionMethod;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
+use Throwable;
 
 use function Laravel\Prompts\confirm;
 use function Laravel\Prompts\info;
@@ -244,46 +245,36 @@ class MakeRelationManagerCommand extends Command
             $this->configureRelatedResource();
 
             if (blank($this->relatedResourceFqn)) {
-                $this->configureFormSchemaFqn();
-
-                if (blank($this->formSchemaFqn)) {
-                    $this->configureIsGeneratedIfNotAlready();
-
-                    $this->isGenerated
-                        ? $this->configureRelatedModelFqnIfNotAlready()
-                        : $this->configureRecordTitleAttributeIfNotAlready();
-                }
-
                 $this->configureHasViewOperation();
 
-                if ($this->hasViewOperation) {
-                    $this->configureInfolistSchemaFqn();
+                $this->configureIsGeneratedIfNotAlready();
 
-                    if (blank($this->infolistSchemaFqn)) {
-                        $this->configureRecordTitleAttributeIfNotAlready();
+                if ($this->isGenerated) {
+                    $this->configureRelatedModelFqnIfNotAlready();
+                }
+
+                if (! $this->isGenerated) {
+                    $this->configureFormSchemaFqn();
+
+                    if ($this->hasViewOperation) {
+                        $this->configureInfolistSchemaFqn();
+                    }
+
+                    if (! $this->hasFileGenerationFlag(FileGenerationFlag::EMBEDDED_PANEL_RESOURCE_TABLES)) {
+                        $this->configureTableFqn();
                     }
                 }
 
-                if ($this->hasFileGenerationFlag(FileGenerationFlag::EMBEDDED_PANEL_RESOURCE_TABLES)) {
-                    $this->configureIsGeneratedIfNotAlready();
+                if (blank($this->formSchemaFqn) && (! $this->isGenerated)) {
+                    $this->configureRecordTitleAttributeIfNotAlready();
+                }
 
-                    $this->isGenerated
-                        ? $this->configureRelatedModelFqnIfNotAlready()
-                        : $this->configureRecordTitleAttributeIfNotAlready();
-                } else {
-                    $this->configureTableFqn();
+                if ($this->hasViewOperation && blank($this->infolistSchemaFqn) && (! $this->isGenerated)) {
+                    $this->configureRecordTitleAttributeIfNotAlready();
                 }
 
                 if (blank($this->tableFqn)) {
                     $this->configureRecordTitleAttributeIfNotAlready();
-
-                    $this->configureIsGeneratedIfNotAlready(
-                        question: 'Should the table columns be generated from the current database columns?',
-                    );
-
-                    if ($this->isGenerated) {
-                        $this->configureRelatedModelFqnIfNotAlready();
-                    }
 
                     $this->configureIsSoftDeletable();
 
@@ -421,9 +412,30 @@ class MakeRelationManagerCommand extends Command
 
         $relatedModel = $this->option('related-model');
 
-        $this->relatedModelFqn = filled($relatedModel) && class_exists($relatedModel)
-            ? $relatedModel
-            : $this->askForRelatedModel($this->relationship);
+        if (filled($relatedModel) && class_exists($relatedModel)) {
+            $this->relatedModelFqn = $relatedModel;
+
+            return;
+        }
+
+        try {
+            $resourceModelFqn = $this->resourceFqn::getModel();
+
+            if (
+                class_exists($resourceModelFqn) &&
+                method_exists($resourceModelFqn, $this->relationship) &&
+                (($relationshipInstance = app($resourceModelFqn)->{$this->relationship}()) instanceof Relation) &&
+                class_exists($relatedModel = $relationshipInstance->getRelated()::class)
+            ) {
+                $this->relatedModelFqn = $relatedModel;
+
+                return;
+            }
+        } catch (Throwable) {
+            //
+        }
+
+        $this->askForRelatedModel($this->relationship);
     }
 
     protected function configureRecordTitleAttributeIfNotAlready(): void
@@ -488,11 +500,11 @@ class MakeRelationManagerCommand extends Command
     protected function configureIsSoftDeletable(): void
     {
         $this->isSoftDeletable = $this->option('soft-deletes') || ((static::$shouldCheckModelsForSoftDeletes && filled($this->relatedModelFqn))
-            ? in_array(SoftDeletes::class, class_uses_recursive($this->relatedModelFqn))
-            : confirm(
-                label: 'Does the model use soft-deletes?',
-                default: false,
-            ));
+                ? in_array(SoftDeletes::class, class_uses_recursive($this->relatedModelFqn))
+                : confirm(
+                    label: 'Does the model use soft-deletes?',
+                    default: false,
+                ));
     }
 
     protected function configureRelationshipType(): void
@@ -507,6 +519,29 @@ class MakeRelationManagerCommand extends Command
             $this->relationshipType = BelongsToMany::class;
 
             return;
+        }
+
+        try {
+            $resourceModelFqn = $this->resourceFqn::getModel();
+
+            if (
+                class_exists($resourceModelFqn) &&
+                method_exists($resourceModelFqn, $this->relationship) &&
+                (($relationshipInstance = app($resourceModelFqn)->{$this->relationship}()) instanceof Relation) &&
+                class_exists($relationshipInstance->getRelated()::class) &&
+                in_array($relationshipInstance::class, [
+                    HasMany::class,
+                    BelongsToMany::class,
+                    MorphMany::class,
+                    MorphToMany::class,
+                ])
+            ) {
+                $this->relationshipType = $relationshipInstance::class;
+
+                return;
+            }
+        } catch (Throwable) {
+            //
         }
 
         $this->relationshipType = select(

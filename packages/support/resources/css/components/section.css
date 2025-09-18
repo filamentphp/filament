@@ -85,32 +85,40 @@
         }
     }
 
-    &.fi-section-not-contained:not(.fi-aside) {
-        @apply grid gap-y-4;
-
-        & > .fi-section-content-ctn {
-            @apply grid gap-y-4;
-        }
-
-        &.fi-divided {
-            & > .fi-section-content-ctn > .fi-section-content {
-                & > * {
-                    @apply py-6;
-                }
+    &.fi-section-not-contained {
+        &.fi-aside {
+            & > .fi-section-content-ctn {
+                @apply md:col-span-2;
             }
         }
 
-        &.fi-compact {
-            @apply gap-y-2.5;
+        &:not(.fi-aside) {
+            @apply grid gap-y-4;
 
             & > .fi-section-content-ctn {
-                @apply gap-y-2.5;
+                @apply grid gap-y-4;
             }
 
             &.fi-divided {
                 & > .fi-section-content-ctn > .fi-section-content {
                     & > * {
-                        @apply py-4;
+                        @apply py-6;
+                    }
+                }
+            }
+
+            &.fi-compact {
+                @apply gap-y-2.5;
+
+                & > .fi-section-content-ctn {
+                    @apply gap-y-2.5;
+                }
+
+                &.fi-divided {
+                    & > .fi-section-content-ctn > .fi-section-content {
+                        & > * {
+                            @apply py-4;
+                        }
                     }
                 }
             }

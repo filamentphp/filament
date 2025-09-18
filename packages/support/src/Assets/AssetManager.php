@@ -2,10 +2,10 @@
 
 namespace Filament\Support\Assets;
 
-use Exception;
 use Filament\Support\Colors\ColorManager;
 use Filament\Support\Facades\FilamentColor;
 use Illuminate\Support\Arr;
+use LogicException;
 
 class AssetManager
 {
@@ -122,7 +122,7 @@ class AssetManager
             return $component->getSrc();
         }
 
-        throw new Exception("Alpine component with ID [{$id}] not found for package [{$package}].");
+        throw new LogicException("Alpine component with ID [{$id}] not found for package [{$package}].");
     }
 
     /**
@@ -164,7 +164,7 @@ class AssetManager
             return $script->getSrc();
         }
 
-        throw new Exception("Script with ID [{$id}] not found for package [{$package}].");
+        throw new LogicException("Script with ID [{$id}] not found for package [{$package}].");
     }
 
     /**
@@ -244,7 +244,7 @@ class AssetManager
             return $style->getHref();
         }
 
-        throw new Exception("Stylesheet with ID [{$id}] not found for package [{$package}].");
+        throw new LogicException("Stylesheet with ID [{$id}] not found for package [{$package}].");
     }
 
     /**

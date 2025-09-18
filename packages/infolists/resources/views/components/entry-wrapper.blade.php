@@ -17,6 +17,7 @@
         $label ??= $entry->getLabel();
         $labelSrOnly ??= $entry->isLabelHidden();
         $url ??= $entry->getUrl();
+        $shouldOpenUrlInNewTab ??= $entry->shouldOpenUrlInNewTab();
     }
 
     if (! $alignment instanceof Alignment) {

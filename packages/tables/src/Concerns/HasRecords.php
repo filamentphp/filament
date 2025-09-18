@@ -2,7 +2,6 @@
 
 namespace Filament\Tables\Concerns;
 
-use Exception;
 use Filament\Support\ArrayRecord;
 use Illuminate\Contracts\Pagination\CursorPaginator;
 use Illuminate\Contracts\Pagination\Paginator;
@@ -12,6 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
+use LogicException;
 
 use function Livewire\invade;
 
@@ -101,10 +101,10 @@ trait HasRecords
 
             $records = $this->getTable()->evaluate($this->getTable()->getDataSource(), [
                 'columnSearches' => fn (): array => $this->getTableColumnSearches(),
-                'filters' => fn (): array => $this->tableFilters,
-                'page' => fn (): int => $this->getTablePage(),
-                'recordsPerPage' => fn (): int => $this->getTableRecordsPerPage(),
-                'search' => fn () => $this->getTableSearch(),
+                'filters' => fn (): ?array => $this->tableFilters,
+                'page' => fn (): int | string => $this->getTablePage(),
+                'recordsPerPage' => fn (): int | string => $this->getTableRecordsPerPage(),
+                'search' => fn (): ?string => $this->getTableSearch(),
                 'sort' => fn (): array => [$this->getTableSortColumn(), $this->getTableSortDirection()],
                 'sortColumn' => fn (): ?string => $this->getTableSortColumn(),
                 'sortDirection' => fn (): ?string => $this->getTableSortDirection(),
@@ -121,7 +121,11 @@ trait HasRecords
                 $collection = $records;
             }
 
-            $collection = $collection->mapWithKeys(function (array $record, string | int $key): array {
+            $collection = $collection->mapWithKeys(function (array | Model $record, string | int $key): array {
+                if ($record instanceof Model) {
+                    return [$record->getKey() => $record];
+                }
+
                 $keyName = ArrayRecord::getKeyName();
 
                 $record[$keyName] ??= $key;
@@ -161,7 +165,7 @@ trait HasRecords
         if (! $query) {
             $livewireClass = $this::class;
 
-            throw new Exception("Table [{$livewireClass}] must have a [query()], [relationship()], or [records()].");
+            throw new LogicException("Table [{$livewireClass}] must have a [query()], [relationship()], or [records()].");
         }
 
         if (
@@ -230,7 +234,7 @@ trait HasRecords
     public function getTableRecordKey(Model | array $record): string
     {
         if (is_array($record)) {
-            return $record[ArrayRecord::getKeyName()] ?? throw new Exception('Record arrays must have a unique [key] entry for identification.');
+            return $record[ArrayRecord::getKeyName()] ?? throw new LogicException('Record arrays must have a unique [key] entry for identification.');
         }
 
         $table = $this->getTable();

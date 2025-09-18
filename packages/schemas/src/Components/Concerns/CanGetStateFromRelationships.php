@@ -8,6 +8,10 @@ use Illuminate\Support\Collection;
 
 trait CanGetStateFromRelationships
 {
+    protected ?bool $hasMultipleStateRelationshipCache = null;
+
+    protected ?Relation $stateRelationshipCache = null;
+
     public function hasStateRelationship(Model $record): bool
     {
         return $this->getStateRelationship($record) !== null;
@@ -15,6 +19,10 @@ trait CanGetStateFromRelationships
 
     public function getStateRelationship(Model $record, ?string $statePath = null): ?Relation
     {
+        if ($this->stateRelationshipCache) {
+            return $this->stateRelationshipCache;
+        }
+
         if (blank($statePath) && (! str($this->getStateRelationshipPath())->contains('.'))) {
             return null;
         }
@@ -32,7 +40,38 @@ trait CanGetStateFromRelationships
             $record = $relationship->getRelated();
         }
 
-        return $relationship;
+        return $this->stateRelationshipCache = $relationship;
+    }
+
+    public function hasMultipleStateRelationship(Model $record): bool
+    {
+        if (isset($this->hasMultipleStateRelationshipCache)) {
+            return $this->hasMultipleStateRelationshipCache;
+        }
+
+        $relationships = explode('.', $this->getStateRelationshipName($record));
+
+        while (count($relationships)) {
+            $currentRelationshipName = array_shift($relationships);
+
+            $currentRelationshipValue = $record->getRelationValue($currentRelationshipName);
+
+            if ($currentRelationshipValue instanceof Collection) {
+                return $this->hasMultipleStateRelationshipCache = true;
+            }
+
+            if (! $currentRelationshipValue instanceof Model) {
+                break;
+            }
+
+            if (! count($relationships)) {
+                break;
+            }
+
+            $record = $currentRelationshipValue;
+        }
+
+        return $this->hasMultipleStateRelationshipCache = false;
     }
 
     /**
@@ -113,6 +152,6 @@ trait CanGetStateFromRelationships
 
     public function getStateRelationshipPath(): ?string
     {
-        return $this->getStatePath();
+        return $this->getStatePath(isAbsolute: false);
     }
 }
