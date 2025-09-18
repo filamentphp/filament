@@ -5,8 +5,8 @@ namespace Filament\Forms\Components;
 use Closure;
 use Filament\Actions\Action;
 use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
-use Filament\Schemas\Components\StateCasts\StringArrayStateCast;
-use Filament\Schemas\Components\StateCasts\StringStateCast;
+use Filament\Schemas\Components\StateCasts\OptionsArrayStateCast;
+use Filament\Schemas\Components\StateCasts\OptionStateCast;
 use Filament\Support\Enums\IconPosition;
 use Filament\Support\Icons\Heroicon;
 use Filament\Support\Services\RelationshipJoiner;
@@ -679,9 +679,9 @@ class ModalTableSelect extends Field
         }
 
         if ($this->isMultiple()) {
-            return [app(StringArrayStateCast::class)];
+            return [app(OptionsArrayStateCast::class)];
         }
 
-        return [app(StringStateCast::class, ['isNullable' => true])];
+        return [app(OptionStateCast::class, ['isNullable' => true])];
     }
 }

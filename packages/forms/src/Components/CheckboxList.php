@@ -6,7 +6,7 @@ use Closure;
 use Filament\Actions\Action;
 use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
 use Filament\Schemas\Components\StateCasts\EnumArrayStateCast;
-use Filament\Schemas\Components\StateCasts\StringArrayStateCast;
+use Filament\Schemas\Components\StateCasts\OptionsArrayStateCast;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Filament\Support\Enums\Size;
 use Filament\Support\Services\RelationshipJoiner;
@@ -338,7 +338,7 @@ class CheckboxList extends Field implements Contracts\CanDisableOptions, Contrac
             return parent::getDefaultStateCasts();
         }
 
-        return [app(StringArrayStateCast::class)];
+        return [app(OptionsArrayStateCast::class)];
     }
 
     /**
