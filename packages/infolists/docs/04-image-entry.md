@@ -14,7 +14,7 @@ use Filament\Infolists\Components\ImageEntry;
 ImageEntry::make('header_image')
 ```
 
-In this case, the `header_image` state could contain `posts/header-images/4281246003439.jpg`, which is relative to the root directory of the storage disk. The storage disk is defined in the [configuration file](../introduction/installation#publishing-configuration), `public` by default. You can also set the `FILESYSTEM_DISK` environment variable to change this.
+In this case, the `header_image` state could contain `posts/header-images/4281246003439.jpg`, which is relative to the root directory of the storage disk. The storage disk is defined in the [configuration file](../introduction/installation#publishing-configuration), `local` by default. You can also set the `FILESYSTEM_DISK` environment variable to change this.
 
 Alternatively, the state could contain an absolute URL to an image, such as `https://example.com/images/header.jpg`.
 
@@ -22,7 +22,7 @@ Alternatively, the state could contain an absolute URL to an image, such as `htt
 
 ## Managing the image disk
 
-The default storage disk is defined in the [configuration file](../introduction/installation#publishing-configuration), `public` by default. You can also set the `FILESYSTEM_DISK` environment variable to change this. If you want to deviate from the default disk, you may pass a custom disk name to the `disk()` method:
+The default storage disk is defined in the [configuration file](../introduction/installation#publishing-configuration), `local` by default. You can also set the `FILESYSTEM_DISK` environment variable to change this. If you want to deviate from the default disk, you may pass a custom disk name to the `disk()` method:
 
 ```php
 use Filament\Infolists\Components\ImageEntry;

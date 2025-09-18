@@ -515,6 +515,8 @@ return [
             'undo' => 'Zpět',
         ],
 
+        'uploading_file_message' => 'Nahrávání souboru...',
+
     ],
 
     'select' => [

@@ -34,9 +34,11 @@ use Filament\Support\Concerns\CanGrow;
 use Filament\Support\Concerns\CanOrderColumns;
 use Filament\Support\Concerns\CanSpanColumns;
 use Filament\Support\Concerns\HasExtraAttributes;
+use Filament\Support\Enums\Width;
 use Illuminate\Database\Eloquent\Model;
-use Livewire\Drawer\Utils;
-use Livewire\Exceptions\RootTagMissingFromViewException;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Js;
+use Illuminate\View\ComponentAttributeBag;
 
 class Component extends ViewComponent
 {
@@ -115,33 +117,6 @@ class Component extends ViewComponent
         };
     }
 
-    public function toHtml(): string
-    {
-        if ($this->isLiberatedFromContainerGrid()) {
-            return parent::toHtml();
-        }
-
-        $key = $this->getKey();
-
-        if (blank($key)) {
-            return parent::toHtml();
-        }
-
-        $html = parent::toHtml();
-
-        if (blank($html)) {
-            return '';
-        }
-
-        try {
-            return Utils::insertAttributesIntoHtmlRoot($html, [
-                'wire:partial' => "schema-component::{$key}",
-            ]);
-        } catch (RootTagMissingFromViewException) {
-            return $html;
-        }
-    }
-
     /**
      * @return array<string, mixed>
      */
@@ -152,5 +127,102 @@ class Component extends ViewComponent
             'operation' => $this->getContainer()->getOperation(),
             'record' => $this->getRecord(),
         ];
+    }
+
+    /**
+     * @internal Do not use this method outside the internals of Filament. It is subject to breaking changes in minor and patch releases.
+     */
+    public function toSchemaHtml(?bool $isVisible = null): string
+    {
+        $isVisible ??= $this->isVisible();
+
+        $container = $this->getContainer();
+
+        $isContainerEmbeddedInParentComponent = $container->isEmbeddedInParentComponent();
+        $containerParentComponent = $isContainerEmbeddedInParentComponent
+            ? $container->getParentComponent()
+            : null;
+        $containerStatePath = $isContainerEmbeddedInParentComponent
+            ? $containerParentComponent->getContainer()->getStatePath()
+            : $container->getStatePath();
+
+        /**
+         * Instead of only rendering the hidden components, we should
+         * render the `<div>` wrappers for all fields, regardless of
+         * if they are hidden or not. This is to solve Livewire DOM
+         * diffing issues.
+         *
+         * Additionally, any `<div>` elements that wrap hidden
+         * components need to have `class="fi-hidden"`, so that they
+         * don't consume grid space.
+         */
+        $hiddenJs = $this->getHiddenJs();
+        $visibleJs = $this->getVisibleJs();
+
+        $maxWidth = $this->getMaxWidth();
+
+        $statePath = $isContainerEmbeddedInParentComponent
+            ? $containerParentComponent->getStatePath()
+            : $this->getStatePath();
+
+        $key = $this->getKey();
+
+        $attributes = (new ComponentAttributeBag)
+            ->when(
+                ! $container->isInline(),
+                fn (ComponentAttributeBag $attributes) => $attributes->gridColumn($this->getColumnSpan(), $this->getColumnStart(), $this->getColumnOrder(), ! $isVisible),
+            )
+            ->merge([
+                'wire:key' => $this->getLivewireKey(),
+                ...(($pollingInterval = $this->getPollingInterval()) ? ["wire:poll.{$pollingInterval}" => "partiallyRenderSchemaComponent('{$this->getKey()}')"] : []),
+            ], escape: false)
+            ->class([
+                ($maxWidth instanceof Width) ? "fi-width-{$maxWidth->value}" : $maxWidth,
+            ]);
+
+        ob_start(); ?>
+
+        <div
+            <?php if (filled($key)) { ?>
+                wire:partial="schema-component::<?= $key ?>"
+            <?php } ?>
+            <?php if ($isVisible) { ?>
+                x-data="filamentSchemaComponent({
+                    path: <?= Js::from($statePath) ?>,
+                    containerPath: <?= Js::from($containerStatePath) ?>,
+                    isLive: <?= Js::from($this->isLive()) ?>,
+                    $wire,
+                })"
+                <?php if ($afterStateUpdatedJs = $this->getAfterStateUpdatedJs()) { ?>
+                    x-init="<?= implode(';', array_map(
+                        fn (string $js): string => '$wire.watch(' . Js::from($statePath) . ', ($state, $old) => ($state !== undefined) && eval(' . Js::from($js) . '))',
+                        $afterStateUpdatedJs,
+                    )) ?>"
+                <?php } ?>
+                <?php if (filled($visibilityJs = match ([filled($hiddenJs), filled($visibleJs)]) {
+                    [true, true] => "(! ({$hiddenJs})) && ({$visibleJs})",
+                    [true, false] => "! ({$hiddenJs})",
+                    [false, true] => $visibleJs,
+                    default => null,
+                })) { ?>
+                    x-bind:class="{ 'fi-hidden': ! (<?= $visibilityJs ?>) }"
+                    x-cloak
+                <?php } ?>
+            <?php } ?>
+            <?= $attributes->toHtml() ?>
+        >
+            <?php if ($isVisible) { ?>
+                <div
+                    class="<?= Arr::toCssClasses([
+                        'fi-sc-component',
+                        'fi-grid-ctn' => $this->isGridContainer(),
+                    ]) ?>"
+                >
+                    <?= $this->toHtml() ?>
+                </div>
+            <?php } ?>
+        </div>
+
+        <?php return ob_get_clean();
     }
 }

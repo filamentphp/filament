@@ -4,6 +4,8 @@ import { Selection } from '@tiptap/pm/state'
 import { BubbleMenuPlugin } from '@tiptap/extension-bubble-menu'
 
 export default function richEditorFormComponent({
+    acceptedFileTypes,
+    acceptedFileTypesValidationMessage,
     activePanel,
     deleteCustomBlockButtonIconHtml,
     editCustomBlockButtonIconHtml,
@@ -14,6 +16,8 @@ export default function richEditorFormComponent({
     isLiveOnBlur,
     liveDebounce,
     livewireId,
+    maxFileSize,
+    maxFileSizeValidationMessage,
     mergeTags,
     noMergeTagSearchResultsMessage,
     placeholder,
@@ -33,6 +37,8 @@ export default function richEditorFormComponent({
 
         isUploadingFile: false,
 
+        fileValidationMessage: null,
+
         shouldUpdateState: true,
 
         editorUpdatedAt: Date.now(),
@@ -42,6 +48,8 @@ export default function richEditorFormComponent({
                 editable: !isDisabled,
                 element: this.$refs.editor,
                 extensions: await getExtensions({
+                    acceptedFileTypes,
+                    acceptedFileTypesValidationMessage,
                     customExtensionUrls: extensions,
                     deleteCustomBlockButtonIconHtml,
                     editCustomBlockButtonIconHtml,
@@ -63,6 +71,8 @@ export default function richEditorFormComponent({
                             { schemaComponent: key },
                         ),
                     key,
+                    maxFileSize,
+                    maxFileSizeValidationMessage,
                     mergeTags,
                     noMergeTagSearchResultsMessage,
                     placeholder,
@@ -102,6 +112,11 @@ export default function richEditorFormComponent({
                 this.editorUpdatedAt = Date.now()
             })
 
+            const debouncedCommit = Alpine.debounce(
+                () => this.$wire.commit(),
+                liveDebounce ?? 300,
+            )
+
             editor.on('update', ({ editor }) =>
                 this.$nextTick(() => {
                     this.editorUpdatedAt = Date.now()
@@ -110,11 +125,10 @@ export default function richEditorFormComponent({
 
                     this.shouldUpdateState = false
 
+                    this.fileValidationMessage = null
+
                     if (isLiveDebounced) {
-                        Alpine.debounce(
-                            () => this.$wire.commit(),
-                            liveDebounce ?? 300,
-                        )
+                        debouncedCommit()
                     }
                 }),
             )
@@ -160,6 +174,7 @@ export default function richEditorFormComponent({
                 }
 
                 this.isUploadingFile = true
+                this.fileValidationMessage = null
 
                 event.stopPropagation()
             })
@@ -177,6 +192,24 @@ export default function richEditorFormComponent({
 
                 event.stopPropagation()
             })
+
+            window.addEventListener(
+                'rich-editor-file-validation-message',
+                (event) => {
+                    if (event.detail.livewireId !== livewireId) {
+                        return
+                    }
+
+                    if (event.detail.key !== key) {
+                        return
+                    }
+
+                    this.isUploadingFile = false
+                    this.fileValidationMessage = event.detail.validationMessage
+
+                    event.stopPropagation()
+                },
+            )
 
             window.dispatchEvent(
                 new CustomEvent(`schema-component-${livewireId}-${key}-loaded`),

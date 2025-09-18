@@ -33,6 +33,13 @@ trait CanGenerateUrls
                     continue;
                 }
 
+                if (str(original_request()->getUri())->contains('/livewire-unit-test-endpoint/')) {
+                    // In the future, Filament will support generating URLs for nested resources.
+                    // within tests. For now, it is unable to resolve the missing URL parameters
+                    // from the parent records as it does not have access to the original request.
+                    return '';
+                }
+
                 $originalRequestRoute ??= original_request()->route();
 
                 if (! $originalRequestRoute->hasParameter($parentRouteParameterName)) {

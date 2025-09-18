@@ -63,6 +63,8 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
 
     protected string | Closure | null $itemLabel = null;
 
+    protected bool | Closure $hasItemNumbers = false;
+
     protected Field | Closure | null $simpleField = null;
 
     protected Alignment | string | Closure | null $addActionAlignment = null;
@@ -114,6 +116,8 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
     protected array | Closure | null $tableColumns = null;
 
     protected bool $shouldMergeHydratedDefaultStateWithItemsStateAfterStateHydrated = true;
+
+    protected bool | Closure $shouldPartiallyRenderAfterActionsCalled = true;
 
     protected function setUp(): void
     {
@@ -202,7 +206,7 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
 
                 $component->callAfterStateUpdated();
 
-                $component->partiallyRender();
+                $component->shouldPartiallyRenderAfterActionsCalled() ? $component->partiallyRender() : null;
             })
             ->button()
             ->size(Size::Small)
@@ -279,7 +283,7 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
 
                 $component->callAfterStateUpdated();
 
-                $component->partiallyRender();
+                $component->shouldPartiallyRenderAfterActionsCalled() ? $component->partiallyRender() : null;
             })
             ->button()
             ->size(Size::Small)
@@ -341,7 +345,7 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
 
                 $component->callAfterStateUpdated();
 
-                $component->partiallyRender();
+                $component->shouldPartiallyRenderAfterActionsCalled() ? $component->partiallyRender() : null;
             })
             ->iconButton()
             ->size(Size::Small)
@@ -382,7 +386,7 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
 
                 $component->callAfterStateUpdated();
 
-                $component->partiallyRender();
+                $component->shouldPartiallyRenderAfterActionsCalled() ? $component->partiallyRender() : null;
             })
             ->iconButton()
             ->size(Size::Small)
@@ -422,7 +426,7 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
 
                 $component->callAfterStateUpdated();
 
-                $component->partiallyRender();
+                $component->shouldPartiallyRenderAfterActionsCalled() ? $component->partiallyRender() : null;
             })
             ->iconButton()
             ->size(Size::Small)
@@ -462,7 +466,7 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
 
                 $component->callAfterStateUpdated();
 
-                $component->partiallyRender();
+                $component->shouldPartiallyRenderAfterActionsCalled() ? $component->partiallyRender() : null;
             })
             ->iconButton()
             ->size(Size::Small)
@@ -505,7 +509,7 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
 
                 $component->callAfterStateUpdated();
 
-                $component->partiallyRender();
+                $component->shouldPartiallyRenderAfterActionsCalled() ? $component->partiallyRender() : null;
             })
             ->livewireClickHandlerEnabled(false)
             ->iconButton()
@@ -910,7 +914,7 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
         $this->relationship = $name ?? $this->getName();
         $this->modifyRelationshipQueryUsing = $modifyQueryUsing;
 
-        $this->afterStateHydrated(function (Repeater $component): void {
+        $this->afterStateHydrated(static function (Repeater $component): void {
             if (! is_array($component->hydratedDefaultState)) {
                 return;
             }
@@ -1034,6 +1038,13 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
     public function itemLabel(string | Closure | null $label): static
     {
         $this->itemLabel = $label;
+
+        return $this;
+    }
+
+    public function itemNumbers(bool | Closure $condition = true): static
+    {
+        $this->hasItemNumbers = $condition;
 
         return $this;
     }
@@ -1165,7 +1176,7 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
             'item' => $container,
             'key' => $key,
             'schema' => $container,
-            'state' => $container->getRawState(),
+            'state' => $container->getStateSnapshot(),
             'uuid' => $key,
         ]);
     }
@@ -1173,6 +1184,11 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
     public function hasItemLabels(): bool
     {
         return $this->itemLabel !== null;
+    }
+
+    public function hasItemNumbers(): bool
+    {
+        return (bool) $this->evaluate($this->hasItemNumbers);
     }
 
     public function simple(Field | Closure | null $field): static
@@ -1352,7 +1368,7 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
      */
     public function getRawItemState(string $key): array
     {
-        return $this->getChildSchema($key)->getRawState();
+        return $this->getChildSchema($key)->getStateSnapshot();
     }
 
     public function getHeadingsCount(): int
@@ -1362,5 +1378,17 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
         }
 
         return 1;
+    }
+
+    public function partiallyRenderAfterActionsCalled(bool | Closure $condition = true): static
+    {
+        $this->shouldPartiallyRenderAfterActionsCalled = $condition;
+
+        return $this;
+    }
+
+    public function shouldPartiallyRenderAfterActionsCalled(): bool
+    {
+        return (bool) $this->evaluate($this->shouldPartiallyRenderAfterActionsCalled);
     }
 }

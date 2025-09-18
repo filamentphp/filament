@@ -26,7 +26,7 @@
         :icon="$icon"
         :icon-position="$iconPosition"
         :icon-size="$iconSize"
-        :size="$size"
+        :size="$size instanceof \Filament\Support\Enums\TextSize ? $size->value : $size"
         :x-on:click="
             $isCopyable ? '
                 window.navigator.clipboard.writeText(' . \Illuminate\Support\Js::from($copyableState) . ')
@@ -62,7 +62,7 @@
                 ->class([
                     'fi-sc-text',
                     'fi-copyable' => $isCopyable,
-                    ($size instanceof \Filament\Support\Enums\TextSize) ? "fi-size-{$size->value}" : $size,
+                    ($size instanceof \BackedEnum) ? "fi-size-{$size->value}" : $size,
                     ($weight instanceof FontWeight) ? "fi-font-{$weight->value}" : $weight,
                     ($fontFamily instanceof FontFamily) ? "fi-font-{$fontFamily->value}" : $fontFamily,
                 ])
