@@ -237,20 +237,21 @@ trait InteractsWithTable
         return null;
     }
 
-    /**
-     * @param  ?string  $pageName
-     */
-    public function resetPage($pageName = null): void
+    public function resetPage(?string $pageName = null): void
     {
         $this->resetLivewirePage($pageName ?? $this->getTablePaginationPageName());
     }
 
-    public function setPage(int|string $page, ?string $pageName = 'page'): void
+    public function setPage(int | string $page, ?string $pageName = null): void
     {
+        $defaultPageName = $this->getTablePaginationPageName();
+
+        $pageName ??= $defaultPageName;
+
         $this->setLivewirePage($page, $pageName);
 
-        if ($pageName === $this->getTablePaginationPageName() && $this->getTable()->shouldScrollToTopOnPageChange()) {
-            $this->dispatch('filament-tables-scroll-to-top', id: $this->getId(), pageName: $this->getTablePaginationPageName());
+        if (($pageName === $defaultPageName) && $this->getTable()->shouldScrollToTopOnPageChange()) {
+            $this->dispatch('scrollToTopOfTable')->self();
         }
     }
 

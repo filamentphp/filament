@@ -117,7 +117,6 @@
     $page = $this->getTablePage();
     $defaultSortOptionLabel = $getDefaultSortOptionLabel();
     $sortDirection = $getSortDirection();
-    $shouldScrollToTopOnPageChange = $shouldScrollToTopOnPageChange();
 
     if (count($defaultRecordActions) && (! $isReordering)) {
         $columnsCount++;
@@ -143,13 +142,6 @@
                 selectsCurrentPageOnly: @js($selectsCurrentPageOnly),
                 $wire,
             })"
-    @if ($shouldScrollToTopOnPageChange)
-        x-on:filament-tables-scroll-to-top.window="
-            if (($event.detail?.id ?? null) !== @js($this->getId())) return;
-            if (($event.detail?.pageName ?? null) !== @js($this->getTablePaginationPageName())) return;
-            $el.scrollIntoView({ block: 'start', inline: 'nearest' })
-        "
-    @endif
     {{
         $getExtraAttributeBag()->class([
             'fi-ta',

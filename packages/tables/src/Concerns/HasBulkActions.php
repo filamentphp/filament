@@ -88,7 +88,7 @@ trait HasBulkActions
 
     public function deselectAllTableRecords(): void
     {
-        $this->dispatch('deselectAllTableRecords');
+        $this->dispatch('deselectAllTableRecords')->self();
     }
 
     /**
