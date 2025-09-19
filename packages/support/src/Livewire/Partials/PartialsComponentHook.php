@@ -105,6 +105,10 @@ class PartialsComponentHook extends ComponentHook
 
     public function dehydrate(ComponentContext $context): void
     {
+        if ($this->shouldForceRender()) {
+            return;
+        }
+
         $partials = [];
 
         $renderAndQueuePartials = function (Closure $getPartialsUsing) use (&$partials): void {
