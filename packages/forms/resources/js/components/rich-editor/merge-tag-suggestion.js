@@ -34,12 +34,19 @@ const updatePosition = (editor, element) => {
 
 export default ({ mergeTags, noMergeTagSearchResultsMessage }) => ({
     items: ({ query }) => {
-        return mergeTags.filter((item) =>
-            item.label
-                .toLowerCase()
-                .replace(/\s/g, '')
-                .includes(query.toLowerCase()),
-        )
+        return Object.entries(mergeTags)
+            .filter(
+                ([id, label]) =>
+                    id
+                        .toLowerCase()
+                        .replace(/\s/g, '')
+                        .includes(query.toLowerCase()) ||
+                    label
+                        .toLowerCase()
+                        .replace(/\s/g, '')
+                        .includes(query.toLowerCase()),
+            )
+            .map(([id, label]) => ({ id, label }))
     },
 
     render: () => {

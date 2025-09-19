@@ -72,25 +72,17 @@ export default Node.create({
         return {
             HTMLAttributes: {},
             renderText({ node }) {
-                const mergeTag = this.mergeTags.find(
-                    (tag) => tag.id === node.attrs.id,
-                )
-
-                return `{{ ${mergeTag.label}}`
+                return `{{ ${this.mergeTags[node.attrs.id]} }}`
             },
             deleteTriggerWithBackspace: false,
             renderHTML({ options, node }) {
-                const mergeTag = this.mergeTags.find(
-                    (tag) => tag.id === node.attrs.id,
-                )
-
                 return [
                     'span',
                     mergeAttributes(
                         this.HTMLAttributes,
                         options.HTMLAttributes,
                     ),
-                    `${mergeTag.label}`,
+                    `${this.mergeTags[node.attrs.id]}`,
                 ]
             },
             suggestions: [],
@@ -118,20 +110,6 @@ export default Node.create({
 
                     return {
                         'data-id': attributes.id,
-                    }
-                },
-            },
-
-            label: {
-                default: null,
-                parseHTML: (element) => element.getAttribute('data-label'),
-                renderHTML: (attributes) => {
-                    if (!attributes.label) {
-                        return {}
-                    }
-
-                    return {
-                        'data-label': attributes.label,
                     }
                 },
             },

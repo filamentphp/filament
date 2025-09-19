@@ -200,20 +200,19 @@
                             </div>
 
                             <div class="fi-fo-rich-editor-merge-tags-list">
-                                @foreach ($mergeTags as $tag)
+                                @foreach ($mergeTags as $tagId => $tagLabel)
                                     <button
                                         draggable="true"
                                         type="button"
-                                        x-on:click="insertMergeTag(@js($tag['id']))"
-                                        x-on:dragstart="$event.dataTransfer.setData('mergeTag', @js($tag['id']))"
+                                        x-on:click="insertMergeTag(@js($tagId))"
+                                        x-on:dragstart="$event.dataTransfer.setData('mergeTag', @js($tagId))"
                                         class="fi-fo-rich-editor-merge-tag-btn"
                                     >
                                         <span
                                             data-type="mergeTag"
-                                            data-id="{{ $tag['id'] }}"
-                                            data-label="{{ $tag['label'] }}"
+                                            data-id="{{ $tagId }}"
                                         >
-                                            {{ $tag['label'] }}
+                                            {{ $tagLabel }}
                                         </span>
                                     </button>
                                 @endforeach

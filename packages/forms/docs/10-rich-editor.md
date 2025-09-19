@@ -442,18 +442,6 @@ Merge tags are surrounded by double curly braces, like `{{ name }}`. When the co
 
 To insert a merge tag into the content, users can start typing `{{` to search for a tag to insert. Alternatively, they can click on the "merge tags" tool in the editor's toolbar, which opens a panel containing all the merge tags. They can then drag a merge tag from the editor's side panel into the content or click to insert it.
 
-You can also use a different display name. The key should be the merge tag identifier, and the value should be the displayed text:
-
-```php
-use Filament\Forms\Components\RichEditor;
-
-RichEditor::make('content')
-    ->mergeTags([
-        'name' => 'Full Name'
-        'today' => 'Date of Today'
-    ])
-```
-
 ### Rendering content with merge tags
 
 When rendering the rich content, you can pass an array of values to replace the merge tags with:
@@ -500,6 +488,22 @@ RichContentRenderer::make($record->content)
 
 When a merge tag value implements the `Htmlable` interface (such as `HtmlString`), the system automatically detects this and renders the HTML content without escaping it. Non-`Htmlable` values continue to be rendered as plain text for security.
 
+### Using custom merge tag labels
+
+You may provide custom labels for merge tags that will be displayed in the editor's side panel and content preview using an associative array where the keys are the merge tag names and the values are the labels:
+
+```php
+use Filament\Forms\Components\RichEditor;
+
+RichEditor::make('content')
+    ->mergeTags([
+        'name' => 'Full name',
+        'today' => 'Today\'s date',
+    ])
+```
+
+The labels aren't saved in the content of the editor and are only used for display purposes.
+
 ### Opening the merge tags panel by default
 
 If you want the merge tags panel to be open by default when the rich editor is loaded, you can use the `activePanel('mergeTags')` method:
@@ -544,6 +548,10 @@ class Post extends Model implements HasRichContent
             ->mergeTags([
                 'name' => fn (): string => $this->user->name,
                 'today' => now()->toFormattedDateString(),
+            ])
+            ->mergeTagLabels([
+                'name' => 'Full name',
+                'today' => 'Today\'s date',
             ])
             ->plugins([
                 HighlightRichContentPlugin::make(),

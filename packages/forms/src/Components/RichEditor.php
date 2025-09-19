@@ -738,19 +738,15 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     }
 
     /**
-     * @return array<array<string,string>>
+     * @return array<string, string>
      */
     public function getMergeTags(): array
     {
         $mergeTags = $this->evaluate($this->mergeTags) ?? $this->getContentAttribute()?->getMergeTags() ?? [];
 
-        return array_map(
-            fn (string $label, int | string $id) => [
-                'id' => is_string($id) ? $id : $label,
-                'label' => $label,
-            ],
+        return Arr::mapWithKeys(
             $mergeTags,
-            array_keys($mergeTags)
+            fn (string $label, int | string $id): array => [(is_string($id) ? $id : $label) => $label],
         );
     }
 
