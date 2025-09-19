@@ -115,15 +115,24 @@ Once the table is sorted, you can ensure that the table records are rendered in 
 use function Pest\Livewire\livewire;
 
 it('can sort posts by title', function () {
-    $posts = Post::factory()->count(10)->create();
+    Post::factory()->count(10)->create();
+
+    $sortedPostsAsc = Post::query()->orderBy('title')->get();
+    $sortedPostsDesc = Post::query()->orderBy('title', 'desc')->get();
 
     livewire(PostResource\Pages\ListPosts::class)
         ->sortTable('title')
-        ->assertCanSeeTableRecords($posts->sortBy('title'), inOrder: true)
+        ->assertCanSeeTableRecords($sortedPostsAsc, inOrder: true)
         ->sortTable('title', 'desc')
-        ->assertCanSeeTableRecords($posts->sortByDesc('title'), inOrder: true);
+        ->assertCanSeeTableRecords($sortedPostsDesc, inOrder: true);
 });
 ```
+
+<Aside variant="info">
+    Records are **sorted** according to the database's sorting strategy (MySQL and PostgreSQL use different sorting strategies).  
+    Therefore, you cannot use the `sortBy()` collection method on the factory results.  
+    Instead, make sure to order them explicitly in your query using `orderBy()`.
+</Aside>
 
 ### Testing the state of a column
 
