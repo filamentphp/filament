@@ -3,11 +3,11 @@
 namespace Filament\Panel\Concerns;
 
 use Closure;
-use Exception;
 use Filament\Navigation\NavigationBuilder;
 use Filament\Navigation\NavigationGroup;
 use Filament\Navigation\NavigationItem;
 use Filament\Navigation\NavigationManager;
+use LogicException;
 use UnitEnum;
 
 trait HasNavigation
@@ -56,7 +56,7 @@ trait HasNavigation
         }
 
         if (is_string($groups)) {
-            throw_unless(enum_exists($groups), new Exception("Enum class [{$groups}] does not exist for navigation groups."));
+            throw_unless(enum_exists($groups), new LogicException("Enum class [{$groups}] does not exist for navigation groups."));
 
             $groups = array_reduce(
                 $groups::cases(),

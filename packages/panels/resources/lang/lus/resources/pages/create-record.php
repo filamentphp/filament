@@ -4,22 +4,22 @@ return [
 
     'title' => ':Label siam na',
 
-    'breadcrumb' => 'Create',
+    'breadcrumb' => 'Siamna',
 
     'form' => [
 
         'actions' => [
 
             'cancel' => [
-                'label' => 'Cancel',
+                'label' => 'Sûtna',
             ],
 
             'create' => [
-                'label' => 'Create',
+                'label' => 'Siamna',
             ],
 
             'create_another' => [
-                'label' => 'Pakhat aia tam siamna',
+                'label' => 'Pakhat siama adang siam lehna',
             ],
 
         ],
@@ -29,7 +29,7 @@ return [
     'notifications' => [
 
         'created' => [
-            'title' => 'Created',
+            'title' => 'A thar siam ani.',
         ],
 
     ],

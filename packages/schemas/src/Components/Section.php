@@ -102,7 +102,7 @@ class Section extends Component implements CanConcealComponents, CanEntangleWith
             $statePath = $component->getStatePath();
 
             return Str::slug(Str::transliterate($heading, strict: true)) . '::' . (filled($statePath) ? "{$statePath}::section" : 'section');
-        });
+        }, isInheritable: false);
 
         $this->afterHeader(fn (Section $component): array => $component->getHeaderActions());
         $this->footer(function (Section $component): Schema {

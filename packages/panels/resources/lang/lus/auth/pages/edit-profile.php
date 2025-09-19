@@ -7,33 +7,33 @@ return [
     'form' => [
 
         'email' => [
-            'label' => 'Email address',
+            'label' => 'Email',
         ],
 
         'name' => [
-            'label' => 'Name',
+            'label' => 'Hming',
         ],
 
         'password' => [
-            'label' => 'New password',
+            'label' => 'Password thar',
             'validation_attribute' => 'password',
         ],
 
         'password_confirmation' => [
-            'label' => 'Confirm new password',
+            'label' => 'Password thar nemnghehna',
             'validation_attribute' => 'password confirmation',
         ],
 
         'current_password' => [
-            'label' => 'Current password',
-            'below_content' => 'Security thil avangin, khawngaihin ti chhunzawm turin I password confirm rawh.',
+            'label' => 'Password hman mek',
+            'below_content' => 'Security thil avangin hemi ti chhunzawm tur hian I password chhu rawh.',
             'validation_attribute' => 'current password',
         ],
 
         'actions' => [
 
             'save' => [
-                'label' => 'Save changes',
+                'label' => 'Thlâkthlengna',
             ],
 
         ],
@@ -60,7 +60,7 @@ return [
     'actions' => [
 
         'cancel' => [
-            'label' => 'Cancel',
+            'label' => 'Sûtna',
         ],
 
     ],

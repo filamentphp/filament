@@ -3,7 +3,6 @@
 namespace Filament\Forms\Components;
 
 use Closure;
-use Exception;
 use Filament\Forms\Components\MorphToSelect\Type;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Concerns\HasLabel;
@@ -13,6 +12,8 @@ use Filament\Schemas\Components\Utilities\Set;
 use Filament\Support\Concerns\CanBeContained;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use InvalidArgumentException;
+use LogicException;
 
 class MorphToSelect extends Component
 {
@@ -55,7 +56,7 @@ class MorphToSelect extends Component
         $name ??= static::getDefaultName();
 
         if (blank($name)) {
-            throw new Exception("MorphToSelect of class [$morphToSelectClass] must have a unique name, passed to the [make()] method.");
+            throw new InvalidArgumentException("MorphToSelect of class [$morphToSelectClass] must have a unique name, passed to the [make()] method.");
         }
 
         $static = app($morphToSelectClass, ['name' => $name]);
@@ -203,7 +204,7 @@ class MorphToSelect extends Component
         $relationshipName = $this->getName();
 
         if (! $record->isRelation($relationshipName)) {
-            throw new Exception("The relationship [{$relationshipName}] does not exist on the model [{$this->getModel()}].");
+            throw new LogicException("The relationship [{$relationshipName}] does not exist on the model [{$this->getModel()}].");
         }
 
         return $record->{$relationshipName}();

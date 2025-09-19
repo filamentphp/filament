@@ -9,9 +9,11 @@ use Filament\Support\Enums\Width;
 
 class CustomBlockAction
 {
+    public const NAME = 'customBlock';
+
     public static function make(): Action
     {
-        return Action::make('customBlock')
+        return Action::make(static::NAME)
             ->fillForm(fn (array $arguments): array => $arguments['config'] ?? [])
             ->modalHeading(function (array $arguments, RichEditor $component): ?string {
                 $block = $component->getCustomBlock($arguments['id']);

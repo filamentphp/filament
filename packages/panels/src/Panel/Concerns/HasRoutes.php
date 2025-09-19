@@ -175,6 +175,10 @@ trait HasRoutes
             $tenant = Filament::getUserDefaultTenant($this->auth()->user());
         }
 
+        if ($tenant && $this->hasTenantDomain()) {
+            return $this->getRedirectUrl($tenant);
+        }
+
         if (Route::has($homeRouteName = $this->generateRouteName('home'))) {
             return route($homeRouteName, $tenant ? ['tenant' => $tenant] : []);
         }
@@ -187,7 +191,7 @@ trait HasRoutes
                 $tenantRoutePrefix .= '/';
             }
 
-            return url(Str::replaceEnd($this->getPath(), '/', '') . '/' . $tenantRoutePrefix . (filled($tenantSlugAttribute) ? $tenant->getAttributeValue($tenantSlugAttribute) : $tenant->getRouteKey()));
+            return url(Str::replaceEnd('/', '', $this->getPath()) . '/' . $tenantRoutePrefix . (filled($tenantSlugAttribute) ? $tenant->getAttributeValue($tenantSlugAttribute) : $tenant->getRouteKey()));
         }
 
         return url($this->getPath());

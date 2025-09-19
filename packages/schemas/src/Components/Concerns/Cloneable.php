@@ -23,7 +23,7 @@ trait Cloneable
         $clone = clone $this;
         $clone->flushCachedAbsoluteKey();
         $clone->flushCachedAbsoluteStatePath();
-        $clone->flushCachedInheritanceKey();
+        $clone->flushCachedAbsoluteInheritanceKey();
         $clone->cloneChildComponents();
 
         foreach ($this->afterCloned as $callback) {

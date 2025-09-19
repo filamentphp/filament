@@ -2,22 +2,22 @@
 
 return [
 
-    'title' => ':Label edit na',
+    'title' => ':Label tihdikna',
 
-    'breadcrumb' => 'Edit',
+    'breadcrumb' => 'Tihdikna',
 
-    'navigation_label' => 'Edit',
+    'navigation_label' => 'Tihdikna',
 
     'form' => [
 
         'actions' => [
 
             'cancel' => [
-                'label' => 'Cancel',
+                'label' => 'Sûtna',
             ],
 
             'save' => [
-                'label' => 'Tihdanglam ho save na',
+                'label' => 'Thlâkthlengna',
             ],
 
         ],
@@ -27,7 +27,7 @@ return [
     'content' => [
 
         'tab' => [
-            'label' => 'Edit',
+            'label' => 'Tihdikna',
         ],
 
     ],

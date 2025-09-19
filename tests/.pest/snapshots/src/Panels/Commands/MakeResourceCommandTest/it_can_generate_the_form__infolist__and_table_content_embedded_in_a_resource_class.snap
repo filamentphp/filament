@@ -64,19 +64,37 @@ class PostResource extends Resource
     {
         return $schema
             ->components([
-                TextEntry::make('author.name'),
+                TextEntry::make('author.name')
+                    ->label('Author'),
+                TextEntry::make('content')
+                    ->placeholder('-')
+                    ->columnSpanFull(),
                 IconEntry::make('is_published')
                     ->boolean(),
                 TextEntry::make('rating')
                     ->numeric(),
+                TextEntry::make('tags')
+                    ->placeholder('-')
+                    ->columnSpanFull(),
                 TextEntry::make('title'),
-                TextEntry::make('string_backed_enum'),
+                TextEntry::make('json')
+                    ->placeholder('-')
+                    ->columnSpanFull(),
+                TextEntry::make('json_array_of_objects')
+                    ->placeholder('-')
+                    ->columnSpanFull(),
+                TextEntry::make('string_backed_enum')
+                    ->badge()
+                    ->placeholder('-'),
                 TextEntry::make('created_at')
-                    ->dateTime(),
+                    ->dateTime()
+                    ->placeholder('-'),
                 TextEntry::make('updated_at')
-                    ->dateTime(),
+                    ->dateTime()
+                    ->placeholder('-'),
                 TextEntry::make('deleted_at')
-                    ->dateTime(),
+                    ->dateTime()
+                    ->visible(fn (Post $record): bool => $record->trashed()),
             ]);
     }
 
@@ -94,6 +112,7 @@ class PostResource extends Resource
                 TextColumn::make('title')
                     ->searchable(),
                 TextColumn::make('string_backed_enum')
+                    ->badge()
                     ->searchable(),
                 TextColumn::make('created_at')
                     ->dateTime()

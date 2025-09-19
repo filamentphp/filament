@@ -3,13 +3,13 @@
 namespace Filament\Support\Components;
 
 use Closure;
-use Exception;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Arr;
 use Illuminate\Support\HtmlString;
 use Illuminate\View\ComponentAttributeBag;
+use LogicException;
 
 abstract class ViewComponent extends Component implements Htmlable
 {
@@ -89,7 +89,7 @@ abstract class ViewComponent extends Component implements Htmlable
             return $defaultView;
         }
 
-        throw new Exception('Class [' . static::class . '] extends [' . ViewComponent::class . '] but does not have a [$view] property defined.');
+        throw new LogicException('Class [' . static::class . '] extends [' . ViewComponent::class . '] but does not have a [$view] property defined.');
     }
 
     public function hasView(): bool

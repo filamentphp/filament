@@ -284,6 +284,10 @@ return [
 
     'markdown_editor' => [
 
+        'file_attachments_accepted_file_types_message' => 'Uploaded files must be of type: :values.',
+
+        'file_attachments_max_size_message' => 'Uploaded files must not be greater than :max kilobytes.',
+
         'tools' => [
             'attach_files' => 'Attach files',
             'blockquote' => 'Blockquote',
@@ -469,6 +473,10 @@ return [
 
         ],
 
+        'file_attachments_accepted_file_types_message' => 'Uploaded files must be of type: :values.',
+
+        'file_attachments_max_size_message' => 'Uploaded files must not be greater than :max kilobytes.',
+
         'no_merge_tag_search_results_message' => 'No merge tag results.',
 
         'tools' => [
@@ -514,6 +522,8 @@ return [
             'underline' => 'Underline',
             'undo' => 'Undo',
         ],
+
+        'uploading_file_message' => 'Uploading file...',
 
     ],
 

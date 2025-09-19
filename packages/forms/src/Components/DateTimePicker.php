@@ -8,6 +8,8 @@ use Carbon\Exceptions\InvalidFormatException;
 use Closure;
 use DateTime;
 use Filament\Schemas\Components\Contracts\HasAffixActions;
+use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
+use Filament\Schemas\Components\StateCasts\DateTimeStateCast;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Filament\Support\Facades\FilamentTimezone;
 use Filament\Support\Icons\Heroicon;
@@ -84,69 +86,42 @@ class DateTimePicker extends Field implements HasAffixActions
     {
         parent::setUp();
 
-        $this->afterStateHydrated(static function (DateTimePicker $component, $state): void {
-            if (blank($state)) {
-                return;
-            }
-
-            if (! $state instanceof CarbonInterface) {
-                try {
-                    $state = Carbon::createFromFormat($component->getFormat(), (string) $state, config('app.timezone'));
-                } catch (InvalidFormatException $exception) {
-                    try {
-                        $state = Carbon::parse($state, config('app.timezone'));
-                    } catch (InvalidFormatException $exception) {
-                        $component->state(null);
-
-                        return;
-                    }
-                }
-            }
-
-            $state = $state->setTimezone($component->getTimezone());
-
-            if (! $component->isNative()) {
-                $component->state((string) $state);
-
-                return;
-            }
-
-            if (! $component->hasTime()) {
-                $component->state($state->toDateString());
-
-                return;
-            }
-
-            $precision = $component->hasSeconds() ? 'second' : 'minute';
-
-            if (! $component->hasDate()) {
-                $component->state($state->toTimeString($precision));
-
-                return;
-            }
-
-            $component->state($state->toDateTimeString($precision));
-        });
-
-        $this->dehydrateStateUsing(static function (DateTimePicker $component, $state) {
-            if (blank($state)) {
-                return null;
-            }
-
-            if (! $state instanceof CarbonInterface) {
-                $state = Carbon::parse($state);
-            }
-
-            $state->shiftTimezone($component->getTimezone());
-            $state->setTimezone(config('app.timezone'));
-
-            return $state->format($component->getFormat());
-        });
-
         $this->rule(
             'date',
             static fn (DateTimePicker $component): bool => $component->hasDate(),
         );
+    }
+
+    /**
+     * @return array<StateCast>
+     */
+    public function getDefaultStateCasts(): array
+    {
+        return [
+            ...parent::getDefaultStateCasts(),
+            app(DateTimeStateCast::class, [
+                'format' => $this->getFormat(),
+                'internalFormat' => $this->getInternalFormat(),
+                'timezone' => $this->getTimezone(),
+            ]),
+        ];
+    }
+
+    public function getInternalFormat(): string
+    {
+        if (! $this->isNative()) {
+            return 'Y-m-d H:i:s';
+        }
+
+        if (! $this->hasTime()) {
+            return 'Y-m-d';
+        }
+
+        if (! $this->hasDate()) {
+            return $this->hasSeconds() ? 'H:i:s' : 'H:i';
+        }
+
+        return 'Y-m-d H:i:s';
     }
 
     public function displayFormat(string | Closure | null $format): static

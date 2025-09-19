@@ -56,7 +56,7 @@ return [
 
             'edit' => [
 
-                'label' => 'Edit',
+                'label' => 'Tihdikna',
 
                 'modal' => [
 
@@ -65,7 +65,7 @@ return [
                     'actions' => [
 
                         'save' => [
-                            'label' => 'Save changes',
+                            'label' => 'Thlâkthlengna',
                         ],
 
                     ],
@@ -129,7 +129,7 @@ return [
             'actions' => [
 
                 'cancel' => [
-                    'label' => 'Cancel',
+                    'label' => 'Sûtna',
                 ],
 
                 'drag_crop' => [
@@ -327,8 +327,8 @@ return [
     'radio' => [
 
         'boolean' => [
-            'true' => 'Yes',
-            'false' => 'No',
+            'true' => 'Aw',
+            'false' => 'Aih',
         ],
 
     ],
@@ -523,20 +523,20 @@ return [
 
             'create_option' => [
 
-                'label' => 'Create',
+                'label' => 'Siamna',
 
                 'modal' => [
 
-                    'heading' => 'Create',
+                    'heading' => 'Siamna',
 
                     'actions' => [
 
                         'create' => [
-                            'label' => 'Create',
+                            'label' => 'Siamna',
                         ],
 
                         'create_another' => [
-                            'label' => 'Create & create another',
+                            'label' => 'Pakhat siama adang siam lehna',
                         ],
 
                     ],
@@ -568,8 +568,8 @@ return [
         ],
 
         'boolean' => [
-            'true' => 'Yes',
-            'false' => 'No',
+            'true' => 'Aw',
+            'false' => 'Aih',
         ],
 
         'loading_message' => 'Loading...',
@@ -578,11 +578,11 @@ return [
 
         'no_search_results_message' => 'I thilzawn hi a awmlo.',
 
-        'placeholder' => 'Select an option',
+        'placeholder' => 'I duh thlang rawh...',
 
-        'searching_message' => 'Searching...',
+        'searching_message' => 'Zawn mek ani...',
 
-        'search_prompt' => 'Search turin thil type rawh...',
+        'search_prompt' => 'Zawng turin thil chhu rawh...',
 
     ],
 
@@ -614,8 +614,8 @@ return [
     'toggle_buttons' => [
 
         'boolean' => [
-            'true' => 'Yes',
-            'false' => 'No',
+            'true' => 'Aw',
+            'false' => 'Aih',
         ],
 
     ],

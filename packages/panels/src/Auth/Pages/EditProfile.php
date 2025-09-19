@@ -2,7 +2,6 @@
 
 namespace Filament\Auth\Pages;
 
-use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Auth\MultiFactor\Contracts\MultiFactorAuthenticationProvider;
@@ -35,6 +34,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Js;
 use Illuminate\Validation\Rules\Password;
 use League\Uri\Components\Query;
+use LogicException;
 use Throwable;
 
 /**
@@ -95,7 +95,7 @@ class EditProfile extends Page
         $user = Filament::auth()->user();
 
         if (! $user instanceof Model) {
-            throw new Exception('The authenticated user object must be an Eloquent model to allow the profile page to update it.');
+            throw new LogicException('The authenticated user object must be an Eloquent model to allow the profile page to update it.');
         }
 
         return $user;
@@ -315,6 +315,7 @@ class EditProfile extends Page
             ->label(__('filament-panels::auth/pages/edit-profile.form.password_confirmation.label'))
             ->validationAttribute(__('filament-panels::auth/pages/edit-profile.form.password_confirmation.validation_attribute'))
             ->password()
+            ->autocomplete('new-password')
             ->revealable(filament()->arePasswordsRevealable())
             ->required()
             ->visible(fn (Get $get): bool => filled($get('password')))
@@ -328,6 +329,7 @@ class EditProfile extends Page
             ->validationAttribute(__('filament-panels::auth/pages/edit-profile.form.current_password.validation_attribute'))
             ->belowContent(__('filament-panels::auth/pages/edit-profile.form.current_password.below_content'))
             ->password()
+            ->autocomplete('current-password')
             ->currentPassword(guard: Filament::getAuthGuard())
             ->revealable(filament()->arePasswordsRevealable())
             ->required()
@@ -470,10 +472,5 @@ class EditProfile extends Page
                 ->map(fn (MultiFactorAuthenticationProvider $multiFactorAuthenticationProvider): Component => Group::make($multiFactorAuthenticationProvider->getManagementSchemaComponents())
                     ->statePath($multiFactorAuthenticationProvider->getId()))
                 ->all());
-    }
-
-    public function getDefaultTestingSchemaName(): ?string
-    {
-        return 'form';
     }
 }

@@ -4,16 +4,16 @@ return [
 
     'label' => 'Pagination navigation',
 
-    'overview' => '{1} Result 1 tihlan|[2,*] Result :first atang :last tihlan, :total atangin',
+    'overview' => '{1} Result 1 tihlan|[2,*] Result :first atang :last lanna, :total atangin',
 
     'fields' => [
 
         'records_per_page' => [
 
-            'label' => 'Per page',
+            'label' => 'Page tinah',
 
             'options' => [
-                'all' => 'All',
+                'all' => 'A vaiin',
             ],
 
         ],
@@ -23,7 +23,7 @@ return [
     'actions' => [
 
         'first' => [
-            'label' => 'First',
+            'label' => 'A hmasa ber',
         ],
 
         'go_to_page' => [
@@ -31,15 +31,15 @@ return [
         ],
 
         'last' => [
-            'label' => 'Last',
+            'label' => 'A tawpna',
         ],
 
         'next' => [
-            'label' => 'Next',
+            'label' => 'A dawttu',
         ],
 
         'previous' => [
-            'label' => 'Previous',
+            'label' => 'A hmasa',
         ],
 
     ],

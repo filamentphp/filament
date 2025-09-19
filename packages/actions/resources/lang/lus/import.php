@@ -2,11 +2,11 @@
 
 return [
 
-    'label' => 'Import :label',
+    'label' => ':Label import na',
 
     'modal' => [
 
-        'heading' => 'Import :label',
+        'heading' => ':Label import na',
 
         'form' => [
 

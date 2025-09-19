@@ -31,6 +31,7 @@ return [
     ],
 
     'notifications' => [
+
         'sent' => [
             'body' => 'Wenn Ihr Konto nicht existiert, erhalten Sie keine E-Mail.',
         ],

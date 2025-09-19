@@ -8,16 +8,16 @@ return [
 
         'modal' => [
 
-            'heading' => ':Label siamna',
+            'heading' => ':Label thar siamna',
 
             'actions' => [
 
                 'create' => [
-                    'label' => 'Create',
+                    'label' => 'Siamna',
                 ],
 
                 'create_another' => [
-                    'label' => 'Create & create another',
+                    'label' => 'Pakhat siama adang siam lehna',
                 ],
 
             ],
@@ -27,7 +27,7 @@ return [
         'notifications' => [
 
             'created' => [
-                'title' => 'Created',
+                'title' => 'A thar siam ani.',
             ],
 
         ],

@@ -168,7 +168,7 @@
                 x-cloak
                 x-on:click.stop=""
                 x-trap.noscroll="isEditorOpen"
-                x-on:keydown.escape.window="closeEditor"
+                x-on:keydown.escape.prevent.stop="closeEditor"
                 @class([
                     'fi-fo-file-upload-editor',
                     'fi-fo-file-upload-editor-circle-cropper' => $hasCircleCropper,
@@ -233,8 +233,8 @@
                                             </x-slot>
 
                                             <input
-                                                x-on:keyup.enter.prevent.stop="{!! $input['alpineSaveHandler'] !!}"
-                                                x-on:blur="{!! $input['alpineSaveHandler'] !!}"
+                                                x-on:keyup.enter.prevent.stop="editor && {!! $input['alpineSaveHandler'] !!}"
+                                                x-on:blur="editor && {!! $input['alpineSaveHandler'] !!}"
                                                 x-ref="{{ $input['ref'] }}"
                                                 x-on:keydown.enter.prevent
                                                 type="text"

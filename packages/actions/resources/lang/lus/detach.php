@@ -4,16 +4,16 @@ return [
 
     'single' => [
 
-        'label' => 'Detach',
+        'label' => 'Thlawnna',
 
         'modal' => [
 
-            'heading' => 'Detach :label',
+            'heading' => ':Label thlawnna',
 
             'actions' => [
 
                 'detach' => [
-                    'label' => 'Detach',
+                    'label' => 'Thlawnna',
                 ],
 
             ],
@@ -23,7 +23,7 @@ return [
         'notifications' => [
 
             'detached' => [
-                'title' => 'Detached',
+                'title' => 'Thlawn a ni e.',
             ],
 
         ],
@@ -32,16 +32,16 @@ return [
 
     'multiple' => [
 
-        'label' => 'Detach selected',
+        'label' => 'Thlan ho thlawn thenna',
 
         'modal' => [
 
-            'heading' => 'Detach selected :label',
+            'heading' => ':Label thlan ho thlawn thenna',
 
             'actions' => [
 
                 'detach' => [
-                    'label' => 'Detach',
+                    'label' => 'Thlawnna',
                 ],
 
             ],
@@ -51,7 +51,7 @@ return [
         'notifications' => [
 
             'detached' => [
-                'title' => 'Detached',
+                'title' => 'Thlawn then a ni e.',
             ],
 
         ],

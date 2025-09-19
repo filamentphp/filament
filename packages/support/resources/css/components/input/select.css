@@ -6,7 +6,7 @@ select.fi-select-input {
     background-repeat: no-repeat;
     background-size: 1.5em 1.5em;
 
-    :dir(rtl) & {
+    @variant rtl {
         background-position: left 0.5rem center;
     }
 
@@ -32,7 +32,7 @@ select.fi-select-input {
         background-repeat: no-repeat;
         background-size: 1.5em 1.5em;
 
-        :dir(rtl) & {
+        @variant rtl {
             background-position: left 0.5rem center;
         }
     }
@@ -75,8 +75,16 @@ select.fi-select-input {
         word-break: break-word;
     }
 
+    & .fi-select-input-placeholder {
+        @apply text-gray-400 dark:text-gray-500;
+    }
+
     & .fi-disabled {
         @apply cursor-not-allowed opacity-70;
+
+        & .fi-select-input-placeholder {
+            @apply text-gray-400 dark:text-gray-500;
+        }
     }
 
     & .fi-select-input-message {

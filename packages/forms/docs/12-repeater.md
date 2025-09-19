@@ -508,6 +508,20 @@ Repeater::make('members')
 
 <AutoScreenshot name="forms/fields/repeater/labelled" alt="Repeater with item labels" version="4.x" />
 
+## Numbering repeater items
+
+You can add the repeater item's number next to its label using the `itemNumbers()` method:
+
+```php
+use Filament\Forms\Components\Repeater;
+
+Repeater::make('members')
+    ->schema([
+        // ...
+    ])
+    ->itemNumbers()
+```
+
 ## Simple repeaters with one field
 
 You can use the `simple()` method to create a repeater with a single field, using a minimal design
@@ -644,6 +658,42 @@ use Filament\Forms\Components\Repeater\TableColumn;
 TableColumn::make('Name')
     ->width('200px')
 ```
+
+### Compact table repeaters
+
+You can make table repeaters more compact by using the `compact()` method, to fit more data in a smaller space:
+
+```php
+use Filament\Forms\Components\Repeater;
+
+Repeater::make('members')
+    ->table([
+        // ...
+    ])
+    ->compact()
+    ->schema([
+        // ...
+    ])
+```
+
+Optionally, you may pass a boolean value to control if the table repeater should be compact or not:
+
+```php
+use Filament\Forms\Components\Repeater;
+
+Repeater::make('members')
+    ->table([
+        // ...
+    ])
+    ->compact(FeatureFlag::active())
+    ->schema([
+        // ...
+    ])
+```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `compact()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+<AutoScreenshot name="forms/fields/repeater/table-compact" alt="Repeater with a compact table layout" version="4.x" />
 
 ## Repeater validation
 
