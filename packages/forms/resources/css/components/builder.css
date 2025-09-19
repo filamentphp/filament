@@ -81,16 +81,16 @@
         &:not(.fi-fo-builder-item-content-has-preview) {
             @apply p-4;
         }
+
+        &.fi-fo-builder-item-content-has-preview {
+            @apply relative;
+        }
     }
 
     & .fi-fo-builder-item-preview {
         &:not(.fi-interactive) {
             @apply pointer-events-none;
         }
-    }
-
-    .fi-fo-builder-item-content-has-preview {
-        @apply relative;
     }
 
     & .fi-fo-builder-item-preview-edit-overlay {
