@@ -104,7 +104,7 @@
                         $minDate,
                         $hasDate,
                         $hasTime,
-                        $hasSeconds
+                        $hasSeconds,
                     ])), 0, 64)
                 }}"
                 x-on:keydown.esc="isOpen() && $event.stopPropagation()"
