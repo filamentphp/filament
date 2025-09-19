@@ -129,7 +129,7 @@ it('can sort posts by title', function () {
 ```
 
 <Aside variant="info">
-    Records are **sorted** according to the database's sorting strategy (MySQL and PostgreSQL use different sorting strategies).  
+    Records are **sorted** according to the database's sorting strategy (e.g. MySQL and PostgreSQL use different sorting strategies).  
     Therefore, you cannot use the `sortBy()` collection method on the factory results.  
     Instead, make sure to order them explicitly in your query using `orderBy()`.
 </Aside>
