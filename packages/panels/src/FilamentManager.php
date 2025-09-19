@@ -546,8 +546,8 @@ class FilamentManager
             $avatar = $user->getAttributeValue('avatar_url');
         }
 
-        if ($avatar) {
-            return $avatar;
+        if (filled($avatar)) {
+            return url($avatar);
         }
 
         return app($this->getDefaultAvatarProvider())->get($user);
