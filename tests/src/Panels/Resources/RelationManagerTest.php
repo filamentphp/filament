@@ -11,6 +11,7 @@ use Filament\Actions\RestoreAction;
 use Filament\Actions\RestoreBulkAction;
 use Filament\Actions\Testing\TestAction;
 use Filament\Actions\ViewAction;
+use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tests\Fixtures\Models\Department;
 use Filament\Tests\Fixtures\Models\Ticket;
 use Filament\Tests\Fixtures\Policies\DepartmentPolicy;
@@ -19,7 +20,10 @@ use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsRelati
 use Filament\Tests\Panels\Resources\TestCase;
 use Illuminate\Auth\Access\Response;
 
+use Illuminate\Support\Str;
 use function Filament\Tests\livewire;
+use function Livewire\store;
+use function Pest\Laravel\assertDatabaseHas;
 
 uses(TestCase::class);
 
@@ -150,3 +154,39 @@ it('renders actions based on policy', function (string $action, string $policyMe
     'restore bulk action with policy returning allowed response' => fn (): array => [RestoreBulkAction::class, 'restoreAny', Response::allow(), true, true, true],
     'restore bulk action with policy returning false' => fn (): array => [RestoreBulkAction::class, 'restoreAny', false, false, true, true],
     'restore bulk action with policy returning denied response' => fn (): array => [RestoreBulkAction::class, 'restoreAny', Response::deny(), false, true, true]]);
+
+it('can force render relation manager after create another', function (): void {
+    $ticket = Ticket::factory()
+        ->create();
+
+    CreateAction::configureUsing(function (CreateAction $action): void {
+        $action->after(function (mixed $livewire, array $arguments): void {
+            if (! $livewire instanceof RelationManager) {
+                return;
+            }
+
+            if ($arguments['another'] ?? false) {
+                $livewire->forceRender();
+            }
+        });
+    });
+
+    $action = TestAction::make(CreateAction::class)->table();
+
+    $livewire = livewire(DepartmentsRelationManager::class, ['ownerRecord' => $ticket, 'pageClass' => EditTicket::class]);
+
+    $livewire->assertSuccessful()
+        ->assertCountTableRecords(0)
+        ->assertActionExists($action)
+        ->mountAction($action, ['another' => true])
+        ->fillForm([
+            'name' => $name = Str::random(),
+        ])
+        ->callMountedAction()
+        ->assertHasNoFormErrors()
+        ->assertCountTableRecords(1);
+
+    assertDatabaseHas(Department::class, ['name' => $name]);
+
+    expect(store($livewire->instance())->get('forceRender'))->toBeTrue();
+});
