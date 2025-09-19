@@ -93,7 +93,7 @@ export default async ({
         statePath,
         uploadingMessage: uploadingFileMessage,
     }),
-    ...(mergeTags.length
+    ...(Object.keys(mergeTags).length
         ? [
               MergeTag.configure({
                   deleteTriggerWithBackspace: true,
@@ -101,6 +101,7 @@ export default async ({
                       mergeTags,
                       noMergeTagSearchResultsMessage,
                   }),
+                  mergeTags,
               }),
           ]
         : []),

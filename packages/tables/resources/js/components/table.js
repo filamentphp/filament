@@ -32,6 +32,9 @@ export default ({
             this.$root.closest('[wire\\:id]')?.attributes['wire:id'].value
 
         $wire.$on('deselectAllTableRecords', () => this.deselectAllRecords())
+        $wire.$on('scrollToTopOfTable', () =>
+            this.$root.scrollIntoView({ block: 'start', inline: 'nearest' }),
+        )
 
         if (currentSelectionLivewireProperty) {
             if (maxSelectableRecords !== 1) {

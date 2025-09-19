@@ -659,6 +659,42 @@ TableColumn::make('Name')
     ->width('200px')
 ```
 
+### Compact table repeaters
+
+You can make table repeaters more compact by using the `compact()` method, to fit more data in a smaller space:
+
+```php
+use Filament\Forms\Components\Repeater;
+
+Repeater::make('members')
+    ->table([
+        // ...
+    ])
+    ->compact()
+    ->schema([
+        // ...
+    ])
+```
+
+Optionally, you may pass a boolean value to control if the table repeater should be compact or not:
+
+```php
+use Filament\Forms\Components\Repeater;
+
+Repeater::make('members')
+    ->table([
+        // ...
+    ])
+    ->compact(FeatureFlag::active())
+    ->schema([
+        // ...
+    ])
+```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `compact()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+<AutoScreenshot name="forms/fields/repeater/table-compact" alt="Repeater with a compact table layout" version="4.x" />
+
 ## Repeater validation
 
 As well as all rules listed on the [validation](validation) page, there are additional rules that are specific to repeaters.

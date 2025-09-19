@@ -470,6 +470,40 @@ RichContentRenderer::make($record->content)
     ->toHtml()
 ```
 
+#### Using HTML content in merge tags
+
+By default, merge tags render their values as plain text. However, you can render HTML content in merge tags by providing values that implement Laravel's `Htmlable` interface. This is useful for inserting formatted content, links, or other HTML elements:
+
+```php
+use Filament\Forms\Components\RichEditor\RichContentRenderer;
+use Illuminate\Support\HtmlString;
+
+RichContentRenderer::make($record->content)
+    ->mergeTags([
+        'user_name' => $record->user->name, // Plain text
+        'user_profile_link' => new HtmlString('<a href="' . route('profile', $record->user) . '">View Profile</a>'),
+    ])
+    ->toHtml()
+```
+
+When a merge tag value implements the `Htmlable` interface (such as `HtmlString`), the system automatically detects this and renders the HTML content without escaping it. Non-`Htmlable` values continue to be rendered as plain text for security.
+
+### Using custom merge tag labels
+
+You may provide custom labels for merge tags that will be displayed in the editor's side panel and content preview using an associative array where the keys are the merge tag names and the values are the labels:
+
+```php
+use Filament\Forms\Components\RichEditor;
+
+RichEditor::make('content')
+    ->mergeTags([
+        'name' => 'Full name',
+        'today' => 'Today\'s date',
+    ])
+```
+
+The labels aren't saved in the content of the editor and are only used for display purposes.
+
 ### Opening the merge tags panel by default
 
 If you want the merge tags panel to be open by default when the rich editor is loaded, you can use the `activePanel('mergeTags')` method:
@@ -514,6 +548,10 @@ class Post extends Model implements HasRichContent
             ->mergeTags([
                 'name' => fn (): string => $this->user->name,
                 'today' => now()->toFormattedDateString(),
+            ])
+            ->mergeTagLabels([
+                'name' => 'Full name',
+                'today' => 'Today\'s date',
             ])
             ->plugins([
                 HighlightRichContentPlugin::make(),

@@ -74,7 +74,7 @@ class EnumArrayStateCast implements StateCast
                     return $carry;
                 }
 
-                $carry[] = $stateItem->value;
+                $carry[] = strval($stateItem->value);
 
                 return $carry;
             },

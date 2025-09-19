@@ -32,11 +32,15 @@ class PartialsComponentHook extends ComponentHook
         return false;
     }
 
-    public function update(): void
+    public function update(): Closure
     {
         $this->storeSet('updatesCount', ($this->storeGet('updatesCount') ?? 0) + 1);
 
-        $this->storeSet('isPendingPartialRender', true);
+        // Defer setting `isPendingPartialRender` to true until after all `updating` hooks have run,
+        // before any `updated` hooks run, and before the actual property is updated. This ensures
+        // that multiple partial renders that are recorded from the `updated` hook each have
+        // their own `isPendingPartialRender` state.
+        return fn () => $this->storeSet('isPendingPartialRender', true);
     }
 
     public function call(): void
