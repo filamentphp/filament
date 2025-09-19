@@ -12,4 +12,64 @@
             @apply rounded-xl bg-white p-4 shadow-xs ring-1 ring-gray-950/5 dark:bg-white/5 dark:ring-white/10;
         }
     }
+
+    /* Table-specific styles */
+    &.fi-in-repeatable-table {
+        @apply overflow-x-auto p-[1px];
+
+        & .fi-in-repeatable-table-element {
+            @apply w-full border-collapse;
+        }
+
+        & .fi-in-repeatable-table-element th {
+            @apply border-b border-gray-200 bg-gray-50 px-3 py-2 text-left font-medium tracking-wide text-gray-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400;
+
+            /* Alignment classes */
+            &.fi-align-left {
+                @apply text-left;
+            }
+
+            &.fi-align-center {
+                @apply text-center;
+            }
+
+            &.fi-align-right {
+                @apply text-right;
+            }
+
+            &.fi-align-justify {
+                @apply text-justify;
+            }
+        }
+
+        & .fi-in-repeatable-table-element td {
+            @apply border-b border-gray-200 px-3 py-2 text-sm text-gray-900 dark:border-gray-700 dark:text-gray-100;
+        }
+
+        & .fi-in-repeatable-table-element tbody tr:hover {
+            @apply bg-gray-50 dark:bg-gray-800/50;
+        }
+
+        & .fi-in-repeatable-table-element tbody tr:last-child td {
+            @apply border-b-0;
+        }
+
+        &.fi-contained {
+            & .fi-in-repeatable-table-element {
+                @apply overflow-hidden rounded-xl shadow-xs ring-1 ring-gray-950/5 dark:ring-white/10;
+            }
+
+            & .fi-in-repeatable-table-element th:first-child {
+                @apply rounded-tl-xl;
+            }
+
+            & .fi-in-repeatable-table-element th:last-child {
+                @apply rounded-tr-xl;
+            }
+        }
+
+        .fi-in-entry-label {
+            @apply hidden;
+        }
+    }
 }

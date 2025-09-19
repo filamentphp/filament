@@ -715,6 +715,24 @@ class EntriesDemo extends Component implements HasSchemas
                             ->grid(2),
                     ]),
                 Group::make()
+                    ->id('repeatableTable')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-5xl',
+                    ])
+                    ->schema([
+                        RepeatableEntry::make('users')
+                            ->schema([
+                                TextEntry::make('name'),
+                                TextEntry::make('email'),
+                                TextEntry::make('role'),
+                            ])
+                            ->table([
+                                RepeatableEntry\TableColumn::make('Name'),
+                                RepeatableEntry\TableColumn::make('Email'),
+                                RepeatableEntry\TableColumn::make('Role'),
+                            ]),
+                    ]),
+                Group::make()
                     ->id('suffixAction')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
@@ -743,6 +761,18 @@ class EntriesDemo extends Component implements HasSchemas
                         'content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam euismod, nisl eget aliquam ultricies, nunc nisl aliquet nunc, quis aliquam nisl.',
                     ],
                 ],
+                'users' => [
+                    [
+                        'name' => 'Jane Doe',
+                        'email' => 'jane@example.com',
+                        'role' => 'Owner',
+                    ],
+                    [
+                        'name' => 'John Doe',
+                        'email' => 'john@example.com',
+                        'role' => 'Admin',
+                    ],
+                ]
             ]);
     }
 
