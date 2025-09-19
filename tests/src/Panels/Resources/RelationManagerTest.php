@@ -22,7 +22,6 @@ use Illuminate\Auth\Access\Response;
 use Illuminate\Support\Str;
 
 use function Filament\Tests\livewire;
-use function Livewire\store;
 use function Pest\Laravel\assertDatabaseHas;
 
 uses(TestCase::class);

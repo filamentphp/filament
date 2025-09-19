@@ -37,7 +37,6 @@ use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
 use Filament\Support\Concerns\CanBeLazy;
 use Filament\Support\Enums\IconPosition;
-use Filament\Support\Livewire\Partials\PartialsComponentHook;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
 use Filament\View\PanelsRenderHook;
@@ -393,10 +392,5 @@ class RelationManager extends Component implements HasActions, HasRenderHookScop
         }
 
         return null;
-    }
-
-    public function forceRender(): void
-    {
-        app(PartialsComponentHook::class)->forceRender($this);
     }
 }
