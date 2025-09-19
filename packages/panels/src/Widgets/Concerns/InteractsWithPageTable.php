@@ -2,7 +2,6 @@
 
 namespace Filament\Widgets\Concerns;
 
-use Exception;
 use Filament\Tables\Contracts\HasTable;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Builder;
@@ -10,6 +9,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\Reactive;
+use LogicException;
 
 use function Livewire\trigger;
 
@@ -56,7 +56,7 @@ trait InteractsWithPageTable /** @phpstan-ignore trait.unused */
 
     protected function getTablePage(): string
     {
-        throw new Exception('You must define a `getTablePage()` method on your widget that returns the name of a Livewire component.');
+        throw new LogicException('You must define a `getTablePage()` method on your widget that returns the name of a Livewire component.');
     }
 
     /**
@@ -75,7 +75,10 @@ trait InteractsWithPageTable /** @phpstan-ignore trait.unused */
 
         /** @var HasTable $tableComponent */
         $page = app('livewire')->new($this->getTablePage());
-        trigger('mount', $page, [
+
+        trigger('mount', $page, [], null, null);
+
+        foreach ([
             'activeTab' => $this->activeTab,
             'paginators' => $this->paginators,
             'parentRecord' => $this->parentRecord,
@@ -86,7 +89,11 @@ trait InteractsWithPageTable /** @phpstan-ignore trait.unused */
             'tableSearch' => $this->tableSearch,
             'tableSort' => $this->tableSort,
             ...$this->getTablePageMountParameters(),
-        ], null, null);
+        ] as $property => $value) {
+            $page->{$property} = $value;
+        }
+
+        $page->bootedInteractsWithTable();
 
         return $this->tablePage = $page;
     }

@@ -4,11 +4,11 @@ namespace Filament\Navigation;
 
 use BackedEnum;
 use Closure;
-use Exception;
 use Filament\Support\Components\Component;
 use Filament\Support\Concerns\HasBadgeTooltip;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Htmlable;
+use LogicException;
 use UnitEnum;
 
 class NavigationItem extends Component
@@ -184,7 +184,7 @@ class NavigationItem extends Component
         $icon = $this->evaluate($this->icon);
 
         if (blank($icon) && $this->getChildItems()) {
-            throw new Exception("Navigation item [{$this->getLabel()}] has child items but no icon. Parent items must have an icon to ensure a proper user experience.");
+            throw new LogicException("Navigation item [{$this->getLabel()}] has child items but no icon. Parent items must have an icon to ensure a proper user experience.");
         }
 
         return $icon;

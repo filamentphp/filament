@@ -49,7 +49,7 @@ Each nested array in the main array represents a group of buttons in the toolbar
 
 ## Uploading images to the editor
 
-You may customize how images are uploaded using configuration methods:
+Images may be uploaded to the editor. They will always be uploaded to a publicly available URL with public storage permissions, since generating temporary file upload URLs is not supported in static content. You may customize where images are uploaded using configuration methods:
 
 ```php
 use Filament\Forms\Components\MarkdownEditor;
@@ -60,3 +60,23 @@ MarkdownEditor::make('content')
 ```
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing static values, the `fileAttachmentsDisk()` and `fileAttachmentsDirectory()` methods also accept functions to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+### Validating uploaded images
+
+You may use the `fileAttachmentsAcceptedFileTypes()` method to control a list of accepted mime types for uploaded images. By default, `image/png`, `image/jpeg`, `image/gif`, and `image/webp` are accepted:
+
+```php
+use Filament\Forms\Components\MarkdownEditor;
+
+MarkdownEditor::make('content')
+    ->fileAttachmentsAcceptedFileTypes(['image/png', 'image/jpeg'])
+```
+
+You may use the `fileAttachmentsMaxSize()` method to control the maximum file size for uploaded images. The size is specified in kilobytes. By default, the maximum size is 12288 KB (12 MB):
+
+```php
+use Filament\Forms\Components\MarkdownEditor;
+
+MarkdownEditor::make('content')
+    ->fileAttachmentsMaxSize(5120) // 5 MB
+```

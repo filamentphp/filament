@@ -11,6 +11,8 @@
     $tools = $getTools();
     $toolbarButtons = $getToolbarButtons();
     $floatingToolbars = $getFloatingToolbars();
+    $fileAttachmentsMaxSize = $getFileAttachmentsMaxSize();
+    $fileAttachmentsAcceptedFileTypes = $getFileAttachmentsAcceptedFileTypes();
 @endphp
 
 <x-dynamic-component :component="$fieldWrapperView" :field="$field">
@@ -26,6 +28,8 @@
             x-load
             x-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('rich-editor', 'filament/forms') }}"
             x-data="richEditorFormComponent({
+                        acceptedFileTypes: @js($fileAttachmentsAcceptedFileTypes),
+                        acceptedFileTypesValidationMessage: @js($fileAttachmentsAcceptedFileTypes ? __('filament-forms::components.rich_editor.file_attachments_accepted_file_types_message', ['values' => implode(', ', $fileAttachmentsAcceptedFileTypes)]) : null),
                         activePanel: @js($getActivePanel()),
                         deleteCustomBlockButtonIconHtml: @js(\Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::Trash, alias: \Filament\Forms\View\FormsIconAlias::COMPONENTS_RICH_EDITOR_PANELS_CUSTOM_BLOCK_DELETE_BUTTON)->toHtml()),
                         editCustomBlockButtonIconHtml: @js(\Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::PencilSquare, alias: \Filament\Forms\View\FormsIconAlias::COMPONENTS_RICH_EDITOR_PANELS_CUSTOM_BLOCK_EDIT_BUTTON)->toHtml()),
@@ -36,6 +40,8 @@
                         isLiveOnBlur: @js($isLiveOnBlur()),
                         liveDebounce: @js($getNormalizedLiveDebounce()),
                         livewireId: @js($this->getId()),
+                        maxFileSize: @js($fileAttachmentsMaxSize),
+                        maxFileSizeValidationMessage: @js($fileAttachmentsMaxSize ? trans_choice('filament-forms::components.rich_editor.file_attachments_max_size_message', $fileAttachmentsMaxSize, ['max' => $fileAttachmentsMaxSize]) : null),
                         mergeTags: @js($mergeTags),
                         noMergeTagSearchResultsMessage: @js($getNoMergeTagSearchResultsMessage()),
                         placeholder: @js($getPlaceholder()),
@@ -59,14 +65,39 @@
                     @foreach ($toolbarButtons as $button => $buttonGroup)
                         <div class="fi-fo-rich-editor-toolbar-group">
                             @foreach ($buttonGroup as $button)
-                                {{ $tools[$button] ?? throw new Exception("Toolbar button [{$button}] cannot be found.") }}
+                                {{ $tools[$button] ?? throw new LogicException("Toolbar button [{$button}] cannot be found.") }}
                             @endforeach
                         </div>
                     @endforeach
                 </div>
             @endif
 
-            <div class="fi-fo-rich-editor-main">
+            <div
+                x-show="isUploadingFile"
+                x-cloak
+                class="fi-fo-rich-editor-uploading-file-message"
+            >
+                {{ \Filament\Support\generate_loading_indicator_html() }}
+
+                <span>
+                    {{ $getUploadingFileMessage() }}
+                </span>
+            </div>
+
+            <div
+                x-show="! isUploadingFile && fileValidationMessage"
+                x-cloak
+                class="fi-fo-rich-editor-file-validation-message"
+            >
+                <span
+                    x-text="fileValidationMessage"
+                    x-show="! isUploadingFile && fileValidationMessage"
+                ></span>
+            </div>
+
+            <div
+                {{ $getExtraInputAttributeBag()->class(['fi-fo-rich-editor-main']) }}
+            >
                 <div class="fi-fo-rich-editor-content fi-prose" x-ref="editor">
                     @foreach ($floatingToolbars as $nodeName => $buttons)
                         <div

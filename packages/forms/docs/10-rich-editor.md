@@ -225,6 +225,26 @@ RichContentRenderer::make($record->content)
     ->toHtml()
 ```
 
+### Validating uploaded images
+
+You may use the `fileAttachmentsAcceptedFileTypes()` method to control a list of accepted mime types for uploaded images. By default, `image/png`, `image/jpeg`, `image/gif`, and `image/webp` are accepted:
+
+```php
+use Filament\Forms\Components\RichEditor;
+
+RichEditor::make('content')
+    ->fileAttachmentsAcceptedFileTypes(['image/png', 'image/jpeg'])
+```
+
+You may use the `fileAttachmentsMaxSize()` method to control the maximum file size for uploaded images. The size is specified in kilobytes. By default, the maximum size is 12288 KB (12 MB):
+
+```php
+use Filament\Forms\Components\RichEditor;
+
+RichEditor::make('content')
+    ->fileAttachmentsMaxSize(5120) // 5 MB
+```
+
 ## Using custom blocks
 
 Custom blocks are elements that users can drag and drop into the rich editor. You can define custom blocks that user can insert into the rich editor using the `customBlocks()` method:
@@ -462,6 +482,24 @@ RichContentRenderer::make($record->content)
     ->toHtml()
 ```
 
+#### Using HTML content in merge tags
+
+By default, merge tags render their values as plain text. However, you can render HTML content in merge tags by providing values that implement Laravel's `Htmlable` interface. This is useful for inserting formatted content, links, or other HTML elements:
+
+```php
+use Filament\Forms\Components\RichEditor\RichContentRenderer;
+use Illuminate\Support\HtmlString;
+
+RichContentRenderer::make($record->content)
+    ->mergeTags([
+        'user_name' => $record->user->name, // Plain text
+        'user_profile_link' => new HtmlString('<a href="' . route('profile', $record->user) . '">View Profile</a>'),
+    ])
+    ->toHtml()
+```
+
+When a merge tag value implements the `Htmlable` interface (such as `HtmlString`), the system automatically detects this and renders the HTML content without escaping it. Non-`Htmlable` values continue to be rendered as plain text for security.
+
 ### Opening the merge tags panel by default
 
 If you want the merge tags panel to be open by default when the rich editor is loaded, you can use the `activePanel('mergeTags')` method:
@@ -619,7 +657,7 @@ class HighlightRichContentPlugin implements RichContentPlugin
                 ->jsHandler('$getEditor()?.chain().focus().toggleHighlight().run()')
                 ->icon(Heroicon::CursorArrowRays),
             RichEditorTool::make('highlightWithCustomColor')
-                ->action(arguments: '{ color: $getEditor().getAttributes(\'mark\')?.data-color }')
+                ->action(arguments: '{ color: $getEditor().getAttributes(\'highlight\')?.[\'data-color\'] }')
                 ->icon(Heroicon::CursorArrowRipple),
         ];
     }

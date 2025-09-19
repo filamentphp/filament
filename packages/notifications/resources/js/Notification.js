@@ -281,19 +281,25 @@ class Action {
     }
 
     button() {
-        this.view('filament-actions::button-action')
+        this.view('filament::components.button.index')
 
         return this
     }
 
     grouped() {
-        this.view('filament-actions::grouped-action')
+        this.view('filament::components.dropdown.list.item')
+
+        return this
+    }
+
+    iconButton() {
+        this.view('filament::components.icon-button')
 
         return this
     }
 
     link() {
-        this.view('filament-actions::link-action')
+        this.view('filament::components.link')
 
         return this
     }

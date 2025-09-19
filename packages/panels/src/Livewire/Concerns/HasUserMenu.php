@@ -14,6 +14,10 @@ trait HasUserMenu
 
     public function bootHasUserMenu(): void
     {
+        if (Filament::auth()->guest()) {
+            return;
+        }
+
         if (! Filament::hasUserMenu()) {
             return;
         }

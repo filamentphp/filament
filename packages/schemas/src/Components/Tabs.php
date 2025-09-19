@@ -68,7 +68,7 @@ class Tabs extends Component
             $statePath = $component->getStatePath();
 
             return Str::slug(Str::transliterate($label, strict: true)) . '::' . (filled($statePath) ? "{$statePath}::tabs" : 'tabs');
-        });
+        }, isInheritable: false);
     }
 
     /**

@@ -4,11 +4,11 @@ return [
 
     'single' => [
 
-        'label' => 'Dahbelh',
+        'label' => 'Behtîrna',
 
         'modal' => [
 
-            'heading' => ':Label dahbelhna',
+            'heading' => ':Label behtîrna',
 
             'fields' => [
 
@@ -21,11 +21,11 @@ return [
             'actions' => [
 
                 'attach' => [
-                    'label' => 'Dahbelh',
+                    'label' => 'Behtîrna',
                 ],
 
                 'attach_another' => [
-                    'label' => 'Pakhat dahbelh a adang dahbelh lehna',
+                    'label' => 'Pakhat behtîra adang behtîr lehna',
                 ],
 
             ],
@@ -35,7 +35,7 @@ return [
         'notifications' => [
 
             'attached' => [
-                'title' => 'Dahbelh a ni.',
+                'title' => 'Behtîr a ni e.',
             ],
 
         ],

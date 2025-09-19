@@ -2,7 +2,7 @@
 
 namespace Filament\Panel\Concerns;
 
-use Exception;
+use LogicException;
 
 trait HasId
 {
@@ -11,7 +11,7 @@ trait HasId
     public function id(string $id): static
     {
         if (isset($this->id)) {
-            throw new Exception("The panel has already been registered with the ID [{$this->id}].");
+            throw new LogicException("The panel has already been registered with the ID [{$this->id}].");
         }
 
         $this->id = $id;
@@ -24,7 +24,7 @@ trait HasId
     public function getId(): string
     {
         if (! isset($this->id)) {
-            throw new Exception('A panel has been registered without an `id()`.');
+            throw new LogicException('A panel has been registered without an `id()`.');
         }
 
         return $this->id;

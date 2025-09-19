@@ -6,6 +6,18 @@ return [
 
         'heading' => 'คอลัมน์',
 
+        'actions' => [
+
+            'apply' => [
+                'label' => 'ใช้งาน',
+            ],
+
+            'reset' => [
+                'label' => 'รีเซ็ต',
+            ],
+
+        ],
+
     ],
 
     'columns' => [

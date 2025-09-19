@@ -3,7 +3,6 @@
 namespace Filament\Tables\Filters;
 
 use Closure;
-use Exception;
 use Filament\Forms\Components\Repeater;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Schema;
@@ -12,6 +11,7 @@ use Filament\Tables\Filters\QueryBuilder\Forms\Components\RuleBuilder;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\ValidationException;
+use LogicException;
 
 class QueryBuilder extends BaseFilter
 {
@@ -35,8 +35,7 @@ class QueryBuilder extends BaseFilter
                 ->label($filter->getLabel())
                 ->constraints($filter->getConstraints())
                 ->blockPickerColumns($filter->getConstraintPickerColumns())
-                ->blockPickerWidth($filter->getConstraintPickerWidth())
-                ->live(onBlur: true),
+                ->blockPickerWidth($filter->getConstraintPickerWidth()),
         ]);
 
         $this->query(function (Builder $query, array $data): void {
@@ -57,7 +56,7 @@ class QueryBuilder extends BaseFilter
 
     public function getActiveCount(): int
     {
-        return $this->countRules($this->getState()['rules'], $this->getRuleBuilder());
+        return $this->countRules($this->getFormState()['rules'], $this->getRuleBuilder());
     }
 
     /**
@@ -226,7 +225,7 @@ class QueryBuilder extends BaseFilter
         $builder = $this->getSchema()->getComponent(fn (Component $component): bool => $component instanceof RuleBuilder);
 
         if (! ($builder instanceof RuleBuilder)) {
-            throw new Exception('No rule builder component found.');
+            throw new LogicException('No rule builder component found.');
         }
 
         return $builder;
@@ -240,7 +239,7 @@ class QueryBuilder extends BaseFilter
             ->getComponent(fn (Component $component): bool => $component instanceof RuleBuilder);
 
         if (! ($builder instanceof RuleBuilder)) {
-            throw new Exception('No nested rule builder component found.');
+            throw new LogicException('No nested rule builder component found.');
         }
 
         return $builder;

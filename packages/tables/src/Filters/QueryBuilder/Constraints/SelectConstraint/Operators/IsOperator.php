@@ -2,7 +2,6 @@
 
 namespace Filament\Tables\Filters\QueryBuilder\Constraints\SelectConstraint\Operators;
 
-use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Forms\Components\Select;
@@ -11,6 +10,7 @@ use Filament\Tables\Filters\QueryBuilder\Constraints\Operators\Operator;
 use Filament\Tables\Filters\QueryBuilder\Constraints\SelectConstraint;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
+use LogicException;
 
 class IsOperator extends Operator
 {
@@ -113,7 +113,7 @@ class IsOperator extends Operator
         $constraint = parent::getConstraint();
 
         if (! ($constraint instanceof SelectConstraint)) {
-            throw new Exception('Is operator can only be used with select constraints.');
+            throw new LogicException('Is operator can only be used with select constraints.');
         }
 
         return $constraint;

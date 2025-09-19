@@ -4,7 +4,7 @@ return [
 
     'single' => [
 
-        'label' => ':label חדש',
+        'label' => 'יצירת :label',
 
         'modal' => [
 
@@ -13,7 +13,7 @@ return [
             'actions' => [
 
                 'create' => [
-                    'label' => 'צור',
+                    'label' => 'יצירה',
                 ],
 
                 'create_another' => [

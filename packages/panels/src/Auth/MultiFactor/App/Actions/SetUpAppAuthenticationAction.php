@@ -40,7 +40,7 @@ class SetUpAppAuthenticationAction
             ->color('primary')
             ->icon(Heroicon::LockClosed)
             ->link()
-            ->mountUsing(function (HasActions $livewire, $action) use ($appAuthentication): void {
+            ->mountUsing(function (HasActions $livewire) use ($appAuthentication): void {
                 $livewire->mergeMountedActionArguments([
                     'encrypted' => encrypt([
                         'secret' => $appAuthentication->generateSecret(),

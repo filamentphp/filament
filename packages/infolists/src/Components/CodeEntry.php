@@ -142,7 +142,7 @@ class CodeEntry extends Entry implements HasEmbeddedView
         ob_start(); ?>
 
         <div <?= $attributes->toHtml() ?>>
-            <?= $phiki->codeToHtml($state, $grammar, [
+            <?= (string) $phiki->codeToHtml($state, $grammar, [
                 'light' => $lightTheme,
                 'dark' => $darkTheme,
             ]) ?>
