@@ -8,9 +8,9 @@ use Filament\Schemas\Components\Concerns\HasContainerGridLayout;
 use Filament\Schemas\Schema;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Concerns\CanBeContained;
+use Filament\Support\Enums\Alignment;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Js;
-use Filament\Support\Enums\Alignment;
 
 class RepeatableEntry extends Entry implements HasEmbeddedView
 {

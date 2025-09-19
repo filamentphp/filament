@@ -772,7 +772,7 @@ class EntriesDemo extends Component implements HasSchemas
                         'email' => 'john@example.com',
                         'role' => 'Admin',
                     ],
-                ]
+                ],
             ]);
     }
 
