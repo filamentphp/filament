@@ -159,15 +159,7 @@ it('can force render relation manager after create another', function (): void {
         ->create();
 
     CreateAction::configureUsing(function (CreateAction $action): void {
-        $action->after(function (mixed $livewire, array $arguments): void {
-            if (! $livewire instanceof RelationManager) {
-                return;
-            }
-
-            if ($arguments['another'] ?? false) {
-                $livewire->forceRender();
-            }
-        });
+        $action->forceRenderAfterCreateAnother(fn (mixed $livewire): bool => $livewire instanceof RelationManager);
     });
 
     $action = TestAction::make(CreateAction::class)->table();
