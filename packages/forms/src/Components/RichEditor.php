@@ -299,6 +299,8 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
                 ->label(__('filament-forms::components.rich_editor.tools.grid_delete'))
                 ->jsHandler('$getEditor()?.chain().focus().deleteNode(\'grid\').run()')
                 ->activeKey('grid')
+                ->activeStyling(false)
+                ->disabledWhenNotActive()
                 ->icon('fi-o-columns-delete')
                 ->iconAlias('forms:components.rich-editor.toolbar.grid_delete'),
             RichEditorTool::make('details')
