@@ -78,7 +78,7 @@ class GridAction
                             ->numeric()
                             ->visible(fn (Get $get): mixed => $get('asymmetric'))
                             ->rules([
-                                fn (Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get) {
+                                fn (Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get): void {
                                     if ($value + $get('rightSpan') !== $get('columns')) {
                                         $fail(__('filament-forms::components.rich_editor.messages.invalid_col_spans'));
                                     }
@@ -92,7 +92,7 @@ class GridAction
                             ->numeric()
                             ->visible(fn (Get $get): mixed => $get('asymmetric'))
                             ->rules([
-                                fn (Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get) {
+                                fn (Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get): void {
                                     if ($value + $get('leftSpan') !== $get('columns')) {
                                         $fail(__('filament-forms::components.rich_editor.messages.invalid_col_spans'));
                                     }

@@ -1,4 +1,9 @@
-import { callOrReturn, getExtensionField, mergeAttributes, Node } from '@tiptap/core'
+import {
+    callOrReturn,
+    getExtensionField,
+    mergeAttributes,
+    Node,
+} from '@tiptap/core'
 import { TextSelection } from '@tiptap/pm/state'
 import { createGrid } from './grid-utils.js'
 
@@ -47,7 +52,7 @@ export default Node.create({
                 default: null,
                 parseHTML: (element) => element.getAttribute('data-right-span'),
             },
-            'style': {
+            style: {
                 default: null,
                 parseHTML: (element) => element.getAttribute('style'),
                 renderHTML: (attributes) => {
@@ -63,45 +68,69 @@ export default Node.create({
         return [
             {
                 tag: 'div',
-                getAttrs: (node) => (node.classList.contains("fi-re-grid") && ! node.classList.contains("-column")) && null,
+                getAttrs: (node) =>
+                    node.classList.contains('fi-re-grid') &&
+                    !node.classList.contains('-column') &&
+                    null,
             },
         ]
     },
 
     renderHTML({ HTMLAttributes }) {
-        return ['div', mergeAttributes(this.options.HTMLAttributes, HTMLAttributes), 0]
+        return [
+            'div',
+            mergeAttributes(this.options.HTMLAttributes, HTMLAttributes),
+            0,
+        ]
     },
 
     addCommands() {
         return {
             insertGrid:
-                ({ columns = 2, stackAt, asymmetric, leftSpan = null, rightSpan = null, coordinates = null } = {}) =>
-                    ({ tr, dispatch, editor }) => {
-                        const node = createGrid(
-                            editor.schema,
-                            columns,
-                            stackAt,
-                            asymmetric,
-                            leftSpan,
-                            rightSpan
-                        )
+                ({
+                    columns = 2,
+                    stackAt,
+                    asymmetric,
+                    leftSpan = null,
+                    rightSpan = null,
+                    coordinates = null,
+                } = {}) =>
+                ({ tr, dispatch, editor }) => {
+                    const node = createGrid(
+                        editor.schema,
+                        columns,
+                        stackAt,
+                        asymmetric,
+                        leftSpan,
+                        rightSpan,
+                    )
 
-                        if (dispatch) {
-                            const offset = tr.selection.anchor + 1
+                    if (dispatch) {
+                        const offset = tr.selection.anchor + 1
 
-                            if (! [null, undefined].includes(coordinates?.from)) {
-                                tr.replaceRangeWith(coordinates.from, coordinates.to, node)
-                                    .scrollIntoView()
-                                    .setSelection(TextSelection.near(tr.doc.resolve(coordinates.from)))
-                            } else {
-                                tr.replaceSelectionWith(node)
-                                    .scrollIntoView()
-                                    .setSelection(TextSelection.near(tr.doc.resolve(offset)))
-                            }
+                        if (![null, undefined].includes(coordinates?.from)) {
+                            tr.replaceRangeWith(
+                                coordinates.from,
+                                coordinates.to,
+                                node,
+                            )
+                                .scrollIntoView()
+                                .setSelection(
+                                    TextSelection.near(
+                                        tr.doc.resolve(coordinates.from),
+                                    ),
+                                )
+                        } else {
+                            tr.replaceSelectionWith(node)
+                                .scrollIntoView()
+                                .setSelection(
+                                    TextSelection.near(tr.doc.resolve(offset)),
+                                )
                         }
+                    }
 
-                        return true
-                    },
+                    return true
+                },
         }
     },
 
@@ -113,7 +142,9 @@ export default Node.create({
         }
 
         return {
-            gridRole: callOrReturn(getExtensionField(extension, 'gridRole', context)),
+            gridRole: callOrReturn(
+                getExtensionField(extension, 'gridRole', context),
+            ),
         }
     },
 })
