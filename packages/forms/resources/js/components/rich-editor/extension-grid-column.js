@@ -5,8 +5,6 @@ export default Node.create({
 
     content: 'block+',
 
-    gridRole: 'column',
-
     isolating: true,
 
     addOptions() {

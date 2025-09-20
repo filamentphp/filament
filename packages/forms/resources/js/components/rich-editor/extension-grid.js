@@ -1,9 +1,4 @@
-import {
-    callOrReturn,
-    getExtensionField,
-    mergeAttributes,
-    Node,
-} from '@tiptap/core'
+import { mergeAttributes, Node } from '@tiptap/core'
 import { TextSelection } from '@tiptap/pm/state'
 
 export default Node.create({
@@ -19,7 +14,6 @@ export default Node.create({
 
     content: 'gridColumn+',
 
-    gridRole: 'grid',
 
     addOptions() {
         return {
@@ -119,19 +113,6 @@ export default Node.create({
         }
     },
 
-    extendNodeSchema(extension) {
-        const context = {
-            name: extension.name,
-            options: extension.options,
-            storage: extension.storage,
-        }
-
-        return {
-            gridRole: callOrReturn(
-                getExtensionField(extension, 'gridRole', context),
-            ),
-        }
-    },
 })
 
 function createGrid(
@@ -141,7 +122,8 @@ function createGrid(
     startSpan = null,
     endSpan = null,
 ) {
-    const { grid, column } = getGridNodeTypes(schema)
+    const columnNodeType = schema.nodes.gridColumn
+
     const columnNodes = []
 
     for (
@@ -150,37 +132,17 @@ function createGrid(
         index += 1
     ) {
         columnNodes.push(
-            column.createAndFill({
+            columnNodeType.createAndFill({
                 'data-col-span': [startSpan, endSpan][index] ?? 1,
             }),
         )
     }
 
-    return grid.createChecked(
+    return schema.nodes.grid.createChecked(
         {
             'data-columns': columns,
             'data-stack-at': fromBreakpoint,
         },
         columnNodes,
     )
-}
-
-function getGridNodeTypes(schema) {
-    if (schema.cached.gridNodeTypes) {
-        return schema.cached.gridNodeTypes
-    }
-
-    const roles = {}
-
-    Object.keys(schema.nodes).forEach((type) => {
-        const nodeType = schema.nodes[type]
-
-        if (nodeType.spec.gridRole) {
-            roles[nodeType.spec.gridRole] = nodeType
-        }
-    })
-
-    schema.cached.gridNodeTypes = roles
-
-    return roles
 }
