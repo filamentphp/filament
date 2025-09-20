@@ -211,7 +211,7 @@ class CreateAction extends Action
 
     public function shouldForceRenderAfterCreateAnother(): bool
     {
-        return $this->evaluate($this->shouldForceRenderAfterCreateAnother);
+        return (bool) $this->evaluate($this->shouldForceRenderAfterCreateAnother);
     }
 
     public function getRelationship(): Relation | Builder | null
