@@ -127,52 +127,6 @@ export default Node.create({
 
                     return true
                 },
-            deleteGrid:
-                () =>
-                ({ tr, dispatch, editor, state }) => {
-                    const { selection } = state
-                    const gridType = editor.schema.nodes.grid
-
-                    // If the selection is a node selection on the grid itself
-                    if (selection.node && selection.node.type === gridType) {
-                        if (dispatch) {
-                            const from = selection.from
-                            const to = selection.to
-                            tr.delete(from, to)
-                                .scrollIntoView()
-                                .setSelection(
-                                    TextSelection.near(
-                                        tr.doc.resolve(Math.max(0, from - 1)),
-                                        -1,
-                                    ),
-                                )
-                        }
-                        return true
-                    }
-
-                    // Otherwise, find the nearest ancestor grid node from the current selection
-                    const $from = selection.$from
-                    for (let depth = $from.depth; depth > 0; depth--) {
-                        const node = $from.node(depth)
-                        if (node.type === gridType) {
-                            const fromPos = $from.before(depth)
-                            const toPos = $from.after(depth)
-                            if (dispatch) {
-                                tr.delete(fromPos, toPos)
-                                    .scrollIntoView()
-                                    .setSelection(
-                                        TextSelection.near(
-                                            tr.doc.resolve(Math.max(0, fromPos - 1)),
-                                            -1,
-                                        ),
-                                    )
-                            }
-                            return true
-                        }
-                    }
-
-                    return false
-                },
         }
     },
 })
