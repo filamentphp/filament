@@ -117,8 +117,8 @@ use function Pest\Livewire\livewire;
 it('can sort posts by title', function () {
     Post::factory()->count(10)->create();
 
-    $sortedPostsAsc = Post::orderBy('title')->get();
-    $sortedPostsDesc = Post::orderByDesc('title')->get();
+    $sortedPostsAsc = Post::query()->orderBy('title')->get();
+    $sortedPostsDesc = Post::query()->orderByDesc('title')->get();
 
     livewire(PostResource\Pages\ListPosts::class)
         ->sortTable('title')
@@ -129,9 +129,7 @@ it('can sort posts by title', function () {
 ```
 
 <Aside variant="info">
-    Records are **sorted** according to the database's sorting strategy (e.g. MySQL and PostgreSQL use different sorting strategies).  
-    Therefore, you cannot use the `sortBy()` collection method on the factory results.  
-    Instead, make sure to order them explicitly in your query using `orderBy()`.
+    Filament tables use a SQL `order` statement to sort records before they are output. Different database drivers can use different sorting strategies, and they can differ from PHP's own sorting strategy, so you should ensure that test records are sorted using `orderBy()` on a database query rather than `sortBy()` on a collection of models.
 </Aside>
 
 ### Testing the state of a column
