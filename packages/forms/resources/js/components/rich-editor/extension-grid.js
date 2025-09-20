@@ -5,7 +5,6 @@ import {
     Node,
 } from '@tiptap/core'
 import { TextSelection } from '@tiptap/pm/state'
-import { createGrid } from './grid-utils.js'
 
 export default Node.create({
     name: 'grid',
@@ -25,17 +24,13 @@ export default Node.create({
     addOptions() {
         return {
             HTMLAttributes: {
-                class: 'fi-re-grid',
+                class: 'grid-layout',
             },
         }
     },
 
     addAttributes() {
         return {
-            'data-asymmetric': {
-                default: false,
-                parseHTML: (element) => element.getAttribute('data-asymmetric'),
-            },
             'data-columns': {
                 default: 2,
                 parseHTML: (element) => element.getAttribute('data-columns'),
@@ -43,14 +38,6 @@ export default Node.create({
             'data-stack-at': {
                 default: 'md',
                 parseHTML: (element) => element.getAttribute('data-stack-at'),
-            },
-            'data-left-span': {
-                default: null,
-                parseHTML: (element) => element.getAttribute('data-left-span'),
-            },
-            'data-right-span': {
-                default: null,
-                parseHTML: (element) => element.getAttribute('data-right-span'),
             },
             style: {
                 default: null,
@@ -69,8 +56,8 @@ export default Node.create({
             {
                 tag: 'div',
                 getAttrs: (node) =>
-                    node.classList.contains('fi-re-grid') &&
-                    !node.classList.contains('-column') &&
+                    node.classList.contains('grid-layout') &&
+                    !node.classList.contains('-col') &&
                     null,
             },
         ]
@@ -89,20 +76,18 @@ export default Node.create({
             insertGrid:
                 ({
                     columns = 2,
-                    stackAt,
-                    asymmetric,
-                    leftSpan = null,
-                    rightSpan = null,
+                    fromBreakpoint,
+                    startSpan = null,
+                    endSpan = null,
                     coordinates = null,
                 } = {}) =>
                 ({ tr, dispatch, editor }) => {
                     const node = createGrid(
                         editor.schema,
                         columns,
-                        stackAt,
-                        asymmetric,
-                        leftSpan,
-                        rightSpan,
+                        fromBreakpoint,
+                        startSpan,
+                        endSpan,
                     )
 
                     if (dispatch) {
@@ -148,3 +133,54 @@ export default Node.create({
         }
     },
 })
+
+function createGrid(
+    schema,
+    columns,
+    fromBreakpoint,
+    startSpan = null,
+    endSpan = null,
+) {
+    const { grid, column } = getGridNodeTypes(schema)
+    const columnNodes = []
+
+    for (
+        let index = 0;
+        index < (startSpan && endSpan ? 2 : columns);
+        index += 1
+    ) {
+        columnNodes.push(
+            column.createAndFill({
+                'data-col-span': [startSpan, endSpan][index] ?? 1,
+            }),
+        )
+    }
+
+    return grid.createChecked(
+        {
+            'data-columns': columns,
+            'data-stack-at': fromBreakpoint,
+        },
+        columnNodes,
+    )
+}
+
+function getGridNodeTypes(schema) {
+    if (schema.cached.gridNodeTypes) {
+        return schema.cached.gridNodeTypes
+    }
+
+    const roles = {}
+
+    Object.keys(schema.nodes).forEach((type) => {
+        const nodeType = schema.nodes[type]
+
+        if (nodeType.spec.gridRole) {
+            roles[nodeType.spec.gridRole] = nodeType
+        }
+    })
+
+    schema.cached.gridNodeTypes = roles
+
+    return roles
+}

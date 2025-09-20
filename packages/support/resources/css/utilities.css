@@ -770,7 +770,8 @@
         font-size: var(--text-base);
     }
 
-    .fi-re-grid-column {
+    & .grid-layout-col {
         margin-top: 0;
+        min-width: 0;
     }
 }

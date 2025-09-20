@@ -19,7 +19,7 @@ class GridExtension extends Node
     {
         return [
             'HTMLAttributes' => [
-                'class' => 'fi-re-grid',
+                'class' => 'grid-layout',
             ],
         ];
     }
@@ -30,10 +30,6 @@ class GridExtension extends Node
     public function addAttributes(): array
     {
         return [
-            'data-asymmetric' => [
-                'default' => false,
-                'parseHTML' => fn ($DOMNode) => $DOMNode->getAttribute('data-asymmetric'),
-            ],
             'data-columns' => [
                 'default' => '2',
                 'parseHTML' => fn ($DOMNode) => $DOMNode->getAttribute('data-columns'),
@@ -47,16 +43,8 @@ class GridExtension extends Node
                 },
             ],
             'data-stack-at' => [
-                'default' => 'md',
+                'default' => 'lg',
                 'parseHTML' => fn ($DOMNode) => $DOMNode->getAttribute('data-stack-at'),
-            ],
-            'data-left-span' => [
-                'default' => null,
-                'parseHTML' => fn ($DOMNode) => $DOMNode->getAttribute('data-left-span'),
-            ],
-            'data-right-span' => [
-                'default' => null,
-                'parseHTML' => fn ($DOMNode) => $DOMNode->getAttribute('data-right-span'),
             ],
         ];
     }
@@ -69,8 +57,8 @@ class GridExtension extends Node
         return [
             [
                 'tag' => 'div',
-                'getAttrs' => fn ($DOMNode): bool => str_contains((string) $DOMNode->getAttribute('class'), 'fi-re-grid')
-                    && ! str_contains((string) $DOMNode->getAttribute('class'), '-column'),
+                'getAttrs' => fn ($DOMNode): bool => str_contains((string) $DOMNode->getAttribute('class'), 'grid-layout')
+                    && ! str_contains((string) $DOMNode->getAttribute('class'), '-col'),
             ],
         ];
     }

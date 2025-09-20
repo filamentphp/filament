@@ -292,6 +292,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
             RichEditorTool::make('grid')
                 ->label(__('filament-forms::components.rich_editor.tools.grid'))
                 ->action()
+                ->activeJsExpression('false')
                 ->icon(Heroicon::OutlinedSquares2x2)
                 ->iconAlias('forms:components.rich-editor.toolbar.grid'),
             RichEditorTool::make('details')
@@ -721,8 +722,8 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
         return [
             AttachFilesAction::make(),
             CustomBlockAction::make(),
-            LinkAction::make(),
             GridAction::make(),
+            LinkAction::make(),
             ...array_reduce(
                 $this->getPlugins(),
                 fn (array $carry, RichContentPlugin $plugin): array => [

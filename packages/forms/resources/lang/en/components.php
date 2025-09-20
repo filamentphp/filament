@@ -447,6 +447,70 @@ return [
 
             ],
 
+            'grid' => [
+
+                'label' => 'Grid',
+
+                'modal' => [
+
+                    'heading' => 'Grid',
+
+                    'form' => [
+
+                        'preset' => [
+
+                            'label' => 'Preset',
+
+                            'placeholder' => 'None',
+
+                            'options' => [
+                                'two' => 'Two',
+                                'three' => 'Three',
+                                'four' => 'Four',
+                                'five' => 'Five',
+                                'two_start_third' => 'Two (Start Third)',
+                                'two_end_third' => 'Two (End Third)',
+                                'two_start_fourth' => 'Two (Start Fourth)',
+                                'two_end_fourth' => 'Two (End Fourth)',
+                            ],
+                        ],
+
+                        'columns' => [
+                            'label' => 'Columns',
+                        ],
+
+                        'from_breakpoint' => [
+
+                            'label' => 'From breakpoint',
+
+                            'options' => [
+                                'sm' => 'Small',
+                                'md' => 'Medium',
+                                'lg' => 'Large',
+                                'xl' => 'Extra large',
+                                '2xl' => 'Two extra large',
+                            ],
+
+                        ],
+
+                        'is_asymmetric' => [
+                            'label' => 'Two asymmetric columns',
+                        ],
+
+                        'start_span' => [
+                            'label' => 'Start span',
+                        ],
+
+                        'end_span' => [
+                            'label' => 'End span',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
             'link' => [
 
                 'label' => 'Edit',
@@ -471,62 +535,6 @@ return [
 
             ],
 
-            'grid' => [
-
-                'label' => 'Grid',
-
-                'modal' => [
-
-                    'heading' => 'Grid',
-
-                    'form' => [
-
-                        'preset' => [
-                            'label' => 'Presets',
-                            'custom' => 'Custom',
-                            'two' => 'Two',
-                            'three' => 'Three',
-                            'four' => 'Four',
-                            'five' => 'Five',
-                            'asy_left_thirds' => 'Asymmetric Left Thirds',
-                            'asy_right_thirds' => 'Asymmetric Right Thirds',
-                            'asy_left_fourths' => 'Asymmetric Left Fourths',
-                            'asy_right_fourths' => 'Asymmetric Right Fourths',
-                        ],
-
-                        'columns' => [
-                            'label' => 'Columns',
-                        ],
-
-                        'stack_at' => [
-                            'label' => 'Stack at',
-                            'dont_stack' => [
-                                'label' => 'Don\'t stack',
-                            ],
-                        ],
-
-                        'asymmetric' => [
-                            'label' => 'Asymmetric',
-                        ],
-
-                        'left_span' => [
-                            'label' => 'Left span',
-                        ],
-
-                        'right_span' => [
-                            'label' => 'Right span',
-                        ],
-
-                    ],
-
-                ],
-
-            ],
-
-        ],
-
-        'messages' => [
-            'invalid_col_spans' => 'The sum of left and right spans must equal the total number of columns',
         ],
 
         'file_attachments_accepted_file_types_message' => 'Uploaded files must be of type: :values.',

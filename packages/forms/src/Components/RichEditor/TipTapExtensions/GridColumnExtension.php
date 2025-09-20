@@ -19,7 +19,7 @@ class GridColumnExtension extends Node
     {
         return [
             'HTMLAttributes' => [
-                'class' => 'fi-re-grid-column',
+                'class' => 'grid-layout-col',
             ],
         ];
     }
@@ -53,7 +53,7 @@ class GridColumnExtension extends Node
         return [
             [
                 'tag' => 'div',
-                'getAttrs' => fn ($DOMNode): bool => str_contains((string) $DOMNode->getAttribute('class'), 'fi-re-grid-column'),
+                'getAttrs' => fn ($DOMNode): bool => str_contains((string) $DOMNode->getAttribute('class'), 'grid-layout-col'),
             ],
         ];
     }

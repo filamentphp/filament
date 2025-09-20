@@ -12,7 +12,7 @@ export default Node.create({
     addOptions() {
         return {
             HTMLAttributes: {
-                class: 'fi-re-grid-column',
+                class: 'grid-layout-col',
             },
         }
     },
@@ -45,7 +45,7 @@ export default Node.create({
             {
                 tag: 'div',
                 getAttrs: (node) =>
-                    node.classList.contains('fi-re-grid-column') && null,
+                    node.classList.contains('grid-layout-col') && null,
             },
         ]
     },

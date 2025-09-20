@@ -195,14 +195,8 @@
             @apply cursor-col-resize cursor-ew-resize;
         }
 
-        & .fi-re-grid {
-            &.ProseMirror-selectednode {
-                @apply ring-primary-600 dark:ring-primary-500 ring-2;
-            }
-
-            .fi-re-grid-column {
-                @apply border border-dashed border-gray-400 p-3 dark:border-gray-600;
-            }
+        & .grid-layout > .grid-layout-col {
+            @apply rounded-md border border-gray-950/20 p-4 dark:border-white/20;
         }
     }
 
