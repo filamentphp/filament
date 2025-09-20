@@ -7,5 +7,5 @@ export default () => ({
 
     disableSticky() {
         this.isSticky = false
-    }
+    },
 })
