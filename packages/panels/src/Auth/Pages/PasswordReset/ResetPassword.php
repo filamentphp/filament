@@ -225,7 +225,8 @@ class ResetPassword extends SimplePage
             ->footer([
                 Actions::make($this->getFormActions())
                     ->alignment($this->getFormActionsAlignment())
-                    ->fullWidth($this->hasFullWidthFormActions()),
+                    ->fullWidth($this->hasFullWidthFormActions())
+                    ->key('form-actions'),
             ]);
     }
 

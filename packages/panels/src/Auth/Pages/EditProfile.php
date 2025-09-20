@@ -450,7 +450,8 @@ class EditProfile extends Page
                 Actions::make($this->getFormActions())
                     ->alignment($this->getFormActionsAlignment())
                     ->fullWidth($this->hasFullWidthFormActions())
-                    ->sticky((! static::isSimple()) && $this->areFormActionsSticky()),
+                    ->sticky((! static::isSimple()) && $this->areFormActionsSticky())
+                    ->key('form-actions'),
             ]);
     }
 
