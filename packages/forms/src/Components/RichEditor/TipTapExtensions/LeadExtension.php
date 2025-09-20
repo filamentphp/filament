@@ -32,7 +32,7 @@ class LeadExtension extends Node
         return [
             [
                 'tag' => 'div',
-                'getAttrs' => fn ($DOMNode): bool => str_contains((string) $DOMNode->getAttribute('class'), 'lead'),
+                'getAttrs' => fn ($DOMNode): bool => in_array('lead', explode(' ', (string) $DOMNode->getAttribute('class'))),
             ],
         ];
     }

@@ -14,7 +14,6 @@ export default Node.create({
 
     content: 'gridColumn+',
 
-
     addOptions() {
         return {
             HTMLAttributes: {
@@ -50,9 +49,7 @@ export default Node.create({
             {
                 tag: 'div',
                 getAttrs: (node) =>
-                    node.classList.contains('grid-layout') &&
-                    !node.classList.contains('-col') &&
-                    null,
+                    node.classList.contains('grid-layout') && null,
             },
         ]
     },
@@ -69,19 +66,38 @@ export default Node.create({
         return {
             insertGrid:
                 ({
-                    columns = 2,
+                    columns = [1, 1],
                     fromBreakpoint,
-                    startSpan = null,
-                    endSpan = null,
                     coordinates = null,
                 } = {}) =>
                 ({ tr, dispatch, editor }) => {
-                    const node = createGrid(
-                        editor.schema,
-                        columns,
-                        fromBreakpoint,
-                        startSpan,
-                        endSpan,
+                    const columnNodeType = editor.schema.nodes.gridColumn
+
+                    const spans =
+                        Array.isArray(columns) && columns.length
+                            ? columns
+                            : [1, 1]
+
+                    const columnNodes = []
+
+                    for (let index = 0; index < spans.length; index += 1) {
+                        columnNodes.push(
+                            columnNodeType.createAndFill({
+                                'data-col-span': Number(spans[index] ?? 1) || 1,
+                            }),
+                        )
+                    }
+
+                    const totalColumnsCount = spans
+                        .map((v) => Number(v) || 1)
+                        .reduce((a, b) => a + b, 0)
+
+                    const node = editor.schema.nodes.grid.createChecked(
+                        {
+                            'data-columns': totalColumnsCount,
+                            'data-stack-at': fromBreakpoint,
+                        },
+                        columnNodes,
                     )
 
                     if (dispatch) {
@@ -112,37 +128,4 @@ export default Node.create({
                 },
         }
     },
-
 })
-
-function createGrid(
-    schema,
-    columns,
-    fromBreakpoint,
-    startSpan = null,
-    endSpan = null,
-) {
-    const columnNodeType = schema.nodes.gridColumn
-
-    const columnNodes = []
-
-    for (
-        let index = 0;
-        index < (startSpan && endSpan ? 2 : columns);
-        index += 1
-    ) {
-        columnNodes.push(
-            columnNodeType.createAndFill({
-                'data-col-span': [startSpan, endSpan][index] ?? 1,
-            }),
-        )
-    }
-
-    return schema.nodes.grid.createChecked(
-        {
-            'data-columns': columns,
-            'data-stack-at': fromBreakpoint,
-        },
-        columnNodes,
-    )
-}

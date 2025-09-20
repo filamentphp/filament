@@ -42,9 +42,9 @@ class GridExtension extends Node
                     ];
                 },
             ],
-            'data-stack-at' => [
+            'data-from-breakpoint' => [
                 'default' => 'lg',
-                'parseHTML' => fn ($DOMNode) => $DOMNode->getAttribute('data-stack-at'),
+                'parseHTML' => fn ($DOMNode) => $DOMNode->getAttribute('data-from-breakpoint'),
             ],
         ];
     }
@@ -57,8 +57,7 @@ class GridExtension extends Node
         return [
             [
                 'tag' => 'div',
-                'getAttrs' => fn ($DOMNode): bool => str_contains((string) $DOMNode->getAttribute('class'), 'grid-layout')
-                    && ! str_contains((string) $DOMNode->getAttribute('class'), '-col'),
+                'getAttrs' => fn ($DOMNode): bool => in_array('grid-layout', explode(' ', (string) $DOMNode->getAttribute('class'))),
             ],
         ];
     }

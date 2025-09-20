@@ -125,23 +125,22 @@ class GridAction
                     ]),
             ])
             ->action(function (array $arguments, array $data, RichEditor $component): void {
-                if ($data['isAsymmetric']) {
-                    $data['startSpan'] ??= 1;
-                    $data['endSpan'] ??= 1;
-                    $data['columns'] = $data['startSpan'] + $data['endSpan'];
-                } else {
-                    $data['startSpan'] = null;
-                    $data['endSpan'] = null;
-                    $data['columns'] ??= 2;
-                }
+                $columns = [];
 
-                unset($data['isAsymmetric']);
+                if ($data['isAsymmetric']) {
+                    $columns = [(int) $data['startSpan'] ?? 1, (int) $data['endSpan'] ?? 1];
+                } else {
+                    $columns = array_fill(0, max(2, (int) $data['columns'] ?? 2), 1);
+                }
 
                 $component->runCommands(
                     [
                         EditorCommand::make(
                             'insertGrid',
-                            arguments: [$data],
+                            arguments: [[
+                                'fromBreakpoint' => $data['fromBreakpoint'] ?? 'lg',
+                                'columns' => $columns,
+                            ]],
                         ),
                     ],
                     editorSelection: $arguments['editorSelection'],
