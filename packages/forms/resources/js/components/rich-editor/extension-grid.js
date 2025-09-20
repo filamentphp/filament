@@ -24,20 +24,21 @@ export default Node.create({
 
     addAttributes() {
         return {
-            'data-columns': {
+            'data-cols': {
                 default: 2,
-                parseHTML: (element) => element.getAttribute('data-columns'),
+                parseHTML: (element) => element.getAttribute('data-cols'),
             },
-            'data-stack-at': {
+            'data-from-breakpoint': {
                 default: 'md',
-                parseHTML: (element) => element.getAttribute('data-stack-at'),
+                parseHTML: (element) =>
+                    element.getAttribute('data-from-breakpoint'),
             },
             style: {
                 default: null,
                 parseHTML: (element) => element.getAttribute('style'),
                 renderHTML: (attributes) => {
                     return {
-                        style: `display: grid; gap: 1rem; grid-template-columns: repeat(${attributes['data-columns']}, 1fr);`,
+                        style: `grid-template-columns: repeat(${attributes['data-cols']}, 1fr)`,
                     }
                 },
             },
@@ -94,8 +95,8 @@ export default Node.create({
 
                     const node = editor.schema.nodes.grid.createChecked(
                         {
-                            'data-columns': totalColumnsCount,
-                            'data-stack-at': fromBreakpoint,
+                            'data-cols': totalColumnsCount,
+                            'data-from-breakpoint': fromBreakpoint,
                         },
                         columnNodes,
                     )

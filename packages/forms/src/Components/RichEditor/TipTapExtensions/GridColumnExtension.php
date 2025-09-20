@@ -38,7 +38,7 @@ class GridColumnExtension extends Node
 
                     return [
                         'data-col-span' => $attributes['data-col-span'],
-                        'style' => 'grid-column: span ' . $attributes['data-col-span'] . ';',
+                        'style' => "--col-span: span {$attributes['data-col-span']} / span {$attributes['data-col-span']}",
                     ];
                 },
             ],

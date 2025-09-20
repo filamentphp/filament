@@ -30,15 +30,15 @@ class GridExtension extends Node
     public function addAttributes(): array
     {
         return [
-            'data-columns' => [
+            'data-cols' => [
                 'default' => '2',
-                'parseHTML' => fn ($DOMNode) => $DOMNode->getAttribute('data-columns'),
+                'parseHTML' => fn ($DOMNode) => $DOMNode->getAttribute('data-cols'),
                 'renderHTML' => function ($attributes): array {
                     $attributes = (array) $attributes;
 
                     return [
-                        'data-columns' => $attributes['data-columns'],
-                        'style' => 'display: grid; gap: 1rem; grid-template-columns: repeat(' . $attributes['data-columns'] . ', 1fr);',
+                        'data-cols' => $attributes['data-cols'],
+                        'style' => "--cols: repeat({$attributes['data-cols']}, minmax(0, 1fr))",
                     ];
                 },
             ],

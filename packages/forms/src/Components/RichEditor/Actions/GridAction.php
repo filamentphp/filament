@@ -128,9 +128,9 @@ class GridAction
                 $columns = [];
 
                 if ($data['isAsymmetric']) {
-                    $columns = [(int) $data['startSpan'] ?? 1, (int) $data['endSpan'] ?? 1];
+                    $columns = [(int) ($data['startSpan'] ?? 1), (int) ($data['endSpan'] ?? 1)];
                 } else {
-                    $columns = array_fill(0, max(2, (int) $data['columns'] ?? 2), 1);
+                    $columns = array_fill(0, max(2, (int) ($data['columns'] ?? 2)), 1);
                 }
 
                 $component->runCommands(
