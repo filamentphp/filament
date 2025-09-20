@@ -87,6 +87,7 @@ class GridAction
                         Select::make('fromBreakpoint')
                             ->label(__('filament-forms::components.rich_editor.actions.grid.modal.form.from_breakpoint.label'))
                             ->options([
+                                'default' => __('filament-forms::components.rich_editor.actions.grid.modal.form.from_breakpoint.options.default'),
                                 'sm' => __('filament-forms::components.rich_editor.actions.grid.modal.form.from_breakpoint.options.sm'),
                                 'md' => __('filament-forms::components.rich_editor.actions.grid.modal.form.from_breakpoint.options.md'),
                                 'lg' => __('filament-forms::components.rich_editor.actions.grid.modal.form.from_breakpoint.options.lg'),
@@ -125,8 +126,6 @@ class GridAction
                     ]),
             ])
             ->action(function (array $arguments, array $data, RichEditor $component): void {
-                $columns = [];
-
                 if ($data['isAsymmetric']) {
                     $columns = [(int) ($data['startSpan'] ?? 1), (int) ($data['endSpan'] ?? 1)];
                 } else {

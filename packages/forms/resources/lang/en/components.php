@@ -484,6 +484,7 @@ return [
                             'label' => 'From breakpoint',
 
                             'options' => [
+                                'default' => 'All',
                                 'sm' => 'Small',
                                 'md' => 'Medium',
                                 'lg' => 'Large',

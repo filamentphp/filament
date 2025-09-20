@@ -773,6 +773,14 @@
     & .grid-layout {
         @apply grid grid-cols-1 gap-4;
 
+        &[data-from-breakpoint='default'] {
+            @apply grid-cols-(--cols);
+
+            & > .grid-layout-col {
+                @apply col-span-(--col-span);
+            }
+        }
+
         &[data-from-breakpoint='sm'] {
             @apply sm:grid-cols-(--cols);
 
