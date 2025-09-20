@@ -8,7 +8,6 @@ use Carbon\CarbonInterface;
 use Closure;
 use Filament\Support\Components\Component;
 use Filament\Support\Contracts\HasLabel as LabelInterface;
-use Filament\Tables\Table;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Model;

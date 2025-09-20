@@ -37,12 +37,16 @@ import Underline from '@tiptap/extension-underline'
 import getMergeTagSuggestion from './merge-tag-suggestion.js'
 
 export default async ({
+    acceptedFileTypes,
+    acceptedFileTypesValidationMessage,
     customExtensionUrls,
     deleteCustomBlockButtonIconHtml,
     editCustomBlockButtonIconHtml,
     editCustomBlockUsing,
     insertCustomBlockUsing,
     key,
+    maxFileSize,
+    maxFileSizeValidationMessage,
     mergeTags,
     noMergeTagSearchResultsMessage,
     placeholder,
@@ -84,12 +88,16 @@ export default async ({
     }),
     ListItem,
     LocalFiles.configure({
+        acceptedTypes: acceptedFileTypes,
+        acceptedTypesValidationMessage: acceptedFileTypesValidationMessage,
         get$WireUsing: () => $wire,
         key,
+        maxSize: maxFileSize,
+        maxSizeValidationMessage: maxFileSizeValidationMessage,
         statePath,
         uploadingMessage: uploadingFileMessage,
     }),
-    ...(mergeTags.length
+    ...(Object.keys(mergeTags).length
         ? [
               MergeTag.configure({
                   deleteTriggerWithBackspace: true,
@@ -97,6 +105,7 @@ export default async ({
                       mergeTags,
                       noMergeTagSearchResultsMessage,
                   }),
+                  mergeTags,
               }),
           ]
         : []),

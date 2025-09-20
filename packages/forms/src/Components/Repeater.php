@@ -8,6 +8,7 @@ use Filament\Forms\Components\Repeater\TableColumn;
 use Filament\Forms\View\FormsIconAlias;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Concerns\CanBeCollapsed;
+use Filament\Schemas\Components\Concerns\CanBeCompact;
 use Filament\Schemas\Components\Concerns\HasContainerGridLayout;
 use Filament\Schemas\Components\Contracts\CanConcealComponents;
 use Filament\Schemas\Components\Contracts\HasExtraItemActions;
@@ -32,6 +33,7 @@ use function Filament\Forms\array_move_before;
 class Repeater extends Field implements CanConcealComponents, HasExtraItemActions
 {
     use CanBeCollapsed;
+    use CanBeCompact;
     use Concerns\CanBeCloned;
     use Concerns\CanGenerateUuids;
     use Concerns\CanLimitItemsLength;

@@ -27,6 +27,11 @@ class RichContentAttribute implements Htmlable
     protected ?array $mergeTags = null;
 
     /**
+     * @var ?array<string, string>
+     */
+    protected ?array $mergeTagLabels = null;
+
+    /**
      * @var ?array<class-string<RichContentCustomBlock> | array<string, mixed> | Closure>
      */
     protected ?array $customBlocks = null;
@@ -136,15 +141,28 @@ class RichContentAttribute implements Htmlable
     }
 
     /**
-     * @return ?array<string>
+     * @param  ?array<string, string>  $labels
+     */
+    public function mergeTagLabels(?array $labels): static
+    {
+        $this->mergeTagLabels = $labels;
+
+        return $this;
+    }
+
+    /**
+     * @return ?array<string, string>
      */
     public function getMergeTags(): ?array
     {
-        if (blank($this->mergeTags)) {
+        if (blank($this->mergeTags) && blank($this->mergeTagLabels)) {
             return null;
         }
 
-        return array_keys($this->mergeTags);
+        return [
+            ...array_combine(array_keys($this->mergeTags ?? []), array_keys($this->mergeTags ?? [])),
+            ...($this->mergeTagLabels ?? []),
+        ];
     }
 
     /**
