@@ -1,6 +1,14 @@
 import Chart from 'chart.js/auto'
 import 'chartjs-adapter-luxon'
 
+if (
+    window.filamentChartJsGlobalPlugins &&
+    Array.isArray(window.filamentChartJsGlobalPlugins) &&
+    window.filamentChartJsGlobalPlugins.length > 0
+) {
+    Chart.register(...window.filamentChartJsGlobalPlugins)
+}
+
 export default function chart({ cachedData, options, type }) {
     return {
         init() {

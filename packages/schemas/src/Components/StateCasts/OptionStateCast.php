@@ -5,13 +5,13 @@ namespace Filament\Schemas\Components\StateCasts;
 use BackedEnum;
 use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
 
-class StringStateCast implements StateCast
+class OptionStateCast implements StateCast
 {
     public function __construct(
         protected bool $isNullable = true,
     ) {}
 
-    public function get(mixed $state): ?string
+    public function get(mixed $state): string | int | null
     {
         if ($this->isNullable && blank($state)) {
             return null;
@@ -19,6 +19,10 @@ class StringStateCast implements StateCast
 
         if ($state instanceof BackedEnum) {
             $state = $state->value;
+        }
+
+        if (is_int($state) || (is_string($state) && ctype_digit($state))) {
+            return intval($state);
         }
 
         return strval($state);

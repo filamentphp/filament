@@ -19,6 +19,12 @@ trait HasDropdown
 
     protected Width | string | Closure | null $dropdownWidth = null;
 
+    protected bool | Closure $hasDropdownFlip = true;
+
+    protected bool | Closure | null $hasDropdownTeleport = null;
+
+    protected bool | Closure | null $hasDefaultDropdownTeleport = null;
+
     public function dropdown(bool | Closure $condition = true): static
     {
         $this->hasDropdown = $condition;
@@ -61,6 +67,27 @@ trait HasDropdown
         return $this;
     }
 
+    public function dropdownFlip(bool | Closure $condition = true): static
+    {
+        $this->hasDropdownFlip = $condition;
+
+        return $this;
+    }
+
+    public function dropdownTeleport(bool | Closure | null $condition = true): static
+    {
+        $this->hasDropdownTeleport = $condition;
+
+        return $this;
+    }
+
+    public function defaultDropdownTeleport(bool | Closure | null $condition = true): static
+    {
+        $this->hasDefaultDropdownTeleport = $condition;
+
+        return $this;
+    }
+
     public function getDropdownPlacement(): ?string
     {
         return $this->evaluate($this->dropdownPlacement) ?? $this->evaluate($this->defaultDropdownPlacement);
@@ -85,6 +112,16 @@ trait HasDropdown
         }
 
         return $width;
+    }
+
+    public function hasDropdownFlip(): bool
+    {
+        return (bool) $this->evaluate($this->hasDropdownFlip);
+    }
+
+    public function hasDropdownTeleport(): bool
+    {
+        return (bool) ($this->evaluate($this->hasDropdownTeleport) ?? $this->evaluate($this->hasDefaultDropdownTeleport));
     }
 
     public function hasDropdown(): bool

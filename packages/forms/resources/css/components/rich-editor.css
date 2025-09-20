@@ -18,6 +18,10 @@
     & .fi-fo-rich-editor-tool {
         @apply flex h-8 min-w-8 items-center justify-center rounded-lg text-sm font-semibold text-gray-700 transition duration-75 hover:bg-gray-50 focus-visible:bg-gray-50 dark:text-gray-200 dark:hover:bg-white/5 dark:focus-visible:bg-white/5;
 
+        &[disabled] {
+            @apply pointer-events-none cursor-default opacity-70;
+        }
+
         &.fi-active {
             @apply text-primary-600 dark:text-primary-400 bg-gray-50 dark:bg-white/5;
         }
@@ -193,6 +197,10 @@
 
         &.resize-cursor {
             @apply cursor-col-resize cursor-ew-resize;
+        }
+
+        & .grid-layout > .grid-layout-col {
+            @apply rounded-md border border-gray-950/20 p-4 dark:border-white/20;
         }
     }
 

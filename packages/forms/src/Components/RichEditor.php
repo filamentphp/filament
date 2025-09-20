@@ -7,6 +7,7 @@ use Filament\Actions\Action;
 use Filament\Forms\Components\RichEditor\Actions\AttachFilesAction;
 use Filament\Forms\Components\RichEditor\Actions\ColorAction;
 use Filament\Forms\Components\RichEditor\Actions\CustomBlockAction;
+use Filament\Forms\Components\RichEditor\Actions\GridAction;
 use Filament\Forms\Components\RichEditor\Actions\LinkAction;
 use Filament\Forms\Components\RichEditor\EditorCommand;
 use Filament\Forms\Components\RichEditor\FileAttachmentProviders\Contracts\FileAttachmentProvider;
@@ -295,6 +296,20 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
                 ->jsHandler('$getEditor()?.chain().focus().setTextAlign(\'justify\').run()')
                 ->icon('fi-o-align-justify')
                 ->iconAlias('forms:components.rich-editor.toolbar.align-justify'),
+            RichEditorTool::make('grid')
+                ->label(__('filament-forms::components.rich_editor.tools.grid'))
+                ->action()
+                ->activeJsExpression('false')
+                ->icon('fi-o-columns')
+                ->iconAlias('forms:components.rich-editor.toolbar.grid'),
+            RichEditorTool::make('gridDelete')
+                ->label(__('filament-forms::components.rich_editor.tools.grid_delete'))
+                ->jsHandler('$getEditor()?.chain().focus().deleteNode(\'grid\').run()')
+                ->activeKey('grid')
+                ->activeStyling(false)
+                ->disabledWhenNotActive()
+                ->icon('fi-o-columns-delete')
+                ->iconAlias('forms:components.rich-editor.toolbar.grid_delete'),
             RichEditorTool::make('details')
                 ->label(__('filament-forms::components.rich_editor.tools.details'))
                 ->jsHandler('$getEditor()?.chain().focus().setDetails().run()')
@@ -728,6 +743,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
             AttachFilesAction::make(),
             ColorAction::make(),
             CustomBlockAction::make(),
+            GridAction::make(),
             LinkAction::make(),
             ...array_reduce(
                 $this->getPlugins(),
@@ -751,11 +767,16 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     }
 
     /**
-     * @return array<string>
+     * @return array<string, string>
      */
     public function getMergeTags(): array
     {
-        return $this->evaluate($this->mergeTags) ?? $this->getContentAttribute()?->getMergeTags() ?? [];
+        $mergeTags = $this->evaluate($this->mergeTags) ?? $this->getContentAttribute()?->getMergeTags() ?? [];
+
+        return Arr::mapWithKeys(
+            $mergeTags,
+            fn (string $label, int | string $id): array => [(is_string($id) ? $id : $label) => $label],
+        );
     }
 
     public function noMergeTagSearchResultsMessage(string | Closure | null $message): static

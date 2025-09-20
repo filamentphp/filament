@@ -4,11 +4,12 @@ namespace Filament\Schemas\Components\StateCasts;
 
 use BackedEnum;
 use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
+use Illuminate\Support\Arr;
 
-class StringArrayStateCast implements StateCast
+class OptionsArrayStateCast implements StateCast
 {
     /**
-     * @return array<string>
+     * @return array<string | int>
      */
     public function get(mixed $state): array
     {
@@ -21,7 +22,7 @@ class StringArrayStateCast implements StateCast
         }
 
         return array_reduce(
-            $state,
+            Arr::wrap($state),
             function (array $carry, $stateItem): array {
                 if (blank($stateItem)) {
                     return $carry;
@@ -31,7 +32,11 @@ class StringArrayStateCast implements StateCast
                     $stateItem = $stateItem->value;
                 }
 
-                $carry[] = strval($stateItem);
+                if (is_int($stateItem) || (is_string($stateItem) && ctype_digit($stateItem))) {
+                    $carry[] = intval($stateItem);
+                } else {
+                    $carry[] = strval($stateItem);
+                }
 
                 return $carry;
             },
@@ -53,7 +58,7 @@ class StringArrayStateCast implements StateCast
         }
 
         return array_reduce(
-            $state,
+            Arr::wrap($state),
             function (array $carry, $stateItem): array {
                 if (blank($stateItem)) {
                     return $carry;

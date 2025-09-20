@@ -447,6 +447,71 @@ return [
 
             ],
 
+            'grid' => [
+
+                'label' => 'Grid',
+
+                'modal' => [
+
+                    'heading' => 'Grid',
+
+                    'form' => [
+
+                        'preset' => [
+
+                            'label' => 'Preset',
+
+                            'placeholder' => 'None',
+
+                            'options' => [
+                                'two' => 'Two',
+                                'three' => 'Three',
+                                'four' => 'Four',
+                                'five' => 'Five',
+                                'two_start_third' => 'Two (Start Third)',
+                                'two_end_third' => 'Two (End Third)',
+                                'two_start_fourth' => 'Two (Start Fourth)',
+                                'two_end_fourth' => 'Two (End Fourth)',
+                            ],
+                        ],
+
+                        'columns' => [
+                            'label' => 'Columns',
+                        ],
+
+                        'from_breakpoint' => [
+
+                            'label' => 'From breakpoint',
+
+                            'options' => [
+                                'default' => 'All',
+                                'sm' => 'Small',
+                                'md' => 'Medium',
+                                'lg' => 'Large',
+                                'xl' => 'Extra large',
+                                '2xl' => 'Two extra large',
+                            ],
+
+                        ],
+
+                        'is_asymmetric' => [
+                            'label' => 'Two asymmetric columns',
+                        ],
+
+                        'start_span' => [
+                            'label' => 'Start span',
+                        ],
+
+                        'end_span' => [
+                            'label' => 'End span',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
             'link' => [
 
                 'label' => 'Edit',
@@ -517,6 +582,8 @@ return [
             'h1' => 'Title',
             'h2' => 'Heading',
             'h3' => 'Subheading',
+            'grid' => 'Grid',
+            'grid_delete' => 'Delete grid',
             'highlight' => 'Highlight',
             'horizontal_rule' => 'Horizontal rule',
             'italic' => 'Italic',

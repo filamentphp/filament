@@ -769,4 +769,61 @@
     & .lead:where(:not(.fi-not-prose, .fi-not-prose *)) {
         font-size: var(--text-base);
     }
+
+    & .grid-layout {
+        @apply grid grid-cols-1 gap-4;
+
+        &[data-from-breakpoint='default'] {
+            @apply grid-cols-(--cols);
+
+            & > .grid-layout-col {
+                @apply col-span-(--col-span);
+            }
+        }
+
+        &[data-from-breakpoint='sm'] {
+            @apply sm:grid-cols-(--cols);
+
+            & > .grid-layout-col {
+                @apply sm:col-span-(--col-span);
+            }
+        }
+
+        &[data-from-breakpoint='md'] {
+            @apply md:grid-cols-(--cols);
+
+            & > .grid-layout-col {
+                @apply md:col-span-(--col-span);
+            }
+        }
+
+        &[data-from-breakpoint='lg'] {
+            @apply lg:grid-cols-(--cols);
+
+            & > .grid-layout-col {
+                @apply lg:col-span-(--col-span);
+            }
+        }
+
+        &[data-from-breakpoint='xl'] {
+            @apply xl:grid-cols-(--cols);
+
+            & > .grid-layout-col {
+                @apply xl:col-span-(--col-span);
+            }
+        }
+
+        &[data-from-breakpoint='2xl'] {
+            @apply 2xl:grid-cols-(--cols);
+
+            & > .grid-layout-col {
+                @apply 2xl:col-span-(--col-span);
+            }
+        }
+
+        & > .grid-layout-col {
+            margin-top: 0;
+            min-width: 0;
+        }
+    }
 }

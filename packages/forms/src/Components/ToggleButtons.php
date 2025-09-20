@@ -8,8 +8,8 @@ use Filament\Schemas\Components\StateCasts\BooleanStateCast;
 use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
 use Filament\Schemas\Components\StateCasts\EnumArrayStateCast;
 use Filament\Schemas\Components\StateCasts\EnumStateCast;
-use Filament\Schemas\Components\StateCasts\StringArrayStateCast;
-use Filament\Schemas\Components\StateCasts\StringStateCast;
+use Filament\Schemas\Components\StateCasts\OptionsArrayStateCast;
+use Filament\Schemas\Components\StateCasts\OptionStateCast;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
 
@@ -136,10 +136,10 @@ class ToggleButtons extends Field implements Contracts\CanDisableOptions
         }
 
         if ($this->isMultiple()) {
-            return [app(StringArrayStateCast::class)];
+            return [app(OptionsArrayStateCast::class)];
         }
 
-        return [app(StringStateCast::class, ['isNullable' => true])];
+        return [app(OptionStateCast::class, ['isNullable' => true])];
     }
 
     /**

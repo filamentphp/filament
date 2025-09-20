@@ -9,9 +9,12 @@ use Filament\Forms\Components\RichEditor\TipTapExtensions\CustomBlockExtension;
 use Filament\Forms\Components\RichEditor\TipTapExtensions\DetailsContentExtension;
 use Filament\Forms\Components\RichEditor\TipTapExtensions\DetailsExtension;
 use Filament\Forms\Components\RichEditor\TipTapExtensions\DetailsSummaryExtension;
+use Filament\Forms\Components\RichEditor\TipTapExtensions\GridColumnExtension;
+use Filament\Forms\Components\RichEditor\TipTapExtensions\GridExtension;
 use Filament\Forms\Components\RichEditor\TipTapExtensions\ImageExtension;
 use Filament\Forms\Components\RichEditor\TipTapExtensions\LeadExtension;
 use Filament\Forms\Components\RichEditor\TipTapExtensions\MergeTagExtension;
+use Filament\Forms\Components\RichEditor\TipTapExtensions\RawHtmlMergeTagExtension;
 use Filament\Forms\Components\RichEditor\TipTapExtensions\RenderedCustomBlockExtension;
 use Filament\Forms\Components\RichEditor\TipTapExtensions\SmallExtension;
 use Illuminate\Contracts\Support\Htmlable;
@@ -221,6 +224,15 @@ class RichContentRenderer implements Htmlable
 
     protected function processMergeTags(Editor $editor): void
     {
+        $editor->descendants(function (object &$node): void {
+            if ($node->type !== 'rawHtmlMergeTag') {
+                return;
+            }
+
+            $node->type = 'mergeTag';
+            unset($node->html);
+        });
+
         if (blank($this->mergeTags)) {
             return;
         }
@@ -234,10 +246,19 @@ class RichContentRenderer implements Htmlable
                 return;
             }
 
+            $value = $this->getMergeTagValue($node->attrs->id);
+
+            if ($value instanceof Htmlable) {
+                $node->type = 'rawHtmlMergeTag';
+                $node->html = $value->toHtml();
+
+                return;
+            }
+
             $node->content = [
                 (object) [
                     'type' => 'text',
-                    'text' => $this->getMergeTagValue($node->attrs->id),
+                    'text' => $value,
                 ],
             ];
         });
@@ -282,6 +303,8 @@ class RichContentRenderer implements Htmlable
             app(DetailsExtension::class),
             app(DetailsSummaryExtension::class),
             app(Document::class),
+            app(GridColumnExtension::class),
+            app(GridExtension::class),
             app(HardBreak::class),
             app(Heading::class),
             app(Highlight::class),
@@ -294,6 +317,7 @@ class RichContentRenderer implements Htmlable
             app(MergeTagExtension::class),
             app(OrderedList::class),
             app(Paragraph::class),
+            app(RawHtmlMergeTagExtension::class),
             app(RenderedCustomBlockExtension::class),
             app(SmallExtension::class),
             app(Strike::class),
