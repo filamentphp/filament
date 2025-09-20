@@ -118,7 +118,7 @@ it('can sort posts by title', function () {
     Post::factory()->count(10)->create();
 
     $sortedPostsAsc = Post::query()->orderBy('title')->get();
-    $sortedPostsDesc = Post::query()->orderByDesc('title')->get();
+    $sortedPostsDesc = Post::query()->orderBy('title', 'desc')->get();
 
     livewire(PostResource\Pages\ListPosts::class)
         ->sortTable('title')
