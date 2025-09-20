@@ -293,8 +293,14 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
                 ->label(__('filament-forms::components.rich_editor.tools.grid'))
                 ->action()
                 ->activeJsExpression('false')
-                ->icon(Heroicon::OutlinedSquares2x2)
+                ->icon('fi-o-columns')
                 ->iconAlias('forms:components.rich-editor.toolbar.grid'),
+            RichEditorTool::make('gridDelete')
+                ->label(__('filament-forms::components.rich_editor.tools.grid_delete'))
+                ->jsHandler('$getEditor()?.chain().focus().deleteNode(\'grid\').run()')
+                ->activeKey('grid')
+                ->icon('fi-o-columns-delete')
+                ->iconAlias('forms:components.rich-editor.toolbar.grid_delete'),
             RichEditorTool::make('details')
                 ->label(__('filament-forms::components.rich_editor.tools.details'))
                 ->jsHandler('$getEditor()?.chain().focus().setDetails().run()')

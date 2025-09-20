@@ -561,6 +561,7 @@ return [
             'h2' => 'Heading',
             'h3' => 'Subheading',
             'grid' => 'Grid',
+            'grid_delete' => 'Delete grid',
             'highlight' => 'Highlight',
             'horizontal_rule' => 'Horizontal rule',
             'italic' => 'Italic',
