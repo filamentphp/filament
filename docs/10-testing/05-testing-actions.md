@@ -101,6 +101,94 @@ livewire(EditInvoice::class)
     ->assertActionExists(TestAction::make('send')->schemaComponent('customer_id'))
 ```
 
+## Testing form actions
+
+Form actions are the actions that appear at the bottom of forms on pages like CreateRecord, EditRecord, SettingsPage, and other form-based pages. These actions (such as the default "Save" action) can be tested using the `TestAction` object with the `schemaComponent()` method, targeting the `'form-actions'` key.
+
+```php
+use Filament\Actions\Testing\TestAction;
+use function Pest\Livewire\livewire;
+
+it('can save a record', function () {
+    $customer = Customer::factory()->create();
+
+    livewire(EditCustomer::class, [
+        'record' => $customer->getRouteKey(),
+    ])
+        ->fillForm([
+            'name' => 'Updated Customer Name',
+            'email' => 'updated@example.com',
+        ])
+        ->callAction(TestAction::make('save')->schemaComponent('form-actions'))
+        ->assertHasNoFormErrors();
+
+    expect($customer->refresh())
+        ->name->toBe('Updated Customer Name')
+        ->email->toBe('updated@example.com');
+});
+```
+
+You can also test the visibility and existence of form actions:
+
+```php
+use Filament\Actions\Testing\TestAction;
+use function Pest\Livewire\livewire;
+
+it('shows the save action', function () {
+    $customer = Customer::factory()->create();
+
+    livewire(EditCustomer::class, [
+        'record' => $customer->getRouteKey(),
+    ])
+        ->assertActionExists(TestAction::make('save')->schemaComponent('form-actions'))
+        ->assertActionVisible(TestAction::make('save')->schemaComponent('form-actions'));
+});
+```
+
+### Testing form actions on create pages
+
+On create pages, you can test the create action in the same way:
+
+```php
+use Filament\Actions\Testing\TestAction;
+use function Pest\Livewire\livewire;
+
+it('can create a record', function () {
+    livewire(CreateCustomer::class)
+        ->fillForm([
+            'name' => 'New Customer',
+            'email' => 'new@example.com',
+        ])
+        ->callAction(TestAction::make('create')->schemaComponent('form-actions'))
+        ->assertHasNoFormErrors();
+
+    $this->assertDatabaseHas('customers', [
+        'name' => 'New Customer',
+        'email' => 'new@example.com',
+    ]);
+});
+```
+
+### Testing custom form actions
+
+If you have added custom actions to your form actions, you can test them using their action name:
+
+```php
+use Filament\Actions\Testing\TestAction;
+use function Pest\Livewire\livewire;
+
+it('can duplicate a record', function () {
+    $customer = Customer::factory()->create();
+
+    livewire(EditCustomer::class, [
+        'record' => $customer->getRouteKey(),
+    ])
+        ->callAction(TestAction::make('duplicate')->schemaComponent('form-actions'));
+
+    $this->assertDatabaseCount('customers', 2);
+});
+```
+
 ## Testing actions inside another action's schema / form
 
 If an action belongs to a component in another action's `schema()` (or `form()`), for example, if it is in the `belowContent()` method of a form field in an action modal, you can use the `TestAction` object with the `schemaComponent()` method. This object receives the name of the action you want to test and replaces the name of the action in any testing method you want to use. You should pass an array of `TestAction` objects in order, for example:
