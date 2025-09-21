@@ -243,6 +243,26 @@ RichContentRenderer::make($record->content)
     ->toHtml();
 ```
 
+### Styling the rendered content
+
+The rich editor HTML uses a combination of HTML elements, CSS classes, and inline styles to style the content, depending on the features used in the editor. If you render the content in a Filament table column or infolist entry with `prose()`, Filament will automatically apply the necessary styles for you. If you are outputting the content in your own Blade view, you may need to add some additional styles to ensure that the content is styled correctly.
+
+One way of styling the content is to use [Tailwind CSS Typography](https://tailwindcss.com/docs/typography-plugin). This plugin provides a set of pre-defined styles for common HTML elements, such as headings, paragraphs, lists, and tables. You can apply these styles to a container element using the `prose` class:
+
+```blade
+<div class="prose dark:prose-invert">
+    {!! \Filament\Forms\Components\RichEditor\RichContentRenderer::make($record->content) !!}
+</div>
+```
+
+However, some features, such as the grid layout and text colors, require additional styles that are not included in the Tailwind CSS Typography plugin. Filament also includes its own `fi-prose` CSS class that adds these additional styles. Any app that loads Filament's `vendor/filament/support/resources/css/index.css` CSS will have access to this class. The styling is different to the `prose` class, but fits with Filament's design system better:
+
+```blade
+<div class="fi-prose">
+    {!! \Filament\Forms\Components\RichEditor\RichContentRenderer::make($record->content) !!}
+</div>
+```
+
 ## Security
 
 By default, the editor outputs raw HTML, and sends it to the backend. Attackers are able to intercept the value of the component and send a different raw HTML string to the backend. As such, it is important that when outputting the HTML from a rich editor, it is sanitized; otherwise your site may be exposed to Cross-Site Scripting (XSS) vulnerabilities.
