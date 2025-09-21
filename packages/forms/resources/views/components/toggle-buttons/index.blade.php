@@ -30,6 +30,22 @@
                     'fi-inline' => $isInline,
                 ])
         }}
+        x-data="{
+            init() {
+                Livewire.hook('morph.updated', () => {
+                    if (window.focusAfterMorph) {
+                        const el = document.getElementById(window.focusAfterMorph)
+                        if (el) {
+                            el.focus()
+                        }
+                        window.focusAfterMorph = null
+                    }
+                })
+            },
+            handleChange(event) {
+                window.focusAfterMorph = event.target.id
+            }
+        }"
     >
         @foreach ($getOptions() as $value => $label)
             @php
@@ -41,6 +57,7 @@
 
             <div class="fi-fo-toggle-buttons-btn-ctn">
                 <input
+                    @change="handleChange"
                     @disabled($shouldOptionBeDisabled)
                     id="{{ $inputId }}"
                     @if (! $isMultiple)

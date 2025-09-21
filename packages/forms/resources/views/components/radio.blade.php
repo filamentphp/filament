@@ -36,9 +36,27 @@
                     ], escape: false);
             @endphp
 
-            <label class="fi-fo-radio-label">
+            <label class="fi-fo-radio-label" 
+                x-data="{
+                    init() {
+                        Livewire.hook('morph.updated', () => {
+                            if (window.focusAfterMorph) {
+                                const el = document.getElementById(window.focusAfterMorph)
+                                if (el) {
+                                    el.focus()
+                                }
+                                window.focusAfterMorph = null
+                            }
+                        })
+                    },
+                    handleChange(event) {
+                        window.focusAfterMorph = event.target.id
+                    }
+                }"
+                >
                 <input
                     type="radio"
+                    @change="handleChange"
                     {{
                         $inputAttributes->class([
                             'fi-radio-input',
