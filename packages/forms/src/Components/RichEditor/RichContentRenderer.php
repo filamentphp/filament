@@ -487,10 +487,9 @@ class RichContentRenderer implements Htmlable
             fn (array $color, string $name): array => [$name => TextColor::make(Str::ucwords($name), $color['600'], $color['400'] ?? null)],
         );
 
-        return array_map(
-            fn (string | TextColor $color, string $key): TextColor => ($color instanceof TextColor) ? $color : TextColor::make($color, $key),
+        return Arr::mapWithKeys(
             $textColors,
-            array_keys($textColors),
+            fn (string | TextColor $color, string $name): array => [$name => ($color instanceof TextColor) ? $color : TextColor::make($color, $name)],
         );
     }
 }

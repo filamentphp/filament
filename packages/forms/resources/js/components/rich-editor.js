@@ -23,6 +23,7 @@ export default function richEditorFormComponent({
     placeholder,
     state,
     statePath,
+    textColors,
     uploadingFileMessage,
     floatingToolbars,
 }) {
@@ -77,6 +78,7 @@ export default function richEditorFormComponent({
                     noMergeTagSearchResultsMessage,
                     placeholder,
                     statePath,
+                    textColors,
                     uploadingFileMessage,
                     $wire: this.$wire,
                     floatingToolbars,

@@ -984,10 +984,24 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
             fn (array $color, string $name): array => [$name => TextColor::make(Str::ucwords($name), $color['600'], $color['400'] ?? null)],
         );
 
-        return array_map(
-            fn (string | TextColor $color, string $key): TextColor => ($color instanceof TextColor) ? $color : TextColor::make($color, $key),
+        return Arr::mapWithKeys(
             $textColors,
-            array_keys($textColors),
+            fn (string | TextColor $color, string $name): array => [$name => ($color instanceof TextColor) ? $color : TextColor::make($color, $name)],
+        );
+    }
+
+    /**
+     * @return array<string, array{label: string, color: string, darkColor: string}>
+     */
+    public function getTextColorsForJs(): array
+    {
+        return array_map(
+            fn (TextColor $color): array => [
+                'label' => $color->getLabel(),
+                'color' => $color->getColor(),
+                'darkColor' => $color->getDarkColor(),
+            ],
+            $this->getTextColors(),
         );
     }
 }

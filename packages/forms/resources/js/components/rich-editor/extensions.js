@@ -26,6 +26,7 @@ import MergeTag from './extension-merge-tag.js'
 import Paragraph from '@tiptap/extension-paragraph'
 import Placeholder from '@tiptap/extension-placeholder'
 import Small from './extension-small.js'
+import TextColor from './extension-text-color.js'
 import Strike from '@tiptap/extension-strike'
 import Subscript from '@tiptap/extension-subscript'
 import Superscript from '@tiptap/extension-superscript'
@@ -51,6 +52,7 @@ export default async ({
     noMergeTagSearchResultsMessage,
     placeholder,
     statePath,
+    textColors,
     uploadingFileMessage,
     $wire,
 }) => [
@@ -114,6 +116,7 @@ export default async ({
     Placeholder.configure({
         placeholder,
     }),
+    TextColor,
     Small,
     Strike,
     Subscript,

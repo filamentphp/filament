@@ -5,8 +5,10 @@ namespace Filament\Forms\Components\RichEditor\Actions;
 use Filament\Actions\Action;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\RichEditor\EditorCommand;
+use Filament\Forms\Components\RichEditor\TextColor;
 use Filament\Forms\Components\Select;
 use Filament\Support\Enums\Width;
+use Illuminate\Support\Arr;
 
 class TextColorAction
 {
@@ -22,9 +24,9 @@ class TextColorAction
             ->schema(fn (RichEditor $component) => [
                 Select::make('color')
                     ->label(__('filament-forms::components.rich_editor.actions.text_color.modal.form.color.label'))
-                    ->options(array_map(
-                        fn (RichEditor\TextColor $color): string => $color->getLabel(),
+                    ->options(Arr::mapWithKeys(
                         $component->getTextColors(),
+                        fn (TextColor $color, string $name): array => [$name => $color->getLabel()],
                     )),
             ])
             ->action(function (array $arguments, array $data, RichEditor $component): void {
