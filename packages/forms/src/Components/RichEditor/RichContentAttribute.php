@@ -44,6 +44,8 @@ class RichContentAttribute implements Htmlable
      */
     protected ?array $textColors = null;
 
+    protected bool $hasCustomTextColors = false;
+
     public function __construct(protected Model $model, protected string $name) {}
 
     public static function make(Model $model, string $name): static
@@ -233,5 +235,17 @@ class RichContentAttribute implements Htmlable
             $textColors,
             fn (string | TextColor $color, string $name): array => [$name => ($color instanceof TextColor) ? $color : TextColor::make($color, $name)],
         );
+    }
+
+    public function customTextColors(bool $condition = true): static
+    {
+        $this->hasCustomTextColors = $condition;
+
+        return $this;
+    }
+
+    public function hasCustomTextColors(): bool
+    {
+        return $this->hasCustomTextColors;
     }
 }

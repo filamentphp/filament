@@ -175,6 +175,20 @@ When you use a `TextColor` object, the key of the array becomes the stored `data
 
 You can also pass `textColors()` to the [content renderer](#rendering-rich-content) and [rich content attribute](#registering-rich-content-attributes) so that server-side rendering matches your editor configuration.
 
+You can also allow users to pick custom colors that aren't in the predefined list by using the `customTextColors()` method:
+
+```php
+use Filament\Forms\Components\RichEditor;
+
+RichEditor::make('content')
+    ->textColors([
+        // ...
+    ])
+    ->customTextColors()
+```
+
+You do not need to use `customTextColors()` on the [content renderer](#rendering-rich-content), as it will automatically render any custom colors that are used in the content.
+
 ## Rendering rich content
 
 If you're [storing content as JSON](#storing-content-as-json) instead of HTML, or your content requires processing to inject [private image URLs](#using-private-images-in-the-editor) or similar, you'll need to use the `RichContentRenderer` tool in Filament to output HTML:
@@ -640,6 +654,7 @@ class Post extends Model implements HasRichContent
             ->textColors(
                 'brand' => TextColor::make('Brand', '#0ea5e9', darkColor: '#38bdf8'),
             )
+            ->customTextColors()
             ->plugins([
                 HighlightRichContentPlugin::make(),
             ]);

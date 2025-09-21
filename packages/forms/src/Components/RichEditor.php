@@ -91,6 +91,8 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
      */
     protected array | Closure | null $textColors = null;
 
+    protected bool | Closure | null $hasCustomTextColors = null;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -999,5 +1001,17 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
             ],
             $this->getTextColors(),
         );
+    }
+
+    public function customTextColors(bool | Closure | null $condition = true): static
+    {
+        $this->hasCustomTextColors = $condition;
+
+        return $this;
+    }
+
+    public function hasCustomTextColors(): bool
+    {
+        return (bool) ($this->evaluate($this->hasCustomTextColors) ?? $this->getContentAttribute()?->hasCustomTextColors() ?? false);
     }
 }

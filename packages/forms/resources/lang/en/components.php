@@ -550,6 +550,10 @@ return [
                             'label' => 'Color',
                         ],
 
+                        'custom_color' => [
+                            'label' => 'Custom color',
+                        ],
+
                     ],
 
                 ],
