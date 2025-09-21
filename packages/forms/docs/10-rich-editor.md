@@ -157,6 +157,20 @@ RichEditor::make('content')
     ])
 ```
 
+If you would like to add new colors onto the existing Tailwind palette, you can merge your colors into the `TextColor::getDefaults()` array:
+
+```php
+use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\RichEditor\TextColor;
+
+RichEditor::make('content')
+    ->textColors([
+        'brand' => TextColor::make('Brand', '#0ea5e9'),
+        'warning' => TextColor::make('Warning', '#f59e0b', darkColor: '#fbbf24'),
+        ...TextColor::getDefaults(),
+    ])
+```
+
 When you use a `TextColor` object, the key of the array becomes the stored `data-color` attribute on the `<span>` tag, allowing you to reference the color in your CSS if needed. When you use the color as the array values, the actual color value (e.g., a HEX string) is stored as the `data-color` attribute.
 
 You can also pass `textColors()` to the [content renderer](#rendering-rich-content) and [rich content attribute](#registering-rich-content-attributes) so that server-side rendering matches your editor configuration.

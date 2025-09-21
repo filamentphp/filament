@@ -46,7 +46,7 @@ class TextColor
     /**
      * @return array<string, TextColor>
      */
-    public static function getDefaultColors(): array
+    public static function getDefaults(): array
     {
         return Arr::mapWithKeys(
             Color::all(),

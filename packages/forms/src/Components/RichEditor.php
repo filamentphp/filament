@@ -979,7 +979,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
      */
     public function getTextColors(): array
     {
-        $textColors = $this->evaluate($this->textColors) ?? $this->getContentAttribute()?->getTextColors() ?? TextColor::getDefaultColors();
+        $textColors = $this->evaluate($this->textColors) ?? $this->getContentAttribute()?->getTextColors() ?? TextColor::getDefaults();
 
         return Arr::mapWithKeys(
             $textColors,

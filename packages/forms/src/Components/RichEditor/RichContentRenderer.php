@@ -487,7 +487,7 @@ class RichContentRenderer implements Htmlable
      */
     public function getTextColors(): array
     {
-        $textColors = $this->textColors ?? TextColor::getDefaultColors();
+        $textColors = $this->textColors ?? TextColor::getDefaults();
 
         return Arr::mapWithKeys(
             $textColors,
