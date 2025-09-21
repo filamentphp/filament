@@ -3,6 +3,12 @@ import { Mark } from '@tiptap/core'
 export default Mark.create({
     name: 'textColor',
 
+    addOptions() {
+        return {
+            textColors: {},
+        }
+    },
+
     parseHTML() {
         return [
             {
@@ -13,7 +19,28 @@ export default Mark.create({
     },
 
     renderHTML({ HTMLAttributes }) {
-        return ['span', { ...HTMLAttributes, class: ['color', HTMLAttributes.class].filter(Boolean).join(' ') }, 0]
+        const colorName = HTMLAttributes['data-color']
+        const config = this.options.textColors?.[colorName]
+
+        // Build CSS variables string from provided textColors map
+        let variables = ''
+        if (config && (config.color || config.darkColor)) {
+            const cssParts = []
+            if (config.color) cssParts.push(`--color: ${config.color}`)
+            if (config.darkColor) cssParts.push(`--dark-color: ${config.darkColor}`)
+            variables = cssParts.join('; ')
+        }
+
+        // Merge with any existing style (string). If object is provided, ignore to keep minimal complexity
+        let style = HTMLAttributes.style || ''
+        if (variables) {
+            style = [variables, style].filter(Boolean).join('; ')
+        }
+
+        const attrs = { ...HTMLAttributes, class: ['color', HTMLAttributes.class].filter(Boolean).join(' ') }
+        if (style) attrs.style = style
+
+        return ['span', attrs, 0]
     },
 
     addAttributes() {

@@ -116,7 +116,9 @@ export default async ({
     Placeholder.configure({
         placeholder,
     }),
-    TextColor,
+    TextColor.configure({
+        textColors,
+    }),
     Small,
     Strike,
     Subscript,

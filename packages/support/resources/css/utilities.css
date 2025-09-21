@@ -766,11 +766,15 @@
         margin-bottom: 0;
     }
 
+    & .color:where(:not(.fi-not-prose, .fi-not-prose *)) {
+        @apply text-(--color) dark:text-(--dark-color);
+    }
+
     & .lead:where(:not(.fi-not-prose, .fi-not-prose *)) {
         font-size: var(--text-base);
     }
 
-    & .grid-layout {
+    & .grid-layout:where(:not(.fi-not-prose, .fi-not-prose *)) {
         @apply grid grid-cols-1 gap-4;
 
         &[data-from-breakpoint='default'] {
