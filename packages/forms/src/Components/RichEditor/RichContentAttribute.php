@@ -5,8 +5,11 @@ namespace Filament\Forms\Components\RichEditor;
 use Closure;
 use Filament\Forms\Components\RichEditor\FileAttachmentProviders\Contracts\FileAttachmentProvider;
 use Filament\Forms\Components\RichEditor\Plugins\Contracts\RichContentPlugin;
+use Filament\Support\Colors\Color;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 
 class RichContentAttribute implements Htmlable
 {
@@ -37,6 +40,11 @@ class RichContentAttribute implements Htmlable
     protected ?array $customBlocks = null;
 
     protected bool $isJson = false;
+
+    /**
+     * @var ?array<string, string | TextColor>
+     */
+    protected ?array $textColors = null;
 
     public function __construct(protected Model $model, protected string $name) {}
 
@@ -127,6 +135,7 @@ class RichContentAttribute implements Htmlable
             ->fileAttachmentsDisk($this->getFileAttachmentsDiskName())
             ->fileAttachmentsVisibility($this->getFileAttachmentsVisibility())
             ->fileAttachmentProvider($this->getFileAttachmentProvider())
+            ->textColors($this->getTextColors())
             ->toHtml();
     }
 
@@ -203,5 +212,32 @@ class RichContentAttribute implements Htmlable
     public function isJson(): bool
     {
         return $this->isJson;
+    }
+
+    /**
+     * @param  ?array<string, string | TextColor>  $colors
+     */
+    public function textColors(?array $colors): static
+    {
+        $this->textColors = $colors;
+
+        return $this;
+    }
+
+    /**
+     * @return array<string, string | TextColor>
+     */
+    public function getTextColors(): array
+    {
+        $textColors = $this->textColors ?? Arr::mapWithKeys(
+            Color::all(),
+            fn (array $color, string $name): array => [$name => TextColor::make(Str::ucwords($name), $color['600'], darkColor: $color['400'] ?? null)],
+        );
+
+        return array_map(
+            fn (string | TextColor $color, string $key): TextColor => ($color instanceof TextColor) ? $color : TextColor::make($color, $key),
+            $textColors,
+            array_keys($textColors),
+        );
     }
 }

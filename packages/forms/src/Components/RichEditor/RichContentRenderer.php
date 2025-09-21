@@ -17,7 +17,9 @@ use Filament\Forms\Components\RichEditor\TipTapExtensions\MergeTagExtension;
 use Filament\Forms\Components\RichEditor\TipTapExtensions\RawHtmlMergeTagExtension;
 use Filament\Forms\Components\RichEditor\TipTapExtensions\RenderedCustomBlockExtension;
 use Filament\Forms\Components\RichEditor\TipTapExtensions\SmallExtension;
+use Filament\Support\Colors\Color;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Support\Traits\Macroable;
@@ -90,6 +92,11 @@ class RichContentRenderer implements Htmlable
      * @var array<Closure>
      */
     protected array $nodeProcessors = [];
+
+    /**
+     * @var ?array<string, string | TextColor>
+     */
+    protected ?array $textColors = null;
 
     /**
      * @param  string | array<string, mixed> | null  $content
@@ -458,5 +465,32 @@ class RichContentRenderer implements Htmlable
         }
 
         return null;
+    }
+
+    /**
+     * @param  ?array<string, string | TextColor>  $colors
+     */
+    public function textColors(?array $colors): static
+    {
+        $this->textColors = $colors;
+
+        return $this;
+    }
+
+    /**
+     * @return array<string, string | TextColor>
+     */
+    public function getTextColors(): array
+    {
+        $textColors = $this->textColors ?? Arr::mapWithKeys(
+            Color::all(),
+            fn (array $color, string $name): array => [$name => TextColor::make(Str::ucwords($name), $color['600'], $color['400'] ?? null)],
+        );
+
+        return array_map(
+            fn (string | TextColor $color, string $key): TextColor => ($color instanceof TextColor) ? $color : TextColor::make($color, $key),
+            $textColors,
+            array_keys($textColors),
+        );
     }
 }
