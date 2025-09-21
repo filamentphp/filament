@@ -26,8 +26,16 @@ class TextColorAction
                     ->label(__('filament-forms::components.rich_editor.actions.text_color.modal.form.color.label'))
                     ->options(Arr::mapWithKeys(
                         $component->getTextColors(),
-                        fn (TextColor $color, string $name): array => [$name => $color->getLabel()],
-                    )),
+                        fn (TextColor $color, string $name): array => [$name => <<<HTML
+                            <div class="fi-fo-rich-editor-text-color-select-option">
+                                <div class="fi-fo-rich-editor-text-color-select-option-preview" style="--color: {$color->getColor()}; --dark-color: {$color->getDarkColor()}"></div>
+
+                                <div>{$color->getSafeLabelHtml()}</div>
+                            </div>
+                            HTML],
+                    ))
+                    ->allowHtml()
+                    ->native(false),
             ])
             ->action(function (array $arguments, array $data, RichEditor $component): void {
                 $isSingleCharacterSelection = ($arguments['editorSelection']['head'] ?? null) === ($arguments['editorSelection']['anchor'] ?? null);

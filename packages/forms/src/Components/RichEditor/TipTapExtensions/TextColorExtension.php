@@ -76,6 +76,13 @@ class TextColorExtension extends Mark
 
         if ($config instanceof TextColor) {
             $cssVars = "--color: {$config->getColor()}; --dark-color: {$config->getDarkColor()}";
+        } elseif (filled($colorName)) {
+            $cssVars = "--color: {$colorName}; --dark-color: {$colorName}";
+        } else {
+            $cssVars = null;
+        }
+
+        if (filled($cssVars)) {
             $existingStyle = isset($HTMLAttributes['style']) ? (string) $HTMLAttributes['style'] : '';
             $HTMLAttributes['style'] = $existingStyle !== '' ? ($cssVars . '; ' . $existingStyle) : $cssVars;
         }

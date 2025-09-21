@@ -28,6 +28,11 @@ class TextColor
         return $this->label;
     }
 
+    public function getSafeLabelHtml(): string
+    {
+        return e($this->getLabel());
+    }
+
     public function getColor(): ?string
     {
         return $this->color;

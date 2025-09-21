@@ -27,9 +27,15 @@ export default Mark.create({
         const colors = this.options.textColors || {}
         const config = colors[colorName]
 
-        if (config) {
-            const cssVars = `--color: ${config.color}; --dark-color: ${config.darkColor}`
+        const hasColorName =
+            typeof colorName === 'string' && colorName.length > 0
+        const cssVars = config
+            ? `--color: ${config.color}; --dark-color: ${config.darkColor}`
+            : hasColorName
+              ? `--color: ${colorName}; --dark-color: ${colorName}`
+              : null
 
+        if (cssVars) {
             const existingStyle =
                 typeof HTMLAttributes.style === 'string'
                     ? HTMLAttributes.style

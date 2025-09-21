@@ -18,7 +18,6 @@ use Filament\Forms\Components\RichEditor\TipTapExtensions\RawHtmlMergeTagExtensi
 use Filament\Forms\Components\RichEditor\TipTapExtensions\RenderedCustomBlockExtension;
 use Filament\Forms\Components\RichEditor\TipTapExtensions\SmallExtension;
 use Filament\Forms\Components\RichEditor\TipTapExtensions\TextColorExtension;
-use Filament\Support\Colors\Color;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
