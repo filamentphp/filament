@@ -81,6 +81,7 @@ Additional tools available in the toolbar include:
 - `highlight` - Highlights the selected text with a `<mark>` tag around it.
 - `horizontalRule` - Inserts a horizontal rule.
 - `lead` - Applies a `lead` class around the text, which is typically used for the first paragraph of an article.
+- `textColor` - Changes the [text color](#customizing-text-colors) of the selected text.
 - `small` - Applies the `<small>` tag to the text, which is typically used for small print or disclaimers.
 - `code` - Format the selected text as inline code.
 - `table` - Creates a table in the editor with a default layout of 3 columns and 2 rows, with the first row configured as a header row.
@@ -125,6 +126,40 @@ RichEditor::make('content')
         ],
     ])
 ```
+
+## Customizing text colors
+
+The rich editor includes a text color tool for styling inline text. By default, it uses the [Tailwind CSS color palette](https://tailwindcss.com/docs/colors). In light mode, the 600 shades are applied to text, and in dark mode, the 400 shades are used.
+
+You can customize which colors are available in the picker using the `textColors()` method:
+
+```php
+use Filament\Forms\Components\RichEditor;
+
+RichEditor::make('content')
+    ->textColors([
+        '#ef4444' => 'Red',
+        '#10b981' => 'Green',
+        '#0ea5e9' => 'Sky',
+    ])
+```
+
+If you would like to define different colors for light and dark mode, you can use the a `TextColor` object to define the color:
+
+```php
+use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\RichEditor\TextColor;
+
+RichEditor::make('content')
+    ->textColors([
+        'brand' => TextColor::make('Brand', '#0ea5e9'),
+        'warning' => TextColor::make('Warning', '#f59e0b', darkColor: '#fbbf24'),
+    ])
+```
+
+When you use a `TextColor` object, the key of the array becomes the stored `data-color` attribute on the `<span>` tag, allowing you to reference the color in your CSS if needed. When you use the color as the array values, the actual color value (e.g., a HEX string) is stored as the `data-color` attribute.
+
+You can also pass `textColors()` to the [content renderer](#rendering-rich-content) and [rich content attribute](#registering-rich-content-attributes) so that server-side rendering matches your editor configuration.
 
 ## Rendering rich content
 
@@ -179,6 +214,19 @@ RichContentRenderer::make($record->content)
         'today' => now()->toFormattedDateString(),
     ])
     ->toHtml()
+```
+
+If you are using [custom text colors](#customizing-text-colors), you can pass an array of colors to the renderer to ensure that the colors are rendered correctly:
+
+```php
+use Filament\Forms\Components\RichEditor\RichContentRenderer;
+use Filament\Forms\Components\RichEditor\TextColor;
+
+RichContentRenderer::make($record->content)
+    ->textColors([
+        'brand' => TextColor::make('Brand', '#0ea5e9', darkColor: '#38bdf8'),
+    ])
+    ->toHtml();
 ```
 
 ## Security
@@ -555,6 +603,9 @@ class Post extends Model implements HasRichContent
                 'name' => 'Full name',
                 'today' => 'Today\'s date',
             ])
+            ->textColors(
+                'brand' => TextColor::make('Brand', '#0ea5e9', darkColor: '#38bdf8'),
+            )
             ->plugins([
                 HighlightRichContentPlugin::make(),
             ]);

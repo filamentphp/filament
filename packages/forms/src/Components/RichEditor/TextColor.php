@@ -2,15 +2,19 @@
 
 namespace Filament\Forms\Components\RichEditor;
 
+use Filament\Support\Colors\Color;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
+
 class TextColor
 {
     public function __construct(
-        protected string $label,
-        protected string $color,
+        protected ?string $label = null,
+        protected ?string $color = null,
         protected ?string $darkColor = null,
     ) {}
 
-    public static function make(string $label, string $color, ?string $darkColor = null): static
+    public static function make(?string $label = null, ?string $color = null, ?string $darkColor = null): static
     {
         return app(static::class, [
             'label' => $label,
@@ -19,18 +23,29 @@ class TextColor
         ]);
     }
 
-    public function getLabel(): string
+    public function getLabel(): ?string
     {
         return $this->label;
     }
 
-    public function getColor(): string
+    public function getColor(): ?string
     {
         return $this->color;
     }
 
-    public function getDarkColor(): string
+    public function getDarkColor(): ?string
     {
         return $this->darkColor ?? $this->getColor();
+    }
+
+    /**
+     * @return array<string, TextColor>
+     */
+    public static function getDefaultColors(): array
+    {
+        return Arr::mapWithKeys(
+            Color::all(),
+            fn (array $color, string $name): array => [$name => TextColor::make(Str::ucwords($name), $color['600'], $color['400'] ?? null)],
+        );
     }
 }

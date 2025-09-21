@@ -229,10 +229,7 @@ class RichContentAttribute implements Htmlable
      */
     public function getTextColors(): array
     {
-        $textColors = $this->textColors ?? Arr::mapWithKeys(
-            Color::all(),
-            fn (array $color, string $name): array => [$name => TextColor::make(Str::ucwords($name), $color['600'], darkColor: $color['400'] ?? null)],
-        );
+        $textColors = $this->textColors ?? TextColor::getDefaultColors();
 
         return Arr::mapWithKeys(
             $textColors,

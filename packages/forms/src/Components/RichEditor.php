@@ -979,10 +979,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
      */
     public function getTextColors(): array
     {
-        $textColors = $this->evaluate($this->textColors) ?? $this->getContentAttribute()?->getTextColors() ?? Arr::mapWithKeys(
-            Color::all(),
-            fn (array $color, string $name): array => [$name => TextColor::make(Str::ucwords($name), $color['600'], $color['400'] ?? null)],
-        );
+        $textColors = $this->evaluate($this->textColors) ?? $this->getContentAttribute()?->getTextColors() ?? TextColor::getDefaultColors();
 
         return Arr::mapWithKeys(
             $textColors,
@@ -991,13 +988,12 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     }
 
     /**
-     * @return array<string, array{label: string, color: string, darkColor: string}>
+     * @return array<string, array{color: string, darkColor: string}>
      */
     public function getTextColorsForJs(): array
     {
         return array_map(
             fn (TextColor $color): array => [
-                'label' => $color->getLabel(),
                 'color' => $color->getColor(),
                 'darkColor' => $color->getDarkColor(),
             ],
