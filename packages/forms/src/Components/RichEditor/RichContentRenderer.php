@@ -17,6 +17,7 @@ use Filament\Forms\Components\RichEditor\TipTapExtensions\MergeTagExtension;
 use Filament\Forms\Components\RichEditor\TipTapExtensions\RawHtmlMergeTagExtension;
 use Filament\Forms\Components\RichEditor\TipTapExtensions\RenderedCustomBlockExtension;
 use Filament\Forms\Components\RichEditor\TipTapExtensions\SmallExtension;
+use Filament\Forms\Components\RichEditor\TipTapExtensions\TextColorExtension;
 use Filament\Support\Colors\Color;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Arr;
@@ -324,6 +325,11 @@ class RichContentRenderer implements Htmlable
             app(RawHtmlMergeTagExtension::class),
             app(RenderedCustomBlockExtension::class),
             app(SmallExtension::class),
+            app(TextColorExtension::class, [
+                'options' => [
+                    'textColors' => $this->getTextColors(),
+                ],
+            ]),
             app(Strike::class),
             app(Subscript::class),
             app(Superscript::class),
