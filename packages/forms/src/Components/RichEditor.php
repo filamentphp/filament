@@ -6,7 +6,9 @@ use Closure;
 use Filament\Actions\Action;
 use Filament\Forms\Components\RichEditor\Actions\AttachFilesAction;
 use Filament\Forms\Components\RichEditor\Actions\CustomBlockAction;
+use Filament\Forms\Components\RichEditor\Actions\GridAction;
 use Filament\Forms\Components\RichEditor\Actions\LinkAction;
+use Filament\Forms\Components\RichEditor\Actions\TextColorAction;
 use Filament\Forms\Components\RichEditor\EditorCommand;
 use Filament\Forms\Components\RichEditor\FileAttachmentProviders\Contracts\FileAttachmentProvider;
 use Filament\Forms\Components\RichEditor\Models\Contracts\HasRichContent;
@@ -16,7 +18,9 @@ use Filament\Forms\Components\RichEditor\RichContentCustomBlock;
 use Filament\Forms\Components\RichEditor\RichContentRenderer;
 use Filament\Forms\Components\RichEditor\RichEditorTool;
 use Filament\Forms\Components\RichEditor\StateCasts\RichEditorStateCast;
+use Filament\Forms\Components\RichEditor\TextColor;
 use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
+use Filament\Support\Colors\Color;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Contracts\Support\Htmlable;
@@ -82,6 +86,13 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
      */
     protected array | Closure | null $floatingToolbars = null;
 
+    /**
+     * @var array<string, string | TextColor> | Closure | null
+     */
+    protected array | Closure | null $textColors = null;
+
+    protected bool | Closure | null $hasCustomTextColors = null;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -122,6 +133,11 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
                 ->action(arguments: '{ url: $getEditor().getAttributes(\'link\')?.href, shouldOpenInNewTab: $getEditor().getAttributes(\'link\')?.target === \'_blank\' }')
                 ->icon(Heroicon::Link)
                 ->iconAlias('forms:components.rich-editor.toolbar.link'),
+            RichEditorTool::make('textColor')
+                ->label(__('filament-forms::components.rich_editor.tools.text_color'))
+                ->action(arguments: '{ color: $getEditor().getAttributes(\'textColor\')[\'data-color\'] ?? null }')
+                ->icon(Heroicon::Swatch)
+                ->iconAlias('forms:components.rich-editor.toolbar.text-color'),
             RichEditorTool::make('h1')
                 ->label(__('filament-forms::components.rich_editor.tools.h1'))
                 ->jsHandler('$getEditor()?.chain().focus().toggleHeading({ level: 1 }).run()')
@@ -288,6 +304,20 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
                 ->jsHandler('$getEditor()?.chain().focus().setTextAlign(\'justify\').run()')
                 ->icon('fi-o-align-justify')
                 ->iconAlias('forms:components.rich-editor.toolbar.align-justify'),
+            RichEditorTool::make('grid')
+                ->label(__('filament-forms::components.rich_editor.tools.grid'))
+                ->action()
+                ->activeJsExpression('false')
+                ->icon('fi-o-columns')
+                ->iconAlias('forms:components.rich-editor.toolbar.grid'),
+            RichEditorTool::make('gridDelete')
+                ->label(__('filament-forms::components.rich_editor.tools.grid_delete'))
+                ->jsHandler('$getEditor()?.chain().focus().deleteNode(\'grid\').run()')
+                ->activeKey('grid')
+                ->activeStyling(false)
+                ->disabledWhenNotActive()
+                ->icon('fi-o-columns-delete')
+                ->iconAlias('forms:components.rich-editor.toolbar.grid_delete'),
             RichEditorTool::make('details')
                 ->label(__('filament-forms::components.rich_editor.tools.details'))
                 ->jsHandler('$getEditor()?.chain().focus().setDetails().run()')
@@ -603,6 +633,13 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
 
     public function getContentAttribute(): ?RichContentAttribute
     {
+        // Do not read content attributes from the model when the rich editor is nested
+        // inside a custom block action modal, since the content attribute should only
+        // be used to configure the parent rich editor.
+        if ($this->getRootContainer()->getOperation() === CustomBlockAction::NAME) {
+            return null;
+        }
+
         $model = $this->getModelInstance();
 
         if (! ($model instanceof HasRichContent)) {
@@ -708,7 +745,9 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
         return [
             AttachFilesAction::make(),
             CustomBlockAction::make(),
+            GridAction::make(),
             LinkAction::make(),
+            TextColorAction::make(),
             ...array_reduce(
                 $this->getPlugins(),
                 fn (array $carry, RichContentPlugin $plugin): array => [
@@ -731,11 +770,16 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     }
 
     /**
-     * @return array<string>
+     * @return array<string, string>
      */
     public function getMergeTags(): array
     {
-        return $this->evaluate($this->mergeTags) ?? $this->getContentAttribute()?->getMergeTags() ?? [];
+        $mergeTags = $this->evaluate($this->mergeTags) ?? $this->getContentAttribute()?->getMergeTags() ?? [];
+
+        return Arr::mapWithKeys(
+            $mergeTags,
+            fn (string $label, int | string $id): array => [(is_string($id) ? $id : $label) => $label],
+        );
     }
 
     public function noMergeTagSearchResultsMessage(string | Closure | null $message): static
@@ -904,5 +948,70 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
                 $fail('validation.required')->translate();
             }
         };
+    }
+
+    public function callAfterStateUpdated(bool $shouldBubbleToParents = true): static
+    {
+        $rawState = $this->getRawState();
+
+        // https://github.com/filamentphp/filament/issues/17472
+        if (! is_array($rawState)) {
+            foreach ($this->getStateCasts() as $stateCast) {
+                $rawState = $stateCast->set($rawState);
+            }
+
+            $this->rawState($rawState);
+        }
+
+        return parent::callAfterStateUpdated($shouldBubbleToParents);
+    }
+
+    /**
+     * @param  array<string, string | TextColor> | Closure | null  $colors
+     */
+    public function textColors(array | Closure | null $colors): static
+    {
+        $this->textColors = $colors;
+
+        return $this;
+    }
+
+    /**
+     * @return array<string, string | TextColor>
+     */
+    public function getTextColors(): array
+    {
+        $textColors = $this->evaluate($this->textColors) ?? $this->getContentAttribute()?->getTextColors() ?? TextColor::getDefaults();
+
+        return Arr::mapWithKeys(
+            $textColors,
+            fn (string | TextColor $color, string $name): array => [$name => ($color instanceof TextColor) ? $color : TextColor::make($color, $name)],
+        );
+    }
+
+    /**
+     * @return array<string, array{color: string, darkColor: string}>
+     */
+    public function getTextColorsForJs(): array
+    {
+        return array_map(
+            fn (TextColor $color): array => [
+                'color' => $color->getColor(),
+                'darkColor' => $color->getDarkColor(),
+            ],
+            $this->getTextColors(),
+        );
+    }
+
+    public function customTextColors(bool | Closure | null $condition = true): static
+    {
+        $this->hasCustomTextColors = $condition;
+
+        return $this;
+    }
+
+    public function hasCustomTextColors(): bool
+    {
+        return (bool) ($this->evaluate($this->hasCustomTextColors) ?? $this->getContentAttribute()?->hasCustomTextColors() ?? false);
     }
 }

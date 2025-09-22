@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Facade;
 /**
  * @method static bool hasSpaMode(?string $url = null)
  * @method static bool hasSpaPrefetching()
- * @method static Htmlable renderHook(string $name, string | array<string> | null $scopes = null)
+ * @method static Htmlable renderHook(string $name, string | array<string> | null $scopes = null, array<string, mixed> $data = [])
  *
  * @see ViewManager
  */

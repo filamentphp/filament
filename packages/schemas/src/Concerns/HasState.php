@@ -228,22 +228,16 @@ trait HasState
             }
 
             if (filled($component->getStatePath(isAbsolute: false))) {
-                $componentStatePath = $component->getStatePath();
-                $componentState = data_get($state, $componentStatePath);
-
-                if ($componentState === '') {
-                    data_set($state, $componentStatePath, null);
-                    $componentState = null;
-                }
-
                 if (! $component->mutatesDehydratedState()) {
                     continue;
                 }
 
+                $componentStatePath = $component->getStatePath();
+
                 data_set(
                     $state,
                     $componentStatePath,
-                    $component->mutateDehydratedState($componentState),
+                    $component->mutateDehydratedState(data_get($state, $componentStatePath)),
                 );
             }
         }
@@ -449,6 +443,34 @@ trait HasState
     }
 
     /**
+     * @internal Do not use this method outside the internals of Filament. It is subject to breaking changes in minor and patch releases.
+     *
+     * @return array<string, mixed>
+     */
+    public function getStateSnapshot(): array
+    {
+        return Component::withVisibilityCache(function (): array {
+            $statePath = $this->getStatePath();
+
+            if (filled($statePath)) {
+                $state = [];
+                data_set($state, $statePath, $this->getRawState());
+            } else {
+                $state = $this->getRawState();
+            }
+
+            $this->dehydrateState($state);
+            $this->mutateDehydratedState($state);
+
+            if ($statePath) {
+                $state = data_get($state, $statePath) ?? [];
+            }
+
+            return $state;
+        });
+    }
+
+    /**
      * @return array<string, mixed> | Arrayable
      */
     public function getRawState(): array | Arrayable
@@ -497,10 +519,23 @@ trait HasState
         return $this->cachedAbsoluteStatePath = implode('.', $pathComponents);
     }
 
-    protected function flushCachedAbsoluteStatePath(): void
+    public function flushCachedAbsoluteStatePath(): void
     {
         /** @phpstan-ignore unset.possiblyHookedProperty */
         unset($this->cachedAbsoluteStatePath);
+    }
+
+    public function flushCachedAbsoluteStatePaths(): void
+    {
+        $this->flushCachedAbsoluteStatePath();
+
+        foreach ($this->getComponents(withActions: false, withHidden: true) as $component) {
+            $component->flushCachedAbsoluteStatePath();
+
+            foreach ($component->getChildSchemas(withHidden: true) as $childSchema) {
+                $childSchema->flushCachedAbsoluteStatePaths();
+            }
+        }
     }
 
     public function shouldPartiallyRender(?string $updatedStatePath = null): bool

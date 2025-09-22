@@ -206,7 +206,7 @@ Depending on which combination of packages you installed, you can import only th
 
 ### Configure the Vite plugin
 
-If it isn't already set up, add the `@tailwindcss/vite` plugin to your Vite configuration (`vite.config,js`):
+If it isn't already set up, add the `@tailwindcss/vite` plugin to your Vite configuration (`vite.config.js`):
 
 ```js
 import { defineConfig } from 'vite'

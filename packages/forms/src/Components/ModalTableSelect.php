@@ -4,6 +4,9 @@ namespace Filament\Forms\Components;
 
 use Closure;
 use Filament\Actions\Action;
+use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
+use Filament\Schemas\Components\StateCasts\OptionsArrayStateCast;
+use Filament\Schemas\Components\StateCasts\OptionStateCast;
 use Filament\Support\Enums\IconPosition;
 use Filament\Support\Icons\Heroicon;
 use Filament\Support\Services\RelationshipJoiner;
@@ -56,6 +59,10 @@ class ModalTableSelect extends Field
 
     protected ?Closure $modifySelectActionUsing = null;
 
+    protected bool | Closure | null $hasBadges = null;
+
+    protected string | Closure | null $badgeColor = null;
+
     /**
      * @var array<mixed> | Closure
      */
@@ -64,20 +71,6 @@ class ModalTableSelect extends Field
     protected function setUp(): void
     {
         parent::setUp();
-
-        $this->default(static fn (ModalTableSelect $component): ?array => $component->isMultiple() ? [] : null);
-
-        $this->afterStateHydrated(static function (ModalTableSelect $component, $state): void {
-            if (! $component->isMultiple()) {
-                return;
-            }
-
-            if (is_array($state)) {
-                return;
-            }
-
-            $component->state([]);
-        });
 
         $this->registerActions([
             fn (ModalTableSelect $component): Action => $component->getSelectAction(),
@@ -143,7 +136,7 @@ class ModalTableSelect extends Field
             ->hiddenLabel()
             ->tableConfiguration($this->getTableConfiguration())
             ->relationshipName($this->getRelationshipName())
-            ->multiple()
+            ->multiple($this->isMultiple())
             ->maxItems($this->getMaxItems())
             ->tableArguments($this->getTableArguments());
 
@@ -678,5 +671,45 @@ class ModalTableSelect extends Field
     public function getTableArguments(): array
     {
         return $this->evaluate($this->tableArguments) ?? [];
+    }
+
+    public function badge(bool | Closure | null $condition = true): static
+    {
+        $this->hasBadges = $condition;
+
+        return $this;
+    }
+
+    public function hasBadges(): bool
+    {
+        return $this->evaluate($this->hasBadges) ?? $this->isMultiple();
+    }
+
+    public function badgeColor(string | Closure | null $color): static
+    {
+        $this->badgeColor = $color;
+
+        return $this;
+    }
+
+    public function getBadgeColor(): ?string
+    {
+        return $this->evaluate($this->badgeColor);
+    }
+
+    /**
+     * @return array<StateCast>
+     */
+    public function getDefaultStateCasts(): array
+    {
+        if ($this->hasCustomStateCasts()) {
+            return parent::getDefaultStateCasts();
+        }
+
+        if ($this->isMultiple()) {
+            return [app(OptionsArrayStateCast::class)];
+        }
+
+        return [app(OptionStateCast::class, ['isNullable' => true])];
     }
 }
