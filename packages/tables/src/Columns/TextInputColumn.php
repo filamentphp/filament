@@ -92,11 +92,6 @@ class TextInputColumn extends Column implements Editable, HasEmbeddedView
         return $this;
     }
 
-    public function postfix(string | Htmlable | Closure | null $label, bool | Closure $isInline = false): static
-    {
-        return $this->suffix($label, $isInline);
-    }
-
     public function suffix(string | Htmlable | Closure | null $label, bool | Closure $isInline = false): static
     {
         $this->suffixLabel = $label;
@@ -200,7 +195,6 @@ class TextInputColumn extends Column implements Editable, HasEmbeddedView
     {
         return (bool) $this->evaluate($this->isSuffixInline);
     }
-
 
     public function toEmbeddedHtml(): string
     {
