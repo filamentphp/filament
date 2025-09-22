@@ -787,7 +787,7 @@ trait HasState
         return filled(ltrim($key, './')) ? "{$containerKey}.{$key}" : $containerKey;
     }
 
-    protected function flushCachedAbsoluteStatePath(): void
+    public function flushCachedAbsoluteStatePath(): void
     {
         /** @phpstan-ignore unset.possiblyHookedProperty */
         unset($this->cachedAbsoluteStatePath);

@@ -11,7 +11,7 @@
 <x-dynamic-component :component="$fieldWrapperView" :field="$field">
     @if ($isDisabled())
         <div id="{{ $id }}" class="fi-fo-markdown-editor fi-disabled fi-prose">
-            {!! str($getState())->sanitizeHtml()->markdown($getCommonMarkOptions(), $getCommonMarkExtensions()) !!}
+            {!! str($getState())->markdown($getCommonMarkOptions(), $getCommonMarkExtensions())->sanitizeHtml() !!}
         </div>
     @else
         <x-filament::input.wrapper

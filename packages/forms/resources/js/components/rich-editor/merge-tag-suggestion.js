@@ -34,9 +34,19 @@ const updatePosition = (editor, element) => {
 
 export default ({ mergeTags, noMergeTagSearchResultsMessage }) => ({
     items: ({ query }) => {
-        return mergeTags.filter((item) =>
-            item.toLowerCase().replace(/\s/g, '').includes(query.toLowerCase()),
-        )
+        return Object.entries(mergeTags)
+            .filter(
+                ([id, label]) =>
+                    id
+                        .toLowerCase()
+                        .replace(/\s/g, '')
+                        .includes(query.toLowerCase()) ||
+                    label
+                        .toLowerCase()
+                        .replace(/\s/g, '')
+                        .includes(query.toLowerCase()),
+            )
+            .map(([id, label]) => ({ id, label }))
     },
 
     render: () => {
@@ -63,7 +73,7 @@ export default ({ mergeTags, noMergeTagSearchResultsMessage }) => ({
                 items.forEach((item, index) => {
                     const button = document.createElement('button')
                     button.className = `fi-dropdown-list-item fi-dropdown-list-item-label ${index === selectedIndex ? 'fi-selected' : ''}`
-                    button.textContent = item
+                    button.textContent = item.label
                     button.type = 'button'
                     button.addEventListener('click', () => selectItem(index))
                     element.appendChild(button)
@@ -84,7 +94,7 @@ export default ({ mergeTags, noMergeTagSearchResultsMessage }) => ({
             const item = items[index]
 
             if (item) {
-                currentProps.command({ id: item })
+                currentProps.command({ id: item.id })
             }
         }
 

@@ -4,6 +4,7 @@ namespace Filament\Schemas\Components\StateCasts;
 
 use BackedEnum;
 use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
+use Illuminate\Support\Arr;
 
 class OptionsArrayStateCast implements StateCast
 {
@@ -21,7 +22,7 @@ class OptionsArrayStateCast implements StateCast
         }
 
         return array_reduce(
-            $state,
+            Arr::wrap($state),
             function (array $carry, $stateItem): array {
                 if (blank($stateItem)) {
                     return $carry;
@@ -57,7 +58,7 @@ class OptionsArrayStateCast implements StateCast
         }
 
         return array_reduce(
-            $state,
+            Arr::wrap($state),
             function (array $carry, $stateItem): array {
                 if (blank($stateItem)) {
                     return $carry;

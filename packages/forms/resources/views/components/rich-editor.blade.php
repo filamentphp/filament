@@ -64,6 +64,7 @@
                         placeholder: @js($getPlaceholder()),
                         state: $wire.{{ $applyStateBindingModifiers("\$entangle('{$statePath}')", isOptimisticallyLive: false) }},
                         statePath: @js($statePath),
+                        textColors: @js($getTextColorsForJs()),
                         uploadingFileMessage: @js($getUploadingFileMessage()),
                         floatingToolbars: @js($floatingToolbars),
                     })"
@@ -216,19 +217,19 @@
                             </div>
 
                             <div class="fi-fo-rich-editor-merge-tags-list">
-                                @foreach ($mergeTags as $tag)
+                                @foreach ($mergeTags as $tagId => $tagLabel)
                                     <button
                                         draggable="true"
                                         type="button"
-                                        x-on:click="insertMergeTag(@js($tag))"
-                                        x-on:dragstart="$event.dataTransfer.setData('mergeTag', @js($tag))"
+                                        x-on:click="insertMergeTag(@js($tagId))"
+                                        x-on:dragstart="$event.dataTransfer.setData('mergeTag', @js($tagId))"
                                         class="fi-fo-rich-editor-merge-tag-btn"
                                     >
                                         <span
                                             data-type="mergeTag"
-                                            data-id="{{ $tag }}"
+                                            data-id="{{ $tagId }}"
                                         >
-                                            {{ $tag }}
+                                            {{ $tagLabel }}
                                         </span>
                                     </button>
                                 @endforeach

@@ -10,6 +10,8 @@ import {
     DetailsContent,
 } from '@tiptap/extension-details'
 import Document from '@tiptap/extension-document'
+import Grid from './extension-grid.js'
+import GridColumn from './extension-grid-column.js'
 import HardBreak from '@tiptap/extension-hard-break'
 import Heading from '@tiptap/extension-heading'
 import Highlight from '@tiptap/extension-highlight'
@@ -24,6 +26,7 @@ import MergeTag from './extension-merge-tag.js'
 import Paragraph from '@tiptap/extension-paragraph'
 import Placeholder from '@tiptap/extension-placeholder'
 import Small from './extension-small.js'
+import TextColor from './extension-text-color.js'
 import Strike from '@tiptap/extension-strike'
 import Subscript from '@tiptap/extension-subscript'
 import Superscript from '@tiptap/extension-superscript'
@@ -54,6 +57,7 @@ export default async ({
     getMentionLabelUsing,
     placeholder,
     statePath,
+    textColors,
     uploadingFileMessage,
     $wire,
 }) => [
@@ -74,6 +78,8 @@ export default async ({
     Document,
     Dropcursor,
     Gapcursor,
+    Grid,
+    GridColumn,
     HardBreak,
     Heading,
     Highlight,
@@ -98,7 +104,7 @@ export default async ({
         statePath,
         uploadingMessage: uploadingFileMessage,
     }),
-    ...(mergeTags.length
+    ...(Object.keys(mergeTags).length
         ? [
               MergeTag.configure({
                   deleteTriggerWithBackspace: true,
@@ -106,6 +112,7 @@ export default async ({
                       mergeTags,
                       noMergeTagSearchResultsMessage,
                   }),
+                  mergeTags,
               }),
           ]
         : []),
@@ -123,6 +130,9 @@ export default async ({
     Paragraph,
     Placeholder.configure({
         placeholder,
+    }),
+    TextColor.configure({
+        textColors,
     }),
     Small,
     Strike,

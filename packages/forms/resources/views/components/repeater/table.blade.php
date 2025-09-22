@@ -29,13 +29,18 @@
     $statePath = $getStatePath();
 
     $tableColumns = $getTableColumns();
+
+    $isCompact = $isCompact();
 @endphp
 
 <x-dynamic-component :component="$fieldWrapperView" :field="$field">
     <div
         {{ $attributes
                 ->merge($getExtraAttributes(), escape: false)
-                ->class(['fi-fo-table-repeater']) }}
+                ->class([
+                                'fi-fo-table-repeater',
+                                'fi-compact' => $isCompact,
+                            ]) }}
     >
         @if (count($items))
             <table class="fi-absolute-positioning-context">

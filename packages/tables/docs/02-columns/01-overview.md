@@ -958,7 +958,7 @@ TextColumn::make('email')
     ->placeholder(fn (User $record): string => "No email for {$record->name}")
 
 TextColumn::make('role')
-    ->hidden(fn (User $record): bool => $record->role === 'admin')
+    ->badge(fn (User $record): bool => $record->role === 'admin')
 
 TextColumn::make('name')
     ->extraAttributes(fn (User $record): array => ['class' => "{$record->getKey()}-name-column"])

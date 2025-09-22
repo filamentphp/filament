@@ -299,6 +299,8 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
             'dropdownWidth' => $this->getDropdownWidth(),
             'extraAttributes' => $this->getExtraAttributes(),
             'hasDropdown' => $this->hasDropdown(),
+            'hasDropdownFlip' => $this->hasDropdownFlip(),
+            'hasDropdownTeleport' => $this->hasDropdownTeleport(),
             'icon' => $this->getIcon(),
             'iconPosition' => $this->getIconPosition(),
             'iconSize' => $this->getIconSize(),
@@ -344,6 +346,8 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
 
         $static->color($data['color'] ?? null);
         $static->dropdown($data['hasDropdown'] ?? false);
+        $static->dropdownFlip($data['hasDropdownFlip'] ?? false);
+        $static->dropdownTeleport($data['hasDropdownTeleport'] ?? false);
         $static->dropdownMaxHeight($data['dropdownMaxHeight'] ?? null);
         $static->dropdownOffset($data['dropdownOffset'] ?? null);
         $static->dropdownPlacement($data['dropdownPlacement'] ?? null);
@@ -472,7 +476,7 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
 
             <div
                 x-cloak
-                x-float.placement.<?= $this->getDropdownPlacement() ?? 'bottom-start' ?>.flip.teleport.offset="{ offset: <?= $this->getDropdownOffset() ?? 8 ?> }"
+                x-float.placement.<?= $this->getDropdownPlacement() ?? 'bottom-start' ?><?= $this->hasDropdownFlip() ? '.flip' : '' ?><?= $this->hasDropdownTeleport() ? '.teleport' : '' ?>.offset="{ offset: <?= $this->getDropdownOffset() ?? 8 ?> }"
                 x-ref="panel"
                 x-transition:enter-start="fi-opacity-0"
                 x-transition:leave-end="fi-opacity-0"
