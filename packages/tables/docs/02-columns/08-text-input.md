@@ -93,17 +93,3 @@ TextInputColumn::make('status')
 ```
 
 As well as allowing static values, the `prefixIconColor()` and `suffixIconColor()` methods also accept a function to dynamically calculate them. You can inject various utilities into the function as parameters.
-
-### Inline affixes
-
-By default, affixes are displayed alongside the input. You may control their layout using the `inlinePrefix()` and `inlineSuffix()` methods:
-
-```php
-use Filament\Tables\Columns\TextInputColumn;
-
-TextInputColumn::make('price')
-    ->prefix('$')
-    ->suffix('USD')
-    ->inlinePrefix()
-    ->inlineSuffix()
-```
