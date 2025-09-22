@@ -76,11 +76,14 @@ Additional tools available in the toolbar include:
 - `alignJustify` - Justifies the text.
 - `clearFormatting` - Clears all formatting from the selected text.
 - `details` - Inserts a `<details>` tag, which allows users to create collapsible sections in their content.
+- `grid` - Inserts a grid layout into the editor, allowing users to create responsive columns of content.
+- `gridDelete` - Deletes the current grid layout.
 - `highlight` - Highlights the selected text with a `<mark>` tag around it.
 - `horizontalRule` - Inserts a horizontal rule.
 - `lead` - Applies a `lead` class around the text, which is typically used for the first paragraph of an article.
 - `small` - Applies the `<small>` tag to the text, which is typically used for small print or disclaimers.
 - `code` - Format the selected text as inline code.
+- `textColor` - Changes the [text color](#customizing-text-colors) of the selected text.
 - `table` - Creates a table in the editor with a default layout of 3 columns and 2 rows, with the first row configured as a header row.
 - `tableAddColumnBefore` - Adds a new column before the current column.
 - `tableAddColumnAfter` - Adds a new column after the current column.
@@ -123,6 +126,68 @@ RichEditor::make('content')
         ],
     ])
 ```
+
+## Customizing text colors
+
+The rich editor includes a text color tool for styling inline text. By default, it uses the [Tailwind CSS color palette](https://tailwindcss.com/docs/colors). In light mode, the 600 shades are applied to text, and in dark mode, the 400 shades are used.
+
+You can customize which colors are available in the picker using the `textColors()` method:
+
+```php
+use Filament\Forms\Components\RichEditor;
+
+RichEditor::make('content')
+    ->textColors([
+        '#ef4444' => 'Red',
+        '#10b981' => 'Green',
+        '#0ea5e9' => 'Sky',
+    ])
+```
+
+If you would like to define different colors for light and dark mode, you can use the a `TextColor` object to define the color:
+
+```php
+use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\RichEditor\TextColor;
+
+RichEditor::make('content')
+    ->textColors([
+        'brand' => TextColor::make('Brand', '#0ea5e9'),
+        'warning' => TextColor::make('Warning', '#f59e0b', darkColor: '#fbbf24'),
+    ])
+```
+
+If you would like to add new colors onto the existing Tailwind palette, you can merge your colors into the `TextColor::getDefaults()` array:
+
+```php
+use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\RichEditor\TextColor;
+
+RichEditor::make('content')
+    ->textColors([
+        'brand' => TextColor::make('Brand', '#0ea5e9'),
+        'warning' => TextColor::make('Warning', '#f59e0b', darkColor: '#fbbf24'),
+        ...TextColor::getDefaults(),
+    ])
+```
+
+When you use a `TextColor` object, the key of the array becomes the stored `data-color` attribute on the `<span>` tag, allowing you to reference the color in your CSS if needed. When you use the color as the array values, the actual color value (e.g., a HEX string) is stored as the `data-color` attribute.
+
+You can also pass `textColors()` to the [content renderer](#rendering-rich-content) and [rich content attribute](#registering-rich-content-attributes) so that server-side rendering matches your editor configuration.
+
+You can also allow users to pick custom colors that aren't in the predefined list by using the `customTextColors()` method:
+
+```php
+use Filament\Forms\Components\RichEditor;
+
+RichEditor::make('content')
+    ->textColors([
+        // ...
+    ])
+    ->customTextColors()
+```
+
+You do not need to use `customTextColors()` on the [content renderer](#rendering-rich-content), as it will automatically render any custom colors that are used in the content.
 
 ## Rendering rich content
 
@@ -179,6 +244,39 @@ RichContentRenderer::make($record->content)
     ->toHtml()
 ```
 
+If you are using [custom text colors](#customizing-text-colors), you can pass an array of colors to the renderer to ensure that the colors are rendered correctly:
+
+```php
+use Filament\Forms\Components\RichEditor\RichContentRenderer;
+use Filament\Forms\Components\RichEditor\TextColor;
+
+RichContentRenderer::make($record->content)
+    ->textColors([
+        'brand' => TextColor::make('Brand', '#0ea5e9', darkColor: '#38bdf8'),
+    ])
+    ->toHtml();
+```
+
+### Styling the rendered content
+
+The rich editor HTML uses a combination of HTML elements, CSS classes, and inline styles to style the content, depending on the features used in the editor. If you render the content in a Filament table column or infolist entry with `prose()`, Filament will automatically apply the necessary styles for you. If you are outputting the content in your own Blade view, you may need to add some additional styles to ensure that the content is styled correctly.
+
+One way of styling the content is to use [Tailwind CSS Typography](https://tailwindcss.com/docs/typography-plugin). This plugin provides a set of pre-defined styles for common HTML elements, such as headings, paragraphs, lists, and tables. You can apply these styles to a container element using the `prose` class:
+
+```blade
+<div class="prose dark:prose-invert">
+    {!! \Filament\Forms\Components\RichEditor\RichContentRenderer::make($record->content) !!}
+</div>
+```
+
+However, some features, such as the grid layout and text colors, require additional styles that are not included in the Tailwind CSS Typography plugin. Filament also includes its own `fi-prose` CSS class that adds these additional styles. Any app that loads Filament's `vendor/filament/support/resources/css/index.css` CSS will have access to this class. The styling is different to the `prose` class, but fits with Filament's design system better:
+
+```blade
+<div class="fi-prose">
+    {!! \Filament\Forms\Components\RichEditor\RichContentRenderer::make($record->content) !!}
+</div>
+```
+
 ## Security
 
 By default, the editor outputs raw HTML, and sends it to the backend. Attackers are able to intercept the value of the component and send a different raw HTML string to the backend. As such, it is important that when outputting the HTML from a rich editor, it is sanitized; otherwise your site may be exposed to Cross-Site Scripting (XSS) vulnerabilities.
@@ -223,6 +321,26 @@ RichContentRenderer::make($record->content)
     ->fileAttachmentsDisk('s3')
     ->fileAttachmentsVisibility('private')
     ->toHtml()
+```
+
+### Validating uploaded images
+
+You may use the `fileAttachmentsAcceptedFileTypes()` method to control a list of accepted mime types for uploaded images. By default, `image/png`, `image/jpeg`, `image/gif`, and `image/webp` are accepted:
+
+```php
+use Filament\Forms\Components\RichEditor;
+
+RichEditor::make('content')
+    ->fileAttachmentsAcceptedFileTypes(['image/png', 'image/jpeg'])
+```
+
+You may use the `fileAttachmentsMaxSize()` method to control the maximum file size for uploaded images. The size is specified in kilobytes. By default, the maximum size is 12288 KB (12 MB):
+
+```php
+use Filament\Forms\Components\RichEditor;
+
+RichEditor::make('content')
+    ->fileAttachmentsMaxSize(5120) // 5 MB
 ```
 
 ## Using custom blocks
@@ -450,6 +568,40 @@ RichContentRenderer::make($record->content)
     ->toHtml()
 ```
 
+#### Using HTML content in merge tags
+
+By default, merge tags render their values as plain text. However, you can render HTML content in merge tags by providing values that implement Laravel's `Htmlable` interface. This is useful for inserting formatted content, links, or other HTML elements:
+
+```php
+use Filament\Forms\Components\RichEditor\RichContentRenderer;
+use Illuminate\Support\HtmlString;
+
+RichContentRenderer::make($record->content)
+    ->mergeTags([
+        'user_name' => $record->user->name, // Plain text
+        'user_profile_link' => new HtmlString('<a href="' . route('profile', $record->user) . '">View Profile</a>'),
+    ])
+    ->toHtml()
+```
+
+When a merge tag value implements the `Htmlable` interface (such as `HtmlString`), the system automatically detects this and renders the HTML content without escaping it. Non-`Htmlable` values continue to be rendered as plain text for security.
+
+### Using custom merge tag labels
+
+You may provide custom labels for merge tags that will be displayed in the editor's side panel and content preview using an associative array where the keys are the merge tag names and the values are the labels:
+
+```php
+use Filament\Forms\Components\RichEditor;
+
+RichEditor::make('content')
+    ->mergeTags([
+        'name' => 'Full name',
+        'today' => 'Today\'s date',
+    ])
+```
+
+The labels aren't saved in the content of the editor and are only used for display purposes.
+
 ### Opening the merge tags panel by default
 
 If you want the merge tags panel to be open by default when the rich editor is loaded, you can use the `activePanel('mergeTags')` method:
@@ -495,6 +647,14 @@ class Post extends Model implements HasRichContent
                 'name' => fn (): string => $this->user->name,
                 'today' => now()->toFormattedDateString(),
             ])
+            ->mergeTagLabels([
+                'name' => 'Full name',
+                'today' => 'Today\'s date',
+            ])
+            ->textColors(
+                'brand' => TextColor::make('Brand', '#0ea5e9', darkColor: '#38bdf8'),
+            )
+            ->customTextColors()
             ->plugins([
                 HighlightRichContentPlugin::make(),
             ]);

@@ -23,6 +23,8 @@ class CreateAction extends Action
 
     protected bool | Closure $canCreateAnother = true;
 
+    protected bool | Closure $shouldForceRenderAfterCreateAnother = false;
+
     protected ?Closure $modifyCreateAnotherActionUsing = null;
 
     protected ?Closure $preserveFormDataWhenCreatingAnotherUsing = null;
@@ -107,6 +109,14 @@ class CreateAction extends Action
             $schema->model($record)->saveRelationships();
 
             if ($arguments['another'] ?? false) {
+                if ($this->shouldForceRenderAfterCreateAnother()) {
+                    $livewire = $this->getLivewire();
+
+                    if (method_exists($livewire, 'forceRender')) {
+                        $livewire->forceRender();
+                    }
+                }
+
                 $this->callAfter();
                 $this->sendSuccessNotification();
 
@@ -157,6 +167,13 @@ class CreateAction extends Action
         return $this;
     }
 
+    public function forceRenderAfterCreateAnother(bool | Closure $condition = true): static
+    {
+        $this->shouldForceRenderAfterCreateAnother = $condition;
+
+        return $this;
+    }
+
     /**
      * @deprecated Use `createAnother()` instead.
      */
@@ -190,6 +207,11 @@ class CreateAction extends Action
     public function shouldClearRecordAfter(): bool
     {
         return true;
+    }
+
+    public function shouldForceRenderAfterCreateAnother(): bool
+    {
+        return (bool) $this->evaluate($this->shouldForceRenderAfterCreateAnother);
     }
 
     public function getRelationship(): Relation | Builder | null

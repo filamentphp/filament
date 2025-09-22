@@ -35,10 +35,13 @@ The page class should contain the following elements:
 namespace App\Filament\Pages;
 
 use App\Models\WebsitePage;
+use Filament\Actions\Action;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
+use Filament\Schemas\Components\Actions;
+use Filament\Schemas\Components\Form;
 use Filament\Schemas\Schema;
 
 /**
@@ -46,6 +49,8 @@ use Filament\Schemas\Schema;
  */
 class ManageHomepage extends Page
 {
+    protected string $view = 'filament.pages.manage-homepage';
+
     /**
      * @var array<string, mixed> | null
      */
@@ -60,11 +65,21 @@ class ManageHomepage extends Page
     {
         return $schema
             ->components([
-                TextInput::make('title')
-                    ->required()
-                    ->maxLength(255),
-                RichEditor::make('content'),
-                // ...
+                Form::make([
+                    TextInput::make('title')
+                        ->required()
+                        ->maxLength(255),
+                    RichEditor::make('content'),
+                    // ...
+                ])
+                    ->livewireSubmitHandler('save')
+                    ->footer([
+                        Actions::make([
+                            Action::make('save')
+                                ->submit('save')
+                                ->keyBindings(['mod+s']),
+                        ]),
+                    ]),
             ])
             ->record($this->getRecord())
             ->statePath('data');
@@ -103,18 +118,10 @@ class ManageHomepage extends Page
 }
 ```
 
-The page Blade view should render the form and a Save button. The `wire:submit` directive should be used to call the `save()` method when the form is submitted:
+The page Blade view should render the form:
 
 ```blade
 <x-filament::page>
-    <form wire:submit="save">
-        {{ $this->form }}
-    
-        <div>
-            <x-filament::button type="submit">
-                Save
-            </x-filament::button>
-        </div>
-    </form>
+    {{ $this->form }}
 </x-filament::page>
 ```

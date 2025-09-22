@@ -243,7 +243,8 @@ abstract class EditTenantProfile extends Page
                 Actions::make($this->getFormActions())
                     ->alignment($this->getFormActionsAlignment())
                     ->fullWidth($this->hasFullWidthFormActions())
-                    ->sticky($this->areFormActionsSticky()),
+                    ->sticky($this->areFormActionsSticky())
+                    ->key('form-actions'),
             ]);
     }
 

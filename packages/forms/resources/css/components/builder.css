@@ -76,10 +76,14 @@
     }
 
     & .fi-fo-builder-item-content {
-        @apply relative border-t border-gray-100 dark:border-white/10;
+        @apply border-t border-gray-100 dark:border-white/10;
 
         &:not(.fi-fo-builder-item-content-has-preview) {
             @apply p-4;
+        }
+
+        &.fi-fo-builder-item-content-has-preview {
+            @apply relative;
         }
     }
 

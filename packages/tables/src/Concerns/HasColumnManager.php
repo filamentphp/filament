@@ -197,10 +197,12 @@ trait HasColumnManager
      */
     protected function mapTableColumnGroupToArray(ColumnGroup $group): array
     {
+        $label = e($group->getLabel());
+
         return [
             'type' => self::TABLE_COLUMN_MANAGER_GROUP_TYPE,
-            'name' => (string) $group->getLabel(),
-            'label' => (string) $group->getLabel(),
+            'name' => $label,
+            'label' => $label,
             'isHidden' => empty(array_filter($group->getColumns(), fn (Column $column): bool => ! $column->isHidden())),
             'isToggled' => true,
             'isToggleable' => true,
@@ -219,7 +221,7 @@ trait HasColumnManager
      */
     protected function mapTableColumnToArray(Column $column): array
     {
-        $label = (string) $column->getLabel();
+        $label = e($column->getLabel());
 
         if (blank($label) && $this->hasReorderableTableColumns()) {
             throw new LogicException("The table column [{$column->getName()}] has a blank label. All columns must have labels when they are reorderable.");

@@ -387,7 +387,8 @@ class CreateRecord extends Page
         return Actions::make($this->getFormActions())
             ->alignment($this->getFormActionsAlignment())
             ->fullWidth($this->hasFullWidthFormActions())
-            ->sticky($this->areFormActionsSticky());
+            ->sticky($this->areFormActionsSticky())
+            ->key('form-actions');
     }
 
     public function hasFormWrapper(): bool

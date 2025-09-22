@@ -3,6 +3,7 @@
 namespace Filament\Forms\Components\Concerns;
 
 use Closure;
+use Filament\Schemas\Components\Component;
 use LogicException;
 
 trait InteractsWithToolbarButtons
@@ -30,22 +31,41 @@ trait InteractsWithToolbarButtons
             throw new LogicException('You cannot use the `disableToolbarButtons()` method when the toolbar buttons are dynamically returned from a function. Instead, do not return the disabled buttons from the function.');
         }
 
-        $this->toolbarButtons = array_reduce(
-            $this->toolbarButtons ?? $this->getDefaultToolbarButtons(),
-            function ($carry, $button) use ($buttonsToDisable) {
-                if (is_array($button)) {
-                    $carry[] = array_values(array_filter(
-                        $button,
-                        static fn ($button) => ! in_array($button, $buttonsToDisable),
-                    ));
-                } elseif (! in_array($button, $buttonsToDisable)) {
-                    $carry[] = $button;
-                }
+        if ($this->toolbarButtons !== null) {
+            $this->toolbarButtons = array_reduce(
+                $this->toolbarButtons,
+                function ($carry, $button) use ($buttonsToDisable) {
+                    if (is_array($button)) {
+                        $carry[] = array_values(array_filter(
+                            $button,
+                            static fn ($button) => ! in_array($button, $buttonsToDisable),
+                        ));
+                    } elseif (! in_array($button, $buttonsToDisable)) {
+                        $carry[] = $button;
+                    }
 
-                return $carry;
-            },
-            initial: [],
-        );
+                    return $carry;
+                },
+                initial: [],
+            );
+        } else {
+            $this->toolbarButtons = fn (Component $component): array => array_reduce(
+                $component->getDefaultToolbarButtons(), /** @phpstan-ignore method.notFound */
+                function ($carry, $button) use ($buttonsToDisable) {
+                    if (is_array($button)) {
+                        $carry[] = array_values(array_filter(
+                            $button,
+                            static fn ($button) => ! in_array($button, $buttonsToDisable),
+                        ));
+                    } elseif (! in_array($button, $buttonsToDisable)) {
+                        $carry[] = $button;
+                    }
+
+                    return $carry;
+                },
+                initial: [],
+            );
+        }
 
         return $this;
     }
@@ -59,10 +79,17 @@ trait InteractsWithToolbarButtons
             throw new LogicException('You cannot use the `enableToolbarButtons()` method when the toolbar buttons are dynamically returned from a function. Instead, return the enabled buttons from the function.');
         }
 
-        $this->toolbarButtons = [
-            ...$this->toolbarButtons ?? $this->getDefaultToolbarButtons(),
-            ...$buttonsToEnable,
-        ];
+        if ($this->toolbarButtons !== null) {
+            $this->toolbarButtons = [
+                ...$this->toolbarButtons ?? $this->getDefaultToolbarButtons(),
+                ...$buttonsToEnable,
+            ];
+        } else {
+            $this->toolbarButtons = fn (Component $component): array => [
+                ...$component->getDefaultToolbarButtons(), /** @phpstan-ignore method.notFound */
+                ...$buttonsToEnable,
+            ];
+        }
 
         return $this;
     }

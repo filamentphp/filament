@@ -1,8 +1,6 @@
 import { Extension } from '@tiptap/core'
 import { Plugin, PluginKey } from '@tiptap/pm/state'
 
-const allowedMimeTypes = ['image/png', 'image/jpeg', 'image/gif', 'image/webp']
-
 const dispatchFormEvent = (editorView, name, detail = {}) => {
     editorView.dom.closest('form')?.dispatchEvent(
         new CustomEvent(name, {
@@ -13,10 +11,34 @@ const dispatchFormEvent = (editorView, name, detail = {}) => {
     )
 }
 
+const validateFiles = ({
+    files,
+    acceptedTypes,
+    acceptedTypesValidationMessage,
+    maxSize,
+    maxSizeValidationMessage,
+}) => {
+    for (const file of files) {
+        if (acceptedTypes && !acceptedTypes.includes(file.type)) {
+            return acceptedTypesValidationMessage
+        }
+
+        if (maxSize && file.size > +maxSize * 1024) {
+            return maxSizeValidationMessage
+        }
+    }
+
+    return null
+}
+
 const LocalFilesPlugin = ({
     editor,
+    acceptedTypes,
+    acceptedTypesValidationMessage,
     get$WireUsing,
     key,
+    maxSize,
+    maxSizeValidationMessage,
     statePath,
     uploadingMessage,
 }) => {
@@ -37,9 +59,30 @@ const LocalFilesPlugin = ({
                     return false
                 }
 
-                const files = Array.from(event.dataTransfer.files).filter(
-                    (file) => allowedMimeTypes.includes(file.type),
-                )
+                const files = Array.from(event.dataTransfer.files)
+
+                const validationMessage = validateFiles({
+                    files,
+                    acceptedTypes,
+                    acceptedTypesValidationMessage,
+                    maxSize,
+                    maxSizeValidationMessage,
+                })
+
+                if (validationMessage) {
+                    editorView.dom.dispatchEvent(
+                        new CustomEvent('rich-editor-file-validation-message', {
+                            bubbles: true,
+                            detail: {
+                                key,
+                                livewireId: get$WireUsing().id,
+                                validationMessage,
+                            },
+                        }),
+                    )
+
+                    return false
+                }
 
                 if (!files.length) {
                     return false
@@ -135,9 +178,30 @@ const LocalFilesPlugin = ({
                     return false
                 }
 
-                const files = Array.from(event.clipboardData.files).filter(
-                    (file) => allowedMimeTypes.includes(file.type),
-                )
+                const files = Array.from(event.clipboardData.files)
+
+                const validationMessage = validateFiles({
+                    files,
+                    acceptedTypes,
+                    acceptedTypesValidationMessage,
+                    maxSize,
+                    maxSizeValidationMessage,
+                })
+
+                if (validationMessage) {
+                    editorView.dom.dispatchEvent(
+                        new CustomEvent('rich-editor-file-validation-message', {
+                            bubbles: true,
+                            detail: {
+                                key,
+                                livewireId: get$WireUsing().id,
+                                validationMessage,
+                            },
+                        }),
+                    )
+
+                    return false
+                }
 
                 if (!files.length) {
                     return false
@@ -231,7 +295,11 @@ export default Extension.create({
 
     addOptions() {
         return {
+            acceptedTypes: [],
+            acceptedTypesValidationMessage: null,
             key: null,
+            maxSize: null,
+            maxSizeValidationMessage: null,
             statePath: null,
             uploadingMessage: null,
             get$WireUsing: null,

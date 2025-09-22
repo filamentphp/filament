@@ -367,7 +367,13 @@ class SelectFilter extends BaseFilter
                     $relationshipTitleAttribute = $component->getRelationshipTitleAttribute();
 
                     if (empty($relationshipQuery->getQuery()->orders)) {
-                        $relationshipQuery->orderBy($relationshipQuery->qualifyColumn($relationshipTitleAttribute));
+                        $relationshipOrderByAttribute = $relationshipTitleAttribute;
+
+                        if (str_contains($relationshipOrderByAttribute, ' as ')) {
+                            $relationshipOrderByAttribute = (string) str($relationshipOrderByAttribute)->before(' as ');
+                        }
+
+                        $relationshipQuery->orderBy($relationshipQuery->qualifyColumn($relationshipOrderByAttribute));
                     }
 
                     if (str_contains($relationshipTitleAttribute, '->')) {
@@ -427,7 +433,13 @@ class SelectFilter extends BaseFilter
                     $relationshipTitleAttribute = $component->getRelationshipTitleAttribute();
 
                     if (empty($relationshipQuery->getQuery()->orders)) {
-                        $relationshipQuery->orderBy($relationshipQuery->qualifyColumn($relationshipTitleAttribute));
+                        $relationshipOrderByAttribute = $relationshipTitleAttribute;
+
+                        if (str_contains($relationshipOrderByAttribute, ' as ')) {
+                            $relationshipOrderByAttribute = (string) str($relationshipOrderByAttribute)->before(' as ');
+                        }
+
+                        $relationshipQuery->orderBy($relationshipQuery->qualifyColumn($relationshipOrderByAttribute));
                     }
 
                     if (str_contains($relationshipTitleAttribute, '->')) {
