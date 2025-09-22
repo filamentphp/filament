@@ -157,7 +157,6 @@ class TextInputColumn extends Column implements Editable, HasEmbeddedView
         return $this;
     }
 
-
     public function getPrefixLabel(): string | Htmlable | null
     {
         return $this->evaluate($this->prefixLabel);
