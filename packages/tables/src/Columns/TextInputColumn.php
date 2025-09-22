@@ -4,8 +4,6 @@ namespace Filament\Tables\Columns;
 
 use BackedEnum;
 use Closure;
-use Filament\Actions\Action;
-use Filament\Forms\Components\Concerns\HasAffixes;
 use Filament\Forms\Components\Concerns\HasExtraInputAttributes;
 use Filament\Forms\Components\Concerns\HasInputMode;
 use Filament\Forms\Components\Concerns\HasStep;
@@ -13,6 +11,7 @@ use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\RawJs;
+use function Filament\Support\generate_icon_html;
 use Filament\Support\View\Components\InputComponent\WrapperComponent\IconComponent;
 use Filament\Tables\Columns\Contracts\Editable;
 use Filament\Tables\Table;
@@ -24,7 +23,6 @@ class TextInputColumn extends Column implements Editable, HasEmbeddedView
 {
     use Concerns\CanBeValidated;
     use Concerns\CanUpdateState;
-    use HasAffixes;
     use HasExtraInputAttributes;
     use HasInputMode;
     use HasStep;
@@ -204,10 +202,6 @@ class TextInputColumn extends Column implements Editable, HasEmbeddedView
         return (bool) $this->evaluate($this->isSuffixInline);
     }
 
-    public function prepareAction(Action $action): Action
-    {
-        return $action;
-    }
 
     public function toEmbeddedHtml(): string
     {
@@ -223,7 +217,6 @@ class TextInputColumn extends Column implements Editable, HasEmbeddedView
 
         $type = filled($mask) ? 'text' : $this->getType();
 
-        // Get affix data
         $prefixIcon = $this->getPrefixIcon();
         $prefixIconColor = $this->getPrefixIconColor();
         $prefixLabel = $this->getPrefixLabel();
@@ -303,7 +296,7 @@ class TextInputColumn extends Column implements Editable, HasEmbeddedView
                         class="fi-input-wrp-prefix <?= $isPrefixInline ? 'fi-inline' : '' ?> <?= filled($prefixLabel) ? 'fi-input-wrp-prefix-has-label' : '' ?>"
                     >
                         <?php if ($prefixIcon) { ?>
-                            <?= \Filament\Support\generate_icon_html($prefixIcon, null, (new ComponentAttributeBag)
+                            <?= generate_icon_html($prefixIcon, null, (new ComponentAttributeBag)
                             ->color(IconComponent::class, $prefixIconColor)) ?>
                         <?php } ?>
 
@@ -333,7 +326,7 @@ class TextInputColumn extends Column implements Editable, HasEmbeddedView
                         <?php } ?>
 
                         <?php if ($suffixIcon) { ?>
-                            <?= \Filament\Support\generate_icon_html($suffixIcon, null, (new ComponentAttributeBag)
+                            <?= generate_icon_html($suffixIcon, null, (new ComponentAttributeBag)
                             ->color(IconComponent::class, $suffixIconColor)) ?>
                         <?php } ?>
                     </div>
