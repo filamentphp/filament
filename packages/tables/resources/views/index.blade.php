@@ -1348,7 +1348,10 @@
                                 @endif
 
                                 @foreach ($columns as $column)
-                                    @if (filled($tableHeaderCellView = FilamentView::renderHook(TablesRenderHook::TABLE_HEADER_CELL, scopes: static::class, data: ['column' => $column, 'isReordering' => $isReordering])))
+                                    @if (filled($tableHeaderCellView = FilamentView::renderHook(TablesRenderHook::TABLE_HEADER_CELL, scopes: static::class, data: [
+                                        'column' => $column, 
+                                        'isReordering' => $isReordering
+                                    ])))
                                         {{ $tableHeaderCellView }}
                                     @else
                                         @php
@@ -1870,15 +1873,15 @@
 
                                                 @foreach ($columns as $column)
                                                     @if (filled($tableCellView = FilamentView::renderHook(TablesRenderHook::TABLE_CELL, scopes: static::class, data: [
-                                                             'column' => $column,
-                                                             'isReordering' => $isReordering,
-                                                             'loop' => $loop,
-                                                             'openRecordUrlInNewTab' => $openRecordUrlInNewTab,
-                                                             'record' => $record,
-                                                             'recordKey' => $recordKey,
-                                                             'recordAction' => $recordAction,
-                                                             'recordUrl' => $recordUrl,
-                                                         ])))
+                                                        'column' => $column,
+                                                        'isReordering' => $isReordering,
+                                                        'loop' => $loop,
+                                                        'openRecordUrlInNewTab' => $openRecordUrlInNewTab,
+                                                        'record' => $record,
+                                                        'recordAction' => $recordAction,
+                                                        'recordKey' => $recordKey,
+                                                        'recordUrl' => $recordUrl,
+                                                    ])))
                                                         {{ $tableCellView }}
                                                     @else
                                                         @php
