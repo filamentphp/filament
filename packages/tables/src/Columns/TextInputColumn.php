@@ -4,6 +4,7 @@ namespace Filament\Tables\Columns;
 
 use BackedEnum;
 use Closure;
+use Filament\Actions\Action;
 use Filament\Forms\Components\Concerns\HasAffixes;
 use Filament\Forms\Components\Concerns\HasExtraInputAttributes;
 use Filament\Forms\Components\Concerns\HasInputMode;
@@ -203,6 +204,10 @@ class TextInputColumn extends Column implements Editable, HasEmbeddedView
         return (bool) $this->evaluate($this->isSuffixInline);
     }
 
+    public function prepareAction(Action $action): Action
+    {
+        return $action;
+    }
 
     public function toEmbeddedHtml(): string
     {
