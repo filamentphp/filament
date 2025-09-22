@@ -99,7 +99,6 @@ class TextInputColumn extends Column implements Editable, HasEmbeddedView
         return $this->suffix($label, $isInline);
     }
 
-
     public function suffix(string | Htmlable | Closure | null $label, bool | Closure $isInline = false): static
     {
         $this->suffixLabel = $label;
