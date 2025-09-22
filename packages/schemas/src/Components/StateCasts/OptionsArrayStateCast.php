@@ -37,7 +37,7 @@ class OptionsArrayStateCast implements StateCast
                     || (
                         is_string($stateItem)
                         && ctype_digit($stateItem)
-                        && (($stateItem === '0') || str($stateItem)->doesntStartWith('0'))
+                        && (($stateItem === '0') || (! str($stateItem)->startsWith('0')))
                     )
                 ) {
                     $carry[] = intval($stateItem);

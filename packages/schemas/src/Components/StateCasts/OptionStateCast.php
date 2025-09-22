@@ -26,7 +26,7 @@ class OptionStateCast implements StateCast
             || (
                 is_string($state)
                 && ctype_digit($state)
-                && (($state === '0') || str($state)->doesntStartWith('0'))
+                && (($state === '0') || (! str($state)->startsWith('0')))
             )
         ) {
             return intval($state);
