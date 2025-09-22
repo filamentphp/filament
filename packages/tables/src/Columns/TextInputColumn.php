@@ -287,16 +287,14 @@ class TextInputColumn extends Column implements Editable, HasEmbeddedView
             >
                 <?php if ($hasPrefix) { ?>
                     <div
-                        class="fi-input-wrp-prefix <?= $isPrefixInline ? 'fi-inline' : '' ?> <?= filled($prefixLabel) ? 'fi-input-wrp-prefix-has-label' : '' ?>"
+                        class="fi-input-wrp-prefix fi-input-wrp-prefix-has-content <?= $isPrefixInline ? 'fi-inline' : '' ?> <?= filled($prefixLabel) ? 'fi-input-wrp-prefix-has-label' : '' ?>"
                     >
-                        <?php if ($prefixIcon) { ?>
-                            <?= generate_icon_html($prefixIcon, null, (new ComponentAttributeBag)
-                            ->color(IconComponent::class, $prefixIconColor)) ?>
-                        <?php } ?>
+                        <?= generate_icon_html($prefixIcon, null, (new ComponentAttributeBag)
+                            ->color(IconComponent::class, $prefixIconColor))?->toHtml() ?>
 
                         <?php if (filled($prefixLabel)) { ?>
                             <span class="fi-input-wrp-label">
-                                <?= $prefixLabel ?>
+                                <?= e($prefixLabel) ?>
                             </span>
                         <?php } ?>
                     </div>
@@ -315,14 +313,12 @@ class TextInputColumn extends Column implements Editable, HasEmbeddedView
                     >
                         <?php if (filled($suffixLabel)) { ?>
                             <span class="fi-input-wrp-label">
-                                <?= $suffixLabel ?>
+                                <?= e($suffixLabel) ?>
                             </span>
                         <?php } ?>
 
-                        <?php if ($suffixIcon) { ?>
-                            <?= generate_icon_html($suffixIcon, null, (new ComponentAttributeBag)
-                            ->color(IconComponent::class, $suffixIconColor)) ?>
-                        <?php } ?>
+                        <?= generate_icon_html($suffixIcon, null, (new ComponentAttributeBag)
+                            ->color(IconComponent::class, $suffixIconColor))?->toHtml() ?>
                     </div>
                 <?php } ?>
             </div>
