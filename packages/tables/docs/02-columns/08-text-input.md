@@ -66,7 +66,7 @@ As well as allowing static values, the `prefix()` and `suffix()` methods also ac
 
 ### Using icons as affixes
 
-You may place an [icon](../../styling/icons) before and after the input using the `prefixIcon()` and `suffixIcon()` methods:
+You may place an [icon](../../../../docs/08-styling/04-icons) before and after the input using the `prefixIcon()` and `suffixIcon()` methods:
 
 ```php
 use Filament\Tables\Columns\TextInputColumn;
