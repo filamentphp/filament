@@ -519,10 +519,23 @@ trait HasState
         return $this->cachedAbsoluteStatePath = implode('.', $pathComponents);
     }
 
-    protected function flushCachedAbsoluteStatePath(): void
+    public function flushCachedAbsoluteStatePath(): void
     {
         /** @phpstan-ignore unset.possiblyHookedProperty */
         unset($this->cachedAbsoluteStatePath);
+    }
+
+    public function flushCachedAbsoluteStatePaths(): void
+    {
+        $this->flushCachedAbsoluteStatePath();
+
+        foreach ($this->getComponents(withActions: false, withHidden: true) as $component) {
+            $component->flushCachedAbsoluteStatePath();
+
+            foreach ($component->getChildSchemas(withHidden: true) as $childSchema) {
+                $childSchema->flushCachedAbsoluteStatePaths();
+            }
+        }
     }
 
     public function shouldPartiallyRender(?string $updatedStatePath = null): bool

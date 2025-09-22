@@ -320,8 +320,8 @@ trait HasComponents
         $components = array_filter(
             $allComponents,
             function (Component | Action | ActionGroup $component) use ($withActions, $withHidden): bool {
-                if (($component instanceof Action) || ($component instanceof ActionGroup)) {
-                    return $withActions;
+                if ((($component instanceof Action) || ($component instanceof ActionGroup)) && (! $withActions)) {
+                    return false;
                 }
 
                 return $withHidden || ! $component->isHidden();

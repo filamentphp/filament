@@ -1,17 +1,11 @@
 export default () => ({
     isSticky: false,
 
-    init() {
-        this.evaluatePageScrollPosition()
+    enableSticky() {
+        this.isSticky = this.$el.getBoundingClientRect().top > 0
     },
 
-    evaluatePageScrollPosition() {
-        const rect = this.$el.getBoundingClientRect()
-
-        const isBelowViewport = rect.top > window.innerHeight
-        const isPartiallyVisible =
-            rect.top < window.innerHeight && rect.bottom > window.innerHeight
-
-        this.isSticky = isBelowViewport || isPartiallyVisible
+    disableSticky() {
+        this.isSticky = false
     },
 })

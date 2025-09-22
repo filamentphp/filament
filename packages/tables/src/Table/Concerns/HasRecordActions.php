@@ -104,7 +104,7 @@ trait HasRecordActions
             : 'bottom-end';
 
         return array_map(
-            fn (Action | ActionGroup $action) => $action instanceof ActionGroup ? $action->defaultDropdownPlacement($defaultGroupDropdownPlacement) : $action,
+            fn (Action | ActionGroup $action) => $action instanceof ActionGroup ? $action->defaultDropdownPlacement($defaultGroupDropdownPlacement)->defaultDropdownTeleport(true) : $action,
             $this->recordActions,
         );
     }
