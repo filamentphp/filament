@@ -59,7 +59,7 @@ class ModalTableSelect extends Field
 
     protected ?Closure $modifySelectActionUsing = null;
 
-    protected bool | Closure | null $hasBadge = null;
+    protected bool | Closure | null $hasBadges = null;
 
     protected string | Closure | null $badgeColor = null;
 
@@ -673,21 +673,16 @@ class ModalTableSelect extends Field
         return $this->evaluate($this->tableArguments) ?? [];
     }
 
-
-    public function badge(null | bool | Closure $condition = null): static
+    public function badge(bool | Closure | null $condition = true): static
     {
-        $this->hasBadge = $condition;
+        $this->hasBadges = $condition;
 
         return $this;
     }
 
-    public function hasBadge(): bool
+    public function hasBadges(): bool
     {
-        if ($this->hasBadge === null) {
-            return (bool) $this->isMultiple();
-        }
-
-        return (bool) $this->evaluate($this->hasBadge);
+        return $this->evaluate($this->hasBadges) ?? $this->isMultiple();
     }
 
     public function badgeColor(string | Closure | null $color): static
@@ -699,9 +694,7 @@ class ModalTableSelect extends Field
 
     public function getBadgeColor(): ?string
     {
-        $color = $this->evaluate($this->badgeColor);
-
-        return $color ? (string) $color : null;
+        return $this->evaluate($this->badgeColor);
     }
 
     /**
@@ -718,6 +711,5 @@ class ModalTableSelect extends Field
         }
 
         return [app(OptionStateCast::class, ['isNullable' => true])];
-
     }
 }
