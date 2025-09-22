@@ -47,7 +47,7 @@
                         </x-filament::badge>
                     @elseif ($isMultiple)
                         @foreach ($optionLabels as $optionLabel)
-                                {{ $optionLabel }}{{ $loop->last ? '' : ', ' }}
+                            {{ $optionLabel . ($loop->last ? '' : ', ') }}
                         @endforeach
                     @else
                         {{ $optionLabel }}
