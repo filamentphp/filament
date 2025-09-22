@@ -4,21 +4,18 @@ namespace Filament\Tables\Columns;
 
 use BackedEnum;
 use Closure;
-use Filament\Actions\Action;
 use Filament\Forms\Components\Concerns\HasAffixes;
 use Filament\Forms\Components\Concerns\HasExtraInputAttributes;
 use Filament\Forms\Components\Concerns\HasInputMode;
 use Filament\Forms\Components\Concerns\HasStep;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Enums\Alignment;
-use Filament\Support\Enums\Size;
 use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\RawJs;
 use Filament\Support\View\Components\InputComponent\WrapperComponent\IconComponent;
 use Filament\Tables\Columns\Contracts\Editable;
 use Filament\Tables\Table;
 use Illuminate\Contracts\Support\Htmlable;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Js;
 use Illuminate\View\ComponentAttributeBag;
 
@@ -35,27 +32,7 @@ class TextInputColumn extends Column implements Editable, HasEmbeddedView
 
     protected string | Closure | null $type = null;
 
-    /**
-     * @var array<Action> | null
-     */
-    protected ?array $cachedSuffixActions = null;
-
-    /**
-     * @var array<Action | Closure>
-     */
-    protected array $suffixActions = [];
-
     protected string | Htmlable | Closure | null $suffixLabel = null;
-
-    /**
-     * @var array<Action> | null
-     */
-    protected ?array $cachedPrefixActions = null;
-
-    /**
-     * @var array<Action | Closure>
-     */
-    protected array $prefixActions = [];
 
     protected string | Htmlable | Closure | null $prefixLabel = null;
 
@@ -121,47 +98,6 @@ class TextInputColumn extends Column implements Editable, HasEmbeddedView
         return $this->suffix($label, $isInline);
     }
 
-    public function prefixAction(Action | Closure $action, bool | Closure $isInline = false): static
-    {
-        $this->prefixActions([$action], $isInline);
-
-        return $this;
-    }
-
-    /**
-     * @param  array<Action | Closure>  $actions
-     */
-    public function prefixActions(array $actions, bool | Closure $isInline = false): static
-    {
-        $this->prefixActions = [
-            ...$this->prefixActions,
-            ...$actions,
-        ];
-        $this->inlinePrefix($isInline);
-
-        return $this;
-    }
-
-    public function suffixAction(Action | Closure $action, bool | Closure $isInline = false): static
-    {
-        $this->suffixActions([$action], $isInline);
-
-        return $this;
-    }
-
-    /**
-     * @param  array<Action | Closure>  $actions
-     */
-    public function suffixActions(array $actions, bool | Closure $isInline = false): static
-    {
-        $this->suffixActions = [
-            ...$this->suffixActions,
-            ...$actions,
-        ];
-        $this->inlineSuffix($isInline);
-
-        return $this;
-    }
 
     public function suffix(string | Htmlable | Closure | null $label, bool | Closure $isInline = false): static
     {
@@ -221,61 +157,6 @@ class TextInputColumn extends Column implements Editable, HasEmbeddedView
         return $this;
     }
 
-    /**
-     * @return array<Action>
-     */
-    public function getPrefixActions(): array
-    {
-        return $this->cachedPrefixActions ?? $this->cachePrefixActions();
-    }
-
-    /**
-     * @return array<Action>
-     */
-    public function cachePrefixActions(): array
-    {
-        $this->cachedPrefixActions = [];
-
-        foreach ($this->prefixActions as $prefixAction) {
-            foreach (Arr::wrap($this->evaluate($prefixAction)) as $action) {
-                $this->cachedPrefixActions[$action->getName()] = $this->prepareAction(
-                    $action
-                        ->defaultSize(Size::Small)
-                        ->defaultView(Action::ICON_BUTTON_VIEW),
-                );
-            }
-        }
-
-        return $this->cachedPrefixActions;
-    }
-
-    /**
-     * @return array<Action>
-     */
-    public function getSuffixActions(): array
-    {
-        return $this->cachedSuffixActions ?? $this->cacheSuffixActions();
-    }
-
-    /**
-     * @return array<Action>
-     */
-    public function cacheSuffixActions(): array
-    {
-        $this->cachedSuffixActions = [];
-
-        foreach ($this->suffixActions as $suffixAction) {
-            foreach (Arr::wrap($this->evaluate($suffixAction)) as $action) {
-                $this->cachedSuffixActions[$action->getName()] = $this->prepareAction(
-                    $action
-                        ->defaultSize(Size::Small)
-                        ->defaultView(Action::ICON_BUTTON_VIEW),
-                );
-            }
-        }
-
-        return $this->cachedSuffixActions;
-    }
 
     public function getPrefixLabel(): string | Htmlable | null
     {
@@ -323,10 +204,6 @@ class TextInputColumn extends Column implements Editable, HasEmbeddedView
         return (bool) $this->evaluate($this->isSuffixInline);
     }
 
-    public function prepareAction(Action $action): Action
-    {
-        return $action;
-    }
 
     public function toEmbeddedHtml(): string
     {
@@ -343,19 +220,17 @@ class TextInputColumn extends Column implements Editable, HasEmbeddedView
         $type = filled($mask) ? 'text' : $this->getType();
 
         // Get affix data
-        $prefixActions = $this->getPrefixActions();
         $prefixIcon = $this->getPrefixIcon();
         $prefixIconColor = $this->getPrefixIconColor();
         $prefixLabel = $this->getPrefixLabel();
-        $suffixActions = $this->getSuffixActions();
         $suffixIcon = $this->getSuffixIcon();
         $suffixIconColor = $this->getSuffixIconColor();
         $suffixLabel = $this->getSuffixLabel();
         $isPrefixInline = $this->isPrefixInline();
         $isSuffixInline = $this->isSuffixInline();
 
-        $hasPrefix = count($prefixActions) || $prefixIcon || filled($prefixLabel);
-        $hasSuffix = count($suffixActions) || $suffixIcon || filled($suffixLabel);
+        $hasPrefix = $prefixIcon || filled($prefixLabel);
+        $hasSuffix = $suffixIcon || filled($suffixLabel);
 
         $attributes = $this->getExtraAttributeBag()
             ->merge([
@@ -423,14 +298,6 @@ class TextInputColumn extends Column implements Editable, HasEmbeddedView
                     <div
                         class="fi-input-wrp-prefix <?= $isPrefixInline ? 'fi-inline' : '' ?> <?= filled($prefixLabel) ? 'fi-input-wrp-prefix-has-label' : '' ?>"
                     >
-                        <?php if (count($prefixActions)) { ?>
-                            <div class="fi-input-wrp-actions">
-                                <?php foreach ($prefixActions as $prefixAction) { ?>
-                                    <?= $prefixAction->toHtml() ?>
-                                <?php } ?>
-                            </div>
-                        <?php } ?>
-
                         <?php if ($prefixIcon) { ?>
                             <?= \Filament\Support\generate_icon_html($prefixIcon, null, (new ComponentAttributeBag)
                             ->color(IconComponent::class, $prefixIconColor)) ?>
@@ -464,14 +331,6 @@ class TextInputColumn extends Column implements Editable, HasEmbeddedView
                         <?php if ($suffixIcon) { ?>
                             <?= \Filament\Support\generate_icon_html($suffixIcon, null, (new ComponentAttributeBag)
                             ->color(IconComponent::class, $suffixIconColor)) ?>
-                        <?php } ?>
-
-                        <?php if (count($suffixActions)) { ?>
-                            <div class="fi-input-wrp-actions">
-                                <?php foreach ($suffixActions as $suffixAction) { ?>
-                                    <?= $suffixAction->toHtml() ?>
-                                <?php } ?>
-                            </div>
                         <?php } ?>
                     </div>
                 <?php } ?>
