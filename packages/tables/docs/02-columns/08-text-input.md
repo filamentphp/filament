@@ -58,10 +58,5 @@ The text input column supports prefix and suffix elements:
 TextInputColumn::make('price')
     ->prefix('$')
     ->suffix('USD')
-    ->prefixIcon('heroicon-o-currency-dollar')
-    ->suffixAction(
-        Action::make('calculate')
-            ->icon('heroicon-o-calculator')
-            ->action(fn ($record, $data) => $record->update(['price' => $data * 1.21]))
-    )
+    ->prefixIcon('heroicon-o-currency-dollar');
 ```
