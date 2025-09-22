@@ -156,26 +156,43 @@ trait HasFilters
 
     protected function applyFiltersToTableQuery(Builder $query): Builder
     {
-        foreach ($this->getTable()->getFilters() as $filter) {
-            $filter->applyToBaseQuery(
-                $query,
-                $this->getTableFilterState($filter->getName()) ?? [],
-            );
+        $table = $this->getTable();
+
+        if ($table->hasDeferredFilters()) {
+            $this->getTableFiltersForm()->statePath('tableFilters')->flushCachedAbsoluteStatePaths();
         }
 
-        return $query->where(function (Builder $query): void {
-            foreach ($this->getTable()->getFilters() as $filter) {
-                $filter->apply(
+        try {
+            foreach ($table->getFilters() as $filter) {
+                $filter->applyToBaseQuery(
                     $query,
                     $this->getTableFilterState($filter->getName()) ?? [],
                 );
             }
-        });
+
+            return $query->where(function (Builder $query) use ($table): void {
+                foreach ($table->getFilters() as $filter) {
+                    $filter->apply(
+                        $query,
+                        $this->getTableFilterState($filter->getName()) ?? [],
+                    );
+                }
+            });
+        } finally {
+            if ($table->hasDeferredFilters()) {
+                $this->getTableFiltersForm()->statePath('tableDeferredFilters')->flushCachedAbsoluteStatePaths();
+            }
+        }
     }
 
     public function getTableFilterState(string $name): ?array
     {
         return Arr::get($this->tableFilters, $this->parseTableFilterName($name));
+    }
+
+    public function getTableFilterFormState(string $name): ?array
+    {
+        return Arr::get($this->getTable()->hasDeferredFilters() ? $this->tableDeferredFilters : $this->tableFilters, $this->parseTableFilterName($name));
     }
 
     public function parseTableFilterName(string $name): string

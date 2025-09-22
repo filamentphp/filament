@@ -441,7 +441,8 @@ class EditRecord extends Page
         return Actions::make($this->getFormActions())
             ->alignment($this->getFormActionsAlignment())
             ->fullWidth($this->hasFullWidthFormActions())
-            ->sticky($this->areFormActionsSticky());
+            ->sticky($this->areFormActionsSticky())
+            ->key('form-actions');
     }
 
     public function hasFormWrapper(): bool
@@ -464,10 +465,5 @@ class EditRecord extends Page
     protected function hasFullWidthFormActions(): bool
     {
         return false;
-    }
-
-    public function getDefaultTestingSchemaName(): ?string
-    {
-        return 'form';
     }
 }

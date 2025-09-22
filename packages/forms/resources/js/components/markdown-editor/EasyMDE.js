@@ -2341,10 +2341,15 @@ EasyMDE.prototype.render = function (el) {
     var keyMaps = {}
 
     function moveToNextField(cm) {
-        const form = cm.getInputField().form
+        const inputField = cm.getInputField()
+        const form = inputField.form
         if (form) {
-            const elements = Array.from(form.elements)
-            const index = elements.indexOf(cm.getInputField())
+            const elements = Array.from(form.elements).filter((el) => {
+                if (el.closest && el.closest('.editor-toolbar')) return false
+                if (el.offsetParent === null) return false
+                return true
+            })
+            const index = elements.indexOf(inputField)
             if (
                 index !== -1 &&
                 index + 1 < elements.length &&
@@ -2356,18 +2361,19 @@ EasyMDE.prototype.render = function (el) {
     }
 
     function moveToPreviousField(cm) {
-        const form = cm.getInputField().form
+        const inputField = cm.getInputField()
+        const form = inputField.form
         if (form) {
-            const elements = Array.from(form.elements)
-            const index = elements.indexOf(cm.getInputField())
+            const elements = Array.from(form.elements).filter((el) => {
+                if (el.closest && el.closest('.editor-toolbar')) return false
+                if (el.offsetParent === null) return false
+                return true
+            })
+            const index = elements.indexOf(inputField)
             if (index !== -1) {
                 for (let i = index - 1; i >= 0; i--) {
                     const element = elements[i]
-                    if (
-                        element &&
-                        element.tagName === 'INPUT' &&
-                        !element.closest('.editor-toolbar')
-                    ) {
+                    if (element) {
                         element.focus()
                         break
                     }

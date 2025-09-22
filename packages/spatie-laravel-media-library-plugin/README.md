@@ -190,7 +190,7 @@ class Post extends Model implements HasRichContent
     public function setUpRichContent(): void
     {
         $this->registerRichContent('content')
-            ->fileAttachmentsProvider(SpatieMediaLibraryFileAttachmentProvider::make());
+            ->fileAttachmentProvider(SpatieMediaLibraryFileAttachmentProvider::make());
     }
 }
 ```
@@ -212,12 +212,41 @@ class Post extends Model implements HasRichContent
     public function setUpRichContent(): void
     {
         $this->registerRichContent('content')
-            ->fileAttachmentsProvider(
+            ->fileAttachmentProvider(
                 SpatieMediaLibraryFileAttachmentProvider::make()
                     ->collection('content-file-attachments'),
             );
     }
 }
+```
+
+You may want to preserve the original filenames of the uploaded files, using the `preserveFilenames()` method:
+
+```php
+use Filament\Forms\Components\RichEditor\FileAttachmentProviders\SpatieMediaLibraryFileAttachmentProvider;
+
+SpatieMediaLibraryFileAttachmentProvider::make()
+    ->preserveFilenames()
+```
+
+You can customize the [media name](https://spatie.be/docs/laravel-medialibrary/api/adding-files#content-usingname) using the `mediaName()` method:
+
+```php
+use Filament\Forms\Components\RichEditor\FileAttachmentProviders\SpatieMediaLibraryFileAttachmentProvider;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
+use Illuminate\Support\Str;
+
+SpatieMediaLibraryFileAttachmentProvider::make()
+    ->mediaName(fn (TemporaryUploadedFile $file): string => Str::random() . '_' . $file->getClientOriginalName())
+```
+
+You may pass in [custom properties](https://spatie.be/docs/laravel-medialibrary/advanced-usage/using-custom-properties) when uploading files using the `customProperties()` method:
+
+```php
+use Filament\Forms\Components\RichEditor\FileAttachmentProviders\SpatieMediaLibraryFileAttachmentProvider;
+
+SpatieMediaLibraryFileAttachmentProvider::make()
+    ->customProperties(['archived' => false])
 ```
 
 ## Table column

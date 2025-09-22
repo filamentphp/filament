@@ -4,7 +4,9 @@ namespace Filament\Tests\Fixtures\Resources\Tickets\RelationManagers;
 
 use Filament\Actions\CreateAction;
 use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Schemas\Schema;
 use Filament\Tables\Table;
+use Filament\Tests\Fixtures\Resources\Departments\Schemas\DepartmentForm;
 use Filament\Tests\Fixtures\Resources\Departments\Tables\DepartmentsTable;
 
 class DepartmentsRelationManager extends RelationManager
@@ -17,5 +19,10 @@ class DepartmentsRelationManager extends RelationManager
             ->headerActions([
                 CreateAction::make(),
             ]);
+    }
+
+    public function form(Schema $schema): Schema
+    {
+        return DepartmentForm::configure($schema);
     }
 }
