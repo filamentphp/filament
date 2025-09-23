@@ -157,6 +157,7 @@
     }}
     x-init='
         if (@js($isGroupingDefaultCollapsed) && @js($group)) {
+            resetCollapsedGroups();
             const groups = @json($allGroupTitles);
             groups.forEach(group => toggleCollapseGroup(group));
         }'
