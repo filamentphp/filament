@@ -103,30 +103,7 @@ livewire(EditInvoice::class)
 
 ## Testing form actions
 
-When testing the default Edit or Create page's actions these actions (such as the default "Save" action) can be tested using the `TestAction` object with the `schemaComponent()` method, targeting the `'form-actions'` key.  This is particularly useful if you need to test cusomziations you have made to a resource's [Create actions](https://filamentphp.com/docs/4.x/resources/creating-records#custom-actions) or [Edit actions]([https://filamentphp.com/docs/4.x/resources/creating-records#custom-actions](https://filamentphp.com/docs/4.x/resources/editing-records#custom-actions)):
-
-```php
-use Filament\Actions\Testing\TestAction;
-use function Pest\Livewire\livewire;
-
-it('can save a record', function () {
-    $customer = Customer::factory()->create();
-
-    livewire(EditCustomer::class, [
-        'record' => $customer->getRouteKey(),
-    ])
-        ->fillForm([
-            'name' => 'Updated Customer Name',
-            'email' => 'updated@example.com',
-        ])
-        ->callAction(TestAction::make('save')->schemaComponent('form-actions'))
-        ->assertHasNoFormErrors();
-
-    expect($customer->refresh())
-        ->name->toBe('Updated Customer Name')
-        ->email->toBe('updated@example.com');
-});
-```
+For details on how to test the default default form actions at the bottom of a resource's page, refer to the [Testing create form actions](https://filamentphp.com/docs/4.x/testing/testing-resources#testing-create-form-actions) or the [Testing edit form actions](https://filamentphp.com/docs/4.x/testing/testing-resources#testing-edit-form-actions) in the Testing Resources document.
 
 ## Testing actions inside another action's schema / form
 
