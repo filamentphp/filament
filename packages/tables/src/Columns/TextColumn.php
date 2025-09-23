@@ -408,12 +408,12 @@ class TextColumn extends Column implements HasEmbeddedView
                 <?php if (($stateCount === 1) && (! $isBulleted)) { ?>
                     <?php
                         $stateItem = Arr::first($state);
-                        [
-                            'attributes' => $stateItemAttributes,
-                            'badgeAttributes' => $stateItemBadgeAttributes,
-                            'iconAfterHtml' => $stateItemIconAfterHtml,
-                            'iconBeforeHtml' => $stateItemIconBeforeHtml,
-                        ] = $getStateItem($stateItem);
+                    [
+                        'attributes' => $stateItemAttributes,
+                        'badgeAttributes' => $stateItemBadgeAttributes,
+                        'iconAfterHtml' => $stateItemIconAfterHtml,
+                        'iconBeforeHtml' => $stateItemIconBeforeHtml,
+                    ] = $getStateItem($stateItem);
                     ?>
 
                     <p <?= $stateItemAttributes->toHtml() ?>>
