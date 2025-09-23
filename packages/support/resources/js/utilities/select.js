@@ -267,18 +267,37 @@ export class Select {
 
                     // Check if search results are still loading
                     if (this.isSearching) {
-                        // Don't select anything while search is in progress
                         return
                     }
 
-                    const firstOption = this.getFirstAvailableOption()
-
-                    if (firstOption) {
-                        this.selectFirstAvailableOption(firstOption)
-                    } else {
-                        // No visible options available - close dropdown without selection
-                        this.closeDropdown()
+                    // Select first visible non-disabled option
+                    const options = this.getVisibleOptions()
+                    if (options.length === 0) {
+                        return
                     }
+
+                    // Find the first option that is not disabled
+                    const firstEnabled = options.find((option) => {
+                        // Consider both aria-disabled and .fi-disabled class
+                        const ariaDisabled =
+                            option.getAttribute('aria-disabled') === 'true'
+                        const hasDisabledClass =
+                            option.classList.contains('fi-disabled')
+                        // Also ensure it is focusable/visible
+                        const isHidden = option.offsetParent === null
+                        return !(ariaDisabled || hasDisabledClass || isHidden)
+                    })
+
+                    if (!firstEnabled) {
+                        return
+                    }
+
+                    const value = firstEnabled.getAttribute('data-value')
+                    if (value === null) {
+                        return
+                    }
+
+                    this.selectOption(value)
                 }
             })
         }
@@ -1272,14 +1291,21 @@ export class Select {
                 // Fetch options
                 const fetchedOptions = await this.getOptionsUsing()
 
+                // Normalize fetched options to an array
+                const normalizedFetched = Array.isArray(fetchedOptions)
+                    ? fetchedOptions
+                    : fetchedOptions && Array.isArray(fetchedOptions.options)
+                      ? fetchedOptions.options
+                      : []
+
                 // Update options
-                this.options = fetchedOptions
+                this.options = normalizedFetched
                 this.originalOptions = JSON.parse(
-                    JSON.stringify(fetchedOptions),
+                    JSON.stringify(normalizedFetched),
                 )
 
                 // Populate the label repository with the fetched options
-                this.populateLabelRepositoryFromOptions(fetchedOptions)
+                this.populateLabelRepositoryFromOptions(normalizedFetched)
 
                 // Render options
                 this.renderOptions()
@@ -1516,56 +1542,6 @@ export class Select {
         return [...ungroupedOptions, ...groupOptions]
     }
 
-    getFirstAvailableOption() {
-        const visibleOptions = this.getVisibleOptions()
-
-        for (const option of visibleOptions) {
-            if (this.isOptionEnabled(option)) {
-                // For multiple selection, skip already selected options
-                if (this.isMultiple) {
-                    const optionValue = option.getAttribute('data-value')
-                    if (
-                        Array.isArray(this.state) &&
-                        this.state.includes(optionValue)
-                    ) {
-                        continue // Skip already selected option
-                    }
-                }
-                return option
-            }
-        }
-
-        return null // No available options
-    }
-
-    isOptionEnabled(option) {
-        // Check for fi-disabled class or aria-disabled attribute
-        return (
-            !option.classList.contains('fi-disabled') &&
-            option.getAttribute('aria-disabled') !== 'true'
-        )
-    }
-
-    selectFirstAvailableOption(option) {
-        // Get the option value and trigger the same selection logic as clicking the option
-        const optionValue = option.getAttribute('data-value')
-        if (optionValue !== null) {
-            this.selectOption(optionValue)
-
-            // Handle selection mode specific behavior
-            if (this.isMultiple) {
-                // Focus search input after selection to allow continued interaction
-                // The selectOption method for multiple selection already handles keeping the dropdown open
-                // and calls maintainFocusInMultipleMode(), but we ensure search input focus here as well
-                if (this.isSearchable && this.searchInput) {
-                    setTimeout(() => {
-                        this.searchInput.focus()
-                    }, 0)
-                }
-            }
-        }
-    }
-
     getSelectedOptionLabels() {
         if (!Array.isArray(this.state) || this.state.length === 0) {
             return {}
@@ -1641,11 +1617,18 @@ export class Select {
                 // Get search results from backend
                 const results = await this.getSearchResultsUsing(query)
 
+                // Normalize results to an array
+                const normalizedResults = Array.isArray(results)
+                    ? results
+                    : results && Array.isArray(results.options)
+                      ? results.options
+                      : []
+
                 // Update options with search results
-                this.options = results
+                this.options = normalizedResults
 
                 // Update the label repository with the search results
-                this.populateLabelRepositoryFromOptions(results)
+                this.populateLabelRepositoryFromOptions(normalizedResults)
 
                 // Hide loading state and render options
                 this.hideLoadingState()
