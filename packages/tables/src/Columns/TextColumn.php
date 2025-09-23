@@ -359,20 +359,20 @@ class TextColumn extends Column implements HasEmbeddedView
 
             ob_start(); ?>
 
-            <div <?= $attributes
-                ->merge($stateItemAttributes->getAttributes(), escape: false)
-                ->toHtml() ?>>
-                <?php if ($isBadge) { ?>
-                    <span <?= $stateItemBadgeAttributes->toHtml() ?>>
-                <?php } ?>
+            <div <?= $attributes->toHtml() ?>>
+                <p <?= $stateItemAttributes->toHtml() ?>>
+                    <?php if ($isBadge) { ?>
+                        <span <?= $stateItemBadgeAttributes->toHtml() ?>>
+                    <?php } ?>
 
-                <?= $stateItemIconBeforeHtml ?>
-                <?= $formatState($stateItem) ?>
-                <?= $stateItemIconAfterHtml ?>
+                    <?= $stateItemIconBeforeHtml ?>
+                    <?= $formatState($stateItem) ?>
+                    <?= $stateItemIconAfterHtml ?>
 
-                <?php if ($isBadge) { ?>
-                    </span>
-                <?php } ?>
+                    <?php if ($isBadge) { ?>
+                        </span>
+                    <?php } ?>
+                </p>
             </div>
 
             <?php return ob_get_clean();
@@ -408,12 +408,12 @@ class TextColumn extends Column implements HasEmbeddedView
                 <?php if (($stateCount === 1) && (! $isBulleted)) { ?>
                     <?php
                         $stateItem = Arr::first($state);
-                    [
-                        'attributes' => $stateItemAttributes,
-                        'badgeAttributes' => $stateItemBadgeAttributes,
-                        'iconAfterHtml' => $stateItemIconAfterHtml,
-                        'iconBeforeHtml' => $stateItemIconBeforeHtml,
-                    ] = $getStateItem($stateItem);
+                        [
+                            'attributes' => $stateItemAttributes,
+                            'badgeAttributes' => $stateItemBadgeAttributes,
+                            'iconAfterHtml' => $stateItemIconAfterHtml,
+                            'iconBeforeHtml' => $stateItemIconBeforeHtml,
+                        ] = $getStateItem($stateItem);
                     ?>
 
                     <p <?= $stateItemAttributes->toHtml() ?>>
