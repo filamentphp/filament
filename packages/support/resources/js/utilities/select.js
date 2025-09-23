@@ -95,6 +95,7 @@ export class Select {
         this.selectedIndex = -1
         this.searchQuery = ''
         this.searchTimeout = null
+        this.isSearching = false
 
         this.render()
         this.setUpEventListeners()
@@ -260,15 +261,18 @@ export class Select {
 
                     this.scrollOptionIntoView(options[this.selectedIndex])
                 } else if (event.key === 'Enter') {
-                    event.preventDefault() // Prevent default form submission behavior
+                    // Prevent default form submission behavior
+                    event.preventDefault()
+                    event.stopPropagation()
 
                     // Check if search results are still loading
-                    if (this.isSearchResultsLoading()) {
+                    if (this.isSearching) {
                         // Don't select anything while search is in progress
                         return
                     }
 
                     const firstOption = this.getFirstAvailableOption()
+
                     if (firstOption) {
                         this.selectFirstAvailableOption(firstOption)
                     } else {
@@ -1562,29 +1566,6 @@ export class Select {
         }
     }
 
-    // Helper method to check if search results are currently loading
-    isSearchResultsLoading() {
-        // Check if there's a pending search timeout (indicates search is in progress)
-        if (this.searchTimeout) {
-            return true
-        }
-
-        // Check if dropdown is showing a loading/searching message
-        const loadingMessage = this.dropdown.querySelector(
-            '.fi-select-input-message',
-        )
-        if (loadingMessage) {
-            // Check if the message text indicates loading or searching
-            const messageText = loadingMessage.textContent
-            return (
-                messageText === this.loadingMessage ||
-                messageText === this.searchingMessage
-            )
-        }
-
-        return false
-    }
-
     getSelectedOptionLabels() {
         if (!Array.isArray(this.state) || this.state.length === 0) {
             return {}
@@ -1648,6 +1629,11 @@ export class Select {
 
         // Handle server-side search with debounce
         this.searchTimeout = setTimeout(async () => {
+            // Clear the timeout handle immediately to avoid stale truthy checks
+            this.searchTimeout = null
+
+            this.isSearching = true
+
             try {
                 // Show searching state
                 this.showLoadingState(true)
@@ -1681,6 +1667,8 @@ export class Select {
                 this.hideLoadingState()
                 this.options = JSON.parse(JSON.stringify(this.originalOptions))
                 this.renderOptions()
+            } finally {
+                this.isSearching = false
             }
         }, this.searchDebounce)
     }
