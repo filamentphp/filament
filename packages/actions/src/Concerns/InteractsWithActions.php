@@ -332,6 +332,11 @@ trait InteractsWithActions
         return $result;
     }
 
+    public function forceRender(): void
+    {
+        app(PartialsComponentHook::class)->forceRender($this);
+    }
+
     protected function partiallyRenderActionParentSchema(Action $action): void
     {
         $actionSchema = $action->getSchemaContainer() ?? $action->getSchemaComponent()?->getContainer();

@@ -17,6 +17,10 @@ class PartialsComponentHook extends ComponentHook
 {
     public function shouldSkipRender(): bool
     {
+        if ($this->shouldForceRender()) {
+            return false;
+        }
+
         if (! $this->isLackingPartialRendersToCoverAllCallsAndUpdates()) {
             return true;
         }
@@ -62,6 +66,11 @@ class PartialsComponentHook extends ComponentHook
         return ($updatesCount + $callsCount) !== intval($this->storeGet('partialRendersCount') ?? 0);
     }
 
+    public function shouldForceRender(): bool
+    {
+        return store($this->component)->get('forceRender', false);
+    }
+
     public function shouldRenderMountedActionOnly(): bool
     {
         if (! property_exists($this->component, 'mountedActions')) {
@@ -100,6 +109,10 @@ class PartialsComponentHook extends ComponentHook
 
     public function dehydrate(ComponentContext $context): void
     {
+        if ($this->shouldForceRender()) {
+            return;
+        }
+
         $partials = [];
 
         $renderAndQueuePartials = function (Closure $getPartialsUsing) use (&$partials): void {
@@ -171,6 +184,11 @@ class PartialsComponentHook extends ComponentHook
     public function skipPartialRender(Component $component): void
     {
         $this->recordPartialRender($component);
+    }
+
+    public function forceRender(Component $component, bool $forceRender = true): void
+    {
+        store($component)->set('forceRender', $forceRender);
     }
 
     public function renderPartial(Component $component, Closure $renderUsing): void

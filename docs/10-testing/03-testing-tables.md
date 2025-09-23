@@ -1,6 +1,7 @@
 ---
 title: Testing tables
 ---
+import Aside from "@components/Aside.astro"
 
 ## Testing that a table can render
 
@@ -115,15 +116,22 @@ Once the table is sorted, you can ensure that the table records are rendered in 
 use function Pest\Livewire\livewire;
 
 it('can sort posts by title', function () {
-    $posts = Post::factory()->count(10)->create();
+    Post::factory()->count(10)->create();
+
+    $sortedPostsAsc = Post::query()->orderBy('title')->get();
+    $sortedPostsDesc = Post::query()->orderBy('title', 'desc')->get();
 
     livewire(PostResource\Pages\ListPosts::class)
         ->sortTable('title')
-        ->assertCanSeeTableRecords($posts->sortBy('title'), inOrder: true)
+        ->assertCanSeeTableRecords($sortedPostsAsc, inOrder: true)
         ->sortTable('title', 'desc')
-        ->assertCanSeeTableRecords($posts->sortByDesc('title'), inOrder: true);
+        ->assertCanSeeTableRecords($sortedPostsDesc, inOrder: true);
 });
 ```
+
+<Aside variant="info">
+    Filament tables use a SQL `order` statement to sort records before they are output. Different database drivers can use different sorting strategies, and they can differ from PHP's own sorting strategy, so you should ensure that test records are sorted using `orderBy()` on a database query rather than `sortBy()` on a collection of models.
+</Aside>
 
 ### Testing the state of a column
 

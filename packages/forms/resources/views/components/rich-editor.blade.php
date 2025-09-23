@@ -47,6 +47,7 @@
                         placeholder: @js($getPlaceholder()),
                         state: $wire.{{ $applyStateBindingModifiers("\$entangle('{$statePath}')", isOptimisticallyLive: false) }},
                         statePath: @js($statePath),
+                        textColors: @js($getTextColorsForJs()),
                         uploadingFileMessage: @js($getUploadingFileMessage()),
                         floatingToolbars: @js($floatingToolbars),
                     })"

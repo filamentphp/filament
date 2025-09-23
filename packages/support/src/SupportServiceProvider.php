@@ -106,6 +106,8 @@ class SupportServiceProvider extends PackageServiceProvider
                     ->allowRelativeLinks()
                     ->allowRelativeMedias()
                     ->allowAttribute('class', allowedElements: '*')
+                    ->allowAttribute('data-color', allowedElements: '*')
+                    ->allowAttribute('data-from-breakpoint', allowedElements: '*')
                     ->allowAttribute('style', allowedElements: '*')
                     ->withMaxInputLength(500000),
             ),
