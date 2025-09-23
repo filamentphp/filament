@@ -2,7 +2,6 @@ const originalReplaceState = window.history.replaceState
 const originalPushState = window.history.pushState
 
 window.history.replaceState = function (state, unused, url) {
-    // Convert URL objects to strings for proper comparison
     if (state?.url instanceof URL) {
         state.url = state.url.toString()
     }
