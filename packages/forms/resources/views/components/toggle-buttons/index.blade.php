@@ -48,7 +48,6 @@
                     @endif
                     type="{{ $isMultiple ? 'checkbox' : 'radio' }}"
                     value="{{ $value }}"
-                    wire:loading.attr="disabled"
                     {{ $wireModelAttribute }}="{{ $statePath }}"
                     {{ $extraInputAttributeBag }}
                 />
