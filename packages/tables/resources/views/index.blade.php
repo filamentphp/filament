@@ -83,6 +83,7 @@
     $isReordering = $isReordering();
     $areGroupingSettingsVisible = (! $isReordering) && count($groups) && (! $areGroupingSettingsHidden());
     $isGroupingDirectionSettingHidden = $isGroupingDirectionSettingHidden();
+    $isGroupingDefaultCollapsed = $isGroupingDefaultCollapsed();
     $areGroupingSettingsInDropdownOnDesktop = $areGroupingSettingsInDropdownOnDesktop();
     $isColumnSearchVisible = $isSearchableByColumn();
     $isGlobalSearchVisible = $isSearchable();
@@ -129,6 +130,12 @@
     if ($group) {
         $groupedSummarySelectedState = $this->getTableSummarySelectedState($this->getAllTableSummaryQuery(), modifyQueryUsing: fn (\Illuminate\Database\Query\Builder $query) => $group->groupQuery($query, model: $getQuery()->getModel()));
     }
+
+    $allGroupTitles = $records
+        ->map(fn ($record) => $group?->getTitle($record))
+        ->unique()
+        ->values()
+        ->all();
 @endphp
 
 <div
@@ -148,7 +155,12 @@
             'fi-loading' => $records === null,
         ])
     }}
->
+    x-init='
+        if (@js($isGroupingDefaultCollapsed) && @js($group)) {
+            const groups = @json($allGroupTitles);
+            groups.forEach(group => toggleCollapseGroup(group));
+        }'
+    >
     <input
         type="hidden"
         value="{{ $allSelectableRecordsCount }}"
