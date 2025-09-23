@@ -347,7 +347,8 @@ class TextColumn extends Column implements HasEmbeddedView
         if (
             ($stateCount === 1) &&
             (! $isBulleted) &&
-            (! $hasDescriptions)
+            (! $hasDescriptions) &&
+            (! $lineClamp)
         ) {
             $stateItem = Arr::first($state);
             [
@@ -359,20 +360,20 @@ class TextColumn extends Column implements HasEmbeddedView
 
             ob_start(); ?>
 
-            <div <?= $attributes->toHtml() ?>>
-                <p <?= $stateItemAttributes->toHtml() ?>>
-                    <?php if ($isBadge) { ?>
-                        <span <?= $stateItemBadgeAttributes->toHtml() ?>>
-                    <?php } ?>
+            <div <?= $attributes
+                ->merge($stateItemAttributes->getAttributes(), escape: false)
+                ->toHtml() ?>>
+                <?php if ($isBadge) { ?>
+                <span <?= $stateItemBadgeAttributes->toHtml() ?>>
+                <?php } ?>
 
-                    <?= $stateItemIconBeforeHtml ?>
-                    <?= $formatState($stateItem) ?>
-                    <?= $stateItemIconAfterHtml ?>
+                <?= $stateItemIconBeforeHtml ?>
+                <?= $formatState($stateItem) ?>
+                <?= $stateItemIconAfterHtml ?>
 
-                    <?php if ($isBadge) { ?>
-                        </span>
-                    <?php } ?>
-                </p>
+                <?php if ($isBadge) { ?>
+                    </span>
+                <?php } ?>
             </div>
 
             <?php return ob_get_clean();
