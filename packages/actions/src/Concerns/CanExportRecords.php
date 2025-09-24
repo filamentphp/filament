@@ -131,6 +131,11 @@ trait CanExportRecords
             $records = $action instanceof ExportTableBulkAction ? $action->getRecords() : null;
 
             $totalRows = $records ? $records->count() : $query->toBase()->getCountForPagination();
+
+            if ((! $records) && $query->getLimit()) {
+                $totalRows = min($totalRows, $query->getLimit());
+            }
+
             $maxRows = $action->getMaxRows() ?? $totalRows;
 
             if ($maxRows < $totalRows) {
