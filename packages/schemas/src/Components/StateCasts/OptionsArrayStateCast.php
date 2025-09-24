@@ -32,7 +32,14 @@ class OptionsArrayStateCast implements StateCast
                     $stateItem = $stateItem->value;
                 }
 
-                if (is_int($stateItem) || (is_string($stateItem) && ctype_digit($stateItem))) {
+                if (
+                    is_int($stateItem)
+                    || (
+                        is_string($stateItem)
+                        && ctype_digit($stateItem)
+                        && (($stateItem === '0') || (! str($stateItem)->startsWith('0')))
+                    )
+                ) {
                     $carry[] = intval($stateItem);
                 } else {
                     $carry[] = strval($stateItem);
