@@ -259,7 +259,7 @@ export default ({
         }
 
         return (
-            this.getSelectedRecordsCount() +
+                this.getSelectedRecordsCount() +
             (keys.length - selectedRecords.length) <=
             maxSelectableRecords
         )
