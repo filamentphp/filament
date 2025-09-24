@@ -136,7 +136,7 @@ if (! function_exists('Filament\Support\generate_href_html')) {
             if (FilamentView::hasSpaPrefetching()) {
                 $html .= ' wire:navigate.hover';
             } elseif ($hasNestedClickEventHandler) {
-                $html .= ' x-on:click.prevent="() => window.Alpine.navigate(' . "'{$url}'" . ')"';
+                $html .= ' x-on:click.prevent="() => Alpine.navigate(' . "'{$url}'" . ')"';
             } else {
                 $html .= ' wire:navigate';
             }

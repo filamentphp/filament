@@ -196,7 +196,7 @@ test('`hasNestedClickEventHandler` forces Alpine navigation when SPA mode is ena
     FilamentView::spa(true, false);
 
     expect(generate_href_html('http://localhost/page', hasNestedClickEventHandler: true))
-        ->toHtml()->toBe('href="http://localhost/page" x-on:click.prevent="() => window.Alpine.navigate(\'http://localhost/page\')"');
+        ->toHtml()->toBe('href="http://localhost/page" x-on:click.prevent="() => Alpine.navigate(\'http://localhost/page\')"');
 
     expect(generate_href_html('http://localhost/page', hasNestedClickEventHandler: false))
         ->toHtml()->toBe('href="http://localhost/page" wire:navigate');
@@ -236,7 +236,7 @@ test('`hasNestedClickEventHandler` works with `shouldOpenInSpaMode` parameter ov
     FilamentView::spa(false);
 
     expect(generate_href_html('http://localhost/page', shouldOpenInSpaMode: true, hasNestedClickEventHandler: true))
-        ->toHtml()->toBe('href="http://localhost/page" x-on:click.prevent="() => window.Alpine.navigate(\'http://localhost/page\')"');
+        ->toHtml()->toBe('href="http://localhost/page" x-on:click.prevent="() => Alpine.navigate(\'http://localhost/page\')"');
 
     expect(generate_href_html('http://localhost/page', shouldOpenInSpaMode: true, hasNestedClickEventHandler: false))
         ->toHtml()->toBe('href="http://localhost/page" wire:navigate');
