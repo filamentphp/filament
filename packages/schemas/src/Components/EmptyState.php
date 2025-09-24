@@ -6,7 +6,6 @@ use Closure;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Schemas\Components\Concerns\HasDescription;
-use Filament\Schemas\Components\Concerns\HasHeading;
 use Filament\Schemas\Schema;
 use Filament\Support\Concerns\HasIcon;
 use Filament\Support\Concerns\HasIconColor;
@@ -16,7 +15,6 @@ use Illuminate\Contracts\Support\Htmlable;
 class EmptyState extends Component
 {
     use HasDescription;
-    use HasHeading;
     use HasIcon;
     use HasIconColor;
     use HasIconSize;
@@ -26,14 +24,16 @@ class EmptyState extends Component
      */
     protected string $view = 'filament-schemas::components.empty-state';
 
+    protected string | Htmlable | Closure $heading;
+
     const FOOTER_SCHEMA_KEY = 'footer';
 
-    final public function __construct(string | Htmlable | Closure | null $heading = null)
+    final public function __construct(string | Htmlable | Closure $heading)
     {
         $this->heading($heading);
     }
 
-    public static function make(string | Htmlable | Closure | null $heading = null): static
+    public static function make(string | Htmlable | Closure $heading): static
     {
         $static = app(static::class, ['heading' => $heading]);
         $static->configure();
@@ -64,5 +64,17 @@ class EmptyState extends Component
         }
 
         return $schema;
+    }
+
+    public function heading(string | Htmlable | Closure $heading): static
+    {
+        $this->heading = $heading;
+
+        return $this;
+    }
+
+    public function getHeading(): string | Htmlable
+    {
+        return $this->evaluate($this->heading);
     }
 }
