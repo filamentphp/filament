@@ -196,29 +196,6 @@ it('validates the form data', function (array $data, array $errors) {
 ]);
 ```
 
-### Testing create form actions
-
-When testing the default Create page's actions, such as the default "create" action, these actions can be tested using the `TestAction` object with the `schemaComponent()` method, targeting the `'form-actions'` key.  This is particularly useful if you need to test cusomziations you have made to a resource's [Create actions](https://filamentphp.com/docs/4.x/resources/creating-records#custom-actions).
-
-```php
-use App\Filament\Resources\Users\Pages\CreateUser;
-use App\Models\User;
-use Filament\Actions\Testing\TestAction;
-use function Pest\Livewire\livewire;
-
-it('can create a user', function () {
-    livewire(CreateUser::class)
-        ->fillForm([
-            'name' => 'New User',
-            'email' => 'newuser@example.com',
-        ])
-        ->callAction(TestAction::make('create')->schemaComponent('form-actions'))
-        ->assertHasNoFormErrors();
-
-    expect(User::where('email', 'newuser@example.com')->exists())->toBeTrue();
-});
-```
-
 ## Testing a resource edit page
 
 To test if the edit page is able to load, test the edit page as a Livewire component, and call `assertOk()` to ensure that the HTTP response was 200 OK. You can also use the `assertSchemaStateSet()` method to check if the form fields are set to the correct values:
@@ -325,35 +302,6 @@ it('can delete a user', function () {
 });
 ```
 
-### Testing edit form actions
-
-When testing the default Edit page's actions, such as the default "save" action, these actions can be tested using the `TestAction` object with the `schemaComponent()` method, targeting the `'form-actions'` key.  This is particularly useful if you need to test cusomziations you have made to a resource's [Save actions](https://filamentphp.com/docs/4.x/resources/editing-records#custom-actions).
-
-```php
-use App\Filament\Resources\Users\Pages\EditUser;
-use App\Models\User;
-use Filament\Actions\Testing\TestAction;
-use function Pest\Livewire\livewire;
-
-it('can update a user', function () {
-    $user = User::factory()->create();
-
-    livewire(CreateCustomer::class, [
-        'record' => $user->id,
-    ])
-        ->fillForm([
-            'name' => 'Updated User Name',
-            'email' => 'updateduser@example.com',
-        ])
-        ->callAction(TestAction::make('save')->schemaComponent('form-actions'))
-        ->assertHasNoFormErrors();
-
-    expect($user->refresh())
-        ->name->toBe('Updated User Name')
-        ->email->toBe('updateduser@example.com');
-});
-```
-
 ## Testing a resource view page
 
 To test if the view page is able to load, test the view page as a Livewire component, and call `assertOk()` to ensure that the HTTP response was 200 OK. You can also use the `assertSchemaStateSet()` method to check if the infolist entries are set to the correct values:
@@ -451,6 +399,28 @@ it('can create a post', function () {
         'content' => $newPostData->content,
         'user_id' => $user->id,
     ]);
+});
+```
+
+## Testing create / edit page `getFormActions()`
+
+When testing actions in `getFormActions()` on a resource page, use the `schemaComponent()` method targeting the `form-actions` key. For example, if you have a custom `Action::make('createAndVerifyEmail')` action in the `getFormActions()` method of your `CreateUser` page, you can test it like this:
+
+```php
+use App\Filament\Resources\Users\Pages\CreateUser;
+use App\Models\User;
+use Filament\Actions\Testing\TestAction;
+
+it('can create a user and verify their email address', function () {
+    livewire(CreateUser::class)
+        ->fillForm([
+            'name' => 'Test User',
+            'email' => 'test@example.com',
+        ])
+        ->callAction(TestAction::make('createAndVerifyEmail')->schemaComponent('form-actions'));
+
+    expect(User::query()->where('email', 'test@example.com')->first())
+        ->hasVerifiedEmail()->toBeTrue();
 });
 ```
 

@@ -101,10 +101,6 @@ livewire(EditInvoice::class)
     ->assertActionExists(TestAction::make('send')->schemaComponent('customer_id'))
 ```
 
-## Testing form actions
-
-For details on how to test the default default form actions at the bottom of a resource's page, refer to the [Testing create form actions](https://filamentphp.com/docs/4.x/testing/testing-resources#testing-create-form-actions) or the [Testing edit form actions](https://filamentphp.com/docs/4.x/testing/testing-resources#testing-edit-form-actions) in the Testing Resources document.
-
 ## Testing actions inside another action's schema / form
 
 If an action belongs to a component in another action's `schema()` (or `form()`), for example, if it is in the `belowContent()` method of a form field in an action modal, you can use the `TestAction` object with the `schemaComponent()` method. This object receives the name of the action you want to test and replaces the name of the action in any testing method you want to use. You should pass an array of `TestAction` objects in order, for example:
@@ -133,6 +129,10 @@ livewire(ManageInvoices::class)
         TestAction::make('send')->schemaComponent('customer.name'),
     ]);
 ```
+
+## Testing resource `getFormActions()`
+
+For details on how to test custom actions in the `getFormActions()` of a resource page, refer to the [Testing resources](testing-resources#testing-create--edit-page-getformactions) documentation.
 
 ## Testing forms in action modals
 
