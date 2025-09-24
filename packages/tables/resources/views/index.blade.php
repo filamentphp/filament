@@ -130,12 +130,6 @@
     if ($group) {
         $groupedSummarySelectedState = $this->getTableSummarySelectedState($this->getAllTableSummaryQuery(), modifyQueryUsing: fn (\Illuminate\Database\Query\Builder $query) => $group->groupQuery($query, model: $getQuery()->getModel()));
     }
-
-    $allGroupTitles = $records
-        ->map(fn ($record) => $group?->getTitle($record))
-        ->unique()
-        ->values()
-        ->all();
 @endphp
 
 <div
@@ -147,6 +141,7 @@
                 currentSelectionLivewireProperty: @js($getCurrentSelectionLivewireProperty()),
                 maxSelectableRecords: @js($maxSelectableRecords),
                 selectsCurrentPageOnly: @js($selectsCurrentPageOnly),
+                isGroupingDefaultCollapsed: @js($isGroupingDefaultCollapsed),
                 $wire,
             })"
     {{
@@ -155,12 +150,6 @@
             'fi-loading' => $records === null,
         ])
     }}
-    x-init='
-        if (@js($isGroupingDefaultCollapsed) && @js($group)) {
-            resetCollapsedGroups();
-            const groups = @json($allGroupTitles);
-            groups.forEach(group => toggleCollapseGroup(group));
-        }'
     >
     <input
         type="hidden"
@@ -1081,7 +1070,7 @@
                                         <div>
                                             @if ($recordUrl)
                                                 <a
-                                                    {{ \Filament\Support\generate_href_html($recordUrl, $openRecordUrlInNewTab, hasNestedClickEventHandler: true) }}
+                                                    {{ \Filament\Support\generate_href_html($recordUrl, $openRecordUrlInNewTab) }}
                                                     class="fi-ta-record-content"
                                                 >
                                                     @foreach ($columnsLayout as $columnsLayoutComponent)
@@ -1935,7 +1924,7 @@
                                                     >
                                                         <{{ $columnWrapperTag }}
                                                             @if ($columnWrapperTag === 'a')
-                                                                {{ \Filament\Support\generate_href_html($columnUrl ?: $recordUrl, $columnUrl ? $column->shouldOpenUrlInNewTab() : $openRecordUrlInNewTab, hasNestedClickEventHandler: true) }}
+                                                                {{ \Filament\Support\generate_href_html($columnUrl ?: $recordUrl, $columnUrl ? $column->shouldOpenUrlInNewTab() : $openRecordUrlInNewTab) }}
                                                             @elseif ($columnWrapperTag === 'button')
                                                                 type="button"
                                                                 wire:click.prevent.stop="{{ $columnWireClickAction }}"
