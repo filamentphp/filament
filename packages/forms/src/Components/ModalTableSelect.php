@@ -59,6 +59,10 @@ class ModalTableSelect extends Field
 
     protected ?Closure $modifySelectActionUsing = null;
 
+    protected bool | Closure | null $hasBadges = null;
+
+    protected string | Closure | null $badgeColor = null;
+
     /**
      * @var array<mixed> | Closure
      */
@@ -667,6 +671,30 @@ class ModalTableSelect extends Field
     public function getTableArguments(): array
     {
         return $this->evaluate($this->tableArguments) ?? [];
+    }
+
+    public function badge(bool | Closure | null $condition = true): static
+    {
+        $this->hasBadges = $condition;
+
+        return $this;
+    }
+
+    public function hasBadges(): bool
+    {
+        return $this->evaluate($this->hasBadges) ?? $this->isMultiple();
+    }
+
+    public function badgeColor(string | Closure | null $color): static
+    {
+        $this->badgeColor = $color;
+
+        return $this;
+    }
+
+    public function getBadgeColor(): ?string
+    {
+        return $this->evaluate($this->badgeColor);
     }
 
     /**

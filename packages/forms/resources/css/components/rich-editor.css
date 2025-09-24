@@ -254,3 +254,11 @@
         }
     }
 }
+
+& .fi-fo-rich-editor-text-color-select-option {
+    @apply flex items-center gap-2;
+
+    & .fi-fo-rich-editor-text-color-select-option-preview {
+        @apply h-5 w-5 shrink-0 rounded-full bg-(--color) dark:bg-(--dark-color);
+    }
+}

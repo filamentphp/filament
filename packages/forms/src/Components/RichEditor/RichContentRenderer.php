@@ -17,7 +17,9 @@ use Filament\Forms\Components\RichEditor\TipTapExtensions\MergeTagExtension;
 use Filament\Forms\Components\RichEditor\TipTapExtensions\RawHtmlMergeTagExtension;
 use Filament\Forms\Components\RichEditor\TipTapExtensions\RenderedCustomBlockExtension;
 use Filament\Forms\Components\RichEditor\TipTapExtensions\SmallExtension;
+use Filament\Forms\Components\RichEditor\TipTapExtensions\TextColorExtension;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Support\Traits\Macroable;
@@ -90,6 +92,11 @@ class RichContentRenderer implements Htmlable
      * @var array<Closure>
      */
     protected array $nodeProcessors = [];
+
+    /**
+     * @var ?array<string, string | TextColor>
+     */
+    protected ?array $textColors = null;
 
     /**
      * @param  string | array<string, mixed> | null  $content
@@ -317,6 +324,11 @@ class RichContentRenderer implements Htmlable
             app(RawHtmlMergeTagExtension::class),
             app(RenderedCustomBlockExtension::class),
             app(SmallExtension::class),
+            app(TextColorExtension::class, [
+                'options' => [
+                    'textColors' => $this->getTextColors(),
+                ],
+            ]),
             app(Strike::class),
             app(Subscript::class),
             app(Superscript::class),
@@ -458,5 +470,28 @@ class RichContentRenderer implements Htmlable
         }
 
         return null;
+    }
+
+    /**
+     * @param  ?array<string, string | TextColor>  $colors
+     */
+    public function textColors(?array $colors): static
+    {
+        $this->textColors = $colors;
+
+        return $this;
+    }
+
+    /**
+     * @return array<string, string | TextColor>
+     */
+    public function getTextColors(): array
+    {
+        $textColors = $this->textColors ?? TextColor::getDefaults();
+
+        return Arr::mapWithKeys(
+            $textColors,
+            fn (string | TextColor $color, string $name): array => [$name => ($color instanceof TextColor) ? $color : TextColor::make($color, $name)],
+        );
     }
 }

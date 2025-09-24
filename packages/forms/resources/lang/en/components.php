@@ -514,7 +514,7 @@ return [
 
             'link' => [
 
-                'label' => 'Edit',
+                'label' => 'Link',
 
                 'modal' => [
 
@@ -528,6 +528,30 @@ return [
 
                         'should_open_in_new_tab' => [
                             'label' => 'Open in new tab',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
+            'text_color' => [
+
+                'label' => 'Text color',
+
+                'modal' => [
+
+                    'heading' => 'Text color',
+
+                    'form' => [
+
+                        'color' => [
+                            'label' => 'Color',
+                        ],
+
+                        'custom_color' => [
+                            'label' => 'Custom color',
                         ],
 
                     ],
@@ -586,6 +610,7 @@ return [
             'table_merge_cells' => 'Merge cells',
             'table_split_cell' => 'Split cell',
             'table_toggle_header_row' => 'Toggle header row',
+            'text_color' => 'Text color',
             'underline' => 'Underline',
             'undo' => 'Undo',
         ],

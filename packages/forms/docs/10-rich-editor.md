@@ -83,6 +83,7 @@ Additional tools available in the toolbar include:
 - `lead` - Applies a `lead` class around the text, which is typically used for the first paragraph of an article.
 - `small` - Applies the `<small>` tag to the text, which is typically used for small print or disclaimers.
 - `code` - Format the selected text as inline code.
+- `textColor` - Changes the [text color](#customizing-text-colors) of the selected text.
 - `table` - Creates a table in the editor with a default layout of 3 columns and 2 rows, with the first row configured as a header row.
 - `tableAddColumnBefore` - Adds a new column before the current column.
 - `tableAddColumnAfter` - Adds a new column after the current column.
@@ -125,6 +126,68 @@ RichEditor::make('content')
         ],
     ])
 ```
+
+## Customizing text colors
+
+The rich editor includes a text color tool for styling inline text. By default, it uses the [Tailwind CSS color palette](https://tailwindcss.com/docs/colors). In light mode, the 600 shades are applied to text, and in dark mode, the 400 shades are used.
+
+You can customize which colors are available in the picker using the `textColors()` method:
+
+```php
+use Filament\Forms\Components\RichEditor;
+
+RichEditor::make('content')
+    ->textColors([
+        '#ef4444' => 'Red',
+        '#10b981' => 'Green',
+        '#0ea5e9' => 'Sky',
+    ])
+```
+
+If you would like to define different colors for light and dark mode, you can use the a `TextColor` object to define the color:
+
+```php
+use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\RichEditor\TextColor;
+
+RichEditor::make('content')
+    ->textColors([
+        'brand' => TextColor::make('Brand', '#0ea5e9'),
+        'warning' => TextColor::make('Warning', '#f59e0b', darkColor: '#fbbf24'),
+    ])
+```
+
+If you would like to add new colors onto the existing Tailwind palette, you can merge your colors into the `TextColor::getDefaults()` array:
+
+```php
+use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\RichEditor\TextColor;
+
+RichEditor::make('content')
+    ->textColors([
+        'brand' => TextColor::make('Brand', '#0ea5e9'),
+        'warning' => TextColor::make('Warning', '#f59e0b', darkColor: '#fbbf24'),
+        ...TextColor::getDefaults(),
+    ])
+```
+
+When you use a `TextColor` object, the key of the array becomes the stored `data-color` attribute on the `<span>` tag, allowing you to reference the color in your CSS if needed. When you use the color as the array values, the actual color value (e.g., a HEX string) is stored as the `data-color` attribute.
+
+You can also pass `textColors()` to the [content renderer](#rendering-rich-content) and [rich content attribute](#registering-rich-content-attributes) so that server-side rendering matches your editor configuration.
+
+You can also allow users to pick custom colors that aren't in the predefined list by using the `customTextColors()` method:
+
+```php
+use Filament\Forms\Components\RichEditor;
+
+RichEditor::make('content')
+    ->textColors([
+        // ...
+    ])
+    ->customTextColors()
+```
+
+You do not need to use `customTextColors()` on the [content renderer](#rendering-rich-content), as it will automatically render any custom colors that are used in the content.
 
 ## Rendering rich content
 
@@ -179,6 +242,39 @@ RichContentRenderer::make($record->content)
         'today' => now()->toFormattedDateString(),
     ])
     ->toHtml()
+```
+
+If you are using [custom text colors](#customizing-text-colors), you can pass an array of colors to the renderer to ensure that the colors are rendered correctly:
+
+```php
+use Filament\Forms\Components\RichEditor\RichContentRenderer;
+use Filament\Forms\Components\RichEditor\TextColor;
+
+RichContentRenderer::make($record->content)
+    ->textColors([
+        'brand' => TextColor::make('Brand', '#0ea5e9', darkColor: '#38bdf8'),
+    ])
+    ->toHtml();
+```
+
+### Styling the rendered content
+
+The rich editor HTML uses a combination of HTML elements, CSS classes, and inline styles to style the content, depending on the features used in the editor. If you render the content in a Filament table column or infolist entry with `prose()`, Filament will automatically apply the necessary styles for you. If you are outputting the content in your own Blade view, you may need to add some additional styles to ensure that the content is styled correctly.
+
+One way of styling the content is to use [Tailwind CSS Typography](https://tailwindcss.com/docs/typography-plugin). This plugin provides a set of pre-defined styles for common HTML elements, such as headings, paragraphs, lists, and tables. You can apply these styles to a container element using the `prose` class:
+
+```blade
+<div class="prose dark:prose-invert">
+    {!! \Filament\Forms\Components\RichEditor\RichContentRenderer::make($record->content) !!}
+</div>
+```
+
+However, some features, such as the grid layout and text colors, require additional styles that are not included in the Tailwind CSS Typography plugin. Filament also includes its own `fi-prose` CSS class that adds these additional styles. Any app that loads Filament's `vendor/filament/support/resources/css/index.css` CSS will have access to this class. The styling is different to the `prose` class, but fits with Filament's design system better:
+
+```blade
+<div class="fi-prose">
+    {!! \Filament\Forms\Components\RichEditor\RichContentRenderer::make($record->content) !!}
+</div>
 ```
 
 ## Security
@@ -555,6 +651,10 @@ class Post extends Model implements HasRichContent
                 'name' => 'Full name',
                 'today' => 'Today\'s date',
             ])
+            ->textColors(
+                'brand' => TextColor::make('Brand', '#0ea5e9', darkColor: '#38bdf8'),
+            )
+            ->customTextColors()
             ->plugins([
                 HighlightRichContentPlugin::make(),
             ]);
