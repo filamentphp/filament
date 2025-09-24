@@ -284,6 +284,10 @@ return [
 
     'markdown_editor' => [
 
+        'file_attachments_accepted_file_types_message' => 'Nahrané súbory musia byť typu: :values.',
+
+        'file_attachments_max_size_message' => 'Nahrané súbory nesmú byť väčšie ako :max kilobajtov.',
+
         'tools' => [
             'attach_files' => 'Pripojiť súbory',
             'blockquote' => 'Citát',
@@ -443,6 +447,71 @@ return [
 
             ],
 
+            'grid' => [
+
+                'label' => 'Mriežka',
+
+                'modal' => [
+
+                    'heading' => 'Mriežka',
+
+                    'form' => [
+
+                        'preset' => [
+
+                            'label' => 'Prednastavenie',
+
+                            'placeholder' => 'Žiadne',
+
+                            'options' => [
+                                'two' => 'Dve',
+                                'three' => 'Tri',
+                                'four' => 'Štyri',
+                                'five' => 'Päť',
+                                'two_start_third' => 'Dve (Začiatok tretej)',
+                                'two_end_third' => 'Dve (Koniec tretej)',
+                                'two_start_fourth' => 'Dve (Začiatok štvrtej)',
+                                'two_end_fourth' => 'Dve (Koniec štvrtej)',
+                            ],
+                        ],
+
+                        'columns' => [
+                            'label' => 'Stĺpce',
+                        ],
+
+                        'from_breakpoint' => [
+
+                            'label' => 'Od breakpointu',
+
+                            'options' => [
+                                'default' => 'Všetko',
+                                'sm' => 'Malý',
+                                'md' => 'Stredný',
+                                'lg' => 'Veľký',
+                                'xl' => 'Extra veľký',
+                                '2xl' => 'Dvakrát extra veľký',
+                            ],
+
+                        ],
+
+                        'is_asymmetric' => [
+                            'label' => 'Dva asymetrické stĺpce',
+                        ],
+
+                        'start_span' => [
+                            'label' => 'Začiatok rozsahu',
+                        ],
+
+                        'end_span' => [
+                            'label' => 'Koniec rozsahu',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
             'link' => [
 
                 'label' => 'Upraviť',
@@ -467,7 +536,35 @@ return [
 
             ],
 
+            'text_color' => [
+
+                'label' => 'Farba textu',
+
+                'modal' => [
+
+                    'heading' => 'Farba textu',
+
+                    'form' => [
+
+                        'color' => [
+                            'label' => 'Farba',
+                        ],
+
+                        'custom_color' => [
+                            'label' => 'Vlastná farba',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
         ],
+
+        'file_attachments_accepted_file_types_message' => 'Nahrané súbory musia byť typu: :values.',
+
+        'file_attachments_max_size_message' => 'Nahrané súbory nesmú byť väčšie ako :max kilobajtov.',
 
         'no_merge_tag_search_results_message' => 'Nenašli sa žiadne výsledky pre značky zlúčenia.',
 
@@ -488,6 +585,8 @@ return [
             'h1' => 'Názov',
             'h2' => 'Nadpis',
             'h3' => 'Podnadpis',
+            'grid' => 'Mriežka',
+            'grid_delete' => 'Odstrániť mriežku',
             'highlight' => 'Zvýrazniť',
             'horizontal_rule' => 'Vodorovná čiara',
             'italic' => 'Kurzíva',
@@ -511,6 +610,7 @@ return [
             'table_merge_cells' => 'Zlúčiť bunky',
             'table_split_cell' => 'Rozdeliť bunku',
             'table_toggle_header_row' => 'Prepnúť riadok hlavičky',
+            'text_color' => 'Farba textu',
             'underline' => 'Podčiarknutie',
             'undo' => 'Späť',
         ],
