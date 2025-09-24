@@ -38,10 +38,15 @@ use Livewire\Attributes\Url;
 
 use function Filament\authorize;
 
+/**
+ * @template TModel of Model = Model
+ */
 class ManageRelatedRecords extends Page implements Tables\Contracts\HasTable
 {
     use Concerns\HasRelationManagers;
-    use Concerns\InteractsWithRecord;
+    use Concerns\InteractsWithRecord {
+        getRecord as getBaseRecord;
+    }
     use InteractsWithRelationshipTable;
 
     public ?string $previousUrl = null;
@@ -329,5 +334,13 @@ class ManageRelatedRecords extends Page implements Tables\Contracts\HasTable
             'label' => $this->getRecordTitle(),
             'relationship' => static::getRelationshipTitle(),
         ]);
+    }
+
+    /**
+     * @return TModel
+     */
+    public function getRecord(): Model
+    {
+        return $this->getBaseRecord();
     }
 }

@@ -33,6 +33,8 @@ use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Throwable;
 
 /**
+ * @template TModel of Model = Model
+ *
  * @property-read Schema $form
  */
 class EditRecord extends Page
@@ -41,7 +43,9 @@ class EditRecord extends Page
     use Concerns\HasRelationManagers {
         getContentTabComponent as getBaseContentTabComponent;
     }
-    use Concerns\InteractsWithRecord;
+    use Concerns\InteractsWithRecord {
+        getRecord as getBaseRecord;
+    }
     use HasUnsavedDataChangesAlert;
 
     /**
@@ -465,5 +469,13 @@ class EditRecord extends Page
     protected function hasFullWidthFormActions(): bool
     {
         return false;
+    }
+
+    /**
+     * @return TModel
+     */
+    public function getRecord(): Model
+    {
+        return $this->getBaseRecord();
     }
 }

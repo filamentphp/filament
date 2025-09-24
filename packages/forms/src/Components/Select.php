@@ -1447,6 +1447,11 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
             }
 
             $state = $this->getState();
+
+            if (blank($state)) {
+                return null;
+            }
+
             $optionLabels = $this->getOptionLabels(withDefaults: false);
 
             if (count($state) > count($optionLabels)) {
@@ -1477,13 +1482,17 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
             throw new LogicException("Filament failed to validate the [{$this->getStatePath()}] field\'s selected options because it did not have an [options()] or [getOptionLabelUsing()] configuration. Please use one of these methods to inform Filament which options are valid for this field.");
         }
 
+        $state = $this->getState();
+
+        if (blank($state)) {
+            return null;
+        }
+
         $optionLabel = $this->getOptionLabel(withDefault: false);
 
         if (blank($optionLabel)) {
             return [];
         }
-
-        $state = $this->getState();
 
         if ($state instanceof BackedEnum) {
             $state = $state->value;
