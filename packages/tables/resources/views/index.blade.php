@@ -1872,81 +1872,67 @@
                                                 @endif
 
                                                 @foreach ($columns as $column)
-                                                    @if (filled($tableCellView = FilamentView::renderHook(TablesRenderHook::TABLE_CELL, scopes: static::class, data: [
-                                                        'column' => $column,
-                                                        'isReordering' => $isReordering,
-                                                        'loop' => $loop,
-                                                        'openRecordUrlInNewTab' => $openRecordUrlInNewTab,
-                                                        'record' => $record,
-                                                        'recordAction' => $recordAction,
-                                                        'recordKey' => $recordKey,
-                                                        'recordUrl' => $recordUrl,
-                                                    ])))
-                                                        {{ $tableCellView }}
-                                                    @else
-                                                        @php
-                                                            $column->record($record);
-                                                            $column->rowLoop($loop->parent);
-                                                            $column->recordKey($recordKey);
+                                                    @php
+                                                        $column->record($record);
+                                                        $column->rowLoop($loop->parent);
+                                                        $column->recordKey($recordKey);
 
-                                                            $columnAction = $column->getAction();
-                                                            $columnUrl = $column->getUrl();
-                                                            $columnHasStateBasedUrls = $column->hasStateBasedUrls();
-                                                            $isColumnClickDisabled = $column->isClickDisabled() || $isReordering;
+                                                        $columnAction = $column->getAction();
+                                                        $columnUrl = $column->getUrl();
+                                                        $columnHasStateBasedUrls = $column->hasStateBasedUrls();
+                                                        $isColumnClickDisabled = $column->isClickDisabled() || $isReordering;
 
-                                                            $columnWrapperTag = match (true) {
-                                                                ($columnUrl || ($recordUrl && $columnAction === null)) && (! $columnHasStateBasedUrls) && (! $isColumnClickDisabled) => 'a',
-                                                                ($columnAction || $recordAction) && (! $columnHasStateBasedUrls) && (! $isColumnClickDisabled) => 'button',
-                                                                default => 'div',
-                                                            };
+                                                        $columnWrapperTag = match (true) {
+                                                            ($columnUrl || ($recordUrl && $columnAction === null)) && (! $columnHasStateBasedUrls) && (! $isColumnClickDisabled) => 'a',
+                                                            ($columnAction || $recordAction) && (! $columnHasStateBasedUrls) && (! $isColumnClickDisabled) => 'button',
+                                                            default => 'div',
+                                                        };
 
-                                                            if ($columnWrapperTag === 'button') {
-                                                                if ($columnAction instanceof \Filament\Actions\Action) {
-                                                                    $columnWireClickAction = "mountTableAction('{$columnAction->getName()}', '{$recordKey}')";
-                                                                } elseif ($columnAction) {
-                                                                    $columnWireClickAction = "callTableColumnAction('{$column->getName()}', '{$recordKey}')";
+                                                        if ($columnWrapperTag === 'button') {
+                                                            if ($columnAction instanceof \Filament\Actions\Action) {
+                                                                $columnWireClickAction = "mountTableAction('{$columnAction->getName()}', '{$recordKey}')";
+                                                            } elseif ($columnAction) {
+                                                                $columnWireClickAction = "callTableColumnAction('{$column->getName()}', '{$recordKey}')";
+                                                            } else {
+                                                                if ($this->getTable()->getAction($recordAction)) {
+                                                                    $columnWireClickAction = "mountTableAction('{$recordAction}', '{$recordKey}')";
                                                                 } else {
-                                                                    if ($this->getTable()->getAction($recordAction)) {
-                                                                        $columnWireClickAction = "mountTableAction('{$recordAction}', '{$recordKey}')";
-                                                                    } else {
-                                                                        $columnWireClickAction = "{$recordAction}('{$recordKey}')";
-                                                                    }
+                                                                    $columnWireClickAction = "{$recordAction}('{$recordKey}')";
                                                                 }
                                                             }
-                                                        @endphp
+                                                        }
+                                                    @endphp
 
-                                                        <td
-                                                            wire:key="{{ $this->getId() }}.table.record.{{ $recordKey }}.column.{{ $column->getName() }}"
-                                                            {{
-                                                                $column->getExtraCellAttributeBag()->class([
-                                                                    'fi-ta-cell',
-                                                                    'fi-ta-cell-' . str($column->getName())->camel()->kebab(),
-                                                                    ((($columnAlignment = $column->getAlignment()) instanceof \Filament\Support\Enums\Alignment) ? "fi-align-{$columnAlignment->value}" : (is_string($columnAlignment) ? $columnAlignment : '')),
-                                                                    ((($columnVerticalAlignment = $column->getVerticalAlignment()) instanceof \Filament\Support\Enums\VerticalAlignment) ? "fi-vertical-align-{$columnVerticalAlignment->value}" : (is_string($columnVerticalAlignment) ? $columnVerticalAlignment : '')),
-                                                                    (filled($columnHiddenFrom = $column->getHiddenFrom()) ? "{$columnHiddenFrom}:fi-hidden" : ''),
-                                                                    (filled($columnVisibleFrom = $column->getVisibleFrom()) ? "{$columnVisibleFrom}:fi-visible" : ''),
-                                                                ])
-                                                            }}
+                                                    <td
+                                                        wire:key="{{ $this->getId() }}.table.record.{{ $recordKey }}.column.{{ $column->getName() }}"
+                                                        {{
+                                                            $column->getExtraCellAttributeBag()->class([
+                                                                'fi-ta-cell',
+                                                                'fi-ta-cell-' . str($column->getName())->camel()->kebab(),
+                                                                ((($columnAlignment = $column->getAlignment()) instanceof \Filament\Support\Enums\Alignment) ? "fi-align-{$columnAlignment->value}" : (is_string($columnAlignment) ? $columnAlignment : '')),
+                                                                ((($columnVerticalAlignment = $column->getVerticalAlignment()) instanceof \Filament\Support\Enums\VerticalAlignment) ? "fi-vertical-align-{$columnVerticalAlignment->value}" : (is_string($columnVerticalAlignment) ? $columnVerticalAlignment : '')),
+                                                                (filled($columnHiddenFrom = $column->getHiddenFrom()) ? "{$columnHiddenFrom}:fi-hidden" : ''),
+                                                                (filled($columnVisibleFrom = $column->getVisibleFrom()) ? "{$columnVisibleFrom}:fi-visible" : ''),
+                                                            ])
+                                                        }}
+                                                    >
+                                                        <{{ $columnWrapperTag }}
+                                                            @if ($columnWrapperTag === 'a')
+                                                                {{ \Filament\Support\generate_href_html($columnUrl ?: $recordUrl, $columnUrl ? $column->shouldOpenUrlInNewTab() : $openRecordUrlInNewTab) }}
+                                                            @elseif ($columnWrapperTag === 'button')
+                                                                type="button"
+                                                                wire:click.prevent.stop="{{ $columnWireClickAction }}"
+                                                                wire:loading.attr="disabled"
+                                                                wire:target="{{ $columnWireClickAction }}"
+                                                            @endif
+                                                            @class([
+                                                                'fi-ta-col',
+                                                                'fi-ta-col-has-column-url' => ($columnWrapperTag === 'a') && filled($columnUrl),
+                                                            ])
                                                         >
-                                                            <{{ $columnWrapperTag }}
-                                                                @if ($columnWrapperTag === 'a')
-                                                                    {{ \Filament\Support\generate_href_html($columnUrl ?: $recordUrl, $columnUrl ? $column->shouldOpenUrlInNewTab() : $openRecordUrlInNewTab) }}
-                                                                @elseif ($columnWrapperTag === 'button')
-                                                                    type
-                                                                    ="button"
-                                                                    wire:click.prevent.stop="{{ $columnWireClickAction }}"
-                                                                    wire:loading.attr="disabled"
-                                                                    wire:target="{{ $columnWireClickAction }}"
-                                                                @endif
-                                                                @class([
-                                                                    'fi-ta-col',
-                                                                    'fi-ta-col-has-column-url' => ($columnWrapperTag === 'a') && filled($columnUrl),
-                                                                ])
-                                                            >
-                                                                {{ $column }}
-                                                            </{{ $columnWrapperTag }}>
-                                                        </td>
-                                                    @endif
+                                                            {{ $column }}
+                                                        </{{ $columnWrapperTag }}>
+                                                    </td>
                                                 @endforeach
 
                                                 @if (count($defaultRecordActions) && $recordActionsPosition === RecordActionsPosition::AfterColumns && (! $isReordering))
