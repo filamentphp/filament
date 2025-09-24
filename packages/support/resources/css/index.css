@@ -11,6 +11,7 @@
 @import './components/dropdown/index.css' layer(components);
 @import './components/dropdown/list/index.css' layer(components);
 @import './components/dropdown/list/item.css' layer(components);
+@import './components/empty-state.css' layer(components);
 @import './components/fieldset.css' layer(components);
 @import './components/grid.css' layer(components);
 @import './components/icon.css' layer(components);
