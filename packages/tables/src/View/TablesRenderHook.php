@@ -38,7 +38,7 @@ class TablesRenderHook
 
     const FILTER_INDICATORS = 'tables::filter.indicators';
 
-    const TABLE_HEADER_CELL = 'tables::table.header.cell';
+    const HEADER_CELL = 'tables::header.cell';
 
     /**
      * @deprecated Use `TOOLBAR_COLUMN_MANAGER_TRIGGER_AFTER` instead.

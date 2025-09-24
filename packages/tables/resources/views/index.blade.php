@@ -1348,15 +1348,15 @@
                                 @endif
 
                                 @php
-                                    $hasTableHeaderCellRenderHook = FilamentView::hasRenderHook(TablesRenderHook::TABLE_HEADER_CELL, scopes: static::class);
+                                    $hasHeaderCellRenderHook = FilamentView::hasRenderHook(TablesRenderHook::HEADER_CELL, scopes: static::class);
                                 @endphp
 
                                 @foreach ($columns as $column)
-                                    @if ($hasTableHeaderCellRenderHook && filled($tableHeaderCellView = FilamentView::renderHook(TablesRenderHook::TABLE_HEADER_CELL, scopes: static::class, data: [
+                                    @if ($hasHeaderCellRenderHook && filled($headerCellView = FilamentView::renderHook(TablesRenderHook::HEADER_CELL, scopes: static::class, data: [
                                              'column' => $column,
                                              'isReordering' => $isReordering,
                                          ])))
-                                        {{ $tableHeaderCellView }}
+                                        {{ $headerCellView }}
                                     @else
                                         @php
                                             $columnName = $column->getName();
