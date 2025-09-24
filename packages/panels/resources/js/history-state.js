@@ -6,13 +6,13 @@ window.history.replaceState = function (state, unused, url) {
         state.url = state.url.toString()
     }
 
-    // Skip duplicate replaceState calls
+    // Skip duplicate `replaceState()` calls
     try {
         if (JSON.stringify(state) === JSON.stringify(window.history.state)) {
             return
         }
-    } catch (e) {
-        // If comparison fails, proceed with update
+    } catch (error) {
+        // If comparison fails, proceed with the update
     }
 
     originalReplaceState.call(window.history, state, unused, url)
