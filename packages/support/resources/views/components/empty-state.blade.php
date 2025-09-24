@@ -6,7 +6,7 @@
 @props([
     'description' => null,
     'footer' => null,
-    'heading' => null,
+    'heading',
     'headingTag' => 'h2',
     'icon' => null,
     'iconColor' => 'primary',
@@ -19,7 +19,6 @@
     }
 
     $hasDescription = filled((string) $description);
-    $hasHeading = filled($heading);
     $hasIcon = filled($icon);
 @endphp
 
@@ -45,11 +44,9 @@
             </div>
         @endif
 
-        @if ($hasHeading)
-            <{{ $headingTag }} class="fi-empty-state-heading">
-                {{ $heading }}
-            </{{ $headingTag }}>
-        @endif
+        <{{ $headingTag }} class="fi-empty-state-heading">
+            {{ $heading }}
+        </{{ $headingTag }}>
 
         @if ($hasDescription)
             <p class="fi-empty-state-description">
