@@ -3,6 +3,7 @@ export default ({
     currentSelectionLivewireProperty,
     maxSelectableRecords,
     selectsCurrentPageOnly,
+    isGroupingDefaultCollapsed,
     $wire,
 }) => ({
     checkboxClickController: null,
@@ -259,22 +260,32 @@ export default ({
 
         return (
             this.getSelectedRecordsCount() +
-                (keys.length - selectedRecords.length) <=
+            (keys.length - selectedRecords.length) <=
             maxSelectableRecords
         )
     },
 
     toggleCollapseGroup(group) {
         if (this.isGroupCollapsed(group)) {
-            this.collapsedGroups.splice(this.collapsedGroups.indexOf(group), 1)
-
-            return
+            if (isGroupingDefaultCollapsed) {
+                this.collapsedGroups.push(group)
+            } else {
+                this.collapsedGroups.splice(this.collapsedGroups.indexOf(group), 1)
+            }
+        } else {
+            if (isGroupingDefaultCollapsed) {
+                this.collapsedGroups.splice(this.collapsedGroups.indexOf(group), 1)
+            } else {
+                this.collapsedGroups.push(group)
+            }
         }
-
-        this.collapsedGroups.push(group)
     },
 
     isGroupCollapsed(group) {
+        if (isGroupingDefaultCollapsed) {
+            return !this.collapsedGroups.includes(group)
+        }
+
         return this.collapsedGroups.includes(group)
     },
 
@@ -310,7 +321,7 @@ export default ({
         if (event.shiftKey) {
             let checkboxes = Array.from(
                 this.$root?.getElementsByClassName('fi-ta-record-checkbox') ??
-                    [],
+                [],
             )
 
             if (!checkboxes.includes(this.lastChecked)) {
