@@ -27,7 +27,7 @@ test('SPA prefetching can be toggled', function (): void {
     expect(FilamentView::hasSpaPrefetching())->toBeFalse();
 });
 
-test('`href` HTML can be generated with wire:navigate based on SPA mode', function (): void {
+test('`href` HTML can be generated with `wire:navigate` based on SPA mode', function (): void {
     FilamentView::spa();
     expect(generate_href_html('http://localhost/page'))
         ->toHtml()->toBe('href="http://localhost/page" wire:navigate');

@@ -121,7 +121,7 @@ if (! function_exists('Filament\Support\is_app_url')) {
 }
 
 if (! function_exists('Filament\Support\generate_href_html')) {
-    function generate_href_html(?string $url, bool $shouldOpenInNewTab = false, ?bool $shouldOpenInSpaMode = null, ?bool $hasNestedClickEventHandler = false): Htmlable
+    function generate_href_html(?string $url, bool $shouldOpenInNewTab = false, ?bool $shouldOpenInSpaMode = null, bool $hasNestedClickEventHandler = false): Htmlable
     {
         if (blank($url)) {
             return new HtmlString('');
@@ -132,7 +132,6 @@ if (! function_exists('Filament\Support\generate_href_html')) {
         if ($shouldOpenInNewTab) {
             $html .= ' target="_blank"';
         } elseif ($shouldOpenInSpaMode ?? (FilamentView::hasSpaMode($url))) {
-
             if (FilamentView::hasSpaPrefetching()) {
                 $html .= ' wire:navigate.hover';
             } elseif ($hasNestedClickEventHandler) {

@@ -1068,7 +1068,7 @@
                                         <div>
                                             @if ($recordUrl)
                                                 <a
-                                                    {{ \Filament\Support\generate_href_html($recordUrl, $openRecordUrlInNewTab, null, true) }}
+                                                    {{ \Filament\Support\generate_href_html($recordUrl, $openRecordUrlInNewTab, hasNestedClickEventHandler: true) }}
                                                     class="fi-ta-record-content"
                                                 >
                                                     @foreach ($columnsLayout as $columnsLayoutComponent)
@@ -1911,7 +1911,7 @@
                                                     >
                                                         <{{ $columnWrapperTag }}
                                                             @if ($columnWrapperTag === 'a')
-                                                                {{ \Filament\Support\generate_href_html($columnUrl ?: $recordUrl, $columnUrl ? $column->shouldOpenUrlInNewTab() : $openRecordUrlInNewTab, null, true) }}
+                                                                {{ \Filament\Support\generate_href_html($columnUrl ?: $recordUrl, $columnUrl ? $column->shouldOpenUrlInNewTab() : $openRecordUrlInNewTab, hasNestedClickEventHandler: true) }}
                                                             @elseif ($columnWrapperTag === 'button')
                                                                 type
                                                                 ="button"
