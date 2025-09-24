@@ -641,6 +641,12 @@ class ModalTableSelect extends Field
             return $values;
         }
 
+        $state = $this->getState();
+
+        if (blank($state)) {
+            return null;
+        }
+
         if ($this->isMultiple()) {
             return array_keys($this->getOptionLabels(withDefaults: false));
         }

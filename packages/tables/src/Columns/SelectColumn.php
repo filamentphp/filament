@@ -67,8 +67,6 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
 
     protected ?Closure $getOptionLabelUsing = null;
 
-    protected ?Closure $getOptionLabelsUsing = null;
-
     protected ?Closure $getOptionsSearchResultsUsing = null;
 
     protected bool | Closure $shouldSearchOptionLabels = true;
@@ -144,6 +142,12 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
      */
     public function getRules(): array
     {
+        $state = $this->getState();
+
+        if (blank($state)) {
+            return $this->getBaseRules();
+        }
+
         $optionLabel = $this->getOptionLabel(withDefault: false);
 
         if (blank($optionLabel)) {
@@ -152,8 +156,6 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
                 Rule::in([]),
             ];
         }
-
-        $state = $this->getState();
 
         if ($state instanceof BackedEnum) {
             $state = $state->value;
