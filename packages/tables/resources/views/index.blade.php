@@ -150,7 +150,7 @@
             'fi-loading' => $records === null,
         ])
     }}
-    >
+>
     <input
         type="hidden"
         value="{{ $allSelectableRecordsCount }}"
