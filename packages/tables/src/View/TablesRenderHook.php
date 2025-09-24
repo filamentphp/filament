@@ -38,8 +38,6 @@ class TablesRenderHook
 
     const FILTER_INDICATORS = 'tables::filter.indicators';
 
-    const TABLE_CELL = 'tables::table.cell';
-
     const TABLE_HEADER_CELL = 'tables::table.header.cell';
 
     /**
