@@ -153,7 +153,7 @@
                                     @endif
                                     class="fi-sidebar-item-label"
                                 >
-                                    {{ __('filament-panels::layout.actions.open_database_notifications.sidebar_label') }}
+                                    {{ __('filament-panels::layout.actions.open_database_notifications.label') }}
                                 </span>
 
                                 @if ($unreadNotificationsCount)

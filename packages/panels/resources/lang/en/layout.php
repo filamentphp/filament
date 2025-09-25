@@ -15,8 +15,7 @@ return [
         ],
 
         'open_database_notifications' => [
-            'label' => 'Open notifications',
-            'sidebar_label' => 'Notifications',
+            'label' => 'Notifications',
         ],
 
         'open_user_menu' => [
