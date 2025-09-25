@@ -372,7 +372,7 @@ class TextColumn extends Column implements HasEmbeddedView
                 ->merge($stateItemAttributes->getAttributes(), escape: false)
                 ->toHtml() ?>>
                 <?php if ($stateItemContentAttributes) { ?>
-                <span <?= $stateItemContentAttributes->toHtml() ?>>
+                    <span <?= $stateItemContentAttributes->toHtml() ?>>
                 <?php } ?>
 
                 <?= $stateItemIconBeforeHtml ?>

@@ -192,7 +192,7 @@ class Builder extends Field implements CanConcealComponents, HasExtraItemActions
                 ->modalSubmitActionLabel(__('filament-forms::components.builder.actions.add.modal.actions.add.label'))
                 ->schema(function (array $arguments, Builder $component): array {
                     return collect($component->getBlock($arguments['block'])->getDefaultChildComponents())
-                        ->map->getClone()
+                        ->map(fn (Component $childComponent): Component => $childComponent->getClone())
                         ->all();
                 });
         }
@@ -289,7 +289,7 @@ class Builder extends Field implements CanConcealComponents, HasExtraItemActions
                 ->modalSubmitActionLabel(__('filament-forms::components.builder.actions.add_between.modal.actions.add.label'))
                 ->schema(function (array $arguments, Builder $component): array {
                     return collect($component->getBlock($arguments['block'])->getDefaultChildComponents())
-                        ->map->getClone()
+                        ->map(fn (Component $childComponent): Component => $childComponent->getClone())
                         ->all();
                 });
         }
