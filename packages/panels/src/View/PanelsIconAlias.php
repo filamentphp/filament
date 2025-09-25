@@ -6,8 +6,6 @@ class PanelsIconAlias
 {
     const GLOBAL_SEARCH_FIELD = 'panels::global-search.field';
 
-    const LAYOUT_OPEN_SIDEBAR_BUTTON = 'panels::layout.open-sidebar-button';
-
     const PAGES_DASHBOARD_ACTIONS_FILTER = 'panels::pages.dashboard.actions.filter';
 
     const PAGES_DASHBOARD_NAVIGATION_ITEM = 'panels::pages.dashboard.navigation-item';
