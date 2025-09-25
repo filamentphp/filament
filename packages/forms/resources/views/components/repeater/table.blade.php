@@ -158,24 +158,22 @@
                                         @endphp
 
                                         @if ($schemaComponent->isVisible())
-                                            <td
-                                                @if (! (($schemaComponent instanceof Action) || ($schemaComponent instanceof ActionGroup)))
-                                                    @php
-                                                        $schemaComponentStatePath = $schemaComponent->getStatePath();
-                                                    @endphp
+                                            @php
+                                                $schemaComponentStatePath = $schemaComponent->getStatePath();
+                                            @endphp
 
-                                                    x-data="filamentSchemaComponent({
-                                                        path: @js($schemaComponentStatePath),
-                                                        containerPath: @js($itemStatePath),
-                                                        isLive: @js($schemaComponent->isLive()),
-                                                        $wire,
-                                                    })"
-                                                    @if ($afterStateUpdatedJs = $schemaComponent->getAfterStateUpdatedJs())
-                                                        x-init="{{ implode(';', array_map(
-                                                            fn (string $js): string => '$wire.watch(' . Js::from($schemaComponentStatePath) . ', ($state, $old) => ($state !== undefined) && eval(' . Js::from($js) . '))',
-                                                            $afterStateUpdatedJs,
-                                                        )) }}"
-                                                    @endif
+                                            <td
+                                                x-data="filamentSchemaComponent({
+                                                    path: @js($schemaComponentStatePath),
+                                                    containerPath: @js($itemStatePath),
+                                                    isLive: @js($schemaComponent->isLive()),
+                                                    $wire,
+                                                })"
+                                                @if ($afterStateUpdatedJs = $schemaComponent->getAfterStateUpdatedJs())
+                                                    x-init="{{ implode(';', array_map(
+                                                        fn (string $js): string => '$wire.watch(' . Js::from($schemaComponentStatePath) . ', ($state, $old) => ($state !== undefined) && eval(' . Js::from($js) . '))',
+                                                        $afterStateUpdatedJs,
+                                                    )) }}"
                                                 @endif
                                             >
                                                 {{ $schemaComponent }}

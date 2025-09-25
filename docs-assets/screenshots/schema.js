@@ -2228,6 +2228,15 @@ export default {
             deviceScaleFactor: 3,
         },
     },
+    'infolists/entries/repeatable/table': {
+        url: 'infolists/entries',
+        selector: '#repeatableTable',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
     'infolists/entries/actions/suffix': {
         url: 'infolists/entries',
         selector: '#suffixAction',

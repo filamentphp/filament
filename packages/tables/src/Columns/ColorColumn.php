@@ -48,7 +48,7 @@ class ColorColumn extends Column implements HasEmbeddedView
             ob_start(); ?>
 
             <div <?= $attributes->toHtml() ?>>
-                <?php if (filled($placeholder !== null)) { ?>
+                <?php if (filled($placeholder)) { ?>
                     <p class="fi-ta-placeholder">
                         <?= e($placeholder) ?>
                     </p>
