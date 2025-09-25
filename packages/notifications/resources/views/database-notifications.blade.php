@@ -12,8 +12,6 @@
 
 <div class="fi-no-database">
     <x-filament::modal
-        x-data="{ isOpen: false }"
-        x-on:open-database-notifications.window="isOpen = true"
         :alignment="$hasNotifications ? null : Alignment::Center"
         close-button
         :description="$hasNotifications ? null : __('filament-notifications::database.modal.empty.description')"

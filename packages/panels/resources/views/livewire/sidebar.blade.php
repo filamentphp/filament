@@ -136,7 +136,7 @@
                         <div class="fi-sidebar-item">
                             <button
                                 class="fi-sidebar-item-btn fi-sidebar-database-notifications-btn"
-                                x-on:click="$dispatch('open-database-notifications')"
+                                x-on:click="$dispatch('open-modal', { id: 'database-notifications' })"
                             >
                                 <x-filament::icon
                                     :icon="\Filament\Support\Icons\Heroicon::OutlinedBell"

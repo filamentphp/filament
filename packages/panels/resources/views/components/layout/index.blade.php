@@ -24,7 +24,6 @@
         'fi-body-has-sidebar-fully-collapsible-on-desktop' => $isSidebarFullyCollapsibleOnDesktop,
         'fi-body-has-topbar' => $hasTopbar,
         'fi-body-has-top-navigation' => $hasTopNavigation,
-        'fi-body-has-topbar' => $hasTopbar,
     ])
 >
     @if ($hasTopbar)
@@ -37,10 +36,7 @@
         <div
             x-data="{}"
             x-show="! $store.sidebar.isOpen"
-            @class([
-                'fi-layout-sidebar-collapse-toggle-btn-ctn' => ! $isSidebarFullyCollapsibleOnDesktop,
-                'fi-layout-sidebar-fully-collapse-toggle-btn-ctn' => $isSidebarFullyCollapsibleOnDesktop,
-            ])
+            class="fi-layout-sidebar-toggle-btn-ctn"
         >
             <x-filament::icon-button
                 color="gray"
@@ -61,7 +57,7 @@
     <div class="fi-layout">
         {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::LAYOUT_START, scopes: $renderHookScopes) }}
 
-        @if (! $hasTopbar)
+        @if ((! $hasTopbar) && filament()->hasDatabaseNotifications())
             @livewire(Filament\Livewire\DatabaseNotifications::class, [
                 'lazy' => filament()->hasLazyLoadedDatabaseNotifications(),
             ])

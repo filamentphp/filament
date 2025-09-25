@@ -281,5 +281,5 @@
 }
 
 .fi-sidebar-database-notifications-btn .fi-sidebar-item-label {
-    @apply text-left;
+    @apply text-start;
 }
