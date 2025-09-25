@@ -1,9 +1,13 @@
+@props([
+    'dropdownPlacement' => 'bottom-end',
+    'trigger' => null,
+])
+
 @php
     use Filament\Actions\Action;
     use Illuminate\Support\Arr;
 
     $user = filament()->auth()->user();
-    $location = $attributes->get('location', 'topbar'); // Default to 'topbar' for backward compatibility
 
     $items = $this->getUserMenuItems();
 
@@ -25,45 +29,25 @@
 {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::USER_MENU_BEFORE) }}
 
 <x-filament::dropdown
-    placement="{{ $location === 'topbar' ? 'bottom-end' : 'top-end' }}"
+    :placement="$dropdownPlacement"
     teleport
     :attributes="
         \Filament\Support\prepare_inherited_attributes($attributes)
-            ->except('location')
             ->class(['fi-user-menu'])
     "
 >
     <x-slot name="trigger">
-        <button
-            aria-label="{{ __('filament-panels::layout.actions.open_user_menu.label') }}"
-            type="button"
-            class="fi-user-menu-trigger"
-        >
-            <x-filament-panels::avatar.user :user="$user" loading="lazy" />
-
-            @if ($location === 'sidebar')
-                <div
-                    x-show="$store.sidebar.isOpen"
-                    class="fi-user-menu-details-ctn"
-                >
-                    <div class="fi-user-menu-details">
-                        <h3 class="fi-user-menu-details-title">
-                            {{ $user->name }}
-                        </h3>
-                        <p class="fi-user-menu-details-body">
-                            {{ $user->email }}
-                        </p>
-                    </div>
-
-                    {{
-                        \Filament\Support\generate_icon_html(
-                            \Filament\Support\Icons\Heroicon::ChevronDown,
-                            alias: \Filament\View\PanelsIconAlias::USER_MENU_TOGGLE_BUTTON
-                        )
-                    }}
-                </div>
-            @endif
-        </button>
+        @if ($trigger)
+            {{ $trigger }}
+        @else
+            <button
+                aria-label="{{ __('filament-panels::layout.actions.open_user_menu.label') }}"
+                type="button"
+                class="fi-user-menu-trigger"
+            >
+                <x-filament-panels::avatar.user :user="$user" loading="lazy" />
+            </button>
+        @endif
     </x-slot>
 
     @if ($hasProfileHeader)

@@ -88,11 +88,7 @@
         </div>
 
         @if (filament()->hasTenancy() && filament()->hasTenantMenu())
-            <div
-                class="fi-sidebar-nav-tenant-menu-ctn"
-            >
-                <x-filament-panels::tenant-menu />
-            </div>
+            <x-filament-panels::tenant-menu />
         @endif
 
         @if ((! $hasTopbar) && filament()->isGlobalSearchEnabled())
@@ -176,11 +172,38 @@
                 ])
             @endif
 
-            <div class="fi-sidebar-user-menu-ctn">
-                @if (filament()->hasUserMenu())
-                    <x-filament-panels::user-menu location="sidebar" />
-                @endif
-            </div>
+            @if (filament()->hasUserMenu())
+                @php
+                    $user = filament()->auth()->user();
+                @endphp
+
+                <x-filament-panels::user-menu dropdown-placement="top-end">
+                    <x-slot name="trigger">
+                        <button
+                            aria-label="{{ __('filament-panels::layout.actions.open_user_menu.label') }}"
+                            type="button"
+                            class="fi-user-menu-trigger"
+                        >
+                            <x-filament-panels::avatar.user :user="$user" loading="lazy" />
+
+                            <span
+                                @if ($isSidebarCollapsibleOnDesktop)
+                                    x-show="$store.sidebar.isOpen"
+                                @endif
+                                class="fi-user-menu-trigger-text"
+                            >
+                                {{ filament()->getUserName($user) }}
+                            </span>
+
+                            {{
+                                \Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::ChevronUp, alias: \Filament\View\PanelsIconAlias::USER_MENU_TOGGLE_BUTTON, attributes: new \Illuminate\View\ComponentAttributeBag([
+                                    'x-show' => $isSidebarCollapsibleOnDesktop ? '$store.sidebar.isOpen' : null,
+                                ]))
+                            }}
+                        </button>
+                    </x-slot>
+                </x-filament-panels::user-menu>
+            @endif
         @endif
 
         {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::SIDEBAR_FOOTER) }}

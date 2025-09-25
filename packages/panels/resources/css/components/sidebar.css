@@ -17,7 +17,7 @@
 }
 
 .fi-sidebar-group-btn {
-    @apply flex items-center gap-x-3 px-2 py-2;
+    @apply flex items-center gap-x-3 p-2;
 
     & .fi-icon {
         @apply text-gray-400 dark:text-gray-500;
@@ -29,7 +29,7 @@
 }
 
 .fi-sidebar-group-dropdown-trigger-btn {
-    @apply relative flex flex-1 items-center justify-center gap-x-3 rounded-lg px-2 py-2 outline-hidden transition duration-75 hover:bg-gray-100 focus-visible:bg-gray-100 dark:hover:bg-white/5 dark:focus-visible:bg-white/5;
+    @apply relative flex flex-1 items-center justify-center gap-x-3 rounded-lg p-2 outline-hidden transition duration-75 hover:bg-gray-100 focus-visible:bg-gray-100 dark:hover:bg-white/5 dark:focus-visible:bg-white/5;
 
     & .fi-icon {
         @apply text-gray-400 dark:text-gray-500;
@@ -109,12 +109,6 @@
             }
         }
     }
-
-    & .fi-sidebar {
-        & .fi-sidebar-nav-tenant-menu-ctn {
-            @apply mx-3 mt-3;
-        }
-    }
 }
 
 .fi-sidebar-header-ctn {
@@ -184,7 +178,7 @@
 }
 
 .fi-sidebar-item-btn {
-    @apply relative flex items-center justify-center gap-x-3 rounded-lg px-2 py-2 outline-hidden transition duration-75;
+    @apply relative flex items-center justify-center gap-x-3 rounded-lg p-2 outline-hidden transition duration-75;
 
     & > .fi-icon {
         @apply text-gray-400 dark:text-gray-500;
@@ -235,7 +229,7 @@
 }
 
 .fi-sidebar-database-notifications-btn {
-    @apply mx-4 w-full text-start relative flex items-center justify-center gap-x-3 rounded-lg px-2 py-2 outline-hidden transition duration-75 hover:bg-gray-100 focus-visible:bg-gray-100 dark:hover:bg-white/5 dark:focus-visible:bg-white/5;
+    @apply relative mx-4 flex w-full items-center justify-center gap-x-3 rounded-lg p-2 text-start outline-hidden transition duration-75 hover:bg-gray-100 focus-visible:bg-gray-100 dark:hover:bg-white/5 dark:focus-visible:bg-white/5;
 
     & > .fi-icon {
         @apply text-gray-400 dark:text-gray-500;
@@ -259,10 +253,6 @@
             @apply opacity-100;
         }
     }
-}
-
-.fi-sidebar-user-menu-ctn {
-    @apply -mx-2 mt-auto pt-4;
 }
 
 .fi-sidebar-open-sidebar-btn,
