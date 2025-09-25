@@ -5,7 +5,8 @@ parameters:
         - packages
 
     excludePaths:
-        - packages/upgrade/*
+        - packages/upgrade/bin
+        - packages/upgrade/src/Rector
 
     reportUnmatchedIgnoredErrors: false
 

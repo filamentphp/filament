@@ -2,12 +2,13 @@
 
 namespace Filament;
 
-use Exception;
 use Filament\Facades\Filament;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Gate;
+use LogicException;
 
 if (! function_exists('Filament\authorize')) {
     /**
@@ -30,13 +31,13 @@ if (! function_exists('Filament\get_authorization_response')) {
         $user = Filament::auth()->user();
 
         if (! $shouldCheckPolicyExistence) {
-            return Gate::forUser($user)->inspect($action, $model);
+            return Gate::forUser($user)->inspect($action, Arr::wrap($model));
         }
 
         $policy = Gate::getPolicyFor($model);
 
         if (filled($policy) && method_exists($policy, $action)) {
-            return Gate::forUser($user)->inspect($action, $model);
+            return Gate::forUser($user)->inspect($action, Arr::wrap($model));
         }
 
         if (Filament::isAuthorizationStrict()) {
@@ -46,7 +47,7 @@ if (! function_exists('Filament\get_authorization_response')) {
                 default => null,
             };
 
-            throw new Exception(blank($policyClass)
+            throw new LogicException(blank($policyClass)
                 ? "Strict authorization mode is enabled, but no policy was found for [{$model}]."
                 : "Strict authorization mode is enabled, but no [{$action}()] method was found on [{$policyClass}].");
         }

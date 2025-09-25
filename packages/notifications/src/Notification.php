@@ -205,7 +205,7 @@ class Notification extends ViewComponent implements Arrayable, HasEmbeddedView
         $data = $this->toArray();
         $data['format'] = 'filament';
 
-        return new BroadcastNotification($data);
+        return app(BroadcastNotification::class, ['data' => $data]);
     }
 
     public function toDatabase(): DatabaseNotification

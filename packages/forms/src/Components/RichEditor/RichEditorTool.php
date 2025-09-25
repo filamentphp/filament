@@ -37,6 +37,10 @@ class RichEditorTool extends ViewComponent implements HasEmbeddedView
 
     protected string | Closure | null $activeJsExpression = null;
 
+    protected bool | Closure $isDisabledWhenNotActive = false;
+
+    protected bool | Closure $hasActiveStyling = true;
+
     protected RichEditor $editor;
 
     protected string $evaluationIdentifier = 'tool';
@@ -157,12 +161,46 @@ class RichEditorTool extends ViewComponent implements HasEmbeddedView
         return $this->shouldTranslateLabel ? __($label) : $label;
     }
 
+    public function disabledWhenNotActive(bool | Closure $condition = true): static
+    {
+        $this->isDisabledWhenNotActive = $condition;
+
+        return $this;
+    }
+
+    public function isDisabledWhenNotActive(): bool
+    {
+        return (bool) $this->evaluate($this->isDisabledWhenNotActive);
+    }
+
+    public function activeStyling(bool | Closure $condition = true): static
+    {
+        $this->hasActiveStyling = $condition;
+
+        return $this;
+    }
+
+    public function hasActiveStyling(): bool
+    {
+        return (bool) $this->evaluate($this->hasActiveStyling);
+    }
+
     public function toEmbeddedHtml(): string
     {
+        $activeJsExpression = $this->getActiveJsExpression();
+
+        if (filled($activeJsExpression)) {
+            $activeJsExpression = "editorUpdatedAt && ({$activeJsExpression})";
+        } else {
+            $activeJsExpression = 'editorUpdatedAt && $getEditor()?.isActive(' . Js::from($this->getActiveKey())->toHtml() . ', ' . Js::from($this->getActiveOptions())->toHtml() . ')';
+        }
+
         $attributes = $this->getExtraAttributeBag()
             ->merge([
                 'tabindex' => -1,
                 'type' => 'button',
+                'x-bind:class' => '{ \'fi-active\': ' . ($this->hasActiveStyling() ? $activeJsExpression : 'false') . ' }',
+                'x-bind:disabled' => $this->isDisabledWhenNotActive() ? '!(' . $activeJsExpression . ')' : null,
                 'x-on:click' => $this->getJsHandler(),
                 'x-tooltip' => filled($label = $this->getLabel())
                     ? '{ content: ' . Js::from($label) . ', theme: $store.theme }'
@@ -170,16 +208,9 @@ class RichEditorTool extends ViewComponent implements HasEmbeddedView
             ], escape: false)
             ->class(['fi-fo-rich-editor-tool']);
 
-        $activeJsExpression = $this->getActiveJsExpression();
-
         ob_start(); ?>
 
-        <button
-            x-bind:class="{
-                'fi-active': editorUpdatedAt && <?php if ($activeJsExpression) { ?> <?= $activeJsExpression ?> <?php } else { ?> $getEditor()?.isActive(<?= Js::from($this->getActiveKey())->toHtml() ?>, <?= Js::from($this->getActiveOptions())->toHtml() ?>) <?php } ?>,
-            }"
-            <?= $attributes->toHtml() ?>
-        >
+        <button <?= $attributes->toHtml() ?>>
             <?= generate_icon_html($this->getIcon(), alias: $this->getIconAlias())->toHtml() ?>
         </button>
 

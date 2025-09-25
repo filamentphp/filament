@@ -33,46 +33,46 @@ use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Livewire\Attributes\Url;
 
 use function Filament\authorize;
 
+/**
+ * @template TModel of Model = Model
+ */
 class ManageRelatedRecords extends Page implements Tables\Contracts\HasTable
 {
     use Concerns\HasRelationManagers;
-    use Concerns\InteractsWithRecord;
+    use Concerns\InteractsWithRecord {
+        getRecord as getBaseRecord;
+    }
     use InteractsWithRelationshipTable;
 
     public ?string $previousUrl = null;
 
-    #[Url]
+    #[Url(as: 'reordering')]
     public bool $isTableReordering = false;
 
     /**
      * @var array<string, mixed> | null
      */
-    #[Url]
+    #[Url(as: 'filters')]
     public ?array $tableFilters = null;
 
-    #[Url]
+    #[Url(as: 'grouping')]
     public ?string $tableGrouping = null;
-
-    #[Url]
-    public ?string $tableGroupingDirection = null;
 
     /**
      * @var ?string
      */
-    #[Url]
+    #[Url(as: 'search')]
     public $tableSearch = '';
 
-    #[Url]
-    public ?string $tableSortColumn = null;
+    #[Url(as: 'sort')]
+    public ?string $tableSort = null;
 
-    #[Url]
-    public ?string $tableSortDirection = null;
-
-    #[Url]
+    #[Url(as: 'tab')]
     public ?string $activeTab = null;
 
     public static function getNavigationIcon(): string | BackedEnum | Htmlable | null
@@ -186,6 +186,10 @@ class ManageRelatedRecords extends Page implements Tables\Contracts\HasTable
 
     public function getDefaultActionRecord(Action $action): ?Model
     {
+        if ($action instanceof CreateAction) {
+            return null;
+        }
+
         if ($action->getTable()) {
             return null;
         }
@@ -193,8 +197,42 @@ class ManageRelatedRecords extends Page implements Tables\Contracts\HasTable
         return $this->getRecord();
     }
 
+    public function getDefaultActionRelationship(Action $action): ?Relation
+    {
+        if ($action instanceof CreateAction) {
+            return $this->getRelationship();
+        }
+
+        return null;
+    }
+
+    /**
+     * @return ?class-string<Model>
+     */
+    public function getDefaultActionModel(Action $action): ?string
+    {
+        if ($action instanceof CreateAction) {
+            return $this->getTable()->getModel();
+        }
+
+        return parent::getDefaultActionModel($action);
+    }
+
+    public function getDefaultActionModelLabel(Action $action): ?string
+    {
+        if ($action instanceof CreateAction) {
+            return $this->getTable()->getModelLabel();
+        }
+
+        return parent::getDefaultActionModelLabel($action);
+    }
+
     public function getDefaultActionRecordTitle(Action $action): ?string
     {
+        if ($action instanceof CreateAction) {
+            return null;
+        }
+
         if ($action->getTable()) {
             return null;
         }
@@ -296,5 +334,13 @@ class ManageRelatedRecords extends Page implements Tables\Contracts\HasTable
             'label' => $this->getRecordTitle(),
             'relationship' => static::getRelationshipTitle(),
         ]);
+    }
+
+    /**
+     * @return TModel
+     */
+    public function getRecord(): Model
+    {
+        return $this->getBaseRecord();
     }
 }

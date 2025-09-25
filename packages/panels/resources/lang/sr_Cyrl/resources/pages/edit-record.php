@@ -6,6 +6,8 @@ return [
 
     'breadcrumb' => 'Уреди',
 
+    'navigation_label' => 'Уреди',
+
     'form' => [
 
         'actions' => [

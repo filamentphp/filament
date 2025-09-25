@@ -61,7 +61,7 @@
             @apply hover:bg-gray-50 dark:hover:bg-white/10;
         }
 
-        input:checked + &label {
+        input:checked + label& {
             @apply bg-gray-400 text-white ring-0 dark:bg-gray-600;
 
             &:not(.fi-disabled):not([disabled]) {
@@ -82,7 +82,7 @@
                 }
             }
 
-            &label {
+            label& {
                 input:checked + & {
                     @apply bg-(--bg) text-(--text) ring-0 dark:bg-(--dark-bg) dark:text-(--dark-text);
                 }
@@ -104,7 +104,7 @@
         }
     }
 
-    &label {
+    label& {
         @apply cursor-pointer;
 
         & > .fi-icon:is(:checked + label > .fi-icon) {
@@ -113,7 +113,7 @@
     }
 
     &:not(.fi-color),
-    &label {
+    label& {
         @apply ring-1 ring-gray-950/10 dark:ring-white/20;
     }
 
@@ -181,7 +181,7 @@
         }
 
         &:not(.fi-color),
-        &label {
+        label& {
             @apply ring-0;
         }
     }

@@ -1,12 +1,14 @@
 export default ({
+    areGroupsCollapsedByDefault,
     canTrackDeselectedRecords,
     currentSelectionLivewireProperty,
     maxSelectableRecords,
+    selectsCurrentPageOnly,
     $wire,
 }) => ({
     checkboxClickController: null,
 
-    collapsedGroups: [],
+    groupVisibility: [],
 
     isLoading: false,
 
@@ -28,9 +30,12 @@ export default ({
 
     init() {
         this.livewireId =
-            this.$root.closest('[wire\\:id]').attributes['wire:id'].value
+            this.$root.closest('[wire\\:id]')?.attributes['wire:id'].value
 
         $wire.$on('deselectAllTableRecords', () => this.deselectAllRecords())
+        $wire.$on('scrollToTopOfTable', () =>
+            this.$root.scrollIntoView({ block: 'start', inline: 'nearest' }),
+        )
 
         if (currentSelectionLivewireProperty) {
             if (maxSelectableRecords !== 1) {
@@ -167,7 +172,7 @@ export default ({
     },
 
     async selectAllRecords() {
-        if (!canTrackDeselectedRecords) {
+        if (!canTrackDeselectedRecords || selectsCurrentPageOnly) {
             this.isLoading = true
 
             this.selectedRecords = new Set(
@@ -188,7 +193,7 @@ export default ({
         this.updatedSelectedRecords()
     },
 
-    canSelectAllRecords(selectsCurrentPageOnly) {
+    canSelectAllRecords() {
         if (selectsCurrentPageOnly) {
             const recordsOnPage = this.getRecordsOnPage()
 
@@ -262,20 +267,36 @@ export default ({
 
     toggleCollapseGroup(group) {
         if (this.isGroupCollapsed(group)) {
-            this.collapsedGroups.splice(this.collapsedGroups.indexOf(group), 1)
-
-            return
+            if (areGroupsCollapsedByDefault) {
+                this.groupVisibility.push(group)
+            } else {
+                this.groupVisibility.splice(
+                    this.groupVisibility.indexOf(group),
+                    1,
+                )
+            }
+        } else {
+            if (areGroupsCollapsedByDefault) {
+                this.groupVisibility.splice(
+                    this.groupVisibility.indexOf(group),
+                    1,
+                )
+            } else {
+                this.groupVisibility.push(group)
+            }
         }
-
-        this.collapsedGroups.push(group)
     },
 
     isGroupCollapsed(group) {
-        return this.collapsedGroups.includes(group)
+        if (areGroupsCollapsedByDefault) {
+            return !this.groupVisibility.includes(group)
+        }
+
+        return this.groupVisibility.includes(group)
     },
 
     resetCollapsedGroups() {
-        this.collapsedGroups = []
+        this.groupVisibility = []
     },
 
     watchForCheckboxClicks() {

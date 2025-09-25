@@ -24,7 +24,7 @@ trait CanOrderColumns
 
         if (! is_array($order)) {
             $order = [
-                'default' => $order,
+                'lg' => $order,
             ];
         }
 

@@ -4,24 +4,24 @@ return [
 
     'actions' => [
 
-        'Click to',
+        'Tüm kodları',
 
         'copy' => [
-            'label' => 'copy',
+            'label' => 'kopyalamak',
         ],
 
         'or',
 
         'download' => [
-            'label' => 'download',
+            'label' => 'indirmek',
         ],
 
-        'all the codes at once.',
+        'için tıklayın.',
 
     ],
 
     'messages' => [
-        'copied' => 'Copied',
+        'copied' => 'Kopyalandı',
     ],
 
 ];

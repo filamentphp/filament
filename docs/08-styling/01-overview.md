@@ -130,7 +130,7 @@ php artisan make:filament-theme --pm=bun
 
 This command generates a CSS file in the `resources/css/filament` directory.
 
-Add the theme's CSS file to the input array in `vite.config.js`:
+Add the theme's CSS file to the Laravel plugin's `input` array in `vite.config.js`:
 
 ```js
 input: [

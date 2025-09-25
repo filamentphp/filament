@@ -5,6 +5,7 @@ namespace Filament\Actions\Imports\Http\Controllers;
 use Filament\Actions\Imports\Models\FailedImportRow;
 use Filament\Actions\Imports\Models\Import;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Gate;
 use League\Csv\Bom;
 use League\Csv\Writer;
@@ -30,7 +31,7 @@ class DownloadImportFailureCsv
         $importPolicy = Gate::getPolicyFor($import::class);
 
         if (filled($importPolicy) && method_exists($importPolicy, 'view')) {
-            Gate::forUser($user)->authorize('view', $import);
+            Gate::forUser($user)->authorize('view', Arr::wrap($import));
         } else {
             abort_unless($import->user()->is($user), 403);
         }

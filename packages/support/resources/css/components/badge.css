@@ -30,7 +30,7 @@
     }
 
     & .fi-icon {
-        @apply shrink-0 text-gray-400 dark:text-gray-500;
+        @apply shrink-0;
     }
 
     &.fi-size-xs {
@@ -44,13 +44,13 @@
     &.fi-color {
         @apply bg-color-50 ring-color-600/10 dark:bg-color-400/10 dark:ring-color-400/30 text-(--text) dark:text-(--dark-text);
 
-        & .fi-icon {
-            @apply text-color-500;
-        }
-
         & .fi-badge-delete-btn > .fi-icon {
             @apply text-color-700/50 dark:text-color-300/50;
         }
+    }
+
+    &:not(.fi-color) .fi-icon {
+        @apply text-gray-400 dark:text-gray-500;
     }
 
     & .fi-badge-delete-btn {

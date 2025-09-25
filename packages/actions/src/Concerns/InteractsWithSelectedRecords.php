@@ -3,12 +3,12 @@
 namespace Filament\Actions\Concerns;
 
 use Closure;
-use Exception;
 use Filament\Support\Authorization\DenyResponse;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection;
 use Illuminate\Support\LazyCollection;
+use LogicException;
 
 trait InteractsWithSelectedRecords
 {
@@ -47,7 +47,7 @@ trait InteractsWithSelectedRecords
     public function getSelectedRecords(): EloquentCollection | Collection | LazyCollection
     {
         if (! $this->canAccessSelectedRecords()) {
-            throw new Exception("The action [{$this->getName()}] is attempting to access the selected records from the table, but it is not using [accessSelectedRecords()], so they are not available.");
+            throw new LogicException("The action [{$this->getName()}] is attempting to access the selected records from the table, but it is not using [accessSelectedRecords()], so they are not available.");
         }
 
         $records = $this->getLivewire()->getSelectedTableRecords($this->shouldFetchSelectedRecords(), $this->getSelectedRecordsChunkSize());
@@ -63,7 +63,7 @@ trait InteractsWithSelectedRecords
     public function getSelectedRecordsQuery(): Builder
     {
         if (! $this->canAccessSelectedRecords()) {
-            throw new Exception("The action [{$this->getName()}] is attempting to access the selected records query from the table, but it is not using [accessSelectedRecords()], so they are not available.");
+            throw new LogicException("The action [{$this->getName()}] is attempting to access the selected records query from the table, but it is not using [accessSelectedRecords()], so they are not available.");
         }
 
         return $this->getLivewire()->getSelectedTableRecordsQuery($this->shouldFetchSelectedRecords(), $this->getSelectedRecordsChunkSize());

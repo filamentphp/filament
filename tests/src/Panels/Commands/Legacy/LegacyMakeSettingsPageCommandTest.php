@@ -65,7 +65,7 @@ it('can generate a page class in a cluster', function (): void {
     $this->artisan('make:filament-settings-page', [
         'name' => 'ManageSettings',
         'settings' => Settings::class,
-        '--cluster' => 'App\\Filament\\Clusters\\Site',
+        '--cluster' => app()->getNamespace() . 'Filament\\Clusters\\Site',
         '--panel' => 'admin',
         '--no-interaction' => true,
     ]);

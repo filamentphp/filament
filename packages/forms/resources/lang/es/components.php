@@ -284,6 +284,10 @@ return [
 
     'markdown_editor' => [
 
+        'file_attachments_accepted_file_types_message' => 'Los archivos cargados deben ser de tipo: :values.',
+
+        'file_attachments_max_size_message' => 'Los archivos cargados no deben tener más de :max kilobytes.',
+
         'tools' => [
             'attach_files' => 'Adjuntar archivos',
             'blockquote' => 'Cita',
@@ -469,6 +473,10 @@ return [
 
         ],
 
+        'file_attachments_accepted_file_types_message' => 'Los archivos cargados deben ser de tipo: :values.',
+
+        'file_attachments_max_size_message' => 'Los archivos cargados no deben tener más de :max kilobytes.',
+
         'no_merge_tag_search_results_message' => 'No se encontraron etiquetas dinámicas.',
 
         'tools' => [
@@ -514,6 +522,8 @@ return [
             'underline' => 'Subrayar',
             'undo' => 'Deshacer',
         ],
+
+        'uploading_file_message' => 'Cargando archivo...',
 
     ],
 
@@ -593,6 +603,11 @@ return [
     'text_input' => [
 
         'actions' => [
+
+            'copy' => [
+                'label' => 'Copiar',
+                'message' => 'Copiado',
+            ],
 
             'hide_password' => [
                 'label' => 'Ocultar contraseña',

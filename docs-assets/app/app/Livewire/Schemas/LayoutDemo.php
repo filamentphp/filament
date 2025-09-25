@@ -12,6 +12,7 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Actions;
+use Filament\Schemas\Components\EmptyState;
 use Filament\Schemas\Components\Fieldset;
 use Filament\Schemas\Components\Flex;
 use Filament\Schemas\Components\Grid;
@@ -700,6 +701,20 @@ class LayoutDemo extends Component implements HasActions, HasSchemas
                                         ->icon(Heroicon::XMark)
                                         ->color('danger'),
                                 ])->verticalAlignment(VerticalAlignment::End),
+                            ]),
+                    ]),
+                Group::make()
+                    ->id('emptyState')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-5xl',
+                    ])
+                    ->schema([
+                        EmptyState::make('No users yet')
+                            ->description('Get started by creating a new user.')
+                            ->icon(Heroicon::OutlinedUser)
+                            ->footer([
+                                Action::make('createUser')
+                                    ->icon(Heroicon::Plus),
                             ]),
                     ]),
             ]);

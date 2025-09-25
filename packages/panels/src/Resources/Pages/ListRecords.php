@@ -30,34 +30,28 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
         makeTable as makeBaseTable;
     }
 
-    #[Url]
+    #[Url(as: 'reordering')]
     public bool $isTableReordering = false;
 
     /**
      * @var array<string, mixed> | null
      */
-    #[Url]
+    #[Url(as: 'filters')]
     public ?array $tableFilters = null;
 
-    #[Url]
+    #[Url(as: 'grouping')]
     public ?string $tableGrouping = null;
-
-    #[Url]
-    public ?string $tableGroupingDirection = null;
 
     /**
      * @var ?string
      */
-    #[Url]
+    #[Url(as: 'search')]
     public $tableSearch = '';
 
-    #[Url]
-    public ?string $tableSortColumn = null;
+    #[Url(as: 'sort')]
+    public ?string $tableSort = null;
 
-    #[Url]
-    public ?string $tableSortDirection = null;
-
-    #[Url]
+    #[Url(as: 'tab')]
     public ?string $activeTab = null;
 
     public function mount(): void

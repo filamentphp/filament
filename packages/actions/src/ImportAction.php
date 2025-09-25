@@ -202,13 +202,16 @@ class ImportAction extends Action
             $maxRows = $action->getMaxRows() ?? $totalRows;
 
             if ($maxRows < $totalRows) {
-                Notification::make()
-                    ->title(__('filament-actions::import.notifications.max_rows.title'))
-                    ->body(trans_choice('filament-actions::import.notifications.max_rows.body', $maxRows, [
-                        'count' => Number::format($maxRows),
-                    ]))
-                    ->danger()
-                    ->send();
+                $action->failureNotification(
+                    Notification::make()
+                        ->title(__('filament-actions::import.notifications.max_rows.title'))
+                        ->body(trans_choice('filament-actions::import.notifications.max_rows.body', $maxRows, [
+                            'count' => Number::format($maxRows),
+                        ]))
+                        ->danger(),
+                );
+
+                $action->failure();
 
                 return;
             }
@@ -311,7 +314,7 @@ class ImportAction extends Action
                         )
                         ->when(
                             ($jobConnection === 'sync') ||
-                                (blank($jobConnection) && (config('queue.default') === 'sync')),
+                            (blank($jobConnection) && (config('queue.default') === 'sync')),
                             fn (Notification $notification) => $notification
                                 ->persistent()
                                 ->send(),
@@ -321,17 +324,23 @@ class ImportAction extends Action
                 ->dispatch();
 
             if (
-                (filled($jobConnection) && ($jobConnection !== 'sync')) ||
-                (blank($jobConnection) && (config('queue.default') !== 'sync'))
+                ($jobConnection === 'sync')
+                || (blank($jobConnection) && (config('queue.default') === 'sync'))
             ) {
+                $action->successNotification(null);
+                $action->successNotificationTitle(null);
+
+                return;
+            }
+
+            $action->successNotification(
                 Notification::make()
                     ->title($action->getSuccessNotificationTitle())
                     ->body(trans_choice('filament-actions::import.notifications.started.body', $import->total_rows, [
                         'count' => Number::format($import->total_rows),
                     ]))
-                    ->success()
-                    ->send();
-            }
+                    ->success(),
+            );
         });
 
         $this->registerModalActions([

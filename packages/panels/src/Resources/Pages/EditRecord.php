@@ -33,6 +33,8 @@ use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Throwable;
 
 /**
+ * @template TModel of Model = Model
+ *
  * @property-read Schema $form
  */
 class EditRecord extends Page
@@ -41,7 +43,9 @@ class EditRecord extends Page
     use Concerns\HasRelationManagers {
         getContentTabComponent as getBaseContentTabComponent;
     }
-    use Concerns\InteractsWithRecord;
+    use Concerns\InteractsWithRecord {
+        getRecord as getBaseRecord;
+    }
     use HasUnsavedDataChangesAlert;
 
     /**
@@ -192,11 +196,15 @@ class EditRecord extends Page
 
             $this->callHook('beforeValidate');
 
+            $oldContainer = $component->getContainer();
+
             $data = Schema::make($component->getLivewire())
                 ->components([$component])
                 ->model($component->getRecord())
                 ->statePath('data')
                 ->getState();
+
+            $component->container($oldContainer);
 
             $this->callHook('afterValidate');
 
@@ -437,7 +445,8 @@ class EditRecord extends Page
         return Actions::make($this->getFormActions())
             ->alignment($this->getFormActionsAlignment())
             ->fullWidth($this->hasFullWidthFormActions())
-            ->sticky($this->areFormActionsSticky());
+            ->sticky($this->areFormActionsSticky())
+            ->key('form-actions');
     }
 
     public function hasFormWrapper(): bool
@@ -462,8 +471,11 @@ class EditRecord extends Page
         return false;
     }
 
-    public function getDefaultTestingSchemaName(): ?string
+    /**
+     * @return TModel
+     */
+    public function getRecord(): Model
     {
-        return 'form';
+        return $this->getBaseRecord();
     }
 }

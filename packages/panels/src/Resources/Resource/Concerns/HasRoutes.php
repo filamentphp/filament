@@ -150,10 +150,6 @@ trait HasRoutes
             return static::$slug;
         }
 
-        if ($parentResource = static::getParentResourceRegistration()) {
-            return $parentResource->getSlug();
-        }
-
         $pluralBasenameBeforeResource = (string) str(static::class)
             ->classBasename()
             ->beforeLast('Resource')

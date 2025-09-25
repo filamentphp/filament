@@ -2,6 +2,7 @@
 
 namespace Filament\Forms\Components\Concerns;
 
+use BackedEnum;
 use Closure;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Contracts\CanBeLengthConstrained;
@@ -761,7 +762,7 @@ trait CanBeValidated
         return $this->evaluate($this->regexPattern);
     }
 
-    public function getRequiredValidationRule(): string
+    public function getRequiredValidationRule(): string | Closure
     {
         return $this->isRequired() ? 'required' : 'nullable';
     }
@@ -1030,5 +1031,31 @@ trait CanBeValidated
         }, fn (Field $component): bool => (bool) $component->evaluate($statePath));
 
         return $this;
+    }
+
+    public function mutatesStateForValidation(): bool
+    {
+        return true;
+    }
+
+    public function mutateStateForValidation(mixed $state): mixed
+    {
+        if (parent::mutatesStateForValidation()) {
+            $state = parent::mutateStateForValidation($state);
+        }
+
+        // Laravel's `in` validation rule expects state values to be scalar, so we need to convert any
+        // enum objects to their backed values before they are passed to the Laravel validator.
+        if (is_array($state)) {
+            foreach ($state as $key => $value) {
+                if ($value instanceof BackedEnum) {
+                    $state[$key] = $value->value;
+                }
+            }
+        } elseif ($state instanceof BackedEnum) {
+            $state = $state->value;
+        }
+
+        return $state;
     }
 }

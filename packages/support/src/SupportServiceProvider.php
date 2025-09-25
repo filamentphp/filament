@@ -106,6 +106,8 @@ class SupportServiceProvider extends PackageServiceProvider
                     ->allowRelativeLinks()
                     ->allowRelativeMedias()
                     ->allowAttribute('class', allowedElements: '*')
+                    ->allowAttribute('data-color', allowedElements: '*')
+                    ->allowAttribute('data-from-breakpoint', allowedElements: '*')
                     ->allowAttribute('style', allowedElements: '*')
                     ->withMaxInputLength(500000),
             ),
@@ -189,7 +191,7 @@ class SupportServiceProvider extends PackageServiceProvider
                     'fi-grid-direction-col' => $direction === GridDirection::Column,
                     ...array_map(
                         fn (string $breakpoint): string => match ($breakpoint) {
-                            'default' => '',
+                            'default' => ($columns[$breakpoint] > 1) ? 'fi-grid-cols' : '',
                             default => "{$breakpoint}:fi-grid-cols",
                         },
                         array_keys($columns),
@@ -207,15 +209,15 @@ class SupportServiceProvider extends PackageServiceProvider
 
         ComponentAttributeBag::macro('gridColumn', function (array | int | string | null $span = [], array | int | null $start = [], array | int | string | null $order = [], bool $isHidden = false): ComponentAttributeBag {
             if (! is_array($span)) {
-                $span = ['default' => $span];
+                $span = ['lg' => $span];
             }
 
             if (! is_array($start)) {
-                $start = ['default' => $start];
+                $start = ['lg' => $start];
             }
 
             if (! is_array($order)) {
-                $order = ['default' => $order];
+                $order = ['lg' => $order];
             }
 
             $span = array_filter($span);

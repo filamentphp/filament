@@ -2,32 +2,32 @@
 
 return [
 
-    'label' => 'Turn off',
+    'label' => 'Kapat',
 
     'modal' => [
 
-        'heading' => 'Disable email verification codes',
+        'heading' => 'E-posta doğrulama kodlarını devre dışı bırak',
 
-        'description' => 'Are you sure you want to stop receiving email verification codes? Disabling this will remove an extra layer of security from your account.',
+        'description' => 'E-posta doğrulama kodları almayı durdurmak istediğinizden emin misiniz? Bu özelliği devre dışı bırakmak hesabınızdan ek bir güvenlik katmanını kaldıracaktır.',
 
         'form' => [
 
             'code' => [
 
-                'label' => 'Enter the 6-digit code we sent you by email',
+                'label' => 'Size e-posta ile gönderdiğimiz 6 haneli kodu girin',
 
-                'validation_attribute' => 'code',
+                'validation_attribute' => 'kod',
 
                 'actions' => [
 
                     'resend' => [
 
-                        'label' => 'Send a new code by email',
+                        'label' => 'E-posta ile yeni kod gönder',
 
                         'notifications' => [
 
                             'resent' => [
-                                'title' => 'We\'ve sent you a new code by email',
+                                'title' => 'Size e-posta ile yeni bir kod gönderdik',
                             ],
 
                         ],
@@ -38,7 +38,7 @@ return [
 
                 'messages' => [
 
-                    'invalid' => 'The code you entered is invalid.',
+                    'invalid' => 'Girdiğiniz kod geçersiz.',
 
                 ],
 
@@ -49,7 +49,7 @@ return [
         'actions' => [
 
             'submit' => [
-                'label' => 'Disable email verification codes',
+                'label' => 'E-posta doğrulama kodlarını devre dışı bırak',
             ],
 
         ],
@@ -59,7 +59,7 @@ return [
     'notifications' => [
 
         'disabled' => [
-            'title' => 'Email verification codes have been disabled',
+            'title' => 'E-posta doğrulama kodları devre dışı bırakıldı',
         ],
 
     ],

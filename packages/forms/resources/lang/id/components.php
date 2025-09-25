@@ -481,7 +481,8 @@ return [
             'bold' => 'Tebal',
             'bullet_list' => 'Daftar',
             'clear_formatting' => 'hapus format',
-            'code_block' => 'Kode',
+            'code' => 'Kode',
+            'code_block' => 'Blok kode',
             'custom_blocks' => 'Blok',
             'details' => 'Detail',
             'h1' => 'Judul',
@@ -592,6 +593,11 @@ return [
     'text_input' => [
 
         'actions' => [
+
+            'copy' => [
+                'label' => 'Salin',
+                'message' => 'Berhasil disalin',
+            ],
 
             'hide_password' => [
                 'label' => 'Sembunyikan kata sandi',

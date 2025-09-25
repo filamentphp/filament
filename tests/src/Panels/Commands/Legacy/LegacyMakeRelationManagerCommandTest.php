@@ -47,8 +47,8 @@ beforeEach(function (): void {
 
     invade(Filament::getCurrentOrDefaultPanel())->resources = [
         ...invade(Filament::getCurrentOrDefaultPanel())->resources,
-        'App\\Filament\\Resources\\TeamResource',
-        'App\\Filament\\Resources\\UserResource',
+        app()->getNamespace() . 'Filament\\Resources\\TeamResource',
+        app()->getNamespace() . 'Filament\\Resources\\UserResource',
     ];
 
     MakeRelationManagerCommand::$shouldCheckModelsForSoftDeletes = false;
@@ -74,7 +74,7 @@ it('can generate a relation manager with a related resource', function (): void 
     $this->artisan('make:filament-relation-manager', [
         'resource' => 'Users',
         'relationship' => 'teams',
-        '--related-resource' => 'App\\Filament\\Resources\\TeamResource',
+        '--related-resource' => app()->getNamespace() . 'Filament\\Resources\\TeamResource',
         '--panel' => 'admin',
         '--no-interaction' => true,
     ]);

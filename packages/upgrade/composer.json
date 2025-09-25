@@ -17,6 +17,13 @@
             "Filament\\Upgrade\\": "src"
         }
     },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Filament\\Upgrade\\UpgradeServiceProvider"
+            ]
+        }
+    },
     "bin": [
         "bin/filament-v4"
     ],

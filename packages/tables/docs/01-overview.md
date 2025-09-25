@@ -357,7 +357,7 @@ public function table(Table $table): Table
 }
 ```
 
-If you're using mass assignment protection on your model, you will also need to add the `sort` attribute to the `$fillable` array there.
+The `sort` database column in this example will be used to store the order of records in the table. Whenever you order a database query using that column, they will be returned in the defined order. If you're using mass assignment protection on your model, you will also need to add the `sort` attribute to the `$fillable` array there.
 
 When making the table reorderable, a new button will be available on the table to toggle reordering.
 
@@ -384,6 +384,18 @@ public function table(Table $table): Table
 {
     return $table
         ->reorderable('sort', auth()->user()->isAdmin());
+}
+```
+
+You can pass a `direction` parameter as `desc` to reorder the records in descending order instead of ascending:
+
+```php
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->reorderable('sort', direction: 'desc');
 }
 ```
 

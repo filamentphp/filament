@@ -1,6 +1,7 @@
 ---
 title: Text input
 ---
+import Aside from "@components/Aside.astro"
 import AutoScreenshot from "@components/AutoScreenshot.astro"
 import UtilityInjection from "@components/UtilityInjection.astro"
 
@@ -218,6 +219,34 @@ TextInput::make('password')
 ```
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `revealable()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+## Allowing the text to be copied to the clipboard
+
+You may make the text copyable, such that clicking on a button next to the input copies the text to the clipboard, and optionally specify a custom confirmation message and duration in milliseconds:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('apiKey')
+    ->label('API key')
+    ->copyable(copyMessage: 'Copied!', copyMessageDuration: 1500)
+```
+
+Optionally, you may pass a boolean value to control if the text should be copyable or not:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('apiKey')
+    ->label('API key')
+    ->copyable(FeatureFlag::active())
+```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing static values, the `copyable()` method parameters also accept functions to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+<Aside variant="warning">
+    This feature only works when SSL is enabled for the app.
+</Aside>
 
 ## Input masking
 

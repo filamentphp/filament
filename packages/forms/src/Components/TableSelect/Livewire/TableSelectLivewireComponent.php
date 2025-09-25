@@ -2,7 +2,6 @@
 
 namespace Filament\Forms\Components\TableSelect\Livewire;
 
-use Exception;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Concerns\InteractsWithForms;
@@ -19,6 +18,7 @@ use Livewire\Attributes\Locked;
 use Livewire\Attributes\Modelable;
 use Livewire\Component;
 use Livewire\WithoutUrlPagination;
+use LogicException;
 
 class TableSelectLivewireComponent extends Component implements HasActions, HasForms, HasTable
 {
@@ -62,11 +62,11 @@ class TableSelectLivewireComponent extends Component implements HasActions, HasF
         $tableConfiguration = base64_decode($this->tableConfiguration);
 
         if (! class_exists($tableConfiguration)) {
-            throw new Exception("Table configuration class [{$tableConfiguration}] does not exist.");
+            throw new LogicException("Table configuration class [{$tableConfiguration}] does not exist.");
         }
 
         if (! method_exists($tableConfiguration, 'configure')) {
-            throw new Exception("Table configuration class [{$tableConfiguration}] does not have a [configure(Table \$table): Table] method.");
+            throw new LogicException("Table configuration class [{$tableConfiguration}] does not have a [configure(Table \$table): Table] method.");
         }
 
         $tableConfiguration::configure($table);

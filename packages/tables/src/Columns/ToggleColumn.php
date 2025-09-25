@@ -42,7 +42,7 @@ class ToggleColumn extends Column implements Editable, HasEmbeddedView
         $onIcon = $this->getOnIcon();
         $state = (bool) $this->getState();
 
-        $attributes = (new ComponentAttributeBag)
+        $attributes = $this->getExtraAttributeBag()
             ->merge([
                 'x-load' => true,
                 'x-load-src' => FilamentAsset::getAlpineComponentSrc('columns/toggle', 'filament/tables'),
@@ -82,7 +82,7 @@ class ToggleColumn extends Column implements Editable, HasEmbeddedView
 
             <div
                 x-bind:aria-checked="state?.toString()"
-                x-on:click="if (! $el.hasAttribute('disabled')) state = ! state"
+                x-on:click.stop.prevent="if (! $el.hasAttribute('disabled')) state = ! state"
                 x-bind:class="state ? '<?= Arr::toCssClasses([
                     'fi-toggle-on',
                     ...get_component_color_classes(ToggleComponent::class, $onColor),

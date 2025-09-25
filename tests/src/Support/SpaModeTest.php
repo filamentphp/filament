@@ -191,3 +191,53 @@ test('SPA prefetching handles edge cases gracefully', function (): void {
     expect(FilamentView::hasSpaPrefetching('http://localhost/page with spaces'))->toBeTrue();
     expect(FilamentView::hasSpaPrefetching('http://localhost/page%20with%20encoding'))->toBeTrue();
 });
+
+test('`hasNestedClickEventHandler` forces Alpine navigation when SPA mode is enabled without prefetching', function (): void {
+    FilamentView::spa(true, false);
+
+    expect(generate_href_html('http://localhost/page', hasNestedClickEventHandler: true))
+        ->toHtml()->toBe('href="http://localhost/page" x-on:click.prevent="Alpine.navigate(\'http://localhost/page\')"');
+
+    expect(generate_href_html('http://localhost/page', hasNestedClickEventHandler: false))
+        ->toHtml()->toBe('href="http://localhost/page" wire:navigate');
+});
+
+test('`hasNestedClickEventHandler` does not affect behavior when SPA prefetching is enabled', function (): void {
+    FilamentView::spa(true, true);
+
+    expect(generate_href_html('http://localhost/page', hasNestedClickEventHandler: true))
+        ->toHtml()->toBe('href="http://localhost/page" wire:navigate.hover');
+
+    expect(generate_href_html('http://localhost/page', hasNestedClickEventHandler: false))
+        ->toHtml()->toBe('href="http://localhost/page" wire:navigate.hover');
+});
+
+test('`hasNestedClickEventHandler` does not affect behavior when SPA mode is disabled', function (): void {
+    FilamentView::spa(false);
+
+    expect(generate_href_html('http://localhost/page', hasNestedClickEventHandler: true))
+        ->toHtml()->toBe('href="http://localhost/page"');
+
+    expect(generate_href_html('http://localhost/page', hasNestedClickEventHandler: false))
+        ->toHtml()->toBe('href="http://localhost/page"');
+});
+
+test('`hasNestedClickEventHandler` does not affect behavior when opening in new tab', function (): void {
+    FilamentView::spa(true, false);
+
+    expect(generate_href_html('http://localhost/page', shouldOpenInNewTab: true, hasNestedClickEventHandler: true))
+        ->toHtml()->toBe('href="http://localhost/page" target="_blank"');
+
+    expect(generate_href_html('http://localhost/page', shouldOpenInNewTab: true, hasNestedClickEventHandler: false))
+        ->toHtml()->toBe('href="http://localhost/page" target="_blank"');
+});
+
+test('`hasNestedClickEventHandler` works with `shouldOpenInSpaMode` parameter override', function (): void {
+    FilamentView::spa(false);
+
+    expect(generate_href_html('http://localhost/page', shouldOpenInSpaMode: true, hasNestedClickEventHandler: true))
+        ->toHtml()->toBe('href="http://localhost/page" x-on:click.prevent="Alpine.navigate(\'http://localhost/page\')"');
+
+    expect(generate_href_html('http://localhost/page', shouldOpenInSpaMode: true, hasNestedClickEventHandler: false))
+        ->toHtml()->toBe('href="http://localhost/page" wire:navigate');
+});

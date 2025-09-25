@@ -5,7 +5,7 @@
         @apply flex items-center gap-4 gap-x-6 bg-gray-50 px-4 sm:px-6 dark:bg-white/5;
 
         & .fi-ta-page-checkbox {
-            @apply my-4;
+            @apply my-4 shrink-0;
         }
 
         & .fi-ta-sorting-settings {
@@ -18,6 +18,8 @@
     }
 
     & .fi-ta-content {
+        @apply grid;
+
         &.fi-ta-content-grid {
             @apply gap-4 p-4 sm:px-6;
 
@@ -26,7 +28,12 @@
             }
 
             & .fi-ta-group-header {
-                @apply -mx-4 w-[calc(100%+2rem)] border-y border-gray-200 first:border-t-0 sm:-mx-6 sm:w-[calc(100%+3rem)] dark:border-white/5;
+                @apply -mx-4 border-y border-gray-200 first:border-t-0 sm:-mx-6 dark:border-white/5;
+                width: calc(100% + 2rem);
+
+                @variant sm {
+                    width: calc(100% + 3rem);
+                }
             }
 
             & .fi-ta-record {
@@ -133,14 +140,12 @@
         }
 
         & .fi-ta-group-header {
-            @apply col-span-full flex w-full items-center gap-x-3 bg-gray-50 px-3 py-2 dark:bg-white/5;
+            @apply col-span-full flex w-full items-center gap-x-3 bg-gray-50 px-1 py-2 sm:px-3 dark:bg-white/5;
 
             &.fi-collapsible {
                 @apply cursor-pointer;
 
                 &.fi-collapsed {
-                    @apply -mb-4 border-b-0;
-
                     & .fi-icon-btn {
                         @apply -rotate-180;
                     }
@@ -156,7 +161,7 @@
             }
 
             & .fi-ta-group-checkbox {
-                @apply px-3;
+                @apply mx-3;
             }
         }
 
@@ -192,7 +197,7 @@
             }
 
             & .fi-ta-record-checkbox {
-                @apply mx-3 my-4;
+                @apply mx-3 my-4 shrink-0;
             }
 
             & .fi-ta-record-content-ctn {
@@ -204,6 +209,35 @@
 
                 & .fi-ta-record-content {
                     @apply block w-full;
+
+                    & .fi-ta-col {
+                        @apply flex justify-start text-start disabled:pointer-events-none;
+
+                        &.fi-growable {
+                            @apply w-full;
+                        }
+
+                        &.fi-align-center {
+                            @apply justify-center text-center;
+                        }
+
+                        &.fi-align-end {
+                            @apply justify-end text-end;
+                        }
+
+                        &.fi-align-left {
+                            @apply justify-start text-left;
+                        }
+
+                        &.fi-align-right {
+                            @apply justify-end text-right;
+                        }
+
+                        &.fi-align-justify,
+                        &.fi-align-between {
+                            @apply justify-between text-justify;
+                        }
+                    }
 
                     &.fi-collapsible {
                         @apply mt-3;
@@ -251,35 +285,6 @@
 
                     & .\32xl\:fi-visible {
                         @apply hidden 2xl:block;
-                    }
-
-                    & .fi-ta-col {
-                        @apply flex justify-start text-start disabled:pointer-events-none;
-
-                        &.fi-growable {
-                            @apply w-full;
-                        }
-
-                        &.fi-align-center {
-                            @apply justify-center text-center;
-                        }
-
-                        &.fi-align-end {
-                            @apply justify-end text-end;
-                        }
-
-                        &.fi-align-left {
-                            @apply justify-start text-left;
-                        }
-
-                        &.fi-align-right {
-                            @apply justify-end text-right;
-                        }
-
-                        &.fi-align-justify,
-                        &.fi-align-between {
-                            @apply justify-between text-justify;
-                        }
                     }
                 }
             }

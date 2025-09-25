@@ -3,12 +3,12 @@
 namespace Filament\Forms\Components\MorphToSelect;
 
 use Closure;
-use Exception;
 use Filament\Forms\Components\Select;
 use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+use LogicException;
 
 use function Filament\Support\generate_search_column_expression;
 use function Filament\Support\generate_search_term_expression;
@@ -23,6 +23,8 @@ class Type
     public Closure $getSearchResultsUsing;
 
     public Closure $getOptionsUsing;
+
+    public ?Closure $modifyKeySelectUsing = null;
 
     protected ?Closure $modifyOptionsQueryUsing = null;
 
@@ -238,6 +240,13 @@ class Type
         return $this;
     }
 
+    public function modifyKeySelectUsing(?Closure $callback): static
+    {
+        $this->modifyKeySelectUsing = $callback;
+
+        return $this;
+    }
+
     public function modifyOptionsQueryUsing(?Closure $callback): static
     {
         $this->modifyOptionsQueryUsing = $callback;
@@ -283,6 +292,11 @@ class Type
         return $this->getOptionLabelFromRecordUsing !== null;
     }
 
+    public function getModifyKeySelectUsingCallback(): ?Closure
+    {
+        return $this->modifyKeySelectUsing;
+    }
+
     /**
      * @return class-string<Model>
      */
@@ -312,7 +326,7 @@ class Type
     public function getTitleAttribute(): string
     {
         if (blank($this->titleAttribute)) {
-            throw new Exception("MorphToSelect type [{$this->getModel()}] must have a [titleAttribute()] set.");
+            throw new LogicException("MorphToSelect type [{$this->getModel()}] must have a [titleAttribute()] set.");
         }
 
         return $this->titleAttribute;

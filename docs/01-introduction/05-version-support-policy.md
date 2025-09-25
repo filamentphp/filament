@@ -7,7 +7,7 @@ contents: false
 
 | Version | New features               | Bug fixes                          | Security fixes                      |
 |---------|----------------------------|------------------------------------|-------------------------------------|
-| 1.x     | ❌ ended Jan 1 2022         | ❌ ended Jan 1 2025                 | ✅ until Jul 1 2025                  |
+| 1.x     | ❌ ended Jan 1 2022         | ❌ ended Jan 1 2025                 | ❌ ended Jul 1 2025                  |
 | 2.x     | ❌ ended Jul 1 2023         | ❌ ended Jan 1 2025                 | ✅ until Jan 1 2026                  |
 | 3.x     | ❌ ended Aug 1 2024         | ✅ until Aug 1 2026                 | ✅ until Jan 1 2028                  |
 | 4.x     | ✅ until 5.x stable release | ✅ ~1 year after 5.x stable release | ✅ ~2 years after 5.x stable release |

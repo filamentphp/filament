@@ -180,7 +180,7 @@ class MakeResourceCommand extends Command
                 name: 'model-namespace',
                 shortcut: null,
                 mode: InputOption::VALUE_REQUIRED,
-                description: 'The namespace of the model class, [App\\Models] by default',
+                description: 'The namespace of the model class, [' . app()->getNamespace() . 'Models] by default',
             ),
             new InputOption(
                 name: 'nested',
@@ -211,7 +211,7 @@ class MakeResourceCommand extends Command
                 name: 'resource-namespace',
                 shortcut: null,
                 mode: InputOption::VALUE_OPTIONAL,
-                description: 'The namespace of the resource class, such as [App\\Filament\\Resources]',
+                description: 'The namespace of the resource class, such as [' . app()->getNamespace() . 'Filament\\Resources]',
             ),
             new InputOption(
                 name: 'simple',
@@ -301,7 +301,7 @@ class MakeResourceCommand extends Command
                 $this->modelFqnEnd = 'Resource';
             }
 
-            $modelNamespace = $this->option('model-namespace') ?? 'App\\Models';
+            $modelNamespace = $this->option('model-namespace') ?? app()->getNamespace() . 'Models';
 
             $this->modelFqn = "{$modelNamespace}\\{$this->modelFqnEnd}";
         } else {
@@ -321,7 +321,7 @@ class MakeResourceCommand extends Command
                         fn (string $class): bool => str($class)->replace(['\\', '/'], '')->contains($search, ignoreCase: true),
                     );
                 },
-                placeholder: 'App\\Models\\BlogPost',
+                placeholder: app()->getNamespace() . 'Models\\BlogPost',
                 required: true,
             );
 

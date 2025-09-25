@@ -142,13 +142,13 @@ test('can get component column order at one breakpoint', function (): void {
         ->getColumnOrder('2xl')->toBe($orderAt2xl);
 });
 
-test('can set component column order at `default` breakpoint', function (): void {
+test('can set component column order at `lg` breakpoint', function (): void {
     $component = (new Component)
         ->container(Schema::make(Livewire::make()))
         ->columnOrder($defaultOrder = rand(1, 12));
 
     expect($component)
-        ->getColumnOrder('default')->toBe($defaultOrder);
+        ->getColumnOrder('lg')->toBe($defaultOrder);
 });
 
 test('can get component column order with null default values', function (): void {

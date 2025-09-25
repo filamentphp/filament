@@ -89,12 +89,22 @@ trait CanGenerateLinkHtml
 
         $hasTooltip = filled($tooltip);
 
+        $formAttributes = $attributes->only(['action', 'method', 'wire:submit']);
+
         $attributes = $attributes
+            ->when(
+                $tag === 'form',
+                fn (ComponentAttributeBag $attributes) => $attributes->except(['action', 'class', 'method', 'wire:submit']),
+            )
             ->merge([
                 'aria-disabled' => $isDisabled ? 'true' : null,
                 'disabled' => $isDisabled && blank($tooltip),
                 'form' => $formId,
-                'type' => $tag === 'button' ? $type : null,
+                'type' => match ($tag) {
+                    'button' => $type,
+                    'form' => 'submit',
+                    default => null,
+                },
                 'wire:loading.attr' => $tag === 'button' ? 'disabled' : null,
                 'wire:target' => ($hasLoadingIndicator && $loadingIndicatorTarget) ? $loadingIndicatorTarget : null,
             ], escape: false)
@@ -124,7 +134,9 @@ trait CanGenerateLinkHtml
 
         ob_start(); ?>
 
-        <<?= $tag ?>
+        <?= ($tag === 'form') ? ('<form ' . $formAttributes->toHtml() . '>' . csrf_field()) : '' ?>
+
+        <<?= ($tag === 'form') ? 'button' : $tag ?>
             <?php if (($tag === 'a') && (! ($isDisabled && $hasTooltip))) { ?>
                 <?= generate_href_html($href, $target === '_blank', $hasSpaMode)->toHtml() ?>
             <?php } ?>
@@ -164,7 +176,9 @@ trait CanGenerateLinkHtml
                     </span>
                 </div>
             <?php } ?>
-        </<?= $tag ?>>
+        </<?= ($tag === 'form') ? 'button' : $tag ?>>
+
+        <?= ($tag === 'form') ? '</form>' : '' ?>
 
         <?php return ob_get_clean();
     }

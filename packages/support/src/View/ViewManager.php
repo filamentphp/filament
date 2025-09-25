@@ -42,13 +42,38 @@ class ViewManager
     /**
      * @param  string | array<string> | null  $scopes
      */
-    public function renderHook(string $name, string | array | null $scopes = null): Htmlable
+    public function hasRenderHook(string $name, string | array | null $scopes = null): bool
+    {
+        if (! isset($this->renderHooks[$name])) {
+            return false;
+        }
+
+        if (isset($this->renderHooks[$name][null]) && count($this->renderHooks[$name][null])) {
+            return true;
+        }
+
+        $scopes = Arr::wrap($scopes);
+
+        foreach ($scopes as $scopeName) {
+            if (isset($this->renderHooks[$name][$scopeName]) && count($this->renderHooks[$name][$scopeName])) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * @param  string | array<string> | null  $scopes
+     * @param  array<string, mixed>  $data
+     */
+    public function renderHook(string $name, string | array | null $scopes = null, array $data = []): Htmlable
     {
         $renderedHooks = [];
 
         $scopes = Arr::wrap($scopes);
 
-        $renderHook = function (callable $hook) use (&$renderedHooks, $scopes): ?string {
+        $renderHook = function (callable $hook) use (&$renderedHooks, $scopes, $data): ?string {
             $hookId = spl_object_id($hook);
 
             if (in_array($hookId, $renderedHooks)) {
@@ -57,7 +82,9 @@ class ViewManager
 
             $renderedHooks[] = $hookId;
 
-            return (string) app()->call($hook, ['scopes' => $scopes]);
+            $result = app()->call($hook, ['data' => $data, 'scopes' => $scopes]);
+
+            return (string) $result;
         };
 
         $hooks = array_map(

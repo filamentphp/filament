@@ -4,16 +4,16 @@ return [
 
     'single' => [
 
-        'label' => 'Gjenskape',
+        'label' => 'Lag kopi',
 
         'modal' => [
 
-            'heading' => 'Gjenskap :label',
+            'heading' => 'Lag kopi av :label',
 
             'actions' => [
 
                 'replicate' => [
-                    'label' => 'Gjenskap',
+                    'label' => 'Lag kopi',
                 ],
 
             ],
@@ -23,7 +23,7 @@ return [
         'notifications' => [
 
             'replicated' => [
-                'title' => 'Gjenskapt',
+                'title' => 'Kopi opprettet',
             ],
 
         ],

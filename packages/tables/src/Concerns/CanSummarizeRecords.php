@@ -4,7 +4,6 @@ namespace Filament\Tables\Concerns;
 
 use Closure;
 use Filament\Support\Services\RelationshipJoiner;
-use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Str;
@@ -43,10 +42,7 @@ trait CanSummarizeRecords
                 continue;
             }
 
-            /** @var Connection $queryConnection */
-            $queryConnection = $query->getConnection();
-
-            $qualifiedAttribute = $queryConnection->getTablePrefix() . $query->getModel()->qualifyColumn($column->getName());
+            $qualifiedAttribute = $query->getModel()->qualifyColumn($column->getName());
 
             foreach ($summarizers as $summarizer) {
                 if ($summarizer->hasQueryModification()) {

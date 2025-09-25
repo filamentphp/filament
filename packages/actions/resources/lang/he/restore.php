@@ -8,7 +8,7 @@ return [
 
         'modal' => [
 
-            'heading' => 'שחזר את :label',
+            'heading' => 'שחזור :label',
 
             'actions' => [
 

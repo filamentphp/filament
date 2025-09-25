@@ -132,6 +132,8 @@ All these render hooks [can be scoped](#scoping-render-hooks) to any table Livew
 use Filament\Tables\View\TablesRenderHook;
 ```
 
+- `TablesRenderHook::FILTER_INDICATORS` - Replace the existing filter indicators, receives `filterIndicators` data as `array<Filament\Tables\Filters\Indicator>`
+- `TablesRenderHook::HEADER_CELL` - Replace the existing header cells, receives the `Filament\Tables\Columns\Column` object as `column` and `isReordering` in the data.
 - `TablesRenderHook::SELECTION_INDICATOR_ACTIONS_AFTER` - After the "select all" and "deselect all" action buttons in the selection indicator bar
 - `TablesRenderHook::SELECTION_INDICATOR_ACTIONS_BEFORE` - Before the "select all" and "deselect all" action buttons in the selection indicator bar
 - `TablesRenderHook::HEADER_AFTER` - After the header container
@@ -148,6 +150,24 @@ use Filament\Tables\View\TablesRenderHook;
 - `TablesRenderHook::TOOLBAR_START` - The start of the toolbar
 - `TablesRenderHook::TOOLBAR_COLUMN_MANAGER_TRIGGER_AFTER` - After the [column manager](../tables/columns/getting-started#toggling-column-visibility) trigger
 - `TablesRenderHook::TOOLBAR_COLUMN_MANAGER_TRIGGER_BEFORE` - Before the [column manager](../tables/columns/getting-started#toggling-column-visibility) trigger
+
+
+### Actions render hooks
+
+All these render hooks [can be scoped](#scoping-render-hooks) to any Livewire component class. When using the Panel Builder, these classes might be the List or Manage page of a resource, or a relation manager.
+
+Scoping is typically not enough in this case, as Livewire components can have multiple actions, so you can access the `action` data as `Filament\Actions\Action` to identify the specific action in all these render hooks.
+
+```php
+use Filament\Actions\View\ActionsRenderHook;
+```
+
+- `ActionsRenderHook::MODAL_CUSTOM_CONTENT_AFTER` - After the [modal content](../actions/modals#custom-modal-content)
+- `ActionsRenderHook::MODAL_CUSTOM_CONTENT_BEFORE` - Before the [modal content](../actions/modals#custom-modal-content)
+- `ActionsRenderHook::MODAL_CUSTOM_CONTENT_FOOTER_AFTER` - After the [modal content footer](../actions/modals#adding-custom-modal-content-below-the-form)
+- `ActionsRenderHook::MODAL_CUSTOM_CONTENT_FOOTER_BEFORE` - Before the [modal content footer](../actions/modals#adding-custom-modal-content-below-the-form)
+- `ActionsRenderHook::MODAL_SCHEMA_AFTER` - After the [modal schema](../actions/modals#rendering-a-schema-in-a-modal)
+- `ActionsRenderHook::MODAL_SCHEMA_BEFORE` - Before the [modal schema](../actions/modals#rendering-a-schema-in-a-modal)
 
 
 ### Widgets render hooks
@@ -220,6 +240,20 @@ FilamentView::registerRenderHook(
 );
 ```
 
+## Passing data to render hooks
+
+Render hooks can receive "data" from when the hook is rendered. To access data from a render hook, you can inject it using an `array $data` parameter to the hook's rendering function:
+
+```php
+use Filament\Support\Facades\FilamentView;
+use Filament\Tables\View\TablesRenderHook;
+
+FilamentView::registerRenderHook(
+    TablesRenderHook::FILTER_INDICATORS,
+    fn (array $data): View => view('filter-indicators', ['indicators' => $data['filterIndicators']]),
+);
+```
+
 ## Rendering hooks
 
 Plugin developers might find it useful to expose render hooks to their users. You do not need to register them anywhere, simply output them in Blade like so:
@@ -228,7 +262,7 @@ Plugin developers might find it useful to expose render hooks to their users. Yo
 {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_START) }}
 ```
 
-To provide scope your render hook, you can pass it as the second argument to `renderHook()`. For instance, if your hook is inside a Livewire component, you can pass the class of the component using `static::class`:
+To provide [scope](#scoping-render-hooks) your render hook, you can pass it as the second argument to `renderHook()`. For instance, if your hook is inside a Livewire component, you can pass the class of the component using `static::class`:
 
 ```blade
 {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_START, scopes: $this->getRenderHookScopes()) }}
@@ -238,4 +272,10 @@ You can even pass multiple scopes as an array, and all render hooks that match a
 
 ```blade
 {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_START, scopes: [static::class, \App\Filament\Resources\Users\UserResource::class]) }}
+```
+
+You can pass [data](#passing-data-to-render-hooks) to a render hook using a `data` argument to the `renderHook()` function:
+
+```blade
+{{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Tables\View\TablesRenderHook::FILTER_INDICATORS, data: ['filterIndicators' => $filterIndicators]) }}
 ```

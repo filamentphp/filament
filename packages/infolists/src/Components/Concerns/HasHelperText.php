@@ -11,7 +11,15 @@ trait HasHelperText
 {
     public function helperText(string | Htmlable | Closure | null $text): static
     {
-        $this->belowContent(fn (Component $component): Text => Text::make($component->evaluate($text)));
+        $this->belowContent(function (Component $component) use ($text): ?Text {
+            $content = $component->evaluate($text);
+
+            if (blank($content)) {
+                return null;
+            }
+
+            return Text::make($content);
+        });
 
         return $this;
     }

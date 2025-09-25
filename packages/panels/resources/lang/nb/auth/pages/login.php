@@ -43,6 +43,30 @@ return [
 
     ],
 
+    'multi_factor' => [
+
+        'heading' => 'Bekreft identiteten din',
+
+        'subheading' => 'For å fortsette innloggingen må du bekrefte identiteten din.',
+
+        'form' => [
+
+            'provider' => [
+                'label' => 'Hvordan vil du bekrefte?',
+            ],
+
+            'actions' => [
+
+                'authenticate' => [
+                    'label' => 'Bekreft innlogging',
+                ],
+
+            ],
+
+        ],
+
+    ],
+
     'messages' => [
 
         'failed' => 'Påloggingsinformasjonen stemmer ikke med våre data',

@@ -2,12 +2,14 @@
     use Filament\Support\Enums\Alignment;
     use Filament\Support\Enums\VerticalAlignment;
     use Filament\Support\Enums\Width;
+    use Filament\Support\Facades\FilamentView;
     use Filament\Tables\Actions\HeaderActionsPosition;
     use Filament\Tables\Columns\Column;
     use Filament\Tables\Columns\ColumnGroup;
     use Filament\Tables\Enums\FiltersLayout;
     use Filament\Tables\Enums\RecordActionsPosition;
     use Filament\Tables\Enums\RecordCheckboxPosition;
+    use Filament\Tables\View\TablesRenderHook;
     use Illuminate\Support\Str;
     use Illuminate\View\ComponentAttributeBag;
 
@@ -81,6 +83,7 @@
     $isReordering = $isReordering();
     $areGroupingSettingsVisible = (! $isReordering) && count($groups) && (! $areGroupingSettingsHidden());
     $isGroupingDirectionSettingHidden = $isGroupingDirectionSettingHidden();
+    $areGroupsCollapsedByDefault = $areGroupsCollapsedByDefault();
     $areGroupingSettingsInDropdownOnDesktop = $areGroupingSettingsInDropdownOnDesktop();
     $isColumnSearchVisible = $isSearchableByColumn();
     $isGlobalSearchVisible = $isSearchable();
@@ -134,9 +137,11 @@
         wire:init="loadTable"
     @endif
     x-data="filamentTable({
+                areGroupsCollapsedByDefault: @js($areGroupsCollapsedByDefault),
                 canTrackDeselectedRecords: @js($canTrackDeselectedRecords()),
                 currentSelectionLivewireProperty: @js($getCurrentSelectionLivewireProperty()),
                 maxSelectableRecords: @js($maxSelectableRecords),
+                selectsCurrentPageOnly: @js($selectsCurrentPageOnly),
                 $wire,
             })"
     {{
@@ -163,7 +168,7 @@
             x-show="@js($hasHeader) || @js($hasNonBulkToolbarAction) || (getSelectedRecordsCount() && @js(count($toolbarActions)))"
             class="fi-ta-header-ctn"
         >
-            {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Tables\View\TablesRenderHook::HEADER_BEFORE, scopes: static::class) }}
+            {{ FilamentView::renderHook(TablesRenderHook::HEADER_BEFORE, scopes: static::class) }}
 
             @if ($header)
                 {{ $header }}
@@ -202,7 +207,7 @@
                 </div>
             @endif
 
-            {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Tables\View\TablesRenderHook::HEADER_AFTER, scopes: static::class) }}
+            {{ FilamentView::renderHook(TablesRenderHook::HEADER_AFTER, scopes: static::class) }}
 
             @if ($hasFiltersAboveContent)
                 <div
@@ -231,23 +236,23 @@
                 </div>
             @endif
 
-            {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Tables\View\TablesRenderHook::TOOLBAR_BEFORE, scopes: static::class) }}
+            {{ FilamentView::renderHook(TablesRenderHook::TOOLBAR_BEFORE, scopes: static::class) }}
 
             <div
                 @if (! $hasHeaderToolbar) x-cloak @endif
                 x-show="@js($hasHeaderToolbar) || @js($hasNonBulkToolbarAction) || (getSelectedRecordsCount() && @js(count($toolbarActions)))"
                 class="fi-ta-header-toolbar"
             >
-                {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Tables\View\TablesRenderHook::TOOLBAR_START, scopes: static::class) }}
+                {{ FilamentView::renderHook(TablesRenderHook::TOOLBAR_START, scopes: static::class) }}
 
                 <div class="fi-ta-actions fi-align-start fi-wrapped">
-                    {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Tables\View\TablesRenderHook::TOOLBAR_REORDER_TRIGGER_BEFORE, scopes: static::class) }}
+                    {{ FilamentView::renderHook(TablesRenderHook::TOOLBAR_REORDER_TRIGGER_BEFORE, scopes: static::class) }}
 
                     @if ($isReorderable)
                         {{ $reorderRecordsTriggerAction }}
                     @endif
 
-                    {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Tables\View\TablesRenderHook::TOOLBAR_REORDER_TRIGGER_AFTER, scopes: static::class) }}
+                    {{ FilamentView::renderHook(TablesRenderHook::TOOLBAR_REORDER_TRIGGER_AFTER, scopes: static::class) }}
 
                     @if ((! $isReordering) && count($toolbarActions))
                         @foreach ($toolbarActions as $action)
@@ -255,31 +260,53 @@
                         @endforeach
                     @endif
 
-                    {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Tables\View\TablesRenderHook::TOOLBAR_GROUPING_SELECTOR_BEFORE, scopes: static::class) }}
+                    {{ FilamentView::renderHook(TablesRenderHook::TOOLBAR_GROUPING_SELECTOR_BEFORE, scopes: static::class) }}
 
                     @if ($areGroupingSettingsVisible)
                         <div
                             x-data="{
-                                direction: $wire.$entangle('tableGroupingDirection', true),
-                                group: $wire.$entangle('tableGrouping', true),
+                                grouping: $wire.$entangle('tableGrouping', true),
+                                group: null,
+                                direction: null,
                             }"
                             x-init="
-                                $watch('group', function (newGroup, oldGroup) {
-                                    if (newGroup && direction) {
-                                        return
-                                    }
+                                if (grouping) {
+                                    ;[group, direction] = grouping.split(':')
+                                    direction ??= 'asc'
+                                }
 
-                                    if (! newGroup) {
+                                $watch('grouping', function () {
+                                    if (! grouping) {
+                                        group = null
                                         direction = null
 
                                         return
                                     }
 
-                                    if (oldGroup) {
+                                    ;[group, direction] = grouping.split(':')
+                                    direction ??= 'asc'
+                                })
+
+                                $watch('direction', function () {
+                                    grouping = group ? `${group}:${direction}` : null
+                                })
+
+                                $watch('group', function (newGroup, oldGroup) {
+                                    if (! newGroup) {
+                                        direction = null
+                                        grouping = group ? `${group}:${direction}` : null
+
                                         return
                                     }
 
-                                    direction = 'asc'
+                                    if (oldGroup) {
+                                        grouping = group ? `${group}:${direction}` : null
+
+                                        return
+                                    }
+
+                                    direction ??= 'asc'
+                                    grouping = group ? `${group}:${direction}` : null
                                 })
                             "
                             class="fi-ta-grouping-settings"
@@ -348,18 +375,14 @@
                             @if (! $areGroupingSettingsInDropdownOnDesktop)
                                 <div class="fi-ta-grouping-settings-fields">
                                     <label>
-                                        <span class="fi-sr-only">
-                                            {{ __('filament-tables::table.grouping.fields.group.label') }}
-                                        </span>
-
-                                        <x-filament::input.wrapper>
+                                        <x-filament::input.wrapper
+                                            :prefix="__('filament-tables::table.grouping.fields.group.label')"
+                                        >
                                             <x-filament::input.select
                                                 x-model="group"
                                                 x-on:change="resetCollapsedGroups()"
                                             >
-                                                <option value="">
-                                                    {{ __('filament-tables::table.grouping.fields.group.placeholder') }}
-                                                </option>
+                                                <option value="">-</option>
 
                                                 @foreach ($groups as $groupOption)
                                                     <option
@@ -398,12 +421,12 @@
                         </div>
                     @endif
 
-                    {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Tables\View\TablesRenderHook::TOOLBAR_GROUPING_SELECTOR_AFTER, scopes: static::class) }}
+                    {{ FilamentView::renderHook(TablesRenderHook::TOOLBAR_GROUPING_SELECTOR_AFTER, scopes: static::class) }}
                 </div>
 
                 @if ($isGlobalSearchVisible || $hasFiltersDialog || $hasColumnManagerDropdown)
                     <div>
-                        {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Tables\View\TablesRenderHook::TOOLBAR_SEARCH_BEFORE, scopes: static::class) }}
+                        {{ FilamentView::renderHook(TablesRenderHook::TOOLBAR_SEARCH_BEFORE, scopes: static::class) }}
 
                         @if ($isGlobalSearchVisible)
                             @php
@@ -417,7 +440,7 @@
                             />
                         @endif
 
-                        {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Tables\View\TablesRenderHook::TOOLBAR_SEARCH_AFTER, scopes: static::class) }}
+                        {{ FilamentView::renderHook(TablesRenderHook::TOOLBAR_SEARCH_AFTER, scopes: static::class) }}
 
                         @if ($hasFiltersDialog || $hasColumnManagerDropdown)
                             @if ($hasFiltersDialog)
@@ -477,6 +500,7 @@
                                         :max-height="$filtersFormMaxHeight"
                                         placement="bottom-end"
                                         shift
+                                        :flip="false"
                                         :width="$filtersFormWidth ?? Width::ExtraSmall"
                                         :wire:key="$this->getId() . '.table.filters'"
                                         class="fi-ta-filters-dropdown"
@@ -494,7 +518,7 @@
                                 @endif
                             @endif
 
-                            {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Tables\View\TablesRenderHook::TOOLBAR_COLUMN_MANAGER_TRIGGER_BEFORE, scopes: static::class) }}
+                            {{ FilamentView::renderHook(TablesRenderHook::TOOLBAR_COLUMN_MANAGER_TRIGGER_BEFORE, scopes: static::class) }}
 
                             @if ($hasColumnManagerDropdown)
                                 @php
@@ -507,6 +531,7 @@
                                     :max-height="$columnManagerMaxHeight"
                                     placement="bottom-end"
                                     shift
+                                    :flip="false"
                                     :width="$columnManagerWidth"
                                     :wire:key="$this->getId() . '.table.column-manager'"
                                     class="fi-ta-col-manager-dropdown"
@@ -526,15 +551,15 @@
                                 </x-filament::dropdown>
                             @endif
 
-                            {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Tables\View\TablesRenderHook::TOOLBAR_COLUMN_MANAGER_TRIGGER_AFTER, scopes: static::class) }}
+                            {{ FilamentView::renderHook(TablesRenderHook::TOOLBAR_COLUMN_MANAGER_TRIGGER_AFTER, scopes: static::class) }}
                         @endif
                     </div>
                 @endif
 
-                {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Tables\View\TablesRenderHook::TOOLBAR_END) }}
+                {{ FilamentView::renderHook(TablesRenderHook::TOOLBAR_END) }}
             </div>
 
-            {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Tables\View\TablesRenderHook::TOOLBAR_AFTER) }}
+            {{ FilamentView::renderHook(TablesRenderHook::TOOLBAR_AFTER) }}
         </div>
 
         @if ($isReordering)
@@ -578,14 +603,14 @@
 
                 @if (! $isSelectionDisabled)
                     <div>
-                        {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Tables\View\TablesRenderHook::SELECTION_INDICATOR_ACTIONS_BEFORE, scopes: static::class) }}
+                        {{ FilamentView::renderHook(TablesRenderHook::SELECTION_INDICATOR_ACTIONS_BEFORE, scopes: static::class) }}
 
                         <div class="fi-ta-selection-indicator-actions-ctn">
                             <x-filament::link
                                 color="primary"
                                 tag="button"
                                 x-on:click="selectAllRecords"
-                                :x-show="'canSelectAllRecords(' . \Illuminate\Support\Js::from($selectsCurrentPageOnly) . ')'"
+                                x-show="canSelectAllRecords()"
                                 {{-- Make sure the Alpine attributes get re-evaluated after a Livewire request: --}}
                                 :wire:key="$this->getId() . 'table.selection.indicator.actions.select-all.' . $allSelectableRecordsCount . '.' . $page"
                             >
@@ -601,62 +626,66 @@
                             </x-filament::link>
                         </div>
 
-                        {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Tables\View\TablesRenderHook::SELECTION_INDICATOR_ACTIONS_AFTER, scopes: static::class) }}
+                        {{ FilamentView::renderHook(TablesRenderHook::SELECTION_INDICATOR_ACTIONS_AFTER, scopes: static::class) }}
                     </div>
                 @endif
             </div>
         @endif
 
         @if ($filterIndicators)
-            <div class="fi-ta-filter-indicators">
-                <div>
-                    <span class="fi-ta-filter-indicators-label">
-                        {{ __('filament-tables::table.filters.indicator') }}
-                    </span>
+            @if (filled($filterIndicatorsView = FilamentView::renderHook(TablesRenderHook::FILTER_INDICATORS, scopes: static::class, data: ['filterIndicators' => $filterIndicators])))
+                {{ $filterIndicatorsView }}
+            @else
+                <div class="fi-ta-filter-indicators">
+                    <div>
+                        <span class="fi-ta-filter-indicators-label">
+                            {{ __('filament-tables::table.filters.indicator') }}
+                        </span>
 
-                    <div class="fi-ta-filter-indicators-badges-ctn">
-                        @foreach ($filterIndicators as $indicator)
-                            @php
-                                $indicatorColor = $indicator->getColor();
-                            @endphp
+                        <div class="fi-ta-filter-indicators-badges-ctn">
+                            @foreach ($filterIndicators as $indicator)
+                                @php
+                                    $indicatorColor = $indicator->getColor();
+                                @endphp
 
-                            <x-filament::badge :color="$indicatorColor">
-                                {{ $indicator->getLabel() }}
+                                <x-filament::badge :color="$indicatorColor">
+                                    {{ $indicator->getLabel() }}
 
-                                @if ($indicator->isRemovable())
-                                    @php
-                                        $indicatorRemoveLivewireClickHandler = $indicator->getRemoveLivewireClickHandler();
-                                    @endphp
+                                    @if ($indicator->isRemovable())
+                                        @php
+                                            $indicatorRemoveLivewireClickHandler = $indicator->getRemoveLivewireClickHandler();
+                                        @endphp
 
-                                    <x-slot
-                                        name="deleteButton"
-                                        :label="__('filament-tables::table.filters.actions.remove.label')"
-                                        :wire:click="$indicatorRemoveLivewireClickHandler"
-                                        wire:loading.attr="disabled"
-                                        wire:target="removeTableFilter"
-                                    ></x-slot>
-                                @endif
-                            </x-filament::badge>
-                        @endforeach
+                                        <x-slot
+                                            name="deleteButton"
+                                            :label="__('filament-tables::table.filters.actions.remove.label')"
+                                            :wire:click="$indicatorRemoveLivewireClickHandler"
+                                            wire:loading.attr="disabled"
+                                            wire:target="removeTableFilter"
+                                        ></x-slot>
+                                    @endif
+                                </x-filament::badge>
+                            @endforeach
+                        </div>
                     </div>
-                </div>
 
-                @if (collect($filterIndicators)->contains(fn (\Filament\Tables\Filters\Indicator $indicator): bool => $indicator->isRemovable()))
-                    <button
-                        type="button"
-                        x-tooltip="{
-                            content: @js(__('filament-tables::table.filters.actions.remove_all.tooltip')),
-                            theme: $store.theme,
-                        }"
-                        wire:click="removeTableFilters"
-                        wire:loading.attr="disabled"
-                        wire:target="removeTableFilters,removeTableFilter"
-                        class="fi-icon-btn fi-size-sm"
-                    >
-                        {{ \Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::XMark, alias: \Filament\Tables\View\TablesIconAlias::FILTERS_REMOVE_ALL_BUTTON, size: \Filament\Support\Enums\IconSize::Small) }}
-                    </button>
-                @endif
-            </div>
+                    @if (collect($filterIndicators)->contains(fn (\Filament\Tables\Filters\Indicator $indicator): bool => $indicator->isRemovable()))
+                        <button
+                            type="button"
+                            x-tooltip="{
+                                content: @js(__('filament-tables::table.filters.actions.remove_all.tooltip')),
+                                theme: $store.theme,
+                            }"
+                            wire:click="removeTableFilters"
+                            wire:loading.attr="disabled"
+                            wire:target="removeTableFilters,removeTableFilter"
+                            class="fi-icon-btn fi-size-sm"
+                        >
+                            {{ \Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::XMark, alias: \Filament\Tables\View\TablesIconAlias::FILTERS_REMOVE_ALL_BUTTON, size: \Filament\Support\Enums\IconSize::Small) }}
+                        </button>
+                    @endif
+                </div>
+            @endif
         @endif
 
         @if (((! $content) && (! $hasColumnsLayout)) || ($records === null) || count($records))
@@ -715,22 +744,45 @@
                                 @if (count($sortableColumns))
                                     <div
                                         x-data="{
-                                            column: $wire.$entangle('tableSortColumn', true),
-                                            direction: $wire.$entangle('tableSortDirection', true),
+                                            sort: $wire.$entangle('tableSort', true),
+                                            column: null,
+                                            direction: null,
                                         }"
                                         x-init="
+                                            if (sort) {
+                                                ;[column, direction] = sort.split(':')
+                                                direction ??= 'asc'
+                                            }
+
+                                            $watch('sort', function () {
+                                                if (! sort) {
+                                                    return
+                                                }
+
+                                                ;[column, direction] = sort.split(':')
+                                                direction ??= 'asc'
+                                            })
+
+                                            $watch('direction', function () {
+                                                sort = column ? `${column}:${direction}` : null
+                                            })
+
                                             $watch('column', function (newColumn, oldColumn) {
                                                 if (! newColumn) {
                                                     direction = null
+                                                    sort = column ? `${column}:${direction}` : null
 
                                                     return
                                                 }
 
                                                 if (oldColumn) {
+                                                    sort = column ? `${column}:${direction}` : null
+
                                                     return
                                                 }
 
                                                 direction = 'asc'
+                                                sort = column ? `${column}:${direction}` : null
                                             })
                                         "
                                         class="fi-ta-sorting-settings"
@@ -846,7 +898,7 @@
                                     );
                                 @endphp
 
-                                @if ($recordGroupTitle !== $previousRecordGroupTitle)
+                                @if ((string) $recordGroupTitle !== (string) $previousRecordGroupTitle)
                                     @if ($hasSummary && (! $isReordering) && filled($previousRecordGroupTitle))
                                         <table
                                             @class([
@@ -1018,7 +1070,7 @@
                                         <div>
                                             @if ($recordUrl)
                                                 <a
-                                                    {{ \Filament\Support\generate_href_html($recordUrl, $openRecordUrlInNewTab) }}
+                                                    {{ \Filament\Support\generate_href_html($recordUrl, $openRecordUrlInNewTab, hasNestedClickEventHandler: true) }}
                                                     class="fi-ta-record-content"
                                                 >
                                                     @foreach ($columnsLayout as $columnsLayoutComponent)
@@ -1297,63 +1349,74 @@
                                     @endif
                                 @endif
 
+                                @php
+                                    $hasHeaderCellRenderHook = FilamentView::hasRenderHook(TablesRenderHook::HEADER_CELL, scopes: static::class);
+                                @endphp
+
                                 @foreach ($columns as $column)
-                                    @php
-                                        $columnName = $column->getName();
-                                        $columnLabel = $column->getLabel();
-                                        $columnAlignment = $column->getAlignment();
-                                        $columnWidth = $column->getWidth();
-                                        $isColumnActivelySorted = $getSortColumn() === $column->getName();
-                                        $isColumnSortable = $column->isSortable() && (! $isReordering);
-                                    @endphp
+                                    @if ($hasHeaderCellRenderHook && filled($headerCellView = FilamentView::renderHook(TablesRenderHook::HEADER_CELL, scopes: static::class, data: [
+                                             'column' => $column,
+                                             'isReordering' => $isReordering,
+                                         ])))
+                                        {{ $headerCellView }}
+                                    @else
+                                        @php
+                                            $columnName = $column->getName();
+                                            $columnLabel = $column->getLabel();
+                                            $columnAlignment = $column->getAlignment();
+                                            $columnWidth = $column->getWidth();
+                                            $isColumnActivelySorted = $getSortColumn() === $column->getName();
+                                            $isColumnSortable = $column->isSortable() && (! $isReordering);
+                                        @endphp
 
-                                    <th
-                                        @if ($isColumnActivelySorted)
-                                            aria-sort="{{ $sortDirection === 'asc' ? 'ascending' : 'descending' }}"
-                                        @endif
-                                        {{
-                                            $column->getExtraHeaderAttributeBag()
-                                                ->class([
-                                                    'fi-ta-header-cell',
-                                                    'fi-ta-header-cell-' . str($columnName)->camel()->kebab(),
-                                                    'fi-growable' => blank($columnWidth) && $column->canGrow(default: false),
-                                                    'fi-grouped' => $column->getGroup(),
-                                                    'fi-wrapped' => $column->canHeaderWrap(),
-                                                    'fi-ta-header-cell-sorted' => $isColumnActivelySorted,
-                                                    ((($columnAlignment = $column->getAlignment()) instanceof \Filament\Support\Enums\Alignment) ? "fi-align-{$columnAlignment->value}" : (is_string($columnAlignment) ? $columnAlignment : '')),
-                                                    (filled($columnHiddenFrom = $column->getHiddenFrom()) ? "{$columnHiddenFrom}:fi-hidden" : ''),
-                                                    (filled($columnVisibleFrom = $column->getVisibleFrom()) ? "{$columnVisibleFrom}:fi-visible" : ''),
-                                                ])
-                                                ->style([
-                                                    ('width: ' . $columnWidth) => filled($columnWidth),
-                                                ])
-                                        }}
-                                    >
-                                        @if ($isColumnSortable)
-                                            <span
-                                                aria-label="{{ trim(strip_tags($columnLabel)) }}"
-                                                role="button"
-                                                tabindex="0"
-                                                wire:click="sortTable('{{ $columnName }}')"
-                                                x-on:keydown.enter.prevent.stop="$wire.sortTable('{{ $columnName }}')"
-                                                x-on:keydown.space.prevent.stop="$wire.sortTable('{{ $columnName }}')"
-                                                wire:loading.attr="disabled"
-                                                class="fi-ta-header-cell-sort-btn"
-                                            >
+                                        <th
+                                            @if ($isColumnActivelySorted)
+                                                aria-sort="{{ $sortDirection === 'asc' ? 'ascending' : 'descending' }}"
+                                            @endif
+                                            {{
+                                                $column->getExtraHeaderAttributeBag()
+                                                    ->class([
+                                                        'fi-ta-header-cell',
+                                                        'fi-ta-header-cell-' . str($columnName)->camel()->kebab(),
+                                                        'fi-growable' => blank($columnWidth) && $column->canGrow(default: false),
+                                                        'fi-grouped' => $column->getGroup(),
+                                                        'fi-wrapped' => $column->canHeaderWrap(),
+                                                        'fi-ta-header-cell-sorted' => $isColumnActivelySorted,
+                                                        ((($columnAlignment = $column->getAlignment()) instanceof \Filament\Support\Enums\Alignment) ? "fi-align-{$columnAlignment->value}" : (is_string($columnAlignment) ? $columnAlignment : '')),
+                                                        (filled($columnHiddenFrom = $column->getHiddenFrom()) ? "{$columnHiddenFrom}:fi-hidden" : ''),
+                                                        (filled($columnVisibleFrom = $column->getVisibleFrom()) ? "{$columnVisibleFrom}:fi-visible" : ''),
+                                                    ])
+                                                    ->style([
+                                                        ('width: ' . $columnWidth) => filled($columnWidth),
+                                                    ])
+                                            }}
+                                        >
+                                            @if ($isColumnSortable)
+                                                <span
+                                                    aria-label="{{ trim(strip_tags($columnLabel)) }}"
+                                                    role="button"
+                                                    tabindex="0"
+                                                    wire:click="sortTable('{{ $columnName }}')"
+                                                    x-on:keydown.enter.prevent.stop="$wire.sortTable('{{ $columnName }}')"
+                                                    x-on:keydown.space.prevent.stop="$wire.sortTable('{{ $columnName }}')"
+                                                    wire:loading.attr="disabled"
+                                                    class="fi-ta-header-cell-sort-btn"
+                                                >
+                                                    {{ $columnLabel }}
+
+                                                    {{
+                                                        \Filament\Support\generate_icon_html(($isColumnActivelySorted && $sortDirection === 'asc') ? \Filament\Support\Icons\Heroicon::ChevronUp : \Filament\Support\Icons\Heroicon::ChevronDown, alias: match (true) {
+                                                            $isColumnActivelySorted && ($sortDirection === 'asc') => \Filament\Tables\View\TablesIconAlias::HEADER_CELL_SORT_ASC_BUTTON,
+                                                            $isColumnActivelySorted && ($sortDirection === 'desc') => \Filament\Tables\View\TablesIconAlias::HEADER_CELL_SORT_DESC_BUTTON,
+                                                            default => \Filament\Tables\View\TablesIconAlias::HEADER_CELL_SORT_BUTTON,
+                                                        })
+                                                    }}
+                                                </span>
+                                            @else
                                                 {{ $columnLabel }}
-
-                                                {{
-                                                    \Filament\Support\generate_icon_html(($isColumnActivelySorted && $sortDirection === 'asc') ? \Filament\Support\Icons\Heroicon::ChevronUp : \Filament\Support\Icons\Heroicon::ChevronDown, alias: match (true) {
-                                                        $isColumnActivelySorted && ($sortDirection === 'asc') => \Filament\Tables\View\TablesIconAlias::HEADER_CELL_SORT_ASC_BUTTON,
-                                                        $isColumnActivelySorted && ($sortDirection === 'desc') => \Filament\Tables\View\TablesIconAlias::HEADER_CELL_SORT_DESC_BUTTON,
-                                                        default => \Filament\Tables\View\TablesIconAlias::HEADER_CELL_SORT_BUTTON,
-                                                    })
-                                                }}
-                                            </span>
-                                        @else
-                                            {{ $columnLabel }}
-                                        @endif
-                                    </th>
+                                            @endif
+                                        </th>
+                                    @endif
                                 @endforeach
 
                                 @if ((! $isReordering) && count($records))
@@ -1534,7 +1597,7 @@
                                             );
                                         @endphp
 
-                                        @if ($recordGroupTitle !== $previousRecordGroupTitle)
+                                        @if ((string) $recordGroupTitle !== (string) $previousRecordGroupTitle)
                                             @if ($hasSummary && (! $isReordering) && filled($previousRecordGroupTitle))
                                                 @php
                                                     $groupColumn = $group->getColumn();
@@ -1861,10 +1924,9 @@
                                                     >
                                                         <{{ $columnWrapperTag }}
                                                             @if ($columnWrapperTag === 'a')
-                                                                {{ \Filament\Support\generate_href_html($columnUrl ?: $recordUrl, $columnUrl ? $column->shouldOpenUrlInNewTab() : $openRecordUrlInNewTab) }}
+                                                                {{ \Filament\Support\generate_href_html($columnUrl ?: $recordUrl, $columnUrl ? $column->shouldOpenUrlInNewTab() : $openRecordUrlInNewTab, hasNestedClickEventHandler: true) }}
                                                             @elseif ($columnWrapperTag === 'button')
-                                                                type
-                                                                ="button"
+                                                                type="button"
                                                                 wire:click.prevent.stop="{{ $columnWireClickAction }}"
                                                                 wire:loading.attr="disabled"
                                                                 wire:target="{{ $columnWireClickAction }}"

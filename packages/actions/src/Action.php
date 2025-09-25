@@ -195,7 +195,13 @@ class Action extends ViewComponent implements Arrayable
     {
         $static = static::make($data['name']);
 
-        $view = $data['view'] ?? null;
+        $view = match ($data['view'] ?? null) {
+            'filament-actions::button-action' => static::BUTTON_VIEW,
+            'filament-actions::grouped-action' => static::GROUPED_VIEW,
+            'filament-actions::icon-button-action' => static::ICON_BUTTON_VIEW,
+            'filament-actions::link-action' => static::LINK_VIEW,
+            default => $data['view'] ?? null,
+        };
 
         if (filled($view) && static::isViewSafe($view)) {
             $static->view($view);
@@ -455,22 +461,29 @@ class Action extends ViewComponent implements Arrayable
     {
         $context = [];
 
-        if ($record = $this->getRecord()) {
-            $context['recordKey'] = $this->resolveRecordKey($record);
-        }
-
-        if (filled($schemaComponentKey = ($this->getSchemaContainer() ?? $this->getSchemaComponent())?->getKey())) {
-            $context['schemaComponent'] = $schemaComponentKey;
-        }
-
         $table = $this->getTable();
 
         if ($table) {
             $context['table'] = true;
         }
 
+        $record = $this->getRecord();
+
+        if ($record && (
+            (! $table)
+            || (! $record instanceof Model)
+            || blank($table->getModel())
+            || ($record::class === $table->getModel())
+        ) && filled($recordKey = $this->resolveRecordKey($record))) {
+            $context['recordKey'] = $recordKey;
+        }
+
         if ($table && $this->isBulk()) {
             $context['bulk'] = true;
+        }
+
+        if (filled($schemaComponentKey = ($this->getSchemaContainer() ?? $this->getSchemaComponent())?->getKey())) {
+            $context['schemaComponent'] = $schemaComponentKey;
         }
 
         return $context;
@@ -485,9 +498,9 @@ class Action extends ViewComponent implements Arrayable
             'arguments' => [$this->getArguments()],
             'data' => [$this->getData()],
             'livewire' => [$this->getLivewire()],
-            'model' => [$this->getModel() ?? $this->getSchemaContainer()?->getModel() ?? $this->getSchemaComponent()?->getModel()],
+            'model' => [$this->getModel()],
             'mountedActions' => [$this->getLivewire()->getMountedActions()],
-            'record' => [$this->getRecord() ?? $this->getSchemaContainer()?->getRecord() ?? $this->getSchemaComponent()?->getRecord()],
+            'record' => [$this->getRecord()],
             'selectedRecords', 'records' => [$this->getIndividuallyAuthorizedSelectedRecords()],
             'selectedRecordsQuery', 'recordsQuery' => [$this->getSelectedRecordsQuery()],
             'schema' => [$this->getSchemaContainer()],
@@ -506,7 +519,7 @@ class Action extends ViewComponent implements Arrayable
      */
     protected function resolveDefaultClosureDependencyForEvaluationByType(string $parameterType): array
     {
-        $record = $this->getRecord() ?? $this->getSchemaContainer()?->getRecord() ?? $this->getSchemaComponent()?->getRecord();
+        $record = $this->getRecord();
 
         return match ($parameterType) {
             Builder::class => [$this->getSelectedRecordsQuery()],
@@ -518,13 +531,11 @@ class Action extends ViewComponent implements Arrayable
 
     public function shouldClearRecordAfter(): bool
     {
-        $record = $this->getRecord();
-
-        if (! ($record instanceof Model)) {
+        if (! ($this->record instanceof Model)) {
             return false;
         }
 
-        return ! $record->exists;
+        return ! $this->record->exists;
     }
 
     public function clearRecordAfter(): void
@@ -678,6 +689,7 @@ class Action extends ViewComponent implements Arrayable
                 'action' => $shouldPostToUrl ? $url : null,
                 'method' => $shouldPostToUrl ? 'post' : null,
                 'wire:click' => $this->getLivewireClickHandler(),
+                'wire:target' => $this->getLivewireTarget(),
                 'x-on:click' => $this->getAlpineClickHandler(),
             ]))
                 ->merge($this->getExtraAttributes(), escape: false)
@@ -711,6 +723,7 @@ class Action extends ViewComponent implements Arrayable
                 'action' => $shouldPostToUrl ? $url : null,
                 'method' => $shouldPostToUrl ? 'post' : null,
                 'wire:click' => $this->getLivewireClickHandler(),
+                'wire:target' => $this->getLivewireTarget(),
                 'x-on:click' => $this->getAlpineClickHandler(),
             ]))
                 ->merge($this->getExtraAttributes(), escape: false)
@@ -749,6 +762,7 @@ class Action extends ViewComponent implements Arrayable
                 'action' => $shouldPostToUrl ? $url : null,
                 'method' => $shouldPostToUrl ? 'post' : null,
                 'wire:click' => $this->getLivewireClickHandler(),
+                'wire:target' => $this->getLivewireTarget(),
                 'x-on:click' => $this->getAlpineClickHandler(),
             ]))
                 ->merge($this->getExtraAttributes(), escape: false)
@@ -766,6 +780,7 @@ class Action extends ViewComponent implements Arrayable
             tag: $url ? $shouldPostToUrl ? 'form' : 'a' : 'button',
             target: ($url && $this->shouldOpenUrlInNewTab()) ? '_blank' : null,
             tooltip: $this->getTooltip(),
+            type: $this->canSubmitForm() ? 'submit' : 'button',
         );
     }
 
@@ -780,6 +795,7 @@ class Action extends ViewComponent implements Arrayable
                 'action' => $shouldPostToUrl ? $url : null,
                 'method' => $shouldPostToUrl ? 'post' : null,
                 'wire:click' => $this->getLivewireClickHandler(),
+                'wire:target' => $this->getLivewireTarget(),
                 'x-on:click' => $this->getAlpineClickHandler(),
             ]))
                 ->merge($this->getExtraAttributes(), escape: false)
@@ -814,6 +830,7 @@ class Action extends ViewComponent implements Arrayable
                 'action' => $shouldPostToUrl ? $url : null,
                 'method' => $shouldPostToUrl ? 'post' : null,
                 'wire:click' => $this->getLivewireClickHandler(),
+                'wire:target' => $this->getLivewireTarget(),
                 'x-on:click' => $this->getAlpineClickHandler(),
             ]))
                 ->merge($this->getExtraAttributes(), escape: false)

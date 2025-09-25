@@ -18,9 +18,25 @@
     & .fi-fo-rich-editor-tool {
         @apply flex h-8 min-w-8 items-center justify-center rounded-lg text-sm font-semibold text-gray-700 transition duration-75 hover:bg-gray-50 focus-visible:bg-gray-50 dark:text-gray-200 dark:hover:bg-white/5 dark:focus-visible:bg-white/5;
 
+        &[disabled] {
+            @apply pointer-events-none cursor-default opacity-70;
+        }
+
         &.fi-active {
             @apply text-primary-600 dark:text-primary-400 bg-gray-50 dark:bg-white/5;
         }
+    }
+
+    & .fi-fo-rich-editor-uploading-file-message {
+        @apply flex items-center gap-x-3 border-b border-gray-200 bg-gray-50 px-5 py-1.5 text-sm leading-6 font-medium text-gray-700 dark:border-white/10 dark:bg-white/5 dark:text-gray-200;
+
+        & .fi-loading-indicator {
+            @apply text-gray-400 dark:text-gray-500;
+        }
+    }
+
+    & .fi-fo-rich-editor-file-validation-message {
+        @apply border-danger-200 bg-danger-50 text-danger-700 dark:text-danger-200 flex items-center gap-x-3 border-b px-5 py-1.5 text-sm leading-6 font-medium dark:border-white/10 dark:bg-white/5;
     }
 
     & .fi-fo-rich-editor-main {
@@ -86,8 +102,8 @@
             @apply outline-none;
 
             & .ProseMirror-selectednode {
-                &div[data-type='customBlock'],
-                &img {
+                div&[data-type='customBlock'],
+                img& {
                     @apply ring-primary-600 dark:ring-primary-500 ring-2;
                 }
             }
@@ -182,14 +198,14 @@
         &.resize-cursor {
             @apply cursor-col-resize cursor-ew-resize;
         }
+
+        & .grid-layout > .grid-layout-col {
+            @apply rounded-md border border-gray-950/20 p-4 dark:border-white/20;
+        }
     }
 
     & img {
         @apply inline-block;
-
-        &.fi-loading {
-            @apply animate-pulse;
-        }
     }
 
     & div[data-type='customBlock'] {
@@ -236,5 +252,13 @@
         & .fi-fo-rich-editor-panels {
             @apply md:max-w-3xs md:rounded-ee-lg md:border-s md:border-b-0;
         }
+    }
+}
+
+& .fi-fo-rich-editor-text-color-select-option {
+    @apply flex items-center gap-2;
+
+    & .fi-fo-rich-editor-text-color-select-option-preview {
+        @apply h-5 w-5 shrink-0 rounded-full bg-(--color) dark:bg-(--dark-color);
     }
 }

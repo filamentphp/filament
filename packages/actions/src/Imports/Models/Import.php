@@ -2,9 +2,7 @@
 
 namespace Filament\Actions\Imports\Models;
 
-use App\Models\User;
 use Carbon\CarbonInterface;
-use Exception;
 use Filament\Actions\Imports\Importer;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Collection;
@@ -12,6 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Prunable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use LogicException;
 
 /**
  * @property CarbonInterface | null $completed_at
@@ -64,12 +63,14 @@ class Import extends Model
             return $this->belongsTo($authenticatable::class);
         }
 
-        if (! class_exists(User::class)) {
-            throw new Exception('No [App\\Models\\User] model found. Please bind an authenticatable model to the [Illuminate\\Contracts\\Auth\\Authenticatable] interface in a service provider\'s [register()] method.');
+        $userClass = app()->getNamespace() . 'Models\\User';
+
+        if (! class_exists($userClass)) {
+            throw new LogicException('No [' . $userClass . '] model found. Please bind an authenticatable model to the [Illuminate\\Contracts\\Auth\\Authenticatable] interface in a service provider\'s [register()] method.');
         }
 
         /** @phpstan-ignore-next-line */
-        return $this->belongsTo(User::class);
+        return $this->belongsTo($userClass);
     }
 
     /**

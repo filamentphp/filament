@@ -42,7 +42,7 @@ trait InteractsWithParentRecord
 
     protected function authorizeParentRecordAccess(): void
     {
-        abort_unless(static::getParentResource()::canView($this->getParentRecord()), 403);
+        abort_unless(static::getParentResource()::canView($this->getParentRecord()) || static::getParentResource()::canEdit($this->getParentRecord()), 403);
     }
 
     /**

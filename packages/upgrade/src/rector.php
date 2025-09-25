@@ -5,6 +5,8 @@ use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Facades\Filament;
 use Filament\FilamentManager;
+use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Infolists\Concerns\InteractsWithInfolists;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Schema;
 use Filament\Support\Colors\Color;
@@ -328,10 +330,14 @@ return static function (RectorConfig $rectorConfig): void {
     ]);
 
     $rectorConfig->ruleWithConfiguration(AddInterfaceByTraitRector::class, [
+        InteractsWithForms::class => HasActions::class,
+        InteractsWithInfolists::class => HasActions::class,
         InteractsWithTable::class => HasActions::class,
     ]);
 
     $rectorConfig->ruleWithConfiguration(AddTraitByTraitRector::class, [
+        InteractsWithForms::class => InteractsWithActions::class,
+        InteractsWithInfolists::class => InteractsWithActions::class,
         InteractsWithTable::class => InteractsWithActions::class,
     ]);
 };

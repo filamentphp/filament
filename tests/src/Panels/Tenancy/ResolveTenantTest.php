@@ -50,3 +50,13 @@ it('resolves the tenant correctly using domain', function (): void {
     $resolvedTenant = $panel->getTenant($team->getRouteKey());
     expect($resolvedTenant)->toBeSameModel($team);
 });
+
+it('resolves the tenant with custom path correctly from the route', function (): void {
+    $team = Team::factory()->create();
+
+    $panel = Filament::getPanel('tenancy');
+    Filament::setCurrentPanel($panel);
+    Filament::setTenant($team);
+
+    expect(Filament::getUrl($team))->toBe('http://localhost/tenancy/1');
+});

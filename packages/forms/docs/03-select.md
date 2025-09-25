@@ -582,6 +582,64 @@ MorphToSelect::make('commentable')
     Many of the same options in the select field are available for `MorphToSelect`, including `searchable()`, `preload()`, `native()`, `allowHtml()`, and `optionsLimit()`.
 </Aside>
 
+#### Customizing the morph select fields
+
+You may further customize the "key" select field for a specific morph type using the `modifyKeySelectUsing()` method:
+
+```php
+use Filament\Forms\Components\MorphToSelect;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+
+MorphToSelect::make('commentable')
+    ->types([
+        MorphToSelect\Type::make(Product::class)
+            ->titleAttribute('name')
+            ->modifyKeySelectUsing(fn (Select $select): Select => $select
+                ->createOptionForm([
+                    TextInput::make('title')
+                        ->required(),
+                ])
+                ->createOptionUsing(function (array $data): int {
+                    return Product::create($data)->getKey();
+                })),
+        MorphToSelect\Type::make(Post::class)
+            ->titleAttribute('title'),
+    ])
+```
+
+This is useful if you want to customize the "key" select field for each morphed type individually. If you want to customize the key select for all types, you can use the `modifyKeySelectUsing()` method on the `MorphToSelect` component itself:
+
+```php
+use Filament\Forms\Components\MorphToSelect;
+use Filament\Forms\Components\Select;
+
+MorphToSelect::make('commentable')
+    ->types([
+        MorphToSelect\Type::make(Product::class)
+            ->titleAttribute('name'),
+        MorphToSelect\Type::make(Post::class)
+            ->titleAttribute('title'),
+    ])
+    ->modifyKeySelectUsing(fn (Select $select): Select => $select->native())
+```
+
+You can also modify the "type" select field using the `modifyTypeSelectUsing()` method:
+
+```php
+use Filament\Forms\Components\MorphToSelect;
+use Filament\Forms\Components\Select;
+
+MorphToSelect::make('commentable')
+    ->types([
+        MorphToSelect\Type::make(Product::class)
+            ->titleAttribute('name'),
+        MorphToSelect\Type::make(Post::class)
+            ->titleAttribute('title'),
+    ])
+    ->modifyTypeSelectUsing(fn (Select $select): Select => $select->native())
+```
+
 ## Allowing HTML in the option labels
 
 By default, Filament will escape any HTML in the option labels. If you'd like to allow HTML, you can use the `allowHtml()` method:
@@ -868,6 +926,35 @@ ModalTableSelect::make('category_id')
     ->getOptionLabelFromRecordUsing(fn (Category $record): string => "{$record->name} ({$record->slug})")
 ```
 
+By default, `multiple()` options are listed in a "badge" design, and singular options are listed in plain text. The `badge()` method can be used to define whether the option label should appear inside a badge:
+
+```php
+use Filament\Forms\Components\ModalTableSelect;
+
+ModalTableSelect::make('category_id')
+    ->relationship('category', 'name')
+    ->tableConfiguration(CategoriesTable::class)
+    ->badge()
+
+ModalTableSelect::make('categories')
+    ->relationship('categories', 'name')
+    ->multiple()
+    ->tableConfiguration(CategoriesTable::class)
+    ->badge(false)
+```
+
+The `badgeColor()` method can be used to set the badge [color](../styling/colors):
+
+```php
+use Filament\Forms\Components\ModalTableSelect;
+
+ModalTableSelect::make('categories')
+    ->relationship('categories', 'name')
+    ->multiple()
+    ->tableConfiguration(CategoriesTable::class)
+    ->badgeColor('success')
+```
+
 ### Passing additional arguments to the table in a modal select
 
 You can pass arguments from your form to the table configuration class using the `tableArguments()` method. For example, this can be used to modify the table's query based on previously filled form fields:
@@ -899,7 +986,7 @@ use Filament\Tables\Columns\TextColumn;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Table;
 
-class EmployeesTable
+class ProductsTable
 {
     public static function configure(Table $table): Table
     {

@@ -405,7 +405,8 @@ class Login extends SimplePage
             ->footer([
                 Actions::make($this->getFormActions())
                     ->alignment($this->getFormActionsAlignment())
-                    ->fullWidth($this->hasFullWidthFormActions()),
+                    ->fullWidth($this->hasFullWidthFormActions())
+                    ->key('form-actions'),
             ])
             ->visible(fn (): bool => blank($this->userUndertakingMultiFactorAuthentication));
     }
@@ -426,10 +427,5 @@ class Login extends SimplePage
     public function getMultiFactorChallengeFormActionsAlignment(): string | Alignment
     {
         return $this->getFormActionsAlignment();
-    }
-
-    public function getDefaultTestingSchemaName(): ?string
-    {
-        return 'form';
     }
 }

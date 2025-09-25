@@ -17,6 +17,10 @@ class PartialsComponentHook extends ComponentHook
 {
     public function shouldSkipRender(): bool
     {
+        if ($this->shouldForceRender()) {
+            return false;
+        }
+
         if (! $this->isLackingPartialRendersToCoverAllCallsAndUpdates()) {
             return true;
         }
@@ -32,11 +36,15 @@ class PartialsComponentHook extends ComponentHook
         return false;
     }
 
-    public function update(): void
+    public function update(): Closure
     {
         $this->storeSet('updatesCount', ($this->storeGet('updatesCount') ?? 0) + 1);
 
-        $this->storeSet('isPendingPartialRender', true);
+        // Defer setting `isPendingPartialRender` to true until after all `updating` hooks have run,
+        // before any `updated` hooks run, and before the actual property is updated. This ensures
+        // that multiple partial renders that are recorded from the `updated` hook each have
+        // their own `isPendingPartialRender` state.
+        return fn () => $this->storeSet('isPendingPartialRender', true);
     }
 
     public function call(): void
@@ -56,6 +64,11 @@ class PartialsComponentHook extends ComponentHook
         }
 
         return ($updatesCount + $callsCount) !== intval($this->storeGet('partialRendersCount') ?? 0);
+    }
+
+    public function shouldForceRender(): bool
+    {
+        return store($this->component)->get('forceRender', false);
     }
 
     public function shouldRenderMountedActionOnly(): bool
@@ -96,6 +109,10 @@ class PartialsComponentHook extends ComponentHook
 
     public function dehydrate(ComponentContext $context): void
     {
+        if ($this->shouldForceRender()) {
+            return;
+        }
+
         $partials = [];
 
         $renderAndQueuePartials = function (Closure $getPartialsUsing) use (&$partials): void {
@@ -167,6 +184,11 @@ class PartialsComponentHook extends ComponentHook
     public function skipPartialRender(Component $component): void
     {
         $this->recordPartialRender($component);
+    }
+
+    public function forceRender(Component $component, bool $forceRender = true): void
+    {
+        store($component)->set('forceRender', $forceRender);
     }
 
     public function renderPartial(Component $component, Closure $renderUsing): void

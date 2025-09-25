@@ -3,10 +3,10 @@
 namespace Filament\Forms\Components;
 
 use Closure;
-use Exception;
 use Filament\Actions\Action;
 use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
 use Filament\Schemas\Components\StateCasts\EnumArrayStateCast;
+use Filament\Schemas\Components\StateCasts\OptionsArrayStateCast;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Filament\Support\Enums\Size;
 use Filament\Support\Services\RelationshipJoiner;
@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Str;
+use LogicException;
 
 class CheckboxList extends Field implements Contracts\CanDisableOptions, Contracts\HasNestedRecursiveValidationRules
 {
@@ -53,16 +54,6 @@ class CheckboxList extends Field implements Contracts\CanDisableOptions, Contrac
     protected function setUp(): void
     {
         parent::setUp();
-
-        $this->default([]);
-
-        $this->afterStateHydrated(static function (CheckboxList $component, $state): void {
-            if (is_array($state)) {
-                return;
-            }
-
-            $component->state([]);
-        });
 
         $this->searchDebounce(0);
 
@@ -158,7 +149,13 @@ class CheckboxList extends Field implements Contracts\CanDisableOptions, Contrac
             $relationshipTitleAttribute = $component->getRelationshipTitleAttribute();
 
             if (empty($relationshipQuery->getQuery()->orders)) {
-                $relationshipQuery->orderBy($relationshipQuery->qualifyColumn($relationshipTitleAttribute));
+                $relationshipOrderByAttribute = $relationshipTitleAttribute;
+
+                if (str_contains($relationshipOrderByAttribute, ' as ')) {
+                    $relationshipOrderByAttribute = (string) str($relationshipOrderByAttribute)->before(' as ');
+                }
+
+                $relationshipQuery->orderBy($relationshipQuery->qualifyColumn($relationshipOrderByAttribute));
             }
 
             if (str_contains($relationshipTitleAttribute, '->')) {
@@ -302,7 +299,7 @@ class CheckboxList extends Field implements Contracts\CanDisableOptions, Contrac
         $record = $this->getModelInstance();
 
         if (! $record->isRelation($name)) {
-            throw new Exception("The relationship [{$name}] does not exist on the model [{$this->getModel()}].");
+            throw new LogicException("The relationship [{$name}] does not exist on the model [{$this->getModel()}].");
         }
 
         return $record->{$name}();
@@ -330,6 +327,18 @@ class CheckboxList extends Field implements Contracts\CanDisableOptions, Contrac
             EnumArrayStateCast::class,
             ['enum' => $enum],
         );
+    }
+
+    /**
+     * @return array<StateCast>
+     */
+    public function getDefaultStateCasts(): array
+    {
+        if ($this->hasCustomStateCasts() || filled($this->getEnum())) {
+            return parent::getDefaultStateCasts();
+        }
+
+        return [app(OptionsArrayStateCast::class)];
     }
 
     /**

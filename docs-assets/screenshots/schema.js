@@ -986,6 +986,15 @@ export default {
             deviceScaleFactor: 3,
         },
     },
+    'forms/fields/repeater/table-compact': {
+        url: 'forms/fields',
+        selector: '#repeaterTableCompact',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
     'forms/fields/repeater/reorderable-with-buttons': {
         url: 'forms/fields',
         selector: '#repeaterReorderableWithButtons',
@@ -1619,6 +1628,15 @@ export default {
             deviceScaleFactor: 3,
         },
     },
+    'schemas/layout/empty-state/simple': {
+        url: 'schemas/layout',
+        selector: '#emptyState',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
     'schemas/layout/section/simple': {
         url: 'schemas/layout',
         selector: '#section',
@@ -2204,6 +2222,15 @@ export default {
     'infolists/entries/repeatable/grid': {
         url: 'infolists/entries',
         selector: '#repeatableGrid',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'infolists/entries/repeatable/table': {
+        url: 'infolists/entries',
+        selector: '#repeatableTable',
         viewport: {
             width: 1920,
             height: 640,

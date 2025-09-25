@@ -1,6 +1,7 @@
 ---
 title: Chart widgets
 ---
+import Aside from "@components/Aside.astro"
 
 ## Introduction
 
@@ -125,7 +126,9 @@ protected function getData(): array
 
 ## Filtering chart data
 
-You can set up chart filters to change the data shown on chart. Commonly, this is used to change the time period that chart data is rendered for.
+### Basic Select filter
+
+You can set up chart filters to change the data that is presented. Commonly, this is used to change the time period that chart data is rendered for.
 
 To set a default filter value, set the `$filter` property:
 
@@ -157,6 +160,55 @@ protected function getData(): array
     // ...
 }
 ```
+
+### Custom filters
+
+You can use [schema components](../schemas) to build custom filters for your chart widget. This approach offers a more flexible way to define filters.
+
+To get started, use the `HasFiltersSchema` trait and implement the `filtersSchema()` method:
+
+```php
+use Filament\Forms\Components\DatePicker;
+use Filament\Schemas\Schema;
+use Filament\Widgets\ChartWidget\Concerns\HasFiltersSchema;
+
+class BlogPostsChart extends ChartWidget
+{
+    use HasFiltersSchema;
+    
+    // ...
+    
+    public function filtersSchema(Schema $schema): Schema
+    {
+        return $schema->components([
+            DatePicker::make('startDate')
+                ->default(now()->subDays(30)),
+            DatePicker::make('endDate')
+                ->default(now()),
+        ]);
+    }
+}
+```
+
+The filter values are accessible via the `$this->filters` array. You can use these values inside your `getData()` method:
+
+```php
+protected function getData(): array
+{
+    $startDate = $this->filters['startDate'] ?? null;
+    $endDate = $this->filters['endDate'] ?? null;
+
+    return [
+        // ...
+    ];
+}
+```
+
+The `$this->filters` array will always reflect the current form data. Please note that this data is not validated, as it is available live and not intended to be used for anything other than querying the database. You must ensure that the data is valid before using it.
+
+<Aside variant="info">
+    If you want to add filters that apply to multiple widgets at once, see [filtering widget data](overview#filtering-widget-data) in the dashboard.
+</Aside>
 
 ## Live updating chart data (polling)
 
@@ -284,9 +336,20 @@ window.filamentChartJsPlugins ??= []
 window.filamentChartJsPlugins.push(ChartDataLabels)
 ```
 
+This is equivalent to including the plugins "inline" via `new Chart(..., { plugins: [...] })` when instantiating a Chart.js chart.
+
 It's important to initialise the array if it has not been already, before pushing onto it. This ensures that mutliple JavaScript files (especially those from Filament plugins) that register Chart.js plugins do not overwrite each other, regardless of the order they are booted in.
 
-You can push as many plugins to the `filamentChartJsPlugins` array as you would like to install, you do not need a separate file to import each plugin.
+You can push as many plugins to the array as you would like to install, you do not need a separate file to import each plugin.
+
+Additionally, you can also register any "global plugins" which will use `Chart.register([...])` in the `window.filamentChartJsGlobalPlugins` array:
+
+```javascript
+import ChartDataLabels from 'chartjs-plugin-datalabels'
+
+window.filamentChartJsGlobalPlugins ??= []
+window.filamentChartJsGlobalPlugins.push(ChartDataLabels)
+```
 
 ### Step 3: Compile the JavaScript file with Vite
 

@@ -22,6 +22,7 @@
         'fi-body-has-navigation' => $hasNavigation,
         'fi-body-has-sidebar-collapsible-on-desktop' => $isSidebarCollapsibleOnDesktop,
         'fi-body-has-sidebar-fully-collapsible-on-desktop' => $isSidebarFullyCollapsibleOnDesktop,
+        'fi-body-has-topbar' => $hasTopbar,
         'fi-body-has-top-navigation' => $hasTopNavigation,
         'fi-body-has-topbar' => $hasTopbar,
     ])
@@ -29,7 +30,7 @@
     @if ($hasTopbar)
         {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::TOPBAR_BEFORE, scopes: $renderHookScopes) }}
 
-        @livewire(\Filament\Livewire\Topbar::class)
+        @livewire(filament()->getTopbarLivewireComponent())
 
         {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::TOPBAR_AFTER, scopes: $renderHookScopes) }}
     @else
@@ -76,7 +77,7 @@
                 class="fi-sidebar-close-overlay"
             ></div>
 
-            @livewire(\Filament\Livewire\Sidebar::class)
+            @livewire(filament()->getSidebarLivewireComponent())
         @endif
 
         <div

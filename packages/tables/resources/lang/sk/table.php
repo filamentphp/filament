@@ -26,6 +26,20 @@ return [
             'label' => 'Akcia|Akcie',
         ],
 
+        'select' => [
+
+            'loading_message' => 'Načítava sa...',
+
+            'no_search_results_message' => 'Žiadne možnosti nezodpovedajú vášmu vyhľadávaniu.',
+
+            'placeholder' => 'Vyberte možnosť',
+
+            'searching_message' => 'Vyhľadáva sa...',
+
+            'search_prompt' => 'Začnite písať pre vyhľadávanie...',
+
+        ],
+
         'text' => [
 
             'actions' => [
@@ -186,7 +200,6 @@ return [
 
             'group' => [
                 'label' => 'Zoskupiť podľa',
-                'placeholder' => 'Zoskupiť podľa',
             ],
 
             'direction' => [

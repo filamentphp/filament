@@ -26,6 +26,20 @@ return [
             'label' => 'Action|Actions',
         ],
 
+        'select' => [
+
+            'loading_message' => 'Loading...',
+
+            'no_search_results_message' => 'No options match your search.',
+
+            'placeholder' => 'Select an option',
+
+            'searching_message' => 'Searching...',
+
+            'search_prompt' => 'Start typing to search...',
+
+        ],
+
         'text' => [
 
             'actions' => [
@@ -186,7 +200,6 @@ return [
 
             'group' => [
                 'label' => 'Group by',
-                'placeholder' => 'Group by',
             ],
 
             'direction' => [

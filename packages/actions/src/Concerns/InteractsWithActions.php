@@ -14,6 +14,7 @@ use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
 use Filament\Support\Exceptions\Cancel;
 use Filament\Support\Exceptions\Halt;
+use Filament\Support\Livewire\Partials\PartialsComponentHook;
 use Filament\Tables\Contracts\HasTable;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Database\Eloquent\Model;
@@ -23,6 +24,7 @@ use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Url;
 use ReflectionMethod;
 use ReflectionNamedType;
+use ReflectionUnionType;
 use Throwable;
 
 use function Livewire\store;
@@ -308,6 +310,8 @@ trait InteractsWithActions
             return $result;
         }
 
+        $this->partiallyRenderActionParentSchema($action);
+
         $action->resetArguments();
         $action->resetData();
 
@@ -326,6 +330,33 @@ trait InteractsWithActions
         $this->unmountAction();
 
         return $result;
+    }
+
+    public function forceRender(): void
+    {
+        app(PartialsComponentHook::class)->forceRender($this);
+    }
+
+    protected function partiallyRenderActionParentSchema(Action $action): void
+    {
+        $actionSchema = $action->getSchemaContainer() ?? $action->getSchemaComponent()?->getContainer();
+        $schemaToPartiallyRender = null;
+
+        while ($actionSchema !== null) {
+            if ($actionSchema->shouldPartiallyRender()) {
+                $schemaToPartiallyRender = $actionSchema;
+            }
+
+            $actionSchema = $actionSchema->getParentComponent()?->getContainer();
+        }
+
+        if (! $schemaToPartiallyRender) {
+            return;
+        }
+
+        app(PartialsComponentHook::class)->renderPartial($this, fn (): array => [
+            "schema.{$schemaToPartiallyRender->getKey()}" => $schemaToPartiallyRender->toHtml(...),
+        ]);
     }
 
     protected function afterActionCalled(): void {}
@@ -512,13 +543,13 @@ trait InteractsWithActions
                 return null;
             }
 
-            if (! $returnTypeReflection instanceof ReflectionNamedType) {
-                return null;
-            }
+            $returnTypes = $returnTypeReflection instanceof ReflectionUnionType ? $returnTypeReflection->getTypes() : [$returnTypeReflection];
 
-            $type = $returnTypeReflection->getName();
+            $hasActionReturnType = collect($returnTypes)
+                ->filter(fn ($returnType) => $returnType instanceof ReflectionNamedType)
+                ->contains(fn (ReflectionNamedType $returnType) => is_a($returnType->getName(), Action::class, allow_string: true));
 
-            if (! is_a($type, Action::class, allow_string: true)) {
+            if (! $hasActionReturnType) {
                 return null;
             }
 
@@ -636,7 +667,11 @@ trait InteractsWithActions
 
         return $mountedAction->getSchema(
             $this->makeSchema()
-                ->model(fn (): Model | array | string | null => $mountedAction->getRecord() ?? $mountedAction->getModel() ?? $mountedAction->getSchemaComponent()?->getActionSchemaModel() ?? $this->getMountedActionSchemaModel())
+                ->model(function () use ($mountedAction): Model | array | string | null {
+                    $schemaComponent = $mountedAction->getSchemaComponent();
+
+                    return $mountedAction->getRecord(withDefault: blank($schemaComponent)) ?? $mountedAction->getModel(withDefault: blank($schemaComponent)) ?? $schemaComponent?->getActionSchemaModel() ?? $this->getMountedActionSchemaModel();
+                })
                 ->key("mountedActionSchema{$actionNestingIndex}")
                 ->statePath("mountedActions.{$actionNestingIndex}.data")
                 ->operation(
