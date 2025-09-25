@@ -4,6 +4,8 @@
     use Filament\Schemas\Components\Component;
     use Filament\Support\Enums\VerticalAlignment;
 
+    $statePath = $getStatePath();
+
     $fromBreakpoint = $getFromBreakpoint();
     $verticalAlignment = $getVerticalAlignment();
 
