@@ -547,7 +547,7 @@ class FilamentManager
         }
 
         if (filled($avatar)) {
-            return url($avatar);
+            return str($avatar)->startsWith('data:image/') ? $avatar : url($avatar);
         }
 
         return app($this->getDefaultAvatarProvider())->get($user);

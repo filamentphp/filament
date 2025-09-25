@@ -28,6 +28,7 @@ Aside from the core packages, all Filament projects can also consume the Blade c
 - [Breadcrumbs](breadcrumbs)
 - [Checkbox](checkbox)
 - [Dropdown](dropdown)
+- [Empty state](empty-state)
 - [Fieldset](fieldset)
 - [Icon button](icon-button)
 - [Input](input)

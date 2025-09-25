@@ -95,6 +95,7 @@ export class Select {
         this.selectedIndex = -1
         this.searchQuery = ''
         this.searchTimeout = null
+        this.isSearching = false
 
         this.render()
         this.setUpEventListeners()
@@ -195,7 +196,7 @@ export class Select {
                 this.handleSearch(event)
             })
 
-            // Handle Tab, Arrow Up, and Arrow Down in search input
+            // Handle Tab, Arrow Up, Arrow Down, and Enter in search input
             this.searchInput.addEventListener('keydown', (event) => {
                 // If the select is disabled, don't handle keyboard events
                 if (this.isDisabled) {
@@ -259,6 +260,44 @@ export class Select {
                     }
 
                     this.scrollOptionIntoView(options[this.selectedIndex])
+                } else if (event.key === 'Enter') {
+                    // Prevent default form submission behavior
+                    event.preventDefault()
+                    event.stopPropagation()
+
+                    // Check if search results are still loading
+                    if (this.isSearching) {
+                        return
+                    }
+
+                    // Select first visible non-disabled option
+                    const options = this.getVisibleOptions()
+                    if (options.length === 0) {
+                        return
+                    }
+
+                    // Find the first option that is not disabled
+                    const firstEnabled = options.find((option) => {
+                        // Consider both aria-disabled and .fi-disabled class
+                        const ariaDisabled =
+                            option.getAttribute('aria-disabled') === 'true'
+                        const hasDisabledClass =
+                            option.classList.contains('fi-disabled')
+                        // Also ensure it is focusable/visible
+                        const isHidden = option.offsetParent === null
+                        return !(ariaDisabled || hasDisabledClass || isHidden)
+                    })
+
+                    if (!firstEnabled) {
+                        return
+                    }
+
+                    const value = firstEnabled.getAttribute('data-value')
+                    if (value === null) {
+                        return
+                    }
+
+                    this.selectOption(value)
                 }
             })
         }
@@ -1252,14 +1291,21 @@ export class Select {
                 // Fetch options
                 const fetchedOptions = await this.getOptionsUsing()
 
+                // Normalize fetched options to an array
+                const normalizedFetched = Array.isArray(fetchedOptions)
+                    ? fetchedOptions
+                    : fetchedOptions && Array.isArray(fetchedOptions.options)
+                      ? fetchedOptions.options
+                      : []
+
                 // Update options
-                this.options = fetchedOptions
+                this.options = normalizedFetched
                 this.originalOptions = JSON.parse(
-                    JSON.stringify(fetchedOptions),
+                    JSON.stringify(normalizedFetched),
                 )
 
                 // Populate the label repository with the fetched options
-                this.populateLabelRepositoryFromOptions(fetchedOptions)
+                this.populateLabelRepositoryFromOptions(normalizedFetched)
 
                 // Render options
                 this.renderOptions()
@@ -1559,6 +1605,11 @@ export class Select {
 
         // Handle server-side search with debounce
         this.searchTimeout = setTimeout(async () => {
+            // Clear the timeout handle immediately to avoid stale truthy checks
+            this.searchTimeout = null
+
+            this.isSearching = true
+
             try {
                 // Show searching state
                 this.showLoadingState(true)
@@ -1566,11 +1617,18 @@ export class Select {
                 // Get search results from backend
                 const results = await this.getSearchResultsUsing(query)
 
+                // Normalize results to an array
+                const normalizedResults = Array.isArray(results)
+                    ? results
+                    : results && Array.isArray(results.options)
+                      ? results.options
+                      : []
+
                 // Update options with search results
-                this.options = results
+                this.options = normalizedResults
 
                 // Update the label repository with the search results
-                this.populateLabelRepositoryFromOptions(results)
+                this.populateLabelRepositoryFromOptions(normalizedResults)
 
                 // Hide loading state and render options
                 this.hideLoadingState()
@@ -1592,6 +1650,8 @@ export class Select {
                 this.hideLoadingState()
                 this.options = JSON.parse(JSON.stringify(this.originalOptions))
                 this.renderOptions()
+            } finally {
+                this.isSearching = false
             }
         }, this.searchDebounce)
     }

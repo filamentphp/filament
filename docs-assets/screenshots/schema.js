@@ -1628,6 +1628,15 @@ export default {
             deviceScaleFactor: 3,
         },
     },
+    'schemas/layout/empty-state/simple': {
+        url: 'schemas/layout',
+        selector: '#emptyState',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
     'schemas/layout/section/simple': {
         url: 'schemas/layout',
         selector: '#section',

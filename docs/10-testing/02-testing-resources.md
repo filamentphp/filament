@@ -402,6 +402,28 @@ it('can create a post', function () {
 });
 ```
 
+## Testing create / edit page `getFormActions()`
+
+When testing actions in `getFormActions()` on a resource page, use the `schemaComponent()` method targeting the `form-actions` key. For example, if you have a custom `Action::make('createAndVerifyEmail')` action in the `getFormActions()` method of your `CreateUser` page, you can test it like this:
+
+```php
+use App\Filament\Resources\Users\Pages\CreateUser;
+use App\Models\User;
+use Filament\Actions\Testing\TestAction;
+
+it('can create a user and verify their email address', function () {
+    livewire(CreateUser::class)
+        ->fillForm([
+            'name' => 'Test User',
+            'email' => 'test@example.com',
+        ])
+        ->callAction(TestAction::make('createAndVerifyEmail')->schemaComponent('form-actions'));
+
+    expect(User::query()->where('email', 'test@example.com')->first())
+        ->hasVerifiedEmail()->toBeTrue();
+});
+```
+
 ## Testing multiple panels
 
 If you have multiple panels and you would like to test a non-default panel, you will need to tell Filament which panel you are testing. This can be done in the `setUp()` method of the test case, or you can do it at the start of a particular test. Filament usually does this in a middleware when you access the panel through a request, so if you're not making a request in your test like when testing a Livewire component, you need to set the current panel manually:

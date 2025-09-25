@@ -351,10 +351,10 @@ use Filament\Actions\Imports\ImportColumn;
 use Illuminate\Database\Eloquent\Collection;
 
 ImportColumn::make('authors')
-    ->relationship(resolveUsing: function (array $states): Collection {
+    ->relationship(resolveUsing: function (array $state): Collection {
         return Author::query()
-            ->whereIn('email', $states)
-            ->orWhereIn('username', $states)
+            ->whereIn('email', $state)
+            ->orWhereIn('username', $state)
             ->get();
     })
 ```

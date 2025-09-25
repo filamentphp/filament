@@ -41,6 +41,30 @@ class ViewManager
 
     /**
      * @param  string | array<string> | null  $scopes
+     */
+    public function hasRenderHook(string $name, string | array | null $scopes = null): bool
+    {
+        if (! isset($this->renderHooks[$name])) {
+            return false;
+        }
+
+        if (isset($this->renderHooks[$name][null]) && count($this->renderHooks[$name][null])) {
+            return true;
+        }
+
+        $scopes = Arr::wrap($scopes);
+
+        foreach ($scopes as $scopeName) {
+            if (isset($this->renderHooks[$name][$scopeName]) && count($this->renderHooks[$name][$scopeName])) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * @param  string | array<string> | null  $scopes
      * @param  array<string, mixed>  $data
      */
     public function renderHook(string $name, string | array | null $scopes = null, array $data = []): Htmlable

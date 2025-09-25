@@ -121,7 +121,7 @@
         @apply line-clamp-(--line-clamp,none);
     }
 
-    &.fi-copyable {
+    & > .fi-copyable {
         @apply cursor-pointer;
     }
 
@@ -217,23 +217,20 @@
         }
     }
 
-    & > .fi-icon {
-        @apply shrink-0 text-gray-400 dark:text-gray-500;
+    & > .fi-icon,
+    & > span:not(.fi-badge) > .fi-icon {
+        @apply inline-block shrink-0 text-gray-400 dark:text-gray-500;
 
         &.fi-color {
             @apply text-color-500;
         }
-    }
-
-    & > .fi-icon {
-        @apply -mt-1 inline-block;
     }
 }
 
 .fi-ta-col-has-column-url .fi-ta-text-item {
     @apply hover:underline focus-visible:underline;
 
-    & > .fi-icon {
+    & .fi-icon {
         @apply hover:no-underline focus-visible:no-underline;
     }
 
