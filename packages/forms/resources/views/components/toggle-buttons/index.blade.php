@@ -61,7 +61,6 @@
                     @endif
                     type="{{ $isMultiple ? 'checkbox' : 'radio' }}"
                     value="{{ $value }}"
-                    wire:loading.attr="disabled"
                     {{ $applyStateBindingModifiers('wire:model') }}="{{ $statePath }}"
                     {{ $getExtraInputAttributeBag()->class(['peer pointer-events-none absolute opacity-0']) }}
                 />
