@@ -765,18 +765,6 @@ class EntriesDemo extends Component implements HasSchemas
                         'is_published' => false,
                     ],
                 ],
-                'users' => [
-                    [
-                        'name' => 'Jane Doe',
-                        'email' => 'jane@example.com',
-                        'role' => 'Owner',
-                    ],
-                    [
-                        'name' => 'John Doe',
-                        'email' => 'john@example.com',
-                        'role' => 'Admin',
-                    ],
-                ],
             ]);
     }
 
