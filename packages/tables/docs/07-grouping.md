@@ -202,11 +202,11 @@ public function table(Table $table): Table
 }
 ```
 
-## Default Collapsible groups
+### Collapsing groups by default
 
-By default, groups with `collapsible()` method are expanded when the table loads.
+By default, groups with the `collapsible()` method are expanded when the table loads.
 
-If you want all groups to be collapsed by default, add the `groupingDefaultCollapsed()` method at the table level:
+If you want all groups to be collapsed by default when the table loads, use `$table->collapsedGroupsByDefault()`:
 
 ```php
 use Filament\Tables\Grouping\Group;
@@ -219,7 +219,7 @@ public function table(Table $table): Table
             Group::make('author.name')
                 ->collapsible(),
         ])
-        ->groupingDefaultCollapsed();
+        ->collapsedGroupsByDefault();
 }
 ```
 

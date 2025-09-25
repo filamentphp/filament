@@ -83,7 +83,7 @@
     $isReordering = $isReordering();
     $areGroupingSettingsVisible = (! $isReordering) && count($groups) && (! $areGroupingSettingsHidden());
     $isGroupingDirectionSettingHidden = $isGroupingDirectionSettingHidden();
-    $isGroupingDefaultCollapsed = $isGroupingDefaultCollapsed();
+    $areGroupsCollapsedByDefault = $areGroupsCollapsedByDefault();
     $areGroupingSettingsInDropdownOnDesktop = $areGroupingSettingsInDropdownOnDesktop();
     $isColumnSearchVisible = $isSearchableByColumn();
     $isGlobalSearchVisible = $isSearchable();
@@ -137,11 +137,11 @@
         wire:init="loadTable"
     @endif
     x-data="filamentTable({
+                areGroupsCollapsedByDefault: @js($areGroupsCollapsedByDefault),
                 canTrackDeselectedRecords: @js($canTrackDeselectedRecords()),
                 currentSelectionLivewireProperty: @js($getCurrentSelectionLivewireProperty()),
                 maxSelectableRecords: @js($maxSelectableRecords),
                 selectsCurrentPageOnly: @js($selectsCurrentPageOnly),
-                isGroupingDefaultCollapsed: @js($isGroupingDefaultCollapsed),
                 $wire,
             })"
     {{

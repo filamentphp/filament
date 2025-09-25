@@ -1,14 +1,14 @@
 export default ({
+    areGroupsCollapsedByDefault,
     canTrackDeselectedRecords,
     currentSelectionLivewireProperty,
     maxSelectableRecords,
     selectsCurrentPageOnly,
-    isGroupingDefaultCollapsed,
     $wire,
 }) => ({
     checkboxClickController: null,
 
-    collapsedGroups: [],
+    groupVisibility: [],
 
     isLoading: false,
 
@@ -267,30 +267,36 @@ export default ({
 
     toggleCollapseGroup(group) {
         if (this.isGroupCollapsed(group)) {
-            if (isGroupingDefaultCollapsed) {
-                this.collapsedGroups.push(group)
+            if (areGroupsCollapsedByDefault) {
+                this.groupVisibility.push(group)
             } else {
-                this.collapsedGroups.splice(this.collapsedGroups.indexOf(group), 1)
+                this.groupVisibility.splice(
+                    this.groupVisibility.indexOf(group),
+                    1,
+                )
             }
         } else {
-            if (isGroupingDefaultCollapsed) {
-                this.collapsedGroups.splice(this.collapsedGroups.indexOf(group), 1)
+            if (areGroupsCollapsedByDefault) {
+                this.groupVisibility.splice(
+                    this.groupVisibility.indexOf(group),
+                    1,
+                )
             } else {
-                this.collapsedGroups.push(group)
+                this.groupVisibility.push(group)
             }
         }
     },
 
     isGroupCollapsed(group) {
-        if (isGroupingDefaultCollapsed) {
-            return !this.collapsedGroups.includes(group)
+        if (areGroupsCollapsedByDefault) {
+            return !this.groupVisibility.includes(group)
         }
 
-        return this.collapsedGroups.includes(group)
+        return this.groupVisibility.includes(group)
     },
 
     resetCollapsedGroups() {
-        this.collapsedGroups = []
+        this.groupVisibility = []
     },
 
     watchForCheckboxClicks() {
@@ -321,7 +327,7 @@ export default ({
         if (event.shiftKey) {
             let checkboxes = Array.from(
                 this.$root?.getElementsByClassName('fi-ta-record-checkbox') ??
-                [],
+                    [],
             )
 
             if (!checkboxes.includes(this.lastChecked)) {

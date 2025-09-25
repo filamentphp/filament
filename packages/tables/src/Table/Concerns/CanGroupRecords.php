@@ -32,7 +32,7 @@ trait CanGroupRecords
 
     protected bool | Closure $isGroupingDirectionSettingHidden = false;
 
-    protected bool | Closure $isGroupingDefaultCollapsed = false;
+    protected bool | Closure $areGroupsCollapsedByDefault = false;
 
     protected ?Closure $modifyGroupRecordsTriggerActionUsing = null;
 
@@ -74,9 +74,9 @@ trait CanGroupRecords
         return $this;
     }
 
-    public function groupingDefaultCollapsed(bool | Closure $condition = true): static
+    public function collapsedGroupsByDefault(bool | Closure $condition = true): static
     {
-        $this->isGroupingDefaultCollapsed = $condition;
+        $this->areGroupsCollapsedByDefault = $condition;
 
         return $this;
     }
@@ -155,9 +155,9 @@ trait CanGroupRecords
         return (bool) $this->evaluate($this->isGroupingDirectionSettingHidden);
     }
 
-    public function isGroupingDefaultCollapsed(): bool
+    public function areGroupsCollapsedByDefault(): bool
     {
-        return (bool) $this->evaluate($this->isGroupingDefaultCollapsed);
+        return (bool) $this->evaluate($this->areGroupsCollapsedByDefault);
     }
 
     public function getDefaultGroup(): ?Group
