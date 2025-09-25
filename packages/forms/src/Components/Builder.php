@@ -6,6 +6,7 @@ use Closure;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Builder\Block;
 use Filament\Forms\View\FormsIconAlias;
+use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Concerns\CanBeCollapsed;
 use Filament\Schemas\Components\Contracts\CanConcealComponents;
 use Filament\Schemas\Components\Contracts\HasExtraItemActions;
@@ -191,9 +192,13 @@ class Builder extends Field implements CanConcealComponents, HasExtraItemActions
                 ]))
                 ->modalSubmitActionLabel(__('filament-forms::components.builder.actions.add.modal.actions.add.label'))
                 ->schema(function (array $arguments, Builder $component): array {
-                    return collect($component->getBlock($arguments['block'])->getDefaultChildComponents())
-                        ->map(fn (Component $childComponent): Component => $childComponent->getClone())
-                        ->all();
+                    /** @var array<Component> $defaultComponents */
+                    $defaultComponents = $component->getBlock($arguments['block'])->getDefaultChildComponents();
+
+                    return array_map(
+                        fn (Component $childComponent): Component => $childComponent->getClone(),
+                        $defaultComponents,
+                    );
                 });
         }
 
@@ -288,9 +293,13 @@ class Builder extends Field implements CanConcealComponents, HasExtraItemActions
                 ]))
                 ->modalSubmitActionLabel(__('filament-forms::components.builder.actions.add_between.modal.actions.add.label'))
                 ->schema(function (array $arguments, Builder $component): array {
-                    return collect($component->getBlock($arguments['block'])->getDefaultChildComponents())
-                        ->map(fn (Component $childComponent): Component => $childComponent->getClone())
-                        ->all();
+                    /** @var array<Component> $defaultComponents */
+                    $defaultComponents = $component->getBlock($arguments['block'])->getDefaultChildComponents();
+
+                    return array_map(
+                        fn (Component $childComponent): Component => $childComponent->getClone(),
+                        $defaultComponents,
+                    );
                 });
         }
 
