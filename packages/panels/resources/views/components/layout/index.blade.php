@@ -38,7 +38,7 @@
             x-data="{}"
             x-show="! $store.sidebar.isOpen"
             @class([
-                'fi-layout-sidebar-collapse-toggle-btn-ctn' => !$isSidebarFullyCollapsibleOnDesktop,
+                'fi-layout-sidebar-collapse-toggle-btn-ctn' => ! $isSidebarFullyCollapsibleOnDesktop,
                 'fi-layout-sidebar-fully-collapse-toggle-btn-ctn' => $isSidebarFullyCollapsibleOnDesktop,
             ])
         >
