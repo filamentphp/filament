@@ -132,8 +132,8 @@ trait CanExportRecords
 
             $totalRows = $records ? $records->count() : $query->toBase()->getCountForPagination();
 
-            if ((! $records) && $query->getLimit()) {
-                $totalRows = min($totalRows, $query->getLimit());
+            if ((! $records) && $query->getQuery()->limit) {
+                $totalRows = min($totalRows, $query->getQuery()->limit);
             }
 
             $maxRows = $action->getMaxRows() ?? $totalRows;
