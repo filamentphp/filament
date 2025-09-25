@@ -211,6 +211,7 @@ Using class `Filament\View\PanelsIconAlias`
 - `PanelsIconAlias::SIDEBAR_EXPAND_BUTTON` - Button to expand the sidebar
 - `PanelsIconAlias::SIDEBAR_EXPAND_BUTTON_RTL` - Button to expand the sidebar (right-to-left direction)
 - `PanelsIconAlias::SIDEBAR_GROUP_COLLAPSE_BUTTON` - Collapse button for a sidebar group
+- `PanelsIconAlias::SIDEBAR_OPEN_DATABASE_NOTIFICATIONS_BUTTON` - Button to open the database notifications modal
 - `PanelsIconAlias::TENANT_MENU_BILLING_BUTTON` - Billing button in the tenant menu
 - `PanelsIconAlias::TENANT_MENU_PROFILE_BUTTON` - Profile button in the tenant menu
 - `PanelsIconAlias::TENANT_MENU_REGISTRATION_BUTTON` - Registration button in the tenant menu
