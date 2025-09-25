@@ -87,22 +87,22 @@
             </header>
         </div>
 
+        @if (filament()->hasTenancy() && filament()->hasTenantMenu())
+            <div
+                class="fi-sidebar-nav-tenant-menu-ctn"
+            >
+                <x-filament-panels::tenant-menu />
+            </div>
+        @endif
+
+        @if ((! $hasTopbar) && filament()->isGlobalSearchEnabled())
+            <div x-show="$store.sidebar.isOpen">
+                @livewire(Filament\Livewire\GlobalSearch::class)
+            </div>
+        @endif
+
         <nav class="fi-sidebar-nav">
             {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::SIDEBAR_NAV_START) }}
-
-            @if (filament()->hasTenancy() && filament()->hasTenantMenu())
-                <div
-                    class="fi-sidebar-nav-tenant-menu-ctn"
-                >
-                    <x-filament-panels::tenant-menu />
-                </div>
-            @endif
-
-            @if (!$hasTopbar && filament()->isGlobalSearchEnabled())
-                <div x-show="$store.sidebar.isOpen">
-                    @livewire(Filament\Livewire\GlobalSearch::class)
-                </div>
-            @endif
 
             <ul class="fi-sidebar-nav-groups">
                 @foreach ($navigation as $group)

@@ -110,25 +110,9 @@
         }
     }
 
-    &.fi-body-has-sidebar-collapsible-on-desktop {
+    & .fi-sidebar {
         & .fi-sidebar-nav-tenant-menu-ctn {
-            @apply -mx-2;
-        }
-    }
-
-    &:not(.fi-body-has-sidebar-collapsible-on-desktop) {
-        & .fi-sidebar {
-            &.fi-sidebar-open {
-                & .fi-sidebar-nav-tenant-menu-ctn {
-                    @apply -mx-2;
-                }
-            }
-
-            &:not(.fi-sidebar-open) {
-                & .fi-sidebar-nav-tenant-menu-ctn {
-                    @apply -mx-4;
-                }
-            }
+            @apply mx-3 mt-3;
         }
     }
 }

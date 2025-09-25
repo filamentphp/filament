@@ -3,7 +3,7 @@
 }
 
 .fi-global-search {
-    @apply sm:relative;
+    @apply flex-1 sm:relative;
 }
 
 .fi-global-search-results-ctn {
@@ -24,16 +24,18 @@
     }
 }
 
-.fi-sidebar .fi-global-search {
-    @apply w-full!;
-}
-
 .fi-topbar .fi-global-search-results-ctn {
     @apply sm:end-0 sm:w-screen sm:max-w-sm;
 }
 
-.fi-sidebar .fi-global-search-results-ctn {
-    @apply sm:start-0;
+.fi-sidebar {
+    & .fi-global-search-ctn {
+        @apply mx-3 mt-3;
+    }
+
+    & .fi-global-search-results-ctn {
+        @apply sm:start-0;
+    }
 }
 
 .fi-global-search-no-results-message {
