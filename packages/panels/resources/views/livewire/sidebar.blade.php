@@ -126,61 +126,6 @@
                 @endforeach
             </ul>
 
-            @if (filament()->auth()->check())
-                <div class="fi-sidebar-user-menu-ctn">
-                    @if (! $hasTopbar && filament()->hasDatabaseNotifications())
-                        @php
-                            $unreadNotificationsCount = auth()->user()?->unreadNotifications()->where('data->format', 'filament')->count() ?? 0;
-                        @endphp
-
-                        <div class="fi-sidebar-item">
-                            <button
-                                class="fi-sidebar-item-btn fi-sidebar-database-notifications-btn"
-                                x-on:click="$dispatch('open-modal', { id: 'database-notifications' })"
-                            >
-                                <x-filament::icon
-                                    :icon="\Filament\Support\Icons\Heroicon::OutlinedBell"
-                                    class="fi-sidebar-item-icon"
-                                    :size="\Filament\Support\Enums\IconSize::Large"
-                                />
-
-                                <span
-                                    @if ($isSidebarCollapsibleOnDesktop)
-                                        x-show="$store.sidebar.isOpen"
-                                        x-transition:enter="fi-transition-enter"
-                                        x-transition:enter-start="fi-transition-enter-start"
-                                        x-transition:enter-end="fi-transition-enter-end"
-                                    @endif
-                                    class="fi-sidebar-item-label"
-                                >
-                                    {{ __('filament-panels::layout.actions.open_database_notifications.label') }}
-                                </span>
-
-                                @if ($unreadNotificationsCount)
-                                    <span
-                                        @if ($isSidebarCollapsibleOnDesktop)
-                                            x-show="$store.sidebar.isOpen"
-                                            x-transition:enter="fi-transition-enter"
-                                            x-transition:enter-start="fi-transition-enter-start"
-                                            x-transition:enter-end="fi-transition-enter-end"
-                                        @endif
-                                        class="fi-sidebar-item-badge-ctn"
-                                    >
-                                        <x-filament::badge>
-                                            {{ $unreadNotificationsCount }}
-                                        </x-filament::badge>
-                                    </span>
-                                @endif
-                            </button>
-                        </div>
-                    @endif
-
-                    @if (! filament()->hasTopbar() && filament()->hasUserMenu())
-                        <x-filament-panels::user-menu location="sidebar" />
-                    @endif
-                </div>
-            @endif
-
             <script>
                 var collapsedGroups = JSON.parse(
                     localStorage.getItem('collapsedGroups'),
@@ -223,6 +168,20 @@
 
             {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::SIDEBAR_NAV_END) }}
         </nav>
+
+        @if ((! $hasTopbar) && filament()->auth()->check())
+            @if (filament()->hasDatabaseNotifications())
+                @livewire(Filament\Livewire\DatabaseNotifications::class, [
+                    'lazy' => filament()->hasLazyLoadedDatabaseNotifications(),
+                ])
+            @endif
+
+            <div class="fi-sidebar-user-menu-ctn">
+                @if (filament()->hasUserMenu())
+                    <x-filament-panels::user-menu location="sidebar" />
+                @endif
+            </div>
+        @endif
 
         {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::SIDEBAR_FOOTER) }}
     </aside>

@@ -24,6 +24,6 @@ class DatabaseNotifications extends BaseComponent
     {
         return filament()->hasTopbar()
             ? view('filament-panels::components.topbar.database-notifications-trigger')
-            : null;
+            : view('filament-panels::components.sidebar.database-notifications-trigger');
     }
 }

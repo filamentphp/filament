@@ -230,6 +230,37 @@
     @apply flex flex-col gap-y-1;
 }
 
+.fi-sidebar > .fi-no-database {
+    @apply block;
+}
+
+.fi-sidebar-database-notifications-btn {
+    @apply mx-4 w-full text-start relative flex items-center justify-center gap-x-3 rounded-lg px-2 py-2 outline-hidden transition duration-75 hover:bg-gray-100 focus-visible:bg-gray-100 dark:hover:bg-white/5 dark:focus-visible:bg-white/5;
+
+    & > .fi-icon {
+        @apply text-gray-400 dark:text-gray-500;
+    }
+
+    & > .fi-sidebar-database-notifications-btn-label {
+        @apply flex-1 truncate text-sm font-medium text-gray-700 dark:text-gray-200;
+    }
+
+    & > .fi-sidebar-database-notifications-btn-label,
+    & > .fi-sidebar-database-notifications-btn-badge-ctn {
+        &.fi-transition-enter {
+            @apply lg:transition lg:delay-100;
+        }
+
+        &.fi-transition-enter-start {
+            @apply opacity-0;
+        }
+
+        &.fi-transition-enter-end {
+            @apply opacity-100;
+        }
+    }
+}
+
 .fi-sidebar-user-menu-ctn {
     @apply -mx-2 mt-auto pt-4;
 }
@@ -254,16 +285,4 @@
 
 .fi-sidebar-close-sidebar-btn {
     @apply mx-0! lg:hidden;
-}
-
-.fi-sidebar-database-notifications-btn {
-    @apply w-full hover:bg-gray-100 focus-visible:bg-gray-100 dark:hover:bg-white/5 dark:focus-visible:bg-white/5;
-}
-
-.fi-sidebar-database-notifications-btn .fi-icon {
-    @apply mx-0.5;
-}
-
-.fi-sidebar-database-notifications-btn .fi-sidebar-item-label {
-    @apply text-start;
 }
