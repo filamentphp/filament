@@ -7,7 +7,7 @@ return [
         'actions' => [
 
             'clone' => [
-                'label' => 'Clone',
+                'label' => 'A ang chiah a lâk chhâwnna',
             ],
 
             'add' => [
@@ -51,7 +51,7 @@ return [
             ],
 
             'delete' => [
-                'label' => 'Delete',
+                'label' => 'Sûtna',
             ],
 
             'edit' => [
@@ -111,11 +111,11 @@ return [
         'actions' => [
 
             'deselect_all' => [
-                'label' => 'Deselect all',
+                'label' => 'Avaia paih na',
             ],
 
             'select_all' => [
-                'label' => 'Select all',
+                'label' => 'Avaia thlanna',
             ],
 
         ],
@@ -255,15 +255,15 @@ return [
         'actions' => [
 
             'add' => [
-                'label' => 'Add row',
+                'label' => 'Tlar belhna',
             ],
 
             'delete' => [
-                'label' => 'Delete row',
+                'label' => 'Tlar paihna',
             ],
 
             'reorder' => [
-                'label' => 'Reorder row',
+                'label' => 'Tlar sawnna',
             ],
 
         ],
@@ -308,12 +308,12 @@ return [
 
             'select' => [
 
-                'label' => 'Select',
+                'label' => 'Thlanna',
 
                 'actions' => [
 
                     'select' => [
-                        'label' => 'Select',
+                        'label' => 'Thlanna',
                     ],
 
                 ],

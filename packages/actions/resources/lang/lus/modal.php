@@ -11,11 +11,11 @@ return [
         ],
 
         'confirm' => [
-            'label' => 'Confirm',
+            'label' => 'Nemnghehna',
         ],
 
         'submit' => [
-            'label' => 'Submit',
+            'label' => 'Theh lûhna',
         ],
 
     ],

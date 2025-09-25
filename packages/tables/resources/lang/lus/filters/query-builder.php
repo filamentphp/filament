@@ -23,7 +23,7 @@ return [
 
         'rules' => [
 
-            'label' => 'Rules',
+            'label' => 'Dân',
 
             'item' => [
                 'and' => 'AND',
@@ -33,11 +33,11 @@ return [
 
     ],
 
-    'no_rules' => '(No rules)',
+    'no_rules' => '(Dân a awmlo)',
 
     'item_separators' => [
-        'and' => 'AND',
-        'or' => 'OR',
+        'and' => 'LEH',
+        'or' => 'EMAW',
     ],
 
     'operators' => [
@@ -169,13 +169,13 @@ return [
             'equals' => [
 
                 'label' => [
-                    'direct' => 'Equals',
-                    'inverse' => 'Does not equal',
+                    'direct' => 'Intluk',
+                    'inverse' => 'Intluklo',
                 ],
 
                 'summary' => [
-                    'direct' => ':attribute equals :number',
-                    'inverse' => ':attribute does not equal :number',
+                    'direct' => ':attribute hi :number nen a intluk',
+                    'inverse' => ':attribute hi :number nen a intluklo',
                 ],
 
             ],
@@ -235,7 +235,7 @@ return [
             'form' => [
 
                 'aggregate' => [
-                    'label' => 'Aggregate',
+                    'label' => 'A vaiin',
                 ],
 
                 'number' => [
@@ -402,13 +402,13 @@ return [
             'contains' => [
 
                 'label' => [
-                    'direct' => 'Contains',
-                    'inverse' => 'Does not contain',
+                    'direct' => 'Pai tel',
+                    'inverse' => 'Pai tello',
                 ],
 
                 'summary' => [
-                    'direct' => ':attribute contains :text',
-                    'inverse' => ':attribute does not contain :text',
+                    'direct' => ':attribute in :text a pai tel',
+                    'inverse' => ':attribute in :text a pai tello',
                 ],
 
             ],
@@ -416,13 +416,13 @@ return [
             'ends_with' => [
 
                 'label' => [
-                    'direct' => 'Ends with',
-                    'inverse' => 'Does not end with',
+                    'direct' => 'A tâwpna',
+                    'inverse' => 'A tâwplo',
                 ],
 
                 'summary' => [
-                    'direct' => ':attribute ends with :text',
-                    'inverse' => ':attribute does not end with :text',
+                    'direct' => ':attribute hi :text a tâwp',
+                    'inverse' => ':attribute hi :text a tâwplo',
                 ],
 
             ],
@@ -430,13 +430,13 @@ return [
             'equals' => [
 
                 'label' => [
-                    'direct' => 'Equals',
-                    'inverse' => 'Does not equal',
+                    'direct' => 'Intluk',
+                    'inverse' => 'Intluklo',
                 ],
 
                 'summary' => [
-                    'direct' => ':attribute equals :text',
-                    'inverse' => ':attribute does not equal :text',
+                    'direct' => ':attribute hi :text nen a intluk',
+                    'inverse' => ':attribute hi :text nen a intluklo',
                 ],
 
             ],
@@ -444,13 +444,13 @@ return [
             'starts_with' => [
 
                 'label' => [
-                    'direct' => 'Starts with',
-                    'inverse' => 'Does not start with',
+                    'direct' => 'Inṭan',
+                    'inverse' => 'Inṭanlo',
                 ],
 
                 'summary' => [
-                    'direct' => ':attribute starts with :text',
-                    'inverse' => ':attribute does not start with :text',
+                    'direct' => ':attribute hi :text a inṭan',
+                    'inverse' => ':attribute hi :text a inṭanlo',
                 ],
 
             ],
@@ -458,7 +458,7 @@ return [
             'form' => [
 
                 'text' => [
-                    'label' => 'Text',
+                    'label' => 'Thu',
                 ],
 
             ],
@@ -470,11 +470,11 @@ return [
     'actions' => [
 
         'add_rule' => [
-            'label' => 'Add rule',
+            'label' => 'Dân belhna',
         ],
 
         'add_rule_group' => [
-            'label' => 'Add rule group',
+            'label' => 'Dân ho belhna',
         ],
 
     ],
