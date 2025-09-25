@@ -25,7 +25,7 @@
             <header
                 class="fi-sidebar-header"
             >
-                @if (!$hasTopbar && $isSidebarCollapsibleOnDesktop)
+                @if ((! $hasTopbar) && $isSidebarCollapsibleOnDesktop)
                     <x-filament::icon-button
                         color="gray"
                         :icon="$isRtl ? \Filament\Support\Icons\Heroicon::OutlinedChevronLeft : \Filament\Support\Icons\Heroicon::OutlinedChevronRight"
@@ -48,7 +48,7 @@
                     />
                 @endif
 
-                @if (!$hasTopbar && ($isSidebarCollapsibleOnDesktop || $isSidebarFullyCollapsibleOnDesktop))
+                @if ((! $hasTopbar) && ($isSidebarCollapsibleOnDesktop || $isSidebarFullyCollapsibleOnDesktop))
                     <x-filament::icon-button
                         color="gray"
                         :icon="$isRtl ? \Filament\Support\Icons\Heroicon::OutlinedChevronRight : \Filament\Support\Icons\Heroicon::OutlinedChevronLeft"
