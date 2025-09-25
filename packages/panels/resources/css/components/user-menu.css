@@ -39,7 +39,7 @@
         @apply mx-3 my-3;
 
         & .fi-dropdown-panel {
-            max-width: calc(100% - 1.5rem) !important;
+            max-width: max(14rem, calc(100% - 1.5rem)) !important;
         }
     }
 }

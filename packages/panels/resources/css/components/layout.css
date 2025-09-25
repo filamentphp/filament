@@ -14,10 +14,8 @@ html.fi {
 
     & > .fi-layout-sidebar-toggle-btn-ctn {
         @apply ps-5 pt-5;
-    }
 
-    &:not(.fi-body-has-sidebar-fully-collapsible-on-desktop) {
-        & > .fi-layout-sidebar-toggle-btn-ctn {
+        &.lg\:fi-hidden {
             @apply lg:hidden;
         }
     }

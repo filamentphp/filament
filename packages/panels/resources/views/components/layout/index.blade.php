@@ -34,8 +34,10 @@
         {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::TOPBAR_AFTER, scopes: $renderHookScopes) }}
     @else
         <div
-            x-data="{}"
-            x-show="! $store.sidebar.isOpen"
+            @if ($isSidebarFullyCollapsibleOnDesktop)
+                x-data="{}"
+                x-bind:class="{ 'lg:fi-hidden': $store.sidebar.isOpen }"
+            @endif
             class="fi-layout-sidebar-toggle-btn-ctn"
         >
             <x-filament::icon-button
@@ -47,7 +49,6 @@
                 x-cloak
                 x-data="{}"
                 x-on:click="$store.sidebar.open()"
-                x-show="! $store.sidebar.isOpen"
                 class="fi-layout-sidebar-toggle-btn"
             />
         </div>
