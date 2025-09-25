@@ -65,85 +65,6 @@ This method accepts the same options as the `columns()` method of the [grid](../
 
 <AutoScreenshot name="infolists/entries/repeatable/grid" alt="Repeatable entry in grid layout" version="4.x" />
 
-## Table layout
-
-You may organize repeatable items into a table by using the `table()` method:
-
-```php
-use Filament\Infolists\Components\RepeatableEntry;
-use Filament\Infolists\Components\RepeatableEntry\TableColumn;
-use Filament\Infolists\Components\TextEntry;
-
-RepeatableEntry::make('users')
-    ->schema([
-        TextEntry::make('name'),
-        TextEntry::make('email'),
-        TextEntry::make('role'),
-    ])
-    ->table([
-        TableColumn::make('Name'),
-        TableColumn::make('Email'),
-        TableColumn::make('Role'),
-    ])
-```
-
-This will display the repeatable data in a structured table format with defined column headers.
-
-<AutoScreenshot name="infolists/entries/repeatable/table" alt="Repeatable entry in table layout" version="4.x" />
-
-### Table column configuration
-
-You can customize table columns with various options:
-
-```php
-use Filament\Infolists\Components\RepeatableEntry;
-use Filament\Infolists\Components\RepeatableEntry\TableColumn;
-use Filament\Support\Enums\Alignment;
-
-RepeatableEntry::make('products')
-    ->schema([
-        TextEntry::make('name'),
-        TextEntry::make('price'),
-        TextEntry::make('status'),
-    ])
-    ->table([
-        TableColumn::make('Product Name')
-            ->width('300px'),
-        TableColumn::make('Price')
-            ->alignment(Alignment::Right)
-            ->width('120px'),
-        TableColumn::make('Status')
-            ->hiddenHeaderLabel(),
-    ])
-```
-
-#### Column alignment
-
-You can set the alignment of table columns using the `alignment()` method:
-
-```php
-TableColumn::make('Price')
-    ->alignment(Alignment::Right)
-```
-
-#### Column width
-
-You can set the width of table columns using the `width()` method:
-
-```php
-TableColumn::make('Name')
-    ->width('200px')
-```
-
-#### Hidden header labels
-
-You can hide the header label of a column while keeping it accessible to screen readers:
-
-```php
-TableColumn::make('Actions')
-    ->hiddenHeaderLabel()
-```
-
 ## Removing the styled container
 
 By default, each item in a repeatable entry is wrapped in a container styled as a card. You may remove the styled container using `contained()`:
@@ -159,3 +80,66 @@ RepeatableEntry::make('comments')
 ```
 
 <UtilityInjection set="infolistEntries" version="4.x">As well as allowing a static value, the `contained()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+## Table repeatable layout
+
+You can present repeatable items in a table format using the `table()` method, which accepts an array of `TableColumn` objects. These objects represent the columns of the table, which correspond to any components in the schema of the entry:
+
+```php
+use Filament\Infolists\Components\IconEntry;
+use Filament\Infolists\Components\RepeatableEntry;
+use Filament\Infolists\Components\RepeatableEntry\TableColumn;
+use Filament\Infolists\Components\TextEntry;
+
+RepeatableEntry::make('comments')
+    ->table([
+        TableColumn::make('Author'),
+        TableColumn::make('Title'),
+        TableColumn::make('Published'),
+    ])
+    ->schema([
+        TextEntry::make('author.name'),
+        TextEntry::make('title'),
+        IconEntry::make('is_published')
+            ->boolean(),
+    ])
+```
+
+<AutoScreenshot name="infolists/entries/repeatable/table" alt="Repeatable entry with table layout" version="4.x" />
+
+The labels displayed in the header of the table are passed to the `TableColumn::make()` method. If you want to provide an accessible label for a column but do not wish to display it, you can use the `hiddenHeaderLabel()` method:
+
+```php
+use Filament\Infolists\Components\RepeatableEntry\TableColumn;
+
+TableColumn::make('Name')
+    ->hiddenHeaderLabel()
+```
+
+You can enable wrapping of the column header using the `wrapHeader()` method:
+
+```php
+use Filament\Infolists\Components\RepeatableEntry\TableColumn;
+
+TableColumn::make('Name')
+    ->wrapHeader()
+```
+
+You can also adjust the alignment of the column header using the `alignment()` method, passing an `Alignment` option of `Alignment::Start`, `Alignment::Center`, or `Alignment::End`:
+
+```php
+use Filament\Infolists\Components\RepeatableEntry\TableColumn;
+use Filament\Support\Enums\Alignment;
+
+TableColumn::make('Name')
+    ->alignment(Alignment::Start)
+```
+
+You can set a fixed column width using the `width()` method, passing a string value that represents the width of the column. This value is passed directly to the `style` attribute of the column header:
+
+```php
+use Filament\Infolists\Components\RepeatableEntry\TableColumn;
+
+TableColumn::make('Name')
+    ->width('200px')
+```

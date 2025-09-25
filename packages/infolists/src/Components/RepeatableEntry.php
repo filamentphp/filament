@@ -3,13 +3,16 @@
 namespace Filament\Infolists\Components;
 
 use Closure;
+use Exception;
 use Filament\Infolists\Components\RepeatableEntry\TableColumn;
+use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Concerns\HasContainerGridLayout;
 use Filament\Schemas\Schema;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Concerns\CanBeContained;
 use Filament\Support\Enums\Alignment;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Js;
 
 class RepeatableEntry extends Entry implements HasEmbeddedView
@@ -89,163 +92,9 @@ class RepeatableEntry extends Entry implements HasEmbeddedView
     public function toEmbeddedHtml(): string
     {
         if ($this->isTable()) {
-            return $this->renderAsTable();
+            return $this->toEmbeddedTableHtml();
         }
 
-        return $this->renderAsGrid();
-    }
-
-    protected function renderAsTable(): string
-    {
-        $items = $this->getItems();
-        $tableColumns = $this->getTableColumns();
-
-        $attributes = $this->getExtraAttributeBag()
-            ->class([
-                'fi-in-repeatable',
-                'fi-in-repeatable-table',
-                'fi-contained' => $this->isContained(),
-            ]);
-
-        if (empty($items)) {
-            $attributes = $attributes
-                ->merge([
-                    'x-tooltip' => filled($tooltip = $this->getEmptyTooltip())
-                        ? '{
-                            content: ' . Js::from($tooltip) . ',
-                            theme: $store.theme,
-                        }'
-                        : null,
-                ], escape: false);
-
-            $placeholder = $this->getPlaceholder();
-
-            ob_start(); ?>
-
-            <div <?= $attributes->toHtml() ?>>
-                <?php if (filled($placeholder) && filled($tableColumns)) { ?>
-                    <table class="fi-in-repeatable-table-element">
-                        <thead
-                            <?php if (empty(array_filter($tableColumns, fn ($column): bool => ! $column->isHeaderLabelHidden()))) { ?>
-                                class="fi-sr-only"
-                            <?php } ?>
-                        >
-                            <tr>
-                                <?php foreach ($tableColumns as $column) { ?>
-                                    <th
-                                        <?php if ($column->getAlignment()) { ?>
-                                            <?php
-                                            $alignmentClass = match ($column->getAlignment()) {
-                                                Alignment::Left => 'fi-align-left',
-                                                Alignment::Center => 'fi-align-center',
-                                                Alignment::Right => 'fi-align-right',
-                                                default => null,
-                                            }
-                                            ?>
-                                            class="<?= $alignmentClass ?>"
-                                        <?php } ?>
-                                        <?php if ($column->getWidth()) { ?>
-                                            style="width: <?= $column->getWidth() ?>"
-                                        <?php } ?>
-                                    >
-                                        <?php if (! $column->isHeaderLabelHidden()) { ?>
-                                            <?= e($column->getLabel()) ?>
-                                        <?php } else { ?>
-                                            <span class="fi-sr-only">
-                                                <?= e($column->getLabel()) ?>
-                                            </span>
-                                        <?php } ?>
-                                    </th>
-                                <?php } ?>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td colspan="<?= count($tableColumns) ?>" class="fi-in-placeholder">
-                                    <?= e($placeholder) ?>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                <?php } elseif (filled($placeholder)) { ?>
-                    <p class="fi-in-placeholder">
-                        <?= e($placeholder) ?>
-                    </p>
-                <?php } ?>
-            </div>
-
-            <?php return $this->wrapEmbeddedHtml(ob_get_clean());
-        }
-
-        ob_start(); ?>
-
-        <div <?= $attributes->toHtml() ?>>
-            <table class="fi-in-repeatable-table-element">
-                <thead
-                    <?php if (empty(array_filter($tableColumns, fn ($column): bool => ! $column->isHeaderLabelHidden()))) { ?>
-                        class="fi-sr-only"
-                    <?php } ?>
-                >
-                    <tr>
-                        <?php foreach ($tableColumns as $column) { ?>
-                            <th
-                                <?php if ($column->getAlignment()) { ?>
-                                    <?php
-                                    $alignmentClass = match ($column->getAlignment()) {
-                                        Alignment::Left => 'fi-align-left',
-                                        Alignment::Center => 'fi-align-center',
-                                        Alignment::Right => 'fi-align-right',
-                                        default => null,
-                                    }
-                                    ?>
-                                    class="<?= $alignmentClass ?>"
-                                <?php } ?>
-                                <?php if ($column->getWidth()) { ?>
-                                    style="width: <?= $column->getWidth() ?>"
-                                <?php } ?>
-                            >
-                                <?php if (! $column->isHeaderLabelHidden()) { ?>
-                                    <?= e($column->getLabel()) ?>
-                                <?php } else { ?>
-                                    <span class="fi-sr-only">
-                                        <?= e($column->getLabel()) ?>
-                                    </span>
-                                <?php } ?>
-                            </th>
-                        <?php } ?>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($items as $item) { ?>
-                        <tr>
-                            <?php
-                            $components = $item->getComponents();
-                        $componentIndex = 0;
-                        foreach ($tableColumns as $column) {
-                            if (isset($components[$componentIndex])) {
-                                $component = $components[$componentIndex];
-                                $componentIndex++;
-                            } else {
-                                $component = null;
-                            }
-                            ?>
-                                <td>
-                                    <?php if ($component) { ?>
-                                        <?= $component->toHtml() ?>
-                                    <?php } ?>
-                                </td>
-                            <?php } ?>
-                        </tr>
-                    <?php } ?>
-                </tbody>
-            </table>
-        </div>
-
-        <?php return $this->wrapEmbeddedHtml(ob_get_clean());
-    }
-
-    protected function renderAsGrid(): string
-    {
         $items = $this->getItems();
 
         $attributes = $this->getExtraAttributeBag()
@@ -270,7 +119,7 @@ class RepeatableEntry extends Entry implements HasEmbeddedView
             ob_start(); ?>
 
             <div <?= $attributes->toHtml() ?>>
-                <?php if (filled($placeholder !== null)) { ?>
+                <?php if (filled($placeholder)) { ?>
                     <p class="fi-in-placeholder">
                         <?= e($placeholder) ?>
                     </p>
@@ -291,6 +140,102 @@ class RepeatableEntry extends Entry implements HasEmbeddedView
                 </li>
             <?php } ?>
         </ul>
+
+        <?php return $this->wrapEmbeddedHtml(ob_get_clean());
+    }
+
+    protected function toEmbeddedTableHtml(): string
+    {
+        $items = $this->getItems();
+        $tableColumns = $this->getTableColumns();
+
+        $attributes = $this->getExtraAttributeBag()
+            ->class([
+                'fi-in-table-repeatable',
+            ]);
+
+        if (empty($items)) {
+            $attributes = $attributes
+                ->merge([
+                    'x-tooltip' => filled($tooltip = $this->getEmptyTooltip())
+                        ? '{
+                            content: ' . Js::from($tooltip) . ',
+                            theme: $store.theme,
+                        }'
+                        : null,
+                ], escape: false);
+
+            $placeholder = $this->getPlaceholder();
+
+            ob_start(); ?>
+
+            <div <?= $attributes->toHtml() ?>>
+                <?php if (filled($placeholder)) { ?>
+                    <p class="fi-in-placeholder">
+                        <?= e($placeholder) ?>
+                    </p>
+                <?php } ?>
+            </div>
+
+            <?php return $this->wrapEmbeddedHtml(ob_get_clean());
+        }
+
+        ob_start(); ?>
+
+        <div <?= $attributes->toHtml() ?>>
+            <table>
+                <thead>
+                    <tr>
+                        <?php foreach ($tableColumns as $column) { ?>
+                            <th
+                                class="<?= Arr::toCssClasses([
+                                    'fi-wrapped' => $column->canHeaderWrap(),
+                                    (($columnAlignment = $column->getAlignment()) instanceof Alignment) ? ('fi-align-' . $columnAlignment->value) : $columnAlignment,
+                                ]) ?>"
+                                <?php if (filled($columnWidth = $column->getWidth())) { ?>
+                                    style="width: <?= $columnWidth ?>"
+                                <?php } ?>
+                            >
+                                <?php if (! $column->isHeaderLabelHidden()) { ?>
+                                    <?= e($column->getLabel()) ?>
+                                <?php } else { ?>
+                                    <span class="fi-sr-only">
+                                        <?= e($column->getLabel()) ?>
+                                    </span>
+                                <?php } ?>
+                            </th>
+                        <?php } ?>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <?php foreach ($items as $item) { ?>
+                        <tr>
+                            <?php $counter = 0 ?>
+
+                            <?php foreach ($item->getComponents(withHidden: true) as $component) { ?>
+                                <?php throw_unless(
+                                    $component instanceof Component,
+                                    new Exception('Table repeatable entries must only contain schema components, but [' . $component::class . '] was used.'),
+                                ) ?>
+
+                                <?php if (count($tableColumns) > $counter) { ?>
+                                    <?php $counter++ ?>
+
+                                    <?php if ($component->isVisible()) { ?>
+                                        <td>
+                                            <?= $component->toHtml() ?>
+                                        </td>
+                                    <?php } else { ?>
+                                        <td class="fi-hidden"></td>
+                                    <?php } ?>
+                                <?php } ?>
+                            <?php } ?>
+                        </tr>
+                    <?php } ?>
+                </tbody>
+            </table>
+        </div>
 
         <?php return $this->wrapEmbeddedHtml(ob_get_clean());
     }
