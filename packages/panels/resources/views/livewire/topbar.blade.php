@@ -1,6 +1,5 @@
 <div class="fi-topbar-ctn">
     @php
-        $navigation = filament()->getNavigation();
         $isRtl = __('filament-panels::layout.direction') === 'rtl';
         $isSidebarCollapsibleOnDesktop = filament()->isSidebarCollapsibleOnDesktop();
         $isSidebarFullyCollapsibleOnDesktop = filament()->isSidebarFullyCollapsibleOnDesktop();
@@ -106,6 +105,10 @@
             @endif
 
             @if ($hasNavigation)
+                @php
+                    $navigation = filament()->getNavigation();
+                @endphp
+
                 <ul class="fi-topbar-nav-groups">
                     @foreach ($navigation as $group)
                         @php
