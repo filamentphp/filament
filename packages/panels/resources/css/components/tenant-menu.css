@@ -36,6 +36,6 @@
 
 .fi-sidebar {
     & .fi-tenant-menu {
-        @apply mx-3 mt-3;
+        @apply mx-4 mt-3;
     }
 }

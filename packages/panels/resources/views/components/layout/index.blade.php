@@ -38,7 +38,10 @@
                 x-data="{}"
                 x-bind:class="{ 'lg:fi-hidden': $store.sidebar.isOpen }"
             @endif
-            class="fi-layout-sidebar-toggle-btn-ctn"
+            @class([
+                'fi-layout-sidebar-toggle-btn-ctn',
+                'lg:fi-hidden' => ! $isSidebarFullyCollapsibleOnDesktop,
+            ])
         >
             <x-filament::icon-button
                 color="gray"
