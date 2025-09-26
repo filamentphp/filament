@@ -82,7 +82,7 @@ class PrepareCsvExport implements ShouldQueue
                         return 'raw:' . ($order['sql'] ?? '');
                     }
 
-                    if ($databaseGrammar->isExpression(($order['column'] ?? null))) {
+                    if ($databaseGrammar->isExpression($order['column'] ?? null)) {
                         return 'expression:' . $order['column']->getValue($databaseGrammar);
                     }
 
