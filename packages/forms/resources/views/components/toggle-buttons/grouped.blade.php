@@ -1,6 +1,5 @@
 @php
     $fieldWrapperView = $getFieldWrapperView();
-    $hasInlineLabel = $hasInlineLabel();
     $id = $getId();
     $isDisabled = $isDisabled();
     $isMultiple = $isMultiple();
@@ -13,7 +12,6 @@
 <x-dynamic-component
     :component="$fieldWrapperView"
     :field="$field"
-    :has-inline-label="$hasInlineLabel"
     class="fi-fo-toggle-buttons-wrp"
 >
     <div

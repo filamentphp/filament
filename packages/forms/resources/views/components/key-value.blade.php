@@ -6,7 +6,6 @@
     $keyPlaceholder = $getKeyPlaceholder();
     $valuePlaceholder = $getValuePlaceholder();
     $debounce = $getLiveDebounce();
-    $hasInlineLabel = $hasInlineLabel();
     $isAddable = $isAddable();
     $isDeletable = $isDeletable();
     $isDisabled = $isDisabled();
@@ -18,7 +17,6 @@
 <x-dynamic-component
     :component="$fieldWrapperView"
     :field="$field"
-    :has-inline-label="$hasInlineLabel"
     class="fi-fo-key-value-wrp"
 >
     <x-filament::input.wrapper
