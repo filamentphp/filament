@@ -13,7 +13,7 @@ return [
             ],
 
             'reset' => [
-                'label' => 'Reset',
+                'label' => 'Tihṭhatna',
             ],
 
         ],
@@ -23,7 +23,7 @@ return [
     'columns' => [
 
         'actions' => [
-            'label' => 'Action|Actions',
+            'label' => 'Thiltihna|Thiltihnate',
         ],
 
         'select' => [
@@ -77,18 +77,18 @@ return [
 
     'summary' => [
 
-        'heading' => 'Summary',
+        'heading' => 'Khai khâwmna',
 
         'subheadings' => [
-            'all' => 'All :label',
-            'group' => ':group summary',
-            'page' => 'This page',
+            'all' => ':Label a vaiin',
+            'group' => ':group khai khâwm',
+            'page' => 'Hemi phêkah',
         ],
 
         'summarizers' => [
 
             'average' => [
-                'label' => 'Average',
+                'label' => 'Chawhrualin',
             ],
 
             'count' => [
@@ -96,7 +96,7 @@ return [
             ],
 
             'sum' => [
-                'label' => 'Sum',
+                'label' => 'Belh khâwm',
             ],
 
         ],
@@ -114,7 +114,7 @@ return [
         ],
 
         'filter' => [
-            'label' => 'Filter',
+            'label' => 'Thlit fîmna',
         ],
 
         'group' => [
@@ -144,51 +144,51 @@ return [
         'actions' => [
 
             'apply' => [
-                'label' => 'Apply filters',
+                'label' => 'Thli fîm rawh',
             ],
 
             'remove' => [
-                'label' => 'Remove filter',
+                'label' => 'Thlit fîm hlihna',
             ],
 
             'remove_all' => [
-                'label' => 'Remove all filters',
-                'tooltip' => 'Remove all filters',
+                'label' => 'Thlit fîm ho hlihna',
+                'tooltip' => 'Thlit fîm ho hlihna',
             ],
 
             'reset' => [
-                'label' => 'Reset',
+                'label' => 'Tihṭhatna',
             ],
 
         ],
 
         'heading' => 'Thlit fîmna',
 
-        'indicator' => 'Active filters',
+        'indicator' => 'Thlit fîm mek',
 
         'multi_select' => [
-            'placeholder' => 'All',
+            'placeholder' => 'A vaiin',
         ],
 
         'select' => [
 
-            'placeholder' => 'All',
+            'placeholder' => 'A vaiin',
 
             'relationship' => [
-                'empty_option_label' => 'None',
+                'empty_option_label' => 'Awmlo',
             ],
 
         ],
 
         'trashed' => [
 
-            'label' => 'Deleted records',
+            'label' => 'Thai bo chhinchhiahna',
 
-            'only_trashed' => 'Deleted tawh chiah',
+            'only_trashed' => 'Thai bo tawh chiah',
 
-            'with_trashed' => 'Deleted tawh telin',
+            'with_trashed' => 'Thai bo tawh telin',
 
-            'without_trashed' => 'Deleted tello in',
+            'without_trashed' => 'Thai bo tello in',
 
         ],
 
@@ -207,8 +207,8 @@ return [
                 'label' => 'Group direction',
 
                 'options' => [
-                    'asc' => 'Ascending',
-                    'desc' => 'Descending',
+                    'asc' => 'Hmasa',
+                    'desc' => 'Hnuhnung',
                 ],
 
             ],
@@ -242,16 +242,16 @@ return [
         'fields' => [
 
             'column' => [
-                'label' => 'Sort by',
+                'label' => 'Thliarna',
             ],
 
             'direction' => [
 
-                'label' => 'Sort direction',
+                'label' => 'Thliarna lam',
 
                 'options' => [
-                    'asc' => 'Ascending',
-                    'desc' => 'Descending',
+                    'asc' => 'Hmasa',
+                    'desc' => 'Hnuhnung',
                 ],
 
             ],

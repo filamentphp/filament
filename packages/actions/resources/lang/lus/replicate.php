@@ -4,16 +4,16 @@ return [
 
     'single' => [
 
-        'label' => 'Replicate',
+        'label' => 'Anpui siamna',
 
         'modal' => [
 
-            'heading' => 'Replicate :label',
+            'heading' => ':Label anpui siamna',
 
             'actions' => [
 
                 'replicate' => [
-                    'label' => 'Replicate',
+                    'label' => 'Anpui siamna',
                 ],
 
             ],
@@ -23,7 +23,7 @@ return [
         'notifications' => [
 
             'replicated' => [
-                'title' => 'Replicated',
+                'title' => 'Anpui siam ani e.',
             ],
 
         ],
