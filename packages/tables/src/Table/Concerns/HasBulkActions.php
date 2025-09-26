@@ -15,6 +15,8 @@ trait HasBulkActions
 
     protected bool | Closure | null $selectsCurrentPageOnly = false;
 
+    protected bool | Closure | null $selectAllAvailable = true;
+
     protected RecordCheckboxPosition | Closure | null $recordCheckboxPosition = null;
 
     protected bool | Closure | null $isSelectable = null;
@@ -61,6 +63,13 @@ trait HasBulkActions
         return $this;
     }
 
+    public function selectAllAvailable(bool | Closure $condition = true): static
+    {
+        $this->selectAllAvailable = $condition;
+
+        return $this;
+    }
+
     public function checkIfRecordIsSelectableUsing(?Closure $callback): static
     {
         $this->checkIfRecordIsSelectableUsing = $callback;
@@ -73,6 +82,11 @@ trait HasBulkActions
         $this->selectsCurrentPageOnly = $condition;
 
         return $this;
+    }
+
+    public function isSelectAllAvailable(): bool
+    {
+        return (bool) $this->evaluate($this->selectAllAvailable);
     }
 
     /**
