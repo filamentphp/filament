@@ -257,15 +257,15 @@ BulkAction::make('delete')
                     if (($failureCount === 1) && ($totalCount === 1)) {
                         return 'One user failed to delete.';
                     }
-        
+
                     if ($failureCount === $totalCount) {
                         return 'All users failed to delete.';
                     }
-        
+
                     if ($failureCount === 1) {
                         return 'One of the selected users failed to delete.';
                     }
-        
+
                     return "{$failureCount} of the selected users failed to delete.";
                 },
             );
@@ -379,6 +379,20 @@ public function table(Table $table): Table
             // ...
         ])
         ->maxSelectableRecords(4);
+}
+```
+
+### Disable the select all records checkbox
+
+You may want to disable the funciotnality to select all records at once.
+
+```php
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->selectAllAvailable(false)
 }
 ```
 
