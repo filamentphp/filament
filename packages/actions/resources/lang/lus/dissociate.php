@@ -4,16 +4,16 @@ return [
 
     'single' => [
 
-        'label' => 'Dissociate',
+        'label' => 'Phelhna',
 
         'modal' => [
 
-            'heading' => 'Dissociate :label',
+            'heading' => ':Label Phelhna',
 
             'actions' => [
 
                 'dissociate' => [
-                    'label' => 'Dissociate',
+                    'label' => 'Phelhna',
                 ],
 
             ],
@@ -23,7 +23,7 @@ return [
         'notifications' => [
 
             'dissociated' => [
-                'title' => 'Dissociated',
+                'title' => 'Phelh a ni e.',
             ],
 
         ],
@@ -32,16 +32,16 @@ return [
 
     'multiple' => [
 
-        'label' => 'Dissociate selected',
+        'label' => 'Thlan ho phelh thenna',
 
         'modal' => [
 
-            'heading' => 'Dissociate selected :label',
+            'heading' => ':Label thlan ho phelh thenna',
 
             'actions' => [
 
                 'dissociate' => [
-                    'label' => 'Dissociate',
+                    'label' => 'Phelhna',
                 ],
 
             ],
@@ -51,7 +51,7 @@ return [
         'notifications' => [
 
             'dissociated' => [
-                'title' => 'Dissociated',
+                'title' => 'Phelh a ni e.',
             ],
 
         ],

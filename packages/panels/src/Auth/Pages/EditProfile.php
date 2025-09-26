@@ -428,7 +428,8 @@ class EditProfile extends Page
     {
         return [
             'hasTopbar' => $this->hasTopbar(),
-            'maxWidth' => $this->getMaxWidth(),
+            'maxContentWidth' => $maxContentWidth = $this->getMaxWidth() ?? $this->getMaxContentWidth(),
+            'maxWidth' => $maxContentWidth,
         ];
     }
 

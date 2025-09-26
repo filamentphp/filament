@@ -72,6 +72,12 @@ trait HasHint
                         $parentComponent = $component->getContainer()->getParentComponent();
 
                         return filled($parentComponent->getHintIcon());
+                    })
+                    ->color(static function (Icon $component): string | array | null {
+                        /** @var self $parentComponent */
+                        $parentComponent = $component->getContainer()->getParentComponent();
+
+                        return $parentComponent->getHintColor();
                     });
             }
 
