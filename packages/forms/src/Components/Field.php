@@ -25,7 +25,7 @@ class Field extends Component implements Contracts\HasValidationRules
     use Concerns\HasHelperText;
     use Concerns\HasHint;
     use HasLabel {
-        getLabel as getBaseLabel;
+        HasLabel::getLabel as getBaseLabel;
     }
     use HasName;
 
