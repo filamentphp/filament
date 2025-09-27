@@ -47,7 +47,7 @@ public function getTabs(): array
 You can add icons to the tabs by passing an [icon](../styling/icons) into the `icon()` method of the tab:
 
 ```php
-use use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Components\Tabs\Tab;
 
 Tab::make()
     ->icon('heroicon-m-user-group')
