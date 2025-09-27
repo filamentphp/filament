@@ -6,16 +6,27 @@ window.history.replaceState = function (state, unused, url) {
         state.url = state.url.toString()
     }
 
+    const targetUrl = url || state?.url || window.location.href
+    const currentUrl = window.location.href
+
+    // Always update if URL changed
+    if (targetUrl !== currentUrl) {
+        originalReplaceState.call(window.history, state, unused, url)
+        return
+    }
+
     // Skip duplicate `replaceState()` calls
     try {
-        if (JSON.stringify(state) === JSON.stringify(window.history.state)) {
-            return
+        const currentState = window.history.state
+        const stateChanged = JSON.stringify(state) !== JSON.stringify(currentState)
+
+        if (stateChanged) {
+            originalReplaceState.call(window.history, state, unused, url)
         }
     } catch (error) {
         // If comparison fails, proceed with the update
+        originalReplaceState.call(window.history, state, unused, url)
     }
-
-    originalReplaceState.call(window.history, state, unused, url)
 }
 
 window.history.pushState = function (state, unused, url) {
