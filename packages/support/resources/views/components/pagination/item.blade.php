@@ -32,7 +32,7 @@
 
         @if (filled($label))
             <span class="fi-pagination-item-label">
-               {{ is_numeric($label) ? \Illuminate\Support\Number::format($label) : ($label ?? '...') }}
+                {{ is_numeric($label) ? \Illuminate\Support\Number::format($label) : ($label ?? '...') }}
             </span>
         @endif
     </button>
