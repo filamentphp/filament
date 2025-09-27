@@ -18,7 +18,8 @@ window.history.replaceState = function (state, unused, url) {
     // Skip duplicate `replaceState()` calls
     try {
         const currentState = window.history.state
-        const stateChanged = JSON.stringify(state) !== JSON.stringify(currentState)
+        const stateChanged =
+            JSON.stringify(state) !== JSON.stringify(currentState)
 
         if (stateChanged) {
             originalReplaceState.call(window.history, state, unused, url)
