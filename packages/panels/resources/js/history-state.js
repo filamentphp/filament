@@ -9,7 +9,7 @@ window.history.replaceState = function (state, unused, url) {
     const targetUrl = url || state?.url || window.location.href
     const currentUrl = window.location.href
 
-    // Always update if URL changed
+    // Always update if the URL has changed
     if (targetUrl !== currentUrl) {
         originalReplaceState.call(window.history, state, unused, url)
         return
