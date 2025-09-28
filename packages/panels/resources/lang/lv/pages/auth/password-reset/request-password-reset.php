@@ -32,6 +32,10 @@ return [
 
     'notifications' => [
 
+         'sent' => [
+            'body' => 'Jūs saņemsiet e-pastu, ja Jūsu konts eksistē.',
+        ],
+
         'throttled' => [
             'title' => 'Pārāk daudz mēģinājumu',
             'body' => 'Lūdzu, mēģiniet vēlreiz pēc :seconds sekundēm.',
