@@ -116,7 +116,11 @@
 }
 
 .fi-sidebar-header {
-    @apply flex h-16 items-center;
+    @apply flex h-16 items-center justify-center;
+}
+
+.fi-sidebar-header-logo-ctn {
+    @apply flex-1;
 }
 
 .fi-body-has-topbar .fi-sidebar-header {
