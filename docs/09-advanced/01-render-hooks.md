@@ -108,6 +108,7 @@ use Filament\View\PanelsRenderHook;
 - `PanelsRenderHook::SIMPLE_PAGE_END` - End of the simple page content container, also [can be scoped](#scoping-render-hooks) to the page class
 - `PanelsRenderHook::SIMPLE_PAGE_START` - Start of the simple page content container, also [can be scoped](#scoping-render-hooks) to the page class
 - `PanelsRenderHook::SIDEBAR_FOOTER` - Pinned to the bottom of the sidebar, below the content
+- `PanelsRenderHook::SIDEBAR_START` - Start of the sidebar container
 - `PanelsRenderHook::STYLES_AFTER` - After styles are defined
 - `PanelsRenderHook::STYLES_BEFORE` - Before styles are defined
 - `PanelsRenderHook::TENANT_MENU_AFTER` - After the [tenant menu](../users/tenancy#customizing-the-tenant-menu)

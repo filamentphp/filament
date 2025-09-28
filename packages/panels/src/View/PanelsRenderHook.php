@@ -124,6 +124,8 @@ class PanelsRenderHook
 
     const SIDEBAR_LOGO_BEFORE = 'panels::sidebar.logo.before';
 
+    const SIDEBAR_START = 'panels::sidebar.start';
+
     const SIDEBAR_NAV_END = 'panels::sidebar.nav.end';
 
     const SIDEBAR_NAV_START = 'panels::sidebar.nav.start';
