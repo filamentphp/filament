@@ -50,7 +50,7 @@ export class Select {
         livewireId = null,
         statePath = null,
         onStateChange = () => {},
-    }) {
+      }) {
         this.element = element
         this.options = options
         this.originalOptions = JSON.parse(JSON.stringify(options)) // Keep a copy of original options
@@ -99,6 +99,9 @@ export class Select {
 
         this.render()
         this.setUpEventListeners()
+
+        this.typeaheadQuery = '' // Store typed characters
+        this.typeaheadTimeout = null // Timeout to clear typed characters
 
         if (this.isAutofocused) {
             this.selectButton.focus()
@@ -760,7 +763,7 @@ export class Select {
         removeButton.setAttribute(
             'aria-label',
             'Remove ' +
-                (this.isHtmlAllowed ? label.replace(/<[^>]*>/g, '') : label),
+            (this.isHtmlAllowed ? label.replace(/<[^>]*>/g, '') : label),
         )
 
         removeButton.addEventListener('click', (event) => {
@@ -1091,6 +1094,18 @@ export class Select {
 
     // Handle keyboard events for the select button
     handleSelectButtonKeydown(event) {
+        // If the select is disabled, don't handle keyboard events
+        if (this.isDisabled) {
+            return
+        }
+
+        // Handle printable characters for typeahead search when the dropdown is closed
+        if (!this.isOpen && event.key.length === 1 && !event.ctrlKey && !event.altKey && !event.metaKey) {
+            event.preventDefault()
+            this.handleTypeahead(event.key)
+            return
+        }
+
         switch (event.key) {
             case 'ArrowDown':
                 event.preventDefault()
@@ -1139,6 +1154,97 @@ export class Select {
                 }
                 break
         }
+    }
+
+    handleTypeahead(char) {
+        // Clear any existing timeout
+        if (this.typeaheadTimeout) {
+            clearTimeout(this.typeaheadTimeout)
+        }
+
+        // Add the character to the query
+        this.typeaheadQuery += char.toLowerCase()
+
+        // Find matching option
+        const matchingOption = this.findMatchingOption(this.typeaheadQuery)
+
+        if (matchingOption) {
+            // Select the matching option
+            this.selectOption(matchingOption.value)
+        }
+
+        // Clear the typeahead query after 1 second of inactivity
+        this.typeaheadTimeout = setTimeout(() => {
+            this.typeaheadQuery = ''
+        }, 1000)
+    }
+
+    findMatchingOption(query) {
+        // Search through all options (including grouped options)
+        for (const option of this.options) {
+            if (option.options && Array.isArray(option.options)) {
+                // Search in the option group
+                for (const groupOption of option.options) {
+                    // Skip disabled options
+                    if (groupOption.isDisabled) {
+                        continue
+                    }
+
+                    const label = groupOption.label.toLowerCase()
+
+                    // Check if the label starts with the query
+                    if (label.startsWith(query)) {
+                        return groupOption
+                    }
+                }
+            } else {
+                // Skip disabled options
+                if (option.isDisabled) {
+                    continue
+                }
+
+                const label = option.label.toLowerCase()
+
+                // Check if the label starts with the query
+                if (label.startsWith(query)) {
+                    return option
+                }
+            }
+        }
+
+        // If no match found with startsWith, try includes for partial matches
+        for (const option of this.options) {
+            if (option.options && Array.isArray(option.options)) {
+                // Search in the option group
+                for (const groupOption of option.options) {
+                    // Skip disabled options
+                    if (groupOption.isDisabled) {
+                        continue
+                    }
+
+                    const label = groupOption.label.toLowerCase()
+
+                    // Check if the label includes the query
+                    if (label.includes(query)) {
+                        return groupOption
+                    }
+                }
+            } else {
+                // Skip disabled options
+                if (option.isDisabled) {
+                    continue
+                }
+
+                const label = option.label.toLowerCase()
+
+                // Check if the label includes the query
+                if (label.includes(query)) {
+                    return option
+                }
+            }
+        }
+
+        return null
     }
 
     // Handle keyboard events within the dropdown
@@ -1295,8 +1401,8 @@ export class Select {
                 const normalizedFetched = Array.isArray(fetchedOptions)
                     ? fetchedOptions
                     : fetchedOptions && Array.isArray(fetchedOptions.options)
-                      ? fetchedOptions.options
-                      : []
+                        ? fetchedOptions.options
+                        : []
 
                 // Update options
                 this.options = normalizedFetched
@@ -1621,8 +1727,8 @@ export class Select {
                 const normalizedResults = Array.isArray(results)
                     ? results
                     : results && Array.isArray(results.options)
-                      ? results.options
-                      : []
+                        ? results.options
+                        : []
 
                 // Update options with search results
                 this.options = normalizedResults
@@ -2095,6 +2201,12 @@ export class Select {
         if (this.searchTimeout) {
             clearTimeout(this.searchTimeout)
             this.searchTimeout = null
+        }
+        
+        // Clear any pending typeahead timeout
+        if (this.typeaheadTimeout) {
+            clearTimeout(this.typeaheadTimeout)
+            this.typeaheadTimeout = null
         }
 
         // Remove the container element from the DOM
