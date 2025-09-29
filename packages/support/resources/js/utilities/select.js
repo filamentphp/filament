@@ -50,7 +50,7 @@ export class Select {
         livewireId = null,
         statePath = null,
         onStateChange = () => {},
-      }) {
+    }) {
         this.element = element
         this.options = options
         this.originalOptions = JSON.parse(JSON.stringify(options)) // Keep a copy of original options
@@ -763,7 +763,7 @@ export class Select {
         removeButton.setAttribute(
             'aria-label',
             'Remove ' +
-            (this.isHtmlAllowed ? label.replace(/<[^>]*>/g, '') : label),
+                (this.isHtmlAllowed ? label.replace(/<[^>]*>/g, '') : label),
         )
 
         removeButton.addEventListener('click', (event) => {
@@ -1401,8 +1401,8 @@ export class Select {
                 const normalizedFetched = Array.isArray(fetchedOptions)
                     ? fetchedOptions
                     : fetchedOptions && Array.isArray(fetchedOptions.options)
-                        ? fetchedOptions.options
-                        : []
+                      ? fetchedOptions.options
+                      : []
 
                 // Update options
                 this.options = normalizedFetched
@@ -1727,8 +1727,8 @@ export class Select {
                 const normalizedResults = Array.isArray(results)
                     ? results
                     : results && Array.isArray(results.options)
-                        ? results.options
-                        : []
+                      ? results.options
+                      : []
 
                 // Update options with search results
                 this.options = normalizedResults
