@@ -4,11 +4,11 @@ return [
 
     'single' => [
 
-        'label' => 'Associate',
+        'label' => 'Inzawmna',
 
         'modal' => [
 
-            'heading' => 'Associate :label',
+            'heading' => ':Label inzawmna',
 
             'fields' => [
 
@@ -21,11 +21,11 @@ return [
             'actions' => [
 
                 'associate' => [
-                    'label' => 'Associate',
+                    'label' => 'Inzawmna',
                 ],
 
                 'associate_another' => [
-                    'label' => 'Associate & associate another',
+                    'label' => 'Pakhat zawm a adang zawm lehna',
                 ],
 
             ],
@@ -35,7 +35,7 @@ return [
         'notifications' => [
 
             'associated' => [
-                'title' => 'Associated',
+                'title' => 'A inzawm khâwm e.',
             ],
 
         ],

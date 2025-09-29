@@ -4,7 +4,6 @@
 
     $fieldWrapperView = $getFieldWrapperView();
     $gridDirection = $getGridDirection() ?? GridDirection::Column;
-    $hasInlineLabel = $hasInlineLabel();
     $id = $getId();
     $isDisabled = $isDisabled();
     $isInline = $isInline();
@@ -18,7 +17,6 @@
 <x-dynamic-component
     :component="$fieldWrapperView"
     :field="$field"
-    :has-inline-label="$hasInlineLabel"
     class="fi-fo-toggle-buttons-wrp"
 >
     <div

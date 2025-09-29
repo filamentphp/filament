@@ -108,6 +108,7 @@ use Filament\View\PanelsRenderHook;
 - `PanelsRenderHook::SIMPLE_PAGE_END` - End of the simple page content container, also [can be scoped](#scoping-render-hooks) to the page class
 - `PanelsRenderHook::SIMPLE_PAGE_START` - Start of the simple page content container, also [can be scoped](#scoping-render-hooks) to the page class
 - `PanelsRenderHook::SIDEBAR_FOOTER` - Pinned to the bottom of the sidebar, below the content
+- `PanelsRenderHook::SIDEBAR_START` - Start of the sidebar container
 - `PanelsRenderHook::STYLES_AFTER` - After styles are defined
 - `PanelsRenderHook::STYLES_BEFORE` - Before styles are defined
 - `PanelsRenderHook::TENANT_MENU_AFTER` - After the [tenant menu](../users/tenancy#customizing-the-tenant-menu)
@@ -133,6 +134,7 @@ use Filament\Tables\View\TablesRenderHook;
 ```
 
 - `TablesRenderHook::FILTER_INDICATORS` - Replace the existing filter indicators, receives `filterIndicators` data as `array<Filament\Tables\Filters\Indicator>`
+- `TablesRenderHook::HEADER_CELL` - Replace the existing header cells, receives the `Filament\Tables\Columns\Column` object as `column` and `isReordering` in the data.
 - `TablesRenderHook::SELECTION_INDICATOR_ACTIONS_AFTER` - After the "select all" and "deselect all" action buttons in the selection indicator bar
 - `TablesRenderHook::SELECTION_INDICATOR_ACTIONS_BEFORE` - Before the "select all" and "deselect all" action buttons in the selection indicator bar
 - `TablesRenderHook::HEADER_AFTER` - After the header container

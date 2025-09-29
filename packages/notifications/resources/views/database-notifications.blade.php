@@ -26,7 +26,9 @@
         id="database-notifications"
         slide-over
         :sticky-header="$hasNotifications"
+        teleport="body"
         width="md"
+        class="fi-no-database"
         :attributes="
             new \Illuminate\View\ComponentAttributeBag([
                 'wire:poll.' . $pollingInterval => $pollingInterval ? '' : false,

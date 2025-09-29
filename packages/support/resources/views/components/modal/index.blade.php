@@ -29,6 +29,7 @@
     'slideOver' => false,
     'stickyFooter' => false,
     'stickyHeader' => false,
+    'teleport' => null,
     'trigger' => null,
     'visible' => true,
     'width' => 'sm',
@@ -75,6 +76,11 @@
     >
         {{ $trigger }}
     </div>
+@endif
+
+@if (filled($teleport))
+    {!! "<template x-teleport=\"{$teleport}\">" !!}
+    {{-- Avoid formatting issues with unclosed elements --}}
 @endif
 
 <div
@@ -260,6 +266,11 @@
         </{{ filled($wireSubmitHandler) ? 'form' : 'div' }}>
     </div>
 </div>
+
+@if (filled($teleport))
+    {!! '</template>' !!}
+    {{-- Avoid formatting issues with unclosed elements --}}
+@endif
 
 @if ($trigger)
     {!! '</div>' !!}

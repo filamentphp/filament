@@ -163,7 +163,7 @@
 
             & td,
             & th {
-                @apply relative min-w-[1em] border border-gray-300 !px-2 py-2 align-top dark:border-gray-600;
+                @apply relative min-w-[1em] border border-gray-300 !p-2 align-top dark:border-gray-600;
 
                 & > * {
                     @apply mb-0;

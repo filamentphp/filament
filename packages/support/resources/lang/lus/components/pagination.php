@@ -10,7 +10,7 @@ return [
 
         'records_per_page' => [
 
-            'label' => 'Page tinah',
+            'label' => 'Phêk tinah',
 
             'options' => [
                 'all' => 'A vaiin',
@@ -27,7 +27,7 @@ return [
         ],
 
         'go_to_page' => [
-            'label' => 'Go to page :page',
+            'label' => 'Phêk :page naa kalna',
         ],
 
         'last' => [

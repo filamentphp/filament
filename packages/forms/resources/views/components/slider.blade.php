@@ -6,7 +6,11 @@
     $isDisabled = $isDisabled();
 @endphp
 
-<x-dynamic-component :component="$fieldWrapperView" :field="$field">
+<x-dynamic-component
+    :component="$fieldWrapperView"
+    :field="$field"
+    :inline-label-vertical-alignment="\Filament\Support\Enums\VerticalAlignment::Center"
+>
     <div
         x-load
         x-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('slider', 'filament/forms') }}"

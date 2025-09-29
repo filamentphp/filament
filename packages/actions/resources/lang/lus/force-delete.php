@@ -4,16 +4,16 @@ return [
 
     'single' => [
 
-        'label' => 'Force delete',
+        'label' => 'Thai bo hlenna',
 
         'modal' => [
 
-            'heading' => 'Force delete :label',
+            'heading' => ':Label thai bo hlenna',
 
             'actions' => [
 
                 'delete' => [
-                    'label' => 'Delete',
+                    'label' => 'Thai bona',
                 ],
 
             ],
@@ -23,7 +23,7 @@ return [
         'notifications' => [
 
             'deleted' => [
-                'title' => 'Deleted',
+                'title' => 'Thai bo ani e.',
             ],
 
         ],
@@ -32,16 +32,16 @@ return [
 
     'multiple' => [
 
-        'label' => 'Force delete selected',
+        'label' => 'Thlanho thai bo hlenna',
 
         'modal' => [
 
-            'heading' => 'Force delete selected :label',
+            'heading' => ':Label thlanho thai bo hlenna',
 
             'actions' => [
 
                 'delete' => [
-                    'label' => 'Delete',
+                    'label' => 'Thai bona',
                 ],
 
             ],
@@ -51,19 +51,19 @@ return [
         'notifications' => [
 
             'deleted' => [
-                'title' => 'Deleted',
+                'title' => 'Thai bo ani e.',
             ],
 
             'deleted_partial' => [
-                'title' => 'Deleted :count of :total',
-                'missing_authorization_failure_message' => 'You don\'t have permission to delete :count.',
-                'missing_processing_failure_message' => ':count could not be deleted.',
+                'title' => ':total atanga :count thai bo ani.',
+                'missing_authorization_failure_message' => 'Hemi :count thai bo phalna I neilo.',
+                'missing_processing_failure_message' => ':count hi a thai bo theihloh.',
             ],
 
             'deleted_none' => [
-                'title' => 'Failed to delete',
-                'missing_authorization_failure_message' => 'You don\'t have permission to delete :count.',
-                'missing_processing_failure_message' => ':count could not be deleted.',
+                'title' => 'Thai bo tumna a hlawhchham',
+                'missing_authorization_failure_message' => 'Hemi :count thai bo phalna I neilo.',
+                'missing_processing_failure_message' => ':count hi a thai bo theihloh.',
             ],
 
         ],

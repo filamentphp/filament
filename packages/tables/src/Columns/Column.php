@@ -160,7 +160,7 @@ class Column extends ViewComponent
         $attributes = $attributes
             ->merge([
                 'type' => ($wrapperTag === 'button') ? 'button' : null,
-                'wire:click' => $wireClickAction = match (true) {
+                'wire:click.stop.prevent' => $wireClickAction = match (true) {
                     ($wrapperTag !== 'button') => null,
                     $action instanceof Action => "mountTableAction('{$action->getName()}', '{$this->getRecordKey()}')",
                     filled($action) => "callTableColumnAction('{$this->getName()}', '{$this->getRecordKey()}')",

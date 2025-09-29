@@ -39,7 +39,7 @@
     }
 
     & .fi-fo-field-label-col {
-        @apply grid auto-cols-fr gap-y-2;
+        @apply grid h-full auto-cols-fr gap-y-2;
 
         &.fi-vertical-align-start {
             @apply sm:items-start;

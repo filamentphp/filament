@@ -1,3 +1,8 @@
+@props([
+    'dropdownPlacement' => 'bottom-end',
+    'trigger' => null,
+])
+
 @php
     use Filament\Actions\Action;
     use Illuminate\Support\Arr;
@@ -24,7 +29,7 @@
 {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::USER_MENU_BEFORE) }}
 
 <x-filament::dropdown
-    placement="bottom-end"
+    :placement="$dropdownPlacement"
     teleport
     :attributes="
         \Filament\Support\prepare_inherited_attributes($attributes)
@@ -32,13 +37,17 @@
     "
 >
     <x-slot name="trigger">
-        <button
-            aria-label="{{ __('filament-panels::layout.actions.open_user_menu.label') }}"
-            type="button"
-            class="fi-user-menu-trigger"
-        >
-            <x-filament-panels::avatar.user :user="$user" loading="lazy" />
-        </button>
+        @if ($trigger)
+            {{ $trigger }}
+        @else
+            <button
+                aria-label="{{ __('filament-panels::layout.actions.open_user_menu.label') }}"
+                type="button"
+                class="fi-user-menu-trigger"
+            >
+                <x-filament-panels::avatar.user :user="$user" loading="lazy" />
+            </button>
+        @endif
     </x-slot>
 
     @if ($hasProfileHeader)

@@ -20,6 +20,8 @@ use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 
 /**
+ * @template TModel of Model = Model
+ *
  * @property-read Schema $form
  */
 class ViewRecord extends Page
@@ -27,7 +29,9 @@ class ViewRecord extends Page
     use Concerns\HasRelationManagers {
         getContentTabComponent as getBaseContentTabComponent;
     }
-    use Concerns\InteractsWithRecord;
+    use Concerns\InteractsWithRecord {
+        getRecord as getBaseRecord;
+    }
 
     /**
      * @var array<string, mixed> | null
@@ -233,5 +237,13 @@ class ViewRecord extends Page
     public function getDefaultTestingSchemaName(): ?string
     {
         return $this->hasInfolist() ? 'infolist' : parent::getDefaultTestingSchemaName();
+    }
+
+    /**
+     * @return TModel
+     */
+    public function getRecord(): Model
+    {
+        return $this->getBaseRecord();
     }
 }

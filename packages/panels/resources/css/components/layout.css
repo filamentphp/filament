@@ -12,6 +12,14 @@ html.fi {
         }
     }
 
+    & > .fi-layout-sidebar-toggle-btn-ctn {
+        @apply ps-5 pt-5;
+
+        &.lg\:fi-hidden {
+            @apply lg:hidden;
+        }
+    }
+
     &.fi-body-has-navigation:not(
             .fi-body-has-sidebar-collapsible-on-desktop
         ):not(.fi-body-has-sidebar-fully-collapsible-on-desktop):not(

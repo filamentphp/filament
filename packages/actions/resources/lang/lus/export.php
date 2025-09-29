@@ -2,11 +2,11 @@
 
 return [
 
-    'label' => ':Label export na',
+    'label' => ':Label dah chhuahna',
 
     'modal' => [
 
-        'heading' => ':Label export na',
+        'heading' => ':Label dah chhuahna',
 
         'form' => [
 
@@ -33,7 +33,7 @@ return [
         'actions' => [
 
             'export' => [
-                'label' => 'Export',
+                'label' => 'Dah chhuahna',
             ],
 
         ],
@@ -44,7 +44,7 @@ return [
 
         'completed' => [
 
-            'title' => 'Export completed',
+            'title' => 'Dah chhuah a zo e.',
 
             'actions' => [
 
@@ -61,13 +61,13 @@ return [
         ],
 
         'max_rows' => [
-            'title' => 'Export hi a lian lutuk',
-            'body' => 'Vawikhatah row 1 ai a tam a export theiloh.|Vawikhatah rows :count ai a tam a export theiloh',
+            'title' => 'Dah chhuah tum hi a lian lutuk',
+            'body' => 'Vawikhatah row 1 ai a tam a dah chhuah theiloh.|Vawikhatah rows :count ai a tam a dah chhuah theiloh',
         ],
 
         'started' => [
-            'title' => 'Export started',
-            'body' => 'I export a intan a, row 1 background ah a insiam ang. A zawh hunah download link awmna nen notification i dawng ang.|I export a intan a, rows :count background ah a insiam ang. A zawh hunah download link awmna nen notification i dawng ang.',
+            'title' => 'Dah chhuah a intan e',
+            'body' => 'I dah chhuah a intan a, row 1 background ah a insiam ang. A zawh hunah download link awmna nen hriattîrna i dawng ang.|I dahchhuah a intan a, rows :count background ah a insiam ang. A zawh hunah download link awmna nen hriattîrna i dawng ang.',
         ],
 
     ],

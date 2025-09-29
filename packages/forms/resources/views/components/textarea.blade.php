@@ -1,7 +1,6 @@
 @php
     $fieldWrapperView = $getFieldWrapperView();
     $extraAttributeBag = $getExtraAttributeBag();
-    $hasInlineLabel = $hasInlineLabel();
     $isConcealed = $isConcealed();
     $isDisabled = $isDisabled();
     $rows = $getRows();
@@ -16,7 +15,6 @@
 <x-dynamic-component
     :component="$fieldWrapperView"
     :field="$field"
-    :has-inline-label="$hasInlineLabel"
     class="fi-fo-textarea-wrp"
 >
     <x-filament::input.wrapper

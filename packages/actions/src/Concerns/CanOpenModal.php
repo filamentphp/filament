@@ -352,7 +352,7 @@ trait CanOpenModal
             return $this->cachedModalFooterActions;
         }
 
-        if ($this->modalFooterActions) {
+        if ($this->modalFooterActions !== null) {
             $actions = [];
 
             foreach ($this->evaluate($this->modalFooterActions) as $modalAction) {

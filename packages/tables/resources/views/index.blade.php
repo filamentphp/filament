@@ -83,6 +83,7 @@
     $isReordering = $isReordering();
     $areGroupingSettingsVisible = (! $isReordering) && count($groups) && (! $areGroupingSettingsHidden());
     $isGroupingDirectionSettingHidden = $isGroupingDirectionSettingHidden();
+    $areGroupsCollapsedByDefault = $areGroupsCollapsedByDefault();
     $areGroupingSettingsInDropdownOnDesktop = $areGroupingSettingsInDropdownOnDesktop();
     $isColumnSearchVisible = $isSearchableByColumn();
     $isGlobalSearchVisible = $isSearchable();
@@ -136,6 +137,7 @@
         wire:init="loadTable"
     @endif
     x-data="filamentTable({
+                areGroupsCollapsedByDefault: @js($areGroupsCollapsedByDefault),
                 canTrackDeselectedRecords: @js($canTrackDeselectedRecords()),
                 currentSelectionLivewireProperty: @js($getCurrentSelectionLivewireProperty()),
                 maxSelectableRecords: @js($maxSelectableRecords),
@@ -1068,7 +1070,7 @@
                                         <div>
                                             @if ($recordUrl)
                                                 <a
-                                                    {{ \Filament\Support\generate_href_html($recordUrl, $openRecordUrlInNewTab) }}
+                                                    {{ \Filament\Support\generate_href_html($recordUrl, $openRecordUrlInNewTab, hasNestedClickEventHandler: true) }}
                                                     class="fi-ta-record-content"
                                                 >
                                                     @foreach ($columnsLayout as $columnsLayoutComponent)
@@ -1347,63 +1349,74 @@
                                     @endif
                                 @endif
 
+                                @php
+                                    $hasHeaderCellRenderHook = FilamentView::hasRenderHook(TablesRenderHook::HEADER_CELL, scopes: static::class);
+                                @endphp
+
                                 @foreach ($columns as $column)
-                                    @php
-                                        $columnName = $column->getName();
-                                        $columnLabel = $column->getLabel();
-                                        $columnAlignment = $column->getAlignment();
-                                        $columnWidth = $column->getWidth();
-                                        $isColumnActivelySorted = $getSortColumn() === $column->getName();
-                                        $isColumnSortable = $column->isSortable() && (! $isReordering);
-                                    @endphp
+                                    @if ($hasHeaderCellRenderHook && filled($headerCellView = FilamentView::renderHook(TablesRenderHook::HEADER_CELL, scopes: static::class, data: [
+                                             'column' => $column,
+                                             'isReordering' => $isReordering,
+                                         ])))
+                                        {{ $headerCellView }}
+                                    @else
+                                        @php
+                                            $columnName = $column->getName();
+                                            $columnLabel = $column->getLabel();
+                                            $columnAlignment = $column->getAlignment();
+                                            $columnWidth = $column->getWidth();
+                                            $isColumnActivelySorted = $getSortColumn() === $column->getName();
+                                            $isColumnSortable = $column->isSortable() && (! $isReordering);
+                                        @endphp
 
-                                    <th
-                                        @if ($isColumnActivelySorted)
-                                            aria-sort="{{ $sortDirection === 'asc' ? 'ascending' : 'descending' }}"
-                                        @endif
-                                        {{
-                                            $column->getExtraHeaderAttributeBag()
-                                                ->class([
-                                                    'fi-ta-header-cell',
-                                                    'fi-ta-header-cell-' . str($columnName)->camel()->kebab(),
-                                                    'fi-growable' => blank($columnWidth) && $column->canGrow(default: false),
-                                                    'fi-grouped' => $column->getGroup(),
-                                                    'fi-wrapped' => $column->canHeaderWrap(),
-                                                    'fi-ta-header-cell-sorted' => $isColumnActivelySorted,
-                                                    ((($columnAlignment = $column->getAlignment()) instanceof \Filament\Support\Enums\Alignment) ? "fi-align-{$columnAlignment->value}" : (is_string($columnAlignment) ? $columnAlignment : '')),
-                                                    (filled($columnHiddenFrom = $column->getHiddenFrom()) ? "{$columnHiddenFrom}:fi-hidden" : ''),
-                                                    (filled($columnVisibleFrom = $column->getVisibleFrom()) ? "{$columnVisibleFrom}:fi-visible" : ''),
-                                                ])
-                                                ->style([
-                                                    ('width: ' . $columnWidth) => filled($columnWidth),
-                                                ])
-                                        }}
-                                    >
-                                        @if ($isColumnSortable)
-                                            <span
-                                                aria-label="{{ trim(strip_tags($columnLabel)) }}"
-                                                role="button"
-                                                tabindex="0"
-                                                wire:click="sortTable('{{ $columnName }}')"
-                                                x-on:keydown.enter.prevent.stop="$wire.sortTable('{{ $columnName }}')"
-                                                x-on:keydown.space.prevent.stop="$wire.sortTable('{{ $columnName }}')"
-                                                wire:loading.attr="disabled"
-                                                class="fi-ta-header-cell-sort-btn"
-                                            >
+                                        <th
+                                            @if ($isColumnActivelySorted)
+                                                aria-sort="{{ $sortDirection === 'asc' ? 'ascending' : 'descending' }}"
+                                            @endif
+                                            {{
+                                                $column->getExtraHeaderAttributeBag()
+                                                    ->class([
+                                                        'fi-ta-header-cell',
+                                                        'fi-ta-header-cell-' . str($columnName)->camel()->kebab(),
+                                                        'fi-growable' => blank($columnWidth) && $column->canGrow(default: false),
+                                                        'fi-grouped' => $column->getGroup(),
+                                                        'fi-wrapped' => $column->canHeaderWrap(),
+                                                        'fi-ta-header-cell-sorted' => $isColumnActivelySorted,
+                                                        ((($columnAlignment = $column->getAlignment()) instanceof \Filament\Support\Enums\Alignment) ? "fi-align-{$columnAlignment->value}" : (is_string($columnAlignment) ? $columnAlignment : '')),
+                                                        (filled($columnHiddenFrom = $column->getHiddenFrom()) ? "{$columnHiddenFrom}:fi-hidden" : ''),
+                                                        (filled($columnVisibleFrom = $column->getVisibleFrom()) ? "{$columnVisibleFrom}:fi-visible" : ''),
+                                                    ])
+                                                    ->style([
+                                                        ('width: ' . $columnWidth) => filled($columnWidth),
+                                                    ])
+                                            }}
+                                        >
+                                            @if ($isColumnSortable)
+                                                <span
+                                                    aria-label="{{ trim(strip_tags($columnLabel)) }}"
+                                                    role="button"
+                                                    tabindex="0"
+                                                    wire:click="sortTable('{{ $columnName }}')"
+                                                    x-on:keydown.enter.prevent.stop="$wire.sortTable('{{ $columnName }}')"
+                                                    x-on:keydown.space.prevent.stop="$wire.sortTable('{{ $columnName }}')"
+                                                    wire:loading.attr="disabled"
+                                                    class="fi-ta-header-cell-sort-btn"
+                                                >
+                                                    {{ $columnLabel }}
+
+                                                    {{
+                                                        \Filament\Support\generate_icon_html(($isColumnActivelySorted && $sortDirection === 'asc') ? \Filament\Support\Icons\Heroicon::ChevronUp : \Filament\Support\Icons\Heroicon::ChevronDown, alias: match (true) {
+                                                            $isColumnActivelySorted && ($sortDirection === 'asc') => \Filament\Tables\View\TablesIconAlias::HEADER_CELL_SORT_ASC_BUTTON,
+                                                            $isColumnActivelySorted && ($sortDirection === 'desc') => \Filament\Tables\View\TablesIconAlias::HEADER_CELL_SORT_DESC_BUTTON,
+                                                            default => \Filament\Tables\View\TablesIconAlias::HEADER_CELL_SORT_BUTTON,
+                                                        })
+                                                    }}
+                                                </span>
+                                            @else
                                                 {{ $columnLabel }}
-
-                                                {{
-                                                    \Filament\Support\generate_icon_html(($isColumnActivelySorted && $sortDirection === 'asc') ? \Filament\Support\Icons\Heroicon::ChevronUp : \Filament\Support\Icons\Heroicon::ChevronDown, alias: match (true) {
-                                                        $isColumnActivelySorted && ($sortDirection === 'asc') => \Filament\Tables\View\TablesIconAlias::HEADER_CELL_SORT_ASC_BUTTON,
-                                                        $isColumnActivelySorted && ($sortDirection === 'desc') => \Filament\Tables\View\TablesIconAlias::HEADER_CELL_SORT_DESC_BUTTON,
-                                                        default => \Filament\Tables\View\TablesIconAlias::HEADER_CELL_SORT_BUTTON,
-                                                    })
-                                                }}
-                                            </span>
-                                        @else
-                                            {{ $columnLabel }}
-                                        @endif
-                                    </th>
+                                            @endif
+                                        </th>
+                                    @endif
                                 @endforeach
 
                                 @if ((! $isReordering) && count($records))
@@ -1911,10 +1924,9 @@
                                                     >
                                                         <{{ $columnWrapperTag }}
                                                             @if ($columnWrapperTag === 'a')
-                                                                {{ \Filament\Support\generate_href_html($columnUrl ?: $recordUrl, $columnUrl ? $column->shouldOpenUrlInNewTab() : $openRecordUrlInNewTab) }}
+                                                                {{ \Filament\Support\generate_href_html($columnUrl ?: $recordUrl, $columnUrl ? $column->shouldOpenUrlInNewTab() : $openRecordUrlInNewTab, hasNestedClickEventHandler: true) }}
                                                             @elseif ($columnWrapperTag === 'button')
-                                                                type
-                                                                ="button"
+                                                                type="button"
                                                                 wire:click.prevent.stop="{{ $columnWireClickAction }}"
                                                                 wire:loading.attr="disabled"
                                                                 wire:target="{{ $columnWireClickAction }}"
