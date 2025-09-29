@@ -1100,7 +1100,13 @@ export class Select {
         }
 
         // Handle printable characters for typeahead search when the dropdown is closed
-        if (!this.isOpen && event.key.length === 1 && !event.ctrlKey && !event.altKey && !event.metaKey) {
+        if (
+            !this.isOpen &&
+            event.key.length === 1 &&
+            !event.ctrlKey &&
+            !event.altKey &&
+            !event.metaKey
+        ) {
             event.preventDefault()
             this.handleTypeahead(event.key)
             return
@@ -2202,7 +2208,7 @@ export class Select {
             clearTimeout(this.searchTimeout)
             this.searchTimeout = null
         }
-        
+
         // Clear any pending typeahead timeout
         if (this.typeaheadTimeout) {
             clearTimeout(this.typeaheadTimeout)
