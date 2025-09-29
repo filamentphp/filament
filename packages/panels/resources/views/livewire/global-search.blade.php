@@ -31,6 +31,16 @@
                     type="search"
                     wire:key="global-search.field.input"
                     x-bind:id="$id('input')"
+                    x-init="
+                        const bindings = @js($keyBindings)
+                        document.addEventListener(
+                            'livewire:navigating',
+                            () => {
+                                bindings.forEach((b) => Mousetrap.unbind(b))
+                            },
+                            { once: true },
+                        )
+                    "
                     x-on:keydown.down.prevent.stop="$dispatch('focus-first-global-search-result')"
                     wire:model.live.debounce.{{ $debounce }}="search"
                     x-mousetrap.global.{{ collect($keyBindings)->map(fn (string $keyBinding): string => str_replace('+', '-', $keyBinding))->implode('.') }}="document.getElementById($id('input')).focus()"
