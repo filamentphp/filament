@@ -1099,7 +1099,8 @@ export class Select {
             return
         }
 
-        // Handle printable characters for typeahead search when the dropdown is closed
+        // Handle printable characters: when searchable,
+        // open dropdown and use search input; otherwise, fall back to typeahead
         if (
             !this.isOpen &&
             event.key.length === 1 &&
@@ -1108,6 +1109,32 @@ export class Select {
             !event.metaKey
         ) {
             event.preventDefault()
+
+            if (this.isSearchable) {
+                // Open the dropdown and funnel the typed character into the search input
+                const char = event.key
+                Promise.resolve(this.openDropdown()).then(() => {
+                    if (!this.searchInput) return
+
+                    // Set the typed character as the initial search value
+                    this.searchInput.value = char
+                    this.searchQuery = char.toLowerCase()
+
+                    // Trigger the existing search logic
+                    this.handleSearch({ target: this.searchInput })
+
+                    // Focus the search input for continued typing
+                    this.searchInput.focus()
+
+                    try {
+                        const end = this.searchInput.value.length
+                        this.searchInput.setSelectionRange(end, end)
+                    } catch (_) {}
+                })
+                return
+            }
+
+            // Not searchable: keep legacy typeahead behavior
             this.handleTypeahead(event.key)
             return
         }
@@ -1255,6 +1282,30 @@ export class Select {
 
     // Handle keyboard events within the dropdown
     handleDropdownKeydown(event) {
+        // If it's a printable character and the select is searchable, redirect typing to the search input
+        if (
+            this.isSearchable &&
+            event.key.length === 1 &&
+            !event.ctrlKey &&
+            !event.altKey &&
+            !event.metaKey
+        ) {
+            event.preventDefault()
+            if (this.searchInput) {
+                if (document.activeElement !== this.searchInput) {
+                    this.searchInput.focus()
+                }
+                const newVal = this.searchInput.value + event.key
+                this.searchInput.value = newVal
+                this.searchQuery = newVal.trim().toLowerCase()
+                this.handleSearch({ target: this.searchInput })
+                try {
+                    const end = this.searchInput.value.length
+                    this.searchInput.setSelectionRange(end, end)
+                } catch (_) {}
+            }
+            return
+        }
         switch (event.key) {
             case 'ArrowDown':
                 event.preventDefault()
