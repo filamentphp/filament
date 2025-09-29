@@ -1096,8 +1096,7 @@ export class Select {
             return
         }
 
-        // Handle printable characters: when searchable,
-        // open dropdown and use search input; otherwise, fall back to typeahead
+        // Handle printable characters: when searchable, open dropdown and use search input
         if (
             !this.isOpen &&
             event.key.length === 1 &&
