@@ -135,7 +135,7 @@ if (! function_exists('Filament\Support\generate_href_html')) {
             if (FilamentView::hasSpaPrefetching()) {
                 $html .= ' wire:navigate.hover';
             } elseif ($hasNestedClickEventHandler) {
-                $html .= ' x-on:click.prevent="Alpine.navigate(' . "'{$url}'" . ')"';
+                $html .= ' x-on:click="if (!(($event.which === 1) && !$event.altKey && !$event.ctrlKey && !$event.metaKey && !$event.shiftKey)) return; $event.preventDefault(); Alpine.navigate(' . "'{$url}'" . ')"';
             } else {
                 $html .= ' wire:navigate';
             }
