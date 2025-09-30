@@ -456,3 +456,16 @@ it('can average values in a column', function () {
         ->assertTableColumnSummarySet('rating', 'range', [$posts->min('rating'), $posts->max('rating')]);
 });
 ```
+
+### Testing all toggleable columns
+
+Toggle all togglable columns on using `toggleAllTableColumns()`:
+
+```php
+use function Pest\Livewire\livewire;
+
+it('can toggle all columns', function () {    
+    livewire(PostResource\Pages\ListPosts::class)
+        ->toggleAllTableColumns();
+});
+```

@@ -523,6 +523,7 @@ class TestsColumns
     public function toggleAllTableColumns(): Closure
     {
         return function (bool $show = true): static {
+            /** @phpstan-ignore-next-line */
             $tableColumns = $this->instance()->tableColumns;
 
             foreach ($tableColumns as &$column) {
