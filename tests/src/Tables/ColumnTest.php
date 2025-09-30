@@ -388,7 +388,7 @@ it('can automatically detect boolean cast attribute in icon column', function ()
 
 it('can toggle all table columns', function (): void {
     Post::factory()->create();
-    
+
     livewire(PostsTable::class)
         ->assertSuccessful()
         ->assertCountTableRecords(1)
