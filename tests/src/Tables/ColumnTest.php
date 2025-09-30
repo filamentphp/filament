@@ -385,3 +385,14 @@ it('can automatically detect boolean cast attribute in icon column', function ()
             return $column->isBoolean();
         }, $post);
 });
+
+it('can toggle all table columns', function (): void {
+    Post::factory()->create();
+    
+    livewire(PostsTable::class)
+        ->assertSuccessful()
+        ->assertCountTableRecords(1)
+        ->assertDontSeeText('ToggleableColumnHiddenByDefault')
+        ->toggleAllTableColumns()
+        ->assertSeeText('ToggleableColumnHiddenByDefault');
+});
