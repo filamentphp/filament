@@ -103,18 +103,19 @@
                 @endif
 
                 @foreach ($tenants as $tenant)
-                    <div x-show="tenantSearch === '' || '{{ e(filament()->getTenantName($tenant)) }}'.replace(/ /g, '').toLowerCase().includes(tenantSearch.replace(/ /g, '').toLowerCase())">
-                        @php
-                            $tenantUrl = filament()->getUrl($tenant);
-                            $tenantImage = filament()->getTenantAvatarUrl($tenant);
-                        @endphp
+                    @php
+                        $tenantUrl = filament()->getUrl($tenant);
+                        $tenantImage = filament()->getTenantAvatarUrl($tenant);
+                        $tenantName = filament()->getTenantName($tenant);
+                    @endphp
 
+                    <div x-show="tenantSearch === '' || '{{ $tenantName }}'.replace(/ /g, '').toLowerCase().includes(tenantSearch.replace(/ /g, '').toLowerCase())">
                         <x-filament::dropdown.list.item
                             :href="$tenantUrl"
                             :image="$tenantImage"
                             tag="a"
                         >
-                            {{ filament()->getTenantName($tenant) }}
+                            {{ $tenantName }}
                         </x-filament::dropdown.list.item>
                     </div>
                 @endforeach
