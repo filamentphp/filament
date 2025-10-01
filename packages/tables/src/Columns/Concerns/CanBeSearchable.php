@@ -82,6 +82,11 @@ trait CanBeSearchable
         return $this->evaluate($this->isSearchForcedCaseInsensitive);
     }
 
+    public function hasCustomSearchQuery(): bool
+    {
+        return $this->searchQuery !== null;
+    }
+
     /**
      * @return array{0: string}
      */
