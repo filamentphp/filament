@@ -124,7 +124,7 @@ it('can get the updated value after set', function (): void {
                         ->default('initial'),
                     TextInput::make('bar')
                         ->live()
-                        ->afterStateUpdated(function (Set $set, Get $get, $state) {
+                        ->afterStateUpdated(function (Set $set, Get $get, $state): void {
                             // Get value before Set
                             $before = $get('foo');
 
