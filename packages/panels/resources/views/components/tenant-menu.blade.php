@@ -92,8 +92,8 @@
     @if ($canSwitchTenants)
         <div x-data="{ tenantSearch: '' }">
             <x-filament::dropdown.list>
-                @if($searchable)
-                    <x-filament::input.wrapper style="box-shadow: none;">
+                @if ($searchable)
+                    <x-filament::input.wrapper style="box-shadow: none">
                         <x-filament::input
                             type="text"
                             x-model="tenantSearch"
@@ -109,7 +109,15 @@
                         $tenantName = filament()->getTenantName($tenant);
                     @endphp
 
-                    <div x-show="tenantSearch === '' || '{{ $tenantName }}'.replace(/ /g, '').toLowerCase().includes(tenantSearch.replace(/ /g, '').toLowerCase())">
+                    <div
+                        x-show="
+                            tenantSearch === '' ||
+                                '{{ $tenantName }}'
+                                    .replace(/ /g, '')
+                                    .toLowerCase()
+                                    .includes(tenantSearch.replace(/ /g, '').toLowerCase())
+                        "
+                    >
                         <x-filament::dropdown.list.item
                             :href="$tenantUrl"
                             :image="$tenantImage"
