@@ -6,6 +6,8 @@
     $currentTenantName = filament()->getTenantName($currentTenant);
 
     $items = $this->getTenantMenuItems();
+    $searchable = $this->getTenantMenuSearchable();
+    $searchPlaceholder = $this->getTenantMenuSearchPlaceholder();
 
     $canSwitchTenants = count($tenants = array_filter(
         filament()->getUserTenants(filament()->auth()->user()),
@@ -88,22 +90,36 @@
     @endif
 
     @if ($canSwitchTenants)
-        <x-filament::dropdown.list>
-            @foreach ($tenants as $tenant)
-                @php
-                    $tenantUrl = filament()->getUrl($tenant);
-                    $tenantImage = filament()->getTenantAvatarUrl($tenant);
-                @endphp
+        <div x-data="{ tenantSearch: '' }">
+            <x-filament::dropdown.list>
+                @if($searchable)
+                    <x-filament::input.wrapper style="box-shadow: none;">
+                        <x-filament::input
+                            type="text"
+                            x-model="tenantSearch"
+                            placeholder="{{ $searchPlaceholder }}"
+                        />
+                    </x-filament::input.wrapper>
+                @endif
 
-                <x-filament::dropdown.list.item
-                    :href="$tenantUrl"
-                    :image="$tenantImage"
-                    tag="a"
-                >
-                    {{ filament()->getTenantName($tenant) }}
-                </x-filament::dropdown.list.item>
-            @endforeach
-        </x-filament::dropdown.list>
+                @foreach ($tenants as $tenant)
+                    <div x-show="tenantSearch === '' || '{{ e(filament()->getTenantName($tenant)) }}'.replace(/ /g, '').toLowerCase().includes(tenantSearch.replace(/ /g, '').toLowerCase())">
+                        @php
+                            $tenantUrl = filament()->getUrl($tenant);
+                            $tenantImage = filament()->getTenantAvatarUrl($tenant);
+                        @endphp
+
+                        <x-filament::dropdown.list.item
+                            :href="$tenantUrl"
+                            :image="$tenantImage"
+                            tag="a"
+                        >
+                            {{ filament()->getTenantName($tenant) }}
+                        </x-filament::dropdown.list.item>
+                    </div>
+                @endforeach
+            </x-filament::dropdown.list>
+        </div>
     @endif
 
     @if ($itemsAfterTenantSwitcher->isNotEmpty())

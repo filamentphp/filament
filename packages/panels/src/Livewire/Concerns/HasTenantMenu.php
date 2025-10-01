@@ -52,4 +52,14 @@ trait HasTenantMenu
 
         return $this->tenantMenuItems ?? [];
     }
+
+    protected function getTenantMenuSearchable(): bool
+    {
+        return Filament::getTenantMenuSearchable();
+    }
+
+    protected function getTenantMenuSearchPlaceholder(): ?string
+    {
+        return Filament::getTenantMenuSearchPlaceholder();
+    }
 }
