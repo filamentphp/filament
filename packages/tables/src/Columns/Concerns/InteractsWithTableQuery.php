@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 
 use function Filament\Support\generate_search_column_expression;
 use function Filament\Support\generate_search_term_expression;
@@ -56,13 +57,12 @@ trait InteractsWithTableQuery
         if ($this->searchQuery) {
             $whereClause = $isFirst ? 'where' : 'orWhere';
 
-            $query->{$whereClause}(
-                fn ($query) => $this->evaluate($this->searchQuery, [
-                    'query' => $query,
-                    'search' => $search,
-                    'searchQuery' => $search,
-                ]),
-            );
+            $this->evaluate($this->searchQuery, [
+                'query' => $query,
+                'search' => $search,
+                'searchQuery' => $search,
+                'isFirst' => $isFirst,
+            ]);
 
             $isFirst = false;
 
@@ -157,5 +157,27 @@ trait InteractsWithTableQuery
             )
             ->applyScopes()
             ->getQuery();
+    }
+
+    public function applyStructuralModifications(EloquentBuilder $originalQuery, EloquentBuilder $modifiedQuery): void
+    {
+        $originalBaseQuery = $originalQuery->getQuery();
+        $modifiedBaseQuery = $modifiedQuery->getQuery();
+
+        $originalJoins = collect($originalBaseQuery->joins ?? []);
+        $modifiedJoins = collect($modifiedBaseQuery->joins ?? []);
+
+        $modifiedJoins->each(function ($join) use ($originalJoins, $originalBaseQuery) {
+            if (!$originalJoins->contains(fn ($existingJoin) => $existingJoin->table === $join->table)) {
+                $originalBaseQuery->joins[] = $join;
+            }
+        });
+
+        $originalBaseQuery->wheres = array_merge($originalBaseQuery->wheres ?? [], $modifiedBaseQuery->wheres ?? []);
+        $originalBaseQuery->mergeBindings($modifiedBaseQuery);
+
+        if (!empty($modifiedBaseQuery->columns)) {
+            $originalBaseQuery->columns = $modifiedBaseQuery->columns;
+        }
     }
 }
