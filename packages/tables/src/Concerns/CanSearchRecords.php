@@ -104,15 +104,20 @@ trait CanSearchRecords
             }
 
             foreach ($this->extractTableSearchWords($search) as $searchWord) {
-                $query->where(function (Builder $query) use ($column, $searchWord): void {
+                if ($column->hasCustomSearchQuery()) {
                     $isFirst = true;
+                    $column->applySearchConstraint($query, $searchWord, $isFirst);
+                } else {
+                    $query->where(function (Builder $query) use ($column, $searchWord): void {
+                        $isFirst = true;
 
-                    $column->applySearchConstraint(
-                        $query,
-                        $searchWord,
-                        $isFirst,
-                    );
-                });
+                        $column->applySearchConstraint(
+                            $query,
+                            $searchWord,
+                            $isFirst,
+                        );
+                    });
+                }
             }
         }
 
@@ -145,53 +150,54 @@ trait CanSearchRecords
         }
 
         if (! $this->getTable()->shouldSplitSearchTerms()) {
-            $query->where(function (Builder $query) use ($search): void {
-                $isFirst = true;
+            $isFirst = true;
 
-                foreach ($this->getTable()->getColumns() as $column) {
-                    if ($column->isHidden()) {
-                        continue;
-                    }
-
-                    if (! $column->isGloballySearchable()) {
-                        continue;
-                    }
-
-                    $column->applySearchConstraint(
-                        $query,
-                        $search,
-                        $isFirst,
-                    );
+            foreach ($this->getTable()->getColumns() as $column) {
+                if ($column->isHidden()) {
+                    continue;
                 }
 
-                $this->getTable()->applyExtraSearchConstraints($query, $search, $isFirst);
-            });
+                if (! $column->isGloballySearchable()) {
+                    continue;
+                }
+
+                if ($column->hasCustomSearchQuery()) {
+                    $column->applySearchConstraint($query, $search, $isFirst);
+                } else {
+                    $query->where(function (Builder $query) use ($column, $search, $isFirst): void {
+                        $column->applySearchConstraint($query, $search, $isFirst);
+                    });
+                }
+            }
+
+            $this->getTable()->applyExtraSearchConstraints($query, $search, $isFirst);
 
             return $query;
         }
 
         foreach ($this->extractTableSearchWords($search) as $searchWord) {
-            $query->where(function (Builder $query) use ($searchWord): void {
+            $searchableColumns = collect($this->getTable()->getColumns())
+                ->filter(fn($column) => !$column->isHidden() && $column->isGloballySearchable());
+
+            $customColumns = $searchableColumns->filter(fn($column) => $column->hasCustomSearchQuery());
+            foreach ($customColumns as $column) {
                 $isFirst = true;
+                $column->applySearchConstraint($query, $searchWord, $isFirst);
+            }
 
-                foreach ($this->getTable()->getColumns() as $column) {
-                    if ($column->isHidden()) {
-                        continue;
+            $regularColumns = $searchableColumns->filter(fn($column) => !$column->hasCustomSearchQuery());
+            if ($regularColumns->isNotEmpty()) {
+                $query->where(function (Builder $query) use ($searchWord, $regularColumns): void {
+                    $isFirst = true;
+                    foreach ($regularColumns as $column) {
+                        $column->applySearchConstraint($query, $searchWord, $isFirst);
                     }
+                });
+            }
 
-                    if (! $column->isGloballySearchable()) {
-                        continue;
-                    }
-
-                    $column->applySearchConstraint(
-                        $query,
-                        $searchWord,
-                        $isFirst,
-                    );
-                }
-
-                $this->getTable()->applyExtraSearchConstraints($query, $searchWord, $isFirst);
-            });
+            // Apply extra search constraints
+            $isFirst = true;
+            $this->getTable()->applyExtraSearchConstraints($query, $searchWord, $isFirst);
         }
 
         return $query;
