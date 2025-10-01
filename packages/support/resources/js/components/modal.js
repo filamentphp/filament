@@ -39,7 +39,6 @@ export default ({ id }) => ({
             }, true)
 
             document.addEventListener('mouseup', (e) => {
-                console.log('hello')
                 const isClick = Date.now() - mouseDownTime < clickThreshold
 
                 if (mouseDownOnModal && isBackdropClick(e) && !isClick) {
