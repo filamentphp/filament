@@ -64,6 +64,7 @@ Wizard::make([
 ])->submitAction(new HtmlString(Blade::render(<<<BLADE
     <x-filament::button
         type="submit"
+        wire:target="callMountedAction"
         size="sm"
     >
         Submit
