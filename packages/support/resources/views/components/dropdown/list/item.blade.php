@@ -90,7 +90,7 @@
     $hasLoadingIndicator = filled($wireTarget);
 
     if ($hasLoadingIndicator) {
-        $loadingIndicatorTarget = html_entity_decode($wireTarget, ENT_QUOTES);
+        $loadingIndicatorTarget = $wireTarget;
     }
 
     $hasTooltip = filled($tooltip);
