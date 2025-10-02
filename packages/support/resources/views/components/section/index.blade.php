@@ -112,27 +112,29 @@
         </header>
     @endif
 
-    <div
-        @if ($collapsible)
-            x-bind:aria-expanded="(! isCollapsed).toString()"
-            @if ($collapsed || $persistCollapsed)
-                x-cloak
+    @if ((! is_slot_empty($slot)) || (! is_slot_empty($footer)))
+        <div
+            @if ($collapsible)
+                x-bind:aria-expanded="(! isCollapsed).toString()"
+                @if ($collapsed || $persistCollapsed)
+                    x-cloak
+                @endif
             @endif
-        @endif
-        class="fi-section-content-ctn"
-    >
-        @if ($hasContentEl)
-            <div class="fi-section-content">
+            class="fi-section-content-ctn"
+        >
+            @if ($hasContentEl)
+                <div class="fi-section-content">
+                    {{ $slot }}
+                </div>
+            @else
                 {{ $slot }}
-            </div>
-        @else
-            {{ $slot }}
-        @endif
+            @endif
 
-        @if (! is_slot_empty($footer))
-            <footer class="fi-section-footer">
-                {{ $footer }}
-            </footer>
-        @endif
-    </div>
+            @if (! is_slot_empty($footer))
+                <footer class="fi-section-footer">
+                    {{ $footer }}
+                </footer>
+            @endif
+        </div>
+    @endif
 </section>
