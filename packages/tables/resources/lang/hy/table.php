@@ -4,7 +4,19 @@ return [
 
     'column_manager' => [
 
-        'heading' => 'Սյունակներ',
+        'heading' => 'Սյուներ',
+
+        'actions' => [
+
+            'apply' => [
+                'label' => 'Կիրառել սյուները',
+            ],
+
+            'reset' => [
+                'label' => 'Վերականգնել',
+            ],
+
+        ],
 
     ],
 
@@ -14,14 +26,24 @@ return [
             'label' => 'Գործողություն|Գործողություններ',
         ],
 
+        'select' => [
+
+            'loading_message' => 'Բեռնում...',
+            'no_search_results_message' => 'Ոչ մի տարբերակ չի համապատասխանում ձեր որոնմանը։',
+            'placeholder' => 'Ընտրեք տարբերակ',
+            'searching_message' => 'Որոնում...',
+            'search_prompt' => 'Մուտքագրեք որոնման համար...',
+
+        ],
+
         'text' => [
 
             'actions' => [
-                'collapse_list' => 'Ցույց տալ :count-ից քիչ',
-                'expand_list' => 'Ցույց տալ :count-ից շատ',
+                'collapse_list' => 'Ցույց տալ :count-ով քիչ',
+                'expand_list' => 'Ցույց տալ :count-ով ավելին',
             ],
 
-            'more_list_items' => 'Եվ ևս :countը',
+            'more_list_items' => 'և ևս :count',
 
         ],
 
@@ -30,21 +52,21 @@ return [
     'fields' => [
 
         'bulk_select_page' => [
-            'label' => 'Ընտրել/չընտրել բոլոր տարրերը զանգվածային գործողությունների համար։',
+            'label' => 'Ընտրել/հեռացնել բոլոր տարրերը խմբային գործողությունների համար։',
         ],
 
         'bulk_select_record' => [
-            'label' => 'Ընտրել/չընտրել :key նյութը զանգվածային գործողությունների համար։',
+            'label' => 'Ընտրել/հեռացնել :key տարրը խմբային գործողությունների համար։',
         ],
 
         'bulk_select_group' => [
-            'label' => 'Ընտրել/չընտրել :title խումբը զանգվածային գործողությունների համար։',
+            'label' => 'Ընտրել/հեռացնել :title խումբը խմբային գործողությունների համար։',
         ],
 
         'search' => [
-            'label' => 'Որոնել',
-            'placeholder' => 'Որոնել',
-            'indicator' => 'Որոնել',
+            'label' => 'Որոնում',
+            'placeholder' => 'Որոնում',
+            'indicator' => 'Որոնում',
         ],
 
     ],
@@ -54,8 +76,8 @@ return [
         'heading' => 'Ամփոփում',
 
         'subheadings' => [
-            'all' => 'Ամբողջ :labelը',
-            'group' => ':group-ի ամփոփումը',
+            'all' => 'Բոլոր :label',
+            'group' => ':group ամփոփում',
             'page' => 'Այս էջը',
         ],
 
@@ -80,11 +102,11 @@ return [
     'actions' => [
 
         'disable_reordering' => [
-            'label' => 'Ավարտել վերադասավորումը',
+            'label' => 'Ավարտել գրառումների վերադասավորումը',
         ],
 
         'enable_reordering' => [
-            'label' => 'Միացնել վերադասավորումը',
+            'label' => 'Վերադասավորել գրառումները',
         ],
 
         'filter' => [
@@ -96,20 +118,20 @@ return [
         ],
 
         'open_bulk_actions' => [
-            'label' => 'Բացել գործողություններ',
+            'label' => 'Խմբային գործողություններ',
         ],
 
         'column_manager' => [
-            'label' => 'Փոխել սյունակները',
+            'label' => 'Սյուների կառավարիչ',
         ],
 
     ],
 
     'empty' => [
 
-        'heading' => ':model չկան',
+        'heading' => 'Ոչ մի :model',
 
-        'description' => 'Սկզբի համար ստեղծեք :model։',
+        'description' => 'Սկսելու համար ստեղծեք :model։',
 
     ],
 
@@ -122,7 +144,7 @@ return [
             ],
 
             'remove' => [
-                'label' => 'Հեռացնել ֆիլտրերը',
+                'label' => 'Հեռացնել ֆիլտրը',
             ],
 
             'remove_all' => [
@@ -145,7 +167,13 @@ return [
         ],
 
         'select' => [
+
             'placeholder' => 'Բոլորը',
+
+            'relationship' => [
+                'empty_option_label' => 'Չկա',
+            ],
+
         ],
 
         'trashed' => [
@@ -153,10 +181,8 @@ return [
             'label' => 'Ջնջված գրառումներ',
 
             'only_trashed' => 'Միայն ջնջված գրառումները',
-
-            'with_trashed' => 'Ջնջված գրառումներով',
-
-            'without_trashed' => 'Առանց ջնջված գրառումների',
+            'with_trashed' => 'Ջնջվածներով',
+            'without_trashed' => 'Առանց ջնջվածների',
 
         ],
 
@@ -168,16 +194,15 @@ return [
 
             'group' => [
                 'label' => 'Խմբավորել ըստ',
-                'placeholder' => 'Խմբավորել ըստ',
             ],
 
             'direction' => [
 
-                'label' => 'Խմբի ուղղություն',
+                'label' => 'Խմբավորման ուղղություն',
 
                 'options' => [
-                    'asc' => 'Ըստ աճման',
-                    'desc' => 'Ըստ նվազման',
+                    'asc' => 'Աճող',
+                    'desc' => 'Նվազող',
                 ],
 
             ],
@@ -186,20 +211,20 @@ return [
 
     ],
 
-    'reorder_indicator' => 'Քաշեք գրառումները ցանկալի հերթականությամբ։',
+    'reorder_indicator' => 'Քաշեք և գցեք գրառումները՝ դասավորելու համար։',
 
     'selection_indicator' => [
 
-        'selected_count' => '1 ընտրված գրառում|:count ընտրված գրառումներ',
+        'selected_count' => 'Ընտրված է 1 գրառում|Ընտրված է :count գրառում',
 
         'actions' => [
 
             'select_all' => [
-                'label' => 'Ընտրել ամբողջ :count-ը',
+                'label' => 'Ընտրել բոլորը՝ :count',
             ],
 
             'deselect_all' => [
-                'label' => 'Ապաընտրել բոլորը',
+                'label' => 'Չընտրել բոլորն',
             ],
 
         ],
@@ -216,7 +241,7 @@ return [
 
             'direction' => [
 
-                'label' => 'Տեսակավորման ուղղություն',
+                'label' => 'Դասավորման ուղղություն',
 
                 'options' => [
                     'asc' => 'Աճող',
@@ -228,5 +253,7 @@ return [
         ],
 
     ],
+
+    'default_model_label' => 'տվյալ',
 
 ];
