@@ -72,8 +72,8 @@ it('can detect custom search queries', function (): void {
     };
 
     $this->assertFalse(property_exists($trait, 'searchQuery') && $trait->searchQuery !== null);
-    
-    $trait->searchQuery = fn($query, $search) => $query->where('custom', 'like', "%{$search}%");
+
+    $trait->searchQuery = fn ($query, $search) => $query->where('custom', 'like', "%{$search}%");
     $this->assertTrue($trait->searchQuery !== null);
 });
 
@@ -91,38 +91,38 @@ it('can handle empty search terms', function (): void {
 });
 
 // Integration tests using Livewire components
-use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Livewire\PostsTable;
+use Filament\Tests\Fixtures\Models\Post;
 
 use function Filament\Tests\livewire;
 
-it('can search records with custom search queries', function () {
+it('can search records with custom search queries', function (): void {
     $posts = Post::factory()->count(5)->create();
-    
+
     $searchablePost = $posts->first();
-    
+
     livewire(PostsTable::class)
         ->searchTable($searchablePost->title)
         ->assertCanSeeTableRecords($posts->where('title', $searchablePost->title))
         ->assertCanNotSeeTableRecords($posts->where('title', '!=', $searchablePost->title));
 });
 
-it('can search individual columns', function () {
+it('can search individual columns', function (): void {
     $posts = Post::factory()->count(5)->create();
-    
+
     $searchablePost = $posts->first();
-    
+
     livewire(PostsTable::class)
         ->searchTableColumns(['content' => $searchablePost->content])
         ->assertCanSeeTableRecords($posts->where('content', $searchablePost->content))
         ->assertCanNotSeeTableRecords($posts->where('content', '!=', $searchablePost->content));
 });
 
-it('can search multiple individual columns', function () {
+it('can search multiple individual columns', function (): void {
     $posts = Post::factory()->count(5)->create();
-    
+
     $searchablePost = $posts->first();
-    
+
     livewire(PostsTable::class)
         ->searchTableColumns([
             'content' => $searchablePost->content,
@@ -132,23 +132,23 @@ it('can search multiple individual columns', function () {
         ->assertCanNotSeeTableRecords($posts->where('author.email', '!=', $searchablePost->author->email));
 });
 
-it('can search with relationships', function () {
+it('can search with relationships', function (): void {
     $posts = Post::factory()->count(5)->create();
-    
+
     $searchablePost = $posts->first();
-    
+
     livewire(PostsTable::class)
         ->searchTable($searchablePost->author->name)
         ->assertCanSeeTableRecords($posts->where('author.name', $searchablePost->author->name))
         ->assertCanNotSeeTableRecords($posts->where('author.name', '!=', $searchablePost->author->name));
 });
 
-it('can handle multi-word searches', function () {
+it('can handle multi-word searches', function (): void {
     $posts = Post::factory()->count(5)->create([
         'title' => 'Multi Word Title',
         'content' => 'Some content with multiple words',
     ]);
-    
+
     livewire(PostsTable::class)
         ->searchTable('Multi Word')
         ->assertCanSeeTableRecords($posts->where('title', 'Multi Word Title'));

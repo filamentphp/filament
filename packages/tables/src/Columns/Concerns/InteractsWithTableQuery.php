@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Collection;
 
 use function Filament\Support\generate_search_column_expression;
 use function Filament\Support\generate_search_term_expression;
@@ -167,8 +166,8 @@ trait InteractsWithTableQuery
         $originalJoins = collect($originalBaseQuery->joins ?? []);
         $modifiedJoins = collect($modifiedBaseQuery->joins ?? []);
 
-        $modifiedJoins->each(function ($join) use ($originalJoins, $originalBaseQuery) {
-            if (!$originalJoins->contains(fn ($existingJoin) => $existingJoin->table === $join->table)) {
+        $modifiedJoins->each(function ($join) use ($originalJoins, $originalBaseQuery): void {
+            if (! $originalJoins->contains(fn ($existingJoin) => $existingJoin->table === $join->table)) {
                 $originalBaseQuery->joins[] = $join;
             }
         });
@@ -176,7 +175,7 @@ trait InteractsWithTableQuery
         $originalBaseQuery->wheres = array_merge($originalBaseQuery->wheres ?? [], $modifiedBaseQuery->wheres ?? []);
         $originalBaseQuery->mergeBindings($modifiedBaseQuery);
 
-        if (!empty($modifiedBaseQuery->columns)) {
+        if (! empty($modifiedBaseQuery->columns)) {
             $originalBaseQuery->columns = $modifiedBaseQuery->columns;
         }
     }

@@ -177,15 +177,15 @@ trait CanSearchRecords
 
         foreach ($this->extractTableSearchWords($search) as $searchWord) {
             $searchableColumns = collect($this->getTable()->getColumns())
-                ->filter(fn($column) => !$column->isHidden() && $column->isGloballySearchable());
+                ->filter(fn ($column) => ! $column->isHidden() && $column->isGloballySearchable());
 
-            $customColumns = $searchableColumns->filter(fn($column) => $column->hasCustomSearchQuery());
+            $customColumns = $searchableColumns->filter(fn ($column) => $column->hasCustomSearchQuery());
             foreach ($customColumns as $column) {
                 $isFirst = true;
                 $column->applySearchConstraint($query, $searchWord, $isFirst);
             }
 
-            $regularColumns = $searchableColumns->filter(fn($column) => !$column->hasCustomSearchQuery());
+            $regularColumns = $searchableColumns->filter(fn ($column) => ! $column->hasCustomSearchQuery());
             if ($regularColumns->isNotEmpty()) {
                 $query->where(function (Builder $query) use ($searchWord, $regularColumns): void {
                     $isFirst = true;
