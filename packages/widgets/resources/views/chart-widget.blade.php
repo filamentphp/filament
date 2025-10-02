@@ -69,7 +69,7 @@
                             options: @js($this->getOptions()),
                             type: @js($this->getType()),
                         })"
-                {{ (new ComponentAttributeBag)->color(ChartWidgetComponent::class, $color) }}
+                {{ (new ComponentAttributeBag)->color(ChartWidgetComponent::class, $color)->class(['fi-wi-chart-canvas-ctn']) }}
             >
                 <canvas
                     x-ref="canvas"
