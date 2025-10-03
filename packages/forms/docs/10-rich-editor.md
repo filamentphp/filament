@@ -852,8 +852,8 @@ Then, create a JavaScript file that imports the extension. In this example, crea
 import Highlight from '@tiptap/extension-highlight'
 
 export default Highlight.configure({
-      multicolor: true,
-    });
+    multicolor: true,
+})
 ```
 
 One way to compile this file is to use [esbuild](https://esbuild.github.io). You can install it using `npm`:
