@@ -97,7 +97,7 @@
     }
 
     & > .fi-icon-btn-badge-ctn {
-        @apply absolute start-full top-1 z-[1] w-max -translate-x-1/2 -translate-y-1/2 rounded-md bg-white rtl:translate-x-1/2 dark:bg-gray-900;
+        @apply absolute start-full top-1 z-[1] flex w-max -translate-x-1/2 -translate-y-1/2 rounded-md bg-white rtl:translate-x-1/2 dark:bg-gray-900;
     }
 
     &:has(+ .fi-btn.fi-labeled-from-sm) {
