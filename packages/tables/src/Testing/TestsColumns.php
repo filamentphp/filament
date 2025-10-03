@@ -202,7 +202,13 @@ class TestsColumns
             Assert::assertEquals(
                 $state,
                 $actualState,
-                "Failed asserting that a table column with name [{$name}] has value of [{$state}] for record [{$record->getKey()}] on the [{$livewireClass}] component.",
+                sprintf(
+                    'Failed asserting that a table column with name [%s] has value of [%s] for record [%s] on the [%s] component.',
+                    $name,
+                    is_object($state) ? get_debug_type($state) : var_export($state, true),
+                    $record->getKey(),
+                    $livewireClass,
+                ),
             );
 
             return $this;
@@ -240,7 +246,13 @@ class TestsColumns
             Assert::assertNotEquals(
                 $state,
                 $actualState,
-                "Failed asserting that a table column with name [{$name}] does not have a value of [{$state}] for record [{$record->getKey()}] on the [{$livewireClass}] component.",
+                sprintf(
+                    'Failed asserting that a table column with name [%s] does not have a value of [%s] for record [%s] on the [%s] component.',
+                    $name,
+                    is_object($state) ? get_debug_type($state) : var_export($state, true),
+                    $record->getKey(),
+                    $livewireClass,
+                ),
             );
 
             return $this;
