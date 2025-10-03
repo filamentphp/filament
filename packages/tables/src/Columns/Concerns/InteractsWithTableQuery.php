@@ -5,7 +5,6 @@ namespace Filament\Tables\Columns\Concerns;
 use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Arr;
 
 use function Filament\Support\generate_search_column_expression;
@@ -119,43 +118,20 @@ trait InteractsWithTableQuery
             return $query;
         }
 
+        $relationshipName = $this->getRelationshipName($query->getModel());
+
         foreach (array_reverse($this->getSortColumns($query->getModel())) as $sortColumn) {
-            $query->orderBy($this->getSortColumnForQuery($query, $sortColumn), $direction);
+            $sortColumn = (string) str($sortColumn)->replace('.', '->');
+
+            if ($relationshipName) {
+                $query->orderByPowerJoins("{$relationshipName}.{$sortColumn}", $direction); /** @phpstan-ignore method.notFound */
+
+                continue;
+            }
+
+            $query->orderBy($sortColumn, $direction);
         }
 
         return $query;
-    }
-
-    /**
-     * @param  array<string> | null  $relationships
-     */
-    protected function getSortColumnForQuery(EloquentBuilder $query, string $sortColumn, ?array $relationships = null): string | Builder
-    {
-        $relationships ??= ($relationshipName = $this->getRelationshipName($query->getModel())) ?
-            explode('.', $relationshipName) :
-            [];
-
-        if (! count($relationships)) {
-            return (string) str($sortColumn)->replace('.', '->');
-        }
-
-        $currentRelationshipName = array_shift($relationships);
-
-        $relationship = $this->getRelationship($query->getModel(), $currentRelationshipName);
-
-        $relatedQuery = $relationship->getRelated()::query();
-
-        return $relationship
-            ->getRelationExistenceQuery(
-                $relatedQuery,
-                $query,
-                [$currentRelationshipName => $this->getSortColumnForQuery(
-                    $relatedQuery,
-                    $sortColumn,
-                    $relationships,
-                )],
-            )
-            ->applyScopes()
-            ->getQuery();
     }
 }
