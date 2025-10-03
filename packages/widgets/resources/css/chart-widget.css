@@ -3,20 +3,15 @@
         @apply h-full;
     }
 
-    & .fi-section-content-ctn {
-        @apply h-full;
-    }
-
-    & .fi-section-content {
-        @apply h-full;
-
-        & > * {
-            @apply @container h-full;
-        }
-    }
-
     & .fi-wi-chart-canvas-ctn {
-        @apply min-h-48 @xs:min-h-[15rem] @sm:min-h-[18rem] @md:min-h-[21rem] @lg:min-h-[24rem] @xl:min-h-[27rem] @2xl:min-h-[31.5rem] @3xl:min-h-[36rem] @4xl:min-h-[42rem] @5xl:min-h-[48rem] @6xl:min-h-[54rem] @7xl:min-h-[60rem];
+        @apply aspect-[2];
+
+        &[data-chart-type="doughnut"],
+        &[data-chart-type="pie"],
+        &[data-chart-type="polarArea"],
+        &[data-chart-type="radar"] {
+            @apply aspect-square;
+        }
     }
 
     & .fi-wi-chart-filter {
