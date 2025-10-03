@@ -79,9 +79,10 @@ document.addEventListener('alpine:init', () => {
             if (state === undefined) {
                 return false
             }
+
             try {
                 return JSON.stringify(state) !== JSON.stringify(old)
-            } catch (e) {
+            } catch {
                 return state !== old
             }
         },
