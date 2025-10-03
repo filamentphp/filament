@@ -781,7 +781,7 @@
             @apply grid-cols-(--cols);
 
             & > .grid-layout-col {
-                @apply col-span-(--col-span);
+                @apply col-(--col-span);
             }
         }
 
@@ -789,7 +789,7 @@
             @apply sm:grid-cols-(--cols);
 
             & > .grid-layout-col {
-                @apply sm:col-span-(--col-span);
+                @apply sm:col-(--col-span);
             }
         }
 
@@ -797,7 +797,7 @@
             @apply md:grid-cols-(--cols);
 
             & > .grid-layout-col {
-                @apply md:col-span-(--col-span);
+                @apply md:col-(--col-span);
             }
         }
 
@@ -805,7 +805,7 @@
             @apply lg:grid-cols-(--cols);
 
             & > .grid-layout-col {
-                @apply lg:col-span-(--col-span);
+                @apply lg:col-(--col-span);
             }
         }
 
@@ -813,7 +813,7 @@
             @apply xl:grid-cols-(--cols);
 
             & > .grid-layout-col {
-                @apply xl:col-span-(--col-span);
+                @apply xl:col-(--col-span);
             }
         }
 
@@ -821,7 +821,7 @@
             @apply 2xl:grid-cols-(--cols);
 
             & > .grid-layout-col {
-                @apply 2xl:col-span-(--col-span);
+                @apply 2xl:col-(--col-span);
             }
         }
 
