@@ -74,6 +74,18 @@ document.addEventListener('alpine:init', () => {
                 )
             })
         },
+
+        isStateChanged(state, old) {
+            if (state === undefined) {
+                return false
+            }
+
+            try {
+                return JSON.stringify(state) !== JSON.stringify(old)
+            } catch {
+                return state !== old
+            }
+        },
     }))
 
     window.Alpine.data(

@@ -121,7 +121,7 @@ class DateTimePicker extends Field implements HasAffixActions
             return $this->hasSeconds() ? 'H:i:s' : 'H:i';
         }
 
-        return 'Y-m-d H:i:s';
+        return $this->hasSeconds() ? 'Y-m-d H:i:s' : 'Y-m-d H:i';
     }
 
     public function displayFormat(string | Closure | null $format): static
