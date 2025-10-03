@@ -1,16 +1,35 @@
 .fi-wi-chart {
-    & .fi-section {
-        @apply h-full;
+    & .fi-wi-chart-canvas-ctn {
+        @apply aspect-square;
     }
 
-    & .fi-wi-chart-canvas-ctn {
-        @apply aspect-[2];
+    @supports (container-type: inline-size) {
+        & .fi-section-content {
+            @apply @container;
+        }
 
-        &[data-chart-type="doughnut"],
-        &[data-chart-type="pie"],
-        &[data-chart-type="polarArea"],
-        &[data-chart-type="radar"] {
-            @apply aspect-square;
+        & .fi-wi-chart-canvas-ctn {
+            @apply @sm:aspect-[2];
+
+            &[data-chart-type='doughnut'],
+            &[data-chart-type='pie'],
+            &[data-chart-type='polarArea'],
+            &[data-chart-type='radar'] {
+                @apply aspect-square;
+            }
+        }
+    }
+
+    @supports not (container-type: inline-size) {
+        & .fi-wi-chart-canvas-ctn {
+            @apply sm:aspect-[2];
+
+            &[data-chart-type='doughnut'],
+            &[data-chart-type='pie'],
+            &[data-chart-type='polarArea'],
+            &[data-chart-type='radar'] {
+                @apply aspect-square;
+            }
         }
     }
 
