@@ -57,7 +57,7 @@ export default async ({
     $wire,
 }) => {
 
-    const baseExtensions = [
+    const extensions = [
         Blockquote,
         Bold,
         BulletList,
@@ -75,6 +75,8 @@ export default async ({
         Document,
         Dropcursor,
         Gapcursor,
+        Grid,
+        GridColumn,
         HardBreak,
         Heading,
         Highlight,
@@ -90,12 +92,16 @@ export default async ({
         }),
         ListItem,
         LocalFiles.configure({
+            acceptedTypes: acceptedFileTypes,
+            acceptedTypesValidationMessage: acceptedFileTypesValidationMessage,
             get$WireUsing: () => $wire,
             key,
+            maxSize: maxFileSize,
+            maxSizeValidationMessage: maxFileSizeValidationMessage,
             statePath,
             uploadingMessage: uploadingFileMessage,
         }),
-        ...(mergeTags.length
+        ...(Object.keys(mergeTags).length
             ? [
                 MergeTag.configure({
                     deleteTriggerWithBackspace: true,
@@ -103,6 +109,7 @@ export default async ({
                         mergeTags,
                         noMergeTagSearchResultsMessage,
                     }),
+                    mergeTags,
                 }),
             ]
             : []),
@@ -110,6 +117,9 @@ export default async ({
         Paragraph,
         Placeholder.configure({
             placeholder,
+        }),
+        TextColor.configure({
+            textColors,
         }),
         Small,
         Strike,
@@ -159,17 +169,17 @@ export default async ({
     for (const customExtension of loadedCustomExtensions) {
         if (!customExtension || !customExtension.name) continue
 
-        const existingIndex = baseExtensions.findIndex(
+        const existingIndex = extensions.findIndex(
             (ext) => ext.name === customExtension.name
         )
 
 
         if (existingIndex !== -1) {
-            baseExtensions[existingIndex] = customExtension
+            extensions[existingIndex] = customExtension
         } else {
-            baseExtensions.push(customExtension)
+            extensions.push(customExtension)
         }
     }
 
-    return baseExtensions
+    return extensions
 }
