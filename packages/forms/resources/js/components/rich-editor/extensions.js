@@ -55,98 +55,121 @@ export default async ({
     textColors,
     uploadingFileMessage,
     $wire,
-}) => [
-    Blockquote,
-    Bold,
-    BulletList,
-    Code,
-    CodeBlock,
-    CustomBlock.configure({
-        deleteCustomBlockButtonIconHtml,
-        editCustomBlockButtonIconHtml,
-        editCustomBlockUsing,
-        insertCustomBlockUsing,
-    }),
-    Details,
-    DetailsSummary,
-    DetailsContent,
-    Document,
-    Dropcursor,
-    Gapcursor,
-    Grid,
-    GridColumn,
-    HardBreak,
-    Heading,
-    Highlight,
-    HorizontalRule,
-    Italic,
-    Image.configure({
-        inline: true,
-    }),
-    Lead,
-    Link.configure({
-        autolink: true,
-        openOnClick: false,
-    }),
-    ListItem,
-    LocalFiles.configure({
-        acceptedTypes: acceptedFileTypes,
-        acceptedTypesValidationMessage: acceptedFileTypesValidationMessage,
-        get$WireUsing: () => $wire,
-        key,
-        maxSize: maxFileSize,
-        maxSizeValidationMessage: maxFileSizeValidationMessage,
-        statePath,
-        uploadingMessage: uploadingFileMessage,
-    }),
-    ...(Object.keys(mergeTags).length
-        ? [
-              MergeTag.configure({
-                  deleteTriggerWithBackspace: true,
-                  suggestion: getMergeTagSuggestion({
-                      mergeTags,
-                      noMergeTagSearchResultsMessage,
-                  }),
-                  mergeTags,
-              }),
-          ]
-        : []),
-    OrderedList,
-    Paragraph,
-    Placeholder.configure({
-        placeholder,
-    }),
-    TextColor.configure({
-        textColors,
-    }),
-    Small,
-    Strike,
-    Subscript,
-    Superscript,
-    TableKit.configure({
-        table: {
-            resizable: true,
-        },
-    }),
-    Text,
-    TextAlign.configure({
-        types: ['heading', 'paragraph'],
-        alignments: ['start', 'center', 'end', 'justify'],
-        defaultAlignment: 'start',
-    }),
-    Underline,
-    UndoRedo,
-    ...(
-        await Promise.all(
-            customExtensionUrls.map(async (url) => {
-                const absoluteUrlRegExp = new RegExp('^(?:[a-z+]+:)?//', 'i')
+}) => {
 
-                if (!absoluteUrlRegExp.test(url)) {
-                    url = new URL(url, document.baseURI).href
-                }
+    const baseExtensions = [
+        Blockquote,
+        Bold,
+        BulletList,
+        Code,
+        CodeBlock,
+        CustomBlock.configure({
+            deleteCustomBlockButtonIconHtml,
+            editCustomBlockButtonIconHtml,
+            editCustomBlockUsing,
+            insertCustomBlockUsing,
+        }),
+        Details,
+        DetailsSummary,
+        DetailsContent,
+        Document,
+        Dropcursor,
+        Gapcursor,
+        HardBreak,
+        Heading,
+        Highlight,
+        HorizontalRule,
+        Italic,
+        Image.configure({
+            inline: true,
+        }),
+        Lead,
+        Link.configure({
+            autolink: true,
+            openOnClick: false,
+        }),
+        ListItem,
+        LocalFiles.configure({
+            get$WireUsing: () => $wire,
+            key,
+            statePath,
+            uploadingMessage: uploadingFileMessage,
+        }),
+        ...(mergeTags.length
+            ? [
+                MergeTag.configure({
+                    deleteTriggerWithBackspace: true,
+                    suggestion: getMergeTagSuggestion({
+                        mergeTags,
+                        noMergeTagSearchResultsMessage,
+                    }),
+                }),
+            ]
+            : []),
+        OrderedList,
+        Paragraph,
+        Placeholder.configure({
+            placeholder,
+        }),
+        Small,
+        Strike,
+        Subscript,
+        Superscript,
+        TableKit.configure({
+            table: {
+                resizable: true,
+            },
+        }),
+        Text,
+        TextAlign.configure({
+            types: ['heading', 'paragraph'],
+            alignments: ['start', 'center', 'end', 'justify'],
+            defaultAlignment: 'start',
+        }),
+        Underline,
+        UndoRedo,
+    ]
 
-                return (await import(url)).default
-            }),
+
+    const loadedCustomExtensions = await Promise.all(
+        customExtensionUrls.map(async (url) => {
+            const absoluteUrlRegExp = new RegExp('^(?:[a-z+]+:)?//', 'i')
+
+            if (!absoluteUrlRegExp.test(url)) {
+                url = new URL(url, document.baseURI).href
+            }
+
+            try {
+                const mod = await import(/* @vite-ignore */ url)
+                const factoryOrInstance = mod.default
+
+                const extension = typeof factoryOrInstance === 'function'
+                    ? factoryOrInstance()
+                    : factoryOrInstance
+
+                return extension
+            } catch (err) {
+                console.error(`Failed to load custom extension from ${url}:`, err)
+                return null
+            }
+        }),
+    )
+
+
+    for (const customExtension of loadedCustomExtensions) {
+        if (!customExtension || !customExtension.name) continue
+
+        const existingIndex = baseExtensions.findIndex(
+            (ext) => ext.name === customExtension.name
         )
-    ).flat(),
-]
+
+
+        if (existingIndex !== -1) {
+            baseExtensions[existingIndex] = customExtension
+        } else {
+            baseExtensions.push(customExtension)
+        }
+    }
+
+    return baseExtensions
+}
