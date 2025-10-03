@@ -941,11 +941,7 @@ trait CanBeValidated
             $date = $component->evaluate($date);
 
             if (! (strtotime($date) || $isStatePathAbsolute)) {
-                $containerStatePath = $component->getContainer()->getStatePath();
-
-                if ($containerStatePath) {
-                    $date = "{$containerStatePath}.{$date}";
-                }
+                $date = $component->resolveRelativeStatePath($date);
             }
 
             return "{$rule}:{$date}";
@@ -960,11 +956,7 @@ trait CanBeValidated
             $statePath = $component->evaluate($statePath);
 
             if (! $isStatePathAbsolute) {
-                $containerStatePath = $component->getContainer()->getStatePath();
-
-                if ($containerStatePath) {
-                    $statePath = "{$containerStatePath}.{$statePath}";
-                }
+                $statePath = $component->resolveRelativeStatePath($statePath);
             }
 
             return "{$rule}:{$statePath}";
@@ -986,15 +978,10 @@ trait CanBeValidated
                     $statePaths = explode(',', $statePaths);
                 }
 
-                $containerStatePath = $component->getContainer()->getStatePath();
-
-                if ($containerStatePath) {
-                    $statePaths = array_map(function ($statePath) use ($containerStatePath) {
-                        $statePath = trim($statePath);
-
-                        return "{$containerStatePath}.{$statePath}";
-                    }, $statePaths);
-                }
+                $statePaths = array_map(
+                    fn (string $statePath): string => $component->resolveRelativeStatePath(trim($statePath)),
+                    $statePaths,
+                );
             }
 
             if (is_array($statePaths)) {
@@ -1014,11 +1001,7 @@ trait CanBeValidated
             $stateValues = $component->evaluate($stateValues);
 
             if (! $isStatePathAbsolute) {
-                $containerStatePath = $component->getContainer()->getStatePath();
-
-                if ($containerStatePath) {
-                    $statePath = "{$containerStatePath}.{$statePath}";
-                }
+                $statePath = $component->resolveRelativeStatePath($statePath);
             }
 
             if (is_array($stateValues)) {
