@@ -33,8 +33,6 @@ import TextAlign from '@tiptap/extension-text-align'
 import Underline from '@tiptap/extension-underline'
 
 import getMergeTagSuggestion from './merge-tag-suggestion.js'
-import Mention from './extension-mention.js'
-import getMentionSuggestion from './mention-suggestion.js'
 
 export default async ({
     customExtensionUrls,
@@ -45,140 +43,124 @@ export default async ({
     key,
     mergeTags,
     noMergeTagSearchResultsMessage,
-    mentions,
-    mentionsLimit,
     placeholder,
     statePath,
     uploadingFileMessage,
     $wire,
-}) => [
-    Blockquote,
-    Bold,
-    BulletList,
-    Code,
-    CodeBlock,
-    CustomBlock.configure({
-        deleteCustomBlockButtonIconHtml,
-        editCustomBlockButtonIconHtml,
-        editCustomBlockUsing,
-        insertCustomBlockUsing,
-    }),
-    Details,
-    DetailsSummary,
-    DetailsContent,
-    Document,
-    Dropcursor,
-    Gapcursor,
-    HardBreak,
-    Heading,
-    Highlight,
-    HorizontalRule,
-    Italic,
-    Image.configure({
-        inline: true,
-    }),
-    Lead,
-    Link.configure({
-        autolink: true,
-        openOnClick: false,
-    }),
-    ListItem,
-    LocalFiles.configure({
-        get$WireUsing: () => $wire,
-        key,
-        statePath,
-        uploadingMessage: uploadingFileMessage,
-    }),
-    ...(mergeTags.length
-        ? [
-              MergeTag.configure({
-                  deleteTriggerWithBackspace: true,
-                  suggestion: getMergeTagSuggestion({
-                      mergeTags,
-                      noMergeTagSearchResultsMessage,
-                  }),
-              }),
-          ]
-        : []),
-    ...(mentions.length
-        ? (() => {
-              const isConfig = (m) => typeof m === 'object' && (m.char || m.items || m.render)
+}) => {
 
-              const suggestions = Array.isArray(mentions) && mentions.length && isConfig(mentions[0])
-                  ? mentions.map((m) => {
-                        const char = m?.char ?? '@'
-                        const effectiveLimit = mentionsLimit
+    const baseExtensions = [
+        Blockquote,
+        Bold,
+        BulletList,
+        Code,
+        CodeBlock,
+        CustomBlock.configure({
+            deleteCustomBlockButtonIconHtml,
+            editCustomBlockButtonIconHtml,
+            editCustomBlockUsing,
+            insertCustomBlockUsing,
+        }),
+        Details,
+        DetailsSummary,
+        DetailsContent,
+        Document,
+        Dropcursor,
+        Gapcursor,
+        HardBreak,
+        Heading,
+        Highlight,
+        HorizontalRule,
+        Italic,
+        Image.configure({
+            inline: true,
+        }),
+        Lead,
+        Link.configure({
+            autolink: true,
+            openOnClick: false,
+        }),
+        ListItem,
+        LocalFiles.configure({
+            get$WireUsing: () => $wire,
+            key,
+            statePath,
+            uploadingMessage: uploadingFileMessage,
+        }),
+        ...(mergeTags.length
+            ? [
+                MergeTag.configure({
+                    deleteTriggerWithBackspace: true,
+                    suggestion: getMergeTagSuggestion({
+                        mergeTags,
+                        noMergeTagSearchResultsMessage,
+                    }),
+                }),
+            ]
+            : []),
+        OrderedList,
+        Paragraph,
+        Placeholder.configure({
+            placeholder,
+        }),
+        Small,
+        Strike,
+        Subscript,
+        Superscript,
+        TableKit.configure({
+            table: {
+                resizable: true,
+            },
+        }),
+        Text,
+        TextAlign.configure({
+            types: ['heading', 'paragraph'],
+            alignments: ['start', 'center', 'end', 'justify'],
+            defaultAlignment: 'start',
+        }),
+        Underline,
+        UndoRedo,
+    ]
 
-                        if (typeof m?.items === 'function') {
-                            const originalItems = m.items
-                            return {
-                                ...m,
-                                char,
-                                items: (ctx) => {
-                                    const result = originalItems(ctx)
-                                    if (result && typeof result.then === 'function') {
-                                        return result.then((arr) => Array.isArray(arr) ? arr.slice(0, effectiveLimit) : arr)
-                                    }
-                                    return Array.isArray(result) ? result.slice(0, effectiveLimit) : result
-                                },
-                            }
-                        }
 
-                        if (typeof m?.render === 'function') {
-                            return { ...m, char }
-                        }
+    const loadedCustomExtensions = await Promise.all(
+        customExtensionUrls.map(async (url) => {
+            const absoluteUrlRegExp = new RegExp('^(?:[a-z+]+:)?//', 'i')
 
-                        return {
-                            ...getMentionSuggestion({
-                                items: m?.items ?? [],
-                                limit: effectiveLimit,
-                            }),
-                            char,
-                        }
-                    })
-                  : [{ ...getMentionSuggestion({ items: mentions, limit: mentionsLimit }), char: '@' }]
+            if (!absoluteUrlRegExp.test(url)) {
+                url = new URL(url, document.baseURI).href
+            }
 
-              return [
-                  Mention.configure({
-                      HTMLAttributes: { class: 'fi-fo-rich-editor-mention' },
-                      suggestions,
-                  }),
-              ]
-          })()
-        : []),
-    OrderedList,
-    Paragraph,
-    Placeholder.configure({
-        placeholder,
-    }),
-    Small,
-    Strike,
-    Subscript,
-    Superscript,
-    TableKit.configure({
-        table: {
-            resizable: true,
-        },
-    }),
-    Text,
-    TextAlign.configure({
-        types: ['heading', 'paragraph'],
-        alignments: ['start', 'center', 'end', 'justify'],
-        defaultAlignment: 'start',
-    }),
-    Underline,
-    UndoRedo,
-    ...(
-        await Promise.all(
-            customExtensionUrls.map(async (url) => {
-                const absoluteUrlRegExp = new RegExp('^(?:[a-z+]+:)?//', 'i')
+            try {
+                const mod = await import(/* @vite-ignore */ url)
+                const factoryOrInstance = mod.default
 
-                if (!absoluteUrlRegExp.test(url)) {
-                    url = new URL(url, document.baseURI).href
-                }
+                const extension = typeof factoryOrInstance === 'function'
+                    ? factoryOrInstance()
+                    : factoryOrInstance
 
-                return (await import(url)).default
-            }),
+                return extension
+            } catch (err) {
+                console.error(`Failed to load custom extension from ${url}:`, err)
+                return null
+            }
+        }),
+    )
+
+
+    for (const customExtension of loadedCustomExtensions) {
+        if (!customExtension || !customExtension.name) continue
+
+        const existingIndex = baseExtensions.findIndex(
+            (ext) => ext.name === customExtension.name
         )
-    ).flat(),
-]
+
+        if (existingIndex !== -1) {
+            baseExtensions[existingIndex] = customExtension
+        } else {
+            baseExtensions.push(customExtension)
+        }
+    }
+
+    return baseExtensions
+}
