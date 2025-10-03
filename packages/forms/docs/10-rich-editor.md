@@ -617,6 +617,74 @@ RichEditor::make('content')
     ->activePanel('mergeTags')
 ```
 
+## Using mentions
+
+Mentions let users type `@` to search and insert inline references (e.g., users, teams). The inserted mention is an inline, non-editable token rendered as text like `@Jane Doe`.
+
+Mentions are built into the rich editor. To enable them, provide a list of items using `mentionItems()`:
+
+```php
+use Filament\Forms\Components\RichEditor;
+
+RichEditor::make('content')
+    ->mentionItems([
+        // Strings
+        'Marketing', 'Sales', 'Support',
+
+        // Or objects with an id and label (recommended)
+        ['id' => 1, 'label' => 'Jane Doe'],
+        ['id' => 2, 'label' => 'John Smith'],
+
+    ])
+    // or Model Query
+    ->mentionItems(fn () => User::all()->map(fn ($item) => ['id' => $item['id'], 'label' => $item['name']])->toArray())
+```
+
+- You can control how many suggestions are shown by default with `mentionItemsLimit()` (default is `5`):
+
+```php
+use Filament\Forms\Components\RichEditor;
+
+RichEditor::make('content')
+    ->mentionItemsLimit(15)
+    ->mentionItems([
+        ['id' => 1, 'label' => 'Jane Doe'],
+        ['id' => 2, 'label' => 'John Smith'],
+    ])
+```
+
+- You can register multiple mention triggers by passing configuration arrays with a `char` and `items`:
+
+```php
+use Filament\Forms\Components\RichEditor;
+
+RichEditor::make('content')
+    ->mentionItemsLimit(10)
+    ->mentionItems([
+        [
+            'char' => '@',
+            'items' => User::query()
+                ->orderBy('name')
+                ->get()
+                ->map(fn ($user) => ['id' => $user->id, 'label' => $user->name])
+                ->toArray(),
+        ],
+        [
+            'char' => '#',
+            'items' => ['Laravel', 'Filament', 'Livewire'],
+        ],
+    ])
+```
+
+- Typing `@` opens a dropdown that filters as you type.
+- Selecting an item inserts an inline span with a ```data-type="mention"``` attribute at the cursor.
+- Items can be simple strings or associative arrays with `id` and `label` (or `name`). When both are present, the label is displayed and the id is stored.
+- You may pass a closure to `mentionItems()` to compute items dynamically.
+- The number of suggestions can be limited globally with `mentionItemsLimit()`.
+- You can use different trigger characters by passing config arrays with a `char` and `items`.
+
+
+
 ## Registering rich content attributes
 
 There are elements of the rich editor configuration that apply to both the editor and the renderer. For example, if you are using [private images](#using-private-images-in-the-editor), [custom blocks](#using-custom-blocks), [merge tags](#using-merge-tags), or [plugins](#extending-the-rich-editor), you need to ensure that the same configuration is used in both places. To do this, Filament provides you with a way to register rich content attributes that can be used in both the editor and the renderer.
@@ -851,9 +919,10 @@ Then, create a JavaScript file that imports the extension. In this example, crea
 ```javascript
 import Highlight from '@tiptap/extension-highlight'
 
-export default Highlight.configure({
-    multicolor: true,
-})
+export default () =>
+    Highlight.configure({
+      multicolor: true,
+    });
 ```
 
 One way to compile this file is to use [esbuild](https://esbuild.github.io). You can install it using `npm`:
