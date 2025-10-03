@@ -241,7 +241,7 @@ class TestsColumns
 
             $displayState = is_object($state) ? get_debug_type($state) : var_export($state, true);
 
-            Assert::assertEquals(
+            Assert::assertNotEquals(
                 $state,
                 $actualState,
                 "Failed asserting that a table column with name [{$name}] does not have a value of [{$displayState}] for record [{$record->getKey()}] on the [{$livewireClass}] component.",
