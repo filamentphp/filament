@@ -146,15 +146,15 @@ abstract class ViewComponent extends Component implements Htmlable
 
     public function render(): View
     {
-        return $this->viewInstance ??= view(
-            $this->getView(),
-            [
-                'attributes' => new ComponentAttributeBag,
-                ...$this->extractPublicMethods(),
-                ...(isset($this->viewIdentifier) ? [$this->viewIdentifier => $this] : []),
-                ...$this->getExtraViewData(),
-                ...$this->getViewData(),
-            ],
-        );
+        $this->viewInstance ??= view($this->getView(), [
+            ...$this->extractPublicMethods(),
+            ...(isset($this->viewIdentifier) ? [$this->viewIdentifier => $this] : []),
+        ]);
+
+        return $this->viewInstance->with([
+            'attributes' => new ComponentAttributeBag,
+            ...$this->getExtraViewData(),
+            ...$this->getViewData(),
+        ]);
     }
 }
