@@ -21,6 +21,7 @@ use Filament\Panel;
 use Filament\PanelRegistry;
 use Filament\Support\Assets\Theme;
 use Filament\Support\Enums\Width;
+use Filament\Widgets\Widget;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\CanResetPassword;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -28,6 +29,7 @@ use Illuminate\Contracts\Auth\StatefulGuard;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Facade;
+use Livewire\Component;
 
 /**
  * @method static bool arePasswordsRevealable()
