@@ -1,3 +1,7 @@
+@props([
+    'teleport' => false,
+])
+
 @php
     use Filament\Actions\Action;
     use Illuminate\Support\Arr;
@@ -28,6 +32,7 @@
 <x-filament::dropdown
     placement="bottom-start"
     size
+    :teleport="$teleport"
     :attributes="
         \Filament\Support\prepare_inherited_attributes($attributes)
             ->class(['fi-tenant-menu'])
