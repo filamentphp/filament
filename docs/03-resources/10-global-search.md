@@ -144,6 +144,22 @@ public function panel(Panel $panel): Panel
 }
 ```
 
+## Choosing the global search position
+
+By default, the global search field is positioned in the topbar, however, you may choose to position it in the sidebar instead. This can be achieved by passing a second argument to the `globalSearch()` method in the [configuration](../panel-configuration):
+
+```php
+use Filament\Panel;
+use Filament\Panel\Enums\GlobalSearchPosition;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->globalSearch(position: GlobalSearchPosition::Sidebar);
+}
+```
+
 ## Registering global search key bindings
 
 The global search field can be opened using keyboard shortcuts. To configure these, pass the `globalSearchKeyBindings()` method to the [configuration](../panel-configuration):

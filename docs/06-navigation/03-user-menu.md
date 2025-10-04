@@ -29,6 +29,22 @@ public function panel(Panel $panel): Panel
 
 <AutoScreenshot name="panels/navigation/user-menu" alt="User menu with custom menu item" version="3.x" />
 
+## Choosing the user menu position
+
+By default, the user menu is positioned in the top right corner of the topbar, however, you may choose to position it in the sidebar instead. This can be achieved by passing a second argument to the `userMenu()` method in the [configuration](../panel-configuration):
+
+```php
+use Filament\Panel;
+use Filament\Panel\Enums\UserMenuPosition;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->userMenu(position: UserMenuPosition::Sidebar);
+}
+```
+
 ## Customizing the profile link
 
 To customize the user profile link at the start of the user menu, register a new item with the `profile` array key, and pass a function that [customizes the action](../actions) object:
