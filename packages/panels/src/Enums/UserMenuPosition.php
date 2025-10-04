@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament\Panel\Enums;
+namespace Filament\Enums;
 
 enum UserMenuPosition
 {

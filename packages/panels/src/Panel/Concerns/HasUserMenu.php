@@ -4,9 +4,9 @@ namespace Filament\Panel\Concerns;
 
 use Closure;
 use Filament\Actions\Action;
+use Filament\Enums\UserMenuPosition;
 use Filament\Facades\Filament;
 use Filament\Navigation\MenuItem;
-use Filament\Panel\Enums\UserMenuPosition;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
 use Filament\View\PanelsIconAlias;

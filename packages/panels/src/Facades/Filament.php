@@ -7,7 +7,10 @@ use Filament\Actions\Action;
 use Filament\Auth\MultiFactor\Contracts\MultiFactorAuthenticationProvider;
 use Filament\Billing\Providers\Contracts\BillingProvider;
 use Filament\Contracts\Plugin;
+use Filament\Enums\DatabaseNotificationsPosition;
+use Filament\Enums\GlobalSearchPosition;
 use Filament\Enums\ThemeMode;
+use Filament\Enums\UserMenuPosition;
 use Filament\FilamentManager;
 use Filament\GlobalSearch\Providers\Contracts\GlobalSearchProvider;
 use Filament\Models\Contracts\HasTenants;
@@ -15,12 +18,9 @@ use Filament\Navigation\NavigationGroup;
 use Filament\Navigation\NavigationItem;
 use Filament\Pages\Enums\SubNavigationPosition;
 use Filament\Panel;
-use Filament\Panel\Enums\GlobalSearchPosition;
-use Filament\Panel\Enums\UserMenuPosition;
 use Filament\PanelRegistry;
 use Filament\Support\Assets\Theme;
 use Filament\Support\Enums\Width;
-use Filament\Widgets\Widget;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\CanResetPassword;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -28,7 +28,6 @@ use Illuminate\Contracts\Auth\StatefulGuard;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Facade;
-use Livewire\Component;
 
 /**
  * @method static bool arePasswordsRevealable()
@@ -48,6 +47,7 @@ use Livewire\Component;
  * @method static Panel | null getCurrentOrDefaultPanel()
  * @method static string | Htmlable | null getDarkModeBrandLogo()
  * @method static string | null getDatabaseNotificationsPollingInterval()
+ * @method static DatabaseNotificationsPosition getDatabaseNotificationsPosition()
  * @method static string getDefaultAvatarProvider()
  * @method static Panel getDefaultPanel()
  * @method static string | null getEmailVerificationPromptUrl(array<string, mixed> $parameters = [])

@@ -2,6 +2,7 @@
 
 namespace Filament\Livewire;
 
+use Filament\Enums\DatabaseNotificationsPosition;
 use Filament\Facades\Filament;
 use Filament\Notifications\Livewire\DatabaseNotifications as BaseComponent;
 use Illuminate\Contracts\Auth\Authenticatable;
@@ -22,7 +23,7 @@ class DatabaseNotifications extends BaseComponent
 
     public function getTrigger(): ?View
     {
-        return filament()->hasTopbar()
+        return (filament()->getDatabaseNotificationsPosition() === DatabaseNotificationsPosition::Topbar)
             ? view('filament-panels::components.topbar.database-notifications-trigger')
             : view('filament-panels::components.sidebar.database-notifications-trigger');
     }

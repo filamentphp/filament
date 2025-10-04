@@ -3,9 +3,9 @@
 namespace Filament\Panel\Concerns;
 
 use Closure;
+use Filament\Enums\GlobalSearchPosition;
 use Filament\GlobalSearch\Providers\Contracts\GlobalSearchProvider;
 use Filament\GlobalSearch\Providers\DefaultGlobalSearchProvider;
-use Filament\Panel\Enums\GlobalSearchPosition;
 use Filament\Support\Enums\Platform;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Stringable;

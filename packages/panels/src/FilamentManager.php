@@ -6,7 +6,10 @@ use Closure;
 use Filament\Actions\Action;
 use Filament\Auth\MultiFactor\Contracts\MultiFactorAuthenticationProvider;
 use Filament\Contracts\Plugin;
+use Filament\Enums\DatabaseNotificationsPosition;
+use Filament\Enums\GlobalSearchPosition;
 use Filament\Enums\ThemeMode;
+use Filament\Enums\UserMenuPosition;
 use Filament\Events\ServingFilament;
 use Filament\Events\TenantSet;
 use Filament\Exceptions\NoDefaultPanelSetException;
@@ -19,8 +22,6 @@ use Filament\Navigation\MenuItem;
 use Filament\Navigation\NavigationGroup;
 use Filament\Navigation\NavigationItem;
 use Filament\Pages\Enums\SubNavigationPosition;
-use Filament\Panel\Enums\GlobalSearchPosition;
-use Filament\Panel\Enums\UserMenuPosition;
 use Filament\Support\Assets\Theme;
 use Filament\Support\Enums\Width;
 use Filament\Support\Facades\FilamentAsset;
@@ -762,6 +763,11 @@ class FilamentManager
     public function getUserMenuPosition(): UserMenuPosition
     {
         return $this->getCurrentOrDefaultPanel()->getUserMenuPosition();
+    }
+
+    public function getDatabaseNotificationsPosition(): DatabaseNotificationsPosition
+    {
+        return $this->getCurrentOrDefaultPanel()->getDatabaseNotificationsPosition();
     }
 
     public function hasTopNavigation(): bool

@@ -149,8 +149,8 @@ public function panel(Panel $panel): Panel
 By default, the global search field is positioned in the topbar, however, you may choose to position it in the sidebar instead. This can be achieved by passing a second argument to the `globalSearch()` method in the [configuration](../panel-configuration):
 
 ```php
+use Filament\Enums\GlobalSearchPosition;
 use Filament\Panel;
-use Filament\Panel\Enums\GlobalSearchPosition;
 
 public function panel(Panel $panel): Panel
 {

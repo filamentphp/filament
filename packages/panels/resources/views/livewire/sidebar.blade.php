@@ -76,10 +76,10 @@
                 <div x-show="$store.sidebar.isOpen" class="fi-sidebar-header-logo-ctn">
                     @if ($homeUrl = filament()->getHomeUrl())
                         <a {{ \Filament\Support\generate_href_html($homeUrl) }}>
-                            <x-filament-panels::logo />
+                            <x-filament-panels::logo/>
                         </a>
                     @else
-                        <x-filament-panels::logo />
+                        <x-filament-panels::logo/>
                     @endif
                 </div>
 
@@ -88,11 +88,15 @@
         </div>
 
         @if (filament()->hasTenancy() && filament()->hasTenantMenu())
-            <x-filament-panels::tenant-menu />
+            <x-filament-panels::tenant-menu/>
         @endif
 
-        @if ((! $hasTopbar) && filament()->isGlobalSearchEnabled() && filament()->getGlobalSearchPosition() === \Filament\Panel\Enums\GlobalSearchPosition::Sidebar)
-            <div x-show="$store.sidebar.isOpen">
+        @if (filament()->isGlobalSearchEnabled() && filament()->getGlobalSearchPosition() === \Filament\Enums\GlobalSearchPosition::Sidebar)
+            <div
+                @if ($isSidebarCollapsibleOnDesktop || $isSidebarFullyCollapsibleOnDesktop)
+                    x-show="$store.sidebar.isOpen"
+                @endif
+            >
                 @livewire(Filament\Livewire\GlobalSearch::class)
             </div>
         @endif
@@ -165,14 +169,14 @@
             {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::SIDEBAR_NAV_END) }}
         </nav>
 
-        @if ((! $hasTopbar) && filament()->auth()->check())
-            @if (filament()->hasDatabaseNotifications())
+        @if (filament()->auth()->check())
+            @if (filament()->hasDatabaseNotifications() && filament()->getDatabaseNotificationsPosition() === \Filament\Enums\DatabaseNotificationsPosition::Sidebar)
                 @livewire(Filament\Livewire\DatabaseNotifications::class, [
                     'lazy' => filament()->hasLazyLoadedDatabaseNotifications(),
                 ])
             @endif
 
-            @if (filament()->hasUserMenu() && filament()->getUserMenuPosition() === \Filament\Panel\Enums\UserMenuPosition::Sidebar)
+            @if (filament()->hasUserMenu() && filament()->getUserMenuPosition() === \Filament\Enums\UserMenuPosition::Sidebar)
                 @php
                     $user = filament()->auth()->user();
                 @endphp
@@ -184,7 +188,7 @@
                             type="button"
                             class="fi-user-menu-trigger"
                         >
-                            <x-filament-panels::avatar.user :user="$user" loading="lazy" />
+                            <x-filament-panels::avatar.user :user="$user" loading="lazy"/>
 
                             <span
                                 @if ($isSidebarCollapsibleOnDesktop)
@@ -210,5 +214,5 @@
     </aside>
     {{-- format-ignore-end --}}
 
-    <x-filament-actions::modals />
+    <x-filament-actions::modals/>
 </div>

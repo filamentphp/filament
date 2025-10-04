@@ -34,8 +34,8 @@ public function panel(Panel $panel): Panel
 By default, the user menu is positioned in the top right corner of the topbar, however, you may choose to position it in the sidebar instead. This can be achieved by passing a second argument to the `userMenu()` method in the [configuration](../panel-configuration):
 
 ```php
+use Filament\Enums\UserMenuPosition;
 use Filament\Panel;
-use Filament\Panel\Enums\UserMenuPosition;
 
 public function panel(Panel $panel): Panel
 {
