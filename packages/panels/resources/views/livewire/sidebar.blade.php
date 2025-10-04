@@ -214,5 +214,5 @@
     </aside>
     {{-- format-ignore-end --}}
 
-    <x-filament-actions::modals/>
+    <x-filament-actions::modals />
 </div>

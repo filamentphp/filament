@@ -90,10 +90,10 @@
 
             @if ($homeUrl = filament()->getHomeUrl())
                 <a {{ \Filament\Support\generate_href_html($homeUrl) }}>
-                    <x-filament-panels::logo/>
+                    <x-filament-panels::logo />
                 </a>
             @else
-                <x-filament-panels::logo/>
+                <x-filament-panels::logo />
             @endif
 
             {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::TOPBAR_LOGO_AFTER) }}
@@ -101,7 +101,7 @@
 
         @if ($hasTopNavigation || (! $hasNavigation))
             @if ($hasTenancy && filament()->hasTenantMenu())
-                <x-filament-panels::tenant-menu/>
+                <x-filament-panels::tenant-menu />
             @endif
 
             @if ($hasNavigation)
@@ -246,7 +246,7 @@
                 @endif
 
                 @if (filament()->hasUserMenu() && filament()->getUserMenuPosition() === \Filament\Enums\UserMenuPosition::Topbar)
-                    <x-filament-panels::user-menu/>
+                    <x-filament-panels::user-menu />
                 @endif
             @endif
         </div>
@@ -254,5 +254,5 @@
         {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::TOPBAR_END) }}
     </nav>
 
-    <x-filament-actions::modals/>
+    <x-filament-actions::modals />
 </div>
