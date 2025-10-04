@@ -3,6 +3,7 @@
 use Filament\Auth\Notifications\VerifyEmail;
 use Filament\Auth\Pages\EmailVerification\EmailVerificationPrompt;
 use Filament\Facades\Filament;
+use Filament\Http\Middleware\Authenticate;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
 use Illuminate\Support\Facades\Notification;
@@ -77,4 +78,17 @@ it('can throttle resend notification attempts', function (): void {
         ->assertNotified();
 
     Notification::assertSentToTimes($userToVerify, VerifyEmail::class, times: 2);
+});
+
+it('redirects guests to the panel when unauthenticated', function (): void {
+    $this->withoutMiddleware(Authenticate::class);
+
+    $panel = Filament::getCurrentOrDefaultPanel();
+
+    expect($panel)->not()->toBeNull();
+    expect($panel->hasLogin())->toBeTrue();
+    expect(Filament::getEmailVerificationPromptUrl())->not()->toBeNull();
+
+    $this->get(Filament::getEmailVerificationPromptUrl())
+        ->assertRedirect($panel?->getUrl());
 });

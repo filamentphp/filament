@@ -1,12 +1,13 @@
 .fi-icon-btn {
     @apply relative -m-2 flex size-9 items-center justify-center rounded-lg text-gray-500 transition duration-75 outline-none dark:text-gray-500;
 
+    &.fi-force-enabled,
     &:not(.fi-disabled):not([disabled]) {
         @apply focus-visible:ring-primary-600 dark:focus-visible:ring-primary-500 hover:text-gray-600 focus-visible:ring-2 dark:hover:text-gray-400;
     }
 
-    &.fi-disabled,
-    &[disabled] {
+    &.fi-disabled:not(.fi-force-enabled),
+    &[disabled]:not(.fi-force-enabled) {
         @apply cursor-default opacity-70;
 
         &:not([x-tooltip]) {
@@ -91,6 +92,7 @@
     &.fi-color {
         @apply text-(--text) dark:text-(--dark-text);
 
+        &.fi-force-enabled,
         &:not(.fi-disabled):not([disabled]) {
             @apply focus-visible:ring-color-600 dark:focus-visible:ring-color-500 hover:text-(--hover-text) dark:hover:text-(--dark-hover-text);
         }

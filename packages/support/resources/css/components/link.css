@@ -1,12 +1,13 @@
 .fi-link {
     @apply relative inline-flex items-center justify-center gap-1.5 font-medium text-gray-700 outline-none dark:text-gray-200;
 
+    &.fi-force-enabled,
     &:not(.fi-disabled):not([disabled]) {
         @apply hover:underline focus-visible:underline;
     }
 
-    &.fi-disabled,
-    &[disabled] {
+    &.fi-disabled:not(.fi-force-enabled),
+    &[disabled]:not(.fi-force-enabled) {
         @apply cursor-default opacity-70;
 
         &:not([x-tooltip]) {

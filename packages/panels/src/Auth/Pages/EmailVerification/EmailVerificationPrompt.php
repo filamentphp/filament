@@ -25,7 +25,7 @@ class EmailVerificationPrompt extends SimplePage
 
     public function mount(): void
     {
-        if ($this->getVerifiable()->hasVerifiedEmail()) {
+        if ((! Filament::auth()->check()) || $this->getVerifiable()->hasVerifiedEmail()) {
             redirect()->intended(Filament::getUrl());
         }
     }

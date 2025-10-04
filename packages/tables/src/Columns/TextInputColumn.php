@@ -282,7 +282,7 @@ class TextInputColumn extends Column implements Editable, HasEmbeddedView
                             theme: $store.theme,
                         }
                 "
-                x-on:click.stop.prevent
+                x-on:click.prevent.stop
                 class="fi-input-wrp"
             >
                 <?php if ($hasPrefix) { ?>

@@ -1,12 +1,13 @@
 .fi-btn {
     @apply relative inline-grid grid-flow-col items-center justify-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium transition duration-75 outline-none;
 
+    &.fi-force-enabled,
     &:not(.fi-disabled):not([disabled]) {
         @apply focus-visible:ring-2;
     }
 
-    &.fi-disabled,
-    &[disabled] {
+    &.fi-disabled:not(.fi-force-enabled),
+    &[disabled]:not(.fi-force-enabled) {
         @apply cursor-default opacity-70;
 
         &:not([x-tooltip]) {
@@ -37,6 +38,7 @@
     &.fi-outlined {
         @apply text-gray-950 shadow-sm ring-1 ring-gray-300 dark:text-white dark:ring-gray-700;
 
+        &.fi-force-enabled,
         &:not(.fi-disabled):not([disabled]) {
             @apply hover:bg-gray-400/10 focus-visible:ring-gray-400/40;
         }
@@ -44,6 +46,7 @@
         &.fi-color {
             @apply ring-color-600 dark:ring-color-500 text-(--text) dark:text-(--dark-text);
 
+            &.fi-force-enabled,
             &:not(.fi-disabled):not([disabled]) {
                 @apply focus-visible:ring-color-500/40 dark:focus-visible:ring-color-400/40 hover:bg-color-500/10 dark:hover:bg-color-600/10;
             }
@@ -57,6 +60,7 @@
     &:not(.fi-outlined) {
         @apply bg-white text-gray-950 dark:bg-white/5 dark:text-white;
 
+        &.fi-force-enabled,
         &:not(.fi-disabled):not([disabled]) {
             @apply hover:bg-gray-50 dark:hover:bg-white/10;
         }
@@ -64,6 +68,7 @@
         input:checked + label& {
             @apply bg-gray-400 text-white ring-0 dark:bg-gray-600;
 
+            &.fi-force-enabled,
             &:not(.fi-disabled):not([disabled]) {
                 @apply hover:bg-gray-300 dark:hover:bg-gray-500;
             }
@@ -73,6 +78,7 @@
             &:not(label) {
                 @apply bg-(--bg) text-(--text) dark:bg-(--dark-bg) dark:text-(--dark-text);
 
+                &.fi-force-enabled,
                 &:not(.fi-disabled):not([disabled]) {
                     @apply focus-visible:ring-color-500/50 dark:focus-visible:ring-color-400/50 hover:bg-(--hover-bg) hover:text-(--hover-text) dark:hover:bg-(--dark-hover-bg) dark:hover:text-(--dark-hover-text);
                 }
@@ -87,6 +93,7 @@
                     @apply bg-(--bg) text-(--text) ring-0 dark:bg-(--dark-bg) dark:text-(--dark-text);
                 }
 
+                &.fi-force-enabled,
                 &:not(.fi-disabled):not([disabled]) {
                     input:checked + & {
                         @apply hover:bg-(--hover-bg) hover:text-(--hover-text) dark:hover:bg-(--dark-hover-bg) dark:hover:text-(--dark-hover-text);
