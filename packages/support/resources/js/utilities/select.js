@@ -1144,6 +1144,32 @@ export class Select {
                     this.closeDropdown()
                 }
                 break
+            default:
+                // If searchable and user types a printable character, open dropdown and focus search input
+                if (
+                    this.isSearchable &&
+                    !event.ctrlKey &&
+                    !event.metaKey &&
+                    !event.altKey &&
+                    typeof event.key === 'string' &&
+                    event.key.length === 1
+                ) {
+                    event.preventDefault()
+                    const char = event.key
+
+                    if (!this.isOpen) {
+                        this.openDropdown()
+                    }
+
+                    if (this.searchInput) {
+                        // Focus and append the typed character to the search input
+                        this.searchInput.focus()
+                        this.searchInput.value = (this.searchInput.value || '') + char
+                        // Trigger input event so search runs
+                        this.searchInput.dispatchEvent(new Event('input', { bubbles: true }))
+                    }
+                }
+                break
         }
     }
 
@@ -1193,6 +1219,28 @@ export class Select {
                 break
             case 'Tab':
                 this.closeDropdown()
+                break
+            default:
+                // If searchable and user types a printable character while dropdown is open, focus search input and start search
+                if (
+                    this.isSearchable &&
+                    !event.ctrlKey &&
+                    !event.metaKey &&
+                    !event.altKey &&
+                    typeof event.key === 'string' &&
+                    event.key.length === 1
+                ) {
+                    event.preventDefault()
+                    const char = event.key
+
+                    if (this.searchInput) {
+                        // Focus and append the typed character to the search input
+                        this.searchInput.focus()
+                        this.searchInput.value = (this.searchInput.value || '') + char
+                        // Trigger input event so search runs
+                        this.searchInput.dispatchEvent(new Event('input', { bubbles: true }))
+                    }
+                }
                 break
         }
     }
