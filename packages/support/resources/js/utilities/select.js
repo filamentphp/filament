@@ -1164,9 +1164,12 @@ export class Select {
                     if (this.searchInput) {
                         // Focus and append the typed character to the search input
                         this.searchInput.focus()
-                        this.searchInput.value = (this.searchInput.value || '') + char
+                        this.searchInput.value =
+                            (this.searchInput.value || '') + char
                         // Trigger input event so search runs
-                        this.searchInput.dispatchEvent(new Event('input', { bubbles: true }))
+                        this.searchInput.dispatchEvent(
+                            new Event('input', { bubbles: true }),
+                        )
                     }
                 }
                 break
@@ -1236,9 +1239,12 @@ export class Select {
                     if (this.searchInput) {
                         // Focus and append the typed character to the search input
                         this.searchInput.focus()
-                        this.searchInput.value = (this.searchInput.value || '') + char
+                        this.searchInput.value =
+                            (this.searchInput.value || '') + char
                         // Trigger input event so search runs
-                        this.searchInput.dispatchEvent(new Event('input', { bubbles: true }))
+                        this.searchInput.dispatchEvent(
+                            new Event('input', { bubbles: true }),
+                        )
                     }
                 }
                 break
