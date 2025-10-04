@@ -142,6 +142,7 @@
                 currentSelectionLivewireProperty: @js($getCurrentSelectionLivewireProperty()),
                 maxSelectableRecords: @js($maxSelectableRecords),
                 selectsCurrentPageOnly: @js($selectsCurrentPageOnly),
+                selectsGroupOnly: @js($selectsGroupOnly()),
                 $wire,
             })"
     {{
@@ -606,16 +607,18 @@
                         {{ FilamentView::renderHook(TablesRenderHook::SELECTION_INDICATOR_ACTIONS_BEFORE, scopes: static::class) }}
 
                         <div class="fi-ta-selection-indicator-actions-ctn">
-                            <x-filament::link
-                                color="primary"
-                                tag="button"
-                                x-on:click="selectAllRecords"
-                                x-show="canSelectAllRecords()"
-                                {{-- Make sure the Alpine attributes get re-evaluated after a Livewire request: --}}
-                                :wire:key="$this->getId() . 'table.selection.indicator.actions.select-all.' . $allSelectableRecordsCount . '.' . $page"
-                            >
-                                {{ trans_choice('filament-tables::table.selection_indicator.actions.select_all.label', $allSelectableRecordsCount, ['count' => \Illuminate\Support\Number::format($allSelectableRecordsCount, locale: app()->getLocale())]) }}
-                            </x-filament::link>
+                            @if (! $selectsGroupOnly())
+                                <x-filament::link
+                                    color="primary"
+                                    tag="button"
+                                    x-on:click="selectAllRecords"
+                                    x-show="canSelectAllRecords()"
+                                    {{-- Make sure the Alpine attributes get re-evaluated after a Livewire request: --}}
+                                    :wire:key="$this->getId() . 'table.selection.indicator.actions.select-all.' . $allSelectableRecordsCount . '.' . $page"
+                                >
+                                    {{ trans_choice('filament-tables::table.selection_indicator.actions.select_all.label', $allSelectableRecordsCount, ['count' => \Illuminate\Support\Number::format($allSelectableRecordsCount, locale: app()->getLocale())]) }}
+                                </x-filament::link>
+                            @endif
 
                             <x-filament::link
                                 color="danger"
@@ -706,7 +709,7 @@
 
                         @if ($isSelectionEnabled || count($sortableColumns))
                             <div class="fi-ta-content-header">
-                                @if ($isSelectionEnabled && ($maxSelectableRecords !== 1) && (! $isReordering))
+                                @if ($isSelectionEnabled && ($maxSelectableRecords !== 1) && (! $isReordering) && (! $selectsGroupOnly()))
                                     <input
                                         aria-label="{{ __('filament-tables::table.fields.bulk_select_page.label') }}"
                                         type="checkbox"

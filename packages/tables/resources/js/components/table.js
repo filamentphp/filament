@@ -4,6 +4,7 @@ export default ({
     currentSelectionLivewireProperty,
     maxSelectableRecords,
     selectsCurrentPageOnly,
+    selectsGroupOnly,
     $wire,
 }) => ({
     checkboxClickController: null,
@@ -194,6 +195,10 @@ export default ({
     },
 
     canSelectAllRecords() {
+        if (selectsGroupOnly) {
+            return false
+        }
+
         if (selectsCurrentPageOnly) {
             const recordsOnPage = this.getRecordsOnPage()
 
