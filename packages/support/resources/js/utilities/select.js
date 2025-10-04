@@ -1663,9 +1663,9 @@ export class Select {
     }
 
     showLoadingState(isSearching = false) {
-        // Clear options list if it's in the DOM
+        // If the options list is in the DOM, remove it to avoid rendering an empty list
         if (this.optionsList.parentNode === this.dropdown) {
-            this.optionsList.innerHTML = ''
+            this.dropdown.removeChild(this.optionsList)
         }
 
         // Remove any existing message
@@ -1691,12 +1691,9 @@ export class Select {
     }
 
     showNoResultsMessage() {
-        // Clear options list if it's in the DOM and not already empty
-        if (
-            this.optionsList.parentNode === this.dropdown &&
-            this.optionsList.children.length > 0
-        ) {
-            this.optionsList.innerHTML = ''
+        // Ensure the options list is not rendered empty while showing the message
+        if (this.optionsList.parentNode === this.dropdown) {
+            this.dropdown.removeChild(this.optionsList)
         }
 
         // Remove any existing message
