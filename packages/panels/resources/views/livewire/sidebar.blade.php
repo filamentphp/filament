@@ -76,10 +76,10 @@
                 <div x-show="$store.sidebar.isOpen" class="fi-sidebar-header-logo-ctn">
                     @if ($homeUrl = filament()->getHomeUrl())
                         <a {{ \Filament\Support\generate_href_html($homeUrl) }}>
-                            <x-filament-panels::logo/>
+                            <x-filament-panels::logo />
                         </a>
                     @else
-                        <x-filament-panels::logo/>
+                        <x-filament-panels::logo />
                     @endif
                 </div>
 
@@ -88,7 +88,7 @@
         </div>
 
         @if (filament()->hasTenancy() && filament()->hasTenantMenu())
-            <x-filament-panels::tenant-menu/>
+            <x-filament-panels::tenant-menu />
         @endif
 
         @if (filament()->isGlobalSearchEnabled() && filament()->getGlobalSearchPosition() === \Filament\Enums\GlobalSearchPosition::Sidebar)
