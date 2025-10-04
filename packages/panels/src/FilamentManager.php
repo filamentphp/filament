@@ -19,6 +19,8 @@ use Filament\Navigation\MenuItem;
 use Filament\Navigation\NavigationGroup;
 use Filament\Navigation\NavigationItem;
 use Filament\Pages\Enums\SubNavigationPosition;
+use Filament\Panel\Enums\GlobalSearchPosition;
+use Filament\Panel\Enums\UserMenuPosition;
 use Filament\Support\Assets\Theme;
 use Filament\Support\Enums\Width;
 use Filament\Support\Facades\FilamentAsset;
@@ -757,6 +759,11 @@ class FilamentManager
         return $this->getCurrentOrDefaultPanel()->hasUserMenu();
     }
 
+    public function getUserMenuPosition(): UserMenuPosition
+    {
+        return $this->getCurrentOrDefaultPanel()->getUserMenuPosition();
+    }
+
     public function hasTopNavigation(): bool
     {
         return $this->getCurrentOrDefaultPanel()->hasTopNavigation();
@@ -780,6 +787,11 @@ class FilamentManager
         }
 
         return false;
+    }
+
+    public function getGlobalSearchPosition(): GlobalSearchPosition
+    {
+        return $this->getCurrentOrDefaultPanel()->getGlobalSearchPosition();
     }
 
     public function isServing(): bool

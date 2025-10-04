@@ -232,7 +232,7 @@
         >
             {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::GLOBAL_SEARCH_BEFORE) }}
 
-            @if (filament()->isGlobalSearchEnabled())
+            @if (filament()->isGlobalSearchEnabled() && filament()->getGlobalSearchPosition() === \Filament\Panel\Enums\GlobalSearchPosition::Topbar)
                 @livewire(Filament\Livewire\GlobalSearch::class)
             @endif
 
@@ -245,7 +245,7 @@
                     ])
                 @endif
 
-                @if (filament()->hasUserMenu())
+                @if (filament()->hasUserMenu() && filament()->getUserMenuPosition() === \Filament\Panel\Enums\UserMenuPosition::Topbar)
                     <x-filament-panels::user-menu />
                 @endif
             @endif

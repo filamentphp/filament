@@ -91,7 +91,7 @@
             <x-filament-panels::tenant-menu />
         @endif
 
-        @if ((! $hasTopbar) && filament()->isGlobalSearchEnabled())
+        @if ((! $hasTopbar) && filament()->isGlobalSearchEnabled() && filament()->getGlobalSearchPosition() === \Filament\Panel\Enums\GlobalSearchPosition::Sidebar)
             <div x-show="$store.sidebar.isOpen">
                 @livewire(Filament\Livewire\GlobalSearch::class)
             </div>
@@ -172,7 +172,7 @@
                 ])
             @endif
 
-            @if (filament()->hasUserMenu())
+            @if (filament()->hasUserMenu() && filament()->getUserMenuPosition() === \Filament\Panel\Enums\UserMenuPosition::Sidebar)
                 @php
                     $user = filament()->auth()->user();
                 @endphp
