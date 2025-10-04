@@ -23,7 +23,7 @@ trait HasTenancy
 
     protected bool | Closure $hasTenantMenu = true;
 
-    protected bool | Closure $isTenantMenuSearchable = false;
+    protected bool | Closure | null $isTenantMenuSearchable = null;
 
     protected ?string $tenantRoutePrefix = null;
 
@@ -69,7 +69,7 @@ trait HasTenancy
         return $this;
     }
 
-    public function searchableTenantMenu(bool | Closure $condition = true): static
+    public function searchableTenantMenu(bool | Closure | null $condition = true): static
     {
         $this->isTenantMenuSearchable = $condition;
 
@@ -334,9 +334,9 @@ trait HasTenancy
         ]) ?? $action;
     }
 
-    public function isTenantMenuSearchable(): bool
+    public function isTenantMenuSearchable(): ?bool
     {
-        return (bool) $this->evaluate($this->isTenantMenuSearchable);
+        return $this->evaluate($this->isTenantMenuSearchable);
     }
 
     /**
