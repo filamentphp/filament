@@ -201,6 +201,7 @@ class EditRecord extends Page
             $data = Schema::make($component->getLivewire())
                 ->components([$component])
                 ->model($component->getRecord())
+                ->operation($oldContainer->getOperation())
                 ->statePath('data')
                 ->getState();
 

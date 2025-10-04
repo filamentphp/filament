@@ -1,4 +1,38 @@
 .fi-wi-chart {
+    & .fi-wi-chart-canvas-ctn {
+        @apply aspect-square;
+    }
+
+    @supports (container-type: inline-size) {
+        & .fi-section-content {
+            @apply @container;
+        }
+
+        & .fi-wi-chart-canvas-ctn {
+            @apply @sm:aspect-[2];
+
+            &[data-chart-type='doughnut'],
+            &[data-chart-type='pie'],
+            &[data-chart-type='polarArea'],
+            &[data-chart-type='radar'] {
+                @apply aspect-square;
+            }
+        }
+    }
+
+    @supports not (container-type: inline-size) {
+        & .fi-wi-chart-canvas-ctn {
+            @apply sm:aspect-[2];
+
+            &[data-chart-type='doughnut'],
+            &[data-chart-type='pie'],
+            &[data-chart-type='polarArea'],
+            &[data-chart-type='radar'] {
+                @apply aspect-square;
+            }
+        }
+    }
+
     & .fi-wi-chart-filter {
         &.fi-input-wrp {
             @apply w-max sm:-my-2;

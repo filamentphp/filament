@@ -199,10 +199,12 @@ class TestsColumns
                 $state = json_encode($state);
             }
 
+            $displayState = is_object($state) ? get_debug_type($state) : var_export($state, true);
+
             Assert::assertEquals(
                 $state,
                 $actualState,
-                "Failed asserting that a table column with name [{$name}] has value of [{$state}] for record [{$record->getKey()}] on the [{$livewireClass}] component.",
+                "Failed asserting that a table column with name [{$name}] has value of [{$displayState}] for record [{$record->getKey()}] on the [{$livewireClass}] component.",
             );
 
             return $this;
@@ -237,10 +239,12 @@ class TestsColumns
                 $state = json_encode($state);
             }
 
+            $displayState = is_object($state) ? get_debug_type($state) : var_export($state, true);
+
             Assert::assertNotEquals(
                 $state,
                 $actualState,
-                "Failed asserting that a table column with name [{$name}] does not have a value of [{$state}] for record [{$record->getKey()}] on the [{$livewireClass}] component.",
+                "Failed asserting that a table column with name [{$name}] does not have a value of [{$displayState}] for record [{$record->getKey()}] on the [{$livewireClass}] component.",
             );
 
             return $this;

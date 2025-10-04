@@ -69,7 +69,7 @@
     }
 
     & .fi-link-badge-ctn {
-        @apply absolute start-full top-0 z-[1] w-max -translate-x-1/4 -translate-y-3/4 rounded-md bg-white font-normal hover:no-underline focus-visible:no-underline rtl:translate-x-1/4 dark:bg-gray-900;
+        @apply absolute start-full top-0 z-[1] flex w-max -translate-x-1/4 -translate-y-3/4 rounded-md bg-white font-normal hover:no-underline focus-visible:no-underline rtl:translate-x-1/4 dark:bg-gray-900;
     }
 }
 

@@ -284,20 +284,46 @@ return [
 
     'markdown_editor' => [
 
+        'file_attachments_accepted_file_types_message' => 'Վերբեռնված ֆայլերը պետք է լինեն հետևյալ տեսակներից՝ :values։',
+
+        'file_attachments_max_size_message' => 'Վերբեռնված ֆայլերը չպետք է գերազանցեն :max կիլոբայթ։',
+
         'tools' => [
             'attach_files' => 'Կցել ֆայլեր',
             'blockquote' => 'Մեջբերում',
             'bold' => 'Թավ',
             'bullet_list' => 'Կետային ցուցակ',
-            'code_block' => 'Կոդային բլոկ',
+            'code_block' => 'Կոդի բլոկ',
             'heading' => 'Վերնագիր',
-            'italic' => 'Շեղատառ',
+            'italic' => 'Շեղ',
             'link' => 'Հղում',
             'ordered_list' => 'Համարակալված ցուցակ',
-            'redo' => 'Վերափոխել',
-            'strike' => 'Խաչված',
+            'redo' => 'Կրկնել',
+            'strike' => 'Գծանցում',
             'table' => 'Աղյուսակ',
-            'undo' => 'Հետարկել',
+            'undo' => 'Հետ բերել',
+        ],
+
+    ],
+
+    'modal_table_select' => [
+
+        'actions' => [
+
+            'select' => [
+
+                'label' => 'Ընտրել',
+
+                'actions' => [
+
+                    'select' => [
+                        'label' => 'Ընտրել',
+                    ],
+
+                ],
+
+            ],
+
         ],
 
     ],
@@ -365,40 +391,230 @@ return [
 
     'rich_editor' => [
 
-        'dialogs' => [
+        'actions' => [
+
+            'attach_files' => [
+
+                'label' => 'Վերբեռնել ֆայլ',
+
+                'modal' => [
+
+                    'heading' => 'Վերբեռնել ֆայլ',
+
+                    'form' => [
+
+                        'file' => [
+
+                            'label' => [
+                                'new' => 'Ֆայլ',
+                                'existing' => 'Փոխարինել ֆայլը',
+                            ],
+
+                        ],
+
+                        'alt' => [
+
+                            'label' => [
+                                'new' => 'Այլընտրանքային տեքստ',
+                                'existing' => 'Փոխել այլընտրանքային տեքստը',
+                            ],
+
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
+            'custom_block' => [
+
+                'modal' => [
+
+                    'actions' => [
+
+                        'insert' => [
+                            'label' => 'Տեղադրել',
+                        ],
+
+                        'save' => [
+                            'label' => 'Պահպանել',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
+            'grid' => [
+
+                'label' => 'Ցանց',
+
+                'modal' => [
+
+                    'heading' => 'Ցանց',
+
+                    'form' => [
+
+                        'preset' => [
+
+                            'label' => 'Կանխադրված',
+                            'placeholder' => 'Չկա',
+
+                            'options' => [
+                                'two' => 'Երկու',
+                                'three' => 'Երեք',
+                                'four' => 'Չորս',
+                                'five' => 'Հինգ',
+                                'two_start_third' => 'Երկու (սկսել երրորդից)',
+                                'two_end_third' => 'Երկու (ավարտ երրորդում)',
+                                'two_start_fourth' => 'Երկու (սկսել չորրորդից)',
+                                'two_end_fourth' => 'Երկու (ավարտ չորրորդում)',
+                            ],
+                        ],
+
+                        'columns' => [
+                            'label' => 'Սյուներ',
+                        ],
+
+                        'from_breakpoint' => [
+
+                            'label' => 'Սկսած չափից',
+
+                            'options' => [
+                                'default' => 'Բոլորը',
+                                'sm' => 'Փոքր',
+                                'md' => 'Միջին',
+                                'lg' => 'Մեծ',
+                                'xl' => 'Շատ մեծ',
+                                '2xl' => 'Երկու անգամ մեծ',
+                            ],
+
+                        ],
+
+                        'is_asymmetric' => [
+                            'label' => 'Երկու ասիմետրիկ սյուն',
+                        ],
+
+                        'start_span' => [
+                            'label' => 'Սկսման լայնություն',
+                        ],
+
+                        'end_span' => [
+                            'label' => 'Ավարտի լայնություն',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
 
             'link' => [
 
-                'actions' => [
-                    'link' => 'Հղում',
-                    'unlink' => 'Անջատել',
+                'label' => 'Հղում',
+
+                'modal' => [
+
+                    'heading' => 'Հղում',
+
+                    'form' => [
+
+                        'url' => [
+                            'label' => 'URL',
+                        ],
+
+                        'should_open_in_new_tab' => [
+                            'label' => 'Բացել նոր թաբում',
+                        ],
+
+                    ],
+
                 ],
 
-                'label' => 'URL',
+            ],
 
-                'placeholder' => 'Մուտքագրեք URL-ը',
+            'text_color' => [
+
+                'label' => 'Տեքստի գույն',
+
+                'modal' => [
+
+                    'heading' => 'Տեքստի գույն',
+
+                    'form' => [
+
+                        'color' => [
+                            'label' => 'Գույն',
+                        ],
+
+                        'custom_color' => [
+                            'label' => 'Այլ գույն',
+                        ],
+
+                    ],
+
+                ],
 
             ],
 
         ],
 
+        'file_attachments_accepted_file_types_message' => 'Վերբեռնված ֆայլերը պետք է լինեն հետևյալ տեսակներից՝ :values։',
+
+        'file_attachments_max_size_message' => 'Վերբեռնված ֆայլերը չպետք է գերազանցեն :max կիլոբայթ։',
+
+        'no_merge_tag_search_results_message' => 'Միաձուլման պիտակների արդյունքներ չկան։',
+
         'tools' => [
+            'align_center' => 'Հավասարեցնել կենտրոնում',
+            'align_end' => 'Հավասարեցնել վերջում',
+            'align_justify' => 'Հավասարեցնել ըստ լայնության',
+            'align_start' => 'Հավասարեցնել սկզբում',
             'attach_files' => 'Կցել ֆայլեր',
-            'blockquote' => 'Մեջբերում բլոկից',
+            'blockquote' => 'Մեջբերում',
             'bold' => 'Թավ',
-            'bullet_list' => 'Կետավոր ցանկ',
-            'code_block' => 'Կոդային բլոկ',
-            'h1' => 'Անվանում',
-            'h2' => 'Վերնագիր',
-            'h3' => 'Ենթավերնագիր',
-            'italic' => 'Շեղատառ',
+            'bullet_list' => 'Կետային ցուցակ',
+            'clear_formatting' => 'Մաքրել ձևաչափումը',
+            'code' => 'Կոդ',
+            'code_block' => 'Կոդի բլոկ',
+            'custom_blocks' => 'Բլոկներ',
+            'details' => 'Մանրամասներ',
+            'h1' => 'Վերնագիր',
+            'h2' => 'Ենթավերնագիր',
+            'h3' => 'Ենթավերնագիր 2',
+            'grid' => 'Ցանց',
+            'grid_delete' => 'Ջնջել ցանցը',
+            'highlight' => 'Նշել գույնով',
+            'horizontal_rule' => 'Հորիզոնական գիծ',
+            'italic' => 'Շեղ',
+            'lead' => 'Առաջատար տեքստ',
             'link' => 'Հղում',
+            'merge_tags' => 'Միաձուլման պիտակներ',
             'ordered_list' => 'Համարակալված ցուցակ',
-            'redo' => 'Վերափոխել',
-            'strike' => 'Խաչված',
+            'redo' => 'Կրկնել',
+            'small' => 'Փոքր տեքստ',
+            'strike' => 'Գծանցում',
+            'subscript' => 'Ենթագրություն',
+            'superscript' => 'Վերգրություն',
+            'table' => 'Աղյուսակ',
+            'table_delete' => 'Ջնջել աղյուսակը',
+            'table_add_column_before' => 'Ավելացնել սյուն առաջ',
+            'table_add_column_after' => 'Ավելացնել սյուն հետո',
+            'table_delete_column' => 'Ջնջել սյունը',
+            'table_add_row_before' => 'Ավելացնել տող վերև',
+            'table_add_row_after' => 'Ավելացնել տող ներքև',
+            'table_delete_row' => 'Ջնջել տողը',
+            'table_merge_cells' => 'Միացնել բջիջները',
+            'table_split_cell' => 'Բաժանել բջիջը',
+            'table_toggle_header_row' => 'Վերնագրային տող',
+            'text_color' => 'Տեքստի գույն',
             'underline' => 'Ընդգծել',
-            'undo' => 'Չեղարկել',
+            'undo' => 'Հետ բերել',
         ],
+
+        'uploading_file_message' => 'Ֆայլի վերբեռնում...',
 
     ],
 
@@ -479,12 +695,17 @@ return [
 
         'actions' => [
 
+            'copy' => [
+                'label' => 'Պատճենել',
+                'message' => 'Պատճենվեց',
+            ],
+
             'hide_password' => [
                 'label' => 'Թաքցնել գաղտնաբառը',
             ],
 
             'show_password' => [
-                'label' => 'Ցույց տալ գաղտնաբառը',
+                'label' => 'Ցուցադրել գաղտնաբառը',
             ],
 
         ],

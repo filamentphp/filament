@@ -326,6 +326,7 @@ trait HasCellState
         }
 
         $nameParts = explode('.', $name);
+        $lastPart = array_pop($nameParts);
 
         foreach ($nameParts as $namePart) {
             if (! $record->isRelation($namePart)) {
@@ -336,7 +337,7 @@ trait HasCellState
             $record = $record->{$namePart}()->getRelated();
         }
 
-        return Arr::first($nameParts);
+        return Arr::first([...$nameParts, $lastPart]);
     }
 
     public function getFullAttributeName(Model $record): string
@@ -348,6 +349,7 @@ trait HasCellState
         }
 
         $nameParts = explode('.', $name);
+        $lastPart = array_pop($nameParts);
 
         foreach ($nameParts as $namePart) {
             if (! $record->isRelation($namePart)) {
@@ -358,7 +360,7 @@ trait HasCellState
             $record = $record->{$namePart}()->getRelated();
         }
 
-        return implode('.', $nameParts);
+        return implode('.', [...$nameParts, $lastPart]);
     }
 
     public function getInverseRelationshipName(Model $record): string

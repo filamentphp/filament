@@ -7,6 +7,7 @@
     $description = $this->getDescription();
     $filters = $this->getFilters();
     $isCollapsible = $this->isCollapsible();
+    $type = $this->getType();
 @endphp
 
 <x-filament-widgets::widget class="fi-wi-chart">
@@ -64,12 +65,13 @@
                 x-load
                 x-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('chart', 'filament/widgets') }}"
                 wire:ignore
+                data-chart-type="{{ $type }}"
                 x-data="chart({
                             cachedData: @js($this->getCachedData()),
                             options: @js($this->getOptions()),
-                            type: @js($this->getType()),
+                            type: @js($type),
                         })"
-                {{ (new ComponentAttributeBag)->color(ChartWidgetComponent::class, $color) }}
+                {{ (new ComponentAttributeBag)->color(ChartWidgetComponent::class, $color)->class(['fi-wi-chart-canvas-ctn']) }}
             >
                 <canvas
                     x-ref="canvas"
