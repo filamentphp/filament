@@ -42,6 +42,7 @@ trait HasComponents
         $this->components = $components;
         $this->cachedComponents = null;
         $this->cachedFlatComponents = [];
+        $this->cachedComponentsByStatePath = [];
 
         return $this;
     }
@@ -357,6 +358,7 @@ trait HasComponents
 
             $this->cachedComponents = null;
             $this->cachedFlatComponents = [];
+            $this->cachedComponentsByStatePath = [];
         }
 
         return $this;
