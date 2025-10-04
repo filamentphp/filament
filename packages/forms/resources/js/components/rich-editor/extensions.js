@@ -56,7 +56,6 @@ export default async ({
     uploadingFileMessage,
     $wire,
 }) => {
-
     const extensions = [
         Blockquote,
         Bold,
@@ -103,15 +102,15 @@ export default async ({
         }),
         ...(Object.keys(mergeTags).length
             ? [
-                MergeTag.configure({
-                    deleteTriggerWithBackspace: true,
-                    suggestion: getMergeTagSuggestion({
-                        mergeTags,
-                        noMergeTagSearchResultsMessage,
-                    }),
-                    mergeTags,
-                }),
-            ]
+                  MergeTag.configure({
+                      deleteTriggerWithBackspace: true,
+                      suggestion: getMergeTagSuggestion({
+                          mergeTags,
+                          noMergeTagSearchResultsMessage,
+                      }),
+                      mergeTags,
+                  }),
+              ]
             : []),
         OrderedList,
         Paragraph,
@@ -140,7 +139,6 @@ export default async ({
         UndoRedo,
     ]
 
-
     const loadedCustomExtensions = await Promise.all(
         customExtensionUrls.map(async (url) => {
             const absoluteUrlRegExp = new RegExp('^(?:[a-z+]+:)?//', 'i')
@@ -150,29 +148,30 @@ export default async ({
             }
 
             try {
-                const mod = await import(/* @vite-ignore */ url)
-                const factoryOrInstance = mod.default
+                const factoryOrInstance = (await import(url)).default
 
-                const extension = typeof factoryOrInstance === 'function'
+                return typeof factoryOrInstance === 'function'
                     ? factoryOrInstance()
                     : factoryOrInstance
+            } catch (error) {
+                console.error(
+                    `Failed to load rich editor custom extension from [${url}]:`,
+                    error,
+                )
 
-                return extension
-            } catch (err) {
-                console.error(`Failed to load custom extension from ${url}:`, err)
                 return null
             }
         }),
     )
 
-
     for (const customExtension of loadedCustomExtensions) {
-        if (!customExtension || !customExtension.name) continue
+        if (!customExtension || !customExtension.name) {
+            continue
+        }
 
         const existingIndex = extensions.findIndex(
-            (ext) => ext.name === customExtension.name
+            (extension) => extension.name === customExtension.name,
         )
-
 
         if (existingIndex !== -1) {
             extensions[existingIndex] = customExtension
