@@ -68,6 +68,8 @@ trait CanReorderRecords
             ]) ?? $action;
         }
 
+        $action->extraAttributes(['class' => 'fi-force-enabled-style'], merge: true);
+
         return $action;
     }
 
