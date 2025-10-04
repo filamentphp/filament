@@ -219,7 +219,7 @@ trait HasColumnManager
             ]) ?? $action;
         }
 
-        $action->extraAttributes(['class' => 'fi-force-enabled-style'], merge: true);
+        $action->extraAttributes(['class' => 'fi-force-enabled'], merge: true);
 
         if ($action->getView() === Action::BUTTON_VIEW) {
             $action->defaultSize(Size::Small);
