@@ -522,7 +522,7 @@ class TestsColumns
 
     public function toggleAllTableColumns(): Closure
     {
-        return function (bool $show = true): static {
+        return function (bool $condition = true): static {
             /** @phpstan-ignore-next-line */
             $tableColumns = $this->instance()->tableColumns;
 
@@ -531,7 +531,7 @@ class TestsColumns
                     continue;
                 }
 
-                $column['isToggled'] = $show;
+                $column['isToggled'] = $condition;
             }
 
             $this->set('tableColumns', $tableColumns);

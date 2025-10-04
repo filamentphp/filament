@@ -457,9 +457,9 @@ it('can average values in a column', function () {
 });
 ```
 
-### Testing all toggleable columns
+## Testing toggleable columns
 
-Toggle all togglable columns on using `toggleAllTableColumns()`:
+By default, only columns that are toggled on by default in the table will be rendered and testable. You can toggle all columns in the table on using `toggleAllTableColumns()`:
 
 ```php
 use function Pest\Livewire\livewire;
@@ -467,5 +467,16 @@ use function Pest\Livewire\livewire;
 it('can toggle all columns', function () {    
     livewire(PostResource\Pages\ListPosts::class)
         ->toggleAllTableColumns();
+});
+```
+
+You can also toggle all columns off using `toggleAllTableColumns(false)`:
+
+```php
+use function Pest\Livewire\livewire;
+
+it('can toggle all columns off', function () {    
+    livewire(PostResource\Pages\ListPosts::class)
+        ->toggleAllTableColumns(false);
 });
 ```

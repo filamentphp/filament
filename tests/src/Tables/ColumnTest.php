@@ -392,7 +392,9 @@ it('can toggle all table columns', function (): void {
     livewire(PostsTable::class)
         ->assertSuccessful()
         ->assertCountTableRecords(1)
-        ->assertDontSeeText('ToggleableColumnHiddenByDefault')
+        ->assertDontSeeText('Toggleable column state')
         ->toggleAllTableColumns()
-        ->assertSeeText('ToggleableColumnHiddenByDefault');
+        ->assertSeeText('Toggleable column state')
+        ->toggleAllTableColumns(false)
+        ->assertDontSeeText('Toggleable column state');
 });
