@@ -1054,7 +1054,6 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
         $this->state(
             $this->getStateFromRelatedRecords($this->getCachedExistingRecords()),
         );
-        $this->clearCachedDefaultChildSchemas();
     }
 
     /**
