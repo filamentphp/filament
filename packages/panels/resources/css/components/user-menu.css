@@ -36,8 +36,6 @@
 
 .fi-sidebar {
     & .fi-user-menu {
-        @apply mx-4 my-3;
-
         & .fi-dropdown-panel {
             max-width: max(14rem, calc(100% - 1.5rem)) !important;
         }

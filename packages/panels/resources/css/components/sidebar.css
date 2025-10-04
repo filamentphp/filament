@@ -224,16 +224,20 @@
     }
 }
 
+.fi-sidebar-footer {
+    @apply mx-4 my-3 grid gap-y-3;
+
+    & > .fi-no-database {
+        @apply block;
+    }
+}
+
 .fi-sidebar-sub-group-items {
     @apply flex flex-col gap-y-1;
 }
 
-.fi-sidebar > .fi-no-database {
-    @apply block;
-}
-
 .fi-sidebar-database-notifications-btn {
-    @apply relative mx-4 flex w-full items-center justify-center gap-x-3 rounded-lg p-2 text-start outline-hidden transition duration-75 hover:bg-gray-100 focus-visible:bg-gray-100 dark:hover:bg-white/5 dark:focus-visible:bg-white/5;
+    @apply relative flex w-full items-center justify-center gap-x-3 rounded-lg p-2 text-start outline-hidden transition duration-75 hover:bg-gray-100 focus-visible:bg-gray-100 dark:hover:bg-white/5 dark:focus-visible:bg-white/5;
 
     & > .fi-icon {
         @apply text-gray-400 dark:text-gray-500;

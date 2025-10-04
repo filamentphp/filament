@@ -169,45 +169,25 @@
             {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::SIDEBAR_NAV_END) }}
         </nav>
 
-        @if (filament()->auth()->check())
-            @if (filament()->hasDatabaseNotifications() && filament()->getDatabaseNotificationsPosition() === \Filament\Enums\DatabaseNotificationsPosition::Sidebar)
-                @livewire(Filament\Livewire\DatabaseNotifications::class, [
-                    'lazy' => filament()->hasLazyLoadedDatabaseNotifications(),
-                ])
-            @endif
+        @php
+            $isAuthenticated = filament()->auth()->check();
+            $hasDatabaseNotificationsInSidebar = filament()->hasDatabaseNotifications() && filament()->getDatabaseNotificationsPosition() === \Filament\Enums\DatabaseNotificationsPosition::Sidebar;
+            $hasUserMenuInSidebar = filament()->hasUserMenu() && filament()->getUserMenuPosition() === \Filament\Enums\UserMenuPosition::Sidebar;
+            $shouldRenderFooter = $isAuthenticated && ($hasDatabaseNotificationsInSidebar || $hasUserMenuInSidebar);
+        @endphp
 
-            @if (filament()->hasUserMenu() && filament()->getUserMenuPosition() === \Filament\Enums\UserMenuPosition::Sidebar)
-                @php
-                    $user = filament()->auth()->user();
-                @endphp
+        @if ($shouldRenderFooter)
+            <div class="fi-sidebar-footer">
+                @if ($hasDatabaseNotificationsInSidebar)
+                    @livewire(Filament\Livewire\DatabaseNotifications::class, [
+                        'lazy' => filament()->hasLazyLoadedDatabaseNotifications(),
+                    ])
+                @endif
 
-                <x-filament-panels::user-menu dropdown-placement="top-end">
-                    <x-slot name="trigger">
-                        <button
-                            aria-label="{{ __('filament-panels::layout.actions.open_user_menu.label') }}"
-                            type="button"
-                            class="fi-user-menu-trigger"
-                        >
-                            <x-filament-panels::avatar.user :user="$user" loading="lazy"/>
-
-                            <span
-                                @if ($isSidebarCollapsibleOnDesktop)
-                                    x-show="$store.sidebar.isOpen"
-                                @endif
-                                class="fi-user-menu-trigger-text"
-                            >
-                                {{ filament()->getUserName($user) }}
-                            </span>
-
-                            {{
-                                \Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::ChevronUp, alias: \Filament\View\PanelsIconAlias::USER_MENU_TOGGLE_BUTTON, attributes: new \Illuminate\View\ComponentAttributeBag([
-                                    'x-show' => $isSidebarCollapsibleOnDesktop ? '$store.sidebar.isOpen' : null,
-                                ]))
-                            }}
-                        </button>
-                    </x-slot>
-                </x-filament-panels::user-menu>
-            @endif
+                @if ($hasUserMenuInSidebar)
+                    <x-filament-panels::user-menu />
+                @endif
+            </div>
         @endif
 
         {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::SIDEBAR_FOOTER) }}

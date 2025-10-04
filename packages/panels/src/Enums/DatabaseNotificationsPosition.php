@@ -2,9 +2,9 @@
 
 namespace Filament\Enums;
 
-enum DatabaseNotificationsPosition
+enum DatabaseNotificationsPosition: string
 {
-    case Topbar;
+    case Topbar = 'topbar';
 
-    case Sidebar;
+    case Sidebar = 'sidebar';
 }
