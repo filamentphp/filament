@@ -169,8 +169,8 @@
     >
         @foreach ($items as $item)
             @php
-                $isItemActive = $item->isActive();
                 $isItemChildItemsActive = $item->isChildItemsActive();
+                $isItemActive = (! $isItemChildItemsActive) && $item->isActive();
                 $itemActiveIcon = $item->getActiveIcon();
                 $itemBadge = $item->getBadge();
                 $itemBadgeColor = $item->getBadgeColor();

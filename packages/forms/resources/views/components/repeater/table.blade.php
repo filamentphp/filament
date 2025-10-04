@@ -166,7 +166,6 @@
                                                 x-data="filamentSchemaComponent({
                                                     path: @js($schemaComponentStatePath),
                                                     containerPath: @js($itemStatePath),
-                                                    isLive: @js($schemaComponent->isLive()),
                                                     $wire,
                                                 })"
                                                 @if ($afterStateUpdatedJs = $schemaComponent->getAfterStateUpdatedJs())

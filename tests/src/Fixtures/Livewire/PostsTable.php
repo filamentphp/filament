@@ -119,6 +119,9 @@ class PostsTable extends Component implements HasActions, HasSchemas, Tables\Con
                     ->sortable()
                     ->searchable()
                     ->prefix(fn (Post $record): string => $record->is_published ? 'published' : 'unpublished'),
+                Tables\Columns\TextColumn::make('toggleable_column')
+                    ->state('Toggleable column state')
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 Tables\Filters\Filter::make('is_published')

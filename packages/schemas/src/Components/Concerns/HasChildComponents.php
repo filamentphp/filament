@@ -17,6 +17,11 @@ trait HasChildComponents
     protected array $childComponents = [];
 
     /**
+     * @var array<Schema> | null
+     */
+    protected ?array $cachedDefaultChildSchemas = null;
+
+    /**
      * @param  array<Component | Action | ActionGroup | string | Htmlable> | Closure  $components
      */
     public function components(array | Closure $components): static
@@ -67,8 +72,8 @@ trait HasChildComponents
      */
     public function getChildSchema($key = null): ?Schema
     {
-        if (filled($key) && array_key_exists($key, $containers = $this->getDefaultChildSchemas())) {
-            return $containers[$key];
+        if (filled($key) && array_key_exists($key, $this->cachedDefaultChildSchemas ??= $this->getDefaultChildSchemas())) {
+            return $this->cachedDefaultChildSchemas[$key];
         }
 
         $key ??= 'default';
@@ -133,7 +138,7 @@ trait HasChildComponents
         }
 
         return [
-            ...(array_key_exists('default', $this->childComponents) ? $this->getDefaultChildSchemas() : []),
+            ...(array_key_exists('default', $this->childComponents) ? ($this->cachedDefaultChildSchemas ??= $this->getDefaultChildSchemas()) : []),
             ...array_reduce(
                 array_keys($this->childComponents),
                 function (array $carry, string $key): array {
@@ -168,6 +173,11 @@ trait HasChildComponents
     public function getDefaultChildSchemas(): array
     {
         return ['default' => $this->getChildSchema()];
+    }
+
+    public function clearCachedDefaultChildSchemas(): void
+    {
+        $this->cachedDefaultChildSchemas = null;
     }
 
     protected function cloneChildComponents(): static

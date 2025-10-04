@@ -73,6 +73,8 @@ namespace Livewire\Features\SupportTesting {
 
         public function assertCountTableRecords(int $count): static {}
 
+        public function toggleAllTableColumns(bool $condition = true): static {}
+
         public function loadTable(): static {}
 
         /**

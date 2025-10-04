@@ -512,7 +512,6 @@ return [
 
             ],
 
-
             'link' => [
 
                 'label' => 'Editar',

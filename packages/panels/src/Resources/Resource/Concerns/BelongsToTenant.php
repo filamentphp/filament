@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use LogicException;
+use Znck\Eloquent\Relations\BelongsToThrough;
 
 trait BelongsToTenant
 {
@@ -176,7 +177,7 @@ trait BelongsToTenant
 
             $relationship = static::getTenantOwnershipRelationship($record);
 
-            if ($relationship instanceof BelongsTo) {
+            if ($relationship instanceof BelongsTo || $relationship instanceof BelongsToThrough) {
                 return;
             }
 

@@ -12,6 +12,8 @@
         fn (\Illuminate\Database\Eloquent\Model $tenant): bool => ! $tenant->is($currentTenant),
     ));
 
+    $isSearchable = filled($canSwitchTenants) ? (filament()->isTenantMenuSearchable() ?? (count($tenants) >= 10)) : false;
+
     $itemsBeforeAndAfterTenantSwitcher = collect($items)
         ->groupBy(fn (Action $item): bool => $canSwitchTenants && ($item->getSort() < 0), preserveKeys: true)
         ->all();
@@ -88,22 +90,49 @@
     @endif
 
     @if ($canSwitchTenants)
-        <x-filament::dropdown.list>
-            @foreach ($tenants as $tenant)
-                @php
-                    $tenantUrl = filament()->getUrl($tenant);
-                    $tenantImage = filament()->getTenantAvatarUrl($tenant);
-                @endphp
+        <div x-data="{ search: '' }">
+            <x-filament::dropdown.list>
+                @if ($isSearchable)
+                    <div x-id="['input']">
+                        <label x-bind:for="$id('input')" class="fi-sr-only">
+                            {{ __('filament-panels::layout.tenant_menu.search_field.label') }}
+                        </label>
 
-                <x-filament::dropdown.list.item
-                    :href="$tenantUrl"
-                    :image="$tenantImage"
-                    tag="a"
-                >
-                    {{ filament()->getTenantName($tenant) }}
-                </x-filament::dropdown.list.item>
-            @endforeach
-        </x-filament::dropdown.list>
+                        <x-filament::input
+                            x-bind:id="$id('input')"
+                            x-model="search"
+                            placeholder="{{ __('filament-panels::layout.tenant_menu.search_field.placeholder') }}"
+                            type="search"
+                        />
+                    </div>
+                @endif
+
+                @foreach ($tenants as $tenant)
+                    @php
+                        $tenantImage = filament()->getTenantAvatarUrl($tenant);
+                        $tenantName = filament()->getTenantName($tenant);
+                        $tenantUrl = filament()->getUrl($tenant);
+                    @endphp
+
+                    <div
+                        x-show="
+                            search === '' ||
+                                @js($tenantName).replace(/ /g, '')
+                                    .toLowerCase()
+                                    .includes(search.replace(/ /g, '').toLowerCase())
+                        "
+                    >
+                        <x-filament::dropdown.list.item
+                            :href="$tenantUrl"
+                            :image="$tenantImage"
+                            tag="a"
+                        >
+                            {{ $tenantName }}
+                        </x-filament::dropdown.list.item>
+                    </div>
+                @endforeach
+            </x-filament::dropdown.list>
+        </div>
     @endif
 
     @if ($itemsAfterTenantSwitcher->isNotEmpty())

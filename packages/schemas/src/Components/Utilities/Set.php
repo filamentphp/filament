@@ -16,12 +16,14 @@ class Set
 
         $path = $this->component->resolveRelativeStatePath($path, $isAbsolute);
 
-        $component = $this->component->getRootContainer()->getComponentByStatePath(
-            $path,
-            withHidden: true,
-            withAbsoluteStatePath: true,
-            skipComponentChildContainersWhileSearching: $this->component,
-        );
+        $component = ($this->component->getStatePath() === $path)
+            ? $this->component
+            : $this->component->getRootContainer()->getComponentByStatePath(
+                $path,
+                withHidden: true,
+                withAbsoluteStatePath: true,
+                skipComponentChildContainersWhileSearching: $this->component,
+            );
 
         $state = $this->component->evaluate($state);
 

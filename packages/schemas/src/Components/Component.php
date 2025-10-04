@@ -190,7 +190,6 @@ class Component extends ViewComponent
                 x-data="filamentSchemaComponent({
                     path: <?= Js::from($statePath) ?>,
                     containerPath: <?= Js::from($containerStatePath) ?>,
-                    isLive: <?= Js::from($this->isLive()) ?>,
                     $wire,
                 })"
                 <?php if ($afterStateUpdatedJs = $this->getAfterStateUpdatedJs()) { ?>
