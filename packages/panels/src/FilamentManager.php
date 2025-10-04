@@ -465,6 +465,11 @@ class FilamentManager
         return $this->getCurrentOrDefaultPanel()->getTenantMenuItems();
     }
 
+    public function isTenantMenuSearchable(): ?bool
+    {
+        return $this->getCurrentOrDefaultPanel()->isTenantMenuSearchable();
+    }
+
     /**
      * @return class-string<Model>|null
      */

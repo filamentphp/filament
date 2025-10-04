@@ -3,6 +3,7 @@
 namespace Filament\Actions\Concerns;
 
 use Closure;
+use Filament\Actions\Action;
 use Filament\Schemas\Schema;
 
 trait CanBeMounted
@@ -29,8 +30,8 @@ trait CanBeMounted
      */
     public function fillForm(array | Closure | null $data): static
     {
-        $this->mountUsing(function (?Schema $schema) use ($data): void {
-            $schema?->fill($this->evaluate($data));
+        $this->mountUsing(static function (Action $action, ?Schema $schema) use ($data): void {
+            $schema?->fill($action->evaluate($data));
         });
 
         return $this;

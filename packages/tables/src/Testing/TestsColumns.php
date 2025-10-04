@@ -523,4 +523,26 @@ class TestsColumns
             return $this;
         };
     }
+
+    public function toggleAllTableColumns(): Closure
+    {
+        return function (bool $condition = true): static {
+            /** @phpstan-ignore-next-line */
+            $tableColumns = $this->instance()->tableColumns;
+
+            foreach ($tableColumns as &$column) {
+                if (! $column['isToggleable']) {
+                    continue;
+                }
+
+                $column['isToggled'] = $condition;
+            }
+
+            $this->set('tableColumns', $tableColumns);
+
+            $this->call('applyTableColumnManager');
+
+            return $this;
+        };
+    }
 }

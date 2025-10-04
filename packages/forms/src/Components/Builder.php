@@ -669,6 +669,7 @@ class Builder extends Field implements CanConcealComponents, HasExtraItemActions
             })
             ->schema(function (array $arguments, Builder $component) {
                 return $component->getChildSchema($arguments['item'])
+                    ->getClone()
                     ->getComponents(withHidden: true);
             })
             ->action(function (array $arguments, Builder $component, $data): void {
