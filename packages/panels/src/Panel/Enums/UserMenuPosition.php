@@ -2,9 +2,9 @@
 
 namespace Filament\Panel\Enums;
 
-enum UserMenuPosition: string
+enum UserMenuPosition
 {
-    case Topbar = 'topbar';
+    case Topbar;
 
-    case Sidebar = 'sidebar';
+    case Sidebar;
 }

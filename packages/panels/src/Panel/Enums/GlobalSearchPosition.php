@@ -2,9 +2,9 @@
 
 namespace Filament\Panel\Enums;
 
-enum GlobalSearchPosition: string
+enum GlobalSearchPosition
 {
-    case Topbar = 'topbar';
+    case Topbar;
 
-    case Sidebar = 'sidebar';
+    case Sidebar;
 }

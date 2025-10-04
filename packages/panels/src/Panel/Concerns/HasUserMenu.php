@@ -51,7 +51,7 @@ trait HasUserMenu
 
     public function getUserMenuPosition(): UserMenuPosition
     {
-        return $this->evaluate($this->userMenuPosition) ?? UserMenuPosition::Topbar;
+        return $this->evaluate($this->userMenuPosition) ?? ($this->hasTopbar() ? UserMenuPosition::Topbar : UserMenuPosition::Sidebar);
     }
 
     protected function getUserProfileMenuItem(Action | Closure | MenuItem | null $item = null): Action

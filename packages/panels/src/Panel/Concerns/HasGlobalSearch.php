@@ -100,7 +100,7 @@ trait HasGlobalSearch
 
     public function getGlobalSearchPosition(): GlobalSearchPosition
     {
-        return $this->evaluate($this->globalSearchPosition) ?? GlobalSearchPosition::Topbar;
+        return $this->evaluate($this->globalSearchPosition) ?? ($this->hasTopbar() ? GlobalSearchPosition::Topbar : GlobalSearchPosition::Sidebar);
     }
 
     public function getGlobalSearchDebounce(): string

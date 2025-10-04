@@ -15,6 +15,8 @@ use Filament\Navigation\NavigationGroup;
 use Filament\Navigation\NavigationItem;
 use Filament\Pages\Enums\SubNavigationPosition;
 use Filament\Panel;
+use Filament\Panel\Enums\GlobalSearchPosition;
+use Filament\Panel\Enums\UserMenuPosition;
 use Filament\PanelRegistry;
 use Filament\Support\Assets\Theme;
 use Filament\Support\Enums\Width;
@@ -68,6 +70,7 @@ use Livewire\Component;
  * @method static string getGlobalSearchDebounce()
  * @method static array<string> getGlobalSearchKeyBindings()
  * @method static GlobalSearchProvider | null getGlobalSearchProvider()
+ * @method static GlobalSearchPosition getGlobalSearchPosition()
  * @method static string | null getHomeUrl()
  * @method static string | null getLoginUrl(array<string, mixed> $parameters = [])
  * @method static string getLogoutUrl(array<string, mixed> $parameters = [])
@@ -112,6 +115,7 @@ use Livewire\Component;
  * @method static string | null getUserAvatarUrl(Model | Authenticatable $user)
  * @method static Model | null getUserDefaultTenant(HasTenants | Model | Authenticatable $user)
  * @method static array<Action> getUserMenuItems()
+ * @method static UserMenuPosition getUserMenuPosition()
  * @method static string getUserName(Model | Authenticatable $user)
  * @method static array<Model> getUserTenants(HasTenants | Model | Authenticatable $user)
  * @method static string | null getUrl(Model | null $tenant = null)
