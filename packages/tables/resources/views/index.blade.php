@@ -142,7 +142,7 @@
                 currentSelectionLivewireProperty: @js($getCurrentSelectionLivewireProperty()),
                 maxSelectableRecords: @js($maxSelectableRecords),
                 selectsCurrentPageOnly: @js($selectsCurrentPageOnly),
-                selectsGroupOnly: @js($selectsGroupOnly()),
+                selectsGroupsOnly: @js($selectsGroupsOnly),
                 $wire,
             })"
     {{
@@ -607,7 +607,7 @@
                         {{ FilamentView::renderHook(TablesRenderHook::SELECTION_INDICATOR_ACTIONS_BEFORE, scopes: static::class) }}
 
                         <div class="fi-ta-selection-indicator-actions-ctn">
-                            @if (! $selectsGroupOnly())
+                            @if (! $selectsGroupsOnly)
                                 <x-filament::link
                                     color="primary"
                                     tag="button"
@@ -707,9 +707,9 @@
                             );
                         @endphp
 
-                        @if ($isSelectionEnabled || count($sortableColumns))
+                        @if (($isSelectionEnabled && ($maxSelectableRecords !== 1) && (! $isReordering) && (! $selectsGroupsOnly)) || count($sortableColumns))
                             <div class="fi-ta-content-header">
-                                @if ($isSelectionEnabled && ($maxSelectableRecords !== 1) && (! $isReordering) && (! $selectsGroupOnly()))
+                                @if ($isSelectionEnabled && ($maxSelectableRecords !== 1) && (! $isReordering) && (! $selectsGroupsOnly))
                                     <input
                                         aria-label="{{ __('filament-tables::table.fields.bulk_select_page.label') }}"
                                         type="checkbox"
@@ -1300,7 +1300,7 @@
                                             <th
                                                 class="fi-ta-cell fi-ta-selection-cell"
                                             >
-                                                @if ($maxSelectableRecords !== 1)
+                                                @if (($maxSelectableRecords !== 1) && (! $selectsGroupsOnly))
                                                     <input
                                                         aria-label="{{ __('filament-tables::table.fields.bulk_select_page.label') }}"
                                                         type="checkbox"
@@ -1442,7 +1442,7 @@
                                         <th
                                             class="fi-ta-cell fi-ta-selection-cell"
                                         >
-                                            @if ($maxSelectableRecords !== 1)
+                                            @if (($maxSelectableRecords !== 1) && (! $selectsGroupsOnly))
                                                 <input
                                                     aria-label="{{ __('filament-tables::table.fields.bulk_select_page.label') }}"
                                                     type="checkbox"

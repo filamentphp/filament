@@ -401,7 +401,7 @@ public function table(Table $table): Table
 
 ### Restricting bulk selection to groups only
 
-The `onlyAllowGroupSelection()` method can be used to restrict bulk selection to only records within the same group, preventing global selection across all groups:
+The `selectGroupsOnly()` method can be used to restrict bulk selection to only records within the same group, preventing bulk selection across multiple groups at once:
 
 ```php
 use Filament\Tables\Table;
@@ -412,7 +412,7 @@ public function table(Table $table): Table
         ->toolbarActions([
             // ...
         ])
-        ->onlyAllowGroupSelection();
+        ->selectGroupsOnly();
 }
 ```
 

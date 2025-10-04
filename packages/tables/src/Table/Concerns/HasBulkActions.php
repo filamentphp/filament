@@ -15,7 +15,7 @@ trait HasBulkActions
 
     protected bool | Closure | null $selectsCurrentPageOnly = false;
 
-    protected bool | Closure | null $selectsGroupOnly = false;
+    protected bool | Closure | null $selectsGroupsOnly = false;
 
     protected RecordCheckboxPosition | Closure | null $recordCheckboxPosition = null;
 
@@ -77,10 +77,9 @@ trait HasBulkActions
         return $this;
     }
 
-    public function onlyAllowGroupSelection(bool | Closure $condition = true): static
+    public function selectGroupsOnly(bool | Closure $condition = true): static
     {
-        $this->selectsCurrentPageOnly = $condition;
-        $this->selectsGroupOnly = $condition;
+        $this->selectsGroupsOnly = $condition;
 
         return $this;
     }
@@ -134,9 +133,9 @@ trait HasBulkActions
         return $this->evaluate($this->selectsCurrentPageOnly) || (! $this->hasQuery());
     }
 
-    public function selectsGroupOnly(): bool
+    public function selectsGroupsOnly(): bool
     {
-        return (bool) $this->evaluate($this->selectsGroupOnly);
+        return (bool) $this->evaluate($this->selectsGroupsOnly);
     }
 
     public function checksIfRecordIsSelectable(): bool
