@@ -82,7 +82,7 @@ class ToggleColumn extends Column implements Editable, HasEmbeddedView
 
             <div
                 x-bind:aria-checked="state?.toString()"
-                x-on:click.stop.prevent="if (! $el.hasAttribute('disabled')) state = ! state"
+                x-on:click.prevent.stop="if (! $el.hasAttribute('disabled')) state = ! state"
                 x-bind:class="state ? '<?= Arr::toCssClasses([
                     'fi-toggle-on',
                     ...get_component_color_classes(ToggleComponent::class, $onColor),

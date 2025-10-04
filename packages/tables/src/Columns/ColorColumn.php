@@ -3,6 +3,7 @@
 namespace Filament\Tables\Columns;
 
 use Filament\Support\Components\Contracts\HasEmbeddedView;
+use Filament\Support\Concerns\CanBeCopied;
 use Filament\Support\Concerns\CanWrap;
 use Filament\Support\Enums\Alignment;
 use Illuminate\Support\Arr;
@@ -12,8 +13,8 @@ use Illuminate\View\ComponentAttributeBag;
 
 class ColorColumn extends Column implements HasEmbeddedView
 {
+    use CanBeCopied;
     use CanWrap;
-    use Concerns\CanBeCopied;
 
     public function toEmbeddedHtml(): string
     {
@@ -85,7 +86,7 @@ class ColorColumn extends Column implements HasEmbeddedView
 
                 <div <?= (new ComponentAttributeBag)
                     ->merge([
-                        'x-on:click' => $isCopyable
+                        'x-on:click.prevent.stop' => $isCopyable
                             ? <<<JS
                             window.navigator.clipboard.writeText({$copyableStateJs})
                             \$tooltip({$copyMessageJs}, {
