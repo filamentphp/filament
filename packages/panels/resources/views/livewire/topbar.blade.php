@@ -101,7 +101,7 @@
 
         @if ($hasTopNavigation || (! $hasNavigation))
             @if ($hasTenancy && filament()->hasTenantMenu())
-                <x-filament-panels::tenant-menu teleport="true"/>
+                <x-filament-panels::tenant-menu teleport />
             @endif
 
             @if ($hasNavigation)
