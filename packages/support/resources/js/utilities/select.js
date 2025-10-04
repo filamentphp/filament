@@ -96,6 +96,8 @@ export class Select {
         this.searchQuery = ''
         this.searchTimeout = null
         this.isSearching = false
+        // Version token to prevent race conditions when updating the selected display
+        this.selectedDisplayVersion = 0
 
         this.render()
         this.setUpEventListeners()
@@ -571,53 +573,57 @@ export class Select {
     }
 
     async updateSelectedDisplay() {
-        // Clear the current content
-        this.selectedDisplay.innerHTML = ''
+        // Increment version to invalidate any in-flight renders
+        this.selectedDisplayVersion = (this.selectedDisplayVersion || 0) + 1
+        const renderVersion = this.selectedDisplayVersion
 
-        // Handle multiple selection
+        // Stage all DOM updates in a fragment to avoid intermediate states
+        const fragment = document.createDocumentFragment()
+
         if (this.isMultiple) {
-            // If no items selected, show placeholder
             if (!Array.isArray(this.state) || this.state.length === 0) {
                 const placeholderSpan = document.createElement('span')
                 placeholderSpan.textContent = this.placeholder
                 placeholderSpan.classList.add('fi-select-input-placeholder')
-
-                this.selectedDisplay.appendChild(placeholderSpan)
-
-                return
+                fragment.appendChild(placeholderSpan)
+            } else {
+                let selectedLabels = await this.getLabelsForMultipleSelection()
+                // Check version before committing
+                if (renderVersion !== this.selectedDisplayVersion) return
+                this.addBadgesForSelectedOptions(selectedLabels, fragment)
             }
 
-            // For multiple selection, get labels for selected options
-            let selectedLabels = await this.getLabelsForMultipleSelection()
-
-            // Create and add badges for selected options
-            this.addBadgesForSelectedOptions(selectedLabels)
-
-            // Reevaluate dropdown position after badges are added
-            if (this.isOpen) {
-                this.positionDropdown()
+            // Commit if still current
+            if (renderVersion === this.selectedDisplayVersion) {
+                this.selectedDisplay.replaceChildren(fragment)
+                if (this.isOpen) {
+                    this.positionDropdown()
+                }
             }
             return
         }
 
-        // Handle single selection
-
-        // If no value selected, show placeholder
+        // Single selection
         if (this.state === null || this.state === '') {
             const placeholderSpan = document.createElement('span')
             placeholderSpan.textContent = this.placeholder
             placeholderSpan.classList.add('fi-select-input-placeholder')
+            fragment.appendChild(placeholderSpan)
 
-            this.selectedDisplay.appendChild(placeholderSpan)
-
+            if (renderVersion === this.selectedDisplayVersion) {
+                this.selectedDisplay.replaceChildren(fragment)
+            }
             return
         }
 
-        // Get label for the selected value
         const selectedLabel = await this.getLabelForSingleSelection()
+        if (renderVersion !== this.selectedDisplayVersion) return
 
-        // Add the label and remove button
-        this.addSingleSelectionDisplay(selectedLabel)
+        this.addSingleSelectionDisplay(selectedLabel, fragment)
+
+        if (renderVersion === this.selectedDisplayVersion) {
+            this.selectedDisplay.replaceChildren(fragment)
+        }
     }
 
     // Helper method to get labels for multiple selection
@@ -785,7 +791,7 @@ export class Select {
     }
 
     // Helper method to add badges for selected options
-    addBadgesForSelectedOptions(selectedLabels) {
+    addBadgesForSelectedOptions(selectedLabels, target = this.selectedDisplay) {
         // Create a container for the badges
         const badgesContainer = document.createElement('div')
         badgesContainer.className = 'fi-select-input-value-badges-ctn'
@@ -797,7 +803,7 @@ export class Select {
             badgesContainer.appendChild(badge)
         })
 
-        this.selectedDisplay.appendChild(badgesContainer)
+        target.appendChild(badgesContainer)
     }
 
     // Helper method to get label for single selection
@@ -845,7 +851,7 @@ export class Select {
     }
 
     // Helper method to add single selection display
-    addSingleSelectionDisplay(selectedLabel) {
+    addSingleSelectionDisplay(selectedLabel, target = this.selectedDisplay) {
         // Create a container for the label
         const labelContainer = document.createElement('span')
         labelContainer.className = 'fi-select-input-value-label'
@@ -856,7 +862,7 @@ export class Select {
             labelContainer.textContent = selectedLabel
         }
 
-        this.selectedDisplay.appendChild(labelContainer)
+        target.appendChild(labelContainer)
 
         // Add a cross button to clear the selection if canSelectPlaceholder is true
         if (!this.canSelectPlaceholder) {
@@ -884,7 +890,7 @@ export class Select {
             }
         })
 
-        this.selectedDisplay.appendChild(removeButton)
+        target.appendChild(removeButton)
     }
 
     getSelectedOptionLabel(value) {
