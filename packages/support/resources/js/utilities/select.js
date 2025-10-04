@@ -574,7 +574,7 @@ export class Select {
 
     async updateSelectedDisplay() {
         // Increment version to invalidate any in-flight renders
-        this.selectedDisplayVersion = (this.selectedDisplayVersion || 0) + 1
+        this.selectedDisplayVersion = this.selectedDisplayVersion + 1
         const renderVersion = this.selectedDisplayVersion
 
         // Stage all DOM updates in a fragment to avoid intermediate states
