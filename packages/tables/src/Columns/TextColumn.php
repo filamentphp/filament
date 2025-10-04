@@ -4,6 +4,7 @@ namespace Filament\Tables\Columns;
 
 use Closure;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
+use Filament\Support\Concerns\CanBeCopied;
 use Filament\Support\Concerns\CanWrap;
 use Filament\Support\Concerns\HasFontFamily;
 use Filament\Support\Concerns\HasLineClamp;
@@ -29,8 +30,8 @@ use function Filament\Support\generate_icon_html;
 
 class TextColumn extends Column implements HasEmbeddedView
 {
+    use CanBeCopied;
     use CanWrap;
-    use Concerns\CanBeCopied;
     use Concerns\CanFormatState;
     use Concerns\HasColor;
     use Concerns\HasDescription;
@@ -314,7 +315,7 @@ class TextColumn extends Column implements HasEmbeddedView
                 'contentAttributes' => ($isBadge || $isCopyable || filled($tooltip))
                     ? (new ComponentAttributeBag)
                         ->merge([
-                            'x-on:click' => $isCopyable
+                            'x-on:click.prevent.stop' => $isCopyable
                                 ? <<<JS
                                 window.navigator.clipboard.writeText({$copyableStateJs})
                                 \$tooltip({$copyMessageJs}, {
