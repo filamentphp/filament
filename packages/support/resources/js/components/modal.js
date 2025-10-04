@@ -5,51 +5,88 @@ export default ({ id }) => ({
 
     livewire: null,
 
+    textSelectionClosePreventionMouseDownHandler: null,
+
+    textSelectionClosePreventionMouseUpHandler: null,
+
+    textSelectionClosePreventionClickHandler: null,
+
     init() {
         this.$nextTick(() => {
             this.isWindowVisible = this.isOpen
 
-            setupModalClickGuard({
-                modalSelector: '.fi-modal-window',
-                backdropSelector: '.fi-modal-close-overlay',
-                pageSelector: '.fi-page',
-            })
+            this.setUpTextSelectionClosePrevention()
 
             this.$watch('isOpen', () => (this.isWindowVisible = this.isOpen))
         })
+    },
 
-        function setupModalClickGuard({ modalSelector, backdropSelector, pageSelector, clickThreshold = 75 }) {
-            let mouseDownOnModal = false
-            let mouseDownTime = 0
+    setUpTextSelectionClosePrevention() {
+        // Ensure that the click element is not triggered from a user selecting text inside an input.
+        // https://github.com/filamentphp/filament/pull/18022
 
-            const preventClick = (event) => {
-                event.stopPropagation()
-                event.preventDefault()
-                document.removeEventListener('click', preventClick, true)
-            }
+        const windowSelector = '.fi-modal-window'
+        const closeOverlaySelector = '.fi-modal-close-overlay'
 
-            const isBackdropClick = (e) => {
-                return !e.target.closest(modalSelector) &&
-                    (e.target.closest(backdropSelector) || e.target.closest(pageSelector))
-            }
+        const capture = true
 
-            document.addEventListener('mousedown', (e) => {
-                mouseDownTime = Date.now()
-                mouseDownOnModal = !!e.target.closest(modalSelector)
-            }, true)
+        let isMouseDownOnModal = false
+        let mouseDownTime = 0
 
-            document.addEventListener('mouseup', (e) => {
-                const isClick = Date.now() - mouseDownTime < clickThreshold
+        this.textSelectionClosePreventionClickHandler = (event) => {
+            event.stopPropagation()
+            event.preventDefault()
 
-                if (mouseDownOnModal && isBackdropClick(e) && !isClick) {
-                    document.addEventListener('click', preventClick, true)
-                } else {
-                    document.removeEventListener('click', preventClick, true)
-                }
-
-                mouseDownOnModal = false
-            }, true)
+            document.removeEventListener(
+                'click',
+                this.textSelectionClosePreventionClickHandler,
+                capture,
+            )
         }
+
+        const isCloseOverlayClick = (event) => {
+            return (
+                !event.target.closest(windowSelector) &&
+                (event.target.closest(closeOverlaySelector) ||
+                    event.target.closest('body'))
+            )
+        }
+
+        this.textSelectionClosePreventionMouseDownHandler = (event) => {
+            mouseDownTime = Date.now()
+            isMouseDownOnModal = !!event.target.closest(windowSelector)
+        }
+
+        this.textSelectionClosePreventionMouseUpHandler = (event) => {
+            const isClick = Date.now() - mouseDownTime < 75
+
+            if (isMouseDownOnModal && isCloseOverlayClick(event) && !isClick) {
+                document.addEventListener(
+                    'click',
+                    this.textSelectionClosePreventionClickHandler,
+                    capture,
+                )
+            } else {
+                document.removeEventListener(
+                    'click',
+                    this.textSelectionClosePreventionClickHandler,
+                    capture,
+                )
+            }
+
+            isMouseDownOnModal = false
+        }
+
+        document.addEventListener(
+            'mousedown',
+            this.textSelectionClosePreventionMouseDownHandler,
+            capture,
+        )
+        document.addEventListener(
+            'mouseup',
+            this.textSelectionClosePreventionMouseUpHandler,
+            capture,
+        )
     },
 
     close() {
@@ -74,5 +111,36 @@ export default ({ id }) => ({
                 }),
             )
         })
+    },
+
+    destroy() {
+        const capture = true
+
+        if (this.textSelectionClosePreventionMouseDownHandler) {
+            document.removeEventListener(
+                'mousedown',
+                this.textSelectionClosePreventionMouseDownHandler,
+                capture,
+            )
+            this.textSelectionClosePreventionMouseDownHandler = null
+        }
+
+        if (this.textSelectionClosePreventionMouseUpHandler) {
+            document.removeEventListener(
+                'mouseup',
+                this.textSelectionClosePreventionMouseUpHandler,
+                capture,
+            )
+            this.textSelectionClosePreventionMouseUpHandler = null
+        }
+
+        if (this.textSelectionClosePreventionClickHandler) {
+            document.removeEventListener(
+                'click',
+                this.textSelectionClosePreventionClickHandler,
+                capture,
+            )
+            this.textSelectionClosePreventionClickHandler = null
+        }
     },
 })
