@@ -6,8 +6,7 @@
     $currentTenantName = filament()->getTenantName($currentTenant);
 
     $items = $this->getTenantMenuItems();
-    $searchable = $this->getTenantMenuSearchable();
-    $searchPlaceholder = $this->getTenantMenuSearchPlaceholder();
+    $isSearchable = filament()->isTenantMenuSearchable();
 
     $canSwitchTenants = count($tenants = array_filter(
         filament()->getUserTenants(filament()->auth()->user()),
@@ -90,32 +89,36 @@
     @endif
 
     @if ($canSwitchTenants)
-        <div x-data="{ tenantSearch: '' }">
+        <div x-data="{ search: '' }">
             <x-filament::dropdown.list>
-                @if ($searchable)
-                    <x-filament::input.wrapper style="box-shadow: none">
+                @if ($isSearchable)
+                    <div x-id="['input']">
+                        <label x-bind:for="$id('input')" class="fi-sr-only">
+                            {{ __('filament-panels::layout.tenant_menu.search_field.label') }}
+                        </label>
+
                         <x-filament::input
-                            type="text"
-                            x-model="tenantSearch"
-                            placeholder="{{ $searchPlaceholder }}"
+                            x-bind:id="$id('input')"
+                            x-model="search"
+                            placeholder="{{ __('filament-panels::layout.tenant_menu.search_field.placeholder') }}"
+                            type="search"
                         />
-                    </x-filament::input.wrapper>
+                    </div>
                 @endif
 
                 @foreach ($tenants as $tenant)
                     @php
-                        $tenantUrl = filament()->getUrl($tenant);
                         $tenantImage = filament()->getTenantAvatarUrl($tenant);
                         $tenantName = filament()->getTenantName($tenant);
+                        $tenantUrl = filament()->getUrl($tenant);
                     @endphp
 
                     <div
                         x-show="
-                            tenantSearch === '' ||
-                                '{{ $tenantName }}'
-                                    .replace(/ /g, '')
+                            search === '' ||
+                                @js($tenantName).replace(/ /g, '')
                                     .toLowerCase()
-                                    .includes(tenantSearch.replace(/ /g, '').toLowerCase())
+                                    .includes(search.replace(/ /g, '').toLowerCase())
                         "
                     >
                         <x-filament::dropdown.list.item

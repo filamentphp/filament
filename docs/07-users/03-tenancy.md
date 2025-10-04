@@ -367,6 +367,21 @@ public function panel(Panel $panel): Panel
 }
 ```
 
+### Allowing the tenants to be searched
+
+You can use the `searchableTenantMenu()` method in the [configuration](../panel-configuration) to allow the tenants to be searched:
+
+```php
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->searchableTenantMenu();
+}
+```
+
 ### Customizing the registration link
 
 To customize the [registration](#adding-a-tenant-registration-page) link in the tenant menu, register a new item with the `register` array key, and pass a function that [customizes the action](../actions) object:
