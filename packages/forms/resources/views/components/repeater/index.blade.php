@@ -20,6 +20,7 @@
     $extraItemActions = $getExtraItemActions();
 
     $hasItemNumbers = $hasItemNumbers();
+    $hasItemHeaders = $hasItemHeaders();
     $isAddable = $isAddable();
     $isCloneable = $isCloneable();
     $isCollapsible = $isCollapsible();
@@ -103,6 +104,7 @@
                         $moveUpAction = $moveUpAction(['item' => $itemKey])->disabled($loop->first);
                         $moveUpActionIsVisible = $isReorderableWithButtons && $moveUpAction->isVisible();
                         $reorderActionIsVisible = $isReorderableWithDragAndDrop && $reorderAction->isVisible();
+                        $hasItemHeader = $hasItemHeaders && ($reorderActionIsVisible || $moveUpActionIsVisible || $moveDownActionIsVisible || filled($itemLabel) || $cloneActionIsVisible || $deleteActionIsVisible || $isCollapsible || $visibleExtraItemActions);
                     @endphp
 
                     <li
@@ -115,10 +117,13 @@
                         x-on:repeater-collapse.window="$event.detail === '{{ $statePath }}' && (isCollapsed = true)"
                         x-on:expand="isCollapsed = false"
                         x-sortable-item="{{ $itemKey }}"
-                        class="fi-fo-repeater-item"
+                        @class([
+                            'fi-fo-repeater-item',
+                            'fi-fo-repeater-item-has-header' => $hasItemHeader,
+                        ])
                         x-bind:class="{ 'fi-collapsed': isCollapsed }"
                     >
-                        @if ($reorderActionIsVisible || $moveUpActionIsVisible || $moveDownActionIsVisible || filled($itemLabel) || $cloneActionIsVisible || $deleteActionIsVisible || $isCollapsible || $visibleExtraItemActions)
+                        @if ($hasItemHeader)
                             <div
                                 @if ($isCollapsible)
                                     x-on:click.stop="isCollapsed = !isCollapsed"

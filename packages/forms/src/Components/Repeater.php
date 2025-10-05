@@ -65,6 +65,8 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
 
     protected bool | Closure $hasItemNumbers = false;
 
+    protected bool | Closure $hasItemHeaders = true;
+
     protected Field | Closure | null $simpleField = null;
 
     protected Alignment | string | Closure | null $addActionAlignment = null;
@@ -1049,6 +1051,13 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
         return $this;
     }
 
+    public function itemHeaders(bool | Closure $condition = true): static
+    {
+        $this->hasItemHeaders = $condition;
+
+        return $this;
+    }
+
     public function fillFromRelationship(): void
     {
         $this->state(
@@ -1189,6 +1198,11 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
     public function hasItemNumbers(): bool
     {
         return (bool) $this->evaluate($this->hasItemNumbers);
+    }
+
+    public function hasItemHeaders(): bool
+    {
+        return (bool) $this->evaluate($this->hasItemHeaders);
     }
 
     public function simple(Field | Closure | null $field): static
