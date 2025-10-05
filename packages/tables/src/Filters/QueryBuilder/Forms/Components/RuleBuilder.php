@@ -42,6 +42,7 @@ class RuleBuilder extends Builder
                         ->icon(Heroicon::Bars4)
                         ->schema([
                             Flex::make(function (Flex $component): array {
+                                /** @var Builder $builder */
                                 $builder = $component->getContainer()->getParentComponent()->getContainer()->getParentComponent();
 
                                 return [
@@ -54,6 +55,7 @@ class RuleBuilder extends Builder
                                                     ->blockPickerColumns($this->getBlockPickerColumns())
                                                     ->blockPickerWidth($this->getBlockPickerWidth()),
                                                 Actions::make(function (Actions $component): array {
+                                                    /** @var Repeater $repeater */
                                                     $repeater = $component->getContainer()->getParentComponent()->getContainer()->getParentComponent();
 
                                                     return [
@@ -64,7 +66,7 @@ class RuleBuilder extends Builder
                                                             ->iconButton()
                                                             ->size(Size::Small)
                                                             ->action($repeater->getAction($deleteActionName)->arguments(['item' => (string) str($component->getContainer()->getParentComponent()->getContainer()->getStatePath(isAbsolute: false))->beforeLast('.data')])->getLivewireClickHandler())
-                                                            ->visible(fn (Get $get): bool => blank($get('rules'))),
+                                                            ->visible(fn (Get $get): bool => blank($get('rules')) && (count($repeater->getRawState()) > 2)),
                                                     ];
                                                 })->grow(false),
                                             ])->verticallyAlignCenter(),
@@ -72,8 +74,8 @@ class RuleBuilder extends Builder
                                         ->addAction(fn (Action $action, Repeater $component) => $action
                                             ->label(__('filament-tables::filters/query-builder.actions.add_rule_group.label'))
                                             ->icon(Heroicon::Plus)
-                                            ->hidden(filled(array_filter($component->getRawState(), fn (array $itemState): bool => blank($itemState['rules'])))))
-                                        ->addActionAlignment(Alignment::Start)
+                                            ->hidden(fn (): bool => filled(array_filter($component->getRawState(), fn (array $itemState): bool => blank($itemState['rules'])))))
+                                        ->addActionAlignment(Alignment::End)
                                         ->labelBetweenItems(__('filament-tables::filters/query-builder.item_separators.or'))
                                         ->itemHeaders(false)
                                         ->defaultItems(2)

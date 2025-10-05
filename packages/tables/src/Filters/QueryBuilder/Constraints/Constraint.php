@@ -4,6 +4,7 @@ namespace Filament\Tables\Filters\QueryBuilder\Constraints;
 
 use Closure;
 use Filament\Actions\Action;
+use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\Builder\Block;
 use Filament\Forms\Components\Select;
 use Filament\Forms\View\FormsIconAlias;
@@ -84,6 +85,7 @@ class Constraint extends Component
 
                 return [
                     Flex::make(function (Flex $component) use ($operatorSelectOptions): array {
+                        /** @var Builder $builder */
                         $builder = $component->getContainer()->getParentComponent()->getContainer()->getParentComponent();
 
                         return [

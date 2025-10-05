@@ -15,7 +15,7 @@ return [
             'label' => 'Groups',
 
             'block' => [
-                'label' => 'Disjunction (OR)',
+                'label' => 'OR condition',
                 'or' => 'OR',
             ],
 
