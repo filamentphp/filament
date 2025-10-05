@@ -75,8 +75,12 @@
         @apply absolute inset-0 rotate-180 transition;
     }
 
+    & .fi-fo-repeater-item-has-header > .fi-fo-repeater-item-content {
+        @apply border-t border-gray-100 dark:border-white/10;
+    }
+
     & .fi-fo-repeater-item-content {
-        @apply border-t border-gray-100 p-4 dark:border-white/10;
+        @apply p-4;
     }
 
     & .fi-fo-repeater-add-between-items-ctn {
