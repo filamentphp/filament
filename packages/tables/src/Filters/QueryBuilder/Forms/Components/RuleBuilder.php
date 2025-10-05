@@ -8,6 +8,7 @@ use Filament\Forms\Components\Repeater;
 use Filament\Forms\View\FormsIconAlias;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Flex;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\Size;
 use Filament\Support\Facades\FilamentIcon;
@@ -46,11 +47,27 @@ class RuleBuilder extends Builder
                                 return [
                                     Repeater::make(static::OR_BLOCK_GROUPS_REPEATER_NAME)
                                         ->label(__('filament-tables::filters/query-builder.form.or_groups.label'))
-                                        ->schema(fn (): array => [
-                                            static::make('rules')
-                                                ->constraints($this->getConstraints())
-                                                ->blockPickerColumns($this->getBlockPickerColumns())
-                                                ->blockPickerWidth($this->getBlockPickerWidth()),
+                                        ->schema([
+                                            Flex::make([
+                                                static::make('rules')
+                                                    ->constraints($this->getConstraints())
+                                                    ->blockPickerColumns($this->getBlockPickerColumns())
+                                                    ->blockPickerWidth($this->getBlockPickerWidth()),
+                                                Actions::make(function (Actions $component): array {
+                                                    $repeater = $component->getContainer()->getParentComponent()->getContainer()->getParentComponent();
+
+                                                    return [
+                                                        Action::make($deleteActionName = $repeater->getDeleteActionName())
+                                                            ->label(__('filament-forms::components.repeater.actions.delete.label'))
+                                                            ->icon(FilamentIcon::resolve(FormsIconAlias::COMPONENTS_REPEATER_ACTIONS_DELETE) ?? Heroicon::Trash)
+                                                            ->color('danger')
+                                                            ->iconButton()
+                                                            ->size(Size::Small)
+                                                            ->action($repeater->getAction($deleteActionName)->arguments(['item' => (string) str($component->getContainer()->getParentComponent()->getContainer()->getStatePath(isAbsolute: false))->beforeLast('.data')])->getLivewireClickHandler())
+                                                            ->visible(fn (Get $get): bool => blank($get('rules'))),
+                                                    ];
+                                                })->grow(false),
+                                            ])->verticallyAlignCenter(),
                                         ])
                                         ->addAction(fn (Action $action, Repeater $component) => $action
                                             ->label(__('filament-tables::filters/query-builder.actions.add_rule_group.label'))
@@ -60,6 +77,7 @@ class RuleBuilder extends Builder
                                         ->labelBetweenItems(__('filament-tables::filters/query-builder.item_separators.or'))
                                         ->itemHeaders(false)
                                         ->defaultItems(2)
+                                        ->minItems(2)
                                         ->cloneable()
                                         ->hiddenLabel()
                                         ->generateUuidUsing(fn (): string => Str::random(4))
