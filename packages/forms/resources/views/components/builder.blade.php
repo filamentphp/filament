@@ -268,46 +268,44 @@
                                 {{ $item }}
                             @endif
                         </div>
+                    </li>
 
-                        @if (! $loop->last)
-                            @if ($isAddable && $addBetweenAction(['afterItem' => $itemKey])->isVisible())
-                                <div
-                                    class="fi-fo-builder-add-between-items-ctn"
-                                >
-                                    <div
-                                        class="fi-fo-builder-add-between-items"
-                                    >
-                                        <div
-                                            class="fi-fo-builder-block-picker-ctn"
+                    @if (! $loop->last)
+                        @if ($isAddable && $addBetweenAction(['afterItem' => $itemKey])->isVisible())
+                            <li class="fi-fo-builder-add-between-items-ctn">
+                                <div class="fi-fo-builder-add-between-items">
+                                    <div class="fi-fo-builder-block-picker-ctn">
+                                        <x-filament-forms::builder.block-picker
+                                            :action="$addBetweenAction"
+                                            :after-item="$itemKey"
+                                            :columns="$blockPickerColumns"
+                                            :blocks="$blockPickerBlocks"
+                                            :key="$key"
+                                            :width="$blockPickerWidth"
                                         >
-                                            <x-filament-forms::builder.block-picker
-                                                :action="$addBetweenAction"
-                                                :after-item="$itemKey"
-                                                :columns="$blockPickerColumns"
-                                                :blocks="$blockPickerBlocks"
-                                                :key="$key"
-                                                :width="$blockPickerWidth"
-                                            >
-                                                <x-slot name="trigger">
-                                                    {{ $addBetweenAction(['afterItem' => $itemKey]) }}
-                                                </x-slot>
-                                            </x-filament-forms::builder.block-picker>
-                                        </div>
+                                            <x-slot name="trigger">
+                                                {{ $addBetweenAction(['afterItem' => $itemKey]) }}
+                                            </x-slot>
+                                        </x-filament-forms::builder.block-picker>
                                     </div>
                                 </div>
-                            @elseif (filled($labelBetweenItems))
+                            </li>
+                        @elseif (filled($labelBetweenItems))
+                            <li class="fi-fo-builder-label-between-items-ctn">
                                 <div
-                                    class="fi-fo-builder-label-between-items-ctn"
-                                >
-                                    <span
-                                        class="fi-fo-builder-label-between-items"
-                                    >
-                                        {{ $labelBetweenItems }}
-                                    </span>
-                                </div>
-                            @endif
+                                    class="fi-fo-builder-label-between-items-divider-before"
+                                ></div>
+
+                                <span class="fi-fo-builder-label-between-items">
+                                    {{ $labelBetweenItems }}
+                                </span>
+
+                                <div
+                                    class="fi-fo-builder-label-between-items-divider-after"
+                                ></div>
+                            </li>
                         @endif
-                    </li>
+                    @endif
                 @endforeach
             </ul>
         @endif

@@ -145,7 +145,7 @@ class Constraint extends Component
                                     ->action($builder->getAction($deleteActionName)->arguments(['item' => (string) str($component->getContainer()->getStatePath(isAbsolute: false))->beforeLast('.data')])->getLivewireClickHandler()),
                             ])->grow(false),
                         ];
-                    })->verticallyAlignCenter(),
+                    }),
                 ];
             });
     }

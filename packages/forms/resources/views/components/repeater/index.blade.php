@@ -229,11 +229,19 @@
                             </li>
                         @elseif (filled($labelBetweenItems))
                             <li class="fi-fo-repeater-label-between-items-ctn">
+                                <div
+                                    class="fi-fo-repeater-label-between-items-divider-before"
+                                ></div>
+
                                 <span
                                     class="fi-fo-repeater-label-between-items"
                                 >
                                     {{ $labelBetweenItems }}
                                 </span>
+
+                                <div
+                                    class="fi-fo-repeater-label-between-items-divider-after"
+                                ></div>
                             </li>
                         @endif
                     @endif

@@ -474,7 +474,7 @@ return [
         ],
 
         'add_rule_group' => [
-            'label' => 'Add rule group',
+            'label' => 'Add OR',
         ],
 
     ],

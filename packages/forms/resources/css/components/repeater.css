@@ -92,11 +92,19 @@
     }
 
     & .fi-fo-repeater-label-between-items-ctn {
-        @apply relative border-t border-gray-200 dark:border-white/10;
+        @apply relative -my-2 flex items-center;
+    }
+
+    & .fi-fo-repeater-label-between-items-divider-before {
+        @apply w-3 shrink-0 border-t border-gray-200 dark:border-white/10;
     }
 
     & .fi-fo-repeater-label-between-items {
-        @apply absolute start-3 -top-2.5 px-1 text-sm font-medium;
+        @apply shrink-0 px-1 text-sm font-medium text-gray-500 dark:text-gray-400;
+    }
+
+    & .fi-fo-repeater-label-between-items-divider-after {
+        @apply flex-1 border-t border-gray-200 dark:border-white/10;
     }
 
     & .fi-fo-repeater-add {
