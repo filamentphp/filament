@@ -95,6 +95,7 @@
                     $hasBlockLabels = $hasBlockLabels();
                     $hasBlockIcons = $hasBlockIcons();
                     $hasBlockNumbers = $hasBlockNumbers();
+                    $hasBlockHeaders = $hasBlockHeaders();
                 @endphp
 
                 @foreach ($items as $itemKey => $item)
@@ -114,6 +115,7 @@
                         $moveUpAction = $moveUpAction(['item' => $itemKey])->disabled($loop->first);
                         $moveUpActionIsVisible = $isReorderableWithButtons && $moveUpAction->isVisible();
                         $reorderActionIsVisible = $isReorderableWithDragAndDrop && $reorderAction->isVisible();
+                        $hasItemHeader = $hasBlockHeaders && ($reorderActionIsVisible || $moveUpActionIsVisible || $moveDownActionIsVisible || $hasBlockIcons || $hasBlockLabels || $editActionIsVisible || $cloneActionIsVisible || $deleteActionIsVisible || $isCollapsible || $visibleExtraItemActions);
                     @endphp
 
                     <li
@@ -128,11 +130,14 @@
                         x-sortable-item="{{ $itemKey }}"
                         {{
                             $item->getParentComponent()->getExtraAttributeBag()
-                                ->class(['fi-fo-builder-item'])
+                                ->class([
+                                    'fi-fo-builder-item',
+                                    'fi-fo-builder-item-has-header' => $hasItemHeader,
+                                ])
                         }}
                         x-bind:class="{ 'fi-collapsed': isCollapsed }"
                     >
-                        @if ($reorderActionIsVisible || $moveUpActionIsVisible || $moveDownActionIsVisible || $hasBlockIcons || $hasBlockLabels || $editActionIsVisible || $cloneActionIsVisible || $deleteActionIsVisible || $isCollapsible || $visibleExtraItemActions)
+                        @if ($hasItemHeader)
                             <div
                                 @if ($isCollapsible)
                                     x-on:click.stop="isCollapsed = !isCollapsed"
