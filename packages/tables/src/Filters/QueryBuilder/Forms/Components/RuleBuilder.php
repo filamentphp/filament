@@ -39,7 +39,7 @@ class RuleBuilder extends Builder
                     ),
                     Builder\Block::make(static::OR_BLOCK_NAME)
                         ->label(__('filament-tables::filters/query-builder.form.or_groups.block.label'))
-                        ->icon(Heroicon::Bars4)
+                        ->icon(Heroicon::Slash)
                         ->schema([
                             Flex::make(function (Flex $component): array {
                                 /** @var Builder $builder */
