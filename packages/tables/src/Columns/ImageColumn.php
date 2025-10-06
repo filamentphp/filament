@@ -435,7 +435,7 @@ class ImageColumn extends Column implements HasEmbeddedView
                         ? '{
                             content: ' . Js::from($tooltip) . ',
                             theme: $store.theme,
-                            allowHTML: ' . ($tooltip instanceof Htmlable ? 'true' : 'false') . ',
+                            allowHTML: ' . Js::from($tooltip instanceof Htmlable) . ',
                         }'
                         : null,
                 ], escape: false);
@@ -495,7 +495,7 @@ class ImageColumn extends Column implements HasEmbeddedView
                         ? '{
                                 content: ' . Js::from($tooltip) . ',
                                 theme: $store.theme,
-                                allowHTML: ' . ($tooltip instanceof Htmlable ? 'true' : 'false') . ',
+                                allowHTML: ' . Js::from($tooltip instanceof Htmlable) . ',
                             }'
                         : null,
                 ], escape: false)
