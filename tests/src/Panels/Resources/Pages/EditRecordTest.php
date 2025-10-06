@@ -6,6 +6,8 @@ use Filament\Actions\ForceDeleteAction;
 use Filament\Actions\ReplicateAction;
 use Filament\Actions\RestoreAction;
 use Filament\Actions\ViewAction;
+use Filament\Events\RecordSaved;
+use Filament\Events\RecordSaving;
 use Filament\Facades\Filament;
 use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Models\Ticket;
@@ -296,3 +298,28 @@ it('renders actions based on policy', function (string $action, string $policyMe
     'replicate action with policy returning false' => fn (): array => [ReplicateAction::class, 'replicate', false, false],
     'replicate action with policy returning denied response' => fn (): array => [ReplicateAction::class, 'replicate', Response::deny(), false],
 ]);
+
+
+it('emits an event when the page is edited', function (): void {
+    Event::fake();
+
+    $post = Post::factory()->create();
+    $newData = Post::factory()->make();
+
+    livewire(EditPost::class, [
+        'record' => $post->getKey(),
+    ])
+        ->fillForm([
+            'author_id' => $newData->author->getKey(),
+            'content' => $newData->content,
+            'tags' => $newData->tags,
+            'title' => $newData->title,
+            'rating' => $newData->rating,
+        ])
+        ->call('save')
+        ->assertHasNoFormErrors();
+
+    Event::assertDispatched(RecordSaving::class);
+    Event::assertDispatched(RecordSaved::class);
+});
+

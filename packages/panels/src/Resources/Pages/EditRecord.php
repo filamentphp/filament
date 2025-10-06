@@ -9,6 +9,8 @@ use Filament\Actions\ActionGroup;
 use Filament\Actions\CreateAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
+use Filament\Events\RecordSaved;
+use Filament\Events\RecordSaving;
 use Filament\Facades\Filament;
 use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\CanUseDatabaseTransactions;
@@ -28,6 +30,7 @@ use Filament\View\PanelsIconAlias;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Js;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Throwable;
@@ -155,6 +158,7 @@ class EditRecord extends Page
                 $this->callHook('afterValidate');
 
                 $this->callHook('beforeSave');
+                Event::dispatch(RecordSaving::class, $this);
             });
 
             $data = $this->mutateFormDataBeforeSave($data);
@@ -162,6 +166,7 @@ class EditRecord extends Page
             $this->handleRecordUpdate($this->getRecord(), $data);
 
             $this->callHook('afterSave');
+            Event::dispatch(RecordSaved::class, $this);
         } catch (Halt $exception) {
             $exception->shouldRollbackDatabaseTransaction() ?
                 $this->rollBackDatabaseTransaction() :

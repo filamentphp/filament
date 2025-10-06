@@ -1,8 +1,11 @@
 <?php
 
+use Filament\Events\RecordCreated;
+use Filament\Events\RecordCreating;
 use Filament\Facades\Filament;
 use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Policies\TicketPolicy;
+use Illuminate\Support\Facades\Event;
 use Filament\Tests\Fixtures\Resources\Posts\Pages\CreateAnotherPreservingDataPost;
 use Filament\Tests\Fixtures\Resources\Posts\Pages\CreatePost;
 use Filament\Tests\Fixtures\Resources\Posts\PostResource;
@@ -233,4 +236,24 @@ it('does not render page if the policy create returns a denied response', functi
         ->assertForbidden();
 
     app()->bind(TicketPolicy::class . '::create', fn (): bool => true);
+});
+
+it('emits an event when the page is created', function (): void {
+    Event::fake();
+
+    $newData = Post::factory()->make();
+
+    livewire(CreatePost::class)
+        ->fillForm([
+            'author_id' => $newData->author->getKey(),
+            'content' => $newData->content,
+            'tags' => $newData->tags,
+            'title' => $newData->title,
+            'rating' => $newData->rating,
+        ])
+        ->call('create')
+        ->assertHasNoFormErrors();
+
+    Event::assertDispatched(RecordCreating::class);
+    Event::assertDispatched(RecordCreated::class);
 });

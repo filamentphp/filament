@@ -4,6 +4,8 @@ namespace Filament\Resources\Pages;
 
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
+use Filament\Events\RecordCreated;
+use Filament\Events\RecordCreating;
 use Filament\Facades\Filament;
 use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\CanUseDatabaseTransactions;
@@ -18,6 +20,7 @@ use Filament\Support\Exceptions\Halt;
 use Filament\Support\Facades\FilamentView;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Js;
 use Livewire\Attributes\Locked;
 use Throwable;
@@ -98,12 +101,14 @@ class CreateRecord extends Page
             $data = $this->mutateFormDataBeforeCreate($data);
 
             $this->callHook('beforeCreate');
+            Event::dispatch(RecordCreating::class, $this);
 
             $this->record = $this->handleRecordCreation($data);
 
             $this->form->model($this->getRecord())->saveRelationships();
 
             $this->callHook('afterCreate');
+            Event::dispatch(RecordCreated::class, $this);
         } catch (Halt $exception) {
             $exception->shouldRollbackDatabaseTransaction() ?
                 $this->rollBackDatabaseTransaction() :
