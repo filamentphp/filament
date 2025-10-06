@@ -34,18 +34,20 @@ class QueryBuilderScope
 
     public function __invoke(Builder $query): Builder
     {
-        $this->applyRulesToBaseQuery($query, $this->rules);
+        $this->applyRulesToBaseQuery($query);
 
-        $query->where(fn (Builder $query) => $this->applyRulesToQuery($query, $this->rules));
+        $query->where(fn (Builder $query) => $this->applyRulesToQuery($query));
 
         return $query;
     }
 
     /**
-     * @param  array<string, mixed>  $rules
+     * @param  array<string, mixed> | null  $rules
      */
-    public function applyRulesToBaseQuery(Builder $query, array $rules): Builder
+    public function applyRulesToBaseQuery(Builder $query, ?array $rules = null): Builder
     {
+        $rules ??= $this->rules;
+
         foreach ($rules as $rule) {
             if ($rule['type'] === RuleBuilder::OR_BLOCK_NAME) {
                 foreach ($rule['data'][RuleBuilder::OR_BLOCK_GROUPS_REPEATER_NAME] as $orGroup) {
@@ -68,10 +70,12 @@ class QueryBuilderScope
     }
 
     /**
-     * @param  array<string, mixed>  $rules
+     * @param  array<string, mixed> | null $rules
      */
-    public function applyRulesToQuery(Builder $query, array $rules): Builder
+    public function applyRulesToQuery(Builder $query, ?array $rules = null): Builder
     {
+        $rules ??= $this->rules;
+
         foreach ($rules as $rule) {
             if ($rule['type'] === RuleBuilder::OR_BLOCK_NAME) {
                 $query->where(function (Builder $query) use ($rule): void {
