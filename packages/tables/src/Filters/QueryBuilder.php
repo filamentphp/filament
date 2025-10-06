@@ -190,7 +190,7 @@ class QueryBuilder extends BaseFilter
             $this->tapOperatorFromRule(
                 $rule,
                 $ruleBuilderBlockContainer,
-                fn ($operator) => $operator->applyToBaseQuery($query),
+                fn (Operator $operator) => $operator->applyToBaseQuery($query),
             );
         }
 
@@ -224,7 +224,7 @@ class QueryBuilder extends BaseFilter
             $this->tapOperatorFromRule(
                 $rule,
                 $ruleBuilderBlockContainer,
-                fn ($operator) => $operator->applyToBaseFilterQuery($query),
+                fn (Operator $operator) => $operator->applyToBaseFilterQuery($query),
             );
         }
 

@@ -117,12 +117,14 @@ class IsRelatedToOperator extends Operator
             ->native($this->isNative())
             ->optionsLimit($this->getOptionsLimit())
             ->required()
+            ->model($constraint->getModel())
             ->relationship(
                 $constraint->getRelationshipName(),
                 $this->getTitleAttribute(),
                 $this->modifyRelationshipQueryUsing,
             )
-            ->forceSearchCaseInsensitive($this->isSearchForcedCaseInsensitive());
+            ->forceSearchCaseInsensitive($this->isSearchForcedCaseInsensitive())
+            ->columnSpanFull();
 
         if ($this->getOptionLabelUsing) {
             $field->getOptionLabelUsing($this->getOptionLabelUsing);
