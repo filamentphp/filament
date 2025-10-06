@@ -29,8 +29,7 @@ class DetailsContentExtension extends Node
     {
         return [
             [
-                'tag' => 'div[data-type]',
-                'getAttrs' => fn ($value): bool => $value === 'detailsContent',
+                'tag' => 'div[data-type="detailsContent"]',
             ],
         ];
     }
