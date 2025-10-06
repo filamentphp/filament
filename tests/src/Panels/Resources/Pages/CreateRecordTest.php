@@ -5,7 +5,6 @@ use Filament\Events\RecordCreating;
 use Filament\Facades\Filament;
 use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Policies\TicketPolicy;
-use Illuminate\Support\Facades\Event;
 use Filament\Tests\Fixtures\Resources\Posts\Pages\CreateAnotherPreservingDataPost;
 use Filament\Tests\Fixtures\Resources\Posts\Pages\CreatePost;
 use Filament\Tests\Fixtures\Resources\Posts\PostResource;
@@ -13,6 +12,7 @@ use Filament\Tests\Fixtures\Resources\TicketMessages\TicketMessageResource;
 use Filament\Tests\Fixtures\Resources\Tickets\TicketResource;
 use Filament\Tests\Panels\Resources\TestCase;
 use Illuminate\Auth\Access\Response;
+use Illuminate\Support\Facades\Event;
 
 use function Filament\Tests\livewire;
 

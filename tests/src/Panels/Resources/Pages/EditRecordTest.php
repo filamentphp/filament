@@ -299,7 +299,6 @@ it('renders actions based on policy', function (string $action, string $policyMe
     'replicate action with policy returning denied response' => fn (): array => [ReplicateAction::class, 'replicate', Response::deny(), false],
 ]);
 
-
 it('emits an event when the page is edited', function (): void {
     Event::fake();
 
@@ -322,4 +321,3 @@ it('emits an event when the page is edited', function (): void {
     Event::assertDispatched(RecordSaving::class);
     Event::assertDispatched(RecordSaved::class);
 });
-
