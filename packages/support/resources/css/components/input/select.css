@@ -1,6 +1,11 @@
 select.fi-select-input {
     @apply block w-full appearance-none border-none bg-transparent py-1.5 ps-3 pe-8 text-sm leading-6 text-gray-950 transition duration-75 focus:ring-0 focus:outline-none disabled:text-gray-500 disabled:[-webkit-text-fill-color:var(--color-gray-500)] dark:text-white dark:disabled:text-gray-400 dark:disabled:[-webkit-text-fill-color:var(--color-gray-400)] [&_optgroup]:bg-white [&_optgroup]:dark:bg-gray-900 [&_option]:bg-white [&_option]:dark:bg-gray-900;
 
+    /* https://defensivecss.dev/tip/input-zoom-safari */
+    @supports (-webkit-touch-callout: none) {
+        @apply text-base;
+    }
+
     background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3E%3C/svg%3E");
     background-position: right 0.5rem center;
     background-repeat: no-repeat;
