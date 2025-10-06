@@ -11,7 +11,7 @@ To use it, you need to define a set of "constraints" that will be used to filter
 You can add a query builder to any table using the `QueryBuilder` filter:
 
 ```php
-use Filament\QueryBuilder;
+use Filament\Tables\Filters\QueryBuilder;
 use Filament\QueryBuilder\Constraints\BooleanConstraint;
 use Filament\QueryBuilder\Constraints\DateConstraint;
 use Filament\QueryBuilder\Constraints\NumberConstraint;
@@ -51,7 +51,7 @@ When deeply nesting the query builder, you might need to increase the amount of 
 
 ```php
 use Filament\Tables\Enums\FiltersLayout;
-use Filament\QueryBuilder;
+use Filament\Tables\Filters\QueryBuilder;
 use Filament\Tables\Table;
 
 public function table(Table $table): Table
@@ -463,7 +463,7 @@ The `summary()` method is used in the header of the constraint when it is applie
 The constraint picker has only 1 column. You may customize it by passing a number of columns to `constraintPickerColumns()`:
 
 ```php
-use Filament\QueryBuilder;
+use Filament\Tables\Filters\QueryBuilder;
 
 QueryBuilder::make()
     ->constraintPickerColumns(2)
@@ -484,7 +484,7 @@ Breakpoints (`sm`, `md`, `lg`, `xl`, `2xl`) are defined by Tailwind, and can be 
 When you [increase the number of columns](#changing-the-number-of-columns-in-the-constraint-picker), the width of the dropdown should increase incrementally to handle the additional columns. If you'd like more control, you can manually set a maximum width for the dropdown using the `constraintPickerWidth()` method. Options correspond to [Tailwind's max-width scale](https://tailwindcss.com/docs/max-width). The options are `xs`, `sm`, `md`, `lg`, `xl`, `2xl`, `3xl`, `4xl`, `5xl`, `6xl`, `7xl`:
 
 ```php
-use Filament\QueryBuilder;
+use Filament\Tables\Filters\QueryBuilder;
 
 QueryBuilder::make()
     ->constraintPickerColumns(3)
