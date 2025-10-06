@@ -52,6 +52,8 @@ class RuleBuilder extends Builder
                                         ->schema([
                                             Flex::make([
                                                 static::make('rules')
+                                                    ->hiddenLabel()
+                                                    ->partiallyRenderAfterActionsCalled($builder->shouldPartiallyRenderAfterActionsCalled())
                                                     ->constraints($this->getConstraints())
                                                     ->blockPickerColumns($this->getBlockPickerColumns())
                                                     ->blockPickerWidth($this->getBlockPickerWidth()),
@@ -111,7 +113,6 @@ class RuleBuilder extends Builder
                 ->icon(FilamentIcon::resolve(QueryBuilderIconAlias::ADD_RULE_ACTION) ?? Heroicon::Plus))
             ->addBetweenAction(fn (Action $action) => $action->hidden())
             ->addActionAlignment(Alignment::Start)
-            ->hiddenLabel()
             ->labelBetweenItems(__('filament-query-builder::query-builder.item_separators.and'))
             ->blockHeaders(false)
             ->cloneable()
@@ -143,5 +144,15 @@ class RuleBuilder extends Builder
     public function getConstraint(string $name): ?Constraint
     {
         return $this->getConstraints()[$name] ?? null;
+    }
+
+    /**
+     * @param  array<string, ?int> | int | null  $columns
+     */
+    public function constraintPickerColumns(array | int | null $columns = 2): static
+    {
+        $this->blockPickerColumns($columns);
+
+        return $this;
     }
 }

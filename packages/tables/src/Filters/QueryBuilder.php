@@ -36,6 +36,7 @@ class QueryBuilder extends BaseFilter
         $this->schema(fn (QueryBuilder $filter): array => [
             RuleBuilder::make('rules')
                 ->label($filter->getLabel())
+                ->hiddenLabel()
                 ->constraints($filter->getConstraints())
                 ->blockPickerColumns($filter->getConstraintPickerColumns())
                 ->blockPickerWidth($filter->getConstraintPickerWidth()),
