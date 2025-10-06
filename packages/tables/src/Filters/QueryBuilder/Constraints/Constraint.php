@@ -3,14 +3,22 @@
 namespace Filament\Tables\Filters\QueryBuilder\Constraints;
 
 use Closure;
+use Filament\Actions\Action;
+use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\Builder\Block;
 use Filament\Forms\Components\Select;
+use Filament\Forms\View\FormsIconAlias;
+use Filament\Schemas\Components\Actions;
+use Filament\Schemas\Components\Flex;
+use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Support\Components\Component;
 use Filament\Support\Concerns\HasIcon;
+use Filament\Support\Enums\Size;
+use Filament\Support\Facades\FilamentIcon;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Filters\QueryBuilder;
-use Illuminate\Validation\ValidationException;
 use LogicException;
 
 class Constraint extends Component
@@ -70,96 +78,78 @@ class Constraint extends Component
     public function getBuilderBlock(): Block
     {
         return Block::make($this->getName())
-            ->label(function (Block $component, ?array $state, ?string $uuid) {
-                if (blank($state[static::OPERATOR_SELECT_NAME] ?? null)) {
-                    return $this->getLabel();
-                }
-
-                [$operatorName, $isInverseOperator] = $this->parseOperatorString($state[static::OPERATOR_SELECT_NAME]);
-
-                $operator = $this->getOperator($operatorName);
-
-                if (! $operator) {
-                    return $this->getLabel();
-                }
-
-                try {
-                    $component->getContainer()->getParentComponent()
-                        ->getChildSchema($uuid)
-                        ->getComponent('settings')
-                        ->getChildSchema()
-                        ->validate();
-                } catch (ValidationException $exception) {
-                    return $this->getLabel();
-                }
-
-                $this
-                    ->settings($state['settings'])
-                    ->inverse($isInverseOperator);
-
-                $operator
-                    ->constraint($this)
-                    ->settings($state['settings'])
-                    ->inverse($isInverseOperator);
-
-                try {
-                    return $operator->getSummary();
-                } finally {
-                    $this
-                        ->settings(null)
-                        ->inverse(null);
-
-                    $operator
-                        ->constraint(null)
-                        ->settings(null)
-                        ->inverse(null);
-                }
-            })
+            ->label($this->getLabel())
             ->icon($this->getIcon())
             ->schema(function (): array {
                 $operatorSelectOptions = $this->getOperatorSelectOptions();
 
                 return [
-                    Select::make(static::OPERATOR_SELECT_NAME)
-                        ->label(__('filament-tables::filters/query-builder.form.operator.label'))
-                        ->options($operatorSelectOptions)
-                        ->default(array_key_first($operatorSelectOptions))
-                        ->live()
-                        ->afterStateUpdated(fn (Select $component, Get $get) => $component
-                            ->getContainer()
-                            ->getComponent('settings')
-                            ->getChildSchema()
-                            ->fill($get('settings'))),
-                    Group::make(function ($component, Get $get): array {
-                        $operator = $get(static::OPERATOR_SELECT_NAME);
+                    Flex::make(function (Flex $component) use ($operatorSelectOptions): array {
+                        /** @var Builder $builder */
+                        $builder = $component->getContainer()->getParentComponent()->getContainer()->getParentComponent();
 
-                        if (blank($operator)) {
-                            return [];
-                        }
+                        return [
+                            Grid::make(3)
+                                ->schema([
+                                    Select::make(static::OPERATOR_SELECT_NAME)
+                                        ->label($this->getLabel())
+                                        ->options($operatorSelectOptions)
+                                        ->default(array_key_first($operatorSelectOptions))
+                                        ->live()
+                                        ->afterStateUpdated(fn (Select $component, Get $get) => $component
+                                            ->getContainer()
+                                            ->getComponent('settings')
+                                            ->getChildSchema()
+                                            ->fill($get('settings'))),
+                                    Group::make(function (Get $get): array {
+                                        $operator = $get(static::OPERATOR_SELECT_NAME);
 
-                        [$operatorName] = $this->parseOperatorString($operator);
+                                        if (blank($operator)) {
+                                            return [];
+                                        }
 
-                        $operator = $this->getOperator($operatorName);
+                                        [$operatorName] = $this->parseOperatorString($operator);
 
-                        if (! $operator) {
-                            return [];
-                        }
+                                        $operator = $this->getOperator($operatorName);
 
-                        $operator->constraint($this);
+                                        if (! $operator) {
+                                            return [];
+                                        }
 
-                        try {
-                            return $operator->getFormSchema();
-                        } finally {
-                            $operator->constraint(null);
-                        }
-                    })
-                        ->statePath('settings')
-                        ->key('settings')
-                        ->columnSpan(2)
-                        ->columns(2),
+                                        $operator->constraint($this);
+
+                                        try {
+                                            return $operator->getFormSchema();
+                                        } finally {
+                                            $operator->constraint(null);
+                                        }
+                                    })
+                                        ->statePath('settings')
+                                        ->key('settings')
+                                        ->columnSpan(2)
+                                        ->columns(2)
+                                        ->visible(fn (Group $component): bool => filled($component->getChildSchema()->getComponents())),
+                                ]),
+                            Actions::make([
+                                Action::make($cloneActionName = $builder->getCloneActionName())
+                                    ->label(__('filament-forms::components.builder.actions.clone.label'))
+                                    ->icon(FilamentIcon::resolve(FormsIconAlias::COMPONENTS_BUILDER_ACTIONS_CLONE) ?? Heroicon::Square2Stack)
+                                    ->color('gray')
+                                    ->iconButton()
+                                    ->size(Size::Small)
+                                    ->action($builder->getAction($cloneActionName)->arguments(['item' => (string) str($component->getContainer()->getStatePath(isAbsolute: false))->beforeLast('.data')])->getLivewireClickHandler()),
+                                Action::make($deleteActionName = $builder->getDeleteActionName())
+                                    ->label(__('filament-forms::components.builder.actions.delete.label'))
+                                    ->icon(FilamentIcon::resolve(FormsIconAlias::COMPONENTS_BUILDER_ACTIONS_DELETE) ?? Heroicon::Trash)
+                                    ->color('danger')
+                                    ->iconButton()
+                                    ->size(Size::Small)
+                                    ->action($builder->getAction($deleteActionName)->arguments(['item' => (string) str($component->getContainer()->getStatePath(isAbsolute: false))->beforeLast('.data')])->getLivewireClickHandler()),
+                            ])->grow(false),
+                        ];
+                    }),
                 ];
-            })
-            ->columns(3);
+            });
     }
 
     /**

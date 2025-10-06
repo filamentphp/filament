@@ -69,6 +69,16 @@ trait HasKey
             if (filled($key)) {
                 return $this->cacheAbsoluteInheritanceKey($key);
             }
+        } elseif ($this->hasStatePath()) {
+            $keyComponents = [];
+
+            if (filled($containerInheritanceKey = $this->getContainer()->getInheritanceKey())) {
+                $keyComponents[] = $containerInheritanceKey;
+            }
+
+            $keyComponents[] = $this->getStatePath(isAbsolute: false);
+
+            return $this->cacheAbsoluteInheritanceKey(implode('.', $keyComponents));
         }
 
         return $this->cacheAbsoluteInheritanceKey($this->getContainer()->getInheritanceKey());

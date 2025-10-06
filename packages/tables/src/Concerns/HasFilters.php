@@ -2,9 +2,11 @@
 
 namespace Filament\Tables\Concerns;
 
+use Filament\Schemas\Components\Component;
 use Filament\Schemas\Schema;
 use Filament\Tables\Filters\BaseFilter;
 use Filament\Tables\Filters\QueryBuilder;
+use Filament\Tables\Filters\QueryBuilder\Forms\Components\RuleBuilder;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
 
@@ -80,6 +82,12 @@ trait HasFilters
 
         if (($filter instanceof QueryBuilder) && blank($field)) {
             $filterFormGroup->getChildSchema()->fill();
+        } elseif ($filter instanceof QueryBuilder) {
+            $ruleBuilder = $filterFormGroup?->getChildSchema()->getComponent(fn (Component $component): bool => $component instanceof RuleBuilder);
+
+            $ruleBuilderRawState = $ruleBuilder?->getRawState() ?? [];
+            unset($ruleBuilderRawState[$field]);
+            $ruleBuilder?->rawState($ruleBuilderRawState);
         } else {
             $filterFields = $filterFormGroup?->getChildSchema()->getFlatFields() ?? [];
 

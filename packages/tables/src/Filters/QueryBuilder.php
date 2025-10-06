@@ -7,9 +7,11 @@ use Filament\Forms\Components\Repeater;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Schema;
 use Filament\Tables\Filters\QueryBuilder\Concerns\HasConstraints;
+use Filament\Tables\Filters\QueryBuilder\Constraints\Operators\Operator;
 use Filament\Tables\Filters\QueryBuilder\Forms\Components\RuleBuilder;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
 use Illuminate\Validation\ValidationException;
 use LogicException;
 
@@ -46,7 +48,66 @@ class QueryBuilder extends BaseFilter
             $this->applyRulesToBaseQuery($query, $data['rules'], $this->getRuleBuilder());
         });
 
+        $this->indicateUsing(function (array $state): array {
+            return $this->getRuleSummaries($state['rules'], $this->getRuleBuilder());
+        });
+
         $this->columnSpanFull();
+    }
+
+    /**
+     * @param  array<string, mixed>  $rules
+     * @return array<string>
+     */
+    public function getRuleSummaries(array $rules, RuleBuilder $ruleBuilder, int $iteration = 1): array
+    {
+        $summaries = [];
+
+        foreach ($rules as $ruleIndex => $rule) {
+            $ruleBuilderBlockContainer = $ruleBuilder->getChildSchema($ruleIndex);
+
+            if ($rule['type'] === RuleBuilder::OR_BLOCK_NAME) {
+                $orSummaries = [];
+
+                foreach ($rule['data'][RuleBuilder::OR_BLOCK_GROUPS_REPEATER_NAME] as $orGroupIndex => $orGroup) {
+                    $orGroupSummaries = $this->getRuleSummaries(
+                        $orGroup['rules'],
+                        $this->getNestedRuleBuilder($ruleBuilderBlockContainer, $orGroupIndex),
+                        $iteration + 1,
+                    );
+
+                    $orSummaries[] = ((count($orGroupSummaries) > 1) ? '(' : '') . implode(' ' . __('filament-tables::filters/query-builder.form.rules.item.and') . ' ', $orGroupSummaries) . ((count($orGroupSummaries) > 1) ? ')' : '');
+                }
+
+                $orSummaries = array_filter($orSummaries, filled(...));
+
+                if (blank($orSummaries)) {
+                    continue;
+                }
+
+                if (count($orSummaries) === 1) {
+                    $summaries[$ruleIndex] = Arr::first($orSummaries);
+
+                    continue;
+                }
+
+                $hasParentheses = ($iteration > 1) && (count($orSummaries) > 1);
+
+                $summaries[$ruleIndex] = ($hasParentheses ? '(' : '') . implode(' ' . __('filament-tables::filters/query-builder.form.or_groups.block.or') . ' ', $orSummaries) . ($hasParentheses ? ')' : '');
+
+                continue;
+            }
+
+            $this->tapOperatorFromRule(
+                $rule,
+                $ruleBuilderBlockContainer,
+                function (Operator $operator) use ($ruleIndex, &$summaries): void {
+                    $summaries[$ruleIndex] = $operator->getSummary();
+                },
+            );
+        }
+
+        return $summaries;
     }
 
     public static function getDefaultName(): ?string
