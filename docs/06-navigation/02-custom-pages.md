@@ -54,6 +54,17 @@ protected function getHeaderActions(): array
 }
 ```
 
+By default, header actions are aligned to the left, to change the alignment of the header actions, use `getHeaderActionsAlignment`:
+
+```php
+use Filament\Support\Enums\Alignment;
+
+protected function getHeaderActionsAlignment(): Alignment
+{
+    return Alignment::End;
+}
+```
+
 ### Opening an action modal when a page loads
 
 You can also open an action when a page loads by setting the `$defaultAction` property to the name of the action you want to open:
