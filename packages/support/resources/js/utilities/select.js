@@ -1310,8 +1310,10 @@ export class Select {
 
         // Check if the select is inside a container that opts in to fixed positioning
         const useFixedPositioning =
-            (this.selectButton.closest('.fi-fixed-positioning-context') !==
-            null) && (this.selectButton.closest('.fi-absolute-positioning-context') === null)
+            this.selectButton.closest('.fi-fixed-positioning-context') !==
+                null &&
+            this.selectButton.closest('.fi-absolute-positioning-context') ===
+                null
         this.dropdown.style.position = useFixedPositioning
             ? 'fixed'
             : 'absolute'
@@ -1444,8 +1446,10 @@ export class Select {
 
         // Check if the select is inside a container that opts in to fixed positioning
         const useFixedPositioning =
-            (this.selectButton.closest('.fi-fixed-positioning-context') !==
-            null) && (this.selectButton.closest('.fi-absolute-positioning-context') === null)
+            this.selectButton.closest('.fi-fixed-positioning-context') !==
+                null &&
+            this.selectButton.closest('.fi-absolute-positioning-context') ===
+                null
 
         computePosition(this.selectButton, this.dropdown, {
             placement: placement,
