@@ -44,7 +44,7 @@ trait CanGenerateIconButtonHtml
         Size | string | null $size = null,
         string $tag = 'button',
         ?string $target = null,
-        ?string $tooltip = null,
+        string | Htmlable | null $tooltip = null,
         ?string $type = 'button',
     ): string {
         $color ??= 'primary';
@@ -129,6 +129,7 @@ trait CanGenerateIconButtonHtml
                 x-tooltip="{
                     content: <?= Js::from($tooltip) ?>,
                     theme: $store.theme,
+                    allowHTML: <?= Js::from($tooltip instanceof Htmlable) ?>,
                 }"
             <?php } ?>
             <?= $attributes->toHtml() ?>

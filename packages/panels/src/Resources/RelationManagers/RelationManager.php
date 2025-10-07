@@ -42,6 +42,7 @@ use Filament\Tables\Table;
 use Filament\View\PanelsRenderHook;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\Access\Response;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Model;
 use Livewire\Attributes\Locked;
@@ -109,7 +110,7 @@ class RelationManager extends Component implements HasActions, HasRenderHookScop
 
     protected static ?string $badgeColor = null;
 
-    protected static ?string $badgeTooltip = null;
+    protected static string | Htmlable | null $badgeTooltip = null;
 
     public function mount(): void
     {
@@ -178,7 +179,7 @@ class RelationManager extends Component implements HasActions, HasRenderHookScop
         return static::$badgeColor;
     }
 
-    public static function getBadgeTooltip(Model $ownerRecord, string $pageClass): ?string
+    public static function getBadgeTooltip(Model $ownerRecord, string $pageClass): string | Htmlable | null
     {
         return static::$badgeTooltip;
     }

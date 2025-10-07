@@ -82,6 +82,7 @@
         x-tooltip="{
             content: @js($tooltip),
             theme: $store.theme,
+            allowHTML: @js($tooltip instanceof \Illuminate\Contracts\Support\Htmlable),
         }"
     @endif
     {{

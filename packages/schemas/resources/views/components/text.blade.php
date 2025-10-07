@@ -54,7 +54,11 @@
             "
         @endif
         @if (filled($tooltip))
-            x-tooltip="{ content: @js($tooltip), theme: $store.theme }"
+            x-tooltip="{
+                content: @js($tooltip),
+                theme: $store.theme,
+                allowHTML: @js($tooltip instanceof \Illuminate\Contracts\Support\Htmlable),
+            }"
         @endif
         {{
             (new \Illuminate\View\ComponentAttributeBag)
