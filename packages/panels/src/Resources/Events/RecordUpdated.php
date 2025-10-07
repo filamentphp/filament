@@ -1,14 +1,17 @@
 <?php
 
-namespace Filament\Events;
+namespace Filament\Resources\Events;
 
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Foundation\Events\Dispatchable;
 
-class RecordSaved
+class RecordUpdated
 {
     use Dispatchable;
 
+    /**
+     * @param  array<string, mixed>  $data
+     */
     public function __construct(
         protected EditRecord $page,
         protected array $data,
@@ -19,8 +22,11 @@ class RecordSaved
         return $this->page;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getData(): array
     {
-        return $this->data;
+        return $this->array;
     }
 }

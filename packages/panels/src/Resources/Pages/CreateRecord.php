@@ -4,14 +4,14 @@ namespace Filament\Resources\Pages;
 
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
-use Filament\Events\RecordCreated;
-use Filament\Events\RecordCreating;
-use Filament\Events\RecordUpdated;
-use Filament\Events\RecordUpdating;
 use Filament\Facades\Filament;
 use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\CanUseDatabaseTransactions;
 use Filament\Pages\Concerns\HasUnsavedDataChangesAlert;
+use Filament\Resources\Events\RecordCreated;
+use Filament\Resources\Events\RecordCreating;
+use Filament\Resources\Events\RecordSaved;
+use Filament\Resources\Events\RecordSaving;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\EmbeddedSchema;
@@ -103,19 +103,16 @@ class CreateRecord extends Page
             $data = $this->mutateFormDataBeforeCreate($data);
 
             $this->callHook('beforeCreate');
-            Event::dispatch(RecordCreating::class, [
-                'page' => $this,
-                'data' => $data,
-            ]);
-            Event::dispatch(RecordUpdating::class, $this);
+            Event::dispatch(RecordCreating::class, ['page' => $this, 'data' => $data]);
+            Event::dispatch(RecordSaving::class, ['page' => $this, 'data' => $data]);
 
             $this->record = $this->handleRecordCreation($data);
 
             $this->form->model($this->getRecord())->saveRelationships();
 
             $this->callHook('afterCreate');
-            Event::dispatch(RecordCreated::class, $this);
-            Event::dispatch(RecordUpdated::class, $this);
+            Event::dispatch(RecordCreated::class, ['page' => $this, 'data' => $data]);
+            Event::dispatch(RecordSaved::class, ['page' => $this, 'data' => $data]);
         } catch (Halt $exception) {
             $exception->shouldRollbackDatabaseTransaction() ?
                 $this->rollBackDatabaseTransaction() :

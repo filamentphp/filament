@@ -1,8 +1,8 @@
 <?php
 
-use Filament\Events\RecordCreated;
-use Filament\Events\RecordCreating;
 use Filament\Facades\Filament;
+use Filament\Resources\Events\RecordCreated;
+use Filament\Resources\Events\RecordCreating;
 use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Policies\TicketPolicy;
 use Filament\Tests\Fixtures\Resources\Posts\Pages\CreateAnotherPreservingDataPost;
