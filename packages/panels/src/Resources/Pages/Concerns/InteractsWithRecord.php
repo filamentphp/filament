@@ -95,8 +95,10 @@ trait InteractsWithRecord
         return $breadcrumbs;
     }
 
-    protected function afterActionCalled(): void
+    protected function afterActionCalled(Action $action): void
     {
+        parent::afterActionCalled($action);
+
         if ($this->getRecord()->exists) {
             return;
         }

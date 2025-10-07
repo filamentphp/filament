@@ -2,7 +2,8 @@
 
 namespace Filament\Resources\Events;
 
-use Filament\Resources\Pages\CreateRecord;
+use Filament\Resources\Pages\Page;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Events\Dispatchable;
 
 class RecordCreated
@@ -13,11 +14,17 @@ class RecordCreated
      * @param  array<string, mixed>  $data
      */
     public function __construct(
-        protected CreateRecord $page,
+        protected Model $record,
         protected array $data,
+        protected Page $page,
     ) {}
 
-    public function getPage(): CreateRecord
+    public function getRecord(): Model
+    {
+        return $this->record;
+    }
+
+    public function getPage(): Page
     {
         return $this->page;
     }
@@ -27,6 +34,6 @@ class RecordCreated
      */
     public function getData(): array
     {
-        return $this->array;
+        return $this->data;
     }
 }

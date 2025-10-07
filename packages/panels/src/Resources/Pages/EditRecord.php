@@ -14,9 +14,7 @@ use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\CanUseDatabaseTransactions;
 use Filament\Pages\Concerns\HasUnsavedDataChangesAlert;
 use Filament\Resources\Events\RecordSaved;
-use Filament\Resources\Events\RecordSaving;
 use Filament\Resources\Events\RecordUpdated;
-use Filament\Resources\Events\RecordUpdating;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\EmbeddedSchema;
@@ -160,8 +158,6 @@ class EditRecord extends Page
                 $this->callHook('afterValidate');
 
                 $this->callHook('beforeSave');
-                Event::dispatch(RecordUpdating::class, ['page' => $this, 'data' => $data]);
-                Event::dispatch(RecordSaving::class, ['page' => $this, 'data' => $data]);
             });
 
             $data = $this->mutateFormDataBeforeSave($data);
@@ -169,8 +165,8 @@ class EditRecord extends Page
             $this->handleRecordUpdate($this->getRecord(), $data);
 
             $this->callHook('afterSave');
-            Event::dispatch(RecordUpdated::class, ['page' => $this, 'data' => $data]);
-            Event::dispatch(RecordSaved::class, ['page' => $this, 'data' => $data]);
+            Event::dispatch(RecordUpdated::class, ['record' => $this->record, 'data' => $data, 'page' => $this]);
+            Event::dispatch(RecordSaved::class, ['record' => $this->record, 'data' => $data, 'page' => $this]);
         } catch (Halt $exception) {
             $exception->shouldRollbackDatabaseTransaction() ?
                 $this->rollBackDatabaseTransaction() :
