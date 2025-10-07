@@ -74,9 +74,12 @@
                 {{
                     (new ComponentAttributeBag)
                         ->color(ChartWidgetComponent::class, $color)
-                        ->class(['fi-wi-chart-canvas-ctn'])
+                        ->class([
+                            'fi-wi-chart-canvas-ctn',
+                            'fi-wi-chart-canvas-ctn-no-aspect-ratio' => filled($maxHeight = $this->getMaxHeight()),
+                        ])
                         ->style([
-                            'max-height: ' . ($maxHeight = $this->getMaxHeight()) => filled($maxHeight),
+                            'max-height: ' . $maxHeight => filled($maxHeight),
                         ])
                 }}
             >
