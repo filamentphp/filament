@@ -89,7 +89,7 @@ class Constraint extends Component
                         $builder = $component->getContainer()->getParentComponent()->getContainer()->getParentComponent();
 
                         return [
-                            Grid::make(3)
+                            Grid::make(['@md' => 2, '@xl' => 3, '!@sm' => 2, '!@md' => 3])
                                 ->schema([
                                     Select::make(static::OPERATOR_SELECT_NAME)
                                         ->label($this->getLabel())
@@ -124,12 +124,14 @@ class Constraint extends Component
                                             $operator->constraint(null);
                                         }
                                     })
+                                        ->dense()
                                         ->statePath('settings')
                                         ->key('settings')
-                                        ->columnSpan(2)
-                                        ->columns(2)
+                                        ->columnSpan(['@xl' => 2, '!@md' => 2])
+                                        ->columns(['@xl' => 2, '!@md' => 2])
                                         ->visible(fn (Group $component): bool => filled($component->getChildSchema()->getComponents())),
-                                ]),
+                                ])
+                                ->dense(),
                             Actions::make([
                                 Action::make($cloneActionName = $builder->getCloneActionName())
                                     ->label(__('filament-forms::components.builder.actions.clone.label'))
@@ -147,7 +149,7 @@ class Constraint extends Component
                                     ->action($builder->getAction($deleteActionName)->arguments(['item' => (string) str($component->getContainer()->getStatePath(isAbsolute: false))->beforeLast('.data')])->getLivewireClickHandler()),
                             ])->grow(false),
                         ];
-                    }),
+                    })->gridContainer(),
                 ];
             });
     }
