@@ -70,7 +70,7 @@ class QueryBuilderScope
     }
 
     /**
-     * @param  array<string, mixed> | null $rules
+     * @param  array<string, mixed> | null  $rules
      */
     public function applyToQuery(Builder $query, ?array $rules = null): Builder
     {
