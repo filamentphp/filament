@@ -1220,7 +1220,7 @@
                         </table>
                     @endif
                 @elseif ((! ($content || $hasColumnsLayout)) && ($records !== null))
-                    <table class="fi-ta-table">
+                    <table class="fi-ta-table fi-fixed-positioning-context">
                         <thead>
                             @if ($hasColumnGroups)
                                 <tr class="fi-ta-table-head-groups-row">
