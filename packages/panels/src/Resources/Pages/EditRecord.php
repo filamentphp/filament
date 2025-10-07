@@ -13,6 +13,8 @@ use Filament\Facades\Filament;
 use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\CanUseDatabaseTransactions;
 use Filament\Pages\Concerns\HasUnsavedDataChangesAlert;
+use Filament\Resources\Events\RecordSaved;
+use Filament\Resources\Events\RecordUpdated;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\EmbeddedSchema;
@@ -28,6 +30,7 @@ use Filament\View\PanelsIconAlias;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Js;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Throwable;
@@ -162,6 +165,8 @@ class EditRecord extends Page
             $this->handleRecordUpdate($this->getRecord(), $data);
 
             $this->callHook('afterSave');
+            Event::dispatch(RecordUpdated::class, ['record' => $this->record, 'data' => $data, 'page' => $this]);
+            Event::dispatch(RecordSaved::class, ['record' => $this->record, 'data' => $data, 'page' => $this]);
         } catch (Halt $exception) {
             $exception->shouldRollbackDatabaseTransaction() ?
                 $this->rollBackDatabaseTransaction() :

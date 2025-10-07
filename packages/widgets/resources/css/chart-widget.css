@@ -1,6 +1,6 @@
 .fi-wi-chart {
     & .fi-wi-chart-canvas-ctn {
-        @apply aspect-square;
+        @apply mx-auto aspect-square;
     }
 
     @supports (container-type: inline-size) {

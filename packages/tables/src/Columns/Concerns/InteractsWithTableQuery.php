@@ -124,7 +124,7 @@ trait InteractsWithTableQuery
             $sortColumn = (string) str($sortColumn)->replace('.', '->');
 
             if ($relationshipName) {
-                $query->orderByPowerJoins("{$relationshipName}.{$sortColumn}", $direction); /** @phpstan-ignore method.notFound */
+                $query->orderByPowerJoins("{$relationshipName}.{$sortColumn}", $direction, joinType: 'leftJoin'); /** @phpstan-ignore method.notFound */
 
                 continue;
             }
