@@ -20,12 +20,16 @@ use Filament\Navigation\NavigationItem;
 use Filament\Pages\Enums\SubNavigationPosition;
 use Filament\Pages\Page as BasePage;
 use Filament\Panel;
+use Filament\Resources\Events\RecordCreated;
+use Filament\Resources\Events\RecordSaved;
+use Filament\Resources\Events\RecordUpdated;
 use Filament\Resources\Pages\Concerns\CanAuthorizeResourceAccess;
 use Filament\Resources\Pages\Concerns\InteractsWithParentRecord;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Routing\Route;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Route as RouteFacade;
 use LogicException;
 
@@ -369,5 +373,18 @@ abstract class Page extends BasePage
     public function getModelLabel(): ?string
     {
         return null;
+    }
+
+    protected function afterActionCalled(Action $action): void
+    {
+        if ($action instanceof CreateAction) {
+            Event::dispatch(RecordCreated::class, ['record' => $action->getRecord(), 'data' => $action->getData(), 'page' => $this]);
+            Event::dispatch(RecordSaved::class, ['record' => $action->getRecord(), 'data' => $action->getData(), 'page' => $this]);
+        }
+
+        if ($action instanceof EditAction) {
+            Event::dispatch(RecordUpdated::class, ['record' => $action->getRecord(), 'data' => $action->getData(), 'page' => $this]);
+            Event::dispatch(RecordSaved::class, ['record' => $action->getRecord(), 'data' => $action->getData(), 'page' => $this]);
+        }
     }
 }

@@ -313,11 +313,11 @@
         @if ($isAddable && $addAction->isVisible())
             <x-filament-forms::builder.block-picker
                 :action="$addAction"
+                :action-alignment="$addActionAlignment"
                 :blocks="$blockPickerBlocks"
                 :columns="$blockPickerColumns"
                 :key="$key"
                 :width="$blockPickerWidth"
-                :class="($addActionAlignment instanceof Alignment) ? ('fi-align-' . $addActionAlignment->value) : $addActionAlignment"
             >
                 <x-slot name="trigger">
                     {{ $addAction }}

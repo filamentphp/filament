@@ -122,7 +122,8 @@ class IsRelatedToOperator extends Operator
                 $this->getTitleAttribute(),
                 $this->modifyRelationshipQueryUsing,
             )
-            ->forceSearchCaseInsensitive($this->isSearchForcedCaseInsensitive());
+            ->forceSearchCaseInsensitive($this->isSearchForcedCaseInsensitive())
+            ->columnSpanFull();
 
         if ($this->getOptionLabelUsing) {
             $field->getOptionLabelUsing($this->getOptionLabelUsing);

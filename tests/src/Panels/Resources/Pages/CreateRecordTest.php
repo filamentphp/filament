@@ -1,6 +1,8 @@
 <?php
 
 use Filament\Facades\Filament;
+use Filament\Resources\Events\RecordCreated;
+use Filament\Resources\Events\RecordSaved;
 use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Policies\TicketPolicy;
 use Filament\Tests\Fixtures\Resources\Posts\Pages\CreateAnotherPreservingDataPost;
@@ -10,6 +12,7 @@ use Filament\Tests\Fixtures\Resources\TicketMessages\TicketMessageResource;
 use Filament\Tests\Fixtures\Resources\Tickets\TicketResource;
 use Filament\Tests\Panels\Resources\TestCase;
 use Illuminate\Auth\Access\Response;
+use Illuminate\Support\Facades\Event;
 
 use function Filament\Tests\livewire;
 
@@ -21,6 +24,11 @@ it('can render page', function (): void {
 });
 
 it('can create', function (): void {
+    Event::fake([
+        RecordCreated::class,
+        RecordSaved::class,
+    ]);
+
     $newData = Post::factory()->make();
 
     livewire(CreatePost::class)
@@ -42,6 +50,9 @@ it('can create', function (): void {
         'title' => $newData->title,
         'rating' => $newData->rating,
     ]);
+
+    Event::assertDispatched(RecordCreated::class);
+    Event::assertDispatched(RecordSaved::class);
 });
 
 it('can create another', function (): void {

@@ -32,7 +32,7 @@
         @livewire(filament()->getTopbarLivewireComponent())
 
         {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::TOPBAR_AFTER, scopes: $renderHookScopes) }}
-    @else
+    @elseif ($hasNavigation)
         <div
             @if ($isSidebarFullyCollapsibleOnDesktop)
                 x-data="{}"

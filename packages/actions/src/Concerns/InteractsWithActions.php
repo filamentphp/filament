@@ -263,7 +263,7 @@ trait InteractsWithActions
 
             $result = $action->callAfter() ?? $result;
 
-            $this->afterActionCalled();
+            $this->afterActionCalled($action);
 
             (match ($action->getStatus()) {
                 ActionStatus::Success => function () use ($action): void {
@@ -359,7 +359,7 @@ trait InteractsWithActions
         ]);
     }
 
-    protected function afterActionCalled(): void {}
+    protected function afterActionCalled(Action $action): void {}
 
     /**
      * @param  array<string, mixed>  $arguments

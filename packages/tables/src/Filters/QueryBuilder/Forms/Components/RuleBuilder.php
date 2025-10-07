@@ -115,7 +115,6 @@ class RuleBuilder extends Builder
             ->blockHeaders(false)
             ->cloneable()
             ->generateUuidUsing(fn (): string => Str::random(4))
-            ->live(onBlur: true)
             ->partiallyRenderAfterActionsCalled(false)
             ->extraAttributes(['class' => 'fi-fo-builder-not-contained']);
     }
