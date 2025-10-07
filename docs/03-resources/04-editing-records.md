@@ -190,23 +190,6 @@ class EditUser extends EditRecord
 }
 ```
 
-You can also use `\Illuminate\Support\Facades\Event::listen()` to hook into certain parts of the lifecycle:
-
-```php
-use Illuminate\Support\Facades\Event;
-use Filament\Events\RecordSaving;
-use Filament\Events\RecordSaved;
-use Filament\Resources\Pages\EditRecord;
-
-Event::listen(RecordSaving::class, function (EditRecord $page) {
-    // Same as beforeCreate()
-});
-
-Event::listen(RecordSaved::class, function (EditRecord $page) {
-    // Same as afterCreate()
-});
-```
-
 Alternatively, if you're editing records in a modal action, check out the [Actions documentation](../actions/edit#lifecycle-hooks).
 
 ## Saving a part of the form independently

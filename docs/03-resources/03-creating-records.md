@@ -206,23 +206,6 @@ class CreateUser extends CreateRecord
 }
 ```
 
-You can also use `\Illuminate\Support\Facades\Event::listen()` to hook into certain parts of the lifecycle:
-
-```php
-use Illuminate\Support\Facades\Event;
-use Filament\Events\RecordCreating;
-use Filament\Events\RecordCreated;
-use Filament\Resources\Pages\CreateRecord;
-
-Event::listen(RecordCreating::class, function (CreateRecord $page) {
-    // Same as beforeCreate()
-});
-
-Event::listen(RecordCreated::class, function (CreateRecord $page) {
-    // Same as afterCreate()
-});
-```
-
 Alternatively, if you're creating records in a modal action, check out the [Actions documentation](../actions/create#lifecycle-hooks).
 
 ## Halting the creation process
