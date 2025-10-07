@@ -6,6 +6,8 @@ use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Events\RecordCreated;
 use Filament\Events\RecordCreating;
+use Filament\Events\RecordUpdated;
+use Filament\Events\RecordUpdating;
 use Filament\Facades\Filament;
 use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\CanUseDatabaseTransactions;
@@ -101,7 +103,11 @@ class CreateRecord extends Page
             $data = $this->mutateFormDataBeforeCreate($data);
 
             $this->callHook('beforeCreate');
-            Event::dispatch(RecordCreating::class, $this);
+            Event::dispatch(RecordCreating::class, [
+                'page' => $this,
+                'data' => $data,
+            ]);
+            Event::dispatch(RecordUpdating::class, $this);
 
             $this->record = $this->handleRecordCreation($data);
 
@@ -109,6 +115,7 @@ class CreateRecord extends Page
 
             $this->callHook('afterCreate');
             Event::dispatch(RecordCreated::class, $this);
+            Event::dispatch(RecordUpdated::class, $this);
         } catch (Halt $exception) {
             $exception->shouldRollbackDatabaseTransaction() ?
                 $this->rollBackDatabaseTransaction() :

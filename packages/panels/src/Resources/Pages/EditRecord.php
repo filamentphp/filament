@@ -11,6 +11,8 @@ use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Events\RecordSaved;
 use Filament\Events\RecordSaving;
+use Filament\Events\RecordUpdated;
+use Filament\Events\RecordUpdating;
 use Filament\Facades\Filament;
 use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\CanUseDatabaseTransactions;
@@ -159,6 +161,7 @@ class EditRecord extends Page
 
                 $this->callHook('beforeSave');
                 Event::dispatch(RecordSaving::class, $this);
+                Event::dispatch(RecordUpdating::class, $this);
             });
 
             $data = $this->mutateFormDataBeforeSave($data);
@@ -166,7 +169,14 @@ class EditRecord extends Page
             $this->handleRecordUpdate($this->getRecord(), $data);
 
             $this->callHook('afterSave');
-            Event::dispatch(RecordSaved::class, $this);
+            Event::dispatch(RecordSaved::class, [
+                'page' => $this,
+                'data' => $data,
+            ]);
+            Event::dispatch(RecordUpdated::class, [
+                'page' => $this,
+                'data' => $data,
+            ]);
         } catch (Halt $exception) {
             $exception->shouldRollbackDatabaseTransaction() ?
                 $this->rollBackDatabaseTransaction() :
