@@ -697,7 +697,7 @@
                 @if ((! $isReordering) && ($pollingInterval = $getPollingInterval()))
                     wire:poll.{{ $pollingInterval }}
                 @endif
-                class="fi-ta-content-ctn"
+                class="fi-ta-content-ctn fi-fixed-positioning-context"
             >
                 @if (($content || $hasColumnsLayout) && ($records !== null) && count($records))
                     @if (! $isReordering)

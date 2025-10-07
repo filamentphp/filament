@@ -43,7 +43,7 @@
                             ]) }}
     >
         @if (count($items))
-            <table class="fi-absolute-positioning-context">
+            <table>
                 <thead>
                     <tr>
                         @if ((count($items) > 1) && ($isReorderableWithButtons || $isReorderableWithDragAndDrop))
