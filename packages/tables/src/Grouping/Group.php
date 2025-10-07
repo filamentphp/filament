@@ -350,7 +350,7 @@ class Group extends Component
         return $query;
     }
 
-    public function scopeQueryByKey(EloquentBuilder $query, string $key): EloquentBuilder
+    public function scopeQueryByKey(EloquentBuilder $query, ?string $key): EloquentBuilder
     {
         $column = $this->getColumn();
 
