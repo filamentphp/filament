@@ -1,6 +1,10 @@
 .fi-wi-chart {
     & .fi-wi-chart-canvas-ctn {
-        @apply mx-auto aspect-square;
+        @apply mx-auto;
+
+        &:not(.fi-wi-chart-canvas-ctn-no-aspect-ratio) {
+            @apply aspect-square;
+        }
     }
 
     @supports (container-type: inline-size) {
@@ -8,7 +12,7 @@
             @apply @container;
         }
 
-        & .fi-wi-chart-canvas-ctn {
+        & .fi-wi-chart-canvas-ctn:not(.fi-wi-chart-canvas-ctn-no-aspect-ratio) {
             @apply @sm:aspect-[2];
 
             &[data-chart-type='doughnut'],
@@ -21,7 +25,7 @@
     }
 
     @supports not (container-type: inline-size) {
-        & .fi-wi-chart-canvas-ctn {
+        & .fi-wi-chart-canvas-ctn:not(.fi-wi-chart-canvas-ctn-no-aspect-ratio) {
             @apply sm:aspect-[2];
 
             &[data-chart-type='doughnut'],
