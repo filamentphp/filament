@@ -1,5 +1,6 @@
 @props([
     'actions' => [],
+    'actionsAlignment' => \Filament\Support\Enums\Alignment::Start,
     'breadcrumbs' => [],
     'heading',
     'subheading' => null,
@@ -39,7 +40,7 @@
             {{ $beforeActions }}
 
             @if ($actions)
-                <x-filament::actions :actions="$actions" />
+                <x-filament::actions :actions="$actions" :alignment="$actionsAlignment" />
             @endif
 
             {{ $afterActions }}

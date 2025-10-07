@@ -4,6 +4,7 @@ namespace Filament\Pages\Concerns;
 
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
+use Filament\Support\Enums\Alignment;
 
 trait InteractsWithHeaderActions
 {
@@ -62,5 +63,13 @@ trait InteractsWithHeaderActions
     protected function getActions(): array
     {
         return [];
+    }
+
+    /**
+     * @return Alignment
+     */
+    protected function getHeaderActionsAlignment(): Alignment
+    {
+        return Alignment::Start;
     }
 }
