@@ -322,7 +322,7 @@ class Group extends Component
         }
 
         if ($relationshipName = $this->getRelationshipName()) {
-            return $query->orderByPowerJoins("{$relationshipName}.{$this->getRelationshipAttribute()}", $direction); /** @phpstan-ignore method.notFound */
+            return $query->orderByPowerJoins("{$relationshipName}.{$this->getRelationshipAttribute()}", $direction, joinType: 'leftJoin'); /** @phpstan-ignore method.notFound */
         }
 
         return $query->orderBy($this->getRelationshipAttribute(), $direction);
@@ -350,7 +350,7 @@ class Group extends Component
         return $query;
     }
 
-    public function scopeQueryByKey(EloquentBuilder $query, string $key): EloquentBuilder
+    public function scopeQueryByKey(EloquentBuilder $query, ?string $key): EloquentBuilder
     {
         $column = $this->getColumn();
 
@@ -369,7 +369,7 @@ class Group extends Component
             return $query->whereHas(
                 $relationshipName,
                 fn (EloquentBuilder $query) => $this->applyDefaultScopeToQuery($query, $this->getRelationshipAttribute(), $key),
-            );
+            )->when(blank($key), fn (EloquentBuilder $query) => $query->orWhereDoesntHave($relationshipName));
         }
 
         return $this->applyDefaultScopeToQuery($query, $column, $key);
