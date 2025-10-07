@@ -2,7 +2,7 @@
 
 use Filament\Facades\Filament;
 use Filament\Resources\Events\RecordCreated;
-use Filament\Resources\Events\RecordCreating;
+use Filament\Resources\Events\RecordSaved;
 use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Policies\TicketPolicy;
 use Filament\Tests\Fixtures\Resources\Posts\Pages\CreateAnotherPreservingDataPost;
@@ -24,6 +24,11 @@ it('can render page', function (): void {
 });
 
 it('can create', function (): void {
+    Event::fake([
+        RecordCreated::class,
+        RecordSaved::class,
+    ]);
+
     $newData = Post::factory()->make();
 
     livewire(CreatePost::class)
@@ -45,6 +50,9 @@ it('can create', function (): void {
         'title' => $newData->title,
         'rating' => $newData->rating,
     ]);
+
+    Event::assertDispatched(RecordCreated::class);
+    Event::assertDispatched(RecordSaved::class);
 });
 
 it('can create another', function (): void {
@@ -236,24 +244,4 @@ it('does not render page if the policy create returns a denied response', functi
         ->assertForbidden();
 
     app()->bind(TicketPolicy::class . '::create', fn (): bool => true);
-});
-
-it('emits an event when the page is created', function (): void {
-    Event::fake();
-
-    $newData = Post::factory()->make();
-
-    livewire(CreatePost::class)
-        ->fillForm([
-            'author_id' => $newData->author->getKey(),
-            'content' => $newData->content,
-            'tags' => $newData->tags,
-            'title' => $newData->title,
-            'rating' => $newData->rating,
-        ])
-        ->call('create')
-        ->assertHasNoFormErrors();
-
-    Event::assertDispatched(RecordCreating::class);
-    Event::assertDispatched(RecordCreated::class);
 });

@@ -8,7 +8,7 @@ use Filament\Actions\RestoreAction;
 use Filament\Actions\ViewAction;
 use Filament\Facades\Filament;
 use Filament\Resources\Events\RecordSaved;
-use Filament\Resources\Events\RecordSaving;
+use Filament\Resources\Events\RecordUpdated;
 use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Models\Ticket;
 use Filament\Tests\Fixtures\Models\TicketMessage;
@@ -50,6 +50,11 @@ it('can retrieve data', function (): void {
 });
 
 it('can save', function (): void {
+    Event::fake([
+        RecordUpdated::class,
+        RecordSaved::class,
+    ]);
+
     $post = Post::factory()->create();
     $newData = Post::factory()->make();
 
@@ -71,6 +76,9 @@ it('can save', function (): void {
         ->content->toBe($newData->content)
         ->tags->toBe($newData->tags)
         ->title->toBe($newData->title);
+
+    Event::assertDispatched(RecordUpdated::class);
+    Event::assertDispatched(RecordSaved::class);
 });
 
 it('can validate input', function (): void {
@@ -298,26 +306,3 @@ it('renders actions based on policy', function (string $action, string $policyMe
     'replicate action with policy returning false' => fn (): array => [ReplicateAction::class, 'replicate', false, false],
     'replicate action with policy returning denied response' => fn (): array => [ReplicateAction::class, 'replicate', Response::deny(), false],
 ]);
-
-it('emits an event when the page is edited', function (): void {
-    Event::fake();
-
-    $post = Post::factory()->create();
-    $newData = Post::factory()->make();
-
-    livewire(EditPost::class, [
-        'record' => $post->getKey(),
-    ])
-        ->fillForm([
-            'author_id' => $newData->author->getKey(),
-            'content' => $newData->content,
-            'tags' => $newData->tags,
-            'title' => $newData->title,
-            'rating' => $newData->rating,
-        ])
-        ->call('save')
-        ->assertHasNoFormErrors();
-
-    Event::assertDispatched(RecordSaving::class);
-    Event::assertDispatched(RecordSaved::class);
-});
