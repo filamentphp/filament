@@ -322,7 +322,7 @@ class Group extends Component
         }
 
         if ($relationshipName = $this->getRelationshipName()) {
-            return $query->orderByPowerJoins("{$relationshipName}.{$this->getRelationshipAttribute()}", $direction); /** @phpstan-ignore method.notFound */
+            return $query->orderByPowerJoins("{$relationshipName}.{$this->getRelationshipAttribute()}", $direction, null, 'leftJoin'); /** @phpstan-ignore method.notFound */
         }
 
         return $query->orderBy($this->getRelationshipAttribute(), $direction);
