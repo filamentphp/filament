@@ -65,9 +65,6 @@ trait InteractsWithHeaderActions
         return [];
     }
 
-    /**
-     * @return Alignment
-     */
     protected function getHeaderActionsAlignment(): Alignment
     {
         return Alignment::Start;

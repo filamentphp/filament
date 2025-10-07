@@ -40,7 +40,10 @@
             {{ $beforeActions }}
 
             @if ($actions)
-                <x-filament::actions :actions="$actions" :alignment="$actionsAlignment" />
+                <x-filament::actions
+                    :actions="$actions"
+                    :alignment="$actionsAlignment"
+                />
             @endif
 
             {{ $afterActions }}
