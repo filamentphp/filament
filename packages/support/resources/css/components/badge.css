@@ -5,8 +5,8 @@
         @apply truncate;
     }
 
-    &.fi-disabled,
-    &[disabled] {
+    &.fi-disabled:not(.fi-force-enabled),
+    &[disabled]:not(.fi-force-enabled) {
         @apply cursor-default opacity-70;
 
         &:not([x-tooltip]) {
@@ -61,6 +61,7 @@
         }
     }
 
+    &.fi-force-enabled,
     &:not(.fi-disabled):not([disabled]) {
         & .fi-badge-delete-btn > .fi-icon {
             @apply focus-visible:text-gray-700/75 dark:hover:text-gray-300/75 dark:focus-visible:text-gray-300/75;

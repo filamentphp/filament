@@ -76,7 +76,8 @@ class IsOperator extends Operator
             ->searchable($constraint->isSearchable())
             ->native($constraint->isNative())
             ->optionsLimit($constraint->getOptionsLimit())
-            ->required();
+            ->required()
+            ->columnSpanFull();
 
         if ($getOptionLabelUsing = $constraint->getOptionLabelUsingCallback()) {
             $field->getOptionLabelUsing($getOptionLabelUsing);

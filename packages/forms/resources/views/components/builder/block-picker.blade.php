@@ -1,10 +1,12 @@
 @php
+    use Filament\Support\Enums\Alignment;
     use Filament\Support\Enums\GridDirection;
     use Illuminate\View\ComponentAttributeBag;
 @endphp
 
 @props([
     'action',
+    'actionAlignment' => null,
     'afterItem' => null,
     'blocks',
     'columns' => null,
@@ -14,10 +16,21 @@
 ])
 
 <x-filament::dropdown
+    :placement="
+        match ($actionAlignment) {
+            Alignment::Start, Alignment::Left => 'bottom-start',
+            Alignment::End, Alignment::Right => 'bottom-end',
+            default => null,
+        }
+    "
+    shift
     :width="$width"
     :attributes="
         \Filament\Support\prepare_inherited_attributes(
-            $attributes->class(['fi-fo-builder-block-picker']),
+            $attributes->class([
+                'fi-fo-builder-block-picker',
+                ($actionAlignment instanceof Alignment) ? ('fi-align-' . $actionAlignment->value) : $actionAlignment => $actionAlignment,
+            ]),
         )
     "
 >

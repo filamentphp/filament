@@ -6,6 +6,8 @@ return [
 
     'breadcrumb' => 'Խմբագրել',
 
+    'navigation_label' => 'Խմբագրել',
+
     'form' => [
 
         'actions' => [
@@ -15,7 +17,7 @@ return [
             ],
 
             'save' => [
-                'label' => 'Պահպանել',
+                'label' => 'Պահպանել փոփոխությունները',
             ],
 
         ],

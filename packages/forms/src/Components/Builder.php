@@ -56,6 +56,8 @@ class Builder extends Field implements CanConcealComponents, HasExtraItemActions
 
     protected bool | Closure $hasBlockIcons = false;
 
+    protected bool | Closure $hasBlockHeaders = true;
+
     protected bool | Closure $hasBlockPreviews = false;
 
     protected bool | Closure $hasInteractiveBlockPreviews = false;
@@ -669,6 +671,7 @@ class Builder extends Field implements CanConcealComponents, HasExtraItemActions
             })
             ->schema(function (array $arguments, Builder $component) {
                 return $component->getChildSchema($arguments['item'])
+                    ->getClone()
                     ->getComponents(withHidden: true);
             })
             ->action(function (array $arguments, Builder $component, $data): void {
@@ -1169,5 +1172,17 @@ class Builder extends Field implements CanConcealComponents, HasExtraItemActions
     public function shouldPartiallyRenderAfterActionsCalled(): bool
     {
         return (bool) $this->evaluate($this->shouldPartiallyRenderAfterActionsCalled);
+    }
+
+    public function blockHeaders(bool | Closure $condition = true): static
+    {
+        $this->hasBlockHeaders = $condition;
+
+        return $this;
+    }
+
+    public function hasBlockHeaders(): bool
+    {
+        return (bool) $this->evaluate($this->hasBlockHeaders);
     }
 }

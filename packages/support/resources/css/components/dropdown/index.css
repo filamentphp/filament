@@ -3,7 +3,7 @@
 }
 
 & .fi-dropdown-panel {
-    @apply absolute z-10 w-screen max-w-[14rem]! rounded-lg bg-white shadow-lg ring-1 ring-gray-950/5 transition dark:bg-gray-900 dark:ring-white/10;
+    @apply absolute z-20 w-screen max-w-[14rem]! rounded-lg bg-white shadow-lg ring-1 ring-gray-950/5 transition dark:bg-gray-900 dark:ring-white/10;
 
     &:not(.fi-dropdown-list) {
         @apply divide-y divide-gray-100 dark:divide-white/5;

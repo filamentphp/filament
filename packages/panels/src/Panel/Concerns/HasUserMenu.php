@@ -4,6 +4,7 @@ namespace Filament\Panel\Concerns;
 
 use Closure;
 use Filament\Actions\Action;
+use Filament\Enums\UserMenuPosition;
 use Filament\Facades\Filament;
 use Filament\Navigation\MenuItem;
 use Filament\Support\Facades\FilamentIcon;
@@ -13,6 +14,8 @@ use Illuminate\Support\Collection;
 
 trait HasUserMenu
 {
+    protected UserMenuPosition | Closure | null $userMenuPosition = null;
+
     protected bool | Closure $hasUserMenu = true;
 
     /**
@@ -20,9 +23,10 @@ trait HasUserMenu
      */
     protected array $userMenuItems = [];
 
-    public function userMenu(bool | Closure $condition = true): static
+    public function userMenu(bool | Closure $condition = true, UserMenuPosition | Closure | null $position = null): static
     {
         $this->hasUserMenu = $condition;
+        $this->userMenuPosition = $position;
 
         return $this;
     }
@@ -43,6 +47,11 @@ trait HasUserMenu
     public function hasUserMenu(): bool
     {
         return (bool) $this->evaluate($this->hasUserMenu);
+    }
+
+    public function getUserMenuPosition(): UserMenuPosition
+    {
+        return $this->evaluate($this->userMenuPosition) ?? ($this->hasTopbar() ? UserMenuPosition::Topbar : UserMenuPosition::Sidebar);
     }
 
     protected function getUserProfileMenuItem(Action | Closure | MenuItem | null $item = null): Action

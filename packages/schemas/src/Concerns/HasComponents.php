@@ -30,6 +30,11 @@ trait HasComponents
     protected ?array $cachedComponents = null;
 
     /**
+     * @var array<array<array<string, Component>>>
+     */
+    protected array $cachedComponentsByStatePath = [];
+
+    /**
      * @param  array<Component | Action | ActionGroup | string | Htmlable> | Component | Action | ActionGroup | string | Htmlable | Closure  $components
      */
     public function components(array | Component | Action | ActionGroup | string | Htmlable | Closure $components): static
@@ -37,6 +42,7 @@ trait HasComponents
         $this->components = $components;
         $this->cachedComponents = null;
         $this->cachedFlatComponents = [];
+        $this->cachedComponentsByStatePath = [];
 
         return $this;
     }
@@ -226,7 +232,7 @@ trait HasComponents
             return null;
         };
 
-        return $search($this);
+        return $this->cachedComponentsByStatePath[$withHidden][$skipComponentChildContainersWhileSearching ? spl_object_id($skipComponentChildContainersWhileSearching) : null][$statePath] ??= $search($this);
     }
 
     /**
@@ -352,6 +358,7 @@ trait HasComponents
 
             $this->cachedComponents = null;
             $this->cachedFlatComponents = [];
+            $this->cachedComponentsByStatePath = [];
         }
 
         return $this;

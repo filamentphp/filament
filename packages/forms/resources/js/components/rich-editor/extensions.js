@@ -55,98 +55,130 @@ export default async ({
     textColors,
     uploadingFileMessage,
     $wire,
-}) => [
-    Blockquote,
-    Bold,
-    BulletList,
-    Code,
-    CodeBlock,
-    CustomBlock.configure({
-        deleteCustomBlockButtonIconHtml,
-        editCustomBlockButtonIconHtml,
-        editCustomBlockUsing,
-        insertCustomBlockUsing,
-    }),
-    Details,
-    DetailsSummary,
-    DetailsContent,
-    Document,
-    Dropcursor,
-    Gapcursor,
-    Grid,
-    GridColumn,
-    HardBreak,
-    Heading,
-    Highlight,
-    HorizontalRule,
-    Italic,
-    Image.configure({
-        inline: true,
-    }),
-    Lead,
-    Link.configure({
-        autolink: true,
-        openOnClick: false,
-    }),
-    ListItem,
-    LocalFiles.configure({
-        acceptedTypes: acceptedFileTypes,
-        acceptedTypesValidationMessage: acceptedFileTypesValidationMessage,
-        get$WireUsing: () => $wire,
-        key,
-        maxSize: maxFileSize,
-        maxSizeValidationMessage: maxFileSizeValidationMessage,
-        statePath,
-        uploadingMessage: uploadingFileMessage,
-    }),
-    ...(Object.keys(mergeTags).length
-        ? [
-              MergeTag.configure({
-                  deleteTriggerWithBackspace: true,
-                  suggestion: getMergeTagSuggestion({
+}) => {
+    const extensions = [
+        Blockquote,
+        Bold,
+        BulletList,
+        Code,
+        CodeBlock,
+        CustomBlock.configure({
+            deleteCustomBlockButtonIconHtml,
+            editCustomBlockButtonIconHtml,
+            editCustomBlockUsing,
+            insertCustomBlockUsing,
+        }),
+        Details,
+        DetailsSummary,
+        DetailsContent,
+        Document,
+        Dropcursor,
+        Gapcursor,
+        Grid,
+        GridColumn,
+        HardBreak,
+        Heading,
+        Highlight,
+        HorizontalRule,
+        Italic,
+        Image.configure({
+            inline: true,
+        }),
+        Lead,
+        Link.configure({
+            autolink: true,
+            openOnClick: false,
+        }),
+        ListItem,
+        LocalFiles.configure({
+            acceptedTypes: acceptedFileTypes,
+            acceptedTypesValidationMessage: acceptedFileTypesValidationMessage,
+            get$WireUsing: () => $wire,
+            key,
+            maxSize: maxFileSize,
+            maxSizeValidationMessage: maxFileSizeValidationMessage,
+            statePath,
+            uploadingMessage: uploadingFileMessage,
+        }),
+        ...(Object.keys(mergeTags).length
+            ? [
+                  MergeTag.configure({
+                      deleteTriggerWithBackspace: true,
+                      suggestion: getMergeTagSuggestion({
+                          mergeTags,
+                          noMergeTagSearchResultsMessage,
+                      }),
                       mergeTags,
-                      noMergeTagSearchResultsMessage,
                   }),
-                  mergeTags,
-              }),
-          ]
-        : []),
-    OrderedList,
-    Paragraph,
-    Placeholder.configure({
-        placeholder,
-    }),
-    TextColor.configure({
-        textColors,
-    }),
-    Small,
-    Strike,
-    Subscript,
-    Superscript,
-    TableKit.configure({
-        table: {
-            resizable: true,
-        },
-    }),
-    Text,
-    TextAlign.configure({
-        types: ['heading', 'paragraph'],
-        alignments: ['start', 'center', 'end', 'justify'],
-        defaultAlignment: 'start',
-    }),
-    Underline,
-    UndoRedo,
-    ...(
-        await Promise.all(
-            customExtensionUrls.map(async (url) => {
-                const absoluteUrlRegExp = new RegExp('^(?:[a-z+]+:)?//', 'i')
+              ]
+            : []),
+        OrderedList,
+        Paragraph,
+        Placeholder.configure({
+            placeholder,
+        }),
+        TextColor.configure({
+            textColors,
+        }),
+        Small,
+        Strike,
+        Subscript,
+        Superscript,
+        TableKit.configure({
+            table: {
+                resizable: true,
+            },
+        }),
+        Text,
+        TextAlign.configure({
+            types: ['heading', 'paragraph'],
+            alignments: ['start', 'center', 'end', 'justify'],
+            defaultAlignment: 'start',
+        }),
+        Underline,
+        UndoRedo,
+    ]
 
-                if (!absoluteUrlRegExp.test(url)) {
-                    url = new URL(url, document.baseURI).href
-                }
+    const loadedCustomExtensions = await Promise.all(
+        customExtensionUrls.map(async (url) => {
+            const absoluteUrlRegExp = new RegExp('^(?:[a-z+]+:)?//', 'i')
 
-                return (await import(url)).default
-            }),
+            if (!absoluteUrlRegExp.test(url)) {
+                url = new URL(url, document.baseURI).href
+            }
+
+            try {
+                const factoryOrInstance = (await import(url)).default
+
+                return typeof factoryOrInstance === 'function'
+                    ? factoryOrInstance()
+                    : factoryOrInstance
+            } catch (error) {
+                console.error(
+                    `Failed to load rich editor custom extension from [${url}]:`,
+                    error,
+                )
+
+                return null
+            }
+        }),
+    )
+
+    for (const customExtension of loadedCustomExtensions) {
+        if (!customExtension || !customExtension.name) {
+            continue
+        }
+
+        const existingIndex = extensions.findIndex(
+            (extension) => extension.name === customExtension.name,
         )
-    ).flat(),
-]
+
+        if (existingIndex !== -1) {
+            extensions[existingIndex] = customExtension
+        } else {
+            extensions.push(customExtension)
+        }
+    }
+
+    return extensions
+}

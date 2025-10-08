@@ -443,6 +443,71 @@ return [
 
             ],
 
+            'grid' => [
+
+                'label' => 'Raster',
+
+                'modal' => [
+
+                    'heading' => 'Raster',
+
+                    'form' => [
+
+                        'preset' => [
+
+                            'label' => 'Voorinstelling',
+
+                            'placeholder' => 'Geen',
+
+                            'options' => [
+                                'two' => 'Twee',
+                                'three' => 'Drie',
+                                'four' => 'Vier',
+                                'five' => 'Vijf',
+                                'two_start_third' => 'Twee (Start Derde)',
+                                'two_end_third' => 'Twee (Einde Derde)',
+                                'two_start_fourth' => 'Twee (Start Vierde)',
+                                'two_end_fourth' => 'Twee (Einde Vierde)',
+                            ],
+                        ],
+
+                        'columns' => [
+                            'label' => 'Kolommen',
+                        ],
+
+                        'from_breakpoint' => [
+
+                            'label' => 'Vanaf breekpunt',
+
+                            'options' => [
+                                'default' => 'Alle',
+                                'sm' => 'Klein',
+                                'md' => 'Medium',
+                                'lg' => 'Groot',
+                                'xl' => 'Extra groot',
+                                '2xl' => 'Twee keer extra groot',
+                            ],
+
+                        ],
+
+                        'is_asymmetric' => [
+                            'label' => 'Twee asymmetrische kolommen',
+                        ],
+
+                        'start_span' => [
+                            'label' => 'Start bereik',
+                        ],
+
+                        'end_span' => [
+                            'label' => 'Eind bereik',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
             'link' => [
 
                 'label' => 'Bewerken',

@@ -284,6 +284,10 @@ return [
 
     'markdown_editor' => [
 
+        'file_attachments_accepted_file_types_message' => 'يجب أن تكون الملفات المرفوعة من نوع: :values.',
+
+        'file_attachments_max_size_message' => 'يجب ألا يتجاوز حجم الملفات المرفوعة :max كيلوبايت.',
+
         'tools' => [
             'attach_files' => 'إرفاق ملفات',
             'blockquote' => 'اقتباس',
@@ -467,7 +471,35 @@ return [
 
             ],
 
+            'text_color' => [
+
+                'label' => 'لون النص',
+
+                'modal' => [
+
+                    'heading' => 'لون النص',
+
+                    'form' => [
+
+                        'color' => [
+                            'label' => 'اللون',
+                        ],
+
+                        'custom_color' => [
+                            'label' => 'لون مخصص',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
         ],
+
+        'file_attachments_accepted_file_types_message' => 'يجب أن تكون الملفات المرفوعة من نوع: :values.',
+
+        'file_attachments_max_size_message' => 'يجب ألا يتجاوز حجم الملفات المرفوعة :max كيلوبايت.',
 
         'no_merge_tag_search_results_message' => 'لا توجد نتائج لوسوم الدمج.',
 
@@ -511,9 +543,12 @@ return [
             'table_merge_cells' => 'دمج الخلايا',
             'table_split_cell' => 'فصل الخلايا',
             'table_toggle_header_row' => 'إظهار/إخفاء الترويسة',
+            'text_color' => 'لون النص',
             'underline' => 'خط اسفل النص',
             'undo' => 'تراجع',
         ],
+
+        'uploading_file_message' => 'جاري رفع الملف...',
 
     ],
 

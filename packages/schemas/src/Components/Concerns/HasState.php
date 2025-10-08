@@ -552,6 +552,11 @@ trait HasState
 
         data_set($livewire, $this->getStatePath(), $this->evaluate($state));
 
+        // For components such as repeaters and builders, the default child schemas depend on the state of the component.
+        // When loading state into these fields after the state is already present, the cached child schemas need to be
+        // cleared so that they can be re-evaluated based on the new state. `rawState()` is called during this process.
+        $this->clearCachedDefaultChildSchemas();
+
         return $this;
     }
 

@@ -32,7 +32,7 @@
         "@codemirror/state": "^6.5.2",
         "@codemirror/theme-one-dark": "^6.1.2",
         "@codemirror/view": "^6.36.6",
-        "@danharrin/alpine-mousetrap": "^0.1.6",
+        "@danharrin/alpine-mousetrap": "^0.1.8",
         "@floating-ui/dom": "^1.7.0",
         "@fontsource-variable/inter": "^5.0.18",
         "@ryangjchandler/alpine-tooltip": "^2.0",

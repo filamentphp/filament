@@ -1,5 +1,5 @@
 .fi-ta-row {
-    @apply [@media(hover:hover)]:transition [@media(hover:hover)]:duration-75;
+    @apply [@media(hover:hover)]:transition-colors [@media(hover:hover)]:duration-75;
 
     &.fi-clickable {
         @apply hover:bg-gray-50 dark:hover:bg-white/5;

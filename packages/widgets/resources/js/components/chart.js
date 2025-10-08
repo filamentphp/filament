@@ -85,6 +85,7 @@ export default function chart({ cachedData, options, type }) {
 
             options ??= {}
             options.borderWidth ??= 2
+            options.maintainAspectRatio ??= false
             options.pointBackgroundColor ??= borderColor
             options.pointHitRadius ??= 4
             options.pointRadius ??= 2

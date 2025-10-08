@@ -4,6 +4,7 @@ export default ({
     currentSelectionLivewireProperty,
     maxSelectableRecords,
     selectsCurrentPageOnly,
+    selectsGroupsOnly,
     $wire,
 }) => ({
     checkboxClickController: null,
