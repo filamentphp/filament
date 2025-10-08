@@ -13,7 +13,7 @@
         }
     }
 
-    &:not(.fi-ta-ctn-with-pagination .fi-ta-content-ctn) {
+    &:not(.fi-ta-ctn-with-footer .fi-ta-content-ctn) {
         @apply rounded-b-xl;
     }
 

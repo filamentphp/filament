@@ -113,6 +113,8 @@
     $pluralModelLabel = $getPluralModelLabel();
     $records = $isLoaded ? $getRecords() : null;
     $hasPagination = (($records instanceof \Illuminate\Contracts\Pagination\Paginator) || ($records instanceof \Illuminate\Contracts\Pagination\CursorPaginator)) && ((! ($records instanceof \Illuminate\Contracts\Pagination\LengthAwarePaginator)) || $records->total());
+    $hasEmptyState = ($records !== null) && ! count($records);
+    $hasContentLayout = $content || $hasColumnsLayout;
     $searchDebounce = $getSearchDebounce();
     $allSelectableRecordsCount = ($isSelectionEnabled && $isLoaded) ? $getAllSelectableRecordsCount() : null;
     $columnsCount = count($columns);
@@ -163,8 +165,9 @@
     <div
         @class([
             'fi-ta-ctn',
+            'fi-ta-ctn-with-content-layout' => $hasContentLayout,
+            'fi-ta-ctn-with-footer' => $hasPagination || $hasEmptyState || $hasFiltersBelowContent,
             'fi-ta-ctn-with-header' => $hasHeader,
-            'fi-ta-ctn-with-pagination' => $hasPagination,
         ])
     >
         <div
@@ -701,7 +704,7 @@
                 @endif
                 class="fi-ta-content-ctn fi-fixed-positioning-context"
             >
-                @if (($content || $hasColumnsLayout) && ($records !== null) && count($records))
+                @if ($hasContentLayout && ($records !== null) && count($records))
                     @if (! $isReordering)
                         @php
                             $sortableColumns = array_filter(
@@ -2086,7 +2089,7 @@
             </div>
         @endif
 
-        @if (($records !== null) && ! count($records))
+        @if ($hasEmptyState)
             @if ($emptyState = $getEmptyState())
                 {{ $emptyState }}
             @else

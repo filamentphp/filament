@@ -93,7 +93,7 @@
         @apply grid gap-y-4;
 
         &.fi-ta-filters-below-content {
-            @apply p-4 sm:px-6;
+            @apply border-t border-gray-200 p-4 sm:px-6 dark:border-white/10;
         }
 
         & .fi-ta-filters-header {
