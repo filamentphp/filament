@@ -6,13 +6,9 @@ use Closure;
 
 trait CanQuietlyProcess
 {
-    protected ?Closure $quietly = null;
+    protected bool|Closure|null $quietly = null;
 
-    /**
-     * Set a condition to determine if a operation should be quiet
-     * @param Closure(static): bool $quietly
-     */
-    public function quietly(Closure $quietly): static
+    public function quietly(bool|Closure $quietly = true): static
     {
         $this->quietly = $quietly;
 
