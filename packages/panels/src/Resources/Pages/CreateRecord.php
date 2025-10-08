@@ -4,6 +4,7 @@ namespace Filament\Resources\Pages;
 
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
+use Filament\Actions\Concerns\CanQuietlyProcess;
 use Filament\Facades\Filament;
 use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\CanUseDatabaseTransactions;
@@ -32,6 +33,7 @@ class CreateRecord extends Page
 {
     use CanUseDatabaseTransactions;
     use HasUnsavedDataChangesAlert;
+    use CanQuietlyProcess;
 
     public ?Model $record = null;
 
@@ -204,7 +206,9 @@ class CreateRecord extends Page
             return $this->associateRecordWithParent($record, $parentRecord);
         }
 
-        $record->save();
+        $this->shouldQuietlyProcess()
+            ? $record->saveQuietly()
+            : $record->save();
 
         return $record;
     }

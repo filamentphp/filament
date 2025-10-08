@@ -6,6 +6,7 @@ use BackedEnum;
 use Closure;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
+use Filament\Actions\Concerns\CanQuietlyProcess;
 use Filament\Actions\CreateAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
@@ -43,6 +44,7 @@ use Throwable;
 class EditRecord extends Page
 {
     use CanUseDatabaseTransactions;
+    use CanQuietlyProcess;
     use Concerns\HasRelationManagers {
         getContentTabComponent as getBaseContentTabComponent;
     }
@@ -269,7 +271,9 @@ class EditRecord extends Page
      */
     protected function handleRecordUpdate(Model $record, array $data): Model
     {
-        $record->update($data);
+        $this->shouldQuietlyProcess()
+            ? $record->updateQuietly($data)
+            : $record->update($data);
 
         return $record;
     }
