@@ -51,7 +51,8 @@ class DeleteAction extends Action
         });
 
         $this->action(function (): void {
-            $result = $this->process(static fn (Model $record): ?bool => $this->shouldQuietlyProcess() ? $record->deleteQuietly() : $record->delete());
+            $quietly = $this->shouldQuietlyProcess();
+            $result = $this->process(static fn (Model $record): ?bool => $quietly ? $record->deleteQuietly() : $record->delete());
 
             if (! $result) {
                 $this->failure();
