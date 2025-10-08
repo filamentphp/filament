@@ -4,7 +4,6 @@ namespace Filament\Resources\Pages;
 
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
-use Filament\Actions\Concerns\CanQuietlyProcess;
 use Filament\Facades\Filament;
 use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\CanUseDatabaseTransactions;
@@ -31,7 +30,6 @@ use Throwable;
  */
 class CreateRecord extends Page
 {
-    use CanQuietlyProcess;
     use CanUseDatabaseTransactions;
     use HasUnsavedDataChangesAlert;
 
@@ -45,6 +43,8 @@ class CreateRecord extends Page
     public ?string $previousUrl = null;
 
     protected static bool $canCreateAnother = true;
+
+    protected static bool $quietly = false;
 
     #[Locked]
     public bool $isCreating = false;
@@ -206,7 +206,7 @@ class CreateRecord extends Page
             return $this->associateRecordWithParent($record, $parentRecord);
         }
 
-        $this->shouldQuietlyProcess()
+        $this->shouldQuietlyCreate()
             ? $record->saveQuietly()
             : $record->save();
 
@@ -359,6 +359,11 @@ class CreateRecord extends Page
     public static function disableCreateAnother(): void
     {
         static::$canCreateAnother = false;
+    }
+
+    public function shouldQuietlyCreate(): bool
+    {
+        return static::$quietly;
     }
 
     public function getRecord(): ?Model

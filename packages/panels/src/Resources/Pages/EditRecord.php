@@ -6,7 +6,6 @@ use BackedEnum;
 use Closure;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
-use Filament\Actions\Concerns\CanQuietlyProcess;
 use Filament\Actions\CreateAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
@@ -43,7 +42,6 @@ use Throwable;
  */
 class EditRecord extends Page
 {
-    use CanQuietlyProcess;
     use CanUseDatabaseTransactions;
     use Concerns\HasRelationManagers {
         getContentTabComponent as getBaseContentTabComponent;
@@ -59,6 +57,8 @@ class EditRecord extends Page
     public ?array $data = [];
 
     public ?string $previousUrl = null;
+
+    protected static bool $quietly = false;
 
     public static function getNavigationIcon(): string | BackedEnum | Htmlable | null
     {
@@ -84,6 +84,11 @@ class EditRecord extends Page
     public function getContentTabLabel(): ?string
     {
         return __('filament-panels::resources/pages/edit-record.content.tab.label');
+    }
+
+    public function shouldQuietlyUpdate(): bool
+    {
+        return static::$quietly;
     }
 
     public function mount(int | string $record): void
@@ -271,7 +276,7 @@ class EditRecord extends Page
      */
     protected function handleRecordUpdate(Model $record, array $data): Model
     {
-        $this->shouldQuietlyProcess()
+        $this->shouldQuietlyUpdate()
             ? $record->updateQuietly($data)
             : $record->update($data);
 

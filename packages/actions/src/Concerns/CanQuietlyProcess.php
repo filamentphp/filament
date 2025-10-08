@@ -21,10 +21,6 @@ trait CanQuietlyProcess
             return false;
         }
 
-        if (is_bool($this->quietly)) {
-            return $this->quietly;
-        }
-
         return $this->evaluate($this->quietly);
     }
 }
