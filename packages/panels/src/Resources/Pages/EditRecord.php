@@ -43,8 +43,8 @@ use Throwable;
  */
 class EditRecord extends Page
 {
-    use CanUseDatabaseTransactions;
     use CanQuietlyProcess;
+    use CanUseDatabaseTransactions;
     use Concerns\HasRelationManagers {
         getContentTabComponent as getBaseContentTabComponent;
     }

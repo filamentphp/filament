@@ -31,9 +31,9 @@ use Throwable;
  */
 class CreateRecord extends Page
 {
+    use CanQuietlyProcess;
     use CanUseDatabaseTransactions;
     use HasUnsavedDataChangesAlert;
-    use CanQuietlyProcess;
 
     public ?Model $record = null;
 
