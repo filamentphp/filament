@@ -20,6 +20,15 @@ CreateAction::make()
     ])
 ```
 
+## Creating records without events
+
+You may create a record without firing any events by using the `quietly()` method, it accepts a boolean and a closure:
+
+```php
+CreateAction::make()
+    ->quietly()
+```
+
 ## Customizing data before saving
 
 Sometimes, you may wish to modify form data before it is finally saved to the database. To do this, you may use the `mutateDataUsing()` method, which has access to the `$data` as an array, and returns the modified version:

@@ -41,6 +41,15 @@ DeleteAction::make()
 
 <UtilityInjection set="actions" version="4.x">As well as `$record`, the `successRedirectUrl()` function can inject various utilities as parameters.</UtilityInjection>
 
+## Deleting records without events
+
+You may delete a record without firing any events by using the `quietly()` method, it accepts a boolean and a closure:
+
+```php
+DeleteAction::make()
+    ->quietly()
+```
+
 ## Customizing the delete notification
 
 When the record is successfully deleted, a notification is dispatched to the user, which indicates the success of their action.

@@ -24,6 +24,15 @@ ReplicateAction::make()
     ->excludeAttributes(['slug'])
 ```
 
+## Replicating records without events
+
+You may replicate a record without firing any events by using the `quietly()` method, it accepts a boolean and a closure:
+
+```php
+ReplicateAction::make()
+    ->quietly()
+```
+
 ## Customizing data before filling the form
 
 You may wish to modify the data from a record before it is filled into the form. To do this, you may use the `mutateRecordDataUsing()` method to modify the `$data` array, and return the modified version before it is filled into the form:
