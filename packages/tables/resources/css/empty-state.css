@@ -1,6 +1,10 @@
 .fi-ta-empty-state {
     @apply px-6 py-12;
 
+    &:not(.fi-ta-ctn-with-content-layout .fi-ta-empty-state) {
+        @apply border-t border-gray-200 dark:border-white/10;
+    }
+
     & .fi-ta-empty-state-content {
         @apply mx-auto grid max-w-lg justify-items-center text-center;
     }
