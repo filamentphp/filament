@@ -112,6 +112,7 @@
     $secondLevelHeadingTag = $heading ? $getHeadingTag(1) : $headingTag;
     $pluralModelLabel = $getPluralModelLabel();
     $records = $isLoaded ? $getRecords() : null;
+    $hasPagination = (($records instanceof \Illuminate\Contracts\Pagination\Paginator) || ($records instanceof \Illuminate\Contracts\Pagination\CursorPaginator)) && ((! ($records instanceof \Illuminate\Contracts\Pagination\LengthAwarePaginator)) || $records->total());
     $searchDebounce = $getSearchDebounce();
     $allSelectableRecordsCount = ($isSelectionEnabled && $isLoaded) ? $getAllSelectableRecordsCount() : null;
     $columnsCount = count($columns);
@@ -163,6 +164,7 @@
         @class([
             'fi-ta-ctn',
             'fi-ta-ctn-with-header' => $hasHeader,
+            'fi-ta-ctn-with-pagination' => $hasPagination,
         ])
     >
         <div
@@ -2123,8 +2125,7 @@
             @endif
         @endif
 
-        @if ((($records instanceof \Illuminate\Contracts\Pagination\Paginator) || ($records instanceof \Illuminate\Contracts\Pagination\CursorPaginator)) &&
-             ((! ($records instanceof \Illuminate\Contracts\Pagination\LengthAwarePaginator)) || $records->total()))
+        @if ($hasPagination)
             @php
                 $hasExtremePaginationLinks = $hasExtremePaginationLinks();
                 $paginationPageOptions = $getPaginationPageOptions();
