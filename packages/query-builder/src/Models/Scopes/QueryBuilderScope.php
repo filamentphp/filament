@@ -110,7 +110,7 @@ class QueryBuilderScope
      */
     protected function tapOperatorFromRule(array $rule, Closure $callback): void
     {
-        $constraint = $this->constraints[$rule['type']];
+        $constraint = $this->constraints[$rule['type']] ?? null;
 
         if (! $constraint) {
             return;
