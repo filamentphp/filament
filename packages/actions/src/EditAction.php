@@ -4,6 +4,7 @@ namespace Filament\Actions;
 
 use Closure;
 use Filament\Actions\Concerns\CanCustomizeProcess;
+use Filament\Actions\Concerns\CanQuietlyProcess;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Actions\View\ActionsIconAlias;
 use Filament\Schemas\Contracts\HasSchemas;
@@ -17,6 +18,7 @@ use Illuminate\Support\Arr;
 class EditAction extends Action
 {
     use CanCustomizeProcess;
+    use CanQuietlyProcess;
 
     protected ?Closure $mutateRecordDataUsing = null;
 
@@ -104,7 +106,9 @@ class EditAction extends Action
                 if ($translatableContentDriver) {
                     $translatableContentDriver->updateRecord($record, $data);
                 } else {
-                    $record->update($data);
+                    $this->shouldQuietlyProcess()
+                        ? $record->updateQuietly($data)
+                        : $record->update($data);
                 }
             });
 

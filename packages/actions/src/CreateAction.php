@@ -4,6 +4,7 @@ namespace Filament\Actions;
 
 use Closure;
 use Filament\Actions\Concerns\CanCustomizeProcess;
+use Filament\Actions\Concerns\CanQuietlyProcess;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Actions\View\ActionsIconAlias;
 use Filament\Schemas\Contracts\HasSchemas;
@@ -20,6 +21,7 @@ use Illuminate\Support\Arr;
 class CreateAction extends Action
 {
     use CanCustomizeProcess;
+    use CanQuietlyProcess;
 
     protected bool | Closure $canCreateAnother = true;
 
@@ -88,7 +90,9 @@ class CreateAction extends Action
                     (! $relationship) ||
                     ($relationship instanceof HasOneOrManyThrough)
                 ) {
-                    $record->save();
+                    $this->shouldQuietlyProcess()
+                        ? $record->saveQuietly()
+                        : $record->save();
 
                     return $record;
                 }

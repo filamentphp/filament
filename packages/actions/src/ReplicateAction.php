@@ -4,6 +4,7 @@ namespace Filament\Actions;
 
 use Closure;
 use Filament\Actions\Concerns\CanCustomizeProcess;
+use Filament\Actions\Concerns\CanQuietlyProcess;
 use Filament\Actions\View\ActionsIconAlias;
 use Filament\Schemas\Schema;
 use Filament\Support\Facades\FilamentIcon;
@@ -14,6 +15,7 @@ use Illuminate\Support\Arr;
 class ReplicateAction extends Action
 {
     use CanCustomizeProcess;
+    use CanQuietlyProcess;
 
     protected ?Closure $beforeReplicaSaved = null;
 
@@ -62,13 +64,17 @@ class ReplicateAction extends Action
                     );
                 }
 
-                $this->replica = $record->replicate($this->getExcludedAttributes());
+                $this->replica = $this->shouldQuietlyProcess()
+                    ? $record->replicateQuietly($this->getExcludedAttributes())
+                    : $record->replicate($this->getExcludedAttributes());
 
                 $this->replica->fill($data);
 
                 $this->callBeforeReplicaSaved();
 
-                $this->replica->save();
+                $this->shouldQuietlyProcess()
+                    ? $this->replica->saveQuietly()
+                    : $this->replica->save();
             });
 
             try {

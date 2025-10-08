@@ -3,6 +3,7 @@
 namespace Filament\Actions;
 
 use Filament\Actions\Concerns\CanCustomizeProcess;
+use Filament\Actions\Concerns\CanQuietlyProcess;
 use Filament\Actions\View\ActionsIconAlias;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
@@ -11,6 +12,7 @@ use Illuminate\Database\Eloquent\Model;
 class DeleteAction extends Action
 {
     use CanCustomizeProcess;
+    use CanQuietlyProcess;
 
     public static function getDefaultName(): ?string
     {
@@ -49,7 +51,7 @@ class DeleteAction extends Action
         });
 
         $this->action(function (): void {
-            $result = $this->process(static fn (Model $record): ?bool => $record->delete());
+            $result = $this->process(static fn (Model $record): ?bool => $this->shouldQuietlyProcess() ? $record->deleteQuietly() : $record->delete());
 
             if (! $result) {
                 $this->failure();
