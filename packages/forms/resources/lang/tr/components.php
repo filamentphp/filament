@@ -36,7 +36,7 @@ return [
 
                 'modal' => [
 
-                    'heading' => ':label\'e  Ekle',
+                    'heading' => ':label\'e Ekle',
 
                     'actions' => [
 
@@ -472,24 +472,46 @@ return [
         'no_merge_tag_search_results_message' => 'Uygun birleşme etiketi bulunamadı.',
 
         'tools' => [
+            'align_center' => 'Ortaya hizala',
+            'align_end' => 'Sona hizala',
+            'align_justify' => 'İki yana yasla',
+            'align_start' => 'Başa hizala',
             'attach_files' => 'Dosya ekle',
             'blockquote' => 'Alıntı',
             'bold' => 'Kalın',
             'bullet_list' => 'Sırasız liste',
+            'clear_formatting' => 'Biçimlendirmeyi temizle',
+            'code' => 'Kod',
             'code_block' => 'Kod bloğu',
             'custom_blocks' => 'Bloklar',
+            'details' => 'Detaylar',
             'h1' => 'Başlık',
             'h2' => 'Başlık 2',
             'h3' => 'Alt başlık',
+            'highlight' => 'Vurgula',
+            'horizontal_rule' => 'Yatay çizgi',
             'italic' => 'Eğik',
+            'lead' => 'Öne çıkan metin',
             'link' => 'Bağlantı',
             'merge_tags' => 'Birleşme etiketleri',
             'ordered_list' => 'Sıralı liste',
             'redo' => 'Yinele',
+            'small' => 'Küçük metin',
             'strike' => 'Üstü çizili',
-            'underline' => 'Altı çizili',
             'subscript' => 'Alt simge',
             'superscript' => 'Üst simge',
+            'table' => 'Tablo',
+            'table_delete' => 'Tabloyu sil',
+            'table_add_column_before' => 'Öncesine sütun ekle',
+            'table_add_column_after' => 'Sonrasına sütun ekle',
+            'table_delete_column' => 'Sütunu sil',
+            'table_add_row_before' => 'Üstüne satır ekle',
+            'table_add_row_after' => 'Altına satır ekle',
+            'table_delete_row' => 'Satırı sil',
+            'table_merge_cells' => 'Hücreleri birleştir',
+            'table_split_cell' => 'Hücreyi böl',
+            'table_toggle_header_row' => 'Başlık satırını aç/kapat',
+            'underline' => 'Altı çizili',
             'undo' => 'Geri al',
         ],
 
@@ -571,6 +593,11 @@ return [
     'text_input' => [
 
         'actions' => [
+
+            'copy' => [
+                'label' => 'Kopyala',
+                'message' => 'Kopyalandı',
+            ],
 
             'hide_password' => [
                 'label' => 'Şifreyi gizle',

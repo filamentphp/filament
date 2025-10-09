@@ -481,7 +481,8 @@ return [
             'bold' => 'Жирный',
             'bullet_list' => 'Маркированный список',
             'clear_formatting' => 'Очистить форматирование',
-            'code_block' => 'Код',
+            'code' => 'Код',
+            'code_block' => 'Блок кода',
             'custom_blocks' => 'Блоки',
             'details' => 'Детали',
             'h1' => 'Название',
@@ -513,6 +514,8 @@ return [
             'underline' => 'Подчеркнутый',
             'undo' => 'Отменить',
         ],
+
+        'uploading_file_message' => 'Загрузка файла...',
 
     ],
 
@@ -592,6 +595,11 @@ return [
     'text_input' => [
 
         'actions' => [
+
+            'copy' => [
+                'label' => 'Копировать',
+                'message' => 'Скопировано',
+            ],
 
             'hide_password' => [
                 'label' => 'Скрыть пароль',

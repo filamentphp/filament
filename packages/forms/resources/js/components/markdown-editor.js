@@ -102,6 +102,13 @@ export default function markdownEditorFormComponent({
         state,
 
         async init() {
+            // If the editor is inside a modal, wait for the modal transition to finish before initializing the editor.
+            // This is necessary to prevent the editor from being initialized before the modal is fully visible,
+            // which can cause it to render without any content.
+            if (this.$root.closest('.fi-modal')) {
+                await new Promise((resolve) => setTimeout(resolve, 300))
+            }
+
             if (this.$root._editor) {
                 this.$root._editor.toTextArea()
                 this.$root._editor = null

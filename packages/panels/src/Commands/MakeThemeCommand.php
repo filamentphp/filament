@@ -94,7 +94,7 @@ class MakeThemeCommand extends Command
 
         $this->components->warn('Action is required to complete the theme setup:');
         $this->components->bulletList([
-            "First, add a new item to the `input` array of `vite.config.js`: `resources/css/filament/{$this->panel->getId()}/theme.css`.",
+            "First, add a new item to the Laravel plugin's `input` array in `vite.config.js`: `resources/css/filament/{$this->panel->getId()}/theme.css`.",
             "Next, register the theme in the {$this->panel->getId()} panel provider using `->viteTheme('resources/css/filament/{$this->panel->getId()}/theme.css')`",
             "Finally, run `{$this->pm} run build` to compile the theme.",
         ]);

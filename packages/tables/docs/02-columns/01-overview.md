@@ -40,7 +40,7 @@ Columns may feel a bit magic at first, but they’re designed to be simple to us
 The data that a column displays is called its "state". When using a [panel resource](../resources), the table is aware of the records it is displaying. This means that the state of the column is set based on the value of the attribute on the record. For example, if the column is used in the table of a `PostResource`, then the `title` attribute value of the current post will be displayed.
 
 ```php
-use Filament\Tables\Components\TextColumn;
+use Filament\Tables\Columns\TextColumn;
 
 TextColumn::make('title')
 ```
@@ -48,7 +48,7 @@ TextColumn::make('title')
 If you want to access the value stored in a relationship, you can use "dot notation". The name of the relationship that you would like to access data from comes first, followed by a dot, and then the name of the attribute:
 
 ```php
-use Filament\Tables\Components\TextColumn;
+use Filament\Tables\Columns\TextColumn;
 
 TextColumn::make('author.name')
 ```
@@ -56,7 +56,7 @@ TextColumn::make('author.name')
 You can also use "dot notation" to access values within a JSON / array column on an Eloquent model. The name of the attribute comes first, followed by a dot, and then the key of the JSON object you want to read from:
 
 ```php
-use Filament\Tables\Components\TextColumn;
+use Filament\Tables\Columns\TextColumn;
 
 TextColumn::make('meta.title')
 ```
@@ -66,20 +66,20 @@ TextColumn::make('meta.title')
 You can pass your own state to a column by using the `state()` method:
 
 ```php
-use Filament\Tables\Components\TextColumn;
+use Filament\Tables\Columns\TextColumn;
 
 TextColumn::make('title')
     ->state('Hello, world!')
 ```
 
-<UtilityInjection set="tableColumns" version="4.x">The `state()` method also accepts a function to dynamically calculate the state. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="tableColumns" except="$state" version="4.x">The `state()` method also accepts a function to dynamically calculate the state. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ### Setting the default state of a column
 
 When a column is empty (its state is `null`), you can use the `default()` method to define alternative state to use instead. This method will treat the default state as if it were real, so columns like [image](image) or [color](color) will display the default image or color.
 
 ```php
-use Filament\Tables\Components\TextColumn;
+use Filament\Tables\Columns\TextColumn;
 
 TextColumn::make('title')
     ->default('Untitled')
@@ -90,7 +90,7 @@ TextColumn::make('title')
 Sometimes you may want to display placeholder text for columns with an empty state, which is styled as a lighter gray text. This differs from the [default value](#setting-the-default-state-of-an-column), as the placeholder is always text and not treated as if it were real state.
 
 ```php
-use Filament\Tables\Components\TextColumn;
+use Filament\Tables\Columns\TextColumn;
 
 TextColumn::make('title')
     ->placeholder('Untitled')
@@ -120,7 +120,7 @@ TextColumn::make('users_count')->counts('users')
 
 In this example, `users` is the name of the relationship to count from. The name of the column must be `users_count`, as this is the convention that [Laravel uses](https://laravel.com/docs/eloquent-relationships#counting-related-models) for storing the result.
 
-If you'd like to scope the relationship before calculating, you can pass an array to the method, where the key is the relationship name and the value is the function to scope the Eloquent query with:
+If you'd like to scope the relationship before counting, you can pass an array to the method, where the key is the relationship name and the value is the function to scope the Eloquent query with:
 
 ```php
 use Filament\Tables\Columns\TextColumn;
@@ -143,7 +143,7 @@ TextColumn::make('users_exists')->exists('users')
 
 In this example, `users` is the name of the relationship to check for existence. The name of the column must be `users_exists`, as this is the convention that [Laravel uses](https://laravel.com/docs/eloquent-relationships#other-aggregate-functions) for storing the result.
 
-If you'd like to scope the relationship before calculating, you can pass an array to the method, where the key is the relationship name and the value is the function to scope the Eloquent query with:
+If you'd like to scope the relationship before checking existance, you can pass an array to the method, where the key is the relationship name and the value is the function to scope the Eloquent query with:
 
 ```php
 use Filament\Tables\Columns\TextColumn;
@@ -166,7 +166,7 @@ TextColumn::make('users_avg_age')->avg('users', 'age')
 
 In this example, `users` is the name of the relationship, while `age` is the field that is being averaged. The name of the column must be `users_avg_age`, as this is the convention that [Laravel uses](https://laravel.com/docs/eloquent-relationships#other-aggregate-functions) for storing the result.
 
-If you'd like to scope the relationship before calculating, you can pass an array to the method, where the key is the relationship name and the value is the function to scope the Eloquent query with:
+If you'd like to scope the relationship before aggregating, you can pass an array to the method, where the key is the relationship name and the value is the function to scope the Eloquent query with:
 
 ```php
 use Filament\Tables\Columns\TextColumn;
@@ -182,7 +182,7 @@ TextColumn::make('users_avg_age')->avg([
 By default, the label of the column, which is displayed in the header of the table, is generated from the name of the column. You may customize this using the `label()` method:
 
 ```php
-use Filament\Tables\Components\TextColumn;
+use Filament\Tables\Columns\TextColumn;
 
 TextColumn::make('name')
     ->label('Full name')
@@ -193,7 +193,7 @@ TextColumn::make('name')
 Customizing the label in this way is useful if you wish to use a [translation string for localization](https://laravel.com/docs/localization#retrieving-translation-strings):
 
 ```php
-use Filament\Tables\Components\TextColumn;
+use Filament\Tables\Columns\TextColumn;
 
 TextColumn::make('name')
     ->label(__('columns.name'))
@@ -274,7 +274,7 @@ public function table(Table $table): Table
         ->columns([
             // ...
         ])
-        ->defaultSort(query: function (Builder $query): Builder {
+        ->defaultSort(function (Builder $query): Builder {
             return $query->orderBy('stock');
         });
 }
@@ -958,7 +958,7 @@ TextColumn::make('email')
     ->placeholder(fn (User $record): string => "No email for {$record->name}")
 
 TextColumn::make('role')
-    ->hidden(fn (User $record): bool => $record->role === 'admin')
+    ->badge(fn (User $record): bool => $record->role === 'admin')
 
 TextColumn::make('name')
     ->extraAttributes(fn (User $record): array => ['class' => "{$record->getKey()}-name-column"])

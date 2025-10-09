@@ -30,6 +30,7 @@ You may change the language syntax highlighting of the code editor using the `la
 - Markdown
 - PHP
 - Python
+- SQL
 - XML
 - YAML
 

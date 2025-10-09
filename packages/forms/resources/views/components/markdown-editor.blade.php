@@ -4,12 +4,14 @@
     $extraAttributeBag = $getExtraAttributeBag();
     $key = $getKey();
     $statePath = $getStatePath();
+    $fileAttachmentsMaxSize = $getFileAttachmentsMaxSize();
+    $fileAttachmentsAcceptedFileTypes = $getFileAttachmentsAcceptedFileTypes();
 @endphp
 
 <x-dynamic-component :component="$fieldWrapperView" :field="$field">
     @if ($isDisabled())
         <div id="{{ $id }}" class="fi-fo-markdown-editor fi-disabled fi-prose">
-            {!! str($getState())->sanitizeHtml()->markdown($getCommonMarkOptions(), $getCommonMarkExtensions()) !!}
+            {!! str($getState())->markdown($getCommonMarkOptions(), $getCommonMarkExtensions())->sanitizeHtml() !!}
         </div>
     @else
         <x-filament::input.wrapper
@@ -23,8 +25,7 @@
                 aria-labelledby="{{ $id }}-label"
                 id="{{ $id }}"
                 role="group"
-                {{-- prettier-ignore-start --}}x-load="visible || event (x-modal-opened)"
-                {{-- prettier-ignore-end --}}
+                x-load
                 x-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('markdown-editor', 'filament/forms') }}"
                 x-data="markdownEditorFormComponent({
                             canAttachFiles: @js($hasToolbarButton('attachFiles')),
@@ -38,6 +39,18 @@
                             toolbarButtons: @js($getToolbarButtons()),
                             translations: @js(__('filament-forms::components.markdown_editor')),
                             uploadFileAttachmentUsing: async (file, onSuccess, onError) => {
+                                const acceptedTypes = @js($fileAttachmentsAcceptedFileTypes)
+
+                                if (acceptedTypes && ! acceptedTypes.includes(file.type)) {
+                                    return onError(@js($fileAttachmentsAcceptedFileTypes ? __('filament-forms::components.markdown_editor.file_attachments_accepted_file_types_message', ['values' => implode(', ', $fileAttachmentsAcceptedFileTypes)]) : null))
+                                }
+
+                                const maxSize = @js($fileAttachmentsMaxSize)
+
+                                if (maxSize && file.size > +maxSize * 1024) {
+                                    return onError(@js($fileAttachmentsMaxSize ? trans_choice('filament-forms::components.markdown_editor.file_attachments_max_size_message', $fileAttachmentsMaxSize, ['max' => $fileAttachmentsMaxSize]) : null))
+                                }
+
                                 $wire.upload(`componentFileAttachments.{{ $statePath }}`, file, () => {
                                     $wire
                                         .callSchemaComponentMethod(

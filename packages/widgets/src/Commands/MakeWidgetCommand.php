@@ -504,7 +504,7 @@ class MakeWidgetCommand extends Command
 
         $this->writeFile($path, app(TableWidgetClassGenerator::class, [
             'fqn' => $this->fqn,
-            'modelFqn' => $modelFqn,
+            'modelFqn' => $modelFqn ?: Model::class,
             'isGenerated' => $isGenerated,
         ]));
     }

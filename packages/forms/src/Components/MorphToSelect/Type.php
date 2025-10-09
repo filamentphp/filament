@@ -3,12 +3,12 @@
 namespace Filament\Forms\Components\MorphToSelect;
 
 use Closure;
-use Exception;
 use Filament\Forms\Components\Select;
 use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+use LogicException;
 
 use function Filament\Support\generate_search_column_expression;
 use function Filament\Support\generate_search_term_expression;
@@ -141,6 +141,14 @@ class Type
                 $query = $component->evaluate($this->modifyOptionsQueryUsing, [
                     'query' => $query,
                 ]) ?? $query;
+            }
+
+            $baseQuery = $query->getQuery();
+
+            if (isset($baseQuery->limit)) {
+                $component->optionsLimit($baseQuery->limit);
+            } elseif ($component->isSearchable() && filled($this->getSearchColumns())) {
+                $query->limit($component->getOptionsLimit());
             }
 
             $keyName = $query->getModel()->getKeyName();
@@ -326,7 +334,7 @@ class Type
     public function getTitleAttribute(): string
     {
         if (blank($this->titleAttribute)) {
-            throw new Exception("MorphToSelect type [{$this->getModel()}] must have a [titleAttribute()] set.");
+            throw new LogicException("MorphToSelect type [{$this->getModel()}] must have a [titleAttribute()] set.");
         }
 
         return $this->titleAttribute;

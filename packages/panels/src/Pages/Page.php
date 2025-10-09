@@ -404,6 +404,6 @@ abstract class Page extends BasePage
 
     public function getDefaultTestingSchemaName(): ?string
     {
-        return 'content';
+        return $this->getSchema('form') ? 'form' : 'content';
     }
 }

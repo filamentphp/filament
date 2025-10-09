@@ -4,7 +4,6 @@ namespace Filament\Tables\Columns;
 
 use BackedEnum;
 use Closure;
-use Exception;
 use Filament\Forms\Components\Concerns\CanDisableOptions;
 use Filament\Forms\Components\Concerns\CanSelectPlaceholder;
 use Filament\Forms\Components\Concerns\HasEnum;
@@ -31,6 +30,8 @@ use Illuminate\Support\Js;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Renderless;
+use LogicException;
+use Stringable;
 use Znck\Eloquent\Relations\BelongsToThrough;
 
 use function Filament\Support\generate_search_column_expression;
@@ -65,8 +66,6 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
     protected string | Htmlable | Closure | null $optionsSearchPrompt = null;
 
     protected ?Closure $getOptionLabelUsing = null;
-
-    protected ?Closure $getOptionLabelsUsing = null;
 
     protected ?Closure $getOptionsSearchResultsUsing = null;
 
@@ -143,6 +142,12 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
      */
     public function getRules(): array
     {
+        $state = $this->getState();
+
+        if (blank($state)) {
+            return $this->getBaseRules();
+        }
+
         $optionLabel = $this->getOptionLabel(withDefault: false);
 
         if (blank($optionLabel)) {
@@ -151,8 +156,6 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
                 Rule::in([]),
             ];
         }
-
-        $state = $this->getState();
 
         if ($state instanceof BackedEnum) {
             $state = $state->value;
@@ -373,6 +376,8 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
 
             if ($state instanceof BackedEnum) {
                 $state = $state->value;
+            } elseif ($state instanceof Stringable) {
+                $state = (string) $state;
             }
 
             foreach ($options as $groupedOptions) {
@@ -589,7 +594,13 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
             $relationshipTitleAttribute = $column->getOptionsRelationshipTitleAttribute();
 
             if (empty($relationshipQuery->getQuery()->orders)) {
-                $relationshipQuery->orderBy($relationshipQuery->qualifyColumn($relationshipTitleAttribute));
+                $relationshipOrderByAttribute = $relationshipTitleAttribute;
+
+                if (str_contains($relationshipOrderByAttribute, ' as ')) {
+                    $relationshipOrderByAttribute = (string) str($relationshipOrderByAttribute)->before(' as ');
+                }
+
+                $relationshipQuery->orderBy($relationshipQuery->qualifyColumn($relationshipOrderByAttribute));
             }
 
             if (str_contains($relationshipTitleAttribute, '->')) {
@@ -643,7 +654,13 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
             $relationshipTitleAttribute = $column->getOptionsRelationshipTitleAttribute();
 
             if (empty($relationshipQuery->getQuery()->orders)) {
-                $relationshipQuery->orderBy($relationshipQuery->qualifyColumn($relationshipTitleAttribute));
+                $relationshipOrderByAttribute = $relationshipTitleAttribute;
+
+                if (str_contains($relationshipOrderByAttribute, ' as ')) {
+                    $relationshipOrderByAttribute = (string) str($relationshipOrderByAttribute)->before(' as ');
+                }
+
+                $relationshipQuery->orderBy($relationshipQuery->qualifyColumn($relationshipOrderByAttribute));
             }
 
             if (str_contains($relationshipTitleAttribute, '->')) {
@@ -782,7 +799,7 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
         if (! $relationship) {
             $model = $record::class;
 
-            throw new Exception("The relationship [{$relationshipName}] does not exist on the model [{$model}].");
+            throw new LogicException("The relationship [{$relationshipName}] does not exist on the model [{$model}].");
         }
 
         return $relationship;

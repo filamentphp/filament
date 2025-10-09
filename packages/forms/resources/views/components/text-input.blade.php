@@ -6,7 +6,6 @@
     $datalistOptions = $getDatalistOptions();
     $extraAlpineAttributes = $getExtraAlpineAttributes();
     $extraAttributeBag = $getExtraAttributeBag();
-    $hasInlineLabel = $hasInlineLabel();
     $id = $getId();
     $isConcealed = $isConcealed();
     $isDisabled = $isDisabled();
@@ -23,6 +22,7 @@
     $suffixIconColor = $getSuffixIconColor();
     $suffixLabel = $getSuffixLabel();
     $statePath = $getStatePath();
+    $placeholder = $getPlaceholder();
 
     if ($isPasswordRevealable) {
         $xData = '{ isPasswordRevealed: false }';
@@ -56,7 +56,7 @@
             'maxlength' => (! $isConcealed) ? $getMaxLength() : null,
             'min' => (! $isConcealed) ? $getMinValue() : null,
             'minlength' => (! $isConcealed) ? $getMinLength() : null,
-            'placeholder' => $getPlaceholder(),
+            'placeholder' => filled($placeholder) ? e($placeholder) : null,
             'readonly' => $isReadOnly(),
             'required' => $isRequired() && (! $isConcealed),
             'step' => $getStep(),
@@ -73,8 +73,7 @@
 <x-dynamic-component
     :component="$fieldWrapperView"
     :field="$field"
-    :has-inline-label="$hasInlineLabel"
-    class="fi-fo-text-input-wrp"
+    :inline-label-vertical-alignment="\Filament\Support\Enums\VerticalAlignment::Center"
 >
     <x-filament::input.wrapper
         :disabled="$isDisabled"

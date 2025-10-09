@@ -52,7 +52,7 @@ class Step extends Component implements CanConcealComponents
             $statePath = $component->getStatePath();
 
             return Str::slug(Str::transliterate($label, strict: true)) . '::' . (filled($statePath) ? "{$statePath}::wizard-step" : 'wizard-step');
-        });
+        }, isInheritable: false);
     }
 
     public function afterValidation(?Closure $callback): static

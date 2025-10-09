@@ -3,7 +3,6 @@
 namespace Filament\Forms\Components;
 
 use Closure;
-use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Schemas\Components\Component;
@@ -14,6 +13,7 @@ use Filament\Schemas\Components\StateCasts\EnumStateCast;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\Size;
 use Illuminate\Contracts\Support\Htmlable;
+use InvalidArgumentException;
 
 class Field extends Component implements Contracts\HasValidationRules
 {
@@ -64,7 +64,7 @@ class Field extends Component implements Contracts\HasValidationRules
         $name ??= static::getDefaultName();
 
         if ($name === null) {
-            throw new Exception("Field of class [$fieldClass] must have a unique name, passed to the [make()] method.");
+            throw new InvalidArgumentException("Field of class [$fieldClass] must have a unique name, passed to the [make()] method.");
         }
 
         $static = app($fieldClass, ['name' => $name]);

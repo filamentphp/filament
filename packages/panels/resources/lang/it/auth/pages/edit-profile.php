@@ -16,10 +16,18 @@ return [
 
         'password' => [
             'label' => 'Nuova password',
+            'validation_attribute' => 'password',
         ],
 
         'password_confirmation' => [
             'label' => 'Conferma nuova password',
+            'validation_attribute' => 'password confirmation',
+        ],
+
+        'current_password' => [
+            'label' => 'Password attuale',
+            'below_content' => 'Per motivi di sicurezza, conferma la tua password per continuare.',
+            'validation_attribute' => 'current password',
         ],
 
         'actions' => [

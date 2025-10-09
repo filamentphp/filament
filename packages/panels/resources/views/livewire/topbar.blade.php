@@ -1,6 +1,5 @@
 <div class="fi-topbar-ctn">
     @php
-        $navigation = filament()->getNavigation();
         $isRtl = __('filament-panels::layout.direction') === 'rtl';
         $isSidebarCollapsibleOnDesktop = filament()->isSidebarCollapsibleOnDesktop();
         $isSidebarFullyCollapsibleOnDesktop = filament()->isSidebarFullyCollapsibleOnDesktop();
@@ -102,10 +101,14 @@
 
         @if ($hasTopNavigation || (! $hasNavigation))
             @if ($hasTenancy && filament()->hasTenantMenu())
-                <x-filament-panels::tenant-menu />
+                <x-filament-panels::tenant-menu teleport />
             @endif
 
             @if ($hasNavigation)
+                @php
+                    $navigation = filament()->getNavigation();
+                @endphp
+
                 <ul class="fi-topbar-nav-groups">
                     @foreach ($navigation as $group)
                         @php
@@ -229,20 +232,20 @@
         >
             {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::GLOBAL_SEARCH_BEFORE) }}
 
-            @if (filament()->isGlobalSearchEnabled())
+            @if (filament()->isGlobalSearchEnabled() && filament()->getGlobalSearchPosition() === \Filament\Enums\GlobalSearchPosition::Topbar)
                 @livewire(Filament\Livewire\GlobalSearch::class)
             @endif
 
             {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::GLOBAL_SEARCH_AFTER) }}
 
             @if (filament()->auth()->check())
-                @if (filament()->hasDatabaseNotifications())
+                @if (filament()->hasDatabaseNotifications() && filament()->getDatabaseNotificationsPosition() === \Filament\Enums\DatabaseNotificationsPosition::Topbar)
                     @livewire(Filament\Livewire\DatabaseNotifications::class, [
                         'lazy' => filament()->hasLazyLoadedDatabaseNotifications(),
                     ])
                 @endif
 
-                @if (filament()->hasUserMenu())
+                @if (filament()->hasUserMenu() && filament()->getUserMenuPosition() === \Filament\Enums\UserMenuPosition::Topbar)
                     <x-filament-panels::user-menu />
                 @endif
             @endif

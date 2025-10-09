@@ -7,6 +7,8 @@ use Filament\Actions\ReplicateAction;
 use Filament\Actions\RestoreAction;
 use Filament\Actions\ViewAction;
 use Filament\Facades\Filament;
+use Filament\Resources\Events\RecordSaved;
+use Filament\Resources\Events\RecordUpdated;
 use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Models\Ticket;
 use Filament\Tests\Fixtures\Models\TicketMessage;
@@ -48,6 +50,11 @@ it('can retrieve data', function (): void {
 });
 
 it('can save', function (): void {
+    Event::fake([
+        RecordUpdated::class,
+        RecordSaved::class,
+    ]);
+
     $post = Post::factory()->create();
     $newData = Post::factory()->make();
 
@@ -69,6 +76,9 @@ it('can save', function (): void {
         ->content->toBe($newData->content)
         ->tags->toBe($newData->tags)
         ->title->toBe($newData->title);
+
+    Event::assertDispatched(RecordUpdated::class);
+    Event::assertDispatched(RecordSaved::class);
 });
 
 it('can validate input', function (): void {

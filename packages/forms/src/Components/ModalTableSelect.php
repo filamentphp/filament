@@ -3,8 +3,10 @@
 namespace Filament\Forms\Components;
 
 use Closure;
-use Exception;
 use Filament\Actions\Action;
+use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
+use Filament\Schemas\Components\StateCasts\OptionsArrayStateCast;
+use Filament\Schemas\Components\StateCasts\OptionStateCast;
 use Filament\Support\Enums\IconPosition;
 use Filament\Support\Icons\Heroicon;
 use Filament\Support\Services\RelationshipJoiner;
@@ -21,6 +23,7 @@ use Illuminate\Database\Eloquent\Relations\HasOneOrManyThrough;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use LogicException;
 use Znck\Eloquent\Relations\BelongsToThrough;
 
 class ModalTableSelect extends Field
@@ -56,6 +59,10 @@ class ModalTableSelect extends Field
 
     protected ?Closure $modifySelectActionUsing = null;
 
+    protected bool | Closure | null $hasBadges = null;
+
+    protected string | Closure | null $badgeColor = null;
+
     /**
      * @var array<mixed> | Closure
      */
@@ -64,20 +71,6 @@ class ModalTableSelect extends Field
     protected function setUp(): void
     {
         parent::setUp();
-
-        $this->default(static fn (ModalTableSelect $component): ?array => $component->isMultiple() ? [] : null);
-
-        $this->afterStateHydrated(static function (ModalTableSelect $component, $state): void {
-            if (! $component->isMultiple()) {
-                return;
-            }
-
-            if (is_array($state)) {
-                return;
-            }
-
-            $component->state([]);
-        });
 
         $this->registerActions([
             fn (ModalTableSelect $component): Action => $component->getSelectAction(),
@@ -143,7 +136,7 @@ class ModalTableSelect extends Field
             ->hiddenLabel()
             ->tableConfiguration($this->getTableConfiguration())
             ->relationshipName($this->getRelationshipName())
-            ->multiple()
+            ->multiple($this->isMultiple())
             ->maxItems($this->getMaxItems())
             ->tableArguments($this->getTableArguments());
 
@@ -300,8 +293,13 @@ class ModalTableSelect extends Field
                 $relatedRecords = $relationship->getResults();
 
                 $component->state(
+                    // Cast the related keys to a string, otherwise JavaScript does not
+                    // know how to handle deselection.
+                    //
+                    // https://github.com/filamentphp/filament/issues/1111
                     $relatedRecords
                         ->pluck($relationship->getLocalKeyName())
+                        ->map(static fn ($key): string => strval($key))
                         ->all(),
                 );
 
@@ -581,7 +579,7 @@ class ModalTableSelect extends Field
         }
 
         if (! $relationship) {
-            throw new Exception("The relationship [{$relationshipName}] does not exist on the model [{$this->getModel()}].");
+            throw new LogicException("The relationship [{$relationshipName}] does not exist on the model [{$this->getModel()}].");
         }
 
         return $relationship;
@@ -643,6 +641,12 @@ class ModalTableSelect extends Field
             return $values;
         }
 
+        $state = $this->getState();
+
+        if (blank($state)) {
+            return null;
+        }
+
         if ($this->isMultiple()) {
             return array_keys($this->getOptionLabels(withDefaults: false));
         }
@@ -664,7 +668,7 @@ class ModalTableSelect extends Field
 
     public function getTableConfiguration(): string
     {
-        return $this->evaluate($this->tableConfiguration) ?? throw new Exception('The [tableConfiguration()] method must be set when using a [TableSelect] component.');
+        return $this->evaluate($this->tableConfiguration) ?? throw new LogicException('The [tableConfiguration()] method must be set when using a [TableSelect] component.');
     }
 
     /**
@@ -673,5 +677,45 @@ class ModalTableSelect extends Field
     public function getTableArguments(): array
     {
         return $this->evaluate($this->tableArguments) ?? [];
+    }
+
+    public function badge(bool | Closure | null $condition = true): static
+    {
+        $this->hasBadges = $condition;
+
+        return $this;
+    }
+
+    public function hasBadges(): bool
+    {
+        return $this->evaluate($this->hasBadges) ?? $this->isMultiple();
+    }
+
+    public function badgeColor(string | Closure | null $color): static
+    {
+        $this->badgeColor = $color;
+
+        return $this;
+    }
+
+    public function getBadgeColor(): ?string
+    {
+        return $this->evaluate($this->badgeColor);
+    }
+
+    /**
+     * @return array<StateCast>
+     */
+    public function getDefaultStateCasts(): array
+    {
+        if ($this->hasCustomStateCasts()) {
+            return parent::getDefaultStateCasts();
+        }
+
+        if ($this->isMultiple()) {
+            return [app(OptionsArrayStateCast::class)];
+        }
+
+        return [app(OptionStateCast::class, ['isNullable' => true])];
     }
 }

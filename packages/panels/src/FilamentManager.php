@@ -3,11 +3,13 @@
 namespace Filament;
 
 use Closure;
-use Exception;
 use Filament\Actions\Action;
 use Filament\Auth\MultiFactor\Contracts\MultiFactorAuthenticationProvider;
 use Filament\Contracts\Plugin;
+use Filament\Enums\DatabaseNotificationsPosition;
+use Filament\Enums\GlobalSearchPosition;
 use Filament\Enums\ThemeMode;
+use Filament\Enums\UserMenuPosition;
 use Filament\Events\ServingFilament;
 use Filament\Events\TenantSet;
 use Filament\Exceptions\NoDefaultPanelSetException;
@@ -35,6 +37,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Event;
 use Livewire\Component;
+use LogicException;
 
 class FilamentManager
 {
@@ -462,6 +465,11 @@ class FilamentManager
         return $this->getCurrentOrDefaultPanel()->getTenantMenuItems();
     }
 
+    public function isTenantMenuSearchable(): ?bool
+    {
+        return $this->getCurrentOrDefaultPanel()->isTenantMenuSearchable();
+    }
+
     /**
      * @return class-string<Model>|null
      */
@@ -546,8 +554,8 @@ class FilamentManager
             $avatar = $user->getAttributeValue('avatar_url');
         }
 
-        if ($avatar) {
-            return $avatar;
+        if (filled($avatar)) {
+            return str($avatar)->startsWith('data:image/') ? $avatar : url($avatar);
         }
 
         return app($this->getDefaultAvatarProvider())->get($user);
@@ -757,6 +765,16 @@ class FilamentManager
         return $this->getCurrentOrDefaultPanel()->hasUserMenu();
     }
 
+    public function getUserMenuPosition(): UserMenuPosition
+    {
+        return $this->getCurrentOrDefaultPanel()->getUserMenuPosition();
+    }
+
+    public function getDatabaseNotificationsPosition(): DatabaseNotificationsPosition
+    {
+        return $this->getCurrentOrDefaultPanel()->getDatabaseNotificationsPosition();
+    }
+
     public function hasTopNavigation(): bool
     {
         return $this->getCurrentOrDefaultPanel()->hasTopNavigation();
@@ -780,6 +798,11 @@ class FilamentManager
         }
 
         return false;
+    }
+
+    public function getGlobalSearchPosition(): GlobalSearchPosition
+    {
+        return $this->getCurrentOrDefaultPanel()->getGlobalSearchPosition();
     }
 
     public function isServing(): bool
@@ -853,7 +876,7 @@ class FilamentManager
         try {
             $this->getDefaultPanel()->navigationGroups($groups);
         } catch (NoDefaultPanelSetException $exception) {
-            throw new Exception('Please use the `navigationGroups()` method on the panel configuration to register navigation groups. See the documentation - https://filamentphp.com/docs/panels/navigation#customizing-navigation-groups');
+            throw new LogicException('Please use the `navigationGroups()` method on the panel configuration to register navigation groups. See the documentation - https://filamentphp.com/docs/panels/navigation#customizing-navigation-groups');
         }
     }
 
@@ -867,7 +890,7 @@ class FilamentManager
         try {
             $this->getDefaultPanel()->navigationItems($items);
         } catch (NoDefaultPanelSetException $exception) {
-            throw new Exception('Please use the `navigationItems()` method on the panel configuration to register navigation items. See the documentation - https://filamentphp.com/docs/panels/navigation#registering-custom-navigation-items');
+            throw new LogicException('Please use the `navigationItems()` method on the panel configuration to register navigation items. See the documentation - https://filamentphp.com/docs/panels/navigation#registering-custom-navigation-items');
         }
     }
 
@@ -881,7 +904,7 @@ class FilamentManager
         try {
             $this->getDefaultPanel()->pages($pages);
         } catch (NoDefaultPanelSetException $exception) {
-            throw new Exception('Please use the `pages()` method on the panel configuration to register pages.');
+            throw new LogicException('Please use the `pages()` method on the panel configuration to register pages.');
         }
     }
 
@@ -903,7 +926,7 @@ class FilamentManager
         try {
             $this->getDefaultPanel()->resources($resources);
         } catch (NoDefaultPanelSetException $exception) {
-            throw new Exception('Please use the `resources()` method on the panel configuration to register resources.');
+            throw new LogicException('Please use the `resources()` method on the panel configuration to register resources.');
         }
     }
 
@@ -914,7 +937,7 @@ class FilamentManager
      */
     public function registerScripts(array $scripts, bool $shouldBeLoadedBeforeCoreScripts = false): void
     {
-        throw new Exception('Please use the `FilamentAsset` facade to register scripts. See the documentation - https://filamentphp.com/docs/support/assets#registering-javascript-files');
+        throw new LogicException('Please use the `FilamentAsset` facade to register scripts. See the documentation - https://filamentphp.com/docs/support/assets#registering-javascript-files');
     }
 
     /**
@@ -934,7 +957,7 @@ class FilamentManager
      */
     public function registerStyles(array $styles): void
     {
-        throw new Exception('Please use the `FilamentAsset` facade to register styles. See the documentation - https://filamentphp.com/docs/support/assets#registering-css-files');
+        throw new LogicException('Please use the `FilamentAsset` facade to register styles. See the documentation - https://filamentphp.com/docs/support/assets#registering-css-files');
     }
 
     /**
@@ -945,7 +968,7 @@ class FilamentManager
         try {
             $this->getDefaultPanel()->theme($theme);
         } catch (NoDefaultPanelSetException $exception) {
-            throw new Exception('Please use the `theme()` method on the panel configuration to register themes.');
+            throw new LogicException('Please use the `theme()` method on the panel configuration to register themes.');
         }
     }
 
@@ -959,7 +982,7 @@ class FilamentManager
         try {
             $this->getDefaultPanel()->viteTheme($theme, $buildDirectory);
         } catch (NoDefaultPanelSetException $exception) {
-            throw new Exception('Please use the `viteTheme()` method on the panel configuration to register themes.');
+            throw new LogicException('Please use the `viteTheme()` method on the panel configuration to register themes.');
         }
     }
 
@@ -973,7 +996,7 @@ class FilamentManager
         try {
             $this->getDefaultPanel()->userMenuItems($items);
         } catch (NoDefaultPanelSetException $exception) {
-            throw new Exception('Please use the `userMenuItems()` method on the panel configuration to register user menu items. See the documentation - https://filamentphp.com/docs/panels/navigation#customizing-the-user-menu');
+            throw new LogicException('Please use the `userMenuItems()` method on the panel configuration to register user menu items. See the documentation - https://filamentphp.com/docs/panels/navigation#customizing-the-user-menu');
         }
     }
 
@@ -987,7 +1010,7 @@ class FilamentManager
         try {
             $this->getDefaultPanel()->widgets($widgets);
         } catch (NoDefaultPanelSetException $exception) {
-            throw new Exception('Please use the `widgets()` method on the panel configuration to register widgets.');
+            throw new LogicException('Please use the `widgets()` method on the panel configuration to register widgets.');
         }
     }
 
@@ -1012,7 +1035,7 @@ class FilamentManager
         }
 
         if (app()->runningInConsole()) {
-            throw new Exception('The current domain is not set, but multiple domains are registered for the panel. Please use [Filament::currentDomain(\'example.com\')] to set the current domain to ensure that panel URLs are generated correctly.');
+            throw new LogicException('The current domain is not set, but multiple domains are registered for the panel. Please use [Filament::currentDomain(\'example.com\')] to set the current domain to ensure that panel URLs are generated correctly.');
         }
 
         return request()->getHost();

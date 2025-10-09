@@ -9,17 +9,8 @@ import UtilityInjection from "@components/UtilityInjection.astro"
 Filament includes an action that is able to export rows to a CSV or XLSX file. When the trigger button is clicked, a modal asks for the columns that they want to export, and what they should be labeled. This feature uses [job batches](https://laravel.com/docs/queues#job-batching) and [database notifications](../../notifications/database-notifications), so you need to publish those migrations from Laravel. Also, you need to publish the migrations for tables that Filament uses to store information about exports:
 
 ```bash
-# Laravel 11 and higher
 php artisan make:queue-batches-table
 php artisan make:notifications-table
-
-# Laravel 10
-php artisan queue:batches-table
-php artisan notifications:table
-```
-
-```bash
-# All apps
 php artisan vendor:publish --tag=filament-actions-migrations
 php artisan migrate
 ```
@@ -271,7 +262,7 @@ ExportColumn::make('users_count')
 
 In this example, `users` is the name of the relationship to count from. The name of the column must be `users_count`, as this is the convention that [Laravel uses](https://laravel.com/docs/eloquent-relationships#counting-related-models) for storing the result.
 
-If you'd like to scope the relationship before calculating, you can pass an array to the method, where the key is the relationship name and the value is the function to scope the Eloquent query with:
+If you'd like to scope the relationship before counting, you can pass an array to the method, where the key is the relationship name and the value is the function to scope the Eloquent query with:
 
 ```php
 use Filament\Actions\Exports\ExportColumn;
@@ -296,7 +287,7 @@ ExportColumn::make('users_exists')
 
 In this example, `users` is the name of the relationship to check for existence. The name of the column must be `users_exists`, as this is the convention that [Laravel uses](https://laravel.com/docs/eloquent-relationships#other-aggregate-functions) for storing the result.
 
-If you'd like to scope the relationship before calculating, you can pass an array to the method, where the key is the relationship name and the value is the function to scope the Eloquent query with:
+If you'd like to scope the relationship before checking existance, you can pass an array to the method, where the key is the relationship name and the value is the function to scope the Eloquent query with:
 
 ```php
 use Filament\Actions\Exports\ExportColumn;
@@ -321,7 +312,7 @@ ExportColumn::make('users_avg_age')
 
 In this example, `users` is the name of the relationship, while `age` is the field that is being averaged. The name of the column must be `users_avg_age`, as this is the convention that [Laravel uses](https://laravel.com/docs/eloquent-relationships#other-aggregate-functions) for storing the result.
 
-If you'd like to scope the relationship before calculating, you can pass an array to the method, where the key is the relationship name and the value is the function to scope the Eloquent query with:
+If you'd like to scope the relationship before aggregating, you can pass an array to the method, where the key is the relationship name and the value is the function to scope the Eloquent query with:
 
 ```php
 use Filament\Actions\Exports\ExportColumn;

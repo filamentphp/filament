@@ -17,6 +17,31 @@ export default (Alpine) => {
             dataIdAttr: 'x-sortable-item',
             animation: animation,
             ghostClass: 'fi-sortable-ghost',
+            onEnd(event) {
+                // https://github.com/filamentphp/filament/issues/17402
+                const {
+                    item: draggedNode,
+                    to: parentNode,
+                    oldDraggableIndex,
+                    newDraggableIndex,
+                } = event
+
+                if (oldDraggableIndex === newDraggableIndex) {
+                    return
+                }
+
+                const draggableSelector = this.options.draggable
+                const previousNode = parentNode.querySelectorAll(
+                    `:scope > ${draggableSelector}`,
+                )[newDraggableIndex - 1]
+
+                if (previousNode) {
+                    parentNode.insertBefore(
+                        draggedNode,
+                        previousNode.nextSibling,
+                    )
+                }
+            },
         })
     })
 }

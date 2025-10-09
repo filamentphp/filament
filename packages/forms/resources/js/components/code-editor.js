@@ -14,6 +14,7 @@ import { json } from '@codemirror/lang-json'
 import { markdown } from '@codemirror/lang-markdown'
 import { php } from '@codemirror/lang-php'
 import { python } from '@codemirror/lang-python'
+import { sql } from '@codemirror/lang-sql'
 import { xml } from '@codemirror/lang-xml'
 import { yaml } from '@codemirror/lang-yaml'
 
@@ -108,6 +109,7 @@ export default function codeEditorFormComponent({
                 markdown,
                 php,
                 python,
+                sql,
                 xml,
                 yaml,
             }

@@ -3,7 +3,6 @@
 namespace Filament\Tables\Filters\QueryBuilder\Constraints\RelationshipConstraint\Operators;
 
 use Closure;
-use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Forms\Components\Select;
@@ -14,6 +13,7 @@ use Filament\Tables\Filters\QueryBuilder\Constraints\RelationshipConstraint;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Arr;
+use LogicException;
 use Znck\Eloquent\Relations\BelongsToThrough;
 
 class IsRelatedToOperator extends Operator
@@ -122,7 +122,8 @@ class IsRelatedToOperator extends Operator
                 $this->getTitleAttribute(),
                 $this->modifyRelationshipQueryUsing,
             )
-            ->forceSearchCaseInsensitive($this->isSearchForcedCaseInsensitive());
+            ->forceSearchCaseInsensitive($this->isSearchForcedCaseInsensitive())
+            ->columnSpanFull();
 
         if ($this->getOptionLabelUsing) {
             $field->getOptionLabelUsing($this->getOptionLabelUsing);
@@ -199,7 +200,7 @@ class IsRelatedToOperator extends Operator
         }
 
         if (! ($constraint instanceof RelationshipConstraint)) {
-            throw new Exception('Is operator can only be used with relationship constraints.');
+            throw new LogicException('Is operator can only be used with relationship constraints.');
         }
 
         return $constraint;

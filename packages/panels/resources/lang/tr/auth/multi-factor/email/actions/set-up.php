@@ -2,32 +2,32 @@
 
 return [
 
-    'label' => 'Set up',
+    'label' => 'Kur',
 
     'modal' => [
 
-        'heading' => 'Set up email verification codes',
+        'heading' => 'E-posta doğrulama kodlarını kur',
 
-        'description' => 'You\'ll need to enter the 6-digit code we send you by email each time you sign in or perform sensitive actions. Check your email for a 6-digit code to complete the setup.',
+        'description' => 'Her giriş yaptığınızda veya hassas işlemler gerçekleştirdiğinizde size e-posta ile gönderdiğimiz 6 haneli kodu girmeniz gerekecek. Kurulumu tamamlamak için e-postanızı kontrol edin ve 6 haneli kodu girin.',
 
         'form' => [
 
             'code' => [
 
-                'label' => 'Enter the 6-digit code we sent you by email',
+                'label' => 'Size e-posta ile gönderdiğimiz 6 haneli kodu girin',
 
-                'validation_attribute' => 'code',
+                'validation_attribute' => 'kod',
 
                 'actions' => [
 
                     'resend' => [
 
-                        'label' => 'Send a new code by email',
+                        'label' => 'E-posta ile yeni kod gönder',
 
                         'notifications' => [
 
                             'resent' => [
-                                'title' => 'We\'ve sent you a new code by email',
+                                'title' => 'Size e-posta ile yeni bir kod gönderdik',
                             ],
 
                         ],
@@ -38,7 +38,7 @@ return [
 
                 'messages' => [
 
-                    'invalid' => 'The code you entered is invalid.',
+                    'invalid' => 'Girdiğiniz kod geçersiz.',
 
                 ],
 
@@ -49,7 +49,7 @@ return [
         'actions' => [
 
             'submit' => [
-                'label' => 'Enable email verification codes',
+                'label' => 'E-posta doğrulama kodlarını etkinleştir',
             ],
 
         ],
@@ -59,7 +59,7 @@ return [
     'notifications' => [
 
         'enabled' => [
-            'title' => 'Email verification codes have been enabled',
+            'title' => 'E-posta doğrulama kodları etkinleştirildi',
         ],
 
     ],

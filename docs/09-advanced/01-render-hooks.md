@@ -108,6 +108,7 @@ use Filament\View\PanelsRenderHook;
 - `PanelsRenderHook::SIMPLE_PAGE_END` - End of the simple page content container, also [can be scoped](#scoping-render-hooks) to the page class
 - `PanelsRenderHook::SIMPLE_PAGE_START` - Start of the simple page content container, also [can be scoped](#scoping-render-hooks) to the page class
 - `PanelsRenderHook::SIDEBAR_FOOTER` - Pinned to the bottom of the sidebar, below the content
+- `PanelsRenderHook::SIDEBAR_START` - Start of the sidebar container
 - `PanelsRenderHook::STYLES_AFTER` - After styles are defined
 - `PanelsRenderHook::STYLES_BEFORE` - Before styles are defined
 - `PanelsRenderHook::TENANT_MENU_AFTER` - After the [tenant menu](../users/tenancy#customizing-the-tenant-menu)
@@ -133,6 +134,7 @@ use Filament\Tables\View\TablesRenderHook;
 ```
 
 - `TablesRenderHook::FILTER_INDICATORS` - Replace the existing filter indicators, receives `filterIndicators` data as `array<Filament\Tables\Filters\Indicator>`
+- `TablesRenderHook::HEADER_CELL` - Replace the existing header cells, receives the `Filament\Tables\Columns\Column` object as `column` and `isReordering` in the data.
 - `TablesRenderHook::SELECTION_INDICATOR_ACTIONS_AFTER` - After the "select all" and "deselect all" action buttons in the selection indicator bar
 - `TablesRenderHook::SELECTION_INDICATOR_ACTIONS_BEFORE` - Before the "select all" and "deselect all" action buttons in the selection indicator bar
 - `TablesRenderHook::HEADER_AFTER` - After the header container
@@ -149,6 +151,24 @@ use Filament\Tables\View\TablesRenderHook;
 - `TablesRenderHook::TOOLBAR_START` - The start of the toolbar
 - `TablesRenderHook::TOOLBAR_COLUMN_MANAGER_TRIGGER_AFTER` - After the [column manager](../tables/columns/getting-started#toggling-column-visibility) trigger
 - `TablesRenderHook::TOOLBAR_COLUMN_MANAGER_TRIGGER_BEFORE` - Before the [column manager](../tables/columns/getting-started#toggling-column-visibility) trigger
+
+
+### Actions render hooks
+
+All these render hooks [can be scoped](#scoping-render-hooks) to any Livewire component class. When using the Panel Builder, these classes might be the List or Manage page of a resource, or a relation manager.
+
+Scoping is typically not enough in this case, as Livewire components can have multiple actions, so you can access the `action` data as `Filament\Actions\Action` to identify the specific action in all these render hooks.
+
+```php
+use Filament\Actions\View\ActionsRenderHook;
+```
+
+- `ActionsRenderHook::MODAL_CUSTOM_CONTENT_AFTER` - After the [modal content](../actions/modals#custom-modal-content)
+- `ActionsRenderHook::MODAL_CUSTOM_CONTENT_BEFORE` - Before the [modal content](../actions/modals#custom-modal-content)
+- `ActionsRenderHook::MODAL_CUSTOM_CONTENT_FOOTER_AFTER` - After the [modal content footer](../actions/modals#adding-custom-modal-content-below-the-form)
+- `ActionsRenderHook::MODAL_CUSTOM_CONTENT_FOOTER_BEFORE` - Before the [modal content footer](../actions/modals#adding-custom-modal-content-below-the-form)
+- `ActionsRenderHook::MODAL_SCHEMA_AFTER` - After the [modal schema](../actions/modals#rendering-a-schema-in-a-modal)
+- `ActionsRenderHook::MODAL_SCHEMA_BEFORE` - Before the [modal schema](../actions/modals#rendering-a-schema-in-a-modal)
 
 
 ### Widgets render hooks

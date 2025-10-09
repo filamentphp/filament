@@ -467,7 +467,7 @@ trait HasComponents
     }
 
     /**
-     * @param  array<string, class-string<Component>>  $components
+     * @param  array<class-string<Component>>  $components
      */
     public function livewireComponents(array $components): static
     {

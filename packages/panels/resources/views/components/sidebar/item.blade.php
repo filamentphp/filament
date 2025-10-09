@@ -115,8 +115,8 @@
         <ul class="fi-sidebar-sub-group-items">
             @foreach ($childItems as $childItem)
                 @php
-                    $isChildActive = $childItem->isActive();
                     $isChildItemChildItemsActive = $childItem->isChildItemsActive();
+                    $isChildActive = (! $isChildItemChildItemsActive) && $childItem->isActive();
                     $childItemActiveIcon = $childItem->getActiveIcon();
                     $childItemBadge = $childItem->getBadge();
                     $childItemBadgeColor = $childItem->getBadgeColor();

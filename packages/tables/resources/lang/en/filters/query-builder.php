@@ -15,7 +15,7 @@ return [
             'label' => 'Groups',
 
             'block' => [
-                'label' => 'Disjunction (OR)',
+                'label' => 'OR condition',
                 'or' => 'OR',
             ],
 
@@ -474,7 +474,7 @@ return [
         ],
 
         'add_rule_group' => [
-            'label' => 'Add rule group',
+            'label' => 'Add OR',
         ],
 
     ],

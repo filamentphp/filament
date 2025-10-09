@@ -205,7 +205,7 @@ class Notification extends ViewComponent implements Arrayable, HasEmbeddedView
         $data = $this->toArray();
         $data['format'] = 'filament';
 
-        return new BroadcastNotification($data);
+        return app(BroadcastNotification::class, ['data' => $data]);
     }
 
     public function toDatabase(): DatabaseNotification
@@ -347,6 +347,8 @@ class Notification extends ViewComponent implements Arrayable, HasEmbeddedView
         <div
             x-data="notificationComponent({ notification: <?= Js::from($this->toArray()) ?> })"
             x-transition:enter-start="fi-transition-enter-start"
+            x-transition:enter-end="fi-transition-enter-end"
+            x-transition:leave-start="fi-transition-leave-start"
             x-transition:leave-end="fi-transition-leave-end"
             <?= $attributes ?>
         >

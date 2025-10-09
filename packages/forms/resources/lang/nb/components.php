@@ -11,15 +11,67 @@ return [
             ],
 
             'add' => [
-                'label' => 'Legge til i :label',
+
+                'label' => 'Legg til i :label',
+
+                'modal' => [
+
+                    'heading' => 'Legg til i :label',
+
+                    'actions' => [
+
+                        'add' => [
+                            'label' => 'Legg til',
+                        ],
+
+                    ],
+
+                ],
+
             ],
 
             'add_between' => [
-                'label' => 'Sett inn mellom',
+
+                'label' => 'Sett inn mellom blokker',
+
+                'modal' => [
+
+                    'heading' => 'Legg til i :label',
+
+                    'actions' => [
+
+                        'add' => [
+                            'label' => 'Legg til',
+                        ],
+
+                    ],
+
+                ],
+
             ],
 
             'delete' => [
                 'label' => 'Slett',
+            ],
+
+            'edit' => [
+
+                'label' => 'Endre',
+
+                'modal' => [
+
+                    'heading' => 'Endre blokk',
+
+                    'actions' => [
+
+                        'save' => [
+                            'label' => 'Lagre endringer',
+                        ],
+
+                    ],
+
+                ],
+
             ],
 
             'reorder' => [
@@ -35,7 +87,7 @@ return [
             ],
 
             'collapse' => [
-                'label' => 'Kollaps',
+                'label' => 'Fold sammen',
             ],
 
             'expand' => [
@@ -43,7 +95,7 @@ return [
             ],
 
             'collapse_all' => [
-                'label' => 'Kollaps alle',
+                'label' => 'Fold sammen alle',
             ],
 
             'expand_all' => [
@@ -250,6 +302,28 @@ return [
 
     ],
 
+    'modal_table_select' => [
+
+        'actions' => [
+
+            'select' => [
+
+                'label' => 'Velg',
+
+                'actions' => [
+
+                    'select' => [
+                        'label' => 'Velg',
+                    ],
+
+                ],
+
+            ],
+
+        ],
+
+    ],
+
     'radio' => [
 
         'boolean' => [
@@ -292,7 +366,7 @@ return [
             ],
 
             'collapse' => [
-                'label' => 'Kollaps',
+                'label' => 'Fold sammen',
             ],
 
             'expand' => [
@@ -300,7 +374,7 @@ return [
             ],
 
             'collapse_all' => [
-                'label' => 'Kollaps alle',
+                'label' => 'Fold sammen alle',
             ],
 
             'expand_all' => [
@@ -313,38 +387,131 @@ return [
 
     'rich_editor' => [
 
-        'dialogs' => [
+        'actions' => [
+
+            'attach_files' => [
+
+                'label' => 'Last opp fil',
+
+                'modal' => [
+
+                    'heading' => 'Last opp fil',
+
+                    'form' => [
+
+                        'file' => [
+
+                            'label' => [
+                                'new' => 'Fil',
+                                'existing' => 'Erstatt fil',
+                            ],
+
+                        ],
+
+                        'alt' => [
+
+                            'label' => [
+                                'new' => 'Alt tekst',
+                                'existing' => 'Endre alt tekst',
+                            ],
+
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
+            'custom_block' => [
+
+                'modal' => [
+
+                    'actions' => [
+
+                        'insert' => [
+                            'label' => 'Sett inn',
+                        ],
+
+                        'save' => [
+                            'label' => 'Lagre',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
 
             'link' => [
 
-                'actions' => [
-                    'link' => 'Lenke',
-                    'unlink' => 'Fjern lenke',
+                'label' => 'Endre',
+
+                'modal' => [
+
+                    'heading' => 'Lenke',
+
+                    'form' => [
+
+                        'url' => [
+                            'label' => 'URL',
+                        ],
+
+                        'should_open_in_new_tab' => [
+                            'label' => 'Åpne i ny fane',
+                        ],
+
+                    ],
+
                 ],
-
-                'label' => 'URL',
-
-                'placeholder' => 'Skriv inn URL',
 
             ],
 
         ],
 
+        'no_merge_tag_search_results_message' => 'Ingen treff for flettefelt.',
+
         'tools' => [
-            'attach_files' => 'Legg til filer',
-            'blockquote' => 'Sitat',
+            'align_center' => 'Midtstill',
+            'align_end' => 'Høyrejuster',
+            'align_justify' => 'Blokkjuster',
+            'align_start' => 'Venstrejuster',
+            'attach_files' => 'Legg ved filer',
+            'blockquote' => 'Blokksitat',
             'bold' => 'Fet',
             'bullet_list' => 'Punktliste',
-            'code_block' => 'Kode',
+            'clear_formatting' => 'Fjern formatering',
+            'code' => 'Kode',
+            'code_block' => 'Kodeblokk',
+            'custom_blocks' => 'Blokker',
+            'details' => 'Detaljer',
             'h1' => 'Tittel',
             'h2' => 'Overskrift',
-            'h3' => 'Undertittel',
+            'h3' => 'Underoverskrift',
+            'highlight' => 'Uthev',
+            'horizontal_rule' => 'Horisontal linje',
             'italic' => 'Kursiv',
+            'lead' => 'Ingress',
             'link' => 'Lenke',
+            'merge_tags' => 'Flettefelt',
             'ordered_list' => 'Nummerert liste',
             'redo' => 'Gjør om',
-            'strike' => 'Gjennomstrekning',
-            'underline' => 'Understrekning',
+            'small' => 'Liten tekst',
+            'strike' => 'Gjennomstreking',
+            'subscript' => 'Senket skrift',
+            'superscript' => 'Hevet skrift',
+            'table' => 'Tabell',
+            'table_delete' => 'Slett tabell',
+            'table_add_column_before' => 'Legg til kolonne før',
+            'table_add_column_after' => 'Legg til kolonne etter',
+            'table_delete_column' => 'Slett kolonne',
+            'table_add_row_before' => 'Legg til rad over',
+            'table_add_row_after' => 'Legg til rad under',
+            'table_delete_row' => 'Slett rad',
+            'table_merge_cells' => 'Slå sammen celler',
+            'table_split_cell' => 'Del celle',
+            'table_toggle_header_row' => 'Slå av/på overskriftsrad',
+            'underline' => 'Understrek',
             'undo' => 'Angre',
         ],
 
@@ -355,6 +522,8 @@ return [
         'actions' => [
 
             'create_option' => [
+
+                'label' => 'Opprett',
 
                 'modal' => [
 
@@ -377,6 +546,8 @@ return [
             ],
 
             'edit_option' => [
+
+                'label' => 'Endre',
 
                 'modal' => [
 
@@ -422,6 +593,11 @@ return [
     'text_input' => [
 
         'actions' => [
+
+            'copy' => [
+                'label' => 'Kopiér',
+                'message' => 'Kopiert',
+            ],
 
             'hide_password' => [
                 'label' => 'Skjul passord',

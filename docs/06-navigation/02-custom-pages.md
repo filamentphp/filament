@@ -105,7 +105,7 @@ This method accepts an array of model attributes that you wish to refresh in the
 
 ## Adding widgets to pages
 
-Filament allows you to display [widgets](dashboard) inside pages, below the header and above the footer.
+Filament allows you to display [widgets](../widgets) inside pages, below the header and above the footer.
 
 To add a widget to a page, use the `getHeaderWidgets()` or `getFooterWidgets()` methods:
 
@@ -122,7 +122,7 @@ protected function getHeaderWidgets(): array
 
 `getHeaderWidgets()` returns an array of widgets to display above the page content, whereas `getFooterWidgets()` are displayed below.
 
-If you'd like to learn how to build and customize widgets, check out the [Dashboard](dashboard) documentation section.
+If you'd like to learn how to build and customize widgets, check out the [Widgets](../widgets) documentation section.
 
 ### Customizing the widgets' grid
 
@@ -151,7 +151,7 @@ public function getHeaderWidgetsColumns(): int | array
 }
 ```
 
-This pairs well with [responsive widget widths](dashboard#responsive-widget-widths).
+This pairs well with [responsive widget widths](../widgets#responsive-widget-widths).
 
 #### Passing data to widgets from the page
 

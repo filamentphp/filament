@@ -474,6 +474,7 @@
         transparent
     );
     --prose-blockquote-border-color: var(--color-gray-300);
+    --prose-pre-bg: var(--color-gray-100);
 
     @variant dark {
         --prose-color: var(--color-gray-300);
@@ -495,6 +496,11 @@
             transparent
         );
         --prose-blockquote-border-color: var(--color-gray-600);
+        --prose-pre-bg: color-mix(
+            in oklab,
+            var(--color-gray-900) 40%,
+            transparent
+        );
     }
 
     color: var(--prose-color);
@@ -546,18 +552,18 @@
     }
 
     ol:where(:not(.fi-not-prose, .fi-not-prose *)) {
-        padding-left: calc(var(--spacing) * 6);
+        padding-inline-start: calc(var(--spacing) * 6);
         list-style-type: decimal;
     }
 
     ul:where(:not(.fi-not-prose, .fi-not-prose *)) {
-        padding-left: calc(var(--spacing) * 6);
+        padding-inline-start: calc(var(--spacing) * 6);
         list-style-type: disc;
     }
 
     ol li:where(:not(.fi-not-prose, .fi-not-prose *)),
     ul li:where(:not(.fi-not-prose, .fi-not-prose *)) {
-        padding-left: calc(var(--spacing) * 3);
+        padding-inline-start: calc(var(--spacing) * 3);
     }
 
     ol li + li:where(:not(.fi-not-prose, .fi-not-prose *)),
@@ -614,6 +620,12 @@
     pre:where(:not(.fi-not-prose, .fi-not-prose *)) {
         margin-top: calc(var(--spacing) * 4);
         margin-bottom: calc(var(--spacing) * 10);
+        border-radius: var(--radius-lg);
+        padding-top: calc(var(--spacing) * 3);
+        padding-inline-end: calc(var(--spacing) * 4);
+        padding-bottom: calc(var(--spacing) * 3);
+        padding-inline-start: calc(var(--spacing) * 4);
+        background-color: var(--prose-pre-bg);
     }
 
     pre code * + *:where(:not(.fi-not-prose, .fi-not-prose *)) {
@@ -754,7 +766,68 @@
         margin-bottom: 0;
     }
 
+    & .color:where(:not(.fi-not-prose, .fi-not-prose *)) {
+        @apply text-(--color) dark:text-(--dark-color);
+    }
+
     & .lead:where(:not(.fi-not-prose, .fi-not-prose *)) {
         font-size: var(--text-base);
+    }
+
+    & .grid-layout:where(:not(.fi-not-prose, .fi-not-prose *)) {
+        @apply grid grid-cols-1 gap-4;
+
+        &[data-from-breakpoint='default'] {
+            @apply grid-cols-(--cols);
+
+            & > .grid-layout-col {
+                @apply col-(--col-span);
+            }
+        }
+
+        &[data-from-breakpoint='sm'] {
+            @apply sm:grid-cols-(--cols);
+
+            & > .grid-layout-col {
+                @apply sm:col-(--col-span);
+            }
+        }
+
+        &[data-from-breakpoint='md'] {
+            @apply md:grid-cols-(--cols);
+
+            & > .grid-layout-col {
+                @apply md:col-(--col-span);
+            }
+        }
+
+        &[data-from-breakpoint='lg'] {
+            @apply lg:grid-cols-(--cols);
+
+            & > .grid-layout-col {
+                @apply lg:col-(--col-span);
+            }
+        }
+
+        &[data-from-breakpoint='xl'] {
+            @apply xl:grid-cols-(--cols);
+
+            & > .grid-layout-col {
+                @apply xl:col-(--col-span);
+            }
+        }
+
+        &[data-from-breakpoint='2xl'] {
+            @apply 2xl:grid-cols-(--cols);
+
+            & > .grid-layout-col {
+                @apply 2xl:col-(--col-span);
+            }
+        }
+
+        & > .grid-layout-col {
+            margin-top: 0;
+            min-width: 0;
+        }
     }
 }

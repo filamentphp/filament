@@ -9,6 +9,7 @@ use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\ImageEntry;
 use Filament\Infolists\Components\KeyValueEntry;
 use Filament\Infolists\Components\RepeatableEntry;
+use Filament\Infolists\Components\RepeatableEntry\TableColumn;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Flex;
 use Filament\Schemas\Components\Group;
@@ -715,6 +716,25 @@ class EntriesDemo extends Component implements HasSchemas
                             ->grid(2),
                     ]),
                 Group::make()
+                    ->id('repeatableTable')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-5xl',
+                    ])
+                    ->schema([
+                        RepeatableEntry::make('comments')
+                            ->table([
+                                TableColumn::make('Author'),
+                                TableColumn::make('Title'),
+                                TableColumn::make('Published'),
+                            ])
+                            ->schema([
+                                TextEntry::make('author'),
+                                TextEntry::make('title'),
+                                IconEntry::make('is_published')
+                                    ->boolean(),
+                            ]),
+                    ]),
+                Group::make()
                     ->id('suffixAction')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
@@ -736,11 +756,13 @@ class EntriesDemo extends Component implements HasSchemas
                         'author' => ['name' => 'Jane Doe'],
                         'title' => 'Wow!',
                         'content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam euismod, nisl eget aliquam ultricies, nunc nisl aliquet nunc, quis aliquam nisl.',
+                        'is_published' => true,
                     ],
                     [
                         'author' => ['name' => 'John Doe'],
                         'title' => 'This isn\'t working. Help!',
                         'content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam euismod, nisl eget aliquam ultricies, nunc nisl aliquet nunc, quis aliquam nisl.',
+                        'is_published' => false,
                     ],
                 ],
             ]);

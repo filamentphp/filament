@@ -13,6 +13,8 @@ use Filament\Facades\Filament;
 use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\CanUseDatabaseTransactions;
 use Filament\Pages\Concerns\HasUnsavedDataChangesAlert;
+use Filament\Resources\Events\RecordSaved;
+use Filament\Resources\Events\RecordUpdated;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\EmbeddedSchema;
@@ -28,11 +30,14 @@ use Filament\View\PanelsIconAlias;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Js;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Throwable;
 
 /**
+ * @template TModel of Model = Model
+ *
  * @property-read Schema $form
  */
 class EditRecord extends Page
@@ -41,7 +46,9 @@ class EditRecord extends Page
     use Concerns\HasRelationManagers {
         getContentTabComponent as getBaseContentTabComponent;
     }
-    use Concerns\InteractsWithRecord;
+    use Concerns\InteractsWithRecord {
+        getRecord as getBaseRecord;
+    }
     use HasUnsavedDataChangesAlert;
 
     /**
@@ -158,6 +165,8 @@ class EditRecord extends Page
             $this->handleRecordUpdate($this->getRecord(), $data);
 
             $this->callHook('afterSave');
+            Event::dispatch(RecordUpdated::class, ['record' => $this->record, 'data' => $data, 'page' => $this]);
+            Event::dispatch(RecordSaved::class, ['record' => $this->record, 'data' => $data, 'page' => $this]);
         } catch (Halt $exception) {
             $exception->shouldRollbackDatabaseTransaction() ?
                 $this->rollBackDatabaseTransaction() :
@@ -192,11 +201,16 @@ class EditRecord extends Page
 
             $this->callHook('beforeValidate');
 
+            $oldContainer = $component->getContainer();
+
             $data = Schema::make($component->getLivewire())
                 ->components([$component])
                 ->model($component->getRecord())
+                ->operation($oldContainer->getOperation())
                 ->statePath('data')
                 ->getState();
+
+            $component->container($oldContainer);
 
             $this->callHook('afterValidate');
 
@@ -437,7 +451,8 @@ class EditRecord extends Page
         return Actions::make($this->getFormActions())
             ->alignment($this->getFormActionsAlignment())
             ->fullWidth($this->hasFullWidthFormActions())
-            ->sticky($this->areFormActionsSticky());
+            ->sticky($this->areFormActionsSticky())
+            ->key('form-actions');
     }
 
     public function hasFormWrapper(): bool
@@ -462,8 +477,11 @@ class EditRecord extends Page
         return false;
     }
 
-    public function getDefaultTestingSchemaName(): ?string
+    /**
+     * @return TModel
+     */
+    public function getRecord(): Model
     {
-        return 'form';
+        return $this->getBaseRecord();
     }
 }

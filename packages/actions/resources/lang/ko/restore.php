@@ -54,6 +54,18 @@ return [
                 'title' => '복원 완료',
             ],
 
+            'restored_partial' => [
+                'title' => ':total 중 :count개 복원됨',
+                'missing_authorization_failure_message' => ':count개를 복원할 권한이 없습니다.',
+                'missing_processing_failure_message' => ':count개를 복원할 수 없습니다.',
+            ],
+
+            'restored_none' => [
+                'title' => '복원 실패',
+                'missing_authorization_failure_message' => ':count개를 복원할 권한이 없습니다.',
+                'missing_processing_failure_message' => ':count개를 복원할 수 없습니다.',
+            ],
+
         ],
 
     ],
