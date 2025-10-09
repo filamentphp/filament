@@ -21,6 +21,7 @@ export class Select {
         options,
         placeholder,
         state,
+        extraInputAttributes = [],
         canOptionLabelsWrap = true,
         canSelectPlaceholder = true,
         initialOptionLabel = null,
@@ -56,6 +57,7 @@ export class Select {
         this.originalOptions = JSON.parse(JSON.stringify(options)) // Keep a copy of original options
         this.placeholder = placeholder
         this.state = state
+        this.extraInputAttributes = extraInputAttributes
         this.canOptionLabelsWrap = canOptionLabelsWrap
         this.canSelectPlaceholder = canSelectPlaceholder
         this.initialOptionLabel = initialOptionLabel
@@ -148,6 +150,10 @@ export class Select {
         this.selectButton.className = 'fi-select-input-btn'
         this.selectButton.type = 'button'
         this.selectButton.setAttribute('aria-expanded', 'false')
+        //loop through extraInputAttributes and set them on the selectButton
+        Object.entries(this.extraInputAttributes).forEach(([name, value]) => {
+            this.selectButton.setAttribute(name, value)
+        })
 
         // Create the selected value display
         this.selectedDisplay = document.createElement('div')
@@ -879,6 +885,9 @@ export class Select {
         removeButton.addEventListener('click', (event) => {
             event.stopPropagation() // Prevent dropdown from toggling
             this.selectOption('') // Select empty value to clear
+        })
+        Object.entries(this.extraInputAttributes).forEach(([name, value]) => {
+            removeButton.setAttribute(name, value)
         })
 
         // Add keydown event listener to handle space key

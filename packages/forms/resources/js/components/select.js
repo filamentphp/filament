@@ -1,6 +1,7 @@
 import { Select } from '../../../../support/resources/js/utilities/select.js'
 
 export default function selectFormComponent({
+    extraInputAttributes,
     canOptionLabelsWrap,
     canSelectPlaceholder,
     isHtmlAllowed,
@@ -44,6 +45,7 @@ export default function selectFormComponent({
                 options,
                 placeholder,
                 state: this.state,
+                extraInputAttributes,
                 canOptionLabelsWrap,
                 canSelectPlaceholder,
                 initialOptionLabel,
