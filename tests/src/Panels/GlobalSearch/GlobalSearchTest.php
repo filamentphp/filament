@@ -6,6 +6,7 @@ use Filament\GlobalSearch\GlobalSearchResults;
 use Filament\GlobalSearch\Providers\Contracts\GlobalSearchProvider;
 use Filament\Livewire\GlobalSearch;
 use Filament\Tests\Fixtures\Models\Post;
+use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Panels\GlobalSearch\TestCase;
 use Illuminate\Database\Eloquent\Factories\Sequence;
 use Illuminate\Support\Str;
@@ -57,6 +58,27 @@ it('can retrieve results via custom search provider', function (): void {
         ->set('search', 'foo')
         ->assertDispatched('open-global-search-results')
         ->assertSee(['foo', 'bar', 'baz']);
+});
+it('orders global search results by globalSearchSort', function (): void {
+    // Posts has $globalSearchSort = 10
+    // Users has $globalSearchSort = 5
+    // So Users should appear first (lower number = first)
+
+    User::factory()->create([
+        'name' => 'Search Term Test',
+    ]);
+
+    Post::factory()->create([
+        'title' => 'Search Term Test',
+    ]);
+
+    $provider = Filament::getCurrentOrDefaultPanel()->getGlobalSearchProvider();
+    $results = $provider->getResults('Search Term Test');
+
+    $categories = $results->getCategories()->keys()->toArray();
+
+    expect($categories[0])->toBe('users');
+    expect($categories[1])->toBe('posts');
 });
 
 class CustomSearchProvider implements GlobalSearchProvider
