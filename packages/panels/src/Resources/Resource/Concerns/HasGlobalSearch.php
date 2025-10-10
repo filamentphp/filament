@@ -242,6 +242,7 @@ trait HasGlobalSearch
     {
         return static::$globalSearchSort;
     }
+
     public static function globalSearchSort(?int $sort): void
     {
         static::$globalSearchSort = $sort;
