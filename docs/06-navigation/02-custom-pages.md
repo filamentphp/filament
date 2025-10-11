@@ -54,15 +54,14 @@ protected function getHeaderActions(): array
 }
 ```
 
-By default, header actions are aligned to the left, to change the alignment of the header actions, use `getHeaderActionsAlignment`:
+#### Aligning header actions
+
+By default, header actions are aligned to the left on mobile. To change the alignment of the header actions on mobile, set `$headerActionsAlignment`:
 
 ```php
 use Filament\Support\Enums\Alignment;
 
-protected function getHeaderActionsAlignment(): Alignment
-{
-    return Alignment::End;
-}
+protected ?Alignment $headerActionsAlignment = Alignment::End;
 ```
 
 ### Opening an action modal when a page loads

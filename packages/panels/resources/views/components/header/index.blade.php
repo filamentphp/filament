@@ -1,6 +1,6 @@
 @props([
     'actions' => [],
-    'actionsAlignment' => \Filament\Support\Enums\Alignment::Start,
+    'actionsAlignment' => null,
     'breadcrumbs' => [],
     'heading',
     'subheading' => null,

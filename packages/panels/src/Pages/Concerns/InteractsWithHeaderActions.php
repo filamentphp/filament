@@ -13,6 +13,8 @@ trait InteractsWithHeaderActions
      */
     protected array $cachedHeaderActions = [];
 
+    protected ?Alignment $headerActionsAlignment = null;
+
     public function cacheInteractsWithHeaderActions(): void
     {
         $actions = $this->getHeaderActions();
@@ -65,8 +67,8 @@ trait InteractsWithHeaderActions
         return [];
     }
 
-    protected function getHeaderActionsAlignment(): Alignment
+    public function getHeaderActionsAlignment(): ?Alignment
     {
-        return Alignment::Start;
+        return $this->headerActionsAlignment;
     }
 }
