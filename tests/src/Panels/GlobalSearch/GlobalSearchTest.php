@@ -59,23 +59,20 @@ it('can retrieve results via custom search provider', function (): void {
         ->assertDispatched('open-global-search-results')
         ->assertSee(['foo', 'bar', 'baz']);
 });
-it('orders global search results by globalSearchSort', function (): void {
-    // Posts has $globalSearchSort = 10
-    // Users has $globalSearchSort = 5
-    // So Users should appear first (lower number = first)
 
+it('orders resource global search results by `$globalSearchSort`', function (): void {
     User::factory()->create([
-        'name' => 'Search Term Test',
+        'name' => 'Test',
     ]);
 
     Post::factory()->create([
-        'title' => 'Search Term Test',
+        'title' => 'Test',
     ]);
 
     $provider = Filament::getCurrentOrDefaultPanel()->getGlobalSearchProvider();
-    $results = $provider->getResults('Search Term Test');
+    $results = $provider->getResults('Test');
 
-    $categories = $results->getCategories()->keys()->toArray();
+    $categories = $results->getCategories()->keys()->all();
 
     expect($categories[0])->toBe('users');
     expect($categories[1])->toBe('posts');
