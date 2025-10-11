@@ -30,9 +30,10 @@ class OptionStateCast implements StateCast
             )
         ) {
             $max = (string) PHP_INT_MAX;
+
             if (
-                strlen($state) > strlen($max) ||
-                (strlen($state) === strlen($max) && strcmp($state, $max) > 0)
+                (strlen($state) > strlen($max)) ||
+                ((strlen($state) === strlen($max)) && (strcmp($state, $max) > 0))
             ) {
                 return strval($state);
             }
