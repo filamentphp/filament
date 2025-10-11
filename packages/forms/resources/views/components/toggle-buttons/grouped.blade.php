@@ -12,8 +12,8 @@
 <x-dynamic-component
     :component="$fieldWrapperView"
     :field="$field"
-    class="fi-fo-toggle-buttons-wrp"
     tabindex="-1"
+    class="fi-fo-toggle-buttons-wrp"
 >
     <div
         {{ $getExtraAttributeBag()->class(['fi-fo-toggle-buttons fi-btn-group']) }}
