@@ -144,27 +144,16 @@ public function panel(Panel $panel): Panel
         ->globalSearch(position: GlobalSearchPosition::Sidebar);
 }
 ```
+
 ## Sorting global search results
 
 By default, global search results are ordered alphabetically by resource name. You can customize this order by setting the `$globalSearchSort` property on your resource:
 
 ```php
-protected static ?int $globalSearchSort = 10;
-```
-Resources with a lower sort value will appear before resources with a higher sort value. Resources without a sort value will be treated as having a sort value of 0.
-
-For example, if you want users to appear first in search results, posts second, and comments third:
-
-```php
-// UserResource.php
-protected static ?int $globalSearchSort = 1;
-
-// PostResource.php
-protected static ?int $globalSearchSort = 2;
-
-// CommentResource.php
 protected static ?int $globalSearchSort = 3;
 ```
+
+Now, navigation items with a lower sort value will appear before those with a higher sort value - the order is ascending.
 
 ## Disabling global search
 
