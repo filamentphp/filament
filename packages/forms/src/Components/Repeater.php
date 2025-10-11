@@ -1131,17 +1131,17 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
         return $this->evaluate($this->relationship);
     }
 
-    protected function modifyRelationshipRecords(Collection $collection): Collection
+    protected function modifyRelationshipRecords(Collection $records): Collection
     {
-        if (! $this->modifyRelationshipRecordsUsing) {
-            return $collection;
-        }
-
-        return $this->evaluate($this->modifyRelationshipRecordsUsing, [
-            'records' => $collection,
-        ], [
-            Collection::class => $collection,
-        ]);
+        return $this->evaluate(
+            $this->modifyRelationshipRecordsUsing,
+            namedInjections: [
+                'records' => $records,
+            ],
+            typedInjections: [
+                Collection::class => $records,
+            ],
+        ) ?? $records;
     }
 
     public function getCachedExistingRecords(): Collection
