@@ -90,7 +90,7 @@ SpatieMediaLibraryFileUpload::make('attachments')
     ->customProperties(['zip_filename_prefix' => 'folder/subfolder/'])
 ```
 
-Or you may use a closure to dynamically generate the properties:
+You may use a function to dynamically set the properties based on the uploaded file:
 
 ```php
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
@@ -99,12 +99,12 @@ use Spatie\Image\Image;
 
 SpatieMediaLibraryFileUpload::make('image')
     ->image()
-    ->customProperties(function (TemporaryUploadedFile $file): array  {
+    ->customProperties(function (TemporaryUploadedFile $file): array {
         $image = Image::load($file->getRealPath());
 
         return [
-            'width' => $image->getWidth(),
             'height' => $image->getHeight(),
+            'width' => $image->getWidth(),
         ];
     })
 ```
