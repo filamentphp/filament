@@ -25,6 +25,13 @@
 
     & > .fi-ac {
         @apply flex-1;
+
+        &:not(.fi-width-full) {
+            &.fi-align-end,
+            &.fi-align-right {
+                @apply flex-row justify-end;
+            }
+        }
     }
 }
 
