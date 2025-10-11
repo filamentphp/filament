@@ -13,6 +13,7 @@
     :component="$fieldWrapperView"
     :field="$field"
     class="fi-fo-toggle-buttons-wrp"
+    tabindex="-1"
 >
     <div
         {{ $getExtraAttributeBag()->class(['fi-fo-toggle-buttons fi-btn-group']) }}
