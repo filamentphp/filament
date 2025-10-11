@@ -11,6 +11,7 @@ use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\View\Components\ToggleComponent;
 use Filament\Tables\Columns\Contracts\Editable;
 use Filament\Tables\Table;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Js;
 use Illuminate\View\ComponentAttributeBag;
@@ -55,6 +56,7 @@ class ToggleColumn extends Column implements Editable, HasEmbeddedView
                     ? '{
                         content: ' . Js::from($tooltip) . ',
                         theme: $store.theme,
+                        allowHTML: ' . Js::from($tooltip instanceof Htmlable) . ',
                     }'
                     : null,
             ], escape: false)

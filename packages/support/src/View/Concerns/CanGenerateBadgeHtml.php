@@ -41,7 +41,7 @@ trait CanGenerateBadgeHtml
         Size | string | null $size = null,
         string $tag = 'span',
         ?string $target = null,
-        ?string $tooltip = null,
+        string | Htmlable | null $tooltip = null,
         ?string $type = 'button',
     ): string {
         $color ??= 'primary';
@@ -126,6 +126,7 @@ trait CanGenerateBadgeHtml
                 x-tooltip="{
                     content: <?= Js::from($tooltip) ?>,
                     theme: $store.theme,
+                    allowHTML: <?= Js::from($tooltip instanceof Htmlable) ?>,
                 }"
             <?php } ?>
             <?= $attributes->toHtml() ?>
