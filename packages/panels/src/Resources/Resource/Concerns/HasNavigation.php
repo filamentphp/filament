@@ -19,7 +19,7 @@ trait HasNavigation
 
     protected static bool $shouldRegisterNavigation = true;
 
-    protected static ?string $navigationBadgeTooltip = null;
+    protected static string | Htmlable | null $navigationBadgeTooltip = null;
 
     protected static string | UnitEnum | null $navigationGroup = null;
 
@@ -136,7 +136,7 @@ trait HasNavigation
         return null;
     }
 
-    public static function getNavigationBadgeTooltip(): ?string
+    public static function getNavigationBadgeTooltip(): string | Htmlable | null
     {
         return static::$navigationBadgeTooltip;
     }

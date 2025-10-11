@@ -6,6 +6,7 @@ use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Concerns\CanBeCopied;
 use Filament\Support\Concerns\CanWrap;
 use Filament\Support\Enums\Alignment;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Js;
@@ -40,6 +41,7 @@ class ColorColumn extends Column implements HasEmbeddedView
                         ? '{
                             content: ' . Js::from($tooltip) . ',
                             theme: $store.theme,
+                            allowHTML: ' . Js::from($tooltip instanceof Htmlable) . ',
                         }'
                         : null,
                 ], escape: false);
@@ -99,6 +101,7 @@ class ColorColumn extends Column implements HasEmbeddedView
                             ? '{
                                 content: ' . Js::from($tooltip) . ',
                                 theme: $store.theme,
+                                allowHTML: ' . Js::from($tooltip instanceof Htmlable) . ',
                             }'
                             : null,
                     ], escape: false)

@@ -39,6 +39,14 @@ trait HasDropdown
         return $this;
     }
 
+    public function dropdownAutoPlacement(): static
+    {
+        $this->dropdownPlacement('auto-placement');
+        $this->dropdownFlip(false);
+
+        return $this;
+    }
+
     public function defaultDropdownPlacement(string | Closure | null $placement): static
     {
         $this->defaultDropdownPlacement = $placement;

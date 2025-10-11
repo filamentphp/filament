@@ -44,7 +44,7 @@ abstract class Page extends BasePage
 
     protected static string | UnitEnum | null $navigationGroup = null;
 
-    protected static ?string $navigationBadgeTooltip = null;
+    protected static string | Htmlable | null $navigationBadgeTooltip = null;
 
     protected static ?string $navigationParentItem = null;
 
@@ -195,7 +195,7 @@ abstract class Page extends BasePage
         return null;
     }
 
-    public static function getNavigationBadgeTooltip(): ?string
+    public static function getNavigationBadgeTooltip(): string | Htmlable | null
     {
         return static::$navigationBadgeTooltip;
     }
