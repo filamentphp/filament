@@ -13,7 +13,7 @@ class DefaultGlobalSearchProvider implements Contracts\GlobalSearchProvider
 
         $resources = Filament::getResources();
 
-        $resources = usort(
+        usort(
             $resources,
             fn (string $a, string $b): int => ($a::getGlobalSearchSort() ?? 0) <=> ($b::getGlobalSearchSort() ?? 0),
         );
