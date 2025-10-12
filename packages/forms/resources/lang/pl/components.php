@@ -484,12 +484,12 @@ return [
                             'label' => 'Od punktu przerwania',
 
                             'options' => [
-                                'default' => 'Wszystkie',
+                                'default' => 'Każdy',
                                 'sm' => 'Mały (sm)',
                                 'md' => 'Średni (md)',
                                 'lg' => 'Duży (lg)',
                                 'xl' => 'Bardzo duży (xl)',
-                                '2xl' => 'Dwa bardzo duże (2xl)',
+                                '2xl' => 'Bardzo bardzo duży (2xl)',
                             ],
 
                         ],
@@ -499,11 +499,11 @@ return [
                         ],
 
                         'start_span' => [
-                            'label' => 'Początek rozciągnięcia',
+                            'label' => 'Szerokość pierwszej kolumny',
                         ],
 
                         'end_span' => [
-                            'label' => 'Koniec rozciągnięcia',
+                            'label' => 'Szerokość drugiej kolumny',
                         ],
 
                     ],
