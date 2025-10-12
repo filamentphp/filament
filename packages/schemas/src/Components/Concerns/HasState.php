@@ -209,6 +209,8 @@ trait HasState
             store($this)->push('executedAfterStateUpdatedCallbacks', value: $runId, iKey: $runId);
         }
 
+        $this->clearCachedDefaultChildSchemas();
+
         return $this;
     }
 

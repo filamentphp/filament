@@ -530,7 +530,7 @@ class SelectFilter extends BaseFilter
                 })
                 ->forceSearchCaseInsensitive($this->isSearchForcedCaseInsensitive());
         } else {
-            $field->options($this->getOptions());
+            $field->options(fn (): array => $this->getOptions());
         }
 
         if ($this->getOptionLabelUsing) {
