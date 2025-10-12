@@ -459,7 +459,7 @@ return [
 
                         'preset' => [
 
-                            'label' => 'Ustawienie predefinioane',
+                            'label' => 'Ustawienie predefiniowane',
 
                             'placeholder' => 'Brak',
 
