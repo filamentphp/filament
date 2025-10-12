@@ -198,7 +198,6 @@ return [
 
             'group' => [
                 'label' => 'Grupuj według',
-                'placeholder' => 'Grupuj według',
             ],
 
             'direction' => [
