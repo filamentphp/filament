@@ -1143,9 +1143,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         });
 
         $this->createOptionUsing(static function (Select $component, array $data, Schema $schema) {
-            $record = $component->getRelationship()->getRelated();
-            $record->fill($data);
-            $record->save();
+            $record = $component->getRelationship()->create($data);
 
             $schema->model($record)->saveRelationships();
 
