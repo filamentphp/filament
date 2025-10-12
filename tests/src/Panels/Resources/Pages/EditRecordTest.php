@@ -21,6 +21,7 @@ use Filament\Tests\Fixtures\Resources\Tickets\TicketResource;
 use Filament\Tests\Panels\Resources\TestCase;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Str;
 
 use function Filament\Tests\livewire;
