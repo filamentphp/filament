@@ -306,6 +306,37 @@ enum NavigationGroup implements HasIcon
 }
 ```
 
+## Defining children navigation items on Resource
+
+You can define children navigation items directly on Resource:
+
+```php
+use Filament\Navigation\NavigationItem;
+
+class OrderResource extends Resource
+{
+    public static function getNavigationChildItems(): array
+    {
+        return [
+            NavigationItem::make('In progress')
+                ->url(ListOrders::getUrl())
+                ->isActiveWhen(fn (): bool => request()->url() === ListOrders::getUrl()),
+
+            NavigationItem::make('Draft')
+                ->url(ListDraftOrders::getUrl())
+                ->isActiveWhen(fn (): bool => request()->url() === ListDraftOrders::getUrl()),
+
+            NavigationItem::make('Archived')
+                ->url(ListArchivedOrders::getUrl())
+                ->isActiveWhen(fn (): bool => request()->url() === ListArchivedOrders::getUrl()),
+        ];
+    }
+}
+``
+
+<AutoScreenshot name="panels/navigation/child-items" alt="Children navigation items" version="4.x" />
+
+
 ## Collapsible sidebar on desktop
 
 To make the sidebar collapsible on desktop as well as mobile, you can use the [configuration](../panel-configuration):
