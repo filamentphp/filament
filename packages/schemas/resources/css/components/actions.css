@@ -11,12 +11,12 @@
 
     &.fi-sticky {
         & .fi-ac {
-            @apply fixed bottom-0 -mx-4 w-inherit transform bg-white p-4 shadow-lg ring-1 ring-gray-950/5 transition md:bottom-4 md:rounded-xl dark:bg-gray-900 dark:ring-white/10;
+            @apply w-inherit fixed bottom-0 -mx-4 transform bg-white p-4 shadow-lg ring-1 ring-gray-950/5 transition md:bottom-4 md:rounded-xl dark:bg-gray-900 dark:ring-white/10;
 
-        &.fi-align-end,
-        &.fi-align-right {
-            @apply self-end;
-        }
+            &.fi-align-end,
+            &.fi-align-right {
+                @apply self-end;
+            }
         }
     }
 
