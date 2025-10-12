@@ -50,6 +50,7 @@
         :actions="$actions"
         :alignment="$alignment"
         :full-width="$isFullWidth"
+        x-bind:style="isSticky ? `width: ${width}px;` : ''"
     />
 
     @if ($belowContentContainer = $getChildSchema($schemaComponent::BELOW_CONTENT_SCHEMA_KEY)?->toHtmlString())
