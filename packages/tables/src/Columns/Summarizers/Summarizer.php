@@ -77,9 +77,9 @@ class Summarizer extends ViewComponent implements HasEmbeddedView
 
         $column = $this->getColumn();
         $attribute = $column->getName();
-        $query = $this->getQuery()->clone();
+        $query = $this->getQuery()?->clone();
 
-        if ($column->hasRelationship($query->getModel())) {
+        if ($query && $column->hasRelationship($query->getModel())) {
             $relationship = $column->getRelationship($query->getModel());
             $attribute = $column->getFullAttributeName($query->getModel());
 
@@ -103,7 +103,7 @@ class Summarizer extends ViewComponent implements HasEmbeddedView
                         return $relatedQuery;
                     },
                 );
-        } elseif (str($attribute)->startsWith('pivot.')) {
+        } elseif ($query && str($attribute)->startsWith('pivot.')) {
             // https://github.com/filamentphp/filament/issues/12501
 
             $pivotAttribute = (string) str($attribute)
@@ -124,9 +124,9 @@ class Summarizer extends ViewComponent implements HasEmbeddedView
             }
         }
 
-        $asName = (string) str($query->getModel()->getTable())->afterLast('.');
+        $asName = (string) str($query?->getModel()->getTable())->afterLast('.');
 
-        $query = $query->getModel()->resolveConnection($query->getModel()->getConnectionName())
+        $query = $query?->getModel()->resolveConnection($query->getModel()->getConnectionName())
             ->table($query->toBase(), $asName);
 
         if ($this->hasQueryModification()) {
