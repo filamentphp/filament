@@ -13,26 +13,7 @@
 
 <div
     @if ($isSticky())
-        x-data="{
-            ...filamentActionsSchemaComponent(),
-            parentWidth: 0,
-            updateWidth() {
-                const parent = this.$root.parentElement
-                if (! parent) {
-                    return
-                }
-                this.parentWidth = parent.offsetWidth
-            },
-            initWidthSync() {
-                this.updateWidth()
-
-                new ResizeObserver(() => this.updateWidth()).observe(
-                    this.$root.parentElement,
-                )
-                window.addEventListener('resize', () => this.updateWidth())
-            },
-        }"
-        x-init="initWidthSync()"
+        x-data="filamentActionsSchemaComponent()"
         x-intersect:enter.half="disableSticky"
         x-intersect:leave="enableSticky"
         x-bind:class="{ 'fi-sticky': isSticky }"
