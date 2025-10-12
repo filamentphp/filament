@@ -1,26 +1,15 @@
 export default () => ({
     isSticky: false,
-    parentWidth: 0,
 
-    enableSticky() {
-        this.isSticky = this.$el.getBoundingClientRect().top > 0
-    },
+    width: 0,
 
-    disableSticky() {
-        this.isSticky = false
-    },
+    resizeObserver: null,
 
-    updateWidth() {
-        const parent = this.$el.parentElement
-        if (!parent) {
-            return
-        }
-
-        this.parentWidth = parent.offsetWidth
-    },
+    boundUpdateWidth: null,
 
     init() {
         const parent = this.$el.parentElement
+
         if (!parent) {
             return
         }
@@ -32,6 +21,31 @@ export default () => ({
 
         this.boundUpdateWidth = this.updateWidth.bind(this)
         window.addEventListener('resize', this.boundUpdateWidth)
+    },
+
+    enableSticky() {
+        this.isSticky = this.$el.getBoundingClientRect().top > 0
+    },
+
+    disableSticky() {
+        this.isSticky = false
+    },
+
+    updateWidth() {
+        const parent = this.$el.parentElement
+
+        if (!parent) {
+            return
+        }
+
+        const actionsComputedStyle = getComputedStyle(
+            this.$root.querySelector('.fi-ac'),
+        )
+
+        this.width =
+            parent.offsetWidth +
+            parseInt(actionsComputedStyle.marginInlineStart, 10) * -1 +
+            parseInt(actionsComputedStyle.marginInlineEnd, 10) * -1
     },
 
     destroy() {
