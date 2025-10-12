@@ -141,6 +141,7 @@
                             :href="$itemUrl"
                             :icon="$itemIcon"
                             tag="a"
+                            :sub-navigation="$subNavigation"
                             :target="$shouldItemOpenUrlInNewTab ? '_blank' : null"
                         >
                             {{ $item->getLabel() }}
@@ -204,6 +205,7 @@
                 :last="$loop->last"
                 :should-open-url-in-new-tab="$shouldItemOpenUrlInNewTab"
                 :sidebar-collapsible="$sidebarCollapsible"
+                :sub-navigation="$subNavigation"
                 :url="$itemUrl"
             >
                 {{ $item->getLabel() }}

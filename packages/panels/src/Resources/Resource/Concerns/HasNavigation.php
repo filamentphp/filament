@@ -74,8 +74,17 @@ trait HasNavigation
                 ->badge(static::getNavigationBadge(), color: static::getNavigationBadgeColor())
                 ->badgeTooltip(static::getNavigationBadgeTooltip())
                 ->sort(static::getNavigationSort())
-                ->url(static::getNavigationUrl()),
+                ->url(static::getNavigationUrl())
+                ->childItems(static::getNavigationChildItems()),
         ];
+    }
+
+    /**
+     * @return array<NavigationItem>
+     */
+    public static function getNavigationChildItems(): array
+    {
+        return [];
     }
 
     public static function getSubNavigationPosition(): SubNavigationPosition
