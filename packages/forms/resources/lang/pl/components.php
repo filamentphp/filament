@@ -447,7 +447,7 @@ return [
 
             ],
 
-             'grid' => [
+            'grid' => [
 
                 'label' => 'Siatka',
 

@@ -26,7 +26,7 @@ return [
             'label' => 'Akcja|Akcje',
         ],
 
-         'select' => [
+        'select' => [
 
             'loading_message' => 'Ładowanie...',
 
