@@ -49,7 +49,7 @@
         @endif
         class="fi-sidebar-item-btn"
     >
-        @if (filled($icon) && ((! $subGrouped) || $sidebarCollapsible) && (! $subNavigation))
+        @if (filled($icon) && ((! $subGrouped) || ($sidebarCollapsible && (! $subNavigation))))
             {{
                 \Filament\Support\generate_icon_html(($active && $activeIcon) ? $activeIcon : $icon, attributes: (new \Illuminate\View\ComponentAttributeBag([
                     'x-show' => ($subGrouped && $sidebarCollapsible) ? '! $store.sidebar.isOpen' : false,
