@@ -141,7 +141,6 @@
                             :href="$itemUrl"
                             :icon="$itemIcon"
                             tag="a"
-                            :sub-navigation="$subNavigation"
                             :target="$shouldItemOpenUrlInNewTab ? '_blank' : null"
                         >
                             {{ $item->getLabel() }}
