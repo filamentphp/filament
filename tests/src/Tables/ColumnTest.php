@@ -320,6 +320,15 @@ it('can output values in a JSON array column of objects', function (): void {
         ->assertTableColumnStateSet('json_array_of_objects.*.value', ['foo', 'bar', 'baz'], $post);
 });
 
+it('can output values in a JSON column with a non-relationship accessor method', function (): void {
+    $post = Post::factory()->create([
+        'config' => ['setting' => 'foo'],
+    ]);
+
+    livewire(PostsTable::class)
+        ->assertTableColumnStateSet('config.setting', 'foo', $post);
+});
+
 it('can state whether a column has extra attributes', function (): void {
     $post = Post::factory()->create();
 

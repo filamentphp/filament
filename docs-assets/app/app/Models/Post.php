@@ -24,4 +24,9 @@ class Post extends Model
     {
         return $this->belongsTo(User::class, 'author_id');
     }
+
+    public function config($key)
+    {
+        return $this->config->$key ?? null;
+    }
 }
