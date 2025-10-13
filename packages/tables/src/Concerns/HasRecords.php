@@ -3,6 +3,7 @@
 namespace Filament\Tables\Concerns;
 
 use Filament\Support\ArrayRecord;
+use Filament\Tables\Performance\N1QueryDetector;
 use Illuminate\Contracts\Pagination\CursorPaginator;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Builder;
@@ -17,12 +18,19 @@ use function Livewire\invade;
 
 trait HasRecords
 {
+    use DetectsEagerLoading;
+
     /**
      * @deprecated Override the `table()` method to configure the table.
      */
     protected bool $allowsDuplicates = false;
 
     protected Collection | Paginator | CursorPaginator | null $cachedTableRecords = null;
+
+    /**
+     * N+1 query detector instance.
+     */
+    protected ?N1QueryDetector $n1QueryDetector = null;
 
     public function getFilteredTableQuery(): ?Builder
     {
@@ -37,9 +45,15 @@ trait HasRecords
 
     public function filterTableQuery(Builder $query): Builder
     {
+        // Enable N+1 detection for filtered queries
+        $this->enableN1QueryDetection();
+
         $this->applyFiltersToTableQuery($query);
 
         $this->applySearchToTableQuery($query);
+
+        // Apply automatic eager loading detection
+        $this->applyEagerLoadingToTableQuery($query);
 
         foreach ($this->getTable()->getVisibleColumns() as $column) {
             $column->applyRelationshipAggregates($query);
@@ -94,6 +108,9 @@ trait HasRecords
 
     public function getTableRecords(): Collection | Paginator | CursorPaginator
     {
+        // Automatically enable N+1 detection in development
+        $this->enableN1QueryDetection();
+
         if (! $this->getTable()->hasQuery()) {
             if ($this->cachedTableRecords) {
                 return $this->cachedTableRecords;
@@ -296,5 +313,103 @@ trait HasRecords
     public function getTablePluralModelLabel(): ?string
     {
         return null;
+    }
+
+    /**
+     * Enable N+1 query detection for this table.
+     */
+    protected function enableN1QueryDetection(): void
+    {
+        if (! $this->shouldEnableN1Detection()) {
+            return;
+        }
+
+        if ($this->n1QueryDetector === null) {
+            $this->n1QueryDetector = new N1QueryDetector();
+        }
+
+        $contextName = $this->getN1DetectionContext();
+        $this->n1QueryDetector->enable($contextName);
+    }
+
+    /**
+     * Disable N+1 query detection.
+     */
+    protected function disableN1QueryDetection(): void
+    {
+        if ($this->n1QueryDetector) {
+            $this->n1QueryDetector->disable();
+        }
+    }
+
+    /**
+     * Check if N+1 detection should be enabled.
+     */
+    protected function shouldEnableN1Detection(): bool
+    {
+        // Only enable in local environment (disable in testing to prevent memory issues)
+        if (! app()->environment('local')) {
+            return false;
+        }
+
+        // Check config
+        if (config('filament.performance.enable_n1_detection') === false) {
+            return false;
+        }
+
+        // Allow per-table override
+        if (property_exists($this, 'disableN1Detection') && $this->disableN1Detection === true) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Get context name for N+1 detection.
+     */
+    protected function getN1DetectionContext(): string
+    {
+        $context = static::class;
+
+        if (method_exists($this, 'getTable')) {
+            $context .= '::' . $this->getTable()->getName();
+        }
+
+        return $context;
+    }
+
+    /**
+     * Get N+1 detection report.
+     */
+    public function getN1DetectionReport(): ?array
+    {
+        if (! $this->n1QueryDetector) {
+            return null;
+        }
+
+        return $this->n1QueryDetector->getReport();
+    }
+
+    /**
+     * Get N+1 detection recommendations.
+     */
+    public function getN1DetectionRecommendations(): array
+    {
+        if (! $this->n1QueryDetector) {
+            return [];
+        }
+
+        return $this->n1QueryDetector->getRecommendations();
+    }
+
+    /**
+     * Reset N+1 detection counters.
+     */
+    public function resetN1Detection(): void
+    {
+        if ($this->n1QueryDetector) {
+            $this->n1QueryDetector->reset();
+        }
     }
 }
