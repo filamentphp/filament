@@ -48,7 +48,7 @@
     &.fi-color {
         background-color: color-mix(in oklab, white 90%, var(--color-400));
 
-        &:where(.dark *) {
+        @variant dark {
             background-color: color-mix(
                 in oklab,
                 var(--gray-900) 90%,
