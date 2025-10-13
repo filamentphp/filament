@@ -39,6 +39,8 @@ class PostResource extends Resource
                     ->columnSpanFull(),
                 Forms\Components\TextInput::make('title')
                     ->required(),
+                Forms\Components\Textarea::make('config')
+                    ->columnSpanFull(),
                 Forms\Components\Textarea::make('json')
                     ->columnSpanFull(),
                 Forms\Components\Textarea::make('json_array_of_objects')

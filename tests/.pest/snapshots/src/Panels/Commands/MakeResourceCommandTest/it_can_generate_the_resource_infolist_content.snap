@@ -26,6 +26,9 @@ class PostInfolist
                     ->placeholder('-')
                     ->columnSpanFull(),
                 TextEntry::make('title'),
+                TextEntry::make('config')
+                    ->placeholder('-')
+                    ->columnSpanFull(),
                 TextEntry::make('json')
                     ->placeholder('-')
                     ->columnSpanFull(),
