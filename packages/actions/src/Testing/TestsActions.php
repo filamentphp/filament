@@ -517,6 +517,7 @@ class TestsActions
 
     /**
      * Helper method to get the modal content from partials.
+     *
      * @internal
      */
     public function getMountedActionModalHtml(): Closure
