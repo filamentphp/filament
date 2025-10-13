@@ -515,28 +515,14 @@ class TestsActions
         };
     }
 
-    /**
-     * Helper method to get the modal content from partials.
-     *
-     * @internal
-     */
-    public function getMountedActionModalHtml(): Closure
-    {
-        return function (): string {
-            $partialName = 'action-modals';
-            $partials = data_get($this->lastState->getEffects(), 'partials', []);
-
-            if (! array_key_exists($partialName, $partials)) {
-                Assert::fail('No mounted action modal data found inside partials.');
-            }
-
-            return $partials[$partialName];
-        };
-    }
-
     public function assertMountedActionModalSee(): Closure
     {
-        return function ($values, $escape = true) {
+        return function (string | array $values, $escape = true) {
+            /**
+             * @var string $html
+             *
+             * @phpstan-ignore-next-line
+             */
             $html = $this->getMountedActionModalHtml();
 
             foreach (Arr::wrap($values) as $value) {
@@ -552,7 +538,12 @@ class TestsActions
 
     public function assertMountedActionModalDontSee(): Closure
     {
-        return function ($values, $escape = true) {
+        return function (string | array $values, bool $escape = true) {
+            /**
+             * @var string $html
+             *
+             * @phpstan-ignore-next-line
+             */
             $html = $this->getMountedActionModalHtml();
 
             foreach (Arr::wrap($values) as $value) {
@@ -568,7 +559,12 @@ class TestsActions
 
     public function assertMountedActionModalSeeHtml(): Closure
     {
-        return function ($values) {
+        return function (string | array $values) {
+            /**
+             * @var string $html
+             *
+             * @phpstan-ignore-next-line
+             */
             $html = $this->getMountedActionModalHtml();
 
             foreach (Arr::wrap($values) as $value) {
@@ -584,7 +580,12 @@ class TestsActions
 
     public function assertMountedActionModalDontSeeHtml(): Closure
     {
-        return function ($values) {
+        return function (string | array $values) {
+            /**
+             * @var string $html
+             *
+             * @phpstan-ignore-next-line
+             */
             $html = $this->getMountedActionModalHtml();
 
             foreach (Arr::wrap($values) as $value) {
@@ -763,6 +764,25 @@ class TestsActions
             }
 
             return $actions;
+        };
+    }
+
+    /**
+     * Helper method to get the modal content from partials.
+     *
+     * @internal
+     */
+    public function getMountedActionModalHtml(): Closure
+    {
+        return function (): string {
+            $partialName = 'action-modals';
+            $partials = data_get($this->lastState->getEffects(), 'partials', []);
+
+            if (! array_key_exists($partialName, $partials)) {
+                Assert::fail('No mounted action modal data found inside partials.');
+            }
+
+            return $partials[$partialName];
         };
     }
 }
