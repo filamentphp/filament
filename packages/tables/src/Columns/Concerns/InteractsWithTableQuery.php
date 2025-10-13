@@ -6,7 +6,7 @@ use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Arr;
-
+use Illuminate\Support\Str;
 use function Filament\Support\generate_search_column_expression;
 use function Filament\Support\generate_search_term_expression;
 
@@ -37,7 +37,7 @@ trait InteractsWithTableQuery
 
     public function applyEagerLoading(EloquentBuilder | Relation $query): EloquentBuilder | Relation
     {
-        if (! $this->hasRelationship($query->getModel())) {
+        if (! $this->hasRelationship($query->getModel()) || $query->getModel()->hasAttribute(Str::before($this->name, '.'))) {
             return $query;
         }
 
