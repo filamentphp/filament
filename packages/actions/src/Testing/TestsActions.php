@@ -775,14 +775,21 @@ class TestsActions
     public function getMountedActionModalHtml(): Closure
     {
         return function (): string {
-            $partialName = 'action-modals';
             $partials = data_get($this->lastState->getEffects(), 'partials', []);
 
-            if (! array_key_exists($partialName, $partials)) {
-                Assert::fail('No mounted action modal data found inside partials.');
+            $partialName = 'action-modals';
+            $nestingIndex = count($this->instance()->mountedActions) - 1;
+            $partialNameWithNestingIndex = $partialName.'.'.$nestingIndex;
+
+            if (array_key_exists($partialName, $partials)) {
+                return $partials[$partialName];
             }
 
-            return $partials[$partialName];
+            if (array_key_exists($partialNameWithNestingIndex, $partials)) {
+                return $partials[$partialNameWithNestingIndex];
+            }
+
+            Assert::fail('No mounted action modal data found inside partials.');
         };
     }
 }
