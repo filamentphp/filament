@@ -13,8 +13,8 @@
 @endphp
 
 <div
+    x-data="filamentActionsSchemaComponent()"
     @if ($isSticky)
-        x-data="filamentActionsSchemaComponent()"
         x-intersect:enter.half="disableSticky"
         x-intersect:leave="enableSticky"
         x-bind:class="{ 'fi-sticky': isSticky }"
