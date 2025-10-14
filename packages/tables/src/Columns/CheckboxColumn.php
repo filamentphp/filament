@@ -8,6 +8,7 @@ use Filament\Support\Enums\Alignment;
 use Filament\Support\Facades\FilamentAsset;
 use Filament\Tables\Columns\Contracts\Editable;
 use Filament\Tables\Table;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Js;
 
 class CheckboxColumn extends Column implements Editable, HasEmbeddedView
@@ -56,6 +57,7 @@ class CheckboxColumn extends Column implements Editable, HasEmbeddedView
                     ? '{
                         content: ' . Js::from($tooltip) . ',
                         theme: $store.theme,
+                        allowHTML: ' . Js::from($tooltip instanceof Htmlable) . ',
                     }'
                     : null,
             ], escape: false)

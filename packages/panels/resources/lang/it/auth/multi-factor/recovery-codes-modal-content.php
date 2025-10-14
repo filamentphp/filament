@@ -4,19 +4,19 @@ return [
 
     'actions' => [
 
-        'Click to' => 'Clicca per',
+        'Clicca per',
 
         'copy' => [
             'label' => 'copiare',
         ],
 
-        'or' => 'o',
+        'o',
 
         'download' => [
             'label' => 'scaricare',
         ],
 
-        'all the codes at once.' => 'tutti i codici in una volta.',
+        'tutti i codici in una volta.',
 
     ],
 

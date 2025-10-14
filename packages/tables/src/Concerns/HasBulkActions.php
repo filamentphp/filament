@@ -310,7 +310,9 @@ trait HasBulkActions
             }
         }
 
-        return $table->selectPivotDataInQuery($relationship);
+        $relationship = $table->selectPivotDataInQuery($relationship);
+
+        return $relationship->getQuery();
     }
 
     /**

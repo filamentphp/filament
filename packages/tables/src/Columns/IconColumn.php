@@ -13,6 +13,7 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\View\Components\Columns\IconColumnComponent\IconComponent;
 use Filament\Tables\View\TablesIconAlias;
 use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Js;
@@ -281,6 +282,7 @@ class IconColumn extends Column implements HasEmbeddedView
                         ? '{
                             content: ' . Js::from($tooltip) . ',
                             theme: $store.theme,
+                            allowHTML: ' . Js::from($tooltip instanceof Htmlable) . ',
                         }'
                         : null,
                 ], escape: false);
@@ -329,6 +331,7 @@ class IconColumn extends Column implements HasEmbeddedView
                             ? '{
                                 content: ' . Js::from($tooltip) . ',
                                 theme: $store.theme,
+                                allowHTML: ' . Js::from($tooltip instanceof Htmlable) . ',
                             }'
                             : null,
                     ], escape: false)

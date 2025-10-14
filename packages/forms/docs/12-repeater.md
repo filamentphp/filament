@@ -454,6 +454,24 @@ Repeater::make('qualifications')
 
 <UtilityInjection set="formFields" version="4.x" extras="Data;;array<string, mixed>;;$data;;The data that is being saved by the repeater.">You can inject various utilities into the function passed to `mutateRelationshipDataBeforeSaveUsing()` as parameters.</UtilityInjection>
 
+### Modifying related records after retrieval
+
+You may filter or modify the related records of a repeater after they are retrieved from the database using the `modifyRecordsUsing` argument. This method accepts a function that receives a `Collection` of related records. You should return the modified collection.
+
+This can be particularly useful to restrict records to a specific group or category without doing this in the database query itself, which would trigger an extra query if the records are already eager loaded:
+
+```php
+use Filament\Forms\Components\Repeater;
+use Illuminate\Database\Eloquent\Collection;
+
+Repeater::make('startItems')
+    ->relationship(name: 'items', modifyRecordsUsing: fn (Collection $records): Collection => $records->where('group', 'start')),
+Repeater::make('endItems')
+    ->relationship(name: 'items', modifyRecordsUsing: fn (Collection $records): Collection => $records->where('group', 'end')),
+```
+
+<UtilityInjection set="formFields" version="4.x" extras="Records;;Illuminate\Database\Eloquent\Collection;;$records;;The collection of related records.">You can inject various utilities into the function passed to `modifyRecordsUsing` as parameters.</UtilityInjection>
+
 ## Grid layout
 
 You may organize repeater items into columns by using the `grid()` method:

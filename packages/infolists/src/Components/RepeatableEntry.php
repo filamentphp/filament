@@ -11,6 +11,7 @@ use Filament\Schemas\Schema;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Concerns\CanBeContained;
 use Filament\Support\Enums\Alignment;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Js;
@@ -110,6 +111,7 @@ class RepeatableEntry extends Entry implements HasEmbeddedView
                         ? '{
                             content: ' . Js::from($tooltip) . ',
                             theme: $store.theme,
+                            allowHTML: ' . Js::from($tooltip instanceof Htmlable) . ',
                         }'
                         : null,
                 ], escape: false);
@@ -161,6 +163,7 @@ class RepeatableEntry extends Entry implements HasEmbeddedView
                         ? '{
                             content: ' . Js::from($tooltip) . ',
                             theme: $store.theme,
+                            allowHTML: ' . Js::from($tooltip instanceof Htmlable) . ',
                         }'
                         : null,
                 ], escape: false);

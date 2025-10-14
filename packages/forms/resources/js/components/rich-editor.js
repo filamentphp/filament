@@ -7,6 +7,7 @@ export default function richEditorFormComponent({
     acceptedFileTypes,
     acceptedFileTypesValidationMessage,
     activePanel,
+    canAttachFiles,
     deleteCustomBlockButtonIconHtml,
     editCustomBlockButtonIconHtml,
     extensions,
@@ -51,6 +52,7 @@ export default function richEditorFormComponent({
                 extensions: await getExtensions({
                     acceptedFileTypes,
                     acceptedFileTypesValidationMessage,
+                    canAttachFiles,
                     customExtensionUrls: extensions,
                     deleteCustomBlockButtonIconHtml,
                     editCustomBlockButtonIconHtml,

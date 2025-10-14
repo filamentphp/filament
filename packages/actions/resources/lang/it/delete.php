@@ -54,18 +54,18 @@ return [
                 'title' => 'Eliminati',
             ],
 
-        ],
+            'deleted_partial' => [
+                'title' => 'Eliminati :count di :total',
+                'missing_authorization_failure_message' => 'Non hai il permesso di eliminare :count.',
+                'missing_processing_failure_message' => ':count non possono essere eliminati.',
+            ],
 
-        'deleted_partial' => [
-            'title' => 'Eliminati :count di :total',
-            'missing_authorization_failure_message' => 'Non hai il permesso di eliminare :count.',
-            'missing_processing_failure_message' => ':count non possono essere eliminati.',
-        ],
+            'deleted_none' => [
+                'title' => 'Eliminazione fallita',
+                'missing_authorization_failure_message' => 'Non hai il permesso di eliminare :count.',
+                'missing_processing_failure_message' => ':count non possono essere eliminati.',
+            ],
 
-        'deleted_none' => [
-            'title' => 'Eliminazione fallita',
-            'missing_authorization_failure_message' => 'Non hai il permesso di eliminare :count.',
-            'missing_processing_failure_message' => ':count non possono essere eliminati.',
         ],
 
     ],

@@ -5,6 +5,8 @@ namespace Filament\Infolists\Components;
 use Closure;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Concerns\CanBeCopied;
+use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Js;
 use Phiki\Grammar\Grammar;
 use Phiki\Phiki;
@@ -60,6 +62,10 @@ class CodeEntry extends Entry implements HasEmbeddedView
     {
         $state = $this->getState();
 
+        if ($state instanceof Collection) {
+            $state = $state->all();
+        }
+
         $attributes = $this->getExtraAttributeBag()
             ->class([
                 'fi-in-code',
@@ -72,6 +78,7 @@ class CodeEntry extends Entry implements HasEmbeddedView
                         ? '{
                             content: ' . Js::from($tooltip) . ',
                             theme: $store.theme,
+                            allowHTML: ' . Js::from($tooltip instanceof Htmlable) . ',
                         }'
                         : null,
                 ], escape: false);
@@ -132,6 +139,7 @@ class CodeEntry extends Entry implements HasEmbeddedView
                     ? '{
                         content: ' . Js::from($tooltip) . ',
                         theme: $store.theme,
+                        allowHTML: ' . Js::from($tooltip instanceof Htmlable) . ',
                     }'
                     : null,
             ], escape: false)

@@ -24,6 +24,8 @@ trait HasGlobalSearch
 
     protected static bool $isGloballySearchable = true;
 
+    protected static ?int $globalSearchSort = null;
+
     public static function canGloballySearch(): bool
     {
         return static::$isGloballySearchable && count(static::getGloballySearchableAttributes()) && static::canAccess();
@@ -234,5 +236,15 @@ trait HasGlobalSearch
     public static function getGlobalSearchEloquentQuery(): Builder
     {
         return static::getEloquentQuery();
+    }
+
+    public static function getGlobalSearchSort(): ?int
+    {
+        return static::$globalSearchSort;
+    }
+
+    public static function globalSearchSort(?int $sort): void
+    {
+        static::$globalSearchSort = $sort;
     }
 }

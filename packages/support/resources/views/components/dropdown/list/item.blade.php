@@ -63,6 +63,7 @@
         x-tooltip="{
             content: @js($tooltip),
             theme: $store.theme,
+            allowHTML: @js($tooltip instanceof \Illuminate\Contracts\Support\Htmlable),
         }"
     @endif
     {{
@@ -137,6 +138,7 @@
                     x-tooltip="{
                         content: @js($badgeTooltip),
                         theme: $store.theme,
+                        allowHTML: @js($badgeTooltip instanceof \Illuminate\Contracts\Support\Htmlable),
                     }"
                 @endif
                 {{ (new ComponentAttributeBag)->color(BadgeComponent::class, $badgeColor)->class(['fi-badge']) }}

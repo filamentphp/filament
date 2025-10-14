@@ -187,7 +187,6 @@ return [
 
             'group' => [
                 'label' => 'Raggruppa per',
-                'placeholder' => 'Raggruppa per',
             ],
 
             'direction' => [
