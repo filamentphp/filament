@@ -1,5 +1,5 @@
 .fi-ta-ctn {
-    @apply rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10;
+    @apply relative flex rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10;
 
     &:not(.fi-ta-ctn-with-header) {
         @apply overflow-hidden;
@@ -187,5 +187,86 @@
 
     & .fi-ta-table-loading-ctn {
         @apply flex h-32 items-center justify-center;
+    }
+
+    & .fi-ta-main {
+        @apply min-w-0 flex-1;
+    }
+
+    & .fi-ta-filters-trigger-action-ctn.lg\:fi-hidden {
+        @apply lg:hidden;
+    }
+
+    & .fi-ta-filters-before-content-ctn,
+    & .fi-ta-filters-after-content-ctn {
+        @apply absolute z-20 hidden w-screen max-w-[14rem]! shrink-0 rounded-lg border-gray-200 bg-white shadow-lg ring-1 ring-gray-950/5 transition lg:static lg:z-auto lg:shadow-none lg:ring-0 dark:border-white/10 dark:bg-gray-900 dark:ring-white/10;
+
+        & .fi-ta-filters {
+            @apply p-6 lg:py-4;
+        }
+
+        &.fi-open {
+            @apply block;
+        }
+
+        &.lg\:fi-open {
+            @apply lg:block;
+        }
+
+        &.fi-opacity-0 {
+            @apply opacity-0;
+        }
+
+        &.fi-width-xs {
+            @apply max-w-xs!;
+        }
+
+        &.fi-width-sm {
+            @apply max-w-sm!;
+        }
+
+        &.fi-width-md {
+            @apply max-w-md!;
+        }
+
+        &.fi-width-lg {
+            @apply max-w-lg!;
+        }
+
+        &.fi-width-xl {
+            @apply max-w-xl!;
+        }
+
+        &.fi-width-2xl {
+            @apply max-w-2xl!;
+        }
+
+        &.fi-width-3xl {
+            @apply max-w-3xl!;
+        }
+
+        &.fi-width-4xl {
+            @apply max-w-4xl!;
+        }
+
+        &.fi-width-5xl {
+            @apply max-w-5xl!;
+        }
+
+        &.fi-width-6xl {
+            @apply max-w-6xl!;
+        }
+
+        &.fi-width-7xl {
+            @apply max-w-7xl!;
+        }
+    }
+
+    & .fi-ta-filters-before-content-ctn {
+        @apply start-0 lg:rounded-s-xl lg:rounded-e-none lg:border-e;
+    }
+
+    & .fi-ta-filters-after-content-ctn {
+        @apply end-0 lg:rounded-s-none lg:rounded-e-xl lg:border-s;
     }
 }
