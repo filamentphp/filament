@@ -233,6 +233,12 @@ class IsRelatedToOperator extends Operator
         $relationship = null;
 
         foreach (explode('.', $constraint->getRelationshipName()) as $nestedRelationshipName) {
+            if ($record->hasAttribute($nestedRelationshipName)) {
+                $relationship = null;
+
+                break;
+            }
+
             if (! $record->isRelation($nestedRelationshipName)) {
                 $relationship = null;
 
