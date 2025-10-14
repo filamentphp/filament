@@ -20,12 +20,18 @@ import { yaml } from '@codemirror/lang-yaml'
 
 export default function codeEditorFormComponent({
     isDisabled,
+    isLive,
+    isLiveDebounced,
+    isLiveOnBlur,
+    liveDebounce,
     language,
     state,
 }) {
     return {
         editor: null,
         themeCompartment: new Compartment(),
+        isDocChanged: false,
+        _liveTimer: null,
         state,
 
         init() {
@@ -41,11 +47,30 @@ export default function codeEditorFormComponent({
                         EditorState.readOnly.of(isDisabled),
                         EditorView.editable.of(!isDisabled),
                         EditorView.updateListener.of((viewUpdate) => {
-                            if (!viewUpdate.docChanged) {
+                            if (viewUpdate.docChanged) {
+                                this.isDocChanged = true
+                            } else {
                                 return
                             }
-
-                            this.state = viewUpdate.state.doc.toString()
+                            if (!isLiveOnBlur && (isLive || isLiveDebounced)) {
+                                clearTimeout(this._liveTimer)
+                                this._liveTimer = setTimeout(
+                                    () => {
+                                        this.state =
+                                            viewUpdate.state.doc.toString()
+                                        this._liveTimer = null
+                                    },
+                                    isLiveDebounced ? liveDebounce : 250,
+                                )
+                            }
+                        }),
+                        EditorView.domEventHandlers({
+                            blur: (event, view) => {
+                                if (isLiveOnBlur && this.isDocChanged) {
+                                    this.state = view.state.doc.toString()
+                                    this.isDocChanged = false
+                                }
+                            },
                         }),
                         ...(languageExtension ? [languageExtension] : []),
                         this.themeCompartment.of(this.getThemeExtensions()),
