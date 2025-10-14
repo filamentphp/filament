@@ -46,7 +46,9 @@ If you set `$navigationIcon = null` on all items within the same navigation grou
 You may assign a navigation [icon](../styling/icons) which will only be used for active items using the `$activeNavigationIcon` property:
 
 ```php
-protected static ?string $activeNavigationIcon = 'heroicon-o-document-text';
+use BackedEnum;
+
+protected static string | BackedEnum | null $activeNavigationIcon = 'heroicon-o-document-text';
 ```
 
 <AutoScreenshot name="panels/navigation/active-icon" alt="Different navigation item icon when active" version="3.x" />

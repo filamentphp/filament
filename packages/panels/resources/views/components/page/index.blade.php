@@ -47,12 +47,14 @@
         @elseif ($heading = $this->getHeading())
             @php
                 $headerActions = $this->getCachedHeaderActions();
+                $headerActionsAlignment = $this->getHeaderActionsAlignment();
                 $breadcrumbs = filament()->hasBreadcrumbs() ? $this->getBreadcrumbs() : [];
                 $subheading = $this->getSubheading();
             @endphp
 
             <x-filament-panels::header
                 :actions="$headerActions"
+                :actions-alignment="$headerActionsAlignment"
                 :breadcrumbs="$breadcrumbs"
                 :heading="$heading"
                 :subheading="$subheading"

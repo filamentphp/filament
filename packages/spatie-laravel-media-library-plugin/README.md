@@ -90,6 +90,25 @@ SpatieMediaLibraryFileUpload::make('attachments')
     ->customProperties(['zip_filename_prefix' => 'folder/subfolder/'])
 ```
 
+You may use a function to dynamically set the properties based on the uploaded file:
+
+```php
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
+use Spatie\Image\Image;
+
+SpatieMediaLibraryFileUpload::make('image')
+    ->image()
+    ->customProperties(function (TemporaryUploadedFile $file): array {
+        $image = Image::load($file->getRealPath());
+
+        return [
+            'height' => $image->getHeight(),
+            'width' => $image->getWidth(),
+        ];
+    })
+```
+
 ### Adding custom headers
 
 You may pass in custom headers when uploading files using the `customHeaders()` method:

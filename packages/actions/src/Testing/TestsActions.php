@@ -44,14 +44,6 @@ class TestsActions
                 );
             }
 
-            if (store($this->instance())->has('redirect')) {
-                return $this;
-            }
-
-            if (count($this->instance()->mountedActions) !== ($initialMountedActionsCount + count($actions))) {
-                return $this;
-            }
-
             return $this;
         };
     }
@@ -124,10 +116,6 @@ class TestsActions
             }
 
             $this->call('callMountedAction', $arguments);
-
-            if (store($this->instance())->has('redirect')) {
-                return $this;
-            }
 
             return $this;
         };

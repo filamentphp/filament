@@ -40,7 +40,16 @@ class OptionsArrayStateCast implements StateCast
                         && (($stateItem === '0') || (! str($stateItem)->startsWith('0')))
                     )
                 ) {
-                    $carry[] = intval($stateItem);
+                    $max = (string) PHP_INT_MAX;
+
+                    if (
+                        (strlen($stateItem) > strlen($max)) ||
+                        ((strlen($stateItem) === strlen($max)) && (strcmp($stateItem, $max) > 0))
+                    ) {
+                        $carry[] = strval($stateItem);
+                    } else {
+                        $carry[] = intval($stateItem);
+                    }
                 } else {
                     $carry[] = strval($stateItem);
                 }
