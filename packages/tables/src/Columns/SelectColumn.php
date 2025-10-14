@@ -786,6 +786,12 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
         $relationshipName = $this->getOptionsRelationshipName();
 
         foreach (explode('.', $relationshipName) as $nestedRelationshipName) {
+            if ($record->hasAttribute($nestedRelationshipName)) {
+                $relationship = null;
+
+                break;
+            }
+
             if (! $record->isRelation($nestedRelationshipName)) {
                 $relationship = null;
 
