@@ -36,9 +36,9 @@ class Post extends Model
         return $this->belongsTo(User::class, 'author_id');
     }
 
-    public function config($key)
+    public function config(string $key): mixed
     {
-        return $this->config->$key ?? null;
+        return $this->config[$key] ?? null;
     }
 
     protected static function newFactory()
