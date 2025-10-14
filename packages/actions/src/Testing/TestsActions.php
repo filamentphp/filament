@@ -503,6 +503,90 @@ class TestsActions
         };
     }
 
+    public function assertMountedActionModalSee(): Closure
+    {
+        return function (string | array $values, $escape = true) {
+            /**
+             * @var string $html
+             *
+             * @phpstan-ignore-next-line
+             */
+            $html = $this->getMountedActionModalHtml();
+
+            foreach (Arr::wrap($values) as $value) {
+                Assert::assertStringContainsString(
+                    $escape ? e($value) : $value,
+                    $html
+                );
+            }
+
+            return $this;
+        };
+    }
+
+    public function assertMountedActionModalDontSee(): Closure
+    {
+        return function (string | array $values, bool $escape = true) {
+            /**
+             * @var string $html
+             *
+             * @phpstan-ignore-next-line
+             */
+            $html = $this->getMountedActionModalHtml();
+
+            foreach (Arr::wrap($values) as $value) {
+                Assert::assertStringNotContainsString(
+                    $escape ? e($value) : $value,
+                    $html
+                );
+            }
+
+            return $this;
+        };
+    }
+
+    public function assertMountedActionModalSeeHtml(): Closure
+    {
+        return function (string | array $values) {
+            /**
+             * @var string $html
+             *
+             * @phpstan-ignore-next-line
+             */
+            $html = $this->getMountedActionModalHtml();
+
+            foreach (Arr::wrap($values) as $value) {
+                Assert::assertStringContainsString(
+                    $value,
+                    $html
+                );
+            }
+
+            return $this;
+        };
+    }
+
+    public function assertMountedActionModalDontSeeHtml(): Closure
+    {
+        return function (string | array $values) {
+            /**
+             * @var string $html
+             *
+             * @phpstan-ignore-next-line
+             */
+            $html = $this->getMountedActionModalHtml();
+
+            foreach (Arr::wrap($values) as $value) {
+                Assert::assertStringNotContainsString(
+                    $value,
+                    $html
+                );
+            }
+
+            return $this;
+        };
+    }
+
     public function assertActionHalted(): Closure
     {
         return $this->assertActionMounted();
@@ -668,6 +752,31 @@ class TestsActions
             }
 
             return $actions;
+        };
+    }
+
+    /**
+     * @internal
+     */
+    public function getMountedActionModalHtml(): Closure
+    {
+        return function (): string {
+            $partials = data_get($this->lastState->getEffects(), 'partials', []);
+
+            $partialName = 'action-modals';
+
+            if (array_key_exists($partialName, $partials)) {
+                return $partials[$partialName];
+            }
+            
+            $nestingIndex = count($this->instance()->mountedActions) - 1;
+            $partialName = "{$partialName}.{$nestingIndex}";
+
+            if (array_key_exists($partialName, $partials)) {
+                return $partials[$partialName];
+            }
+
+            Assert::fail('No mounted action modal content was found.');
         };
     }
 }

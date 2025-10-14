@@ -13,6 +13,7 @@
     'shouldOpenUrlInNewTab' => false,
     'sidebarCollapsible' => true,
     'subGrouped' => false,
+    'subNavigation' => false,
     'url',
 ])
 
@@ -33,7 +34,7 @@
     <a
         {{ \Filament\Support\generate_href_html($url, $shouldOpenUrlInNewTab) }}
         x-on:click="window.matchMedia(`(max-width: 1024px)`).matches && $store.sidebar.close()"
-        @if ($sidebarCollapsible)
+        @if ($sidebarCollapsible && (! $subNavigation))
             x-data="{ tooltip: false }"
             x-effect="
                 tooltip = $store.sidebar.isOpen
@@ -48,7 +49,7 @@
         @endif
         class="fi-sidebar-item-btn"
     >
-        @if (filled($icon) && ((! $subGrouped) || $sidebarCollapsible))
+        @if (filled($icon) && ((! $subGrouped) || ($sidebarCollapsible && (! $subNavigation))))
             {{
                 \Filament\Support\generate_icon_html(($active && $activeIcon) ? $activeIcon : $icon, attributes: (new \Illuminate\View\ComponentAttributeBag([
                     'x-show' => ($subGrouped && $sidebarCollapsible) ? '! $store.sidebar.isOpen' : false,
@@ -58,7 +59,7 @@
 
         @if ((blank($icon) && $grouped) || $subGrouped)
             <div
-                @if (filled($icon) && $subGrouped && $sidebarCollapsible)
+                @if (filled($icon) && $subGrouped && $sidebarCollapsible && (! $subNavigation))
                     x-show="$store.sidebar.isOpen"
                 @endif
                 class="fi-sidebar-item-grouped-border"
@@ -80,7 +81,7 @@
         @endif
 
         <span
-            @if ($sidebarCollapsible)
+            @if ($sidebarCollapsible && (! $subNavigation))
                 x-show="$store.sidebar.isOpen"
                 x-transition:enter="fi-transition-enter"
                 x-transition:enter-start="fi-transition-enter-start"
@@ -93,7 +94,7 @@
 
         @if (filled($badge))
             <span
-                @if ($sidebarCollapsible)
+                @if ($sidebarCollapsible && (! $subNavigation))
                     x-show="$store.sidebar.isOpen"
                     x-transition:enter="fi-transition-enter"
                     x-transition:enter-start="fi-transition-enter-start"
@@ -139,6 +140,7 @@
                     :last="$loop->last"
                     :should-open-url-in-new-tab="$shouldChildItemOpenUrlInNewTab"
                     sub-grouped
+                    :sub-navigation="$subNavigation"
                     :url="$childItemUrl"
                 >
                     {{ $childItem->getLabel() }}
