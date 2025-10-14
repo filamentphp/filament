@@ -768,8 +768,6 @@ class TestsActions
     }
 
     /**
-     * Helper method to get the modal content from partials.
-     *
      * @internal
      */
     public function getMountedActionModalHtml(): Closure
@@ -778,18 +776,19 @@ class TestsActions
             $partials = data_get($this->lastState->getEffects(), 'partials', []);
 
             $partialName = 'action-modals';
+
+            if (array_key_exists($partialName, $partials)) {
+                return $partials[$partialName];
+            }
+            
             $nestingIndex = count($this->instance()->mountedActions) - 1;
-            $partialNameWithNestingIndex = $partialName.'.'.$nestingIndex;
+            $partialName = "{$partialName}.{$nestingIndex}";
 
             if (array_key_exists($partialName, $partials)) {
                 return $partials[$partialName];
             }
 
-            if (array_key_exists($partialNameWithNestingIndex, $partials)) {
-                return $partials[$partialNameWithNestingIndex];
-            }
-
-            Assert::fail('No mounted action modal data found inside partials.');
+            Assert::fail('No mounted action modal content was found.');
         };
     }
 }
