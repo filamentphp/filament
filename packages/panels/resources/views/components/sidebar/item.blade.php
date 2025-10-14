@@ -140,8 +140,8 @@
                     :last="$loop->last"
                     :should-open-url-in-new-tab="$shouldChildItemOpenUrlInNewTab"
                     sub-grouped
-                    :url="$childItemUrl"
                     :sub-navigation="$subNavigation"
+                    :url="$childItemUrl"
                 >
                     {{ $childItem->getLabel() }}
                 </x-filament-panels::sidebar.item>
