@@ -34,42 +34,30 @@ class SetUpEmailAuthenticationAction
             ->modalIconColor('primary')
             ->modalHeading(__('filament-panels::auth/multi-factor/email/actions/set-up.modal.heading'))
             ->modalDescription(__('filament-panels::auth/multi-factor/email/actions/set-up.modal.description'))
-            ->schema([
-                OneTimeCodeInput::make('code')
-                    ->label(__('filament-panels::auth/multi-factor/email/actions/set-up.modal.form.code.label'))
-                    ->belowContent(Action::make('resend')
-                        ->label(__('filament-panels::auth/multi-factor/email/actions/set-up.modal.form.code.actions.resend.label'))
-                        ->link()
-                        ->action(function () use ($emailAuthentication): void {
-                            /** @var HasEmailAuthentication $user */
-                            $user = Filament::auth()->user();
+            ->schema(function () use ($emailAuthentication): array {
+                /** @var HasEmailAuthentication $user */
+                $user = Filament::auth()->user();
 
-                            if (! $emailAuthentication->sendCode($user)) {
-                                Notification::make()
-                                    ->title(__('filament-panels::auth/multi-factor/email/actions/set-up.modal.form.code.actions.resend.notifications.rate_limited.title'))
-                                    ->warning()
-                                    ->send();
+                return [
+                    OneTimeCodeInput::make('code')
+                        ->label(__('filament-panels::auth/multi-factor/email/actions/set-up.modal.form.code.label'))
+                        ->belowContent($emailAuthentication->createResendAction(
+                            $user,
+                            'filament-panels::auth/multi-factor/email/actions/set-up.modal.form.code.actions.resend'
+                        ))
+                        ->validationAttribute(__('filament-panels::auth/multi-factor/email/actions/set-up.modal.form.code.validation_attribute'))
+                        ->required()
+                        ->rule(function () use ($emailAuthentication): Closure {
+                            return function (string $attribute, $value, Closure $fail) use ($emailAuthentication): void {
+                                if ($emailAuthentication->verifyCode($value)) {
+                                    return;
+                                }
 
-                                return;
-                            }
-
-                            Notification::make()
-                                ->title(__('filament-panels::auth/multi-factor/email/actions/set-up.modal.form.code.actions.resend.notifications.resent.title'))
-                                ->success()
-                                ->send();
-                        }))
-                    ->validationAttribute(__('filament-panels::auth/multi-factor/email/actions/set-up.modal.form.code.validation_attribute'))
-                    ->required()
-                    ->rule(function () use ($emailAuthentication): Closure {
-                        return function (string $attribute, $value, Closure $fail) use ($emailAuthentication): void {
-                            if ($emailAuthentication->verifyCode($value)) {
-                                return;
-                            }
-
-                            $fail(__('filament-panels::auth/multi-factor/email/actions/set-up.modal.form.code.messages.invalid'));
-                        };
-                    }),
-            ])
+                                $fail(__('filament-panels::auth/multi-factor/email/actions/set-up.modal.form.code.messages.invalid'));
+                            };
+                        }),
+                ];
+            })
             ->modalSubmitAction(fn (Action $action) => $action
                 ->label(__('filament-panels::auth/multi-factor/email/actions/set-up.modal.actions.submit.label')))
             ->action(function (): void {

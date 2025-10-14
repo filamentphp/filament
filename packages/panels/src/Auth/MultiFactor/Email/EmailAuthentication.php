@@ -130,6 +130,28 @@ class EmailAuthentication implements HasBeforeChallengeHook, MultiFactorAuthenti
         return true;
     }
 
+    public function createResendAction(HasEmailAuthentication $user, string $translationKeyPrefix): Action
+    {
+        return Action::make('resend')
+            ->label(__("{$translationKeyPrefix}.label"))
+            ->link()
+            ->action(function () use ($user, $translationKeyPrefix): void {
+                if (! $this->sendCode($user)) {
+                    Notification::make()
+                        ->title(__("{$translationKeyPrefix}.notifications.rate_limited.title"))
+                        ->warning()
+                        ->send();
+
+                    return;
+                }
+
+                Notification::make()
+                    ->title(__("{$translationKeyPrefix}.notifications.resent.title"))
+                    ->success()
+                    ->send();
+            });
+    }
+
     /**
      * @return array<Component | Action | ActionGroup>
      */
@@ -195,24 +217,10 @@ class EmailAuthentication implements HasBeforeChallengeHook, MultiFactorAuthenti
             OneTimeCodeInput::make('code')
                 ->label(__('filament-panels::auth/multi-factor/email/provider.login_form.code.label'))
                 ->validationAttribute('code')
-                ->belowContent(Action::make('resend')
-                    ->label(__('filament-panels::auth/multi-factor/email/provider.login_form.code.actions.resend.label'))
-                    ->link()
-                    ->action(function () use ($user): void {
-                        if (! $this->sendCode($user)) {
-                            Notification::make()
-                                ->title(__('filament-panels::auth/multi-factor/email/provider.login_form.code.actions.resend.notifications.rate_limited.title'))
-                                ->warning()
-                                ->send();
-
-                            return;
-                        }
-
-                        Notification::make()
-                            ->title(__('filament-panels::auth/multi-factor/email/provider.login_form.code.actions.resend.notifications.resent.title'))
-                            ->success()
-                            ->send();
-                    }))
+                ->belowContent($this->createResendAction(
+                    $user,
+                    'filament-panels::auth/multi-factor/email/provider.login_form.code.actions.resend'
+                ))
                 ->required()
                 ->rule(function (): Closure {
                     return function (string $attribute, $value, Closure $fail): void {
