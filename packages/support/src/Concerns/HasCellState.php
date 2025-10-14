@@ -218,13 +218,13 @@ trait HasCellState
             array_pop($nameParts);
         }
 
-        if($record->hasAttribute($nameParts[0])) {
-            return null;
-        }
-
         $relationship = null;
 
         foreach ($nameParts as $namePart) {
+            if ($record->hasAttribute($namePart)) {
+                break;
+            }
+
             if (! $record->isRelation($namePart)) {
                 break;
             }
