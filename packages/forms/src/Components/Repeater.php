@@ -1119,7 +1119,7 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
 
         $relationshipName = $this->getRelationshipName();
 
-        if (! $record->isRelation($relationshipName)) {
+        if ($record->hasAttribute($relationshipName) || (! $record->isRelation($relationshipName))) {
             throw new LogicException("The relationship [{$relationshipName}] does not exist on the model [{$this->getModel()}].");
         }
 

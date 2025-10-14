@@ -298,7 +298,7 @@ class CheckboxList extends Field implements Contracts\CanDisableOptions, Contrac
 
         $record = $this->getModelInstance();
 
-        if (! $record->isRelation($name)) {
+        if ($record->hasAttribute($name) || (! $record->isRelation($name))) {
             throw new LogicException("The relationship [{$name}] does not exist on the model [{$this->getModel()}].");
         }
 

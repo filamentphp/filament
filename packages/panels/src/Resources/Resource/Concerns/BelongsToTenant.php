@@ -71,7 +71,7 @@ trait BelongsToTenant
     {
         $relationshipName = static::getTenantOwnershipRelationshipName();
 
-        if (! $record->isRelation($relationshipName)) {
+        if ($record->hasAttribute($relationshipName) || (! $record->isRelation($relationshipName))) {
             $resourceClass = static::class;
             $recordClass = $record::class;
 
@@ -93,7 +93,7 @@ trait BelongsToTenant
     {
         $relationshipName = static::getTenantRelationshipName();
 
-        if (! $tenant->isRelation($relationshipName)) {
+        if ($tenant->hasAttribute($relationshipName) || (! $tenant->isRelation($relationshipName))) {
             $resourceClass = static::class;
             $tenantClass = $tenant::class;
 

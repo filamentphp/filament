@@ -248,6 +248,12 @@ trait CanSearchRecords
         $relationship = null;
 
         foreach (str($name)->beforeLast('.')->explode('.')->all() as $nestedRelationshipName) {
+            if ($record->hasAttribute($nestedRelationshipName)) {
+                $relationship = null;
+
+                break;
+            }
+
             if (! $record->isRelation($nestedRelationshipName)) {
                 $relationship = null;
 

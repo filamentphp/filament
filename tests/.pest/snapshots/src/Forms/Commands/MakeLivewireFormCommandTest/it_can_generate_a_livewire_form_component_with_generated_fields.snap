@@ -47,6 +47,8 @@ class CreatePostWithFields extends Component implements HasActions, HasSchemas
                     ->columnSpanFull(),
                 TextInput::make('title')
                     ->required(),
+                Textarea::make('config')
+                    ->columnSpanFull(),
                 Textarea::make('json')
                     ->columnSpanFull(),
                 Textarea::make('json_array_of_objects')
