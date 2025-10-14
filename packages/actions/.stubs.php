@@ -86,13 +86,6 @@ namespace Livewire\Features\SupportTesting {
         public function parseNestedActionName(string | array $name): array {}
 
         public function parseNestedActions(string | TestAction | array $actions, array $arguments = [], bool $areRelativeToMountedActions = true): array {}
-
-        /**
-         * Helper method to get the modal content from partials.
-         *
-         * @internal
-         */
-        public function getMountedActionModalHtml(): string {}
     }
 
 }
