@@ -170,7 +170,7 @@ export default async ({
         }),
     )
 
-    for (const customExtension of loadedCustomExtensions) {
+    for (let customExtension of loadedCustomExtensions) {
         if (!customExtension || !customExtension.name) {
             continue
         }
@@ -178,6 +178,13 @@ export default async ({
         const existingIndex = extensions.findIndex(
             (extension) => extension.name === customExtension.name,
         )
+
+        if (
+            customExtension.name === 'placeholder' &&
+            customExtension.parent === null
+        ) {
+            customExtension = Placeholder.configure(customExtension.options)
+        }
 
         if (existingIndex !== -1) {
             extensions[existingIndex] = customExtension
