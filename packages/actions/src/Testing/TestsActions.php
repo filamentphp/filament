@@ -768,7 +768,7 @@ class TestsActions
             if (array_key_exists($partialName, $partials)) {
                 return $partials[$partialName];
             }
-            
+
             $nestingIndex = count($this->instance()->mountedActions) - 1;
             $partialName = "{$partialName}.{$nestingIndex}";
 
