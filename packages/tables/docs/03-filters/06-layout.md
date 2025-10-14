@@ -128,6 +128,40 @@ public function table(Table $table): Table
 
 <AutoScreenshot name="tables/filters/below-content" alt="Table with filters below content" version="4.x" />
 
+## Displaying filters to the left or right of the table content
+
+To render the filters to the left (before) or right (after) of the table content instead of in a dropdown, you may use:
+
+```php
+use Filament\Tables\Enums\FiltersLayout;
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->filters([
+            // ...
+        ], layout: FiltersLayout::BeforeContent); // or `FiltersLayout::AfterContent`
+}
+```
+
+### Allowing filters to be collapsible when displayed to the left or right of the table content
+
+To allow the filters to be collapsible when displayed to the left or right of the table content, you may use:
+
+```php
+use Filament\Tables\Enums\FiltersLayout;
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->filters([
+            // ...
+        ], layout: FiltersLayout::BeforeContentCollapsible); // or `FiltersLayout::AfterContentCollapsible`
+}
+```
+
 ## Hiding the filter indicators
 
 To hide the active filters indicators above the table, you may use `hiddenFilterIndicators()`:
