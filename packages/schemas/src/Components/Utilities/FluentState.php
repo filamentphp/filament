@@ -15,7 +15,7 @@ class FluentState extends Get
     {
         $state = parent::__invoke($path, $isAbsolute);
 
-        if (is_array($state) || is_object($state)) {
+        if (is_iterable($state)) {
             return new Fluent($state);
         }
 
