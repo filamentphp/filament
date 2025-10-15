@@ -113,8 +113,8 @@ class LayoutDemo extends Component implements HasActions, HasSchemas
                             ->schema([
                                 TextEntry::make('name')
                                     ->state('Dan Harrin'),
-                               TextEntry::make('role')
-                                   ->state('Admin'),
+                                TextEntry::make('role')
+                                    ->state('Admin'),
                             ]),
                         Fieldset::make('No Gap')
                             ->columns(1)
