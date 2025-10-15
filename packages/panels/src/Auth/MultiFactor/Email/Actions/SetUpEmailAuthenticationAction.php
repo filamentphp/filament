@@ -46,8 +46,8 @@ class SetUpEmailAuthenticationAction
 
                             if (! $emailAuthentication->sendCode($user)) {
                                 Notification::make()
-                                    ->title(__('filament-panels::auth/multi-factor/email/actions/set-up.modal.form.code.actions.resend.notifications.rate_limited.title'))
-                                    ->warning()
+                                    ->title(__('filament-panels::auth/multi-factor/email/actions/set-up.modal.form.code.actions.resend.notifications.throttled.title'))
+                                    ->danger()
                                     ->send();
 
                                 return;

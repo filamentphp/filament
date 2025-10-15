@@ -41,7 +41,7 @@ return [
                             'title' => 'We\'ve sent you a new code by email',
                         ],
 
-                        'rate_limited' => [
+                        'throttled' => [
                             'title' => 'Too many resend attempts. Please wait before requesting another code.',
                         ],
 

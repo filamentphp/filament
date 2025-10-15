@@ -201,8 +201,8 @@ class EmailAuthentication implements HasBeforeChallengeHook, MultiFactorAuthenti
                     ->action(function () use ($user): void {
                         if (! $this->sendCode($user)) {
                             Notification::make()
-                                ->title(__('filament-panels::auth/multi-factor/email/provider.login_form.code.actions.resend.notifications.rate_limited.title'))
-                                ->warning()
+                                ->title(__('filament-panels::auth/multi-factor/email/provider.login_form.code.actions.resend.notifications.throttled.title'))
+                                ->danger()
                                 ->send();
 
                             return;
