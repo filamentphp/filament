@@ -24,6 +24,7 @@ use Filament\Schemas\Components\Concerns\HasKey;
 use Filament\Schemas\Components\Concerns\HasMaxWidth;
 use Filament\Schemas\Components\Concerns\HasMeta;
 use Filament\Schemas\Components\Concerns\HasState;
+use Filament\Schemas\Components\Utilities\FluentState;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Concerns\HasColumns;
@@ -83,6 +84,7 @@ class Component extends ViewComponent
     {
         return match ($parameterName) {
             'context', 'operation' => [$this->getContainer()->getOperation()],
+            'fluentState' => [$this->makeFluentStateUtility()],
             'get' => [$this->makeGetUtility()],
             'livewire' => [$this->getLivewire()],
             'model' => [$this->getModel()],
@@ -103,6 +105,7 @@ class Component extends ViewComponent
 
         if ((! $record) || is_array($record)) {
             return match ($parameterType) {
+                FluentState::class => [$this->makeFluentStateUtility()],
                 Get::class => [$this->makeGetUtility()],
                 Set::class => [$this->makeSetUtility()],
                 default => parent::resolveDefaultClosureDependencyForEvaluationByType($parameterType),
@@ -110,6 +113,7 @@ class Component extends ViewComponent
         }
 
         return match ($parameterType) {
+            FluentState::class => [$this->makeFluentStateUtility()],
             Get::class => [$this->makeGetUtility()],
             Model::class, $record::class => [$record],
             Set::class => [$this->makeSetUtility()],
@@ -123,6 +127,7 @@ class Component extends ViewComponent
     public function getExtraViewData(): array
     {
         return [
+            'fluentState' => $this->makeFluentStateUtility(),
             'get' => $this->makeGetUtility(),
             'operation' => $this->getContainer()->getOperation(),
             'record' => $this->getRecord(),
