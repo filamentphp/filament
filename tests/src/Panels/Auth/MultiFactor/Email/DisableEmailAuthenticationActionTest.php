@@ -106,8 +106,8 @@ it('can resend the code to the user more than twice per minute', function (): vo
             ->schemaComponent('code'))
         ->assertNotified(
             FilamentNotification::make()
-                ->title(__('filament-panels::auth/multi-factor/email/actions/disable.modal.form.code.actions.resend.notifications.rate_limited.title'))
-                ->warning()
+                ->title(__('filament-panels::auth/multi-factor/email/actions/disable.modal.form.code.actions.resend.notifications.throttled.title'))
+                ->danger()
         );
 
     Notification::assertSentTimes(VerifyEmailAuthentication::class, 2);
