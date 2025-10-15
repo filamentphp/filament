@@ -271,6 +271,34 @@ Fieldset::make('Label')
 
 <AutoScreenshot name="schemas/layout/fieldset/not-contained" alt="Fieldset without a container border" version="4.x" />
 
+## Control spacing between components
+
+The spacing between child elements can be adjusted using the `gap()` and `dense()` methods on any layout component.
+
+### `gap` option
+
+The `gap` option determines whether spacing is applied between components. By default, `gap` is set to `true`, which adds spacing. To remove spacing, set `gap(false)`:
+
+```php
+Group::make()
+    ->gap(false)
+    ->schema([
+        // ...
+    ])
+```
+
+#### `dense` Option
+
+The `dense` option makes the layout more compact by reducing spacing between components:
+
+```php
+Group::make()
+    ->dense()
+    ->schema([
+        // ...
+    ])
+```
+
 ## Using container queries
 
 In addition to traditional breakpoints based on the size of the viewport, you can also use [container queries](https://tailwindcss.com/docs/responsive-design#container-queries) to create responsive layouts based on the size of a parent container. This is particularly useful when the size of the parent container is not directly tied to the size of the viewport. For example, when using a collapsible sidebar alongside the content, the content area dynamically adjusts its size depending on the collapse state of the sidebar.
