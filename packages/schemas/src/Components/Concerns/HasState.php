@@ -7,6 +7,7 @@ use Filament\Forms\Components\RichEditor\Models\Contracts\HasRichContent;
 use Filament\Infolists\Components\Entry;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
+use Filament\Schemas\Components\Utilities\FluentState;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Illuminate\Contracts\Support\Arrayable;
@@ -712,6 +713,11 @@ trait HasState
     public function makeSetUtility(): Set
     {
         return app(Set::class, ['component' => $this]);
+    }
+
+    public function makeFluentStateUtility(): FluentState
+    {
+        return app(FluentState::class, ['component' => $this]);
     }
 
     /**
