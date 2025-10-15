@@ -1,12 +1,15 @@
+import { autoUpdate, computePosition, offset, shift } from '@floating-ui/dom'
+
 export default ({
     areGroupsCollapsedByDefault,
     canTrackDeselectedRecords,
     currentSelectionLivewireProperty,
     maxSelectableRecords,
     selectsCurrentPageOnly,
-    selectsGroupsOnly,
     $wire,
 }) => ({
+    areFiltersOpen: false,
+
     checkboxClickController: null,
 
     groupVisibility: [],
@@ -28,6 +31,8 @@ export default ({
     entangledSelectedRecords: currentSelectionLivewireProperty
         ? $wire.$entangle(currentSelectionLivewireProperty)
         : null,
+
+    cleanUpFiltersDropdown: null,
 
     init() {
         this.livewireId =
@@ -362,5 +367,73 @@ export default ({
         }
 
         this.lastChecked = checkbox
+    },
+
+    toggleFiltersDropdown() {
+        this.areFiltersOpen = !this.areFiltersOpen
+
+        if (this.areFiltersOpen) {
+            const cleanUpAutoUpdate = autoUpdate(
+                this.$refs.filtersTriggerActionContainer,
+                this.$refs.filtersContentContainer,
+                async () => {
+                    const { x, y } = await computePosition(
+                        this.$refs.filtersTriggerActionContainer,
+                        this.$refs.filtersContentContainer,
+                        {
+                            placement: 'bottom-end',
+                            middleware: [offset(8), shift({ padding: 8 })],
+                        },
+                    )
+
+                    Object.assign(this.$refs.filtersContentContainer.style, {
+                        left: `${x}px`,
+                        top: `${y}px`,
+                    })
+                },
+            )
+
+            const onClickAway = (event) => {
+                const trigger = this.$refs.filtersTriggerActionContainer
+                const filters = this.$refs.filtersContentContainer
+
+                if (
+                    (filters && filters.contains(event.target)) ||
+                    (trigger && trigger.contains(event.target))
+                ) {
+                    return
+                }
+
+                this.areFiltersOpen = false
+
+                if (this.cleanUpFiltersDropdown) {
+                    this.cleanUpFiltersDropdown()
+                    this.cleanUpFiltersDropdown = null
+                }
+            }
+
+            document.addEventListener('mousedown', onClickAway)
+            document.addEventListener('touchstart', onClickAway, {
+                passive: true,
+            })
+            const onKeydown = (event) => {
+                if (event.key === 'Escape') {
+                    onClickAway(event)
+                }
+            }
+            document.addEventListener('keydown', onKeydown)
+
+            this.cleanUpFiltersDropdown = () => {
+                cleanUpAutoUpdate()
+                document.removeEventListener('mousedown', onClickAway)
+                document.removeEventListener('touchstart', onClickAway, {
+                    passive: true,
+                })
+                document.removeEventListener('keydown', onKeydown)
+            }
+        } else if (this.cleanUpFiltersDropdown) {
+            this.cleanUpFiltersDropdown()
+            this.cleanUpFiltersDropdown = null
+        }
     },
 })

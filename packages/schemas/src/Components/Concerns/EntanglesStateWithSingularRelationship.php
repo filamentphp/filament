@@ -227,6 +227,8 @@ trait EntanglesStateWithSingularRelationship
     {
         $this->cachedExistingRecord = $record;
 
+        $this->clearCachedDefaultChildSchemas();
+
         return $this;
     }
 
