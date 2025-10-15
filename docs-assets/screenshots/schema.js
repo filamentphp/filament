@@ -1538,6 +1538,15 @@ export default {
             deviceScaleFactor: 3,
         },
     },
+    'schemas/layout/group/spacing-options': {
+        url: 'schemas/layout',
+        selector: '#spacingOptions',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
     'schemas/layout/tabs/simple': {
         url: 'schemas/layout',
         selector: '#tabs',

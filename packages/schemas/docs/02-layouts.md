@@ -273,11 +273,11 @@ Fieldset::make('Label')
 
 ## Control spacing between components
 
-The spacing between child elements can be adjusted using the `gap()` and `dense()` methods on any layout component.
+You can adjust the spacing between child elements using the `gap()` and `dense()` methods on any layout component.
 
 ### `gap` option
 
-The `gap` option determines whether spacing is applied between components. By default, `gap` is set to `true`, which adds spacing. To remove spacing, set `gap(false)`:
+The `gap` option controls whether spacing is applied between components. By default, it is enabled (`true`), adding standard spacing. To remove spacing entirely, disable it with `gap(false)`:
 
 ```php
 Group::make()
@@ -289,7 +289,7 @@ Group::make()
 
 #### `dense` Option
 
-The `dense` option makes the layout more compact by reducing spacing between components:
+The `dense` option creates a more compact layout by reducing the spacing between components, rather than removing it completely:
 
 ```php
 Group::make()
@@ -298,6 +298,8 @@ Group::make()
         // ...
     ])
 ```
+
+<AutoScreenshot name="schemas/layout/group/spacing-options" alt="Groups with different spacing options" version="4.x" />
 
 ## Using container queries
 

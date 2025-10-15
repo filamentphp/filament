@@ -11,6 +11,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\EmptyState;
 use Filament\Schemas\Components\Fieldset;
@@ -89,6 +90,42 @@ class LayoutDemo extends Component implements HasActions, HasSchemas
                                     ->default(100),
                             ])
                             ->columns(3),
+                    ]),
+                Grid::make(3)
+                    ->id('spacingOptions')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-2xl',
+                    ])
+                    ->schema([
+                        Fieldset::make('Default')
+                            ->columns(1)
+                            ->inlineLabel()
+                            ->schema([
+                                TextEntry::make('name')
+                                    ->state('Dan Harrin'),
+                                TextEntry::make('role')
+                                    ->state('Admin'),
+                            ]),
+                        Fieldset::make('Dense')
+                            ->columns(1)
+                            ->dense()
+                            ->inlineLabel()
+                            ->schema([
+                                TextEntry::make('name')
+                                    ->state('Dan Harrin'),
+                               TextEntry::make('role')
+                                   ->state('Admin'),
+                            ]),
+                        Fieldset::make('No Gap')
+                            ->columns(1)
+                            ->gap(false)
+                            ->inlineLabel()
+                            ->schema([
+                                TextEntry::make('name')
+                                    ->state('Dan Harrin'),
+                                TextEntry::make('role')
+                                    ->state('Admin'),
+                            ]),
                     ]),
                 Group::make()
                     ->id('tabs')
