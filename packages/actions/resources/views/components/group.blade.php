@@ -3,6 +3,7 @@
     'badge' => null,
     'badgeColor' => null,
     'button' => false,
+    'buttonGroup' => null,
     'color' => null,
     'dropdownMaxHeight' => null,
     'dropdownOffset' => null,
@@ -54,6 +55,11 @@
     if ($link) {
         $group->link();
     }
+
+    if ($buttonGroup) {
+        $group->buttonGroup();
+    }
+
 @endphp
 
 {{ $group }}
