@@ -508,6 +508,7 @@ class Action extends ViewComponent implements Arrayable
             'schemaOperation', 'context', 'operation' => [$this->getSchemaContainer()?->getOperation() ?? $this->getSchemaComponent()?->getContainer()->getOperation()],
             'schemaGet', 'get' => [$this->getSchemaComponent()->makeGetUtility()],
             'schemaSet', 'set' => [$this->getSchemaComponent()->makeSetUtility()],
+            'schemaFluentState', 'fluentState' => [$this->getSchemaComponent()->makeFluentStateUtility()],
             'schemaComponentState', 'state' => [$this->getSchemaComponent()->getState()],
             'table' => [$this->getTable()],
             default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
