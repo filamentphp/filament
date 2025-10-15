@@ -46,7 +46,15 @@
     }
 
     &.fi-color {
-        @apply bg-color-50 dark:bg-color-400/10;
+        background-color: color-mix(in oklab, white 90%, var(--color-400));
+
+        @variant dark {
+            background-color: color-mix(
+                in oklab,
+                var(--gray-900) 90%,
+                var(--color-400)
+            );
+        }
     }
 
     &.fi-transition-enter-start {

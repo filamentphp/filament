@@ -41,6 +41,10 @@ return [
                             'title' => 'We\'ve sent you a new code by email',
                         ],
 
+                        'throttled' => [
+                            'title' => 'Too many resend attempts. Please wait before requesting another code.',
+                        ],
+
                     ],
 
                 ],

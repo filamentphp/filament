@@ -393,6 +393,12 @@ class Group extends Component
         $relationship = null;
 
         foreach (explode('.', $name ?? $this->getRelationshipName()) as $nestedRelationshipName) {
+            if ($record->hasAttribute($nestedRelationshipName)) {
+                $relationship = null;
+
+                break;
+            }
+
             if (! $record->isRelation($nestedRelationshipName)) {
                 $relationship = null;
 

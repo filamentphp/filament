@@ -204,6 +204,13 @@
         }
     }
 
+    & .tiptap.ProseMirror {
+        /* https://defensivecss.dev/tip/input-zoom-safari */
+        @supports (-webkit-touch-callout: none) {
+            @apply text-base;
+        }
+    }
+
     & img {
         @apply inline-block;
     }

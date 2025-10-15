@@ -86,6 +86,17 @@ ActionGroup::make([
 
 <AutoScreenshot name="actions/group/placement" alt="Action group with top placement style" version="4.x" />
 
+Alternatively, you may let the dropdown position be automatically determined based on the available space using the `dropdownAutoPlacement()` method:
+
+```php
+use Filament\Actions\ActionGroup;
+
+ActionGroup::make([
+    // Array of actions
+])
+    ->dropdownAutoPlacement()
+```
+
 ## Adding dividers between actions
 
 You may add dividers between groups of actions by using nested `ActionGroup` objects:

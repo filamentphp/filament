@@ -25,6 +25,7 @@ class Post extends Model
             'tags' => 'array',
             'json' => 'array',
             'json_array_of_objects' => 'array',
+            'config' => 'array',
         ];
     }
 
@@ -33,6 +34,11 @@ class Post extends Model
     public function author(): BelongsTo
     {
         return $this->belongsTo(User::class, 'author_id');
+    }
+
+    public function config(string $key): mixed
+    {
+        return $this->config[$key] ?? null;
     }
 
     protected static function newFactory()

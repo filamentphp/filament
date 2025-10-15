@@ -383,7 +383,7 @@ trait HasTenancy
                 fn (Collection $items): Collection => $items->put('register', $this->getTenantRegistrationMenuItem()),
             )
             ->filter(fn (Action $item): bool => $item->isVisible())
-            ->sort(fn (Action $item): int => $item->getSort())
+            ->sortBy(fn (Action $item): int => $item->getSort())
             ->all();
     }
 

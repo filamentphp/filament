@@ -97,6 +97,7 @@ class PostsTable extends Component implements HasActions, HasSchemas, Tables\Con
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('json_array_of_objects.*.value'),
+                Tables\Columns\TextColumn::make('config.setting'),
                 Tables\Columns\TextColumn::make('author.json.foo')
                     ->searchable()
                     ->sortable(),

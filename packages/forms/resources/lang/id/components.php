@@ -284,12 +284,16 @@ return [
 
     'markdown_editor' => [
 
+        'file_attachments_accepted_file_types_message' => 'Berkas yang diunggah harus bertipe: :values.',
+
+        'file_attachments_max_size_message' => 'Berkas yang diunggah tidak boleh lebih besar dari :max kilobyte.',
+
         'tools' => [
             'attach_files' => 'Lampirkan berkas',
             'blockquote' => 'Kutipan',
             'bold' => 'Tebal',
             'bullet_list' => 'Daftar',
-            'code_block' => 'Kode',
+            'code_block' => 'Blok kode',
             'heading' => 'Judul',
             'italic' => 'Miring',
             'link' => 'Tautan',
@@ -443,6 +447,71 @@ return [
 
             ],
 
+            'grid' => [
+
+                'label' => 'Grid',
+
+                'modal' => [
+
+                    'heading' => 'Grid',
+
+                    'form' => [
+
+                        'preset' => [
+
+                            'label' => 'Preset',
+
+                            'placeholder' => 'Tidak ada',
+
+                            'options' => [
+                                'two' => 'Dua',
+                                'three' => 'Tiga',
+                                'four' => 'Empat',
+                                'five' => 'Lima',
+                                'two_start_third' => 'Dua (Mulai Ketiga)',
+                                'two_end_third' => 'Dua (Akhiri Ketiga)',
+                                'two_start_fourth' => 'Dua (Mulai Keempat)',
+                                'two_end_fourth' => 'Dua (Akhiri Keempat)',
+                            ],
+                        ],
+
+                        'columns' => [
+                            'label' => 'Kolom',
+                        ],
+
+                        'from_breakpoint' => [
+
+                            'label' => 'Dari breakpoint',
+
+                            'options' => [
+                                'default' => 'Semua',
+                                'sm' => 'Kecil',
+                                'md' => 'Sedang',
+                                'lg' => 'Besar',
+                                'xl' => 'Ekstra besar',
+                                '2xl' => 'Dua ekstra besar',
+                            ],
+
+                        ],
+
+                        'is_asymmetric' => [
+                            'label' => 'Dua kolom asimetris',
+                        ],
+
+                        'start_span' => [
+                            'label' => 'Rentang awal',
+                        ],
+
+                        'end_span' => [
+                            'label' => 'Rentang akhir',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
             'link' => [
 
                 'label' => 'Ubah',
@@ -467,7 +536,35 @@ return [
 
             ],
 
+            'text_color' => [
+
+                'label' => 'Warna teks',
+
+                'modal' => [
+
+                    'heading' => 'Warna teks',
+
+                    'form' => [
+
+                        'color' => [
+                            'label' => 'Warna',
+                        ],
+
+                        'custom_color' => [
+                            'label' => 'Warna khusus',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
         ],
+
+        'file_attachments_accepted_file_types_message' => 'Berkas yang diunggah harus bertipe: :values.',
+
+        'file_attachments_max_size_message' => 'Berkas yang diunggah tidak boleh lebih besar dari :max kilobyte.',
 
         'no_merge_tag_search_results_message' => 'Tidak ada tag gabungan yang ditemukan.',
 
@@ -480,7 +577,7 @@ return [
             'blockquote' => 'Kutipan',
             'bold' => 'Tebal',
             'bullet_list' => 'Daftar',
-            'clear_formatting' => 'hapus format',
+            'clear_formatting' => 'Hapus format',
             'code' => 'Kode',
             'code_block' => 'Blok kode',
             'custom_blocks' => 'Blok',
@@ -488,6 +585,8 @@ return [
             'h1' => 'Judul',
             'h2' => 'Sub judul',
             'h3' => 'Anak judul',
+            'grid' => 'Grid',
+            'grid_delete' => 'Hapus grid',
             'highlight' => 'Sorot',
             'horizontal_rule' => 'Garis horizontal',
             'italic' => 'Miring',
@@ -511,9 +610,12 @@ return [
             'table_merge_cells' => 'Gabungkan sel',
             'table_split_cell' => 'Pisahkan sel',
             'table_toggle_header_row' => 'Alihkan Baris Judul',
+            'text_color' => 'Warna teks',
             'underline' => 'Garis bawah',
             'undo' => 'Batalkan',
         ],
+
+        'uploading_file_message' => 'Mengunggah berkas...',
 
     ],
 

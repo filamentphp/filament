@@ -17,6 +17,7 @@
 <x-dynamic-component
     :component="$fieldWrapperView"
     :field="$field"
+    tabindex="-1"
     class="fi-fo-toggle-buttons-wrp"
 >
     <div

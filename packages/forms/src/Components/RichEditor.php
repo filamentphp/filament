@@ -34,7 +34,9 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
 {
     use Concerns\CanBeLengthConstrained;
     use Concerns\HasExtraInputAttributes;
-    use Concerns\HasFileAttachments;
+    use Concerns\HasFileAttachments {
+        saveUploadedFileAttachment as baseSaveUploadedFileAttachment;
+    }
     use Concerns\HasPlaceholder;
     use Concerns\InteractsWithToolbarButtons;
     use HasExtraAlpineAttributes;
@@ -780,6 +782,15 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
             $mergeTags,
             fn (string $label, int | string $id): array => [(is_string($id) ? $id : $label) => $label],
         );
+    }
+
+    public function saveUploadedFileAttachment(TemporaryUploadedFile $file): mixed
+    {
+        if (! $this->hasToolbarButton('attachFiles')) {
+            return null;
+        }
+
+        return $this->baseSaveUploadedFileAttachment($file);
     }
 
     public function noMergeTagSearchResultsMessage(string | Closure | null $message): static

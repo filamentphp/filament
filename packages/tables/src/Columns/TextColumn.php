@@ -19,6 +19,7 @@ use Filament\Support\View\Components\BadgeComponent;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\View\Components\Columns\TextColumnComponent\ItemComponent;
 use Filament\Tables\View\Components\Columns\TextColumnComponent\ItemComponent\IconComponent;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Js;
@@ -190,6 +191,7 @@ class TextColumn extends Column implements HasEmbeddedView
                         ? '{
                             content: ' . Js::from($tooltip) . ',
                             theme: $store.theme,
+                            allowHTML: ' . Js::from($tooltip instanceof Htmlable) . ',
                         }'
                         : null,
                 ], escape: false);
@@ -328,6 +330,7 @@ class TextColumn extends Column implements HasEmbeddedView
                                 ? '{
                                 content: ' . Js::from($tooltip) . ',
                                 theme: $store.theme,
+                                allowHTML: ' . Js::from($tooltip instanceof Htmlable) . ',
                             }'
                                 : null,
                         ], escape: false)

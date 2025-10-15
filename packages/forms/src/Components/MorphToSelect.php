@@ -203,7 +203,7 @@ class MorphToSelect extends Component
 
         $relationshipName = $this->getName();
 
-        if (! $record->isRelation($relationshipName)) {
+        if ($record->hasAttribute($relationshipName) || (! $record->isRelation($relationshipName))) {
             throw new LogicException("The relationship [{$relationshipName}] does not exist on the model [{$this->getModel()}].");
         }
 
