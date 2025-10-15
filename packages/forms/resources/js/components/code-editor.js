@@ -31,11 +31,15 @@ export default function codeEditorFormComponent({
         editor: null,
         themeCompartment: new Compartment(),
         isDocChanged: false,
-        _liveTimer: null,
         state,
 
         init() {
             const languageExtension = this.getLanguageExtension()
+
+            const debouncedCommit = Alpine.debounce(
+                () => this.$wire.commit(),
+                liveDebounce ?? 300,
+            )
 
             this.editor = new EditorView({
                 parent: this.$refs.editor,
@@ -47,28 +51,19 @@ export default function codeEditorFormComponent({
                         EditorState.readOnly.of(isDisabled),
                         EditorView.editable.of(!isDisabled),
                         EditorView.updateListener.of((viewUpdate) => {
-                            if (viewUpdate.docChanged) {
-                                this.isDocChanged = true
-                            } else {
+                            if (!viewUpdate.docChanged) {
                                 return
                             }
-                            if (!isLiveOnBlur && (isLive || isLiveDebounced)) {
-                                clearTimeout(this._liveTimer)
-                                this._liveTimer = setTimeout(
-                                    () => {
-                                        this.state =
-                                            viewUpdate.state.doc.toString()
-                                        this._liveTimer = null
-                                    },
-                                    isLiveDebounced ? liveDebounce : 250,
-                                )
+                            this.isDocChanged = true
+                            this.state = viewUpdate.state.doc.toString()
+                            if (isLiveDebounced) {
+                                debouncedCommit()
                             }
                         }),
                         EditorView.domEventHandlers({
                             blur: (event, view) => {
                                 if (isLiveOnBlur && this.isDocChanged) {
-                                    this.state = view.state.doc.toString()
-                                    this.isDocChanged = false
+                                    this.$wire.$commit()
                                 }
                             },
                         }),
