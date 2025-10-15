@@ -129,7 +129,7 @@
                 x-load
                 x-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('select', 'filament/forms') }}"
                 x-data="selectFormComponent({
-                            extraInputAttributes: @js($extraInputAttributeBag->toArray()),
+                            extraInputAttributes: @js($extraInputAttributeBag->merge(['id'=>$id], escape: false)),
                             canOptionLabelsWrap: @js($canOptionLabelsWrap),
                             canSelectPlaceholder: @js($canSelectPlaceholder),
                             isHtmlAllowed: @js($isHtmlAllowed),
