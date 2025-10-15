@@ -271,36 +271,6 @@ Fieldset::make('Label')
 
 <AutoScreenshot name="schemas/layout/fieldset/not-contained" alt="Fieldset without a container border" version="4.x" />
 
-## Control spacing between components
-
-You can adjust the spacing between child elements using the `gap()` and `dense()` methods on any layout component.
-
-### `gap` option
-
-The `gap` option controls whether spacing is applied between components. By default, it is enabled (`true`), adding standard spacing. To remove spacing entirely, disable it with `gap(false)`:
-
-```php
-Group::make()
-    ->gap(false)
-    ->schema([
-        // ...
-    ])
-```
-
-#### `dense` Option
-
-The `dense` option creates a more compact layout by reducing the spacing between components, rather than removing it completely:
-
-```php
-Group::make()
-    ->dense()
-    ->schema([
-        // ...
-    ])
-```
-
-<AutoScreenshot name="schemas/layout/group/spacing-options" alt="Groups with different spacing options" version="4.x" />
-
 ## Using container queries
 
 In addition to traditional breakpoints based on the size of the viewport, you can also use [container queries](https://tailwindcss.com/docs/responsive-design#container-queries) to create responsive layouts based on the size of a parent container. This is particularly useful when the size of the parent container is not directly tied to the size of the viewport. For example, when using a collapsible sidebar alongside the content, the content area dynamically adjusts its size depending on the collapse state of the sidebar.
@@ -433,6 +403,40 @@ Grid::make()
 ```
 
 In this example, the fallback breakpoints ensure that even in browsers that don't support container queries, the layout will still respond to viewport size changes, with the name field appearing first and the email field second on larger screens.
+
+## Controlling spacing between components
+
+### Reducing space between components
+
+The `dense()` method creates a more compact layout by reducing the spacing between components by 50%:
+
+```php
+use Filament\Schemas\Components\Grid;
+
+Grid::make()
+    ->dense()
+    ->schema([
+        // ...
+    ])
+```
+
+<AutoScreenshot name="schemas/layout/dense" alt="A layout with dense spacing" version="4.x" />
+
+### Removing space between components
+
+The `gap(false)` method removes space between components:
+
+```php
+use Filament\Schemas\Components\Grid;
+
+Grid::make()
+    ->gap(false)
+    ->schema([
+        // ...
+    ])
+```
+
+<AutoScreenshot name="schemas/layout/no-gap" alt="A layout with no gap" version="4.x" />
 
 ## Adding extra HTML attributes to a layout component
 

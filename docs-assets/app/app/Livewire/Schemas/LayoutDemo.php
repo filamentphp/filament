@@ -91,35 +91,31 @@ class LayoutDemo extends Component implements HasActions, HasSchemas
                             ])
                             ->columns(3),
                     ]),
-                Grid::make(3)
-                    ->id('spacingOptions')
+                Group::make()
+                    ->id('dense')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-2xl',
                     ])
                     ->schema([
-                        Fieldset::make('Default')
-                            ->columns(1)
-                            ->inlineLabel()
-                            ->schema([
-                                TextEntry::make('name')
-                                    ->state('Dan Harrin'),
-                                TextEntry::make('role')
-                                    ->state('Admin'),
-                            ]),
                         Fieldset::make('Dense')
                             ->columns(1)
                             ->dense()
-                            ->inlineLabel()
                             ->schema([
                                 TextEntry::make('name')
                                     ->state('Dan Harrin'),
                                 TextEntry::make('role')
                                     ->state('Admin'),
                             ]),
-                        Fieldset::make('No Gap')
+                    ]),
+                Group::make()
+                    ->id('noGap')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-2xl',
+                    ])
+                    ->schema([
+                        Fieldset::make('No gap')
                             ->columns(1)
                             ->gap(false)
-                            ->inlineLabel()
                             ->schema([
                                 TextEntry::make('name')
                                     ->state('Dan Harrin'),
