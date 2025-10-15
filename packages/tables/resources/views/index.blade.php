@@ -249,10 +249,11 @@
 
                 @if ($hasFiltersAboveContent)
                     <div
-                        x-bind:class="{ 'fi-open': areFiltersOpen }"
+                        @if ($hasCollapsibleFilters)
+                            x-bind:class="{ 'fi-open': areFiltersOpen }"
+                        @endif
                         @class([
                             'fi-ta-filters-above-content-ctn',
-                            'lg:fi-open' => ! $hasCollapsibleFilters,
                         ])
                     >
                         <x-filament-tables::filters
@@ -260,7 +261,7 @@
                             :form="$filtersForm"
                             :heading-tag="$secondLevelHeadingTag"
                             x-cloak
-                            x-show="areFiltersOpen"
+                            :x-show="$hasCollapsibleFilters ? 'areFiltersOpen' : null"
                         />
 
                         @if ($hasCollapsibleFilters)

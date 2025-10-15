@@ -127,7 +127,7 @@ trait HasUserMenu
                 fn (Collection $items): Collection => $items->put('logout', $this->getUserLogoutMenuItem()),
             )
             ->filter(fn (Action $item): bool => $item->isVisible())
-            ->sort(fn (Action $item): int => $item->getSort())
+            ->sortBy(fn (Action $item): int => $item->getSort())
             ->all();
     }
 }

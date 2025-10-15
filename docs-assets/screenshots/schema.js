@@ -1538,6 +1538,24 @@ export default {
             deviceScaleFactor: 3,
         },
     },
+    'schemas/layout/dense': {
+        url: 'schemas/layout',
+        selector: '#dense',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'schemas/layout/no-gap': {
+        url: 'schemas/layout',
+        selector: '#noGap',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
     'schemas/layout/tabs/simple': {
         url: 'schemas/layout',
         selector: '#tabs',

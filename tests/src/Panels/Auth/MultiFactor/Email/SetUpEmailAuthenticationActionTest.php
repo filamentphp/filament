@@ -5,6 +5,7 @@ use Filament\Auth\MultiFactor\Email\EmailAuthentication;
 use Filament\Auth\MultiFactor\Email\Notifications\VerifyEmailAuthentication;
 use Filament\Auth\Pages\EditProfile;
 use Filament\Facades\Filament;
+use Filament\Notifications\Notification as FilamentNotification;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
 use Illuminate\Support\Arr;
@@ -81,7 +82,12 @@ it('can resend the code to the user', function (): void {
 
     $livewire
         ->callAction(TestAction::make('resend')
-            ->schemaComponent('code'));
+            ->schemaComponent('code'))
+        ->assertNotified(
+            FilamentNotification::make()
+                ->title(__('filament-panels::auth/multi-factor/email/actions/set-up.modal.form.code.actions.resend.notifications.resent.title'))
+                ->success()
+        );
 
     Notification::assertSentTimes(VerifyEmailAuthentication::class, 2);
 });
@@ -97,13 +103,23 @@ it('can resend the code to the user more than twice per minute', function (): vo
 
     $livewire
         ->callAction(TestAction::make('resend')
-            ->schemaComponent('code'));
+            ->schemaComponent('code'))
+        ->assertNotified(
+            FilamentNotification::make()
+                ->title(__('filament-panels::auth/multi-factor/email/actions/set-up.modal.form.code.actions.resend.notifications.resent.title'))
+                ->success()
+        );
 
     Notification::assertSentTimes(VerifyEmailAuthentication::class, 2);
 
     $livewire
         ->callAction(TestAction::make('resend')
-            ->schemaComponent('code'));
+            ->schemaComponent('code'))
+        ->assertNotified(
+            FilamentNotification::make()
+                ->title(__('filament-panels::auth/multi-factor/email/actions/set-up.modal.form.code.actions.resend.notifications.throttled.title'))
+                ->danger()
+        );
 
     Notification::assertSentTimes(VerifyEmailAuthentication::class, 2);
 
@@ -111,7 +127,12 @@ it('can resend the code to the user more than twice per minute', function (): vo
 
     $livewire
         ->callAction(TestAction::make('resend')
-            ->schemaComponent('code'));
+            ->schemaComponent('code'))
+        ->assertNotified(
+            FilamentNotification::make()
+                ->title(__('filament-panels::auth/multi-factor/email/actions/set-up.modal.form.code.actions.resend.notifications.resent.title'))
+                ->success()
+        );
 
     Notification::assertSentTimes(VerifyEmailAuthentication::class, 3);
 });
