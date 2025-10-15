@@ -50,10 +50,12 @@ class ToggleButtons extends Field implements Contracts\CanDisableOptions
             0 => $falseLabel ?? __('filament-forms::components.toggle_buttons.boolean.false'),
         ]);
 
-        $this->colors([
-            1 => 'success',
-            0 => 'danger',
-        ]);
+        if ($this->colors === null) {
+            $this->colors([
+                1 => 'success',
+                0 => 'danger',
+            ]);
+        }
 
         $this->icons([
             1 => FilamentIcon::resolve(FormsIconAlias::COMPONENTS_TOGGLE_BUTTONS_BOOLEAN_TRUE) ?? Heroicon::Check,
