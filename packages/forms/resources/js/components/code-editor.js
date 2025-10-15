@@ -56,7 +56,7 @@ export default function codeEditorFormComponent({
                             }
                             this.isDocChanged = true
                             this.state = viewUpdate.state.doc.toString()
-                            if (isLiveDebounced) {
+                            if (!isLiveOnBlur && (isLive || isLiveDebounced)) {
                                 debouncedCommit()
                             }
                         }),
