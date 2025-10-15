@@ -249,6 +249,7 @@
 
                 @if ($hasFiltersAboveContent)
                     <div
+                        x-data="{ areFiltersOpen: @js(! $hasCollapsibleFilters) }"
                         x-bind:class="{ 'fi-open': areFiltersOpen }"
                         @class([
                             'fi-ta-filters-above-content-ctn',
