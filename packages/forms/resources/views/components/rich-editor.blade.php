@@ -1,6 +1,7 @@
 @php
     $customBlocks = $getCustomBlocks();
     $extraAttributeBag = $getExtraAttributeBag();
+    $extraInputAttributeBag = $getExtraInputAttributeBag();
     $fieldWrapperView = $getFieldWrapperView();
     $id = $getId();
     $isDisabled = $isDisabled();
@@ -100,7 +101,9 @@
             <div
                 {{ $getExtraInputAttributeBag()->class(['fi-fo-rich-editor-main']) }}
             >
-                <div class="fi-fo-rich-editor-content fi-prose" x-ref="editor">
+                <div x-ref="editor"
+                    {{ $extraInputAttributeBag->class(['fi-fo-rich-editor-content fi-prose']) }}
+                    >
                     @foreach ($floatingToolbars as $nodeName => $buttons)
                         <div
                             x-ref="floatingToolbar::{{ $nodeName }}"
