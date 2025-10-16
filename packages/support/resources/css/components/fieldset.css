@@ -20,4 +20,8 @@
     &.fi-fieldset-not-contained {
         @apply pt-6;
     }
+
+    &.fi-fieldset-not-contained.fi-fieldset-label-hidden {
+        @apply pt-0;
+    }
 }
