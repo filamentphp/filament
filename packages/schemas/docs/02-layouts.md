@@ -200,6 +200,21 @@ Grid::make([
     ])
 ```
 
+### Group component
+
+The `Group` component allows you to organize a collection of fields into a logical group. This is useful, for example, when you need to place fields within a subgrid or control their visibility without calling `hidden` on each individual field:
+
+```php
+Group::make([
+    TextInput::make('title'),
+    TextInput::make('subtitle'),
+])
+    ->columns(2)
+    ->hidden(fn (string $operation) => $operation === 'create')
+```
+
+You can also leverage a `Group` or other layout components to [save data on a related model](../forms/overview#saving-data-to-relationships).
+
 ### Flex component
 
 The `Flex` component allows you to define layouts with flexible widths, using flexbox. This component does not use Filament's [grid system](#grid-system).
