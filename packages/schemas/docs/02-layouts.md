@@ -248,7 +248,7 @@ The `from()` method is used to control the [Tailwind breakpoint](https://tailwin
 
 ### Fieldset component
 
-You may want to group fields into a Fieldset. Each fieldset has a label, a border, and a two-column grid by default:
+Similar to the `Group` component, you may use a `Fieldset` to group a collection of fields inside a visual wrapper. Each fieldset has a label, a border, and a two-column grid by default:
 
 ```php
 use Filament\Schemas\Components\Fieldset;
