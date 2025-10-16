@@ -3,6 +3,7 @@
     'actionsAlignment' => null,
     'breadcrumbs' => [],
     'heading',
+    'isHeadingHidden' => false,
     'subheading' => null,
 ])
 
@@ -19,14 +20,16 @@
             <x-filament::breadcrumbs :breadcrumbs="$breadcrumbs" />
         @endif
 
-        <h1 class="fi-header-heading">
-            {{ $heading }}
-        </h1>
+        @if (! $isHeadingHidden)
+            <h1 class="fi-header-heading">
+                {{ $heading }}
+            </h1>
 
-        @if ($subheading)
-            <p class="fi-header-subheading">
-                {{ $subheading }}
-            </p>
+            @if ($subheading)
+                <p class="fi-header-subheading">
+                    {{ $subheading }}
+                </p>
+            @endif
         @endif
     </div>
 

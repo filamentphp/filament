@@ -49,6 +49,7 @@
                 $headerActions = $this->getCachedHeaderActions();
                 $headerActionsAlignment = $this->getHeaderActionsAlignment();
                 $breadcrumbs = filament()->hasBreadcrumbs() ? $this->getBreadcrumbs() : [];
+                $isHeadingHidden = $this->isHeadingHidden();
                 $subheading = $this->getSubheading();
             @endphp
 
@@ -57,6 +58,7 @@
                 :actions-alignment="$headerActionsAlignment"
                 :breadcrumbs="$breadcrumbs"
                 :heading="$heading"
+                :is-heading-hidden="$isHeadingHidden"
                 :subheading="$subheading"
             >
                 @if ($heading instanceof \Illuminate\Contracts\Support\Htmlable)

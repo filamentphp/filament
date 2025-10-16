@@ -30,6 +30,8 @@ abstract class BasePage extends Component implements HasActions, HasRenderHookSc
 
     protected ?string $subheading = null;
 
+    protected bool $isHeadingHidden = false;
+
     protected string $view;
 
     public static ?Closure $reportValidationErrorUsing = null;
@@ -78,6 +80,11 @@ abstract class BasePage extends Component implements HasActions, HasRenderHookSc
     public function getSubheading(): string | Htmlable | null
     {
         return $this->subheading;
+    }
+
+    public function isHeadingHidden(): bool
+    {
+        return $this->isHeadingHidden;
     }
 
     public function getTitle(): string | Htmlable
