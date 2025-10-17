@@ -44,8 +44,9 @@
 
         @if ($header = $this->getHeader())
             {{ $header }}
-        @elseif ($heading = $this->getHeading())
+        @else
             @php
+                $heading = $this->getHeading();
                 $headerActions = $this->getCachedHeaderActions();
                 $headerActionsAlignment = $this->getHeaderActionsAlignment();
                 $breadcrumbs = filament()->hasBreadcrumbs() ? $this->getBreadcrumbs() : [];

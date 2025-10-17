@@ -2,7 +2,7 @@
     'actions' => [],
     'actionsAlignment' => null,
     'breadcrumbs' => [],
-    'heading',
+    'heading' => null,
     'subheading' => null,
 ])
 
@@ -19,9 +19,11 @@
             <x-filament::breadcrumbs :breadcrumbs="$breadcrumbs" />
         @endif
 
-        <h1 class="fi-header-heading">
-            {{ $heading }}
-        </h1>
+        @if ($heading)
+            <h1 class="fi-header-heading">
+                {{ $heading }}
+            </h1>
+        @endif
 
         @if ($subheading)
             <p class="fi-header-subheading">
