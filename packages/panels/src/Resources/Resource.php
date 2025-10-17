@@ -175,6 +175,9 @@ abstract class Resource
         ];
     }
 
+    /**
+     * @return string | array<string>
+     */
     public static function getNavigationItemActiveRoutePattern(): string | array
     {
         return static::getRouteBaseName() . '.*';
