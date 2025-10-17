@@ -110,12 +110,12 @@ abstract class Page extends BasePage
         ];
     }
 
-    public static function getNavigationItemActiveRoutePattern(): string
+    public static function getNavigationItemActiveRoutePattern(): string | array
     {
         return static::getRouteName();
     }
 
-    public static function getRouteName(?string $panel = null): string
+    public static function getRouteName(?string $panel = null): string | array
     {
         $panel = $panel ? Filament::getPanel($panel) : Filament::getCurrentPanel();
 

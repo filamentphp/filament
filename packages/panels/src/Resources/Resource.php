@@ -167,12 +167,17 @@ abstract class Resource
                 ->parentItem(static::getNavigationParentItem())
                 ->icon(static::getNavigationIcon())
                 ->activeIcon(static::getActiveNavigationIcon())
-                ->isActiveWhen(fn () => request()->routeIs(static::getRouteBaseName() . '.*'))
+                ->isActiveWhen(fn () => request()->routeIs(static::getNavigationItemActiveRoutePattern()))
                 ->badge(static::getNavigationBadge(), color: static::getNavigationBadgeColor())
                 ->badgeTooltip(static::getNavigationBadgeTooltip())
                 ->sort(static::getNavigationSort())
                 ->url(static::getNavigationUrl()),
         ];
+    }
+
+    public static function getNavigationItemActiveRoutePattern(): string | array
+    {
+        return static::getRouteBaseName() . '.*';
     }
 
     public static function getSubNavigationPosition(): SubNavigationPosition
