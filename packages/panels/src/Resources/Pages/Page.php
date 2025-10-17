@@ -23,7 +23,7 @@ abstract class Page extends BasePage
 
     protected static bool $isDiscovered = false;
 
-    public static function getRouteName(?string $panel = null): string | array
+    public static function getRouteName(?string $panel = null): string
     {
         $routeBaseName = static::getResource()::getRouteBaseName(panel: $panel);
 
@@ -41,11 +41,16 @@ abstract class Page extends BasePage
                 ->parentItem(static::getNavigationParentItem())
                 ->icon(static::getNavigationIcon())
                 ->activeIcon(static::getActiveNavigationIcon())
-                ->isActiveWhen(fn (): bool => request()->routeIs(static::getRouteName()))
+                ->isActiveWhen(fn (): bool => request()->routeIs(static::getNavigationItemActiveRoutePattern()))
                 ->sort(static::getNavigationSort())
                 ->badge(static::getNavigationBadge(), color: static::getNavigationBadgeColor())
                 ->url(static::getNavigationUrl($urlParameters)),
         ];
+    }
+
+    public static function getNavigationItemActiveRoutePattern(): string | array
+    {
+        return static::getRouteName();
     }
 
     /**
