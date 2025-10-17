@@ -115,7 +115,7 @@ abstract class Page extends BasePage
         return static::getRouteName();
     }
 
-    public static function getRouteName(?string $panel = null): string | array
+    public static function getRouteName(?string $panel = null): string
     {
         $panel = $panel ? Filament::getPanel($panel) : Filament::getCurrentPanel();
 
