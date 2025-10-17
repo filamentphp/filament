@@ -48,6 +48,10 @@
             ->outlined($attributes->get('outlined') ?? false);
     }
 
+    if ($buttonGroup) {
+        $group->buttonGroup();
+    }
+
     if ($iconButton) {
         $group->iconButton();
     }
@@ -55,11 +59,6 @@
     if ($link) {
         $group->link();
     }
-
-    if ($buttonGroup) {
-        $group->buttonGroup();
-    }
-
 @endphp
 
 {{ $group }}
