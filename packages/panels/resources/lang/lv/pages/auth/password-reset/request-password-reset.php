@@ -32,7 +32,7 @@ return [
 
     'notifications' => [
 
-         'sent' => [
+        'sent' => [
             'body' => 'Jūs saņemsiet e-pastu, ja Jūsu konts eksistē.',
         ],
 
