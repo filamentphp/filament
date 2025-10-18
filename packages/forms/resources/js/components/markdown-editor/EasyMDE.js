@@ -1137,7 +1137,10 @@ function toggleSideBySide(editor) {
         if (newValue != null) {
             // Sanitize content to prevent XSS
             const sanitizedContent = newValue
-                .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+                .replace(
+                    /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,
+                    '',
+                )
                 .replace(/javascript:/gi, '')
                 .replace(/on\w+\s*=/gi, '')
             preview.innerHTML = sanitizedContent
@@ -1153,7 +1156,10 @@ function toggleSideBySide(editor) {
         if (newValue != null) {
             // Sanitize content to prevent XSS
             const sanitizedContent = newValue
-                .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+                .replace(
+                    /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,
+                    '',
+                )
                 .replace(/javascript:/gi, '')
                 .replace(/on\w+\s*=/gi, '')
             preview.innerHTML = sanitizedContent
@@ -2750,7 +2756,10 @@ EasyMDE.prototype.autosave = function () {
                 if (savedContent && typeof savedContent === 'string') {
                     // Basic sanitization - remove potential script tags
                     const sanitizedContent = savedContent
-                        .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+                        .replace(
+                            /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,
+                            '',
+                        )
                         .replace(/javascript:/gi, '')
                         .replace(/on\w+\s*=/gi, '')
                     this.codemirror.setValue(sanitizedContent)
