@@ -7,8 +7,8 @@ return [
         'text' => [
 
             'actions' => [
-                'collapse_list' => 'نمایش :count کمتر',
-                'expand_list' => 'نمایش :count بیشتر',
+                'collapse_list' => 'نمایش :count مورد کمتر',
+                'expand_list' => 'نمایش :count مورد بیشتر',
             ],
 
             'more_list_items' => 'و :count مورد دیگر',
