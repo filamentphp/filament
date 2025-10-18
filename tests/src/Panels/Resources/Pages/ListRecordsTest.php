@@ -96,7 +96,7 @@ it('can sort posts with default sort key', function (): void {
         ->sortTable('title')
         ->assertCanSeeTableRecords($posts->sortBy([['title', 'asc'], ['id', 'asc']]), inOrder: true)
         ->sortTable('title', 'desc')
-        ->assertCanSeeTableRecords($posts->sortBy([['title', 'desc'], ['id', 'asc']]), inOrder: true);
+        ->assertCanSeeTableRecords($posts->sortBy([['title', 'desc'], ['id', 'desc']]), inOrder: true);
 });
 
 it('can search posts by title', function (): void {
