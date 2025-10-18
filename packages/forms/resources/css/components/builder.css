@@ -124,7 +124,17 @@
     }
 
     & .fi-fo-builder-add-between-items-ctn {
-        @apply flex w-full justify-center;
+        /* Place between items without affecting total gap (gap-y-4),
+           previous -my-2 wasn’t enough in some layouts; use -my-4 to fully neutralize the two grid gaps, while the control’s own height provides the perceived spacing */
+        @apply -my-4 flex w-full justify-center opacity-0 invisible pointer-events-none transition-opacity;
+    }
+
+    /* Reveal the add-between control when the adjacent item is hovered, or when it itself is hovered/focused */
+    & .fi-fo-builder-item:hover + .fi-fo-builder-add-between-items-ctn,
+    & .fi-fo-builder-add-between-items-ctn:has(+ .fi-fo-builder-item:hover),
+    & .fi-fo-builder-add-between-items-ctn:hover,
+    & .fi-fo-builder-add-between-items-ctn:focus-within {
+        @apply opacity-100 visible pointer-events-auto;
     }
 
     & .fi-fo-builder-add-between-items {
