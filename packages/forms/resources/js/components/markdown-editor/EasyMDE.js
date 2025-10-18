@@ -1135,7 +1135,12 @@ function toggleSideBySide(editor) {
     var sideBySideRenderingFunction = function () {
         var newValue = editor.options.previewRender(editor.value(), preview)
         if (newValue != null) {
-            preview.innerHTML = newValue
+            // Sanitize content to prevent XSS
+            const sanitizedContent = newValue
+                .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+                .replace(/javascript:/gi, '')
+                .replace(/on\w+\s*=/gi, '')
+            preview.innerHTML = sanitizedContent
         }
     }
 
@@ -1146,7 +1151,12 @@ function toggleSideBySide(editor) {
     if (useSideBySideListener) {
         var newValue = editor.options.previewRender(editor.value(), preview)
         if (newValue != null) {
-            preview.innerHTML = newValue
+            // Sanitize content to prevent XSS
+            const sanitizedContent = newValue
+                .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+                .replace(/javascript:/gi, '')
+                .replace(/on\w+\s*=/gi, '')
+            preview.innerHTML = sanitizedContent
         }
         cm.on('update', cm.sideBySideRenderingFunction)
     } else {
@@ -1213,7 +1223,12 @@ function togglePreview(editor) {
 
     var preview_result = editor.options.previewRender(editor.value(), preview)
     if (preview_result !== null) {
-        preview.innerHTML = preview_result
+        // Sanitize preview content to prevent XSS
+        const sanitizedContent = preview_result
+            .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+            .replace(/javascript:/gi, '')
+            .replace(/on\w+\s*=/gi, '')
+        preview.innerHTML = sanitizedContent
     }
 }
 
@@ -2728,11 +2743,18 @@ EasyMDE.prototype.autosave = function () {
                     'smde_' + this.options.autosave.uniqueId,
                 ) != ''
             ) {
-                this.codemirror.setValue(
-                    localStorage.getItem(
-                        'smde_' + this.options.autosave.uniqueId,
-                    ),
+                // Sanitize localStorage content before setting
+                const savedContent = localStorage.getItem(
+                    'smde_' + this.options.autosave.uniqueId,
                 )
+                if (savedContent && typeof savedContent === 'string') {
+                    // Basic sanitization - remove potential script tags
+                    const sanitizedContent = savedContent
+                        .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+                        .replace(/javascript:/gi, '')
+                        .replace(/on\w+\s*=/gi, '')
+                    this.codemirror.setValue(sanitizedContent)
+                }
                 this.options.autosave.foundSavedValue = true
             }
 

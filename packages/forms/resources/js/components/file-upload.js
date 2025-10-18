@@ -346,7 +346,7 @@ export default function fileUploadFormComponent({
                     // type is uploaded, for example: `File of invalid type: Expects  or image/*`. This is a
                     // hacky workaround to fix the message to be `File of invalid type: Expects image/*`.
                     this.error = `${error.main}: ${error.sub}`.replace(
-                        'Expects  or',
+                        'Expects or',
                         'Expects',
                     )
                 })
