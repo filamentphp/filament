@@ -10,7 +10,11 @@
     }
 
     & .fi-fo-builder-items {
-        @apply grid grid-cols-1 gap-y-4;
+        @apply grid grid-cols-1;
+
+        & > * + * {
+            @apply mt-4;
+        }
     }
 
     & .fi-fo-builder-item {
@@ -124,15 +128,22 @@
     }
 
     & .fi-fo-builder-add-between-items-ctn {
-        @apply flex w-full justify-center;
+        @apply pointer-events-none invisible relative mt-0 flex h-0 w-full justify-center overflow-visible opacity-0 transition-opacity;
+    }
+
+    & .fi-fo-builder-item:hover + .fi-fo-builder-add-between-items-ctn,
+    & .fi-fo-builder-add-between-items-ctn:has(+ .fi-fo-builder-item:hover),
+    & .fi-fo-builder-add-between-items-ctn:hover,
+    & .fi-fo-builder-add-between-items-ctn:focus-within {
+        @apply pointer-events-auto visible opacity-100;
     }
 
     & .fi-fo-builder-add-between-items {
-        @apply rounded-lg bg-white dark:bg-gray-900;
+        @apply absolute top-1/2 z-10 translate-y-[calc(-50%+0.5rem)] rounded-lg bg-white dark:bg-gray-900;
     }
 
     & .fi-fo-builder-label-between-items-ctn {
-        @apply relative -my-2 flex items-center;
+        @apply relative mt-1 -mb-3 flex items-center;
     }
 
     & .fi-fo-builder-label-between-items-divider-before {
