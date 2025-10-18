@@ -316,7 +316,7 @@ public function table(Table $table): Table
 
 ## Disabling default primary key sorting
 
-By default, Filament will automatically add a primary key sort to the table query to ensure that the order of records is consistent. If your table doesn't have a primary key, or you wish to disable this behavior, you can use the `defaultKeySort(false)` method:
+By default, Filament will automatically add a primary key sort to the table query to ensure that the order of records is consistent. The primary key will be sorted in the same direction as the other sort column. If your table doesn't have a primary key, or you wish to disable this behavior, you can use the `defaultKeySort(false)` method:
 
 ```php
 use Filament\Tables\Table;
