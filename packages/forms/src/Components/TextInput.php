@@ -9,6 +9,7 @@ use Filament\Schemas\Components\Concerns\CanTrimState;
 use Filament\Schemas\Components\Contracts\HasAffixActions;
 use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
 use Filament\Schemas\Components\StateCasts\NumberStateCast;
+use Filament\Schemas\Components\StateCasts\UriStateCast;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Filament\Support\RawJs;
 use LogicException;
@@ -47,6 +48,8 @@ class TextInput extends Field implements CanHaveNumericState, Contracts\CanBeLen
     protected bool | Closure $isCopyable = false;
 
     protected bool | Closure $isTel = false;
+
+    protected bool | Closure $isUri = false;
 
     protected bool | Closure $isUrl = false;
 
@@ -216,6 +219,13 @@ class TextInput extends Field implements CanHaveNumericState, Contracts\CanBeLen
         return $this;
     }
 
+    public function uri(bool | Closure $condition = true): static
+    {
+        $this->isUri = $condition;
+
+        return $this;
+    }
+
     public function url(bool | Closure $condition = true): static
     {
         $this->isUrl = $condition;
@@ -290,6 +300,11 @@ class TextInput extends Field implements CanHaveNumericState, Contracts\CanBeLen
         return (bool) $this->evaluate($this->isTel);
     }
 
+    public function isUri(): bool
+    {
+        return (bool) $this->evaluate($this->isUri);
+    }
+
     public function isUrl(): bool
     {
         return (bool) $this->evaluate($this->isUrl);
@@ -303,6 +318,7 @@ class TextInput extends Field implements CanHaveNumericState, Contracts\CanBeLen
         return [
             ...parent::getDefaultStateCasts(),
             ...($this->isNumeric() ? [app(NumberStateCast::class, ['isNullable' => true])] : []),
+            ...($this->isUri() ? [app(UriStateCast::class, ['isNullable' => true])] : []),
         ];
     }
 
