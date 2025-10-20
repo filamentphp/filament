@@ -2,10 +2,12 @@
 
 use BladeUI\Icons\Factory;
 use BladeUI\Icons\IconsManifest;
+use Filament\Facades\Filament;
 use Filament\Notifications\Actions\Action;
 use Filament\Notifications\Collection;
 use Filament\Notifications\Livewire\Notifications;
 use Filament\Notifications\Notification;
+use Filament\Panel;
 use Filament\Support\Enums\ActionSize;
 use Filament\Support\Enums\IconPosition;
 use Filament\Tests\Notifications\Fixtures\CustomNotification;
@@ -259,4 +261,54 @@ it('can resolve custom notification object from data', function () {
     expect($notification)
         ->toBeInstanceOf(CustomNotification::class)
         ->getSize()->toBe($size);
+});
+
+it('can check stackable status based on panel configuration', function () {
+    $component = livewire(Notifications::class);
+    expect($component->instance()->isStackable())->toBeTrue();
+});
+
+it('respects panel stackable notifications configuration', function () {
+    $panel = Panel::make()
+        ->id('test')
+        ->stackableNotifications(false);
+
+    // Mock the current panel
+    Filament::setCurrentPanel($panel);
+
+    $component = livewire(Notifications::class);
+    expect($component->instance()->isStackable())->toBeFalse();
+
+    // Reset panel
+    Filament::setCurrentPanel(null);
+});
+
+describe('respects panel stackable notifications with closure', function () {
+    it('can disable stackable notifications via closure', function () {
+        $shouldStack = false;
+
+        $panel = Panel::make()
+            ->id('test')
+            ->stackableNotifications(fn () => $shouldStack);
+
+        // Mock the current panel
+        Filament::setCurrentPanel($panel);
+
+        $component = livewire(Notifications::class);
+        expect($component->instance()->isStackable())->toBeFalse();
+    });
+
+    it('can enable stackable notifications via closure', function () {
+        $shouldStack = true;
+
+        $panel = Panel::make()
+            ->id('test')
+            ->stackableNotifications(fn () => $shouldStack);
+
+        // Mock the current panel
+        Filament::setCurrentPanel($panel);
+
+        $component = livewire(Notifications::class);
+        expect($component->instance()->isStackable())->toBeTrue();
+    });
 });
