@@ -21,6 +21,7 @@ use PHPUnit\Framework\Assert;
 class Notification extends ViewComponent implements Arrayable
 {
     use Concerns\CanBeInline;
+    use Concerns\CanBeStacked;
     use Concerns\HasActions;
     use Concerns\HasBody;
     use Concerns\HasDate;
