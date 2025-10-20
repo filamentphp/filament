@@ -57,10 +57,10 @@ use Filament\View\PanelsRenderHook;
 - `PanelsRenderHook::CONTENT_END` - After page content, inside `<main>`
 - `PanelsRenderHook::CONTENT_START` - Before page content, inside `<main>`
 - `PanelsRenderHook::FOOTER` - Footer of the page
-- `PanelsRenderHook::GLOBAL_SEARCH_AFTER` - After the [global search](../panels/resources/global-search) container, inside the topbar
-- `PanelsRenderHook::GLOBAL_SEARCH_BEFORE` - Before the [global search](../panels/resources/global-search) container, inside the topbar
-- `PanelsRenderHook::GLOBAL_SEARCH_END` - The end of the [global search](../panels/resources/global-search) container
-- `PanelsRenderHook::GLOBAL_SEARCH_START` - The start of the [global search](../panels/resources/global-search) container
+- `PanelsRenderHook::GLOBAL_SEARCH_AFTER` - After the [global search](../resources/global-search) container, inside the topbar
+- `PanelsRenderHook::GLOBAL_SEARCH_BEFORE` - Before the [global search](../resources/global-search) container, inside the topbar
+- `PanelsRenderHook::GLOBAL_SEARCH_END` - The end of the [global search](../resources/global-search) container
+- `PanelsRenderHook::GLOBAL_SEARCH_START` - The start of the [global search](../resources/global-search) container
 - `PanelsRenderHook::HEAD_END` - Before `</head>`
 - `PanelsRenderHook::HEAD_START` - After `<head>`
 - `PanelsRenderHook::LAYOUT_END` - End of the layout container, also [can be scoped](#scoping-render-hooks) to the page class
@@ -101,8 +101,8 @@ use Filament\View\PanelsRenderHook;
 - `PanelsRenderHook::SCRIPTS_BEFORE` - Before scripts are defined
 - `PanelsRenderHook::SIDEBAR_LOGO_AFTER` - After the logo in the sidebar
 - `PanelsRenderHook::SIDEBAR_LOGO_BEFORE` - Before the logo in the sidebar
-- `PanelsRenderHook::SIDEBAR_NAV_END` - In the [sidebar](../panels/navigation), before `</nav>`
-- `PanelsRenderHook::SIDEBAR_NAV_START` - In the [sidebar](../panels/navigation), after `<nav>`
+- `PanelsRenderHook::SIDEBAR_NAV_END` - In the [sidebar](../navigation), before `</nav>`
+- `PanelsRenderHook::SIDEBAR_NAV_START` - In the [sidebar](../navigation), after `<nav>`
 - `PanelsRenderHook::SIMPLE_LAYOUT_END` - End of the simple layout container, also [can be scoped](#scoping-render-hooks) to the page class
 - `PanelsRenderHook::SIMPLE_LAYOUT_START` - Start of the simple layout container, also [can be scoped](#scoping-render-hooks) to the page class
 - `PanelsRenderHook::SIMPLE_PAGE_END` - End of the simple page content container, also [can be scoped](#scoping-render-hooks) to the page class

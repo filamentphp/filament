@@ -143,7 +143,7 @@ Now that the table is using a relationship instead of a plain Eloquent query, al
 
 If your relationship uses a pivot table, you can use all pivot columns as if they were normal columns on your table, as long as they are listed in the `withPivot()` method of the relationship *and* inverse relationship definition.
 
-Relationship tables are used in the Panel Builder as ["relation managers"](../panels/resources/managing-relationships#creating-a-relation-manager). Most of the documented features for relation managers are also available for relationship tables. For instance, [attaching and detaching](../panels/resources/managing-relationships#attaching-and-detaching-records) and [associating and dissociating](../panels/resources/relation-managers#associating-and-dissociating-records) actions.
+Relationship tables are used in the Panel Builder as ["relation managers"](../resources/managing-relationships#creating-a-relation-manager). Most of the documented features for relation managers are also available for relationship tables. For instance, [attaching and detaching](../resources/managing-relationships#attaching-and-detaching-records) and [associating and dissociating](../resources/managing-relationships#associating-and-dissociating-records) actions.
 
 ## Generating table Livewire components with the CLI
 

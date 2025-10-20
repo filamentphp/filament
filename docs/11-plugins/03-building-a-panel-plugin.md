@@ -5,7 +5,7 @@ import Aside from "@components/Aside.astro"
 
 ## Preface
 
-Please read the docs on [panel plugin development](../panels/plugins) and the [getting started guide](getting-started) before continuing.
+Please read the docs on [panel plugin development](../plugins/panel-plugins) and the [getting started guide](getting-started) before continuing.
 
 ## Introduction
 
