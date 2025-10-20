@@ -225,6 +225,10 @@
             @apply text-color-500;
         }
     }
+
+    &.fi-ta-text-has-badges > .fi-badge {
+        @apply align-middle;
+    }
 }
 
 .fi-ta-col-has-column-url .fi-ta-text-item {
