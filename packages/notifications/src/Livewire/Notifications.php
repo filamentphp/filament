@@ -2,6 +2,7 @@
 
 namespace Filament\Notifications\Livewire;
 
+use Filament\Facades\Filament;
 use Filament\Notifications\Collection;
 use Filament\Notifications\Notification;
 use Filament\Support\Enums\Alignment;
@@ -29,6 +30,17 @@ class Notifications extends Component
     {
         $this->notifications = new Collection;
         $this->pullNotificationsFromSession();
+    }
+
+    public function isStackable(): bool
+    {
+        $panel = Filament::getCurrentPanel();
+
+        if ($panel && method_exists($panel, 'hasStackableNotifications')) {
+            return $panel->hasStackableNotifications();
+        }
+
+        return $this->isStackable ?? true;
     }
 
     #[On('notificationsSent')]

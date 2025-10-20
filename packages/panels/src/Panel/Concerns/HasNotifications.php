@@ -12,6 +12,8 @@ trait HasNotifications
 
     protected string | Closure | null $databaseNotificationsPolling = '30s';
 
+    protected bool | Closure $hasStackableNotifications = true;
+
     public function databaseNotifications(bool | Closure $condition = true, bool | Closure $isLazy = true): static
     {
         $this->hasDatabaseNotifications = $condition;
@@ -34,6 +36,13 @@ trait HasNotifications
         return $this;
     }
 
+    public function stackableNotifications(bool | Closure $condition = true): static
+    {
+        $this->hasStackableNotifications = $condition;
+
+        return $this;
+    }
+
     public function hasDatabaseNotifications(): bool
     {
         return (bool) $this->evaluate($this->hasDatabaseNotifications);
@@ -47,5 +56,10 @@ trait HasNotifications
     public function getDatabaseNotificationsPollingInterval(): ?string
     {
         return $this->evaluate($this->databaseNotificationsPolling);
+    }
+
+    public function hasStackableNotifications(): bool
+    {
+        return (bool) $this->evaluate($this->hasStackableNotifications);
     }
 }

@@ -21,7 +21,7 @@
         ])
         role="status"
     >
-        @if ($this->isStacked())
+        @if ($this->isStackable())
             @foreach ($notifications as $notification)
                 {{ $notification }}
             @endforeach
