@@ -116,7 +116,7 @@ trait CanGenerateBadgeHtml
 
         <<?= ($tag === 'form') ? 'button' : $tag ?>
             <?php if (($tag === 'a') && (! ($isDisabled && $hasTooltip))) { ?>
-                <?= generate_href_html($href, $target === '_blank', $hasSpaMode)->toHtml() ?>
+                <?= generate_href_html($href, $target, $hasSpaMode)->toHtml() ?>
             <?php } ?>
             <?php if ($keyBindings) { ?>
                 x-bind:id="$id('key-bindings')"

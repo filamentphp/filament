@@ -32,7 +32,7 @@
     @if ($tag === 'button')
         type="{{ $type }}"
     @elseif ($tag === 'a')
-        {{ \Filament\Support\generate_href_html($href, $target === '_blank', $spaMode) }}
+        {{ \Filament\Support\generate_href_html($href, $target, $spaMode) }}
     @endif
     @if ($hasAlpineActiveClasses)
         x-bind:class="{

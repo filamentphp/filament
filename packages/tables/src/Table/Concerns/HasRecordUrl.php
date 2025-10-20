@@ -7,18 +7,18 @@ use Illuminate\Database\Eloquent\Model;
 
 trait HasRecordUrl
 {
-    protected bool | Closure $shouldOpenRecordUrlInNewTab = false;
+    protected bool | string | Closure $shouldOpenRecordUrlInNewTab = false;
 
     protected string | Closure | null $recordUrl = null;
 
-    public function openRecordUrlInNewTab(bool | Closure $condition = true): static
+    public function openRecordUrlInNewTab(bool | string | Closure $condition = true): static
     {
         $this->shouldOpenRecordUrlInNewTab = $condition;
 
         return $this;
     }
 
-    public function recordUrl(string | Closure | null $url, bool | Closure $shouldOpenInNewTab = false): static
+    public function recordUrl(string | Closure | null $url, bool | string | Closure $shouldOpenInNewTab = false): static
     {
         $this->openRecordUrlInNewTab($shouldOpenInNewTab);
         $this->recordUrl = $url;
@@ -58,5 +58,29 @@ trait HasRecordUrl
                 $record::class => $record,
             ] : [],
         );
+    }
+
+    public function getRecordUrlTarget(Model | array $record): ?string
+    {
+        $value = $this->evaluate(
+            $this->shouldOpenRecordUrlInNewTab,
+            namedInjections: [
+                'record' => $record,
+            ],
+            typedInjections: ($record instanceof Model) ? [
+                Model::class => $record,
+                $record::class => $record,
+            ] : [],
+        );
+
+        if (is_string($value) && $value !== '') {
+            return $value;
+        }
+
+        if ($value) {
+            return '_blank';
+        }
+
+        return null;
     }
 }

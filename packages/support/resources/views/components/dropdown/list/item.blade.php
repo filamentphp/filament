@@ -53,7 +53,7 @@
 
 <{{ ($tag === 'form') ? 'button' : $tag }}
     @if (($tag === 'a') && (! ($disabled && $hasTooltip)))
-        {{ \Filament\Support\generate_href_html($href, $target === '_blank', $spaMode) }}
+        {{ \Filament\Support\generate_href_html($href, $target, $spaMode) }}
     @endif
     @if ($keyBindings)
         x-bind:id="$id('key-bindings')"

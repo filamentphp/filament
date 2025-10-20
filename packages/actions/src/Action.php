@@ -706,7 +706,7 @@ class Action extends ViewComponent implements Arrayable
             label: $this->getLabel(),
             size: $this->getSize(),
             tag: $url ? $shouldPostToUrl ? 'form' : 'a' : 'button',
-            target: ($url && $this->shouldOpenUrlInNewTab()) ? '_blank' : null,
+            target: $url ? $this->getUrlTarget() : null,
             tooltip: $this->getTooltip(),
             type: $this->canSubmitForm() ? 'submit' : 'button',
         );
@@ -745,7 +745,7 @@ class Action extends ViewComponent implements Arrayable
             labeledFromBreakpoint: $this->getLabeledFromBreakpoint(),
             size: $this->getSize(),
             tag: $url ? $shouldPostToUrl ? 'form' : 'a' : 'button',
-            target: ($url && $this->shouldOpenUrlInNewTab()) ? '_blank' : null,
+            target: $url ? $this->getUrlTarget() : null,
             tooltip: $this->getTooltip(),
             type: $this->canSubmitForm() ? 'submit' : 'button',
         );
@@ -778,7 +778,7 @@ class Action extends ViewComponent implements Arrayable
             keyBindings: $this->getKeyBindings(),
             label: $this->getLabel(),
             tag: $url ? $shouldPostToUrl ? 'form' : 'a' : 'button',
-            target: ($url && $this->shouldOpenUrlInNewTab()) ? '_blank' : null,
+            target: $url ? $this->getUrlTarget() : null,
             tooltip: $this->getTooltip(),
             type: $this->canSubmitForm() ? 'submit' : 'button',
         );
@@ -813,7 +813,7 @@ class Action extends ViewComponent implements Arrayable
             label: $this->getLabel(),
             size: $this->getSize(),
             tag: $url ? $shouldPostToUrl ? 'form' : 'a' : 'button',
-            target: ($url && $this->shouldOpenUrlInNewTab()) ? '_blank' : null,
+            target: $url ? $this->getUrlTarget() : null,
             tooltip: $this->getTooltip(),
             type: $this->canSubmitForm() ? 'submit' : 'button',
         );
@@ -850,7 +850,7 @@ class Action extends ViewComponent implements Arrayable
             label: $this->getLabel(),
             size: $this->getSize(),
             tag: $url ? $shouldPostToUrl ? 'form' : 'a' : 'button',
-            target: ($url && $this->shouldOpenUrlInNewTab()) ? '_blank' : null,
+            target: $url ? $this->getUrlTarget() : null,
             tooltip: $this->getTooltip(),
             type: $this->canSubmitForm() ? 'submit' : 'button',
         );
