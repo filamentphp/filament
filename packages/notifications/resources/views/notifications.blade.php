@@ -21,9 +21,13 @@
         ])
         role="status"
     >
-        @foreach ($notifications as $notification)
-            {{ $notification }}
-        @endforeach
+        @if ($this->isStacked())
+            @foreach ($notifications as $notification)
+                {{ $notification }}
+            @endforeach
+        @else
+            {{ $notifications->last() }}
+        @endif
     </div>
 
     @if ($broadcastChannel = $this->getBroadcastChannel())
