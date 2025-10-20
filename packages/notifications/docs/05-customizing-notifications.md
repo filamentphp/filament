@@ -23,6 +23,26 @@ Notifications::alignment(Alignment::Start);
 Notifications::verticalAlignment(VerticalAlignment::End);
 ```
 
+## Configuring stackable notifications
+
+By default, notifications are stackable, meaning multiple notifications will appear stacked on top of each other. You can configure this behavior at the panel level using the `stackableNotifications()` method:
+
+```php
+use Filament\Panel;
+
+Panel::make()
+    ->stackableNotifications(false)
+    // ... other panel configuration
+```
+
+You can also use a closure for dynamic behavior:
+
+```php
+Panel::make()
+    ->stackableNotifications(fn () => true)
+    // ... other panel configuration
+```
+
 ## Using a custom notification view
 
 If your desired customization can't be achieved using the CSS classes above, you can create a custom view to render the notification. To configure the notification view, call the static `configureUsing()` method inside a service provider's `boot()` method and specify the view to use:
