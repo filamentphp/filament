@@ -283,32 +283,30 @@ it('respects panel stackable notifications configuration', function () {
     Filament::setCurrentPanel(null);
 });
 
-describe('respects panel stackable notifications with closure', function () {
-    it('can disable stackable notifications via closure', function () {
-        $shouldStack = false;
+it('can disable stackable notifications via closure', function () {
+    $shouldStack = false;
 
-        $panel = Panel::make()
-            ->id('test')
-            ->stackableNotifications(fn () => $shouldStack);
+    $panel = Panel::make()
+        ->id('test')
+        ->stackableNotifications(fn () => $shouldStack);
 
-        // Mock the current panel
-        Filament::setCurrentPanel($panel);
+    // Mock the current panel
+    Filament::setCurrentPanel($panel);
 
-        $component = livewire(Notifications::class);
-        expect($component->instance()->isStackable())->toBeFalse();
-    });
+    $component = livewire(Notifications::class);
+    expect($component->instance()->isStackable())->toBeFalse();
+});
 
-    it('can enable stackable notifications via closure', function () {
-        $shouldStack = true;
+it('can enable stackable notifications via closure', function () {
+    $shouldStack = true;
 
-        $panel = Panel::make()
-            ->id('test')
-            ->stackableNotifications(fn () => $shouldStack);
+    $panel = Panel::make()
+        ->id('test')
+        ->stackableNotifications(fn () => $shouldStack);
 
-        // Mock the current panel
-        Filament::setCurrentPanel($panel);
+    // Mock the current panel
+    Filament::setCurrentPanel($panel);
 
-        $component = livewire(Notifications::class);
-        expect($component->instance()->isStackable())->toBeTrue();
-    });
+    $component = livewire(Notifications::class);
+    expect($component->instance()->isStackable())->toBeTrue();
 });
