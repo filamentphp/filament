@@ -8,21 +8,16 @@
         "source": "https://github.com/filamentphp/filament"
     },
     "require": {
-        "php": "^8.1",
+        "php": "^8.2",
         "filament/actions": "self.version",
-        "filament/support": "self.version",
-        "illuminate/contracts": "^10.45|^11.0|^12.0",
-        "illuminate/filesystem": "^10.45|^11.0|^12.0",
-        "illuminate/notifications": "^10.45|^11.0|^12.0",
-        "illuminate/support": "^10.45|^11.0|^12.0",
-        "spatie/laravel-package-tools": "^1.9"
+        "filament/support": "self.version"
     },
     "autoload": {
         "psr-4": {
             "Filament\\Notifications\\": "src"
         },
         "files": [
-            "src/Testing/Autoload.php"
+            "src/Testing/helpers.php"
         ]
     },
     "extra": {

@@ -3,29 +3,29 @@
 namespace Filament\Upgrade\Rector;
 
 use Closure;
+use Filament\Pages\Dashboard;
+use Filament\Pages\Page;
+use Filament\Pages\Tenancy\EditTenantProfile;
+use Filament\Pages\Tenancy\RegisterTenant;
+use Filament\Resources\Pages\CreateRecord;
+use Filament\Resources\Pages\ViewRecord;
+use Filament\Resources\Resource;
+use Filament\Tables\Contracts\HasTable;
 use PhpParser\Modifiers;
 use PhpParser\Node;
-use PhpParser\Node\Expr\ConstFetch;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Identifier;
-use PhpParser\Node\Name;
+use PhpParser\Node\Name\FullyQualified;
 use PhpParser\Node\Param;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
-use Rector\Naming\VariableRenamer;
+use PhpParser\Node\Stmt\Enum_;
+use PhpParser\Node\UnionType;
+use PHPStan\Type\ObjectType;
 use Rector\Rector\AbstractRector;
-use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
-use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 class SimpleMethodChangesRector extends AbstractRector
 {
-    protected VariableRenamer $variableRenamer;
-
-    public function __construct(VariableRenamer $variableRenamer)
-    {
-        $this->variableRenamer = $variableRenamer;
-    }
-
     /**
      * @return array<array{
      *     class: class-string | array<class-string>,
@@ -35,246 +35,109 @@ class SimpleMethodChangesRector extends AbstractRector
      */
     public function getChanges(): array
     {
+        $prependPanelParamModifier = static function (ClassMethod $node): void {
+            $panelParam = new Param(new Variable('panel'), type: new FullyQualified('Filament\\Panel'));
+
+            foreach ($node->getParams() as $param) {
+                if ($param->var->name === 'panel') {
+                    return;
+                }
+            }
+
+            array_unshift($node->params, $panelParam);
+        };
+
+        $prependNullablePanelParamModifier = static function (ClassMethod $node): void {
+            $panelParam = new Param(
+                var: new Variable('panel'),
+                type: new Node\NullableType(new FullyQualified('Filament\\Panel')),
+                default: new Node\Expr\ConstFetch(new Node\Name('null'))
+            );
+
+            foreach ($node->getParams() as $param) {
+                if ($param->var->name === 'panel') {
+                    return;
+                }
+            }
+
+            array_unshift($node->params, $panelParam);
+        };
+
         return [
             [
-                'class' => 'Filament\\Models\\Contracts\\FilamentUser',
-                'classIdentifier' => 'implements',
+                'class' => [
+                    Page::class,
+                    EditTenantProfile::class,
+                    RegisterTenant::class,
+                ],
                 'changes' => [
-                    'canAccessFilament' => function (ClassMethod $node) {
-                        $param = new Param(new Variable('panel'));
-                        $param->type = new Name('\\Filament\\Panel');
-
-                        $node->params = [$param];
+                    'getFooterWidgetsColumns' => function (ClassMethod $node): void {
+                        $node->returnType = new UnionType([new Identifier('int'), new Identifier('array')]);
                     },
+                    'getHeaderWidgetsColumns' => function (ClassMethod $node): void {
+                        $node->returnType = new UnionType([new Identifier('int'), new Identifier('array')]);
+                    },
+                    'getSubNavigationPosition' => function (ClassMethod $node): void {
+                        $node->flags &= Modifiers::STATIC;
+                    },
+                    'getRoutePath' => $prependPanelParamModifier,
+                    'getRelativeRouteName' => $prependPanelParamModifier,
+                    'getSlug' => $prependNullablePanelParamModifier,
+                    'prependClusterSlug' => $prependPanelParamModifier,
+                    'prependClusterRouteBaseName' => $prependPanelParamModifier,
                 ],
             ],
             [
                 'class' => [
-                    'Filament\\Pages\\Dashboard',
-                    'Filament\\Pages\\Page',
-                    'Filament\\Pages\\SettingsPage',
-                    'Filament\\Resources\\Pages\\CreateRecord',
-                    'Filament\\Resources\\Pages\\EditRecord',
-                    'Filament\\Resources\\Pages\\ListRecords',
-                    'Filament\\Resources\\Pages\\ManageRecords',
-                    'Filament\\Resources\\Pages\\Page',
-                    'Filament\\Resources\\Pages\\ViewRecord',
+                    Resource::class,
                 ],
-                'classIdentifier' => 'extends',
                 'changes' => [
-                    'getBreadcrumbs' => function (ClassMethod $node) {
-                        $node->flags &= ~Modifiers::PROTECTED;
-                        $node->flags |= Modifiers::PUBLIC;
-                    },
-                    'getFooterWidgetsColumns' => function (ClassMethod $node) {
-                        $node->flags &= ~Modifiers::PROTECTED;
-                        $node->flags |= Modifiers::PUBLIC;
-                    },
-                    'getHeader' => function (ClassMethod $node) {
-                        $node->flags &= ~Modifiers::PROTECTED;
-                        $node->flags |= Modifiers::PUBLIC;
-                    },
-                    'getHeaderWidgetsColumns' => function (ClassMethod $node) {
-                        $node->flags &= ~Modifiers::PROTECTED;
-                        $node->flags |= Modifiers::PUBLIC;
-                    },
-                    'getHeading' => function (ClassMethod $node) {
-                        $node->flags &= ~Modifiers::PROTECTED;
-                        $node->flags |= Modifiers::PUBLIC;
-                    },
-                    'getRouteName' => function (ClassMethod $node) {
-                        $param = new Param(new Variable('panel'));
-                        $param->default = new ConstFetch(new Name('null'));
-                        $param->type = new Identifier('?string');
-
-                        $node->params = [$param];
-                    },
-                    'getSubheading' => function (ClassMethod $node) {
-                        $node->flags &= ~Modifiers::PROTECTED;
-                        $node->flags |= Modifiers::PUBLIC;
-                    },
-                    'getTitle' => function (ClassMethod $node) {
-                        $node->flags &= ~Modifiers::PROTECTED;
-                        $node->flags |= Modifiers::PUBLIC;
-                    },
-                    'getVisibleFooterWidgets' => function (ClassMethod $node) {
-                        $node->flags &= ~Modifiers::PROTECTED;
-                        $node->flags |= Modifiers::PUBLIC;
-                    },
-                    'getVisibleHeaderWidgets' => function (ClassMethod $node) {
-                        $node->flags &= ~Modifiers::PROTECTED;
-                        $node->flags |= Modifiers::PUBLIC;
-                    },
+                    'getRelativeRouteName' => $prependPanelParamModifier,
+                    'getRoutePrefix' => $prependPanelParamModifier,
+                    'getSlug' => $prependNullablePanelParamModifier,
                 ],
             ],
             [
                 'class' => [
-                    'Filament\\Pages\\Dashboard',
-                    'Filament\\Pages\\Page',
-                    'Filament\\Pages\\SettingsPage',
-                    'Filament\\Resources\\Pages\\CreateRecord',
-                    'Filament\\Resources\\Pages\\EditRecord',
-                    'Filament\\Resources\\Pages\\ListRecords',
-                    'Filament\\Resources\\Pages\\ManageRecords',
-                    'Filament\\Resources\\Pages\\Page',
-                    'Filament\\Resources\\Pages\\ViewRecord',
-                    'Filament\\Resources\\Resource',
+                    CreateRecord::class,
                 ],
-                'classIdentifier' => 'extends',
                 'changes' => [
-                    'getActiveNavigationIcon' => function (ClassMethod $node) {
-                        $node->flags &= ~Modifiers::PROTECTED;
-                        $node->flags |= Modifiers::PUBLIC;
-                    },
-                    'getNavigationBadge' => function (ClassMethod $node) {
-                        $node->flags &= ~Modifiers::PROTECTED;
-                        $node->flags |= Modifiers::PUBLIC;
-                    },
-                    'getNavigationBadgeColor' => function (ClassMethod $node) {
-                        $node->flags &= ~Modifiers::PROTECTED;
-                        $node->flags |= Modifiers::PUBLIC;
-                    },
-                    'getNavigationGroup' => function (ClassMethod $node) {
-                        $node->flags &= ~Modifiers::PROTECTED;
-                        $node->flags |= Modifiers::PUBLIC;
-                    },
-                    'getNavigationIcon' => function (ClassMethod $node) {
-                        $node->flags &= ~Modifiers::PROTECTED;
-                        $node->flags |= Modifiers::PUBLIC;
-
-                        $node->returnType = new Identifier('?string');
-                    },
-                    'getNavigationLabel' => function (ClassMethod $node) {
-                        $node->flags &= ~Modifiers::PROTECTED;
-                        $node->flags |= Modifiers::PUBLIC;
-                    },
-                    'getNavigationSort' => function (ClassMethod $node) {
-                        $node->flags &= ~Modifiers::PROTECTED;
-                        $node->flags |= Modifiers::PUBLIC;
-                    },
-                    'getNavigationUrl' => function (ClassMethod $node) {
-                        $node->flags &= ~Modifiers::PROTECTED;
-                        $node->flags |= Modifiers::PUBLIC;
-                    },
-                    'shouldRegisterNavigation' => function (ClassMethod $node) {
-                        $node->flags &= ~Modifiers::PROTECTED;
-                        $node->flags |= Modifiers::PUBLIC;
-                    },
-                ],
-            ],
-            [
-                'class' => 'Filament\\Pages\\Dashboard',
-                'classIdentifier' => 'extends',
-                'changes' => [
-                    'getColumns' => function (ClassMethod $node) {
-                        $node->flags &= ~Modifiers::PROTECTED;
-                        $node->flags |= Modifiers::PUBLIC;
-                    },
-                    'getWidgets' => function (ClassMethod $node) {
-                        $node->flags &= ~Modifiers::PROTECTED;
-                        $node->flags |= Modifiers::PUBLIC;
-                    },
-                ],
-            ],
-            [
-                'class' => [
-                    'Filament\\Resources\\Pages\\EditRecord',
-                    'Filament\\Resources\\Pages\\ViewRecord',
-                ],
-                'classIdentifier' => 'extends',
-                'changes' => [
-                    'getFormTabLabel' => function (ClassMethod $node) {
-                        $node->name = new Identifier('getContentTabLabel');
-                    },
-                    'mount' => function (ClassMethod $node) {
-                        $node->params[0]->type = new Identifier('int | string');
-                    },
-                ],
-            ],
-            [
-                'class' => 'Filament\\Resources\\Pages\\CreateRecord',
-                'classIdentifier' => 'extends',
-                'changes' => [
-                    'canCreateAnother' => function (ClassMethod $node) {
-                        $node->flags &= ~Modifiers::PROTECTED;
-                        $node->flags |= Modifiers::PUBLIC;
-                    },
-                ],
-            ],
-            [
-                'class' => 'Filament\\Resources\\Pages\\ListRecords',
-                'classIdentifier' => 'extends',
-                'changes' => [
-                    'table' => function (ClassMethod $node) {
-                        $node->flags &= ~Modifiers::PROTECTED;
-                        $node->flags |= Modifiers::PUBLIC;
-                    },
-                ],
-            ],
-            [
-                'class' => 'Filament\\Resources\\Resource',
-                'classIdentifier' => 'extends',
-                'changes' => [
-                    'applyGlobalSearchAttributeConstraint' => function (ClassMethod $node) {
-                        $node->params[1]->var->name = 'search';
-                        $node->params[1]->type = new Identifier('string');
-
-                        $node->params[2]->var->name = 'searchAttributes';
-                        $node->params[2]->type = new Identifier('array');
-
-                        $this->variableRenamer->renameVariableInFunctionLike(
-                            $node,
-                            oldName: 'searchQuery',
-                            expectedName: 'search',
-                        );
-                    },
-                    'getGlobalSearchEloquentQuery' => function (ClassMethod $node) {
-                        $node->flags &= ~Modifiers::PROTECTED;
-                        $node->flags |= Modifiers::PUBLIC;
-                    },
-                    'getGlobalSearchResults' => function (ClassMethod $node) {
-                        $node->params[0]->var->name = 'search';
-
-                        $this->variableRenamer->renameVariableInFunctionLike(
-                            $node,
-                            oldName: 'searchQuery',
-                            expectedName: 'search',
-                        );
-                    },
-                    'getRouteBaseName' => function (ClassMethod $node) {
-                        $param = new Param(new Variable('panel'));
-                        $param->default = new ConstFetch(new Name('null'));
-                        $param->type = new Identifier('?string');
-
-                        $node->params = [$param];
-                    },
-                    'resolveRecordRouteBinding' => function (ClassMethod $node) {
-                        $node->params[0]->type = new Identifier('int | string');
-                    },
-                ],
-            ],
-            [
-                'class' => [
-                    'Filament\\Resources\\RelationManagers\\RelationManager',
-                    'Filament\\Resources\\RelationManagers\\BelongsToManyRelationManager',
-                    'Filament\\Resources\\RelationManagers\\HasManyRelationManager',
-                    'Filament\\Resources\\RelationManagers\\HasManyThroughRelationManager',
-                    'Filament\\Resources\\RelationManagers\\MorphManyRelationManager',
-                    'Filament\\Resources\\RelationManagers\\MorphToManyRelationManager',
-                ],
-                'classIdentifier' => 'extends',
-                'changes' => [
-                    'form' => function (ClassMethod $node) {
+                    'canCreateAnother' => function (ClassMethod $node): void {
                         $node->flags &= ~Modifiers::STATIC;
                     },
-                    'getInverseRelationshipName' => function (ClassMethod $node) {
-                        $node->returnType = new Identifier('?string');
+                ],
+            ],
+            [
+                'class' => [
+                    ViewRecord::class,
+                ],
+                'changes' => [
+                    'infolist' => function (ClassMethod $node): void {
+                        $param = new Param(new Variable('schema'));
+                        $param->type = new FullyQualified('Filament\\Schemas\\Schema');
+
+                        $node->params = [$param];
                     },
-                    'getModelLabel' => function (ClassMethod $node) {
-                        $node->returnType = new Identifier('?string');
+                ],
+            ],
+            [
+                'class' => [
+                    Dashboard::class,
+                ],
+                'changes' => [
+                    'getColumns' => function (ClassMethod $node): void {
+                        $node->returnType = new UnionType([new Identifier('int'), new Identifier('array')]);
                     },
-                    'table' => function (ClassMethod $node) {
-                        $node->flags &= ~Modifiers::STATIC;
+                ],
+            ],
+            [
+                'class' => [
+                    HasTable::class,
+                ],
+                'changes' => [
+                    'getTableRecordKey' => function (ClassMethod $node): void {
+                        $param = $node->getParams()[0];
+                        $param->type = new UnionType([new FullyQualified('Illuminate\\Database\\Eloquent\\Model'), new Identifier('array')]);
                     },
                 ],
             ],
@@ -283,15 +146,16 @@ class SimpleMethodChangesRector extends AbstractRector
 
     public function getNodeTypes(): array
     {
-        return [Class_::class];
+        return [Class_::class, Enum_::class];
     }
 
     /**
-     * @param  Class_  $node
+     * @param  Class_ | Enum_  $node
      */
     public function refactor(Node $node): ?Node
     {
         $touched = false;
+
         foreach ($this->getChanges() as $change) {
             if (! $this->isClassMatchingChange($node, $change)) {
                 continue;
@@ -313,47 +177,40 @@ class SimpleMethodChangesRector extends AbstractRector
         return $touched ? $node : null;
     }
 
-    public function getRuleDefinition(): RuleDefinition
-    {
-        return new RuleDefinition(
-            'Fix method definitions',
-            [
-                new CodeSample(
-                    'public static function form(Form $form): Form',
-                    'public function form(Form $form): Form',
-                ),
-            ]
-        );
-    }
-
     /**
      * @param array{
      *     class: class-string | array<class-string>,
      *     classIdentifier: string,
      * } $change
      */
-    public function isClassMatchingChange(Class_ $class, array $change): bool
+    public function isClassMatchingChange(Class_ | Enum_ $class, array $change): bool
     {
+        if (! array_key_exists('class', $change)) {
+            return true;
+        }
+
         $classes = is_array($change['class']) ?
             $change['class'] :
             [$change['class']];
 
-        $classes = [
-            ...array_map(fn (string $class): string => ltrim($class, '\\'), $classes),
-            ...array_map(fn (string $class): string => '\\' . ltrim($class, '\\'), $classes),
-        ];
+        $classes = array_map(fn (string $class): string => ltrim($class, '\\'), $classes);
 
-        if ($change['classIdentifier'] === 'extends') {
-            return $class->extends && $this->isNames($class->extends, $classes);
+        foreach ($classes as $classToCheck) {
+            if ($class instanceof Enum_) {
+                foreach ($class->implements as $enumInterface) {
+                    if ($enumInterface->toString() === $classToCheck) {
+                        return true;
+                    }
+                }
+
+                continue;
+            }
+
+            if ($this->isObjectType($class, new ObjectType($classToCheck))) {
+                return true;
+            }
         }
 
-        if ($change['classIdentifier'] !== 'implements') {
-            return false;
-        }
-
-        return (bool) count(array_filter(
-            $class->implements,
-            fn (Name $interface): bool => $this->isNames($interface, $classes),
-        ));
+        return false;
     }
 }

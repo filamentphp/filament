@@ -2,12 +2,12 @@
 
 namespace Filament\Tables\Filters\QueryBuilder\Constraints\NumberConstraint\Operators\Concerns;
 
-use Exception;
 use Filament\Forms\Components\Select;
 use Filament\Tables\Filters\QueryBuilder\Constraints\NumberConstraint;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Str;
+use LogicException;
 
 trait CanAggregateRelationships
 {
@@ -124,7 +124,7 @@ trait CanAggregateRelationships
         $constraint = parent::getConstraint();
 
         if (! ($constraint instanceof NumberConstraint)) {
-            throw new Exception('Constraint must be an instance of [' . NumberConstraint::class . '].');
+            throw new LogicException('Constraint must be an instance of [' . NumberConstraint::class . '].');
         }
 
         return $constraint;

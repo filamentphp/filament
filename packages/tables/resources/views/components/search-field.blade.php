@@ -17,14 +17,14 @@
     x-id="['input']"
     {{ $attributes->class(['fi-ta-search-field']) }}
 >
-    <label x-bind:for="$id('input')" class="sr-only">
+    <label x-bind:for="$id('input')" class="fi-sr-only">
         {{ __('filament-tables::table.fields.search.label') }}
     </label>
 
     <x-filament::input.wrapper
         inline-prefix
-        prefix-icon="heroicon-m-magnifying-glass"
-        prefix-icon-alias="tables::search-field"
+        :prefix-icon="\Filament\Support\Icons\Heroicon::MagnifyingGlass"
+        :prefix-icon-alias="\Filament\Tables\View\TablesIconAlias::SEARCH_FIELD"
         :wire:target="$wireModel"
     >
         <x-filament::input
@@ -39,7 +39,7 @@
                     $wireModelAttribute => $wireModel,
                     'x-bind:id' => '$id(\'input\')',
                     'x-on:keyup' => 'if ($event.key === \'Enter\') { $wire.$refresh() }',
-                ])
+                ], escape: false)
             "
         />
     </x-filament::input.wrapper>

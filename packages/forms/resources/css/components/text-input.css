@@ -1,0 +1,9 @@
+.fi-fo-text-input {
+    @apply overflow-hidden;
+
+    & input {
+        &.fi-revealable {
+            @apply [&::-ms-reveal]:hidden;
+        }
+    }
+}

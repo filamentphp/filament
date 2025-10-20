@@ -1,0 +1,72 @@
+.fi-ta-row {
+    @apply [@media(hover:hover)]:transition-colors [@media(hover:hover)]:duration-75;
+
+    &.fi-clickable {
+        @apply hover:bg-gray-50 dark:hover:bg-white/5;
+    }
+
+    &.fi-striped {
+        @apply bg-gray-50 dark:bg-white/5;
+    }
+
+    &.fi-collapsed {
+        @apply hidden;
+    }
+
+    &.fi-ta-group-header-row {
+        & > td {
+            @apply bg-gray-50 dark:bg-white/5;
+        }
+    }
+
+    & .fi-ta-group-header {
+        @apply flex w-full items-center gap-x-3 px-3 py-2;
+
+        &.fi-collapsible {
+            @apply cursor-pointer;
+
+            &.fi-collapsed {
+                & .fi-icon-btn {
+                    @apply -rotate-180;
+                }
+            }
+        }
+
+        & .fi-ta-group-heading {
+            @apply text-sm font-medium text-gray-950 dark:text-white;
+        }
+
+        & .fi-ta-group-description {
+            @apply text-sm text-gray-500 dark:text-gray-400;
+        }
+    }
+
+    &.fi-selected {
+        &:not(.fi-striped) {
+            @apply bg-gray-50 dark:bg-white/5;
+        }
+
+        & > *:first-child {
+            @apply relative;
+
+            &::before {
+                @apply bg-primary-600 absolute inset-y-0 start-0 w-0.5;
+                content: '';
+            }
+
+            @variant dark {
+                &::before {
+                    @apply bg-primary-500;
+                }
+            }
+        }
+    }
+}
+
+.fi-ta-reordering {
+    & .fi-ta-row {
+        &:not(.fi-ta-row-not-reorderable) {
+            @apply cursor-move;
+        }
+    }
+}

@@ -25,8 +25,8 @@ class SpatieMediaLibraryImageEntry extends ImageEntry
         parent::setUp();
 
         $this->defaultImageUrl(function (SpatieMediaLibraryImageEntry $component, Model $record): ?string {
-            if ($component->hasRelationship($record)) {
-                $record = $component->getRelationshipResults($record);
+            if ($component->hasStateRelationship($record)) {
+                $record = $component->getStateRelationshipResults($record);
             }
 
             $records = Arr::wrap($record);
@@ -90,8 +90,8 @@ class SpatieMediaLibraryImageEntry extends ImageEntry
             return null;
         }
 
-        if ($this->hasRelationship($record)) {
-            $record = $this->getRelationshipResults($record);
+        if ($this->hasStateRelationship($record)) {
+            $record = $this->getStateRelationshipResults($record);
         }
 
         $records = Arr::wrap($record);
@@ -111,7 +111,7 @@ class SpatieMediaLibraryImageEntry extends ImageEntry
             if ($this->getVisibility() === 'private') {
                 try {
                     return $media->getTemporaryUrl(
-                        now()->addMinutes(5),
+                        now()->addMinutes(30)->endOfHour(),
                         $conversion ?? '',
                     );
                 } catch (Throwable $exception) {
@@ -132,8 +132,8 @@ class SpatieMediaLibraryImageEntry extends ImageEntry
     {
         $record = $this->getRecord();
 
-        if ($this->hasRelationship($record)) {
-            $record = $this->getRelationshipResults($record);
+        if ($this->hasStateRelationship($record)) {
+            $record = $this->getStateRelationshipResults($record);
         }
 
         $records = Arr::wrap($record);

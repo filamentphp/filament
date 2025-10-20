@@ -56,6 +56,7 @@ export default function fileUploadFormComponent({
     loadingIndicatorPosition,
     locale,
     maxFiles,
+    maxFilesValidationMessage,
     maxSize,
     minSize,
     maxParallelUploads,
@@ -98,7 +99,7 @@ export default function fileUploadFormComponent({
 
         editor: {},
 
-        init: async function () {
+        async init() {
             FilePond.setOptions(locales[locale] ?? locales['en'])
 
             this.pond = FilePond.create(this.$refs.input, {
@@ -123,7 +124,7 @@ export default function fileUploadFormComponent({
                 itemInsertLocation: shouldAppendFiles ? 'after' : 'before',
                 ...(placeholder && { labelIdle: placeholder }),
                 maxFiles,
-                maxFileSize: maxSize,
+                fileAttachmentsMaxFileSize: maxSize,
                 minFileSize: minSize,
                 ...(maxParallelUploads && { maxParallelUploads }),
                 styleButtonProcessItemPosition: uploadButtonPosition,
@@ -294,6 +295,8 @@ export default function fileUploadFormComponent({
             })
 
             this.pond.on('addfilestart', async (file) => {
+                this.error = null
+
                 if (file.status !== FilePond.FileStatus.PROCESSING_QUEUED) {
                     return
                 }
@@ -327,6 +330,12 @@ export default function fileUploadFormComponent({
 
             this.pond.on('processfilerevert', handleFileProcessing)
 
+            this.pond.on('warning', (warning) => {
+                if (warning.body === 'Max files') {
+                    this.error = maxFilesValidationMessage
+                }
+            })
+
             if (panelLayout === 'compact circle') {
                 // The compact circle layout does not have enough space to render an error message inside the input.
                 // As such, we need to display the error message outside of the input, using the `error` Alpine.js
@@ -341,19 +350,19 @@ export default function fileUploadFormComponent({
                         'Expects',
                     )
                 })
-
-                this.pond.on('removefile', () => (this.error = null))
             }
+
+            this.pond.on('removefile', () => (this.error = null))
         },
 
-        destroy: function () {
+        destroy() {
             this.destroyEditor()
 
             FilePond.destroy(this.$refs.input)
             this.pond = null
         },
 
-        dispatchFormEvent: function (name, detail = {}) {
+        dispatchFormEvent(name, detail = {}) {
             this.$el.closest('form')?.dispatchEvent(
                 new CustomEvent(name, {
                     composed: true,
@@ -363,7 +372,7 @@ export default function fileUploadFormComponent({
             )
         },
 
-        getUploadedFiles: async function () {
+        async getUploadedFiles() {
             const uploadedFiles = await getUploadedFilesUsing()
 
             this.fileKeyIndex = uploadedFiles ?? {}
@@ -377,7 +386,7 @@ export default function fileUploadFormComponent({
                 }, {})
         },
 
-        getFiles: async function () {
+        async getFiles() {
             await this.getUploadedFiles()
 
             let files = []
@@ -411,7 +420,7 @@ export default function fileUploadFormComponent({
             return shouldAppendFiles ? files : files.reverse()
         },
 
-        insertDownloadLink: function (file) {
+        insertDownloadLink(file) {
             if (file.origin !== FilePond.FileOrigin.LOCAL) {
                 return
             }
@@ -428,7 +437,7 @@ export default function fileUploadFormComponent({
                 .prepend(anchor)
         },
 
-        insertOpenLink: function (file) {
+        insertOpenLink(file) {
             if (file.origin !== FilePond.FileOrigin.LOCAL) {
                 return
             }
@@ -445,7 +454,7 @@ export default function fileUploadFormComponent({
                 .prepend(anchor)
         },
 
-        getDownloadLink: function (file) {
+        getDownloadLink(file) {
             let fileSource = file.source
 
             if (!fileSource) {
@@ -460,7 +469,7 @@ export default function fileUploadFormComponent({
             return anchor
         },
 
-        getOpenLink: function (file) {
+        getOpenLink(file) {
             let fileSource = file.source
 
             if (!fileSource) {
@@ -475,7 +484,7 @@ export default function fileUploadFormComponent({
             return anchor
         },
 
-        initEditor: function () {
+        initEditor() {
             if (isDisabled) {
                 return
             }
@@ -508,7 +517,7 @@ export default function fileUploadFormComponent({
             })
         },
 
-        closeEditor: function () {
+        closeEditor() {
             this.editingFile = {}
 
             this.isEditorOpen = false
@@ -516,7 +525,7 @@ export default function fileUploadFormComponent({
             this.destroyEditor()
         },
 
-        fixImageDimensions: function (file, callback) {
+        fixImageDimensions(file, callback) {
             if (file.type !== 'image/svg+xml') {
                 return callback(file)
             }
@@ -575,7 +584,7 @@ export default function fileUploadFormComponent({
             svgReader.readAsText(file)
         },
 
-        loadEditor: function (file) {
+        loadEditor(file) {
             if (isDisabled) {
                 return
             }
@@ -624,7 +633,7 @@ export default function fileUploadFormComponent({
             })
         },
 
-        getRoundedCanvas: function (sourceCanvas) {
+        getRoundedCanvas(sourceCanvas) {
             let width = sourceCanvas.width
             let height = sourceCanvas.height
 
@@ -651,7 +660,7 @@ export default function fileUploadFormComponent({
             return canvas
         },
 
-        saveEditor: function () {
+        saveEditor() {
             if (isDisabled) {
                 return
             }
@@ -745,7 +754,7 @@ export default function fileUploadFormComponent({
             )
         },
 
-        destroyEditor: function () {
+        destroyEditor() {
             if (this.editor && typeof this.editor.destroy === 'function') {
                 this.editor.destroy()
             }
@@ -779,11 +788,11 @@ import km from 'filepond/locale/km-km'
 import ko from 'filepond/locale/ko-kr'
 import lt from 'filepond/locale/lt-lt'
 import lv from 'filepond/locale/lv-lv'
+import nb from 'filepond/locale/no_nb'
 import nl from 'filepond/locale/nl-nl'
-import no from 'filepond/locale/no_nb'
 import pl from 'filepond/locale/pl-pl'
+import pt from 'filepond/locale/pt-pt'
 import pt_BR from 'filepond/locale/pt-br'
-import pt_PT from 'filepond/locale/pt-br'
 import ro from 'filepond/locale/ro-ro'
 import ru from 'filepond/locale/ru-ru'
 import sk from 'filepond/locale/sk-sk'
@@ -792,6 +801,7 @@ import tr from 'filepond/locale/tr-tr'
 import uk from 'filepond/locale/uk-ua'
 import vi from 'filepond/locale/vi-vi'
 import zh_CN from 'filepond/locale/zh-cn'
+import zh_HK from 'filepond/locale/zh-hk'
 import zh_TW from 'filepond/locale/zh-tw'
 
 const locales = {
@@ -819,11 +829,11 @@ const locales = {
     ko,
     lt,
     lv,
+    nb,
     nl,
-    no,
     pl,
+    pt,
     pt_BR,
-    pt_PT,
     ro,
     ru,
     sk,
@@ -832,5 +842,6 @@ const locales = {
     uk,
     vi,
     zh_CN,
+    zh_HK,
     zh_TW,
 }

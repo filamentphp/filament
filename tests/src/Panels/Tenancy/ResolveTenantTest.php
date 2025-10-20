@@ -1,15 +1,15 @@
 <?php
 
 use Filament\Facades\Filament;
-use Filament\Tests\Models\DomainTeam;
-use Filament\Tests\Models\Team;
+use Filament\Tests\Fixtures\Models\DomainTeam;
+use Filament\Tests\Fixtures\Models\Team;
 use Filament\Tests\Panels\Pages\TestCase;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Route;
 
 uses(TestCase::class);
 
-it('resolves the tenant correctly from the route', function () {
+it('resolves the tenant correctly from the route', function (): void {
     $team = Team::factory()->create();
 
     $panel = Filament::getPanel('tenancy');
@@ -29,7 +29,7 @@ it('resolves the tenant correctly from the route', function () {
     expect($resolvedTenant)->toBeSameModel($team);
 });
 
-it('resolves the tenant correctly using domain', function () {
+it('resolves the tenant correctly using domain', function (): void {
     $team = DomainTeam::factory()->create();
     $panel = Filament::getPanel('domain-tenancy');
 
@@ -49,4 +49,14 @@ it('resolves the tenant correctly using domain', function () {
 
     $resolvedTenant = $panel->getTenant($team->getRouteKey());
     expect($resolvedTenant)->toBeSameModel($team);
+});
+
+it('resolves the tenant with custom path correctly from the route', function (): void {
+    $team = Team::factory()->create();
+
+    $panel = Filament::getPanel('tenancy');
+    Filament::setCurrentPanel($panel);
+    Filament::setTenant($team);
+
+    expect(Filament::getUrl($team))->toBe('http://localhost/tenancy/1');
 });

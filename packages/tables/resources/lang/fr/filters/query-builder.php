@@ -15,7 +15,7 @@ return [
             'label' => 'Groupes',
 
             'block' => [
-                'label' => 'Groupe (OR)',
+                'label' => 'Groupe (OU)',
                 'or' => 'OU',
             ],
 
@@ -377,7 +377,7 @@ return [
                     'inverse' => ':attribute n\'est pas :values',
                     'values_glue' => [
                         ', ',
-                        'final' => ' or ',
+                        'final' => ' ou ',
                     ],
                 ],
 

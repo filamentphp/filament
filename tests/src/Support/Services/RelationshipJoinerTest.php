@@ -1,14 +1,14 @@
 <?php
 
 use Filament\Support\Services\RelationshipJoiner;
-use Filament\Tests\Models\Team;
-use Filament\Tests\Models\User;
+use Filament\Tests\Fixtures\Models\Team;
+use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
 use Illuminate\Database\Query\Expression;
 
 uses(TestCase::class);
 
-it('can prepare query for no constraints for a BelongsToMany relationship', function () {
+it('can prepare query for no constraints for a BelongsToMany relationship', function (): void {
     $user = User::factory()->create();
 
     expect($user->teams()->toBase())

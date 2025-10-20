@@ -1,0 +1,213 @@
+.fi-ta-header-cell {
+    @apply px-3 py-3.5 text-start text-sm font-semibold text-gray-950 sm:first-of-type:ps-6 sm:last-of-type:pe-6 dark:text-white;
+
+    &.fi-growable {
+        @apply w-full;
+    }
+
+    &.fi-grouped {
+        @apply border-gray-200 dark:border-white/5 [&:not(:first-of-type)]:border-s [&:not(:last-of-type)]:border-e;
+    }
+
+    &.fi-align-center {
+        @apply text-center;
+
+        & .fi-ta-header-cell-sort-btn {
+            @apply justify-center;
+        }
+    }
+
+    &.fi-align-end {
+        @apply text-end;
+
+        & .fi-ta-header-cell-sort-btn {
+            @apply justify-end;
+        }
+    }
+
+    &.fi-align-left {
+        @apply text-left;
+
+        & .fi-ta-header-cell-sort-btn {
+            @apply justify-start rtl:flex-row-reverse;
+        }
+    }
+
+    &.fi-align-right {
+        @apply text-right;
+
+        & .fi-ta-header-cell-sort-btn {
+            @apply justify-end rtl:flex-row-reverse;
+        }
+    }
+
+    &.fi-align-justify,
+    &.fi-align-between {
+        @apply text-justify;
+
+        & .fi-ta-header-cell-sort-btn {
+            @apply justify-between;
+        }
+    }
+
+    &.fi-ta-header-cell-sorted {
+        & .fi-icon {
+            @apply text-gray-950 dark:text-white;
+        }
+    }
+
+    &:not(.fi-ta-header-cell-sorted) {
+        & .fi-icon {
+            @apply text-gray-400 dark:text-gray-500;
+        }
+
+        & .fi-ta-header-cell-sort-btn:hover {
+            & .fi-icon {
+                @apply text-gray-500 dark:text-gray-400;
+            }
+        }
+
+        & .fi-ta-header-cell-sort-btn:focus-visible {
+            & .fi-icon {
+                @apply text-gray-500 dark:text-gray-400;
+            }
+        }
+    }
+
+    &.sm\:fi-hidden {
+        @apply sm:hidden;
+    }
+
+    &.md\:fi-hidden {
+        @apply md:hidden;
+    }
+
+    &.lg\:fi-hidden {
+        @apply lg:hidden;
+    }
+
+    &.xl\:fi-hidden {
+        @apply xl:hidden;
+    }
+
+    &.\32xl\:fi-hidden {
+        @apply 2xl:hidden;
+    }
+
+    &.sm\:fi-visible {
+        @apply hidden sm:table-cell;
+    }
+
+    &.md\:fi-visible {
+        @apply hidden md:table-cell;
+    }
+
+    &.lg\:fi-visible {
+        @apply hidden lg:table-cell;
+    }
+
+    &.xl\:fi-visible {
+        @apply hidden xl:table-cell;
+    }
+
+    &.\32xl\:fi-visible {
+        @apply hidden 2xl:table-cell;
+    }
+
+    &.fi-wrapped {
+        @apply whitespace-normal;
+    }
+
+    &:not(.fi-wrapped) {
+        @apply whitespace-nowrap;
+    }
+
+    & .fi-ta-header-cell-sort-btn {
+        @apply flex w-full cursor-pointer items-center justify-start gap-x-1;
+    }
+
+    & .fi-icon {
+        @apply shrink-0 transition duration-75;
+    }
+}
+
+.fi-ta-header-group-cell {
+    @apply border-gray-200 px-3 py-2 text-sm font-semibold text-gray-950 sm:first-of-type:ps-6 sm:last-of-type:pe-6 dark:border-white/5 dark:text-white [&:not(:first-of-type)]:border-s [&:not(:last-of-type)]:border-e;
+
+    &.fi-align-start {
+        @apply text-start;
+    }
+
+    &.fi-align-center {
+        @apply text-center;
+    }
+
+    &.fi-align-end {
+        @apply text-end;
+    }
+
+    &.fi-align-left {
+        @apply text-left;
+    }
+
+    &.fi-align-right {
+        @apply text-right;
+    }
+
+    &.fi-align-justify,
+    &.fi-align-between {
+        @apply text-justify;
+    }
+
+    &.sm\:fi-hidden {
+        @apply sm:hidden;
+    }
+
+    &.md\:fi-hidden {
+        @apply md:hidden;
+    }
+
+    &.lg\:fi-hidden {
+        @apply lg:hidden;
+    }
+
+    &.xl\:fi-hidden {
+        @apply xl:hidden;
+    }
+
+    &.\32xl\:fi-hidden {
+        @apply 2xl:hidden;
+    }
+
+    &.sm\:fi-visible {
+        @apply hidden sm:table-cell;
+    }
+
+    &.md\:fi-visible {
+        @apply hidden md:table-cell;
+    }
+
+    &.lg\:fi-visible {
+        @apply hidden lg:table-cell;
+    }
+
+    &.xl\:fi-visible {
+        @apply hidden xl:table-cell;
+    }
+
+    &.\32xl\:fi-visible {
+        @apply hidden 2xl:table-cell;
+    }
+
+    &.fi-wrapped {
+        @apply whitespace-normal;
+    }
+
+    &:not(.fi-wrapped) {
+        @apply whitespace-nowrap;
+    }
+}
+
+.fi-ta-empty-header-cell {
+    @apply w-1;
+}

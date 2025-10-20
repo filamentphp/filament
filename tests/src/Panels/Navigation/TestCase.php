@@ -2,7 +2,7 @@
 
 namespace Filament\Tests\Panels\Navigation;
 
-use Filament\Tests\Models\User;
+use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase as BaseTestCase;
 
 class TestCase extends BaseTestCase

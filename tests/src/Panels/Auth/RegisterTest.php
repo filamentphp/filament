@@ -1,10 +1,10 @@
 <?php
 
-use Filament\Events\Auth\Registered;
+use Filament\Auth\Events\Registered;
+use Filament\Auth\Notifications\VerifyEmail;
+use Filament\Auth\Pages\Register;
 use Filament\Facades\Filament;
-use Filament\Notifications\Auth\VerifyEmail;
-use Filament\Pages\Auth\Register;
-use Filament\Tests\Models\User;
+use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Notification;
@@ -14,15 +14,15 @@ use function Filament\Tests\livewire;
 
 uses(TestCase::class);
 
-it('can render page', function () {
+it('can render page', function (): void {
     expect(Filament::getRegistrationUrl())->toEndWith('/register');
 
     $this->get(Filament::getRegistrationUrl())
         ->assertSuccessful();
 });
 
-it('can render page with a custom slug', function () {
-    Filament::setCurrentPanel(Filament::getPanel('slugs'));
+it('can render page with a custom slug', function (): void {
+    Filament::setCurrentPanel('slugs');
 
     expect(Filament::getRegistrationUrl())->toEndWith('/register-test');
 
@@ -30,13 +30,13 @@ it('can render page with a custom slug', function () {
         ->assertSuccessful();
 });
 
-it('can register', function () {
+it('can register', function (): void {
     Notification::fake();
     Event::fake();
 
     $this->assertGuest();
 
-    Filament::getCurrentPanel()->requiresEmailVerification(false);
+    Filament::getCurrentOrDefaultPanel()->requiresEmailVerification(false);
 
     $userToRegister = User::factory()->make();
 
@@ -61,13 +61,13 @@ it('can register', function () {
     ]);
 });
 
-it('can register and redirect user to their intended URL', function () {
+it('can register and redirect user to their intended URL', function (): void {
     Notification::fake();
     Event::fake();
 
     session()->put('url.intended', $intendedUrl = Str::random());
 
-    Filament::getCurrentPanel()->requiresEmailVerification(false);
+    Filament::getCurrentOrDefaultPanel()->requiresEmailVerification(false);
 
     $userToRegister = User::factory()->make();
 
@@ -82,7 +82,7 @@ it('can register and redirect user to their intended URL', function () {
         ->assertRedirect($intendedUrl);
 });
 
-it('can throttle registration attempts', function () {
+it('can throttle registration attempts', function (): void {
     Notification::fake();
     Event::fake();
 
@@ -126,42 +126,42 @@ it('can throttle registration attempts', function () {
     $this->assertGuest();
 });
 
-it('can validate `name` is required', function () {
+it('can validate `name` is required', function (): void {
     livewire(Register::class)
         ->fillForm(['name' => ''])
         ->call('register')
         ->assertHasFormErrors(['name' => ['required']]);
 });
 
-it('can validate `name` is max 255 characters', function () {
+it('can validate `name` is max 255 characters', function (): void {
     livewire(Register::class)
         ->fillForm(['name' => Str::random(256)])
         ->call('register')
         ->assertHasFormErrors(['name' => ['max']]);
 });
 
-it('can validate `email` is required', function () {
+it('can validate `email` is required', function (): void {
     livewire(Register::class)
         ->fillForm(['email' => ''])
         ->call('register')
         ->assertHasFormErrors(['email' => ['required']]);
 });
 
-it('can validate `email` is valid email', function () {
+it('can validate `email` is valid email', function (): void {
     livewire(Register::class)
         ->fillForm(['email' => 'invalid-email'])
         ->call('register')
         ->assertHasFormErrors(['email' => ['email']]);
 });
 
-it('can validate `email` is max 255 characters', function () {
+it('can validate `email` is max 255 characters', function (): void {
     livewire(Register::class)
         ->fillForm(['email' => Str::random(256)])
         ->call('register')
         ->assertHasFormErrors(['email' => ['max']]);
 });
 
-it('can validate `email` is unique', function () {
+it('can validate `email` is unique', function (): void {
     $existingEmail = User::factory()->create()->email;
 
     livewire(Register::class)
@@ -170,14 +170,14 @@ it('can validate `email` is unique', function () {
         ->assertHasFormErrors(['email' => ['unique']]);
 });
 
-it('can validate `password` is required', function () {
+it('can validate `password` is required', function (): void {
     livewire(Register::class)
         ->fillForm(['password' => ''])
         ->call('register')
         ->assertHasFormErrors(['password' => ['required']]);
 });
 
-it('can validate `password` is confirmed', function () {
+it('can validate `password` is confirmed', function (): void {
     livewire(Register::class)
         ->fillForm([
             'password' => Str::random(),
@@ -187,7 +187,7 @@ it('can validate `password` is confirmed', function () {
         ->assertHasFormErrors(['password' => ['same']]);
 });
 
-it('can validate `passwordConfirmation` is required', function () {
+it('can validate `passwordConfirmation` is required', function (): void {
     livewire(Register::class)
         ->fillForm(['passwordConfirmation' => ''])
         ->call('register')

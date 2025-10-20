@@ -2,43 +2,24 @@
 
 namespace Filament\Support\Concerns;
 
+use BackedEnum;
 use Closure;
-use Filament\Support\Enums\IconPosition;
-use Filament\Support\Enums\IconSize;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Support\HtmlString;
 
 trait HasIcon
 {
-    protected string | Htmlable | Closure | null $icon = null;
+    protected string | BackedEnum | Htmlable | Closure | false | null $icon = null;
 
-    protected IconPosition | string | Closure | null $iconPosition = null;
-
-    protected IconSize | string | Closure | null $iconSize = null;
-
-    public function icon(string | Htmlable | Closure | null $icon): static
+    public function icon(string | BackedEnum | Htmlable | Closure | null $icon): static
     {
-        $this->icon = $icon;
+        $this->icon = filled($icon) ? $icon : false;
 
         return $this;
     }
 
-    public function iconPosition(IconPosition | string | Closure | null $position): static
-    {
-        $this->iconPosition = $position;
-
-        return $this;
-    }
-
-    public function iconSize(IconSize | string | Closure | null $size): static
-    {
-        $this->iconSize = $size;
-
-        return $this;
-    }
-
-    public function getIcon(): string | Htmlable | null
+    public function getIcon(string | BackedEnum | null $default = null): string | BackedEnum | Htmlable | null
     {
         $icon = $this->evaluate($this->icon);
 
@@ -47,16 +28,10 @@ trait HasIcon
             return new HtmlString($icon->render());
         }
 
-        return $icon;
-    }
+        if ($icon === false) {
+            return null;
+        }
 
-    public function getIconPosition(): IconPosition | string
-    {
-        return $this->evaluate($this->iconPosition) ?? IconPosition::Before;
-    }
-
-    public function getIconSize(): IconSize | string | null
-    {
-        return $this->evaluate($this->iconSize);
+        return $icon ?? $default;
     }
 }

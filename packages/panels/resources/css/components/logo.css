@@ -1,0 +1,11 @@
+.fi-logo {
+    @apply flex text-xl leading-5 font-bold tracking-tight text-gray-950 dark:text-white;
+
+    &.fi-logo-light {
+        @apply dark:hidden;
+    }
+
+    &.fi-logo-dark {
+        @apply hidden dark:flex;
+    }
+}

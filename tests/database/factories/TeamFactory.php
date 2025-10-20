@@ -2,7 +2,7 @@
 
 namespace Filament\Tests\Database\Factories;
 
-use Filament\Tests\Models\Team;
+use Filament\Tests\Fixtures\Models\Team;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class TeamFactory extends Factory
@@ -13,6 +13,7 @@ class TeamFactory extends Factory
     {
         return [
             'name' => $this->faker->company(),
+            'description' => $this->faker->sentence(),
         ];
     }
 }

@@ -4,20 +4,21 @@ namespace App\Livewire\Panels\Navigation;
 
 use Filament\Navigation\MenuItem;
 use Filament\Pages\Page;
+use Filament\Support\Icons\Heroicon;
 
 class UserMenuCustomization extends Page
 {
-    protected static string $view = 'livewire.panels.navigation.empty';
+    protected string $view = 'livewire.panels.navigation.empty';
 
     public function mount()
     {
         filament()
-            ->getCurrentPanel()
+            ->getCurrentOrDefaultPanel()
             ->userMenuItems([
                 MenuItem::make()
                     ->label('Settings')
                     ->url(fn (): string => '#')
-                    ->icon('heroicon-o-cog-6-tooth'),
+                    ->icon(Heroicon::OutlinedCog6Tooth),
             ]);
     }
 }

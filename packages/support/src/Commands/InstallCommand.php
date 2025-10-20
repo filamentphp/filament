@@ -2,148 +2,152 @@
 
 namespace Filament\Support\Commands;
 
+use Composer\InstalledVersions;
 use Filament\PanelProvider;
 use Filament\Support\Commands\Concerns\CanGeneratePanels;
 use Filament\Support\Commands\Concerns\CanManipulateFiles;
+use Filament\Support\Commands\Concerns\CanOpenUrlInBrowser;
+use Filament\Support\Commands\Exceptions\FailureCommandOutput;
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
-use Illuminate\Support\Arr;
 use Symfony\Component\Console\Attribute\AsCommand;
+use Symfony\Component\Console\Input\InputOption;
 
 use function Laravel\Prompts\confirm;
 
-#[AsCommand(name: 'filament:install')]
+#[AsCommand(name: 'filament:install', aliases: [
+    'install:filament',
+])]
 class InstallCommand extends Command
 {
     use CanGeneratePanels;
     use CanManipulateFiles;
-
-    protected $signature = 'filament:install {--scaffold} {--actions} {--forms} {--infolists} {--notifications} {--panels} {--tables} {--widgets} {--F|force}';
+    use CanOpenUrlInBrowser;
 
     protected $description = 'Install Filament';
 
+    protected $name = 'filament:install';
+
+    /**
+     * @var array<string>
+     */
+    protected $aliases = [
+        'install:filament',
+    ];
+
+    /**
+     * @return array<InputOption>
+     */
+    protected function getOptions(): array
+    {
+        return [
+            new InputOption(
+                name: 'panels',
+                shortcut: null,
+                mode: InputOption::VALUE_NONE,
+                description: 'Install the panel builder and create the first panel',
+            ),
+            new InputOption(
+                name: 'scaffold',
+                shortcut: null,
+                mode: InputOption::VALUE_NONE,
+                description: 'Install the Filament packages for use outside of panels, in your Blade or Livewire application',
+            ),
+            new InputOption(
+                name: 'notifications',
+                shortcut: null,
+                mode: InputOption::VALUE_NONE,
+                description: 'Install the Filament flash notifications into the scaffolded layout file',
+            ),
+            new InputOption(
+                name: 'force',
+                shortcut: 'F',
+                mode: InputOption::VALUE_NONE,
+                description: 'Overwrite the contents of the files if they already exist',
+            ),
+        ];
+    }
+
     public function __invoke(): int
     {
-        if ($this->option('panels')) {
-            if (! $this->installAdminPanel()) {
-                return static::FAILURE;
-            }
-        }
-
-        if ($this->option('scaffold')) {
+        try {
+            $this->installAdminPanel();
             $this->installScaffolding();
+            $this->installUpgradeCommand();
+        } catch (FailureCommandOutput) {
+            return static::FAILURE;
         }
 
         $this->call(UpgradeCommand::class);
-
-        $this->installUpgradeCommand();
 
         $this->askToStar();
 
         return static::SUCCESS;
     }
 
-    protected function askToStar(): void
+    protected function installAdminPanel(): void
     {
-        if ($this->option('no-interaction')) {
+        if (! $this->option('panels')) {
             return;
         }
 
-        if (confirm(
-            label: 'All done! Would you like to show some love by starring the Filament repo on GitHub?',
-            default: true,
-        )) {
-            if (PHP_OS_FAMILY === 'Darwin') {
-                exec('open https://github.com/filamentphp/filament');
-            }
-            if (PHP_OS_FAMILY === 'Linux') {
-                exec('xdg-open https://github.com/filamentphp/filament');
-            }
-            if (PHP_OS_FAMILY === 'Windows') {
-                exec('start https://github.com/filamentphp/filament');
-            }
-
-            $this->components->info('Thank you!');
-        }
-    }
-
-    protected function installAdminPanel(): bool
-    {
         if (! class_exists(PanelProvider::class)) {
             $this->components->error('Please require [filament/filament] before attempting to install the Panel Builder.');
 
-            return false;
+            throw new FailureCommandOutput;
         }
 
-        return $this->generatePanel(default: 'admin', force: $this->option('force'));
+        $this->generatePanel(defaultId: 'admin', isForced: $this->option('force'));
     }
 
     protected function installScaffolding(): void
     {
-        static::updateNpmPackages();
+        if (! $this->option('scaffold')) {
+            return;
+        }
 
         $filesystem = app(Filesystem::class);
-        $filesystem->delete(resource_path('js/bootstrap.js'));
         $filesystem->copyDirectory(__DIR__ . '/../../stubs/scaffolding', base_path());
 
-        // Install filament/notifications into the layout Blade file
+        $hasNotifications = false;
+
         if (
-            $this->option('actions') ||
-            $this->option('notifications') ||
-            $this->option('tables')
+            InstalledVersions::isInstalled('filament/notifications') &&
+            ($this->option('notifications') || confirm(
+                label: 'Do you want to send flash notifications using Filament?',
+                default: true,
+            ))
         ) {
             $layout = $filesystem->get(resource_path('views/components/layouts/app.blade.php'));
             $layout = (string) str($layout)
                 ->replace('{{ $slot }}', '{{ $slot }}' . PHP_EOL . PHP_EOL . '        @livewire(\'notifications\')');
             $filesystem->put(resource_path('views/components/layouts/app.blade.php'), $layout);
+
+            $hasNotifications = true;
         }
+
+        $packagesCssImports = collect([
+            'actions',
+            'forms',
+            'infolists',
+            ...($hasNotifications ? ['notifications'] : []),
+            'schemas',
+            'tables',
+            'widgets',
+        ])
+            ->filter(fn (string $package): bool => InstalledVersions::isInstalled("filament/{$package}"))
+            ->implode('/resources/css/index.css\';' . PHP_EOL . '@import \'../../vendor/filament/');
+
+        $css = $filesystem->get(resource_path('css/app.css'));
+        $css = (string) str($css)->replace(
+            '@import \'../../vendor/filament/support/resources/css/index.css\';',
+            '@import \'../../vendor/filament/support/resources/css/index.css\';' . PHP_EOL . "@import '../../vendor/filament/{$packagesCssImports}/resources/css/index.css';",
+        );
+        $filesystem->put(resource_path('css/app.css'), $css);
 
         $this->components->info('Scaffolding installed successfully.');
 
-        $this->components->info('Please run `npm install && npm run dev` to compile your new assets.');
-    }
-
-    protected static function updateNpmPackages(bool $dev = true): void
-    {
-        if (! file_exists(base_path('package.json'))) {
-            return;
-        }
-
-        $configurationKey = $dev ? 'devDependencies' : 'dependencies';
-
-        $packages = json_decode(file_get_contents(base_path('package.json')), associative: true);
-
-        $packages[$configurationKey] = static::updateNpmPackageArray(
-            array_key_exists($configurationKey, $packages) ? $packages[$configurationKey] : []
-        );
-
-        ksort($packages[$configurationKey]);
-
-        file_put_contents(
-            base_path('package.json'),
-            json_encode($packages, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) . PHP_EOL
-        );
-    }
-
-    /**
-     * @param  array<string, string>  $packages
-     * @return array<string, string>
-     */
-    protected static function updateNpmPackageArray(array $packages): array
-    {
-        return [
-            '@tailwindcss/forms' => '^0.5.2',
-            '@tailwindcss/typography' => '^0.5.4',
-            'autoprefixer' => '^10.4.7',
-            'postcss' => '^8.4.14',
-            'postcss-nesting' => '^13.0.0',
-            'tailwindcss' => '^3.1',
-            ...Arr::except($packages, [
-                '@tailwindcss/postcss',
-                'axios',
-                'lodash',
-            ]),
-        ];
+        $this->components->info('Please run `npm run build` to compile your new assets.');
     }
 
     protected function installUpgradeCommand(): void
@@ -178,5 +182,21 @@ class InstallCommand extends Command
                     replace: '    "keywords": ["framework", "laravel"],',
                 ),
         );
+    }
+
+    protected function askToStar(): void
+    {
+        if ($this->option('no-interaction')) {
+            return;
+        }
+
+        if (! confirm(
+            label: 'All done! Would you like to show some love by starring the Filament repo on GitHub?',
+            default: true,
+        )) {
+            return;
+        }
+
+        $this->openUrlInBrowser('https://github.com/filamentphp/filament');
     }
 }

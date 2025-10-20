@@ -5,34 +5,33 @@ namespace Filament\Resources\Pages;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Facades\Filament;
-use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\CanUseDatabaseTransactions;
 use Filament\Pages\Concerns\HasUnsavedDataChangesAlert;
-use Filament\Pages\Concerns\InteractsWithFormActions;
+use Filament\Resources\Events\RecordCreated;
+use Filament\Resources\Events\RecordSaved;
+use Filament\Schemas\Components\Actions;
+use Filament\Schemas\Components\Component;
+use Filament\Schemas\Components\EmbeddedSchema;
+use Filament\Schemas\Components\Form;
+use Filament\Schemas\Components\Group;
+use Filament\Schemas\Schema;
 use Filament\Support\Exceptions\Halt;
 use Filament\Support\Facades\FilamentView;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasManyThrough;
-use Illuminate\Database\Eloquent\Relations\HasOneOrManyThrough;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Js;
 use Livewire\Attributes\Locked;
 use Throwable;
 
 /**
- * @property Form $form
+ * @property-read Schema $form
  */
 class CreateRecord extends Page
 {
     use CanUseDatabaseTransactions;
     use HasUnsavedDataChangesAlert;
-    use InteractsWithFormActions;
-
-    /**
-     * @var view-string
-     */
-    protected static string $view = 'filament-panels::resources.pages.create-record';
 
     public ?Model $record = null;
 
@@ -86,6 +85,10 @@ class CreateRecord extends Page
 
         $this->authorizeAccess();
 
+        if ($another) {
+            $preserveRawState = $this->preserveFormDataWhenCreatingAnother($this->form->getRawState());
+        }
+
         try {
             $this->beginDatabaseTransaction();
 
@@ -104,6 +107,8 @@ class CreateRecord extends Page
             $this->form->model($this->getRecord())->saveRelationships();
 
             $this->callHook('afterCreate');
+            Event::dispatch(RecordCreated::class, ['record' => $this->record, 'data' => $data, 'page' => $this]);
+            Event::dispatch(RecordSaved::class, ['record' => $this->record, 'data' => $data, 'page' => $this]);
         } catch (Halt $exception) {
             $exception->shouldRollbackDatabaseTransaction() ?
                 $this->rollBackDatabaseTransaction() :
@@ -133,6 +138,11 @@ class CreateRecord extends Page
 
             $this->fillForm();
 
+            $this->form->rawState([
+                ...$this->form->getRawState(),
+                ...$preserveRawState,
+            ]);
+
             $this->isCreating = false;
 
             return;
@@ -141,6 +151,15 @@ class CreateRecord extends Page
         $redirectUrl = $this->getRedirectUrl();
 
         $this->redirect($redirectUrl, navigate: FilamentView::hasSpaMode($redirectUrl));
+    }
+
+    /**
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
+    protected function preserveFormDataWhenCreatingAnother(array $data): array
+    {
+        return [];
     }
 
     protected function getCreatedNotification(): ?Notification
@@ -181,11 +200,8 @@ class CreateRecord extends Page
     {
         $record = new ($this->getModel())($data);
 
-        if (
-            static::getResource()::isScopedToTenant() &&
-            ($tenant = Filament::getTenant())
-        ) {
-            return $this->associateRecordWithTenant($record, $tenant);
+        if ($parentRecord = $this->getParentRecord()) {
+            return $this->associateRecordWithParent($record, $parentRecord);
         }
 
         $record->save();
@@ -193,17 +209,9 @@ class CreateRecord extends Page
         return $record;
     }
 
-    protected function associateRecordWithTenant(Model $record, Model $tenant): Model
+    protected function associateRecordWithParent(Model $record, Model $parent): Model
     {
-        $relationship = static::getResource()::getTenantRelationship($tenant);
-
-        if ($relationship instanceof (class_exists(HasOneOrManyThrough::class) ? HasOneOrManyThrough::class : HasManyThrough::class)) {
-            $record->save();
-
-            return $record;
-        }
-
-        return $relationship->save($record);
+        return static::getResource()::getParentResourceRegistration()->getRelationship($parent)->save($record);
     }
 
     /**
@@ -222,22 +230,30 @@ class CreateRecord extends Page
     {
         return [
             $this->getCreateFormAction(),
-            ...(static::canCreateAnother() ? [$this->getCreateAnotherFormAction()] : []),
+            ...($this->canCreateAnother() ? [$this->getCreateAnotherFormAction()] : []),
             $this->getCancelFormAction(),
         ];
     }
 
     protected function getCreateFormAction(): Action
     {
+        $hasFormWrapper = $this->hasFormWrapper();
+
         return Action::make('create')
             ->label(__('filament-panels::resources/pages/create-record.form.actions.create.label'))
-            ->submit('create')
+            ->submit($hasFormWrapper ? $this->getSubmitFormLivewireMethodName() : null)
+            ->action($hasFormWrapper ? null : $this->getSubmitFormLivewireMethodName())
             ->keyBindings(['mod+s']);
     }
 
     protected function getSubmitFormAction(): Action
     {
         return $this->getCreateFormAction();
+    }
+
+    protected function getSubmitFormLivewireMethodName(): string
+    {
+        return 'create';
     }
 
     protected function getCreateAnotherFormAction(): Action
@@ -251,9 +267,15 @@ class CreateRecord extends Page
 
     protected function getCancelFormAction(): Action
     {
+        $url = $this->previousUrl ?? $this->getResourceUrl();
+
         return Action::make('cancel')
             ->label(__('filament-panels::resources/pages/create-record.form.actions.cancel.label'))
-            ->alpineClickHandler('document.referrer ? window.history.back() : (window.location.href = ' . Js::from($this->previousUrl ?? static::getResource()::getUrl()) . ')')
+            ->alpineClickHandler(
+                FilamentView::hasSpaMode($url)
+                    ? 'document.referrer ? window.history.back() : Livewire.navigate(' . Js::from($url) . ')'
+                    : 'document.referrer ? window.history.back() : (window.location.href = ' . Js::from($url) . ')',
+            )
             ->color('gray');
     }
 
@@ -268,41 +290,45 @@ class CreateRecord extends Page
         ]);
     }
 
-    public function form(Form $form): Form
+    public function defaultForm(Schema $schema): Schema
     {
-        return $form;
+        return $schema
+            ->columns($this->hasInlineLabels() ? 1 : 2)
+            ->inlineLabel($this->hasInlineLabels())
+            ->model($this->getModel())
+            ->operation('create')
+            ->statePath('data');
     }
 
-    /**
-     * @return array<int | string, string | Form>
-     */
-    protected function getForms(): array
+    public function form(Schema $schema): Schema
     {
-        return [
-            'form' => $this->form(static::getResource()::form(
-                $this->makeForm()
-                    ->operation('create')
-                    ->model($this->getModel())
-                    ->statePath($this->getFormStatePath())
-                    ->columns($this->hasInlineLabels() ? 1 : 2)
-                    ->inlineLabel($this->hasInlineLabels()),
-            )),
-        ];
+        return static::getResource()::form($schema);
     }
 
     protected function getRedirectUrl(): string
     {
         $resource = static::getResource();
 
+        if (
+            filled($defaultRedirect = Filament::getResourceCreatePageRedirect()) &&
+            $resource::hasPage($defaultRedirect) &&
+            (
+                (($defaultRedirect !== 'view') || $resource::canView($this->getRecord())) &&
+                (($defaultRedirect !== 'edit') || $resource::canEdit($this->getRecord()))
+            )
+        ) {
+            return $this->getResourceUrl($defaultRedirect, $this->getRedirectUrlParameters());
+        }
+
         if ($resource::hasPage('view') && $resource::canView($this->getRecord())) {
-            return $resource::getUrl('view', ['record' => $this->getRecord(), ...$this->getRedirectUrlParameters()]);
+            return $this->getResourceUrl('view', $this->getRedirectUrlParameters());
         }
 
         if ($resource::hasPage('edit') && $resource::canEdit($this->getRecord())) {
-            return $resource::getUrl('edit', ['record' => $this->getRecord(), ...$this->getRedirectUrlParameters()]);
+            return $this->getResourceUrl('edit', $this->getRedirectUrlParameters());
         }
 
-        return $resource::getUrl('index');
+        return $this->getResourceUrl(parameters: $this->getRedirectUrlParameters());
     }
 
     /**
@@ -313,12 +339,15 @@ class CreateRecord extends Page
         return [];
     }
 
-    protected function getMountedActionFormModel(): Model | string | null
+    /**
+     * @return Model|class-string<Model>|null
+     */
+    protected function getMountedActionSchemaModel(): Model | string | null
     {
         return $this->getModel();
     }
 
-    public static function canCreateAnother(): bool
+    public function canCreateAnother(): bool
     {
         return static::$canCreateAnother;
     }
@@ -328,13 +357,63 @@ class CreateRecord extends Page
         static::$canCreateAnother = false;
     }
 
-    public function getFormStatePath(): ?string
-    {
-        return 'data';
-    }
-
     public function getRecord(): ?Model
     {
         return $this->record;
+    }
+
+    public function content(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+                $this->getFormContentComponent(),
+            ]);
+    }
+
+    public function getFormContentComponent(): Component
+    {
+        if (! $this->hasFormWrapper()) {
+            return Group::make([
+                EmbeddedSchema::make('form'),
+                $this->getFormActionsContentComponent(),
+            ]);
+        }
+
+        return Form::make([EmbeddedSchema::make('form')])
+            ->id('form')
+            ->livewireSubmitHandler($this->getSubmitFormLivewireMethodName())
+            ->footer([
+                $this->getFormActionsContentComponent(),
+            ]);
+    }
+
+    public function getFormActionsContentComponent(): Component
+    {
+        return Actions::make($this->getFormActions())
+            ->alignment($this->getFormActionsAlignment())
+            ->fullWidth($this->hasFullWidthFormActions())
+            ->sticky($this->areFormActionsSticky())
+            ->key('form-actions');
+    }
+
+    public function hasFormWrapper(): bool
+    {
+        return true;
+    }
+
+    /**
+     * @return array<string>
+     */
+    public function getPageClasses(): array
+    {
+        return [
+            'fi-resource-create-record-page',
+            'fi-resource-' . str_replace('/', '-', $this->getResource()::getSlug(Filament::getCurrentOrDefaultPanel())),
+        ];
+    }
+
+    protected function hasFullWidthFormActions(): bool
+    {
+        return false;
     }
 }

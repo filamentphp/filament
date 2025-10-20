@@ -1,0 +1,33 @@
+{
+    "name": "filament/schemas",
+    "description": "Easily add beautiful UI to any Livewire component.",
+    "license": "MIT",
+    "homepage": "https://github.com/filamentphp/filament",
+    "support": {
+        "issues": "https://github.com/filamentphp/filament/issues",
+        "source": "https://github.com/filamentphp/filament"
+    },
+    "require": {
+        "php": "^8.2",
+        "danharrin/date-format-converter": "^0.3",
+        "filament/actions": "self.version",
+        "filament/support": "self.version"
+    },
+    "autoload": {
+        "psr-4": {
+            "Filament\\Schemas\\": "src"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Filament\\Schemas\\SchemasServiceProvider"
+            ]
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}

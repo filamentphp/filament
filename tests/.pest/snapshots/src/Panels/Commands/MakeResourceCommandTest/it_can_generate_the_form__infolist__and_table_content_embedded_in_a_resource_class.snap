@@ -1,0 +1,165 @@
+<?php
+
+namespace App\Filament\Resources\Posts;
+
+use App\Filament\Resources\Posts\Pages\CreatePost;
+use App\Filament\Resources\Posts\Pages\EditPost;
+use App\Filament\Resources\Posts\Pages\ListPosts;
+use App\Filament\Resources\Posts\Pages\ViewPost;
+use BackedEnum;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\Toggle;
+use Filament\Infolists\Components\IconEntry;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
+use Filament\Tests\Fixtures\Enums\StringBackedEnum;
+use Filament\Tests\Fixtures\Models\Post;
+
+class PostResource extends Resource
+{
+    protected static ?string $model = Post::class;
+
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+
+    public static function form(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+                Select::make('author_id')
+                    ->relationship('author', 'name')
+                    ->required(),
+                Textarea::make('content')
+                    ->columnSpanFull(),
+                Toggle::make('is_published')
+                    ->required(),
+                TextInput::make('rating')
+                    ->required()
+                    ->numeric()
+                    ->default(0),
+                Textarea::make('tags')
+                    ->columnSpanFull(),
+                TextInput::make('title')
+                    ->required(),
+                Textarea::make('config')
+                    ->columnSpanFull(),
+                Textarea::make('json')
+                    ->columnSpanFull(),
+                Textarea::make('json_array_of_objects')
+                    ->columnSpanFull(),
+                Select::make('string_backed_enum')
+                    ->options(StringBackedEnum::class),
+            ]);
+    }
+
+    public static function infolist(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+                TextEntry::make('author.name')
+                    ->label('Author'),
+                TextEntry::make('content')
+                    ->placeholder('-')
+                    ->columnSpanFull(),
+                IconEntry::make('is_published')
+                    ->boolean(),
+                TextEntry::make('rating')
+                    ->numeric(),
+                TextEntry::make('tags')
+                    ->placeholder('-')
+                    ->columnSpanFull(),
+                TextEntry::make('title'),
+                TextEntry::make('config')
+                    ->placeholder('-')
+                    ->columnSpanFull(),
+                TextEntry::make('json')
+                    ->placeholder('-')
+                    ->columnSpanFull(),
+                TextEntry::make('json_array_of_objects')
+                    ->placeholder('-')
+                    ->columnSpanFull(),
+                TextEntry::make('string_backed_enum')
+                    ->badge()
+                    ->placeholder('-'),
+                TextEntry::make('created_at')
+                    ->dateTime()
+                    ->placeholder('-'),
+                TextEntry::make('updated_at')
+                    ->dateTime()
+                    ->placeholder('-'),
+                TextEntry::make('deleted_at')
+                    ->dateTime()
+                    ->visible(fn (Post $record): bool => $record->trashed()),
+            ]);
+    }
+
+    public static function table(Table $table): Table
+    {
+        return $table
+            ->columns([
+                TextColumn::make('author.name')
+                    ->searchable(),
+                IconColumn::make('is_published')
+                    ->boolean(),
+                TextColumn::make('rating')
+                    ->numeric()
+                    ->sortable(),
+                TextColumn::make('title')
+                    ->searchable(),
+                TextColumn::make('string_backed_enum')
+                    ->badge()
+                    ->searchable(),
+                TextColumn::make('created_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('updated_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('deleted_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+            ])
+            ->filters([
+                //
+            ])
+            ->recordActions([
+                ViewAction::make(),
+                EditAction::make(),
+            ])
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                ]),
+            ]);
+    }
+
+    public static function getRelations(): array
+    {
+        return [
+            //
+        ];
+    }
+
+    public static function getPages(): array
+    {
+        return [
+            'index' => ListPosts::route('/'),
+            'create' => CreatePost::route('/create'),
+            'view' => ViewPost::route('/{record}'),
+            'edit' => EditPost::route('/{record}/edit'),
+        ];
+    }
+}

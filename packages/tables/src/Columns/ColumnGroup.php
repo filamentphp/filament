@@ -4,14 +4,15 @@ namespace Filament\Tables\Columns;
 
 use Closure;
 use Filament\Support\Components\Component;
+use Filament\Support\Concerns\CanWrapHeader;
 use Filament\Support\Concerns\HasAlignment;
 use Illuminate\Contracts\Support\Htmlable;
 
 class ColumnGroup extends Component
 {
+    use CanWrapHeader;
     use Concerns\BelongsToTable;
     use Concerns\CanBeHiddenResponsively;
-    use Concerns\CanWrapHeader;
     use Concerns\HasExtraHeaderAttributes;
     use HasAlignment;
 

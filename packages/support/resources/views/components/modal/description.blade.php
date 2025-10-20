@@ -1,5 +1,5 @@
 <p
-    {{ $attributes->class(['fi-modal-description text-sm text-gray-500 dark:text-gray-400']) }}
+    {{ $attributes->class(['fi-modal-description']) }}
 >
     {{ $slot }}
 </p>

@@ -1,0 +1,62 @@
+.fi-dropdown-list-item {
+    @apply flex w-full items-center gap-2 overflow-hidden rounded-md p-2 text-sm whitespace-nowrap transition-colors duration-75 outline-none;
+
+    &:not(.fi-disabled):not([disabled]) {
+        @apply hover:bg-gray-50 focus-visible:bg-gray-50 dark:hover:bg-white/5 dark:focus-visible:bg-white/5;
+
+        &.fi-selected {
+            @apply bg-gray-50 dark:bg-white/5;
+        }
+    }
+
+    &.fi-disabled,
+    &[disabled] {
+        @apply cursor-default opacity-70;
+
+        &:not([x-tooltip]) {
+            @apply pointer-events-none;
+        }
+    }
+
+    & .fi-icon {
+        @apply transition duration-75;
+    }
+
+    & .fi-dropdown-list-item-image {
+        @apply size-5 rounded-full bg-cover bg-center;
+    }
+
+    & > .fi-icon {
+        @apply text-gray-400 dark:text-gray-500;
+
+        &.fi-color {
+            @apply text-color-500 dark:text-color-400;
+        }
+    }
+
+    &.fi-color {
+        &:not(.fi-disabled):not([disabled]) {
+            @apply hover:bg-color-50 focus-visible:bg-color-50 dark:hover:bg-color-400/10 dark:focus-visible:bg-color-400/10;
+
+            &.fi-selected {
+                @apply bg-color-50 dark:bg-color-400/10;
+            }
+        }
+
+        & .fi-dropdown-list-item-label {
+            @apply text-(--text) hover:text-(--hover-text) dark:text-(--dark-text) dark:hover:text-(--dark-hover-text);
+
+            &.fi-selected {
+                @apply text-(--hover-text) dark:text-(--dark-hover-text);
+            }
+        }
+    }
+
+    & .fi-badge {
+        @apply min-w-[theme(spacing.5)] px-1.5 py-0.5 tracking-tight;
+    }
+}
+
+.fi-dropdown-list-item-label {
+    @apply flex-1 truncate text-start text-gray-700 dark:text-gray-200;
+}

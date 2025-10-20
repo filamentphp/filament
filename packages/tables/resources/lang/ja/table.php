@@ -2,7 +2,7 @@
 
 return [
 
-    'column_toggle' => [
+    'column_manager' => [
 
         'heading' => 'カラム',
 
@@ -95,7 +95,7 @@ return [
             'label' => '操作を開く',
         ],
 
-        'toggle_columns' => [
+        'column_manager' => [
             'label' => '列を切り替える',
         ],
 

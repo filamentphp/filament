@@ -1,0 +1,34 @@
+.fi-in-color {
+    @apply flex w-full gap-1.5;
+
+    &.fi-wrapped {
+        @apply flex-wrap;
+    }
+
+    &.fi-align-start,
+    &.fi-align-left {
+        @apply justify-start;
+    }
+
+    &.fi-align-center {
+        @apply justify-center;
+    }
+
+    &.fi-align-end,
+    &.fi-align-right {
+        @apply justify-end;
+    }
+
+    &.fi-align-justify,
+    &.fi-align-between {
+        @apply justify-between;
+    }
+
+    & > .fi-in-color-item {
+        @apply size-6 rounded-md;
+
+        &.fi-copyable {
+            @apply cursor-pointer;
+        }
+    }
+}

@@ -173,7 +173,7 @@ class Operator extends Component
     }
 
     /**
-     * @return array<\Filament\Forms\Components\Component>
+     * @return array<\Filament\Schemas\Components\Component>
      */
     public function getFormSchema(): array
     {

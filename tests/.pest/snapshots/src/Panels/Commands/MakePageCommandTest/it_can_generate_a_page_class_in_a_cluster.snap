@@ -1,0 +1,13 @@
+<?php
+
+namespace App\Filament\Clusters\Site\Pages;
+
+use App\Filament\Clusters\Site\SiteCluster;
+use Filament\Pages\Page;
+
+class ManageSettings extends Page
+{
+    protected string $view = 'filament.clusters.site.pages.manage-settings';
+
+    protected static ?string $cluster = SiteCluster::class;
+}

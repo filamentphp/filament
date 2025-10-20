@@ -284,7 +284,11 @@ return [
 
     'markdown_editor' => [
 
-        'toolbar_buttons' => [
+        'file_attachments_accepted_file_types_message' => 'Los archivos cargados deben ser de tipo: :values.',
+
+        'file_attachments_max_size_message' => 'Los archivos cargados no deben tener más de :max kilobytes.',
+
+        'tools' => [
             'attach_files' => 'Adjuntar archivos',
             'blockquote' => 'Cita',
             'bold' => 'Negrita',
@@ -298,6 +302,28 @@ return [
             'redo' => 'Rehacer',
             'table' => 'Tabla',
             'undo' => 'Deshacer',
+        ],
+
+    ],
+
+    'modal_table_select' => [
+
+        'actions' => [
+
+            'select' => [
+
+                'label' => 'Seleccionar',
+
+                'actions' => [
+
+                    'select' => [
+                        'label' => 'Seleccionar',
+                    ],
+
+                ],
+
+            ],
+
         ],
 
     ],
@@ -365,40 +391,231 @@ return [
 
     'rich_editor' => [
 
-        'dialogs' => [
+        'actions' => [
+
+            'attach_files' => [
+
+                'label' => 'Subir archivo',
+
+                'modal' => [
+
+                    'heading' => 'Subir archivo',
+
+                    'form' => [
+
+                        'file' => [
+
+                            'label' => [
+                                'new' => 'Archivo',
+                                'existing' => 'Reemplazar archivo',
+                            ],
+
+                        ],
+
+                        'alt' => [
+
+                            'label' => [
+                                'new' => 'Texto alternativo',
+                                'existing' => 'Cambiar texto alternativo',
+                            ],
+
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
+            'custom_block' => [
+
+                'modal' => [
+
+                    'actions' => [
+
+                        'insert' => [
+                            'label' => 'Insertar',
+                        ],
+
+                        'save' => [
+                            'label' => 'Guardar',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
+            'grid' => [
+
+                'label' => 'Cuadrícula',
+
+                'modal' => [
+
+                    'heading' => 'Cuadrícula',
+
+                    'form' => [
+
+                        'preset' => [
+
+                            'label' => 'Preestablecido',
+
+                            'placeholder' => 'Ninguno',
+
+                            'options' => [
+                                'two' => 'Dos',
+                                'three' => 'Tres',
+                                'four' => 'Cuatro',
+                                'five' => 'Cinco',
+                                'two_start_third' => 'Dos (Comienzo del tercio)',
+                                'two_end_third' => 'Dos (Final del tercio)',
+                                'two_start_fourth' => 'Dos (Comienzo del cuarto)',
+                                'two_end_fourth' => 'Dos (Final del cuarto)',
+                            ],
+                        ],
+
+                        'columns' => [
+                            'label' => 'Columnas',
+                        ],
+
+                        'from_breakpoint' => [
+
+                            'label' => 'Desde el punto de quiebre',
+
+                            'options' => [
+                                'default' => 'Todos',
+                                'sm' => 'Pequeño',
+                                'md' => 'Mediano',
+                                'lg' => 'Grande',
+                                'xl' => 'Extra grande',
+                                '2xl' => 'Doble extra grande',
+                            ],
+
+                        ],
+
+                        'is_asymmetric' => [
+                            'label' => 'Dos columnas asimétricas',
+                        ],
+
+                        'start_span' => [
+                            'label' => 'Extensión inicial',
+                        ],
+
+                        'end_span' => [
+                            'label' => 'Extensión final',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
 
             'link' => [
 
-                'actions' => [
-                    'link' => 'Enlace',
-                    'unlink' => 'Quitar enlace',
+                'label' => 'Editar',
+
+                'modal' => [
+
+                    'heading' => 'Enlace',
+
+                    'form' => [
+
+                        'url' => [
+                            'label' => 'URL',
+                        ],
+
+                        'should_open_in_new_tab' => [
+                            'label' => 'Abrir en una nueva pestaña',
+                        ],
+
+                    ],
+
                 ],
 
-                'label' => 'URL',
+            ],
 
-                'placeholder' => 'Teclee un enlace URL',
+            'text_color' => [
+
+                'label' => 'Color de texto',
+
+                'modal' => [
+
+                    'heading' => 'Color de texto',
+
+                    'form' => [
+
+                        'color' => [
+                            'label' => 'Color',
+                        ],
+
+                        'custom_color' => [
+                            'label' => 'Color personalizado',
+                        ],
+
+                    ],
+
+                ],
 
             ],
 
         ],
 
-        'toolbar_buttons' => [
+        'file_attachments_accepted_file_types_message' => 'Los archivos cargados deben ser de tipo: :values.',
+
+        'file_attachments_max_size_message' => 'Los archivos cargados no deben tener más de :max kilobytes.',
+
+        'no_merge_tag_search_results_message' => 'No se encontraron etiquetas dinámicas.',
+
+        'tools' => [
+            'align_center' => 'Alinear al centro',
+            'align_end' => 'Alinear al final',
+            'align_justify' => 'Justificar',
+            'align_start' => 'Alinear al inicio',
             'attach_files' => 'Adjuntar archivos',
             'blockquote' => 'Cita',
             'bold' => 'Negrita',
             'bullet_list' => 'Viñetas',
+            'clear_formatting' => 'Limpiar formato',
+            'code' => 'Código',
             'code_block' => 'Bloque de código',
+            'custom_blocks' => 'Bloques',
+            'details' => 'Detalles',
             'h1' => 'Título',
             'h2' => 'Encabezado',
             'h3' => 'Subencabezado',
+            'grid' => 'Cuadrícula',
+            'grid_delete' => 'Eliminar cuadrícula',
+            'highlight' => 'Resaltar',
+            'horizontal_rule' => 'Línea horizontal',
             'italic' => 'Cursiva',
+            'lead' => 'Texto guía',
             'link' => 'Enlace',
+            'merge_tags' => 'Etiquetas dinámicas',
             'ordered_list' => 'Lista numerada',
             'redo' => 'Rehacer',
+            'small' => 'Texto pequeño',
             'strike' => 'Tachar',
+            'subscript' => 'Subíndice',
+            'superscript' => 'Superíndice',
+            'table' => 'Tabla',
+            'table_delete' => 'Eliminar tabla',
+            'table_add_column_before' => 'Añadir columna antes',
+            'table_add_column_after' => 'Añadir columna después',
+            'table_delete_column' => 'Eliminar columna',
+            'table_add_row_before' => 'Añadir fila encima',
+            'table_add_row_after' => 'Añadir fila debajo',
+            'table_delete_row' => 'Eliminar fila',
+            'table_merge_cells' => 'Combinar celdas',
+            'table_split_cell' => 'Dividir celda',
+            'table_toggle_header_row' => 'Alternar fila de encabezado',
+            'text_color' => 'Color de texto',
             'underline' => 'Subrayar',
             'undo' => 'Deshacer',
         ],
+
+        'uploading_file_message' => 'Cargando archivo...',
 
     ],
 
@@ -479,6 +696,11 @@ return [
 
         'actions' => [
 
+            'copy' => [
+                'label' => 'Copiar',
+                'message' => 'Copiado',
+            ],
+
             'hide_password' => [
                 'label' => 'Ocultar contraseña',
             ],
@@ -496,22 +718,6 @@ return [
         'boolean' => [
             'true' => 'Sí',
             'false' => 'No',
-        ],
-
-    ],
-
-    'wizard' => [
-
-        'actions' => [
-
-            'previous_step' => [
-                'label' => 'Anterior',
-            ],
-
-            'next_step' => [
-                'label' => 'Siguiente',
-            ],
-
         ],
 
     ],

@@ -1,0 +1,105 @@
+.fi-no-notification {
+    @apply pointer-events-auto invisible flex w-full shrink-0 gap-3 overflow-hidden p-4 transition duration-300;
+
+    & .fi-no-notification-icon {
+        @apply text-gray-400;
+
+        &.fi-color {
+            @apply text-color-400;
+        }
+    }
+
+    & .fi-no-notification-main {
+        @apply mt-0.5 grid flex-1 gap-3;
+    }
+
+    & .fi-no-notification-text {
+        @apply grid gap-1;
+    }
+
+    & .fi-no-notification-title {
+        @apply text-sm font-medium text-gray-950 dark:text-white;
+    }
+
+    & .fi-no-notification-date {
+        @apply text-sm text-gray-500 dark:text-gray-400;
+    }
+
+    & .fi-no-notification-body {
+        @apply overflow-hidden text-sm text-pretty break-words text-gray-500 dark:text-gray-400;
+
+        & > p:not(:first-of-type) {
+            @apply mt-1;
+        }
+    }
+
+    &:not(.fi-inline) {
+        @apply flex max-w-sm gap-3 rounded-xl bg-white p-4 shadow-lg ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10;
+
+        &.fi-color {
+            @apply ring-color-600/20 dark:ring-color-400/30;
+        }
+
+        &.fi-transition-leave-end {
+            @apply scale-95;
+        }
+    }
+
+    &.fi-color {
+        background-color: color-mix(in oklab, white 90%, var(--color-400));
+
+        @variant dark {
+            background-color: color-mix(
+                in oklab,
+                var(--gray-900) 90%,
+                var(--color-400)
+            );
+        }
+    }
+
+    &.fi-transition-enter-start {
+        @apply opacity-0;
+    }
+
+    &.fi-transition-leave-end {
+        @apply opacity-0;
+    }
+}
+
+.fi-no {
+    &.fi-align-start,
+    &.fi-align-left {
+        & .fi-no-notification {
+            &.fi-transition-enter-start {
+                @apply -translate-x-12;
+            }
+        }
+    }
+
+    &.fi-align-end,
+    &.fi-align-right {
+        & .fi-no-notification {
+            &.fi-transition-enter-start {
+                @apply translate-x-12;
+            }
+        }
+    }
+
+    &.fi-align-center {
+        &.fi-vertical-align-start {
+            & .fi-no-notification {
+                &.fi-transition-enter-start {
+                    @apply -translate-y-12;
+                }
+            }
+        }
+
+        &.fi-vertical-align-end {
+            & .fi-no-notification {
+                &.fi-transition-enter-start {
+                    @apply translate-y-12;
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,7 @@
+.fi-ta-select {
+    @apply w-full min-w-48;
+
+    &:not(.fi-inline) {
+        @apply px-3 py-4;
+    }
+}

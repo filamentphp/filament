@@ -4,10 +4,11 @@ namespace App\Livewire\Panels\Navigation;
 
 use Filament\Navigation\NavigationItem;
 use Filament\Pages\Page;
+use Filament\Support\Icons\Heroicon;
 
 class Group extends Page
 {
-    protected static string $view = 'livewire.panels.navigation.empty';
+    protected string $view = 'livewire.panels.navigation.empty';
 
     public function mount()
     {
@@ -18,7 +19,7 @@ class Group extends Page
                     ->label('Bank Accounts')
                     ->url(fn (): string => '#')
                     ->group('Settings')
-                    ->icon('heroicon-o-currency-dollar'),
+                    ->icon(Heroicon::OutlinedCurrencyDollar),
             ]);
     }
 }

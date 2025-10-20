@@ -7,6 +7,8 @@ use Filament\Facades\Filament;
 use Filament\Navigation\NavigationManager;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Str;
 use Laravel\SerializableClosure\Serializers\Native;
 
 trait HasRoutes
@@ -166,6 +168,36 @@ trait HasRoutes
     }
 
     public function getUrl(?Model $tenant = null): ?string
+    {
+        $hasTenancy = $this->hasTenancy();
+
+        if ((! $tenant) && $hasTenancy && $this->auth()->hasUser()) {
+            $tenant = Filament::getUserDefaultTenant($this->auth()->user());
+        }
+
+        if ($tenant && $this->hasTenantDomain()) {
+            return $this->getRedirectUrl($tenant);
+        }
+
+        if (((! $hasTenancy) || $tenant) && Route::has($homeRouteName = $this->generateRouteName('home'))) {
+            return route($homeRouteName, $tenant ? ['tenant' => $tenant] : []);
+        }
+
+        if ($tenant) {
+            $tenantSlugAttribute = $this->getTenantSlugAttribute();
+            $tenantRoutePrefix = $this->getTenantRoutePrefix() ?? '';
+
+            if (filled($tenantRoutePrefix)) {
+                $tenantRoutePrefix .= '/';
+            }
+
+            return url(Str::replaceEnd('/', '', $this->getPath()) . '/' . $tenantRoutePrefix . (filled($tenantSlugAttribute) ? $tenant->getAttributeValue($tenantSlugAttribute) : $tenant->getRouteKey()));
+        }
+
+        return url($this->getPath());
+    }
+
+    public function getRedirectUrl(?Model $tenant = null): ?string
     {
         if ((! $this->auth()->check()) && $this->hasLogin()) {
             return $this->getLoginUrl();

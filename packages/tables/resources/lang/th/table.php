@@ -2,9 +2,21 @@
 
 return [
 
-    'column_toggle' => [
+    'column_manager' => [
 
         'heading' => 'คอลัมน์',
+
+        'actions' => [
+
+            'apply' => [
+                'label' => 'ใช้งาน',
+            ],
+
+            'reset' => [
+                'label' => 'รีเซ็ต',
+            ],
+
+        ],
 
     ],
 
@@ -95,7 +107,7 @@ return [
             'label' => 'การดำเนินการเป็นกลุ่ม',
         ],
 
-        'toggle_columns' => [
+        'column_manager' => [
             'label' => 'สลับคอลัมน์',
         ],
 

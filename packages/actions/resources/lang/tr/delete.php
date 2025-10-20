@@ -54,6 +54,17 @@ return [
                 'title' => 'Silindi',
             ],
 
+            'deleted_partial' => [
+                'title' => ':total kayıttan :count kayıt silindi',
+                'missing_authorization_failure_message' => ':count kayıt silmek için gereken izniniz yok.',
+                'missing_processing_failure_message' => ':count kayıt silinemedi.',
+            ],
+
+            'deleted_none' => [
+                'title' => 'Kayıtlar silinemedi',
+                'missing_authorization_failure_message' => ':count kayıt silmek için gereken izniniz yok.',
+                'missing_processing_failure_message' => ':count kayıt silinemedi.',
+            ],
         ],
 
     ],

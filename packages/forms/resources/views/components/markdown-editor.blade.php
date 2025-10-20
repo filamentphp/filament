@@ -1,41 +1,34 @@
 @php
-    use Filament\Support\Facades\FilamentView;
-
     $id = $getId();
+    $fieldWrapperView = $getFieldWrapperView();
+    $extraAttributeBag = $getExtraAttributeBag();
+    $key = $getKey();
     $statePath = $getStatePath();
+    $fileAttachmentsMaxSize = $getFileAttachmentsMaxSize();
+    $fileAttachmentsAcceptedFileTypes = $getFileAttachmentsAcceptedFileTypes();
 @endphp
 
-<x-dynamic-component
-    :component="$getFieldWrapperView()"
-    :field="$field"
-    label-tag="div"
->
+<x-dynamic-component :component="$fieldWrapperView" :field="$field">
     @if ($isDisabled())
-        <div
-            aria-labelledby="{{ $id }}-label"
-            id="{{ $id }}"
-            role="group"
-            class="fi-fo-markdown-editor fi-disabled prose block w-full max-w-none rounded-lg bg-gray-50 px-3 py-3 text-gray-500 shadow-sm ring-1 ring-gray-950/10 dark:prose-invert dark:bg-transparent dark:text-gray-400 dark:ring-white/10 sm:text-sm"
-        >
-            {!! str($getState())->markdown()->sanitizeHtml() !!}
+        <div id="{{ $id }}" class="fi-fo-markdown-editor fi-disabled fi-prose">
+            {!! str($getState())->markdown($getCommonMarkOptions(), $getCommonMarkExtensions())->sanitizeHtml() !!}
         </div>
     @else
         <x-filament::input.wrapper
             :valid="! $errors->has($statePath)"
             :attributes="
-                \Filament\Support\prepare_inherited_attributes($getExtraAttributeBag())
-                    ->class(['fi-fo-markdown-editor max-w-full overflow-hidden font-mono text-base text-gray-950 dark:text-white sm:text-sm'])
+                \Filament\Support\prepare_inherited_attributes($extraAttributeBag)
+                    ->class(['fi-fo-markdown-editor'])
             "
         >
             <div
                 aria-labelledby="{{ $id }}-label"
                 id="{{ $id }}"
                 role="group"
-                {{-- prettier-ignore-start --}}x-load="visible || event (ax-modal-opened)"
-                {{-- prettier-ignore-end --}}
+                x-load
                 x-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('markdown-editor', 'filament/forms') }}"
                 x-data="markdownEditorFormComponent({
-                            canAttachFiles: @js($hasToolbarButton('attachFiles')),
+                            canAttachFiles: @js($hasFileAttachments()),
                             isLiveDebounced: @js($isLiveDebounced()),
                             isLiveOnBlur: @js($isLiveOnBlur()),
                             liveDebounce: @js($getNormalizedLiveDebounce()),
@@ -46,9 +39,24 @@
                             toolbarButtons: @js($getToolbarButtons()),
                             translations: @js(__('filament-forms::components.markdown_editor')),
                             uploadFileAttachmentUsing: async (file, onSuccess, onError) => {
+                                const acceptedTypes = @js($fileAttachmentsAcceptedFileTypes)
+
+                                if (acceptedTypes && ! acceptedTypes.includes(file.type)) {
+                                    return onError(@js($fileAttachmentsAcceptedFileTypes ? __('filament-forms::components.markdown_editor.file_attachments_accepted_file_types_message', ['values' => implode(', ', $fileAttachmentsAcceptedFileTypes)]) : null))
+                                }
+
+                                const maxSize = @js($fileAttachmentsMaxSize)
+
+                                if (maxSize && file.size > +maxSize * 1024) {
+                                    return onError(@js($fileAttachmentsMaxSize ? trans_choice('filament-forms::components.markdown_editor.file_attachments_max_size_message', $fileAttachmentsMaxSize, ['max' => $fileAttachmentsMaxSize]) : null))
+                                }
+
                                 $wire.upload(`componentFileAttachments.{{ $statePath }}`, file, () => {
                                     $wire
-                                        .getFormComponentFileAttachmentUrl('{{ $statePath }}')
+                                        .callSchemaComponentMethod(
+                                            '{{ $key }}',
+                                            'saveUploadedFileAttachmentAndGetUrl',
+                                        )
                                         .then((url) => {
                                             if (! url) {
                                                 return onError()
@@ -62,7 +70,7 @@
                 wire:ignore
                 {{ $getExtraAlpineAttributeBag() }}
             >
-                <textarea x-ref="editor" class="hidden"></textarea>
+                <textarea x-ref="editor" x-cloak></textarea>
             </div>
         </x-filament::input.wrapper>
     @endif

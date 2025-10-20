@@ -1,0 +1,27 @@
+.fi-icon {
+    @apply size-5;
+
+    &.fi-size-xs {
+        @apply size-3;
+    }
+
+    &.fi-size-sm {
+        @apply size-4;
+    }
+
+    &.fi-size-md {
+        @apply size-5;
+    }
+
+    &.fi-size-lg {
+        @apply size-6;
+    }
+
+    &.fi-size-xl {
+        @apply size-7;
+    }
+
+    &.fi-size-2xl {
+        @apply size-8;
+    }
+}

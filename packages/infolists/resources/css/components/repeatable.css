@@ -1,0 +1,144 @@
+.fi-in-repeatable {
+    ul& {
+        @apply gap-4;
+    }
+
+    & .fi-in-repeatable-item {
+        @apply block;
+    }
+
+    &.fi-contained {
+        & .fi-in-repeatable-item {
+            @apply rounded-xl bg-white p-4 shadow-xs ring-1 ring-gray-950/5 dark:bg-white/5 dark:ring-white/10;
+        }
+    }
+}
+
+.fi-in-table-repeatable {
+    @apply grid gap-3;
+
+    & > table {
+        @apply block w-full divide-y divide-gray-200 rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:divide-white/10 dark:bg-gray-900 dark:ring-white/10;
+
+        & > thead {
+            @apply hidden whitespace-nowrap;
+
+            & > tr {
+                & > th {
+                    @apply border-gray-200 bg-gray-50 px-3 py-2 text-start text-sm font-semibold text-gray-950 first-of-type:rounded-tl-xl last-of-type:rounded-tr-xl dark:border-white/5 dark:bg-white/5 dark:text-white [&:not(:first-of-type)]:border-s [&:not(:last-of-type)]:border-e;
+
+                    &.fi-align-center {
+                        @apply text-center;
+                    }
+
+                    &.fi-align-end,
+                    &.fi-align-right {
+                        @apply text-end;
+                    }
+
+                    &.fi-wrapped {
+                        @apply whitespace-normal;
+                    }
+
+                    &:not(.fi-wrapped) {
+                        @apply whitespace-nowrap;
+                    }
+
+                    &.fi-in-table-repeatable-empty-header-cell {
+                        @apply w-1;
+                    }
+                }
+            }
+        }
+
+        & > tbody {
+            @apply block divide-y divide-gray-200 dark:divide-white/5;
+
+            & > tr {
+                @apply grid gap-6 p-6;
+
+                & > td {
+                    @apply block;
+
+                    &.fi-hidden {
+                        @apply hidden;
+                    }
+                }
+            }
+        }
+    }
+
+    @supports (container-type: inline-size) {
+        @apply @container;
+
+        & > table {
+            @apply @xl:table;
+
+            & > thead {
+                @apply @xl:table-header-group;
+            }
+
+            & > tbody {
+                @apply @xl:table-row-group;
+
+                & > tr {
+                    @apply @xl:table-row @xl:p-0;
+
+                    & > td {
+                        @apply @xl:table-cell @xl:px-3 @xl:py-2;
+
+                        &.fi-hidden {
+                            @apply @xl:table-cell;
+                        }
+
+                        & .fi-in-entry {
+                            @apply @xl:gap-y-0;
+                        }
+
+                        & .fi-in-entry-label {
+                            @apply @xl:hidden;
+                        }
+                    }
+                }
+            }
+
+            & .fi-in-table-repeatable-actions {
+                @apply @xl:px-3 @xl:py-2;
+            }
+        }
+    }
+
+    @supports not (container-type: inline-size) {
+        & > table {
+            @apply lg:table;
+
+            & > thead {
+                @apply lg:table-header-group;
+            }
+
+            & > tbody {
+                @apply lg:table-row-group;
+
+                & > tr {
+                    @apply lg:table-row lg:p-0;
+
+                    & > td {
+                        @apply lg:table-cell lg:px-3 lg:py-2;
+
+                        &.fi-hidden {
+                            @apply lg:table-cell;
+                        }
+
+                        & .fi-in-entry {
+                            @apply lg:gap-y-0;
+                        }
+
+                        & .fi-in-entry-label {
+                            @apply lg:hidden;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

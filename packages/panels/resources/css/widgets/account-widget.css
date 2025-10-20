@@ -1,0 +1,21 @@
+.fi-account-widget {
+    & .fi-section-content {
+        @apply flex items-center gap-x-3;
+    }
+}
+
+.fi-account-widget-logout-form {
+    @apply my-auto;
+}
+
+.fi-account-widget-main {
+    @apply flex-1;
+}
+
+.fi-account-widget-heading {
+    @apply grid flex-1 text-base leading-6 font-semibold text-gray-950 dark:text-white;
+}
+
+.fi-account-widget-user-name {
+    @apply text-sm text-gray-500 dark:text-gray-400;
+}

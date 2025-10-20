@@ -211,7 +211,7 @@ return [
     ],
 
     'markdown_editor' => [
-        'toolbar_buttons' => [
+        'tools' => [
             'attach_files' => 'ဖိုင်များ ပူးတွဲရန်',
             'blockquote' => 'ကိုးကားချက်',
             'bold' => 'စာလုံးထူ',
@@ -287,7 +287,7 @@ return [
             ],
         ],
 
-        'toolbar_buttons' => [
+        'tools' => [
             'attach_files' => 'ဖိုင်များ ပူးတွဲရန်',
             'blockquote' => 'ကိုးကားချက်',
             'bold' => 'စာလုံးထူ',

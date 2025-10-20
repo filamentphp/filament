@@ -284,7 +284,7 @@ return [
 
     'markdown_editor' => [
 
-        'toolbar_buttons' => [
+        'tools' => [
             'attach_files' => 'Επισύναψη αρχείων',
             'blockquote' => 'Blockquote',
             'bold' => 'Έντονα',
@@ -382,7 +382,7 @@ return [
 
         ],
 
-        'toolbar_buttons' => [
+        'tools' => [
             'attach_files' => 'Επισύναψη αρχείων',
             'blockquote' => 'Blockquote',
             'bold' => 'Έντονα',
@@ -496,22 +496,6 @@ return [
         'boolean' => [
             'true' => 'Ναι',
             'false' => 'Όχι',
-        ],
-
-    ],
-
-    'wizard' => [
-
-        'actions' => [
-
-            'previous_step' => [
-                'label' => 'Πίσω',
-            ],
-
-            'next_step' => [
-                'label' => 'Επόμενο',
-            ],
-
         ],
 
     ],

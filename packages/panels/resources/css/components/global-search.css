@@ -1,0 +1,93 @@
+.fi-global-search-ctn {
+    @apply flex items-center;
+}
+
+.fi-global-search {
+    @apply flex-1 sm:relative;
+}
+
+.fi-global-search-results-ctn {
+    @apply absolute inset-x-4 z-10 mt-2 max-h-96 overflow-auto rounded-lg bg-white shadow-lg ring-1 ring-gray-950/5 transition sm:inset-x-auto dark:bg-gray-900 dark:ring-white/10;
+
+    /**
+     * This zero translation along the z-axis fixes a Safari bug
+     * where the results container is incorrectly placed in the stacking context
+     * due to the overflow-x value of clip on the topbar element.
+     *
+     * https://github.com/filamentphp/filament/issues/8215
+     */
+    transform: translateZ(0);
+
+    &.fi-transition-enter-start,
+    &.fi-transition-leave-end {
+        @apply opacity-0;
+    }
+}
+
+.fi-topbar .fi-global-search-results-ctn {
+    @apply sm:end-0 sm:w-screen sm:max-w-sm;
+}
+
+.fi-sidebar {
+    & .fi-global-search-ctn {
+        @apply mx-3 mt-3;
+    }
+
+    & .fi-global-search-results-ctn {
+        @apply sm:start-0;
+    }
+}
+
+.fi-global-search-no-results-message {
+    @apply px-4 py-4 text-sm text-gray-500 dark:text-gray-400;
+}
+
+.fi-global-search-results {
+    @apply divide-y divide-gray-200 dark:divide-white/10;
+}
+
+.fi-global-search-result-group-header {
+    @apply sticky top-0 z-10 border-b border-gray-200 bg-gray-50 px-4 py-2 text-sm font-semibold text-gray-950 capitalize dark:border-white/10 dark:bg-gray-800 dark:text-white;
+}
+
+.fi-global-search-result-group-results {
+    @apply divide-y divide-gray-200 dark:divide-white/10;
+}
+
+.fi-global-search-result {
+    @apply scroll-mt-9 transition duration-75 focus-within:bg-gray-50 hover:bg-gray-50 dark:focus-within:bg-white/5 dark:hover:bg-white/5;
+
+    &.fi-global-search-result-has-actions {
+        & .fi-global-search-result-link {
+            @apply pb-0;
+        }
+    }
+}
+
+.fi-global-search-result-link {
+    @apply block p-4 outline-hidden;
+}
+
+.fi-global-search-result-heading {
+    @apply text-sm font-medium text-gray-950 dark:text-white;
+}
+
+.fi-global-search-result-details {
+    @apply mt-1;
+}
+
+.fi-global-search-result-detail {
+    @apply text-sm text-gray-500 dark:text-gray-400;
+}
+
+.fi-global-search-result-detail-label {
+    @apply inline font-medium;
+}
+
+.fi-global-search-result-detail-value {
+    @apply inline;
+}
+
+.fi-global-search-result-actions {
+    @apply mt-3 flex gap-x-3 px-4 pb-4;
+}

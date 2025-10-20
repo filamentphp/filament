@@ -1,11 +1,12 @@
 <?php
 
 use Filament\Facades\Filament;
-use Filament\GlobalSearch\Contracts\GlobalSearchProvider;
 use Filament\GlobalSearch\GlobalSearchResult;
 use Filament\GlobalSearch\GlobalSearchResults;
+use Filament\GlobalSearch\Providers\Contracts\GlobalSearchProvider;
 use Filament\Livewire\GlobalSearch;
-use Filament\Tests\Models\Post;
+use Filament\Tests\Fixtures\Models\Post;
+use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Panels\GlobalSearch\TestCase;
 use Illuminate\Database\Eloquent\Factories\Sequence;
 use Illuminate\Support\Str;
@@ -14,12 +15,12 @@ use function Filament\Tests\livewire;
 
 uses(TestCase::class);
 
-it('can render', function () {
+it('can render', function (): void {
     livewire(GlobalSearch::class)
         ->assertSeeHtml('search');
 });
 
-it('can retrieve search results', function () {
+it('can retrieve search results', function (): void {
     $post = Post::factory()->create();
 
     livewire(GlobalSearch::class)
@@ -28,7 +29,7 @@ it('can retrieve search results', function () {
         ->assertSee($post->title);
 });
 
-it('can retrieve limited search results', function () {
+it('can retrieve limited search results', function (): void {
     $title = Str::random();
 
     $posts = Post::factory()
@@ -50,13 +51,31 @@ it('can retrieve limited search results', function () {
         ->assertDontSee($posts[3]->title);
 });
 
-it('can retrieve results via custom search provider', function () {
-    Filament::getCurrentPanel()->globalSearch(CustomSearchProvider::class);
+it('can retrieve results via custom search provider', function (): void {
+    Filament::getCurrentOrDefaultPanel()->globalSearch(CustomSearchProvider::class);
 
     livewire(GlobalSearch::class)
         ->set('search', 'foo')
         ->assertDispatched('open-global-search-results')
         ->assertSee(['foo', 'bar', 'baz']);
+});
+
+it('orders resource global search results by `$globalSearchSort`', function (): void {
+    User::factory()->create([
+        'name' => 'Test',
+    ]);
+
+    Post::factory()->create([
+        'title' => 'Test',
+    ]);
+
+    $provider = Filament::getCurrentOrDefaultPanel()->getGlobalSearchProvider();
+    $results = $provider->getResults('Test');
+
+    $categories = $results->getCategories()->keys()->all();
+
+    expect($categories[0])->toBe('users');
+    expect($categories[1])->toBe('posts');
 });
 
 class CustomSearchProvider implements GlobalSearchProvider

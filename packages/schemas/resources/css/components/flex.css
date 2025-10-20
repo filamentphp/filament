@@ -1,0 +1,87 @@
+.fi-sc-flex {
+    @apply flex gap-6;
+
+    &.fi-dense {
+        @apply gap-3;
+    }
+
+    & > .fi-hidden {
+        @apply hidden;
+    }
+
+    & > .fi-growable {
+        @apply w-full flex-1;
+    }
+
+    &.fi-from-default {
+        @apply items-start;
+
+        &.fi-vertical-align-center {
+            @apply items-center;
+        }
+
+        &.fi-vertical-align-end {
+            @apply items-end;
+        }
+    }
+
+    &.fi-from-sm {
+        @apply flex-col sm:flex-row sm:items-start;
+
+        &.fi-vertical-align-center {
+            @apply sm:items-center;
+        }
+
+        &.fi-vertical-align-end {
+            @apply sm:items-end;
+        }
+    }
+
+    &.fi-from-md {
+        @apply flex-col md:flex-row md:items-start;
+
+        &.fi-vertical-align-center {
+            @apply md:items-center;
+        }
+
+        &.fi-vertical-align-end {
+            @apply md:items-end;
+        }
+    }
+
+    &.fi-from-lg {
+        @apply flex-col lg:flex-row lg:items-start;
+
+        &.fi-vertical-align-center {
+            @apply lg:items-center;
+        }
+
+        &.fi-vertical-align-end {
+            @apply lg:items-end;
+        }
+    }
+
+    &.fi-from-xl {
+        @apply flex-col xl:flex-row xl:items-start;
+
+        &.fi-vertical-align-center {
+            @apply xl:items-center;
+        }
+
+        &.fi-vertical-align-end {
+            @apply xl:items-end;
+        }
+    }
+
+    &.fi-from-2xl {
+        @apply flex-col 2xl:flex-row 2xl:items-start;
+
+        &.fi-vertical-align-center {
+            @apply 2xl:items-center;
+        }
+
+        &.fi-vertical-align-end {
+            @apply 2xl:items-end;
+        }
+    }
+}

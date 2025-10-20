@@ -34,7 +34,7 @@ trait HasExtraFieldWrapperAttributes
         $temporaryAttributeBag = new ComponentAttributeBag;
 
         foreach ($this->extraFieldWrapperAttributes as $extraFieldWrapperAttributes) {
-            $temporaryAttributeBag = $temporaryAttributeBag->merge($this->evaluate($extraFieldWrapperAttributes));
+            $temporaryAttributeBag = $temporaryAttributeBag->merge($this->evaluate($extraFieldWrapperAttributes), escape: false);
         }
 
         return $temporaryAttributeBag->getAttributes();

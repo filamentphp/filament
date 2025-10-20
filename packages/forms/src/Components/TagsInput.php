@@ -3,13 +3,18 @@
 namespace Filament\Forms\Components;
 
 use Closure;
+use Filament\Schemas\Components\Concerns\CanStripCharactersFromState;
+use Filament\Schemas\Components\Concerns\CanTrimState;
+use Filament\Schemas\Components\Contracts\HasAffixActions;
 use Filament\Support\Concerns\HasColor;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Filament\Support\Concerns\HasReorderAnimationDuration;
 use Illuminate\Contracts\Support\Arrayable;
 
-class TagsInput extends Field implements Contracts\HasAffixActions, Contracts\HasNestedRecursiveValidationRules
+class TagsInput extends Field implements Contracts\HasNestedRecursiveValidationRules, HasAffixActions
 {
+    use CanStripCharactersFromState;
+    use CanTrimState;
     use Concerns\HasAffixes;
     use Concerns\HasExtraInputAttributes;
     use Concerns\HasNestedRecursiveValidationRules;
@@ -168,5 +173,49 @@ class TagsInput extends Field implements Contracts\HasAffixActions, Contracts\Ha
     public function isReorderable(): bool
     {
         return (bool) $this->evaluate($this->isReorderable);
+    }
+
+    public function mutateDehydratedState(mixed $state): mixed
+    {
+        if (is_array($state)) {
+            $state = array_map(function (mixed $value): mixed {
+                $value = $this->stripCharactersFromState($value);
+                $value = $this->trimState($value);
+
+                return $value;
+            }, $state);
+        } else {
+            $state = $this->stripCharactersFromState($state);
+            $state = $this->trimState($state);
+        }
+
+        return parent::mutateDehydratedState($state);
+    }
+
+    public function mutateStateForValidation(mixed $state): mixed
+    {
+        if (is_array($state)) {
+            $state = array_map(function (mixed $value): mixed {
+                $value = $this->stripCharactersFromState($value);
+                $value = $this->trimState($value);
+
+                return $value;
+            }, $state);
+        } else {
+            $state = $this->stripCharactersFromState($state);
+            $state = $this->trimState($state);
+        }
+
+        return parent::mutateStateForValidation($state);
+    }
+
+    public function mutatesDehydratedState(): bool
+    {
+        return parent::mutatesDehydratedState() || $this->hasStripCharacters() || $this->isTrimmed();
+    }
+
+    public function mutatesStateForValidation(): bool
+    {
+        return parent::mutatesStateForValidation() || $this->hasStripCharacters() || $this->isTrimmed();
     }
 }

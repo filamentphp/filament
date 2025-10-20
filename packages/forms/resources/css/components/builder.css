@@ -1,0 +1,174 @@
+.fi-fo-builder {
+    @apply grid grid-cols-1 gap-y-4;
+
+    & .fi-fo-builder-actions {
+        @apply flex gap-x-3;
+
+        &.fi-hidden {
+            @apply hidden;
+        }
+    }
+
+    & .fi-fo-builder-items {
+        @apply grid grid-cols-1;
+
+        & > * + * {
+            @apply mt-4;
+        }
+    }
+
+    & .fi-fo-builder-item {
+        @apply rounded-xl bg-white shadow-xs ring-1 ring-gray-950/5 dark:bg-white/5 dark:ring-white/10;
+
+        &.fi-collapsed {
+            & .fi-fo-builder-item-header-collapsible-actions {
+                @apply -rotate-180;
+            }
+
+            & .fi-fo-builder-item-header-collapse-action {
+                @apply pointer-events-none opacity-0;
+            }
+        }
+
+        &:not(.fi-collapsed) {
+            & .fi-fo-builder-item-header-expand-action {
+                @apply pointer-events-none opacity-0;
+            }
+        }
+    }
+
+    &.fi-fo-builder-not-contained > .fi-fo-builder-items {
+        & > .fi-fo-builder-item {
+            @apply rounded-none bg-transparent shadow-none ring-0;
+
+            & > .fi-fo-builder-item-content {
+                @apply p-0;
+            }
+        }
+
+        & > .fi-fo-builder-label-between-items-ctn {
+            & > .fi-fo-builder-label-between-items-divider-before {
+                @apply w-0;
+            }
+
+            & > .fi-fo-builder-label-between-items {
+                @apply ps-0;
+            }
+        }
+    }
+
+    & .fi-fo-builder-item-header {
+        @apply flex items-center gap-x-3 overflow-hidden px-4 py-3;
+    }
+
+    &.fi-collapsible {
+        & .fi-fo-builder-item-header {
+            @apply cursor-pointer select-none;
+        }
+    }
+
+    & .fi-fo-builder-item-header-start-actions {
+        @apply flex items-center gap-x-3;
+    }
+
+    & .fi-fo-builder-item-header-icon {
+        @apply text-gray-400 dark:text-gray-500;
+    }
+
+    & .fi-fo-builder-item-header-label {
+        @apply text-sm font-medium text-gray-950 dark:text-white;
+
+        &.fi-truncated {
+            @apply truncate;
+        }
+    }
+
+    & .fi-fo-builder-item-header-end-actions {
+        @apply ms-auto flex items-center gap-x-3;
+    }
+
+    & .fi-fo-builder-item-header-collapsible-actions {
+        @apply relative transition;
+    }
+
+    & .fi-fo-builder-item-header-collapse-action {
+        @apply transition;
+    }
+
+    & .fi-fo-builder-item-header-expand-action {
+        @apply absolute inset-0 rotate-180 transition;
+    }
+
+    & .fi-fo-builder-item-content {
+        &:not(.fi-fo-builder-item-content-has-preview) {
+            @apply p-4;
+        }
+
+        &.fi-fo-builder-item-content-has-preview {
+            @apply relative;
+        }
+    }
+
+    & .fi-fo-builder-item-has-header > .fi-fo-builder-item-content {
+        @apply border-t border-gray-100 dark:border-white/10;
+    }
+
+    & .fi-fo-builder-item-preview {
+        &:not(.fi-interactive) {
+            @apply pointer-events-none;
+        }
+    }
+
+    & .fi-fo-builder-item-preview-edit-overlay {
+        @apply absolute inset-0 z-1 cursor-pointer;
+    }
+
+    & .fi-fo-builder-block-picker-ctn {
+        @apply rounded-lg bg-white dark:bg-gray-900;
+    }
+
+    & .fi-fo-builder-add-between-items-ctn {
+        @apply pointer-events-none invisible relative mt-0 flex h-0 w-full justify-center overflow-visible opacity-0 transition-opacity;
+    }
+
+    & .fi-fo-builder-item:hover + .fi-fo-builder-add-between-items-ctn,
+    & .fi-fo-builder-add-between-items-ctn:has(+ .fi-fo-builder-item:hover),
+    & .fi-fo-builder-add-between-items-ctn:hover,
+    & .fi-fo-builder-add-between-items-ctn:focus-within {
+        @apply pointer-events-auto visible opacity-100;
+    }
+
+    & .fi-fo-builder-add-between-items {
+        @apply absolute top-1/2 z-10 translate-y-[calc(-50%+0.5rem)] rounded-lg bg-white dark:bg-gray-900;
+    }
+
+    & .fi-fo-builder-label-between-items-ctn {
+        @apply relative mt-1 -mb-3 flex items-center;
+    }
+
+    & .fi-fo-builder-label-between-items-divider-before {
+        @apply w-3 shrink-0 border-t border-gray-200 dark:border-white/10;
+    }
+
+    & .fi-fo-builder-label-between-items {
+        @apply shrink-0 px-1 text-sm font-medium text-gray-500 dark:text-gray-400;
+    }
+
+    & .fi-fo-builder-label-between-items-divider-after {
+        @apply flex-1 border-t border-gray-200 dark:border-white/10;
+    }
+
+    & .fi-fo-builder-block-picker {
+        @apply flex justify-center;
+
+        &.fi-align-start,
+        &.fi-align-left {
+            @apply justify-start;
+        }
+
+        &.fi-align-end,
+        &.fi-align-right {
+            @apply justify-end;
+        }
+    }
+}

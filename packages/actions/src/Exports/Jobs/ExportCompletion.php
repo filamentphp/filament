@@ -2,10 +2,10 @@
 
 namespace Filament\Actions\Exports\Jobs;
 
+use Filament\Actions\Action;
 use Filament\Actions\Exports\Enums\Contracts\ExportFormat;
 use Filament\Actions\Exports\Exporter;
 use Filament\Actions\Exports\Models\Export;
-use Filament\Notifications\Actions\Action as NotificationAction;
 use Filament\Notifications\Notification;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Auth\Authenticatable;
@@ -33,8 +33,9 @@ class ExportCompletion implements ShouldQueue
     public function __construct(
         protected Export $export,
         protected array $columnMap,
-        protected array $formats = [],
-        protected array $options = [],
+        protected array $formats,
+        protected array $options,
+        protected string $authGuard,
     ) {
         $this->exporter = $this->export->getExporter(
             $this->columnMap,
@@ -46,7 +47,7 @@ class ExportCompletion implements ShouldQueue
     {
         $this->export->touch('completed_at');
 
-        if (! $this->export->user instanceof Authenticatable) {
+        if (! $this->export->user instanceof Authenticatable) { /** @phpstan-ignore instanceof.alwaysTrue */
             return;
         }
 
@@ -70,7 +71,7 @@ class ExportCompletion implements ShouldQueue
             ->when(
                 $failedRowsCount < $this->export->total_rows,
                 fn (Notification $notification) => $notification->actions(array_map(
-                    fn (ExportFormat $format): NotificationAction => $format->getDownloadNotificationAction($this->export),
+                    fn (ExportFormat $format): Action => $format->getDownloadNotificationAction($this->export, $this->authGuard),
                     $this->formats,
                 )),
             )

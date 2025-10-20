@@ -5,13 +5,13 @@ use Illuminate\Support\Facades\Route;
 
 uses(TestCase::class);
 
-it('panels without any domain should not use the domain in the names of routes', function () {
+it('panels without any domain should not use the domain in the names of routes', function (): void {
     $routeName = 'filament.admin.auth.login';
     $route = Route::getRoutes()->getByName($routeName);
     expect($route)->not->toBeEmpty();
 });
 
-it('panels with a single domain should not use the domain in the names of routes', function () {
+it('panels with a single domain should not use the domain in the names of routes', function (): void {
     $routeName = 'filament.single-domain.auth.login';
     $route = Route::getRoutes()->getByName($routeName);
     expect($route)->not->toBeEmpty();
@@ -21,7 +21,7 @@ it('panels with a single domain should not use the domain in the names of routes
     expect($route)->toBeEmpty();
 });
 
-it('panels with multiple domains should use the domain in names of all routes', function () {
+it('panels with multiple domains should use the domain in names of all routes', function (): void {
     $routeName = 'filament.multi-domain.auth.login';
     $route = Route::getRoutes()->getByName($routeName);
     expect($route)->toBeEmpty();

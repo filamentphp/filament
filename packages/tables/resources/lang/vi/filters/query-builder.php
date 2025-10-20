@@ -2,7 +2,7 @@
 
 return [
 
-    'label' => 'Trình tạo truy vấn',
+    'label' => 'Trình xây dựng truy vấn',
 
     'form' => [
 
@@ -45,13 +45,13 @@ return [
         'is_filled' => [
 
             'label' => [
-                'direct' => 'Đã điền',
-                'inverse' => 'Trống',
+                'direct' => 'Giá trị khác rỗng',
+                'inverse' => 'Giá trị rỗng',
             ],
 
             'summary' => [
-                'direct' => ':attribute đã điền',
-                'inverse' => ':attribute trống',
+                'direct' => ':attribute có giá trị khác rỗng',
+                'inverse' => ':attribute có giá trị rỗng',
             ],
 
         ],

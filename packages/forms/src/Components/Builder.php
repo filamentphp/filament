@@ -3,24 +3,29 @@
 namespace Filament\Forms\Components;
 
 use Closure;
-use Filament\Forms\ComponentContainer;
-use Filament\Forms\Components\Actions\Action;
+use Filament\Actions\Action;
 use Filament\Forms\Components\Builder\Block;
+use Filament\Forms\View\FormsIconAlias;
+use Filament\Schemas\Components\Concerns\CanBeCollapsed;
+use Filament\Schemas\Components\Contracts\CanConcealComponents;
+use Filament\Schemas\Components\Contracts\HasExtraItemActions;
+use Filament\Schemas\Schema;
 use Filament\Support\Concerns\HasReorderAnimationDuration;
-use Filament\Support\Enums\ActionSize;
 use Filament\Support\Enums\Alignment;
-use Filament\Support\Enums\MaxWidth;
+use Filament\Support\Enums\Size;
+use Filament\Support\Enums\Width;
 use Filament\Support\Facades\FilamentIcon;
+use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 
 use function Filament\Forms\array_move_after;
 use function Filament\Forms\array_move_before;
 
-class Builder extends Field implements Contracts\CanConcealComponents, Contracts\HasExtraItemActions
+class Builder extends Field implements CanConcealComponents, HasExtraItemActions
 {
+    use CanBeCollapsed;
     use Concerns\CanBeCloned;
-    use Concerns\CanBeCollapsed;
     use Concerns\CanGenerateUuids;
     use Concerns\CanLimitItemsLength;
     use Concerns\HasExtraItemActions;
@@ -50,6 +55,8 @@ class Builder extends Field implements Contracts\CanConcealComponents, Contracts
     protected bool | Closure $hasBlockNumbers = true;
 
     protected bool | Closure $hasBlockIcons = false;
+
+    protected bool | Closure $hasBlockHeaders = true;
 
     protected bool | Closure $hasBlockPreviews = false;
 
@@ -86,11 +93,13 @@ class Builder extends Field implements Contracts\CanConcealComponents, Contracts
     protected bool | Closure $isBlockLabelTruncated = true;
 
     /**
-     * @var array<string, int | string | null> | null
+     * @var array<string, ?int> | null
      */
     protected ?array $blockPickerColumns = [];
 
-    protected MaxWidth | string | Closure | null $blockPickerWidth = null;
+    protected Width | string | Closure | null $blockPickerWidth = null;
+
+    protected bool | Closure $shouldPartiallyRenderAfterActionsCalled = true;
 
     protected function setUp(): void
     {
@@ -98,10 +107,10 @@ class Builder extends Field implements Contracts\CanConcealComponents, Contracts
 
         $this->default([]);
 
-        $this->afterStateHydrated(static function (Builder $component, ?array $state): void {
+        $this->afterStateHydrated(static function (Builder $component, ?array $rawState): void {
             $items = [];
 
-            foreach ($state ?? [] as $itemData) {
+            foreach ($rawState ?? [] as $itemData) {
                 if ($uuid = $component->generateUuid()) {
                     $items[$uuid] = $itemData;
                 } else {
@@ -109,7 +118,7 @@ class Builder extends Field implements Contracts\CanConcealComponents, Contracts
                 }
             }
 
-            $component->state($items);
+            $component->rawState($items);
         });
 
         $this->registerActions([
@@ -137,7 +146,7 @@ class Builder extends Field implements Contracts\CanConcealComponents, Contracts
      */
     public function blocks(array | Closure $blocks): static
     {
-        $this->childComponents($blocks);
+        $this->components($blocks);
 
         return $this;
     }
@@ -150,7 +159,7 @@ class Builder extends Field implements Contracts\CanConcealComponents, Contracts
             ->action(function (array $arguments, Builder $component, array $data = []): void {
                 $newUuid = $component->generateUuid();
 
-                $items = $component->getState();
+                $items = $component->getRawState();
 
                 if ($newUuid) {
                     $items[$newUuid] = [
@@ -164,9 +173,9 @@ class Builder extends Field implements Contracts\CanConcealComponents, Contracts
                     ];
                 }
 
-                $component->state($items);
+                $component->rawState($items);
 
-                $component->getChildComponentContainer($newUuid ?? array_key_last($items))->fill(filled($data) ? $data : null);
+                $component->getChildSchema($newUuid ?? array_key_last($items))->fill(filled($data) ? $data : null);
 
                 $component->collapsed(false, shouldMakeComponentCollapsible: false);
 
@@ -174,7 +183,7 @@ class Builder extends Field implements Contracts\CanConcealComponents, Contracts
             })
             ->livewireClickHandlerEnabled(false)
             ->button()
-            ->size(ActionSize::Small)
+            ->size(Size::Small)
             ->visible(fn (Builder $component): bool => $component->isAddable());
 
         if ($this->hasBlockPreviews()) {
@@ -183,8 +192,8 @@ class Builder extends Field implements Contracts\CanConcealComponents, Contracts
                     'label' => $component->getLabel(),
                 ]))
                 ->modalSubmitActionLabel(__('filament-forms::components.builder.actions.add.modal.actions.add.label'))
-                ->form(function (array $arguments, Builder $component): array {
-                    return $component->getBlock($arguments['block'])->getChildComponents();
+                ->schema(function (array $arguments, Builder $component): array {
+                    return $component->getBlock($arguments['block'])->getClone()->getDefaultChildComponents();
                 });
         }
 
@@ -237,7 +246,7 @@ class Builder extends Field implements Contracts\CanConcealComponents, Contracts
 
                 $items = [];
 
-                foreach ($component->getState() ?? [] as $key => $item) {
+                foreach ($component->getRawState() ?? [] as $key => $item) {
                     $items[$key] = $item;
 
                     if ($key === $arguments['afterItem']) {
@@ -257,17 +266,19 @@ class Builder extends Field implements Contracts\CanConcealComponents, Contracts
                     }
                 }
 
-                $component->state($items);
+                $component->rawState($items);
 
-                $component->getChildComponentContainer($newKey)->fill(filled($data) ? $data : null);
+                $component->getChildSchema($newKey)->fill(filled($data) ? $data : null);
 
                 $component->collapsed(false, shouldMakeComponentCollapsible: false);
 
                 $component->callAfterStateUpdated();
+
+                $component->shouldPartiallyRenderAfterActionsCalled() ? $component->partiallyRender() : null;
             })
             ->livewireClickHandlerEnabled(false)
             ->button()
-            ->size(ActionSize::Small)
+            ->size(Size::Small)
             ->visible(fn (Builder $component): bool => $component->isAddable());
 
         if ($this->hasBlockPreviews()) {
@@ -276,8 +287,8 @@ class Builder extends Field implements Contracts\CanConcealComponents, Contracts
                     'label' => $component->getLabel(),
                 ]))
                 ->modalSubmitActionLabel(__('filament-forms::components.builder.actions.add_between.modal.actions.add.label'))
-                ->form(function (array $arguments, Builder $component): array {
-                    return $component->getBlock($arguments['block'])->getChildComponents();
+                ->schema(function (array $arguments, Builder $component): array {
+                    return $component->getBlock($arguments['block'])->getClone()->getDefaultChildComponents();
                 });
         }
 
@@ -306,12 +317,12 @@ class Builder extends Field implements Contracts\CanConcealComponents, Contracts
     {
         $action = Action::make($this->getCloneActionName())
             ->label(__('filament-forms::components.builder.actions.clone.label'))
-            ->icon(FilamentIcon::resolve('forms::components.builder.actions.clone') ?? 'heroicon-m-square-2-stack')
+            ->icon(FilamentIcon::resolve(FormsIconAlias::COMPONENTS_BUILDER_ACTIONS_CLONE) ?? Heroicon::Square2Stack)
             ->color('gray')
             ->action(function (array $arguments, Builder $component): void {
                 $newUuid = $component->generateUuid();
 
-                $items = $component->getState();
+                $items = $component->getRawState();
 
                 if ($newUuid) {
                     $items[$newUuid] = $items[$arguments['item']];
@@ -319,14 +330,16 @@ class Builder extends Field implements Contracts\CanConcealComponents, Contracts
                     $items[] = $items[$arguments['item']];
                 }
 
-                $component->state($items);
+                $component->rawState($items);
 
                 $component->collapsed(false, shouldMakeComponentCollapsible: false);
 
                 $component->callAfterStateUpdated();
+
+                $component->shouldPartiallyRenderAfterActionsCalled() ? $component->partiallyRender() : null;
             })
             ->iconButton()
-            ->size(ActionSize::Small)
+            ->size(Size::Small)
             ->visible(fn (Builder $component): bool => $component->isCloneable());
 
         if ($this->modifyCloneActionUsing) {
@@ -354,18 +367,20 @@ class Builder extends Field implements Contracts\CanConcealComponents, Contracts
     {
         $action = Action::make($this->getDeleteActionName())
             ->label(__('filament-forms::components.builder.actions.delete.label'))
-            ->icon(FilamentIcon::resolve('forms::components.builder.actions.delete') ?? 'heroicon-m-trash')
+            ->icon(FilamentIcon::resolve(FormsIconAlias::COMPONENTS_BUILDER_ACTIONS_DELETE) ?? Heroicon::Trash)
             ->color('danger')
             ->action(function (array $arguments, Builder $component): void {
-                $items = $component->getState();
+                $items = $component->getRawState();
                 unset($items[$arguments['item']]);
 
-                $component->state($items);
+                $component->rawState($items);
 
                 $component->callAfterStateUpdated();
+
+                $component->shouldPartiallyRenderAfterActionsCalled() ? $component->partiallyRender() : null;
             })
             ->iconButton()
-            ->size(ActionSize::Small)
+            ->size(Size::Small)
             ->visible(fn (Builder $component): bool => $component->isDeletable());
 
         if ($this->modifyDeleteActionUsing) {
@@ -393,17 +408,19 @@ class Builder extends Field implements Contracts\CanConcealComponents, Contracts
     {
         $action = Action::make($this->getMoveDownActionName())
             ->label(__('filament-forms::components.builder.actions.move_down.label'))
-            ->icon(FilamentIcon::resolve('forms::components.builder.actions.move-down') ?? 'heroicon-m-arrow-down')
+            ->icon(FilamentIcon::resolve(FormsIconAlias::COMPONENTS_BUILDER_ACTIONS_MOVE_DOWN) ?? Heroicon::ArrowDown)
             ->color('gray')
             ->action(function (array $arguments, Builder $component): void {
-                $items = array_move_after($component->getState(), $arguments['item']);
+                $items = array_move_after($component->getRawState(), $arguments['item']);
 
-                $component->state($items);
+                $component->rawState($items);
 
                 $component->callAfterStateUpdated();
+
+                $component->shouldPartiallyRenderAfterActionsCalled() ? $component->partiallyRender() : null;
             })
             ->iconButton()
-            ->size(ActionSize::Small)
+            ->size(Size::Small)
             ->visible(fn (Builder $component): bool => $component->isReorderable());
 
         if ($this->modifyMoveDownActionUsing) {
@@ -431,17 +448,19 @@ class Builder extends Field implements Contracts\CanConcealComponents, Contracts
     {
         $action = Action::make($this->getMoveUpActionName())
             ->label(__('filament-forms::components.builder.actions.move_up.label'))
-            ->icon(FilamentIcon::resolve('forms::components.builder.actions.move-up') ?? 'heroicon-m-arrow-up')
+            ->icon(FilamentIcon::resolve(FormsIconAlias::COMPONENTS_BUILDER_ACTIONS_MOVE_UP) ?? Heroicon::ArrowUp)
             ->color('gray')
             ->action(function (array $arguments, Builder $component): void {
-                $items = array_move_before($component->getState(), $arguments['item']);
+                $items = array_move_before($component->getRawState(), $arguments['item']);
 
-                $component->state($items);
+                $component->rawState($items);
 
                 $component->callAfterStateUpdated();
+
+                $component->shouldPartiallyRenderAfterActionsCalled() ? $component->partiallyRender() : null;
             })
             ->iconButton()
-            ->size(ActionSize::Small)
+            ->size(Size::Small)
             ->visible(fn (Builder $component): bool => $component->isReorderable());
 
         if ($this->modifyMoveUpActionUsing) {
@@ -476,21 +495,23 @@ class Builder extends Field implements Contracts\CanConcealComponents, Contracts
     {
         $action = Action::make($this->getReorderActionName())
             ->label(__('filament-forms::components.builder.actions.reorder.label'))
-            ->icon(FilamentIcon::resolve('forms::components.builder.actions.reorder') ?? 'heroicon-m-arrows-up-down')
+            ->icon(FilamentIcon::resolve(FormsIconAlias::COMPONENTS_BUILDER_ACTIONS_REORDER) ?? Heroicon::ArrowsUpDown)
             ->color('gray')
             ->action(function (array $arguments, Builder $component): void {
                 $items = [
                     ...array_flip($arguments['items']),
-                    ...$component->getState(),
+                    ...$component->getRawState(),
                 ];
 
-                $component->state($items);
+                $component->rawState($items);
 
                 $component->callAfterStateUpdated();
+
+                $component->shouldPartiallyRenderAfterActionsCalled() ? $component->partiallyRender() : null;
             })
             ->livewireClickHandlerEnabled(false)
             ->iconButton()
-            ->size(ActionSize::Small)
+            ->size(Size::Small)
             ->visible(fn (Builder $component): bool => $component->isReorderableWithDragAndDrop());
 
         if ($this->modifyReorderActionUsing) {
@@ -518,11 +539,11 @@ class Builder extends Field implements Contracts\CanConcealComponents, Contracts
     {
         $action = Action::make($this->getCollapseActionName())
             ->label(__('filament-forms::components.builder.actions.collapse.label'))
-            ->icon(FilamentIcon::resolve('forms::components.builder.actions.collapse') ?? 'heroicon-m-chevron-up')
+            ->icon(FilamentIcon::resolve(FormsIconAlias::COMPONENTS_BUILDER_ACTIONS_COLLAPSE) ?? Heroicon::ChevronUp)
             ->color('gray')
             ->livewireClickHandlerEnabled(false)
             ->iconButton()
-            ->size(ActionSize::Small);
+            ->size(Size::Small);
 
         if ($this->modifyCollapseActionUsing) {
             $action = $this->evaluate($this->modifyCollapseActionUsing, [
@@ -549,11 +570,11 @@ class Builder extends Field implements Contracts\CanConcealComponents, Contracts
     {
         $action = Action::make($this->getExpandActionName())
             ->label(__('filament-forms::components.builder.actions.expand.label'))
-            ->icon(FilamentIcon::resolve('forms::components.builder.actions.expand') ?? 'heroicon-m-chevron-down')
+            ->icon(FilamentIcon::resolve(FormsIconAlias::COMPONENTS_BUILDER_ACTIONS_EXPAND) ?? Heroicon::ChevronDown)
             ->color('gray')
             ->livewireClickHandlerEnabled(false)
             ->iconButton()
-            ->size(ActionSize::Small);
+            ->size(Size::Small);
 
         if ($this->modifyExpandActionUsing) {
             $action = $this->evaluate($this->modifyExpandActionUsing, [
@@ -583,7 +604,7 @@ class Builder extends Field implements Contracts\CanConcealComponents, Contracts
             ->color('gray')
             ->livewireClickHandlerEnabled(false)
             ->link()
-            ->size(ActionSize::Small);
+            ->size(Size::Small);
 
         if ($this->modifyCollapseAllActionUsing) {
             $action = $this->evaluate($this->modifyCollapseAllActionUsing, [
@@ -613,7 +634,7 @@ class Builder extends Field implements Contracts\CanConcealComponents, Contracts
             ->color('gray')
             ->livewireClickHandlerEnabled(false)
             ->link()
-            ->size(ActionSize::Small);
+            ->size(Size::Small);
 
         if ($this->modifyExpandAllActionUsing) {
             $action = $this->evaluate($this->modifyExpandAllActionUsing, [
@@ -648,24 +669,27 @@ class Builder extends Field implements Contracts\CanConcealComponents, Contracts
 
                 return $state[$arguments['item']]['data'];
             })
-            ->form(function (array $arguments, Builder $component) {
-                return $component->getChildComponentContainer($arguments['item'])
+            ->schema(function (array $arguments, Builder $component) {
+                return $component->getChildSchema($arguments['item'])
+                    ->getClone()
                     ->getComponents(withHidden: true);
             })
             ->action(function (array $arguments, Builder $component, $data): void {
-                $state = $component->getState();
+                $state = $component->getRawState();
 
                 $state[$arguments['item']]['data'] = $data;
 
-                $component->state($state);
+                $component->rawState($state);
 
-                $component->getChildComponentContainer($arguments['item'])->fill($data);
+                $component->getChildSchema($arguments['item'])->fill($data);
 
                 $component->callAfterStateUpdated();
+
+                $component->shouldPartiallyRenderAfterActionsCalled() ? $component->partiallyRender() : null;
             })
             ->iconButton()
-            ->icon('heroicon-s-cog-6-tooth')
-            ->size(ActionSize::Small)
+            ->icon(Heroicon::Cog6Tooth)
+            ->size(Size::Small)
             ->visible(fn (Builder $component): bool => (! $component->isDisabled()) && $component->hasBlockPreviews());
 
         if ($this->modifyEditActionUsing) {
@@ -876,28 +900,36 @@ class Builder extends Field implements Contracts\CanConcealComponents, Contracts
     public function getBlocks(): array
     {
         /** @var array<Block> $blocks */
-        $blocks = $this->getChildComponentContainer()->getComponents();
+        $blocks = $this->getChildSchema()->getComponents();
 
         return $blocks;
     }
 
-    public function getChildComponentContainers(bool $withHidden = false): array
+    /**
+     * @return array<Schema>
+     */
+    public function getItems(): array
     {
-        if ((! $withHidden) && $this->isHidden()) {
-            return [];
-        }
-
-        return collect($this->getState())
+        return collect($this->getRawState())
             ->filter(fn (array $itemData): bool => filled($itemData['type'] ?? null) && $this->hasBlock($itemData['type']))
             ->map(
-                fn (array $itemData, $itemIndex): ComponentContainer => $this
+                fn (array $itemData, $itemIndex): Schema => $this
                     ->getBlock($itemData['type'])
-                    ->getChildComponentContainer()
+                    ->getChildSchema()
                     ->statePath("{$itemIndex}.data")
+                    ->constantState($itemData['data'] ?? [])
                     ->inlineLabel(false)
                     ->getClone(),
             )
             ->all();
+    }
+
+    /**
+     * @return array<Schema>
+     */
+    public function getDefaultChildSchemas(): array
+    {
+        return $this->getItems();
     }
 
     public function getAddBetweenActionLabel(): string
@@ -1003,7 +1035,7 @@ class Builder extends Field implements Contracts\CanConcealComponents, Contracts
      */
     public function getBlockPickerBlocks(): array
     {
-        $state = $this->getState();
+        $state = $this->getRawState();
 
         /** @var array<Block> $blocks */
         $blocks = array_filter($this->getBlocks(), function (Block $block) use ($state): bool {
@@ -1025,9 +1057,9 @@ class Builder extends Field implements Contracts\CanConcealComponents, Contracts
     }
 
     /**
-     * @param  array<string, int | string | null> | int | string | null  $columns
+     * @param  array<string, ?int> | int | null  $columns
      */
-    public function blockPickerColumns(array | int | string | null $columns = 2): static
+    public function blockPickerColumns(array | int | null $columns = 2): static
     {
         if (! is_array($columns)) {
             $columns = [
@@ -1044,9 +1076,9 @@ class Builder extends Field implements Contracts\CanConcealComponents, Contracts
     }
 
     /**
-     * @return array<string, int | string | null> | int | string | null
+     * @return array<string, ?int> | int | null
      */
-    public function getBlockPickerColumns(?string $breakpoint = null): array | int | string | null
+    public function getBlockPickerColumns(?string $breakpoint = null): array | int | null
     {
         $columns = $this->blockPickerColumns ?? [
             'default' => 1,
@@ -1064,14 +1096,14 @@ class Builder extends Field implements Contracts\CanConcealComponents, Contracts
         return $columns;
     }
 
-    public function blockPickerWidth(MaxWidth | string | Closure | null $width): static
+    public function blockPickerWidth(Width | string | Closure | null $width): static
     {
         $this->blockPickerWidth = $width;
 
         return $this;
     }
 
-    public function getBlockPickerWidth(): MaxWidth | string | null
+    public function getBlockPickerWidth(): Width | string | null
     {
         $width = $this->evaluate($this->blockPickerWidth);
 
@@ -1098,16 +1130,59 @@ class Builder extends Field implements Contracts\CanConcealComponents, Contracts
     /**
      * @return array<string, mixed>
      */
-    public function getItemState(string $uuid): array
+    public function getItemState(string $key): array
     {
-        return $this->getChildComponentContainer($uuid)->getState(shouldCallHooksBefore: false);
+        return $this->getChildSchema($key)->getState(shouldCallHooksBefore: false);
     }
 
     /**
      * @return array<string, mixed>
      */
-    public function getRawItemState(string $uuid): array
+    public function getRawItemState(string $key): array
     {
-        return $this->getChildComponentContainer($uuid)->getRawState();
+        return $this->getChildSchema($key)->getStateSnapshot();
+    }
+
+    public function getHeadingsCount(): int
+    {
+        if (! $this->hasBlockLabels()) {
+            return 0;
+        }
+
+        return 1;
+    }
+
+    /**
+     * @param  array<string, array<mixed>>  $rules
+     */
+    public function dehydrateValidationRules(array &$rules): void
+    {
+        parent::dehydrateValidationRules($rules);
+
+        $rules["{$this->getStatePath()}.*.type"] = ['required'];
+    }
+
+    public function partiallyRenderAfterActionsCalled(bool | Closure $condition = true): static
+    {
+        $this->shouldPartiallyRenderAfterActionsCalled = $condition;
+
+        return $this;
+    }
+
+    public function shouldPartiallyRenderAfterActionsCalled(): bool
+    {
+        return (bool) $this->evaluate($this->shouldPartiallyRenderAfterActionsCalled);
+    }
+
+    public function blockHeaders(bool | Closure $condition = true): static
+    {
+        $this->hasBlockHeaders = $condition;
+
+        return $this;
+    }
+
+    public function hasBlockHeaders(): bool
+    {
+        return (bool) $this->evaluate($this->hasBlockHeaders);
     }
 }

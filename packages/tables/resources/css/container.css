@@ -1,0 +1,272 @@
+.fi-ta-ctn {
+    @apply relative flex rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10;
+
+    &:not(.fi-ta-ctn-with-header) {
+        @apply overflow-hidden;
+    }
+
+    &.fi-loading {
+        @apply animate-pulse;
+    }
+
+    & .fi-ta-header-ctn {
+        @apply -mt-px;
+    }
+
+    & .fi-ta-header {
+        @apply flex flex-col gap-3 border-b border-gray-200 p-4 sm:px-6 dark:border-white/10;
+
+        &.fi-ta-header-adaptive-actions-position {
+            @apply sm:flex-row sm:items-center;
+
+            & .fi-ta-actions {
+                @apply sm:ms-auto;
+            }
+
+            &:not(:has(.fi-ta-header-heading)) {
+                &:not(:has(.fi-ta-header-description)) {
+                    & .fi-ta-actions {
+                        @apply ms-auto;
+                    }
+                }
+            }
+        }
+
+        & .fi-ta-header-heading {
+            @apply text-base leading-6 font-semibold text-gray-950 dark:text-white;
+        }
+
+        & .fi-ta-header-description {
+            @apply mt-1 text-sm text-gray-600 dark:text-gray-400;
+        }
+    }
+
+    & .fi-ta-header-toolbar {
+        @apply flex flex-wrap items-center justify-between gap-4 border-b border-gray-200 px-4 py-3 sm:px-6 dark:border-white/10;
+
+        & > * {
+            @apply flex items-center gap-x-4;
+        }
+
+        & > :nth-child(1) {
+            @apply shrink-0;
+        }
+
+        & > :nth-child(2) {
+            @apply ms-auto;
+        }
+
+        & .fi-ta-grouping-settings {
+            & .fi-dropdown {
+                &.sm\:fi-hidden {
+                    @apply sm:hidden;
+                }
+
+                & .fi-ta-grouping-settings-fields {
+                    @apply grid gap-y-6 p-6;
+
+                    & label {
+                        @apply grid gap-y-2 text-sm leading-6 font-medium text-gray-950 dark:text-white;
+                    }
+                }
+            }
+
+            & > .fi-ta-grouping-settings-fields {
+                @apply hidden items-center gap-x-3 sm:flex;
+            }
+        }
+
+        & .fi-ta-filters-dropdown {
+            & .fi-ta-filters {
+                @apply p-6;
+            }
+        }
+
+        & .fi-ta-col-manager-dropdown {
+            & .fi-ta-col-manager {
+                @apply p-6;
+            }
+        }
+    }
+
+    & .fi-ta-filters {
+        @apply grid gap-y-4;
+
+        &.fi-ta-filters-below-content {
+            @apply border-t border-gray-200 p-4 sm:px-6 dark:border-white/10;
+        }
+
+        & .fi-ta-filters-header {
+            @apply flex items-center justify-between;
+
+            & .fi-ta-filters-heading {
+                @apply text-base leading-6 font-semibold text-gray-950 dark:text-white;
+            }
+
+            & .fi-loading-indicator {
+                @apply text-gray-400 dark:text-gray-500;
+            }
+        }
+    }
+
+    & .fi-ta-filters-above-content-ctn {
+        @apply grid border-b border-gray-200 px-4 py-4 sm:px-6 dark:border-white/10;
+
+        & .fi-ta-filters-trigger-action-ctn {
+            @apply ms-auto;
+        }
+
+        &.fi-open {
+            & .fi-ta-filters-trigger-action-ctn {
+                @apply mt-3;
+            }
+
+            &:has(.fi-ta-filters-apply-action-ctn) {
+                & .fi-ta-filters-trigger-action-ctn {
+                    @apply -mt-7;
+                }
+            }
+        }
+    }
+
+    & .fi-ta-reorder-indicator {
+        @apply flex items-center gap-x-3 border-b border-gray-200 bg-gray-50 px-3 py-1.5 text-sm leading-6 font-medium text-gray-700 sm:px-6 dark:border-white/10 dark:bg-white/5 dark:text-gray-200;
+
+        & .fi-loading-indicator {
+            @apply text-gray-400 dark:text-gray-500;
+        }
+    }
+
+    & .fi-ta-selection-indicator {
+        @apply flex flex-col justify-between gap-y-1 border-b border-gray-200 bg-gray-50 px-3 py-2 sm:flex-row sm:items-center sm:px-6 sm:py-1.5 dark:border-white/10 dark:bg-white/5;
+
+        & .fi-loading-indicator {
+            @apply text-gray-400 dark:text-gray-500;
+        }
+
+        & .fi-ta-selection-indicator-actions-ctn {
+            @apply flex gap-x-3;
+        }
+
+        & > * {
+            @apply flex gap-x-3;
+        }
+
+        & > :nth-child(1) {
+            @apply text-sm leading-6 font-medium text-gray-700 dark:text-gray-200;
+        }
+
+        & > :nth-child(2) {
+            @apply ms-auto;
+        }
+    }
+
+    & .fi-ta-filter-indicators {
+        @apply flex items-start justify-between gap-x-3 border-b border-gray-200 bg-gray-50 px-3 py-1.5 sm:px-6 dark:border-white/10 dark:bg-white/5;
+
+        & > :nth-child(1) {
+            @apply flex flex-col gap-x-3 gap-y-1 sm:flex-row;
+
+            & .fi-ta-filter-indicators-label {
+                @apply text-sm leading-6 font-medium whitespace-nowrap text-gray-700 dark:text-gray-200;
+            }
+
+            & .fi-ta-filter-indicators-badges-ctn {
+                @apply flex flex-wrap gap-1.5;
+            }
+        }
+
+        & > :nth-child(2).fi-icon-btn {
+            @apply -mt-1;
+        }
+    }
+
+    & .fi-pagination {
+        @apply border-t border-gray-200 px-3 py-3 sm:px-6 dark:border-white/10;
+    }
+
+    & .fi-ta-table-loading-ctn {
+        @apply flex h-32 items-center justify-center;
+    }
+
+    & .fi-ta-main {
+        @apply min-w-0 flex-1;
+    }
+
+    & .fi-ta-filters-trigger-action-ctn.lg\:fi-hidden {
+        @apply lg:hidden;
+    }
+
+    & .fi-ta-filters-before-content-ctn,
+    & .fi-ta-filters-after-content-ctn {
+        @apply absolute z-20 hidden w-screen max-w-[14rem]! shrink-0 rounded-lg border-gray-200 bg-white shadow-lg ring-1 ring-gray-950/5 transition lg:static lg:z-auto lg:shadow-none lg:ring-0 dark:border-white/10 dark:bg-gray-900 dark:ring-white/10;
+
+        & .fi-ta-filters {
+            @apply p-6 lg:py-4;
+        }
+
+        &.fi-open {
+            @apply block;
+        }
+
+        &.lg\:fi-open {
+            @apply lg:block;
+        }
+
+        &.fi-opacity-0 {
+            @apply opacity-0;
+        }
+
+        &.fi-width-xs {
+            @apply max-w-xs!;
+        }
+
+        &.fi-width-sm {
+            @apply max-w-sm!;
+        }
+
+        &.fi-width-md {
+            @apply max-w-md!;
+        }
+
+        &.fi-width-lg {
+            @apply max-w-lg!;
+        }
+
+        &.fi-width-xl {
+            @apply max-w-xl!;
+        }
+
+        &.fi-width-2xl {
+            @apply max-w-2xl!;
+        }
+
+        &.fi-width-3xl {
+            @apply max-w-3xl!;
+        }
+
+        &.fi-width-4xl {
+            @apply max-w-4xl!;
+        }
+
+        &.fi-width-5xl {
+            @apply max-w-5xl!;
+        }
+
+        &.fi-width-6xl {
+            @apply max-w-6xl!;
+        }
+
+        &.fi-width-7xl {
+            @apply max-w-7xl!;
+        }
+    }
+
+    & .fi-ta-filters-before-content-ctn {
+        @apply start-0 lg:rounded-s-xl lg:rounded-e-none lg:border-e;
+    }
+
+    & .fi-ta-filters-after-content-ctn {
+        @apply end-0 lg:rounded-s-none lg:rounded-e-xl lg:border-s;
+    }
+}

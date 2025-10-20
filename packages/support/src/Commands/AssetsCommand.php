@@ -15,12 +15,12 @@ class AssetsCommand extends Command
 
     protected $description = 'Set up Filament assets';
 
-    protected $signature = 'filament:assets';
+    protected $name = 'filament:assets';
 
     /** @var array<string> */
     protected array $publishedAssets = [];
 
-    public function handle(): int
+    public function handle(Filesystem $filesystem): int
     {
         foreach (FilamentAsset::getAlpineComponents() as $asset) {
             if ($asset->isRemote()) {
@@ -28,6 +28,18 @@ class AssetsCommand extends Command
             }
 
             $this->copyAsset($asset->getPath(), $asset->getPublicPath());
+        }
+
+        foreach (FilamentAsset::getFonts() as $asset) {
+            $assetPublicPath = $asset->getPublicPath();
+
+            foreach ($filesystem->allFiles($asset->getPath()) as $file) {
+                if ($file->getExtension() === 'js') {
+                    continue;
+                }
+
+                $this->copyAsset($file->getPathname(), $assetPublicPath . DIRECTORY_SEPARATOR . $file->getFilename());
+            }
         }
 
         foreach (FilamentAsset::getScripts() as $asset) {

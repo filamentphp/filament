@@ -1,0 +1,54 @@
+.fi-fo-slider {
+    @apply gap-4 rounded-lg border-0 bg-transparent shadow-sm ring-1 ring-gray-950/10 dark:ring-white/20;
+
+    & .noUi-connect {
+        @apply bg-primary-500 dark:bg-primary-600;
+    }
+
+    & .noUi-connects {
+        @apply rounded-lg bg-gray-950/5 dark:bg-white/5;
+    }
+
+    & .noUi-handle {
+        @apply focus:outline-primary-600 dark:focus:outline-primary-500 absolute rounded-lg border-1 border-gray-950/10 bg-white shadow-none backface-hidden focus:outline-2 dark:border-white/20 dark:bg-gray-700;
+
+        &::before,
+        &::after {
+            @apply border-0 bg-gray-400;
+        }
+    }
+
+    & .noUi-tooltip {
+        @apply rounded-md border-0 bg-white text-gray-950 shadow-sm ring-1 ring-gray-950/10 dark:bg-gray-800 dark:text-white dark:ring-white/20;
+    }
+
+    & .noUi-pips {
+        & .noUi-value {
+            @apply text-gray-950 dark:text-white;
+        }
+    }
+
+    &.fi-fo-slider-vertical {
+        @apply mt-4 h-40;
+
+        &.fi-fo-slider-has-tooltips {
+            @apply ms-10;
+        }
+    }
+
+    &:not(.fi-fo-slider-vertical) {
+        &.fi-fo-slider-has-pips {
+            @apply mb-8;
+        }
+
+        &.fi-fo-slider-has-tooltips {
+            @apply mt-10;
+        }
+
+        & .noUi-pips {
+            & .noUi-value {
+                @apply mt-1;
+            }
+        }
+    }
+}

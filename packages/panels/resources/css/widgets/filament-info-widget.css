@@ -1,0 +1,21 @@
+.fi-filament-info-widget {
+    & .fi-section-content {
+        @apply flex items-center gap-x-3;
+    }
+}
+
+.fi-filament-info-widget-main {
+    @apply flex-1;
+}
+
+.fi-filament-info-widget-logo {
+    @apply h-5 text-gray-950 dark:text-white;
+}
+
+.fi-filament-info-widget-version {
+    @apply mt-2 text-xs text-gray-500 dark:text-gray-400;
+}
+
+.fi-filament-info-widget-links {
+    @apply flex flex-col items-end gap-y-1;
+}

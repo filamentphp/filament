@@ -2,22 +2,53 @@
 
 return [
 
-    'column_toggle' => [
+    'column_manager' => [
 
-        'heading' => '显示字段',
+        'heading' => '列管理',
+
+        'actions' => [
+
+            'apply' => [
+                'label' => '应用列设置',
+            ],
+
+            'reset' => [
+                'label' => '重置',
+            ],
+
+        ],
 
     ],
 
     'columns' => [
 
+        'actions' => [
+            'label' => '操作',
+        ],
+
+        'select' => [
+
+            'loading_message' => '加载中...',
+
+            'no_search_results_message' => '无匹配选项',
+
+            'placeholder' => '请选择',
+
+            'searching_message' => '搜索中...',
+
+            'search_prompt' => '输入关键词搜索...',
+
+        ],
+
         'text' => [
 
             'actions' => [
-                'collapse_list' => '收起 :count 条记录',
-                'expand_list' => '展示 :count 条记录',
+                'collapse_list' => '收起 :count 项',
+                'expand_list' => '展开 :count 项',
             ],
 
-            'more_list_items' => '还有 :count 条记录',
+            'more_list_items' => '及其他 :count 项',
+
         ],
 
     ],
@@ -25,20 +56,20 @@ return [
     'fields' => [
 
         'bulk_select_page' => [
-            'label' => '选择或取消选择所有数据。',
+            'label' => '全选/取消全选本页条目',
         ],
 
         'bulk_select_record' => [
-            'label' => '选择或取消选择第 :key 条数据。',
+            'label' => '选择/取消选择条目 :key',
         ],
 
         'bulk_select_group' => [
-            'label' => '选择或取消选择 :title 分组数据。',
+            'label' => '选择/取消选择分组 :title',
         ],
 
         'search' => [
             'label' => '搜索',
-            'placeholder' => '搜索',
+            'placeholder' => '请输入关键词',
             'indicator' => '搜索',
         ],
 
@@ -46,18 +77,18 @@ return [
 
     'summary' => [
 
-        'heading' => '合计',
+        'heading' => '统计摘要',
 
         'subheadings' => [
-            'all' => '所有 :label',
-            'group' => ':group 分组',
-            'page' => '本页',
+            'all' => '全部 :label',
+            'group' => ':group 分组统计',
+            'page' => '本页数据',
         ],
 
         'summarizers' => [
 
             'average' => [
-                'label' => '平均',
+                'label' => '平均值',
             ],
 
             'count' => [
@@ -75,11 +106,11 @@ return [
     'actions' => [
 
         'disable_reordering' => [
-            'label' => '停止拖放排序',
+            'label' => '完成排序',
         ],
 
         'enable_reordering' => [
-            'label' => '开始拖放排序',
+            'label' => '调整排序',
         ],
 
         'filter' => [
@@ -94,17 +125,17 @@ return [
             'label' => '批量操作',
         ],
 
-        'toggle_columns' => [
-            'label' => '切换显示字段',
+        'column_manager' => [
+            'label' => '列管理',
         ],
 
     ],
 
     'empty' => [
 
-        'heading' => '没有 :model',
+        'heading' => '暂无 :model',
 
-        'description' => '创建一条 :model',
+        'description' => '请创建:model以开始使用',
 
     ],
 
@@ -113,16 +144,16 @@ return [
         'actions' => [
 
             'apply' => [
-                'label' => '确定',
+                'label' => '应用筛选',
             ],
 
             'remove' => [
-                'label' => '取消筛选条件',
+                'label' => '移除筛选',
             ],
 
             'remove_all' => [
-                'label' => '重置所有筛选条件',
-                'tooltip' => '重置所有筛选条件',
+                'label' => '清除所有筛选',
+                'tooltip' => '清除所有筛选条件',
             ],
 
             'reset' => [
@@ -133,25 +164,31 @@ return [
 
         'heading' => '筛选条件',
 
-        'indicator' => '激活筛选条件',
+        'indicator' => '已启用筛选',
 
         'multi_select' => [
-            'placeholder' => '所有',
+            'placeholder' => '全部',
         ],
 
         'select' => [
-            'placeholder' => '所有',
+
+            'placeholder' => '全部',
+
+            'relationship' => [
+                'empty_option_label' => '无关联项',
+            ],
+
         ],
 
         'trashed' => [
 
             'label' => '已删除记录',
 
-            'only_trashed' => '仅显示已删除记录',
+            'only_trashed' => '仅显示已删除',
 
-            'with_trashed' => '显示全部记录',
+            'with_trashed' => '包含已删除',
 
-            'without_trashed' => '不显示已删除记录',
+            'without_trashed' => '不含已删除',
 
         ],
 
@@ -162,13 +199,12 @@ return [
         'fields' => [
 
             'group' => [
-                'label' => '分组',
-                'placeholder' => '分组',
+                'label' => '分组依据',
             ],
 
             'direction' => [
 
-                'label' => '分组排序',
+                'label' => '排序方向',
 
                 'options' => [
                     'asc' => '升序',
@@ -181,20 +217,20 @@ return [
 
     ],
 
-    'reorder_indicator' => '拖放记录进行排序。',
+    'reorder_indicator' => '拖放条目调整排序',
 
     'selection_indicator' => [
 
-        'selected_count' => '已选择 1 条记录|已选择 :count 条记录',
+        'selected_count' => '已选 :count 条记录',
 
         'actions' => [
 
             'select_all' => [
-                'label' => '选择全部 :count 条记录',
+                'label' => '全选 :count 条',
             ],
 
             'deselect_all' => [
-                'label' => '取消选择所有记录',
+                'label' => '取消全选',
             ],
 
         ],
@@ -206,7 +242,7 @@ return [
         'fields' => [
 
             'column' => [
-                'label' => '排序',
+                'label' => '排序字段',
             ],
 
             'direction' => [
@@ -223,5 +259,7 @@ return [
         ],
 
     ],
+
+    'default_model_label' => '记录',
 
 ];

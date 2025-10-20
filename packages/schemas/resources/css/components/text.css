@@ -1,0 +1,77 @@
+.fi-sc-text {
+    &.fi-copyable {
+        @apply cursor-pointer;
+    }
+
+    &.fi-font-sans {
+        @apply font-sans;
+    }
+
+    &.fi-font-serif {
+        @apply font-serif;
+    }
+
+    &.fi-font-mono {
+        @apply font-mono;
+    }
+
+    &:not(.fi-badge) {
+        @apply inline-block text-sm break-words text-gray-600 dark:text-gray-400;
+
+        &.fi-font-thin {
+            @apply font-thin;
+        }
+
+        &.fi-font-extralight {
+            @apply font-extralight;
+        }
+
+        &.fi-font-light {
+            @apply font-light;
+        }
+
+        &.fi-font-normal {
+            @apply font-normal;
+        }
+
+        &.fi-font-medium {
+            @apply font-medium;
+        }
+
+        &.fi-font-semibold {
+            @apply font-semibold;
+        }
+
+        &.fi-font-bold {
+            @apply font-bold;
+        }
+
+        &.fi-font-extrabold {
+            @apply font-extrabold;
+        }
+
+        &.fi-font-black {
+            @apply font-black;
+        }
+
+        &.fi-size-lg {
+            @apply text-lg;
+        }
+
+        &.fi-color-neutral {
+            @apply text-gray-950 dark:text-white;
+        }
+
+        &.fi-color:not(.fi-color-neutral) {
+            @apply text-(--text) dark:text-(--dark-text);
+        }
+
+        &.fi-size-xs {
+            @apply text-xs;
+        }
+
+        &.fi-size-md {
+            @apply text-base;
+        }
+    }
+}

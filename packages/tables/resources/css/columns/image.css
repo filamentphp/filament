@@ -1,0 +1,123 @@
+.fi-ta-image {
+    @apply flex w-full items-center gap-1.5;
+
+    & img {
+        @apply max-w-none object-cover object-center;
+    }
+
+    &.fi-circular {
+        & img {
+            @apply rounded-full;
+        }
+    }
+
+    &.fi-ta-image-ring {
+        & img,
+        & .fi-ta-image-limited-remaining-text {
+            @apply ring ring-white dark:ring-gray-900;
+        }
+
+        &.fi-ta-image-ring-1 {
+            & img,
+            & .fi-ta-image-limited-remaining-text {
+                @apply ring-1;
+            }
+        }
+
+        &.fi-ta-image-ring-2 {
+            & img,
+            & .fi-ta-image-limited-remaining-text {
+                @apply ring-2;
+            }
+        }
+
+        &.fi-ta-image-ring-4 {
+            & img,
+            & .fi-ta-image-limited-remaining-text {
+                @apply ring-4;
+            }
+        }
+    }
+
+    &.fi-ta-image-overlap-1 {
+        @apply gap-x-0 -space-x-1;
+    }
+
+    &.fi-ta-image-overlap-2 {
+        @apply gap-x-0 -space-x-2;
+    }
+
+    &.fi-ta-image-overlap-3 {
+        @apply gap-x-0 -space-x-3;
+    }
+
+    &.fi-ta-image-overlap-4 {
+        @apply gap-x-0 -space-x-4;
+    }
+
+    &.fi-ta-image-overlap-5 {
+        @apply gap-x-0 -space-x-5;
+    }
+
+    &.fi-ta-image-overlap-6 {
+        @apply gap-x-0 -space-x-6;
+    }
+
+    &.fi-ta-image-overlap-7 {
+        @apply gap-x-0 -space-x-7;
+    }
+
+    &.fi-ta-image-overlap-8 {
+        @apply gap-x-0 -space-x-8;
+    }
+
+    &.fi-wrapped {
+        @apply flex-wrap;
+    }
+
+    &:not(.fi-inline) {
+        @apply px-3 py-4;
+    }
+
+    &.fi-align-start,
+    &.fi-align-left {
+        @apply justify-start;
+    }
+
+    &.fi-align-center {
+        @apply justify-center;
+    }
+
+    &.fi-align-end,
+    &.fi-align-right {
+        @apply justify-end;
+    }
+
+    &.fi-align-justify,
+    &.fi-align-between {
+        @apply justify-between;
+    }
+
+    &.fi-stacked {
+        & .fi-ta-image-limited-remaining-text {
+            @apply rounded-full bg-gray-100 dark:bg-gray-800;
+        }
+    }
+
+    & .fi-ta-image-limited-remaining-text {
+        @apply flex items-center justify-center text-sm font-medium text-gray-500 dark:text-gray-400;
+
+        &.fi-size-xs {
+            @apply text-xs;
+        }
+
+        &.fi-size-base,
+        &.fi-size-md {
+            @apply text-base;
+        }
+
+        &.fi-size-lg {
+            @apply text-lg;
+        }
+    }
+}

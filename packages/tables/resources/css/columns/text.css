@@ -1,0 +1,244 @@
+.fi-ta-text {
+    @apply w-full;
+
+    &.fi-ta-text-has-descriptions,
+    &.fi-ta-text-list-limited {
+        /* Add space between content and descriptions / list limit message. */
+        @apply flex flex-col;
+
+        &.fi-ta-text-has-badges {
+            /* When the content contains badges, more gap is required to balance the spacing. */
+            @apply gap-y-2;
+        }
+
+        &:not(.fi-ta-text-has-badges) {
+            /* When the content does not contain badges, less gap is required to balance the spacing. */
+            @apply gap-y-1;
+        }
+    }
+
+    &:not(.fi-inline) {
+        @apply px-3 py-4;
+    }
+
+    ul&.fi-bulleted,
+    &.fi-bulleted ul {
+        @apply list-inside list-disc;
+    }
+
+    &:not(.fi-ta-text-has-line-breaks) {
+        ul&.fi-ta-text-has-badges,
+        &.fi-ta-text-has-badges ul {
+            /* A list of badges without line breaks need to remain on the same line, not wrap */
+            @apply flex gap-x-1.5;
+
+            &.fi-wrapped,
+            &:is(.fi-wrapped ul) {
+                /* When wrap is enabled, some badges can remain on the same line as others and some should wrap */
+                @apply flex-wrap gap-y-1;
+            }
+        }
+    }
+
+    ul&.fi-ta-text-has-badges,
+    &.fi-ta-text-has-badges ul {
+        &.fi-ta-text-has-line-breaks,
+        &:is(.fi-ta-text-has-line-breaks ul) {
+            /* Add vertical gap between badges in a list with line breaks */
+            @apply flex flex-col gap-y-1;
+        }
+
+        &:not(ul.fi-ta-text-has-line-breaks),
+        &:not(.fi-ta-text-has-line-breaks ul) {
+            /* A list of badges without line breaks need to remain on the same line, not wrap */
+            @apply flex gap-x-1.5;
+
+            &.fi-wrapped,
+            &:is(.fi-wrapped ul) {
+                /* When wrap is enabled, some badges can remain on the same line as others and some should wrap */
+                @apply flex-wrap gap-y-1;
+            }
+        }
+    }
+
+    &.fi-wrapped:not(.fi-ta-text-has-badges.fi-ta-text-has-line-breaks) {
+        /* If the content has badges, and they have line breaks, setting `whitespace-normal` sometimes pushes the badge
+             onto the line below the bullet point if there is one, and badge content does not need to wrap anyway. */
+        @apply whitespace-normal;
+
+        & .fi-badge,
+        & .fi-ta-text-list-limited-message {
+            /* Badge content should not wrap, but descriptions above and below badges should. The list limited
+                 message and actions should not wrap. */
+            @apply whitespace-nowrap;
+        }
+    }
+
+    & > .fi-ta-text-description,
+    & > .fi-ta-text-list-limited-message {
+        @apply text-sm text-gray-500 dark:text-gray-400;
+    }
+
+    &.fi-align-center {
+        @apply text-center;
+
+        ul&,
+        & ul {
+            @apply justify-center;
+        }
+    }
+
+    &.fi-align-end,
+    &.fi-align-right {
+        @apply text-end;
+
+        ul&,
+        & ul {
+            @apply justify-end;
+        }
+    }
+
+    &.fi-align-justify,
+    &.fi-align-between {
+        @apply text-justify;
+
+        ul&,
+        & ul {
+            @apply justify-between;
+        }
+    }
+}
+
+.fi-ta-text-item {
+    @apply text-gray-950 dark:text-white;
+
+    & a {
+        @apply hover:underline focus-visible:underline;
+    }
+
+    &:not(.fi-bulleted li.fi-ta-text-item) {
+        /* Line clamping sets the `display` property of the list item to `-webkit-box` instead of `list-item`, which hides the bullet point. */
+        @apply line-clamp-(--line-clamp,none);
+    }
+
+    & > .fi-copyable {
+        @apply cursor-pointer;
+    }
+
+    &.fi-size-xs {
+        @apply text-xs;
+    }
+
+    &.fi-size-sm {
+        @apply text-sm leading-6;
+    }
+
+    &.fi-size-md {
+        @apply text-base;
+    }
+
+    &.fi-size-lg {
+        @apply text-lg;
+    }
+
+    &.fi-font-thin {
+        @apply font-thin;
+    }
+
+    &.fi-font-extralight {
+        @apply font-extralight;
+    }
+
+    &.fi-font-light {
+        @apply font-light;
+    }
+
+    &.fi-font-normal {
+        @apply font-normal;
+    }
+
+    &.fi-font-medium {
+        @apply font-medium;
+    }
+
+    &.fi-font-semibold {
+        @apply font-semibold;
+    }
+
+    &.fi-font-bold {
+        @apply font-bold;
+    }
+
+    &.fi-font-extrabold {
+        @apply font-extrabold;
+    }
+
+    &.fi-font-black {
+        @apply font-black;
+    }
+
+    &.fi-font-sans {
+        @apply font-sans;
+    }
+
+    &.fi-font-serif {
+        @apply font-serif;
+    }
+
+    &.fi-font-mono {
+        @apply font-mono;
+    }
+
+    &.fi-color {
+        @apply text-(--text) dark:text-(--dark-text);
+
+        li&::marker {
+            @apply text-gray-950;
+        }
+
+        @variant dark {
+            li&::marker {
+                @apply text-white;
+            }
+        }
+    }
+
+    &.fi-color-gray {
+        @apply text-gray-500 dark:text-gray-400;
+
+        li&::marker {
+            @apply text-gray-950;
+        }
+
+        @variant dark {
+            li&::marker {
+                @apply text-white;
+            }
+        }
+    }
+
+    & > .fi-icon,
+    & > span:not(.fi-badge) > .fi-icon {
+        @apply inline-block shrink-0 text-gray-400 dark:text-gray-500;
+
+        &.fi-color {
+            @apply text-color-500;
+        }
+    }
+
+    &.fi-ta-text-has-badges > .fi-badge {
+        @apply align-middle;
+    }
+}
+
+.fi-ta-col-has-column-url .fi-ta-text-item {
+    @apply hover:underline focus-visible:underline;
+
+    & .fi-icon {
+        @apply hover:no-underline focus-visible:no-underline;
+    }
+
+    & > .fi-badge {
+        @apply hover:no-underline focus-visible:no-underline;
+    }
+}

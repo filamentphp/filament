@@ -1,0 +1,19 @@
+input[type='text'].fi-one-time-code-input {
+    @apply absolute inset-y-0 -right-8 left-0 block border-none bg-transparent px-3 font-mono tracking-[1.72rem] text-gray-950 transition duration-75 placeholder:text-gray-400 focus:ring-0 focus:outline-none disabled:text-gray-500 disabled:[-webkit-text-fill-color:var(--color-gray-500)] disabled:placeholder:[-webkit-text-fill-color:var(--color-gray-400)] dark:text-white dark:placeholder:text-gray-500 dark:disabled:text-gray-400 dark:disabled:[-webkit-text-fill-color:var(--color-gray-400)] dark:disabled:placeholder:[-webkit-text-fill-color:var(--color-gray-500)];
+
+    &.fi-valid {
+        @apply caret-transparent;
+    }
+}
+
+.fi-one-time-code-input-ctn {
+    @apply relative h-12;
+
+    & > .fi-one-time-code-input-digit-field {
+        @apply inline-block h-full w-8 rounded-lg border border-gray-950/10 bg-white dark:border-white/20 dark:bg-white/5;
+
+        &.fi-active {
+            @apply border-primary-600 dark:border-primary-500 border-2;
+        }
+    }
+}

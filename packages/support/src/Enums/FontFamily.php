@@ -2,11 +2,11 @@
 
 namespace Filament\Support\Enums;
 
-enum FontFamily
+enum FontFamily: string
 {
-    case Sans;
+    case Sans = 'sans';
 
-    case Serif;
+    case Serif = 'serif';
 
-    case Mono;
+    case Mono = 'mono';
 }

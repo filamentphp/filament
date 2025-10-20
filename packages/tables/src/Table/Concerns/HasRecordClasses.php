@@ -24,19 +24,20 @@ trait HasRecordClasses
     }
 
     /**
+     * @param  Model | array<string, mixed>  $record
      * @return array<string | int, bool | string>
      */
-    public function getRecordClasses(Model $record): array
+    public function getRecordClasses(Model | array $record): array
     {
         return Arr::wrap($this->evaluate(
             $this->recordClasses,
             namedInjections: [
                 'record' => $record,
             ],
-            typedInjections: [
+            typedInjections: ($record instanceof Model) ? [
                 Model::class => $record,
                 $record::class => $record,
-            ],
+            ] : [],
         ) ?? []);
     }
 }

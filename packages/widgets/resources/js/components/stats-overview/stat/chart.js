@@ -8,7 +8,7 @@ export default function statsOverviewStatChart({
     return {
         dataChecksum,
 
-        init: function () {
+        init() {
             Alpine.effect(() => {
                 Alpine.store('theme')
 
@@ -40,7 +40,7 @@ export default function statsOverviewStatChart({
                 })
         },
 
-        initChart: function () {
+        initChart() {
             if (
                 !this.$refs.canvas ||
                 !this.$refs.backgroundColorElement ||
@@ -98,7 +98,7 @@ export default function statsOverviewStatChart({
             })
         },
 
-        getChart: function () {
+        getChart() {
             if (!this.$refs.canvas) {
                 return null
             }

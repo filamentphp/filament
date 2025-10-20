@@ -1,0 +1,88 @@
+.fi-sc {
+    @apply text-sm;
+
+    &.fi-inline {
+        @apply flex grow flex-wrap items-center;
+    }
+
+    &.fi-sc-has-gap {
+        @apply gap-6;
+
+        &.fi-sc-dense {
+            @apply gap-3;
+        }
+    }
+
+    &.fi-align-start,
+    &.fi-align-left {
+        @apply justify-start;
+    }
+
+    &.fi-align-center {
+        @apply justify-center;
+    }
+
+    &.fi-align-end,
+    &.fi-align-right {
+        @apply justify-end;
+    }
+
+    &.fi-align-between,
+    &.fi-align-justify {
+        @apply justify-between;
+    }
+
+    & > .fi-hidden {
+        @apply hidden;
+    }
+
+    & > .fi-grid-col {
+        &.fi-width-xs {
+            @apply max-w-xs;
+        }
+
+        &.fi-width-sm {
+            @apply max-w-sm;
+        }
+
+        &.fi-width-md {
+            @apply max-w-md;
+        }
+
+        &.fi-width-lg {
+            @apply max-w-lg;
+        }
+
+        &.fi-width-xl {
+            @apply max-w-xl;
+        }
+
+        &.fi-width-2xl {
+            @apply max-w-2xl;
+        }
+
+        &.fi-width-3xl {
+            @apply max-w-3xl;
+        }
+
+        &.fi-width-4xl {
+            @apply max-w-4xl;
+        }
+
+        &.fi-width-5xl {
+            @apply max-w-5xl;
+        }
+
+        &.fi-width-6xl {
+            @apply max-w-6xl;
+        }
+
+        &.fi-width-7xl {
+            @apply max-w-7xl;
+        }
+
+        & > .fi-sc-component {
+            @apply h-full;
+        }
+    }
+}

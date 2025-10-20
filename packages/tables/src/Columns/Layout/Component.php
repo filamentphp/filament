@@ -3,20 +3,21 @@
 namespace Filament\Tables\Columns\Layout;
 
 use Closure;
-use Exception;
 use Filament\Support\Components\ViewComponent;
 use Filament\Support\Concerns\CanGrow;
+use Filament\Support\Concerns\CanSpanColumns;
 use Filament\Support\Concerns\HasExtraAttributes;
 use Filament\Tables\Columns\Column;
 use Filament\Tables\Columns\Concerns\BelongsToLayout;
 use Filament\Tables\Columns\Concerns\BelongsToTable;
 use Filament\Tables\Columns\Concerns\CanBeHidden;
-use Filament\Tables\Columns\Concerns\CanSpanColumns;
 use Filament\Tables\Columns\Concerns\HasRecord;
 use Filament\Tables\Columns\Concerns\HasRowLoopObject;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Traits\Conditionable;
+use Illuminate\Support\HtmlString;
+use Illuminate\View\ComponentAttributeBag;
+use LogicException;
 
 class Component extends ViewComponent
 {
@@ -25,7 +26,6 @@ class Component extends ViewComponent
     use CanBeHidden;
     use CanGrow;
     use CanSpanColumns;
-    use Conditionable;
     use HasExtraAttributes;
     use HasRecord;
     use HasRowLoopObject;
@@ -118,7 +118,7 @@ class Component extends ViewComponent
 
     public function getTable(): Table
     {
-        return $this->table ?? $this->getLayout()?->getTable() ?? throw new Exception('The column layout component is not mounted to a table.');
+        return $this->table ?? $this->getLayout()?->getTable() ?? throw new LogicException('The column layout component is not mounted to a table.');
     }
 
     public function isCollapsible(): bool
@@ -151,9 +151,39 @@ class Component extends ViewComponent
             return parent::resolveDefaultClosureDependencyForEvaluationByType($parameterType);
         }
 
+        if (! ($record instanceof Model)) {
+            return parent::resolveDefaultClosureDependencyForEvaluationByType($parameterType);
+        }
+
         return match ($parameterType) {
             Model::class, $record::class => [$record],
             default => parent::resolveDefaultClosureDependencyForEvaluationByType($parameterType),
         };
+    }
+
+    public function renderInLayout(): ?HtmlString
+    {
+        if ($this->isHidden()) {
+            return null;
+        }
+
+        $attributes = (new ComponentAttributeBag)
+            ->gridColumn(
+                $this->getColumnSpan(),
+                $this->getColumnStart(),
+            )
+            ->class([
+                'fi-growable' => $this->canGrow(),
+                (filled($hiddenFrom = $this->getHiddenFrom()) ? "{$hiddenFrom}:fi-hidden" : ''),
+                (filled($visibleFrom = $this->getVisibleFrom()) ? "{$visibleFrom}:fi-visible" : ''),
+            ]);
+
+        ob_start(); ?>
+
+        <div <?= $attributes->toHtml() ?>>
+            <?= $this->toHtml() ?>
+        </div>
+
+        <?php return new HtmlString(ob_get_clean());
     }
 }

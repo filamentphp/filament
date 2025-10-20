@@ -1,0 +1,20 @@
+.fi-in-code {
+    & .phiki {
+        @apply overflow-x-auto rounded-lg px-4 py-3 shadow-sm ring-1 ring-gray-950/10 dark:ring-white/20;
+    }
+
+    @variant dark {
+        & .phiki,
+        & .phiki span {
+            color: var(--phiki-dark-color) !important;
+            background-color: var(--phiki-dark-background-color) !important;
+            font-style: var(--phiki-dark-font-style) !important;
+            font-weight: var(--phiki-dark-font-weight) !important;
+            text-decoration: var(--phiki-dark-text-decoration) !important;
+        }
+    }
+
+    &.fi-copyable {
+        @apply cursor-pointer;
+    }
+}

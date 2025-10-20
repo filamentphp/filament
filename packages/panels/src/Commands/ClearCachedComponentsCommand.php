@@ -11,7 +11,7 @@ class ClearCachedComponentsCommand extends Command
 {
     protected $description = 'Clear all cached components';
 
-    protected $signature = 'filament:clear-cached-components';
+    protected $name = 'filament:clear-cached-components';
 
     public function handle(): int
     {

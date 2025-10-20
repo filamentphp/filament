@@ -39,7 +39,7 @@ class XlsxDownloader implements Downloader
 
         $csvDelimiter = $export->exporter::getCsvDelimiter();
 
-        $writeRowsFromFile = function (string $file) use ($csvDelimiter, $disk, $writer) {
+        $writeRowsFromFile = function (string $file) use ($csvDelimiter, $disk, $writer): void {
             $csvReader = CsvReader::createFromStream($disk->readStream($file));
             $csvReader->setDelimiter($csvDelimiter);
             $csvResults = (new Statement)->process($csvReader);
@@ -49,7 +49,7 @@ class XlsxDownloader implements Downloader
             }
         };
 
-        return response()->streamDownload(function () use ($disk, $directory, $fileName, $writer, $writeRowsFromFile) {
+        return response()->streamDownload(function () use ($disk, $directory, $fileName, $writer, $writeRowsFromFile): void {
             $writer->openToBrowser($fileName);
 
             $writeRowsFromFile($directory . DIRECTORY_SEPARATOR . 'headers.csv');

@@ -1,0 +1,35 @@
+.fi-ta-split {
+    @apply flex;
+
+    &.default\:fi-ta-split {
+        @apply items-center gap-3;
+    }
+
+    &.sm\:fi-ta-split,
+    &.md\:fi-ta-split,
+    &.lg\:fi-ta-split,
+    &.xl\:fi-ta-split,
+    &.\32xl\:fi-ta-split {
+        @apply flex-col gap-2;
+    }
+
+    &.sm\:fi-ta-split {
+        @apply sm:flex-row sm:items-center sm:gap-3;
+    }
+
+    &.md\:fi-ta-split {
+        @apply md:flex-row md:items-center md:gap-3;
+    }
+
+    &.lg\:fi-ta-split {
+        @apply lg:flex-row lg:items-center lg:gap-3;
+    }
+
+    &.xl\:fi-ta-split {
+        @apply xl:flex-row xl:items-center xl:gap-3;
+    }
+
+    &.\32xl\:fi-ta-split {
+        @apply 2xl:flex-row 2xl:items-center 2xl:gap-3;
+    }
+}

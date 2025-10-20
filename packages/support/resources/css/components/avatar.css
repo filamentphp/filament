@@ -1,0 +1,15 @@
+.fi-avatar {
+    @apply size-8 rounded-md object-cover object-center;
+
+    &.fi-circular {
+        @apply rounded-full;
+    }
+
+    &.fi-size-sm {
+        @apply size-6;
+    }
+
+    &.fi-size-lg {
+        @apply size-10;
+    }
+}

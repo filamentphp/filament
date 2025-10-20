@@ -1,0 +1,333 @@
+.fi-ta-content-ctn {
+    @apply relative divide-y divide-gray-200 overflow-x-auto dark:divide-white/10 dark:border-t-white/10;
+
+    & .fi-ta-content-header {
+        @apply flex items-center gap-4 gap-x-6 bg-gray-50 px-4 sm:px-6 dark:bg-white/5;
+
+        & .fi-ta-page-checkbox {
+            @apply my-4 shrink-0;
+        }
+
+        & .fi-ta-sorting-settings {
+            @apply flex gap-x-3 py-3;
+        }
+    }
+
+    &:not(.fi-ta-ctn-with-footer .fi-ta-content-ctn) {
+        @apply rounded-b-xl;
+    }
+
+    &:not(.fi-ta-ctn-with-header .fi-ta-content-ctn) {
+        @apply border-t-0;
+    }
+
+    & .fi-ta-content {
+        @apply grid;
+
+        &.fi-ta-content-grid {
+            @apply gap-4 p-4 sm:px-6;
+
+            &.fi-ta-content-grouped {
+                @apply pt-0;
+            }
+
+            & .fi-ta-group-header {
+                @apply -mx-4 border-y border-gray-200 first:border-t-0 sm:-mx-6 dark:border-white/5;
+                width: calc(100% + 2rem);
+
+                @variant sm {
+                    width: calc(100% + 3rem);
+                }
+            }
+
+            & .fi-ta-record {
+                @apply rounded-xl shadow-sm ring-1 ring-gray-950/5 dark:bg-white/5 dark:ring-white/10;
+
+                &.fi-clickable {
+                    @apply dark:hover:bg-white/10 dark:hover:ring-white/20;
+                }
+
+                &.fi-selected {
+                    @apply dark:bg-white/10 dark:ring-white/20;
+                }
+
+                &:not(.fi-selected) {
+                    @apply bg-white dark:bg-white/5 dark:ring-white/10;
+                }
+
+                &.fi-ta-record-with-content-prefix {
+                    & .fi-ta-record-content {
+                        @apply ps-2;
+                    }
+
+                    & .fi-ta-actions {
+                        @apply ps-2;
+                    }
+                }
+
+                &.fi-ta-record-with-content-suffix {
+                    & .fi-ta-record-content {
+                        @apply pe-2;
+                    }
+
+                    & .fi-ta-actions {
+                        @apply pe-2;
+                    }
+                }
+            }
+        }
+
+        &:not(.fi-ta-content-grid) {
+            @apply gap-y-px bg-gray-200 dark:bg-white/5;
+
+            & .fi-ta-record {
+                &.fi-clickable {
+                    @apply dark:hover:bg-white/5;
+                }
+
+                &.fi-selected {
+                    @apply before:bg-primary-600 dark:before:bg-primary-500 before:absolute before:inset-y-0 before:start-0 before:w-0.5 dark:bg-white/5;
+                }
+
+                & .fi-ta-record-content-ctn {
+                    @apply md:flex-row md:items-center;
+                }
+
+                &:not(.fi-ta-record-with-content-prefix) {
+                    & .fi-ta-record-content {
+                        @apply sm:ps-6;
+                    }
+
+                    & .fi-ta-actions {
+                        @apply sm:ps-6;
+                    }
+                }
+
+                &:not(.fi-ta-record-with-content-suffix) {
+                    & .fi-ta-record-content {
+                        @apply sm:pe-6;
+                    }
+
+                    & .fi-ta-actions {
+                        @apply sm:pe-6;
+                    }
+                }
+
+                &.fi-ta-record-with-content-prefix {
+                    @apply sm:ps-3;
+
+                    & .fi-ta-record-content {
+                        @apply ps-3;
+                    }
+
+                    & .fi-ta-actions {
+                        @apply ps-3;
+                    }
+                }
+
+                &.fi-ta-record-with-content-suffix {
+                    @apply sm:pe-3;
+
+                    & .fi-ta-record-content {
+                        @apply pe-3;
+                    }
+
+                    & .fi-ta-actions {
+                        @apply pe-3;
+                    }
+                }
+
+                & .fi-ta-actions {
+                    @apply md:ps-3;
+                }
+            }
+        }
+
+        & .fi-ta-group-header {
+            @apply col-span-full flex w-full items-center gap-x-3 bg-gray-50 px-1 py-2 sm:px-3 dark:bg-white/5;
+
+            &.fi-collapsible {
+                @apply cursor-pointer;
+
+                &.fi-collapsed {
+                    & .fi-icon-btn {
+                        @apply -rotate-180;
+                    }
+                }
+            }
+
+            & .fi-ta-group-heading {
+                @apply text-sm font-medium text-gray-950 dark:text-white;
+            }
+
+            & .fi-ta-group-description {
+                @apply text-sm text-gray-500 dark:text-gray-400;
+            }
+
+            & .fi-ta-group-checkbox {
+                @apply mx-3;
+            }
+        }
+
+        & .fi-ta-table {
+            @apply col-span-full;
+        }
+
+        & .fi-ta-record {
+            @apply relative flex h-full items-center bg-white transition duration-75 dark:bg-gray-900;
+
+            &.fi-ta-record-with-content-prefix {
+                @apply ps-1;
+            }
+
+            &.fi-ta-record-with-content-suffix {
+                @apply pe-1;
+            }
+
+            &.fi-clickable {
+                @apply hover:bg-gray-50;
+            }
+
+            &.fi-collapsed {
+                @apply hidden;
+            }
+
+            &.fi-selected {
+                @apply bg-gray-50;
+            }
+
+            & .fi-ta-reorder-handle {
+                @apply mx-1 my-2;
+            }
+
+            & .fi-ta-record-checkbox {
+                @apply mx-3 my-4 shrink-0;
+            }
+
+            & .fi-ta-record-content-ctn {
+                @apply flex h-full w-full flex-col gap-y-3 py-4;
+
+                & > :nth-child(1) {
+                    @apply flex-1;
+                }
+
+                & .fi-ta-record-content {
+                    @apply block w-full;
+
+                    & .fi-ta-col {
+                        @apply flex justify-start text-start disabled:pointer-events-none;
+
+                        &.fi-growable {
+                            @apply w-full;
+                        }
+
+                        &.fi-align-center {
+                            @apply justify-center text-center;
+                        }
+
+                        &.fi-align-end {
+                            @apply justify-end text-end;
+                        }
+
+                        &.fi-align-left {
+                            @apply justify-start text-left;
+                        }
+
+                        &.fi-align-right {
+                            @apply justify-end text-right;
+                        }
+
+                        &.fi-align-justify,
+                        &.fi-align-between {
+                            @apply justify-between text-justify;
+                        }
+                    }
+
+                    &.fi-collapsible {
+                        @apply mt-3;
+                    }
+
+                    & .fi-growable {
+                        @apply w-full flex-1;
+                    }
+
+                    & .sm\:fi-hidden {
+                        @apply sm:hidden;
+                    }
+
+                    & .md\:fi-hidden {
+                        @apply md:hidden;
+                    }
+
+                    & .lg\:fi-hidden {
+                        @apply lg:hidden;
+                    }
+
+                    & .xl\:fi-hidden {
+                        @apply xl:hidden;
+                    }
+
+                    & .\32xl\:fi-hidden {
+                        @apply 2xl:hidden;
+                    }
+
+                    & .sm\:fi-visible {
+                        @apply hidden sm:block;
+                    }
+
+                    & .md\:fi-visible {
+                        @apply hidden md:block;
+                    }
+
+                    & .lg\:fi-visible {
+                        @apply hidden lg:block;
+                    }
+
+                    & .xl\:fi-visible {
+                        @apply hidden xl:block;
+                    }
+
+                    & .\32xl\:fi-visible {
+                        @apply hidden 2xl:block;
+                    }
+                }
+            }
+
+            & .fi-ta-record-collapse-btn {
+                @apply mx-1 my-2 shrink-0;
+            }
+
+            & .fi-ta-actions {
+                &.fi-ta-actions-before-columns-position {
+                    @apply order-first;
+                }
+            }
+
+            &:not(.fi-ta-record-with-content-prefix) {
+                & .fi-ta-record-content {
+                    @apply ps-4;
+                }
+
+                & .fi-ta-actions {
+                    @apply ps-4;
+                }
+            }
+
+            &:not(.fi-ta-record-with-content-suffix) {
+                & .fi-ta-record-content {
+                    @apply pe-4;
+                }
+
+                & .fi-ta-actions {
+                    @apply pe-4;
+                }
+            }
+
+            &.fi-ta-record-collapsed {
+                & .fi-ta-record-collapse-btn {
+                    @apply rotate-180;
+                }
+            }
+        }
+    }
+}

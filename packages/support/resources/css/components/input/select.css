@@ -1,0 +1,108 @@
+select.fi-select-input {
+    @apply block w-full appearance-none border-none bg-transparent py-1.5 ps-3 pe-8 text-sm leading-6 text-gray-950 transition duration-75 focus:ring-0 focus:outline-none disabled:text-gray-500 disabled:[-webkit-text-fill-color:var(--color-gray-500)] dark:text-white dark:disabled:text-gray-400 dark:disabled:[-webkit-text-fill-color:var(--color-gray-400)] [&_optgroup]:bg-white [&_optgroup]:dark:bg-gray-900 [&_option]:bg-white [&_option]:dark:bg-gray-900;
+
+    /* https://defensivecss.dev/tip/input-zoom-safari */
+    @supports (-webkit-touch-callout: none) {
+        @apply text-base;
+    }
+
+    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3E%3C/svg%3E");
+    background-position: right 0.5rem center;
+    background-repeat: no-repeat;
+    background-size: 1.5em 1.5em;
+
+    @variant rtl {
+        background-position: left 0.5rem center;
+    }
+
+    &.fi-select-input-has-inline-prefix {
+        @apply ps-0;
+    }
+}
+
+.fi-select-input {
+    & .fi-select-input-ctn {
+        @apply relative;
+    }
+
+    & div[x-ref='select'] {
+        @apply min-h-9;
+    }
+
+    & .fi-select-input-btn {
+        @apply flex min-h-9 w-full rounded-lg py-1.5 ps-3 pe-8 text-start text-sm leading-6 text-gray-950 focus:ring-0 focus:outline-none dark:text-white;
+
+        background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3E%3C/svg%3E");
+        background-position: right 0.5rem center;
+        background-repeat: no-repeat;
+        background-size: 1.5em 1.5em;
+
+        @variant rtl {
+            background-position: left 0.5rem center;
+        }
+    }
+
+    & .fi-select-input-value-ctn {
+        @apply flex w-full items-center text-wrap;
+        word-break: break-word;
+    }
+
+    & .fi-select-input-value-badges-ctn {
+        @apply flex flex-wrap gap-1.5;
+    }
+
+    & .fi-select-input-value-label {
+        @apply flex-1;
+    }
+
+    & .fi-select-input-value-remove-btn {
+        @apply ms-2 text-gray-500 hover:text-gray-600 focus-visible:text-gray-600 focus-visible:outline-none dark:hover:text-gray-300 dark:focus-visible:text-gray-300;
+    }
+
+    & .fi-dropdown-panel {
+        @apply max-h-60 max-w-full!;
+    }
+
+    & .fi-select-input-options-ctn {
+        @apply divide-y divide-gray-100 dark:divide-white/5;
+    }
+
+    & .fi-select-input-option-group {
+        @apply divide-y divide-gray-100 dark:divide-white/5;
+    }
+
+    & .fi-select-input-search-ctn {
+        @apply sticky top-0 z-10 bg-white dark:bg-gray-900;
+    }
+
+    & .fi-select-input-option {
+        @apply min-w-px text-wrap;
+        word-break: break-word;
+    }
+
+    & .fi-select-input-placeholder {
+        @apply text-gray-400 dark:text-gray-500;
+    }
+
+    & .fi-disabled {
+        @apply cursor-not-allowed opacity-70;
+
+        & .fi-select-input-placeholder {
+            @apply text-gray-400 dark:text-gray-500;
+        }
+    }
+
+    & .fi-select-input-message {
+        @apply px-3 py-2 text-sm text-gray-500 dark:text-gray-400;
+    }
+
+    & .fi-select-input-ctn.fi-select-input-ctn-option-labels-not-wrapped {
+        & .fi-select-input-value-ctn > span {
+            @apply truncate text-nowrap break-normal;
+        }
+
+        & .fi-select-input-option > span {
+            @apply truncate;
+        }
+    }
+}

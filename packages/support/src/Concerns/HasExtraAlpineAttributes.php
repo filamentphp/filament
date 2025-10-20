@@ -34,7 +34,7 @@ trait HasExtraAlpineAttributes
         $temporaryAttributeBag = new ComponentAttributeBag;
 
         foreach ($this->extraAlpineAttributes as $extraAlpineAttributes) {
-            $temporaryAttributeBag = $temporaryAttributeBag->merge($this->evaluate($extraAlpineAttributes));
+            $temporaryAttributeBag = $temporaryAttributeBag->merge($this->evaluate($extraAlpineAttributes), escape: false);
         }
 
         return $temporaryAttributeBag->getAttributes();

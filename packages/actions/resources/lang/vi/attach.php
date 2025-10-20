@@ -21,7 +21,7 @@ return [
             'actions' => [
 
                 'attach' => [
-                    'label' => 'Đình kèm',
+                    'label' => 'Đính kèm',
                 ],
 
                 'attach_another' => [

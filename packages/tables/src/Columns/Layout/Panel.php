@@ -3,15 +3,11 @@
 namespace Filament\Tables\Columns\Layout;
 
 use Closure;
+use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Tables\Columns\Column;
 
-class Panel extends Component
+class Panel extends Component implements HasEmbeddedView
 {
-    /**
-     * @var view-string
-     */
-    protected string $view = 'filament-tables::columns.layout.panel';
-
     /**
      * @param  array<Column | Component> | Closure  $schema
      */
@@ -29,5 +25,25 @@ class Panel extends Component
         $static->configure();
 
         return $static;
+    }
+
+    public function toEmbeddedHtml(): string
+    {
+        $attributes = $this->getExtraAttributeBag()
+            ->class(['fi-ta-panel']);
+
+        $record = $this->getRecord();
+        $recordKey = $this->getRecordKey();
+        $rowLoop = $this->getRowLoop();
+
+        ob_start(); ?>
+
+        <div <?= $attributes->toHtml() ?>>
+            <?php foreach ($this->getComponents() as $component) { ?>
+                <?= $component->record($record)->recordKey($recordKey)->rowLoop($rowLoop)->renderInLayout() ?>
+            <?php } ?>
+        </div>
+
+        <?php return ob_get_clean();
     }
 }

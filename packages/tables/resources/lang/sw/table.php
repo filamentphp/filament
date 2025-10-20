@@ -45,7 +45,7 @@ return [
             'label' => 'Fungua matendo',
         ],
 
-        'toggle_columns' => [
+        'column_manager' => [
             'label' => 'Geuza safu',
         ],
 

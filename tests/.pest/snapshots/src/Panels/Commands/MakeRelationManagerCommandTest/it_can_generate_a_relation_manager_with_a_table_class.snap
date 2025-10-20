@@ -1,0 +1,29 @@
+<?php
+
+namespace App\Filament\Resources\Users\RelationManagers;
+
+use App\Filament\Resources\Teams\Tables\TeamsTable;
+use Filament\Forms\Components\TextInput;
+use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Schemas\Schema;
+use Filament\Tables\Table;
+
+class TeamsRelationManager extends RelationManager
+{
+    protected static string $relationship = 'teams';
+
+    public function form(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+                TextInput::make('name')
+                    ->required()
+                    ->maxLength(255),
+            ]);
+    }
+
+    public function table(Table $table): Table
+    {
+        return TeamsTable::configure($table);
+    }
+}

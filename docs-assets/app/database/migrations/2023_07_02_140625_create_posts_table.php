@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('posts', function (Blueprint $table) {
+        Schema::create('posts', function (Blueprint $table): void {
             $table->id();
             $table->foreignId('author_id')->nullable()->constrained('users')->nullOnDelete();
             $table->boolean('is_featured')->nullable();

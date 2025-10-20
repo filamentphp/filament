@@ -2,13 +2,29 @@
 
 return [
 
-    'column_toggle' => [
+    'column_manager' => [
 
         'heading' => 'Столбцы',
+
+        'actions' => [
+
+            'apply' => [
+                'label' => 'Применить столбцы',
+            ],
+
+            'reset' => [
+                'label' => 'Сбросить',
+            ],
+
+        ],
 
     ],
 
     'columns' => [
+
+        'actions' => [
+            'label' => 'Действие|Действия',
+        ],
 
         'text' => [
 
@@ -95,7 +111,7 @@ return [
             'label' => 'Открыть действия',
         ],
 
-        'toggle_columns' => [
+        'column_manager' => [
             'label' => 'Переключить столбцы',
         ],
 
@@ -141,7 +157,13 @@ return [
         ],
 
         'select' => [
+
             'placeholder' => 'Все',
+
+            'relationship' => [
+                'empty_option_label' => 'Нет',
+            ],
+
         ],
 
         'trashed' => [
@@ -224,5 +246,7 @@ return [
         ],
 
     ],
+
+    'default_model_label' => 'запись',
 
 ];

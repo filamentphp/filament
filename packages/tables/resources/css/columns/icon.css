@@ -1,0 +1,42 @@
+.fi-ta-icon {
+    @apply flex w-full gap-1.5;
+
+    &.fi-wrapped {
+        @apply flex-wrap;
+    }
+
+    &.fi-ta-icon-has-line-breaks {
+        @apply flex-col;
+    }
+
+    &:not(.fi-inline) {
+        @apply px-3 py-4;
+    }
+
+    &.fi-align-start,
+    &.fi-align-left {
+        @apply justify-start;
+    }
+
+    &.fi-align-center {
+        @apply justify-center;
+    }
+
+    &.fi-align-end,
+    &.fi-align-right {
+        @apply justify-end;
+    }
+
+    &.fi-align-justify,
+    &.fi-align-between {
+        @apply justify-between;
+    }
+
+    & > .fi-icon {
+        @apply text-gray-400 dark:text-gray-500;
+
+        &.fi-color {
+            @apply text-(--text) dark:text-(--dark-text);
+        }
+    }
+}

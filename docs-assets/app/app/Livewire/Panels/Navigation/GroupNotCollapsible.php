@@ -5,10 +5,11 @@ namespace App\Livewire\Panels\Navigation;
 use Filament\Navigation\NavigationGroup;
 use Filament\Navigation\NavigationItem;
 use Filament\Pages\Page;
+use Filament\Support\Icons\Heroicon;
 
 class GroupNotCollapsible extends Page
 {
-    protected static string $view = 'livewire.panels.navigation.empty';
+    protected string $view = 'livewire.panels.navigation.empty';
 
     public function mount()
     {
@@ -22,7 +23,7 @@ class GroupNotCollapsible extends Page
                     ->label('Bank Accounts')
                     ->url(fn (): string => '#')
                     ->group('Settings')
-                    ->icon('heroicon-o-currency-dollar'),
+                    ->icon(Heroicon::OutlinedCurrencyDollar),
             ]);
     }
 }

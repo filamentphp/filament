@@ -3,7 +3,7 @@ name: translation-update
 on:
   pull_request:
     branches:
-      - 3.x
+      - 4.x
     types:
       - closed
 

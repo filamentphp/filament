@@ -2,42 +2,33 @@
 
 namespace Filament\Widgets;
 
-use Filament\Actions;
-use Filament\Forms;
-use Filament\Infolists;
-use Filament\Tables;
+use Filament\Actions\Concerns\InteractsWithActions;
+use Filament\Actions\Contracts\HasActions;
+use Filament\Schemas\Concerns\InteractsWithSchemas;
+use Filament\Schemas\Contracts\HasSchemas;
+use Filament\Tables\Concerns\InteractsWithTable;
+use Filament\Tables\Contracts\HasTable;
+use Filament\Tables\Enums\PaginationMode;
 use Filament\Tables\Table;
-use Illuminate\Contracts\Pagination\CursorPaginator;
-use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Contracts\Support\Htmlable;
-use Illuminate\Database\Eloquent\Builder;
 
-class TableWidget extends Widget implements Actions\Contracts\HasActions, Forms\Contracts\HasForms, Infolists\Contracts\HasInfolists, Tables\Contracts\HasTable
+class TableWidget extends Widget implements HasActions, HasSchemas, HasTable
 {
-    use Actions\Concerns\InteractsWithActions;
-    use Forms\Concerns\InteractsWithForms;
-    use Infolists\Concerns\InteractsWithInfolists;
-    use Tables\Concerns\InteractsWithTable {
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+    use InteractsWithTable {
         makeTable as makeBaseTable;
     }
 
     /**
      * @var view-string
      */
-    protected static string $view = 'filament-widgets::table-widget';
+    protected string $view = 'filament-widgets::table-widget';
 
     /**
      * @deprecated Override the `table()` method to configure the table.
      */
     protected static ?string $heading = null;
-
-    protected function paginateTableQuery(Builder $query): Paginator | CursorPaginator
-    {
-        return $query->simplePaginate(
-            perPage: ($this->getTableRecordsPerPage() === 'all') ? $query->count() : $this->getTableRecordsPerPage(),
-            pageName: $this->getTablePaginationPageName(),
-        );
-    }
 
     /**
      * @deprecated Override the `table()` method to configure the table.
@@ -55,7 +46,8 @@ class TableWidget extends Widget implements Actions\Contracts\HasActions, Forms\
                     ->beforeLast('Widget')
                     ->kebab()
                     ->replace('-', ' ')
-                    ->title(),
-            );
+                    ->ucwords(),
+            )
+            ->paginationMode(PaginationMode::Simple);
     }
 }

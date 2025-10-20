@@ -53,7 +53,7 @@ export default function dateTimePickerFormComponent({
 
         months: [],
 
-        init: function () {
+        init() {
             dayjs.locale(locales[locale] ?? locales['en'])
 
             this.$nextTick(() => {
@@ -252,7 +252,7 @@ export default function dateTimePickerFormComponent({
             })
         },
 
-        clearState: function () {
+        clearState() {
             this.isClearingState = true
 
             this.setState(null)
@@ -264,7 +264,7 @@ export default function dateTimePickerFormComponent({
             this.$nextTick(() => (this.isClearingState = false))
         },
 
-        dateIsDisabled: function (date) {
+        dateIsDisabled(date) {
             if (
                 this.$refs?.disabledDates &&
                 JSON.parse(this.$refs.disabledDates.value ?? []).some(
@@ -292,13 +292,13 @@ export default function dateTimePickerFormComponent({
             return false
         },
 
-        dayIsDisabled: function (day) {
+        dayIsDisabled(day) {
             this.focusedDate ??= dayjs().tz(timezone)
 
             return this.dateIsDisabled(this.focusedDate.date(day))
         },
 
-        dayIsSelected: function (day) {
+        dayIsSelected(day) {
             let selectedDate = this.getSelectedDate()
 
             if (selectedDate === null) {
@@ -314,7 +314,7 @@ export default function dateTimePickerFormComponent({
             )
         },
 
-        dayIsToday: function (day) {
+        dayIsToday(day) {
             let date = dayjs().tz(timezone)
             this.focusedDate ??= date
 
@@ -325,31 +325,31 @@ export default function dateTimePickerFormComponent({
             )
         },
 
-        focusPreviousDay: function () {
+        focusPreviousDay() {
             this.focusedDate ??= dayjs().tz(timezone)
 
             this.focusedDate = this.focusedDate.subtract(1, 'day')
         },
 
-        focusPreviousWeek: function () {
+        focusPreviousWeek() {
             this.focusedDate ??= dayjs().tz(timezone)
 
             this.focusedDate = this.focusedDate.subtract(1, 'week')
         },
 
-        focusNextDay: function () {
+        focusNextDay() {
             this.focusedDate ??= dayjs().tz(timezone)
 
             this.focusedDate = this.focusedDate.add(1, 'day')
         },
 
-        focusNextWeek: function () {
+        focusNextWeek() {
             this.focusedDate ??= dayjs().tz(timezone)
 
             this.focusedDate = this.focusedDate.add(1, 'week')
         },
 
-        getDayLabels: function () {
+        getDayLabels() {
             const labels = dayjs.weekdaysShort()
 
             if (firstDayOfWeek === 0) {
@@ -362,19 +362,19 @@ export default function dateTimePickerFormComponent({
             ]
         },
 
-        getMaxDate: function () {
+        getMaxDate() {
             let date = dayjs(this.$refs.maxDate?.value)
 
             return date.isValid() ? date : null
         },
 
-        getMinDate: function () {
+        getMinDate() {
             let date = dayjs(this.$refs.minDate?.value)
 
             return date.isValid() ? date : null
         },
 
-        getSelectedDate: function () {
+        getSelectedDate() {
             if (this.state === undefined) {
                 return null
             }
@@ -392,7 +392,7 @@ export default function dateTimePickerFormComponent({
             return date
         },
 
-        getDefaultFocusedDate: function () {
+        getDefaultFocusedDate() {
             if (this.defaultFocusedDate === null) {
                 return null
             }
@@ -406,7 +406,7 @@ export default function dateTimePickerFormComponent({
             return defaultFocusedDate
         },
 
-        togglePanelVisibility: function () {
+        togglePanelVisibility() {
             if (!this.isOpen()) {
                 this.focusedDate =
                     this.getSelectedDate() ??
@@ -420,7 +420,7 @@ export default function dateTimePickerFormComponent({
             this.$refs.panel.toggle(this.$refs.button)
         },
 
-        selectDate: function (day = null) {
+        selectDate(day = null) {
             if (day) {
                 this.setFocusedDay(day)
             }
@@ -434,21 +434,21 @@ export default function dateTimePickerFormComponent({
             }
         },
 
-        setDisplayText: function () {
+        setDisplayText() {
             this.displayText = this.getSelectedDate()
                 ? this.getSelectedDate().format(displayFormat)
                 : ''
         },
 
-        setMonths: function () {
+        setMonths() {
             this.months = dayjs.months()
         },
 
-        setDayLabels: function () {
+        setDayLabels() {
             this.dayLabels = this.getDayLabels()
         },
 
-        setupDaysGrid: function () {
+        setupDaysGrid() {
             this.focusedDate ??= dayjs().tz(timezone)
 
             this.emptyDaysInFocusedMonth = Array.from(
@@ -466,13 +466,13 @@ export default function dateTimePickerFormComponent({
             )
         },
 
-        setFocusedDay: function (day) {
+        setFocusedDay(day) {
             this.focusedDate = (this.focusedDate ?? dayjs().tz(timezone)).date(
                 day,
             )
         },
 
-        setState: function (date) {
+        setState(date) {
             if (date === null) {
                 this.state = null
                 this.setDisplayText()
@@ -493,13 +493,14 @@ export default function dateTimePickerFormComponent({
             this.setDisplayText()
         },
 
-        isOpen: function () {
+        isOpen() {
             return this.$refs.panel?.style.display === 'block'
         },
     }
 }
 
 const locales = {
+    am: require('dayjs/locale/am'),
     ar: require('dayjs/locale/ar'),
     bs: require('dayjs/locale/bs'),
     ca: require('dayjs/locale/ca'),
@@ -528,18 +529,23 @@ const locales = {
     lv: require('dayjs/locale/lv'),
     ms: require('dayjs/locale/ms'),
     my: require('dayjs/locale/my'),
+    nb: require('dayjs/locale/nb'),
     nl: require('dayjs/locale/nl'),
-    no: require('dayjs/locale/nb'),
     pl: require('dayjs/locale/pl'),
+    pt: require('dayjs/locale/pt'),
     pt_BR: require('dayjs/locale/pt-br'),
-    pt_PT: require('dayjs/locale/pt'),
     ro: require('dayjs/locale/ro'),
     ru: require('dayjs/locale/ru'),
+    sl: require('dayjs/locale/sl'),
+    sr_Cyrl: require('dayjs/locale/sr-cyrl'),
+    sr_Latn: require('dayjs/locale/sr'),
     sv: require('dayjs/locale/sv'),
     th: require('dayjs/locale/th'),
     tr: require('dayjs/locale/tr'),
     uk: require('dayjs/locale/uk'),
+    ur: require('dayjs/locale/ur'),
     vi: require('dayjs/locale/vi'),
     zh_CN: require('dayjs/locale/zh-cn'),
+    zh_HK: require('dayjs/locale/zh-hk'),
     zh_TW: require('dayjs/locale/zh-tw'),
 }

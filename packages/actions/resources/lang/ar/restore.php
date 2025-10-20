@@ -54,6 +54,18 @@ return [
                 'title' => 'تمت الاستعادة',
             ],
 
+            'restored_partial' => [
+                'title' => 'تمت استعادة :count من أصل :total',
+                'missing_authorization_failure_message' => 'ليس لديك صلاحية لاستعادة :count.',
+                'missing_processing_failure_message' => 'تعذر استعادة :count.',
+            ],
+
+            'restored_none' => [
+                'title' => 'فشل في الاستعادة',
+                'missing_authorization_failure_message' => 'ليس لديك صلاحية لاستعادة :count.',
+                'missing_processing_failure_message' => 'تعذر استعادة :count.',
+            ],
+
         ],
 
     ],

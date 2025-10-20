@@ -7,11 +7,6 @@ use Illuminate\Database\Query\Builder;
 
 class Values extends Summarizer
 {
-    /**
-     * @var view-string
-     */
-    protected string $view = 'filament-tables::columns.summaries.values';
-
     protected bool | Closure $isBulleted = true;
 
     /**
@@ -32,5 +27,33 @@ class Values extends Summarizer
     public function isBulleted(): bool
     {
         return (bool) $this->evaluate($this->isBulleted);
+    }
+
+    public function toEmbeddedHtml(): string
+    {
+        $attributes = $this->getExtraAttributeBag()
+            ->class(['fi-ta-values-summary']);
+
+        ob_start(); ?>
+
+        <div <?= $attributes->toHtml() ?>>
+            <?php if (filled($label = $this->getLabel())) { ?>
+                <span class="fi-ta-values-summary-label">
+                    <?= $label ?>
+                </span>
+            <?php } ?>
+
+            <?php if ($state = $this->getState()) { ?>
+                <ul <?= $this->isBulleted() ? 'class="fi-bulleted"' : '' ?>>
+                    <?php foreach ($state as $stateItem) { ?>
+                        <li>
+                            <?= $this->formatState($stateItem) ?>
+                        </li>
+                    <?php } ?>
+                </ul>
+            <?php } ?>
+        </div>
+
+        <?php return ob_get_clean();
     }
 }

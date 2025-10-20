@@ -4,8 +4,12 @@ namespace Filament\Navigation;
 
 use Filament\Facades\Filament;
 use Filament\Panel;
+use Filament\Support\Contracts\HasIcon;
+use Filament\Support\Contracts\HasLabel;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use LogicException;
+use UnitEnum;
 
 class NavigationManager
 {
@@ -25,7 +29,7 @@ class NavigationManager
 
     public function __construct()
     {
-        $this->panel = Filament::getCurrentPanel();
+        $this->panel = Filament::getCurrentOrDefaultPanel();
 
         $this->navigationGroups = array_map(
             fn (NavigationGroup | string $group): NavigationGroup | string => $group instanceof NavigationGroup ? (clone $group) : $group,
@@ -55,14 +59,18 @@ class NavigationManager
         return collect($this->getNavigationItems())
             ->filter(fn (NavigationItem $item): bool => $item->isVisible())
             ->sortBy(fn (NavigationItem $item): int => $item->getSort())
-            ->groupBy(fn (NavigationItem $item): string => $item->getGroup() ?? '')
+            ->groupBy(function (NavigationItem $item): string {
+                $group = $item->getGroup();
+
+                return serialize($group);
+            })
             ->map(function (Collection $items, string $groupIndex) use ($groups): NavigationGroup {
                 $parentItems = $items->groupBy(fn (NavigationItem $item): string => $item->getParentItem() ?? '');
 
                 $items = $parentItems->get('', collect())
                     ->keyBy(fn (NavigationItem $item): string => $item->getLabel());
 
-                $parentItems->except([''])->each(function (Collection $parentItemItems, string $parentItemLabel) use ($items) {
+                $parentItems->except([''])->each(function (Collection $parentItemItems, string $parentItemLabel) use ($items): void {
                     if (! $items->has($parentItemLabel)) {
                         return;
                     }
@@ -72,17 +80,26 @@ class NavigationManager
 
                 $items = $items->filter(fn (NavigationItem $item): bool => (filled($item->getChildItems()) || filled($item->getUrl())));
 
-                if (blank($groupIndex)) {
+                $groupName = unserialize($groupIndex);
+
+                if (blank($groupName)) {
                     return NavigationGroup::make()->items($items);
                 }
 
+                $groupEnum = null;
+
+                if ($groupName instanceof UnitEnum) {
+                    $groupEnum = $groupName;
+                    $groupName = $groupEnum->name;
+                }
+
                 $registeredGroup = $groups
-                    ->first(function (NavigationGroup | string $registeredGroup, string | int $registeredGroupIndex) use ($groupIndex) {
-                        if ($registeredGroupIndex === $groupIndex) {
+                    ->first(function (NavigationGroup | string $registeredGroup, string | int $registeredGroupIndex) use ($groupName) {
+                        if ($registeredGroupIndex === $groupName) {
                             return true;
                         }
 
-                        if ($registeredGroup === $groupIndex) {
+                        if ($registeredGroup === $groupName) {
                             return true;
                         }
 
@@ -90,20 +107,37 @@ class NavigationManager
                             return false;
                         }
 
-                        return $registeredGroup->getLabel() === $groupIndex;
+                        return $registeredGroup->getLabel() === $groupName;
                     });
 
                 if ($registeredGroup instanceof NavigationGroup) {
                     return $registeredGroup->items($items);
                 }
 
-                return NavigationGroup::make($registeredGroup ?? $groupIndex)
-                    ->items($items);
+                $group = NavigationGroup::make($registeredGroup ?? $groupName);
+
+                if ($groupEnum instanceof HasLabel) {
+                    $group->label($groupEnum->getLabel());
+                }
+
+                if ($groupEnum instanceof HasIcon) {
+                    $group->icon($groupEnum->getIcon());
+                }
+
+                return $group->items($items);
             })
             ->filter(fn (NavigationGroup $group): bool => filled($group->getItems()))
             ->sortBy(function (NavigationGroup $group, ?string $groupIndex): int {
                 if (blank($group->getLabel())) {
                     return -1;
+                }
+
+                $groupName = unserialize($groupIndex);
+                $groupEnum = null;
+
+                if ($groupName instanceof UnitEnum) {
+                    $groupEnum = $groupName;
+                    $groupName = $groupEnum->name;
                 }
 
                 $registeredGroups = $this->getNavigationGroups();
@@ -118,9 +152,14 @@ class NavigationManager
                 }
 
                 $sort = array_search(
-                    $groupIndex,
+                    $groupName,
                     $groupsToSearch,
                 );
+
+                if ($groupEnum) {
+                    $enumCaseSort = array_search($groupEnum, $groupEnum::cases());
+                    $sort = ($enumCaseSort !== false) ? $enumCaseSort : $sort;
+                }
 
                 if ($sort === false) {
                     return count($registeredGroups);
@@ -145,10 +184,24 @@ class NavigationManager
     }
 
     /**
-     * @param  array<string | int, NavigationGroup | string>  $groups
+     * @param  array<string | int, NavigationGroup | string> | class-string<UnitEnum>  $groups
      */
-    public function navigationGroups(array $groups): static
+    public function navigationGroups(array | string $groups): static
     {
+        if (is_string($groups)) {
+            throw_unless(enum_exists($groups), new LogicException("Enum class [{$groups}] does not exist for navigation groups."));
+
+            $groups = array_reduce(
+                $groups::cases(),
+                function (array $carry, UnitEnum $case): array {
+                    $carry[$case->name] = NavigationGroup::fromEnum($case);
+
+                    return $carry;
+                },
+                initial: [],
+            );
+        }
+
         $this->navigationGroups = [
             ...$this->navigationGroups,
             ...$groups,

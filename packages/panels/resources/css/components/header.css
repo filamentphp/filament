@@ -1,0 +1,52 @@
+.fi-header {
+    @apply flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between;
+
+    & .fi-breadcrumbs {
+        @apply mb-2 hidden sm:block;
+    }
+
+    &.fi-header-has-breadcrumbs {
+        .fi-header-actions-ctn {
+            @apply sm:mt-7;
+        }
+    }
+}
+
+.fi-header-heading {
+    @apply text-2xl font-bold tracking-tight text-gray-950 sm:text-3xl dark:text-white;
+}
+
+.fi-header-subheading {
+    @apply mt-2 max-w-2xl text-lg text-gray-600 dark:text-gray-400;
+}
+
+.fi-header-actions-ctn {
+    @apply flex shrink-0 items-center gap-3;
+
+    & > .fi-ac {
+        @apply flex-1;
+
+        &:not(.fi-width-full) {
+            &.fi-align-end,
+            &.fi-align-right {
+                @apply flex-row justify-end;
+            }
+        }
+    }
+}
+
+.fi-simple-header {
+    @apply flex flex-col items-center;
+
+    & .fi-logo {
+        @apply mb-4;
+    }
+}
+
+.fi-simple-header-heading {
+    @apply text-center text-2xl font-bold tracking-tight text-gray-950 dark:text-white;
+}
+
+.fi-simple-header-subheading {
+    @apply mt-2 text-center text-sm text-gray-500 dark:text-gray-400;
+}

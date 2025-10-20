@@ -2,8 +2,10 @@
 
 namespace Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint\Operators;
 
-use Filament\Forms\Components\Component;
+use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Component;
 use Filament\Tables\Filters\QueryBuilder\Constraints\Operators\Operator;
 use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder;
@@ -40,7 +42,7 @@ class StartsWithOperator extends Operator
     }
 
     /**
-     * @return array<Component>
+     * @return array<Component | Action | ActionGroup>
      */
     public function getFormSchema(): array
     {
@@ -62,14 +64,23 @@ class StartsWithOperator extends Operator
         $isPostgres = $databaseConnection->getDriverName() === 'pgsql';
 
         if ($isPostgres) {
-            [$table, $column] = explode('.', $qualifiedColumn);
+            $parts = explode('.', $qualifiedColumn);
+
+            if (count($parts) === 3) {
+                [$schema, $table, $column] = $parts;
+                $table = "{$schema}.{$table}";
+            } else {
+                [$table, $column] = $parts;
+            }
 
             if (Str::lower($table) !== $table) {
-                $table = (string) str($table)->wrap('"');
+                $table = collect(explode('.', $table))
+                    ->map(fn (string $segment): string => "\"{$segment}\"")
+                    ->implode('.');
             }
 
             if (Str::lower($column) !== $column) {
-                $column = (string) str($column)->wrap('"');
+                $column = "\"{$column}\"";
             }
 
             $qualifiedColumn = new Expression("lower({$table}.{$column}::text)");

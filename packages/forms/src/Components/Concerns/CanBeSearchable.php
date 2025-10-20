@@ -7,7 +7,7 @@ use Illuminate\Contracts\Support\Htmlable;
 
 trait CanBeSearchable
 {
-    protected bool | Closure $isSearchable = false;
+    protected bool | Closure | null $isSearchable = null;
 
     protected string | Htmlable | Closure | null $noSearchResultsMessage = null;
 
@@ -21,7 +21,7 @@ trait CanBeSearchable
 
     protected bool | Closure $shouldSearchValues = false;
 
-    public function searchable(bool | Closure $condition = true): static
+    public function searchable(bool | Closure | null $condition = true): static
     {
         $this->isSearchable = $condition;
 

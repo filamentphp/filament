@@ -34,7 +34,7 @@ trait HasExtraModalWindowAttributes
         $temporaryAttributeBag = new ComponentAttributeBag;
 
         foreach ($this->extraModalWindowAttributes as $extraModalWindowAttributes) {
-            $temporaryAttributeBag = $temporaryAttributeBag->merge($this->evaluate($extraModalWindowAttributes));
+            $temporaryAttributeBag = $temporaryAttributeBag->merge($this->evaluate($extraModalWindowAttributes), escape: false);
         }
 
         return $temporaryAttributeBag->getAttributes();

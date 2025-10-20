@@ -28,7 +28,7 @@ class SpatieTagsEntry extends TextEntry
     {
         $state = parent::getState();
 
-        if ($state && (! $state instanceof Collection)) {
+        if ($state && (! $state instanceof Collection) && (! is_array($state))) {
             return $state;
         }
 
@@ -38,8 +38,8 @@ class SpatieTagsEntry extends TextEntry
             return [];
         }
 
-        if ($this->hasRelationship($record)) {
-            $record = $this->getRelationshipResults($record);
+        if ($this->hasStateRelationship($record)) {
+            $record = $this->getStateRelationshipResults($record);
         }
 
         $records = Arr::wrap($record);

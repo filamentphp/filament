@@ -1,0 +1,16 @@
+.fi-ta-checkbox {
+    @apply w-full;
+
+    &:not(.fi-inline) {
+        @apply px-3 py-4;
+    }
+
+    &.fi-align-center {
+        @apply text-center;
+    }
+
+    &.fi-align-end,
+    &.fi-align-right {
+        @apply text-end;
+    }
+}

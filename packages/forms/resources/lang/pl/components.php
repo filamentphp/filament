@@ -284,7 +284,11 @@ return [
 
     'markdown_editor' => [
 
-        'toolbar_buttons' => [
+        'file_attachments_accepted_file_types_message' => 'Przesyłane pliki muszą być typu: :values.',
+
+        'file_attachments_max_size_message' => 'Przesyłane pliki nie mogą być większe niż :max kilobajtów.',
+
+        'tools' => [
             'attach_files' => 'Dołącz pliki',
             'blockquote' => 'Cytat blokowy',
             'bold' => 'Pogrubienie',
@@ -298,6 +302,28 @@ return [
             'strike' => 'Przekreślenie',
             'table' => 'Tabela',
             'undo' => 'Cofnij',
+        ],
+
+    ],
+
+    'modal_table_select' => [
+
+        'actions' => [
+
+            'select' => [
+
+                'label' => 'Wybierz',
+
+                'actions' => [
+
+                    'select' => [
+                        'label' => 'Wybierz',
+                    ],
+
+                ],
+
+            ],
+
         ],
 
     ],
@@ -365,40 +391,231 @@ return [
 
     'rich_editor' => [
 
-        'dialogs' => [
+        'actions' => [
+
+            'attach_files' => [
+
+                'label' => 'Prześlij plik',
+
+                'modal' => [
+
+                    'heading' => 'Prześlij plik',
+
+                    'form' => [
+
+                        'file' => [
+
+                            'label' => [
+                                'new' => 'Plik',
+                                'existing' => 'Zastąp plik',
+                            ],
+
+                        ],
+
+                        'alt' => [
+
+                            'label' => [
+                                'new' => 'Tekst alternatywny',
+                                'existing' => 'Zmień tekst alternatywny',
+                            ],
+
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
+            'custom_block' => [
+
+                'modal' => [
+
+                    'actions' => [
+
+                        'insert' => [
+                            'label' => 'Wstaw',
+                        ],
+
+                        'save' => [
+                            'label' => 'Zapisz',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
+            'grid' => [
+
+                'label' => 'Siatka',
+
+                'modal' => [
+
+                    'heading' => 'Siatka',
+
+                    'form' => [
+
+                        'preset' => [
+
+                            'label' => 'Ustawienie predefiniowane',
+
+                            'placeholder' => 'Brak',
+
+                            'options' => [
+                                'two' => 'Dwie kolumny',
+                                'three' => 'Trzy kolumny',
+                                'four' => 'Cztery kolumny',
+                                'five' => 'Pięć kolumn',
+                                'two_start_third' => 'Dwie kolumny (1/3 i 2/3)',
+                                'two_end_third' => 'Dwie kolumny (2/3 i 1/3)',
+                                'two_start_fourth' => 'Dwie kolumny (1/4 i 3/4)',
+                                'two_end_fourth' => 'Dwie kolumny (3/4 i 1/4)',
+                            ],
+                        ],
+
+                        'columns' => [
+                            'label' => 'Kolumny',
+                        ],
+
+                        'from_breakpoint' => [
+
+                            'label' => 'Od punktu przerwania',
+
+                            'options' => [
+                                'default' => 'Każdy',
+                                'sm' => 'Mały (sm)',
+                                'md' => 'Średni (md)',
+                                'lg' => 'Duży (lg)',
+                                'xl' => 'Bardzo duży (xl)',
+                                '2xl' => 'Bardzo bardzo duży (2xl)',
+                            ],
+
+                        ],
+
+                        'is_asymmetric' => [
+                            'label' => 'Dwie asymetryczne kolumny',
+                        ],
+
+                        'start_span' => [
+                            'label' => 'Szerokość pierwszej kolumny',
+                        ],
+
+                        'end_span' => [
+                            'label' => 'Szerokość drugiej kolumny',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
 
             'link' => [
 
-                'actions' => [
-                    'link' => 'Linkuj',
-                    'unlink' => 'Usuń link',
+                'label' => 'Edytuj',
+
+                'modal' => [
+
+                    'heading' => 'Link',
+
+                    'form' => [
+
+                        'url' => [
+                            'label' => 'URL',
+                        ],
+
+                        'should_open_in_new_tab' => [
+                            'label' => 'Otwórz w nowej karcie',
+                        ],
+
+                    ],
+
                 ],
 
-                'label' => 'URL',
+            ],
 
-                'placeholder' => 'Wprowadź URL',
+            'text_color' => [
+
+                'label' => 'Kolor tekstu',
+
+                'modal' => [
+
+                    'heading' => 'Kolor tekstu',
+
+                    'form' => [
+
+                        'color' => [
+                            'label' => 'Kolor',
+                        ],
+
+                        'custom_color' => [
+                            'label' => 'Kolor niestandardowy',
+                        ],
+
+                    ],
+
+                ],
 
             ],
 
         ],
 
-        'toolbar_buttons' => [
+        'file_attachments_accepted_file_types_message' => 'Przesyłane pliki muszą być typu: :values.',
+
+        'file_attachments_max_size_message' => 'Przesyłane pliki nie mogą być większe niż :max kilobajtów.',
+
+        'no_merge_tag_search_results_message' => 'Brak wyników.',
+
+        'tools' => [
+            'align_center' => 'Wyśrodkuj',
+            'align_end' => 'Wyrównaj do prawej',
+            'align_justify' => 'Justuj',
+            'align_start' => 'Wyrównaj do lewej',
             'attach_files' => 'Dołącz pliki',
             'blockquote' => 'Cytat',
             'bold' => 'Pogrubienie',
             'bullet_list' => 'Lista punktowana',
+            'clear_formatting' => 'Usuń formatowanie',
+            'code' => 'Kod',
             'code_block' => 'Blok kodu',
+            'custom_blocks' => 'Bloki',
+            'details' => 'Szczegóły',
+            'highlight' => 'Podświetlenie',
+            'horizontal_rule' => 'Linia pozioma',
             'h1' => 'Tytuł',
             'h2' => 'Nagłówek',
             'h3' => 'Podtytuł',
+            'grid' => 'Siatka',
+            'grid_delete' => 'Usuń siatkę',
             'italic' => 'Kursywa',
+            'lead' => 'Tekst wiodący',
             'link' => 'Adres',
+            'merge_tags' => 'Scal tagi',
             'ordered_list' => 'Lista numerowana',
             'redo' => 'Ponów',
+            'small' => 'Mniejsza czcionka',
             'strike' => 'Przekreślenie',
+            'subscript' => 'Indeks dolny',
+            'superscript' => 'Indeks górny',
+            'table' => 'Tabela',
+            'table_delete' => 'Usuń tabelę',
+            'table_add_column_before' => 'Dodaj kolumnę przed',
+            'table_add_column_after' => 'Dodaj kolumnę po',
+            'table_delete_column' => 'Usuń kolumnę',
+            'table_add_row_before' => 'Dodaj wiersz powyżej',
+            'table_add_row_after' => 'Dodaj wiersz poniżej',
+            'table_delete_row' => 'Usuń wiersz',
+            'table_merge_cells' => 'Scal komórki',
+            'table_split_cell' => 'Podziel komórkę',
+            'table_toggle_header_row' => 'Przełącz wiersz nagłówka',
+            'text_color' => 'Kolor tekstu',
             'underline' => 'Podkreślenie',
             'undo' => 'Cofnij',
         ],
+
+        'uploading_file_message' => 'Przesyłanie pliku...',
 
     ],
 
@@ -479,6 +696,11 @@ return [
 
         'actions' => [
 
+            'copy' => [
+                'label' => 'Kopiuj',
+                'message' => 'Skopiowano',
+            ],
+
             'hide_password' => [
                 'label' => 'Ukryj hasło',
             ],
@@ -496,22 +718,6 @@ return [
         'boolean' => [
             'true' => 'Tak',
             'false' => 'Nie',
-        ],
-
-    ],
-
-    'wizard' => [
-
-        'actions' => [
-
-            'previous_step' => [
-                'label' => 'Poprzedni',
-            ],
-
-            'next_step' => [
-                'label' => 'Następny',
-            ],
-
         ],
 
     ],

@@ -3,10 +3,14 @@
 namespace Filament\Forms\Components;
 
 use Closure;
+use Filament\Support\Concerns\CanConfigureCommonMark;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
+use LogicException;
 
-class MarkdownEditor extends Field implements Contracts\CanBeLengthConstrained, Contracts\HasFileAttachments
+class MarkdownEditor extends Field implements Contracts\CanBeLengthConstrained
 {
+    use CanConfigureCommonMark;
     use Concerns\CanBeLengthConstrained;
     use Concerns\HasFileAttachments;
     use Concerns\HasMaxHeight;
@@ -21,21 +25,44 @@ class MarkdownEditor extends Field implements Contracts\CanBeLengthConstrained, 
     protected string $view = 'filament-forms::components.markdown-editor';
 
     /**
-     * @var array<string>
+     * @return array<string | array<string>>
      */
-    protected array | Closure $toolbarButtons = [
-        'attachFiles',
-        'blockquote',
-        'bold',
-        'bulletList',
-        'codeBlock',
-        'heading',
-        'italic',
-        'link',
-        'orderedList',
-        'redo',
-        'strike',
-        'table',
-        'undo',
-    ];
+    public function getDefaultToolbarButtons(): array
+    {
+        return [
+            ['bold', 'italic', 'strike', 'link'],
+            ['heading'],
+            ['blockquote', 'codeBlock', 'bulletList', 'orderedList'],
+            ['table', 'attachFiles'],
+            ['undo', 'redo'],
+        ];
+    }
+
+    public function getFileAttachmentsDiskName(): string
+    {
+        $name = $this->evaluate($this->fileAttachmentsDiskName);
+
+        if (filled($name)) {
+            return $name;
+        }
+
+        $defaultName = config('filament.default_filesystem_disk');
+
+        return ($defaultName === 'local') ? 'public' : $defaultName;
+    }
+
+    public function fileAttachmentsVisibility(string | Closure | null $visibility): static
+    {
+        throw new LogicException('The visibility of file attachments for markdown content is always `public`, since generating temporary file upload URLs is not supported in static content.');
+    }
+
+    public function getFileAttachmentsVisibility(): string
+    {
+        return 'public';
+    }
+
+    public function hasFileAttachmentsByDefault(): bool
+    {
+        return $this->hasToolbarButton('attachFiles');
+    }
 }

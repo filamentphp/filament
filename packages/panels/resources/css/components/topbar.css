@@ -1,0 +1,80 @@
+.fi-topbar-ctn {
+    @apply sticky top-0 z-30 overflow-x-clip;
+}
+
+.fi-topbar {
+    @apply flex min-h-16 items-center bg-white px-4 shadow-xs ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10;
+
+    & .fi-tenant-menu {
+        @apply hidden lg:block;
+    }
+}
+
+.fi-topbar-open-sidebar-btn {
+    @apply mx-0!;
+}
+
+.fi-topbar-close-sidebar-btn {
+    @apply mx-0! lg:hidden;
+}
+
+.fi-topbar-open-collapse-sidebar-btn {
+    @apply mx-0!;
+}
+
+.fi-topbar-close-collapse-sidebar-btn {
+    @apply mx-0! hidden lg:flex;
+}
+
+.fi-topbar-start {
+    @apply me-6 hidden items-center lg:flex;
+
+    & .fi-logo {
+        @apply ms-3;
+    }
+}
+
+.fi-body {
+    &.fi-body-has-sidebar-collapsible-on-desktop,
+    &:not(.fi-body-has-sidebar-fully-collapsible-on-desktop) {
+        & .fi-topbar-open-sidebar-btn {
+            @apply lg:hidden;
+        }
+    }
+}
+
+.fi-topbar-nav-groups {
+    @apply ms-4 me-4 hidden items-center gap-x-4 lg:my-2 lg:flex lg:flex-wrap lg:gap-y-1;
+}
+
+.fi-topbar-end {
+    @apply ms-auto flex items-center gap-x-4;
+}
+
+.fi-topbar-item-btn {
+    @apply flex items-center justify-center gap-x-2 rounded-lg px-3 py-2 outline-hidden transition duration-75 hover:bg-gray-50 focus-visible:bg-gray-50 dark:hover:bg-white/5 dark:focus-visible:bg-white/5;
+
+    & > .fi-icon {
+        @apply text-gray-400 dark:text-gray-500;
+    }
+}
+
+.fi-topbar-item-label {
+    @apply text-sm font-medium text-gray-700 dark:text-gray-200;
+}
+
+.fi-topbar-item {
+    &.fi-active {
+        & .fi-topbar-item-btn {
+            @apply bg-gray-50 dark:bg-white/5;
+
+            & > .fi-icon {
+                @apply text-primary-600 dark:text-primary-400;
+            }
+        }
+
+        & .fi-topbar-item-label {
+            @apply text-primary-600 dark:text-primary-400;
+        }
+    }
+}

@@ -3,7 +3,7 @@
 namespace Filament\Actions\Concerns;
 
 use Closure;
-use Filament\Forms\Components\Wizard\Step;
+use Filament\Schemas\Components\Wizard\Step;
 
 trait HasWizard
 {
@@ -21,7 +21,7 @@ trait HasWizard
     public function steps(array | Closure $steps): static
     {
         $this->isWizard = true;
-        $this->form($steps);
+        $this->schema($steps);
 
         return $this;
     }

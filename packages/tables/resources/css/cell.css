@@ -1,0 +1,128 @@
+.fi-ta-cell {
+    @apply p-0 first-of-type:ps-1 last-of-type:pe-1 sm:first-of-type:ps-3 sm:last-of-type:pe-3;
+
+    &.fi-vertical-align-start {
+        @apply align-top;
+    }
+
+    &.fi-vertical-align-end {
+        @apply align-bottom;
+    }
+
+    &.sm\:fi-hidden {
+        @apply sm:hidden;
+    }
+
+    &.md\:fi-hidden {
+        @apply md:hidden;
+    }
+
+    &.lg\:fi-hidden {
+        @apply lg:hidden;
+    }
+
+    &.xl\:fi-hidden {
+        @apply xl:hidden;
+    }
+
+    &.\32xl\:fi-hidden {
+        @apply 2xl:hidden;
+    }
+
+    &.sm\:fi-visible {
+        @apply hidden sm:table-cell;
+    }
+
+    &.md\:fi-visible {
+        @apply hidden md:table-cell;
+    }
+
+    &.lg\:fi-visible {
+        @apply hidden lg:table-cell;
+    }
+
+    &.xl\:fi-visible {
+        @apply hidden xl:table-cell;
+    }
+
+    &.\32xl\:fi-visible {
+        @apply hidden 2xl:table-cell;
+    }
+
+    & > .fi-ta-col {
+        @apply flex w-full justify-start text-start disabled:pointer-events-none;
+    }
+
+    &:has(.fi-ta-reorder-handle) {
+        @apply w-1 px-3 first-of-type:ps-4 last-of-type:pe-4 sm:first-of-type:ps-6 sm:last-of-type:pe-6;
+    }
+
+    &:has(.fi-ta-actions) {
+        @apply px-3 py-4 whitespace-nowrap first-of-type:ps-4 last-of-type:pe-4 sm:first-of-type:ps-6 sm:last-of-type:pe-6;
+    }
+
+    &:has(.fi-ta-record-checkbox) {
+        @apply w-1 px-3 py-4 first-of-type:ps-4 last-of-type:pe-4 sm:first-of-type:ps-6 sm:last-of-type:pe-6;
+    }
+
+    & .fi-ta-placeholder {
+        @apply text-sm leading-6 text-gray-400 dark:text-gray-500;
+    }
+
+    &.fi-ta-summary-row-heading-cell {
+        @apply px-3 py-4 text-sm font-medium text-gray-950 dark:text-white;
+    }
+
+    &.fi-align-start {
+        @apply text-start;
+    }
+
+    &.fi-align-center {
+        @apply text-center;
+    }
+
+    &.fi-align-end {
+        @apply text-end;
+    }
+
+    &.fi-align-left {
+        @apply text-left;
+    }
+
+    &.fi-align-right {
+        @apply text-right;
+    }
+
+    &.fi-align-justify,
+    &.fi-align-between {
+        @apply text-justify;
+    }
+
+    &.fi-ta-summary-header-cell {
+        @apply px-3 py-2 text-sm font-medium text-gray-950 sm:first-of-type:ps-6 dark:text-white;
+
+        &.fi-wrapped {
+            @apply whitespace-nowrap;
+        }
+
+        &:not(.fi-wrapped) {
+            @apply whitespace-nowrap;
+        }
+    }
+
+    &.fi-ta-individual-search-cell {
+        @apply min-w-48 px-3 py-2;
+    }
+
+    & .fi-ta-reorder-handle {
+        @apply cursor-move;
+    }
+
+    &.fi-ta-selection-cell {
+        @apply w-1 px-3 py-4 first-of-type:ps-4 last-of-type:pe-4 sm:first-of-type:ps-6 sm:last-of-type:pe-6;
+    }
+
+    &.fi-ta-group-selection-cell {
+        @apply w-1 px-3 first-of-type:ps-4 last-of-type:pe-4 sm:first-of-type:ps-6 sm:last-of-type:pe-6;
+    }
+}

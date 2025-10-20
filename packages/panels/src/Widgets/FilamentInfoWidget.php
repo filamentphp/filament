@@ -11,5 +11,5 @@ class FilamentInfoWidget extends Widget
     /**
      * @var view-string
      */
-    protected static string $view = 'filament-panels::widgets.filament-info-widget';
+    protected string $view = 'filament-panels::widgets.filament-info-widget';
 }

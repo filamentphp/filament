@@ -4,10 +4,11 @@ namespace App\Livewire\Panels\Navigation;
 
 use Filament\Navigation\NavigationItem;
 use Filament\Pages\Page;
+use Filament\Support\Icons\Heroicon;
 
 class Badge extends Page
 {
-    protected static string $view = 'livewire.panels.navigation.empty';
+    protected string $view = 'livewire.panels.navigation.empty';
 
     public function mount()
     {
@@ -17,7 +18,7 @@ class Badge extends Page
                 NavigationItem::make()
                     ->label('Orders')
                     ->url(fn (): string => '#')
-                    ->icon('heroicon-o-shopping-cart')
+                    ->icon(Heroicon::OutlinedShoppingCart)
                     ->badge(24),
             ]);
     }

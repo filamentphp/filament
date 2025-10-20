@@ -70,16 +70,10 @@ class SpatieMediaLibraryFileUpload extends FileUpload
                 })
                 ->toArray();
 
-            $component->state($media);
+            $component->rawState($media);
         });
 
-        $this->afterStateHydrated(static function (BaseFileUpload $component, string | array | null $state): void {
-            if (is_array($state)) {
-                return;
-            }
-
-            $component->state([]);
-        });
+        $this->afterStateHydrated(null);
 
         $this->beforeStateDehydrated(null);
 
@@ -100,7 +94,7 @@ class SpatieMediaLibraryFileUpload extends FileUpload
 
                 try {
                     $url = $media?->getTemporaryUrl(
-                        now()->addMinutes(5),
+                        now()->addMinutes(30)->endOfHour(),
                         (filled($conversion) && $media->hasGeneratedConversion($conversion)) ? $conversion : '',
                     );
                 } catch (Throwable $exception) {
@@ -122,7 +116,7 @@ class SpatieMediaLibraryFileUpload extends FileUpload
             ];
         });
 
-        $this->saveRelationshipsUsing(static function (SpatieMediaLibraryFileUpload $component) {
+        $this->saveRelationshipsUsing(static function (SpatieMediaLibraryFileUpload $component): void {
             $component->deleteAbandonedFiles();
             $component->saveUploadedFiles();
         });
@@ -150,7 +144,7 @@ class SpatieMediaLibraryFileUpload extends FileUpload
                 ->usingFileName($filename)
                 ->usingName($component->getMediaName($file) ?? pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME))
                 ->storingConversionsOnDisk($component->getConversionsDisk() ?? '')
-                ->withCustomProperties($component->getCustomProperties())
+                ->withCustomProperties($component->getCustomProperties($file))
                 ->withManipulations($component->getManipulations())
                 ->withResponsiveImagesIf($component->hasResponsiveImages())
                 ->withProperties($component->getProperties())
@@ -159,8 +153,8 @@ class SpatieMediaLibraryFileUpload extends FileUpload
             return $media->getAttributeValue('uuid');
         });
 
-        $this->reorderUploadedFilesUsing(static function (SpatieMediaLibraryFileUpload $component, ?Model $record, array $state): array {
-            $uuids = array_filter(array_values($state));
+        $this->reorderUploadedFilesUsing(static function (SpatieMediaLibraryFileUpload $component, ?Model $record, array $rawState): array {
+            $uuids = array_filter(array_keys($rawState));
 
             $mediaClass = ($record && method_exists($record, 'getMediaModel')) ? $record->getMediaModel() : null;
             $mediaClass ??= config('media-library.media_model', Media::class);
@@ -172,7 +166,7 @@ class SpatieMediaLibraryFileUpload extends FileUpload
                 ...$mappedIds,
             ]);
 
-            return $state;
+            return $rawState;
         });
     }
 
@@ -251,15 +245,17 @@ class SpatieMediaLibraryFileUpload extends FileUpload
 
         $record
             ->getMedia($this->getCollection() ?? 'default')
-            ->whereNotIn('uuid', array_keys($this->getState() ?? []))
+            ->whereNotIn('uuid', array_keys($this->getRawState() ?? []))
             ->when($this->hasMediaFilter(), fn (Collection $media): Collection => $this->filterMedia($media))
             ->each(fn (Media $media) => $media->delete());
     }
 
     public function getDiskName(): string
     {
-        if ($diskName = $this->evaluate($this->diskName)) {
-            return $diskName;
+        $name = $this->evaluate($this->diskName);
+
+        if (filled($name)) {
+            return $name;
         }
 
         /** @var Model&HasMedia $model */
@@ -274,7 +270,27 @@ class SpatieMediaLibraryFileUpload extends FileUpload
             ->first()
             ?->diskName;
 
-        return $diskNameFromRegisteredConversions ?? config('filament.default_filesystem_disk');
+        if (
+            ($diskNameFromRegisteredConversions === 'public')
+            && ($this->getCustomVisibility() === 'private')
+        ) {
+            return 'local';
+        }
+
+        if (filled($diskNameFromRegisteredConversions)) {
+            return $diskNameFromRegisteredConversions;
+        }
+
+        $defaultName = config('filament.default_filesystem_disk');
+
+        if (
+            ($defaultName === 'public')
+            && ($this->getCustomVisibility() === 'private')
+        ) {
+            return 'local';
+        }
+
+        return $defaultName;
     }
 
     public function getCollection(): ?string
@@ -303,9 +319,11 @@ class SpatieMediaLibraryFileUpload extends FileUpload
     /**
      * @return array<string, mixed>
      */
-    public function getCustomProperties(): array
+    public function getCustomProperties(TemporaryUploadedFile $file): array
     {
-        return $this->evaluate($this->customProperties) ?? [];
+        return $this->evaluate($this->customProperties, [
+            'file' => $file,
+        ]) ?? [];
     }
 
     /**

@@ -2,10 +2,9 @@
 
 use App\Livewire\ActionsDemo;
 use App\Livewire\Forms\FieldsDemo;
-use App\Livewire\Forms\GettingStartedDemo;
-use App\Livewire\Forms\LayoutDemo as FormsLayoutDemo;
+use App\Livewire\Forms\FieldsOverview;
 use App\Livewire\Infolists\EntriesDemo;
-use App\Livewire\Infolists\LayoutDemo as InfolistsLayoutDemo;
+use App\Livewire\Infolists\EntriesOverview;
 use App\Livewire\NotificationsDemo;
 use App\Livewire\Panels\Navigation\ActiveIcon;
 use App\Livewire\Panels\Navigation\Badge;
@@ -22,6 +21,9 @@ use App\Livewire\Panels\Navigation\SidebarFullyCollapsibleOnDesktop;
 use App\Livewire\Panels\Navigation\SortItems;
 use App\Livewire\Panels\Navigation\TopNavigation;
 use App\Livewire\Panels\Navigation\UserMenuCustomization;
+use App\Livewire\PrimesDemo;
+use App\Livewire\Schemas\LayoutDemo;
+use App\Livewire\Schemas\OverviewDemo;
 use App\Livewire\TablesDemo;
 use Illuminate\Support\Facades\Route;
 
@@ -37,22 +39,23 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/actions', ActionsDemo::class);
-Route::get('/notifications', NotificationsDemo::class);
-Route::get('/tables', TablesDemo::class);
 
-Route::group(['prefix' => 'forms'], function () {
+Route::prefix('forms')->group(function (): void {
+    Route::get('overview', FieldsOverview::class);
     Route::get('fields', FieldsDemo::class);
-    Route::get('getting-started', GettingStartedDemo::class);
-    Route::get('layout', FormsLayoutDemo::class);
 });
 
-Route::prefix('infolists')->group(function () {
+Route::prefix('infolists')->group(function (): void {
+    Route::get('overview', EntriesOverview::class);
     Route::get('entries', EntriesDemo::class);
-    Route::get('layout', InfolistsLayoutDemo::class);
 });
 
-Route::prefix('panels')->group(function () {
-    Route::prefix('navigation')->group(function () {
+Route::get('primes', PrimesDemo::class);
+
+Route::get('/notifications', NotificationsDemo::class);
+
+Route::prefix('panels')->middleware(['panel:admin'])->group(function (): void {
+    Route::prefix('navigation')->group(function (): void {
         Route::get('user-menu-customization', UserMenuCustomization::class);
         Route::get('disabled-navigation', DisabledNavigation::class);
         Route::get('active-icon', ActiveIcon::class);
@@ -70,3 +73,10 @@ Route::prefix('panels')->group(function () {
         Route::get('group-not-collapsible', GroupNotCollapsible::class);
     });
 });
+
+Route::prefix('schemas')->group(function (): void {
+    Route::get('layout', LayoutDemo::class);
+    Route::get('overview', OverviewDemo::class);
+});
+
+Route::get('/tables', TablesDemo::class);

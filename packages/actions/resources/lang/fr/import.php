@@ -75,7 +75,7 @@ return [
         'file_name' => 'import-:import_id-:csv_name-failed-rows',
         'error_header' => 'error',
         'system_error' => 'Erreur système, veuillez contacter le support.',
-        'column_mapping_required_for_new_record' => 'La colonne n\'a pas été associée à une colonne dans le fichier, mais elle est requise pour créer de nouveaux enregistrements.',
+        'column_mapping_required_for_new_record' => 'La colonne :attribute n\'a pas été associée à une colonne dans le fichier, mais elle est requise pour créer de nouveaux enregistrements.',
     ],
 
 ];

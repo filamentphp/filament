@@ -2,6 +2,6 @@
 
 use Filament\Panel;
 
-return function (Panel $panel) {
+return function (Panel $panel): void {
     //
 };

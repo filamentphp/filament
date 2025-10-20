@@ -6,10 +6,11 @@ use Closure;
 use Filament\Tables\Columns\Summarizers\Summarizer;
 use Filament\Tables\Contracts\HasTable;
 use Illuminate\Testing\Assert;
+use Livewire\Component;
 use Livewire\Features\SupportTesting\Testable;
 
 /**
- * @method HasTable instance()
+ * @method Component&HasTable instance()
  *
  * @mixin Testable
  */
@@ -42,7 +43,7 @@ class TestsSummaries
             Assert::assertEqualsCanonicalizing(
                 $state,
                 $actualState,
-                message: "Failed asserting that summarizer [$summarizerId], for column [{$columnName}], on the [{$livewireClass}] component, is set.",
+                "Failed asserting that summarizer [$summarizerId], for column [{$columnName}], on the [{$livewireClass}] component, is set.",
             );
 
             return $this;
@@ -76,7 +77,7 @@ class TestsSummaries
             Assert::assertNotEqualsCanonicalizing(
                 $state,
                 $actualState,
-                message: "Failed asserting that summarizer [$summarizerId], for column [{$columnName}], on the [{$livewireClass}] component, is not set.",
+                "Failed asserting that summarizer [$summarizerId], for column [{$columnName}], on the [{$livewireClass}] component, is not set.",
             );
 
             return $this;
@@ -97,7 +98,7 @@ class TestsSummaries
             Assert::assertInstanceOf(
                 Summarizer::class,
                 $summarizer,
-                message: "Failed asserting that a table column with name [{$columnName}] has a summarizer with ID [{$summarizerId}] on the [{$livewireClass}] component. Please ensure that the ID is passed to the summarizer with [Summarizer::make('{$summarizerId}')].",
+                "Failed asserting that a table column with name [{$columnName}] has a summarizer with ID [{$summarizerId}] on the [{$livewireClass}] component. Please ensure that the ID is passed to the summarizer with [Summarizer::make('{$summarizerId}')].",
             );
 
             return $this;

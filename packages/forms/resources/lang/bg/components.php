@@ -223,7 +223,7 @@ return [
 
     'markdown_editor' => [
 
-        'toolbar_buttons' => [
+        'tools' => [
             'attach_files' => 'Прикачи файлове',
             'blockquote' => 'Цитат',
             'bold' => 'Удебелен текст',
@@ -308,7 +308,7 @@ return [
 
         ],
 
-        'toolbar_buttons' => [
+        'tools' => [
             'attach_files' => 'Прикачи файлове',
             'blockquote' => 'Цитат',
             'bold' => 'Удебелен текст',
@@ -395,22 +395,6 @@ return [
 
     'tags_input' => [
         'placeholder' => 'Нов таг',
-    ],
-
-    'wizard' => [
-
-        'actions' => [
-
-            'previous_step' => [
-                'label' => 'Назад',
-            ],
-
-            'next_step' => [
-                'label' => 'Напред',
-            ],
-
-        ],
-
     ],
 
 ];

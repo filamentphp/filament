@@ -4,10 +4,11 @@ namespace App\Livewire\Panels\Navigation;
 
 use Filament\Navigation\NavigationItem;
 use Filament\Pages\Page;
+use Filament\Support\Icons\Heroicon;
 
 class BadgeTooltip extends Page
 {
-    protected static string $view = 'livewire.panels.navigation.empty';
+    protected string $view = 'livewire.panels.navigation.empty';
 
     public function mount()
     {
@@ -17,7 +18,7 @@ class BadgeTooltip extends Page
                 NavigationItem::make()
                     ->label('Users')
                     ->url(fn (): string => '#')
-                    ->icon('heroicon-o-user-group')
+                    ->icon(Heroicon::OutlinedUserGroup)
                     ->badge(12)
                     ->badgeTooltip('The number of users'),
             ]);

@@ -3,6 +3,7 @@
 namespace Filament\Tables\Table\Concerns;
 
 use Closure;
+use Filament\Tables\Enums\PaginationMode;
 use Illuminate\Support\Arr;
 
 trait CanPaginateRecords
@@ -19,6 +20,34 @@ trait CanPaginateRecords
     protected array | Closure | null $paginationPageOptions = null;
 
     protected bool | Closure $hasExtremePaginationLinks = false;
+
+    protected PaginationMode | Closure | null $paginationMode = null;
+
+    protected bool | Closure $shouldScrollToTopOnPageChange = false;
+
+    public function scrollToTopOnPageChange(bool | Closure $condition = true): static
+    {
+        $this->shouldScrollToTopOnPageChange = $condition;
+
+        return $this;
+    }
+
+    public function shouldScrollToTopOnPageChange(): bool
+    {
+        return (bool) $this->evaluate($this->shouldScrollToTopOnPageChange);
+    }
+
+    public function paginationMode(PaginationMode | Closure | null $mode): static
+    {
+        $this->paginationMode = $mode;
+
+        return $this;
+    }
+
+    public function getPaginationMode(): ?PaginationMode
+    {
+        return $this->evaluate($this->paginationMode) ?? PaginationMode::Default;
+    }
 
     public function defaultPaginationPageOption(int | string | Closure | null $option): static
     {
@@ -88,7 +117,7 @@ trait CanPaginateRecords
      */
     public function getPaginationPageOptions(): array
     {
-        return $this->evaluate($this->paginationPageOptions) ?? [5, 10, 25, 50, 'all'];
+        return $this->evaluate($this->paginationPageOptions) ?? [5, 10, 25, 50];
     }
 
     public function isPaginated(): bool

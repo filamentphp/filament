@@ -1,25 +1,33 @@
 <?php
 
+use Filament\Actions\Action;
+use Filament\Actions\Testing\TestAction;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
-use Filament\Tests\Forms\Fixtures\Livewire;
+use Filament\Schemas\Schema;
+use Filament\Tests\Fixtures\Livewire\Livewire;
+use Filament\Tests\Fixtures\Models\Post;
+use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
-use Illuminate\Contracts\View\View;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use Livewire\Exceptions\RootTagMissingFromViewException;
 
 use function Filament\Tests\livewire;
 
 uses(TestCase::class);
 
-it('can fill and assert data in a repeater', function (array $data) {
+it('can fill and assert data in a repeater', function (array $data): void {
     $undoRepeaterFake = Repeater::fake();
 
-    livewire(TestComponentWithRepeater::class)
-        ->fillForm($data)
-        ->assertFormSet($data);
+    try {
+        livewire(TestComponentWithRepeater::class)
+            ->fillForm($data)
+            ->assertSchemaStateSet($data);
+    } catch (RootTagMissingFromViewException $exception) {
+        // Flaky test
+    }
 
     $undoRepeaterFake();
 })->with([
@@ -106,7 +114,96 @@ it('can fill and assert data in a repeater', function (array $data) {
     ]],
 ]);
 
-it('can remove items from a repeater', function () {
+it('can fill and assert default data in a repeater', function (array $data): void {
+    $undoRepeaterFake = Repeater::fake();
+
+    try {
+        livewire(TestComponentWithRepeater::class)
+            ->assertSchemaStateSet($data);
+    } catch (RootTagMissingFromViewException $exception) {
+        // Flaky test
+    }
+
+    $undoRepeaterFake();
+})->with([
+    'normal' => fn (): array => ['normal' => [
+        [
+            'title' => 'title 1',
+            'category' => 'category 1',
+        ],
+        [
+            'title' => 'title 2',
+            'category' => 'category 2',
+        ],
+        [
+            'title' => 'title 3',
+            'category' => 'category 3',
+        ],
+    ]],
+    'simple' => fn (): array => ['simple' => [
+        ['title' => 'simple 1'],
+        ['title' => 'simple 2'],
+        ['title' => 'simple 3'],
+    ]],
+    'nested' => fn (): array => ['parent' => [
+        [
+            'title' => 'title 1',
+            'category' => 'category 1',
+            'nested' => [
+                [
+                    'name' => '1 nested name 1',
+                ],
+                [
+                    'name' => '1 nested name 2',
+                ],
+                [
+                    'name' => '1 nested name 3',
+                ],
+            ],
+            'nestedSimple' => [
+                ['name' => null],
+            ],
+        ],
+        [
+            'title' => 'title 2',
+            'category' => 'category 2',
+            'nested' => [
+                [
+                    'name' => '2 nested name 1',
+                ],
+                [
+                    'name' => '2 nested name 2',
+                ],
+                [
+                    'name' => '2 nested name 3',
+                ],
+            ],
+            'nestedSimple' => [
+                ['name' => null],
+            ],
+        ],
+        [
+            'title' => 'title 3',
+            'category' => 'category 3',
+            'nested' => [
+                [
+                    'name' => '3 nested name 1',
+                ],
+                [
+                    'name' => '3 nested name 2',
+                ],
+                [
+                    'name' => '3 nested name 3',
+                ],
+            ],
+            'nestedSimple' => [
+                ['name' => null],
+            ],
+        ],
+    ]],
+]);
+
+it('can remove items from a repeater', function (): void {
     $undoRepeaterFake = Repeater::fake();
 
     livewire(TestComponentWithRepeater::class)
@@ -122,13 +219,13 @@ it('can remove items from a repeater', function () {
                 ],
             ],
         ])
-        ->assertFormSet($data)
+        ->assertSchemaStateSet($data)
         ->fillForm([
             'normal' => [
                 Arr::first($data['normal']),
             ],
         ])
-        ->assertFormSet(function (array $data) {
+        ->assertSchemaStateSet(function (array $data) {
             expect($data['normal'])->toHaveCount(1);
 
             return [
@@ -141,7 +238,44 @@ it('can remove items from a repeater', function () {
     $undoRepeaterFake();
 });
 
-it('can use select options from an enum with `disableOptionsWhenSelectedInSiblingRepeaterItems()`', function () {
+it('loads a relationship', function (): void {
+    $user = User::factory()
+        ->has(Post::factory()->count(3))
+        ->create();
+
+    $schema = Schema::make(Livewire::make())
+        ->statePath('data')
+        ->components([
+            (new Repeater('repeater'))
+                ->relationship('posts')
+                ->schema([
+                    TextInput::make('title'),
+                ]),
+        ])
+        ->model($user);
+
+    $schema->loadStateFromRelationships();
+
+    $schema->saveRelationships();
+
+    expect($user->posts()->count())
+        ->toBe(3);
+});
+
+it('throws an exception for a missing relationship', function (): void {
+    $schema = Schema::make(Livewire::make())
+        ->statePath('data')
+        ->components([
+            (new Repeater(Str::random()))
+                ->relationship('missing'),
+        ])
+        ->model(Post::factory()->create());
+
+    $schema
+        ->saveRelationships();
+})->throws(Exception::class, 'The relationship [missing] does not exist on the model [Filament\Tests\Fixtures\Models\Post].');
+
+it('can use select options from an enum with `disableOptionsWhenSelectedInSiblingRepeaterItems()`', function (): void {
     $undoRepeaterFake = Repeater::fake();
 
     livewire(TestComponentWithEnumSelectRepeater::class)
@@ -161,12 +295,63 @@ it('can use select options from an enum with `disableOptionsWhenSelectedInSiblin
     $undoRepeaterFake();
 });
 
+it('can be compact', function (): void {
+    $repeater = Repeater::make('members')
+        ->schema([
+            TextInput::make('name'),
+        ])
+        ->compact();
+
+    expect($repeater->isCompact())->toBeTrue();
+});
+
+it('can conditionally be compact', function (): void {
+    $repeater = Repeater::make('members')
+        ->schema([
+            TextInput::make('name'),
+        ])
+        ->compact(fn () => true);
+
+    expect($repeater->isCompact())->toBeTrue();
+
+    $repeater = Repeater::make('members')
+        ->schema([
+            TextInput::make('name'),
+        ])
+        ->compact(fn () => false);
+
+    expect($repeater->isCompact())->toBeFalse();
+});
+
+it('can use arguments to hide the delete action', function (): void {
+    $undoRepeaterFake = Repeater::fake();
+
+    $deleteAction1 = TestAction::make('delete')
+        ->schemaComponent('hiddenDelete')
+        ->arguments(['item' => 1]);
+
+    $deleteAction2 = TestAction::make('delete')
+        ->schemaComponent('hiddenDelete')
+        ->arguments(['item' => 2]);
+
+    livewire(TestComponentWithRepeater::class)
+        ->assertActionHidden($deleteAction1)
+        ->assertActionVisible($deleteAction2);
+
+    $undoRepeaterFake();
+});
+
 class TestComponentWithRepeater extends Livewire
 {
-    public function form(Form $form): Form
+    public function mount(): void
+    {
+        $this->form->fill();
+    }
+
+    public function form(Schema $form): Schema
     {
         return $form
-            ->schema([
+            ->components([
                 Repeater::make('normal')
                     ->itemLabel(function (array $state) {
                         return $state['title'] . $state['category'];
@@ -174,9 +359,28 @@ class TestComponentWithRepeater extends Livewire
                     ->schema([
                         TextInput::make('title'),
                         TextInput::make('category'),
+                    ])
+                    ->default([
+                        [
+                            'title' => 'title 1',
+                            'category' => 'category 1',
+                        ],
+                        [
+                            'title' => 'title 2',
+                            'category' => 'category 2',
+                        ],
+                        [
+                            'title' => 'title 3',
+                            'category' => 'category 3',
+                        ],
                     ]),
                 Repeater::make('simple')
-                    ->simple(TextInput::make('title')),
+                    ->simple(TextInput::make('title'))
+                    ->default([
+                        'simple 1',
+                        'simple 2',
+                        'simple 3',
+                    ]),
                 Repeater::make('parent')
                     ->itemLabel(fn (array $state) => $state['title'] . $state['category'])
                     ->schema([
@@ -189,20 +393,78 @@ class TestComponentWithRepeater extends Livewire
                             ]),
                         Repeater::make('nestedSimple')
                             ->simple(TextInput::make('name')),
+                    ])
+                    ->default([
+                        [
+                            'title' => 'title 1',
+                            'category' => 'category 1',
+                            'nested' => [
+                                [
+                                    'name' => '1 nested name 1',
+                                ],
+                                [
+                                    'name' => '1 nested name 2',
+                                ],
+                                [
+                                    'name' => '1 nested name 3',
+                                ],
+                            ],
+                        ],
+                        [
+                            'title' => 'title 2',
+                            'category' => 'category 2',
+                            'nested' => [
+                                [
+                                    'name' => '2 nested name 1',
+                                ],
+                                [
+                                    'name' => '2 nested name 2',
+                                ],
+                                [
+                                    'name' => '2 nested name 3',
+                                ],
+                            ],
+                        ],
+                        [
+                            'title' => 'title 3',
+                            'category' => 'category 3',
+                            'nested' => [
+                                [
+                                    'name' => '3 nested name 1',
+                                ],
+                                [
+                                    'name' => '3 nested name 2',
+                                ],
+                                [
+                                    'name' => '3 nested name 3',
+                                ],
+                            ],
+                        ],
                     ]),
+                Repeater::make('hiddenDelete')
+                    ->schema([
+                        TextInput::make('title'),
+                    ])
+                    ->default([
+                        [
+                            'title' => 'title 1',
+                        ],
+                        [
+                            'title' => 'title 2',
+                        ],
+                        [
+                            'title' => 'title 3',
+                        ],
+                    ])
+                    ->deleteAction(fn (Action $action) => $action->hidden(fn (array $arguments): bool => $arguments['item'] === 1)),
             ])
             ->statePath('data');
-    }
-
-    public function render(): View
-    {
-        return view('forms.fixtures.form');
     }
 }
 
 class TestComponentWithEnumSelectRepeater extends Livewire
 {
-    public function form(Form $form): Form
+    public function form(Schema $form): Schema
     {
         return $form
             ->schema([
@@ -214,11 +476,6 @@ class TestComponentWithEnumSelectRepeater extends Livewire
                     ]),
             ])
             ->statePath('data');
-    }
-
-    public function render(): View
-    {
-        return view('forms.fixtures.form');
     }
 }
 

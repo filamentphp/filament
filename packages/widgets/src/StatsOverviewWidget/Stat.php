@@ -2,18 +2,25 @@
 
 namespace Filament\Widgets\StatsOverviewWidget;
 
+use BackedEnum;
 use Closure;
-use Filament\Support\Concerns\Macroable;
+use Filament\Schemas\Components\Component;
+use Filament\Schemas\Components\Concerns\CanOpenUrl;
+use Filament\Schemas\Components\Concerns\HasDescription;
+use Filament\Schemas\Components\Concerns\HasLabel;
+use Filament\Support\Concerns\HasColor;
 use Filament\Support\Enums\IconPosition;
+use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Htmlable;
-use Illuminate\Contracts\View\View;
-use Illuminate\Support\Str;
-use Illuminate\View\Component;
-use Illuminate\View\ComponentAttributeBag;
 
-class Stat extends Component implements Htmlable
+class Stat extends Component
 {
-    use Macroable;
+    use CanOpenUrl;
+    use HasColor;
+    use HasDescription;
+    use HasLabel;
+
+    protected string $view = 'filament-widgets::stats-overview-widget.stat';
 
     /**
      * @var array<float> | null
@@ -21,40 +28,20 @@ class Stat extends Component implements Htmlable
     protected ?array $chart = null;
 
     /**
-     * @var string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null
+     * @var string | array<string> | null
      */
     protected string | array | null $chartColor = null;
 
-    /**
-     * @var string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null
-     */
-    protected string | array | null $color = null;
+    protected string | BackedEnum | null $icon = null;
 
-    protected ?string $icon = null;
-
-    protected string | Htmlable | null $description = null;
-
-    protected ?string $descriptionIcon = null;
+    protected string | BackedEnum | null $descriptionIcon = null;
 
     protected IconPosition | string | null $descriptionIconPosition = null;
 
     /**
-     * @var string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null
+     * @var string | array<string> | null
      */
     protected string | array | null $descriptionColor = null;
-
-    /**
-     * @var array<string, scalar>
-     */
-    protected array $extraAttributes = [];
-
-    protected bool $shouldOpenUrlInNewTab = false;
-
-    protected ?string $url = null;
-
-    protected ?string $id = null;
-
-    protected string | Htmlable $label;
 
     /**
      * @var scalar | Htmlable | Closure
@@ -79,7 +66,7 @@ class Stat extends Component implements Htmlable
     }
 
     /**
-     * @param  string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null  $color
+     * @param  string | array<string> | null  $color
      */
     public function chartColor(string | array | null $color): static
     {
@@ -88,32 +75,15 @@ class Stat extends Component implements Htmlable
         return $this;
     }
 
-    /**
-     * @param  string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null  $color
-     */
-    public function color(string | array | null $color): static
-    {
-        $this->color = $color;
-
-        return $this;
-    }
-
-    public function icon(?string $icon): static
+    public function icon(string | BackedEnum | null $icon): static
     {
         $this->icon = $icon;
 
         return $this;
     }
 
-    public function description(string | Htmlable | null $description): static
-    {
-        $this->description = $description;
-
-        return $this;
-    }
-
     /**
-     * @param  string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null  $color
+     * @param  string | array<string> | null  $color
      */
     public function descriptionColor(string | array | null $color): static
     {
@@ -122,7 +92,7 @@ class Stat extends Component implements Htmlable
         return $this;
     }
 
-    public function descriptionIcon(?string $icon, IconPosition | string | null $position = null): static
+    public function descriptionIcon(string | BackedEnum | null $icon, IconPosition | string | null $position = null): static
     {
         $this->descriptionIcon = $icon;
         $this->descriptionIconPosition = $position;
@@ -131,50 +101,19 @@ class Stat extends Component implements Htmlable
     }
 
     /**
-     * @param  array<string, scalar>  $attributes
+     * @param  array<float> | Arrayable | null  $chart
      */
-    public function extraAttributes(array $attributes): static
+    public function chart(array | Arrayable | null $chart): static
     {
-        $this->extraAttributes = $attributes;
+        if (is_null($chart)) {
+            return $this;
+        }
 
-        return $this;
-    }
+        if ($chart instanceof Arrayable) {
+            $chart = $chart->toArray();
+        }
 
-    public function openUrlInNewTab(bool $condition = true): static
-    {
-        $this->shouldOpenUrlInNewTab = $condition;
-
-        return $this;
-    }
-
-    public function url(?string $url, bool $shouldOpenInNewTab = false): static
-    {
-        $this->openUrlInNewTab($shouldOpenInNewTab);
-        $this->url = $url;
-
-        return $this;
-    }
-
-    /**
-     * @param  array<float> | null  $chart
-     */
-    public function chart(?array $chart): static
-    {
         $this->chart = $chart;
-
-        return $this;
-    }
-
-    public function label(string | Htmlable $label): static
-    {
-        $this->label = $label;
-
-        return $this;
-    }
-
-    public function id(string $id): static
-    {
-        $this->id = $id;
 
         return $this;
     }
@@ -198,40 +137,27 @@ class Stat extends Component implements Htmlable
     }
 
     /**
-     * @return string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null
+     * @return string | array<string> | null
      */
     public function getChartColor(): string | array | null
     {
-        return $this->chartColor ?? $this->color;
+        return $this->chartColor ?? $this->getColor();
     }
 
-    /**
-     * @return string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null
-     */
-    public function getColor(): string | array | null
-    {
-        return $this->color;
-    }
-
-    public function getIcon(): ?string
+    public function getIcon(): string | BackedEnum | null
     {
         return $this->icon;
     }
 
-    public function getDescription(): string | Htmlable | null
-    {
-        return $this->description;
-    }
-
     /**
-     * @return string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null
+     * @return string | array<string> | null
      */
     public function getDescriptionColor(): string | array | null
     {
-        return $this->descriptionColor ?? $this->color;
+        return $this->descriptionColor ?? $this->getColor();
     }
 
-    public function getDescriptionIcon(): ?string
+    public function getDescriptionIcon(): string | BackedEnum | null
     {
         return $this->descriptionIcon;
     }
@@ -242,57 +168,14 @@ class Stat extends Component implements Htmlable
     }
 
     /**
-     * @return array<string, scalar>
-     */
-    public function getExtraAttributes(): array
-    {
-        return $this->extraAttributes;
-    }
-
-    public function getExtraAttributeBag(): ComponentAttributeBag
-    {
-        return new ComponentAttributeBag($this->getExtraAttributes());
-    }
-
-    public function getUrl(): ?string
-    {
-        return $this->url;
-    }
-
-    public function shouldOpenUrlInNewTab(): bool
-    {
-        return $this->shouldOpenUrlInNewTab;
-    }
-
-    public function getLabel(): string | Htmlable
-    {
-        return $this->label;
-    }
-
-    public function getId(): string
-    {
-        return $this->id ?? Str::slug($this->getLabel());
-    }
-
-    /**
      * @return scalar | Htmlable | Closure
      */
-    public function getValue()
+    public function getValue(): mixed
     {
         return value($this->value);
     }
 
-    public function toHtml(): string
-    {
-        return $this->render()->render();
-    }
-
-    public function render(): View
-    {
-        return view('filament-widgets::stats-overview-widget.stat', $this->data());
-    }
-
-    public function generateDataChecksum(): string
+    public function generateChartDataChecksum(): string
     {
         return md5(json_encode($this->getChart()) . now());
     }

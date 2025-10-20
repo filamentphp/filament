@@ -1,0 +1,17 @@
+<?php
+
+namespace App\Filament\Schemas\Blog;
+
+use Filament\Schemas\Schema;
+use Filament\Tests\Fixtures\Models\Blog\Category;
+
+class CategoryForm
+{
+    public static function configure(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+                //
+            ]);
+    }
+}

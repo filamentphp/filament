@@ -2,13 +2,24 @@
 
 namespace Filament\Forms\Components;
 
+use BackedEnum;
 use Closure;
-use Exception;
-use Filament\Forms\ComponentContainer;
-use Filament\Forms\Components\Actions\Action;
-use Filament\Forms\Form;
+use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
+use Filament\Forms\View\FormsIconAlias;
+use Filament\Schemas\Components\Component;
+use Filament\Schemas\Components\Contracts\HasAffixActions;
+use Filament\Schemas\Components\StateCasts\BooleanStateCast;
+use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
+use Filament\Schemas\Components\StateCasts\EnumArrayStateCast;
+use Filament\Schemas\Components\StateCasts\EnumStateCast;
+use Filament\Schemas\Components\StateCasts\OptionsArrayStateCast;
+use Filament\Schemas\Components\StateCasts\OptionStateCast;
+use Filament\Schemas\Schema;
+use Filament\Support\Components\Attributes\ExposedLivewireMethod;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Filament\Support\Facades\FilamentIcon;
+use Filament\Support\Icons\Heroicon;
 use Filament\Support\Services\RelationshipJoiner;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Htmlable;
@@ -19,22 +30,20 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
 use Illuminate\Database\Eloquent\Relations\HasOneOrManyThrough;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
-use Illuminate\Validation\Rule;
-use Illuminate\Validation\Rules\Exists;
-use Livewire\Component as LivewireComponent;
+use Livewire\Attributes\Renderless;
+use LogicException;
 use Znck\Eloquent\Relations\BelongsToThrough;
 
 use function Filament\Support\generate_search_column_expression;
 use function Filament\Support\generate_search_term_expression;
 
-class Select extends Field implements Contracts\CanDisableOptions, Contracts\HasAffixActions, Contracts\HasNestedRecursiveValidationRules
+class Select extends Field implements Contracts\CanDisableOptions, Contracts\HasNestedRecursiveValidationRules, HasAffixActions
 {
     use Concerns\CanAllowHtml;
     use Concerns\CanBeNative;
@@ -60,7 +69,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
     protected string $view = 'filament-forms::components.select';
 
     /**
-     * @var array<Component> | Closure | null
+     * @var array<Component | Action | ActionGroup> | Closure | null
      */
     protected array | Closure | null $createOptionActionForm = null;
 
@@ -75,7 +84,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
     protected ?Closure $modifyManageOptionActionsUsing = null;
 
     /**
-     * @var array<Component> | Closure | null
+     * @var array<Component | Action | ActionGroup> | Closure | null
      */
     protected array | Closure | null $editOptionActionForm = null;
 
@@ -118,77 +127,17 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
 
     protected bool | Closure | null $isSearchForcedCaseInsensitive = null;
 
+    protected bool | Closure $canOptionLabelsWrap = true;
+
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->default(static fn (Select $component): ?array => $component->isMultiple() ? [] : null);
-
-        $this->afterStateHydrated(static function (Select $component, $state): void {
-            if (! $component->isMultiple()) {
-                return;
-            }
-
-            if (is_array($state)) {
-                return;
-            }
-
-            $component->state([]);
-        });
-
-        $this->getOptionLabelUsing(static function (Select $component, $value): ?string {
-            $options = $component->getOptions();
-
-            foreach ($options as $groupedOptions) {
-                if (! is_array($groupedOptions)) {
-                    continue;
-                }
-
-                if (! array_key_exists($value, $groupedOptions)) {
-                    continue;
-                }
-
-                return $groupedOptions[$value];
-            }
-
-            if (! array_key_exists($value, $options)) {
-                return $value;
-            }
-
-            return $options[$value];
-        });
-
-        $this->getOptionLabelsUsing(static function (Select $component, array $values): array {
-            $options = $component->getOptions();
-
-            $labels = [];
-
-            foreach ($values as $value) {
-                foreach ($options as $groupedOptions) {
-                    if (! is_array($groupedOptions)) {
-                        continue;
-                    }
-
-                    if (! array_key_exists($value, $groupedOptions)) {
-                        continue;
-                    }
-
-                    $labels[$value] = $groupedOptions[$value];
-
-                    continue 2;
-                }
-
-                $labels[$value] = $options[$value] ?? $value;
-            }
-
-            return $labels;
-        });
-
         $this->transformOptionsForJsUsing(static function (Select $component, array $options): array {
             return collect($options)
                 ->map(fn ($label, $value): array => is_array($label)
-                    ? ['label' => $value, 'choices' => $component->transformOptionsForJs($label)]
-                    : ['label' => $label, 'value' => strval($value), 'disabled' => $component->isOptionDisabled($value, $label)])
+                    ? ['label' => $value, 'options' => $component->transformOptionsForJs($label)]
+                    : ['label' => $label, 'value' => strval($value), 'isDisabled' => $component->isOptionDisabled($value, $label)])
                 ->values()
                 ->all();
         });
@@ -210,6 +159,8 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
 
         $this->placeholder($placeholder ?? '-');
 
+        $this->stateCast(app(BooleanStateCast::class, ['isStoredAsInt' => true]));
+
         return $this;
     }
 
@@ -228,7 +179,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
     }
 
     /**
-     * @param  array<Component> | Closure | null  $schema
+     * @param  array<Component | Action | ActionGroup> | Closure | null  $schema
      */
     public function manageOptionForm(array | Closure | null $schema): static
     {
@@ -239,7 +190,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
     }
 
     /**
-     * @param  array<Component> | Closure | null  $schema
+     * @param  array<Component | Action | ActionGroup> | Closure | null  $schema
      */
     public function createOptionForm(array | Closure | null $schema): static
     {
@@ -277,19 +228,20 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
 
         $action = Action::make($this->getCreateOptionActionName())
             ->label(__('filament-forms::components.select.actions.create_option.label'))
-            ->form(static function (Select $component, Form $form): array | Form | null {
-                return $component->getCreateOptionActionForm($form->model(
+            ->schema(static function (Select $component, Schema $schema): array | Schema | null {
+                return $component->getCreateOptionActionForm($schema->model(
                     $component->getRelationship() ? $component->getRelationship()->getModel()::class : null,
                 ));
             })
-            ->action(static function (Action $action, array $arguments, Select $component, array $data, ComponentContainer $form) {
+            ->action(static function (Action $action, array $arguments, Select $component, array $data, Schema $schema): void {
                 if (! $component->getCreateOptionUsing()) {
-                    throw new Exception("Select field [{$component->getStatePath()}] must have a [createOptionUsing()] closure set.");
+                    throw new LogicException("Select field [{$component->getStatePath()}] must have a [createOptionUsing()] closure set.");
                 }
 
                 $createdOptionKey = $component->evaluate($component->getCreateOptionUsing(), [
                     'data' => $data,
-                    'form' => $form,
+                    'form' => $schema,
+                    'schema' => $schema,
                 ]);
 
                 $state = $component->isMultiple()
@@ -308,12 +260,12 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
 
                 $action->callAfter();
 
-                $form->fill();
+                $schema->fill();
 
                 $action->halt();
             })
             ->color('gray')
-            ->icon(FilamentIcon::resolve('forms::components.select.actions.create-option') ?? 'heroicon-m-plus')
+            ->icon(FilamentIcon::resolve(FormsIconAlias::COMPONENTS_SELECT_ACTIONS_CREATE_OPTION) ?? Heroicon::Plus)
             ->iconButton()
             ->modalHeading($this->getCreateOptionModalHeading() ?? __('filament-forms::components.select.actions.create_option.modal.heading'))
             ->modalSubmitActionLabel(__('filament-forms::components.select.actions.create_option.modal.actions.create.label'))
@@ -359,11 +311,11 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
     }
 
     /**
-     * @return array<Component> | Form | null
+     * @return array<Component | Action | ActionGroup> | Schema | null
      */
-    public function getCreateOptionActionForm(Form $form): array | Form | null
+    public function getCreateOptionActionForm(Schema $schema): array | Schema | null
     {
-        return $this->evaluate($this->createOptionActionForm, ['form' => $form]);
+        return $this->evaluate($this->createOptionActionForm, ['form' => $schema, 'schema' => $schema]);
     }
 
     public function hasCreateOptionActionFormSchema(): bool
@@ -372,11 +324,11 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
     }
 
     /**
-     * @return array<Component> | Form | null
+     * @return array<Component | Action | ActionGroup> | Schema | null
      */
-    public function getEditOptionActionForm(Form $form): array | Form | null
+    public function getEditOptionActionForm(Schema $schema): array | Schema | null
     {
-        return $this->evaluate($this->editOptionActionForm, ['form' => $form]);
+        return $this->evaluate($this->editOptionActionForm, ['form' => $schema, 'schema' => $schema]);
     }
 
     public function hasEditOptionActionFormSchema(): bool
@@ -385,7 +337,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
     }
 
     /**
-     * @param  array<Component> | Closure | null  $schema
+     * @param  array<Component | Action | ActionGroup> | Closure | null  $schema
      */
     public function editOptionForm(array | Closure | null $schema): static
     {
@@ -428,26 +380,27 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
 
         $action = Action::make($this->getEditOptionActionName())
             ->label(__('filament-forms::components.select.actions.edit_option.label'))
-            ->form(static function (Select $component, Form $form): array | Form | null {
+            ->schema(static function (Select $component, Schema $schema): array | Schema | null {
                 return $component->getEditOptionActionForm(
-                    $form->model($component->getSelectedRecord()),
+                    $schema->model($component->getSelectedRecord()),
                 );
             })
-            ->fillForm(static fn (Select $component) => $component->getEditOptionActionFormData())
-            ->action(static function (Action $action, array $arguments, Select $component, array $data, ComponentContainer $form) {
+            ->fillForm(static fn (Select $component): ?array => $component->getEditOptionActionFormData())
+            ->action(static function (Action $action, array $arguments, Select $component, array $data, Schema $schema): void {
                 if (! $component->getUpdateOptionUsing()) {
-                    throw new Exception("Select field [{$component->getStatePath()}] must have a [updateOptionUsing()] closure set.");
+                    throw new LogicException("Select field [{$component->getStatePath()}] must have a [updateOptionUsing()] closure set.");
                 }
 
                 $component->evaluate($component->getUpdateOptionUsing(), [
                     'data' => $data,
-                    'form' => $form,
+                    'form' => $schema,
+                    'schema' => $schema,
                 ]);
 
                 $component->refreshSelectedOptionLabel();
             })
             ->color('gray')
-            ->icon(FilamentIcon::resolve('forms::components.select.actions.edit-option') ?? 'heroicon-m-pencil-square')
+            ->icon(FilamentIcon::resolve(FormsIconAlias::COMPONENTS_SELECT_ACTIONS_EDIT_OPTION) ?? Heroicon::PencilSquare)
             ->iconButton()
             ->modalHeading($this->getEditOptionModalHeading() ?? __('filament-forms::components.select.actions.edit_option.modal.heading'))
             ->modalSubmitActionLabel(__('filament-forms::components.select.actions.edit_option.modal.actions.save.label'))
@@ -577,24 +530,123 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         return $this->evaluate($this->position);
     }
 
-    public function getOptionLabel(): ?string
+    #[ExposedLivewireMethod]
+    #[Renderless]
+    public function getOptionLabel(bool $withDefault = true): ?string
     {
-        return $this->evaluate($this->getOptionLabelUsing, [
-            'value' => fn (): mixed => $this->getState(),
+        if (! $this->getOptionLabelUsing) {
+            $state = $this->getState();
+            $options = $this->getOptions();
+
+            if ($state instanceof BackedEnum) {
+                $state = $state->value;
+            }
+
+            foreach ($options as $groupedOptions) {
+                if (! is_array($groupedOptions)) {
+                    continue;
+                }
+
+                if (blank($groupedOptions[$state] ?? null)) {
+                    continue;
+                }
+
+                return $groupedOptions[$state];
+            }
+
+            if (filled($options[$state] ?? null) && (! is_array($options[$state]))) {
+                return $options[$state];
+            }
+
+            if ($withDefault) {
+                return $state;
+            }
+
+            return null;
+        }
+
+        $state = null;
+
+        $label = $this->evaluate($this->getOptionLabelUsing, [
+            'value' => function () use (&$state): mixed {
+                return $state = $this->getState();
+            },
         ]);
+
+        if ($withDefault) {
+            $label ??= ($state ?? $this->getState());
+        }
+
+        return $label;
     }
 
     /**
      * @return array<string>
      */
-    public function getOptionLabels(): array
+    public function getOptionLabels(bool $withDefaults = true): array
     {
+        if (! $this->getOptionLabelsUsing) {
+            $state = $this->getState();
+            $options = $this->getOptions();
+
+            $labels = [];
+
+            foreach ($state as $value) {
+                if ($value instanceof BackedEnum) {
+                    $value = $value->value;
+                }
+
+                foreach ($options as $groupedOptions) {
+                    if (! is_array($groupedOptions)) {
+                        continue;
+                    }
+
+                    if (blank($groupedOptions[$value] ?? null)) {
+                        continue;
+                    }
+
+                    $labels[$value] = $groupedOptions[$value];
+
+                    continue 2;
+                }
+
+                if (
+                    filled($options[$value] ?? null)
+                    && (! is_array($options[$value]))
+                ) {
+                    $labels[$value] = $options[$value];
+
+                    continue;
+                }
+
+                if ($withDefaults) {
+                    $labels[$value] = $value;
+                }
+            }
+
+            return $labels;
+        }
+
         $labels = $this->evaluate($this->getOptionLabelsUsing, [
             'values' => fn (): array => $this->getState(),
         ]);
 
         if ($labels instanceof Arrayable) {
             $labels = $labels->toArray();
+        }
+
+        foreach ($labels as $value => $label) {
+            if (filled($label)) {
+                continue;
+            }
+
+            if ($withDefaults) {
+                $labels[$value] = $value;
+
+                continue;
+            }
+
+            unset($labels[$value]);
         }
 
         return $labels;
@@ -639,6 +691,8 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
     /**
      * @return array<array{'label': string, 'value': string}>
      */
+    #[ExposedLivewireMethod]
+    #[Renderless]
     public function getSearchResultsForJs(string $search): array
     {
         return $this->transformOptionsForJs($this->getSearchResults($search));
@@ -647,6 +701,8 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
     /**
      * @return array<array{'label': string, 'value': string}>
      */
+    #[ExposedLivewireMethod]
+    #[Renderless]
     public function getOptionsForJs(): array
     {
         return $this->transformOptionsForJs($this->getOptions());
@@ -655,6 +711,8 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
     /**
      * @return array<array{'label': string, 'value': string}>
      */
+    #[ExposedLivewireMethod]
+    #[Renderless]
     public function getOptionLabelsForJs(): array
     {
         return $this->transformOptionsForJs($this->getOptionLabels());
@@ -688,7 +746,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
 
     public function isSearchable(): bool
     {
-        return $this->evaluate($this->isSearchable) || $this->isMultiple();
+        return $this->evaluate($this->isSearchable) ?? $this->isMultiple();
     }
 
     public function relationship(string | Closure | null $name = null, string | Closure | null $titleAttribute = null, ?Closure $modifyQueryUsing = null, bool $ignoreRecord = false): static
@@ -739,7 +797,13 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
             $relationshipTitleAttribute = $component->getRelationshipTitleAttribute();
 
             if (empty($relationshipQuery->getQuery()->orders)) {
-                $relationshipQuery->orderBy($relationshipQuery->qualifyColumn($relationshipTitleAttribute));
+                $relationshipOrderByAttribute = $relationshipTitleAttribute;
+
+                if (str_contains($relationshipOrderByAttribute, ' as ')) {
+                    $relationshipOrderByAttribute = (string) str($relationshipOrderByAttribute)->before(' as ');
+                }
+
+                $relationshipQuery->orderBy($relationshipQuery->qualifyColumn($relationshipOrderByAttribute));
             }
 
             if (str_contains($relationshipTitleAttribute, '->')) {
@@ -797,7 +861,13 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
             $relationshipTitleAttribute = $component->getRelationshipTitleAttribute();
 
             if (empty($relationshipQuery->getQuery()->orders)) {
-                $relationshipQuery->orderBy($relationshipQuery->qualifyColumn($relationshipTitleAttribute));
+                $relationshipOrderByAttribute = $relationshipTitleAttribute;
+
+                if (str_contains($relationshipOrderByAttribute, ' as ')) {
+                    $relationshipOrderByAttribute = (string) str($relationshipOrderByAttribute)->before(' as ');
+                }
+
+                $relationshipQuery->orderBy($relationshipQuery->qualifyColumn($relationshipOrderByAttribute));
             }
 
             if (str_contains($relationshipTitleAttribute, '->')) {
@@ -822,7 +892,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
 
             if (
                 ($relationship instanceof BelongsToMany) ||
-                ($relationship instanceof (class_exists(HasOneOrManyThrough::class) ? HasOneOrManyThrough::class : HasManyThrough::class))
+                ($relationship instanceof HasOneOrManyThrough)
             ) {
                 if ($modifyQueryUsing) {
                     $component->evaluate($modifyQueryUsing, [
@@ -907,7 +977,13 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
                 return $component->getOptionLabelFromRecord($record);
             }
 
-            return $record->getAttributeValue($component->getRelationshipTitleAttribute());
+            $relationshipTitleAttribute = $component->getRelationshipTitleAttribute();
+
+            if (str_contains($relationshipTitleAttribute, '->')) {
+                $relationshipTitleAttribute = str_replace('->', '.', $relationshipTitleAttribute);
+            }
+
+            return data_get($record, $relationshipTitleAttribute);
         });
 
         $this->getSelectedRecordUsing(static function (Select $component, $state) use ($modifyQueryUsing): ?Model {
@@ -967,35 +1043,48 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
                 ->toArray();
         });
 
-        $this->rule(
-            static function (Select $component): Exists {
-                $relationship = $component->getRelationship();
+        $this->saveRelationshipsUsing(static function (Select $component, Model $record, $state) use ($modifyQueryUsing): void {
+            $relationship = $component->getRelationship();
 
-                return Rule::exists(
-                    $relationship->getModel()::class,
-                    $component->getQualifiedRelatedKeyNameForRelationship($relationship),
-                );
-            },
-            static function (Select $component): bool {
-                $relationship = $component->getRelationship();
+            if (($relationship instanceof HasOne) || ($relationship instanceof HasMany)) {
+                $query = $relationship->getQuery();
 
-                if (! (
-                    $relationship instanceof BelongsTo ||
-                    $relationship instanceof BelongsToThrough
-                )) {
-                    return false;
+                if ($modifyQueryUsing) {
+                    $component->evaluate($modifyQueryUsing, [
+                        'query' => $query,
+                        'search' => null,
+                    ]);
                 }
 
-                return ! $component->isMultiple();
-            },
-        );
+                $query->update([
+                    $relationship->getForeignKeyName() => null,
+                ]);
 
-        $this->saveRelationshipsUsing(static function (Select $component, Model $record, $state) use ($modifyQueryUsing) {
-            $relationship = $component->getRelationship();
+                if (! empty($state)) {
+                    $relationship::noConstraints(function () use ($component, $record, $state, $modifyQueryUsing): void {
+                        $relationship = $component->getRelationship();
+
+                        $query = $relationship->getQuery()->whereIn($relationship->getLocalKeyName(), Arr::wrap($state));
+
+                        if ($modifyQueryUsing) {
+                            $component->evaluate($modifyQueryUsing, [
+                                'query' => $query,
+                                'search' => null,
+                            ]);
+                        }
+
+                        $query->update([
+                            $relationship->getForeignKeyName() => $record->getAttribute($relationship->getLocalKeyName()),
+                        ]);
+                    });
+                }
+
+                return;
+            }
 
             if (
                 ($relationship instanceof HasOneOrMany) ||
-                ($relationship instanceof (class_exists(HasOneOrManyThrough::class) ? HasOneOrManyThrough::class : HasManyThrough::class)) ||
+                ($relationship instanceof HasOneOrManyThrough) ||
                 ($relationship instanceof BelongsToThrough)
             ) {
                 return;
@@ -1053,12 +1142,12 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
             $relationship->syncWithPivotValues($state, $pivotData, detaching: false);
         });
 
-        $this->createOptionUsing(static function (Select $component, array $data, Form $form) {
-            $record = $component->getRelationship()->getRelated();
+        $this->createOptionUsing(static function (Select $component, array $data, Schema $schema) {
+            $record = $component->getRelationship()->newModelInstance();
             $record->fill($data);
             $record->save();
 
-            $form->model($record)->saveRelationships();
+            $schema->model($record)->saveRelationships();
 
             return $record->getKey();
         });
@@ -1067,8 +1156,8 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
             return $component->getSelectedRecord()?->attributesToArray();
         });
 
-        $this->updateOptionUsing(static function (array $data, Form $form) {
-            $form->getRecord()?->update($data);
+        $this->updateOptionUsing(static function (array $data, Schema $schema): void {
+            $schema->getRecord()?->update($data);
         });
 
         $this->dehydrated(fn (Select $component): bool => ! $component->isMultiple());
@@ -1076,7 +1165,10 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         return $this;
     }
 
-    protected function applySearchConstraint(Builder $query, string $search): Builder
+    /**
+     * @internal Do not use this method outside the internals of Filament. It is subject to breaking changes in minor and patch releases.
+     */
+    public function applySearchConstraint(Builder $query, string $search): Builder
     {
         /** @var Connection $databaseConnection */
         $databaseConnection = $query->getConnection();
@@ -1150,9 +1242,9 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         return parent::getLabel();
     }
 
-    public function getRelationship(): BelongsTo | BelongsToMany | HasOneOrMany | HasManyThrough | HasOneOrManyThrough | BelongsToThrough | null
+    public function getRelationship(): BelongsTo | BelongsToMany | HasOneOrMany | HasOneOrManyThrough | BelongsToThrough | null
     {
-        if (blank($this->getRelationshipName())) {
+        if (! $this->hasRelationship()) {
             return null;
         }
 
@@ -1160,7 +1252,15 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
 
         $relationship = null;
 
-        foreach (explode('.', $this->getRelationshipName()) as $nestedRelationshipName) {
+        $relationshipName = $this->getRelationshipName();
+
+        foreach (explode('.', $relationshipName) as $nestedRelationshipName) {
+            if ($record->hasAttribute($nestedRelationshipName)) {
+                $relationship = null;
+
+                break;
+            }
+
             if (! $record->isRelation($nestedRelationshipName)) {
                 $relationship = null;
 
@@ -1169,6 +1269,10 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
 
             $relationship = $record->{$nestedRelationshipName}();
             $record = $relationship->getRelated();
+        }
+
+        if (! $relationship) {
+            throw new LogicException("The relationship [{$relationshipName}] does not exist on the model [{$this->getModel()}].");
         }
 
         return $relationship;
@@ -1219,13 +1323,16 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         return $this->getSearchResultsUsing instanceof Closure;
     }
 
-    public function getActionFormModel(): Model | string | null
+    /**
+     * @return Model | array<string, mixed> | class-string<Model> | null
+     */
+    public function getActionSchemaModel(): Model | array | string | null
     {
         if ($this->hasRelationship()) {
             return $this->getRelationship()->getModel()::class;
         }
 
-        return parent::getActionFormModel();
+        return parent::getActionSchemaModel();
     }
 
     public function getOptionsLimit(): int
@@ -1254,28 +1361,25 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         return $this->evaluate($this->isSearchForcedCaseInsensitive);
     }
 
-    public function hydrateDefaultState(?array &$hydratedDefaultState): void
+    public function wrapOptionLabels(bool | Closure $condition = true): static
     {
-        parent::hydrateDefaultState($hydratedDefaultState);
+        $this->canOptionLabelsWrap = $condition;
 
-        if (is_bool($state = $this->getState())) {
-            $state = $state ? 1 : 0;
-
-            $this->state($state);
-
-            if (is_array($hydratedDefaultState)) {
-                Arr::set($hydratedDefaultState, $this->getStatePath(), $state);
-            }
-        }
+        return $this;
     }
 
-    protected function getQualifiedRelatedKeyNameForRelationship(Relation $relationship): string
+    public function canOptionLabelsWrap(): bool
+    {
+        return (bool) $this->evaluate($this->canOptionLabelsWrap);
+    }
+
+    public function getQualifiedRelatedKeyNameForRelationship(Relation $relationship): string
     {
         if ($relationship instanceof BelongsToMany) {
             return $relationship->getQualifiedRelatedKeyName();
         }
 
-        if ($relationship instanceof (class_exists(HasOneOrManyThrough::class) ? HasOneOrManyThrough::class : HasManyThrough::class)) {
+        if ($relationship instanceof HasOneOrManyThrough) {
             return $relationship->getQualifiedForeignKeyName();
         }
 
@@ -1293,7 +1397,6 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
 
     public function refreshSelectedOptionLabel(): void
     {
-        /** @var LivewireComponent $livewire */
         $livewire = $this->getLivewire();
 
         $livewire->dispatch(
@@ -1301,5 +1404,120 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
             livewireId: $livewire->getId(),
             statePath: $this->getStatePath(),
         );
+    }
+
+    public function getEnumDefaultStateCast(): ?StateCast
+    {
+        $enum = $this->getEnum();
+
+        if (blank($enum)) {
+            return null;
+        }
+
+        return app(
+            $this->isMultiple() ? EnumArrayStateCast::class : EnumStateCast::class,
+            ['enum' => $enum],
+        );
+    }
+
+    /**
+     * @return array<StateCast>
+     */
+    public function getDefaultStateCasts(): array
+    {
+        if ($this->hasCustomStateCasts() || filled($this->getEnum())) {
+            return parent::getDefaultStateCasts();
+        }
+
+        if ($this->isMultiple()) {
+            return [app(OptionsArrayStateCast::class)];
+        }
+
+        return [app(OptionStateCast::class, ['isNullable' => true])];
+    }
+
+    /**
+     * @return ?array<string>
+     */
+    public function getInValidationRuleValues(): ?array
+    {
+        $values = parent::getInValidationRuleValues();
+
+        if ($values !== null) {
+            return $values;
+        }
+
+        if ($this->isMultiple()) {
+            if ((! $this->getOptionLabelsUsing) && ($this->options === null)) {
+                throw new LogicException("Filament failed to validate the [{$this->getStatePath()}] field\'s selected options because it did not have an [options()] or [getOptionLabelsUsing()] configuration. Please use one of these methods to inform Filament which options are valid for this field.");
+            }
+
+            $state = $this->getState();
+
+            if (blank($state)) {
+                return null;
+            }
+
+            $optionLabels = $this->getOptionLabels(withDefaults: false);
+
+            if (count($state) > count($optionLabels)) {
+                return [];
+            }
+
+            $state = array_map(
+                static fn (mixed $value): mixed => ($value instanceof BackedEnum) ? $value->value : $value,
+                $state,
+            );
+
+            if (count(array_diff($state, array_keys($optionLabels)))) {
+                return [];
+            }
+
+            if ($this->hasDisabledOptions()) {
+                foreach ($optionLabels as $optionValue => $optionLabel) {
+                    if ($this->isOptionDisabled($optionValue, $optionLabel)) {
+                        return [];
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        if ((! $this->getOptionLabelUsing) && ($this->options === null)) {
+            throw new LogicException("Filament failed to validate the [{$this->getStatePath()}] field\'s selected options because it did not have an [options()] or [getOptionLabelUsing()] configuration. Please use one of these methods to inform Filament which options are valid for this field.");
+        }
+
+        $state = $this->getState();
+
+        if (blank($state)) {
+            return null;
+        }
+
+        $optionLabel = $this->getOptionLabel(withDefault: false);
+
+        if (blank($optionLabel)) {
+            return [];
+        }
+
+        if ($state instanceof BackedEnum) {
+            $state = $state->value;
+        }
+
+        if ($this->hasDisabledOptions() && $this->isOptionDisabled($state, $optionLabel)) {
+            return [];
+        }
+
+        return null;
+    }
+
+    public function hasInValidationOnMultipleValues(): bool
+    {
+        return $this->isMultiple();
+    }
+
+    public function hasNullableBooleanState(): bool
+    {
+        return true;
     }
 }

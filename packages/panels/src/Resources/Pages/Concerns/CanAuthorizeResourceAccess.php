@@ -12,5 +12,9 @@ trait CanAuthorizeResourceAccess
     public static function authorizeResourceAccess(): void
     {
         abort_unless(static::getResource()::canAccess(), 403);
+
+        if ($parentResource = static::getParentResource()) {
+            abort_unless($parentResource::canAccess(), 403);
+        }
     }
 }

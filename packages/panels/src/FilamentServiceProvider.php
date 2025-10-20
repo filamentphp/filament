@@ -2,23 +2,28 @@
 
 namespace Filament;
 
+use Filament\Auth\Http\Responses\BlockEmailChangeVerificationResponse;
+use Filament\Auth\Http\Responses\Contracts\BlockEmailChangeVerificationResponse as BlockEmailChangeVerificationResponseContract;
+use Filament\Auth\Http\Responses\Contracts\EmailChangeVerificationResponse as EmailChangeVerificationResponseContract;
+use Filament\Auth\Http\Responses\Contracts\EmailVerificationResponse as EmailVerificationResponseContract;
+use Filament\Auth\Http\Responses\Contracts\LoginResponse as LoginResponseContract;
+use Filament\Auth\Http\Responses\Contracts\LogoutResponse as LogoutResponseContract;
+use Filament\Auth\Http\Responses\Contracts\PasswordResetResponse as PasswordResetResponseContract;
+use Filament\Auth\Http\Responses\Contracts\RegistrationResponse as RegistrationResponseContract;
+use Filament\Auth\Http\Responses\EmailChangeVerificationResponse;
+use Filament\Auth\Http\Responses\EmailVerificationResponse;
+use Filament\Auth\Http\Responses\LoginResponse;
+use Filament\Auth\Http\Responses\LogoutResponse;
+use Filament\Auth\Http\Responses\PasswordResetResponse;
+use Filament\Auth\Http\Responses\RegistrationResponse;
 use Filament\Facades\Filament;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Http\Middleware\IdentifyTenant;
 use Filament\Http\Middleware\SetUpPanel;
-use Filament\Http\Responses\Auth\Contracts\EmailVerificationResponse as EmailVerificationResponseContract;
-use Filament\Http\Responses\Auth\Contracts\LoginResponse as LoginResponseContract;
-use Filament\Http\Responses\Auth\Contracts\LogoutResponse as LogoutResponseContract;
-use Filament\Http\Responses\Auth\Contracts\PasswordResetResponse as PasswordResetResponseContract;
-use Filament\Http\Responses\Auth\Contracts\RegistrationResponse as RegistrationResponseContract;
-use Filament\Http\Responses\Auth\EmailVerificationResponse;
-use Filament\Http\Responses\Auth\LoginResponse;
-use Filament\Http\Responses\Auth\LogoutResponse;
-use Filament\Http\Responses\Auth\PasswordResetResponse;
-use Filament\Http\Responses\Auth\RegistrationResponse;
 use Filament\Navigation\NavigationManager;
+use Filament\Support\Assets\Font;
 use Filament\Support\Assets\Js;
 use Filament\Support\Assets\Theme;
 use Filament\Support\Facades\FilamentAsset;
@@ -36,7 +41,17 @@ class FilamentServiceProvider extends PackageServiceProvider
     {
         $package
             ->name('filament-panels')
-            ->hasCommands($this->getCommands())
+            ->hasCommands([
+                Commands\CacheComponentsCommand::class,
+                Commands\ClearCachedComponentsCommand::class,
+                Commands\MakeClusterCommand::class,
+                Commands\MakePageCommand::class,
+                Commands\MakePanelCommand::class,
+                Commands\MakeRelationManagerCommand::class,
+                Commands\MakeResourceCommand::class,
+                Commands\MakeThemeCommand::class,
+                Commands\MakeUserCommand::class,
+            ])
             ->hasRoutes('web')
             ->hasTranslations()
             ->hasViews();
@@ -58,6 +73,8 @@ class FilamentServiceProvider extends PackageServiceProvider
             return new NavigationManager;
         });
 
+        $this->app->bind(BlockEmailChangeVerificationResponseContract::class, BlockEmailChangeVerificationResponse::class);
+        $this->app->bind(EmailChangeVerificationResponseContract::class, EmailChangeVerificationResponse::class);
         $this->app->bind(EmailVerificationResponseContract::class, EmailVerificationResponse::class);
         $this->app->bind(LoginResponseContract::class, LoginResponse::class);
         $this->app->bind(LogoutResponseContract::class, LogoutResponse::class);
@@ -70,11 +87,12 @@ class FilamentServiceProvider extends PackageServiceProvider
     public function packageBooted(): void
     {
         Blade::components([
-            LegacyComponents\Page::class => 'filament::page',
-            LegacyComponents\Widget::class => 'filament::widget',
+            LegacyComponents\PageComponent::class => 'filament::page',
+            LegacyComponents\WidgetComponent::class => 'filament::widget',
         ]);
 
         FilamentAsset::register([
+            Font::make('inter', __DIR__ . '/../dist/fonts/inter'),
             Js::make('app', __DIR__ . '/../dist/index.js')->core(),
             Js::make('echo', __DIR__ . '/../dist/echo.js')->core(),
             Theme::make('app', __DIR__ . '/../dist/theme.css'),
@@ -88,7 +106,11 @@ class FilamentServiceProvider extends PackageServiceProvider
             SetUpPanel::class,
         ]);
 
-        Filament::serving(function () {
+        // Register panels if they have not been registered already,
+        // by executing pending `resolving()` callbacks.
+        app(PanelRegistry::class);
+
+        Filament::serving(function (): void {
             Filament::setServingStatus();
         });
 
@@ -99,40 +121,5 @@ class FilamentServiceProvider extends PackageServiceProvider
                 ], 'filament-stubs');
             }
         }
-    }
-
-    /**
-     * @return array<class-string>
-     */
-    protected function getCommands(): array
-    {
-        $commands = [
-            Commands\CacheComponentsCommand::class,
-            Commands\ClearCachedComponentsCommand::class,
-            Commands\MakeClusterCommand::class,
-            Commands\MakePageCommand::class,
-            Commands\MakePanelCommand::class,
-            Commands\MakeRelationManagerCommand::class,
-            Commands\MakeResourceCommand::class,
-            Commands\MakeThemeCommand::class,
-            Commands\MakeUserCommand::class,
-        ];
-
-        $aliases = [];
-
-        foreach ($commands as $command) {
-            $class = 'Filament\\Commands\\Aliases\\' . class_basename($command);
-
-            if (! class_exists($class)) {
-                continue;
-            }
-
-            $aliases[] = $class;
-        }
-
-        return [
-            ...$commands,
-            ...$aliases,
-        ];
     }
 }

@@ -13,7 +13,7 @@ trait CanRedirect
 
     public function dispatchFailureRedirect(): static
     {
-        $url = $this->evaluate($this->failureRedirectUrl);
+        $url = $this->evaluate($this->failureRedirectUrl) ?? $this->getHasActionsLivewire()->getDefaultActionFailureRedirectUrl($this);
 
         if (filled($url)) {
             $this->redirect($url);
@@ -24,7 +24,7 @@ trait CanRedirect
 
     public function dispatchSuccessRedirect(): static
     {
-        $url = $this->evaluate($this->successRedirectUrl);
+        $url = $this->evaluate($this->successRedirectUrl) ?? $this->getHasActionsLivewire()->getDefaultActionSuccessRedirectUrl($this);
 
         if (filled($url)) {
             $this->redirect($url);

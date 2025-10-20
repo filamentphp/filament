@@ -280,7 +280,7 @@ return [
 
     'markdown_editor' => [
 
-        'toolbar_buttons' => [
+        'tools' => [
             'attach_files' => 'Fayl əlavə et',
             'blockquote' => 'Sitat',
             'bold' => 'Qalın',
@@ -378,7 +378,7 @@ return [
 
         ],
 
-        'toolbar_buttons' => [
+        'tools' => [
             'attach_files' => 'Fayl əlavə et',
             'blockquote' => 'Sitat',
             'bold' => 'Qalın',
@@ -488,22 +488,6 @@ return [
         'boolean' => [
             'true' => 'Bəli',
             'false' => 'Xeyr',
-        ],
-
-    ],
-
-    'wizard' => [
-
-        'actions' => [
-
-            'previous_step' => [
-                'label' => 'Geri',
-            ],
-
-            'next_step' => [
-                'label' => 'İrəli',
-            ],
-
         ],
 
     ],

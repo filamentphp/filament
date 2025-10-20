@@ -8,21 +8,20 @@
         "source": "https://github.com/filamentphp/filament"
     },
     "require": {
-        "php": "^8.1",
-        "blade-ui-kit/blade-heroicons": "^2.5",
-        "doctrine/dbal": "^3.2|^4.0",
+        "php": "^8.2",
         "ext-intl": "*",
-        "illuminate/contracts": "^10.45|^11.0|^12.0",
-        "illuminate/support": "^10.45|^11.0|^12.0",
-        "illuminate/view": "^10.45|^11.0|^12.0",
-        "kirschbaum-development/eloquent-power-joins": "^3.0|^4.0",
+        "blade-ui-kit/blade-heroicons": "^2.5",
+        "danharrin/livewire-rate-limiting": "^2.0",
+        "illuminate/contracts": "^11.28|^12.0",
+        "kirschbaum-development/eloquent-power-joins": "^4.0",
+        "league/uri-components": "^7.0",
         "livewire/livewire": "^3.5",
-        "ryangjchandler/blade-capture-directive": "^0.2|^0.3|^1.0",
-        "spatie/color": "^1.5",
-        "spatie/invade": "^1.0|^2.0",
+        "nette/php-generator": "^4.0",
+        "ryangjchandler/blade-capture-directive": "^1.0",
+        "spatie/invade": "^2.0",
         "spatie/laravel-package-tools": "^1.9",
-        "symfony/html-sanitizer": "^6.1|^7.0",
-        "symfony/console": "^6.0|^7.0"
+        "symfony/html-sanitizer": "^7.0",
+        "symfony/console": "^7.0"
     },
     "autoload": {
         "files": [

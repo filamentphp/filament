@@ -1,0 +1,61 @@
+.fi-wi-stats-overview-stat {
+    @apply relative block rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10;
+
+    & .fi-icon {
+        @apply shrink-0 text-gray-400 dark:text-gray-500;
+    }
+
+    & .fi-wi-stats-overview-stat-content {
+        @apply grid gap-y-2;
+    }
+
+    & .fi-wi-stats-overview-stat-label-ctn {
+        @apply flex items-center gap-x-2;
+    }
+
+    & .fi-wi-stats-overview-stat-label {
+        @apply text-sm font-medium text-gray-500 dark:text-gray-400;
+    }
+
+    & .fi-wi-stats-overview-stat-value {
+        @apply text-3xl font-semibold tracking-tight text-gray-950 dark:text-white;
+    }
+
+    & .fi-wi-stats-overview-stat-description {
+        @apply flex items-center gap-x-1 text-sm text-gray-500 dark:text-gray-400;
+
+        &.fi-color {
+            @apply text-(--text) dark:text-(--dark-text);
+
+            & .fi-icon {
+                @apply text-color-500;
+            }
+        }
+    }
+
+    & .fi-wi-stats-overview-stat-chart {
+        @apply absolute inset-x-0 bottom-0 overflow-hidden rounded-b-xl;
+
+        & > canvas {
+            @apply h-6;
+        }
+
+        & .fi-wi-stats-overview-stat-chart-bg-color {
+            @apply text-gray-100 dark:text-gray-800;
+        }
+
+        & .fi-wi-stats-overview-stat-chart-border-color {
+            @apply text-gray-400;
+        }
+
+        &.fi-color {
+            & .fi-wi-stats-overview-stat-chart-bg-color {
+                @apply text-color-50 dark:text-color-400/10;
+            }
+
+            & .fi-wi-stats-overview-stat-chart-border-color {
+                @apply text-color-500 dark:text-color-400;
+            }
+        }
+    }
+}

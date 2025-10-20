@@ -2,109 +2,200 @@
 
 namespace Filament\Forms\Commands;
 
-use Filament\Forms\Commands\Concerns\CanGenerateForms;
-use Filament\Support\Commands\Concerns\CanIndentStrings;
+use Filament\Forms\Commands\FileGenerators\FormSchemaClassGenerator;
+use Filament\Support\Commands\Concerns\CanAskForComponentLocation;
 use Filament\Support\Commands\Concerns\CanManipulateFiles;
-use Filament\Support\Commands\Concerns\CanReadModelSchemas;
+use Filament\Support\Commands\Exceptions\FailureCommandOutput;
 use Illuminate\Console\Command;
-use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Model;
 use Symfony\Component\Console\Attribute\AsCommand;
+use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputOption;
 
-use function Laravel\Prompts\select;
+use function Filament\Support\discover_app_classes;
+use function Laravel\Prompts\confirm;
+use function Laravel\Prompts\suggest;
 use function Laravel\Prompts\text;
 
-#[AsCommand(name: 'make:livewire-form')]
+#[AsCommand(name: 'make:filament-form', aliases: [
+    'filament:form',
+])]
 class MakeFormCommand extends Command
 {
-    use CanGenerateForms;
-    use CanIndentStrings;
+    use CanAskForComponentLocation;
     use CanManipulateFiles;
-    use CanReadModelSchemas;
 
-    protected $description = 'Create a new Livewire component containing a Filament form';
+    protected $description = 'Create a new Filament form schema class';
 
-    protected $signature = 'make:livewire-form {name?} {model?} {--E|edit} {--G|generate} {--F|force}';
+    protected $name = 'make:filament-form';
+
+    /**
+     * @var array<string>
+     */
+    protected $aliases = [
+        'filament:form',
+    ];
+
+    /**
+     * @var class-string
+     */
+    protected string $fqn;
+
+    protected string $fqnEnd;
+
+    protected string $path;
+
+    /**
+     * @var ?class-string<Model>
+     */
+    protected ?string $modelFqn = null;
+
+    protected ?string $modelFqnEnd = null;
+
+    /**
+     * @return array<InputArgument>
+     */
+    protected function getArguments(): array
+    {
+        return [
+            new InputArgument(
+                name: 'name',
+                mode: InputArgument::OPTIONAL,
+                description: 'The name of the form schema class to generate, optionally prefixed with directories',
+            ),
+            new InputArgument(
+                name: 'model',
+                mode: InputArgument::OPTIONAL,
+                description: 'The name of the model to generate the form for, optionally prefixed with directories',
+            ),
+        ];
+    }
+
+    /**
+     * @return array<InputOption>
+     */
+    protected function getOptions(): array
+    {
+        return [
+            new InputOption(
+                name: 'model-namespace',
+                shortcut: null,
+                mode: InputOption::VALUE_REQUIRED,
+                description: 'The namespace of the model class, [' . app()->getNamespace() . 'Models] by default',
+            ),
+            new InputOption(
+                name: 'force',
+                shortcut: 'F',
+                mode: InputOption::VALUE_NONE,
+                description: 'Overwrite the contents of the files if they already exist',
+            ),
+        ];
+    }
 
     public function handle(): int
     {
-        $component = (string) str($this->argument('name') ?? text(
-            label: 'What is the form name?',
-            placeholder: 'Products/CreateProduct',
+        try {
+            $this->configureFqnEnd();
+            $this->configureModel();
+
+            $this->configureLocation();
+
+            $this->createSchema();
+        } catch (FailureCommandOutput) {
+            return static::FAILURE;
+        }
+
+        $this->components->info("Form schema [{$this->fqn}] created successfully.");
+
+        return static::SUCCESS;
+    }
+
+    protected function configureFqnEnd(): void
+    {
+        $this->fqnEnd = (string) str($this->argument('name') ?? text(
+            label: 'What is the form schema name?',
+            placeholder: 'BlogPostForm',
             required: true,
         ))
             ->trim('/')
             ->trim('\\')
             ->trim(' ')
+            ->studly()
             ->replace('/', '\\');
-        $componentClass = (string) str($component)->afterLast('\\');
-        $componentNamespace = str($component)->contains('\\') ?
-            (string) str($component)->beforeLast('\\') :
-            '';
+    }
 
-        $view = str($component)
-            ->replace('\\', '/')
-            ->prepend('Livewire/')
-            ->explode('/')
-            ->map(fn ($segment) => Str::lower(Str::kebab($segment)))
-            ->implode('.');
+    protected function configureModel(): void
+    {
+        if ($this->argument('model')) {
+            $this->modelFqnEnd = (string) str($this->argument('model'))
+                ->trim('/')
+                ->trim('\\')
+                ->trim(' ')
+                ->studly()
+                ->replace('/', '\\');
 
-        $model = (string) str($this->argument('model') ??
-                text(
-                    label: 'What is the model name?',
-                    placeholder: 'Product',
-                    required: $this->option('edit')
-                ))->replace('/', '\\');
-        $modelClass = (string) str($model)->afterLast('\\');
+            $modelNamespace = $this->option('model-namespace') ?? app()->getNamespace() . 'Models';
 
-        if ($this->option('edit')) {
-            $isEditForm = true;
-        } elseif (filled($model)) {
-            $isEditForm = select(
-                label: 'Which namespace would you like to create this in?',
-                options: [
-                    'Create',
-                    'Edit',
-                ]
-            ) === 'Edit';
-        } else {
-            $isEditForm = false;
+            $this->modelFqn = "{$modelNamespace}\\{$this->modelFqnEnd}";
+
+            return;
         }
 
-        $path = (string) str($component)
-            ->prepend('/')
-            ->prepend(app_path('Livewire/'))
-            ->replace('\\', '/')
-            ->replace('//', '/')
-            ->append('.php');
+        if (! confirm(
+            label: 'Would you like to create a form for a model?',
+            default: false,
+        )) {
+            return;
+        }
 
-        $viewPath = resource_path(
-            (string) str($view)
-                ->replace('.', '/')
-                ->prepend('views/')
-                ->append('.blade.php'),
+        $modelFqns = discover_app_classes(parentClass: Model::class);
+
+        $this->modelFqn = suggest(
+            label: 'What is the model?',
+            options: function (string $search) use ($modelFqns): array {
+                $search = str($search)->trim()->replace(['\\', '/'], '');
+
+                if (blank($search)) {
+                    return $modelFqns;
+                }
+
+                return array_filter(
+                    $modelFqns,
+                    fn (string $class): bool => str($class)->replace(['\\', '/'], '')->contains($search, ignoreCase: true),
+                );
+            },
+            placeholder: app()->getNamespace() . 'Models\\BlogPost',
+            required: true,
         );
 
-        if (! $this->option('force') && $this->checkForCollision([$path, $viewPath])) {
-            return static::INVALID;
+        $this->modelFqnEnd = class_basename($this->modelFqn);
+    }
+
+    protected function configureLocation(): void
+    {
+        [
+            $namespace,
+            $path,
+        ] = $this->askForComponentLocation(
+            path: 'Schemas',
+            question: 'Where would you like to create the form schema?',
+        );
+
+        $this->fqn = "{$namespace}\\{$this->fqnEnd}";
+        $this->path = (string) str("{$path}\\{$this->fqnEnd}.php")
+            ->replace('\\', '/')
+            ->replace('//', '/');
+    }
+
+    protected function createSchema(): void
+    {
+        if (! $this->option('force') && $this->checkForCollision($this->path)) {
+            throw new FailureCommandOutput;
         }
 
-        $this->copyStubToApp(filled($model) ? ($isEditForm ? 'EditForm' : 'CreateForm') : 'Form', $path, [
-            'class' => $componentClass,
-            'model' => $model,
-            'modelClass' => $modelClass,
-            'namespace' => 'App\\Livewire' . ($componentNamespace !== '' ? "\\{$componentNamespace}" : ''),
-            'schema' => $this->indentString((filled($model) && $this->option('generate')) ? $this->getResourceFormSchema(
-                'App\\Models\\' . $model,
-            ) : '//', 4),
-            'view' => $view,
-        ]);
-
-        $this->copyStubToApp('FormView', $viewPath, [
-            'submitAction' => filled($model) ? ($isEditForm ? 'save' : 'create') : 'submit',
-        ]);
-
-        $this->components->info("Filament form [{$path}] created successfully.");
-
-        return static::SUCCESS;
+        $this->writeFile($this->path, app(FormSchemaClassGenerator::class, [
+            'fqn' => $this->fqn,
+            'modelFqn' => $this->modelFqn,
+        ]));
     }
 }

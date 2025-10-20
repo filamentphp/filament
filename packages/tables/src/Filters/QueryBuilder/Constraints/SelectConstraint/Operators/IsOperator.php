@@ -2,13 +2,15 @@
 
 namespace Filament\Tables\Filters\QueryBuilder\Constraints\SelectConstraint\Operators;
 
-use Exception;
-use Filament\Forms\Components\Component;
+use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Forms\Components\Select;
+use Filament\Schemas\Components\Component;
 use Filament\Tables\Filters\QueryBuilder\Constraints\Operators\Operator;
 use Filament\Tables\Filters\QueryBuilder\Constraints\SelectConstraint;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
+use LogicException;
 
 class IsOperator extends Operator
 {
@@ -61,7 +63,7 @@ class IsOperator extends Operator
     }
 
     /**
-     * @return array<Component>
+     * @return array<Component | Action | ActionGroup>
      */
     public function getFormSchema(): array
     {
@@ -74,7 +76,8 @@ class IsOperator extends Operator
             ->searchable($constraint->isSearchable())
             ->native($constraint->isNative())
             ->optionsLimit($constraint->getOptionsLimit())
-            ->required();
+            ->required()
+            ->columnSpanFull();
 
         if ($getOptionLabelUsing = $constraint->getOptionLabelUsingCallback()) {
             $field->getOptionLabelUsing($getOptionLabelUsing);
@@ -111,7 +114,7 @@ class IsOperator extends Operator
         $constraint = parent::getConstraint();
 
         if (! ($constraint instanceof SelectConstraint)) {
-            throw new Exception('Is operator can only be used with select constraints.');
+            throw new LogicException('Is operator can only be used with select constraints.');
         }
 
         return $constraint;
