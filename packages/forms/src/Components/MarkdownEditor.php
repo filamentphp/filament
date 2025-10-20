@@ -5,7 +5,6 @@ namespace Filament\Forms\Components;
 use Closure;
 use Filament\Support\Concerns\CanConfigureCommonMark;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
-use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use LogicException;
 
 class MarkdownEditor extends Field implements Contracts\CanBeLengthConstrained
