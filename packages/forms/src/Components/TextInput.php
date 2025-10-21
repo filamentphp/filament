@@ -173,6 +173,10 @@ class TextInput extends Field implements CanHaveNumericState, Contracts\CanBeLen
         return $this->isPassword() ?: throw new LogicException("The text input [{$this->getStatePath()}] is not a [password()], so it cannot be [revealable()].");
     }
 
+    /**
+     * Prevent password managers like 1password or LastPass from injecting
+     * buttons or dropdowns into the field.
+     */
     public function blockPasswordManagers(bool | Closure $condition = true): static
     {
         $this->blockPasswordManagers = $condition;
