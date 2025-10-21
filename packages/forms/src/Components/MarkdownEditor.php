@@ -32,7 +32,10 @@ class MarkdownEditor extends Field implements Contracts\CanBeLengthConstrained
             ['bold', 'italic', 'strike', 'link'],
             ['heading'],
             ['blockquote', 'codeBlock', 'bulletList', 'orderedList'],
-            ['table', 'attachFiles'],
+            [
+                'table',
+                ...($this->hasFileAttachments() ? ['attachFiles'] : []),
+            ],
             ['undo', 'redo'],
         ];
     }
