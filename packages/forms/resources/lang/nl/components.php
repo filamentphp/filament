@@ -561,6 +561,8 @@ return [
             'h1' => 'Titel',
             'h2' => 'Kop',
             'h3' => 'Subkop',
+            'grid' => 'Raster',
+            'grid_delete' => 'Verwijder raster',
             'highlight' => 'Markeren',
             'horizontal_rule' => 'Horizontale lijn',
             'italic' => 'Cursief',
