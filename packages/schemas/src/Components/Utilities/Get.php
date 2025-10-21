@@ -63,7 +63,6 @@ class Get
         return filter_var($this($key, $isAbsolute) ?? $default, FILTER_VALIDATE_BOOLEAN);
     }
 
-
     /** @return array<mixed, mixed> */
     public function array(string $key, bool $isAbsolute = false): array
     {
