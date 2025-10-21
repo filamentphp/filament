@@ -44,6 +44,8 @@ class TextInput extends Field implements CanHaveNumericState, Contracts\CanBeLen
 
     protected bool | Closure $isRevealable = false;
 
+    protected bool | Closure $blockPasswordManagers = false;
+
     protected bool | Closure $isCopyable = false;
 
     protected bool | Closure $isTel = false;
@@ -169,6 +171,18 @@ class TextInput extends Field implements CanHaveNumericState, Contracts\CanBeLen
         }
 
         return $this->isPassword() ?: throw new LogicException("The text input [{$this->getStatePath()}] is not a [password()], so it cannot be [revealable()].");
+    }
+
+    public function blockPasswordManagers(bool | Closure $condition = true): static
+    {
+        $this->blockPasswordManagers = $condition;
+
+        return $this;
+    }
+
+    public function isBlockPasswordManagers(): bool
+    {
+        return (bool) $this->evaluate($this->blockPasswordManagers);
     }
 
     public function copyable(

@@ -248,6 +248,25 @@ TextInput::make('apiKey')
     This feature only works when SSL is enabled for the app.
 </Aside>
 
+## Block password managers
+
+Some password managers may suggest filling stored credentials or addresses into a field. This often is the case when a field is named something like `name`, `street`, `city` etc.
+
+To explicitly disable this behaviour for a text input  you may use the `blockPasswordManagers()` method:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('street')
+    ->blockPasswordManagers()
+```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing static values, the `blockPasswordManagers()` method parameters also accept functions to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+<Aside variant="warning">
+    Currently supported password managers are 1Password, LastPass, BitWarden and Keeper.
+</Aside>
+
 ## Input masking
 
 Input masking is the practice of defining a format that the input value must conform to.

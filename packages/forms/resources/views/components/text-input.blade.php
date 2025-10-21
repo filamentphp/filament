@@ -23,6 +23,7 @@
     $suffixLabel = $getSuffixLabel();
     $statePath = $getStatePath();
     $placeholder = $getPlaceholder();
+    $blockPasswordManagers = $isBlockPasswordManagers();
 
     if ($isPasswordRevealable) {
         $xData = '{ isPasswordRevealed: false }';
@@ -64,9 +65,13 @@
             $applyStateBindingModifiers('wire:model') => $statePath,
             'x-bind:type' => $isPasswordRevealable ? 'isPasswordRevealed ? \'text\' : \'password\'' : null,
             'x-mask' . ($mask instanceof \Filament\Support\RawJs ? ':dynamic' : '') => filled($mask) ? $mask : null,
+            'data-1p-ignore' => $blockPasswordManagers ? '' : null,
+            'data-lpignore' => $blockPasswordManagers ? 'true' : null,
+            'data-bwignore' => $blockPasswordManagers ? 'true' : null,
         ], escape: false)
         ->class([
             'fi-revealable' => $isPasswordRevealable,
+            'keeper-ignore' => $blockPasswordManagers,
         ]);
 @endphp
 
