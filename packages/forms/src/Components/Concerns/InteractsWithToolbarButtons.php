@@ -168,4 +168,9 @@ trait InteractsWithToolbarButtons
 
         return false;
     }
+
+    public function hasCustomToolbarButtons(): bool
+    {
+        return $this->evaluate($this->toolbarButtons) !== null;
+    }
 }
