@@ -9,9 +9,9 @@ import UtilityInjection from "@components/UtilityInjection.astro"
 
 <AutoScreenshot name="infolists/overview" alt="Product infolist example" version="4.x" />
 
-Filament's infolists package lets you display a read-only list of data for a specific entity. It's integrated into other Filament packages, such as inside [panel resources](../panels/resources), [relation managers](../panels/resources/managing-relationships), and [action modals](../actions). Understanding how to use the infolist builder will save you time when building custom Livewire applications or working with other Filament features.
+Filament's infolists package lets you display a read-only list of data for a specific entity. It's integrated into other Filament packages, such as inside [panel resources](../resources), [relation managers](../resources/managing-relationships), and [action modals](../actions). Understanding how to use the infolist builder will save you time when building custom Livewire applications or working with other Filament features.
 
-This guide covers the fundamentals of building infolists with Filament. If you want to add an infolist to your own Livewire component, [start here](../components/infolist) before continuing. If you're adding an infolist to an [panel resource](../panels/resources), or using another Filament package, you're ready to begin!
+This guide covers the fundamentals of building infolists with Filament. If you want to add an infolist to your own Livewire component, [start here](../components/infolist) before continuing. If you're adding an infolist to a [panel resource](../resources), or using another Filament package, you're ready to begin!
 
 ## Defining entries
 

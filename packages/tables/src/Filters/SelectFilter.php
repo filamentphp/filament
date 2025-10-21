@@ -180,7 +180,7 @@ class SelectFilter extends BaseFilter
 
         if (blank(Arr::first(
             Arr::wrap($values),
-            fn ($value) => filled($value),
+            fn ($value): bool => filled($value),
         ))) {
             return $query;
         }

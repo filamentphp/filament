@@ -34,9 +34,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
 {
     use Concerns\CanBeLengthConstrained;
     use Concerns\HasExtraInputAttributes;
-    use Concerns\HasFileAttachments {
-        saveUploadedFileAttachment as baseSaveUploadedFileAttachment;
-    }
+    use Concerns\HasFileAttachments;
     use Concerns\HasPlaceholder;
     use Concerns\InteractsWithToolbarButtons;
     use HasExtraAlpineAttributes;
@@ -784,15 +782,6 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
         );
     }
 
-    public function saveUploadedFileAttachment(TemporaryUploadedFile $file): mixed
-    {
-        if (! $this->hasToolbarButton('attachFiles')) {
-            return null;
-        }
-
-        return $this->baseSaveUploadedFileAttachment($file);
-    }
-
     public function noMergeTagSearchResultsMessage(string | Closure | null $message): static
     {
         $this->noMergeTagSearchResultsMessage = $message;
@@ -1024,5 +1013,10 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     public function hasCustomTextColors(): bool
     {
         return (bool) ($this->evaluate($this->hasCustomTextColors) ?? $this->getContentAttribute()?->hasCustomTextColors() ?? false);
+    }
+
+    public function hasFileAttachmentsByDefault(): bool
+    {
+        return $this->hasToolbarButton('attachFiles');
     }
 }

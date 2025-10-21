@@ -127,7 +127,10 @@ abstract class Page extends BasePage
         ];
     }
 
-    public static function getNavigationItemActiveRoutePattern(): string
+    /**
+     * @return string | array<string>
+     */
+    public static function getNavigationItemActiveRoutePattern(): string | array
     {
         return static::getRouteName();
     }

@@ -5,16 +5,13 @@ namespace Filament\Forms\Components;
 use Closure;
 use Filament\Support\Concerns\CanConfigureCommonMark;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
-use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use LogicException;
 
 class MarkdownEditor extends Field implements Contracts\CanBeLengthConstrained
 {
     use CanConfigureCommonMark;
     use Concerns\CanBeLengthConstrained;
-    use Concerns\HasFileAttachments {
-        saveUploadedFileAttachment as baseSaveUploadedFileAttachment;
-    }
+    use Concerns\HasFileAttachments;
     use Concerns\HasMaxHeight;
     use Concerns\HasMinHeight;
     use Concerns\HasPlaceholder;
@@ -40,15 +37,6 @@ class MarkdownEditor extends Field implements Contracts\CanBeLengthConstrained
         ];
     }
 
-    public function saveUploadedFileAttachment(TemporaryUploadedFile $file): mixed
-    {
-        if (! $this->hasToolbarButton('attachFiles')) {
-            return null;
-        }
-
-        return $this->baseSaveUploadedFileAttachment($file);
-    }
-
     public function getFileAttachmentsDiskName(): string
     {
         $name = $this->evaluate($this->fileAttachmentsDiskName);
@@ -70,5 +58,10 @@ class MarkdownEditor extends Field implements Contracts\CanBeLengthConstrained
     public function getFileAttachmentsVisibility(): string
     {
         return 'public';
+    }
+
+    public function hasFileAttachmentsByDefault(): bool
+    {
+        return $this->hasToolbarButton('attachFiles');
     }
 }
