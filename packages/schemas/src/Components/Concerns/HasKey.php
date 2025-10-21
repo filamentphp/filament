@@ -32,7 +32,9 @@ trait HasKey
             return $this->cachedAbsoluteKey;
         }
 
-        $key = $this->evaluate($this->key) ?? $this->getStatePath(isAbsolute: false);
+        $key = ($this->isKeyInheritable() || (! $this->hasStatePath()))
+            ? ($this->evaluate($this->key) ?? $this->getStatePath(isAbsolute: false))
+            : $this->getStatePath(isAbsolute: false);
 
         if (! $isAbsolute) {
             return $key;
