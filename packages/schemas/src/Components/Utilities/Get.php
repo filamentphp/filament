@@ -2,6 +2,7 @@
 
 namespace Filament\Schemas\Components\Utilities;
 
+use BackedEnum;
 use Carbon\CarbonInterface;
 use Filament\Schemas\Components\Component;
 use Illuminate\Support\Collection;
@@ -63,7 +64,6 @@ class Get
         return filter_var($this($key, $isAbsolute) ?? $default, FILTER_VALIDATE_BOOLEAN);
     }
 
-    /** @return array<mixed, mixed> */
     public function array(string $key, bool $isAbsolute = false): array
     {
         return (array) ($this($key, $isAbsolute) ?? []);
@@ -90,22 +90,12 @@ class Get
         return Date::createFromFormat($format, $state, $tz);
     }
 
-    /**
-     * @template TEnum of \BackedEnum
-     *
-     * @param  class-string<TEnum>  $enumClass
-     * @param  TEnum|null  $default
-     * @return TEnum|null
-     */
-    public function enum(string $key, string $enumClass, $default = null, bool $isAbsolute = false)
+    /** @param class-string<BackedEnum> $enumClass */
+    public function enum(string $key, string $enumClass, ?BackedEnum $default = null, bool $isAbsolute = false): ?BackedEnum
     {
         $state = $this($key, $isAbsolute);
 
-        if (
-            ! enum_exists($enumClass) ||
-            ! method_exists($enumClass, 'tryFrom') ||
-            ! is_string($state)
-        ) {
+        if (! enum_exists($enumClass) || ! is_string($state)) {
             return $default;
         }
 
