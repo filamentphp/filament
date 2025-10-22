@@ -5,7 +5,7 @@ namespace Filament\Schemas\Components\Utilities;
 use BackedEnum;
 use Carbon\CarbonInterface;
 use Filament\Schemas\Components\Component;
-use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Facades\Carbon;
 use Throwable;
 
 class Get
@@ -38,11 +38,7 @@ class Get
 
     public function string(string $key, bool $isAbsolute = false): string
     {
-        try {
-            return (string) ($this($key, $isAbsolute) ?? '');
-        } catch (Throwable) {
-            return '';
-        }
+        return (string) ($this($key, $isAbsolute) ?? '');
     }
 
     public function integer(string $key, bool $isAbsolute = false): int
@@ -60,7 +56,9 @@ class Get
         return (bool) $this($key, $isAbsolute);
     }
 
-    /** @return array<mixed, mixed> */
+    /** 
+     * @return array<mixed, mixed> 
+     */
     public function array(string $key, bool $isAbsolute = false): array
     {
         return (array) ($this($key, $isAbsolute) ?? []);
@@ -70,19 +68,21 @@ class Get
     {
         $state = $this($key, $isAbsolute);
 
-        if (! is_string($state)) {
+        if (blank($state)) {
             return null;
         }
 
-        return Date::parse($state);
+        return Carbon::parse($state);
     }
 
-    /** @param class-string<BackedEnum> $enumClass */
+    /** 
+     * @param class-string<BackedEnum> $enumClass 
+     */
     public function enum(string $key, string $enumClass, bool $isAbsolute = false): ?BackedEnum
     {
         $state = $this($key, $isAbsolute);
 
-        if (! enum_exists($enumClass) || ! is_string($state)) {
+        if (blank($state)) {
             return null;
         }
 
