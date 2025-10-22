@@ -5,7 +5,7 @@ namespace Filament\Schemas\Components\Utilities;
 use BackedEnum;
 use Carbon\CarbonInterface;
 use Filament\Schemas\Components\Component;
-use Illuminate\Support\Facades\Carbon;
+use Illuminate\Support\Carbon;
 use Throwable;
 
 class Get
@@ -38,7 +38,7 @@ class Get
 
     public function string(string $key, bool $isAbsolute = false): string
     {
-        return (string) ($this($key, $isAbsolute) ?? '');
+        return (string) $this($key, $isAbsolute);
     }
 
     public function integer(string $key, bool $isAbsolute = false): int
