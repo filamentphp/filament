@@ -6,7 +6,6 @@ use BackedEnum;
 use Carbon\CarbonInterface;
 use Filament\Schemas\Components\Component;
 use Illuminate\Support\Carbon;
-use Throwable;
 
 class Get
 {
@@ -56,8 +55,8 @@ class Get
         return (bool) $this($key, $isAbsolute);
     }
 
-    /** 
-     * @return array<mixed, mixed> 
+    /**
+     * @return array<mixed, mixed>
      */
     public function array(string $key, bool $isAbsolute = false): array
     {
@@ -75,8 +74,8 @@ class Get
         return Carbon::parse($state);
     }
 
-    /** 
-     * @param class-string<BackedEnum> $enumClass 
+    /**
+     * @param  class-string<BackedEnum>  $enumClass
      */
     public function enum(string $key, string $enumClass, bool $isAbsolute = false): ?BackedEnum
     {
