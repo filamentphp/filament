@@ -3,14 +3,10 @@
 namespace Filament\Schemas\Components\Utilities;
 
 use BackedEnum;
+use Throwable;
 use Carbon\CarbonInterface;
 use Filament\Schemas\Components\Component;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Date;
-use Illuminate\Support\Str;
-use Illuminate\Support\Stringable;
-
-use function Illuminate\Support\enum_value;
 
 class Get
 {
@@ -40,66 +36,55 @@ class Get
         return $component->getState();
     }
 
-    /** @param mixed $default */
-    public function string(string $key, $default = null, bool $isAbsolute = false): Stringable
+    public function string(string $key, bool $isAbsolute = false): string
     {
-        return Str::of($this($key, $isAbsolute) ?? $default);
+        try {
+            return (string) ($this($key, $isAbsolute) ?? '');
+        } catch (Throwable) {
+            return '';
+        }
     }
 
-    /** @param mixed $default */
-    public function integer(string $key, $default = 0, bool $isAbsolute = false): int
+    public function integer(string $key, bool $isAbsolute = false): int
     {
-        return intval($this($key, $isAbsolute) ?? $default);
+        return (int) $this($key, $isAbsolute);
     }
 
-    /** @param mixed $default */
-    public function float(string $key, $default = 0.0, bool $isAbsolute = false): float
+    public function float(string $key, bool $isAbsolute = false): float
     {
-        return floatval($this($key, $isAbsolute) ?? $default);
+        return (float) $this($key, $isAbsolute);
     }
 
-    /** @param mixed $default */
-    public function boolean(string $key, $default = false, bool $isAbsolute = false): bool
+    public function boolean(string $key, bool $isAbsolute = false): bool
     {
-        return filter_var($this($key, $isAbsolute) ?? $default, FILTER_VALIDATE_BOOLEAN);
+        return filter_var($this($key, $isAbsolute) ?? false, FILTER_VALIDATE_BOOLEAN);
     }
 
-    /** @return array<mixed, mixed> */
     public function array(string $key, bool $isAbsolute = false): array
     {
         return (array) ($this($key, $isAbsolute) ?? []);
     }
 
-    public function collect(string $key, bool $isAbsolute = false): Collection
-    {
-        return collect($this($key, $isAbsolute) ?? []);
-    }
-
-    public function date(string $key, ?string $format = null, ?string $tz = null, bool $isAbsolute = false): ?CarbonInterface
+    public function date(string $key, bool $isAbsolute = false): ?CarbonInterface
     {
         $state = $this($key, $isAbsolute);
-        $tz = enum_value($tz);
 
         if (! is_string($state)) {
             return null;
         }
 
-        if (is_null($format)) {
-            return Date::parse($state, $tz);
-        }
-
-        return Date::createFromFormat($format, $state, $tz);
+        return Date::parse($state);
     }
 
     /** @param class-string<BackedEnum> $enumClass */
-    public function enum(string $key, string $enumClass, ?BackedEnum $default = null, bool $isAbsolute = false): ?BackedEnum
+    public function enum(string $key, string $enumClass, bool $isAbsolute = false): ?BackedEnum
     {
         $state = $this($key, $isAbsolute);
 
         if (! enum_exists($enumClass) || ! is_string($state)) {
-            return $default;
+            return null;
         }
 
-        return $enumClass::tryFrom($state) ?: $default;
+        return $enumClass::tryFrom($state);
     }
 }
