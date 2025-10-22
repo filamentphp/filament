@@ -57,7 +57,7 @@ class Get
 
     public function boolean(string $key, bool $isAbsolute = false): bool
     {
-        return filter_var($this($key, $isAbsolute) ?? false, FILTER_VALIDATE_BOOLEAN);
+        return (bool) $this($key, $isAbsolute);
     }
 
     /** @return array<mixed, mixed> */
