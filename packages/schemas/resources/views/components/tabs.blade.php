@@ -83,12 +83,12 @@
                         [false, true] => $tabVisibleJs,
                         default => null,
                     };
-                    if(!$isScrollable){
-                        if(!empty($tabVisibilityJs)){
+                    if (! $isScrollable) {
+                        if (! empty($tabVisibilityJs)) {
                             $tabVisibilityJs .= ' && ';
                         }
 
-                        $tabVisibilityJs .= '(!tabsWithinDropdown.length || !tabsWithinDropdown.includes(\''. $tabKey .'\'))';
+                        $tabVisibilityJs .= '(!tabsWithinDropdown.length || !tabsWithinDropdown.includes(\'' . $tabKey . '\'))';
                     }
                 @endphp
 
@@ -111,11 +111,12 @@
                 </x-filament::tabs.item>
             @endforeach
 
-            @if(!$isScrollable)
+            @if (! $isScrollable)
                 <x-filament::dropdown
-                    :placement="__('filament-panels::layout.direction') === 'ltr' ? 'bottom-start' : 'bottom-end'">
+                    :placement="__('filament-panels::layout.direction') === 'ltr' ? 'bottom-start' : 'bottom-end'"
+                >
                     <x-slot name="trigger">
-                        @foreach($getChildSchema()->getComponents() as $tab)
+                        @foreach ($getChildSchema()->getComponents() as $tab)
                             @php
                                 $tabKey = $tab->getKey(isAbsolute: false);
                                 $tabBadge = $tab->getBadge();
@@ -129,15 +130,16 @@
                                 $tabHiddenJs = $tab->getHiddenJs();
                                 $tabVisibleJs = $tab->getVisibleJs();
                                 $tabVisibilityJs = match ([filled($tabHiddenJs), filled($tabVisibleJs)]) {
-                                [true, true] => "(! ({$tabHiddenJs})) && ({$tabVisibleJs})",
-                                [true, false] => "! ({$tabHiddenJs})",
-                                [false, true] => $tabVisibleJs,
-                                default => null,
+                                    [true, true] => "(! ({$tabHiddenJs})) && ({$tabVisibleJs})",
+                                    [true, false] => "! ({$tabHiddenJs})",
+                                    [false, true] => $tabVisibleJs,
+                                    default => null,
                                 };
                             @endphp
+
                             <x-filament::tabs.item
                                 :alpine-active="'tab === \'' . $tabKey . '\''"
-                                :x-show="'tab === \'' . $tabKey . '\' && tabsWithinDropdown.length && tabsWithinDropdown.includes(\''. $tabKey .'\')'"
+                                :x-show="'tab === \'' . $tabKey . '\' && tabsWithinDropdown.length && tabsWithinDropdown.includes(\'' . $tabKey . '\')'"
                                 icon="heroicon-o-chevron-down"
                                 :icon-position="IconPosition::After"
                                 :x-cloak="$tabVisibilityJs !== null"
@@ -146,21 +148,26 @@
                                 {{ $tab->getLabel() }}
                             </x-filament::tabs.item>
                         @endforeach
+
                         <x-filament::tabs.item
-                            x-show="(tabsWithinDropdown.length && !tabsWithinDropdown.includes(tab)) || dropDownButtonDimensions === null">
-                            <x-filament::icon icon="heroicon-c-ellipsis-horizontal" />
+                            x-show="(tabsWithinDropdown.length && !tabsWithinDropdown.includes(tab)) || dropDownButtonDimensions === null"
+                        >
+                            <x-filament::icon
+                                icon="heroicon-c-ellipsis-horizontal"
+                            />
                         </x-filament::tabs.item>
                     </x-slot>
 
                     <x-filament::dropdown.list>
-                        @foreach($getChildSchema()->getComponents() as $tab)
+                        @foreach ($getChildSchema()->getComponents() as $tab)
                             @php
                                 $tabKey = $tab->getKey(isAbsolute: false);
                                 $tabIcon = $tab->getIcon();
                             @endphp
+
                             <x-filament::dropdown.list.item
                                 :icon="$tabIcon"
-                                :x-show="'tabsWithinDropdown.includes(\''. $tabKey .'\')'"
+                                :x-show="'tabsWithinDropdown.includes(\'' . $tabKey . '\')'"
                                 :x-on:click="'tab = \'' . $tabKey . '\'; close($event);'"
                                 x-bind:class="{
                                     'bg-gray-50': {{ 'tab === \'' . $tabKey . '\'' }}
@@ -168,8 +175,8 @@
                             >
                                 <span
                                     x-bind:class="{
-                                    'text-primary-700': {{ 'tab === \'' . $tabKey . '\'' }},
-                                    'text-gray-700': {{ 'tab !== \'' . $tabKey . '\'' }}
+                                        'text-primary-700': {{ 'tab === \'' . $tabKey . '\'' }},
+                                        'text-gray-700': {{ 'tab !== \'' . $tabKey . '\'' }},
                                     }"
                                 >
                                     {{ $tab->getLabel() }}

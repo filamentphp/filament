@@ -4,7 +4,7 @@ export default function tabsSchemaComponent({
     livewireId,
     tab,
     tabQueryStringKey,
-    isScrollable
+    isScrollable,
 }) {
     return {
         tab,
@@ -47,7 +47,7 @@ export default function tabsSchemaComponent({
                 },
             )
 
-            if(!isScrollable) {
+            if (!isScrollable) {
                 this.setUpScrollable()
             }
         },
@@ -78,27 +78,38 @@ export default function tabsSchemaComponent({
 
         setUpScrollable() {
             this.$nextTick(() => {
-                const dropDownButtonElement = Array.from(this.$refs.tabsContainer.children).at(-1);
+                const dropDownButtonElement = Array.from(
+                    this.$refs.tabsContainer.children,
+                ).at(-1)
                 this.dropDownButtonDimensions = {
-                    width: Math.floor(dropDownButtonElement.clientWidth) * 2
+                    width: Math.floor(dropDownButtonElement.clientWidth) * 2,
                 }
 
-                const containerElementStyles = window.getComputedStyle(this.$refs.tabsContainer)
+                const containerElementStyles = window.getComputedStyle(
+                    this.$refs.tabsContainer,
+                )
                 this.containerElementDimensions = {
                     width: Math.floor(this.$refs.tabsContainer.clientWidth),
-                    padding: Math.floor(parseFloat(containerElementStyles.paddingLeft)) * 2,
+                    padding:
+                        Math.floor(
+                            parseFloat(containerElementStyles.paddingLeft),
+                        ) * 2,
                     gap: {
-                        width: Math.floor(parseFloat(containerElementStyles.columnGap))
-                    }
+                        width: Math.floor(
+                            parseFloat(containerElementStyles.columnGap),
+                        ),
+                    },
                 }
 
-                Array.from(this.$refs.tabsContainer.children).slice(0, -1).forEach((el) => {
-                    this.tabsElementsDimensions.push({
-                        width: Math.ceil(el.clientWidth),
-                        height: Math.ceil(el.clientHeight),
-                        key: el.dataset.tabKey
+                Array.from(this.$refs.tabsContainer.children)
+                    .slice(0, -1)
+                    .forEach((el) => {
+                        this.tabsElementsDimensions.push({
+                            width: Math.ceil(el.clientWidth),
+                            height: Math.ceil(el.clientHeight),
+                            key: el.dataset.tabKey,
+                        })
                     })
-                })
 
                 this.updateTabsWithinDropdown()
             })
@@ -106,18 +117,26 @@ export default function tabsSchemaComponent({
 
         updateTabsWithinDropdown() {
             this.tabsWithinDropdown = []
-            this.containerElementDimensions.width = Math.floor(this.$refs.tabsContainer.clientWidth)
+            this.containerElementDimensions.width = Math.floor(
+                this.$refs.tabsContainer.clientWidth,
+            )
 
-            const containerWidth = this.containerElementDimensions.width - this.containerElementDimensions.padding - this.dropDownButtonDimensions.width
+            const containerWidth =
+                this.containerElementDimensions.width -
+                this.containerElementDimensions.padding -
+                this.dropDownButtonDimensions.width
 
             let currentWidth = 0
-            this.tabsElementsDimensions.forEach(tab =>  {
-                const nextWidth = currentWidth + tab.width + this.containerElementDimensions.gap.width
-                if(nextWidth >= containerWidth) {
+            this.tabsElementsDimensions.forEach((tab) => {
+                const nextWidth =
+                    currentWidth +
+                    tab.width +
+                    this.containerElementDimensions.gap.width
+                if (nextWidth >= containerWidth) {
                     this.tabsWithinDropdown.push(tab.key)
                 }
                 currentWidth = nextWidth
             })
-        }
+        },
     }
 }
