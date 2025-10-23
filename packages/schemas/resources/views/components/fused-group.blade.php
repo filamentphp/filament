@@ -65,7 +65,7 @@
                     'id' => $getId(),
                 ], escape: false)
                 ->merge($getExtraAttributes(), escape: false)
-                ->class(['fi-sc-fused-group'])
+                ->class(['fi-sc-fused-group', 'fi-fixed-positioning-context'])
         }}
     >
         {{ $getChildSchema() }}
