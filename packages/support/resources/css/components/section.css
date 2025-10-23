@@ -222,7 +222,7 @@
         @apply overflow-hidden text-sm break-words text-gray-500 dark:text-gray-400;
     }
 
-    & .fi-sc-fused-group .fi-input-wrp {
-        @apply dark:bg-black/49;
+    & .fi-sc-fused-group .fi-sc-component {
+        @apply dark:bg-gray-900;
     }
 }
