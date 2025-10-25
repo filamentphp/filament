@@ -22,11 +22,11 @@ use Filament\Support\Facades\FilamentAsset;
 public function boot(): void
 {
     // ...
-    
+
     FilamentAsset::register([
         // ...
     ]);
-    
+
     // ...
 }
 ```
@@ -68,17 +68,14 @@ Now, when the `php artisan filament:assets` command is run, this CSS file is cop
 
 Typically, registering CSS files is used to register custom stylesheets for your application. If you want to process these files using Tailwind CSS, you need to consider the implications of that, especially if you are a plugin developer.
 
-Tailwind builds are unique to every application - they contain a minimal set of utility classes, only the ones that you are actually using in your application. This means that if you are a plugin developer, you probably should not be building your Tailwind CSS files into your plugin. Instead, you should provide the raw CSS files and instruct the user that they should build the Tailwind CSS file themselves. To do this, they probably just need to add your vendor directory into the `content` array of their `tailwind.config.js` file:
+Tailwind builds are unique to every application - they contain a minimal set of utility classes, only the ones that you are actually using in your application. This means that if you are a plugin developer, you probably should not be building your Tailwind CSS files into your plugin. Instead, you should provide the raw CSS files and instruct the user that they should build the Tailwind CSS file themselves. To do this, they need to add your vendor directory to their custom theme's CSS file using the `@source` directive. In their [custom theme](../styling#creating-a-custom-theme) CSS file (e.g., `resources/css/filament/admin/theme.css`), they should add:
 
-```js
-export default {
-    content: [
-        './resources/**/*.blade.php',
-        './vendor/filament/**/*.blade.php',
-        './vendor/danharrin/filament-blog/resources/views/**/*.blade.php', // Your plugin's vendor directory
-    ],
-    // ...
-}
+```css
+@import "tailwindcss";
+
+@source '../../../../app/Filament';
+@source '../../../../resources/views/filament';
+@source '../../../../vendor/danharrin/filament-blog/resources/views'; /* Your plugin's vendor directory */
 ```
 
 This means that when they build their Tailwind CSS file, it will include all the utility classes that are used in your plugin's views, as well as the utility classes that are used in their application and the Filament core.
@@ -282,13 +279,13 @@ export default function testComponent({
 }) {
     return {
         state,
-        
+
         // You can define any other Alpine.js properties here.
 
         init() {
             // Initialise the Alpine component here, if you need to.
         },
-        
+
         // You can define any other Alpine.js functions here.
     }
 }
