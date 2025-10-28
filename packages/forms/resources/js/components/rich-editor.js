@@ -118,14 +118,11 @@ export default function richEditorFormComponent({
                 this.editorUpdatedAt = Date.now()
             })
 
-            const debouncedCommit = Alpine.debounce(
-                () => {
-                    if (!isDestroyed) {
-                        this.$wire.commit()
-                    }
-                },
-                liveDebounce ?? 300,
-            )
+            const debouncedCommit = Alpine.debounce(() => {
+                if (!isDestroyed) {
+                    this.$wire.commit()
+                }
+            }, liveDebounce ?? 300)
 
             editor.on('update', ({ editor }) =>
                 this.$nextTick(() => {
@@ -184,8 +181,14 @@ export default function richEditorFormComponent({
 
                 this.runEditorCommands(event.detail)
             }
-            window.addEventListener('run-rich-editor-commands', runCommandsHandler)
-            eventListeners.push(['run-rich-editor-commands', runCommandsHandler])
+            window.addEventListener(
+                'run-rich-editor-commands',
+                runCommandsHandler,
+            )
+            eventListeners.push([
+                'run-rich-editor-commands',
+                runCommandsHandler,
+            ])
 
             const uploadingFileHandler = (event) => {
                 if (event.detail.livewireId !== livewireId) {
@@ -201,8 +204,14 @@ export default function richEditorFormComponent({
 
                 event.stopPropagation()
             }
-            window.addEventListener('rich-editor-uploading-file', uploadingFileHandler)
-            eventListeners.push(['rich-editor-uploading-file', uploadingFileHandler])
+            window.addEventListener(
+                'rich-editor-uploading-file',
+                uploadingFileHandler,
+            )
+            eventListeners.push([
+                'rich-editor-uploading-file',
+                uploadingFileHandler,
+            ])
 
             const uploadedFileHandler = (event) => {
                 if (event.detail.livewireId !== livewireId) {
@@ -217,8 +226,14 @@ export default function richEditorFormComponent({
 
                 event.stopPropagation()
             }
-            window.addEventListener('rich-editor-uploaded-file', uploadedFileHandler)
-            eventListeners.push(['rich-editor-uploaded-file', uploadedFileHandler])
+            window.addEventListener(
+                'rich-editor-uploaded-file',
+                uploadedFileHandler,
+            )
+            eventListeners.push([
+                'rich-editor-uploaded-file',
+                uploadedFileHandler,
+            ])
 
             const validationMessageHandler = (event) => {
                 if (event.detail.livewireId !== livewireId) {
@@ -234,8 +249,14 @@ export default function richEditorFormComponent({
 
                 event.stopPropagation()
             }
-            window.addEventListener('rich-editor-file-validation-message', validationMessageHandler)
-            eventListeners.push(['rich-editor-file-validation-message', validationMessageHandler])
+            window.addEventListener(
+                'rich-editor-file-validation-message',
+                validationMessageHandler,
+            )
+            eventListeners.push([
+                'rich-editor-file-validation-message',
+                validationMessageHandler,
+            ])
 
             window.dispatchEvent(
                 new CustomEvent(`schema-component-${livewireId}-${key}-loaded`),
