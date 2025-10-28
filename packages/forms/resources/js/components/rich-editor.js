@@ -264,7 +264,7 @@ export default function richEditorFormComponent({
         },
 
         destroy() {
-            // Set flag to prevent any async operations
+            // Set flag to prevent async operations
             isDestroyed = true
 
             // Remove all event listeners
