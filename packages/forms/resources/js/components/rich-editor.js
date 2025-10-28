@@ -273,7 +273,6 @@ export default function richEditorFormComponent({
             })
             eventListeners = []
 
-            // Destroy the editor instance
             if (editor) {
                 editor.destroy()
                 editor = null
