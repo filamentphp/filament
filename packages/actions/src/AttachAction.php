@@ -5,6 +5,7 @@ namespace Filament\Actions;
 use Closure;
 use Filament\Actions\Concerns\CanCustomizeProcess;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TableSelect;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\Width;
 use Filament\Support\Services\RelationshipJoiner;
@@ -31,6 +32,8 @@ class AttachAction extends Action
 
     protected bool | Closure $isRecordSelectPreloaded = false;
 
+    protected string | Closure | null $tableSelectConfiguration = null;
+
     protected bool | Closure $isMultiple = false;
 
     /**
@@ -43,6 +46,22 @@ class AttachAction extends Action
     public static function getDefaultName(): ?string
     {
         return 'attach';
+    }
+
+    public function getTableSelectConfiguration(): string | Closure | null
+    {
+        return $this->tableSelectConfiguration;
+    }
+
+    public function usingTableSelect(): bool
+    {
+        return filled($this->tableSelectConfiguration);
+    }
+
+    public function tableSelect(string | Closure | null $configuration): static
+    {
+        $this->tableSelectConfiguration = $configuration;
+        return $this;
     }
 
     protected function setUp(): void
@@ -68,7 +87,7 @@ class AttachAction extends Action
 
         $this->defaultColor('gray');
 
-        $this->schema(fn (): array => [$this->getRecordSelect()]);
+        $this->schema(fn (): array => [ ! $this->usingTableSelect() ? $this->getRecordSelect() : $this->getTableSelect()]);
 
         $this->action(function (array $arguments, array $data, Schema $schema, Table $table): void {
             /** @var BelongsToMany $relationship */
@@ -313,6 +332,19 @@ class AttachAction extends Action
         }
 
         return $select;
+    }
+
+    public function getTableSelect()
+    {
+        return TableSelect::make('recordId')
+            ->label($this->getLabel())
+            ->hiddenLabel()
+            ->tableConfiguration($this->getTableSelectConfiguration())
+            ->model($this->getTable()->getRelationship()->getParent()::class)
+            ->relationshipName(
+                $this->getTable()->getRelationship()->getRelationName(),
+            )
+            ->multiple($this->isMultiple());
     }
 
     public function forceSearchCaseInsensitive(bool | Closure | null $condition = true): static
