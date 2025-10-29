@@ -20,9 +20,9 @@ Radio::make('status')
     ])
 ```
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static array, the `options()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="5.x">As well as allowing a static array, the `options()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="forms/fields/radio/simple" alt="Radio" version="4.x" />
+<AutoScreenshot name="forms/fields/radio/simple" alt="Radio" version="5.x" />
 
 ## Setting option descriptions
 
@@ -44,9 +44,9 @@ Radio::make('status')
     ])
 ```
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static array, the `descriptions()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="5.x">As well as allowing a static array, the `descriptions()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="forms/fields/radio/option-descriptions" alt="Radio with option descriptions" version="4.x" />
+<AutoScreenshot name="forms/fields/radio/option-descriptions" alt="Radio with option descriptions" version="5.x" />
 
 <Aside variant="info">
     Be sure to use the same `key` in the descriptions array as the `key` in the option array so the right description matches the right option.
@@ -65,7 +65,7 @@ Radio::make('feedback')
     ->inline()
 ```
 
-<AutoScreenshot name="forms/fields/radio/inline" alt="Inline toggle buttons" version="4.x" />
+<AutoScreenshot name="forms/fields/radio/inline" alt="Inline toggle buttons" version="5.x" />
 
 Optionally, you may pass a boolean value to control if the options should be inline or not:
 
@@ -78,7 +78,7 @@ Radio::make('feedback')
     ->inline(FeatureFlag::active())
 ```
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `inline()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="5.x">As well as allowing a static value, the `inline()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Disabling specific options
 
@@ -96,9 +96,9 @@ Radio::make('status')
     ->disableOptionWhen(fn (string $value): bool => $value === 'published')
 ```
 
-<UtilityInjection set="formFields" version="4.x" extras="Option value;;mixed;;$value;;The value of the option to disable.||Option label;;string | Illuminate\Contracts\Support\Htmlable;;$label;;The label of the option to disable.">You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="5.x" extras="Option value;;mixed;;$value;;The value of the option to disable.||Option label;;string | Illuminate\Contracts\Support\Htmlable;;$label;;The label of the option to disable.">You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="forms/fields/radio/disabled-option" alt="Radio with disabled option" version="4.x" />
+<AutoScreenshot name="forms/fields/radio/disabled-option" alt="Radio with disabled option" version="5.x" />
 
 If you want to retrieve the options that have not been disabled, e.g. for validation purposes, you can do so using `getEnabledOptions()`:
 
@@ -129,7 +129,7 @@ Radio::make('feedback')
     ->boolean()
 ```
 
-<AutoScreenshot name="forms/fields/radio/boolean" alt="Boolean radio" version="4.x" />
+<AutoScreenshot name="forms/fields/radio/boolean" alt="Boolean radio" version="5.x" />
 
 To customize the "Yes" label, you can use the `trueLabel` argument on the `boolean()` method:
 

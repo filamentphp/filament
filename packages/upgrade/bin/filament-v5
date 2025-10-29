@@ -9,31 +9,15 @@ render(<<<'HTML'
     <div>
         <div class="space-y-1">
             <div class="py-1 px-3 bg-amber-600 text-amber-50">
-                <strong>Filament v4</strong> Upgrade
+                <strong>Filament v5</strong> Upgrade
             </div>
 
             <div>
-                Welcome to the <strong>Filament v4</strong> upgrade process!
-
-                <br />
-
-                This script will attempt to handle most of the breaking changes for you.
+                Welcome to the <strong>Filament v5</strong> upgrade process!
 
                 <br />
 
                 If you have any questions, please reach out to us on <a href="https://filamentphp.com/discord" class="underline font-bold">Discord</a> or <a href="https://github.com/filamentphp/filament/discussions/new?category=q-a" class="underline font-bold">GitHub</a>.
-            </div>
-
-            <div>
-                To begin, please ensure that you are using a version control system such as Git.
-
-                <br />
-
-                We will make changes directly to your files, and you will need to be able to revert them if something goes wrong.
-
-                <br />
-
-                <strong>Please commit any changes you have made to your project before continuing.</strong>
             </div>
         </div>
 
@@ -42,45 +26,6 @@ render(<<<'HTML'
 HTML);
 
 require __DIR__ . '/../src/check-compatibility.php';
-
-$directories = $argv[1] ?? ask(<<<HTML
-    <div>
-        Please provide a comma-separated list of directories containing Filament code to upgrade (e.g. <strong>app</strong>, <strong>app-modules</strong>, <strong>src</strong>).
-
-        <br />
-
-        <span class="bg-amber-600 text-amber-50 mr-1">
-             You can skip this if you have a normal Laravel app structure:
-        </span>
-    </div>
-    HTML) ?: 'app';
-
-render(<<<HTML
-    <p class="bg-green-600 text-green-50">
-        Starting upgrade...
-    </p>
-HTML);
-
-$rectorScriptPath = implode(DIRECTORY_SEPARATOR, ['vendor', 'bin', 'rector']);
-
-foreach (explode(',', $directories) as $directory) {
-    $directory = trim($directory);
-    $directory = trim($directory, DIRECTORY_SEPARATOR);
-
-    render(<<<HTML
-        <p>
-            Start processing <strong>/{$directory}</strong> to fix code affected by breaking changes.
-        </p>
-        HTML);
-
-    exec("{$rectorScriptPath} process {$directory} --config vendor/filament/upgrade/src/rector.php --clear-cache");
-
-    render(<<<HTML
-        <p class="pt-2">
-            Finished processing <strong>/{$directory}</strong>.
-        </p>
-        HTML);
-}
 
 $requireCommands = [];
 
@@ -103,15 +48,15 @@ foreach (json_decode(file_get_contents('composer.json'), true)['require'] as $pa
     $isWindows = str_starts_with(php_uname(), 'Windows');
 
     if (! $isWindows) {
-        $requireCommands[] = "composer require {$package}:\"^4.0\" -W --no-update";
+        $requireCommands[] = "composer require {$package}:\"^5.0\" -W --no-update";
     } else {
-        $requireCommands[] = "composer require {$package}:\"~4.0\" -W --no-update";
+        $requireCommands[] = "composer require {$package}:\"~5.0\" -W --no-update";
     }
 }
 
 $requireCommandsHtml = implode("</strong><br /><strong>", $requireCommands);
 
-// Suggest commands for third-party Filament plugins that have v4-compatible releases
+// Suggest commands for third-party Filament plugins that have v5-compatible releases
 $thirdPartyCommands = [];
 
 try {
@@ -176,7 +121,7 @@ try {
                     if (!str_starts_with($dep, 'filament/')) {
                         continue;
                     }
-                    if (preg_match("/\^\s*4(?:\.|$)|~\s*4(?:\.|$)|>=\s*4(?:\.|$)/", (string) $constraint)) {
+                    if (preg_match("/\^\s*5(?:\.|$)|~\s*5(?:\.|$)|>=\s*5(?:\.|$)/", (string) $constraint)) {
                         $compatibility = [
                             'version' => (string) ($checkingVersion['version'] ?? ''),
                             'isPrerelease' => false,
@@ -197,7 +142,7 @@ try {
                             continue;
                         }
 
-                        if (preg_match("/\^\s*4(?:\.|$)|~\s*4(?:\.|$)|>=\s*4(?:\.|$)/", (string) $constraint)) {
+                        if (preg_match("/\^\s*5(?:\.|$)|~\s*5(?:\.|$)|>=\s*5(?:\.|$)/", (string) $constraint)) {
                             $compatibility = [
                                 'version' => (string) ($checkingVersion['version'] ?? ''),
                                 'isPrerelease' => true,
@@ -228,7 +173,7 @@ try {
                                 continue;
                             }
 
-                            if (preg_match("/\^\s*4(?:\.|$)|~\s*4(?:\.|$)|>=\s*4(?:\.|$)/", (string) $constraint)) {
+                            if (preg_match("/\^\s*5(?:\.|$)|~\s*5(?:\.|$)|>=\s*5(?:\.|$)/", (string) $constraint)) {
                                 $compatibility = [
                                     'version' => (string) ($checkingVersion['version'] ?? ''),
                                     'isPrerelease' => false,
@@ -257,7 +202,7 @@ try {
                                     continue;
                                 }
 
-                                if (preg_match("/\^\s*4(?:\.|$)|~\s*4(?:\.|$)|>=\s*4(?:\.|$)/", (string) $constraint)) {
+                                if (preg_match("/\^\s*5(?:\.|$)|~\s*5(?:\.|$)|>=\s*5(?:\.|$)/", (string) $constraint)) {
                                     $compatibility = [
                                         'version' => (string) ($checkingVersion['version'] ?? ''),
                                         'isPrerelease' => true,
@@ -297,7 +242,7 @@ try {
                         // For 0.x.y, constrain to the minor series, e.g. ^0.12 or ~0.12
                         $constraint = $isWindows ? "~0.{$minor}" : "^0.{$minor}";
                     } else {
-                        // For 1.x and above, stick to major series, e.g. ^4.0 or ~4.0
+                        // For 1.x and above, stick to major series, e.g. ^5.0 or ~5.0
                         $constraint = $isWindows ? "~{$major}.0" : "^{$major}.0";
                     }
                 } elseif (preg_match('/^(\d+)/', $version, $m)) {

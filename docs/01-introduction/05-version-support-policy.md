@@ -11,6 +11,7 @@ contents: false
 | 2.x     | ❌ ended Jul 1 2023         | ❌ ended Jan 1 2025                 | ✅ until Jan 1 2026                  |
 | 3.x     | ❌ ended Aug 1 2024         | ✅ until Aug 1 2026                 | ✅ until Jan 1 2028                  |
 | 4.x     | ✅ until 5.x stable release | ✅ ~1 year after 5.x stable release | ✅ ~2 years after 5.x stable release |
+| 5.x     | ✅ until 6.x stable release | ✅ ~1 year after 6.x stable release | ✅ ~2 years after 6.x stable release |
 
 ## New features
 

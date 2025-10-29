@@ -15,7 +15,7 @@ use Filament\Forms\Components\RichEditor;
 RichEditor::make('content')
 ```
 
-<AutoScreenshot name="forms/fields/rich-editor/simple" alt="Rich editor" version="4.x" />
+<AutoScreenshot name="forms/fields/rich-editor/simple" alt="Rich editor" version="5.x" />
 
 ## Storing content as JSON
 
@@ -96,7 +96,7 @@ Additional tools available in the toolbar include:
 - `tableToggleHeaderRow` - Toggles the header row of the table.
 - `tableDelete` - Deletes the table.
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `toolbarButtons()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="5.x">As well as allowing a static value, the `toolbarButtons()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ### Customizing floating toolbars
 
@@ -302,7 +302,7 @@ RichEditor::make('content')
     ->fileAttachmentsVisibility('private')
 ```
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing static values, the `fileAttachmentsDisk()`, `fileAttachmentsDirectory()`, and `fileAttachmentsVisibility()` methods also accept functions to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="5.x">As well as allowing static values, the `fileAttachmentsDisk()`, `fileAttachmentsDirectory()`, and `fileAttachmentsVisibility()` methods also accept functions to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 <Aside variant="tip">
     Filament also supports [`spatie/laravel-medialibrary`](https://github.com/spatie/laravel-medialibrary) for storing rich editor file attachments. See our [plugin documentation](/plugins/filament-spatie-media-library#using-media-library-for-rich-editor-file-attachments) for more information.

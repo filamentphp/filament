@@ -14,7 +14,7 @@ use Filament\Forms\Components\MarkdownEditor;
 MarkdownEditor::make('content')
 ```
 
-<AutoScreenshot name="forms/fields/markdown-editor/simple" alt="Markdown editor" version="4.x" />
+<AutoScreenshot name="forms/fields/markdown-editor/simple" alt="Markdown editor" version="5.x" />
 
 ## Security
 
@@ -45,7 +45,7 @@ MarkdownEditor::make('content')
 
 Each nested array in the main array represents a group of buttons in the toolbar.
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `toolbarButtons()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="5.x">As well as allowing a static value, the `toolbarButtons()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Uploading images to the editor
 
@@ -59,7 +59,7 @@ MarkdownEditor::make('content')
     ->fileAttachmentsDirectory('attachments')
 ```
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing static values, the `fileAttachmentsDisk()` and `fileAttachmentsDirectory()` methods also accept functions to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="5.x">As well as allowing static values, the `fileAttachmentsDisk()` and `fileAttachmentsDirectory()` methods also accept functions to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ### Validating uploaded images
 

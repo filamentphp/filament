@@ -21,9 +21,9 @@ IconColumn::make('status')
     })
 ```
 
-<UtilityInjection set="tableColumns" version="4.x">The `icon()` method can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="tableColumns" version="5.x">The `icon()` method can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="tables/columns/icon/simple" alt="Icon column" version="4.x" />
+<AutoScreenshot name="tables/columns/icon/simple" alt="Icon column" version="5.x" />
 
 ## Customizing the color
 
@@ -50,9 +50,9 @@ IconColumn::make('status')
     })
 ```
 
-<UtilityInjection set="tableColumns" version="4.x">The `color()` method can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="tableColumns" version="5.x">The `color()` method can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="tables/columns/icon/color" alt="Icon column with color" version="4.x" />
+<AutoScreenshot name="tables/columns/icon/color" alt="Icon column with color" version="5.x" />
 
 ## Customizing the size
 
@@ -66,9 +66,9 @@ IconColumn::make('status')
     ->size(IconSize::Medium)
 ```
 
-<UtilityInjection set="tableColumns" version="4.x">As well as allowing a static value, the `size()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="tableColumns" version="5.x">As well as allowing a static value, the `size()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="tables/columns/icon/medium" alt="Medium-sized icon column" version="4.x" />
+<AutoScreenshot name="tables/columns/icon/medium" alt="Medium-sized icon column" version="5.x" />
 
 ## Handling booleans
 
@@ -83,7 +83,7 @@ IconColumn::make('is_featured')
 
 > If this attribute in the model class is already cast as a `bool` or `boolean`, Filament is able to detect this, and you do not need to use `boolean()` manually.
 
-<AutoScreenshot name="tables/columns/icon/boolean" alt="Icon column to display a boolean" version="4.x" />
+<AutoScreenshot name="tables/columns/icon/boolean" alt="Icon column to display a boolean" version="5.x" />
 
 Optionally, you may pass a boolean value to control if the icon should be boolean or not:
 
@@ -94,7 +94,7 @@ IconColumn::make('is_featured')
     ->boolean(FeatureFlag::active())
 ```
 
-<UtilityInjection set="tableColumns" version="4.x">As well as allowing a static value, the `boolean()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="tableColumns" version="5.x">As well as allowing a static value, the `boolean()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ### Customizing the boolean icons
 
@@ -110,9 +110,9 @@ IconColumn::make('is_featured')
     ->falseIcon(Heroicon::OutlinedXMark)
 ```
 
-<UtilityInjection set="tableColumns" version="4.x">As well as allowing static values, the `trueIcon()` and `falseIcon()` methods also accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters.</UtilityInjection>
+<UtilityInjection set="tableColumns" version="5.x">As well as allowing static values, the `trueIcon()` and `falseIcon()` methods also accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters.</UtilityInjection>
 
-<AutoScreenshot name="tables/columns/icon/boolean-icon" alt="Icon column to display a boolean with custom icons" version="4.x" />
+<AutoScreenshot name="tables/columns/icon/boolean-icon" alt="Icon column to display a boolean with custom icons" version="5.x" />
 
 ### Customizing the boolean colors
 
@@ -127,9 +127,9 @@ IconColumn::make('is_featured')
     ->falseColor('warning')
 ```
 
-<UtilityInjection set="tableColumns" version="4.x">As well as allowing static values, the `trueColor()` and `falseColor()` methods also accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters.</UtilityInjection>
+<UtilityInjection set="tableColumns" version="5.x">As well as allowing static values, the `trueColor()` and `falseColor()` methods also accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters.</UtilityInjection>
 
-<AutoScreenshot name="tables/columns/icon/boolean-color" alt="Icon column to display a boolean with custom colors" version="4.x" />
+<AutoScreenshot name="tables/columns/icon/boolean-color" alt="Icon column to display a boolean with custom colors" version="5.x" />
 
 ## Wrapping multiple icons
 

@@ -29,7 +29,7 @@ Wizard::make([
 ])
 ```
 
-<AutoScreenshot name="schemas/layout/wizard/simple" alt="Wizard" version="4.x" />
+<AutoScreenshot name="schemas/layout/wizard/simple" alt="Wizard" version="5.x" />
 
 <Aside variant="tip">
     We have different setup instructions if you're looking to add a wizard to the creation process inside a [panel resource](../resources/creating-records#using-a-wizard) or an [action modal](../actions/modals#rendering-a-wizard-in-a-modal). Following that documentation will ensure that the ability to submit the form is only available on the last step of the wizard.
@@ -88,9 +88,9 @@ Step::make('Order')
     ]),
 ```
 
-<UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `icon()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="schemaComponents" version="5.x">As well as allowing a static value, the `icon()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="schemas/layout/wizard/icons" alt="Wizard with step icons" version="4.x" />
+<AutoScreenshot name="schemas/layout/wizard/icons" alt="Wizard with step icons" version="5.x" />
 
 ## Customizing the icon for completed steps
 
@@ -107,9 +107,9 @@ Step::make('Order')
     ]),
 ```
 
-<UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `completedIcon()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="schemaComponents" version="5.x">As well as allowing a static value, the `completedIcon()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="schemas/layout/wizard/completed-icons" alt="Wizard with completed step icons" version="4.x" />
+<AutoScreenshot name="schemas/layout/wizard/completed-icons" alt="Wizard with completed step icons" version="5.x" />
 
 ## Adding descriptions to steps
 
@@ -125,9 +125,9 @@ Step::make('Order')
     ]),
 ```
 
-<UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `description()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="schemaComponents" version="5.x">As well as allowing a static value, the `description()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="schemas/layout/wizard/descriptions" alt="Wizard with step descriptions" version="4.x" />
+<AutoScreenshot name="schemas/layout/wizard/descriptions" alt="Wizard with step descriptions" version="5.x" />
 
 ## Setting the default active step
 
@@ -141,7 +141,7 @@ Wizard::make([
 ])->startOnStep(2)
 ```
 
-<UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `startOnStep()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="schemaComponents" version="5.x">As well as allowing a static value, the `startOnStep()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Allowing steps to be skipped
 
@@ -167,7 +167,7 @@ Step::make('Order')
     ]),
 ```
 
-<UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `skippable()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="schemaComponents" version="5.x">As well as allowing a static value, the `skippable()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Persisting the current step in the URL's query string
 
@@ -191,7 +191,7 @@ Wizard::make([
 ])->persistStepInQueryString('wizard-step')
 ```
 
-<UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `persistStepInQueryString()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="schemaComponents" version="5.x">As well as allowing a static value, the `persistStepInQueryString()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Step lifecycle hooks
 
@@ -212,7 +212,7 @@ Step::make('Order')
     ]),
 ```
 
-<UtilityInjection set="schemaComponents" version="4.x">You can inject various utilities into the `afterValidation()` and `beforeValidation()` functions as parameters.</UtilityInjection>
+<UtilityInjection set="schemaComponents" version="5.x">You can inject various utilities into the `afterValidation()` and `beforeValidation()` functions as parameters.</UtilityInjection>
 
 ### Preventing the next step from being loaded
 
@@ -253,7 +253,7 @@ Wizard::make([
 ])
 ```
 
-<UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `columns()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="schemaComponents" version="5.x">As well as allowing a static value, the `columns()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Customizing the wizard action objects
 
@@ -276,4 +276,4 @@ Wizard::make([
     )
 ```
 
-<UtilityInjection set="formFields" version="4.x" extras="Action;;Filament\Actions\Action;;$action;;The action object to customize.">The action registration methods can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="5.x" extras="Action;;Filament\Actions\Action;;$action;;The action object to customize.">The action registration methods can inject various utilities into the function as parameters.</UtilityInjection>

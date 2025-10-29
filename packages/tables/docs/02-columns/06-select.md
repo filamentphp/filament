@@ -22,7 +22,7 @@ SelectColumn::make('status')
     ])
 ```
 
-<AutoScreenshot name="tables/columns/select/simple" alt="Select column" version="4.x" />
+<AutoScreenshot name="tables/columns/select/simple" alt="Select column" version="5.x" />
 
 ## Enabling the JavaScript select
 
@@ -40,7 +40,7 @@ SelectColumn::make('status')
     ->native(false)
 ```
 
-<UtilityInjection set="tableColumns" version="4.x">As well as allowing a static value, the `native()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="tableColumns" version="5.x">As well as allowing a static value, the `native()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Searching options
 
@@ -66,7 +66,7 @@ SelectColumn::make('author_id')
     ->searchableOptions(FeatureFlag::active())
 ```
 
-<UtilityInjection set="tableColumns" version="4.x">As well as allowing a static value, the `searchableOptions()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="tableColumns" version="5.x">As well as allowing a static value, the `searchableOptions()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ### Returning custom search results
 
@@ -93,7 +93,7 @@ SelectColumn::make('author_id')
 
 `getOptionLabelUsing()` is crucial, since it provides Filament with the label of the selected option, so it doesn't need to execute a full search to find it. If an option is not valid, it should return `null`.
 
-<UtilityInjection set="tableColumns" version="4.x" extras="Option value;;mixed;;$value;;The option value to retrieve the label for.||Search;;?string;;$search;;[<code>getOptionsSearchResultsUsing()</code> only] The current search input value, if the field is searchable.">You can inject various utilities into these functions as parameters.</UtilityInjection>
+<UtilityInjection set="tableColumns" version="5.x" extras="Option value;;mixed;;$value;;The option value to retrieve the label for.||Search;;?string;;$search;;[<code>getOptionsSearchResultsUsing()</code> only] The current search input value, if the field is searchable.">You can inject various utilities into these functions as parameters.</UtilityInjection>
 
 ### Setting a custom loading message
 
@@ -108,7 +108,7 @@ SelectColumn::make('author_id')
     ->optionsLoadingMessage('Loading authors...')
 ```
 
-<UtilityInjection set="tableColumns" version="4.x">As well as allowing a static value, the `optionsLoadingMessage()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="tableColumns" version="5.x">As well as allowing a static value, the `optionsLoadingMessage()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ### Setting a custom no search results message
 
@@ -123,7 +123,7 @@ SelectColumn::make('author_id')
     ->noOptionsSearchResultsMessage('No authors found.')
 ```
 
-<UtilityInjection set="tableColumns" version="4.x">As well as allowing a static value, the `noOptionsSearchResultsMessage()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="tableColumns" version="5.x">As well as allowing a static value, the `noOptionsSearchResultsMessage()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ### Setting a custom search prompt
 
@@ -138,7 +138,7 @@ SelectColumn::make('author_id')
     ->optionsSearchPrompt('Search authors by their name or email address')
 ```
 
-<UtilityInjection set="tableColumns" version="4.x">As well as allowing a static value, the `optionsSearchPrompt()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="tableColumns" version="5.x">As well as allowing a static value, the `optionsSearchPrompt()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ### Setting a custom searching message
 
@@ -153,7 +153,7 @@ SelectColumn::make('author_id')
     ->optionsSearchingMessage('Searching authors...')
 ```
 
-<UtilityInjection set="tableColumns" version="4.x">As well as allowing a static value, the `optionsSearchingMessage()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="tableColumns" version="5.x">As well as allowing a static value, the `optionsSearchingMessage()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ### Tweaking the search debounce
 
@@ -170,7 +170,7 @@ SelectColumn::make('author_id')
 
 Ensure that you are not lowering the debounce too much, as this may cause the select to become slow and unresponsive due to a high number of network requests to retrieve options from server.
 
-<UtilityInjection set="tableColumns" version="4.x">As well as allowing a static value, the `optionsSearchDebounce()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="tableColumns" version="5.x">As well as allowing a static value, the `optionsSearchDebounce()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Integrating with an Eloquent relationship
 
@@ -219,7 +219,7 @@ SelectColumn::make('author_id')
     ->preload(FeatureFlag::active())
 ```
 
-<UtilityInjection set="tableColumns" version="4.x">As well as allowing a static value, the `preload()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="tableColumns" version="5.x">As well as allowing a static value, the `preload()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ### Excluding the current record
 
@@ -250,7 +250,7 @@ SelectColumn::make('author_id')
     )
 ```
 
-<UtilityInjection set="tableColumns" version="4.x" extras="Query;;Illuminate\Database\Eloquent\Builder;;$query;;The Eloquent query builder to modify.||Search;;?string;;$search;;The current search input value, if the field is searchable.">The `modifyQueryUsing` argument can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="tableColumns" version="5.x" extras="Query;;Illuminate\Database\Eloquent\Builder;;$query;;The Eloquent query builder to modify.||Search;;?string;;$search;;The current search input value, if the field is searchable.">The `modifyQueryUsing` argument can inject various utilities into the function as parameters.</UtilityInjection>
 
 ### Customizing the relationship option labels
 
@@ -283,7 +283,7 @@ SelectColumn::make('author_id')
     ->searchableOptions(['first_name', 'last_name'])
 ```
 
-<UtilityInjection set="tableColumns" version="4.x" extras="Eloquent record;;Illuminate\Database\Eloquent\Model;;$record;;The Eloquent record to get the option label for.">The `getOptionLabelFromRecordUsing()` method can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="tableColumns" version="5.x" extras="Eloquent record;;Illuminate\Database\Eloquent\Model;;$record;;The Eloquent record to get the option label for.">The `getOptionLabelFromRecordUsing()` method can inject various utilities into the function as parameters.</UtilityInjection>
 
 ### Remembering options
 
@@ -301,7 +301,7 @@ SelectColumn::make('author_id')
     When options are remembered, any record-specific options or disabled options will not work correctly, as the same options will be used for all records in the table. If you need record-specific options or disabled options, you should disable option remembering.
 </Aside>
 
-<UtilityInjection set="tableColumns" version="4.x">As well as allowing a static value, the `rememberOptions()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="tableColumns" version="5.x">As well as allowing a static value, the `rememberOptions()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Allowing HTML in the option labels
 
@@ -341,7 +341,7 @@ SelectColumn::make('technology')
     ->allowOptionsHtml(FeatureFlag::active())
 ```
 
-<UtilityInjection set="tableColumns" version="4.x">As well as allowing a static value, the `allowOptionsHtml()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="tableColumns" version="5.x">As well as allowing a static value, the `allowOptionsHtml()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Wrap or truncate option labels
 
@@ -354,7 +354,7 @@ SelectColumn::make('truncate')
     ->wrapOptionLabels(false)
 ```
 
-<UtilityInjection set="tableColumns" version="4.x">As well as allowing a static value, the `wrapOptionLabels()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="tableColumns" version="5.x">As well as allowing a static value, the `wrapOptionLabels()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Disable placeholder selection
 
@@ -372,7 +372,7 @@ SelectColumn::make('status')
     ->selectablePlaceholder(false)
 ```
 
-<UtilityInjection set="tableColumns" version="4.x">As well as allowing a static value, the `selectablePlaceholder()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="tableColumns" version="5.x">As well as allowing a static value, the `selectablePlaceholder()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Disabling specific options
 
@@ -391,7 +391,7 @@ SelectColumn::make('status')
     ->disableOptionWhen(fn (string $value): bool => $value === 'published')
 ```
 
-<UtilityInjection set="tableColumns" version="4.x" extras="Option value;;mixed;;$value;;The value of the option to disable.||Option label;;string | Illuminate\Contracts\Support\Htmlable;;$label;;The label of the option to disable.">You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="tableColumns" version="5.x" extras="Option value;;mixed;;$value;;The value of the option to disable.||Option label;;string | Illuminate\Contracts\Support\Htmlable;;$label;;The label of the option to disable.">You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Limiting the number of options
 
@@ -408,7 +408,7 @@ SelectColumn::make('author_id')
 
 Ensure that you are not raising the limit too high, as this may cause the select to become slow and unresponsive due to high in-browser memory usage.
 
-<UtilityInjection set="tableColumns" version="4.x">As well as allowing a static value, the `optionsLimit()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="tableColumns" version="5.x">As well as allowing a static value, the `optionsLimit()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Validation
 
