@@ -1,5 +1,7 @@
 <?php
 
+namespace Filament\Tests\Forms;
+
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Wizard;

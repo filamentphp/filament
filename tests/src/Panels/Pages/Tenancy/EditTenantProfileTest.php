@@ -1,5 +1,7 @@
 <?php
 
+namespace Filament\Tests\Panels\Pages\Tenancy;
+
 use Filament\Facades\Filament;
 use Filament\Pages\Tenancy\EditTenantProfile;
 use Filament\Tests\Fixtures\Models\Team;
