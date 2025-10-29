@@ -38,7 +38,7 @@ it('can send notifications', function (): void {
     };
 
     $getRandomIcon = function () use ($icons): string {
-        return 'heroicon-' . collect($icons)->flatten()->random();
+        return 'heroicon-' . collect($icons['heroicons'])->flatten()->random();
     };
 
     expect(session()->get('filament.notifications'))
