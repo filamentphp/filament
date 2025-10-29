@@ -13,6 +13,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\Modelable;
@@ -29,6 +30,9 @@ class TableSelectLivewireComponent extends Component implements HasActions, HasF
 
     #[Locked]
     public bool $isDisabled = false;
+
+    #[Locked]
+    public bool $shouldIgnoreRelatedRecords = false;
 
     #[Locked]
     public ?int $maxSelectableRecords = null;
@@ -92,6 +96,20 @@ class TableSelectLivewireComponent extends Component implements HasActions, HasF
 
                 if (! ($relationship instanceof BelongsToMany)) {
                     return $relationshipQuery;
+                }
+
+                if ($this->shouldIgnoreRelatedRecords) {
+                    $relationshipQuery->whereNot(function (Builder $relationshipQuery) use ($relationship): void {
+                        $relationshipQuery->where(
+                            $relationship->getQualifiedForeignPivotKeyName(),
+                            '=',
+                            $relationship->getParent()->{$relationship->getParentKeyName()}
+                        );
+
+                        if ($relationship instanceof MorphToMany) {
+                            $relationshipQuery->where($relationship->qualifyPivotColumn($relationship->getMorphType()), $relationship->getMorphClass());
+                        }
+                    });
                 }
 
                 $relationshipBaseQuery = $relationshipQuery->getQuery();
