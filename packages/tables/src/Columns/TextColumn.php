@@ -251,7 +251,7 @@ class TextColumn extends Column implements HasEmbeddedView
         if (($stateCount > 1) && (! $isListWithLineBreaks) && (! $isBadge)) {
             $state = [
                 implode(
-                    ', ',
+                    $this->getSeparator() ?? ', ',
                     array_map(
                         fn (mixed $stateItem): string => $formatState($stateItem),
                         $state,
