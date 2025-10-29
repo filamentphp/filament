@@ -14,7 +14,7 @@ Looking for a full example on how to test a panel resource? Check out the [Testi
 
 If you could like to learn the different methods available to test tables, check out the [Testing tables](../tables/testing) section.
 
-If you need to test a schema, which encompasses both forms and infolists, check out the [Testing schemas](../schemas/testing) section.
+If you need to test a schema, which encompasses both forms and infolists, check out the [Testing schemas](../testing/testing-schemas) section.
 
 If you would like to test an action, including actions that exist in tables or in schemas, check out the [Testing actions](../actions/testing) section.
 
