@@ -30,6 +30,7 @@
 
     $collapseAllActionIsVisible = $isCollapsible && $collapseAllAction->isVisible();
     $expandAllActionIsVisible = $isCollapsible && $expandAllAction->isVisible();
+    $persistCollapsed = $shouldPersistCollapsed();
 
     $key = $getKey();
     $statePath = $getStatePath();
