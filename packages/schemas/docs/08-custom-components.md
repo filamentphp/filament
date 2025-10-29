@@ -22,7 +22,7 @@ You may pass data to this view through the `viewData()` method:
 use Filament\Schemas\Components\View;
 
 View::make('filament.schemas.components.chart')
-    ->viewData(fn (): array => ['foo' => 'bar'])
+    ->viewData(['data' => $data])
 ```
 
 ### Rendering the component's child schema
