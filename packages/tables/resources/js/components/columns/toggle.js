@@ -7,38 +7,35 @@ export default function toggleTableColumn({ name, recordKey, state }) {
         state,
 
         init() {
-            Livewire.hook(
-                'commit',
-                ({ component, commit, succeed, fail, respond }) => {
-                    succeed(({ snapshot, effect }) => {
-                        this.$nextTick(() => {
-                            if (this.isLoading) {
-                                return
-                            }
+            Livewire.interceptMessage(({ component, onSuccess }) => {
+                onSuccess(() => {
+                    this.$nextTick(() => {
+                        if (this.isLoading) {
+                            return
+                        }
 
-                            if (
-                                component.id !==
-                                this.$root.closest('[wire\\:id]')?.attributes[
-                                    'wire:id'
-                                ].value
-                            ) {
-                                return
-                            }
+                        if (
+                            component.id !==
+                            this.$root.closest('[wire\\:id]')?.attributes[
+                                'wire:id'
+                            ].value
+                        ) {
+                            return
+                        }
 
-                            const serverState = this.getServerState()
+                        const serverState = this.getServerState()
 
-                            if (
-                                serverState === undefined ||
-                                Alpine.raw(this.state) === serverState
-                            ) {
-                                return
-                            }
+                        if (
+                            serverState === undefined ||
+                            Alpine.raw(this.state) === serverState
+                        ) {
+                            return
+                        }
 
-                            this.state = serverState
-                        })
+                        this.state = serverState
                     })
-                },
-            )
+                })
+            })
 
             this.$watch('state', async () => {
                 const serverState = this.getServerState()

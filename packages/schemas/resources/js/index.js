@@ -112,9 +112,9 @@ document.addEventListener('alpine:init', () => {
 
     window.Alpine.data('filamentActionsSchemaComponent', actions)
 
-    Livewire.hook('commit', ({ component, commit, respond, succeed, fail }) => {
-        succeed(({ snapshot, effects }) => {
-            effects.dispatches?.forEach((dispatch) => {
+    Livewire.interceptMessage(({ component, onSuccess }) => {
+        onSuccess(({ payload }) => {
+            payload.effects?.dispatches?.forEach((dispatch) => {
                 if (!dispatch.params?.awaitSchemaComponent) {
                     return
                 }

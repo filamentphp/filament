@@ -19,28 +19,25 @@ export default function checkboxListFormComponent({ livewireId }) {
                 this.checkIfAllCheckboxesAreChecked()
             })
 
-            Livewire.hook(
-                'commit',
-                ({ component, commit, succeed, fail, respond }) => {
-                    succeed(({ snapshot, effect }) => {
-                        this.$nextTick(() => {
-                            if (component.id !== livewireId) {
-                                return
-                            }
+            Livewire.interceptMessage(({ component, onSuccess }) => {
+                onSuccess(() => {
+                    this.$nextTick(() => {
+                        if (component.id !== livewireId) {
+                            return
+                        }
 
-                            this.checkboxListOptions = Array.from(
-                                this.$root.querySelectorAll(
-                                    '.fi-fo-checkbox-list-option',
-                                ),
-                            )
+                        this.checkboxListOptions = Array.from(
+                            this.$root.querySelectorAll(
+                                '.fi-fo-checkbox-list-option',
+                            ),
+                        )
 
-                            this.updateVisibleCheckboxListOptions()
+                        this.updateVisibleCheckboxListOptions()
 
-                            this.checkIfAllCheckboxesAreChecked()
-                        })
+                        this.checkIfAllCheckboxesAreChecked()
                     })
-                },
-            )
+                })
+            })
 
             this.$watch('search', () => {
                 this.updateVisibleCheckboxListOptions()

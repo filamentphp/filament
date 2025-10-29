@@ -1434,11 +1434,11 @@
         },
         {
             "name": "filament/support",
-            "version": "4.x-dev",
+            "version": "5.x-dev",
             "dist": {
                 "type": "path",
                 "url": "packages/support",
-                "reference": "3024a6e3ddcabbd24f3335cc68cdce6d05e33a05"
+                "reference": "9cefe2ef695ecf91de58bd5214d67fe76ba79e77"
             },
             "require": {
                 "blade-ui-kit/blade-heroicons": "^2.5",
@@ -1447,7 +1447,7 @@
                 "illuminate/contracts": "^11.28|^12.0",
                 "kirschbaum-development/eloquent-power-joins": "^4.0",
                 "league/uri-components": "^7.0",
-                "livewire/livewire": "^3.5",
+                "livewire/livewire": "^4.0@beta",
                 "nette/php-generator": "^4.0",
                 "php": "^8.2",
                 "ryangjchandler/blade-capture-directive": "^1.0",
@@ -2406,16 +2406,16 @@
         },
         {
             "name": "laravel/framework",
-            "version": "v12.36.0",
+            "version": "v12.36.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "5247c8f4139e5266cd42bbe13de131604becd7e1"
+                "reference": "cad110d7685fbab990a6bb8184d0cfd847d7c4d8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/5247c8f4139e5266cd42bbe13de131604becd7e1",
-                "reference": "5247c8f4139e5266cd42bbe13de131604becd7e1",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/cad110d7685fbab990a6bb8184d0cfd847d7c4d8",
+                "reference": "cad110d7685fbab990a6bb8184d0cfd847d7c4d8",
                 "shasum": ""
             },
             "require": {
@@ -2621,7 +2621,7 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2025-10-28T15:13:16+00:00"
+            "time": "2025-10-29T14:20:57+00:00"
         },
         {
             "name": "laravel/pail",
@@ -3735,16 +3735,16 @@
         },
         {
             "name": "livewire/livewire",
-            "version": "v3.6.4",
+            "version": "v4.0.0-beta.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/livewire/livewire.git",
-                "reference": "ef04be759da41b14d2d129e670533180a44987dc"
+                "reference": "28efe84a67ce8e0cf4d5afeeed577baebd03e745"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/livewire/livewire/zipball/ef04be759da41b14d2d129e670533180a44987dc",
-                "reference": "ef04be759da41b14d2d129e670533180a44987dc",
+                "url": "https://api.github.com/repos/livewire/livewire/zipball/28efe84a67ce8e0cf4d5afeeed577baebd03e745",
+                "reference": "28efe84a67ce8e0cf4d5afeeed577baebd03e745",
                 "shasum": ""
             },
             "require": {
@@ -3799,7 +3799,7 @@
             "description": "A front-end framework for Laravel.",
             "support": {
                 "issues": "https://github.com/livewire/livewire/issues",
-                "source": "https://github.com/livewire/livewire/tree/v3.6.4"
+                "source": "https://github.com/livewire/livewire/tree/v4.0.0-beta.1"
             },
             "funding": [
                 {
@@ -3807,7 +3807,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-07-17T05:12:15+00:00"
+            "time": "2025-10-28T07:20:09+00:00"
         },
         {
             "name": "maennchen/zipstream-php",
@@ -7779,16 +7779,16 @@
         },
         {
             "name": "rector/rector",
-            "version": "2.2.6",
+            "version": "2.2.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/rectorphp/rector.git",
-                "reference": "5c5bbc956b9a056a26cb593379253104b7ed9c2d"
+                "reference": "022038537838bc8a4e526af86c2d6e38eaeff7ef"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rectorphp/rector/zipball/5c5bbc956b9a056a26cb593379253104b7ed9c2d",
-                "reference": "5c5bbc956b9a056a26cb593379253104b7ed9c2d",
+                "url": "https://api.github.com/repos/rectorphp/rector/zipball/022038537838bc8a4e526af86c2d6e38eaeff7ef",
+                "reference": "022038537838bc8a4e526af86c2d6e38eaeff7ef",
                 "shasum": ""
             },
             "require": {
@@ -7827,7 +7827,7 @@
             ],
             "support": {
                 "issues": "https://github.com/rectorphp/rector/issues",
-                "source": "https://github.com/rectorphp/rector/tree/2.2.6"
+                "source": "https://github.com/rectorphp/rector/tree/2.2.7"
             },
             "funding": [
                 {
@@ -7835,7 +7835,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-10-27T11:35:56+00:00"
+            "time": "2025-10-29T15:46:12+00:00"
         },
         {
             "name": "ryangjchandler/blade-capture-directive",
@@ -9853,16 +9853,16 @@
         },
         {
             "name": "spatie/ray",
-            "version": "1.43.0",
+            "version": "1.43.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/ray.git",
-                "reference": "ee9c0477e0b7e5ff49e62cd1f4f75be27da91dbe"
+                "reference": "2104ba5fb20cceda04aaa72dc7a4786a89c67cb4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/ray/zipball/ee9c0477e0b7e5ff49e62cd1f4f75be27da91dbe",
-                "reference": "ee9c0477e0b7e5ff49e62cd1f4f75be27da91dbe",
+                "url": "https://api.github.com/repos/spatie/ray/zipball/2104ba5fb20cceda04aaa72dc7a4786a89c67cb4",
+                "reference": "2104ba5fb20cceda04aaa72dc7a4786a89c67cb4",
                 "shasum": ""
             },
             "require": {
@@ -9922,7 +9922,7 @@
             ],
             "support": {
                 "issues": "https://github.com/spatie/ray/issues",
-                "source": "https://github.com/spatie/ray/tree/1.43.0"
+                "source": "https://github.com/spatie/ray/tree/1.43.1"
             },
             "funding": [
                 {
@@ -9934,7 +9934,7 @@
                     "type": "other"
                 }
             ],
-            "time": "2025-10-16T10:01:03+00:00"
+            "time": "2025-10-29T14:30:35+00:00"
         },
         {
             "name": "spatie/shiki-php",
@@ -13506,16 +13506,16 @@
         },
         {
             "name": "webmozart/assert",
-            "version": "1.12.0",
+            "version": "1.12.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webmozarts/assert.git",
-                "reference": "541057574806f942c94662b817a50f63f7345360"
+                "reference": "9be6926d8b485f55b9229203f962b51ed377ba68"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webmozarts/assert/zipball/541057574806f942c94662b817a50f63f7345360",
-                "reference": "541057574806f942c94662b817a50f63f7345360",
+                "url": "https://api.github.com/repos/webmozarts/assert/zipball/9be6926d8b485f55b9229203f962b51ed377ba68",
+                "reference": "9be6926d8b485f55b9229203f962b51ed377ba68",
                 "shasum": ""
             },
             "require": {
@@ -13558,9 +13558,9 @@
             ],
             "support": {
                 "issues": "https://github.com/webmozarts/assert/issues",
-                "source": "https://github.com/webmozarts/assert/tree/1.12.0"
+                "source": "https://github.com/webmozarts/assert/tree/1.12.1"
             },
-            "time": "2025-10-20T12:43:39+00:00"
+            "time": "2025-10-29T15:56:20+00:00"
         },
         {
             "name": "zbateson/mail-mime-parser",

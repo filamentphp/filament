@@ -9,15 +9,15 @@ document.addEventListener('livewire:init', () => {
         return closestRoot.__livewire
     }
 
-    Livewire.hook('commit', ({ component, commit, respond, succeed, fail }) => {
-        respond(() => {
+    Livewire.interceptMessage(({ component, onSuccess }) => {
+        onSuccess(({ payload }) => {
             queueMicrotask(() => {
-                if (component.effects.html) {
+                if (payload.effects?.html) {
                     return
                 }
 
                 for (const [name, html] of Object.entries(
-                    component.effects.partials ?? {},
+                    payload.effects?.partials ?? {},
                 )) {
                     let els = Array.from(
                         component.el.querySelectorAll(
