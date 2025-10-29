@@ -47,3 +47,7 @@ composer update
 </Aside>
 
 You can now `composer remove filament/upgrade --dev` as you don't need it anymore.
+
+## Upgrading Livewire
+
+Filament v5 requires Livewire v4.0+. You can upgrade your Livewire code by following the [Livewire upgrade guide](https://livewire.laravel.com/docs/4.x/upgrading).
