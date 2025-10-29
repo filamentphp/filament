@@ -6,6 +6,9 @@ use Filament\Schemas\Components\Component;
 
 class Get
 {
+    /**
+     * @var array<Component>
+     */
     protected static array $skipComponentsChildContainersWhileSearching = [];
 
     public function __construct(
