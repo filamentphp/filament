@@ -144,6 +144,8 @@ class SupportServiceProvider extends PackageServiceProvider
 
     public function packageBooted(): void
     {
+        config()->set('livewire.smart_wire_keys', false);
+
         app('livewire')->componentHook(new PartialsComponentHook);
 
         FilamentAsset::register([
