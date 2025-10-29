@@ -44,9 +44,11 @@
                         )
                     },
                     getUploadedFilesUsing: async () => {
-                        return await $wire.callSchemaComponentMethod(
-                            @js($key),
-                            'getUploadedFiles',
+                        return await Livewire.fireAction(
+                            $wire.__instance,
+                            'callSchemaComponentMethod',
+                            [@js($key), 'getUploadedFiles'],
+                            { async: true },
                         )
                     },
                     hasImageEditor: @js($hasImageEditor),
