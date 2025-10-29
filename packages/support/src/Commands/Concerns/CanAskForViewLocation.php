@@ -46,6 +46,10 @@ trait CanAskForViewLocation
                     continue;
                 }
 
+                if (filled($paths[''] ?? null) && str($path)->startsWith($paths[''])) {
+                    continue;
+                }
+
                 $paths[$namespace] = $path;
 
                 break;
