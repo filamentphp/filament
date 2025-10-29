@@ -16,7 +16,7 @@ View::make('filament.schemas.components.chart')
 
 This assumes that you have a `resources/views/filament/schemas/components/chart.blade.php` file.
 
-You may pass data to this view by adding the `viewData()` method.
+You may pass data to this view through the `viewData()` method:
 
 ```php
 use Filament\Schemas\Components\View;
