@@ -24,7 +24,7 @@ For example, the state of this entry might be represented as:
 ]
 ```
 
-<AutoScreenshot name="infolists/entries/key-value/simple" alt="Key-value entry" version="4.x" />
+<AutoScreenshot name="infolists/entries/key-value/simple" alt="Key-value entry" version="5.x" />
 
 If you're saving the data in Eloquent, you should be sure to add an `array` [cast](https://laravel.com/docs/eloquent-mutators#array-and-json-casting) to the model property:
 
@@ -58,7 +58,7 @@ KeyValueEntry::make('meta')
     ->keyLabel('Property name')
 ```
 
-<UtilityInjection set="infolistEntries" version="4.x">As well as allowing a static value, the `keyLabel()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="infolistEntries" version="5.x">As well as allowing a static value, the `keyLabel()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Customizing the value column's label
 
@@ -71,4 +71,4 @@ KeyValueEntry::make('meta')
     ->valueLabel('Property value')
 ```
 
-<UtilityInjection set="infolistEntries" version="4.x">As well as allowing a static value, the `valueLabel()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="infolistEntries" version="5.x">As well as allowing a static value, the `valueLabel()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>

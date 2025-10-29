@@ -39,7 +39,7 @@ ForceDeleteAction::make()
     ->successRedirectUrl(route('posts.list'))
 ```
 
-<UtilityInjection set="actions" version="4.x">As well as `$record`, the `successRedirectUrl()` function can inject various utilities as parameters.</UtilityInjection>
+<UtilityInjection set="actions" version="5.x">As well as `$record`, the `successRedirectUrl()` function can inject various utilities as parameters.</UtilityInjection>
 
 ## Customizing the force-delete notification
 
@@ -54,7 +54,7 @@ ForceDeleteAction::make()
     ->successNotificationTitle('User force-deleted')
 ```
 
-<UtilityInjection set="actions" version="4.x">As well as allowing a static value, the `successNotificationTitle()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="actions" version="5.x">As well as allowing a static value, the `successNotificationTitle()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 You may customize the entire notification using the `successNotification()` method:
 
@@ -71,7 +71,7 @@ ForceDeleteAction::make()
     )
 ```
 
-<UtilityInjection set="actions" version="4.x" extras="Notification;;Filament\Notifications\Notification;;$notification;;The default notification object, which could be a useful starting point for customization.">As well as allowing a static value, the `successNotification()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="actions" version="5.x" extras="Notification;;Filament\Notifications\Notification;;$notification;;The default notification object, which could be a useful starting point for customization.">As well as allowing a static value, the `successNotification()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 To disable the notification altogether, use the `successNotification(null)` method:
 
@@ -98,7 +98,7 @@ ForceDeleteAction::make()
     })
 ```
 
-<UtilityInjection set="actions" version="4.x">These hook functions can inject various utilities as parameters.</UtilityInjection>
+<UtilityInjection set="actions" version="5.x">These hook functions can inject various utilities as parameters.</UtilityInjection>
 
 ## Improving the performance of force-delete bulk actions
 

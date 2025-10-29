@@ -15,7 +15,7 @@ use Filament\Forms\Components\ColorPicker;
 ColorPicker::make('color')
 ```
 
-<AutoScreenshot name="forms/fields/color-picker/simple" alt="Color picker" version="4.x" />
+<AutoScreenshot name="forms/fields/color-picker/simple" alt="Color picker" version="5.x" />
 
 ## Setting the color format
 

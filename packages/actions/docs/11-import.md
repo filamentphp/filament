@@ -158,7 +158,7 @@ ImportColumn::make('sku')
 
 Any rows that do not pass validation will not be imported. Instead, they will be compiled into a new CSV of "failed rows", which the user can download after the import has finished. The user will be shown a list of validation errors for each row that failed.
 
-<UtilityInjection set="importColumns" version="4.x">As well as allowing a static value, the `rules()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="importColumns" version="5.x">As well as allowing a static value, the `rules()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ### Casting state
 
@@ -180,7 +180,7 @@ ImportColumn::make('price')
     })
 ```
 
-<UtilityInjection set="importColumns" version="4.x" extras="State;;mixed;;$state;;The state to cast, after it has been processed by other casting methods.||Original state;;mixed;;$originalState;;The state to cast, before it was processed by other casting methods.">As well as `$state`, the `castStateUsing()` method allows you to inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="importColumns" version="5.x" extras="State;;mixed;;$state;;The state to cast, after it has been processed by other casting methods.||Original state;;mixed;;$originalState;;The state to cast, before it was processed by other casting methods.">As well as `$state`, the `castStateUsing()` method allows you to inject various utilities into the function as parameters.</UtilityInjection>
 
 In this example, we pass in a function that is used to cast the `$state`. This function removes any non-numeric characters from the string, casts it to a float, and rounds it to two decimal places.
 
@@ -236,7 +236,7 @@ ImportColumn::make('price')
     })
 ```
 
-<UtilityInjection set="importColumns" version="4.x" extras="State;;mixed;;$state;;The state to cast, after it has been processed by other casting methods.||Original state;;mixed;;$originalState;;The state to cast, before it was processed by other casting methods.">As well as `$state`, the `castStateUsing()` method allows you to inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="importColumns" version="5.x" extras="State;;mixed;;$state;;The state to cast, after it has been processed by other casting methods.||Original state;;mixed;;$originalState;;The state to cast, before it was processed by other casting methods.">As well as `$state`, the `castStateUsing()` method allows you to inject various utilities into the function as parameters.</UtilityInjection>
 
 ### Handling multiple values in a single column
 
@@ -249,7 +249,7 @@ ImportColumn::make('documentation_urls')
     ->multiple(',')
 ```
 
-<UtilityInjection set="importColumns" version="4.x">As well as allowing a static value, the `multiple()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="importColumns" version="5.x">As well as allowing a static value, the `multiple()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 In this example, we pass in a comma as the delimiter, so the values in the column will be split by commas, and cast to an array.
 
@@ -279,7 +279,7 @@ ImportColumn::make('customer_ratings')
     ->nestedRecursiveRules(['integer', 'min:1', 'max:5'])
 ```
 
-<UtilityInjection set="importColumns" version="4.x">As well as allowing a static value, the `nestedRecursiveRules()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="importColumns" version="5.x">As well as allowing a static value, the `nestedRecursiveRules()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ### Importing relationships
 
@@ -341,7 +341,7 @@ ImportColumn::make('author')
     })
 ```
 
-<UtilityInjection set="importColumns" version="4.x" extras="State;;mixed;;$state;;The state to resolve into a record.">The function passed to `resolveUsing` allows you to inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="importColumns" version="5.x" extras="State;;mixed;;$state;;The state to resolve into a record.">The function passed to `resolveUsing` allows you to inject various utilities into the function as parameters.</UtilityInjection>
 
 If you are using a `BelongsToMany` relationship, the `$state` will be an array, and you should return a collection of records that you have resolved:
 
@@ -402,7 +402,7 @@ ImportColumn::make('sku')
     })
 ```
 
-<UtilityInjection set="importColumns" version="4.x" extras="State;;mixed;;$state;;The state to fill into the record.">The function passed to the `fillRecordUsing()` method allows you to inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="importColumns" version="5.x" extras="State;;mixed;;$state;;The state to fill into the record.">The function passed to the `fillRecordUsing()` method allows you to inject various utilities into the function as parameters.</UtilityInjection>
 
 ### Adding helper text below the import column
 
@@ -635,7 +635,7 @@ ImportAction::make()
     ->maxRows(100000)
 ```
 
-<UtilityInjection set="actions" version="4.x">As well as allowing a static value, the `maxRows()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="actions" version="5.x">As well as allowing a static value, the `maxRows()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Changing the import chunk size
 
@@ -650,7 +650,7 @@ ImportAction::make()
     ->chunkSize(250)
 ```
 
-<UtilityInjection set="actions" version="4.x">As well as allowing a static value, the `chunkSize()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="actions" version="5.x">As well as allowing a static value, the `chunkSize()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 <Aside variant="tip">
     If you are encountering memory or timeout issues when importing large CSV files, you may wish to reduce the chunk size.
@@ -669,7 +669,7 @@ ImportAction::make()
     ->csvDelimiter(';')
 ```
 
-<UtilityInjection set="actions" version="4.x">As well as allowing a static value, the `csvDelimiter()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="actions" version="5.x">As well as allowing a static value, the `csvDelimiter()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 You can only specify a single character, otherwise an exception will be thrown.
 
@@ -686,7 +686,7 @@ ImportAction::make()
     ->headerOffset(5)
 ```
 
-<UtilityInjection set="actions" version="4.x">As well as allowing a static value, the `headerOffset()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="actions" version="5.x">As well as allowing a static value, the `headerOffset()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Customizing the import job
 
@@ -846,7 +846,7 @@ ImportAction::make()
     ]),
 ```
 
-<UtilityInjection set="actions" version="4.x">As well as allowing a static value, the `fileRules()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="actions" version="5.x">As well as allowing a static value, the `fileRules()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Lifecycle hooks
 

@@ -44,7 +44,7 @@ Action::make('delete')
 
 All methods on the action accept callback functions, where you can access the current table `$record` that was clicked.
 
-<AutoScreenshot name="tables/actions/simple" alt="Table with actions" version="4.x" />
+<AutoScreenshot name="tables/actions/simple" alt="Table with actions" version="5.x" />
 
 ### Positioning record actions before columns
 
@@ -63,7 +63,7 @@ public function table(Table $table): Table
 }
 ```
 
-<AutoScreenshot name="tables/actions/before-columns" alt="Table with actions before columns" version="4.x" />
+<AutoScreenshot name="tables/actions/before-columns" alt="Table with actions before columns" version="5.x" />
 
 ### Positioning record actions before the checkbox column
 
@@ -96,7 +96,7 @@ Table::configureUsing(function (Table $table): void {
 });
 ```
 
-<AutoScreenshot name="tables/actions/before-cells" alt="Table with actions before cells" version="4.x" />
+<AutoScreenshot name="tables/actions/before-cells" alt="Table with actions before cells" version="5.x" />
 
 ### Accessing the selected table rows
 
@@ -157,7 +157,7 @@ BulkAction::make('delete')
 
 The function allows you to access the current table `$records` that are selected. It is an Eloquent collection of models.
 
-<AutoScreenshot name="tables/actions/bulk" alt="Table with bulk action" version="4.x" />
+<AutoScreenshot name="tables/actions/bulk" alt="Table with bulk action" version="5.x" />
 
 ### Authorizing bulk actions
 
@@ -466,7 +466,7 @@ public function table(Table $table): Table
 
 This is useful for things like "create" actions, which are not related to any specific table row, or bulk actions that need to be more visible.
 
-<AutoScreenshot name="tables/actions/header" alt="Table with header actions" version="4.x" />
+<AutoScreenshot name="tables/actions/header" alt="Table with header actions" version="5.x" />
 
 ## Toolbar actions
 
@@ -486,7 +486,7 @@ public function table(Table $table): Table
 
 This is useful for things like "create" actions, which are not related to any specific table row, or bulk actions that need to be more visible.
 
-<AutoScreenshot name="tables/actions/toolbar" alt="Table with toolbar actions" version="4.x" />
+<AutoScreenshot name="tables/actions/toolbar" alt="Table with toolbar actions" version="5.x" />
 
 ## Column actions
 
@@ -519,4 +519,4 @@ public function table(Table $table): Table
 
 You may find out more about customizing action groups in the [Actions documentation](../actions/grouping-actions).
 
-<AutoScreenshot name="tables/actions/group" alt="Table with action group" version="4.x" />
+<AutoScreenshot name="tables/actions/group" alt="Table with action group" version="5.x" />

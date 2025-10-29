@@ -87,4 +87,4 @@ If you discover a security vulnerability within Filament, please [report it thro
 
 ## Code of Conduct
 
-Please note that Filament is released with a [Contributor Code of Conduct](https://github.com/filamentphp/filament/blob/4.x/CODE_OF_CONDUCT.md). By participating in this project, you agree to abide by its terms.
+Please note that Filament is released with a [Contributor Code of Conduct](https://github.com/filamentphp/filament/blob/5.x/CODE_OF_CONDUCT.md). By participating in this project, you agree to abide by its terms.

@@ -1,5 +1,7 @@
 <?php
 
+namespace Filament\Tests\Forms\Components;
+
 use Filament\Forms\Components\FileUpload;
 use Filament\Schemas\Schema;
 use Filament\Tests\Fixtures\Livewire\Livewire;
@@ -39,7 +41,7 @@ describe('disk', function (): void {
     });
 
     it('overrides disk name using config', function (): void {
-        Config::set('filament.default_filesystem_disk', 'public');
+        config()->set('filament.default_filesystem_disk', 'public');
 
         $disk = config('filament.default_filesystem_disk');
 

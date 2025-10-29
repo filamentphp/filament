@@ -23,7 +23,7 @@ public function table(Table $table): Table
 }
 ```
 
-<AutoScreenshot name="tables/grouping" alt="Table with grouping" version="4.x" />
+<AutoScreenshot name="tables/grouping" alt="Table with grouping" version="5.x" />
 
 ## Allowing users to choose between groupings
 
@@ -146,7 +146,7 @@ public function table(Table $table): Table
 }
 ```
 
-<AutoScreenshot name="tables/grouping-descriptions" alt="Table with group descriptions" version="4.x" />
+<AutoScreenshot name="tables/grouping-descriptions" alt="Table with group descriptions" version="5.x" />
 
 ## Setting a group key
 

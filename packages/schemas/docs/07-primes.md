@@ -16,7 +16,7 @@ Within Filament schemas, prime components are the most basic building blocks tha
 
 You may also [create your own custom components](custom-components) to add your own arbitrary content to a schema.
 
-<AutoScreenshot name="primes/overview/example" alt="An example of using prime components to set up two-factor authentication." version="4.x" />
+<AutoScreenshot name="primes/overview/example" alt="An example of using prime components to set up two-factor authentication." version="5.x" />
 
 In this example, prime components are being used to display instructions to the user, a QR code that the user can scan, and list of recovery codes that the user can save:
 
@@ -73,7 +73,7 @@ use Filament\Schemas\Components\Text;
 Text::make('Modifying these permissions may give users access to sensitive information.')
 ```
 
-<AutoScreenshot name="primes/text/simple" alt="Text" version="4.x" />
+<AutoScreenshot name="primes/text/simple" alt="Text" version="5.x" />
 
 To render raw HTML content, you can pass an `HtmlString` object to the `make()` method:
 
@@ -88,7 +88,7 @@ Text::make(new HtmlString('<strong>Warning:</strong> Modifying these permissions
     Be aware that you will need to ensure that the HTML is safe to render, otherwise your application will be vulnerable to XSS attacks.
 </Aside>
 
-<AutoScreenshot name="primes/text/html" alt="Text with HTML" version="4.x" />
+<AutoScreenshot name="primes/text/html" alt="Text with HTML" version="5.x" />
 
 To render Markdown, you can use Laravel's `str()` helper to convert Markdown to HTML, and then transform it into an `HtmlString` object:
 
@@ -102,7 +102,7 @@ Text::make(
 )
 ```
 
-<UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `make()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="schemaComponents" version="5.x">As well as allowing a static value, the `make()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ### Customizing the text color
 
@@ -115,9 +115,9 @@ Text::make('Information')
     ->color('info')
 ```
 
-<UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `color()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="schemaComponents" version="5.x">As well as allowing a static value, the `color()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="primes/text/color" alt="Text in the info color" version="4.x" />
+<AutoScreenshot name="primes/text/color" alt="Text in the info color" version="5.x" />
 
 ### Using a neutral color
 
@@ -132,7 +132,7 @@ Text::make('Modifying these permissions may give users access to sensitive infor
     ->color('neutral')
 ```
 
-<AutoScreenshot name="primes/text/neutral" alt="Text in the neutral color" version="4.x" />
+<AutoScreenshot name="primes/text/neutral" alt="Text in the neutral color" version="5.x" />
 
 ### Displaying as a "badge"
 
@@ -146,7 +146,7 @@ Text::make('Warning')
     ->badge()
 ```
 
-<AutoScreenshot name="primes/text/badge" alt="Text as badge" version="4.x" />
+<AutoScreenshot name="primes/text/badge" alt="Text as badge" version="5.x" />
 
 Optionally, you may pass a boolean value to control if the text should be in a badge or not:
 
@@ -158,7 +158,7 @@ Text::make('Warning')
     ->badge(FeatureFlag::active())
 ```
 
-<UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `badge()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="schemaComponents" version="5.x">As well as allowing a static value, the `badge()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 #### Adding an icon to the badge
 
@@ -174,7 +174,7 @@ Text::make('Warning')
     ->icon(Heroicon::ExclamationTriangle)
 ```
 
-<AutoScreenshot name="primes/text/badge-icon" alt="Text as badge with an icon" version="4.x" />
+<AutoScreenshot name="primes/text/badge-icon" alt="Text as badge with an icon" version="5.x" />
 
 ### Customizing the text size
 
@@ -190,7 +190,7 @@ Text::make('Modifying these permissions may give users access to sensitive infor
     ->size(TextSize::Large)
 ```
 
-<AutoScreenshot name="primes/text/large" alt="Text entry in a large font size" version="4.x" />
+<AutoScreenshot name="primes/text/large" alt="Text entry in a large font size" version="5.x" />
 
 ### Customizing the font weight
 
@@ -206,9 +206,9 @@ Text::make('Modifying these permissions may give users access to sensitive infor
     ->weight(FontWeight::Bold)
 ```
 
-<UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `weight()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="schemaComponents" version="5.x">As well as allowing a static value, the `weight()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="primes/text/bold" alt="Text entry in a bold font" version="4.x" />
+<AutoScreenshot name="primes/text/bold" alt="Text entry in a bold font" version="5.x" />
 
 ### Customizing the font family
 
@@ -224,9 +224,9 @@ Text::make('28o.-AK%D~xh*.:[4"3)zPiC')
     ->fontFamily(FontFamily::Mono)
 ```
 
-<UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `fontFamily()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="schemaComponents" version="5.x">As well as allowing a static value, the `fontFamily()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="primes/text/mono" alt="Text entry in a monospaced font" version="4.x" />
+<AutoScreenshot name="primes/text/mono" alt="Text entry in a monospaced font" version="5.x" />
 
 ### Adding a tooltip to the text
 
@@ -239,9 +239,9 @@ Text::make('28o.-AK%D~xh*.:[4"3)zPiC')
     ->tooltip('Your secret recovery code')
 ```
 
-<UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `tooltip()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="schemaComponents" version="5.x">As well as allowing a static value, the `tooltip()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="primes/text/tooltip" alt="Text with a tooltip" version="4.x" />
+<AutoScreenshot name="primes/text/tooltip" alt="Text with a tooltip" version="5.x" />
 
 ### Using JavaScript to determine the content of the text
 
@@ -269,9 +269,9 @@ use Filament\Support\Icons\Heroicon;
 Icon::make(Heroicon::Star)
 ```
 
-<UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `make()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="schemaComponents" version="5.x">As well as allowing a static value, the `make()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="primes/icon/simple" alt="Icon" version="4.x" />
+<AutoScreenshot name="primes/icon/simple" alt="Icon" version="5.x" />
 
 ### Customizing the icon color
 
@@ -285,9 +285,9 @@ Icon::make(Heroicon::ExclamationCircle)
     ->color('danger')
 ```
 
-<UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `color()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="schemaComponents" version="5.x">As well as allowing a static value, the `color()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="primes/icon/color" alt="Icon in the danger color" version="4.x" />
+<AutoScreenshot name="primes/icon/color" alt="Icon in the danger color" version="5.x" />
 
 ### Adding a tooltip to the icon
 
@@ -301,9 +301,9 @@ Icon::make(Heroicon::ExclamationTriangle)
     ->tooltip('Warning')
 ```
 
-<UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `tooltip()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="schemaComponents" version="5.x">As well as allowing a static value, the `tooltip()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="primes/icon/tooltip" alt="Icon with a tooltip" version="4.x" />
+<AutoScreenshot name="primes/icon/tooltip" alt="Icon with a tooltip" version="5.x" />
 
 ## Image component
 
@@ -318,9 +318,9 @@ Image::make(
 )
 ```
 
-<UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static values, the arguments of the `make()` method also accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters.</UtilityInjection>
+<UtilityInjection set="schemaComponents" version="5.x">As well as allowing a static values, the arguments of the `make()` method also accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters.</UtilityInjection>
 
-<AutoScreenshot name="primes/image/simple" alt="Image" version="4.x" />
+<AutoScreenshot name="primes/image/simple" alt="Image" version="5.x" />
 
 ### Customizing the image size
 
@@ -348,9 +348,9 @@ Image::make(
     ->imageSize('12rem')
 ```
 
-<UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static values, the `imageWidth()`, `imageHeight()` and `imageSize()` methods also accept functions to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="schemaComponents" version="5.x">As well as allowing a static values, the `imageWidth()`, `imageHeight()` and `imageSize()` methods also accept functions to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="primes/image/size" alt="Image with a custom size" version="4.x" />
+<AutoScreenshot name="primes/image/size" alt="Image with a custom size" version="5.x" />
 
 ### Aligning the image
 
@@ -391,9 +391,9 @@ Image::make(
     ->alignment(Alignment::Center)
 ```
 
-<UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `alignment()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="schemaComponents" version="5.x">As well as allowing a static value, the `alignment()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="primes/image/alignment" alt="Image with a custom alignment" version="4.x" />
+<AutoScreenshot name="primes/image/alignment" alt="Image with a custom alignment" version="5.x" />
 
 ### Adding a tooltip to the image
 
@@ -410,9 +410,9 @@ Image::make(
     ->alignCenter()
 ```
 
-<UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `tooltip()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="schemaComponents" version="5.x">As well as allowing a static value, the `tooltip()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="primes/image/tooltip" alt="Image with a tooltip" version="4.x" />
+<AutoScreenshot name="primes/image/tooltip" alt="Image with a tooltip" version="5.x" />
 
 ## Unordered list component
 
@@ -429,9 +429,9 @@ UnorderedList::make([
 ])
 ```
 
-<UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `make()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="schemaComponents" version="5.x">As well as allowing a static value, the `make()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="primes/unordered-list/simple" alt="Unordered list" version="4.x" />
+<AutoScreenshot name="primes/unordered-list/simple" alt="Unordered list" version="5.x" />
 
 Text components can be used as list items, which allows you to customize the formatting of each item:
 
@@ -467,9 +467,9 @@ UnorderedList::make([
     ->size(TextSize::Large)
 ```
 
-<UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `size()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="schemaComponents" version="5.x">As well as allowing a static value, the `size()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="primes/unordered-list/large" alt="Unordered list with large bullets" version="4.x" />
+<AutoScreenshot name="primes/unordered-list/large" alt="Unordered list with large bullets" version="5.x" />
 
 ## Adding extra HTML attributes to a prime component
 
@@ -482,6 +482,6 @@ Text::make('Modifying these permissions may give users access to sensitive infor
     ->extraAttributes(['class' => 'custom-text-style'])
 ```
 
-<UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `extraAttributes()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="schemaComponents" version="5.x">As well as allowing a static value, the `extraAttributes()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 By default, calling `extraAttributes()` multiple times will overwrite the previous attributes. If you wish to merge the attributes instead, you can pass `merge: true` to the method.

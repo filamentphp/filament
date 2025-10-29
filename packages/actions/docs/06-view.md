@@ -35,4 +35,4 @@ ViewAction::make()
     })
 ```
 
-<UtilityInjection set="actions" version="4.x">As well as `$data`, the `mutateRecordDataUsing()` function can inject various utilities as parameters.</UtilityInjection>
+<UtilityInjection set="actions" version="5.x">As well as `$data`, the `mutateRecordDataUsing()` function can inject various utilities as parameters.</UtilityInjection>

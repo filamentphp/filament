@@ -14,7 +14,7 @@ use Filament\Forms\Components\Textarea;
 Textarea::make('description')
 ```
 
-<AutoScreenshot name="forms/fields/textarea/simple" alt="Textarea" version="4.x" />
+<AutoScreenshot name="forms/fields/textarea/simple" alt="Textarea" version="5.x" />
 
 ## Resizing the textarea
 
@@ -28,7 +28,7 @@ Textarea::make('description')
     ->cols(20)
 ```
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing static values, the `rows()` and `cols()` methods also accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="5.x">As well as allowing static values, the `rows()` and `cols()` methods also accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters.</UtilityInjection>
 
 ### Autosizing the textarea
 
@@ -50,7 +50,7 @@ Textarea::make('description')
     ->autosize(FeatureFlag::active())
 ```
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `autosize()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="5.x">As well as allowing a static value, the `autosize()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Making the field read-only
 
@@ -78,7 +78,7 @@ Textarea::make('description')
     ->readOnly(FeatureFlag::active())
 ```
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `readOnly()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="5.x">As well as allowing a static value, the `readOnly()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Disabling Grammarly checks
 
@@ -100,7 +100,7 @@ Textarea::make('description')
     ->disableGrammarly(FeatureFlag::active())
 ```
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `disableGrammarly()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="5.x">As well as allowing a static value, the `disableGrammarly()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Trimming whitespace
 
@@ -148,4 +148,4 @@ Textarea::make('question')
     ->length(100)
 ```
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing static values, the `minLength()`, `maxLength()` and `length()` methods also accept a function to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="5.x">As well as allowing static values, the `minLength()`, `maxLength()` and `length()` methods also accept a function to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
