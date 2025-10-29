@@ -339,6 +339,7 @@ class AttachAction extends Action
         return TableSelect::make('recordId')
             ->label($this->getLabel())
             ->hiddenLabel()
+            ->ignoreRelatedRecords(true)
             ->tableConfiguration($this->getTableSelectConfiguration())
             ->model($this->getTable()->getRelationship()->getParent()::class)
             ->relationshipName(

@@ -22,7 +22,7 @@
             'model' => $getModel(),
             'record' => $getRecord(),
             'relationshipName' => $getRelationshipName(),
-            'shouldIgnoreRelatedRecords' => true,
+            'shouldIgnoreRelatedRecords' => $getShouldIgnoreRelatedRecords(),
             'tableConfiguration' => base64_encode($getTableConfiguration()),
             'tableArguments' => $getTableArguments(),
             $applyStateBindingModifiers('wire:model') => $getStatePath(),

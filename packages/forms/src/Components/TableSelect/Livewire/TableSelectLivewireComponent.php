@@ -99,17 +99,17 @@ class TableSelectLivewireComponent extends Component implements HasActions, HasF
                 }
 
                 if ($this->shouldIgnoreRelatedRecords) {
-                    $relationshipQuery->whereNot(function (Builder $relationshipQuery) use ($relationship): void {
-                        $relationshipQuery->where(
+                    $relationshipQuery->where(function (Builder $relationshipQuery) use ($relationship): void {
+                        $relationshipQuery->whereNull(
                             $relationship->getQualifiedForeignPivotKeyName(),
-                            '=',
-                            $relationship->getParent()->{$relationship->getParentKeyName()}
                         );
 
                         if ($relationship instanceof MorphToMany) {
-                            $relationshipQuery->where($relationship->qualifyPivotColumn($relationship->getMorphType()), $relationship->getMorphClass());
+                            $relationshipQuery->whereNull($relationship->qualifyPivotColumn($relationship->getMorphType()));
                         }
                     });
+
+                    return $relationshipQuery;
                 }
 
                 $relationshipBaseQuery = $relationshipQuery->getQuery();
