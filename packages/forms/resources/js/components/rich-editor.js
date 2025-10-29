@@ -29,8 +29,8 @@ export default function richEditorFormComponent({
     floatingToolbars,
 }) {
     let editor
-    let isDestroyed = false
     let eventListeners = []
+    let isDestroyed = false
 
     return {
         state,
@@ -169,7 +169,6 @@ export default function richEditorFormComponent({
                 editor.commands.setContent(this.state)
             })
 
-            // Store event listeners for cleanup
             const runCommandsHandler = (event) => {
                 if (event.detail.livewireId !== livewireId) {
                     return
@@ -263,25 +262,6 @@ export default function richEditorFormComponent({
             )
         },
 
-        destroy() {
-            // Set flag to prevent async operations
-            isDestroyed = true
-
-            // Remove all event listeners
-            eventListeners.forEach(([eventName, handler]) => {
-                window.removeEventListener(eventName, handler)
-            })
-            eventListeners = []
-
-            if (editor) {
-                editor.destroy()
-                editor = null
-            }
-
-            // Clear any pending state updates
-            this.shouldUpdateState = true
-        },
-
         getEditor() {
             return editor
         },
@@ -360,6 +340,22 @@ export default function richEditorFormComponent({
                     },
                 ])
                 .run()
+        },
+
+        destroy() {
+            isDestroyed = true
+
+            eventListeners.forEach(([eventName, handler]) => {
+                window.removeEventListener(eventName, handler)
+            })
+            eventListeners = []
+
+            if (editor) {
+                editor.destroy()
+                editor = null
+            }
+
+            this.shouldUpdateState = true
         },
     }
 }
