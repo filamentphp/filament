@@ -69,6 +69,8 @@ trait CanExportRecords
 
     protected bool | Closure $hasColumnMapping = true;
 
+    protected bool | Closure $includeVisibleColumns = false;
+
     protected string | Closure | null $authGuard = null;
 
     protected function setUp(): void
@@ -107,7 +109,11 @@ trait CanExportRecords
                             Forms\Components\Checkbox::make('isEnabled')
                                 ->label(__('filament-actions::export.modal.form.columns.form.is_enabled.label', ['column' => $column->getName()]))
                                 ->hiddenLabel()
-                                ->default($column->isEnabledByDefault())
+                                ->default(
+                                    $this->hasIncludeVisibleColumns()
+                                        ? in_array($column->getName(), $this->getTableVisibleColumns())
+                                        : $column->isEnabledByDefault()
+                                )
                                 ->live()
                                 ->grow(false),
                             Forms\Components\TextInput::make('label')
@@ -190,6 +196,12 @@ trait CanExportRecords
                     ->all();
             } else {
                 $columnMap = collect($exporter::getColumns())
+                    ->when(
+                        $this->hasIncludeVisibleColumns(),
+                        fn ($columns): Collection => $columns->filter(
+                            fn (ExportColumn $column): bool => in_array($column->getName(), $this->getTableVisibleColumns())
+                        )
+                    )
                     ->mapWithKeys(fn (ExportColumn $column): array => [$column->getName() => $column->getLabel()])
                     ->all();
             }
@@ -341,6 +353,16 @@ trait CanExportRecords
     }
 
     /**
+     * @return array<string>
+     */
+    public function getTableVisibleColumns(): array
+    {
+        return $this->hasIncludeVisibleColumns()
+            ? array_keys($this->getLivewire()->getTable()->getVisibleColumns())
+            : array_keys($this->getLivewire()->getTable()->getColumns());
+    }
+
+    /**
      * @param  class-string | null  $job
      */
     public function job(?string $job): static
@@ -476,6 +498,18 @@ trait CanExportRecords
     public function hasColumnMapping(): bool
     {
         return (bool) $this->evaluate($this->hasColumnMapping);
+    }
+
+    public function includeVisibleColumns(bool | Closure $condition = true): static
+    {
+        $this->includeVisibleColumns = $condition;
+
+        return $this;
+    }
+
+    public function hasIncludeVisibleColumns(): bool
+    {
+        return (bool) $this->evaluate($this->includeVisibleColumns);
     }
 
     public function authGuard(string | Closure | null $authGuard): static
