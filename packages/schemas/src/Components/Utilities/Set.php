@@ -22,7 +22,7 @@ class Set
                 $path,
                 withHidden: true,
                 withAbsoluteStatePath: true,
-                skipComponentChildContainersWhileSearching: $this->component,
+                skipComponentsChildContainersWhileSearching: [$this->component],
             );
 
         $state = $this->component->evaluate($state);
