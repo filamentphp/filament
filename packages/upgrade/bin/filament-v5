@@ -54,6 +54,22 @@ foreach (json_decode(file_get_contents('composer.json'), true)['require'] as $pa
     }
 }
 
+// If the project already depends on Livewire, suggest bumping it to v4 as part of the upgrade.
+try {
+    $composer = json_decode(file_get_contents('composer.json'), true) ?: [];
+    $require = $composer['require'] ?? [];
+    $requireDev = $composer['require-dev'] ?? [];
+
+    $hasLivewire = array_key_exists('livewire/livewire', $require) || array_key_exists('livewire/livewire', $requireDev);
+    if ($hasLivewire) {
+        $isWindows = str_starts_with(php_uname(), 'Windows');
+        $constraint = $isWindows ? '~4.0' : '^4.0';
+        $requireCommands[] = "composer require livewire/livewire:\"{$constraint}\" -W --no-update";
+    }
+} catch (Throwable $exception) {
+    // ignore detection errors
+}
+
 $requireCommandsHtml = implode("</strong><br /><strong>", $requireCommands);
 
 // Suggest commands for third-party Filament plugins that have v5-compatible releases
