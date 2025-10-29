@@ -3,6 +3,7 @@
 namespace Filament\Schemas\Components\Concerns;
 
 use Filament\Forms\Components\Repeater;
+use Illuminate\Support\Str;
 
 trait CanBeRepeated
 {
@@ -25,5 +26,24 @@ trait CanBeRepeated
         }
 
         return $this->cachedParentRepeater ?: null;
+    }
+
+    public function getRepeaterItemIndex(): int
+    {
+        $repeater = $this->getParentRepeater();
+
+        if (! $repeater) {
+            return 0;
+        }
+
+        // Extract the UUID part from the state path to determine the index.
+        $id = Str::of($this->getStatePath())
+            ->before(sprintf('.%s', $this->getConstantStatePath()))
+            ->afterLast('.')
+            ->toString();
+
+        $key = (int) array_search($id, array_keys($repeater->getState()), true);
+
+        return $key;
     }
 }

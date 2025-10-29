@@ -90,6 +90,7 @@ class Component extends ViewComponent
             'record' => [$this->getRecord()],
             'set' => [$this->makeSetUtility()],
             'state' => [$this->getState()],
+            'repeaterIndex' => [$this->getRepeaterItemIndex()],
             default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
         };
     }
