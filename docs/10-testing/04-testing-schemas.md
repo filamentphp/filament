@@ -261,7 +261,7 @@ test('comments section has heading', function () {
 If you want more informative test results, you can embed an assertion within your truth test callback:
 
 ```php
-use Filament\Forms\Components\Section;
+use Filament\Schemas\Components\Section;
 use Illuminate\Testing\Assert;
 
 use function Pest\Livewire\livewire;
