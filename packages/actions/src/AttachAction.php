@@ -61,6 +61,7 @@ class AttachAction extends Action
     public function tableSelect(string | Closure | null $configuration): static
     {
         $this->tableSelectConfiguration = $configuration;
+
         return $this;
     }
 
@@ -87,7 +88,7 @@ class AttachAction extends Action
 
         $this->defaultColor('gray');
 
-        $this->schema(fn (): array => [ ! $this->usingTableSelect() ? $this->getRecordSelect() : $this->getTableSelect()]);
+        $this->schema(fn (): array => [! $this->usingTableSelect() ? $this->getRecordSelect() : $this->getTableSelect()]);
 
         $this->action(function (array $arguments, array $data, Schema $schema, Table $table): void {
             /** @var BelongsToMany $relationship */
