@@ -395,6 +395,18 @@ public function table(Table $table): Table
 }
 ```
 
+### Using a Table Select to display the records to attach
+
+Sometimes you might need to be able to view more details about the records to attach, to do this you can display them as a Table.
+
+```php
+use Filament\Actions\AttachAction;
+use App\Filament\Resources\Products\Tables\ProductsTable;
+
+AttachAction::make()
+    ->tableSelect(ProductsTable::class)
+```
+
 ### Improving the performance of detach bulk actions
 
 By default, the `DetachBulkAction` will load all Eloquent records into memory, before looping over them and detaching them one by one.
