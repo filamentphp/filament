@@ -601,14 +601,6 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
         return array_reduce(
             [
                 ...array_reduce(
-                    $this->getPlugins(),
-                    fn (array $carry, RichContentPlugin $plugin): array => [
-                        ...$carry,
-                        ...$plugin->getEditorTools(),
-                    ],
-                    initial: [],
-                ),
-                ...array_reduce(
                     $this->tools,
                     function (array $carry, RichEditorTool | Closure $tool): array {
                         if ($tool instanceof Closure) {
@@ -620,6 +612,14 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
                             ...Arr::wrap($tool),
                         ];
                     },
+                    initial: [],
+                ),
+                ...array_reduce(
+                    $this->getPlugins(),
+                    fn (array $carry, RichContentPlugin $plugin): array => [
+                        ...$carry,
+                        ...$plugin->getEditorTools(),
+                    ],
                     initial: [],
                 ),
             ],
