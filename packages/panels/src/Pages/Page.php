@@ -387,10 +387,10 @@ abstract class Page extends BasePage
             ->components([
                 RenderHook::make(PanelsRenderHook::PAGE_HEADER_WIDGETS_START),
                 Grid::make($this->getHeaderWidgetsColumns())
-                    ->schema($widgets = $this->getWidgetsSchemaComponents($this->getHeaderWidgets())),
+                    ->schema(fn (): array => $this->getWidgetsSchemaComponents($this->getHeaderWidgets())),
                 RenderHook::make(PanelsRenderHook::PAGE_HEADER_WIDGETS_END),
             ])
-            ->hidden(empty($widgets));
+            ->hidden(fn (): bool => empty($this->getWidgetsSchemaComponents($this->getHeaderWidgets())));
     }
 
     public function footerWidgets(Schema $schema): Schema
@@ -399,10 +399,10 @@ abstract class Page extends BasePage
             ->components([
                 RenderHook::make(PanelsRenderHook::PAGE_FOOTER_WIDGETS_START),
                 Grid::make($this->getFooterWidgetsColumns())
-                    ->schema($widgets = $this->getWidgetsSchemaComponents($this->getFooterWidgets())),
+                    ->schema(fn (): array => $this->getWidgetsSchemaComponents($this->getFooterWidgets())),
                 RenderHook::make(PanelsRenderHook::PAGE_FOOTER_WIDGETS_END),
             ])
-            ->hidden(empty($widgets));
+            ->hidden(fn (): bool => empty($this->getWidgetsSchemaComponents($this->getFooterWidgets())));
     }
 
     public function getDefaultTestingSchemaName(): ?string
