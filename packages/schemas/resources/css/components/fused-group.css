@@ -4,7 +4,7 @@
     }
 
     & .fi-sc {
-        @apply rounded-lg divide-y divide-gray-950/10 dark:divide-white/20;
+        @apply divide-y divide-gray-950/10 rounded-lg dark:divide-white/20;
 
         & .fi-sc-component {
             @apply min-h-full;
@@ -27,7 +27,7 @@
         }
 
         &.fi-grid-cols {
-            @apply divide-y-0 divide-x;
+            @apply divide-x divide-y-0;
 
             & > :first-child .fi-input-wrp {
                 @apply rounded-se-none rounded-es-lg;
@@ -39,7 +39,7 @@
         }
 
         &.sm\:fi-grid-cols {
-            @apply sm:divide-y-0 sm:divide-x;
+            @apply sm:divide-x sm:divide-y-0;
 
             & > :first-child .fi-input-wrp {
                 @apply sm:rounded-se-none sm:rounded-es-lg;
@@ -51,7 +51,7 @@
         }
 
         &.md\:fi-grid-cols {
-            @apply md:divide-y-0 md:divide-x;
+            @apply md:divide-x md:divide-y-0;
 
             & > :first-child .fi-input-wrp {
                 @apply md:rounded-se-none md:rounded-es-lg;
@@ -63,7 +63,7 @@
         }
 
         &.lg\:fi-grid-cols {
-            @apply lg:divide-y-0 lg:divide-x;
+            @apply lg:divide-x lg:divide-y-0;
 
             & > :first-child .fi-input-wrp {
                 @apply lg:rounded-se-none lg:rounded-es-lg;
@@ -75,7 +75,7 @@
         }
 
         &.xl\:fi-grid-cols {
-            @apply xl:divide-y-0 xl:divide-x;
+            @apply xl:divide-x xl:divide-y-0;
 
             & > :first-child .fi-input-wrp {
                 @apply xl:rounded-se-none xl:rounded-es-lg;
@@ -87,7 +87,7 @@
         }
 
         &.\32xl\:fi-grid-cols {
-            @apply 2xl:divide-y-0 2xl:divide-x;
+            @apply 2xl:divide-x 2xl:divide-y-0;
 
             & > :first-child .fi-input-wrp {
                 @apply 2xl:rounded-se-none 2xl:rounded-es-lg;
@@ -100,7 +100,7 @@
 
         @supports (container-type: inline-size) {
             &.\@3xs\:fi-grid-cols {
-                @apply @3xs:divide-y-0 @3xs:divide-x;
+                @apply @3xs:divide-x @3xs:divide-y-0;
 
                 & > :first-child .fi-input-wrp {
                     @apply @3xs:rounded-se-none @3xs:rounded-es-lg;
@@ -112,7 +112,7 @@
             }
 
             &.\@2xs\:fi-grid-cols {
-                @apply @2xs:divide-y-0 @2xs:divide-x;
+                @apply @2xs:divide-x @2xs:divide-y-0;
 
                 & > :first-child .fi-input-wrp {
                     @apply @2xs:rounded-se-none @2xs:rounded-es-lg;
@@ -124,7 +124,7 @@
             }
 
             &.\@xs\:fi-grid-cols {
-                @apply @xs:divide-y-0 @xs:divide-x;
+                @apply @xs:divide-x @xs:divide-y-0;
 
                 & > :first-child .fi-input-wrp {
                     @apply @xs:rounded-se-none @xs:rounded-es-lg;
@@ -136,7 +136,7 @@
             }
 
             &.\@sm\:fi-grid-cols {
-                @apply @sm:divide-y-0 @sm:divide-x;
+                @apply @sm:divide-x @sm:divide-y-0;
 
                 & > :first-child .fi-input-wrp {
                     @apply @sm:rounded-se-none @sm:rounded-es-lg;
@@ -148,7 +148,7 @@
             }
 
             &.\@md\:fi-grid-cols {
-                @apply @md:divide-y-0 @md:divide-x;
+                @apply @md:divide-x @md:divide-y-0;
 
                 & > :first-child .fi-input-wrp {
                     @apply @md:rounded-se-none @md:rounded-es-lg;
@@ -160,7 +160,7 @@
             }
 
             &.\@lg\:fi-grid-cols {
-                @apply @lg:divide-y-0 @lg:divide-x;
+                @apply @lg:divide-x @lg:divide-y-0;
 
                 & > :first-child .fi-input-wrp {
                     @apply @lg:rounded-se-none @lg:rounded-es-lg;
@@ -172,7 +172,7 @@
             }
 
             &.\@xl\:fi-grid-cols {
-                @apply @xl:divide-y-0 @xl:divide-x;
+                @apply @xl:divide-x @xl:divide-y-0;
 
                 & > :first-child .fi-input-wrp {
                     @apply @xl:rounded-se-none @xl:rounded-es-lg;
@@ -184,7 +184,7 @@
             }
 
             &.\@2xl\:fi-grid-cols {
-                @apply @2xl:divide-y-0 @2xl:divide-x;
+                @apply @2xl:divide-x @2xl:divide-y-0;
 
                 & > :first-child .fi-input-wrp {
                     @apply @2xl:rounded-se-none @2xl:rounded-es-lg;
@@ -196,7 +196,7 @@
             }
 
             &.\@3xl\:fi-grid-cols {
-                @apply @3xl:divide-y-0 @3xl:divide-x;
+                @apply @3xl:divide-x @3xl:divide-y-0;
 
                 & > :first-child .fi-input-wrp {
                     @apply @3xl:rounded-se-none @3xl:rounded-es-lg;
@@ -208,7 +208,7 @@
             }
 
             &.\@4xl\:fi-grid-cols {
-                @apply @4xl:divide-y-0 @4xl:divide-x;
+                @apply @4xl:divide-x @4xl:divide-y-0;
 
                 & > :first-child .fi-input-wrp {
                     @apply @4xl:rounded-se-none @4xl:rounded-es-lg;
@@ -220,7 +220,7 @@
             }
 
             &.\@5xl\:fi-grid-cols {
-                @apply @5xl:divide-y-0 @5xl:divide-x;
+                @apply @5xl:divide-x @5xl:divide-y-0;
 
                 & > :first-child .fi-input-wrp {
                     @apply @5xl:rounded-se-none @5xl:rounded-es-lg;
@@ -232,7 +232,7 @@
             }
 
             &.\@6xl\:fi-grid-cols {
-                @apply @6xl:divide-y-0 @6xl:divide-x;
+                @apply @6xl:divide-x @6xl:divide-y-0;
 
                 & > :first-child .fi-input-wrp {
                     @apply @6xl:rounded-se-none @6xl:rounded-es-lg;
@@ -244,7 +244,7 @@
             }
 
             &.\@7xl\:fi-grid-cols {
-                @apply @7xl:divide-y-0 @7xl:divide-x;
+                @apply @7xl:divide-x @7xl:divide-y-0;
 
                 & > :first-child .fi-input-wrp {
                     @apply @7xl:rounded-se-none @7xl:rounded-es-lg;
@@ -258,7 +258,7 @@
 
         @supports not (container-type: inline-size) {
             &.\!\@sm\:fi-grid-cols {
-                @apply sm:divide-y-0 sm:divide-x;
+                @apply sm:divide-x sm:divide-y-0;
 
                 & > :first-child .fi-input-wrp {
                     @apply sm:rounded-se-none sm:rounded-es-lg;
@@ -270,7 +270,7 @@
             }
 
             &.\!\@md\:fi-grid-cols {
-                @apply md:divide-y-0 md:divide-x;
+                @apply md:divide-x md:divide-y-0;
 
                 & > :first-child .fi-input-wrp {
                     @apply md:rounded-se-none md:rounded-es-lg;
@@ -282,7 +282,7 @@
             }
 
             &.\!\@lg\:fi-grid-cols {
-                @apply lg:divide-y-0 lg:divide-x;
+                @apply lg:divide-x lg:divide-y-0;
 
                 & > :first-child .fi-input-wrp {
                     @apply lg:rounded-se-none lg:rounded-es-lg;
@@ -294,7 +294,7 @@
             }
 
             &.\!\@xl\:fi-grid-cols {
-                @apply xl:divide-y-0 xl:divide-x;
+                @apply xl:divide-x xl:divide-y-0;
 
                 & > :first-child .fi-input-wrp {
                     @apply xl:rounded-se-none xl:rounded-es-lg;
@@ -306,7 +306,7 @@
             }
 
             &.\!\@2xl\:fi-grid-cols {
-                @apply 2xl:divide-y-0 2xl:divide-x;
+                @apply 2xl:divide-x 2xl:divide-y-0;
 
                 & > :first-child .fi-input-wrp {
                     @apply 2xl:rounded-se-none 2xl:rounded-es-lg;
