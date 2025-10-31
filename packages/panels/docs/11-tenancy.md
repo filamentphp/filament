@@ -121,7 +121,7 @@ namespace App\Filament\Pages\Tenancy;
 
 use App\Models\Team;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Filament\Pages\Tenancy\RegisterTenant;
 
 class RegisterTeam extends RegisterTenant
@@ -131,9 +131,9 @@ class RegisterTeam extends RegisterTenant
         return 'Register team';
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
+        return $schema
             ->schema([
                 TextInput::make('name'),
                 // ...
@@ -181,7 +181,7 @@ To set up a profile page, you'll need to create a new page class that extends `F
 namespace App\Filament\Pages\Tenancy;
 
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Filament\Pages\Tenancy\EditTenantProfile;
 
 class EditTeamProfile extends EditTenantProfile
@@ -191,9 +191,9 @@ class EditTeamProfile extends EditTenantProfile
         return 'Team profile';
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
+        return $schema
             ->schema([
                 TextInput::make('name'),
                 // ...
