@@ -56,6 +56,7 @@
             "Filament\\FontProviders\\": "packages/spatie-laravel-google-fonts-plugin/src",
             "Filament\\Infolists\\": "packages/infolists/src",
             "Filament\\Notifications\\": "packages/notifications/src",
+            "Filament\\QueryBuilder\\": "packages/query-builder/src",
             "Filament\\Schemas\\": "packages/schemas/src",
             "Filament\\Support\\": "packages/support/src",
             "Filament\\Tables\\": "packages/tables/src",
