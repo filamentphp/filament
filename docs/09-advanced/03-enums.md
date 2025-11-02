@@ -95,7 +95,7 @@ If you use a [`TextEntry`](../infolists/text-entry) in an infolist, and it is ca
 
 ## Enum colors
 
-The `HasColor` interface transforms an enum instance into a [color](colors). This is useful for displaying colored enum values in your UI.
+The `HasColor` interface transforms an enum instance into a [color](../styling/colors). This is useful for displaying colored enum values in your UI.
 
 ```php
 use Filament\Support\Contracts\HasColor;
@@ -133,7 +133,7 @@ If you use a [`ToggleButtons`](../forms/toggle-buttons) form field, and it is se
 
 ## Enum icons
 
-The `HasIcon` interface transforms an enum instance into an [icon](icons). This is useful for displaying icons alongside enum values in your UI.
+The `HasIcon` interface transforms an enum instance into an [icon](../styling/icons). This is useful for displaying icons alongside enum values in your UI.
 
 ```php
 use Filament\Support\Contracts\HasIcon;

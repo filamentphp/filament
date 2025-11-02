@@ -9,6 +9,7 @@ use Filament\FilamentServiceProvider;
 use Filament\Forms\FormsServiceProvider;
 use Filament\Infolists\InfolistsServiceProvider;
 use Filament\Notifications\NotificationsServiceProvider;
+use Filament\QueryBuilder\QueryBuilderServiceProvider;
 use Filament\Schemas\SchemasServiceProvider;
 use Filament\SpatieLaravelSettingsPluginServiceProvider;
 use Filament\Support\SupportServiceProvider;
@@ -54,6 +55,7 @@ abstract class TestCase extends BaseTestCase
             InfolistsServiceProvider::class,
             LivewireServiceProvider::class,
             NotificationsServiceProvider::class,
+            QueryBuilderServiceProvider::class,
             SchemasServiceProvider::class,
             SpatieLaravelSettingsPluginServiceProvider::class,
             SupportServiceProvider::class,

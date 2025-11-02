@@ -1,11 +1,13 @@
 <?php
 
-namespace Filament\Tables\Filters\QueryBuilder\Forms\Components;
+namespace Filament\QueryBuilder\Forms\Components;
 
 use Filament\Actions\Action;
 use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\View\FormsIconAlias;
+use Filament\QueryBuilder\Constraints\Constraint;
+use Filament\QueryBuilder\View\QueryBuilderIconAlias;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Flex;
 use Filament\Schemas\Components\Utilities\Get;
@@ -13,24 +15,23 @@ use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\Size;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
-use Filament\Tables\Filters\QueryBuilder\Concerns\HasConstraints;
-use Filament\Tables\Filters\QueryBuilder\Constraints\Constraint;
 use Illuminate\Support\Str;
 
 class RuleBuilder extends Builder
 {
-    use HasConstraints;
-
     public const OR_BLOCK_NAME = 'or';
 
     public const OR_BLOCK_GROUPS_REPEATER_NAME = 'groups';
+
+    /** @var array<Constraint> */
+    protected array $constraints = [];
 
     protected function setUp(): void
     {
         parent::setUp();
 
         $this
-            ->label(__('filament-tables::filters/query-builder.form.rules.label'))
+            ->label(__('filament-query-builder::query-builder.form.rules.label'))
             ->blocks(function (): array {
                 return [
                     ...array_map(
@@ -38,8 +39,8 @@ class RuleBuilder extends Builder
                         $this->getConstraints(),
                     ),
                     Builder\Block::make(static::OR_BLOCK_NAME)
-                        ->label(__('filament-tables::filters/query-builder.form.or_groups.block.label'))
-                        ->icon(Heroicon::Slash)
+                        ->label(__('filament-query-builder::query-builder.form.or_groups.block.label'))
+                        ->icon(FilamentIcon::resolve(QueryBuilderIconAlias::OR_GROUP_BLOCK) ?? Heroicon::Slash)
                         ->schema([
                             Flex::make(function (Flex $component): array {
                                 /** @var Builder $builder */
@@ -47,10 +48,12 @@ class RuleBuilder extends Builder
 
                                 return [
                                     Repeater::make(static::OR_BLOCK_GROUPS_REPEATER_NAME)
-                                        ->label(__('filament-tables::filters/query-builder.form.or_groups.label'))
+                                        ->label(__('filament-query-builder::query-builder.form.or_groups.label'))
                                         ->schema([
                                             Flex::make([
                                                 static::make('rules')
+                                                    ->hiddenLabel()
+                                                    ->partiallyRenderAfterActionsCalled($builder->shouldPartiallyRenderAfterActionsCalled())
                                                     ->constraints($this->getConstraints())
                                                     ->blockPickerColumns($this->getBlockPickerColumns())
                                                     ->blockPickerWidth($this->getBlockPickerWidth()),
@@ -72,11 +75,11 @@ class RuleBuilder extends Builder
                                             ])->verticallyAlignCenter(),
                                         ])
                                         ->addAction(fn (Action $action, Repeater $component) => $action
-                                            ->label(__('filament-tables::filters/query-builder.actions.add_rule_group.label'))
-                                            ->icon(Heroicon::Plus)
+                                            ->label(__('filament-query-builder::query-builder.actions.add_rule_group.label'))
+                                            ->icon(FilamentIcon::resolve(QueryBuilderIconAlias::OR_GROUP_ADD_GROUP_ACTION) ?? Heroicon::Plus)
                                             ->hidden(fn (): bool => filled(array_filter($component->getRawState(), fn (array $itemState): bool => blank($itemState['rules'])))))
                                         ->addActionAlignment(Alignment::End)
-                                        ->labelBetweenItems(__('filament-tables::filters/query-builder.item_separators.or'))
+                                        ->labelBetweenItems(__('filament-query-builder::query-builder.item_separators.or'))
                                         ->itemHeaders(false)
                                         ->defaultItems(2)
                                         ->minItems(2)
@@ -106,16 +109,50 @@ class RuleBuilder extends Builder
                 ];
             })
             ->addAction(fn (Action $action) => $action
-                ->label(__('filament-tables::filters/query-builder.actions.add_rule.label'))
-                ->icon(Heroicon::Plus))
+                ->label(__('filament-query-builder::query-builder.actions.add_rule.label'))
+                ->icon(FilamentIcon::resolve(QueryBuilderIconAlias::ADD_RULE_ACTION) ?? Heroicon::Plus))
             ->addBetweenAction(fn (Action $action) => $action->hidden())
             ->addActionAlignment(Alignment::Start)
-            ->hiddenLabel()
-            ->labelBetweenItems(__('filament-tables::filters/query-builder.item_separators.and'))
+            ->labelBetweenItems(__('filament-query-builder::query-builder.item_separators.and'))
             ->blockHeaders(false)
             ->cloneable()
             ->generateUuidUsing(fn (): string => Str::random(4))
             ->partiallyRenderAfterActionsCalled(false)
             ->extraAttributes(['class' => 'fi-fo-builder-not-contained']);
+    }
+
+    /**
+     * @param  array<Constraint>  $constraints
+     */
+    public function constraints(array $constraints): static
+    {
+        foreach ($constraints as $constraint) {
+            $this->constraints[$constraint->getName()] = $constraint;
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return array<Constraint>
+     */
+    public function getConstraints(): array
+    {
+        return $this->evaluate($this->constraints);
+    }
+
+    public function getConstraint(string $name): ?Constraint
+    {
+        return $this->getConstraints()[$name] ?? null;
+    }
+
+    /**
+     * @param  array<string, ?int> | int | null  $columns
+     */
+    public function constraintPickerColumns(array | int | null $columns = 2): static
+    {
+        $this->blockPickerColumns($columns);
+
+        return $this;
     }
 }
