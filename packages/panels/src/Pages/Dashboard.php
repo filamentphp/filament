@@ -89,6 +89,6 @@ class Dashboard extends Page
     public function getWidgetsContentComponent(): Component
     {
         return Grid::make($this->getColumns())
-            ->schema($this->getWidgetsSchemaComponents($this->getWidgets()));
+            ->schema(fn (): array => $this->getWidgetsSchemaComponents($this->getWidgets()));
     }
 }
