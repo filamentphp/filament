@@ -89,8 +89,14 @@ class DatabaseNotifications extends Component implements HasActions, HasSchemas
 
     public function getNotificationsQuery(): Builder | Relation
     {
-        /** @phpstan-ignore-next-line */
-        return $this->getUser()->notifications()->where('data->format', 'filament');
+        $user = $this->getUser();
+
+        if (!$user) {
+            // Return an empty builder to satisfy the return type
+            return DatabaseNotification::query()->limit(0);
+        }
+
+        return $user->notifications()->where('data->format', 'filament');
     }
 
     public function getUnreadNotificationsQuery(): Builder | Relation
