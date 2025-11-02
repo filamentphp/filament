@@ -358,7 +358,7 @@ class ImageColumn extends Column implements HasEmbeddedView
         return $this->evaluate($this->limit);
     }
 
-    public function limitedRemainingText(bool | Closure $condition = true, string | Closure | null $size = null): static
+    public function limitedRemainingText(bool | Closure $condition = true, TextSize | string | Closure | null $size = null): static
     {
         $this->hasLimitedRemainingText = $condition;
         $this->limitedRemainingTextSize($size);

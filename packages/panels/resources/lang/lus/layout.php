@@ -15,7 +15,7 @@ return [
         ],
 
         'open_database_notifications' => [
-            'label' => 'Hriattîrna hawnna',
+            'label' => 'Hriattîrna',
         ],
 
         'open_user_menu' => [
@@ -58,6 +58,15 @@ return [
 
     'logo' => [
         'alt' => ':name logo',
+    ],
+
+    'tenant_menu' => [
+
+        'search_field' => [
+            'label' => 'Tenant zawnna',
+            'placeholder' => 'Zawnna',
+        ],
+
     ],
 
 ];

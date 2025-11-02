@@ -6,7 +6,7 @@ return [
 
     'modal' => [
 
-        'heading' => 'Authenticator app siam na',
+        'heading' => 'Authenticator app siamna',
 
         'description' => <<<'BLADE'
             Google Authenticator app (<x-filament::link href="https://itunes.apple.com/us/app/google-authenticator/id388497605" target="_blank">iOS</x-filament::link>, <x-filament::link href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2" target="_blank">Android</x-filament::link>) ang chi hi hemi complete nan hian I mamawh ang.

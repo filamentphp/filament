@@ -9,7 +9,7 @@ return [
     'actions' => [
 
         'login' => [
-            'label' => 'login a letna',
+            'label' => 'Luhna a letna',
         ],
 
     ],
@@ -33,11 +33,11 @@ return [
     'notifications' => [
 
         'sent' => [
-            'body' => 'I account a awmlo anih chuan, email i dawng lo ang.',
+            'body' => 'I account a awmlo anih chuan email i dawng lo ang.',
         ],
 
         'throttled' => [
-            'title' => 'Request a tam lutuk',
+            'title' => 'Thawn a tam lutuk',
             'body' => 'Khawngaihin seconds :seconds hnuah ti nawn leh rawh.',
         ],
 

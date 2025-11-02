@@ -1,5 +1,5 @@
 .fi-dropdown-list-item {
-    @apply flex w-full items-center gap-2 overflow-hidden rounded-md p-2 text-sm whitespace-nowrap transition-colors duration-75 outline-none;
+    @apply flex w-full items-center gap-2 overflow-hidden rounded-md p-2 text-sm whitespace-nowrap transition-colors duration-75 outline-none select-none;
 
     &:not(.fi-disabled):not([disabled]) {
         @apply hover:bg-gray-50 focus-visible:bg-gray-50 dark:hover:bg-white/5 dark:focus-visible:bg-white/5;
