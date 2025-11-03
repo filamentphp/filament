@@ -88,7 +88,6 @@ class Get
         return $enumClass::tryFrom($state);
     }
 
-
     public function filled(string $key, bool $isAbsolute = false): bool
     {
         return filled($this($key, $isAbsolute));
