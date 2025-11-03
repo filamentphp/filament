@@ -286,6 +286,27 @@ trait CanFormatState
         return $this;
     }
 
+    public function abbreviate(int | Closure $precision = 0): static
+    {
+        $this->isNumeric = true;
+
+        $this->formatStateUsing(static function (TextColumn $column, $state) use ($precision): ?string {
+            if (blank($state)) {
+                return null;
+            }
+
+            if (! is_numeric($state)) {
+                return $state;
+            }
+
+            $precision = $column->evaluate($precision);
+
+            return Number::abbreviate($state, $precision);
+        });
+
+        return $this;
+    }
+
     public function time(string | Closure | null $format = null, string | Closure | null $timezone = null): static
     {
         $this->isTime = true;
