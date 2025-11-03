@@ -316,6 +316,28 @@ TextEntry::make('stock')
 
 <UtilityInjection set="infolistEntries" version="4.x">As well as allowing static values, the `locale` argument also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
+### Number abbreviation
+
+Instead of passing a function to `formatStateUsing()`, you can use the `abbreviate()` method to format the number in a human-readable way with abbreviated units:
+
+```php
+use Filament\Infolists\Components\TextEntry;
+
+TextEntry::make('views')
+    ->abbreviate()
+```
+
+By default, the abbreviation uses one decimal place. You can customize the number of decimal places by passing an integer to the `precision` argument:
+
+```php
+use Filament\Infolists\Components\TextEntry;
+
+TextEntry::make('views')
+    ->abbreviate(precision: 2)
+```
+
+<UtilityInjection set="infolistEntries" version="4.x">As well as allowing static values, the `precision` argument also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 ### Money formatting
 
 Instead of passing a function to `formatStateUsing()`, you can use the `money()` method to easily format amounts of money, in any currency:
