@@ -60,4 +60,13 @@ return [
         'alt' => ':name logotip',
     ],
 
+
+    'tenant_menu' => [
+
+        'search_field' => [
+            'label' => 'Pretraga zakupaca',
+            'placeholder' => 'Search',
+        ],
+
+    ],
 ];

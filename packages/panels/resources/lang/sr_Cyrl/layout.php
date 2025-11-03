@@ -60,4 +60,13 @@ return [
         'alt' => ':name логотип',
     ],
 
+
+    'tenant_menu' => [
+
+        'search_field' => [
+            'label' => 'Претрага закупаца',
+            'placeholder' => 'Search',
+        ],
+
+    ],
 ];
