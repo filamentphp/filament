@@ -312,6 +312,22 @@ Builder::make('content')
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `deletable()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
+### Preventing block add/edit modals from closing
+
+You may prevent the user from closing block add/edit modal of builder in block preview mode using the `persistentModal(true)` method:
+
+```php
+use Filament\Forms\Components\Builder;
+
+Builder::make('content')
+    ->blocks([
+        // ...
+    ])
+    ->persistentModal(true)
+```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `persistentModal()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 ## Reordering items
 
 A button is displayed on each item to allow the user to drag and drop to reorder it in the list.

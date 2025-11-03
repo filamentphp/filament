@@ -49,6 +49,8 @@ class Builder extends Field implements CanConcealComponents, HasExtraItemActions
     protected bool | Closure $isAddable = true;
 
     protected bool | Closure $isDeletable = true;
+    
+    protected bool | Closure $isModalPersistent = false;
 
     protected bool | Closure $hasBlockLabels = true;
 
@@ -192,6 +194,8 @@ class Builder extends Field implements CanConcealComponents, HasExtraItemActions
                     'label' => $component->getLabel(),
                 ]))
                 ->modalSubmitActionLabel(__('filament-forms::components.builder.actions.add.modal.actions.add.label'))
+                ->closeModalByClickingAway(fn (Builder $component): bool => !$component->isModalPersistent())
+                ->closeModalByEscaping(fn (Builder $component): bool => !$component->isModalPersistent())
                 ->schema(function (array $arguments, Builder $component): array {
                     return $component->getBlock($arguments['block'])->getClone()->getDefaultChildComponents();
                 });
@@ -287,6 +291,8 @@ class Builder extends Field implements CanConcealComponents, HasExtraItemActions
                     'label' => $component->getLabel(),
                 ]))
                 ->modalSubmitActionLabel(__('filament-forms::components.builder.actions.add_between.modal.actions.add.label'))
+                ->closeModalByClickingAway(fn (Builder $component): bool => !$component->isModalPersistent())
+                ->closeModalByEscaping(fn (Builder $component): bool => !$component->isModalPersistent())
                 ->schema(function (array $arguments, Builder $component): array {
                     return $component->getBlock($arguments['block'])->getClone()->getDefaultChildComponents();
                 });
@@ -663,6 +669,8 @@ class Builder extends Field implements CanConcealComponents, HasExtraItemActions
             ->label(__('filament-forms::components.builder.actions.edit.label'))
             ->modalHeading(__('filament-forms::components.builder.actions.edit.modal.heading'))
             ->modalSubmitActionLabel(__('filament-forms::components.builder.actions.edit.modal.actions.save.label'))
+            ->closeModalByClickingAway(fn (Builder $component): bool => !$component->isModalPersistent())
+            ->closeModalByEscaping(fn (Builder $component): bool => !$component->isModalPersistent())
             ->color('gray')
             ->fillForm(function (array $arguments, Builder $component) {
                 $state = $component->getState();
@@ -771,6 +779,13 @@ class Builder extends Field implements CanConcealComponents, HasExtraItemActions
     public function reorderable(bool | Closure $condition = true): static
     {
         $this->isReorderable = $condition;
+
+        return $this;
+    }
+
+    public function persistentModal(bool | Closure $condition = false): static
+    {
+        $this->isModalPersistent = $condition;
 
         return $this;
     }
@@ -988,6 +1003,11 @@ class Builder extends Field implements CanConcealComponents, HasExtraItemActions
         }
 
         return (bool) $this->evaluate($this->isDeletable);
+    }
+
+    public function isModalPersistent(): bool
+    {
+        return (bool) $this->evaluate($this->isModalPersistent);
     }
 
     public function hasBlockLabels(): bool
