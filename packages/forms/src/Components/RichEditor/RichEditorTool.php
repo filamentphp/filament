@@ -39,6 +39,8 @@ class RichEditorTool extends ViewComponent implements HasEmbeddedView
 
     protected bool | Closure $isDisabledWhenNotActive = false;
 
+    protected bool | Closure $hasLabelInButton = false;
+
     protected bool | Closure $hasActiveStyling = true;
 
     protected RichEditor $editor;
@@ -161,6 +163,19 @@ class RichEditorTool extends ViewComponent implements HasEmbeddedView
         return $this->shouldTranslateLabel ? __($label) : $label;
     }
 
+    public function labelInButton(bool | Closure $condition = true): static
+    {
+        $this->hasLabelInButton = $condition;
+
+        return $this;
+    }
+
+    public function hasLabelInButton(): bool
+    {
+        return (bool) $this->evaluate($this->hasLabelInButton);
+
+    }
+
     public function disabledWhenNotActive(bool | Closure $condition = true): static
     {
         $this->isDisabledWhenNotActive = $condition;
@@ -202,16 +217,20 @@ class RichEditorTool extends ViewComponent implements HasEmbeddedView
                 'x-bind:class' => '{ \'fi-active\': ' . ($this->hasActiveStyling() ? $activeJsExpression : 'false') . ' }',
                 'x-bind:disabled' => $this->isDisabledWhenNotActive() ? '!(' . $activeJsExpression . ')' : null,
                 'x-on:click' => $this->getJsHandler(),
-                'x-tooltip' => filled($label = $this->getLabel())
+                'x-tooltip' => filled($label = $this->getLabel()) && ! $this->hasLabelInButton()
                     ? '{ content: ' . Js::from($label) . ', theme: $store.theme }'
                     : null,
             ], escape: false)
-            ->class(['fi-fo-rich-editor-tool']);
+            ->class([
+                'fi-fo-rich-editor-tool',
+                'fi-fo-rich-editor-tool-with-label-as-button' => $this->hasLabelInButton(),
+            ]);
 
         ob_start(); ?>
 
         <button <?= $attributes->toHtml() ?>>
             <?= generate_icon_html($this->getIcon(), alias: $this->getIconAlias())->toHtml() ?>
+            <?= $this->hasLabelInButton() ? '<span>' . $this->getLabel() . '</span>' : null ?>
         </button>
 
         <?php return ob_get_clean();
