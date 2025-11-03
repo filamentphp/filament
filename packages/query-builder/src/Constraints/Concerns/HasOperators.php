@@ -1,8 +1,8 @@
 <?php
 
-namespace Filament\Tables\Filters\QueryBuilder\Constraints\Concerns;
+namespace Filament\QueryBuilder\Constraints\Concerns;
 
-use Filament\Tables\Filters\QueryBuilder\Constraints\Operators\Operator;
+use Filament\QueryBuilder\Constraints\Operators\Operator;
 
 trait HasOperators
 {

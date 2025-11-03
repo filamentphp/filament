@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament\Tables\Filters\QueryBuilder\Constraints\Operators\Concerns;
+namespace Filament\QueryBuilder\Constraints\Operators\Concerns;
 
 use Closure;
 

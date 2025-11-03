@@ -72,6 +72,10 @@ export default function checkboxListFormComponent({ livewireId }) {
                     return
                 }
 
+                if (checkbox.checked === inverseAreAllCheckboxesChecked) {
+                    return
+                }
+
                 checkbox.checked = inverseAreAllCheckboxesChecked
                 checkbox.dispatchEvent(new Event('change'))
             })

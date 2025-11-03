@@ -3,11 +3,7 @@
 ])
 
 <x-filament::tabs
-    wire:ignore
-    :attributes="
-        \Filament\Support\prepare_inherited_attributes($attributes)
-            ->class(['fi-page-sub-navigation-tabs'])
-    "
+    :attributes="\Filament\Support\prepare_inherited_attributes($attributes)->class(['fi-page-sub-navigation-tabs'])"
 >
     @foreach ($navigation as $navigationGroup)
         @php
