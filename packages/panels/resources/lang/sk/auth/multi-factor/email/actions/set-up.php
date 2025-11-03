@@ -30,6 +30,9 @@ return [
                                 'title' => 'Poslali sme Vám nový kód e-mailom',
                             ],
 
+                            'throttled' => [
+                                'title' => 'Príliš veľa pokusov o opätovné odoslanie. Počkajte, prosím, pred ďalšou žiadosťou o kód.',
+                            ],
                         ],
 
                     ],
