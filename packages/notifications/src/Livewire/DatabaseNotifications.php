@@ -91,9 +91,8 @@ class DatabaseNotifications extends Component implements HasActions, HasSchemas
     {
         $user = $this->getUser();
 
-        if (!$user) {
-            /** @phpstan-ignore-next-line */
-            return DatabaseNotification::query()->limit(0);
+        if (! $user) {
+            abort(401);
         }
 
         /** @phpstan-ignore-next-line */
