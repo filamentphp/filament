@@ -98,6 +98,24 @@ export default ({ mergeTags, noMergeTagSearchResultsMessage }) => ({
             }
         }
 
+        const scrollToSelected = () => {
+            if (!element || !currentProps || currentProps.items.length === 0)
+                return
+
+            const selectedButton = element.children[selectedIndex]
+
+            if (selectedButton) {
+                const rect = selectedButton.getBoundingClientRect()
+                const containerRect = element.getBoundingClientRect()
+                if (
+                    rect.top < containerRect.top ||
+                    rect.bottom > containerRect.bottom
+                ) {
+                    selectedButton.scrollIntoView({ block: 'nearest' })
+                }
+            }
+        }
+
         const upHandler = () => {
             if (!currentProps) return
 
@@ -106,6 +124,7 @@ export default ({ mergeTags, noMergeTagSearchResultsMessage }) => ({
 
             selectedIndex = (selectedIndex + items.length - 1) % items.length
             renderItems()
+            scrollToSelected()
         }
 
         const downHandler = () => {
@@ -116,6 +135,7 @@ export default ({ mergeTags, noMergeTagSearchResultsMessage }) => ({
 
             selectedIndex = (selectedIndex + 1) % items.length
             renderItems()
+            scrollToSelected()
         }
 
         const enterHandler = () => {
@@ -156,6 +176,7 @@ export default ({ mergeTags, noMergeTagSearchResultsMessage }) => ({
 
                 // Update dropdown items
                 renderItems()
+                scrollToSelected()
 
                 if (!props.clientRect) {
                     return
