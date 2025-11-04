@@ -468,6 +468,21 @@ return [
 
             ],
 
+            'text_color' => [
+                'label' => 'Màu chữ',
+                'modal' => [
+                    'form' => [
+                        'color' => [
+                            'label' => 'Màu chữ',
+                        ],
+                        'custom_color' => [
+                            'label' => 'Màu chữ tùy chỉnh',
+                        ],
+                    ],
+                    'heading' => 'Chọn màu chữ',
+                ],
+            ],
+
         ],
 
         'no_merge_tag_search_results_message' => 'Không tìm thấy thẻ nội dung động nào.',
