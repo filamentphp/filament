@@ -26,7 +26,7 @@
             @apply text-primary-600 dark:text-primary-400 bg-gray-50 dark:bg-white/5;
         }
 
-        &.fi-fo-rich-editor-tool-with-label-as-button {
+        &.fi-fo-rich-editor-tool-with-label {
             @apply px-1.5 items-center gap-x-1;
         }
     }
