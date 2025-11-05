@@ -13,27 +13,13 @@
         }
 
         & .fi-wi-chart-canvas-ctn:not(.fi-wi-chart-canvas-ctn-no-aspect-ratio) {
-            @apply @sm:aspect-[2];
-
-            &[data-chart-type='doughnut'],
-            &[data-chart-type='pie'],
-            &[data-chart-type='polarArea'],
-            &[data-chart-type='radar'] {
-                @apply aspect-square;
-            }
+            @apply @sm:aspect-[1.5];
         }
     }
 
     @supports not (container-type: inline-size) {
         & .fi-wi-chart-canvas-ctn:not(.fi-wi-chart-canvas-ctn-no-aspect-ratio) {
-            @apply sm:aspect-[2];
-
-            &[data-chart-type='doughnut'],
-            &[data-chart-type='pie'],
-            &[data-chart-type='polarArea'],
-            &[data-chart-type='radar'] {
-                @apply aspect-square;
-            }
+            @apply sm:aspect-[1.5];
         }
     }
 
