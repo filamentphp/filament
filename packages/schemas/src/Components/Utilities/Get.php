@@ -77,7 +77,7 @@ class Get
     /**
      * @template T of BackedEnum
      *
-     * @param class-string<T> $enumClass
+     * @param  class-string<T>  $enumClass
      * @return ?T
      */
     public function enum(string $key, string $enumClass, bool $isAbsolute = false): ?BackedEnum
