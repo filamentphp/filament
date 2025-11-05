@@ -93,7 +93,7 @@ class Section extends Component implements CanConcealComponents, CanEntangleWith
         parent::setUp();
 
         $this->key(function (Section $component): ?string {
-            $heading = $this->getHeading();
+            $heading = $component->getHeading();
 
             if (blank($heading)) {
                 return null;
