@@ -63,36 +63,26 @@ class Get
         return (array) ($this($key, $isAbsolute) ?? []);
     }
 
-    public function date(string $key, bool $isAbsolute = false): ?CarbonInterface
+    public function date(string $key, bool $isAbsolute = false): CarbonInterface
     {
-        $state = $this($key, $isAbsolute);
-
-        if (blank($state)) {
-            return null;
-        }
-
-        return Carbon::parse($state);
+        return Carbon::parse($this($key, $isAbsolute));
     }
 
     /**
      * @template T of BackedEnum
      *
      * @param  class-string<T>  $enumClass
-     * @return ?T
+     * @return T
      */
-    public function enum(string $key, string $enumClass, bool $isAbsolute = false): ?BackedEnum
+    public function enum(string $key, string $enumClass, bool $isAbsolute = false): BackedEnum
     {
         $state = $this($key, $isAbsolute);
-
-        if (blank($state)) {
-            return null;
-        }
 
         if ($state instanceof BackedEnum) {
             return $state;
         }
 
-        return $enumClass::tryFrom($state);
+        return $enumClass::from($state);
     }
 
     public function filled(string $key, bool $isAbsolute = false): bool
