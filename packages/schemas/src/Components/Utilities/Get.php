@@ -75,7 +75,10 @@ class Get
     }
 
     /**
-     * @param  class-string<BackedEnum>  $enumClass
+     * @template T of BackedEnum
+     *
+     * @param class-string<T> $enumClass
+     * @return ?T
      */
     public function enum(string $key, string $enumClass, bool $isAbsolute = false): ?BackedEnum
     {
@@ -83,6 +86,10 @@ class Get
 
         if (blank($state)) {
             return null;
+        }
+
+        if ($state instanceof BackedEnum) {
+            return $state;
         }
 
         return $enumClass::tryFrom($state);
