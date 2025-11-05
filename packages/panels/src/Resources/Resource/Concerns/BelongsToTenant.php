@@ -75,7 +75,20 @@ trait BelongsToTenant
             $resourceClass = static::class;
             $recordClass = $record::class;
 
-            throw new LogicException("The model [{$recordClass}] does not have a relationship named [{$relationshipName}]. You can change the relationship being used by passing it to the [ownershipRelationship] argument of the [tenant()] method in configuration. You can change the relationship being used per-resource by setting it as the [\$tenantOwnershipRelationshipName] static property on the [{$resourceClass}] resource class.");
+            // Provide more helpful error message with available relationships
+            $availableRelationships = method_exists($record, 'getRelations')
+                ? array_keys($record->getRelations())
+                : [];
+
+            $message = "The model [{$recordClass}] does not have a relationship named [{$relationshipName}].";
+
+            if (! empty($availableRelationships)) {
+                $message .= ' Available relationships: ' . implode(', ', $availableRelationships) . '.';
+            }
+
+            $message .= " You can change the relationship being used by passing it to the [ownershipRelationship] argument of the [tenant()] method in configuration. You can change the relationship being used per-resource by setting it as the [\$tenantOwnershipRelationshipName] static property on the [{$resourceClass}] resource class.";
+
+            throw new LogicException($message);
         }
 
         return $record->{$relationshipName}();
@@ -97,7 +110,20 @@ trait BelongsToTenant
             $resourceClass = static::class;
             $tenantClass = $tenant::class;
 
-            throw new LogicException("The model [{$tenantClass}] does not have a relationship named [{$relationshipName}]. You can change the relationship being used by setting it as the [\$tenantRelationshipName] static property on the [{$resourceClass}] resource class.");
+            // Provide more helpful error message with available relationships
+            $availableRelationships = method_exists($tenant, 'getRelations')
+                ? array_keys($tenant->getRelations())
+                : [];
+
+            $message = "The model [{$tenantClass}] does not have a relationship named [{$relationshipName}].";
+
+            if (! empty($availableRelationships)) {
+                $message .= ' Available relationships: ' . implode(', ', $availableRelationships) . '.';
+            }
+
+            $message .= " You can change the relationship being used by setting it as the [\$tenantRelationshipName] static property on the [{$resourceClass}] resource class.";
+
+            throw new LogicException($message);
         }
 
         return $tenant->{$relationshipName}();
