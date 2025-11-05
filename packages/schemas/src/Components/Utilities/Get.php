@@ -41,7 +41,7 @@ class Get
      * @param  TNullable  $isNullable
      * @return (TNullable is true ? ?string : string)
      */
-    public function string(string $key, bool $isNullable = true, bool $isAbsolute = false): ?string
+    public function string(string $key, bool $isNullable = false, bool $isAbsolute = false): ?string
     {
         $state = $this($key, $isAbsolute);
 
@@ -58,7 +58,7 @@ class Get
      * @param  TNullable  $isNullable
      * @return (TNullable is true ? ?int : int)
      */
-    public function integer(string $key, bool $isNullable = true, bool $isAbsolute = false): ?int
+    public function integer(string $key, bool $isNullable = false, bool $isAbsolute = false): ?int
     {
         $state = $this($key, $isAbsolute);
 
@@ -75,7 +75,7 @@ class Get
      * @param  TNullable  $isNullable
      * @return (TNullable is true ? ?float : float)
      */
-    public function float(string $key, bool $isNullable = true, bool $isAbsolute = false): ?float
+    public function float(string $key, bool $isNullable = false, bool $isAbsolute = false): ?float
     {
         $state = $this($key, $isAbsolute);
 
@@ -92,7 +92,7 @@ class Get
      * @param  TNullable  $isNullable
      * @return (TNullable is true ? ?bool : bool)
      */
-    public function boolean(string $key, bool $isNullable = true, bool $isAbsolute = false): ?bool
+    public function boolean(string $key, bool $isNullable = false, bool $isAbsolute = false): ?bool
     {
         $state = $this($key, $isAbsolute);
 
@@ -109,7 +109,7 @@ class Get
      * @param  TNullable  $isNullable
      * @return (TNullable is true ? ?array<mixed, mixed> : array<mixed, mixed>)
      */
-    public function array(string $key, bool $isNullable = true, bool $isAbsolute = false): ?array
+    public function array(string $key, bool $isNullable = false, bool $isAbsolute = false): ?array
     {
         $state = $this($key, $isAbsolute);
 
@@ -126,7 +126,7 @@ class Get
      * @param  TNullable  $isNullable
      * @return (TNullable is true ? ?CarbonInterface : CarbonInterface)
      */
-    public function date(string $key, bool $isNullable = true, bool $isAbsolute = false): ?CarbonInterface
+    public function date(string $key, bool $isNullable = false, bool $isAbsolute = false): ?CarbonInterface
     {
         $state = $this($key, $isAbsolute);
 
@@ -145,7 +145,7 @@ class Get
      * @param  TNullable  $isNullable
      * @return (TNullable is true ? T|null : T)
      */
-    public function enum(string $key, string $enumClass, bool $isNullable = true, bool $isAbsolute = false): ?BackedEnum
+    public function enum(string $key, string $enumClass, bool $isNullable = false, bool $isAbsolute = false): ?BackedEnum
     {
         $state = $this($key, $isAbsolute);
 

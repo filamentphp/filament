@@ -1047,12 +1047,12 @@ $get->filled('email'); // Returns the result of the `filled()` helper for the fi
 $get->blank('email'); // Returns the result of the `blank()` helper for the field.
 ```
 
-Each method assumes that the field's state could also be `null`. To force a non-nullable return type, pass the `isNullable: false` argument:
+Each method assumes that the field's state can't be `null`. To force a nullable return type, pass the `isNullable: true` argument:
 
 ```php
 use Filament\Schemas\Components\Utilities\Get;
 
-$get->string('email', isNullable: false);
+$get->string('email', isNullable: true);
 ```
 
 ### Injecting the current Eloquent record
