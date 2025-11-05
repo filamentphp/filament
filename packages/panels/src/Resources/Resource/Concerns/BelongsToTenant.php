@@ -76,9 +76,7 @@ trait BelongsToTenant
             $recordClass = $record::class;
 
             // Provide more helpful error message with available relationships
-            $availableRelationships = method_exists($record, 'getRelations')
-                ? array_keys($record->getRelations())
-                : [];
+            $availableRelationships = array_keys($record->getRelations());
 
             $message = "The model [{$recordClass}] does not have a relationship named [{$relationshipName}].";
 
@@ -111,9 +109,7 @@ trait BelongsToTenant
             $tenantClass = $tenant::class;
 
             // Provide more helpful error message with available relationships
-            $availableRelationships = method_exists($tenant, 'getRelations')
-                ? array_keys($tenant->getRelations())
-                : [];
+            $availableRelationships = array_keys($tenant->getRelations());
 
             $message = "The model [{$tenantClass}] does not have a relationship named [{$relationshipName}].";
 
