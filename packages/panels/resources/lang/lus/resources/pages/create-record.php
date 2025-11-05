@@ -2,7 +2,7 @@
 
 return [
 
-    'title' => ':Label siam na',
+    'title' => ':Label siamna',
 
     'breadcrumb' => 'Siamna',
 

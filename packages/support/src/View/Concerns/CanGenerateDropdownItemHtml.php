@@ -103,7 +103,7 @@ trait CanGenerateDropdownItemHtml
             <?php } ?>
             <?php if ($keyBindings) { ?>
                 x-bind:id="$id('key-bindings')"
-                x-mousetrap.global.<?= collect($keyBindings)->map(fn (string $keyBinding): string => str_replace('+', '-', $keyBinding))->implode('.') ?>="document.getElementById($el.id).click()"
+                x-mousetrap.global.<?= collect($keyBindings)->map(fn (string $keyBinding): string => str_replace('+', '-', $keyBinding))->implode('.') ?>="document.getElementById($el.id)?.click()"
             <?php } ?>
             <?php if ($hasTooltip) { ?>
                 x-tooltip="{

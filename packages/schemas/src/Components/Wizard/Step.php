@@ -48,7 +48,7 @@ class Step extends Component implements CanConcealComponents
         parent::setUp();
 
         $this->key(function (Step $component): string {
-            $label = $this->getLabel();
+            $label = $component->getLabel();
             $statePath = $component->getStatePath();
 
             return Str::slug(Str::transliterate($label, strict: true)) . '::' . (filled($statePath) ? "{$statePath}::wizard-step" : 'wizard-step');

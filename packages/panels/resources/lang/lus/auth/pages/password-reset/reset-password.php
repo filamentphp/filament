@@ -4,7 +4,7 @@ return [
 
     'title' => 'Reset your password',
 
-    'heading' => 'Reset your password',
+    'heading' => 'Password tihṭhatna',
 
     'form' => [
 
@@ -24,7 +24,7 @@ return [
         'actions' => [
 
             'reset' => [
-                'label' => 'Reset password',
+                'label' => 'Tihṭhatna',
             ],
 
         ],
@@ -34,7 +34,7 @@ return [
     'notifications' => [
 
         'throttled' => [
-            'title' => 'Reset tumna a tam lutuk',
+            'title' => 'Tihṭhat tumna a tam lutuk',
             'body' => 'Khawngaihin seconds :seconds hnuah ti nawn leh rawh.',
         ],
 
