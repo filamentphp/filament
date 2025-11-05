@@ -2,6 +2,7 @@
 
 namespace Filament\Tables\Concerns;
 
+use Closure;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Collection;
@@ -52,6 +53,88 @@ trait CanReorderRecords
                     ),
                 ]);
         });
+
+        $this->flushCachedTableRecords();
+    }
+
+    /**
+     * @param  array<int, array{id: int | string, position: int, parent?: int | string | null}>  $order
+     */
+    public function reorderTreeTable(array $order): void
+    {
+        $table = $this->getTable();
+
+        if (! $table->hasTree() || ! $table->isReorderable()) {
+            return;
+        }
+
+        $tree = $table->getTree();
+
+        if (($callback = $tree?->getReorderUsing()) instanceof Closure) {
+            $table->evaluate($callback, [
+                'order' => $order,
+                'table' => $table,
+                'livewire' => $this,
+            ]);
+
+            $this->flushCachedTableRecords();
+
+            return;
+        }
+
+        $orderColumn = (string) str($table->getReorderColumn())->afterLast('.');
+        $parentColumn = $tree?->getParentColumn();
+
+        DB::transaction(function () use ($order, $orderColumn, $parentColumn, $table): void {
+            $relationship = $table->getRelationship();
+
+            if (
+                ($relationship instanceof BelongsToMany) &&
+                in_array($orderColumn, $relationship->getPivotColumns())
+            ) {
+                foreach ($order as $payload) {
+                    if (! isset($payload['id'], $payload['position'])) {
+                        continue;
+                    }
+
+                    $record = $this->getTableRecord((string) $payload['id']);
+
+                    if (! $record) {
+                        continue;
+                    }
+
+                    $record->getRelationValue($relationship->getPivotAccessor())->update([
+                        $orderColumn => (int) $payload['position'],
+                    ]);
+                }
+
+                return;
+            }
+
+            $model = app($table->getModel());
+            $modelKeyName = $model->getKeyName();
+
+            foreach ($order as $payload) {
+                if (! isset($payload['id'], $payload['position'])) {
+                    continue;
+                }
+
+                $update = [
+                    $orderColumn => (int) $payload['position'],
+                ];
+
+                if ($parentColumn) {
+                    $update[$parentColumn] = $payload['parent'] ?? null;
+                }
+
+                $model
+                    ->newModelQuery()
+                    ->where($modelKeyName, $payload['id'])
+                    ->update($update);
+            }
+        });
+
+        $this->flushCachedTableRecords();
     }
 
     public function toggleTableReordering(): void

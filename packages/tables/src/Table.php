@@ -41,6 +41,7 @@ class Table extends ViewComponent
     use Table\Concerns\HasRecords;
     use Table\Concerns\HasRecordUrl;
     use Table\Concerns\HasToolbarActions;
+    use Table\Concerns\HasTree;
 
     /**
      * @var view-string
@@ -58,6 +59,7 @@ class Table extends ViewComponent
         'removeTableFilter',
         'removeTableFilters',
         'reorderTable',
+        'reorderTreeTable',
         'resetTableFiltersForm',
         'sortTable',
         'tableColumnSearches',

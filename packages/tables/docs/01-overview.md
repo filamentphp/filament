@@ -434,6 +434,54 @@ public function table(Table $table): Table
 
 <AutoScreenshot name="tables/reordering/custom-trigger-action" alt="Table with reorderable rows and a custom trigger action" version="4.x" />
 
+### Tree reordering
+
+Tables can also render nested, reorderable trees. Enable tree mode by configuring the table's tree instance with your parent column and children relationship. Tree mode automatically disables pagination so that records can be freely moved between parents.
+
+```php
+use Filament\Tables\Table;
+use App\Models\Category;
+
+public function table(Table $table): Table
+{
+    $table
+        ->query(Category::query())
+        ->recordTitleAttribute('name')
+        ->reorderable('position');
+
+    $table->tree()
+        ->parentColumn('parent_id')
+        ->childrenRelationship('children');
+
+    return $table->records(fn () => Category::with('children')
+        ->whereNull('parent_id')
+        ->orderBy('position')
+        ->get());
+}
+```
+
+If you need to run custom persistence logic, you may intercept the flattened tree payload using `reorderUsing()`:
+
+```php
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    $table->tree()
+        ->parentColumn('parent_id')
+        ->childrenRelationship('children')
+        ->reorderUsing(function (array $order): void {
+            foreach ($order as $item) {
+                // $item contains `id`, `position`, and `parent` keys.
+            }
+        });
+
+    // ...
+}
+```
+
+Tree rows include collapse toggles for nested children and support dragging entire branches between different parents.
+
 ## Customizing the table header
 
 You can add a heading to a table using the `$table->heading()` method:

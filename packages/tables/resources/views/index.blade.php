@@ -27,6 +27,12 @@
     $isSelectionDisabled = $isSelectionDisabled();
     $maxSelectableRecords = $getMaxSelectableRecords();
     $columns = $getVisibleColumns();
+    $tree = $getTree();
+    $hasTree = $hasTree();
+    $treeChildrenRelationship = $tree?->getChildrenRelationship();
+    $treeTitleAttribute = $tree?->getTitleColumn();
+    $isTreeCollapsible = $tree?->isCollapsible() ?? false;
+    $isTreeCollapsedByDefault = $tree?->isCollapsedByDefault() ?? false;
     $collapsibleColumnsLayout = $getCollapsibleColumnsLayout();
     $columnsLayout = $getColumnsLayout();
     $content = $getContent();
@@ -89,6 +95,10 @@
     $isGlobalSearchVisible = $isSearchable();
     $isSearchOnBlur = $isSearchOnBlur();
     $isSelectionEnabled = $isSelectionEnabled() && (! $isGroupsOnly);
+
+    if ($hasTree) {
+        $isSelectionEnabled = false;
+    }
     $selectsCurrentPageOnly = $selectsCurrentPageOnly();
     $selectsGroupsOnly = $selectsGroupsOnly();
     $recordCheckboxPosition = $getRecordCheckboxPosition();
@@ -117,6 +127,10 @@
     $pluralModelLabel = $getPluralModelLabel();
     $records = $isLoaded ? $getRecords() : null;
     $hasPagination = (($records instanceof \Illuminate\Contracts\Pagination\Paginator) || ($records instanceof \Illuminate\Contracts\Pagination\CursorPaginator)) && ((! ($records instanceof \Illuminate\Contracts\Pagination\LengthAwarePaginator)) || $records->total());
+
+    if ($hasTree) {
+        $hasPagination = false;
+    }
     $hasEmptyState = ($records !== null) && ! count($records);
     $hasContentLayout = $content || $hasColumnsLayout;
     $searchDebounce = $getSearchDebounce();
@@ -886,6 +900,17 @@
 
                         @if ($content)
                             {{ $content->with(['records' => $records]) }}
+                        @elseif ($hasTree)
+                            @include('filament-tables::tree.index', [
+                                'records' => collect($records ?? []),
+                                'treeChildrenRelationship' => $treeChildrenRelationship,
+                                'treeTitleAttribute' => $treeTitleAttribute,
+                                'isTreeCollapsible' => $isTreeCollapsible,
+                                'isTreeCollapsedByDefault' => $isTreeCollapsedByDefault,
+                                'isReorderable' => $isReorderable,
+                                'defaultRecordActions' => $defaultRecordActions,
+                                'reorderAnimationDuration' => $getReorderAnimationDuration(),
+                            ])
                         @else
                             <div
                                 @if ($isReorderable)

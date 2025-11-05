@@ -24,6 +24,11 @@ trait HasRecords
 
     protected Collection | Paginator | CursorPaginator | null $cachedTableRecords = null;
 
+    /**
+     * @var array<string, Model | array<string, mixed>>
+     */
+    protected array $cachedTableRecordLookup = [];
+
     public function getFilteredTableQuery(): ?Builder
     {
         $query = $this->getTable()->getQuery();
@@ -92,6 +97,142 @@ trait HasRecords
         return $records;
     }
 
+    /**
+     * @return array{0: Collection, 1: array<string, Model | array<string, mixed>>}
+     */
+    protected function prepareTableRecordsCollection(Collection $records): array
+    {
+        $records = $records->values();
+        $table = $this->getTable();
+
+        if (! $table->hasTree()) {
+            $collection = $records->mapWithKeys(function (array | Model $record, string | int $key): array {
+                if ($record instanceof Model) {
+                    return [$record->getKey() => $record];
+                }
+
+                $keyName = ArrayRecord::getKeyName();
+
+                $record[$keyName] ??= $key;
+                $record[$keyName] = (string) $record[$keyName];
+
+                return [$record[$keyName] => $record];
+            });
+
+            return [$collection, $collection->all()];
+        }
+
+        return $this->prepareTreeRecordsCollection($records);
+    }
+
+    /**
+     * @return array{0: Collection, 1: array<string, Model | array<string, mixed>>}
+     */
+    protected function prepareTreeRecordsCollection(Collection $records, int $depth = 0, ?string $parentKey = null): array
+    {
+        $table = $this->getTable();
+        $tree = $table->getTree();
+
+        $childrenRelationship = $tree?->getChildrenRelationship() ?? 'children';
+        $keyName = ArrayRecord::getKeyName();
+
+        $prepared = collect();
+        $lookup = [];
+
+        foreach ($records as $key => $record) {
+            if ($record instanceof Model) {
+                $recordKey = $this->getTableRecordKey($record);
+                $children = $this->extractModelChildrenForTree($record, $childrenRelationship);
+            } else {
+                if (! is_array($record)) {
+                    $record = (array) $record;
+                }
+
+                $record[$keyName] ??= $key;
+                $record[$keyName] = (string) $record[$keyName];
+                $recordKey = $record[$keyName];
+
+                $children = $this->extractArrayChildrenForTree($record, $childrenRelationship);
+            }
+
+            $childrenCollection = $children instanceof Collection
+                ? $children
+                : collect($children ?? []);
+
+            if ($childrenCollection->isNotEmpty()) {
+                [$childCollection, $childLookup] = $this->prepareTreeRecordsCollection($childrenCollection, $depth + 1, $recordKey);
+            } else {
+                $childCollection = collect();
+                $childLookup = [];
+            }
+
+            $childCollection = $childCollection->values();
+
+            if ($record instanceof Model) {
+                $record->setRelation($childrenRelationship, $childCollection);
+                $record->setAttribute('__filament_tree_parent', $parentKey);
+                $record->setAttribute('__filament_tree_depth', $depth);
+            } else {
+                $record[$childrenRelationship] = $childCollection;
+                $record['__filament_tree_parent'] = $parentKey;
+                $record['__filament_tree_depth'] = $depth;
+            }
+
+            $prepared[$recordKey] = $record;
+            $lookup[$recordKey] = $record;
+            $lookup += $childLookup;
+        }
+
+        return [$prepared, $lookup];
+    }
+
+    protected function extractModelChildrenForTree(Model $record, string $relationship): Collection
+    {
+        if ($record->relationLoaded($relationship)) {
+            $children = $record->getRelation($relationship);
+
+            return $children instanceof Collection ? $children : collect($children);
+        }
+
+        $attribute = $record->getAttribute($relationship);
+
+        if ($attribute instanceof Collection) {
+            return $attribute;
+        }
+
+        if (is_array($attribute)) {
+            return collect($attribute);
+        }
+
+        return collect();
+    }
+
+    /**
+     * @param  array<string, mixed>  $record
+     */
+    protected function extractArrayChildrenForTree(array &$record, string $relationship): Collection
+    {
+        $children = $record[$relationship] ?? ($relationship === 'children'
+            ? ($record['children'] ?? [])
+            : ($record['children'] ?? []));
+
+        unset($record[$relationship]);
+
+        if ($relationship !== 'children') {
+            unset($record['children']);
+        }
+
+        if ($children instanceof Collection) {
+            return $children;
+        }
+
+        if (is_array($children)) {
+            return collect($children);
+        }
+
+        return collect();
+    }
+
     public function getTableRecords(): Collection | Paginator | CursorPaginator
     {
         if (! $this->getTable()->hasQuery()) {
@@ -117,22 +258,15 @@ trait HasRecords
                 method_exists($records, 'getCollection')
             ) {
                 $collection = $records->getCollection();
-            } else {
+            } elseif ($records instanceof Collection) {
                 $collection = $records;
+            } else {
+                $collection = collect($records);
             }
 
-            $collection = $collection->mapWithKeys(function (array | Model $record, string | int $key): array {
-                if ($record instanceof Model) {
-                    return [$record->getKey() => $record];
-                }
+            [$collection, $lookup] = $this->prepareTableRecordsCollection($collection instanceof Collection ? $collection : collect($collection));
 
-                $keyName = ArrayRecord::getKeyName();
-
-                $record[$keyName] ??= $key;
-                $record[$keyName] = (string) $record[$keyName];
-
-                return [$record[$keyName] => $record];
-            });
+            $this->cachedTableRecordLookup = $lookup;
 
             if (
                 ($records instanceof Paginator || $records instanceof CursorPaginator) &&
@@ -188,7 +322,7 @@ trait HasRecords
         }
 
         if (! $this->getTable()->hasQuery()) {
-            return $this->getTable()->getRecords()[$key] ?? null;
+            return $this->cachedTableRecordLookup[$key] ?? null;
         }
 
         if (! ($this->getTable()->getRelationship() instanceof BelongsToMany)) {
@@ -264,6 +398,7 @@ trait HasRecords
     public function flushCachedTableRecords(): void
     {
         $this->cachedTableRecords = null;
+        $this->cachedTableRecordLookup = [];
     }
 
     /**

@@ -122,7 +122,9 @@ trait CanPaginateRecords
 
     public function isPaginated(): bool
     {
-        return $this->evaluate($this->isPaginated) && (! $this->isGroupsOnly());
+        return $this->evaluate($this->isPaginated) &&
+            (! $this->isGroupsOnly()) &&
+            (! $this->hasTree());
     }
 
     public function isPaginatedWhileReordering(): bool
