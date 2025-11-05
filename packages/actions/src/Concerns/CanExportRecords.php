@@ -69,7 +69,7 @@ trait CanExportRecords
 
     protected bool | Closure $hasColumnMapping = true;
 
-    protected bool | Closure $includeVisibleColumns = false;
+    protected bool | Closure $isEnablingVisibleTableColumnsByDefault = false;
 
     protected string | Closure | null $authGuard = null;
 
@@ -104,14 +104,17 @@ trait CanExportRecords
                     ],
                 })
                 ->schema(function () use ($action): array {
+                    $isEnablingVisibleTableColumnsByDefault = $action->isEnablingVisibleTableColumnsByDefault();
+                    $visibleTableColumnsNames = $action->getVisibleTableColumnNames();
+
                     return array_map(
                         fn (ExportColumn $column): Flex => Flex::make([
                             Forms\Components\Checkbox::make('isEnabled')
                                 ->label(__('filament-actions::export.modal.form.columns.form.is_enabled.label', ['column' => $column->getName()]))
                                 ->hiddenLabel()
                                 ->default(
-                                    $this->hasIncludeVisibleColumns()
-                                        ? in_array($column->getName(), $this->getTableVisibleColumns())
+                                    $isEnablingVisibleTableColumnsByDefault
+                                        ? (in_array($column->getName(), $visibleTableColumnsNames) && $column->isEnabledByDefault())
                                         : $column->isEnabledByDefault()
                                 )
                                 ->live()
@@ -195,12 +198,14 @@ trait CanExportRecords
                     ->mapWithKeys(fn (array $column, string $columnName): array => [$columnName => $column['label']])
                     ->all();
             } else {
+                $visibleTableColumnNames = $action->getVisibleTableColumnNames();
+
                 $columnMap = collect($exporter::getColumns())
                     ->when(
-                        $this->hasIncludeVisibleColumns(),
+                        $action->isEnablingVisibleTableColumnsByDefault(),
                         fn ($columns): Collection => $columns->filter(
-                            fn (ExportColumn $column): bool => in_array($column->getName(), $this->getTableVisibleColumns())
-                        )
+                            fn (ExportColumn $column): bool => in_array($column->getName(), $visibleTableColumnNames) && $column->isEnabledByDefault(),
+                        ),
                     )
                     ->mapWithKeys(fn (ExportColumn $column): array => [$column->getName() => $column->getLabel()])
                     ->all();
@@ -355,11 +360,9 @@ trait CanExportRecords
     /**
      * @return array<string>
      */
-    public function getTableVisibleColumns(): array
+    public function getVisibleTableColumnNames(): array
     {
-        return $this->hasIncludeVisibleColumns()
-            ? array_keys($this->getLivewire()->getTable()->getVisibleColumns())
-            : array_keys($this->getLivewire()->getTable()->getColumns());
+        return array_keys($this->getLivewire()->getTable()->getVisibleColumns());
     }
 
     /**
@@ -500,16 +503,16 @@ trait CanExportRecords
         return (bool) $this->evaluate($this->hasColumnMapping);
     }
 
-    public function includeVisibleColumns(bool | Closure $condition = true): static
+    public function enableVisibleTableColumnsByDefault(bool | Closure $condition = true): static
     {
-        $this->includeVisibleColumns = $condition;
+        $this->isEnablingVisibleTableColumnsByDefault = $condition;
 
         return $this;
     }
 
-    public function hasIncludeVisibleColumns(): bool
+    public function isEnablingVisibleTableColumnsByDefault(): bool
     {
-        return (bool) $this->evaluate($this->includeVisibleColumns);
+        return (bool) $this->evaluate($this->isEnablingVisibleTableColumnsByDefault);
     }
 
     public function authGuard(string | Closure | null $authGuard): static
