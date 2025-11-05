@@ -35,54 +35,129 @@ class Get
         return $component->getState();
     }
 
-    public function string(string $key, bool $isAbsolute = false): string
+    /**
+     * @template TNullable of bool
+     *
+     * @param  TNullable  $isNullable
+     * @return (TNullable is true ? ?string : string)
+     */
+    public function string(string $key, bool $isNullable = true, bool $isAbsolute = false): ?string
     {
-        return (string) $this($key, $isAbsolute);
-    }
+        $state = $this($key, $isAbsolute);
 
-    public function integer(string $key, bool $isAbsolute = false): int
-    {
-        return (int) $this($key, $isAbsolute);
-    }
+        if ($isNullable && blank($state)) {
+            return null;
+        }
 
-    public function float(string $key, bool $isAbsolute = false): float
-    {
-        return (float) $this($key, $isAbsolute);
-    }
-
-    public function boolean(string $key, bool $isAbsolute = false): bool
-    {
-        return (bool) $this($key, $isAbsolute);
+        return (string) $state;
     }
 
     /**
-     * @return array<mixed, mixed>
+     * @template TNullable of bool
+     *
+     * @param  TNullable  $isNullable
+     * @return (TNullable is true ? ?int : int)
      */
-    public function array(string $key, bool $isAbsolute = false): array
+    public function integer(string $key, bool $isNullable = true, bool $isAbsolute = false): ?int
     {
-        return (array) ($this($key, $isAbsolute) ?? []);
+        $state = $this($key, $isAbsolute);
+
+        if ($isNullable && blank($state)) {
+            return null;
+        }
+
+        return (int) $state;
     }
 
-    public function date(string $key, bool $isAbsolute = false): CarbonInterface
+    /**
+     * @template TNullable of bool
+     *
+     * @param  TNullable  $isNullable
+     * @return (TNullable is true ? ?float : float)
+     */
+    public function float(string $key, bool $isNullable = true, bool $isAbsolute = false): ?float
     {
-        return Carbon::parse($this($key, $isAbsolute));
+        $state = $this($key, $isAbsolute);
+
+        if ($isNullable && blank($state)) {
+            return null;
+        }
+
+        return (float) $state;
+    }
+
+    /**
+     * @template TNullable of bool
+     *
+     * @param  TNullable  $isNullable
+     * @return (TNullable is true ? ?bool : bool)
+     */
+    public function boolean(string $key, bool $isNullable = true, bool $isAbsolute = false): ?bool
+    {
+        $state = $this($key, $isAbsolute);
+
+        if ($isNullable && blank($state)) {
+            return null;
+        }
+
+        return (bool) $state;
+    }
+
+    /**
+     * @template TNullable of bool
+     *
+     * @param  TNullable  $isNullable
+     * @return (TNullable is true ? ?array<mixed, mixed> : array<mixed, mixed>)
+     */
+    public function array(string $key, bool $isNullable = true, bool $isAbsolute = false): ?array
+    {
+        $state = $this($key, $isAbsolute);
+
+        if ($isNullable && (! is_array($state))) {
+            return null;
+        }
+
+        return (array) ($state ?? []);
+    }
+
+    /**
+     * @template TNullable of bool
+     *
+     * @param  TNullable  $isNullable
+     * @return (TNullable is true ? ?CarbonInterface : CarbonInterface)
+     */
+    public function date(string $key, bool $isNullable = true, bool $isAbsolute = false): ?CarbonInterface
+    {
+        $state = $this($key, $isAbsolute);
+
+        if ($isNullable && blank($state)) {
+            return null;
+        }
+
+        return Carbon::parse($state);
     }
 
     /**
      * @template T of BackedEnum
+     * @template TNullable of bool
      *
      * @param  class-string<T>  $enumClass
-     * @return T
+     * @param  TNullable  $isNullable
+     * @return (TNullable is true ? T|null : T)
      */
-    public function enum(string $key, string $enumClass, bool $isAbsolute = false): BackedEnum
+    public function enum(string $key, string $enumClass, bool $isNullable = true, bool $isAbsolute = false): ?BackedEnum
     {
         $state = $this($key, $isAbsolute);
+
+        if ($isNullable && blank($state)) {
+            return null;
+        }
 
         if ($state instanceof BackedEnum) {
             return $state;
         }
 
-        return $enumClass::from($state);
+        return $enumClass::tryFrom($state);
     }
 
     public function filled(string $key, bool $isAbsolute = false): bool
