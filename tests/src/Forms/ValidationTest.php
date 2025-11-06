@@ -983,7 +983,7 @@ test('conditional validation rules support enum instances', function (string $ru
     ['requiredIf', IntegerBackedEnum::One, [IntegerBackedEnum::One, IntegerBackedEnum::Two]],
 ]);
 
-test('in/notIn validation rules support enum instances', function (string $rule, string $value): void {
+test('in/notIn validation rules support enum instances', function (string $rule, BackedEnum $value): void {
     $rules = [];
 
     try {
@@ -1000,6 +1000,6 @@ test('in/notIn validation rules support enum instances', function (string $rule,
 
     expect($rules)->not->toBeEmpty();
 })->with([
-    ['notIn', 'one'],
-    ['in', 'three'],
+    ['notIn', StringBackedEnum::One],
+    ['in', StringBackedEnum::Three],
 ]);
