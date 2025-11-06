@@ -94,10 +94,14 @@ trait InteractsWithTableQuery
                         "%{$nonTranslatableSearch}%",
                     ),
                     fn (EloquentBuilder $query) => $query->{$whereClause}(
-                        generate_search_column_expression((string) str($searchColumn)->replace('.', '->'), $isSearchForcedCaseInsensitive, $databaseConnection),
+                        generate_search_column_expression(
+                            $query->getModel()->getTable() . '.' . (string) str($searchColumn)->replace('.', '->'),
+                            $isSearchForcedCaseInsensitive,
+                            $databaseConnection
+                        ),
                         'like',
                         "%{$nonTranslatableSearch}%",
-                    ),
+                  ),
                 ),
             );
 
@@ -129,7 +133,7 @@ trait InteractsWithTableQuery
                 continue;
             }
 
-            $query->orderBy($sortColumn, $direction);
+            $query->orderBy($query->getModel()->getTable() . '.' . $sortColumn, $direction);
         }
 
         return $query;
