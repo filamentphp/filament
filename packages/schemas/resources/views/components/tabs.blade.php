@@ -16,7 +16,9 @@
     <div
         x-load
         x-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('tabs', 'filament/schemas') }}"
-        @resize.window="() => !isScrollable && updateTabsWithinDropdown()"
+        @if(!$isScrollable)
+            @resize.window="() => updateTabsWithinDropdown()"
+        @endif
         x-data="tabsSchemaComponent({
             activeTab: @js($activeTab),
             isTabPersistedInQueryString: @js($isTabPersistedInQueryString()),
@@ -58,13 +60,12 @@
             :label="$label"
             :vertical="$isVertical"
             x-cloak
-            x-ref="tabsContainer"
         >
             @foreach ($getStartRenderHooks() as $startRenderHook)
                 {{ \Filament\Support\Facades\FilamentView::renderHook($startRenderHook, scopes: $renderHookScopes) }}
             @endforeach
 
-            @foreach ($getChildSchema()->getComponents() as $tab)
+            @foreach ($getChildSchema()->getComponents() as $index => $tab)
                 @php
                     $tabKey = $tab->getKey(isAbsolute: false);
                     $tabBadge = $tab->getBadge();
@@ -88,7 +89,7 @@
                             $tabVisibilityJs .= ' && ';
                         }
 
-                        $tabVisibilityJs .= '(!tabsWithinDropdown.length || !tabsWithinDropdown.includes(\'' . $tabKey . '\'))';
+                        $tabVisibilityJs .= '(withinDropdownIndex === null || ' . $index . ' < withinDropdownIndex)';
                     }
                 @endphp
 
@@ -116,16 +117,9 @@
                     :placement="__('filament-panels::layout.direction') === 'ltr' ? 'bottom-start' : 'bottom-end'"
                 >
                     <x-slot name="trigger">
-                        @foreach ($getChildSchema()->getComponents() as $tab)
+                        @foreach ($getChildSchema()->getComponents() as $index => $tab)
                             @php
                                 $tabKey = $tab->getKey(isAbsolute: false);
-                                $tabBadge = $tab->getBadge();
-                                $tabBadgeColor = $tab->getBadgeColor();
-                                $tabBadgeIcon = $tab->getBadgeIcon();
-                                $tabBadgeIconPosition = $tab->getBadgeIconPosition();
-                                $tabBadgeTooltip = $tab->getBadgeTooltip();
-                                $tabIcon = $tab->getIcon();
-                                $tabIconPosition = $tab->getIconPosition();
                                 $tabExtraAttributeBag = $tab->getExtraAttributeBag();
                                 $tabHiddenJs = $tab->getHiddenJs();
                                 $tabVisibleJs = $tab->getVisibleJs();
@@ -135,11 +129,18 @@
                                     [false, true] => $tabVisibleJs,
                                     default => null,
                                 };
+                                if (!$isScrollable){
+                                   if (! empty($tabVisibilityJs)) {
+                                        $tabVisibilityJs .= ' && ';
+                                   }
+
+                                   $tabVisibilityJs .= 'withinDropdownIndex !== null && ' . $index . ' >= withinDropdownIndex && \'' . $tabKey . '\' === tab';
+                                }
                             @endphp
 
                             <x-filament::tabs.item
                                 :alpine-active="'tab === \'' . $tabKey . '\''"
-                                :x-show="'tab === \'' . $tabKey . '\' && tabsWithinDropdown.length && tabsWithinDropdown.includes(\'' . $tabKey . '\')'"
+                                :x-show="$tabVisibilityJs"
                                 icon="heroicon-o-chevron-down"
                                 :icon-position="IconPosition::After"
                                 :x-cloak="$tabVisibilityJs !== null"
@@ -150,7 +151,7 @@
                         @endforeach
 
                         <x-filament::tabs.item
-                            x-show="(tabsWithinDropdown.length && !tabsWithinDropdown.includes(tab)) || dropDownButtonDimensions === null"
+                            x-show="(withinDropdownIndex !== null && tabIndex < withinDropdownIndex) || dropDownButtonDimensions === null"
                         >
                             <x-filament::icon
                                 icon="heroicon-c-ellipsis-horizontal"
@@ -159,7 +160,7 @@
                     </x-slot>
 
                     <x-filament::dropdown.list>
-                        @foreach ($getChildSchema()->getComponents() as $tab)
+                        @foreach ($getChildSchema()->getComponents() as $index => $tab)
                             @php
                                 $tabKey = $tab->getKey(isAbsolute: false);
                                 $tabIcon = $tab->getIcon();
@@ -167,20 +168,13 @@
 
                             <x-filament::dropdown.list.item
                                 :icon="$tabIcon"
-                                :x-show="'tabsWithinDropdown.includes(\'' . $tabKey . '\')'"
+                                :x-show="$index . ' >= withinDropdownIndex'"
                                 :x-on:click="'tab = \'' . $tabKey . '\'; close($event);'"
                                 x-bind:class="{
-                                    'bg-gray-50': {{ 'tab === \'' . $tabKey . '\'' }}
-                                    }"
+                                    'fi-selected fi-active': {{ 'tab === \'' . $tabKey . '\'' }}
+                                }"
                             >
-                                <span
-                                    x-bind:class="{
-                                        'text-primary-700': {{ 'tab === \'' . $tabKey . '\'' }},
-                                        'text-gray-700': {{ 'tab !== \'' . $tabKey . '\'' }},
-                                    }"
-                                >
-                                    {{ $tab->getLabel() }}
-                                </span>
+                                {{ $tab->getLabel() }}
                             </x-filament::dropdown.list.item>
                         @endforeach
                     </x-filament::dropdown.list>

@@ -61,6 +61,8 @@ export default function tabsSchemaComponent({
         },
 
         updateQueryString() {
+            this.tabIndex = this.getTabs().findIndex(tab => tab === this.tab)
+
             if (!isTabPersistedInQueryString) {
                 return
             }
@@ -70,7 +72,8 @@ export default function tabsSchemaComponent({
 
             history.replaceState(null, document.title, url.toString())
         },
-
+        tabIndex: null,
+        withinDropdownIndex: null,
         containerElementDimensions: null,
         dropDownButtonDimensions: null,
         tabsElementsDimensions: [],
@@ -78,18 +81,19 @@ export default function tabsSchemaComponent({
 
         setUpScrollable() {
             this.$nextTick(() => {
+                const tabsContainer = this.$el.querySelector('.fi-tabs')
                 const dropDownButtonElement = Array.from(
-                    this.$refs.tabsContainer.children,
+                    tabsContainer.children,
                 ).at(-1)
                 this.dropDownButtonDimensions = {
                     width: Math.floor(dropDownButtonElement.clientWidth) * 2,
                 }
 
                 const containerElementStyles = window.getComputedStyle(
-                    this.$refs.tabsContainer,
+                    tabsContainer,
                 )
                 this.containerElementDimensions = {
-                    width: Math.floor(this.$refs.tabsContainer.clientWidth),
+                    width: Math.floor(tabsContainer.clientWidth),
                     padding:
                         Math.floor(
                             parseFloat(containerElementStyles.paddingLeft),
@@ -101,7 +105,7 @@ export default function tabsSchemaComponent({
                     },
                 }
 
-                Array.from(this.$refs.tabsContainer.children)
+                Array.from(tabsContainer.children)
                     .slice(0, -1)
                     .forEach((el) => {
                         this.tabsElementsDimensions.push({
@@ -117,8 +121,10 @@ export default function tabsSchemaComponent({
 
         updateTabsWithinDropdown() {
             this.tabsWithinDropdown = []
+            this.withinDropdownIndex = null
+            const tabsContainer = this.$el.querySelector('.fi-tabs')
             this.containerElementDimensions.width = Math.floor(
-                this.$refs.tabsContainer.clientWidth,
+                tabsContainer.clientWidth,
             )
 
             const containerWidth =
@@ -127,12 +133,15 @@ export default function tabsSchemaComponent({
                 this.dropDownButtonDimensions.width
 
             let currentWidth = 0
-            this.tabsElementsDimensions.forEach((tab) => {
+            this.tabsElementsDimensions.forEach((tab, index) => {
                 const nextWidth =
                     currentWidth +
                     tab.width +
                     this.containerElementDimensions.gap.width
                 if (nextWidth >= containerWidth) {
+                    if (this.withinDropdownIndex === null){
+                        this.withinDropdownIndex = index
+                    }
                     this.tabsWithinDropdown.push(tab.key)
                 }
                 currentWidth = nextWidth
