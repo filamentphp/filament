@@ -29,7 +29,7 @@ By default, an icon button's underlying HTML tag is `<button>`. You can change i
 
 ## Setting the size of an icon button
 
-By default, the size of an icon button is "medium". You can make it "extra small", "small", "large" or "extra large" by using the `size` attribute:
+By default, the size of an icon button is "medium". You can make it "extra small", "small", "large" or "extra large" by using the `iconSize` attribute:
 
 ```blade
 <x-filament::icon-button
