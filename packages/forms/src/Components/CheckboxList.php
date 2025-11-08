@@ -43,6 +43,8 @@ class CheckboxList extends Field implements Contracts\CanDisableOptions, Contrac
 
     protected ?Closure $getOptionLabelFromRecordUsing = null;
 
+    protected ?Closure $getOptionDescriptionFromRecordUsing = null;
+
     protected string | Closure | null $relationship = null;
 
     protected bool | Closure $isBulkToggleable = false;
