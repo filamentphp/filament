@@ -270,6 +270,32 @@ class CheckboxList extends Field implements Contracts\CanDisableOptions, Contrac
         );
     }
 
+    public function getOptionDescriptionFromRecordUsing(?Closure $callback): static
+    {
+        $this->getOptionDescriptionFromRecordUsing = $callback;
+
+        return $this;
+    }
+
+    public function hasOptionDescriptionFromRecordUsingCallback(): bool
+    {
+        return $this->getOptionDescriptionFromRecordUsing !== null;
+    }
+
+    public function getOptionDescriptionFromRecord(Model $record): string | Htmlable
+    {
+        return $this->evaluate(
+            $this->getOptionDescriptionFromRecordUsing,
+            namedInjections: [
+                'record' => $record,
+            ],
+            typedInjections: [
+                Model::class => $record,
+                $record::class => $record,
+            ],
+        );
+    }
+
     public function getRelationshipTitleAttribute(): ?string
     {
         return $this->evaluate($this->relationshipTitleAttribute);
