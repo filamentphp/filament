@@ -34,25 +34,25 @@ By default, the size of an icon button is "medium". You can make it "extra small
 ```blade
 <x-filament::icon-button
     icon="heroicon-m-plus"
-    size="xs"
+    iconSize="xs"
     label="New label"
 />
 
 <x-filament::icon-button
     icon="heroicon-m-plus"
-    size="sm"
+    iconSize="sm"
     label="New label"
 />
 
 <x-filament::icon-button
     icon="heroicon-s-plus"
-    size="lg"
+    iconSize="lg"
     label="New label"
 />
 
 <x-filament::icon-button
     icon="heroicon-s-plus"
-    size="xl"
+    iconSize="xl"
     label="New label"
 />
 ```
