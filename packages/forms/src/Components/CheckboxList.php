@@ -139,9 +139,22 @@ class CheckboxList extends Field implements Contracts\CanDisableOptions, Contrac
                 ]) ?? $relationshipQuery;
             }
 
+            if ($component->hasOptionLabelFromRecordUsingCallback() || $component->hasOptionDescriptionFromRecordUsingCallback()) {
+                $records = $relationshipQuery->get();
+            }
+
+            if ($component->hasOptionDescriptionFromRecordUsingCallback()) {
+                $descriptions = $records
+                    ->mapWithKeys(static fn (Model $record) => [
+                        $record->{Str::afterLast($relationship->getQualifiedRelatedKeyName(), '.')} => $component->getOptionDescriptionFromRecord($record),
+                    ])
+                    ->toArray();
+
+                $component->descriptions($descriptions);
+            }
+
             if ($component->hasOptionLabelFromRecordUsingCallback()) {
-                return $relationshipQuery
-                    ->get()
+                return $records
                     ->mapWithKeys(static fn (Model $record) => [
                         $record->{Str::afterLast($relationship->getQualifiedRelatedKeyName(), '.')} => $component->getOptionLabelFromRecord($record),
                     ])
