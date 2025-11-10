@@ -417,4 +417,8 @@ CheckboxList::make('technologies')
     )
 ```
 
+<Aside variant="tip">
+    To customize the bulk toggling button labels, the `selectAllActionLabel()` and `deselectAllActionLabel()` methods can be used instead of passing a function to `selectAllAction()` and `deselectAllAction()`, if you don't require any further customizations.
+</Aside>
+
 <UtilityInjection set="formFields" version="4.x" extras="Action;;Filament\Actions\Action;;$action;;The action object to customize.">The action registration methods can inject various utilities into the function as parameters.</UtilityInjection>

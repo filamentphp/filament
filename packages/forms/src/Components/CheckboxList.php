@@ -51,6 +51,10 @@ class CheckboxList extends Field implements Contracts\CanDisableOptions, Contrac
 
     protected ?Closure $modifyDeselectAllActionUsing = null;
 
+    protected string | Closure | null $selectAllActionLabel = null;
+
+    protected string | Closure | null $deselectAllActionLabel = null;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -63,10 +67,24 @@ class CheckboxList extends Field implements Contracts\CanDisableOptions, Contrac
         ]);
     }
 
+    public function selectAllActionLabel(string | Closure | null $label = null): static
+    {
+        $this->selectAllActionLabel = $label;
+
+        return $this;
+    }
+
+    public function deselectAllActionLabel(string | Closure | null $label = null): static
+    {
+        $this->deselectAllActionLabel = $label;
+
+        return $this;
+    }
+
     public function getSelectAllAction(): Action
     {
         $action = Action::make($this->getSelectAllActionName())
-            ->label(__('filament-forms::components.checkbox_list.actions.select_all.label'))
+            ->label($this->getSelectAllActionLabel())
             ->livewireClickHandlerEnabled(false)
             ->link()
             ->size(Size::Small);
@@ -92,10 +110,15 @@ class CheckboxList extends Field implements Contracts\CanDisableOptions, Contrac
         return 'selectAll';
     }
 
+    public function getSelectAllActionLabel(): string
+    {
+        return $this->evaluate($this->selectAllActionLabel) ?? __('filament-forms::components.checkbox_list.actions.deselect_all.label');
+    }
+
     public function getDeselectAllAction(): Action
     {
         $action = Action::make($this->getDeselectAllActionName())
-            ->label(__('filament-forms::components.checkbox_list.actions.deselect_all.label'))
+            ->label($this->getDeselectAllActionLabel())
             ->livewireClickHandlerEnabled(false)
             ->link()
             ->size(Size::Small);
@@ -119,6 +142,11 @@ class CheckboxList extends Field implements Contracts\CanDisableOptions, Contrac
     public function getDeselectAllActionName(): string
     {
         return 'deselectAll';
+    }
+
+    public function getDeselectAllActionLabel(): string
+    {
+        return $this->evaluate($this->deselectAllActionLabel) ?? __('filament-forms::components.checkbox_list.actions.select_all.label');
     }
 
     public function relationship(string | Closure | null $name = null, string | Closure | null $titleAttribute = null, ?Closure $modifyQueryUsing = null): static
