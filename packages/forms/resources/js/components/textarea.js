@@ -31,8 +31,6 @@ export default function textareaFormComponent({
         },
 
         resize() {
-            this.setInitialHeight()
-
             if (this.$el.scrollHeight <= 0) {
                 return
             }
