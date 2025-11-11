@@ -197,11 +197,11 @@ class Tabs extends Component
 
     public function isVertical(): bool
     {
-        if ((bool) $this->visible()->evaluate($this->isVertical)) {
+        if ((bool) $this->evaluate($this->isVertical)) {
             return true;
         }
 
-        return ! (bool) $this->visible()->evaluate($this->isHorizontal);
+        return ! (bool) $this->evaluate($this->isHorizontal);
     }
 
     public function horizontal(bool | Closure $condition = true, bool | Closure $scrollable = true): static
