@@ -79,6 +79,7 @@ Forms\Components\Select::make('user_id')
 </code-snippet>
 @endverbatim
 
+
 ## Version 2 Changes To Focus On
 - Resources are located in `app/Filament/Resources/` directory.
 - Resource pages (List, Create, Edit) are auto-generated within the resource structure.
