@@ -61,7 +61,6 @@
     @apply flex-1 truncate text-start text-gray-700 dark:text-gray-200;
 }
 
-
 .fi-dropdown-list-item {
     &.fi-active {
         .fi-dropdown-list-item-label {

@@ -48,7 +48,7 @@ export default function tabsSchemaComponent({
             )
 
             if (!isScrollable) {
-                this.setUpScrollable()
+                this.updateTabsWithinDropdown()
             }
         },
 
@@ -61,8 +61,6 @@ export default function tabsSchemaComponent({
         },
 
         updateQueryString() {
-            this.tabIndex = this.getTabs().findIndex(tab => tab === this.tab)
-
             if (!isTabPersistedInQueryString) {
                 return
             }
@@ -72,80 +70,101 @@ export default function tabsSchemaComponent({
 
             history.replaceState(null, document.title, url.toString())
         },
-        tabIndex: null,
+
+        withinDropdownMounted: false,
         withinDropdownIndex: null,
-        containerElementDimensions: null,
-        dropDownButtonDimensions: null,
-        tabsElementsDimensions: [],
-        tabsWithinDropdown: [],
-
-        setUpScrollable() {
-            this.$nextTick(() => {
-                const tabsContainer = this.$el.querySelector('.fi-tabs')
-                const dropDownButtonElement = Array.from(
-                    tabsContainer.children,
-                ).at(-1)
-                this.dropDownButtonDimensions = {
-                    width: Math.floor(dropDownButtonElement.clientWidth) * 2,
-                }
-
-                const containerElementStyles = window.getComputedStyle(
-                    tabsContainer,
-                )
-                this.containerElementDimensions = {
-                    width: Math.floor(tabsContainer.clientWidth),
-                    padding:
-                        Math.floor(
-                            parseFloat(containerElementStyles.paddingLeft),
-                        ) * 2,
-                    gap: {
-                        width: Math.floor(
-                            parseFloat(containerElementStyles.columnGap),
-                        ),
-                    },
-                }
-
-                Array.from(tabsContainer.children)
-                    .slice(0, -1)
-                    .forEach((el) => {
-                        this.tabsElementsDimensions.push({
-                            width: Math.ceil(el.clientWidth),
-                            height: Math.ceil(el.clientHeight),
-                            key: el.dataset.tabKey,
-                        })
-                    })
-
-                this.updateTabsWithinDropdown()
-            })
+        get isDropDownButtonVisible() {
+            return (
+                (this.withinDropdownIndex !== null &&
+                    this.getTabs().findIndex((tab) => tab === this.tab) <
+                        this.withinDropdownIndex) ||
+                !this.withinDropdownMounted
+            )
         },
 
-        updateTabsWithinDropdown() {
-            this.tabsWithinDropdown = []
+        async updateTabsWithinDropdown() {
+            this.withinDropdownMounted = false
             this.withinDropdownIndex = null
-            const tabsContainer = this.$el.querySelector('.fi-tabs')
-            this.containerElementDimensions.width = Math.floor(
-                tabsContainer.clientWidth,
+
+            await this.$nextTick()
+
+            const tabs = this.getTabs()
+
+            const tabsContainerElement = this.$el.querySelector('.fi-tabs')
+            const dropdownTriggerElement = tabsContainerElement.querySelector(
+                '.fi-tabs-item:last-child',
             )
+            const dropdownTriggerIconElement =
+                dropdownTriggerElement.querySelector('.fi-icon')
 
-            const containerWidth =
-                this.containerElementDimensions.width -
-                this.containerElementDimensions.padding -
-                this.dropDownButtonDimensions.width
+            const tabsContainerElementComputedStyles =
+                window.getComputedStyle(tabsContainerElement)
 
-            let currentWidth = 0
-            this.tabsElementsDimensions.forEach((tab, index) => {
-                const nextWidth =
-                    currentWidth +
-                    tab.width +
-                    this.containerElementDimensions.gap.width
-                if (nextWidth >= containerWidth) {
-                    if (this.withinDropdownIndex === null){
-                        this.withinDropdownIndex = index
+            const dropdownTriggerElementComputedStyles =
+                window.getComputedStyle(dropdownTriggerElement)
+
+            const dropDownTriggerDimensions = {
+                width: Math.ceil(dropdownTriggerElement.clientWidth),
+                iconWidth: Math.ceil(dropdownTriggerIconElement.clientWidth),
+                gapWidth: Math.ceil(
+                    parseFloat(dropdownTriggerElementComputedStyles.columnGap),
+                ),
+            }
+
+            const tabsContainerElementDimensions = {
+                width: Math.floor(tabsContainerElement.clientWidth),
+                padding:
+                    Math.ceil(
+                        parseFloat(
+                            tabsContainerElementComputedStyles.paddingLeft,
+                        ),
+                    ) * 2,
+                gapWidth: Math.ceil(
+                    parseFloat(tabsContainerElementComputedStyles.columnGap),
+                ),
+            }
+
+            let tabsContainerAvailableWidth =
+                tabsContainerElementDimensions.width -
+                tabsContainerElementDimensions.padding
+
+            const maxVisibleTabs = Array.from(tabsContainerElement.children)
+                .slice(0, -1)
+                .findIndex((tab, index, tabs) => {
+                    const nextWidestTab = tabs
+                        .slice(index)
+                        .reduce((max, current) => {
+                            return max.clientWidth > current.clientWidth
+                                ? max
+                                : current
+                        }, tab)
+
+                    const nextWidestTabWidth =
+                        Math.ceil(nextWidestTab.clientWidth) +
+                        tabsContainerElementDimensions.gapWidth +
+                        dropDownTriggerDimensions.iconWidth +
+                        dropDownTriggerDimensions.gapWidth
+
+                    const remainingSpace =
+                        tabsContainerAvailableWidth - nextWidestTabWidth
+
+                    if (remainingSpace <= 0) {
+                        return true
                     }
-                    this.tabsWithinDropdown.push(tab.key)
-                }
-                currentWidth = nextWidth
-            })
+
+                    const currentTabWidth =
+                        Math.ceil(tab.clientWidth) +
+                        tabsContainerElementDimensions.gapWidth
+
+                    tabsContainerAvailableWidth =
+                        tabsContainerAvailableWidth - currentTabWidth
+                })
+
+            if (maxVisibleTabs !== -1) {
+                this.withinDropdownIndex = maxVisibleTabs - 1
+            }
+
+            this.withinDropdownMounted = true
         },
     }
 }

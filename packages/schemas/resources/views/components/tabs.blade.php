@@ -16,7 +16,7 @@
     <div
         x-load
         x-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('tabs', 'filament/schemas') }}"
-        @if(!$isScrollable)
+        @if (! $isScrollable)
             @resize.window="() => updateTabsWithinDropdown()"
         @endif
         x-data="tabsSchemaComponent({
@@ -89,7 +89,7 @@
                             $tabVisibilityJs .= ' && ';
                         }
 
-                        $tabVisibilityJs .= '(withinDropdownIndex === null || ' . $index . ' < withinDropdownIndex)';
+                        $tabVisibilityJs .= '(!withinDropdownMounted || withinDropdownIndex === null || ' . $index . ' < withinDropdownIndex)';
                     }
                 @endphp
 
@@ -116,7 +116,9 @@
                 <x-filament::dropdown
                     :placement="__('filament-panels::layout.direction') === 'ltr' ? 'bottom-start' : 'bottom-end'"
                 >
-                    <x-slot name="trigger">
+                    <x-slot
+                        name="trigger"
+                    >
                         @foreach ($getChildSchema()->getComponents() as $index => $tab)
                             @php
                                 $tabKey = $tab->getKey(isAbsolute: false);
@@ -129,12 +131,12 @@
                                     [false, true] => $tabVisibleJs,
                                     default => null,
                                 };
-                                if (!$isScrollable){
-                                   if (! empty($tabVisibilityJs)) {
+                                if (! $isScrollable) {
+                                    if (! empty($tabVisibilityJs)) {
                                         $tabVisibilityJs .= ' && ';
-                                   }
+                                    }
 
-                                   $tabVisibilityJs .= 'withinDropdownIndex !== null && ' . $index . ' >= withinDropdownIndex && \'' . $tabKey . '\' === tab';
+                                    $tabVisibilityJs .= '(withinDropdownMounted && withinDropdownIndex !== null && ' . $index . ' >= withinDropdownIndex && \'' . $tabKey . '\' === tab)';
                                 }
                             @endphp
 
@@ -151,7 +153,7 @@
                         @endforeach
 
                         <x-filament::tabs.item
-                            x-show="(withinDropdownIndex !== null && tabIndex < withinDropdownIndex) || dropDownButtonDimensions === null"
+                            x-show="isDropDownButtonVisible"
                         >
                             <x-filament::icon
                                 icon="heroicon-c-ellipsis-horizontal"
@@ -171,8 +173,8 @@
                                 :x-show="$index . ' >= withinDropdownIndex'"
                                 :x-on:click="'tab = \'' . $tabKey . '\'; close($event);'"
                                 x-bind:class="{
-                                    'fi-selected fi-active': {{ 'tab === \'' . $tabKey . '\'' }}
-                                }"
+                                                                        'fi-selected fi-active': {{ 'tab === \'' . $tabKey . '\'' }}
+                                                                    }"
                             >
                                 {{ $tab->getLabel() }}
                             </x-filament::dropdown.list.item>
