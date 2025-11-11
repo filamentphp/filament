@@ -173,8 +173,8 @@
                                 :x-show="$index . ' >= withinDropdownIndex'"
                                 :x-on:click="'tab = \'' . $tabKey . '\'; close($event);'"
                                 x-bind:class="{
-                                                                        'fi-selected fi-active': {{ 'tab === \'' . $tabKey . '\'' }}
-                                                                    }"
+                                                                                    'fi-selected fi-active': {{ 'tab === \'' . $tabKey . '\'' }}
+                                                                                }"
                             >
                                 {{ $tab->getLabel() }}
                             </x-filament::dropdown.list.item>
