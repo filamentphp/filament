@@ -6,6 +6,8 @@ return [
 
     'breadcrumb' => '詳細',
 
+    'navigation_label' => '詳細',
+
     'content' => [
 
         'tab' => [

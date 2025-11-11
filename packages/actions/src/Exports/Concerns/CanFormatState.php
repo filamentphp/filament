@@ -2,6 +2,7 @@
 
 namespace Filament\Actions\Exports\Concerns;
 
+use BackedEnum;
 use Closure;
 use Illuminate\Support\Str;
 
@@ -65,6 +66,10 @@ trait CanFormatState
         $state = $this->evaluate($this->formatStateUsing ?? $state, [
             'state' => $state,
         ]);
+
+        if ($state instanceof BackedEnum) {
+            $state = $state->value;
+        }
 
         if ($characterLimit = $this->getCharacterLimit()) {
             $state = Str::limit($state, $characterLimit, $this->getCharacterLimitEnd());

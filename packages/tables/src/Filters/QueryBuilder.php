@@ -4,11 +4,11 @@ namespace Filament\Tables\Filters;
 
 use Closure;
 use Filament\Forms\Components\Repeater;
+use Filament\QueryBuilder\Constraints\Constraint;
+use Filament\QueryBuilder\Constraints\Operators\Operator;
+use Filament\QueryBuilder\Forms\Components\RuleBuilder;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Schema;
-use Filament\Tables\Filters\QueryBuilder\Concerns\HasConstraints;
-use Filament\Tables\Filters\QueryBuilder\Constraints\Operators\Operator;
-use Filament\Tables\Filters\QueryBuilder\Forms\Components\RuleBuilder;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
@@ -17,8 +17,6 @@ use LogicException;
 
 class QueryBuilder extends BaseFilter
 {
-    use HasConstraints;
-
     /**
      * @var array<string, ?int> | null
      */
@@ -26,15 +24,19 @@ class QueryBuilder extends BaseFilter
 
     protected string | Closure | null $constraintPickerWidth = null;
 
+    /** @var array<Constraint> */
+    protected array $constraints = [];
+
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->label(__('filament-tables::filters/query-builder.label'));
+        $this->label(__('filament-query-builder::query-builder.label'));
 
         $this->schema(fn (QueryBuilder $filter): array => [
             RuleBuilder::make('rules')
                 ->label($filter->getLabel())
+                ->hiddenLabel()
                 ->constraints($filter->getConstraints())
                 ->blockPickerColumns($filter->getConstraintPickerColumns())
                 ->blockPickerWidth($filter->getConstraintPickerWidth()),
@@ -76,7 +78,7 @@ class QueryBuilder extends BaseFilter
                         $iteration + 1,
                     );
 
-                    $orSummaries[] = ((count($orGroupSummaries) > 1) ? '(' : '') . implode(' ' . __('filament-tables::filters/query-builder.form.rules.item.and') . ' ', $orGroupSummaries) . ((count($orGroupSummaries) > 1) ? ')' : '');
+                    $orSummaries[] = ((count($orGroupSummaries) > 1) ? '(' : '') . implode(' ' . __('filament-query-builder::query-builder.form.rules.item.and') . ' ', $orGroupSummaries) . ((count($orGroupSummaries) > 1) ? ')' : '');
                 }
 
                 $orSummaries = array_filter($orSummaries, filled(...));
@@ -93,7 +95,7 @@ class QueryBuilder extends BaseFilter
 
                 $hasParentheses = ($iteration > 1) && (count($orSummaries) > 1);
 
-                $summaries[$ruleIndex] = ($hasParentheses ? '(' : '') . implode(' ' . __('filament-tables::filters/query-builder.form.or_groups.block.or') . ' ', $orSummaries) . ($hasParentheses ? ')' : '');
+                $summaries[$ruleIndex] = ($hasParentheses ? '(' : '') . implode(' ' . __('filament-query-builder::query-builder.form.or_groups.block.or') . ' ', $orSummaries) . ($hasParentheses ? ')' : '');
 
                 continue;
             }
@@ -188,7 +190,7 @@ class QueryBuilder extends BaseFilter
             $this->tapOperatorFromRule(
                 $rule,
                 $ruleBuilderBlockContainer,
-                fn ($operator) => $operator->applyToBaseQuery($query),
+                fn (Operator $operator) => $operator->applyToBaseQuery($query),
             );
         }
 
@@ -222,7 +224,7 @@ class QueryBuilder extends BaseFilter
             $this->tapOperatorFromRule(
                 $rule,
                 $ruleBuilderBlockContainer,
-                fn ($operator) => $operator->applyToBaseFilterQuery($query),
+                fn (Operator $operator) => $operator->applyToBaseFilterQuery($query),
             );
         }
 
@@ -356,5 +358,30 @@ class QueryBuilder extends BaseFilter
             ->constraint(null)
             ->settings(null)
             ->inverse(null);
+    }
+
+    /**
+     * @param  array<Constraint>  $constraints
+     */
+    public function constraints(array $constraints): static
+    {
+        foreach ($constraints as $constraint) {
+            $this->constraints[$constraint->getName()] = $constraint;
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return array<Constraint>
+     */
+    public function getConstraints(): array
+    {
+        return array_map(fn (Constraint $constraint): Constraint => $constraint->model($this->getTable()->getModel()), $this->constraints);
+    }
+
+    public function getConstraint(string $name): ?Constraint
+    {
+        return $this->getConstraints()[$name] ?? null;
     }
 }

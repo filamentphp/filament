@@ -71,7 +71,7 @@ class Wizard extends Component
 
         $this->key(function (Wizard $component): string {
             $statePath = $component->getStatePath();
-            $label = $this->getLabel();
+            $label = $component->getLabel();
 
             if (blank($label)) {
                 return filled($statePath) ? "{$statePath}::wizard" : 'wizard';

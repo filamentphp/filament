@@ -1005,9 +1005,15 @@ trait CanBeValidated
             }
 
             if (is_array($stateValues)) {
+                $stateValues = array_map(
+                    static fn ($value) => $value instanceof BackedEnum ? $value->value : $value,
+                    $stateValues
+                );
                 $stateValues = implode(',', $stateValues);
             } elseif (is_bool($stateValues)) {
                 $stateValues = $stateValues ? 'true' : 'false';
+            } elseif ($stateValues instanceof BackedEnum) {
+                $stateValues = $stateValues->value;
             }
 
             return "{$rule}:{$statePath},{$stateValues}";
