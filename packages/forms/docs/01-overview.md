@@ -1029,6 +1029,32 @@ function (Get $get) {
     Unless a form field is [reactive](#the-basics-of-reactivity), the schema will not refresh when the value of the field changes, only when the next user interaction occurs that makes a request to the server. If you need to react to changes in a field's value, it should be `live()`.
 </Aside>
 
+#### Type-safe retrieval of another field's state
+
+You may use a "typed" method on the `Get` utility to retrieve the state of another field in a type-safe manner:
+
+```php
+use Filament\Schemas\Components\Utilities\Get;
+
+$get->string('email');
+$get->integer('age');
+$get->float('price');
+$get->boolean('is_admin');
+$get->array('tags');
+$get->date('published_at');
+$get->enum('status', StatusEnum::class);
+$get->filled('email'); // Returns the result of the `filled()` helper for the field.
+$get->blank('email'); // Returns the result of the `blank()` helper for the field.
+```
+
+Each method assumes that the field's state can't be `null`. To force a nullable return type, pass the `isNullable: true` argument:
+
+```php
+use Filament\Schemas\Components\Utilities\Get;
+
+$get->string('email', isNullable: true);
+```
+
 ### Injecting the current Eloquent record
 
 You may retrieve the Eloquent record for the current schema using a `$record` parameter:

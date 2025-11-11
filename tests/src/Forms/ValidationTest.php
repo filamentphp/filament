@@ -2,6 +2,8 @@
 
 use Filament\Forms\Components\Field;
 use Filament\Schemas\Schema;
+use Filament\Tests\Fixtures\Enums\IntegerBackedEnum;
+use Filament\Tests\Fixtures\Enums\StringBackedEnum;
 use Filament\Tests\Fixtures\Livewire\Livewire;
 use Filament\Tests\TestCase;
 use Illuminate\Contracts\Support\Arrayable;
@@ -952,3 +954,52 @@ test('the `doesntEndWith()` rule can be conditionally validated', function (): v
     expect($fails)
         ->toBeEmpty();
 });
+
+test('conditional validation rules support enum instances', function (string $rule, BackedEnum $defaultValue, BackedEnum | array $enumValue): void {
+    $rules = [];
+
+    try {
+        Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([
+                (new Field('status'))
+                    ->default($defaultValue),
+                $field = (new Field('description'))
+                    ->{$rule}('status', $enumValue),
+            ])
+            ->fill()
+            ->validate();
+    } catch (ValidationException $exception) {
+        $rules = array_keys($exception->validator->failed()[$field->getStatePath()]);
+    }
+
+    expect($rules)->not->toBeEmpty();
+})->with([
+    ['requiredIf', StringBackedEnum::One, StringBackedEnum::One],
+    ['requiredIf', StringBackedEnum::One, [StringBackedEnum::One, StringBackedEnum::Two]],
+    ['requiredUnless', StringBackedEnum::Two, StringBackedEnum::One],
+    ['requiredUnless', StringBackedEnum::Three, [StringBackedEnum::One, StringBackedEnum::Two]],
+    ['requiredIf', IntegerBackedEnum::One, IntegerBackedEnum::One],
+    ['requiredIf', IntegerBackedEnum::One, [IntegerBackedEnum::One, IntegerBackedEnum::Two]],
+]);
+
+test('in/notIn validation rules support enum instances', function (string $rule, BackedEnum $value): void {
+    $rules = [];
+
+    try {
+        Schema::make(Livewire::make()->data(['status' => $value]))
+            ->statePath('data')
+            ->components([
+                $field = (new Field('status'))
+                    ->{$rule}([StringBackedEnum::One, StringBackedEnum::Two]),
+            ])
+            ->validate();
+    } catch (ValidationException $exception) {
+        $rules = array_keys($exception->validator->failed()[$field->getStatePath()]);
+    }
+
+    expect($rules)->not->toBeEmpty();
+})->with([
+    ['notIn', StringBackedEnum::One],
+    ['in', StringBackedEnum::Three],
+]);

@@ -127,6 +127,17 @@ ExportColumn::make('description')
     ->enabledByDefault(false)
 ```
 
+You can use the `enableVisibleTableColumnsByDefault()` method on the `ExportAction` to enable only the columns that are currently visible in the table by default. Columns that use `enabledByDefault(false)` will also be disabled by default:
+
+```php
+use App\Filament\Exports\ProductExporter;
+use Filament\Actions\ExportAction;
+
+ExportAction::make()
+    ->exporter(ProductExporter::class)
+    ->enableVisibleTableColumnsByDefault()
+```
+
 ### Configuring the column selection form layout
 
 By default, the column selection form uses a single column layout. You can change this using the `columnMappingColumns()` method, passing the number of columns you would like to use for the layout on large screens:

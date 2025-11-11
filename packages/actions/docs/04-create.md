@@ -254,7 +254,7 @@ If you'd like to modify the "create another" action, you may use the `createAnot
 use Filament\Actions\CreateAction;
 
 CreateAction::make()
-    ->createAnotherAction(fn (Action $action): Action => $aciton->label('Custom create another label'))
+    ->createAnotherAction(fn (Action $action): Action => $action->label('Custom create another label'))
 ```
 
 ### Disabling create another
