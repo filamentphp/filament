@@ -420,7 +420,7 @@ public static function modifyQuery(Builder $query): Builder
 
 ### Customizing the storage disk
 
-By default, exported files will be uploaded to the storage disk defined in the [configuration file](../../installation#publishing-configuration), which is `public` by default. You can set the `FILAMENT_FILESYSTEM_DISK` environment variable to change this.
+By default, exported files will be uploaded to the storage disk defined in the [configuration file](../../installation#publishing-configuration), which is `public` by default. You can set the `FILESYSTEM_DISK` environment variable to change this.
 
 While using the `public` disk a good default for many parts of Filament, using it for exports would result in exported files being stored in a public location. As such, if the default filesystem disk is `public` and a `local` disk exists in your `config/filesystems.php`, Filament will use the `local` disk for exports instead. If you override the disk to be `public` for an `ExportAction` or inside an exporter class, Filament will use that.
 
