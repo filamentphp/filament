@@ -31,6 +31,7 @@
                         isLiveOnBlur: @js($isLiveOnBlur),
                         liveDebounce: @js($liveDebounce),
                         language: @js($language?->value),
+                        isWrapping: @js($isWrapping()),
                         state: $wire.{{ $applyStateBindingModifiers("\$entangle('{$statePath}')", isOptimisticallyLive: false) }},
                     })"
             wire:ignore

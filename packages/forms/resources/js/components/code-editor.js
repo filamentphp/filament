@@ -26,6 +26,7 @@ export default function codeEditorFormComponent({
     liveDebounce,
     language,
     state,
+    isWrapping = false,
 }) {
     return {
         editor: null,
@@ -48,6 +49,7 @@ export default function codeEditorFormComponent({
                     extensions: [
                         basicSetup,
                         keymap.of([indentWithTab]),
+                        isWrapping ? EditorView.lineWrapping : [],
                         EditorState.readOnly.of(isDisabled),
                         EditorView.editable.of(!isDisabled),
                         EditorView.updateListener.of((viewUpdate) => {
