@@ -83,12 +83,11 @@
                 x-sortable
                 data-sortable-animation-duration="{{ $getReorderAnimationDuration() }}"
                 x-on:end.stop="
-                    $event.oldDraggableIndex !== $event.newDraggableIndex &&
-                        $wire.mountAction(
-                            'reorder',
-                            { items: $event.target.sortable.toArray() },
-                            { schemaComponent: '{{ $key }}' },
-                        )
+                    $wire.mountAction(
+                        'reorder',
+                        { items: $event.target.sortable.toArray() },
+                        { schemaComponent: '{{ $key }}' },
+                    )
                 "
                 class="fi-fo-builder-items"
             >
