@@ -98,6 +98,7 @@ You may also simply pass any `Htmlable`, like an `HtmlString`:
 
 ```php
 use Filament\Tables\Table;
+use Illuminate\Support\HtmlString;
 
 public function table(Table $table): Table
 {
