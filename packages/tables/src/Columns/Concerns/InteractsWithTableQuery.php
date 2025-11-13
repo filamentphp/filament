@@ -5,6 +5,7 @@ namespace Filament\Tables\Columns\Concerns;
 use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Arr;
 
 use function Filament\Support\generate_search_column_expression;
@@ -123,15 +124,37 @@ trait InteractsWithTableQuery
         foreach (array_reverse($this->getSortColumns($query->getModel())) as $sortColumn) {
             $sortColumn = (string) str($sortColumn)->replace('.', '->');
 
-            if ($relationshipName) {
+            if (blank($relationshipName)) {
+                $query->orderBy($sortColumn, $direction);
+
+                continue;
+            }
+
+            if (str($relationshipName)->contains('.')) {
                 $query->orderByPowerJoins("{$relationshipName}.{$sortColumn}", $direction, joinType: 'leftJoin'); /** @phpstan-ignore method.notFound */
 
                 continue;
             }
 
-            $query->orderBy($sortColumn, $direction);
+            $query->orderBy($this->getRelationshipSortColumnForQuery($query, $sortColumn), $direction);
         }
 
         return $query;
+    }
+
+    protected function getRelationshipSortColumnForQuery(EloquentBuilder $query, string $sortColumn): string | Builder
+    {
+        $relationship = $this->getRelationship($query->getModel());
+
+        $relatedQuery = $relationship->getRelated()::query();
+
+        return $relationship
+            ->getRelationExistenceQuery(
+                $relatedQuery,
+                $query,
+                $sortColumn,
+            )
+            ->applyScopes()
+            ->getQuery();
     }
 }
