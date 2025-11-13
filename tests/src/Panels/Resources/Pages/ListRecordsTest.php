@@ -15,6 +15,7 @@ use Filament\Facades\Filament;
 use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Models\Ticket;
 use Filament\Tests\Fixtures\Models\TicketMessage;
+use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Fixtures\Policies\TicketPolicy;
 use Filament\Tests\Fixtures\Resources\Posts\Pages\ListPosts;
 use Filament\Tests\Fixtures\Resources\Posts\PostResource;
@@ -63,40 +64,64 @@ it('can render post authors', function (): void {
 });
 
 it('can sort posts by title', function (): void {
-    $posts = Post::factory()->count(10)->create();
+    Post::factory()->count(10)->create();
+
+    $sortedAsc = Post::query()->orderBy('title')->get();
+    $sortedDesc = Post::query()->orderByDesc('title')->get();
 
     livewire(ListPosts::class)
         ->sortTable('title')
-        ->assertCanSeeTableRecords($posts->sortBy('title'), inOrder: true)
+        ->assertCanSeeTableRecords($sortedAsc, inOrder: true)
         ->sortTable('title', 'desc')
-        ->assertCanSeeTableRecords($posts->sortByDesc('title'), inOrder: true);
+        ->assertCanSeeTableRecords($sortedDesc, inOrder: true);
 });
 
 it('can sort posts by author', function (): void {
-    $posts = Post::factory()->count(10)->create();
+    Post::factory()->count(10)->create();
+
+    $sortedAsc = Post::query()
+        ->orderBy(
+            User::query()
+                ->select('name')
+                ->whereColumn('users.id', 'posts.author_id')
+                ->limit(1)
+        )
+        ->get();
+
+    $sortedDesc = Post::query()
+        ->orderByDesc(
+            User::query()
+                ->select('name')
+                ->whereColumn('users.id', 'posts.author_id')
+                ->limit(1)
+        )
+        ->get();
 
     livewire(ListPosts::class)
         ->sortTable('author.name')
-        ->assertCanSeeTableRecords($posts->sortBy('author.name'), inOrder: true)
+        ->assertCanSeeTableRecords($sortedAsc, inOrder: true)
         ->sortTable('author.name', 'desc')
-        ->assertCanSeeTableRecords($posts->sortByDesc('author.name'), inOrder: true);
+        ->assertCanSeeTableRecords($sortedDesc, inOrder: true);
 });
 
 it('can sort posts with default sort key', function (): void {
 
     $faker = fake()->unique();
-    $posts = Post::factory()->count(10)->state(function () use ($faker) {
+    Post::factory()->count(10)->state(function () use ($faker) {
         return [
             'id' => $faker->randomDigit(),
             'title' => 'Lorem Ipsum',
         ];
     })->create();
 
+    $sortedAsc = Post::query()->orderBy('title')->orderBy('id')->get();
+    $sortedDesc = Post::query()->orderByDesc('title')->orderByDesc('id')->get();
+
     livewire(ListPosts::class)
         ->sortTable('title')
-        ->assertCanSeeTableRecords($posts->sortBy([['title', 'asc'], ['id', 'asc']]), inOrder: true)
+        ->assertCanSeeTableRecords($sortedAsc, inOrder: true)
         ->sortTable('title', 'desc')
-        ->assertCanSeeTableRecords($posts->sortBy([['title', 'desc'], ['id', 'desc']]), inOrder: true);
+        ->assertCanSeeTableRecords($sortedDesc, inOrder: true);
 });
 
 it('can search posts by title', function (): void {

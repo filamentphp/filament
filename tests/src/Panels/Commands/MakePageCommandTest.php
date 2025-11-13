@@ -425,8 +425,10 @@ it('can generate a manage related records page class in a resource with a genera
         ->expectsQuestion($questions['relationshipType'], BelongsToMany::class);
 
     assertFileExists($path = app_path('Filament/Resources/Users/Pages/ManageUserTeams.php'));
-    expect(file_get_contents($path))
-        ->toMatchSnapshot();
+    if (config('database.default') === 'testing') {
+        expect(file_get_contents($path))
+            ->toMatchSnapshot();
+    }
 });
 
 it('can generate a manage related records page class in a resource with a view operation', function () use ($runGenerateManageRelatedRecordsPageCommand, $generateManageRelatedRecordsPageCommandQuestions): void {

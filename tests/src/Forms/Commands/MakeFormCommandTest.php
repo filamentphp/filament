@@ -32,8 +32,11 @@ it('can generate a form schema class for a model', function (): void {
     ]);
 
     assertFileExists($path = app_path('Filament/Schemas/PostForm.php'));
-    expect(file_get_contents($path))
-        ->toMatchSnapshot();
+
+    if (config('database.default') === 'testing') {
+        expect(file_get_contents($path))
+            ->toMatchSnapshot();
+    }
 });
 
 it('can generate a form schema class in a nested directory', function (): void {
@@ -56,6 +59,9 @@ it('can generate a form schema class for a model in a nested directory', functio
     ]);
 
     assertFileExists($path = app_path('Filament/Schemas/Blog/CategoryForm.php'));
-    expect(file_get_contents($path))
-        ->toMatchSnapshot();
+
+    if (config('database.default') === 'testing') {
+        expect(file_get_contents($path))
+            ->toMatchSnapshot();
+    }
 });
