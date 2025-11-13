@@ -163,6 +163,28 @@ public function table(Table $table): Table
 }
 ```
 
+### Configuring the reset button position
+
+By default, the reset button appears in the top right corner of the filters header. You can configure it to appear next to the apply button instead, using the `resetButtonPosition()` method:
+
+```php
+use Filament\Tables\Enums\ResetButtonPosition;
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->filters([
+            // ...
+        ])
+        ->resetButtonPosition(ResetButtonPosition::NextToApply);
+}
+```
+
+The `ResetButtonPosition` enum has two options:
+- `ResetButtonPosition::Default` - Reset button appears in the top right corner of the filters header (default)
+- `ResetButtonPosition::NextToApply` - Reset button appears next to the apply button in the actions container
+
 ## Deselecting records when filters change
 
 By default, all records will be deselected when the filters change. Using the `deselectAllRecordsWhenFiltered(false)` method, you can disable this behavior:
