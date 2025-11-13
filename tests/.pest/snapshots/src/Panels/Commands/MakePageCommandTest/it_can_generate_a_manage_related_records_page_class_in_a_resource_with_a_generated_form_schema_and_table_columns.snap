@@ -36,6 +36,10 @@ class ManageUserTeams extends ManageRelatedRecords
                     ->required(),
                 Textarea::make('description')
                     ->columnSpanFull(),
+                TextInput::make('budget')
+                    ->required()
+                    ->numeric()
+                    ->default(0),
             ]);
     }
 
@@ -46,6 +50,9 @@ class ManageUserTeams extends ManageRelatedRecords
             ->columns([
                 TextColumn::make('name')
                     ->searchable(),
+                TextColumn::make('budget')
+                    ->numeric()
+                    ->sortable(),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
