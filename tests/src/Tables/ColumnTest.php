@@ -407,3 +407,29 @@ it('can toggle all table columns', function (): void {
         ->toggleAllTableColumns(false)
         ->assertDontSeeText('Toggleable column state');
 });
+
+it('can search and sort by relationship column when both tables have the same column name', function (): void {
+    $teamAlpha = \Filament\Tests\Fixtures\Models\Team::factory()->create(['name' => 'Team Alpha']);
+    $teamBeta = \Filament\Tests\Fixtures\Models\Team::factory()->create(['name' => 'Team Beta']);
+
+    $userAlice = User::factory()->create([
+        'name' => 'Alice',
+        'team_id' => $teamAlpha->id,
+    ]);
+
+    $userBob = User::factory()->create([
+        'name' => 'Bob',
+        'team_id' => $teamBeta->id,
+    ]);
+
+    // This should not throw an ambiguous column error when:
+    // 1. We have searchable columns on the main table (id, name)
+    // 2. We have a sortable relationship column (team.name)
+    // 3. Both tables share common column names (id, name)
+    // 4. We search (activating the WHERE clauses) then sort by the relationship column
+    livewire(\Filament\Tests\Fixtures\Livewire\UsersWithTeamTable::class)
+        ->searchTable('Alice')
+        ->sortTable('team.name')
+        ->assertCanSeeTableRecords([$userAlice])
+        ->assertCanNotSeeTableRecords([$userBob]);
+});
