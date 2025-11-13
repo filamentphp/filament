@@ -165,7 +165,7 @@ public function table(Table $table): Table
 
 ### Configuring the reset button position
 
-By default, the reset button appears in the top right corner of the filters header. You can configure it to appear next to the apply button instead, using the `resetButtonPosition()` method:
+By default, the reset button appears in the top right corner of the filters header. You can configure it to appear next to the apply button instead, using the `resetButtonPosition()` method at the table level:
 
 ```php
 use Filament\Tables\Enums\ResetButtonPosition;
