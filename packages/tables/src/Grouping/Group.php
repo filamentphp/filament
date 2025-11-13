@@ -321,11 +321,33 @@ class Group extends Component
             ]) ?? $query;
         }
 
-        if ($relationshipName = $this->getRelationshipName()) {
+        $relationshipName = $this->getRelationshipName();
+
+        if (blank($relationshipName)) {
+            return $query->orderBy($this->getRelationshipAttribute(), $direction);
+        }
+
+        if (str($relationshipName)->contains('.')) {
             return $query->orderByPowerJoins("{$relationshipName}.{$this->getRelationshipAttribute()}", $direction, joinType: 'leftJoin'); /** @phpstan-ignore method.notFound */
         }
 
-        return $query->orderBy($this->getRelationshipAttribute(), $direction);
+        return $query->orderBy($this->getRelationshipOrderColumnForQuery($query), $direction);
+    }
+
+    protected function getRelationshipOrderColumnForQuery(EloquentBuilder $query): string | Builder
+    {
+        $relationshipName = $this->getRelationshipName();
+        $relationship = $query->getModel()->{$relationshipName}();
+        $relatedQuery = $relationship->getRelated()::query();
+
+        return $relationship
+            ->getRelationExistenceQuery(
+                $relatedQuery,
+                $query,
+                [$this->getRelationshipAttribute()],
+            )
+            ->applyScopes()
+            ->getQuery();
     }
 
     public function scopeQuery(EloquentBuilder $query, Model $record): EloquentBuilder
