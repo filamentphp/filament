@@ -35,7 +35,7 @@
 
     {{ $form }}
 
-    <div class="fi-ta-filters-apply-action-ctn">
+    <div class="fi-ta-filters-actions-ctn">
         @if ($applyAction->isVisible())
             {{ $applyAction }}
         @endif

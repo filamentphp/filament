@@ -108,7 +108,7 @@
             }
         }
 
-        & .fi-ta-filters-apply-action-ctn {
+        & .fi-ta-filters-actions-ctn {
             @apply flex gap-2;
         }
     }
@@ -125,7 +125,7 @@
                 @apply mt-3;
             }
 
-            &:has(.fi-ta-filters-apply-action-ctn) {
+            &:has(.fi-ta-filters-actions-ctn) {
                 & .fi-ta-filters-trigger-action-ctn {
                     @apply -mt-7;
                 }
