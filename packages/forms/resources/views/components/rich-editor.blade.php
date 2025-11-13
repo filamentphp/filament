@@ -11,6 +11,7 @@
     $tools = $getTools();
     $toolbarButtons = $getToolbarButtons();
     $floatingToolbars = $getFloatingToolbars();
+    $linkProtocols = $getLinkProtocols();
     $fileAttachmentsMaxSize = $getFileAttachmentsMaxSize();
     $fileAttachmentsAcceptedFileTypes = $getFileAttachmentsAcceptedFileTypes();
 @endphp
@@ -51,6 +52,7 @@
                         textColors: @js($getTextColorsForJs()),
                         uploadingFileMessage: @js($getUploadingFileMessage()),
                         floatingToolbars: @js($floatingToolbars),
+                        linkProtocols: @js($linkProtocols),
                     })"
             x-bind:class="{
                 'fi-fo-rich-editor-uploading-file': isUploadingFile,

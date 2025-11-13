@@ -55,6 +55,7 @@ export default async ({
     statePath,
     textColors,
     uploadingFileMessage,
+    linkProtocols,
     $wire,
 }) => {
     const extensions = [
@@ -89,6 +90,7 @@ export default async ({
         Link.configure({
             autolink: true,
             openOnClick: false,
+            protocols: linkProtocols,
         }),
         ListItem,
         ...(canAttachFiles

@@ -46,6 +46,8 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
 
     protected string | Closure | null $uploadingFileMessage = null;
 
+    protected array | Closure $linkProtocols = ['http', 'https', 'mailto'];
+
     protected bool | Closure | null $isJson = null;
 
     /**
@@ -555,6 +557,18 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
         return RichContentRenderer::make()
             ->plugins($this->getPlugins())
             ->getEditor();
+    }
+
+    public function linkProtocols(array | Closure $protocols): static
+    {
+        $this->linkProtocols = $protocols;
+
+        return $this;
+    }
+
+    public function getLinkProtocols(): array
+    {
+        return $this->evaluate($this->linkProtocols);
     }
 
     /**

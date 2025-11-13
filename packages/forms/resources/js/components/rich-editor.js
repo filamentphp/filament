@@ -27,6 +27,7 @@ export default function richEditorFormComponent({
     textColors,
     uploadingFileMessage,
     floatingToolbars,
+    linkProtocols,
 }) {
     let editor
     let eventListeners = []
@@ -84,6 +85,7 @@ export default function richEditorFormComponent({
                     statePath,
                     textColors,
                     uploadingFileMessage,
+                    linkProtocols,
                     $wire: this.$wire,
                     floatingToolbars,
                 }),
