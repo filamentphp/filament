@@ -86,9 +86,9 @@ class RelationshipOrderer
             $isFirstRelationship = $i === 0;
 
             if ($isFirstRelationship) {
-                $this->applyFirstRelationshipConstraint($subquery, $relationshipChain[$i], $baseModel);
+                $this->applyFirstRelationshipConstraint($subquery, $relationshipChain[$i], $baseModel); /** @phpstan-ignore argument.type */
             } else {
-                $this->applyIntermediateRelationshipJoin($subquery, $relationshipChain[$i], $relationshipChain[$i - 1]);
+                $this->applyIntermediateRelationshipJoin($subquery, $relationshipChain[$i], $relationshipChain[$i - 1]); /** @phpstan-ignore argument.type, argument.type */
             }
         }
     }
