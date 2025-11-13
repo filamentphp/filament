@@ -1,6 +1,7 @@
 <?php
 
 use Filament\Tests\Fixtures\Livewire\PostsQueryBuilderTable;
+use Filament\Tests\Fixtures\Livewire\UsersQueryBuilderTable;
 use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Tables\TestCase;
@@ -1245,4 +1246,184 @@ it('can combine relationship constraints with regular constraints', function ():
         ]))
         ->assertCanSeeTableRecords($matchingPosts)
         ->assertCanNotSeeTableRecords($activeHighScoreUnpublished->merge($nonMatchingPosts));
+});
+
+it('can filter records using number constraint with sum aggregate on relationship', function (): void {
+    // Create user with high total rating across all posts
+    $highTotalUser = User::factory()->create();
+    Post::factory()->count(3)->create([
+        'author_id' => $highTotalUser->id,
+        'rating' => 8, // Total: 24
+    ]);
+
+    // Create user with low total rating across all posts
+    $lowTotalUser = User::factory()->create();
+    Post::factory()->count(3)->create([
+        'author_id' => $lowTotalUser->id,
+        'rating' => 2, // Total: 6
+    ]);
+
+    livewire(UsersQueryBuilderTable::class)
+        ->assertCanSeeTableRecords([$highTotalUser, $lowTotalUser])
+        ->tap(fn ($livewire) => $livewire
+            ->set('tableDeferredFilters.query_builder.rules', [
+                [
+                    'type' => 'posts_rating',
+                    'data' => [
+                        'operator' => 'isMin',
+                        'settings' => ['number' => 20, 'aggregate' => 'sum'],
+                    ],
+                ],
+            ])
+            ->call('applyTableFilters'))
+        ->assertCanSeeTableRecords([$highTotalUser])
+        ->assertCanNotSeeTableRecords([$lowTotalUser]);
+});
+
+it('can filter records using number constraint with average aggregate on relationship', function (): void {
+    // Create user with high average rating
+    $highAvgUser = User::factory()->create();
+    Post::factory()->count(3)->create([
+        'author_id' => $highAvgUser->id,
+        'rating' => 9, // Average: 9
+    ]);
+
+    // Create user with low average rating
+    $lowAvgUser = User::factory()->create();
+    Post::factory()->count(3)->create([
+        'author_id' => $lowAvgUser->id,
+        'rating' => 3, // Average: 3
+    ]);
+
+    livewire(UsersQueryBuilderTable::class)
+        ->assertCanSeeTableRecords([$highAvgUser, $lowAvgUser])
+        ->tap(fn ($livewire) => $livewire
+            ->set('tableDeferredFilters.query_builder.rules', [
+                [
+                    'type' => 'posts_rating',
+                    'data' => [
+                        'operator' => 'isMin',
+                        'settings' => ['number' => 7, 'aggregate' => 'avg'],
+                    ],
+                ],
+            ])
+            ->call('applyTableFilters'))
+        ->assertCanSeeTableRecords([$highAvgUser])
+        ->assertCanNotSeeTableRecords([$lowAvgUser]);
+});
+
+it('can filter records using number constraint with min aggregate on relationship', function (): void {
+    // Create user where even the lowest rating is high
+    $highMinUser = User::factory()->create();
+    Post::factory()->create([
+        'author_id' => $highMinUser->id,
+        'rating' => 8,
+    ]);
+    Post::factory()->create([
+        'author_id' => $highMinUser->id,
+        'rating' => 9,
+    ]);
+    Post::factory()->create([
+        'author_id' => $highMinUser->id,
+        'rating' => 10,
+    ]);
+
+    // Create user with at least one low rating
+    $lowMinUser = User::factory()->create();
+    Post::factory()->create([
+        'author_id' => $lowMinUser->id,
+        'rating' => 2, // This is the min
+    ]);
+    Post::factory()->create([
+        'author_id' => $lowMinUser->id,
+        'rating' => 9,
+    ]);
+
+    livewire(UsersQueryBuilderTable::class)
+        ->assertCanSeeTableRecords([$highMinUser, $lowMinUser])
+        ->tap(fn ($livewire) => $livewire
+            ->set('tableDeferredFilters.query_builder.rules', [
+                [
+                    'type' => 'posts_rating',
+                    'data' => [
+                        'operator' => 'isMin',
+                        'settings' => ['number' => 7, 'aggregate' => 'min'],
+                    ],
+                ],
+            ])
+            ->call('applyTableFilters'))
+        ->assertCanSeeTableRecords([$highMinUser])
+        ->assertCanNotSeeTableRecords([$lowMinUser]);
+});
+
+it('can filter records using number constraint with max aggregate on relationship', function (): void {
+    // Create user with at least one very high rating
+    $highMaxUser = User::factory()->create();
+    Post::factory()->create([
+        'author_id' => $highMaxUser->id,
+        'rating' => 10, // This is the max
+    ]);
+    Post::factory()->create([
+        'author_id' => $highMaxUser->id,
+        'rating' => 5,
+    ]);
+
+    // Create user where even the highest rating is low
+    $lowMaxUser = User::factory()->create();
+    Post::factory()->create([
+        'author_id' => $lowMaxUser->id,
+        'rating' => 3,
+    ]);
+    Post::factory()->create([
+        'author_id' => $lowMaxUser->id,
+        'rating' => 4, // This is the max
+    ]);
+
+    livewire(UsersQueryBuilderTable::class)
+        ->assertCanSeeTableRecords([$highMaxUser, $lowMaxUser])
+        ->tap(fn ($livewire) => $livewire
+            ->set('tableDeferredFilters.query_builder.rules', [
+                [
+                    'type' => 'posts_rating',
+                    'data' => [
+                        'operator' => 'isMin',
+                        'settings' => ['number' => 8, 'aggregate' => 'max'],
+                    ],
+                ],
+            ])
+            ->call('applyTableFilters'))
+        ->assertCanSeeTableRecords([$highMaxUser])
+        ->assertCanNotSeeTableRecords([$lowMaxUser]);
+});
+
+it('can filter records using number constraint with aggregate and inverse operator', function (): void {
+    // Create user with high average rating
+    $highAvgUser = User::factory()->create();
+    Post::factory()->count(3)->create([
+        'author_id' => $highAvgUser->id,
+        'rating' => 9,
+    ]);
+
+    // Create user with low average rating
+    $lowAvgUser = User::factory()->create();
+    Post::factory()->count(3)->create([
+        'author_id' => $lowAvgUser->id,
+        'rating' => 3,
+    ]);
+
+    livewire(UsersQueryBuilderTable::class)
+        ->assertCanSeeTableRecords([$highAvgUser, $lowAvgUser])
+        ->tap(fn ($livewire) => $livewire
+            ->set('tableDeferredFilters.query_builder.rules', [
+                [
+                    'type' => 'posts_rating',
+                    'data' => [
+                        'operator' => 'isMin.inverse', // Less than
+                        'settings' => ['number' => 7, 'aggregate' => 'avg'],
+                    ],
+                ],
+            ])
+            ->call('applyTableFilters'))
+        ->assertCanSeeTableRecords([$lowAvgUser])
+        ->assertCanNotSeeTableRecords([$highAvgUser]);
 });
