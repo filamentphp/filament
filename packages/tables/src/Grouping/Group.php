@@ -8,6 +8,7 @@ use Carbon\CarbonInterface;
 use Closure;
 use Filament\Support\Components\Component;
 use Filament\Support\Contracts\HasLabel as LabelInterface;
+use Filament\Support\Services\RelationshipOrderer;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Model;
@@ -321,33 +322,14 @@ class Group extends Component
             ]) ?? $query;
         }
 
-        $relationshipName = $this->getRelationshipName();
-
-        if (blank($relationshipName)) {
-            return $query->orderBy($this->getRelationshipAttribute(), $direction);
+        if (filled($relationshipName = $this->getRelationshipName())) {
+            return $query->orderBy(
+                app(RelationshipOrderer::class)->buildSubquery($query, $relationshipName, $this->getRelationshipAttribute()),
+                $direction
+            );
         }
 
-        if (str($relationshipName)->contains('.')) {
-            return $query->orderByPowerJoins("{$relationshipName}.{$this->getRelationshipAttribute()}", $direction, joinType: 'leftJoin'); /** @phpstan-ignore method.notFound */
-        }
-
-        return $query->orderBy($this->getRelationshipOrderColumnForQuery($query), $direction);
-    }
-
-    protected function getRelationshipOrderColumnForQuery(EloquentBuilder $query): string | Builder
-    {
-        $relationshipName = $this->getRelationshipName();
-        $relationship = $query->getModel()->{$relationshipName}();
-        $relatedQuery = $relationship->getRelated()::query();
-
-        return $relationship
-            ->getRelationExistenceQuery(
-                $relatedQuery,
-                $query,
-                [$this->getRelationshipAttribute()],
-            )
-            ->applyScopes()
-            ->getQuery();
+        return $query->orderBy($this->getRelationshipAttribute(), $direction);
     }
 
     public function scopeQuery(EloquentBuilder $query, Model $record): EloquentBuilder

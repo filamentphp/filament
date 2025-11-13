@@ -2,7 +2,12 @@
 
 use Filament\Tables;
 use Filament\Tests\Fixtures\Livewire\PostsTable;
+use Filament\Tests\Fixtures\Livewire\UsersTable;
+use Filament\Tests\Fixtures\Models\Company;
+use Filament\Tests\Fixtures\Models\Image;
 use Filament\Tests\Fixtures\Models\Post;
+use Filament\Tests\Fixtures\Models\Profile;
+use Filament\Tests\Fixtures\Models\Setting;
 use Filament\Tests\Fixtures\Models\Team;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Tables\TestCase;
@@ -102,4 +107,273 @@ it('can group records by nested relationship', function (): void {
     livewire(PostsTable::class)
         ->set('tableGrouping', 'author.team.name')
         ->assertCanSeeTableRecords($posts->sortBy('author.team.name'), inOrder: true);
+});
+
+it('can group records by `BelongsTo` -> `HasOne` relationship', function (): void {
+    $posts = collect();
+
+    // Create posts with unique profile bios
+    $bios = ['Alpha bio', 'Beta bio', 'Gamma bio', 'Delta bio', 'Epsilon bio'];
+    foreach ($bios as $bio) {
+        $user = User::factory()->has(
+            Profile::factory()->state(['bio' => $bio]),
+            'profile'
+        )->create();
+        $posts->push(Post::factory()->create(['author_id' => $user->id]));
+    }
+
+    livewire(PostsTable::class)
+        ->set('tableGrouping', 'author.profile.bio')
+        ->assertCanSeeTableRecords($posts->sortBy('author.profile.bio'), inOrder: true);
+});
+
+it('can group records by `BelongsTo` -> `HasOne` -> `BelongsTo` relationship', function (): void {
+    $posts = collect();
+
+    // Create posts with users that have profiles linked to companies
+    $companyNames = ['Acme Corp', 'Beta Inc', 'Gamma LLC', 'Delta Co', 'Epsilon Ltd'];
+    foreach ($companyNames as $companyName) {
+        $company = Company::factory()->create(['name' => $companyName]);
+        $user = User::factory()->has(
+            Profile::factory()->for($company, 'company'),
+            'profile'
+        )->create();
+        $posts->push(Post::factory()->create(['author_id' => $user->id]));
+    }
+
+    livewire(PostsTable::class)
+        ->set('tableGrouping', 'author.profile.company.name')
+        ->assertCanSeeTableRecords($posts->sortBy('author.profile.company.name'), inOrder: true);
+});
+
+it('can group records by `HasOne` -> `BelongsTo` relationship', function (): void {
+    $users = collect();
+
+    // Create users with profiles linked to different companies
+    $companyNames = ['Alpha Corp', 'Beta Corp', 'Gamma Corp', 'Delta Corp', 'Epsilon Corp'];
+    foreach ($companyNames as $companyName) {
+        $company = Company::factory()->create(['name' => $companyName]);
+        $user = User::factory()->has(
+            Profile::factory()->for($company, 'company'),
+            'profile'
+        )->create();
+        $users->push($user);
+    }
+
+    livewire(UsersTable::class)
+        ->set('tableGrouping', 'profile.company.name')
+        ->assertCanSeeTableRecords($users->sortBy('profile.company.name'), inOrder: true);
+});
+
+it('can group records by `HasOne` -> `HasOne` relationship', function (): void {
+    $users = collect();
+
+    // Create users with profiles that have settings
+    $themes = ['alpha-theme', 'beta-theme', 'gamma-theme', 'delta-theme', 'epsilon-theme'];
+    foreach ($themes as $theme) {
+        $user = User::factory()->has(
+            Profile::factory()->has(
+                Setting::factory()->state(['theme' => $theme]),
+                'setting'
+            ),
+            'profile'
+        )->create();
+        $users->push($user);
+    }
+
+    livewire(UsersTable::class)
+        ->set('tableGrouping', 'profile.setting.theme')
+        ->assertCanSeeTableRecords($users->sortBy('profile.setting.theme'), inOrder: true);
+});
+
+it('can group records by `MorphOne` relationship', function (): void {
+    $users = collect();
+
+    $urls = ['alpha.jpg', 'beta.jpg', 'gamma.jpg', 'delta.jpg', 'epsilon.jpg'];
+    foreach ($urls as $url) {
+        $user = User::factory()->create();
+        Image::factory()->create([
+            'url' => $url,
+            'imageable_type' => User::class,
+            'imageable_id' => $user->id,
+        ]);
+        $users->push($user);
+    }
+
+    livewire(UsersTable::class)
+        ->set('tableGrouping', 'image.url')
+        ->assertCanSeeTableRecords($users->sortBy('image.url'), inOrder: true);
+});
+
+it('can group records by `BelongsTo` -> `MorphOne` relationship', function (): void {
+    $posts = collect();
+
+    $urls = ['alpha.jpg', 'beta.jpg', 'gamma.jpg', 'delta.jpg', 'epsilon.jpg'];
+    foreach ($urls as $url) {
+        $user = User::factory()->create();
+        Image::factory()->create([
+            'url' => $url,
+            'imageable_type' => User::class,
+            'imageable_id' => $user->id,
+        ]);
+        $posts->push(Post::factory()->create(['author_id' => $user->id]));
+    }
+
+    livewire(PostsTable::class)
+        ->set('tableGrouping', 'author.image.url')
+        ->assertCanSeeTableRecords($posts->sortBy('author.image.url'), inOrder: true);
+});
+
+it('can group records by `BelongsTo` -> `HasOne` -> `MorphOne` relationship', function (): void {
+    $posts = collect();
+
+    $altTexts = ['alt alpha', 'alt beta', 'alt gamma', 'alt delta', 'alt epsilon'];
+    foreach ($altTexts as $altText) {
+        $user = User::factory()->create();
+        $profile = Profile::factory()->create(['user_id' => $user->id]);
+        Image::factory()->create([
+            'alt_text' => $altText,
+            'imageable_type' => Profile::class,
+            'imageable_id' => $profile->id,
+        ]);
+        $posts->push(Post::factory()->create(['author_id' => $user->id]));
+    }
+
+    livewire(PostsTable::class)
+        ->set('tableGrouping', 'author.profile.image.alt_text')
+        ->assertCanSeeTableRecords($posts->sortBy('author.profile.image.alt_text'), inOrder: true);
+});
+
+it('can group records with nullable `BelongsTo` relationship', function (): void {
+    $userAlpha = User::factory()->create(['name' => 'Alpha']);
+    $userBeta = User::factory()->create(['name' => 'Beta']);
+
+    $postWithAlpha = Post::factory()->create(['author_id' => $userAlpha->id]);
+    $postWithBeta = Post::factory()->create(['author_id' => $userBeta->id]);
+    $postWithoutAuthor1 = Post::factory()->create(['author_id' => null]);
+    $postWithoutAuthor2 = Post::factory()->create(['author_id' => null]);
+
+    $allPosts = collect([$postWithAlpha, $postWithBeta, $postWithoutAuthor1, $postWithoutAuthor2]);
+
+    // Just verify grouping doesn't crash with nullable relationships
+    livewire(PostsTable::class)
+        ->set('tableGrouping', 'author.name')
+        ->assertCanSeeTableRecords($allPosts);
+});
+
+it('can group records with nullable `HasOne` relationship', function (): void {
+    $userWithProfile1 = User::factory()->has(
+        Profile::factory()->state(['bio' => 'Alpha bio']),
+        'profile'
+    )->create();
+
+    $userWithProfile2 = User::factory()->has(
+        Profile::factory()->state(['bio' => 'Beta bio']),
+        'profile'
+    )->create();
+
+    $userWithoutProfile1 = User::factory()->create();
+    $userWithoutProfile2 = User::factory()->create();
+
+    $allUsers = collect([$userWithProfile1, $userWithProfile2, $userWithoutProfile1, $userWithoutProfile2]);
+
+    // Just verify grouping doesn't crash with nullable relationships
+    livewire(UsersTable::class)
+        ->set('tableGrouping', 'profile.bio')
+        ->assertCanSeeTableRecords($allUsers);
+});
+
+it('can group records with nullable `MorphOne` relationship', function (): void {
+    $userWithImage1 = User::factory()->create();
+    Image::factory()->create([
+        'url' => 'alpha.jpg',
+        'imageable_type' => User::class,
+        'imageable_id' => $userWithImage1->id,
+    ]);
+
+    $userWithImage2 = User::factory()->create();
+    Image::factory()->create([
+        'url' => 'beta.jpg',
+        'imageable_type' => User::class,
+        'imageable_id' => $userWithImage2->id,
+    ]);
+
+    $userWithoutImage1 = User::factory()->create();
+    $userWithoutImage2 = User::factory()->create();
+
+    $allUsers = collect([$userWithImage1, $userWithImage2, $userWithoutImage1, $userWithoutImage2]);
+
+    // Just verify grouping doesn't crash with nullable relationships
+    livewire(UsersTable::class)
+        ->set('tableGrouping', 'image.url')
+        ->assertCanSeeTableRecords($allUsers);
+});
+
+it('can group records with nullable nested `BelongsTo` -> `HasOne` relationship', function (): void {
+    $userWithProfile = User::factory()->has(
+        Profile::factory()->state(['bio' => 'Alpha bio']),
+        'profile'
+    )->create();
+    $postWithAuthorAndProfile = Post::factory()->create(['author_id' => $userWithProfile->id]);
+
+    $userWithoutProfile = User::factory()->create();
+    $postWithAuthorNoProfile = Post::factory()->create(['author_id' => $userWithoutProfile->id]);
+
+    $postWithoutAuthor = Post::factory()->create(['author_id' => null]);
+
+    $allPosts = collect([$postWithAuthorAndProfile, $postWithAuthorNoProfile, $postWithoutAuthor]);
+
+    // Just verify grouping doesn't crash with nullable nested relationships
+    livewire(PostsTable::class)
+        ->set('tableGrouping', 'author.profile.bio')
+        ->assertCanSeeTableRecords($allPosts);
+});
+
+it('can group records with nullable nested `BelongsTo` -> `HasOne` -> `BelongsTo` relationship', function (): void {
+    $company = Company::factory()->create(['name' => 'Acme Corp']);
+    $userWithProfileAndCompany = User::factory()->has(
+        Profile::factory()->for($company, 'company'),
+        'profile'
+    )->create();
+    $postComplete = Post::factory()->create(['author_id' => $userWithProfileAndCompany->id]);
+
+    $userWithProfileNoCompany = User::factory()->has(
+        Profile::factory()->state(['company_id' => null]),
+        'profile'
+    )->create();
+    $postNoCompany = Post::factory()->create(['author_id' => $userWithProfileNoCompany->id]);
+
+    $userNoProfile = User::factory()->create();
+    $postNoProfile = Post::factory()->create(['author_id' => $userNoProfile->id]);
+
+    $postNoAuthor = Post::factory()->create(['author_id' => null]);
+
+    $allPosts = collect([$postComplete, $postNoCompany, $postNoProfile, $postNoAuthor]);
+
+    // Just verify grouping doesn't crash with nullable nested relationships
+    livewire(PostsTable::class)
+        ->set('tableGrouping', 'author.profile.company.name')
+        ->assertCanSeeTableRecords($allPosts);
+});
+
+it('can group records with nullable nested `BelongsTo` -> `MorphOne` relationship', function (): void {
+    $userWithImage = User::factory()->create();
+    Image::factory()->create([
+        'url' => 'alpha.jpg',
+        'imageable_type' => User::class,
+        'imageable_id' => $userWithImage->id,
+    ]);
+    $postWithAuthorAndImage = Post::factory()->create(['author_id' => $userWithImage->id]);
+
+    $userWithoutImage = User::factory()->create();
+    $postWithAuthorNoImage = Post::factory()->create(['author_id' => $userWithoutImage->id]);
+
+    $postWithoutAuthor = Post::factory()->create(['author_id' => null]);
+
+    $allPosts = collect([$postWithAuthorAndImage, $postWithAuthorNoImage, $postWithoutAuthor]);
+
+    // Just verify grouping doesn't crash with nullable nested relationships
+    livewire(PostsTable::class)
+        ->set('tableGrouping', 'author.image.url')
+        ->assertCanSeeTableRecords($allPosts);
 });

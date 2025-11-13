@@ -43,6 +43,10 @@ class PostsTable extends Component implements HasActions, HasSchemas, Tables\Con
                 Tables\Grouping\Group::make('author.name')
                     ->label(fn (Table $table, self $livewire) => 'Dynamic label'),
                 Tables\Grouping\Group::make('author.team.name'),
+                Tables\Grouping\Group::make('author.profile.bio'),
+                Tables\Grouping\Group::make('author.profile.company.name'),
+                Tables\Grouping\Group::make('author.image.url'),
+                Tables\Grouping\Group::make('author.profile.image.alt_text'),
             ])
             ->columns([
                 Tables\Columns\TextColumn::make('title')
@@ -69,6 +73,22 @@ class PostsTable extends Component implements HasActions, HasSchemas, Tables\Con
                 Tables\Columns\TextColumn::make('author.team.name')
                     ->label('Author Team')
                     ->sortable(),
+                Tables\Columns\TextColumn::make('author.profile.bio')
+                    ->label('Author Profile Bio')
+                    ->sortable()
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('author.profile.company.name')
+                    ->label('Author Company')
+                    ->sortable()
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('author.image.url')
+                    ->label('Author Image URL')
+                    ->sortable()
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('author.profile.image.alt_text')
+                    ->label('Profile Image Alt')
+                    ->sortable()
+                    ->searchable(),
                 Tables\Columns\IconColumn::make('is_published')
                     ->boolean()
                     ->summarize([

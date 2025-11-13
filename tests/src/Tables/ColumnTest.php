@@ -4,8 +4,13 @@ use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tests\Fixtures\Livewire\PostsTable;
 use Filament\Tests\Fixtures\Livewire\PostsTableWithQualifiedColumns;
+use Filament\Tests\Fixtures\Livewire\UsersTable;
 use Filament\Tests\Fixtures\Livewire\UsersWithTeamTable;
+use Filament\Tests\Fixtures\Models\Company;
+use Filament\Tests\Fixtures\Models\Image;
 use Filament\Tests\Fixtures\Models\Post;
+use Filament\Tests\Fixtures\Models\Profile;
+use Filament\Tests\Fixtures\Models\Setting;
 use Filament\Tests\Fixtures\Models\Team;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Tables\TestCase;
@@ -446,7 +451,7 @@ it('can search and sort by relationship column when both tables have the same co
         ->assertCanNotSeeTableRecords([$userBob]);
 });
 
-it('can search and sort by nested relationship column when tables have the same column name', function (): void {
+it('can search and sort by nested relationship column when tables have the same column name, with a qualified column', function (): void {
     // Create teams (teams table has 'name' column)
     $teamAlpha = Team::factory()->create(['name' => 'Team Alpha']);
     $teamBeta = Team::factory()->create(['name' => 'Team Beta']);
@@ -489,4 +494,470 @@ it('can search and sort by nested relationship column when tables have the same 
         ->sortTable('author.team.name')
         ->assertCanSeeTableRecords([$postByAlice])
         ->assertCanNotSeeTableRecords([$postByBob, $postByCharlie]);
+});
+
+it('can sort records with `BelongsTo` -> `HasOne` relationship', function (): void {
+    $posts = Post::factory()->count(5)->state(fn (): array => [
+        'author_id' => User::factory()->has(
+            Profile::factory()->state(fn (): array => [
+                'bio' => fake()->sentence(),
+            ]),
+            'profile'
+        ),
+    ])->create();
+
+    livewire(PostsTable::class)
+        ->sortTable('author.profile.bio')
+        ->assertCanSeeTableRecords($posts->sortBy('author.profile.bio'), inOrder: true)
+        ->sortTable('author.profile.bio', 'desc')
+        ->assertCanSeeTableRecords($posts->sortByDesc('author.profile.bio'), inOrder: true);
+});
+
+it('can sort records with `BelongsTo` -> `HasOne` -> `BelongsTo` relationship', function (): void {
+    $posts = Post::factory()->count(5)->state(fn (): array => [
+        'author_id' => User::factory()->has(
+            Profile::factory()->state(fn (): array => [
+                'company_id' => Company::factory(),
+            ]),
+            'profile'
+        ),
+    ])->create();
+
+    livewire(PostsTable::class)
+        ->sortTable('author.profile.company.name')
+        ->assertCanSeeTableRecords($posts->sortBy('author.profile.company.name'), inOrder: true)
+        ->sortTable('author.profile.company.name', 'desc')
+        ->assertCanSeeTableRecords($posts->sortByDesc('author.profile.company.name'), inOrder: true);
+});
+
+it('can search records with `BelongsTo` -> `HasOne` relationship', function (): void {
+    $searchBio = 'unique bio for testing';
+
+    $matchingUser = User::factory()->has(
+        Profile::factory()->state([
+            'bio' => $searchBio,
+        ]),
+        'profile'
+    )->create();
+
+    $matchingPost = Post::factory()->for($matchingUser, 'author')->create();
+
+    $nonMatchingPosts = Post::factory()->count(3)->create();
+
+    livewire(PostsTable::class)
+        ->searchTable($searchBio)
+        ->assertCanSeeTableRecords([$matchingPost])
+        ->assertCanNotSeeTableRecords($nonMatchingPosts);
+});
+
+it('can search records with `BelongsTo` -> `HasOne` -> `BelongsTo` relationship', function (): void {
+    $searchCompany = 'Acme Corporation Testing';
+
+    $company = Company::factory()->create([
+        'name' => $searchCompany,
+    ]);
+
+    $matchingUser = User::factory()->has(
+        Profile::factory()->for($company, 'company'),
+        'profile'
+    )->create();
+
+    $matchingPost = Post::factory()->for($matchingUser, 'author')->create();
+
+    $nonMatchingPosts = Post::factory()->count(3)->create();
+
+    livewire(PostsTable::class)
+        ->searchTable($searchCompany)
+        ->assertCanSeeTableRecords([$matchingPost])
+        ->assertCanNotSeeTableRecords($nonMatchingPosts);
+});
+
+it('can sort records with `HasOne` -> `BelongsTo` relationship', function (): void {
+    $users = collect();
+
+    for ($i = 0; $i < 5; $i++) {
+        $company = Company::factory()->create(['name' => 'Company ' . chr(65 + $i)]);  // A, B, C, D, E
+        $user = User::factory()->has(
+            Profile::factory()->for($company, 'company'),
+            'profile'
+        )->create();
+        $users->push($user);
+    }
+
+    livewire(UsersTable::class)
+        ->sortTable('profile.company.name')
+        ->assertCanSeeTableRecords($users->sortBy('profile.company.name'), inOrder: true)
+        ->sortTable('profile.company.name', 'desc')
+        ->assertCanSeeTableRecords($users->sortByDesc('profile.company.name'), inOrder: true);
+});
+
+it('can sort records with `HasOne` -> `HasOne` relationship', function (): void {
+    $themes = ['alpha', 'beta', 'gamma', 'delta', 'epsilon'];
+    $users = collect();
+
+    foreach ($themes as $theme) {
+        $user = User::factory()->has(
+            Profile::factory()->has(
+                Setting::factory()->state(['theme' => $theme]),
+                'setting'
+            ),
+            'profile'
+        )->create();
+        $users->push($user);
+    }
+
+    livewire(UsersTable::class)
+        ->sortTable('profile.setting.theme')
+        ->assertCanSeeTableRecords($users->sortBy('profile.setting.theme'), inOrder: true)
+        ->sortTable('profile.setting.theme', 'desc')
+        ->assertCanSeeTableRecords($users->sortByDesc('profile.setting.theme'), inOrder: true);
+});
+
+it('can search records with `HasOne` -> `BelongsTo` relationship', function (): void {
+    $searchCompany = 'TechCorp Testing Inc';
+
+    $company = Company::factory()->create(['name' => $searchCompany]);
+
+    $matchingUser = User::factory()->has(
+        Profile::factory()->for($company, 'company'),
+        'profile'
+    )->create();
+
+    $nonMatchingUsers = User::factory()->count(3)->create();
+
+    livewire(UsersTable::class)
+        ->searchTable($searchCompany)
+        ->assertCanSeeTableRecords([$matchingUser])
+        ->assertCanNotSeeTableRecords($nonMatchingUsers);
+});
+
+it('can search records with `HasOne` -> `HasOne` relationship', function (): void {
+    $searchTheme = 'midnight-purple';
+
+    $matchingUser = User::factory()->has(
+        Profile::factory()->has(
+            Setting::factory()->state(['theme' => $searchTheme]),
+            'setting'
+        ),
+        'profile'
+    )->create();
+
+    $nonMatchingUsers = User::factory()->count(3)->create();
+
+    livewire(UsersTable::class)
+        ->searchTable($searchTheme)
+        ->assertCanSeeTableRecords([$matchingUser])
+        ->assertCanNotSeeTableRecords($nonMatchingUsers);
+});
+
+it('can sort records with `MorphOne` relationship', function (): void {
+    $urls = ['alpha.jpg', 'beta.jpg', 'gamma.jpg', 'delta.jpg', 'epsilon.jpg'];
+    $users = collect();
+
+    foreach ($urls as $url) {
+        $user = User::factory()->create();
+        Image::factory()->create([
+            'url' => $url,
+            'imageable_type' => User::class,
+            'imageable_id' => $user->id,
+        ]);
+        $users->push($user);
+    }
+
+    livewire(UsersTable::class)
+        ->sortTable('image.url')
+        ->assertCanSeeTableRecords($users->sortBy('image.url'), inOrder: true)
+        ->sortTable('image.url', 'desc')
+        ->assertCanSeeTableRecords($users->sortByDesc('image.url'), inOrder: true);
+});
+
+it('can sort records with `BelongsTo` -> `MorphOne` relationship', function (): void {
+    $urls = ['alpha.jpg', 'beta.jpg', 'gamma.jpg', 'delta.jpg', 'epsilon.jpg'];
+    $posts = collect();
+
+    foreach ($urls as $url) {
+        $user = User::factory()->create();
+        Image::factory()->create([
+            'url' => $url,
+            'imageable_type' => User::class,
+            'imageable_id' => $user->id,
+        ]);
+        $posts->push(Post::factory()->create(['author_id' => $user->id]));
+    }
+
+    livewire(PostsTable::class)
+        ->sortTable('author.image.url')
+        ->assertCanSeeTableRecords($posts->sortBy('author.image.url'), inOrder: true)
+        ->sortTable('author.image.url', 'desc')
+        ->assertCanSeeTableRecords($posts->sortByDesc('author.image.url'), inOrder: true);
+});
+
+it('can sort records with `BelongsTo` -> `HasOne` -> `MorphOne` relationship', function (): void {
+    $altTexts = ['alt alpha', 'alt beta', 'alt gamma', 'alt delta', 'alt epsilon'];
+    $posts = collect();
+
+    foreach ($altTexts as $altText) {
+        $user = User::factory()->create();
+        $profile = Profile::factory()->create(['user_id' => $user->id]);
+        Image::factory()->create([
+            'alt_text' => $altText,
+            'imageable_type' => Profile::class,
+            'imageable_id' => $profile->id,
+        ]);
+        $posts->push(Post::factory()->create(['author_id' => $user->id]));
+    }
+
+    livewire(PostsTable::class)
+        ->sortTable('author.profile.image.alt_text')
+        ->assertCanSeeTableRecords($posts->sortBy('author.profile.image.alt_text'), inOrder: true)
+        ->sortTable('author.profile.image.alt_text', 'desc')
+        ->assertCanSeeTableRecords($posts->sortByDesc('author.profile.image.alt_text'), inOrder: true);
+});
+
+it('can search records with `MorphOne` relationship', function (): void {
+    $searchUrl = 'unique-image-url.jpg';
+
+    $matchingUser = User::factory()->create();
+    Image::factory()->create([
+        'url' => $searchUrl,
+        'imageable_type' => User::class,
+        'imageable_id' => $matchingUser->id,
+    ]);
+
+    $nonMatchingUsers = User::factory()->count(3)->create();
+
+    livewire(UsersTable::class)
+        ->searchTable($searchUrl)
+        ->assertCanSeeTableRecords([$matchingUser])
+        ->assertCanNotSeeTableRecords($nonMatchingUsers);
+});
+
+it('can search records with `BelongsTo` -> `MorphOne` relationship', function (): void {
+    $searchUrl = 'unique-author-image.jpg';
+
+    $matchingUser = User::factory()->create();
+    Image::factory()->create([
+        'url' => $searchUrl,
+        'imageable_type' => User::class,
+        'imageable_id' => $matchingUser->id,
+    ]);
+
+    $matchingPost = Post::factory()->for($matchingUser, 'author')->create();
+    $nonMatchingPosts = Post::factory()->count(3)->create();
+
+    livewire(PostsTable::class)
+        ->searchTable($searchUrl)
+        ->assertCanSeeTableRecords([$matchingPost])
+        ->assertCanNotSeeTableRecords($nonMatchingPosts);
+});
+
+it('can search records with `BelongsTo` -> `HasOne` -> `MorphOne` relationship', function (): void {
+    $searchAltText = 'unique profile image alt text';
+
+    $matchingUser = User::factory()->create();
+    $matchingProfile = Profile::factory()->create(['user_id' => $matchingUser->id]);
+    Image::factory()->create([
+        'alt_text' => $searchAltText,
+        'imageable_type' => Profile::class,
+        'imageable_id' => $matchingProfile->id,
+    ]);
+
+    $matchingPost = Post::factory()->for($matchingUser, 'author')->create();
+    $nonMatchingPosts = Post::factory()->count(3)->create();
+
+    livewire(PostsTable::class)
+        ->searchTable($searchAltText)
+        ->assertCanSeeTableRecords([$matchingPost])
+        ->assertCanNotSeeTableRecords($nonMatchingPosts);
+});
+
+it('can sort records with nullable `BelongsTo` relationship', function (): void {
+    // Create posts with authors
+    $userAlice = User::factory()->create(['name' => 'Alice']);
+    $userBob = User::factory()->create(['name' => 'Bob']);
+
+    $postWithAlice = Post::factory()->create(['author_id' => $userAlice->id]);
+    $postWithBob = Post::factory()->create(['author_id' => $userBob->id]);
+
+    // Create posts without authors (null relationship)
+    $postWithoutAuthor1 = Post::factory()->create(['author_id' => null]);
+    $postWithoutAuthor2 = Post::factory()->create(['author_id' => null]);
+
+    $allPosts = collect([$postWithAlice, $postWithBob, $postWithoutAuthor1, $postWithoutAuthor2]);
+
+    // Just verify sorting doesn't crash with nullable relationships
+    livewire(PostsTable::class)
+        ->sortTable('author.name')
+        ->assertCanSeeTableRecords($allPosts)
+        ->sortTable('author.name', 'desc')
+        ->assertCanSeeTableRecords($allPosts);
+});
+
+it('can sort records with nullable `HasOne` relationship', function (): void {
+    // Create users with profiles
+    $userWithProfile1 = User::factory()->has(
+        Profile::factory()->state(['bio' => 'Alpha bio']),
+        'profile'
+    )->create();
+
+    $userWithProfile2 = User::factory()->has(
+        Profile::factory()->state(['bio' => 'Beta bio']),
+        'profile'
+    )->create();
+
+    // Create users without profiles (null relationship)
+    $userWithoutProfile1 = User::factory()->create();
+    $userWithoutProfile2 = User::factory()->create();
+
+    $allUsers = collect([$userWithProfile1, $userWithProfile2, $userWithoutProfile1, $userWithoutProfile2]);
+
+    // Just verify sorting doesn't crash with nullable relationships
+    livewire(UsersTable::class)
+        ->sortTable('profile.bio')
+        ->assertCanSeeTableRecords($allUsers)
+        ->sortTable('profile.bio', 'desc')
+        ->assertCanSeeTableRecords($allUsers);
+});
+
+it('can sort records with nullable `MorphOne` relationship', function (): void {
+    // Create users with images
+    $userWithImage1 = User::factory()->create();
+    Image::factory()->create([
+        'url' => 'alpha.jpg',
+        'imageable_type' => User::class,
+        'imageable_id' => $userWithImage1->id,
+    ]);
+
+    $userWithImage2 = User::factory()->create();
+    Image::factory()->create([
+        'url' => 'beta.jpg',
+        'imageable_type' => User::class,
+        'imageable_id' => $userWithImage2->id,
+    ]);
+
+    // Create users without images (null relationship)
+    $userWithoutImage1 = User::factory()->create();
+    $userWithoutImage2 = User::factory()->create();
+
+    $allUsers = collect([$userWithImage1, $userWithImage2, $userWithoutImage1, $userWithoutImage2]);
+
+    // Just verify sorting doesn't crash with nullable relationships
+    livewire(UsersTable::class)
+        ->sortTable('image.url')
+        ->assertCanSeeTableRecords($allUsers)
+        ->sortTable('image.url', 'desc')
+        ->assertCanSeeTableRecords($allUsers);
+});
+
+it('can sort records with nullable nested `BelongsTo` -> `HasOne` relationship', function (): void {
+    // Post with author that has profile
+    $userWithProfile = User::factory()->has(
+        Profile::factory()->state(['bio' => 'Alpha bio']),
+        'profile'
+    )->create();
+    $postWithAuthorAndProfile = Post::factory()->create(['author_id' => $userWithProfile->id]);
+
+    // Post with author but no profile
+    $userWithoutProfile = User::factory()->create();
+    $postWithAuthorNoProfile = Post::factory()->create(['author_id' => $userWithoutProfile->id]);
+
+    // Post with no author
+    $postWithoutAuthor = Post::factory()->create(['author_id' => null]);
+
+    $allPosts = collect([$postWithAuthorAndProfile, $postWithAuthorNoProfile, $postWithoutAuthor]);
+
+    // Just verify sorting doesn't crash with nullable nested relationships
+    livewire(PostsTable::class)
+        ->sortTable('author.profile.bio')
+        ->assertCanSeeTableRecords($allPosts)
+        ->sortTable('author.profile.bio', 'desc')
+        ->assertCanSeeTableRecords($allPosts);
+});
+
+it('can sort records with nullable nested `BelongsTo` -> `HasOne` -> `BelongsTo` relationship', function (): void {
+    // Post with author->profile->company
+    $company = Company::factory()->create(['name' => 'Acme Corp']);
+    $userWithProfileAndCompany = User::factory()->has(
+        Profile::factory()->for($company, 'company'),
+        'profile'
+    )->create();
+    $postComplete = Post::factory()->create(['author_id' => $userWithProfileAndCompany->id]);
+
+    // Post with author and profile but no company
+    $userWithProfileNoCompany = User::factory()->has(
+        Profile::factory()->state(['company_id' => null]),
+        'profile'
+    )->create();
+    $postNoCompany = Post::factory()->create(['author_id' => $userWithProfileNoCompany->id]);
+
+    // Post with author but no profile
+    $userNoProfile = User::factory()->create();
+    $postNoProfile = Post::factory()->create(['author_id' => $userNoProfile->id]);
+
+    // Post with no author
+    $postNoAuthor = Post::factory()->create(['author_id' => null]);
+
+    $allPosts = collect([$postComplete, $postNoCompany, $postNoProfile, $postNoAuthor]);
+
+    // Just verify sorting doesn't crash with nullable nested relationships
+    livewire(PostsTable::class)
+        ->sortTable('author.profile.company.name')
+        ->assertCanSeeTableRecords($allPosts)
+        ->sortTable('author.profile.company.name', 'desc')
+        ->assertCanSeeTableRecords($allPosts);
+});
+
+it('can sort records with nullable nested `BelongsTo` -> `MorphOne` relationship', function (): void {
+    // Post with author that has image
+    $userWithImage = User::factory()->create();
+    Image::factory()->create([
+        'url' => 'alpha.jpg',
+        'imageable_type' => User::class,
+        'imageable_id' => $userWithImage->id,
+    ]);
+    $postWithAuthorAndImage = Post::factory()->create(['author_id' => $userWithImage->id]);
+
+    // Post with author but no image
+    $userWithoutImage = User::factory()->create();
+    $postWithAuthorNoImage = Post::factory()->create(['author_id' => $userWithoutImage->id]);
+
+    // Post with no author
+    $postWithoutAuthor = Post::factory()->create(['author_id' => null]);
+
+    $allPosts = collect([$postWithAuthorAndImage, $postWithAuthorNoImage, $postWithoutAuthor]);
+
+    // Just verify sorting doesn't crash with nullable nested relationships
+    livewire(PostsTable::class)
+        ->sortTable('author.image.url')
+        ->assertCanSeeTableRecords($allPosts)
+        ->sortTable('author.image.url', 'desc')
+        ->assertCanSeeTableRecords($allPosts);
+});
+
+it('can search records with nullable `BelongsTo` relationship', function (): void {
+    $userAlice = User::factory()->create(['name' => 'Alice Unique']);
+
+    $matchingPost = Post::factory()->create(['author_id' => $userAlice->id]);
+    $postWithoutAuthor = Post::factory()->create(['author_id' => null]);
+    $nonMatchingPost = Post::factory()->create();
+
+    livewire(PostsTable::class)
+        ->searchTable('Alice Unique')
+        ->assertCanSeeTableRecords([$matchingPost])
+        ->assertCanNotSeeTableRecords([$postWithoutAuthor, $nonMatchingPost]);
+});
+
+it('can search records with nullable `HasOne` relationship', function (): void {
+    $userWithProfile = User::factory()->has(
+        Profile::factory()->state(['bio' => 'Unique bio search']),
+        'profile'
+    )->create();
+
+    $userWithoutProfile = User::factory()->create();
+    $otherUsers = User::factory()->count(2)->create();
+
+    livewire(UsersTable::class)
+        ->searchTable('Unique bio search')
+        ->assertCanSeeTableRecords([$userWithProfile])
+        ->assertCanNotSeeTableRecords([$userWithoutProfile, ...$otherUsers]);
 });
