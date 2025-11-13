@@ -24,6 +24,9 @@ class RelationshipOrderer
         return $subquery->limit(1)->toBase();
     }
 
+    /**
+     * @return array<Relation>
+     */
     protected function buildRelationshipChain(Model $baseModel, string $relationshipPath): array
     {
         $relationshipSegments = explode('.', $relationshipPath);
@@ -54,6 +57,9 @@ class RelationshipOrderer
         );
     }
 
+    /**
+     * @param  array<Relation>  $relationshipChain
+     */
     protected function getTargetModel(array $relationshipChain): Model
     {
         $lastRelationship = end($relationshipChain);
@@ -66,6 +72,9 @@ class RelationshipOrderer
         return $targetModel::query()->select($targetModel->qualifyColumn($column));
     }
 
+    /**
+     * @param  array<Relation>  $relationshipChain
+     */
     protected function applyRelationshipConstraints(
         EloquentBuilder $subquery,
         array $relationshipChain,
