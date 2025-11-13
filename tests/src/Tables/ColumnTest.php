@@ -3,6 +3,7 @@
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tests\Fixtures\Livewire\PostsTable;
+use Filament\Tests\Fixtures\Livewire\PostsTableWithQualifiedColumns;
 use Filament\Tests\Fixtures\Livewire\UsersWithTeamTable;
 use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Models\Team;
@@ -443,4 +444,49 @@ it('can search and sort by relationship column when both tables have the same co
         ->sortTable('team.name')
         ->assertCanSeeTableRecords([$userAlice])
         ->assertCanNotSeeTableRecords([$userBob]);
+});
+
+it('can search and sort by nested relationship column when tables have the same column name', function (): void {
+    // Create teams (teams table has 'name' column)
+    $teamAlpha = Team::factory()->create(['name' => 'Team Alpha']);
+    $teamBeta = Team::factory()->create(['name' => 'Team Beta']);
+    $teamGamma = Team::factory()->create(['name' => 'Team Gamma']);
+
+    // Create users with names and team assignments (users table has 'name' column)
+    $userAlice = User::factory()->create([
+        'name' => 'Alice',
+        'team_id' => $teamAlpha->id,
+    ]);
+
+    $userBob = User::factory()->create([
+        'name' => 'Bob',
+        'team_id' => $teamBeta->id,
+    ]);
+
+    $userCharlie = User::factory()->create([
+        'name' => 'Charlie',
+        'team_id' => $teamGamma->id,
+    ]);
+
+    // Create posts with those authors (posts table has searchable 'title' column)
+    $postByAlice = Post::factory()->create([
+        'author_id' => $userAlice->id,
+        'title' => 'Alice\'s Post',
+    ]);
+
+    $postByBob = Post::factory()->create([
+        'author_id' => $userBob->id,
+        'title' => 'Bob\'s Post',
+    ]);
+
+    $postByCharlie = Post::factory()->create([
+        'author_id' => $userCharlie->id,
+        'title' => 'Charlie\'s Post',
+    ]);
+
+    livewire(PostsTableWithQualifiedColumns::class)
+        ->searchTable('Alice')
+        ->sortTable('author.team.name')
+        ->assertCanSeeTableRecords([$postByAlice])
+        ->assertCanNotSeeTableRecords([$postByBob, $postByCharlie]);
 });

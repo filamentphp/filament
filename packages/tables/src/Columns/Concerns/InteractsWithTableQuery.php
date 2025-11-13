@@ -83,6 +83,8 @@ trait InteractsWithTableQuery
         foreach ($this->getSearchColumns($query->getModel()) as $searchColumn) {
             $whereClause = $isFirst ? 'where' : 'orWhere';
 
+            $jsonSafeSearchColumn = $this->getJsonSafeColumnName($searchColumn, $model->getTable());
+
             $query->when(
                 $translatableContentDriver?->isAttributeTranslatable($model::class, attribute: $searchColumn),
                 fn (EloquentBuilder $query): EloquentBuilder => $translatableContentDriver->applySearchConstraintToQuery($query, $searchColumn, $search, $whereClause, $isSearchForcedCaseInsensitive),
@@ -90,12 +92,12 @@ trait InteractsWithTableQuery
                     $this->hasRelationship($query->getModel()),
                     fn (EloquentBuilder $query): EloquentBuilder => $query->{"{$whereClause}Relation"}(
                         $this->getRelationshipName($query->getModel()),
-                        generate_search_column_expression((string) str($searchColumn)->replace('.', '->'), $isSearchForcedCaseInsensitive, $databaseConnection),
+                        generate_search_column_expression($jsonSafeSearchColumn, $isSearchForcedCaseInsensitive, $databaseConnection),
                         'like',
                         "%{$nonTranslatableSearch}%",
                     ),
                     fn (EloquentBuilder $query) => $query->{$whereClause}(
-                        generate_search_column_expression((string) str($searchColumn)->replace('.', '->'), $isSearchForcedCaseInsensitive, $databaseConnection),
+                        generate_search_column_expression($jsonSafeSearchColumn, $isSearchForcedCaseInsensitive, $databaseConnection),
                         'like',
                         "%{$nonTranslatableSearch}%",
                     ),
@@ -106,6 +108,15 @@ trait InteractsWithTableQuery
         }
 
         return $query;
+    }
+
+    protected function getJsonSafeColumnName(string $column, string $tableName): string
+    {
+        if (str($column)->startsWith("{$tableName}.")) {
+            return (string) str($column)->after('.')->replace('.', '->')->prepend("{$tableName}.");
+        }
+
+        return (string) str($column)->replace('.', '->');
     }
 
     public function applySort(EloquentBuilder $query, string $direction = 'asc'): EloquentBuilder
@@ -122,7 +133,7 @@ trait InteractsWithTableQuery
         $relationshipName = $this->getRelationshipName($query->getModel());
 
         foreach (array_reverse($this->getSortColumns($query->getModel())) as $sortColumn) {
-            $sortColumn = (string) str($sortColumn)->replace('.', '->');
+            $sortColumn = $this->getJsonSafeColumnName($sortColumn, $query->getModel()->getTable());
 
             if (blank($relationshipName)) {
                 $query->orderBy($sortColumn, $direction);
