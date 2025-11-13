@@ -39,8 +39,10 @@ class PostsTable extends Component implements HasActions, HasSchemas, Tables\Con
         return $table
             ->query(Post::query())
             ->groups(fn () => [
+                Tables\Grouping\Group::make('title'),
                 Tables\Grouping\Group::make('author.name')
                     ->label(fn (Table $table, self $livewire) => 'Dynamic label'),
+                Tables\Grouping\Group::make('author.team.name'),
             ])
             ->columns([
                 Tables\Columns\TextColumn::make('title')
