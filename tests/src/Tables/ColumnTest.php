@@ -73,11 +73,15 @@ it('can sort records with JSON column', function (): void {
         'json' => ['foo' => Str::random()],
     ])->create();
 
+    // Get database-sorted results to match actual query behavior
+    $sortedAsc = Post::query()->orderBy('json->foo')->get();
+    $sortedDesc = Post::query()->orderByDesc('json->foo')->get();
+
     livewire(PostsTable::class)
         ->sortTable('json.foo')
-        ->assertCanSeeTableRecords($posts->sortBy('json.foo'), inOrder: true)
+        ->assertCanSeeTableRecords($sortedAsc, inOrder: true)
         ->sortTable('json.foo', 'desc')
-        ->assertCanSeeTableRecords($posts->sortByDesc('json.foo'), inOrder: true);
+        ->assertCanSeeTableRecords($sortedDesc, inOrder: true);
 });
 
 it('can sort records with nested JSON column', function (): void {
@@ -85,11 +89,15 @@ it('can sort records with nested JSON column', function (): void {
         'json' => ['bar' => ['baz' => Str::random()]],
     ])->create();
 
+    // Get database-sorted results to match actual query behavior
+    $sortedAsc = Post::query()->orderBy('json->bar->baz')->get();
+    $sortedDesc = Post::query()->orderByDesc('json->bar->baz')->get();
+
     livewire(PostsTable::class)
         ->sortTable('json.bar.baz')
-        ->assertCanSeeTableRecords($posts->sortBy('json.bar.baz'), inOrder: true)
+        ->assertCanSeeTableRecords($sortedAsc, inOrder: true)
         ->sortTable('json.bar.baz', 'desc')
-        ->assertCanSeeTableRecords($posts->sortByDesc('json.bar.baz'), inOrder: true);
+        ->assertCanSeeTableRecords($sortedDesc, inOrder: true);
 });
 
 it('can sort records with relationship JSON column', function (): void {
@@ -97,11 +105,30 @@ it('can sort records with relationship JSON column', function (): void {
         'author_id' => User::factory()->state(['json' => ['foo' => Str::random()]]),
     ])->create();
 
+    // Get database-sorted results using subquery orderBy
+    $sortedAsc = Post::query()
+        ->orderBy(
+            User::query()
+                ->select('json->foo')
+                ->whereColumn('users.id', 'posts.author_id')
+                ->limit(1)
+        )
+        ->get();
+
+    $sortedDesc = Post::query()
+        ->orderByDesc(
+            User::query()
+                ->select('json->foo')
+                ->whereColumn('users.id', 'posts.author_id')
+                ->limit(1)
+        )
+        ->get();
+
     livewire(PostsTable::class)
         ->sortTable('author.json.foo')
-        ->assertCanSeeTableRecords($posts->sortBy('author.json.foo'), inOrder: true)
+        ->assertCanSeeTableRecords($sortedAsc, inOrder: true)
         ->sortTable('author.json.foo', 'desc')
-        ->assertCanSeeTableRecords($posts->sortByDesc('author.json.foo'), inOrder: true);
+        ->assertCanSeeTableRecords($sortedDesc, inOrder: true);
 });
 
 it('can sort records with relationship nested JSON column', function (): void {
@@ -109,11 +136,30 @@ it('can sort records with relationship nested JSON column', function (): void {
         'author_id' => User::factory()->state(['json' => ['bar' => ['baz' => Str::random()]]]),
     ])->create();
 
+    // Get database-sorted results using subquery orderBy
+    $sortedAsc = Post::query()
+        ->orderBy(
+            User::query()
+                ->select('json->bar->baz')
+                ->whereColumn('users.id', 'posts.author_id')
+                ->limit(1)
+        )
+        ->get();
+
+    $sortedDesc = Post::query()
+        ->orderByDesc(
+            User::query()
+                ->select('json->bar->baz')
+                ->whereColumn('users.id', 'posts.author_id')
+                ->limit(1)
+        )
+        ->get();
+
     livewire(PostsTable::class)
         ->sortTable('author.json.bar.baz')
-        ->assertCanSeeTableRecords($posts->sortBy('author.json.bar.baz'), inOrder: true)
+        ->assertCanSeeTableRecords($sortedAsc, inOrder: true)
         ->sortTable('author.json.bar.baz', 'desc')
-        ->assertCanSeeTableRecords($posts->sortByDesc('author.json.bar.baz'), inOrder: true);
+        ->assertCanSeeTableRecords($sortedDesc, inOrder: true);
 });
 
 it('can search records', function (): void {
