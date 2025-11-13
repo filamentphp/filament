@@ -22,14 +22,14 @@ it('can generate a Livewire table component', function (): void {
 
     assertFileExists($path = app_path('Livewire/ListBlogPosts.php'));
     expect(file_get_contents($path));
-    if (config('database.connections.testing.driver') === 'sqlite') {
+    if (config('database.default') === 'testing') {
         expect(file_get_contents($path))
             ->toMatchSnapshot();
     }
 
     assertFileExists($viewPath = resource_path('views/livewire/list-blog-posts.blade.php'));
     expect(file_get_contents($viewPath));
-    if (config('database.connections.testing.driver') === 'sqlite') {
+    if (config('database.default') === 'testing') {
         expect(file_get_contents($path))
             ->toMatchSnapshot();
     }
@@ -45,14 +45,14 @@ it('can generate a Livewire table component with a model', function (): void {
 
     assertFileExists($path = app_path('Livewire/ListPosts.php'));
     expect(file_get_contents($path));
-    if (config('database.connections.testing.driver') === 'sqlite') {
+    if (config('database.default') === 'testing') {
         expect(file_get_contents($path))
             ->toMatchSnapshot();
     }
 
     assertFileExists($viewPath = resource_path('views/livewire/list-posts.blade.php'));
     expect(file_get_contents($viewPath));
-    if (config('database.connections.testing.driver') === 'sqlite') {
+    if (config('database.default') === 'testing') {
         expect(file_get_contents($path))
             ->toMatchSnapshot();
     }
@@ -69,14 +69,14 @@ it('can generate a Livewire table component with generated columns', function ()
 
     assertFileExists($path = app_path('Livewire/ListPostsWithColumns.php'));
     expect(file_get_contents($path));
-    if (config('database.connections.testing.driver') === 'sqlite') {
+    if (config('database.default') === 'testing') {
         expect(file_get_contents($path))
             ->toMatchSnapshot();
     }
 
     assertFileExists($viewPath = resource_path('views/livewire/list-posts-with-columns.blade.php'));
     expect(file_get_contents($viewPath));
-    if (config('database.connections.testing.driver') === 'sqlite') {
+    if (config('database.default') === 'testing') {
         expect(file_get_contents($path))
             ->toMatchSnapshot();
     }
@@ -92,14 +92,14 @@ it('can generate a Livewire table component in a nested directory', function ():
 
     assertFileExists($path = app_path('Livewire/Blog/ListPosts.php'));
     expect(file_get_contents($path));
-    if (config('database.connections.testing.driver') === 'sqlite') {
+    if (config('database.default') === 'testing') {
         expect(file_get_contents($path))
             ->toMatchSnapshot();
     }
 
     assertFileExists($viewPath = resource_path('views/livewire/blog/list-posts.blade.php'));
     expect(file_get_contents($viewPath));
-    if (config('database.connections.testing.driver') === 'sqlite') {
+    if (config('database.default') === 'testing') {
         expect(file_get_contents($path))
             ->toMatchSnapshot();
     }
@@ -115,14 +115,14 @@ it('can generate a Livewire table component for a model in a nested directory', 
 
     assertFileExists($path = app_path('Livewire/Blog/ListCategories.php'));
     expect(file_get_contents($path));
-    if (config('database.connections.testing.driver') === 'sqlite') {
+    if (config('database.default') === 'testing') {
         expect(file_get_contents($path))
             ->toMatchSnapshot();
     }
 
     assertFileExists($viewPath = resource_path('views/livewire/blog/list-categories.blade.php'));
     expect(file_get_contents($viewPath));
-    if (config('database.connections.testing.driver') === 'sqlite') {
+    if (config('database.default') === 'testing') {
         expect(file_get_contents($path))
             ->toMatchSnapshot();
     }
