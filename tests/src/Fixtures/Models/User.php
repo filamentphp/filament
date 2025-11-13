@@ -20,9 +20,11 @@ use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Collection;
+use Znck\Eloquent\Traits\BelongsToThrough as BelongsToThroughTrait;
 
 class User extends Authenticatable implements FilamentUser, HasAppAuthentication, HasAppAuthenticationRecovery, HasEmailAuthentication, HasTenants, MustVerifyEmail
 {
+    use BelongsToThroughTrait;
     use HasFactory;
     use Notifiable;
 
@@ -130,5 +132,10 @@ class User extends Authenticatable implements FilamentUser, HasAppAuthentication
     public function image(): MorphOne
     {
         return $this->morphOne(Image::class, 'imageable');
+    }
+
+    public function company()
+    {
+        return $this->belongsToThrough(Company::class, Team::class);
     }
 }

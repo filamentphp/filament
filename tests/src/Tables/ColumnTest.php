@@ -1059,3 +1059,125 @@ it('can search records with `BelongsToThrough` relationship', function (): void 
         ->assertCanSeeTableRecords([$matchingPost])
         ->assertCanNotSeeTableRecords($nonMatchingPosts);
 });
+
+it('can sort records with nested `BelongsToThrough` -> `BelongsTo` relationship', function (): void {
+    $posts = Post::factory()->count(5)->state(fn (): array => [
+        'author_id' => User::factory()->state([
+            'team_id' => Team::factory()->state([
+                'company_id' => Company::factory(),
+            ]),
+        ]),
+    ])->create();
+
+    livewire(PostsTable::class)
+        ->sortTable('team.company.name')
+        ->assertCanSeeTableRecords($posts->sortBy('team.company.name'), inOrder: true)
+        ->sortTable('team.company.name', 'desc')
+        ->assertCanSeeTableRecords($posts->sortByDesc('team.company.name'), inOrder: true);
+});
+
+it('can sort records with nullable nested `BelongsToThrough` -> `BelongsTo` relationship', function (): void {
+    // Post with team and company
+    $company = Company::factory()->create(['name' => 'Acme Corp']);
+    $teamWithCompany = Team::factory()->create(['company_id' => $company->id]);
+    $userWithTeamAndCompany = User::factory()->create(['team_id' => $teamWithCompany->id]);
+    $postComplete = Post::factory()->create(['author_id' => $userWithTeamAndCompany->id]);
+
+    // Post with team but no company
+    $teamWithoutCompany = Team::factory()->create(['company_id' => null]);
+    $userWithTeamNoCompany = User::factory()->create(['team_id' => $teamWithoutCompany->id]);
+    $postNoCompany = Post::factory()->create(['author_id' => $userWithTeamNoCompany->id]);
+
+    // Post with author but no team
+    $userWithoutTeam = User::factory()->create(['team_id' => null]);
+    $postNoTeam = Post::factory()->create(['author_id' => $userWithoutTeam->id]);
+
+    // Post with no author
+    $postNoAuthor = Post::factory()->create(['author_id' => null]);
+
+    $allPosts = collect([$postComplete, $postNoCompany, $postNoTeam, $postNoAuthor]);
+
+    // Just verify sorting doesn't crash with nullable nested relationships
+    livewire(PostsTable::class)
+        ->sortTable('team.company.name')
+        ->assertCanSeeTableRecords($allPosts)
+        ->sortTable('team.company.name', 'desc')
+        ->assertCanSeeTableRecords($allPosts);
+});
+
+it('can search records with nested `BelongsToThrough` -> `BelongsTo` relationship', function (): void {
+    $searchCompany = 'Unique Company Name';
+
+    $company = Company::factory()->create(['name' => $searchCompany]);
+    $team = Team::factory()->create(['company_id' => $company->id]);
+    $matchingUser = User::factory()->create(['team_id' => $team->id]);
+    $matchingPost = Post::factory()->for($matchingUser, 'author')->create();
+
+    $nonMatchingPosts = Post::factory()->count(3)->create();
+
+    livewire(PostsTable::class)
+        ->searchTable($searchCompany)
+        ->assertCanSeeTableRecords([$matchingPost])
+        ->assertCanNotSeeTableRecords($nonMatchingPosts);
+});
+
+it('can sort records with `BelongsTo` -> `BelongsToThrough` relationship', function (): void {
+    $posts = Post::factory()->count(5)->state(fn (): array => [
+        'author_id' => User::factory()->state([
+            'team_id' => Team::factory()->state([
+                'company_id' => Company::factory(),
+            ]),
+        ]),
+    ])->create();
+
+    livewire(PostsTable::class)
+        ->sortTable('author.company.name')
+        ->assertCanSeeTableRecords($posts->sortBy('author.company.name'), inOrder: true)
+        ->sortTable('author.company.name', 'desc')
+        ->assertCanSeeTableRecords($posts->sortByDesc('author.company.name'), inOrder: true);
+});
+
+it('can sort records with nullable `BelongsTo` -> `BelongsToThrough` relationship', function (): void {
+    // Post with author, team, and company
+    $company = Company::factory()->create(['name' => 'Acme Corp']);
+    $teamWithCompany = Team::factory()->create(['company_id' => $company->id]);
+    $userComplete = User::factory()->create(['team_id' => $teamWithCompany->id]);
+    $postComplete = Post::factory()->create(['author_id' => $userComplete->id]);
+
+    // Post with author and team but no company
+    $teamWithoutCompany = Team::factory()->create(['company_id' => null]);
+    $userNoCompany = User::factory()->create(['team_id' => $teamWithoutCompany->id]);
+    $postNoCompany = Post::factory()->create(['author_id' => $userNoCompany->id]);
+
+    // Post with author but no team
+    $userNoTeam = User::factory()->create(['team_id' => null]);
+    $postNoTeam = Post::factory()->create(['author_id' => $userNoTeam->id]);
+
+    // Post with no author
+    $postNoAuthor = Post::factory()->create(['author_id' => null]);
+
+    $allPosts = collect([$postComplete, $postNoCompany, $postNoTeam, $postNoAuthor]);
+
+    // Just verify sorting doesn't crash with nullable relationships
+    livewire(PostsTable::class)
+        ->sortTable('author.company.name')
+        ->assertCanSeeTableRecords($allPosts)
+        ->sortTable('author.company.name', 'desc')
+        ->assertCanSeeTableRecords($allPosts);
+});
+
+it('can search records with `BelongsTo` -> `BelongsToThrough` relationship', function (): void {
+    $searchCompany = 'Specific Company Name';
+
+    $company = Company::factory()->create(['name' => $searchCompany]);
+    $team = Team::factory()->create(['company_id' => $company->id]);
+    $matchingUser = User::factory()->create(['team_id' => $team->id]);
+    $matchingPost = Post::factory()->for($matchingUser, 'author')->create();
+
+    $nonMatchingPosts = Post::factory()->count(3)->create();
+
+    livewire(PostsTable::class)
+        ->searchTable($searchCompany)
+        ->assertCanSeeTableRecords([$matchingPost])
+        ->assertCanNotSeeTableRecords($nonMatchingPosts);
+});

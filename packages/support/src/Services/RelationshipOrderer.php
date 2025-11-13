@@ -181,8 +181,8 @@ class RelationshipOrderer
 
     protected function applyIntermediateRelationshipJoin(
         EloquentBuilder $subquery,
-        BelongsTo | HasOne | MorphOne $currentRelationship,
-        BelongsTo | HasOne | MorphOne $previousRelationship
+        BelongsTo | HasOne | MorphOne | BelongsToThrough $currentRelationship,
+        BelongsTo | HasOne | MorphOne | BelongsToThrough $previousRelationship
     ): void {
         $previousTable = $previousRelationship->getRelated()->getTable();
 
@@ -192,6 +192,8 @@ class RelationshipOrderer
             $this->joinMorphOne($subquery, $currentRelationship, $previousTable);
         } elseif ($currentRelationship instanceof HasOne) {
             $this->joinHasOne($subquery, $currentRelationship, $previousTable);
+        } elseif ($currentRelationship instanceof BelongsToThrough) {
+            $this->joinBelongsToThrough($subquery, $currentRelationship, $previousTable);
         }
     }
 
@@ -234,6 +236,49 @@ class RelationshipOrderer
         )->where(
             $relationship->getQualifiedMorphType(),
             $relationship->getMorphClass(),
+        );
+    }
+
+    protected function joinBelongsToThrough(
+        EloquentBuilder $subquery,
+        BelongsToThrough $relationship,
+        string $previousTable
+    ): void {
+        $throughParents = $relationship->getThroughParents();
+        $targetModel = $relationship->getRelated();
+
+        // Join through parents from target to previousTable
+        // For User->Company via Team: join Team to Company, then User to Team
+        foreach ($throughParents as $i => $throughParent) {
+            $isFirstThroughParent = $i === 0;
+
+            if ($isFirstThroughParent) {
+                // Join first through parent to the target model
+                $subquery->join(
+                    $throughParent->getTable(),
+                    $targetModel->qualifyColumn($relationship->getLocalKeyName($targetModel)),
+                    '=',
+                    $throughParent->qualifyColumn($relationship->getForeignKeyName($targetModel)),
+                );
+            } else {
+                // Join subsequent through parents
+                $predecessor = $throughParents[$i - 1];
+                $subquery->join(
+                    $throughParent->getTable(),
+                    $predecessor->qualifyColumn($relationship->getLocalKeyName($predecessor)),
+                    '=',
+                    $throughParent->qualifyColumn($relationship->getForeignKeyName($predecessor)),
+                );
+            }
+        }
+
+        // Finally, join the previous table to the last through parent
+        $lastThroughParent = end($throughParents);
+        $subquery->join(
+            $previousTable,
+            $lastThroughParent->qualifyColumn($relationship->getLocalKeyName($lastThroughParent)),
+            '=',
+            "{$previousTable}.{$relationship->getForeignKeyName($lastThroughParent)}",
         );
     }
 }
