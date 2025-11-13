@@ -4,8 +4,9 @@ namespace Filament\QueryBuilder\Constraints\NumberConstraint\Operators\Concerns;
 
 use Filament\Forms\Components\Select;
 use Filament\QueryBuilder\Constraints\NumberConstraint;
+use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
 use LogicException;
 
 trait CanAggregateRelationships
@@ -42,7 +43,10 @@ trait CanAggregateRelationships
 
     protected function getNumericCastType(Builder $query): string
     {
-        $driver = $query->getConnection()->getDriverName();
+        /** @var Connection $databaseConnection */
+        $databaseConnection = $query->getConnection();
+
+        $driver = $databaseConnection->getDriverName();
 
         return match ($driver) {
             'sqlite' => 'real',
@@ -57,7 +61,7 @@ trait CanAggregateRelationships
         $attributeForQuery = $this->getConstraint()->getAttributeForQuery();
         $aggregate = $this->getAggregate();
 
-        /** @var Relation $relationship */
+        /** @var HasOneOrMany $relationship */
         $relationship = $query->getModel()->{$relationshipName}();
 
         $relatedModel = $relationship->getModel();
@@ -69,7 +73,7 @@ trait CanAggregateRelationships
 
         $subQuery = $relatedModel->query()
             ->selectRaw("cast({$aggregate}({$attributeForQuery}) as {$castType})")
-            ->whereColumn("{$foreignKeyName}", "{$parentKeyName}");
+            ->whereColumn($foreignKeyName, $parentKeyName);
 
         return $query->whereRaw("({$subQuery->toSql()}) {$operator} ?", [...$subQuery->getBindings(), $value]);
     }
