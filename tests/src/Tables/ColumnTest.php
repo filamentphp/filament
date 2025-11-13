@@ -3,6 +3,7 @@
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tests\Fixtures\Livewire\PostsTable;
+use Filament\Tests\Fixtures\Livewire\UsersWithTeamTable;
 use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Models\Team;
 use Filament\Tests\Fixtures\Models\User;
@@ -437,12 +438,7 @@ it('can search and sort by relationship column when both tables have the same co
         'team_id' => $teamBeta->id,
     ]);
 
-    // This should not throw an ambiguous column error when:
-    // 1. We have searchable columns on the main table (id, name)
-    // 2. We have a sortable relationship column (team.name)
-    // 3. Both tables share common column names (id, name)
-    // 4. We search (activating the WHERE clauses) then sort by the relationship column
-    livewire(\Filament\Tests\Fixtures\Livewire\UsersWithTeamTable::class)
+    livewire(UsersWithTeamTable::class)
         ->searchTable('Alice')
         ->sortTable('team.name')
         ->assertCanSeeTableRecords([$userAlice])
