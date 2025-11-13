@@ -3,6 +3,7 @@
 use Filament\Tests\Fixtures\Livewire\PostsQueryBuilderTable;
 use Filament\Tests\Fixtures\Livewire\UsersQueryBuilderTable;
 use Filament\Tests\Fixtures\Models\Post;
+use Filament\Tests\Fixtures\Models\Team;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Tables\TestCase;
 
@@ -1420,6 +1421,159 @@ it('can filter records using number constraint with aggregate and inverse operat
                     'data' => [
                         'operator' => 'isMin.inverse', // Less than
                         'settings' => ['number' => 7, 'aggregate' => 'avg'],
+                    ],
+                ],
+            ])
+            ->call('applyTableFilters'))
+        ->assertCanSeeTableRecords([$lowAvgUser])
+        ->assertCanNotSeeTableRecords([$highAvgUser]);
+});
+
+it('can filter records using number constraint with sum aggregate on BelongsToMany relationship', function (): void {
+    // Create user with high total budget across all teams
+    $highTotalUser = User::factory()->create();
+    $highTeams = Team::factory()->count(3)->create(['budget' => 5000]); // Total: 15000
+    $highTotalUser->teams()->attach($highTeams->pluck('id'));
+
+    // Create user with low total budget across all teams
+    $lowTotalUser = User::factory()->create();
+    $lowTeams = Team::factory()->count(2)->create(['budget' => 1000]); // Total: 2000
+    $lowTotalUser->teams()->attach($lowTeams->pluck('id'));
+
+    livewire(UsersQueryBuilderTable::class)
+        ->assertCanSeeTableRecords([$highTotalUser, $lowTotalUser])
+        ->tap(fn ($livewire) => $livewire
+            ->set('tableDeferredFilters.query_builder.rules', [
+                [
+                    'type' => 'teams_budget',
+                    'data' => [
+                        'operator' => 'isMin',
+                        'settings' => ['number' => 10000, 'aggregate' => 'sum'],
+                    ],
+                ],
+            ])
+            ->call('applyTableFilters'))
+        ->assertCanSeeTableRecords([$highTotalUser])
+        ->assertCanNotSeeTableRecords([$lowTotalUser]);
+});
+
+it('can filter records using number constraint with average aggregate on BelongsToMany relationship', function (): void {
+    // Create user with high average budget
+    $highAvgUser = User::factory()->create();
+    $highTeams = Team::factory()->count(3)->create(['budget' => 8000]); // Average: 8000
+    $highAvgUser->teams()->attach($highTeams->pluck('id'));
+
+    // Create user with low average budget
+    $lowAvgUser = User::factory()->create();
+    $lowTeams = Team::factory()->count(3)->create(['budget' => 2000]); // Average: 2000
+    $lowAvgUser->teams()->attach($lowTeams->pluck('id'));
+
+    livewire(UsersQueryBuilderTable::class)
+        ->assertCanSeeTableRecords([$highAvgUser, $lowAvgUser])
+        ->tap(fn ($livewire) => $livewire
+            ->set('tableDeferredFilters.query_builder.rules', [
+                [
+                    'type' => 'teams_budget',
+                    'data' => [
+                        'operator' => 'isMin',
+                        'settings' => ['number' => 5000, 'aggregate' => 'avg'],
+                    ],
+                ],
+            ])
+            ->call('applyTableFilters'))
+        ->assertCanSeeTableRecords([$highAvgUser])
+        ->assertCanNotSeeTableRecords([$lowAvgUser]);
+});
+
+it('can filter records using number constraint with min aggregate on BelongsToMany relationship', function (): void {
+    // Create user where even the lowest budget is high
+    $highMinUser = User::factory()->create();
+    $highMinTeams = collect([
+        Team::factory()->create(['budget' => 6000]),
+        Team::factory()->create(['budget' => 8000]),
+        Team::factory()->create(['budget' => 10000]),
+    ]);
+    $highMinUser->teams()->attach($highMinTeams->pluck('id'));
+
+    // Create user with at least one low budget team
+    $lowMinUser = User::factory()->create();
+    $lowMinTeams = collect([
+        Team::factory()->create(['budget' => 1000]), // This is the min
+        Team::factory()->create(['budget' => 9000]),
+    ]);
+    $lowMinUser->teams()->attach($lowMinTeams->pluck('id'));
+
+    livewire(UsersQueryBuilderTable::class)
+        ->assertCanSeeTableRecords([$highMinUser, $lowMinUser])
+        ->tap(fn ($livewire) => $livewire
+            ->set('tableDeferredFilters.query_builder.rules', [
+                [
+                    'type' => 'teams_budget',
+                    'data' => [
+                        'operator' => 'isMin',
+                        'settings' => ['number' => 5000, 'aggregate' => 'min'],
+                    ],
+                ],
+            ])
+            ->call('applyTableFilters'))
+        ->assertCanSeeTableRecords([$highMinUser])
+        ->assertCanNotSeeTableRecords([$lowMinUser]);
+});
+
+it('can filter records using number constraint with max aggregate on BelongsToMany relationship', function (): void {
+    // Create user with at least one very high budget team
+    $highMaxUser = User::factory()->create();
+    $highMaxTeams = collect([
+        Team::factory()->create(['budget' => 15000]), // This is the max
+        Team::factory()->create(['budget' => 3000]),
+    ]);
+    $highMaxUser->teams()->attach($highMaxTeams->pluck('id'));
+
+    // Create user where even the highest budget is low
+    $lowMaxUser = User::factory()->create();
+    $lowMaxTeams = collect([
+        Team::factory()->create(['budget' => 2000]),
+        Team::factory()->create(['budget' => 3000]), // This is the max
+    ]);
+    $lowMaxUser->teams()->attach($lowMaxTeams->pluck('id'));
+
+    livewire(UsersQueryBuilderTable::class)
+        ->assertCanSeeTableRecords([$highMaxUser, $lowMaxUser])
+        ->tap(fn ($livewire) => $livewire
+            ->set('tableDeferredFilters.query_builder.rules', [
+                [
+                    'type' => 'teams_budget',
+                    'data' => [
+                        'operator' => 'isMin',
+                        'settings' => ['number' => 10000, 'aggregate' => 'max'],
+                    ],
+                ],
+            ])
+            ->call('applyTableFilters'))
+        ->assertCanSeeTableRecords([$highMaxUser])
+        ->assertCanNotSeeTableRecords([$lowMaxUser]);
+});
+
+it('can filter records using number constraint with aggregate and inverse operator on BelongsToMany relationship', function (): void {
+    // Create user with high average budget
+    $highAvgUser = User::factory()->create();
+    $highTeams = Team::factory()->count(3)->create(['budget' => 8000]);
+    $highAvgUser->teams()->attach($highTeams->pluck('id'));
+
+    // Create user with low average budget
+    $lowAvgUser = User::factory()->create();
+    $lowTeams = Team::factory()->count(3)->create(['budget' => 2000]);
+    $lowAvgUser->teams()->attach($lowTeams->pluck('id'));
+
+    livewire(UsersQueryBuilderTable::class)
+        ->assertCanSeeTableRecords([$highAvgUser, $lowAvgUser])
+        ->tap(fn ($livewire) => $livewire
+            ->set('tableDeferredFilters.query_builder.rules', [
+                [
+                    'type' => 'teams_budget',
+                    'data' => [
+                        'operator' => 'isMin.inverse', // Less than
+                        'settings' => ['number' => 5000, 'aggregate' => 'avg'],
                     ],
                 ],
             ])

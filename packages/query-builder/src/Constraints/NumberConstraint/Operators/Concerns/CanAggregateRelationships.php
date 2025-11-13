@@ -6,7 +6,9 @@ use Filament\Forms\Components\Select;
 use Filament\QueryBuilder\Constraints\NumberConstraint;
 use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use LogicException;
 
 trait CanAggregateRelationships
@@ -61,21 +63,40 @@ trait CanAggregateRelationships
         $attributeForQuery = $this->getConstraint()->getAttributeForQuery();
         $aggregate = $this->getAggregate();
 
-        /** @var HasOneOrMany $relationship */
+        /** @var Relation $relationship */
         $relationship = $query->getModel()->{$relationshipName}();
 
         $relatedModel = $relationship->getModel();
         $attributeForQuery = $relatedModel->qualifyColumn($attributeForQuery);
-        $foreignKeyName = $relationship->getQualifiedForeignKeyName();
-        $parentKeyName = $relationship->getQualifiedParentKeyName();
-
         $castType = $this->getNumericCastType($query);
 
-        $subQuery = $relatedModel->query()
-            ->selectRaw("cast({$aggregate}({$attributeForQuery}) as {$castType})")
-            ->whereColumn($foreignKeyName, $parentKeyName);
+        if ($relationship instanceof BelongsToMany) {
+            $pivotTable = $relationship->getTable();
+            $foreignPivotKey = $relationship->getQualifiedForeignPivotKeyName();
+            $relatedPivotKey = $relationship->getQualifiedRelatedPivotKeyName();
+            $parentKey = $relationship->getQualifiedParentKeyName();
+            $relatedKey = $relationship->getQualifiedRelatedKeyName();
 
-        return $query->whereRaw("({$subQuery->toSql()}) {$operator} ?", [...$subQuery->getBindings(), $value]);
+            $subQuery = $relatedModel->query()
+                ->selectRaw("cast({$aggregate}({$attributeForQuery}) as {$castType})")
+                ->join($pivotTable, $relatedKey, '=', $relatedPivotKey)
+                ->whereColumn($foreignPivotKey, $parentKey);
+
+            return $query->whereRaw("({$subQuery->toSql()}) {$operator} ?", [...$subQuery->getBindings(), $value]);
+        }
+
+        if ($relationship instanceof HasOneOrMany) {
+            $foreignKeyName = $relationship->getQualifiedForeignKeyName();
+            $parentKeyName = $relationship->getQualifiedParentKeyName();
+
+            $subQuery = $relatedModel->query()
+                ->selectRaw("cast({$aggregate}({$attributeForQuery}) as {$castType})")
+                ->whereColumn($foreignKeyName, $parentKeyName);
+
+            return $query->whereRaw("({$subQuery->toSql()}) {$operator} ?", [...$subQuery->getBindings(), $value]);
+        }
+
+        throw new LogicException('Relationship type [' . get_class($relationship) . '] is not supported for aggregate queries.');
     }
 
     protected function getAggregateSelect(): Select
