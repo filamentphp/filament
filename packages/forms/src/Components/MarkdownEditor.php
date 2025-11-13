@@ -32,10 +32,7 @@ class MarkdownEditor extends Field implements Contracts\CanBeLengthConstrained
             ['bold', 'italic', 'strike', 'link'],
             ['heading'],
             ['blockquote', 'codeBlock', 'bulletList', 'orderedList'],
-            [
-                'table',
-                ...($this->hasFileAttachments() ? ['attachFiles'] : []),
-            ],
+            ['table', 'attachFiles'],
             ['undo', 'redo'],
         ];
     }
@@ -65,6 +62,6 @@ class MarkdownEditor extends Field implements Contracts\CanBeLengthConstrained
 
     public function hasFileAttachmentsByDefault(): bool
     {
-        return (! $this->hasCustomToolbarButtons()) || $this->hasToolbarButton('attachFiles');
+        return $this->hasToolbarButton('attachFiles');
     }
 }
