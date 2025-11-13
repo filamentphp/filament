@@ -1,0 +1,1248 @@
+<?php
+
+use Filament\Tests\Fixtures\Livewire\PostsQueryBuilderTable;
+use Filament\Tests\Fixtures\Models\Post;
+use Filament\Tests\Fixtures\Models\User;
+use Filament\Tests\Tables\TestCase;
+
+use function Filament\Tests\livewire;
+
+uses(TestCase::class);
+
+function applyQueryBuilderFilter(array $rules)
+{
+    return fn ($livewire) => $livewire
+        ->set('tableDeferredFilters.query_builder.rules', $rules)
+        ->call('applyTableFilters');
+}
+
+it('can filter records using text constraint with contains operator', function (): void {
+    $posts = Post::factory()->count(10)->create([
+        'title' => 'Test Post Title',
+    ]);
+
+    $otherPosts = Post::factory()->count(5)->create([
+        'title' => 'Different Title',
+    ]);
+
+    livewire(PostsQueryBuilderTable::class)
+        ->assertCanSeeTableRecords($posts->merge($otherPosts))
+        ->tap(applyQueryBuilderFilter([
+            [
+                'type' => 'title',
+                'data' => [
+                    'operator' => 'contains',
+                    'settings' => ['text' => 'Test Post'],
+                ],
+            ],
+        ]))
+        ->assertCanSeeTableRecords($posts)
+        ->assertCanNotSeeTableRecords($otherPosts);
+});
+
+it('can filter records using text constraint with does not contain operator', function (): void {
+    $posts = Post::factory()->count(10)->create([
+        'title' => 'Test Post Title',
+    ]);
+
+    $otherPosts = Post::factory()->count(5)->create([
+        'title' => 'Different Title',
+    ]);
+
+    livewire(PostsQueryBuilderTable::class)
+        ->assertCanSeeTableRecords($posts->merge($otherPosts))
+        ->tap(applyQueryBuilderFilter([
+            [
+                'type' => 'title',
+                'data' => [
+                    'operator' => 'contains.inverse',
+                    'settings' => ['text' => 'Test Post'],
+                ],
+            ],
+        ]))
+        ->assertCanSeeTableRecords($otherPosts)
+        ->assertCanNotSeeTableRecords($posts);
+});
+
+it('can filter records using text constraint with starts with operator', function (): void {
+    $posts = Post::factory()->count(10)->create([
+        'title' => 'Test Post Title',
+    ]);
+
+    $otherPosts = Post::factory()->count(5)->create([
+        'title' => 'Different Title',
+    ]);
+
+    livewire(PostsQueryBuilderTable::class)
+        ->assertCanSeeTableRecords($posts->merge($otherPosts))
+        ->tap(applyQueryBuilderFilter([
+            [
+                'type' => 'title',
+                'data' => [
+                    'operator' => 'startsWith',
+                    'settings' => ['text' => 'Test'],
+                ],
+            ],
+        ]))
+        ->assertCanSeeTableRecords($posts)
+        ->assertCanNotSeeTableRecords($otherPosts);
+});
+
+it('can filter records using text constraint with does not start with operator', function (): void {
+    $posts = Post::factory()->count(10)->create([
+        'title' => 'Test Post Title',
+    ]);
+
+    $otherPosts = Post::factory()->count(5)->create([
+        'title' => 'Different Title',
+    ]);
+
+    livewire(PostsQueryBuilderTable::class)
+        ->assertCanSeeTableRecords($posts->merge($otherPosts))
+        ->tap(applyQueryBuilderFilter([
+            [
+                'type' => 'title',
+                'data' => [
+                    'operator' => 'startsWith.inverse',
+                    'settings' => ['text' => 'Test'],
+                ],
+            ],
+        ]))
+        ->assertCanSeeTableRecords($otherPosts)
+        ->assertCanNotSeeTableRecords($posts);
+});
+
+it('can filter records using text constraint with ends with operator', function (): void {
+    $posts = Post::factory()->count(10)->create([
+        'title' => 'Post Title Test',
+    ]);
+
+    $otherPosts = Post::factory()->count(5)->create([
+        'title' => 'Different Title',
+    ]);
+
+    livewire(PostsQueryBuilderTable::class)
+        ->assertCanSeeTableRecords($posts->merge($otherPosts))
+        ->tap(applyQueryBuilderFilter([
+            [
+                'type' => 'title',
+                'data' => [
+                    'operator' => 'endsWith',
+                    'settings' => ['text' => 'Test'],
+                ],
+            ],
+        ]))
+        ->assertCanSeeTableRecords($posts)
+        ->assertCanNotSeeTableRecords($otherPosts);
+});
+
+it('can filter records using text constraint with does not end with operator', function (): void {
+    $posts = Post::factory()->count(10)->create([
+        'title' => 'Post Title Test',
+    ]);
+
+    $otherPosts = Post::factory()->count(5)->create([
+        'title' => 'Different Title',
+    ]);
+
+    livewire(PostsQueryBuilderTable::class)
+        ->assertCanSeeTableRecords($posts->merge($otherPosts))
+        ->tap(applyQueryBuilderFilter([
+            [
+                'type' => 'title',
+                'data' => [
+                    'operator' => 'endsWith.inverse',
+                    'settings' => ['text' => 'Test'],
+                ],
+            ],
+        ]))
+        ->assertCanSeeTableRecords($otherPosts)
+        ->assertCanNotSeeTableRecords($posts);
+});
+
+it('can filter records using text constraint with equals operator', function (): void {
+    $posts = Post::factory()->count(10)->create([
+        'title' => 'Exact Title',
+    ]);
+
+    $otherPosts = Post::factory()->count(5)->create([
+        'title' => 'Different Title',
+    ]);
+
+    livewire(PostsQueryBuilderTable::class)
+        ->assertCanSeeTableRecords($posts->merge($otherPosts))
+        ->tap(applyQueryBuilderFilter([
+            [
+                'type' => 'title',
+                'data' => [
+                    'operator' => 'equals',
+                    'settings' => ['text' => 'Exact Title'],
+                ],
+            ],
+        ]))
+        ->assertCanSeeTableRecords($posts)
+        ->assertCanNotSeeTableRecords($otherPosts);
+});
+
+it('can filter records using text constraint with does not equal operator', function (): void {
+    $posts = Post::factory()->count(10)->create([
+        'title' => 'Exact Title',
+    ]);
+
+    $otherPosts = Post::factory()->count(5)->create([
+        'title' => 'Different Title',
+    ]);
+
+    livewire(PostsQueryBuilderTable::class)
+        ->assertCanSeeTableRecords($posts->merge($otherPosts))
+        ->tap(applyQueryBuilderFilter([
+            [
+                'type' => 'title',
+                'data' => [
+                    'operator' => 'equals.inverse',
+                    'settings' => ['text' => 'Exact Title'],
+                ],
+            ],
+        ]))
+        ->assertCanSeeTableRecords($otherPosts)
+        ->assertCanNotSeeTableRecords($posts);
+});
+
+it('can filter records using boolean constraint with is true operator', function (): void {
+    $publishedPosts = Post::factory()->count(10)->create([
+        'is_published' => true,
+    ]);
+
+    $unpublishedPosts = Post::factory()->count(5)->create([
+        'is_published' => false,
+    ]);
+
+    livewire(PostsQueryBuilderTable::class)
+        ->assertCanSeeTableRecords($publishedPosts->merge($unpublishedPosts))
+        ->tap(applyQueryBuilderFilter([
+            [
+                'type' => 'is_published',
+                'data' => [
+                    'operator' => 'isTrue',
+                    'settings' => [],
+                ],
+            ],
+        ]))
+        ->assertCanSeeTableRecords($publishedPosts)
+        ->assertCanNotSeeTableRecords($unpublishedPosts);
+});
+
+it('can filter records using boolean constraint with is false operator', function (): void {
+    $publishedPosts = Post::factory()->count(10)->create([
+        'is_published' => true,
+    ]);
+
+    $unpublishedPosts = Post::factory()->count(5)->create([
+        'is_published' => false,
+    ]);
+
+    livewire(PostsQueryBuilderTable::class)
+        ->assertCanSeeTableRecords($publishedPosts->merge($unpublishedPosts))
+        ->tap(applyQueryBuilderFilter([
+            [
+                'type' => 'is_published',
+                'data' => [
+                    'operator' => 'isTrue.inverse',
+                    'settings' => [],
+                ],
+            ],
+        ]))
+        ->assertCanSeeTableRecords($unpublishedPosts)
+        ->assertCanNotSeeTableRecords($publishedPosts);
+});
+
+it('can filter records using number constraint with minimum operator', function (): void {
+    $highRatedPosts = Post::factory()->count(5)->create([
+        'rating' => 8,
+    ]);
+
+    $lowRatedPosts = Post::factory()->count(5)->create([
+        'rating' => 3,
+    ]);
+
+    livewire(PostsQueryBuilderTable::class)
+        ->assertCanSeeTableRecords($highRatedPosts->merge($lowRatedPosts))
+        ->tap(applyQueryBuilderFilter([
+            [
+                'type' => 'rating',
+                'data' => [
+                    'operator' => 'isMin',
+                    'settings' => ['number' => 5],
+                ],
+            ],
+        ]))
+        ->assertCanSeeTableRecords($highRatedPosts)
+        ->assertCanNotSeeTableRecords($lowRatedPosts);
+});
+
+it('can filter records using number constraint with less than operator', function (): void {
+    $highRatedPosts = Post::factory()->count(5)->create([
+        'rating' => 8,
+    ]);
+
+    $lowRatedPosts = Post::factory()->count(5)->create([
+        'rating' => 3,
+    ]);
+
+    livewire(PostsQueryBuilderTable::class)
+        ->assertCanSeeTableRecords($highRatedPosts->merge($lowRatedPosts))
+        ->tap(applyQueryBuilderFilter([
+            [
+                'type' => 'rating',
+                'data' => [
+                    'operator' => 'isMin.inverse',
+                    'settings' => ['number' => 5],
+                ],
+            ],
+        ]))
+        ->assertCanSeeTableRecords($lowRatedPosts)
+        ->assertCanNotSeeTableRecords($highRatedPosts);
+});
+
+it('can filter records using number constraint with maximum operator', function (): void {
+    $highRatedPosts = Post::factory()->count(5)->create([
+        'rating' => 8,
+    ]);
+
+    $lowRatedPosts = Post::factory()->count(5)->create([
+        'rating' => 3,
+    ]);
+
+    livewire(PostsQueryBuilderTable::class)
+        ->assertCanSeeTableRecords($highRatedPosts->merge($lowRatedPosts))
+        ->tap(applyQueryBuilderFilter([
+            [
+                'type' => 'rating',
+                'data' => [
+                    'operator' => 'isMax',
+                    'settings' => ['number' => 5],
+                ],
+            ],
+        ]))
+        ->assertCanSeeTableRecords($lowRatedPosts)
+        ->assertCanNotSeeTableRecords($highRatedPosts);
+});
+
+it('can filter records using number constraint with greater than operator', function (): void {
+    $highRatedPosts = Post::factory()->count(5)->create([
+        'rating' => 8,
+    ]);
+
+    $lowRatedPosts = Post::factory()->count(5)->create([
+        'rating' => 3,
+    ]);
+
+    livewire(PostsQueryBuilderTable::class)
+        ->assertCanSeeTableRecords($highRatedPosts->merge($lowRatedPosts))
+        ->tap(applyQueryBuilderFilter([
+            [
+                'type' => 'rating',
+                'data' => [
+                    'operator' => 'isMax.inverse',
+                    'settings' => ['number' => 5],
+                ],
+            ],
+        ]))
+        ->assertCanSeeTableRecords($highRatedPosts)
+        ->assertCanNotSeeTableRecords($lowRatedPosts);
+});
+
+it('can filter records using number constraint with equals operator', function (): void {
+    $targetPosts = Post::factory()->count(5)->create([
+        'rating' => 5,
+    ]);
+
+    $otherPosts = Post::factory()->count(5)->create([
+        'rating' => 3,
+    ]);
+
+    livewire(PostsQueryBuilderTable::class)
+        ->assertCanSeeTableRecords($targetPosts->merge($otherPosts))
+        ->tap(applyQueryBuilderFilter([
+            [
+                'type' => 'rating',
+                'data' => [
+                    'operator' => 'equals',
+                    'settings' => ['number' => 5],
+                ],
+            ],
+        ]))
+        ->assertCanSeeTableRecords($targetPosts)
+        ->assertCanNotSeeTableRecords($otherPosts);
+});
+
+it('can filter records using number constraint with does not equal operator', function (): void {
+    $targetPosts = Post::factory()->count(5)->create([
+        'rating' => 5,
+    ]);
+
+    $otherPosts = Post::factory()->count(5)->create([
+        'rating' => 3,
+    ]);
+
+    livewire(PostsQueryBuilderTable::class)
+        ->assertCanSeeTableRecords($targetPosts->merge($otherPosts))
+        ->tap(applyQueryBuilderFilter([
+            [
+                'type' => 'rating',
+                'data' => [
+                    'operator' => 'equals.inverse',
+                    'settings' => ['number' => 5],
+                ],
+            ],
+        ]))
+        ->assertCanSeeTableRecords($otherPosts)
+        ->assertCanNotSeeTableRecords($targetPosts);
+});
+
+it('can filter records using integer number constraint', function (): void {
+    $integerRatedPosts = Post::factory()->count(5)->create([
+        'rating' => 5,
+    ]);
+
+    $otherPosts = Post::factory()->count(5)->create([
+        'rating' => 3,
+    ]);
+
+    livewire(PostsQueryBuilderTable::class)
+        ->assertCanSeeTableRecords($integerRatedPosts->merge($otherPosts))
+        ->tap(applyQueryBuilderFilter([
+            [
+                'type' => 'rating_integer',
+                'data' => [
+                    'operator' => 'equals',
+                    'settings' => ['number' => 5],
+                ],
+            ],
+        ]))
+        ->assertCanSeeTableRecords($integerRatedPosts)
+        ->assertCanNotSeeTableRecords($otherPosts);
+});
+
+it('can filter records using date constraint with is after operator', function (): void {
+    $recentPosts = Post::factory()->count(5)->create([
+        'created_at' => now()->addDays(5),
+    ]);
+
+    $oldPosts = Post::factory()->count(5)->create([
+        'created_at' => now()->subDays(5),
+    ]);
+
+    livewire(PostsQueryBuilderTable::class)
+        ->assertCanSeeTableRecords($recentPosts->merge($oldPosts))
+        ->tap(applyQueryBuilderFilter([
+            [
+                'type' => 'created_at',
+                'data' => [
+                    'operator' => 'isAfter',
+                    'settings' => ['date' => now()->toDateString()],
+                ],
+            ],
+        ]))
+        ->assertCanSeeTableRecords($recentPosts)
+        ->assertCanNotSeeTableRecords($oldPosts);
+});
+
+it('can filter records using date constraint with is before operator', function (): void {
+    $recentPosts = Post::factory()->count(5)->create([
+        'created_at' => now()->addDays(5),
+    ]);
+
+    $oldPosts = Post::factory()->count(5)->create([
+        'created_at' => now()->subDays(5),
+    ]);
+
+    livewire(PostsQueryBuilderTable::class)
+        ->assertCanSeeTableRecords($recentPosts->merge($oldPosts))
+        ->tap(applyQueryBuilderFilter([
+            [
+                'type' => 'created_at',
+                'data' => [
+                    'operator' => 'isBefore',
+                    'settings' => ['date' => now()->toDateString()],
+                ],
+            ],
+        ]))
+        ->assertCanSeeTableRecords($oldPosts)
+        ->assertCanNotSeeTableRecords($recentPosts);
+});
+
+it('can filter records using date constraint with is date operator', function (): void {
+    $targetDate = now()->startOfDay();
+
+    $targetPosts = Post::factory()->count(5)->create([
+        'created_at' => $targetDate,
+    ]);
+
+    $otherPosts = Post::factory()->count(5)->create([
+        'created_at' => $targetDate->copy()->addDays(1),
+    ]);
+
+    livewire(PostsQueryBuilderTable::class)
+        ->assertCanSeeTableRecords($targetPosts->merge($otherPosts))
+        ->tap(applyQueryBuilderFilter([
+            [
+                'type' => 'created_at',
+                'data' => [
+                    'operator' => 'isDate',
+                    'settings' => ['date' => $targetDate->toDateString()],
+                ],
+            ],
+        ]))
+        ->assertCanSeeTableRecords($targetPosts)
+        ->assertCanNotSeeTableRecords($otherPosts);
+});
+
+it('can filter records using select constraint', function (): void {
+    $targetPosts = Post::factory()->count(5)->create([
+        'rating' => 3,
+    ]);
+
+    $otherPosts = Post::factory()->count(5)->create([
+        'rating' => 5,
+    ]);
+
+    livewire(PostsQueryBuilderTable::class)
+        ->assertCanSeeTableRecords($targetPosts->merge($otherPosts))
+        ->tap(applyQueryBuilderFilter([
+            [
+                'type' => 'rating_select',
+                'data' => [
+                    'operator' => 'is',
+                    'settings' => ['value' => 3],
+                ],
+            ],
+        ]))
+        ->assertCanSeeTableRecords($targetPosts)
+        ->assertCanNotSeeTableRecords($otherPosts);
+});
+
+it('can filter records using select constraint with is not operator', function (): void {
+    $targetPosts = Post::factory()->count(5)->create([
+        'rating' => 3,
+    ]);
+
+    $otherPosts = Post::factory()->count(5)->create([
+        'rating' => 5,
+    ]);
+
+    livewire(PostsQueryBuilderTable::class)
+        ->assertCanSeeTableRecords($targetPosts->merge($otherPosts))
+        ->tap(applyQueryBuilderFilter([
+            [
+                'type' => 'rating_select',
+                'data' => [
+                    'operator' => 'is.inverse',
+                    'settings' => ['value' => 3],
+                ],
+            ],
+        ]))
+        ->assertCanSeeTableRecords($otherPosts)
+        ->assertCanNotSeeTableRecords($targetPosts);
+});
+
+it('can filter records using multiple select constraint', function (): void {
+    $posts3or5 = Post::factory()->count(5)->create([
+        'rating' => 3,
+    ])->merge(Post::factory()->count(3)->create([
+        'rating' => 5,
+    ]));
+
+    $otherPosts = Post::factory()->count(5)->create([
+        'rating' => 1,
+    ]);
+
+    livewire(PostsQueryBuilderTable::class)
+        ->assertCanSeeTableRecords($posts3or5->merge($otherPosts))
+        ->tap(applyQueryBuilderFilter([
+            [
+                'type' => 'rating_select_multiple',
+                'data' => [
+                    'operator' => 'is',
+                    'settings' => ['values' => [3, 5]],
+                ],
+            ],
+        ]))
+        ->assertCanSeeTableRecords($posts3or5)
+        ->assertCanNotSeeTableRecords($otherPosts);
+});
+
+it('can filter records using relationship constraint with text operator', function (): void {
+    $author = User::factory()->create(['name' => 'John Doe']);
+    $posts = Post::factory()->count(5)->create(['author_id' => $author->id]);
+
+    $otherPosts = Post::factory()->count(5)->create();
+
+    livewire(PostsQueryBuilderTable::class)
+        ->assertCanSeeTableRecords($posts->merge($otherPosts))
+        ->tap(applyQueryBuilderFilter([
+            [
+                'type' => 'author_name',
+                'data' => [
+                    'operator' => 'contains',
+                    'settings' => ['text' => 'John'],
+                ],
+            ],
+        ]))
+        ->assertCanSeeTableRecords($posts)
+        ->assertCanNotSeeTableRecords($otherPosts);
+});
+
+it('can filter records using relationship constraint with is related to operator', function (): void {
+    $author = User::factory()->create(['name' => 'John Doe']);
+    $posts = Post::factory()->count(5)->create(['author_id' => $author->id]);
+
+    $otherPosts = Post::factory()->count(5)->create();
+
+    livewire(PostsQueryBuilderTable::class)
+        ->assertCanSeeTableRecords($posts->merge($otherPosts))
+        ->tap(applyQueryBuilderFilter([
+            [
+                'type' => 'author',
+                'data' => [
+                    'operator' => 'isRelatedTo',
+                    'settings' => ['value' => $author->id],
+                ],
+            ],
+        ]))
+        ->assertCanSeeTableRecords($posts)
+        ->assertCanNotSeeTableRecords($otherPosts);
+});
+
+it('can filter records using relationship constraint with is not related to operator', function (): void {
+    $author = User::factory()->create(['name' => 'John Doe']);
+    $posts = Post::factory()->count(5)->create(['author_id' => $author->id]);
+
+    $otherPosts = Post::factory()->count(5)->create();
+
+    livewire(PostsQueryBuilderTable::class)
+        ->assertCanSeeTableRecords($posts->merge($otherPosts))
+        ->tap(applyQueryBuilderFilter([
+            [
+                'type' => 'author',
+                'data' => [
+                    'operator' => 'isRelatedTo.inverse',
+                    'settings' => ['value' => $author->id],
+                ],
+            ],
+        ]))
+        ->assertCanSeeTableRecords($otherPosts)
+        ->assertCanNotSeeTableRecords($posts);
+});
+
+it('can filter records using nullable constraint with is filled operator', function (): void {
+    $filledPosts = Post::factory()->count(5)->create([
+        'content' => 'Some content here',
+    ]);
+
+    $emptyPosts = Post::factory()->count(5)->create([
+        'content' => null,
+    ]);
+
+    livewire(PostsQueryBuilderTable::class)
+        ->assertCanSeeTableRecords($filledPosts->merge($emptyPosts))
+        ->tap(applyQueryBuilderFilter([
+            [
+                'type' => 'content',
+                'data' => [
+                    'operator' => 'isFilled',
+                    'settings' => [],
+                ],
+            ],
+        ]))
+        ->assertCanSeeTableRecords($filledPosts)
+        ->assertCanNotSeeTableRecords($emptyPosts);
+});
+
+it('can filter records using nullable constraint with is blank operator', function (): void {
+    $filledPosts = Post::factory()->count(5)->create([
+        'content' => 'Some content here',
+    ]);
+
+    $emptyPosts = Post::factory()->count(5)->create([
+        'content' => null,
+    ]);
+
+    livewire(PostsQueryBuilderTable::class)
+        ->assertCanSeeTableRecords($filledPosts->merge($emptyPosts))
+        ->tap(applyQueryBuilderFilter([
+            [
+                'type' => 'content',
+                'data' => [
+                    'operator' => 'isFilled.inverse',
+                    'settings' => [],
+                ],
+            ],
+        ]))
+        ->assertCanSeeTableRecords($emptyPosts)
+        ->assertCanNotSeeTableRecords($filledPosts);
+});
+
+it('can filter records using complex nested AND rules', function (): void {
+    $matchingPosts = Post::factory()->count(3)->create([
+        'title' => 'Test Post',
+        'rating' => 8,
+        'is_published' => true,
+    ]);
+
+    $nonMatchingPosts = Post::factory()->count(5)->create([
+        'title' => 'Different Title',
+        'rating' => 3,
+        'is_published' => false,
+    ]);
+
+    livewire(PostsQueryBuilderTable::class)
+        ->assertCanSeeTableRecords($matchingPosts->merge($nonMatchingPosts))
+        ->tap(applyQueryBuilderFilter([
+            [
+                'type' => 'title',
+                'data' => [
+                    'operator' => 'contains',
+                    'settings' => ['text' => 'Test'],
+                ],
+            ],
+            [
+                'type' => 'rating',
+                'data' => [
+                    'operator' => 'isMin',
+                    'settings' => ['number' => 5],
+                ],
+            ],
+            [
+                'type' => 'is_published',
+                'data' => [
+                    'operator' => 'isTrue',
+                    'settings' => [],
+                ],
+            ],
+        ]))
+        ->assertCanSeeTableRecords($matchingPosts)
+        ->assertCanNotSeeTableRecords($nonMatchingPosts);
+});
+
+it('can filter records using OR block rules', function (): void {
+    $highRatedPosts = Post::factory()->count(3)->create([
+        'title' => 'High Rated',
+        'rating' => 9,
+        'is_published' => false,
+    ]);
+
+    $publishedPosts = Post::factory()->count(3)->create([
+        'title' => 'Published',
+        'rating' => 3,
+        'is_published' => true,
+    ]);
+
+    $nonMatchingPosts = Post::factory()->count(5)->create([
+        'title' => 'Low Rated',
+        'rating' => 2,
+        'is_published' => false,
+    ]);
+
+    livewire(PostsQueryBuilderTable::class)
+        ->assertCanSeeTableRecords($highRatedPosts->merge($publishedPosts)->merge($nonMatchingPosts))
+        ->tap(applyQueryBuilderFilter([
+            [
+                'type' => 'or',
+                'data' => [
+                    'groups' => [
+                        [
+                            'rules' => [
+                                [
+                                    'type' => 'rating',
+                                    'data' => [
+                                        'operator' => 'isMin',
+                                        'settings' => ['number' => 8],
+                                    ],
+                                ],
+                            ],
+                        ],
+                        [
+                            'rules' => [
+                                [
+                                    'type' => 'is_published',
+                                    'data' => [
+                                        'operator' => 'isTrue',
+                                        'settings' => [],
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ]))
+        ->assertCanSeeTableRecords($highRatedPosts->merge($publishedPosts))
+        ->assertCanNotSeeTableRecords($nonMatchingPosts);
+});
+
+it('can filter records using deeply nested OR and AND rules', function (): void {
+    // Matching: (title contains "Premium" AND rating >= 8) OR (is_published = true AND rating >= 5)
+    $premiumHighRated = Post::factory()->count(2)->create([
+        'title' => 'Premium Product',
+        'rating' => 9,
+        'is_published' => false,
+    ]);
+
+    $publishedMediumRated = Post::factory()->count(2)->create([
+        'title' => 'Standard Product',
+        'rating' => 6,
+        'is_published' => true,
+    ]);
+
+    $nonMatchingPosts = Post::factory()->count(5)->create([
+        'title' => 'Basic Product',
+        'rating' => 3,
+        'is_published' => false,
+    ]);
+
+    livewire(PostsQueryBuilderTable::class)
+        ->assertCanSeeTableRecords($premiumHighRated->merge($publishedMediumRated)->merge($nonMatchingPosts))
+        ->tap(applyQueryBuilderFilter([
+            [
+                'type' => 'or',
+                'data' => [
+                    'groups' => [
+                        [
+                            'rules' => [
+                                [
+                                    'type' => 'title',
+                                    'data' => [
+                                        'operator' => 'contains',
+                                        'settings' => ['text' => 'Premium'],
+                                    ],
+                                ],
+                                [
+                                    'type' => 'rating',
+                                    'data' => [
+                                        'operator' => 'isMin',
+                                        'settings' => ['number' => 8],
+                                    ],
+                                ],
+                            ],
+                        ],
+                        [
+                            'rules' => [
+                                [
+                                    'type' => 'is_published',
+                                    'data' => [
+                                        'operator' => 'isTrue',
+                                        'settings' => [],
+                                    ],
+                                ],
+                                [
+                                    'type' => 'rating',
+                                    'data' => [
+                                        'operator' => 'isMin',
+                                        'settings' => ['number' => 5],
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ]))
+        ->assertCanSeeTableRecords($premiumHighRated->merge($publishedMediumRated))
+        ->assertCanNotSeeTableRecords($nonMatchingPosts);
+});
+
+it('can filter records using multiple constraints with different data types', function (): void {
+    $targetDate = now()->subDays(2);
+    $author = User::factory()->create(['name' => 'Alice Smith']);
+
+    $matchingPosts = Post::factory()->count(3)->create([
+        'title' => 'Featured Article',
+        'rating' => 7,
+        'is_published' => true,
+        'created_at' => $targetDate,
+        'author_id' => $author->id,
+    ]);
+
+    $nonMatchingPosts = Post::factory()->count(5)->create([
+        'title' => 'Draft Article',
+        'rating' => 2,
+        'is_published' => false,
+    ]);
+
+    livewire(PostsQueryBuilderTable::class)
+        ->assertCanSeeTableRecords($matchingPosts->merge($nonMatchingPosts))
+        ->tap(applyQueryBuilderFilter([
+            [
+                'type' => 'title',
+                'data' => [
+                    'operator' => 'contains',
+                    'settings' => ['text' => 'Featured'],
+                ],
+            ],
+            [
+                'type' => 'rating',
+                'data' => [
+                    'operator' => 'isMin',
+                    'settings' => ['number' => 5],
+                ],
+            ],
+            [
+                'type' => 'is_published',
+                'data' => [
+                    'operator' => 'isTrue',
+                    'settings' => [],
+                ],
+            ],
+            [
+                'type' => 'created_at',
+                'data' => [
+                    'operator' => 'isBefore',
+                    'settings' => ['date' => now()->subDays(1)->toDateString()],
+                ],
+            ],
+            [
+                'type' => 'author_name',
+                'data' => [
+                    'operator' => 'contains',
+                    'settings' => ['text' => 'Alice'],
+                ],
+            ],
+        ]))
+        ->assertCanSeeTableRecords($matchingPosts)
+        ->assertCanNotSeeTableRecords($nonMatchingPosts);
+});
+
+it('can combine multiple OR blocks with AND conditions', function (): void {
+    // Must be published AND ((rating >= 8) OR (title contains "Featured"))
+    $publishedHighRated = Post::factory()->count(2)->create([
+        'title' => 'Regular Post',
+        'rating' => 9,
+        'is_published' => true,
+    ]);
+
+    $publishedFeatured = Post::factory()->count(2)->create([
+        'title' => 'Featured Content',
+        'rating' => 5,
+        'is_published' => true,
+    ]);
+
+    $unpublishedHighRated = Post::factory()->count(2)->create([
+        'title' => 'Regular Post',
+        'rating' => 9,
+        'is_published' => false,
+    ]);
+
+    $unpublishedFeatured = Post::factory()->count(2)->create([
+        'title' => 'Featured Content',
+        'rating' => 5,
+        'is_published' => false,
+    ]);
+
+    livewire(PostsQueryBuilderTable::class)
+        ->assertCanSeeTableRecords(
+            $publishedHighRated
+                ->merge($publishedFeatured)
+                ->merge($unpublishedHighRated)
+                ->merge($unpublishedFeatured)
+        )
+        ->tap(applyQueryBuilderFilter([
+            [
+                'type' => 'is_published',
+                'data' => [
+                    'operator' => 'isTrue',
+                    'settings' => [],
+                ],
+            ],
+            [
+                'type' => 'or',
+                'data' => [
+                    'groups' => [
+                        [
+                            'rules' => [
+                                [
+                                    'type' => 'rating',
+                                    'data' => [
+                                        'operator' => 'isMin',
+                                        'settings' => ['number' => 8],
+                                    ],
+                                ],
+                            ],
+                        ],
+                        [
+                            'rules' => [
+                                [
+                                    'type' => 'title',
+                                    'data' => [
+                                        'operator' => 'contains',
+                                        'settings' => ['text' => 'Featured'],
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ]))
+        ->assertCanSeeTableRecords($publishedHighRated->merge($publishedFeatured))
+        ->assertCanNotSeeTableRecords($unpublishedHighRated->merge($unpublishedFeatured));
+});
+
+it('can filter records using text constraint with relationship method', function (): void {
+    $matchingAuthor = User::factory()->create(['email' => 'john@example.com']);
+    $matchingPosts = Post::factory()->count(5)->create(['author_id' => $matchingAuthor->id]);
+
+    $nonMatchingAuthor = User::factory()->create(['email' => 'jane@different.com']);
+    $nonMatchingPosts = Post::factory()->count(5)->create(['author_id' => $nonMatchingAuthor->id]);
+
+    livewire(PostsQueryBuilderTable::class)
+        ->assertCanSeeTableRecords($matchingPosts->merge($nonMatchingPosts))
+        ->tap(applyQueryBuilderFilter([
+            [
+                'type' => 'author_email',
+                'data' => [
+                    'operator' => 'contains',
+                    'settings' => ['text' => 'example.com'],
+                ],
+            ],
+        ]))
+        ->assertCanSeeTableRecords($matchingPosts)
+        ->assertCanNotSeeTableRecords($nonMatchingPosts);
+});
+
+it('can filter records using boolean constraint with relationship method', function (): void {
+    $activeAuthor = User::factory()->create(['has_email_authentication' => true]);
+    $activePosts = Post::factory()->count(5)->create(['author_id' => $activeAuthor->id]);
+
+    $inactiveAuthor = User::factory()->create(['has_email_authentication' => false]);
+    $inactivePosts = Post::factory()->count(5)->create(['author_id' => $inactiveAuthor->id]);
+
+    livewire(PostsQueryBuilderTable::class)
+        ->assertCanSeeTableRecords($activePosts->merge($inactivePosts))
+        ->tap(applyQueryBuilderFilter([
+            [
+                'type' => 'author_has_email_auth',
+                'data' => [
+                    'operator' => 'isTrue',
+                    'settings' => [],
+                ],
+            ],
+        ]))
+        ->assertCanSeeTableRecords($activePosts)
+        ->assertCanNotSeeTableRecords($inactivePosts);
+});
+
+it('can filter records using boolean constraint with relationship method and inverse operator', function (): void {
+    $activeAuthor = User::factory()->create(['has_email_authentication' => true]);
+    $activePosts = Post::factory()->count(5)->create(['author_id' => $activeAuthor->id]);
+
+    $inactiveAuthor = User::factory()->create(['has_email_authentication' => false]);
+    $inactivePosts = Post::factory()->count(5)->create(['author_id' => $inactiveAuthor->id]);
+
+    livewire(PostsQueryBuilderTable::class)
+        ->assertCanSeeTableRecords($activePosts->merge($inactivePosts))
+        ->tap(applyQueryBuilderFilter([
+            [
+                'type' => 'author_has_email_auth',
+                'data' => [
+                    'operator' => 'isTrue.inverse',
+                    'settings' => [],
+                ],
+            ],
+        ]))
+        ->assertCanSeeTableRecords($inactivePosts)
+        ->assertCanNotSeeTableRecords($activePosts);
+});
+
+it('can filter records using number constraint with relationship method', function (): void {
+    $highScoreAuthor = User::factory()->create(['score' => 95]);
+    $highScorePosts = Post::factory()->count(5)->create(['author_id' => $highScoreAuthor->id]);
+
+    $lowScoreAuthor = User::factory()->create(['score' => 45]);
+    $lowScorePosts = Post::factory()->count(5)->create(['author_id' => $lowScoreAuthor->id]);
+
+    livewire(PostsQueryBuilderTable::class)
+        ->assertCanSeeTableRecords($highScorePosts->merge($lowScorePosts))
+        ->tap(applyQueryBuilderFilter([
+            [
+                'type' => 'author_score',
+                'data' => [
+                    'operator' => 'isMin',
+                    'settings' => ['number' => 80, 'aggregate' => null],
+                ],
+            ],
+        ]))
+        ->assertCanSeeTableRecords($highScorePosts)
+        ->assertCanNotSeeTableRecords($lowScorePosts);
+});
+
+it('can filter records using number constraint with relationship method and inverse operator', function (): void {
+    $highScoreAuthor = User::factory()->create(['score' => 95]);
+    $highScorePosts = Post::factory()->count(5)->create(['author_id' => $highScoreAuthor->id]);
+
+    $lowScoreAuthor = User::factory()->create(['score' => 45]);
+    $lowScorePosts = Post::factory()->count(5)->create(['author_id' => $lowScoreAuthor->id]);
+
+    livewire(PostsQueryBuilderTable::class)
+        ->assertCanSeeTableRecords($highScorePosts->merge($lowScorePosts))
+        ->tap(applyQueryBuilderFilter([
+            [
+                'type' => 'author_score',
+                'data' => [
+                    'operator' => 'isMin.inverse',
+                    'settings' => ['number' => 80, 'aggregate' => null],
+                ],
+            ],
+        ]))
+        ->assertCanSeeTableRecords($lowScorePosts)
+        ->assertCanNotSeeTableRecords($highScorePosts);
+});
+
+it('can filter records using select constraint with relationship method', function (): void {
+    $activeAuthor = User::factory()->create(['status' => 'active']);
+    $activePosts = Post::factory()->count(5)->create(['author_id' => $activeAuthor->id]);
+
+    $pendingAuthor = User::factory()->create(['status' => 'pending']);
+    $pendingPosts = Post::factory()->count(5)->create(['author_id' => $pendingAuthor->id]);
+
+    livewire(PostsQueryBuilderTable::class)
+        ->assertCanSeeTableRecords($activePosts->merge($pendingPosts))
+        ->tap(applyQueryBuilderFilter([
+            [
+                'type' => 'author_status',
+                'data' => [
+                    'operator' => 'is',
+                    'settings' => ['value' => 'active'],
+                ],
+            ],
+        ]))
+        ->assertCanSeeTableRecords($activePosts)
+        ->assertCanNotSeeTableRecords($pendingPosts);
+});
+
+it('can filter records using select constraint with relationship method and inverse operator', function (): void {
+    $activeAuthor = User::factory()->create(['status' => 'active']);
+    $activePosts = Post::factory()->count(5)->create(['author_id' => $activeAuthor->id]);
+
+    $pendingAuthor = User::factory()->create(['status' => 'pending']);
+    $pendingPosts = Post::factory()->count(5)->create(['author_id' => $pendingAuthor->id]);
+
+    livewire(PostsQueryBuilderTable::class)
+        ->assertCanSeeTableRecords($activePosts->merge($pendingPosts))
+        ->tap(applyQueryBuilderFilter([
+            [
+                'type' => 'author_status',
+                'data' => [
+                    'operator' => 'is.inverse',
+                    'settings' => ['value' => 'active'],
+                ],
+            ],
+        ]))
+        ->assertCanSeeTableRecords($pendingPosts)
+        ->assertCanNotSeeTableRecords($activePosts);
+});
+
+it('can filter records using date constraint with relationship method', function (): void {
+    $recentDate = '2024-06-20';
+    $oldDate = '2024-01-10';
+    $filterDate = '2024-06-15';
+
+    $recentAuthor = User::factory()->create(['email_verified_at' => $recentDate]);
+    $recentPosts = Post::factory()->count(5)->create(['author_id' => $recentAuthor->id]);
+
+    $oldAuthor = User::factory()->create(['email_verified_at' => $oldDate]);
+    $oldPosts = Post::factory()->count(5)->create(['author_id' => $oldAuthor->id]);
+
+    livewire(PostsQueryBuilderTable::class)
+        ->assertCanSeeTableRecords($recentPosts->merge($oldPosts))
+        ->tap(applyQueryBuilderFilter([
+            [
+                'type' => 'author_verified_at',
+                'data' => [
+                    'operator' => 'isAfter',
+                    'settings' => ['date' => $filterDate],
+                ],
+            ],
+        ]))
+        ->assertCanSeeTableRecords($recentPosts)
+        ->assertCanNotSeeTableRecords($oldPosts);
+});
+
+it('can filter records using date constraint with relationship method and inverse operator', function (): void {
+    $recentDate = '2024-06-20';
+    $oldDate = '2024-01-10';
+    $filterDate = '2024-06-15';
+
+    $recentAuthor = User::factory()->create(['email_verified_at' => $recentDate]);
+    $recentPosts = Post::factory()->count(5)->create(['author_id' => $recentAuthor->id]);
+
+    $oldAuthor = User::factory()->create(['email_verified_at' => $oldDate]);
+    $oldPosts = Post::factory()->count(5)->create(['author_id' => $oldAuthor->id]);
+
+    livewire(PostsQueryBuilderTable::class)
+        ->assertCanSeeTableRecords($recentPosts->merge($oldPosts))
+        ->tap(applyQueryBuilderFilter([
+            [
+                'type' => 'author_verified_at',
+                'data' => [
+                    'operator' => 'isAfter.inverse',
+                    'settings' => ['date' => $filterDate],
+                ],
+            ],
+        ]))
+        ->assertCanSeeTableRecords($oldPosts)
+        ->assertCanNotSeeTableRecords($recentPosts);
+});
+
+it('can combine relationship constraints with regular constraints', function (): void {
+    $activeHighScoreAuthor = User::factory()->create([
+        'score' => 95,
+        'status' => 'active',
+    ]);
+    $matchingPosts = Post::factory()->count(3)->create([
+        'author_id' => $activeHighScoreAuthor->id,
+        'is_published' => true,
+    ]);
+
+    $activeHighScoreUnpublished = Post::factory()->count(2)->create([
+        'author_id' => $activeHighScoreAuthor->id,
+        'is_published' => false,
+    ]);
+
+    $inactiveAuthor = User::factory()->create([
+        'score' => 95,
+        'status' => 'inactive',
+    ]);
+    $nonMatchingPosts = Post::factory()->count(3)->create([
+        'author_id' => $inactiveAuthor->id,
+        'is_published' => true,
+    ]);
+
+    livewire(PostsQueryBuilderTable::class)
+        ->assertCanSeeTableRecords($matchingPosts->merge($activeHighScoreUnpublished)->merge($nonMatchingPosts))
+        ->tap(applyQueryBuilderFilter([
+            [
+                'type' => 'author_score',
+                'data' => [
+                    'operator' => 'isMin',
+                    'settings' => ['number' => 80, 'aggregate' => null],
+                ],
+            ],
+            [
+                'type' => 'author_status',
+                'data' => [
+                    'operator' => 'is',
+                    'settings' => ['value' => 'active'],
+                ],
+            ],
+            [
+                'type' => 'is_published',
+                'data' => [
+                    'operator' => 'isTrue',
+                    'settings' => [],
+                ],
+            ],
+        ]))
+        ->assertCanSeeTableRecords($matchingPosts)
+        ->assertCanNotSeeTableRecords($activeHighScoreUnpublished->merge($nonMatchingPosts));
+});
