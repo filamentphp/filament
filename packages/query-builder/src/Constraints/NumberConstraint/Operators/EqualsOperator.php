@@ -58,6 +58,33 @@ class EqualsOperator extends Operator
 
     public function apply(Builder $query, string $qualifiedColumn): Builder
     {
+        if (filled($this->getAggregate())) {
+            $relationshipName = $this->getConstraint()->getRelationshipName();
+            $attributeForQuery = $this->getConstraint()->getAttributeForQuery();
+            $operator = $this->isInverse() ? '!=' : '=';
+            $value = floatval($this->getSettings()['number']);
+            $aggregate = $this->getAggregate();
+
+            // Build a scalar subquery for the aggregate
+            $relationship = $query->getModel()->{$relationshipName}();
+            $relatedModel = $relationship->getModel();
+            $relatedTable = $relatedModel->getTable();
+            $foreignKeyName = $relationship->getForeignKeyName();
+            $ownerKeyName = $relationship->getLocalKeyName();
+            $mainTable = $query->getModel()->getTable();
+
+            // Create the subquery using the relationship to get proper scopes
+            // Cast to REAL to ensure numeric comparison (important for SQLite)
+            $subQuery = $relatedModel->query()
+                ->selectRaw("CAST({$aggregate}({$relatedTable}.{$attributeForQuery}) AS REAL)")
+                ->whereColumn("{$relatedTable}.{$foreignKeyName}", "{$mainTable}.{$ownerKeyName}");
+
+            // Add the comparison
+            $query->whereRaw("({$subQuery->toSql()}) {$operator} ?", array_merge($subQuery->getBindings(), [$value]));
+
+            return $query;
+        }
+
         return $query->where($this->replaceQualifiedColumnWithQualifiedAggregateColumn($qualifiedColumn), $this->isInverse() ? '!=' : '=', floatval($this->getSettings()['number']));
     }
 }

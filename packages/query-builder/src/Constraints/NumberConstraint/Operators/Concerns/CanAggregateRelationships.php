@@ -41,34 +41,6 @@ trait CanAggregateRelationships
         return parent::queriesRelationshipsUsingSubSelect() && blank($this->getSettings()[static::getAggregateSelectName()]);
     }
 
-    public function applyToBaseFilterQuery(Builder $query): Builder
-    {
-        if (filled($this->getAggregate())) {
-            $aggregateAlias = $this->generateAggregateAlias();
-
-            if ($this->getConstraint()->isExistingAggregateAlias($aggregateAlias)) {
-                return $query;
-            }
-
-            $relationship = $query->getModel()->{$this->getConstraint()->getRelationshipName()}();
-            $relatedModel = $relationship->getModel();
-            $relatedQuery = $relatedModel->newQuery();
-
-            $qualifiedColumn = $relatedQuery->qualifyColumn($this->getConstraint()->getAttributeForQuery());
-
-            $query->leftJoinSub(
-                $relatedQuery
-                    ->groupBy($relatedModel->getQualifiedKeyName())
-                    ->selectRaw("{$relatedModel->getQualifiedKeyName()}, {$this->getAggregate()}({$qualifiedColumn}) as {$aggregateAlias}"),
-                $aggregateAlias,
-                fn (JoinClause $join) => $join->on("{$aggregateAlias}.{$relatedModel->getKeyName()}", '=', $query->getModel()->getQualifiedKeyName())
-            );
-
-            $this->getConstraint()->reportAggregateAlias($aggregateAlias);
-        }
-
-        return $query;
-    }
 
     protected function getAggregateSelect(): Select
     {
