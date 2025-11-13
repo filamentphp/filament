@@ -5,6 +5,7 @@ namespace Filament\QueryBuilder\Constraints\NumberConstraint\Operators\Concerns;
 use Filament\Forms\Components\Select;
 use Filament\QueryBuilder\Constraints\NumberConstraint;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Str;
 use LogicException;
@@ -39,6 +40,40 @@ trait CanAggregateRelationships
     public function queriesRelationshipsUsingSubSelect(): bool
     {
         return parent::queriesRelationshipsUsingSubSelect() && blank($this->getSettings()[static::getAggregateSelectName()]);
+    }
+
+    protected function getNumericCastType(Builder $query): string
+    {
+        $driver = $query->getConnection()->getDriverName();
+
+        return match ($driver) {
+            'sqlite' => 'real',
+            'pgsql' => 'numeric',
+            default => 'decimal(10,2)',
+        };
+    }
+
+    protected function applyAggregateComparison(Builder $query, string $operator, float $value): Builder
+    {
+        $relationshipName = $this->getConstraint()->getRelationshipName();
+        $attributeForQuery = $this->getConstraint()->getAttributeForQuery();
+        $aggregate = $this->getAggregate();
+
+        /** @var Relation $relationship */
+        $relationship = $query->getModel()->{$relationshipName}();
+
+        $relatedModel = $relationship->getModel();
+        $attributeForQuery = $relatedModel->qualifyColumn($attributeForQuery);
+        $foreignKeyName = $relationship->getQualifiedForeignKeyName();
+        $parentKeyName = $relationship->getQualifiedParentKeyName();
+
+        $castType = $this->getNumericCastType($query);
+
+        $subQuery = $relatedModel->query()
+            ->selectRaw("cast({$aggregate}({$attributeForQuery}) as {$castType})")
+            ->whereColumn("{$foreignKeyName}", "{$parentKeyName}");
+
+        return $query->whereRaw("({$subQuery->toSql()}) {$operator} ?", [...$subQuery->getBindings(), $value]);
     }
 
 
