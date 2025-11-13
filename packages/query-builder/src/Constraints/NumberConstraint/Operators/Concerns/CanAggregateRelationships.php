@@ -6,8 +6,6 @@ use Filament\Forms\Components\Select;
 use Filament\QueryBuilder\Constraints\NumberConstraint;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Database\Query\JoinClause;
-use Illuminate\Support\Str;
 use LogicException;
 
 trait CanAggregateRelationships
@@ -76,7 +74,6 @@ trait CanAggregateRelationships
         return $query->whereRaw("({$subQuery->toSql()}) {$operator} ?", [...$subQuery->getBindings(), $value]);
     }
 
-
     protected function getAggregateSelect(): Select
     {
         return Select::make(static::getAggregateSelectName())
@@ -106,24 +103,6 @@ trait CanAggregateRelationships
             static::getAggregateSumKey() => 'filament-query-builder::query-builder.operators.number.aggregates.sum.summary',
             default => $attributeLabel,
         }, ['attribute' => $attributeLabel]);
-    }
-
-    protected function generateAggregateAlias(): string
-    {
-        $relationshipName = Str::snake($this->getConstraint()->getRelationshipName());
-
-        return "{$relationshipName}_{$this->getAggregate()}_{$this->getConstraint()->getAttributeForQuery()}";
-    }
-
-    protected function replaceQualifiedColumnWithQualifiedAggregateColumn(string $qualifiedColumn): string
-    {
-        if (blank($this->getAggregate())) {
-            return $qualifiedColumn;
-        }
-
-        $aggregateAlias = $this->generateAggregateAlias();
-
-        return "{$aggregateAlias}.{$aggregateAlias}";
     }
 
     public function getConstraint(): ?NumberConstraint

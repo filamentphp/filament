@@ -65,6 +65,6 @@ class IsMaxOperator extends Operator
             return $this->applyAggregateComparison($query, $operator, $value);
         }
 
-        return $query->where($this->replaceQualifiedColumnWithQualifiedAggregateColumn($qualifiedColumn), $this->isInverse() ? '>' : '<=', floatval($this->getSettings()['number']));
+        return $query->where($qualifiedColumn, $this->isInverse() ? '>' : '<=', floatval($this->getSettings()['number']));
     }
 }
