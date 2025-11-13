@@ -21,6 +21,10 @@ class TeamsRelationManager extends RelationManager
                     ->required(),
                 Forms\Components\Textarea::make('description')
                     ->columnSpanFull(),
+                Forms\Components\TextInput::make('budget')
+                    ->required()
+                    ->numeric()
+                    ->default(0),
             ]);
     }
 
@@ -31,6 +35,9 @@ class TeamsRelationManager extends RelationManager
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->searchable(),
+                Tables\Columns\TextColumn::make('budget')
+                    ->numeric()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
