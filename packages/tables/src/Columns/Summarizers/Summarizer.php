@@ -82,10 +82,13 @@ class Summarizer extends ViewComponent implements HasEmbeddedView
         $hasRelationship = $query && $column->hasRelationship($query->getModel());
 
         if ($this->hasQueryModification() && $hasRelationship) {
-            $baseQueryForModification = $query->toBase();
+            // Apply the query modification to the Eloquent query.
+            // The modification closure expects a Query\Builder, but we'll pass the
+            // underlying base query. Since toBase() returns a reference to the
+            // actual query builder, modifications will be reflected in the Eloquent query.
             $this->evaluate($this->modifyQueryUsing, [
                 'attribute' => $attribute,
-                'query' => $baseQueryForModification,
+                'query' => $query->toBase(),
             ]);
         }
 

@@ -102,6 +102,14 @@ trait CanSummarizeRecords
             ...$joins,
         ];
 
+        // Transfer join bindings from the relationship query to the summary query
+        if (filled($joins)) {
+            $joinBindings = $queryToJoin->toBase()->getBindings()['join'] ?? [];
+            if (filled($joinBindings)) {
+                $query->addBinding($joinBindings, 'join');
+            }
+        }
+
         return $query
             ->selectRaw(implode(', ', $selects))
             ->get()
