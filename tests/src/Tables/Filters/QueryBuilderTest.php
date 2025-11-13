@@ -576,12 +576,15 @@ it('can filter records using multiple select constraint', function (): void {
 
 it('can filter records using relationship constraint with text operator', function (): void {
     $author = User::factory()->create(['name' => 'John Doe']);
-    $posts = Post::factory()->count(5)->create(['author_id' => $author->id]);
+    Post::factory()->count(5)->create(['author_id' => $author->id]);
+    Post::factory()->count(5)->create();
 
-    $otherPosts = Post::factory()->count(5)->create();
+    $allPosts = Post::with('author')->get();
+    $matchingPosts = $allPosts->filter(fn ($post) => str_contains($post->author->name ?? '', 'John'));
+    $nonMatchingPosts = $allPosts->reject(fn ($post) => str_contains($post->author->name ?? '', 'John'));
 
     livewire(PostsQueryBuilderTable::class)
-        ->assertCanSeeTableRecords($posts->merge($otherPosts))
+        ->assertCanSeeTableRecords($allPosts)
         ->tap(applyQueryBuilderFilter([
             [
                 'type' => 'author_name',
@@ -591,18 +594,21 @@ it('can filter records using relationship constraint with text operator', functi
                 ],
             ],
         ]))
-        ->assertCanSeeTableRecords($posts)
-        ->assertCanNotSeeTableRecords($otherPosts);
+        ->assertCanSeeTableRecords($matchingPosts)
+        ->assertCanNotSeeTableRecords($nonMatchingPosts);
 });
 
 it('can filter records using relationship constraint with is related to operator', function (): void {
     $author = User::factory()->create(['name' => 'John Doe']);
-    $posts = Post::factory()->count(5)->create(['author_id' => $author->id]);
+    Post::factory()->count(5)->create(['author_id' => $author->id]);
+    Post::factory()->count(5)->create();
 
-    $otherPosts = Post::factory()->count(5)->create();
+    $allPosts = Post::all();
+    $matchingPosts = $allPosts->filter(fn ($post) => $post->author_id === $author->id);
+    $nonMatchingPosts = $allPosts->reject(fn ($post) => $post->author_id === $author->id);
 
     livewire(PostsQueryBuilderTable::class)
-        ->assertCanSeeTableRecords($posts->merge($otherPosts))
+        ->assertCanSeeTableRecords($allPosts)
         ->tap(applyQueryBuilderFilter([
             [
                 'type' => 'author',
@@ -612,18 +618,21 @@ it('can filter records using relationship constraint with is related to operator
                 ],
             ],
         ]))
-        ->assertCanSeeTableRecords($posts)
-        ->assertCanNotSeeTableRecords($otherPosts);
+        ->assertCanSeeTableRecords($matchingPosts)
+        ->assertCanNotSeeTableRecords($nonMatchingPosts);
 });
 
 it('can filter records using relationship constraint with is not related to operator', function (): void {
     $author = User::factory()->create(['name' => 'John Doe']);
-    $posts = Post::factory()->count(5)->create(['author_id' => $author->id]);
+    Post::factory()->count(5)->create(['author_id' => $author->id]);
+    Post::factory()->count(5)->create();
 
-    $otherPosts = Post::factory()->count(5)->create();
+    $allPosts = Post::all();
+    $matchingPosts = $allPosts->filter(fn ($post) => $post->author_id !== $author->id);
+    $nonMatchingPosts = $allPosts->reject(fn ($post) => $post->author_id !== $author->id);
 
     livewire(PostsQueryBuilderTable::class)
-        ->assertCanSeeTableRecords($posts->merge($otherPosts))
+        ->assertCanSeeTableRecords($allPosts)
         ->tap(applyQueryBuilderFilter([
             [
                 'type' => 'author',
@@ -633,8 +642,8 @@ it('can filter records using relationship constraint with is not related to oper
                 ],
             ],
         ]))
-        ->assertCanSeeTableRecords($otherPosts)
-        ->assertCanNotSeeTableRecords($posts);
+        ->assertCanSeeTableRecords($matchingPosts)
+        ->assertCanNotSeeTableRecords($nonMatchingPosts);
 });
 
 it('can filter records using nullable constraint with is filled operator', function (): void {
