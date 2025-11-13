@@ -1429,7 +1429,7 @@ it('can filter records using number constraint with aggregate and inverse operat
         ->assertCanNotSeeTableRecords([$highAvgUser]);
 });
 
-it('can filter records using number constraint with sum aggregate on BelongsToMany relationship', function (): void {
+it('can filter records using number constraint with sum aggregate on `BelongsToMany` relationship', function (): void {
     // Create user with high total budget across all teams
     $highTotalUser = User::factory()->create();
     $highTeams = Team::factory()->count(3)->create(['budget' => 5000]); // Total: 15000
@@ -1457,7 +1457,7 @@ it('can filter records using number constraint with sum aggregate on BelongsToMa
         ->assertCanNotSeeTableRecords([$lowTotalUser]);
 });
 
-it('can filter records using number constraint with average aggregate on BelongsToMany relationship', function (): void {
+it('can filter records using number constraint with average aggregate on `BelongsToMany` relationship', function (): void {
     // Create user with high average budget
     $highAvgUser = User::factory()->create();
     $highTeams = Team::factory()->count(3)->create(['budget' => 8000]); // Average: 8000
@@ -1485,7 +1485,7 @@ it('can filter records using number constraint with average aggregate on Belongs
         ->assertCanNotSeeTableRecords([$lowAvgUser]);
 });
 
-it('can filter records using number constraint with min aggregate on BelongsToMany relationship', function (): void {
+it('can filter records using number constraint with min aggregate on `BelongsToMany` relationship', function (): void {
     // Create user where even the lowest budget is high
     $highMinUser = User::factory()->create();
     $highMinTeams = collect([
@@ -1520,7 +1520,7 @@ it('can filter records using number constraint with min aggregate on BelongsToMa
         ->assertCanNotSeeTableRecords([$lowMinUser]);
 });
 
-it('can filter records using number constraint with max aggregate on BelongsToMany relationship', function (): void {
+it('can filter records using number constraint with max aggregate on `BelongsToMany` relationship', function (): void {
     // Create user with at least one very high budget team
     $highMaxUser = User::factory()->create();
     $highMaxTeams = collect([
@@ -1554,7 +1554,7 @@ it('can filter records using number constraint with max aggregate on BelongsToMa
         ->assertCanNotSeeTableRecords([$lowMaxUser]);
 });
 
-it('can filter records using number constraint with aggregate and inverse operator on BelongsToMany relationship', function (): void {
+it('can filter records using number constraint with aggregate and inverse operator on `BelongsToMany` relationship', function (): void {
     // Create user with high average budget
     $highAvgUser = User::factory()->create();
     $highTeams = Team::factory()->count(3)->create(['budget' => 8000]);
