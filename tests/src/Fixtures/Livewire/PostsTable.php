@@ -64,6 +64,9 @@ class PostsTable extends Component implements HasActions, HasSchemas, Tables\Con
                     ]),
                 Tables\Columns\TextColumn::make('author.email')
                     ->searchable(isIndividual: true, isGlobal: false),
+                Tables\Columns\TextColumn::make('author.team.name')
+                    ->label('Author Team')
+                    ->sortable(),
                 Tables\Columns\IconColumn::make('is_published')
                     ->boolean()
                     ->summarize([

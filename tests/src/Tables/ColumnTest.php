@@ -4,6 +4,7 @@ use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tests\Fixtures\Livewire\PostsTable;
 use Filament\Tests\Fixtures\Models\Post;
+use Filament\Tests\Fixtures\Models\Team;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Tables\TestCase;
 use Illuminate\Support\Str;
@@ -44,6 +45,32 @@ it('can sort records with relationship', function (): void {
         ->assertCanSeeTableRecords($posts->sortBy('author.name'), inOrder: true)
         ->sortTable('author.name', 'desc')
         ->assertCanSeeTableRecords($posts->sortByDesc('author.name'), inOrder: true);
+});
+
+it('can sort records with nested relationship', function (): void {
+    $teamAlpha = Team::factory()->create(['name' => 'Alpha Team']);
+    $teamBeta = Team::factory()->create(['name' => 'Beta Team']);
+    $teamGamma = Team::factory()->create(['name' => 'Gamma Team']);
+
+    // Create users with teams first
+    $userWithAlpha = User::factory()->create(['team_id' => $teamAlpha->id]);
+    $userWithBeta = User::factory()->create(['team_id' => $teamBeta->id]);
+    $userWithGamma = User::factory()->create(['team_id' => $teamGamma->id]);
+
+    // Create posts with those authors
+    $posts = collect([
+        Post::factory()->create(['author_id' => $userWithAlpha->id]),
+        Post::factory()->create(['author_id' => $userWithBeta->id]),
+        Post::factory()->create(['author_id' => $userWithGamma->id]),
+        Post::factory()->create(['author_id' => $userWithAlpha->id]),
+        Post::factory()->create(['author_id' => $userWithBeta->id]),
+    ]);
+
+    livewire(PostsTable::class)
+        ->sortTable('author.team.name')
+        ->assertCanSeeTableRecords($posts->sortBy('author.team.name'), inOrder: true)
+        ->sortTable('author.team.name', 'desc')
+        ->assertCanSeeTableRecords($posts->sortByDesc('author.team.name'), inOrder: true);
 });
 
 it('can sort records with JSON column', function (): void {
@@ -409,8 +436,8 @@ it('can toggle all table columns', function (): void {
 });
 
 it('can search and sort by relationship column when both tables have the same column name', function (): void {
-    $teamAlpha = \Filament\Tests\Fixtures\Models\Team::factory()->create(['name' => 'Team Alpha']);
-    $teamBeta = \Filament\Tests\Fixtures\Models\Team::factory()->create(['name' => 'Team Beta']);
+    $teamAlpha = Team::factory()->create(['name' => 'Team Alpha']);
+    $teamBeta = Team::factory()->create(['name' => 'Team Beta']);
 
     $userAlice = User::factory()->create([
         'name' => 'Alice',
