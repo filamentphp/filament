@@ -48,23 +48,11 @@ it('can sort records with relationship', function (): void {
 });
 
 it('can sort records with nested relationship', function (): void {
-    $teamAlpha = Team::factory()->create(['name' => 'Alpha Team']);
-    $teamBeta = Team::factory()->create(['name' => 'Beta Team']);
-    $teamGamma = Team::factory()->create(['name' => 'Gamma Team']);
-
-    // Create users with teams first
-    $userWithAlpha = User::factory()->create(['team_id' => $teamAlpha->id]);
-    $userWithBeta = User::factory()->create(['team_id' => $teamBeta->id]);
-    $userWithGamma = User::factory()->create(['team_id' => $teamGamma->id]);
-
-    // Create posts with those authors
-    $posts = collect([
-        Post::factory()->create(['author_id' => $userWithAlpha->id]),
-        Post::factory()->create(['author_id' => $userWithBeta->id]),
-        Post::factory()->create(['author_id' => $userWithGamma->id]),
-        Post::factory()->create(['author_id' => $userWithAlpha->id]),
-        Post::factory()->create(['author_id' => $userWithBeta->id]),
-    ]);
+    $posts = Post::factory()->count(5)->state(fn (): array => [
+        'author_id' => User::factory()->state([
+            'team_id' => Team::factory(),
+        ]),
+    ])->create();
 
     livewire(PostsTable::class)
         ->sortTable('author.team.name')
