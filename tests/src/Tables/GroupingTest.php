@@ -51,17 +51,17 @@ it('can group a table', function (): void {
 
 it('can group records by column', function (): void {
     // Create posts with different titles to group by
-    $posts = collect([
-        Post::factory()->create(['title' => 'Apple Post']),
-        Post::factory()->create(['title' => 'Banana Post']),
-        Post::factory()->create(['title' => 'Apple Post']),
-        Post::factory()->create(['title' => 'Cherry Post']),
-        Post::factory()->create(['title' => 'Banana Post']),
-    ]);
+    Post::factory()->create(['title' => 'Apple Post']);
+    Post::factory()->create(['title' => 'Banana Post']);
+    Post::factory()->create(['title' => 'Apple Post']);
+    Post::factory()->create(['title' => 'Cherry Post']);
+    Post::factory()->create(['title' => 'Banana Post']);
+
+    $sortedPosts = Post::query()->orderBy('title')->get();
 
     livewire(PostsTable::class)
         ->set('tableGrouping', 'title')
-        ->assertCanSeeTableRecords($posts->sortBy('title'), inOrder: true);
+        ->assertCanSeeTableRecords($sortedPosts, inOrder: true);
 });
 
 it('can group records by relationship', function (): void {
@@ -71,17 +71,24 @@ it('can group records by relationship', function (): void {
     $userCharlie = User::factory()->create(['name' => 'Charlie']);
 
     // Create posts with those authors
-    $posts = collect([
-        Post::factory()->create(['author_id' => $userBob->id]),
-        Post::factory()->create(['author_id' => $userAlice->id]),
-        Post::factory()->create(['author_id' => $userCharlie->id]),
-        Post::factory()->create(['author_id' => $userAlice->id]),
-        Post::factory()->create(['author_id' => $userBob->id]),
-    ]);
+    Post::factory()->create(['author_id' => $userBob->id]);
+    Post::factory()->create(['author_id' => $userAlice->id]);
+    Post::factory()->create(['author_id' => $userCharlie->id]);
+    Post::factory()->create(['author_id' => $userAlice->id]);
+    Post::factory()->create(['author_id' => $userBob->id]);
+
+    $sortedPosts = Post::query()
+        ->orderBy(
+            User::query()
+                ->select('name')
+                ->whereColumn('users.id', 'posts.author_id')
+                ->limit(1)
+        )
+        ->get();
 
     livewire(PostsTable::class)
         ->set('tableGrouping', 'author.name')
-        ->assertCanSeeTableRecords($posts->sortBy('author.name'), inOrder: true);
+        ->assertCanSeeTableRecords($sortedPosts, inOrder: true);
 });
 
 it('can group records by nested relationship', function (): void {
@@ -96,22 +103,29 @@ it('can group records by nested relationship', function (): void {
     $userWithGamma = User::factory()->create(['team_id' => $teamGamma->id]);
 
     // Create posts with those authors
-    $posts = collect([
-        Post::factory()->create(['author_id' => $userWithBeta->id]),
-        Post::factory()->create(['author_id' => $userWithAlpha->id]),
-        Post::factory()->create(['author_id' => $userWithGamma->id]),
-        Post::factory()->create(['author_id' => $userWithAlpha->id]),
-        Post::factory()->create(['author_id' => $userWithBeta->id]),
-    ]);
+    Post::factory()->create(['author_id' => $userWithBeta->id]);
+    Post::factory()->create(['author_id' => $userWithAlpha->id]);
+    Post::factory()->create(['author_id' => $userWithGamma->id]);
+    Post::factory()->create(['author_id' => $userWithAlpha->id]);
+    Post::factory()->create(['author_id' => $userWithBeta->id]);
+
+    $sortedPosts = Post::query()
+        ->orderBy(
+            Team::query()
+                ->select('teams.name')
+                ->whereColumn('teams.id', 'users.team_id')
+                ->join('users', 'users.team_id', '=', 'teams.id')
+                ->whereColumn('users.id', 'posts.author_id')
+                ->limit(1)
+        )
+        ->get();
 
     livewire(PostsTable::class)
         ->set('tableGrouping', 'author.team.name')
-        ->assertCanSeeTableRecords($posts->sortBy('author.team.name'), inOrder: true);
+        ->assertCanSeeTableRecords($sortedPosts, inOrder: true);
 });
 
 it('can group records by `BelongsTo` -> `HasOne` relationship', function (): void {
-    $posts = collect();
-
     // Create posts with unique profile bios
     $bios = ['Alpha bio', 'Beta bio', 'Gamma bio', 'Delta bio', 'Epsilon bio'];
     foreach ($bios as $bio) {
@@ -119,17 +133,26 @@ it('can group records by `BelongsTo` -> `HasOne` relationship', function (): voi
             Profile::factory()->state(['bio' => $bio]),
             'profile'
         )->create();
-        $posts->push(Post::factory()->create(['author_id' => $user->id]));
+        Post::factory()->create(['author_id' => $user->id]);
     }
+
+    $sortedPosts = Post::query()
+        ->orderBy(
+            Profile::query()
+                ->select('bio')
+                ->whereColumn('profiles.user_id', 'users.id')
+                ->join('users', 'users.id', '=', 'profiles.user_id')
+                ->whereColumn('users.id', 'posts.author_id')
+                ->limit(1)
+        )
+        ->get();
 
     livewire(PostsTable::class)
         ->set('tableGrouping', 'author.profile.bio')
-        ->assertCanSeeTableRecords($posts->sortBy('author.profile.bio'), inOrder: true);
+        ->assertCanSeeTableRecords($sortedPosts, inOrder: true);
 });
 
 it('can group records by `BelongsTo` -> `HasOne` -> `BelongsTo` relationship', function (): void {
-    $posts = collect();
-
     // Create posts with users that have profiles linked to companies
     $companyNames = ['Acme Corp', 'Beta Inc', 'Gamma LLC', 'Delta Co', 'Epsilon Ltd'];
     foreach ($companyNames as $companyName) {
@@ -138,57 +161,83 @@ it('can group records by `BelongsTo` -> `HasOne` -> `BelongsTo` relationship', f
             Profile::factory()->for($company, 'company'),
             'profile'
         )->create();
-        $posts->push(Post::factory()->create(['author_id' => $user->id]));
+        Post::factory()->create(['author_id' => $user->id]);
     }
+
+    $sortedPosts = Post::query()
+        ->orderBy(
+            Company::query()
+                ->select('companies.name')
+                ->whereColumn('companies.id', 'profiles.company_id')
+                ->join('profiles', 'profiles.company_id', '=', 'companies.id')
+                ->join('users', 'users.id', '=', 'profiles.user_id')
+                ->whereColumn('users.id', 'posts.author_id')
+                ->limit(1)
+        )
+        ->get();
 
     livewire(PostsTable::class)
         ->set('tableGrouping', 'author.profile.company.name')
-        ->assertCanSeeTableRecords($posts->sortBy('author.profile.company.name'), inOrder: true);
+        ->assertCanSeeTableRecords($sortedPosts, inOrder: true);
 });
 
 it('can group records by `HasOne` -> `BelongsTo` relationship', function (): void {
-    $users = collect();
-
     // Create users with profiles linked to different companies
     $companyNames = ['Alpha Corp', 'Beta Corp', 'Gamma Corp', 'Delta Corp', 'Epsilon Corp'];
     foreach ($companyNames as $companyName) {
         $company = Company::factory()->create(['name' => $companyName]);
-        $user = User::factory()->has(
+        User::factory()->has(
             Profile::factory()->for($company, 'company'),
             'profile'
         )->create();
-        $users->push($user);
     }
+
+    $sortedUsers = User::query()
+        ->orderBy(
+            Company::query()
+                ->select('companies.name')
+                ->whereColumn('companies.id', 'profiles.company_id')
+                ->join('profiles', 'profiles.company_id', '=', 'companies.id')
+                ->whereColumn('profiles.user_id', 'users.id')
+                ->limit(1)
+        )
+        ->get();
 
     livewire(UsersTable::class)
         ->set('tableGrouping', 'profile.company.name')
-        ->assertCanSeeTableRecords($users->sortBy('profile.company.name'), inOrder: true);
+        ->assertCanSeeTableRecords($sortedUsers, inOrder: true);
 });
 
 it('can group records by `HasOne` -> `HasOne` relationship', function (): void {
-    $users = collect();
-
     // Create users with profiles that have settings
     $themes = ['alpha-theme', 'beta-theme', 'gamma-theme', 'delta-theme', 'epsilon-theme'];
     foreach ($themes as $theme) {
-        $user = User::factory()->has(
+        User::factory()->has(
             Profile::factory()->has(
                 Setting::factory()->state(['theme' => $theme]),
                 'setting'
             ),
             'profile'
         )->create();
-        $users->push($user);
     }
+
+    $sortedUsers = User::query()
+        ->orderBy(
+            Setting::query()
+                ->select('theme')
+                ->whereColumn('settings.profile_id', 'profiles.id')
+                ->join('profiles', 'profiles.id', '=', 'settings.profile_id')
+                ->whereColumn('profiles.user_id', 'users.id')
+                ->limit(1)
+        )
+        ->get();
 
     livewire(UsersTable::class)
         ->set('tableGrouping', 'profile.setting.theme')
-        ->assertCanSeeTableRecords($users->sortBy('profile.setting.theme'), inOrder: true);
+        ->assertCanSeeTableRecords($sortedUsers, inOrder: true);
 });
 
 it('can group records by `MorphOne` relationship', function (): void {
-    $users = collect();
-
     $urls = ['alpha.jpg', 'beta.jpg', 'gamma.jpg', 'delta.jpg', 'epsilon.jpg'];
     foreach ($urls as $url) {
         $user = User::factory()->create();
@@ -197,12 +246,21 @@ it('can group records by `MorphOne` relationship', function (): void {
             'imageable_type' => User::class,
             'imageable_id' => $user->id,
         ]);
-        $users->push($user);
     }
+
+    $sortedUsers = User::query()
+        ->orderBy(
+            Image::query()
+                ->select('url')
+                ->whereColumn('images.imageable_id', 'users.id')
+                ->where('images.imageable_type', User::class)
+                ->limit(1)
+        )
+        ->get();
 
     livewire(UsersTable::class)
         ->set('tableGrouping', 'image.url')
-        ->assertCanSeeTableRecords($users->sortBy('image.url'), inOrder: true);
+        ->assertCanSeeTableRecords($sortedUsers, inOrder: true);
 });
 
 it('can group records with nullable `BelongsTo` relationship', function (): void {
