@@ -1020,6 +1020,10 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
 
     public function hasFileAttachmentsByDefault(): bool
     {
+        if ($this->toolbarButtons === null) {
+            return true;
+        }
+
         return (! $this->hasCustomToolbarButtons()) || $this->hasToolbarButton('attachFiles');
     }
 }
