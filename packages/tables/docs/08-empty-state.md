@@ -93,3 +93,15 @@ public function table(Table $table): Table
         ->emptyState(view('tables.posts.empty-state'));
 }
 ```
+
+You may also simply pass any `Htmlable`, like an `HtmlString`:
+
+```php
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->emptyState(new HtmlString("<div class='fi-ta-empty-state'>Empty!</div>"));
+}
+```
