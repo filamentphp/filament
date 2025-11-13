@@ -36,6 +36,7 @@
     $filtersApplyAction = $getFiltersApplyAction();
     $filtersForm = $getFiltersForm();
     $filtersFormWidth = $getFiltersFormWidth();
+    $resetButtonPosition = $getResetButtonPosition();
     $hasColumnGroups = $hasColumnGroups();
     $hasColumnsLayout = $hasColumnsLayout();
     $hasSummary = $hasSummary($this->getAllTableSummaryQuery());
@@ -548,6 +549,7 @@
                                                 :apply-action="$filtersApplyAction"
                                                 :form="$filtersForm"
                                                 :heading-tag="$secondLevelHeadingTag"
+                                                :reset-button-position="$resetButtonPosition"
                                             />
                                         </x-filament::dropdown>
                                     @endif

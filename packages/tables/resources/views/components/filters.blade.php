@@ -1,7 +1,9 @@
+
 @props([
     'applyAction',
     'form',
     'headingTag' => 'h3',
+    'resetButtonPosition' => Filament\Tables\Enums\ResetButtonPosition::Default,
 ])
 
 <div {{ $attributes->class(['fi-ta-filters']) }}>
@@ -10,30 +12,41 @@
             {{ __('filament-tables::table.filters.heading') }}
         </{{ $headingTag }}>
 
-        <div>
-            <x-filament::link
-                :attributes="
-                    \Filament\Support\prepare_inherited_attributes(
-                        new \Illuminate\View\ComponentAttributeBag([
-                            'color' => 'danger',
-                            'tag' => 'button',
-                            'wire:click' => 'resetTableFiltersForm',
-                            'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => '',
-                            'wire:target' => 'resetTableFiltersForm',
-                        ])
-                    )
-                "
-            >
-                {{ __('filament-tables::table.filters.actions.reset.label') }}
-            </x-filament::link>
-        </div>
+        @if ($resetButtonPosition === Filament\Tables\Enums\ResetButtonPosition::Default)
+            <div>
+                <x-filament::link
+                    :attributes="
+                        \Filament\Support\prepare_inherited_attributes(
+                            new \Illuminate\View\ComponentAttributeBag([
+                                'color' => 'danger',
+                                'tag' => 'button',
+                                'wire:click' => 'resetTableFiltersForm',
+                                'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => '',
+                                'wire:target' => 'resetTableFiltersForm',
+                            ])
+                        )
+                    "
+                >
+                    {{ __('filament-tables::table.filters.actions.reset.label') }}
+                </x-filament::link>
+            </div>
+        @endif
     </div>
 
     {{ $form }}
 
-    @if ($applyAction->isVisible())
-        <div class="fi-ta-filters-apply-action-ctn">
+    <div class="fi-ta-filters-apply-action-ctn">
+        @if ($applyAction->isVisible())
             {{ $applyAction }}
-        </div>
-    @endif
+        @endif
+
+        @if ($resetButtonPosition === Filament\Tables\Enums\ResetButtonPosition::NextToApply)
+            <x-filament::button
+                color="danger"
+                wire:click="resetTableFiltersForm"
+            >
+                {{ __('filament-tables::table.filters.actions.reset.label') }}
+            </x-filament::button>
+        @endif
+    </div>
 </div>
