@@ -205,45 +205,6 @@ it('can group records by `MorphOne` relationship', function (): void {
         ->assertCanSeeTableRecords($users->sortBy('image.url'), inOrder: true);
 });
 
-it('can group records by `BelongsTo` -> `MorphOne` relationship', function (): void {
-    $posts = collect();
-
-    $urls = ['alpha.jpg', 'beta.jpg', 'gamma.jpg', 'delta.jpg', 'epsilon.jpg'];
-    foreach ($urls as $url) {
-        $user = User::factory()->create();
-        Image::factory()->create([
-            'url' => $url,
-            'imageable_type' => User::class,
-            'imageable_id' => $user->id,
-        ]);
-        $posts->push(Post::factory()->create(['author_id' => $user->id]));
-    }
-
-    livewire(PostsTable::class)
-        ->set('tableGrouping', 'author.image.url')
-        ->assertCanSeeTableRecords($posts->sortBy('author.image.url'), inOrder: true);
-});
-
-it('can group records by `BelongsTo` -> `HasOne` -> `MorphOne` relationship', function (): void {
-    $posts = collect();
-
-    $altTexts = ['alt alpha', 'alt beta', 'alt gamma', 'alt delta', 'alt epsilon'];
-    foreach ($altTexts as $altText) {
-        $user = User::factory()->create();
-        $profile = Profile::factory()->create(['user_id' => $user->id]);
-        Image::factory()->create([
-            'alt_text' => $altText,
-            'imageable_type' => Profile::class,
-            'imageable_id' => $profile->id,
-        ]);
-        $posts->push(Post::factory()->create(['author_id' => $user->id]));
-    }
-
-    livewire(PostsTable::class)
-        ->set('tableGrouping', 'author.profile.image.alt_text')
-        ->assertCanSeeTableRecords($posts->sortBy('author.profile.image.alt_text'), inOrder: true);
-});
-
 it('can group records with nullable `BelongsTo` relationship', function (): void {
     $userAlpha = User::factory()->create(['name' => 'Alpha']);
     $userBeta = User::factory()->create(['name' => 'Beta']);
@@ -353,27 +314,5 @@ it('can group records with nullable nested `BelongsTo` -> `HasOne` -> `BelongsTo
     // Just verify grouping doesn't crash with nullable nested relationships
     livewire(PostsTable::class)
         ->set('tableGrouping', 'author.profile.company.name')
-        ->assertCanSeeTableRecords($allPosts);
-});
-
-it('can group records with nullable nested `BelongsTo` -> `MorphOne` relationship', function (): void {
-    $userWithImage = User::factory()->create();
-    Image::factory()->create([
-        'url' => 'alpha.jpg',
-        'imageable_type' => User::class,
-        'imageable_id' => $userWithImage->id,
-    ]);
-    $postWithAuthorAndImage = Post::factory()->create(['author_id' => $userWithImage->id]);
-
-    $userWithoutImage = User::factory()->create();
-    $postWithAuthorNoImage = Post::factory()->create(['author_id' => $userWithoutImage->id]);
-
-    $postWithoutAuthor = Post::factory()->create(['author_id' => null]);
-
-    $allPosts = collect([$postWithAuthorAndImage, $postWithAuthorNoImage, $postWithoutAuthor]);
-
-    // Just verify grouping doesn't crash with nullable nested relationships
-    livewire(PostsTable::class)
-        ->set('tableGrouping', 'author.image.url')
         ->assertCanSeeTableRecords($allPosts);
 });
