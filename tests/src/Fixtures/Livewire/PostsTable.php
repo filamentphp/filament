@@ -73,6 +73,10 @@ class PostsTable extends Component implements HasActions, HasSchemas, Tables\Con
                 Tables\Columns\TextColumn::make('author.team.name')
                     ->label('Author Team')
                     ->sortable(),
+                Tables\Columns\TextColumn::make('team.name')
+                    ->label('Team (BelongsToThrough)')
+                    ->sortable()
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('author.profile.bio')
                     ->label('Author Profile Bio')
                     ->sortable()

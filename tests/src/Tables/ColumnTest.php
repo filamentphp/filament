@@ -1007,3 +1007,55 @@ it('can search records with nullable `HasOne` relationship', function (): void {
         ->assertCanSeeTableRecords([$userWithProfile])
         ->assertCanNotSeeTableRecords([$userWithoutProfile, ...$otherUsers]);
 });
+
+it('can sort records with `BelongsToThrough` relationship', function (): void {
+    $posts = Post::factory()->count(5)->state(fn (): array => [
+        'author_id' => User::factory()->state([
+            'team_id' => Team::factory(),
+        ]),
+    ])->create();
+
+    livewire(PostsTable::class)
+        ->sortTable('team.name')
+        ->assertCanSeeTableRecords($posts->sortBy('team.name'), inOrder: true)
+        ->sortTable('team.name', 'desc')
+        ->assertCanSeeTableRecords($posts->sortByDesc('team.name'), inOrder: true);
+});
+
+it('can sort records with nullable `BelongsToThrough` relationship', function (): void {
+    // Post with author that has team
+    $teamAlpha = Team::factory()->create(['name' => 'Alpha Team']);
+    $userWithTeam = User::factory()->create(['team_id' => $teamAlpha->id]);
+    $postWithTeam = Post::factory()->create(['author_id' => $userWithTeam->id]);
+
+    // Post with author but no team
+    $userWithoutTeam = User::factory()->create(['team_id' => null]);
+    $postWithAuthorNoTeam = Post::factory()->create(['author_id' => $userWithoutTeam->id]);
+
+    // Post with no author
+    $postWithoutAuthor = Post::factory()->create(['author_id' => null]);
+
+    $allPosts = collect([$postWithTeam, $postWithAuthorNoTeam, $postWithoutAuthor]);
+
+    // Just verify sorting doesn't crash with nullable relationships
+    livewire(PostsTable::class)
+        ->sortTable('team.name')
+        ->assertCanSeeTableRecords($allPosts)
+        ->sortTable('team.name', 'desc')
+        ->assertCanSeeTableRecords($allPosts);
+});
+
+it('can search records with `BelongsToThrough` relationship', function (): void {
+    $searchTeam = 'Unique Team Name';
+
+    $team = Team::factory()->create(['name' => $searchTeam]);
+    $matchingUser = User::factory()->create(['team_id' => $team->id]);
+    $matchingPost = Post::factory()->for($matchingUser, 'author')->create();
+
+    $nonMatchingPosts = Post::factory()->count(3)->create();
+
+    livewire(PostsTable::class)
+        ->searchTable($searchTeam)
+        ->assertCanSeeTableRecords([$matchingPost])
+        ->assertCanNotSeeTableRecords($nonMatchingPosts);
+});

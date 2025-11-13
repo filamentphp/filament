@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Query\Builder;
 use InvalidArgumentException;
+use Znck\Eloquent\Relations\BelongsToThrough;
 
 class RelationshipOrderer
 {
@@ -48,12 +49,12 @@ class RelationshipOrderer
 
     protected function validateRelationshipType(Relation $relationship): void
     {
-        if ($relationship instanceof BelongsTo || $relationship instanceof HasOne || $relationship instanceof MorphOne) {
+        if ($relationship instanceof BelongsTo || $relationship instanceof HasOne || $relationship instanceof MorphOne || $relationship instanceof BelongsToThrough) {
             return;
         }
 
         throw new InvalidArgumentException(
-            'Nested sorting only supports [BelongsTo], [HasOne], and [MorphOne] relationships, [' . $relationship::class . '] found.'
+            'Nested sorting only supports [BelongsTo], [HasOne], [MorphOne], and [BelongsToThrough] relationships, [' . $relationship::class . '] found.'
         );
     }
 
@@ -95,7 +96,7 @@ class RelationshipOrderer
 
     protected function applyFirstRelationshipConstraint(
         EloquentBuilder $subquery,
-        BelongsTo | HasOne | MorphOne $relationship,
+        BelongsTo | HasOne | MorphOne | BelongsToThrough $relationship,
         Model $baseModel
     ): void {
         $baseTable = $baseModel->getTable();
@@ -106,6 +107,8 @@ class RelationshipOrderer
             $this->applyMorphOneConstraint($subquery, $relationship, $baseModel);
         } elseif ($relationship instanceof HasOne) {
             $this->applyHasOneConstraint($subquery, $relationship, $baseModel);
+        } elseif ($relationship instanceof BelongsToThrough) {
+            $this->applyBelongsToThroughConstraint($subquery, $relationship, $baseModel);
         }
     }
 
@@ -142,6 +145,37 @@ class RelationshipOrderer
         )->where(
             $relationship->getQualifiedMorphType(),
             $relationship->getMorphClass()
+        );
+    }
+
+    protected function applyBelongsToThroughConstraint(
+        EloquentBuilder $subquery,
+        BelongsToThrough $relationship,
+        Model $baseModel,
+    ): void {
+        $throughParents = $relationship->getThroughParents();
+
+        foreach ($throughParents as $i => $throughParent) {
+            $isFirstThroughParent = $i === 0;
+
+            if ($isFirstThroughParent) {
+                $predecessor = $relationship->getRelated();
+                $first = $throughParent->qualifyColumn($relationship->getForeignKeyName($predecessor));
+                $second = $predecessor->qualifyColumn($relationship->getLocalKeyName($predecessor));
+
+                $subquery->join($throughParent->getTable(), $first, '=', $second);
+            } else {
+                $predecessor = $throughParents[$i - 1];
+                $first = $throughParent->qualifyColumn($relationship->getForeignKeyName($predecessor));
+                $second = $predecessor->qualifyColumn($relationship->getLocalKeyName($predecessor));
+
+                $subquery->join($throughParent->getTable(), $first, '=', $second);
+            }
+        }
+
+        $subquery->whereColumn(
+            $relationship->getQualifiedFirstLocalKeyName(),
+            $baseModel->qualifyColumn($relationship->getFirstForeignKeyName()),
         );
     }
 
