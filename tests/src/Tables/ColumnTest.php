@@ -35,37 +35,80 @@ it('can render text column with relationship', function (): void {
 });
 
 it('can sort records', function (): void {
-    $posts = Post::factory()->count(10)->create();
+    Post::factory()->count(10)->create();
+
+    $sortedAsc = Post::query()->orderBy('title')->get();
+    $sortedDesc = Post::query()->orderByDesc('title')->get();
 
     livewire(PostsTable::class)
         ->sortTable('title')
-        ->assertCanSeeTableRecords($posts->sortBy('title'), inOrder: true)
+        ->assertCanSeeTableRecords($sortedAsc, inOrder: true)
         ->sortTable('title', 'desc')
-        ->assertCanSeeTableRecords($posts->sortByDesc('title'), inOrder: true);
+        ->assertCanSeeTableRecords($sortedDesc, inOrder: true);
 });
 
 it('can sort records with relationship', function (): void {
-    $posts = Post::factory()->count(10)->create();
+    Post::factory()->count(10)->create();
+
+    $sortedAsc = Post::query()
+        ->orderBy(
+            User::query()
+                ->select('name')
+                ->whereColumn('users.id', 'posts.author_id')
+                ->limit(1)
+        )
+        ->get();
+
+    $sortedDesc = Post::query()
+        ->orderByDesc(
+            User::query()
+                ->select('name')
+                ->whereColumn('users.id', 'posts.author_id')
+                ->limit(1)
+        )
+        ->get();
 
     livewire(PostsTable::class)
         ->sortTable('author.name')
-        ->assertCanSeeTableRecords($posts->sortBy('author.name'), inOrder: true)
+        ->assertCanSeeTableRecords($sortedAsc, inOrder: true)
         ->sortTable('author.name', 'desc')
-        ->assertCanSeeTableRecords($posts->sortByDesc('author.name'), inOrder: true);
+        ->assertCanSeeTableRecords($sortedDesc, inOrder: true);
 });
 
 it('can sort records with nested relationship', function (): void {
-    $posts = Post::factory()->count(5)->state(fn (): array => [
+    Post::factory()->count(5)->state(fn (): array => [
         'author_id' => User::factory()->state([
             'team_id' => Team::factory(),
         ]),
     ])->create();
 
+    $sortedAsc = Post::query()
+        ->orderBy(
+            Team::query()
+                ->select('teams.name')
+                ->whereColumn('teams.id', 'users.team_id')
+                ->join('users', 'users.team_id', '=', 'teams.id')
+                ->whereColumn('users.id', 'posts.author_id')
+                ->limit(1)
+        )
+        ->get();
+
+    $sortedDesc = Post::query()
+        ->orderByDesc(
+            Team::query()
+                ->select('teams.name')
+                ->whereColumn('teams.id', 'users.team_id')
+                ->join('users', 'users.team_id', '=', 'teams.id')
+                ->whereColumn('users.id', 'posts.author_id')
+                ->limit(1)
+        )
+        ->get();
+
     livewire(PostsTable::class)
         ->sortTable('author.team.name')
-        ->assertCanSeeTableRecords($posts->sortBy('author.team.name'), inOrder: true)
+        ->assertCanSeeTableRecords($sortedAsc, inOrder: true)
         ->sortTable('author.team.name', 'desc')
-        ->assertCanSeeTableRecords($posts->sortByDesc('author.team.name'), inOrder: true);
+        ->assertCanSeeTableRecords($sortedDesc, inOrder: true);
 });
 
 it('can sort records with JSON column', function (): void {
@@ -543,7 +586,7 @@ it('can search and sort by nested relationship column when tables have the same 
 });
 
 it('can sort records with `BelongsTo` -> `HasOne` relationship', function (): void {
-    $posts = Post::factory()->count(5)->state(fn (): array => [
+    Post::factory()->count(5)->state(fn (): array => [
         'author_id' => User::factory()->has(
             Profile::factory()->state(fn (): array => [
                 'bio' => fake()->sentence(),
@@ -552,15 +595,37 @@ it('can sort records with `BelongsTo` -> `HasOne` relationship', function (): vo
         ),
     ])->create();
 
+    $sortedAsc = Post::query()
+        ->orderBy(
+            Profile::query()
+                ->select('bio')
+                ->whereColumn('profiles.user_id', 'users.id')
+                ->join('users', 'users.id', '=', 'profiles.user_id')
+                ->whereColumn('users.id', 'posts.author_id')
+                ->limit(1)
+        )
+        ->get();
+
+    $sortedDesc = Post::query()
+        ->orderByDesc(
+            Profile::query()
+                ->select('bio')
+                ->whereColumn('profiles.user_id', 'users.id')
+                ->join('users', 'users.id', '=', 'profiles.user_id')
+                ->whereColumn('users.id', 'posts.author_id')
+                ->limit(1)
+        )
+        ->get();
+
     livewire(PostsTable::class)
         ->sortTable('author.profile.bio')
-        ->assertCanSeeTableRecords($posts->sortBy('author.profile.bio'), inOrder: true)
+        ->assertCanSeeTableRecords($sortedAsc, inOrder: true)
         ->sortTable('author.profile.bio', 'desc')
-        ->assertCanSeeTableRecords($posts->sortByDesc('author.profile.bio'), inOrder: true);
+        ->assertCanSeeTableRecords($sortedDesc, inOrder: true);
 });
 
 it('can sort records with `BelongsTo` -> `HasOne` -> `BelongsTo` relationship', function (): void {
-    $posts = Post::factory()->count(5)->state(fn (): array => [
+    Post::factory()->count(5)->state(fn (): array => [
         'author_id' => User::factory()->has(
             Profile::factory()->state(fn (): array => [
                 'company_id' => Company::factory(),
@@ -569,11 +634,35 @@ it('can sort records with `BelongsTo` -> `HasOne` -> `BelongsTo` relationship', 
         ),
     ])->create();
 
+    $sortedAsc = Post::query()
+        ->orderBy(
+            Company::query()
+                ->select('companies.name')
+                ->whereColumn('companies.id', 'profiles.company_id')
+                ->join('profiles', 'profiles.company_id', '=', 'companies.id')
+                ->join('users', 'users.id', '=', 'profiles.user_id')
+                ->whereColumn('users.id', 'posts.author_id')
+                ->limit(1)
+        )
+        ->get();
+
+    $sortedDesc = Post::query()
+        ->orderByDesc(
+            Company::query()
+                ->select('companies.name')
+                ->whereColumn('companies.id', 'profiles.company_id')
+                ->join('profiles', 'profiles.company_id', '=', 'companies.id')
+                ->join('users', 'users.id', '=', 'profiles.user_id')
+                ->whereColumn('users.id', 'posts.author_id')
+                ->limit(1)
+        )
+        ->get();
+
     livewire(PostsTable::class)
         ->sortTable('author.profile.company.name')
-        ->assertCanSeeTableRecords($posts->sortBy('author.profile.company.name'), inOrder: true)
+        ->assertCanSeeTableRecords($sortedAsc, inOrder: true)
         ->sortTable('author.profile.company.name', 'desc')
-        ->assertCanSeeTableRecords($posts->sortByDesc('author.profile.company.name'), inOrder: true);
+        ->assertCanSeeTableRecords($sortedDesc, inOrder: true);
 });
 
 it('can search records with `BelongsTo` -> `HasOne` relationship', function (): void {
@@ -619,44 +708,83 @@ it('can search records with `BelongsTo` -> `HasOne` -> `BelongsTo` relationship'
 });
 
 it('can sort records with `HasOne` -> `BelongsTo` relationship', function (): void {
-    $users = collect();
-
     for ($i = 0; $i < 5; $i++) {
         $company = Company::factory()->create(['name' => 'Company ' . chr(65 + $i)]);  // A, B, C, D, E
-        $user = User::factory()->has(
+        User::factory()->has(
             Profile::factory()->for($company, 'company'),
             'profile'
         )->create();
-        $users->push($user);
     }
+
+    $sortedAsc = User::query()
+        ->orderBy(
+            Company::query()
+                ->select('name')
+                ->whereColumn('companies.id', 'profiles.company_id')
+                ->join('profiles', 'profiles.company_id', '=', 'companies.id')
+                ->whereColumn('profiles.user_id', 'users.id')
+                ->limit(1)
+        )
+        ->get();
+
+    $sortedDesc = User::query()
+        ->orderByDesc(
+            Company::query()
+                ->select('name')
+                ->whereColumn('companies.id', 'profiles.company_id')
+                ->join('profiles', 'profiles.company_id', '=', 'companies.id')
+                ->whereColumn('profiles.user_id', 'users.id')
+                ->limit(1)
+        )
+        ->get();
 
     livewire(UsersTable::class)
         ->sortTable('profile.company.name')
-        ->assertCanSeeTableRecords($users->sortBy('profile.company.name'), inOrder: true)
+        ->assertCanSeeTableRecords($sortedAsc, inOrder: true)
         ->sortTable('profile.company.name', 'desc')
-        ->assertCanSeeTableRecords($users->sortByDesc('profile.company.name'), inOrder: true);
+        ->assertCanSeeTableRecords($sortedDesc, inOrder: true);
 });
 
 it('can sort records with `HasOne` -> `HasOne` relationship', function (): void {
     $themes = ['alpha', 'beta', 'gamma', 'delta', 'epsilon'];
-    $users = collect();
 
     foreach ($themes as $theme) {
-        $user = User::factory()->has(
+        User::factory()->has(
             Profile::factory()->has(
                 Setting::factory()->state(['theme' => $theme]),
                 'setting'
             ),
             'profile'
         )->create();
-        $users->push($user);
     }
+
+    $sortedAsc = User::query()
+        ->orderBy(
+            Setting::query()
+                ->select('theme')
+                ->whereColumn('settings.profile_id', 'profiles.id')
+                ->join('profiles', 'profiles.id', '=', 'settings.profile_id')
+                ->whereColumn('profiles.user_id', 'users.id')
+                ->limit(1)
+        )
+        ->get();
+
+    $sortedDesc = User::query()
+        ->orderByDesc(
+            Setting::query()
+                ->select('theme')
+                ->whereColumn('settings.profile_id', 'profiles.id')
+                ->join('profiles', 'profiles.id', '=', 'settings.profile_id')
+                ->whereColumn('profiles.user_id', 'users.id')
+                ->limit(1)
+        )
+        ->get();
 
     livewire(UsersTable::class)
         ->sortTable('profile.setting.theme')
-        ->assertCanSeeTableRecords($users->sortBy('profile.setting.theme'), inOrder: true)
+        ->assertCanSeeTableRecords($sortedAsc, inOrder: true)
         ->sortTable('profile.setting.theme', 'desc')
-        ->assertCanSeeTableRecords($users->sortByDesc('profile.setting.theme'), inOrder: true);
+        ->assertCanSeeTableRecords($sortedDesc, inOrder: true);
 });
 
 it('can search records with `HasOne` -> `BelongsTo` relationship', function (): void {
@@ -698,7 +826,6 @@ it('can search records with `HasOne` -> `HasOne` relationship', function (): voi
 
 it('can sort records with `MorphOne` relationship', function (): void {
     $urls = ['alpha.jpg', 'beta.jpg', 'gamma.jpg', 'delta.jpg', 'epsilon.jpg'];
-    $users = collect();
 
     foreach ($urls as $url) {
         $user = User::factory()->create();
@@ -707,19 +834,37 @@ it('can sort records with `MorphOne` relationship', function (): void {
             'imageable_type' => User::class,
             'imageable_id' => $user->id,
         ]);
-        $users->push($user);
     }
+
+    $sortedAsc = User::query()
+        ->orderBy(
+            Image::query()
+                ->select('url')
+                ->whereColumn('images.imageable_id', 'users.id')
+                ->where('images.imageable_type', User::class)
+                ->limit(1)
+        )
+        ->get();
+
+    $sortedDesc = User::query()
+        ->orderByDesc(
+            Image::query()
+                ->select('url')
+                ->whereColumn('images.imageable_id', 'users.id')
+                ->where('images.imageable_type', User::class)
+                ->limit(1)
+        )
+        ->get();
 
     livewire(UsersTable::class)
         ->sortTable('image.url')
-        ->assertCanSeeTableRecords($users->sortBy('image.url'), inOrder: true)
+        ->assertCanSeeTableRecords($sortedAsc, inOrder: true)
         ->sortTable('image.url', 'desc')
-        ->assertCanSeeTableRecords($users->sortByDesc('image.url'), inOrder: true);
+        ->assertCanSeeTableRecords($sortedDesc, inOrder: true);
 });
 
 it('can sort records with `BelongsTo` -> `MorphOne` relationship', function (): void {
     $urls = ['alpha.jpg', 'beta.jpg', 'gamma.jpg', 'delta.jpg', 'epsilon.jpg'];
-    $posts = collect();
 
     foreach ($urls as $url) {
         $user = User::factory()->create();
@@ -728,19 +873,42 @@ it('can sort records with `BelongsTo` -> `MorphOne` relationship', function (): 
             'imageable_type' => User::class,
             'imageable_id' => $user->id,
         ]);
-        $posts->push(Post::factory()->create(['author_id' => $user->id]));
+        Post::factory()->create(['author_id' => $user->id]);
     }
+
+    $sortedAsc = Post::query()
+        ->orderBy(
+            Image::query()
+                ->select('url')
+                ->whereColumn('images.imageable_id', 'users.id')
+                ->where('images.imageable_type', User::class)
+                ->join('users', 'users.id', '=', 'images.imageable_id')
+                ->whereColumn('users.id', 'posts.author_id')
+                ->limit(1)
+        )
+        ->get();
+
+    $sortedDesc = Post::query()
+        ->orderByDesc(
+            Image::query()
+                ->select('url')
+                ->whereColumn('images.imageable_id', 'users.id')
+                ->where('images.imageable_type', User::class)
+                ->join('users', 'users.id', '=', 'images.imageable_id')
+                ->whereColumn('users.id', 'posts.author_id')
+                ->limit(1)
+        )
+        ->get();
 
     livewire(PostsTable::class)
         ->sortTable('author.image.url')
-        ->assertCanSeeTableRecords($posts->sortBy('author.image.url'), inOrder: true)
+        ->assertCanSeeTableRecords($sortedAsc, inOrder: true)
         ->sortTable('author.image.url', 'desc')
-        ->assertCanSeeTableRecords($posts->sortByDesc('author.image.url'), inOrder: true);
+        ->assertCanSeeTableRecords($sortedDesc, inOrder: true);
 });
 
 it('can sort records with `BelongsTo` -> `HasOne` -> `MorphOne` relationship', function (): void {
     $altTexts = ['alt alpha', 'alt beta', 'alt gamma', 'alt delta', 'alt epsilon'];
-    $posts = collect();
 
     foreach ($altTexts as $altText) {
         $user = User::factory()->create();
@@ -750,14 +918,40 @@ it('can sort records with `BelongsTo` -> `HasOne` -> `MorphOne` relationship', f
             'imageable_type' => Profile::class,
             'imageable_id' => $profile->id,
         ]);
-        $posts->push(Post::factory()->create(['author_id' => $user->id]));
+        Post::factory()->create(['author_id' => $user->id]);
     }
+
+    $sortedAsc = Post::query()
+        ->orderBy(
+            Image::query()
+                ->select('alt_text')
+                ->whereColumn('images.imageable_id', 'profiles.id')
+                ->where('images.imageable_type', Profile::class)
+                ->join('profiles', 'profiles.id', '=', 'images.imageable_id')
+                ->join('users', 'users.id', '=', 'profiles.user_id')
+                ->whereColumn('users.id', 'posts.author_id')
+                ->limit(1)
+        )
+        ->get();
+
+    $sortedDesc = Post::query()
+        ->orderByDesc(
+            Image::query()
+                ->select('alt_text')
+                ->whereColumn('images.imageable_id', 'profiles.id')
+                ->where('images.imageable_type', Profile::class)
+                ->join('profiles', 'profiles.id', '=', 'images.imageable_id')
+                ->join('users', 'users.id', '=', 'profiles.user_id')
+                ->whereColumn('users.id', 'posts.author_id')
+                ->limit(1)
+        )
+        ->get();
 
     livewire(PostsTable::class)
         ->sortTable('author.profile.image.alt_text')
-        ->assertCanSeeTableRecords($posts->sortBy('author.profile.image.alt_text'), inOrder: true)
+        ->assertCanSeeTableRecords($sortedAsc, inOrder: true)
         ->sortTable('author.profile.image.alt_text', 'desc')
-        ->assertCanSeeTableRecords($posts->sortByDesc('author.profile.image.alt_text'), inOrder: true);
+        ->assertCanSeeTableRecords($sortedDesc, inOrder: true);
 });
 
 it('can search records with `MorphOne` relationship', function (): void {
@@ -1009,17 +1203,39 @@ it('can search records with nullable `HasOne` relationship', function (): void {
 });
 
 it('can sort records with `BelongsToThrough` relationship', function (): void {
-    $posts = Post::factory()->count(5)->state(fn (): array => [
+    Post::factory()->count(5)->state(fn (): array => [
         'author_id' => User::factory()->state([
             'team_id' => Team::factory(),
         ]),
     ])->create();
 
+    $sortedAsc = Post::query()
+        ->orderBy(
+            Team::query()
+                ->select('teams.name')
+                ->whereColumn('teams.id', 'users.team_id')
+                ->join('users', 'users.team_id', '=', 'teams.id')
+                ->whereColumn('users.id', 'posts.author_id')
+                ->limit(1)
+        )
+        ->get();
+
+    $sortedDesc = Post::query()
+        ->orderByDesc(
+            Team::query()
+                ->select('teams.name')
+                ->whereColumn('teams.id', 'users.team_id')
+                ->join('users', 'users.team_id', '=', 'teams.id')
+                ->whereColumn('users.id', 'posts.author_id')
+                ->limit(1)
+        )
+        ->get();
+
     livewire(PostsTable::class)
         ->sortTable('team.name')
-        ->assertCanSeeTableRecords($posts->sortBy('team.name'), inOrder: true)
+        ->assertCanSeeTableRecords($sortedAsc, inOrder: true)
         ->sortTable('team.name', 'desc')
-        ->assertCanSeeTableRecords($posts->sortByDesc('team.name'), inOrder: true);
+        ->assertCanSeeTableRecords($sortedDesc, inOrder: true);
 });
 
 it('can sort records with nullable `BelongsToThrough` relationship', function (): void {
@@ -1061,7 +1277,7 @@ it('can search records with `BelongsToThrough` relationship', function (): void 
 });
 
 it('can sort records with nested `BelongsToThrough` -> `BelongsTo` relationship', function (): void {
-    $posts = Post::factory()->count(5)->state(fn (): array => [
+    Post::factory()->count(5)->state(fn (): array => [
         'author_id' => User::factory()->state([
             'team_id' => Team::factory()->state([
                 'company_id' => Company::factory(),
@@ -1069,11 +1285,35 @@ it('can sort records with nested `BelongsToThrough` -> `BelongsTo` relationship'
         ]),
     ])->create();
 
+    $sortedAsc = Post::query()
+        ->orderBy(
+            Company::query()
+                ->select('companies.name')
+                ->whereColumn('companies.id', 'teams.company_id')
+                ->join('teams', 'teams.company_id', '=', 'companies.id')
+                ->join('users', 'users.team_id', '=', 'teams.id')
+                ->whereColumn('users.id', 'posts.author_id')
+                ->limit(1)
+        )
+        ->get();
+
+    $sortedDesc = Post::query()
+        ->orderByDesc(
+            Company::query()
+                ->select('companies.name')
+                ->whereColumn('companies.id', 'teams.company_id')
+                ->join('teams', 'teams.company_id', '=', 'companies.id')
+                ->join('users', 'users.team_id', '=', 'teams.id')
+                ->whereColumn('users.id', 'posts.author_id')
+                ->limit(1)
+        )
+        ->get();
+
     livewire(PostsTable::class)
         ->sortTable('team.company.name')
-        ->assertCanSeeTableRecords($posts->sortBy('team.company.name'), inOrder: true)
+        ->assertCanSeeTableRecords($sortedAsc, inOrder: true)
         ->sortTable('team.company.name', 'desc')
-        ->assertCanSeeTableRecords($posts->sortByDesc('team.company.name'), inOrder: true);
+        ->assertCanSeeTableRecords($sortedDesc, inOrder: true);
 });
 
 it('can sort records with nullable nested `BelongsToThrough` -> `BelongsTo` relationship', function (): void {
@@ -1122,7 +1362,7 @@ it('can search records with nested `BelongsToThrough` -> `BelongsTo` relationshi
 });
 
 it('can sort records with `BelongsTo` -> `BelongsToThrough` relationship', function (): void {
-    $posts = Post::factory()->count(5)->state(fn (): array => [
+    Post::factory()->count(5)->state(fn (): array => [
         'author_id' => User::factory()->state([
             'team_id' => Team::factory()->state([
                 'company_id' => Company::factory(),
@@ -1130,11 +1370,35 @@ it('can sort records with `BelongsTo` -> `BelongsToThrough` relationship', funct
         ]),
     ])->create();
 
+    $sortedAsc = Post::query()
+        ->orderBy(
+            Company::query()
+                ->select('companies.name')
+                ->whereColumn('companies.id', 'teams.company_id')
+                ->join('teams', 'teams.company_id', '=', 'companies.id')
+                ->join('users', 'users.team_id', '=', 'teams.id')
+                ->whereColumn('users.id', 'posts.author_id')
+                ->limit(1)
+        )
+        ->get();
+
+    $sortedDesc = Post::query()
+        ->orderByDesc(
+            Company::query()
+                ->select('companies.name')
+                ->whereColumn('companies.id', 'teams.company_id')
+                ->join('teams', 'teams.company_id', '=', 'companies.id')
+                ->join('users', 'users.team_id', '=', 'teams.id')
+                ->whereColumn('users.id', 'posts.author_id')
+                ->limit(1)
+        )
+        ->get();
+
     livewire(PostsTable::class)
         ->sortTable('author.company.name')
-        ->assertCanSeeTableRecords($posts->sortBy('author.company.name'), inOrder: true)
+        ->assertCanSeeTableRecords($sortedAsc, inOrder: true)
         ->sortTable('author.company.name', 'desc')
-        ->assertCanSeeTableRecords($posts->sortByDesc('author.company.name'), inOrder: true);
+        ->assertCanSeeTableRecords($sortedDesc, inOrder: true);
 });
 
 it('can sort records with nullable `BelongsTo` -> `BelongsToThrough` relationship', function (): void {
