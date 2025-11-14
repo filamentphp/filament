@@ -25,6 +25,8 @@ class TeamsRelationManager extends RelationManager
                     ->required()
                     ->numeric()
                     ->default(0),
+                Forms\Components\Select::make('company_id')
+                    ->relationship('company', 'name'),
             ]);
     }
 
@@ -38,6 +40,8 @@ class TeamsRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('budget')
                     ->numeric()
                     ->sortable(),
+                Tables\Columns\TextColumn::make('company.name')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

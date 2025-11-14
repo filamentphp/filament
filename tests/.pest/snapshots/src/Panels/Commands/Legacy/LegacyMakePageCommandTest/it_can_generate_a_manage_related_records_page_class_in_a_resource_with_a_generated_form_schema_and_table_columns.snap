@@ -32,6 +32,8 @@ class ManageUserTeams extends ManageRelatedRecords
                     ->required()
                     ->numeric()
                     ->default(0),
+                Forms\Components\Select::make('company_id')
+                    ->relationship('company', 'name'),
             ]);
     }
 
@@ -45,6 +47,8 @@ class ManageUserTeams extends ManageRelatedRecords
                 Tables\Columns\TextColumn::make('budget')
                     ->numeric()
                     ->sortable(),
+                Tables\Columns\TextColumn::make('company.name')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
