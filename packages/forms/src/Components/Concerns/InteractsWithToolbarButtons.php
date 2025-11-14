@@ -3,6 +3,7 @@
 namespace Filament\Forms\Components\Concerns;
 
 use Closure;
+use Exception;
 use LogicException;
 
 trait InteractsWithToolbarButtons
@@ -85,6 +86,7 @@ trait InteractsWithToolbarButtons
                 'disableAll' => [],
                 'disable' => $this->applyDisableToolbarButtonsModification($buttons, $modification['buttons']),
                 'enable' => [...$buttons, ...$modification['buttons']],
+                default => throw new Exception('Unknown toolbar buttons modification type: [' . $modification['type'] . '].'),
             };
         }
 
