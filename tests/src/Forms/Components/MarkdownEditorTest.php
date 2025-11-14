@@ -347,7 +347,7 @@ test('`disableToolbarButtons()` with `attachFiles` also makes `hasFileAttachment
         ->and($markdownEditor->hasToolbarButton('attachFiles'))->toBeFalse();
 });
 
-test('`fileAttachments(true)` overrides `disableToolbarButtons()` for `attachFiles`', function (): void {
+test('`fileAttachments(true)` does not force `attachFiles` button to appear when using `disableToolbarButtons()`', function (): void {
     $schema = Schema::make(Livewire::make())
         ->statePath('data')
         ->components([
@@ -358,7 +358,7 @@ test('`fileAttachments(true)` overrides `disableToolbarButtons()` for `attachFil
     $markdownEditor->disableToolbarButtons(['attachFiles']);
     $markdownEditor->fileAttachments(true);
 
-    // `fileAttachments(true)` explicitly enables it, but the `attachFiles` button is still removed from toolbar
+    // File attachments are enabled (drag/drop works), but the toolbar button remains hidden
     expect($markdownEditor->hasFileAttachments())->toBeTrue()
         ->and($markdownEditor->hasToolbarButton('attachFiles'))->toBeFalse();
 });
