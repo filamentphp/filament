@@ -45,6 +45,16 @@ export default function chart({ cachedData, options, type }) {
                         this.initChart()
                     })
                 })
+
+            this.resizeHandler = Alpine.debounce(() => {
+                this.getChart().destroy()
+                this.initChart()
+            }, 250)
+
+            window.addEventListener('resize', this.resizeHandler)
+
+            this.resizeObserver = new ResizeObserver(() => this.resizeHandler())
+            this.resizeObserver.observe(this.$el)
         },
 
         initChart(data = null) {
@@ -122,6 +132,16 @@ export default function chart({ cachedData, options, type }) {
             }
 
             return Chart.getChart(this.$refs.canvas)
+        },
+
+        destroy() {
+            window.removeEventListener('resize', this.resizeHandler)
+
+            if (this.resizeObserver) {
+                this.resizeObserver.disconnect()
+            }
+
+            this.getChart()?.destroy()
         },
     }
 }
