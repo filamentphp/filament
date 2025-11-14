@@ -3,7 +3,6 @@
 namespace Filament\Forms\Components\Concerns;
 
 use Closure;
-use Filament\Schemas\Components\Component;
 use LogicException;
 
 trait InteractsWithToolbarButtons
