@@ -29,9 +29,9 @@ class IdentifyTenant
             abort(404);
         }
 
-        $currentTenant = Filament::getTenant();
-        $slugAttribute = $panel->getTenantSlugAttribute();
         $tenantRouteKey = $request->route()->parameter('tenant');
+        $slugAttribute = $panel->getTenantSlugAttribute();
+        $currentTenant = Filament::getTenant();
 
         $currentTenantKey = filled($slugAttribute)
             ? $currentTenant?->getAttribute($slugAttribute)
