@@ -23,8 +23,8 @@ it('can generate a slug based on the page name', function (): void {
 it('can report validation errors', function (): void {
     Page::$reportValidationErrorUsing = function (ValidationException $exception): void {
         Notification::make()
-            ->danger()
             ->title($exception->getMessage())
+            ->danger()
             ->send();
     };
 

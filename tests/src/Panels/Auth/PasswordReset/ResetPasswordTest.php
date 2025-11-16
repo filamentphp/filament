@@ -61,8 +61,8 @@ it('can reset password', function (): void {
         ->call('resetPassword')
         ->assertNotified(
             Notification::make()
-                ->success()
                 ->title(__('passwords.reset'))
+                ->success()
         )
         ->assertRedirect(Filament::getLoginUrl());
 
@@ -93,8 +93,8 @@ it('cannot reset password without panel access', function (): void {
         ->call('resetPassword')
         ->assertNotified(
             Notification::make()
-                ->danger()
                 ->title(__('passwords.user'))
+                ->danger()
         );
 
     Event::assertNotDispatched(PasswordReset::class);
