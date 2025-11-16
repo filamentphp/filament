@@ -3,7 +3,6 @@
 namespace Filament\Support\Rector;
 
 use Filament\Actions\Action;
-use Filament\Forms\Components\Component as FormComponent;
 use Filament\Forms\Components\Concerns\CanBeValidated;
 use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Component as SchemaComponent;
@@ -162,12 +161,10 @@ CODE_SAMPLE
     }
 
     /**
-     * Sort terminal methods according to their lifecycle order
-     *
      * @param  array<array{name: string, call: MethodCall}>  $terminalMethods
      * @return array<array{name: string, call: MethodCall}>
      */
-    private function sortTerminalMethods(array $terminalMethods): array
+    protected function sortTerminalMethods(array $terminalMethods): array
     {
         usort($terminalMethods, function ($a, $b) {
             return $this->getTerminalMethodPriority($a['name']) <=> $this->getTerminalMethodPriority($b['name']);
@@ -176,10 +173,7 @@ CODE_SAMPLE
         return $terminalMethods;
     }
 
-    /**
-     * Get the priority order for terminal methods (lower = earlier in chain)
-     */
-    private function getTerminalMethodPriority(string $methodName): int
+    protected function getTerminalMethodPriority(string $methodName): int
     {
         // Action lifecycle methods (in order)
         if ($methodName === 'before') {
@@ -215,10 +209,7 @@ CODE_SAMPLE
         return 999;
     }
 
-    /**
-     * Check if a method is a terminal action method that should stay at the end
-     */
-    private function isTerminalActionMethod(?string $methodName): bool
+    protected function isTerminalActionMethod(?string $methodName): bool
     {
         if ($methodName === null) {
             return false;
@@ -257,7 +248,7 @@ CODE_SAMPLE
         return false;
     }
 
-    private function getRootNode(MethodCall $node): Expr
+    protected function getRootNode(MethodCall $node): Expr
     {
         $current = $node;
 
@@ -268,7 +259,7 @@ CODE_SAMPLE
         return $current->var;
     }
 
-    private function getClassName(Node $node): ?string
+    protected function getClassName(Node $node): ?string
     {
         if ($node instanceof StaticCall) {
             $callerType = $this->nodeTypeResolver->getType($node->class);
@@ -283,7 +274,7 @@ CODE_SAMPLE
         return null;
     }
 
-    private function isFilamentClass(Node $node): bool
+    protected function isFilamentClass(Node $node): bool
     {
         // For StaticCall, check the class name
         if ($node instanceof StaticCall) {
@@ -324,10 +315,7 @@ CODE_SAMPLE
         return false;
     }
 
-    /**
-     * Check if a class should be excluded from reordering
-     */
-    private function isExcludedClass(string $className): bool
+    protected function isExcludedClass(string $className): bool
     {
         // Classes with order-dependent builder methods
         $excludedClasses = [
@@ -343,7 +331,7 @@ CODE_SAMPLE
         return false;
     }
 
-    private function isChainStartingWithMake(Node $node): bool
+    protected function isChainStartingWithMake(Node $node): bool
     {
         if ($node instanceof StaticCall) {
             return $this->isName($node->name, 'make');
@@ -352,7 +340,7 @@ CODE_SAMPLE
         return false;
     }
 
-    private function isOutermostMethodCall(MethodCall $node): bool
+    protected function isOutermostMethodCall(MethodCall $node): bool
     {
         // Check if this method call is not part of a larger method call chain
         $parent = $node->getAttribute('parent');
@@ -363,7 +351,7 @@ CODE_SAMPLE
     /**
      * @return array<array{name: string, call: MethodCall}>
      */
-    private function collectMethodCalls(MethodCall $node): array
+    protected function collectMethodCalls(MethodCall $node): array
     {
         $calls = [];
         $current = $node;
@@ -386,10 +374,7 @@ CODE_SAMPLE
         return $calls;
     }
 
-    /**
-     * Check if a method is a fluent builder method by checking if it returns the same type
-     */
-    private function isFluentBuilderMethod(MethodCall $methodCall, Type $rootType): bool
+    protected function isFluentBuilderMethod(MethodCall $methodCall, Type $rootType): bool
     {
         // Get the return type of this method call
         $returnType = $this->nodeTypeResolver->getType($methodCall);
@@ -423,10 +408,7 @@ CODE_SAMPLE
         return true;
     }
 
-    /**
-     * Get the trait that defines a method by checking if it's defined in CanBeValidated or HasState
-     */
-    private function getMethodDefiningTrait(string $className, string $methodName): ?string
+    protected function getMethodDefiningTrait(string $className, string $methodName): ?string
     {
         $cacheKey = $className . '::' . $methodName;
 
@@ -504,11 +486,9 @@ CODE_SAMPLE
     }
 
     /**
-     * Get all traits used by a class, including traits used by parent classes and traits
-     *
      * @return array<string>
      */
-    private function getAllTraits(\ReflectionClass $class): array
+    protected function getAllTraits(\ReflectionClass $class): array
     {
         $traits = [];
 
@@ -529,12 +509,10 @@ CODE_SAMPLE
     }
 
     /**
-     * Split chain at clone*() boundaries and sort each segment independently
-     *
      * @param  array<array{name: string, call: MethodCall}>  $methodCalls
      * @return array<array{name: string, call: MethodCall}>
      */
-    private function sortMethodCallsWithCloneBoundaries(array $methodCalls, ?string $className): array
+    protected function sortMethodCallsWithCloneBoundaries(array $methodCalls, ?string $className): array
     {
         // Split the chain into segments at clone*() boundaries
         $segments = [];
@@ -567,7 +545,7 @@ CODE_SAMPLE
      * @param  array<array{name: string, call: MethodCall}>  $methodCalls
      * @return array<array{name: string, call: MethodCall}>
      */
-    private function sortMethodCalls(array $methodCalls, ?string $className): array
+    protected function sortMethodCalls(array $methodCalls, ?string $className): array
     {
         if (! $className) {
             return $this->sortDefaultMethods($methodCalls);
@@ -583,17 +561,14 @@ CODE_SAMPLE
         }
 
         // Check if this is a Component (forms/schemas/tables components)
-        if ($this->isComponent($className)) {
+        if ($this->isSchemaComponent($className)) {
             return $this->sortSchemaComponentMethods($methodCalls, $className);
         }
 
         return $this->sortDefaultMethods($methodCalls);
     }
 
-    /**
-     * Check if a class is an Action
-     */
-    private function isAction(string $className): bool
+    protected function isAction(string $className): bool
     {
         if (! class_exists($className)) {
             return false;
@@ -602,10 +577,7 @@ CODE_SAMPLE
         return is_a($className, Action::class, true);
     }
 
-    /**
-     * Check if a class is a Notification
-     */
-    private function isNotification(string $className): bool
+    protected function isNotification(string $className): bool
     {
         if (! class_exists($className)) {
             return false;
@@ -614,27 +586,20 @@ CODE_SAMPLE
         return is_a($className, Notification::class, true);
     }
 
-    /**
-     * Check if a class is a Component (Forms or Schemas)
-     */
-    private function isComponent(string $className): bool
+    protected function isSchemaComponent(string $className): bool
     {
         if (! class_exists($className)) {
             return false;
         }
 
-        // Check if it's a Forms Component or Schemas Component
-        return is_a($className, FormComponent::class, true) ||
-               is_a($className, SchemaComponent::class, true);
+        return is_a($className, SchemaComponent::class, true);
     }
 
     /**
-     * Sort methods for Action classes
-     *
      * @param  array<array{name: string, call: MethodCall}>  $methodCalls
      * @return array<array{name: string, call: MethodCall}>
      */
-    private function sortActionMethods(array $methodCalls, string $className): array
+    protected function sortActionMethods(array $methodCalls, string $className): array
     {
         $labelMethods = [];
         $regularMethods = [];
@@ -656,12 +621,10 @@ CODE_SAMPLE
     }
 
     /**
-     * Sort methods for Notification classes
-     *
      * @param  array<array{name: string, call: MethodCall}>  $methodCalls
      * @return array<array{name: string, call: MethodCall}>
      */
-    private function sortNotificationMethods(array $methodCalls, string $className): array
+    protected function sortNotificationMethods(array $methodCalls, string $className): array
     {
         $titleMethods = [];
         $bodyMethods = [];
@@ -687,12 +650,10 @@ CODE_SAMPLE
     }
 
     /**
-     * Sort methods for SchemaComponent classes (handles CanBeValidated and HasState traits)
-     *
      * @param  array<array{name: string, call: MethodCall}>  $methodCalls
      * @return array<array{name: string, call: MethodCall}>
      */
-    private function sortSchemaComponentMethods(array $methodCalls, string $className): array
+    protected function sortSchemaComponentMethods(array $methodCalls, string $className): array
     {
         $labelMethods = [];
         $regularMethods = [];
@@ -736,12 +697,10 @@ CODE_SAMPLE
     }
 
     /**
-     * Default sorting behavior for classes that don't match specific patterns
-     *
      * @param  array<array{name: string, call: MethodCall}>  $methodCalls
      * @return array<array{name: string, call: MethodCall}>
      */
-    private function sortDefaultMethods(array $methodCalls): array
+    protected function sortDefaultMethods(array $methodCalls): array
     {
         $sortedMethods = $methodCalls;
 
@@ -754,7 +713,7 @@ CODE_SAMPLE
     /**
      * @param  array<array{name: string, call: MethodCall}>  $sortedCalls
      */
-    private function rebuildChain(Expr $rootNode, array $sortedCalls): MethodCall
+    protected function rebuildChain(Expr $rootNode, array $sortedCalls): MethodCall
     {
         $chain = null;
 

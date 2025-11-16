@@ -6,7 +6,7 @@ use Iterator;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 
-final class AlphabetizeFluentMethodsRectorTest extends AbstractRectorTestCase
+class AlphabetizeFluentMethodsRectorTest extends AbstractRectorTestCase
 {
     #[DataProvider('provideData')]
     public function test(string $filePath): void
