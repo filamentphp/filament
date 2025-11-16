@@ -2,8 +2,13 @@
 
 namespace Filament\Support\Rector;
 
+use Filament\Actions\Action;
+use Filament\Forms\Components\Component as FormComponent;
 use Filament\Forms\Components\Concerns\CanBeValidated;
+use Filament\Notifications\Notification;
+use Filament\Schemas\Components\Component as SchemaComponent;
 use Filament\Schemas\Components\Concerns\HasState;
+use Filament\Schemas\Schema;
 use PhpParser\Node;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\MethodCall;
@@ -326,7 +331,7 @@ CODE_SAMPLE
     {
         // Classes with order-dependent builder methods
         $excludedClasses = [
-            'Filament\\Schemas\\Schema',
+            Schema::class,
         ];
 
         foreach ($excludedClasses as $excludedClass) {
@@ -564,12 +569,131 @@ CODE_SAMPLE
      */
     private function sortMethodCalls(array $methodCalls, ?string $className): array
     {
-        // Check if this is a Notification class
-        $isNotification = $className && str_contains($className, 'Notification');
+        if (! $className) {
+            return $this->sortDefaultMethods($methodCalls);
+        }
 
-        // Categorize methods
+        // Determine which sorting behavior to use based on class type
+        if ($this->isAction($className)) {
+            return $this->sortActionMethods($methodCalls, $className);
+        }
+
+        if ($this->isNotification($className)) {
+            return $this->sortNotificationMethods($methodCalls, $className);
+        }
+
+        // Check if this is a Component (forms/schemas/tables components)
+        if ($this->isComponent($className)) {
+            return $this->sortSchemaComponentMethods($methodCalls, $className);
+        }
+
+        return $this->sortDefaultMethods($methodCalls);
+    }
+
+    /**
+     * Check if a class is an Action
+     */
+    private function isAction(string $className): bool
+    {
+        if (! class_exists($className)) {
+            return false;
+        }
+
+        return is_a($className, Action::class, true);
+    }
+
+    /**
+     * Check if a class is a Notification
+     */
+    private function isNotification(string $className): bool
+    {
+        if (! class_exists($className)) {
+            return false;
+        }
+
+        return is_a($className, Notification::class, true);
+    }
+
+    /**
+     * Check if a class is a Component (Forms or Schemas)
+     */
+    private function isComponent(string $className): bool
+    {
+        if (! class_exists($className)) {
+            return false;
+        }
+
+        // Check if it's a Forms Component or Schemas Component
+        return is_a($className, FormComponent::class, true) ||
+               is_a($className, SchemaComponent::class, true);
+    }
+
+    /**
+     * Sort methods for Action classes
+     *
+     * @param  array<array{name: string, call: MethodCall}>  $methodCalls
+     * @return array<array{name: string, call: MethodCall}>
+     */
+    private function sortActionMethods(array $methodCalls, string $className): array
+    {
+        $labelMethods = [];
+        $regularMethods = [];
+
+        foreach ($methodCalls as $callData) {
+            $methodName = $callData['name'];
+
+            if ($methodName === 'label') {
+                $labelMethods[] = $callData;
+            } else {
+                $regularMethods[] = $callData;
+            }
+        }
+
+        // Sort regular methods alphabetically
+        usort($regularMethods, fn ($a, $b) => strcmp($a['name'], $b['name']));
+
+        return array_merge($labelMethods, $regularMethods);
+    }
+
+    /**
+     * Sort methods for Notification classes
+     *
+     * @param  array<array{name: string, call: MethodCall}>  $methodCalls
+     * @return array<array{name: string, call: MethodCall}>
+     */
+    private function sortNotificationMethods(array $methodCalls, string $className): array
+    {
         $titleMethods = [];
         $bodyMethods = [];
+        $regularMethods = [];
+
+        foreach ($methodCalls as $callData) {
+            $methodName = $callData['name'];
+
+            if ($methodName === 'title') {
+                $titleMethods[] = $callData;
+            } elseif ($methodName === 'body') {
+                $bodyMethods[] = $callData;
+            } else {
+                $regularMethods[] = $callData;
+            }
+        }
+
+        // Sort regular methods alphabetically
+        usort($regularMethods, fn ($a, $b) => strcmp($a['name'], $b['name']));
+
+        // Order: title, body, then alphabetically sorted regular methods
+        return array_merge($titleMethods, $bodyMethods, $regularMethods);
+    }
+
+    /**
+     * Sort methods for SchemaComponent classes (handles CanBeValidated and HasState traits)
+     *
+     * @param  array<array{name: string, call: MethodCall}>  $methodCalls
+     * @return array<array{name: string, call: MethodCall}>
+     */
+    private function sortSchemaComponentMethods(array $methodCalls, string $className): array
+    {
         $labelMethods = [];
         $regularMethods = [];
         $validationMethods = [];
@@ -578,15 +702,11 @@ CODE_SAMPLE
         foreach ($methodCalls as $callData) {
             $methodName = $callData['name'];
 
-            if ($isNotification && $methodName === 'title') {
-                $titleMethods[] = $callData;
-            } elseif ($isNotification && $methodName === 'body') {
-                $bodyMethods[] = $callData;
-            } elseif ($methodName === 'label') {
+            if ($methodName === 'label') {
                 $labelMethods[] = $callData;
-            } elseif ($className && $this->getMethodDefiningTrait($className, $methodName) === CanBeValidated::class) {
+            } elseif ($this->getMethodDefiningTrait($className, $methodName) === CanBeValidated::class) {
                 $validationMethods[] = $callData;
-            } elseif ($className && $this->getMethodDefiningTrait($className, $methodName) === HasState::class) {
+            } elseif ($this->getMethodDefiningTrait($className, $methodName) === HasState::class) {
                 $stateMethods[] = $callData;
             } else {
                 $regularMethods[] = $callData;
@@ -611,13 +731,24 @@ CODE_SAMPLE
         // Sort state methods alphabetically
         usort($stateMethods, fn ($a, $b) => strcmp($a['name'], $b['name']));
 
-        // For Notifications: title, body, regular, validation, state
-        // For others: label, regular, validation, state
-        if ($isNotification) {
-            return array_merge($titleMethods, $bodyMethods, $regularMethods, $validationMethods, $stateMethods);
-        }
-
+        // Order: label, regular, validation, state
         return array_merge($labelMethods, $regularMethods, $validationMethods, $stateMethods);
+    }
+
+    /**
+     * Default sorting behavior for classes that don't match specific patterns
+     *
+     * @param  array<array{name: string, call: MethodCall}>  $methodCalls
+     * @return array<array{name: string, call: MethodCall}>
+     */
+    private function sortDefaultMethods(array $methodCalls): array
+    {
+        $sortedMethods = $methodCalls;
+
+        // Sort all methods alphabetically
+        usort($sortedMethods, fn ($a, $b) => strcmp($a['name'], $b['name']));
+
+        return $sortedMethods;
     }
 
     /**
