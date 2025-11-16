@@ -65,20 +65,20 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
             ->statePath('data')
             ->components([
                 Group::make()
-                    ->id('simple')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('simple')
                     ->schema([
                         TextInput::make('simple')
                             ->label('Name')
                             ->default('Dan Harrin'),
                     ]),
                 Group::make()
-                    ->id('disabled')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('disabled')
                     ->schema([
                         TextInput::make('disabled')
                             ->label('Name')
@@ -86,22 +86,23 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                             ->default('Dan Harrin'),
                     ]),
                 Group::make()
-                    ->id('inlineLabel')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('inlineLabel')
                     ->schema([
                         TextInput::make('inlineLabel')
                             ->label('Name')
                             ->inlineLabel(),
                     ]),
                 Group::make()
-                    ->id('inlineLabelSection')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('inlineLabelSection')
                     ->schema([
                         Section::make('Details')
+                            ->inlineLabel()
                             ->schema([
                                 TextInput::make('inlineLabelSectionName')
                                     ->label('Name'),
@@ -109,24 +110,23 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                                     ->label('Email address'),
                                 TextInput::make('inlineLabelSectionPhone')
                                     ->label('Phone number'),
-                            ])
-                            ->inlineLabel(),
+                            ]),
                     ]),
                 Group::make()
-                    ->id('placeholder')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('placeholder')
                     ->schema([
                         TextInput::make('placeholder')
                             ->label('Name')
                             ->placeholder('Dan Harrin'),
                     ]),
                 Group::make()
-                    ->id('fused')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('fused')
                     ->schema([
                         FusedGroup::make([
                             TextInput::make('city')
@@ -136,10 +136,10 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                         ]),
                     ]),
                 Group::make()
-                    ->id('fusedLabel')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('fusedLabel')
                     ->schema([
                         FusedGroup::make([
                             TextInput::make('city')
@@ -150,10 +150,10 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                             ->label('Location'),
                     ]),
                 Group::make()
-                    ->id('fusedColumns')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('fusedColumns')
                     ->schema([
                         FusedGroup::make([
                             TextInput::make('city')
@@ -165,15 +165,15 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                             ->columns(2),
                     ]),
                 Group::make()
-                    ->id('fusedColumnsSpan')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('fusedColumnsSpan')
                     ->schema([
                         FusedGroup::make([
                             TextInput::make('city')
-                                ->placeholder('City')
-                                ->columnSpan(2),
+                                ->columnSpan(2)
+                                ->placeholder('City'),
                             Select::make('country')
                                 ->placeholder('Country'),
                         ])
@@ -181,37 +181,37 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                             ->columns(3),
                     ]),
                 Group::make()
-                    ->id('textBelowContent')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('textBelowContent')
                     ->schema([
                         TextInput::make('name')
                             ->belowContent('This is the user\'s full name.'),
                     ]),
                 Group::make()
-                    ->id('componentBelowContent')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('componentBelowContent')
                     ->schema([
                         TextInput::make('name')
                             ->belowContent(Text::make('This is the user\'s full name.')->weight(FontWeight::Bold)),
                     ]),
                 Group::make()
-                    ->id('actionBelowContent')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('actionBelowContent')
                     ->schema([
                         TextInput::make('name')
                             ->belowContent(Action::make('generate')),
                     ]),
                 Group::make()
-                    ->id('belowContent')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('belowContent')
                     ->schema([
                         TextInput::make('name')
                             ->belowContent([
@@ -221,10 +221,10 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                             ]),
                     ]),
                 Group::make()
-                    ->id('belowContentAlignment')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('belowContentAlignment')
                     ->schema([
                         TextInput::make('name')
                             ->belowContent(Schema::end([
@@ -249,10 +249,10 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                             ])),
                     ]),
                 Group::make()
-                    ->id('aboveLabel')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('aboveLabel')
                     ->schema([
                         TextInput::make('aboveLabel')
                             ->label('Name')
@@ -262,20 +262,20 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                             ]),
                     ]),
                 Group::make()
-                    ->id('beforeLabel')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('beforeLabel')
                     ->schema([
                         TextInput::make('beforeLabel')
                             ->label('Name')
                             ->beforeLabel(Icon::make(Heroicon::Star)),
                     ]),
                 Group::make()
-                    ->id('afterLabel')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('afterLabel')
                     ->schema([
                         TextInput::make('afterLabel')
                             ->label('Name')
@@ -285,10 +285,10 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                             ]),
                     ]),
                 Group::make()
-                    ->id('afterLabelAlignedStart')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('afterLabelAlignedStart')
                     ->schema([
                         TextInput::make('afterLabelAlignedStart')
                             ->label('Name')
@@ -298,10 +298,10 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                             ])),
                     ]),
                 Group::make()
-                    ->id('belowLabel')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('belowLabel')
                     ->schema([
                         TextInput::make('belowLabel')
                             ->label('Name')
@@ -311,10 +311,10 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                             ]),
                     ]),
                 Group::make()
-                    ->id('aboveContent')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('aboveContent')
                     ->schema([
                         TextInput::make('aboveContent')
                             ->label('Name')
@@ -324,119 +324,119 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                             ]),
                     ]),
                 Group::make()
-                    ->id('beforeContent')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('beforeContent')
                     ->schema([
                         TextInput::make('beforeContent')
                             ->label('Name')
                             ->beforeContent(Icon::make(Heroicon::Star)),
                     ]),
                 Group::make()
-                    ->id('afterContent')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('afterContent')
                     ->schema([
                         TextInput::make('afterContent')
                             ->label('Name')
                             ->afterContent(Icon::make(Heroicon::Star)),
                     ]),
                 Group::make()
-                    ->id('aboveErrorMessage')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('aboveErrorMessage')
                     ->schema([
                         TextInput::make('aboveErrorMessage')
                             ->label('Name')
-                            ->required()
                             ->aboveErrorMessage([
                                 Icon::make(Heroicon::Star),
                                 'This is the content above the field\'s error message',
-                            ]),
+                            ])
+                            ->required(),
                     ]),
                 Group::make()
-                    ->id('belowErrorMessage')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('belowErrorMessage')
                     ->schema([
                         TextInput::make('belowErrorMessage')
                             ->label('Name')
-                            ->required()
                             ->belowErrorMessage([
                                 Icon::make(Heroicon::Star),
                                 'This is the content below the field\'s error message',
-                            ]),
+                            ])
+                            ->required(),
                     ]),
                 Group::make()
-                    ->id('textInput')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('textInput')
                     ->schema([
                         TextInput::make('textInput')
                             ->label('Name')
                             ->default('Dan Harrin'),
                     ]),
                 Group::make()
-                    ->id('textInputAffix')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('textInputAffix')
                     ->schema([
                         TextInput::make('textInputAffix')
                             ->label('Domain')
-                            ->default('filamentphp')
                             ->prefix('https://')
-                            ->suffix('.com'),
+                            ->suffix('.com')
+                            ->default('filamentphp'),
                     ]),
                 Group::make()
-                    ->id('textInputSuffixIcon')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('textInputSuffixIcon')
                     ->schema([
                         TextInput::make('textInputSuffixIcon')
                             ->label('Domain')
-                            ->default('https://filamentphp.com')
-                            ->suffixIcon(Heroicon::GlobeAlt),
+                            ->suffixIcon(Heroicon::GlobeAlt)
+                            ->default('https://filamentphp.com'),
                     ]),
                 Group::make()
-                    ->id('textInputRevealablePassword')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('textInputRevealablePassword')
                     ->schema([
                         TextInput::make('textInputRevealablePassword')
                             ->label('Password')
-                            ->default('filament123')
                             ->password()
-                            ->revealable(),
+                            ->revealable()
+                            ->default('filament123'),
                         TextInput::make('textInputRevealedPassword')
                             ->label('Password')
-                            ->default('filament123')
                             ->suffixActions([
                                 TextInput\Actions\HidePasswordAction::make()
                                     ->extraAttributes([]),
-                            ]),
+                            ])
+                            ->default('filament123'),
                     ]),
                 Group::make()
-                    ->id('select')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('select')
                     ->schema([
                         Select::make('select')
                             ->label('Status'),
                     ]),
                 Group::make()
-                    ->id('javascriptSelect')
                     ->extraAttributes([
                         'class' => 'px-16 pt-16 pb-48 max-w-xl',
                     ])
+                    ->id('javascriptSelect')
                     ->schema([
                         Select::make('javascriptSelect')
                             ->label('Status')
@@ -448,27 +448,27 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                             ]),
                     ]),
                 Group::make()
-                    ->id('searchableSelect')
                     ->extraAttributes([
                         'class' => 'px-16 pt-16 pb-72 max-w-xl',
                     ])
+                    ->id('searchableSelect')
                     ->schema([
                         Select::make('searchableSelect')
                             ->label('Author')
-                            ->searchable()
                             ->options([
                                 'dan' => 'Dan Harrin',
                                 'ryan' => 'Ryan Chandler',
                                 'zep' => 'Zep Fietje',
                                 'dennis' => 'Dennis Koch',
                                 'adam' => 'Adam Weston',
-                            ]),
+                            ])
+                            ->searchable(),
                     ]),
                 Group::make()
-                    ->id('multipleSelect')
                     ->extraAttributes([
                         'class' => 'px-16 pt-16 pb-44 max-w-xl',
                     ])
+                    ->id('multipleSelect')
                     ->schema([
                         Select::make('multipleSelect')
                             ->label('Technologies')
@@ -481,14 +481,13 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                             ]),
                     ]),
                 Group::make()
-                    ->id('groupedSelect')
                     ->extraAttributes([
                         'class' => 'px-16 pt-16 pb-96 max-w-xl',
                     ])
+                    ->id('groupedSelect')
                     ->schema([
                         Select::make('groupedSelect')
                             ->label('Status')
-                            ->searchable()
                             ->options([
                                 'In Process' => [
                                     'draft' => 'Draft',
@@ -498,13 +497,14 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                                     'published' => 'Published',
                                     'rejected' => 'Rejected',
                                 ],
-                            ]),
+                            ])
+                            ->searchable(),
                     ]),
                 Group::make()
-                    ->id('createSelectOption')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('createSelectOption')
                     ->schema([
                         Select::make('createSelectOption')
                             ->label('Author')
@@ -513,149 +513,149 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                             ]),
                     ]),
                 Group::make()
-                    ->id('editSelectOption')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('editSelectOption')
                     ->schema([
                         Select::make('editSelectOption')
                             ->label('Author')
-                            ->default('dan')
+                            ->editOptionForm([
+                                TextInput::make('name'),
+                            ])
+                            ->fillEditOptionActionFormUsing(fn () => ['name' => 'Dan Harrin'])
                             ->options([
                                 'dan' => 'Dan Harrin',
                             ])
-                            ->fillEditOptionActionFormUsing(fn () => ['name' => 'Dan Harrin'])
-                            ->editOptionForm([
-                                TextInput::make('name'),
-                            ]),
+                            ->default('dan'),
                     ]),
                 Group::make()
-                    ->id('selectAffix')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('selectAffix')
                     ->schema([
                         Select::make('selectAffix')
                             ->label('Domain')
-                            ->default('filament')
                             ->options([
                                 'filament' => 'filamentphp',
                             ])
                             ->prefix('https://')
-                            ->suffix('.com'),
+                            ->suffix('.com')
+                            ->default('filament'),
                     ]),
                 Group::make()
-                    ->id('selectSuffixIcon')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('selectSuffixIcon')
                     ->schema([
                         Select::make('selectSuffixIcon')
                             ->label('Domain')
-                            ->default('filament')
                             ->options([
                                 'filament' => 'filamentphp',
                             ])
-                            ->suffixIcon(Heroicon::GlobeAlt),
+                            ->suffixIcon(Heroicon::GlobeAlt)
+                            ->default('filament'),
                     ]),
                 Group::make()
-                    ->id('checkbox')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('checkbox')
                     ->schema([
                         Checkbox::make('checkbox')
                             ->label('Is admin'),
                     ]),
                 Group::make()
-                    ->id('inlineCheckbox')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('inlineCheckbox')
                     ->schema([
                         Checkbox::make('inlineCheckbox')
                             ->label('Is admin')
                             ->inline(),
                     ]),
                 Group::make()
-                    ->id('notInlineCheckbox')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('notInlineCheckbox')
                     ->schema([
                         Checkbox::make('notInlineCheckbox')
                             ->label('Is admin')
                             ->inline(false),
                     ]),
                 Group::make()
-                    ->id('toggle')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('toggle')
                     ->schema([
                         Toggle::make('toggle')
                             ->label('Is admin'),
                     ]),
                 Group::make()
-                    ->id('toggleIcons')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('toggleIcons')
                     ->schema([
                         Toggle::make('toggleIcons')
                             ->label('Is admin')
-                            ->onIcon(Heroicon::Bolt)
-                            ->offIcon(Heroicon::User),
+                            ->offIcon(Heroicon::User)
+                            ->onIcon(Heroicon::Bolt),
                     ]),
                 Group::make()
-                    ->id('toggleOffColor')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('toggleOffColor')
                     ->schema([
                         Toggle::make('toggleOffColor')
                             ->label('Is admin')
-                            ->default(false)
+                            ->offColor('danger')
                             ->onColor('success')
-                            ->offColor('danger'),
+                            ->default(false),
                     ]),
                 Group::make()
-                    ->id('toggleOnColor')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('toggleOnColor')
                     ->schema([
                         Toggle::make('toggleOnColor')
                             ->label('Is admin')
-                            ->default(true)
+                            ->offColor('danger')
                             ->onColor('success')
-                            ->offColor('danger'),
+                            ->default(true),
                     ]),
                 Group::make()
-                    ->id('inlineToggle')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('inlineToggle')
                     ->schema([
                         Toggle::make('inlineToggle')
                             ->label('Is admin')
                             ->inline(),
                     ]),
                 Group::make()
-                    ->id('notInlineToggle')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('notInlineToggle')
                     ->schema([
                         Toggle::make('notInlineToggle')
                             ->label('Is admin')
                             ->inline(false),
                     ]),
                 Group::make()
-                    ->id('checkboxList')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('checkboxList')
                     ->schema([
                         CheckboxList::make('checkboxList')
                             ->label('Technologies')
@@ -667,66 +667,66 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                             ]),
                     ]),
                 Group::make()
-                    ->id('checkboxListOptionDescriptions')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('checkboxListOptionDescriptions')
                     ->schema([
                         CheckboxList::make('checkboxListOptionDescriptions')
                             ->label('Technologies')
-                            ->options([
-                                'tailwind' => 'Tailwind CSS',
-                                'alpine' => 'Alpine.js',
-                                'laravel' => 'Laravel',
-                                'livewire' => 'Laravel Livewire',
-                            ])
                             ->descriptions([
                                 'tailwind' => 'A utility-first CSS framework for rapidly building modern websites without ever leaving your HTML.',
                                 'alpine' => new HtmlString('A rugged, minimal tool for composing behavior <strong>directly in your markup</strong>.'),
                                 'laravel' => str('A **web application** framework with expressive, elegant syntax.')->inlineMarkdown()->toHtmlString(),
                                 'livewire' => 'A full-stack framework for Laravel building dynamic interfaces simple, without leaving the comfort of Laravel.',
+                            ])
+                            ->options([
+                                'tailwind' => 'Tailwind CSS',
+                                'alpine' => 'Alpine.js',
+                                'laravel' => 'Laravel',
+                                'livewire' => 'Laravel Livewire',
                             ]),
                     ]),
                 Group::make()
-                    ->id('checkboxListColumns')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('checkboxListColumns')
                     ->schema([
                         CheckboxList::make('checkboxListColumns')
                             ->label('Technologies')
+                            ->columns(2)
                             ->options([
                                 'tailwind' => 'Tailwind CSS',
                                 'alpine' => 'Alpine.js',
                                 'laravel' => 'Laravel',
                                 'livewire' => 'Laravel Livewire',
                             ])
-                            ->default(['tailwind', 'laravel'])
-                            ->columns(2),
+                            ->default(['tailwind', 'laravel']),
                     ]),
                 Group::make()
-                    ->id('checkboxListRows')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('checkboxListRows')
                     ->schema([
                         CheckboxList::make('checkboxListRows')
                             ->label('Technologies')
+                            ->columns(2)
+                            ->gridDirection('row')
                             ->options([
                                 'tailwind' => 'Tailwind CSS',
                                 'alpine' => 'Alpine.js',
                                 'laravel' => 'Laravel',
                                 'livewire' => 'Laravel Livewire',
                             ])
-                            ->default(['tailwind', 'laravel'])
-                            ->columns(2)
-                            ->gridDirection('row'),
+                            ->default(['tailwind', 'laravel']),
                     ]),
                 Group::make()
-                    ->id('searchableCheckboxList')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('searchableCheckboxList')
                     ->schema([
                         CheckboxList::make('searchableCheckboxList')
                             ->label('Technologies')
@@ -736,31 +736,31 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                                 'laravel' => 'Laravel',
                                 'livewire' => 'Laravel Livewire',
                             ])
-                            ->default(['tailwind', 'laravel'])
-                            ->searchable(),
+                            ->searchable()
+                            ->default(['tailwind', 'laravel']),
                     ]),
                 Group::make()
-                    ->id('bulkToggleableCheckboxList')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('bulkToggleableCheckboxList')
                     ->schema([
                         CheckboxList::make('bulkToggleableCheckboxList')
                             ->label('Technologies')
+                            ->bulkToggleable()
                             ->options([
                                 'tailwind' => 'Tailwind CSS',
                                 'alpine' => 'Alpine.js',
                                 'laravel' => 'Laravel',
                                 'livewire' => 'Laravel Livewire',
                             ])
-                            ->default(['tailwind', 'laravel'])
-                            ->bulkToggleable(),
+                            ->default(['tailwind', 'laravel']),
                     ]),
                 Group::make()
-                    ->id('radio')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('radio')
                     ->schema([
                         Radio::make('radio')
                             ->label('Status')
@@ -772,30 +772,30 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                             ->default('draft'),
                     ]),
                 Group::make()
-                    ->id('radioOptionDescriptions')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('radioOptionDescriptions')
                     ->schema([
                         Radio::make('radioOptionDescriptions')
                             ->label('Status')
-                            ->options([
-                                'draft' => 'Draft',
-                                'scheduled' => 'Scheduled',
-                                'published' => 'Published',
-                            ])
                             ->descriptions([
                                 'draft' => 'Is not visible.',
                                 'scheduled' => 'Will be visible.',
                                 'published' => 'Is visible.',
                             ])
+                            ->options([
+                                'draft' => 'Draft',
+                                'scheduled' => 'Scheduled',
+                                'published' => 'Published',
+                            ])
                             ->default('draft'),
                     ]),
                 Group::make()
-                    ->id('booleanRadio')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('booleanRadio')
                     ->schema([
                         Radio::make('booleanRadio')
                             ->label('Like this post?')
@@ -803,10 +803,10 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                             ->default(true),
                     ]),
                 Group::make()
-                    ->id('inlineRadio')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('inlineRadio')
                     ->schema([
                         Radio::make('inlineRadio')
                             ->label('Like this post?')
@@ -815,26 +815,26 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                             ->default(true),
                     ]),
                 Group::make()
-                    ->id('disabledOptionRadio')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('disabledOptionRadio')
                     ->schema([
                         Radio::make('disabledOptionRadio')
                             ->label('Status')
+                            ->disableOptionWhen(fn (string $value): bool => $value === 'published')
                             ->options([
                                 'draft' => 'Draft',
                                 'scheduled' => 'Scheduled',
                                 'published' => 'Published',
                             ])
-                            ->default('draft')
-                            ->disableOptionWhen(fn (string $value): bool => $value === 'published'),
+                            ->default('draft'),
                     ]),
                 Group::make()
-                    ->id('dateTimePickers')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('dateTimePickers')
                     ->schema([
                         DateTimePicker::make('dateTimePicker')
                             ->label('Published at'),
@@ -844,20 +844,20 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                             ->label('Alarm at'),
                     ]),
                 Group::make()
-                    ->id('dateTimePickerWithoutSeconds')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('dateTimePickerWithoutSeconds')
                     ->schema([
                         DateTimePicker::make('dateTimePickerWithoutSeconds')
                             ->label('Published at')
                             ->seconds(false),
                     ]),
                 Group::make()
-                    ->id('javascriptDateTimePicker')
                     ->extraAttributes([
                         'class' => 'px-16 pt-16 pb-96 max-w-xl',
                     ])
+                    ->id('javascriptDateTimePicker')
                     ->schema([
                         DatePicker::make('javascriptDateTimePicker')
                             ->label('Date of birth')
@@ -865,22 +865,22 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                             ->default('2000-01-01'),
                     ]),
                 Group::make()
-                    ->id('dateTimePickerDisplayFormat')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('dateTimePickerDisplayFormat')
                     ->schema([
                         DatePicker::make('dateTimePickerDisplayFormat')
                             ->label('Date of birth')
-                            ->native(false)
                             ->displayFormat('d/m/Y')
+                            ->native(false)
                             ->default('2000-01-01'),
                     ]),
                 Group::make()
-                    ->id('dateTimePickerWeekStartsOnSunday')
                     ->extraAttributes([
                         'class' => 'px-16 pt-16 pb-96 max-w-xl',
                     ])
+                    ->id('dateTimePickerWeekStartsOnSunday')
                     ->schema([
                         DatePicker::make('dateTimePickerWeekStartsOnSunday')
                             ->label('Published at')
@@ -889,22 +889,22 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                             ->default('2000-01-01'),
                     ]),
                 Group::make()
-                    ->id('dateTimePickerDisabledDates')
                     ->extraAttributes([
                         'class' => 'px-16 pt-16 pb-96 max-w-xl',
                     ])
+                    ->id('dateTimePickerDisabledDates')
                     ->schema([
                         DatePicker::make('dateTimePickerDisabledDates')
                             ->label('Date')
-                            ->native(false)
                             ->disabledDates(['2000-01-03', '2000-01-15', '2000-01-20'])
+                            ->native(false)
                             ->default('2000-01-01'),
                     ]),
                 Group::make()
-                    ->id('dateTimePickerAffix')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('dateTimePickerAffix')
                     ->schema([
                         DatePicker::make('dateTimePickerAffix')
                             ->label('Date')
@@ -913,10 +913,10 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                             ->default('2000-01-01'),
                     ]),
                 Group::make()
-                    ->id('dateTimePickerPrefixIcon')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('dateTimePickerPrefixIcon')
                     ->schema([
                         TimePicker::make('dateTimePickerPrefixIcon')
                             ->label('At')
@@ -924,40 +924,41 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                             ->default('2000-01-01'),
                     ]),
                 Group::make()
-                    ->id('fileUpload')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('fileUpload')
                     ->schema([
                         FileUpload::make('fileUpload')
                             ->label('Attachment'),
                     ]),
                 Group::make()
-                    ->id('richEditor')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-5xl',
                     ])
+                    ->id('richEditor')
                     ->schema([
                         RichEditor::make('richEditor')
                             ->label('Content'),
                     ]),
                 Group::make()
-                    ->id('markdownEditor')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-5xl',
                     ])
+                    ->id('markdownEditor')
                     ->schema([
                         MarkdownEditor::make('markdownEditor')
                             ->label('Content'),
                     ]),
                 Group::make()
-                    ->id('repeater')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-5xl',
                     ])
+                    ->id('repeater')
                     ->schema([
                         Repeater::make('repeater')
                             ->label('Members')
+                            ->columns(2)
                             ->schema([
                                 TextInput::make('name')->required(),
                                 Select::make('role')
@@ -968,7 +969,6 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                                     ])
                                     ->required(),
                             ])
-                            ->columns(2)
                             ->default([
                                 [
                                     'name' => 'Dan Harrin',
@@ -989,17 +989,14 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                             ]),
                     ]),
                 Group::make()
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-5xl',
+                    ])
                     ->id('repeaterTable')
-                    ->extraAttributes([
-                        'class' => 'p-16 max-w-5xl',
-                    ])
                     ->schema([
                         Repeater::make('repeaterTable')
                             ->label('Members')
-                            ->table([
-                                Repeater\TableColumn::make('Name'),
-                                Repeater\TableColumn::make('Role'),
-                            ])
+                            ->columns(2)
                             ->schema([
                                 TextInput::make('name')->required(),
                                 Select::make('role')
@@ -1010,7 +1007,10 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                                     ])
                                     ->required(),
                             ])
-                            ->columns(2)
+                            ->table([
+                                Repeater\TableColumn::make('Name'),
+                                Repeater\TableColumn::make('Role'),
+                            ])
                             ->default([
                                 [
                                     'name' => 'Dan Harrin',
@@ -1031,17 +1031,14 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                             ]),
                     ]),
                 Group::make()
-                    ->id('repeaterTableCompact')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-5xl',
                     ])
+                    ->id('repeaterTableCompact')
                     ->schema([
                         Repeater::make('repeaterTable')
                             ->label('Members')
-                            ->table([
-                                Repeater\TableColumn::make('Name'),
-                                Repeater\TableColumn::make('Role'),
-                            ])
+                            ->columns(2)
                             ->compact()
                             ->schema([
                                 TextInput::make('name')->required(),
@@ -1053,7 +1050,10 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                                     ])
                                     ->required(),
                             ])
-                            ->columns(2)
+                            ->table([
+                                Repeater\TableColumn::make('Name'),
+                                Repeater\TableColumn::make('Role'),
+                            ])
                             ->default([
                                 [
                                     'name' => 'Dan Harrin',
@@ -1074,13 +1074,15 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                             ]),
                     ]),
                 Group::make()
-                    ->id('repeaterReorderableWithButtons')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-5xl',
                     ])
+                    ->id('repeaterReorderableWithButtons')
                     ->schema([
                         Repeater::make('repeaterReorderableWithButtons')
                             ->label('Members')
+                            ->columns(2)
+                            ->reorderableWithButtons()
                             ->schema([
                                 TextInput::make('name')->required(),
                                 Select::make('role')
@@ -1091,7 +1093,6 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                                     ])
                                     ->required(),
                             ])
-                            ->columns(2)
                             ->default([
                                 [
                                     'name' => 'Dan Harrin',
@@ -1105,25 +1106,24 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                                     'name' => 'Zep Fietje',
                                     'role' => 'member',
                                 ],
-                            ])
-                            ->reorderableWithButtons(),
+                            ]),
                     ]),
                 Group::make()
-                    ->id('collapsedRepeater')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-5xl',
                     ])
+                    ->id('collapsedRepeater')
                     ->schema([
                         Repeater::make('collapsedRepeater')
                             ->label('Qualifications')
-                            ->defaultItems(3)
-                            ->collapsed(),
+                            ->collapsed()
+                            ->defaultItems(3),
                     ]),
                 Group::make()
-                    ->id('cloneableRepeater')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-5xl',
                     ])
+                    ->id('cloneableRepeater')
                     ->schema([
                         Repeater::make('cloneableRepeater')
                             ->label('Qualifications')
@@ -1139,17 +1139,17 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                             ]),
                     ]),
                 Group::make()
-                    ->id('gridRepeater')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-5xl',
                     ])
+                    ->id('gridRepeater')
                     ->schema([
                         Repeater::make('gridRepeater')
                             ->label('Qualifications')
+                            ->grid(2)
                             ->schema([
                                 TextInput::make('name')->required(),
                             ])
-                            ->grid(2)
                             ->default([
                                 ['name' => 'Tailwind CSS Level 1'],
                                 ['name' => 'Alpine.js Level 1'],
@@ -1158,13 +1158,15 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                             ]),
                     ]),
                 Group::make()
-                    ->id('labelledRepeater')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-5xl',
                     ])
+                    ->id('labelledRepeater')
                     ->schema([
                         Repeater::make('labelledRepeater')
                             ->label('Members')
+                            ->columns(2)
+                            ->itemLabel(fn (array $state): ?string => $state['name'] ?? null)
                             ->schema([
                                 TextInput::make('name')->required(),
                                 Select::make('role')
@@ -1175,7 +1177,6 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                                     ])
                                     ->required(),
                             ])
-                            ->columns(2)
                             ->default([
                                 [
                                     'name' => 'Dan Harrin',
@@ -1189,14 +1190,13 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                                     'name' => 'Zep Fietje',
                                     'role' => 'member',
                                 ],
-                            ])
-                            ->itemLabel(fn (array $state): ?string => $state['name'] ?? null),
+                            ]),
                     ]),
                 Group::make()
-                    ->id('simpleRepeater')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-5xl',
                     ])
+                    ->id('simpleRepeater')
                     ->schema([
                         Repeater::make('simpleRepeater')
                             ->label('Invitations')
@@ -1211,15 +1211,16 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                             ]),
                     ]),
                 Group::make()
-                    ->id('builder')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-5xl',
                     ])
+                    ->id('builder')
                     ->schema([
                         Builder::make('builder')
                             ->label('Content')
                             ->schema([
                                 Builder\Block::make('heading')
+                                    ->columns(2)
                                     ->schema([
                                         TextInput::make('content')
                                             ->label('Heading')
@@ -1234,8 +1235,7 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                                                 'h6' => 'Heading 6',
                                             ])
                                             ->required(),
-                                    ])
-                                    ->columns(2),
+                                    ]),
                                 Builder\Block::make('paragraph')
                                     ->schema([
                                         Textarea::make('content')
@@ -1290,15 +1290,23 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                             ]),
                     ]),
                 Group::make()
-                    ->id('labelledBuilder')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-5xl',
                     ])
+                    ->id('labelledBuilder')
                     ->schema([
                         Builder::make('labelledBuilder')
                             ->label('Content')
                             ->schema([
                                 Builder\Block::make('heading')
+                                    ->label(function (?array $state): string {
+                                        if ($state === null) {
+                                            return 'Heading';
+                                        }
+
+                                        return $state['content'] ?? 'Untitled heading';
+                                    })
+                                    ->columns(2)
                                     ->schema([
                                         TextInput::make('content')
                                             ->label('Heading')
@@ -1313,15 +1321,7 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                                                 'h6' => 'Heading 6',
                                             ])
                                             ->required(),
-                                    ])
-                                    ->columns(2)
-                                    ->label(function (?array $state): string {
-                                        if ($state === null) {
-                                            return 'Heading';
-                                        }
-
-                                        return $state['content'] ?? 'Untitled heading';
-                                    }),
+                                    ]),
                             ])
                             ->default([
                                 [
@@ -1341,21 +1341,21 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                             ]),
                     ]),
                 Group::make()
-                    ->id('builderIcons')
                     ->extraAttributes([
                         'class' => 'px-16 pt-16 pb-40 max-w-5xl',
                     ])
+                    ->id('builderIcons')
                     ->schema([
                         Builder::make('builderIcons')
                             ->label('Content')
                             ->schema([
                                 Builder\Block::make('paragraph')
+                                    ->icon(Heroicon::Bars3BottomLeft)
                                     ->schema([
                                         Textarea::make('content')
                                             ->label('Paragraph')
                                             ->required(),
-                                    ])
-                                    ->icon(Heroicon::Bars3BottomLeft),
+                                    ]),
                                 Builder\Block::make('image')
                                     ->icon(Heroicon::Photo),
                             ])
@@ -1369,21 +1369,22 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                             ]),
                     ]),
                 Group::make()
-                    ->id('builderReorderableWithButtons')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-5xl',
                     ])
+                    ->id('builderReorderableWithButtons')
                     ->schema([
                         Builder::make('builderReorderableWithButtons')
                             ->label('Content')
+                            ->reorderableWithButtons()
                             ->schema([
                                 Builder\Block::make('paragraph')
+                                    ->icon(Heroicon::Bars3BottomLeft)
                                     ->schema([
                                         Textarea::make('content')
                                             ->label('Paragraph')
                                             ->required(),
-                                    ])
-                                    ->icon(Heroicon::Bars3BottomLeft),
+                                    ]),
                             ])
                             ->default([
                                 [
@@ -1404,25 +1405,25 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                                         'content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam euismod, nisl eget aliquam ultricies, quam sapien aliquet nunc, eget aliquam velit nisl quis nunc. Donec euismod, nisl eget aliquam ultricies, quam sapien aliquet nunc, eget aliquam velit nisl quis nunc.',
                                     ],
                                 ],
-                            ])
-                            ->reorderableWithButtons(),
+                            ]),
                     ]),
                 Group::make()
-                    ->id('collapsedBuilder')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-5xl',
                     ])
+                    ->id('collapsedBuilder')
                     ->schema([
                         Builder::make('collapsedBuilder')
                             ->label('Content')
+                            ->collapsed()
                             ->schema([
                                 Builder\Block::make('paragraph')
+                                    ->icon(Heroicon::Bars3BottomLeft)
                                     ->schema([
                                         Textarea::make('content')
                                             ->label('Paragraph')
                                             ->required(),
-                                    ])
-                                    ->icon(Heroicon::Bars3BottomLeft),
+                                    ]),
                             ])
                             ->default([
                                 [
@@ -1443,25 +1444,24 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                                         'content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam euismod, nisl eget aliquam ultricies, quam sapien aliquet nunc, eget aliquam velit nisl quis nunc. Donec euismod, nisl eget aliquam ultricies, quam sapien aliquet nunc, eget aliquam velit nisl quis nunc.',
                                     ],
                                 ],
-                            ])
-                            ->collapsed(),
+                            ]),
                     ]),
                 Group::make()
-                    ->id('cloneableBuilder')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-5xl',
                     ])
+                    ->id('cloneableBuilder')
                     ->schema([
                         Builder::make('cloneableBuilder')
                             ->label('Content')
                             ->schema([
                                 Builder\Block::make('paragraph')
+                                    ->icon(Heroicon::Bars3BottomLeft)
                                     ->schema([
                                         Textarea::make('content')
                                             ->label('Paragraph')
                                             ->required(),
-                                    ])
-                                    ->icon(Heroicon::Bars3BottomLeft),
+                                    ]),
                             ])
                             ->default([
                                 [
@@ -1486,30 +1486,30 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                             ->cloneable(),
                     ]),
                 Group::make()
-                    ->id('tagsInput')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('tagsInput')
                     ->schema([
                         TagsInput::make('tagsInput')
                             ->label('Tags')
                             ->default(['Tailwind CSS', 'Alpine.js']),
                     ]),
                 Group::make()
-                    ->id('textarea')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('textarea')
                     ->schema([
                         Textarea::make('textarea')
                             ->label('Description')
                             ->default('Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam euismod, nisl eget aliquam ultricies, quam sapien aliquet nunc, eget aliquam velit nisl quis nunc.'),
                     ]),
                 Group::make()
-                    ->id('keyValue')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-5xl',
                     ])
+                    ->id('keyValue')
                     ->schema([
                         KeyValue::make('keyValue')
                             ->label('Meta')
@@ -1520,35 +1520,35 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                             ]),
                     ]),
                 Group::make()
-                    ->id('reorderableKeyValue')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-5xl',
                     ])
+                    ->id('reorderableKeyValue')
                     ->schema([
                         KeyValue::make('reorderableKeyValue')
                             ->label('Meta')
+                            ->reorderable()
                             ->default([
                                 'description' => 'Filament is a collection of Laravel packages',
                                 'og:type' => 'website',
                                 'og:site_name' => 'Filament',
-                            ])
-                            ->reorderable(),
+                            ]),
                     ]),
                 Group::make()
-                    ->id('colorPicker')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('colorPicker')
                     ->schema([
                         ColorPicker::make('colorPicker')
                             ->label('Color')
                             ->default('#3490dc'),
                     ]),
                 Group::make()
-                    ->id('toggleButtons')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('toggleButtons')
                     ->schema([
                         ToggleButtons::make('toggleButtons')
                             ->label('Status')
@@ -1560,50 +1560,50 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                             ->default('published'),
                     ]),
                 Group::make()
-                    ->id('toggleButtonsColors')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('toggleButtonsColors')
                     ->schema([
                         ToggleButtons::make('toggleButtonsColors')
                             ->label('Status')
-                            ->options([
-                                'draft' => 'Draft',
-                                'scheduled' => 'Scheduled',
-                                'published' => 'Published',
-                            ])
                             ->colors([
                                 'draft' => 'info',
                                 'scheduled' => 'warning',
                                 'published' => 'success',
                             ])
-                            ->default('draft'),
-                    ]),
-                Group::make()
-                    ->id('toggleButtonsIcons')
-                    ->extraAttributes([
-                        'class' => 'p-16 max-w-xl',
-                    ])
-                    ->schema([
-                        ToggleButtons::make('toggleButtonsIcons')
-                            ->label('Status')
                             ->options([
                                 'draft' => 'Draft',
                                 'scheduled' => 'Scheduled',
                                 'published' => 'Published',
                             ])
+                            ->default('draft'),
+                    ]),
+                Group::make()
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->id('toggleButtonsIcons')
+                    ->schema([
+                        ToggleButtons::make('toggleButtonsIcons')
+                            ->label('Status')
                             ->icons([
                                 'draft' => Heroicon::OutlinedPencil,
                                 'scheduled' => Heroicon::OutlinedClock,
                                 'published' => Heroicon::OutlinedCheckCircle,
                             ])
+                            ->options([
+                                'draft' => 'Draft',
+                                'scheduled' => 'Scheduled',
+                                'published' => 'Published',
+                            ])
                             ->default('scheduled'),
                     ]),
                 Group::make()
-                    ->id('toggleButtonsBoolean')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('toggleButtonsBoolean')
                     ->schema([
                         ToggleButtons::make('toggleButtonsBoolean')
                             ->label('Like this post?')
@@ -1611,10 +1611,10 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                             ->default(true),
                     ]),
                 Group::make()
-                    ->id('toggleButtonsInline')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('toggleButtonsInline')
                     ->schema([
                         ToggleButtons::make('toggleButtonsInline')
                             ->label('Like this post?')
@@ -1623,10 +1623,10 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                             ->default(false),
                     ]),
                 Group::make()
-                    ->id('toggleButtonsGrouped')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('toggleButtonsGrouped')
                     ->schema([
                         ToggleButtons::make('toggleButtonsGrouped')
                             ->label('Like this post?')
@@ -1635,10 +1635,10 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                             ->default(true),
                     ]),
                 Group::make()
-                    ->id('toggleButtonsMultiple')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('toggleButtonsMultiple')
                     ->schema([
                         ToggleButtons::make('toggleButtonsMultiple')
                             ->label('Technologies')
@@ -1652,86 +1652,86 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                             ->default(['tailwind', 'laravel']),
                     ]),
                 Group::make()
-                    ->id('toggleButtonsColumns')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('toggleButtonsColumns')
                     ->schema([
                         ToggleButtons::make('toggleButtonsColumns')
                             ->label('Technologies')
+                            ->columns(2)
                             ->options([
                                 'tailwind' => 'Tailwind CSS',
                                 'alpine' => 'Alpine.js',
                                 'laravel' => 'Laravel',
                                 'livewire' => 'Laravel Livewire',
                             ])
-                            ->columns(2)
                             ->default('alpine'),
                     ]),
                 Group::make()
-                    ->id('toggleButtonsRows')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('toggleButtonsRows')
                     ->schema([
                         ToggleButtons::make('toggleButtonsRows')
                             ->label('Technologies')
+                            ->columns(2)
+                            ->gridDirection('row')
                             ->options([
                                 'tailwind' => 'Tailwind CSS',
                                 'alpine' => 'Alpine.js',
                                 'laravel' => 'Laravel',
                                 'livewire' => 'Laravel Livewire',
                             ])
-                            ->columns(2)
-                            ->gridDirection('row')
                             ->default('alpine'),
                     ]),
                 Group::make()
-                    ->id('disabledOptionToggleButtons')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('disabledOptionToggleButtons')
                     ->schema([
                         ToggleButtons::make('disabledOptionToggleButtons')
                             ->label('Status')
+                            ->disableOptionWhen(fn (string $value): bool => $value === 'published')
                             ->options([
                                 'draft' => 'Draft',
                                 'scheduled' => 'Scheduled',
                                 'published' => 'Published',
                             ])
-                            ->default('draft')
-                            ->disableOptionWhen(fn (string $value): bool => $value === 'published'),
+                            ->default('draft'),
                     ]),
                 Group::make()
-                    ->id('suffixAction')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('suffixAction')
                     ->schema([
                         TextInput::make('suffixAction')
                             ->label('Cost')
                             ->prefix('€')
-                            ->default('22.66')
                             ->suffixAction(
                                 Action::make('copyCostToPrice')
                                     ->icon(Heroicon::Clipboard),
-                            ),
+                            )
+                            ->default('22.66'),
                     ]),
                 Group::make()
-                    ->id('slider')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('slider')
                     ->schema([
                         Slider::make('slider')
                             ->label('Slider')
                             ->default(50),
                     ]),
                 Group::make()
-                    ->id('sliderRange')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('sliderRange')
                     ->schema([
                         Slider::make('sliderRange')
                             ->label('Slider')
@@ -1739,20 +1739,20 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                             ->default(50),
                     ]),
                 Group::make()
-                    ->id('sliderMultiple')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('sliderMultiple')
                     ->schema([
                         Slider::make('sliderMultiple')
                             ->label('Slider')
                             ->default([20, 70]),
                     ]),
                 Group::make()
-                    ->id('sliderVertical')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('sliderVertical')
                     ->schema([
                         Slider::make('sliderVertical')
                             ->label('Slider')
@@ -1760,10 +1760,10 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                             ->default(50),
                     ]),
                 Group::make()
-                    ->id('sliderTooltips')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('sliderTooltips')
                     ->schema([
                         Slider::make('sliderTooltips')
                             ->label('Slider')
@@ -1771,10 +1771,10 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                             ->default(50),
                     ]),
                 Group::make()
-                    ->id('sliderTooltipsMultiple')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('sliderTooltipsMultiple')
                     ->schema([
                         Slider::make('sliderTooltipsMultiple')
                             ->label('Slider')
@@ -1782,10 +1782,10 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                             ->default([20, 70]),
                     ]),
                 Group::make()
-                    ->id('sliderTooltipsVertical')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('sliderTooltipsVertical')
                     ->schema([
                         Slider::make('sliderTooltipsVertical')
                             ->label('Slider')
@@ -1794,10 +1794,10 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                             ->default(50),
                     ]),
                 Group::make()
-                    ->id('sliderTooltipsFormatting')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('sliderTooltipsFormatting')
                     ->schema([
                         Slider::make('sliderTooltipsFormatting')
                             ->label('Slider')
@@ -1805,10 +1805,10 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                             ->default(64.99),
                     ]),
                 Group::make()
-                    ->id('sliderFill')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('sliderFill')
                     ->schema([
                         Slider::make('sliderFill')
                             ->label('Slider')
@@ -1816,10 +1816,10 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                             ->default(50),
                     ]),
                 Group::make()
-                    ->id('sliderFillMultiple')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('sliderFillMultiple')
                     ->schema([
                         Slider::make('sliderFillMultiple')
                             ->label('Slider')
@@ -1827,10 +1827,10 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                             ->default([20, 70]),
                     ]),
                 Group::make()
-                    ->id('sliderFillVertical')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('sliderFillVertical')
                     ->schema([
                         Slider::make('sliderFillVertical')
                             ->label('Slider')
@@ -1839,10 +1839,10 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                             ->default(50),
                     ]),
                 Group::make()
-                    ->id('sliderPips')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('sliderPips')
                     ->schema([
                         Slider::make('sliderPips')
                             ->label('Slider')
@@ -1850,10 +1850,10 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                             ->default(50),
                     ]),
                 Group::make()
-                    ->id('sliderPipsMultiple')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('sliderPipsMultiple')
                     ->schema([
                         Slider::make('sliderPipsMultiple')
                             ->label('Slider')
@@ -1861,10 +1861,10 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                             ->default([20, 70]),
                     ]),
                 Group::make()
-                    ->id('sliderPipsVertical')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('sliderPipsVertical')
                     ->schema([
                         Slider::make('sliderPipsVertical')
                             ->label('Slider')
@@ -1873,10 +1873,10 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                             ->default(50),
                     ]),
                 Group::make()
-                    ->id('sliderPipsDensity')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('sliderPipsDensity')
                     ->schema([
                         Slider::make('sliderPipsDensity')
                             ->label('Slider')
@@ -1884,10 +1884,10 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                             ->default(50),
                     ]),
                 Group::make()
-                    ->id('sliderPipsFormatting')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('sliderPipsFormatting')
                     ->schema([
                         Slider::make('sliderPipsFormatting')
                             ->label('Slider')
@@ -1896,34 +1896,34 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                             ->default(50),
                     ]),
                 Group::make()
-                    ->id('sliderPipsSteps')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('sliderPipsSteps')
                     ->schema([
                         Slider::make('sliderPipsSteps')
                             ->label('Slider')
-                            ->step(10)
                             ->pips(PipsMode::Steps)
+                            ->step(10)
                             ->default(50),
                     ]),
                 Group::make()
-                    ->id('sliderPipsStepsDensity')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('sliderPipsStepsDensity')
                     ->schema([
                         Slider::make('sliderPipsStepsDensity')
                             ->label('Slider')
-                            ->step(10)
                             ->pips(PipsMode::Steps, density: 5)
+                            ->step(10)
                             ->default(50),
                     ]),
                 Group::make()
-                    ->id('sliderPipsPositions')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('sliderPipsPositions')
                     ->schema([
                         Slider::make('sliderPipsPositions')
                             ->label('Slider')
@@ -1932,10 +1932,10 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                             ->default(50),
                     ]),
                 Group::make()
-                    ->id('sliderPipsCount')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('sliderPipsCount')
                     ->schema([
                         Slider::make('sliderPipsCount')
                             ->label('Slider')
@@ -1944,10 +1944,10 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                             ->default(50),
                     ]),
                 Group::make()
-                    ->id('sliderPipsValues')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('sliderPipsValues')
                     ->schema([
                         Slider::make('sliderPipsValues')
                             ->label('Slider')
@@ -1956,10 +1956,10 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                             ->default(50),
                     ]),
                 Group::make()
-                    ->id('sliderPipsValuesDensity')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('sliderPipsValuesDensity')
                     ->schema([
                         Slider::make('sliderPipsValuesDensity')
                             ->label('Slider')
@@ -1968,10 +1968,10 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                             ->default(50),
                     ]),
                 Group::make()
-                    ->id('sliderPipsFilter')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('sliderPipsFilter')
                     ->schema([
                         Slider::make('sliderPipsFilter')
                             ->label('Slider')
@@ -1988,10 +1988,10 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                             ->default(50),
                     ]),
                 Group::make()
-                    ->id('sliderNonLinear')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('sliderNonLinear')
                     ->schema([
                         Slider::make('sliderNonLinear')
                             ->label('Slider')
@@ -2000,10 +2000,10 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                             ->default(50),
                     ]),
                 Group::make()
-                    ->id('codeEditor')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('codeEditor')
                     ->schema([
                         CodeEditor::make('code')
                             ->default(<<<'YAML'
@@ -2015,10 +2015,10 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                                 YAML),
                     ]),
                 Group::make()
-                    ->id('codeEditorLanguage')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('codeEditorLanguage')
                     ->schema([
                         CodeEditor::make('codeWithLanguage')
                             ->label('Code')

@@ -17,8 +17,8 @@ class UserMenuCustomization extends Page
             ->userMenuItems([
                 MenuItem::make()
                     ->label('Settings')
-                    ->url(fn (): string => '#')
-                    ->icon(Heroicon::OutlinedCog6Tooth),
+                    ->icon(Heroicon::OutlinedCog6Tooth)
+                    ->url(fn (): string => '#'),
             ]);
     }
 }

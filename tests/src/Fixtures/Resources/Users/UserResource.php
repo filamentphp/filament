@@ -42,23 +42,23 @@ class UserResource extends Resource
                 Tables\Columns\TextColumn::make('name'),
                 Tables\Columns\TextColumn::make('email'),
                 Tables\Columns\TextColumn::make('posts_exists')
-                    ->exists('posts')
-                    ->label('Has Posts'),
+                    ->label('Has Posts')
+                    ->exists('posts'),
                 Tables\Columns\TextColumn::make('posts_count')
-                    ->counts('posts')
-                    ->label('# Posts'),
+                    ->label('# Posts')
+                    ->counts('posts'),
                 Tables\Columns\TextColumn::make('posts_avg_rating')
-                    ->avg('posts', 'rating')
-                    ->label('Posts Avg. Rating'),
+                    ->label('Posts Avg. Rating')
+                    ->avg('posts', 'rating'),
                 Tables\Columns\TextColumn::make('posts_max_rating')
-                    ->max('posts', 'rating')
-                    ->label('Posts Max. Rating'),
+                    ->label('Posts Max. Rating')
+                    ->max('posts', 'rating'),
                 Tables\Columns\TextColumn::make('posts_min_rating')
-                    ->min('posts', 'rating')
-                    ->label('Posts Min. Rating'),
+                    ->label('Posts Min. Rating')
+                    ->min('posts', 'rating'),
                 Tables\Columns\TextColumn::make('posts_sum_rating')
-                    ->sum('posts', 'rating')
-                    ->label('Posts Rating Sum'),
+                    ->label('Posts Rating Sum')
+                    ->sum('posts', 'rating'),
             ])
             ->recordActions([
                 ViewAction::make(),

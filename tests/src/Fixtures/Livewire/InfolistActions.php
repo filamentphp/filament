@@ -29,8 +29,8 @@ class InfolistActions extends Component implements HasActions, HasSchemas
                         Action::make('setValue')
                             ->schema([
                                 TextInput::make('value')
-                                    ->default('foo')
-                                    ->required(),
+                                    ->required()
+                                    ->default('foo'),
                             ])
                             ->action(function (array $data): void {
                                 $this->dispatch('foo', $data['value']);

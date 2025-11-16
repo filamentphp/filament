@@ -27,11 +27,11 @@ class PrimesDemo extends Component implements HasSchemas
         return $schema
             ->components([
                 Group::make()
-                    ->id('example')
+                    ->dense()
                     ->extraAttributes([
                         'class' => 'py-16 px-[18rem] max-w-5xl',
                     ])
-                    ->dense()
+                    ->id('example')
                     ->schema([
                         Text::make('Scan this QR code with your authenticator app:')
                             ->color('neutral'),
@@ -39,18 +39,19 @@ class PrimesDemo extends Component implements HasSchemas
                             url: fn (): string => $this->getQrCodeUrl(),
                             alt: 'QR code to scan with an authenticator app',
                         )
-                            ->imageHeight('12rem')
-                            ->alignCenter(),
+                            ->alignCenter()
+                            ->imageHeight('12rem'),
                         Section::make()
+                            ->compact()
                             ->schema([
                                 Text::make('Please save the following recovery codes in a safe place. They will only be shown once, but you\'ll need them if you lose access to your authenticator app:')
-                                    ->weight(FontWeight::Bold)
-                                    ->color('neutral'),
+                                    ->color('neutral')
+                                    ->weight(FontWeight::Bold),
                                 UnorderedList::make(fn (): array => array_map(
                                     fn (string $recoveryCode): \Filament\Schemas\Components\Component => Text::make($recoveryCode)
+                                        ->color('neutral')
                                         ->fontFamily(FontFamily::Mono)
-                                        ->size(TextSize::ExtraSmall)
-                                        ->color('neutral'),
+                                        ->size(TextSize::ExtraSmall),
                                     [
                                         'tYRnCqNLUx-3QOLNKyDiV',
                                         'cKok2eImKc-oWHHH4VhNe',
@@ -64,132 +65,131 @@ class PrimesDemo extends Component implements HasSchemas
                                 ))
                                     ->size(TextSize::ExtraSmall),
                             ])
-                            ->compact()
                             ->secondary(),
                     ]),
                 Group::make()
-                    ->id('text')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('text')
                     ->schema([
                         Text::make('Modifying these permissions may give users access to sensitive information.'),
                     ]),
                 Group::make()
-                    ->id('textHtml')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('textHtml')
                     ->schema([
                         Text::make(new HtmlString('<strong>Warning:</strong> Modifying these permissions may give users access to sensitive information.')),
                     ]),
                 Group::make()
-                    ->id('textColor')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('textColor')
                     ->schema([
                         Text::make('Information')
                             ->color('info'),
                     ]),
                 Group::make()
-                    ->id('textNeutral')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('textNeutral')
                     ->schema([
                         Text::make('Modifying these permissions may give users access to sensitive information.'),
                         Text::make('Modifying these permissions may give users access to sensitive information.')
                             ->color('neutral'),
                     ]),
                 Group::make()
-                    ->id('textBadge')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('textBadge')
                     ->schema([
                         Text::make('Warning')
-                            ->color('warning')
-                            ->badge(),
+                            ->badge()
+                            ->color('warning'),
                     ]),
                 Group::make()
-                    ->id('textBadgeIcon')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('textBadgeIcon')
                     ->schema([
                         Text::make('Warning')
-                            ->color('warning')
                             ->badge()
+                            ->color('warning')
                             ->icon(Heroicon::ExclamationTriangle),
                     ]),
                 Group::make()
-                    ->id('textLarge')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('textLarge')
                     ->schema([
                         Text::make('Modifying these permissions may give users access to sensitive information.')
                             ->size(TextSize::Large),
                     ]),
                 Group::make()
-                    ->id('textBold')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('textBold')
                     ->schema([
                         Text::make('Modifying these permissions may give users access to sensitive information.')
                             ->weight(FontWeight::Bold),
                     ]),
                 Group::make()
-                    ->id('textMono')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('textMono')
                     ->schema([
                         Text::make('28o.-AK%D~xh*.:[4"3)zPiC')
                             ->fontFamily(FontFamily::Mono),
                     ]),
                 Group::make()
-                    ->id('textTooltip')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('textTooltip')
                     ->schema([
                         Text::make('28o.-AK%D~xh*.:[4"3)zPiC')
                             ->tooltip('Your secret recovery code'),
                     ]),
                 Group::make()
-                    ->id('icon')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('icon')
                     ->schema([
                         Icon::make(Heroicon::Star),
                     ]),
                 Group::make()
-                    ->id('iconColor')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('iconColor')
                     ->schema([
                         Icon::make(Heroicon::ExclamationCircle)
                             ->color('danger'),
                     ]),
                 Group::make()
-                    ->id('iconTooltip')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('iconTooltip')
                     ->schema([
                         Icon::make(Heroicon::ExclamationTriangle)
                             ->tooltip('Warning'),
                     ]),
                 Group::make()
-                    ->id('image')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('image')
                     ->schema([
                         Image::make(
                             url: fn (): string => $this->getQrCodeUrl(),
@@ -197,10 +197,10 @@ class PrimesDemo extends Component implements HasSchemas
                         ),
                     ]),
                 Group::make()
-                    ->id('imageSize')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('imageSize')
                     ->schema([
                         Image::make(
                             url: fn (): string => $this->getQrCodeUrl(),
@@ -209,10 +209,10 @@ class PrimesDemo extends Component implements HasSchemas
                             ->imageHeight('12rem'),
                     ]),
                 Group::make()
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
                     ->id('imageAlignment')
-                    ->extraAttributes([
-                        'class' => 'p-16 max-w-xl',
-                    ])
                     ->schema([
                         Image::make(
                             url: fn (): string => $this->getQrCodeUrl(),
@@ -221,23 +221,23 @@ class PrimesDemo extends Component implements HasSchemas
                             ->alignCenter(),
                     ]),
                 Group::make()
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
                     ->id('imageTooltip')
-                    ->extraAttributes([
-                        'class' => 'p-16 max-w-xl',
-                    ])
                     ->schema([
                         Image::make(
                             url: fn (): string => $this->getQrCodeUrl(),
                             alt: 'QR code to scan with an authenticator app',
                         )
-                            ->tooltip('Scan this QR code with your authenticator app')
-                            ->alignCenter(),
+                            ->alignCenter()
+                            ->tooltip('Scan this QR code with your authenticator app'),
                     ]),
                 Group::make()
-                    ->id('unorderedList')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('unorderedList')
                     ->schema([
                         UnorderedList::make([
                             'Tables',
@@ -247,10 +247,10 @@ class PrimesDemo extends Component implements HasSchemas
                         ]),
                     ]),
                 Group::make()
-                    ->id('unorderedListLarge')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('unorderedListLarge')
                     ->schema([
                         UnorderedList::make([
                             Text::make('Tables')->size(TextSize::Large),

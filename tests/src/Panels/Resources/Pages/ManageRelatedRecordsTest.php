@@ -156,7 +156,7 @@ it('renders actions based on policy', function (string $action, string $policyMe
 
         livewire(ManageTicketDepartments::class, ['record' => $ticket->getKey()])
             ->filterTable('trashed', $isSoftDeleted ? 1 : null)
-            ->{$isVisible ? 'assertActionVisible' : 'assertActionHidden'}(TestAction::make($action)->table($department)->bulk($isBulkAction));
+            ->{$isVisible ? 'assertActionVisible' : 'assertActionHidden'}(TestAction::make($action)->bulk($isBulkAction)->table($department));
     } else {
         livewire(ManageTicketDepartments::class, ['record' => $ticket->getKey()])
             ->{$isVisible ? 'assertActionVisible' : 'assertActionHidden'}($action);

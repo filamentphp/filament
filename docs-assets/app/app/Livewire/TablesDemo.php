@@ -346,15 +346,15 @@ class TablesDemo extends Component implements HasActions, HasSchemas, HasTable
                 ColumnGroup::make('Visibility', [
                     TextColumn::make('status')
                         ->badge()
-                        ->icon(fn (string $state): Heroicon => match ($state) {
-                            'draft' => Heroicon::OutlinedPencil,
-                            'reviewing' => Heroicon::OutlinedClock,
-                            'published' => Heroicon::OutlinedCheckCircle,
-                        })
                         ->color(fn (string $state): string => match ($state) {
                             'draft' => 'gray',
                             'reviewing' => 'warning',
                             'published' => 'success',
+                        })
+                        ->icon(fn (string $state): Heroicon => match ($state) {
+                            'draft' => Heroicon::OutlinedPencil,
+                            'reviewing' => Heroicon::OutlinedClock,
+                            'published' => Heroicon::OutlinedCheckCircle,
                         }),
                     IconColumn::make('is_featured')
                         ->boolean(),
@@ -481,9 +481,9 @@ class TablesDemo extends Component implements HasActions, HasSchemas, HasTable
             ->columns([
                 TextColumn::make('name'),
                 TextColumn::make('email')
-                    ->copyable()
                     ->copyMessage('Email address copied')
-                    ->copyMessageDuration(1500),
+                    ->copyMessageDuration(1500)
+                    ->copyable(),
             ]);
     }
 
@@ -507,16 +507,16 @@ class TablesDemo extends Component implements HasActions, HasSchemas, HasTable
             ->columns([
                 TextColumn::make('title'),
                 IconColumn::make('status')
-                    ->icon(fn (string $state): Heroicon => match ($state) {
-                        'draft' => Heroicon::OutlinedPencil,
-                        'reviewing' => Heroicon::OutlinedClock,
-                        'published' => Heroicon::OutlinedCheckCircle,
-                    })
                     ->color(fn (string $state): string => match ($state) {
                         'draft' => 'info',
                         'reviewing' => 'warning',
                         'published' => 'success',
                         default => 'gray',
+                    })
+                    ->icon(fn (string $state): Heroicon => match ($state) {
+                        'draft' => Heroicon::OutlinedPencil,
+                        'reviewing' => Heroicon::OutlinedClock,
+                        'published' => Heroicon::OutlinedCheckCircle,
                     }),
             ]);
     }
@@ -553,8 +553,8 @@ class TablesDemo extends Component implements HasActions, HasSchemas, HasTable
                 TextColumn::make('title'),
                 IconColumn::make('is_featured')
                     ->boolean()
-                    ->trueIcon(Heroicon::OutlinedCheckBadge)
-                    ->falseIcon(Heroicon::OutlinedXMark),
+                    ->falseIcon(Heroicon::OutlinedXMark)
+                    ->trueIcon(Heroicon::OutlinedCheckBadge),
             ]);
     }
 
@@ -565,8 +565,8 @@ class TablesDemo extends Component implements HasActions, HasSchemas, HasTable
                 TextColumn::make('title'),
                 IconColumn::make('is_featured')
                     ->boolean()
-                    ->trueColor('info')
-                    ->falseColor('warning'),
+                    ->falseColor('warning')
+                    ->trueColor('info'),
             ]);
     }
 
@@ -617,8 +617,8 @@ class TablesDemo extends Component implements HasActions, HasSchemas, HasTable
                 TextColumn::make('name'),
                 ImageColumn::make('colleagues')
                     ->circular()
-                    ->stacked()
-                    ->limit(3),
+                    ->limit(3)
+                    ->stacked(),
             ]);
     }
 
@@ -629,9 +629,9 @@ class TablesDemo extends Component implements HasActions, HasSchemas, HasTable
                 TextColumn::make('name'),
                 ImageColumn::make('colleagues')
                     ->circular()
-                    ->stacked()
                     ->limit(3)
-                    ->limitedRemainingText(),
+                    ->limitedRemainingText()
+                    ->stacked(),
             ]);
     }
 
@@ -642,9 +642,9 @@ class TablesDemo extends Component implements HasActions, HasSchemas, HasTable
                 TextColumn::make('name'),
                 ImageColumn::make('colleagues')
                     ->circular()
-                    ->stacked()
                     ->limit(3)
-                    ->limitedRemainingText(isSeparate: true),
+                    ->limitedRemainingText(isSeparate: true)
+                    ->stacked(),
             ]);
     }
 
@@ -670,16 +670,16 @@ class TablesDemo extends Component implements HasActions, HasSchemas, HasTable
             ->columns([
                 TextColumn::make('title'),
                 ColorColumn::make('color')
+                    ->copyMessage('Color code copied')
+                    ->copyMessageDuration(1500)
+                    ->copyable()
                     ->getStateUsing(fn ($rowLoop): string => match ($rowLoop->index) {
                         0 => '#ef4444',
                         1 => '#fde047',
                         2 => '#22c55e',
                         3 => '#0ea5e9',
                         default => '#8b5cf6',
-                    })
-                    ->copyable()
-                    ->copyMessage('Color code copied')
-                    ->copyMessageDuration(1500),
+                    }),
             ]);
     }
 
@@ -736,15 +736,15 @@ class TablesDemo extends Component implements HasActions, HasSchemas, HasTable
                 TextColumn::make('slug'),
                 TextColumn::make('status')
                     ->badge()
-                    ->icon(fn (string $state): Heroicon => match ($state) {
-                        'draft' => Heroicon::OutlinedPencil,
-                        'reviewing' => Heroicon::OutlinedClock,
-                        'published' => Heroicon::OutlinedCheckCircle,
-                    })
                     ->color(fn (string $state): string => match ($state) {
                         'draft' => 'gray',
                         'reviewing' => 'warning',
                         'published' => 'success',
+                    })
+                    ->icon(fn (string $state): Heroicon => match ($state) {
+                        'draft' => Heroicon::OutlinedPencil,
+                        'reviewing' => Heroicon::OutlinedClock,
+                        'published' => Heroicon::OutlinedCheckCircle,
                     }),
                 IconColumn::make('is_featured')
                     ->boolean(),
@@ -808,12 +808,12 @@ class TablesDemo extends Component implements HasActions, HasSchemas, HasTable
                 SelectFilter::make('status'),
                 SelectFilter::make('author'),
                 Filter::make('created_at')
+                    ->columnSpan(2)
+                    ->columns(2)
                     ->schema([
                         DatePicker::make('created_from'),
                         DatePicker::make('created_until'),
-                    ])
-                    ->columns(2)
-                    ->columnSpan(2),
+                    ]),
             ], layout: FiltersLayout::AboveContent)
             ->filtersFormColumns(4);
     }
@@ -825,12 +825,12 @@ class TablesDemo extends Component implements HasActions, HasSchemas, HasTable
                 SelectFilter::make('status'),
                 SelectFilter::make('author'),
                 Filter::make('created_at')
+                    ->columnSpan(2)
+                    ->columns(2)
                     ->schema([
                         DatePicker::make('created_from'),
                         DatePicker::make('created_until'),
-                    ])
-                    ->columns(2)
-                    ->columnSpan(2),
+                    ]),
             ], layout: FiltersLayout::BelowContent)
             ->filtersFormColumns(4);
     }
@@ -858,15 +858,15 @@ class TablesDemo extends Component implements HasActions, HasSchemas, HasTable
                 TextColumn::make('slug'),
                 TextColumn::make('status')
                     ->badge()
-                    ->icon(fn (string $state): Heroicon => match ($state) {
-                        'draft' => Heroicon::OutlinedPencil,
-                        'reviewing' => Heroicon::OutlinedClock,
-                        'published' => Heroicon::OutlinedCheckCircle,
-                    })
                     ->color(fn (string $state): string => match ($state) {
                         'draft' => 'gray',
                         'reviewing' => 'warning',
                         'published' => 'success',
+                    })
+                    ->icon(fn (string $state): Heroicon => match ($state) {
+                        'draft' => Heroicon::OutlinedPencil,
+                        'reviewing' => Heroicon::OutlinedClock,
+                        'published' => Heroicon::OutlinedCheckCircle,
                     }),
                 IconColumn::make('is_featured')
                     ->boolean(),
@@ -976,8 +976,8 @@ class TablesDemo extends Component implements HasActions, HasSchemas, HasTable
                     EditAction::make(),
                     DeleteAction::make(),
                 ])
-                    ->button()
-                    ->label('Actions'),
+                    ->label('Actions')
+                    ->button(),
             ]);
     }
 
@@ -990,8 +990,8 @@ class TablesDemo extends Component implements HasActions, HasSchemas, HasTable
                     EditAction::make(),
                     DeleteAction::make(),
                 ])
-                    ->link()
-                    ->label('Actions'),
+                    ->label('Actions')
+                    ->link(),
             ]);
     }
 
@@ -1066,9 +1066,9 @@ class TablesDemo extends Component implements HasActions, HasSchemas, HasTable
                         ->grow(false),
                     Stack::make([
                         TextColumn::make('name')
-                            ->weight(FontWeight::Bold)
                             ->searchable()
-                            ->sortable(),
+                            ->sortable()
+                            ->weight(FontWeight::Bold),
                         TextColumn::make('job'),
                     ]),
                     Stack::make([
@@ -1096,9 +1096,9 @@ class TablesDemo extends Component implements HasActions, HasSchemas, HasTable
                     ImageColumn::make('avatar')
                         ->circular(),
                     TextColumn::make('name')
-                        ->weight(FontWeight::Bold)
                         ->searchable()
-                        ->sortable(),
+                        ->sortable()
+                        ->weight(FontWeight::Bold),
                     TextColumn::make('email'),
                 ]),
             ]);
@@ -1112,9 +1112,9 @@ class TablesDemo extends Component implements HasActions, HasSchemas, HasTable
                     ImageColumn::make('avatar')
                         ->circular(),
                     TextColumn::make('name')
-                        ->weight(FontWeight::Bold)
                         ->searchable()
-                        ->sortable(),
+                        ->sortable()
+                        ->weight(FontWeight::Bold),
                     TextColumn::make('email'),
                 ])->from('md'),
             ]);
@@ -1129,9 +1129,9 @@ class TablesDemo extends Component implements HasActions, HasSchemas, HasTable
                         ->circular()
                         ->grow(false),
                     TextColumn::make('name')
-                        ->weight(FontWeight::Bold)
                         ->searchable()
-                        ->sortable(),
+                        ->sortable()
+                        ->weight(FontWeight::Bold),
                     TextColumn::make('email'),
                 ])->from('md'),
             ]);
@@ -1146,9 +1146,9 @@ class TablesDemo extends Component implements HasActions, HasSchemas, HasTable
                         ->circular()
                         ->grow(false),
                     TextColumn::make('name')
-                        ->weight(FontWeight::Bold)
                         ->searchable()
-                        ->sortable(),
+                        ->sortable()
+                        ->weight(FontWeight::Bold),
                     Stack::make([
                         TextColumn::make('phone')
                             ->icon(Heroicon::Phone),
@@ -1168,9 +1168,9 @@ class TablesDemo extends Component implements HasActions, HasSchemas, HasTable
                         ->circular()
                         ->grow(false),
                     TextColumn::make('name')
-                        ->weight(FontWeight::Bold)
                         ->searchable()
-                        ->sortable(),
+                        ->sortable()
+                        ->weight(FontWeight::Bold),
                     Stack::make([
                         TextColumn::make('phone')
                             ->icon(Heroicon::Phone),
@@ -1190,16 +1190,16 @@ class TablesDemo extends Component implements HasActions, HasSchemas, HasTable
                         ->circular()
                         ->grow(false),
                     TextColumn::make('name')
-                        ->weight(FontWeight::Bold)
                         ->searchable()
-                        ->sortable(),
+                        ->sortable()
+                        ->weight(FontWeight::Bold),
                     Stack::make([
                         TextColumn::make('phone')
-                            ->icon(Heroicon::Phone)
-                            ->grow(false),
+                            ->grow(false)
+                            ->icon(Heroicon::Phone),
                         TextColumn::make('email')
-                            ->icon(Heroicon::Envelope)
-                            ->grow(false),
+                            ->grow(false)
+                            ->icon(Heroicon::Envelope),
                     ])
                         ->alignment(Alignment::End)
                         ->visibleFrom('md'),
@@ -1216,9 +1216,9 @@ class TablesDemo extends Component implements HasActions, HasSchemas, HasTable
                         ->circular()
                         ->grow(false),
                     TextColumn::make('name')
-                        ->weight(FontWeight::Bold)
                         ->searchable()
-                        ->sortable(),
+                        ->sortable()
+                        ->weight(FontWeight::Bold),
                 ])->from('md'),
                 Panel::make([
                     Split::make([
@@ -1240,9 +1240,9 @@ class TablesDemo extends Component implements HasActions, HasSchemas, HasTable
                         ->circular()
                         ->grow(false),
                     TextColumn::make('name')
-                        ->weight(FontWeight::Bold)
                         ->searchable()
-                        ->sortable(),
+                        ->sortable()
+                        ->weight(FontWeight::Bold),
                     TextColumn::make('job'),
                 ]),
                 Panel::make([])->collapsible(),
@@ -1271,15 +1271,15 @@ class TablesDemo extends Component implements HasActions, HasSchemas, HasTable
                     ]),
                 TextColumn::make('status')
                     ->badge()
-                    ->icon(fn (string $state): Heroicon => match ($state) {
-                        'draft' => Heroicon::OutlinedPencil,
-                        'reviewing' => Heroicon::OutlinedClock,
-                        'published' => Heroicon::OutlinedCheckCircle,
-                    })
                     ->color(fn (string $state): string => match ($state) {
                         'draft' => 'gray',
                         'reviewing' => 'warning',
                         'published' => 'success',
+                    })
+                    ->icon(fn (string $state): Heroicon => match ($state) {
+                        'draft' => Heroicon::OutlinedPencil,
+                        'reviewing' => Heroicon::OutlinedClock,
+                        'published' => Heroicon::OutlinedCheckCircle,
                     }),
                 IconColumn::make('is_featured')
                     ->boolean()
@@ -1302,15 +1302,15 @@ class TablesDemo extends Component implements HasActions, HasSchemas, HasTable
                     ->numeric(),
                 TextColumn::make('status')
                     ->badge()
-                    ->icon(fn (string $state): Heroicon => match ($state) {
-                        'draft' => Heroicon::OutlinedPencil,
-                        'reviewing' => Heroicon::OutlinedClock,
-                        'published' => Heroicon::OutlinedCheckCircle,
-                    })
                     ->color(fn (string $state): string => match ($state) {
                         'draft' => 'gray',
                         'reviewing' => 'warning',
                         'published' => 'success',
+                    })
+                    ->icon(fn (string $state): Heroicon => match ($state) {
+                        'draft' => Heroicon::OutlinedPencil,
+                        'reviewing' => Heroicon::OutlinedClock,
+                        'published' => Heroicon::OutlinedCheckCircle,
                     }),
             ])
             ->defaultGroup('status');
@@ -1328,15 +1328,15 @@ class TablesDemo extends Component implements HasActions, HasSchemas, HasTable
                     ->numeric(),
                 TextColumn::make('status')
                     ->badge()
-                    ->icon(fn (string $state): Heroicon => match ($state) {
-                        'draft' => Heroicon::OutlinedPencil,
-                        'reviewing' => Heroicon::OutlinedClock,
-                        'published' => Heroicon::OutlinedCheckCircle,
-                    })
                     ->color(fn (string $state): string => match ($state) {
                         'draft' => 'gray',
                         'reviewing' => 'warning',
                         'published' => 'success',
+                    })
+                    ->icon(fn (string $state): Heroicon => match ($state) {
+                        'draft' => Heroicon::OutlinedPencil,
+                        'reviewing' => Heroicon::OutlinedClock,
+                        'published' => Heroicon::OutlinedCheckCircle,
                     }),
             ])
             ->defaultGroup(Group::make('status')->getDescriptionFromRecordUsing(fn (Post $post): string => match ($post->status) {
@@ -1378,8 +1378,8 @@ class TablesDemo extends Component implements HasActions, HasSchemas, HasTable
             ->emptyStateActions([
                 Action::make('create')
                     ->label('Create post')
-                    ->icon(Heroicon::Plus)
-                    ->button(),
+                    ->button()
+                    ->icon(Heroicon::Plus),
             ]);
     }
 
@@ -1397,15 +1397,15 @@ class TablesDemo extends Component implements HasActions, HasSchemas, HasTable
                     ->numeric(),
                 TextColumn::make('status')
                     ->badge()
-                    ->icon(fn (string $state): Heroicon => match ($state) {
-                        'draft' => Heroicon::OutlinedPencil,
-                        'reviewing' => Heroicon::OutlinedClock,
-                        'published' => Heroicon::OutlinedCheckCircle,
-                    })
                     ->color(fn (string $state): string => match ($state) {
                         'draft' => 'gray',
                         'reviewing' => 'warning',
                         'published' => 'success',
+                    })
+                    ->icon(fn (string $state): Heroicon => match ($state) {
+                        'draft' => Heroicon::OutlinedPencil,
+                        'reviewing' => Heroicon::OutlinedClock,
+                        'published' => Heroicon::OutlinedCheckCircle,
                     }),
             ])
             ->reorderable('rating');

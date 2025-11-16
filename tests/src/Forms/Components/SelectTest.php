@@ -90,12 +90,12 @@ class TestComponentWithMultipleSelect extends Livewire
         return $form
             ->schema([
                 Select::make('number')
+                    ->multiple()
                     ->options([
                         'one' => 'One',
                         'two' => 'Two',
                         'three' => 'Three',
-                    ])
-                    ->multiple(),
+                    ]),
             ])
             ->statePath('data');
     }
@@ -115,17 +115,17 @@ class TestComponentWithSelectCustomSearchResults extends Livewire
         return $form
             ->schema([
                 Select::make('number')
-                    ->getSearchResultsUsing(fn (string $search) => collect([
-                        'one' => 'One',
-                        'two' => 'Two',
-                        'three' => 'Three',
-                    ])->filter(fn (string $label, string $value): bool => str_contains($label, $search) || str_contains($value, $search)))
                     ->getOptionLabelUsing(fn (string $value): ?string => match ($value) {
                         'one' => 'One',
                         'two' => 'Two',
                         'three' => 'Three',
                         default => null,
-                    }),
+                    })
+                    ->getSearchResultsUsing(fn (string $search) => collect([
+                        'one' => 'One',
+                        'two' => 'Two',
+                        'three' => 'Three',
+                    ])->filter(fn (string $label, string $value): bool => str_contains($label, $search) || str_contains($value, $search))),
             ])
             ->statePath('data');
     }
@@ -145,11 +145,6 @@ class TestComponentWithMultipleSelectCustomSearchResults extends Livewire
         return $form
             ->schema([
                 Select::make('number')
-                    ->getSearchResultsUsing(fn (string $search) => collect([
-                        'one' => 'One',
-                        'two' => 'Two',
-                        'three' => 'Three',
-                    ])->filter(fn (string $label, string $value): bool => str_contains($label, $search) || str_contains($value, $search)))
                     ->getOptionLabelsUsing(function (array $values): array {
                         $labels = [];
 
@@ -164,6 +159,11 @@ class TestComponentWithMultipleSelectCustomSearchResults extends Livewire
 
                         return $labels;
                     })
+                    ->getSearchResultsUsing(fn (string $search) => collect([
+                        'one' => 'One',
+                        'two' => 'Two',
+                        'three' => 'Three',
+                    ])->filter(fn (string $label, string $value): bool => str_contains($label, $search) || str_contains($value, $search)))
                     ->multiple(),
             ])
             ->statePath('data');

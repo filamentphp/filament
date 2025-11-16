@@ -17,9 +17,9 @@ class Badge extends Page
             ->navigationItems([
                 NavigationItem::make()
                     ->label('Orders')
-                    ->url(fn (): string => '#')
+                    ->badge(24)
                     ->icon(Heroicon::OutlinedShoppingCart)
-                    ->badge(24),
+                    ->url(fn (): string => '#'),
             ]);
     }
 }

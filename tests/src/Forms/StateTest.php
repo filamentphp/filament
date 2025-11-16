@@ -494,8 +494,8 @@ test('custom logic can be executed before state is dehydrated', function (): voi
         ->statePath('data')
         ->components([
             Field::make($statePath = Str::random())
-                ->default($state = Str::random())
-                ->beforeStateDehydrated(fn (Component $component, $state) => $component->state(strrev($state)), shouldUpdateValidatedStateAfter: true),
+                ->beforeStateDehydrated(fn (Component $component, $state) => $component->state(strrev($state)), shouldUpdateValidatedStateAfter: true)
+                ->default($state = Str::random()),
         ])
         ->fill();
 
@@ -547,8 +547,8 @@ test('hidden components are excluded from state dehydration', function (): void 
         ->statePath('data')
         ->components([
             Field::make(Str::random())
-                ->default(Str::random())
-                ->hidden(),
+                ->hidden()
+                ->default(Str::random()),
         ])
         ->fill();
 
@@ -582,8 +582,8 @@ test('hidden components are excluded from state dehydration except if they are m
         ->statePath('data')
         ->components([
             Field::make(Str::random())
-                ->default(Str::random())
                 ->hidden()
+                ->default(Str::random())
                 ->dehydratedWhenHidden(),
         ])
         ->fill();
@@ -620,8 +620,8 @@ test('hidden components are excluded from state dehydration even if their parent
                 ->statePath('nested')
                 ->schema([
                     Field::make(Str::random())
-                        ->default(Str::random())
-                        ->hidden(),
+                        ->hidden()
+                        ->default(Str::random()),
                 ]),
         ])
         ->fill();
@@ -673,8 +673,8 @@ test('hidden components are not excluded from state dehydration if there is anot
         ->statePath('data')
         ->components([
             Field::make($statePath = Str::random())
-                ->default(Str::random())
-                ->hidden(),
+                ->hidden()
+                ->default(Str::random()),
             Field::make($statePath)
                 ->default(Str::random()),
         ])
@@ -691,8 +691,8 @@ test('hidden components are not excluded from state dehydration if there is anot
             Field::make($statePath = Str::random())
                 ->default(Str::random()),
             Field::make($statePath)
-                ->default(Str::random())
-                ->hidden(),
+                ->hidden()
+                ->default(Str::random()),
         ])
         ->fill();
 
@@ -731,8 +731,8 @@ test('disabled components are excluded from state dehydration', function (): voi
         ->statePath('data')
         ->components([
             Field::make(Str::random())
-                ->default(Str::random())
-                ->disabled(),
+                ->disabled()
+                ->default(Str::random()),
         ])
         ->fill();
 
@@ -766,8 +766,8 @@ test('disabled components are excluded from state dehydration except if they are
         ->statePath('data')
         ->components([
             Field::make(Str::random())
-                ->default(Str::random())
                 ->disabled()
+                ->default(Str::random())
                 ->dehydrated(),
         ])
         ->fill();

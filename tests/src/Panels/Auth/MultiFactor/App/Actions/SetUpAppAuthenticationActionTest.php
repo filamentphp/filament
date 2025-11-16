@@ -25,7 +25,6 @@ it('can generate a secret and recovery codes when the action is mounted', functi
         ->mountAction(TestAction::make('setUpAppAuthentication')
             ->schemaComponent('app', schema: 'content'))
         ->assertActionMounted(TestAction::make('setUpAppAuthentication')
-            ->schemaComponent('app', schema: 'content')
             ->arguments(function (array $actualArguments): bool {
                 $encrypted = decrypt($actualArguments['encrypted']);
 
@@ -56,7 +55,8 @@ it('can generate a secret and recovery codes when the action is mounted', functi
                 }
 
                 return $encrypted['userId'] === auth()->id();
-            }));
+            })
+            ->schemaComponent('app', schema: 'content'));
 });
 
 it('can save the secret and recovery codes to the user when the action is submitted', function (): void {

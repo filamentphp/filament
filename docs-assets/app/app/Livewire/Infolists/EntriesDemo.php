@@ -38,10 +38,10 @@ class EntriesDemo extends Component implements HasSchemas
         return $infolist
             ->components([
                 Group::make()
-                    ->id('simple')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('simple')
                     ->schema([
                         TextEntry::make('title')
                             ->state('What is Filament?'),
@@ -49,31 +49,32 @@ class EntriesDemo extends Component implements HasSchemas
                             ->state('Dan Harrin'),
                     ]),
                 Group::make()
-                    ->id('placeholder')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('placeholder')
                     ->schema([
                         TextEntry::make('title')
                             ->placeholder('Dan Harrin'),
                     ]),
                 Group::make()
-                    ->id('inlineLabel')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('inlineLabel')
                     ->schema([
                         TextEntry::make('name')
                             ->inlineLabel()
                             ->state('Dan Harrin'),
                     ]),
                 Group::make()
-                    ->id('inlineLabelSection')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('inlineLabelSection')
                     ->schema([
                         Section::make('Details')
+                            ->inlineLabel()
                             ->schema([
                                 TextEntry::make('name')
                                     ->state('Dan Harrin'),
@@ -81,85 +82,83 @@ class EntriesDemo extends Component implements HasSchemas
                                     ->state('dan@filamentphp.com'),
                                 TextEntry::make('phoneNumber')
                                     ->state('123-456-7890'),
-                            ])
-                            ->inlineLabel(),
+                            ]),
                     ]),
                 Group::make()
-                    ->id('tooltips')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('tooltips')
                     ->schema([
                         TextEntry::make('title')
-                            ->state('What is Filament?')
-                            ->tooltip('Shown at the top of the page'),
+                            ->tooltip('Shown at the top of the page')
+                            ->state('What is Filament?'),
                     ]),
                 Group::make()
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
                     ->id('textBelowContent')
+                    ->schema([
+                        TextEntry::make('name')
+                            ->belowContent('This is the user\'s full name.')
+                            ->state('Dan Harrin'),
+                    ]),
+                Group::make()
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
-                    ->schema([
-                        TextEntry::make('name')
-                            ->state('Dan Harrin')
-                            ->belowContent('This is the user\'s full name.'),
-                    ]),
-                Group::make()
                     ->id('componentBelowContent')
+                    ->schema([
+                        TextEntry::make('name')
+                            ->belowContent(Text::make('This is the user\'s full name.')->weight(FontWeight::Bold))
+                            ->state('Dan Harrin'),
+                    ]),
+                Group::make()
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
-                    ->schema([
-                        TextEntry::make('name')
-                            ->state('Dan Harrin')
-                            ->belowContent(Text::make('This is the user\'s full name.')->weight(FontWeight::Bold)),
-                    ]),
-                Group::make()
                     ->id('actionBelowContent')
-                    ->extraAttributes([
-                        'class' => 'p-16 max-w-xl',
-                    ])
                     ->schema([
                         TextEntry::make('name')
-                            ->state('Dan Harrin')
-                            ->belowContent(Action::make('generate')),
+                            ->belowContent(Action::make('generate'))
+                            ->state('Dan Harrin'),
                     ]),
                 Group::make()
-                    ->id('belowContent')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('belowContent')
                     ->schema([
                         TextEntry::make('name')
-                            ->state('Dan Harrin')
                             ->belowContent([
                                 Icon::make(Heroicon::InformationCircle),
                                 'This is the user\'s full name.',
                                 Action::make('generate'),
-                            ]),
+                            ])
+                            ->state('Dan Harrin'),
                     ]),
                 Group::make()
-                    ->id('belowContentAlignment')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('belowContentAlignment')
                     ->schema([
                         TextEntry::make('name')
-                            ->state('Dan Harrin')
                             ->belowContent(Schema::end([
                                 Icon::make(Heroicon::InformationCircle),
                                 'This is the user\'s full name.',
                                 Action::make('generate'),
-                            ])),
+                            ]))
+                            ->state('Dan Harrin'),
                         TextEntry::make('name')
-                            ->state('Dan Harrin')
                             ->belowContent(Schema::between([
                                 Icon::make(Heroicon::InformationCircle),
                                 'This is the user\'s full name.',
                                 Action::make('generate'),
-                            ])),
+                            ]))
+                            ->state('Dan Harrin'),
                         TextEntry::make('name')
-                            ->state('Dan Harrin')
                             ->belowContent(Schema::between([
                                 Flex::make([
                                     Icon::make(Heroicon::InformationCircle)
@@ -167,471 +166,472 @@ class EntriesDemo extends Component implements HasSchemas
                                     'This is the user\'s full name.',
                                 ]),
                                 Action::make('generate'),
-                            ])),
+                            ]))
+                            ->state('Dan Harrin'),
                     ]),
                 Group::make()
-                    ->id('aboveLabel')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('aboveLabel')
                     ->schema([
                         TextEntry::make('name')
-                            ->state('Dan Harrin')
                             ->aboveLabel([
                                 Icon::make(Heroicon::Star),
                                 'This is the content above the entry\'s label',
-                            ]),
+                            ])
+                            ->state('Dan Harrin'),
                     ]),
                 Group::make()
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
                     ->id('beforeLabel')
-                    ->extraAttributes([
-                        'class' => 'p-16 max-w-xl',
-                    ])
                     ->schema([
                         TextEntry::make('name')
-                            ->state('Dan Harrin')
-                            ->beforeLabel(Icon::make(Heroicon::Star)),
+                            ->beforeLabel(Icon::make(Heroicon::Star))
+                            ->state('Dan Harrin'),
                     ]),
                 Group::make()
-                    ->id('afterLabel')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('afterLabel')
                     ->schema([
                         TextEntry::make('name')
-                            ->state('Dan Harrin')
                             ->afterLabel([
                                 Icon::make(Heroicon::Star),
                                 'This is the content after the entry\'s label',
-                            ]),
+                            ])
+                            ->state('Dan Harrin'),
                     ]),
                 Group::make()
-                    ->id('afterLabelAlignedStart')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('afterLabelAlignedStart')
                     ->schema([
                         TextEntry::make('name')
-                            ->state('Dan Harrin')
                             ->afterLabel(Schema::start([
                                 Icon::make(Heroicon::Star),
                                 'This is the content after the entry\'s label',
-                            ])),
+                            ]))
+                            ->state('Dan Harrin'),
                     ]),
                 Group::make()
-                    ->id('belowLabel')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('belowLabel')
                     ->schema([
                         TextEntry::make('name')
-                            ->state('Dan Harrin')
                             ->belowLabel([
                                 Icon::make(Heroicon::Star),
                                 'This is the content below the entry\'s label',
-                            ]),
+                            ])
+                            ->state('Dan Harrin'),
                     ]),
                 Group::make()
-                    ->id('aboveContent')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('aboveContent')
                     ->schema([
                         TextEntry::make('name')
-                            ->state('Dan Harrin')
                             ->belowLabel([
                                 Icon::make(Heroicon::Star),
                                 'This is the content above the entry\'s content',
-                            ]),
+                            ])
+                            ->state('Dan Harrin'),
                     ]),
                 Group::make()
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
                     ->id('beforeContent')
+                    ->schema([
+                        TextEntry::make('name')
+                            ->beforeContent(Icon::make(Heroicon::Star))
+                            ->state('Dan Harrin'),
+                    ]),
+                Group::make()
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
-                    ->schema([
-                        TextEntry::make('name')
-                            ->state('Dan Harrin')
-                            ->beforeContent(Icon::make(Heroicon::Star)),
-                    ]),
-                Group::make()
                     ->id('afterContent')
-                    ->extraAttributes([
-                        'class' => 'p-16 max-w-xl',
-                    ])
                     ->schema([
                         TextEntry::make('name')
-                            ->state('Dan Harrin')
-                            ->afterContent(Icon::make(Heroicon::Star)),
+                            ->afterContent(Icon::make(Heroicon::Star))
+                            ->state('Dan Harrin'),
                     ]),
                 Group::make()
-                    ->id('text')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('text')
                     ->schema([
                         TextEntry::make('title')
                             ->state('What is Filament?'),
                     ]),
                 Group::make()
-                    ->id('textBadge')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('textBadge')
                     ->schema([
                         TextEntry::make('status')
-                            ->state('published')
                             ->badge()
                             ->color(fn (string $state): string => match ($state) {
                                 'draft' => 'gray',
                                 'reviewing' => 'warning',
                                 'published' => 'success',
                                 'rejected' => 'danger',
-                            }),
+                            })
+                            ->state('published'),
                     ]),
                 Group::make()
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
                     ->id('textList')
-                    ->extraAttributes([
-                        'class' => 'p-16 max-w-xl',
-                    ])
                     ->schema([
                         TextEntry::make('authors.name')
                             ->listWithLineBreaks()
                             ->state(['Dan Harrin', 'Ryan Chandler', 'Zep Fietje', 'Dennis Koch', 'Adam Weston']),
                     ]),
                 Group::make()
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
                     ->id('textBulletList')
-                    ->extraAttributes([
-                        'class' => 'p-16 max-w-xl',
-                    ])
                     ->schema([
                         TextEntry::make('authors.name')
-                            ->listWithLineBreaks()
                             ->bulleted()
+                            ->listWithLineBreaks()
                             ->state(['Dan Harrin', 'Ryan Chandler', 'Zep Fietje', 'Dennis Koch', 'Adam Weston']),
                     ]),
                 Group::make()
-                    ->id('textColor')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('textColor')
                     ->schema([
                         TextEntry::make('status')
-                            ->state('Published')
-                            ->color('primary'),
+                            ->color('primary')
+                            ->state('Published'),
                     ]),
                 Group::make()
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
                     ->id('textIcon')
+                    ->schema([
+                        TextEntry::make('email')
+                            ->icon(Heroicon::Envelope)
+                            ->state('dan@filamentphp.com'),
+                    ]),
+                Group::make()
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
-                    ->schema([
-                        TextEntry::make('email')
-                            ->state('dan@filamentphp.com')
-                            ->icon(Heroicon::Envelope),
-                    ]),
-                Group::make()
                     ->id('textIconAfter')
+                    ->schema([
+                        TextEntry::make('email')
+                            ->icon(Heroicon::Envelope)
+                            ->iconPosition(IconPosition::After)
+                            ->state('dan@filamentphp.com'),
+                    ]),
+                Group::make()
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
-                    ->schema([
-                        TextEntry::make('email')
-                            ->state('dan@filamentphp.com')
-                            ->icon(Heroicon::Envelope)
-                            ->iconPosition(IconPosition::After),
-                    ]),
-                Group::make()
                     ->id('textIconColor')
-                    ->extraAttributes([
-                        'class' => 'p-16 max-w-xl',
-                    ])
                     ->schema([
                         TextEntry::make('email')
-                            ->state('dan@filamentphp.com')
                             ->icon(Heroicon::Envelope)
-                            ->iconColor('primary'),
+                            ->iconColor('primary')
+                            ->state('dan@filamentphp.com'),
                     ]),
                 Group::make()
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
                     ->id('textLarge')
+                    ->schema([
+                        TextEntry::make('title')
+                            ->size(TextSize::Large)
+                            ->state('What is Filament?'),
+                    ]),
+                Group::make()
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
-                    ->schema([
-                        TextEntry::make('title')
-                            ->state('What is Filament?')
-                            ->size(TextSize::Large),
-                    ]),
-                Group::make()
                     ->id('textBold')
-                    ->extraAttributes([
-                        'class' => 'p-16 max-w-xl',
-                    ])
                     ->schema([
                         TextEntry::make('title')
-                            ->state('What is Filament?')
-                            ->weight(FontWeight::Bold),
+                            ->weight(FontWeight::Bold)
+                            ->state('What is Filament?'),
                     ]),
                 Group::make()
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
                     ->id('textMono')
-                    ->extraAttributes([
-                        'class' => 'p-16 max-w-xl',
-                    ])
                     ->schema([
                         TextEntry::make('apiKey')
                             ->label('API key')
-                            ->state('HGA3CH5AB345JD9MQ3')
-                            ->fontFamily(FontFamily::Mono),
+                            ->fontFamily(FontFamily::Mono)
+                            ->state('HGA3CH5AB345JD9MQ3'),
                     ]),
                 Group::make()
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
                     ->id('textCopyable')
-                    ->extraAttributes([
-                        'class' => 'p-16 max-w-xl',
-                    ])
                     ->schema([
                         TextEntry::make('apiKey')
                             ->label('API key')
-                            ->state('HGA3CH5AB345JD9MQ3')
-                            ->copyable()
                             ->copyMessage('Copied!')
-                            ->copyMessageDuration(1500),
+                            ->copyMessageDuration(1500)
+                            ->copyable()
+                            ->state('HGA3CH5AB345JD9MQ3'),
                     ]),
                 Group::make()
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
                     ->id('icon')
-                    ->extraAttributes([
-                        'class' => 'p-16 max-w-xl',
-                    ])
                     ->schema([
                         IconEntry::make('status')
-                            ->state('reviewing')
-                            ->icon(fn (string $state): Heroicon => match ($state) {
-                                'draft' => Heroicon::OutlinedPencil,
-                                'reviewing' => Heroicon::OutlinedClock,
-                                'published' => Heroicon::OutlinedCheckCircle,
-                            }),
-                    ]),
-                Group::make()
-                    ->id('iconColor')
-                    ->extraAttributes([
-                        'class' => 'p-16 max-w-xl',
-                    ])
-                    ->schema([
-                        IconEntry::make('status')
-                            ->state('reviewing')
                             ->icon(fn (string $state): Heroicon => match ($state) {
                                 'draft' => Heroicon::OutlinedPencil,
                                 'reviewing' => Heroicon::OutlinedClock,
                                 'published' => Heroicon::OutlinedCheckCircle,
                             })
+                            ->state('reviewing'),
+                    ]),
+                Group::make()
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->id('iconColor')
+                    ->schema([
+                        IconEntry::make('status')
                             ->color(fn (string $state): string => match ($state) {
                                 'draft' => 'info',
                                 'reviewing' => 'warning',
                                 'published' => 'success',
                                 default => 'gray',
-                            }),
-                    ]),
-                Group::make()
-                    ->id('iconMedium')
-                    ->extraAttributes([
-                        'class' => 'p-16 max-w-xl',
-                    ])
-                    ->schema([
-                        IconEntry::make('status')
-                            ->state('reviewing')
+                            })
                             ->icon(fn (string $state): Heroicon => match ($state) {
                                 'draft' => Heroicon::OutlinedPencil,
                                 'reviewing' => Heroicon::OutlinedClock,
                                 'published' => Heroicon::OutlinedCheckCircle,
                             })
+                            ->state('reviewing'),
+                    ]),
+                Group::make()
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->id('iconMedium')
+                    ->schema([
+                        IconEntry::make('status')
                             ->color(fn (string $state): string => match ($state) {
                                 'draft' => 'danger',
                                 'reviewing' => 'warning',
                                 'published' => 'success',
                                 default => 'gray',
                             })
-                            ->size(IconSize::Medium),
+                            ->icon(fn (string $state): Heroicon => match ($state) {
+                                'draft' => Heroicon::OutlinedPencil,
+                                'reviewing' => Heroicon::OutlinedClock,
+                                'published' => Heroicon::OutlinedCheckCircle,
+                            })
+                            ->size(IconSize::Medium)
+                            ->state('reviewing'),
                     ]),
                 Group::make()
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
                     ->id('iconBoolean')
+                    ->schema([
+                        IconEntry::make('is_featured')
+                            ->boolean()
+                            ->state(0),
+                        IconEntry::make('is_featured')
+                            ->boolean()
+                            ->state(1),
+                    ]),
+                Group::make()
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
-                    ->schema([
-                        IconEntry::make('is_featured')
-                            ->state(0)
-                            ->boolean(),
-                        IconEntry::make('is_featured')
-                            ->state(1)
-                            ->boolean(),
-                    ]),
-                Group::make()
                     ->id('iconBooleanIcon')
+                    ->schema([
+                        IconEntry::make('is_featured')
+                            ->boolean()
+                            ->falseIcon(Heroicon::OutlinedXMark)
+                            ->trueIcon(Heroicon::OutlinedCheckBadge)
+                            ->state(0),
+                        IconEntry::make('is_featured')
+                            ->boolean()
+                            ->falseIcon(Heroicon::OutlinedXMark)
+                            ->trueIcon(Heroicon::OutlinedCheckBadge)
+                            ->state(1),
+                    ]),
+                Group::make()
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
-                    ->schema([
-                        IconEntry::make('is_featured')
-                            ->state(0)
-                            ->boolean()
-                            ->trueIcon(Heroicon::OutlinedCheckBadge)
-                            ->falseIcon(Heroicon::OutlinedXMark),
-                        IconEntry::make('is_featured')
-                            ->state(1)
-                            ->boolean()
-                            ->trueIcon(Heroicon::OutlinedCheckBadge)
-                            ->falseIcon(Heroicon::OutlinedXMark),
-                    ]),
-                Group::make()
                     ->id('iconBooleanColor')
-                    ->extraAttributes([
-                        'class' => 'p-16 max-w-xl',
-                    ])
                     ->schema([
                         IconEntry::make('is_featured')
-                            ->state(0)
                             ->boolean()
+                            ->falseColor('warning')
                             ->trueColor('info')
-                            ->falseColor('warning'),
+                            ->state(0),
                         IconEntry::make('is_featured')
-                            ->state(1)
                             ->boolean()
+                            ->falseColor('warning')
                             ->trueColor('info')
-                            ->falseColor('warning'),
+                            ->state(1),
                     ]),
                 Group::make()
-                    ->id('image')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-3xl',
                     ])
+                    ->id('image')
                     ->schema([
                         ImageEntry::make('header_image')
                             ->state('https://picsum.photos/id/12/1200/800'),
                     ]),
                 Group::make()
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-3xl',
+                    ])
                     ->id('imageSquare')
-                    ->extraAttributes([
-                        'class' => 'p-16 max-w-3xl',
-                    ])
                     ->schema([
                         ImageEntry::make('author.avatar')
                             ->height(40)
-                            ->state('https://picsum.photos/id/177/1200/800')
-                            ->square(),
+                            ->square()
+                            ->state('https://picsum.photos/id/177/1200/800'),
                     ]),
                 Group::make()
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-3xl',
+                    ])
                     ->id('imageCircular')
-                    ->extraAttributes([
-                        'class' => 'p-16 max-w-3xl',
-                    ])
                     ->schema([
                         ImageEntry::make('author.avatar')
+                            ->circular()
                             ->height(40)
-                            ->state('https://picsum.photos/id/433/1200/800')
-                            ->circular(),
+                            ->state('https://picsum.photos/id/433/1200/800'),
                     ]),
                 Group::make()
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-3xl',
+                    ])
                     ->id('imageStacked')
-                    ->extraAttributes([
-                        'class' => 'p-16 max-w-3xl',
-                    ])
                     ->schema([
                         ImageEntry::make('colleagues')
+                            ->circular()
                             ->height(40)
+                            ->stacked()
                             ->state([
                                 'https://avatars.githubusercontent.com/u/41837763?v=4',
                                 'https://avatars.githubusercontent.com/u/44533235?v=4',
                                 'https://avatars.githubusercontent.com/u/22632550?v=4',
                                 'https://avatars.githubusercontent.com/u/3596800?v=4',
                                 'https://avatars.githubusercontent.com/u/881938?v=4',
-                            ])
-                            ->circular()
-                            ->stacked(),
+                            ]),
                     ]),
                 Group::make()
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-3xl',
+                    ])
                     ->id('imageLimited')
-                    ->extraAttributes([
-                        'class' => 'p-16 max-w-3xl',
-                    ])
                     ->schema([
                         ImageEntry::make('colleagues')
+                            ->circular()
                             ->height(40)
+                            ->limit(3)
+                            ->stacked()
                             ->state([
                                 'https://avatars.githubusercontent.com/u/41837763?v=4',
                                 'https://avatars.githubusercontent.com/u/44533235?v=4',
                                 'https://avatars.githubusercontent.com/u/22632550?v=4',
                                 'https://avatars.githubusercontent.com/u/3596800?v=4',
                                 'https://avatars.githubusercontent.com/u/881938?v=4',
-                            ])
-                            ->circular()
-                            ->stacked()
-                            ->limit(3),
+                            ]),
                     ]),
                 Group::make()
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-3xl',
+                    ])
                     ->id('imageLimitedRemainingText')
-                    ->extraAttributes([
-                        'class' => 'p-16 max-w-3xl',
-                    ])
                     ->schema([
                         ImageEntry::make('colleagues')
+                            ->circular()
                             ->height(40)
+                            ->limit(3)
+                            ->limitedRemainingText()
+                            ->stacked()
                             ->state([
                                 'https://avatars.githubusercontent.com/u/41837763?v=4',
                                 'https://avatars.githubusercontent.com/u/44533235?v=4',
                                 'https://avatars.githubusercontent.com/u/22632550?v=4',
                                 'https://avatars.githubusercontent.com/u/3596800?v=4',
                                 'https://avatars.githubusercontent.com/u/881938?v=4',
-                            ])
-                            ->circular()
-                            ->stacked()
-                            ->limit(3)
-                            ->limitedRemainingText(),
+                            ]),
                     ]),
                 Group::make()
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-3xl',
+                    ])
                     ->id('imageLimitedRemainingTextSeparately')
-                    ->extraAttributes([
-                        'class' => 'p-16 max-w-3xl',
-                    ])
                     ->schema([
                         ImageEntry::make('colleagues')
+                            ->circular()
                             ->height(40)
+                            ->limit(3)
+                            ->limitedRemainingText(isSeparate: true)
+                            ->stacked()
                             ->state([
                                 'https://avatars.githubusercontent.com/u/41837763?v=4',
                                 'https://avatars.githubusercontent.com/u/44533235?v=4',
                                 'https://avatars.githubusercontent.com/u/22632550?v=4',
                                 'https://avatars.githubusercontent.com/u/3596800?v=4',
                                 'https://avatars.githubusercontent.com/u/881938?v=4',
-                            ])
-                            ->circular()
-                            ->stacked()
-                            ->limit(3)
-                            ->limitedRemainingText(isSeparate: true),
+                            ]),
                     ]),
                 Group::make()
-                    ->id('color')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('color')
                     ->schema([
                         ColorEntry::make('color')
                             ->state('#3490dc'),
                     ]),
                 Group::make()
-                    ->id('colorCopyable')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('colorCopyable')
                     ->schema([
                         ColorEntry::make('color')
-                            ->state('#3490dc')
-                            ->copyable()
                             ->copyMessage('Copied!')
-                            ->copyMessageDuration(1500),
+                            ->copyMessageDuration(1500)
+                            ->copyable()
+                            ->state('#3490dc'),
                     ]),
                 Group::make()
-                    ->id('code')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('code')
                     ->schema([
                         CodeEntry::make('code')
                             ->grammar(Grammar::Php)
@@ -649,15 +649,15 @@ class EntriesDemo extends Component implements HasSchemas
                                 PHP),
                     ]),
                 Group::make()
-                    ->id('codeDracula')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('codeDracula')
                     ->schema([
                         CodeEntry::make('code')
+                            ->darkTheme(Theme::Dracula)
                             ->grammar(Grammar::Php)
                             ->lightTheme(Theme::Dracula)
-                            ->darkTheme(Theme::Dracula)
                             ->state(<<<PHP
                                 <?php
 
@@ -672,10 +672,10 @@ class EntriesDemo extends Component implements HasSchemas
                                 PHP),
                     ]),
                 Group::make()
-                    ->id('keyValue')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('keyValue')
                     ->schema([
                         KeyValueEntry::make('meta')
                             ->state([
@@ -685,69 +685,69 @@ class EntriesDemo extends Component implements HasSchemas
                             ]),
                     ]),
                 Group::make()
-                    ->id('repeatable')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('repeatable')
                     ->schema([
                         RepeatableEntry::make('comments')
-                            ->schema([
-                                TextEntry::make('author'),
-                                TextEntry::make('title'),
-                                TextEntry::make('content')
-                                    ->columnSpan(2),
-                            ])
-                            ->columns(2),
-                    ]),
-                Group::make()
-                    ->id('repeatableGrid')
-                    ->extraAttributes([
-                        'class' => 'p-16 max-w-5xl',
-                    ])
-                    ->schema([
-                        RepeatableEntry::make('comments')
-                            ->schema([
-                                TextEntry::make('author'),
-                                TextEntry::make('title'),
-                                TextEntry::make('content')
-                                    ->columnSpan(2),
-                            ])
                             ->columns(2)
-                            ->grid(2),
+                            ->schema([
+                                TextEntry::make('author'),
+                                TextEntry::make('title'),
+                                TextEntry::make('content')
+                                    ->columnSpan(2),
+                            ]),
                     ]),
                 Group::make()
-                    ->id('repeatableTable')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-5xl',
                     ])
+                    ->id('repeatableGrid')
                     ->schema([
                         RepeatableEntry::make('comments')
-                            ->table([
-                                TableColumn::make('Author'),
-                                TableColumn::make('Title'),
-                                TableColumn::make('Published'),
-                            ])
+                            ->columns(2)
+                            ->grid(2)
+                            ->schema([
+                                TextEntry::make('author'),
+                                TextEntry::make('title'),
+                                TextEntry::make('content')
+                                    ->columnSpan(2),
+                            ]),
+                    ]),
+                Group::make()
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-5xl',
+                    ])
+                    ->id('repeatableTable')
+                    ->schema([
+                        RepeatableEntry::make('comments')
                             ->schema([
                                 TextEntry::make('author'),
                                 TextEntry::make('title'),
                                 IconEntry::make('is_published')
                                     ->boolean(),
+                            ])
+                            ->table([
+                                TableColumn::make('Author'),
+                                TableColumn::make('Title'),
+                                TableColumn::make('Published'),
                             ]),
                     ]),
                 Group::make()
-                    ->id('suffixAction')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
+                    ->id('suffixAction')
                     ->schema([
                         TextEntry::make('suffixAction')
                             ->label('Cost')
                             ->prefix('€')
-                            ->default('22.66')
                             ->suffixAction(
                                 Action::make('copyCostToPrice')
                                     ->icon(Heroicon::Clipboard),
-                            ),
+                            )
+                            ->default('22.66'),
                     ]),
             ])
             ->constantState([

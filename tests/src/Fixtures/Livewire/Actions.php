@@ -34,8 +34,8 @@ class Actions extends Component implements HasActions, HasSchemas
                         Action::make('setValue')
                             ->schema([
                                 TextInput::make('value')
-                                    ->default('foo')
-                                    ->required(),
+                                    ->required()
+                                    ->default('foo'),
                             ])
                             ->action(function (TextInput $component, array $data): void {
                                 $component->state($data['value']);

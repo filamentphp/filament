@@ -68,10 +68,10 @@ it('can set the value of a nested field', function (): void {
             return $form
                 ->components([
                     Section::make()
-                        ->statePath('nested')
                         ->schema([
                             TextInput::make('foo'),
-                        ]),
+                        ])
+                        ->statePath('nested'),
                     TextInput::make('bar')
                         ->live()
                         ->afterStateUpdated(fn (Set $set, $state) => $set('nested.foo', $state)),
@@ -96,12 +96,12 @@ it('can set the value of a parent level field', function (): void {
                 ->components([
                     TextInput::make('foo'),
                     Section::make()
-                        ->statePath('nested')
                         ->schema([
                             TextInput::make('bar')
                                 ->live()
                                 ->afterStateUpdated(fn (Set $set, $state) => $set('../foo', $state)),
-                        ]),
+                        ])
+                        ->statePath('nested'),
                 ])
                 ->statePath('data');
         }
@@ -122,17 +122,17 @@ it('can set the value of a parent level field with a nested field', function ():
             return $form
                 ->components([
                     Section::make()
-                        ->statePath('nestedOne')
                         ->schema([
                             TextInput::make('foo'),
-                        ]),
+                        ])
+                        ->statePath('nestedOne'),
                     Section::make()
-                        ->statePath('nestedTwo')
                         ->schema([
                             TextInput::make('bar')
                                 ->live()
                                 ->afterStateUpdated(fn (Set $set, $state) => $set('../nestedOne.foo', $state)),
-                        ]),
+                        ])
+                        ->statePath('nestedTwo'),
                 ])
                 ->statePath('data');
         }

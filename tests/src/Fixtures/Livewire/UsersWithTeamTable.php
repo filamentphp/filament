@@ -24,16 +24,16 @@ class UsersWithTeamTable extends Component implements HasActions, HasSchemas, Ta
             ->query(User::query())
             ->columns([
                 Tables\Columns\TextColumn::make('id')
-                    ->sortable()
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('name')
                     ->label('Name')
-                    ->sortable()
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('team.name')
                     ->label('Team Name')
-                    ->sortable()
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable(),
             ])
             ->paginated(false);
     }

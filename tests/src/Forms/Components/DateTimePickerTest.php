@@ -39,10 +39,10 @@ it('returns datetime format without seconds when native and seconds are disabled
 
 it('returns full datetime format for non-native pickers regardless of other flags', function (): void {
     $picker = DateTimePicker::make('dt')
-        ->time(false)
         ->date(false)
+        ->native(false)
         ->seconds(false)
-        ->native(false);
+        ->time(false);
 
     expect($picker->getInternalFormat())->toBe('Y-m-d H:i:s');
 });

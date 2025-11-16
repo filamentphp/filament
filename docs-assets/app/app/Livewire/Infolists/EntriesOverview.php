@@ -31,102 +31,101 @@ class EntriesOverview extends Component implements HasSchemas
         return $infolist
             ->schema([
                 Group::make()
-                    ->id('product_info')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-6xl',
                     ])
+                    ->id('product_info')
                     ->schema([
                         Section::make('Product information')
+                            ->collapsible()
+                            ->columnSpan(['lg' => 2])
                             ->description('Detailed information about the product')
                             ->icon(Heroicon::Wallet)
-                            ->collapsible()
                             ->persistCollapsed(false)
-                            ->columnSpan(['lg' => 2])
                             ->schema([
                                 Grid::make(3)
                                     ->schema([
                                         TextEntry::make('name')
                                             ->label('Product name')
-                                            ->weight(FontWeight::Bold)
-                                            ->size(TextSize::Large)
-                                            ->state('Premium Ergonomic Office Chair')
+                                            ->columnSpan(2)
                                             ->icon(Heroicon::InformationCircle)
                                             ->iconPosition(IconPosition::Before)
-                                            ->columnSpan(2),
+                                            ->size(TextSize::Large)
+                                            ->weight(FontWeight::Bold)
+                                            ->state('Premium Ergonomic Office Chair'),
 
                                         TextEntry::make('sku')
                                             ->label('SKU')
-                                            ->state('CHAIR-ERG-2023')
-                                            ->fontFamily(FontFamily::Mono)
-                                            ->size(TextSize::Large)
-                                            ->copyable()
+                                            ->badge()
+                                            ->color('gray')
                                             ->copyMessage('SKU copied to clipboard!')
                                             ->copyMessageDuration(1500)
-                                            ->badge()
-                                            ->color('gray'),
+                                            ->copyable()
+                                            ->fontFamily(FontFamily::Mono)
+                                            ->size(TextSize::Large)
+                                            ->state('CHAIR-ERG-2023'),
 
                                         TextEntry::make('status')
                                             ->label('Stock status')
-                                            ->state('in_stock')
                                             ->badge()
-                                            ->formatStateUsing(
-                                                fn (string $state) => str($state)
-                                                    ->replace('_', ' ')
-                                                    ->title()
-                                            )
+                                            ->color(fn (string $state): string => match ($state) {
+                                                'in_stock' => 'success',
+                                                'low_stock' => 'warning',
+                                                'out_of_stock' => 'danger',
+                                                default => 'gray',
+                                            })
                                             ->icon(fn (string $state): string => match ($state) {
                                                 'in_stock' => 'heroicon-o-check-circle',
                                                 'low_stock' => 'heroicon-o-exclamation-circle',
                                                 'out_of_stock' => 'heroicon-o-x-circle',
                                                 default => 'heroicon-o-question-mark-circle',
                                             })
-                                            ->color(fn (string $state): string => match ($state) {
-                                                'in_stock' => 'success',
-                                                'low_stock' => 'warning',
-                                                'out_of_stock' => 'danger',
-                                                default => 'gray',
-                                            }),
+                                            ->formatStateUsing(
+                                                fn (string $state) => str($state)
+                                                    ->replace('_', ' ')
+                                                    ->title()
+                                            )
+                                            ->state('in_stock'),
                                     ]),
 
                                 Grid::make(3)
                                     ->schema([
                                         TextEntry::make('description')
-                                            ->state('Experience unparalleled comfort with our Premium Ergonomic Office Chair. Designed for professionals who spend long hours at their desk, this chair offers adjustable lumbar support, breathable mesh backing, and customizable armrests.')
+                                            ->columnSpan(2)
                                             ->markdown()
-                                            ->columnSpan(2),
+                                            ->state('Experience unparalleled comfort with our Premium Ergonomic Office Chair. Designed for professionals who spend long hours at their desk, this chair offers adjustable lumbar support, breathable mesh backing, and customizable armrests.'),
 
                                         ImageEntry::make('product_image')
-                                            ->state('https://cdn.pixabay.com/photo/2021/09/26/11/44/chair-6657315_1280.jpg')
-                                            ->columnSpan(1),
+                                            ->columnSpan(1)
+                                            ->state('https://cdn.pixabay.com/photo/2021/09/26/11/44/chair-6657315_1280.jpg'),
                                     ]),
                             ]),
 
                         Section::make('Pricing & features')
-                            ->icon(Heroicon::CurrencyDollar)
-                            ->description('Information about pricing and features')
                             ->collapsible()
                             ->columnSpan(['lg' => 1])
+                            ->description('Information about pricing and features')
+                            ->icon(Heroicon::CurrencyDollar)
                             ->schema([
                                 TextEntry::make('price')
-                                    ->state('249.99')
+                                    ->color('primary')
                                     ->prefix('$')
-                                    ->weight(FontWeight::Bold)
                                     ->size(TextSize::Large)
                                     ->suffix(' USD')
-                                    ->color('primary'),
+                                    ->weight(FontWeight::Bold)
+                                    ->state('249.99'),
 
                                 IconEntry::make('featured')
                                     ->label('Featured product')
-                                    ->state(true)
                                     ->boolean()
-                                    ->trueIcon(Heroicon::Star)
                                     ->falseIcon(Heroicon::XMark)
+                                    ->size(IconSize::Large)
                                     ->trueColor('warning')
-                                    ->size(IconSize::Large),
+                                    ->trueIcon(Heroicon::Star)
+                                    ->state(true),
 
                                 ColorEntry::make('color_options')
                                     ->label('Available colors')
-                                    ->state(['#000000', '#0047AB', '#8B4513'])
                                     ->afterStateHydrated(function (ColorEntry $component, array $state): void {
                                         $component->tooltip(function (string $color) {
                                             return match ($color) {
@@ -136,33 +135,34 @@ class EntriesOverview extends Component implements HasSchemas
                                                 default => $color,
                                             };
                                         });
-                                    }),
+                                    })
+                                    ->state(['#000000', '#0047AB', '#8B4513']),
 
                             ]),
 
                         Tabs::make('Product Details')
+                            ->columnSpan(['lg' => 3])
                             ->tabs([
                                 Tabs\Tab::make('Specifications')
                                     ->icon(Heroicon::ClipboardDocumentList)
                                     ->schema([
                                         KeyValueEntry::make('specifications')
                                             ->label(false)
+                                            ->keyLabel('Specification')
+                                            ->valueLabel('Details')
                                             ->state([
                                                 'Material' => 'Mesh, aluminum, high-grade plastic',
                                                 'Weight capacity' => '300 lbs',
                                                 'Height adjustment' => '17" to 21"',
                                                 'Warranty' => '5 years limited',
                                                 'Assembly required' => 'Yes (Tools Included)',
-                                            ])
-                                            ->keyLabel('Specification')
-                                            ->valueLabel('Details'),
+                                            ]),
                                     ]),
 
                                 Tabs\Tab::make('Reviews')
-                                    ->icon(Heroicon::OutlinedPencilSquare)
-                                    ->badge(fn () => 3),
-                            ])
-                            ->columnSpan(['lg' => 3]),
+                                    ->badge(fn () => 3)
+                                    ->icon(Heroicon::OutlinedPencilSquare),
+                            ]),
                     ]),
             ])
             ->constantState([

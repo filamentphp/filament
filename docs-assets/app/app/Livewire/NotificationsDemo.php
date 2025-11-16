@@ -72,8 +72,8 @@ class NotificationsDemo extends Component
     {
         Notification::make()
             ->title('Saved successfully')
-            ->success()
             ->body('Changes to the post have been saved.')
+            ->success()
             ->send();
     }
 
@@ -81,7 +81,6 @@ class NotificationsDemo extends Component
     {
         Notification::make()
             ->title('Saved successfully')
-            ->success()
             ->body('Changes to the post have been saved.')
             ->actions([
                 Action::make('view')
@@ -89,6 +88,7 @@ class NotificationsDemo extends Component
                 Action::make('undo')
                     ->color('gray'),
             ])
+            ->success()
             ->send();
     }
 

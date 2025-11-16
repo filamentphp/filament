@@ -49,53 +49,53 @@ class LayoutDemo extends Component implements HasActions, HasSchemas
             ->statePath('data')
             ->components([
                 Group::make()
-                    ->id('fieldset')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-2xl',
                     ])
+                    ->id('fieldset')
                     ->schema([
                         Fieldset::make('Rate limiting')
-                            ->statePath('fieldset')
+                            ->columns(3)
                             ->schema([
                                 TextInput::make('hits')
                                     ->default(30),
                                 Select::make('period')
-                                    ->default('hour')
                                     ->options([
                                         'hour' => 'Hour',
-                                    ]),
+                                    ])
+                                    ->default('hour'),
                                 TextInput::make('maximum')
                                     ->default(100),
                             ])
-                            ->columns(3),
+                            ->statePath('fieldset'),
                     ]),
                 Group::make()
-                    ->id('fieldsetNotContained')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-2xl',
                     ])
+                    ->id('fieldsetNotContained')
                     ->schema([
                         Fieldset::make('Rate limiting')
-                            ->statePath('fieldsetNotContained')
+                            ->columns(3)
                             ->contained(false)
                             ->schema([
                                 TextInput::make('hits')
                                     ->default(30),
                                 Select::make('period')
-                                    ->default('hour')
                                     ->options([
                                         'hour' => 'Hour',
-                                    ]),
+                                    ])
+                                    ->default('hour'),
                                 TextInput::make('maximum')
                                     ->default(100),
                             ])
-                            ->columns(3),
+                            ->statePath('fieldsetNotContained'),
                     ]),
                 Group::make()
-                    ->id('dense')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-2xl',
                     ])
+                    ->id('dense')
                     ->schema([
                         Fieldset::make('Dense')
                             ->columns(1)
@@ -108,10 +108,10 @@ class LayoutDemo extends Component implements HasActions, HasSchemas
                             ]),
                     ]),
                 Group::make()
-                    ->id('noGap')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-2xl',
                     ])
+                    ->id('noGap')
                     ->schema([
                         Fieldset::make('No gap')
                             ->columns(1)
@@ -124,41 +124,40 @@ class LayoutDemo extends Component implements HasActions, HasSchemas
                             ]),
                     ]),
                 Group::make()
-                    ->id('tabs')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-2xl',
                     ])
+                    ->id('tabs')
                     ->schema([
                         Tabs::make('Tabs')
-                            ->statePath('tabs')
                             ->schema([
                                 Tab::make('Rate Limiting')
+                                    ->columns(3)
                                     ->schema([
                                         TextInput::make('hits')
                                             ->default(30),
                                         Select::make('period')
-                                            ->default('hour')
                                             ->options([
                                                 'hour' => 'Hour',
-                                            ]),
+                                            ])
+                                            ->default('hour'),
                                         TextInput::make('maximum')
                                             ->default(100),
                                         Textarea::make('notes')
                                             ->columnSpanFull(),
-                                    ])
-                                    ->columns(3),
+                                    ]),
                                 Tab::make('Proxy'),
                                 Tab::make('Meta'),
-                            ]),
+                            ])
+                            ->statePath('tabs'),
                     ]),
                 Group::make()
-                    ->id('tabsIcons')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-2xl',
                     ])
+                    ->id('tabsIcons')
                     ->schema([
                         Tabs::make('Tabs')
-                            ->statePath('tabsIcons')
                             ->schema([
                                 Tab::make('Notifications')
                                     ->icon(Heroicon::Bell)
@@ -166,25 +165,25 @@ class LayoutDemo extends Component implements HasActions, HasSchemas
                                         Checkbox::make('enabled')
                                             ->default(true),
                                         Select::make('frequency')
-                                            ->default('hourly')
                                             ->options([
                                                 'hourly' => 'Hourly',
-                                            ]),
+                                            ])
+                                            ->default('hourly'),
                                     ]),
                                 Tab::make('Security')
                                     ->icon(Heroicon::LockClosed),
                                 Tab::make('Meta')
                                     ->icon(Heroicon::Bars3CenterLeft),
-                            ]),
+                            ])
+                            ->statePath('tabsIcons'),
                     ]),
                 Group::make()
-                    ->id('tabsIconsAfter')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-2xl',
                     ])
+                    ->id('tabsIconsAfter')
                     ->schema([
                         Tabs::make('Tabs')
-                            ->statePath('tabsIconsAfter')
                             ->schema([
                                 Tab::make('Notifications')
                                     ->icon(Heroicon::Bell)
@@ -193,10 +192,10 @@ class LayoutDemo extends Component implements HasActions, HasSchemas
                                         Checkbox::make('enabled')
                                             ->default(true),
                                         Select::make('frequency')
-                                            ->default('hourly')
                                             ->options([
                                                 'hourly' => 'Hourly',
-                                            ]),
+                                            ])
+                                            ->default('hourly'),
                                     ]),
                                 Tab::make('Security')
                                     ->icon(Heroicon::LockClosed)
@@ -204,16 +203,16 @@ class LayoutDemo extends Component implements HasActions, HasSchemas
                                 Tab::make('Meta')
                                     ->icon(Heroicon::Bars3CenterLeft)
                                     ->iconPosition(IconPosition::After),
-                            ]),
+                            ])
+                            ->statePath('tabsIconsAfter'),
                     ]),
                 Group::make()
-                    ->id('tabsBadges')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-2xl',
                     ])
+                    ->id('tabsBadges')
                     ->schema([
                         Tabs::make('Tabs')
-                            ->statePath('tabsBadges')
                             ->schema([
                                 Tab::make('Notifications')
                                     ->badge(5)
@@ -221,23 +220,23 @@ class LayoutDemo extends Component implements HasActions, HasSchemas
                                         Checkbox::make('enabled')
                                             ->default(true),
                                         Select::make('frequency')
-                                            ->default('hourly')
                                             ->options([
                                                 'hourly' => 'Hourly',
-                                            ]),
+                                            ])
+                                            ->default('hourly'),
                                     ]),
                                 Tab::make('Security'),
                                 Tab::make('Meta'),
-                            ]),
+                            ])
+                            ->statePath('tabsBadges'),
                     ]),
                 Group::make()
-                    ->id('tabsBadgesColor')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-2xl',
                     ])
+                    ->id('tabsBadgesColor')
                     ->schema([
                         Tabs::make('Tabs')
-                            ->statePath('tabsBadgesColor')
                             ->schema([
                                 Tab::make('Notifications')
                                     ->badge(5)
@@ -246,55 +245,59 @@ class LayoutDemo extends Component implements HasActions, HasSchemas
                                         Checkbox::make('enabled')
                                             ->default(true),
                                         Select::make('frequency')
-                                            ->default('hourly')
                                             ->options([
                                                 'hourly' => 'Hourly',
-                                            ]),
+                                            ])
+                                            ->default('hourly'),
                                     ]),
                                 Tab::make('Security'),
                                 Tab::make('Meta'),
-                            ]),
+                            ])
+                            ->statePath('tabsBadgesColor'),
                     ]),
                 Group::make()
-                    ->id('tabsVertical')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-2xl',
                     ])
+                    ->id('tabsVertical')
                     ->schema([
                         Tabs::make('Tabs')
-                            ->statePath('tabsVertical')
                             ->schema([
                                 Tab::make('Rate Limiting')
+                                    ->columns(3)
                                     ->schema([
                                         TextInput::make('hits')
                                             ->default(30),
                                         Select::make('period')
-                                            ->default('hour')
                                             ->options([
                                                 'hour' => 'Hour',
-                                            ]),
+                                            ])
+                                            ->default('hour'),
                                         TextInput::make('maximum')
                                             ->default(100),
                                         Textarea::make('notes')
                                             ->columnSpanFull(),
-                                    ])
-                                    ->columns(3),
+                                    ]),
                                 Tab::make('Proxy'),
                                 Tab::make('Meta'),
                             ])
-                            ->vertical(),
+                            ->vertical()
+                            ->statePath('tabsVertical'),
                     ]),
                 Group::make()
-                    ->id('wizard')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-5xl',
                     ])
+                    ->id('wizard')
                     ->schema([
                         Wizard::make([
                             Wizard\Step::make('Order')
                                 ->schema([
                                     Repeater::make('items')
+                                        ->addActionLabel('Add to order')
+                                        ->columns(2)
                                         ->hiddenLabel()
+                                        ->reorderable(false)
                                         ->schema([
                                             Select::make('product')
                                                 ->options([
@@ -302,9 +305,6 @@ class LayoutDemo extends Component implements HasActions, HasSchemas
                                                 ]),
                                             TextInput::make('quantity'),
                                         ])
-                                        ->columns(2)
-                                        ->reorderable(false)
-                                        ->addActionLabel('Add to order')
                                         ->default([
                                             [
                                                 'product' => 'tshirt',
@@ -319,17 +319,20 @@ class LayoutDemo extends Component implements HasActions, HasSchemas
                             ->statePath('wizard'),
                     ]),
                 Group::make()
-                    ->id('wizardIcons')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-5xl',
                     ])
+                    ->id('wizardIcons')
                     ->schema([
                         Wizard::make([
                             Wizard\Step::make('Order')
                                 ->icon(Heroicon::ShoppingBag)
                                 ->schema([
                                     Repeater::make('items')
+                                        ->addActionLabel('Add to order')
+                                        ->columns(2)
                                         ->hiddenLabel()
+                                        ->reorderable(false)
                                         ->schema([
                                             Select::make('product')
                                                 ->options([
@@ -337,9 +340,6 @@ class LayoutDemo extends Component implements HasActions, HasSchemas
                                                 ]),
                                             TextInput::make('quantity'),
                                         ])
-                                        ->columns(2)
-                                        ->reorderable(false)
-                                        ->addActionLabel('Add to order')
                                         ->default([
                                             [
                                                 'product' => 'tshirt',
@@ -356,24 +356,27 @@ class LayoutDemo extends Component implements HasActions, HasSchemas
                             ->statePath('wizardIcons'),
                     ]),
                 Group::make()
-                    ->id('wizardCompletedIcons')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-5xl',
                     ])
+                    ->id('wizardCompletedIcons')
                     ->schema([
                         Wizard::make([
                             Wizard\Step::make('Order')
-                                ->icon(Heroicon::ShoppingBag)
-                                ->completedIcon(Heroicon::HandThumbUp),
-                            Wizard\Step::make('Delivery')
-                                ->icon(Heroicon::Truck)
-                                ->completedIcon(Heroicon::HandThumbUp),
-                            Wizard\Step::make('Billing')
-                                ->icon(Heroicon::CreditCard)
                                 ->completedIcon(Heroicon::HandThumbUp)
+                                ->icon(Heroicon::ShoppingBag),
+                            Wizard\Step::make('Delivery')
+                                ->completedIcon(Heroicon::HandThumbUp)
+                                ->icon(Heroicon::Truck),
+                            Wizard\Step::make('Billing')
+                                ->completedIcon(Heroicon::HandThumbUp)
+                                ->icon(Heroicon::CreditCard)
                                 ->schema([
                                     Repeater::make('items')
+                                        ->addActionLabel('Add to order')
+                                        ->columns(2)
                                         ->hiddenLabel()
+                                        ->reorderable(false)
                                         ->schema([
                                             Select::make('product')
                                                 ->options([
@@ -381,9 +384,6 @@ class LayoutDemo extends Component implements HasActions, HasSchemas
                                                 ]),
                                             TextInput::make('quantity'),
                                         ])
-                                        ->columns(2)
-                                        ->reorderable(false)
-                                        ->addActionLabel('Add to order')
                                         ->default([
                                             [
                                                 'product' => 'tshirt',
@@ -397,17 +397,20 @@ class LayoutDemo extends Component implements HasActions, HasSchemas
                             ->statePath('wizardCompletedIcons'),
                     ]),
                 Group::make()
-                    ->id('wizardDescriptions')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-5xl',
                     ])
+                    ->id('wizardDescriptions')
                     ->schema([
                         Wizard::make([
                             Wizard\Step::make('Order')
                                 ->description('Review your basket')
                                 ->schema([
                                     Repeater::make('items')
+                                        ->addActionLabel('Add to order')
+                                        ->columns(2)
                                         ->hiddenLabel()
+                                        ->reorderable(false)
                                         ->schema([
                                             Select::make('product')
                                                 ->options([
@@ -415,9 +418,6 @@ class LayoutDemo extends Component implements HasActions, HasSchemas
                                                 ]),
                                             TextInput::make('quantity'),
                                         ])
-                                        ->columns(2)
-                                        ->reorderable(false)
-                                        ->addActionLabel('Add to order')
                                         ->default([
                                             [
                                                 'product' => 'tshirt',
@@ -434,96 +434,98 @@ class LayoutDemo extends Component implements HasActions, HasSchemas
                             ->statePath('wizardDescriptions'),
                     ]),
                 Group::make()
-                    ->id('section')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-2xl',
                     ])
+                    ->id('section')
                     ->schema([
                         Section::make('Rate limiting')
+                            ->columns(3)
                             ->description('Prevent abuse by limiting the number of requests per period')
-                            ->statePath('section')
                             ->schema([
                                 TextInput::make('hits')
                                     ->default(30),
                                 Select::make('period')
-                                    ->default('hour')
                                     ->options([
                                         'hour' => 'Hour',
-                                    ]),
+                                    ])
+                                    ->default('hour'),
                                 TextInput::make('maximum')
                                     ->default(100),
                                 Textarea::make('notes')
                                     ->columnSpanFull(),
                             ])
-                            ->columns(3),
+                            ->statePath('section'),
                     ]),
                 Group::make()
-                    ->id('sectionHeaderActions')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-2xl',
                     ])
+                    ->id('sectionHeaderActions')
                     ->schema([
                         Section::make('Rate limiting')
-                            ->description('Prevent abuse by limiting the number of requests per period')
                             ->afterHeader([
                                 Action::make('test'),
                             ])
-                            ->statePath('section')
+                            ->columns(3)
+                            ->description('Prevent abuse by limiting the number of requests per period')
                             ->schema([
                                 TextInput::make('hits')
                                     ->default(30),
                                 Select::make('period')
-                                    ->default('hour')
                                     ->options([
                                         'hour' => 'Hour',
-                                    ]),
+                                    ])
+                                    ->default('hour'),
                                 TextInput::make('maximum')
                                     ->default(100),
                                 Textarea::make('notes')
                                     ->columnSpanFull(),
                             ])
-                            ->columns(3),
+                            ->statePath('section'),
                     ]),
                 Group::make()
-                    ->id('sectionFooterActions')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-2xl',
                     ])
+                    ->id('sectionFooterActions')
                     ->schema([
                         Section::make('Rate limiting')
+                            ->columns(3)
                             ->description('Prevent abuse by limiting the number of requests per period')
                             ->footer([
                                 Action::make('test'),
                             ])
-                            ->statePath('section')
                             ->schema([
                                 TextInput::make('hits')
                                     ->default(30),
                                 Select::make('period')
-                                    ->default('hour')
                                     ->options([
                                         'hour' => 'Hour',
-                                    ]),
+                                    ])
+                                    ->default('hour'),
                                 TextInput::make('maximum')
                                     ->default(100),
                                 Textarea::make('notes')
                                     ->columnSpanFull(),
                             ])
-                            ->columns(3),
+                            ->statePath('section'),
                     ]),
                 Group::make()
-                    ->id('sectionIcons')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-2xl',
                     ])
+                    ->id('sectionIcons')
                     ->schema([
                         Section::make('Cart')
                             ->description('The items you have selected for purchase')
                             ->icon(Heroicon::ShoppingBag)
-                            ->statePath('sectionIcons')
                             ->schema([
                                 Repeater::make('items')
+                                    ->addActionLabel('Add to order')
+                                    ->columns(2)
                                     ->hiddenLabel()
+                                    ->reorderable(false)
                                     ->schema([
                                         Select::make('product')
                                             ->options([
@@ -531,9 +533,6 @@ class LayoutDemo extends Component implements HasActions, HasSchemas
                                             ]),
                                         TextInput::make('quantity'),
                                     ])
-                                    ->columns(2)
-                                    ->reorderable(false)
-                                    ->addActionLabel('Add to order')
                                     ->default([
                                         [
                                             'product' => 'tshirt',
@@ -541,132 +540,133 @@ class LayoutDemo extends Component implements HasActions, HasSchemas
                                         ],
                                     ]),
                                 Textarea::make('specialOrderNotes'),
-                            ]),
+                            ])
+                            ->statePath('sectionIcons'),
                     ]),
                 Group::make()
-                    ->id('sectionAside')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-5xl',
                     ])
+                    ->id('sectionAside')
                     ->schema([
                         Section::make('Rate limiting')
-                            ->description('Prevent abuse by limiting the number of requests per period')
                             ->aside()
-                            ->statePath('sectionAside')
+                            ->description('Prevent abuse by limiting the number of requests per period')
                             ->schema([
                                 TextInput::make('hits')
                                     ->default(30),
                                 Select::make('period')
-                                    ->default('hour')
                                     ->options([
                                         'hour' => 'Hour',
-                                    ]),
+                                    ])
+                                    ->default('hour'),
                                 TextInput::make('maximum')
                                     ->default(100),
                                 Textarea::make('notes'),
-                            ]),
+                            ])
+                            ->statePath('sectionAside'),
                     ]),
                 Group::make()
-                    ->id('sectionCollapsed')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-2xl',
                     ])
+                    ->id('sectionCollapsed')
                     ->schema([
                         Section::make('Cart')
-                            ->description('The items you have selected for purchase')
                             ->collapsed()
+                            ->description('The items you have selected for purchase')
                             ->statePath('sectionCollapsed'),
                     ]),
                 Group::make()
-                    ->id('sectionCompact')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-2xl',
                     ])
+                    ->id('sectionCompact')
                     ->schema([
                         Section::make('Rate limiting')
-                            ->description('Prevent abuse by limiting the number of requests per period')
+                            ->columns(3)
                             ->compact()
-                            ->statePath('sectionCompact')
+                            ->description('Prevent abuse by limiting the number of requests per period')
                             ->schema([
                                 TextInput::make('hits')
                                     ->default(30),
                                 Select::make('period')
-                                    ->default('hour')
                                     ->options([
                                         'hour' => 'Hour',
-                                    ]),
+                                    ])
+                                    ->default('hour'),
                                 TextInput::make('maximum')
                                     ->default(100),
                                 Textarea::make('notes')
                                     ->columnSpanFull(),
                             ])
-                            ->columns(3),
+                            ->statePath('sectionCompact'),
                     ]),
                 Group::make()
-                    ->id('sectionSecondary')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-2xl',
                     ])
+                    ->id('sectionSecondary')
                     ->schema([
                         Section::make('Rate limiting')
+                            ->columns(3)
                             ->description('Prevent abuse by limiting the number of requests per period')
-                            ->statePath('sectionSecondary')
                             ->schema([
                                 TextInput::make('hits')
                                     ->default(30),
                                 Select::make('period')
-                                    ->default('hour')
                                     ->options([
                                         'hour' => 'Hour',
-                                    ]),
+                                    ])
+                                    ->default('hour'),
                                 TextInput::make('maximum')
                                     ->default(100),
                                 Section::make('Notes')
+                                    ->columnSpanFull()
                                     ->compact()
-                                    ->secondary()
                                     ->schema([
                                         Textarea::make('notes')
                                             ->hiddenLabel(),
                                     ])
-                                    ->columnSpanFull(),
+                                    ->secondary(),
                             ])
-                            ->columns(3),
+                            ->statePath('sectionSecondary'),
                     ]),
                 Group::make()
-                    ->id('sectionWithoutHeader')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-2xl',
                     ])
+                    ->id('sectionWithoutHeader')
                     ->schema([
                         Section::make([
                             TextInput::make('hits')
                                 ->default(30),
                             Select::make('period')
-                                ->default('hour')
                                 ->options([
                                     'hour' => 'Hour',
-                                ]),
+                                ])
+                                ->default('hour'),
                             TextInput::make('maximum')
                                 ->default(100),
                             Textarea::make('notes')
                                 ->columnSpanFull(),
                         ])
-                            ->statePath('sectionWithoutHeader')
-                            ->columns(3),
+                            ->columns(3)
+                            ->statePath('sectionWithoutHeader'),
                     ]),
                 Group::make()
-                    ->id('flex')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-2xl',
                     ])
+                    ->id('flex')
                     ->schema([
                         Flex::make([
                             Section::make([
                                 TextInput::make('title')
                                     ->default('Lorem ipsum dolor sit amet'),
                                 Textarea::make('content')
-                                    ->default('Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec euismod, nisl eget tempor aliquam, nunc nisl aliquet nunc, quis aliquam nisl nunc quis nisl. Donec euismod, nisl eget tempor aliquam, nunc nisl aliquet nunc, quis aliquam nisl nunc quis nisl.')
-                                    ->rows(5),
+                                    ->rows(5)
+                                    ->default('Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec euismod, nisl eget tempor aliquam, nunc nisl aliquet nunc, quis aliquam nisl nunc quis nisl. Donec euismod, nisl eget tempor aliquam, nunc nisl aliquet nunc, quis aliquam nisl nunc quis nisl.'),
                             ]),
                             Section::make([
                                 Toggle::make('is_published')
@@ -676,52 +676,52 @@ class LayoutDemo extends Component implements HasActions, HasSchemas
                         ])->statePath('flex'),
                     ]),
                 Group::make()
-                    ->id('independentActions')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-2xl',
                     ])
+                    ->id('independentActions')
                     ->schema([
                         Actions::make([
                             Action::make('star')
                                 ->icon(Heroicon::Star),
                             Action::make('resetStars')
-                                ->icon(Heroicon::XMark)
-                                ->color('danger'),
+                                ->color('danger')
+                                ->icon(Heroicon::XMark),
                         ]),
                     ]),
                 Group::make()
-                    ->id('independentActionsFullWidth')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-2xl',
                     ])
+                    ->id('independentActionsFullWidth')
                     ->schema([
                         Actions::make([
                             Action::make('star')
                                 ->icon(Heroicon::Star),
                             Action::make('resetStars')
-                                ->icon(Heroicon::XMark)
-                                ->color('danger'),
+                                ->color('danger')
+                                ->icon(Heroicon::XMark),
                         ])->fullWidth(),
                     ]),
                 Group::make()
-                    ->id('independentActionsHorizontallyAlignedCenter')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-2xl',
                     ])
+                    ->id('independentActionsHorizontallyAlignedCenter')
                     ->schema([
                         Actions::make([
                             Action::make('star')
                                 ->icon(Heroicon::Star),
                             Action::make('resetStars')
-                                ->icon(Heroicon::XMark)
-                                ->color('danger'),
+                                ->color('danger')
+                                ->icon(Heroicon::XMark),
                         ])->alignment(Alignment::Center),
                     ]),
                 Group::make()
-                    ->id('independentActionsVerticallyAlignedEnd')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-2xl',
                     ])
+                    ->id('independentActionsVerticallyAlignedEnd')
                     ->schema([
                         Grid::make(2)
                             ->schema([
@@ -731,24 +731,24 @@ class LayoutDemo extends Component implements HasActions, HasSchemas
                                     Action::make('star')
                                         ->icon(Heroicon::Star),
                                     Action::make('resetStars')
-                                        ->icon(Heroicon::XMark)
-                                        ->color('danger'),
+                                        ->color('danger')
+                                        ->icon(Heroicon::XMark),
                                 ])->verticalAlignment(VerticalAlignment::End),
                             ]),
                     ]),
                 Group::make()
-                    ->id('emptyState')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-5xl',
                     ])
+                    ->id('emptyState')
                     ->schema([
                         EmptyState::make('No users yet')
                             ->description('Get started by creating a new user.')
-                            ->icon(Heroicon::OutlinedUser)
                             ->footer([
                                 Action::make('createUser')
                                     ->icon(Heroicon::Plus),
-                            ]),
+                            ])
+                            ->icon(Heroicon::OutlinedUser),
                     ]),
             ]);
     }

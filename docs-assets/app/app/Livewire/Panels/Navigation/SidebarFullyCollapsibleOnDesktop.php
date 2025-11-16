@@ -17,8 +17,8 @@ class SidebarFullyCollapsibleOnDesktop extends Page
             ->navigationItems([
                 NavigationItem::make()
                     ->label('Products')
-                    ->sort(2)
                     ->icon(Heroicon::OutlinedDocumentText)
+                    ->sort(2)
                     ->url(fn (): string => '#'),
             ])
             ->sidebarFullyCollapsibleOnDesktop();

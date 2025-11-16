@@ -17,8 +17,8 @@ class ChangeIcon extends Page
             ->navigationItems([
                 NavigationItem::make()
                     ->label('Settings')
-                    ->url(fn (): string => '#')
-                    ->icon(Heroicon::OutlinedDocumentText),
+                    ->icon(Heroicon::OutlinedDocumentText)
+                    ->url(fn (): string => '#'),
             ]);
     }
 }

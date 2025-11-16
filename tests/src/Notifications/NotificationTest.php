@@ -45,8 +45,11 @@ it('can send notifications', function (): void {
         ->toBeEmpty();
 
     Notification::make($id = Str::random())
+        ->title($title = Str::random())
+        ->body($body = Str::random())
         ->actions([
             Action::make($actionName = Str::random())
+                ->label($actionLabel = Str::random())
                 ->close($shouldClose = (bool) rand(0, 1))
                 ->color($actionColor = $getRandomColor())
                 ->disabled($isActionDisabled = (bool) rand(0, 1))
@@ -54,7 +57,6 @@ it('can send notifications', function (): void {
                 ->extraAttributes($actionExtraAttributes = ['x' . Str::random(15) => Str::random()]) // Attributes must start with a letter
                 ->icon($actionIcon = $getRandomIcon())
                 ->iconPosition($actionIconPosition = Arr::random([IconPosition::After, IconPosition::Before]))
-                ->label($actionLabel = Str::random())
                 ->outlined($isActionOutlined = (bool) rand(0, 1))
                 ->size($actionSize = Arr::random([Size::ExtraSmall, Size::Small, Size::Medium, Size::Large, Size::ExtraLarge]))
                 ->url(
@@ -62,11 +64,9 @@ it('can send notifications', function (): void {
                     shouldOpenInNewTab: $shouldActionOpenUrlInNewTab = (bool) rand(0, 1),
                 ),
         ])
-        ->body($body = Str::random())
         ->duration($duration = rand(1, 10))
         ->icon($icon = $getRandomIcon())
         ->iconColor($iconColor = $getRandomColor())
-        ->title($title = Str::random())
         ->send();
 
     $notifications = session()->get('filament.notifications');
@@ -236,9 +236,9 @@ it('can resolve custom notification object from data', function (): void {
     app()->bind(Notification::class, CustomNotification::class);
 
     Notification::make()
-        ->size($size = 'lg')
-        ->body($body = Str::random())
         ->title($title = Str::random())
+        ->body($body = Str::random())
+        ->size($size = 'lg')
         ->send();
 
     $notifications = session()->get('filament.notifications');

@@ -18,7 +18,7 @@ it('can call bulk action', function (): void {
 
     livewire(PostsTable::class)
         ->selectTableRecords($posts)
-        ->callAction(TestAction::make(DeleteBulkAction::class)->table()->bulk());
+        ->callAction(TestAction::make(DeleteBulkAction::class)->bulk()->table());
 
     foreach ($posts as $post) {
         assertSoftDeleted($post);
@@ -39,7 +39,7 @@ it('can call a bulk action with data', function (): void {
 
     livewire(PostsTable::class)
         ->selectTableRecords($posts)
-        ->callAction(TestAction::make('data')->table()->bulk(), data: [
+        ->callAction(TestAction::make('data')->bulk()->table(), data: [
             'payload' => $payload = Str::random(),
         ])
         ->assertHasNoFormErrors()
@@ -62,7 +62,7 @@ it('can validate a bulk action\'s data', function (): void {
 
     livewire(PostsTable::class)
         ->selectTableRecords($posts)
-        ->callAction(TestAction::make('data')->table()->bulk(), data: [
+        ->callAction(TestAction::make('data')->bulk()->table(), data: [
             'payload' => null,
         ])
         ->assertHasFormErrors(['payload' => ['required']])
@@ -81,7 +81,7 @@ it('can set default bulk action data when mounted', function (): void {
 
     livewire(PostsTable::class)
         ->selectTableRecords($posts)
-        ->mountAction(TestAction::make('data')->table()->bulk())
+        ->mountAction(TestAction::make('data')->bulk()->table())
         ->assertSchemaStateSet([
             'foo' => 'bar',
         ]);
@@ -103,7 +103,7 @@ it('can call a bulk action with arguments', function (): void {
         ->selectTableRecords($posts)
         ->callAction(TestAction::make('arguments')->arguments([
             'payload' => $payload = Str::random(),
-        ])->table()->bulk())
+        ])->bulk()->table())
         ->assertDispatched('arguments-called', arguments: [
             'payload' => $payload,
         ]);
@@ -122,9 +122,9 @@ it('can call a bulk action and halt', function (): void {
 
     livewire(PostsTable::class)
         ->selectTableRecords($posts)
-        ->callAction(TestAction::make('halt')->table()->bulk())
+        ->callAction(TestAction::make('halt')->bulk()->table())
         ->assertDispatched('halt-called')
-        ->assertActionHalted(TestAction::make('halt')->table()->bulk());
+        ->assertActionHalted(TestAction::make('halt')->bulk()->table());
 
     livewire(PostsTable::class)
         ->callTableBulkAction('halt', records: $posts)
@@ -134,8 +134,8 @@ it('can call a bulk action and halt', function (): void {
 
 it('can hide a bulk action', function (): void {
     livewire(PostsTable::class)
-        ->assertActionVisible(TestAction::make('visible')->table()->bulk())
-        ->assertActionHidden(TestAction::make('hidden')->table()->bulk());
+        ->assertActionVisible(TestAction::make('visible')->bulk()->table())
+        ->assertActionHidden(TestAction::make('hidden')->bulk()->table());
 
     livewire(PostsTable::class)
         ->assertTableBulkActionVisible('visible')
@@ -144,8 +144,8 @@ it('can hide a bulk action', function (): void {
 
 it('can disable a bulk action', function (): void {
     livewire(PostsTable::class)
-        ->assertActionEnabled(TestAction::make('enabled')->table()->bulk())
-        ->assertActionDisabled(TestAction::make('disabled')->table()->bulk());
+        ->assertActionEnabled(TestAction::make('enabled')->bulk()->table())
+        ->assertActionDisabled(TestAction::make('disabled')->bulk()->table());
 
     livewire(PostsTable::class)
         ->assertTableBulkActionEnabled('enabled')
@@ -154,8 +154,8 @@ it('can disable a bulk action', function (): void {
 
 it('can have an icon', function (): void {
     livewire(PostsTable::class)
-        ->assertActionHasIcon(TestAction::make('hasIcon')->table()->bulk(), Heroicon::PencilSquare)
-        ->assertActionDoesNotHaveIcon(TestAction::make('hasIcon')->table()->bulk(), Heroicon::Trash);
+        ->assertActionHasIcon(TestAction::make('hasIcon')->bulk()->table(), Heroicon::PencilSquare)
+        ->assertActionDoesNotHaveIcon(TestAction::make('hasIcon')->bulk()->table(), Heroicon::Trash);
 
     livewire(PostsTable::class)
         ->assertTableBulkActionHasIcon('hasIcon', Heroicon::PencilSquare)
@@ -164,8 +164,8 @@ it('can have an icon', function (): void {
 
 it('can have a label', function (): void {
     livewire(PostsTable::class)
-        ->assertActionHasLabel(TestAction::make('hasLabel')->table()->bulk(), 'My Action')
-        ->assertActionDoesNotHaveLabel(TestAction::make('hasLabel')->table()->bulk(), 'My Other Action');
+        ->assertActionHasLabel(TestAction::make('hasLabel')->bulk()->table(), 'My Action')
+        ->assertActionDoesNotHaveLabel(TestAction::make('hasLabel')->bulk()->table(), 'My Other Action');
 
     livewire(PostsTable::class)
         ->assertTableBulkActionHasLabel('hasLabel', 'My Action')
@@ -174,8 +174,8 @@ it('can have a label', function (): void {
 
 it('can have a color', function (): void {
     livewire(PostsTable::class)
-        ->assertActionHasColor(TestAction::make('hasColor')->table()->bulk(), 'primary')
-        ->assertActionDoesNotHaveColor(TestAction::make('hasColor')->table()->bulk(), 'gray');
+        ->assertActionHasColor(TestAction::make('hasColor')->bulk()->table(), 'primary')
+        ->assertActionDoesNotHaveColor(TestAction::make('hasColor')->bulk()->table(), 'gray');
 
     livewire(PostsTable::class)
         ->assertTableBulkActionHasColor('hasColor', 'primary')
@@ -184,8 +184,8 @@ it('can have a color', function (): void {
 
 it('can state whether a bulk action exists', function (): void {
     livewire(PostsTable::class)
-        ->assertActionExists(TestAction::make('exists')->table()->bulk())
-        ->assertActionDoesNotExist(TestAction::make('doesNotExist')->table()->bulk());
+        ->assertActionExists(TestAction::make('exists')->bulk()->table())
+        ->assertActionDoesNotExist(TestAction::make('doesNotExist')->bulk()->table());
 
     livewire(PostsTable::class)
         ->assertTableBulkActionExists('exists')

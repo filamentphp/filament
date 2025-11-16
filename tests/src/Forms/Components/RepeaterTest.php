@@ -297,28 +297,28 @@ it('can use select options from an enum with `disableOptionsWhenSelectedInSiblin
 
 it('can be compact', function (): void {
     $repeater = Repeater::make('members')
+        ->compact()
         ->schema([
             TextInput::make('name'),
-        ])
-        ->compact();
+        ]);
 
     expect($repeater->isCompact())->toBeTrue();
 });
 
 it('can conditionally be compact', function (): void {
     $repeater = Repeater::make('members')
+        ->compact(fn () => true)
         ->schema([
             TextInput::make('name'),
-        ])
-        ->compact(fn () => true);
+        ]);
 
     expect($repeater->isCompact())->toBeTrue();
 
     $repeater = Repeater::make('members')
+        ->compact(fn () => false)
         ->schema([
             TextInput::make('name'),
-        ])
-        ->compact(fn () => false);
+        ]);
 
     expect($repeater->isCompact())->toBeFalse();
 });
@@ -327,12 +327,12 @@ it('can use arguments to hide the delete action', function (): void {
     $undoRepeaterFake = Repeater::fake();
 
     $deleteAction1 = TestAction::make('delete')
-        ->schemaComponent('hiddenDelete')
-        ->arguments(['item' => 1]);
+        ->arguments(['item' => 1])
+        ->schemaComponent('hiddenDelete');
 
     $deleteAction2 = TestAction::make('delete')
-        ->schemaComponent('hiddenDelete')
-        ->arguments(['item' => 2]);
+        ->arguments(['item' => 2])
+        ->schemaComponent('hiddenDelete');
 
     livewire(TestComponentWithRepeater::class)
         ->assertActionHidden($deleteAction1)
@@ -442,6 +442,7 @@ class TestComponentWithRepeater extends Livewire
                         ],
                     ]),
                 Repeater::make('hiddenDelete')
+                    ->deleteAction(fn (Action $action) => $action->hidden(fn (array $arguments): bool => $arguments['item'] === 1))
                     ->schema([
                         TextInput::make('title'),
                     ])
@@ -455,8 +456,7 @@ class TestComponentWithRepeater extends Livewire
                         [
                             'title' => 'title 3',
                         ],
-                    ])
-                    ->deleteAction(fn (Action $action) => $action->hidden(fn (array $arguments): bool => $arguments['item'] === 1)),
+                    ]),
             ])
             ->statePath('data');
     }
@@ -471,8 +471,8 @@ class TestComponentWithEnumSelectRepeater extends Livewire
                 Repeater::make('alternatives')
                     ->schema([
                         Select::make('letter')
-                            ->options(TestLetterEnum::class)
-                            ->disableOptionsWhenSelectedInSiblingRepeaterItems(),
+                            ->disableOptionsWhenSelectedInSiblingRepeaterItems()
+                            ->options(TestLetterEnum::class),
                     ]),
             ])
             ->statePath('data');

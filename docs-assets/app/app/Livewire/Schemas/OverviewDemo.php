@@ -34,10 +34,10 @@ class OverviewDemo extends Component implements HasActions, HasSchemas
             ->statePath('data')
             ->components([
                 Group::make()
-                    ->id('example')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-2xl',
                     ])
+                    ->id('example')
                     ->schema([
                         Grid::make(2)
                             ->schema([

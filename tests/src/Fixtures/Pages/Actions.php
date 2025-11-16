@@ -36,7 +36,6 @@ class Actions extends Page
                     $this->dispatch('before-hook-called', data: $action->getData());
                 }),
             Action::make('arguments')
-                ->requiresConfirmation()
                 ->action(function (array $arguments): void {
                     $this->dispatch('arguments-called', arguments: $arguments);
                 })
@@ -46,7 +45,8 @@ class Actions extends Page
                         ->action(function (array $arguments): void {
                             $this->dispatch('nested-called', arguments: $arguments);
                         }),
-                ]),
+                ])
+                ->requiresConfirmation(),
             Action::make('record-arguments')
                 ->record(fn (array $arguments) => $arguments['key'])
                 ->resolveRecordUsing(fn () => null)
@@ -54,25 +54,6 @@ class Actions extends Page
                     $this->dispatch('record-arguments-called', arguments: $arguments);
                 }),
             Action::make('parent')
-                ->schema([
-                    TextInput::make('foo')
-                        ->required()
-                        ->registerActions([
-                            Action::make('nested')
-                                ->schema([
-                                    TextInput::make('bar')
-                                        ->required(),
-                                ])
-                                ->action(fn () => null),
-                            Action::make('cancelParent')
-                                ->schema([
-                                    TextInput::make('bar')
-                                        ->required(),
-                                ])
-                                ->action(fn () => null)
-                                ->cancelParentActions(),
-                        ]),
-                ])
                 ->action(function (array $data): void {
                     $this->dispatch('parent-called', foo: $data['foo']);
                 })
@@ -86,10 +67,6 @@ class Actions extends Page
                 ])
                 ->registerModalActions([
                     Action::make('manuallyRegisteredModal')
-                        ->schema([
-                            TextInput::make('bar')
-                                ->required(),
-                        ])
                         ->registerModalActions([
                             Action::make('testData')
                                 ->schema([
@@ -112,7 +89,30 @@ class Actions extends Page
                                     );
                                 }),
                         ])
+                        ->schema([
+                            TextInput::make('bar')
+                                ->required(),
+                        ])
                         ->action(fn () => null),
+                ])
+                ->schema([
+                    TextInput::make('foo')
+                        ->registerActions([
+                            Action::make('nested')
+                                ->schema([
+                                    TextInput::make('bar')
+                                        ->required(),
+                                ])
+                                ->action(fn () => null),
+                            Action::make('cancelParent')
+                                ->action(fn () => null)
+                                ->cancelParentActions()
+                                ->schema([
+                                    TextInput::make('bar')
+                                        ->required(),
+                                ]),
+                        ])
+                        ->required(),
                 ]),
             Action::make('halt')
                 ->requiresConfirmation()

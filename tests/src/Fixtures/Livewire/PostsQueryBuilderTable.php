@@ -80,8 +80,8 @@ class PostsQueryBuilderTable extends Component implements HasActions, HasSchemas
                         RelationshipConstraint::make('author')
                             ->selectable(
                                 IsRelatedToOperator::make()
-                                    ->titleAttribute('name')
                                     ->searchable()
+                                    ->titleAttribute('name')
                             ),
                         TextConstraint::make('author_email')
                             ->label('Author Email')
@@ -94,12 +94,12 @@ class PostsQueryBuilderTable extends Component implements HasActions, HasSchemas
                             ->relationship(name: 'author', titleAttribute: 'score'),
                         SelectConstraint::make('author_status')
                             ->label('Author Status')
-                            ->relationship(name: 'author', titleAttribute: 'status')
                             ->options([
                                 'active' => 'Active',
                                 'inactive' => 'Inactive',
                                 'pending' => 'Pending',
-                            ]),
+                            ])
+                            ->relationship(name: 'author', titleAttribute: 'status'),
                         DateConstraint::make('author_verified_at')
                             ->label('Author Verified At')
                             ->relationship(name: 'author', titleAttribute: 'email_verified_at'),

@@ -24,15 +24,15 @@ class PostsTableWithQualifiedColumns extends Component implements HasActions, Ha
             ->query(Post::query())
             ->columns([
                 Tables\Columns\TextColumn::make('id')
-                    ->sortable()
-                    ->searchable(['posts.id']),
+                    ->searchable(['posts.id'])
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('title')
-                    ->sortable()
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('author.team.name')
                     ->label('Author Team')
-                    ->sortable()
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable(),
             ])
             ->paginated(false);
     }

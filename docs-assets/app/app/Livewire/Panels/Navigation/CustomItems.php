@@ -17,14 +17,14 @@ class CustomItems extends Page
             ->getCurrentPanel()
             ->navigationItems([
                 NavigationItem::make('Analytics')
-                    ->url('https://filament.pirsch.io', shouldOpenInNewTab: true)
-                    ->icon(Heroicon::OutlinedPresentationChartLine)
                     ->group('Reports')
-                    ->sort(3),
+                    ->icon(Heroicon::OutlinedPresentationChartLine)
+                    ->sort(3)
+                    ->url('https://filament.pirsch.io', shouldOpenInNewTab: true),
                 NavigationItem::make('dashboard')
                     ->label(fn (): string => __('filament-panels::pages/dashboard.title'))
-                    ->url(fn (): string => Dashboard::getUrl())
-                    ->isActiveWhen(fn () => request()->routeIs('filament.admin.pages.dashboard')),
+                    ->isActiveWhen(fn () => request()->routeIs('filament.admin.pages.dashboard'))
+                    ->url(fn (): string => Dashboard::getUrl()),
             ]);
     }
 }

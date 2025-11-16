@@ -5,3 +5,4 @@ composer.lock
 docs-assets
 packages/panels/resources/boost
 tests/src/Upgrade/Fixture
+tests/src/Support/Rector/AlphabetizeFluentMethodsRector/Fixture

@@ -80,18 +80,18 @@ class ActionsDemo extends Component implements HasActions, HasSchemas
     public function badgedAction(): Action
     {
         return Action::make('badged')
-            ->iconButton()
+            ->badge(5)
             ->icon(Heroicon::Funnel)
-            ->badge(5);
+            ->iconButton();
     }
 
     public function successBadgedAction(): Action
     {
         return Action::make('successBadged')
-            ->iconButton()
-            ->icon(Heroicon::Funnel)
             ->badge(5)
-            ->badgeColor('success');
+            ->badgeColor('success')
+            ->icon(Heroicon::Funnel)
+            ->iconButton();
     }
 
     public function outlinedAction(): Action
@@ -116,10 +116,10 @@ class ActionsDemo extends Component implements HasActions, HasSchemas
         return Action::make('confirmationModalCustomText')
             ->label('Delete')
             ->color('danger')
-            ->requiresConfirmation()
-            ->modalHeading('Delete post')
             ->modalDescription('Are you sure you\'d like to delete this post? This cannot be undone.')
+            ->modalHeading('Delete post')
             ->modalSubmitActionLabel('Yes, delete it')
+            ->requiresConfirmation()
             ->action(fn () => null);
     }
 
@@ -127,10 +127,10 @@ class ActionsDemo extends Component implements HasActions, HasSchemas
     {
         return Action::make('modalIcon')
             ->label('Delete')
-            ->color('danger')
-            ->requiresConfirmation()
             ->action(fn () => null)
-            ->modalIcon(Heroicon::OutlinedTrash);
+            ->color('danger')
+            ->modalIcon(Heroicon::OutlinedTrash)
+            ->requiresConfirmation();
     }
 
     public function modalFormAction(): Action
@@ -151,6 +151,7 @@ class ActionsDemo extends Component implements HasActions, HasSchemas
             ->label('Create')
             ->steps([
                 Step::make('Name')
+                    ->columns(2)
                     ->description('Give the category unique name')
                     ->schema([
                         TextInput::make('name')
@@ -158,8 +159,7 @@ class ActionsDemo extends Component implements HasActions, HasSchemas
                         TextInput::make('slug')
                             ->disabled()
                             ->required(),
-                    ])
-                    ->columns(2),
+                    ]),
                 Step::make('Description')
                     ->description('Add some extra details')
                     ->schema([]),

@@ -17,15 +17,15 @@ class ActiveIcon extends Page
             ->navigationItems([
                 NavigationItem::make()
                     ->label('Settings Inactive')
-                    ->url(fn (): string => '#')
                     ->activeIcon(Heroicon::OutlinedDocumentText)
-                    ->icon(Heroicon::OutlinedCog),
+                    ->icon(Heroicon::OutlinedCog)
+                    ->url(fn (): string => '#'),
                 NavigationItem::make('')
                     ->label('Settings Active')
-                    ->url(fn (): string => '#')
-                    ->isActiveWhen(fn () => request()->path() === 'panels/navigation/active-icon')
                     ->activeIcon(Heroicon::Cog)
-                    ->icon(Heroicon::Cog),
+                    ->icon(Heroicon::Cog)
+                    ->isActiveWhen(fn () => request()->path() === 'panels/navigation/active-icon')
+                    ->url(fn (): string => '#'),
             ]);
     }
 }

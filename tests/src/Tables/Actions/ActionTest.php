@@ -255,9 +255,9 @@ it('can cancel a grouped parent action when calling a nested action', function (
 
 it('can call an action with arguments', function (): void {
     livewire(PostsTable::class)
-        ->callAction(TestAction::make('arguments')->table()->arguments([
+        ->callAction(TestAction::make('arguments')->arguments([
             'payload' => $payload = Str::random(),
-        ]))
+        ])->table())
         ->assertDispatched('arguments-called', arguments: [
             'payload' => $payload,
         ]);

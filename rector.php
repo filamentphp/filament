@@ -1,5 +1,6 @@
 <?php
 
+use Filament\Support\Rector\AlphabetizeFluentMethodsRector;
 use Rector\Config\RectorConfig;
 
 return RectorConfig::configure()
@@ -14,4 +15,12 @@ return RectorConfig::configure()
     ])
     ->withTypeCoverageLevel(0)
     ->withDeadCodeLevel(0)
-    ->withCodeQualityLevel(0);
+    ->withCodeQualityLevel(0)
+    ->withRules([
+        AlphabetizeFluentMethodsRector::class,
+    ])
+    ->withSkip([
+        AlphabetizeFluentMethodsRector::class => [
+            __DIR__ . '/packages',
+        ],
+    ]);

@@ -18,14 +18,14 @@ class SortItems extends Page
                 NavigationItem::make()
                     ->label('Products')
                     ->badge('2')
-                    ->sort(2)
                     ->icon(Heroicon::OutlinedDocumentText)
+                    ->sort(2)
                     ->url(fn (): string => '#'),
                 NavigationItem::make('')
                     ->label('Orders')
                     ->badge('1')
-                    ->sort(1)
                     ->icon(Heroicon::OutlinedDocumentText)
+                    ->sort(1)
                     ->url(fn (): string => '#'),
             ]);
     }

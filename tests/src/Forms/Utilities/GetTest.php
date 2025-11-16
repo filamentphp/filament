@@ -41,11 +41,11 @@ it('can get the value of a nested field', function (): void {
             return $form
                 ->components([
                     Section::make()
-                        ->statePath('nested')
                         ->schema([
                             TextInput::make('foo')
                                 ->live(),
-                        ]),
+                        ])
+                        ->statePath('nested'),
                     TextInput::make('bar')
                         ->label(fn (Get $get): string => "Label {$get('nested.foo')}"),
                 ])
@@ -68,11 +68,11 @@ it('can get the value from a parent level field', function (): void {
                     TextInput::make('foo')
                         ->live(),
                     Section::make()
-                        ->statePath('nested')
                         ->schema([
                             TextInput::make('bar')
                                 ->label(fn (Get $get): string => "Label {$get('../foo')}"),
-                        ]),
+                        ])
+                        ->statePath('nested'),
                 ])
                 ->statePath('data');
         }
@@ -91,17 +91,17 @@ it('can get the value from a parent level field with a nested field', function (
             return $form
                 ->components([
                     Section::make()
-                        ->statePath('nestedOne')
                         ->schema([
                             TextInput::make('foo')
                                 ->live(),
-                        ]),
+                        ])
+                        ->statePath('nestedOne'),
                     Section::make()
-                        ->statePath('nestedTwo')
                         ->schema([
                             TextInput::make('bar')
                                 ->label(fn (Get $get): string => "Label {$get('../nestedOne.foo')}"),
-                        ]),
+                        ])
+                        ->statePath('nestedTwo'),
                 ])
                 ->statePath('data');
         }

@@ -17,9 +17,9 @@ class BadgeColor extends Page
             ->navigationItems([
                 NavigationItem::make()
                     ->label('Orders')
-                    ->url(fn (): string => '#')
+                    ->badge(32, 'danger')
                     ->icon(Heroicon::OutlinedShoppingCart)
-                    ->badge(32, 'danger'),
+                    ->url(fn (): string => '#'),
             ]);
     }
 }

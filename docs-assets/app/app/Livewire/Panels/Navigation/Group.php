@@ -17,9 +17,9 @@ class Group extends Page
             ->navigationItems([
                 NavigationItem::make()
                     ->label('Bank Accounts')
-                    ->url(fn (): string => '#')
                     ->group('Settings')
-                    ->icon(Heroicon::OutlinedCurrencyDollar),
+                    ->icon(Heroicon::OutlinedCurrencyDollar)
+                    ->url(fn (): string => '#'),
             ]);
     }
 }

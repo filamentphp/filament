@@ -50,19 +50,19 @@ class PostsTable extends Component implements HasActions, HasSchemas, Tables\Con
             ])
             ->columns([
                 Tables\Columns\TextColumn::make('title')
-                    ->sortable()
                     ->searchable()
+                    ->sortable()
                     ->action(fn () => $this->dispatch('title-action-called')),
                 Tables\Columns\TextColumn::make('content')
-                    ->words(10)
-                    ->searchable(isIndividual: true, isGlobal: false),
+                    ->searchable(isIndividual: true, isGlobal: false)
+                    ->words(10),
                 Tables\Columns\TextColumn::make('author.name')
-                    ->sortable()
-                    ->searchable()
                     ->action(
                         Action::make('column-action-object')
                             ->action(fn () => $this->dispatch('column-action-object-called')),
                     )
+                    ->searchable()
+                    ->sortable()
                     ->summarize([
                         Tables\Columns\Summarizers\Range::make('range'),
                         Tables\Columns\Summarizers\Range::make('published_range')
@@ -75,32 +75,32 @@ class PostsTable extends Component implements HasActions, HasSchemas, Tables\Con
                     ->sortable(),
                 Tables\Columns\TextColumn::make('author.company.name')
                     ->label('Author Company (BelongsTo -> BelongsToThrough)')
-                    ->sortable()
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('team.name')
                     ->label('Team (BelongsToThrough)')
-                    ->sortable()
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('team.company.name')
                     ->label('Team Company (Nested BelongsToThrough)')
-                    ->sortable()
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('author.profile.bio')
                     ->label('Author Profile Bio')
-                    ->sortable()
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('author.profile.company.name')
                     ->label('Author Company')
-                    ->sortable()
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('author.image.url')
                     ->label('Author Image URL')
-                    ->sortable()
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('author.profile.image.alt_text')
                     ->label('Profile Image Alt')
-                    ->sortable()
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\IconColumn::make('is_published')
                     ->boolean()
                     ->summarize([
@@ -154,9 +154,9 @@ class PostsTable extends Component implements HasActions, HasSchemas, Tables\Con
                         'blue' => 'Blue',
                     ]),
                 Tables\Columns\TextColumn::make('title2')
-                    ->sortable()
+                    ->prefix(fn (Post $record): string => $record->is_published ? 'published' : 'unpublished')
                     ->searchable()
-                    ->prefix(fn (Post $record): string => $record->is_published ? 'published' : 'unpublished'),
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('toggleable_column')
                     ->state('Toggleable column state')
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -168,11 +168,11 @@ class PostsTable extends Component implements HasActions, HasSchemas, Tables\Con
                     ->relationship('author', 'name')
                     ->searchable(['name', 'email', 'job']),
                 Tables\Filters\SelectFilter::make('select_filter_attribute')
+                    ->attribute('is_published')
                     ->options([
                         true => 'Published',
                         false => 'Not Published',
-                    ])
-                    ->attribute('is_published'),
+                    ]),
                 Tables\Filters\TrashedFilter::make(),
                 Tables\Filters\Filter::make('hidden')
                     ->hidden(),
@@ -245,25 +245,6 @@ class PostsTable extends Component implements HasActions, HasSchemas, Tables\Con
                             ->required(),
                     ]),
                 Action::make('parent')
-                    ->schema([
-                        TextInput::make('foo')
-                            ->required()
-                            ->registerActions([
-                                Action::make('nested')
-                                    ->schema([
-                                        TextInput::make('bar')
-                                            ->required(),
-                                    ])
-                                    ->action(fn (array $data, Post $record) => $this->dispatch('nested-called', bar: $data['bar'], recordKey: $record->getKey())),
-                                Action::make('cancelParent')
-                                    ->schema([
-                                        TextInput::make('bar')
-                                            ->required(),
-                                    ])
-                                    ->action(fn (array $data, Post $record) => $this->dispatch('nested-called', bar: $data['bar'], recordKey: $record->getKey()))
-                                    ->cancelParentActions(),
-                            ]),
-                    ])
                     ->action(function (array $data, Post $record): void {
                         $this->dispatch('parent-called', foo: $data['foo'], recordKey: $record->getKey());
                     })
@@ -282,31 +263,31 @@ class PostsTable extends Component implements HasActions, HasSchemas, Tables\Con
                                     ->required(),
                             ])
                             ->action(fn (array $data, Post $record) => $this->dispatch('nested-called', bar: $data['bar'], recordKey: $record->getKey())),
+                    ])
+                    ->schema([
+                        TextInput::make('foo')
+                            ->registerActions([
+                                Action::make('nested')
+                                    ->schema([
+                                        TextInput::make('bar')
+                                            ->required(),
+                                    ])
+                                    ->action(fn (array $data, Post $record) => $this->dispatch('nested-called', bar: $data['bar'], recordKey: $record->getKey())),
+                                Action::make('cancelParent')
+                                    ->action(fn (array $data, Post $record) => $this->dispatch('nested-called', bar: $data['bar'], recordKey: $record->getKey()))
+                                    ->cancelParentActions()
+                                    ->schema([
+                                        TextInput::make('bar')
+                                            ->required(),
+                                    ]),
+                            ])
+                            ->required(),
                     ]),
                 ActionGroup::make([
                     DeleteAction::make('groupedDelete'),
                     ForceDeleteAction::make('groupedForceDelete'),
                     RestoreAction::make('groupedRestore'),
                     Action::make('groupedParent')
-                        ->schema([
-                            TextInput::make('foo')
-                                ->required()
-                                ->registerActions([
-                                    Action::make('nested')
-                                        ->schema([
-                                            TextInput::make('bar')
-                                                ->required(),
-                                        ])
-                                        ->action(fn (array $data, Post $record) => $this->dispatch('nested-called', bar: $data['bar'], recordKey: $record->getKey())),
-                                    Action::make('cancelParent')
-                                        ->schema([
-                                            TextInput::make('bar')
-                                                ->required(),
-                                        ])
-                                        ->action(fn (array $data, Post $record) => $this->dispatch('nested-called', bar: $data['bar'], recordKey: $record->getKey()))
-                                        ->cancelParentActions(),
-                                ]),
-                        ])
                         ->action(function (array $data, Post $record): void {
                             $this->dispatch('grouped-parent-called', foo: $data['foo'], recordKey: $record->getKey());
                         })
@@ -325,6 +306,25 @@ class PostsTable extends Component implements HasActions, HasSchemas, Tables\Con
                                         ->required(),
                                 ])
                                 ->action(fn (array $data, Post $record) => $this->dispatch('nested-called', bar: $data['bar'], recordKey: $record->getKey())),
+                        ])
+                        ->schema([
+                            TextInput::make('foo')
+                                ->registerActions([
+                                    Action::make('nested')
+                                        ->schema([
+                                            TextInput::make('bar')
+                                                ->required(),
+                                        ])
+                                        ->action(fn (array $data, Post $record) => $this->dispatch('nested-called', bar: $data['bar'], recordKey: $record->getKey())),
+                                    Action::make('cancelParent')
+                                        ->action(fn (array $data, Post $record) => $this->dispatch('nested-called', bar: $data['bar'], recordKey: $record->getKey()))
+                                        ->cancelParentActions()
+                                        ->schema([
+                                            TextInput::make('bar')
+                                                ->required(),
+                                        ]),
+                                ])
+                                ->required(),
                         ]),
                 ]),
             ])

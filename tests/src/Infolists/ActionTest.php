@@ -57,9 +57,9 @@ it('can set default action data when mounted', function (): void {
 
 it('can call an action with arguments', function (): void {
     livewire(InfolistActions::class)
-        ->callAction(TestAction::make('setValueFromArguments')->schemaComponent('textEntry')->arguments([
+        ->callAction(TestAction::make('setValueFromArguments')->arguments([
             'value' => $value = Str::random(),
-        ]))
+        ])->schemaComponent('textEntry'))
         ->assertDispatched('foo', $value);
 
     livewire(InfolistActions::class)

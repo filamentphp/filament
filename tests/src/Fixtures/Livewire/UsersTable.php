@@ -30,31 +30,31 @@ class UsersTable extends Component implements HasActions, HasSchemas, Tables\Con
             ])
             ->columns([
                 Tables\Columns\TextColumn::make('name')
-                    ->sortable()
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('email')
-                    ->sortable()
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('profile.bio')
                     ->label('Profile Bio')
-                    ->sortable()
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('profile.company.name')
                     ->label('Company')
-                    ->sortable()
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('profile.setting.theme')
                     ->label('Theme')
-                    ->sortable()
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('profile.setting.language')
                     ->label('Language')
-                    ->sortable()
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('image.url')
                     ->label('Image URL')
-                    ->sortable()
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable(),
             ]);
     }
 

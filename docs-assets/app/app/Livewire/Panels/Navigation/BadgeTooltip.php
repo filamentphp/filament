@@ -17,10 +17,10 @@ class BadgeTooltip extends Page
             ->navigationItems([
                 NavigationItem::make()
                     ->label('Users')
-                    ->url(fn (): string => '#')
-                    ->icon(Heroicon::OutlinedUserGroup)
                     ->badge(12)
-                    ->badgeTooltip('The number of users'),
+                    ->badgeTooltip('The number of users')
+                    ->icon(Heroicon::OutlinedUserGroup)
+                    ->url(fn (): string => '#'),
             ]);
     }
 }

@@ -109,7 +109,7 @@ it('renders actions based on policy', function (string $action, string $policyMe
 
     livewire(DepartmentsRelationManager::class, ['ownerRecord' => $ticket, 'pageClass' => EditTicket::class])
         ->filterTable('trashed', $isSoftDeleted ? 1 : null)
-        ->{$isVisible ? 'assertActionVisible' : 'assertActionHidden'}(TestAction::make($action)->table($department)->bulk($isBulkAction));
+        ->{$isVisible ? 'assertActionVisible' : 'assertActionHidden'}(TestAction::make($action)->bulk($isBulkAction)->table($department));
 
     app()->bind(DepartmentPolicy::class . '::' . $policyMethod, fn (): bool => true);
 })->with([

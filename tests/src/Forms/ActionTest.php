@@ -82,9 +82,9 @@ it('can set default action data when mounted', function (): void {
 
 it('can call an action with arguments', function (): void {
     livewire(Actions::class)
-        ->callAction(TestAction::make('setValueFromArguments')->schemaComponent('textInput')->arguments([
+        ->callAction(TestAction::make('setValueFromArguments')->arguments([
             'value' => $value = Str::random(),
-        ]))
+        ])->schemaComponent('textInput'))
         ->assertSchemaStateSet(['textInput' => $value]);
 
     livewire(Actions::class)

@@ -36,19 +36,19 @@ class FieldsOverview extends Component implements HasActions, HasSchemas
             ->columns(1)
             ->components([
                 Group::make()
-                    ->id('account-settings')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-5xl',
                     ])
+                    ->id('account-settings')
                     ->schema([
                         Section::make('Account settings')
-                            ->description('Manage your account preferences')
+                            ->collapsible()
                             ->columns([
                                 'sm' => 1,
                                 'md' => 2,
                                 'lg' => 2,
                             ])
-                            ->collapsible()
+                            ->description('Manage your account preferences')
                             ->schema([
                                 TextInput::make('username')
                                     ->required(),
@@ -60,39 +60,39 @@ class FieldsOverview extends Component implements HasActions, HasSchemas
                                 Toggle::make('two_factor_auth')
                                     ->label('Enable two-factor authentication')
                                     ->helperText('Increase your account security by enabling 2FA')
-                                    ->onColor('success')
+                                    ->inline()
                                     ->offColor('danger')
-                                    ->inline(),
+                                    ->onColor('success'),
 
                                 ToggleButtons::make('theme_preference')
                                     ->label('Theme preference')
+                                    ->icons([
+                                        'light' => Heroicon::OutlinedSun,
+                                        'dark' => Heroicon::OutlinedMoon,
+                                        'system' => Heroicon::OutlinedComputerDesktop,
+                                    ])
+                                    ->inline()
                                     ->options([
                                         'light' => 'Light',
                                         'dark' => 'Dark',
                                         'system' => 'System',
                                     ])
-                                    ->inline()
-                                    ->default('system')
-                                    ->icons([
-                                        'light' => Heroicon::OutlinedSun,
-                                        'dark' => Heroicon::OutlinedMoon,
-                                        'system' => Heroicon::OutlinedComputerDesktop,
-                                    ]),
+                                    ->default('system'),
 
                                 ColorPicker::make('accent_color')
                                     ->default('#3490dc'),
 
                                 CheckboxList::make('notifications')
                                     ->label('Notification preferences')
-                                    ->options([
-                                        'email' => 'Email notifications',
-                                        'push' => 'Push notifications',
-                                        'sms' => 'SMS notifications',
-                                    ])
                                     ->descriptions([
                                         'email' => 'Receive updates via email',
                                         'push' => 'Get instant notifications on your devices',
                                         'sms' => 'Get text messages for urgent updates',
+                                    ])
+                                    ->options([
+                                        'email' => 'Email notifications',
+                                        'push' => 'Push notifications',
+                                        'sms' => 'SMS notifications',
                                     ])
                                     ->default(['email']),
                             ]),
