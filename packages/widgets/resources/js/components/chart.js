@@ -11,6 +11,12 @@ if (
 
 export default function chart({ cachedData, options, type }) {
     return {
+        userPointBackgroundColor: options?.pointBackgroundColor,
+        userXGridColor: options?.scales?.x?.grid?.color,
+        userYGridColor: options?.scales?.y?.grid?.color,
+        userRadialGridColor: options?.scales?.r?.grid?.color,
+        userRadialTicksColor: options?.scales?.r?.ticks?.color,
+
         init() {
             this.initChart()
 
@@ -96,7 +102,8 @@ export default function chart({ cachedData, options, type }) {
             options ??= {}
             options.borderWidth ??= 2
             options.maintainAspectRatio ??= false
-            options.pointBackgroundColor ??= borderColor
+            options.pointBackgroundColor =
+                this.userPointBackgroundColor ?? borderColor
             options.pointHitRadius ??= 4
             options.pointRadius ??= 2
             options.scales ??= {}
@@ -104,18 +111,33 @@ export default function chart({ cachedData, options, type }) {
             options.scales.x.border ??= {}
             options.scales.x.border.display ??= false
             options.scales.x.grid ??= {}
-            options.scales.x.grid.color ??= gridColor
+            options.scales.x.grid.color = this.userXGridColor ?? gridColor
             options.scales.x.grid.display ??= false
             options.scales.y ??= {}
             options.scales.y.border ??= {}
             options.scales.y.border.display ??= false
             options.scales.y.grid ??= {}
-            options.scales.y.grid.color ??= gridColor
+            options.scales.y.grid.color = this.userYGridColor ?? gridColor
 
-            if (['doughnut', 'pie'].includes(type)) {
+            if (['doughnut', 'pie', 'polarArea'].includes(type)) {
                 options.scales.x.display ??= false
                 options.scales.y.display ??= false
                 options.scales.y.grid.display ??= false
+            }
+
+            if (type === 'polarArea') {
+                const textColor = getComputedStyle(
+                    this.$refs.textColorElement,
+                ).color
+
+                options.scales.r ??= {}
+                options.scales.r.grid ??= {}
+                options.scales.r.grid.color =
+                    this.userRadialGridColor ?? gridColor
+                options.scales.r.ticks ??= {}
+                options.scales.r.ticks.color =
+                    this.userRadialTicksColor ?? textColor
+                options.scales.r.ticks.backdropColor ??= 'transparent'
             }
 
             return new Chart(this.$refs.canvas, {
