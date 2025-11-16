@@ -460,17 +460,21 @@ CODE_SAMPLE
         // Get the return type of this method call
         $returnType = $this->nodeTypeResolver->getType($methodCall);
 
-        // Check if the return type matches the root type (fluent interface)
-        // This means the method returns $this or the same class type
-        if ($rootType->isObject()->yes() && $returnType->isObject()->yes()) {
-            $rootClassNames = $rootType->getObjectClassNames();
-            $returnClassNames = $returnType->getObjectClassNames();
-
-            // Check if any of the class names match
-            return ! empty(array_intersect($rootClassNames, $returnClassNames));
+        // Root must be an object to have a fluent interface
+        if (! $rootType->isObject()->yes()) {
+            return false;
         }
 
-        return false;
+        // Return type must also be an object for fluent interface
+        if (! $returnType->isObject()->yes()) {
+            return false;
+        }
+
+        // Check if return type matches root type (fluent interface returns $this or same type)
+        $rootClassNames = $rootType->getObjectClassNames();
+        $returnClassNames = $returnType->getObjectClassNames();
+
+        return ! empty(array_intersect($rootClassNames, $returnClassNames));
     }
 
     protected function getMethodDefiningTrait(string $className, string $methodName): ?string
