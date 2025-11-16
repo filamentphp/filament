@@ -185,6 +185,12 @@ CODE_SAMPLE
      */
     protected function isActionTerminalMethod(string $methodName): bool
     {
+        // Action setup methods (run before lifecycle)
+        $setupMethods = [
+            'fillForm',
+            'mountUsing',
+        ];
+
         // Action lifecycle methods
         $lifecycleMethods = [
             'before',
@@ -192,6 +198,10 @@ CODE_SAMPLE
             'using',
             'after',
         ];
+
+        if (in_array($methodName, $setupMethods, true)) {
+            return true;
+        }
 
         if (in_array($methodName, $lifecycleMethods, true)) {
             return true;
@@ -268,28 +278,30 @@ CODE_SAMPLE
      */
     protected function getActionTerminalMethodPriority(string $methodName): int
     {
-        // Action lifecycle methods (in order)
-        if ($methodName === 'before') {
-            return 10;
-        }
-        if ($methodName === 'action') {
-            return 20;
-        }
-        if ($methodName === 'using') {
-            return 30;
-        }
-        if ($methodName === 'after') {
-            return 40;
+        // Define the order of terminal methods
+        $terminalMethodOrder = [
+            'fillForm',
+            'mountUsing',
+            'before',
+            'action',
+            'using',
+            'after',
+        ];
+
+        // Check exact match first
+        $index = array_search($methodName, $terminalMethodOrder, true);
+        if ($index !== false) {
+            return $index;
         }
 
         // Success methods come after lifecycle
         if (str_starts_with($methodName, 'success')) {
-            return 50;
+            return count($terminalMethodOrder);
         }
 
         // Failure methods come after success methods
         if (str_starts_with($methodName, 'failure')) {
-            return 60;
+            return count($terminalMethodOrder) + 1;
         }
 
         // Default priority for unknown terminal methods
@@ -319,14 +331,16 @@ CODE_SAMPLE
      */
     protected function getNotificationTerminalMethodPriority(string $methodName): int
     {
-        // Notification terminal methods ordering
-        $notificationTerminals = [
-            'send' => 10,
-            'sendToDatabase' => 20,
-            'broadcast' => 30,
+        // Define the order of notification terminal methods
+        $terminalMethodOrder = [
+            'send',
+            'sendToDatabase',
+            'broadcast',
         ];
 
-        return $notificationTerminals[$methodName] ?? 999;
+        $index = array_search($methodName, $terminalMethodOrder, true);
+
+        return $index !== false ? $index : 999;
     }
 
     protected function getRootNode(MethodCall $node): Expr
