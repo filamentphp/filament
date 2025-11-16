@@ -1143,7 +1143,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         });
 
         $this->createOptionUsing(static function (Select $component, array $data, Schema $schema) {
-            $record = $component->getRelationship()->getRelated();
+            $record = $component->getRelationship()->newModelInstance();
             $record->fill($data);
             $record->save();
 
@@ -1255,6 +1255,12 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         $relationshipName = $this->getRelationshipName();
 
         foreach (explode('.', $relationshipName) as $nestedRelationshipName) {
+            if ($record->hasAttribute($nestedRelationshipName)) {
+                $relationship = null;
+
+                break;
+            }
+
             if (! $record->isRelation($nestedRelationshipName)) {
                 $relationship = null;
 

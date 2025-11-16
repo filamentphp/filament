@@ -41,7 +41,7 @@ return [
             'actions' => [
 
                 'delete' => [
-                    'label' => 'Hapus yang dipilih',
+                    'label' => 'Hapus',
                 ],
 
             ],

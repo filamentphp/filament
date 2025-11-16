@@ -50,7 +50,7 @@ trait HasHint
                         /** @var self $parentComponent */
                         $parentComponent = $component->getContainer()->getParentComponent();
 
-                        return filled($parentComponent->hasHint());
+                        return filled($parentComponent->getHint());
                     });
             }
 

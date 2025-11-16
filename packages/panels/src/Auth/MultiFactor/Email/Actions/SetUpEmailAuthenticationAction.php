@@ -44,7 +44,14 @@ class SetUpEmailAuthenticationAction
                             /** @var HasEmailAuthentication $user */
                             $user = Filament::auth()->user();
 
-                            $emailAuthentication->sendCode($user);
+                            if (! $emailAuthentication->sendCode($user)) {
+                                Notification::make()
+                                    ->title(__('filament-panels::auth/multi-factor/email/actions/set-up.modal.form.code.actions.resend.notifications.throttled.title'))
+                                    ->danger()
+                                    ->send();
+
+                                return;
+                            }
 
                             Notification::make()
                                 ->title(__('filament-panels::auth/multi-factor/email/actions/set-up.modal.form.code.actions.resend.notifications.resent.title'))

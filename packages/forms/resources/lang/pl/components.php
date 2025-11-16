@@ -284,6 +284,10 @@ return [
 
     'markdown_editor' => [
 
+        'file_attachments_accepted_file_types_message' => 'Przesyłane pliki muszą być typu: :values.',
+
+        'file_attachments_max_size_message' => 'Przesyłane pliki nie mogą być większe niż :max kilobajtów.',
+
         'tools' => [
             'attach_files' => 'Dołącz pliki',
             'blockquote' => 'Cytat blokowy',
@@ -443,6 +447,71 @@ return [
 
             ],
 
+            'grid' => [
+
+                'label' => 'Siatka',
+
+                'modal' => [
+
+                    'heading' => 'Siatka',
+
+                    'form' => [
+
+                        'preset' => [
+
+                            'label' => 'Ustawienie predefiniowane',
+
+                            'placeholder' => 'Brak',
+
+                            'options' => [
+                                'two' => 'Dwie kolumny',
+                                'three' => 'Trzy kolumny',
+                                'four' => 'Cztery kolumny',
+                                'five' => 'Pięć kolumn',
+                                'two_start_third' => 'Dwie kolumny (1/3 i 2/3)',
+                                'two_end_third' => 'Dwie kolumny (2/3 i 1/3)',
+                                'two_start_fourth' => 'Dwie kolumny (1/4 i 3/4)',
+                                'two_end_fourth' => 'Dwie kolumny (3/4 i 1/4)',
+                            ],
+                        ],
+
+                        'columns' => [
+                            'label' => 'Kolumny',
+                        ],
+
+                        'from_breakpoint' => [
+
+                            'label' => 'Od punktu przerwania',
+
+                            'options' => [
+                                'default' => 'Każdy',
+                                'sm' => 'Mały (sm)',
+                                'md' => 'Średni (md)',
+                                'lg' => 'Duży (lg)',
+                                'xl' => 'Bardzo duży (xl)',
+                                '2xl' => 'Bardzo bardzo duży (2xl)',
+                            ],
+
+                        ],
+
+                        'is_asymmetric' => [
+                            'label' => 'Dwie asymetryczne kolumny',
+                        ],
+
+                        'start_span' => [
+                            'label' => 'Szerokość pierwszej kolumny',
+                        ],
+
+                        'end_span' => [
+                            'label' => 'Szerokość drugiej kolumny',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
             'link' => [
 
                 'label' => 'Edytuj',
@@ -467,7 +536,35 @@ return [
 
             ],
 
+            'text_color' => [
+
+                'label' => 'Kolor tekstu',
+
+                'modal' => [
+
+                    'heading' => 'Kolor tekstu',
+
+                    'form' => [
+
+                        'color' => [
+                            'label' => 'Kolor',
+                        ],
+
+                        'custom_color' => [
+                            'label' => 'Kolor niestandardowy',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
         ],
+
+        'file_attachments_accepted_file_types_message' => 'Przesyłane pliki muszą być typu: :values.',
+
+        'file_attachments_max_size_message' => 'Przesyłane pliki nie mogą być większe niż :max kilobajtów.',
 
         'no_merge_tag_search_results_message' => 'Brak wyników.',
 
@@ -481,6 +578,7 @@ return [
             'bold' => 'Pogrubienie',
             'bullet_list' => 'Lista punktowana',
             'clear_formatting' => 'Usuń formatowanie',
+            'code' => 'Kod',
             'code_block' => 'Blok kodu',
             'custom_blocks' => 'Bloki',
             'details' => 'Szczegóły',
@@ -489,6 +587,8 @@ return [
             'h1' => 'Tytuł',
             'h2' => 'Nagłówek',
             'h3' => 'Podtytuł',
+            'grid' => 'Siatka',
+            'grid_delete' => 'Usuń siatkę',
             'italic' => 'Kursywa',
             'lead' => 'Tekst wiodący',
             'link' => 'Adres',
@@ -510,9 +610,12 @@ return [
             'table_merge_cells' => 'Scal komórki',
             'table_split_cell' => 'Podziel komórkę',
             'table_toggle_header_row' => 'Przełącz wiersz nagłówka',
+            'text_color' => 'Kolor tekstu',
             'underline' => 'Podkreślenie',
             'undo' => 'Cofnij',
         ],
+
+        'uploading_file_message' => 'Przesyłanie pliku...',
 
     ],
 
@@ -592,6 +695,11 @@ return [
     'text_input' => [
 
         'actions' => [
+
+            'copy' => [
+                'label' => 'Kopiuj',
+                'message' => 'Skopiowano',
+            ],
 
             'hide_password' => [
                 'label' => 'Ukryj hasło',

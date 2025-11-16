@@ -12,13 +12,13 @@ Since all Filament components are mounted to a Livewire component, we're just us
 
 Looking for a full example on how to test a panel resource? Check out the [Testing resources](testing-resources) section.
 
-If you could like to learn the different methods available to test tables, check out the [Testing tables](../tables/testing) section.
+If you could like to learn the different methods available to test tables, check out the [Testing tables](testing-tables) section.
 
-If you need to test a schema, which encompasses both forms and infolists, check out the [Testing schemas](../schemas/testing) section.
+If you need to test a schema, which encompasses both forms and infolists, check out the [Testing schemas](testing-schemas) section.
 
-If you would like to test an action, including actions that exist in tables or in schemas, check out the [Testing actions](../actions/testing) section.
+If you would like to test an action, including actions that exist in tables or in schemas, check out the [Testing actions](testing-actions) section.
 
-If you would like to test a notification that you have sent, check out the [Testing notifications](../notifications/testing) section.
+If you would like to test a notification that you have sent, check out the [Testing notifications](testing-notifications) section.
 
 If you would like to test a custom page in a panel, these are Livewire components with no special behavior, so you should visit the [testing](https://livewire.laravel.com/docs/testing) section of the Livewire documentation.
 

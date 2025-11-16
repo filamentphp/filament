@@ -13,6 +13,10 @@
         }
     }
 
+    &:not(.fi-ta-ctn-with-footer .fi-ta-content-ctn) {
+        @apply rounded-b-xl;
+    }
+
     &:not(.fi-ta-ctn-with-header .fi-ta-content-ctn) {
         @apply border-t-0;
     }

@@ -170,7 +170,7 @@ class RequestPasswordReset extends SimplePage
         return __('filament-panels::auth/pages/password-reset/request-password-reset.title');
     }
 
-    public function getHeading(): string | Htmlable
+    public function getHeading(): string | Htmlable | null
     {
         return __('filament-panels::auth/pages/password-reset/request-password-reset.heading');
     }

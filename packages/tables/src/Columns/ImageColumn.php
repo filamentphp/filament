@@ -8,6 +8,7 @@ use Filament\Support\Concerns\CanWrap;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\TextSize;
 use Illuminate\Contracts\Filesystem\Filesystem;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
@@ -357,7 +358,7 @@ class ImageColumn extends Column implements HasEmbeddedView
         return $this->evaluate($this->limit);
     }
 
-    public function limitedRemainingText(bool | Closure $condition = true, string | Closure | null $size = null): static
+    public function limitedRemainingText(bool | Closure $condition = true, TextSize | string | Closure | null $size = null): static
     {
         $this->hasLimitedRemainingText = $condition;
         $this->limitedRemainingTextSize($size);
@@ -434,6 +435,7 @@ class ImageColumn extends Column implements HasEmbeddedView
                         ? '{
                             content: ' . Js::from($tooltip) . ',
                             theme: $store.theme,
+                            allowHTML: ' . Js::from($tooltip instanceof Htmlable) . ',
                         }'
                         : null,
                 ], escape: false);
@@ -493,6 +495,7 @@ class ImageColumn extends Column implements HasEmbeddedView
                         ? '{
                                 content: ' . Js::from($tooltip) . ',
                                 theme: $store.theme,
+                                allowHTML: ' . Js::from($tooltip instanceof Htmlable) . ',
                             }'
                         : null,
                 ], escape: false)

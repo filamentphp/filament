@@ -28,7 +28,7 @@
                 x-load
                 x-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('markdown-editor', 'filament/forms') }}"
                 x-data="markdownEditorFormComponent({
-                            canAttachFiles: @js($hasToolbarButton('attachFiles')),
+                            canAttachFiles: @js($hasFileAttachments()),
                             isLiveDebounced: @js($isLiveDebounced()),
                             isLiveOnBlur: @js($isLiveOnBlur()),
                             liveDebounce: @js($getNormalizedLiveDebounce()),

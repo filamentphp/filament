@@ -19,7 +19,7 @@ trait HasNavigation
 
     protected static bool $shouldRegisterNavigation = true;
 
-    protected static ?string $navigationBadgeTooltip = null;
+    protected static string | Htmlable | null $navigationBadgeTooltip = null;
 
     protected static string | UnitEnum | null $navigationGroup = null;
 
@@ -70,12 +70,20 @@ trait HasNavigation
                 ->parentItem(static::getNavigationParentItem())
                 ->icon(static::getNavigationIcon())
                 ->activeIcon(static::getActiveNavigationIcon())
-                ->isActiveWhen(fn () => original_request()->routeIs(static::getRouteBaseName() . '.*'))
+                ->isActiveWhen(fn () => original_request()->routeIs(static::getNavigationItemActiveRoutePattern()))
                 ->badge(static::getNavigationBadge(), color: static::getNavigationBadgeColor())
                 ->badgeTooltip(static::getNavigationBadgeTooltip())
                 ->sort(static::getNavigationSort())
                 ->url(static::getNavigationUrl()),
         ];
+    }
+
+    /**
+     * @return string | array<string>
+     */
+    public static function getNavigationItemActiveRoutePattern(): string | array
+    {
+        return static::getRouteBaseName() . '.*';
     }
 
     public static function getSubNavigationPosition(): SubNavigationPosition
@@ -136,7 +144,7 @@ trait HasNavigation
         return null;
     }
 
-    public static function getNavigationBadgeTooltip(): ?string
+    public static function getNavigationBadgeTooltip(): string | Htmlable | null
     {
         return static::$navigationBadgeTooltip;
     }

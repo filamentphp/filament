@@ -77,7 +77,7 @@ class MyPluginServiceProvider extends PackageServiceProvider
 Please read this guide in its entirety before upgrading your plugin. It will help you understand the concepts and how to build your plugin.
 
 1. [Filament Asset Management](../advanced/assets)
-2. [Panel Plugin Development](../panels/plugins)
+2. [Panel Plugin Development](../plugins)
 3. [Icon Management](../styling/icons)
 4. [Colors Management](../styling/colors)
 5. [CSS Hooks](../styling/css-hooks)

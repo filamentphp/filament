@@ -536,6 +536,7 @@ const locales = {
     pt_BR: require('dayjs/locale/pt-br'),
     ro: require('dayjs/locale/ro'),
     ru: require('dayjs/locale/ru'),
+    sl: require('dayjs/locale/sl'),
     sr_Cyrl: require('dayjs/locale/sr-cyrl'),
     sr_Latn: require('dayjs/locale/sr'),
     sv: require('dayjs/locale/sv'),

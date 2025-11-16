@@ -2,6 +2,10 @@
     $fieldWrapperView = $getFieldWrapperView();
     $extraAttributeBag = $getExtraAttributeBag();
     $isDisabled = $isDisabled();
+    $isLive = $isLive();
+    $isLiveOnBlur = $isLiveOnBlur();
+    $isLiveDebounced = $isLiveDebounced();
+    $liveDebounce = $getLiveDebounce();
     $key = $getKey();
     $language = $getLanguage();
     $statePath = $getStatePath();
@@ -22,8 +26,12 @@
             x-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('code-editor', 'filament/forms') }}"
             x-data="codeEditorFormComponent({
                         isDisabled: @js($isDisabled),
+                        isLive: @js($isLive),
+                        isLiveDebounced: @js($isLiveDebounced),
+                        isLiveOnBlur: @js($isLiveOnBlur),
+                        liveDebounce: @js($liveDebounce),
                         language: @js($language?->value),
-                        state: $wire.{{ $applyStateBindingModifiers("\$entangle('{$statePath}')") }},
+                        state: $wire.{{ $applyStateBindingModifiers("\$entangle('{$statePath}')", isOptimisticallyLive: false) }},
                     })"
             wire:ignore
             wire:key="{{ $livewireKey }}.{{

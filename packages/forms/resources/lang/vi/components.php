@@ -468,6 +468,86 @@ return [
 
             ],
 
+            'text_color' => [
+                'label' => 'Màu chữ',
+                'modal' => [
+                    'form' => [
+                        'color' => [
+                            'label' => 'Màu chữ',
+                        ],
+                        'custom_color' => [
+                            'label' => 'Màu chữ tùy chỉnh',
+                        ],
+                    ],
+                    'heading' => 'Chọn màu chữ',
+                ],
+            ],
+
+            'grid' => [
+
+                'label' => 'Mẫu lưới',
+
+                'modal' => [
+
+                    'heading' => 'Mẫu lưới',
+
+                    'form' => [
+
+                        'preset' => [
+
+                            'label' => 'Cấu hình',
+
+                            'placeholder' => 'Không có',
+
+                            'options' => [
+                                'two' => '2 cột',
+                                'three' => '3 cột',
+                                'four' => '4 cột',
+                                'five' => '5 cột',
+                                'two_start_third' => '2 cột (1 - 2)',
+                                'two_end_third' => '2 cột (2 - 1)',
+                                'two_start_fourth' => '2 cột (1 - 3)',
+                                'two_end_fourth' => '2 cột (3 - 1)',
+                            ],
+                        ],
+
+                        'columns' => [
+                            'label' => 'Số cột',
+                        ],
+
+                        'from_breakpoint' => [
+
+                            'label' => 'Từ điểm ngắt',
+
+                            'options' => [
+                                'default' => 'Mặc định',
+                                'sm' => 'Nhỏ',
+                                'md' => 'Trung bình',
+                                'lg' => 'Lớn',
+                                'xl' => 'Rất lớn',
+                                '2xl' => 'Rất rất lớn',
+                            ],
+
+                        ],
+
+                        'is_asymmetric' => [
+                            'label' => '2 cột không đối xứng',
+                        ],
+
+                        'start_span' => [
+                            'label' => 'Số cột bắt đầu',
+                        ],
+
+                        'end_span' => [
+                            'label' => 'Số cột kết thúc',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
         ],
 
         'no_merge_tag_search_results_message' => 'Không tìm thấy thẻ nội dung động nào.',
@@ -514,6 +594,9 @@ return [
             'table_toggle_header_row' => 'Bật/tắt dòng tiêu đề',
             'underline' => 'Gạch chân',
             'undo' => 'Hoàn tác',
+            'text_color' => 'Màu chữ',
+            'grid' => 'Mẫu lưới',
+            'grid_delete' => 'Xóa mẫu lưới',
         ],
 
     ],

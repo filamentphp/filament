@@ -13,6 +13,7 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\View\Components\Columns\IconColumnComponent\IconComponent;
 use Filament\Tables\View\TablesIconAlias;
 use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Js;
@@ -67,7 +68,7 @@ class IconColumn extends Column implements HasEmbeddedView
     /**
      * @param  string | array<int | string, string | int> | Closure | null  $color
      */
-    public function false(string | BackedEnum | Closure | false | null $icon = null, string | array | Closure | null $color = null): static
+    public function false(string | BackedEnum | Htmlable | Closure | false | null $icon = null, string | array | Closure | null $color = null): static
     {
         $this->falseIcon($icon);
         $this->falseColor($color);
@@ -86,7 +87,7 @@ class IconColumn extends Column implements HasEmbeddedView
         return $this;
     }
 
-    public function falseIcon(string | BackedEnum | Closure | false | null $icon): static
+    public function falseIcon(string | BackedEnum | Htmlable | Closure | false | null $icon): static
     {
         $this->boolean();
         $this->falseIcon = $icon;
@@ -97,7 +98,7 @@ class IconColumn extends Column implements HasEmbeddedView
     /**
      * @param  string | array<int | string, string | int> | Closure | null  $color
      */
-    public function true(string | BackedEnum | Closure | false | null $icon = null, string | array | Closure | null $color = null): static
+    public function true(string | BackedEnum | Htmlable | Closure | false | null $icon = null, string | array | Closure | null $color = null): static
     {
         $this->trueIcon($icon);
         $this->trueColor($color);
@@ -116,7 +117,7 @@ class IconColumn extends Column implements HasEmbeddedView
         return $this;
     }
 
-    public function trueIcon(string | BackedEnum | Closure | false | null $icon): static
+    public function trueIcon(string | BackedEnum | Htmlable | Closure | false | null $icon): static
     {
         $this->boolean();
         $this->trueIcon = $icon;
@@ -164,7 +165,7 @@ class IconColumn extends Column implements HasEmbeddedView
         return $size;
     }
 
-    public function getIcon(mixed $state): string | BackedEnum | null
+    public function getIcon(mixed $state): string | BackedEnum | Htmlable | null
     {
         if (filled($icon = $this->getBaseIcon($state))) {
             return $icon;
@@ -209,7 +210,7 @@ class IconColumn extends Column implements HasEmbeddedView
         return $this->evaluate($this->falseColor) ?? 'danger';
     }
 
-    public function getFalseIcon(): string | BackedEnum | null
+    public function getFalseIcon(): string | BackedEnum | Htmlable | null
     {
         $icon = $this->evaluate($this->falseIcon);
 
@@ -230,7 +231,7 @@ class IconColumn extends Column implements HasEmbeddedView
         return $this->evaluate($this->trueColor) ?? 'success';
     }
 
-    public function getTrueIcon(): string | BackedEnum | null
+    public function getTrueIcon(): string | BackedEnum | Htmlable | null
     {
         $icon = $this->evaluate($this->trueIcon);
 
@@ -281,6 +282,7 @@ class IconColumn extends Column implements HasEmbeddedView
                         ? '{
                             content: ' . Js::from($tooltip) . ',
                             theme: $store.theme,
+                            allowHTML: ' . Js::from($tooltip instanceof Htmlable) . ',
                         }'
                         : null,
                 ], escape: false);
@@ -329,6 +331,7 @@ class IconColumn extends Column implements HasEmbeddedView
                             ? '{
                                 content: ' . Js::from($tooltip) . ',
                                 theme: $store.theme,
+                                allowHTML: ' . Js::from($tooltip instanceof Htmlable) . ',
                             }'
                             : null,
                     ], escape: false)

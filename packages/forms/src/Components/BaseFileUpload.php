@@ -649,6 +649,14 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
     #[Renderless]
     public function removeUploadedFile(string $fileKey): string | TemporaryUploadedFile | null
     {
+        if ($this->isDisabled()) {
+            return null;
+        }
+
+        if (! $this->isDeletable()) {
+            return null;
+        }
+
         $files = $this->getRawState();
         $file = $files[$fileKey] ?? null;
 
@@ -704,7 +712,11 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
     #[Renderless]
     public function reorderUploadedFiles(array $fileKeys): void
     {
-        if (! $this->isReorderable) {
+        if ($this->isDisabled()) {
+            return;
+        }
+
+        if (! $this->isReorderable()) {
             return;
         }
 

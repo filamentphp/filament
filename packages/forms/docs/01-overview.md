@@ -9,9 +9,9 @@ import UtilityInjection from "@components/UtilityInjection.astro"
 
 <AutoScreenshot name="forms/overview" alt="Account settings form example" version="4.x" />
 
-Filament's forms package allows you to easily build dynamic forms in your app. It's used within other Filament packages to render forms within [panel resources](../panels/resources), [action modals](../actions/modals), [table filters](../tables/filters), and more. Learning how to build forms is essential to learning how to use these Filament packages.
+Filament's forms package allows you to easily build dynamic forms in your app. It's used within other Filament packages to render forms within [panel resources](../resources), [action modals](../actions/modals), [table filters](../tables/filters), and more. Learning how to build forms is essential to learning how to use these Filament packages.
 
-This guide will walk you through the basics of building forms with Filament's form package. If you're planning to add a new form to your own Livewire component, you should [do that first](../components/form) and then come back. If you're adding a form to a [panel resource](../panels/resources), or another Filament package, you're ready to go!
+This guide will walk you through the basics of building forms with Filament's form package. If you're planning to add a new form to your own Livewire component, you should [do that first](../components/form) and then come back. If you're adding a form to a [panel resource](../resources), or another Filament package, you're ready to go!
 
 ## Form fields
 
@@ -1028,6 +1028,32 @@ function (Get $get) {
 <Aside variant="tip">
     Unless a form field is [reactive](#the-basics-of-reactivity), the schema will not refresh when the value of the field changes, only when the next user interaction occurs that makes a request to the server. If you need to react to changes in a field's value, it should be `live()`.
 </Aside>
+
+#### Type-safe retrieval of another field's state
+
+You may use a "typed" method on the `Get` utility to retrieve the state of another field in a type-safe manner:
+
+```php
+use Filament\Schemas\Components\Utilities\Get;
+
+$get->string('email');
+$get->integer('age');
+$get->float('price');
+$get->boolean('is_admin');
+$get->array('tags');
+$get->date('published_at');
+$get->enum('status', StatusEnum::class);
+$get->filled('email'); // Returns the result of the `filled()` helper for the field.
+$get->blank('email'); // Returns the result of the `blank()` helper for the field.
+```
+
+Each method assumes that the field's state can't be `null`. To force a nullable return type, pass the `isNullable: true` argument:
+
+```php
+use Filament\Schemas\Components\Utilities\Get;
+
+$get->string('email', isNullable: true);
+```
 
 ### Injecting the current Eloquent record
 

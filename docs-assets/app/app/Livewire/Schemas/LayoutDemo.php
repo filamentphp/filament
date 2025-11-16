@@ -11,6 +11,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\EmptyState;
 use Filament\Schemas\Components\Fieldset;
@@ -89,6 +90,38 @@ class LayoutDemo extends Component implements HasActions, HasSchemas
                                     ->default(100),
                             ])
                             ->columns(3),
+                    ]),
+                Group::make()
+                    ->id('dense')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-2xl',
+                    ])
+                    ->schema([
+                        Fieldset::make('Dense')
+                            ->columns(1)
+                            ->dense()
+                            ->schema([
+                                TextEntry::make('name')
+                                    ->state('Dan Harrin'),
+                                TextEntry::make('role')
+                                    ->state('Admin'),
+                            ]),
+                    ]),
+                Group::make()
+                    ->id('noGap')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-2xl',
+                    ])
+                    ->schema([
+                        Fieldset::make('No gap')
+                            ->columns(1)
+                            ->gap(false)
+                            ->schema([
+                                TextEntry::make('name')
+                                    ->state('Dan Harrin'),
+                                TextEntry::make('role')
+                                    ->state('Admin'),
+                            ]),
                     ]),
                 Group::make()
                     ->id('tabs')

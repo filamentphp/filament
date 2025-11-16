@@ -60,4 +60,13 @@ return [
         'alt' => ':nameロゴ',
     ],
 
+    'tenant_menu' => [
+
+        'search_field' => [
+            'label' => 'テナントを検索',
+            'placeholder' => '検索',
+        ],
+
+    ],
+
 ];

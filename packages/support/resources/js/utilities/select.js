@@ -1304,17 +1304,19 @@ export class Select {
     }
 
     async openDropdown() {
-        // Make dropdown visible but with position fixed (or absolute in containers with .fi-absolute-positioning-context class) and opacity 0 for measurement
+        // Make dropdown visible but with position absolute by default, or fixed in containers with .fi-fixed-positioning-context class, and opacity 0 for measurement
         this.dropdown.style.display = 'block'
         this.dropdown.style.opacity = '0'
 
-        // Check if the select is inside a container that requires absolute positioning
-        const useAbsolutePositioning =
-            this.selectButton.closest('.fi-absolute-positioning-context') !==
-            null
-        this.dropdown.style.position = useAbsolutePositioning
-            ? 'absolute'
-            : 'fixed'
+        // Check if the select is inside a container that opts in to fixed positioning
+        const useFixedPositioning =
+            this.selectButton.closest('.fi-fixed-positioning-context') !==
+                null &&
+            this.selectButton.closest('.fi-absolute-positioning-context') ===
+                null
+        this.dropdown.style.position = useFixedPositioning
+            ? 'fixed'
+            : 'absolute'
         // Set width immediately to match the select button
         this.dropdown.style.width = `${this.selectButton.offsetWidth}px`
         this.selectButton.setAttribute('aria-expanded', 'true')
@@ -1442,15 +1444,17 @@ export class Select {
             middleware.push(flip()) // Flip to top if not enough space at bottom
         }
 
-        // Check if the select is inside a container that requires absolute positioning
-        const useAbsolutePositioning =
-            this.selectButton.closest('.fi-absolute-positioning-context') !==
-            null
+        // Check if the select is inside a container that opts in to fixed positioning
+        const useFixedPositioning =
+            this.selectButton.closest('.fi-fixed-positioning-context') !==
+                null &&
+            this.selectButton.closest('.fi-absolute-positioning-context') ===
+                null
 
         computePosition(this.selectButton, this.dropdown, {
             placement: placement,
             middleware: middleware,
-            strategy: useAbsolutePositioning ? 'absolute' : 'fixed',
+            strategy: useFixedPositioning ? 'fixed' : 'absolute',
         }).then(({ x, y }) => {
             Object.assign(this.dropdown.style, {
                 left: `${x}px`,

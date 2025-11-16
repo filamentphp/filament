@@ -204,6 +204,7 @@
                 :last="$loop->last"
                 :should-open-url-in-new-tab="$shouldItemOpenUrlInNewTab"
                 :sidebar-collapsible="$sidebarCollapsible"
+                :sub-navigation="$subNavigation"
                 :url="$itemUrl"
             >
                 {{ $item->getLabel() }}

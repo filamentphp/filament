@@ -69,13 +69,13 @@ trait HasColumnManager
     /**
      * @param  array<int, array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool, columns?: array<int, array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool}>}>|null  $state
      */
-    public function applyTableColumnManager(?array $state = null): void
+    public function applyTableColumnManager(?array $state = null, bool $wasReordered = false): void
     {
         if (filled($state)) {
             $this->tableColumns = $state;
 
             if ($this->hasReorderableTableColumns()) {
-                $this->persistHasReorderedTableColumns();
+                $this->persistHasReorderedTableColumns($wasReordered);
             }
         }
 
@@ -158,11 +158,11 @@ trait HasColumnManager
         );
     }
 
-    protected function persistHasReorderedTableColumns(): void
+    protected function persistHasReorderedTableColumns(bool $wasReordered = false): void
     {
         session()->put(
             $this->getHasReorderedTableColumnsSessionKey(),
-            $this->hasReorderedTableColumns()
+            $wasReordered || $this->hasReorderedTableColumns()
         );
     }
 

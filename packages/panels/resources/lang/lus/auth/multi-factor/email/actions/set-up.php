@@ -6,7 +6,7 @@ return [
 
     'modal' => [
 
-        'heading' => 'Email verification codes siam na',
+        'heading' => 'Email verification codes siamna',
 
         'description' => 'Email hmanga 6-digit code kan rawn thawn kha I sign in dawnah emaw thil sensitive deuh hlek tih dawnah i chhutluh zel a ngai ang. Setup puitling turin 6-digit code i email ah en rawh.',
 
@@ -30,6 +30,10 @@ return [
                                 'title' => 'Email hmangin code thar kan rawn thawn e',
                             ],
 
+                            'throttled' => [
+                                'title' => 'Thawnnawn tumna a tam lutuk, Khawngaihin code dang dîl leh hmain nghak phawt rawh.',
+                            ],
+
                         ],
 
                     ],
@@ -49,7 +53,7 @@ return [
         'actions' => [
 
             'submit' => [
-                'label' => 'mail verification codes enable rawh',
+                'label' => 'Email verification codes enable rawh',
             ],
 
         ],

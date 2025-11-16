@@ -78,11 +78,19 @@ abstract class Page extends BasePage
                 ->parentItem(static::getNavigationParentItem())
                 ->icon(static::getNavigationIcon())
                 ->activeIcon(static::getActiveNavigationIcon())
-                ->isActiveWhen(fn (): bool => original_request()->routeIs(static::getRouteName()))
+                ->isActiveWhen(fn (): bool => original_request()->routeIs(static::getNavigationItemActiveRoutePattern()))
                 ->sort(static::getNavigationSort())
                 ->badge(static::getNavigationBadge(), color: static::getNavigationBadgeColor())
                 ->url(static::getNavigationUrl($urlParameters)),
         ];
+    }
+
+    /**
+     * @return string | array<string>
+     */
+    public static function getNavigationItemActiveRoutePattern(): string | array
+    {
+        return static::getRouteName();
     }
 
     /**

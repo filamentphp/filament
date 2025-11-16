@@ -30,6 +30,7 @@
 
     $collapseAllActionIsVisible = $isCollapsible && $collapseAllAction->isVisible();
     $expandAllActionIsVisible = $isCollapsible && $expandAllAction->isVisible();
+    $persistCollapsed = $shouldPersistCollapsed();
 
     $key = $getKey();
     $statePath = $getStatePath();
@@ -83,7 +84,7 @@
                         ->grid($getGridColumns())
                         ->merge([
                             'data-sortable-animation-duration' => $getReorderAnimationDuration(),
-                            'x-on:end.stop' => '$event.oldDraggableIndex !== $event.newDraggableIndex && $wire.mountAction(\'reorder\', { items: $event.target.sortable.toArray() }, { schemaComponent: \'' . $key . '\' })',
+                            'x-on:end.stop' => '$wire.mountAction(\'reorder\', { items: $event.target.sortable.toArray() }, { schemaComponent: \'' . $key . '\' })',
                         ], escape: false)
                         ->class(['fi-fo-repeater-items'])
                 }}
@@ -111,7 +112,7 @@
                         wire:ignore.self
                         wire:key="{{ $item->getLivewireKey() }}.item"
                         x-data="{
-                            isCollapsed: @js($isCollapsed($item)),
+                            isCollapsed: @if ($persistCollapsed) $persist(@js($isCollapsed($item))).as(`repeater-${@js($key)}-${@js($itemKey)}-isCollapsed`) @else @js($isCollapsed($item)) @endif,
                         }"
                         x-on:repeater-expand.window="$event.detail === '{{ $statePath }}' && (isCollapsed = false)"
                         x-on:repeater-collapse.window="$event.detail === '{{ $statePath }}' && (isCollapsed = true)"

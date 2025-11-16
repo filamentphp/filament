@@ -38,12 +38,12 @@
         {{ $attributes
                 ->merge($getExtraAttributes(), escape: false)
                 ->class([
-                                'fi-fo-table-repeater',
-                                'fi-compact' => $isCompact,
-                            ]) }}
+                    'fi-fo-table-repeater',
+                    'fi-compact' => $isCompact,
+                ]) }}
     >
         @if (count($items))
-            <table class="fi-absolute-positioning-context">
+            <table>
                 <thead>
                     <tr>
                         @if ((count($items) > 1) && ($isReorderableWithButtons || $isReorderableWithDragAndDrop))
@@ -86,7 +86,7 @@
                     {{ (new ComponentAttributeBag)
                             ->merge([
                                 'data-sortable-animation-duration' => $getReorderAnimationDuration(),
-                                'x-on:end.stop' => '$event.oldDraggableIndex !== $event.newDraggableIndex && $wire.mountAction(\'reorder\', { items: $event.target.sortable.toArray() }, { schemaComponent: \'' . $key . '\' })',
+                                'x-on:end.stop' => '$wire.mountAction(\'reorder\', { items: $event.target.sortable.toArray() }, { schemaComponent: \'' . $key . '\' })',
                             ], escape: false) }}
                 >
                     @foreach ($items as $itemKey => $item)

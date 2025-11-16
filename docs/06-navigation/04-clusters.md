@@ -59,7 +59,7 @@ The [`$navigationIcon`](../navigation#customizing-a-navigation-items-icon) prope
 To add resources and pages to a cluster, you just need to define the `$cluster` property on the resource or page class, and set it to the cluster class [you created](#creating-a-cluster):
 
 ```php
-use App\Filament\Clusters\Settings;
+use App\Filament\Clusters\SettingsCluster;
 
 protected static ?string $cluster = SettingsCluster::class;
 ```

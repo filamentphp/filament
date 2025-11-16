@@ -22,6 +22,8 @@ body:
         - filament/forms
         - filament/infolists
         - filament/notifications
+        - filament/query-builder
+        - filament/schemas
         - filament/spark-billing-provider
         - filament/spatie-laravel-google-fonts-plugin
         - filament/spatie-laravel-media-library-plugin

@@ -14,7 +14,7 @@
         "filament/infolists": "self.version",
         "filament/notifications": "self.version",
         "filament/support": "self.version",
-        "league/csv": "^9.16",
+        "league/csv": "^9.27",
         "openspout/openspout": "^4.23"
     },
     "autoload": {
