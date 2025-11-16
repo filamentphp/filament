@@ -465,16 +465,30 @@ CODE_SAMPLE
             return false;
         }
 
-        // Return type must also be an object for fluent interface
-        if (! $returnType->isObject()->yes()) {
+        // If return type is definitely NOT an object (void, bool, string, int, array, etc.)
+        if ($returnType->isObject()->no()) {
             return false;
         }
 
-        // Check if return type matches root type (fluent interface returns $this or same type)
         $rootClassNames = $rootType->getObjectClassNames();
+
+        // Try to check if the return type matches using isSuperTypeOf
+        // This handles cases where getObjectClassNames() might not work
+        if ($returnType->isSuperTypeOf($rootType)->yes() || $rootType->isSuperTypeOf($returnType)->yes()) {
+            return true;
+        }
+
+        // Try to get class names from the return type
         $returnClassNames = $returnType->getObjectClassNames();
 
-        return ! empty(array_intersect($rootClassNames, $returnClassNames));
+        // If we got class names from both, check if they match
+        if (! empty($rootClassNames) && ! empty($returnClassNames)) {
+            return ! empty(array_intersect($rootClassNames, $returnClassNames));
+        }
+
+        // If we couldn't get return class names, the type is unknown
+        // We cannot determine if it's fluent based on types alone
+        return false;
     }
 
     protected function getMethodDefiningTrait(string $className, string $methodName): ?string
