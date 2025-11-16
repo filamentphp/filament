@@ -5,15 +5,19 @@ namespace Filament\Support\Rector;
 use Filament\Forms\Components\Concerns\CanBeValidated;
 use Filament\Schemas\Components\Concerns\HasState;
 use PhpParser\Node;
+use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\StaticCall;
-use PHPStan\Type\ObjectType;
+use PHPStan\Type\Type;
 use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 class AlphabetizeFluentMethodsRector extends AbstractRector
 {
+    /**
+     * @var array<string, ?string>
+     */
     private array $methodTraitCache = [];
 
     public function getRuleDefinition(): RuleDefinition
@@ -80,6 +84,7 @@ CODE_SAMPLE
 
         // Collect non-fluent and terminal methods from the end
         $current = $node;
+        // @phpstan-ignore-next-line instanceof.alwaysTrue - First iteration is always true, but $current is reassigned in loop
         while ($current instanceof MethodCall) {
             $methodName = $this->getName($current->name);
 
@@ -247,7 +252,7 @@ CODE_SAMPLE
         return false;
     }
 
-    private function getRootNode(MethodCall $node): Node
+    private function getRootNode(MethodCall $node): Expr
     {
         $current = $node;
 
@@ -263,8 +268,10 @@ CODE_SAMPLE
         if ($node instanceof StaticCall) {
             $callerType = $this->nodeTypeResolver->getType($node->class);
 
-            if ($callerType instanceof ObjectType) {
-                return $callerType->getClassName();
+            if ($callerType->isObject()->yes()) {
+                $classNames = $callerType->getObjectClassNames();
+
+                return $classNames[0] ?? null;
             }
         }
 
@@ -277,30 +284,36 @@ CODE_SAMPLE
         if ($node instanceof StaticCall) {
             $callerType = $this->nodeTypeResolver->getType($node->class);
 
-            if ($callerType instanceof ObjectType) {
-                $className = $callerType->getClassName();
+            if ($callerType->isObject()->yes()) {
+                $classNames = $callerType->getObjectClassNames();
+                foreach ($classNames as $className) {
+                    // Exclude classes that have order-dependent builder methods
+                    if ($this->isExcludedClass($className)) {
+                        return false;
+                    }
 
-                // Exclude classes that have order-dependent builder methods
-                if ($this->isExcludedClass($className)) {
-                    return false;
+                    if (str_starts_with($className, 'Filament\\')) {
+                        return true;
+                    }
                 }
-
-                return str_starts_with($className, 'Filament\\');
             }
         }
 
         // For other expressions, check their type
         $nodeType = $this->nodeTypeResolver->getType($node);
 
-        if ($nodeType instanceof ObjectType) {
-            $className = $nodeType->getClassName();
+        if ($nodeType->isObject()->yes()) {
+            $classNames = $nodeType->getObjectClassNames();
+            foreach ($classNames as $className) {
+                // Exclude classes that have order-dependent builder methods
+                if ($this->isExcludedClass($className)) {
+                    return false;
+                }
 
-            // Exclude classes that have order-dependent builder methods
-            if ($this->isExcludedClass($className)) {
-                return false;
+                if (str_starts_with($className, 'Filament\\')) {
+                    return true;
+                }
             }
-
-            return str_starts_with($className, 'Filament\\');
         }
 
         return false;
@@ -371,15 +384,19 @@ CODE_SAMPLE
     /**
      * Check if a method is a fluent builder method by checking if it returns the same type
      */
-    private function isFluentBuilderMethod(MethodCall $methodCall, $rootType): bool
+    private function isFluentBuilderMethod(MethodCall $methodCall, Type $rootType): bool
     {
         // Get the return type of this method call
         $returnType = $this->nodeTypeResolver->getType($methodCall);
 
         // Check if the return type matches the root type (fluent interface)
         // This means the method returns $this or the same class type
-        if ($rootType instanceof ObjectType && $returnType instanceof ObjectType) {
-            return $rootType->getClassName() === $returnType->getClassName();
+        if ($rootType->isObject()->yes() && $returnType->isObject()->yes()) {
+            $rootClassNames = $rootType->getObjectClassNames();
+            $returnClassNames = $returnType->getObjectClassNames();
+
+            // Check if any of the class names match
+            return ! empty(array_intersect($rootClassNames, $returnClassNames));
         }
 
         // If we can't determine the types, fall back to name-based heuristics
@@ -483,6 +500,8 @@ CODE_SAMPLE
 
     /**
      * Get all traits used by a class, including traits used by parent classes and traits
+     *
+     * @return array<string>
      */
     private function getAllTraits(\ReflectionClass $class): array
     {
@@ -604,7 +623,7 @@ CODE_SAMPLE
     /**
      * @param  array<array{name: string, call: MethodCall}>  $sortedCalls
      */
-    private function rebuildChain(Node $rootNode, array $sortedCalls): MethodCall
+    private function rebuildChain(Expr $rootNode, array $sortedCalls): MethodCall
     {
         $chain = null;
 
