@@ -19,8 +19,8 @@ use Filament\Widgets\WidgetConfiguration;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Filesystem\Filesystem;
 use Livewire\Component;
+use Livewire\Finder\Finder;
 use Livewire\Livewire;
-use Livewire\Mechanisms\ComponentRegistry;
 use ReflectionClass;
 
 trait HasComponents
@@ -593,7 +593,7 @@ trait HasComponents
 
     protected function queueLivewireComponentForRegistration(string $component): void
     {
-        $componentName = app(ComponentRegistry::class)->getName($component);
+        [$namespace, $componentName] = app(Finder::class)->parseNamespaceAndName($component);
 
         $this->livewireComponents[$componentName] = $component;
     }
