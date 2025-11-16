@@ -80,6 +80,9 @@ CODE_SAMPLE
             return null;
         }
 
+        // Get the class name early for terminal method detection
+        $className = $this->getClassName($rootNode);
+
         // Check if the outermost method is non-fluent or terminal
         $rootType = $this->nodeTypeResolver->getType($rootNode);
         $nonFluentTail = null;
@@ -102,8 +105,8 @@ CODE_SAMPLE
                 }
 
                 $current = $chainToProcess;
-            } elseif ($this->isTerminalActionMethod($methodName)) {
-                // Terminal action method, save it
+            } elseif ($this->isTerminalMethod($methodName, $className)) {
+                // Terminal method, save it
                 array_unshift($terminalMethods, ['name' => $methodName, 'call' => $current]);
                 $chainToProcess = $current->var;
 
@@ -127,9 +130,6 @@ CODE_SAMPLE
             return null;
         }
 
-        // Get the class name for dynamic trait checking
-        $className = $this->getClassName($rootNode);
-
         // Split the chain at clone() boundaries and sort each segment independently
         $sortedCalls = $this->sortMethodCallsWithCloneBoundaries($methodCalls, $className);
 
@@ -142,7 +142,7 @@ CODE_SAMPLE
         $rebuiltChain = $this->rebuildChain($rootNode, $sortedCalls);
 
         // Sort and reattach terminal methods in the correct order
-        $sortedTerminalMethods = $this->sortTerminalMethods($terminalMethods);
+        $sortedTerminalMethods = $this->sortTerminalMethods($terminalMethods, $className);
         foreach ($sortedTerminalMethods as $terminalData) {
             $newTerminal = clone $terminalData['call'];
             $newTerminal->var = $rebuiltChain;
@@ -161,19 +161,112 @@ CODE_SAMPLE
     }
 
     /**
+     * Check if a method is a terminal method that should stay at the end
+     */
+    protected function isTerminalMethod(?string $methodName, ?string $className): bool
+    {
+        if ($methodName === null || $className === null) {
+            return false;
+        }
+
+        if ($this->isAction($className)) {
+            return $this->isActionTerminalMethod($methodName);
+        }
+
+        if ($this->isNotification($className)) {
+            return $this->isNotificationTerminalMethod($methodName);
+        }
+
+        return false;
+    }
+
+    /**
+     * Check if a method is a terminal method for Actions
+     */
+    protected function isActionTerminalMethod(string $methodName): bool
+    {
+        // Action lifecycle methods
+        $lifecycleMethods = [
+            'before',
+            'action',
+            'using',
+            'after',
+        ];
+
+        if (in_array($methodName, $lifecycleMethods, true)) {
+            return true;
+        }
+
+        // success* and failure* methods for Actions
+        if (str_starts_with($methodName, 'success') || str_starts_with($methodName, 'failure')) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Check if a method is a terminal method for Notifications
+     */
+    protected function isNotificationTerminalMethod(string $methodName): bool
+    {
+        // Methods that execute/send notifications and should remain at the end
+        $terminalMethods = [
+            'send',
+            'sendToDatabase',
+            'broadcast',
+            'dispatch',
+            'sendToQueue',
+        ];
+
+        return in_array($methodName, $terminalMethods, true);
+    }
+
+    /**
+     * Sort terminal methods according to class-specific ordering
+     *
      * @param  array<array{name: string, call: MethodCall}>  $terminalMethods
      * @return array<array{name: string, call: MethodCall}>
      */
-    protected function sortTerminalMethods(array $terminalMethods): array
+    protected function sortTerminalMethods(array $terminalMethods, ?string $className): array
+    {
+        if ($className === null) {
+            return $terminalMethods;
+        }
+
+        if ($this->isAction($className)) {
+            return $this->sortActionTerminalMethods($terminalMethods);
+        }
+
+        if ($this->isNotification($className)) {
+            return $this->sortNotificationTerminalMethods($terminalMethods);
+        }
+
+        return $terminalMethods;
+    }
+
+    /**
+     * Sort terminal methods for Actions according to their lifecycle order
+     *
+     * @param  array<array{name: string, call: MethodCall}>  $terminalMethods
+     * @return array<array{name: string, call: MethodCall}>
+     */
+    protected function sortActionTerminalMethods(array $terminalMethods): array
     {
         usort($terminalMethods, function ($a, $b) {
-            return $this->getTerminalMethodPriority($a['name']) <=> $this->getTerminalMethodPriority($b['name']);
+            $priorityA = $this->getActionTerminalMethodPriority($a['name']);
+            $priorityB = $this->getActionTerminalMethodPriority($b['name']);
+
+            return $priorityA <=> $priorityB;
         });
 
         return $terminalMethods;
     }
 
-    protected function getTerminalMethodPriority(string $methodName): int
+    /**
+     * Get the priority order for Action terminal methods (lower = earlier in chain)
+     */
+    protected function getActionTerminalMethodPriority(string $methodName): int
     {
         // Action lifecycle methods (in order)
         if ($methodName === 'before') {
@@ -199,53 +292,41 @@ CODE_SAMPLE
             return 60;
         }
 
-        // Notification terminal methods (send, broadcast, etc.) come last
-        $notificationTerminals = ['send', 'sendToDatabase', 'broadcast', 'dispatch', 'sendToQueue'];
-        if (in_array($methodName, $notificationTerminals, true)) {
-            return 100;
-        }
-
         // Default priority for unknown terminal methods
         return 999;
     }
 
-    protected function isTerminalActionMethod(?string $methodName): bool
+    /**
+     * Sort terminal methods for Notifications
+     *
+     * @param  array<array{name: string, call: MethodCall}>  $terminalMethods
+     * @return array<array{name: string, call: MethodCall}>
+     */
+    protected function sortNotificationTerminalMethods(array $terminalMethods): array
     {
-        if ($methodName === null) {
-            return false;
-        }
+        usort($terminalMethods, function ($a, $b) {
+            $priorityA = $this->getNotificationTerminalMethodPriority($a['name']);
+            $priorityB = $this->getNotificationTerminalMethodPriority($b['name']);
 
-        // Methods that execute actions and should remain at the end
-        $terminalMethods = [
-            'send',
-            'sendToDatabase',
-            'broadcast',
-            'dispatch',
-            'sendToQueue',
+            return $priorityA <=> $priorityB;
+        });
+
+        return $terminalMethods;
+    }
+
+    /**
+     * Get the priority order for Notification terminal methods (lower = earlier in chain)
+     */
+    protected function getNotificationTerminalMethodPriority(string $methodName): int
+    {
+        // Notification terminal methods ordering
+        $notificationTerminals = [
+            'send' => 10,
+            'sendToDatabase' => 20,
+            'broadcast' => 30,
         ];
 
-        // Action lifecycle methods
-        $lifecycleMethods = [
-            'before',
-            'action',
-            'using',
-            'after',
-        ];
-
-        if (in_array($methodName, $terminalMethods, true)) {
-            return true;
-        }
-
-        if (in_array($methodName, $lifecycleMethods, true)) {
-            return true;
-        }
-
-        // success* and failure* methods for Actions
-        if (str_starts_with($methodName, 'success') || str_starts_with($methodName, 'failure')) {
-            return true;
-        }
-
-        return false;
+        return $notificationTerminals[$methodName] ?? 999;
     }
 
     protected function getRootNode(MethodCall $node): Expr
@@ -389,23 +470,7 @@ CODE_SAMPLE
             return ! empty(array_intersect($rootClassNames, $returnClassNames));
         }
 
-        // If we can't determine the types, fall back to name-based heuristics
-        // Exclude methods that are clearly not fluent based on common naming patterns
-        $methodName = $this->getName($methodCall->name);
-        if ($methodName === null) {
-            return false;
-        }
-
-        // Exclude getter/query methods that typically return different types
-        $nonFluentPrefixes = ['get', 'is', 'has', 'can', 'should', 'to', 'find', 'all', 'first', 'count', 'exists'];
-        foreach ($nonFluentPrefixes as $prefix) {
-            if (str_starts_with($methodName, $prefix)) {
-                return false;
-            }
-        }
-
-        // Assume it's fluent if it doesn't match non-fluent patterns
-        return true;
+        return false;
     }
 
     protected function getMethodDefiningTrait(string $className, string $methodName): ?string
