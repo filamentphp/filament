@@ -68,6 +68,7 @@ class Panel extends Component
 
     public function register(): void
     {
+        $this->registerRoutes();
         $this->registerLivewireComponents();
         $this->registerLivewirePersistentMiddleware();
 

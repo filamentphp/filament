@@ -172,6 +172,10 @@ class Filament extends Facade
 
     public static function registerPanel(Panel | Closure $panel): void
     {
+        if (static::getFacadeApplication()->resolved(PanelRegistry::class) === true) {
+            app(PanelRegistry::class)->register(value($panel));
+        }
+
         static::getFacadeApplication()->resolving(
             PanelRegistry::class,
             fn (PanelRegistry $registry) => $registry->register(value($panel)),
