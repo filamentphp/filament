@@ -140,7 +140,7 @@ class SpatieMediaLibraryFileUpload extends FileUpload
             $filename = $component->getUploadedFileNameForStorage($file);
 
             $media = $mediaAdder
-                ->addCustomHeaders([...['ContentType' => $file->getMimeType()], ...$component->getCustomHeaders()])
+                ->addCustomHeaders([...['Content-Type' => $file->getMimeType()], ...$component->getCustomHeaders()])
                 ->usingFileName($filename)
                 ->usingName($component->getMediaName($file) ?? pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME))
                 ->storingConversionsOnDisk($component->getConversionsDisk() ?? '')
