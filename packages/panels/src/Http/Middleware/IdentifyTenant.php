@@ -29,18 +29,18 @@ class IdentifyTenant
             abort(404);
         }
 
-        $tenantRouteKey = $request->route()->parameter('tenant');
-        $slugAttribute = $panel->getTenantSlugAttribute();
+        $tenantRouteParameter = $request->route()->parameter('tenant');
+        $tenantSlugAttribute = $panel->getTenantSlugAttribute();
         $currentTenant = Filament::getTenant();
 
-        $currentTenantKey = filled($slugAttribute)
-            ? $currentTenant?->getAttribute($slugAttribute)
+        $currentTenantIdentifier = filled($tenantSlugAttribute)
+            ? $currentTenant?->getAttribute($tenantSlugAttribute)
             : $currentTenant?->getRouteKey();
 
-        if ($currentTenant && $currentTenantKey === $tenantRouteKey) {
+        if ($currentTenant && $currentTenantIdentifier === $tenantRouteParameter) {
             $tenant = $currentTenant;
         } else {
-            $tenant = $panel->getTenant($tenantRouteKey);
+            $tenant = $panel->getTenant($tenantRouteParameter);
             Filament::setTenant($tenant);
         }
 
