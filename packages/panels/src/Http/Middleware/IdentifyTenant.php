@@ -29,24 +29,13 @@ class IdentifyTenant
             abort(404);
         }
 
-        $tenantRouteParameter = $request->route()->parameter('tenant');
-        $tenantSlugAttribute = $panel->getTenantSlugAttribute();
-        $currentTenant = Filament::getTenant();
-
-        $currentTenantIdentifier = filled($tenantSlugAttribute)
-            ? $currentTenant?->getAttribute($tenantSlugAttribute)
-            : $currentTenant?->getRouteKey();
-
-        if ($currentTenant && $currentTenantIdentifier === $tenantRouteParameter) {
-            $tenant = $currentTenant;
-        } else {
-            $tenant = $panel->getTenant($tenantRouteParameter);
-            Filament::setTenant($tenant);
-        }
+        $tenant = $panel->resolveTenantForRequest($request->route()->parameter('tenant'));
 
         if (! $user->canAccessTenant($tenant)) {
             abort(404);
         }
+
+        Filament::setTenant($tenant);
 
         return $next($request);
     }
