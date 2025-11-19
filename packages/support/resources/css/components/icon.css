@@ -1,27 +1,31 @@
 .fi-icon {
-    @apply size-5;
+    @apply size-5 max-h-5 max-w-5;
 
     &.fi-size-xs {
-        @apply size-3;
+        @apply size-3 max-h-3 max-w-3;
     }
 
     &.fi-size-sm {
-        @apply size-4;
+        @apply size-4 max-h-4 max-w-4;
     }
 
     &.fi-size-md {
-        @apply size-5;
+        @apply size-5 max-h-5 max-w-5;
     }
 
     &.fi-size-lg {
-        @apply size-6;
+        @apply size-6 max-h-6 max-w-6;
     }
 
     &.fi-size-xl {
-        @apply size-7;
+        @apply size-7 max-h-7 max-w-7;
     }
 
     &.fi-size-2xl {
-        @apply size-8;
+        @apply size-8 max-h-8 max-w-8;
+    }
+
+    & > svg {
+        @apply h-[inherit] w-[inherit];
     }
 }

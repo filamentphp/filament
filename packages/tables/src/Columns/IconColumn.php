@@ -38,14 +38,14 @@ class IconColumn extends Column implements HasEmbeddedView
      */
     protected string | array | Closure | null $falseColor = null;
 
-    protected string | BackedEnum | Closure | false | null $falseIcon = null;
+    protected string | BackedEnum | Htmlable | Closure | false | null $falseIcon = null;
 
     /**
      * @var string | array<string> | Closure | null
      */
     protected string | array | Closure | null $trueColor = null;
 
-    protected string | BackedEnum | Closure | false | null $trueIcon = null;
+    protected string | BackedEnum | Htmlable | Closure | false | null $trueIcon = null;
 
     protected bool | Closure $isListWithLineBreaks = false;
 
