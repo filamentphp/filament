@@ -11,6 +11,7 @@ use Filament\Support\Contracts\Collapsible;
 use Filament\Support\Contracts\HasIcon;
 use Filament\Support\Contracts\HasLabel;
 use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Contracts\Support\Htmlable;
 use UnitEnum;
 
 class NavigationGroup extends Component
@@ -22,7 +23,7 @@ class NavigationGroup extends Component
 
     protected bool | Closure | null $isCollapsible = null;
 
-    protected string | BackedEnum | Closure | null $icon = null;
+    protected string | BackedEnum | Htmlable | Closure | null $icon = null;
 
     /**
      * @var array<NavigationItem> | Arrayable
@@ -60,7 +61,7 @@ class NavigationGroup extends Component
         return $this;
     }
 
-    public function icon(string | BackedEnum | Closure | null $icon): static
+    public function icon(string | BackedEnum | Htmlable | Closure | null $icon): static
     {
         $this->icon = $icon;
 
@@ -84,7 +85,7 @@ class NavigationGroup extends Component
         return $this;
     }
 
-    public function getIcon(): string | BackedEnum | null
+    public function getIcon(): string | BackedEnum | Htmlable | null
     {
         return $this->evaluate($this->icon);
     }

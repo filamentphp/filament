@@ -1642,7 +1642,7 @@ export class Select {
     }
 
     handleSearch(event) {
-        const query = event.target.value.trim().toLowerCase()
+        const query = event.target.value.trim()
         this.searchQuery = query
 
         // Clear any existing timeout
@@ -1767,6 +1767,8 @@ export class Select {
     filterOptions(query) {
         const searchInLabel = this.searchableOptionFields.includes('label')
         const searchInValue = this.searchableOptionFields.includes('value')
+
+        query = query.toLowerCase()
 
         const filteredOptions = []
 

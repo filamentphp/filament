@@ -145,11 +145,14 @@ trait CanGenerateModelInfolists
                     'double',
                     'money',
                 ]) && blank($guessedRelationshipName)) {
-                    $componentData[in_array($componentName, [
+                    $componentData[(in_array($componentName, [
                         'cost',
                         'money',
                         'price',
-                    ]) || $type['name'] === 'money' ? 'money' : 'numeric'] = [];
+                    ]) || str($componentName)->endsWith([
+                        '_cost',
+                        '_price',
+                    ]) || $type['name'] === 'money') ? 'money' : 'numeric'] = [];
                 }
             }
 

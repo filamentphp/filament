@@ -32,6 +32,7 @@
 
     $collapseAllActionIsVisible = $isCollapsible && $collapseAllAction->isVisible();
     $expandAllActionIsVisible = $isCollapsible && $expandAllAction->isVisible();
+    $persistCollapsed = $shouldPersistCollapsed();
 
     $key = $getKey();
     $statePath = $getStatePath();
@@ -82,12 +83,11 @@
                 x-sortable
                 data-sortable-animation-duration="{{ $getReorderAnimationDuration() }}"
                 x-on:end.stop="
-                    $event.oldDraggableIndex !== $event.newDraggableIndex &&
-                        $wire.mountAction(
-                            'reorder',
-                            { items: $event.target.sortable.toArray() },
-                            { schemaComponent: '{{ $key }}' },
-                        )
+                    $wire.mountAction(
+                        'reorder',
+                        { items: $event.target.sortable.toArray() },
+                        { schemaComponent: '{{ $key }}' },
+                    )
                 "
                 class="fi-fo-builder-items"
             >
@@ -122,7 +122,7 @@
                         wire:ignore.self
                         wire:key="{{ $item->getLivewireKey() }}.item"
                         x-data="{
-                            isCollapsed: @js($isCollapsed($item)),
+                            isCollapsed: @if ($persistCollapsed) $persist(@js($isCollapsed($item))).as(`builder-${@js($key)}-${@js($itemKey)}-isCollapsed`) @else @js($isCollapsed($item)) @endif,
                         }"
                         x-on:builder-expand.window="$event.detail === '{{ $statePath }}' && (isCollapsed = false)"
                         x-on:builder-collapse.window="$event.detail === '{{ $statePath }}' && (isCollapsed = true)"

@@ -160,11 +160,14 @@ trait CanGenerateModelTables
                     'double',
                     'money',
                 ]) && blank($guessedRelationshipName)) {
-                    $columnData[in_array($columnName, [
+                    $columnData[(in_array($columnName, [
                         'cost',
                         'money',
                         'price',
-                    ]) || $type['name'] === 'money' ? 'money' : 'numeric'] = [];
+                    ]) || str($columnName)->endsWith([
+                        '_cost',
+                        '_price',
+                    ]) || $type['name'] === 'money') ? 'money' : 'numeric'] = [];
                 }
 
                 if ((in_array($type['name'], [

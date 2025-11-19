@@ -10,7 +10,7 @@ return [
 
         'records_per_page' => [
 
-            'label' => '件を表示',
+            'label' => '表示件数',
 
             'options' => [
                 'all' => 'すべて',

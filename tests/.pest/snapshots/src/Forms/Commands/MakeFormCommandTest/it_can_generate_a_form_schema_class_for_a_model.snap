@@ -17,8 +17,7 @@ class PostForm
         return $schema
             ->components([
                 Select::make('author_id')
-                    ->relationship('author', 'name')
-                    ->required(),
+                    ->relationship('author', 'name'),
                 Textarea::make('content')
                     ->columnSpanFull(),
                 Toggle::make('is_published')
@@ -31,6 +30,7 @@ class PostForm
                     ->columnSpanFull(),
                 TextInput::make('title')
                     ->required(),
+                TextInput::make('title2'),
                 Textarea::make('config')
                     ->columnSpanFull(),
                 Textarea::make('json')

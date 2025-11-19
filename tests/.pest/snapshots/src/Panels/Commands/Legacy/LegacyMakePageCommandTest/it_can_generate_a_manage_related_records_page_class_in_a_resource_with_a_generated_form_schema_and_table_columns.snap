@@ -28,6 +28,12 @@ class ManageUserTeams extends ManageRelatedRecords
                     ->required(),
                 Forms\Components\Textarea::make('description')
                     ->columnSpanFull(),
+                Forms\Components\TextInput::make('budget')
+                    ->required()
+                    ->numeric()
+                    ->default(0),
+                Forms\Components\Select::make('company_id')
+                    ->relationship('company', 'name'),
             ]);
     }
 
@@ -37,6 +43,11 @@ class ManageUserTeams extends ManageRelatedRecords
             ->recordTitleAttribute('name')
             ->columns([
                 Tables\Columns\TextColumn::make('name')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('budget')
+                    ->numeric()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('company.name')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
