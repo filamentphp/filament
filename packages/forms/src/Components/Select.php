@@ -1308,7 +1308,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         }
 
         if ($this->hasRelationship()) {
-            return $this->isPreloaded();
+            return ! $this->isPreloaded();
         }
 
         return $this->options instanceof Closure;
