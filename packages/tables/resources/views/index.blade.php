@@ -195,6 +195,7 @@
                     :form="$filtersForm"
                     :heading-tag="$secondLevelHeadingTag"
                     class="fi-ta-filters-before-content"
+                    :reset-button-position="$resetButtonPosition"
                 />
             </div>
         @endif
@@ -263,6 +264,7 @@
                             :heading-tag="$secondLevelHeadingTag"
                             x-cloak
                             :x-show="$hasCollapsibleFilters ? 'areFiltersOpen' : null"
+                            :reset-button-position="$resetButtonPosition"
                         />
 
                         @if ($hasCollapsibleFilters)
@@ -2197,6 +2199,7 @@
                     :form="$filtersForm"
                     :heading-tag="$secondLevelHeadingTag"
                     class="fi-ta-filters-below-content"
+                    :reset-button-position="$resetButtonPosition"
                 />
             @endif
         </div>
@@ -2218,6 +2221,7 @@
                     :form="$filtersForm"
                     :heading-tag="$secondLevelHeadingTag"
                     class="fi-ta-filters-after-content"
+                    :reset-button-position="$resetButtonPosition"
                 />
             </div>
         @endif
