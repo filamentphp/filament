@@ -8,4 +8,3 @@ enum ResetButtonPosition
 
     case NextToApply;
 }
-
