@@ -1421,11 +1421,18 @@
                                                 $columnWidth = $column->getWidth();
                                                 $isColumnActivelySorted = $getSortColumn() === $column->getName();
                                                 $isColumnSortable = $column->isSortable() && (! $isReordering);
+                                                $columnHeaderTooltip = $column->getHeaderTooltip();
                                             @endphp
 
                                             <th
                                                 @if ($isColumnActivelySorted)
                                                     aria-sort="{{ $sortDirection === 'asc' ? 'ascending' : 'descending' }}"
+                                                @endif
+                                                @if (filled($columnHeaderTooltip))
+                                                    x-tooltip="{
+                                                        content: @js($columnHeaderTooltip),
+                                                        theme: $store.theme,
+                                                    }"
                                                 @endif
                                                 {{
                                                     $column->getExtraHeaderAttributeBag()
