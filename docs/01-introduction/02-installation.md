@@ -70,16 +70,6 @@ php artisan make:filament-user
 
 Open `/admin` in your web browser, sign in, and [start building your app](../getting-started)!
 
-### Publishing configuration
-
-Filament ships with a configuration file that allows you to override defaults shared across all packages. Publish it after installing the panel builder so you can review and customize the settings:
-
-```bash
-php artisan vendor:publish --tag=filament-config
-```
-
-This command creates `config/filament.php`, where you can configure options like the default filesystem disk, file generation flags, and UI defaults. Re-run the publish command any time you want to pull in newly added configuration keys before tweaking them to suit your project.
-
 </div>
 
 <div
@@ -290,5 +280,15 @@ The important parts of this are the `@filamentStyles` in the `<head>` of the lay
 </div>
 
 </div>
+
+## Publishing configuration
+
+Filament ships with a configuration file that allows you to override defaults shared across all packages. Publish it after installing the panel builder so you can review and customize the settings:
+
+```bash
+php artisan vendor:publish --tag=filament-config
+```
+
+This command creates `config/filament.php`, where you can configure options like the default filesystem disk, file generation flags, and UI defaults. Re-run the publish command any time you want to pull in newly added configuration keys before tweaking them to suit your project.
 
 </div>
