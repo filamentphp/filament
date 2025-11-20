@@ -597,6 +597,7 @@
                                             :has-toggleable-columns="$hasToggleableColumns"
                                             :heading-tag="$secondLevelHeadingTag"
                                             :reorder-animation-duration="$getReorderAnimationDuration()"
+                                            :reset-button-position="$resetButtonPosition"
                                         />
                                     </x-filament::dropdown>
                                 @endif

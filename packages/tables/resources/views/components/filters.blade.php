@@ -35,18 +35,20 @@
 
     {{ $form }}
 
-    <div class="fi-ta-filters-actions-ctn">
-        @if ($applyAction->isVisible())
-            {{ $applyAction }}
-        @endif
+    @if ($applyAction->isVisible() || $resetButtonPosition === Filament\Tables\Enums\ResetButtonPosition::NextToApply)
+        <div class="fi-ta-filters-actions-ctn">
+            @if ($applyAction->isVisible())
+                {{ $applyAction }}
+            @endif
 
-        @if ($resetButtonPosition === Filament\Tables\Enums\ResetButtonPosition::NextToApply)
-            <x-filament::button
-                color="danger"
-                wire:click="resetTableFiltersForm"
-            >
-                {{ __('filament-tables::table.filters.actions.reset.label') }}
-            </x-filament::button>
-        @endif
-    </div>
+            @if ($resetButtonPosition === Filament\Tables\Enums\ResetButtonPosition::NextToApply)
+                <x-filament::button
+                    color="danger"
+                    wire:click="resetTableFiltersForm"
+                >
+                    {{ __('filament-tables::table.filters.actions.reset.label') }}
+                </x-filament::button>
+            @endif
+        </div>
+    @endif
 </div>
