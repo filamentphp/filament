@@ -207,7 +207,7 @@ trait CanExportRecords
 
                 $isEnablingVisibleTableColumnsByDefault = $action->isEnablingVisibleTableColumnsByDefault();
 
-                if ($isEnablingVisibleTableColumnsByDefault && !method_exists($this->getLivewire(), 'getTable')) {
+                if ($isEnablingVisibleTableColumnsByDefault && ! method_exists($this->getLivewire(), 'getTable')) {
                     throw new LogicException(static::class . '::$isEnablingVisibleTableColumnsByDefault is true and ' . $this->getLivewire()::class . " doesn't have a getTable() method.");
                 }
 
