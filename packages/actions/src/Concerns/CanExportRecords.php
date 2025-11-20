@@ -204,11 +204,18 @@ trait CanExportRecords
                     ->mapWithKeys(fn (array $column, string $columnName): array => [$columnName => $column['label']])
                     ->all();
             } else {
-                $visibleTableColumnNames = $action->getVisibleTableColumnNames();
+
+                $isEnablingVisibleTableColumnsByDefault = $action->isEnablingVisibleTableColumnsByDefault();
+
+                if ($isEnablingVisibleTableColumnsByDefault && !method_exists($this->getLivewire(), 'getTable')) {
+                    throw new LogicException(static::class . '::$isEnablingVisibleTableColumnsByDefault is true and ' . $this->getLivewire()::class . " doesn't have a getTable() method.");
+                }
+
+                $visibleTableColumnNames = $isEnablingVisibleTableColumnsByDefault ? $action->getVisibleTableColumnNames() : [];
 
                 $columnMap = collect($exporter::getColumns())
                     ->when(
-                        $action->isEnablingVisibleTableColumnsByDefault(),
+                        $isEnablingVisibleTableColumnsByDefault,
                         fn ($columns): Collection => $columns->filter(
                             fn (ExportColumn $column): bool => in_array($column->getName(), $visibleTableColumnNames) && $column->isEnabledByDefault(),
                         ),
