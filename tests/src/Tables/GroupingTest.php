@@ -57,7 +57,7 @@ it('can group records by column', function (): void {
     Post::factory()->create(['title' => 'Cherry Post']);
     Post::factory()->create(['title' => 'Banana Post']);
 
-    $sortedPosts = Post::query()->orderBy('title')->get();
+    $sortedPosts = Post::query()->orderBy('title')->orderBy('id')->get();
 
     livewire(PostsTable::class)
         ->set('tableGrouping', 'title')
@@ -84,6 +84,7 @@ it('can group records by relationship', function (): void {
                 ->whereColumn('users.id', 'posts.author_id')
                 ->limit(1)
         )
+        ->orderBy('posts.id')
         ->get();
 
     livewire(PostsTable::class)
@@ -118,6 +119,7 @@ it('can group records by nested relationship', function (): void {
                 ->whereColumn('users.id', 'posts.author_id')
                 ->limit(1)
         )
+        ->orderBy('posts.id')
         ->get();
 
     livewire(PostsTable::class)
@@ -145,6 +147,7 @@ it('can group records by `BelongsTo` -> `HasOne` relationship', function (): voi
                 ->whereColumn('users.id', 'posts.author_id')
                 ->limit(1)
         )
+        ->orderBy('posts.id')
         ->get();
 
     livewire(PostsTable::class)
@@ -174,6 +177,7 @@ it('can group records by `BelongsTo` -> `HasOne` -> `BelongsTo` relationship', f
                 ->whereColumn('users.id', 'posts.author_id')
                 ->limit(1)
         )
+        ->orderBy('posts.id')
         ->get();
 
     livewire(PostsTable::class)
@@ -201,6 +205,7 @@ it('can group records by `HasOne` -> `BelongsTo` relationship', function (): voi
                 ->whereColumn('profiles.user_id', 'users.id')
                 ->limit(1)
         )
+        ->orderBy('users.id')
         ->get();
 
     livewire(UsersTable::class)
@@ -230,6 +235,7 @@ it('can group records by `HasOne` -> `HasOne` relationship', function (): void {
                 ->whereColumn('profiles.user_id', 'users.id')
                 ->limit(1)
         )
+        ->orderBy('users.id')
         ->get();
 
     livewire(UsersTable::class)
@@ -256,6 +262,7 @@ it('can group records by `MorphOne` relationship', function (): void {
                 ->where('images.imageable_type', User::class)
                 ->limit(1)
         )
+        ->orderBy('users.id')
         ->get();
 
     livewire(UsersTable::class)

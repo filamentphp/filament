@@ -159,7 +159,7 @@ class RelationManager extends Component implements HasActions, HasRenderHookScop
             ->iconPosition(static::class::getIconPosition($ownerRecord, $pageClass));
     }
 
-    public static function getIcon(Model $ownerRecord, string $pageClass): string | BackedEnum | null
+    public static function getIcon(Model $ownerRecord, string $pageClass): string | BackedEnum | Htmlable | null
     {
         return static::$icon;
     }

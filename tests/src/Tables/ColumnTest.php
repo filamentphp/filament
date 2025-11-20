@@ -37,8 +37,8 @@ it('can render text column with relationship', function (): void {
 it('can sort records', function (): void {
     Post::factory()->count(10)->create();
 
-    $sortedAsc = Post::query()->orderBy('title')->get();
-    $sortedDesc = Post::query()->orderByDesc('title')->get();
+    $sortedAsc = Post::query()->orderBy('title')->orderBy('id')->get();
+    $sortedDesc = Post::query()->orderByDesc('title')->orderBy('id')->get();
 
     livewire(PostsTable::class)
         ->sortTable('title')
@@ -57,6 +57,7 @@ it('can sort records with relationship', function (): void {
                 ->whereColumn('users.id', 'posts.author_id')
                 ->limit(1)
         )
+        ->orderBy('posts.id')
         ->get();
 
     $sortedDesc = Post::query()
@@ -66,6 +67,7 @@ it('can sort records with relationship', function (): void {
                 ->whereColumn('users.id', 'posts.author_id')
                 ->limit(1)
         )
+        ->orderBy('posts.id')
         ->get();
 
     livewire(PostsTable::class)
@@ -91,6 +93,7 @@ it('can sort records with nested relationship', function (): void {
                 ->whereColumn('users.id', 'posts.author_id')
                 ->limit(1)
         )
+        ->orderBy('posts.id')
         ->get();
 
     $sortedDesc = Post::query()
@@ -102,6 +105,7 @@ it('can sort records with nested relationship', function (): void {
                 ->whereColumn('users.id', 'posts.author_id')
                 ->limit(1)
         )
+        ->orderBy('posts.id')
         ->get();
 
     livewire(PostsTable::class)
@@ -117,8 +121,8 @@ it('can sort records with JSON column', function (): void {
     ])->create();
 
     // Get database-sorted results to match actual query behavior
-    $sortedAsc = Post::query()->orderBy('json->foo')->get();
-    $sortedDesc = Post::query()->orderByDesc('json->foo')->get();
+    $sortedAsc = Post::query()->orderBy('json->foo')->orderBy('id')->get();
+    $sortedDesc = Post::query()->orderByDesc('json->foo')->orderBy('id')->get();
 
     livewire(PostsTable::class)
         ->sortTable('json.foo')
@@ -133,8 +137,8 @@ it('can sort records with nested JSON column', function (): void {
     ])->create();
 
     // Get database-sorted results to match actual query behavior
-    $sortedAsc = Post::query()->orderBy('json->bar->baz')->get();
-    $sortedDesc = Post::query()->orderByDesc('json->bar->baz')->get();
+    $sortedAsc = Post::query()->orderBy('json->bar->baz')->orderBy('id')->get();
+    $sortedDesc = Post::query()->orderByDesc('json->bar->baz')->orderBy('id')->get();
 
     livewire(PostsTable::class)
         ->sortTable('json.bar.baz')
@@ -156,6 +160,7 @@ it('can sort records with relationship JSON column', function (): void {
                 ->whereColumn('users.id', 'posts.author_id')
                 ->limit(1)
         )
+        ->orderBy('posts.id')
         ->get();
 
     $sortedDesc = Post::query()
@@ -165,6 +170,7 @@ it('can sort records with relationship JSON column', function (): void {
                 ->whereColumn('users.id', 'posts.author_id')
                 ->limit(1)
         )
+        ->orderBy('posts.id')
         ->get();
 
     livewire(PostsTable::class)
@@ -187,6 +193,7 @@ it('can sort records with relationship nested JSON column', function (): void {
                 ->whereColumn('users.id', 'posts.author_id')
                 ->limit(1)
         )
+        ->orderBy('posts.id')
         ->get();
 
     $sortedDesc = Post::query()
@@ -196,6 +203,7 @@ it('can sort records with relationship nested JSON column', function (): void {
                 ->whereColumn('users.id', 'posts.author_id')
                 ->limit(1)
         )
+        ->orderBy('posts.id')
         ->get();
 
     livewire(PostsTable::class)
@@ -604,6 +612,7 @@ it('can sort records with `BelongsTo` -> `HasOne` relationship', function (): vo
                 ->whereColumn('users.id', 'posts.author_id')
                 ->limit(1)
         )
+        ->orderBy('posts.id')
         ->get();
 
     $sortedDesc = Post::query()
@@ -615,6 +624,7 @@ it('can sort records with `BelongsTo` -> `HasOne` relationship', function (): vo
                 ->whereColumn('users.id', 'posts.author_id')
                 ->limit(1)
         )
+        ->orderBy('posts.id')
         ->get();
 
     livewire(PostsTable::class)
@@ -644,6 +654,7 @@ it('can sort records with `BelongsTo` -> `HasOne` -> `BelongsTo` relationship', 
                 ->whereColumn('users.id', 'posts.author_id')
                 ->limit(1)
         )
+        ->orderBy('posts.id')
         ->get();
 
     $sortedDesc = Post::query()
@@ -656,6 +667,7 @@ it('can sort records with `BelongsTo` -> `HasOne` -> `BelongsTo` relationship', 
                 ->whereColumn('users.id', 'posts.author_id')
                 ->limit(1)
         )
+        ->orderBy('posts.id')
         ->get();
 
     livewire(PostsTable::class)
@@ -725,6 +737,7 @@ it('can sort records with `HasOne` -> `BelongsTo` relationship', function (): vo
                 ->whereColumn('profiles.user_id', 'users.id')
                 ->limit(1)
         )
+        ->orderBy('users.id')
         ->get();
 
     $sortedDesc = User::query()
@@ -736,6 +749,7 @@ it('can sort records with `HasOne` -> `BelongsTo` relationship', function (): vo
                 ->whereColumn('profiles.user_id', 'users.id')
                 ->limit(1)
         )
+        ->orderBy('users.id')
         ->get();
 
     livewire(UsersTable::class)
@@ -767,6 +781,7 @@ it('can sort records with `HasOne` -> `HasOne` relationship', function (): void 
                 ->whereColumn('profiles.user_id', 'users.id')
                 ->limit(1)
         )
+        ->orderBy('users.id')
         ->get();
 
     $sortedDesc = User::query()
@@ -778,6 +793,7 @@ it('can sort records with `HasOne` -> `HasOne` relationship', function (): void 
                 ->whereColumn('profiles.user_id', 'users.id')
                 ->limit(1)
         )
+        ->orderBy('users.id')
         ->get();
 
     livewire(UsersTable::class)
@@ -844,6 +860,7 @@ it('can sort records with `MorphOne` relationship', function (): void {
                 ->where('images.imageable_type', User::class)
                 ->limit(1)
         )
+        ->orderBy('users.id')
         ->get();
 
     $sortedDesc = User::query()
@@ -854,6 +871,7 @@ it('can sort records with `MorphOne` relationship', function (): void {
                 ->where('images.imageable_type', User::class)
                 ->limit(1)
         )
+        ->orderBy('users.id')
         ->get();
 
     livewire(UsersTable::class)
@@ -886,6 +904,7 @@ it('can sort records with `BelongsTo` -> `MorphOne` relationship', function (): 
                 ->whereColumn('users.id', 'posts.author_id')
                 ->limit(1)
         )
+        ->orderBy('posts.id')
         ->get();
 
     $sortedDesc = Post::query()
@@ -898,6 +917,7 @@ it('can sort records with `BelongsTo` -> `MorphOne` relationship', function (): 
                 ->whereColumn('users.id', 'posts.author_id')
                 ->limit(1)
         )
+        ->orderBy('posts.id')
         ->get();
 
     livewire(PostsTable::class)
@@ -932,6 +952,7 @@ it('can sort records with `BelongsTo` -> `HasOne` -> `MorphOne` relationship', f
                 ->whereColumn('users.id', 'posts.author_id')
                 ->limit(1)
         )
+        ->orderBy('posts.id')
         ->get();
 
     $sortedDesc = Post::query()
@@ -945,6 +966,7 @@ it('can sort records with `BelongsTo` -> `HasOne` -> `MorphOne` relationship', f
                 ->whereColumn('users.id', 'posts.author_id')
                 ->limit(1)
         )
+        ->orderBy('posts.id')
         ->get();
 
     livewire(PostsTable::class)
@@ -1218,6 +1240,7 @@ it('can sort records with `BelongsToThrough` relationship', function (): void {
                 ->whereColumn('users.id', 'posts.author_id')
                 ->limit(1)
         )
+        ->orderBy('posts.id')
         ->get();
 
     $sortedDesc = Post::query()
@@ -1229,6 +1252,7 @@ it('can sort records with `BelongsToThrough` relationship', function (): void {
                 ->whereColumn('users.id', 'posts.author_id')
                 ->limit(1)
         )
+        ->orderBy('posts.id')
         ->get();
 
     livewire(PostsTable::class)
@@ -1295,6 +1319,7 @@ it('can sort records with nested `BelongsToThrough` -> `BelongsTo` relationship'
                 ->whereColumn('users.id', 'posts.author_id')
                 ->limit(1)
         )
+        ->orderBy('posts.id')
         ->get();
 
     $sortedDesc = Post::query()
@@ -1307,6 +1332,7 @@ it('can sort records with nested `BelongsToThrough` -> `BelongsTo` relationship'
                 ->whereColumn('users.id', 'posts.author_id')
                 ->limit(1)
         )
+        ->orderBy('posts.id')
         ->get();
 
     livewire(PostsTable::class)
@@ -1380,6 +1406,7 @@ it('can sort records with `BelongsTo` -> `BelongsToThrough` relationship', funct
                 ->whereColumn('users.id', 'posts.author_id')
                 ->limit(1)
         )
+        ->orderBy('posts.id')
         ->get();
 
     $sortedDesc = Post::query()
@@ -1392,6 +1419,7 @@ it('can sort records with `BelongsTo` -> `BelongsToThrough` relationship', funct
                 ->whereColumn('users.id', 'posts.author_id')
                 ->limit(1)
         )
+        ->orderBy('posts.id')
         ->get();
 
     livewire(PostsTable::class)

@@ -1,6 +1,6 @@
 <?php
 
-use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\MarkdownEditor;
 use Filament\Schemas\Schema;
 use Filament\Tests\Fixtures\Livewire\Livewire;
 use Filament\Tests\TestCase;
@@ -15,7 +15,7 @@ test('fields can be required', function (): void {
         Schema::make(Livewire::make())
             ->statePath('data')
             ->components([
-                $field = (new RichEditor('content'))
+                $field = (new MarkdownEditor('content'))
                     ->required(),
             ])
             ->fill([
@@ -31,33 +31,33 @@ test('fields can be required', function (): void {
 });
 
 test('can get default toolbar buttons using `getDefaultToolbarButtons()`', function (): void {
-    $richEditor = Schema::make(Livewire::make())
+    $markdownEditor = Schema::make(Livewire::make())
         ->statePath('data')
         ->components([
-            RichEditor::make('content'),
+            MarkdownEditor::make('content'),
         ])
         ->getComponents()[0];
 
-    $defaultButtons = $richEditor->getDefaultToolbarButtons();
+    $defaultButtons = $markdownEditor->getDefaultToolbarButtons();
 
     expect($defaultButtons)
         ->toBeArray()
         ->toHaveCount(5)
-        ->and($defaultButtons[0])->toEqual(['bold', 'italic', 'underline', 'strike', 'subscript', 'superscript', 'link'])
-        ->and($defaultButtons[1])->toEqual(['h2', 'h3', 'alignStart', 'alignCenter', 'alignEnd'])
+        ->and($defaultButtons[0])->toEqual(['bold', 'italic', 'strike', 'link'])
+        ->and($defaultButtons[1])->toEqual(['heading'])
         ->and($defaultButtons[2])->toEqual(['blockquote', 'codeBlock', 'bulletList', 'orderedList'])
         ->and($defaultButtons[3])->toEqual(['table', 'attachFiles'])
         ->and($defaultButtons[4])->toEqual(['undo', 'redo']);
 });
 
 test('can overwrite toolbar buttons array using `toolbarButtons()`', function (): void {
-    $richEditor = RichEditor::make('content')
+    $markdownEditor = MarkdownEditor::make('content')
         ->toolbarButtons([
             ['bold', 'italic'],
             ['undo', 'redo'],
         ]);
 
-    $buttons = $richEditor->getToolbarButtons();
+    $buttons = $markdownEditor->getToolbarButtons();
 
     expect($buttons)
         ->toBeArray()
@@ -67,12 +67,12 @@ test('can overwrite toolbar buttons array using `toolbarButtons()`', function ()
 });
 
 test('can overwrite toolbar buttons with closure using `toolbarButtons()`', function (): void {
-    $richEditor = RichEditor::make('content')
+    $markdownEditor = MarkdownEditor::make('content')
         ->toolbarButtons(fn () => [
             ['bold', 'italic'],
         ]);
 
-    $buttons = $richEditor->getToolbarButtons();
+    $buttons = $markdownEditor->getToolbarButtons();
 
     expect($buttons)
         ->toBeArray()
@@ -84,13 +84,13 @@ test('can disable specific toolbar buttons using `disableToolbarButtons()`', fun
     $schema = Schema::make(Livewire::make())
         ->statePath('data')
         ->components([
-            RichEditor::make('content'),
+            MarkdownEditor::make('content'),
         ]);
 
-    $richEditor = $schema->getComponents()[0];
-    $richEditor->disableToolbarButtons(['bold', 'italic', 'attachFiles']);
+    $markdownEditor = $schema->getComponents()[0];
+    $markdownEditor->disableToolbarButtons(['bold', 'italic', 'attachFiles']);
 
-    $buttons = $richEditor->getToolbarButtons();
+    $buttons = $markdownEditor->getToolbarButtons();
 
     // Check that `bold`, `italic`, and `attachFiles` buttons are not present
     $flatButtons = array_merge(...$buttons);
@@ -99,8 +99,8 @@ test('can disable specific toolbar buttons using `disableToolbarButtons()`', fun
         ->not->toContain('bold')
         ->not->toContain('italic')
         ->not->toContain('attachFiles')
-        ->toContain('underline')
         ->toContain('strike')
+        ->toContain('link')
         ->toContain('undo');
 });
 
@@ -108,99 +108,99 @@ test('can enable additional toolbar buttons using `enableToolbarButtons()`', fun
     $schema = Schema::make(Livewire::make())
         ->statePath('data')
         ->components([
-            RichEditor::make('content'),
+            MarkdownEditor::make('content'),
         ]);
 
-    $richEditor = $schema->getComponents()[0];
-    $richEditor->enableToolbarButtons(['h1', 'textColor']);
+    $markdownEditor = $schema->getComponents()[0];
+    $markdownEditor->enableToolbarButtons(['underline', 'subscript']);
 
-    $buttons = $richEditor->getToolbarButtons();
+    $buttons = $markdownEditor->getToolbarButtons();
 
-    // Check that all default buttons plus `h1` and `textColor` are present
+    // Check that all default buttons plus `underline` and `subscript` are present
     $flatButtons = array_merge(...$buttons);
 
     expect($flatButtons)
         ->toContain('bold')
         ->toContain('italic')
-        ->toContain('h1')
-        ->toContain('textColor');
+        ->toContain('underline')
+        ->toContain('subscript');
 });
 
 test('can disable all toolbar buttons using `disableAllToolbarButtons()`', function (): void {
     $schema = Schema::make(Livewire::make())
         ->statePath('data')
         ->components([
-            RichEditor::make('content'),
+            MarkdownEditor::make('content'),
         ]);
 
-    $richEditor = $schema->getComponents()[0];
-    $richEditor->disableAllToolbarButtons();
+    $markdownEditor = $schema->getComponents()[0];
+    $markdownEditor->disableAllToolbarButtons();
 
-    $buttons = $richEditor->getToolbarButtons();
+    $buttons = $markdownEditor->getToolbarButtons();
 
     expect($buttons)->toBeArray()->toBeEmpty();
 });
 
 test('can conditionally disable all toolbar buttons using `disableAllToolbarButtons()`', function (): void {
-    $richEditor = Schema::make(Livewire::make())
+    $markdownEditor = Schema::make(Livewire::make())
         ->statePath('data')
         ->components([
-            RichEditor::make('content')
+            MarkdownEditor::make('content')
                 ->disableAllToolbarButtons(false),
         ])
         ->getComponents()[0];
 
-    $buttons = $richEditor->getToolbarButtons();
+    $buttons = $markdownEditor->getToolbarButtons();
 
     expect($buttons)->toBeArray()->not->toBeEmpty();
 });
 
 test('can check if toolbar button exists using `hasToolbarButton()`', function (): void {
-    $richEditor = Schema::make(Livewire::make())
+    $markdownEditor = Schema::make(Livewire::make())
         ->statePath('data')
         ->components([
-            RichEditor::make('content'),
+            MarkdownEditor::make('content'),
         ])
         ->getComponents()[0];
 
-    expect($richEditor->hasToolbarButton('bold'))->toBeTrue()
-        ->and($richEditor->hasToolbarButton('italic'))->toBeTrue()
-        ->and($richEditor->hasToolbarButton('attachFiles'))->toBeTrue()
-        ->and($richEditor->hasToolbarButton('nonexistent'))->toBeFalse();
+    expect($markdownEditor->hasToolbarButton('bold'))->toBeTrue()
+        ->and($markdownEditor->hasToolbarButton('italic'))->toBeTrue()
+        ->and($markdownEditor->hasToolbarButton('attachFiles'))->toBeTrue()
+        ->and($markdownEditor->hasToolbarButton('nonexistent'))->toBeFalse();
 });
 
 test('can check if toolbar button exists with array using `hasToolbarButton()`', function (): void {
-    $richEditor = Schema::make(Livewire::make())
+    $markdownEditor = Schema::make(Livewire::make())
         ->statePath('data')
         ->components([
-            RichEditor::make('content'),
+            MarkdownEditor::make('content'),
         ])
         ->getComponents()[0];
 
-    expect($richEditor->hasToolbarButton(['bold', 'italic']))->toBeTrue()
-        ->and($richEditor->hasToolbarButton(['nonexistent1', 'nonexistent2']))->toBeFalse()
-        ->and($richEditor->hasToolbarButton(['bold', 'nonexistent']))->toBeTrue(); // At least one exists
+    expect($markdownEditor->hasToolbarButton(['bold', 'italic']))->toBeTrue()
+        ->and($markdownEditor->hasToolbarButton(['nonexistent1', 'nonexistent2']))->toBeFalse()
+        ->and($markdownEditor->hasToolbarButton(['bold', 'nonexistent']))->toBeTrue(); // At least one exists
 });
 
 test('can check if custom toolbar buttons are set using `hasCustomToolbarButtons()`', function (): void {
-    $richEditor = RichEditor::make('content');
+    $markdownEditor = MarkdownEditor::make('content');
 
-    expect($richEditor->hasCustomToolbarButtons())->toBeFalse();
+    expect($markdownEditor->hasCustomToolbarButtons())->toBeFalse();
 
-    $richEditor->toolbarButtons([['bold', 'italic']]);
+    $markdownEditor->toolbarButtons([['bold', 'italic']]);
 
-    expect($richEditor->hasCustomToolbarButtons())->toBeTrue();
+    expect($markdownEditor->hasCustomToolbarButtons())->toBeTrue();
 });
 
 test('toolbar buttons are properly grouped by `getToolbarButtons()`', function (): void {
-    $richEditor = RichEditor::make('content')
+    $markdownEditor = MarkdownEditor::make('content')
         ->toolbarButtons([
             ['bold', 'italic'],
-            'underline',
             'strike',
+            'link',
         ]);
 
-    $buttons = $richEditor->getToolbarButtons();
+    $buttons = $markdownEditor->getToolbarButtons();
 
     // The `getToolbarButtons()` method groups consecutive non-array buttons together.
     // When an array is encountered, it becomes its own group, and any preceding
@@ -209,18 +209,18 @@ test('toolbar buttons are properly grouped by `getToolbarButtons()`', function (
         ->toBeArray()
         ->toHaveCount(2)
         ->and($buttons[0])->toEqual(['bold', 'italic'])
-        ->and($buttons[1])->toEqual(['underline', 'strike']);
+        ->and($buttons[1])->toEqual(['strike', 'link']);
 });
 
 test('blank button groups are filtered out by `getToolbarButtons()`', function (): void {
-    $richEditor = RichEditor::make('content')
+    $markdownEditor = MarkdownEditor::make('content')
         ->toolbarButtons([
             ['bold', 'italic'],
             [],
             ['undo', 'redo'],
         ]);
 
-    $buttons = $richEditor->getToolbarButtons();
+    $buttons = $markdownEditor->getToolbarButtons();
 
     expect($buttons)
         ->toBeArray()
@@ -230,84 +230,84 @@ test('blank button groups are filtered out by `getToolbarButtons()`', function (
 });
 
 test('cannot use `disableToolbarButtons()` when using closure', function (): void {
-    $richEditor = RichEditor::make('content')
+    $markdownEditor = MarkdownEditor::make('content')
         ->toolbarButtons(fn () => [['bold', 'italic']]);
 
-    expect(fn () => $richEditor->disableToolbarButtons(['bold']))
+    expect(fn () => $markdownEditor->disableToolbarButtons(['bold']))
         ->toThrow(LogicException::class, 'You cannot use the `disableToolbarButtons()` method when the toolbar buttons are dynamically returned from a function.');
 });
 
 test('cannot use `enableToolbarButtons()` when using closure', function (): void {
-    $richEditor = RichEditor::make('content')
+    $markdownEditor = MarkdownEditor::make('content')
         ->toolbarButtons(fn () => [['bold', 'italic']]);
 
-    expect(fn () => $richEditor->enableToolbarButtons(['underline']))
+    expect(fn () => $markdownEditor->enableToolbarButtons(['strike']))
         ->toThrow(LogicException::class, 'You cannot use the `enableToolbarButtons()` method when the toolbar buttons are dynamically returned from a function.');
 });
 
 test('`hasFileAttachments()` returns true by default', function (): void {
-    $richEditor = Schema::make(Livewire::make())
+    $markdownEditor = Schema::make(Livewire::make())
         ->statePath('data')
         ->components([
-            RichEditor::make('content'),
+            MarkdownEditor::make('content'),
         ])
         ->getComponents()[0];
 
-    expect($richEditor->hasFileAttachments())->toBeTrue()
-        ->and($richEditor->hasToolbarButton('attachFiles'))->toBeTrue();
+    expect($markdownEditor->hasFileAttachments())->toBeTrue()
+        ->and($markdownEditor->hasToolbarButton('attachFiles'))->toBeTrue();
 });
 
 test('`hasFileAttachments()` returns false when `attachFiles` button is removed using `disableToolbarButtons()`', function (): void {
     $schema = Schema::make(Livewire::make())
         ->statePath('data')
         ->components([
-            RichEditor::make('content'),
+            MarkdownEditor::make('content'),
         ]);
 
-    $richEditor = $schema->getComponents()[0];
-    $richEditor->disableToolbarButtons(['attachFiles']);
+    $markdownEditor = $schema->getComponents()[0];
+    $markdownEditor->disableToolbarButtons(['attachFiles']);
 
-    expect($richEditor->hasFileAttachments())->toBeFalse()
-        ->and($richEditor->hasToolbarButton('attachFiles'))->toBeFalse();
+    expect($markdownEditor->hasFileAttachments())->toBeFalse()
+        ->and($markdownEditor->hasToolbarButton('attachFiles'))->toBeFalse();
 });
 
 test('`hasFileAttachments()` returns true when `attachFiles` is in custom toolbar buttons', function (): void {
-    $richEditor = RichEditor::make('content')
+    $markdownEditor = MarkdownEditor::make('content')
         ->toolbarButtons([
             ['bold', 'italic'],
             ['attachFiles'],
         ]);
 
-    expect($richEditor->hasFileAttachments())->toBeTrue()
-        ->and($richEditor->hasToolbarButton('attachFiles'))->toBeTrue();
+    expect($markdownEditor->hasFileAttachments())->toBeTrue()
+        ->and($markdownEditor->hasToolbarButton('attachFiles'))->toBeTrue();
 });
 
 test('`hasFileAttachments()` returns false with custom toolbar buttons without `attachFiles`', function (): void {
-    $richEditor = RichEditor::make('content')
+    $markdownEditor = MarkdownEditor::make('content')
         ->toolbarButtons([
             ['bold', 'italic'],
             ['undo', 'redo'],
         ]);
 
-    expect($richEditor->hasFileAttachments())->toBeFalse()
-        ->and($richEditor->hasToolbarButton('attachFiles'))->toBeFalse();
+    expect($markdownEditor->hasFileAttachments())->toBeFalse()
+        ->and($markdownEditor->hasToolbarButton('attachFiles'))->toBeFalse();
 });
 
 test('`fileAttachments()` method takes precedence over `disableToolbarButtons()`', function (): void {
     $schema = Schema::make(Livewire::make())
         ->statePath('data')
         ->components([
-            RichEditor::make('content'),
+            MarkdownEditor::make('content'),
         ]);
 
-    $richEditor = $schema->getComponents()[0];
-    $richEditor->disableToolbarButtons(['bold']);
-    $richEditor->fileAttachments(false);
+    $markdownEditor = $schema->getComponents()[0];
+    $markdownEditor->disableToolbarButtons(['bold']);
+    $markdownEditor->fileAttachments(false);
 
-    expect($richEditor->hasFileAttachments())->toBeFalse()
-        ->and($richEditor->hasToolbarButton('attachFiles'))->toBeFalse();
+    expect($markdownEditor->hasFileAttachments())->toBeFalse()
+        ->and($markdownEditor->hasToolbarButton('attachFiles'))->toBeFalse();
 
-    $buttons = $richEditor->getToolbarButtons();
+    $buttons = $markdownEditor->getToolbarButtons();
     $flatButtons = array_merge(...$buttons);
 
     expect($flatButtons)->not->toContain('attachFiles');
@@ -317,17 +317,17 @@ test('`fileAttachments(false)` works when called before `disableToolbarButtons()
     $schema = Schema::make(Livewire::make())
         ->statePath('data')
         ->components([
-            RichEditor::make('content'),
+            MarkdownEditor::make('content'),
         ]);
 
-    $richEditor = $schema->getComponents()[0];
-    $richEditor->fileAttachments(false);
-    $richEditor->disableToolbarButtons(['bold']);
+    $markdownEditor = $schema->getComponents()[0];
+    $markdownEditor->fileAttachments(false);
+    $markdownEditor->disableToolbarButtons(['bold']);
 
-    expect($richEditor->hasFileAttachments())->toBeFalse()
-        ->and($richEditor->hasToolbarButton('attachFiles'))->toBeFalse();
+    expect($markdownEditor->hasFileAttachments())->toBeFalse()
+        ->and($markdownEditor->hasToolbarButton('attachFiles'))->toBeFalse();
 
-    $buttons = $richEditor->getToolbarButtons();
+    $buttons = $markdownEditor->getToolbarButtons();
     $flatButtons = array_merge(...$buttons);
 
     expect($flatButtons)->not->toContain('attachFiles');
@@ -337,28 +337,28 @@ test('`disableToolbarButtons()` with `attachFiles` also makes `hasFileAttachment
     $schema = Schema::make(Livewire::make())
         ->statePath('data')
         ->components([
-            RichEditor::make('content'),
+            MarkdownEditor::make('content'),
         ]);
 
-    $richEditor = $schema->getComponents()[0];
-    $richEditor->disableToolbarButtons(['attachFiles']);
+    $markdownEditor = $schema->getComponents()[0];
+    $markdownEditor->disableToolbarButtons(['attachFiles']);
 
-    expect($richEditor->hasFileAttachments())->toBeFalse()
-        ->and($richEditor->hasToolbarButton('attachFiles'))->toBeFalse();
+    expect($markdownEditor->hasFileAttachments())->toBeFalse()
+        ->and($markdownEditor->hasToolbarButton('attachFiles'))->toBeFalse();
 });
 
 test('`fileAttachments(true)` does not force `attachFiles` button to appear when using `disableToolbarButtons()`', function (): void {
     $schema = Schema::make(Livewire::make())
         ->statePath('data')
         ->components([
-            RichEditor::make('content'),
+            MarkdownEditor::make('content'),
         ]);
 
-    $richEditor = $schema->getComponents()[0];
-    $richEditor->disableToolbarButtons(['attachFiles']);
-    $richEditor->fileAttachments(true);
+    $markdownEditor = $schema->getComponents()[0];
+    $markdownEditor->disableToolbarButtons(['attachFiles']);
+    $markdownEditor->fileAttachments(true);
 
     // File attachments are enabled (drag/drop works), but the toolbar button remains hidden
-    expect($richEditor->hasFileAttachments())->toBeTrue()
-        ->and($richEditor->hasToolbarButton('attachFiles'))->toBeFalse();
+    expect($markdownEditor->hasFileAttachments())->toBeTrue()
+        ->and($markdownEditor->hasToolbarButton('attachFiles'))->toBeFalse();
 });

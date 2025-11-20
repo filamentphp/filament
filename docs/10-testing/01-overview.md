@@ -12,7 +12,7 @@ Since all Filament components are mounted to a Livewire component, we're just us
 
 Looking for a full example on how to test a panel resource? Check out the [Testing resources](testing-resources) section.
 
-If you could like to learn the different methods available to test tables, check out the [Testing tables](testing-tables) section.
+If you would like to learn the different methods available to test tables, check out the [Testing tables](testing-tables) section.
 
 If you need to test a schema, which encompasses both forms and infolists, check out the [Testing schemas](testing-schemas) section.
 

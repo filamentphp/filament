@@ -66,8 +66,8 @@ it('can render post authors', function (): void {
 it('can sort posts by title', function (): void {
     Post::factory()->count(10)->create();
 
-    $sortedAsc = Post::query()->orderBy('title')->get();
-    $sortedDesc = Post::query()->orderByDesc('title')->get();
+    $sortedAsc = Post::query()->orderBy('title')->orderBy('id')->get();
+    $sortedDesc = Post::query()->orderByDesc('title')->orderBy('id')->get();
 
     livewire(ListPosts::class)
         ->sortTable('title')
@@ -86,6 +86,7 @@ it('can sort posts by author', function (): void {
                 ->whereColumn('users.id', 'posts.author_id')
                 ->limit(1)
         )
+        ->orderBy('posts.id')
         ->get();
 
     $sortedDesc = Post::query()
@@ -95,6 +96,7 @@ it('can sort posts by author', function (): void {
                 ->whereColumn('users.id', 'posts.author_id')
                 ->limit(1)
         )
+        ->orderBy('posts.id')
         ->get();
 
     livewire(ListPosts::class)

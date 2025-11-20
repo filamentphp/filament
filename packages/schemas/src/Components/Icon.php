@@ -19,14 +19,14 @@ class Icon extends Component implements HasEmbeddedView
     use HasColor;
     use HasTooltip;
 
-    protected string | BackedEnum | Closure $icon;
+    protected string | BackedEnum | Htmlable | Closure $icon;
 
-    final public function __construct(string | BackedEnum | Closure $icon)
+    final public function __construct(string | BackedEnum | Htmlable | Closure $icon)
     {
         $this->icon($icon);
     }
 
-    public static function make(string | BackedEnum | Closure $icon): static
+    public static function make(string | BackedEnum | Htmlable | Closure $icon): static
     {
         $static = app(static::class, ['icon' => $icon]);
         $static->configure();
@@ -34,7 +34,7 @@ class Icon extends Component implements HasEmbeddedView
         return $static;
     }
 
-    public function icon(string | BackedEnum | Closure $icon): static
+    public function icon(string | BackedEnum | Htmlable | Closure $icon): static
     {
         $this->icon = $icon;
 
