@@ -42,7 +42,7 @@ Filament is designed to be highly extensible, allowing you to add your own UI co
 The vast majority of plugins in the ecosystem are open-source and free to use. Some premium plugins are available for purchase, often offering enhanced customer support and quality.
 
 <Aside variant="warning">
-    Plugins not maintained by Filament team are created and managed by independent authors. While these plugins can enhance your experience, Filament cannot guarantee their quality, security, compatibility, or maintenance. We recommend reviewing the plugin's code, documentation, and user feedback before installation.
+    Plugins not maintained by the Filament team are created and managed by independent authors. While these plugins can enhance your experience, Filament cannot guarantee their quality, security, compatibility, or maintenance. We recommend reviewing the plugin's code, documentation, and user feedback before installation.
 </Aside>
 
 You can browse an extensive list of official and community plugins on the [Filament website](/plugins).
