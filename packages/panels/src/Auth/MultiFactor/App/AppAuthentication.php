@@ -123,9 +123,9 @@ class AppAuthentication implements MultiFactorAuthenticationProvider
         ));
     }
 
-    public function generateSecret(int $secretLength = 16): string
+    public function generateSecret(): string
     {
-        return $this->google2FA->generateSecretKey($secretLength);
+        return $this->google2FA->generateSecretKey(16);
     }
 
     public function getCurrentCode(HasAppAuthentication $user, ?string $secret = null): string
