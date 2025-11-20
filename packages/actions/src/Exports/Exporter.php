@@ -242,4 +242,9 @@ abstract class Exporter
     {
         return $query;
     }
+
+    public static function shouldDispatchNotificationEvent(Export $export): bool
+    {
+        return true;
+    }
 }
