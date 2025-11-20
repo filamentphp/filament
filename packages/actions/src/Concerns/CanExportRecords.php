@@ -105,16 +105,15 @@ trait CanExportRecords
                     ],
                 })
                 ->schema(function () use ($action): array {
-                        $isEnablingVisibleTableColumnsByDefault = $action->isEnablingVisibleTableColumnsByDefault();
+                    $isEnablingVisibleTableColumnsByDefault = $action->isEnablingVisibleTableColumnsByDefault();
 
-                        if ($isEnablingVisibleTableColumnsByDefault && !method_exists($this->getLivewire(), 'getTable')) {
-                            throw new LogicException(static::class . "::\$isEnablingVisibleTableColumnsByDefault is true and " . $this->getLivewire()::class . " doesn't have a getTable() method.");
-                        }
+                    if ($isEnablingVisibleTableColumnsByDefault && ! method_exists($this->getLivewire(), 'getTable')) {
+                        throw new LogicException(static::class . '::$isEnablingVisibleTableColumnsByDefault is true and ' . $this->getLivewire()::class . " doesn't have a getTable() method.");
+                    }
 
-                        $visibleTableColumnsNames = $isEnablingVisibleTableColumnsByDefault ? $action->getVisibleTableColumnNames() : [];
+                    $visibleTableColumnsNames = $isEnablingVisibleTableColumnsByDefault ? $action->getVisibleTableColumnNames() : [];
 
-
-                        return array_map(
+                    return array_map(
                         fn (ExportColumn $column): Flex => Flex::make([
                             Forms\Components\Checkbox::make('isEnabled')
                                 ->label(__('filament-actions::export.modal.form.columns.form.is_enabled.label', ['column' => $column->getName()]))
