@@ -21,6 +21,8 @@ class ExportColumn extends Component
 
     protected string | Closure | null $label = null;
 
+    protected bool $shouldTranslateLabel = false;
+
     protected ?Exporter $exporter = null;
 
     protected bool | Closure $isEnabledByDefault = true;
@@ -101,14 +103,25 @@ class ExportColumn extends Component
         return $this->getExporter()?->getRecord();
     }
 
+    public function translateLabel(bool $shouldTranslateLabel = true): static
+    {
+        $this->shouldTranslateLabel = $shouldTranslateLabel;
+
+        return $this;
+    }
+
     public function getLabel(): ?string
     {
-        return $this->evaluate($this->label) ?? (string) str($this->getName())
+        $label = $this->evaluate($this->label) ?? (string) str($this->getName())
             ->beforeLast('.')
             ->afterLast('.')
             ->kebab()
             ->replace(['-', '_'], ' ')
             ->ucfirst();
+
+        return is_string($label) && $this->shouldTranslateLabel
+            ? __($label)
+            : $label;
     }
 
     public function applyRelationshipAggregates(EloquentBuilder $query): EloquentBuilder
