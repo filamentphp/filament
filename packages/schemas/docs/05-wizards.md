@@ -155,7 +155,7 @@ Wizard::make([
 ])->skippable()
 ```
 
-Optionally, the `skippable()` method accepts a boolean value to control if the step is skippable or not:
+Optionally, the `skippable()` method accepts a boolean value to control if the steps are skippable or not:
 
 ```php
 use Filament\Schemas\Components\Wizard;
