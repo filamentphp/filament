@@ -52,7 +52,7 @@ class ExportCompletion implements ShouldQueue
         }
 
         $failedRowsCount = $this->export->getFailedRowsCount();
-        $shouldDispatchNotificationEvent = $this->exporter->shouldDispatchNotificationEvent($this->export);
+        $shouldDispatchNotificationEvent = $this->exporter::shouldDispatchNotificationEvent($this->export);
 
         Notification::make()
             ->title($this->exporter::getCompletedNotificationTitle($this->export))
