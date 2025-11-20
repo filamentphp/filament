@@ -89,7 +89,7 @@ You may also remove the testing directories and files, but we'll leave them in f
 
 Now that we have our plugin cleaned up, we can start adding our code. The boilerplate in the `src/HeadingsServiceProvider.php` file has a lot going on so, let's delete everything and start from scratch.
 
-We need to be able to register our stylesheet with the Filament Asset Manager so that we can load it on demand in our blade view. To do this, we'll need to add the following to the `packageBooted` method in our service provider.
+We need to be able to register our stylesheet with the Filament Asset Manager so that we can load it on demand in our Blade view. To do this, we'll need to add the following to the `packageBooted` method in our service provider.
 
 ***Note the `loadedOnRequest()` method. This is important, because it tells Filament to only load the stylesheet when it's needed.***
 
