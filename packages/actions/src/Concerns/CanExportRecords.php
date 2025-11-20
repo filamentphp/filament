@@ -111,7 +111,7 @@ trait CanExportRecords
                         throw new LogicException(static::class . '::$isEnablingVisibleTableColumnsByDefault is true and ' . $this->getLivewire()::class . " doesn't have a getTable() method.");
                     }
 
-                    $visibleTableColumnsNames = $isEnablingVisibleTableColumnsByDefault ? $action->getVisibleTableColumnNames() : [];
+                    $visibleTableColumnNames = $isEnablingVisibleTableColumnsByDefault ? $action->getVisibleTableColumnNames() : [];
 
                     return array_map(
                         fn (ExportColumn $column): Flex => Flex::make([
@@ -120,7 +120,7 @@ trait CanExportRecords
                                 ->hiddenLabel()
                                 ->default(
                                     $isEnablingVisibleTableColumnsByDefault
-                                        ? (in_array($column->getName(), $visibleTableColumnsNames) && $column->isEnabledByDefault())
+                                        ? (in_array($column->getName(), $visibleTableColumnNames) && $column->isEnabledByDefault())
                                         : $column->isEnabledByDefault()
                                 )
                                 ->live()
