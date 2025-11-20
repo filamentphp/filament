@@ -106,11 +106,6 @@ trait CanExportRecords
                 })
                 ->schema(function () use ($action): array {
                     $isEnablingVisibleTableColumnsByDefault = $action->isEnablingVisibleTableColumnsByDefault();
-
-                    if ($isEnablingVisibleTableColumnsByDefault && ! method_exists($this->getLivewire(), 'getTable')) {
-                        throw new LogicException(static::class . '::$isEnablingVisibleTableColumnsByDefault is true and ' . $this->getLivewire()::class . " doesn't have a getTable() method.");
-                    }
-
                     $visibleTableColumnNames = $isEnablingVisibleTableColumnsByDefault ? $action->getVisibleTableColumnNames() : [];
 
                     return array_map(
@@ -204,13 +199,7 @@ trait CanExportRecords
                     ->mapWithKeys(fn (array $column, string $columnName): array => [$columnName => $column['label']])
                     ->all();
             } else {
-
                 $isEnablingVisibleTableColumnsByDefault = $action->isEnablingVisibleTableColumnsByDefault();
-
-                if ($isEnablingVisibleTableColumnsByDefault && ! method_exists($this->getLivewire(), 'getTable')) {
-                    throw new LogicException(static::class . '::$isEnablingVisibleTableColumnsByDefault is true and ' . $this->getLivewire()::class . " doesn't have a getTable() method.");
-                }
-
                 $visibleTableColumnNames = $isEnablingVisibleTableColumnsByDefault ? $action->getVisibleTableColumnNames() : [];
 
                 $columnMap = collect($exporter::getColumns())
@@ -375,6 +364,10 @@ trait CanExportRecords
      */
     public function getVisibleTableColumnNames(): array
     {
+        if (! $this->getLivewire() instanceof HasTable) {
+            throw new LogicException('Cannot get visible table columns from a non-table Livewire component.');
+        }
+
         return array_keys($this->getLivewire()->getTable()->getVisibleColumns());
     }
 
