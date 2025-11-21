@@ -1458,10 +1458,12 @@
                                                         class="fi-ta-header-cell-sort-btn"
                                                     >
                                                         @if (filled($columnHeaderTooltip))
-                                                            <span x-tooltip="{
+                                                            <span
+                                                                x-tooltip="{
                                                                     content: @js($columnHeaderTooltip),
                                                                     theme: $store.theme,
                                                                 }"
+                                                                class="fi-ta-header-cell-tooltip"
                                                             >
                                                                 {{ $columnLabel }}
                                                             </span>
@@ -1479,10 +1481,12 @@
                                                     </span>
                                                 @else
                                                     @if (filled($columnHeaderTooltip))
-                                                        <span x-tooltip="{
+                                                        <span
+                                                            x-tooltip="{
                                                                 content: @js($columnHeaderTooltip),
                                                                 theme: $store.theme,
                                                             }"
+                                                            class="fi-ta-header-cell-tooltip"
                                                         >
                                                             {{ $columnLabel }}
                                                         </span>
