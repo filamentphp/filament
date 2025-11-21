@@ -1428,12 +1428,6 @@
                                                 @if ($isColumnActivelySorted)
                                                     aria-sort="{{ $sortDirection === 'asc' ? 'ascending' : 'descending' }}"
                                                 @endif
-                                                @if (filled($columnHeaderTooltip))
-                                                    x-tooltip="{
-                                                        content: @js($columnHeaderTooltip),
-                                                        theme: $store.theme,
-                                                    }"
-                                                @endif
                                                 {{
                                                     $column->getExtraHeaderAttributeBag()
                                                         ->class([
@@ -1463,7 +1457,17 @@
                                                         wire:loading.attr="disabled"
                                                         class="fi-ta-header-cell-sort-btn"
                                                     >
-                                                        {{ $columnLabel }}
+                                                        @if (filled($columnHeaderTooltip))
+                                                            <span x-tooltip="{
+                                                                    content: @js($columnHeaderTooltip),
+                                                                    theme: $store.theme,
+                                                                }"
+                                                            >
+                                                                {{ $columnLabel }}
+                                                            </span>
+                                                        @else
+                                                            {{ $columnLabel }}
+                                                        @endif
 
                                                         {{
                                                             \Filament\Support\generate_icon_html(($isColumnActivelySorted && $sortDirection === 'asc') ? \Filament\Support\Icons\Heroicon::ChevronUp : \Filament\Support\Icons\Heroicon::ChevronDown, alias: match (true) {
@@ -1474,7 +1478,17 @@
                                                         }}
                                                     </span>
                                                 @else
-                                                    {{ $columnLabel }}
+                                                    @if (filled($columnHeaderTooltip))
+                                                        <span x-tooltip="{
+                                                                content: @js($columnHeaderTooltip),
+                                                                theme: $store.theme,
+                                                            }"
+                                                        >
+                                                            {{ $columnLabel }}
+                                                        </span>
+                                                    @else
+                                                        {{ $columnLabel }}
+                                                    @endif
                                                 @endif
                                             </th>
                                         @endif
