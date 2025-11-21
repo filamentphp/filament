@@ -77,14 +77,8 @@ namespace Livewire\Features\SupportTesting {
 
         public function loadTable(): static {}
 
-        /**
-         * @deprecated Use `mountAction()` instead.
-         */
         public function mountTableAction(string | array $name, $record = null): static {}
 
-        /**
-         * @deprecated Use `unmountAction()` instead.
-         */
         public function unmountTableAction(): static {}
 
         /**
