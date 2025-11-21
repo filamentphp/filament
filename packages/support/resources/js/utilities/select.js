@@ -94,7 +94,7 @@ export class Select {
         this.isOpen = false
         this.selectedIndex = -1
         this.searchQuery = ''
-        this.searched = false;
+        this.searched = false
         this.searchTimeout = null
         this.isSearching = false
         // Version token to prevent race conditions when updating the selected display
@@ -1305,7 +1305,7 @@ export class Select {
     }
 
     async openDropdown() {
-        this.searched = false;
+        this.searched = false
         // Make dropdown visible but with position absolute by default, or fixed in containers with .fi-fixed-positioning-context class, and opacity 0 for measurement
         this.dropdown.style.display = 'block'
         this.dropdown.style.opacity = '0'
@@ -1372,25 +1372,29 @@ export class Select {
                       ? fetchedOptions.options
                       : []
 
-
                 // Populate the label repository with the fetched options
                 this.populateLabelRepositoryFromOptions(normalizedFetched)
 
-                if(this.isSearchable && this.searchInput && this.searched && this.getSearchResultsUsing) {
+                if (
+                    this.isSearchable &&
+                    this.searchInput &&
+                    this.searched &&
+                    this.getSearchResultsUsing
+                ) {
                     this.originalOptions = JSON.parse(
                         JSON.stringify(normalizedFetched),
                     )
-                    return;
+                    return
                 }
 
-                if(this.isSearchable && this.searchInput && this.searched) {
+                if (this.isSearchable && this.searchInput && this.searched) {
                     this.originalOptions = JSON.parse(
                         JSON.stringify(normalizedFetched),
                     )
-                    this.options = normalizedFetched;
+                    this.options = normalizedFetched
                     this.filterOptions(this.searchQuery)
                     this.renderOptions()
-                    return;
+                    return
                 }
 
                 // Update options
@@ -1412,7 +1416,7 @@ export class Select {
         this.hideLoadingState()
 
         // If searchable, focus the search input
-        if(!this.isSearchable || !this.searchInput) {
+        if (!this.isSearchable || !this.searchInput) {
             // Focus the first option or the selected option
             this.selectedIndex = -1
 
@@ -1663,7 +1667,7 @@ export class Select {
     }
 
     handleSearch(event) {
-        this.searched = true;
+        this.searched = true
         const query = event.target.value.trim()
         this.searchQuery = query
 
