@@ -58,5 +58,5 @@ it('resolves the tenant with custom path correctly from the route', function ():
     Filament::setCurrentPanel($panel);
     Filament::setTenant($team);
 
-    expect(Filament::getUrl($team))->toBe('http://localhost/tenancy/1');
+    expect(Filament::getUrl($team))->toBe('http://localhost/tenancy/' . $team->getKey());
 });

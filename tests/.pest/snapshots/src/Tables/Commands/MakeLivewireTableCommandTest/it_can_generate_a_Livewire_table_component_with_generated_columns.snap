@@ -37,6 +37,8 @@ class ListPostsWithColumns extends Component implements HasActions, HasSchemas, 
                     ->sortable(),
                 TextColumn::make('title')
                     ->searchable(),
+                TextColumn::make('title2')
+                    ->searchable(),
                 TextColumn::make('string_backed_enum')
                     ->badge()
                     ->searchable(),

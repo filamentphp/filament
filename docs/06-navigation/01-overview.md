@@ -250,7 +250,7 @@ enum NavigationGroup
 }
 ```
 
-To order that the cases are defined in will control the order of the navigation groups.
+The order that the cases are defined in will control the order of the navigation groups.
 
 To use an enum navigation group for a resource or custom page, you can set the `$navigationGroup` property to the enum case:
 

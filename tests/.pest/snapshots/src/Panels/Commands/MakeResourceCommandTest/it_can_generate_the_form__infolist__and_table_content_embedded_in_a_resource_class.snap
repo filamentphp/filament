@@ -37,8 +37,7 @@ class PostResource extends Resource
         return $schema
             ->components([
                 Select::make('author_id')
-                    ->relationship('author', 'name')
-                    ->required(),
+                    ->relationship('author', 'name'),
                 Textarea::make('content')
                     ->columnSpanFull(),
                 Toggle::make('is_published')
@@ -51,6 +50,7 @@ class PostResource extends Resource
                     ->columnSpanFull(),
                 TextInput::make('title')
                     ->required(),
+                TextInput::make('title2'),
                 Textarea::make('config')
                     ->columnSpanFull(),
                 Textarea::make('json')
@@ -67,7 +67,8 @@ class PostResource extends Resource
         return $schema
             ->components([
                 TextEntry::make('author.name')
-                    ->label('Author'),
+                    ->label('Author')
+                    ->placeholder('-'),
                 TextEntry::make('content')
                     ->placeholder('-')
                     ->columnSpanFull(),
@@ -79,6 +80,8 @@ class PostResource extends Resource
                     ->placeholder('-')
                     ->columnSpanFull(),
                 TextEntry::make('title'),
+                TextEntry::make('title2')
+                    ->placeholder('-'),
                 TextEntry::make('config')
                     ->placeholder('-')
                     ->columnSpanFull(),
@@ -115,6 +118,8 @@ class PostResource extends Resource
                     ->numeric()
                     ->sortable(),
                 TextColumn::make('title')
+                    ->searchable(),
+                TextColumn::make('title2')
                     ->searchable(),
                 TextColumn::make('string_backed_enum')
                     ->badge()

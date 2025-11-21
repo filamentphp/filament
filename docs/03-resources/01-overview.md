@@ -443,7 +443,7 @@ public static function getNavigationParentItem(): ?string
 
 ## Generating URLs to resource pages
 
-Filament provides `getUrl()` static method on resource classes to generate URLs to resources and specific pages within them. Traditionally, you would need to construct the URL by hand or by using Laravel's `route()` helper, but these methods depend on knowledge of the resource's slug or route naming conventions.
+Filament provides a `getUrl()` static method on resource classes to generate URLs to resources and specific pages within them. Traditionally, you would need to construct the URL by hand or by using Laravel's `route()` helper, but these methods depend on knowledge of the resource's slug or route naming conventions.
 
 The `getUrl()` method, without any arguments, will generate a URL to the resource's [List page](listing-records):
 

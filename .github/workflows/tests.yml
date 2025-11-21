@@ -4,6 +4,10 @@ on:
   push:
   pull_request:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   run-tests:
     runs-on: ubuntu-latest
@@ -12,13 +16,32 @@ jobs:
       matrix:
         php: [8.4, 8.3, 8.2]
         laravel: [12.*, 11.*]
+        db: [sqlite, mysql, pgsql]
         dependency-version: [prefer-stable]
         include:
           - laravel: 12.*
             testbench: 10.*
           - laravel: 11.*
             testbench: 9.*
-    name: P${{ matrix.php }} - L${{ matrix.laravel }} - ${{ matrix.dependency-version }}
+    name: P${{ matrix.php }} - L${{ matrix.laravel }} - DB:${{ matrix.db }}
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: password
+          MYSQL_DATABASE: testing
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: testing
+        ports:
+          - 5432:5432
+        options: --health-cmd=pg_isready --health-interval=10s --health-timeout=5s --health-retries=3
     steps:
       - uses: actions/checkout@v3
       - name: Cache dependencies
@@ -30,11 +53,29 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
-          extensions: mbstring, pdo, pdo_sqlite
+          extensions: mbstring, pdo, pdo_sqlite, pdo_mysql, pdo_pgsql
           coverage: none
       - name: Install dependencies
         run: |
           composer require "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" "filament/support" --no-interaction --no-update
           composer update --${{ matrix.dependency-version }} --prefer-dist --no-interaction
+      - name: Wait for MySQL
+        if: matrix.db == 'mysql'
+        run: |
+          for i in {1..60}; do
+            nc -z 127.0.0.1 3306 && echo "MySQL is up" && exit 0
+            echo "Waiting for MySQL ($i) ..." && sleep 2
+          done
+          echo "MySQL did not become ready in time" && exit 1
+      - name: Wait for Postgres
+        if: matrix.db == 'pgsql'
+        run: |
+          for i in {1..60}; do
+            nc -z 127.0.0.1 5432 && echo "Postgres is up" && exit 0
+            echo "Waiting for Postgres ($i) ..." && sleep 2
+          done
+          echo "Postgres did not become ready in time" && exit 1
       - name: Execute tests
-        run: ./vendor/bin/pest
+        run: ./vendor/bin/pest --configuration=phpunit.${{ matrix.db }}.xml
+        env:
+          DB_PASSWORD: password

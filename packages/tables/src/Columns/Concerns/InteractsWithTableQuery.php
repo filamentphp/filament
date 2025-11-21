@@ -2,10 +2,12 @@
 
 namespace Filament\Tables\Columns\Concerns;
 
+use Filament\Support\Services\RelationshipOrderer;
 use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Arr;
+use Znck\Eloquent\Relations\BelongsToThrough;
 
 use function Filament\Support\generate_search_column_expression;
 use function Filament\Support\generate_search_term_expression;
@@ -87,14 +89,28 @@ trait InteractsWithTableQuery
                 fn (EloquentBuilder $query): EloquentBuilder => $translatableContentDriver->applySearchConstraintToQuery($query, $searchColumn, $search, $whereClause, $isSearchForcedCaseInsensitive),
                 fn (EloquentBuilder $query) => $query->when(
                     $this->hasRelationship($query->getModel()),
-                    fn (EloquentBuilder $query): EloquentBuilder => $query->{"{$whereClause}Relation"}(
-                        $this->getRelationshipName($query->getModel()),
-                        generate_search_column_expression((string) str($searchColumn)->replace('.', '->'), $isSearchForcedCaseInsensitive, $databaseConnection),
-                        'like',
-                        "%{$nonTranslatableSearch}%",
-                    ),
+                    function (EloquentBuilder $query) use ($model, $whereClause, $searchColumn, $isSearchForcedCaseInsensitive, $databaseConnection, $nonTranslatableSearch): EloquentBuilder {
+                        $relationshipName = $this->getRelationshipName($query->getModel());
+                        $relationship = $this->getRelationship($query->getModel(), $relationshipName);
+
+                        $relatedTable = $model->getTable();
+
+                        if ($relationship instanceof BelongsToThrough) {
+                            $relatedTable = $relationship->getRelated()->getTable();
+                            $searchColumn = str($searchColumn)->startsWith("{$relatedTable}.")
+                                ? $searchColumn
+                                : $relationship->getRelated()->qualifyColumn($searchColumn);
+                        }
+
+                        return $query->{"{$whereClause}Relation"}(
+                            $relationshipName,
+                            generate_search_column_expression($this->getJsonSafeColumnName($searchColumn, $relatedTable), $isSearchForcedCaseInsensitive, $databaseConnection),
+                            'like',
+                            "%{$nonTranslatableSearch}%",
+                        );
+                    },
                     fn (EloquentBuilder $query) => $query->{$whereClause}(
-                        generate_search_column_expression((string) str($searchColumn)->replace('.', '->'), $isSearchForcedCaseInsensitive, $databaseConnection),
+                        generate_search_column_expression($this->getJsonSafeColumnName($searchColumn, $model->getTable()), $isSearchForcedCaseInsensitive, $databaseConnection),
                         'like',
                         "%{$nonTranslatableSearch}%",
                     ),
@@ -105,6 +121,15 @@ trait InteractsWithTableQuery
         }
 
         return $query;
+    }
+
+    protected function getJsonSafeColumnName(string $column, string $tableName): string
+    {
+        if (str($column)->startsWith("{$tableName}.")) {
+            return (string) str($column)->after('.')->replace('.', '->')->prepend("{$tableName}.");
+        }
+
+        return (string) str($column)->replace('.', '->');
     }
 
     public function applySort(EloquentBuilder $query, string $direction = 'asc'): EloquentBuilder
@@ -121,10 +146,13 @@ trait InteractsWithTableQuery
         $relationshipName = $this->getRelationshipName($query->getModel());
 
         foreach (array_reverse($this->getSortColumns($query->getModel())) as $sortColumn) {
-            $sortColumn = (string) str($sortColumn)->replace('.', '->');
+            $sortColumn = $this->getJsonSafeColumnName($sortColumn, $query->getModel()->getTable());
 
-            if ($relationshipName) {
-                $query->orderByPowerJoins("{$relationshipName}.{$sortColumn}", $direction, joinType: 'leftJoin'); /** @phpstan-ignore method.notFound */
+            if (filled($relationshipName)) {
+                $query->orderBy(
+                    app(RelationshipOrderer::class)->buildSubquery($query, $relationshipName, $sortColumn),
+                    $direction
+                );
 
                 continue;
             }

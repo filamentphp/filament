@@ -204,11 +204,18 @@ class Constraint extends Component
         return $this;
     }
 
+    public function modifyRelationshipQueryUsing(?Closure $modifyQueryUsing): static
+    {
+        $this->modifyRelationshipQueryUsing = $modifyQueryUsing;
+
+        return $this;
+    }
+
     public function relationship(string $name, string $titleAttribute, ?Closure $modifyQueryUsing = null): static
     {
         $this->attribute("{$name}.{$titleAttribute}");
 
-        $this->modifyRelationshipQueryUsing = $modifyQueryUsing;
+        $this->modifyRelationshipQueryUsing($modifyQueryUsing);
 
         return $this;
     }

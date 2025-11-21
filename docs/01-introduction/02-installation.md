@@ -73,7 +73,7 @@ Open `/admin` in your web browser, sign in, and [start building your app](../get
 </div>
 
 <div
-    x-show="package === 'components'" 
+    x-show="package === 'components'"
     x-data="{ laravelProject: 'new' }"
     x-cloak
 >
@@ -228,7 +228,7 @@ export default defineConfig({
 
 Compile your new CSS and JavaScript assets using `npm run dev`.
 
-### Configuring your layout 
+### Configuring your layout
 
 If you don't have a Blade layout file yet, create it at `resources/views/components/layouts/app.blade.php` by running the following command:
 
@@ -280,5 +280,15 @@ The important parts of this are the `@filamentStyles` in the `<head>` of the lay
 </div>
 
 </div>
+
+## Publishing configuration
+
+Filament ships with a configuration file that allows you to override defaults shared across all packages. Publish it after installing the panel builder so you can review and customize the settings:
+
+```bash
+php artisan vendor:publish --tag=filament-config
+```
+
+This command creates `config/filament.php`, where you can configure options like the default filesystem disk, file generation flags, and UI defaults. Re-run the publish command any time you want to pull in newly added configuration keys before tweaking them to suit your project.
 
 </div>
