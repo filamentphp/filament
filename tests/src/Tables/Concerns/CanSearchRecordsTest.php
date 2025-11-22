@@ -19,6 +19,7 @@ it('can extract the search into words using whitespace', function (): void {
     assertCount(2, $trait->extractTableSearchWords('testy test'));
     assertCount(2, $trait->extractTableSearchWords('testy   test'));
     assertCount(2, $trait->extractTableSearchWords("testy \t \n \r  test"));
+    assertCount(2, $trait->extractTableSearchWords("testy 　 \u{3164} \u{1160}  test"));
     assertCount(3, $trait->extractTableSearchWords('testy   tasty   test'));
 
     // test count when string contains phrases
