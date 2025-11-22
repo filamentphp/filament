@@ -339,7 +339,7 @@ ExportColumn::make('users_avg_age')
 
 ## Configuring the export formats
 
-By default, the export action will generate both CSV and XLSX formats and allow user to choose between it in the notification. You can use the `ExportFormat` enum to customize this, by passing an array of formats to the `formats()` method on the action:
+By default, the export action will generate both CSV and XLSX formats and allow user to choose between them in the notification. You can use the `ExportFormat` enum to customize this, by passing an array of formats to the `formats()` method on the action:
 
 ```php
 use App\Filament\Exports\ProductExporter;
