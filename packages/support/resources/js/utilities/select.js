@@ -77,6 +77,9 @@ export class Select {
         this.loadingMessage = loadingMessage
         this.searchingMessage = searchingMessage
         this.noSearchResultsMessage = noSearchResultsMessage
+
+        // Tracks the latest initiated async search to invalidate stale results
+        this.activeSearchId = 0
         this.maxItems = maxItems
         this.maxItemsMessage = maxItemsMessage
         this.optionsLimit = optionsLimit
@@ -1344,6 +1347,18 @@ export class Select {
         // Make dropdown visible
         this.dropdown.style.opacity = '1'
 
+        // On every fresh open, clear any previous search query so reopening starts clean.
+        if (this.isSearchable && this.searchInput) {
+            this.searchInput.value = ''
+            this.searchQuery = ''
+
+            // If options are static, immediately reset to the unfiltered list.
+            if (!this.hasDynamicOptions) {
+                this.options = JSON.parse(JSON.stringify(this.originalOptions))
+                this.renderOptions()
+            }
+        }
+
         // If hasDynamicOptions is true, fetch options
         if (this.hasDynamicOptions && this.getOptionsUsing) {
             // Show loading message
@@ -1369,8 +1384,28 @@ export class Select {
                 // Populate the label repository with the fetched options
                 this.populateLabelRepositoryFromOptions(normalizedFetched)
 
-                // Render options
-                this.renderOptions()
+                // Render options or reapply existing search query if present
+                if (
+                    this.isSearchable &&
+                    this.searchInput &&
+                    ((this.searchInput.value &&
+                        this.searchInput.value.trim() !== '') ||
+                        (this.searchQuery && this.searchQuery.trim() !== ''))
+                ) {
+                    const query = (
+                        this.searchInput.value ||
+                        this.searchQuery ||
+                        ''
+                    )
+                        .trim()
+                        .toLowerCase()
+
+                    // Ensure any loading message is hidden before rendering
+                    this.hideLoadingState()
+                    this.filterOptions(query)
+                } else {
+                    this.renderOptions()
+                }
             } catch (error) {
                 console.error('Error fetching options:', error)
 
@@ -1384,13 +1419,9 @@ export class Select {
 
         // If searchable, focus the search input
         if (this.isSearchable && this.searchInput) {
-            this.searchInput.value = ''
+            // Preserve any existing query; do not reset during or after async load
             this.searchInput.focus()
-
-            // Always reset search query and options when reopening
-            this.searchQuery = ''
-            this.options = JSON.parse(JSON.stringify(this.originalOptions))
-            this.renderOptions()
+            // If a search query exists, options were already filtered; otherwise they were rendered above.
         } else {
             // Focus the first option or the selected option
             this.selectedIndex = -1
@@ -1468,6 +1499,19 @@ export class Select {
         this.selectButton.setAttribute('aria-expanded', 'false')
         this.isOpen = false
 
+        // Cancel any pending debounced search
+        if (this.searchTimeout) {
+            clearTimeout(this.searchTimeout)
+            this.searchTimeout = null
+        }
+
+        // Invalidate any in-flight async searches and reset searching state
+        this.activeSearchId++
+        this.isSearching = false
+
+        // Remove any loading / no-results messages
+        this.hideLoadingState()
+
         // Remove resize listener
         if (this.resizeListener) {
             window.removeEventListener('resize', this.resizeListener)
@@ -1485,6 +1529,9 @@ export class Select {
         options.forEach((option) => {
             option.classList.remove('fi-selected')
         })
+
+        // Clear active descendant when closing
+        this.dropdown.removeAttribute('aria-activedescendant')
     }
 
     focusNextOption() {
@@ -1672,6 +1719,8 @@ export class Select {
             // Clear the timeout handle immediately to avoid stale truthy checks
             this.searchTimeout = null
 
+            // Increment the active search token to invalidate any in-flight previous searches
+            const searchId = ++this.activeSearchId
             this.isSearching = true
 
             try {
@@ -1680,6 +1729,11 @@ export class Select {
 
                 // Get search results from backend
                 const results = await this.getSearchResultsUsing(query)
+
+                // If this search is no longer the latest or the dropdown is closed, ignore the results
+                if (searchId !== this.activeSearchId || !this.isOpen) {
+                    return
+                }
 
                 // Normalize results to an array
                 const normalizedResults = Array.isArray(results)
@@ -1708,14 +1762,21 @@ export class Select {
                     this.showNoResultsMessage()
                 }
             } catch (error) {
-                console.error('Error fetching search results:', error)
+                // If this search is obsolete, silence errors to avoid noisy logs on cancellation
+                if (searchId === this.activeSearchId) {
+                    console.error('Error fetching search results:', error)
 
-                // Hide loading state and restore original options
-                this.hideLoadingState()
-                this.options = JSON.parse(JSON.stringify(this.originalOptions))
-                this.renderOptions()
+                    // Hide loading state and restore original options
+                    this.hideLoadingState()
+                    this.options = JSON.parse(
+                        JSON.stringify(this.originalOptions),
+                    )
+                    this.renderOptions()
+                }
             } finally {
-                this.isSearching = false
+                if (searchId === this.activeSearchId) {
+                    this.isSearching = false
+                }
             }
         }, this.searchDebounce)
     }
