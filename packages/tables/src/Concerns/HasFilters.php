@@ -124,10 +124,12 @@ trait HasFilters
         $filters = $this->getTable()->getFilters();
 
         foreach ($filters as $filterName => $filter) {
-            $this->removeTableFilter(
-                $filterName,
-                isRemovingAllFilters: true,
-            );
+            if (collect($filter->getIndicators())->contains(fn (\Filament\Tables\Filters\Indicator $indicator): bool => $indicator->isRemovable())) {
+                $this->removeTableFilter(
+                    $filterName,
+                    isRemovingAllFilters: true,
+                );
+            }
         }
 
         $this->resetTableSearch();
