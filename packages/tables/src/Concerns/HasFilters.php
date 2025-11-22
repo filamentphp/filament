@@ -125,7 +125,7 @@ trait HasFilters
         $filters = $this->getTable()->getFilters();
 
         foreach ($filters as $filterName => $filter) {
-            if (Arr::every($filter->getIndicators(), fn (Indicator $indicator): bool => $indicator->isRemovable())) {
+            if (collect($filter->getIndicators())->every(fn (Indicator $indicator): bool => $indicator->isRemovable())) {
                 $this->removeTableFilter(
                     $filterName,
                     isRemovingAllFilters: true,
