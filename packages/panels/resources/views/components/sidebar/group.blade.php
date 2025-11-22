@@ -29,13 +29,13 @@
         <div
             @if ($collapsible)
                 x-on:click="$store.sidebar.toggleCollapsedGroup(label)"
-            role="button"
+                role="button"
             @endif
             @if ($sidebarCollapsible)
                 x-show="$store.sidebar.isOpen"
-            x-transition:enter="fi-transition-enter"
-            x-transition:enter-start="fi-transition-enter-start"
-            x-transition:enter-end="fi-transition-enter-end"
+                x-transition:enter="fi-transition-enter"
+                x-transition:enter-start="fi-transition-enter-start"
+                x-transition:enter-end="fi-transition-enter-end"
             @endif
             class="fi-sidebar-group-btn"
         >
@@ -64,7 +64,6 @@
     @if ($hasDropdown)
         <x-filament::dropdown
             :placement="(__('filament-panels::layout.direction') === 'rtl') ? 'left-start' : 'right-start'"
-            :teleport="__('filament-panels::layout.direction') !== 'rtl'"
             x-show="! $store.sidebar.isOpen"
         >
             <x-slot name="trigger">
@@ -155,15 +154,15 @@
         @if (filled($label))
             @if ($sidebarCollapsible)
                 x-show="$store.sidebar.isOpen ? ! $store.sidebar.groupIsCollapsed(label) : ! @js($hasDropdown)"
-        @else
-            x-show="! $store.sidebar.groupIsCollapsed(label)"
-        @endif
-        x-collapse.duration.200ms
+            @else
+                x-show="! $store.sidebar.groupIsCollapsed(label)"
+            @endif
+            x-collapse.duration.200ms
         @endif
         @if ($sidebarCollapsible)
             x-transition:enter="fi-transition-enter"
-        x-transition:enter-start="fi-transition-enter-start"
-        x-transition:enter-end="fi-transition-enter-end"
+            x-transition:enter-start="fi-transition-enter-start"
+            x-transition:enter-end="fi-transition-enter-end"
         @endif
         class="fi-sidebar-group-items"
     >
