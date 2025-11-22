@@ -94,7 +94,7 @@ it('can prepare query for no constraints for a BelongsToMany relationship', func
     expect($preparedQuery->toBase())
         ->distinct->toBeTrue()
         ->getColumns()->not->toContain([
-            'role DESC'
+            'role DESC',
         ])
         ->orders->toHaveCount(1)
         ->and($preparedQuery->toBase()->orders[0])
