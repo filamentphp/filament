@@ -6,9 +6,7 @@ import UtilityInjection from "@components/UtilityInjection.astro"
 
 ## Introduction
 
-Filament includes an action that is able to export rows to a CSV or XLSX file. When the trigger button is clicked, a modal asks for the columns that they want to export, and what they should be labeled. This feature uses [job batches](https://laravel.com/docs/queues#job-batching) and [database notifications](../../notifications/database-notifications), so you need to publish those migrations from Laravel. 
-If you’d like to receive notifications in a panel, you can enable them in the [panel configuration](../../notifications/database-notifications#enabling-database-notifications-in-a-panel).
-Also, you need to publish the migrations for tables that Filament uses to store information about exports:
+Filament includes an action that is able to export rows to a CSV or XLSX file. When the trigger button is clicked, a modal asks for the columns that they want to export, and what they should be labeled. This feature uses [job batches](https://laravel.com/docs/queues#job-batching) and [database notifications](../../notifications/database-notifications), so you need to publish those migrations from Laravel. Also, you need to publish the migrations for tables that Filament uses to store information about exports:
 
 ```bash
 php artisan make:queue-batches-table
@@ -16,6 +14,8 @@ php artisan make:notifications-table
 php artisan vendor:publish --tag=filament-actions-migrations
 php artisan migrate
 ```
+
+If you’d like to receive export notifications in a panel, you can enable them in the [panel configuration](../../notifications/database-notifications#enabling-database-notifications-in-a-panel).
 
 <Aside variant="info">
     If you're using PostgreSQL, make sure that the `data` column in the notifications migration is using `json()`: `$table->json('data')`.
