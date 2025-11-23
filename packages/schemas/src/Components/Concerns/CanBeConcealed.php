@@ -15,6 +15,10 @@ trait CanBeConcealed
             return $this->cachedConcealingComponent ?: null;
         }
 
+        if (filled($this->getHiddenJs()) || filled($this->getVisibleJs())) {
+            return $this->cachedConcealingComponent = $this;
+        }
+
         $parentComponent = $this->getContainer()->getParentComponent();
 
         if (! $parentComponent) {

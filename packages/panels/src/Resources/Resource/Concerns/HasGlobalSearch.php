@@ -175,7 +175,7 @@ trait HasGlobalSearch
         }
 
         $searchWords = array_filter(
-            str_getcsv(preg_replace('/\s+/', ' ', $search), separator: ' ', escape: '\\'),
+            str_getcsv(preg_replace('/(\s|\x{3164}|\x{1160})+/u', ' ', $search), separator: ' ', escape: '\\'),
             fn ($word): bool => filled($word),
         );
 
