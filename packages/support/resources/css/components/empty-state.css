@@ -38,10 +38,10 @@
     }
 
     &.fi-compact {
-        @apply p-4;
+        @apply py-6;
 
         & .fi-empty-state-content {
-            @apply mx-0 flex max-w-none items-start gap-3 text-start;
+            @apply mx-0 flex max-w-none items-start gap-4 text-start;
         }
 
         & .fi-empty-state-icon-bg {
