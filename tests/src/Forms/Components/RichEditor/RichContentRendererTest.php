@@ -446,3 +446,82 @@ it('handles dynamic merge tag values', function (): void {
 
     expect($html)->toContain('computed value');
 });
+
+it('extracts the table of contents from content', function (): void {
+    $renderer = RichContentRenderer::make([
+        'type' => 'doc',
+        'content' => [
+            [
+                'type' => 'paragraph',
+                'content' => [
+                    [
+                        'type' => 'text',
+                        'text' => 'John Doe',
+                    ],
+                ],
+            ],
+            [
+                'type' => 'heading',
+                'attrs' => ['level' => 2],
+                'content' => [
+                    [
+                        'type' => 'text',
+                        'text' => 'Section 1',
+                    ],
+                ],
+            ],
+            [
+                'type' => 'heading',
+                'attrs' => ['level' => 3],
+                'content' => [
+                    [
+                        'type' => 'text',
+                        'text' => 'Section 2',
+                    ],
+                ],
+            ],
+
+        ],
+    ]);
+
+    $tableOfContents = $renderer->toTableOfContents();
+
+    expect($tableOfContents)->toEqual([
+        [
+            'depth' => 2,
+            'text' => 'Section 1',
+            'id' => 'section-1',
+            'subs' => [
+                [
+                    'depth' => 3,
+                    'text' => 'Section 2',
+                    'id' => 'section-2',
+                ],
+            ],
+        ],
+    ]);
+});
+
+it('handles duplicate heading texts with unique IDs and proper nesting', function (): void {
+    $renderer = RichContentRenderer::make([
+        'type' => 'doc',
+        'content' => [
+            ['type' => 'heading', 'attrs' => ['level' => 2], 'content' => [['type' => 'text', 'text' => 'Duplicate']]],
+            ['type' => 'heading', 'attrs' => ['level' => 2], 'content' => [['type' => 'text', 'text' => 'Duplicate']]],
+            ['type' => 'heading', 'attrs' => ['level' => 3], 'content' => [['type' => 'text', 'text' => 'Child']]],
+        ],
+    ]);
+
+    $tableOfContents = $renderer->toTableOfContents();
+
+    expect($tableOfContents)->toHaveCount(2);
+    expect($tableOfContents[0]['text'])->toBe('Duplicate');
+    expect($tableOfContents[0]['id'])->toBe('duplicate');
+    expect($tableOfContents[0])->not->toHaveKey('subs');
+
+    expect($tableOfContents[1]['text'])->toBe('Duplicate');
+    expect($tableOfContents[1]['id'])->toBe('duplicate-1');
+    expect($tableOfContents[1]['subs'])->toBeArray();
+    expect($tableOfContents[1]['subs'][0]['text'])->toBe('Child');
+    expect($tableOfContents[1]['subs'][0]['id'])->toBe('child');
+});

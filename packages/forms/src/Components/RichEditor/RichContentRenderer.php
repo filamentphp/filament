@@ -431,6 +431,150 @@ class RichContentRenderer implements Htmlable
     }
 
     /**
+     * Generate a hierarchical Table of Contents for the current editor content.
+     *
+     * @param  int  $maxDepth  Maximum heading level (1..6) to include.
+     * @return array<int, array{id:string, text:string, depth:int, subs?:array}>
+     */
+    public function toTableOfContents(int $maxDepth = 3): array
+    {
+        if (empty($this->content)) {
+            return [];
+        }
+
+        $document = $this->toArray();
+
+        if (empty($document['content'])) {
+            return [];
+        }
+
+        $idCounts = [];
+        $headings = $this->parseTOCHeadings($document['content'], $maxDepth, $idCounts);
+
+        if ($headings === []) {
+            return [];
+        }
+
+        return $this->generateTOCArray($headings);
+    }
+
+    /**
+     * Recursively extract heading nodes from a list of Tiptap nodes.
+     *
+     * @param  array<int, array<string, mixed>>  $nodes
+     * @param  array<string, int>  $idCounts  Used internally to ensure unique ids (slug => counter).
+     * @return array<int, array{level:int, id:string, text:string}>
+     */
+    private function parseTOCHeadings(array $nodes, int $maxDepth = 3, array &$idCounts = []): array
+    {
+        $headings = [];
+
+        foreach ($nodes as $node) {
+            if (! is_array($node) || ! isset($node['type'])) {
+                continue;
+            }
+
+            if ($node['type'] === 'heading' && isset($node['attrs']['level']) && $node['attrs']['level'] <= $maxDepth) {
+                $text = $this->extractPlainTextFromNode($node['content'] ?? []);
+                $text = trim($text);
+
+                // Derive / normalize id.
+                $id = $node['attrs']['id'] ?? Str::slug($text) ?: 'heading';
+
+                // Ensure uniqueness.
+                if (isset($idCounts[$id])) {
+                    $idCounts[$id]++;
+                    $id = $id . '-' . $idCounts[$id];
+                } else {
+                    $idCounts[$id] = 0;
+                }
+
+                $headings[] = [
+                    'level' => (int) $node['attrs']['level'],
+                    'id' => $id,
+                    'text' => $text,
+                ];
+            }
+
+            // Recurse into child content.
+            if (isset($node['content']) && is_array($node['content'])) {
+                $headings = [
+                    ...$headings,
+                    ...$this->parseTOCHeadings($node['content'], $maxDepth, $idCounts),
+                ];
+            }
+        }
+
+        return $headings;
+    }
+
+    /**
+     * Build a nested TOC tree from a flat, ordered heading list.
+     *
+     * Consumes the $headings array (by reference) as it assembles hierarchy.
+     *
+     * @param  array<int, array{level:int, id:string, text:string}>  $headings
+     * @return array<int, array{id:string, text:string, depth:int, subs?:array}>
+     */
+    private function generateTOCArray(array &$headings, int $parentLevel = 0): array
+    {
+        $result = [];
+
+        while ($headings !== []) {
+            $current = $headings[0];
+            $currentLevel = $current['level'];
+
+            if ($parentLevel >= $currentLevel) {
+                break;
+            }
+
+            array_shift($headings);
+
+            $nextLevel = $headings[0]['level'] ?? 0;
+
+            $entry = [
+                'id' => $current['id'],
+                'text' => $current['text'],
+                'depth' => $currentLevel,
+            ];
+
+            if ($nextLevel > $currentLevel) {
+                $entry['subs'] = $this->generateTOCArray($headings, $currentLevel);
+            }
+
+            $result[] = $entry;
+        }
+
+        return $result;
+    }
+
+    /**
+     * Extract plain text recursively from a node content array.
+     *
+     * @param  array<int, array<string, mixed>>  $nodes
+     */
+    private function extractPlainTextFromNode(array $nodes): string
+    {
+        $buffer = '';
+
+        foreach ($nodes as $n) {
+            if (! is_array($n)) {
+                continue;
+            }
+
+            if (isset($n['text']) && is_string($n['text'])) {
+                $buffer .= $n['text'] . ' ';
+            }
+
+            if (isset($n['content']) && is_array($n['content'])) {
+                $buffer .= $this->extractPlainTextFromNode($n['content']) . ' ';
+            }
+        }
+
+        return trim(preg_replace('/\s+/', ' ', $buffer) ?? '');
+    }
+
+    /**
      * @param  ?array<string, mixed>  $tags
      */
     public function mergeTags(?array $tags): static
