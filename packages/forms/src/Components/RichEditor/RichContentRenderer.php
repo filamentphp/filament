@@ -437,7 +437,7 @@ class RichContentRenderer implements Htmlable
      * Generate a hierarchical Table of Contents for the current editor content.
      *
      * @param  int  $maxDepth  Maximum heading level (1..6) to include.
-     * @return array<int, array{id:string, text:string, depth:int, subs?:array}>
+     * @return array<int, array{id:string, text:string, depth:int, subs?:array<int, array<string, mixed>>}>
      */
     public function toTableOfContents(int $maxDepth = 3): array
     {
@@ -473,7 +473,7 @@ class RichContentRenderer implements Htmlable
         $headings = [];
 
         foreach ($nodes as $node) {
-            if (! is_array($node) || ! isset($node['type'])) {
+            if (! isset($node['type'])) {
                 continue;
             }
 
@@ -515,7 +515,7 @@ class RichContentRenderer implements Htmlable
      * Consumes the $headings array (by reference) as it assembles hierarchy.
      *
      * @param  array<int, array{level:int, id:string, text:string}>  $headings
-     * @return array<int, array{id:string, text:string, depth:int, subs?:array}>
+     * @return array<int, array{id:string, text:string, depth:int, subs?:array<int, array<string, mixed>>}>
      */
     private function generateTOCArray(array &$headings, int $parentLevel = 0): array
     {
@@ -559,10 +559,6 @@ class RichContentRenderer implements Htmlable
         $buffer = '';
 
         foreach ($nodes as $n) {
-            if (! is_array($n)) {
-                continue;
-            }
-
             if (isset($n['text']) && is_string($n['text'])) {
                 $buffer .= $n['text'] . ' ';
             }
@@ -579,7 +575,7 @@ class RichContentRenderer implements Htmlable
      * @return void
      *              Assign unique IDs to heading nodes so you can jump to that section of the content.
      */
-    protected function processHeaderIds($editor, int $maxDepth = 3): void
+    protected function processHeaderIds(Editor $editor, int $maxDepth = 3): void
     {
         $idCounts = [];
 
@@ -593,7 +589,7 @@ class RichContentRenderer implements Htmlable
             }
 
             $baseId = str(collect($node->content)->map(function ($child) {
-                return $child?->text ?? null;
+                return $child->text ?? null;
             })->implode(' '))->slug()->toString();
 
             if ($baseId === '') {

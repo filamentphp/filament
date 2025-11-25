@@ -9,8 +9,14 @@ use Tiptap\Core\Node;
  */
 class IdExtension extends Node
 {
+    /**
+     * @var string
+     */
     public static $name = 'id';
 
+    /**
+     * @return array<array<string, mixed>>
+     */
     public function addGlobalAttributes(): array
     {
         return [
