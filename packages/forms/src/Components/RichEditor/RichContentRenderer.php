@@ -478,23 +478,21 @@ class RichContentRenderer implements Htmlable
             }
 
             if ($node['type'] === 'heading' && isset($node['attrs']['level']) && $node['attrs']['level'] <= $maxDepth) {
-                $text = $this->extractPlainTextFromNode($node['content'] ?? []);
-                $text = trim($text);
+                $text = trim($this->extractPlainTextFromNode($node['content']));
 
-                // Derive / normalize id.
-                $id = $node['attrs']['id'] ?? Str::slug($text) ?: 'heading';
+                $baseId = empty($text) ? 'heading' : Str::slug($text);
 
-                // Ensure uniqueness.
-                if (isset($idCounts[$id])) {
-                    $idCounts[$id]++;
-                    $id = $id . '-' . $idCounts[$id];
+                if (isset($idCounts[$baseId])) {
+                    $idCounts[$baseId]++;
+                    $uniqueId = $baseId . '-' . $idCounts[$baseId];
                 } else {
-                    $idCounts[$id] = 0;
+                    $idCounts[$baseId] = 0;
+                    $uniqueId = $baseId;
                 }
 
                 $headings[] = [
                     'level' => (int) $node['attrs']['level'],
-                    'id' => $id,
+                    'id' => $uniqueId,
                     'text' => $text,
                 ];
             }
@@ -579,13 +577,13 @@ class RichContentRenderer implements Htmlable
 
     /**
      * @return void
-     * Wherever you have headings, this will inject ids into the heading attributes
-     * (if they don't already exist)
-     * This allows you to have a table of contents on your page that actually goes to the content.
+     * Assign unique IDs to heading nodes so you can jump to that section of the content.
      */
     protected function processHeaderIds($editor, int $maxDepth = 3): void
     {
-        $editor->descendants(function (&$node) use ($maxDepth) {
+        $idCounts = [];
+
+        $editor->descendants(function (&$node) use ($maxDepth, &$idCounts) {
             if ($node->type !== 'heading') {
                 return;
             }
@@ -594,11 +592,23 @@ class RichContentRenderer implements Htmlable
                 return;
             }
 
-            if (! property_exists($node->attrs, 'id') || $node->attrs->id === null) {
-                $node->attrs->id = str(collect($node->content)->map(function ($node) {
-                    return $node?->text ?? null;
-                })->implode(' '))->slug()->toString();
+            $baseId = str(collect($node->content)->map(function ($child) {
+                return $child?->text ?? null;
+            })->implode(' '))->slug()->toString();
+
+            if ($baseId === '') {
+                $baseId = 'heading';
             }
+
+            if (isset($idCounts[$baseId])) {
+                $idCounts[$baseId]++;
+                $uniqueId = $baseId . '-' . $idCounts[$baseId];
+            } else {
+                $idCounts[$baseId] = 0;
+                $uniqueId = $baseId;
+            }
+
+            $node->attrs->id = $uniqueId;
         });
     }
 

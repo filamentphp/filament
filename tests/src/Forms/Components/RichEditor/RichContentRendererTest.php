@@ -525,3 +525,22 @@ it('handles duplicate heading texts with unique IDs and proper nesting', functio
     expect($tableOfContents[1]['subs'][0]['text'])->toBe('Child');
     expect($tableOfContents[1]['subs'][0]['id'])->toBe('child');
 });
+
+
+it('will inject ids into heading nodes', function (): void {
+    $renderer = RichContentRenderer::make([
+        'type' => 'doc',
+        'content' => [
+            ['type' => 'heading', 'attrs' => ['level' => 2], 'content' => [['type' => 'text', 'text' => 'Duplicate']]],
+            ['type' => 'heading', 'attrs' => ['level' => 2], 'content' => [['type' => 'text', 'text' => 'Duplicate']]],
+            ['type' => 'heading', 'attrs' => ['level' => 3], 'content' => [['type' => 'text', 'text' => 'Child']]],
+        ],
+    ]);
+
+    $content = $renderer->toHtml();
+
+    expect($content)->toBeString();
+    expect($content)->toContain('id="duplicate"');
+    expect($content)->toContain('id="duplicate-1"');
+    expect($content)->toContain('id="child"');
+});
