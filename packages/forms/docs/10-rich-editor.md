@@ -51,6 +51,19 @@ class Post extends Model
 }
 ```
 
+### Output to Array
+Rather than working with the HTML string that we provide, you can also output to an array representation of the content by using the `toArray()` method:
+
+```php
+use Filament\Forms\Components\RichEditor\RichContentRenderer;
+
+$content = RichContentRenderer::make($record->content)->toArray()
+```
+
+You can then iterate through the `$content['content']` array to access the individual nodes.
+
+This can be useful if you want to manipulate the content in some way before rendering it, or if you want to output it in a different format (e.g., JSON for an API).
+
 ## Customizing the toolbar buttons
 
 You may set the toolbar buttons for the editor using the `toolbarButtons()` method. The options shown here are the defaults:
@@ -276,6 +289,30 @@ However, some features, such as the grid layout and text colors, require additio
     {!! \Filament\Forms\Components\RichEditor\RichContentRenderer::make($record->content) !!}
 </div>
 ```
+
+
+### Table of Contents
+
+The rich editor supports generating a table of contents (ToC) based on the headings in the content. You can generate a ToC using the `getTableOfContents()` method on the `RichContentRenderer`:
+It has an optional parameter `maxDepth`, which controls how deep the ToC should go (e.g., h2, h3, etc.). You should use an integer to define the depth.
+
+```php
+$tableOfContents = \Filament\Forms\Components\RichEditor\RichContentRenderer::make($article->raw_content)->toTableOfContents(maxDepth: 3)
+
+// Example Output
+array:4 [▼
+  0 => array:3 [▼
+    "id" => "heading-1-test"
+    "text" => "Heading 1 Test"
+    "depth" => 2
+  ]
+  1 => array:3 [▶]
+  2 => array:4 [▶]
+  3 => array:3 [▶]
+]
+```
+You can then iterate through this array to create your own table of contents.
+
 
 ## Security
 

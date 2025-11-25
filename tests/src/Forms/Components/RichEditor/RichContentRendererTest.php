@@ -526,7 +526,6 @@ it('handles duplicate heading texts with unique IDs and proper nesting', functio
     expect($tableOfContents[1]['subs'][0]['id'])->toBe('child');
 });
 
-
 it('will inject ids into heading nodes', function (): void {
     $renderer = RichContentRenderer::make([
         'type' => 'doc',

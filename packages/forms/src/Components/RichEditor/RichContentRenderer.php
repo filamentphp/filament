@@ -577,13 +577,13 @@ class RichContentRenderer implements Htmlable
 
     /**
      * @return void
-     * Assign unique IDs to heading nodes so you can jump to that section of the content.
+     *              Assign unique IDs to heading nodes so you can jump to that section of the content.
      */
     protected function processHeaderIds($editor, int $maxDepth = 3): void
     {
         $idCounts = [];
 
-        $editor->descendants(function (&$node) use ($maxDepth, &$idCounts) {
+        $editor->descendants(function (&$node) use ($maxDepth, &$idCounts): void {
             if ($node->type !== 'heading') {
                 return;
             }
