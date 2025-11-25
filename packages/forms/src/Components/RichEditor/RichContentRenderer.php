@@ -11,6 +11,7 @@ use Filament\Forms\Components\RichEditor\TipTapExtensions\DetailsExtension;
 use Filament\Forms\Components\RichEditor\TipTapExtensions\DetailsSummaryExtension;
 use Filament\Forms\Components\RichEditor\TipTapExtensions\GridColumnExtension;
 use Filament\Forms\Components\RichEditor\TipTapExtensions\GridExtension;
+use Filament\Forms\Components\RichEditor\TipTapExtensions\IdExtension;
 use Filament\Forms\Components\RichEditor\TipTapExtensions\ImageExtension;
 use Filament\Forms\Components\RichEditor\TipTapExtensions\LeadExtension;
 use Filament\Forms\Components\RichEditor\TipTapExtensions\MergeTagExtension;
@@ -308,6 +309,7 @@ class RichContentRenderer implements Htmlable
             app(DetailsSummaryExtension::class),
             app(Document::class),
             app(GridColumnExtension::class),
+            app(IdExtension::class),
             app(GridExtension::class),
             app(HardBreak::class),
             app(Heading::class),
@@ -397,6 +399,7 @@ class RichContentRenderer implements Htmlable
         $this->processFileAttachments($editor);
         $this->processMergeTags($editor);
         $this->processNodes($editor);
+        $this->processHeaderIds($editor);
 
         return $editor->getHTML();
     }
@@ -572,6 +575,31 @@ class RichContentRenderer implements Htmlable
         }
 
         return trim(preg_replace('/\s+/', ' ', $buffer) ?? '');
+    }
+
+    /**
+     * @return void
+     * Wherever you have headings, this will inject ids into the heading attributes
+     * (if they don't already exist)
+     * This allows you to have a table of contents on your page that actually goes to the content.
+     */
+    protected function processHeaderIds($editor, int $maxDepth = 3): void
+    {
+        $editor->descendants(function (&$node) use ($maxDepth) {
+            if ($node->type !== 'heading') {
+                return;
+            }
+
+            if ($node->attrs->level > $maxDepth) {
+                return;
+            }
+
+            if (! property_exists($node->attrs, 'id') || $node->attrs->id === null) {
+                $node->attrs->id = str(collect($node->content)->map(function ($node) {
+                    return $node?->text ?? null;
+                })->implode(' '))->slug()->toString();
+            }
+        });
     }
 
     /**
