@@ -33,6 +33,7 @@ use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Number;
 use Illuminate\Support\Str;
 use Livewire\Component;
+use LogicException;
 
 trait CanExportRecords
 {
@@ -105,7 +106,7 @@ trait CanExportRecords
                 })
                 ->schema(function () use ($action): array {
                     $isEnablingVisibleTableColumnsByDefault = $action->isEnablingVisibleTableColumnsByDefault();
-                    $visibleTableColumnsNames = $action->getVisibleTableColumnNames();
+                    $visibleTableColumnNames = $isEnablingVisibleTableColumnsByDefault ? $action->getVisibleTableColumnNames() : [];
 
                     return array_map(
                         fn (ExportColumn $column): Flex => Flex::make([
@@ -114,7 +115,7 @@ trait CanExportRecords
                                 ->hiddenLabel()
                                 ->default(
                                     $isEnablingVisibleTableColumnsByDefault
-                                        ? (in_array($column->getName(), $visibleTableColumnsNames) && $column->isEnabledByDefault())
+                                        ? (in_array($column->getName(), $visibleTableColumnNames) && $column->isEnabledByDefault())
                                         : $column->isEnabledByDefault()
                                 )
                                 ->live()
@@ -198,11 +199,12 @@ trait CanExportRecords
                     ->mapWithKeys(fn (array $column, string $columnName): array => [$columnName => $column['label']])
                     ->all();
             } else {
-                $visibleTableColumnNames = $action->getVisibleTableColumnNames();
+                $isEnablingVisibleTableColumnsByDefault = $action->isEnablingVisibleTableColumnsByDefault();
+                $visibleTableColumnNames = $isEnablingVisibleTableColumnsByDefault ? $action->getVisibleTableColumnNames() : [];
 
                 $columnMap = collect($exporter::getColumns())
                     ->when(
-                        $action->isEnablingVisibleTableColumnsByDefault(),
+                        $isEnablingVisibleTableColumnsByDefault,
                         fn ($columns): Collection => $columns->filter(
                             fn (ExportColumn $column): bool => in_array($column->getName(), $visibleTableColumnNames) && $column->isEnabledByDefault(),
                         ),
@@ -362,6 +364,10 @@ trait CanExportRecords
      */
     public function getVisibleTableColumnNames(): array
     {
+        if (! $this->getLivewire() instanceof HasTable) {
+            throw new LogicException('Cannot get visible table columns from a non-table Livewire component.');
+        }
+
         return array_keys($this->getLivewire()->getTable()->getVisibleColumns());
     }
 

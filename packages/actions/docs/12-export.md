@@ -15,6 +15,8 @@ php artisan vendor:publish --tag=filament-actions-migrations
 php artisan migrate
 ```
 
+If you’d like to receive export notifications in a panel, you can enable them in the [panel configuration](../../notifications/database-notifications#enabling-database-notifications-in-a-panel).
+
 <Aside variant="info">
     If you're using PostgreSQL, make sure that the `data` column in the notifications migration is using `json()`: `$table->json('data')`.
 </Aside>
@@ -298,7 +300,7 @@ ExportColumn::make('users_exists')
 
 In this example, `users` is the name of the relationship to check for existence. The name of the column must be `users_exists`, as this is the convention that [Laravel uses](https://laravel.com/docs/eloquent-relationships#other-aggregate-functions) for storing the result.
 
-If you'd like to scope the relationship before checking existance, you can pass an array to the method, where the key is the relationship name and the value is the function to scope the Eloquent query with:
+If you'd like to scope the relationship before checking existence, you can pass an array to the method, where the key is the relationship name and the value is the function to scope the Eloquent query with:
 
 ```php
 use Filament\Actions\Exports\ExportColumn;
@@ -337,7 +339,7 @@ ExportColumn::make('users_avg_age')
 
 ## Configuring the export formats
 
-By default, the export action will allow the user to choose between both CSV and XLSX formats. You can use the `ExportFormat` enum to customize this, by passing an array of formats to the `formats()` method on the action:
+By default, the export action will generate both CSV and XLSX formats and allow user to choose between them in the notification. You can use the `ExportFormat` enum to customize this, by passing an array of formats to the `formats()` method on the action:
 
 ```php
 use App\Filament\Exports\ProductExporter;
