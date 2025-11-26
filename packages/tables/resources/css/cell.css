@@ -70,7 +70,7 @@
     }
 
     &.fi-ta-summary-row-heading-cell {
-        @apply px-3 py-4 text-sm font-medium text-gray-950 dark:text-white;
+        @apply px-3 py-4 text-sm font-medium text-gray-950 sm:first-of-type:ps-6 sm:last-of-type:pe-6 dark:text-white;
     }
 
     &.fi-align-start {

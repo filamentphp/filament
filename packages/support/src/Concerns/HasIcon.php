@@ -19,7 +19,7 @@ trait HasIcon
         return $this;
     }
 
-    public function getIcon(string | BackedEnum | null $default = null): string | BackedEnum | Htmlable | null
+    public function getIcon(string | BackedEnum | Htmlable | null $default = null): string | BackedEnum | Htmlable | null
     {
         $icon = $this->evaluate($this->icon);
 

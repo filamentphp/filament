@@ -10,7 +10,7 @@ Filament requires the following to run:
 
 - PHP 8.2+
 - Laravel v11.28+
-- Tailwind CSS v4.0+
+- Tailwind CSS v4.1+
 
 Installation comes in two flavors, depending on whether you want to build an app using our panel builder or use the components within your app's Blade views:
 
