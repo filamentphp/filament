@@ -459,7 +459,7 @@ Export files that are created are the developer's responsibility to delete if th
 
 ### Configuring the export file names
 
-By default, exported files will have a name generated based on the ID and type of the export. You can also use the `fileName()` method on the action to customize the file name:
+By default, exported files are given a name generated based on the export's ID and type. You can customize the file name by using the `fileName()` method on the action:
 
 ```php
 use Filament\Actions\ExportAction;
@@ -467,17 +467,17 @@ use Filament\Actions\Exports\Models\Export;
 
 ExportAction::make()
     ->exporter(ProductExporter::class)
-    ->fileName(fn (Export $export): string => "products-{$export->getKey()}.csv")
+    ->fileName(fn (Export $export): string => "products-{$export->getKey()}")
 ```
 
-Alternatively, you can override the `getFileName()` method on the exporter class, returning a string:
+Alternatively, you can override the `getFileName()` method on the exporter class and return a custom string:
 
 ```php
 use Filament\Actions\Exports\Models\Export;
 
 public function getFileName(Export $export): string
 {
-    return "products-{$export->getKey()}.csv";
+    return "products-{$export->getKey()}";
 }
 ```
 
