@@ -704,7 +704,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
             ['blockquote', 'codeBlock', 'bulletList', 'orderedList'],
             [
                 'table',
-                ...($this->hasFileAttachments() ? ['attachFiles'] : []),
+                ...($this->hasFileAttachments(default: true) ? ['attachFiles'] : []),
                 ...(filled($this->getCustomBlocks()) ? ['customBlocks'] : []),
                 ...(filled($this->getMergeTags()) ? ['mergeTags'] : []),
             ],
@@ -1020,6 +1020,6 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
 
     public function hasFileAttachmentsByDefault(): bool
     {
-        return (! $this->hasCustomToolbarButtons()) || $this->hasToolbarButton('attachFiles');
+        return $this->hasToolbarButton('attachFiles');
     }
 }

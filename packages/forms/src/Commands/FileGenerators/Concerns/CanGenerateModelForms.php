@@ -198,6 +198,9 @@ trait CanGenerateModelForms
                     'cost',
                     'money',
                     'price',
+                ]) || str($componentName)->endsWith([
+                    '_cost',
+                    '_price',
                 ]) || $type['name'] === 'money') {
                     $componentData['prefix'] = ['$'];
                 }

@@ -14,7 +14,8 @@ class PostInfolist
         return $schema
             ->components([
                 TextEntry::make('author.name')
-                    ->label('Author'),
+                    ->label('Author')
+                    ->placeholder('-'),
                 TextEntry::make('content')
                     ->placeholder('-')
                     ->columnSpanFull(),
@@ -26,6 +27,8 @@ class PostInfolist
                     ->placeholder('-')
                     ->columnSpanFull(),
                 TextEntry::make('title'),
+                TextEntry::make('title2')
+                    ->placeholder('-'),
                 TextEntry::make('config')
                     ->placeholder('-')
                     ->columnSpanFull(),

@@ -17,6 +17,8 @@ php artisan vendor:publish --tag=filament-actions-migrations
 php artisan migrate
 ```
 
+If you’d like to receive import notifications in a panel, you can enable them in the [panel configuration](../../notifications/database-notifications#enabling-database-notifications-in-a-panel).
+
 <Aside variant="info">
     If you're using PostgreSQL, make sure that the `data` column in the notifications migration is using `json()`: `$table->json('data')`.
 </Aside>

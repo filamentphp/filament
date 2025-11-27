@@ -331,7 +331,7 @@ public function panel(Panel $panel): Panel
 
 ### Disabling revealable password inputs
 
-By default, all password inputs in authentication forms are [`revealable()`](../forms/text-input#revealable-password-inputs). This allows the user can see a plain text version of the password they're typing by clicking a button. To disable this feature, you can pass `false` to the `revealablePasswords()` [configuration](../panel-configuration) method:
+By default, all password inputs in authentication forms are [`revealable()`](../forms/text-input#revealable-password-inputs). This allows the user to see a plain text version of the password they're typing by clicking a button. To disable this feature, you can pass `false` to the `revealablePasswords()` [configuration](../panel-configuration) method:
 
 ```php
 use Filament\Panel;

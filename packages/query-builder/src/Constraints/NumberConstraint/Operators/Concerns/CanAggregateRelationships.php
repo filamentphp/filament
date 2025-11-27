@@ -4,9 +4,11 @@ namespace Filament\QueryBuilder\Constraints\NumberConstraint\Operators\Concerns;
 
 use Filament\Forms\Components\Select;
 use Filament\QueryBuilder\Constraints\NumberConstraint;
+use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Query\JoinClause;
-use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use LogicException;
 
 trait CanAggregateRelationships
@@ -41,33 +43,60 @@ trait CanAggregateRelationships
         return parent::queriesRelationshipsUsingSubSelect() && blank($this->getSettings()[static::getAggregateSelectName()]);
     }
 
-    public function applyToBaseFilterQuery(Builder $query): Builder
+    protected function getNumericCastType(Builder $query): string
     {
-        if (filled($this->getAggregate())) {
-            $aggregateAlias = $this->generateAggregateAlias();
+        /** @var Connection $databaseConnection */
+        $databaseConnection = $query->getConnection();
 
-            if ($this->getConstraint()->isExistingAggregateAlias($aggregateAlias)) {
-                return $query;
-            }
+        $driver = $databaseConnection->getDriverName();
 
-            $relationship = $query->getModel()->{$this->getConstraint()->getRelationshipName()}();
-            $relatedModel = $relationship->getModel();
-            $relatedQuery = $relatedModel->newQuery();
+        return match ($driver) {
+            'sqlite' => 'real',
+            'pgsql' => 'numeric',
+            default => 'decimal(10,2)',
+        };
+    }
 
-            $qualifiedColumn = $relatedQuery->qualifyColumn($this->getConstraint()->getAttributeForQuery());
+    protected function applyAggregateComparison(Builder $query, string $operator, float $value): Builder
+    {
+        $relationshipName = $this->getConstraint()->getRelationshipName();
+        $attributeForQuery = $this->getConstraint()->getAttributeForQuery();
+        $aggregate = $this->getAggregate();
 
-            $query->leftJoinSub(
-                $relatedQuery
-                    ->groupBy($relatedModel->getQualifiedKeyName())
-                    ->selectRaw("{$relatedModel->getQualifiedKeyName()}, {$this->getAggregate()}({$qualifiedColumn}) as {$aggregateAlias}"),
-                $aggregateAlias,
-                fn (JoinClause $join) => $join->on("{$aggregateAlias}.{$relatedModel->getKeyName()}", '=', $query->getModel()->getQualifiedKeyName())
-            );
+        /** @var Relation $relationship */
+        $relationship = $query->getModel()->{$relationshipName}();
 
-            $this->getConstraint()->reportAggregateAlias($aggregateAlias);
+        $relatedModel = $relationship->getModel();
+        $attributeForQuery = $relatedModel->qualifyColumn($attributeForQuery);
+        $castType = $this->getNumericCastType($query);
+
+        if ($relationship instanceof BelongsToMany) {
+            $pivotTable = $relationship->getTable();
+            $foreignPivotKey = $relationship->getQualifiedForeignPivotKeyName();
+            $relatedPivotKey = $relationship->getQualifiedRelatedPivotKeyName();
+            $parentKey = $relationship->getQualifiedParentKeyName();
+            $relatedKey = $relationship->getQualifiedRelatedKeyName();
+
+            $subQuery = $relatedModel->query()
+                ->selectRaw("cast({$aggregate}({$attributeForQuery}) as {$castType})")
+                ->join($pivotTable, $relatedKey, '=', $relatedPivotKey)
+                ->whereColumn($foreignPivotKey, $parentKey);
+
+            return $query->whereRaw("({$subQuery->toSql()}) {$operator} ?", [...$subQuery->getBindings(), $value]);
         }
 
-        return $query;
+        if ($relationship instanceof HasOneOrMany) {
+            $foreignKeyName = $relationship->getQualifiedForeignKeyName();
+            $parentKeyName = $relationship->getQualifiedParentKeyName();
+
+            $subQuery = $relatedModel->query()
+                ->selectRaw("cast({$aggregate}({$attributeForQuery}) as {$castType})")
+                ->whereColumn($foreignKeyName, $parentKeyName);
+
+            return $query->whereRaw("({$subQuery->toSql()}) {$operator} ?", [...$subQuery->getBindings(), $value]);
+        }
+
+        throw new LogicException('Relationship type [' . get_class($relationship) . '] is not supported for aggregate queries.');
     }
 
     protected function getAggregateSelect(): Select
@@ -99,24 +128,6 @@ trait CanAggregateRelationships
             static::getAggregateSumKey() => 'filament-query-builder::query-builder.operators.number.aggregates.sum.summary',
             default => $attributeLabel,
         }, ['attribute' => $attributeLabel]);
-    }
-
-    protected function generateAggregateAlias(): string
-    {
-        $relationshipName = Str::snake($this->getConstraint()->getRelationshipName());
-
-        return "{$relationshipName}_{$this->getAggregate()}_{$this->getConstraint()->getAttributeForQuery()}";
-    }
-
-    protected function replaceQualifiedColumnWithQualifiedAggregateColumn(string $qualifiedColumn): string
-    {
-        if (blank($this->getAggregate())) {
-            return $qualifiedColumn;
-        }
-
-        $aggregateAlias = $this->generateAggregateAlias();
-
-        return "{$aggregateAlias}.{$aggregateAlias}";
     }
 
     public function getConstraint(): ?NumberConstraint

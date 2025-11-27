@@ -29,7 +29,7 @@ To optimize Filament for production, you should run the following command in you
 php artisan filament:optimize
 ```
 
-This command will [cache the Filament components](#caching-filament-components) and additionally the [Blade icons](#caching-blade-icons), which can significantly improve the performance of your Filament panels. This command is a shorthand for the commands `php artisan filament:cache-components` and `php artisan icons:cache`.
+This command will [cache the Filament components](#caching-filament-components) and additionally the [Blade Icons](#caching-blade-icons), which can significantly improve the performance of your Filament panels. This command is a shorthand for the commands `php artisan filament:cache-components` and `php artisan icons:cache`.
 
 To clear the caches at once, you can run:
 
