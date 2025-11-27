@@ -87,7 +87,7 @@ class StatsOverviewWidget extends Widget implements HasSchemas
     }
 
     /**
-     * @return array<Stat>
+     * @return array<Component>
      */
     protected function getCachedStats(): array
     {
@@ -97,7 +97,7 @@ class StatsOverviewWidget extends Widget implements HasSchemas
     /**
      * @deprecated Use `getStats()` instead.
      *
-     * @return array<Stat>
+     * @return array<Component>
      */
     protected function getCards(): array
     {
@@ -105,7 +105,7 @@ class StatsOverviewWidget extends Widget implements HasSchemas
     }
 
     /**
-     * @return array<Stat>
+     * @return array<Component>
      */
     protected function getStats(): array
     {
