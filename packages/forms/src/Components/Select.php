@@ -129,6 +129,8 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
 
     protected bool | Closure $canOptionLabelsWrap = true;
 
+    protected bool | Closure $isSortable = false;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -502,6 +504,19 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         $this->isMultiple = $condition;
 
         return $this;
+    }
+
+    public function sortable(bool | Closure $condition = true): static
+    {
+        $this->isSortable = $condition;
+
+        return $this;
+    }
+
+    public function isSortable(): bool
+    {
+        $result = (bool) $this->evaluate($this->isSortable);
+        return $result;
     }
 
     public function position(string | Closure | null $position): static

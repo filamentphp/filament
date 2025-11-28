@@ -6,6 +6,7 @@
     $isDisabled = $isDisabled();
     $isMultiple = $isMultiple();
     $isSearchable = $isSearchable();
+    $isSortable = $isSortable();
     $canOptionLabelsWrap = $canOptionLabelsWrap();
     $isRequired = $isRequired();
     $isConcealed = $isConcealed();
@@ -161,6 +162,7 @@
                             isDisabled: @js($isDisabled),
                             isMultiple: @js($isMultiple),
                             isSearchable: @js($isSearchable),
+                            isSortable: @js($isSortable),
                             livewireId: @js($this->getId()),
                             hasDynamicOptions: @js($hasDynamicOptions()),
                             hasDynamicSearchResults: @js($hasDynamicSearchResults()),

@@ -1,4 +1,5 @@
 import { computePosition, flip, shift, offset } from '@floating-ui/dom'
+import Sortable from 'sortablejs'
 
 // Helper function to check if a value is null, undefined, or an empty string
 function blank(value) {
@@ -31,6 +32,7 @@ export class Select {
         isDisabled = false,
         isMultiple = false,
         isSearchable = false,
+        isSortable = false,
         getOptionLabelUsing = null,
         getOptionLabelsUsing = null,
         getOptionsUsing = null,
@@ -66,6 +68,7 @@ export class Select {
         this.isDisabled = isDisabled
         this.isMultiple = isMultiple
         this.isSearchable = isSearchable
+        this.isSortable = isSortable
         this.getOptionLabelUsing = getOptionLabelUsing
         this.getOptionLabelsUsing = getOptionLabelsUsing
         this.getOptionsUsing = getOptionsUsing
@@ -807,6 +810,34 @@ export class Select {
         })
 
         target.appendChild(badgesContainer)
+
+        if (this.isSortable) {
+            console.log('Sortable Select Initialized')
+            
+            badgesContainer.addEventListener('click', (event) => {
+                event.stopPropagation()
+            })
+
+            badgesContainer.addEventListener('mousedown', (event) => {
+                event.stopPropagation()
+            })
+
+            new Sortable(badgesContainer, {
+                animation: 150,
+                onEnd: () => {
+                    const newState = []
+
+                    badgesContainer
+                        .querySelectorAll('[data-value]')
+                        .forEach((badge) => {
+                            newState.push(badge.getAttribute('data-value'))
+                        })
+
+                    this.state = newState
+                    this.onStateChange(this.state)
+                },
+            })
+        }
     }
 
     // Helper method to get label for single selection
