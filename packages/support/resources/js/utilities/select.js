@@ -812,7 +812,6 @@ export class Select {
         target.appendChild(badgesContainer)
 
         if (this.isSortable) {
-            
             badgesContainer.addEventListener('click', (event) => {
                 event.stopPropagation()
             })

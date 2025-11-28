@@ -516,6 +516,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
     public function isSortable(): bool
     {
         $result = (bool) $this->evaluate($this->isSortable);
+
         return $result;
     }
 
