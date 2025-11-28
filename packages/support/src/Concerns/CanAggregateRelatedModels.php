@@ -14,9 +14,9 @@ trait CanAggregateRelatedModels
     protected string | array | Closure | null $relationshipToAvg = null;
 
     /**
-     * @var string | array<int | string, string | Closure> | Closure | null
+     * @var bool | string | array<int | string, string | Closure> | Closure | null
      */
-    protected string | array | Closure | null $relationshipsToCount = null;
+    protected bool | string | array | Closure | null $relationshipsToCount = null;
 
     /**
      * @var string | array<int | string, string | Closure> | Closure | null
@@ -56,11 +56,15 @@ trait CanAggregateRelatedModels
     }
 
     /**
-     * @param  string | array<int | string, string | Closure> | Closure | null  $relationships
+     * @param  bool | string | array<int | string, string | Closure> | Closure | null  $relationships
      */
-    public function counts(string | array | Closure | null $relationships): static
+    public function counts(bool | string | array | Closure | null $relationships = true): static
     {
         $this->relationshipsToCount = $relationships;
+
+        if ($relationships === true) {
+            $this->attribute("{$this->getName()}_count");
+        }
 
         return $this;
     }
@@ -126,7 +130,17 @@ trait CanAggregateRelatedModels
      */
     public function getRelationshipsToCount(): string | array | null
     {
-        return $this->evaluate($this->relationshipsToCount);
+        $relationshipsToCount = $this->evaluate($this->relationshipsToCount);
+
+        if ($relationshipsToCount === true) {
+            return $this->getName();
+        }
+
+        if ($relationshipsToCount === false) {
+            return null;
+        }
+
+        return $relationshipsToCount;
     }
 
     /**

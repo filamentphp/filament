@@ -115,10 +115,10 @@ If you wish to count the number of related records in a column, you may use the 
 ```php
 use Filament\Tables\Columns\TextColumn;
 
-TextColumn::make('users_count')->counts('users')
+TextColumn::make('users')->counts()
 ```
 
-In this example, `users` is the name of the relationship to count from. The name of the column must be `users_count`, as this is the convention that [Laravel uses](https://laravel.com/docs/eloquent-relationships#counting-related-models) for storing the result.
+In this example, `users` is the name of the relationship to count from.
 
 If you'd like to scope the relationship before counting, you can pass an array to the method, where the key is the relationship name and the value is the function to scope the Eloquent query with:
 
@@ -130,6 +130,8 @@ TextColumn::make('users_count')->counts([
     'users' => fn (Builder $query) => $query->where('is_active', true),
 ])
 ```
+
+When the relationship is defined explicitly, the name of the column must be `users_count`, as this is the convention that [Laravel uses](https://laravel.com/docs/eloquent-relationships#counting-related-models) for storing the result.
 
 #### Determining relationship existence
 

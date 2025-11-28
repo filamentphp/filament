@@ -63,6 +63,20 @@ it('can render post authors', function (): void {
         ->assertCanRenderTableColumn('author.name');
 });
 
+it('can render post count', function (): void {
+    /** @var \Illuminate\Database\Eloquent\Collection<int, User> $users */
+    $users = User::factory()->count(10)
+        ->afterCreating(fn (User $author) => Post::factory()->count($author->getKey())->for($author, 'author')->create())
+        ->create();
+
+    $table = livewire(\Filament\Tests\Fixtures\Resources\Users\Pages\ListUsers::class)
+        ->assertCanRenderTableColumn('posts');
+
+    foreach ($users as $user) {
+        $table->assertTableColumnStateSet('posts', $user->posts()->count(), $user->getKey());
+    }
+});
+
 it('can sort posts by title', function (): void {
     Post::factory()->count(10)->create();
 

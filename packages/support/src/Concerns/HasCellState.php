@@ -28,6 +28,8 @@ trait HasCellState
 
     protected ?string $inverseRelationshipName = null;
 
+    protected string | Closure | null $attribute = null;
+
     /**
      * @var array<string, mixed>
      */
@@ -72,6 +74,13 @@ trait HasCellState
         return $this;
     }
 
+    public function attribute(string | Closure | null $name): static
+    {
+        $this->attribute = $name;
+
+        return $this;
+    }
+
     public function isDistinctList(): bool
     {
         return (bool) $this->evaluate($this->isDistinctList);
@@ -80,6 +89,11 @@ trait HasCellState
     public function getDefaultState(): mixed
     {
         return $this->evaluate($this->defaultState);
+    }
+
+    public function getAttribute(): string
+    {
+        return $this->evaluate($this->attribute) ?? $this->getName();
     }
 
     public function getState(): mixed
@@ -149,7 +163,7 @@ trait HasCellState
             }
         }
 
-        $name = $this->getName();
+        $name = $this->getAttribute();
 
         if (
             ($record instanceof HasRichContent) &&
@@ -327,7 +341,7 @@ trait HasCellState
 
     public function getAttributeName(Model $record): string
     {
-        $name = $this->getName();
+        $name = $this->getAttribute();
 
         if (! str($name)->contains('.')) {
             return $name;
@@ -354,7 +368,7 @@ trait HasCellState
 
     public function getFullAttributeName(Model $record): string
     {
-        $name = $this->getName();
+        $name = $this->getAttribute();
 
         if (! str($name)->contains('.')) {
             return $name;

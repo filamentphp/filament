@@ -44,8 +44,8 @@ class UserResource extends Resource
                 Tables\Columns\TextColumn::make('posts_exists')
                     ->exists('posts')
                     ->label('Has Posts'),
-                Tables\Columns\TextColumn::make('posts_count')
-                    ->counts('posts')
+                Tables\Columns\TextColumn::make('posts')
+                    ->counts()
                     ->label('# Posts'),
                 Tables\Columns\TextColumn::make('posts_avg_rating')
                     ->avg('posts', 'rating')
