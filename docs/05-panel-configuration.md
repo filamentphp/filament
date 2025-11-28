@@ -9,7 +9,7 @@ By default, the configuration file is located at `app/Providers/Filament/AdminPa
 
 ## Introducing panels
 
-By default, when you install the package, there is one panel that has been set up for you - and it lives on `/admin`. All the [resources](resources), [custom pages](navigation/custom-pages), and [dashboard widgets](dashboard) you create get registered to this panel.
+By default, when you install the package, there is one panel that has been set up for you - and it lives on `/admin`. All the [resources](resources/overview), [custom pages](navigation/custom-pages), and [dashboard widgets](widgets/overview) you create get registered to this panel.
 
 However, you can create as many panels as you want, and each can have its own set of resources, pages and widgets.
 
@@ -199,7 +199,7 @@ public function panel(Panel $panel): Panel
 ```
 
 <Aside variant="info">
-    In this example, we are using [`getUrl()`](/resources#generating-urls-to-resource-pages) on a resource to get the URL to the resource's index page. This feature requires the panel to already be registered though, and the configuration is too early in the request lifecycle to do that. You can use a function to return the URLs instead, which will be resolved when the panel has been registered.
+    In this example, we are using [`getUrl()`](resources/overview#generating-urls-to-resource-pages) on a resource to get the URL to the resource's index page. This feature requires the panel to already be registered though, and the configuration is too early in the request lifecycle to do that. You can use a function to return the URLs instead, which will be resolved when the panel has been registered.
 </Aside>
 
 These URLs need to exactly match the URL that the user is navigating to, including the domain and protocol. If you'd like to use a pattern to match multiple URLs, you can use an asterisk (`*`) as a wildcard character:
@@ -321,7 +321,7 @@ class CreatePost extends CreateRecord
 
 ## Registering assets for a panel
 
-You can register [assets](../advanced/assets) that will only be loaded on pages within a specific panel, and not in the rest of the app. To do that, pass an array of assets to the `assets()` method:
+You can register [assets](advanced/assets) that will only be loaded on pages within a specific panel, and not in the rest of the app. To do that, pass an array of assets to the `assets()` method:
 
 ```php
 use Filament\Panel;
@@ -339,7 +339,7 @@ public function panel(Panel $panel): Panel
 }
 ```
 
-Before these [assets](../advanced/assets) can be used, you'll need to run `php artisan filament:assets`.
+Before these [assets](advanced/assets) can be used, you'll need to run `php artisan filament:assets`.
 
 ## Applying middleware
 
@@ -407,7 +407,7 @@ public function panel(Panel $panel): Panel
 
 ## Disabling broadcasting
 
-By default, Laravel Echo will automatically connect for every panel, if credentials have been set up in the [published `config/filament.php` configuration file](installation#publishing-configuration). To disable this automatic connection in a panel, you can use the `broadcasting(false)` method:
+By default, Laravel Echo will automatically connect for every panel, if credentials have been set up in the [published `config/filament.php` configuration file](introduction/installation#publishing-configuration). To disable this automatic connection in a panel, you can use the `broadcasting(false)` method:
 
 ```php
 use Filament\Panel;

@@ -37,7 +37,7 @@ Since all pages are Livewire components, you can [add actions](../components/act
 
 ### Header actions
 
-You can also easily add actions to the header of any page, including [resource pages](resources). You don't need to worry about adding anything to the Blade template, we handle that for you. Just return your actions from the `getHeaderActions()` method of the page class:
+You can also easily add actions to the header of any page, including [resource pages](../resources/overview). You don't need to worry about adding anything to the Blade template, we handle that for you. Just return your actions from the `getHeaderActions()` method of the page class:
 
 ```php
 use Filament\Actions\Action;
@@ -95,7 +95,7 @@ Alternatively, you can open an action modal when a page loads by specifying the 
 
 ### Refreshing form data
 
-If you're using actions on an [Edit](resources/editing-records) or [View](resources/viewing-records) resource page, you can refresh data within the main form using the `refreshFormData()` method:
+If you're using actions on an [Edit](../resources/editing-records) or [View](../resources/viewing-records) resource page, you can refresh data within the main form using the `refreshFormData()` method:
 
 ```php
 use App\Models\Post;
@@ -237,7 +237,7 @@ public function getTitle(): string | Htmlable
 
 ## Customizing the page navigation label
 
-By default, Filament will use the page's [title](#customizing-the-page-title) as its [navigation](navigation) item label. You may override this by defining a `$navigationLabel` property on your page class:
+By default, Filament will use the page's [title](#customizing-the-page-title) as its [navigation](overview) item label. You may override this by defining a `$navigationLabel` property on your page class:
 
 ```php
 protected static ?string $navigationLabel = 'Custom Navigation Label';
@@ -369,7 +369,7 @@ Settings::getUrl(panel: 'marketing');
 
 ## Adding sub-navigation between pages
 
-You may want to add a common sub-navigation to multiple pages, to allow users to quickly navigate between them. You can do this by defining a [cluster](clusters). Clusters can also contain [resources](resources), and you can switch between multiple pages or resources within a cluster.
+You may want to add a common sub-navigation to multiple pages, to allow users to quickly navigate between them. You can do this by defining a [cluster](clusters). Clusters can also contain [resources](../resources/overview), and you can switch between multiple pages or resources within a cluster.
 
 ## Setting the sub-navigation position
 
