@@ -42,6 +42,8 @@ trait HasTenancy
 
     protected ?string $tenantOwnershipRelationshipName = null;
 
+    protected ?Closure $resolveTenantUsing = null;
+
     /**
      * @var array<Action | Closure | MenuItem>
      */
@@ -137,6 +139,13 @@ trait HasTenancy
         return $this;
     }
 
+    public function resolveTenantUsing(?Closure $callback): static
+    {
+        $this->resolveTenantUsing = $callback;
+
+        return $this;
+    }
+
     public function hasTenancy(): bool
     {
         return filled($this->getTenantModel());
@@ -204,6 +213,12 @@ trait HasTenancy
 
     public function getTenant(string $key): Model
     {
+        if ($this->resolveTenantUsing) {
+            return $this->evaluate($this->resolveTenantUsing, [
+                'key' => $key,
+            ]);
+        }
+
         $tenantModel = $this->getTenantModel();
 
         $record = app($tenantModel)

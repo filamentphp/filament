@@ -15,6 +15,7 @@
     $isSuffixInline = $isSuffixInline();
     $maxDate = $getMaxDate();
     $minDate = $getMinDate();
+    $defaultFocusedDate = $getDefaultFocusedDate();
     $prefixActions = $getPrefixActions();
     $prefixIcon = $getPrefixIcon();
     $prefixIconColor = $getPrefixIconColor();

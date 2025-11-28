@@ -826,7 +826,7 @@ Repeater::make('members')
 This method will automatically enable the `distinct()` and `live()` methods on the field.
 
 <Aside variant="warning">
-    In case you want to add another condition to [disable options](../select#disabling-specific-options) with, you can chain `disableOptionWhen()` with the `merge: true` argument:
+    In case you want to add another condition to [disable options](select#disabling-specific-options) with, you can chain `disableOptionWhen()` with the `merge: true` argument:
     
     ```php
     use Filament\Forms\Components\Repeater;

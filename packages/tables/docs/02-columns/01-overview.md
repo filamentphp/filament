@@ -37,7 +37,7 @@ TextColumn::make('author.name')
 
 Columns may feel a bit magic at first, but they’re designed to be simple to use and optimized to display data from an Eloquent record. Despite this, they’re flexible and you can display data from any source, not just an Eloquent record attribute.
 
-The data that a column displays is called its "state". When using a [panel resource](../resources), the table is aware of the records it is displaying. This means that the state of the column is set based on the value of the attribute on the record. For example, if the column is used in the table of a `PostResource`, then the `title` attribute value of the current post will be displayed.
+The data that a column displays is called its "state". When using a [panel resource](../../resources/overview), the table is aware of the records it is displaying. This means that the state of the column is set based on the value of the attribute on the record. For example, if the column is used in the table of a `PostResource`, then the `title` attribute value of the current post will be displayed.
 
 ```php
 use Filament\Tables\Columns\TextColumn;
@@ -881,7 +881,7 @@ public function table(Table $table): Table
 
 #### Customizing the column manager dropdown trigger action
 
-To customize the column manager dropdown trigger button, you may use the `columnManagerTriggerAction()` method, passing a closure that returns an action. All methods that are available to [customize action trigger buttons](../actions/overview) can be used:
+To customize the column manager dropdown trigger button, you may use the `columnManagerTriggerAction()` method, passing a closure that returns an action. All methods that are available to [customize action trigger buttons](../../actions/overview) can be used:
 
 ```php
 use Filament\Actions\Action;

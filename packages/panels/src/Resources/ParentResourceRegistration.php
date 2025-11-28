@@ -27,7 +27,7 @@ class ParentResourceRegistration
             ->camel()
             ->when(
                 function (Stringable $singularRelationshipName): bool {
-                    $model = app($this->childResource::getModel());
+                    $model = $this->childResource::getModel();
 
                     if (method_exists($model, $singularRelationshipName)) {
                         return false;
