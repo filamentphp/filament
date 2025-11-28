@@ -1,4 +1,4 @@
-name: 'Sync Documentation'
+name: sync-docs
 
 on:
   release:
@@ -7,9 +7,7 @@ on:
 
 jobs:
   sync-docs:
-    name: 'Sync Mintlify Docs'
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout docs repository
         uses: actions/checkout@v4
@@ -18,7 +16,7 @@ jobs:
           token: ${{ secrets.GH_ACCESS_TOKEN }}
           path: docs
 
-      - name: Setup Node.js
+      - name: Set up Node
         uses: actions/setup-node@v4
         with:
           node-version: '20'
