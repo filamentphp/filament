@@ -29,7 +29,7 @@ class IdentifyTenant
             abort(404);
         }
 
-        $tenant = $panel->resolveTenantForRequest($request->route()->parameter('tenant'));
+        $tenant = $panel->getTenant($request->route()->parameter('tenant'));
 
         if (! $user->canAccessTenant($tenant)) {
             abort(404);
