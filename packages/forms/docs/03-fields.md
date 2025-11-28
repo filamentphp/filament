@@ -172,7 +172,7 @@ Toggle::make('is_admin')
     ->dehydrated(auth()->user()->isAdmin())
 ```
 
-If you're using the [admin panel](/docs/admin) and only want to save disabled fields on the [Create page of a resource](/docs/admin/resources):
+If you're using the [admin panel](../admin/installation) and only want to save disabled fields on the [Create page of a resource](../admin/resources/getting-started):
 
 ```php
 use Filament\Resources\Pages\CreateRecord;
@@ -627,7 +627,7 @@ Select::make('technologies')
     ->relationship('technologies', 'name')
 ```
 
-> To set this functionality up, **you must also follow the instructions set out in the [field relationships](getting-started#field-relationships) section**. If you're using the [admin panel](/docs/admin), you can skip this step.
+> To set this functionality up, **you must also follow the instructions set out in the [field relationships](getting-started#field-relationships) section**. If you're using the [admin panel](../admin/installation), you can skip this step.
 
 If you'd like to populate the options from the database when the page is loaded, instead of when the user searches, you can use the `preload()` method:
 
@@ -742,7 +742,7 @@ Select::make('authorId')
 
 The form opens in a modal, where the user can fill it with data. Upon form submission, the new record is selected by the field.
 
-Since HTML does not support nested `<form>` elements, you must also render the modal outside the `<form>` in the view. If you're using the [admin panel](/docs/admin), this is included already:
+Since HTML does not support nested `<form>` elements, you must also render the modal outside the `<form>` in the view. If you're using the [admin panel](../admin/installation), this is included already:
 
 ```blade
 <form wire:submit.prevent="submit">
@@ -954,7 +954,7 @@ CheckboxList::make('technologies')
     ->relationship('technologies', 'name')
 ```
 
-> To set this functionality up, **you must also follow the instructions set out in the [field relationships](getting-started#field-relationships) section**. If you're using the [admin panel](/docs/admin), you can skip this step.
+> To set this functionality up, **you must also follow the instructions set out in the [field relationships](getting-started#field-relationships) section**. If you're using the [admin panel](../admin/installation), you can skip this step.
 
 You may customize the database query that retrieves options using the third parameter of the `relationship()` method:
 
@@ -1353,7 +1353,7 @@ FileUpload::make('attachments')
     ->enableDownload()
 ```
 
-> Filament also supports [`spatie/laravel-medialibrary`](https://github.com/spatie/laravel-medialibrary). See our [plugin documentation](/docs/spatie-laravel-media-library-plugin) for more information.
+> Filament also supports [`spatie/laravel-medialibrary`](https://github.com/spatie/laravel-medialibrary). See our [plugin documentation](https://filamentphp.com/plugins/spatie-laravel-media-library-plugin) for more information.
 
 ## Rich editor
 
@@ -1632,7 +1632,7 @@ Repeater::make('qualifications')
     ])
 ```
 
-> To set this functionality up, **you must also follow the instructions set out in the [field relationships](getting-started#field-relationships) section**. If you're using the [admin panel](/docs/admin), you can skip this step.
+> To set this functionality up, **you must also follow the instructions set out in the [field relationships](getting-started#field-relationships) section**. If you're using the [admin panel](../admin/installation), you can skip this step.
 
 #### Ordering items
 
@@ -1908,7 +1908,7 @@ TagsInput::make('tags')
 
 ![](https://user-images.githubusercontent.com/41773797/147614115-7570a6cb-dd91-4912-8adf-e54a51f1c567.png)
 
-> Filament also supports [`spatie/laravel-tags`](https://github.com/spatie/laravel-tags). See our [plugin documentation](/docs/spatie-laravel-tags-plugin) for more information.
+> Filament also supports [`spatie/laravel-tags`](https://github.com/spatie/laravel-tags). See our [plugin documentation](https://filamentphp.com/plugins/spatie-laravel-tags-plugin) for more information.
 
 ## Textarea
 

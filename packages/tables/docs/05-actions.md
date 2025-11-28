@@ -203,7 +203,7 @@ BulkAction::make('delete')
 
 You may also render a form in this modal to collect extra information from the user before the action runs.
 
-You may use components from the [Form Builder](/docs/forms/fields) to create custom action modal forms. The data from the form is available in the `$data` array of the `action()` callback:
+You may use components from the [Form Builder](../forms/fields) to create custom action modal forms. The data from the form is available in the `$data` array of the `action()` callback:
 
 ```php
 use App\Models\User;
@@ -395,7 +395,7 @@ ReplicateAction::make()
 
 #### Retrieving user input
 
-Just like [normal actions](#custom-forms), you can provide a [form schema](/docs/forms/fields) that can be used to modify the replication process:
+Just like [normal actions](#custom-forms), you can provide a [form schema](../forms/fields) that can be used to modify the replication process:
 
 ```php
 use Filament\Tables\Actions\ReplicateAction;
@@ -456,7 +456,7 @@ Row actions are aligned to the right in their cell by default. To change the ali
 
 ## Tooltips
 
-> If you want to use tooltips outside of the admin panel, make sure you have [`@ryangjchandler/alpine-tooltip` installed](https://github.com/ryangjchandler/alpine-tooltip#installation) in your app, including [`tippy.css`](https://atomiks.github.io/tippyjs/v6/getting-started/#1-package-manager). You'll also need to install [`tippy.css`](https://atomiks.github.io/tippyjs/v6/getting-started/#1-package-manager) if you're using a [custom admin theme](/docs/admin/appearance#building-themes).
+> If you want to use tooltips outside of the admin panel, make sure you have [`@ryangjchandler/alpine-tooltip` installed](https://github.com/ryangjchandler/alpine-tooltip#installation) in your app, including [`tippy.css`](https://atomiks.github.io/tippyjs/v6/getting-started/#1-package-manager). You'll also need to install [`tippy.css`](https://atomiks.github.io/tippyjs/v6/getting-started/#1-package-manager) if you're using a [custom admin theme](../admin/appearance#building-themes).
 
 You may specify a tooltip to display when you hover over an action:
 

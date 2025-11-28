@@ -195,7 +195,7 @@ TernaryFilter::make('trashed')
 
 ### Custom filter forms
 
-You may use components from the [Form Builder](/docs/forms/fields) to create custom filter forms. The data from the custom filter form is available in the `$data` array of the `query()` callback:
+You may use components from the [Form Builder](../forms/fields) to create custom filter forms. The data from the custom filter form is available in the `$data` array of the `query()` callback:
 
 ```php
 use Filament\Forms;

@@ -91,7 +91,7 @@ public static function canView(): bool
 
 ## Disabling the default widgets
 
-By default, two widgets are displayed on the dashboard. These widgets can be disabled by updating the `widgets.register` property of the [configuration](installation#publishing-configuration) file:
+By default, two widgets are displayed on the dashboard. These widgets can be disabled by updating the `widgets.register` property of the [configuration](../installation#publishing-configuration) file:
 
 ```php
 'widgets' => [
@@ -127,7 +127,7 @@ class Dashboard extends BasePage
 }
 ```
 
-Finally, remove the original `Dashboard` class from the [configuration file](installation#publishing-configuration):
+Finally, remove the original `Dashboard` class from the [configuration file](../installation#publishing-configuration):
 
 ```php
 'pages' => [

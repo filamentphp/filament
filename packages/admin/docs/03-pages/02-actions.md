@@ -115,7 +115,7 @@ Action::make('delete')
 
 You may also render a form in this modal to collect extra information from the user before the action runs.
 
-You may use components from the [Form Builder](/docs/forms/fields) to create custom action modal forms. The data from the form is available in the `$data` array of the `action()` callback:
+You may use components from the [Form Builder](../../forms/fields) to create custom action modal forms. The data from the form is available in the `$data` array of the `action()` callback:
 
 ```php
 use App\Models\User;

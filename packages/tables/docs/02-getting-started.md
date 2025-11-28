@@ -524,7 +524,7 @@ protected function getTablePollingInterval(): ?string
 
 ## Using the form builder
 
-Internally, the table builder uses the [form builder](/docs/forms) to implement filtering, actions, and bulk actions. Because of this, the form builder is already set up on your Livewire component and ready to use with your own custom forms.
+Internally, the table builder uses the [form builder](../forms/installation) to implement filtering, actions, and bulk actions. Because of this, the form builder is already set up on your Livewire component and ready to use with your own custom forms.
 
 You may use the default `form` out of the box:
 

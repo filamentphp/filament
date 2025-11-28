@@ -61,7 +61,7 @@ protected static function getGlobalSearchEloquentQuery(): Builder
 
 ## URL
 
-Global search results will link to the [Edit page](editing-records) of your resource, or the [View page](viewing-page) if the user does not have [edit permissions](editing-records#authorization). To customize this, you may override the `getGlobalSearchResultUrl()` method and return a route of your choice:
+Global search results will link to the [Edit page](editing-records) of your resource, or the [View page](viewing-records) if the user does not have [edit permissions](editing-records#authorization). To customize this, you may override the `getGlobalSearchResultUrl()` method and return a route of your choice:
 
 ```php
 public static function getGlobalSearchResultUrl(Model $record): string

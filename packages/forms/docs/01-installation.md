@@ -10,7 +10,7 @@ Filament has a few requirements to run:
 - Laravel v8.0+
 - Livewire v2.0+
 
-The form builder comes pre-installed inside the [admin panel 2.x](/docs/admin/2.x), but you must still follow the installation instructions below if you're using it in the rest of your app.
+The form builder comes pre-installed inside the [admin panel 2.x](../admin/installation), but you must still follow the installation instructions below if you're using it in the rest of your app.
 
 First, require the form builder using Composer:
 

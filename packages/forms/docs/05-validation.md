@@ -422,7 +422,7 @@ Sometimes, you may wish to ignore a given model during unique validation. For ex
 Field::make('email')->unique(ignorable: $ignoredUser)
 ```
 
-If you're using the [admin panel](/docs/admin), you can easily ignore the current record by using `ignoreRecord` instead:
+If you're using the [admin panel](../admin/installation), you can easily ignore the current record by using `ignoreRecord` instead:
 
 ```php
 Field::make('email')->unique(ignoreRecord: true)

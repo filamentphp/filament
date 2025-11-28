@@ -97,7 +97,7 @@ protected static string $resource; // Protected the property. Added the `string`
 
 The entire `Filament\Resources\Forms` namespace has been moved to `Filament\Forms`.
 
-The `when()`, `only()` and `except()` methods have been removed. You may now pass a closure to any field configuration method, for example `hidden()`, which determines if the method should be applied. For more information, please see the [advanced forms documentation](/docs/forms/advanced#using-closure-customization);
+The `when()`, `only()` and `except()` methods have been removed. You may now pass a closure to any field configuration method, for example `hidden()`, which determines if the method should be applied. For more information, please see the [advanced forms documentation](../forms/advanced#using-closure-customization);
 
 #### Fields
 
@@ -163,7 +163,7 @@ The `primary()` method has been removed from columns. All columns link to the re
 
 The filter class has been moved from `Filament\Resources\Tables\Filter` to `Filament\Tables\Filters\Filter`.
 
-Filters now have a dedicated `query()` method for applying the query, instead of using the second parameter of the `make()` method. For more information, check out the [table builder filters documentation](/docs/tables/filters).
+Filters now have a dedicated `query()` method for applying the query, instead of using the second parameter of the `make()` method. For more information, check out the [table builder filters documentation](../tables/filters).
 
 The `apply()` method of reusable filters must now have the following signature:
 
