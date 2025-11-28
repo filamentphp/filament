@@ -76,7 +76,7 @@ git clone git@github.com:filamentphp/filament.git
 composer install
 
 # Run the tool  
-./bin/translation-tool.php
+php ./bin/translation-tool.php
 ```
 
 First select "List outdated translations" as the command and then choose the locale you want to check. This command will show you which translations are missing for the specified locale. You can then submit a pull request with the missing translations to [the GitHub repository](https://github.com/filamentphp/filament).
@@ -88,3 +88,4 @@ If you discover a security vulnerability within Filament, please [report it thro
 ## Code of Conduct
 
 Please note that Filament is released with a [Contributor Code of Conduct](https://github.com/filamentphp/filament/blob/4.x/CODE_OF_CONDUCT.md). By participating in this project, you agree to abide by its terms.
+
