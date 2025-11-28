@@ -12,7 +12,7 @@ This command will create two files - a widget class in the `/Widgets` directory 
 
 Widgets are pure [Laravel Livewire](https://laravel-livewire.com) components, so may use any features of that package.
 
-> Pre-built widget templates are coming soon. For more information, please see our [Development Roadmap](roadmap).
+> Pre-built widget templates are coming soon.
 
 ## Disabling the Default Widgets
 

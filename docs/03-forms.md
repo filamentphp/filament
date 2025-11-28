@@ -122,7 +122,7 @@ FileUpload::make($name)
 
 > Available values for the position methods can be found on [Filepond's website](https://pqina.nl/filepond/docs/patterns/api/filepond-instance#styles).
 
-> Support for multiple file uploads is coming soon. For more information, please see our [Development Roadmap](roadmap).
+> Support for multiple file uploads is coming soon.
 
 ### Key-value
 
