@@ -22,9 +22,11 @@ use Filament\Tests\Fixtures\Resources\Posts\PostResource;
 use Filament\Tests\Fixtures\Resources\TicketMessages\TicketMessageResource;
 use Filament\Tests\Fixtures\Resources\Tickets\Pages\ListTickets;
 use Filament\Tests\Fixtures\Resources\Tickets\TicketResource;
+use Filament\Tests\Fixtures\Resources\Users\Pages\ListUsers;
 use Filament\Tests\Fixtures\Resources\Users\UserResource;
 use Filament\Tests\Panels\Resources\TestCase;
 use Illuminate\Auth\Access\Response;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 
 use function Filament\Tests\livewire;
@@ -64,12 +66,12 @@ it('can render post authors', function (): void {
 });
 
 it('can render post count', function (): void {
-    /** @var \Illuminate\Database\Eloquent\Collection<int, User> $users */
+    /** @var Collection<int, User> $users */
     $users = User::factory()->count(10)
         ->afterCreating(fn (User $author) => Post::factory()->count($author->getKey())->for($author, 'author')->create())
         ->create();
 
-    $table = livewire(\Filament\Tests\Fixtures\Resources\Users\Pages\ListUsers::class)
+    $table = livewire(ListUsers::class)
         ->assertCanRenderTableColumn('posts');
 
     foreach ($users as $user) {
