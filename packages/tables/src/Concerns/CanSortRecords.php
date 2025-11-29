@@ -103,8 +103,6 @@ trait CanSortRecords
             ($sortColumn = $this->getTable()->getSortableVisibleColumn($defaultSort))
         ) {
             $sortColumn->applySort($query, $sortDirection);
-        } elseif (is_string($defaultSort)) {
-            $query->orderBy($defaultSort, $sortDirection);
         }
 
         if ($defaultSort instanceof Builder) {
