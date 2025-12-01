@@ -331,7 +331,7 @@ public function table(Table $table): Table
 }
 ```
 
-## Disabling persisting columns in user's session
+## Disabling column persistence in user's session
 
 By default, Filament will store the table's columns in session for persisting them. To disable persisting columns in user's session, use the `persistColumnsInSession(false)` method:
 
