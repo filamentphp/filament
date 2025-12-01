@@ -81,12 +81,14 @@ trait HasColumnManager
 
         return $this;
     }
+
     public function persistColumnsInSession(bool | Closure $condition = true): static
     {
         $this->persistsColumnsInSession = $condition;
 
         return $this;
     }
+
     public function persistsColumnsInSession(): bool
     {
         return (bool) $this->evaluate($this->persistsColumnsInSession);
