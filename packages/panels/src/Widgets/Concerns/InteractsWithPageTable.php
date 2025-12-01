@@ -19,6 +19,10 @@ trait InteractsWithPageTable /** @phpstan-ignore trait.unused */
     #[Reactive]
     public $paginators = [];
 
+    /** @var int | null */
+    #[Reactive]
+    public ?int $tableRecordsCount = null;
+
     /**
      * @var array<string, string | array<string, string | null> | null>
      */
@@ -81,6 +85,7 @@ trait InteractsWithPageTable /** @phpstan-ignore trait.unused */
         foreach ([
             'activeTab' => $this->activeTab,
             'paginators' => $this->paginators,
+            'tableRecordsCount' => $this->tableRecordsCount,
             'parentRecord' => $this->parentRecord,
             'tableColumnSearches' => $this->tableColumnSearches,
             'tableFilters' => $this->tableFilters,
