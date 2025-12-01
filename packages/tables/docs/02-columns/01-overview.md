@@ -331,6 +331,23 @@ public function table(Table $table): Table
 }
 ```
 
+## Disabling persisting columns in user's session
+
+By default, Filament will store the table's columns in session for persisting them. To disable persisting columns in user's session, use the `persistColumnsInSession(false)` method:
+
+```php
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->columns([
+            // ...
+        ])
+        ->persistColumnsInSession(false);
+}
+```
+
 ## Searching
 
 Columns may be searchable by using the text input field in the top right of the table. To make a column searchable, you must use the `searchable()` method:
