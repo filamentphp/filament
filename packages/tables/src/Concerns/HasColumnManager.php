@@ -152,10 +152,13 @@ trait HasColumnManager
 
     protected function persistTableColumns(): void
     {
-        session()->put(
-            $this->getTableColumnsSessionKey(),
-            $this->tableColumns
-        );
+        $shouldPersistColumns = $this->getTable()->persistsColumnsInSession();
+        if ($shouldPersistColumns) {
+            session()->put(
+                $this->getTableColumnsSessionKey(),
+                $this->tableColumns
+            );
+        }
     }
 
     protected function persistHasReorderedTableColumns(bool $wasReordered = false): void
