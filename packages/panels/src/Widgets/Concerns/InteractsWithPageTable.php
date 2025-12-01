@@ -19,7 +19,6 @@ trait InteractsWithPageTable /** @phpstan-ignore trait.unused */
     #[Reactive]
     public $paginators = [];
 
-    /** @var int | null */
     #[Reactive]
     public ?int $tableRecordsCount = null;
 
