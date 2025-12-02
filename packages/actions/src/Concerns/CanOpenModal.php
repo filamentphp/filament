@@ -87,7 +87,7 @@ trait CanOpenModal
 
     protected bool | Closure | null $isModalAutofocused = null;
 
-    protected string | BackedEnum | Closure | null $modalIcon = null;
+    protected string | BackedEnum | Htmlable | Closure | null $modalIcon = null;
 
     /**
      * @var string | array<string> | Closure | null
@@ -141,7 +141,7 @@ trait CanOpenModal
         return $this;
     }
 
-    public function modalIcon(string | BackedEnum | Closure | null $icon = null): static
+    public function modalIcon(string | BackedEnum | Htmlable | Closure | null $icon = null): static
     {
         $this->modalIcon = $icon;
 
@@ -682,7 +682,7 @@ trait CanOpenModal
             ->button();
     }
 
-    public function getModalIcon(): string | BackedEnum | null
+    public function getModalIcon(): string | BackedEnum | Htmlable | null
     {
         if ($icon = $this->evaluate($this->modalIcon)) {
             return $icon;

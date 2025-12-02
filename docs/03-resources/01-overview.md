@@ -148,7 +148,7 @@ public static function configure(Schema $schema): Schema
 }
 ```
 
-The `components()` method is used to define the structure of your form. It is an array of [fields](../forms#available-fields) and [layout components](../schemas/layout#available-layout-components), in the order they should appear in your form.
+The `components()` method is used to define the structure of your form. It is an array of [fields](../forms/overview#available-fields) and [layout components](../schemas/layouts#available-layout-components), in the order they should appear in your form.
 
 Check out the Forms docs for a [guide](../forms) on how to build forms with Filament.
 
@@ -443,7 +443,7 @@ public static function getNavigationParentItem(): ?string
 
 ## Generating URLs to resource pages
 
-Filament provides `getUrl()` static method on resource classes to generate URLs to resources and specific pages within them. Traditionally, you would need to construct the URL by hand or by using Laravel's `route()` helper, but these methods depend on knowledge of the resource's slug or route naming conventions.
+Filament provides a `getUrl()` static method on resource classes to generate URLs to resources and specific pages within them. Traditionally, you would need to construct the URL by hand or by using Laravel's `route()` helper, but these methods depend on knowledge of the resource's slug or route naming conventions.
 
 The `getUrl()` method, without any arguments, will generate a URL to the resource's [List page](listing-records):
 

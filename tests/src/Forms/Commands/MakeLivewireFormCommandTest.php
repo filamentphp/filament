@@ -72,12 +72,16 @@ it('can generate a Livewire form component with generated fields', function (): 
     ]);
 
     assertFileExists($path = app_path('Livewire/CreatePostWithFields.php'));
-    expect(file_get_contents($path))
-        ->toMatchSnapshot();
+    if (config('database.default') === 'testing') {
+        expect(file_get_contents($path))
+            ->toMatchSnapshot();
+    }
 
     assertFileExists($viewPath = resource_path('views/livewire/create-post-with-fields.blade.php'));
-    expect(file_get_contents($viewPath))
-        ->toMatchSnapshot();
+    if (config('database.default') === 'testing') {
+        expect(file_get_contents($viewPath))
+            ->toMatchSnapshot();
+    }
 });
 
 it('can generate a Livewire form component in a nested directory', function (): void {

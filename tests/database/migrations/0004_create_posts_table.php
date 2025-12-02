@@ -10,16 +10,18 @@ return new class extends Migration
     {
         Schema::create('posts', function (Blueprint $table): void {
             $table->id();
-            $table->foreignId('author_id');
+            $table->foreignId('author_id')->nullable();
             $table->text('content')->nullable();
             $table->boolean('is_published')->default(true);
             $table->unsignedTinyInteger('rating')->default(0);
             $table->json('tags')->nullable();
             $table->string('title');
+            $table->string('title2')->nullable();
             $table->json('config')->nullable();
             $table->json('json')->nullable();
             $table->json('json_array_of_objects')->nullable();
             $table->string('string_backed_enum')->nullable();
+            $table->timestamp('published_at')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

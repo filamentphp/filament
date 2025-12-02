@@ -5,6 +5,10 @@
         @apply mx-auto grid max-w-lg justify-items-center text-center;
     }
 
+    & .fi-empty-state-text-ctn {
+        @apply grid justify-items-center text-center;
+    }
+
     & .fi-empty-state-icon-bg {
         @apply mb-4 rounded-full bg-gray-100 p-3 dark:bg-gray-500/20;
 
@@ -31,5 +35,29 @@
 
     & .fi-empty-state-footer {
         @apply mt-6;
+    }
+
+    &.fi-compact {
+        @apply py-6;
+
+        & .fi-empty-state-content {
+            @apply mx-0 flex max-w-none items-start gap-4 text-start;
+        }
+
+        & .fi-empty-state-icon-bg {
+            @apply mb-0 shrink-0;
+        }
+
+        & .fi-empty-state-text-ctn {
+            @apply flex-1 justify-items-start text-start;
+        }
+
+        & .fi-empty-state-description {
+            @apply mt-1;
+        }
+
+        & .fi-empty-state-footer {
+            @apply mt-4;
+        }
     }
 }

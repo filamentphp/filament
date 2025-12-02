@@ -301,9 +301,9 @@ trait HasFileAttachments
         return $this;
     }
 
-    public function hasFileAttachments(): bool
+    public function hasFileAttachments(?bool $default = null): bool
     {
-        return $this->evaluate($this->hasFileAttachments) ?? $this->hasFileAttachmentsByDefault();
+        return $this->evaluate($this->hasFileAttachments) ?? ($default ?? $this->hasFileAttachmentsByDefault());
     }
 
     public function hasFileAttachmentsByDefault(): bool

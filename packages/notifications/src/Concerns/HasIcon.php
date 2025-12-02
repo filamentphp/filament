@@ -7,6 +7,7 @@ use Filament\Notifications\View\NotificationsIconAlias;
 use Filament\Support\Concerns\HasIcon as BaseTrait;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
+use Illuminate\Contracts\Support\Htmlable;
 
 trait HasIcon
 {
@@ -14,7 +15,7 @@ trait HasIcon
         getIcon as getBaseIcon;
     }
 
-    public function getIcon(): string | BackedEnum | null
+    public function getIcon(): string | BackedEnum | Htmlable | null
     {
         return $this->getBaseIcon() ?? match ($this->getStatus()) {
             'danger' => FilamentIcon::resolve(NotificationsIconAlias::NOTIFICATION_DANGER) ?? Heroicon::OutlinedXCircle,
