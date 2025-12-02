@@ -3,47 +3,57 @@
 namespace Filament\Schemas\Components\Concerns;
 
 use Filament\Forms\Components\Repeater;
-use Illuminate\Support\Str;
+use Filament\Schemas\Schema;
 
 trait CanBeRepeated
 {
-    protected Repeater | bool | null $cachedParentRepeater = null;
+    protected Schema | bool | null $cachedParentRepeaterItem = null;
 
     public function getParentRepeater(): ?Repeater
     {
-        if (filled($this->cachedParentRepeater)) {
-            return $this->cachedParentRepeater ?: null;
-        }
-
-        $parentComponent = $this->getContainer()->getParentComponent();
-
-        if (! $parentComponent) {
-            $this->cachedParentRepeater = false;
-        } elseif ($parentComponent instanceof Repeater) {
-            $this->cachedParentRepeater = $parentComponent;
-        } else {
-            $this->cachedParentRepeater = $parentComponent->getParentRepeater();
-        }
-
-        return $this->cachedParentRepeater ?: null;
+        return $this->getParentRepeaterItem()?->getParentComponent();
     }
 
-    public function getRepeaterItemIndex(): int
+    public function getParentRepeaterItem(): ?Schema
     {
-        $repeater = $this->getParentRepeater();
+        if (filled($this->cachedParentRepeaterItem)) {
+            return $this->cachedParentRepeaterItem ?: null;
+        }
 
-        if (! $repeater) {
+        $container = $this->getContainer();
+
+        $parentComponent = $container->getParentComponent();
+
+        if (! $parentComponent) {
+            $this->cachedParentRepeaterItem = false;
+        } elseif ($parentComponent instanceof Repeater) {
+            $this->cachedParentRepeaterItem = $container;
+        } else {
+            $this->cachedParentRepeaterItem = $parentComponent->getParentRepeaterItem();
+        }
+
+        return $this->cachedParentRepeaterItem ?: null;
+    }
+
+    public function getParentRepeaterItemIndex(): int
+    {
+        $item = $this->getParentRepeaterItem();
+
+        if (! $item) {
             return 0;
         }
 
-        // Extract the UUID part from the state path to determine the index.
-        $id = Str::of($this->getStatePath())
-            ->before(sprintf('.%s', $this->getConstantStatePath()))
-            ->afterLast('.')
-            ->toString();
+        $keys = array_keys($item->getParentComponent()->getState());
 
-        $key = (int) array_search($id, array_keys($repeater->getState()), true);
+        $index = array_search(
+            $item->getStatePath(isAbsolute: false),
+            $keys,
+        );
 
-        return $key;
+        if ($index === false) {
+            return 0;
+        }
+
+        return $index;
     }
 }
