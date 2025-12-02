@@ -20,7 +20,7 @@ return [
 
         'empty' => [
             'heading' => 'Hriattîrna a awmlo',
-            'description' => 'Nakinah ilo endik leh dawn nia.',
+            'description' => 'Nakinah ilo en leh dawn nia.',
         ],
 
     ],

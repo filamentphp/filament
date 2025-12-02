@@ -86,7 +86,7 @@ By default, the size of the empty state icon is "large". You can change it to be
 
 ## Adding footer actions to the empty state
 
-You can add actions below the description by using the `footer` slot. This is useful for placing buttons, like the `[<x-filament::button>`](button) component:
+You can add actions below the description by using the `footer` slot. This is useful for placing buttons, like the [`<x-filament::button>`](button) component:
 
 ```blade
 <x-filament::empty-state>

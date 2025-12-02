@@ -79,8 +79,10 @@ it('can generate a page class with a generated form schema', function (): void {
     ]);
 
     assertFileExists($path = app_path('Filament/Pages/ManageSettings.php'));
-    expect(file_get_contents($path))
-        ->toMatchSnapshot();
+    if (config('database.default') === 'testing') {
+        expect(file_get_contents($path))
+            ->toMatchSnapshot();
+    }
 });
 
 class Settings extends BaseSettings

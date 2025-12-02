@@ -12,6 +12,7 @@ use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Livewire;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Arr;
 use Livewire\Attributes\Url;
 
@@ -95,7 +96,7 @@ trait HasRelationManagers
         return null;
     }
 
-    public function getContentTabIcon(): string | BackedEnum | null
+    public function getContentTabIcon(): string | BackedEnum | Htmlable | null
     {
         return null;
     }

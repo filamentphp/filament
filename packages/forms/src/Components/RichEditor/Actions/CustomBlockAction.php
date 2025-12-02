@@ -14,7 +14,7 @@ class CustomBlockAction
     public static function make(): Action
     {
         return Action::make(static::NAME)
-            ->fillForm(fn (array $arguments): array => $arguments['config'] ?? [])
+            ->fillForm(fn (array $arguments): ?array => $arguments['config'] ?? null)
             ->modalHeading(function (array $arguments, RichEditor $component): ?string {
                 $block = $component->getCustomBlock($arguments['id']);
 

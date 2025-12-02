@@ -27,7 +27,7 @@ class Tab extends Component implements CanConcealComponents
 
     protected ?Closure $modifyQueryUsing = null;
 
-    protected string | BackedEnum | Closure | null $badgeIcon = null;
+    protected string | BackedEnum | Htmlable | Closure | null $badgeIcon = null;
 
     protected IconPosition | string | Closure | null $badgeIconPosition = null;
 
@@ -54,7 +54,7 @@ class Tab extends Component implements CanConcealComponents
         parent::setUp();
 
         $this->key(function (Tab $component): string {
-            $label = $this->getLabel();
+            $label = $component->getLabel();
             $statePath = $component->getStatePath();
 
             return Str::slug(Str::transliterate($label, strict: true)) . '::' . (filled($statePath) ? "{$statePath}::tab" : 'tab');
@@ -101,7 +101,7 @@ class Tab extends Component implements CanConcealComponents
         ]) ?? $query;
     }
 
-    public function badgeIcon(string | BackedEnum | Closure | null $icon): static
+    public function badgeIcon(string | BackedEnum | Htmlable | Closure | null $icon): static
     {
         $this->badgeIcon = $icon;
 
@@ -115,7 +115,7 @@ class Tab extends Component implements CanConcealComponents
         return $this;
     }
 
-    public function getBadgeIcon(): string | BackedEnum | null
+    public function getBadgeIcon(): string | BackedEnum | Htmlable | null
     {
         return $this->evaluate($this->badgeIcon);
     }

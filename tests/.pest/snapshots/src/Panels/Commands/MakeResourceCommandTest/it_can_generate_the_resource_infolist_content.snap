@@ -14,7 +14,8 @@ class PostInfolist
         return $schema
             ->components([
                 TextEntry::make('author.name')
-                    ->label('Author'),
+                    ->label('Author')
+                    ->placeholder('-'),
                 TextEntry::make('content')
                     ->placeholder('-')
                     ->columnSpanFull(),
@@ -26,6 +27,8 @@ class PostInfolist
                     ->placeholder('-')
                     ->columnSpanFull(),
                 TextEntry::make('title'),
+                TextEntry::make('title2')
+                    ->placeholder('-'),
                 TextEntry::make('config')
                     ->placeholder('-')
                     ->columnSpanFull(),
@@ -37,6 +40,9 @@ class PostInfolist
                     ->columnSpanFull(),
                 TextEntry::make('string_backed_enum')
                     ->badge()
+                    ->placeholder('-'),
+                TextEntry::make('published_at')
+                    ->dateTime()
                     ->placeholder('-'),
                 TextEntry::make('created_at')
                     ->dateTime()

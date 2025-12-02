@@ -10,6 +10,7 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\DetachAction;
 use Filament\Actions\DetachBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -29,6 +30,12 @@ class TeamsRelationManager extends RelationManager
                     ->required(),
                 Textarea::make('description')
                     ->columnSpanFull(),
+                TextInput::make('budget')
+                    ->required()
+                    ->numeric()
+                    ->default(0),
+                Select::make('company_id')
+                    ->relationship('company', 'name'),
             ]);
     }
 
@@ -38,6 +45,11 @@ class TeamsRelationManager extends RelationManager
             ->recordTitleAttribute('name')
             ->columns([
                 TextColumn::make('name')
+                    ->searchable(),
+                TextColumn::make('budget')
+                    ->numeric()
+                    ->sortable(),
+                TextColumn::make('company.name')
                     ->searchable(),
                 TextColumn::make('created_at')
                     ->dateTime()

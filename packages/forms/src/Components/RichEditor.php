@@ -34,9 +34,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
 {
     use Concerns\CanBeLengthConstrained;
     use Concerns\HasExtraInputAttributes;
-    use Concerns\HasFileAttachments {
-        saveUploadedFileAttachment as baseSaveUploadedFileAttachment;
-    }
+    use Concerns\HasFileAttachments;
     use Concerns\HasPlaceholder;
     use Concerns\InteractsWithToolbarButtons;
     use HasExtraAlpineAttributes;
@@ -143,18 +141,21 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
             RichEditorTool::make('h1')
                 ->label(__('filament-forms::components.rich_editor.tools.h1'))
                 ->jsHandler('$getEditor()?.chain().focus().toggleHeading({ level: 1 }).run()')
+                ->activeKey('heading')
                 ->activeOptions(['level' => 1])
                 ->icon(Heroicon::H1)
                 ->iconAlias('forms:components.rich-editor.toolbar.h1'),
             RichEditorTool::make('h2')
                 ->label(__('filament-forms::components.rich_editor.tools.h2'))
                 ->jsHandler('$getEditor()?.chain().focus().toggleHeading({ level: 2 }).run()')
+                ->activeKey('heading')
                 ->activeOptions(['level' => 2])
                 ->icon(Heroicon::H2)
                 ->iconAlias('forms:components.rich-editor.toolbar.h2'),
             RichEditorTool::make('h3')
                 ->label(__('filament-forms::components.rich_editor.tools.h3'))
                 ->jsHandler('$getEditor()?.chain().focus().toggleHeading({ level: 3 }).run()')
+                ->activeKey('heading')
                 ->activeOptions(['level' => 3])
                 ->icon(Heroicon::H3)
                 ->iconAlias('forms:components.rich-editor.toolbar.h3'),
@@ -608,14 +609,6 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
         return array_reduce(
             [
                 ...array_reduce(
-                    $this->getPlugins(),
-                    fn (array $carry, RichContentPlugin $plugin): array => [
-                        ...$carry,
-                        ...$plugin->getEditorTools(),
-                    ],
-                    initial: [],
-                ),
-                ...array_reduce(
                     $this->tools,
                     function (array $carry, RichEditorTool | Closure $tool): array {
                         if ($tool instanceof Closure) {
@@ -627,6 +620,14 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
                             ...Arr::wrap($tool),
                         ];
                     },
+                    initial: [],
+                ),
+                ...array_reduce(
+                    $this->getPlugins(),
+                    fn (array $carry, RichContentPlugin $plugin): array => [
+                        ...$carry,
+                        ...$plugin->getEditorTools(),
+                    ],
                     initial: [],
                 ),
             ],
@@ -708,7 +709,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
             ['blockquote', 'codeBlock', 'bulletList', 'orderedList'],
             [
                 'table',
-                'attachFiles',
+                ...($this->hasFileAttachments(default: true) ? ['attachFiles'] : []),
                 ...(filled($this->getCustomBlocks()) ? ['customBlocks'] : []),
                 ...(filled($this->getMergeTags()) ? ['mergeTags'] : []),
             ],
@@ -787,15 +788,6 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
             $mergeTags,
             fn (string $label, int | string $id): array => [(is_string($id) ? $id : $label) => $label],
         );
-    }
-
-    public function saveUploadedFileAttachment(TemporaryUploadedFile $file): mixed
-    {
-        if (! $this->hasToolbarButton('attachFiles')) {
-            return null;
-        }
-
-        return $this->baseSaveUploadedFileAttachment($file);
     }
 
     public function noMergeTagSearchResultsMessage(string | Closure | null $message): static
@@ -1029,5 +1021,10 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     public function hasCustomTextColors(): bool
     {
         return (bool) ($this->evaluate($this->hasCustomTextColors) ?? $this->getContentAttribute()?->hasCustomTextColors() ?? false);
+    }
+
+    public function hasFileAttachmentsByDefault(): bool
+    {
+        return $this->hasToolbarButton('attachFiles');
     }
 }

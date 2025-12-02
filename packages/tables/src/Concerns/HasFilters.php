@@ -2,11 +2,12 @@
 
 namespace Filament\Tables\Concerns;
 
+use Filament\QueryBuilder\Forms\Components\RuleBuilder;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Schema;
 use Filament\Tables\Filters\BaseFilter;
+use Filament\Tables\Filters\Indicator;
 use Filament\Tables\Filters\QueryBuilder;
-use Filament\Tables\Filters\QueryBuilder\Forms\Components\RuleBuilder;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
 
@@ -124,10 +125,12 @@ trait HasFilters
         $filters = $this->getTable()->getFilters();
 
         foreach ($filters as $filterName => $filter) {
-            $this->removeTableFilter(
-                $filterName,
-                isRemovingAllFilters: true,
-            );
+            if (collect($filter->getIndicators())->every(fn (Indicator $indicator): bool => $indicator->isRemovable())) {
+                $this->removeTableFilter(
+                    $filterName,
+                    isRemovingAllFilters: true,
+                );
+            }
         }
 
         $this->resetTableSearch();

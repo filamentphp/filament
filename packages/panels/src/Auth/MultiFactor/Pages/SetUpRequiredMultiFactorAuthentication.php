@@ -27,7 +27,7 @@ class SetUpRequiredMultiFactorAuthentication extends SimplePage
         return __('filament-panels::auth/multi-factor/pages/set-up-required-multi-factor-authentication.title');
     }
 
-    public function getHeading(): string | Htmlable
+    public function getHeading(): string | Htmlable | null
     {
         return __('filament-panels::auth/multi-factor/pages/set-up-required-multi-factor-authentication.heading');
     }

@@ -308,7 +308,7 @@ class Login extends SimplePage
         return __('filament-panels::auth/pages/login.title');
     }
 
-    public function getHeading(): string | Htmlable
+    public function getHeading(): string | Htmlable | null
     {
         if (filled($this->userUndertakingMultiFactorAuthentication)) {
             return __('filament-panels::auth/pages/login.multi_factor.heading');

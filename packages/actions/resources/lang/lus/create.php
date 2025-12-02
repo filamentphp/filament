@@ -4,11 +4,11 @@ return [
 
     'single' => [
 
-        'label' => ':Label thar',
+        'label' => ':Label siamna',
 
         'modal' => [
 
-            'heading' => ':Label thar siamna',
+            'heading' => ':Label siamna',
 
             'actions' => [
 

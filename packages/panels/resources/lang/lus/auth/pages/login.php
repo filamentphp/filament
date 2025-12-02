@@ -4,13 +4,13 @@ return [
 
     'title' => 'Login',
 
-    'heading' => 'Sign in',
+    'heading' => 'Luhna',
 
     'actions' => [
 
         'register' => [
-            'before' => 'or',
-            'label' => 'account nei turin sign up rawh',
+            'before' => 'emaw',
+            'label' => 'account nei turin in ziak lut rawh',
         ],
 
         'request_password_reset' => [
@@ -22,7 +22,7 @@ return [
     'form' => [
 
         'email' => [
-            'label' => 'Email address',
+            'label' => 'Email',
         ],
 
         'password' => [
@@ -30,13 +30,13 @@ return [
         ],
 
         'remember' => [
-            'label' => 'Remember me',
+            'label' => 'Inhriatrengna',
         ],
 
         'actions' => [
 
             'authenticate' => [
-                'label' => 'Sign in',
+                'label' => 'Luhna',
             ],
 
         ],
@@ -45,20 +45,20 @@ return [
 
     'multi_factor' => [
 
-        'heading' => 'I nihna verify rawh',
+        'heading' => 'I nihna finfiah rawh',
 
-        'subheading' => 'Signing in chhunzawm turin, i nihna verify phawt a ngai.',
+        'subheading' => 'Lût chhunzawm turin, i nihna finfiah phawt a ngai.',
 
         'form' => [
 
             'provider' => [
-                'label' => 'Engtiang a verify nge i duh?',
+                'label' => 'Engtiang a finfiah nge i duh?',
             ],
 
             'actions' => [
 
                 'authenticate' => [
-                    'label' => 'Confirm sign in',
+                    'label' => 'Luhna nemnghehna',
                 ],
 
             ],
@@ -76,7 +76,7 @@ return [
     'notifications' => [
 
         'throttled' => [
-            'title' => 'Login tumna a tam lutuk',
+            'title' => 'Luh tumna a tam lutuk',
             'body' => 'Khawngaihin seconds :seconds hnuah ti nawn leh rawh.',
         ],
 

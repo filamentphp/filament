@@ -25,7 +25,7 @@ trait HasHint
      */
     protected string | array | Closure | null $hintColor = null;
 
-    protected string | BackedEnum | Closure | null $hintIcon = null;
+    protected string | BackedEnum | Htmlable | Closure | null $hintIcon = null;
 
     protected string | Closure | null $hintIconTooltip = null;
 
@@ -51,12 +51,12 @@ trait HasHint
                         /** @var self $parentComponent */
                         $parentComponent = $component->getContainer()->getParentComponent();
 
-                        return filled($parentComponent->hasHint());
+                        return filled($parentComponent->getHint());
                     });
             }
 
             if ($component->hasHintIcon()) {
-                $components[] = Icon::make(static function (Icon $component): string | BackedEnum | null {
+                $components[] = Icon::make(static function (Icon $component): string | BackedEnum | Htmlable | null {
                     /** @var self $parentComponent */
                     $parentComponent = $component->getContainer()->getParentComponent();
 
@@ -106,7 +106,7 @@ trait HasHint
         return $this;
     }
 
-    public function hintIcon(string | BackedEnum | Closure | null $icon, string | Closure | null $tooltip = null): static
+    public function hintIcon(string | BackedEnum | Htmlable | Closure | null $icon, string | Closure | null $tooltip = null): static
     {
         $this->hintIcon = $icon;
         $this->hintIconTooltip($tooltip);
@@ -164,7 +164,7 @@ trait HasHint
         return filled($this->hintIcon);
     }
 
-    public function getHintIcon(): string | BackedEnum | null
+    public function getHintIcon(): string | BackedEnum | Htmlable | null
     {
         return $this->evaluate($this->hintIcon);
     }

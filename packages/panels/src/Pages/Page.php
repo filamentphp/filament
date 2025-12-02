@@ -58,6 +58,16 @@ abstract class Page extends BasePage
 
     protected static bool $shouldRegisterNavigation = true;
 
+    /**
+     * @var array<Component | Action | ActionGroup>
+     */
+    protected array $cachedHeaderWidgetsSchemaComponents;
+
+    /**
+     * @var array<Component | Action | ActionGroup>
+     */
+    protected array $cachedFooterWidgetsSchemaComponents;
+
     protected string $view = 'filament-panels::pages.page';
 
     public function getLayout(): string
@@ -127,7 +137,10 @@ abstract class Page extends BasePage
         ];
     }
 
-    public static function getNavigationItemActiveRoutePattern(): string
+    /**
+     * @return string | array<string>
+     */
+    public static function getNavigationItemActiveRoutePattern(): string | array
     {
         return static::getRouteName();
     }
@@ -384,10 +397,10 @@ abstract class Page extends BasePage
             ->components([
                 RenderHook::make(PanelsRenderHook::PAGE_HEADER_WIDGETS_START),
                 Grid::make($this->getHeaderWidgetsColumns())
-                    ->schema($widgets = $this->getWidgetsSchemaComponents($this->getHeaderWidgets())),
+                    ->schema(fn (): array => $this->cachedHeaderWidgetsSchemaComponents ??= $this->getWidgetsSchemaComponents($this->getHeaderWidgets())),
                 RenderHook::make(PanelsRenderHook::PAGE_HEADER_WIDGETS_END),
             ])
-            ->hidden(empty($widgets));
+            ->hidden(fn (): bool => empty($this->cachedHeaderWidgetsSchemaComponents ??= $this->getWidgetsSchemaComponents($this->getHeaderWidgets())));
     }
 
     public function footerWidgets(Schema $schema): Schema
@@ -396,10 +409,10 @@ abstract class Page extends BasePage
             ->components([
                 RenderHook::make(PanelsRenderHook::PAGE_FOOTER_WIDGETS_START),
                 Grid::make($this->getFooterWidgetsColumns())
-                    ->schema($widgets = $this->getWidgetsSchemaComponents($this->getFooterWidgets())),
+                    ->schema(fn (): array => $this->cachedFooterWidgetsSchemaComponents ??= $this->getWidgetsSchemaComponents($this->getFooterWidgets())),
                 RenderHook::make(PanelsRenderHook::PAGE_FOOTER_WIDGETS_END),
             ])
-            ->hidden(empty($widgets));
+            ->hidden(fn (): bool => empty($this->cachedFooterWidgetsSchemaComponents ??= $this->getWidgetsSchemaComponents($this->getFooterWidgets())));
     }
 
     public function getDefaultTestingSchemaName(): ?string

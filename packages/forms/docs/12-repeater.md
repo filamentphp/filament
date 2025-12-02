@@ -597,7 +597,7 @@ You are trying to retrieve the value of `client_id` from inside the repeater ite
 
 `$get()` is relative to the current repeater item, so `$get('client_id')` is looking for `$get('repeater.item1.client_id')`.
 
-You can use `../` to go up a level in the data structure, so `$get('../client_id')` is `$get('repeater.client_id')` and `$get('../client_id')` is `$get('client_id')`.
+You can use `../` to go up a level in the data structure, so `$get('../client_id')` is `$get('repeater.client_id')` and `$get('../../client_id')` is `$get('client_id')`.
 
 The special case of `$get()` with no arguments, or `$get('')` or `$get('./')`, will always return the full data array for the current repeater item.
 
@@ -826,7 +826,7 @@ Repeater::make('members')
 This method will automatically enable the `distinct()` and `live()` methods on the field.
 
 <Aside variant="warning">
-    In case you want to add another condition to [disable options](../select#disabling-specific-options) with, you can chain `disableOptionWhen()` with the `merge: true` argument:
+    In case you want to add another condition to [disable options](select#disabling-specific-options) with, you can chain `disableOptionWhen()` with the `merge: true` argument:
     
     ```php
     use Filament\Forms\Components\Repeater;

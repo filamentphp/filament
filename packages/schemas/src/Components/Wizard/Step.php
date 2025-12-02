@@ -7,6 +7,7 @@ use Closure;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Concerns\HasLabel;
 use Filament\Schemas\Components\Contracts\CanConcealComponents;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Str;
 
 class Step extends Component implements CanConcealComponents
@@ -19,9 +20,9 @@ class Step extends Component implements CanConcealComponents
 
     protected string | Closure | null $description = null;
 
-    protected string | BackedEnum | Closure | null $icon = null;
+    protected string | BackedEnum | Htmlable | Closure | null $icon = null;
 
-    protected string | BackedEnum | Closure | null $completedIcon = null;
+    protected string | BackedEnum | Htmlable | Closure | null $completedIcon = null;
 
     protected bool | Closure $hasFormWrapper = true;
 
@@ -48,7 +49,7 @@ class Step extends Component implements CanConcealComponents
         parent::setUp();
 
         $this->key(function (Step $component): string {
-            $label = $this->getLabel();
+            $label = $component->getLabel();
             $statePath = $component->getStatePath();
 
             return Str::slug(Str::transliterate($label, strict: true)) . '::' . (filled($statePath) ? "{$statePath}::wizard-step" : 'wizard-step');
@@ -86,14 +87,14 @@ class Step extends Component implements CanConcealComponents
         return $this;
     }
 
-    public function icon(string | BackedEnum | Closure | null $icon): static
+    public function icon(string | BackedEnum | Htmlable | Closure | null $icon): static
     {
         $this->icon = $icon;
 
         return $this;
     }
 
-    public function completedIcon(string | BackedEnum | Closure | null $icon): static
+    public function completedIcon(string | BackedEnum | Htmlable | Closure | null $icon): static
     {
         $this->completedIcon = $icon;
 
@@ -115,12 +116,12 @@ class Step extends Component implements CanConcealComponents
         return $this->evaluate($this->description);
     }
 
-    public function getIcon(): string | BackedEnum | null
+    public function getIcon(): string | BackedEnum | Htmlable | null
     {
         return $this->evaluate($this->icon);
     }
 
-    public function getCompletedIcon(): string | BackedEnum | null
+    public function getCompletedIcon(): string | BackedEnum | Htmlable | null
     {
         return $this->evaluate($this->completedIcon);
     }

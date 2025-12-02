@@ -12,13 +12,13 @@ You can add a query builder to any table using the `QueryBuilder` filter:
 
 ```php
 use Filament\Tables\Filters\QueryBuilder;
-use Filament\Tables\Filters\QueryBuilder\Constraints\BooleanConstraint;
-use Filament\Tables\Filters\QueryBuilder\Constraints\DateConstraint;
-use Filament\Tables\Filters\QueryBuilder\Constraints\NumberConstraint;
-use Filament\Tables\Filters\QueryBuilder\Constraints\RelationshipConstraint;
-use Filament\Tables\Filters\QueryBuilder\Constraints\RelationshipConstraint\Operators\IsRelatedToOperator;
-use Filament\Tables\Filters\QueryBuilder\Constraints\SelectConstraint;
-use Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint;
+use Filament\QueryBuilder\Constraints\BooleanConstraint;
+use Filament\QueryBuilder\Constraints\DateConstraint;
+use Filament\QueryBuilder\Constraints\NumberConstraint;
+use Filament\QueryBuilder\Constraints\RelationshipConstraint;
+use Filament\QueryBuilder\Constraints\RelationshipConstraint\Operators\IsRelatedToOperator;
+use Filament\QueryBuilder\Constraints\SelectConstraint;
+use Filament\QueryBuilder\Constraints\TextConstraint;
 
 QueryBuilder::make()
     ->constraints([
@@ -41,8 +41,7 @@ QueryBuilder::make()
                     ->searchable()
                     ->multiple(),
             ),
-        NumberConstraint::make('reviewsRating')
-            ->relationship('reviews', 'rating')
+        NumberConstraint::make('reviews.rating')
             ->integer(),
     ])
 ```
@@ -82,12 +81,11 @@ Filament ships with many different constraints that you can use out of the box. 
 Text constraints allow you to filter text fields. They can be used to filter any text field, including via relationships.
 
 ```php
-use Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint;
+use Filament\QueryBuilder\Constraints\TextConstraint;
 
 TextConstraint::make('name') // Filter the `name` column
 
-TextConstraint::make('creatorName')
-    ->relationship(name: 'creator', titleAttribute: 'name') // Filter the `name` column on the `creator` relationship
+TextConstraint::make('creator.name') // Filter the `name` column on the `creator` relationship using dot syntax
 ```
 
 By default, the following operators are available:
@@ -108,12 +106,11 @@ By default, the following operators are available:
 Boolean constraints allow you to filter boolean fields. They can be used to filter any boolean field, including via relationships.
 
 ```php
-use Filament\Tables\Filters\QueryBuilder\Constraints\BooleanConstraint;
+use Filament\QueryBuilder\Constraints\BooleanConstraint;
 
 BooleanConstraint::make('is_visible') // Filter the `is_visible` column
 
-BooleanConstraint::make('creatorIsAdmin')
-    ->relationship(name: 'creator', titleAttribute: 'is_admin') // Filter the `is_admin` column on the `creator` relationship
+BooleanConstraint::make('creator.is_admin') // Filter the `is_admin` column on the `creator` relationship using dot syntax
 ```
 
 By default, the following operators are available:
@@ -126,12 +123,11 @@ By default, the following operators are available:
 Number constraints allow you to filter numeric fields. They can be used to filter any numeric field, including via relationships.
 
 ```php
-use Filament\Tables\Filters\QueryBuilder\Constraints\NumberConstraint;
+use Filament\QueryBuilder\Constraints\NumberConstraint;
 
 NumberConstraint::make('stock') // Filter the `stock` column
 
-NumberConstraint::make('ordersItemCount')
-    ->relationship(name: 'orders', titleAttribute: 'item_count') // Filter the `item_count` column on the `orders` relationship
+NumberConstraint::make('orders.item_count') // Filter the `item_count` column on the `orders` relationship using dot syntax
 ```
 
 By default, the following operators are available:
@@ -145,14 +141,14 @@ By default, the following operators are available:
 - Is filled - filters a column to not be empty
 - Is blank - filters a column to be empty
 
-When using `relationship()` with a number constraint, users also have the ability to "aggregate" related records. This means that they can filter the column to be the sum, average, minimum or maximum of all the related records at once.
+When using relationship column with a number constraint, users also have the ability to "aggregate" related records. This means that they can filter the column to be the sum, average, minimum or maximum of all the related records at once.
 
 #### Integer constraints
 
 By default, number constraints will allow decimal values. If you'd like to only allow integer values, you can use the `integer()` method:
 
 ```php
-use Filament\Tables\Filters\QueryBuilder\Constraints\NumberConstraint;
+use Filament\QueryBuilder\Constraints\NumberConstraint;
 
 NumberConstraint::make('stock')
     ->integer()
@@ -163,12 +159,11 @@ NumberConstraint::make('stock')
 Date constraints allow you to filter date fields. They can be used to filter any date field, including via relationships.
 
 ```php
-use Filament\Tables\Filters\QueryBuilder\Constraints\DateConstraint;
+use Filament\QueryBuilder\Constraints\DateConstraint;
 
 DateConstraint::make('created_at') // Filter the `created_at` column
 
-DateConstraint::make('creatorCreatedAt')
-    ->relationship(name: 'creator', titleAttribute: 'created_at') // Filter the `created_at` column on the `creator` relationship
+DateConstraint::make('creator.created_at') // Filter the `created_at` column on the `creator` relationship using dot syntax
 ```
 
 By default, the following operators are available:
@@ -184,12 +179,23 @@ By default, the following operators are available:
 - Is year - filters a column to be in the same year as the searched year
 - Is not year - filters a column to not be in the same year as the searched year
 
+#### Datetime constraints
+
+By default, date constraints only filter by date. If you have a datetime column and want to enable time-based filtering, you can use the `time()` method:
+
+```php
+use Filament\QueryBuilder\Constraints\DateConstraint;
+
+DateConstraint::make('published_at')
+    ->time()
+```
+
 ### Select constraints
 
 Select constraints allow you to filter fields using a select field. They can be used to filter any field, including via relationships.
 
 ```php
-use Filament\Tables\Filters\QueryBuilder\Constraints\SelectConstraint;
+use Filament\QueryBuilder\Constraints\SelectConstraint;
 
 SelectConstraint::make('status') // Filter the `status` column
     ->options([
@@ -197,9 +203,8 @@ SelectConstraint::make('status') // Filter the `status` column
         'reviewing' => 'Reviewing',
         'published' => 'Published',
     ])
-    
-SelectConstraint::make('creatorStatus')
-    ->relationship(name: 'creator', titleAttribute: 'department') // Filter the `department` column on the `creator` relationship
+
+SelectConstraint::make('creator.department') // Filter the `department` column on the `creator` relationship using dot syntax
     ->options([
         'sales' => 'Sales',
         'marketing' => 'Marketing',
@@ -213,7 +218,7 @@ SelectConstraint::make('creatorStatus')
 By default, select constraints will not allow the user to search the options. If you'd like to allow the user to search the options, you can use the `searchable()` method:
 
 ```php
-use Filament\Tables\Filters\QueryBuilder\Constraints\SelectConstraint;
+use Filament\QueryBuilder\Constraints\SelectConstraint;
 
 SelectConstraint::make('status')
     ->searchable()
@@ -229,7 +234,7 @@ SelectConstraint::make('status')
 By default, select constraints will only allow the user to select a single option. If you'd like to allow the user to select multiple options, you can use the `multiple()` method:
 
 ```php
-use Filament\Tables\Filters\QueryBuilder\Constraints\SelectConstraint;
+use Filament\QueryBuilder\Constraints\SelectConstraint;
 
 SelectConstraint::make('status')
     ->multiple()
@@ -247,8 +252,8 @@ When the user selects multiple options, the table will be filtered to show recor
 Relationship constraints allow you to filter fields using data about a relationship:
 
 ```php
-use Filament\Tables\Filters\QueryBuilder\Constraints\RelationshipConstraint;
-use Filament\Tables\Filters\QueryBuilder\Constraints\RelationshipConstraint\Operators\IsRelatedToOperator;
+use Filament\QueryBuilder\Constraints\RelationshipConstraint;
+use Filament\QueryBuilder\Constraints\RelationshipConstraint\Operators\IsRelatedToOperator;
 
 RelationshipConstraint::make('creator') // Filter the `creator` relationship
     ->selectable(
@@ -266,7 +271,7 @@ The `IsRelatedToOperator` is used to configure the "Is / Contains" and "Is not /
 By default, relationship constraints only include operators that are appropriate for filtering a singular relationship, like a `BelongsTo`. If you have a relationship such as a `HasMany` or `BelongsToMany`, you may wish to mark the constraint as `multiple()`:
 
 ```php
-use Filament\Tables\Filters\QueryBuilder\Constraints\RelationshipConstraint;
+use Filament\QueryBuilder\Constraints\RelationshipConstraint;
 
 RelationshipConstraint::make('categories')
     ->multiple()
@@ -288,7 +293,7 @@ The `RelationshipConstraint` does not support [`nullable()`](#nullable-constrain
 If the relationship is `multiple()`, then the constraint will show an option to filter out "empty" relationships. This means that the relationship has no related records. If your relationship is singular, then you can use the `emptyable()` method to show an option to filter out "empty" relationships:
 
 ```php
-use Filament\Tables\Filters\QueryBuilder\Constraints\RelationshipConstraint;
+use Filament\QueryBuilder\Constraints\RelationshipConstraint;
 
 RelationshipConstraint::make('creator')
     ->emptyable()
@@ -297,7 +302,7 @@ RelationshipConstraint::make('creator')
 If you have a `multiple()` relationship that must always have at least 1 related record, then you can use the `emptyable(false)` method to hide the option to filter out "empty" relationships:
 
 ```php
-use Filament\Tables\Filters\QueryBuilder\Constraints\RelationshipConstraint;
+use Filament\QueryBuilder\Constraints\RelationshipConstraint;
 
 RelationshipConstraint::make('categories')
     ->emptyable(false)
@@ -308,7 +313,7 @@ RelationshipConstraint::make('categories')
 By default, constraints will not show an option to filter `null` values. If you'd like to show an option to filter `null` values, you can use the `nullable()` method:
 
 ```php
-use Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint;
+use Filament\QueryBuilder\Constraints\TextConstraint;
 
 TextConstraint::make('name')
     ->nullable()
@@ -321,18 +326,15 @@ Now, the following operators are also available:
 
 ## Scoping relationships
 
-When you use the `relationship()` method on a constraint, you can scope the relationship to filter the related records using the `modifyQueryUsing` argument:
+When you use a relationship constraint, you can scope the relationship to filter the related records using the `modifyRelationshipQueryUsing()` method:
 
 ```php
-use Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint;
+use Filament\QueryBuilder\Constraints\TextConstraint;
 use Illuminate\Database\Eloquent\Builder;
 
-TextConstraint::make('adminCreatorName')
-    ->relationship(
-        name: 'creator',
-        titleAttribute: 'name',
-        modifyQueryUsing: fn (Builder $query) => $query->where('is_admin', true),
-    )
+TextConstraint::make('creator.name')
+    ->label('Admin creator name')
+    ->modifyRelationshipQueryUsing(fn (Builder $query) => $query->where('is_admin', true))
 ```
 
 ## Customizing the constraint icon
@@ -340,10 +342,9 @@ TextConstraint::make('adminCreatorName')
 Each constraint type has a default [icon](../../styling/icons), which is displayed next to the label in the picker. You can customize the icon for a constraint by passing its name to the `icon()` method:
 
 ```php
-use Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint;
+use Filament\QueryBuilder\Constraints\TextConstraint;
 
-TextConstraint::make('author')
-    ->relationship(name: 'author', titleAttribute: 'name')
+TextConstraint::make('author.name')
     ->icon('heroicon-m-user')
 ```
 
@@ -352,11 +353,10 @@ TextConstraint::make('author')
 Each constraint type has a set of default operators, which you can customize by using the `operators()`method:
 
 ```php
-use Filament\Tables\Filters\QueryBuilder\Constraints\Operators\IsFilledOperator;
-use Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint;
+use Filament\QueryBuilder\Constraints\Operators\IsFilledOperator;
+use Filament\QueryBuilder\Constraints\TextConstraint;
 
-TextConstraint::make('author')
-    ->relationship(name: 'author', titleAttribute: 'name')
+TextConstraint::make('author.name')
     ->operators([
         IsFilledOperator::make(),
     ])
@@ -367,11 +367,10 @@ This will remove all operators, and register the `EqualsOperator`.
 If you'd like to add an operator to the end of the list, use `pushOperators()` instead:
 
 ```php
-use Filament\Tables\Filters\QueryBuilder\Constraints\Operators\IsFilledOperator;
-use Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint;
+use Filament\QueryBuilder\Constraints\Operators\IsFilledOperator;
+use Filament\QueryBuilder\Constraints\TextConstraint;
 
-TextConstraint::make('author')
-    ->relationship(name: 'author', titleAttribute: 'name')
+TextConstraint::make('author.name')
     ->pushOperators([
         IsFilledOperator::class,
     ])
@@ -380,11 +379,10 @@ TextConstraint::make('author')
 If you'd like to add an operator to the start of the list, use `unshiftOperators()` instead:
 
 ```php
-use Filament\Tables\Filters\QueryBuilder\Constraints\Operators\IsFilledOperator;
-use Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint;
+use Filament\QueryBuilder\Constraints\Operators\IsFilledOperator;
+use Filament\QueryBuilder\Constraints\TextConstraint;
 
-TextConstraint::make('author')
-    ->relationship(name: 'author', titleAttribute: 'name')
+TextConstraint::make('author.name')
     ->unshiftOperators([
         IsFilledOperator::class,
     ])
@@ -395,7 +393,7 @@ TextConstraint::make('author')
 Custom constraints can be created "inline" with other constraints using the `Constraint::make()` method. You should also pass an [icon](#customizing-the-constraint-icon) to the `icon()` method:
 
 ```php
-use Filament\Tables\Filters\QueryBuilder\Constraints\Constraint;
+use Filament\QueryBuilder\Constraints\Constraint;
 
 Constraint::make('subscribed')
     ->icon('heroicon-m-bell')
@@ -407,7 +405,7 @@ Constraint::make('subscribed')
 If you want to customize the label of the constraint, you can use the `label()` method:
 
 ```php
-use Filament\Tables\Filters\QueryBuilder\Constraints\Constraint;
+use Filament\QueryBuilder\Constraints\Constraint;
 
 Constraint::make('subscribed')
     ->label('Subscribed to updates')
@@ -420,8 +418,8 @@ Constraint::make('subscribed')
 Now, you must [define operators](#creating-custom-operators) for the constraint. These are options that you can pick from to filter the column. If the column is [nullable](#nullable-constraints), you can also register that built-in operator for your custom constraint:
 
 ```php
-use Filament\Tables\Filters\QueryBuilder\Constraints\Constraint;
-use Filament\Tables\Filters\QueryBuilder\Constraints\Operators\IsFilledOperator;
+use Filament\QueryBuilder\Constraints\Constraint;
+use Filament\QueryBuilder\Constraints\Operators\IsFilledOperator;
 
 Constraint::make('subscribed')
     ->label('Subscribed to updates')
@@ -437,7 +435,7 @@ Constraint::make('subscribed')
 Custom operators can be created using the `Operator::make()` method:
 
 ```php
-use Filament\Tables\Filters\QueryBuilder\Constraints\Operators\Operator;
+use Filament\QueryBuilder\Constraints\Operators\Operator;
 
 Operator::make('subscribed')
     ->label(fn (bool $isInverse): string => $isInverse ? 'Not subscribed' : 'Subscribed')

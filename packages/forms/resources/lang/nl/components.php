@@ -284,6 +284,10 @@ return [
 
     'markdown_editor' => [
 
+        'file_attachments_accepted_file_types_message' => 'Geüploade bestanden moeten van het volgende type zijn: :values.',
+
+        'file_attachments_max_size_message' => 'Geüploade bestanden mogen niet groter zijn dan :max kilobytes.',
+
         'tools' => [
             'attach_files' => 'Bestanden bijvoegen',
             'blockquote' => 'Blokcitaat',
@@ -534,6 +538,10 @@ return [
 
         ],
 
+        'file_attachments_accepted_file_types_message' => 'Geüploade bestanden moeten van het volgende type zijn: :values.',
+
+        'file_attachments_max_size_message' => 'Geüploade bestanden mogen niet groter zijn dan :max kilobytes.',
+
         'no_merge_tag_search_results_message' => 'Geen merge tags gevonden.',
 
         'tools' => [
@@ -553,6 +561,8 @@ return [
             'h1' => 'Titel',
             'h2' => 'Kop',
             'h3' => 'Subkop',
+            'grid' => 'Raster',
+            'grid_delete' => 'Verwijder raster',
             'highlight' => 'Markeren',
             'horizontal_rule' => 'Horizontale lijn',
             'italic' => 'Cursief',
@@ -579,6 +589,8 @@ return [
             'underline' => 'Onderstrepen',
             'undo' => 'Ongedaan maken',
         ],
+
+        'uploading_file_message' => 'Het bestand wordt geüpload...',
 
     ],
 

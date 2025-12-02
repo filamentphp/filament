@@ -6,7 +6,7 @@ import UtilityInjection from "@components/UtilityInjection.astro"
 
 ## Introduction
 
-Filament includes an action that is able to export rows to a CSV or XLSX file. When the trigger button is clicked, a modal asks for the columns that they want to export, and what they should be labeled. This feature uses [job batches](https://laravel.com/docs/queues#job-batching) and [database notifications](../../notifications/database-notifications), so you need to publish those migrations from Laravel. Also, you need to publish the migrations for tables that Filament uses to store information about exports:
+Filament includes an action that is able to export rows to a CSV or XLSX file. When the trigger button is clicked, a modal asks for the columns that they want to export, and what they should be labeled. This feature uses [job batches](https://laravel.com/docs/queues#job-batching) and [database notifications](../notifications/database-notifications), so you need to publish those migrations from Laravel. Also, you need to publish the migrations for tables that Filament uses to store information about exports:
 
 ```bash
 php artisan make:queue-batches-table
@@ -14,6 +14,8 @@ php artisan make:notifications-table
 php artisan vendor:publish --tag=filament-actions-migrations
 php artisan migrate
 ```
+
+If you'd like to receive export notifications in a panel, you can enable them in the [panel configuration](../notifications/database-notifications#enabling-database-notifications-in-a-panel).
 
 <Aside variant="info">
     If you're using PostgreSQL, make sure that the `data` column in the notifications migration is using `json()`: `$table->json('data')`.
@@ -125,6 +127,17 @@ use Filament\Actions\Exports\ExportColumn;
 
 ExportColumn::make('description')
     ->enabledByDefault(false)
+```
+
+You can use the `enableVisibleTableColumnsByDefault()` method on the `ExportAction` to enable only the columns that are currently visible in the table by default. Columns that use `enabledByDefault(false)` will also be disabled by default:
+
+```php
+use App\Filament\Exports\ProductExporter;
+use Filament\Actions\ExportAction;
+
+ExportAction::make()
+    ->exporter(ProductExporter::class)
+    ->enableVisibleTableColumnsByDefault()
 ```
 
 ### Configuring the column selection form layout
@@ -287,7 +300,7 @@ ExportColumn::make('users_exists')
 
 In this example, `users` is the name of the relationship to check for existence. The name of the column must be `users_exists`, as this is the convention that [Laravel uses](https://laravel.com/docs/eloquent-relationships#other-aggregate-functions) for storing the result.
 
-If you'd like to scope the relationship before checking existance, you can pass an array to the method, where the key is the relationship name and the value is the function to scope the Eloquent query with:
+If you'd like to scope the relationship before checking existence, you can pass an array to the method, where the key is the relationship name and the value is the function to scope the Eloquent query with:
 
 ```php
 use Filament\Actions\Exports\ExportColumn;
@@ -326,7 +339,7 @@ ExportColumn::make('users_avg_age')
 
 ## Configuring the export formats
 
-By default, the export action will allow the user to choose between both CSV and XLSX formats. You can use the `ExportFormat` enum to customize this, by passing an array of formats to the `formats()` method on the action:
+By default, the export action will generate both CSV and XLSX formats and allow user to choose between them in the notification. You can use the `ExportFormat` enum to customize this, by passing an array of formats to the `formats()` method on the action:
 
 ```php
 use App\Filament\Exports\ProductExporter;
@@ -409,7 +422,7 @@ public static function modifyQuery(Builder $query): Builder
 
 ### Customizing the storage disk
 
-By default, exported files will be uploaded to the storage disk defined in the [configuration file](../../installation#publishing-configuration), which is `public` by default. You can set the `FILAMENT_FILESYSTEM_DISK` environment variable to change this.
+By default, exported files will be uploaded to the storage disk defined in the [configuration file](../introduction/installation#publishing-configuration), which is `public` by default. You can set the `FILESYSTEM_DISK` environment variable to change this.
 
 While using the `public` disk a good default for many parts of Filament, using it for exports would result in exported files being stored in a public location. As such, if the default filesystem disk is `public` and a `local` disk exists in your `config/filesystems.php`, Filament will use the `local` disk for exports instead. If you override the disk to be `public` for an `ExportAction` or inside an exporter class, Filament will use that.
 
@@ -446,7 +459,7 @@ Export files that are created are the developer's responsibility to delete if th
 
 ### Configuring the export file names
 
-By default, exported files will have a name generated based on the ID and type of the export. You can also use the `fileName()` method on the action to customize the file name:
+By default, exported files are given a name generated based on the export's ID and type. You can customize the file name by using the `fileName()` method on the action:
 
 ```php
 use Filament\Actions\ExportAction;
@@ -454,17 +467,17 @@ use Filament\Actions\Exports\Models\Export;
 
 ExportAction::make()
     ->exporter(ProductExporter::class)
-    ->fileName(fn (Export $export): string => "products-{$export->getKey()}.csv")
+    ->fileName(fn (Export $export): string => "products-{$export->getKey()}")
 ```
 
-Alternatively, you can override the `getFileName()` method on the exporter class, returning a string:
+Alternatively, you can override the `getFileName()` method on the exporter class and return a custom string:
 
 ```php
 use Filament\Actions\Exports\Models\Export;
 
 public function getFileName(Export $export): string
 {
-    return "products-{$export->getKey()}.csv";
+    return "products-{$export->getKey()}";
 }
 ```
 

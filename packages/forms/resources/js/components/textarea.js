@@ -31,13 +31,15 @@ export default function textareaFormComponent({
         },
 
         resize() {
-            this.setInitialHeight()
-
             if (this.$el.scrollHeight <= 0) {
                 return
             }
 
+            const previousHeight = this.$el.style.height
+            this.$el.style.height = '0px'
+
             const newHeight = this.$el.scrollHeight + 'px'
+            this.$el.style.height = previousHeight
 
             if (this.wrapperEl.style.height === newHeight) {
                 return

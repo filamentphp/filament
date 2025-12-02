@@ -133,7 +133,7 @@ trait CanSortRecords
             }
         }
 
-        return $query->orderBy($qualifiedKeyName);
+        return $query->orderBy($qualifiedKeyName, $sortDirection);
     }
 
     /**
