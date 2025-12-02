@@ -29,6 +29,9 @@ class PostsTable
                 TextColumn::make('string_backed_enum')
                     ->badge()
                     ->searchable(),
+                TextColumn::make('published_at')
+                    ->dateTime()
+                    ->sortable(),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

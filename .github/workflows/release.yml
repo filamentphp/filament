@@ -1,16 +1,14 @@
-name: 'Deploy website on release'
+name: deploy-website
 
 on:
   release:
     types: [published]
 
 jobs:
-  forge-deploy:
-    name: 'Laravel Forge Deploy'
+  deploy:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Deploy
+      - name: Deploy website
         uses: jbrooksuk/laravel-forge-action@v1.0.2
         with:
           trigger_url: ${{ secrets.WEBSITE_DEPLOYMENT_TRIGGER_URL }}

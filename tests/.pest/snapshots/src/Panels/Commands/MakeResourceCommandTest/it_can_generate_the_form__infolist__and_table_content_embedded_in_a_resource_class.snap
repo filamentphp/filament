@@ -11,6 +11,7 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
+use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
@@ -59,6 +60,7 @@ class PostResource extends Resource
                     ->columnSpanFull(),
                 Select::make('string_backed_enum')
                     ->options(StringBackedEnum::class),
+                DateTimePicker::make('published_at'),
             ]);
     }
 
@@ -94,6 +96,9 @@ class PostResource extends Resource
                 TextEntry::make('string_backed_enum')
                     ->badge()
                     ->placeholder('-'),
+                TextEntry::make('published_at')
+                    ->dateTime()
+                    ->placeholder('-'),
                 TextEntry::make('created_at')
                     ->dateTime()
                     ->placeholder('-'),
@@ -124,6 +129,9 @@ class PostResource extends Resource
                 TextColumn::make('string_backed_enum')
                     ->badge()
                     ->searchable(),
+                TextColumn::make('published_at')
+                    ->dateTime()
+                    ->sortable(),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
