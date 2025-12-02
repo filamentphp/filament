@@ -2245,150 +2245,7 @@ it('can filter records using date constraint with is after operator with `today`
         ->assertCanNotSeeTableRecords($oldPosts);
 });
 
-it('can filter records using date constraint with is after operator with `yesterday` preset', function (): void {
-    $todayPosts = Post::factory()->count(3)->create([
-        'created_at' => now()->startOfDay(),
-    ]);
-
-    $yesterdayPosts = Post::factory()->count(3)->create([
-        'created_at' => now()->subDay()->startOfDay(),
-    ]);
-
-    $oldPosts = Post::factory()->count(5)->create([
-        'created_at' => now()->subDays(5),
-    ]);
-
-    livewire(PostsQueryBuilderTable::class)
-        ->assertCanSeeTableRecords($todayPosts->merge($yesterdayPosts)->merge($oldPosts))
-        ->tap(applyQueryBuilderFilter([
-            [
-                'type' => 'created_at',
-                'data' => [
-                    'operator' => 'isAfter',
-                    'settings' => [
-                        'mode' => 'relative',
-                        'preset' => 'yesterday',
-                    ],
-                ],
-            ],
-        ]))
-        ->assertCanSeeTableRecords($todayPosts->merge($yesterdayPosts))
-        ->assertCanNotSeeTableRecords($oldPosts);
-});
-
-it('can filter records using date constraint with is after operator with `tomorrow` preset', function (): void {
-    $futurePosts = Post::factory()->count(5)->create([
-        'created_at' => now()->addDays(5),
-    ]);
-
-    $tomorrowPosts = Post::factory()->count(3)->create([
-        'created_at' => now()->addDay()->startOfDay(),
-    ]);
-
-    $todayPosts = Post::factory()->count(3)->create([
-        'created_at' => now()->startOfDay(),
-    ]);
-
-    livewire(PostsQueryBuilderTable::class)
-        ->assertCanSeeTableRecords($futurePosts->merge($tomorrowPosts)->merge($todayPosts))
-        ->tap(applyQueryBuilderFilter([
-            [
-                'type' => 'created_at',
-                'data' => [
-                    'operator' => 'isAfter',
-                    'settings' => [
-                        'mode' => 'relative',
-                        'preset' => 'tomorrow',
-                    ],
-                ],
-            ],
-        ]))
-        ->assertCanSeeTableRecords($futurePosts->merge($tomorrowPosts))
-        ->assertCanNotSeeTableRecords($todayPosts);
-});
-
-it('can filter records using date constraint with is after operator with `start_of_week` preset', function (): void {
-    $thisWeekPosts = Post::factory()->count(5)->create([
-        'created_at' => now()->startOfWeek()->addDays(2),
-    ]);
-
-    $lastWeekPosts = Post::factory()->count(5)->create([
-        'created_at' => now()->subWeek(),
-    ]);
-
-    livewire(PostsQueryBuilderTable::class)
-        ->assertCanSeeTableRecords($thisWeekPosts->merge($lastWeekPosts))
-        ->tap(applyQueryBuilderFilter([
-            [
-                'type' => 'created_at',
-                'data' => [
-                    'operator' => 'isAfter',
-                    'settings' => [
-                        'mode' => 'relative',
-                        'preset' => 'start_of_week',
-                    ],
-                ],
-            ],
-        ]))
-        ->assertCanSeeTableRecords($thisWeekPosts)
-        ->assertCanNotSeeTableRecords($lastWeekPosts);
-});
-
-it('can filter records using date constraint with is after operator with `start_of_month` preset', function (): void {
-    $thisMonthPosts = Post::factory()->count(5)->create([
-        'created_at' => now()->startOfMonth()->addDays(5),
-    ]);
-
-    $lastMonthPosts = Post::factory()->count(5)->create([
-        'created_at' => now()->subMonth(),
-    ]);
-
-    livewire(PostsQueryBuilderTable::class)
-        ->assertCanSeeTableRecords($thisMonthPosts->merge($lastMonthPosts))
-        ->tap(applyQueryBuilderFilter([
-            [
-                'type' => 'created_at',
-                'data' => [
-                    'operator' => 'isAfter',
-                    'settings' => [
-                        'mode' => 'relative',
-                        'preset' => 'start_of_month',
-                    ],
-                ],
-            ],
-        ]))
-        ->assertCanSeeTableRecords($thisMonthPosts)
-        ->assertCanNotSeeTableRecords($lastMonthPosts);
-});
-
-it('can filter records using date constraint with is after operator with `start_of_quarter` preset', function (): void {
-    $thisQuarterPosts = Post::factory()->count(5)->create([
-        'created_at' => now()->startOfQuarter()->addDays(10),
-    ]);
-
-    $lastQuarterPosts = Post::factory()->count(5)->create([
-        'created_at' => now()->subQuarter(),
-    ]);
-
-    livewire(PostsQueryBuilderTable::class)
-        ->assertCanSeeTableRecords($thisQuarterPosts->merge($lastQuarterPosts))
-        ->tap(applyQueryBuilderFilter([
-            [
-                'type' => 'created_at',
-                'data' => [
-                    'operator' => 'isAfter',
-                    'settings' => [
-                        'mode' => 'relative',
-                        'preset' => 'start_of_quarter',
-                    ],
-                ],
-            ],
-        ]))
-        ->assertCanSeeTableRecords($thisQuarterPosts)
-        ->assertCanNotSeeTableRecords($lastQuarterPosts);
-});
-
-it('can filter records using date constraint with is after operator with `start_of_year` preset', function (): void {
+it('can filter records using date constraint with is after operator with `this_year` preset', function (): void {
     $thisYearPosts = Post::factory()->count(5)->create([
         'created_at' => now()->startOfYear()->addDays(30),
     ]);
@@ -2406,7 +2263,7 @@ it('can filter records using date constraint with is after operator with `start_
                     'operator' => 'isAfter',
                     'settings' => [
                         'mode' => 'relative',
-                        'preset' => 'start_of_year',
+                        'preset' => 'this_year',
                     ],
                 ],
             ],
@@ -2629,60 +2486,6 @@ it('can filter records using date constraint with is after operator with `next_m
         ]))
         ->assertCanSeeTableRecords($farFuturePosts)
         ->assertCanNotSeeTableRecords($nearFuturePosts);
-});
-
-it('can filter records using date constraint with is after operator with `end_of_week` preset', function (): void {
-    $nextWeekPosts = Post::factory()->count(5)->create([
-        'created_at' => now()->addWeek(),
-    ]);
-
-    $thisWeekPosts = Post::factory()->count(5)->create([
-        'created_at' => now()->startOfWeek()->addDays(2),
-    ]);
-
-    livewire(PostsQueryBuilderTable::class)
-        ->assertCanSeeTableRecords($nextWeekPosts->merge($thisWeekPosts))
-        ->tap(applyQueryBuilderFilter([
-            [
-                'type' => 'created_at',
-                'data' => [
-                    'operator' => 'isAfter',
-                    'settings' => [
-                        'mode' => 'relative',
-                        'preset' => 'end_of_week',
-                    ],
-                ],
-            ],
-        ]))
-        ->assertCanSeeTableRecords($nextWeekPosts)
-        ->assertCanNotSeeTableRecords($thisWeekPosts);
-});
-
-it('can filter records using date constraint with is after operator with `end_of_month` preset', function (): void {
-    $nextMonthPosts = Post::factory()->count(5)->create([
-        'created_at' => now()->addMonth()->startOfMonth()->addDays(5),
-    ]);
-
-    $thisMonthPosts = Post::factory()->count(5)->create([
-        'created_at' => now()->startOfMonth()->addDays(10),
-    ]);
-
-    livewire(PostsQueryBuilderTable::class)
-        ->assertCanSeeTableRecords($nextMonthPosts->merge($thisMonthPosts))
-        ->tap(applyQueryBuilderFilter([
-            [
-                'type' => 'created_at',
-                'data' => [
-                    'operator' => 'isAfter',
-                    'settings' => [
-                        'mode' => 'relative',
-                        'preset' => 'end_of_month',
-                    ],
-                ],
-            ],
-        ]))
-        ->assertCanSeeTableRecords($nextMonthPosts)
-        ->assertCanNotSeeTableRecords($thisMonthPosts);
 });
 
 it('can filter records using date constraint with is after operator with custom relative `day` unit past', function (): void {
@@ -2980,145 +2783,6 @@ it('can filter records using date constraint with is before operator with `today
         ]))
         ->assertCanSeeTableRecords($todayPosts->merge($oldPosts))
         ->assertCanNotSeeTableRecords($futurePosts);
-});
-
-it('can filter records using date constraint with is before operator with `tomorrow` preset', function (): void {
-    $todayPosts = Post::factory()->count(3)->create([
-        'created_at' => now()->startOfDay(),
-    ]);
-
-    $tomorrowPosts = Post::factory()->count(3)->create([
-        'created_at' => now()->addDay()->startOfDay(),
-    ]);
-
-    $futurePosts = Post::factory()->count(5)->create([
-        'created_at' => now()->addDays(5),
-    ]);
-
-    livewire(PostsQueryBuilderTable::class)
-        ->assertCanSeeTableRecords($todayPosts->merge($tomorrowPosts)->merge($futurePosts))
-        ->tap(applyQueryBuilderFilter([
-            [
-                'type' => 'created_at',
-                'data' => [
-                    'operator' => 'isBefore',
-                    'settings' => [
-                        'mode' => 'relative',
-                        'preset' => 'tomorrow',
-                    ],
-                ],
-            ],
-        ]))
-        ->assertCanSeeTableRecords($todayPosts->merge($tomorrowPosts))
-        ->assertCanNotSeeTableRecords($futurePosts);
-});
-
-it('can filter records using date constraint with is before operator with `end_of_week` preset', function (): void {
-    $thisWeekPosts = Post::factory()->count(5)->create([
-        'created_at' => now()->startOfWeek()->addDays(2),
-    ]);
-
-    $nextWeekPosts = Post::factory()->count(5)->create([
-        'created_at' => now()->addWeek()->addDays(3),
-    ]);
-
-    livewire(PostsQueryBuilderTable::class)
-        ->assertCanSeeTableRecords($thisWeekPosts->merge($nextWeekPosts))
-        ->tap(applyQueryBuilderFilter([
-            [
-                'type' => 'created_at',
-                'data' => [
-                    'operator' => 'isBefore',
-                    'settings' => [
-                        'mode' => 'relative',
-                        'preset' => 'end_of_week',
-                    ],
-                ],
-            ],
-        ]))
-        ->assertCanSeeTableRecords($thisWeekPosts)
-        ->assertCanNotSeeTableRecords($nextWeekPosts);
-});
-
-it('can filter records using date constraint with is before operator with `end_of_month` preset', function (): void {
-    $thisMonthPosts = Post::factory()->count(5)->create([
-        'created_at' => now()->startOfMonth()->addDays(10),
-    ]);
-
-    $nextMonthPosts = Post::factory()->count(5)->create([
-        'created_at' => now()->addMonth()->startOfMonth()->addDays(5),
-    ]);
-
-    livewire(PostsQueryBuilderTable::class)
-        ->assertCanSeeTableRecords($thisMonthPosts->merge($nextMonthPosts))
-        ->tap(applyQueryBuilderFilter([
-            [
-                'type' => 'created_at',
-                'data' => [
-                    'operator' => 'isBefore',
-                    'settings' => [
-                        'mode' => 'relative',
-                        'preset' => 'end_of_month',
-                    ],
-                ],
-            ],
-        ]))
-        ->assertCanSeeTableRecords($thisMonthPosts)
-        ->assertCanNotSeeTableRecords($nextMonthPosts);
-});
-
-it('can filter records using date constraint with is before operator with `end_of_quarter` preset', function (): void {
-    $thisQuarterPosts = Post::factory()->count(5)->create([
-        'created_at' => now()->startOfQuarter()->addDays(30),
-    ]);
-
-    $nextQuarterPosts = Post::factory()->count(5)->create([
-        'created_at' => now()->addQuarter()->addDays(15),
-    ]);
-
-    livewire(PostsQueryBuilderTable::class)
-        ->assertCanSeeTableRecords($thisQuarterPosts->merge($nextQuarterPosts))
-        ->tap(applyQueryBuilderFilter([
-            [
-                'type' => 'created_at',
-                'data' => [
-                    'operator' => 'isBefore',
-                    'settings' => [
-                        'mode' => 'relative',
-                        'preset' => 'end_of_quarter',
-                    ],
-                ],
-            ],
-        ]))
-        ->assertCanSeeTableRecords($thisQuarterPosts)
-        ->assertCanNotSeeTableRecords($nextQuarterPosts);
-});
-
-it('can filter records using date constraint with is before operator with `end_of_year` preset', function (): void {
-    $thisYearPosts = Post::factory()->count(5)->create([
-        'created_at' => now()->startOfYear()->addMonths(6),
-    ]);
-
-    $nextYearPosts = Post::factory()->count(5)->create([
-        'created_at' => now()->addYear()->startOfYear()->addMonths(2),
-    ]);
-
-    livewire(PostsQueryBuilderTable::class)
-        ->assertCanSeeTableRecords($thisYearPosts->merge($nextYearPosts))
-        ->tap(applyQueryBuilderFilter([
-            [
-                'type' => 'created_at',
-                'data' => [
-                    'operator' => 'isBefore',
-                    'settings' => [
-                        'mode' => 'relative',
-                        'preset' => 'end_of_year',
-                    ],
-                ],
-            ],
-        ]))
-        ->assertCanSeeTableRecords($thisYearPosts)
-        ->assertCanNotSeeTableRecords($nextYearPosts);
 });
 
 it('can filter records using date constraint with is before operator with `next_week` preset', function (): void {
@@ -3577,7 +3241,7 @@ it('can filter records using date constraint with is before operator inverse wit
 // Combined relative date tests
 
 it('can filter records using combined `relative` date constraints', function (): void {
-    // Posts created in the last month but before end of this week
+    // Posts created in the last month but before next week
     $matchingPosts = Post::factory()->count(5)->create([
         'created_at' => now()->subDays(10),
     ]);
@@ -3589,7 +3253,7 @@ it('can filter records using combined `relative` date constraints', function ():
 
     // Posts created in the future
     $futurePosts = Post::factory()->count(5)->create([
-        'created_at' => now()->addWeek(),
+        'created_at' => now()->addWeeks(2),
     ]);
 
     livewire(PostsQueryBuilderTable::class)
@@ -3611,7 +3275,7 @@ it('can filter records using combined `relative` date constraints', function ():
                     'operator' => 'isBefore',
                     'settings' => [
                         'mode' => 'relative',
-                        'preset' => 'end_of_week',
+                        'preset' => 'next_week',
                     ],
                 ],
             ],

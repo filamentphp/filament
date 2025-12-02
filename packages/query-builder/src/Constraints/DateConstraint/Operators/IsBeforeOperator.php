@@ -4,11 +4,11 @@ namespace Filament\QueryBuilder\Constraints\DateConstraint\Operators;
 
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
-use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\QueryBuilder\Constraints\DateConstraint;
-use Filament\QueryBuilder\Constraints\DateConstraint\RelativeDateUnit;
+use Filament\QueryBuilder\Constraints\DateConstraint\DateUnit;
 use Filament\QueryBuilder\Constraints\Operators\Operator;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\FusedGroup;
@@ -50,12 +50,11 @@ class IsBeforeOperator extends Operator
                     'filament-query-builder::query-builder.operators.date.is_before.summary.direct',
                 [
                     'attribute' => $constraint->getAttributeLabel(),
-                    'date' => $hasTime && $isTimeBasedFilter ? $parsedDate->toFormattedDayDateString() . ' ' . $parsedDate->format('g:i A') : $parsedDate->toFormattedDateString(),
+                    'date' => $hasTime && $isTimeBasedFilter ? $parsedDate->toFormattedDayDateString() . ' ' . $parsedDate->format('H:i:s') : $parsedDate->toFormattedDateString(),
                 ],
             );
         }
 
-        // Default to absolute mode (backwards compatible)
         $parsedDate = Carbon::parse($settings['date']);
 
         return __(
@@ -64,7 +63,7 @@ class IsBeforeOperator extends Operator
                 'filament-query-builder::query-builder.operators.date.is_before.summary.direct',
             [
                 'attribute' => $constraint->getAttributeLabel(),
-                'date' => $hasTime ? $parsedDate->toFormattedDayDateString() . ' ' . $parsedDate->format('g:i A') : $parsedDate->toFormattedDateString(),
+                'date' => $hasTime ? $parsedDate->toFormattedDayDateString() . ' ' . $parsedDate->format('H:i:s') : $parsedDate->toFormattedDateString(),
             ],
         );
     }
@@ -87,7 +86,7 @@ class IsBeforeOperator extends Operator
                     'relative' => __('filament-query-builder::query-builder.operators.date.form.mode.options.relative'),
                 ])
                 ->default('absolute'),
-            DatePicker::make('date')
+            DateTimePicker::make('date')
                 ->label(__('filament-query-builder::query-builder.operators.date.form.date.label'))
                 ->time($hasTime)
                 ->hidden(fn (Get $get): bool => $get('mode') === 'relative')
@@ -119,12 +118,12 @@ class IsBeforeOperator extends Operator
                 Select::make('relative_unit')
                     ->label(__('filament-query-builder::query-builder.operators.date.form.relative_unit.label'))
                     ->options(
-                        collect(RelativeDateUnit::cases())
-                            ->reject(fn (RelativeDateUnit $unit): bool => (! $hasTime) && $unit->isTimeUnit())
-                            ->mapWithKeys(fn (RelativeDateUnit $unit): array => [$unit->value => $unit->getLabel()])
+                        collect(DateUnit::cases())
+                            ->reject(fn (DateUnit $unit): bool => (! $hasTime) && $unit->isTimeUnit())
+                            ->mapWithKeys(fn (DateUnit $unit): array => [$unit->value => $unit->getLabel()])
                             ->all()
                     )
-                    ->default(RelativeDateUnit::Day->value)
+                    ->default(DateUnit::Day->value)
                     ->required(),
             ])
                 ->columns(3)
@@ -143,7 +142,7 @@ class IsBeforeOperator extends Operator
             'past_5_years' => __('filament-query-builder::query-builder.operators.date.presets.past_5_years'),
             'past_2_years' => __('filament-query-builder::query-builder.operators.date.presets.past_2_years'),
             'past_year' => __('filament-query-builder::query-builder.operators.date.presets.past_year'),
-            'past_half_year' => __('filament-query-builder::query-builder.operators.date.presets.past_half_year'),
+            'past_6_months' => __('filament-query-builder::query-builder.operators.date.presets.past_6_months'),
             'past_quarter' => __('filament-query-builder::query-builder.operators.date.presets.past_quarter'),
             'past_month' => __('filament-query-builder::query-builder.operators.date.presets.past_month'),
             'past_2_weeks' => __('filament-query-builder::query-builder.operators.date.presets.past_2_weeks'),
@@ -175,7 +174,7 @@ class IsBeforeOperator extends Operator
             'next_2_weeks' => __('filament-query-builder::query-builder.operators.date.presets.next_2_weeks'),
             'next_month' => __('filament-query-builder::query-builder.operators.date.presets.next_month'),
             'next_quarter' => __('filament-query-builder::query-builder.operators.date.presets.next_quarter'),
-            'next_half_year' => __('filament-query-builder::query-builder.operators.date.presets.next_half_year'),
+            'next_6_months' => __('filament-query-builder::query-builder.operators.date.presets.next_6_months'),
             'next_year' => __('filament-query-builder::query-builder.operators.date.presets.next_year'),
             'next_2_years' => __('filament-query-builder::query-builder.operators.date.presets.next_2_years'),
             'next_5_years' => __('filament-query-builder::query-builder.operators.date.presets.next_5_years'),
@@ -203,7 +202,6 @@ class IsBeforeOperator extends Operator
             return $query->whereDate($qualifiedColumn, $this->isInverse() ? '>' : '<=', $dateTime);
         }
 
-        // Default to absolute mode using the date directly (backwards compatible)
         return $query->whereDate($qualifiedColumn, $this->isInverse() ? '>' : '<=', $settings['date']);
     }
 
@@ -219,9 +217,9 @@ class IsBeforeOperator extends Operator
         }
 
         if ($preset === 'custom') {
-            $unit = $settings['relative_unit'] ?? RelativeDateUnit::Day->value;
+            $unit = $settings['relative_unit'] ?? DateUnit::Day->value;
 
-            return in_array($unit, [RelativeDateUnit::Second->value, RelativeDateUnit::Minute->value, RelativeDateUnit::Hour->value], true);
+            return in_array($unit, [DateUnit::Second->value, DateUnit::Minute->value, DateUnit::Hour->value], true);
         }
 
         return false;
@@ -239,7 +237,7 @@ class IsBeforeOperator extends Operator
             'past_5_years' => Carbon::now()->subYears(5)->toDateString(),
             'past_2_years' => Carbon::now()->subYears(2)->toDateString(),
             'past_year' => Carbon::now()->subYear()->toDateString(),
-            'past_half_year' => Carbon::now()->subMonths(6)->toDateString(),
+            'past_6_months' => Carbon::now()->subMonths(6)->toDateString(),
             'past_quarter' => Carbon::now()->subQuarter()->toDateString(),
             'past_month' => Carbon::now()->subMonth()->toDateString(),
             'past_2_weeks' => Carbon::now()->subWeeks(2)->toDateString(),
@@ -259,7 +257,7 @@ class IsBeforeOperator extends Operator
             'next_2_weeks' => Carbon::now()->addWeeks(2)->toDateString(),
             'next_month' => Carbon::now()->addMonth()->toDateString(),
             'next_quarter' => Carbon::now()->addQuarter()->toDateString(),
-            'next_half_year' => Carbon::now()->addMonths(6)->toDateString(),
+            'next_6_months' => Carbon::now()->addMonths(6)->toDateString(),
             'next_year' => Carbon::now()->addYear()->toDateString(),
             'next_2_years' => Carbon::now()->addYears(2)->toDateString(),
             'next_5_years' => Carbon::now()->addYears(5)->toDateString(),
@@ -275,20 +273,20 @@ class IsBeforeOperator extends Operator
     protected function resolveCustomRelativeDate(array $settings, bool $hasTime = false): string
     {
         $value = (int) ($settings['relative_value'] ?? 1);
-        $unit = $settings['relative_unit'] ?? RelativeDateUnit::Day->value;
+        $unit = $settings['relative_unit'] ?? DateUnit::Day->value;
         $tense = $settings['tense'] ?? 'past';
 
         $method = $tense === 'future' ? 'add' : 'sub';
 
         return match ($unit) {
-            RelativeDateUnit::Second->value => Carbon::now()->{$method . 'Seconds'}($value)->toDateTimeString(),
-            RelativeDateUnit::Minute->value => Carbon::now()->{$method . 'Minutes'}($value)->toDateTimeString(),
-            RelativeDateUnit::Hour->value => Carbon::now()->{$method . 'Hours'}($value)->toDateTimeString(),
-            RelativeDateUnit::Day->value => Carbon::now()->{$method . 'Days'}($value)->toDateString(),
-            RelativeDateUnit::Week->value => Carbon::now()->{$method . 'Weeks'}($value)->toDateString(),
-            RelativeDateUnit::Month->value => Carbon::now()->{$method . 'Months'}($value)->toDateString(),
-            RelativeDateUnit::Quarter->value => Carbon::now()->{$method . 'Quarters'}($value)->toDateString(),
-            RelativeDateUnit::Year->value => Carbon::now()->{$method . 'Years'}($value)->toDateString(),
+            DateUnit::Second->value => Carbon::now()->{$method . 'Seconds'}($value)->toDateTimeString(),
+            DateUnit::Minute->value => Carbon::now()->{$method . 'Minutes'}($value)->toDateTimeString(),
+            DateUnit::Hour->value => Carbon::now()->{$method . 'Hours'}($value)->toDateTimeString(),
+            DateUnit::Day->value => Carbon::now()->{$method . 'Days'}($value)->toDateString(),
+            DateUnit::Week->value => Carbon::now()->{$method . 'Weeks'}($value)->toDateString(),
+            DateUnit::Month->value => Carbon::now()->{$method . 'Months'}($value)->toDateString(),
+            DateUnit::Quarter->value => Carbon::now()->{$method . 'Quarters'}($value)->toDateString(),
+            DateUnit::Year->value => Carbon::now()->{$method . 'Years'}($value)->toDateString(),
             default => Carbon::today()->toDateString(),
         };
     }

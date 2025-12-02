@@ -4,7 +4,7 @@ namespace Filament\QueryBuilder\Constraints\DateConstraint;
 
 use Filament\Support\Contracts\HasLabel;
 
-enum RelativeDateUnit: string implements HasLabel
+enum DateUnit: string implements HasLabel
 {
     case Second = 'second';
     case Minute = 'minute';
