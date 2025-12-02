@@ -34,9 +34,9 @@ interface HasTable
     public function getAllSelectableTableRecordsCount(): int;
 
     /**
-     * @return array<string, mixed> | null
+     * @return mixed
      */
-    public function getTableFilterState(string $name): ?array;
+    public function getTableFilterState(string $name): mixed;
 
     /**
      * @return array<string, mixed> | null

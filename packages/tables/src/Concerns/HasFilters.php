@@ -196,12 +196,12 @@ trait HasFilters
         }
     }
 
-    public function getTableFilterState(string $name): ?array
+    public function getTableFilterState(string $name): mixed
     {
         return Arr::get($this->tableFilters, $this->parseTableFilterName($name));
     }
 
-    public function getTableFilterFormState(string $name): ?array
+    public function getTableFilterFormState(string $name): mixed
     {
         return Arr::get($this->getTable()->hasDeferredFilters() ? $this->tableDeferredFilters : $this->tableFilters, $this->parseTableFilterName($name));
     }
