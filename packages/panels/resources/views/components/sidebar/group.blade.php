@@ -64,7 +64,6 @@
     @if ($hasDropdown)
         <x-filament::dropdown
             :placement="(__('filament-panels::layout.direction') === 'rtl') ? 'left-start' : 'right-start'"
-            teleport
             x-show="! $store.sidebar.isOpen"
         >
             <x-slot name="trigger">

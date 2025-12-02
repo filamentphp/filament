@@ -141,18 +141,21 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
             RichEditorTool::make('h1')
                 ->label(__('filament-forms::components.rich_editor.tools.h1'))
                 ->jsHandler('$getEditor()?.chain().focus().toggleHeading({ level: 1 }).run()')
+                ->activeKey('heading')
                 ->activeOptions(['level' => 1])
                 ->icon(Heroicon::H1)
                 ->iconAlias('forms:components.rich-editor.toolbar.h1'),
             RichEditorTool::make('h2')
                 ->label(__('filament-forms::components.rich_editor.tools.h2'))
                 ->jsHandler('$getEditor()?.chain().focus().toggleHeading({ level: 2 }).run()')
+                ->activeKey('heading')
                 ->activeOptions(['level' => 2])
                 ->icon(Heroicon::H2)
                 ->iconAlias('forms:components.rich-editor.toolbar.h2'),
             RichEditorTool::make('h3')
                 ->label(__('filament-forms::components.rich_editor.tools.h3'))
                 ->jsHandler('$getEditor()?.chain().focus().toggleHeading({ level: 3 }).run()')
+                ->activeKey('heading')
                 ->activeOptions(['level' => 3])
                 ->icon(Heroicon::H3)
                 ->iconAlias('forms:components.rich-editor.toolbar.h3'),
@@ -231,6 +234,11 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
                 ->jsHandler('$getEditor()?.chain().focus().toggleHeaderRow().run()')
                 ->icon('fi-o-table-toggle-header-row')
                 ->iconAlias('forms:components.rich-editor.toolbar.table_toggle_header_row'),
+            RichEditorTool::make('tableToggleHeaderCell')
+                ->label(__('filament-forms::components.rich_editor.tools.table_toggle_header_cell'))
+                ->jsHandler('$getEditor()?.chain().focus().toggleHeaderCell().run()')
+                ->icon('fi-o-table-toggle-header-cell')
+                ->iconAlias('forms:components.rich-editor.toolbar.table_toggle_header_cell'),
             RichEditorTool::make('tableDelete')
                 ->label(__('filament-forms::components.rich_editor.tools.table_delete'))
                 ->jsHandler('$getEditor()?.chain().focus().deleteTable().run()')
@@ -601,14 +609,6 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
         return array_reduce(
             [
                 ...array_reduce(
-                    $this->getPlugins(),
-                    fn (array $carry, RichContentPlugin $plugin): array => [
-                        ...$carry,
-                        ...$plugin->getEditorTools(),
-                    ],
-                    initial: [],
-                ),
-                ...array_reduce(
                     $this->tools,
                     function (array $carry, RichEditorTool | Closure $tool): array {
                         if ($tool instanceof Closure) {
@@ -620,6 +620,14 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
                             ...Arr::wrap($tool),
                         ];
                     },
+                    initial: [],
+                ),
+                ...array_reduce(
+                    $this->getPlugins(),
+                    fn (array $carry, RichContentPlugin $plugin): array => [
+                        ...$carry,
+                        ...$plugin->getEditorTools(),
+                    ],
                     initial: [],
                 ),
             ],
@@ -684,7 +692,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
                 'tableAddColumnBefore', 'tableAddColumnAfter', 'tableDeleteColumn',
                 'tableAddRowBefore', 'tableAddRowAfter', 'tableDeleteRow',
                 'tableMergeCells', 'tableSplitCell',
-                'tableToggleHeaderRow',
+                'tableToggleHeaderRow', 'tableToggleHeaderCell',
                 'tableDelete',
             ],
         ];
@@ -701,7 +709,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
             ['blockquote', 'codeBlock', 'bulletList', 'orderedList'],
             [
                 'table',
-                ...($this->hasFileAttachments() ? ['attachFiles'] : []),
+                ...($this->hasFileAttachments(default: true) ? ['attachFiles'] : []),
                 ...(filled($this->getCustomBlocks()) ? ['customBlocks'] : []),
                 ...(filled($this->getMergeTags()) ? ['mergeTags'] : []),
             ],
@@ -1017,6 +1025,6 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
 
     public function hasFileAttachmentsByDefault(): bool
     {
-        return (! $this->hasCustomToolbarButtons()) || $this->hasToolbarButton('attachFiles');
+        return $this->hasToolbarButton('attachFiles');
     }
 }

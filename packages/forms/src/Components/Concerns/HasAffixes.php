@@ -35,14 +35,14 @@ trait HasAffixes
 
     protected string | Htmlable | Closure | null $prefixLabel = null;
 
-    protected string | BackedEnum | Closure | null $prefixIcon = null;
+    protected string | BackedEnum | Htmlable | Closure | null $prefixIcon = null;
 
     /**
      * @var string | array<string> | Closure | null
      */
     protected string | array | Closure | null $prefixIconColor = null;
 
-    protected string | BackedEnum | Closure | null $suffixIcon = null;
+    protected string | BackedEnum | Htmlable | Closure | null $suffixIcon = null;
 
     /**
      * @var string | array<string> | Closure | null
@@ -130,7 +130,7 @@ trait HasAffixes
         return $this;
     }
 
-    public function prefixIcon(string | BackedEnum | Closure | null $icon, bool | Closure $isInline = false): static
+    public function prefixIcon(string | BackedEnum | Htmlable | Closure | null $icon, bool | Closure $isInline = false): static
     {
         $this->prefixIcon = $icon;
         $this->inlinePrefix($isInline);
@@ -148,7 +148,7 @@ trait HasAffixes
         return $this;
     }
 
-    public function suffixIcon(string | BackedEnum | Closure | null $icon, bool | Closure $isInline = false): static
+    public function suffixIcon(string | BackedEnum | Htmlable | Closure | null $icon, bool | Closure $isInline = false): static
     {
         $this->suffixIcon = $icon;
         $this->inlineSuffix($isInline);
@@ -232,12 +232,12 @@ trait HasAffixes
         return $this->evaluate($this->suffixLabel);
     }
 
-    public function getPrefixIcon(): string | BackedEnum | null
+    public function getPrefixIcon(): string | BackedEnum | Htmlable | null
     {
         return $this->evaluate($this->prefixIcon);
     }
 
-    public function getSuffixIcon(): string | BackedEnum | null
+    public function getSuffixIcon(): string | BackedEnum | Htmlable | null
     {
         return $this->evaluate($this->suffixIcon);
     }

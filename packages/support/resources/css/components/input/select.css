@@ -69,6 +69,10 @@ select.fi-select-input {
 
     & .fi-select-input-option-group {
         @apply divide-y divide-gray-100 dark:divide-white/5;
+
+        & .fi-dropdown-header {
+            @apply font-medium text-gray-500 dark:text-gray-400;
+        }
     }
 
     & .fi-select-input-search-ctn {

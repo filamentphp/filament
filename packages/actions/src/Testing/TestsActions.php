@@ -733,10 +733,7 @@ class TestsActions
 
                         $areArgumentsKeyedByActionName = true;
                     } elseif (! $areArgumentsKeyedByActionName) {
-                        $action['arguments'] = [
-                            ...$arguments,
-                            ...$action['arguments'] ?? [],
-                        ];
+                        $action['arguments'] = $arguments;
                     }
                 }
 

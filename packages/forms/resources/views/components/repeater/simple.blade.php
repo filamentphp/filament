@@ -42,7 +42,7 @@
                         ->grid($getGridColumns())
                         ->merge([
                             'data-sortable-animation-duration' => $getReorderAnimationDuration(),
-                            'x-on:end.stop' => '$event.oldDraggableIndex !== $event.newDraggableIndex && $wire.mountAction(\'reorder\', { items: $event.target.sortable.toArray() }, { schemaComponent: \'' . $key . '\' })',
+                            'x-on:end.stop' => '$wire.mountAction(\'reorder\', { items: $event.target.sortable.toArray() }, { schemaComponent: \'' . $key . '\' })',
                         ], escape: false)
                         ->class(['fi-fo-simple-repeater-items'])
                 }}

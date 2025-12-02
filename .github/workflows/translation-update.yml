@@ -8,7 +8,7 @@ on:
       - closed
 
 jobs:
-  translation_update:
+  translation-update:
     runs-on: ubuntu-latest
     if: github.event.pull_request.merged == true
     steps:

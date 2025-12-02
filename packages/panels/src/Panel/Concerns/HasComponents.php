@@ -408,7 +408,7 @@ trait HasComponents
     /**
      * @param  array<string, class-string<Component>>  $register
      */
-    protected function discoverComponents(string $baseClass, array &$register, ?string $directory, ?string $namespace): void
+    public function discoverComponents(string $baseClass, array &$register, ?string $directory, ?string $namespace): void
     {
         if (blank($directory) || blank($namespace)) {
             return;

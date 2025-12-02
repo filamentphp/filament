@@ -59,7 +59,7 @@ class Tabs extends Component
         parent::setUp();
 
         $this->key(function (Tabs $component): ?string {
-            $label = $this->getLabel();
+            $label = $component->getLabel();
 
             if (blank($label)) {
                 return null;
