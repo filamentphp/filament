@@ -16,25 +16,25 @@ jobs:
         with:
           path: ~/.composer/cache/files
           key: dependencies-composer-${{ hashFiles('composer.json') }}
-      - name: Setup PHP
+      - name: Set up PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: 8.3
           extensions: mbstring, pdo, pdo_sqlite
           coverage: none
-      - name: Setup Node
+      - name: Set up Node
         uses: actions/setup-node@v2
       - name: Install dependencies
         run: |
           cd docs-assets/screenshots
           npm ci
-      - name: Setup app
+      - name: Set up app
         run: |
           cd docs-assets/app
           composer install --no-interaction
           npm ci && npm run build
           php artisan serve &
-      - name: Run script
+      - name: Take screenshots
         run: |
           cd docs-assets/screenshots
           node script

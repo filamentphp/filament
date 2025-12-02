@@ -125,7 +125,7 @@ If you use a [`TextColumn`](../tables/columns/text) with the Table Builder, and 
 
 ### Using the enum color with a text entry in your infolist
 
-If you use a [`TextEntry`](../infolists/text-entry) in an infolist, and it is cast to an enum in your Eloquent model, Filament will automatically use the `HasColor` interface to display the enum label in its color. This works best if you use the [`badge()`](../infolists/text#displaying-as-a-badge) method on the entry.
+If you use a [`TextEntry`](../infolists/text-entry) in an infolist, and it is cast to an enum in your Eloquent model, Filament will automatically use the `HasColor` interface to display the enum label in its color. This works best if you use the [`badge()`](../infolists/text-entry#displaying-as-a-badge) method on the entry.
 
 ### Using the enum color with a toggle buttons field in your form
 
@@ -163,7 +163,7 @@ If you use a [`TextColumn`](../tables/columns/text) with the Table Builder, and 
 
 ### Using the enum icon with a text entry in your infolist
 
-If you use a [`TextEntry`](../infolists/text-entry) in an infolist, and it is cast to an enum in your Eloquent model, Filament will automatically use the `HasIcon` interface to display the enum's icon aside its label. This works best if you use the [`badge()`](../infolists/text#displaying-as-a-badge) method on the entry.
+If you use a [`TextEntry`](../infolists/text-entry) in an infolist, and it is cast to an enum in your Eloquent model, Filament will automatically use the `HasIcon` interface to display the enum's icon aside its label. This works best if you use the [`badge()`](../infolists/text-entry#displaying-as-a-badge) method on the entry.
 
 ### Using the enum icon with a toggle buttons field in your form
 
