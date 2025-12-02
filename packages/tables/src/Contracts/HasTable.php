@@ -33,15 +33,9 @@ interface HasTable
 
     public function getAllSelectableTableRecordsCount(): int;
 
-    /**
-     * @return mixed
-     */
     public function getTableFilterState(string $name): mixed;
 
-    /**
-     * @return array<string, mixed> | null
-     */
-    public function getTableFilterFormState(string $name): ?array;
+    public function getTableFilterFormState(string $name): mixed;
 
     public function getSelectedTableRecords(bool $shouldFetchSelectedRecords = true, ?int $chunkSize = null): EloquentCollection | Collection | LazyCollection;
 
