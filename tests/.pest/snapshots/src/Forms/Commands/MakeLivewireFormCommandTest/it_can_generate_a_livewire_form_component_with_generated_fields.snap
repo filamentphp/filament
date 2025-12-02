@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
+use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
@@ -55,6 +56,7 @@ class CreatePostWithFields extends Component implements HasActions, HasSchemas
                     ->columnSpanFull(),
                 Select::make('string_backed_enum')
                     ->options(StringBackedEnum::class),
+                DateTimePicker::make('published_at'),
             ])
             ->statePath('data')
             ->model(Post::class);
