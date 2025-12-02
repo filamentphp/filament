@@ -330,17 +330,19 @@ class AttachAction extends Action
         return $select;
     }
 
-    public function getTableRecordSelect()
+    public function getTableRecordSelect(): TableSelect
     {
+        $relationship = $this->getTable()->getRelationship();
+
+        assert($relationship instanceof BelongsToMany);
+
         return TableSelect::make('recordId')
             ->label(__('filament-actions::attach.single.modal.fields.record_id.label'))
             ->hiddenLabel()
             ->ignoreRelatedRecords()
             ->tableConfiguration($this->getTableSelectConfiguration())
-            ->model($this->getTable()->getRelationship()->getParent()::class)
-            ->relationshipName(
-                $this->getTable()->getRelationship()->getRelationName(),
-            )
+            ->model($relationship->getParent())
+            ->relationshipName($relationship->getRelationName())
             ->multiple($this->isMultiple());
     }
 
