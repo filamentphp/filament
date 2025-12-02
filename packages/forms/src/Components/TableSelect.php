@@ -66,9 +66,9 @@ class TableSelect extends Field
         return $this;
     }
 
-    public function getShouldIgnoreRelatedRecords(): bool
+    public function shouldIgnoreRelatedRecords(): bool
     {
-        return $this->evaluate($this->shouldIgnoreRelatedRecords);
+        return (bool) $this->evaluate($this->shouldIgnoreRelatedRecords);
     }
 
     public function getTableConfiguration(): string

@@ -48,14 +48,9 @@ class AttachAction extends Action
         return 'attach';
     }
 
-    public function getTableSelectConfiguration(): string | Closure | null
+    public function getTableSelectConfiguration(): ?string
     {
-        return $this->tableSelectConfiguration;
-    }
-
-    public function usingTableSelect(): bool
-    {
-        return filled($this->tableSelectConfiguration);
+        return $this->evaluate($this->tableSelectConfiguration);
     }
 
     public function tableSelect(string | Closure | null $configuration): static
@@ -88,7 +83,7 @@ class AttachAction extends Action
 
         $this->defaultColor('gray');
 
-        $this->schema(fn (): array => [! $this->usingTableSelect() ? $this->getRecordSelect() : $this->getTableSelect()]);
+        $this->schema(fn (AttachAction $action): array => [blank($action->getTableSelectConfiguration()) ? $action->getRecordSelect() : $action->getTableRecordSelect()]);
 
         $this->action(function (array $arguments, array $data, Schema $schema, Table $table): void {
             /** @var BelongsToMany $relationship */
@@ -335,12 +330,12 @@ class AttachAction extends Action
         return $select;
     }
 
-    public function getTableSelect()
+    public function getTableRecordSelect()
     {
         return TableSelect::make('recordId')
-            ->label($this->getLabel())
+            ->label(__('filament-actions::attach.single.modal.fields.record_id.label'))
             ->hiddenLabel()
-            ->ignoreRelatedRecords(true)
+            ->ignoreRelatedRecords()
             ->tableConfiguration($this->getTableSelectConfiguration())
             ->model($this->getTable()->getRelationship()->getParent()::class)
             ->relationshipName(
