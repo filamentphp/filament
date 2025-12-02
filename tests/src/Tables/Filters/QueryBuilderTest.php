@@ -3728,3 +3728,555 @@ it('can filter records using `relative` date without `mode` defaults to `absolut
         ->assertCanSeeTableRecords($recentPosts)
         ->assertCanNotSeeTableRecords($oldPosts);
 });
+
+// Time-Based Date Filtering Tests
+
+it('can filter records using datetime constraint with is after operator with `this_minute` preset', function (): void {
+    $currentMinutePosts = Post::factory()->count(3)->create([
+        'published_at' => now()->startOfMinute()->addSeconds(30),
+    ]);
+
+    $futurePosts = Post::factory()->count(5)->create([
+        'published_at' => now()->addMinutes(5),
+    ]);
+
+    $oldPosts = Post::factory()->count(5)->create([
+        'published_at' => now()->subMinutes(5),
+    ]);
+
+    livewire(PostsQueryBuilderTable::class)
+        ->assertCanSeeTableRecords($currentMinutePosts->merge($futurePosts)->merge($oldPosts))
+        ->tap(applyQueryBuilderFilter([
+            [
+                'type' => 'published_at',
+                'data' => [
+                    'operator' => 'isAfter',
+                    'settings' => [
+                        'mode' => 'relative',
+                        'preset' => 'this_minute',
+                    ],
+                ],
+            ],
+        ]))
+        ->assertCanSeeTableRecords($currentMinutePosts->merge($futurePosts))
+        ->assertCanNotSeeTableRecords($oldPosts);
+});
+
+it('can filter records using datetime constraint with is after operator with `this_hour` preset', function (): void {
+    $currentHourPosts = Post::factory()->count(3)->create([
+        'published_at' => now()->startOfHour()->addMinutes(30),
+    ]);
+
+    $futurePosts = Post::factory()->count(5)->create([
+        'published_at' => now()->addHours(5),
+    ]);
+
+    $oldPosts = Post::factory()->count(5)->create([
+        'published_at' => now()->subHours(5),
+    ]);
+
+    livewire(PostsQueryBuilderTable::class)
+        ->assertCanSeeTableRecords($currentHourPosts->merge($futurePosts)->merge($oldPosts))
+        ->tap(applyQueryBuilderFilter([
+            [
+                'type' => 'published_at',
+                'data' => [
+                    'operator' => 'isAfter',
+                    'settings' => [
+                        'mode' => 'relative',
+                        'preset' => 'this_hour',
+                    ],
+                ],
+            ],
+        ]))
+        ->assertCanSeeTableRecords($currentHourPosts->merge($futurePosts))
+        ->assertCanNotSeeTableRecords($oldPosts);
+});
+
+it('can filter records using datetime constraint with is after operator with `past_minute` preset', function (): void {
+    $recentPosts = Post::factory()->count(5)->create([
+        'published_at' => now()->subSeconds(30),
+    ]);
+
+    $oldPosts = Post::factory()->count(5)->create([
+        'published_at' => now()->subMinutes(5),
+    ]);
+
+    livewire(PostsQueryBuilderTable::class)
+        ->assertCanSeeTableRecords($recentPosts->merge($oldPosts))
+        ->tap(applyQueryBuilderFilter([
+            [
+                'type' => 'published_at',
+                'data' => [
+                    'operator' => 'isAfter',
+                    'settings' => [
+                        'mode' => 'relative',
+                        'preset' => 'past_minute',
+                    ],
+                ],
+            ],
+        ]))
+        ->assertCanSeeTableRecords($recentPosts)
+        ->assertCanNotSeeTableRecords($oldPosts);
+});
+
+it('can filter records using datetime constraint with is after operator with `past_hour` preset', function (): void {
+    $recentPosts = Post::factory()->count(5)->create([
+        'published_at' => now()->subMinutes(30),
+    ]);
+
+    $oldPosts = Post::factory()->count(5)->create([
+        'published_at' => now()->subHours(5),
+    ]);
+
+    livewire(PostsQueryBuilderTable::class)
+        ->assertCanSeeTableRecords($recentPosts->merge($oldPosts))
+        ->tap(applyQueryBuilderFilter([
+            [
+                'type' => 'published_at',
+                'data' => [
+                    'operator' => 'isAfter',
+                    'settings' => [
+                        'mode' => 'relative',
+                        'preset' => 'past_hour',
+                    ],
+                ],
+            ],
+        ]))
+        ->assertCanSeeTableRecords($recentPosts)
+        ->assertCanNotSeeTableRecords($oldPosts);
+});
+
+it('can filter records using datetime constraint with is after operator with `next_minute` preset', function (): void {
+    $farFuturePosts = Post::factory()->count(5)->create([
+        'published_at' => now()->addMinutes(5),
+    ]);
+
+    $nearFuturePosts = Post::factory()->count(5)->create([
+        'published_at' => now()->addSeconds(30),
+    ]);
+
+    livewire(PostsQueryBuilderTable::class)
+        ->assertCanSeeTableRecords($farFuturePosts->merge($nearFuturePosts))
+        ->tap(applyQueryBuilderFilter([
+            [
+                'type' => 'published_at',
+                'data' => [
+                    'operator' => 'isAfter',
+                    'settings' => [
+                        'mode' => 'relative',
+                        'preset' => 'next_minute',
+                    ],
+                ],
+            ],
+        ]))
+        ->assertCanSeeTableRecords($farFuturePosts)
+        ->assertCanNotSeeTableRecords($nearFuturePosts);
+});
+
+it('can filter records using datetime constraint with is after operator with `next_hour` preset', function (): void {
+    $farFuturePosts = Post::factory()->count(5)->create([
+        'published_at' => now()->addHours(5),
+    ]);
+
+    $nearFuturePosts = Post::factory()->count(5)->create([
+        'published_at' => now()->addMinutes(30),
+    ]);
+
+    livewire(PostsQueryBuilderTable::class)
+        ->assertCanSeeTableRecords($farFuturePosts->merge($nearFuturePosts))
+        ->tap(applyQueryBuilderFilter([
+            [
+                'type' => 'published_at',
+                'data' => [
+                    'operator' => 'isAfter',
+                    'settings' => [
+                        'mode' => 'relative',
+                        'preset' => 'next_hour',
+                    ],
+                ],
+            ],
+        ]))
+        ->assertCanSeeTableRecords($farFuturePosts)
+        ->assertCanNotSeeTableRecords($nearFuturePosts);
+});
+
+it('can filter records using datetime constraint with is after operator with `custom` preset and `second` unit in past tense', function (): void {
+    $recentPosts = Post::factory()->count(5)->create([
+        'published_at' => now()->subSeconds(15),
+    ]);
+
+    $oldPosts = Post::factory()->count(5)->create([
+        'published_at' => now()->subMinutes(5),
+    ]);
+
+    livewire(PostsQueryBuilderTable::class)
+        ->assertCanSeeTableRecords($recentPosts->merge($oldPosts))
+        ->tap(applyQueryBuilderFilter([
+            [
+                'type' => 'published_at',
+                'data' => [
+                    'operator' => 'isAfter',
+                    'settings' => [
+                        'mode' => 'relative',
+                        'preset' => 'custom',
+                        'tense' => 'past',
+                        'relative_value' => 30,
+                        'relative_unit' => 'second',
+                    ],
+                ],
+            ],
+        ]))
+        ->assertCanSeeTableRecords($recentPosts)
+        ->assertCanNotSeeTableRecords($oldPosts);
+});
+
+it('can filter records using datetime constraint with is after operator with `custom` preset and `minute` unit in past tense', function (): void {
+    $recentPosts = Post::factory()->count(5)->create([
+        'published_at' => now()->subMinutes(5),
+    ]);
+
+    $oldPosts = Post::factory()->count(5)->create([
+        'published_at' => now()->subMinutes(30),
+    ]);
+
+    livewire(PostsQueryBuilderTable::class)
+        ->assertCanSeeTableRecords($recentPosts->merge($oldPosts))
+        ->tap(applyQueryBuilderFilter([
+            [
+                'type' => 'published_at',
+                'data' => [
+                    'operator' => 'isAfter',
+                    'settings' => [
+                        'mode' => 'relative',
+                        'preset' => 'custom',
+                        'tense' => 'past',
+                        'relative_value' => 10,
+                        'relative_unit' => 'minute',
+                    ],
+                ],
+            ],
+        ]))
+        ->assertCanSeeTableRecords($recentPosts)
+        ->assertCanNotSeeTableRecords($oldPosts);
+});
+
+it('can filter records using datetime constraint with is after operator with `custom` preset and `hour` unit in past tense', function (): void {
+    $recentPosts = Post::factory()->count(5)->create([
+        'published_at' => now()->subHours(1),
+    ]);
+
+    $oldPosts = Post::factory()->count(5)->create([
+        'published_at' => now()->subHours(5),
+    ]);
+
+    livewire(PostsQueryBuilderTable::class)
+        ->assertCanSeeTableRecords($recentPosts->merge($oldPosts))
+        ->tap(applyQueryBuilderFilter([
+            [
+                'type' => 'published_at',
+                'data' => [
+                    'operator' => 'isAfter',
+                    'settings' => [
+                        'mode' => 'relative',
+                        'preset' => 'custom',
+                        'tense' => 'past',
+                        'relative_value' => 3,
+                        'relative_unit' => 'hour',
+                    ],
+                ],
+            ],
+        ]))
+        ->assertCanSeeTableRecords($recentPosts)
+        ->assertCanNotSeeTableRecords($oldPosts);
+});
+
+it('can filter records using datetime constraint with is after operator with `custom` preset and `second` unit in future tense', function (): void {
+    $farFuturePosts = Post::factory()->count(5)->create([
+        'published_at' => now()->addMinutes(5),
+    ]);
+
+    $nearFuturePosts = Post::factory()->count(5)->create([
+        'published_at' => now()->addSeconds(15),
+    ]);
+
+    livewire(PostsQueryBuilderTable::class)
+        ->assertCanSeeTableRecords($farFuturePosts->merge($nearFuturePosts))
+        ->tap(applyQueryBuilderFilter([
+            [
+                'type' => 'published_at',
+                'data' => [
+                    'operator' => 'isAfter',
+                    'settings' => [
+                        'mode' => 'relative',
+                        'preset' => 'custom',
+                        'tense' => 'future',
+                        'relative_value' => 30,
+                        'relative_unit' => 'second',
+                    ],
+                ],
+            ],
+        ]))
+        ->assertCanSeeTableRecords($farFuturePosts)
+        ->assertCanNotSeeTableRecords($nearFuturePosts);
+});
+
+it('can filter records using datetime constraint with is after operator with `custom` preset and `minute` unit in future tense', function (): void {
+    $farFuturePosts = Post::factory()->count(5)->create([
+        'published_at' => now()->addMinutes(30),
+    ]);
+
+    $nearFuturePosts = Post::factory()->count(5)->create([
+        'published_at' => now()->addMinutes(5),
+    ]);
+
+    livewire(PostsQueryBuilderTable::class)
+        ->assertCanSeeTableRecords($farFuturePosts->merge($nearFuturePosts))
+        ->tap(applyQueryBuilderFilter([
+            [
+                'type' => 'published_at',
+                'data' => [
+                    'operator' => 'isAfter',
+                    'settings' => [
+                        'mode' => 'relative',
+                        'preset' => 'custom',
+                        'tense' => 'future',
+                        'relative_value' => 10,
+                        'relative_unit' => 'minute',
+                    ],
+                ],
+            ],
+        ]))
+        ->assertCanSeeTableRecords($farFuturePosts)
+        ->assertCanNotSeeTableRecords($nearFuturePosts);
+});
+
+it('can filter records using datetime constraint with is after operator with `custom` preset and `hour` unit in future tense', function (): void {
+    $farFuturePosts = Post::factory()->count(5)->create([
+        'published_at' => now()->addHours(5),
+    ]);
+
+    $nearFuturePosts = Post::factory()->count(5)->create([
+        'published_at' => now()->addHours(1),
+    ]);
+
+    livewire(PostsQueryBuilderTable::class)
+        ->assertCanSeeTableRecords($farFuturePosts->merge($nearFuturePosts))
+        ->tap(applyQueryBuilderFilter([
+            [
+                'type' => 'published_at',
+                'data' => [
+                    'operator' => 'isAfter',
+                    'settings' => [
+                        'mode' => 'relative',
+                        'preset' => 'custom',
+                        'tense' => 'future',
+                        'relative_value' => 3,
+                        'relative_unit' => 'hour',
+                    ],
+                ],
+            ],
+        ]))
+        ->assertCanSeeTableRecords($farFuturePosts)
+        ->assertCanNotSeeTableRecords($nearFuturePosts);
+});
+
+// IsBeforeOperator Time-Based Tests
+
+it('can filter records using datetime constraint with is before operator with `this_minute` preset', function (): void {
+    $oldPosts = Post::factory()->count(5)->create([
+        'published_at' => now()->subMinutes(5),
+    ]);
+
+    $currentMinutePosts = Post::factory()->count(3)->create([
+        'published_at' => now()->startOfMinute()->addSeconds(30),
+    ]);
+
+    livewire(PostsQueryBuilderTable::class)
+        ->assertCanSeeTableRecords($oldPosts->merge($currentMinutePosts))
+        ->tap(applyQueryBuilderFilter([
+            [
+                'type' => 'published_at',
+                'data' => [
+                    'operator' => 'isBefore',
+                    'settings' => [
+                        'mode' => 'relative',
+                        'preset' => 'this_minute',
+                    ],
+                ],
+            ],
+        ]))
+        ->assertCanSeeTableRecords($oldPosts)
+        ->assertCanNotSeeTableRecords($currentMinutePosts);
+});
+
+it('can filter records using datetime constraint with is before operator with `this_hour` preset', function (): void {
+    $oldPosts = Post::factory()->count(5)->create([
+        'published_at' => now()->subHours(5),
+    ]);
+
+    $currentHourPosts = Post::factory()->count(3)->create([
+        'published_at' => now()->startOfHour()->addMinutes(30),
+    ]);
+
+    livewire(PostsQueryBuilderTable::class)
+        ->assertCanSeeTableRecords($oldPosts->merge($currentHourPosts))
+        ->tap(applyQueryBuilderFilter([
+            [
+                'type' => 'published_at',
+                'data' => [
+                    'operator' => 'isBefore',
+                    'settings' => [
+                        'mode' => 'relative',
+                        'preset' => 'this_hour',
+                    ],
+                ],
+            ],
+        ]))
+        ->assertCanSeeTableRecords($oldPosts)
+        ->assertCanNotSeeTableRecords($currentHourPosts);
+});
+
+it('can filter records using datetime constraint with is before operator with `past_minute` preset', function (): void {
+    $veryOldPosts = Post::factory()->count(5)->create([
+        'published_at' => now()->subMinutes(5),
+    ]);
+
+    $recentPosts = Post::factory()->count(5)->create([
+        'published_at' => now()->subSeconds(30),
+    ]);
+
+    livewire(PostsQueryBuilderTable::class)
+        ->assertCanSeeTableRecords($veryOldPosts->merge($recentPosts))
+        ->tap(applyQueryBuilderFilter([
+            [
+                'type' => 'published_at',
+                'data' => [
+                    'operator' => 'isBefore',
+                    'settings' => [
+                        'mode' => 'relative',
+                        'preset' => 'past_minute',
+                    ],
+                ],
+            ],
+        ]))
+        ->assertCanSeeTableRecords($veryOldPosts)
+        ->assertCanNotSeeTableRecords($recentPosts);
+});
+
+it('can filter records using datetime constraint with is before operator with `past_hour` preset', function (): void {
+    $veryOldPosts = Post::factory()->count(5)->create([
+        'published_at' => now()->subHours(5),
+    ]);
+
+    $recentPosts = Post::factory()->count(5)->create([
+        'published_at' => now()->subMinutes(30),
+    ]);
+
+    livewire(PostsQueryBuilderTable::class)
+        ->assertCanSeeTableRecords($veryOldPosts->merge($recentPosts))
+        ->tap(applyQueryBuilderFilter([
+            [
+                'type' => 'published_at',
+                'data' => [
+                    'operator' => 'isBefore',
+                    'settings' => [
+                        'mode' => 'relative',
+                        'preset' => 'past_hour',
+                    ],
+                ],
+            ],
+        ]))
+        ->assertCanSeeTableRecords($veryOldPosts)
+        ->assertCanNotSeeTableRecords($recentPosts);
+});
+
+it('can filter records using datetime constraint with is before operator with `custom` preset and `second` unit', function (): void {
+    $veryOldPosts = Post::factory()->count(5)->create([
+        'published_at' => now()->subMinutes(5),
+    ]);
+
+    $recentPosts = Post::factory()->count(5)->create([
+        'published_at' => now()->subSeconds(15),
+    ]);
+
+    livewire(PostsQueryBuilderTable::class)
+        ->assertCanSeeTableRecords($veryOldPosts->merge($recentPosts))
+        ->tap(applyQueryBuilderFilter([
+            [
+                'type' => 'published_at',
+                'data' => [
+                    'operator' => 'isBefore',
+                    'settings' => [
+                        'mode' => 'relative',
+                        'preset' => 'custom',
+                        'tense' => 'past',
+                        'relative_value' => 30,
+                        'relative_unit' => 'second',
+                    ],
+                ],
+            ],
+        ]))
+        ->assertCanSeeTableRecords($veryOldPosts)
+        ->assertCanNotSeeTableRecords($recentPosts);
+});
+
+it('can filter records using datetime constraint with is before operator with `custom` preset and `minute` unit', function (): void {
+    $veryOldPosts = Post::factory()->count(5)->create([
+        'published_at' => now()->subMinutes(30),
+    ]);
+
+    $recentPosts = Post::factory()->count(5)->create([
+        'published_at' => now()->subMinutes(5),
+    ]);
+
+    livewire(PostsQueryBuilderTable::class)
+        ->assertCanSeeTableRecords($veryOldPosts->merge($recentPosts))
+        ->tap(applyQueryBuilderFilter([
+            [
+                'type' => 'published_at',
+                'data' => [
+                    'operator' => 'isBefore',
+                    'settings' => [
+                        'mode' => 'relative',
+                        'preset' => 'custom',
+                        'tense' => 'past',
+                        'relative_value' => 10,
+                        'relative_unit' => 'minute',
+                    ],
+                ],
+            ],
+        ]))
+        ->assertCanSeeTableRecords($veryOldPosts)
+        ->assertCanNotSeeTableRecords($recentPosts);
+});
+
+it('can filter records using datetime constraint with is before operator with `custom` preset and `hour` unit', function (): void {
+    $veryOldPosts = Post::factory()->count(5)->create([
+        'published_at' => now()->subHours(5),
+    ]);
+
+    $recentPosts = Post::factory()->count(5)->create([
+        'published_at' => now()->subHours(1),
+    ]);
+
+    livewire(PostsQueryBuilderTable::class)
+        ->assertCanSeeTableRecords($veryOldPosts->merge($recentPosts))
+        ->tap(applyQueryBuilderFilter([
+            [
+                'type' => 'published_at',
+                'data' => [
+                    'operator' => 'isBefore',
+                    'settings' => [
+                        'mode' => 'relative',
+                        'preset' => 'custom',
+                        'tense' => 'past',
+                        'relative_value' => 3,
+                        'relative_unit' => 'hour',
+                    ],
+                ],
+            ],
+        ]))
+        ->assertCanSeeTableRecords($veryOldPosts)
+        ->assertCanNotSeeTableRecords($recentPosts);
+});

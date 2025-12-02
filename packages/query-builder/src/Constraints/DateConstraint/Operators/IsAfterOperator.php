@@ -7,6 +7,7 @@ use Filament\Actions\ActionGroup;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\QueryBuilder\Constraints\DateConstraint;
 use Filament\QueryBuilder\Constraints\DateConstraint\RelativeDateUnit;
 use Filament\QueryBuilder\Constraints\Operators\Operator;
 use Filament\Schemas\Components\Component;
@@ -14,7 +15,6 @@ use Filament\Schemas\Components\FusedGroup;
 use Filament\Schemas\Components\Utilities\Get;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Str;
 
 class IsAfterOperator extends Operator
 {
@@ -35,62 +35,38 @@ class IsAfterOperator extends Operator
     public function getSummary(): string
     {
         $settings = $this->getSettings();
+        $constraint = $this->getConstraint();
+        $hasTime = $constraint instanceof DateConstraint && $constraint->hasTime();
 
         // Check if using relative mode
         if (($settings['mode'] ?? null) === 'relative') {
-            $dateDescription = $this->getRelativeDateDescription($settings);
+            $resolvedDate = $this->resolveRelativeDate($settings, $hasTime);
+            $parsedDate = Carbon::parse($resolvedDate);
+            $isTimeBasedFilter = $this->isTimeBasedFilter($settings);
 
             return __(
                 $this->isInverse() ?
                     'filament-query-builder::query-builder.operators.date.is_after.summary.inverse' :
                     'filament-query-builder::query-builder.operators.date.is_after.summary.direct',
                 [
-                    'attribute' => $this->getConstraint()->getAttributeLabel(),
-                    'date' => $dateDescription,
+                    'attribute' => $constraint->getAttributeLabel(),
+                    'date' => $hasTime && $isTimeBasedFilter ? $parsedDate->toFormattedDayDateString() . ' ' . $parsedDate->format('g:i A') : $parsedDate->toFormattedDateString(),
                 ],
             );
         }
 
         // Default to absolute mode (backwards compatible)
+        $parsedDate = Carbon::parse($settings['date']);
+
         return __(
             $this->isInverse() ?
                 'filament-query-builder::query-builder.operators.date.is_after.summary.inverse' :
                 'filament-query-builder::query-builder.operators.date.is_after.summary.direct',
             [
-                'attribute' => $this->getConstraint()->getAttributeLabel(),
-                'date' => Carbon::parse($settings['date'])->toFormattedDateString(),
+                'attribute' => $constraint->getAttributeLabel(),
+                'date' => $hasTime ? $parsedDate->toFormattedDayDateString() . ' ' . $parsedDate->format('g:i A') : $parsedDate->toFormattedDateString(),
             ],
         );
-    }
-
-    /**
-     * @param  array<string, mixed>  $settings
-     */
-    protected function getRelativeDateDescription(array $settings): string
-    {
-        $preset = $settings['preset'] ?? 'custom';
-
-        if ($preset !== 'custom') {
-            return Str::lower(__("filament-query-builder::query-builder.operators.date.presets.{$preset}"));
-        }
-
-        $value = (int) ($settings['relative_value'] ?? 1);
-        $unit = $settings['relative_unit'] ?? RelativeDateUnit::Day->value;
-        $tense = $settings['tense'] ?? 'past';
-
-        $unitLabel = trans_choice("filament-query-builder::query-builder.operators.date.units.{$unit}", $value);
-
-        if ($tense === 'future') {
-            return __('filament-query-builder::query-builder.operators.date.relative_description_future', [
-                'value' => $value,
-                'unit' => $unitLabel,
-            ]);
-        }
-
-        return __('filament-query-builder::query-builder.operators.date.relative_description', [
-            'value' => $value,
-            'unit' => $unitLabel,
-        ]);
     }
 
     /**
@@ -98,6 +74,9 @@ class IsAfterOperator extends Operator
      */
     public function getFormSchema(): array
     {
+        $constraint = $this->getConstraint();
+        $hasTime = $constraint instanceof DateConstraint && $constraint->hasTime();
+
         return [
             Select::make('mode')
                 ->label(__('filament-query-builder::query-builder.operators.date.form.mode.label'))
@@ -110,44 +89,14 @@ class IsAfterOperator extends Operator
                 ->default('absolute'),
             DatePicker::make('date')
                 ->label(__('filament-query-builder::query-builder.operators.date.form.date.label'))
+                ->time($hasTime)
                 ->hidden(fn (Get $get): bool => $get('mode') === 'relative')
                 ->required(fn (Get $get): bool => $get('mode') !== 'relative'),
             Select::make('preset')
                 ->label(__('filament-query-builder::query-builder.operators.date.form.preset.label'))
                 ->selectablePlaceholder(false)
                 ->live()
-                ->options([
-                    'today' => __('filament-query-builder::query-builder.operators.date.presets.today'),
-                    'yesterday' => __('filament-query-builder::query-builder.operators.date.presets.yesterday'),
-                    'tomorrow' => __('filament-query-builder::query-builder.operators.date.presets.tomorrow'),
-                    'this_week' => __('filament-query-builder::query-builder.operators.date.presets.this_week'),
-                    'this_month' => __('filament-query-builder::query-builder.operators.date.presets.this_month'),
-                    'this_quarter' => __('filament-query-builder::query-builder.operators.date.presets.this_quarter'),
-                    'this_year' => __('filament-query-builder::query-builder.operators.date.presets.this_year'),
-                    'start_of_week' => __('filament-query-builder::query-builder.operators.date.presets.start_of_week'),
-                    'start_of_month' => __('filament-query-builder::query-builder.operators.date.presets.start_of_month'),
-                    'start_of_quarter' => __('filament-query-builder::query-builder.operators.date.presets.start_of_quarter'),
-                    'start_of_year' => __('filament-query-builder::query-builder.operators.date.presets.start_of_year'),
-                    'end_of_week' => __('filament-query-builder::query-builder.operators.date.presets.end_of_week'),
-                    'end_of_month' => __('filament-query-builder::query-builder.operators.date.presets.end_of_month'),
-                    'end_of_quarter' => __('filament-query-builder::query-builder.operators.date.presets.end_of_quarter'),
-                    'end_of_year' => __('filament-query-builder::query-builder.operators.date.presets.end_of_year'),
-                    'past_week' => __('filament-query-builder::query-builder.operators.date.presets.past_week'),
-                    'past_2_weeks' => __('filament-query-builder::query-builder.operators.date.presets.past_2_weeks'),
-                    'past_month' => __('filament-query-builder::query-builder.operators.date.presets.past_month'),
-                    'past_quarter' => __('filament-query-builder::query-builder.operators.date.presets.past_quarter'),
-                    'past_6_months' => __('filament-query-builder::query-builder.operators.date.presets.past_6_months'),
-                    'past_year' => __('filament-query-builder::query-builder.operators.date.presets.past_year'),
-                    'past_2_years' => __('filament-query-builder::query-builder.operators.date.presets.past_2_years'),
-                    'next_week' => __('filament-query-builder::query-builder.operators.date.presets.next_week'),
-                    'next_2_weeks' => __('filament-query-builder::query-builder.operators.date.presets.next_2_weeks'),
-                    'next_month' => __('filament-query-builder::query-builder.operators.date.presets.next_month'),
-                    'next_quarter' => __('filament-query-builder::query-builder.operators.date.presets.next_quarter'),
-                    'next_6_months' => __('filament-query-builder::query-builder.operators.date.presets.next_6_months'),
-                    'next_year' => __('filament-query-builder::query-builder.operators.date.presets.next_year'),
-                    'next_2_years' => __('filament-query-builder::query-builder.operators.date.presets.next_2_years'),
-                    'custom' => __('filament-query-builder::query-builder.operators.date.presets.custom'),
-                ])
+                ->options($this->getPresetOptions($hasTime))
                 ->default('past_month')
                 ->hidden(fn (Get $get): bool => $get('mode') !== 'relative')
                 ->required(fn (Get $get): bool => $get('mode') === 'relative'),
@@ -171,6 +120,7 @@ class IsAfterOperator extends Operator
                     ->label(__('filament-query-builder::query-builder.operators.date.form.relative_unit.label'))
                     ->options(
                         collect(RelativeDateUnit::cases())
+                            ->reject(fn (RelativeDateUnit $unit): bool => (! $hasTime) && $unit->isTimeUnit())
                             ->mapWithKeys(fn (RelativeDateUnit $unit): array => [$unit->value => $unit->getLabel()])
                             ->all()
                     )
@@ -183,15 +133,74 @@ class IsAfterOperator extends Operator
         ];
     }
 
+    /**
+     * @return array<string, string>
+     */
+    protected function getPresetOptions(bool $hasTime): array
+    {
+        $options = [
+            'past_decade' => __('filament-query-builder::query-builder.operators.date.presets.past_decade'),
+            'past_5_years' => __('filament-query-builder::query-builder.operators.date.presets.past_5_years'),
+            'past_2_years' => __('filament-query-builder::query-builder.operators.date.presets.past_2_years'),
+            'past_year' => __('filament-query-builder::query-builder.operators.date.presets.past_year'),
+            'past_half_year' => __('filament-query-builder::query-builder.operators.date.presets.past_half_year'),
+            'past_quarter' => __('filament-query-builder::query-builder.operators.date.presets.past_quarter'),
+            'past_month' => __('filament-query-builder::query-builder.operators.date.presets.past_month'),
+            'past_2_weeks' => __('filament-query-builder::query-builder.operators.date.presets.past_2_weeks'),
+            'past_week' => __('filament-query-builder::query-builder.operators.date.presets.past_week'),
+        ];
+
+        if ($hasTime) {
+            $options['past_hour'] = __('filament-query-builder::query-builder.operators.date.presets.past_hour');
+            $options['past_minute'] = __('filament-query-builder::query-builder.operators.date.presets.past_minute');
+        }
+
+        $options += [
+            'this_decade' => __('filament-query-builder::query-builder.operators.date.presets.this_decade'),
+            'this_year' => __('filament-query-builder::query-builder.operators.date.presets.this_year'),
+            'this_quarter' => __('filament-query-builder::query-builder.operators.date.presets.this_quarter'),
+            'this_month' => __('filament-query-builder::query-builder.operators.date.presets.this_month'),
+            'today' => __('filament-query-builder::query-builder.operators.date.presets.today'),
+        ];
+
+        if ($hasTime) {
+            $options['this_hour'] = __('filament-query-builder::query-builder.operators.date.presets.this_hour');
+            $options['this_minute'] = __('filament-query-builder::query-builder.operators.date.presets.this_minute');
+            $options['next_minute'] = __('filament-query-builder::query-builder.operators.date.presets.next_minute');
+            $options['next_hour'] = __('filament-query-builder::query-builder.operators.date.presets.next_hour');
+        }
+
+        $options += [
+            'next_week' => __('filament-query-builder::query-builder.operators.date.presets.next_week'),
+            'next_2_weeks' => __('filament-query-builder::query-builder.operators.date.presets.next_2_weeks'),
+            'next_month' => __('filament-query-builder::query-builder.operators.date.presets.next_month'),
+            'next_quarter' => __('filament-query-builder::query-builder.operators.date.presets.next_quarter'),
+            'next_half_year' => __('filament-query-builder::query-builder.operators.date.presets.next_half_year'),
+            'next_year' => __('filament-query-builder::query-builder.operators.date.presets.next_year'),
+            'next_2_years' => __('filament-query-builder::query-builder.operators.date.presets.next_2_years'),
+            'next_5_years' => __('filament-query-builder::query-builder.operators.date.presets.next_5_years'),
+            'next_decade' => __('filament-query-builder::query-builder.operators.date.presets.next_decade'),
+            'custom' => __('filament-query-builder::query-builder.operators.date.presets.custom'),
+        ];
+
+        return $options;
+    }
+
     public function apply(Builder $query, string $qualifiedColumn): Builder
     {
         $settings = $this->getSettings();
+        $constraint = $this->getConstraint();
+        $hasTime = $constraint instanceof DateConstraint && $constraint->hasTime();
 
         // Check if using relative mode - only if mode is explicitly set to 'relative'
         if (($settings['mode'] ?? null) === 'relative') {
-            $date = $this->resolveRelativeDate($settings);
+            $dateTime = $this->resolveRelativeDate($settings, $hasTime);
 
-            return $query->whereDate($qualifiedColumn, $this->isInverse() ? '<' : '>=', $date);
+            if ($hasTime && $this->isTimeBasedFilter($settings)) {
+                return $query->where($qualifiedColumn, $this->isInverse() ? '<' : '>=', $dateTime);
+            }
+
+            return $query->whereDate($qualifiedColumn, $this->isInverse() ? '<' : '>=', $dateTime);
         }
 
         // Default to absolute mode using the date directly (backwards compatible)
@@ -201,41 +210,61 @@ class IsAfterOperator extends Operator
     /**
      * @param  array<string, mixed>  $settings
      */
-    protected function resolveRelativeDate(array $settings): string
+    protected function isTimeBasedFilter(array $settings): bool
+    {
+        $preset = $settings['preset'] ?? 'custom';
+
+        if (in_array($preset, ['this_minute', 'this_hour', 'past_minute', 'past_hour', 'next_minute', 'next_hour'], true)) {
+            return true;
+        }
+
+        if ($preset === 'custom') {
+            $unit = $settings['relative_unit'] ?? RelativeDateUnit::Day->value;
+
+            return in_array($unit, [RelativeDateUnit::Second->value, RelativeDateUnit::Minute->value, RelativeDateUnit::Hour->value], true);
+        }
+
+        return false;
+    }
+
+    /**
+     * @param  array<string, mixed>  $settings
+     */
+    protected function resolveRelativeDate(array $settings, bool $hasTime = false): string
     {
         $preset = $settings['preset'] ?? 'custom';
 
         return match ($preset) {
-            'today' => Carbon::today()->toDateString(),
-            'yesterday' => Carbon::yesterday()->toDateString(),
-            'tomorrow' => Carbon::tomorrow()->toDateString(),
-            'this_week' => Carbon::now()->startOfWeek()->toDateString(),
-            'this_month' => Carbon::now()->startOfMonth()->toDateString(),
-            'this_quarter' => Carbon::now()->startOfQuarter()->toDateString(),
-            'this_year' => Carbon::now()->startOfYear()->toDateString(),
-            'start_of_week' => Carbon::now()->startOfWeek()->toDateString(),
-            'start_of_month' => Carbon::now()->startOfMonth()->toDateString(),
-            'start_of_quarter' => Carbon::now()->startOfQuarter()->toDateString(),
-            'start_of_year' => Carbon::now()->startOfYear()->toDateString(),
-            'end_of_week' => Carbon::now()->endOfWeek()->toDateString(),
-            'end_of_month' => Carbon::now()->endOfMonth()->toDateString(),
-            'end_of_quarter' => Carbon::now()->endOfQuarter()->toDateString(),
-            'end_of_year' => Carbon::now()->endOfYear()->toDateString(),
-            'past_week' => Carbon::now()->subWeek()->toDateString(),
-            'past_2_weeks' => Carbon::now()->subWeeks(2)->toDateString(),
-            'past_month' => Carbon::now()->subMonth()->toDateString(),
-            'past_quarter' => Carbon::now()->subQuarter()->toDateString(),
-            'past_6_months' => Carbon::now()->subMonths(6)->toDateString(),
-            'past_year' => Carbon::now()->subYear()->toDateString(),
+            'past_decade' => Carbon::now()->subYears(10)->toDateString(),
+            'past_5_years' => Carbon::now()->subYears(5)->toDateString(),
             'past_2_years' => Carbon::now()->subYears(2)->toDateString(),
+            'past_year' => Carbon::now()->subYear()->toDateString(),
+            'past_half_year' => Carbon::now()->subMonths(6)->toDateString(),
+            'past_quarter' => Carbon::now()->subQuarter()->toDateString(),
+            'past_month' => Carbon::now()->subMonth()->toDateString(),
+            'past_2_weeks' => Carbon::now()->subWeeks(2)->toDateString(),
+            'past_week' => Carbon::now()->subWeek()->toDateString(),
+            'past_hour' => Carbon::now()->subHour()->toDateTimeString(),
+            'past_minute' => Carbon::now()->subMinute()->toDateTimeString(),
+            'this_decade' => Carbon::now()->startOfDecade()->toDateString(),
+            'this_year' => Carbon::now()->startOfYear()->toDateString(),
+            'this_quarter' => Carbon::now()->startOfQuarter()->toDateString(),
+            'this_month' => Carbon::now()->startOfMonth()->toDateString(),
+            'today' => Carbon::today()->toDateString(),
+            'this_hour' => Carbon::now()->startOfHour()->toDateTimeString(),
+            'this_minute' => Carbon::now()->startOfMinute()->toDateTimeString(),
+            'next_minute' => Carbon::now()->addMinute()->toDateTimeString(),
+            'next_hour' => Carbon::now()->addHour()->toDateTimeString(),
             'next_week' => Carbon::now()->addWeek()->toDateString(),
             'next_2_weeks' => Carbon::now()->addWeeks(2)->toDateString(),
             'next_month' => Carbon::now()->addMonth()->toDateString(),
             'next_quarter' => Carbon::now()->addQuarter()->toDateString(),
-            'next_6_months' => Carbon::now()->addMonths(6)->toDateString(),
+            'next_half_year' => Carbon::now()->addMonths(6)->toDateString(),
             'next_year' => Carbon::now()->addYear()->toDateString(),
             'next_2_years' => Carbon::now()->addYears(2)->toDateString(),
-            'custom' => $this->resolveCustomRelativeDate($settings),
+            'next_5_years' => Carbon::now()->addYears(5)->toDateString(),
+            'next_decade' => Carbon::now()->addYears(10)->toDateString(),
+            'custom' => $this->resolveCustomRelativeDate($settings, $hasTime),
             default => Carbon::today()->toDateString(),
         };
     }
@@ -243,7 +272,7 @@ class IsAfterOperator extends Operator
     /**
      * @param  array<string, mixed>  $settings
      */
-    protected function resolveCustomRelativeDate(array $settings): string
+    protected function resolveCustomRelativeDate(array $settings, bool $hasTime = false): string
     {
         $value = (int) ($settings['relative_value'] ?? 1);
         $unit = $settings['relative_unit'] ?? RelativeDateUnit::Day->value;
@@ -252,6 +281,9 @@ class IsAfterOperator extends Operator
         $method = $tense === 'future' ? 'add' : 'sub';
 
         return match ($unit) {
+            RelativeDateUnit::Second->value => Carbon::now()->{$method . 'Seconds'}($value)->toDateTimeString(),
+            RelativeDateUnit::Minute->value => Carbon::now()->{$method . 'Minutes'}($value)->toDateTimeString(),
+            RelativeDateUnit::Hour->value => Carbon::now()->{$method . 'Hours'}($value)->toDateTimeString(),
             RelativeDateUnit::Day->value => Carbon::now()->{$method . 'Days'}($value)->toDateString(),
             RelativeDateUnit::Week->value => Carbon::now()->{$method . 'Weeks'}($value)->toDateString(),
             RelativeDateUnit::Month->value => Carbon::now()->{$method . 'Months'}($value)->toDateString(),
