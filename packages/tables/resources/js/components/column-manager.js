@@ -4,9 +4,13 @@ export default function filamentTableColumnManager({ columns, isLive }) {
 
         isLoading: false,
 
+        deferredColumns: [],
+
         columns,
 
         isLive,
+
+        hasReordered: false,
 
         init() {
             if (!this.columns || this.columns.length === 0) {
@@ -14,12 +18,14 @@ export default function filamentTableColumnManager({ columns, isLive }) {
 
                 return
             }
+
+            this.deferredColumns = JSON.parse(JSON.stringify(this.columns))
         },
 
         get groupedColumns() {
             const groupedColumns = {}
 
-            this.columns
+            this.deferredColumns
                 .filter((column) => column.type === 'group')
                 .forEach((column) => {
                     groupedColumns[column.name] =
@@ -74,7 +80,7 @@ export default function filamentTableColumnManager({ columns, isLive }) {
 
         getColumn(name, groupName = null) {
             if (groupName) {
-                const group = this.columns.find(
+                const group = this.deferredColumns.find(
                     (group) =>
                         group.type === 'group' && group.name === groupName,
                 )
@@ -82,11 +88,11 @@ export default function filamentTableColumnManager({ columns, isLive }) {
                 return group?.columns?.find((column) => column.name === name)
             }
 
-            return this.columns.find((column) => column.name === name)
+            return this.deferredColumns.find((column) => column.name === name)
         },
 
         toggleGroup(groupName) {
-            const group = this.columns.find(
+            const group = this.deferredColumns.find(
                 (group) => group.type === 'group' && group.name === groupName,
             )
 
@@ -114,7 +120,7 @@ export default function filamentTableColumnManager({ columns, isLive }) {
                     column.isToggled = newValue
                 })
 
-            this.columns = [...this.columns]
+            this.deferredColumns = [...this.deferredColumns]
 
             if (this.isLive) {
                 this.applyTableColumnManager()
@@ -129,7 +135,7 @@ export default function filamentTableColumnManager({ columns, isLive }) {
             }
 
             column.isToggled = !column.isToggled
-            this.columns = [...this.columns]
+            this.deferredColumns = [...this.deferredColumns]
 
             if (this.isLive) {
                 this.applyTableColumnManager()
@@ -139,6 +145,7 @@ export default function filamentTableColumnManager({ columns, isLive }) {
         reorderColumns(sortedIds) {
             const newOrder = sortedIds.map((id) => id.split('::'))
             this.reorderTopLevel(newOrder)
+            this.hasReordered = true
 
             if (this.isLive) {
                 this.applyTableColumnManager()
@@ -146,7 +153,7 @@ export default function filamentTableColumnManager({ columns, isLive }) {
         },
 
         reorderGroupColumns(sortedIds, groupName) {
-            const group = this.columns.find(
+            const group = this.deferredColumns.find(
                 (column) =>
                     column.type === 'group' && column.name === groupName,
             )
@@ -169,7 +176,8 @@ export default function filamentTableColumnManager({ columns, isLive }) {
             })
 
             group.columns = reordered
-            this.columns = [...this.columns]
+            this.deferredColumns = [...this.deferredColumns]
+            this.hasReordered = true
 
             if (this.isLive) {
                 this.applyTableColumnManager()
@@ -177,7 +185,7 @@ export default function filamentTableColumnManager({ columns, isLive }) {
         },
 
         reorderTopLevel(newOrder) {
-            const cloned = this.columns
+            const cloned = this.deferredColumns
             const reordered = []
 
             newOrder.forEach(([type, name]) => {
@@ -195,15 +203,22 @@ export default function filamentTableColumnManager({ columns, isLive }) {
                 }
             })
 
-            this.columns = reordered
+            this.deferredColumns = reordered
         },
 
         async applyTableColumnManager() {
             this.isLoading = true
 
             try {
-                await this.$wire.call('applyTableColumnManager', this.columns)
+                this.columns = JSON.parse(JSON.stringify(this.deferredColumns))
 
+                await this.$wire.call(
+                    'applyTableColumnManager',
+                    this.columns,
+                    this.hasReordered,
+                )
+
+                this.hasReordered = false
                 this.error = undefined
             } catch (error) {
                 this.error = 'Failed to update column visibility'

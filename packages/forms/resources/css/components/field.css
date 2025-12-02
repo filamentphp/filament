@@ -14,7 +14,7 @@
         @apply flex items-start gap-x-3;
 
         & > .fi-checkbox-input {
-            @apply mt-0.5;
+            @apply mt-0.5 shrink-0;
         }
 
         & > .fi-toggle {

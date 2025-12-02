@@ -32,7 +32,7 @@ class Cluster extends Page
 
     public static function shouldRegisterNavigation(): bool
     {
-        return static::canAccessClusteredComponents();
+        return parent::shouldRegisterNavigation() && static::canAccessClusteredComponents();
     }
 
     public function mount(): void

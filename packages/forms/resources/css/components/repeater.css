@@ -288,6 +288,10 @@
             & .fi-in-entry-content {
                 @apply @xl:px-3;
             }
+
+            & .fi-fo-radio {
+                @apply @xl:px-3;
+            }
         }
     }
 
@@ -356,6 +360,10 @@
             }
 
             & .fi-in-entry-content {
+                @apply lg:px-3;
+            }
+
+            & .fi-fo-radio {
                 @apply lg:px-3;
             }
         }

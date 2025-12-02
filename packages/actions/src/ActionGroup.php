@@ -263,7 +263,7 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
         return false;
     }
 
-    public function getIcon(): string | BackedEnum
+    public function getIcon(): string | BackedEnum | Htmlable
     {
         return $this->getBaseIcon() ?? FilamentIcon::resolve(ActionsIconAlias::ACTION_GROUP) ?? Heroicon::EllipsisVertical;
     }

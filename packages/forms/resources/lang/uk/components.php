@@ -284,6 +284,10 @@ return [
 
     'markdown_editor' => [
 
+        'file_attachments_accepted_file_types_message' => 'Файли для завантаження повинні бути наступного типу: :values.',
+
+        'file_attachments_max_size_message' => 'Розмір завантажених файлів не повинен перевищувати :max кілобайт.',
+
         'tools' => [
             'attach_files' => 'Прикріпити файли',
             'blockquote' => 'Цитата',
@@ -443,6 +447,71 @@ return [
 
             ],
 
+            'grid' => [
+
+                'label' => 'Сітка',
+
+                'modal' => [
+
+                    'heading' => 'Сітка',
+
+                    'form' => [
+
+                        'preset' => [
+
+                            'label' => 'Попередньо налаштована',
+
+                            'placeholder' => 'Жоден',
+
+                            'options' => [
+                                'two' => 'Дві',
+                                'three' => 'Три',
+                                'four' => 'Чотири',
+                                'five' => 'П\'ять',
+                                'two_start_third' => 'Дві (Початок Третя)',
+                                'two_end_third' => 'Дві (Кінець Третя)',
+                                'two_start_fourth' => 'Дві (Початок Четверта)',
+                                'two_end_fourth' => 'Дві (Кінець Четверта)',
+                            ],
+                        ],
+
+                        'columns' => [
+                            'label' => 'Колонки',
+                        ],
+
+                        'from_breakpoint' => [
+
+                            'label' => 'Від точки зупинки',
+
+                            'options' => [
+                                'default' => 'Всі',
+                                'sm' => 'Маленький',
+                                'md' => 'Середній',
+                                'lg' => 'Великий',
+                                'xl' => 'Дуже великий',
+                                '2xl' => 'Величезний',
+                            ],
+
+                        ],
+
+                        'is_asymmetric' => [
+                            'label' => 'Дві асиметричні колонки',
+                        ],
+
+                        'start_span' => [
+                            'label' => 'Початковий проміжок',
+                        ],
+
+                        'end_span' => [
+                            'label' => 'Кінцевий проміжок',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
             'link' => [
 
                 'label' => 'Редагувати',
@@ -467,7 +536,35 @@ return [
 
             ],
 
+            'text_color' => [
+
+                'label' => 'Колір тексту',
+
+                'modal' => [
+
+                    'heading' => 'Колір тексту',
+
+                    'form' => [
+
+                        'color' => [
+                            'label' => 'Колір',
+                        ],
+
+                        'custom_color' => [
+                            'label' => 'Колір вибраний користувачем',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
         ],
+
+        'file_attachments_accepted_file_types_message' => 'Файли для завантаження повинні бути наступного типу: :values.',
+
+        'file_attachments_max_size_message' => 'Розмір завантажених файлів не повинен перевищувати :max кілобайт.',
 
         'no_merge_tag_search_results_message' => 'Немає результатів для тегів злиття.',
 
@@ -488,6 +585,8 @@ return [
             'h1' => 'Заголовок',
             'h2' => 'Підзаголовок',
             'h3' => 'Підпідзаголовок',
+            'grid' => 'Сітка',
+            'grid_delete' => 'Видалити сітку',
             'highlight' => 'Виділити',
             'horizontal_rule' => 'Горизонтальна лінія',
             'italic' => 'Курсив',
@@ -511,6 +610,7 @@ return [
             'table_merge_cells' => 'Обʼєднати клітинки',
             'table_split_cell' => 'Розділити клітинку',
             'table_toggle_header_row' => 'Увімкнути/вимкнути заголовок',
+            'text_color' => 'Колір тексту',
             'underline' => 'Підкреслений',
             'undo' => 'Скасувати',
         ],
