@@ -27,7 +27,7 @@
         }
 
         &.fi-fo-rich-editor-tool-with-label {
-            @apply px-1.5 items-center gap-x-1;
+            @apply items-center gap-x-1 px-1.5;
         }
     }
 
