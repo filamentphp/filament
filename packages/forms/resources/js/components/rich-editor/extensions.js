@@ -46,6 +46,7 @@ export default async ({
     editCustomBlockButtonIconHtml,
     editCustomBlockUsing,
     insertCustomBlockUsing,
+    linkProtocols,
     key,
     maxFileSize,
     maxFileSizeValidationMessage,
@@ -55,7 +56,6 @@ export default async ({
     statePath,
     textColors,
     uploadingFileMessage,
-    linkProtocols,
     $wire,
 }) => {
     const extensions = [

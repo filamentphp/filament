@@ -36,10 +36,12 @@
                         deleteCustomBlockButtonIconHtml: @js(\Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::Trash, alias: \Filament\Forms\View\FormsIconAlias::COMPONENTS_RICH_EDITOR_PANELS_CUSTOM_BLOCK_DELETE_BUTTON)->toHtml()),
                         editCustomBlockButtonIconHtml: @js(\Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::PencilSquare, alias: \Filament\Forms\View\FormsIconAlias::COMPONENTS_RICH_EDITOR_PANELS_CUSTOM_BLOCK_EDIT_BUTTON)->toHtml()),
                         extensions: @js($getTipTapJsExtensions()),
-                        key: @js($key),
+                        floatingToolbars: @js($floatingToolbars),
                         isDisabled: @js($isDisabled),
                         isLiveDebounced: @js($isLiveDebounced()),
                         isLiveOnBlur: @js($isLiveOnBlur()),
+                        key: @js($key),
+                        linkProtocols: @js($linkProtocols),
                         liveDebounce: @js($getNormalizedLiveDebounce()),
                         livewireId: @js($this->getId()),
                         maxFileSize: @js($fileAttachmentsMaxSize),
@@ -51,8 +53,6 @@
                         statePath: @js($statePath),
                         textColors: @js($getTextColorsForJs()),
                         uploadingFileMessage: @js($getUploadingFileMessage()),
-                        floatingToolbars: @js($floatingToolbars),
-                        linkProtocols: @js($linkProtocols),
                     })"
             x-bind:class="{
                 'fi-fo-rich-editor-uploading-file': isUploadingFile,
