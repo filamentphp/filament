@@ -84,9 +84,17 @@
         "pint": "pint --config pint-strict-imports.json",
         "rector": "rector",
         "test:pest": "pest --parallel",
+        "test:sqlite": "pest --configuration=phpunit.sqlite.xml --parallel",
+        "test:mysql": "pest --configuration=phpunit.mysql.xml",
+        "test:pgsql": "pest --configuration=phpunit.pgsql.xml",
+        "test:all-databases": [
+            "@test:sqlite",
+            "@test:mysql",
+            "@test:pgsql"
+        ],
         "test:phpstan": "phpstan analyse",
         "test": [
-            "@test:pest",
+            "@test:sqlite",
             "@test:phpstan"
         ]
     },

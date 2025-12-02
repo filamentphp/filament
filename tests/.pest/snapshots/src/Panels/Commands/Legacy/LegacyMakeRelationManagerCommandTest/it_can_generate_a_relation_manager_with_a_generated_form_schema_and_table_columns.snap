@@ -21,6 +21,12 @@ class TeamsRelationManager extends RelationManager
                     ->required(),
                 Forms\Components\Textarea::make('description')
                     ->columnSpanFull(),
+                Forms\Components\TextInput::make('budget')
+                    ->required()
+                    ->numeric()
+                    ->default(0),
+                Forms\Components\Select::make('company_id')
+                    ->relationship('company', 'name'),
             ]);
     }
 
@@ -30,6 +36,11 @@ class TeamsRelationManager extends RelationManager
             ->recordTitleAttribute('name')
             ->columns([
                 Tables\Columns\TextColumn::make('name')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('budget')
+                    ->numeric()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('company.name')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()

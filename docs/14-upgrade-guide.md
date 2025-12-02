@@ -14,7 +14,7 @@ import Disclosure from "@components/Disclosure.astro"
 
 - PHP 8.2+
 - Laravel v11.28+
-- Tailwind CSS v4.0+, if you’re currently using Tailwind CSS v3.0 with Filament. This doesn’t apply if you’re just using a Filament panel without a custom theme CSS file.
+- Tailwind CSS v4.1+, if you’re currently using Tailwind CSS v3.0 with Filament. This doesn’t apply if you’re just using a Filament panel without a custom theme CSS file.
 - Filament no longer requires `doctrine/dbal`, but if your application still does, and you don’t have it installed directly, you should add it to your `composer.json` file.
 
 ## Running the automated upgrade script
@@ -24,7 +24,7 @@ import Disclosure from "@components/Disclosure.astro"
 </Aside>
 
 <Aside variant="info">
-    Some plugins you're using may not be available in v4 just yet. You could temporarily remove them from your `composer.json` file until they've been upgraded, replace them with a similar plugins that are v4-compatible, wait for the plugins to be upgraded before upgrading your app, or even write PRs to help the authors upgrade them.
+    Some plugins you're using may not be available in v4 just yet. You could temporarily remove them from your `composer.json` file until they've been upgraded, replace them with similar plugins that are v4-compatible, wait for the plugins to be upgraded before upgrading your app, or even write PRs to help the authors upgrade them.
 </Aside>
 
 The first step to upgrade your Filament app is to run the automated upgrade script. This script will automatically upgrade your application to the latest version of Filament and make changes to your code, which handles most breaking changes:
@@ -534,7 +534,7 @@ In Filament v3, import and export jobs were retries continuously for 24 hours if
 
 In v4, they’re retried 3 times with a 60 second backoff between each retry.
 
-This behavior can be customized in the [importer](import#customizing-the-import-job-retries) and [exporter](export#customizing-the-export-job-retries) classes.
+This behavior can be customized in the [importer](actions/import#customizing-the-import-job-retries) and [exporter](actions/export#customizing-the-export-job-retries) classes.
 </Disclosure>
 
 ### Low-impact changes
@@ -717,7 +717,7 @@ public function table(Table $table): Table
 <Disclosure x-show="packages.includes('panels')">
 <span slot="summary">Overriding the `can*()` authorization methods on a `Resource`, `RelationManager` or `ManageRelatedRecords` class</span>
 
-Although these methods, such as `canCreate()`, `canViewAny()` and `canDelete()`weren’t documented, if you’re overriding those to provide custom authorization logic in v3, you should be aware that they aren’t always called in v4. The authorization logic has been improved to properly support [policy response objects](https://laravel.com/docs/authorization#policy-responses), and these methods were too simple as they are just able to return booleans.
+Although these methods, such as `canCreate()`, `canViewAny()` and `canDelete()` weren't documented, if you're overriding those to provide custom authorization logic in v3, you should be aware that they aren't always called in v4. The authorization logic has been improved to properly support [policy response objects](https://laravel.com/docs/authorization#policy-responses), and these methods were too simple as they are just able to return booleans.
 
 If you can make the authorization customization inside the policy of the model instead, you should do that. If you need to customize the authorization logic in the resource or relation manager class, you should override the `get*AuthorizationResponse()` methods instead, such as `getCreateAuthorizationResponse()`, `getViewAnyAuthorizationResponse()` and `getDeleteAuthorizationResponse()`. These methods are called when the authorization logic is executed, and they return a [policy response object](https://laravel.com/docs/authorization#policy-responses). If you remove the override for the `can*()` methods, the `get*AuthorizationResponse()` methods will be used to determine the authorization response boolean, so you don't have to maintain the logic twice.
 </Disclosure>

@@ -43,13 +43,21 @@ it('can create', function (): void {
         ->assertHasNoFormErrors()
         ->assertRedirect();
 
-    $this->assertDatabaseHas(Post::class, [
-        'author_id' => $newData->author->getKey(),
-        'content' => $newData->content,
-        'tags' => json_encode($newData->tags),
-        'title' => $newData->title,
-        'rating' => $newData->rating,
-    ]);
+    $record = Post::query()
+
+        ->where('author_id', $newData->author->getKey())
+
+        ->where('content', $newData->content)
+
+        ->where('title', $newData->title)
+
+        ->where('rating', $newData->rating)
+
+        ->first();
+
+    expect($record)->not->toBeNull();
+
+    expect($record->tags)->toBe($newData->tags);
 
     Event::assertDispatched(RecordCreated::class);
     Event::assertDispatched(RecordSaved::class);
@@ -88,21 +96,31 @@ it('can create another', function (): void {
         ->assertHasNoFormErrors()
         ->assertRedirect();
 
-    $this->assertDatabaseHas(Post::class, [
-        'author_id' => $newData->author->getKey(),
-        'content' => $newData->content,
-        'tags' => json_encode($newData->tags),
-        'title' => $newData->title,
-        'rating' => $newData->rating,
-    ]);
+    $record = Post::query()
 
-    $this->assertDatabaseHas(Post::class, [
-        'author_id' => $newData2->author->getKey(),
-        'content' => $newData2->content,
-        'tags' => json_encode($newData2->tags),
-        'title' => $newData2->title,
-        'rating' => $newData2->rating,
-    ]);
+        ->where('author_id', $newData->author->getKey())
+
+        ->where('content', $newData->content)
+
+        ->where('title', $newData->title)
+
+        ->where('rating', $newData->rating)
+
+        ->first();
+
+    expect($record)->not->toBeNull();
+
+    expect($record->tags)->toBe($newData->tags);
+
+    $record2 = Post::query()
+        ->where('author_id', $newData2->author->getKey())
+        ->where('content', $newData2->content)
+        ->where('title', $newData2->title)
+        ->where('rating', $newData2->rating)
+        ->first();
+
+    expect($record2)->not->toBeNull();
+    expect($record2->tags)->toBe($newData2->tags);
 });
 
 it('can create another and preserve data', function (): void {
@@ -136,21 +154,31 @@ it('can create another and preserve data', function (): void {
         ->assertHasNoFormErrors()
         ->assertRedirect();
 
-    $this->assertDatabaseHas(Post::class, [
-        'author_id' => $newData->author->getKey(),
-        'content' => $newData->content,
-        'tags' => json_encode($newData->tags),
-        'title' => $newData->title,
-        'rating' => $newData->rating,
-    ]);
+    $record = Post::query()
 
-    $this->assertDatabaseHas(Post::class, [
-        'author_id' => $newData2->author->getKey(),
-        'content' => $newData2->content,
-        'tags' => json_encode($newData->tags),
-        'title' => $newData2->title,
-        'rating' => $newData->rating,
-    ]);
+        ->where('author_id', $newData->author->getKey())
+
+        ->where('content', $newData->content)
+
+        ->where('title', $newData->title)
+
+        ->where('rating', $newData->rating)
+
+        ->first();
+
+    expect($record)->not->toBeNull();
+
+    expect($record->tags)->toBe($newData->tags);
+
+    $record2 = Post::query()
+        ->where('author_id', $newData2->author->getKey())
+        ->where('content', $newData2->content)
+        ->where('title', $newData2->title)
+        ->where('rating', $newData->rating)
+        ->first();
+
+    expect($record2)->not->toBeNull();
+    expect($record2->tags)->toBe($newData->tags);
 });
 
 it('can validate input', function (): void {

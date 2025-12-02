@@ -286,7 +286,7 @@ Now, users will be redirected to the billing page if they don't have an active s
 
 #### Requiring a subscription for specific resources and pages
 
-Sometimes, you may wish to only require a subscription for certain [resources](resources) and [custom pages](../navigation/custom-pages) in your app. You can do this by returning `true` from the `isTenantSubscriptionRequired()` method on the resource or page class:
+Sometimes, you may wish to only require a subscription for certain [resources](../resources/overview) and [custom pages](../navigation/custom-pages) in your app. You can do this by returning `true` from the `isTenantSubscriptionRequired()` method on the resource or page class:
 
 ```php
 public static function isTenantSubscriptionRequired(Panel $panel): bool
@@ -485,7 +485,7 @@ However, this is a sign that Filament's tenancy feature is not suitable for your
 
 ## Setting up avatars
 
-Out of the box, Filament uses [ui-avatars.com](https://ui-avatars.com) to generate avatars based on a user's name. However, if you user model has an `avatar_url` attribute, that will be used instead. To customize how Filament gets a user's avatar URL, you can implement the `HasAvatar` contract:
+Out of the box, Filament uses [ui-avatars.com](https://ui-avatars.com) to generate avatars based on a user's name. However, if your user model has an `avatar_url` attribute, that will be used instead. To customize how Filament gets a user's avatar URL, you can implement the `HasAvatar` contract:
 
 ```php
 <?php

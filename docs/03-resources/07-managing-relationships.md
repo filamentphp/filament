@@ -379,6 +379,38 @@ AttachAction::make()
     )
 ```
 
+#### Selecting records to attach using a modal table
+
+You may use the `tableSelect()` method to select records in the attachment modal using a full Filament table, instead of a simple select dropdown:
+
+```php
+use App\Filament\Resources\Products\Tables\ProductsTable;
+use Filament\Actions\AttachAction;
+
+AttachAction::make()
+    ->tableSelect(ProductsTable::class)
+```
+
+In this example, the `ProductsTable` class is a standard Filament table class, with a `configure()` method that defines the table's columns:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
+
+public static function configure(Table $table): Table
+{
+    return $table
+        ->columns([
+            TextColumn::make('name'),
+            TextColumn::make('sku'),
+            // ...
+        ])
+        ->filters([
+            // ...
+        ]);
+}
+```
+
 ### Handling duplicates
 
 By default, you will not be allowed to attach a record more than once. This is because you must also set up a primary `id` column on the pivot table for this feature to work.

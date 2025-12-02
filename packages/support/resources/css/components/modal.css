@@ -373,10 +373,10 @@
 
     @supports (container-type: inline-size) {
         & > .fi-modal-window-ctn > .fi-modal-window {
-            @apply @container;
-
             & .fi-modal-footer {
                 &.fi-align-center {
+                    @apply @container;
+
                     & .fi-modal-footer-actions {
                         @apply @sm:grid @sm:grid-cols-[repeat(auto-fit,minmax(0,1fr))];
                     }

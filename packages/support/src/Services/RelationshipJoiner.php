@@ -75,6 +75,10 @@ class RelationshipJoiner
                     continue;
                 }
 
+                if (array_key_exists('type', $order) && $order['type'] === 'Raw' && preg_match('/\b(asc|desc)\b/i', $order['sql'])) {
+                    continue;
+                }
+
                 $columnValue = $order['column'] ?? new Expression($order['sql']);
 
                 if (

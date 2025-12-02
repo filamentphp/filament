@@ -155,16 +155,14 @@ Wizard::make([
 ])->skippable()
 ```
 
-Optionally, the `skippable()` method accepts a boolean value to control if the step is skippable or not:
+Optionally, the `skippable()` method accepts a boolean value to control if the steps are skippable or not:
 
 ```php
-use Filament\Schemas\Components\Wizard\Step;
+use Filament\Schemas\Components\Wizard;
 
-Step::make('Order')
-    ->skippable(FeatureFlag::active())
-    ->schema([
-        // ...
-    ]),
+Wizard::make([
+    // ...
+])->skippable(FeatureFlag::active())
 ```
 
 <UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `skippable()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
