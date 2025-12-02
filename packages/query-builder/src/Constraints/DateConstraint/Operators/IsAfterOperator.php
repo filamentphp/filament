@@ -10,10 +10,11 @@ use Filament\Forms\Components\TextInput;
 use Filament\QueryBuilder\Constraints\DateConstraint\RelativeDateUnit;
 use Filament\QueryBuilder\Constraints\Operators\Operator;
 use Filament\Schemas\Components\Component;
-use Filament\Schemas\Components\Group;
+use Filament\Schemas\Components\FusedGroup;
 use Filament\Schemas\Components\Utilities\Get;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Str;
 
 class IsAfterOperator extends Operator
 {
@@ -70,23 +71,25 @@ class IsAfterOperator extends Operator
         $preset = $settings['preset'] ?? 'custom';
 
         if ($preset !== 'custom') {
-            return __("filament-query-builder::query-builder.operators.date.presets.{$preset}");
+            return Str::lower(__("filament-query-builder::query-builder.operators.date.presets.{$preset}"));
         }
 
         $value = (int) ($settings['relative_value'] ?? 1);
         $unit = $settings['relative_unit'] ?? RelativeDateUnit::Day->value;
         $tense = $settings['tense'] ?? 'past';
 
+        $unitLabel = trans_choice("filament-query-builder::query-builder.operators.date.units.{$unit}", $value);
+
         if ($tense === 'future') {
             return __('filament-query-builder::query-builder.operators.date.relative_description_future', [
                 'value' => $value,
-                'unit' => __("filament-query-builder::query-builder.operators.date.units.{$unit}"),
+                'unit' => $unitLabel,
             ]);
         }
 
         return __('filament-query-builder::query-builder.operators.date.relative_description', [
             'value' => $value,
-            'unit' => __("filament-query-builder::query-builder.operators.date.units.{$unit}"),
+            'unit' => $unitLabel,
         ]);
     }
 
@@ -148,7 +151,7 @@ class IsAfterOperator extends Operator
                 ->default('past_month')
                 ->hidden(fn (Get $get): bool => $get('mode') !== 'relative')
                 ->required(fn (Get $get): bool => $get('mode') === 'relative'),
-            Group::make([
+            FusedGroup::make([
                 Select::make('tense')
                     ->label(__('filament-query-builder::query-builder.operators.date.form.tense.label'))
                     ->selectablePlaceholder(false)
@@ -175,6 +178,7 @@ class IsAfterOperator extends Operator
                     ->required(),
             ])
                 ->columns(3)
+                ->columnSpanFull()
                 ->hidden(fn (Get $get): bool => $get('mode') !== 'relative' || $get('preset') !== 'custom'),
         ];
     }

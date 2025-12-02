@@ -147,6 +147,14 @@ return [
             ],
 
             'units' => [
+                'day' => '{1} day|[2,*] days',
+                'week' => '{1} week|[2,*] weeks',
+                'month' => '{1} month|[2,*] months',
+                'quarter' => '{1} quarter|[2,*] quarters',
+                'year' => '{1} year|[2,*] years',
+            ],
+
+            'unit_labels' => [
                 'day' => 'Days',
                 'week' => 'Weeks',
                 'month' => 'Months',
