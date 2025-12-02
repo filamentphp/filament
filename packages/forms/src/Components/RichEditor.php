@@ -234,6 +234,11 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
                 ->jsHandler('$getEditor()?.chain().focus().toggleHeaderRow().run()')
                 ->icon('fi-o-table-toggle-header-row')
                 ->iconAlias('forms:components.rich-editor.toolbar.table_toggle_header_row'),
+            RichEditorTool::make('tableToggleHeaderCell')
+                ->label(__('filament-forms::components.rich_editor.tools.table_toggle_header_cell'))
+                ->jsHandler('$getEditor()?.chain().focus().toggleHeaderCell().run()')
+                ->icon('fi-o-table-toggle-header-cell')
+                ->iconAlias('forms:components.rich-editor.toolbar.table_toggle_header_cell'),
             RichEditorTool::make('tableDelete')
                 ->label(__('filament-forms::components.rich_editor.tools.table_delete'))
                 ->jsHandler('$getEditor()?.chain().focus().deleteTable().run()')
@@ -687,7 +692,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
                 'tableAddColumnBefore', 'tableAddColumnAfter', 'tableDeleteColumn',
                 'tableAddRowBefore', 'tableAddRowAfter', 'tableDeleteRow',
                 'tableMergeCells', 'tableSplitCell',
-                'tableToggleHeaderRow',
+                'tableToggleHeaderRow', 'tableToggleHeaderCell',
                 'tableDelete',
             ],
         ];

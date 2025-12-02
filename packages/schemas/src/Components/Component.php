@@ -86,6 +86,7 @@ class Component extends ViewComponent
             'get' => [$this->makeGetUtility()],
             'livewire' => [$this->getLivewire()],
             'model' => [$this->getModel()],
+            'parentRepeaterItemIndex' => [$this->getParentRepeaterItemIndex()],
             'rawState' => [$this->getRawState()],
             'record' => [$this->getRecord()],
             'set' => [$this->makeSetUtility()],
