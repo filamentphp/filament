@@ -194,30 +194,6 @@ We also define a bulk action. When bulk actions are defined, each row in the tab
 
 Actions can also open modals to request confirmation from the user, as well as render forms inside to collect extra data. It's a good idea to read the [Actions documentation](../actions) to learn more about their extensive capabilities throughout Filament.
 
-## Configuring reset button position
-
-By default, reset buttons in filters and the column manager appear in the header. You can move them next to the apply button using the `resetButtonPosition()` method:
-
-```php
-use Filament\Tables\Enums\ResetButtonPosition;
-use Filament\Tables\Table;
-
-public function table(Table $table): Table
-{
-    return $table
-        ->filters([
-            // ...
-        ])
-        ->resetButtonPosition(ResetButtonPosition::NextToApply);
-}
-```
-
-Available positions:
-- `ResetButtonPosition::Default` - Appears in the header (default)
-- `ResetButtonPosition::NextToApply` - Appears next to the apply button
-
-This setting applies to both filters and the column manager.
-
 ## Pagination
 
 By default, Filament tables will be paginated. The user can choose between 5, 10, 25, and 50 records per page. If there are more records than the selected number, the user can navigate between pages using the pagination buttons.

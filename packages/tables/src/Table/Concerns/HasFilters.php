@@ -11,7 +11,7 @@ use Filament\Support\Enums\Width;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Enums\FiltersLayout;
-use Filament\Tables\Enums\ResetButtonPosition;
+use Filament\Tables\Enums\FiltersResetActionPosition;
 use Filament\Tables\Filters\BaseFilter;
 use Filament\Tables\View\TablesIconAlias;
 
@@ -45,7 +45,7 @@ trait HasFilters
 
     protected ?Closure $modifyFiltersApplyActionUsing = null;
 
-    protected ResetButtonPosition | Closure | null $resetButtonPosition = null;
+    protected FiltersResetActionPosition | Closure | null $filtersResetActionPosition = null;
 
     public function deferFilters(bool | Closure $condition = true): static
     {
@@ -126,16 +126,16 @@ trait HasFilters
         return $this;
     }
 
-    public function resetButtonPosition(ResetButtonPosition | Closure | null $position): static
+    public function filtersResetActionPosition(FiltersResetActionPosition | Closure | null $position): static
     {
-        $this->resetButtonPosition = $position;
+        $this->filtersResetActionPosition = $position;
 
         return $this;
     }
 
-    public function getResetButtonPosition(): ResetButtonPosition
+    public function getFiltersResetActionPosition(): FiltersResetActionPosition
     {
-        return $this->evaluate($this->resetButtonPosition) ?? ResetButtonPosition::Default;
+        return $this->evaluate($this->filtersResetActionPosition) ?? FiltersResetActionPosition::Header;
     }
 
     public function filtersLayout(FiltersLayout | Closure | null $filtersLayout): static

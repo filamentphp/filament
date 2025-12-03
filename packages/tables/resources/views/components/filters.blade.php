@@ -1,8 +1,12 @@
+@php
+    use Filament\Tables\Enums\FiltersResetActionPosition;
+@endphp
+
 @props([
     'applyAction',
     'form',
     'headingTag' => 'h3',
-    'resetButtonPosition' => Filament\Tables\Enums\ResetButtonPosition::Default,
+    'resetActionPosition' => FiltersResetActionPosition::Header,
 ])
 
 <div {{ $attributes->class(['fi-ta-filters']) }}>
@@ -11,7 +15,7 @@
             {{ __('filament-tables::table.filters.heading') }}
         </{{ $headingTag }}>
 
-        @if ($resetButtonPosition === Filament\Tables\Enums\ResetButtonPosition::Default)
+        @if ($resetActionPosition === FiltersResetActionPosition::Header)
             <div>
                 <x-filament::link
                     :attributes="
@@ -34,13 +38,13 @@
 
     {{ $form }}
 
-    @if ($applyAction->isVisible() || $resetButtonPosition === Filament\Tables\Enums\ResetButtonPosition::NextToApply)
+    @if ($applyAction->isVisible() || $resetActionPosition === FiltersResetActionPosition::Footer)
         <div class="fi-ta-filters-actions-ctn">
             @if ($applyAction->isVisible())
                 {{ $applyAction }}
             @endif
 
-            @if ($resetButtonPosition === Filament\Tables\Enums\ResetButtonPosition::NextToApply)
+            @if ($resetActionPosition === FiltersResetActionPosition::Footer)
                 <x-filament::button
                     color="danger"
                     wire:click="resetTableFiltersForm"

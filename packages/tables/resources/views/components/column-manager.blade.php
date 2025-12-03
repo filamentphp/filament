@@ -1,3 +1,9 @@
+@php
+    use Filament\Support\Enums\GridDirection;
+    use Filament\Tables\Enums\ColumnManagerResetActionPosition;
+    use Illuminate\View\ComponentAttributeBag;
+@endphp
+
 @props([
     'applyAction',
     'columns' => null,
@@ -5,13 +11,8 @@
     'hasToggleableColumns',
     'headingTag' => 'h3',
     'reorderAnimationDuration' => 300,
-    'resetButtonPosition' => Filament\Tables\Enums\ResetButtonPosition::Default,
+    'resetActionPosition' => ColumnManagerResetActionPosition::Header,
 ])
-
-@php
-    use Filament\Support\Enums\GridDirection;
-    use Illuminate\View\ComponentAttributeBag;
-@endphp
 
 <div class="fi-ta-col-manager">
     <div
@@ -26,7 +27,7 @@
                 {{ __('filament-tables::table.column_manager.heading') }}
             </{{ $headingTag }}>
 
-            @if ($resetButtonPosition === Filament\Tables\Enums\ResetButtonPosition::Default)
+            @if ($resetActionPosition === ColumnManagerResetActionPosition::Header)
                 <div>
                     <x-filament::link
                         :attributes="
@@ -187,13 +188,13 @@
             </template>
         </div>
 
-        @if ($applyAction->isVisible() || $resetButtonPosition === Filament\Tables\Enums\ResetButtonPosition::NextToApply)
+        @if ($applyAction->isVisible() || $resetActionPosition === ColumnManagerResetActionPosition::Footer)
             <div class="fi-ta-col-manager-apply-action-ctn">
                 @if ($applyAction->isVisible())
                     {{ $applyAction }}
                 @endif
 
-                @if ($resetButtonPosition === Filament\Tables\Enums\ResetButtonPosition::NextToApply)
+                @if ($resetActionPosition === ColumnManagerResetActionPosition::Footer)
                     <x-filament::button
                         color="danger"
                         wire:click="resetTableColumnManager"
