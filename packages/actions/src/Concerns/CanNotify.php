@@ -11,6 +11,8 @@ trait CanNotify
 {
     protected Notification | Closure | null $failureNotification = null;
 
+    protected bool $successNotificationIsDisabled = false;
+
     protected Notification | Closure | null $successNotification = null;
 
     protected Notification | Closure | null $unauthorizedNotification = null;
@@ -118,6 +120,10 @@ trait CanNotify
 
     public function sendSuccessNotification(): static
     {
+        if ($this->successNotificationIsDisabled) {
+            return $this;
+        }
+
         $notification = $this->evaluate($this->successNotification, [
             'notification' => $notification = Notification::make()
                 ->success()
@@ -127,6 +133,13 @@ trait CanNotify
         if (filled($notification?->getTitle())) {
             $notification->send();
         }
+
+        return $this;
+    }
+
+    public function disableSuccessNotification(): static
+    {
+        $this->successNotificationIsDisabled = true;
 
         return $this;
     }
