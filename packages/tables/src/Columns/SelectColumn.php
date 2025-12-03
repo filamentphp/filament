@@ -926,6 +926,7 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
                     isHtmlAllowed: ' . Js::from($this->isOptionsHtmlAllowed()) . ',
                     isNative: ' . Js::from($isNative) . ',
                     isSearchable: ' . Js::from($this->areOptionsSearchable()) . ',
+                    isPreloaded: ' . Js::from($this->areOptionsPreloaded()) . ',
                     loadingMessage: ' . Js::from($this->getOptionsLoadingMessage()) . ',
                     name: ' . Js::from($name) . ',
                     noSearchResultsMessage: ' . Js::from($this->getNoOptionsSearchResultsMessage()) . ',

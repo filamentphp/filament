@@ -31,6 +31,7 @@ export class Select {
         isDisabled = false,
         isMultiple = false,
         isSearchable = false,
+        isPreloaded = false,
         getOptionLabelUsing = null,
         getOptionLabelsUsing = null,
         getOptionsUsing = null,
@@ -66,6 +67,7 @@ export class Select {
         this.isDisabled = isDisabled
         this.isMultiple = isMultiple
         this.isSearchable = isSearchable
+        this.isPreloaded = isPreloaded
         this.getOptionLabelUsing = getOptionLabelUsing
         this.getOptionLabelsUsing = getOptionLabelsUsing
         this.getOptionsUsing = getOptionsUsing
@@ -430,17 +432,12 @@ export class Select {
 
         // If no options were rendered
         if (totalRenderedCount === 0) {
-            const isMultipleWithNoSelections =
-                this.isMultiple &&
-                (!Array.isArray(this.state) || this.state.length === 0)
-
-            // If there's a search query or preloaded option enabled, show "No results" message
-            // Also show message on fields accepting multiple selections that are left with no more options to choose,
-            // or simply started withou any options at all
+            // Show "No results" message if:
+            // - There is an active search query, or
+            // - The field is searchable and preloaded, but there is no search query and no options to display
             if (
                 this.searchQuery ||
-                (this.hasDynamicOptions &&
-                    (!this.isMultiple || isMultipleWithNoSelections))
+                (this.isSearchable && this.isPreloaded && !this.searchQuery)
             ) {
                 this.showNoResultsMessage()
             }
@@ -1422,8 +1419,7 @@ export class Select {
                 // Hide loading state
                 this.hideLoadingState()
             }
-        } else {
-            // If not using dynamic options, clear any stale messages from previous state
+        } else if (!this.isPreloaded || this.searchQuery) {
             this.hideLoadingState()
         }
 
