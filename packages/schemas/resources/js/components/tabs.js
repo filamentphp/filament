@@ -1,17 +1,19 @@
 export default function tabsSchemaComponent({
     activeTab,
+    isScrollable,
     isTabPersistedInQueryString,
     livewireId,
     tab,
     tabQueryStringKey,
-    isScrollable,
 }) {
     return {
-        tab,
         isScrollable,
+        tab,
+        withinDropdownIndex: null,
+        withinDropdownMounted: false,
+
         init() {
             const tabs = this.getTabs()
-
             const queryString = new URLSearchParams(window.location.search)
 
             if (
@@ -52,12 +54,81 @@ export default function tabsSchemaComponent({
             }
         },
 
-        getTabs() {
-            if (!this.$refs.tabsData) {
-                return []
+        calculateAvailableWidth(containerEl) {
+            const styles = window.getComputedStyle(containerEl)
+
+            return (
+                Math.floor(containerEl.clientWidth) -
+                Math.ceil(parseFloat(styles.paddingLeft)) * 2
+            )
+        },
+
+        calculateDropdownTriggerWidth(triggerEl) {
+            const styles = window.getComputedStyle(triggerEl)
+            const iconEl = triggerEl.querySelector('.fi-icon')
+
+            return (
+                Math.ceil(iconEl.clientWidth) +
+                Math.ceil(parseFloat(styles.columnGap))
+            )
+        },
+
+        calculateGapWidth(containerEl) {
+            const styles = window.getComputedStyle(containerEl)
+
+            return Math.ceil(parseFloat(styles.columnGap))
+        },
+
+        findOverflowIndex(tabElements, availableWidth, gapWidth, triggerWidth) {
+            let remainingWidth = availableWidth
+
+            for (let i = 0; i < tabElements.length; i++) {
+                const currentTabWidth =
+                    Math.ceil(tabElements[i].clientWidth) + gapWidth
+
+                const widestRemainingTab = tabElements
+                    .slice(i)
+                    .reduce((widest, current) =>
+                        current.clientWidth > widest.clientWidth
+                            ? current
+                            : widest,
+                    )
+
+                const requiredWidth =
+                    Math.ceil(widestRemainingTab.clientWidth) +
+                    gapWidth +
+                    triggerWidth
+
+                if (remainingWidth - requiredWidth <= 0) {
+                    return i
+                }
+
+                remainingWidth -= currentTabWidth
             }
 
-            return JSON.parse(this.$refs.tabsData.value)
+            return -1
+        },
+
+        get isDropdownButtonVisible() {
+            if (!this.withinDropdownMounted) {
+                return true
+            }
+
+            if (this.withinDropdownIndex === null) {
+                return false
+            }
+
+            const activeTabIndex = this.getTabs().findIndex(
+                (tab) => tab === this.tab,
+            )
+
+            return activeTabIndex < this.withinDropdownIndex
+        },
+
+        getTabs() {
+            return this.$refs.tabsData
+                ? JSON.parse(this.$refs.tabsData.value)
+                : []
         },
 
         updateQueryString() {
@@ -71,97 +142,31 @@ export default function tabsSchemaComponent({
             history.replaceState(null, document.title, url.toString())
         },
 
-        withinDropdownMounted: false,
-        withinDropdownIndex: null,
-        get isDropDownButtonVisible() {
-            return (
-                (this.withinDropdownIndex !== null &&
-                    this.getTabs().findIndex((tab) => tab === this.tab) <
-                        this.withinDropdownIndex) ||
-                !this.withinDropdownMounted
-            )
-        },
-
         async updateTabsWithinDropdown() {
-            this.withinDropdownMounted = false
             this.withinDropdownIndex = null
+            this.withinDropdownMounted = false
 
             await this.$nextTick()
 
-            const tabs = this.getTabs()
-
-            const tabsContainerElement = this.$el.querySelector('.fi-tabs')
-            const dropdownTriggerElement = tabsContainerElement.querySelector(
+            const containerEl = this.$el.querySelector('.fi-tabs')
+            const triggerEl = containerEl.querySelector(
                 '.fi-tabs-item:last-child',
             )
-            const dropdownTriggerIconElement =
-                dropdownTriggerElement.querySelector('.fi-icon')
+            const tabElements = Array.from(containerEl.children).slice(0, -1)
 
-            const tabsContainerElementComputedStyles =
-                window.getComputedStyle(tabsContainerElement)
+            const availableWidth = this.calculateAvailableWidth(containerEl)
+            const gapWidth = this.calculateGapWidth(containerEl)
+            const triggerWidth = this.calculateDropdownTriggerWidth(triggerEl)
 
-            const dropdownTriggerElementComputedStyles =
-                window.getComputedStyle(dropdownTriggerElement)
+            const overflowIndex = this.findOverflowIndex(
+                tabElements,
+                availableWidth,
+                gapWidth,
+                triggerWidth,
+            )
 
-            const dropDownTriggerDimensions = {
-                width: Math.ceil(dropdownTriggerElement.clientWidth),
-                iconWidth: Math.ceil(dropdownTriggerIconElement.clientWidth),
-                gapWidth: Math.ceil(
-                    parseFloat(dropdownTriggerElementComputedStyles.columnGap),
-                ),
-            }
-
-            const tabsContainerElementDimensions = {
-                width: Math.floor(tabsContainerElement.clientWidth),
-                padding:
-                    Math.ceil(
-                        parseFloat(
-                            tabsContainerElementComputedStyles.paddingLeft,
-                        ),
-                    ) * 2,
-                gapWidth: Math.ceil(
-                    parseFloat(tabsContainerElementComputedStyles.columnGap),
-                ),
-            }
-
-            let tabsContainerAvailableWidth =
-                tabsContainerElementDimensions.width -
-                tabsContainerElementDimensions.padding
-
-            const maxVisibleTabs = Array.from(tabsContainerElement.children)
-                .slice(0, -1)
-                .findIndex((tab, index, tabs) => {
-                    const nextWidestTab = tabs
-                        .slice(index)
-                        .reduce((max, current) => {
-                            return max.clientWidth > current.clientWidth
-                                ? max
-                                : current
-                        }, tab)
-
-                    const nextWidestTabWidth =
-                        Math.ceil(nextWidestTab.clientWidth) +
-                        tabsContainerElementDimensions.gapWidth +
-                        dropDownTriggerDimensions.iconWidth +
-                        dropDownTriggerDimensions.gapWidth
-
-                    const remainingSpace =
-                        tabsContainerAvailableWidth - nextWidestTabWidth
-
-                    if (remainingSpace <= 0) {
-                        return true
-                    }
-
-                    const currentTabWidth =
-                        Math.ceil(tab.clientWidth) +
-                        tabsContainerElementDimensions.gapWidth
-
-                    tabsContainerAvailableWidth =
-                        tabsContainerAvailableWidth - currentTabWidth
-                })
-
-            if (maxVisibleTabs !== -1) {
-                this.withinDropdownIndex = maxVisibleTabs - 1
+            if (overflowIndex !== -1) {
+                this.withinDropdownIndex = overflowIndex
             }
 
             this.withinDropdownMounted = true
