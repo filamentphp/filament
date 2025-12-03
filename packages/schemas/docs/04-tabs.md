@@ -193,6 +193,8 @@ Tabs::make('Tabs')
     ->horizontal(scrollable: false)
 ```
 
+When horizontal tabs are not scrollable, the component automatically detects the available width. If not all tabs can fit, a final dropdown button will appear. Any tabs that exceed the available width will be grouped inside this dropdown automatically.
+
 ## Using vertical tabs
 
 You can render the tabs vertically by using the `vertical()` method:
