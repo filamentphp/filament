@@ -125,7 +125,7 @@
                             <x-filament::tabs.item
                                 :alpine-active="'tab === \'' . $tabKey . '\''"
                                 :attributes="$tab->getExtraAttributeBag()"
-                                icon="heroicon-o-chevron-down"
+                                icon="heroicon-m-chevron-down"
                                 :icon-position="IconPosition::After"
                                 :x-cloak="$tabVisibilityJs !== null"
                                 :x-show="$tabVisibilityJs"
@@ -136,7 +136,7 @@
 
                         <x-filament::tabs.item x-show="isDropdownButtonVisible">
                             <x-filament::icon
-                                icon="heroicon-c-ellipsis-horizontal"
+                                icon="heroicon-m-ellipsis-horizontal"
                             />
                         </x-filament::tabs.item>
                     </x-slot>
@@ -149,7 +149,7 @@
 
                             <x-filament::dropdown.list.item
                                 :icon="$tab->getIcon()"
-                                x-bind:class="{ 'fi-active': tab === '{{ $tabKey }}' }"
+                                x-bind:class="{ 'fi-selected': tab === '{{ $tabKey }}' }"
                                 :x-on:click="'tab = \'' . $tabKey . '\'; close($event);'"
                                 :x-show="$index . ' >= withinDropdownIndex'"
                             >
