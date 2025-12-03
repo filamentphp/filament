@@ -91,11 +91,11 @@ return [
             ],
 
             'collapse_all' => [
-                'label' => 'ដួលរលំទាំងអស់។',
+                'label' => 'ដួលរលំទាំងអស់',
             ],
 
             'expand_all' => [
-                'label' => 'ពង្រីកទាំងអស់។',
+                'label' => 'ពង្រីកទាំងអស់',
             ],
 
         ],
@@ -348,11 +348,11 @@ return [
             ],
 
             'collapse_all' => [
-                'label' => 'ដួលរលំទាំងអស់។',
+                'label' => 'ដួលរលំទាំងអស់',
             ],
 
             'expand_all' => [
-                'label' => 'ពង្រីកទាំងអស់។',
+                'label' => 'ពង្រីកទាំងអស់',
             ],
 
         ],
@@ -468,7 +468,7 @@ return [
     ],
 
     'tags_input' => [
-        'placeholder' => 'ស្លាកថ្មី។',
+        'placeholder' => 'ស្លាកថ្មី',
     ],
 
     'text_input' => [

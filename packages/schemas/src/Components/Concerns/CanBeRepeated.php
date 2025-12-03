@@ -3,27 +3,61 @@
 namespace Filament\Schemas\Components\Concerns;
 
 use Filament\Forms\Components\Repeater;
+use Filament\Schemas\Schema;
 
 trait CanBeRepeated
 {
-    protected Repeater | bool | null $cachedParentRepeater = null;
+    protected Schema | bool | null $cachedParentRepeaterItem = null;
 
     public function getParentRepeater(): ?Repeater
     {
-        if (filled($this->cachedParentRepeater)) {
-            return $this->cachedParentRepeater ?: null;
+        $repeater = $this->getParentRepeaterItem()?->getParentComponent();
+
+        assert($repeater instanceof Repeater);
+
+        return $repeater;
+    }
+
+    public function getParentRepeaterItem(): ?Schema
+    {
+        if (filled($this->cachedParentRepeaterItem)) {
+            return $this->cachedParentRepeaterItem ?: null;
         }
 
-        $parentComponent = $this->getContainer()->getParentComponent();
+        $container = $this->getContainer();
+
+        $parentComponent = $container->getParentComponent();
 
         if (! $parentComponent) {
-            $this->cachedParentRepeater = false;
+            $this->cachedParentRepeaterItem = false;
         } elseif ($parentComponent instanceof Repeater) {
-            $this->cachedParentRepeater = $parentComponent;
+            $this->cachedParentRepeaterItem = $container;
         } else {
-            $this->cachedParentRepeater = $parentComponent->getParentRepeater();
+            $this->cachedParentRepeaterItem = $parentComponent->getParentRepeaterItem();
         }
 
-        return $this->cachedParentRepeater ?: null;
+        return $this->cachedParentRepeaterItem ?: null;
+    }
+
+    public function getParentRepeaterItemIndex(): int
+    {
+        $item = $this->getParentRepeaterItem();
+
+        if (! $item) {
+            return 0;
+        }
+
+        $keys = array_keys($item->getParentComponent()->getState());
+
+        $index = array_search(
+            $item->getStatePath(isAbsolute: false),
+            $keys,
+        );
+
+        if ($index === false) {
+            return 0;
+        }
+
+        return $index;
     }
 }

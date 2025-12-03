@@ -6,7 +6,7 @@ import UtilityInjection from "@components/UtilityInjection.astro"
 
 ## Introduction
 
-Often, you will want to use a [select field](../../forms/fields/select) instead of a checkbox. This is especially true when you want to filter a column based on a set of pre-defined options that the user can choose from. To do this, you can create a filter using the `SelectFilter` class:
+Often, you will want to use a [select field](../../forms/select) instead of a checkbox. This is especially true when you want to filter a column based on a set of pre-defined options that the user can choose from. To do this, you can create a filter using the `SelectFilter` class:
 
 ```php
 use Filament\Tables\Filters\SelectFilter;
@@ -19,7 +19,7 @@ SelectFilter::make('status')
     ])
 ```
 
-The `options()` that are passed to the filter are the same as those that are passed to the [select field](../../forms/fields/select).
+The `options()` that are passed to the filter are the same as those that are passed to the [select field](../../forms/select).
 
 <UtilityInjection set="tableFilters" version="4.x">As well as allowing a static value, the `options()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 

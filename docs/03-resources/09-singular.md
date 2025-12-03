@@ -10,7 +10,7 @@ Sometimes there is no need for a table that lists records in a resource. There i
 
 For example, a CMS might have a `Page` Eloquent model and a `PageResource`, but you may also want to create a singular page outside the `PageResource` for editing the "homepage" of the website. This allows the user to directly edit the homepage without having to navigate to the `PageResource` and find the homepage record in the table.
 
-Other examples of this include a "Settings" page, or a "Profile" page for the currently logged-in user. For these use cases, though, we recommend that you use the [Spatie Settings plugin](/plugins/filament-spatie-settings) and the [Profile](../users#authentication-features) features of Filament, which require less code to implement.
+Other examples of this include a "Settings" page, or a "Profile" page for the currently logged-in user. For these use cases, though, we recommend that you use the [Spatie Settings plugin](https://filamentphp.com/plugins/filament-spatie-settings) and the [Profile](../users/overview#authentication-features) features of Filament, which require less code to implement.
 
 ## Creating a singular resource
 

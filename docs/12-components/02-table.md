@@ -40,7 +40,7 @@ Route::get('products', ListProducts::class);
 There are 3 tasks when adding a table to a Livewire component class:
 
 1) Implement the `HasTable` and `HasSchemas` interfaces, and use the `InteractsWithTable` and `InteractsWithSchemas` traits.
-2) Add a `table()` method, which is where you configure the table. [Add the table's columns, filters, and actions](getting-started#columns).
+2) Add a `table()` method, which is where you configure the table. [Add the table's columns, filters, and actions](../tables/overview#columns).
 3) Make sure to define the base query that will be used to fetch rows in the table. For example, if you're listing products from your `Product` model, you will want to return `Product::query()`.
 
 ```php

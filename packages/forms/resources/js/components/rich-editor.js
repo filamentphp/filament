@@ -11,10 +11,12 @@ export default function richEditorFormComponent({
     deleteCustomBlockButtonIconHtml,
     editCustomBlockButtonIconHtml,
     extensions,
-    key,
+    floatingToolbars,
     isDisabled,
     isLiveDebounced,
     isLiveOnBlur,
+    key,
+    linkProtocols,
     liveDebounce,
     livewireId,
     maxFileSize,
@@ -26,7 +28,6 @@ export default function richEditorFormComponent({
     statePath,
     textColors,
     uploadingFileMessage,
-    floatingToolbars,
 }) {
     let editor
     let eventListeners = []
@@ -69,6 +70,7 @@ export default function richEditorFormComponent({
                             },
                             { schemaComponent: key },
                         ),
+                    floatingToolbars,
                     insertCustomBlockUsing: (id, dragPosition = null) =>
                         this.$wire.mountAction(
                             'customBlock',
@@ -76,6 +78,7 @@ export default function richEditorFormComponent({
                             { schemaComponent: key },
                         ),
                     key,
+                    linkProtocols,
                     maxFileSize,
                     maxFileSizeValidationMessage,
                     mergeTags,
@@ -85,7 +88,6 @@ export default function richEditorFormComponent({
                     textColors,
                     uploadingFileMessage,
                     $wire: this.$wire,
-                    floatingToolbars,
                 }),
                 content: this.state,
             })

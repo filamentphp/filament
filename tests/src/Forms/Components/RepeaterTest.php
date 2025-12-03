@@ -479,6 +479,55 @@ class TestComponentWithEnumSelectRepeater extends Livewire
     }
 }
 
+it('can inject `$parentRepeaterItemIndex` into component configuration closures', function (): void {
+    $undoRepeaterFake = Repeater::fake();
+
+    livewire(TestComponentWithParentRepeaterItemIndex::class)
+        ->assertFormComponentExists('items.0.name', function (TextInput $field): bool {
+            expect($field->getLabel())->toBe('Item 0');
+
+            return true;
+        })
+        ->assertFormComponentExists('items.1.name', function (TextInput $field): bool {
+            expect($field->getLabel())->toBe('Item 1');
+
+            return true;
+        })
+        ->assertFormComponentExists('items.2.name', function (TextInput $field): bool {
+            expect($field->getLabel())->toBe('Item 2');
+
+            return true;
+        });
+
+    $undoRepeaterFake();
+});
+
+class TestComponentWithParentRepeaterItemIndex extends Livewire
+{
+    public function mount(): void
+    {
+        $this->form->fill();
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->components([
+                Repeater::make('items')
+                    ->schema([
+                        TextInput::make('name')
+                            ->label(fn (int $parentRepeaterItemIndex): string => "Item {$parentRepeaterItemIndex}"),
+                    ])
+                    ->default([
+                        ['name' => 'first'],
+                        ['name' => 'second'],
+                        ['name' => 'third'],
+                    ]),
+            ])
+            ->statePath('data');
+    }
+}
+
 enum TestLetterEnum: string
 {
     case A = 'A';

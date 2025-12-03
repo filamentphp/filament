@@ -22,7 +22,7 @@ trait HasEmptyState
 
     protected string | Htmlable | Closure | null $emptyStateHeading = null;
 
-    protected string | BackedEnum | Closure | null $emptyStateIcon = null;
+    protected string | BackedEnum | Htmlable | Closure | null $emptyStateIcon = null;
 
     /**
      * @var array<Action | ActionGroup>
@@ -86,7 +86,7 @@ trait HasEmptyState
         return $this;
     }
 
-    public function emptyStateIcon(string | BackedEnum | Closure | null $icon): static
+    public function emptyStateIcon(string | BackedEnum | Htmlable | Closure | null $icon): static
     {
         $this->emptyStateIcon = $icon;
 

@@ -45,7 +45,7 @@ There are 5 main tasks when adding a form to a Livewire component class. Each on
 
 1) Implement the `HasSchemas` interface and use the `InteractsWithSchemas` trait.
 2) Define a public Livewire property to store your form's data. In our example, we'll call this `$data`, but you can call it whatever you want.
-3) Add a `form()` method, which is where you configure the form. [Add the form's schema](getting-started#form-schemas), and tell Filament to store the form data in the `$data` property (using `statePath('data')`).
+3) Add a `form()` method, which is where you configure the form. [Add the form's schema](../forms/overview#form-schemas), and tell Filament to store the form data in the `$data` property (using `statePath('data')`).
 4) Initialize the form with `$this->form->fill()` in `mount()`. This is imperative for every form that you build, even if it doesn't have any initial data.
 5) Define a method to handle the form submission. In our example, we'll call this `create()`, but you can call it whatever you want. Inside that method, you can validate and get the form's data using `$this->form->getState()`. It's important that you use this method instead of accessing the `$this->data` property directly, because the form's data needs to be validated and transformed into a useful format before being returned.
 
@@ -114,7 +114,7 @@ Finally, in your Livewire component's view, render the form:
 ```
 
 <Aside variant="info">
-    `<x-filament-actions::modals />` is used to render form component [action modals](../schemas/actions). The code can be put anywhere outside the `<form>` element, as long as it's within the Livewire component.
+    `<x-filament-actions::modals />` is used to render form component [action modals](../actions/modals). The code can be put anywhere outside the `<form>` element, as long as it's within the Livewire component.
 </Aside>
 
 Visit your Livewire component in the browser, and you should see the form components from `components()`:
@@ -162,8 +162,8 @@ It's important that you use the `$this->form->fill()` method instead of assignin
 
 Giving the `$form` access to a model is useful for a few reasons:
 
-- It allows fields within that form to load information from that model. For example, select fields can [load their options from the database](fields/select#integrating-with-an-eloquent-relationship) automatically.
-- The form can load and save the model's relationship data automatically. For example, you have an Edit Post form, with a [Repeater](fields/repeater#integrating-with-an-eloquent-relationship) which manages comments associated with that post. Filament will automatically load the comments for that post when you call `$this->form->fill([...])`, and save them back to the relationship when you call `$this->form->getState()`.
+- It allows fields within that form to load information from that model. For example, select fields can [load their options from the database](../forms/select#integrating-with-an-eloquent-relationship) automatically.
+- The form can load and save the model's relationship data automatically. For example, you have an Edit Post form, with a [Repeater](../forms/repeater#integrating-with-an-eloquent-relationship) which manages comments associated with that post. Filament will automatically load the comments for that post when you call `$this->form->fill([...])`, and save them back to the relationship when you call `$this->form->getState()`.
 - Validation rules like `exists()` and `unique()` can automatically retrieve the database table name from the model.
 
 It is advised to always pass the model to the form when there is one. As explained, it unlocks many new powers of Filament's form system.
