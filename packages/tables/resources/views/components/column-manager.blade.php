@@ -189,7 +189,7 @@
         </div>
 
         @if ($applyAction->isVisible() || $resetActionPosition === ColumnManagerResetActionPosition::Footer)
-            <div class="fi-ta-col-manager-apply-action-ctn">
+            <div class="fi-ta-col-manager-actions-ctn">
                 @if ($applyAction->isVisible())
                     {{ $applyAction }}
                 @endif
