@@ -811,14 +811,15 @@ Select::make('post_id')
 
 ### Hiding a shared table column on the relation manager
 
-If you're sharing a table column from the resource with the relation manager, you may want to hide it on the relation manager. This is especially useful if you want to hide a column for the owner record in the relation manager, since this is not appropriate when the owner record is already listed above the relation manager. To do this, you may use the `hiddenOn()` method, passing the name of the relation manager:
+If you're sharing a table column from the resource with the relation manager, you may want to hide it on the relation manager. This is especially useful if you want to hide a column for the owner record in the relation manager, since this is not appropriate when the owner record is already listed above the relation manager. To do this, you may use the `hiddenOn()` method, passing the name or names of the relation manager(s):
 
 ```php
 use App\Filament\Resources\Blog\PostResource\RelationManagers\CommentsRelationManager;
+use App\Filament\Resources\Blog\PostResource\RelationManagers\LikesRelationManager;
 use Filament\Tables\Columns\TextColumn;
 
 TextColumn::make('post.title')
-    ->hiddenOn(CommentsRelationManager::class)
+    ->hiddenOn(CommentsRelationManager::class) //or ->hiddenOn([CommentsRelationManager::class, LikesRelationManager::Class])
 ```
 
 ### Hiding a shared table filter on the relation manager
