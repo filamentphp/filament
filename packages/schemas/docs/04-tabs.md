@@ -177,6 +177,22 @@ Tabs::make('Tabs')
 
 <UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `columns()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
+## Using horizontal tabs
+
+Tabs are rendered horizontally by default, and are scrollable when they exceed the available width.
+
+You may control whether horizontal tabs should be scrollable using the `horizontal()` method. The method accepts a `scrollable` boolean parameter:
+
+```php
+use Filament\Schemas\Components\Tabs;
+
+Tabs::make('Tabs')
+    ->tabs([
+        // ...
+    ])
+    ->horizontal(scrollable: false)
+```
+
 ## Using vertical tabs
 
 You can render the tabs vertically by using the `vertical()` method:
