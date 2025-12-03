@@ -41,9 +41,6 @@
 
 @if (blank($livewireProperty))
     <div
-        @if (! $isScrollable)
-            @resize.window="updateTabsWithinDropdown()"
-        @endif
         x-data="tabsSchemaComponent({
             activeTab: @js($activeTab),
             isScrollable: @js($isScrollable),

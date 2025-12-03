@@ -7,7 +7,9 @@ export default function tabsSchemaComponent({
     tabQueryStringKey,
 }) {
     return {
+        boundResizeHandler: null,
         isScrollable,
+        resizeDebounceTimer: null,
         tab,
         withinDropdownIndex: null,
         withinDropdownMounted: false,
@@ -50,8 +52,21 @@ export default function tabsSchemaComponent({
             )
 
             if (!isScrollable) {
+                this.boundResizeHandler =
+                    this.debouncedUpdateTabsWithinDropdown.bind(this)
+
+                window.addEventListener('resize', this.boundResizeHandler)
+
                 this.updateTabsWithinDropdown()
             }
+        },
+
+        destroy() {
+            if (this.boundResizeHandler) {
+                window.removeEventListener('resize', this.boundResizeHandler)
+            }
+
+            clearTimeout(this.resizeDebounceTimer)
         },
 
         calculateAvailableWidth(containerEl) {
@@ -63,47 +78,70 @@ export default function tabsSchemaComponent({
             )
         },
 
-        calculateDropdownTriggerWidth(triggerEl) {
-            const styles = window.getComputedStyle(triggerEl)
-            const iconEl = triggerEl.querySelector('.fi-icon')
-
-            return (
-                Math.ceil(iconEl.clientWidth) +
-                Math.ceil(parseFloat(styles.columnGap))
-            )
-        },
-
-        calculateGapWidth(containerEl) {
+        calculateContainerGap(containerEl) {
             const styles = window.getComputedStyle(containerEl)
 
             return Math.ceil(parseFloat(styles.columnGap))
         },
 
-        findOverflowIndex(tabElements, availableWidth, gapWidth, triggerWidth) {
-            let remainingWidth = availableWidth
+        calculateDropdownIconWidth(triggerEl) {
+            const iconEl = triggerEl.querySelector('.fi-icon')
+
+            return Math.ceil(iconEl.clientWidth)
+        },
+
+        calculateTabItemGap(tabEl) {
+            const styles = window.getComputedStyle(tabEl)
+
+            return Math.ceil(parseFloat(styles.columnGap) || 8)
+        },
+
+        calculateTabItemPadding(tabEl) {
+            const styles = window.getComputedStyle(tabEl)
+
+            return (
+                Math.ceil(parseFloat(styles.paddingLeft)) +
+                Math.ceil(parseFloat(styles.paddingRight))
+            )
+        },
+
+        findOverflowIndex(
+            tabElements,
+            availableWidth,
+            containerGap,
+            tabItemGap,
+            tabItemPadding,
+            dropdownIconWidth,
+        ) {
+            const tabWidths = tabElements.map((el) => Math.ceil(el.clientWidth))
+            const labelWidths = tabElements.map((el) =>
+                Math.ceil(el.querySelector('.fi-tabs-item-label').clientWidth),
+            )
 
             for (let i = 0; i < tabElements.length; i++) {
-                const currentTabWidth =
-                    Math.ceil(tabElements[i].clientWidth) + gapWidth
+                const visibleTabsWidth = tabWidths
+                    .slice(0, i + 1)
+                    .reduce((sum, w) => sum + w, 0)
 
-                const widestRemainingTab = tabElements
-                    .slice(i)
-                    .reduce((widest, current) =>
-                        current.clientWidth > widest.clientWidth
-                            ? current
-                            : widest,
-                    )
+                const gapsBetweenVisibleTabs = i * containerGap
 
-                const requiredWidth =
-                    Math.ceil(widestRemainingTab.clientWidth) +
-                    gapWidth +
-                    triggerWidth
+                const collapsedLabels = labelWidths.slice(i + 1)
+                const hasCollapsedTabs = collapsedLabels.length > 0
 
-                if (remainingWidth - requiredWidth <= 0) {
+                const triggerWidth = hasCollapsedTabs
+                    ? tabItemPadding +
+                      Math.max(...collapsedLabels) +
+                      tabItemGap +
+                      dropdownIconWidth +
+                      containerGap
+                    : 0
+
+                const totalWidth =
+                    visibleTabsWidth + gapsBetweenVisibleTabs + triggerWidth
+
+                if (totalWidth > availableWidth) {
                     return i
                 }
-
-                remainingWidth -= currentTabWidth
             }
 
             return -1
@@ -142,6 +180,15 @@ export default function tabsSchemaComponent({
             history.replaceState(null, document.title, url.toString())
         },
 
+        debouncedUpdateTabsWithinDropdown() {
+            clearTimeout(this.resizeDebounceTimer)
+
+            this.resizeDebounceTimer = setTimeout(
+                () => this.updateTabsWithinDropdown(),
+                150,
+            )
+        },
+
         async updateTabsWithinDropdown() {
             this.withinDropdownIndex = null
             this.withinDropdownMounted = false
@@ -154,15 +201,31 @@ export default function tabsSchemaComponent({
             )
             const tabElements = Array.from(containerEl.children).slice(0, -1)
 
+            // Force all tabs visible for accurate measurement
+            const originalStyles = tabElements.map((el) => el.style.display)
+            tabElements.forEach((el) => (el.style.display = ''))
+
+            // Force reflow to ensure dimensions are calculated
+            containerEl.offsetHeight
+
             const availableWidth = this.calculateAvailableWidth(containerEl)
-            const gapWidth = this.calculateGapWidth(containerEl)
-            const triggerWidth = this.calculateDropdownTriggerWidth(triggerEl)
+            const containerGap = this.calculateContainerGap(containerEl)
+            const dropdownIconWidth = this.calculateDropdownIconWidth(triggerEl)
+            const tabItemGap = this.calculateTabItemGap(tabElements[0])
+            const tabItemPadding = this.calculateTabItemPadding(tabElements[0])
 
             const overflowIndex = this.findOverflowIndex(
                 tabElements,
                 availableWidth,
-                gapWidth,
-                triggerWidth,
+                containerGap,
+                tabItemGap,
+                tabItemPadding,
+                dropdownIconWidth,
+            )
+
+            // Restore original display styles
+            tabElements.forEach(
+                (el, i) => (el.style.display = originalStyles[i]),
             )
 
             if (overflowIndex !== -1) {
