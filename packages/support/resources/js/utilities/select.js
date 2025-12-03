@@ -430,8 +430,18 @@ export class Select {
 
         // If no options were rendered
         if (totalRenderedCount === 0) {
-            // If there's a search query, show "No results" message
-            if (this.searchQuery) {
+            const isMultipleWithNoSelections =
+                this.isMultiple &&
+                (!Array.isArray(this.state) || this.state.length === 0)
+
+            // If there's a search query or preloaded option enabled, show "No results" message
+            // Also show message on fields accepting multiple selections that are left with no more options to choose,
+            // or simply started withou any options at all
+            if (
+                this.searchQuery ||
+                (this.hasDynamicOptions &&
+                    (!this.isMultiple || isMultipleWithNoSelections))
+            ) {
                 this.showNoResultsMessage()
             }
             // If in multiple mode and no search query, hide the dropdown
@@ -1412,10 +1422,10 @@ export class Select {
                 // Hide loading state
                 this.hideLoadingState()
             }
+        } else {
+            // If not using dynamic options, clear any stale messages from previous state
+            this.hideLoadingState()
         }
-
-        // Hide any existing messages (like "No results")
-        this.hideLoadingState()
 
         // If searchable, focus the search input
         if (this.isSearchable && this.searchInput) {
