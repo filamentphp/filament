@@ -114,9 +114,22 @@ export default function tabsSchemaComponent({
             dropdownIconWidth,
         ) {
             const tabWidths = tabElements.map((el) => Math.ceil(el.clientWidth))
-            const labelWidths = tabElements.map((el) =>
-                Math.ceil(el.querySelector('.fi-tabs-item-label').clientWidth),
-            )
+
+            const tabContentWidths = tabElements.map((el) => {
+                const labelEl = el.querySelector('.fi-tabs-item-label')
+                const badgeEl = el.querySelector('.fi-badge')
+
+                const labelWidth = Math.ceil(labelEl.clientWidth)
+                const badgeWidth = badgeEl ? Math.ceil(badgeEl.clientWidth) : 0
+
+                return {
+                    label: labelWidth,
+                    badge: badgeWidth,
+                    total:
+                        labelWidth +
+                        (badgeWidth > 0 ? tabItemGap + badgeWidth : 0),
+                }
+            })
 
             for (let i = 0; i < tabElements.length; i++) {
                 const visibleTabsWidth = tabWidths
@@ -125,12 +138,16 @@ export default function tabsSchemaComponent({
 
                 const gapsBetweenVisibleTabs = i * containerGap
 
-                const collapsedLabels = labelWidths.slice(i + 1)
-                const hasCollapsedTabs = collapsedLabels.length > 0
+                const collapsedContents = tabContentWidths.slice(i + 1)
+                const hasCollapsedTabs = collapsedContents.length > 0
+
+                const widestCollapsedContent = hasCollapsedTabs
+                    ? Math.max(...collapsedContents.map((c) => c.total))
+                    : 0
 
                 const triggerWidth = hasCollapsedTabs
                     ? tabItemPadding +
-                      Math.max(...collapsedLabels) +
+                      widestCollapsedContent +
                       tabItemGap +
                       dropdownIconWidth +
                       containerGap

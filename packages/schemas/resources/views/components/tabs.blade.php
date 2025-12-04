@@ -1,6 +1,8 @@
 @php
     use Filament\Schemas\Components\Tabs\Tab;
+    use Filament\Schemas\View\SchemaIconAlias;
     use Filament\Support\Enums\IconPosition;
+    use Filament\Support\Icons\Heroicon;
 
     $activeTab = $getActiveTab();
     $id = $getId();
@@ -78,6 +80,7 @@
             :label="$label"
             :vertical="$isVertical"
             x-cloak
+            :x-bind:class="! $isScrollable ? '{ \'fi-invisible\': ! withinDropdownMounted }' : null"
         >
             @foreach ($getStartRenderHooks() as $startRenderHook)
                 {{ \Filament\Support\Facades\FilamentView::renderHook($startRenderHook, scopes: $renderHookScopes) }}
@@ -122,8 +125,11 @@
                             <x-filament::tabs.item
                                 :alpine-active="'tab === \'' . $tabKey . '\''"
                                 :attributes="$tab->getExtraAttributeBag()"
-                                icon="heroicon-m-chevron-down"
-                                :icon-position="IconPosition::After"
+                                :badge="$tab->getBadge()"
+                                :badge-color="$tab->getBadgeColor()"
+                                :badge-tooltip="$tab->getBadgeTooltip()"
+                                :icon="Heroicon::ChevronDown"
+                                :icon-alias="SchemaIconAlias::COMPONENTS_TABS_DROPDOWN_TRIGGER_BUTTON"
                                 :x-cloak="$tabVisibilityJs !== null"
                                 :x-show="$tabVisibilityJs"
                             >
@@ -132,9 +138,12 @@
                         @endforeach
 
                         <x-filament::tabs.item x-show="isDropdownButtonVisible">
-                            <x-filament::icon
-                                icon="heroicon-m-ellipsis-horizontal"
-                            />
+                            {{
+                                \Filament\Support\generate_icon_html(
+                                    Heroicon::EllipsisHorizontal,
+                                    alias: SchemaIconAlias::COMPONENTS_TABS_MORE_TABS_BUTTON,
+                                )
+                            }}
                         </x-filament::tabs.item>
                     </x-slot>
 
@@ -145,6 +154,9 @@
                             @endphp
 
                             <x-filament::dropdown.list.item
+                                :badge="$tab->getBadge()"
+                                :badge-color="$tab->getBadgeColor()"
+                                :badge-tooltip="$tab->getBadgeTooltip()"
                                 :icon="$tab->getIcon()"
                                 x-bind:class="{ 'fi-selected': tab === '{{ $tabKey }}' }"
                                 :x-on:click="'tab = \'' . $tabKey . '\'; close($event);'"
