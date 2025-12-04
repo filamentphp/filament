@@ -84,11 +84,11 @@ trait InteractsWithPageTable /** @phpstan-ignore trait.unused */
         foreach ([
             'activeTab' => $this->activeTab,
             'paginators' => $this->paginators,
-            'tableRecordsCount' => $this->tableRecordsCount,
             'parentRecord' => $this->parentRecord,
             'tableColumnSearches' => $this->tableColumnSearches,
             'tableFilters' => $this->tableFilters,
             'tableGrouping' => $this->tableGrouping,
+            'tableRecordsCount' => $this->tableRecordsCount,
             'tableRecordsPerPage' => $this->tableRecordsPerPage,
             'tableSearch' => $this->tableSearch,
             'tableSort' => $this->tableSort,

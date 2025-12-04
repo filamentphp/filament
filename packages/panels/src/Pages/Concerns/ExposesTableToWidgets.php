@@ -9,11 +9,11 @@ trait ExposesTableToWidgets /** @phpstan-ignore trait.unused */
         return [
             'activeTab' => $this->activeTab,
             'paginators' => $this->paginators,
-            'tableRecordsCount' => $this->getAllTableRecordsCount(),
             'parentRecord' => $this->parentRecord,
             'tableColumnSearches' => $this->tableColumnSearches,
             'tableFilters' => $this->tableFilters,
             'tableGrouping' => $this->tableGrouping,
+            'tableRecordsCount' => $this->getAllTableRecordsCount(),
             'tableRecordsPerPage' => $this->tableRecordsPerPage,
             'tableSearch' => $this->tableSearch,
             'tableSort' => $this->tableSort,
