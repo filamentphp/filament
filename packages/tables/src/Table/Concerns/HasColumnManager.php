@@ -108,7 +108,7 @@ trait HasColumnManager
   
     public function getColumnManagerResetActionPosition(): ColumnManagerResetActionPosition
     {
-        return $this->evaluate($this->columnManagerResetActionPosition) ?? ColumnManagerResetActionPosition::Header
+        return $this->evaluate($this->columnManagerResetActionPosition) ?? ColumnManagerResetActionPosition::Header;
     }
 
     /**
