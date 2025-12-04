@@ -88,26 +88,35 @@
 
             @foreach ($tabs as $index => $tab)
                 @php
+                    $tabBadge = $tab->getBadge();
+                    $tabBadgeColor = $tab->getBadgeColor();
+                    $tabBadgeIcon = $tab->getBadgeIcon();
+                    $tabBadgeIconPosition = $tab->getBadgeIconPosition();
+                    $tabBadgeTooltip = $tab->getBadgeTooltip();
+                    $tabExtraAttributeBag = $tab->getExtraAttributeBag();
+                    $tabIcon = $tab->getIcon();
+                    $tabIconPosition = $tab->getIconPosition();
                     $tabKey = $tab->getKey(isAbsolute: false);
+                    $tabLabel = $tab->getLabel();
                     $tabVisibilityJs = $getTabVisibilityJs($tab, $index, 'inline');
                 @endphp
 
                 <x-filament::tabs.item
                     :alpine-active="'tab === \'' . $tabKey . '\''"
-                    :attributes="$tab->getExtraAttributeBag()"
-                    :badge="$tab->getBadge()"
-                    :badge-color="$tab->getBadgeColor()"
-                    :badge-icon="$tab->getBadgeIcon()"
-                    :badge-icon-position="$tab->getBadgeIconPosition()"
-                    :badge-tooltip="$tab->getBadgeTooltip()"
+                    :attributes="$tabExtraAttributeBag"
+                    :badge="$tabBadge"
+                    :badge-color="$tabBadgeColor"
+                    :badge-icon="$tabBadgeIcon"
+                    :badge-icon-position="$tabBadgeIconPosition"
+                    :badge-tooltip="$tabBadgeTooltip"
                     :data-tab-key="$tabKey"
-                    :icon="$tab->getIcon()"
-                    :icon-position="$tab->getIconPosition()"
+                    :icon="$tabIcon"
+                    :icon-position="$tabIconPosition"
                     :x-cloak="$tabVisibilityJs !== null"
                     :x-on:click="'tab = \'' . $tabKey . '\''"
                     :x-show="$tabVisibilityJs"
                 >
-                    {{ $tab->getLabel() }}
+                    {{ $tabLabel }}
                 </x-filament::tabs.item>
             @endforeach
 
@@ -118,22 +127,27 @@
                     <x-slot name="trigger">
                         @foreach ($tabs as $index => $tab)
                             @php
+                                $tabBadge = $tab->getBadge();
+                                $tabBadgeColor = $tab->getBadgeColor();
+                                $tabBadgeTooltip = $tab->getBadgeTooltip();
+                                $tabExtraAttributeBag = $tab->getExtraAttributeBag();
                                 $tabKey = $tab->getKey(isAbsolute: false);
+                                $tabLabel = $tab->getLabel();
                                 $tabVisibilityJs = $getTabVisibilityJs($tab, $index, 'trigger');
                             @endphp
 
                             <x-filament::tabs.item
                                 :alpine-active="'tab === \'' . $tabKey . '\''"
-                                :attributes="$tab->getExtraAttributeBag()"
-                                :badge="$tab->getBadge()"
-                                :badge-color="$tab->getBadgeColor()"
-                                :badge-tooltip="$tab->getBadgeTooltip()"
+                                :attributes="$tabExtraAttributeBag"
+                                :badge="$tabBadge"
+                                :badge-color="$tabBadgeColor"
+                                :badge-tooltip="$tabBadgeTooltip"
                                 :icon="Heroicon::ChevronDown"
                                 :icon-alias="SchemaIconAlias::COMPONENTS_TABS_DROPDOWN_TRIGGER_BUTTON"
                                 :x-cloak="$tabVisibilityJs !== null"
                                 :x-show="$tabVisibilityJs"
                             >
-                                {{ $tab->getLabel() }}
+                                {{ $tabLabel }}
                             </x-filament::tabs.item>
                         @endforeach
 
@@ -150,19 +164,24 @@
                     <x-filament::dropdown.list>
                         @foreach ($tabs as $index => $tab)
                             @php
+                                $tabBadge = $tab->getBadge();
+                                $tabBadgeColor = $tab->getBadgeColor();
+                                $tabBadgeTooltip = $tab->getBadgeTooltip();
+                                $tabIcon = $tab->getIcon();
                                 $tabKey = $tab->getKey(isAbsolute: false);
+                                $tabLabel = $tab->getLabel();
                             @endphp
 
                             <x-filament::dropdown.list.item
-                                :badge="$tab->getBadge()"
-                                :badge-color="$tab->getBadgeColor()"
-                                :badge-tooltip="$tab->getBadgeTooltip()"
-                                :icon="$tab->getIcon()"
+                                :badge="$tabBadge"
+                                :badge-color="$tabBadgeColor"
+                                :badge-tooltip="$tabBadgeTooltip"
+                                :icon="$tabIcon"
                                 x-bind:class="{ 'fi-selected': tab === '{{ $tabKey }}' }"
                                 :x-on:click="'tab = \'' . $tabKey . '\'; close($event);'"
                                 :x-show="$index . ' >= withinDropdownIndex'"
                             >
-                                {{ $tab->getLabel() }}
+                                {{ $tabLabel }}
                             </x-filament::dropdown.list.item>
                         @endforeach
                     </x-filament::dropdown.list>
@@ -219,22 +238,31 @@
 
             @foreach ($getChildSchema()->getComponents(withOriginalKeys: true) as $tabKey => $tab)
                 @php
+                    $tabBadge = $tab->getBadge();
+                    $tabBadgeColor = $tab->getBadgeColor();
+                    $tabBadgeIcon = $tab->getBadgeIcon();
+                    $tabBadgeIconPosition = $tab->getBadgeIconPosition();
+                    $tabBadgeTooltip = $tab->getBadgeTooltip();
+                    $tabExtraAttributeBag = $tab->getExtraAttributeBag();
+                    $tabIcon = $tab->getIcon();
+                    $tabIconPosition = $tab->getIconPosition();
                     $tabKey = strval($tabKey);
+                    $tabLabel = $tab->getLabel() ?? $this->generateTabLabel($tabKey);
                 @endphp
 
                 <x-filament::tabs.item
                     :active="$activeTab === $tabKey"
-                    :attributes="$tab->getExtraAttributeBag()"
-                    :badge="$tab->getBadge()"
-                    :badge-color="$tab->getBadgeColor()"
-                    :badge-icon="$tab->getBadgeIcon()"
-                    :badge-icon-position="$tab->getBadgeIconPosition()"
-                    :badge-tooltip="$tab->getBadgeTooltip()"
-                    :icon="$tab->getIcon()"
-                    :icon-position="$tab->getIconPosition()"
+                    :attributes="$tabExtraAttributeBag"
+                    :badge="$tabBadge"
+                    :badge-color="$tabBadgeColor"
+                    :badge-icon="$tabBadgeIcon"
+                    :badge-icon-position="$tabBadgeIconPosition"
+                    :badge-tooltip="$tabBadgeTooltip"
+                    :icon="$tabIcon"
+                    :icon-position="$tabIconPosition"
                     :wire:click="'$set(\'' . $livewireProperty . '\', ' . (filled($tabKey) ? ('\'' . $tabKey . '\'') : 'null') . ')'"
                 >
-                    {{ $tab->getLabel() ?? $this->generateTabLabel($tabKey) }}
+                    {{ $tabLabel }}
                 </x-filament::tabs.item>
             @endforeach
 
