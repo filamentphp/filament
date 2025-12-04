@@ -442,7 +442,7 @@ public function table(Table $table): Table
                 if (! is_numeric($search)) {
                     return $query;
                 }
-            
+
                 return $query->whereYear('published_at', $search);
             },
         ]);
@@ -652,6 +652,20 @@ TextColumn::make('title')
 <UtilityInjection set="tableColumns" version="4.x">As well as allowing a static value, the `tooltip()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 <AutoScreenshot name="tables/columns/tooltips" alt="Table with column triggering a tooltip" version="4.x" />
+
+## Adding a header tooltip to a column
+
+You may specify a tooltip to display when you hover over the column header:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('sku')
+    ->headerTooltip('Stock Keeping Unit')
+```
+
+<UtilityInjection set="tableColumns" version="4.x">As well as allowing a static value, the `headerTooltip()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 
 ## Aligning column content
 
@@ -915,6 +929,24 @@ public function table(Table $table): Table
                 ->button()
                 ->label('Column Manager'),
         );
+}
+```
+
+#### Displaying the reset action in the footer
+
+By default, the reset action appears in the header of the column manager. You may move it to the footer, next to the apply action, using the `columnManagerResetActionPosition()` method:
+
+```php
+use Filament\Tables\Enums\ColumnManagerResetActionPosition;
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->columns([
+            // ...
+        ])
+        ->columnManagerResetActionPosition(ColumnManagerResetActionPosition::Footer);
 }
 ```
 

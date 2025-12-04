@@ -2,6 +2,7 @@
     use Filament\Actions\Action;
     use Filament\Actions\ActionGroup;
     use Filament\Support\Enums\Alignment;
+    use Filament\Support\Enums\VerticalAlignment;
     use Illuminate\Support\Js;
     use Illuminate\View\ComponentAttributeBag;
 
@@ -160,9 +161,14 @@
                                         @if ($schemaComponent->isVisible())
                                             @php
                                                 $schemaComponentStatePath = $schemaComponent->getStatePath();
+                                                $currentColumn = $tableColumns[$counter - 1] ?? null;
+                                                $columnVerticalAlignment = $currentColumn?->getVerticalAlignment();
                                             @endphp
 
                                             <td
+                                                @class([
+                                                    ($columnVerticalAlignment instanceof VerticalAlignment) ? ('fi-vertical-align-' . $columnVerticalAlignment->value) : (is_string($columnVerticalAlignment) ? $columnVerticalAlignment : ''),
+                                                ])
                                                 x-data="filamentSchemaComponent({
                                                     path: @js($schemaComponentStatePath),
                                                     containerPath: @js($itemStatePath),

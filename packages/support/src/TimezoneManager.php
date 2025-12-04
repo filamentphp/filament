@@ -2,17 +2,22 @@
 
 namespace Filament\Support;
 
+use Closure;
+use Filament\Support\Concerns\EvaluatesClosures;
+
 class TimezoneManager
 {
-    protected ?string $timezone = null;
+    use EvaluatesClosures;
 
-    public function set(?string $timezone): void
+    protected string | Closure | null $timezone = null;
+
+    public function set(string | Closure | null $timezone = null): void
     {
         $this->timezone = $timezone;
     }
 
     public function get(): string
     {
-        return $this->timezone ?? config('app.timezone');
+        return $this->evaluate($this->timezone) ?? config('app.timezone');
     }
 }

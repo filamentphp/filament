@@ -46,6 +46,7 @@ export default async ({
     editCustomBlockButtonIconHtml,
     editCustomBlockUsing,
     insertCustomBlockUsing,
+    linkProtocols,
     key,
     maxFileSize,
     maxFileSizeValidationMessage,
@@ -89,6 +90,7 @@ export default async ({
         Link.configure({
             autolink: true,
             openOnClick: false,
+            protocols: linkProtocols,
         }),
         ListItem,
         ...(canAttachFiles
