@@ -113,10 +113,6 @@ trait CanGenerateModelTables
 
             $columnData = [];
 
-            if (filled($column['comment'])) {
-                $columnData['headerTooltip'] = $column['comment'];
-            }
-
             if (in_array($columnName, [
                 'id',
                 'sku',
