@@ -404,7 +404,7 @@ it('can create a post', function () {
 
 ## Testing create / edit page `getFormActions()`
 
-When testing actions in `getFormActions()` on a resource page, use the `schemaComponent()` method targeting the `form-actions` key. For example, if you have a custom `Action::make('createAndVerifyEmail')` action in the `getFormActions()` method of your `CreateUser` page, you can test it like this:
+When testing actions in `getFormActions()` on a resource page, use the `schemaComponent()` method targeting the `form-actions` key in the `content` schema. For example, if you have a custom `Action::make('createAndVerifyEmail')` action in the `getFormActions()` method of your `CreateUser` page, you can test it like this:
 
 ```php
 use App\Filament\Resources\Users\Pages\CreateUser;
@@ -417,7 +417,7 @@ it('can create a user and verify their email address', function () {
             'name' => 'Test User',
             'email' => 'test@example.com',
         ])
-        ->callAction(TestAction::make('createAndVerifyEmail')->schemaComponent('form-actions'));
+        ->callAction(TestAction::make('createAndVerifyEmail')->schemaComponent('form-actions', schema: 'content'));
 
     expect(User::query()->where('email', 'test@example.com')->first())
         ->hasVerifiedEmail()->toBeTrue();

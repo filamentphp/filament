@@ -14,7 +14,7 @@ import Disclosure from "@components/Disclosure.astro"
 
 - PHP 8.2+
 - Laravel v11.28+
-- Tailwind CSS v4.0+, if you’re currently using Tailwind CSS v3.0 with Filament. This doesn’t apply if you’re just using a Filament panel without a custom theme CSS file.
+- Tailwind CSS v4.1+, if you’re currently using Tailwind CSS v3.0 with Filament. This doesn’t apply if you’re just using a Filament panel without a custom theme CSS file.
 - Filament no longer requires `doctrine/dbal`, but if your application still does, and you don’t have it installed directly, you should add it to your `composer.json` file.
 
 ## Running the automated upgrade script
@@ -534,7 +534,7 @@ In Filament v3, import and export jobs were retries continuously for 24 hours if
 
 In v4, they’re retried 3 times with a 60 second backoff between each retry.
 
-This behavior can be customized in the [importer](import#customizing-the-import-job-retries) and [exporter](export#customizing-the-export-job-retries) classes.
+This behavior can be customized in the [importer](actions/import#customizing-the-import-job-retries) and [exporter](actions/export#customizing-the-export-job-retries) classes.
 </Disclosure>
 
 ### Low-impact changes

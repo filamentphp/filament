@@ -148,7 +148,7 @@ public static function configure(Schema $schema): Schema
 }
 ```
 
-The `components()` method is used to define the structure of your form. It is an array of [fields](../forms#available-fields) and [layout components](../schemas/layout#available-layout-components), in the order they should appear in your form.
+The `components()` method is used to define the structure of your form. It is an array of [fields](../forms/overview#available-fields) and [layout components](../schemas/layouts#available-layout-components), in the order they should appear in your form.
 
 Check out the Forms docs for a [guide](../forms) on how to build forms with Filament.
 

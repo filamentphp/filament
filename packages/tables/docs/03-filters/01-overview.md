@@ -63,13 +63,13 @@ Filter::make('is_featured')
 
 ## Customizing the filter schema
 
-By default, creating a filter with the `Filter` class will render a [checkbox form component](../../forms/fields/checkbox). When the checkbox is checked, the `query()` function will be applied to the table's query, scoping the records in the table. When the checkbox is unchecked, the `query()` function will be removed from the table's query.
+By default, creating a filter with the `Filter` class will render a [checkbox form component](../../forms/checkbox). When the checkbox is checked, the `query()` function will be applied to the table's query, scoping the records in the table. When the checkbox is unchecked, the `query()` function will be removed from the table's query.
 
 Filters are built entirely on Filament's form fields. They can render any combination of form fields, which users can then interact with to filter the table.
 
 ### Using a toggle button instead of a checkbox
 
-The simplest example of managing the form field that is used for a filter is to replace the [checkbox](../../forms/fields/checkbox) with a [toggle button](../../forms/fields/toggle), using the `toggle()` method:
+The simplest example of managing the form field that is used for a filter is to replace the [checkbox](../../forms/checkbox) with a [toggle button](../../forms/toggle), using the `toggle()` method:
 
 ```php
 use Filament\Tables\Filters\Filter;

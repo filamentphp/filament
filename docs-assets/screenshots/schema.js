@@ -1610,6 +1610,15 @@ export default {
             deviceScaleFactor: 3,
         },
     },
+    'schemas/layout/tabs/not-scrollable': {
+        url: 'schemas/layout',
+        selector: '#tabsNotScrollable',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
     'schemas/layout/wizard/simple': {
         url: 'schemas/layout',
         selector: '#wizard',

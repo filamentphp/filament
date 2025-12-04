@@ -47,3 +47,14 @@ CodeEditor::make('code')
 <UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `language()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 <AutoScreenshot name="forms/fields/code-editor/language" alt="Code editor with syntax highlighting" version="4.x" />
+
+## Allowing lines to wrap
+
+By default, long lines in the code editor will create a horizontal scrollbar. If you would like to allow long lines to wrap instead, you may use the `wrap()` method:
+
+```php
+use Filament\Forms\Components\CodeEditor;
+
+CodeEditor::make('code')
+    ->wrap()
+```

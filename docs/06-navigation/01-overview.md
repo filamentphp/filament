@@ -6,7 +6,7 @@ import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Introduction
 
-By default, Filament will register navigation items for each of your [resources](../resources), [custom pages](custom-pages), and [clusters](clusters). These classes contain static properties and methods that you can override, to configure that navigation item.
+By default, Filament will register navigation items for each of your [resources](../resources/overview), [custom pages](custom-pages), and [clusters](clusters). These classes contain static properties and methods that you can override, to configure that navigation item.
 
 If you're looking to add a second layer of navigation to your app, you can use [clusters](clusters). These are useful for grouping resources and pages together.
 
@@ -29,7 +29,7 @@ public static function getNavigationLabel(): string
 
 ## Customizing a navigation item's icon
 
-To customize a navigation item's [icon](../styling/icons), you may override the `$navigationIcon` property on the [resource](resources) or [page](pages) class:
+To customize a navigation item's [icon](../styling/icons), you may override the `$navigationIcon` property on the [resource](../resources/overview) or [page](custom-pages) class:
 
 ```php
 use BackedEnum;
@@ -108,7 +108,7 @@ public static function getNavigationBadgeTooltip(): ?string
 
 ## Grouping navigation items
 
-You may group navigation items by specifying a `$navigationGroup` property on a [resource](resources) and [custom page](custom-pages):
+You may group navigation items by specifying a `$navigationGroup` property on a [resource](../resources/overview) and [custom page](custom-pages):
 
 ```php
 use UnitEnum;

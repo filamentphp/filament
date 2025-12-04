@@ -52,6 +52,8 @@ class PostsQueryBuilderTable extends Component implements HasActions, HasSchemas
                             ->attribute('rating')
                             ->integer(),
                         DateConstraint::make('created_at'),
+                        DateConstraint::make('published_at')
+                            ->time(),
                         SelectConstraint::make('rating_select')
                             ->attribute('rating')
                             ->options([
