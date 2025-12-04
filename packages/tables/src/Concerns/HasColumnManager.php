@@ -152,8 +152,7 @@ trait HasColumnManager
 
     protected function persistTableColumns(): void
     {
-        $shouldPersistColumns = $this->getTable()->persistsColumnsInSession();
-        if ($shouldPersistColumns) {
+        if ($this->getTable()->persistsColumnsInSession()) {
             session()->put(
                 $this->getTableColumnsSessionKey(),
                 $this->tableColumns
