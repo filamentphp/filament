@@ -18,10 +18,6 @@ class TimezoneManager
 
     public function get(): string
     {
-        if (is_null($this->timezone)) {
-            return config('app.timezone');
-        }
-
-        return (string) $this->evaluate($this->timezone);
+        return $this->evaluate($this->timezone) ?? config('app.timezone');
     }
 }
