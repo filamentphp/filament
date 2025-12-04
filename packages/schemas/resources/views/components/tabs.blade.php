@@ -1,7 +1,6 @@
 @php
     use Filament\Schemas\Components\Tabs\Tab;
     use Filament\Schemas\View\SchemaIconAlias;
-    use Filament\Support\Enums\IconPosition;
     use Filament\Support\Icons\Heroicon;
 
     $activeTab = $getActiveTab();
@@ -71,7 +70,7 @@
     >
         <input
             type="hidden"
-            value="{{ collect($tabs)->filter(fn (Tab $tab): bool => $tab->isVisible())->map(fn (Tab $tab) => $tab->getKey(isAbsolute: false))->values()->toJson() }}"
+            value="{{ collect($tabs)->filter(static fn (Tab $tab): bool => $tab->isVisible())->map(static fn (Tab $tab) => $tab->getKey(isAbsolute: false))->values()->toJson() }}"
             x-ref="tabsData"
         />
 
