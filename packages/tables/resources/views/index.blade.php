@@ -1615,33 +1615,10 @@
 
                                     @if (count($records))
                                         @php
-                                                $recordAction = $getRecordAction($record);
-                                                $recordKey = $getRecordKey($record);
-                                                $recordUrl = $getRecordUrl($record);
-                                                $openRecordUrlInNewTab = $shouldOpenRecordUrlInNewTab($record);
-                                                $recordGroupKey = $group?->getStringKey($record);
-                                                $recordGroupTitle = $group?->getTitle($record);
-
-                                                $recordActions = array_reduce(
-                                                    $defaultRecordActions,
-                                                    function (array $carry, $action) use ($record): array {
-                                                        $action = $action->getClone();
-
-                                                        if (! $action instanceof \Filament\Actions\BulkAction) {
-                                                            $action->record($record);
-                                                        }
-
-                                                        if ($action->isHidden()) {
-                                                            return $carry;
-                                                        }
-
-                                                        $carry[] = $action;
-
-                                                        return $carry;
-                                                    },
-                                                    initial: [],
-                                                );
-                                            <BHTd2qEUTbdfDDMB></BHTd2qEUTbdfDDMB>
+                                            $isRecordRowStriped = false;
+                                            $previousRecord = null;
+                                            $previousRecordGroupKey = null;
+                                            $previousRecordGroupTitle = null;
                                         @endphp
 
                                         @foreach ($records as $record)
