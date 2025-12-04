@@ -61,14 +61,6 @@ export default function tabsSchemaComponent({
             }
         },
 
-        destroy() {
-            if (this.boundResizeHandler) {
-                window.removeEventListener('resize', this.boundResizeHandler)
-            }
-
-            clearTimeout(this.resizeDebounceTimer)
-        },
-
         calculateAvailableWidth(containerEl) {
             const styles = window.getComputedStyle(containerEl)
 
@@ -250,6 +242,14 @@ export default function tabsSchemaComponent({
             }
 
             this.withinDropdownMounted = true
+        },
+
+        destroy() {
+            if (this.boundResizeHandler) {
+                window.removeEventListener('resize', this.boundResizeHandler)
+            }
+
+            clearTimeout(this.resizeDebounceTimer)
         },
     }
 }

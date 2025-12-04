@@ -39,11 +39,9 @@ class Tabs extends Component
 
     protected string | Closure | null $livewireProperty = null;
 
-    protected bool | Closure $isVertical = false;
-
-    protected bool | Closure $isHorizontal = true;
-
     protected bool | Closure $isScrollable = true;
+
+    protected bool | Closure $isVertical = false;
 
     final public function __construct(string | Htmlable | Closure | null $label = null)
     {
@@ -188,6 +186,18 @@ class Tabs extends Component
         return $this->evaluate($this->livewireProperty);
     }
 
+    public function scrollable(bool | Closure $condition = true): static
+    {
+        $this->isScrollable = $condition;
+
+        return $this;
+    }
+
+    public function isScrollable(): bool
+    {
+        return (bool) $this->evaluate($this->isScrollable);
+    }
+
     public function vertical(bool | Closure $condition = true): static
     {
         $this->isVertical = $condition;
@@ -197,29 +207,6 @@ class Tabs extends Component
 
     public function isVertical(): bool
     {
-        if ((bool) $this->evaluate($this->isVertical)) {
-            return true;
-        }
-
-        return ! (bool) $this->evaluate($this->isHorizontal);
-    }
-
-    public function horizontal(bool | Closure $condition = true, bool | Closure $scrollable = true): static
-    {
-        $this->isHorizontal = $condition;
-
-        $this->isScrollable = $scrollable;
-
-        return $this;
-    }
-
-    public function isHorizontal(): bool
-    {
-        return ! $this->isVertical();
-    }
-
-    public function isScrollable(): bool
-    {
-        return $this->evaluate($this->isScrollable);
+        return (bool) $this->evaluate($this->isVertical);
     }
 }
