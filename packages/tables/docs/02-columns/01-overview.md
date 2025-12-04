@@ -649,8 +649,6 @@ TextColumn::make('sku')
 
 <UtilityInjection set="tableColumns" version="4.x">As well as allowing a static value, the `headerTooltip()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="tables/columns/header-tooltips" alt="Table with column triggering a header tooltip" version="4.x" />
-
 
 ## Aligning column content
 
