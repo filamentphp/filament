@@ -11,7 +11,11 @@ trait CanBeRepeated
 
     public function getParentRepeater(): ?Repeater
     {
-        return $this->getParentRepeaterItem()?->getParentComponent();
+        $repeater = $this->getParentRepeaterItem()?->getParentComponent();
+
+        assert($repeater instanceof Repeater);
+
+        return $repeater;
     }
 
     public function getParentRepeaterItem(): ?Schema

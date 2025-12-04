@@ -344,7 +344,7 @@ CheckboxList::make('authors')
     ->getOptionDescriptionFromRecordUsing(fn (Model $record) => $record->notes)
 ```
 
-<UtilityInjection set="formFields" version="4.x" extras="Eloquent record;;Illuminate\Database\Eloquent\Model;;$record;;The Eloquent record to get the option description for.">The `getOptionDescriptionFromRecordUsing()` method can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="5.x" extras="Eloquent record;;Illuminate\Database\Eloquent\Model;;$record;;The Eloquent record to get the option description for.">The `getOptionDescriptionFromRecordUsing()` method can inject various utilities into the function as parameters.</UtilityInjection>
 
 
 ### Saving pivot data to the relationship

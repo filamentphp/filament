@@ -6,7 +6,9 @@
     use Filament\Tables\Actions\HeaderActionsPosition;
     use Filament\Tables\Columns\Column;
     use Filament\Tables\Columns\ColumnGroup;
+    use Filament\Tables\Enums\ColumnManagerResetActionPosition;
     use Filament\Tables\Enums\FiltersLayout;
+    use Filament\Tables\Enums\FiltersResetActionPosition;
     use Filament\Tables\Enums\RecordActionsPosition;
     use Filament\Tables\Enums\RecordCheckboxPosition;
     use Filament\Tables\View\TablesRenderHook;
@@ -36,6 +38,8 @@
     $filtersApplyAction = $getFiltersApplyAction();
     $filtersForm = $getFiltersForm();
     $filtersFormWidth = $getFiltersFormWidth();
+    $filtersResetActionPosition = $getFiltersResetActionPosition();
+    $columnManagerResetActionPosition = $getColumnManagerResetActionPosition();
     $hasColumnGroups = $hasColumnGroups();
     $hasColumnsLayout = $hasColumnsLayout();
     $hasSummary = $hasSummary($this->getAllTableSummaryQuery());
@@ -194,6 +198,7 @@
                     :form="$filtersForm"
                     :heading-tag="$secondLevelHeadingTag"
                     class="fi-ta-filters-before-content"
+                    :reset-action-position="$filtersResetActionPosition"
                 />
             </div>
         @endif
@@ -262,6 +267,7 @@
                             :heading-tag="$secondLevelHeadingTag"
                             x-cloak
                             :x-show="$hasCollapsibleFilters ? 'areFiltersOpen' : null"
+                            :reset-action-position="$filtersResetActionPosition"
                         />
 
                         @if ($hasCollapsibleFilters)
@@ -548,6 +554,7 @@
                                                 :apply-action="$filtersApplyAction"
                                                 :form="$filtersForm"
                                                 :heading-tag="$secondLevelHeadingTag"
+                                                :reset-action-position="$filtersResetActionPosition"
                                             />
                                         </x-filament::dropdown>
                                     @endif
@@ -589,6 +596,7 @@
                                         <x-filament-tables::column-manager
                                             :apply-action="$columnManagerApplyAction"
                                             :columns="$columnManagerColumns"
+                                            :reset-action-position="$columnManagerResetActionPosition"
                                             :has-reorderable-columns="$hasReorderableColumns"
                                             :has-toggleable-columns="$hasToggleableColumns"
                                             :heading-tag="$secondLevelHeadingTag"
@@ -2195,6 +2203,7 @@
                     :form="$filtersForm"
                     :heading-tag="$secondLevelHeadingTag"
                     class="fi-ta-filters-below-content"
+                    :reset-action-position="$filtersResetActionPosition"
                 />
             @endif
         </div>
@@ -2216,6 +2225,7 @@
                     :form="$filtersForm"
                     :heading-tag="$secondLevelHeadingTag"
                     class="fi-ta-filters-after-content"
+                    :reset-action-position="$filtersResetActionPosition"
                 />
             </div>
         @endif

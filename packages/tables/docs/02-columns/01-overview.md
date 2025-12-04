@@ -901,6 +901,24 @@ public function table(Table $table): Table
 }
 ```
 
+#### Displaying the reset action in the footer
+
+By default, the reset action appears in the header of the column manager. You may move it to the footer, next to the apply action, using the `columnManagerResetActionPosition()` method:
+
+```php
+use Filament\Tables\Enums\ColumnManagerResetActionPosition;
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->columns([
+            // ...
+        ])
+        ->columnManagerResetActionPosition(ColumnManagerResetActionPosition::Footer);
+}
+```
+
 ## Adding extra HTML attributes to a column content
 
 You can pass extra HTML attributes to the column content via the `extraAttributes()` method, which will be merged onto its outer HTML element. The attributes should be represented by an array, where the key is the attribute name and the value is the attribute value:
