@@ -195,6 +195,8 @@ Tabs::make('Tabs')
 
 When tabs are not scrollable, the component automatically detects the available width. If not all tabs can fit, a dropdown button will appear. Any tabs that exceed the available width will be grouped inside this dropdown automatically.
 
+<AutoScreenshot name="schemas/layout/tabs/not-scrollable" alt="Non-scrollable tabs with overflow dropdown" version="4.x" />
+
 ## Using vertical tabs
 
 You can render the tabs vertically by using the `vertical()` method:
