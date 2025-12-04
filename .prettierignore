@@ -3,5 +3,7 @@
 **/vendor
 composer.lock
 docs-assets
+packages/forms/resources/views/components/repeater/table.blade.php
 packages/panels/resources/boost
+packages/tables/resources/views/index.blade.php
 tests/src/Upgrade/Fixture
