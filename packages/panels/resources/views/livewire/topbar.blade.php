@@ -41,7 +41,7 @@
 
         <div class="fi-topbar-start">
             @if ($isSidebarCollapsibleOnDesktop || $isSidebarFullyCollapsibleOnDesktop)
-                <div class="w-9 shrink-0">
+                <div class="fi-topbar-collapse-sidebar-btn-ctn">
                     @if ($isSidebarCollapsibleOnDesktop)
                         <x-filament::icon-button
                             color="gray"
