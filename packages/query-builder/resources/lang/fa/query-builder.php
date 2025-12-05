@@ -146,6 +146,50 @@ return [
 
             ],
 
+            'unit_labels' => [
+                'second' => 'ثانیه',
+                'minute' => 'دقیقه',
+                'hour' => 'ساعت',
+                'day' => 'روز',
+                'week' => 'هفته',
+                'month' => 'ماه',
+                'quarter' => 'فصل',
+                'year' => 'سال',
+            ],
+
+            'presets' => [
+                'past_decade' => 'دهه گذشته',
+                'past_5_years' => '۵ سال گذشته',
+                'past_2_years' => '۲ سال گذشته',
+                'past_year' => 'سال گذشته',
+                'past_6_months' => '۶ ماه گذشته',
+                'past_quarter' => 'فصل گذشته',
+                'past_month' => 'ماه گذشته',
+                'past_2_weeks' => '۲ هفته گذشته',
+                'past_week' => 'هفته گذشته',
+                'past_hour' => 'ساعت گذشته',
+                'past_minute' => 'دقیقه گذشته',
+                'this_decade' => 'این دهه',
+                'this_year' => 'امسال',
+                'this_quarter' => 'این فصل',
+                'this_month' => 'این ماه',
+                'today' => 'امروز',
+                'this_hour' => 'این ساعت',
+                'this_minute' => 'این دقیقه',
+                'next_minute' => 'دقیقه بعد',
+                'next_hour' => 'ساعت بعد',
+                'next_week' => 'هفته بعد',
+                'next_2_weeks' => '۲ هفته بعد',
+                'next_month' => 'ماه بعد',
+                'next_quarter' => 'فصل بعد',
+                'next_6_months' => '۶ ماه بعد',
+                'next_year' => 'سال بعد',
+                'next_2_years' => '۲ سال بعد',
+                'next_5_years' => '۵ سال بعد',
+                'next_decade' => 'دهه بعد',
+                'custom' => 'سفارشی',
+            ],
+
             'form' => [
 
                 'date' => [
@@ -158,6 +202,34 @@ return [
 
                 'year' => [
                     'label' => 'سال',
+                ],
+
+                'mode' => [
+                    'label' => 'نوع تاریخ',
+                    'options' => [
+                        'absolute' => 'تاریخ مشخص',
+                        'relative' => 'بازه زمانی متغیر',
+                    ],
+                ],
+
+                'preset' => [
+                    'label' => 'دوره زمانی',
+                ],
+
+                'relative_value' => [
+                    'label' => 'چند واحد',
+                ],
+
+                'relative_unit' => [
+                    'label' => 'واحد زمانی',
+                ],
+
+                'tense' => [
+                    'label' => 'زمان',
+                    'options' => [
+                        'past' => 'گذشته',
+                        'future' => 'آینده',
+                    ],
                 ],
 
             ],

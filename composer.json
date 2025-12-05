@@ -12,7 +12,7 @@
         "chillerlan/php-qrcode": "^5.0",
         "filament/support": "*",
         "larastan/larastan": "^3.0",
-        "laravel/pint": "^1.0",
+        "laravel/pint": "1.25.1",
         "laravel/prompts": "^0.3.5",
         "league/csv": "^9.27",
         "league/flysystem-aws-s3-v3": "^3.0",

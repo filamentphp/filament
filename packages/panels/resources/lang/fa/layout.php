@@ -59,4 +59,14 @@ return [
     'logo' => [
         'alt' => 'لوگوی :name',
     ],
+
+    'tenant_menu' => [
+
+        'search_field' => [
+            'label' => 'جستجوی واحد',
+            'placeholder' => 'جستجو',
+        ],
+
+    ],
+
 ];
