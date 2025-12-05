@@ -11,19 +11,19 @@ trait CanNotify
 {
     protected Notification | Closure | null $failureNotification = null;
 
-    protected bool $failureNotificationIsDisabled = false;
+    protected bool $isFailureNotificationDisabled = false;
 
     protected Notification | Closure | null $successNotification = null;
 
-    protected bool $successNotificationIsDisabled = false;
+    protected bool $isSuccessNotificationDisabled = false;
 
     protected Notification | Closure | null $unauthorizedNotification = null;
 
-    protected bool $unauthorizedNotificationIsDisabled = false;
+    protected bool $isUnauthorizedNotificationDisabled = false;
 
     protected Notification | Closure | null $rateLimitedNotification = null;
 
-    protected bool $rateLimitedNotificationIsDisabled = false;
+    protected bool $isRateLimitedNotificationDisabled = false;
 
     protected string | Closure | null $failureNotificationTitle = null;
 
@@ -75,7 +75,7 @@ trait CanNotify
 
     public function sendFailureNotification(): static
     {
-        if ($this->failureNotificationIsDisabled) {
+        if ($this->isFailureNotificationDisabled) {
             return $this;
         }
 
@@ -101,13 +101,8 @@ trait CanNotify
 
     public function failureNotification(Notification | Closure | null $notification): static
     {
-        if ($notification === null) {
-            $this->failureNotificationIsDisabled = true;
-
-            return $this;
-        }
-
         $this->failureNotification = $notification;
+        $this->isFailureNotificationDisabled = $notification === null;
 
         return $this;
     }
@@ -136,7 +131,7 @@ trait CanNotify
 
     public function sendSuccessNotification(): static
     {
-        if ($this->successNotificationIsDisabled) {
+        if ($this->isSuccessNotificationDisabled) {
             return $this;
         }
 
@@ -155,13 +150,8 @@ trait CanNotify
 
     public function successNotification(Notification | Closure | null $notification): static
     {
-        if ($notification === null) {
-            $this->successNotificationIsDisabled = true;
-
-            return $this;
-        }
-
         $this->successNotification = $notification;
+        $this->isSuccessNotificationDisabled = $notification === null;
 
         return $this;
     }
@@ -183,7 +173,7 @@ trait CanNotify
 
     public function sendUnauthorizedNotification(Response $response): static
     {
-        if ($this->unauthorizedNotificationIsDisabled) {
+        if ($this->isUnauthorizedNotificationDisabled) {
             return $this;
         }
 
@@ -204,13 +194,8 @@ trait CanNotify
 
     public function unauthorizedNotification(Notification | Closure | null $notification): static
     {
-        if ($notification === null) {
-            $this->unauthorizedNotificationIsDisabled = true;
-
-            return $this;
-        }
-
         $this->unauthorizedNotification = $notification;
+        $this->isUnauthorizedNotificationDisabled = $notification === null;
 
         return $this;
     }
@@ -224,7 +209,7 @@ trait CanNotify
 
     public function sendRateLimitedNotification(TooManyRequestsException $exception): static
     {
-        if ($this->rateLimitedNotificationIsDisabled) {
+        if ($this->isRateLimitedNotificationDisabled) {
             return $this;
         }
 
@@ -251,13 +236,8 @@ trait CanNotify
 
     public function rateLimitedNotification(Notification | Closure | null $notification): static
     {
-        if ($notification === null) {
-            $this->rateLimitedNotificationIsDisabled = true;
-
-            return $this;
-        }
-
         $this->rateLimitedNotification = $notification;
+        $this->isRateLimitedNotificationDisabled = $notification === null;
 
         return $this;
     }
