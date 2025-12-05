@@ -473,7 +473,7 @@ class Action extends ViewComponent implements Arrayable
             (! $table)
             || (! $record instanceof Model)
             || blank($table->getModel())
-            || ($record::class === $table->getModel())
+            || is_a($record::class, $table->getModel(), true)
         ) && filled($recordKey = $this->resolveRecordKey($record))) {
             $context['recordKey'] = $recordKey;
         }
