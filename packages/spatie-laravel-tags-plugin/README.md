@@ -26,7 +26,7 @@ You must also [prepare your Eloquent model](https://spatie.be/docs/laravel-tags/
 
 ## Form component
 
-This guide assumes that you've already set up your model attach tags as per [Spatie's documentation](https://spatie.be/docs/laravel-tags/basic-usage/using-tags).
+This guide assumes that you've already set up your model to attach tags as per [Spatie's documentation](https://spatie.be/docs/laravel-tags/basic-usage/using-tags).
 
 You may use the field in the same way as the [original tags input](https://filamentphp.com/docs/forms/tags-input) field:
 
@@ -36,7 +36,7 @@ use Filament\Forms\Components\SpatieTagsInput;
 SpatieTagsInput::make('tags')
 ```
 
-Optionally, you may pass a [`type()`](https://spatie.be/docs/laravel-tags/advanced-usage/using-types) allows you to group tags into collections:
+Optionally, you may pass a [`type()`](https://spatie.be/docs/laravel-tags/advanced-usage/using-types) that allows you to group tags into collections:
 
 ```php
 use Filament\Forms\Components\SpatieTagsInput;
