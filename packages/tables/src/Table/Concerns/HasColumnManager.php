@@ -34,6 +34,8 @@ trait HasColumnManager
 
     protected ?Closure $modifyColumnManagerApplyActionUsing = null;
 
+    protected bool | Closure $persistsColumnsInSession = true;
+
     public function columnManager(bool | Closure | null $condition = true): static
     {
         $this->hasColumnManager = $condition;
@@ -83,6 +85,14 @@ trait HasColumnManager
         return $this;
     }
 
+
+    public function persistColumnsInSession(bool | Closure $condition = true): static
+    {
+        $this->persistsColumnsInSession = $condition;
+
+        return $this;
+    }
+  
     public function columnManagerResetActionPosition(ColumnManagerResetActionPosition | Closure | null $position): static
     {
         $this->columnManagerResetActionPosition = $position;
@@ -90,6 +100,12 @@ trait HasColumnManager
         return $this;
     }
 
+
+    public function persistsColumnsInSession(): bool
+    {
+        return (bool) $this->evaluate($this->persistsColumnsInSession);
+    }
+  
     public function getColumnManagerResetActionPosition(): ColumnManagerResetActionPosition
     {
         return $this->evaluate($this->columnManagerResetActionPosition) ?? ColumnManagerResetActionPosition::Header;

@@ -933,6 +933,23 @@ public function table(Table $table): Table
 }
 ```
 
+#### Disabling column persistence in the user's session
+
+By default, Filament persists the table's columns by storing them in the user's session. To prevent persisting the columns in the user's session, use the `persistColumnsInSession(false)` method:
+
+```php
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->columns([
+            // ...
+        ])
+        ->persistColumnsInSession(false);
+}
+```
+
 ## Adding extra HTML attributes to a column content
 
 You can pass extra HTML attributes to the column content via the `extraAttributes()` method, which will be merged onto its outer HTML element. The attributes should be represented by an array, where the key is the attribute name and the value is the attribute value:
