@@ -515,9 +515,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
 
     public function isReorderable(): bool
     {
-        $result = (bool) $this->evaluate($this->isReorderable);
-
-        return $result;
+        return (bool) $this->evaluate($this->isReorderable);
     }
 
     public function position(string | Closure | null $position): static

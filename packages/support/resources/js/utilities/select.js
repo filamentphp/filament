@@ -31,8 +31,8 @@ export class Select {
         isAutofocused = false,
         isDisabled = false,
         isMultiple = false,
-        isSearchable = false,
         isReorderable = false,
+        isSearchable = false,
         getOptionLabelUsing = null,
         getOptionLabelsUsing = null,
         getOptionsUsing = null,
@@ -67,8 +67,8 @@ export class Select {
         this.isAutofocused = isAutofocused
         this.isDisabled = isDisabled
         this.isMultiple = isMultiple
-        this.isSearchable = isSearchable
         this.isReorderable = isReorderable
+        this.isSearchable = isSearchable
         this.getOptionLabelUsing = getOptionLabelUsing
         this.getOptionLabelsUsing = getOptionLabelsUsing
         this.getOptionsUsing = getOptionsUsing
