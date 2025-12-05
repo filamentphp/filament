@@ -6,7 +6,7 @@
     $isDisabled = $isDisabled();
     $isMultiple = $isMultiple();
     $isSearchable = $isSearchable();
-    $isSortable = $isSortable();
+    $isReorderable = $isReorderable();
     $canOptionLabelsWrap = $canOptionLabelsWrap();
     $isRequired = $isRequired();
     $isConcealed = $isConcealed();
