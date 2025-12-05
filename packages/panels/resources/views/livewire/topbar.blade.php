@@ -40,50 +40,57 @@
         @endif
 
         <div class="fi-topbar-start">
-            @if ($isSidebarCollapsibleOnDesktop)
-                <x-filament::icon-button
-                    color="gray"
-                    :icon="$isRtl ? \Filament\Support\Icons\Heroicon::OutlinedChevronLeft : \Filament\Support\Icons\Heroicon::OutlinedChevronRight"
-                    {{-- @deprecated Use `PanelsIconAlias::SIDEBAR_EXPAND_BUTTON_RTL` instead of `PanelsIconAlias::SIDEBAR_EXPAND_BUTTON` for RTL. --}}
-                    :icon-alias="
-                        $isRtl
-                        ? [
-                            \Filament\View\PanelsIconAlias::SIDEBAR_EXPAND_BUTTON_RTL,
-                            \Filament\View\PanelsIconAlias::SIDEBAR_EXPAND_BUTTON,
-                        ]
-                        : \Filament\View\PanelsIconAlias::SIDEBAR_EXPAND_BUTTON
-                    "
-                    icon-size="lg"
-                    :label="__('filament-panels::layout.actions.sidebar.expand.label')"
-                    x-cloak
-                    x-data="{}"
-                    x-on:click="$store.sidebar.open()"
-                    x-show="! $store.sidebar.isOpen"
-                    class="fi-topbar-open-collapse-sidebar-btn"
-                />
-            @endif
-
             @if ($isSidebarCollapsibleOnDesktop || $isSidebarFullyCollapsibleOnDesktop)
-                <x-filament::icon-button
-                    color="gray"
-                    :icon="$isRtl ? \Filament\Support\Icons\Heroicon::OutlinedChevronRight : \Filament\Support\Icons\Heroicon::OutlinedChevronLeft"
-                    {{-- @deprecated Use `PanelsIconAlias::SIDEBAR_COLLAPSE_BUTTON_RTL` instead of `PanelsIconAlias::SIDEBAR_COLLAPSE_BUTTON` for RTL. --}}
-                    :icon-alias="
-                        $isRtl
-                        ? [
-                            \Filament\View\PanelsIconAlias::SIDEBAR_COLLAPSE_BUTTON_RTL,
-                            \Filament\View\PanelsIconAlias::SIDEBAR_COLLAPSE_BUTTON,
-                        ]
-                        : \Filament\View\PanelsIconAlias::SIDEBAR_COLLAPSE_BUTTON
-                    "
-                    icon-size="lg"
-                    :label="__('filament-panels::layout.actions.sidebar.collapse.label')"
-                    x-cloak
-                    x-data="{}"
-                    x-on:click="$store.sidebar.close()"
-                    x-show="$store.sidebar.isOpen"
-                    class="fi-topbar-close-collapse-sidebar-btn"
-                />
+                <div
+                    x-show="$store.sidebar.isOpen || @js($isSidebarCollapsibleOnDesktop)"
+                    class="fi-topbar-collapse-sidebar-btn-ctn"
+                >
+                    @if ($isSidebarCollapsibleOnDesktop)
+                        <x-filament::icon-button
+                            color="gray"
+                            :icon="$isRtl ? \Filament\Support\Icons\Heroicon::OutlinedChevronLeft : \Filament\Support\Icons\Heroicon::OutlinedChevronRight"
+                            {{-- @deprecated Use `PanelsIconAlias::SIDEBAR_EXPAND_BUTTON_RTL` instead of `PanelsIconAlias::SIDEBAR_EXPAND_BUTTON` for RTL. --}}
+                            :icon-alias="
+                                $isRtl
+                                ? [
+                                    \Filament\View\PanelsIconAlias::SIDEBAR_EXPAND_BUTTON_RTL,
+                                    \Filament\View\PanelsIconAlias::SIDEBAR_EXPAND_BUTTON,
+                                ]
+                                : \Filament\View\PanelsIconAlias::SIDEBAR_EXPAND_BUTTON
+                            "
+                            icon-size="lg"
+                            :label="__('filament-panels::layout.actions.sidebar.expand.label')"
+                            x-cloak
+                            x-data="{}"
+                            x-on:click="$store.sidebar.open()"
+                            x-show="! $store.sidebar.isOpen"
+                            class="fi-topbar-open-collapse-sidebar-btn"
+                        />
+                    @endif
+
+                    @if ($isSidebarCollapsibleOnDesktop || $isSidebarFullyCollapsibleOnDesktop)
+                        <x-filament::icon-button
+                            color="gray"
+                            :icon="$isRtl ? \Filament\Support\Icons\Heroicon::OutlinedChevronRight : \Filament\Support\Icons\Heroicon::OutlinedChevronLeft"
+                            {{-- @deprecated Use `PanelsIconAlias::SIDEBAR_COLLAPSE_BUTTON_RTL` instead of `PanelsIconAlias::SIDEBAR_COLLAPSE_BUTTON` for RTL. --}}
+                            :icon-alias="
+                                $isRtl
+                                ? [
+                                    \Filament\View\PanelsIconAlias::SIDEBAR_COLLAPSE_BUTTON_RTL,
+                                    \Filament\View\PanelsIconAlias::SIDEBAR_COLLAPSE_BUTTON,
+                                ]
+                                : \Filament\View\PanelsIconAlias::SIDEBAR_COLLAPSE_BUTTON
+                            "
+                            icon-size="lg"
+                            :label="__('filament-panels::layout.actions.sidebar.collapse.label')"
+                            x-cloak
+                            x-data="{}"
+                            x-on:click="$store.sidebar.close()"
+                            x-show="$store.sidebar.isOpen"
+                            class="fi-topbar-close-collapse-sidebar-btn"
+                        />
+                    @endif
+                </div>
             @endif
 
             {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::TOPBAR_LOGO_BEFORE) }}
