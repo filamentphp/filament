@@ -32,7 +32,7 @@ export class Select {
         isDisabled = false,
         isMultiple = false,
         isSearchable = false,
-        isSortable = false,
+        isReorderable = false,
         getOptionLabelUsing = null,
         getOptionLabelsUsing = null,
         getOptionsUsing = null,
@@ -68,7 +68,7 @@ export class Select {
         this.isDisabled = isDisabled
         this.isMultiple = isMultiple
         this.isSearchable = isSearchable
-        this.isSortable = isSortable
+        this.isReorderable = isReorderable
         this.getOptionLabelUsing = getOptionLabelUsing
         this.getOptionLabelsUsing = getOptionLabelsUsing
         this.getOptionsUsing = getOptionsUsing
@@ -811,7 +811,7 @@ export class Select {
 
         target.appendChild(badgesContainer)
 
-        if (this.isSortable) {
+        if (this.isReorderable) {
             badgesContainer.addEventListener('click', (event) => {
                 event.stopPropagation()
             })

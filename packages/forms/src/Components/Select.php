@@ -129,7 +129,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
 
     protected bool | Closure $canOptionLabelsWrap = true;
 
-    protected bool | Closure $isSortable = false;
+    protected bool | Closure $isReorderable = false;
 
     protected function setUp(): void
     {
@@ -506,16 +506,16 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         return $this;
     }
 
-    public function sortable(bool | Closure $condition = true): static
+    public function reorderable(bool | Closure $condition = true): static
     {
-        $this->isSortable = $condition;
+        $this->isReorderable = $condition;
 
         return $this;
     }
 
-    public function isSortable(): bool
+    public function isReorderable(): bool
     {
-        $result = (bool) $this->evaluate($this->isSortable);
+        $result = (bool) $this->evaluate($this->isReorderable);
 
         return $result;
     }

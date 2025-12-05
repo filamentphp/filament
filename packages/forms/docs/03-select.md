@@ -256,7 +256,7 @@ Select::make('technologies')
 
 ## Reordering options
 
-The `sortable()` method allows you to reorder the selected options in a multi-select:
+The `reorderable()` method allows you to reorder the selected options in a multi-select:
 
 ```php
 use Filament\Forms\Components\Select;
@@ -269,7 +269,7 @@ Select::make('technologies')
         'laravel' => 'Laravel',
         'livewire' => 'Laravel Livewire',
     ])
-    ->sortable()
+    ->reorderable()
 ```
 
 This is useful when the order of the selected options matters.
