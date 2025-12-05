@@ -88,7 +88,6 @@ trait InteractsWithPageTable /** @phpstan-ignore trait.unused */
             'tableColumnSearches' => $this->tableColumnSearches,
             'tableFilters' => $this->tableFilters,
             'tableGrouping' => $this->tableGrouping,
-            'tableRecordsCount' => $this->tableRecordsCount,
             'tableRecordsPerPage' => $this->tableRecordsPerPage,
             'tableSearch' => $this->tableSearch,
             'tableSort' => $this->tableSort,
