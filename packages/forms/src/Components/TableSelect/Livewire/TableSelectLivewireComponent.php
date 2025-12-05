@@ -10,10 +10,12 @@ use Filament\Support\Services\RelationshipJoiner;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Database\Query\Builder;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\Modelable;
 use Livewire\Component;
@@ -29,6 +31,9 @@ class TableSelectLivewireComponent extends Component implements HasActions, HasF
 
     #[Locked]
     public bool $isDisabled = false;
+
+    #[Locked]
+    public bool $shouldIgnoreRelatedRecords = false;
 
     #[Locked]
     public ?int $maxSelectableRecords = null;
@@ -85,12 +90,37 @@ class TableSelectLivewireComponent extends Component implements HasActions, HasF
             ->arguments($this->getTableArguments());
 
         if (filled($this->relationshipName)) {
-            $table->query(function (): Builder {
+            $table->query(function (): EloquentBuilder {
                 $relationship = Relation::noConstraints(fn (): Relation => ($this->record ??= app($this->model))->{$this->relationshipName}());
 
                 $relationshipQuery = app(RelationshipJoiner::class)->prepareQueryForNoConstraints($relationship);
 
                 if (! ($relationship instanceof BelongsToMany)) {
+                    return $relationshipQuery;
+                }
+
+                if ($this->shouldIgnoreRelatedRecords) {
+                    $relationshipQuery->whereNotExists(function (Builder $query) use ($relationship): void {
+                        $query
+                            ->select($relationship->getConnection()->raw(1))
+                            ->from($relationship->getTable())
+                            ->whereColumn(
+                                $relationship->getQualifiedRelatedPivotKeyName(),
+                                $relationship->getQualifiedRelatedKeyName(),
+                            )
+                            ->where(
+                                $relationship->getQualifiedForeignPivotKeyName(),
+                                $this->record->getAttribute($relationship->getParentKeyName()),
+                            );
+
+                        if ($relationship instanceof MorphToMany) {
+                            $query->where(
+                                $relationship->qualifyPivotColumn($relationship->getMorphType()),
+                                $relationship->getMorphClass(),
+                            );
+                        }
+                    });
+
                     return $relationshipQuery;
                 }
 
