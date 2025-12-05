@@ -41,7 +41,10 @@
 
         <div class="fi-topbar-start">
             @if ($isSidebarCollapsibleOnDesktop || $isSidebarFullyCollapsibleOnDesktop)
-                <div class="fi-topbar-collapse-sidebar-btn-ctn">
+                <div
+                    x-show="$store.sidebar.isOpen || @js($isSidebarCollapsibleOnDesktop)"
+                    class="fi-topbar-collapse-sidebar-btn-ctn"
+                >
                     @if ($isSidebarCollapsibleOnDesktop)
                         <x-filament::icon-button
                             color="gray"
