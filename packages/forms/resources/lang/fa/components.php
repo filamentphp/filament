@@ -11,6 +11,7 @@ return [
             ],
 
             'add' => [
+
                 'label' => 'افزودن به :label',
 
                 'modal' => [
@@ -26,10 +27,12 @@ return [
                     ],
 
                 ],
+
             ],
 
             'add_between' => [
-                'label' => 'قراردادن',
+
+                'label' => 'درج',
 
                 'modal' => [
 
@@ -44,6 +47,7 @@ return [
                     ],
 
                 ],
+
             ],
 
             'delete' => [
@@ -181,7 +185,7 @@ return [
                 ],
 
                 'zoom_100' => [
-                    'label' => 'بزرگنمایی عکس به 100%',
+                    'label' => 'بزرگنمایی عکس به ۱۰۰٪',
                 ],
 
                 'zoom_in' => [
@@ -189,7 +193,7 @@ return [
                 ],
 
                 'zoom_out' => [
-                    'label' => 'دورنمایی',
+                    'label' => 'کوچک‌نمایی',
                 ],
 
             ],
@@ -203,7 +207,7 @@ return [
 
                 'rotation' => [
                     'label' => 'چرخش',
-                    'unit' => 'deg',
+                    'unit' => 'درجه',
                 ],
 
                 'width' => [
@@ -236,8 +240,8 @@ return [
             'svg' => [
 
                 'messages' => [
-                    'confirmation' => 'ویرایش فایل‌های SVG توصیه نمی‌شود، زیرا می‌تواند منجر به کاهش کیفیت در هنگام مقیاس‌بندی شود.\n آیا مطمئن هستید که می‌خواهید ادامه دهید؟',
-                    'disabled' => 'ویرایش فایل‌های SVG غیرفعال است زیرا می‌تواند منجر به کاهش کیفیت در هنگام مقیاس‌بندی شود.',
+                    'confirmation' => 'ویرایش فایل‌های SVG توصیه نمی‌شود، زیرا ممکن است کیفیت هنگام مقیاس‌بندی کاهش یابد.\n آیا مطمئن هستید که می‌خواهید ادامه دهید؟',
+                    'disabled' => 'ویرایش فایل‌های SVG غیرفعال است زیرا ممکن است کیفیت هنگام مقیاس‌بندی کاهش یابد.',
                 ],
 
             ],
@@ -280,23 +284,28 @@ return [
 
     'markdown_editor' => [
 
+        'file_attachments_accepted_file_types_message' => 'فایل‌های بارگذاری شده باید از نوع: :values باشند.',
+
+        'file_attachments_max_size_message' => 'حجم فایل‌های بارگذاری شده نباید بیشتر از :max کیلوبایت باشد.',
+
         'tools' => [
-            'attach_files' => 'پیوستن فایل ها',
+            'attach_files' => 'پیوستن فایل‌ها',
             'blockquote' => 'نقل قول',
             'bold' => 'پررنگ',
             'bullet_list' => 'لیست نامرتب',
-            'code_block' => 'بلاک کد',
+            'code_block' => 'بلوک کد',
             'heading' => 'عنوان',
             'italic' => 'مورب',
             'link' => 'لینک',
             'ordered_list' => 'لیست مرتب',
-            'redo' => 'اَزنو',
+            'redo' => 'جلو',
             'strike' => 'خط زده',
             'table' => 'جدول',
-            'undo' => 'واگرد',
+            'undo' => 'عقب',
         ],
 
     ],
+
     'modal_table_select' => [
 
         'actions' => [
@@ -318,6 +327,7 @@ return [
         ],
 
     ],
+
     'radio' => [
 
         'boolean' => [
@@ -380,6 +390,7 @@ return [
     ],
 
     'rich_editor' => [
+
         'actions' => [
 
             'attach_files' => [
@@ -436,6 +447,71 @@ return [
 
             ],
 
+            'grid' => [
+
+                'label' => 'شبکه',
+
+                'modal' => [
+
+                    'heading' => 'شبکه',
+
+                    'form' => [
+
+                        'preset' => [
+
+                            'label' => 'پیش‌تنظیم',
+
+                            'placeholder' => 'هیچ',
+
+                            'options' => [
+                                'two' => 'دو',
+                                'three' => 'سه',
+                                'four' => 'چهار',
+                                'five' => 'پنج',
+                                'two_start_third' => 'دو (شروع سوم)',
+                                'two_end_third' => 'دو (پایان سوم)',
+                                'two_start_fourth' => 'دو (شروع چهارم)',
+                                'two_end_fourth' => 'دو (پایان چهارم)',
+                            ],
+                        ],
+
+                        'columns' => [
+                            'label' => 'ستون‌ها',
+                        ],
+
+                        'from_breakpoint' => [
+
+                            'label' => 'از نقطه شکست',
+
+                            'options' => [
+                                'default' => 'همه',
+                                'sm' => 'کوچک',
+                                'md' => 'متوسط',
+                                'lg' => 'بزرگ',
+                                'xl' => 'خیلی بزرگ',
+                                '2xl' => 'دو برابر خیلی بزرگ',
+                            ],
+
+                        ],
+
+                        'is_asymmetric' => [
+                            'label' => 'دو ستون نامتقارن',
+                        ],
+
+                        'start_span' => [
+                            'label' => 'شروع بازه',
+                        ],
+
+                        'end_span' => [
+                            'label' => 'پایان بازه',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
             'link' => [
 
                 'label' => 'ویرایش',
@@ -460,7 +536,35 @@ return [
 
             ],
 
+            'text_color' => [
+
+                'label' => 'رنگ متن',
+
+                'modal' => [
+
+                    'heading' => 'رنگ متن',
+
+                    'form' => [
+
+                        'color' => [
+                            'label' => 'رنگ',
+                        ],
+
+                        'custom_color' => [
+                            'label' => 'رنگ سفارشی',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
         ],
+
+        'file_attachments_accepted_file_types_message' => 'فایل‌های بارگذاری شده باید از نوع: :values باشند.',
+
+        'file_attachments_max_size_message' => 'حجم فایل‌های بارگذاری شده نباید بیشتر از :max کیلوبایت باشد.',
 
         'no_merge_tag_search_results_message' => 'هیچ نتیجه‌ای برای جستجوی برچسب ادغام یافت نشد.',
 
@@ -469,19 +573,24 @@ return [
             'align_end' => 'تراز انتها',
             'align_justify' => 'تراز کامل',
             'align_start' => 'تراز ابتدا',
-            'attach_files' => 'پیوستن فایل ها',
+            'attach_files' => 'پیوستن فایل‌ها',
             'blockquote' => 'نقل قول',
             'bold' => 'پررنگ',
             'bullet_list' => 'لیست نامرتب',
-            'clear_formatting' => 'پاک کردن قالب بندی',
+            'clear_formatting' => 'پاک کردن قالب‌بندی',
             'code' => 'کد',
             'code_block' => 'بلوک کد',
+            'custom_blocks' => 'بلوک‌های سفارشی',
+            'details' => 'جزئیات',
             'h1' => 'عنوان اصلی',
             'h2' => 'عنوان فرعی',
             'h3' => 'زیرعنوان',
+            'grid' => 'شبکه',
+            'grid_delete' => 'حذف شبکه',
             'highlight' => 'برجسته‌سازی',
             'horizontal_rule' => 'خط افقی',
             'italic' => 'مورب',
+            'lead' => 'متن اصلی',
             'link' => 'لینک',
             'merge_tags' => 'برچسب‌های ادغام',
             'ordered_list' => 'لیست مرتب',
@@ -501,9 +610,13 @@ return [
             'table_merge_cells' => 'ادغام سلول‌ها',
             'table_split_cell' => 'تقسیم سلول',
             'table_toggle_header_row' => 'تغییر ردیف سرستون',
+            'table_toggle_header_cell' => 'تغییر سلول سرستون',
+            'text_color' => 'رنگ متن',
             'underline' => 'زیرخط',
             'undo' => 'عقب',
         ],
+
+        'uploading_file_message' => 'در حال بارگذاری فایل...',
 
     ],
 
@@ -537,9 +650,9 @@ return [
 
             'edit_option' => [
 
-                'modal' => [
+                'label' => 'ویرایش',
 
-                    'label' => 'ویرایش',
+                'modal' => [
 
                     'heading' => 'ویرایش',
 
@@ -562,7 +675,7 @@ return [
             'false' => 'خیر',
         ],
 
-        'loading_message' => 'درحال بارگذاری...',
+        'loading_message' => 'در حال بارگذاری...',
 
         'max_items_message' => 'تنها :count مورد می‌تواند انتخاب شود.',
 
@@ -570,7 +683,7 @@ return [
 
         'placeholder' => 'یک گزینه را انتخاب کنید',
 
-        'searching_message' => 'درحال جستجو...',
+        'searching_message' => 'در حال جستجو...',
 
         'search_prompt' => 'برای جستجو تایپ کنید...',
 
@@ -584,12 +697,17 @@ return [
 
         'actions' => [
 
+            'copy' => [
+                'label' => 'کپی',
+                'message' => 'کپی شد',
+            ],
+
             'hide_password' => [
                 'label' => 'مخفی کردن رمز',
             ],
 
             'show_password' => [
-                'label' => 'نشان دادن رمز',
+                'label' => 'نمایش رمز',
             ],
 
         ],

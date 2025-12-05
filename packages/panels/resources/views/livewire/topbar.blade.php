@@ -125,6 +125,7 @@
                         @if ($groupLabel)
                             <x-filament::dropdown
                                 placement="bottom-start"
+                                teleport
                                 :attributes="\Filament\Support\prepare_inherited_attributes($groupExtraTopbarAttributeBag)"
                             >
                                 <x-slot name="trigger">
