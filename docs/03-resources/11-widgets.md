@@ -125,7 +125,7 @@ Stat::make('Total Products', $this->getPageTableRecords()->count()),
 
 ## Accessing the total table records count
 
-If you need the total count of all records for the table query without executing additional count query, you can access the `$tableRecordsCount` property:
+If you need the total count of all records for the table query without executing an additional count query, you can use the `$tableRecordsCount` property:
 
 ```php
 use Filament\Widgets\StatsOverviewWidget\Stat;
