@@ -524,6 +524,42 @@ Action::make('edit')
 
 Now, the edit modal will have a "Delete" button in the footer, which will open a confirmation modal when clicked. This action is completely independent of the `edit` action, and will not run the `edit` action when it is clicked.
 
+#### Grouping extra footer actions
+
+You can use `ActionGroup` to group related actions together in the modal footer:
+
+```php
+use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
+
+Action::make('create')
+    ->schema([
+        // ...
+    ])
+    ->extraModalFooterActions([
+        Action::make('createAnother')
+            ->action(function () {
+                // ...
+            }),
+        ActionGroup::make([
+            Action::make('createAndEmail')
+                ->action(function () {
+                    // ...
+                }),
+            Action::make('createAndNotify')
+                ->action(function () {
+                    // ...
+                }),
+            Action::make('createDraft')
+                ->action(function () {
+                    // ...
+                }),
+        ])
+            ->button()
+            ->label('More Options'),
+    ])
+```
+
 In this example though, you probably want to cancel the `edit` action if the `delete` action is run. You can do this using the `cancelParentActions()` method:
 
 ```php
