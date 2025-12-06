@@ -30,7 +30,7 @@ RichEditor::make('content')
 
 The JSON is in [TipTap's](https://tiptap.dev) format, which is a structured representation of the content.
 
-If you're saving the JSON tags using Eloquent, you should be sure to add an `array` [cast](https://laravel.com/docs/eloquent-mutators#array-and-json-casting) to the model property:
+If you're saving the JSON content using Eloquent, you should be sure to add an `array` [cast](https://laravel.com/docs/eloquent-mutators#array-and-json-casting) to the model property:
 
 ```php
 use Illuminate\Database\Eloquent\Model;
@@ -94,6 +94,7 @@ Additional tools available in the toolbar include:
 - `tableMergeCells` - Merges the selected cells into one cell.
 - `tableSplitCell` - Splits the selected cell into multiple cells.
 - `tableToggleHeaderRow` - Toggles the header row of the table.
+- `tableToggleHeaderCell` - Toggles the header cell of the table.
 - `tableDelete` - Deletes the table.
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `toolbarButtons()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
@@ -121,7 +122,7 @@ RichEditor::make('content')
             'tableAddColumnBefore', 'tableAddColumnAfter', 'tableDeleteColumn',
             'tableAddRowBefore', 'tableAddRowAfter', 'tableDeleteRow',
             'tableMergeCells', 'tableSplitCell',
-            'tableToggleHeaderRow',
+            'tableToggleHeaderRow', 'tableToggleHeaderCell',
             'tableDelete',
         ],
     ])

@@ -212,3 +212,21 @@ public function table(Table $table): Table
 ```
 
 In this example, we have put two of the filters inside a [section](../../schemas/sections) component, and used the `columns()` method to specify that the section should have two columns. We have also used the `columnSpanFull()` method to specify that the section should span the full width of the filter form, which is also 2 columns wide. We have inserted each filter into the form schema by using the filter's name as the key in the `$filters` array.
+
+## Displaying the reset action in the footer
+
+By default, the reset action appears in the header of the filters form. You may move it to the footer, next to the apply action, using the `filtersResetActionPosition()` method:
+
+```php
+use Filament\Tables\Enums\FiltersResetActionPosition;
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->filters([
+            // ...
+        ])
+        ->filtersResetActionPosition(FiltersResetActionPosition::Footer);
+}
+```

@@ -285,6 +285,28 @@ class LayoutDemo extends Component implements HasActions, HasSchemas
                             ->vertical(),
                     ]),
                 Group::make()
+                    ->id('tabsNotScrollable')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        Tabs::make('Tabs')
+                            ->statePath('tabsNotScrollable')
+                            ->schema([
+                                Tab::make('Tab 1')
+                                    ->schema([
+                                        TextInput::make('field'),
+                                    ]),
+                                Tab::make('Tab 2'),
+                                Tab::make('Tab 3'),
+                                Tab::make('Tab 4'),
+                                Tab::make('Tab 5'),
+                                Tab::make('Tab 6'),
+                                Tab::make('Tab 7'),
+                            ])
+                            ->scrollable(false),
+                    ]),
+                Group::make()
                     ->id('wizard')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-5xl',

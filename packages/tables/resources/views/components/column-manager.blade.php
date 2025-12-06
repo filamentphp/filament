@@ -1,3 +1,9 @@
+@php
+    use Filament\Support\Enums\GridDirection;
+    use Filament\Tables\Enums\ColumnManagerResetActionPosition;
+    use Illuminate\View\ComponentAttributeBag;
+@endphp
+
 @props([
     'applyAction',
     'columns' => null,
@@ -5,12 +11,8 @@
     'hasToggleableColumns',
     'headingTag' => 'h3',
     'reorderAnimationDuration' => 300,
+    'resetActionPosition' => ColumnManagerResetActionPosition::Header,
 ])
-
-@php
-    use Filament\Support\Enums\GridDirection;
-    use Illuminate\View\ComponentAttributeBag;
-@endphp
 
 <div class="fi-ta-col-manager">
     <div
@@ -25,23 +27,25 @@
                 {{ __('filament-tables::table.column_manager.heading') }}
             </{{ $headingTag }}>
 
-            <div>
-                <x-filament::link
-                    :attributes="
-                        \Filament\Support\prepare_inherited_attributes(
-                            new ComponentAttributeBag([
-                                'color' => 'danger',
-                                'tag' => 'button',
-                                'wire:click' => 'resetTableColumnManager',
-                                'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => '',
-                                'wire:target' => 'resetTableColumnManager',
-                            ])
-                        )
-                    "
-                >
-                    {{ __('filament-tables::table.column_manager.actions.reset.label') }}
-                </x-filament::link>
-            </div>
+            @if ($resetActionPosition === ColumnManagerResetActionPosition::Header)
+                <div>
+                    <x-filament::link
+                        :attributes="
+                            \Filament\Support\prepare_inherited_attributes(
+                                new ComponentAttributeBag([
+                                    'color' => 'danger',
+                                    'tag' => 'button',
+                                    'wire:click' => 'resetTableColumnManager',
+                                    'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => '',
+                                    'wire:target' => 'resetTableColumnManager',
+                                ])
+                            )
+                        "
+                    >
+                        {{ __('filament-tables::table.column_manager.actions.reset.label') }}
+                    </x-filament::link>
+                </div>
+            @endif
         </div>
 
         <div
@@ -184,9 +188,20 @@
             </template>
         </div>
 
-        @if ($applyAction->isVisible())
-            <div class="fi-ta-col-manager-apply-action-ctn">
-                {{ $applyAction }}
+        @if ($applyAction->isVisible() || $resetActionPosition === ColumnManagerResetActionPosition::Footer)
+            <div class="fi-ta-col-manager-actions-ctn">
+                @if ($applyAction->isVisible())
+                    {{ $applyAction }}
+                @endif
+
+                @if ($resetActionPosition === ColumnManagerResetActionPosition::Footer)
+                    <x-filament::button
+                        color="danger"
+                        wire:click="resetTableColumnManager"
+                    >
+                        {{ __('filament-tables::table.column_manager.actions.reset.label') }}
+                    </x-filament::button>
+                @endif
             </div>
         @endif
     </div>

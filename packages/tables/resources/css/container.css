@@ -107,6 +107,10 @@
                 @apply text-gray-400 dark:text-gray-500;
             }
         }
+
+        & .fi-ta-filters-actions-ctn {
+            @apply flex gap-3;
+        }
     }
 
     & .fi-ta-filters-above-content-ctn {
@@ -121,7 +125,7 @@
                 @apply mt-3;
             }
 
-            &:has(.fi-ta-filters-apply-action-ctn) {
+            &:has(.fi-ta-filters-actions-ctn) {
                 & .fi-ta-filters-trigger-action-ctn {
                     @apply -mt-7;
                 }

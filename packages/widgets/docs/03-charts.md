@@ -338,7 +338,7 @@ window.filamentChartJsPlugins.push(ChartDataLabels)
 
 This is equivalent to including the plugins "inline" via `new Chart(..., { plugins: [...] })` when instantiating a Chart.js chart.
 
-It's important to initialise the array if it has not been already, before pushing onto it. This ensures that mutliple JavaScript files (especially those from Filament plugins) that register Chart.js plugins do not overwrite each other, regardless of the order they are booted in.
+It's important to initialise the array if it has not been already, before pushing onto it. This ensures that multiple JavaScript files (especially those from Filament plugins) that register Chart.js plugins do not overwrite each other, regardless of the order they are booted in.
 
 You can push as many plugins to the array as you would like to install, you do not need a separate file to import each plugin.
 

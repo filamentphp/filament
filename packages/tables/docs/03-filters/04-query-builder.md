@@ -179,6 +179,17 @@ By default, the following operators are available:
 - Is year - filters a column to be in the same year as the searched year
 - Is not year - filters a column to not be in the same year as the searched year
 
+#### Datetime constraints
+
+By default, date constraints only filter by date. If you have a datetime column and want to enable time-based filtering, you can use the `time()` method:
+
+```php
+use Filament\QueryBuilder\Constraints\DateConstraint;
+
+DateConstraint::make('published_at')
+    ->time()
+```
+
 ### Select constraints
 
 Select constraints allow you to filter fields using a select field. They can be used to filter any field, including via relationships.

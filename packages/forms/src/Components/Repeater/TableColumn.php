@@ -6,6 +6,7 @@ use Closure;
 use Filament\Support\Components\Component;
 use Filament\Support\Concerns\CanWrapHeader;
 use Filament\Support\Concerns\HasAlignment;
+use Filament\Support\Concerns\HasVerticalAlignment;
 use Filament\Support\Concerns\HasWidth;
 use Illuminate\Contracts\Support\Htmlable;
 
@@ -13,6 +14,7 @@ class TableColumn extends Component
 {
     use CanWrapHeader;
     use HasAlignment;
+    use HasVerticalAlignment;
     use HasWidth;
 
     protected string $evaluationIdentifier = 'column';

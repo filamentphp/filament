@@ -19,6 +19,7 @@ import { xml } from '@codemirror/lang-xml'
 import { yaml } from '@codemirror/lang-yaml'
 
 export default function codeEditorFormComponent({
+    canWrap,
     isDisabled,
     isLive,
     isLiveDebounced,
@@ -48,6 +49,7 @@ export default function codeEditorFormComponent({
                     extensions: [
                         basicSetup,
                         keymap.of([indentWithTab]),
+                        ...(canWrap ? [EditorView.lineWrapping] : []),
                         EditorState.readOnly.of(isDisabled),
                         EditorView.editable.of(!isDisabled),
                         EditorView.updateListener.of((viewUpdate) => {

@@ -25,6 +25,7 @@
             x-load
             x-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('code-editor', 'filament/forms') }}"
             x-data="codeEditorFormComponent({
+                        canWrap: @js($canWrap()),
                         isDisabled: @js($isDisabled),
                         isLive: @js($isLive),
                         isLiveDebounced: @js($isLiveDebounced),
