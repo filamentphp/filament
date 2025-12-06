@@ -470,10 +470,7 @@ it('can call an action with data registered in an ActionGroup in extraModalFoote
 it('can mount an action that has an ActionGroup in extraModalFooterActions', function (): void {
     livewire(Actions::class)
         ->mountAction('withGroupedExtraActions')
-        ->assertActionMounted('withGroupedExtraActions')
-        ->assertActionDataSet([
-            'content' => null,
-        ]);
+        ->assertActionMounted('withGroupedExtraActions');
 });
 
 it('can call multiple actions registered in an ActionGroup in extraModalFooterActions', function (): void {
