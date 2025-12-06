@@ -467,7 +467,7 @@ it('can call an action with data inside an ActionGroup in extraModalFooterAction
         ->assertDispatched('option3-called', value: $value);
 });
 
-it('can mount a parent action with ActionGroup in extraModalFooterActions', function (): void {
+it('can open modal for action with ActionGroup in extraModalFooterActions', function (): void {
     livewire(Actions::class)
         ->mountAction('withGroupedExtraActions')
         ->assertActionMounted('withGroupedExtraActions')
