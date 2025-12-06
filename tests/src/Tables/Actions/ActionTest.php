@@ -409,3 +409,74 @@ it('can replicate a record', function (): void {
         'title' => $post->title . ' (Copy)',
     ]);
 });
+
+it('can call an action inside an ActionGroup in extraModalFooterActions', function (): void {
+    $post = Post::factory()->create();
+
+    livewire(PostsTable::class)
+        ->callAction([
+            TestAction::make('withGroupedExtraActions')->table($post),
+            TestAction::make('simpleExtra'),
+        ])
+        ->assertDispatched('simple-extra-called', recordKey: $post->getKey());
+});
+
+it('can call an action with data inside an ActionGroup in extraModalFooterActions', function (): void {
+    $post = Post::factory()->create();
+
+    livewire(PostsTable::class)
+        ->callAction([
+            TestAction::make('withGroupedExtraActions')->table($post),
+            TestAction::make('option3'),
+        ], [
+            'value' => $value = Str::random(),
+        ])
+        ->assertHasNoFormErrors()
+        ->assertDispatched('option3-called', value: $value, recordKey: $post->getKey());
+});
+
+it('can mount a parent action with ActionGroup in extraModalFooterActions', function (): void {
+    $post = Post::factory()->create();
+
+    livewire(PostsTable::class)
+        ->mountTableAction('withGroupedExtraActions', $post)
+        ->assertTableActionMounted('withGroupedExtraActions')
+        ->assertTableActionDataSet([
+            'content' => null,
+        ]);
+});
+
+it('can access record in actions within ActionGroup in extraModalFooterActions', function (): void {
+    $post = Post::factory()->create();
+
+    livewire(PostsTable::class)
+        ->callAction([
+            TestAction::make('withGroupedExtraActions')->table($post),
+            TestAction::make('option1'),
+        ])
+        ->assertDispatched('option1-called', recordKey: $post->getKey());
+
+    livewire(PostsTable::class)
+        ->callAction([
+            TestAction::make('withGroupedExtraActions')->table($post),
+            TestAction::make('option2'),
+        ])
+        ->assertDispatched('option2-called', recordKey: $post->getKey());
+});
+
+it('can submit parent action after calling action in ActionGroup', function (): void {
+    $post = Post::factory()->create();
+
+    livewire(PostsTable::class)
+        ->callAction([
+            TestAction::make('withGroupedExtraActions')->table($post),
+            TestAction::make('option1'),
+        ])
+        ->assertDispatched('option1-called', recordKey: $post->getKey())
+        ->fillForm([
+            'content' => $content = Str::random(),
+        ])
+        ->callMountedTableAction()
+        ->assertHasNoTableActionErrors()
+        ->assertDispatched('grouped-extra-actions-called', content: $content, recordKey: $post->getKey());
+});

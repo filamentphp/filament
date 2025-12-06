@@ -445,3 +445,64 @@ it('will assert that a notification was not sent', function (): void {
         ->callAction('shows-notification-with-id')
         ->assertNotNotified('A notification');
 });
+
+it('can call an action inside an ActionGroup in extraModalFooterActions', function (): void {
+    livewire(Actions::class)
+        ->callAction([
+            'withGroupedExtraActions',
+            TestAction::make('simpleExtra'),
+        ])
+        ->assertDispatched('simple-extra-called');
+});
+
+it('can call an action with data inside an ActionGroup in extraModalFooterActions', function (): void {
+    livewire(Actions::class)
+        ->callAction([
+            'withGroupedExtraActions',
+            TestAction::make('option3'),
+        ], [
+            'value' => $value = Str::random(),
+        ])
+        ->assertHasNoFormErrors()
+        ->assertDispatched('option3-called', value: $value);
+});
+
+it('can mount a parent action with ActionGroup in extraModalFooterActions', function (): void {
+    livewire(Actions::class)
+        ->mountAction('withGroupedExtraActions')
+        ->assertActionMounted('withGroupedExtraActions')
+        ->assertActionDataSet([
+            'content' => null,
+        ]);
+});
+
+it('can call different actions within ActionGroup in extraModalFooterActions', function (): void {
+    livewire(Actions::class)
+        ->callAction([
+            'withGroupedExtraActions',
+            TestAction::make('option1'),
+        ])
+        ->assertDispatched('option1-called');
+
+    livewire(Actions::class)
+        ->callAction([
+            'withGroupedExtraActions',
+            TestAction::make('option2'),
+        ])
+        ->assertDispatched('option2-called');
+});
+
+it('can submit parent action after calling action in ActionGroup in extraModalFooterActions', function (): void {
+    livewire(Actions::class)
+        ->callAction([
+            'withGroupedExtraActions',
+            TestAction::make('option1'),
+        ])
+        ->assertDispatched('option1-called')
+        ->fillForm([
+            'content' => $content = Str::random(),
+        ])
+        ->callMountedAction()
+        ->assertHasNoActionErrors()
+        ->assertDispatched('grouped-extra-actions-called', content: $content);
+});
