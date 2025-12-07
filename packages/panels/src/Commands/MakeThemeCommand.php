@@ -303,16 +303,19 @@ class MakeThemeCommand extends Command
         }
 
         // Look for ->id('panelId') to confirm we're in the right file
-        if (! preg_match('/->id\s*\(\s*[\'"]' . preg_quote($panelId, '/') . '[\'"]\s*\)/', $contents)) {
+        $idPattern = '/(->id\s*\(\s*[\'"]' . preg_quote($panelId, '/') . '[\'"]\s*\))(\s*\n)/';
+        if (! preg_match($idPattern, $contents)) {
             return false;
         }
 
-        // Look for ->path('...') which is typically right after ->id()
-        // We'll insert ->viteTheme() after ->path()
-        $pattern = '/(->path\s*\(\s*[\'"][^\'"]*[\'"]\s*\))(\s*\n)/';
+        // Try to insert after ->path() first, then fall back to ->id()
+        $pathPattern = '/(->path\s*\(\s*[\'"][^\'"]*[\'"]\s*\))(\s*\n)/';
 
-        if (! preg_match($pattern, $contents)) {
-            return false;
+        if (preg_match($pathPattern, $contents)) {
+            $pattern = $pathPattern;
+        } else {
+            // No ->path() found, insert after ->id() instead
+            $pattern = $idPattern;
         }
 
         $replacement = '$1' . "\n            ->viteTheme('{$this->themePath}')" . '$2';

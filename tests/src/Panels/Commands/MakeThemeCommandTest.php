@@ -276,12 +276,13 @@ describe('Register in panel provider', function (): void {
         expect($result)->toBeFalse();
     });
 
-    it('returns `false` when no path method exists', function (): void {
+    it('adds `viteTheme()` after `id()` when no path method exists', function (): void {
         $content = getFixtureContent('panel-provider', 'no-path-method.php');
         $setup = createCommandWithMockedFilesystem(panelProviderContent: $content);
 
         $result = callProtectedMethod($setup['command'], 'registerInPanelProvider');
 
-        expect($result)->toBeFalse();
+        expect($result)->toBeTrue();
+        expect(($setup['getPanelProvider'])())->toMatchSnapshot();
     });
 });
