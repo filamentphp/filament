@@ -4,4 +4,5 @@
 composer.lock
 docs-assets
 packages/panels/resources/boost
+tests/src/Panels/Commands/Fixture
 tests/src/Upgrade/Fixture
