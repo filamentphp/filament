@@ -5,7 +5,7 @@ namespace App\Providers\Filament;
 use Filament\Panel;
 use Filament\PanelProvider;
 
-class AdminPanelProvider extends PanelProvider
+class NoPathMethodPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
     {
