@@ -146,6 +146,50 @@ return [
 
             ],
 
+            'unit_labels' => [
+                'second' => 'Sekundy',
+                'minute' => 'Minuty',
+                'hour' => 'Hodiny',
+                'day' => 'Dny',
+                'week' => 'Týdny',
+                'month' => 'Měsíce',
+                'quarter' => 'Čtvrtletí',
+                'year' => 'Roky',
+            ],
+
+            'presets' => [
+                'past_decade' => 'Posledních 10 let',
+                'past_5_years' => 'Posledních 5 let',
+                'past_2_years' => 'Posledních 2 let',
+                'past_year' => 'Poslední rok',
+                'past_6_months' => 'Posledních 6 měsíců',
+                'past_quarter' => 'Poslední čtvrtletí',
+                'past_month' => 'Poslední měsíc',
+                'past_2_weeks' => 'Posledních 2 týdnů',
+                'past_week' => 'Poslední týden',
+                'past_hour' => 'Poslední hodina',
+                'past_minute' => 'Poslední minuta',
+                'this_decade' => 'Toto desítletí',
+                'this_year' => 'Tento rok',
+                'this_quarter' => 'Toto čtvrtletí',
+                'this_month' => 'Tento měsíc',
+                'today' => 'Dnes',
+                'this_hour' => 'Tato hodina',
+                'this_minute' => 'Tato minuta',
+                'next_minute' => 'Příští minuta',
+                'next_hour' => 'Příští hodina',
+                'next_week' => 'Příští týden',
+                'next_2_weeks' => 'Příštích 2 týdny',
+                'next_month' => 'Příští měsíc',
+                'next_quarter' => 'Příští čtvrtletí',
+                'next_6_months' => 'Příštích 6 měsíců',
+                'next_year' => 'Příští rok',
+                'next_2_years' => 'Příštích 2 let',
+                'next_5_years' => 'Příštích 5 let',
+                'next_decade' => 'Příštích 10 let',
+                'custom' => 'Vlastní',
+            ],
+
             'form' => [
 
                 'date' => [
@@ -158,6 +202,34 @@ return [
 
                 'year' => [
                     'label' => 'Rok',
+                ],
+
+                'mode' => [
+                    'label' => 'Typ data',
+                    'options' => [
+                        'absolute' => 'Konkrétní datum',
+                        'relative' => 'Posuvné okno',
+                    ],
+                ],
+
+                'preset' => [
+                    'label' => 'Časový rozsah',
+                ],
+
+                'relative_value' => [
+                    'label' => 'Kolik',
+                ],
+
+                'relative_unit' => [
+                    'label' => 'Jednotka času',
+                ],
+
+                'tense' => [
+                    'label' => 'Čas',
+                    'options' => [
+                        'past' => 'Minulost',
+                        'future' => 'Budoucnost',
+                    ],
                 ],
 
             ],
