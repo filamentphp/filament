@@ -128,6 +128,45 @@ public function table(Table $table): Table
 }
 ```
 
+### Pre-selecting table rows
+
+You may want a table to load with certain rows already selected. This is useful in multi-step forms, edit flows, or when restoring previously saved choices. Filament allows you to pre-populate the table selection using a Livewire property, which is synchronized automatically with the table.
+
+To enable this, you need to provide a list of selected record keys in your component and pass that property to the `currentSelectionLivewireProperty()` method. Filament will then ensure these rows are marked as selected when the table renders. Since Filament stores selection keys as strings, you should convert the IDs accordingly.
+
+For example, you may want to initialize the table with product IDs already chosen in a previous step. You can populate the selection in the `mount()` method and bind it to the table:
+
+```php
+use Filament\Actions\Action;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Collection;
+
+public function mount(array $selected = []): void
+{
+    $this->selectedTableRecords = collect($selected)
+        ->filter(fn ($id) => filled($id))
+        ->map(fn ($id) => (string) $id)
+        ->unique()
+        ->values()
+        ->all();
+}
+
+public function table(Table $table): Table
+{
+    return $table
+        ->selectable()
+        ->currentSelectionLivewireProperty('selectedTableRecords')
+        ->recordActions([])
+        ->headerActions([
+            Action::make('next')
+                ->accessSelectedRecords()
+                ->action(function (Collection $selectedRecords) {
+                    // Handle selected records...
+                }),
+        ]);
+}
+```
+
 ## Bulk actions
 
 Tables also support "bulk actions". These can be used when the user selects rows in the table. Traditionally, when rows are selected, a "bulk actions" button appears. When the user clicks this button, they are presented with a dropdown menu of actions to choose from. You can put them in the `$table->toolbarActions()` or `$table->headerActions()` methods:
