@@ -129,6 +129,8 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
 
     protected bool | Closure $canOptionLabelsWrap = true;
 
+    protected bool | Closure $isReorderable = false;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -502,6 +504,18 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         $this->isMultiple = $condition;
 
         return $this;
+    }
+
+    public function reorderable(bool | Closure $condition = true): static
+    {
+        $this->isReorderable = $condition;
+
+        return $this;
+    }
+
+    public function isReorderable(): bool
+    {
+        return (bool) $this->evaluate($this->isReorderable);
     }
 
     public function position(string | Closure | null $position): static

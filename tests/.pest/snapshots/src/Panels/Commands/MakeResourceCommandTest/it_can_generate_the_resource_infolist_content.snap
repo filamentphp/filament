@@ -41,6 +41,9 @@ class PostInfolist
                 TextEntry::make('string_backed_enum')
                     ->badge()
                     ->placeholder('-'),
+                TextEntry::make('published_at')
+                    ->dateTime()
+                    ->placeholder('-'),
                 TextEntry::make('created_at')
                     ->dateTime()
                     ->placeholder('-'),

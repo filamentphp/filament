@@ -245,7 +245,7 @@ Text::make('28o.-AK%D~xh*.:[4"3)zPiC')
 
 ### Using JavaScript to determine the content of the text
 
-You can use JavaScript to determine the content of the text. This is useful if you want to display a different message depending on the state of a [form field](../forms/fields), without making a request to the server to re-render the schema. To allow this, you can use the `js()` method:
+You can use JavaScript to determine the content of the text. This is useful if you want to display a different message depending on the state of a [form field](../forms/overview), without making a request to the server to re-render the schema. To allow this, you can use the `js()` method:
 
 ```php
 use Filament\Schemas\Components\Text;
@@ -256,7 +256,7 @@ Text::make(<<<'JS'
     ->js()
 ```
 
-The [`$state`](../forms/fields#injecting-the-current-state-of-the-field) and [`$get()`](../forms/fields#injecting-the-state-of-another-field) utilities are available in the JavaScript context, so you can use them to get the state of fields in the schema.
+The [`$state`](../forms/overview#injecting-the-current-state-of-the-field) and [`$get()`](../forms/overview#injecting-the-state-of-another-field) utilities are available in the JavaScript context, so you can use them to get the state of fields in the schema.
 
 ## Icon component
 

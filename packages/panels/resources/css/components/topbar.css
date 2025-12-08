@@ -34,6 +34,10 @@
     }
 }
 
+.fi-topbar-collapse-sidebar-btn-ctn {
+    @apply w-9 shrink-0;
+}
+
 .fi-body {
     &.fi-body-has-sidebar-collapsible-on-desktop,
     &:not(.fi-body-has-sidebar-fully-collapsible-on-desktop) {

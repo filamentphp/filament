@@ -123,6 +123,16 @@ use Filament\Widgets\StatsOverviewWidget\Stat;
 Stat::make('Total Products', $this->getPageTableRecords()->count()),
 ```
 
+## Accessing the total table records count
+
+If you need the total count of all records for the table query without executing an additional count query, you can use the `$tableRecordsCount` property:
+
+```php
+use Filament\Widgets\StatsOverviewWidget\Stat;
+
+Stat::make('Total Products', $this->tableRecordsCount),
+```
+
 ## Passing properties to widgets on resource pages
 
 When registering a widget on a resource page, you can use the `make()` method to pass an array of [Livewire properties](https://livewire.laravel.com/docs/properties) to it:
