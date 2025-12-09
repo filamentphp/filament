@@ -15,7 +15,7 @@ trait CanAskForRelatedResource
         info('Filament can link this to an existing resource, which will open the resource\'s pages instead of modals when links are clicked. It will also inherit the resource\'s configuration.');
 
         if (! confirm(
-            label: 'Do you want to do this?',
+            label: 'Do you want to link this to an existing resource?',
             default: false,
         )) {
             return null;
