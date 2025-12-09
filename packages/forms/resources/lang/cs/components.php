@@ -610,6 +610,7 @@ return [
             'table_merge_cells' => 'Sloučit buňky',
             'table_split_cell' => 'Rozdělit buňku',
             'table_toggle_header_row' => 'Přepnout řádek záhlaví',
+            'table_toggle_header_cell' => 'Přepnout buňku záhlaví',
             'text_color' => 'Barva textu',
             'underline' => 'Podtržení',
             'undo' => 'Zpět',
