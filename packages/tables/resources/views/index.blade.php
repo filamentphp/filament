@@ -1467,6 +1467,9 @@
                                                     >
                                                         @if (filled($columnHeaderTooltip))
                                                             <span
+                                                                @if ($columnHeaderTooltip instanceof \Illuminate\Contracts\Support\Htmlable)
+                                                                    x-tooltip.html
+                                                                @endif
                                                                 x-tooltip="{
                                                                     content: @js($columnHeaderTooltip),
                                                                     theme: $store.theme,
@@ -1490,6 +1493,9 @@
                                                 @else
                                                     @if (filled($columnHeaderTooltip))
                                                         <span
+                                                            @if ($columnHeaderTooltip instanceof \Illuminate\Contracts\Support\Htmlable)
+                                                                x-tooltip.html
+                                                            @endif
                                                             x-tooltip="{
                                                                 content: @js($columnHeaderTooltip),
                                                                 theme: $store.theme,
