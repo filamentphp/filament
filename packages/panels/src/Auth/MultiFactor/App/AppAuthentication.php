@@ -190,7 +190,7 @@ class AppAuthentication implements MultiFactorAuthenticationProvider
         }
 
         if ($isValid) {
-            $user->saveAppAuthenticationRecoveryCodes($remainingCodes); /** @phpstan-ignore-line */
+            $user->saveAppAuthenticationRecoveryCodes($remainingCodes);
         }
 
         return $isValid;
