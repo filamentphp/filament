@@ -343,3 +343,61 @@ it('will not authenticate the user with a valid recovery code if recovery is dis
 
     $this->assertGuest();
 });
+
+it('will not allow a recovery code to be used more than once', function (): void {
+    $appAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
+
+    $userToAuthenticate = User::factory()
+        ->hasAppAuthentication($recoveryCodes = $appAuthentication->generateRecoveryCodes())
+        ->create();
+
+    $recoveryCodeToUse = Arr::first($recoveryCodes);
+
+    livewire(Login::class)
+        ->fillForm([
+            'email' => $userToAuthenticate->email,
+            'password' => 'password',
+        ])
+        ->call('authenticate')
+        ->assertNotSet('userUndertakingMultiFactorAuthentication', null)
+        ->assertNoRedirect()
+        ->callAction(TestAction::make('useRecoveryCode')
+            ->schemaComponent("{$appAuthentication->getId()}.code", schema: 'multiFactorChallengeForm'))
+        ->fillForm([
+            $appAuthentication->getId() => [
+                'recoveryCode' => $recoveryCodeToUse,
+            ],
+        ], 'multiFactorChallengeForm')
+        ->call('authenticate')
+        ->assertHasNoErrors()
+        ->assertRedirect(Filament::getUrl());
+
+    $this->assertAuthenticatedAs($userToAuthenticate);
+
+    auth()->logout();
+
+    $this->assertGuest();
+
+    livewire(Login::class)
+        ->fillForm([
+            'email' => $userToAuthenticate->email,
+            'password' => 'password',
+        ])
+        ->call('authenticate')
+        ->assertNotSet('userUndertakingMultiFactorAuthentication', null)
+        ->assertNoRedirect()
+        ->callAction(TestAction::make('useRecoveryCode')
+            ->schemaComponent("{$appAuthentication->getId()}.code", schema: 'multiFactorChallengeForm'))
+        ->fillForm([
+            $appAuthentication->getId() => [
+                'recoveryCode' => $recoveryCodeToUse,
+            ],
+        ], 'multiFactorChallengeForm')
+        ->call('authenticate')
+        ->assertHasFormErrors([
+            "{$appAuthentication->getId()}.recoveryCode",
+        ], 'multiFactorChallengeForm')
+        ->assertNoRedirect();
+
+    $this->assertGuest();
+});
