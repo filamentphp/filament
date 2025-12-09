@@ -340,7 +340,7 @@ $runGenerateManageRelatedRecordsPageCommand = function (TestCase $testCase): Pen
 
 $generateManageRelatedRecordsPageCommandQuestions = [
     'relationship' => 'What is the relationship?',
-    'hasRelatedResource' => 'Do you want to do this?',
+    'hasRelatedResource' => 'Do you want to link this to an existing resource?',
     'relatedResource' => 'Which resource do you want to use?',
     'hasFormSchemaClass' => 'Should an existing form schema class be used?',
     'isGenerated' => 'Should the page be generated from the current database columns?',
