@@ -117,6 +117,9 @@
                             },
                         )
                     },
+                    cancelUploadFileUsing: (fileKey) => {
+                        $wire.cancelUpload(`{{ $statePath }}.${fileKey}`)
+                    },
                 })"
         wire:ignore
         wire:key="{{ $livewireKey }}.{{

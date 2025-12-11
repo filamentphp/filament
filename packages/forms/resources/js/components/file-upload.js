@@ -75,6 +75,7 @@ export default function fileUploadFormComponent({
     uploadingMessage,
     uploadProgressIndicatorPosition,
     uploadUsing,
+    cancelUploadFileUsing,
 }) {
     return {
         fileKeyIndex: {},
@@ -150,6 +151,7 @@ export default function fileUploadFormComponent({
                         load,
                         error,
                         progress,
+                        abort,
                     ) => {
                         this.shouldUpdateState = false
 
@@ -178,6 +180,13 @@ export default function fileUploadFormComponent({
                             error,
                             progress,
                         )
+
+                        return {
+                            abort: () => {
+                                cancelUploadFileUsing(fileKey)
+                                abort()
+                            },
+                        }
                     },
                     remove: async (source, load) => {
                         let fileKey = this.uploadedFileIndex[source] ?? null
