@@ -84,6 +84,7 @@ if (! function_exists('Filament\Support\get_component_color_classes')) {
 if (! function_exists('Filament\Support\get_component_custom_styles')) {
     /**
      * @param  class-string<HasColor>  $component
+     * @param  array<string, string>  $color
      * @return array<string>
      */
     function get_component_custom_styles(string | HasColor $component, array $color): array
