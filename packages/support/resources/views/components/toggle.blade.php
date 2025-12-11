@@ -11,19 +11,40 @@
     'onIcon' => null,
 ])
 
+@php
+    $onColorClasses = [];
+    $onColorStyles = [];
+
+    $offColorClasses = [];
+    $offColorStyles = [];
+
+    if (is_array($onColor)) {
+        $onColorClasses[] = 'fi-color';
+        $onColorStyles = \Filament\Support\get_component_custom_styles(ToggleComponent::class, $onColor);
+    } else {
+        $onColorClasses = [
+            ...$onColorClasses,
+            ...\Filament\Support\get_component_color_classes(ToggleComponent::class, $onColor),
+        ];
+    }
+
+    if (is_array($offColor)) {
+        $offColorClasses[] = 'fi-color';
+        $offColorStyles = \Filament\Support\get_component_custom_styles(ToggleComponent::class, $offColor);
+    } else {
+        $offColorClasses = [
+            ...$offColorClasses,
+            ...\Filament\Support\get_component_color_classes(ToggleComponent::class, $offColor),
+        ];
+    }
+@endphp
+
 <button
     x-data="{ state: {{ $state }} }"
     x-bind:aria-checked="state?.toString()"
     x-on:click="state = ! state"
-    x-bind:class="
-        state ? @js(Arr::toCssClasses([
-                    'fi-toggle-on',
-                    ...\Filament\Support\get_component_color_classes(ToggleComponent::class, $onColor),
-                ])) : @js(Arr::toCssClasses([
-                            'fi-toggle-off',
-                            ...\Filament\Support\get_component_color_classes(ToggleComponent::class, $offColor),
-                        ]))
-    "
+    x-bind:class="state ? @js(Arr::toCssClasses(['fi-toggle-on', ...$onColorClasses])) : @js(Arr::toCssClasses(['fi-toggle-off', ...$offColorClasses]))"
+    x-bind:style="state ? @js(Arr::toCssStyles($onColorStyles)) : @js(Arr::toCssStyles($offColorStyles))"
     @if ($state)
         x-cloak
     @endif
@@ -53,8 +74,9 @@
         wire:ignore
         @class([
             'fi-toggle fi-toggle-on fi-hidden',
-            ...\Filament\Support\get_component_color_classes(ToggleComponent::class, $onColor),
+            ...$onColorClasses,
         ])
+        @style($onColorStyles)
     >
         <div>
             <div aria-hidden="true"></div>

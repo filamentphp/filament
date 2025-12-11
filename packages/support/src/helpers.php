@@ -81,6 +81,21 @@ if (! function_exists('Filament\Support\get_component_color_classes')) {
     }
 }
 
+if (! function_exists('Filament\Support\get_component_custom_styles')) {
+    /**
+     * @param  class-string<HasColor>  $component
+     * @return array<string>
+     */
+    function get_component_custom_styles(string | HasColor $component, array $color): array
+    {
+        if (blank($color)) {
+            return [];
+        }
+
+        return FilamentColor::getComponentCustomStyles($component, $color);
+    }
+}
+
 if (! function_exists('Filament\Support\prepare_inherited_attributes')) {
     function prepare_inherited_attributes(ComponentAttributeBag $attributes): ComponentAttributeBag
     {
