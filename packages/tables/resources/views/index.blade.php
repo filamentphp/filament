@@ -1430,6 +1430,10 @@
                                                 $isColumnActivelySorted = $getSortColumn() === $column->getName();
                                                 $isColumnSortable = $column->isSortable() && (! $isReordering);
                                                 $columnHeaderTooltip = $column->getHeaderTooltip();
+
+                                                $tooltipAttr = $columnHeaderTooltip instanceof \Illuminate\Contracts\Support\Htmlable
+                                                    ? 'x-tooltip.html'
+                                                    : 'x-tooltip';
                                             @endphp
 
                                             <th
@@ -1467,10 +1471,7 @@
                                                     >
                                                         @if (filled($columnHeaderTooltip))
                                                             <span
-                                                                @if ($columnHeaderTooltip instanceof \Illuminate\Contracts\Support\Htmlable)
-                                                                    x-tooltip.html
-                                                                @endif
-                                                                x-tooltip="{
+                                                                {{ $tooltipAttr }}="{
                                                                     content: @js($columnHeaderTooltip),
                                                                     theme: $store.theme,
                                                                 }"
@@ -1493,10 +1494,7 @@
                                                 @else
                                                     @if (filled($columnHeaderTooltip))
                                                         <span
-                                                            @if ($columnHeaderTooltip instanceof \Illuminate\Contracts\Support\Htmlable)
-                                                                x-tooltip.html
-                                                            @endif
-                                                            x-tooltip="{
+                                                            {{ $tooltipAttr }}="{
                                                                 content: @js($columnHeaderTooltip),
                                                                 theme: $store.theme,
                                                             }"
