@@ -22,20 +22,14 @@
         $onColorClasses[] = 'fi-color';
         $onColorStyles = \Filament\Support\get_component_custom_styles(ToggleComponent::class, $onColor);
     } else {
-        $onColorClasses = [
-            ...$onColorClasses,
-            ...\Filament\Support\get_component_color_classes(ToggleComponent::class, $onColor),
-        ];
+        $onColorClasses = \Filament\Support\get_component_color_classes(ToggleComponent::class, $onColor);
     }
 
     if (is_array($offColor)) {
         $offColorClasses[] = 'fi-color';
         $offColorStyles = \Filament\Support\get_component_custom_styles(ToggleComponent::class, $offColor);
     } else {
-        $offColorClasses = [
-            ...$offColorClasses,
-            ...\Filament\Support\get_component_color_classes(ToggleComponent::class, $offColor),
-        ];
+        $offColorClasses = \Filament\Support\get_component_color_classes(ToggleComponent::class, $offColor);
     }
 @endphp
 
