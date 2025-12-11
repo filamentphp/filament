@@ -52,6 +52,9 @@
                     hasImageEditor: @js($hasImageEditor),
                     hasCircleCropper: @js($hasCircleCropper),
                     canEditSvgs: @js($canEditSvgs()),
+                    cancelUploadUsing: (fileKey) => {
+                        $wire.cancelUpload(`{{ $statePath }}.${fileKey}`)
+                    },
                     isSvgEditingConfirmed: @js($isSvgEditingConfirmed()),
                     confirmSvgEditingMessage: @js(__('filament-forms::components.file_upload.editor.svg.messages.confirmation')),
                     disabledSvgEditingMessage: @js(__('filament-forms::components.file_upload.editor.svg.messages.disabled')),
@@ -116,9 +119,6 @@
                                 progress(true, progressEvent.detail.progress, 100)
                             },
                         )
-                    },
-                    cancelUploadUsing: (fileKey) => {
-                        $wire.cancelUpload(`{{ $statePath }}.${fileKey}`)
                     },
                 })"
         wire:ignore
