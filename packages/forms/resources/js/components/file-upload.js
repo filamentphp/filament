@@ -45,6 +45,7 @@ export default function fileUploadFormComponent({
     canEditSvgs,
     isSvgEditingConfirmed,
     confirmSvgEditingMessage,
+    cancelUploadUsing,
     disabledSvgEditingMessage,
     isDownloadable,
     isMultiple,
@@ -75,7 +76,6 @@ export default function fileUploadFormComponent({
     uploadingMessage,
     uploadProgressIndicatorPosition,
     uploadUsing,
-    cancelUploadFileUsing,
 }) {
     return {
         fileKeyIndex: {},
@@ -183,7 +183,7 @@ export default function fileUploadFormComponent({
 
                         return {
                             abort: () => {
-                                cancelUploadFileUsing(fileKey)
+                                cancelUploadUsing(fileKey)
                                 abort()
                             },
                         }
