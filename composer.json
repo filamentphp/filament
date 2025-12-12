@@ -83,10 +83,13 @@
         ],
         "pint": "pint --config pint-strict-imports.json",
         "rector": "rector",
-        "test:pest": "pest --parallel",
-        "test:sqlite": "pest --configuration=phpunit.sqlite.xml --parallel",
-        "test:mysql": "pest --configuration=phpunit.mysql.xml",
-        "test:pgsql": "pest --configuration=phpunit.pgsql.xml",
+        "test:pest": "pest --parallel --exclude-group=commands",
+        "test:sqlite": "pest --configuration=phpunit.sqlite.xml --parallel --exclude-group=commands",
+        "test:mysql": "pest --configuration=phpunit.mysql.xml --parallel --exclude-group=commands",
+        "test:pgsql": "pest --configuration=phpunit.pgsql.xml --parallel --exclude-group=commands",
+        "test:commands:sqlite": "pest --configuration=phpunit.sqlite.xml --group=commands",
+        "test:commands:mysql": "pest --configuration=phpunit.mysql.xml --group=commands",
+        "test:commands:pgsql": "pest --configuration=phpunit.pgsql.xml --group=commands",
         "test:all-databases": [
             "@test:sqlite",
             "@test:mysql",
@@ -95,6 +98,7 @@
         "test:phpstan": "phpstan analyse",
         "test": [
             "@test:sqlite",
+            "@test:commands:sqlite",
             "@test:phpstan"
         ]
     },

@@ -43,6 +43,7 @@ export default function fileUploadFormComponent({
     hasImageEditor,
     hasCircleCropper,
     canEditSvgs,
+    cancelUploadUsing,
     isSvgEditingConfirmed,
     confirmSvgEditingMessage,
     disabledSvgEditingMessage,
@@ -150,6 +151,7 @@ export default function fileUploadFormComponent({
                         load,
                         error,
                         progress,
+                        abort,
                     ) => {
                         this.shouldUpdateState = false
 
@@ -178,6 +180,13 @@ export default function fileUploadFormComponent({
                             error,
                             progress,
                         )
+
+                        return {
+                            abort: () => {
+                                cancelUploadUsing(fileKey)
+                                abort()
+                            },
+                        }
                     },
                     remove: async (source, load) => {
                         let fileKey = this.uploadedFileIndex[source] ?? null

@@ -143,7 +143,8 @@ trait InteractsWithTable
             $shouldPersistSortInSession &&
             session()->has($sortSessionKey)
         ) {
-            $this->tableSort = session()->get($sortSessionKey);
+            $sessionSort = session()->get($sortSessionKey);
+            $this->tableSort = is_string($sessionSort) ? $sessionSort : null;
         }
 
         if ($shouldPersistSortInSession) {
