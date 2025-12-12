@@ -3,19 +3,17 @@
 use Filament\Commands\MakeResourceCommand;
 use Filament\Facades\Filament;
 use Filament\Tests\TestCase;
-use Illuminate\Support\Arr;
 
 use function PHPUnit\Framework\assertFileDoesNotExist;
 use function PHPUnit\Framework\assertFileExists;
 
-uses(TestCase::class);
+uses(TestCase::class)->group('commands');
 
 beforeEach(function (): void {
     $this->withoutMockingConsoleOutput();
 
     MakeResourceCommand::$shouldCheckModelsForSoftDeletes = false;
-})
-    ->skip((bool) Arr::get($_SERVER, 'PARATEST'), 'File generation tests cannot be run in parallel as they would share a filesystem and have the potential to conflict with each other.');
+});
 
 it('can generate a resource class', function (): void {
     $this->artisan('make:filament-resource', [

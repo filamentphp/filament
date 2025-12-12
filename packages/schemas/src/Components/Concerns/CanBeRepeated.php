@@ -13,7 +13,7 @@ trait CanBeRepeated
     {
         $repeater = $this->getParentRepeaterItem()?->getParentComponent();
 
-        assert($repeater instanceof Repeater);
+        assert(($repeater instanceof Repeater) || (! $repeater));
 
         return $repeater;
     }

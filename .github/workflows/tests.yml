@@ -39,6 +39,7 @@ jobs:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: password
           POSTGRES_DB: testing
+          POSTGRES_HOST_AUTH_METHOD: trust
         ports:
           - 5432:5432
         options: --health-cmd=pg_isready --health-interval=10s --health-timeout=5s --health-retries=3
@@ -75,7 +76,11 @@ jobs:
             echo "Waiting for Postgres ($i) ..." && sleep 2
           done
           echo "Postgres did not become ready in time" && exit 1
-      - name: Execute tests
-        run: ./vendor/bin/pest --configuration=phpunit.${{ matrix.db }}.xml
+      - name: Execute tests (parallel)
+        run: ./vendor/bin/pest --configuration=phpunit.${{ matrix.db }}.xml --parallel --exclude-group=commands
+        env:
+          DB_PASSWORD: password
+      - name: Execute command tests (serial)
+        run: ./vendor/bin/pest --configuration=phpunit.${{ matrix.db }}.xml --group=commands
         env:
           DB_PASSWORD: password
