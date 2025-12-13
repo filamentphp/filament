@@ -6,6 +6,7 @@ category: [media, tables, infolists]
 description: A Filament plugin for displaying image galleries with a built-in viewer across tables, infolists, and Blade components.
 docs_url: https://github.com/al-saloul/filament-image-gallery
 github_repository: al-saloul/filament-image-gallery
+image: /images/plugins/filament-image-gallery.png
 versions: [2, 3]
 has_dark_theme: true
 has_translations: false
