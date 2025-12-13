@@ -1,6 +1,7 @@
 ---
 name: Mohammed Alsaloul
-github: al-saloul
+slug: al-saloul
+github_url: https://github.com/al-saloul
 image: /images/authors/al-saloul.jpg
 ---
 

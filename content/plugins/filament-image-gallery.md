@@ -2,13 +2,14 @@
 name: Filament Image Gallery
 slug: filament-image-gallery
 author: al-saloul
-github: al-saloul/filament-image-gallery
-description: >
-  A Filament plugin for displaying image galleries with a built-in viewer
-  across tables, infolists, and Blade components.
-supports:
-  - Filament v3
-  - Filament v4
+category: [media, tables, infolists]
+description: A Filament plugin for displaying image galleries with a built-in viewer across tables, infolists, and Blade components.
+docs_url: https://github.com/al-saloul/filament-image-gallery
+github_repository: al-saloul/filament-image-gallery
+versions: [2, 3]
+has_dark_theme: true
+has_translations: false
+publish_date: 2023-08-01
 ---
 
 **Filament Image Gallery** is a flexible and lightweight plugin that allows you to display
