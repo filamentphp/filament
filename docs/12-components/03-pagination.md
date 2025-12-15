@@ -24,32 +24,6 @@ class ListUsers extends Component
 }
 ```
 
-Additionally, you can also add paginated links to your custom Filament widget by moving the `$view` variable into a `render()` method and using the `WithPagination` trait:
-
-```php
-use App\Models\User;
-use Filament\Widgets\Widget;
-use Illuminate\Contracts\View\View;
-use Livewire\WithPagination;
-
-class CustomWidget extends Widget
-{
-    use WithPagination;
-    
-    // protected string $view = 'livewire.custom-widget';
-
-    public function render(): View
-    {
-        return view('livewire.custom-widget', [
-            'users' => User::query()->paginate(10),
-        ]);
-    }
-}
-
-```
-
-Then, in your Blade view, you can use the Filament pagination component to display the pagination links:
-
 ```blade
 <x-filament::pagination :paginator="$users" />
 ```
@@ -91,7 +65,7 @@ class ListUsers extends Component
 <x-filament::pagination
     :paginator="$users"
     :page-options="[5, 10, 20, 50, 100, 'all']"
-    current-page-option-property="perPage"
+    :current-page-option-property="perPage"
 />
 ```
 
