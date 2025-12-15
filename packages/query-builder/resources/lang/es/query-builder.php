@@ -146,6 +146,50 @@ return [
 
             ],
 
+            'unit_labels' => [
+                'second' => 'Segundos',
+                'minute' => 'Minutos',
+                'hour' => 'Horas',
+                'day' => 'Días',
+                'week' => 'Semanas',
+                'month' => 'Meses',
+                'quarter' => 'Trimestres',
+                'year' => 'Años',
+            ],
+
+            'presets' => [
+                'past_decade' => 'Última década',
+                'past_5_years' => 'Últimos 5 años',
+                'past_2_years' => 'Últimos 2 años',
+                'past_year' => 'Último año',
+                'past_6_months' => 'Últimos 6 meses',
+                'past_quarter' => 'Último trimestre',
+                'past_month' => 'Último mes',
+                'past_2_weeks' => 'Últimas 2 semanas',
+                'past_week' => 'Última semana',
+                'past_hour' => 'Última hora',
+                'past_minute' => 'Último minuto',
+                'this_decade' => 'Esta década',
+                'this_year' => 'Este año',
+                'this_quarter' => 'Este trimestre',
+                'this_month' => 'Este mes',
+                'today' => 'Hoy',
+                'this_hour' => 'Esta hora',
+                'this_minute' => 'Este minuto',
+                'next_minute' => 'Próximo minuto',
+                'next_hour' => 'Próxima hora',
+                'next_week' => 'Próxima semana',
+                'next_2_weeks' => 'Próximas 2 semanas',
+                'next_month' => 'Próximo mes',
+                'next_quarter' => 'Próximo trimestre',
+                'next_6_months' => 'Próximos 6 meses',
+                'next_year' => 'Próximo año',
+                'next_2_years' => 'Próximos 2 años',
+                'next_5_years' => 'Próximos 5 años',
+                'next_decade' => 'Próxima década',
+                'custom' => 'Personalizado',
+            ],
+
             'form' => [
 
                 'date' => [
@@ -158,6 +202,40 @@ return [
 
                 'year' => [
                     'label' => 'Año',
+                ],
+
+                'mode' => [
+
+                    'label' => 'Tipo de fecha',
+
+                    'options' => [
+                        'absolute' => 'Fecha específica',
+                        'relative' => 'Ventana ajustable',
+                    ],
+
+                ],
+
+                'preset' => [
+                    'label' => 'Período de tiempo',
+                ],
+
+                'relative_value' => [
+                    'label' => 'Cuántos',
+                ],
+
+                'relative_unit' => [
+                    'label' => 'Unidad de tiempo',
+                ],
+
+                'tense' => [
+
+                    'label' => 'Tiempo',
+
+                    'options' => [
+                        'past' => 'Pasado',
+                        'future' => 'Futuro',
+                    ],
+
                 ],
 
             ],

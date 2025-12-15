@@ -1430,6 +1430,9 @@
                                                 $isColumnActivelySorted = $getSortColumn() === $column->getName();
                                                 $isColumnSortable = $column->isSortable() && (! $isReordering);
                                                 $columnHeaderTooltip = $column->getHeaderTooltip();
+                                                $columnHeaderTooltipAttribute = ($columnHeaderTooltip instanceof \Illuminate\Contracts\Support\Htmlable)
+                                                    ? 'x-tooltip.html'
+                                                    : 'x-tooltip';
                                             @endphp
 
                                             <th
@@ -1467,7 +1470,7 @@
                                                     >
                                                         @if (filled($columnHeaderTooltip))
                                                             <span
-                                                                x-tooltip="{
+                                                                {{ $columnHeaderTooltipAttribute }}="{
                                                                     content: @js($columnHeaderTooltip),
                                                                     theme: $store.theme,
                                                                 }"
@@ -1490,7 +1493,7 @@
                                                 @else
                                                     @if (filled($columnHeaderTooltip))
                                                         <span
-                                                            x-tooltip="{
+                                                            {{ $columnHeaderTooltipAttribute }}="{
                                                                 content: @js($columnHeaderTooltip),
                                                                 theme: $store.theme,
                                                             }"
