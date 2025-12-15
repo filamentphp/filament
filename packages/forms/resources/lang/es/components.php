@@ -610,6 +610,7 @@ return [
             'table_merge_cells' => 'Combinar celdas',
             'table_split_cell' => 'Dividir celda',
             'table_toggle_header_row' => 'Alternar fila de encabezado',
+            'table_toggle_header_cell' => 'Alternar celda de encabezado',
             'text_color' => 'Color de texto',
             'underline' => 'Subrayar',
             'undo' => 'Deshacer',
