@@ -280,9 +280,7 @@ trait HasBulkActions
                 }
             }
 
-            if ($table->shouldDeselectAllRecordsWhenFiltered()) {
-                $this->filterTableQuery($query);
-            }
+            $this->filterTableQuery($query);
 
             return $query;
         }
