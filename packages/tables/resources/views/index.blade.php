@@ -1430,8 +1430,7 @@
                                                 $isColumnActivelySorted = $getSortColumn() === $column->getName();
                                                 $isColumnSortable = $column->isSortable() && (! $isReordering);
                                                 $columnHeaderTooltip = $column->getHeaderTooltip();
-
-                                                $columnHeaderTooltipAttr = $columnHeaderTooltip instanceof \Illuminate\Contracts\Support\Htmlable
+                                                $columnHeaderTooltipAttribute = ($columnHeaderTooltip instanceof \Illuminate\Contracts\Support\Htmlable)
                                                     ? 'x-tooltip.html'
                                                     : 'x-tooltip';
                                             @endphp
@@ -1471,7 +1470,7 @@
                                                     >
                                                         @if (filled($columnHeaderTooltip))
                                                             <span
-                                                                {{ $columnHeaderTooltipAttr }}="{
+                                                                {{ $columnHeaderTooltipAttribute }}="{
                                                                     content: @js($columnHeaderTooltip),
                                                                     theme: $store.theme,
                                                                 }"
@@ -1494,7 +1493,7 @@
                                                 @else
                                                     @if (filled($columnHeaderTooltip))
                                                         <span
-                                                            {{ $columnHeaderTooltipAttr }}="{
+                                                            {{ $columnHeaderTooltipAttribute }}="{
                                                                 content: @js($columnHeaderTooltip),
                                                                 theme: $store.theme,
                                                             }"
