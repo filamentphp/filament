@@ -35,6 +35,8 @@ trait CanSearchRecords
 
     protected ?Closure $searchUsing = null;
 
+    protected bool | Closure | null $isSearchForcedCaseInsensitive = null;
+
     public function persistSearchInSession(bool | Closure $condition = true): static
     {
         $this->persistsSearchInSession = $condition;
@@ -205,29 +207,31 @@ trait CanSearchRecords
 
             $model = $query->getModel();
 
-            $nonTranslatableSearch = generate_search_term_expression($search, isSearchForcedCaseInsensitive: false, databaseConnection: $databaseConnection);
+            $isSearchForcedCaseInsensitive = $this->isSearchForcedCaseInsensitive();
+
+            $nonTranslatableSearch = generate_search_term_expression($search, isSearchForcedCaseInsensitive: $isSearchForcedCaseInsensitive, databaseConnection: $databaseConnection);
 
             $translatableContentDriver = $this->getLivewire()->makeFilamentTranslatableContentDriver();
 
             $query->when(
                 $translatableContentDriver?->isAttributeTranslatable($model::class, attribute: $column),
-                fn (Builder $query): Builder => $translatableContentDriver->applySearchConstraintToQuery($query, $column, $search, $whereClause, isSearchForcedCaseInsensitive: false),
+                fn (Builder $query): Builder => $translatableContentDriver->applySearchConstraintToQuery($query, $column, $search, $whereClause, isSearchForcedCaseInsensitive: $isSearchForcedCaseInsensitive),
                 fn (Builder $query) => $query->when(
                     $this->getExtraSearchableColumnRelationship($column, $query->getModel()),
                     fn (Builder $query): Builder => $query->{"{$whereClause}Relation"}(
                         (string) str($column)->beforeLast('.'),
-                        generate_search_column_expression((string) str($column)->afterLast('.'), isSearchForcedCaseInsensitive: false, databaseConnection: $databaseConnection),
+                        generate_search_column_expression((string) str($column)->afterLast('.'), isSearchForcedCaseInsensitive: $isSearchForcedCaseInsensitive, databaseConnection: $databaseConnection),
                         'like',
                         "%{$nonTranslatableSearch}%",
                     ),
-                    function (Builder $query) use ($databaseConnection, $nonTranslatableSearch, $column, $whereClause): Builder {
+                    function (Builder $query) use ($databaseConnection, $nonTranslatableSearch, $column, $whereClause, $isSearchForcedCaseInsensitive): Builder {
                         // Treat the missing "relationship" as a JSON column if dot notation is used in the column name.
                         if (str($column)->contains('.')) {
                             $column = (string) str($column)->replace('.', '->');
                         }
 
                         return $query->{$whereClause}(
-                            generate_search_column_expression($column, isSearchForcedCaseInsensitive: false, databaseConnection: $databaseConnection),
+                            generate_search_column_expression($column, isSearchForcedCaseInsensitive: $isSearchForcedCaseInsensitive, databaseConnection: $databaseConnection),
                             'like',
                             "%{$nonTranslatableSearch}%",
                         );
@@ -297,5 +301,17 @@ trait CanSearchRecords
             'query' => $query,
             'search' => $search,
         ]);
+    }
+
+    public function forceSearchCaseInsensitive(bool | Closure | null $condition = true): static
+    {
+        $this->isSearchForcedCaseInsensitive = $condition;
+
+        return $this;
+    }
+
+    public function isSearchForcedCaseInsensitive(): ?bool
+    {
+        return $this->evaluate($this->isSearchForcedCaseInsensitive);
     }
 }
