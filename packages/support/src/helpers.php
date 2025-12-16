@@ -227,7 +227,7 @@ if (! function_exists('Filament\Support\generate_search_column_expression')) {
     /**
      * @internal This function is only to be used internally by Filament and is subject to change at any time. Please do not use this function in your own code.
      */
-    function generate_search_column_expression(string $column, ?bool $isSearchForcedCaseInsensitive, Connection $databaseConnection): string | Expression
+    function generate_search_column_expression(string $column, ?bool $isSearchForcedCaseInsensitive, Connection $databaseConnection): Expression
     {
         $driverName = $databaseConnection->getDriverName();
 
@@ -290,14 +290,7 @@ if (! function_exists('Filament\Support\generate_search_column_expression')) {
             $column = "{$column} collate {$collation}";
         }
 
-        if (
-            str($column)->contains('(') || // This checks if the column name probably contains a raw expression like `lower()` or `json_extract()`.
-            filled($collation)
-        ) {
-            return new Expression($column);
-        }
-
-        return $column;
+        return new Expression($column);
     }
 }
 
