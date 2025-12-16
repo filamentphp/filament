@@ -414,6 +414,24 @@ Image::make(
 
 <AutoScreenshot name="primes/image/tooltip" alt="Image with a tooltip" version="4.x" />
 
+### Adding a fallback image URL
+
+You may specify a fallback image URL that will be displayed when the primary image fails to load using the `onErrorUrl()` method:
+
+```php
+use Filament\Schemas\Components\Image;
+
+Image::make(
+    url: asset('images/user-avatar.jpg'),
+    alt: 'User avatar',
+)
+    ->onErrorUrl(asset('images/default-avatar.jpg'))
+```
+
+<UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `onErrorUrl()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+When the primary image fails to load, the browser will automatically replace it with the fallback URL specified via `onErrorUrl()`. This is useful for handling broken image links gracefully and providing a better user experience.
+
 ## Unordered list component
 
 Unordered lists can be inserted into a schema using the `UnorderedList` component. The list items, comprising plain text or [text components](#text-component), are passed to the `make()` method:
