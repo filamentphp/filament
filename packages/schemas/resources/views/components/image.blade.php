@@ -5,6 +5,7 @@
     $height = $getImageHeight() ?? '8rem';
     $width = $getImageWidth();
     $tooltip = $getTooltip();
+    $onErrorUrl = $getOnErrorUrl();
 
     if (! $alignment instanceof Alignment) {
         $alignment = filled($alignment) ? (Alignment::tryFrom($alignment) ?? $alignment) : null;
@@ -14,6 +15,10 @@
 <img
     alt="{{ $getAlt() }}"
     src="{{ $getUrl() }}"
+    @if (filled($onErrorUrl))
+        data-error-url="{{ $onErrorUrl }}"
+        onerror="if(this.getAttribute('data-error-url')) this.src=this.getAttribute('data-error-url')"
+    @endif
     @if (filled($tooltip))
         x-tooltip="{ content: @js($tooltip), theme: $store.theme, allowHTML: @js($tooltip instanceof \Illuminate\Contracts\Support\Htmlable) }"
     @endif

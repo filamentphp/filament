@@ -21,6 +21,8 @@ class Image extends Component
 
     protected int | string | Closure | null $imageWidth = null;
 
+    protected string | Closure | null $onErrorUrl = null;
+
     final public function __construct(string | Closure $url, string | Closure $alt)
     {
         $this->url($url);
@@ -109,5 +111,23 @@ class Image extends Component
         }
 
         return $width;
+    }
+
+    public function onErrorUrl(string | Closure | null $url): static
+    {
+        $this->onErrorUrl = $url;
+
+        return $this;
+    }
+
+    public function getOnErrorUrl(): ?string
+    {
+        $url = $this->evaluate($this->onErrorUrl);
+
+        if ($url === null) {
+            return null;
+        }
+
+        return $url;
     }
 }
