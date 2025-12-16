@@ -997,6 +997,24 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
         return parent::callAfterStateUpdated($shouldBubbleToParents);
     }
 
+    public function callBeforeStateDehydrated(array &$state = []): static
+    {
+        $rawState = $this->getRawState();
+
+        // https://github.com/filamentphp/filament/issues/17472
+        // The beforeStateDehydrated callback expects ?array but getRawState() returns
+        // string when RichEditor is in HTML mode and the field wasn't edited.
+        if (! is_array($rawState)) {
+            foreach ($this->getStateCasts() as $stateCast) {
+                $rawState = $stateCast->set($rawState);
+            }
+
+            $this->rawState($rawState);
+        }
+
+        return parent::callBeforeStateDehydrated($state);
+    }
+
     /**
      * @param  array<string, string | TextColor> | Closure | null  $colors
      */
