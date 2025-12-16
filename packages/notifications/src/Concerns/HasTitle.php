@@ -8,6 +8,8 @@ trait HasTitle
 {
     protected string | Closure | null $title = null;
 
+    protected bool $shouldTranslateTitle = false;
+
     public function title(string | Closure | null $title): static
     {
         $this->title = $title;
@@ -15,8 +17,19 @@ trait HasTitle
         return $this;
     }
 
+    public function translateTitle(bool $shouldTranslateTitle = true): static
+    {
+        $this->shouldTranslateTitle = $shouldTranslateTitle;
+
+        return $this;
+    }
+
     public function getTitle(): ?string
     {
-        return $this->evaluate($this->title);
+        $title = $this->evaluate($this->title);
+
+        return is_string($title) && $this->shouldTranslateTitle
+            ? __($title)
+            : $title;
     }
 }
