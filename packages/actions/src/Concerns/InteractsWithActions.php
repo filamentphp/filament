@@ -605,9 +605,11 @@ trait InteractsWithActions
     {
         if (count($parentActions)) {
             $parentAction = Arr::last($parentActions);
-            $resolvedAction = $parentAction->getModalAction($action['name']) ?? throw new ActionNotResolvableException("Action [{$action['name']}] was not found for action [{$parentAction->getName()}].");
+            $resolvedAction = $parentAction->getModalAction($action['name']);
 
-            return $resolvedAction;
+            if ($resolvedAction) {
+                return $resolvedAction;
+            }
         }
 
         if (! $this instanceof HasSchemas) {
