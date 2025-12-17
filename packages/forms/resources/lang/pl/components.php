@@ -610,6 +610,7 @@ return [
             'table_merge_cells' => 'Scal komórki',
             'table_split_cell' => 'Podziel komórkę',
             'table_toggle_header_row' => 'Przełącz wiersz nagłówka',
+            'table_toggle_header_cell' => 'Przełącz komórkę nagłówka',
             'text_color' => 'Kolor tekstu',
             'underline' => 'Podkreślenie',
             'undo' => 'Cofnij',
