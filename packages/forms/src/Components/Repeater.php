@@ -826,13 +826,24 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
         $items = [];
 
         foreach ($this->getRawState() ?? [] as $itemKey => $itemData) {
-            $items[$itemKey] = $this
+            $childSchema = $this
                 ->getChildSchema()
                 ->statePath($itemKey)
                 ->constantState(((! ($relationship && $records->has($itemKey))) && is_array($itemData)) ? $itemData : null)
                 ->model($relationship ? $records[$itemKey] ?? $this->getRelatedModel() : null)
                 ->inlineLabel(false)
                 ->getClone();
+
+            // Apply StateCasts to child components for non-relationship repeaters.
+            // This ensures components like FileUpload have properly normalized state
+            // after afterStateHydrated restructures items and clears cached schemas.
+            if (! $relationship) {
+                foreach ($childSchema->getComponents(withActions: false, withHidden: true) as $component) {
+                    $component->castStateAfterLoadingFromRelationships();
+                }
+            }
+
+            $items[$itemKey] = $childSchema;
         }
 
         return $items;
