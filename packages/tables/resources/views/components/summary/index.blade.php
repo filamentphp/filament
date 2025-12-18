@@ -1,4 +1,16 @@
-@props([ 'actions' => false, 'actionsPosition' => null, 'columns', 'extraHeadingColumn' => false, 'groupColumn' => null, 'groupsOnly' => false, 'placeholderColumns' => true, 'pluralModelLabel', 'recordCheckboxPosition' => null, 'records', 'selectionEnabled' => false, ])
+@props([
+    'actions' => false,
+    'actionsPosition' => null,
+    'columns',
+    'extraHeadingColumn' => false,
+    'groupColumn' => null,
+    'groupsOnly' => false,
+    'placeholderColumns' => true,
+    'pluralModelLabel',
+    'recordCheckboxPosition' => null,
+    'records',
+    'selectionEnabled' => false,
+])
 
 @php
     use Filament\Support\Enums\Alignment;
@@ -23,61 +35,61 @@
 
 @if ($hasPageSummary)
     <tr class="fi-ta-row fi-ta-summary-header-row fi-striped">
-            @if ($placeholderColumns && $actions && in_array($actionsPosition, [RecordActionsPosition::BeforeCells, RecordActionsPosition::BeforeColumns]))
-                <td></td>
-            @endif
+        @if ($placeholderColumns && $actions && in_array($actionsPosition, [RecordActionsPosition::BeforeCells, RecordActionsPosition::BeforeColumns]))
+            <td></td>
+        @endif
 
-            @if ($placeholderColumns && $selectionEnabled && $recordCheckboxPosition === RecordCheckboxPosition::BeforeCells)
-                <td></td>
-            @endif
+        @if ($placeholderColumns && $selectionEnabled && $recordCheckboxPosition === RecordCheckboxPosition::BeforeCells)
+            <td></td>
+        @endif
 
-            @if ($extraHeadingColumn)
-                <td class="fi-ta-cell fi-ta-summary-header-cell">
-                    {{ __('filament-tables::table.summary.heading', ['label' => $pluralModelLabel]) }}
-                </td>
-            @endif
+        @if ($extraHeadingColumn)
+            <td class="fi-ta-cell fi-ta-summary-header-cell">
+                {{ __('filament-tables::table.summary.heading', ['label' => $pluralModelLabel]) }}
+            </td>
+        @endif
 
-            @foreach ($columns as $column)
+        @foreach ($columns as $column)
+            @php
+                $columnHasSummary = ($pageTableSummaryQuery && $column->hasSummary($pageTableSummaryQuery)) || $column->hasSummary($allTableSummaryQuery);
+            @endphp
+
+            @if ($placeholderColumns || $columnHasSummary)
                 @php
-                    $columnHasSummary = ($pageTableSummaryQuery && $column->hasSummary($pageTableSummaryQuery)) || $column->hasSummary($allTableSummaryQuery);
+                    $alignment = $column->getAlignment() ?? Alignment::Start;
+
+                    if (! $alignment instanceof Alignment) {
+                        $alignment = filled($alignment) ? (Alignment::tryFrom($alignment) ?? $alignment) : null;
+                    }
+
+                    $hasColumnHeaderLabel = (! $placeholderColumns) || $columnHasSummary;
                 @endphp
 
-                @if ($placeholderColumns || $columnHasSummary)
-                    @php
-                        $alignment = $column->getAlignment() ?? Alignment::Start;
-
-                        if (! $alignment instanceof Alignment) {
-                            $alignment = filled($alignment) ? (Alignment::tryFrom($alignment) ?? $alignment) : null;
-                        }
-
-                        $hasColumnHeaderLabel = (! $placeholderColumns) || $columnHasSummary;
-                    @endphp
-
-                    <td
-                        {{
-                            $column->getExtraHeaderAttributeBag()->class([
-                                'fi-ta-cell fi-ta-summary-header-cell',
-                                'fi-wrapped' => $column->canHeaderWrap(),
-                                (($alignment instanceof Alignment) ? "fi-align-{$alignment->value}" : (is_string($alignment) ? $alignment : '')) => (! ($loop->first && (! $extraHeadingColumn))) && $hasColumnHeaderLabel,
-                            ])
-                        }}
-                    >
-                        @if ($loop->first && (! $extraHeadingColumn))
-                            {{ __('filament-tables::table.summary.heading', ['label' => $pluralModelLabel]) }}
-                        @elseif ($hasColumnHeaderLabel)
-                            {{ $column->getLabel() }}
-                        @endif
-                    </td>
-                @endif
-            @endforeach
-
-            @if ($placeholderColumns && $actions && in_array($actionsPosition, [RecordActionsPosition::AfterColumns, RecordActionsPosition::AfterCells]))
-                <td></td>
+                <td
+                    {{
+                        $column->getExtraHeaderAttributeBag()->class([
+                            'fi-ta-cell fi-ta-summary-header-cell',
+                            'fi-wrapped' => $column->canHeaderWrap(),
+                            (($alignment instanceof Alignment) ? "fi-align-{$alignment->value}" : (is_string($alignment) ? $alignment : '')) => (! ($loop->first && (! $extraHeadingColumn))) && $hasColumnHeaderLabel,
+                        ])
+                    }}
+                >
+                    @if ($loop->first && (! $extraHeadingColumn))
+                        {{ __('filament-tables::table.summary.heading', ['label' => $pluralModelLabel]) }}
+                    @elseif ($hasColumnHeaderLabel)
+                        {{ $column->getLabel() }}
+                    @endif
+                </td>
             @endif
+        @endforeach
 
-            @if ($placeholderColumns && $selectionEnabled && $recordCheckboxPosition === RecordCheckboxPosition::AfterCells)
-                <td></td>
-            @endif
+        @if ($placeholderColumns && $actions && in_array($actionsPosition, [RecordActionsPosition::AfterColumns, RecordActionsPosition::AfterCells]))
+            <td></td>
+        @endif
+
+        @if ($placeholderColumns && $selectionEnabled && $recordCheckboxPosition === RecordCheckboxPosition::AfterCells)
+            <td></td>
+        @endif
     </tr>
 
     @php
