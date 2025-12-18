@@ -502,6 +502,13 @@ export default function dateTimePickerFormComponent({
 const locales = {
     am: require('dayjs/locale/am'),
     ar: require('dayjs/locale/ar'),
+    ar_DZ: require('dayjs/locale/ar-dz'),
+    ar_IQ: require('dayjs/locale/ar-iq'),
+    ar_KW: require('dayjs/locale/ar-kw'),
+    ar_LY: require('dayjs/locale/ar-ly'),
+    ar_MA: require('dayjs/locale/ar-ma'),
+    ar_SA: require('dayjs/locale/ar-sa'),
+    ar_TN: require('dayjs/locale/ar-tn'),
     bs: require('dayjs/locale/bs'),
     ca: require('dayjs/locale/ca'),
     ckb: require('dayjs/locale/ku'),
