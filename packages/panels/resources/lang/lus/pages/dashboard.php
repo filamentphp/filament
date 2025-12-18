@@ -8,11 +8,11 @@ return [
 
         'filter' => [
 
-            'label' => 'Filter',
+            'label' => 'Thlit fîmna',
 
             'modal' => [
 
-                'heading' => 'Filter',
+                'heading' => 'Thlit fîmna',
 
                 'actions' => [
 
