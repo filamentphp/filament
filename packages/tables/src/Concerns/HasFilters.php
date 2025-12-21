@@ -221,7 +221,15 @@ trait HasFilters
 
     public function getTableFiltersSessionKey(): string
     {
-        $table = md5($this::class);
+        $tenantKey = filament()->getTenant()?->getKey();
+
+        $namespace = $this::class;
+
+        if ($tenantKey) {
+            $namespace .= '|' . $tenantKey;
+        }
+
+        $table = md5($namespace);
 
         return "tables.{$table}_filters";
     }
