@@ -272,11 +272,11 @@ if (! function_exists('Filament\Support\generate_search_column_expression')) {
 
         $isSearchForcedCaseInsensitive ??= match ($driverName) {
             'pgsql' => true,
-            default => str($column)->contains('json_extract('),
+            default => str($column)->contains('json_extract(') || str($column)->contains('->'),
         };
 
         if ($isSearchForcedCaseInsensitive) {
-            if (in_array($driverName, ['mysql', 'mariadb'], true) && str($column)->contains('->') && ! str($column)->startsWith('json_extract(')) {
+            if (in_array($driverName, ['mysql', 'mariadb', 'sqlite'], true) && str($column)->contains('->') && ! str($column)->startsWith('json_extract(')) {
                 [$field, $path] = invade($databaseConnection->getQueryGrammar())->wrapJsonFieldAndPath($column); /** @phpstan-ignore-line */
                 $column = "json_extract({$field}{$path})";
             }
@@ -300,12 +300,7 @@ if (! function_exists('Filament\Support\generate_search_term_expression')) {
      */
     function generate_search_term_expression(string $search, ?bool $isSearchForcedCaseInsensitive, Connection $databaseConnection): string
     {
-        $isSearchForcedCaseInsensitive ??= match ($databaseConnection->getDriverName()) {
-            'pgsql' => true,
-            default => false,
-        };
-
-        if (! $isSearchForcedCaseInsensitive) {
+        if ($isSearchForcedCaseInsensitive === false) {
             return $search;
         }
 
