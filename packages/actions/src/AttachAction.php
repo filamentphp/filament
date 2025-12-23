@@ -4,6 +4,7 @@ namespace Filament\Actions;
 
 use Closure;
 use Filament\Actions\Concerns\CanCustomizeProcess;
+use Filament\Forms\Components\Field;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TableSelect;
 use Filament\Schemas\Schema;
@@ -83,7 +84,7 @@ class AttachAction extends Action
 
         $this->defaultColor('gray');
 
-        $this->schema(fn (AttachAction $action): array => [blank($action->getTableSelectConfiguration()) ? $action->getRecordSelect() : $action->getTableRecordSelect()]);
+        $this->schema(fn (AttachAction $action): array => [$action->getRecordSelect()]);
 
         $this->action(function (array $arguments, array $data, Schema $schema, Table $table): void {
             /** @var BelongsToMany $relationship */
@@ -205,8 +206,12 @@ class AttachAction extends Action
         return $this->evaluate($this->recordSelectSearchColumns);
     }
 
-    public function getRecordSelect(): Select
+    public function getRecordSelect(): Field
     {
+        if (filled($this->getTableSelectConfiguration())) {
+            return $this->getTableRecordSelect();
+        }
+
         $table = $this->getTable();
 
         $getOptions = function (int $optionsLimit, ?string $search = null, ?array $searchColumns = []) use ($table): array {
