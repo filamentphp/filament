@@ -264,7 +264,7 @@ class AppAuthentication implements MultiFactorAuthenticationProvider
         return $this;
     }
 
-    public function getBrandName(): string | null
+    public function getBrandName(): ?string
     {
         return $this->brandName ?? strip_tags(Filament::getBrandName());
     }
