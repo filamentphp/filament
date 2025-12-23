@@ -139,7 +139,7 @@ class AppAuthentication implements MultiFactorAuthenticationProvider
         $user = Filament::auth()->user();
 
         $inlineQrCode = $this->google2FA->getQRCodeInline(
-            $this->getBrandName(),
+            $this->getBrandName() ?? config('app.name'),
             $this->getHolderName($user),
             $secret,
         );
@@ -264,7 +264,7 @@ class AppAuthentication implements MultiFactorAuthenticationProvider
         return $this;
     }
 
-    public function getBrandName(): string
+    public function getBrandName(): string | null
     {
         return $this->brandName ?? strip_tags(Filament::getBrandName());
     }

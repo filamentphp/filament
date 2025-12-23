@@ -118,6 +118,7 @@ class PanelProviderClassGenerator extends ClassGenerator
             <<<PHP
                 return \$panel{$defaultOutput}
                     ->id(?)
+                    ->brandName(config('app.name'))
                     ->path(?){$loginOutput}
                     ->colors([
                         'primary' => {$this->simplifyFqn(Color::class)}::Amber,

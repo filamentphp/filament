@@ -85,7 +85,7 @@ class FilamentManager
         return $this->getCurrentOrDefaultPanel()->getAuthPasswordBroker();
     }
 
-    public function getBrandName(): string | Htmlable
+    public function getBrandName(): string | Htmlable | null
     {
         return $this->getCurrentOrDefaultPanel()->getBrandName();
     }

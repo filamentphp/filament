@@ -16,8 +16,8 @@ trait HasBrandName
         return $this;
     }
 
-    public function getBrandName(): string | Htmlable
+    public function getBrandName(): string | Htmlable | null
     {
-        return $this->evaluate($this->brandName) ?? config('app.name');
+        return $this->evaluate($this->brandName);
     }
 }

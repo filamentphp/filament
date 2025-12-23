@@ -39,7 +39,7 @@ use Livewire\Component;
  * @method static void currentDomain(?string $domain)
  * @method static string getAuthGuard()
  * @method static string | null getAuthPasswordBroker()
- * @method static string | Htmlable getBrandName()
+ * @method static string | Htmlable | null getBrandName()
  * @method static string | Htmlable | null getBrandLogo()
  * @method static string | null getBrandLogoHeight()
  * @method static array<string | int, array<class-string> | class-string> getClusteredComponents(?string $cluster = null)
