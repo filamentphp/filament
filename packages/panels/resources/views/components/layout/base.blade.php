@@ -33,7 +33,7 @@
 
         <title>
             {{ filled($title) ? $title : null }}
-            {{ filled($brandName) && filled($title) ? " - " : null }}
+            {{ filled($brandName) && filled($title) ? ' - ' : null }}
             {{ filled($brandName) ? $brandName : null }}
         </title>
 
