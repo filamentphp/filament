@@ -575,18 +575,11 @@ trait InteractsWithActions
             throw new ActionNotResolvableException('Failed to resolve table action for Livewire component without the [' . HasTable::class . '] trait.');
         }
 
-        $resolvedAction = null;
-
-        if (count($parentActions)) {
-            $parentAction = Arr::last($parentActions);
-            $resolvedAction = $parentAction->getModalAction($action['name']) ?? throw new ActionNotResolvableException("Action [{$action['name']}] was not found for action [{$parentAction->getName()}].");
-        } else {
-            if ($action['context']['bulk'] ?? false) {
-                $resolvedAction = $this->getTable()->getBulkAction($action['name']);
-            }
-
-            $resolvedAction ??= $this->getTable()->getAction($action['name']) ?? throw new ActionNotResolvableException("Action [{$action['name']}] not found on table.");
+        if ($action['context']['bulk'] ?? false) {
+            $resolvedAction = $this->getTable()->getBulkAction($action['name']);
         }
+
+        $resolvedAction ??= $this->getTable()->getAction($action['name']) ?? throw new ActionNotResolvableException("Action [{$action['name']}] not found on table.");
 
         if (filled($action['context']['recordKey'] ?? null)) {
             $record = $this->getTableRecord($action['context']['recordKey']);
@@ -603,15 +596,6 @@ trait InteractsWithActions
      */
     protected function resolveSchemaComponentAction(array $action, array $parentActions): Action
     {
-        if (count($parentActions)) {
-            $parentAction = Arr::last($parentActions);
-            $resolvedAction = $parentAction->getModalAction($action['name']);
-
-            if ($resolvedAction) {
-                return $resolvedAction;
-            }
-        }
-
         if (! $this instanceof HasSchemas) {
             throw new ActionNotResolvableException('Failed to resolve action schema for Livewire component without the [' . InteractsWithSchemas::class . '] trait.');
         }
