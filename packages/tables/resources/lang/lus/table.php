@@ -43,11 +43,11 @@ return [
         'text' => [
 
             'actions' => [
-                'collapse_list' => 'Show :count less',
-                'expand_list' => 'Show :count more',
+                'collapse_list' => ':count in tilang tlem rawh',
+                'expand_list' => ':count in tilang tam rawh',
             ],
 
-            'more_list_items' => 'and :count more',
+            'more_list_items' => 'leh adang :count',
 
         ],
 
@@ -217,7 +217,7 @@ return [
 
     ],
 
-    'reorder_indicator' => 'Drag and drop the records into order.',
+    'reorder_indicator' => 'A indawt dânin record dah kual rawh.',
 
     'selection_indicator' => [
 

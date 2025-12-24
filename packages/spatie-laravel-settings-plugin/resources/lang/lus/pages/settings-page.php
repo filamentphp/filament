@@ -7,7 +7,7 @@ return [
         'actions' => [
 
             'save' => [
-                'label' => 'Save changes',
+                'label' => 'Thlâkthlengna',
             ],
 
         ],
@@ -17,7 +17,7 @@ return [
     'notifications' => [
 
         'saved' => [
-            'title' => 'Saved',
+            'title' => 'A in save e.',
         ],
 
     ],
