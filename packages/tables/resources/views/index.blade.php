@@ -42,7 +42,9 @@
     $columnManagerResetActionPosition = $getColumnManagerResetActionPosition();
     $hasColumnGroups = $hasColumnGroups();
     $hasColumnsLayout = $hasColumnsLayout();
-    $hasSummary = $hasSummary($this->getAllTableSummaryQuery());
+    $hasPageSummary = $hasPageSummary();
+    $hasTotalSummary = $hasTotalSummary();
+    $hasSummary = ($hasPageSummary || $hasTotalSummary) && $hasSummary($this->getAllTableSummaryQuery());
     $header = $getHeader();
     $headerActions = array_filter(
         $getHeaderActions(),
@@ -1266,6 +1268,8 @@
                                     <x-filament-tables::summary
                                         :columns="$columns"
                                         extra-heading-column
+                                        :has-page-summary="$hasPageSummary"
+                                        :has-total-summary="$hasTotalSummary"
                                         :placeholder-columns="false"
                                         :plural-model-label="$pluralModelLabel"
                                         :records="$records"
@@ -2142,6 +2146,8 @@
                                                 :columns="$columns"
                                                 :group-column="$groupColumn"
                                                 :groups-only="$isGroupsOnly"
+                                                :has-page-summary="$hasPageSummary"
+                                                :has-total-summary="$hasTotalSummary"
                                                 :plural-model-label="$pluralModelLabel"
                                                 :record-checkbox-position="$recordCheckboxPosition"
                                                 :records="$records"

@@ -11,15 +11,10 @@ trait CanSummarizeRecords
 
     protected bool | Closure | null $hasTotalSummary = null;
 
-    public function summaries(bool | Closure | null $pageSummary = null, bool | Closure | null $totalSummary = null): static
+    public function summaries(bool | Closure $pageSummaryCondition = true, bool | Closure $totalSummaryCondition = true): static
     {
-        if ($pageSummary !== null) {
-            $this->hasPageSummary = $pageSummary;
-        }
-
-        if ($totalSummary !== null) {
-            $this->hasTotalSummary = $totalSummary;
-        }
+        $this->hasPageSummary = $pageSummaryCondition;
+        $this->hasTotalSummary = $totalSummaryCondition;
 
         return $this;
     }
@@ -36,13 +31,6 @@ trait CanSummarizeRecords
 
     public function hasSummary(Builder | Closure | null $query): bool
     {
-        if (
-            $this->hasPageSummary === false &&
-            $this->hasTotalSummary === false
-        ) {
-            return false;
-        }
-
         foreach ($this->getColumns() as $column) {
             if ($column->hasSummary($query)) {
                 return true;

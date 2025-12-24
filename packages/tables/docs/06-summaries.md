@@ -7,7 +7,28 @@ import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 You may render a "summary" section below your table content. This is great for displaying the results of calculations such as averages, sums, counts, and ranges of the data in your table.
 
-By default, there will be a single summary line for the current page of data, and an additional summary line for the totals for all data if multiple pages are available. You may also add summaries for [groups](grouping) of records, see ["Summarising groups of rows"](#summarising-groups-of-rows).
+By default, there will be a single summary line for the current page of data, and an additional summary line for the totals for all data if multiple pages are available. However, you can control this behaviour see ["Summary rows"](#summary-rows). You may also add summaries for [groups](grouping) of records, see ["Summarising groups of rows"](#summarising-groups-of-rows).
+
+## Summary rows
+
+By default, both the page summary and total summary rows are displayed when columns have summarizers. You can control which summary rows appear using the `summaries()` method on the table:
+
+```php
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->summaries(
+            pageSummaryCondition: false,
+            totalSummaryCondition: false
+        );
+}
+```
+
+This is useful when using [group summaries](#summarising-groups-of-rows) where you only want to display summaries per group, or when the page summary is redundant and you only need the total across all records.
+
+## Adding summarizers
 
 "Summarizer" objects can be added to any [table column](columns) using the `summarize()` method:
 

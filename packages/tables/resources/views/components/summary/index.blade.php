@@ -5,6 +5,8 @@
     'extraHeadingColumn' => false,
     'groupColumn' => null,
     'groupsOnly' => false,
+    'hasPageSummary' => true,
+    'hasTotalSummary' => true,
     'placeholderColumns' => true,
     'pluralModelLabel',
     'recordCheckboxPosition' => null,
@@ -24,10 +26,7 @@
             ->all();
     }
 
-    $table = $this->getTable();
-
-    $hasPageSummary = $table->hasPageSummary() && (! $groupsOnly) && $records instanceof \Illuminate\Contracts\Pagination\Paginator && $records->hasPages();
-    $hasTotalSummary = $table->hasTotalSummary();
+    $hasPageSummary = $hasPageSummary && (! $groupsOnly) && $records instanceof \Illuminate\Contracts\Pagination\Paginator && $records->hasPages();
 
     $pageTableSummaryQuery = $hasPageSummary ? $this->getPageTableSummaryQuery() : null;
     $allTableSummaryQuery = $hasTotalSummary ? $this->getAllTableSummaryQuery() : null;
