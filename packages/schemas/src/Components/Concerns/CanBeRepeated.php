@@ -14,7 +14,7 @@ trait CanBeRepeated
     {
         $repeater = $this->getParentRepeaterItem()?->getParentComponent();
 
-        assert($repeater instanceof Repeater || $repeater instanceof Block);
+        assert(($repeater instanceof Repeater) || ($repeater instanceof Block) || (! $repeater));
 
         return $repeater;
     }
