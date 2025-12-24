@@ -121,6 +121,8 @@ class Action extends ViewComponent implements Arrayable
 
     protected ?ActionStatus $status = null;
 
+    protected ?Action $parentAction = null;
+
     final public function __construct(?string $name)
     {
         $this->name($name);
@@ -463,10 +465,6 @@ class Action extends ViewComponent implements Arrayable
 
         $table = $this->getTable();
 
-        if ($table) {
-            $context['table'] = true;
-        }
-
         $record = $this->getRecord();
 
         if ($record && (
@@ -476,6 +474,14 @@ class Action extends ViewComponent implements Arrayable
             || is_a($record::class, $table->getModel(), true)
         ) && filled($recordKey = $this->resolveRecordKey($record))) {
             $context['recordKey'] = $recordKey;
+        }
+
+        if ($this->getParentAction()) {
+            return $context;
+        }
+
+        if ($table) {
+            $context['table'] = true;
         }
 
         if ($table && $this->isBulk()) {
@@ -859,5 +865,17 @@ class Action extends ViewComponent implements Arrayable
     public function getClone(): static
     {
         return clone $this;
+    }
+
+    public function parentAction(?Action $action): static
+    {
+        $this->parentAction = $action;
+
+        return $this;
+    }
+
+    public function getParentAction(): ?Action
+    {
+        return $this->parentAction;
     }
 }

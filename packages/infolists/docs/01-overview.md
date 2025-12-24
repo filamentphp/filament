@@ -403,7 +403,7 @@ use Filament\Schemas\Components\Section;
 
 Section::make('Details')
     ->inlineLabel()
-    ->entries([
+    ->schema([
         TextInput::make('name'),
         TextInput::make('email')
             ->label('Email address'),
@@ -437,7 +437,7 @@ use Filament\Schemas\Components\Section;
 
 Section::make('Details')
     ->inlineLabel()
-    ->entries([
+    ->schema([
         TextInput::make('name'),
         TextInput::make('email')
             ->label('Email address'),
