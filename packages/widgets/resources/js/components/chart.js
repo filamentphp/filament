@@ -21,6 +21,7 @@ export default function chart({ cachedData, options, type }) {
             this.initChart()
 
             this.$wire.$on('updateChartData', ({ data }) => {
+                cachedData = data
                 chart = this.getChart()
                 chart.data = data
                 chart.update('resize')
