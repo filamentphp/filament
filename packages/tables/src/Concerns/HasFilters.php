@@ -2,6 +2,7 @@
 
 namespace Filament\Tables\Concerns;
 
+use Filament\Facades\Filament;
 use Filament\QueryBuilder\Forms\Components\RuleBuilder;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Schema;
@@ -221,11 +222,15 @@ trait HasFilters
 
     public function getTableFiltersSessionKey(): string
     {
-        $tenantKey = filament()->getTenant()?->getKey();
-
         $namespace = $this::class;
 
-        if ($tenantKey) {
+        $tenantKey = null;
+
+        if (class_exists(Filament::class)) {
+            $tenantKey = Filament::getTenant()?->getKey();
+        }
+
+        if ($tenantKey !== null && $tenantKey !== '') {
             $namespace .= '|' . $tenantKey;
         }
 
