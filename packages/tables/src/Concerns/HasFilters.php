@@ -230,7 +230,7 @@ trait HasFilters
             $tenantKey = Filament::getTenant()?->getKey();
         }
 
-        if ($tenantKey !== null && $tenantKey !== '') {
+        if (filled($tenantKey)) {
             $namespace .= '|' . $tenantKey;
         }
 
