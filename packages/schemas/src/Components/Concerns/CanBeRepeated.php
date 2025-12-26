@@ -2,19 +2,19 @@
 
 namespace Filament\Schemas\Components\Concerns;
 
-use Filament\Forms\Components\Builder\Block;
+use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\Repeater;
 use Filament\Schemas\Schema;
 
 trait CanBeRepeated
 {
-    protected Schema | bool | null $cachedParentRepeaterItem = null;
+    protected Schema|bool|null $cachedParentRepeaterItem = null;
 
-    public function getParentRepeater(): null | Repeater | Block
+    public function getParentRepeater(): null|Repeater|Builder
     {
         $repeater = $this->getParentRepeaterItem()?->getParentComponent();
 
-        assert(($repeater instanceof Repeater) || ($repeater instanceof Block) || (! $repeater));
+        assert(($repeater instanceof Repeater) || ($repeater instanceof Builder) || (!$repeater));
 
         return $repeater;
     }
@@ -29,9 +29,9 @@ trait CanBeRepeated
 
         $parentComponent = $container->getParentComponent();
 
-        if (! $parentComponent) {
+        if (!$parentComponent) {
             $this->cachedParentRepeaterItem = false;
-        } elseif ($parentComponent instanceof Repeater || $parentComponent instanceof Block) {
+        } elseif ($parentComponent instanceof Repeater || $parentComponent instanceof Builder) {
             $this->cachedParentRepeaterItem = $container;
         } else {
             $this->cachedParentRepeaterItem = $parentComponent->getParentRepeaterItem();
@@ -44,7 +44,7 @@ trait CanBeRepeated
     {
         $item = $this->getParentRepeaterItem();
 
-        if (! $item) {
+        if (!$item) {
             return 0;
         }
 
