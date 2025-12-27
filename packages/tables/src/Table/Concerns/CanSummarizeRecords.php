@@ -7,26 +7,26 @@ use Illuminate\Database\Eloquent\Builder;
 
 trait CanSummarizeRecords
 {
-    protected bool | Closure | null $hasPageSummary = null;
+    protected bool | Closure $hasPageSummary = true;
 
-    protected bool | Closure | null $hasTotalSummary = null;
+    protected bool | Closure $hasAllTableSummary = true;
 
-    public function summaries(bool | Closure $pageSummaryCondition = true, bool | Closure $totalSummaryCondition = true): static
+    public function summaries(bool | Closure $pageCondition = true, bool | Closure $allTableCondition = true): static
     {
-        $this->hasPageSummary = $pageSummaryCondition;
-        $this->hasTotalSummary = $totalSummaryCondition;
+        $this->hasPageSummary = $pageCondition;
+        $this->hasAllTableSummary = $allTableCondition;
 
         return $this;
     }
 
     public function hasPageSummary(): bool
     {
-        return (bool) $this->evaluate($this->hasPageSummary ?? true);
+        return (bool) $this->evaluate($this->hasPageSummary);
     }
 
-    public function hasTotalSummary(): bool
+    public function hasAllTableSummary(): bool
     {
-        return (bool) $this->evaluate($this->hasTotalSummary ?? true);
+        return (bool) $this->evaluate($this->hasAllTableSummary);
     }
 
     public function hasSummary(Builder | Closure | null $query): bool

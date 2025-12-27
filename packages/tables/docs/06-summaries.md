@@ -20,8 +20,8 @@ public function table(Table $table): Table
 {
     return $table
         ->summaries(
-            pageSummaryCondition: false,
-            totalSummaryCondition: false
+            pageCondition: false,
+            allTableCondition: false
         );
 }
 ```

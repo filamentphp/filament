@@ -1,12 +1,12 @@
 @props([
     'actions' => false,
     'actionsPosition' => null,
+    'allTableSummary' => true,
     'columns',
     'extraHeadingColumn' => false,
     'groupColumn' => null,
     'groupsOnly' => false,
-    'hasPageSummary' => true,
-    'hasTotalSummary' => true,
+    'pageSummary' => true,
     'placeholderColumns' => true,
     'pluralModelLabel',
     'recordCheckboxPosition' => null,
@@ -26,10 +26,10 @@
             ->all();
     }
 
-    $hasPageSummary = $hasPageSummary && (! $groupsOnly) && $records instanceof \Illuminate\Contracts\Pagination\Paginator && $records->hasPages();
+    $hasPageSummary = $pageSummary && (! $groupsOnly) && $records instanceof \Illuminate\Contracts\Pagination\Paginator && $records->hasPages();
 
     $pageTableSummaryQuery = $hasPageSummary ? $this->getPageTableSummaryQuery() : null;
-    $allTableSummaryQuery = $hasTotalSummary ? $this->getAllTableSummaryQuery() : null;
+    $allTableSummaryQuery = $allTableSummary ? $this->getAllTableSummaryQuery() : null;
 @endphp
 
 @if ($hasPageSummary)
@@ -109,7 +109,7 @@
     />
 @endif
 
-@if ($hasTotalSummary)
+@if ($allTableSummary)
     @php
         $selectedState = $this->getTableSummarySelectedState($allTableSummaryQuery)[0] ?? [];
     @endphp
