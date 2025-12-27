@@ -425,6 +425,7 @@ trait CanOpenModal
     public function prepareModalAction(Action $action): Action
     {
         return $action
+            ->parentAction($this)
             ->schemaContainer($this->getSchemaContainer())
             ->schemaComponent($this->getSchemaComponent())
             ->livewire($this->getLivewire())

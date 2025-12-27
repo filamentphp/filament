@@ -2,6 +2,7 @@
 
 use Filament\Actions\Action;
 use Filament\Actions\Testing\TestAction;
+use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -533,4 +534,144 @@ enum TestLetterEnum: string
     case A = 'A';
     case B = 'B';
     case C = 'C';
+}
+
+it('can validate distinct fields in a builder block in a repeater with errors', function (): void {
+    $undoRepeaterFake = Repeater::fake();
+
+    $data = [
+        'repeater' => [
+            [
+                'bar' => 'test 1',
+                'builder' => [
+                    [
+                        'type' => 'one',
+                        'data' => [
+                            'foo' => 'test 1',
+                        ],
+                    ],
+                    [
+                        'type' => 'one',
+                        'data' => [
+                            'foo' => 'test 1',
+                        ],
+                    ],
+                ],
+            ],
+            [
+                'bar' => 'test 1',
+                'builder' => [
+                    [
+                        'type' => 'one',
+                        'data' => [
+                            'foo' => 'test 1',
+                        ],
+                    ],
+                    [
+                        'type' => 'one',
+                        'data' => [
+                            'foo' => 'test 1',
+                        ],
+                    ],
+                ],
+            ],
+        ],
+    ];
+
+    livewire(TestComponentWithRepeaterAndBuilder::class)
+        ->assertSuccessful()
+        ->fillForm($data)
+        ->assertFormSet($data)
+        ->call('save')
+        ->assertHasFormErrors([
+            'repeater.0.bar' => ['The bar field has a duplicate value.'],
+            'repeater.0.builder.0.data.foo' => ['The foo field has a duplicate value.'],
+            'repeater.0.builder.1.data.foo' => ['The foo field has a duplicate value.'],
+            'repeater.1.bar' => ['The bar field has a duplicate value.'],
+            'repeater.1.builder.0.data.foo' => ['The foo field has a duplicate value.'],
+            'repeater.1.builder.1.data.foo' => ['The foo field has a duplicate value.'],
+        ]);
+
+    $undoRepeaterFake();
+});
+
+it('can validate distinct fields in a builder block in a repeater with no errors', function (): void {
+    $undoRepeaterFake = Repeater::fake();
+
+    $data = [
+        'repeater' => [
+            [
+                'bar' => 'test 1',
+                'builder' => [
+                    [
+                        'type' => 'one',
+                        'data' => [
+                            'foo' => 'test 1',
+                        ],
+                    ],
+                    [
+                        'type' => 'one',
+                        'data' => [
+                            'foo' => 'test 2',
+                        ],
+                    ],
+                ],
+            ],
+            [
+                'bar' => 'test 2',
+                'builder' => [
+                    [
+                        'type' => 'one',
+                        'data' => [
+                            'foo' => 'test 1',
+                        ],
+                    ],
+                    [
+                        'type' => 'one',
+                        'data' => [
+                            'foo' => 'test 2',
+                        ],
+                    ],
+                ],
+            ],
+        ],
+    ];
+
+    livewire(TestComponentWithRepeaterAndBuilder::class)
+        ->assertSuccessful()
+        ->fillForm($data)
+        ->assertFormSet($data)
+        ->call('save')
+        ->assertHasNoFormErrors();
+
+    $undoRepeaterFake();
+});
+
+class TestComponentWithRepeaterAndBuilder extends Livewire
+{
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->components([
+                Repeater::make('repeater')
+                    ->schema([
+                        TextInput::make('bar')
+                            ->distinct(),
+                        Builder::make('builder')
+                            ->blocks([
+                                Builder\Block::make('one')
+                                    ->schema([
+                                        TextInput::make('foo')
+                                            ->distinct(),
+                                    ]),
+                            ]),
+                    ]),
+            ])
+            ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->form->getState();
+    }
 }
