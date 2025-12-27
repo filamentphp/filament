@@ -8,6 +8,7 @@ use Filament\Navigation\NavigationItem;
 use Filament\Pages\Enums\SubNavigationPosition;
 use Filament\Pages\Page;
 use Filament\Resources\Pages\Page as ResourcePage;
+use Illuminate\Support\Collection;
 use UnitEnum;
 
 trait HasSubNavigation
@@ -110,10 +111,40 @@ trait HasSubNavigation
             );
         }
 
+        $navigationItems = $this->processParentNavigationItems(collect($navigationItems))->all();
+
+        foreach ($navigationGroups as $navigationGroup) {
+            $navigationGroup->items(
+                $this->processParentNavigationItems(collect($navigationGroup->getItems()))->all(),
+            );
+        }
+
         return $this->cachedSubNavigation = [
             ...($navigationItems ? [NavigationGroup::make()->items($navigationItems)] : []),
             ...$navigationGroups,
         ];
+    }
+
+    /**
+     * @param  Collection<int, NavigationItem>  $items
+     * @return Collection<int, NavigationItem>
+     */
+    protected function processParentNavigationItems(Collection $items): Collection
+    {
+        $parentItems = $items->groupBy(fn (NavigationItem $item): string => $item->getParentItem() ?? '');
+
+        $items = $parentItems->get('', collect())
+            ->keyBy(fn (NavigationItem $item): string => $item->getLabel());
+
+        $parentItems->except([''])->each(function (Collection $childItems, string $parentItemLabel) use ($items): void {
+            if (! $items->has($parentItemLabel)) {
+                return;
+            }
+
+            $items->get($parentItemLabel)->childItems($childItems);
+        });
+
+        return $items->values();
     }
 
     /**

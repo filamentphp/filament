@@ -41,48 +41,7 @@ trait HasNavigation
         /** @var NavigationBuilder $builder */
         $builder = app()->call($this->navigationBuilder);
 
-        $navigation = $builder->getNavigation();
-
-        foreach ($navigation as $group) {
-            if (! $group instanceof NavigationGroup) {
-                continue;
-            }
-
-            $items = $group->getItems();
-
-            foreach ($navigation as $group) {
-                if (! $group instanceof NavigationGroup) {
-                    continue;
-                }
-
-                $items = $group->getItems();
-                $newItems = [];
-
-                foreach ($items as $item) {
-                    $parentLabel = $item->getParentItem();
-
-                    if ($parentLabel) {
-                        $parent = collect($items)
-                            ->first(fn ($i) => $i->getLabel() === $parentLabel);
-
-                        if ($parent) {
-                            // Attach to parent
-                            $parent->childItems([...$parent->getChildItems(), $item]);
-                            // Do NOT add to newItems
-                            continue;
-                        }
-                    }
-
-                    // Keep item in the group if it has no parent
-                    $newItems[] = $item;
-                }
-
-                // Replace group's items with filtered list
-                $group->items($newItems);
-            }
-        }
-
-        return $navigation;
+        return $builder->getNavigation();
     }
 
     /**
