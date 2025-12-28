@@ -16,6 +16,8 @@ use Filament\Tests\Fixtures\Pages\Settings;
 use Filament\Tests\Fixtures\Resources\PostCategories\PostCategoryResource;
 use Filament\Tests\Fixtures\Resources\Posts\PostResource;
 use Filament\Tests\Fixtures\Resources\Shop\Products\ProductResource;
+use Filament\Tests\Fixtures\Resources\Tenancy\NonTenantScopedUsers\NonTenantScopedUserResource;
+use Filament\Tests\Fixtures\Resources\Tenancy\TenantScopedUsers\TenantScopedUserResource;
 use Filament\Tests\Fixtures\Resources\Users\UserResource;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
@@ -37,9 +39,11 @@ class TenancyPanelProvider extends PanelProvider
             ->passwordReset()
             ->emailVerification()
             ->resources([
+                NonTenantScopedUserResource::class,
                 PostResource::class,
                 PostCategoryResource::class,
                 ProductResource::class,
+                TenantScopedUserResource::class,
                 UserResource::class,
             ])
             ->pages([
