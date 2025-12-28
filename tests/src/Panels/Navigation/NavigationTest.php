@@ -28,6 +28,9 @@ it('can register navigation items from resources and pages', function (): void {
                         ->getLabel()->toBe('User Management')
                         ->getIcon()->toBe(Heroicon::OutlinedUsers),
                     fn ($item) => $item
+                        ->getLabel()->toBe('Companies')
+                        ->getIcon()->toBe(Heroicon::OutlinedBuildingOffice),
+                    fn ($item) => $item
                         ->getLabel()->toBe('Departments')
                         ->getIcon()->toBe(Heroicon::OutlinedRectangleStack),
                     fn ($item) => $item
