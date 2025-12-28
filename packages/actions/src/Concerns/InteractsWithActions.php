@@ -194,6 +194,8 @@ trait InteractsWithActions
             return null;
         }
 
+        $originalActionArguments = $action->getArguments();
+
         $action->mergeArguments($arguments);
 
         if ($action->isDisabled()) {
@@ -289,7 +291,7 @@ trait InteractsWithActions
             $action->rollBackDatabaseTransaction();
 
             if (! $this->mountedActionShouldOpenModal(mountedAction: $action)) {
-                $action->resetArguments();
+                $action->arguments($originalActionArguments);
                 $action->resetData();
 
                 $this->unmountAction();
@@ -312,7 +314,7 @@ trait InteractsWithActions
 
         $this->partiallyRenderActionParentSchema($action);
 
-        $action->resetArguments();
+        $action->arguments($originalActionArguments);
         $action->resetData();
 
         $onlyActionNamesAndContexts = fn (array $actions): array => collect($actions)
@@ -479,7 +481,7 @@ trait InteractsWithActions
      * @param  array<array<string, mixed>>  $actions
      * @return array<Action>
      */
-    protected function resolveActions(array $actions): array
+    protected function resolveActions(array $actions, bool $isMounting = true): array
     {
         $resolvedActions = [];
 
@@ -505,10 +507,12 @@ trait InteractsWithActions
 
             $resolvedActions[] = $resolvedAction;
 
-            $this->cacheSchema(
-                "mountedActionSchema{$actionNestingIndex}",
-                $this->getMountedActionSchema($actionNestingIndex, $resolvedAction),
-            );
+            if ($isMounting) {
+                $this->cacheSchema(
+                    "mountedActionSchema{$actionNestingIndex}",
+                    $this->getMountedActionSchema($actionNestingIndex, $resolvedAction),
+                );
+            }
         }
 
         return $resolvedActions;
@@ -625,14 +629,14 @@ trait InteractsWithActions
     /**
      * @param  string | array<string>  $actions
      */
-    public function getAction(string | array $actions): ?Action
+    public function getAction(string | array $actions, bool $isMounting = true): ?Action
     {
         $actions = array_map(
             fn (string | array $action): array => is_array($action) ? $action : ['name' => $action],
             Arr::wrap($actions),
         );
 
-        return Arr::last($this->resolveActions($actions));
+        return Arr::last($this->resolveActions($actions, $isMounting));
     }
 
     public function getMountedActionSchemaName(): ?string

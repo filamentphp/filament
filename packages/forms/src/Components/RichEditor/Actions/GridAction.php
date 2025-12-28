@@ -126,7 +126,7 @@ class GridAction
                     ]),
             ])
             ->action(function (array $arguments, array $data, RichEditor $component): void {
-                if ($data['isAsymmetric']) {
+                if ($data['isAsymmetric'] ?? false) {
                     $columns = [(int) ($data['startSpan'] ?? 1), (int) ($data['endSpan'] ?? 1)];
                 } else {
                     $columns = array_fill(0, max(2, (int) ($data['columns'] ?? 2)), 1);

@@ -1,6 +1,7 @@
 <?php
 
 use Filament\Forms\Components\Field;
+use Filament\Schemas\JsContent;
 use Filament\Schemas\Schema;
 use Filament\Tests\Fixtures\Enums\IntegerBackedEnum;
 use Filament\Tests\Fixtures\Enums\StringBackedEnum;
@@ -1003,3 +1004,20 @@ test('in/notIn validation rules support enum instances', function (string $rule,
     ['notIn', StringBackedEnum::One],
     ['in', StringBackedEnum::Three],
 ]);
+
+test('fields with `Htmlable` labels use the default label for validation attribute', function (): void {
+    $field = (new Field('user_name'))
+        ->label(JsContent::make('dynamicLabel'));
+
+    expect($field->getValidationAttribute())
+        ->toBe('user name');
+});
+
+test('fields with `Htmlable` labels can still override the validation attribute', function (): void {
+    $field = (new Field('user_name'))
+        ->label(JsContent::make('dynamicLabel'))
+        ->validationAttribute('custom attribute');
+
+    expect($field->getValidationAttribute())
+        ->toBe('custom attribute');
+});
