@@ -816,6 +816,49 @@ test('dehydrated state can be mutated', function (): void {
         ]);
 });
 
+test('dehydrated state can be mutated when component is hidden and dehydrated when hidden', function (): void {
+    $schema = Schema::make(Livewire::make())
+        ->statePath('data')
+        ->components([
+            Field::make($statePath = Str::random())
+                ->default($state = Str::random())
+                ->hidden()
+                ->dehydratedWhenHidden()
+                ->mutateDehydratedStateUsing(fn ($state) => strrev($state)),
+        ])
+        ->fill();
+
+    invade($schema->getLivewire())->cacheSchema('form', $schema);
+
+    expect($schema->getState())
+        ->toBe([
+            $statePath => strrev($state),
+        ]);
+});
+
+test('dehydrated state can be mutated when parent schema is hidden and dehydrated when hidden', function (): void {
+    $schema = Schema::make(Livewire::make())
+        ->statePath('data')
+        ->components([
+            (new Component)
+                ->hidden()
+                ->dehydratedWhenHidden()
+                ->childComponents([
+                    Field::make($statePath = Str::random())
+                        ->default($state = Str::random())
+                        ->mutateDehydratedStateUsing(fn ($state) => strrev($state)),
+                ]),
+        ])
+        ->fill();
+
+    invade($schema->getLivewire())->cacheSchema('form', $schema);
+
+    expect($schema->getState())
+        ->toBe([
+            $statePath => strrev($state),
+        ]);
+});
+
 test('sibling state can be retrieved relatively from another component', function (): void {
     Schema::make(Livewire::make())
         ->statePath('data')
