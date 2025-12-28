@@ -194,6 +194,8 @@ trait InteractsWithActions
             return null;
         }
 
+        $originalActionArguments = $action->getArguments();
+
         $action->mergeArguments($arguments);
 
         if ($action->isDisabled()) {
@@ -289,7 +291,7 @@ trait InteractsWithActions
             $action->rollBackDatabaseTransaction();
 
             if (! $this->mountedActionShouldOpenModal(mountedAction: $action)) {
-                $action->resetArguments();
+                $action->arguments($originalActionArguments);
                 $action->resetData();
 
                 $this->unmountAction();
@@ -312,7 +314,7 @@ trait InteractsWithActions
 
         $this->partiallyRenderActionParentSchema($action);
 
-        $action->resetArguments();
+        $action->arguments($originalActionArguments);
         $action->resetData();
 
         $onlyActionNamesAndContexts = fn (array $actions): array => collect($actions)
