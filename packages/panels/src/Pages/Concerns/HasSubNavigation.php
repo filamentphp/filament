@@ -75,14 +75,15 @@ trait HasSubNavigation
                 }
 
                 $itemGroup = $item->getGroup();
+                $itemGroupKey = $itemGroup;
 
                 if ($itemGroup instanceof UnitEnum) {
-                    $itemGroup = $itemGroup->name;
+                    $itemGroupKey = $itemGroup->name;
                 }
 
-                if (array_key_exists($itemGroup, $navigationGroups)) {
-                    $navigationGroups[$itemGroup]->items([
-                        ...$navigationGroups[$itemGroup]->getItems(),
+                if (array_key_exists($itemGroupKey, $navigationGroups)) {
+                    $navigationGroups[$itemGroupKey]->items([
+                        ...$navigationGroups[$itemGroupKey]->getItems(),
                         $item,
                     ]);
 
@@ -90,9 +91,9 @@ trait HasSubNavigation
                 }
 
                 if (filled($itemGroup)) {
-                    $navigationGroups[$itemGroup] = NavigationGroup::make()
-                        ->label($itemGroup)
-                        ->items([$item]);
+                    $navigationGroups[$itemGroupKey] = ($itemGroup instanceof UnitEnum)
+                        ? NavigationGroup::fromEnum($itemGroup)->items([$item])
+                        : NavigationGroup::make()->label($itemGroup)->items([$item]);
 
                     return false;
                 }

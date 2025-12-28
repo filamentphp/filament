@@ -4,7 +4,10 @@ use Filament\Facades\Filament;
 use Filament\Navigation\NavigationGroup;
 use Filament\Navigation\NavigationItem;
 use Filament\Support\Icons\Heroicon;
+use Filament\Tests\Fixtures\Clusters\UserManagement\Pages\ManageAdmins;
 use Filament\Tests\Panels\Navigation\TestCase;
+
+use function Filament\Tests\livewire;
 
 uses(TestCase::class);
 
@@ -21,6 +24,9 @@ it('can register navigation items from resources and pages', function (): void {
                         ->getIcon()->toBe(Heroicon::OutlinedHome),
                     fn ($item) => $item
                         ->getLabel()->toBe('Actions'),
+                    fn ($item) => $item
+                        ->getLabel()->toBe('User Management')
+                        ->getIcon()->toBe(Heroicon::OutlinedUsers),
                     fn ($item) => $item
                         ->getLabel()->toBe('Departments')
                         ->getIcon()->toBe(Heroicon::OutlinedRectangleStack),
@@ -122,4 +128,28 @@ it('can reorder navigation groups by registering their labels', function (): voi
                 ->toBeInstanceOf(NavigationGroup::class)
                 ->getLabel()->toBe('Blog'),
         );
+});
+
+it('can use enum `HasLabel` for cluster sub-navigation groups', function (): void {
+    // Access a page within the cluster
+    $this->get(ManageAdmins::getUrl())->assertSuccessful();
+
+    // Get the page instance to test sub-navigation (pages within cluster also have sub-navigation)
+    $component = livewire(ManageAdmins::class);
+
+    $subNavigation = $component->instance()->getCachedSubNavigation();
+
+    // Should have groups with proper labels from `HasLabel` interface
+    $groupLabels = collect($subNavigation)
+        ->filter(fn (NavigationGroup $group) => filled($group->getLabel()))
+        ->map(fn (NavigationGroup $group) => $group->getLabel())
+        ->values()
+        ->all();
+
+    // The enum `NavigationGroupEnum` has `getLabel()` returning 'User Management' for Users
+    // and 'System Settings' for Settings - NOT the raw enum name like 'Users' or 'Settings'
+    expect($groupLabels)->toContain('User Management');
+    expect($groupLabels)->toContain('System Settings');
+    expect($groupLabels)->not->toContain('Users');
+    expect($groupLabels)->not->toContain('Settings');
 });
