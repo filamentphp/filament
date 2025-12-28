@@ -382,7 +382,7 @@ trait HasState
      */
     public function getConstantState(): array | object
     {
-        return $this->constantState
+        return $this->evaluate($this->constantState)
             ?? $this->getRecord(withParentComponentRecord: false)
             ?? $this->getParentComponent()?->getContainer()->getConstantState()
             ?? $this->getRecord()
