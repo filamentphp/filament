@@ -9,6 +9,10 @@ use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
+use Filament\Tests\Fixtures\Clusters\UserManagement;
+use Filament\Tests\Fixtures\Clusters\UserManagement\Pages\GeneralSettings;
+use Filament\Tests\Fixtures\Clusters\UserManagement\Pages\ManageAdmins;
+use Filament\Tests\Fixtures\Clusters\UserManagement\Pages\ManageStaff;
 use Filament\Tests\Fixtures\Pages\Actions;
 use Filament\Tests\Fixtures\Pages\Settings;
 use Filament\Tests\Fixtures\Resources\Departments\DepartmentResource;
@@ -51,6 +55,10 @@ class AdminPanelProvider extends PanelProvider
                 Pages\Dashboard::class,
                 Actions::class,
                 Settings::class,
+                UserManagement::class,
+                ManageAdmins::class,
+                ManageStaff::class,
+                GeneralSettings::class,
             ])
             ->middleware([
                 EncryptCookies::class,
