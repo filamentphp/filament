@@ -47,7 +47,7 @@ trait InteractsWithRecord
 
     public function getRecord(): Model
     {
-        abort_unless($this->record, 404);
+        abort_unless($this->record instanceof Model, 404);
 
         return $this->record;
     }
