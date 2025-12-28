@@ -31,7 +31,7 @@ class LinkAction
             ->action(function (array $arguments, array $data, RichEditor $component): void {
                 $isSingleCharacterSelection = ($arguments['editorSelection']['head'] ?? null) === ($arguments['editorSelection']['anchor'] ?? null);
 
-                if (blank($data['url'])) {
+                if (blank($data['url'] ?? null)) {
                     $component->runCommands(
                         [
                             ...($isSingleCharacterSelection ? [EditorCommand::make(
