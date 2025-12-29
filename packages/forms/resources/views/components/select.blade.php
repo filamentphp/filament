@@ -7,7 +7,7 @@
     $isMultiple = $isMultiple();
     $isReorderable = $isReorderable();
     $isSearchable = $isSearchable();
-    $isPreloaded = $isPreloaded();
+    $hasInitialNoOptionsMessage = $hasInitialNoOptionsMessage();
     $canOptionLabelsWrap = $canOptionLabelsWrap();
     $isRequired = $isRequired();
     $isConcealed = $isConcealed();
@@ -133,7 +133,6 @@
                 x-data="selectFormComponent({
                             canOptionLabelsWrap: @js($canOptionLabelsWrap),
                             canSelectPlaceholder: @js($canSelectPlaceholder),
-                            isHtmlAllowed: @js($isHtmlAllowed),
                             getOptionLabelUsing: async () => {
                                 return await $wire.callSchemaComponentMethod(@js($key), 'getOptionLabel')
                             },
@@ -156,21 +155,23 @@
                                     { search },
                                 )
                             },
+                            hasDynamicOptions: @js($hasDynamicOptions()),
+                            hasDynamicSearchResults: @js($hasDynamicSearchResults()),
+                            hasInitialNoOptionsMessage: @js($hasInitialNoOptionsMessage),
                             initialOptionLabel: @js((blank($state) || $isMultiple) ? null : $getOptionLabel()),
                             initialOptionLabels: @js((filled($state) && $isMultiple) ? $getOptionLabelsForJs() : []),
                             initialState: @js($state),
                             isAutofocused: @js($isAutofocused),
                             isDisabled: @js($isDisabled),
+                            isHtmlAllowed: @js($isHtmlAllowed),
                             isMultiple: @js($isMultiple),
                             isReorderable: @js($isReorderable),
                             isSearchable: @js($isSearchable),
-                            isPreloaded: @js($isPreloaded),
                             livewireId: @js($this->getId()),
-                            hasDynamicOptions: @js($hasDynamicOptions()),
-                            hasDynamicSearchResults: @js($hasDynamicSearchResults()),
                             loadingMessage: @js($getLoadingMessage()),
                             maxItems: @js($getMaxItems()),
                             maxItemsMessage: @js($getMaxItemsMessage()),
+                            noOptionsMessage: @js($getNoOptionsMessage()),
                             noSearchResultsMessage: @js($getNoSearchResultsMessage()),
                             options: @js($getOptionsForJs()),
                             optionsLimit: @js($getOptionsLimit()),

@@ -1340,6 +1340,15 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         return $this->getSearchResultsUsing instanceof Closure;
     }
 
+    public function hasInitialNoOptionsMessage(): bool
+    {
+        if ($this->hasRelationship()) {
+            return $this->isPreloaded();
+        }
+
+        return ! $this->hasDynamicSearchResults();
+    }
+
     /**
      * @return Model | array<string, mixed> | class-string<Model> | null
      */
