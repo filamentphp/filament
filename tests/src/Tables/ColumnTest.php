@@ -4,6 +4,7 @@ use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tests\Fixtures\Livewire\PostsTable;
 use Filament\Tests\Fixtures\Livewire\PostsTableWithQualifiedColumns;
+use Filament\Tests\Fixtures\Livewire\PostsTableWithTableSearchableColumns;
 use Filament\Tests\Fixtures\Livewire\UsersTable;
 use Filament\Tests\Fixtures\Livewire\UsersWithTeamTable;
 use Filament\Tests\Fixtures\Models\Company;
@@ -1471,5 +1472,56 @@ it('can search records with `BelongsTo` -> `BelongsToThrough` relationship', fun
     livewire(PostsTable::class)
         ->searchTable($searchCompany)
         ->assertCanSeeTableRecords([$matchingPost])
+        ->assertCanNotSeeTableRecords($nonMatchingPosts);
+});
+
+it('can search records using table-level searchable columns', function (): void {
+    $posts = Post::factory()->count(10)->create();
+
+    $title = $posts->first()->title;
+
+    livewire(PostsTableWithTableSearchableColumns::class)
+        ->searchTable($title)
+        ->assertCanSeeTableRecords($posts->where('title', $title))
+        ->assertCanNotSeeTableRecords($posts->where('title', '!=', $title));
+});
+
+it('can search records using table-level searchable columns with relationship', function (): void {
+    $posts = Post::factory()->count(10)->create();
+
+    $author = $posts->first()->author->name;
+
+    livewire(PostsTableWithTableSearchableColumns::class)
+        ->searchTable($author)
+        ->assertCanSeeTableRecords($posts->where('author.name', $author))
+        ->assertCanNotSeeTableRecords($posts->where('author.name', '!=', $author));
+});
+
+it('can search records using table-level searchable columns case insensitively', function (): void {
+    $matchingPost = Post::factory()->create([
+        'title' => 'Test Post Title',
+    ]);
+
+    $nonMatchingPosts = Post::factory()->count(3)->create();
+
+    livewire(PostsTableWithTableSearchableColumns::class)
+        ->searchTable('test post title')
+        ->assertCanSeeTableRecords([$matchingPost])
+        ->assertCanNotSeeTableRecords($nonMatchingPosts);
+});
+
+it('can search records using table-level searchable columns with relationship case insensitively', function (): void {
+    $matchingAuthor = User::factory()->create(['name' => 'John Smith']);
+
+    $matchingPosts = Post::factory()
+        ->for($matchingAuthor, 'author')
+        ->count(3)
+        ->create();
+
+    $nonMatchingPosts = Post::factory()->count(3)->create();
+
+    livewire(PostsTableWithTableSearchableColumns::class)
+        ->searchTable('john smith')
+        ->assertCanSeeTableRecords($matchingPosts)
         ->assertCanNotSeeTableRecords($nonMatchingPosts);
 });
