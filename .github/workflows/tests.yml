@@ -76,6 +76,8 @@ jobs:
             echo "Waiting for Postgres ($i) ..." && sleep 2
           done
           echo "Postgres did not become ready in time" && exit 1
+      - name: Cache Blade views
+        run: ./vendor/bin/testbench view:cache
       - name: Execute tests (parallel)
         run: ./vendor/bin/pest --configuration=phpunit.${{ matrix.db }}.xml --parallel --exclude-group=commands
         env:
