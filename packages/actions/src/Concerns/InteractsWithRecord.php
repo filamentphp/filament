@@ -112,28 +112,44 @@ trait InteractsWithRecord
             $this->record = $record;
         }
 
-        if ($record) {
+        $customModel = $this->getCustomModel();
+
+        $ensureCorrectRecordType = function (Model | array | null $record) use ($customModel): Model | array | null {
+            if (filled($customModel) && ($record instanceof Model) && (! $record instanceof $customModel)) {
+                return null;
+            }
+
             return $record;
+        };
+
+        if ($record) {
+            return $ensureCorrectRecordType($record);
         }
 
         if ($record = $this->getGroup()?->getRecord($withDefault)) {
-            return $record;
+            return $ensureCorrectRecordType($record);
         }
 
         if (($this instanceof Action) && $record = $this->getSchemaContainer()?->getRecord()) {
-            return $record;
+            return $ensureCorrectRecordType($record);
         }
 
         if (($this instanceof Action) && $record = $this->getSchemaComponent()?->getRecord()) {
-            return $record;
+            return $ensureCorrectRecordType($record);
         }
 
-        return ($withDefault && ($this instanceof Action)) ? $this->getHasActionsLivewire()?->getDefaultActionRecord($this) : null;
+        return ($withDefault && ($this instanceof Action)) ? $ensureCorrectRecordType($this->getHasActionsLivewire()?->getDefaultActionRecord($this)) : null;
     }
 
     public function getRecordTitle(?Model $record = null): ?string
     {
         $record ??= $this->getRecord();
+
+        $customModel = $this->getCustomModel();
+
+        if (filled($customModel) && ($record instanceof Model) && (! $record instanceof $customModel)) {
+            $record = null;
+        }
 
         if ($record) {
             if (filled($title = $this->getCustomRecordTitle($record))) {
