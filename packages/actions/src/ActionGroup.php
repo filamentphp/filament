@@ -16,6 +16,8 @@ use Filament\Support\Concerns\HasIcon;
 use Filament\Support\Concerns\HasIconPosition;
 use Filament\Support\Concerns\HasIconSize;
 use Filament\Support\Concerns\HasTooltip;
+use Filament\Support\Contracts\ScalableIcon;
+use Filament\Support\Enums\IconSize;
 use Filament\Support\Enums\Width;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
@@ -290,6 +292,14 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
      */
     public function toArray(): array
     {
+        $icon = $this->getIcon();
+
+        if ($icon instanceof ScalableIcon) {
+            $icon = $icon->getIconForSize($this->getIconSize() ?? IconSize::Medium);
+        } elseif ($icon instanceof BackedEnum) {
+            $icon = $icon->value;
+        }
+
         return [
             'actions' => collect($this->getActions())->toArray(),
             'color' => $this->getColor(),
@@ -301,7 +311,7 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
             'hasDropdown' => $this->hasDropdown(),
             'hasDropdownFlip' => $this->hasDropdownFlip(),
             'hasDropdownTeleport' => $this->hasDropdownTeleport(),
-            'icon' => $this->getIcon(),
+            'icon' => $icon,
             'iconPosition' => $this->getIconPosition(),
             'iconSize' => $this->getIconSize(),
             'isOutlined' => $this->isOutlined(),

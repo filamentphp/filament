@@ -1475,6 +1475,258 @@ it('can search records with `BelongsTo` -> `BelongsToThrough` relationship', fun
         ->assertCanNotSeeTableRecords($nonMatchingPosts);
 });
 
+it('can sort records with `HasOneThrough` relationship', function (): void {
+    $themes = ['alpha', 'beta', 'gamma', 'delta', 'epsilon'];
+
+    foreach ($themes as $theme) {
+        User::factory()->has(
+            Profile::factory()->has(
+                Setting::factory()->state(['theme' => $theme]),
+                'setting'
+            ),
+            'profile'
+        )->create();
+    }
+
+    $sortedAsc = User::query()
+        ->orderBy(
+            Setting::query()
+                ->select('theme')
+                ->join('profiles', 'profiles.id', '=', 'settings.profile_id')
+                ->whereColumn('profiles.user_id', 'users.id')
+                ->limit(1)
+        )
+        ->orderBy('users.id')
+        ->get();
+
+    $sortedDesc = User::query()
+        ->orderByDesc(
+            Setting::query()
+                ->select('theme')
+                ->join('profiles', 'profiles.id', '=', 'settings.profile_id')
+                ->whereColumn('profiles.user_id', 'users.id')
+                ->limit(1)
+        )
+        ->orderBy('users.id')
+        ->get();
+
+    livewire(UsersTable::class)
+        ->sortTable('setting.theme')
+        ->assertCanSeeTableRecords($sortedAsc, inOrder: true)
+        ->sortTable('setting.theme', 'desc')
+        ->assertCanSeeTableRecords($sortedDesc, inOrder: true);
+});
+
+it('can sort records with nullable `HasOneThrough` relationship', function (): void {
+    // User with profile and setting
+    $userWithSetting = User::factory()->has(
+        Profile::factory()->has(
+            Setting::factory()->state(['theme' => 'dark']),
+            'setting'
+        ),
+        'profile'
+    )->create();
+
+    // User with profile but no setting
+    $userWithProfileNoSetting = User::factory()->has(
+        Profile::factory(),
+        'profile'
+    )->create();
+
+    // User without profile (no setting possible)
+    $userWithoutProfile = User::factory()->create();
+
+    $allUsers = collect([$userWithSetting, $userWithProfileNoSetting, $userWithoutProfile]);
+
+    // Just verify sorting doesn't crash with nullable relationships
+    livewire(UsersTable::class)
+        ->sortTable('setting.theme')
+        ->assertCanSeeTableRecords($allUsers)
+        ->sortTable('setting.theme', 'desc')
+        ->assertCanSeeTableRecords($allUsers);
+});
+
+it('can search records with `HasOneThrough` relationship', function (): void {
+    $searchTheme = 'unique-theme-for-testing';
+
+    $matchingUser = User::factory()->has(
+        Profile::factory()->has(
+            Setting::factory()->state(['theme' => $searchTheme]),
+            'setting'
+        ),
+        'profile'
+    )->create();
+
+    $nonMatchingUsers = User::factory()->count(3)->create();
+
+    livewire(UsersTable::class)
+        ->searchTable($searchTheme)
+        ->assertCanSeeTableRecords([$matchingUser])
+        ->assertCanNotSeeTableRecords($nonMatchingUsers);
+});
+
+it('can sort records with `HasOneThrough` relationship using different column', function (): void {
+    $languages = ['de', 'en', 'es', 'fr', 'it'];
+
+    foreach ($languages as $language) {
+        User::factory()->has(
+            Profile::factory()->has(
+                Setting::factory()->state(['language' => $language]),
+                'setting'
+            ),
+            'profile'
+        )->create();
+    }
+
+    $sortedAsc = User::query()
+        ->orderBy(
+            Setting::query()
+                ->select('language')
+                ->join('profiles', 'profiles.id', '=', 'settings.profile_id')
+                ->whereColumn('profiles.user_id', 'users.id')
+                ->limit(1)
+        )
+        ->orderBy('users.id')
+        ->get();
+
+    $sortedDesc = User::query()
+        ->orderByDesc(
+            Setting::query()
+                ->select('language')
+                ->join('profiles', 'profiles.id', '=', 'settings.profile_id')
+                ->whereColumn('profiles.user_id', 'users.id')
+                ->limit(1)
+        )
+        ->orderBy('users.id')
+        ->get();
+
+    livewire(UsersTable::class)
+        ->sortTable('setting.language')
+        ->assertCanSeeTableRecords($sortedAsc, inOrder: true)
+        ->sortTable('setting.language', 'desc')
+        ->assertCanSeeTableRecords($sortedDesc, inOrder: true);
+});
+
+it('can search records with `HasOneThrough` relationship using different column', function (): void {
+    $searchLanguage = 'unique-language';
+
+    $matchingUser = User::factory()->has(
+        Profile::factory()->has(
+            Setting::factory()->state(['language' => $searchLanguage]),
+            'setting'
+        ),
+        'profile'
+    )->create();
+
+    $nonMatchingUsers = User::factory()->count(3)->create();
+
+    livewire(UsersTable::class)
+        ->searchTable($searchLanguage)
+        ->assertCanSeeTableRecords([$matchingUser])
+        ->assertCanNotSeeTableRecords($nonMatchingUsers);
+});
+
+it('can sort records with `BelongsTo` -> `HasOneThrough` relationship', function (): void {
+    $themes = ['alpha', 'beta', 'gamma', 'delta', 'epsilon'];
+
+    foreach ($themes as $theme) {
+        $user = User::factory()->has(
+            Profile::factory()->has(
+                Setting::factory()->state(['theme' => $theme]),
+                'setting'
+            ),
+            'profile'
+        )->create();
+
+        Post::factory()->create(['author_id' => $user->id]);
+    }
+
+    $sortedAsc = Post::query()
+        ->orderBy(
+            Setting::query()
+                ->select('theme')
+                ->join('profiles', 'profiles.id', '=', 'settings.profile_id')
+                ->join('users', 'users.id', '=', 'profiles.user_id')
+                ->whereColumn('users.id', 'posts.author_id')
+                ->limit(1)
+        )
+        ->orderBy('posts.id')
+        ->get();
+
+    $sortedDesc = Post::query()
+        ->orderByDesc(
+            Setting::query()
+                ->select('theme')
+                ->join('profiles', 'profiles.id', '=', 'settings.profile_id')
+                ->join('users', 'users.id', '=', 'profiles.user_id')
+                ->whereColumn('users.id', 'posts.author_id')
+                ->limit(1)
+        )
+        ->orderBy('posts.id')
+        ->get();
+
+    livewire(PostsTable::class)
+        ->sortTable('author.setting.theme')
+        ->assertCanSeeTableRecords($sortedAsc, inOrder: true)
+        ->sortTable('author.setting.theme', 'desc')
+        ->assertCanSeeTableRecords($sortedDesc, inOrder: true);
+});
+
+it('can sort records with nullable `BelongsTo` -> `HasOneThrough` relationship', function (): void {
+    // Post with author that has setting
+    $userWithSetting = User::factory()->has(
+        Profile::factory()->has(
+            Setting::factory()->state(['theme' => 'dark']),
+            'setting'
+        ),
+        'profile'
+    )->create();
+    $postWithSetting = Post::factory()->create(['author_id' => $userWithSetting->id]);
+
+    // Post with author with profile but no setting
+    $userWithProfileNoSetting = User::factory()->has(
+        Profile::factory(),
+        'profile'
+    )->create();
+    $postNoSetting = Post::factory()->create(['author_id' => $userWithProfileNoSetting->id]);
+
+    // Post with author but no profile
+    $userNoProfile = User::factory()->create();
+    $postNoProfile = Post::factory()->create(['author_id' => $userNoProfile->id]);
+
+    // Post with no author
+    $postNoAuthor = Post::factory()->create(['author_id' => null]);
+
+    $allPosts = collect([$postWithSetting, $postNoSetting, $postNoProfile, $postNoAuthor]);
+
+    // Just verify sorting doesn't crash with nullable nested relationships
+    livewire(PostsTable::class)
+        ->sortTable('author.setting.theme')
+        ->assertCanSeeTableRecords($allPosts)
+        ->sortTable('author.setting.theme', 'desc')
+        ->assertCanSeeTableRecords($allPosts);
+});
+
+it('can search records with `BelongsTo` -> `HasOneThrough` relationship', function (): void {
+    $searchTheme = 'unique-post-author-theme';
+
+    $matchingUser = User::factory()->has(
+        Profile::factory()->has(
+            Setting::factory()->state(['theme' => $searchTheme]),
+            'setting'
+        ),
+        'profile'
+    )->create();
+
+    $matchingPost = Post::factory()->for($matchingUser, 'author')->create();
+    $nonMatchingPosts = Post::factory()->count(3)->create();
+
+    livewire(PostsTable::class)
+        ->searchTable($searchTheme)
+        ->assertCanSeeTableRecords([$matchingPost])
+        ->assertCanNotSeeTableRecords($nonMatchingPosts);
+});
+
 it('can search records using table-level searchable columns', function (): void {
     $posts = Post::factory()->count(10)->create();
 

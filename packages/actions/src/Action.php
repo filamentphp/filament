@@ -2,6 +2,7 @@
 
 namespace Filament\Actions;
 
+use BackedEnum;
 use Closure;
 use Filament\Actions\Concerns\HasTooltip;
 use Filament\Actions\Enums\ActionStatus;
@@ -14,6 +15,8 @@ use Filament\Support\Concerns\HasExtraAttributes;
 use Filament\Support\Concerns\HasIcon;
 use Filament\Support\Concerns\HasIconPosition;
 use Filament\Support\Concerns\HasIconSize;
+use Filament\Support\Contracts\ScalableIcon;
+use Filament\Support\Enums\IconSize;
 use Filament\Support\Exceptions\Cancel;
 use Filament\Support\Exceptions\Halt;
 use Filament\Support\View\Concerns\CanGenerateBadgeHtml;
@@ -164,6 +167,14 @@ class Action extends ViewComponent implements Arrayable
      */
     public function toArray(): array
     {
+        $icon = $this->getIcon();
+
+        if ($icon instanceof ScalableIcon) {
+            $icon = $icon->getIconForSize($this->getIconSize() ?? IconSize::Medium);
+        } elseif ($icon instanceof BackedEnum) {
+            $icon = $icon->value;
+        }
+
         return [
             'name' => $this->getName(),
             'color' => $this->getColor(),
@@ -172,7 +183,7 @@ class Action extends ViewComponent implements Arrayable
             'dispatchDirection' => $this->getDispatchDirection(),
             'dispatchToComponent' => $this->getDispatchToComponent(),
             'extraAttributes' => $this->getExtraAttributes(),
-            'icon' => $this->getIcon(),
+            'icon' => $icon,
             'iconPosition' => $this->getIconPosition(),
             'iconSize' => $this->getIconSize(),
             'isOutlined' => $this->isOutlined(),
