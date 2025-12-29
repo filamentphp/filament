@@ -128,7 +128,17 @@ By default, this command will use NPM to install dependencies. If you want to us
 php artisan make:filament-theme --pm=bun
 ````
 
-This command generates a CSS file in the `resources/css/filament` directory.
+This command will:
+
+1. Install the required Tailwind CSS dependencies
+2. Generate a CSS file in `resources/css/filament/{panel}/theme.css`
+3. Attempt to automatically add the theme to your `vite.config.js` input array
+4. Attempt to automatically register `->viteTheme()` in your panel provider
+5. Offer to compile the theme with Vite
+
+If the command cannot automatically configure your files (due to non-standard formatting), it will display manual instructions instead. In that case, follow these steps:
+
+### Manual configuration
 
 Add the theme's CSS file to the Laravel plugin's `input` array in `vite.config.js`:
 
@@ -139,7 +149,7 @@ input: [
 ]
 ```
 
-Now, register the Vite-compiled theme CSS file in the panel's provider:
+Register the Vite-compiled theme CSS file in the panel's provider:
 
 ```php
 use Filament\Panel;
@@ -152,14 +162,14 @@ public function panel(Panel $panel): Panel
 }
 ```
 
-Finally, compile the theme with Vite:
+Then compile the theme with Vite:
 
 ```bash
 npm run build
 ```
 
 <Aside variant="info">
-    Check the command output for the exact file path (e.g., `app/theme.css`), as it may vary depending on your panel's ID.
+    Check the command output for the exact file path (e.g., `admin/theme.css`), as it may vary depending on your panel's ID.
 </Aside>
 
 You can now customize the theme by editing the CSS file in `resources/css/filament`.

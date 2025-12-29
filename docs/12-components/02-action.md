@@ -186,7 +186,7 @@ You can also take advantage of this to hide any wrapping elements that may not n
 
 ## Grouping actions in a Livewire view
 
-You may [group actions together into a dropdown menu](grouping-actions) by using the `<x-filament-actions::group>` Blade component, passing in the `actions` array as an attribute:
+You may [group actions together into a dropdown menu](../actions/grouping-actions) by using the `<x-filament-actions::group>` Blade component, passing in the `actions` array as an attribute:
 
 ```blade
 <div>

@@ -1,11 +1,5 @@
 input.fi-input {
-    /* A fully transparent white background color is used
-         instead transparent to fix a Safari bug
-         where the date/time input "placeholder" colors too dark.
-
-         https://github.com/filamentphp/filament/issues/7087 */
-
-    @apply block w-full appearance-none border-none bg-white/0 px-3 py-1.5 text-start text-sm leading-6 text-gray-950 transition duration-75 placeholder:text-gray-400 focus:ring-0 focus:outline-none disabled:text-gray-500 disabled:[-webkit-text-fill-color:var(--color-gray-500)] disabled:placeholder:[-webkit-text-fill-color:var(--color-gray-400)] dark:text-white dark:placeholder:text-gray-500 dark:disabled:text-gray-400 dark:disabled:[-webkit-text-fill-color:var(--color-gray-400)] dark:disabled:placeholder:[-webkit-text-fill-color:var(--color-gray-500)];
+    @apply block w-full appearance-none border-none px-3 py-1.5 text-start text-sm leading-6 text-gray-950 transition duration-75 placeholder:text-gray-400 focus:ring-0 focus:outline-none disabled:text-gray-500 disabled:[-webkit-text-fill-color:var(--color-gray-500)] disabled:placeholder:[-webkit-text-fill-color:var(--color-gray-400)] dark:text-white dark:placeholder:text-gray-500 dark:disabled:text-gray-400 dark:disabled:[-webkit-text-fill-color:var(--color-gray-400)] dark:disabled:placeholder:[-webkit-text-fill-color:var(--color-gray-500)];
 
     /* https://defensivecss.dev/tip/input-zoom-safari */
     @supports (-webkit-touch-callout: none) {
@@ -40,6 +34,19 @@ input.fi-input {
     &.fi-align-between {
         @apply text-justify;
     }
+}
+
+input[type='date'].fi-input,
+input[type='datetime-local'].fi-input,
+input[type='time'].fi-input {
+    /* An almost transparent white background color is used
+     instead of fully transparent to fix a Safari bug
+     where the date/time input "placeholder" colors too dark.
+
+     https://github.com/filamentphp/filament/issues/7087
+     https://github.com/filamentphp/filament/issues/18570 */
+
+    @apply bg-white/[1%];
 }
 
 input[type='range'].fi-input {

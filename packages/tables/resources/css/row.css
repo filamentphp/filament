@@ -19,8 +19,12 @@
         }
     }
 
+    & .fi-ta-group-header-cell {
+        @apply px-3 sm:first-of-type:ps-6 sm:last-of-type:pe-6;
+    }
+
     & .fi-ta-group-header {
-        @apply flex w-full items-center gap-x-3 px-3 py-2;
+        @apply flex w-full items-center gap-x-3 py-2;
 
         &.fi-collapsible {
             @apply cursor-pointer;

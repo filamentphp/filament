@@ -121,6 +121,8 @@ class Action extends ViewComponent implements Arrayable
 
     protected ?ActionStatus $status = null;
 
+    protected ?Action $parentAction = null;
+
     final public function __construct(?string $name)
     {
         $this->name($name);
@@ -463,19 +465,23 @@ class Action extends ViewComponent implements Arrayable
 
         $table = $this->getTable();
 
-        if ($table) {
-            $context['table'] = true;
-        }
-
         $record = $this->getRecord();
 
         if ($record && (
             (! $table)
             || (! $record instanceof Model)
             || blank($table->getModel())
-            || ($record::class === $table->getModel())
+            || is_a($record::class, $table->getModel(), true)
         ) && filled($recordKey = $this->resolveRecordKey($record))) {
             $context['recordKey'] = $recordKey;
+        }
+
+        if ($this->getParentAction()) {
+            return $context;
+        }
+
+        if ($table) {
+            $context['table'] = true;
         }
 
         if ($table && $this->isBulk()) {
@@ -506,8 +512,8 @@ class Action extends ViewComponent implements Arrayable
             'schema' => [$this->getSchemaContainer()],
             'schemaComponent', 'component' => [$this->getSchemaComponent()],
             'schemaOperation', 'context', 'operation' => [$this->getSchemaContainer()?->getOperation() ?? $this->getSchemaComponent()?->getContainer()->getOperation()],
-            'schemaGet', 'get' => [$this->getSchemaComponent()->makeGetUtility()],
-            'schemaSet', 'set' => [$this->getSchemaComponent()->makeSetUtility()],
+            'schemaGet', 'get' => [$this->getSchemaComponent()->makeGetUtility()->skipComponentsChildContainersWhileSearching(false)],
+            'schemaSet', 'set' => [$this->getSchemaComponent()->makeSetUtility()->skipComponentsChildContainersWhileSearching(false)],
             'schemaComponentState', 'state' => [$this->getSchemaComponent()->getState()],
             'table' => [$this->getTable()],
             default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
@@ -859,5 +865,17 @@ class Action extends ViewComponent implements Arrayable
     public function getClone(): static
     {
         return clone $this;
+    }
+
+    public function parentAction(?Action $action): static
+    {
+        $this->parentAction = $action;
+
+        return $this;
+    }
+
+    public function getParentAction(): ?Action
+    {
+        return $this->parentAction;
     }
 }

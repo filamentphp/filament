@@ -19,6 +19,7 @@ The `HasLabel` interface transforms an enum instance into a textual label. This 
 
 ```php
 use Filament\Support\Contracts\HasLabel;
+use Illuminate\Contracts\Support\Htmlable;
 
 enum Status: string implements HasLabel
 {
@@ -27,7 +28,7 @@ enum Status: string implements HasLabel
     case Published = 'published';
     case Rejected = 'rejected';
     
-    public function getLabel(): ?string
+    public function getLabel(): string | Htmlable | null
     {
         return $this->name;
         
@@ -125,7 +126,7 @@ If you use a [`TextColumn`](../tables/columns/text) with the Table Builder, and 
 
 ### Using the enum color with a text entry in your infolist
 
-If you use a [`TextEntry`](../infolists/text-entry) in an infolist, and it is cast to an enum in your Eloquent model, Filament will automatically use the `HasColor` interface to display the enum label in its color. This works best if you use the [`badge()`](../infolists/text#displaying-as-a-badge) method on the entry.
+If you use a [`TextEntry`](../infolists/text-entry) in an infolist, and it is cast to an enum in your Eloquent model, Filament will automatically use the `HasColor` interface to display the enum label in its color. This works best if you use the [`badge()`](../infolists/text-entry#displaying-as-a-badge) method on the entry.
 
 ### Using the enum color with a toggle buttons field in your form
 
@@ -136,7 +137,9 @@ If you use a [`ToggleButtons`](../forms/toggle-buttons) form field, and it is se
 The `HasIcon` interface transforms an enum instance into an [icon](../styling/icons). This is useful for displaying icons alongside enum values in your UI.
 
 ```php
+use BackedEnum;
 use Filament\Support\Contracts\HasIcon;
+use Illuminate\Contracts\Support\Htmlable;
 
 enum Status: string implements HasIcon
 {
@@ -145,7 +148,7 @@ enum Status: string implements HasIcon
     case Published = 'published';
     case Rejected = 'rejected';
     
-    public function getIcon(): ?string
+    public function getIcon(): string | BackedEnum | Htmlable | null
     {
         return match ($this) {
             self::Draft => 'heroicon-m-pencil',
@@ -163,7 +166,7 @@ If you use a [`TextColumn`](../tables/columns/text) with the Table Builder, and 
 
 ### Using the enum icon with a text entry in your infolist
 
-If you use a [`TextEntry`](../infolists/text-entry) in an infolist, and it is cast to an enum in your Eloquent model, Filament will automatically use the `HasIcon` interface to display the enum's icon aside its label. This works best if you use the [`badge()`](../infolists/text#displaying-as-a-badge) method on the entry.
+If you use a [`TextEntry`](../infolists/text-entry) in an infolist, and it is cast to an enum in your Eloquent model, Filament will automatically use the `HasIcon` interface to display the enum's icon aside its label. This works best if you use the [`badge()`](../infolists/text-entry#displaying-as-a-badge) method on the entry.
 
 ### Using the enum icon with a toggle buttons field in your form
 
@@ -176,6 +179,7 @@ The `HasDescription` interface transforms an enum instance into a textual descri
 ```php
 use Filament\Support\Contracts\HasDescription;
 use Filament\Support\Contracts\HasLabel;
+use Illuminate\Contracts\Support\Htmlable;
 
 enum Status: string implements HasLabel, HasDescription
 {
@@ -184,12 +188,12 @@ enum Status: string implements HasLabel, HasDescription
     case Published = 'published';
     case Rejected = 'rejected';
     
-    public function getLabel(): ?string
+    public function getLabel(): string | Htmlable | null
     {
         return $this->name;
     }
     
-    public function getDescription(): ?string
+    public function getDescription(): string | Htmlable | null
     {
         return match ($this) {
             self::Draft => 'This has not finished being written yet.',

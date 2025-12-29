@@ -610,6 +610,7 @@ return [
             'table_merge_cells' => 'Zlúčiť bunky',
             'table_split_cell' => 'Rozdeliť bunku',
             'table_toggle_header_row' => 'Prepnúť riadok hlavičky',
+            'table_toggle_header_cell' => 'Prepnúť bunku hlavičky',
             'text_color' => 'Farba textu',
             'underline' => 'Podčiarknutie',
             'undo' => 'Späť',

@@ -1,5 +1,6 @@
 <?php
 
+use Filament\Actions\AttachAction;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
@@ -17,6 +18,7 @@ use Filament\Tests\Fixtures\Models\Ticket;
 use Filament\Tests\Fixtures\Policies\DepartmentPolicy;
 use Filament\Tests\Fixtures\Resources\Tickets\Pages\EditTicket;
 use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsRelationManager;
+use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsWithAttachTableSelectRelationManager;
 use Filament\Tests\Panels\Resources\TestCase;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Support\Str;
@@ -178,4 +180,75 @@ it('can force render relation manager after create another', function (): void {
         ->assertSeeText($name);
 
     assertDatabaseHas(Department::class, ['name' => $name]);
+});
+
+it('can attach a single record with table select', function (): void {
+    $ticket = Ticket::factory()->create();
+    $department = Department::factory()->create();
+
+    livewire(DepartmentsWithAttachTableSelectRelationManager::class, [
+        'ownerRecord' => $ticket,
+        'pageClass' => EditTicket::class,
+    ])
+        ->callAction(TestAction::make(AttachAction::class)->table(), [
+            'recordId' => $department->getKey(),
+        ])
+        ->assertHasNoFormErrors();
+
+    assertDatabaseHas('department_ticket', [
+        'department_id' => $department->getKey(),
+        'ticket_id' => $ticket->getKey(),
+    ]);
+});
+
+it('can attach multiple records with table select', function (): void {
+    $ticket = Ticket::factory()->create();
+    $departments = Department::factory(3)->create();
+
+    livewire(DepartmentsWithAttachTableSelectRelationManager::class, [
+        'ownerRecord' => $ticket,
+        'pageClass' => EditTicket::class,
+    ])
+        ->callAction(TestAction::make(AttachAction::class)->table(), [
+            'recordId' => $departments->pluck('id')->toArray(),
+        ])
+        ->assertHasNoFormErrors();
+
+    foreach ($departments as $department) {
+        assertDatabaseHas('department_ticket', [
+            'department_id' => $department->getKey(),
+            'ticket_id' => $ticket->getKey(),
+        ]);
+    }
+});
+
+it('can attach records when some are already related', function (): void {
+    $ticket = Ticket::factory()->create();
+    $alreadyAttachedDepartment = Department::factory()->create();
+    $newDepartment = Department::factory()->create();
+
+    // First, attach a department to the ticket
+    $ticket->departments()->attach($alreadyAttachedDepartment);
+
+    // Verify initial state
+    expect($ticket->departments()->count())->toBe(1);
+
+    // Now attach only the new department (the UI would filter out already-attached ones)
+    livewire(DepartmentsWithAttachTableSelectRelationManager::class, [
+        'ownerRecord' => $ticket,
+        'pageClass' => EditTicket::class,
+    ])
+        ->callAction(TestAction::make(AttachAction::class)->table(), [
+            'recordId' => $newDepartment->getKey(),
+        ])
+        ->assertHasNoFormErrors();
+
+    // Verify the new department was attached
+    assertDatabaseHas('department_ticket', [
+        'department_id' => $newDepartment->getKey(),
+        'ticket_id' => $ticket->getKey(),
+    ]);
+
+    // Verify total count is now 2
+    expect($ticket->departments()->count())->toBe(2);
 });

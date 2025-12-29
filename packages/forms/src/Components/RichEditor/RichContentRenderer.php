@@ -297,6 +297,14 @@ class RichContentRenderer implements Htmlable
     public function getTipTapPhpExtensions(): array
     {
         return [
+            ...array_reduce(
+                $this->getPlugins(),
+                fn (array $carry, RichContentPlugin $plugin): array => [
+                    ...$carry,
+                    ...$plugin->getTipTapPhpExtensions(),
+                ],
+                initial: [],
+            ),
             app(Blockquote::class),
             app(Bold::class),
             app(BulletList::class),
@@ -345,14 +353,6 @@ class RichContentRenderer implements Htmlable
                 ],
             ]),
             app(Underline::class),
-            ...array_reduce(
-                $this->getPlugins(),
-                fn (array $carry, RichContentPlugin $plugin): array => [
-                    ...$carry,
-                    ...$plugin->getTipTapPhpExtensions(),
-                ],
-                initial: [],
-            ),
         ];
     }
 

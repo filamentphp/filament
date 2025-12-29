@@ -445,3 +445,40 @@ it('will assert that a notification was not sent', function (): void {
         ->callAction('shows-notification-with-id')
         ->assertNotNotified('A notification');
 });
+
+it('preserves predefined arguments after calling an action with a modal', function (): void {
+    livewire(Actions::class)
+        ->assertActionHasLabel('predefined-arguments', 'Action for bar')
+        ->callAction('predefined-arguments')
+        ->assertDispatched('predefined-arguments-called', arguments: [
+            'foo' => 'bar',
+            'baz' => 'qux',
+        ])
+        ->assertActionHasLabel('predefined-arguments', 'Action for bar')
+        ->callAction('predefined-arguments')
+        ->assertDispatched('predefined-arguments-called', arguments: [
+            'foo' => 'bar',
+            'baz' => 'qux',
+        ]);
+});
+
+it('restores original arguments after calling an action with call-time arguments', function (): void {
+    livewire(Actions::class)
+        ->assertActionHasLabel('predefined-arguments', 'Action for bar')
+        ->mountAction('predefined-arguments')
+        ->callMountedAction([
+            'foo' => 'overridden',
+            'extra' => 'call-time-value',
+        ])
+        ->assertDispatched('predefined-arguments-called', arguments: [
+            'foo' => 'overridden',
+            'baz' => 'qux',
+            'extra' => 'call-time-value',
+        ])
+        ->assertActionHasLabel('predefined-arguments', 'Action for bar')
+        ->callAction('predefined-arguments')
+        ->assertDispatched('predefined-arguments-called', arguments: [
+            'foo' => 'bar',
+            'baz' => 'qux',
+        ]);
+});

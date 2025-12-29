@@ -129,7 +129,7 @@ TextEntry::make('name')
 ### Hiding an entry's label
 
 <Aside variant="tip">
-    If you're looking to hide an entry's label, it might be the case that you are trying to use an entry for arbitrary text or UI. Entries are specifically designed to display data in a structured way, but [Prime components](../schemas/primes) are simple components that are used to render basic stand-alone static content, such as text, images, and buttons (actions). You may want to consider using a Prime component instead.
+    If you're looking to hide an entry's label, it might be the case that you are trying to use an entry for arbitrary text or UI. Entries are specifically designed to display data in a structured way, but [Prime components](../schemas/overview#prime-components) are simple components that are used to render basic stand-alone static content, such as text, images, and buttons (actions). You may want to consider using a Prime component instead.
 </Aside>
 
 It may be tempting to set the label to an empty string to hide it, but this is not recommended. Setting the label to an empty string will not communicate the purpose of the entry to screen readers, even if the purpose is clear visually. Instead, you should use the `hiddenLabel()` method, so it is hidden visually but still accessible to screen readers:
@@ -395,7 +395,7 @@ TextInput::make('name')
 
 ### Using inline labels in multiple places at once
 
-If you wish to display all labels inline in a [layout component](../schemas/layouts) like a [section](../schemas/section) or [tab](../schemas/tabs), you can use the `inlineLabel()` on the component itself, and all entries within it will have their labels displayed inline:
+If you wish to display all labels inline in a [layout component](../schemas/layouts) like a [section](../schemas/sections) or [tab](../schemas/tabs), you can use the `inlineLabel()` on the component itself, and all entries within it will have their labels displayed inline:
 
 ```php
 use Filament\Infolists\Components\TextInput;
@@ -403,7 +403,7 @@ use Filament\Schemas\Components\Section;
 
 Section::make('Details')
     ->inlineLabel()
-    ->entries([
+    ->schema([
         TextInput::make('name'),
         TextInput::make('email')
             ->label('Email address'),
@@ -437,7 +437,7 @@ use Filament\Schemas\Components\Section;
 
 Section::make('Details')
     ->inlineLabel()
-    ->entries([
+    ->schema([
         TextInput::make('name'),
         TextInput::make('email')
             ->label('Email address'),

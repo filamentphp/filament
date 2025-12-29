@@ -56,6 +56,7 @@ class RelationManager extends Component implements HasActions, HasRenderHookScop
     use InteractsWithActions;
     use InteractsWithRelationshipTable {
         InteractsWithRelationshipTable::makeTable as makeBaseRelationshipTable;
+        InteractsWithRelationshipTable::canReorder as baseCanReorder;
     }
     use InteractsWithSchemas;
 
@@ -321,6 +322,11 @@ class RelationManager extends Component implements HasActions, HasRenderHookScop
                 EmbeddedTable::make(),
                 RenderHook::make(PanelsRenderHook::RESOURCE_RELATION_MANAGER_AFTER),
             ]);
+    }
+
+    protected function canReorder(): bool
+    {
+        return $this->isReadOnly() ? false : $this->baseCanReorder();
     }
 
     public function getDefaultActionAuthorizationResponse(Action $action): ?Response

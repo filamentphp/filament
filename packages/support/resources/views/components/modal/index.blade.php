@@ -116,6 +116,8 @@
             'fi-modal',
             'fi-absolute-positioning-context',
             'fi-modal-slide-over' => $slideOver,
+            'fi-modal-has-sticky-header' => $stickyHeader,
+            'fi-modal-has-sticky-footer' => $stickyFooter,
             'fi-width-screen' => $width === Width::Screen,
         ])
     }}
@@ -162,7 +164,6 @@
                     'fi-modal-window-has-content' => $hasContent,
                     'fi-modal-window-has-footer' => $hasFooter,
                     'fi-modal-window-has-icon' => $hasIcon,
-                    'fi-modal-window-has-sticky-header' => $stickyHeader,
                     'fi-hidden' => ! $visible,
                     ($alignment instanceof Alignment) ? "fi-align-{$alignment->value}" : null,
                     ($width instanceof Width) ? "fi-width-{$width->value}" : (is_string($width) ? $width : null),
@@ -176,7 +177,6 @@
                     @endif
                     @class([
                         'fi-modal-header',
-                        'fi-sticky' => $stickyHeader,
                         'fi-vertical-align-center' => $hasIcon && $hasHeading && (! $hasDescription) && in_array($alignment, [Alignment::Start, Alignment::Left]),
                     ])
                 >
@@ -239,7 +239,6 @@
                     @endif
                     @class([
                         'fi-modal-footer',
-                        'fi-sticky' => $stickyFooter,
                         ($footerActionsAlignment instanceof Alignment) ? "fi-align-{$footerActionsAlignment->value}" : null,
                     ])
                 >

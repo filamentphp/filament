@@ -146,6 +146,50 @@ return [
 
             ],
 
+            'unit_labels' => [
+                'second' => 'Seconds',
+                'minute' => 'Minutes',
+                'hour' => 'Hours',
+                'day' => 'Days',
+                'week' => 'Weeks',
+                'month' => 'Months',
+                'quarter' => 'Quarters',
+                'year' => 'Years',
+            ],
+
+            'presets' => [
+                'past_decade' => 'Past decade',
+                'past_5_years' => 'Past 5 years',
+                'past_2_years' => 'Past 2 years',
+                'past_year' => 'Past year',
+                'past_6_months' => 'Past 6 months',
+                'past_quarter' => 'Past quarter',
+                'past_month' => 'Past month',
+                'past_2_weeks' => 'Past 2 weeks',
+                'past_week' => 'Past week',
+                'past_hour' => 'Past hour',
+                'past_minute' => 'Past minute',
+                'this_decade' => 'This decade',
+                'this_year' => 'This year',
+                'this_quarter' => 'This quarter',
+                'this_month' => 'This month',
+                'today' => 'Today',
+                'this_hour' => 'This hour',
+                'this_minute' => 'This minute',
+                'next_minute' => 'Next minute',
+                'next_hour' => 'Next hour',
+                'next_week' => 'Next week',
+                'next_2_weeks' => 'Next 2 weeks',
+                'next_month' => 'Next month',
+                'next_quarter' => 'Next quarter',
+                'next_6_months' => 'Next 6 months',
+                'next_year' => 'Next year',
+                'next_2_years' => 'Next 2 years',
+                'next_5_years' => 'Next 5 years',
+                'next_decade' => 'Next decade',
+                'custom' => 'Custom',
+            ],
+
             'form' => [
 
                 'date' => [
@@ -158,6 +202,40 @@ return [
 
                 'year' => [
                     'label' => 'Year',
+                ],
+
+                'mode' => [
+
+                    'label' => 'Date type',
+
+                    'options' => [
+                        'absolute' => 'Specific date',
+                        'relative' => 'Rolling window',
+                    ],
+
+                ],
+
+                'preset' => [
+                    'label' => 'Time period',
+                ],
+
+                'relative_value' => [
+                    'label' => 'How many',
+                ],
+
+                'relative_unit' => [
+                    'label' => 'Time unit',
+                ],
+
+                'tense' => [
+
+                    'label' => 'Tense',
+
+                    'options' => [
+                        'past' => 'Past',
+                        'future' => 'Future',
+                    ],
+
                 ],
 
             ],
