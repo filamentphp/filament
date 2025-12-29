@@ -234,7 +234,25 @@ class EditProfile extends Page
             'newEmail' => $newEmail,
         ]));
 
-        Notification::route('mail', $newEmail)
+        if (method_exists($record, 'routeNotificationForMail')) {
+            $newEmailRecipient = $record->routeNotificationForMail($notification);
+            if (is_array($newEmailRecipient) && array_key_exists($record->getAttributeValue('email'), $newEmailRecipient)) {
+                // Add new entry
+                $name = $newEmailRecipient[$record->getAttributeValue('email')];
+                $newEmailRecipient[$newEmail] = $name;
+
+                // Remove old entry
+                unset($newEmailRecipient[$record->getAttributeValue('email')]);
+            }
+        } else {
+            $newEmailRecipient = $record->getAttributeValue('email');
+        }
+
+        if ($record instanceof \Illuminate\Contracts\Translation\HasLocalePreference) {
+            $notification->locale($record->preferredLocale());
+        }
+
+        Notification::route('mail', $newEmailRecipient)
             ->notify($notification);
 
         $this->getEmailChangeVerificationSentNotification($newEmail)?->send();
