@@ -231,19 +231,6 @@ class Notification extends ViewComponent implements Arrayable, HasEmbeddedView
         $data['format'] = 'filament';
         unset($data['id']);
 
-        $data['actions'] = collect($data['actions'])->map(function (array $action) {
-            $icon = $action['icon'];
-            if($icon instanceof Heroicon) {
-               $prefix = str($icon->value)->startsWith('o-')
-                   ? ''
-                   : 's-';
-
-                $action['icon'] = "heroicon-$prefix{$icon->value}";
-            }
-
-            return $action;
-        });
-        
         return $data;
     }
 

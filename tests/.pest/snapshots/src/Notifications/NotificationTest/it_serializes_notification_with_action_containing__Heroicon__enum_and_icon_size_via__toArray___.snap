@@ -1,0 +1,38 @@
+{
+    "id": "test-id",
+    "actions": [
+        {
+            "name": "view",
+            "color": null,
+            "event": null,
+            "eventData": [],
+            "dispatchDirection": false,
+            "dispatchToComponent": null,
+            "extraAttributes": [],
+            "icon": "heroicon-c-eye",
+            "iconPosition": "before",
+            "iconSize": "sm",
+            "isOutlined": false,
+            "isDisabled": false,
+            "label": "View",
+            "shouldClose": false,
+            "shouldMarkAsRead": false,
+            "shouldMarkAsUnread": false,
+            "shouldOpenUrlInNewTab": false,
+            "shouldPostToUrl": false,
+            "size": "sm",
+            "tooltip": null,
+            "url": null,
+            "view": "filament::components.link"
+        }
+    ],
+    "body": null,
+    "color": null,
+    "duration": 6000,
+    "icon": null,
+    "iconColor": null,
+    "status": null,
+    "title": "Test Title",
+    "view": null,
+    "viewData": []
+}
