@@ -5,9 +5,8 @@ namespace Filament\Infolists\View\Components\TextEntryComponent;
 use Filament\Support\Colors\Color;
 use Filament\Support\Facades\FilamentColor;
 use Filament\Support\View\Components\Contracts\HasColor;
-use Filament\Support\View\Components\Contracts\HasDefaultGrayColor;
 
-class ItemComponent implements HasColor, HasDefaultGrayColor
+class ItemComponent implements HasColor
 {
     /**
      * @param  array<int, string>  $color
