@@ -205,18 +205,18 @@ trait CanSearchRecords
 
             $model = $query->getModel();
 
-            $nonTranslatableSearch = generate_search_term_expression($search, isSearchForcedCaseInsensitive: false, databaseConnection: $databaseConnection);
+            $nonTranslatableSearch = generate_search_term_expression($search, isSearchForcedCaseInsensitive: null, databaseConnection: $databaseConnection);
 
             $translatableContentDriver = $this->getLivewire()->makeFilamentTranslatableContentDriver();
 
             $query->when(
                 $translatableContentDriver?->isAttributeTranslatable($model::class, attribute: $column),
-                fn (Builder $query): Builder => $translatableContentDriver->applySearchConstraintToQuery($query, $column, $search, $whereClause, isSearchForcedCaseInsensitive: false),
+                fn (Builder $query): Builder => $translatableContentDriver->applySearchConstraintToQuery($query, $column, $search, $whereClause),
                 fn (Builder $query) => $query->when(
                     $this->getExtraSearchableColumnRelationship($column, $query->getModel()),
                     fn (Builder $query): Builder => $query->{"{$whereClause}Relation"}(
                         (string) str($column)->beforeLast('.'),
-                        generate_search_column_expression((string) str($column)->afterLast('.'), isSearchForcedCaseInsensitive: false, databaseConnection: $databaseConnection),
+                        generate_search_column_expression((string) str($column)->afterLast('.'), isSearchForcedCaseInsensitive: null, databaseConnection: $databaseConnection),
                         'like',
                         "%{$nonTranslatableSearch}%",
                     ),
@@ -227,7 +227,7 @@ trait CanSearchRecords
                         }
 
                         return $query->{$whereClause}(
-                            generate_search_column_expression($column, isSearchForcedCaseInsensitive: false, databaseConnection: $databaseConnection),
+                            generate_search_column_expression($column, isSearchForcedCaseInsensitive: null, databaseConnection: $databaseConnection),
                             'like',
                             "%{$nonTranslatableSearch}%",
                         );
