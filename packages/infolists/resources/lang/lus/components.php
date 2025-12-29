@@ -11,7 +11,7 @@ return [
                 'expand_list' => ':count in tilang tam rawh',
             ],
 
-            'more_list_items' => 'and :count more',
+            'more_list_items' => 'leh adang :count',
 
         ],
 
@@ -29,7 +29,7 @@ return [
 
             ],
 
-            'placeholder' => 'No entries',
+            'placeholder' => 'Ziah luh a awmlo',
 
         ],
 

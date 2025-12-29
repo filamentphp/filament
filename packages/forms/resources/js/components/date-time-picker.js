@@ -516,6 +516,7 @@ const locales = {
     fa: require('dayjs/locale/fa'),
     fi: require('dayjs/locale/fi'),
     fr: require('dayjs/locale/fr'),
+    he: require('dayjs/locale/he'),
     hi: require('dayjs/locale/hi'),
     hu: require('dayjs/locale/hu'),
     hy: require('dayjs/locale/hy-am'),

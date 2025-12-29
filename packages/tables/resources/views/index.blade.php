@@ -6,7 +6,9 @@
     use Filament\Tables\Actions\HeaderActionsPosition;
     use Filament\Tables\Columns\Column;
     use Filament\Tables\Columns\ColumnGroup;
+    use Filament\Tables\Enums\ColumnManagerResetActionPosition;
     use Filament\Tables\Enums\FiltersLayout;
+    use Filament\Tables\Enums\FiltersResetActionPosition;
     use Filament\Tables\Enums\RecordActionsPosition;
     use Filament\Tables\Enums\RecordCheckboxPosition;
     use Filament\Tables\View\TablesRenderHook;
@@ -36,9 +38,13 @@
     $filtersApplyAction = $getFiltersApplyAction();
     $filtersForm = $getFiltersForm();
     $filtersFormWidth = $getFiltersFormWidth();
+    $filtersResetActionPosition = $getFiltersResetActionPosition();
+    $columnManagerResetActionPosition = $getColumnManagerResetActionPosition();
     $hasColumnGroups = $hasColumnGroups();
     $hasColumnsLayout = $hasColumnsLayout();
-    $hasSummary = $hasSummary($this->getAllTableSummaryQuery());
+    $hasPageSummary = $hasPageSummary();
+    $hasAllTableSummary = $hasAllTableSummary();
+    $hasSummary = ($hasPageSummary || $hasAllTableSummary) && $hasSummary($this->getAllTableSummaryQuery());
     $header = $getHeader();
     $headerActions = array_filter(
         $getHeaderActions(),
@@ -194,6 +200,7 @@
                     :form="$filtersForm"
                     :heading-tag="$secondLevelHeadingTag"
                     class="fi-ta-filters-before-content"
+                    :reset-action-position="$filtersResetActionPosition"
                 />
             </div>
         @endif
@@ -262,6 +269,7 @@
                             :heading-tag="$secondLevelHeadingTag"
                             x-cloak
                             :x-show="$hasCollapsibleFilters ? 'areFiltersOpen' : null"
+                            :reset-action-position="$filtersResetActionPosition"
                         />
 
                         @if ($hasCollapsibleFilters)
@@ -548,6 +556,7 @@
                                                 :apply-action="$filtersApplyAction"
                                                 :form="$filtersForm"
                                                 :heading-tag="$secondLevelHeadingTag"
+                                                :reset-action-position="$filtersResetActionPosition"
                                             />
                                         </x-filament::dropdown>
                                     @endif
@@ -589,6 +598,7 @@
                                         <x-filament-tables::column-manager
                                             :apply-action="$columnManagerApplyAction"
                                             :columns="$columnManagerColumns"
+                                            :reset-action-position="$columnManagerResetActionPosition"
                                             :has-reorderable-columns="$hasReorderableColumns"
                                             :has-toggleable-columns="$hasToggleableColumns"
                                             :heading-tag="$secondLevelHeadingTag"
@@ -1256,8 +1266,10 @@
                             <table class="fi-ta-table">
                                 <tbody>
                                     <x-filament-tables::summary
+                                        :all-table-summary="$hasAllTableSummary"
                                         :columns="$columns"
                                         extra-heading-column
+                                        :page-summary="$hasPageSummary"
                                         :placeholder-columns="false"
                                         :plural-model-label="$pluralModelLabel"
                                         :records="$records"
@@ -1421,6 +1433,10 @@
                                                 $columnWidth = $column->getWidth();
                                                 $isColumnActivelySorted = $getSortColumn() === $column->getName();
                                                 $isColumnSortable = $column->isSortable() && (! $isReordering);
+                                                $columnHeaderTooltip = $column->getHeaderTooltip();
+                                                $columnHeaderTooltipAttribute = ($columnHeaderTooltip instanceof \Illuminate\Contracts\Support\Htmlable)
+                                                    ? 'x-tooltip.html'
+                                                    : 'x-tooltip';
                                             @endphp
 
                                             <th
@@ -1456,7 +1472,19 @@
                                                         wire:loading.attr="disabled"
                                                         class="fi-ta-header-cell-sort-btn"
                                                     >
-                                                        {{ $columnLabel }}
+                                                        @if (filled($columnHeaderTooltip))
+                                                            <span
+                                                                {{ $columnHeaderTooltipAttribute }}="{
+                                                                    content: @js($columnHeaderTooltip),
+                                                                    theme: $store.theme,
+                                                                }"
+                                                                class="fi-ta-header-cell-tooltip"
+                                                            >
+                                                                {{ $columnLabel }}
+                                                            </span>
+                                                        @else
+                                                            {{ $columnLabel }}
+                                                        @endif
 
                                                         {{
                                                             \Filament\Support\generate_icon_html(($isColumnActivelySorted && $sortDirection === 'asc') ? \Filament\Support\Icons\Heroicon::ChevronUp : \Filament\Support\Icons\Heroicon::ChevronDown, alias: match (true) {
@@ -1467,7 +1495,19 @@
                                                         }}
                                                     </span>
                                                 @else
-                                                    {{ $columnLabel }}
+                                                    @if (filled($columnHeaderTooltip))
+                                                        <span
+                                                            {{ $columnHeaderTooltipAttribute }}="{
+                                                                content: @js($columnHeaderTooltip),
+                                                                theme: $store.theme,
+                                                            }"
+                                                            class="fi-ta-header-cell-tooltip"
+                                                        >
+                                                            {{ $columnLabel }}
+                                                        </span>
+                                                    @else
+                                                        {{ $columnLabel }}
+                                                    @endif
                                                 @endif
                                             </th>
                                         @endif
@@ -2103,9 +2143,11 @@
                                             <x-filament-tables::summary
                                                 :actions="count($defaultRecordActions)"
                                                 :actions-position="$recordActionsPosition"
+                                                :all-table-summary="$hasAllTableSummary"
                                                 :columns="$columns"
                                                 :group-column="$groupColumn"
                                                 :groups-only="$isGroupsOnly"
+                                                :page-summary="$hasPageSummary"
                                                 :plural-model-label="$pluralModelLabel"
                                                 :record-checkbox-position="$recordCheckboxPosition"
                                                 :records="$records"
@@ -2195,6 +2237,7 @@
                     :form="$filtersForm"
                     :heading-tag="$secondLevelHeadingTag"
                     class="fi-ta-filters-below-content"
+                    :reset-action-position="$filtersResetActionPosition"
                 />
             @endif
         </div>
@@ -2216,6 +2259,7 @@
                     :form="$filtersForm"
                     :heading-tag="$secondLevelHeadingTag"
                     class="fi-ta-filters-after-content"
+                    :reset-action-position="$filtersResetActionPosition"
                 />
             </div>
         @endif

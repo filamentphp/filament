@@ -4,7 +4,7 @@ return [
 
     'single' => [
 
-        'label' => 'Attach',
+        'label' => 'Vedhæft',
 
         'modal' => [
 

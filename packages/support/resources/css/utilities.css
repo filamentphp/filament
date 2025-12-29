@@ -507,9 +507,17 @@
     font-size: var(--text-sm);
     line-height: 1.5;
 
-    *:where(:not(.fi-not-prose, .fi-not-prose *))
-        + *:where(:not(.fi-not-prose, .fi-not-prose *)) {
+    img + img {
+        margin-top: 0;
+    }
+
+    *:where(:not(.fi-not-prose, .fi-not-prose *, br))
+        + *:where(:not(.fi-not-prose, .fi-not-prose *, br)) {
         margin-top: calc(var(--spacing) * 4);
+    }
+
+    p br {
+        margin: 0;
     }
 
     h1:where(:not(.fi-not-prose, .fi-not-prose *)) {

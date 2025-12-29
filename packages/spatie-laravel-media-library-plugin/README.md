@@ -38,7 +38,7 @@ The media library file upload supports all the customization options of the [ori
 
 ### Passing a collection
 
-Optionally, you may pass a [`collection()`](https://spatie.be/docs/laravel-medialibrary/working-with-media-collections/simple-media-collections) allows you to group files into categories:
+Optionally, you may pass a [`collection()`](https://spatie.be/docs/laravel-medialibrary/working-with-media-collections/simple-media-collections) that allows you to group files into categories:
 
 ```php
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;

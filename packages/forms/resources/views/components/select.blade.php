@@ -5,6 +5,7 @@
     $isAutofocused = $isAutofocused();
     $isDisabled = $isDisabled();
     $isMultiple = $isMultiple();
+    $isReorderable = $isReorderable();
     $isSearchable = $isSearchable();
     $isPreloaded = $isPreloaded();
     $canOptionLabelsWrap = $canOptionLabelsWrap();
@@ -161,6 +162,7 @@
                             isAutofocused: @js($isAutofocused),
                             isDisabled: @js($isDisabled),
                             isMultiple: @js($isMultiple),
+                            isReorderable: @js($isReorderable),
                             isSearchable: @js($isSearchable),
                             isPreloaded: @js($isPreloaded),
                             livewireId: @js($this->getId()),

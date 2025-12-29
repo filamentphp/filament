@@ -17,12 +17,27 @@ return [
             ],
 
         ],
+
     ],
 
     'columns' => [
 
         'actions' => [
             'label' => 'عملیات|عملیات‌ها',
+        ],
+
+        'select' => [
+
+            'loading_message' => 'در حال بارگذاری...',
+
+            'no_search_results_message' => 'هیچ گزینه‌ای با جستجوی شما مطابقت ندارد.',
+
+            'placeholder' => 'یک گزینه را انتخاب کنید',
+
+            'searching_message' => 'درحال جستجو...',
+
+            'search_prompt' => 'برای جستجو تایپ کنید...',
+
         ],
 
         'text' => [

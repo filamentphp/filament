@@ -92,6 +92,8 @@ export default function richEditorFormComponent({
                 content: this.state,
             })
 
+            const hasParagraphToolbar = 'paragraph' in floatingToolbars
+
             Object.keys(floatingToolbars).forEach((key) => {
                 const element = this.$refs[`floatingToolbar::${key}`]
 
@@ -106,8 +108,25 @@ export default function richEditorFormComponent({
                         editor,
                         element,
                         pluginKey: `floatingToolbar::${key}`,
-                        shouldShow: ({ editor }) =>
-                            editor.isFocused && editor.isActive(key),
+                        shouldShow: ({ editor }) => {
+                            if (key === 'paragraph') {
+                                return (
+                                    editor.isFocused &&
+                                    editor.isActive(key) &&
+                                    !editor.state.selection.empty
+                                )
+                            }
+
+                            if (
+                                hasParagraphToolbar &&
+                                !editor.state.selection.empty &&
+                                editor.isActive('paragraph')
+                            ) {
+                                return false
+                            }
+
+                            return editor.isFocused && editor.isActive(key)
+                        },
                         options: {
                             placement: 'bottom',
                             offset: 15,

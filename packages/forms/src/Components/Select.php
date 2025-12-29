@@ -129,6 +129,8 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
 
     protected bool | Closure $canOptionLabelsWrap = true;
 
+    protected bool | Closure $isReorderable = false;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -502,6 +504,18 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         $this->isMultiple = $condition;
 
         return $this;
+    }
+
+    public function reorderable(bool | Closure $condition = true): static
+    {
+        $this->isReorderable = $condition;
+
+        return $this;
+    }
+
+    public function isReorderable(): bool
+    {
+        return (bool) $this->evaluate($this->isReorderable);
     }
 
     public function position(string | Closure | null $position): static
@@ -904,15 +918,18 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
                 /** @var Collection $relatedRecords */
                 $relatedRecords = $relationship->getResults();
 
+                // Cast the related keys to a string, otherwise JavaScript does not
+                // know how to handle deselection.
+                //
+                // https://github.com/filamentphp/filament/issues/1111
+                $relatedKeys = $relatedRecords
+                    ->pluck(($relationship instanceof BelongsToMany) ? $relationship->getRelatedKeyName() : $relationship->getRelated()->getKeyName())
+                    ->map(static fn ($key): string => strval($key));
+
                 $component->state(
-                    // Cast the related keys to a string, otherwise JavaScript does not
-                    // know how to handle deselection.
-                    //
-                    // https://github.com/filamentphp/filament/issues/1111
-                    $relatedRecords
-                        ->pluck(($relationship instanceof BelongsToMany) ? $relationship->getRelatedKeyName() : $relationship->getRelated()->getKeyName())
-                        ->map(static fn ($key): string => strval($key))
-                        ->all(),
+                    $component->isMultiple()
+                        ? $relatedKeys->all()
+                        : $relatedKeys->first(),
                 );
 
                 return;

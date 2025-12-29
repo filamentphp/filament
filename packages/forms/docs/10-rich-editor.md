@@ -30,7 +30,7 @@ RichEditor::make('content')
 
 The JSON is in [TipTap's](https://tiptap.dev) format, which is a structured representation of the content.
 
-If you're saving the JSON tags using Eloquent, you should be sure to add an `array` [cast](https://laravel.com/docs/eloquent-mutators#array-and-json-casting) to the model property:
+If you're saving the JSON content using Eloquent, you should be sure to add an `array` [cast](https://laravel.com/docs/eloquent-mutators#array-and-json-casting) to the model property:
 
 ```php
 use Illuminate\Database\Eloquent\Model;

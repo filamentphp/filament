@@ -91,8 +91,10 @@ class LivewireInfolists extends Component implements HasSchemas
     public function render(): string
     {
         return <<<'BLADE'
-		{{ $this->infolist }}
-		{{ $this->infolistWithCustomName }}
-		BLADE;
+            <div>
+                {{ $this->infolist }}
+                {{ $this->infolistWithCustomName }}
+            </div>
+            BLADE;
     }
 }
