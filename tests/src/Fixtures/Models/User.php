@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -137,5 +138,10 @@ class User extends Authenticatable implements FilamentUser, HasAppAuthentication
     public function company()
     {
         return $this->belongsToThrough(Company::class, Team::class);
+    }
+
+    public function setting(): HasOneThrough
+    {
+        return $this->hasOneThrough(Setting::class, Profile::class);
     }
 }
