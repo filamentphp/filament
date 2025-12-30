@@ -52,7 +52,21 @@ class MentionExtension extends Node
                 'parseHTML' => fn ($DOMNode) => $DOMNode->getAttribute('data-char') ?: '@',
                 'renderHTML' => fn ($attributes) => ['data-char' => $attributes->char ?? '@'],
             ],
+            'extra' => [
+                'default' => null,
+                'parseHTML' => fn ($DOMNode) => null,
+                'renderHTML' => fn ($attributes) => [],
+                'rendered' => false,
+            ],
         ];
+    }
+
+    public function renderText($node): string
+    {
+        $char = $node->attrs->char ?? '@';
+        $label = $node->attrs->label ?? '';
+
+        return "{$char}{$label}";
     }
 
     /**
@@ -62,9 +76,6 @@ class MentionExtension extends Node
      */
     public function renderHTML($node, $HTMLAttributes = []): array
     {
-        $char = $node->attrs->char ?? '@';
-        $label = $node->attrs->label ?? '';
-
         return [
             'span',
             HTML::mergeAttributes(
@@ -72,7 +83,7 @@ class MentionExtension extends Node
                 $this->options['HTMLAttributes'],
                 $HTMLAttributes,
             ),
-            "{$char}{$label}",
+            0,
         ];
     }
 }

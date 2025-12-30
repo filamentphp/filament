@@ -887,18 +887,26 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     }
 
     /**
-     * @return array<int, array{char: string, items: array<string, string>, extraAttributes: array<string, mixed>, noOptionsMessage: string, noSearchResultsMessage: string, isSearchable: bool}>
+     * @return array<int, array{char: string, items: array<string, string>, extraAttributes: array<string, mixed>, noOptionsMessage: string, noSearchResultsMessage: string, searchPrompt: string, searchingMessage: string, isSearchable: bool}>
      */
     public function getMentionsForJs(): array
     {
         return array_map(
             function (MentionProvider $provider): array {
+                // Only preload items if there are static options
+                // For search-only providers, start with empty items to show search prompt
+                $items = $provider->hasOptions()
+                    ? $provider->getSearchResults('')
+                    : [];
+
                 return [
                     'char' => $provider->getChar(),
-                    'items' => $provider->getSearchResults(''),
+                    'items' => $items,
                     'extraAttributes' => $provider->getExtraAttributes(),
                     'noOptionsMessage' => $provider->getNoOptionsMessage(),
                     'noSearchResultsMessage' => $provider->getNoSearchResultsMessage(),
+                    'searchPrompt' => $provider->getSearchPrompt(),
+                    'searchingMessage' => $provider->getSearchingMessage(),
                     'isSearchable' => $provider->hasSearchResultsUsing(),
                 ];
             },

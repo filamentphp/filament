@@ -59,6 +59,14 @@ class MentionLinkExtension extends Node
         ];
     }
 
+    public function renderText($node): string
+    {
+        $char = $node->attrs->char ?? '@';
+        $label = $node->attrs->label ?? '';
+
+        return "{$char}{$label}";
+    }
+
     /**
      * @param  object  $node
      * @param  array<string, mixed>  $HTMLAttributes
@@ -66,9 +74,6 @@ class MentionLinkExtension extends Node
      */
     public function renderHTML($node, $HTMLAttributes = []): array
     {
-        $char = $node->attrs->char ?? '@';
-        $label = $node->attrs->label ?? '';
-
         return [
             'a',
             HTML::mergeAttributes(
@@ -76,7 +81,7 @@ class MentionLinkExtension extends Node
                 $this->options['HTMLAttributes'],
                 $HTMLAttributes,
             ),
-            "{$char}{$label}",
+            0,
         ];
     }
 }

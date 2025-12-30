@@ -64,7 +64,7 @@
     }
 
     & span[data-type='mention'] {
-        @apply bg-primary-50 text-primary-600 dark:bg-primary-400/10 dark:text-primary-400 rounded px-1 font-medium;
+        @apply bg-primary-50 text-primary-600 dark:bg-primary-400/10 dark:text-primary-400 rounded px-1 font-medium whitespace-nowrap;
     }
 
     & .fi-fo-rich-editor-panels {

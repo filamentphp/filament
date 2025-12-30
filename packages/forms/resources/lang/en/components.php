@@ -571,6 +571,8 @@ return [
         'mentions' => [
             'no_options_message' => 'No options available.',
             'no_search_results_message' => 'No results match your search.',
+            'search_prompt' => 'Start typing to search...',
+            'searching_message' => 'Searching...',
         ],
 
         'tools' => [

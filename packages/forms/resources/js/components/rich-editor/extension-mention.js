@@ -26,17 +26,19 @@ const getSuggestionOptions = function ({
                 range.to += 1
             }
 
+            const mentionAttrs = {
+                ...props,
+                char: triggerChar,
+                extra: extraAttributes,
+            }
+
             editor
                 .chain()
                 .focus()
                 .insertContentAt(range, [
                     {
                         type: extensionName,
-                        attrs: {
-                            ...props,
-                            char: triggerChar,
-                            extra: extraAttributes,
-                        },
+                        attrs: mentionAttrs,
                     },
                     {
                         type: 'text',
@@ -122,6 +124,7 @@ export default Node.create({
 
             label: {
                 default: null,
+                keepOnSplit: false,
                 parseHTML: (element) => element.getAttribute('data-label'),
                 renderHTML: (attributes) => {
                     if (!attributes.label) {
@@ -410,6 +413,9 @@ export default Node.create({
             } else {
                 const preservedExtraAttributes =
                     suggestionConfig?.extraAttributes
+                const searchPrompt = suggestionConfig?.searchPrompt ?? null
+                const searchingMessage =
+                    suggestionConfig?.searchingMessage ?? null
                 suggestion = {
                     ...getMentionSuggestion({
                         items: async ({ query }) => {
@@ -446,6 +452,8 @@ export default Node.create({
                         },
                         noOptionsMessage,
                         noSearchResultsMessage,
+                        searchPrompt,
+                        searchingMessage,
                         isSearchable,
                     }),
                     char,

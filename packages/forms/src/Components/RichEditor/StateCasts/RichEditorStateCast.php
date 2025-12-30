@@ -5,6 +5,7 @@ namespace Filament\Forms\Components\RichEditor\StateCasts;
 use Filament\Forms\Components\RichEditor;
 use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
 use Illuminate\Contracts\Support\Htmlable;
+use Tiptap\Editor;
 
 class RichEditorStateCast implements StateCast
 {
@@ -52,7 +53,10 @@ class RichEditorStateCast implements StateCast
             });
         }
 
-        return $editor->{$this->richEditor->isJson() ? 'getDocument' : 'getHtml'}();
+        $this->hydrateMentionLabels($editor);
+
+        // Always return JSON since the JS editor uses JSON internally
+        return $editor->getDocument();
     }
 
     /**
@@ -105,6 +109,68 @@ class RichEditorStateCast implements StateCast
             });
         }
 
+        $this->hydrateMentionLabels($editor);
+
         return $editor->getDocument();
+    }
+
+    protected function hydrateMentionLabels(Editor $editor): void
+    {
+        $mentionProviders = $this->richEditor->getMentionProviders();
+
+        if (blank($mentionProviders)) {
+            return;
+        }
+
+        // Collect all mentions by char
+        $mentionsByChar = [];
+
+        $editor->descendants(function (object &$node) use (&$mentionsByChar): void {
+            if (! in_array($node->type, ['mention', 'mentionLink'], true)) {
+                return;
+            }
+
+            $char = $node->attrs->char ?? '@';
+            $id = $node->attrs->id ?? null;
+
+            if (blank($id)) {
+                return;
+            }
+
+            $mentionsByChar[$char][] = (string) $id;
+        });
+
+        if (blank($mentionsByChar)) {
+            return;
+        }
+
+        // Fetch labels for each char
+        $labelsByChar = [];
+
+        foreach ($mentionsByChar as $char => $ids) {
+            foreach ($mentionProviders as $provider) {
+                if ($provider->getChar() === $char) {
+                    $labelsByChar[$char] = $provider->getLabels(array_unique($ids));
+
+                    break;
+                }
+            }
+        }
+
+        // Apply labels to mentions
+        $editor->descendants(function (object &$node) use ($labelsByChar): void {
+            if (! in_array($node->type, ['mention', 'mentionLink'], true)) {
+                return;
+            }
+
+            $char = $node->attrs->char ?? '@';
+            $id = $node->attrs->id ?? null;
+
+            if (blank($id)) {
+                return;
+            }
+
+            $node->attrs->label = $labelsByChar[$char][(string) $id] ?? '';
+        });
     }
 }

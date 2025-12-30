@@ -27,6 +27,10 @@ class MentionProvider
 
     protected ?string $noSearchResultsMessage = null;
 
+    protected ?string $searchingMessage = null;
+
+    protected ?string $searchPrompt = null;
+
     final public function __construct(
         protected string $char,
     ) {}
@@ -48,7 +52,12 @@ class MentionProvider
      */
     public function options(array $options): static
     {
-        $this->options = $options;
+        // Ensure all keys and values are strings
+        $this->options = [];
+
+        foreach ($options as $id => $label) {
+            $this->options[(string) $id] = (string) $label;
+        }
 
         return $this;
     }
@@ -97,6 +106,20 @@ class MentionProvider
         return $this;
     }
 
+    public function searchingMessage(?string $message): static
+    {
+        $this->searchingMessage = $message;
+
+        return $this;
+    }
+
+    public function searchPrompt(?string $message): static
+    {
+        $this->searchPrompt = $message;
+
+        return $this;
+    }
+
     public function getChar(): string
     {
         return $this->char;
@@ -126,6 +149,16 @@ class MentionProvider
         return $this->noSearchResultsMessage ?? __('filament-forms::components.rich_editor.mentions.no_search_results_message');
     }
 
+    public function getSearchingMessage(): string
+    {
+        return $this->searchingMessage ?? __('filament-forms::components.rich_editor.mentions.searching_message');
+    }
+
+    public function getSearchPrompt(): string
+    {
+        return $this->searchPrompt ?? __('filament-forms::components.rich_editor.mentions.search_prompt');
+    }
+
     public function getUrl(string $id, string $label): ?string
     {
         if (! ($this->getUrlUsing instanceof Closure)) {
@@ -147,13 +180,19 @@ class MentionProvider
     public function getLabels(array $ids): array
     {
         if ($this->getLabelsUsing instanceof Closure) {
-            return ($this->getLabelsUsing)($ids);
+            $labels = ($this->getLabelsUsing)($ids);
+        } else {
+            $labels = Arr::only($this->options, $ids);
         }
 
-        return array_map(
-            strval(...),
-            Arr::only($this->options, $ids),
-        );
+        // Ensure all keys and values are strings
+        $result = [];
+
+        foreach ($labels as $id => $label) {
+            $result[(string) $id] = (string) $label;
+        }
+
+        return $result;
     }
 
     public function hasSearchResultsUsing(): bool
@@ -172,18 +211,25 @@ class MentionProvider
     public function getSearchResults(string $search): array
     {
         if ($this->getSearchResultsUsing instanceof Closure) {
-            return ($this->getSearchResultsUsing)($search) ?? [];
+            $results = ($this->getSearchResultsUsing)($search) ?? [];
+        } elseif (blank($search)) {
+            $results = $this->options;
+        } else {
+            $searchLower = strtolower($search);
+
+            $results = array_filter(
+                $this->options,
+                fn (string $label): bool => str_contains(strtolower($label), $searchLower),
+            );
         }
 
-        if (blank($search)) {
-            return $this->options;
+        // Ensure all keys and values are strings
+        $normalized = [];
+
+        foreach ($results as $id => $label) {
+            $normalized[(string) $id] = (string) $label;
         }
 
-        $search = strtolower($search);
-
-        return array_filter(
-            $this->options,
-            fn (string $label): bool => str_contains(strtolower($label), $search),
-        );
+        return $normalized;
     }
 }
