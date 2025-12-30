@@ -52,19 +52,33 @@
     }
 
     & span[data-type='mergeTag'] {
-        &::before {
-            @apply me-1 font-normal opacity-60;
-            content: '{{';
-        }
+        @apply inline whitespace-nowrap;
+    }
 
-        &::after {
-            @apply ms-1 font-normal opacity-60;
-            content: '}}';
-        }
+    & span[data-type='mergeTag']::before {
+        @apply me-1 font-normal opacity-60;
+        content: '{{';
+    }
+
+    & span[data-type='mergeTag']::after {
+        @apply ms-1 font-normal opacity-60;
+        content: '}}';
     }
 
     & span[data-type='mention'] {
-        @apply bg-primary-50 text-primary-600 dark:bg-primary-400/10 dark:text-primary-400 rounded px-1 font-medium whitespace-nowrap;
+        display: inline !important;
+        white-space: nowrap !important;
+        background-color: var(--color-primary-50);
+        color: var(--color-primary-600);
+        border-radius: var(--radius-DEFAULT);
+        padding-inline: calc(var(--spacing) * 1);
+        font-weight: var(--font-weight-medium);
+        margin-top: 0;
+
+        @variant dark {
+            background-color: color-mix(in oklab, var(--color-primary-400) 10%, transparent);
+            color: var(--color-primary-400);
+        }
     }
 
     & .fi-fo-rich-editor-panels {

@@ -83,13 +83,18 @@ export default Node.create({
             },
             deleteTriggerWithBackspace: true,
             renderHTML({ options, node }) {
+                const char = node.attrs.char ?? '@'
+                const label = node.attrs.label ?? ''
+                // Use non-breaking space to prevent wrapping between char and label
+                const content = `${char}\u00A0${label}`
+
                 return [
                     'span',
                     mergeAttributes(
                         this.HTMLAttributes,
                         options.HTMLAttributes,
                     ),
-                    `${node.attrs.char ?? '@'} ${node.attrs.label ?? ''}`,
+                    content,
                 ]
             },
             suggestions: [],
@@ -419,6 +424,18 @@ export default Node.create({
                 suggestion = {
                     ...getMentionSuggestion({
                         items: async ({ query }) => {
+                            // Check if baseItems has content (handles both arrays and objects from PHP)
+                            const hasBaseItems = Array.isArray(baseItems)
+                                ? baseItems.length > 0
+                                : baseItems &&
+                                  typeof baseItems === 'object' &&
+                                  Object.keys(baseItems).length > 0
+
+                            // If no base items and no query, show search prompt instead of searching
+                            if (!hasBaseItems && !query) {
+                                return []
+                            }
+
                             if (
                                 typeof getMentionSearchResultsUsing ===
                                 'function'

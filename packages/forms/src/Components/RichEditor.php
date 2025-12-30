@@ -877,15 +877,10 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     {
         return array_map(
             function (MentionProvider $provider): array {
-                // Only preload items if there are static options
-                // For search-only providers, start with empty items to show search prompt
-                $items = $provider->hasOptions()
-                    ? $provider->getSearchResults('')
-                    : [];
-
                 return [
                     'char' => $provider->getChar(),
-                    'items' => $items,
+                    // Only include static options - don't call search closure on initial load
+                    'items' => $provider->getOptions(),
                     'extraAttributes' => $provider->getExtraAttributes(),
                     'noOptionsMessage' => $provider->getNoOptionsMessage(),
                     'noSearchResultsMessage' => $provider->getNoSearchResultsMessage(),

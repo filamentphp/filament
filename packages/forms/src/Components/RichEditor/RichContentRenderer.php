@@ -282,13 +282,46 @@ class RichContentRenderer implements Htmlable
             return;
         }
 
-        $editor->descendants(function (object &$node): void {
+        // Collect all mentions by char that need labels
+        $mentionsByChar = [];
+
+        $editor->descendants(function (object &$node) use (&$mentionsByChar): void {
             if ($node->type !== 'mention') {
                 return;
             }
 
             $id = $node->attrs->id ?? null;
-            $label = $node->attrs->label ?? null;
+
+            if (blank($id)) {
+                return;
+            }
+
+            if (filled($node->attrs->label ?? null)) {
+                return;
+            }
+
+            $char = $node->attrs->char ?? '@';
+            $mentionsByChar[$char][] = (string) $id;
+        });
+
+        // Batch fetch labels for each char
+        $labelsByChar = [];
+
+        foreach ($mentionsByChar as $char => $ids) {
+            $provider = $this->getMentionProvider($char);
+
+            if ($provider) {
+                $labelsByChar[$char] = $provider->getLabels(array_unique($ids));
+            }
+        }
+
+        // Apply labels and URLs to mentions
+        $editor->descendants(function (object &$node) use ($labelsByChar): void {
+            if ($node->type !== 'mention') {
+                return;
+            }
+
+            $id = $node->attrs->id ?? null;
             $char = $node->attrs->char ?? '@';
 
             if (blank($id)) {
@@ -301,19 +334,15 @@ class RichContentRenderer implements Htmlable
                 return;
             }
 
-            if (blank($label)) {
-                $labels = $provider->getLabels([$id]);
-                $label = $labels[$id] ?? $id;
-            }
+            $label = $node->attrs->label ?? $labelsByChar[$char][(string) $id] ?? (string) $id;
+            $node->attrs->label = $label;
 
-            $url = $provider->getUrl($id, $label);
+            $url = $provider->getUrl((string) $id, $label);
 
             if ($url) {
                 $node->type = 'mentionLink';
                 $node->attrs->href = $url;
             }
-
-            $node->attrs->label = $label;
         });
     }
 

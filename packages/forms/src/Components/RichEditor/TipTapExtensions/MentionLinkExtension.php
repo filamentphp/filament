@@ -74,6 +74,17 @@ class MentionLinkExtension extends Node
      */
     public function renderHTML($node, $HTMLAttributes = []): array
     {
+        $char = $node->attrs->char ?? '@';
+        $label = $node->attrs->label ?? '';
+
+        // Inject content into the node so tiptap-php can render it
+        $node->content = [
+            (object) [
+                'type' => 'text',
+                'text' => "{$char}\u{00A0}{$label}",
+            ],
+        ];
+
         return [
             'a',
             HTML::mergeAttributes(

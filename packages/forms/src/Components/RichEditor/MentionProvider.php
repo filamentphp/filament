@@ -208,6 +208,14 @@ class MentionProvider
     /**
      * @return array<string, string>
      */
+    public function getOptions(): array
+    {
+        return $this->options;
+    }
+
+    /**
+     * @return array<string, string>
+     */
     public function getSearchResults(string $search): array
     {
         if ($this->getSearchResultsUsing instanceof Closure) {

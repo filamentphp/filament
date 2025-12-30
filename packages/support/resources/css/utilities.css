@@ -511,8 +511,24 @@
         margin-top: 0;
     }
 
-    *:where(:not(.fi-not-prose, .fi-not-prose *, br))
-        + *:where(:not(.fi-not-prose, .fi-not-prose *, br)) {
+    *:where(
+            :not(
+                .fi-not-prose,
+                .fi-not-prose *,
+                br,
+                span[data-type='mention'],
+                span[data-type='mergeTag']
+            )
+        )
+        + *:where(
+            :not(
+                .fi-not-prose,
+                .fi-not-prose *,
+                br,
+                span[data-type='mention'],
+                span[data-type='mergeTag']
+            )
+        ) {
         margin-top: calc(var(--spacing) * 4);
     }
 
@@ -784,6 +800,27 @@
 
     & span[data-type='mention']:where(:not(.fi-not-prose, .fi-not-prose *)) {
         font-weight: var(--font-weight-semibold);
+        white-space: nowrap;
+        margin-top: 0;
+    }
+
+    & span[data-type='mergeTag']:where(:not(.fi-not-prose, .fi-not-prose *)) {
+        display: inline;
+        white-space: nowrap;
+    }
+
+    & span[data-type='mergeTag']:where(:not(.fi-not-prose, .fi-not-prose *))::before {
+        margin-inline-end: calc(var(--spacing) * 1);
+        font-weight: var(--font-weight-normal);
+        opacity: 0.6;
+        content: '{{';
+    }
+
+    & span[data-type='mergeTag']:where(:not(.fi-not-prose, .fi-not-prose *))::after {
+        margin-inline-start: calc(var(--spacing) * 1);
+        font-weight: var(--font-weight-normal);
+        opacity: 0.6;
+        content: '}}';
     }
 
     & .grid-layout:where(:not(.fi-not-prose, .fi-not-prose *)) {
