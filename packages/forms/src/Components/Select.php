@@ -1177,7 +1177,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
             $schema->getRecord()?->update($data);
         });
 
-        $this->dehydrated(fn (Select $component): bool => ! $component->isMultiple());
+        $this->dehydrated(fn (Select $component): bool => (! $component->isMultiple()) && $component->isSaved());
 
         return $this;
     }
