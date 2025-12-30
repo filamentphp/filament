@@ -33,9 +33,7 @@ const updatePosition = (editor, element) => {
 }
 
 export default ({ items = [] }) => ({
-    // Support: items can be an array or a (async) function returning an array
     items: async ({ query }) => {
-        // When items is a function, call it (it may return a Promise or array)
         if (typeof items === 'function') {
             try {
                 const result = items({ query })
@@ -45,7 +43,6 @@ export default ({ items = [] }) => ({
             }
         }
 
-        // items is a static array - apply local filtering when query is provided
         if (!query) return items
 
         const q = String(query).toLowerCase()

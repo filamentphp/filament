@@ -271,7 +271,6 @@ export default Node.create({
             ...this.storage.suggestions.map(Suggestion),
             new Plugin({
                 view: (view) => {
-                    // Initial hydration
                     setTimeout(() => hydrateMentions(view), 0)
                     return {
                         update: (view) => hydrateMentions(view),
@@ -364,12 +363,10 @@ export default Node.create({
                         },
                     }),
                     char,
-                    // Preserve extraAttributes so it reaches the command insert attrs
                     ...(preservedExtraAttributes ? { extraAttributes: preservedExtraAttributes } : {}),
                 }
             }
 
-            // Attach per-char label resolver if provided on options
             if (typeof this.options.getMentionLabelUsing === 'function') {
                 s.getMentionLabelUsing = (id) => this.options.getMentionLabelUsing(id, char)
             }
