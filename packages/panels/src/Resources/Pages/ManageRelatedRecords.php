@@ -305,7 +305,7 @@ class ManageRelatedRecords extends Page implements Tables\Contracts\HasTable
         if (
             ($action instanceof CreateAction) &&
             ($relatedResource::hasPage('create')) &&
-            ((blank($actionModel)) || ($actionModel === $relatedResource::getModel()))
+            (blank($actionModel) || ($actionModel === $relatedResource::getModel()))
         ) {
             return $relatedResource::getUrl('create', shouldGuessMissingParameters: true);
         }
@@ -313,7 +313,7 @@ class ManageRelatedRecords extends Page implements Tables\Contracts\HasTable
         if (
             ($action instanceof EditAction) &&
             ($relatedResource::hasPage('edit')) &&
-            ((blank($actionModel)) || ($actionModel === $relatedResource::getModel()))
+            (blank($actionModel) || ($actionModel === $relatedResource::getModel()))
         ) {
             return $relatedResource::getUrl('edit', ['record' => $action->getRecord()], shouldGuessMissingParameters: true);
         }
@@ -321,7 +321,7 @@ class ManageRelatedRecords extends Page implements Tables\Contracts\HasTable
         if (
             ($action instanceof ViewAction) &&
             ($relatedResource::hasPage('view')) &&
-            ((blank($actionModel)) || ($actionModel === $relatedResource::getModel()))
+            (blank($actionModel) || ($actionModel === $relatedResource::getModel()))
         ) {
             return $relatedResource::getUrl('view', ['record' => $action->getRecord()], shouldGuessMissingParameters: true);
         }

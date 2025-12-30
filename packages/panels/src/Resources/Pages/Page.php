@@ -354,7 +354,7 @@ abstract class Page extends BasePage
         if (
             ($action instanceof CreateAction) &&
             (static::getResource()::hasPage('create')) &&
-            ((blank($actionModel)) || ($actionModel === static::getResource()::getModel()))
+            (blank($actionModel) || ($actionModel === static::getResource()::getModel()))
         ) {
             return $this->getResourceUrl('create');
         }
@@ -363,7 +363,7 @@ abstract class Page extends BasePage
             ($action instanceof EditAction) &&
             (static::getResource()::hasPage('edit')) &&
             (! $this instanceof EditRecord) &&
-            ((blank($actionModel)) || ($actionModel === static::getResource()::getModel()))
+            (blank($actionModel) || ($actionModel === static::getResource()::getModel()))
         ) {
             return $this->getResourceUrl('edit', ['record' => $action->getRecord()]);
         }
@@ -372,7 +372,7 @@ abstract class Page extends BasePage
             ($action instanceof ViewAction) &&
             (static::getResource()::hasPage('view')) &&
             (! $this instanceof ViewRecord) &&
-            ((blank($actionModel)) || ($actionModel === static::getResource()::getModel()))
+            (blank($actionModel) || ($actionModel === static::getResource()::getModel()))
         ) {
             return $this->getResourceUrl('view', ['record' => $action->getRecord()]);
         }
