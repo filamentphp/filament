@@ -6,7 +6,6 @@ use Closure;
 
 class MentionProvider
 {
-
     /**
      * @param  array<mixed>|null  $options
      * @param  array<string, mixed>|Closure|null  $extraAttributes
@@ -25,7 +24,7 @@ class MentionProvider
         return new self(char: $char);
     }
 
-    public function getSearchResultsUsing(Closure $callback): static
+    public function getSearchResultsUsing(?Closure $callback): static
     {
         $this->getSearchResultsUsing = $callback;
 
@@ -42,10 +41,9 @@ class MentionProvider
         return $this;
     }
 
-    public function getOptionLabelUsing(Closure $callback): static
+    public function getOptionLabelUsing(?Closure $callback): static
     {
         $this->getOptionLabelUsing = $callback;
-
 
         return $this;
     }
@@ -67,9 +65,6 @@ class MentionProvider
         return $this->char;
     }
 
-    /**
-     * @return array<string, mixed>
-     */
     /**
      * @return array<string, mixed>
      */
@@ -115,7 +110,7 @@ class MentionProvider
     /**
      * @return array<mixed>
      */
-    public function resolveItems(string $search): array
+    public function getSearchResults(string $search): array
     {
         if (! $this->getSearchResultsUsing && ! $this->options) {
             return [];
@@ -125,11 +120,6 @@ class MentionProvider
             ? ($this->getSearchResultsUsing)($search)
             : $this->options;
 
-        // if ($results instanceof \Illuminate\Contracts\Support\Arrayable) {
-        //     $results = $results->toArray();
-        // }
-
         return $results ?? [];
     }
 }
-

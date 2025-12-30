@@ -403,5 +403,3 @@ export default Node.create({
         }
     },
 })
-
-

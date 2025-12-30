@@ -656,10 +656,9 @@ RichEditor::make('content')
                 ->limit(10)
                 ->pluck('name', 'id')
                 ->all())
-                ->getOptionLabelUsing(fn ($value): ?string => User::find($value)?->name),
+            ->getOptionLabelUsing(fn ($value): ?string => User::find($value)?->name),
     ])
 ```
-
 
 ### Adding extra HTML attributes
 
@@ -679,9 +678,6 @@ MentionProvider::make('@')
 ### Notes
 
 - You can provide multiple providers, each with a different `char` (default `@`).
-
-
-
 
 ## Registering rich content attributes
 

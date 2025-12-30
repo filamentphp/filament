@@ -167,7 +167,5 @@ export default ({ items = [] }) => ({
                 }
             },
         }
-
-
     },
 })
