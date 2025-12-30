@@ -1101,7 +1101,7 @@ test('components can inject their old state after it is updated', function (): v
         ]);
 });
 
-test('components can be excluded from state dehydration using saved(false)', function (): void {
+test('components can be excluded from state dehydration using `saved(false)`', function (): void {
     $schema = Schema::make(Livewire::make())
         ->statePath('data')
         ->components([
@@ -1117,7 +1117,7 @@ test('components can be excluded from state dehydration using saved(false)', fun
         ->getState()->toBe([]);
 });
 
-test('components can be excluded from state dehydration if their parent component uses saved(false)', function (): void {
+test('components can be excluded from state dehydration if their parent component uses `saved(false)`', function (): void {
     $schema = Schema::make(Livewire::make())
         ->statePath('data')
         ->components([
@@ -1136,7 +1136,7 @@ test('components can be excluded from state dehydration if their parent componen
         ->getState()->toBe([]);
 });
 
-test('explicit dehydrated(true) takes precedence over saved(false) for dehydration', function (): void {
+test('explicit `dehydrated(true)` takes precedence over `saved(false)` for dehydration', function (): void {
     $schema = Schema::make(Livewire::make())
         ->statePath('data')
         ->components([
@@ -1154,7 +1154,7 @@ test('explicit dehydrated(true) takes precedence over saved(false) for dehydrati
         ->getState()->toBe([$statePath => $state]);
 });
 
-test('saved(false) prevents dehydration when dehydrated() is not explicitly set', function (): void {
+test('`saved(false)` prevents dehydration when `dehydrated()` is not explicitly set', function (): void {
     $schema = Schema::make(Livewire::make())
         ->statePath('data')
         ->components([
@@ -1170,7 +1170,7 @@ test('saved(false) prevents dehydration when dehydrated() is not explicitly set'
         ->getState()->toBe([]);
 });
 
-test('saved() can accept a closure', function (): void {
+test('`saved()` can accept a closure', function (): void {
     $savedSchema = Schema::make(Livewire::make())
         ->statePath('data')
         ->components([
@@ -1200,7 +1200,7 @@ test('saved() can accept a closure', function (): void {
         ->getState()->toBe([]);
 });
 
-test('disabled components can be dehydrated when dehydrated() is called after disabled()', function (): void {
+test('disabled components can be dehydrated when `dehydrated()` is called after `disabled()`', function (): void {
     $schema = Schema::make(Livewire::make())
         ->statePath('data')
         ->components([
@@ -1217,7 +1217,7 @@ test('disabled components can be dehydrated when dehydrated() is called after di
         ->getState()->toBe([$statePath => $state]);
 });
 
-test('disabled components can be saved when saved() is called after disabled()', function (): void {
+test('disabled components can be saved when `saved()` is called after `disabled()`', function (): void {
     $schema = Schema::make(Livewire::make())
         ->statePath('data')
         ->components([

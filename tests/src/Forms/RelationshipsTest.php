@@ -90,7 +90,7 @@ test('hidden fields can save relationships when requested', function (): void {
         ->toBe(2);
 });
 
-test('fields with saved(false) do not save relationships', function (): void {
+test('fields with `saved(false)` do not save relationships', function (): void {
     $numberOfRelationshipsSaved = 0;
     $isSaved = true;
 
@@ -130,7 +130,7 @@ test('fields with saved(false) do not save relationships', function (): void {
         ->toBe(2);
 });
 
-test('saved(false) prevents relationship saving regardless of dehydrated() setting', function (): void {
+test('`saved(false)` prevents relationship saving regardless of `dehydrated()` setting', function (): void {
     $numberOfRelationshipsSaved = 0;
 
     $saveRelationshipsUsing = function () use (&$numberOfRelationshipsSaved): void {
