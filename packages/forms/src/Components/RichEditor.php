@@ -367,14 +367,6 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
                         'content' => [],
                     ])
                     ->descendants(function (object &$node) use ($component, &$fileAttachmentIds): void {
-                        if (($node->type ?? null) === 'mention') {
-                            if (isset($node->attrs) && isset($node->attrs->label)) {
-                                unset($node->attrs->label);
-                            }
-
-                            return;
-                        }
-
                         if ($node->type !== 'image') {
                             return;
                         }
@@ -441,14 +433,6 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
                         'content' => [],
                     ])
                     ->descendants(function (object &$node) use ($component, &$fileAttachmentIds): void {
-                        if (($node->type ?? null) === 'mention') {
-                            if (isset($node->attrs) && isset($node->attrs->label)) {
-                                unset($node->attrs->label);
-                            }
-
-                            return;
-                        }
-
                         if ($node->type !== 'image') {
                             return;
                         }

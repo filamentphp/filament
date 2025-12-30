@@ -193,34 +193,6 @@ export default function richEditorFormComponent({
                     return
                 }
 
-                // Check if incoming state has mention labels
-                const getMentionLabels = (state) => {
-                    const mentions = []
-                    const findMentions = (node) => {
-                        if (node.type === 'mention')
-                            mentions.push(node.attrs?.label)
-                        if (node.content) node.content.forEach(findMentions)
-                    }
-                    if (state) findMentions(state)
-                    return mentions
-                }
-
-                const incomingLabels = getMentionLabels(this.state)
-                const currentLabels = getMentionLabels(editor.getJSON())
-
-                // Don't wipe labels if current editor has them but incoming state doesn't
-                const incomingHasLabels = incomingLabels.some((l) => l)
-                const currentHasLabels = currentLabels.some((l) => l)
-
-                if (
-                    currentHasLabels &&
-                    !incomingHasLabels &&
-                    incomingLabels.length === currentLabels.length
-                ) {
-                    // Skip update - would wipe labels
-                    return
-                }
-
                 editor.commands.setContent(this.state)
             })
 

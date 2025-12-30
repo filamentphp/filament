@@ -53,7 +53,16 @@ class RichEditorStateCast implements StateCast
             });
         }
 
-        $this->hydrateMentionLabels($editor);
+        // Strip mention labels before saving - they are hydrated on load
+        if ($this->richEditor->getMentionProviders()) {
+            $editor->descendants(function (object &$node): void {
+                if (! in_array($node->type, ['mention', 'mentionLink'], true)) {
+                    return;
+                }
+
+                unset($node->attrs->label);
+            });
+        }
 
         // Always return JSON since the JS editor uses JSON internally
         return $editor->getDocument();
