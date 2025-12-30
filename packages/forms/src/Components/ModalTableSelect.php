@@ -504,7 +504,7 @@ class ModalTableSelect extends Field
             $relationship->syncWithPivotValues($state, $pivotData, detaching: false);
         });
 
-        $this->dehydrated(fn (ModalTableSelect $component): bool => ! $component->isMultiple());
+        $this->dehydrated(fn (ModalTableSelect $component): bool => (! $component->isMultiple()) && $component->isSaved());
 
         return $this;
     }

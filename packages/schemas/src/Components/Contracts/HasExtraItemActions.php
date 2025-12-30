@@ -10,4 +10,9 @@ interface HasExtraItemActions
      * @return array<Action>
      */
     public function getExtraItemActions(): array;
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function getItemState(string $key): array;
 }

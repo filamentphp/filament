@@ -673,16 +673,16 @@ TextInput::make('password')
 
 Be aware that you will need to ensure that the HTML in all validation messages is safe to render, otherwise your application will be vulnerable to XSS attacks.
 
-## Disabling validation when fields are not dehydrated
+## Disabling validation when fields are not saved
 
-When a field is [not dehydrated](overview#preventing-a-field-from-being-dehydrated), it is still validated. To disable validation for fields that are not dehydrated, use the `validatedWhenNotDehydrated()` method:
+When a field is [not saved](overview#preventing-a-field-from-being-saved), it is still validated. To disable validation for fields that are not saved, use the `validatedWhenNotDehydrated()` method:
 
 ```php
 use Filament\Forms\Components\TextInput;
 
 TextInput::make('name')
     ->required()
-    ->dehydrated(false)
+    ->saved(false)
     ->validatedWhenNotDehydrated(false)
 ```
 

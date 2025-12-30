@@ -2,6 +2,8 @@
 
 namespace Filament\Tests\Forms\Components;
 
+use Filament\Actions\Action;
+use Filament\Actions\Testing\TestAction;
 use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\TextInput;
@@ -224,5 +226,115 @@ class TestComponentWithBuilderAndRepeater extends Livewire
     public function save(): void
     {
         $this->form->getState();
+    }
+}
+
+it('can access correct block state from action directly in builder schema', function (): void {
+    $undoBuilderFake = Builder::fake();
+
+    livewire(TestComponentWithActionInBuilder::class)
+        ->callAction(
+            TestAction::make('captureState')
+                ->schemaComponent('blocks.0.data'),
+        )
+        ->assertDispatched('state-captured', state: [
+            'content' => 'Block 1 content',
+        ])
+        ->callAction(
+            TestAction::make('captureState')
+                ->schemaComponent('blocks.1.data'),
+        )
+        ->assertDispatched('state-captured', state: [
+            'content' => 'Block 2 content',
+        ]);
+
+    $undoBuilderFake();
+});
+
+it('can access correct block state from `extraItemActions()`', function (): void {
+    $undoBuilderFake = Builder::fake();
+
+    livewire(TestComponentWithExtraItemActionInBuilder::class)
+        ->callAction(
+            TestAction::make('captureBlockState')
+                ->schemaComponent('blocks')
+                ->arguments(['item' => 0]),
+        )
+        ->assertDispatched('state-captured', state: [
+            'content' => 'First Block',
+        ])
+        ->callAction(
+            TestAction::make('captureBlockState')
+                ->schemaComponent('blocks')
+                ->arguments(['item' => 1]),
+        )
+        ->assertDispatched('state-captured', state: [
+            'content' => 'Second Block',
+        ]);
+
+    $undoBuilderFake();
+});
+
+class TestComponentWithActionInBuilder extends Livewire
+{
+    public function mount(): void
+    {
+        $this->form->fill();
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->components([
+                Builder::make('blocks')
+                    ->blocks([
+                        Builder\Block::make('text')
+                            ->schema([
+                                TextInput::make('content'),
+                                Action::make('captureState')
+                                    ->action(function (array $state): void {
+                                        $this->dispatch('state-captured', state: $state);
+                                    }),
+                            ]),
+                    ])
+                    ->default([
+                        ['type' => 'text', 'data' => ['content' => 'Block 1 content']],
+                        ['type' => 'text', 'data' => ['content' => 'Block 2 content']],
+                    ]),
+            ])
+            ->statePath('data');
+    }
+}
+
+class TestComponentWithExtraItemActionInBuilder extends Livewire
+{
+    public function mount(): void
+    {
+        $this->form->fill();
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->components([
+                Builder::make('blocks')
+                    ->blocks([
+                        Builder\Block::make('paragraph')
+                            ->schema([
+                                TextInput::make('content'),
+                            ]),
+                    ])
+                    ->extraItemActions([
+                        Action::make('captureBlockState')
+                            ->action(function (array $state): void {
+                                $this->dispatch('state-captured', state: $state);
+                            }),
+                    ])
+                    ->default([
+                        ['type' => 'paragraph', 'data' => ['content' => 'First Block']],
+                        ['type' => 'paragraph', 'data' => ['content' => 'Second Block']],
+                    ]),
+            ])
+            ->statePath('data');
     }
 }

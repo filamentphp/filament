@@ -40,6 +40,10 @@ trait BelongsToModel
             return;
         }
 
+        if (! $this->isSaved()) {
+            return;
+        }
+
         if (! ($this->getRecord()?->exists)) {
             return;
         }
@@ -60,6 +64,10 @@ trait BelongsToModel
         $callback = $this->saveRelationshipsBeforeChildrenUsing;
 
         if (! $callback) {
+            return;
+        }
+
+        if (! $this->isSaved()) {
             return;
         }
 

@@ -242,7 +242,7 @@ class TableSelect extends Field
             $relationship->syncWithPivotValues($state, $pivotData, detaching: false);
         });
 
-        $this->dehydrated(fn (TableSelect $component): bool => ! $component->isMultiple());
+        $this->dehydrated(fn (TableSelect $component): bool => (! $component->isMultiple()) && $component->isSaved());
 
         return $this;
     }

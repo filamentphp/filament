@@ -2,9 +2,14 @@
 
 use Filament\Actions\Action;
 use Filament\Actions\Testing\TestAction;
+use Filament\Forms\Components\Builder;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Group;
+use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tests\Fixtures\Livewire\Actions;
+use Filament\Tests\Fixtures\Livewire\Livewire;
 use Filament\Tests\TestCase;
 use Illuminate\Support\Str;
 
@@ -187,3 +192,146 @@ it('can state whether a form component action exists', function (): void {
         ->assertFormComponentActionExists('textInput', 'exists')
         ->assertFormComponentActionDoesNotExist('textInput', 'doesNotExist');
 });
+
+it('can get state from action registered on a component', function (): void {
+    livewire(TestComponentWithActionState::class)
+        ->callAction(TestAction::make('captureState')->schemaComponent('name'))
+        ->assertDispatched('state-captured', state: 'John');
+});
+
+it('can get state from action in `belowContent` schema', function (): void {
+    livewire(TestComponentWithActionState::class)
+        ->callAction(TestAction::make('captureStateBelow')->schemaComponent('email'))
+        ->assertDispatched('state-captured', state: 'john@example.com');
+});
+
+it('can get state from action directly in a schema with state path', function (): void {
+    $undoRepeaterFake = Repeater::fake();
+
+    livewire(TestComponentWithActionState::class)
+        ->callAction(TestAction::make('captureState')->schemaComponent('items.0'))
+        ->assertDispatched('state-captured', state: ['title' => 'Item 1'])
+        ->callAction(TestAction::make('captureState')->schemaComponent('items.1'))
+        ->assertDispatched('state-captured', state: ['title' => 'Item 2']);
+
+    $undoRepeaterFake();
+});
+
+it('can get state from action in a Group without state path inside repeater', function (): void {
+    $undoRepeaterFake = Repeater::fake();
+
+    livewire(TestComponentWithActionState::class)
+        ->callAction(TestAction::make('captureStateInGroup')->schemaComponent('items.0'))
+        ->assertDispatched('state-captured', state: ['title' => 'Item 1']);
+
+    $undoRepeaterFake();
+});
+
+it('can get state from action in builder block schema', function (): void {
+    $undoBuilderFake = Builder::fake();
+
+    livewire(TestComponentWithActionState::class)
+        ->callAction(TestAction::make('captureState')->schemaComponent('blocks.0.data'))
+        ->assertDispatched('state-captured', state: ['content' => 'Block 1'])
+        ->callAction(TestAction::make('captureState')->schemaComponent('blocks.1.data'))
+        ->assertDispatched('state-captured', state: ['content' => 'Block 2']);
+
+    $undoBuilderFake();
+});
+
+it('can get state from action in `belowContent` schema inside a Group without state path', function (): void {
+    livewire(TestComponentWithActionState::class)
+        ->callAction(TestAction::make('captureStateBelowInGroup')->schemaComponent('phone'))
+        ->assertDispatched('state-captured', state: '555-1234');
+});
+
+it('can get state from action directly in a Group with state path', function (): void {
+    livewire(TestComponentWithActionState::class)
+        ->callAction(TestAction::make('captureStateInGroupWithPath')->schemaComponent('address'))
+        ->assertDispatched('state-captured', state: ['street' => '123 Main St', 'city' => 'Springfield']);
+});
+
+class TestComponentWithActionState extends Livewire
+{
+    public function mount(): void
+    {
+        $this->form->fill();
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->components([
+                TextInput::make('name')
+                    ->default('John')
+                    ->registerActions([
+                        Action::make('captureState')
+                            ->action(function (mixed $state): void {
+                                $this->dispatch('state-captured', state: $state);
+                            }),
+                    ]),
+                TextInput::make('email')
+                    ->default('john@example.com')
+                    ->belowContent([
+                        Action::make('captureStateBelow')
+                            ->action(function (mixed $state): void {
+                                $this->dispatch('state-captured', state: $state);
+                            }),
+                    ]),
+                Group::make([
+                    TextInput::make('phone')
+                        ->default('555-1234')
+                        ->belowContent([
+                            Action::make('captureStateBelowInGroup')
+                                ->action(function (mixed $state): void {
+                                    $this->dispatch('state-captured', state: $state);
+                                }),
+                        ]),
+                ]),
+                Group::make([
+                    TextInput::make('street')
+                        ->default('123 Main St'),
+                    TextInput::make('city')
+                        ->default('Springfield'),
+                    Action::make('captureStateInGroupWithPath')
+                        ->action(function (mixed $state): void {
+                            $this->dispatch('state-captured', state: $state);
+                        }),
+                ])->statePath('address'),
+                Repeater::make('items')
+                    ->schema([
+                        TextInput::make('title'),
+                        Action::make('captureState')
+                            ->action(function (mixed $state): void {
+                                $this->dispatch('state-captured', state: $state);
+                            }),
+                        Group::make([
+                            Action::make('captureStateInGroup')
+                                ->action(function (mixed $state): void {
+                                    $this->dispatch('state-captured', state: $state);
+                                }),
+                        ]),
+                    ])
+                    ->default([
+                        ['title' => 'Item 1'],
+                        ['title' => 'Item 2'],
+                    ]),
+                Builder::make('blocks')
+                    ->blocks([
+                        Builder\Block::make('paragraph')
+                            ->schema([
+                                TextInput::make('content'),
+                                Action::make('captureState')
+                                    ->action(function (mixed $state): void {
+                                        $this->dispatch('state-captured', state: $state);
+                                    }),
+                            ]),
+                    ])
+                    ->default([
+                        ['type' => 'paragraph', 'data' => ['content' => 'Block 1']],
+                        ['type' => 'paragraph', 'data' => ['content' => 'Block 2']],
+                    ]),
+            ])
+            ->statePath('data');
+    }
+}

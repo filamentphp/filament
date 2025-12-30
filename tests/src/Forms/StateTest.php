@@ -1100,3 +1100,136 @@ test('components can inject their old state after it is updated', function (): v
             'foo' => $state,
         ]);
 });
+
+test('components can be excluded from state dehydration using `saved(false)`', function (): void {
+    $schema = Schema::make(Livewire::make())
+        ->statePath('data')
+        ->components([
+            Field::make(Str::random())
+                ->default(Str::random())
+                ->saved(false),
+        ])
+        ->fill();
+
+    invade($schema->getLivewire())->cacheSchema('form', $schema);
+
+    expect($schema)
+        ->getState()->toBe([]);
+});
+
+test('components can be excluded from state dehydration if their parent component uses `saved(false)`', function (): void {
+    $schema = Schema::make(Livewire::make())
+        ->statePath('data')
+        ->components([
+            (new Component)
+                ->saved(false)
+                ->schema([
+                    Field::make(Str::random())
+                        ->default(Str::random()),
+                ]),
+        ])
+        ->fill();
+
+    invade($schema->getLivewire())->cacheSchema('form', $schema);
+
+    expect($schema)
+        ->getState()->toBe([]);
+});
+
+test('explicit `dehydrated(true)` takes precedence over `saved(false)` for dehydration', function (): void {
+    $schema = Schema::make(Livewire::make())
+        ->statePath('data')
+        ->components([
+            Field::make($statePath = Str::random())
+                ->default($state = Str::random())
+                ->dehydrated(true)
+                ->saved(false),
+        ])
+        ->fill();
+
+    invade($schema->getLivewire())->cacheSchema('form', $schema);
+
+    // dehydrated(true) explicitly set, so state is dehydrated despite saved(false)
+    expect($schema)
+        ->getState()->toBe([$statePath => $state]);
+});
+
+test('`saved(false)` prevents dehydration when `dehydrated()` is not explicitly set', function (): void {
+    $schema = Schema::make(Livewire::make())
+        ->statePath('data')
+        ->components([
+            Field::make(Str::random())
+                ->default(Str::random())
+                ->saved(false),
+        ])
+        ->fill();
+
+    invade($schema->getLivewire())->cacheSchema('form', $schema);
+
+    expect($schema)
+        ->getState()->toBe([]);
+});
+
+test('`saved()` can accept a closure', function (): void {
+    $savedSchema = Schema::make(Livewire::make())
+        ->statePath('data')
+        ->components([
+            Field::make($savedStatePath = Str::random())
+                ->default($savedState = Str::random())
+                ->saved(fn (): bool => true),
+        ])
+        ->fill();
+
+    invade($savedSchema->getLivewire())->cacheSchema('form', $savedSchema);
+
+    expect($savedSchema)
+        ->getState()->toBe([$savedStatePath => $savedState]);
+
+    $notSavedSchema = Schema::make(Livewire::make())
+        ->statePath('data')
+        ->components([
+            Field::make(Str::random())
+                ->default(Str::random())
+                ->saved(fn (): bool => false),
+        ])
+        ->fill();
+
+    invade($notSavedSchema->getLivewire())->cacheSchema('form', $notSavedSchema);
+
+    expect($notSavedSchema)
+        ->getState()->toBe([]);
+});
+
+test('disabled components can be dehydrated when `dehydrated()` is called after `disabled()`', function (): void {
+    $schema = Schema::make(Livewire::make())
+        ->statePath('data')
+        ->components([
+            Field::make($statePath = Str::random())
+                ->default($state = Str::random())
+                ->disabled()
+                ->dehydrated(),
+        ])
+        ->fill();
+
+    invade($schema->getLivewire())->cacheSchema('form', $schema);
+
+    expect($schema)
+        ->getState()->toBe([$statePath => $state]);
+});
+
+test('disabled components can be saved when `saved()` is called after `disabled()`', function (): void {
+    $schema = Schema::make(Livewire::make())
+        ->statePath('data')
+        ->components([
+            Field::make($statePath = Str::random())
+                ->default($state = Str::random())
+                ->disabled()
+                ->saved(),
+        ])
+        ->fill();
+
+    invade($schema->getLivewire())->cacheSchema('form', $schema);
+
+    expect($schema)
+        ->getState()->toBe([$statePath => $state]);
+});
