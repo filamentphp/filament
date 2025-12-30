@@ -1,5 +1,5 @@
 .fi-sc-unordered-list {
-    @apply ms-3 list-disc text-sm sm:columns-2;
+    @apply ms-3 list-disc text-sm;
 
     &.fi-size-xs {
         @apply text-xs;

@@ -15,12 +15,15 @@ use Filament\Tests\Fixtures\Clusters\UserManagement\Pages\ManageAdmins;
 use Filament\Tests\Fixtures\Clusters\UserManagement\Pages\ManageStaff;
 use Filament\Tests\Fixtures\Pages\Actions;
 use Filament\Tests\Fixtures\Pages\Settings;
+use Filament\Tests\Fixtures\Resources\Companies\CompanyResource;
+use Filament\Tests\Fixtures\Resources\Companies\Resources\CompanyTeamResource;
 use Filament\Tests\Fixtures\Resources\Departments\DepartmentResource;
 use Filament\Tests\Fixtures\Resources\PostCategories\PostCategoryResource;
 use Filament\Tests\Fixtures\Resources\Posts\PostResource;
 use Filament\Tests\Fixtures\Resources\Shop\Products\ProductResource;
 use Filament\Tests\Fixtures\Resources\TicketMessages\TicketMessageResource;
 use Filament\Tests\Fixtures\Resources\Tickets\TicketResource;
+use Filament\Tests\Fixtures\Resources\Users\Resources\UserPostResource;
 use Filament\Tests\Fixtures\Resources\Users\UserResource;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
@@ -43,6 +46,8 @@ class AdminPanelProvider extends PanelProvider
             ->emailVerification()
             ->profile()
             ->resources([
+                CompanyResource::class,
+                CompanyTeamResource::class,
                 DepartmentResource::class,
                 PostResource::class,
                 PostCategoryResource::class,
@@ -50,6 +55,7 @@ class AdminPanelProvider extends PanelProvider
                 TicketResource::class,
                 TicketMessageResource::class,
                 UserResource::class,
+                UserPostResource::class,
             ])
             ->pages([
                 Pages\Dashboard::class,

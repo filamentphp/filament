@@ -1,9 +1,17 @@
 <?php
 
+use Filament\Actions\Concerns\InteractsWithActions;
+use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Components\Select;
+use Filament\Schemas\Concerns\InteractsWithSchemas;
+use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
 use Filament\Tests\Fixtures\Livewire\Livewire;
+use Filament\Tests\Fixtures\Models\Team;
+use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
+use Illuminate\Contracts\View\View;
+use Livewire\Component;
 
 use function Filament\Tests\livewire;
 
@@ -55,6 +63,68 @@ it('can automatically validate valid multiple options with custom search results
         ->fillForm(['number' => ['one', 'four']])
         ->call('save')
         ->assertHasFormErrors(['number.1' => ['in']]);
+});
+
+it('can use `BelongsToMany` relationship as multiple select', function (): void {
+    $user = User::factory()->create();
+    $teams = Team::factory()->count(3)->create();
+    $user->teams()->attach($teams);
+
+    expect($user->teams)->toHaveCount(3);
+
+    livewire(TestComponentWithBelongsToManyMultipleSelect::class, ['record' => $user])
+        ->assertSchemaStateSet([
+            'teams' => $teams->pluck('id')->map(fn ($id) => (string) $id)->all(),
+        ]);
+});
+
+it('can save `BelongsToMany` relationship as multiple select', function (): void {
+    $user = User::factory()->create();
+    $teams = Team::factory()->count(3)->create();
+    $user->teams()->attach($teams->first());
+
+    expect($user->teams)->toHaveCount(1);
+
+    $newTeamIds = $teams->take(2)->pluck('id')->map(fn ($id) => (string) $id)->all();
+
+    livewire(TestComponentWithBelongsToManyMultipleSelect::class, ['record' => $user])
+        ->fillForm(['teams' => $newTeamIds])
+        ->call('save');
+
+    $user->refresh();
+    expect($user->teams)->toHaveCount(2);
+    expect($user->teams->pluck('id')->sort()->values()->all())->toBe($teams->take(2)->pluck('id')->sort()->values()->all());
+});
+
+it('can use `BelongsToMany` relationship as single select', function (): void {
+    $user = User::factory()->create();
+    $teams = Team::factory()->count(3)->create();
+    $user->teams()->attach($teams);
+
+    expect($user->teams)->toHaveCount(3);
+
+    livewire(TestComponentWithBelongsToManySelect::class, ['record' => $user])
+        ->assertSchemaStateSet([
+            'teams' => (string) $teams->first()->id,
+        ]);
+});
+
+it('can save `BelongsToMany` relationship as single select', function (): void {
+    $user = User::factory()->create();
+    $teams = Team::factory()->count(3)->create();
+    $user->teams()->attach($teams->take(2));
+
+    expect($user->teams)->toHaveCount(2);
+
+    $newTeamId = (string) $teams->last()->id;
+
+    livewire(TestComponentWithBelongsToManySelect::class, ['record' => $user])
+        ->fillForm(['teams' => $newTeamId])
+        ->call('save');
+
+    $user->refresh();
+    expect($user->teams)->toHaveCount(1);
+    expect($user->teams->first()->id)->toBe($teams->last()->id);
 });
 
 class TestComponentWithSelect extends Livewire
@@ -172,5 +242,80 @@ class TestComponentWithMultipleSelectCustomSearchResults extends Livewire
     public function save(): void
     {
         $this->form->getState();
+    }
+}
+
+class TestComponentWithBelongsToManySelect extends Component implements HasActions, HasSchemas
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+
+    public $data = [];
+
+    public User $record;
+
+    public function mount(): void
+    {
+        $this->form->fill($this->record->attributesToArray());
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                Select::make('teams')
+                    ->relationship('teams', 'name')
+                    ->preload(),
+            ])
+            ->model($this->record)
+            ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->form->getState();
+    }
+
+    public function render(): View
+    {
+        return view('livewire.form');
+    }
+}
+
+class TestComponentWithBelongsToManyMultipleSelect extends Component implements HasActions, HasSchemas
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+
+    public $data = [];
+
+    public User $record;
+
+    public function mount(): void
+    {
+        $this->form->fill($this->record->attributesToArray());
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                Select::make('teams')
+                    ->relationship('teams', 'name')
+                    ->multiple()
+                    ->preload(),
+            ])
+            ->model($this->record)
+            ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->form->getState();
+    }
+
+    public function render(): View
+    {
+        return view('livewire.form');
     }
 }

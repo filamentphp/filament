@@ -129,6 +129,22 @@ Select::make('author_id')
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `noSearchResultsMessage()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
+### Setting a custom no options message
+
+When you're using a select or multi-select with `preload()` or dynamic options via `options()` closure, you may want to display a custom message when no options are available. You can do this using the `noOptionsMessage()` method:
+
+```php
+use Filament\Forms\Components\Select;
+
+Select::make('author_id')
+    ->relationship(name: 'author', titleAttribute: 'name')
+    ->searchable()
+    ->preload()
+    ->noOptionsMessage('No authors available.')
+```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `noOptionsMessage()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 ### Setting a custom search prompt
 
 When you're using a searchable select or multi-select, you may want to display a custom message when the user has not yet entered a search term. You can do this using the `searchPrompt()` method:

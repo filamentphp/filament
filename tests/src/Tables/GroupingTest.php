@@ -381,3 +381,124 @@ it('can group records with nullable nested `BelongsTo` -> `HasOne` -> `BelongsTo
         ->set('tableGrouping', 'author.profile.company.name')
         ->assertCanSeeTableRecords($allPosts);
 });
+
+it('can group records by `HasOneThrough` relationship', function (): void {
+    // Create users with profiles that have settings with unique themes
+    $themes = ['alpha-theme', 'beta-theme', 'gamma-theme', 'delta-theme', 'epsilon-theme'];
+    foreach ($themes as $theme) {
+        User::factory()->has(
+            Profile::factory()->has(
+                Setting::factory()->state(['theme' => $theme]),
+                'setting'
+            ),
+            'profile'
+        )->create();
+    }
+
+    $sortedUsers = User::query()
+        ->orderBy(
+            Setting::query()
+                ->select('theme')
+                ->join('profiles', 'profiles.id', '=', 'settings.profile_id')
+                ->whereColumn('profiles.user_id', 'users.id')
+                ->limit(1)
+        )
+        ->orderBy('users.id')
+        ->get();
+
+    livewire(UsersTable::class)
+        ->set('tableGrouping', 'setting.theme')
+        ->assertCanSeeTableRecords($sortedUsers, inOrder: true);
+});
+
+it('can group records with nullable `HasOneThrough` relationship', function (): void {
+    // User with profile and setting
+    $userWithSetting = User::factory()->has(
+        Profile::factory()->has(
+            Setting::factory()->state(['theme' => 'dark']),
+            'setting'
+        ),
+        'profile'
+    )->create();
+
+    // User with profile but no setting
+    $userWithProfileNoSetting = User::factory()->has(
+        Profile::factory(),
+        'profile'
+    )->create();
+
+    // User without profile (no setting possible)
+    $userWithoutProfile = User::factory()->create();
+
+    $allUsers = collect([$userWithSetting, $userWithProfileNoSetting, $userWithoutProfile]);
+
+    // Just verify grouping doesn't crash with nullable relationships
+    livewire(UsersTable::class)
+        ->set('tableGrouping', 'setting.theme')
+        ->assertCanSeeTableRecords($allUsers);
+});
+
+it('can group records by `BelongsTo` -> `HasOneThrough` relationship', function (): void {
+    // Create posts with authors that have settings via HasOneThrough
+    $themes = ['alpha-theme', 'beta-theme', 'gamma-theme', 'delta-theme', 'epsilon-theme'];
+    foreach ($themes as $theme) {
+        $user = User::factory()->has(
+            Profile::factory()->has(
+                Setting::factory()->state(['theme' => $theme]),
+                'setting'
+            ),
+            'profile'
+        )->create();
+
+        Post::factory()->create(['author_id' => $user->id]);
+    }
+
+    $sortedPosts = Post::query()
+        ->orderBy(
+            Setting::query()
+                ->select('theme')
+                ->join('profiles', 'profiles.id', '=', 'settings.profile_id')
+                ->join('users', 'users.id', '=', 'profiles.user_id')
+                ->whereColumn('users.id', 'posts.author_id')
+                ->limit(1)
+        )
+        ->orderBy('posts.id')
+        ->get();
+
+    livewire(PostsTable::class)
+        ->set('tableGrouping', 'author.setting.theme')
+        ->assertCanSeeTableRecords($sortedPosts, inOrder: true);
+});
+
+it('can group records with nullable `BelongsTo` -> `HasOneThrough` relationship', function (): void {
+    // Post with author that has setting
+    $userWithSetting = User::factory()->has(
+        Profile::factory()->has(
+            Setting::factory()->state(['theme' => 'dark']),
+            'setting'
+        ),
+        'profile'
+    )->create();
+    $postWithSetting = Post::factory()->create(['author_id' => $userWithSetting->id]);
+
+    // Post with author with profile but no setting
+    $userWithProfileNoSetting = User::factory()->has(
+        Profile::factory(),
+        'profile'
+    )->create();
+    $postNoSetting = Post::factory()->create(['author_id' => $userWithProfileNoSetting->id]);
+
+    // Post with author but no profile
+    $userNoProfile = User::factory()->create();
+    $postNoProfile = Post::factory()->create(['author_id' => $userNoProfile->id]);
+
+    // Post with no author
+    $postNoAuthor = Post::factory()->create(['author_id' => null]);
+
+    $allPosts = collect([$postWithSetting, $postNoSetting, $postNoProfile, $postNoAuthor]);
+
+    // Just verify grouping doesn't crash with nullable nested relationships
+    livewire(PostsTable::class)
+        ->set('tableGrouping', 'author.setting.theme')
+        ->assertCanSeeTableRecords($allPosts);
+});

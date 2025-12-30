@@ -6,6 +6,8 @@ use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Filament\Tests\Fixtures\Livewire\Livewire;
 use Filament\Tests\Fixtures\Models\Post;
@@ -673,5 +675,47 @@ class TestComponentWithRepeaterAndBuilder extends Livewire
     public function save(): void
     {
         $this->form->getState();
+    }
+}
+
+it('can set repeater state programmatically via action', function (): void {
+    livewire(TestComponentWithRepeaterSetByAction::class)
+        ->callAction(TestAction::make('insert')->schemaComponent('questionsSection'))
+        ->assertSuccessful();
+});
+
+class TestComponentWithRepeaterSetByAction extends Livewire
+{
+    public function mount(): void
+    {
+        $this->form->fill();
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->components([
+                Section::make('Questions')
+                    ->key('questionsSection')
+                    ->schema([
+                        Repeater::make('questions')
+                            ->schema([
+                                TextInput::make('question')->required(),
+                            ])
+                            ->itemLabel(fn (array $state): ?string => $state['question'] ?? null),
+                    ])
+                    ->headerActions([
+                        Action::make('insert')
+                            ->label('Insert Question')
+                            ->action(function (Set $set): void {
+                                $set('questions', [
+                                    ['question' => 'Question #1'],
+                                    ['question' => 'Question #2'],
+                                    ['question' => 'Question #3'],
+                                ]);
+                            }),
+                    ]),
+            ])
+            ->statePath('data');
     }
 }
