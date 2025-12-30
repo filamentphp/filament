@@ -626,17 +626,17 @@ Configure mentions with providers using `mentions()`. Each provider handles a tr
 
 ```php
 use Filament\Forms\Components\RichEditor;
-use Filament\Forms\Components\RichEditor\MentionProviders\MentionProvider;
+use Filament\Forms\Components\RichEditor\MentionsProvider;
 
 // Static items for multiple triggers
 RichEditor::make('content')
     ->mentions([
-        MentionProvider::make('@')
+        MentionsProvider::make('@')
             ->options([
                 ['id' => 1, 'label' => 'Jane Doe'],
                 ['id' => 2, 'label' => 'John Smith'],
             ]),
-        MentionProvider::make('#')
+        MentionsProvider::make('#')
             ->options(['Laravel', 'Filament', 'Livewire']),
     ])
 ```
@@ -645,11 +645,11 @@ For large datasets, provide async results with `getSearchResultsUsing()`. The ca
 
 ```php
 use Filament\Forms\Components\RichEditor;
-use Filament\Forms\Components\RichEditor\MentionProviders\MentionProvider;
+use Filament\Forms\Components\RichEditor\MentionsProvider;
 
 RichEditor::make('content')
     ->mentions([
-        MentionProvider::make('@')
+        MentionsProvider::make('@')
             ->getSearchResultsUsing(fn (string $search): array => User::query()
                 ->where('name', 'like', "%{$search}%")
                 ->orderBy('name')
@@ -665,7 +665,7 @@ RichEditor::make('content')
 You may apply extra HTML attributes to the rendered mention element:
 
 ```php
-MentionProvider::make('@')
+MentionsProvider::make('@')
     ->options([
         ['id' => 1, 'label' => 'Jane Doe'],
     ])

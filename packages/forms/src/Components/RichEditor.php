@@ -14,7 +14,7 @@ use Filament\Forms\Components\RichEditor\FileAttachmentProviders\Contracts\FileA
 use Filament\Forms\Components\RichEditor\Models\Contracts\HasRichContent;
 use Filament\Forms\Components\RichEditor\Plugins\Contracts\RichContentPlugin;
 use Filament\Forms\Components\RichEditor\RichContentAttribute;
-use Filament\Forms\Components\RichEditor\MentionProviders\MentionProvider;
+use Filament\Forms\Components\RichEditor\MentionsProvider;
 use Filament\Forms\Components\RichEditor\RichContentCustomBlock;
 use Filament\Forms\Components\RichEditor\RichContentRenderer;
 use Filament\Forms\Components\RichEditor\RichEditorTool;
@@ -72,7 +72,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     protected array | Closure | null $mergeTags = null;
 
     /**
-     * @var array<MentionProvider | Closure | array<string, mixed>> | Closure | null
+     * @var array<MentionsProvider | Closure | array<string, mixed>> | Closure | null
      */
     protected array | Closure | null $mentions = null;
 
@@ -843,7 +843,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     }
 
     /**
-     * @param  array<MentionProvider | Closure | array<string, mixed>> | Closure | null  $mentions
+     * @param  array<MentionsProvider | Closure | array<string, mixed>> | Closure | null  $mentions
      */
     public function mentions(array | Closure | null $mentions): static
     {
@@ -858,16 +858,16 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     }
 
     /**
-     * @return array<MentionProvider>
+     * @return array<MentionsProvider>
      */
-    public function getMentionProviders(): array
+    public function getMentionsProviders(): array
     {
         $configured = $this->evaluate($this->mentions) ?? [];
 
         $providers = [];
 
         foreach (Arr::wrap($configured) as $mention) {
-            if ($mention instanceof MentionProvider) {
+            if ($mention instanceof MentionsProvider) {
                 $providers[] = $mention;
 
                 continue;
@@ -876,7 +876,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
             if (is_array($mention)) {
                 $char = strval($mention['char'] ?? '@');
 
-                $provider = MentionProvider::make($char);
+                $provider = MentionsProvider::make($char);
 
                 if (array_key_exists('items', $mention) && is_array($mention['items'])) {
                     $provider->options($mention['items']);
@@ -899,14 +899,14 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     public function getMentionsForJs(): array
     {
         return array_map(
-            function (MentionProvider $provider): array {
+            function (MentionsProvider $provider): array {
                 return [
                     'char' => $provider->getChar(),
                     'items' => $provider->getSearchResults(''),
                     'extraAttributes' => $provider->getExtraAttributes(),
                 ];
             },
-            $this->getMentionProviders(),
+            $this->getMentionsProviders(),
         );
     }
 
@@ -919,9 +919,9 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     {
         $char = $char ?? '@';
 
-        $providers = $this->getMentionProviders();
+        $providers = $this->getMentionsProviders();
 
-        $provider = collect($providers)->first(function (MentionProvider $p) use ($char): bool {
+        $provider = collect($providers)->first(function (MentionsProvider $p) use ($char): bool {
             return $p->getChar() === $char;
         }) ?? ($providers[0] ?? null);
 
@@ -943,9 +943,9 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     {
         $char = $char ?? '@';
 
-        $providers = $this->getMentionProviders();
+        $providers = $this->getMentionsProviders();
 
-        $provider = collect($providers)->first(function (MentionProvider $p) use ($char): bool {
+        $provider = collect($providers)->first(function (MentionsProvider $p) use ($char): bool {
             return $p->getChar() === $char;
         }) ?? ($providers[0] ?? null);
 

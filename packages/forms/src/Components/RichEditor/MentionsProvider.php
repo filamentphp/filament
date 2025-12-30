@@ -1,10 +1,10 @@
 <?php
 
-namespace Filament\Forms\Components\RichEditor\MentionProviders;
+namespace Filament\Forms\Components\RichEditor;
 
 use Closure;
 
-class MentionProvider
+class MentionsProvider
 {
     /**
      * @param  array<mixed>|null  $options
@@ -49,8 +49,6 @@ class MentionProvider
     }
 
     /**
-     * Define extra HTML attributes to apply on the rendered mention element.
-     *
      * @param  array<string, mixed>|Closure():array<string, mixed>  $attributes
      */
     public function extraAttributes(array|Closure $attributes): static
@@ -87,7 +85,6 @@ class MentionProvider
 
         $items = $this->options ?? [];
 
-        // Associative array: id => label
         if (! empty($items) && array_keys($items) !== range(0, count($items) - 1)) {
             return isset($items[$id]) ? strval($items[$id]) : null;
         }
