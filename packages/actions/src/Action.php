@@ -576,7 +576,7 @@ class Action extends ViewComponent implements Arrayable
             $schemaComponent instanceof HasExtraItemActions &&
             filled($itemKey = $arguments['item'] ?? null)
         ) {
-            return $schemaComponent->getItemState($itemKey) ?? $schemaComponent->getState();
+            return $schemaComponent->getItemState($itemKey);
         }
 
         return $schemaComponent?->getState();
