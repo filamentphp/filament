@@ -245,9 +245,9 @@ it('can get state from action in `belowContent` schema inside a Group without st
         ->assertDispatched('state-captured', state: '555-1234');
 });
 
-it('can get state from action in `belowContent` schema inside a Group with state path', function (): void {
+it('can get state from action directly in a Group with state path', function (): void {
     livewire(TestComponentWithActionState::class)
-        ->callAction(TestAction::make('captureStateBelowInGroupWithPath')->schemaComponent('address.street'))
+        ->callAction(TestAction::make('captureStateInGroupWithPath')->schemaComponent('address'))
         ->assertDispatched('state-captured', state: ['street' => '123 Main St', 'city' => 'Springfield']);
 });
 
@@ -278,6 +278,26 @@ class TestComponentWithActionState extends Livewire
                                 $this->dispatch('state-captured', state: $state);
                             }),
                     ]),
+                Group::make([
+                    TextInput::make('phone')
+                        ->default('555-1234')
+                        ->belowContent([
+                            Action::make('captureStateBelowInGroup')
+                                ->action(function (mixed $state): void {
+                                    $this->dispatch('state-captured', state: $state);
+                                }),
+                        ]),
+                ]),
+                Group::make([
+                    TextInput::make('street')
+                        ->default('123 Main St'),
+                    TextInput::make('city')
+                        ->default('Springfield'),
+                    Action::make('captureStateInGroupWithPath')
+                        ->action(function (mixed $state): void {
+                            $this->dispatch('state-captured', state: $state);
+                        }),
+                ])->statePath('address'),
                 Repeater::make('items')
                     ->schema([
                         TextInput::make('title'),
