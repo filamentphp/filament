@@ -782,6 +782,10 @@
         font-size: var(--text-base);
     }
 
+    & span[data-type='mention']:where(:not(.fi-not-prose, .fi-not-prose *)) {
+        font-weight: var(--font-weight-semibold);
+    }
+
     & .grid-layout:where(:not(.fi-not-prose, .fi-not-prose *)) {
         @apply grid grid-cols-1 gap-4;
 

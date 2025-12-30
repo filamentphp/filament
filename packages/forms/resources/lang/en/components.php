@@ -568,6 +568,11 @@ return [
 
         'no_merge_tag_search_results_message' => 'No merge tag results.',
 
+        'mentions' => [
+            'no_options_message' => 'No options available.',
+            'no_search_results_message' => 'No results match your search.',
+        ],
+
         'tools' => [
             'align_center' => 'Align center',
             'align_end' => 'Align end',

@@ -56,7 +56,7 @@ export default async ({
     noMergeTagSearchResultsMessage,
     mentions,
     getMentionSearchResultsUsing,
-    getMentionLabelUsing,
+    getMentionLabelsUsing,
     placeholder,
     statePath,
     textColors,
@@ -125,13 +125,14 @@ export default async ({
                   }),
               ]
             : []),
-        ...(mentions.length || typeof getMentionSearchResultsUsing === 'function'
+        ...(mentions.length ||
+        typeof getMentionSearchResultsUsing === 'function'
             ? [
                   Mention.configure({
                       HTMLAttributes: { class: 'fi-fo-rich-editor-mention' },
                       suggestions: mentions,
                       getMentionSearchResultsUsing,
-                      getMentionLabelUsing,
+                      getMentionLabelsUsing,
                   }),
               ]
             : []),

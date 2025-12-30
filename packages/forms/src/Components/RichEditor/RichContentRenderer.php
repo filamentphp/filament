@@ -13,6 +13,8 @@ use Filament\Forms\Components\RichEditor\TipTapExtensions\GridColumnExtension;
 use Filament\Forms\Components\RichEditor\TipTapExtensions\GridExtension;
 use Filament\Forms\Components\RichEditor\TipTapExtensions\ImageExtension;
 use Filament\Forms\Components\RichEditor\TipTapExtensions\LeadExtension;
+use Filament\Forms\Components\RichEditor\TipTapExtensions\MentionExtension;
+use Filament\Forms\Components\RichEditor\TipTapExtensions\MentionLinkExtension;
 use Filament\Forms\Components\RichEditor\TipTapExtensions\MergeTagExtension;
 use Filament\Forms\Components\RichEditor\TipTapExtensions\RawHtmlMergeTagExtension;
 use Filament\Forms\Components\RichEditor\TipTapExtensions\RenderedCustomBlockExtension;
@@ -82,6 +84,11 @@ class RichContentRenderer implements Htmlable
      * @var ?array<class-string<RichContentCustomBlock> | array<string, mixed> | Closure>
      */
     protected ?array $customBlocks = null;
+
+    /**
+     * @var ?array<MentionProvider>
+     */
+    protected ?array $mentionProviders = null;
 
     /**
      * @var array<string, mixed>
@@ -269,6 +276,47 @@ class RichContentRenderer implements Htmlable
         });
     }
 
+    protected function processMentions(Editor $editor): void
+    {
+        if (blank($this->mentionProviders)) {
+            return;
+        }
+
+        $editor->descendants(function (object &$node): void {
+            if ($node->type !== 'mention') {
+                return;
+            }
+
+            $id = $node->attrs->id ?? null;
+            $label = $node->attrs->label ?? null;
+            $char = $node->attrs->char ?? '@';
+
+            if (blank($id)) {
+                return;
+            }
+
+            $provider = $this->getMentionProvider($char);
+
+            if (! $provider) {
+                return;
+            }
+
+            if (blank($label)) {
+                $labels = $provider->getLabels([$id]);
+                $label = $labels[$id] ?? $id;
+            }
+
+            $url = $provider->getUrl($id, $label);
+
+            if ($url) {
+                $node->type = 'mentionLink';
+                $node->attrs->href = $url;
+            }
+
+            $node->attrs->label = $label;
+        });
+    }
+
     public function processNodesUsing(Closure $callback): static
     {
         $this->nodeProcessors[] = $callback;
@@ -326,6 +374,8 @@ class RichContentRenderer implements Htmlable
             app(LeadExtension::class),
             app(Link::class),
             app(ListItem::class),
+            app(MentionExtension::class),
+            app(MentionLinkExtension::class),
             app(MergeTagExtension::class),
             app(OrderedList::class),
             app(Paragraph::class),
@@ -396,6 +446,7 @@ class RichContentRenderer implements Htmlable
         $this->processCustomBlocks($editor);
         $this->processFileAttachments($editor);
         $this->processMergeTags($editor);
+        $this->processMentions($editor);
         $this->processNodes($editor);
 
         return $editor->getHTML();
@@ -470,6 +521,39 @@ class RichContentRenderer implements Htmlable
         }
 
         return null;
+    }
+
+    /**
+     * @param  ?array<MentionProvider>  $providers
+     */
+    public function mentionProviders(?array $providers): static
+    {
+        $this->mentionProviders = $providers;
+
+        return $this;
+    }
+
+    /**
+     * @return ?array<MentionProvider>
+     */
+    public function getMentionProviders(): ?array
+    {
+        return $this->mentionProviders;
+    }
+
+    public function getMentionProvider(string $char): ?MentionProvider
+    {
+        if (blank($this->mentionProviders)) {
+            return null;
+        }
+
+        foreach ($this->mentionProviders as $provider) {
+            if ($provider->getChar() === $char) {
+                return $provider;
+            }
+        }
+
+        return $this->mentionProviders[0] ?? null;
     }
 
     /**

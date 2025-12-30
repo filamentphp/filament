@@ -32,13 +32,18 @@ const updatePosition = (editor, element) => {
     })
 }
 
-export default ({ items = [] }) => ({
+export default ({
+    items = [],
+    noOptionsMessage = null,
+    noSearchResultsMessage = null,
+    isSearchable = false,
+}) => ({
     items: async ({ query }) => {
         if (typeof items === 'function') {
             try {
                 const result = items({ query })
                 return Array.isArray(result) ? result : await result
-            } catch (e) {
+            } catch {
                 return []
             }
         }
@@ -47,7 +52,10 @@ export default ({ items = [] }) => ({
 
         const searchQuery = String(query).toLowerCase()
         return items.filter((item) => {
-            const label = typeof item === 'string' ? item : (item?.label ?? item?.name ?? '')
+            const label =
+                typeof item === 'string'
+                    ? item
+                    : (item?.label ?? item?.name ?? '')
             return String(label).toLowerCase().includes(searchQuery)
         })
     },
@@ -56,60 +64,133 @@ export default ({ items = [] }) => ({
         let element
         let selectedIndex = 0
         let currentProps = null
+        let hasSearched = false
 
         const createDropdown = () => {
             const dropdown = document.createElement('div')
-            dropdown.className = 'fi-dropdown-panel fi-dropdown-list'
+            dropdown.className =
+                'fi-dropdown-panel fi-dropdown-list fi-scrollable'
+            dropdown.style.maxHeight = '15rem'
+
             return dropdown
         }
 
         const renderItems = () => {
             if (!element || !currentProps) return
 
-            const list = Array.isArray(currentProps.items) ? currentProps.items : []
+            const items = Array.isArray(currentProps.items)
+                ? currentProps.items
+                : []
+            const query = currentProps.query ?? ''
+
             element.innerHTML = ''
 
-            if (list.length) {
-                list.forEach((raw, index) => {
-                    const label = typeof raw === 'string' ? raw : (raw?.label ?? raw?.name ?? String(raw?.id ?? ''))
-                    const id = typeof raw === 'object' ? (raw?.id ?? label) : label
+            if (items.length) {
+                items.forEach((raw, index) => {
+                    const label =
+                        typeof raw === 'string'
+                            ? raw
+                            : (raw?.label ?? raw?.name ?? String(raw?.id ?? ''))
+                    const id =
+                        typeof raw === 'object' ? (raw?.id ?? label) : label
 
                     const button = document.createElement('button')
-                    button.className = `fi-dropdown-list-item fi-dropdown-list-item-label ${index === selectedIndex ? 'fi-selected' : ''}`
-                    button.textContent = label
+                    button.className = `fi-dropdown-list-item ${index === selectedIndex ? 'fi-selected' : ''}`
                     button.type = 'button'
-                    button.addEventListener('click', () => selectItem(id, label))
+                    button.addEventListener('click', () =>
+                        selectItem(id, label),
+                    )
+
+                    const labelSpan = document.createElement('span')
+                    labelSpan.className = 'fi-dropdown-list-item-label'
+                    labelSpan.textContent = label
+                    button.appendChild(labelSpan)
+
                     element.appendChild(button)
                 })
+            } else {
+                const message = getEmptyMessage(query)
+
+                if (message) {
+                    const messageElement = document.createElement('div')
+                    messageElement.className = 'fi-dropdown-header'
+
+                    const messageSpan = document.createElement('span')
+                    messageSpan.textContent = message
+                    messageElement.appendChild(messageSpan)
+
+                    element.appendChild(messageElement)
+                }
             }
+        }
+
+        const getEmptyMessage = (query) => {
+            if (query && (isSearchable || hasSearched)) {
+                return noSearchResultsMessage
+            }
+
+            return noOptionsMessage
         }
 
         const selectItem = (id, label) => {
             if (!currentProps) return
+
             currentProps.command({ id, label })
+        }
+
+        const scrollToSelected = () => {
+            if (!element || !currentProps) return
+
+            const items = currentProps.items || []
+            if (items.length === 0) return
+
+            const selectedButton = element.children[selectedIndex]
+
+            if (selectedButton) {
+                const rect = selectedButton.getBoundingClientRect()
+                const containerRect = element.getBoundingClientRect()
+                if (
+                    rect.top < containerRect.top ||
+                    rect.bottom > containerRect.bottom
+                ) {
+                    selectedButton.scrollIntoView({ block: 'nearest' })
+                }
+            }
         }
 
         const upHandler = () => {
             if (!currentProps) return
-            const list = Array.isArray(currentProps.items) ? currentProps.items : []
-            if (!list.length) return
-            selectedIndex = (selectedIndex + list.length - 1) % list.length
+
+            const items = Array.isArray(currentProps.items)
+                ? currentProps.items
+                : []
+            if (items.length === 0) return
+
+            selectedIndex = (selectedIndex + items.length - 1) % items.length
             renderItems()
+            scrollToSelected()
         }
 
         const downHandler = () => {
             if (!currentProps) return
-            const list = currentProps.items || []
-            if (!list.length) return
-            selectedIndex = (selectedIndex + 1) % list.length
+
+            const items = currentProps.items || []
+            if (items.length === 0) return
+
+            selectedIndex = (selectedIndex + 1) % items.length
             renderItems()
+            scrollToSelected()
         }
 
         const enterHandler = () => {
-            const list = currentProps?.items || []
-            if (!list.length) return
-            const raw = list[selectedIndex]
-            const label = typeof raw === 'string' ? raw : (raw?.label ?? raw?.name ?? String(raw?.id ?? ''))
+            const items = currentProps?.items || []
+            if (items.length === 0) return
+
+            const raw = items[selectedIndex]
+            const label =
+                typeof raw === 'string'
+                    ? raw
+                    : (raw?.label ?? raw?.name ?? String(raw?.id ?? ''))
             const id = typeof raw === 'object' ? (raw?.id ?? label) : label
             selectItem(id, label)
         }
@@ -118,21 +199,37 @@ export default ({ items = [] }) => ({
             onStart: (props) => {
                 currentProps = props
                 selectedIndex = 0
+                hasSearched = false
 
                 element = createDropdown()
                 element.style.position = 'absolute'
+
                 renderItems()
+
                 document.body.appendChild(element)
 
-                if (!props.clientRect) return
+                if (!props.clientRect) {
+                    return
+                }
+
                 updatePosition(props.editor, element)
             },
 
             onUpdate: (props) => {
                 currentProps = props
                 selectedIndex = 0
+
+                if (props.query) {
+                    hasSearched = true
+                }
+
                 renderItems()
-                if (!props.clientRect) return
+                scrollToSelected()
+
+                if (!props.clientRect) {
+                    return
+                }
+
                 updatePosition(props.editor, element)
             },
 
@@ -141,20 +238,25 @@ export default ({ items = [] }) => ({
                     if (element && element.parentNode) {
                         element.parentNode.removeChild(element)
                     }
+
                     return true
                 }
+
                 if (props.event.key === 'ArrowUp') {
                     upHandler()
                     return true
                 }
+
                 if (props.event.key === 'ArrowDown') {
                     downHandler()
                     return true
                 }
+
                 if (props.event.key === 'Enter') {
                     enterHandler()
                     return true
                 }
+
                 return false
             },
 

@@ -620,64 +620,145 @@ RichEditor::make('content')
 
 ## Using mentions
 
-Mentions let users type a trigger character (like `@`) to search and insert inline references (e.g., users, tasks). Mentions are rendered inline as non-editable tokens (e.g. `@ Jane Doe`).
+Mentions allow users to insert references to other records (such as users, issues, or tags) by typing a trigger character. When the user types a trigger character like `@`, a dropdown appears allowing them to search and select from available options. The selected mention is inserted as a non-editable inline token.
 
-Configure mentions with providers using `mentions()`. Each provider handles a trigger `char` and either static items or async search:
+To register mentions on an editor, use the `mentions()` method with one or more `MentionProvider` instances:
 
 ```php
 use Filament\Forms\Components\RichEditor;
-use Filament\Forms\Components\RichEditor\MentionsProvider;
+use Filament\Forms\Components\RichEditor\MentionProvider;
 
-// Static items for multiple triggers
 RichEditor::make('content')
     ->mentions([
-        MentionsProvider::make('@')
+        MentionProvider::make('@')
             ->options([
-                ['id' => 1, 'label' => 'Jane Doe'],
-                ['id' => 2, 'label' => 'John Smith'],
+                1 => 'Jane Doe',
+                2 => 'John Smith',
             ]),
-        MentionsProvider::make('#')
-            ->options(['Laravel', 'Filament', 'Livewire']),
     ])
 ```
 
-For large datasets, provide async results with `getSearchResultsUsing()`. The callback receives the search term and should return an array of items (strings, or objects with `id` and `label`).
+Each provider is configured with a trigger character (passed to `make()`) that activates the mention search. You can have multiple providers with different triggers:
 
 ```php
 use Filament\Forms\Components\RichEditor;
-use Filament\Forms\Components\RichEditor\MentionsProvider;
+use Filament\Forms\Components\RichEditor\MentionProvider;
 
 RichEditor::make('content')
     ->mentions([
-        MentionsProvider::make('@')
+        MentionProvider::make('@')
+            ->options([
+                1 => 'Jane Doe',
+                2 => 'John Smith',
+            ]),
+        MentionProvider::make('#')
+            ->options([
+                'bug' => 'Bug',
+                'feature' => 'Feature',
+            ]),
+    ])
+```
+
+### Searching mentions from the database
+
+For large datasets, you should fetch results dynamically using `getSearchResultsUsing()`. The callback receives the search term and should return an array of options with the format `[id => label]`.
+
+When using dynamic search results, only the mention's `id` is stored in the content. To display the correct label when the content is loaded, you must also provide `getLabelsUsing()`. This callback receives an array of IDs and should return an array with the format `[id => label]`:
+
+```php
+use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\RichEditor\MentionProvider;
+
+RichEditor::make('content')
+    ->mentions([
+        MentionProvider::make('@')
             ->getSearchResultsUsing(fn (string $search): array => User::query()
                 ->where('name', 'like', "%{$search}%")
                 ->orderBy('name')
                 ->limit(10)
                 ->pluck('name', 'id')
                 ->all())
-            ->getOptionLabelUsing(fn ($value): ?string => User::find($value)?->name),
+            ->getLabelsUsing(fn (array $ids): array => User::query()
+                ->whereIn('id', $ids)
+                ->pluck('name', 'id')
+                ->all()),
     ])
 ```
 
-### Adding extra HTML attributes
+### Linking mentions to URLs
 
-You may apply extra HTML attributes to the rendered mention element:
+You can make mentions link to a URL when rendered using the `url()` method. The callback receives the mention's `id` and `label`, and should return a URL string:
 
 ```php
-MentionsProvider::make('@')
-    ->options([
-        ['id' => 1, 'label' => 'Jane Doe'],
-    ])
-    ->extraAttributes([
-        'type' => 'user',
-        'class' => 'mention-user text-blue-600',
+use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\RichEditor\MentionProvider;
+
+RichEditor::make('content')
+    ->mentions([
+        MentionProvider::make('@')
+            ->getSearchResultsUsing(fn (string $search): array => User::query()
+                ->where('name', 'like', "%{$search}%")
+                ->limit(10)
+                ->pluck('name', 'id')
+                ->all())
+            ->getLabelsUsing(fn (array $ids): array => User::query()
+                ->whereIn('id', $ids)
+                ->pluck('name', 'id')
+                ->all())
+            ->url(fn (string $id, string $label): string => route('users.show', $id)),
     ])
 ```
 
-### Notes
+When rendered, mentions with a URL become clickable links with standard prose link styling.
 
-- You can provide multiple providers, each with a different `char` (default `@`).
+### Adding extra HTML attributes to mentions
+
+You may apply extra HTML attributes to the rendered mention element using `extraAttributes()`. This is useful for styling mentions differently based on their type:
+
+```php
+use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\RichEditor\MentionProvider;
+
+RichEditor::make('content')
+    ->mentions([
+        MentionProvider::make('@')
+            ->options([
+                1 => 'Jane Doe',
+            ])
+            ->extraAttributes([
+                'data-type' => 'user',
+            ]),
+    ])
+```
+
+### Using mentions with rich content attributes
+
+When using mentions with the rich content attribute system, you can define your mention providers once and have them apply to both the editor and renderer. This ensures mentions display correctly when rendering stored content:
+
+```php
+use Filament\Forms\Components\RichEditor\MentionProvider;
+use Filament\Forms\Components\RichEditor\RichContentAttribute;
+
+class Post extends Model implements HasRichContent
+{
+    use InteractsWithRichContent;
+
+    public function setUpRichContent(): void
+    {
+        $this->richContentAttributes([
+            RichContentAttribute::make($this, 'content')
+                ->mentionProviders([
+                    MentionProvider::make('@')
+                        ->getLabelsUsing(fn (array $ids): array => User::query()
+                            ->whereIn('id', $ids)
+                            ->pluck('name', 'id')
+                            ->all())
+                        ->url(fn (string $id, string $label): string => route('users.show', $id)),
+                ]),
+        ]);
+    }
+}
+```
 
 ## Registering rich content attributes
 

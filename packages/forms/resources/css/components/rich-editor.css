@@ -63,6 +63,10 @@
         }
     }
 
+    & span[data-type='mention'] {
+        @apply bg-primary-50 text-primary-600 dark:bg-primary-400/10 dark:text-primary-400 rounded px-1 font-medium;
+    }
+
     & .fi-fo-rich-editor-panels {
         @apply w-full border-b border-gray-200 bg-gray-50 dark:border-white/10 dark:bg-gray-900/30;
     }

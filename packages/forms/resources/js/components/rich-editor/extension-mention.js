@@ -32,7 +32,11 @@ const getSuggestionOptions = function ({
                 .insertContentAt(range, [
                     {
                         type: extensionName,
-                        attrs: { ...props, char: triggerChar, extra: extraAttributes },
+                        attrs: {
+                            ...props,
+                            char: triggerChar,
+                            extra: extraAttributes,
+                        },
                     },
                     {
                         type: 'text',
@@ -65,7 +69,6 @@ export default Node.create({
         return {
             suggestions: [],
             getSuggestionFromChar: () => null,
-            getLabelUsingFromChar: () => null,
         }
     },
 
@@ -80,13 +83,16 @@ export default Node.create({
             renderHTML({ options, node }) {
                 return [
                     'span',
-                    mergeAttributes(this.HTMLAttributes, options.HTMLAttributes),
+                    mergeAttributes(
+                        this.HTMLAttributes,
+                        options.HTMLAttributes,
+                    ),
                     `${node.attrs.char ?? '@'} ${node.attrs.label ?? ''}`,
                 ]
             },
             suggestions: [],
             suggestion: {},
-            getMentionLabelUsing: null,
+            getMentionLabelsUsing: null,
         }
     },
 
@@ -130,7 +136,8 @@ export default Node.create({
 
             char: {
                 default: '@',
-                parseHTML: (element) => element.getAttribute('data-char') ?? '@',
+                parseHTML: (element) =>
+                    element.getAttribute('data-char') ?? '@',
                 renderHTML: (attributes) => {
                     if (!attributes.char) {
                         return {}
@@ -161,9 +168,9 @@ export default Node.create({
     },
 
     renderHTML({ node, HTMLAttributes }) {
-        const suggestion = this.editor?.extensionStorage?.[this.name]?.getSuggestionFromChar(
-            node?.attrs?.char ?? '@',
-        )
+        const suggestion = this.editor?.extensionStorage?.[
+            this.name
+        ]?.getSuggestionFromChar(node?.attrs?.char ?? '@')
 
         const mergedOptions = { ...this.options }
 
@@ -197,9 +204,9 @@ export default Node.create({
         const args = {
             options: this.options,
             node,
-            suggestion: this.editor?.extensionStorage?.[this.name]?.getSuggestionFromChar(
-                node?.attrs?.char ?? '@',
-            ),
+            suggestion: this.editor?.extensionStorage?.[
+                this.name
+            ]?.getSuggestionFromChar(node?.attrs?.char ?? '@'),
         }
         return this.options.renderText(args)
     },
@@ -231,7 +238,9 @@ export default Node.create({
                     if (isMention) {
                         const trigger = mentionNode?.attrs?.char ?? '@'
                         transaction.insertText(
-                            this.options.deleteTriggerWithBackspace ? '' : trigger,
+                            this.options.deleteTriggerWithBackspace
+                                ? ''
+                                : trigger,
                             mentionPos,
                             mentionPos + mentionNode.nodeSize,
                         )
@@ -243,28 +252,42 @@ export default Node.create({
     },
 
     addProseMirrorPlugins() {
-        const hydrateMentions = (view) => {
+        const hydrateMentions = async (view) => {
             const { state, dispatch } = view
             const pending = []
+
             state.doc.descendants((node, pos) => {
                 if (node.type.name !== this.name) return
                 if (node.attrs?.label) return
                 const id = node.attrs?.id
                 const char = node.attrs?.char ?? '@'
-                const getLabel = this.editor?.extensionStorage?.[this.name]?.getLabelUsingFromChar(char) || this.options.getMentionLabelUsing
-                if (!id || typeof getLabel !== 'function') return
-                pending.push({ id, char, pos, getLabel })
+                if (!id) return
+                pending.push({ id, char, pos })
             })
-            pending.forEach(({ id, char, pos, getLabel }) => {
-                Promise.resolve(getLabel(id, char)).then((label) => {
+
+            if (pending.length === 0) return
+
+            const getMentionLabelsUsing = this.options.getMentionLabelsUsing
+            if (typeof getMentionLabelsUsing !== 'function') return
+
+            try {
+                const mentions = pending.map(({ id, char }) => ({ id, char }))
+                const labels = await getMentionLabelsUsing(mentions)
+
+                pending.forEach(({ id, pos }) => {
+                    const label = labels[id]
                     if (!label) return
                     const current = view.state.doc.nodeAt(pos)
                     if (!current || current.type.name !== this.name) return
                     const attrs = { ...current.attrs, label }
-                    const transaction = view.state.tr.setNodeMarkup(pos, undefined, attrs)
+                    const transaction = view.state.tr.setNodeMarkup(
+                        pos,
+                        undefined,
+                        attrs,
+                    )
                     dispatch(transaction)
                 })
-            })
+            } catch {}
         }
 
         return [
@@ -281,18 +304,33 @@ export default Node.create({
     },
 
     onBeforeCreate() {
-        const isArrayOfSuggestionObjects = (arr) => Array.isArray(arr) && arr.length > 0 && typeof arr[0] === 'object' && (arr[0].items || arr[0].char)
-        const isArrayOfItems = (arr) => Array.isArray(arr) && (arr.length === 0 || (typeof arr[0] === 'string' || typeof arr[0] === 'object'))
+        const isArrayOfSuggestionObjects = (arr) =>
+            Array.isArray(arr) &&
+            arr.length > 0 &&
+            typeof arr[0] === 'object' &&
+            (arr[0].items || arr[0].char)
+        const isArrayOfItems = (arr) =>
+            Array.isArray(arr) &&
+            (arr.length === 0 ||
+                typeof arr[0] === 'string' ||
+                typeof arr[0] === 'object')
         const toItemsArray = (value) => {
             if (value && !Array.isArray(value) && typeof value === 'object') {
-                return Object.entries(value).map(([id, label]) => ({ id, label }))
+                return Object.entries(value).map(([id, label]) => ({
+                    id,
+                    label,
+                }))
             }
             return value
         }
         const normalizeResults = (results, currentChar, baseItems, query) => {
             if (Array.isArray(results)) {
                 if (isArrayOfSuggestionObjects(results)) {
-                    const match = results.find((result) => (result?.char ?? '@') === (currentChar ?? '@')) || (results.length === 1 ? results[0] : null)
+                    const match =
+                        results.find(
+                            (result) =>
+                                (result?.char ?? '@') === (currentChar ?? '@'),
+                        ) || (results.length === 1 ? results[0] : null)
                     if (match?.items) return toItemsArray(match.items)
                 }
                 if (isArrayOfItems(results)) return toItemsArray(results)
@@ -304,7 +342,11 @@ export default Node.create({
                     }
                 }
                 const keys = Object.keys(results)
-                if (keys.length && typeof results[keys[0]] !== 'undefined' && !Array.isArray(results[keys[0]])) {
+                if (
+                    keys.length &&
+                    typeof results[keys[0]] !== 'undefined' &&
+                    !Array.isArray(results[keys[0]])
+                ) {
                     return toItemsArray(results)
                 }
                 const charKey = currentChar ?? '@'
@@ -315,17 +357,27 @@ export default Node.create({
             if (!query) return baseItems
             const searchQuery = String(query).toLowerCase()
             return (baseItems ?? []).filter((item) => {
-                const label = typeof item === 'string' ? item : (item?.label ?? item?.name ?? '')
+                const label =
+                    typeof item === 'string'
+                        ? item
+                        : (item?.label ?? item?.name ?? '')
                 return String(label).toLowerCase().includes(searchQuery)
             })
         }
 
-        const configured = this.options.suggestions.length ? this.options.suggestions : [this.options.suggestion]
+        const configured = this.options.suggestions.length
+            ? this.options.suggestions
+            : [this.options.suggestion]
 
         this.storage.suggestions = configured.map((suggestionConfig) => {
             const char = suggestionConfig?.char ?? '@'
             const baseItems = suggestionConfig?.items ?? []
-            const getMentionSearchResultsUsing = this.options.getMentionSearchResultsUsing
+            const noOptionsMessage = suggestionConfig?.noOptionsMessage ?? null
+            const noSearchResultsMessage =
+                suggestionConfig?.noSearchResultsMessage ?? null
+            const isSearchable = suggestionConfig?.isSearchable ?? false
+            const getMentionSearchResultsUsing =
+                this.options.getMentionSearchResultsUsing
 
             let suggestion = suggestionConfig
 
@@ -334,43 +386,73 @@ export default Node.create({
                 suggestion = {
                     ...suggestionConfig,
                     items: async (context) => {
-                        if (typeof getMentionSearchResultsUsing === 'function') {
+                        if (
+                            typeof getMentionSearchResultsUsing === 'function'
+                        ) {
                             try {
-                                const asyncResults = await getMentionSearchResultsUsing(context?.query, char)
+                                const asyncResults =
+                                    await getMentionSearchResultsUsing(
+                                        context?.query,
+                                        char,
+                                    )
                                 const base = await originalItems(context)
-                                return normalizeResults(asyncResults, char, base, context?.query)
+                                return normalizeResults(
+                                    asyncResults,
+                                    char,
+                                    base,
+                                    context?.query,
+                                )
                             } catch {}
                         }
                         return await originalItems(context)
                     },
                 }
             } else {
-                const preservedExtraAttributes = suggestionConfig?.extraAttributes
+                const preservedExtraAttributes =
+                    suggestionConfig?.extraAttributes
                 suggestion = {
                     ...getMentionSuggestion({
                         items: async ({ query }) => {
-                            if (typeof getMentionSearchResultsUsing === 'function') {
+                            if (
+                                typeof getMentionSearchResultsUsing ===
+                                'function'
+                            ) {
                                 try {
-                                    const asyncResults = await getMentionSearchResultsUsing(query, char)
-                                    return normalizeResults(asyncResults, char, baseItems, query)
+                                    const asyncResults =
+                                        await getMentionSearchResultsUsing(
+                                            query,
+                                            char,
+                                        )
+                                    return normalizeResults(
+                                        asyncResults,
+                                        char,
+                                        baseItems,
+                                        query,
+                                    )
                                 } catch {}
                             }
                             const base = baseItems
                             if (!query) return base
                             const searchQuery = String(query).toLowerCase()
                             return (base ?? []).filter((item) => {
-                                const label = typeof item === 'string' ? item : (item?.label ?? item?.name ?? '')
-                                return String(label).toLowerCase().includes(searchQuery)
+                                const label =
+                                    typeof item === 'string'
+                                        ? item
+                                        : (item?.label ?? item?.name ?? '')
+                                return String(label)
+                                    .toLowerCase()
+                                    .includes(searchQuery)
                             })
                         },
+                        noOptionsMessage,
+                        noSearchResultsMessage,
+                        isSearchable,
                     }),
                     char,
-                    ...(preservedExtraAttributes ? { extraAttributes: preservedExtraAttributes } : {}),
+                    ...(preservedExtraAttributes
+                        ? { extraAttributes: preservedExtraAttributes }
+                        : {}),
                 }
-            }
-
-            if (typeof this.options.getMentionLabelUsing === 'function') {
-                suggestion.getMentionLabelUsing = (id) => this.options.getMentionLabelUsing(id, char)
             }
 
             return getSuggestionOptions({
@@ -381,7 +463,9 @@ export default Node.create({
         })
 
         this.storage.getSuggestionFromChar = (char) => {
-            const suggestion = this.storage.suggestions.find((item) => item.char === char)
+            const suggestion = this.storage.suggestions.find(
+                (item) => item.char === char,
+            )
             if (suggestion) {
                 return suggestion
             }
@@ -389,14 +473,6 @@ export default Node.create({
                 return this.storage.suggestions[0]
             }
 
-            return null
-        }
-
-        this.storage.getLabelUsingFromChar = (char) => {
-            const suggestion = this.storage.getSuggestionFromChar(char)
-            if (suggestion && typeof suggestion.getMentionLabelUsing === 'function') {
-                return suggestion.getMentionLabelUsing
-            }
             return null
         }
     },

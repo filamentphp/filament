@@ -11,10 +11,10 @@ use Filament\Forms\Components\RichEditor\Actions\LinkAction;
 use Filament\Forms\Components\RichEditor\Actions\TextColorAction;
 use Filament\Forms\Components\RichEditor\EditorCommand;
 use Filament\Forms\Components\RichEditor\FileAttachmentProviders\Contracts\FileAttachmentProvider;
+use Filament\Forms\Components\RichEditor\MentionProvider;
 use Filament\Forms\Components\RichEditor\Models\Contracts\HasRichContent;
 use Filament\Forms\Components\RichEditor\Plugins\Contracts\RichContentPlugin;
 use Filament\Forms\Components\RichEditor\RichContentAttribute;
-use Filament\Forms\Components\RichEditor\MentionsProvider;
 use Filament\Forms\Components\RichEditor\RichContentCustomBlock;
 use Filament\Forms\Components\RichEditor\RichContentRenderer;
 use Filament\Forms\Components\RichEditor\RichEditorTool;
@@ -22,13 +22,13 @@ use Filament\Forms\Components\RichEditor\StateCasts\RichEditorStateCast;
 use Filament\Forms\Components\RichEditor\TextColor;
 use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
 use Filament\Support\Colors\Color;
+use Filament\Support\Components\Attributes\ExposedLivewireMethod;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
-use Filament\Support\Components\Attributes\ExposedLivewireMethod;
 use Livewire\Attributes\Renderless;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Tiptap\Editor;
@@ -72,7 +72,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     protected array | Closure | null $mergeTags = null;
 
     /**
-     * @var array<MentionsProvider | Closure | array<string, mixed>> | Closure | null
+     * @var array<MentionProvider | Closure | array<string, mixed>> | Closure | null
      */
     protected array | Closure | null $mentions = null;
 
@@ -367,7 +367,6 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
                         'content' => [],
                     ])
                     ->descendants(function (object &$node) use ($component, &$fileAttachmentIds): void {
-                        // Strip label from mentions before saving
                         if (($node->type ?? null) === 'mention') {
                             if (isset($node->attrs) && isset($node->attrs->label)) {
                                 unset($node->attrs->label);
@@ -442,7 +441,6 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
                         'content' => [],
                     ])
                     ->descendants(function (object &$node) use ($component, &$fileAttachmentIds): void {
-                        // Strip label from mentions before saving
                         if (($node->type ?? null) === 'mention') {
                             if (isset($node->attrs) && isset($node->attrs->label)) {
                                 unset($node->attrs->label);
@@ -831,19 +829,16 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
      */
     public function getMergeTags(): array
     {
-        $evaluated = $this->evaluate($this->mergeTags);
+        $mergeTags = $this->evaluate($this->mergeTags) ?? $this->getContentAttribute()?->getMergeTags() ?? [];
 
-        if (is_array($evaluated)) {
-            return $evaluated;
-        }
-
-        $fromAttribute = $this->getContentAttribute()?->getMergeTags();
-
-        return is_array($fromAttribute) ? $fromAttribute : [];
+        return Arr::mapWithKeys(
+            $mergeTags,
+            fn (string $label, int | string $id): array => [(is_string($id) ? $id : $label) => $label],
+        );
     }
 
     /**
-     * @param  array<MentionsProvider | Closure | array<string, mixed>> | Closure | null  $mentions
+     * @param  array<MentionProvider | Closure | array<string, mixed>> | Closure | null  $mentions
      */
     public function mentions(array | Closure | null $mentions): static
     {
@@ -858,16 +853,16 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     }
 
     /**
-     * @return array<MentionsProvider>
+     * @return array<MentionProvider>
      */
-    public function getMentionsProviders(): array
+    public function getMentionProviders(): array
     {
+        $providers = $this->getContentAttribute()?->getMentionProviders() ?? [];
+
         $configured = $this->evaluate($this->mentions) ?? [];
 
-        $providers = [];
-
         foreach (Arr::wrap($configured) as $mention) {
-            if ($mention instanceof MentionsProvider) {
+            if ($mention instanceof MentionProvider) {
                 $providers[] = $mention;
 
                 continue;
@@ -876,7 +871,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
             if (is_array($mention)) {
                 $char = strval($mention['char'] ?? '@');
 
-                $provider = MentionsProvider::make($char);
+                $provider = MentionProvider::make($char);
 
                 if (array_key_exists('items', $mention) && is_array($mention['items'])) {
                     $provider->options($mention['items']);
@@ -892,21 +887,22 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     }
 
     /**
-     * Normalized for JS: [ { char: '@', items: [...] }, ... ]
-     *
-     * @return array<int, array{char: string, items: array<mixed>}> 
+     * @return array<int, array{char: string, items: array<string, string>, extraAttributes: array<string, mixed>, noOptionsMessage: string, noSearchResultsMessage: string, isSearchable: bool}>
      */
     public function getMentionsForJs(): array
     {
         return array_map(
-            function (MentionsProvider $provider): array {
+            function (MentionProvider $provider): array {
                 return [
                     'char' => $provider->getChar(),
                     'items' => $provider->getSearchResults(''),
                     'extraAttributes' => $provider->getExtraAttributes(),
+                    'noOptionsMessage' => $provider->getNoOptionsMessage(),
+                    'noSearchResultsMessage' => $provider->getNoSearchResultsMessage(),
+                    'isSearchable' => $provider->hasSearchResultsUsing(),
                 ];
             },
-            $this->getMentionsProviders(),
+            $this->getMentionProviders(),
         );
     }
 
@@ -919,10 +915,10 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     {
         $char = $char ?? '@';
 
-        $providers = $this->getMentionsProviders();
+        $providers = $this->getMentionProviders();
 
-        $provider = collect($providers)->first(function (MentionsProvider $p) use ($char): bool {
-            return $p->getChar() === $char;
+        $provider = collect($providers)->first(function (MentionProvider $mentionProvider) use ($char): bool {
+            return $mentionProvider->getChar() === $char;
         }) ?? ($providers[0] ?? null);
 
         if (! $provider) {
@@ -933,29 +929,36 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     }
 
     /**
-     * Resolve the display label for a mention by id and char.
-     *
-     * @return array{label: ?string}
+     * @param  array<array{id: mixed, char: string}>  $mentions
+     * @return array<mixed, string>
      */
     #[ExposedLivewireMethod]
     #[Renderless]
-    public function getMentionLabelForJs(mixed $id = null, ?string $char = '@'): array
+    public function getMentionLabelsForJs(array $mentions = []): array
     {
-        $char = $char ?? '@';
+        $providers = $this->getMentionProviders();
+        $labels = [];
 
-        $providers = $this->getMentionsProviders();
+        $mentionsByChar = collect($mentions)->groupBy('char');
 
-        $provider = collect($providers)->first(function (MentionsProvider $p) use ($char): bool {
-            return $p->getChar() === $char;
-        }) ?? ($providers[0] ?? null);
+        foreach ($mentionsByChar as $char => $charMentions) {
+            $provider = collect($providers)->first(function (MentionProvider $mentionProvider) use ($char): bool {
+                return $mentionProvider->getChar() === $char;
+            }) ?? ($providers[0] ?? null);
 
-        if (! $provider) {
-            return ['label' => null];
+            if (! $provider) {
+                continue;
+            }
+
+            $ids = $charMentions->pluck('id')->all();
+            $charLabels = $provider->getLabels($ids);
+
+            foreach ($charLabels as $id => $label) {
+                $labels[$id] = $label;
+            }
         }
 
-        return [
-            'label' => $provider->getOptionLabelForId($id),
-        ];
+        return $labels;
     }
 
     public function hasMentions(): bool

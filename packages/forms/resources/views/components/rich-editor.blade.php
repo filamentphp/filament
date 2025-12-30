@@ -56,13 +56,12 @@
                                 { search: query, char },
                             )
                         },
-                        getMentionLabelUsing: async (id, char) => {
-                            const result = await $wire.callSchemaComponentMethod(
+                        getMentionLabelsUsing: async (mentions) => {
+                            return await $wire.callSchemaComponentMethod(
                                 @js($key),
-                                'getMentionLabelForJs',
-                                { id, char },
+                                'getMentionLabelsForJs',
+                                { mentions },
                             )
-                            return result?.label ?? null
                         },
                         noMergeTagSearchResultsMessage: @js($getNoMergeTagSearchResultsMessage()),
                         placeholder: @js($getPlaceholder()),
@@ -92,6 +91,7 @@
                     @endforeach
                 </div>
             @endif
+
             <div
                 x-show="isUploadingFile"
                 x-cloak
