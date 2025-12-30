@@ -50,9 +50,11 @@ trait HasState
 
     protected bool $hasDefaultState = false;
 
-    protected bool | Closure $isDehydrated = true;
+    protected bool | Closure | null $isDehydrated = null;
 
     protected bool | Closure $isDehydratedWhenHidden = false;
+
+    protected bool | Closure $isSaved = true;
 
     protected bool | Closure $isValidatedWhenNotDehydrated = true;
 
@@ -258,6 +260,13 @@ trait HasState
     public function dehydratedWhenHidden(bool | Closure $condition = true): static
     {
         $this->isDehydratedWhenHidden = $condition;
+
+        return $this;
+    }
+
+    public function saved(bool | Closure $condition = true): static
+    {
+        $this->isSaved = $condition;
 
         return $this;
     }
@@ -665,7 +674,9 @@ trait HasState
 
     public function isDehydrated(): bool
     {
-        if (! $this->evaluate($this->isDehydrated)) {
+        $isDehydrated = $this->evaluate($this->isDehydrated) ?? $this->isSaved();
+
+        if (! $isDehydrated) {
             return false;
         }
 
@@ -675,6 +686,11 @@ trait HasState
     public function isDehydratedWhenHidden(): bool
     {
         return (bool) $this->evaluate($this->isDehydratedWhenHidden);
+    }
+
+    public function isSaved(): bool
+    {
+        return (bool) $this->evaluate($this->isSaved);
     }
 
     public function isValidatedWhenNotDehydrated(): bool

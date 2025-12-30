@@ -337,11 +337,11 @@ Select::make('technologies')
 ```
 
 <Aside variant="warning">
-    When using `disabled()` with `multiple()` and `relationship()`, ensure that `disabled()` is called before `relationship()`. This ensures that the `dehydrated()` call from within `relationship()` is not overridden by the call from `disabled()`:
-    
+    When using `disabled()` with `multiple()` and `relationship()`, ensure that `disabled()` is called before `relationship()`. This ensures that the `saved()` call from `disabled()` is not applied after the `relationship()` configuration:
+
     ```php
     use Filament\Forms\Components\Select;
-    
+
     Select::make('technologies')
         ->multiple()
         ->disabled()

@@ -163,31 +163,31 @@ Toggle::make('is_admin')
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `disabled()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-Disabling a field will prevent it from being saved. If you'd like it to be saved, but still not editable, use the `dehydrated()` method:
+Disabling a field will prevent it from being saved. If you'd like it to be saved, but still not editable, use the `saved()` method:
 
 ```php
 use Filament\Forms\Components\Toggle;
 
 Toggle::make('is_admin')
     ->disabled()
-    ->dehydrated()
+    ->saved()
 ```
 
 <Aside variant="danger">
-    If you choose to dehydrate the field, a skilled user could still edit the field's value by manipulating Livewire's JavaScript.
+    If you choose to save the field when disabled, a skilled user could still edit the field's value by manipulating Livewire's JavaScript.
 </Aside>
 
-Optionally, you may pass a boolean value to control if the field should be dehydrated or not:
+Optionally, you may pass a boolean value to control if the field should be saved or not:
 
 ```php
 use Filament\Forms\Components\Toggle;
 
 Toggle::make('is_admin')
     ->disabled()
-    ->dehydrated(FeatureFlag::active())
+    ->saved(FeatureFlag::active())
 ```
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `dehydrated()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `saved()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ### Disabling a field based on the current operation
 
@@ -1283,22 +1283,22 @@ TextInput::make('name')
     ->dehydrateStateUsing(fn (string $state): string => ucwords($state))
 ```
 
-#### Preventing a field from being dehydrated
+#### Preventing a field from being saved
 
-You may also prevent a field from being dehydrated altogether using `dehydrated(false)`. In this example, the field will not be present in the array returned from `getState()`:
+You may prevent a field from being saved altogether using `saved(false)`. In this example, the field will not be present in the array returned from `getState()`, and any relationships associated with the field will not be saved either:
 
 ```php
 use Filament\Forms\Components\TextInput;
 
 TextInput::make('password_confirmation')
     ->password()
-    ->dehydrated(false)
+    ->saved(false)
 ```
 
 If your schema auto-saves data to the database, like in a [resource](../resources), this is useful to prevent a field from being saved to the database if it is purely used for presentational purposes.
 
 <Aside variant="info">
-    Even when a field is not dehydrated, it is still validated. To learn more about this behavior, see the [validation](validation#disabling-validation-when-fields-are-not-dehydrated) section.
+    Even when a field is not saved, it is still validated. To learn more about this behavior, see the [validation](validation#disabling-validation-when-fields-are-not-saved) section.
 </Aside>
 
 ### Field rendering
@@ -1602,7 +1602,7 @@ TextInput::make('password')
     ->dehydrateStateUsing(fn (string $state): string => Hash::make($state))
 ```
 
-But if your schema is used to change an existing password, you don't want to overwrite the existing password if the field is empty. You can [prevent the field from being dehydrated](#preventing-a-field-from-being-dehydrated) if the field is null or an empty string (using the `filled()` helper):
+But if your schema is used to change an existing password, you don't want to overwrite the existing password if the field is empty. You can [prevent the field from being saved](#preventing-a-field-from-being-saved) if the field is null or an empty string (using the `filled()` helper):
 
 ```php
 use Filament\Forms\Components\TextInput;
@@ -1611,7 +1611,7 @@ use Illuminate\Support\Facades\Hash;
 TextInput::make('password')
     ->password()
     ->dehydrateStateUsing(fn (string $state): string => Hash::make($state))
-    ->dehydrated(fn (?string $state): bool => filled($state))
+    ->saved(fn (?string $state): bool => filled($state))
 ```
 
 However, you want to require the password to be filled when the user is being created, by [injecting the `$operation` utility](#injecting-the-current-operation), and then [conditionally making the field required](#conditionally-making-a-field-required):
@@ -1623,7 +1623,7 @@ use Illuminate\Support\Facades\Hash;
 TextInput::make('password')
     ->password()
     ->dehydrateStateUsing(fn (string $state): string => Hash::make($state))
-    ->dehydrated(fn (?string $state): bool => filled($state))
+    ->saved(fn (?string $state): bool => filled($state))
     ->required(fn (string $operation): bool => $operation === 'create')
 ```
 
