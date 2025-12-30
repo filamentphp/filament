@@ -45,10 +45,10 @@ export default ({ items = [] }) => ({
 
         if (!query) return items
 
-        const q = String(query).toLowerCase()
+        const searchQuery = String(query).toLowerCase()
         return items.filter((item) => {
             const label = typeof item === 'string' ? item : (item?.label ?? item?.name ?? '')
-            return String(label).toLowerCase().includes(q)
+            return String(label).toLowerCase().includes(searchQuery)
         })
     },
 
