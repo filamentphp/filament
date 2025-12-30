@@ -684,6 +684,56 @@ it('can set repeater state programmatically via action', function (): void {
         ->assertSuccessful();
 });
 
+it('can access correct item state from action directly in repeater schema', function (): void {
+    $undoRepeaterFake = Repeater::fake();
+
+    livewire(TestComponentWithActionInRepeater::class)
+        ->callAction(
+            TestAction::make('captureState')
+                ->schemaComponent('items.0'),
+        )
+        ->assertDispatched('state-captured', state: [
+            'name' => 'Item 1',
+        ])
+        ->callAction(
+            TestAction::make('captureState')
+                ->schemaComponent('items.1'),
+        )
+        ->assertDispatched('state-captured', state: [
+            'name' => 'Item 2',
+        ]);
+
+    $undoRepeaterFake();
+});
+
+class TestComponentWithActionInRepeater extends Livewire
+{
+    public function mount(): void
+    {
+        $this->form->fill();
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->components([
+                Repeater::make('items')
+                    ->schema([
+                        TextInput::make('name'),
+                        Action::make('captureState')
+                            ->action(function (array $state): void {
+                                $this->dispatch('state-captured', state: $state);
+                            }),
+                    ])
+                    ->default([
+                        ['name' => 'Item 1'],
+                        ['name' => 'Item 2'],
+                    ]),
+            ])
+            ->statePath('data');
+    }
+}
+
 class TestComponentWithRepeaterSetByAction extends Livewire
 {
     public function mount(): void

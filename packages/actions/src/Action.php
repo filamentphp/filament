@@ -525,7 +525,7 @@ class Action extends ViewComponent implements Arrayable
             'schemaOperation', 'context', 'operation' => [$this->getSchemaContainer()?->getOperation() ?? $this->getSchemaComponent()?->getContainer()->getOperation()],
             'schemaGet', 'get' => [$this->getSchemaComponent()->makeGetUtility()->skipComponentsChildContainersWhileSearching(false)],
             'schemaSet', 'set' => [$this->getSchemaComponent()->makeSetUtility()->skipComponentsChildContainersWhileSearching(false)],
-            'schemaComponentState', 'state' => [$this->getSchemaComponent()->getState()],
+            'schemaComponentState', 'state' => [$this->getSchemaComponentState()],
             'table' => [$this->getTable()],
             default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
         };
@@ -544,6 +544,31 @@ class Action extends ViewComponent implements Arrayable
             Model::class, ($record instanceof Model) ? $record::class : null => [$record],
             default => parent::resolveDefaultClosureDependencyForEvaluationByType($parameterType),
         };
+    }
+
+    public function getSchemaComponentState(): mixed
+    {
+        $schemaContainer = $this->getSchemaContainer();
+
+        while ($schemaContainer) {
+            if (filled($schemaContainer->getStatePath(isAbsolute: false))) {
+                return $schemaContainer->getStateSnapshot();
+            }
+
+            $parentComponent = $schemaContainer->getParentComponent();
+
+            if (! $parentComponent) {
+                break;
+            }
+
+            if ($parentComponent->hasStatePath()) {
+                return $parentComponent->getState();
+            }
+
+            $schemaContainer = $parentComponent->getContainer();
+        }
+
+        return $this->getSchemaComponent()?->getState();
     }
 
     public function shouldClearRecordAfter(): bool

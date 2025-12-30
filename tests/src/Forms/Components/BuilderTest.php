@@ -1,5 +1,7 @@
 <?php
 
+use Filament\Actions\Action;
+use Filament\Actions\Testing\TestAction;
 use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\TextInput;
@@ -222,5 +224,58 @@ class TestComponentWithBuilderAndRepeater extends Livewire
     public function save(): void
     {
         $this->form->getState();
+    }
+}
+
+it('can access correct block state from action directly in builder schema', function (): void {
+    $undoBuilderFake = Builder::fake();
+
+    livewire(TestComponentWithActionInBuilder::class)
+        ->callAction(
+            TestAction::make('captureState')
+                ->schemaComponent('blocks.0.data'),
+        )
+        ->assertDispatched('state-captured', state: [
+            'content' => 'Block 1 content',
+        ])
+        ->callAction(
+            TestAction::make('captureState')
+                ->schemaComponent('blocks.1.data'),
+        )
+        ->assertDispatched('state-captured', state: [
+            'content' => 'Block 2 content',
+        ]);
+
+    $undoBuilderFake();
+});
+
+class TestComponentWithActionInBuilder extends Livewire
+{
+    public function mount(): void
+    {
+        $this->form->fill();
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->components([
+                Builder::make('blocks')
+                    ->blocks([
+                        Builder\Block::make('text')
+                            ->schema([
+                                TextInput::make('content'),
+                                Action::make('captureState')
+                                    ->action(function (array $state): void {
+                                        $this->dispatch('state-captured', state: $state);
+                                    }),
+                            ]),
+                    ])
+                    ->default([
+                        ['type' => 'text', 'data' => ['content' => 'Block 1 content']],
+                        ['type' => 'text', 'data' => ['content' => 'Block 2 content']],
+                    ]),
+            ])
+            ->statePath('data');
     }
 }
