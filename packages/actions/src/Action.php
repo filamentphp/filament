@@ -6,6 +6,7 @@ use BackedEnum;
 use Closure;
 use Filament\Actions\Concerns\HasTooltip;
 use Filament\Actions\Enums\ActionStatus;
+use Filament\Schemas\Components\Contracts\HasExtraItemActions;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Components\ViewComponent;
 use Filament\Support\Concerns\HasBadge;
@@ -568,7 +569,17 @@ class Action extends ViewComponent implements Arrayable
             $schemaContainer = $parentComponent->getContainer();
         }
 
-        return $this->getSchemaComponent()?->getState();
+        $schemaComponent = $this->getSchemaComponent();
+        $arguments = $this->getArguments();
+
+        if (
+            $schemaComponent instanceof HasExtraItemActions &&
+            filled($itemKey = $arguments['item'] ?? null)
+        ) {
+            return $schemaComponent->getItemState($itemKey) ?? $schemaComponent->getState();
+        }
+
+        return $schemaComponent?->getState();
     }
 
     public function shouldClearRecordAfter(): bool

@@ -249,6 +249,30 @@ it('can access correct block state from action directly in builder schema', func
     $undoBuilderFake();
 });
 
+it('can access correct block state from `extraItemActions()`', function (): void {
+    $undoBuilderFake = Builder::fake();
+
+    livewire(TestComponentWithExtraItemActionInBuilder::class)
+        ->callAction(
+            TestAction::make('captureBlockState')
+                ->schemaComponent('blocks')
+                ->arguments(['item' => 0]),
+        )
+        ->assertDispatched('state-captured', state: [
+            'content' => 'First Block',
+        ])
+        ->callAction(
+            TestAction::make('captureBlockState')
+                ->schemaComponent('blocks')
+                ->arguments(['item' => 1]),
+        )
+        ->assertDispatched('state-captured', state: [
+            'content' => 'Second Block',
+        ]);
+
+    $undoBuilderFake();
+});
+
 class TestComponentWithActionInBuilder extends Livewire
 {
     public function mount(): void
@@ -274,6 +298,39 @@ class TestComponentWithActionInBuilder extends Livewire
                     ->default([
                         ['type' => 'text', 'data' => ['content' => 'Block 1 content']],
                         ['type' => 'text', 'data' => ['content' => 'Block 2 content']],
+                    ]),
+            ])
+            ->statePath('data');
+    }
+}
+
+class TestComponentWithExtraItemActionInBuilder extends Livewire
+{
+    public function mount(): void
+    {
+        $this->form->fill();
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->components([
+                Builder::make('blocks')
+                    ->blocks([
+                        Builder\Block::make('paragraph')
+                            ->schema([
+                                TextInput::make('content'),
+                            ]),
+                    ])
+                    ->extraItemActions([
+                        Action::make('captureBlockState')
+                            ->action(function (array $state): void {
+                                $this->dispatch('state-captured', state: $state);
+                            }),
+                    ])
+                    ->default([
+                        ['type' => 'paragraph', 'data' => ['content' => 'First Block']],
+                        ['type' => 'paragraph', 'data' => ['content' => 'Second Block']],
                     ]),
             ])
             ->statePath('data');
