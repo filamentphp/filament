@@ -527,6 +527,7 @@ class Action extends ViewComponent implements Arrayable
             'schemaGet', 'get' => [$this->getSchemaComponent()->makeGetUtility()->skipComponentsChildContainersWhileSearching(false)],
             'schemaSet', 'set' => [$this->getSchemaComponent()->makeSetUtility()->skipComponentsChildContainersWhileSearching(false)],
             'schemaComponentState', 'state' => [$this->getSchemaComponentState()],
+            'schemaState' => [$this->getSchemaState()],
             'table' => [$this->getTable()],
             default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
         };
@@ -552,10 +553,6 @@ class Action extends ViewComponent implements Arrayable
         $schemaContainer = $this->getSchemaContainer();
 
         while ($schemaContainer) {
-            if (filled($schemaContainer->getStatePath(isAbsolute: false))) {
-                return $schemaContainer->getStateSnapshot();
-            }
-
             $parentComponent = $schemaContainer->getParentComponent();
 
             if (! $parentComponent) {
@@ -569,6 +566,11 @@ class Action extends ViewComponent implements Arrayable
             $schemaContainer = $parentComponent->getContainer();
         }
 
+        return $this->getSchemaComponent()?->getState();
+    }
+
+    public function getSchemaState(): mixed
+    {
         $schemaComponent = $this->getSchemaComponent();
         $arguments = $this->getArguments();
 
@@ -579,7 +581,23 @@ class Action extends ViewComponent implements Arrayable
             return $schemaComponent->getItemState($itemKey);
         }
 
-        return $schemaComponent?->getState();
+        $schemaContainer = $this->getSchemaContainer();
+
+        while ($schemaContainer) {
+            if (filled($schemaContainer->getStatePath(isAbsolute: false))) {
+                return $schemaContainer->getStateSnapshot();
+            }
+
+            $parentComponent = $schemaContainer->getParentComponent();
+
+            if (! $parentComponent) {
+                return $schemaContainer->getStateSnapshot();
+            }
+
+            $schemaContainer = $parentComponent->getContainer();
+        }
+
+        return null;
     }
 
     public function shouldClearRecordAfter(): bool

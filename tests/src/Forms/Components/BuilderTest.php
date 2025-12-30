@@ -227,19 +227,19 @@ class TestComponentWithBuilderAndRepeater extends Livewire
     }
 }
 
-it('can access correct block state from action directly in builder schema', function (): void {
+it('can access correct block schema state from action directly in builder schema', function (): void {
     $undoBuilderFake = Builder::fake();
 
     livewire(TestComponentWithActionInBuilder::class)
         ->callAction(
-            TestAction::make('captureState')
+            TestAction::make('captureSchemaState')
                 ->schemaComponent('blocks.0.data'),
         )
         ->assertDispatched('state-captured', state: [
             'content' => 'Block 1 content',
         ])
         ->callAction(
-            TestAction::make('captureState')
+            TestAction::make('captureSchemaState')
                 ->schemaComponent('blocks.1.data'),
         )
         ->assertDispatched('state-captured', state: [
@@ -289,9 +289,9 @@ class TestComponentWithActionInBuilder extends Livewire
                         Builder\Block::make('text')
                             ->schema([
                                 TextInput::make('content'),
-                                Action::make('captureState')
-                                    ->action(function (array $state): void {
-                                        $this->dispatch('state-captured', state: $state);
+                                Action::make('captureSchemaState')
+                                    ->action(function (array $schemaState): void {
+                                        $this->dispatch('state-captured', state: $schemaState);
                                     }),
                             ]),
                     ])
@@ -324,8 +324,8 @@ class TestComponentWithExtraItemActionInBuilder extends Livewire
                     ])
                     ->extraItemActions([
                         Action::make('captureBlockState')
-                            ->action(function (array $state): void {
-                                $this->dispatch('state-captured', state: $state);
+                            ->action(function (array $schemaState): void {
+                                $this->dispatch('state-captured', state: $schemaState);
                             }),
                     ])
                     ->default([

@@ -684,19 +684,19 @@ it('can set repeater state programmatically via action', function (): void {
         ->assertSuccessful();
 });
 
-it('can access correct item state from action directly in repeater schema', function (): void {
+it('can access correct item schema state from action directly in repeater schema', function (): void {
     $undoRepeaterFake = Repeater::fake();
 
     livewire(TestComponentWithActionInRepeater::class)
         ->callAction(
-            TestAction::make('captureState')
+            TestAction::make('captureSchemaState')
                 ->schemaComponent('items.0'),
         )
         ->assertDispatched('state-captured', state: [
             'name' => 'Item 1',
         ])
         ->callAction(
-            TestAction::make('captureState')
+            TestAction::make('captureSchemaState')
                 ->schemaComponent('items.1'),
         )
         ->assertDispatched('state-captured', state: [
@@ -747,8 +747,8 @@ class TestComponentWithExtraItemAction extends Livewire
                     ])
                     ->extraItemActions([
                         Action::make('captureItemState')
-                            ->action(function (array $state): void {
-                                $this->dispatch('state-captured', state: $state);
+                            ->action(function (array $schemaState): void {
+                                $this->dispatch('state-captured', state: $schemaState);
                             }),
                     ])
                     ->default([
@@ -774,9 +774,9 @@ class TestComponentWithActionInRepeater extends Livewire
                 Repeater::make('items')
                     ->schema([
                         TextInput::make('name'),
-                        Action::make('captureState')
-                            ->action(function (array $state): void {
-                                $this->dispatch('state-captured', state: $state);
+                        Action::make('captureSchemaState')
+                            ->action(function (array $schemaState): void {
+                                $this->dispatch('state-captured', state: $schemaState);
                             }),
                     ])
                     ->default([
