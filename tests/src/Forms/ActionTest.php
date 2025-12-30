@@ -205,35 +205,35 @@ it('can get state from action in `belowContent` schema', function (): void {
         ->assertDispatched('state-captured', state: 'john@example.com');
 });
 
-it('can get state from action directly in a schema with state path', function (): void {
+it('can get schema state from action directly in a schema with state path', function (): void {
     $undoRepeaterFake = Repeater::fake();
 
     livewire(TestComponentWithActionState::class)
-        ->callAction(TestAction::make('captureState')->schemaComponent('items.0'))
+        ->callAction(TestAction::make('captureSchemaState')->schemaComponent('items.0'))
         ->assertDispatched('state-captured', state: ['title' => 'Item 1'])
-        ->callAction(TestAction::make('captureState')->schemaComponent('items.1'))
+        ->callAction(TestAction::make('captureSchemaState')->schemaComponent('items.1'))
         ->assertDispatched('state-captured', state: ['title' => 'Item 2']);
 
     $undoRepeaterFake();
 });
 
-it('can get state from action in a Group without state path inside repeater', function (): void {
+it('can get schema state from action in a Group without state path inside repeater', function (): void {
     $undoRepeaterFake = Repeater::fake();
 
     livewire(TestComponentWithActionState::class)
-        ->callAction(TestAction::make('captureStateInGroup')->schemaComponent('items.0'))
+        ->callAction(TestAction::make('captureSchemaStateInGroup')->schemaComponent('items.0'))
         ->assertDispatched('state-captured', state: ['title' => 'Item 1']);
 
     $undoRepeaterFake();
 });
 
-it('can get state from action in builder block schema', function (): void {
+it('can get schema state from action in builder block schema', function (): void {
     $undoBuilderFake = Builder::fake();
 
     livewire(TestComponentWithActionState::class)
-        ->callAction(TestAction::make('captureState')->schemaComponent('blocks.0.data'))
+        ->callAction(TestAction::make('captureSchemaState')->schemaComponent('blocks.0.data'))
         ->assertDispatched('state-captured', state: ['content' => 'Block 1'])
-        ->callAction(TestAction::make('captureState')->schemaComponent('blocks.1.data'))
+        ->callAction(TestAction::make('captureSchemaState')->schemaComponent('blocks.1.data'))
         ->assertDispatched('state-captured', state: ['content' => 'Block 2']);
 
     $undoBuilderFake();
@@ -301,14 +301,14 @@ class TestComponentWithActionState extends Livewire
                 Repeater::make('items')
                     ->schema([
                         TextInput::make('title'),
-                        Action::make('captureState')
-                            ->action(function (mixed $state): void {
-                                $this->dispatch('state-captured', state: $state);
+                        Action::make('captureSchemaState')
+                            ->action(function (mixed $schemaState): void {
+                                $this->dispatch('state-captured', state: $schemaState);
                             }),
                         Group::make([
-                            Action::make('captureStateInGroup')
-                                ->action(function (mixed $state): void {
-                                    $this->dispatch('state-captured', state: $state);
+                            Action::make('captureSchemaStateInGroup')
+                                ->action(function (mixed $schemaState): void {
+                                    $this->dispatch('state-captured', state: $schemaState);
                                 }),
                         ]),
                     ])
@@ -321,9 +321,9 @@ class TestComponentWithActionState extends Livewire
                         Builder\Block::make('paragraph')
                             ->schema([
                                 TextInput::make('content'),
-                                Action::make('captureState')
-                                    ->action(function (mixed $state): void {
-                                        $this->dispatch('state-captured', state: $state);
+                                Action::make('captureSchemaState')
+                                    ->action(function (mixed $schemaState): void {
+                                        $this->dispatch('state-captured', state: $schemaState);
                                     }),
                             ]),
                     ])

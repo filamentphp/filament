@@ -392,10 +392,53 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
             'schemaComponent', 'component' => [$this->getSchemaComponent()],
             'schemaOperation', 'context', 'operation' => [$this->getSchemaContainer()?->getOperation() ?? $this->getSchemaComponent()?->getContainer()->getOperation()],
             'schemaGet', 'get' => [$this->getSchemaComponent()->makeGetUtility()],
-            'schemaComponentState', 'state' => [$this->getSchemaComponent()->getState()],
+            'schemaComponentState', 'state' => [$this->getSchemaComponentState()],
+            'schemaState' => [$this->getSchemaState()],
             'table' => [$this->getTable()],
             default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
         };
+    }
+
+    public function getSchemaComponentState(): mixed
+    {
+        $schemaContainer = $this->getSchemaContainer();
+
+        while ($schemaContainer) {
+            $parentComponent = $schemaContainer->getParentComponent();
+
+            if (! $parentComponent) {
+                break;
+            }
+
+            if ($parentComponent->hasStatePath()) {
+                return $parentComponent->getState();
+            }
+
+            $schemaContainer = $parentComponent->getContainer();
+        }
+
+        return $this->getSchemaComponent()?->getState();
+    }
+
+    public function getSchemaState(): mixed
+    {
+        $schemaContainer = $this->getSchemaContainer();
+
+        while ($schemaContainer) {
+            if (filled($schemaContainer->getStatePath(isAbsolute: false))) {
+                return $schemaContainer->getStateSnapshot();
+            }
+
+            $parentComponent = $schemaContainer->getParentComponent();
+
+            if (! $parentComponent) {
+                return $schemaContainer->getStateSnapshot();
+            }
+
+            $schemaContainer = $parentComponent->getContainer();
+        }
+
+        return null;
     }
 
     protected function resolveDefaultClosureDependencyForEvaluationByType(string $parameterType): array
