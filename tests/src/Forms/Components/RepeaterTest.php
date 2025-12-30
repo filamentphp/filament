@@ -2,9 +2,12 @@
 
 use Filament\Actions\Action;
 use Filament\Actions\Testing\TestAction;
+use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Filament\Tests\Fixtures\Livewire\Livewire;
 use Filament\Tests\Fixtures\Models\Post;
@@ -479,9 +482,344 @@ class TestComponentWithEnumSelectRepeater extends Livewire
     }
 }
 
+it('can inject `$parentRepeaterItemIndex` into component configuration closures', function (): void {
+    $undoRepeaterFake = Repeater::fake();
+
+    livewire(TestComponentWithParentRepeaterItemIndex::class)
+        ->assertFormComponentExists('items.0.name', function (TextInput $field): bool {
+            expect($field->getLabel())->toBe('Item 0');
+
+            return true;
+        })
+        ->assertFormComponentExists('items.1.name', function (TextInput $field): bool {
+            expect($field->getLabel())->toBe('Item 1');
+
+            return true;
+        })
+        ->assertFormComponentExists('items.2.name', function (TextInput $field): bool {
+            expect($field->getLabel())->toBe('Item 2');
+
+            return true;
+        });
+
+    $undoRepeaterFake();
+});
+
+class TestComponentWithParentRepeaterItemIndex extends Livewire
+{
+    public function mount(): void
+    {
+        $this->form->fill();
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->components([
+                Repeater::make('items')
+                    ->schema([
+                        TextInput::make('name')
+                            ->label(fn (int $parentRepeaterItemIndex): string => "Item {$parentRepeaterItemIndex}"),
+                    ])
+                    ->default([
+                        ['name' => 'first'],
+                        ['name' => 'second'],
+                        ['name' => 'third'],
+                    ]),
+            ])
+            ->statePath('data');
+    }
+}
+
 enum TestLetterEnum: string
 {
     case A = 'A';
     case B = 'B';
     case C = 'C';
+}
+
+it('can validate distinct fields in a builder block in a repeater with errors', function (): void {
+    $undoRepeaterFake = Repeater::fake();
+
+    $data = [
+        'repeater' => [
+            [
+                'bar' => 'test 1',
+                'builder' => [
+                    [
+                        'type' => 'one',
+                        'data' => [
+                            'foo' => 'test 1',
+                        ],
+                    ],
+                    [
+                        'type' => 'one',
+                        'data' => [
+                            'foo' => 'test 1',
+                        ],
+                    ],
+                ],
+            ],
+            [
+                'bar' => 'test 1',
+                'builder' => [
+                    [
+                        'type' => 'one',
+                        'data' => [
+                            'foo' => 'test 1',
+                        ],
+                    ],
+                    [
+                        'type' => 'one',
+                        'data' => [
+                            'foo' => 'test 1',
+                        ],
+                    ],
+                ],
+            ],
+        ],
+    ];
+
+    livewire(TestComponentWithRepeaterAndBuilder::class)
+        ->assertSuccessful()
+        ->fillForm($data)
+        ->assertFormSet($data)
+        ->call('save')
+        ->assertHasFormErrors([
+            'repeater.0.bar' => ['The bar field has a duplicate value.'],
+            'repeater.0.builder.0.data.foo' => ['The foo field has a duplicate value.'],
+            'repeater.0.builder.1.data.foo' => ['The foo field has a duplicate value.'],
+            'repeater.1.bar' => ['The bar field has a duplicate value.'],
+            'repeater.1.builder.0.data.foo' => ['The foo field has a duplicate value.'],
+            'repeater.1.builder.1.data.foo' => ['The foo field has a duplicate value.'],
+        ]);
+
+    $undoRepeaterFake();
+});
+
+it('can validate distinct fields in a builder block in a repeater with no errors', function (): void {
+    $undoRepeaterFake = Repeater::fake();
+
+    $data = [
+        'repeater' => [
+            [
+                'bar' => 'test 1',
+                'builder' => [
+                    [
+                        'type' => 'one',
+                        'data' => [
+                            'foo' => 'test 1',
+                        ],
+                    ],
+                    [
+                        'type' => 'one',
+                        'data' => [
+                            'foo' => 'test 2',
+                        ],
+                    ],
+                ],
+            ],
+            [
+                'bar' => 'test 2',
+                'builder' => [
+                    [
+                        'type' => 'one',
+                        'data' => [
+                            'foo' => 'test 1',
+                        ],
+                    ],
+                    [
+                        'type' => 'one',
+                        'data' => [
+                            'foo' => 'test 2',
+                        ],
+                    ],
+                ],
+            ],
+        ],
+    ];
+
+    livewire(TestComponentWithRepeaterAndBuilder::class)
+        ->assertSuccessful()
+        ->fillForm($data)
+        ->assertFormSet($data)
+        ->call('save')
+        ->assertHasNoFormErrors();
+
+    $undoRepeaterFake();
+});
+
+class TestComponentWithRepeaterAndBuilder extends Livewire
+{
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->components([
+                Repeater::make('repeater')
+                    ->schema([
+                        TextInput::make('bar')
+                            ->distinct(),
+                        Builder::make('builder')
+                            ->blocks([
+                                Builder\Block::make('one')
+                                    ->schema([
+                                        TextInput::make('foo')
+                                            ->distinct(),
+                                    ]),
+                            ]),
+                    ]),
+            ])
+            ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->form->getState();
+    }
+}
+
+it('can set repeater state programmatically via action', function (): void {
+    livewire(TestComponentWithRepeaterSetByAction::class)
+        ->callAction(TestAction::make('insert')->schemaComponent('questionsSection'))
+        ->assertSuccessful();
+});
+
+it('can access correct item schema state from action directly in repeater schema', function (): void {
+    $undoRepeaterFake = Repeater::fake();
+
+    livewire(TestComponentWithActionInRepeater::class)
+        ->callAction(
+            TestAction::make('captureSchemaState')
+                ->schemaComponent('items.0'),
+        )
+        ->assertDispatched('state-captured', state: [
+            'name' => 'Item 1',
+        ])
+        ->callAction(
+            TestAction::make('captureSchemaState')
+                ->schemaComponent('items.1'),
+        )
+        ->assertDispatched('state-captured', state: [
+            'name' => 'Item 2',
+        ]);
+
+    $undoRepeaterFake();
+});
+
+it('can access correct item state from `extraItemActions()`', function (): void {
+    $undoRepeaterFake = Repeater::fake();
+
+    livewire(TestComponentWithExtraItemAction::class)
+        ->callAction(
+            TestAction::make('captureItemState')
+                ->schemaComponent('items')
+                ->arguments(['item' => 0]),
+        )
+        ->assertDispatched('state-captured', state: [
+            'name' => 'First Item',
+        ])
+        ->callAction(
+            TestAction::make('captureItemState')
+                ->schemaComponent('items')
+                ->arguments(['item' => 1]),
+        )
+        ->assertDispatched('state-captured', state: [
+            'name' => 'Second Item',
+        ]);
+
+    $undoRepeaterFake();
+});
+
+class TestComponentWithExtraItemAction extends Livewire
+{
+    public function mount(): void
+    {
+        $this->form->fill();
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->components([
+                Repeater::make('items')
+                    ->schema([
+                        TextInput::make('name'),
+                    ])
+                    ->extraItemActions([
+                        Action::make('captureItemState')
+                            ->action(function (array $schemaState): void {
+                                $this->dispatch('state-captured', state: $schemaState);
+                            }),
+                    ])
+                    ->default([
+                        ['name' => 'First Item'],
+                        ['name' => 'Second Item'],
+                    ]),
+            ])
+            ->statePath('data');
+    }
+}
+
+class TestComponentWithActionInRepeater extends Livewire
+{
+    public function mount(): void
+    {
+        $this->form->fill();
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->components([
+                Repeater::make('items')
+                    ->schema([
+                        TextInput::make('name'),
+                        Action::make('captureSchemaState')
+                            ->action(function (array $schemaState): void {
+                                $this->dispatch('state-captured', state: $schemaState);
+                            }),
+                    ])
+                    ->default([
+                        ['name' => 'Item 1'],
+                        ['name' => 'Item 2'],
+                    ]),
+            ])
+            ->statePath('data');
+    }
+}
+
+class TestComponentWithRepeaterSetByAction extends Livewire
+{
+    public function mount(): void
+    {
+        $this->form->fill();
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->components([
+                Section::make('Questions')
+                    ->key('questionsSection')
+                    ->schema([
+                        Repeater::make('questions')
+                            ->schema([
+                                TextInput::make('question')->required(),
+                            ])
+                            ->itemLabel(fn (array $state): ?string => $state['question'] ?? null),
+                    ])
+                    ->headerActions([
+                        Action::make('insert')
+                            ->label('Insert Question')
+                            ->action(function (Set $set): void {
+                                $set('questions', [
+                                    ['question' => 'Question #1'],
+                                    ['question' => 'Question #2'],
+                                    ['question' => 'Question #3'],
+                                ]);
+                            }),
+                    ]),
+            ])
+            ->statePath('data');
+    }
 }

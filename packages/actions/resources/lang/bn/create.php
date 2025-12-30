@@ -8,16 +8,16 @@ return [
 
         'modal' => [
 
-            'heading' => ':label তৈরী করুন',
+            'heading' => ':label তৈরি করুন',
 
             'actions' => [
 
                 'create' => [
-                    'label' => 'তৈরী করুন',
+                    'label' => 'তৈরি করুন',
                 ],
 
                 'create_another' => [
-                    'label' => 'তৈরী এবং নতুন তৈরী করুন',
+                    'label' => 'তৈরি এবং নতুন তৈরি করুন',
                 ],
 
             ],
@@ -27,7 +27,7 @@ return [
         'notifications' => [
 
             'created' => [
-                'title' => 'তৈরী হয়েছে',
+                'title' => 'তৈরি হয়েছে',
             ],
 
         ],

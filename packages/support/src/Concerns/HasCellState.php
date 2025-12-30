@@ -188,6 +188,10 @@ trait HasCellState
             return false;
         }
 
+        if ($record->hasAttribute((string) str($name)->before('.'))) {
+            return false;
+        }
+
         return $record->isRelation((string) str($name)->before('.'));
     }
 
@@ -221,6 +225,10 @@ trait HasCellState
         $relationship = null;
 
         foreach ($nameParts as $namePart) {
+            if ($record->hasAttribute($namePart)) {
+                break;
+            }
+
             if (! $record->isRelation($namePart)) {
                 break;
             }
@@ -326,8 +334,13 @@ trait HasCellState
         }
 
         $nameParts = explode('.', $name);
+        $lastPart = array_pop($nameParts);
 
         foreach ($nameParts as $namePart) {
+            if ($record->hasAttribute($namePart)) {
+                break;
+            }
+
             if (! $record->isRelation($namePart)) {
                 break;
             }
@@ -336,7 +349,7 @@ trait HasCellState
             $record = $record->{$namePart}()->getRelated();
         }
 
-        return Arr::first($nameParts);
+        return Arr::first([...$nameParts, $lastPart]);
     }
 
     public function getFullAttributeName(Model $record): string
@@ -348,8 +361,13 @@ trait HasCellState
         }
 
         $nameParts = explode('.', $name);
+        $lastPart = array_pop($nameParts);
 
         foreach ($nameParts as $namePart) {
+            if ($record->hasAttribute($namePart)) {
+                break;
+            }
+
             if (! $record->isRelation($namePart)) {
                 break;
             }
@@ -358,7 +376,7 @@ trait HasCellState
             $record = $record->{$namePart}()->getRelated();
         }
 
-        return implode('.', $nameParts);
+        return implode('.', [...$nameParts, $lastPart]);
     }
 
     public function getInverseRelationshipName(Model $record): string
@@ -373,6 +391,10 @@ trait HasCellState
         $inverseRelationshipParts = [];
 
         foreach ($nameParts as $namePart) {
+            if ($record->hasAttribute($namePart)) {
+                break;
+            }
+
             if (! $record->isRelation($namePart)) {
                 break;
             }
@@ -389,11 +411,11 @@ trait HasCellState
                 )
                 ->camel();
 
-            if (! $record->isRelation($inverseNestedRelationshipName)) {
+            if ($record->hasAttribute($inverseNestedRelationshipName) || (! $record->isRelation($inverseNestedRelationshipName))) {
                 // The conventional relationship doesn't exist, but we can
                 // attempt to use the original relationship name instead.
 
-                if (! $record->isRelation($namePart)) {
+                if ($record->hasAttribute($namePart) || (! $record->isRelation($namePart))) {
                     $recordClass = $record::class;
 
                     throw new LogicException("When trying to guess the inverse relationship for column [{$this->getName()}], relationship [{$inverseNestedRelationshipName}] was not found on model [{$recordClass}]. Please define a custom [inverseRelationship()] for this column.");
@@ -422,6 +444,10 @@ trait HasCellState
         $relationshipParts = [];
 
         foreach ($nameParts as $namePart) {
+            if ($record->hasAttribute($namePart)) {
+                break;
+            }
+
             if (! $record->isRelation($namePart)) {
                 break;
             }

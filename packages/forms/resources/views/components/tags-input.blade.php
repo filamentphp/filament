@@ -3,7 +3,6 @@
     $extraAttributes = $getExtraAttributes();
     $extraInputAttributeBag = $getExtraInputAttributeBag();
     $color = $getColor() ?? 'primary';
-    $hasInlineLabel = $hasInlineLabel();
     $id = $getId();
     $isAutofocused = $isAutofocused();
     $isDisabled = $isDisabled();
@@ -25,7 +24,6 @@
 <x-dynamic-component
     :component="$fieldWrapperView"
     :field="$field"
-    :has-inline-label="$hasInlineLabel"
     class="fi-fo-tags-input-wrp"
 >
     <x-filament::input.wrapper

@@ -31,6 +31,8 @@ class TableSelect extends Field
 
     protected string | Closure | null $tableConfiguration = null;
 
+    protected bool | Closure $shouldIgnoreRelatedRecords = false;
+
     protected string | Closure | null $relationship = null;
 
     protected bool | Closure $isMultiple = false;
@@ -55,6 +57,18 @@ class TableSelect extends Field
         $this->tableArguments = $arguments;
 
         return $this;
+    }
+
+    public function ignoreRelatedRecords(bool | Closure $condition = true): static
+    {
+        $this->shouldIgnoreRelatedRecords = $condition;
+
+        return $this;
+    }
+
+    public function shouldIgnoreRelatedRecords(): bool
+    {
+        return (bool) $this->evaluate($this->shouldIgnoreRelatedRecords);
     }
 
     public function getTableConfiguration(): string
@@ -228,7 +242,7 @@ class TableSelect extends Field
             $relationship->syncWithPivotValues($state, $pivotData, detaching: false);
         });
 
-        $this->dehydrated(fn (TableSelect $component): bool => ! $component->isMultiple());
+        $this->dehydrated(fn (TableSelect $component): bool => (! $component->isMultiple()) && $component->isSaved());
 
         return $this;
     }
@@ -253,6 +267,12 @@ class TableSelect extends Field
         $relationshipName = $this->getRelationshipName();
 
         foreach (explode('.', $relationshipName) as $nestedRelationshipName) {
+            if ($record->hasAttribute($nestedRelationshipName)) {
+                $relationship = null;
+
+                break;
+            }
+
             if (! $record->isRelation($nestedRelationshipName)) {
                 $relationship = null;
 

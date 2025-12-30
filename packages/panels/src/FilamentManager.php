@@ -6,7 +6,10 @@ use Closure;
 use Filament\Actions\Action;
 use Filament\Auth\MultiFactor\Contracts\MultiFactorAuthenticationProvider;
 use Filament\Contracts\Plugin;
+use Filament\Enums\DatabaseNotificationsPosition;
+use Filament\Enums\GlobalSearchPosition;
 use Filament\Enums\ThemeMode;
+use Filament\Enums\UserMenuPosition;
 use Filament\Events\ServingFilament;
 use Filament\Events\TenantSet;
 use Filament\Exceptions\NoDefaultPanelSetException;
@@ -462,6 +465,11 @@ class FilamentManager
         return $this->getCurrentOrDefaultPanel()->getTenantMenuItems();
     }
 
+    public function isTenantMenuSearchable(): ?bool
+    {
+        return $this->getCurrentOrDefaultPanel()->isTenantMenuSearchable();
+    }
+
     /**
      * @return class-string<Model>|null
      */
@@ -757,6 +765,16 @@ class FilamentManager
         return $this->getCurrentOrDefaultPanel()->hasUserMenu();
     }
 
+    public function getUserMenuPosition(): UserMenuPosition
+    {
+        return $this->getCurrentOrDefaultPanel()->getUserMenuPosition();
+    }
+
+    public function getDatabaseNotificationsPosition(): DatabaseNotificationsPosition
+    {
+        return $this->getCurrentOrDefaultPanel()->getDatabaseNotificationsPosition();
+    }
+
     public function hasTopNavigation(): bool
     {
         return $this->getCurrentOrDefaultPanel()->hasTopNavigation();
@@ -780,6 +798,11 @@ class FilamentManager
         }
 
         return false;
+    }
+
+    public function getGlobalSearchPosition(): GlobalSearchPosition
+    {
+        return $this->getCurrentOrDefaultPanel()->getGlobalSearchPosition();
     }
 
     public function isServing(): bool

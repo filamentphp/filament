@@ -31,7 +31,6 @@
                         'id' => $id . '-' . $value,
                         'name' => $id,
                         'value' => $value,
-                        'wire:loading.attr' => 'disabled',
                         $wireModelAttribute => $statePath,
                     ], escape: false);
             @endphp

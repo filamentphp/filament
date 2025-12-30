@@ -129,6 +129,22 @@ Select::make('author_id')
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `noSearchResultsMessage()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
+### Setting a custom no options message
+
+When you're using a select or multi-select with `preload()` or dynamic options via `options()` closure, you may want to display a custom message when no options are available. You can do this using the `noOptionsMessage()` method:
+
+```php
+use Filament\Forms\Components\Select;
+
+Select::make('author_id')
+    ->relationship(name: 'author', titleAttribute: 'name')
+    ->searchable()
+    ->preload()
+    ->noOptionsMessage('No authors available.')
+```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `noOptionsMessage()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 ### Setting a custom search prompt
 
 When you're using a searchable select or multi-select, you may want to display a custom message when the user has not yet entered a search term. You can do this using the `searchPrompt()` method:
@@ -254,6 +270,28 @@ Select::make('technologies')
 
 <UtilityInjection set="formFields" version="4.x" extras="Option values;;array<mixed>;;$values;;[<code>getOptionLabelsUsing()</code> only] The option values to retrieve the labels for.">The `getOptionLabelsUsing()` method can inject various utilities into the function as parameters.</UtilityInjection>
 
+### Reordering selected options
+
+The `reorderable()` method allows you to reorder the selected options in a multi-select:
+
+```php
+use Filament\Forms\Components\Select;
+
+Select::make('technologies')
+    ->multiple()
+    ->reorderable()
+    ->options([
+        'tailwind' => 'Tailwind CSS',
+        'alpine' => 'Alpine.js',
+        'laravel' => 'Laravel',
+        'livewire' => 'Laravel Livewire',
+    ])
+```
+
+This is useful when the order of the selected options matters.
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `reorderable()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 ## Grouping options
 
 You can group options together under a label, to organize them better. To do this, you can pass an array of groups to `options()` or wherever you would normally pass an array of options. The keys of the array are used as group labels, and the values are arrays of options in that group:
@@ -299,11 +337,11 @@ Select::make('technologies')
 ```
 
 <Aside variant="warning">
-    When using `disabled()` with `multiple()` and `relationship()`, ensure that `disabled()` is called before `relationship()`. This ensures that the `dehydrated()` call from within `relationship()` is not overridden by the call from `disabled()`:
-    
+    When using `disabled()` with `multiple()` and `relationship()`, ensure that `disabled()` is called before `relationship()`. This ensures that the `saved()` call from `disabled()` is not applied after the `relationship()` configuration:
+
     ```php
     use Filament\Forms\Components\Select;
-    
+
     Select::make('technologies')
         ->multiple()
         ->disabled()
@@ -924,6 +962,35 @@ ModalTableSelect::make('category_id')
     ->relationship('category', 'name')
     ->tableConfiguration(CategoriesTable::class)
     ->getOptionLabelFromRecordUsing(fn (Category $record): string => "{$record->name} ({$record->slug})")
+```
+
+By default, `multiple()` options are listed in a "badge" design, and singular options are listed in plain text. The `badge()` method can be used to define whether the option label should appear inside a badge:
+
+```php
+use Filament\Forms\Components\ModalTableSelect;
+
+ModalTableSelect::make('category_id')
+    ->relationship('category', 'name')
+    ->tableConfiguration(CategoriesTable::class)
+    ->badge()
+
+ModalTableSelect::make('categories')
+    ->relationship('categories', 'name')
+    ->multiple()
+    ->tableConfiguration(CategoriesTable::class)
+    ->badge(false)
+```
+
+The `badgeColor()` method can be used to set the badge [color](../styling/colors):
+
+```php
+use Filament\Forms\Components\ModalTableSelect;
+
+ModalTableSelect::make('categories')
+    ->relationship('categories', 'name')
+    ->multiple()
+    ->tableConfiguration(CategoriesTable::class)
+    ->badgeColor('success')
 ```
 
 ### Passing additional arguments to the table in a modal select

@@ -171,6 +171,13 @@ class Actions extends Page
                 ->action(fn () => $this->dispatch(
                     'rate-limited-called',
                 )),
+            Action::make('predefined-arguments')
+                ->arguments(['foo' => 'bar', 'baz' => 'qux'])
+                ->label(fn (array $arguments): string => "Action for {$arguments['foo']}")
+                ->requiresConfirmation()
+                ->action(function (array $arguments): void {
+                    $this->dispatch('predefined-arguments-called', arguments: $arguments);
+                }),
         ];
     }
 }

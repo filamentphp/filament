@@ -18,6 +18,6 @@ class UiAvatarsProvider implements Contracts\AvatarProvider
             ->map(fn (string $segment): string => filled($segment) ? mb_substr($segment, 0, 1) : '')
             ->join(' ');
 
-        return 'https://ui-avatars.com/api/?name=' . urlencode($name) . '&color=FFFFFF&background=' . (FilamentColor::getColor('gray')[950] ?? Color::Gray[950]);
+        return 'https://ui-avatars.com/api/?name=' . urlencode($name) . '&color=FFFFFF&background=' . urlencode(FilamentColor::getColor('gray')[950] ?? Color::Gray[950]);
     }
 }

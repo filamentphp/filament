@@ -8,7 +8,7 @@
     }
 
     & .fi-fo-rich-editor-floating-toolbar {
-        @apply invisible absolute z-[20] -mt-1 flex flex-wrap gap-x-3 gap-y-1 rounded-lg border border-gray-300 bg-white p-1 shadow dark:border-gray-600 dark:bg-gray-800;
+        @apply invisible absolute z-[20] -mt-1 flex max-w-full flex-wrap gap-x-3 gap-y-1 rounded-lg border border-gray-300 bg-white p-1 shadow dark:border-gray-600 dark:bg-gray-800;
     }
 
     & .fi-fo-rich-editor-toolbar-group {
@@ -24,6 +24,10 @@
 
         &.fi-active {
             @apply text-primary-600 dark:text-primary-400 bg-gray-50 dark:bg-white/5;
+        }
+
+        &.fi-fo-rich-editor-tool-with-label {
+            @apply items-center gap-x-1 px-1.5;
         }
     }
 
@@ -44,7 +48,7 @@
     }
 
     & .fi-fo-rich-editor-content {
-        @apply min-h-12 w-full flex-1 px-5 py-3;
+        @apply relative min-h-12 w-full flex-1 px-5 py-3;
     }
 
     & span[data-type='mergeTag'] {
@@ -163,7 +167,7 @@
 
             & td,
             & th {
-                @apply relative min-w-[1em] border border-gray-300 !px-2 py-2 align-top dark:border-gray-600;
+                @apply relative min-w-[1em] border border-gray-300 !p-2 align-top dark:border-gray-600;
 
                 & > * {
                     @apply mb-0;
@@ -201,6 +205,13 @@
 
         & .grid-layout > .grid-layout-col {
             @apply rounded-md border border-gray-950/20 p-4 dark:border-white/20;
+        }
+    }
+
+    & .tiptap.ProseMirror {
+        /* https://defensivecss.dev/tip/input-zoom-safari */
+        @supports (-webkit-touch-callout: none) {
+            @apply text-base;
         }
     }
 

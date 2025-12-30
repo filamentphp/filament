@@ -133,7 +133,7 @@ trait HasBulkActions
     /**
      * @return array<string>
      */
-    public function getGroupedSelectableTableRecordKeys(string $group): array
+    public function getGroupedSelectableTableRecordKeys(?string $group): array
     {
         $query = $this->getFilteredTableQuery();
 
@@ -310,7 +310,9 @@ trait HasBulkActions
             }
         }
 
-        return $table->selectPivotDataInQuery($relationship);
+        $relationship = $table->selectPivotDataInQuery($relationship);
+
+        return $relationship->getQuery();
     }
 
     /**

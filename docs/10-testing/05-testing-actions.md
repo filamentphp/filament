@@ -130,6 +130,10 @@ livewire(ManageInvoices::class)
     ]);
 ```
 
+## Testing resource `getFormActions()`
+
+For details on how to test custom actions in the `getFormActions()` of a resource page, refer to the [Testing resources](testing-resources#testing-create--edit-page-getformactions) documentation.
+
 ## Testing forms in action modals
 
 To pass an array of data into an action, use the `data` parameter:
@@ -221,7 +225,7 @@ it('can send invoices to the primary contact by default', function () {
 
 ## Testing the content of an action modal
 
-To assert the content of a modal, you should first mount the action (rather than call it which closes the modal). You can then use [Livewire assertions](https://livewire.laravel.com/docs/testing#assertions) such as `assertSee()` to assert the modal contains the content that you expect it to:
+To assert the content of a modal, you should first mount the action (rather than call it which closes the modal). You can then use `assertMountedActionModalSee()`, `assertMountedActionModalDontSee()`, `assertMountedActionModalSeeHtml()` or `assertMountedActionModalDontSeeHtml()` to assert the modal contains the content that you expect it to:
 
 ```php
 use function Pest\Livewire\livewire;
@@ -234,7 +238,7 @@ it('confirms the target address before sending', function () {
         'invoice' => $invoice,
     ])
         ->mountAction('send')
-        ->assertSee($recipientEmail);
+        ->assertMountedActionModalSee($recipientEmail);
 });
 ```
 

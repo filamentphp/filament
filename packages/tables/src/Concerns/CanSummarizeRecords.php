@@ -27,8 +27,12 @@ trait CanSummarizeRecords
     /**
      * @return array<string, mixed>
      */
-    public function getTableSummarySelectedState(Builder $query, ?Closure $modifyQueryUsing = null): array
+    public function getTableSummarySelectedState(?Builder $query = null, ?Closure $modifyQueryUsing = null): array
     {
+        if (! $query) {
+            return [];
+        }
+
         $selects = [];
 
         foreach ($this->getTable()->getVisibleColumns() as $column) {

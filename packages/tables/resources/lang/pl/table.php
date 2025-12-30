@@ -26,6 +26,20 @@ return [
             'label' => 'Akcja|Akcje',
         ],
 
+        'select' => [
+
+            'loading_message' => 'Ładowanie...',
+
+            'no_search_results_message' => 'Brak wyników.',
+
+            'placeholder' => 'Wybierz opcję',
+
+            'searching_message' => 'Ładowanie...',
+
+            'search_prompt' => 'Zacznij pisać, aby wyszukać...',
+
+        ],
+
         'text' => [
 
             'actions' => [
@@ -184,7 +198,6 @@ return [
 
             'group' => [
                 'label' => 'Grupuj według',
-                'placeholder' => 'Grupuj według',
             ],
 
             'direction' => [

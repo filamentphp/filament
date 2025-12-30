@@ -39,6 +39,8 @@ class Tabs extends Component
 
     protected string | Closure | null $livewireProperty = null;
 
+    protected bool | Closure $isScrollable = true;
+
     protected bool | Closure $isVertical = false;
 
     final public function __construct(string | Htmlable | Closure | null $label = null)
@@ -59,7 +61,7 @@ class Tabs extends Component
         parent::setUp();
 
         $this->key(function (Tabs $component): ?string {
-            $label = $this->getLabel();
+            $label = $component->getLabel();
 
             if (blank($label)) {
                 return null;
@@ -182,6 +184,18 @@ class Tabs extends Component
     public function getLivewireProperty(): ?string
     {
         return $this->evaluate($this->livewireProperty);
+    }
+
+    public function scrollable(bool | Closure $condition = true): static
+    {
+        $this->isScrollable = $condition;
+
+        return $this;
+    }
+
+    public function isScrollable(): bool
+    {
+        return (bool) $this->evaluate($this->isScrollable);
     }
 
     public function vertical(bool | Closure $condition = true): static

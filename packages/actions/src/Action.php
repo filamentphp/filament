@@ -2,9 +2,11 @@
 
 namespace Filament\Actions;
 
+use BackedEnum;
 use Closure;
 use Filament\Actions\Concerns\HasTooltip;
 use Filament\Actions\Enums\ActionStatus;
+use Filament\Schemas\Components\Contracts\HasExtraItemActions;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Components\ViewComponent;
 use Filament\Support\Concerns\HasBadge;
@@ -14,6 +16,8 @@ use Filament\Support\Concerns\HasExtraAttributes;
 use Filament\Support\Concerns\HasIcon;
 use Filament\Support\Concerns\HasIconPosition;
 use Filament\Support\Concerns\HasIconSize;
+use Filament\Support\Contracts\ScalableIcon;
+use Filament\Support\Enums\IconSize;
 use Filament\Support\Exceptions\Cancel;
 use Filament\Support\Exceptions\Halt;
 use Filament\Support\View\Concerns\CanGenerateBadgeHtml;
@@ -121,6 +125,8 @@ class Action extends ViewComponent implements Arrayable
 
     protected ?ActionStatus $status = null;
 
+    protected ?Action $parentAction = null;
+
     final public function __construct(?string $name)
     {
         $this->name($name);
@@ -162,6 +168,14 @@ class Action extends ViewComponent implements Arrayable
      */
     public function toArray(): array
     {
+        $icon = $this->getIcon();
+
+        if ($icon instanceof ScalableIcon) {
+            $icon = $icon->getIconForSize($this->getIconSize() ?? IconSize::Medium);
+        } elseif ($icon instanceof BackedEnum) {
+            $icon = $icon->value;
+        }
+
         return [
             'name' => $this->getName(),
             'color' => $this->getColor(),
@@ -170,7 +184,7 @@ class Action extends ViewComponent implements Arrayable
             'dispatchDirection' => $this->getDispatchDirection(),
             'dispatchToComponent' => $this->getDispatchToComponent(),
             'extraAttributes' => $this->getExtraAttributes(),
-            'icon' => $this->getIcon(),
+            'icon' => $icon,
             'iconPosition' => $this->getIconPosition(),
             'iconSize' => $this->getIconSize(),
             'isOutlined' => $this->isOutlined(),
@@ -463,19 +477,23 @@ class Action extends ViewComponent implements Arrayable
 
         $table = $this->getTable();
 
-        if ($table) {
-            $context['table'] = true;
-        }
-
         $record = $this->getRecord();
 
         if ($record && (
             (! $table)
             || (! $record instanceof Model)
             || blank($table->getModel())
-            || ($record::class === $table->getModel())
+            || is_a($record::class, $table->getModel(), true)
         ) && filled($recordKey = $this->resolveRecordKey($record))) {
             $context['recordKey'] = $recordKey;
+        }
+
+        if ($this->getParentAction()) {
+            return $context;
+        }
+
+        if ($table) {
+            $context['table'] = true;
         }
 
         if ($table && $this->isBulk()) {
@@ -506,9 +524,10 @@ class Action extends ViewComponent implements Arrayable
             'schema' => [$this->getSchemaContainer()],
             'schemaComponent', 'component' => [$this->getSchemaComponent()],
             'schemaOperation', 'context', 'operation' => [$this->getSchemaContainer()?->getOperation() ?? $this->getSchemaComponent()?->getContainer()->getOperation()],
-            'schemaGet', 'get' => [$this->getSchemaComponent()->makeGetUtility()],
-            'schemaSet', 'set' => [$this->getSchemaComponent()->makeSetUtility()],
-            'schemaComponentState', 'state' => [$this->getSchemaComponent()->getState()],
+            'schemaGet', 'get' => [$this->getSchemaComponent()->makeGetUtility()->skipComponentsChildContainersWhileSearching(false)],
+            'schemaSet', 'set' => [$this->getSchemaComponent()->makeSetUtility()->skipComponentsChildContainersWhileSearching(false)],
+            'schemaComponentState', 'state' => [$this->getSchemaComponentState()],
+            'schemaState' => [$this->getSchemaState()],
             'table' => [$this->getTable()],
             default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
         };
@@ -527,6 +546,58 @@ class Action extends ViewComponent implements Arrayable
             Model::class, ($record instanceof Model) ? $record::class : null => [$record],
             default => parent::resolveDefaultClosureDependencyForEvaluationByType($parameterType),
         };
+    }
+
+    public function getSchemaComponentState(): mixed
+    {
+        $schemaContainer = $this->getSchemaContainer();
+
+        while ($schemaContainer) {
+            $parentComponent = $schemaContainer->getParentComponent();
+
+            if (! $parentComponent) {
+                break;
+            }
+
+            if ($parentComponent->hasStatePath()) {
+                return $parentComponent->getState();
+            }
+
+            $schemaContainer = $parentComponent->getContainer();
+        }
+
+        return $this->getSchemaComponent()?->getState();
+    }
+
+    public function getSchemaState(): mixed
+    {
+        $schemaComponent = $this->getSchemaComponent();
+        $arguments = $this->getArguments();
+
+        if (
+            $schemaComponent instanceof HasExtraItemActions &&
+            filled($itemKey = $arguments['item'] ?? null)
+        ) {
+            return $schemaComponent->getItemState($itemKey);
+        }
+
+        $schemaContainer = $this->getSchemaContainer();
+
+        while ($schemaContainer) {
+            if (filled($schemaContainer->getStatePath(isAbsolute: false))) {
+                return $schemaContainer->getStateSnapshot();
+            }
+
+            $parentComponent = $schemaContainer->getParentComponent();
+
+            if (! $parentComponent) {
+                return $schemaContainer->getStateSnapshot();
+            }
+
+            $schemaContainer = $parentComponent->getContainer();
+        }
+
+        return null;
     }
 
     public function shouldClearRecordAfter(): bool
@@ -859,5 +930,17 @@ class Action extends ViewComponent implements Arrayable
     public function getClone(): static
     {
         return clone $this;
+    }
+
+    public function parentAction(?Action $action): static
+    {
+        $this->parentAction = $action;
+
+        return $this;
+    }
+
+    public function getParentAction(): ?Action
+    {
+        return $this->parentAction;
     }
 }

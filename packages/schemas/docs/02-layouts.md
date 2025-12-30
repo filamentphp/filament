@@ -15,6 +15,7 @@ Filament's grid system allows you to create responsive, multi-column layouts usi
 - [Section](sections)
 - [Tabs](tabs)
 - [Wizard](wizards)
+- [Empty state](empty-states)
 
 You may also [create your own custom layout components](custom-components#custom-layout-components) to display components however you wish.
 
@@ -402,6 +403,40 @@ Grid::make()
 ```
 
 In this example, the fallback breakpoints ensure that even in browsers that don't support container queries, the layout will still respond to viewport size changes, with the name field appearing first and the email field second on larger screens.
+
+## Controlling spacing between components
+
+### Reducing space between components
+
+The `dense()` method creates a more compact layout by reducing the spacing between components by 50%:
+
+```php
+use Filament\Schemas\Components\Grid;
+
+Grid::make()
+    ->dense()
+    ->schema([
+        // ...
+    ])
+```
+
+<AutoScreenshot name="schemas/layout/dense" alt="A layout with dense spacing" version="4.x" />
+
+### Removing space between components
+
+The `gap(false)` method removes space between components:
+
+```php
+use Filament\Schemas\Components\Grid;
+
+Grid::make()
+    ->gap(false)
+    ->schema([
+        // ...
+    ])
+```
+
+<AutoScreenshot name="schemas/layout/no-gap" alt="A layout with no gap" version="4.x" />
 
 ## Adding extra HTML attributes to a layout component
 

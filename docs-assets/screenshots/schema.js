@@ -1538,6 +1538,24 @@ export default {
             deviceScaleFactor: 3,
         },
     },
+    'schemas/layout/dense': {
+        url: 'schemas/layout',
+        selector: '#dense',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'schemas/layout/no-gap': {
+        url: 'schemas/layout',
+        selector: '#noGap',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
     'schemas/layout/tabs/simple': {
         url: 'schemas/layout',
         selector: '#tabs',
@@ -1592,6 +1610,15 @@ export default {
             deviceScaleFactor: 3,
         },
     },
+    'schemas/layout/tabs/not-scrollable': {
+        url: 'schemas/layout',
+        selector: '#tabsNotScrollable',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
     'schemas/layout/wizard/simple': {
         url: 'schemas/layout',
         selector: '#wizard',
@@ -1622,6 +1649,15 @@ export default {
     'schemas/layout/wizard/descriptions': {
         url: 'schemas/layout',
         selector: '#wizardDescriptions',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'schemas/layout/empty-state/simple': {
+        url: 'schemas/layout',
+        selector: '#emptyState',
         viewport: {
             width: 1920,
             height: 640,
@@ -2213,6 +2249,15 @@ export default {
     'infolists/entries/repeatable/grid': {
         url: 'infolists/entries',
         selector: '#repeatableGrid',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'infolists/entries/repeatable/table': {
+        url: 'infolists/entries',
+        selector: '#repeatableTable',
         viewport: {
             width: 1920,
             height: 640,

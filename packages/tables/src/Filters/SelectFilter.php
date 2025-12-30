@@ -180,7 +180,7 @@ class SelectFilter extends BaseFilter
 
         if (blank(Arr::first(
             Arr::wrap($values),
-            fn ($value) => filled($value),
+            fn ($value): bool => filled($value),
         ))) {
             return $query;
         }
@@ -530,7 +530,7 @@ class SelectFilter extends BaseFilter
                 })
                 ->forceSearchCaseInsensitive($this->isSearchForcedCaseInsensitive());
         } else {
-            $field->options($this->getOptions());
+            $field->options(fn (): array => $this->getOptions());
         }
 
         if ($this->getOptionLabelUsing) {

@@ -4,10 +4,12 @@ namespace Filament\Forms\Components;
 
 use Closure;
 use Filament\Forms\Components\CodeEditor\Enums\Language;
+use Filament\Support\Concerns\CanWrap;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 
 class CodeEditor extends Field
 {
+    use CanWrap;
     use HasExtraAlpineAttributes;
 
     /**

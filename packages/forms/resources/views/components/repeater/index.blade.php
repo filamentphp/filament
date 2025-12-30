@@ -20,6 +20,7 @@
     $extraItemActions = $getExtraItemActions();
 
     $hasItemNumbers = $hasItemNumbers();
+    $hasItemHeaders = $hasItemHeaders();
     $isAddable = $isAddable();
     $isCloneable = $isCloneable();
     $isCollapsible = $isCollapsible();
@@ -29,6 +30,7 @@
 
     $collapseAllActionIsVisible = $isCollapsible && $collapseAllAction->isVisible();
     $expandAllActionIsVisible = $isCollapsible && $expandAllAction->isVisible();
+    $persistCollapsed = $shouldPersistCollapsed();
 
     $key = $getKey();
     $statePath = $getStatePath();
@@ -82,7 +84,7 @@
                         ->grid($getGridColumns())
                         ->merge([
                             'data-sortable-animation-duration' => $getReorderAnimationDuration(),
-                            'x-on:end.stop' => '$event.oldDraggableIndex !== $event.newDraggableIndex && $wire.mountAction(\'reorder\', { items: $event.target.sortable.toArray() }, { schemaComponent: \'' . $key . '\' })',
+                            'x-on:end.stop' => '$wire.mountAction(\'reorder\', { items: $event.target.sortable.toArray() }, { schemaComponent: \'' . $key . '\' })',
                         ], escape: false)
                         ->class(['fi-fo-repeater-items'])
                 }}
@@ -103,22 +105,26 @@
                         $moveUpAction = $moveUpAction(['item' => $itemKey])->disabled($loop->first);
                         $moveUpActionIsVisible = $isReorderableWithButtons && $moveUpAction->isVisible();
                         $reorderActionIsVisible = $isReorderableWithDragAndDrop && $reorderAction->isVisible();
+                        $hasItemHeader = $hasItemHeaders && ($reorderActionIsVisible || $moveUpActionIsVisible || $moveDownActionIsVisible || filled($itemLabel) || $cloneActionIsVisible || $deleteActionIsVisible || $isCollapsible || $visibleExtraItemActions);
                     @endphp
 
                     <li
                         wire:ignore.self
                         wire:key="{{ $item->getLivewireKey() }}.item"
                         x-data="{
-                            isCollapsed: @js($isCollapsed($item)),
+                            isCollapsed: @if ($persistCollapsed) $persist(@js($isCollapsed($item))).as(`repeater-${@js($key)}-${@js($itemKey)}-isCollapsed`) @else @js($isCollapsed($item)) @endif,
                         }"
                         x-on:repeater-expand.window="$event.detail === '{{ $statePath }}' && (isCollapsed = false)"
                         x-on:repeater-collapse.window="$event.detail === '{{ $statePath }}' && (isCollapsed = true)"
                         x-on:expand="isCollapsed = false"
                         x-sortable-item="{{ $itemKey }}"
-                        class="fi-fo-repeater-item"
+                        @class([
+                            'fi-fo-repeater-item',
+                            'fi-fo-repeater-item-has-header' => $hasItemHeader,
+                        ])
                         x-bind:class="{ 'fi-collapsed': isCollapsed }"
                     >
-                        @if ($reorderActionIsVisible || $moveUpActionIsVisible || $moveDownActionIsVisible || filled($itemLabel) || $cloneActionIsVisible || $deleteActionIsVisible || $isCollapsible || $visibleExtraItemActions)
+                        @if ($hasItemHeader)
                             <div
                                 @if ($isCollapsible)
                                     x-on:click.stop="isCollapsed = !isCollapsed"
@@ -224,11 +230,19 @@
                             </li>
                         @elseif (filled($labelBetweenItems))
                             <li class="fi-fo-repeater-label-between-items-ctn">
+                                <div
+                                    class="fi-fo-repeater-label-between-items-divider-before"
+                                ></div>
+
                                 <span
                                     class="fi-fo-repeater-label-between-items"
                                 >
                                     {{ $labelBetweenItems }}
                                 </span>
+
+                                <div
+                                    class="fi-fo-repeater-label-between-items-divider-after"
+                                ></div>
                             </li>
                         @endif
                     @endif

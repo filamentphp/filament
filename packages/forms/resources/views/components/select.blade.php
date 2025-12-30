@@ -5,7 +5,9 @@
     $isAutofocused = $isAutofocused();
     $isDisabled = $isDisabled();
     $isMultiple = $isMultiple();
+    $isReorderable = $isReorderable();
     $isSearchable = $isSearchable();
+    $hasInitialNoOptionsMessage = $hasInitialNoOptionsMessage();
     $canOptionLabelsWrap = $canOptionLabelsWrap();
     $isRequired = $isRequired();
     $isConcealed = $isConcealed();
@@ -31,7 +33,7 @@
 <x-dynamic-component
     :component="$fieldWrapperView"
     :field="$field"
-    :inline-label-vertical-alignment="\Filament\Support\Enums\VerticalAlignment::Center"
+    class="fi-fo-select-wrp"
 >
     <x-filament::input.wrapper
         :disabled="$isDisabled"
@@ -131,7 +133,6 @@
                 x-data="selectFormComponent({
                             canOptionLabelsWrap: @js($canOptionLabelsWrap),
                             canSelectPlaceholder: @js($canSelectPlaceholder),
-                            isHtmlAllowed: @js($isHtmlAllowed),
                             getOptionLabelUsing: async () => {
                                 return await $wire.callSchemaComponentMethod(@js($key), 'getOptionLabel')
                             },
@@ -154,19 +155,23 @@
                                     { search },
                                 )
                             },
+                            hasDynamicOptions: @js($hasDynamicOptions()),
+                            hasDynamicSearchResults: @js($hasDynamicSearchResults()),
+                            hasInitialNoOptionsMessage: @js($hasInitialNoOptionsMessage),
                             initialOptionLabel: @js((blank($state) || $isMultiple) ? null : $getOptionLabel()),
                             initialOptionLabels: @js((filled($state) && $isMultiple) ? $getOptionLabelsForJs() : []),
                             initialState: @js($state),
                             isAutofocused: @js($isAutofocused),
                             isDisabled: @js($isDisabled),
+                            isHtmlAllowed: @js($isHtmlAllowed),
                             isMultiple: @js($isMultiple),
+                            isReorderable: @js($isReorderable),
                             isSearchable: @js($isSearchable),
                             livewireId: @js($this->getId()),
-                            hasDynamicOptions: @js($hasDynamicOptions()),
-                            hasDynamicSearchResults: @js($hasDynamicSearchResults()),
                             loadingMessage: @js($getLoadingMessage()),
                             maxItems: @js($getMaxItems()),
                             maxItemsMessage: @js($getMaxItemsMessage()),
+                            noOptionsMessage: @js($getNoOptionsMessage()),
                             noSearchResultsMessage: @js($getNoSearchResultsMessage()),
                             options: @js($getOptionsForJs()),
                             optionsLimit: @js($getOptionsLimit()),

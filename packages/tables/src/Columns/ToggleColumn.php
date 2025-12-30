@@ -11,6 +11,7 @@ use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\View\Components\ToggleComponent;
 use Filament\Tables\Columns\Contracts\Editable;
 use Filament\Tables\Table;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Js;
 use Illuminate\View\ComponentAttributeBag;
@@ -55,6 +56,7 @@ class ToggleColumn extends Column implements Editable, HasEmbeddedView
                     ? '{
                         content: ' . Js::from($tooltip) . ',
                         theme: $store.theme,
+                        allowHTML: ' . Js::from($tooltip instanceof Htmlable) . ',
                     }'
                     : null,
             ], escape: false)
@@ -82,7 +84,7 @@ class ToggleColumn extends Column implements Editable, HasEmbeddedView
 
             <div
                 x-bind:aria-checked="state?.toString()"
-                x-on:click="if (! $el.hasAttribute('disabled')) state = ! state"
+                x-on:click.prevent.stop="if (! $el.hasAttribute('disabled')) state = ! state"
                 x-bind:class="state ? '<?= Arr::toCssClasses([
                     'fi-toggle-on',
                     ...get_component_color_classes(ToggleComponent::class, $onColor),

@@ -47,6 +47,8 @@ trait InteractsWithRecord
 
     public function getRecord(): Model
     {
+        abort_unless($this->record instanceof Model, 404);
+
         return $this->record;
     }
 
@@ -95,8 +97,10 @@ trait InteractsWithRecord
         return $breadcrumbs;
     }
 
-    protected function afterActionCalled(): void
+    protected function afterActionCalled(Action $action): void
     {
+        parent::afterActionCalled($action);
+
         if ($this->getRecord()->exists) {
             return;
         }

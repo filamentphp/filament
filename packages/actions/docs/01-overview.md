@@ -555,6 +555,7 @@ You can access various additional utilities if your action is defined in a schem
 - `$schema` - The schema instance that the action belongs to.
 - `$schemaComponent` - The schema component instance that the action belongs to.
 - `$schemaComponentState` - The current value of the schema component.
+- `$schemaState` - The current value of the schema that this action belongs to, like the current repeater item.
 - `$schemaGet` - A function for retrieving values from the schema data. Validation is not run on form fields.
 - `$schemaSet` - A function for setting values in the schema data.
 - `$schemaOperation` - The current operation being performed by the schema. Usually `create`, `edit`, or `view`.

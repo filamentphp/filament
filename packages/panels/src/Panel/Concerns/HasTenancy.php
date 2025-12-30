@@ -23,6 +23,8 @@ trait HasTenancy
 
     protected bool | Closure $hasTenantMenu = true;
 
+    protected bool | Closure | null $isTenantMenuSearchable = null;
+
     protected ?string $tenantRoutePrefix = null;
 
     protected ?string $tenantDomain = null;
@@ -39,6 +41,8 @@ trait HasTenancy
     protected ?string $tenantSlugAttribute = null;
 
     protected ?string $tenantOwnershipRelationshipName = null;
+
+    protected ?Closure $resolveTenantUsing = null;
 
     /**
      * @var array<Action | Closure | MenuItem>
@@ -63,6 +67,13 @@ trait HasTenancy
             ...$this->tenantMenuItems,
             ...$items,
         ];
+
+        return $this;
+    }
+
+    public function searchableTenantMenu(bool | Closure | null $condition = true): static
+    {
+        $this->isTenantMenuSearchable = $condition;
 
         return $this;
     }
@@ -124,6 +135,13 @@ trait HasTenancy
     public function tenantRegistration(?string $page): static
     {
         $this->tenantRegistrationPage = $page;
+
+        return $this;
+    }
+
+    public function resolveTenantUsing(?Closure $callback): static
+    {
+        $this->resolveTenantUsing = $callback;
 
         return $this;
     }
@@ -195,6 +213,12 @@ trait HasTenancy
 
     public function getTenant(string $key): Model
     {
+        if ($this->resolveTenantUsing) {
+            return $this->evaluate($this->resolveTenantUsing, [
+                'key' => $key,
+            ]);
+        }
+
         $tenantModel = $this->getTenantModel();
 
         $record = app($tenantModel)
@@ -325,6 +349,11 @@ trait HasTenancy
         ]) ?? $action;
     }
 
+    public function isTenantMenuSearchable(): ?bool
+    {
+        return $this->evaluate($this->isTenantMenuSearchable);
+    }
+
     /**
      * @return array<Action>
      */
@@ -369,7 +398,7 @@ trait HasTenancy
                 fn (Collection $items): Collection => $items->put('register', $this->getTenantRegistrationMenuItem()),
             )
             ->filter(fn (Action $item): bool => $item->isVisible())
-            ->sort(fn (Action $item): int => $item->getSort())
+            ->sortBy(fn (Action $item): int => $item->getSort())
             ->all();
     }
 

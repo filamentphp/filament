@@ -40,4 +40,8 @@
             @apply ps-8;
         }
     }
+
+    & .fi-ta-col-manager-actions-ctn {
+        @apply flex gap-3;
+    }
 }

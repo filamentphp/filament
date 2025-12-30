@@ -36,6 +36,10 @@ trait CanOpenUrl
 
     public function getUrl(): ?string
     {
+        if ($this->hasModal()) {
+            return null;
+        }
+
         return $this->evaluate($this->url) ?? $this->getHasActionsLivewire()?->getDefaultActionUrl($this);
     }
 

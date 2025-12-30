@@ -213,12 +213,12 @@ return [
 
                 'modal' => [
 
-                    'heading' => 'তৈরী করুন',
+                    'heading' => 'তৈরি করুন',
 
                     'actions' => [
 
                         'create' => [
-                            'label' => 'তৈরী করুন',
+                            'label' => 'তৈরি করুন',
                         ],
 
                     ],

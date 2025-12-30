@@ -179,7 +179,7 @@ trait HasRoutes
             return $this->getRedirectUrl($tenant);
         }
 
-        if (Route::has($homeRouteName = $this->generateRouteName('home'))) {
+        if (((! $hasTenancy) || $tenant) && Route::has($homeRouteName = $this->generateRouteName('home'))) {
             return route($homeRouteName, $tenant ? ['tenant' => $tenant] : []);
         }
 

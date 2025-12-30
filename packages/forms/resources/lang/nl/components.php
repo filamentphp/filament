@@ -284,6 +284,10 @@ return [
 
     'markdown_editor' => [
 
+        'file_attachments_accepted_file_types_message' => 'Geüploade bestanden moeten van het volgende type zijn: :values.',
+
+        'file_attachments_max_size_message' => 'Geüploade bestanden mogen niet groter zijn dan :max kilobytes.',
+
         'tools' => [
             'attach_files' => 'Bestanden bijvoegen',
             'blockquote' => 'Blokcitaat',
@@ -443,6 +447,71 @@ return [
 
             ],
 
+            'grid' => [
+
+                'label' => 'Raster',
+
+                'modal' => [
+
+                    'heading' => 'Raster',
+
+                    'form' => [
+
+                        'preset' => [
+
+                            'label' => 'Voorinstelling',
+
+                            'placeholder' => 'Geen',
+
+                            'options' => [
+                                'two' => 'Twee',
+                                'three' => 'Drie',
+                                'four' => 'Vier',
+                                'five' => 'Vijf',
+                                'two_start_third' => 'Twee (Start Derde)',
+                                'two_end_third' => 'Twee (Einde Derde)',
+                                'two_start_fourth' => 'Twee (Start Vierde)',
+                                'two_end_fourth' => 'Twee (Einde Vierde)',
+                            ],
+                        ],
+
+                        'columns' => [
+                            'label' => 'Kolommen',
+                        ],
+
+                        'from_breakpoint' => [
+
+                            'label' => 'Vanaf breekpunt',
+
+                            'options' => [
+                                'default' => 'Alle',
+                                'sm' => 'Klein',
+                                'md' => 'Medium',
+                                'lg' => 'Groot',
+                                'xl' => 'Extra groot',
+                                '2xl' => 'Twee keer extra groot',
+                            ],
+
+                        ],
+
+                        'is_asymmetric' => [
+                            'label' => 'Twee asymmetrische kolommen',
+                        ],
+
+                        'start_span' => [
+                            'label' => 'Start bereik',
+                        ],
+
+                        'end_span' => [
+                            'label' => 'Eind bereik',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
             'link' => [
 
                 'label' => 'Bewerken',
@@ -469,6 +538,10 @@ return [
 
         ],
 
+        'file_attachments_accepted_file_types_message' => 'Geüploade bestanden moeten van het volgende type zijn: :values.',
+
+        'file_attachments_max_size_message' => 'Geüploade bestanden mogen niet groter zijn dan :max kilobytes.',
+
         'no_merge_tag_search_results_message' => 'Geen merge tags gevonden.',
 
         'tools' => [
@@ -488,6 +561,8 @@ return [
             'h1' => 'Titel',
             'h2' => 'Kop',
             'h3' => 'Subkop',
+            'grid' => 'Raster',
+            'grid_delete' => 'Verwijder raster',
             'highlight' => 'Markeren',
             'horizontal_rule' => 'Horizontale lijn',
             'italic' => 'Cursief',
@@ -514,6 +589,8 @@ return [
             'underline' => 'Onderstrepen',
             'undo' => 'Ongedaan maken',
         ],
+
+        'uploading_file_message' => 'Het bestand wordt geüpload...',
 
     ],
 

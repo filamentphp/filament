@@ -32,7 +32,9 @@
         @endphp
 
         <title>
-            {{ filled($title) ? "{$title} - " : null }} {{ $brandName }}
+            {{ filled($title) ? $title : null }}
+            {{ filled($brandName) && filled($title) ? ' - ' : null }}
+            {{ filled($brandName) ? $brandName : null }}
         </title>
 
         {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::STYLES_BEFORE, scopes: $renderHookScopes) }}

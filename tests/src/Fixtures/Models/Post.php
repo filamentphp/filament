@@ -8,9 +8,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Znck\Eloquent\Relations\BelongsToThrough;
+use Znck\Eloquent\Traits\BelongsToThrough as BelongsToThroughTrait;
 
 class Post extends Model
 {
+    use BelongsToThroughTrait;
     use HasFactory;
     use SoftDeletes;
 
@@ -25,6 +28,7 @@ class Post extends Model
             'tags' => 'array',
             'json' => 'array',
             'json_array_of_objects' => 'array',
+            'config' => 'array',
         ];
     }
 
@@ -33,6 +37,20 @@ class Post extends Model
     public function author(): BelongsTo
     {
         return $this->belongsTo(User::class, 'author_id');
+    }
+
+    public function team(): BelongsToThrough
+    {
+        return $this->belongsToThrough(
+            Team::class,
+            User::class,
+            foreignKeyLookup: [User::class => 'author_id']
+        );
+    }
+
+    public function config(string $key): mixed
+    {
+        return $this->config[$key] ?? null;
     }
 
     protected static function newFactory()

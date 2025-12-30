@@ -40,6 +40,10 @@ trait BelongsToModel
             return;
         }
 
+        if (! $this->isSaved()) {
+            return;
+        }
+
         if (! ($this->getRecord()?->exists)) {
             return;
         }
@@ -60,6 +64,10 @@ trait BelongsToModel
         $callback = $this->saveRelationshipsBeforeChildrenUsing;
 
         if (! $callback) {
+            return;
+        }
+
+        if (! $this->isSaved()) {
             return;
         }
 
@@ -93,13 +101,35 @@ trait BelongsToModel
         $this->evaluate($callback);
 
         if ($shouldHydrate) {
+            $this->castStateAfterLoadingFromRelationships();
+
             $this->callAfterStateHydrated();
 
-            foreach ($this->getChildSchemas() as $childSchema) {
+            foreach ($this->getChildSchemas(withHidden: true) as $childSchema) {
                 $childSchema->callAfterStateHydrated();
             }
 
             $this->fillStateWithNull();
+        }
+    }
+
+    public function castStateAfterLoadingFromRelationships(): void
+    {
+        foreach ($this->getChildSchemas(withHidden: true) as $childSchema) {
+            foreach ($childSchema->getComponents(withActions: false, withHidden: true) as $component) {
+                $component->castStateAfterLoadingFromRelationships();
+            }
+        }
+
+        $rawState = $this->getRawState();
+        $originalRawState = $rawState;
+
+        foreach ($this->getStateCasts() as $stateCast) {
+            $rawState = $stateCast->set($rawState);
+        }
+
+        if ($rawState !== $originalRawState) {
+            $this->rawState($rawState);
         }
     }
 

@@ -64,7 +64,6 @@
     @if ($hasDropdown)
         <x-filament::dropdown
             :placement="(__('filament-panels::layout.direction') === 'rtl') ? 'left-start' : 'right-start'"
-            teleport
             x-show="! $store.sidebar.isOpen"
         >
             <x-slot name="trigger">
@@ -169,8 +168,8 @@
     >
         @foreach ($items as $item)
             @php
-                $isItemActive = $item->isActive();
                 $isItemChildItemsActive = $item->isChildItemsActive();
+                $isItemActive = (! $isItemChildItemsActive) && $item->isActive();
                 $itemActiveIcon = $item->getActiveIcon();
                 $itemBadge = $item->getBadge();
                 $itemBadgeColor = $item->getBadgeColor();
@@ -204,6 +203,7 @@
                 :last="$loop->last"
                 :should-open-url-in-new-tab="$shouldItemOpenUrlInNewTab"
                 :sidebar-collapsible="$sidebarCollapsible"
+                :sub-navigation="$subNavigation"
                 :url="$itemUrl"
             >
                 {{ $item->getLabel() }}

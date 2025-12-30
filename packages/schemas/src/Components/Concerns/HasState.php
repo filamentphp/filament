@@ -50,9 +50,11 @@ trait HasState
 
     protected bool $hasDefaultState = false;
 
-    protected bool | Closure $isDehydrated = true;
+    protected bool | Closure | null $isDehydrated = null;
 
     protected bool | Closure $isDehydratedWhenHidden = false;
+
+    protected bool | Closure $isSaved = true;
 
     protected bool | Closure $isValidatedWhenNotDehydrated = true;
 
@@ -209,6 +211,8 @@ trait HasState
             store($this)->push('executedAfterStateUpdatedCallbacks', value: $runId, iKey: $runId);
         }
 
+        $this->clearCachedDefaultChildSchemas();
+
         return $this;
     }
 
@@ -256,6 +260,13 @@ trait HasState
     public function dehydratedWhenHidden(bool | Closure $condition = true): static
     {
         $this->isDehydratedWhenHidden = $condition;
+
+        return $this;
+    }
+
+    public function saved(bool | Closure $condition = true): static
+    {
+        $this->isSaved = $condition;
 
         return $this;
     }
@@ -552,6 +563,11 @@ trait HasState
 
         data_set($livewire, $this->getStatePath(), $this->evaluate($state));
 
+        // For components such as repeaters and builders, the default child schemas depend on the state of the component.
+        // When loading state into these fields after the state is already present, the cached child schemas need to be
+        // cleared so that they can be re-evaluated based on the new state. `rawState()` is called during this process.
+        $this->clearCachedDefaultChildSchemas();
+
         return $this;
     }
 
@@ -658,7 +674,9 @@ trait HasState
 
     public function isDehydrated(): bool
     {
-        if (! $this->evaluate($this->isDehydrated)) {
+        $isDehydrated = $this->evaluate($this->isDehydrated) ?? $this->isSaved();
+
+        if (! $isDehydrated) {
             return false;
         }
 
@@ -668,6 +686,11 @@ trait HasState
     public function isDehydratedWhenHidden(): bool
     {
         return (bool) $this->evaluate($this->isDehydratedWhenHidden);
+    }
+
+    public function isSaved(): bool
+    {
+        return (bool) $this->evaluate($this->isSaved);
     }
 
     public function isValidatedWhenNotDehydrated(): bool

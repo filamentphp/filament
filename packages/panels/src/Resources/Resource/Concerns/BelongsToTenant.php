@@ -7,9 +7,11 @@ use Filament\Panel;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use LogicException;
+use Znck\Eloquent\Relations\BelongsToThrough;
 
 trait BelongsToTenant
 {
@@ -70,7 +72,7 @@ trait BelongsToTenant
     {
         $relationshipName = static::getTenantOwnershipRelationshipName();
 
-        if (! $record->isRelation($relationshipName)) {
+        if ($record->hasAttribute($relationshipName) || (! $record->isRelation($relationshipName))) {
             $resourceClass = static::class;
             $recordClass = $record::class;
 
@@ -92,7 +94,7 @@ trait BelongsToTenant
     {
         $relationshipName = static::getTenantRelationshipName();
 
-        if (! $tenant->isRelation($relationshipName)) {
+        if ($tenant->hasAttribute($relationshipName) || (! $tenant->isRelation($relationshipName))) {
             $resourceClass = static::class;
             $tenantClass = $tenant::class;
 
@@ -176,7 +178,13 @@ trait BelongsToTenant
 
             $relationship = static::getTenantOwnershipRelationship($record);
 
-            if ($relationship instanceof BelongsTo) {
+            if ($relationship instanceof BelongsTo || $relationship instanceof BelongsToThrough) {
+                return;
+            }
+
+            if ($relationship instanceof BelongsToMany) {
+                $relationship->syncWithoutDetaching([$tenant]);
+
                 return;
             }
 

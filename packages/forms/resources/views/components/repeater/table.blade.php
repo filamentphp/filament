@@ -2,6 +2,7 @@
     use Filament\Actions\Action;
     use Filament\Actions\ActionGroup;
     use Filament\Support\Enums\Alignment;
+    use Filament\Support\Enums\VerticalAlignment;
     use Illuminate\Support\Js;
     use Illuminate\View\ComponentAttributeBag;
 
@@ -38,12 +39,12 @@
         {{ $attributes
                 ->merge($getExtraAttributes(), escape: false)
                 ->class([
-                                'fi-fo-table-repeater',
-                                'fi-compact' => $isCompact,
-                            ]) }}
+                    'fi-fo-table-repeater',
+                    'fi-compact' => $isCompact,
+                ]) }}
     >
         @if (count($items))
-            <table class="fi-absolute-positioning-context">
+            <table>
                 <thead>
                     <tr>
                         @if ((count($items) > 1) && ($isReorderableWithButtons || $isReorderableWithDragAndDrop))
@@ -86,7 +87,7 @@
                     {{ (new ComponentAttributeBag)
                             ->merge([
                                 'data-sortable-animation-duration' => $getReorderAnimationDuration(),
-                                'x-on:end.stop' => '$event.oldDraggableIndex !== $event.newDraggableIndex && $wire.mountAction(\'reorder\', { items: $event.target.sortable.toArray() }, { schemaComponent: \'' . $key . '\' })',
+                                'x-on:end.stop' => '$wire.mountAction(\'reorder\', { items: $event.target.sortable.toArray() }, { schemaComponent: \'' . $key . '\' })',
                             ], escape: false) }}
                 >
                     @foreach ($items as $itemKey => $item)
@@ -158,24 +159,26 @@
                                         @endphp
 
                                         @if ($schemaComponent->isVisible())
-                                            <td
-                                                @if (! (($schemaComponent instanceof Action) || ($schemaComponent instanceof ActionGroup)))
-                                                    @php
-                                                        $schemaComponentStatePath = $schemaComponent->getStatePath();
-                                                    @endphp
+                                            @php
+                                                $schemaComponentStatePath = $schemaComponent->getStatePath();
+                                                $currentColumn = $tableColumns[$counter - 1] ?? null;
+                                                $columnVerticalAlignment = $currentColumn?->getVerticalAlignment();
+                                            @endphp
 
-                                                    x-data="filamentSchemaComponent({
-                                                        path: @js($schemaComponentStatePath),
-                                                        containerPath: @js($itemStatePath),
-                                                        isLive: @js($schemaComponent->isLive()),
-                                                        $wire,
-                                                    })"
-                                                    @if ($afterStateUpdatedJs = $schemaComponent->getAfterStateUpdatedJs())
-                                                        x-init="{{ implode(';', array_map(
-                                                            fn (string $js): string => '$wire.watch(' . Js::from($schemaComponentStatePath) . ', ($state, $old) => ($state !== undefined) && eval(' . Js::from($js) . '))',
-                                                            $afterStateUpdatedJs,
-                                                        )) }}"
-                                                    @endif
+                                            <td
+                                                @class([
+                                                    ($columnVerticalAlignment instanceof VerticalAlignment) ? ('fi-vertical-align-' . $columnVerticalAlignment->value) : (is_string($columnVerticalAlignment) ? $columnVerticalAlignment : ''),
+                                                ])
+                                                x-data="filamentSchemaComponent({
+                                                    path: @js($schemaComponentStatePath),
+                                                    containerPath: @js($itemStatePath),
+                                                    $wire,
+                                                })"
+                                                @if ($afterStateUpdatedJs = $schemaComponent->getAfterStateUpdatedJs())
+                                                    x-init="{{ implode(';', array_map(
+                                                        fn (string $js): string => '$wire.watch(' . Js::from($schemaComponentStatePath) . ', ($state, $old) => isStateChanged($state, $old) && eval(' . Js::from($js) . '))',
+                                                        $afterStateUpdatedJs,
+                                                    )) }}"
                                                 @endif
                                             >
                                                 {{ $schemaComponent }}

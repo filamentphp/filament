@@ -26,6 +26,20 @@ return [
             'label' => 'Акција|Акције',
         ],
 
+        'select' => [
+
+            'loading_message' => 'Учитавање...',
+
+            'no_search_results_message' => 'Ниједна опција не се подудара.',
+
+            'placeholder' => 'Изаберите опцију',
+
+            'searching_message' => 'Претрага...',
+
+            'search_prompt' => 'Започните унос за претрагу...',
+
+        ],
+
         'text' => [
 
             'actions' => [
@@ -184,7 +198,6 @@ return [
 
             'group' => [
                 'label' => 'Групишите по',
-                'placeholder' => 'Групишите по',
             ],
 
             'direction' => [

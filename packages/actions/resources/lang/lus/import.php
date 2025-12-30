@@ -2,11 +2,11 @@
 
 return [
 
-    'label' => ':Label import na',
+    'label' => ':Label lâkluhna',
 
     'modal' => [
 
-        'heading' => ':Label import na',
+        'heading' => ':Label lâkluhna',
 
         'form' => [
 
@@ -24,7 +24,7 @@ return [
 
             'columns' => [
                 'label' => 'Columns',
-                'placeholder' => 'Select a column',
+                'placeholder' => 'Column thlang rawh',
             ],
 
         ],
@@ -36,7 +36,7 @@ return [
             ],
 
             'import' => [
-                'label' => 'Import',
+                'label' => 'Lâkluhna',
             ],
 
         ],
@@ -47,12 +47,12 @@ return [
 
         'completed' => [
 
-            'title' => 'Import completed',
+            'title' => 'Lâkluh a zo e.',
 
             'actions' => [
 
                 'download_failed_rows_csv' => [
-                    'label' => 'A failed na chhan download rawh|A failed na chhan te download rawh',
+                    'label' => 'A hlawhchham na chhan download rawh|A hlawhchham na chhan te download rawh',
                 ],
 
             ],
@@ -61,12 +61,12 @@ return [
 
         'max_rows' => [
             'title' => 'CSV file upload hi a lian lutuk',
-            'body' => 'Vawikhatah row 1 ai a tam a import theiloh.|Vawikhatah rows :count ai a tam a import theiloh',
+            'body' => 'Vawikhatah row 1 ai a tam a lâkluh theiloh.|Vawikhatah rows :count ai a tam a lâkluh theiloh',
         ],
 
         'started' => [
-            'title' => 'Import started',
-            'body' => 'I import a intan a, row 1 background ah a insiam ang.|I export a intan a, rows :count background ah a insiam ang.',
+            'title' => 'Lâkluh a intan e.',
+            'body' => 'I lâkluh a intan a, row 1 background ah a insiam ang.|I lâkluh a intan a, rows :count background ah a insiam ang.',
         ],
 
     ],

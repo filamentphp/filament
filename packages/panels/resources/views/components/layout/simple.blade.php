@@ -26,6 +26,7 @@
                 @if (filament()->hasDatabaseNotifications())
                     @livewire(Filament\Livewire\DatabaseNotifications::class, [
                         'lazy' => filament()->hasLazyLoadedDatabaseNotifications(),
+                        'position' => \Filament\Enums\DatabaseNotificationsPosition::Topbar,
                     ])
                 @endif
 

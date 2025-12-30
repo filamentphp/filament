@@ -264,6 +264,11 @@ class Field extends Component implements Contracts\HasValidationRules
             return $label;
         }
 
+        return $this->getDefaultLabel();
+    }
+
+    public function getDefaultLabel(): string
+    {
         $label = (string) str($this->getName())
             ->afterLast('.')
             ->kebab()

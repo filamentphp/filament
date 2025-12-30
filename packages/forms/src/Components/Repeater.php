@@ -6,7 +6,6 @@ use Closure;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Repeater\TableColumn;
 use Filament\Forms\View\FormsIconAlias;
-use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Concerns\CanBeCollapsed;
 use Filament\Schemas\Components\Concerns\CanBeCompact;
 use Filament\Schemas\Components\Concerns\HasContainerGridLayout;
@@ -65,11 +64,15 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
 
     protected bool | Closure $hasItemNumbers = false;
 
+    protected bool | Closure $hasItemHeaders = true;
+
     protected Field | Closure | null $simpleField = null;
 
     protected Alignment | string | Closure | null $addActionAlignment = null;
 
     protected ?Closure $modifyRelationshipQueryUsing = null;
+
+    protected ?Closure $modifyRelationshipRecordsUsing = null;
 
     protected ?Closure $modifyAddActionUsing = null;
 
@@ -909,10 +912,11 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
         return $this;
     }
 
-    public function relationship(string | Closure | null $name = null, ?Closure $modifyQueryUsing = null): static
+    public function relationship(string | Closure | null $name = null, ?Closure $modifyQueryUsing = null, ?Closure $modifyRecordsUsing = null): static
     {
         $this->relationship = $name ?? $this->getName();
         $this->modifyRelationshipQueryUsing = $modifyQueryUsing;
+        $this->modifyRelationshipRecordsUsing = $modifyRecordsUsing;
 
         $this->afterStateHydrated(static function (Repeater $component): void {
             if (! is_array($component->hydratedDefaultState)) {
@@ -1049,6 +1053,13 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
         return $this;
     }
 
+    public function itemHeaders(bool | Closure $condition = true): static
+    {
+        $this->hasItemHeaders = $condition;
+
+        return $this;
+    }
+
     public function fillFromRelationship(): void
     {
         $this->state(
@@ -1108,7 +1119,7 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
 
         $relationshipName = $this->getRelationshipName();
 
-        if (! $record->isRelation($relationshipName)) {
+        if ($record->hasAttribute($relationshipName) || (! $record->isRelation($relationshipName))) {
             throw new LogicException("The relationship [{$relationshipName}] does not exist on the model [{$this->getModel()}].");
         }
 
@@ -1118,6 +1129,19 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
     public function getRelationshipName(): ?string
     {
         return $this->evaluate($this->relationship);
+    }
+
+    protected function modifyRelationshipRecords(Collection $records): Collection
+    {
+        return $this->evaluate(
+            $this->modifyRelationshipRecordsUsing,
+            namedInjections: [
+                'records' => $records,
+            ],
+            typedInjections: [
+                Collection::class => $records,
+            ],
+        ) ?? $records;
     }
 
     public function getCachedExistingRecords(): Collection
@@ -1136,11 +1160,11 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
             $this->getModelInstance()->relationLoaded($relationshipName) &&
             (! $this->modifyRelationshipQueryUsing)
         ) {
-            return $this->cachedExistingRecords = $this->getRecord()->getRelationValue($relationshipName)
+            return $this->cachedExistingRecords = $this->modifyRelationshipRecords($this->getRecord()->getRelationValue($relationshipName)
                 ->when(filled($orderColumn), fn (Collection $records) => $records->sortBy($orderColumn))
                 ->mapWithKeys(
                     fn (Model $item): array => ["record-{$item[$relatedKeyName]}" => $item],
-                );
+                ));
         }
 
         $relationshipQuery = $relationship->getQuery();
@@ -1162,9 +1186,9 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
             $relationshipQuery->orderBy($orderColumn);
         }
 
-        return $this->cachedExistingRecords = $relationshipQuery->get()->mapWithKeys(
+        return $this->cachedExistingRecords = $this->modifyRelationshipRecords($relationshipQuery->get()->mapWithKeys(
             fn (Model $item): array => ["record-{$item[$relatedKeyName]}" => $item],
-        );
+        ));
     }
 
     public function getItemLabel(string $key): string | Htmlable | null
@@ -1189,6 +1213,11 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
     public function hasItemNumbers(): bool
     {
         return (bool) $this->evaluate($this->hasItemNumbers);
+    }
+
+    public function hasItemHeaders(): bool
+    {
+        return (bool) $this->evaluate($this->hasItemHeaders);
     }
 
     public function simple(Field | Closure | null $field): static

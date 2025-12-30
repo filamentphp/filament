@@ -5,6 +5,7 @@ use Filament\Auth\MultiFactor\Email\EmailAuthentication;
 use Filament\Auth\MultiFactor\Email\Notifications\VerifyEmailAuthentication;
 use Filament\Auth\Pages\Login;
 use Filament\Facades\Filament;
+use Filament\Notifications\Notification as FilamentNotification;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
 use Illuminate\Support\Arr;
@@ -108,8 +109,14 @@ it('can resend the code to the user', function (): void {
     $this->travelBack();
 
     $livewire
-        ->callAction(TestAction::make('resend')
-            ->schemaComponent("{$emailAuthentication->getId()}.code", schema: 'multiFactorChallengeForm'));
+        ->callAction(
+            TestAction::make('resend')
+                ->schemaComponent("{$emailAuthentication->getId()}.code", schema: 'multiFactorChallengeForm')
+        )->assertNotified(
+            FilamentNotification::make()
+                ->title(__('filament-panels::auth/multi-factor/email/provider.login_form.code.actions.resend.notifications.resent.title'))
+                ->success()
+        );
 
     Notification::assertSentTimes(VerifyEmailAuthentication::class, 2);
 });
@@ -133,22 +140,40 @@ it('can not resend the code to the user more than twice per minute', function ()
     Notification::assertSentTimes(VerifyEmailAuthentication::class, 1);
 
     $livewire
-        ->callAction(TestAction::make('resend')
-            ->schemaComponent("{$emailAuthentication->getId()}.code", schema: 'multiFactorChallengeForm'));
+        ->callAction(
+            TestAction::make('resend')
+                ->schemaComponent("{$emailAuthentication->getId()}.code", schema: 'multiFactorChallengeForm')
+        )->assertNotified(
+            FilamentNotification::make()
+                ->title(__('filament-panels::auth/multi-factor/email/provider.login_form.code.actions.resend.notifications.resent.title'))
+                ->success()
+        );
 
     Notification::assertSentTimes(VerifyEmailAuthentication::class, 2);
 
     $livewire
-        ->callAction(TestAction::make('resend')
-            ->schemaComponent("{$emailAuthentication->getId()}.code", schema: 'multiFactorChallengeForm'));
+        ->callAction(
+            TestAction::make('resend')
+                ->schemaComponent("{$emailAuthentication->getId()}.code", schema: 'multiFactorChallengeForm')
+        )->assertNotified(
+            FilamentNotification::make()
+                ->title(__('filament-panels::auth/multi-factor/email/provider.login_form.code.actions.resend.notifications.throttled.title'))
+                ->danger()
+        );
 
     Notification::assertSentTimes(VerifyEmailAuthentication::class, 2);
 
     $this->travelBack();
 
     $livewire
-        ->callAction(TestAction::make('resend')
-            ->schemaComponent("{$emailAuthentication->getId()}.code", schema: 'multiFactorChallengeForm'));
+        ->callAction(
+            TestAction::make('resend')
+                ->schemaComponent("{$emailAuthentication->getId()}.code", schema: 'multiFactorChallengeForm')
+        )->assertNotified(
+            FilamentNotification::make()
+                ->title(__('filament-panels::auth/multi-factor/email/provider.login_form.code.actions.resend.notifications.resent.title'))
+                ->success()
+        );
 
     Notification::assertSentTimes(VerifyEmailAuthentication::class, 3);
 });

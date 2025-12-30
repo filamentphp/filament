@@ -33,6 +33,13 @@ class UnorderedList extends Component
         return $static;
     }
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->columns(['sm' => 2]);
+    }
+
     public function size(TextSize | string | Closure | null $size): static
     {
         $this->size = $size;

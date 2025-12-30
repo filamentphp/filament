@@ -9,17 +9,15 @@ use DateTime;
 use DateTimeImmutable;
 use DateTimeInterface;
 use Filament\Tests\TestCase;
-use Illuminate\Support\Arr;
 use Spatie\LaravelSettings\Settings as BaseSettings;
 
 use function PHPUnit\Framework\assertFileExists;
 
-uses(TestCase::class);
+uses(TestCase::class)->group('commands');
 
 beforeEach(function (): void {
     $this->withoutMockingConsoleOutput();
-})
-    ->skip((bool) Arr::get($_SERVER, 'PARATEST'), 'File generation tests cannot be run in parallel as they would share a filesystem and have the potential to conflict with each other.');
+});
 
 it('can generate a page class', function (): void {
     $this->artisan('make:filament-settings-page', [
@@ -79,8 +77,10 @@ it('can generate a page class with a generated form schema', function (): void {
     ]);
 
     assertFileExists($path = app_path('Filament/Pages/ManageSettings.php'));
-    expect(file_get_contents($path))
-        ->toMatchSnapshot();
+    if (config('database.default') === 'testing') {
+        expect(file_get_contents($path))
+            ->toMatchSnapshot();
+    }
 });
 
 class Settings extends BaseSettings

@@ -129,6 +129,8 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
 
     protected bool | Closure $canOptionLabelsWrap = true;
 
+    protected bool | Closure $isReorderable = false;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -502,6 +504,18 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         $this->isMultiple = $condition;
 
         return $this;
+    }
+
+    public function reorderable(bool | Closure $condition = true): static
+    {
+        $this->isReorderable = $condition;
+
+        return $this;
+    }
+
+    public function isReorderable(): bool
+    {
+        return (bool) $this->evaluate($this->isReorderable);
     }
 
     public function position(string | Closure | null $position): static
@@ -904,15 +918,18 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
                 /** @var Collection $relatedRecords */
                 $relatedRecords = $relationship->getResults();
 
+                // Cast the related keys to a string, otherwise JavaScript does not
+                // know how to handle deselection.
+                //
+                // https://github.com/filamentphp/filament/issues/1111
+                $relatedKeys = $relatedRecords
+                    ->pluck(($relationship instanceof BelongsToMany) ? $relationship->getRelatedKeyName() : $relationship->getRelated()->getKeyName())
+                    ->map(static fn ($key): string => strval($key));
+
                 $component->state(
-                    // Cast the related keys to a string, otherwise JavaScript does not
-                    // know how to handle deselection.
-                    //
-                    // https://github.com/filamentphp/filament/issues/1111
-                    $relatedRecords
-                        ->pluck(($relationship instanceof BelongsToMany) ? $relationship->getRelatedKeyName() : $relationship->getRelated()->getKeyName())
-                        ->map(static fn ($key): string => strval($key))
-                        ->all(),
+                    $component->isMultiple()
+                        ? $relatedKeys->all()
+                        : $relatedKeys->first(),
                 );
 
                 return;
@@ -1143,7 +1160,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         });
 
         $this->createOptionUsing(static function (Select $component, array $data, Schema $schema) {
-            $record = $component->getRelationship()->getRelated();
+            $record = $component->getRelationship()->newModelInstance();
             $record->fill($data);
             $record->save();
 
@@ -1160,7 +1177,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
             $schema->getRecord()?->update($data);
         });
 
-        $this->dehydrated(fn (Select $component): bool => ! $component->isMultiple());
+        $this->dehydrated(fn (Select $component): bool => (! $component->isMultiple()) && $component->isSaved());
 
         return $this;
     }
@@ -1255,6 +1272,12 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         $relationshipName = $this->getRelationshipName();
 
         foreach (explode('.', $relationshipName) as $nestedRelationshipName) {
+            if ($record->hasAttribute($nestedRelationshipName)) {
+                $relationship = null;
+
+                break;
+            }
+
             if (! $record->isRelation($nestedRelationshipName)) {
                 $relationship = null;
 
@@ -1315,6 +1338,15 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         }
 
         return $this->getSearchResultsUsing instanceof Closure;
+    }
+
+    public function hasInitialNoOptionsMessage(): bool
+    {
+        if ($this->hasRelationship()) {
+            return $this->isPreloaded();
+        }
+
+        return ! $this->hasDynamicSearchResults();
     }
 
     /**
@@ -1447,6 +1479,11 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
             }
 
             $state = $this->getState();
+
+            if (blank($state)) {
+                return null;
+            }
+
             $optionLabels = $this->getOptionLabels(withDefaults: false);
 
             if (count($state) > count($optionLabels)) {
@@ -1477,13 +1514,17 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
             throw new LogicException("Filament failed to validate the [{$this->getStatePath()}] field\'s selected options because it did not have an [options()] or [getOptionLabelUsing()] configuration. Please use one of these methods to inform Filament which options are valid for this field.");
         }
 
+        $state = $this->getState();
+
+        if (blank($state)) {
+            return null;
+        }
+
         $optionLabel = $this->getOptionLabel(withDefault: false);
 
         if (blank($optionLabel)) {
             return [];
         }
-
-        $state = $this->getState();
 
         if ($state instanceof BackedEnum) {
             $state = $state->value;

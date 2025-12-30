@@ -239,7 +239,7 @@ class Register extends SimplePage
         return __('filament-panels::auth/pages/register.title');
     }
 
-    public function getHeading(): string | Htmlable
+    public function getHeading(): string | Htmlable | null
     {
         return __('filament-panels::auth/pages/register.heading');
     }

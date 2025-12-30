@@ -125,7 +125,7 @@ class AppAuthentication implements MultiFactorAuthenticationProvider
 
     public function generateSecret(): string
     {
-        return $this->google2FA->generateSecretKey();
+        return $this->google2FA->generateSecretKey(16);
     }
 
     public function getCurrentCode(HasAppAuthentication $user, ?string $secret = null): string
@@ -176,13 +176,24 @@ class AppAuthentication implements MultiFactorAuthenticationProvider
     {
         $user ??= Filament::auth()->user();
 
+        $remainingCodes = [];
+        $isValid = false;
+
         foreach ($this->getRecoveryCodes($user) as $hashedRecoveryCode) { /** @phpstan-ignore-line */
             if (Hash::check($recoveryCode, $hashedRecoveryCode)) {
-                return true;
+                $isValid = true;
+
+                continue;
             }
+
+            $remainingCodes[] = $hashedRecoveryCode;
         }
 
-        return false;
+        if ($isValid) {
+            $user->saveAppAuthenticationRecoveryCodes($remainingCodes);
+        }
+
+        return $isValid;
     }
 
     /**

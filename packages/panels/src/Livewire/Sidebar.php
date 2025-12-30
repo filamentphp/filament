@@ -5,6 +5,7 @@ namespace Filament\Livewire;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Livewire\Concerns\HasTenantMenu;
+use Filament\Livewire\Concerns\HasUserMenu;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Illuminate\Contracts\View\View;
@@ -14,6 +15,7 @@ use Livewire\Component;
 class Sidebar extends Component implements HasActions, HasSchemas
 {
     use HasTenantMenu;
+    use HasUserMenu;
     use InteractsWithActions;
     use InteractsWithSchemas;
 

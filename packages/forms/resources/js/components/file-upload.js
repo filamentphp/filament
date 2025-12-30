@@ -43,6 +43,7 @@ export default function fileUploadFormComponent({
     hasImageEditor,
     hasCircleCropper,
     canEditSvgs,
+    cancelUploadUsing,
     isSvgEditingConfirmed,
     confirmSvgEditingMessage,
     disabledSvgEditingMessage,
@@ -150,6 +151,7 @@ export default function fileUploadFormComponent({
                         load,
                         error,
                         progress,
+                        abort,
                     ) => {
                         this.shouldUpdateState = false
 
@@ -178,6 +180,13 @@ export default function fileUploadFormComponent({
                             error,
                             progress,
                         )
+
+                        return {
+                            abort: () => {
+                                cancelUploadUsing(fileKey)
+                                abort()
+                            },
+                        }
                     },
                     remove: async (source, load) => {
                         let fileKey = this.uploadedFileIndex[source] ?? null
@@ -787,6 +796,7 @@ import ja from 'filepond/locale/ja-ja'
 import km from 'filepond/locale/km-km'
 import ko from 'filepond/locale/ko-kr'
 import lt from 'filepond/locale/lt-lt'
+import lus from 'filepond/locale/lus-lus'
 import lv from 'filepond/locale/lv-lv'
 import nb from 'filepond/locale/no_nb'
 import nl from 'filepond/locale/nl-nl'
@@ -828,6 +838,7 @@ const locales = {
     km,
     ko,
     lt,
+    lus,
     lv,
     nb,
     nl,

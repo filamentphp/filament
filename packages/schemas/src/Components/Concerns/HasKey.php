@@ -32,7 +32,9 @@ trait HasKey
             return $this->cachedAbsoluteKey;
         }
 
-        $key = $this->evaluate($this->key) ?? $this->getStatePath(isAbsolute: false);
+        $key = ($this->isKeyInheritable() || (! $this->hasStatePath()))
+            ? ($this->evaluate($this->key) ?? $this->getStatePath(isAbsolute: false))
+            : $this->getStatePath(isAbsolute: false);
 
         if (! $isAbsolute) {
             return $key;
@@ -69,6 +71,16 @@ trait HasKey
             if (filled($key)) {
                 return $this->cacheAbsoluteInheritanceKey($key);
             }
+        } elseif ($this->hasStatePath()) {
+            $keyComponents = [];
+
+            if (filled($containerInheritanceKey = $this->getContainer()->getInheritanceKey())) {
+                $keyComponents[] = $containerInheritanceKey;
+            }
+
+            $keyComponents[] = $this->getStatePath(isAbsolute: false);
+
+            return $this->cacheAbsoluteInheritanceKey(implode('.', $keyComponents));
         }
 
         return $this->cacheAbsoluteInheritanceKey($this->getContainer()->getInheritanceKey());

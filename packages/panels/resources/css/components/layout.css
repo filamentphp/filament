@@ -1,5 +1,5 @@
 html.fi {
-    @apply min-h-dvh;
+    @apply min-h-dvh [scrollbar-gutter:stable];
 }
 
 .fi-body {
@@ -9,6 +9,14 @@ html.fi {
     &.fi-body-has-sidebar-fully-collapsible-on-desktop {
         & .fi-main-ctn {
             @apply min-h-[calc(100dvh-4rem)] opacity-0 transition-all;
+        }
+    }
+
+    & > .fi-layout-sidebar-toggle-btn-ctn {
+        @apply ps-5 pt-5;
+
+        &.lg\:fi-hidden {
+            @apply lg:hidden;
         }
     }
 

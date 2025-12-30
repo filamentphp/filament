@@ -13,3 +13,5 @@
 composer.phar
 Thumbs.db
 phpunit.xml
+.env.testing
+!phpunit.*.xml

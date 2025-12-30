@@ -55,7 +55,7 @@ class EmailAuthentication implements HasBeforeChallengeHook, MultiFactorAuthenti
         return $user->hasEmailAuthentication();
     }
 
-    public function sendCode(HasEmailAuthentication $user): void
+    public function sendCode(HasEmailAuthentication $user): bool
     {
         if (! ($user instanceof Model)) {
             throw new LogicException('The [' . $user::class . '] class must be an instance of [' . Model::class . '] to use email authentication.');
@@ -70,7 +70,7 @@ class EmailAuthentication implements HasBeforeChallengeHook, MultiFactorAuthenti
         $rateLimitingKey = "filament_email_authentication.{$user->getKey()}";
 
         if (RateLimiter::tooManyAttempts($rateLimitingKey, maxAttempts: 2)) {
-            return;
+            return false;
         }
 
         RateLimiter::hit($rateLimitingKey);
@@ -85,6 +85,8 @@ class EmailAuthentication implements HasBeforeChallengeHook, MultiFactorAuthenti
             'code' => $code,
             'codeExpiryMinutes' => $codeExpiryMinutes,
         ]));
+
+        return true;
     }
 
     public function enableEmailAuthentication(HasEmailAuthentication $user): void
@@ -197,7 +199,14 @@ class EmailAuthentication implements HasBeforeChallengeHook, MultiFactorAuthenti
                     ->label(__('filament-panels::auth/multi-factor/email/provider.login_form.code.actions.resend.label'))
                     ->link()
                     ->action(function () use ($user): void {
-                        $this->sendCode($user);
+                        if (! $this->sendCode($user)) {
+                            Notification::make()
+                                ->title(__('filament-panels::auth/multi-factor/email/provider.login_form.code.actions.resend.notifications.throttled.title'))
+                                ->danger()
+                                ->send();
+
+                            return;
+                        }
 
                         Notification::make()
                             ->title(__('filament-panels::auth/multi-factor/email/provider.login_form.code.actions.resend.notifications.resent.title'))

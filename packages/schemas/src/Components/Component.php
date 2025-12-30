@@ -86,6 +86,7 @@ class Component extends ViewComponent
             'get' => [$this->makeGetUtility()],
             'livewire' => [$this->getLivewire()],
             'model' => [$this->getModel()],
+            'parentRepeaterItemIndex' => [$this->getParentRepeaterItemIndex()],
             'rawState' => [$this->getRawState()],
             'record' => [$this->getRecord()],
             'set' => [$this->makeSetUtility()],
@@ -190,12 +191,11 @@ class Component extends ViewComponent
                 x-data="filamentSchemaComponent({
                     path: <?= Js::from($statePath) ?>,
                     containerPath: <?= Js::from($containerStatePath) ?>,
-                    isLive: <?= Js::from($this->isLive()) ?>,
                     $wire,
                 })"
                 <?php if ($afterStateUpdatedJs = $this->getAfterStateUpdatedJs()) { ?>
                     x-init="<?= implode(';', array_map(
-                        fn (string $js): string => '$wire.watch(' . Js::from($statePath) . ', ($state, $old) => ($state !== undefined) && eval(' . Js::from($js) . '))',
+                        fn (string $js): string => '$wire.watch(' . Js::from($statePath) . ', ($state, $old) => isStateChanged($state, $old) && eval(' . Js::from($js) . '))',
                         $afterStateUpdatedJs,
                     )) ?>"
                 <?php } ?>

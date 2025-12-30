@@ -1,16 +1,14 @@
 <?php
 
 use Filament\Tests\TestCase;
-use Illuminate\Support\Arr;
 
 use function PHPUnit\Framework\assertFileExists;
 
-uses(TestCase::class);
+uses(TestCase::class)->group('commands');
 
 beforeEach(function (): void {
     $this->withoutMockingConsoleOutput();
-})
-    ->skip((bool) Arr::get($_SERVER, 'PARATEST'), 'File generation tests cannot be run in parallel as they would share a filesystem and have the potential to conflict with each other.');
+});
 
 it('can generate a Livewire form component', function (): void {
     $this->artisan('make:filament-livewire-form', [
@@ -72,12 +70,16 @@ it('can generate a Livewire form component with generated fields', function (): 
     ]);
 
     assertFileExists($path = app_path('Livewire/CreatePostWithFields.php'));
-    expect(file_get_contents($path))
-        ->toMatchSnapshot();
+    if (config('database.default') === 'testing') {
+        expect(file_get_contents($path))
+            ->toMatchSnapshot();
+    }
 
     assertFileExists($viewPath = resource_path('views/livewire/create-post-with-fields.blade.php'));
-    expect(file_get_contents($viewPath))
-        ->toMatchSnapshot();
+    if (config('database.default') === 'testing') {
+        expect(file_get_contents($viewPath))
+            ->toMatchSnapshot();
+    }
 });
 
 it('can generate a Livewire form component in a nested directory', function (): void {

@@ -87,7 +87,7 @@ trait CanOpenModal
 
     protected bool | Closure | null $isModalAutofocused = null;
 
-    protected string | BackedEnum | Closure | null $modalIcon = null;
+    protected string | BackedEnum | Htmlable | Closure | null $modalIcon = null;
 
     /**
      * @var string | array<string> | Closure | null
@@ -141,7 +141,7 @@ trait CanOpenModal
         return $this;
     }
 
-    public function modalIcon(string | BackedEnum | Closure | null $icon = null): static
+    public function modalIcon(string | BackedEnum | Htmlable | Closure | null $icon = null): static
     {
         $this->modalIcon = $icon;
 
@@ -352,7 +352,7 @@ trait CanOpenModal
             return $this->cachedModalFooterActions;
         }
 
-        if ($this->modalFooterActions) {
+        if ($this->modalFooterActions !== null) {
             $actions = [];
 
             foreach ($this->evaluate($this->modalFooterActions) as $modalAction) {
@@ -425,6 +425,7 @@ trait CanOpenModal
     public function prepareModalAction(Action $action): Action
     {
         return $action
+            ->parentAction($this)
             ->schemaContainer($this->getSchemaContainer())
             ->schemaComponent($this->getSchemaComponent())
             ->livewire($this->getLivewire())
@@ -618,9 +619,14 @@ trait CanOpenModal
         return (bool) $this->evaluate($this->isModalSlideOver);
     }
 
+    public function hasModal(): ?bool
+    {
+        return $this->evaluate($this->hasModal);
+    }
+
     public function shouldOpenModal(?Closure $checkForSchemaUsing = null): bool
     {
-        if (is_bool($hasModal = $this->evaluate($this->hasModal))) {
+        if (is_bool($hasModal = $this->hasModal())) {
             return $hasModal;
         }
 
@@ -682,7 +688,7 @@ trait CanOpenModal
             ->button();
     }
 
-    public function getModalIcon(): string | BackedEnum | null
+    public function getModalIcon(): string | BackedEnum | Htmlable | null
     {
         if ($icon = $this->evaluate($this->modalIcon)) {
             return $icon;

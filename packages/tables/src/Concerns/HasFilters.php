@@ -2,8 +2,12 @@
 
 namespace Filament\Tables\Concerns;
 
+use Filament\Facades\Filament;
+use Filament\QueryBuilder\Forms\Components\RuleBuilder;
+use Filament\Schemas\Components\Component;
 use Filament\Schemas\Schema;
 use Filament\Tables\Filters\BaseFilter;
+use Filament\Tables\Filters\Indicator;
 use Filament\Tables\Filters\QueryBuilder;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
@@ -80,6 +84,12 @@ trait HasFilters
 
         if (($filter instanceof QueryBuilder) && blank($field)) {
             $filterFormGroup->getChildSchema()->fill();
+        } elseif ($filter instanceof QueryBuilder) {
+            $ruleBuilder = $filterFormGroup?->getChildSchema()->getComponent(fn (Component $component): bool => $component instanceof RuleBuilder);
+
+            $ruleBuilderRawState = $ruleBuilder?->getRawState() ?? [];
+            unset($ruleBuilderRawState[$field]);
+            $ruleBuilder?->rawState($ruleBuilderRawState);
         } else {
             $filterFields = $filterFormGroup?->getChildSchema()->getFlatFields() ?? [];
 
@@ -116,10 +126,12 @@ trait HasFilters
         $filters = $this->getTable()->getFilters();
 
         foreach ($filters as $filterName => $filter) {
-            $this->removeTableFilter(
-                $filterName,
-                isRemovingAllFilters: true,
-            );
+            if (collect($filter->getIndicators())->every(fn (Indicator $indicator): bool => $indicator->isRemovable())) {
+                $this->removeTableFilter(
+                    $filterName,
+                    isRemovingAllFilters: true,
+                );
+            }
         }
 
         $this->resetTableSearch();
@@ -210,7 +222,19 @@ trait HasFilters
 
     public function getTableFiltersSessionKey(): string
     {
-        $table = md5($this::class);
+        $namespace = $this::class;
+
+        $tenantKey = null;
+
+        if (class_exists(Filament::class)) {
+            $tenantKey = Filament::getTenant()?->getKey();
+        }
+
+        if (filled($tenantKey)) {
+            $namespace .= '|' . $tenantKey;
+        }
+
+        $table = md5($namespace);
 
         return "tables.{$table}_filters";
     }

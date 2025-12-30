@@ -7,13 +7,16 @@ export default function richEditorFormComponent({
     acceptedFileTypes,
     acceptedFileTypesValidationMessage,
     activePanel,
+    canAttachFiles,
     deleteCustomBlockButtonIconHtml,
     editCustomBlockButtonIconHtml,
     extensions,
-    key,
+    floatingToolbars,
     isDisabled,
     isLiveDebounced,
     isLiveOnBlur,
+    key,
+    linkProtocols,
     liveDebounce,
     livewireId,
     maxFileSize,
@@ -28,9 +31,10 @@ export default function richEditorFormComponent({
     statePath,
     textColors,
     uploadingFileMessage,
-    floatingToolbars,
 }) {
     let editor
+    let eventListeners = []
+    let isDestroyed = false
 
     return {
         state,
@@ -54,6 +58,7 @@ export default function richEditorFormComponent({
                 extensions: await getExtensions({
                     acceptedFileTypes,
                     acceptedFileTypesValidationMessage,
+                    canAttachFiles,
                     customExtensionUrls: extensions,
                     deleteCustomBlockButtonIconHtml,
                     editCustomBlockButtonIconHtml,
@@ -68,6 +73,7 @@ export default function richEditorFormComponent({
                             },
                             { schemaComponent: key },
                         ),
+                    floatingToolbars,
                     insertCustomBlockUsing: (id, dragPosition = null) =>
                         this.$wire.mountAction(
                             'customBlock',
@@ -75,6 +81,7 @@ export default function richEditorFormComponent({
                             { schemaComponent: key },
                         ),
                     key,
+                    linkProtocols,
                     maxFileSize,
                     maxFileSizeValidationMessage,
                     mergeTags,
@@ -87,10 +94,11 @@ export default function richEditorFormComponent({
                     textColors,
                     uploadingFileMessage,
                     $wire: this.$wire,
-                    floatingToolbars,
                 }),
                 content: this.state,
             })
+
+            const hasParagraphToolbar = 'paragraph' in floatingToolbars
 
             Object.keys(floatingToolbars).forEach((key) => {
                 const element = this.$refs[`floatingToolbar::${key}`]
@@ -106,8 +114,25 @@ export default function richEditorFormComponent({
                         editor,
                         element,
                         pluginKey: `floatingToolbar::${key}`,
-                        shouldShow: ({ editor }) =>
-                            editor.isFocused && editor.isActive(key),
+                        shouldShow: ({ editor }) => {
+                            if (key === 'paragraph') {
+                                return (
+                                    editor.isFocused &&
+                                    editor.isActive(key) &&
+                                    !editor.state.selection.empty
+                                )
+                            }
+
+                            if (
+                                hasParagraphToolbar &&
+                                !editor.state.selection.empty &&
+                                editor.isActive('paragraph')
+                            ) {
+                                return false
+                            }
+
+                            return editor.isFocused && editor.isActive(key)
+                        },
                         options: {
                             placement: 'bottom',
                             offset: 15,
@@ -120,13 +145,16 @@ export default function richEditorFormComponent({
                 this.editorUpdatedAt = Date.now()
             })
 
-            const debouncedCommit = Alpine.debounce(
-                () => this.$wire.commit(),
-                liveDebounce ?? 300,
-            )
+            const debouncedCommit = Alpine.debounce(() => {
+                if (!isDestroyed) {
+                    this.$wire.commit()
+                }
+            }, liveDebounce ?? 300)
 
             editor.on('update', ({ editor }) =>
                 this.$nextTick(() => {
+                    if (isDestroyed) return
+
                     this.editorUpdatedAt = Date.now()
 
                     this.state = editor.getJSON()
@@ -142,15 +170,23 @@ export default function richEditorFormComponent({
             )
 
             editor.on('selectionUpdate', ({ transaction }) => {
+                if (isDestroyed) return
+
                 this.editorUpdatedAt = Date.now()
                 this.editorSelection = transaction.selection.toJSON()
             })
 
             if (isLiveOnBlur) {
-                editor.on('blur', () => this.$wire.commit())
+                editor.on('blur', () => {
+                    if (!isDestroyed) {
+                        this.$wire.commit()
+                    }
+                })
             }
 
             this.$watch('state', () => {
+                if (isDestroyed) return
+
                 if (!this.shouldUpdateState) {
                     this.shouldUpdateState = true
 
@@ -160,7 +196,7 @@ export default function richEditorFormComponent({
                 editor.commands.setContent(this.state)
             })
 
-            window.addEventListener('run-rich-editor-commands', (event) => {
+            const runCommandsHandler = (event) => {
                 if (event.detail.livewireId !== livewireId) {
                     return
                 }
@@ -170,9 +206,17 @@ export default function richEditorFormComponent({
                 }
 
                 this.runEditorCommands(event.detail)
-            })
+            }
+            window.addEventListener(
+                'run-rich-editor-commands',
+                runCommandsHandler,
+            )
+            eventListeners.push([
+                'run-rich-editor-commands',
+                runCommandsHandler,
+            ])
 
-            window.addEventListener('rich-editor-uploading-file', (event) => {
+            const uploadingFileHandler = (event) => {
                 if (event.detail.livewireId !== livewireId) {
                     return
                 }
@@ -185,9 +229,17 @@ export default function richEditorFormComponent({
                 this.fileValidationMessage = null
 
                 event.stopPropagation()
-            })
+            }
+            window.addEventListener(
+                'rich-editor-uploading-file',
+                uploadingFileHandler,
+            )
+            eventListeners.push([
+                'rich-editor-uploading-file',
+                uploadingFileHandler,
+            ])
 
-            window.addEventListener('rich-editor-uploaded-file', (event) => {
+            const uploadedFileHandler = (event) => {
                 if (event.detail.livewireId !== livewireId) {
                     return
                 }
@@ -199,25 +251,38 @@ export default function richEditorFormComponent({
                 this.isUploadingFile = false
 
                 event.stopPropagation()
-            })
+            }
+            window.addEventListener(
+                'rich-editor-uploaded-file',
+                uploadedFileHandler,
+            )
+            eventListeners.push([
+                'rich-editor-uploaded-file',
+                uploadedFileHandler,
+            ])
 
+            const validationMessageHandler = (event) => {
+                if (event.detail.livewireId !== livewireId) {
+                    return
+                }
+
+                if (event.detail.key !== key) {
+                    return
+                }
+
+                this.isUploadingFile = false
+                this.fileValidationMessage = event.detail.validationMessage
+
+                event.stopPropagation()
+            }
             window.addEventListener(
                 'rich-editor-file-validation-message',
-                (event) => {
-                    if (event.detail.livewireId !== livewireId) {
-                        return
-                    }
-
-                    if (event.detail.key !== key) {
-                        return
-                    }
-
-                    this.isUploadingFile = false
-                    this.fileValidationMessage = event.detail.validationMessage
-
-                    event.stopPropagation()
-                },
+                validationMessageHandler,
             )
+            eventListeners.push([
+                'rich-editor-file-validation-message',
+                validationMessageHandler,
+            ])
 
             window.dispatchEvent(
                 new CustomEvent(`schema-component-${livewireId}-${key}-loaded`),
@@ -302,6 +367,22 @@ export default function richEditorFormComponent({
                     },
                 ])
                 .run()
+        },
+
+        destroy() {
+            isDestroyed = true
+
+            eventListeners.forEach(([eventName, handler]) => {
+                window.removeEventListener(eventName, handler)
+            })
+            eventListeners = []
+
+            if (editor) {
+                editor.destroy()
+                editor = null
+            }
+
+            this.shouldUpdateState = true
         },
     }
 }

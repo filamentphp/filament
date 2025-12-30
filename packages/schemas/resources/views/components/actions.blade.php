@@ -4,6 +4,7 @@
     $actions = $getChildSchema()->getComponents();
     $alignment = $getAlignment();
     $isFullWidth = $isFullWidth();
+    $isSticky = $isSticky();
     $verticalAlignment = $getVerticalAlignment();
 
     if (! $verticalAlignment instanceof VerticalAlignment) {
@@ -12,7 +13,7 @@
 @endphp
 
 <div
-    @if ($isSticky())
+    @if ($isSticky)
         x-data="filamentActionsSchemaComponent()"
         x-intersect:enter.half="disableSticky"
         x-intersect:leave="enableSticky"
@@ -50,6 +51,7 @@
         :actions="$actions"
         :alignment="$alignment"
         :full-width="$isFullWidth"
+        :x-bind:style="$isSticky ? 'isSticky ? `width: ${width}px;` : \'\'' : null"
     />
 
     @if ($belowContentContainer = $getChildSchema($schemaComponent::BELOW_CONTENT_SCHEMA_KEY)?->toHtmlString())

@@ -178,7 +178,7 @@ it('has an author column', function () {
 });
 ```
 
-You may pass a function as an additional argument to assert that a column passes a given "truth test". This is useful for asserting that a column has a specific configuration. You can also pass in a record as the third parameter, which is useful if your check is dependant on which table row is being rendered:
+You may pass a function as an additional argument to assert that a column passes a given "truth test". This is useful for asserting that a column has a specific configuration. You can also pass in a record as the third parameter, which is useful if your check is dependent on which table row is being rendered:
 
 ```php
 use function Pest\Livewire\livewire;
@@ -385,7 +385,7 @@ You may pass a function as an additional argument to assert that a filter passes
 use function Pest\Livewire\livewire;
 use Filament\Tables\Filters\SelectFilter;
 
-it('has an author filter', function () {    
+it('has an author filter', function () {
     livewire(PostResource\Pages\ListPosts::class)
         ->assertTableFilterExists('author', function (SelectFilter $column): bool {
             return $column->getLabel() === 'Select author';
@@ -454,5 +454,29 @@ it('can average values in a column', function () {
     livewire(PostResource\Pages\ListPosts::class)
         ->assertCanSeeTableRecords($posts)
         ->assertTableColumnSummarySet('rating', 'range', [$posts->min('rating'), $posts->max('rating')]);
+});
+```
+
+## Testing toggleable columns
+
+By default, only columns that are toggled on by default in the table will be rendered and testable. You can toggle all columns in the table on using `toggleAllTableColumns()`:
+
+```php
+use function Pest\Livewire\livewire;
+
+it('can toggle all columns', function () {
+    livewire(PostResource\Pages\ListPosts::class)
+        ->toggleAllTableColumns();
+});
+```
+
+You can also toggle all columns off using `toggleAllTableColumns(false)`:
+
+```php
+use function Pest\Livewire\livewire;
+
+it('can toggle all columns off', function () {
+    livewire(PostResource\Pages\ListPosts::class)
+        ->toggleAllTableColumns(false);
 });
 ```

@@ -6,13 +6,12 @@ use Filament\Support\Commands\FileGenerators\FileGenerationFlag;
 use Filament\Tests\TestCase;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Support\Arr;
 use Illuminate\Testing\PendingCommand;
 
 use function PHPUnit\Framework\assertFileDoesNotExist;
 use function PHPUnit\Framework\assertFileExists;
 
-uses(TestCase::class);
+uses(TestCase::class)->group('commands');
 
 beforeEach(function (): void {
     config()->set('filament.file_generation.flags', [
@@ -24,8 +23,7 @@ beforeEach(function (): void {
     ]);
 
     MakePageCommand::$shouldCheckModelsForSoftDeletes = false;
-})
-    ->skip((bool) Arr::get($_SERVER, 'PARATEST'), 'File generation tests cannot be run in parallel as they would share a filesystem and have the potential to conflict with each other.');
+});
 
 it('can generate a page class', function (): void {
     $this->withoutMockingConsoleOutput();
@@ -349,7 +347,7 @@ $runGenerateManageRelatedRecordsPageCommand = function (TestCase $testCase): Pen
 
 $generateManageRelatedRecordsPageCommandQuestions = [
     'relationship' => 'What is the relationship?',
-    'hasRelatedResource' => 'Do you want to do this?',
+    'hasRelatedResource' => 'Do you want to link this to an existing resource?',
     'relatedResource' => 'Which resource do you want to use?',
     'isGenerated' => 'Should the page be generated from the current database columns?',
     'relatedModel' => 'What is the related model?',
@@ -407,8 +405,10 @@ it('can generate a manage related records page class in a resource with a genera
         ->expectsQuestion($questions['relationshipType'], BelongsToMany::class);
 
     assertFileExists($path = app_path('Filament/Resources/UserResource/Pages/ManageUserTeams.php'));
-    expect(file_get_contents($path))
-        ->toMatchSnapshot();
+    if (config('database.default') === 'testing') {
+        expect(file_get_contents($path))
+            ->toMatchSnapshot();
+    }
 });
 
 it('can generate a manage related records page class in a resource with a view operation', function () use ($runGenerateManageRelatedRecordsPageCommand, $generateManageRelatedRecordsPageCommandQuestions): void {

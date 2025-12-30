@@ -43,6 +43,8 @@ class CheckboxList extends Field implements Contracts\CanDisableOptions, Contrac
 
     protected ?Closure $getOptionLabelFromRecordUsing = null;
 
+    protected ?Closure $getOptionDescriptionFromRecordUsing = null;
+
     protected string | Closure | null $relationship = null;
 
     protected bool | Closure $isBulkToggleable = false;
@@ -137,13 +139,26 @@ class CheckboxList extends Field implements Contracts\CanDisableOptions, Contrac
                 ]) ?? $relationshipQuery;
             }
 
-            if ($component->hasOptionLabelFromRecordUsingCallback()) {
-                return $relationshipQuery
-                    ->get()
-                    ->mapWithKeys(static fn (Model $record) => [
-                        $record->{Str::afterLast($relationship->getQualifiedRelatedKeyName(), '.')} => $component->getOptionLabelFromRecord($record),
-                    ])
-                    ->toArray();
+            if ($component->hasOptionLabelFromRecordUsingCallback() || $component->hasOptionDescriptionFromRecordUsingCallback()) {
+                $records = $relationshipQuery->get();
+
+                if ($component->hasOptionDescriptionFromRecordUsingCallback()) {
+                    $descriptions = $records
+                        ->mapWithKeys(static fn (Model $record) => [
+                            $record->{Str::afterLast($relationship->getQualifiedRelatedKeyName(), '.')} => $component->getOptionDescriptionFromRecord($record),
+                        ])
+                        ->toArray();
+
+                    $component->descriptions($descriptions);
+                }
+
+                if ($component->hasOptionLabelFromRecordUsingCallback()) {
+                    return $records
+                        ->mapWithKeys(static fn (Model $record) => [
+                            $record->{Str::afterLast($relationship->getQualifiedRelatedKeyName(), '.')} => $component->getOptionLabelFromRecord($record),
+                        ])
+                        ->toArray();
+                }
             }
 
             $relationshipTitleAttribute = $component->getRelationshipTitleAttribute();
@@ -268,6 +283,32 @@ class CheckboxList extends Field implements Contracts\CanDisableOptions, Contrac
         );
     }
 
+    public function getOptionDescriptionFromRecordUsing(?Closure $callback): static
+    {
+        $this->getOptionDescriptionFromRecordUsing = $callback;
+
+        return $this;
+    }
+
+    public function hasOptionDescriptionFromRecordUsingCallback(): bool
+    {
+        return $this->getOptionDescriptionFromRecordUsing !== null;
+    }
+
+    public function getOptionDescriptionFromRecord(Model $record): string | Htmlable | null
+    {
+        return $this->evaluate(
+            $this->getOptionDescriptionFromRecordUsing,
+            namedInjections: [
+                'record' => $record,
+            ],
+            typedInjections: [
+                Model::class => $record,
+                $record::class => $record,
+            ],
+        );
+    }
+
     public function getRelationshipTitleAttribute(): ?string
     {
         return $this->evaluate($this->relationshipTitleAttribute);
@@ -298,7 +339,7 @@ class CheckboxList extends Field implements Contracts\CanDisableOptions, Contrac
 
         $record = $this->getModelInstance();
 
-        if (! $record->isRelation($name)) {
+        if ($record->hasAttribute($name) || (! $record->isRelation($name))) {
             throw new LogicException("The relationship [{$name}] does not exist on the model [{$this->getModel()}].");
         }
 

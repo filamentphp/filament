@@ -610,6 +610,7 @@ return [
             'table_merge_cells' => 'Merge cells',
             'table_split_cell' => 'Split cell',
             'table_toggle_header_row' => 'Toggle header row',
+            'table_toggle_header_cell' => 'Toggle header cell',
             'text_color' => 'Text color',
             'underline' => 'Underline',
             'undo' => 'Undo',
@@ -677,6 +678,8 @@ return [
         'loading_message' => 'Loading...',
 
         'max_items_message' => 'Only :count can be selected.',
+
+        'no_options_message' => 'No options available.',
 
         'no_search_results_message' => 'No options match your search.',
 

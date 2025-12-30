@@ -23,6 +23,9 @@ return [
                         'resent' => [
                             'title' => 'Poslali jsme Vám nový kód e-mailem',
                         ],
+                        'throttled' => [
+                            'title' => 'Příliš mnoho pokusů o opětovné odeslání. Počkejte prosím, než požádáte o další kód.',
+                        ],
                     ],
                 ],
             ],

@@ -1,4 +1,5 @@
 import { computePosition, flip, shift, offset } from '@floating-ui/dom'
+import Sortable from 'sortablejs'
 
 // Helper function to check if a value is null, undefined, or an empty string
 function blank(value) {
@@ -17,76 +18,85 @@ function filled(value) {
 
 export class Select {
     constructor({
-        element,
-        options,
-        placeholder,
-        state,
         canOptionLabelsWrap = true,
         canSelectPlaceholder = true,
-        initialOptionLabel = null,
-        initialOptionLabels = null,
-        initialState = null,
-        isHtmlAllowed = false,
-        isAutofocused = false,
-        isDisabled = false,
-        isMultiple = false,
-        isSearchable = false,
+        element,
         getOptionLabelUsing = null,
         getOptionLabelsUsing = null,
         getOptionsUsing = null,
         getSearchResultsUsing = null,
         hasDynamicOptions = false,
         hasDynamicSearchResults = true,
-        searchPrompt = 'Search...',
-        searchDebounce = 1000,
+        hasInitialNoOptionsMessage = false,
+        initialOptionLabel = null,
+        initialOptionLabels = null,
+        initialState = null,
+        isAutofocused = false,
+        isDisabled = false,
+        isHtmlAllowed = false,
+        isMultiple = false,
+        isReorderable = false,
+        isSearchable = false,
+        livewireId = null,
         loadingMessage = 'Loading...',
-        searchingMessage = 'Searching...',
-        noSearchResultsMessage = 'No results found',
         maxItems = null,
         maxItemsMessage = 'Maximum number of items selected',
+        noOptionsMessage = 'No options available',
+        noSearchResultsMessage = 'No results found',
+        onStateChange = () => {},
+        options,
         optionsLimit = null,
+        placeholder,
         position = null,
         searchableOptionFields = ['label'],
-        livewireId = null,
+        searchDebounce = 1000,
+        searchingMessage = 'Searching...',
+        searchPrompt = 'Search...',
+        state,
         statePath = null,
-        onStateChange = () => {},
     }) {
-        this.element = element
-        this.options = options
-        this.originalOptions = JSON.parse(JSON.stringify(options)) // Keep a copy of original options
-        this.placeholder = placeholder
-        this.state = state
         this.canOptionLabelsWrap = canOptionLabelsWrap
         this.canSelectPlaceholder = canSelectPlaceholder
-        this.initialOptionLabel = initialOptionLabel
-        this.initialOptionLabels = initialOptionLabels
-        this.initialState = initialState
-        this.isHtmlAllowed = isHtmlAllowed
-        this.isAutofocused = isAutofocused
-        this.isDisabled = isDisabled
-        this.isMultiple = isMultiple
-        this.isSearchable = isSearchable
+        this.element = element
         this.getOptionLabelUsing = getOptionLabelUsing
         this.getOptionLabelsUsing = getOptionLabelsUsing
         this.getOptionsUsing = getOptionsUsing
         this.getSearchResultsUsing = getSearchResultsUsing
         this.hasDynamicOptions = hasDynamicOptions
         this.hasDynamicSearchResults = hasDynamicSearchResults
-        this.searchPrompt = searchPrompt
-        this.searchDebounce = searchDebounce
+        this.hasInitialNoOptionsMessage = hasInitialNoOptionsMessage
+        this.initialOptionLabel = initialOptionLabel
+        this.initialOptionLabels = initialOptionLabels
+        this.initialState = initialState
+        this.isAutofocused = isAutofocused
+        this.isDisabled = isDisabled
+        this.isHtmlAllowed = isHtmlAllowed
+        this.isMultiple = isMultiple
+        this.isReorderable = isReorderable
+        this.isSearchable = isSearchable
+        this.livewireId = livewireId
         this.loadingMessage = loadingMessage
-        this.searchingMessage = searchingMessage
-        this.noSearchResultsMessage = noSearchResultsMessage
         this.maxItems = maxItems
         this.maxItemsMessage = maxItemsMessage
+        this.noOptionsMessage = noOptionsMessage
+        this.noSearchResultsMessage = noSearchResultsMessage
+        this.onStateChange = onStateChange
+        this.options = options
         this.optionsLimit = optionsLimit
+        this.originalOptions = JSON.parse(JSON.stringify(options))
+        this.placeholder = placeholder
         this.position = position
         this.searchableOptionFields = Array.isArray(searchableOptionFields)
             ? searchableOptionFields
             : ['label']
-        this.livewireId = livewireId
+        this.searchDebounce = searchDebounce
+        this.searchingMessage = searchingMessage
+        this.searchPrompt = searchPrompt
+        this.state = state
         this.statePath = statePath
-        this.onStateChange = onStateChange
+
+        // Tracks the latest initiated async search to invalidate stale results
+        this.activeSearchId = 0
 
         // Central repository for option labels
         this.labelRepository = {}
@@ -95,6 +105,9 @@ export class Select {
         this.selectedIndex = -1
         this.searchQuery = ''
         this.searchTimeout = null
+        this.isSearching = false
+        // Version token to prevent race conditions when updating the selected display
+        this.selectedDisplayVersion = 0
 
         this.render()
         this.setUpEventListeners()
@@ -195,7 +208,7 @@ export class Select {
                 this.handleSearch(event)
             })
 
-            // Handle Tab, Arrow Up, and Arrow Down in search input
+            // Handle Tab, Arrow Up, Arrow Down, and Enter in search input
             this.searchInput.addEventListener('keydown', (event) => {
                 // If the select is disabled, don't handle keyboard events
                 if (this.isDisabled) {
@@ -259,6 +272,44 @@ export class Select {
                     }
 
                     this.scrollOptionIntoView(options[this.selectedIndex])
+                } else if (event.key === 'Enter') {
+                    // Prevent default form submission behavior
+                    event.preventDefault()
+                    event.stopPropagation()
+
+                    // Check if search results are still loading
+                    if (this.isSearching) {
+                        return
+                    }
+
+                    // Select first visible non-disabled option
+                    const options = this.getVisibleOptions()
+                    if (options.length === 0) {
+                        return
+                    }
+
+                    // Find the first option that is not disabled
+                    const firstEnabled = options.find((option) => {
+                        // Consider both aria-disabled and .fi-disabled class
+                        const ariaDisabled =
+                            option.getAttribute('aria-disabled') === 'true'
+                        const hasDisabledClass =
+                            option.classList.contains('fi-disabled')
+                        // Also ensure it is focusable/visible
+                        const isHidden = option.offsetParent === null
+                        return !(ariaDisabled || hasDisabledClass || isHidden)
+                    })
+
+                    if (!firstEnabled) {
+                        return
+                    }
+
+                    const value = firstEnabled.getAttribute('data-value')
+                    if (value === null) {
+                        return
+                    }
+
+                    this.selectOption(value)
                 }
             })
         }
@@ -386,9 +437,13 @@ export class Select {
 
         // If no options were rendered
         if (totalRenderedCount === 0) {
-            // If there's a search query, show "No results" message
+            // Show a message if:
+            // - There is an active search query (show "no search results" message), or
+            // - The field has hasInitialNoOptionsMessage enabled (show "no options" message)
             if (this.searchQuery) {
                 this.showNoResultsMessage()
+            } else if (this.hasInitialNoOptionsMessage) {
+                this.showNoOptionsMessage()
             }
             // If in multiple mode and no search query, hide the dropdown
             else if (this.isMultiple && this.isOpen && !this.isSearchable) {
@@ -532,53 +587,57 @@ export class Select {
     }
 
     async updateSelectedDisplay() {
-        // Clear the current content
-        this.selectedDisplay.innerHTML = ''
+        // Increment version to invalidate any in-flight renders
+        this.selectedDisplayVersion = this.selectedDisplayVersion + 1
+        const renderVersion = this.selectedDisplayVersion
 
-        // Handle multiple selection
+        // Stage all DOM updates in a fragment to avoid intermediate states
+        const fragment = document.createDocumentFragment()
+
         if (this.isMultiple) {
-            // If no items selected, show placeholder
             if (!Array.isArray(this.state) || this.state.length === 0) {
                 const placeholderSpan = document.createElement('span')
                 placeholderSpan.textContent = this.placeholder
                 placeholderSpan.classList.add('fi-select-input-placeholder')
-
-                this.selectedDisplay.appendChild(placeholderSpan)
-
-                return
+                fragment.appendChild(placeholderSpan)
+            } else {
+                let selectedLabels = await this.getLabelsForMultipleSelection()
+                // Check version before committing
+                if (renderVersion !== this.selectedDisplayVersion) return
+                this.addBadgesForSelectedOptions(selectedLabels, fragment)
             }
 
-            // For multiple selection, get labels for selected options
-            let selectedLabels = await this.getLabelsForMultipleSelection()
-
-            // Create and add badges for selected options
-            this.addBadgesForSelectedOptions(selectedLabels)
-
-            // Reevaluate dropdown position after badges are added
-            if (this.isOpen) {
-                this.positionDropdown()
+            // Commit if still current
+            if (renderVersion === this.selectedDisplayVersion) {
+                this.selectedDisplay.replaceChildren(fragment)
+                if (this.isOpen) {
+                    this.positionDropdown()
+                }
             }
             return
         }
 
-        // Handle single selection
-
-        // If no value selected, show placeholder
+        // Single selection
         if (this.state === null || this.state === '') {
             const placeholderSpan = document.createElement('span')
             placeholderSpan.textContent = this.placeholder
             placeholderSpan.classList.add('fi-select-input-placeholder')
+            fragment.appendChild(placeholderSpan)
 
-            this.selectedDisplay.appendChild(placeholderSpan)
-
+            if (renderVersion === this.selectedDisplayVersion) {
+                this.selectedDisplay.replaceChildren(fragment)
+            }
             return
         }
 
-        // Get label for the selected value
         const selectedLabel = await this.getLabelForSingleSelection()
+        if (renderVersion !== this.selectedDisplayVersion) return
 
-        // Add the label and remove button
-        this.addSingleSelectionDisplay(selectedLabel)
+        this.addSingleSelectionDisplay(selectedLabel, fragment)
+
+        if (renderVersion === this.selectedDisplayVersion) {
+            this.selectedDisplay.replaceChildren(fragment)
+        }
     }
 
     // Helper method to get labels for multiple selection
@@ -746,7 +805,7 @@ export class Select {
     }
 
     // Helper method to add badges for selected options
-    addBadgesForSelectedOptions(selectedLabels) {
+    addBadgesForSelectedOptions(selectedLabels, target = this.selectedDisplay) {
         // Create a container for the badges
         const badgesContainer = document.createElement('div')
         badgesContainer.className = 'fi-select-input-value-badges-ctn'
@@ -758,7 +817,33 @@ export class Select {
             badgesContainer.appendChild(badge)
         })
 
-        this.selectedDisplay.appendChild(badgesContainer)
+        target.appendChild(badgesContainer)
+
+        if (this.isReorderable) {
+            badgesContainer.addEventListener('click', (event) => {
+                event.stopPropagation()
+            })
+
+            badgesContainer.addEventListener('mousedown', (event) => {
+                event.stopPropagation()
+            })
+
+            new Sortable(badgesContainer, {
+                animation: 150,
+                onEnd: () => {
+                    const newState = []
+
+                    badgesContainer
+                        .querySelectorAll('[data-value]')
+                        .forEach((badge) => {
+                            newState.push(badge.getAttribute('data-value'))
+                        })
+
+                    this.state = newState
+                    this.onStateChange(this.state)
+                },
+            })
+        }
     }
 
     // Helper method to get label for single selection
@@ -806,7 +891,7 @@ export class Select {
     }
 
     // Helper method to add single selection display
-    addSingleSelectionDisplay(selectedLabel) {
+    addSingleSelectionDisplay(selectedLabel, target = this.selectedDisplay) {
         // Create a container for the label
         const labelContainer = document.createElement('span')
         labelContainer.className = 'fi-select-input-value-label'
@@ -817,7 +902,7 @@ export class Select {
             labelContainer.textContent = selectedLabel
         }
 
-        this.selectedDisplay.appendChild(labelContainer)
+        target.appendChild(labelContainer)
 
         // Add a cross button to clear the selection if canSelectPlaceholder is true
         if (!this.canSelectPlaceholder) {
@@ -845,7 +930,7 @@ export class Select {
             }
         })
 
-        this.selectedDisplay.appendChild(removeButton)
+        target.appendChild(removeButton)
     }
 
     getSelectedOptionLabel(value) {
@@ -1099,6 +1184,35 @@ export class Select {
                     this.closeDropdown()
                 }
                 break
+            default:
+                // If searchable and user types a printable character, open dropdown and focus search input
+                if (
+                    this.isSearchable &&
+                    !event.ctrlKey &&
+                    !event.metaKey &&
+                    !event.altKey &&
+                    typeof event.key === 'string' &&
+                    event.key.length === 1
+                ) {
+                    event.preventDefault()
+                    const char = event.key
+
+                    if (!this.isOpen) {
+                        this.openDropdown()
+                    }
+
+                    if (this.searchInput) {
+                        // Focus and append the typed character to the search input
+                        this.searchInput.focus()
+                        this.searchInput.value =
+                            (this.searchInput.value || '') + char
+                        // Trigger input event so search runs
+                        this.searchInput.dispatchEvent(
+                            new Event('input', { bubbles: true }),
+                        )
+                    }
+                }
+                break
         }
     }
 
@@ -1148,6 +1262,31 @@ export class Select {
                 break
             case 'Tab':
                 this.closeDropdown()
+                break
+            default:
+                // If searchable and user types a printable character while dropdown is open, focus search input and start search
+                if (
+                    this.isSearchable &&
+                    !event.ctrlKey &&
+                    !event.metaKey &&
+                    !event.altKey &&
+                    typeof event.key === 'string' &&
+                    event.key.length === 1
+                ) {
+                    event.preventDefault()
+                    const char = event.key
+
+                    if (this.searchInput) {
+                        // Focus and append the typed character to the search input
+                        this.searchInput.focus()
+                        this.searchInput.value =
+                            (this.searchInput.value || '') + char
+                        // Trigger input event so search runs
+                        this.searchInput.dispatchEvent(
+                            new Event('input', { bubbles: true }),
+                        )
+                    }
+                }
                 break
         }
     }
@@ -1205,17 +1344,19 @@ export class Select {
     }
 
     async openDropdown() {
-        // Make dropdown visible but with position fixed (or absolute in containers with .fi-absolute-positioning-context class) and opacity 0 for measurement
+        // Make dropdown visible but with position absolute by default, or fixed in containers with .fi-fixed-positioning-context class, and opacity 0 for measurement
         this.dropdown.style.display = 'block'
         this.dropdown.style.opacity = '0'
 
-        // Check if the select is inside a container that requires absolute positioning
-        const useAbsolutePositioning =
-            this.selectButton.closest('.fi-absolute-positioning-context') !==
-            null
-        this.dropdown.style.position = useAbsolutePositioning
-            ? 'absolute'
-            : 'fixed'
+        // Check if the select is inside a container that opts in to fixed positioning
+        const useFixedPositioning =
+            this.selectButton.closest('.fi-fixed-positioning-context') !==
+                null &&
+            this.selectButton.closest('.fi-absolute-positioning-context') ===
+                null
+        this.dropdown.style.position = useFixedPositioning
+            ? 'fixed'
+            : 'absolute'
         // Set width immediately to match the select button
         this.dropdown.style.width = `${this.selectButton.offsetWidth}px`
         this.selectButton.setAttribute('aria-expanded', 'true')
@@ -1243,6 +1384,18 @@ export class Select {
         // Make dropdown visible
         this.dropdown.style.opacity = '1'
 
+        // On every fresh open, clear any previous search query so reopening starts clean.
+        if (this.isSearchable && this.searchInput) {
+            this.searchInput.value = ''
+            this.searchQuery = ''
+
+            // If options are static, immediately reset to the unfiltered list.
+            if (!this.hasDynamicOptions) {
+                this.options = JSON.parse(JSON.stringify(this.originalOptions))
+                this.renderOptions()
+            }
+        }
+
         // If hasDynamicOptions is true, fetch options
         if (this.hasDynamicOptions && this.getOptionsUsing) {
             // Show loading message
@@ -1252,37 +1405,59 @@ export class Select {
                 // Fetch options
                 const fetchedOptions = await this.getOptionsUsing()
 
+                // Normalize fetched options to an array
+                const normalizedFetched = Array.isArray(fetchedOptions)
+                    ? fetchedOptions
+                    : fetchedOptions && Array.isArray(fetchedOptions.options)
+                      ? fetchedOptions.options
+                      : []
+
                 // Update options
-                this.options = fetchedOptions
+                this.options = normalizedFetched
                 this.originalOptions = JSON.parse(
-                    JSON.stringify(fetchedOptions),
+                    JSON.stringify(normalizedFetched),
                 )
 
                 // Populate the label repository with the fetched options
-                this.populateLabelRepositoryFromOptions(fetchedOptions)
+                this.populateLabelRepositoryFromOptions(normalizedFetched)
 
-                // Render options
-                this.renderOptions()
+                // Render options or reapply existing search query if present
+                if (
+                    this.isSearchable &&
+                    this.searchInput &&
+                    ((this.searchInput.value &&
+                        this.searchInput.value.trim() !== '') ||
+                        (this.searchQuery && this.searchQuery.trim() !== ''))
+                ) {
+                    const query = (
+                        this.searchInput.value ||
+                        this.searchQuery ||
+                        ''
+                    )
+                        .trim()
+                        .toLowerCase()
+
+                    // Ensure any loading message is hidden before rendering
+                    this.hideLoadingState()
+                    this.filterOptions(query)
+                } else {
+                    this.renderOptions()
+                }
             } catch (error) {
                 console.error('Error fetching options:', error)
 
                 // Hide loading state
                 this.hideLoadingState()
             }
+        } else if (!this.hasInitialNoOptionsMessage || this.searchQuery) {
+            this.hideLoadingState()
         }
-
-        // Hide any existing messages (like "No results")
-        this.hideLoadingState()
 
         // If searchable, focus the search input
         if (this.isSearchable && this.searchInput) {
-            this.searchInput.value = ''
+            // Preserve any existing query; do not reset during or after async load
             this.searchInput.focus()
-
-            // Always reset search query and options when reopening
-            this.searchQuery = ''
-            this.options = JSON.parse(JSON.stringify(this.originalOptions))
-            this.renderOptions()
+            // If a search query exists, options were already filtered; otherwise they were rendered above.
         } else {
             // Focus the first option or the selected option
             this.selectedIndex = -1
@@ -1336,15 +1511,17 @@ export class Select {
             middleware.push(flip()) // Flip to top if not enough space at bottom
         }
 
-        // Check if the select is inside a container that requires absolute positioning
-        const useAbsolutePositioning =
-            this.selectButton.closest('.fi-absolute-positioning-context') !==
-            null
+        // Check if the select is inside a container that opts in to fixed positioning
+        const useFixedPositioning =
+            this.selectButton.closest('.fi-fixed-positioning-context') !==
+                null &&
+            this.selectButton.closest('.fi-absolute-positioning-context') ===
+                null
 
         computePosition(this.selectButton, this.dropdown, {
             placement: placement,
             middleware: middleware,
-            strategy: useAbsolutePositioning ? 'absolute' : 'fixed',
+            strategy: useFixedPositioning ? 'fixed' : 'absolute',
         }).then(({ x, y }) => {
             Object.assign(this.dropdown.style, {
                 left: `${x}px`,
@@ -1357,6 +1534,19 @@ export class Select {
         this.dropdown.style.display = 'none'
         this.selectButton.setAttribute('aria-expanded', 'false')
         this.isOpen = false
+
+        // Cancel any pending debounced search
+        if (this.searchTimeout) {
+            clearTimeout(this.searchTimeout)
+            this.searchTimeout = null
+        }
+
+        // Invalidate any in-flight async searches and reset searching state
+        this.activeSearchId++
+        this.isSearching = false
+
+        // Remove any loading / no-results messages
+        this.hideLoadingState()
 
         // Remove resize listener
         if (this.resizeListener) {
@@ -1375,6 +1565,9 @@ export class Select {
         options.forEach((option) => {
             option.classList.remove('fi-selected')
         })
+
+        // Clear active descendant when closing
+        this.dropdown.removeAttribute('aria-activedescendant')
     }
 
     focusNextOption() {
@@ -1532,7 +1725,7 @@ export class Select {
     }
 
     handleSearch(event) {
-        const query = event.target.value.trim().toLowerCase()
+        const query = event.target.value.trim()
         this.searchQuery = query
 
         // Clear any existing timeout
@@ -1559,6 +1752,13 @@ export class Select {
 
         // Handle server-side search with debounce
         this.searchTimeout = setTimeout(async () => {
+            // Clear the timeout handle immediately to avoid stale truthy checks
+            this.searchTimeout = null
+
+            // Increment the active search token to invalidate any in-flight previous searches
+            const searchId = ++this.activeSearchId
+            this.isSearching = true
+
             try {
                 // Show searching state
                 this.showLoadingState(true)
@@ -1566,11 +1766,23 @@ export class Select {
                 // Get search results from backend
                 const results = await this.getSearchResultsUsing(query)
 
+                // If this search is no longer the latest or the dropdown is closed, ignore the results
+                if (searchId !== this.activeSearchId || !this.isOpen) {
+                    return
+                }
+
+                // Normalize results to an array
+                const normalizedResults = Array.isArray(results)
+                    ? results
+                    : results && Array.isArray(results.options)
+                      ? results.options
+                      : []
+
                 // Update options with search results
-                this.options = results
+                this.options = normalizedResults
 
                 // Update the label repository with the search results
-                this.populateLabelRepositoryFromOptions(results)
+                this.populateLabelRepositoryFromOptions(normalizedResults)
 
                 // Hide loading state and render options
                 this.hideLoadingState()
@@ -1586,20 +1798,29 @@ export class Select {
                     this.showNoResultsMessage()
                 }
             } catch (error) {
-                console.error('Error fetching search results:', error)
+                // If this search is obsolete, silence errors to avoid noisy logs on cancellation
+                if (searchId === this.activeSearchId) {
+                    console.error('Error fetching search results:', error)
 
-                // Hide loading state and restore original options
-                this.hideLoadingState()
-                this.options = JSON.parse(JSON.stringify(this.originalOptions))
-                this.renderOptions()
+                    // Hide loading state and restore original options
+                    this.hideLoadingState()
+                    this.options = JSON.parse(
+                        JSON.stringify(this.originalOptions),
+                    )
+                    this.renderOptions()
+                }
+            } finally {
+                if (searchId === this.activeSearchId) {
+                    this.isSearching = false
+                }
             }
         }, this.searchDebounce)
     }
 
     showLoadingState(isSearching = false) {
-        // Clear options list if it's in the DOM
+        // If the options list is in the DOM, remove it to avoid rendering an empty list
         if (this.optionsList.parentNode === this.dropdown) {
-            this.optionsList.innerHTML = ''
+            this.dropdown.removeChild(this.optionsList)
         }
 
         // Remove any existing message
@@ -1624,13 +1845,26 @@ export class Select {
         }
     }
 
+    showNoOptionsMessage() {
+        // Ensure the options list is not rendered empty while showing the message
+        if (this.optionsList.parentNode === this.dropdown) {
+            this.dropdown.removeChild(this.optionsList)
+        }
+
+        // Remove any existing message
+        this.hideLoadingState()
+
+        // Add "No options" message
+        const noOptionsItem = document.createElement('div')
+        noOptionsItem.className = 'fi-select-input-message'
+        noOptionsItem.textContent = this.noOptionsMessage
+        this.dropdown.appendChild(noOptionsItem)
+    }
+
     showNoResultsMessage() {
-        // Clear options list if it's in the DOM and not already empty
-        if (
-            this.optionsList.parentNode === this.dropdown &&
-            this.optionsList.children.length > 0
-        ) {
-            this.optionsList.innerHTML = ''
+        // Ensure the options list is not rendered empty while showing the message
+        if (this.optionsList.parentNode === this.dropdown) {
+            this.dropdown.removeChild(this.optionsList)
         }
 
         // Remove any existing message
@@ -1646,6 +1880,8 @@ export class Select {
     filterOptions(query) {
         const searchInLabel = this.searchableOptionFields.includes('label')
         const searchInValue = this.searchableOptionFields.includes('value')
+
+        query = query.toLowerCase()
 
         const filteredOptions = []
 

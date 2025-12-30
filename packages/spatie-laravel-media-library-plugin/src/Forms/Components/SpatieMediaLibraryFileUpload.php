@@ -140,11 +140,11 @@ class SpatieMediaLibraryFileUpload extends FileUpload
             $filename = $component->getUploadedFileNameForStorage($file);
 
             $media = $mediaAdder
-                ->addCustomHeaders($component->getCustomHeaders())
+                ->addCustomHeaders([...['ContentType' => $file->getMimeType()], ...$component->getCustomHeaders()])
                 ->usingFileName($filename)
                 ->usingName($component->getMediaName($file) ?? pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME))
                 ->storingConversionsOnDisk($component->getConversionsDisk() ?? '')
-                ->withCustomProperties($component->getCustomProperties())
+                ->withCustomProperties($component->getCustomProperties($file))
                 ->withManipulations($component->getManipulations())
                 ->withResponsiveImagesIf($component->hasResponsiveImages())
                 ->withProperties($component->getProperties())
@@ -319,9 +319,11 @@ class SpatieMediaLibraryFileUpload extends FileUpload
     /**
      * @return array<string, mixed>
      */
-    public function getCustomProperties(): array
+    public function getCustomProperties(TemporaryUploadedFile $file): array
     {
-        return $this->evaluate($this->customProperties) ?? [];
+        return $this->evaluate($this->customProperties, [
+            'file' => $file,
+        ]) ?? [];
     }
 
     /**

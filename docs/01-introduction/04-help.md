@@ -34,7 +34,7 @@ If you have a feature request, you can create a discussion on GitHub [following 
 
 ## One-on-one private support & consulting (paid)
 
-If you're looking for dedicated help with your Filament project, we're here for you. Whether you're a solo developer or running a large company, we provide support and development services that fit your needs. More information can be found on our [consulting page](/consulting).
+If you're looking for dedicated help with your Filament project, we're here for you. Whether you're a solo developer or running a large company, we provide support and development services that fit your needs. More information can be found on our [consulting page](https://filamentphp.com/consulting).
 
 ## Google
 

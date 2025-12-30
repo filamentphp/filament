@@ -25,7 +25,7 @@ class EmailVerificationPrompt extends SimplePage
 
     public function mount(): void
     {
-        if ($this->getVerifiable()->hasVerifiedEmail()) {
+        if ((! Filament::auth()->check()) || $this->getVerifiable()->hasVerifiedEmail()) {
             redirect()->intended(Filament::getUrl());
         }
     }
@@ -99,7 +99,7 @@ class EmailVerificationPrompt extends SimplePage
         return __('filament-panels::auth/pages/email-verification/email-verification-prompt.title');
     }
 
-    public function getHeading(): string | Htmlable
+    public function getHeading(): string | Htmlable | null
     {
         return __('filament-panels::auth/pages/email-verification/email-verification-prompt.heading');
     }

@@ -3,8 +3,10 @@
 namespace Filament\Tables\Columns;
 
 use Filament\Support\Components\Contracts\HasEmbeddedView;
+use Filament\Support\Concerns\CanBeCopied;
 use Filament\Support\Concerns\CanWrap;
 use Filament\Support\Enums\Alignment;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Js;
@@ -12,8 +14,8 @@ use Illuminate\View\ComponentAttributeBag;
 
 class ColorColumn extends Column implements HasEmbeddedView
 {
+    use CanBeCopied;
     use CanWrap;
-    use Concerns\CanBeCopied;
 
     public function toEmbeddedHtml(): string
     {
@@ -39,6 +41,7 @@ class ColorColumn extends Column implements HasEmbeddedView
                         ? '{
                             content: ' . Js::from($tooltip) . ',
                             theme: $store.theme,
+                            allowHTML: ' . Js::from($tooltip instanceof Htmlable) . ',
                         }'
                         : null,
                 ], escape: false);
@@ -48,7 +51,7 @@ class ColorColumn extends Column implements HasEmbeddedView
             ob_start(); ?>
 
             <div <?= $attributes->toHtml() ?>>
-                <?php if (filled($placeholder !== null)) { ?>
+                <?php if (filled($placeholder)) { ?>
                     <p class="fi-ta-placeholder">
                         <?= e($placeholder) ?>
                     </p>
@@ -85,7 +88,7 @@ class ColorColumn extends Column implements HasEmbeddedView
 
                 <div <?= (new ComponentAttributeBag)
                     ->merge([
-                        'x-on:click' => $isCopyable
+                        'x-on:click.prevent.stop' => $isCopyable
                             ? <<<JS
                             window.navigator.clipboard.writeText({$copyableStateJs})
                             \$tooltip({$copyMessageJs}, {
@@ -98,6 +101,7 @@ class ColorColumn extends Column implements HasEmbeddedView
                             ? '{
                                 content: ' . Js::from($tooltip) . ',
                                 theme: $store.theme,
+                                allowHTML: ' . Js::from($tooltip instanceof Htmlable) . ',
                             }'
                             : null,
                     ], escape: false)

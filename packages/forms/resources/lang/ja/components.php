@@ -284,6 +284,10 @@ return [
 
     'markdown_editor' => [
 
+        'file_attachments_accepted_file_types_message' => 'アップロードできるファイルの種類は :values です。',
+
+        'file_attachments_max_size_message' => 'アップロードできるファイルの最大サイズは :max キロバイトです。',
+
         'tools' => [
             'attach_files' => 'ファイルを添付',
             'blockquote' => 'ブロック引用',
@@ -298,6 +302,28 @@ return [
             'strike' => '打ち消し線',
             'table' => '表',
             'undo' => '元に戻す',
+        ],
+
+    ],
+
+    'modal_table_select' => [
+
+        'actions' => [
+
+            'select' => [
+
+                'label' => '選択',
+
+                'actions' => [
+
+                    'select' => [
+                        'label' => '選択',
+                    ],
+
+                ],
+
+            ],
+
         ],
 
     ],
@@ -365,40 +391,231 @@ return [
 
     'rich_editor' => [
 
-        'dialogs' => [
+        'actions' => [
+
+            'attach_files' => [
+
+                'label' => 'ファイルをアップロード',
+
+                'modal' => [
+
+                    'heading' => 'ファイルをアップロード',
+
+                    'form' => [
+
+                        'file' => [
+
+                            'label' => [
+                                'new' => 'ファイル',
+                                'existing' => 'ファイルを置き換える',
+                            ],
+
+                        ],
+
+                        'alt' => [
+
+                            'label' => [
+                                'new' => '代替テキスト',
+                                'existing' => '代替テキストを変更',
+                            ],
+
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
+            'custom_block' => [
+
+                'modal' => [
+
+                    'actions' => [
+
+                        'insert' => [
+                            'label' => '挿入',
+                        ],
+
+                        'save' => [
+                            'label' => '保存',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
+            'grid' => [
+
+                'label' => 'グリッド',
+
+                'modal' => [
+
+                    'heading' => 'グリッド設定',
+
+                    'form' => [
+
+                        'preset' => [
+
+                            'label' => 'プリセット',
+
+                            'placeholder' => 'なし',
+
+                            'options' => [
+                                'two' => '2列',
+                                'three' => '3列',
+                                'four' => '4列',
+                                'five' => '5列',
+                                'two_start_third' => '2列（開始位置：3分の1）',
+                                'two_end_third' => '2列（終了位置：3分の1）',
+                                'two_start_fourth' => '2列（開始位置：4分の1）',
+                                'two_end_fourth' => '2列（終了位置：4分の1）',
+                            ],
+                        ],
+
+                        'columns' => [
+                            'label' => '列数',
+                        ],
+
+                        'from_breakpoint' => [
+
+                            'label' => 'ブレークポイント',
+
+                            'options' => [
+                                'default' => 'すべて',
+                                'sm' => '小',
+                                'md' => '中',
+                                'lg' => '大',
+                                'xl' => '特大',
+                                '2xl' => '超特大',
+                            ],
+
+                        ],
+
+                        'is_asymmetric' => [
+                            'label' => '非対称の2列',
+                        ],
+
+                        'start_span' => [
+                            'label' => '開始スパン',
+                        ],
+
+                        'end_span' => [
+                            'label' => '終了スパン',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
 
             'link' => [
 
-                'actions' => [
-                    'link' => 'リンク追加',
-                    'unlink' => 'リンク解除',
+                'label' => 'リンク',
+
+                'modal' => [
+
+                    'heading' => 'リンク設定',
+
+                    'form' => [
+
+                        'url' => [
+                            'label' => 'URL',
+                        ],
+
+                        'should_open_in_new_tab' => [
+                            'label' => '新しいタブで開く',
+                        ],
+
+                    ],
+
                 ],
 
-                'label' => 'URL',
+            ],
 
-                'placeholder' => 'URLを入力',
+            'text_color' => [
+
+                'label' => '文字色',
+
+                'modal' => [
+
+                    'heading' => '文字色',
+
+                    'form' => [
+
+                        'color' => [
+                            'label' => '色',
+                        ],
+
+                        'custom_color' => [
+                            'label' => 'カスタムカラー',
+                        ],
+
+                    ],
+
+                ],
 
             ],
 
         ],
 
+        'file_attachments_accepted_file_types_message' => 'アップロードできるファイルの種類は :values です。',
+
+        'file_attachments_max_size_message' => 'アップロードできるファイルの最大サイズは :max キロバイトです。',
+
+        'no_merge_tag_search_results_message' => '一致するマージタグがありません。',
+
         'tools' => [
+            'align_center' => '中央揃え',
+            'align_end' => '右揃え',
+            'align_justify' => '両端揃え',
+            'align_start' => '左揃え',
             'attach_files' => 'ファイルを添付',
-            'blockquote' => 'ブロック引用',
+            'blockquote' => '引用',
             'bold' => '太字',
-            'bullet_list' => '箇条書き',
+            'bullet_list' => '箇条書きリスト',
+            'clear_formatting' => '書式をクリア',
+            'code' => 'コード',
             'code_block' => 'コードブロック',
+            'custom_blocks' => 'ブロック',
+            'details' => '詳細',
             'h1' => 'タイトル',
             'h2' => '見出し',
             'h3' => '小見出し',
-            'italic' => 'イタリック',
+            'grid' => 'グリッド',
+            'grid_delete' => 'グリッドを削除',
+            'highlight' => 'ハイライト',
+            'horizontal_rule' => '区切り線',
+            'italic' => '斜体',
+            'lead' => 'リード文',
             'link' => 'リンク',
+            'merge_tags' => 'マージタグ',
             'ordered_list' => '番号付きリスト',
             'redo' => 'やり直し',
-            'strike' => '打ち消し線',
+            'small' => '小文字',
+            'strike' => '取り消し線',
+            'subscript' => '下付き文字',
+            'superscript' => '上付き文字',
+            'table' => '表',
+            'table_delete' => '表を削除',
+            'table_add_column_before' => '左に列を追加',
+            'table_add_column_after' => '右に列を追加',
+            'table_delete_column' => '列を削除',
+            'table_add_row_before' => '上に行を追加',
+            'table_add_row_after' => '下に行を追加',
+            'table_delete_row' => '行を削除',
+            'table_merge_cells' => 'セルを結合',
+            'table_split_cell' => 'セルを分割',
+            'table_toggle_header_row' => 'ヘッダー行を切り替え',
+            'text_color' => '文字色',
             'underline' => '下線',
             'undo' => '元に戻す',
         ],
+
+        'uploading_file_message' => 'ファイルをアップロードしています...',
 
     ],
 
@@ -407,6 +624,8 @@ return [
         'actions' => [
 
             'create_option' => [
+
+                'label' => '作成',
 
                 'modal' => [
 
@@ -429,6 +648,8 @@ return [
             ],
 
             'edit_option' => [
+
+                'label' => '編集',
 
                 'modal' => [
 
@@ -474,6 +695,11 @@ return [
     'text_input' => [
 
         'actions' => [
+
+            'copy' => [
+                'label' => 'コピー',
+                'message' => 'コピーしました',
+            ],
 
             'hide_password' => [
                 'label' => 'パスワードを非表示',

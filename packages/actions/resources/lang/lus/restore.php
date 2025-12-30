@@ -4,16 +4,16 @@ return [
 
     'single' => [
 
-        'label' => 'Restore',
+        'label' => 'Ngai awhtîr lehna',
 
         'modal' => [
 
-            'heading' => 'Restore :label',
+            'heading' => ':Label ngai awhtîr lehna',
 
             'actions' => [
 
                 'restore' => [
-                    'label' => 'Restore',
+                    'label' => 'Ngai awhtîr lehna',
                 ],
 
             ],
@@ -23,7 +23,7 @@ return [
         'notifications' => [
 
             'restored' => [
-                'title' => 'Restored',
+                'title' => 'Ngai awhtîr leh ani e.',
             ],
 
         ],
@@ -32,16 +32,16 @@ return [
 
     'multiple' => [
 
-        'label' => 'Restore selected',
+        'label' => 'Thlanho ngai awhtîr lehna',
 
         'modal' => [
 
-            'heading' => 'Restore selected :label',
+            'heading' => ':Label thlanho ngai awhtîr lehna',
 
             'actions' => [
 
                 'restore' => [
-                    'label' => 'Restore',
+                    'label' => 'Ngai awhtîr lehna',
                 ],
 
             ],
@@ -51,19 +51,19 @@ return [
         'notifications' => [
 
             'restored' => [
-                'title' => 'Restored',
+                'title' => 'Ngai awhtîr leh ani e.',
             ],
 
             'restored_partial' => [
-                'title' => 'Restored :count of :total',
-                'missing_authorization_failure_message' => 'You don\'t have permission to restore :count.',
-                'missing_processing_failure_message' => ':count could not be restored.',
+                'title' => ':total atanga :count ngai awhtîr leh ani.',
+                'missing_authorization_failure_message' => 'Hemi :count ngai awhtîr leh tur hian phalna I neilo.',
+                'missing_processing_failure_message' => ':count hi ngai a awhtîr leh theihloh.',
             ],
 
             'restored_none' => [
                 'title' => 'Failed to restore',
-                'missing_authorization_failure_message' => 'You don\'t have permission to restore :count.',
-                'missing_processing_failure_message' => ':count could not be restored.',
+                'missing_authorization_failure_message' => 'Hemi :count ngai awhtîr leh tur hian phalna I neilo.',
+                'missing_processing_failure_message' => ':count hi ngai a awhtîr leh theihloh.',
             ],
 
         ],

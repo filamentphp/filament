@@ -36,7 +36,6 @@ trait EntanglesStateWithSingularRelationship
         $this->hasRelationship = $condition;
         $this->relatedModel = $relatedModel;
         $this->statePath($name);
-        $this->isKeyInheritable() || $this->key($name);
 
         $this->loadStateFromRelationshipsUsing(static function (Component | CanEntangleWithSingularRelationships $component): void {
             $component->clearCachedExistingRecord();
@@ -227,6 +226,8 @@ trait EntanglesStateWithSingularRelationship
     public function cachedExistingRecord(?Model $record): static
     {
         $this->cachedExistingRecord = $record;
+
+        $this->clearCachedDefaultChildSchemas();
 
         return $this;
     }

@@ -30,6 +30,12 @@ trait CanGetStateFromRelationships
         $relationship = null;
 
         foreach (explode('.', $statePath ?? $this->getStateRelationshipName()) as $nestedRelationshipName) {
+            if ($record->hasAttribute($nestedRelationshipName)) {
+                $relationship = null;
+
+                break;
+            }
+
             if (! $record->isRelation($nestedRelationshipName)) {
                 $relationship = null;
 

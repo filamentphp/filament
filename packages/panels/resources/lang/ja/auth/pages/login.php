@@ -43,6 +43,30 @@ return [
 
     ],
 
+    'multi_factor' => [
+
+        'heading' => '本人確認',
+
+        'subheading' => 'ログインを続行するには、本人確認が必要です。',
+
+        'form' => [
+
+            'provider' => [
+                'label' => 'どの方法で認証しますか?',
+            ],
+
+            'actions' => [
+
+                'authenticate' => [
+                    'label' => 'ログイン認証',
+                ],
+
+            ],
+
+        ],
+
+    ],
+
     'messages' => [
 
         'failed' => '認証に失敗しました。',

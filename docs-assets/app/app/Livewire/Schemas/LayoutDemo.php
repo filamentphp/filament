@@ -11,7 +11,9 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Actions;
+use Filament\Schemas\Components\EmptyState;
 use Filament\Schemas\Components\Fieldset;
 use Filament\Schemas\Components\Flex;
 use Filament\Schemas\Components\Grid;
@@ -88,6 +90,38 @@ class LayoutDemo extends Component implements HasActions, HasSchemas
                                     ->default(100),
                             ])
                             ->columns(3),
+                    ]),
+                Group::make()
+                    ->id('dense')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-2xl',
+                    ])
+                    ->schema([
+                        Fieldset::make('Dense')
+                            ->columns(1)
+                            ->dense()
+                            ->schema([
+                                TextEntry::make('name')
+                                    ->state('Dan Harrin'),
+                                TextEntry::make('role')
+                                    ->state('Admin'),
+                            ]),
+                    ]),
+                Group::make()
+                    ->id('noGap')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-2xl',
+                    ])
+                    ->schema([
+                        Fieldset::make('No gap')
+                            ->columns(1)
+                            ->gap(false)
+                            ->schema([
+                                TextEntry::make('name')
+                                    ->state('Dan Harrin'),
+                                TextEntry::make('role')
+                                    ->state('Admin'),
+                            ]),
                     ]),
                 Group::make()
                     ->id('tabs')
@@ -249,6 +283,28 @@ class LayoutDemo extends Component implements HasActions, HasSchemas
                                 Tab::make('Meta'),
                             ])
                             ->vertical(),
+                    ]),
+                Group::make()
+                    ->id('tabsNotScrollable')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        Tabs::make('Tabs')
+                            ->statePath('tabsNotScrollable')
+                            ->schema([
+                                Tab::make('Tab 1')
+                                    ->schema([
+                                        TextInput::make('field'),
+                                    ]),
+                                Tab::make('Tab 2'),
+                                Tab::make('Tab 3'),
+                                Tab::make('Tab 4'),
+                                Tab::make('Tab 5'),
+                                Tab::make('Tab 6'),
+                                Tab::make('Tab 7'),
+                            ])
+                            ->scrollable(false),
                     ]),
                 Group::make()
                     ->id('wizard')
@@ -700,6 +756,20 @@ class LayoutDemo extends Component implements HasActions, HasSchemas
                                         ->icon(Heroicon::XMark)
                                         ->color('danger'),
                                 ])->verticalAlignment(VerticalAlignment::End),
+                            ]),
+                    ]),
+                Group::make()
+                    ->id('emptyState')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-5xl',
+                    ])
+                    ->schema([
+                        EmptyState::make('No users yet')
+                            ->description('Get started by creating a new user.')
+                            ->icon(Heroicon::OutlinedUser)
+                            ->footer([
+                                Action::make('createUser')
+                                    ->icon(Heroicon::Plus),
                             ]),
                     ]),
             ]);

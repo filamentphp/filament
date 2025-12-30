@@ -7,7 +7,7 @@ return [
         'actions' => [
 
             'clone' => [
-                'label' => 'Clone',
+                'label' => 'A ang chiah a lâk chhâwnna',
             ],
 
             'add' => [
@@ -51,7 +51,7 @@ return [
             ],
 
             'delete' => [
-                'label' => 'Delete',
+                'label' => 'Thai bona',
             ],
 
             'edit' => [
@@ -111,11 +111,11 @@ return [
         'actions' => [
 
             'deselect_all' => [
-                'label' => 'Deselect all',
+                'label' => 'Avaia paih na',
             ],
 
             'select_all' => [
-                'label' => 'Select all',
+                'label' => 'Avaia thlanna',
             ],
 
         ],
@@ -255,15 +255,15 @@ return [
         'actions' => [
 
             'add' => [
-                'label' => 'Add row',
+                'label' => 'Tlar belhna',
             ],
 
             'delete' => [
-                'label' => 'Delete row',
+                'label' => 'Tlar paihna',
             ],
 
             'reorder' => [
-                'label' => 'Reorder row',
+                'label' => 'Tlar sawnna',
             ],
 
         ],
@@ -283,6 +283,10 @@ return [
     ],
 
     'markdown_editor' => [
+
+        'file_attachments_accepted_file_types_message' => 'File upload ho hi type: :values an ni tur ani.',
+
+        'file_attachments_max_size_message' => 'File upload ho hi :max kilobytes ai a lian theilo.',
 
         'tools' => [
             'attach_files' => 'Attach files',
@@ -308,12 +312,12 @@ return [
 
             'select' => [
 
-                'label' => 'Select',
+                'label' => 'Thlanna',
 
                 'actions' => [
 
                     'select' => [
-                        'label' => 'Select',
+                        'label' => 'Thlanna',
                     ],
 
                 ],
@@ -443,9 +447,74 @@ return [
 
             ],
 
+            'grid' => [
+
+                'label' => 'Grid',
+
+                'modal' => [
+
+                    'heading' => 'Grid',
+
+                    'form' => [
+
+                        'preset' => [
+
+                            'label' => 'Preset',
+
+                            'placeholder' => 'None',
+
+                            'options' => [
+                                'two' => 'Two',
+                                'three' => 'Three',
+                                'four' => 'Four',
+                                'five' => 'Five',
+                                'two_start_third' => 'Two (Start Third)',
+                                'two_end_third' => 'Two (End Third)',
+                                'two_start_fourth' => 'Two (Start Fourth)',
+                                'two_end_fourth' => 'Two (End Fourth)',
+                            ],
+                        ],
+
+                        'columns' => [
+                            'label' => 'Columns',
+                        ],
+
+                        'from_breakpoint' => [
+
+                            'label' => 'From breakpoint',
+
+                            'options' => [
+                                'default' => 'All',
+                                'sm' => 'Small',
+                                'md' => 'Medium',
+                                'lg' => 'Large',
+                                'xl' => 'Extra large',
+                                '2xl' => 'Two extra large',
+                            ],
+
+                        ],
+
+                        'is_asymmetric' => [
+                            'label' => 'Two asymmetric columns',
+                        ],
+
+                        'start_span' => [
+                            'label' => 'Start span',
+                        ],
+
+                        'end_span' => [
+                            'label' => 'End span',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
             'link' => [
 
-                'label' => 'Edit',
+                'label' => 'Link',
 
                 'modal' => [
 
@@ -467,7 +536,35 @@ return [
 
             ],
 
+            'text_color' => [
+
+                'label' => 'Text color',
+
+                'modal' => [
+
+                    'heading' => 'Text color',
+
+                    'form' => [
+
+                        'color' => [
+                            'label' => 'Color',
+                        ],
+
+                        'custom_color' => [
+                            'label' => 'Custom color',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
         ],
+
+        'file_attachments_accepted_file_types_message' => 'File upload ho hi type: :values an ni tur ani.',
+
+        'file_attachments_max_size_message' => 'File upload ho hi :max kilobytes ai a lian theilo.',
 
         'no_merge_tag_search_results_message' => 'No merge tag results.',
 
@@ -488,6 +585,8 @@ return [
             'h1' => 'Title',
             'h2' => 'Heading',
             'h3' => 'Subheading',
+            'grid' => 'Grid',
+            'grid_delete' => 'Delete grid',
             'highlight' => 'Highlight',
             'horizontal_rule' => 'Horizontal rule',
             'italic' => 'Italic',
@@ -511,9 +610,13 @@ return [
             'table_merge_cells' => 'Merge cells',
             'table_split_cell' => 'Split cell',
             'table_toggle_header_row' => 'Toggle header row',
+            'table_toggle_header_cell' => 'Toggle header cell',
+            'text_color' => 'Text color',
             'underline' => 'Underline',
             'undo' => 'Undo',
         ],
+
+        'uploading_file_message' => 'Uploading file...',
 
     ],
 
