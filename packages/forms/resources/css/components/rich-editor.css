@@ -52,7 +52,7 @@
     }
 
     & span[data-type='mergeTag'] {
-        @apply inline whitespace-nowrap;
+        @apply my-0 inline-block whitespace-nowrap;
     }
 
     & span[data-type='mergeTag']::before {
@@ -66,19 +66,7 @@
     }
 
     & span[data-type='mention'] {
-        display: inline !important;
-        white-space: nowrap !important;
-        background-color: var(--color-primary-50);
-        color: var(--color-primary-600);
-        border-radius: var(--radius-DEFAULT);
-        padding-inline: calc(var(--spacing) * 1);
-        font-weight: var(--font-weight-medium);
-        margin-top: 0;
-
-        @variant dark {
-            background-color: color-mix(in oklab, var(--color-primary-400) 10%, transparent);
-            color: var(--color-primary-400);
-        }
+        @apply bg-primary-50 text-primary-600 dark:bg-primary-400/10 dark:text-primary-400 my-0 inline-block rounded px-1 font-medium whitespace-nowrap;
     }
 
     & .fi-fo-rich-editor-panels {

@@ -81,7 +81,7 @@ class MentionLinkExtension extends Node
         $node->content = [
             (object) [
                 'type' => 'text',
-                'text' => "{$char}\u{00A0}{$label}",
+                'text' => "{$char} {$label}",
             ],
         ];
 

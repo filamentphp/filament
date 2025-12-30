@@ -83,18 +83,13 @@ export default Node.create({
             },
             deleteTriggerWithBackspace: true,
             renderHTML({ options, node }) {
-                const char = node.attrs.char ?? '@'
-                const label = node.attrs.label ?? ''
-                // Use non-breaking space to prevent wrapping between char and label
-                const content = `${char}\u00A0${label}`
-
                 return [
                     'span',
                     mergeAttributes(
                         this.HTMLAttributes,
                         options.HTMLAttributes,
                     ),
-                    content,
+                    `${node.attrs.char ?? '@'} ${node.attrs.label ?? ''}`,
                 ]
             },
             suggestions: [],
