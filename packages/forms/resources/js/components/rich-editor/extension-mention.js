@@ -141,7 +141,6 @@ export default Node.create({
                     }
                 },
             },
-            // Arbitrary extra attributes to apply to the element
             extra: {
                 default: null,
                 renderHTML: (attributes) => {
