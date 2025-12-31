@@ -12,7 +12,7 @@ class MentionProvider
     /**
      * @var array<string, string>
      */
-    protected array $options = [];
+    protected array $items = [];
 
     /**
      * @var array<string, mixed>|Closure|null
@@ -23,7 +23,7 @@ class MentionProvider
 
     protected ?Closure $getUrlUsing = null;
 
-    protected ?string $noOptionsMessage = null;
+    protected ?string $noItemsMessage = null;
 
     protected ?string $noSearchResultsMessage = null;
 
@@ -48,14 +48,14 @@ class MentionProvider
     }
 
     /**
-     * @param  array<string, string>  $options
+     * @param  array<string, string>  $items
      */
-    public function options(array $options): static
+    public function items(array $items): static
     {
-        $this->options = [];
+        $this->items = [];
 
-        foreach ($options as $id => $label) {
-            $this->options[(string) $id] = (string) $label;
+        foreach ($items as $id => $label) {
+            $this->items[(string) $id] = (string) $label;
         }
 
         return $this;
@@ -91,9 +91,9 @@ class MentionProvider
         return $this;
     }
 
-    public function noOptionsMessage(?string $message): static
+    public function noItemsMessage(?string $message): static
     {
-        $this->noOptionsMessage = $message;
+        $this->noItemsMessage = $message;
 
         return $this;
     }
@@ -138,9 +138,9 @@ class MentionProvider
         return is_array($attributes) ? $attributes : [];
     }
 
-    public function getNoOptionsMessage(): string
+    public function getNoItemsMessage(): string
     {
-        return $this->noOptionsMessage ?? __('filament-forms::components.rich_editor.mentions.no_options_message');
+        return $this->noItemsMessage ?? __('filament-forms::components.rich_editor.mentions.no_options_message');
     }
 
     public function getNoSearchResultsMessage(): string
@@ -181,7 +181,7 @@ class MentionProvider
         if ($this->getLabelsUsing instanceof Closure) {
             $labels = ($this->getLabelsUsing)($ids);
         } else {
-            $labels = Arr::only($this->options, $ids);
+            $labels = Arr::only($this->items, $ids);
         }
 
         $result = [];
@@ -198,17 +198,17 @@ class MentionProvider
         return $this->getSearchResultsUsing instanceof Closure;
     }
 
-    public function hasOptions(): bool
+    public function hasItems(): bool
     {
-        return filled($this->options);
+        return filled($this->items);
     }
 
     /**
      * @return array<string, string>
      */
-    public function getOptions(): array
+    public function getItems(): array
     {
-        return $this->options;
+        return $this->items;
     }
 
     /**
@@ -219,12 +219,12 @@ class MentionProvider
         if ($this->getSearchResultsUsing instanceof Closure) {
             $results = ($this->getSearchResultsUsing)($search) ?? [];
         } elseif (blank($search)) {
-            $results = $this->options;
+            $results = $this->items;
         } else {
             $searchLower = strtolower($search);
 
             $results = array_filter(
-                $this->options,
+                $this->items,
                 fn (string $label): bool => str_contains(strtolower($label), $searchLower),
             );
         }

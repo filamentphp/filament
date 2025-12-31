@@ -723,7 +723,7 @@ it('renders mentions without provider configured', function (): void {
     expect($html)->toContain('@John');
 });
 
-it('uses static `options()` for label lookup when `getLabelsUsing()` is not configured', function (): void {
+it('uses static `items()` for label lookup when `getLabelsUsing()` is not configured', function (): void {
     $renderer = RichContentRenderer::make([
         'type' => 'doc',
         'content' => [
@@ -744,7 +744,7 @@ it('uses static `options()` for label lookup when `getLabelsUsing()` is not conf
 
     $renderer->mentions([
         MentionProvider::make('@')
-            ->options([
+            ->items([
                 'admin' => 'Administrator',
                 'user' => 'Regular User',
             ]),

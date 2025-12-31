@@ -843,7 +843,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     }
 
     /**
-     * @return array<int, array{char: string, items: array<string, string>, extraAttributes: array<string, mixed>, noOptionsMessage: string, noSearchResultsMessage: string, searchPrompt: string, searchingMessage: string, isSearchable: bool}>
+     * @return array<int, array{char: string, extraAttributes: array<string, mixed>, isSearchable: bool, items: array<string, string>, noOptionsMessage: string, noSearchResultsMessage: string, searchPrompt: string, searchingMessage: string}>
      */
     public function getMentionsForJs(): array
     {
@@ -851,14 +851,13 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
             function (MentionProvider $provider): array {
                 return [
                     'char' => $provider->getChar(),
-                    // Only include static options - don't call search closure on initial load
-                    'items' => $provider->getOptions(),
                     'extraAttributes' => $provider->getExtraAttributes(),
-                    'noOptionsMessage' => $provider->getNoOptionsMessage(),
+                    'isSearchable' => $provider->hasSearchResultsUsing(),
+                    'items' => $provider->getItems(),
+                    'noOptionsMessage' => $provider->getNoItemsMessage(),
                     'noSearchResultsMessage' => $provider->getNoSearchResultsMessage(),
                     'searchPrompt' => $provider->getSearchPrompt(),
                     'searchingMessage' => $provider->getSearchingMessage(),
-                    'isSearchable' => $provider->hasSearchResultsUsing(),
                 ];
             },
             $this->getMentionProviders(),

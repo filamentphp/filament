@@ -631,7 +631,7 @@ use Filament\Forms\Components\RichEditor\MentionProvider;
 RichEditor::make('content')
     ->mentions([
         MentionProvider::make('@')
-            ->options([
+            ->items([
                 1 => 'Jane Doe',
                 2 => 'John Smith',
             ]),
@@ -647,12 +647,12 @@ use Filament\Forms\Components\RichEditor\MentionProvider;
 RichEditor::make('content')
     ->mentions([
         MentionProvider::make('@')
-            ->options([
+            ->items([
                 1 => 'Jane Doe',
                 2 => 'John Smith',
             ]),
         MentionProvider::make('#')
-            ->options([
+            ->items([
                 'bug' => 'Bug',
                 'feature' => 'Feature',
             ]),
@@ -744,7 +744,7 @@ class Post extends Model implements HasRichContent
             ])
             ->mentions([
                 MentionProvider::make('@')
-                    ->options([
+                    ->items([
                         1 => 'Jane Doe',
                         2 => 'John Smith',
                     ]),
