@@ -687,7 +687,9 @@ RichEditor::make('content')
 
 ### Rendering content with mentions
 
-When rendering the rich content, you can pass the array of mention providers to the `RichContentRenderer` to ensure that the mentions are rendered correctly:
+When rendering the rich content, you can pass the array of mention providers to the `RichContentRenderer` to ensure that the mentions are rendered correctly.
+
+You can make mentions link to a URL when rendered using the `url()` method. The callback receives the mention's `id` and `label`, and should return a URL string:
 
 ```php
 use Filament\Forms\Components\RichEditor\MentionProvider;
@@ -696,58 +698,13 @@ use Filament\Forms\Components\RichEditor\RichContentRenderer;
 RichContentRenderer::make($record->content)
     ->mentions([
         MentionProvider::make('@')
-            ->options([
-                1 => 'Jane Doe',
-                2 => 'John Smith',
-            ]),
-    ])
-    ->toHtml()
-```
-
-#### Linking mentions to URLs
-
-You can make mentions link to a URL when rendered using the `url()` method. The callback receives the mention's `id` and `label`, and should return a URL string:
-
-```php
-use Filament\Forms\Components\RichEditor;
-use Filament\Forms\Components\RichEditor\MentionProvider;
-
-RichEditor::make('content')
-    ->mentions([
-        MentionProvider::make('@')
-            ->getSearchResultsUsing(fn (string $search): array => User::query()
-                ->where('name', 'like', "%{$search}%")
-                ->limit(10)
-                ->pluck('name', 'id')
-                ->all())
             ->getLabelsUsing(fn (array $ids): array => User::query()
                 ->whereIn('id', $ids)
                 ->pluck('name', 'id')
                 ->all())
             ->url(fn (string $id, string $label): string => route('users.show', $id)),
     ])
-```
-
-When rendered, mentions with a URL become clickable links.
-
-#### Adding extra HTML attributes to mentions
-
-You may apply extra HTML attributes to the rendered mention element using `extraAttributes()`. This is useful for styling mentions differently based on their type:
-
-```php
-use Filament\Forms\Components\RichEditor;
-use Filament\Forms\Components\RichEditor\MentionProvider;
-
-RichEditor::make('content')
-    ->mentions([
-        MentionProvider::make('@')
-            ->options([
-                1 => 'Jane Doe',
-            ])
-            ->extraAttributes([
-                'data-model' => 'user',
-            ]),
-    ])
+    ->toHtml()
 ```
 
 ## Registering rich content attributes
