@@ -94,6 +94,8 @@ class MentionExtension extends Node
                     'text' => "{$char}{$label}",
                 ],
             ];
+        } else {
+            $node->content = [];
         }
 
         return [
