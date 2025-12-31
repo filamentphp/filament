@@ -85,7 +85,6 @@ export default ({
             let element
             let selectedIndex = 0
             let currentProps = null
-            let hasSearched = false
             let isLoading = false
 
             renderContext = {
@@ -100,6 +99,7 @@ export default ({
                 dropdown.className =
                     'fi-dropdown-panel fi-dropdown-list fi-scrollable'
                 dropdown.style.maxHeight = '15rem'
+                dropdown.style.minWidth = '12rem'
 
                 return dropdown
             }
@@ -120,6 +120,7 @@ export default ({
                     messageElement.className = 'fi-dropdown-header'
 
                     const messageSpan = document.createElement('span')
+                    messageSpan.style.whiteSpace = 'normal'
                     messageSpan.textContent = message
                     messageElement.appendChild(messageSpan)
 
@@ -160,6 +161,7 @@ export default ({
                         messageElement.className = 'fi-dropdown-header'
 
                         const messageSpan = document.createElement('span')
+                        messageSpan.style.whiteSpace = 'normal'
                         messageSpan.textContent = message
                         messageElement.appendChild(messageSpan)
 
@@ -169,13 +171,11 @@ export default ({
             }
 
             const getEmptyMessage = (query) => {
-                // User has searched but no results
-                if (query && (isSearchable || hasSearched)) {
+                if (query) {
                     return noSearchResultsMessage
                 }
 
-                // No options and searchable - show search prompt
-                if (isSearchable && !hasSearched) {
+                if (isSearchable) {
                     return searchPrompt
                 }
 
@@ -250,7 +250,6 @@ export default ({
                 onStart: (props) => {
                     currentProps = props
                     selectedIndex = 0
-                    hasSearched = false
 
                     element = createDropdown()
                     element.style.position = 'absolute'
@@ -269,10 +268,6 @@ export default ({
                 onUpdate: (props) => {
                     currentProps = props
                     selectedIndex = 0
-
-                    if (props.query) {
-                        hasSearched = true
-                    }
 
                     renderItems()
                     scrollToSelected()

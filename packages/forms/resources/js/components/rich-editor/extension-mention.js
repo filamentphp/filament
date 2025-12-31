@@ -307,65 +307,19 @@ export default Node.create({
     },
 
     onBeforeCreate() {
-        const isArrayOfSuggestionObjects = (arr) =>
-            Array.isArray(arr) &&
-            arr.length > 0 &&
-            typeof arr[0] === 'object' &&
-            (arr[0].items || arr[0].char)
-        const isArrayOfItems = (arr) =>
-            Array.isArray(arr) &&
-            (arr.length === 0 ||
-                typeof arr[0] === 'string' ||
-                typeof arr[0] === 'object')
         const toItemsArray = (value) => {
-            if (value && !Array.isArray(value) && typeof value === 'object') {
+            if (Array.isArray(value)) {
+                return value
+            }
+
+            if (value && typeof value === 'object') {
                 return Object.entries(value).map(([id, label]) => ({
                     id,
                     label,
                 }))
             }
-            return value
-        }
-        const normalizeResults = (results, currentChar, baseItems, query) => {
-            if (Array.isArray(results)) {
-                if (isArrayOfSuggestionObjects(results)) {
-                    const match =
-                        results.find(
-                            (result) =>
-                                (result?.char ?? '@') === (currentChar ?? '@'),
-                        ) || (results.length === 1 ? results[0] : null)
-                    if (match?.items) return toItemsArray(match.items)
-                }
-                if (isArrayOfItems(results)) return toItemsArray(results)
-            }
-            if (results && typeof results === 'object') {
-                if (results.items) {
-                    if (!results.char || results.char === currentChar) {
-                        return toItemsArray(results.items)
-                    }
-                }
-                const keys = Object.keys(results)
-                if (
-                    keys.length &&
-                    typeof results[keys[0]] !== 'undefined' &&
-                    !Array.isArray(results[keys[0]])
-                ) {
-                    return toItemsArray(results)
-                }
-                const charKey = currentChar ?? '@'
-                if (results[charKey]) return toItemsArray(results[charKey])
-                const firstKey = keys[0]
-                if (firstKey) return toItemsArray(results[firstKey])
-            }
-            if (!query) return baseItems
-            const searchQuery = String(query).toLowerCase()
-            return (baseItems ?? []).filter((item) => {
-                const label =
-                    typeof item === 'string'
-                        ? item
-                        : (item?.label ?? item?.name ?? '')
-                return String(label).toLowerCase().includes(searchQuery)
-            })
+
+            return []
         }
 
         const configured = this.options.suggestions.length
@@ -386,6 +340,7 @@ export default Node.create({
 
             if (typeof suggestionConfig?.items === 'function') {
                 const originalItems = suggestionConfig.items
+
                 suggestion = {
                     ...suggestionConfig,
                     items: async (context) => {
@@ -393,40 +348,34 @@ export default Node.create({
                             typeof getMentionSearchResultsUsing === 'function'
                         ) {
                             try {
-                                const asyncResults =
+                                const results =
                                     await getMentionSearchResultsUsing(
                                         context?.query,
                                         char,
                                     )
-                                const base = await originalItems(context)
-                                return normalizeResults(
-                                    asyncResults,
-                                    char,
-                                    base,
-                                    context?.query,
-                                )
+
+                                return toItemsArray(results)
                             } catch {}
                         }
+
                         return await originalItems(context)
                     },
                 }
             } else {
-                const preservedExtraAttributes =
-                    suggestionConfig?.extraAttributes
+                const extraAttributes = suggestionConfig?.extraAttributes
                 const searchPrompt = suggestionConfig?.searchPrompt ?? null
                 const searchingMessage =
                     suggestionConfig?.searchingMessage ?? null
+
                 suggestion = {
                     ...getMentionSuggestion({
                         items: async ({ query }) => {
-                            // Check if baseItems has content (handles both arrays and objects from PHP)
                             const hasBaseItems = Array.isArray(baseItems)
                                 ? baseItems.length > 0
                                 : baseItems &&
                                   typeof baseItems === 'object' &&
                                   Object.keys(baseItems).length > 0
 
-                            // If no base items and no query, show search prompt instead of searching
                             if (!hasBaseItems && !query) {
                                 return []
                             }
@@ -436,42 +385,43 @@ export default Node.create({
                                 'function'
                             ) {
                                 try {
-                                    const asyncResults =
+                                    const results =
                                         await getMentionSearchResultsUsing(
                                             query,
                                             char,
                                         )
-                                    return normalizeResults(
-                                        asyncResults,
-                                        char,
-                                        baseItems,
-                                        query,
-                                    )
+
+                                    return toItemsArray(results)
                                 } catch {}
                             }
-                            const base = baseItems
-                            if (!query) return base
+
+                            const items = toItemsArray(baseItems)
+
+                            if (!query) {
+                                return items
+                            }
+
                             const searchQuery = String(query).toLowerCase()
-                            return (base ?? []).filter((item) => {
+
+                            return items.filter((item) => {
                                 const label =
                                     typeof item === 'string'
                                         ? item
                                         : (item?.label ?? item?.name ?? '')
+
                                 return String(label)
                                     .toLowerCase()
                                     .includes(searchQuery)
                             })
                         },
+                        isSearchable,
                         noOptionsMessage,
                         noSearchResultsMessage,
                         searchPrompt,
                         searchingMessage,
-                        isSearchable,
                     }),
                     char,
-                    ...(preservedExtraAttributes
-                        ? { extraAttributes: preservedExtraAttributes }
-                        : {}),
+                    ...(extraAttributes ? { extraAttributes } : {}),
                 }
             }
 
@@ -483,17 +433,11 @@ export default Node.create({
         })
 
         this.storage.getSuggestionFromChar = (char) => {
-            const suggestion = this.storage.suggestions.find(
-                (item) => item.char === char,
+            return (
+                this.storage.suggestions.find((item) => item.char === char) ??
+                this.storage.suggestions[0] ??
+                null
             )
-            if (suggestion) {
-                return suggestion
-            }
-            if (this.storage.suggestions.length) {
-                return this.storage.suggestions[0]
-            }
-
-            return null
         }
     },
 })
