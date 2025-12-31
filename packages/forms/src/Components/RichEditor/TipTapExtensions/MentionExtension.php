@@ -68,6 +68,9 @@ class MentionExtension extends Node
         ];
     }
 
+    /**
+     * @param  object  $node
+     */
     public function renderText($node): string
     {
         $char = $node->attrs->char ?? '@';
