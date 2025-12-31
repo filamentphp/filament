@@ -14,7 +14,6 @@ use Filament\Forms\Components\RichEditor\TipTapExtensions\GridExtension;
 use Filament\Forms\Components\RichEditor\TipTapExtensions\ImageExtension;
 use Filament\Forms\Components\RichEditor\TipTapExtensions\LeadExtension;
 use Filament\Forms\Components\RichEditor\TipTapExtensions\MentionExtension;
-use Filament\Forms\Components\RichEditor\TipTapExtensions\MentionLinkExtension;
 use Filament\Forms\Components\RichEditor\TipTapExtensions\MergeTagExtension;
 use Filament\Forms\Components\RichEditor\TipTapExtensions\RawHtmlMergeTagExtension;
 use Filament\Forms\Components\RichEditor\TipTapExtensions\RenderedCustomBlockExtension;
@@ -340,7 +339,6 @@ class RichContentRenderer implements Htmlable
             $url = $provider->getUrl((string) $id, $label);
 
             if ($url) {
-                $node->type = 'mentionLink';
                 $node->attrs->href = $url;
             }
         });
@@ -404,7 +402,6 @@ class RichContentRenderer implements Htmlable
             app(Link::class),
             app(ListItem::class),
             app(MentionExtension::class),
-            app(MentionLinkExtension::class),
             app(MergeTagExtension::class),
             app(OrderedList::class),
             app(Paragraph::class),
@@ -555,7 +552,7 @@ class RichContentRenderer implements Htmlable
     /**
      * @param  ?array<MentionProvider>  $providers
      */
-    public function mentionProviders(?array $providers): static
+    public function mentions(?array $providers): static
     {
         $this->mentionProviders = $providers;
 

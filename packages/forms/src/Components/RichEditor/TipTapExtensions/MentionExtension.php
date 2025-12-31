@@ -31,6 +31,9 @@ class MentionExtension extends Node
             [
                 'tag' => 'span[data-type="' . self::$name . '"]',
             ],
+            [
+                'tag' => 'a[data-type="' . self::$name . '"]',
+            ],
         ];
     }
 
@@ -51,6 +54,10 @@ class MentionExtension extends Node
             'char' => [
                 'parseHTML' => fn ($DOMNode) => $DOMNode->getAttribute('data-char') ?: '@',
                 'renderHTML' => fn ($attributes) => ['data-char' => $attributes->char ?? '@'],
+            ],
+            'href' => [
+                'parseHTML' => fn ($DOMNode) => $DOMNode->getAttribute('href') ?: null,
+                'renderHTML' => fn ($attributes) => ['href' => $attributes->href ?? null],
             ],
             'extra' => [
                 'default' => null,
@@ -78,17 +85,17 @@ class MentionExtension extends Node
     {
         $char = $node->attrs->char ?? '@';
         $label = $node->attrs->label ?? '';
+        $href = $node->attrs->href ?? null;
 
-        // Inject content into the node so tiptap-php can render it
         $node->content = [
             (object) [
                 'type' => 'text',
-                'text' => "{$char} {$label}",
+                'text' => "{$char}{$label}",
             ],
         ];
 
         return [
-            'span',
+            $href ? 'a' : 'span',
             HTML::mergeAttributes(
                 ['data-type' => self::$name],
                 $this->options['HTMLAttributes'],

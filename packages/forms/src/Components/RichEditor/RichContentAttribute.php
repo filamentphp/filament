@@ -137,7 +137,7 @@ class RichContentAttribute implements Htmlable
             ->plugins($this->getPlugins())
             ->customBlocks($this->customBlocks)
             ->mergeTags($this->mergeTags)
-            ->mentionProviders($this->mentionProviders)
+            ->mentions($this->mentionProviders)
             ->fileAttachmentsDisk($this->getFileAttachmentsDiskName())
             ->fileAttachmentsVisibility($this->getFileAttachmentsVisibility())
             ->fileAttachmentProvider($this->getFileAttachmentProvider())
@@ -183,7 +183,7 @@ class RichContentAttribute implements Htmlable
     /**
      * @param  ?array<MentionProvider>  $providers
      */
-    public function mentionProviders(?array $providers): static
+    public function mentions(?array $providers): static
     {
         $this->mentionProviders = $providers;
 

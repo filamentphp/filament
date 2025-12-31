@@ -747,7 +747,7 @@ class Post extends Model implements HasRichContent
     {
         $this->richContentAttributes([
             RichContentAttribute::make($this, 'content')
-                ->mentionProviders([
+                ->mentions([
                     MentionProvider::make('@')
                         ->getLabelsUsing(fn (array $ids): array => User::query()
                             ->whereIn('id', $ids)

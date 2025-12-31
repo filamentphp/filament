@@ -23,6 +23,7 @@ import Link from '@tiptap/extension-link'
 import { BulletList, ListItem, OrderedList } from '@tiptap/extension-list'
 import LocalFiles from './extension-local-files.js'
 import MergeTag from './extension-merge-tag.js'
+import Mention from './extension-mention.js'
 import Paragraph from '@tiptap/extension-paragraph'
 import Placeholder from '@tiptap/extension-placeholder'
 import Small from './extension-small.js'
@@ -36,10 +37,9 @@ import TextAlign from '@tiptap/extension-text-align'
 import Underline from '@tiptap/extension-underline'
 
 import getMergeTagSuggestion from './merge-tag-suggestion.js'
-import Mention from './extension-mention.js'
-import getMentionSuggestion from './mention-suggestion.js'
 
 export default async ({
+    $wire,
     acceptedFileTypes,
     acceptedFileTypesValidationMessage,
     canAttachFiles,
@@ -47,21 +47,20 @@ export default async ({
     deleteCustomBlockButtonIconHtml,
     editCustomBlockButtonIconHtml,
     editCustomBlockUsing,
+    getMentionLabelsUsing,
+    getMentionSearchResultsUsing,
     insertCustomBlockUsing,
-    linkProtocols,
     key,
+    linkProtocols,
     maxFileSize,
     maxFileSizeValidationMessage,
+    mentions,
     mergeTags,
     noMergeTagSearchResultsMessage,
-    mentions,
-    getMentionSearchResultsUsing,
-    getMentionLabelsUsing,
     placeholder,
     statePath,
     textColors,
     uploadingFileMessage,
-    $wire,
 }) => {
     const extensions = [
         Blockquote,

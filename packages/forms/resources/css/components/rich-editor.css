@@ -53,16 +53,16 @@
 
     & span[data-type='mergeTag'] {
         @apply my-0 inline-block whitespace-nowrap;
-    }
 
-    & span[data-type='mergeTag']::before {
-        @apply me-1 font-normal opacity-60;
-        content: '{{';
-    }
+        &::before {
+            @apply me-1 font-normal opacity-60;
+            content: '{{';
+        }
 
-    & span[data-type='mergeTag']::after {
-        @apply ms-1 font-normal opacity-60;
-        content: '}}';
+        &::after {
+            @apply ms-1 font-normal opacity-60;
+            content: '}}';
+        }
     }
 
     & span[data-type='mention'] {

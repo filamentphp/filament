@@ -89,7 +89,7 @@ export default Node.create({
                         this.HTMLAttributes,
                         options.HTMLAttributes,
                     ),
-                    `${node.attrs.char ?? '@'} ${node.attrs.label ?? ''}`,
+                    `${node.attrs.char ?? '@'}${node.attrs.label ?? ''}`,
                 ]
             },
             suggestions: [],

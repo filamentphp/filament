@@ -53,10 +53,9 @@ class RichEditorStateCast implements StateCast
             });
         }
 
-        // Strip mention labels before saving - they are hydrated on load
         if ($this->richEditor->getMentionProviders()) {
             $editor->descendants(function (object &$node): void {
-                if (! in_array($node->type, ['mention', 'mentionLink'], true)) {
+                if (! in_array($node->type, ['mention', 'mentionLink'], strict: true)) {
                     return;
                 }
 
@@ -64,7 +63,6 @@ class RichEditorStateCast implements StateCast
             });
         }
 
-        // Always return JSON since the JS editor uses JSON internally
         return $editor->getDocument();
     }
 
@@ -131,7 +129,6 @@ class RichEditorStateCast implements StateCast
             return;
         }
 
-        // Collect all mentions by char
         $mentionsByChar = [];
 
         $editor->descendants(function (object &$node) use (&$mentionsByChar): void {
@@ -153,7 +150,6 @@ class RichEditorStateCast implements StateCast
             return;
         }
 
-        // Fetch labels for each char
         $labelsByChar = [];
 
         foreach ($mentionsByChar as $char => $ids) {
@@ -166,7 +162,6 @@ class RichEditorStateCast implements StateCast
             }
         }
 
-        // Apply labels to mentions
         $editor->descendants(function (object &$node) use ($labelsByChar): void {
             if (! in_array($node->type, ['mention', 'mentionLink'], true)) {
                 return;

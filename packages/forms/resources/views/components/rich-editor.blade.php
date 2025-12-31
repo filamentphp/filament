@@ -8,7 +8,7 @@
     $key = $getKey();
     $mergeTags = $getMergeTags();
     $statePath = $getStatePath();
-    $mentions = $field->getMentionsForJs();
+    $mentions = $getMentionsForJs();
     $tools = $getTools();
     $toolbarButtons = $getToolbarButtons();
     $floatingToolbars = $getFloatingToolbars();
@@ -38,6 +38,20 @@
                         editCustomBlockButtonIconHtml: @js(\Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::PencilSquare, alias: \Filament\Forms\View\FormsIconAlias::COMPONENTS_RICH_EDITOR_PANELS_CUSTOM_BLOCK_EDIT_BUTTON)->toHtml()),
                         extensions: @js($getTipTapJsExtensions()),
                         floatingToolbars: @js($floatingToolbars),
+                        getMentionLabelsUsing: async (mentions) => {
+                            return await $wire.callSchemaComponentMethod(
+                                @js($key),
+                                'getMentionLabelsForJs',
+                                { mentions },
+                            )
+                        },
+                        getMentionSearchResultsUsing: async (query, char) => {
+                            return await $wire.callSchemaComponentMethod(
+                                @js($key),
+                                'getMentionSearchResultsForJs',
+                                { search: query, char },
+                            )
+                        },
                         isDisabled: @js($isDisabled),
                         isLiveDebounced: @js($isLiveDebounced()),
                         isLiveOnBlur: @js($isLiveOnBlur()),
@@ -47,22 +61,8 @@
                         livewireId: @js($this->getId()),
                         maxFileSize: @js($fileAttachmentsMaxSize),
                         maxFileSizeValidationMessage: @js($fileAttachmentsMaxSize ? trans_choice('filament-forms::components.rich_editor.file_attachments_max_size_message', $fileAttachmentsMaxSize, ['max' => $fileAttachmentsMaxSize]) : null),
-                        mergeTags: @js($mergeTags),
                         mentions: @js($mentions),
-                        getMentionSearchResultsUsing: async (query, char) => {
-                            return await $wire.callSchemaComponentMethod(
-                                @js($key),
-                                'getMentionSearchResultsForJs',
-                                { search: query, char },
-                            )
-                        },
-                        getMentionLabelsUsing: async (mentions) => {
-                            return await $wire.callSchemaComponentMethod(
-                                @js($key),
-                                'getMentionLabelsForJs',
-                                { mentions },
-                            )
-                        },
+                        mergeTags: @js($mergeTags),
                         noMergeTagSearchResultsMessage: @js($getNoMergeTagSearchResultsMessage()),
                         placeholder: @js($getPlaceholder()),
                         state: $wire.{{ $applyStateBindingModifiers("\$entangle('{$statePath}')", isOptimisticallyLive: false) }},
