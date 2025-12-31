@@ -63,7 +63,7 @@ class RichEditorStateCast implements StateCast
             });
         }
 
-        return $editor->getDocument();
+        return $editor->{$this->richEditor->isJson() ? 'getDocument' : 'getHtml'}();
     }
 
     /**
