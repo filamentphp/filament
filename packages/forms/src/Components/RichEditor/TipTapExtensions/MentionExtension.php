@@ -84,15 +84,17 @@ class MentionExtension extends Node
     public function renderHTML($node, $HTMLAttributes = []): array
     {
         $char = $node->attrs->char ?? '@';
-        $label = $node->attrs->label ?? '';
+        $label = $node->attrs->label ?? null;
         $href = $node->attrs->href ?? null;
 
-        $node->content = [
-            (object) [
-                'type' => 'text',
-                'text' => "{$char}{$label}",
-            ],
-        ];
+        if (filled($label)) {
+            $node->content = [
+                (object) [
+                    'type' => 'text',
+                    'text' => "{$char}{$label}",
+                ],
+            ];
+        }
 
         return [
             $href ? 'a' : 'span',

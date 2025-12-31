@@ -754,3 +754,27 @@ it('uses static `items()` for label lookup when `getLabelsUsing()` is not config
 
     expect($html)->toContain('@Administrator');
 });
+
+it('renders mentions without labels as empty spans', function (): void {
+    $renderer = RichContentRenderer::make([
+        'type' => 'doc',
+        'content' => [
+            [
+                'type' => 'paragraph',
+                'content' => [
+                    [
+                        'type' => 'mention',
+                        'attrs' => [
+                            'id' => '1',
+                            'char' => '@',
+                        ],
+                    ],
+                ],
+            ],
+        ],
+    ]);
+
+    $html = $renderer->toUnsafeHtml();
+
+    expect($html)->toContain('<span data-type="mention" data-id="1" data-char="@"></span>');
+});

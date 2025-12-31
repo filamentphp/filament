@@ -55,7 +55,7 @@ class RichEditorStateCast implements StateCast
 
         if ($this->richEditor->getMentionProviders()) {
             $editor->descendants(function (object &$node): void {
-                if (! in_array($node->type, ['mention', 'mentionLink'], strict: true)) {
+                if ($node->type !== 'mention') {
                     return;
                 }
 
@@ -132,7 +132,7 @@ class RichEditorStateCast implements StateCast
         $mentionsByChar = [];
 
         $editor->descendants(function (object &$node) use (&$mentionsByChar): void {
-            if (! in_array($node->type, ['mention', 'mentionLink'], true)) {
+            if ($node->type !== 'mention') {
                 return;
             }
 
@@ -163,7 +163,7 @@ class RichEditorStateCast implements StateCast
         }
 
         $editor->descendants(function (object &$node) use ($labelsByChar): void {
-            if (! in_array($node->type, ['mention', 'mentionLink'], true)) {
+            if ($node->type !== 'mention') {
                 return;
             }
 
