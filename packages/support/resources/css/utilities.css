@@ -790,32 +790,6 @@
         white-space: nowrap;
     }
 
-    & span[data-type='mergeTag']:where(:not(.fi-not-prose, .fi-not-prose *)) {
-        display: inline-block;
-        margin-block: 0;
-        white-space: nowrap;
-    }
-
-    &
-        span[data-type='mergeTag']:where(
-            :not(.fi-not-prose, .fi-not-prose *)
-        )::before {
-        margin-inline-end: calc(var(--spacing) * 1);
-        font-weight: var(--font-weight-normal);
-        opacity: 0.6;
-        content: '{{';
-    }
-
-    &
-        span[data-type='mergeTag']:where(
-            :not(.fi-not-prose, .fi-not-prose *)
-        )::after {
-        margin-inline-start: calc(var(--spacing) * 1);
-        font-weight: var(--font-weight-normal);
-        opacity: 0.6;
-        content: '}}';
-    }
-
     & .grid-layout:where(:not(.fi-not-prose, .fi-not-prose *)) {
         @apply grid grid-cols-1 gap-4;
 
