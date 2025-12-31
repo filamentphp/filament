@@ -52,7 +52,6 @@ class MentionProvider
      */
     public function options(array $options): static
     {
-        // Ensure all keys and values are strings
         $this->options = [];
 
         foreach ($options as $id => $label) {
@@ -185,7 +184,6 @@ class MentionProvider
             $labels = Arr::only($this->options, $ids);
         }
 
-        // Ensure all keys and values are strings
         $result = [];
 
         foreach ($labels as $id => $label) {
@@ -231,7 +229,6 @@ class MentionProvider
             );
         }
 
-        // Ensure all keys and values are strings
         $normalized = [];
 
         foreach ($results as $id => $label) {

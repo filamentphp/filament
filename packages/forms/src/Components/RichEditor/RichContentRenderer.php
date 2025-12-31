@@ -281,7 +281,6 @@ class RichContentRenderer implements Htmlable
             return;
         }
 
-        // Collect all mentions by char that need labels
         $mentionsByChar = [];
 
         $editor->descendants(function (object &$node) use (&$mentionsByChar): void {
@@ -303,7 +302,6 @@ class RichContentRenderer implements Htmlable
             $mentionsByChar[$char][] = (string) $id;
         });
 
-        // Batch fetch labels for each char
         $labelsByChar = [];
 
         foreach ($mentionsByChar as $char => $ids) {
@@ -314,7 +312,6 @@ class RichContentRenderer implements Htmlable
             }
         }
 
-        // Apply labels and URLs to mentions
         $editor->descendants(function (object &$node) use ($labelsByChar): void {
             if ($node->type !== 'mention') {
                 return;

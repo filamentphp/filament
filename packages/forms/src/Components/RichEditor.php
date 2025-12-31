@@ -72,7 +72,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     protected array | Closure | null $mergeTags = null;
 
     /**
-     * @var array<MentionProvider | Closure | array<string, mixed>> | Closure | null
+     * @var array<MentionProvider> | Closure | null
      */
     protected array | Closure | null $mentions = null;
 
@@ -822,16 +822,11 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     }
 
     /**
-     * @param  array<MentionProvider | Closure | array<string, mixed>> | Closure | null  $mentions
+     * @param  array<MentionProvider> | Closure  $providers
      */
-    public function mentions(array | Closure | null $mentions): static
+    public function mentions(array | Closure $providers): static
     {
-        $existing = $this->mentions;
-
-        $this->mentions = [
-            ...is_array($existing) ? $existing : Arr::wrap($existing),
-            ...is_array($mentions) ? $mentions : Arr::wrap($mentions),
-        ];
+        $this->mentions = $providers;
 
         return $this;
     }
@@ -841,33 +836,10 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
      */
     public function getMentionProviders(): array
     {
-        $providers = $this->getContentAttribute()?->getMentionProviders() ?? [];
-
-        $configured = $this->evaluate($this->mentions) ?? [];
-
-        foreach (Arr::wrap($configured) as $mention) {
-            if ($mention instanceof MentionProvider) {
-                $providers[] = $mention;
-
-                continue;
-            }
-
-            if (is_array($mention)) {
-                $char = strval($mention['char'] ?? '@');
-
-                $provider = MentionProvider::make($char);
-
-                if (array_key_exists('items', $mention) && is_array($mention['items'])) {
-                    $provider->options($mention['items']);
-                }
-
-                $providers[] = $provider;
-
-                continue;
-            }
-        }
-
-        return $providers;
+        return [
+            ...($this->getContentAttribute()?->getMentionProviders() ?? []),
+            ...($this->evaluate($this->mentions) ?? []),
+        ];
     }
 
     /**
