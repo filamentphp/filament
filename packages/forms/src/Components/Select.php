@@ -256,6 +256,8 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
                 $component->state($state);
                 $component->callAfterStateUpdated();
 
+                $component->refreshSelectedOptionLabel();
+
                 if (! ($arguments['another'] ?? false)) {
                     return;
                 }
