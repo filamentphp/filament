@@ -77,6 +77,24 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
 
     protected ?Closure $saveUploadedFileUsing = null;
 
+    /**
+     * @var array<string>
+     */
+    protected const ARRAY_VALIDATION_RULES = [
+        'filled',
+        'prohibited',
+        'prohibited_if',
+        'prohibited_unless',
+        'required_if',
+        'required_if_accepted',
+        'required_if_declined',
+        'required_unless',
+        'required_with',
+        'required_with_all',
+        'required_without',
+        'required_without_all',
+    ];
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -598,7 +616,23 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
             $rules[] = "min:{$count}";
         }
 
-        $rules[] = function (string $attribute, array $value, Closure $fail): void {
+        $arrayRules = [];
+        $fileRules = [];
+
+        foreach (parent::getValidationRules() as $rule) {
+            if ($this->isArrayValidationRule($rule)) {
+                $arrayRules[] = $rule;
+            } else {
+                $fileRules[] = $rule;
+            }
+        }
+
+        $rules = [
+            ...$rules,
+            ...$arrayRules,
+        ];
+
+        $rules[] = function (string $attribute, array $value, Closure $fail) use ($fileRules): void {
             $files = array_filter($value, fn (TemporaryUploadedFile | string $file): bool => $file instanceof TemporaryUploadedFile);
 
             $name = $this->getName();
@@ -607,7 +641,7 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
 
             $validator = Validator::make(
                 [$name => $files],
-                ["{$name}.*" => ['file', ...parent::getValidationRules()]],
+                ["{$name}.*" => ['file', ...$fileRules]],
                 $validationMessages ? ["{$name}.*" => $validationMessages] : [],
                 ["{$name}.*" => $this->getValidationAttribute()],
             );
@@ -620,6 +654,17 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
         };
 
         return $rules;
+    }
+
+    protected function isArrayValidationRule(mixed $rule): bool
+    {
+        if (! is_string($rule)) {
+            return false;
+        }
+
+        $ruleName = strtolower(explode(':', $rule)[0]);
+
+        return in_array($ruleName, static::ARRAY_VALIDATION_RULES, strict: true);
     }
 
     #[ExposedLivewireMethod]
