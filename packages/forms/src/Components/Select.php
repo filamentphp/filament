@@ -603,11 +603,12 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
     {
         if (! $this->getOptionLabelsUsing) {
             $state = $this->getState();
+
             $options = $this->getOptions();
 
             $labels = [];
 
-            foreach ($state as $value) {
+            foreach ($state ?? [] as $value) {
                 if ($value instanceof BackedEnum) {
                     $value = $value->value;
                 }
