@@ -603,7 +603,6 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
     {
         if (! $this->getOptionLabelsUsing) {
             $state = $this->getState();
-
             $options = $this->getOptions();
 
             $labels = [];
