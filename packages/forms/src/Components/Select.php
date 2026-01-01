@@ -1327,7 +1327,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         }
 
         if ($this->hasRelationship()) {
-            return $this->isPreloaded();
+            return (! $this->isSearchable()) || $this->isPreloaded();
         }
 
         return $this->options instanceof Closure;
@@ -1345,7 +1345,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
     public function hasInitialNoOptionsMessage(): bool
     {
         if ($this->hasRelationship()) {
-            return $this->isPreloaded();
+            return (! $this->isSearchable()) || $this->isPreloaded();
         }
 
         return ! $this->hasDynamicSearchResults();
