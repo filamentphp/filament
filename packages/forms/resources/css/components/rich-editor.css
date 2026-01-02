@@ -218,7 +218,6 @@
                 background: rgba(0, 0, 0, 0.8);
             }
 
-            /* Corner handles */
             &[data-resize-handle] {
                 margin: 0 !important;
             }
@@ -254,7 +253,6 @@
                 cursor: nwse-resize;
             }
 
-            /* Edge handles */
             &[data-resize-handle='top'],
             &[data-resize-handle='bottom'] {
                 height: 6px;

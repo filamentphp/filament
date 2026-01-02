@@ -2,6 +2,7 @@
 
 namespace Filament\Forms\Components\RichEditor\TipTapExtensions;
 
+use DOMElement;
 use Tiptap\Nodes\Image as BaseImage;
 
 class ImageExtension extends BaseImage
@@ -50,7 +51,7 @@ class ImageExtension extends BaseImage
         ];
     }
 
-    protected function getStyleValue(\DOMElement $DOMNode, string $property): ?string
+    protected function getStyleValue(DOMElement $DOMNode, string $property): ?string
     {
         $style = $DOMNode->getAttribute('style');
 
