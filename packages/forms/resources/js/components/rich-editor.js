@@ -12,6 +12,7 @@ export default function richEditorFormComponent({
     editCustomBlockButtonIconHtml,
     extensions,
     floatingToolbars,
+    hasResizableImages,
     isDisabled,
     isLiveDebounced,
     isLiveOnBlur,
@@ -71,6 +72,7 @@ export default function richEditorFormComponent({
                             { schemaComponent: key },
                         ),
                     floatingToolbars,
+                    hasResizableImages,
                     insertCustomBlockUsing: (id, dragPosition = null) =>
                         this.$wire.mountAction(
                             'customBlock',
