@@ -114,6 +114,22 @@ class RichEditorTool extends ViewComponent implements HasEmbeddedView
 
     public function jsHandler(string | Closure | null $handler): static
     {
+        if (is_string($handler)) {
+            $handler = $this->wrapJsHandler($handler);
+        } elseif ($handler instanceof Closure) {
+            $originalHandler = $handler;
+
+            $handler = function (RichEditorTool $tool, ...$args) use ($originalHandler) {
+                $result = app()->call($originalHandler, [
+                    'tool' => $tool,
+                    'component' => $tool,
+                    ...$args,
+                ]);
+
+                return is_string($result) ? $this->wrapJsHandler($result) : $result;
+            };
+        }
+
         $this->jsHandler = $handler;
 
         return $this;
@@ -223,5 +239,18 @@ class RichEditorTool extends ViewComponent implements HasEmbeddedView
         </button>
 
         <?php return ob_get_clean();
+    }
+
+    protected function wrapJsHandler(string $js): string
+    {
+        if (str_contains($js, 'editorUpdatedAt = Date.now()')) {
+            return $js;
+        }
+
+        if (str_contains($js, '$getEditor()') || str_contains($js, '$wire.mountAction')) {
+            return "editorUpdatedAt = Date.now(); {$js}";
+        }
+
+        return $js;
     }
 }
