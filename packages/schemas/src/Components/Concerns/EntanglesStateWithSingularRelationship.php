@@ -40,11 +40,7 @@ trait EntanglesStateWithSingularRelationship
         $this->loadStateFromRelationshipsUsing(static function (Component | CanEntangleWithSingularRelationships $component): void {
             $component->clearCachedExistingRecord();
 
-            // Find all layout components using this same relationship - mirror the save logic coordination.
-            // This prevents state overwrites when multiple Groups access the same HasOne relationship.
-            $componentsWithThisRelationship = [];
-
-            $findComponentsWithThisRelationship = function (Schema $schema) use ($component, &$componentsWithThisRelationship, &$findComponentsWithThisRelationship): void {
+            $findFirstComponentWithThisRelationship = function (Schema $schema) use ($component, &$findFirstComponentWithThisRelationship): ?CanEntangleWithSingularRelationships {
                 foreach ($schema->getComponents(withActions: false, withHidden: true) as $childComponent) {
                     if (
                         ($childComponent->getModel() === $component->getModel()) &&
@@ -53,27 +49,32 @@ trait EntanglesStateWithSingularRelationship
                         ($childComponent->getRelationshipName() === $component->getRelationshipName()) &&
                         ($childComponent->hasRelationship())
                     ) {
-                        $componentsWithThisRelationship[] = $childComponent;
-
-                        continue;
+                        return $childComponent;
                     }
 
                     foreach ($childComponent->getChildSchemas() as $schema) {
-                        $findComponentsWithThisRelationship($schema);
+                        $found = $findFirstComponentWithThisRelationship($schema);
+
+                        if ($found) {
+                            return $found;
+                        }
                     }
                 }
+
+                return null;
             };
 
-            $findComponentsWithThisRelationship($component->getRootContainer());
+            $firstComponentWithThisRelationship = $findFirstComponentWithThisRelationship($component->getRootContainer());
 
-            $isFirstComponent = blank($componentsWithThisRelationship) || (Arr::first($componentsWithThisRelationship) === $component);
+            $isFirstComponent = ($firstComponentWithThisRelationship === null) || ($firstComponentWithThisRelationship === $component);
 
             if ($isFirstComponent) {
-                // First component fills from relationship (sets raw state + hydrates + applies StateCasts)
+                // The first layout component using this relationship is the one that will fill the relationship data for all of them,
+                // but it will only hydrate the state correctly for itself.
                 $component->fillFromRelationship();
             } else {
-                // State is already set by the first component.
-                // Just hydrate this component's child schema (applies StateCasts automatically).
+                // If this is not the first layout component using this relationship, the data has already been filled by the first one,
+                // so we just need to hydrate the state without calling any hydration hooks. This ensures that state casts have run.
                 $hydratedDefaultState = null;
                 $component->getChildSchema()->hydrateState($hydratedDefaultState, shouldCallHydrationHooks: false);
             }
