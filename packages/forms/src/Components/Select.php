@@ -1197,15 +1197,23 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
                             $relationshipTitleAttribute = str_replace('->', '.', $relationshipTitleAttribute);
                         }
 
+                        $filteredRecords = $relatedRecords->filter(
+                            fn (Model $relatedRecord): bool => in_array(
+                                (string) $relatedRecord->getAttribute($relatedKeyName),
+                                $requestedKeys,
+                                strict: true,
+                            ),
+                        );
+
                         if ($component->hasOptionLabelFromRecordUsingCallback()) {
-                            return $relatedRecords
+                            return $filteredRecords
                                 ->mapWithKeys(static fn (Model $relatedRecord) => [
                                     $relatedRecord->getAttribute($relatedKeyName) => $component->getOptionLabelFromRecord($relatedRecord),
                                 ])
                                 ->toArray();
                         }
 
-                        return $relatedRecords
+                        return $filteredRecords
                             ->pluck($relationshipTitleAttribute, $relatedKeyName)
                             ->toArray();
                     }
