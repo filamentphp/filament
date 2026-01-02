@@ -32,7 +32,7 @@ return [
 
             'no_options_message' => 'Duh thlan tur a awmlo.',
 
-            'no_search_results_message' => 'I thilzawn hi hi a awmlo.',
+            'no_search_results_message' => 'I thilzawn hi a awmlo.',
 
             'placeholder' => 'I duh thlang rawh...',
 
