@@ -50,7 +50,7 @@ class ImageExtension extends BaseImage
         ];
     }
 
-    protected function getStyleValue($DOMNode, string $property): ?string
+    protected function getStyleValue(\DOMElement $DOMNode, string $property): ?string
     {
         $style = $DOMNode->getAttribute('style');
 
