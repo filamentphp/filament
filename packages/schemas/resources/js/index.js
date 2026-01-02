@@ -31,14 +31,16 @@ const resolveRelativeStatePath = function (containerPath, path, isAbsolute) {
     return `${containerPathCopy}.${path}`
 }
 
-const findClosestLivewireComponent = (el) => {
-    let closestRoot = Alpine.findClosest(el, (i) => i.__livewire)
-
-    if (!closestRoot) {
-        throw 'Could not find Livewire component in DOM tree.'
+// NOTE: In some edge cases (e.g. DOM replaced/removed during a Livewire request
+// lifecycle), relying on the `__livewire` property can cause
+// "Could not find Livewire component in DOM tree." to be thrown.
+// Using the closest `[wire:id]` is more resilient across Livewire versions.
+const findClosestLivewireComponentId = (el) => {
+    if (!el?.closest) {
+        return null
     }
 
-    return closestRoot.__livewire
+    return el.closest('[wire\\:id]')?.getAttribute('wire:id') ?? null
 }
 
 document.addEventListener('alpine:init', () => {
@@ -123,7 +125,10 @@ document.addEventListener('alpine:init', () => {
                     component.el.querySelectorAll(
                         `[wire\\:partial="schema-component::${dispatch.params.awaitSchemaComponent}"]`,
                     ),
-                ).filter((el) => findClosestLivewireComponent(el) === component)
+                ).filter(
+                    (el) =>
+                        findClosestLivewireComponentId(el) === component.id,
+                )
 
                 if (els.length === 1) {
                     return
