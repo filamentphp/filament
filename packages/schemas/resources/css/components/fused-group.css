@@ -16,6 +16,10 @@
             & .fi-input {
                 @apply min-h-full;
             }
+
+            & .fi-sc-actions {
+                @apply p-2.5;
+            }
         }
 
         & > :first-child .fi-input-wrp {
