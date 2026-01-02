@@ -21,7 +21,10 @@ export default Image.extend({
 
             width: {
                 default: null,
-                parseHTML: (element) => element.getAttribute('width') || element.style.width || null,
+                parseHTML: (element) =>
+                    element.getAttribute('width') ||
+                    element.style.width ||
+                    null,
                 renderHTML: (attributes) => {
                     if (!attributes.width) {
                         return {}
@@ -36,7 +39,10 @@ export default Image.extend({
 
             height: {
                 default: null,
-                parseHTML: (element) => element.getAttribute('height') || element.style.height || null,
+                parseHTML: (element) =>
+                    element.getAttribute('height') ||
+                    element.style.height ||
+                    null,
                 renderHTML: (attributes) => {
                     if (!attributes.height) {
                         return {}
