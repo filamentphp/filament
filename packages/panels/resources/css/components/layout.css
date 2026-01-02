@@ -1,5 +1,5 @@
 html.fi {
-    @apply min-h-dvh [scrollbar-gutter:stable];
+    @apply min-h-dvh;
 }
 
 .fi-body {
