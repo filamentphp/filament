@@ -40,7 +40,43 @@ trait EntanglesStateWithSingularRelationship
         $this->loadStateFromRelationshipsUsing(static function (Component | CanEntangleWithSingularRelationships $component): void {
             $component->clearCachedExistingRecord();
 
-            $component->fillFromRelationship();
+            // Find all layout components using this same relationship - mirror the save logic coordination.
+            // This prevents state overwrites when multiple Groups access the same HasOne relationship.
+            $componentsWithThisRelationship = [];
+
+            $findComponentsWithThisRelationship = function (Schema $schema) use ($component, &$componentsWithThisRelationship, &$findComponentsWithThisRelationship): void {
+                foreach ($schema->getComponents(withActions: false, withHidden: true) as $childComponent) {
+                    if (
+                        ($childComponent->getModel() === $component->getModel()) &&
+                        ($childComponent->getRecord() === $component->getRecord()) &&
+                        ($childComponent instanceof CanEntangleWithSingularRelationships) &&
+                        ($childComponent->getRelationshipName() === $component->getRelationshipName()) &&
+                        ($childComponent->hasRelationship())
+                    ) {
+                        $componentsWithThisRelationship[] = $childComponent;
+
+                        continue;
+                    }
+
+                    foreach ($childComponent->getChildSchemas() as $schema) {
+                        $findComponentsWithThisRelationship($schema);
+                    }
+                }
+            };
+
+            $findComponentsWithThisRelationship($component->getRootContainer());
+
+            $isFirstComponent = blank($componentsWithThisRelationship) || (Arr::first($componentsWithThisRelationship) === $component);
+
+            if ($isFirstComponent) {
+                // First component fills from relationship (sets raw state + hydrates + applies StateCasts)
+                $component->fillFromRelationship();
+            } else {
+                // State is already set by the first component.
+                // Just hydrate this component's child schema (applies StateCasts automatically).
+                $hydratedDefaultState = null;
+                $component->getChildSchema()->hydrateState($hydratedDefaultState, shouldCallHydrationHooks: false);
+            }
         });
 
         $this->saveRelationshipsBeforeChildrenUsing(static function (Component | CanEntangleWithSingularRelationships $component, LivewireComponent & HasSchemas $livewire): void {
