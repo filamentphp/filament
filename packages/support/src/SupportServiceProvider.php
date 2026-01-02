@@ -109,6 +109,8 @@ class SupportServiceProvider extends PackageServiceProvider
                     ->allowAttribute('data-color', allowedElements: '*')
                     ->allowAttribute('data-from-breakpoint', allowedElements: '*')
                     ->allowAttribute('style', allowedElements: '*')
+                    ->allowAttribute('width', allowedElements: 'img')
+                    ->allowAttribute('height', allowedElements: 'img')
                     ->withMaxInputLength(500000),
             ),
         );

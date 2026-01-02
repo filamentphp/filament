@@ -85,6 +85,11 @@ export default async ({
         Italic,
         Image.configure({
             inline: true,
+            resize: {
+                enabled: true,
+                alwaysPreserveAspectRatio: true,
+                allowBase64: true,
+            },
         }),
         Lead,
         Link.configure({
