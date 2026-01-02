@@ -835,12 +835,72 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
                 ->toArray();
         });
 
-        $this->options(static function (Select $component) use ($modifyQueryUsing, $ignoreRecord): ?array {
+        $cachedRecords = null;
+        $cachedOptions = null;
+
+        $this->options(static function (Select $component) use ($modifyQueryUsing, $ignoreRecord, &$cachedRecords, &$cachedOptions): ?array {
             if (($component->isSearchable()) && ! $component->isPreloaded()) {
                 return null;
             }
 
             $relationship = Relation::noConstraints(fn () => $component->getRelationship());
+
+            $qualifiedRelatedKeyName = $component->getQualifiedRelatedKeyNameForRelationship($relationship);
+
+            if ($component->hasOptionLabelFromRecordUsingCallback()) {
+                if (
+                    (! $modifyQueryUsing) &&
+                    (! $ignoreRecord) &&
+                    ($cachedRecords !== null)
+                ) {
+                    return $cachedRecords
+                        ->mapWithKeys(static fn (Model $record) => [
+                            $record->{Str::afterLast($qualifiedRelatedKeyName, '.')} => $component->getOptionLabelFromRecord($record),
+                        ])
+                        ->toArray();
+                }
+
+                $relationshipQuery = app(RelationshipJoiner::class)->prepareQueryForNoConstraints($relationship);
+
+                if ($ignoreRecord && ($record = $component->getRecord())) {
+                    $relationshipQuery->where($record->getQualifiedKeyName(), '!=', $record->getKey());
+                }
+
+                if ($modifyQueryUsing) {
+                    $relationshipQuery = $component->evaluate($modifyQueryUsing, [
+                        'query' => $relationshipQuery,
+                        'search' => null,
+                    ]) ?? $relationshipQuery;
+                }
+
+                $baseRelationshipQuery = $relationshipQuery->getQuery();
+
+                if (isset($baseRelationshipQuery->limit)) {
+                    $component->optionsLimit($baseRelationshipQuery->limit);
+                } elseif ($component->isSearchable() && filled($component->getSearchColumns())) {
+                    $relationshipQuery->limit($component->getOptionsLimit());
+                }
+
+                $records = $relationshipQuery->get();
+
+                if ((! $modifyQueryUsing) && (! $ignoreRecord)) {
+                    $cachedRecords = $records;
+                }
+
+                return $records
+                    ->mapWithKeys(static fn (Model $record) => [
+                        $record->{Str::afterLast($qualifiedRelatedKeyName, '.')} => $component->getOptionLabelFromRecord($record),
+                    ])
+                    ->toArray();
+            }
+
+            if (
+                (! $modifyQueryUsing) &&
+                (! $ignoreRecord) &&
+                ($cachedOptions !== null)
+            ) {
+                return $cachedOptions;
+            }
 
             $relationshipQuery = app(RelationshipJoiner::class)->prepareQueryForNoConstraints($relationship);
 
@@ -863,17 +923,6 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
                 $relationshipQuery->limit($component->getOptionsLimit());
             }
 
-            $qualifiedRelatedKeyName = $component->getQualifiedRelatedKeyNameForRelationship($relationship);
-
-            if ($component->hasOptionLabelFromRecordUsingCallback()) {
-                return $relationshipQuery
-                    ->get()
-                    ->mapWithKeys(static fn (Model $record) => [
-                        $record->{Str::afterLast($qualifiedRelatedKeyName, '.')} => $component->getOptionLabelFromRecord($record),
-                    ])
-                    ->toArray();
-            }
-
             $relationshipTitleAttribute = $component->getRelationshipTitleAttribute();
 
             if (empty($relationshipQuery->getQuery()->orders)) {
@@ -894,9 +943,15 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
                 $relationshipTitleAttribute = $relationshipQuery->qualifyColumn($relationshipTitleAttribute);
             }
 
-            return $relationshipQuery
+            $options = $relationshipQuery
                 ->pluck($relationshipTitleAttribute, $qualifiedRelatedKeyName)
                 ->toArray();
+
+            if ((! $modifyQueryUsing) && (! $ignoreRecord)) {
+                $cachedOptions = $options;
+            }
+
+            return $options;
         });
 
         $this->loadStateFromRelationshipsUsing(static function (Select $component, $state) use ($modifyQueryUsing): void {
@@ -905,6 +960,72 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
             }
 
             $relationship = $component->getRelationship();
+            $relationshipName = $component->getRelationshipName();
+
+            if (
+                (! $modifyQueryUsing) &&
+                (! str_contains($relationshipName, '.')) &&
+                ($record = $component->getRecord()) instanceof Model &&
+                $record->relationLoaded($relationshipName)
+            ) {
+                $relatedRecords = $record->getRelationValue($relationshipName);
+
+                if (
+                    ($relationship instanceof BelongsToMany) ||
+                    ($relationship instanceof HasOneOrManyThrough)
+                ) {
+                    $relatedKeys = $relatedRecords
+                        ->pluck(($relationship instanceof BelongsToMany) ? $relationship->getRelatedKeyName() : $relationship->getRelated()->getKeyName())
+                        ->map(static fn ($key): string => strval($key));
+
+                    $component->state(
+                        $component->isMultiple()
+                            ? $relatedKeys->all()
+                            : $relatedKeys->first(),
+                    );
+
+                    return;
+                }
+
+                if ($relationship instanceof BelongsToThrough) {
+                    $component->state(
+                        $relatedRecords?->getAttribute(
+                            $relationship->getRelated()->getKeyName(),
+                        ),
+                    );
+
+                    return;
+                }
+
+                if ($relationship instanceof HasMany) {
+                    $component->state(
+                        $relatedRecords
+                            ->pluck($relationship->getLocalKeyName())
+                            ->all(),
+                    );
+
+                    return;
+                }
+
+                if ($relationship instanceof HasOne) {
+                    $component->state(
+                        $relatedRecords?->getAttribute(
+                            $relationship->getLocalKeyName(),
+                        ),
+                    );
+
+                    return;
+                }
+
+                /** @var BelongsTo $relationship */
+                $component->state(
+                    $relatedRecords?->getAttribute(
+                        $relationship->getOwnerKeyName(),
+                    ),
+                );
+
+                return;
+            }
 
             if (
                 ($relationship instanceof BelongsToMany) ||
@@ -1006,6 +1127,29 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         });
 
         $this->getSelectedRecordUsing(static function (Select $component, $state) use ($modifyQueryUsing): ?Model {
+            $relationship = $component->getRelationship();
+
+            if (
+                (! $modifyQueryUsing) &&
+                ($relationship instanceof BelongsTo)
+            ) {
+                $record = $component->getRecord();
+
+                if (
+                    ($record instanceof Model) &&
+                    $record->relationLoaded($component->getRelationshipName())
+                ) {
+                    $relatedRecord = $record->getRelationValue($component->getRelationshipName());
+
+                    if (
+                        ($relatedRecord instanceof Model) &&
+                        ((string) $relatedRecord->getAttribute($relationship->getOwnerKeyName()) === (string) $state)
+                    ) {
+                        return $relatedRecord;
+                    }
+                }
+            }
+
             $relationship = Relation::noConstraints(fn () => $component->getRelationship());
 
             $relationshipQuery = app(RelationshipJoiner::class)->prepareQueryForNoConstraints($relationship);
@@ -1023,6 +1167,51 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         });
 
         $this->getOptionLabelsUsing(static function (Select $component, array $values) use ($modifyQueryUsing): array {
+            $relationship = $component->getRelationship();
+            $record = $component->getRecord();
+            $relationshipName = $component->getRelationshipName();
+
+            if (
+                (! $modifyQueryUsing) &&
+                ($record instanceof Model) &&
+                $record->relationLoaded($relationshipName) &&
+                (
+                    ($relationship instanceof BelongsToMany) ||
+                    ($relationship instanceof HasOneOrMany)
+                )
+            ) {
+                $relatedRecords = $record->getRelationValue($relationshipName);
+
+                if ($relatedRecords instanceof Collection) {
+                    $relatedKeyName = ($relationship instanceof BelongsToMany)
+                        ? $relationship->getRelatedKeyName()
+                        : $relationship->getRelated()->getKeyName();
+
+                    $loadedKeys = $relatedRecords->pluck($relatedKeyName)->map(fn ($key) => (string) $key)->all();
+                    $requestedKeys = array_map(fn ($value) => (string) $value, $values);
+
+                    if (empty(array_diff($requestedKeys, $loadedKeys))) {
+                        $relationshipTitleAttribute = $component->getRelationshipTitleAttribute();
+
+                        if (str_contains($relationshipTitleAttribute, '->')) {
+                            $relationshipTitleAttribute = str_replace('->', '.', $relationshipTitleAttribute);
+                        }
+
+                        if ($component->hasOptionLabelFromRecordUsingCallback()) {
+                            return $relatedRecords
+                                ->mapWithKeys(static fn (Model $relatedRecord) => [
+                                    $relatedRecord->getAttribute($relatedKeyName) => $component->getOptionLabelFromRecord($relatedRecord),
+                                ])
+                                ->toArray();
+                        }
+
+                        return $relatedRecords
+                            ->pluck($relationshipTitleAttribute, $relatedKeyName)
+                            ->toArray();
+                    }
+                }
+            }
+
             $relationship = Relation::noConstraints(fn () => $component->getRelationship());
 
             $relationshipQuery = app(RelationshipJoiner::class)->prepareQueryForNoConstraints($relationship);

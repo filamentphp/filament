@@ -1,6 +1,8 @@
 <?php
 
 use Filament\Actions\Action;
+use Filament\Actions\Concerns\InteractsWithActions;
+use Filament\Actions\Contracts\HasActions;
 use Filament\Actions\Testing\TestAction;
 use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\Repeater;
@@ -8,13 +10,18 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Set;
+use Filament\Schemas\Concerns\InteractsWithSchemas;
+use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
 use Filament\Tests\Fixtures\Livewire\Livewire;
 use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
+use Illuminate\Contracts\View\View;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Livewire\Component;
 use Livewire\Exceptions\RootTagMissingFromViewException;
 
 use function Filament\Tests\livewire;
@@ -263,6 +270,91 @@ it('loads a relationship', function (): void {
 
     expect($user->posts()->count())
         ->toBe(3);
+});
+
+it('can load state from a `HasMany` relationship using eager loaded data without additional queries', function (): void {
+    $undoRepeaterFake = Repeater::fake();
+
+    $user = User::factory()->create();
+    Post::factory()->count(3)->create(['author_id' => $user->id]);
+
+    $freshUser = $user->fresh();
+    expect($freshUser->relationLoaded('posts'))->toBeFalse();
+
+    DB::enableQueryLog();
+    DB::flushQueryLog();
+
+    livewire(RepeaterWithHasManyRelationship::class, ['record' => $freshUser])
+        ->assertSchemaStateSet(function (array $state) {
+            expect($state['posts'])->toHaveCount(3);
+
+            return [];
+        });
+
+    $queriesWithoutEagerLoading = count(DB::getQueryLog());
+
+    $eagerUser = $user->fresh();
+    $eagerUser->load('posts');
+    expect($eagerUser->relationLoaded('posts'))->toBeTrue();
+
+    DB::flushQueryLog();
+
+    livewire(RepeaterWithHasManyRelationship::class, ['record' => $eagerUser])
+        ->assertSchemaStateSet(function (array $state) {
+            expect($state['posts'])->toHaveCount(3);
+
+            return [];
+        });
+
+    $queriesWithEagerLoading = count(DB::getQueryLog());
+    DB::disableQueryLog();
+
+    $queriesSaved = $queriesWithoutEagerLoading - $queriesWithEagerLoading;
+    expect($queriesSaved)->toBe(1, "Expected to save 1 query with eager loading, but saved {$queriesSaved}");
+
+    $undoRepeaterFake();
+});
+
+it('does not use eager loaded data when `modifyQueryUsing()` is set', function (): void {
+    $undoRepeaterFake = Repeater::fake();
+
+    $user = User::factory()->create();
+    Post::factory()->count(3)->create(['author_id' => $user->id]);
+
+    $freshUser = $user->fresh();
+    expect($freshUser->relationLoaded('posts'))->toBeFalse();
+
+    DB::enableQueryLog();
+    DB::flushQueryLog();
+
+    livewire(RepeaterWithHasManyRelationshipAndModifyQuery::class, ['record' => $freshUser])
+        ->assertSchemaStateSet(function (array $state) {
+            expect($state['posts'])->toHaveCount(3);
+
+            return [];
+        });
+
+    $queriesWithoutEagerLoading = count(DB::getQueryLog());
+
+    $eagerUser = $user->fresh();
+    $eagerUser->load('posts');
+    expect($eagerUser->relationLoaded('posts'))->toBeTrue();
+
+    DB::flushQueryLog();
+
+    livewire(RepeaterWithHasManyRelationshipAndModifyQuery::class, ['record' => $eagerUser])
+        ->assertSchemaStateSet(function (array $state) {
+            expect($state['posts'])->toHaveCount(3);
+
+            return [];
+        });
+
+    $queriesWithEagerLoading = count(DB::getQueryLog());
+    DB::disableQueryLog();
+
+    expect($queriesWithEagerLoading)->toBe($queriesWithoutEagerLoading);
+
+    $undoRepeaterFake();
 });
 
 it('throws an exception for a missing relationship', function (): void {
@@ -821,5 +913,76 @@ class TestComponentWithRepeaterSetByAction extends Livewire
                     ]),
             ])
             ->statePath('data');
+    }
+}
+
+class RepeaterWithHasManyRelationship extends Component implements HasActions, HasSchemas
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+
+    public $data = [];
+
+    public User $record;
+
+    public function mount(): void
+    {
+        $this->form->fill([]);
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                Repeater::make('posts')
+                    ->relationship('posts')
+                    ->schema([
+                        TextInput::make('title'),
+                    ]),
+            ])
+            ->model($this->record)
+            ->statePath('data');
+    }
+
+    public function render(): View
+    {
+        return view('livewire.form');
+    }
+}
+
+class RepeaterWithHasManyRelationshipAndModifyQuery extends Component implements HasActions, HasSchemas
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+
+    public $data = [];
+
+    public User $record;
+
+    public function mount(): void
+    {
+        $this->form->fill([]);
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                Repeater::make('posts')
+                    ->relationship(
+                        'posts',
+                        modifyQueryUsing: fn ($query) => $query->orderBy('title'),
+                    )
+                    ->schema([
+                        TextInput::make('title'),
+                    ]),
+            ])
+            ->model($this->record)
+            ->statePath('data');
+    }
+
+    public function render(): View
+    {
+        return view('livewire.form');
     }
 }
