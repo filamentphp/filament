@@ -950,9 +950,9 @@ public function table(Table $table): Table
 }
 ```
 
-#### Change column manager number of columns
+#### Changing the number of display columns in the column manager
 
-By default, Filament shows the column manager in one column. When there are many columns to deal with (reorder, change visibility), it is possible to show it in two or more columns using `columnManagerColumns()`.
+By default, the column manager displays its options in a single column. You can increase this to multiple columns using the `columnManagerColumns()` method:
 
 ```php
 use Filament\Tables\Table;
@@ -966,7 +966,6 @@ public function table(Table $table): Table
         ->columnManagerColumns(2);
 }
 ```
-
 
 ## Adding extra HTML attributes to a column content
 
