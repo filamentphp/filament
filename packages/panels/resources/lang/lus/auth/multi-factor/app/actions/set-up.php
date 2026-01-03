@@ -27,7 +27,7 @@ return [
                 'instruction' => 'emaw nangmahin hemi code hi enter chawp rawh:',
 
                 'messages' => [
-                    'copied' => 'Copied',
+                    'copied' => 'Lâk chhâwn ani e',
                 ],
 
             ],

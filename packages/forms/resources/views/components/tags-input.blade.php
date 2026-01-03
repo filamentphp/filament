@@ -39,6 +39,7 @@
         :suffix-icon="$suffixIcon"
         :suffix-icon-color="$suffixIconColor"
         :valid="! $errors->has($statePath)"
+        x-on:focus-input.stop="$el.querySelector('input')?.focus()"
         :attributes="
             \Filament\Support\prepare_inherited_attributes($attributes)
                 ->merge($extraAttributes, escape: false)

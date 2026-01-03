@@ -679,6 +679,8 @@ return [
 
         'max_items_message' => 'Solo :count pueden ser seleccionados.',
 
+        'no_options_message' => 'No hay opciones disponibles.',
+
         'no_search_results_message' => 'No se encontraron coincidencias con su búsqueda.',
 
         'placeholder' => 'Seleccione una opción',

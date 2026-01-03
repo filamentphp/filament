@@ -45,9 +45,10 @@ export default async ({
     deleteCustomBlockButtonIconHtml,
     editCustomBlockButtonIconHtml,
     editCustomBlockUsing,
+    hasResizableImages,
     insertCustomBlockUsing,
-    linkProtocols,
     key,
+    linkProtocols,
     maxFileSize,
     maxFileSizeValidationMessage,
     mergeTags,
@@ -85,6 +86,11 @@ export default async ({
         Italic,
         Image.configure({
             inline: true,
+            resize: {
+                enabled: hasResizableImages,
+                alwaysPreserveAspectRatio: true,
+                allowBase64: true,
+            },
         }),
         Lead,
         Link.configure({

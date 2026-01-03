@@ -48,6 +48,7 @@
         :suffix-icon="$suffixIcon"
         :suffix-icon-color="$suffixIconColor"
         :valid="! $errors->has($statePath)"
+        :x-on:focus-input.stop="$isNative ? '$el.querySelector(\'select\')?.focus()' : '$el.querySelector(\'.fi-select-input-btn\')?.focus()'"
         :attributes="
             \Filament\Support\prepare_inherited_attributes($getExtraAttributeBag())
                 ->class([

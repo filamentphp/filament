@@ -97,6 +97,7 @@ class MorphToSelect extends Component
 
             $keySelect = Select::make($keyColumn)
                 ->label(fn (Get $get): ?string => ($types[$get($typeColumn)] ?? null)?->getLabel())
+                ->model(fn (Get $get): ?string => ($types[$get($typeColumn)] ?? null)?->getModel())
                 ->hiddenLabel()
                 ->options(fn (Select $component, Get $get): ?array => $component->evaluate(($types[$get($typeColumn)] ?? null)?->getOptionsUsing))
                 ->getSearchResultsUsing(fn (Select $component, Get $get, $search): ?array => $component->evaluate(($types[$get($typeColumn)] ?? null)?->getSearchResultsUsing, ['search' => $search]))
