@@ -316,8 +316,6 @@
     }
 }
 
-[x-sortable]:has(.fi-sortable-ghost) {
-    .fi-fo-markdown-editor {
-        pointer-events: none;
-    }
+[x-sortable]:has(.fi-sortable-ghost) .fi-fo-markdown-editor {
+    pointer-events: none;
 }
