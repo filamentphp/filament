@@ -344,6 +344,21 @@ RichEditor::make('content')
     ->fileAttachmentsMaxSize(5120) // 5 MB
 ```
 
+### Allowing users to resize images
+
+By default, images in the editor cannot be resized by the user. You may enable image resizing using the `resizableImages()` method:
+
+```php
+use Filament\Forms\Components\RichEditor;
+
+RichEditor::make('content')
+    ->resizableImages()
+```
+
+When enabled, users can resize images by clicking on them and dragging the resize handles. The aspect ratio is always preserved when resizing.
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `resizableImages()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 ## Using custom blocks
 
 Custom blocks are elements that users can drag and drop into the rich editor. You can define custom blocks that user can insert into the rich editor using the `customBlocks()` method:

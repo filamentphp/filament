@@ -128,19 +128,33 @@ class CheckboxList extends Field implements Contracts\CanDisableOptions, Contrac
         $this->relationship = $name ?? $this->getName();
         $this->relationshipTitleAttribute = $titleAttribute;
 
-        $this->options(static function (CheckboxList $component) use ($modifyQueryUsing): array {
+        $cachedRecords = null;
+        $cachedOptions = null;
+
+        $this->options(static function (CheckboxList $component) use ($modifyQueryUsing, &$cachedRecords, &$cachedOptions): array {
             $relationship = Relation::noConstraints(fn () => $component->getRelationship());
 
-            $relationshipQuery = app(RelationshipJoiner::class)->prepareQueryForNoConstraints($relationship);
-
-            if ($modifyQueryUsing) {
-                $relationshipQuery = $component->evaluate($modifyQueryUsing, [
-                    'query' => $relationshipQuery,
-                ]) ?? $relationshipQuery;
-            }
-
             if ($component->hasOptionLabelFromRecordUsingCallback() || $component->hasOptionDescriptionFromRecordUsingCallback()) {
-                $records = $relationshipQuery->get();
+                if (
+                    (! $modifyQueryUsing) &&
+                    ($cachedRecords !== null)
+                ) {
+                    $records = $cachedRecords;
+                } else {
+                    $relationshipQuery = app(RelationshipJoiner::class)->prepareQueryForNoConstraints($relationship);
+
+                    if ($modifyQueryUsing) {
+                        $relationshipQuery = $component->evaluate($modifyQueryUsing, [
+                            'query' => $relationshipQuery,
+                        ]) ?? $relationshipQuery;
+                    }
+
+                    $records = $relationshipQuery->get();
+
+                    if (! $modifyQueryUsing) {
+                        $cachedRecords = $records;
+                    }
+                }
 
                 if ($component->hasOptionDescriptionFromRecordUsingCallback()) {
                     $descriptions = $records
@@ -159,6 +173,21 @@ class CheckboxList extends Field implements Contracts\CanDisableOptions, Contrac
                         ])
                         ->toArray();
                 }
+            }
+
+            if (
+                (! $modifyQueryUsing) &&
+                ($cachedOptions !== null)
+            ) {
+                return $cachedOptions;
+            }
+
+            $relationshipQuery = app(RelationshipJoiner::class)->prepareQueryForNoConstraints($relationship);
+
+            if ($modifyQueryUsing) {
+                $relationshipQuery = $component->evaluate($modifyQueryUsing, [
+                    'query' => $relationshipQuery,
+                ]) ?? $relationshipQuery;
             }
 
             $relationshipTitleAttribute = $component->getRelationshipTitleAttribute();
@@ -181,13 +210,38 @@ class CheckboxList extends Field implements Contracts\CanDisableOptions, Contrac
                 $relationshipTitleAttribute = $relationshipQuery->qualifyColumn($relationshipTitleAttribute);
             }
 
-            return $relationshipQuery
+            $options = $relationshipQuery
                 ->pluck($relationshipTitleAttribute, $relationship->getQualifiedRelatedKeyName())
                 ->toArray();
+
+            if (! $modifyQueryUsing) {
+                $cachedOptions = $options;
+            }
+
+            return $options;
         });
 
         $this->loadStateFromRelationshipsUsing(static function (CheckboxList $component, ?array $state) use ($modifyQueryUsing): void {
             $relationship = $component->getRelationship();
+            $relationshipName = $component->getRelationshipName();
+
+            if (
+                (! $modifyQueryUsing) &&
+                ($record = $component->getRecord()) instanceof Model &&
+                $record->relationLoaded($relationshipName)
+            ) {
+                /** @var Collection $relatedRecords */
+                $relatedRecords = $record->getRelationValue($relationshipName);
+
+                $component->state(
+                    $relatedRecords
+                        ->pluck($relationship->getRelatedKeyName())
+                        ->map(static fn ($key): string => strval($key))
+                        ->all(),
+                );
+
+                return;
+            }
 
             if ($modifyQueryUsing) {
                 $component->evaluate($modifyQueryUsing, [

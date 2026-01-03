@@ -49,6 +49,7 @@ export default async ({
     editCustomBlockUsing,
     getMentionLabelsUsing,
     getMentionSearchResultsUsing,
+    hasResizableImages,
     insertCustomBlockUsing,
     key,
     linkProtocols,
@@ -89,6 +90,11 @@ export default async ({
         Italic,
         Image.configure({
             inline: true,
+            resize: {
+                enabled: hasResizableImages,
+                alwaysPreserveAspectRatio: true,
+                allowBase64: true,
+            },
         }),
         Lead,
         Link.configure({

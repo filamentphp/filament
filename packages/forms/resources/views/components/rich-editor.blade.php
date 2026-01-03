@@ -52,6 +52,7 @@
                                 { search: query, char },
                             )
                         },
+                        hasResizableImages: @js($hasResizableImages()),
                         isDisabled: @js($isDisabled),
                         isLiveDebounced: @js($isLiveDebounced()),
                         isLiveOnBlur: @js($isLiveOnBlur()),
