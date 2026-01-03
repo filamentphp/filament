@@ -84,7 +84,7 @@ jobs:
       - name: Execute tests (parallel)
         id: parallel-tests
         continue-on-error: true
-        run: ./vendor/bin/pest --configuration=phpunit.${{ matrix.db }}.xml --exclude-group=commands
+        run: ./vendor/bin/pest --configuration=phpunit.${{ matrix.db }}.xml --parallel --exclude-group=commands
         env:
           DB_PASSWORD: password
       - name: Execute tests (non-parallel fallback)
