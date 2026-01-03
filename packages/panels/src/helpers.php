@@ -10,6 +10,8 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Gate;
 use LogicException;
 
+use function Illuminate\Support\enum_value;
+
 if (! function_exists('Filament\authorize')) {
     /**
      * @param  Model|class-string<Model>  $model
@@ -31,6 +33,10 @@ if (! function_exists('Filament\get_authorization_response')) {
         $user = Filament::auth()->user();
 
         if (! $shouldCheckPolicyExistence) {
+            if (Filament::isAuthorizationStrict() && ! Gate::forUser($user)->has($action)) {
+                throw new LogicException('Strict authorization mode is enabled, but no ability [' . enum_value($action) . '] is defined.');
+            }
+
             return Gate::forUser($user)->inspect($action, Arr::wrap($model));
         }
 
