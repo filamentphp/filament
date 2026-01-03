@@ -6,6 +6,7 @@ use Filament\Schemas\Schema;
 use Filament\Tests\Fixtures\Livewire\Livewire;
 use Filament\Tests\TestCase;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use Livewire\Exceptions\RootTagMissingFromViewException;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
@@ -192,6 +193,86 @@ describe('validation', function (): void {
 
         $stringRules = array_filter($rules, fn ($rule) => is_string($rule));
         expect($stringRules)->not->toContain('mimetypes:image/png');
+    });
+});
+
+describe('image validation', function (): void {
+    it('can use `rule()` with `Rule::dimensions()` for min dimension constraints', function (): void {
+        $field = FileUpload::make('image')
+            ->image()
+            ->rule(Rule::dimensions()->minWidth(800)->minHeight(600));
+
+        expect($field)->toBeInstanceOf(FileUpload::class);
+    });
+
+    it('can use `rule()` with `Rule::dimensions()` for max dimension constraints', function (): void {
+        $field = FileUpload::make('image')
+            ->image()
+            ->rule(Rule::dimensions()->maxWidth(1920)->maxHeight(1080));
+
+        expect($field)->toBeInstanceOf(FileUpload::class);
+    });
+
+    it('can use `rule()` with `Rule::dimensions()` for combined min and max dimension constraints', function (): void {
+        $field = FileUpload::make('image')
+            ->image()
+            ->rule(Rule::dimensions()->minWidth(800)->minHeight(600)->maxWidth(1920)->maxHeight(1080));
+
+        expect($field)->toBeInstanceOf(FileUpload::class);
+    });
+
+    it('can use `rule()` with `Rule::dimensions()` for min aspect ratio constraints', function (): void {
+        $field = FileUpload::make('image')
+            ->image()
+            ->rule(Rule::dimensions()->minRatio(1 / 1));
+
+        expect($field)->toBeInstanceOf(FileUpload::class);
+    });
+
+    it('can use `rule()` with `Rule::dimensions()` for max aspect ratio constraints', function (): void {
+        $field = FileUpload::make('image')
+            ->image()
+            ->rule(Rule::dimensions()->maxRatio(16 / 9));
+
+        expect($field)->toBeInstanceOf(FileUpload::class);
+    });
+
+    it('can use `rule()` with `Rule::dimensions()` for min and max aspect ratio constraints', function (): void {
+        $field = FileUpload::make('image')
+            ->image()
+            ->rule(Rule::dimensions()->minRatio(4 / 3)->maxRatio(16 / 9));
+
+        expect($field)->toBeInstanceOf(FileUpload::class);
+    });
+
+    it('can chain `imageAspectRatio()` with exact ratio', function (): void {
+        $field = FileUpload::make('image')
+            ->imageAspectRatio('16/9');
+
+        expect($field)->toBeInstanceOf(FileUpload::class);
+    });
+
+    it('can chain `imageAspectRatio()` with multiple allowed ratios', function (): void {
+        $field = FileUpload::make('image')
+            ->imageAspectRatio(['16/9', '4/3', '1/1']);
+
+        expect($field)->toBeInstanceOf(FileUpload::class);
+    });
+
+    it('can combine `rule()` with `Rule::dimensions()` and `imageAspectRatio()`', function (): void {
+        $field = FileUpload::make('image')
+            ->image()
+            ->rule(Rule::dimensions()->minWidth(800)->minHeight(600)->maxWidth(1920)->maxHeight(1080))
+            ->imageAspectRatio('4/3');
+
+        expect($field)->toBeInstanceOf(FileUpload::class);
+    });
+
+    it('can use `imageAspectRatio()` with closure values', function (): void {
+        $field = FileUpload::make('image')
+            ->imageAspectRatio(fn () => '16/9');
+
+        expect($field)->toBeInstanceOf(FileUpload::class);
     });
 });
 

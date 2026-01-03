@@ -595,6 +595,10 @@ As well as all rules listed on the [validation](validation) page, there are addi
 
 Since Filament is powered by Livewire and uses its file upload system, you will want to refer to the default Livewire file upload validation rules in the `config/livewire.php` file as well. This also controls the 12MB file size maximum.
 
+<Aside variant="info">
+    Many of these validation rules only apply to newly uploaded files. Existing files that were uploaded before the validation rules were added will not be re-validated.
+</Aside>
+
 ### File type validation
 
 You may restrict the types of files that may be uploaded using the `acceptedFileTypes()` method, and passing an array of MIME types.
@@ -677,6 +681,88 @@ The [max upload size can be adjusted in the `rules` key of `temporary_file_uploa
     // ...
 ],
 ```
+
+### Image dimension validation
+
+You may restrict the dimensions of uploaded images using the `rule()` method with Laravel's `Rule::dimensions()`:
+
+```php
+use Filament\Forms\Components\FileUpload;
+use Illuminate\Validation\Rule;
+
+FileUpload::make('photo')
+    ->image()
+    ->rule(Rule::dimensions()->minWidth(800)->minHeight(600))
+```
+
+```php
+use Filament\Forms\Components\FileUpload;
+use Illuminate\Validation\Rule;
+
+FileUpload::make('photo')
+    ->image()
+    ->rule(Rule::dimensions()->maxWidth(1920)->maxHeight(1080))
+```
+
+You can combine minimum and maximum constraints:
+
+```php
+use Filament\Forms\Components\FileUpload;
+use Illuminate\Validation\Rule;
+
+FileUpload::make('photo')
+    ->image()
+    ->rule(
+        Rule::dimensions()
+            ->minWidth(800)
+            ->minHeight(600)
+            ->maxWidth(1920)
+            ->maxHeight(1080)
+    )
+```
+
+<Aside variant="info">
+    These dimension validation rules only apply to newly uploaded files. Existing files that were uploaded before the validation rules were added will not be re-validated.
+</Aside>
+
+### Image aspect ratio validation
+
+You may restrict the aspect ratio of uploaded images using the `imageAspectRatio()` method:
+
+```php
+use Filament\Forms\Components\FileUpload;
+
+FileUpload::make('banner')
+    ->image()
+    ->imageAspectRatio('16/9')
+```
+
+You can allow multiple aspect ratios by passing an array:
+
+```php
+use Filament\Forms\Components\FileUpload;
+
+FileUpload::make('banner')
+    ->image()
+    ->imageAspectRatio(['16/9', '4/3', '1/1'])
+```
+
+<UtilityInjection set="formFields" version="5.x">As well as allowing a static value, the `imageAspectRatio()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+You can also specify a range of acceptable aspect ratios using `Rule::dimensions()`:
+
+```php
+use Filament\Forms\Components\FileUpload;
+use Illuminate\Validation\Rule;
+
+FileUpload::make('banner')
+    ->image()
+    ->rule(Rule::dimensions()->minRatio(4 / 3)->maxRatio(16 / 9))
+```
+
+<Aside variant="info">
+    These aspect ratio validation rules only apply to newly uploaded files. Existing files that were uploaded before the validation rules were added will not be re-validated.
+</Aside>
 
 ### Number of files validation
 

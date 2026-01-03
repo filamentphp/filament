@@ -12,6 +12,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 use League\Flysystem\UnableToCheckFileExistence;
 use Livewire\Attributes\Renderless;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
@@ -945,6 +946,39 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
         if ($fileNamesStatePath = $this->getFileNamesStatePath()) {
             $rules[$fileNamesStatePath] = ['nullable'];
         }
+    }
+
+    /**
+     * @param  string | array<string> | Closure | null  $ratio
+     */
+    public function imageAspectRatio(string | array | Closure | null $ratio): static
+    {
+        $this->rule(static function (BaseFileUpload $component) use ($ratio) {
+            /** @var array<string> $ratios */
+            $ratios = Arr::wrap($component->evaluate($ratio));
+
+            return static function (string $attribute, mixed $value, Closure $fail) use ($ratios): void {
+                if (blank($value)) {
+                    return;
+                }
+
+                foreach ($ratios as $allowedRatio) {
+                    if (Validator::make(
+                        ['file' => $value],
+                        /** @phpstan-ignore argument.type */
+                        ['file' => Rule::dimensions()->ratio($allowedRatio)],
+                    )->passes()) {
+                        return;
+                    }
+                }
+
+                $fail('validation.dimensions')->translate();
+            };
+        }, static function (BaseFileUpload $component) use ($ratio): bool {
+            return filled($component->evaluate($ratio));
+        });
+
+        return $this;
     }
 
     public function getDefaultStateCasts(): array
