@@ -1303,7 +1303,7 @@ If your schema auto-saves data to the database, like in a [resource](../resource
 
 ### Field rendering
 
-Each time a reactive field is updated, the HTML entire Livewire component that the schema belongs to is re-generated and sent to the frontend via a network request. In some cases, this may be overkill, especially if the schema is large and only certain components have changed.
+Each time a reactive field is updated, the HTML of the entire Livewire component that the schema belongs to is re-generated and sent to the frontend via a network request. In some cases, this may be overkill, especially if the schema is large and only certain components have changed.
 
 #### Field partial rendering
 
