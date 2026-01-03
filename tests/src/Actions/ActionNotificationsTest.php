@@ -1,9 +1,7 @@
 <?php
 
-use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;
 use Filament\Actions\CreateAction;
 use Filament\Tests\TestCase;
-use Illuminate\Auth\Access\Response;
 
 uses(TestCase::class);
 
@@ -64,7 +62,7 @@ it('will not send a failure notification when disabled', function (): void {
 it('will not send an unauthorized notification by default', function (): void {
     $action = CreateAction::make();
 
-    $mockAuthResponse = $this->createMock(Response::class);
+    $mockAuthResponse = $this->createMock(\Illuminate\Auth\Access\Response::class);
 
     $action->sendUnauthorizedNotification($mockAuthResponse);
 
@@ -75,7 +73,7 @@ it('will send an unauthorized notification when set', function (): void {
     $action = CreateAction::make()
         ->unauthorizedNotificationTitle('Unauthorized Action');
 
-    $mockAuthResponse = $this->createMock(Response::class);
+    $mockAuthResponse = $this->createMock(\Illuminate\Auth\Access\Response::class);
 
     expect($action->getUnauthorizedNotificationTitle($mockAuthResponse))->toBe('Unauthorized Action');
 
@@ -89,7 +87,7 @@ it('will not send an unauthorized notification when disabled', function (): void
         ->unauthorizedNotificationTitle('Unauthorized Action')
         ->unauthorizedNotification(null);
 
-    $mockAuthResponse = $this->createMock(Response::class);
+    $mockAuthResponse = $this->createMock(\Illuminate\Auth\Access\Response::class);
 
     expect($action->getUnauthorizedNotificationTitle($mockAuthResponse))->toBe('Unauthorized Action');
 
@@ -101,7 +99,7 @@ it('will not send an unauthorized notification when disabled', function (): void
 it('will send a rate limited notification by default', function (): void {
     $action = CreateAction::make();
 
-    $tooManyRequestExceptionMock = $this->createMock(TooManyRequestsException::class);
+    $tooManyRequestExceptionMock = $this->createMock(\DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException::class);
 
     expect($action->getRateLimitedNotificationTitle($tooManyRequestExceptionMock))->toBe(null);
 
@@ -114,7 +112,7 @@ it('will not send a rate limited notification when disabled', function (): void 
     $action = CreateAction::make()
         ->rateLimitedNotification(null);
 
-    $tooManyRequestExceptionMock = $this->createMock(TooManyRequestsException::class);
+    $tooManyRequestExceptionMock = $this->createMock(\DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException::class);
 
     expect($action->getRateLimitedNotificationTitle($tooManyRequestExceptionMock))->toBe(null);
 
