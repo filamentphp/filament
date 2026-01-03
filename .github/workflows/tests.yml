@@ -14,7 +14,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        php: [8.5, 8.4, 8.3, 8.2]
+        php: [8.5, 8.4, 8.3]
         laravel: [12.*, 11.*]
         db: [sqlite, mysql, pgsql]
         dependency-version: [prefer-stable]
@@ -23,18 +23,6 @@ jobs:
             testbench: 10.*
           - laravel: 11.*
             testbench: 9.*
-          - php: 8.5
-            pest: ^4.0
-            pest-plugin-laravel: ^4.0
-          - php: 8.4
-            pest: ^4.0
-            pest-plugin-laravel: ^4.0
-          - php: 8.3
-            pest: ^4.0
-            pest-plugin-laravel: ^4.0
-          - php: 8.2
-            pest: ^3.7
-            pest-plugin-laravel: ^3.0
     name: P${{ matrix.php }} - L${{ matrix.laravel }} - DB:${{ matrix.db }}
     services:
       mysql:
@@ -70,7 +58,7 @@ jobs:
           coverage: none
       - name: Install dependencies
         run: |
-          composer require "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" "pestphp/pest:${{ matrix.pest }}" "pestphp/pest-plugin-laravel:${{ matrix.pest-plugin-laravel }}" --no-interaction --no-update
+          composer require "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" --no-interaction --no-update
           composer update --${{ matrix.dependency-version }} --prefer-dist --no-interaction
       - name: Wait for MySQL
         if: matrix.db == 'mysql'
