@@ -482,3 +482,19 @@ it('restores original arguments after calling an action with call-time arguments
             'baz' => 'qux',
         ]);
 });
+
+it('can call an action that replaces itself with another action', function (): void {
+    livewire(Actions::class)
+        ->callAction('replaces-action')
+        ->assertActionMounted('replaced-action')
+        ->callMountedAction()
+        ->assertDispatched('replaced-action-called');
+});
+
+it('can mount an action that replaces itself and then call the replaced action', function (): void {
+    livewire(Actions::class)
+        ->mountAction('replaces-action')
+        ->assertActionMounted('replaced-action')
+        ->callMountedAction()
+        ->assertDispatched('replaced-action-called');
+});
