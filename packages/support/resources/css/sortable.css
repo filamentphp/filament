@@ -1,3 +1,10 @@
 .fi-sortable-ghost {
     @apply opacity-30;
 }
+
+[x-sortable]:has(.fi-sortable-ghost) {
+    .fi-fo-markdown-editor,
+    .fi-fo-rich-editor {
+        pointer-events: none;
+    }
+}
