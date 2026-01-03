@@ -237,13 +237,11 @@ trait CanExportRecords
             $user = auth($authGuard)->user();
 
             if ($action->hasColumnMapping()) {
-                $columnMap = collect($data['columnMap'])
-                    ->dot()
-                    ->reduce(fn (Collection $carry, mixed $value, string $key): Collection => $carry->mergeRecursive([
-                        Str::beforeLast($key, '.') => [Str::afterLast($key, '.') => $value],
-                    ]), collect())
-                    ->filter(fn (array $column): bool => $column['isEnabled'] ?? false)
-                    ->mapWithKeys(fn (array $column, string $columnName): array => [$columnName => $column['label']])
+                $columnMap = collect($exporter::getColumns())
+                    ->filter(fn (ExportColumn $column): bool => (bool) data_get($data['columnMap'], "{$column->getName()}.isEnabled", false))
+                    ->mapWithKeys(fn (ExportColumn $column): array => [
+                        $column->getName() => data_get($data['columnMap'], "{$column->getName()}.label", $column->getLabel()),
+                    ])
                     ->all();
             } else {
                 $isEnablingVisibleTableColumnsByDefault = $action->isEnablingVisibleTableColumnsByDefault();
