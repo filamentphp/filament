@@ -14,7 +14,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        php: [8.4, 8.3, 8.2]
+        php: [8.5, 8.4, 8.3, 8.2]
         laravel: [12.*, 11.*]
         db: [sqlite, mysql, pgsql]
         dependency-version: [prefer-stable]
