@@ -64,7 +64,7 @@ body:
     attributes:
       label: PHP Version
       description: Please provide the full PHP version of your server.
-      placeholder: PHP 8.3.0
+      placeholder: PHP 8.5.0
     validations:
       required: true
   - type: textarea

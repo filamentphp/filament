@@ -10,7 +10,7 @@ uses(TestCase::class);
 
 it('can verify an email change', function (): void {
     $userToVerify = User::factory()->create();
-    $newEmail = fake()->email;
+    $newEmail = fake()->email();
 
     expect($userToVerify->refresh())
         ->email->not->toBe($newEmail);
@@ -35,7 +35,7 @@ it('can verify an email with a custom slug', function (): void {
     Filament::setCurrentPanel('slugs');
 
     $userToVerify = User::factory()->create();
-    $newEmail = fake()->email;
+    $newEmail = fake()->email();
 
     $verificationUrl = Filament::getVerifyEmailChangeUrl($userToVerify, $newEmail);
 
@@ -57,7 +57,7 @@ it('can verify an email with a custom slug', function (): void {
 
 it('cannot verify an email when signed in as another user', function (): void {
     $userToVerify = User::factory()->create();
-    $newEmail = fake()->email;
+    $newEmail = fake()->email();
 
     expect($userToVerify->refresh())
         ->email->not->toBe($newEmail);
@@ -80,7 +80,7 @@ it('cannot verify an email when signed in as another user', function (): void {
 
 it('cannot verify an email change with the same URL twice', function (): void {
     $userToVerify = User::factory()->create();
-    $newEmail = fake()->email;
+    $newEmail = fake()->email();
 
     expect($userToVerify->refresh())
         ->email->not->toBe($newEmail);
@@ -106,7 +106,7 @@ it('cannot verify an email change with the same URL twice', function (): void {
         ->get($verificationUrl)
         ->assertForbidden();
 
-    $userToVerify->update(['email' => fake()->email]);
+    $userToVerify->update(['email' => fake()->email()]);
 
     $this
         ->actingAs($userToVerify)
