@@ -8,7 +8,7 @@
 
     &.fi-disabled:not(.fi-force-enabled),
     &[disabled]:not(.fi-force-enabled) {
-        @apply opacity-25;
+        @apply cursor-default opacity-25;
 
         &:not([x-tooltip]) {
             @apply pointer-events-auto cursor-not-allowed;
