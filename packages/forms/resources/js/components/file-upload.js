@@ -513,7 +513,7 @@ export default function fileUploadFormComponent({
             return anchor
         },
 
-        initEditor() {
+        initEditor(forceAspectRatio = null) {
             if (isDisabled) {
                 return
             }
@@ -524,7 +524,8 @@ export default function fileUploadFormComponent({
 
             const cropperOptions = {
                 aspectRatio:
-                    imageEditorViewportWidth / imageEditorViewportHeight,
+                    forceAspectRatio ??
+                    (imageEditorViewportWidth / imageEditorViewportHeight),
                 autoCropArea: 1,
                 center: true,
                 cropBoxResizable: true,
@@ -618,7 +619,7 @@ export default function fileUploadFormComponent({
             svgReader.readAsText(file)
         },
 
-        loadEditor(file) {
+        loadEditor(file, forceAspectRatio = null) {
             if (isDisabled) {
                 return
             }
@@ -650,7 +651,7 @@ export default function fileUploadFormComponent({
             this.fixImageDimensions(file, (editingFile) => {
                 this.editingFile = editingFile
 
-                this.initEditor()
+                this.initEditor(forceAspectRatio)
 
                 const reader = new FileReader()
 
@@ -717,18 +718,16 @@ export default function fileUploadFormComponent({
 
             croppedCanvas.toBlob(
                 (croppedImage) => {
-                    if (isMultiple) {
-                        this.pond.removeFile(
-                            this.pond
-                                .getFiles()
-                                .find(
-                                    (uploadedFile) =>
-                                        uploadedFile.filename ===
-                                        this.editingFile.name,
-                                )?.id,
-                            { revert: true },
-                        )
-                    }
+                    this.pond.removeFile(
+                        this.pond
+                            .getFiles()
+                            .find(
+                                (uploadedFile) =>
+                                    uploadedFile.filename ===
+                                    this.editingFile.name,
+                            )?.id,
+                        { revert: true },
+                    )
 
                     this.$nextTick(() => {
                         this.shouldUpdateState = false
@@ -815,7 +814,7 @@ export default function fileUploadFormComponent({
                         imageRatio - automaticallyOpenImageEditorForAspectRatio,
                     ) > tolerance
                 ) {
-                    this.loadEditor(file)
+                    this.loadEditor(file, automaticallyOpenImageEditorForAspectRatio)
                 }
             }
 
