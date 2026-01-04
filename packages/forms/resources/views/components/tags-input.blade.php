@@ -121,10 +121,7 @@
                                 <x-slot
                                     name="deleteButton"
                                     x-on:click.stop="deleteTag(tag)"
-                                    ::aria-label="
-                                        '{{   __('filament-forms::components.tags_input.actions.delete.label')   }}: ' +
-                                            tag
-                                    "
+                                    :x-bind:aria-label="'\'' . __('filament-forms::components.tags_input.actions.delete.label') . ':  + tag\''"
                                 ></x-slot>
                             </x-filament::badge>
                         </template>
