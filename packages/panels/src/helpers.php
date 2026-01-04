@@ -10,8 +10,6 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Gate;
 use LogicException;
 
-use function Illuminate\Support\enum_value;
-
 if (! function_exists('Filament\authorize')) {
     /**
      * @param  Model|class-string<Model>  $model
