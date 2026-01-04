@@ -34,7 +34,7 @@ trait CanReorderRecords
         return $this;
     }
 
-    public function reorderable(string | Closure | null $column = null, bool | Closure | null $condition = null, string | Closure | null $direction = null, Closure | null $beforeReorder = null, Closure | null $afterReorder = null): static
+    public function reorderable(string | Closure | null $column = null, bool | Closure | null $condition = null, string | Closure | null $direction = null, ?Closure $beforeReorder = null, ?Closure $afterReorder = null): static
     {
         $this->reorderColumn = $column;
 
