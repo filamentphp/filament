@@ -539,7 +539,7 @@ TextInput::make('slug')
 
 The JavaScript string has access to `$get()` and `$set()` utilities, which allow you to read and modify the state of form fields in the schema.
 
-<UtilityInjection set="actions" version="4.x">As well as allowing a static value, the `jsAction()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="actions" version="5.x">As well as allowing a static value, the `jsAction()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 <Aside variant="warning">
     When using `jsAction()`, the action cannot open a modal or perform any server-side processing. It is intended for simple client-side interactions only. If you need to run PHP code, use the `action()` method instead.

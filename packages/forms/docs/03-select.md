@@ -143,7 +143,7 @@ Select::make('author_id')
     ->noOptionsMessage('No authors available.')
 ```
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `noOptionsMessage()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="5.x">As well as allowing a static value, the `noOptionsMessage()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ### Setting a custom search prompt
 
