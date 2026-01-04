@@ -34,7 +34,7 @@
         x-data="fileUploadFormComponent({
                     acceptedFileTypes: @js($getAcceptedFileTypes()),
                     automaticallyCropImagesAspectRatio: @js($automaticallyCropImagesAspectRatio),
-                    automaticallyOpenImageEditorForAspectRatio: @js($getAutomaticallyOpenImageEditorForAspectRatioForJs()),
+                    automaticallyOpenImageEditorForAspectRatio: @js($getAutomaticallyOpenImageEditorForAspectRatio()),
                     automaticallyResizeImagesMode: @js($getAutomaticallyResizeImagesMode()),
                     automaticallyResizeImagesHeight: @js($automaticallyResizeImagesHeight),
                     automaticallyResizeImagesWidth: @js($automaticallyResizeImagesWidth),

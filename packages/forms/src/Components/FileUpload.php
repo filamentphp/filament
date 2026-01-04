@@ -24,7 +24,7 @@ class FileUpload extends BaseFileUpload
      */
     protected string $view = 'filament-forms::components.file-upload';
 
-    protected string | bool | Closure | null $automaticallyCropImagesAspectRatio = null;
+    protected bool | Closure $shouldAutomaticallyCropImagesToAspectRatio = false;
 
     protected string | Closure | null $automaticallyResizeImagesMode = null;
 
@@ -133,19 +133,22 @@ class FileUpload extends BaseFileUpload
         return $this;
     }
 
-    public function automaticallyCropImagesToAspectRatio(string | bool | Closure $ratio = true): static
+    public function automaticallyCropImagesToAspectRatio(bool | Closure $condition = true): static
     {
-        $this->automaticallyCropImagesAspectRatio = $ratio;
+        $this->shouldAutomaticallyCropImagesToAspectRatio = $condition;
 
         return $this;
     }
 
     /**
-     * @deprecated Use `automaticallyCropImagesToAspectRatio()` instead.
+     * @deprecated Use `imageAspectRatio()` and `automaticallyCropImagesToAspectRatio()` instead.
      */
-    public function imageCropAspectRatio(string | bool | Closure $ratio = true): static
+    public function imageCropAspectRatio(string | Closure | null $ratio): static
     {
-        return $this->automaticallyCropImagesToAspectRatio($ratio);
+        $this->imageAspectRatio($ratio);
+        $this->automaticallyCropImagesToAspectRatio(($ratio instanceof Closure) ? $ratio : filled($ratio));
+
+        return $this;
     }
 
     public function automaticallyResizeImagesMode(string | Closure | null $mode): static
@@ -281,25 +284,28 @@ class FileUpload extends BaseFileUpload
         return $this;
     }
 
+    public function shouldAutomaticallyCropImagesToAspectRatio(): bool
+    {
+        return (bool) $this->evaluate($this->shouldAutomaticallyCropImagesToAspectRatio);
+    }
+
     public function getAutomaticallyCropImagesAspectRatio(): ?string
     {
-        $ratio = $this->evaluate($this->automaticallyCropImagesAspectRatio);
-
-        if ($ratio === true) {
-            $imageAspectRatio = $this->getImageAspectRatio();
-
-            if (blank($imageAspectRatio)) {
-                return null;
-            }
-
-            if (is_array($imageAspectRatio)) {
-                $imageAspectRatio = $imageAspectRatio[0] ?? null;
-            }
-
-            return $this->normalizeAspectRatio($imageAspectRatio);
+        if (! $this->shouldAutomaticallyCropImagesToAspectRatio()) {
+            return null;
         }
 
-        return $this->normalizeAspectRatio($ratio);
+        $imageAspectRatio = $this->getImageAspectRatio();
+
+        if (blank($imageAspectRatio)) {
+            return null;
+        }
+
+        if (is_array($imageAspectRatio)) {
+            $imageAspectRatio = $imageAspectRatio[0] ?? null;
+        }
+
+        return $this->normalizeAspectRatio($imageAspectRatio);
     }
 
     /**
@@ -624,7 +630,7 @@ class FileUpload extends BaseFileUpload
         return true;
     }
 
-    public function getAutomaticallyOpenImageEditorForAspectRatioForJs(): ?float
+    public function getAutomaticallyOpenImageEditorForAspectRatio(): ?float
     {
         if (! $this->shouldAutomaticallyOpenImageEditorForAspectRatio()) {
             return null;
