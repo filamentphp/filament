@@ -70,7 +70,7 @@ jobs:
       - name: Install npm dependencies
         run: npm ci
       - name: Install Playwright browsers
-        run: npx playwright install chromium
+        run: npx playwright install --with-deps
       - name: Wait for MySQL
         if: matrix.db == 'mysql'
         run: |

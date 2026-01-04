@@ -51,6 +51,7 @@ jobs:
       - name: Install dependencies
         run: |
           composer require "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" "pestphp/pest:${{ matrix.pest }}" "pestphp/pest-plugin-laravel:${{ matrix.pest-plugin-laravel }}" --no-interaction --no-update
+          if [ "${{ matrix.php }}" = "8.2" ]; then composer remove pestphp/pest-plugin-browser --dev --no-interaction --no-update; fi
           composer update --${{ matrix.dependency-version }} --prefer-dist --no-interaction
       - name: Run PHPStan
         run: ./vendor/bin/phpstan
