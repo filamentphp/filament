@@ -24,7 +24,9 @@ document.addEventListener('livewire:init', () => {
                             `[wire\\:partial="${name}"]`,
                         ),
                     ).filter(
-                        (el) => findClosestLivewireComponent(el) === message.component,
+                        (el) =>
+                            findClosestLivewireComponent(el) ===
+                            message.component,
                     )
 
                     if (!els.length) {
@@ -77,7 +79,8 @@ document.addEventListener('livewire:init', () => {
 
                             if (
                                 isComponentRootEl(el) &&
-                                el.getAttribute('wire:id') !== message.component.id
+                                el.getAttribute('wire:id') !==
+                                    message.component.id
                             ) {
                                 return skip()
                             }

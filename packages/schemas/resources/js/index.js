@@ -123,7 +123,10 @@ document.addEventListener('alpine:init', () => {
                     message.component.el.querySelectorAll(
                         `[wire\\:partial="schema-component::${dispatch.params.awaitSchemaComponent}"]`,
                     ),
-                ).filter((el) => findClosestLivewireComponent(el) === message.component)
+                ).filter(
+                    (el) =>
+                        findClosestLivewireComponent(el) === message.component,
+                )
 
                 if (els.length === 1) {
                     return
