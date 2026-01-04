@@ -134,6 +134,9 @@
             {{
                 $deleteButton->attributes
                     ->except(['label'])
+                    ->merge([
+                        'aria-label' => $deleteButton->attributes->get('label'),
+                    ], escape: false)
                     ->class([
                         'fi-badge-delete-btn',
                     ])

@@ -692,7 +692,17 @@ return [
     ],
 
     'tags_input' => [
+
+        'actions' => [
+
+            'delete' => [
+                'label' => 'Delete',
+            ],
+
+        ],
+
         'placeholder' => 'New tag',
+
     ],
 
     'text_input' => [
