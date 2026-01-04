@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\Gate;
 use LogicException;
 use UnitEnum;
 
+use function Illuminate\Support\enum_value;
+
 if (! function_exists('Filament\authorize')) {
     /**
      * @param  Model|class-string<Model>  $model
@@ -32,12 +34,12 @@ if (! function_exists('Filament\get_authorization_response')) {
         $user = Filament::auth()->user();
 
         if (! $shouldCheckPolicyExistence) {
-            return Gate::forUser($user)->inspect($action, Arr::wrap($model));
+            return Gate::forUser($user)->authorize($action, Arr::wrap($model));
         }
 
         $policy = Gate::getPolicyFor($model);
 
-        if (filled($policy) && method_exists($policy, $action)) {
+        if (filled($policy) && method_exists($policy, enum_value($action))) {
             return Gate::forUser($user)->inspect($action, Arr::wrap($model));
         }
 
@@ -50,7 +52,7 @@ if (! function_exists('Filament\get_authorization_response')) {
 
             throw new LogicException(blank($policyClass)
                 ? "Strict authorization mode is enabled, but no policy was found for [{$model}]."
-                : "Strict authorization mode is enabled, but no [{$action}()] method was found on [{$policyClass}].");
+                : 'Strict authorization mode is enabled, but no [' . enum_value($action) . "] method was found on [{$policyClass}].");
         }
 
         /** @var bool | Response | null $response */
