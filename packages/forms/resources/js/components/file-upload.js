@@ -513,7 +513,7 @@ export default function fileUploadFormComponent({
             return anchor
         },
 
-        initEditor(forceAspectRatio = null) {
+        initEditor() {
             if (isDisabled) {
                 return
             }
@@ -524,8 +524,8 @@ export default function fileUploadFormComponent({
 
             const cropperOptions = {
                 aspectRatio:
-                    forceAspectRatio ??
-                    (imageEditorViewportWidth / imageEditorViewportHeight),
+                    automaticallyOpenImageEditorForAspectRatio ??
+                    imageEditorViewportWidth / imageEditorViewportHeight,
                 autoCropArea: 1,
                 center: true,
                 cropBoxResizable: true,
@@ -619,7 +619,7 @@ export default function fileUploadFormComponent({
             svgReader.readAsText(file)
         },
 
-        loadEditor(file, forceAspectRatio = null) {
+        loadEditor(file) {
             if (isDisabled) {
                 return
             }
@@ -651,7 +651,7 @@ export default function fileUploadFormComponent({
             this.fixImageDimensions(file, (editingFile) => {
                 this.editingFile = editingFile
 
-                this.initEditor(forceAspectRatio)
+                this.initEditor()
 
                 const reader = new FileReader()
 
@@ -814,7 +814,7 @@ export default function fileUploadFormComponent({
                         imageRatio - automaticallyOpenImageEditorForAspectRatio,
                     ) > tolerance
                 ) {
-                    this.loadEditor(file, automaticallyOpenImageEditorForAspectRatio)
+                    this.loadEditor(file)
                 }
             }
 

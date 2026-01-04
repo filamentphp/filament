@@ -178,6 +178,7 @@
                 @class([
                     'fi-fo-file-upload-editor',
                     'fi-fo-file-upload-editor-circle-cropper' => $hasCircleCropper,
+                    'fi-fo-file-upload-editor-crop-only' => ! $isImageEditorExplicitlyEnabled,
                 ])
             >
                 <div
@@ -312,15 +313,15 @@
                         <div
                             class="fi-fo-file-upload-editor-control-panel-footer"
                         >
-                            <button
-                                type="button"
-                                x-on:click.prevent="pond.imageEditEditor.oncancel"
-                                class="fi-btn"
-                            >
-                                {{ __('filament-forms::components.file_upload.editor.actions.cancel.label') }}
-                            </button>
-
                             @if ($isImageEditorExplicitlyEnabled)
+                                <button
+                                    type="button"
+                                    x-on:click.prevent="pond.imageEditEditor.oncancel"
+                                    class="fi-btn"
+                                >
+                                    {{ __('filament-forms::components.file_upload.editor.actions.cancel.label') }}
+                                </button>
+
                                 <button
                                     type="button"
                                     x-on:click.prevent.stop="editor.reset()"
@@ -332,19 +333,39 @@
                                 >
                                     {{ __('filament-forms::components.file_upload.editor.actions.reset.label') }}
                                 </button>
-                            @endif
 
-                            <button
-                                type="button"
-                                x-on:click.prevent="saveEditor"
-                                {{
-                                    (new \Illuminate\View\ComponentAttributeBag)
-                                        ->color(\Filament\Support\View\Components\ButtonComponent::class, 'success')
-                                        ->class(['fi-btn'])
-                                }}
-                            >
-                                {{ __('filament-forms::components.file_upload.editor.actions.save.label') }}
-                            </button>
+                                <button
+                                    type="button"
+                                    x-on:click.prevent="saveEditor"
+                                    {{
+                                        (new \Illuminate\View\ComponentAttributeBag)
+                                            ->color(\Filament\Support\View\Components\ButtonComponent::class, 'success')
+                                            ->class(['fi-btn'])
+                                    }}
+                                >
+                                    {{ __('filament-forms::components.file_upload.editor.actions.save.label') }}
+                                </button>
+                            @else
+                                <button
+                                    type="button"
+                                    x-on:click.prevent="saveEditor"
+                                    {{
+                                        (new \Illuminate\View\ComponentAttributeBag)
+                                            ->color(\Filament\Support\View\Components\ButtonComponent::class, 'success')
+                                            ->class(['fi-btn'])
+                                    }}
+                                >
+                                    {{ __('filament-forms::components.file_upload.editor.actions.save.label') }}
+                                </button>
+
+                                <button
+                                    type="button"
+                                    x-on:click.prevent="pond.imageEditEditor.oncancel"
+                                    class="fi-btn"
+                                >
+                                    {{ __('filament-forms::components.file_upload.editor.actions.cancel.label') }}
+                                </button>
+                            @endif
                         </div>
                     </div>
                 </div>
