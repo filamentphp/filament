@@ -7,7 +7,7 @@ export default function toggleTableColumn({ name, recordKey, state }) {
         state,
 
         init() {
-            Livewire.interceptMessage(({ component, onSuccess }) => {
+            Livewire.interceptMessage(({ message, onSuccess }) => {
                 onSuccess(() => {
                     this.$nextTick(() => {
                         if (this.isLoading) {
@@ -15,7 +15,7 @@ export default function toggleTableColumn({ name, recordKey, state }) {
                         }
 
                         if (
-                            component.id !==
+                            message.component.id !==
                             this.$root.closest('[wire\\:id]')?.attributes[
                                 'wire:id'
                             ].value

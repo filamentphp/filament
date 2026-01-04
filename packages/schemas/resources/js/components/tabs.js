@@ -32,10 +32,10 @@ export default function tabsSchemaComponent({
                 this.tab = tabs[activeTab - 1]
             }
 
-            Livewire.interceptMessage(({ component, onSuccess }) => {
+            Livewire.interceptMessage(({ message, onSuccess }) => {
                 onSuccess(() => {
                     this.$nextTick(() => {
-                        if (component.id !== livewireId) {
+                        if (message.component.id !== livewireId) {
                             return
                         }
 
