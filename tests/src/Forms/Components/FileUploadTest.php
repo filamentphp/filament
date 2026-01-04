@@ -247,14 +247,14 @@ describe('image validation', function (): void {
 
     it('can chain `imageAspectRatio()` with exact ratio', function (): void {
         $field = FileUpload::make('image')
-            ->imageAspectRatio('16/9');
+            ->imageAspectRatio('16:9');
 
         expect($field)->toBeInstanceOf(FileUpload::class);
     });
 
     it('can chain `imageAspectRatio()` with multiple allowed ratios', function (): void {
         $field = FileUpload::make('image')
-            ->imageAspectRatio(['16/9', '4/3', '1/1']);
+            ->imageAspectRatio(['16:9', '4:3', '1:1']);
 
         expect($field)->toBeInstanceOf(FileUpload::class);
     });
@@ -263,16 +263,159 @@ describe('image validation', function (): void {
         $field = FileUpload::make('image')
             ->image()
             ->rule(Rule::dimensions()->minWidth(800)->minHeight(600)->maxWidth(1920)->maxHeight(1080))
-            ->imageAspectRatio('4/3');
+            ->imageAspectRatio('4:3');
 
         expect($field)->toBeInstanceOf(FileUpload::class);
     });
 
     it('can use `imageAspectRatio()` with closure values', function (): void {
         $field = FileUpload::make('image')
-            ->imageAspectRatio(fn () => '16/9');
+            ->imageAspectRatio(fn () => '16:9');
 
         expect($field)->toBeInstanceOf(FileUpload::class);
+    });
+
+    it('can use `imageAspectRatio()` with slash format', function (): void {
+        $field = FileUpload::make('image')
+            ->imageAspectRatio('16/9');
+
+        expect($field)->toBeInstanceOf(FileUpload::class);
+    });
+
+    it('can use `imageAspectRatio()` with array of slash format values', function (): void {
+        $field = FileUpload::make('image')
+            ->imageAspectRatio(['16/9', '4/3', '1/1']);
+
+        expect($field)->toBeInstanceOf(FileUpload::class);
+    });
+});
+
+describe('automaticallyOpenImageEditorForAspectRatio', function (): void {
+    it('can chain `automaticallyOpenImageEditorForAspectRatio()` with `imageAspectRatio()`', function (): void {
+        $field = FileUpload::make('image')
+            ->image()
+            ->imageAspectRatio('16:9')
+            ->automaticallyOpenImageEditorForAspectRatio();
+
+        expect($field)->toBeInstanceOf(FileUpload::class);
+    });
+
+    it('enables image editor automatically when `automaticallyOpenImageEditorForAspectRatio()` is used', function (): void {
+        $field = FileUpload::make('image')
+            ->image()
+            ->imageAspectRatio('16:9')
+            ->automaticallyOpenImageEditorForAspectRatio();
+
+        expect($field->hasImageEditor())->toBeTrue();
+    });
+
+    it('does not set `automaticImageCropAspectRatio` unless `automaticImageCropAspectRatio()` is explicitly called', function (): void {
+        $field = FileUpload::make('image')
+            ->image()
+            ->imageAspectRatio('16:9')
+            ->automaticallyOpenImageEditorForAspectRatio();
+
+        expect($field->getAutomaticImageCropAspectRatio())->toBeNull();
+    });
+
+    it('throws exception when `automaticallyOpenImageEditorForAspectRatio()` is used without `imageAspectRatio()`', function (): void {
+        $field = FileUpload::make('image')
+            ->image()
+            ->automaticallyOpenImageEditorForAspectRatio();
+
+        $field->shouldAutomaticallyOpenImageEditorForAspectRatio();
+    })->throws(InvalidArgumentException::class, 'The [automaticallyOpenImageEditorForAspectRatio()] method requires [imageAspectRatio()] to be set with a single aspect ratio.');
+
+    it('throws exception when `automaticallyOpenImageEditorForAspectRatio()` is used with multiple aspect ratios', function (): void {
+        $field = FileUpload::make('image')
+            ->image()
+            ->imageAspectRatio(['16:9', '4:3'])
+            ->automaticallyOpenImageEditorForAspectRatio();
+
+        $field->shouldAutomaticallyOpenImageEditorForAspectRatio();
+    })->throws(InvalidArgumentException::class, 'The [automaticallyOpenImageEditorForAspectRatio()] method cannot be used when [imageAspectRatio()] has multiple allowed aspect ratios.');
+
+    it('returns correct aspect ratio for JavaScript', function (): void {
+        $field = FileUpload::make('image')
+            ->image()
+            ->imageAspectRatio('16:9')
+            ->automaticallyOpenImageEditorForAspectRatio();
+
+        expect($field->getAutomaticallyOpenImageEditorForAspectRatioForJs())->toBe(16 / 9);
+    });
+
+    it('returns null for aspect ratio when not enabled', function (): void {
+        $field = FileUpload::make('image')
+            ->image()
+            ->imageAspectRatio('16:9');
+
+        expect($field->getAutomaticallyOpenImageEditorForAspectRatioForJs())->toBeNull();
+    });
+
+    it('can use `automaticallyOpenImageEditorForAspectRatio()` with array containing single ratio', function (): void {
+        $field = FileUpload::make('image')
+            ->image()
+            ->imageAspectRatio(['16:9'])
+            ->automaticallyOpenImageEditorForAspectRatio();
+
+        expect($field->shouldAutomaticallyOpenImageEditorForAspectRatio())->toBeTrue()
+            ->and($field->getAutomaticallyOpenImageEditorForAspectRatioForJs())->toBe(16 / 9);
+    });
+
+    it('prioritizes explicit automaticImageCropAspectRatio over imageAspectRatio', function (): void {
+        $field = FileUpload::make('image')
+            ->image()
+            ->imageAspectRatio('16:9')
+            ->automaticImageCropAspectRatio('4:3')
+            ->automaticallyOpenImageEditorForAspectRatio();
+
+        expect($field->getAutomaticImageCropAspectRatio())->toBe('4:3');
+    });
+
+    it('returns false for `isImageEditorExplicitlyEnabled()` when only using `automaticallyOpenImageEditorForAspectRatio()`', function (): void {
+        $field = FileUpload::make('image')
+            ->image()
+            ->imageAspectRatio('16:9')
+            ->automaticallyOpenImageEditorForAspectRatio();
+
+        expect($field->hasImageEditor())->toBeTrue()
+            ->and($field->isImageEditorExplicitlyEnabled())->toBeFalse();
+    });
+
+    it('returns true for `isImageEditorExplicitlyEnabled()` when using both `imageEditor()` and `automaticallyOpenImageEditorForAspectRatio()`', function (): void {
+        $field = FileUpload::make('image')
+            ->image()
+            ->imageEditor()
+            ->imageAspectRatio('16:9')
+            ->automaticallyOpenImageEditorForAspectRatio();
+
+        expect($field->hasImageEditor())->toBeTrue()
+            ->and($field->isImageEditorExplicitlyEnabled())->toBeTrue();
+    });
+
+    it('uses imageAspectRatio for automaticImageCropAspectRatio when set to true', function (): void {
+        $field = FileUpload::make('image')
+            ->image()
+            ->imageAspectRatio('16:9')
+            ->automaticImageCropAspectRatio();
+
+        expect($field->getAutomaticImageCropAspectRatio())->toBe('16:9');
+    });
+
+    it('does not use imageAspectRatio when automaticImageCropAspectRatio is not called', function (): void {
+        $field = FileUpload::make('image')
+            ->image()
+            ->imageAspectRatio('16:9');
+
+        expect($field->getAutomaticImageCropAspectRatio())->toBeNull();
+    });
+
+    it('converts slash format to colon format for automaticImageCropAspectRatio', function (): void {
+        $field = FileUpload::make('image')
+            ->image()
+            ->automaticImageCropAspectRatio('16/9');
+
+        expect($field->getAutomaticImageCropAspectRatio())->toBe('16:9');
     });
 });
 

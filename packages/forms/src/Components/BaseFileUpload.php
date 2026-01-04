@@ -79,6 +79,11 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
     protected ?Closure $saveUploadedFileUsing = null;
 
     /**
+     * @var string | array<string> | Closure | null
+     */
+    protected string | array | Closure | null $imageAspectRatio = null;
+
+    /**
      * @var array<string>
      */
     protected const ARRAY_VALIDATION_RULES = [
@@ -953,20 +958,27 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
      */
     public function imageAspectRatio(string | array | Closure | null $ratio): static
     {
-        $this->rule(static function (BaseFileUpload $component) use ($ratio) {
-            /** @var array<string> $ratios */
-            $ratios = Arr::wrap($component->evaluate($ratio));
+        $this->imageAspectRatio = $ratio;
 
-            return static function (string $attribute, mixed $value, Closure $fail) use ($ratios): void {
+        $this->rule(static function (BaseFileUpload $component): Closure {
+            /** @var array<string> $ratios */
+            $ratios = Arr::wrap($component->getImageAspectRatio());
+
+            return static function (string $attribute, mixed $value, Closure $fail) use ($component, $ratios): void {
                 if (blank($value)) {
                     return;
                 }
 
-                foreach ($ratios as $allowedRatio) {
+                foreach ($ratios as $ratio) {
+                    $ratio = $component->calculateAspectRatio($ratio);
+
+                    if ($ratio === null) {
+                        continue;
+                    }
+
                     if (Validator::make(
                         ['file' => $value],
-                        /** @phpstan-ignore argument.type */
-                        ['file' => Rule::dimensions()->ratio($allowedRatio)],
+                        ['file' => Rule::dimensions()->ratio($ratio)],
                     )->passes()) {
                         return;
                     }
@@ -974,11 +986,66 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
 
                 $fail('validation.dimensions')->translate();
             };
-        }, static function (BaseFileUpload $component) use ($ratio): bool {
-            return filled($component->evaluate($ratio));
+        }, static function (BaseFileUpload $component): bool {
+            return filled($component->getImageAspectRatio());
         });
 
         return $this;
+    }
+
+    /**
+     * @return string | array<string> | null
+     */
+    public function getImageAspectRatio(): string | array | null
+    {
+        $ratio = $this->evaluate($this->imageAspectRatio);
+
+        if (is_array($ratio)) {
+            return array_filter(array_map(
+                fn (string $ratio): ?string => $this->normalizeAspectRatio($ratio),
+                $ratio,
+            ));
+        }
+
+        return $this->normalizeAspectRatio($ratio);
+    }
+
+    protected function calculateAspectRatio(?string $ratio): ?float
+    {
+        if ($ratio === null) {
+            return null;
+        }
+
+        $parts = explode(':', $ratio);
+
+        if (count($parts) !== 2) {
+            return null;
+        }
+
+        [$numerator, $denominator] = $parts;
+
+        if (! is_numeric($numerator) || ! is_numeric($denominator) || ((float) $denominator === 0.0)) {
+            return null;
+        }
+
+        return (float) $numerator / (float) $denominator;
+    }
+
+    protected function normalizeAspectRatio(?string $ratio): ?string
+    {
+        if (blank($ratio)) {
+            return null;
+        }
+
+        if (str_contains($ratio, ':')) {
+            return $ratio;
+        }
+
+        if (str_contains($ratio, '/')) {
+            return str_replace('/', ':', $ratio);
+        }
+
+        return null;
     }
 
     public function getDefaultStateCasts(): array
