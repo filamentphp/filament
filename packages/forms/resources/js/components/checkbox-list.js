@@ -19,10 +19,10 @@ export default function checkboxListFormComponent({ livewireId }) {
                 this.checkIfAllCheckboxesAreChecked()
             })
 
-            Livewire.interceptMessage(({ component, onSuccess }) => {
+            Livewire.interceptMessage(({ message, onSuccess }) => {
                 onSuccess(() => {
                     this.$nextTick(() => {
-                        if (component.id !== livewireId) {
+                        if (message.component.id !== livewireId) {
                             return
                         }
 

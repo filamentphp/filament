@@ -112,7 +112,7 @@ document.addEventListener('alpine:init', () => {
 
     window.Alpine.data('filamentActionsSchemaComponent', actions)
 
-    Livewire.interceptMessage(({ component, onSuccess }) => {
+    Livewire.interceptMessage(({ message, onSuccess }) => {
         onSuccess(({ payload }) => {
             payload.effects?.dispatches?.forEach((dispatch) => {
                 if (!dispatch.params?.awaitSchemaComponent) {
@@ -120,10 +120,13 @@ document.addEventListener('alpine:init', () => {
                 }
 
                 let els = Array.from(
-                    component.el.querySelectorAll(
+                    message.component.el.querySelectorAll(
                         `[wire\\:partial="schema-component::${dispatch.params.awaitSchemaComponent}"]`,
                     ),
-                ).filter((el) => findClosestLivewireComponent(el) === component)
+                ).filter(
+                    (el) =>
+                        findClosestLivewireComponent(el) === message.component,
+                )
 
                 if (els.length === 1) {
                     return
