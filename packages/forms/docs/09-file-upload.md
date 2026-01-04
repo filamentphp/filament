@@ -381,22 +381,26 @@ FileUpload::make('banner')
     The `automaticallyOpenImageEditorForAspectRatio()` method can only be used with a single aspect ratio. If you need to allow multiple aspect ratios, use `imageAspectRatio()` for validation only, and consider using [`imageEditor()`](#image-editor) with [`imageEditorAspectRatioOptions()`](#allowing-users-to-crop-images-to-aspect-ratios) to let users choose their preferred ratio.
 </Aside>
 
+<Aside variant="info">
+    The `automaticallyOpenImageEditorForAspectRatio()` method is not available when [`multiple()`](#uploading-multiple-files) is enabled.
+</Aside>
+
 ### Cropping and resizing images without the editor
 
-Filepond allows you to crop and resize images before they are uploaded, without the need for a separate editor. You can customize this behavior using the `automaticImageResizeTargetHeight()` and `automaticImageResizeTargetWidth()` methods. `automaticImageResizeMode()` should be set for these methods to have an effect - either [`force`, `cover`, or `contain`](https://pqina.nl/filepond/docs/api/plugins/image-resize).
+Filepond allows you to crop and resize images before they are uploaded, without the need for a separate editor. You can customize this behavior using the `automaticallyResizeImagesToHeight()` and `automaticallyResizeImagesToWidth()` methods. `automaticallyResizeImagesMode()` should be set for these methods to have an effect - either [`force`, `cover`, or `contain`](https://pqina.nl/filepond/docs/api/plugins/image-resize).
 
 ```php
 use Filament\Forms\Components\FileUpload;
 
 FileUpload::make('image')
     ->image()
-    ->automaticImageCropAspectRatio('16:9')
-    ->automaticImageResizeMode('cover')
-    ->automaticImageResizeTargetWidth('1920')
-    ->automaticImageResizeTargetHeight('1080')
+    ->automaticallyCropImagesToAspectRatio('16:9')
+    ->automaticallyResizeImagesMode('cover')
+    ->automaticallyResizeImagesToWidth('1920')
+    ->automaticallyResizeImagesToHeight('1080')
 ```
 
-To enable automatic cropping with a specific aspect ratio, use the `automaticImageCropAspectRatio()` method. If you also have `imageAspectRatio()` set for validation and want the automatic crop to use the same ratio, you can call `automaticImageCropAspectRatio()` without any arguments:
+To enable automatic cropping with a specific aspect ratio, use the `automaticallyCropImagesToAspectRatio()` method. If you also have `imageAspectRatio()` set for validation and want the automatic crop to use the same ratio, you can call `automaticallyCropImagesToAspectRatio()` without any arguments:
 
 ```php
 use Filament\Forms\Components\FileUpload;
@@ -404,13 +408,13 @@ use Filament\Forms\Components\FileUpload;
 FileUpload::make('image')
     ->image()
     ->imageAspectRatio('16:9')
-    ->automaticImageCropAspectRatio()
-    ->automaticImageResizeMode('cover')
-    ->automaticImageResizeTargetWidth('1920')
-    ->automaticImageResizeTargetHeight('1080')
+    ->automaticallyCropImagesToAspectRatio()
+    ->automaticallyResizeImagesMode('cover')
+    ->automaticallyResizeImagesToWidth('1920')
+    ->automaticallyResizeImagesToHeight('1080')
 ```
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing static values, the `automaticImageResizeMode()`, `automaticImageCropAspectRatio()`, `automaticImageResizeTargetHeight()` and `automaticImageResizeTargetWidth()` methods also accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="4.x">As well as allowing static values, the `automaticallyResizeImagesMode()`, `automaticallyCropImagesToAspectRatio()`, `automaticallyResizeImagesToHeight()` and `automaticallyResizeImagesToWidth()` methods also accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters.</UtilityInjection>
 
 <Aside variant="warning">
     When using automatic image cropping, the crop is applied automatically without user interaction. The user cannot choose which part of the image to keep. If you want users to control how their images are cropped, use [`automaticallyOpenImageEditorForAspectRatio()`](#enforcing-a-specific-aspect-ratio) instead.
@@ -829,7 +833,7 @@ FileUpload::make('banner')
 </Aside>
 
 <Aside variant="tip">
-    If you want to help users meet the aspect ratio requirement rather than just rejecting invalid uploads, consider using [`automaticallyOpenImageEditorForAspectRatio()`](#enforcing-a-specific-aspect-ratio) alongside `imageAspectRatio()`. This will automatically open a crop editor when an uploaded image doesn't match the required ratio. Alternatively, you can use [`automaticImageCropAspectRatio()`](#cropping-and-resizing-images-without-the-editor) to automatically crop images to the required ratio without user interaction.
+    If you want to help users meet the aspect ratio requirement rather than just rejecting invalid uploads, consider using [`automaticallyOpenImageEditorForAspectRatio()`](#enforcing-a-specific-aspect-ratio) alongside `imageAspectRatio()`. This will automatically open a crop editor when an uploaded image doesn't match the required ratio. Alternatively, you can use [`automaticallyCropImagesToAspectRatio()`](#cropping-and-resizing-images-without-the-editor) to automatically crop images to the required ratio without user interaction.
 </Aside>
 
 ### Number of files validation

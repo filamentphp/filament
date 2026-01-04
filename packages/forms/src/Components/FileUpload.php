@@ -24,15 +24,15 @@ class FileUpload extends BaseFileUpload
      */
     protected string $view = 'filament-forms::components.file-upload';
 
-    protected string | bool | Closure | null $automaticImageCropAspectRatio = null;
+    protected string | bool | Closure | null $automaticallyCropImagesAspectRatio = null;
 
-    protected string | Closure | null $automaticImageResizeMode = null;
+    protected string | Closure | null $automaticallyResizeImagesMode = null;
 
-    protected string | Closure | null $automaticImageResizeTargetHeight = null;
+    protected string | Closure | null $automaticallyResizeImagesHeight = null;
 
-    protected string | Closure | null $automaticImageResizeTargetWidth = null;
+    protected string | Closure | null $automaticallyResizeImagesWidth = null;
 
-    protected bool | Closure $automaticImageResizeUpscale = true;
+    protected bool | Closure $shouldAutomaticallyUpscaleImagesWhenResizing = true;
 
     protected string | Closure | null $imagePreviewHeight = null;
 
@@ -100,11 +100,11 @@ class FileUpload extends BaseFileUpload
 
         $this->image();
         $this->imageAspectRatio('1:1');
-        $this->automaticImageResizeMode('cover');
-        $this->automaticImageResizeUpscale(false);
-        $this->automaticImageCropAspectRatio();
-        $this->automaticImageResizeTargetHeight('500');
-        $this->automaticImageResizeTargetWidth('500');
+        $this->automaticallyResizeImagesMode('cover');
+        $this->automaticallyUpscaleImagesWhenResizing(false);
+        $this->automaticallyCropImagesToAspectRatio();
+        $this->automaticallyResizeImagesToHeight('500');
+        $this->automaticallyResizeImagesToWidth('500');
         $this->loadingIndicatorPosition('center bottom');
         $this->panelLayout('compact circle');
         $this->removeUploadedFileButtonPosition(fn (FileUpload $component) => $component->hasImageEditor() ? 'left bottom' : 'center bottom');
@@ -133,79 +133,79 @@ class FileUpload extends BaseFileUpload
         return $this;
     }
 
-    public function automaticImageCropAspectRatio(string | bool | Closure $ratio = true): static
+    public function automaticallyCropImagesToAspectRatio(string | bool | Closure $ratio = true): static
     {
-        $this->automaticImageCropAspectRatio = $ratio;
+        $this->automaticallyCropImagesAspectRatio = $ratio;
 
         return $this;
     }
 
     /**
-     * @deprecated Use `automaticImageCropAspectRatio()` instead.
+     * @deprecated Use `automaticallyCropImagesToAspectRatio()` instead.
      */
     public function imageCropAspectRatio(string | bool | Closure $ratio = true): static
     {
-        return $this->automaticImageCropAspectRatio($ratio);
+        return $this->automaticallyCropImagesToAspectRatio($ratio);
     }
 
-    public function automaticImageResizeMode(string | Closure | null $mode): static
+    public function automaticallyResizeImagesMode(string | Closure | null $mode): static
     {
-        $this->automaticImageResizeMode = $mode;
+        $this->automaticallyResizeImagesMode = $mode;
 
         return $this;
     }
 
     /**
-     * @deprecated Use `automaticImageResizeMode()` instead.
+     * @deprecated Use `automaticallyResizeImagesMode()` instead.
      */
     public function imageResizeMode(string | Closure | null $mode): static
     {
-        return $this->automaticImageResizeMode($mode);
+        return $this->automaticallyResizeImagesMode($mode);
     }
 
-    public function automaticImageResizeTargetHeight(string | Closure | null $height): static
+    public function automaticallyResizeImagesToHeight(string | Closure | null $height): static
     {
-        $this->automaticImageResizeTargetHeight = $height;
+        $this->automaticallyResizeImagesHeight = $height;
 
         return $this;
     }
 
     /**
-     * @deprecated Use `automaticImageResizeTargetHeight()` instead.
+     * @deprecated Use `automaticallyResizeImagesToHeight()` instead.
      */
     public function imageResizeTargetHeight(string | Closure | null $height): static
     {
-        return $this->automaticImageResizeTargetHeight($height);
+        return $this->automaticallyResizeImagesToHeight($height);
     }
 
-    public function automaticImageResizeTargetWidth(string | Closure | null $width): static
+    public function automaticallyResizeImagesToWidth(string | Closure | null $width): static
     {
-        $this->automaticImageResizeTargetWidth = $width;
+        $this->automaticallyResizeImagesWidth = $width;
 
         return $this;
     }
 
     /**
-     * @deprecated Use `automaticImageResizeTargetWidth()` instead.
+     * @deprecated Use `automaticallyResizeImagesToWidth()` instead.
      */
     public function imageResizeTargetWidth(string | Closure | null $width): static
     {
-        return $this->automaticImageResizeTargetWidth($width);
+        return $this->automaticallyResizeImagesToWidth($width);
     }
 
-    public function automaticImageResizeUpscale(bool | Closure $condition = true): static
+    public function automaticallyUpscaleImagesWhenResizing(bool | Closure $condition = true): static
     {
-        $this->automaticImageResizeUpscale = $condition;
+        $this->shouldAutomaticallyUpscaleImagesWhenResizing = $condition;
 
         return $this;
     }
 
     /**
-     * @deprecated Use `automaticImageResizeUpscale()` instead.
+     * @deprecated Use `automaticallyUpscaleImagesWhenResizing()` instead.
      */
     public function imageResizeUpscale(bool | Closure $condition = true): static
     {
-        return $this->automaticImageResizeUpscale($condition);
+        return $this->automaticallyUpscaleImagesWhenResizing($condition);
     }
 
     public function imagePreviewHeight(string | Closure | null $height): static
@@ -281,9 +281,9 @@ class FileUpload extends BaseFileUpload
         return $this;
     }
 
-    public function getAutomaticImageCropAspectRatio(): ?string
+    public function getAutomaticallyCropImagesAspectRatio(): ?string
     {
-        $ratio = $this->evaluate($this->automaticImageCropAspectRatio);
+        $ratio = $this->evaluate($this->automaticallyCropImagesAspectRatio);
 
         if ($ratio === true) {
             $imageAspectRatio = $this->getImageAspectRatio();
@@ -303,63 +303,63 @@ class FileUpload extends BaseFileUpload
     }
 
     /**
-     * @deprecated Use `getAutomaticImageCropAspectRatio()` instead.
+     * @deprecated Use `getAutomaticallyCropImagesAspectRatio()` instead.
      */
     public function getImageCropAspectRatio(): ?string
     {
-        return $this->getAutomaticImageCropAspectRatio();
+        return $this->getAutomaticallyCropImagesAspectRatio();
     }
 
-    public function getAutomaticImageResizeMode(): ?string
+    public function getAutomaticallyResizeImagesMode(): ?string
     {
-        return $this->evaluate($this->automaticImageResizeMode);
+        return $this->evaluate($this->automaticallyResizeImagesMode);
     }
 
     /**
-     * @deprecated Use `getAutomaticImageResizeMode()` instead.
+     * @deprecated Use `getAutomaticallyResizeImagesMode()` instead.
      */
     public function getImageResizeMode(): ?string
     {
-        return $this->getAutomaticImageResizeMode();
+        return $this->getAutomaticallyResizeImagesMode();
     }
 
-    public function getAutomaticImageResizeTargetHeight(): ?string
+    public function getAutomaticallyResizeImagesHeight(): ?string
     {
-        return $this->evaluate($this->automaticImageResizeTargetHeight);
+        return $this->evaluate($this->automaticallyResizeImagesHeight);
     }
 
     /**
-     * @deprecated Use `getAutomaticImageResizeTargetHeight()` instead.
+     * @deprecated Use `getAutomaticallyResizeImagesHeight()` instead.
      */
     public function getImageResizeTargetHeight(): ?string
     {
-        return $this->getAutomaticImageResizeTargetHeight();
+        return $this->getAutomaticallyResizeImagesHeight();
     }
 
-    public function getAutomaticImageResizeTargetWidth(): ?string
+    public function getAutomaticallyResizeImagesWidth(): ?string
     {
-        return $this->evaluate($this->automaticImageResizeTargetWidth);
+        return $this->evaluate($this->automaticallyResizeImagesWidth);
     }
 
     /**
-     * @deprecated Use `getAutomaticImageResizeTargetWidth()` instead.
+     * @deprecated Use `getAutomaticallyResizeImagesWidth()` instead.
      */
     public function getImageResizeTargetWidth(): ?string
     {
-        return $this->getAutomaticImageResizeTargetWidth();
+        return $this->getAutomaticallyResizeImagesWidth();
     }
 
-    public function getAutomaticImageResizeUpscale(): bool
+    public function shouldAutomaticallyUpscaleImagesWhenResizing(): bool
     {
-        return (bool) $this->evaluate($this->automaticImageResizeUpscale);
+        return (bool) $this->evaluate($this->shouldAutomaticallyUpscaleImagesWhenResizing);
     }
 
     /**
-     * @deprecated Use `getAutomaticImageResizeUpscale()` instead.
+     * @deprecated Use `shouldAutomaticallyUpscaleImagesWhenResizing()` instead.
      */
     public function getImageResizeUpscale(): bool
     {
-        return $this->getAutomaticImageResizeUpscale();
+        return $this->shouldAutomaticallyUpscaleImagesWhenResizing();
     }
 
     public function getImagePreviewHeight(): ?string
@@ -519,11 +519,11 @@ class FileUpload extends BaseFileUpload
 
     public function getImageEditorViewportHeight(): ?int
     {
-        if (($targetHeight = (int) $this->getAutomaticImageResizeTargetHeight()) > 1) {
+        if (($targetHeight = (int) $this->getAutomaticallyResizeImagesHeight()) > 1) {
             return (int) round($targetHeight * $this->getParentTargetSizes($targetHeight), precision: 0);
         }
 
-        if (filled($ratio = $this->getAutomaticImageCropAspectRatio())) {
+        if (filled($ratio = $this->getAutomaticallyCropImagesAspectRatio())) {
             $parts = explode(':', $ratio);
 
             if (count($parts) === 2) {
@@ -536,11 +536,11 @@ class FileUpload extends BaseFileUpload
 
     public function getImageEditorViewportWidth(): ?int
     {
-        if (($targetWidth = (int) $this->getAutomaticImageResizeTargetWidth()) > 1) {
+        if (($targetWidth = (int) $this->getAutomaticallyResizeImagesWidth()) > 1) {
             return (int) round($targetWidth * $this->getParentTargetSizes($targetWidth), precision: 0);
         }
 
-        if (filled($ratio = $this->getAutomaticImageCropAspectRatio())) {
+        if (filled($ratio = $this->getAutomaticallyCropImagesAspectRatio())) {
             $parts = explode(':', $ratio);
 
             if (count($parts) === 2) {
@@ -553,7 +553,7 @@ class FileUpload extends BaseFileUpload
 
     protected function getParentTargetSizes(int $widthOrHeight): int | float
     {
-        $targetWidth = (int) $this->getAutomaticImageResizeTargetWidth();
+        $targetWidth = (int) $this->getAutomaticallyResizeImagesWidth();
 
         if ($targetWidth === 0) {
             return 1;
@@ -607,6 +607,10 @@ class FileUpload extends BaseFileUpload
             return false;
         }
 
+        if ($this->isMultiple()) {
+            throw new InvalidArgumentException('The [automaticallyOpenImageEditorForAspectRatio()] method cannot be used when [multiple()] is enabled.');
+        }
+
         $ratio = $this->getImageAspectRatio();
 
         if (blank($ratio)) {
@@ -646,7 +650,7 @@ class FileUpload extends BaseFileUpload
     {
         return collect($this->evaluate($this->imageEditorAspectRatioOptions) ?? [])
             ->when(
-                filled($automaticCropRatio = $this->getAutomaticImageCropAspectRatio()),
+                filled($automaticCropRatio = $this->getAutomaticallyCropImagesAspectRatio()),
                 fn (Collection $ratios): Collection => $ratios->push($automaticCropRatio),
             )
             ->unique()

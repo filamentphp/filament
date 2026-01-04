@@ -3,9 +3,9 @@
 
     $fieldWrapperView = $getFieldWrapperView();
     $id = $getId();
-    $automaticImageCropAspectRatio = $getAutomaticImageCropAspectRatio();
-    $automaticImageResizeTargetHeight = $getAutomaticImageResizeTargetHeight();
-    $automaticImageResizeTargetWidth = $getAutomaticImageResizeTargetWidth();
+    $automaticallyCropImagesAspectRatio = $getAutomaticallyCropImagesAspectRatio();
+    $automaticallyResizeImagesHeight = $getAutomaticallyResizeImagesHeight();
+    $automaticallyResizeImagesWidth = $getAutomaticallyResizeImagesWidth();
     $isAvatar = $isAvatar();
     $isMultiple = $isMultiple();
     $key = $getKey();
@@ -33,12 +33,11 @@
         x-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('file-upload', 'filament/forms') }}"
         x-data="fileUploadFormComponent({
                     acceptedFileTypes: @js($getAcceptedFileTypes()),
-                    automaticImageCropAspectRatio: @js($automaticImageCropAspectRatio),
-                    automaticImageResizeMode: @js($getAutomaticImageResizeMode()),
-                    automaticImageResizeTargetHeight: @js($automaticImageResizeTargetHeight),
-                    automaticImageResizeTargetWidth: @js($automaticImageResizeTargetWidth),
-                    automaticImageResizeUpscale: @js($getAutomaticImageResizeUpscale()),
+                    automaticallyCropImagesAspectRatio: @js($automaticallyCropImagesAspectRatio),
                     automaticallyOpenImageEditorForAspectRatio: @js($getAutomaticallyOpenImageEditorForAspectRatioForJs()),
+                    automaticallyResizeImagesMode: @js($getAutomaticallyResizeImagesMode()),
+                    automaticallyResizeImagesHeight: @js($automaticallyResizeImagesHeight),
+                    automaticallyResizeImagesWidth: @js($automaticallyResizeImagesWidth),
                     cancelUploadUsing: (fileKey) => {
                         $wire.cancelUpload(`{{ $statePath }}.${fileKey}`)
                     },
@@ -104,8 +103,9 @@
                         )
                     },
                     shouldAppendFiles: @js($shouldAppendFiles()),
+                    shouldAutomaticallyUpscaleImagesWhenResizing: @js($shouldAutomaticallyUpscaleImagesWhenResizing()),
                     shouldOrientImageFromExif: @js($shouldOrientImagesFromExif()),
-                    shouldTransformImage: @js($automaticImageCropAspectRatio || $automaticImageResizeTargetHeight || $automaticImageResizeTargetWidth),
+                    shouldTransformImage: @js($automaticallyCropImagesAspectRatio || $automaticallyResizeImagesHeight || $automaticallyResizeImagesWidth),
                     state: $wire.{{ $applyStateBindingModifiers("\$entangle('{$statePath}')") }},
                     uploadButtonPosition: @js($getUploadButtonPosition()),
                     uploadingMessage: @js($getUploadingMessage()),

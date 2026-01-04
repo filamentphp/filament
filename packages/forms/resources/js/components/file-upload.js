@@ -25,12 +25,11 @@ window.FilePond = FilePond
 
 export default function fileUploadFormComponent({
     acceptedFileTypes,
-    automaticImageCropAspectRatio,
-    automaticImageResizeMode,
-    automaticImageResizeTargetHeight,
-    automaticImageResizeTargetWidth,
-    automaticImageResizeUpscale,
+    automaticallyCropImagesAspectRatio,
     automaticallyOpenImageEditorForAspectRatio,
+    automaticallyResizeImagesHeight,
+    automaticallyResizeImagesMode,
+    automaticallyResizeImagesWidth,
     cancelUploadUsing,
     canEditSvgs,
     confirmSvgEditingMessage,
@@ -71,6 +70,7 @@ export default function fileUploadFormComponent({
     removeUploadedFileUsing,
     reorderUploadedFilesUsing,
     shouldAppendFiles,
+    shouldAutomaticallyUpscaleImagesWhenResizing,
     shouldOrientImageFromExif,
     shouldTransformImage,
     state,
@@ -117,12 +117,13 @@ export default function fileUploadFormComponent({
                 allowImageTransform: shouldTransformImage,
                 credits: false,
                 files: await this.getFiles(),
-                imageCropAspectRatio: automaticImageCropAspectRatio,
+                imageCropAspectRatio: automaticallyCropImagesAspectRatio,
                 imagePreviewHeight,
-                imageResizeTargetHeight: automaticImageResizeTargetHeight,
-                imageResizeTargetWidth: automaticImageResizeTargetWidth,
-                imageResizeMode: automaticImageResizeMode,
-                imageResizeUpscale: automaticImageResizeUpscale,
+                imageResizeTargetHeight: automaticallyResizeImagesHeight,
+                imageResizeTargetWidth: automaticallyResizeImagesWidth,
+                imageResizeMode: automaticallyResizeImagesMode,
+                imageResizeUpscale:
+                    shouldAutomaticallyUpscaleImagesWhenResizing,
                 imageTransformOutputStripImageHead: false,
                 itemInsertLocation: shouldAppendFiles ? 'after' : 'before',
                 ...(placeholder && { labelIdle: placeholder }),
@@ -706,10 +707,10 @@ export default function fileUploadFormComponent({
 
             let croppedCanvas = this.editor.getCroppedCanvas({
                 fillColor: imageEditorEmptyFillColor ?? 'transparent',
-                height: automaticImageResizeTargetHeight,
+                height: automaticallyResizeImagesHeight,
                 imageSmoothingEnabled: true,
                 imageSmoothingQuality: 'high',
-                width: automaticImageResizeTargetWidth,
+                width: automaticallyResizeImagesWidth,
             })
 
             if (hasCircleCropper) {
