@@ -24,21 +24,21 @@ class FileUpload extends BaseFileUpload
      */
     protected string $view = 'filament-forms::components.file-upload';
 
-    protected string | Closure | null $imageCropAspectRatio = null;
+    protected bool | Closure $shouldAutomaticallyCropImagesToAspectRatio = false;
+
+    protected string | Closure | null $automaticallyResizeImagesMode = null;
+
+    protected string | Closure | null $automaticallyResizeImagesHeight = null;
+
+    protected string | Closure | null $automaticallyResizeImagesWidth = null;
+
+    protected bool | Closure $shouldAutomaticallyUpscaleImagesWhenResizing = true;
 
     protected string | Closure | null $imagePreviewHeight = null;
 
-    protected string | Closure | null $imageResizeTargetHeight = null;
-
-    protected string | Closure | null $imageResizeTargetWidth = null;
-
-    protected string | Closure | null $imageResizeMode = null;
-
-    protected bool | Closure $imageResizeUpscale = true;
-
     protected bool | Closure $isAvatar = false;
 
-    protected int | float | Closure | null $itemPanelAspectRatio = null;
+    protected string | int | float | Closure | null $itemPanelAspectRatio = null;
 
     protected string | Closure $loadingIndicatorPosition = 'right';
 
@@ -64,6 +64,8 @@ class FileUpload extends BaseFileUpload
 
     protected bool | Closure $isSvgEditingConfirmed = false;
 
+    protected bool | Closure $shouldAutomaticallyOpenImageEditorForAspectRatio = false;
+
     protected int | Closure | null $imageEditorViewportWidth = null;
 
     protected int | Closure | null $imageEditorViewportHeight = null;
@@ -76,9 +78,9 @@ class FileUpload extends BaseFileUpload
     protected string | array | Closure | null $imageEditorEmptyFillColor = null;
 
     /**
-     * @var array<?string> | Closure
+     * @var array<string | null> | Closure
      */
-    protected array | Closure $imageEditorAspectRatios = [];
+    protected array | Closure $imageEditorAspectRatioOptions = [];
 
     /**
      * @var array<string, string> | Closure
@@ -97,11 +99,12 @@ class FileUpload extends BaseFileUpload
         $this->isAvatar = true;
 
         $this->image();
-        $this->imageResizeMode('cover');
-        $this->imageResizeUpscale(false);
-        $this->imageCropAspectRatio('1:1');
-        $this->imageResizeTargetHeight('500');
-        $this->imageResizeTargetWidth('500');
+        $this->imageAspectRatio('1:1');
+        $this->automaticallyResizeImagesMode('cover');
+        $this->automaticallyUpscaleImagesWhenResizing(false);
+        $this->automaticallyCropImagesToAspectRatio();
+        $this->automaticallyResizeImagesToHeight('500');
+        $this->automaticallyResizeImagesToWidth('500');
         $this->loadingIndicatorPosition('center bottom');
         $this->panelLayout('compact circle');
         $this->removeUploadedFileButtonPosition(fn (FileUpload $component) => $component->hasImageEditor() ? 'left bottom' : 'center bottom');
@@ -130,11 +133,82 @@ class FileUpload extends BaseFileUpload
         return $this;
     }
 
-    public function imageCropAspectRatio(string | Closure | null $ratio): static
+    public function automaticallyCropImagesToAspectRatio(bool | Closure $condition = true): static
     {
-        $this->imageCropAspectRatio = $ratio;
+        $this->shouldAutomaticallyCropImagesToAspectRatio = $condition;
 
         return $this;
+    }
+
+    /**
+     * @deprecated Use `imageAspectRatio()` and `automaticallyCropImagesToAspectRatio()` instead.
+     */
+    public function imageCropAspectRatio(string | Closure | null $ratio): static
+    {
+        $this->imageAspectRatio($ratio);
+        $this->automaticallyCropImagesToAspectRatio(($ratio instanceof Closure) ? $ratio : filled($ratio));
+
+        return $this;
+    }
+
+    public function automaticallyResizeImagesMode(string | Closure | null $mode): static
+    {
+        $this->automaticallyResizeImagesMode = $mode;
+
+        return $this;
+    }
+
+    /**
+     * @deprecated Use `automaticallyResizeImagesMode()` instead.
+     */
+    public function imageResizeMode(string | Closure | null $mode): static
+    {
+        return $this->automaticallyResizeImagesMode($mode);
+    }
+
+    public function automaticallyResizeImagesToHeight(string | Closure | null $height): static
+    {
+        $this->automaticallyResizeImagesHeight = $height;
+
+        return $this;
+    }
+
+    /**
+     * @deprecated Use `automaticallyResizeImagesToHeight()` instead.
+     */
+    public function imageResizeTargetHeight(string | Closure | null $height): static
+    {
+        return $this->automaticallyResizeImagesToHeight($height);
+    }
+
+    public function automaticallyResizeImagesToWidth(string | Closure | null $width): static
+    {
+        $this->automaticallyResizeImagesWidth = $width;
+
+        return $this;
+    }
+
+    /**
+     * @deprecated Use `automaticallyResizeImagesToWidth()` instead.
+     */
+    public function imageResizeTargetWidth(string | Closure | null $width): static
+    {
+        return $this->automaticallyResizeImagesToWidth($width);
+    }
+
+    public function automaticallyUpscaleImagesWhenResizing(bool | Closure $condition = true): static
+    {
+        $this->shouldAutomaticallyUpscaleImagesWhenResizing = $condition;
+
+        return $this;
+    }
+
+    /**
+     * @deprecated Use `automaticallyUpscaleImagesWhenResizing()` instead.
+     */
+    public function imageResizeUpscale(bool | Closure $condition = true): static
+    {
+        return $this->automaticallyUpscaleImagesWhenResizing($condition);
     }
 
     public function imagePreviewHeight(string | Closure | null $height): static
@@ -144,35 +218,7 @@ class FileUpload extends BaseFileUpload
         return $this;
     }
 
-    public function imageResizeTargetHeight(string | Closure | null $height): static
-    {
-        $this->imageResizeTargetHeight = $height;
-
-        return $this;
-    }
-
-    public function imageResizeTargetWidth(string | Closure | null $width): static
-    {
-        $this->imageResizeTargetWidth = $width;
-
-        return $this;
-    }
-
-    public function imageResizeMode(string | Closure | null $mode): static
-    {
-        $this->imageResizeMode = $mode;
-
-        return $this;
-    }
-
-    public function imageResizeUpscale(bool | Closure $condition = true): static
-    {
-        $this->imageResizeUpscale = $condition;
-
-        return $this;
-    }
-
-    public function itemPanelAspectRatio(int | float | Closure | null $ratio): static
+    public function itemPanelAspectRatio(string | int | float | Closure | null $ratio): static
     {
         $this->itemPanelAspectRatio = $ratio;
 
@@ -238,9 +284,88 @@ class FileUpload extends BaseFileUpload
         return $this;
     }
 
+    public function shouldAutomaticallyCropImagesToAspectRatio(): bool
+    {
+        return (bool) $this->evaluate($this->shouldAutomaticallyCropImagesToAspectRatio);
+    }
+
+    public function getAutomaticallyCropImagesAspectRatio(): ?string
+    {
+        if (! $this->shouldAutomaticallyCropImagesToAspectRatio()) {
+            return null;
+        }
+
+        $imageAspectRatio = $this->getImageAspectRatio();
+
+        if (blank($imageAspectRatio)) {
+            return null;
+        }
+
+        if (is_array($imageAspectRatio)) {
+            $imageAspectRatio = $imageAspectRatio[0] ?? null;
+        }
+
+        return $this->normalizeAspectRatio($imageAspectRatio);
+    }
+
+    /**
+     * @deprecated Use `getAutomaticallyCropImagesAspectRatio()` instead.
+     */
     public function getImageCropAspectRatio(): ?string
     {
-        return $this->evaluate($this->imageCropAspectRatio);
+        return $this->getAutomaticallyCropImagesAspectRatio();
+    }
+
+    public function getAutomaticallyResizeImagesMode(): ?string
+    {
+        return $this->evaluate($this->automaticallyResizeImagesMode);
+    }
+
+    /**
+     * @deprecated Use `getAutomaticallyResizeImagesMode()` instead.
+     */
+    public function getImageResizeMode(): ?string
+    {
+        return $this->getAutomaticallyResizeImagesMode();
+    }
+
+    public function getAutomaticallyResizeImagesHeight(): ?string
+    {
+        return $this->evaluate($this->automaticallyResizeImagesHeight);
+    }
+
+    /**
+     * @deprecated Use `getAutomaticallyResizeImagesHeight()` instead.
+     */
+    public function getImageResizeTargetHeight(): ?string
+    {
+        return $this->getAutomaticallyResizeImagesHeight();
+    }
+
+    public function getAutomaticallyResizeImagesWidth(): ?string
+    {
+        return $this->evaluate($this->automaticallyResizeImagesWidth);
+    }
+
+    /**
+     * @deprecated Use `getAutomaticallyResizeImagesWidth()` instead.
+     */
+    public function getImageResizeTargetWidth(): ?string
+    {
+        return $this->getAutomaticallyResizeImagesWidth();
+    }
+
+    public function shouldAutomaticallyUpscaleImagesWhenResizing(): bool
+    {
+        return (bool) $this->evaluate($this->shouldAutomaticallyUpscaleImagesWhenResizing);
+    }
+
+    /**
+     * @deprecated Use `shouldAutomaticallyUpscaleImagesWhenResizing()` instead.
+     */
+    public function getImageResizeUpscale(): bool
+    {
+        return $this->shouldAutomaticallyUpscaleImagesWhenResizing();
     }
 
     public function getImagePreviewHeight(): ?string
@@ -248,38 +373,22 @@ class FileUpload extends BaseFileUpload
         return $this->evaluate($this->imagePreviewHeight);
     }
 
-    public function getImageResizeTargetHeight(): ?string
-    {
-        return $this->evaluate($this->imageResizeTargetHeight);
-    }
-
-    public function getImageResizeTargetWidth(): ?string
-    {
-        return $this->evaluate($this->imageResizeTargetWidth);
-    }
-
-    public function getImageResizeMode(): ?string
-    {
-        return $this->evaluate($this->imageResizeMode);
-    }
-
-    public function getImageResizeUpscale(): bool
-    {
-        return (bool) $this->evaluate($this->imageResizeUpscale);
-    }
-
     public function getItemPanelAspectRatio(): int | float | null
     {
-        $itemPanelAspectRatio = $this->evaluate($this->itemPanelAspectRatio);
+        $ratio = $this->evaluate($this->itemPanelAspectRatio);
 
         if (
             ($this->getPanelLayout() === 'grid') &&
-            (! $itemPanelAspectRatio)
+            (! $ratio)
         ) {
             return 1;
         }
 
-        return $itemPanelAspectRatio;
+        if (is_string($ratio)) {
+            return $this->calculateAspectRatio($this->normalizeAspectRatio($ratio));
+        }
+
+        return $ratio;
     }
 
     public function getLoadingIndicatorPosition(): string
@@ -289,7 +398,7 @@ class FileUpload extends BaseFileUpload
 
     public function getPanelAspectRatio(): ?string
     {
-        return $this->evaluate($this->panelAspectRatio);
+        return $this->normalizeAspectRatio($this->evaluate($this->panelAspectRatio));
     }
 
     public function getPanelLayout(): ?string
@@ -355,6 +464,13 @@ class FileUpload extends BaseFileUpload
         return $this;
     }
 
+    public function automaticallyOpenImageEditorForAspectRatio(bool | Closure $condition = true): static
+    {
+        $this->shouldAutomaticallyOpenImageEditorForAspectRatio = $condition;
+
+        return $this;
+    }
+
     public function imageEditorViewportWidth(int | Closure | null $width): static
     {
         $this->imageEditorViewportWidth = $width;
@@ -388,25 +504,37 @@ class FileUpload extends BaseFileUpload
     }
 
     /**
-     * @param  array<?string> | Closure  $ratios
+     * @param  array<string | null> | Closure  $ratios
      */
-    public function imageEditorAspectRatios(array | Closure $ratios): static
+    public function imageEditorAspectRatioOptions(array | Closure $ratios): static
     {
-        $this->imageEditorAspectRatios = $ratios;
+        $this->imageEditorAspectRatioOptions = $ratios;
 
         return $this;
     }
 
+    /**
+     * @deprecated Use `imageEditorAspectRatioOptions()` instead.
+     *
+     * @param  array<string | null> | Closure  $ratios
+     */
+    public function imageEditorAspectRatios(array | Closure $ratios): static
+    {
+        return $this->imageEditorAspectRatioOptions($ratios);
+    }
+
     public function getImageEditorViewportHeight(): ?int
     {
-        if (($targetHeight = (int) $this->getImageResizeTargetHeight()) > 1) {
+        if (($targetHeight = (int) $this->getAutomaticallyResizeImagesHeight()) > 1) {
             return (int) round($targetHeight * $this->getParentTargetSizes($targetHeight), precision: 0);
         }
 
-        if (filled($ratio = $this->getImageCropAspectRatio())) {
-            [$numerator, $denominator] = explode(':', $ratio);
+        if (filled($ratio = $this->getAutomaticallyCropImagesAspectRatio())) {
+            $parts = explode(':', $ratio);
 
-            return (int) $denominator;
+            if (count($parts) === 2) {
+                return (int) $parts[1];
+            }
         }
 
         return $this->evaluate($this->imageEditorViewportHeight);
@@ -414,14 +542,16 @@ class FileUpload extends BaseFileUpload
 
     public function getImageEditorViewportWidth(): ?int
     {
-        if (($targetWidth = (int) $this->getImageResizeTargetWidth()) > 1) {
+        if (($targetWidth = (int) $this->getAutomaticallyResizeImagesWidth()) > 1) {
             return (int) round($targetWidth * $this->getParentTargetSizes($targetWidth), precision: 0);
         }
 
-        if (filled($ratio = $this->getImageCropAspectRatio())) {
-            [$numerator, $denominator] = explode(':', $ratio);
+        if (filled($ratio = $this->getAutomaticallyCropImagesAspectRatio())) {
+            $parts = explode(':', $ratio);
 
-            return (int) $numerator;
+            if (count($parts) === 2) {
+                return (int) $parts[0];
+            }
         }
 
         return $this->evaluate($this->imageEditorViewportWidth);
@@ -429,7 +559,7 @@ class FileUpload extends BaseFileUpload
 
     protected function getParentTargetSizes(int $widthOrHeight): int | float
     {
-        $targetWidth = (int) $this->getImageResizeTargetWidth();
+        $targetWidth = (int) $this->getAutomaticallyResizeImagesWidth();
 
         if ($targetWidth === 0) {
             return 1;
@@ -450,6 +580,15 @@ class FileUpload extends BaseFileUpload
 
     public function hasImageEditor(): bool
     {
+        if ($this->shouldAutomaticallyOpenImageEditorForAspectRatio()) {
+            return true;
+        }
+
+        return (bool) $this->evaluate($this->hasImageEditor);
+    }
+
+    public function isImageEditorExplicitlyEnabled(): bool
+    {
         return (bool) $this->evaluate($this->hasImageEditor);
     }
 
@@ -468,21 +607,69 @@ class FileUpload extends BaseFileUpload
         return (bool) $this->evaluate($this->isSvgEditingConfirmed);
     }
 
+    public function shouldAutomaticallyOpenImageEditorForAspectRatio(): bool
+    {
+        if (! $this->evaluate($this->shouldAutomaticallyOpenImageEditorForAspectRatio)) {
+            return false;
+        }
+
+        if ($this->isMultiple()) {
+            throw new InvalidArgumentException('The [automaticallyOpenImageEditorForAspectRatio()] method cannot be used when [multiple()] is enabled.');
+        }
+
+        $ratio = $this->getImageAspectRatio();
+
+        if (blank($ratio)) {
+            throw new InvalidArgumentException('The [automaticallyOpenImageEditorForAspectRatio()] method requires [imageAspectRatio()] to be set with a single aspect ratio.');
+        }
+
+        if (is_array($ratio) && count($ratio) > 1) {
+            throw new InvalidArgumentException('The [automaticallyOpenImageEditorForAspectRatio()] method cannot be used when [imageAspectRatio()] has multiple allowed aspect ratios.');
+        }
+
+        return true;
+    }
+
+    public function getAutomaticallyOpenImageEditorForAspectRatio(): ?float
+    {
+        if (! $this->shouldAutomaticallyOpenImageEditorForAspectRatio()) {
+            return null;
+        }
+
+        $ratio = $this->getImageAspectRatio();
+
+        if (is_array($ratio)) {
+            $ratio = $ratio[0] ?? null;
+        }
+
+        if (blank($ratio)) {
+            return null;
+        }
+
+        return $this->calculateAspectRatio($ratio);
+    }
+
     /**
      * @return array<string, float | string>
      */
-    public function getImageEditorAspectRatiosForJs(): array
+    public function getImageEditorAspectRatioOptionsForJs(): array
     {
-        return collect($this->evaluate($this->imageEditorAspectRatios) ?? [])
+        return collect($this->evaluate($this->imageEditorAspectRatioOptions) ?? [])
             ->when(
-                filled($imageCropAspectRatio = $this->getImageCropAspectRatio()),
-                fn (Collection $ratios): Collection => $ratios->push($imageCropAspectRatio),
+                filled($automaticCropRatio = $this->getAutomaticallyCropImagesAspectRatio()),
+                fn (Collection $ratios): Collection => $ratios->push($automaticCropRatio),
             )
             ->unique()
-            ->mapWithKeys(fn (?string $ratio): array => [
-                $ratio ?? __('filament-forms::components.file_upload.editor.aspect_ratios.no_fixed.label') => $this->normalizeImageCroppingRatioForJs($ratio),
-            ])
-            ->filter(fn (float | string | false $ratio): bool => $ratio !== false)
+            ->mapWithKeys(function (?string $ratio): array {
+                $label = $ratio === null
+                    ? __('filament-forms::components.file_upload.editor.aspect_ratios.no_fixed.label')
+                    : str_replace('/', ':', $ratio);
+
+                $floatValue = $ratio === null ? 'NaN' : $this->calculateAspectRatio($ratio);
+
+                return [$label => $floatValue];
+            })
+            ->filter(fn (float | string | null $ratio): bool => $ratio !== null)
             ->when(
                 fn (Collection $ratios): bool => $ratios->count() < 2,
                 fn (Collection $ratios) => $ratios->take(0),
@@ -490,33 +677,14 @@ class FileUpload extends BaseFileUpload
             ->all();
     }
 
-    protected function normalizeImageCroppingRatioForJs(?string $ratio): float | string | false
+    /**
+     * @deprecated Use `getImageEditorAspectRatioOptionsForJs()` instead.
+     *
+     * @return array<string, float | string>
+     */
+    public function getImageEditorAspectRatiosForJs(): array
     {
-        if ($ratio === null) {
-            return 'NaN';
-        }
-
-        $ratioParts = explode(':', $ratio);
-
-        if (count($ratioParts) !== 2) {
-            return false;
-        }
-
-        [$numerator, $denominator] = $ratioParts;
-
-        if (! $denominator) {
-            return false;
-        }
-
-        if (! is_numeric($numerator)) {
-            return false;
-        }
-
-        if (! is_numeric($denominator)) {
-            return false;
-        }
-
-        return $numerator / $denominator;
+        return $this->getImageEditorAspectRatioOptionsForJs();
     }
 
     /**

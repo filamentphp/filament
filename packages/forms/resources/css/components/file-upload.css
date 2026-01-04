@@ -154,5 +154,23 @@
                 border-radius: 50%;
             }
         }
+
+        &.fi-fo-file-upload-editor-crop-only {
+            & .fi-fo-file-upload-editor-window {
+                @apply max-w-3xl flex-col;
+            }
+
+            & .fi-fo-file-upload-editor-image-ctn {
+                @apply min-h-0 flex-1 overflow-hidden;
+            }
+
+            & .fi-fo-file-upload-editor-control-panel {
+                @apply h-auto flex-none lg:max-w-none;
+            }
+
+            & .fi-fo-file-upload-editor-control-panel-footer {
+                @apply justify-start;
+            }
+        }
     }
 }

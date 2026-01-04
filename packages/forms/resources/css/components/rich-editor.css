@@ -360,3 +360,7 @@
         @apply h-5 w-5 shrink-0 rounded-full bg-(--color) dark:bg-(--dark-color);
     }
 }
+
+[x-sortable]:has(.fi-sortable-ghost) .fi-fo-rich-editor {
+    pointer-events: none;
+}
