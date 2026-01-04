@@ -310,6 +310,13 @@ class Action extends ViewComponent implements Arrayable
         return $this;
     }
 
+    public function jsAction(string | Closure | null $action): static
+    {
+        $this->alpineClickHandler($action);
+
+        return $this;
+    }
+
     public static function getDefaultName(): ?string
     {
         return null;

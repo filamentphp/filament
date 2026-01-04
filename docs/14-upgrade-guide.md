@@ -271,6 +271,31 @@ npx @tailwindcss/upgrade
 The `tailwind.config.js` file for your theme is no longer used, since Tailwind CSS v4 defines [configuration in CSS](https://tailwindcss.com/docs/adding-custom-styles). Any customizations you made to the `tailwind.config.js` file should be added to the CSS file.
 </Disclosure>
 
+<Disclosure open x-show="packages.includes('panels')">
+<span slot="summary">Tailwind CSS classes from Filament views no longer available without a custom theme</span>
+
+In v3, Filament's Blade views contained Tailwind CSS classes directly in the HTML. This meant that if you used any of those same Tailwind classes in your own code (such as `hidden` or `text-primary-600`), they would "just work" without you needing to set up a custom theme - Filament's asset compilation would include them for you.
+
+In v4, Filament's Tailwind classes have been moved into CSS files using Tailwind's `@apply` directive. This means those classes are no longer scanned by Tailwind when compiling assets, so they won't be included in Filament's default stylesheet.
+
+If you're using Tailwind classes in your own Blade views, Livewire components, or other code, and you don't have a custom theme, those styles will no longer work. To fix this, you need to create a custom theme.
+
+Run `php artisan make:filament-theme` and follow the [theming documentation](styling/overview#creating-a-custom-theme). In your theme CSS file, add `@source` entries pointing to your files that use Tailwind classes:
+
+```css
+@import '../../../../vendor/filament/filament/resources/css/theme.css';
+
+@source '../../../../app/Filament';
+@source '../../../../resources/views/filament';
+@source '../../../../resources/views/components'; /* Add your own paths */
+@source '../../../../resources/views/livewire'; /* Add your own paths */
+```
+
+<Aside variant="tip">
+    This change only affects you if you were relying on Filament's compiled styles to include Tailwind classes that you used in your own code. If you already have a custom theme, you likely won't notice any difference.
+</Aside>
+</Disclosure>
+
 <Disclosure open x-show="packages.includes('tables')">
 <span slot="summary">Changes to table filters are deferred by default</span>
 

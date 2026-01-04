@@ -30,7 +30,7 @@ trait CanAskForComponentLocation
         }
 
         $options = [
-            null => app()->getNamespace() . "Filament\\{$pathNamespace}",
+            '' => app()->getNamespace() . "Filament\\{$pathNamespace}",
             ...array_map(
                 fn (string $namespace): string => "{$namespace}\\{$pathNamespace}",
                 array_combine(

@@ -12,6 +12,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 use League\Flysystem\UnableToCheckFileExistence;
 use Livewire\Attributes\Renderless;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
@@ -76,6 +77,11 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
     protected ?Closure $reorderUploadedFilesUsing = null;
 
     protected ?Closure $saveUploadedFileUsing = null;
+
+    /**
+     * @var string | array<string> | Closure | null
+     */
+    protected string | array | Closure | null $imageAspectRatio = null;
 
     /**
      * @var array<string>
@@ -945,6 +951,101 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
         if ($fileNamesStatePath = $this->getFileNamesStatePath()) {
             $rules[$fileNamesStatePath] = ['nullable'];
         }
+    }
+
+    /**
+     * @param  string | array<string> | Closure | null  $ratio
+     */
+    public function imageAspectRatio(string | array | Closure | null $ratio): static
+    {
+        $this->imageAspectRatio = $ratio;
+
+        $this->rule(static function (BaseFileUpload $component): Closure {
+            /** @var array<string> $ratios */
+            $ratios = Arr::wrap($component->getImageAspectRatio());
+
+            return static function (string $attribute, mixed $value, Closure $fail) use ($component, $ratios): void {
+                if (blank($value)) {
+                    return;
+                }
+
+                foreach ($ratios as $ratio) {
+                    $ratio = $component->calculateAspectRatio($ratio);
+
+                    if ($ratio === null) {
+                        continue;
+                    }
+
+                    if (Validator::make(
+                        ['file' => $value],
+                        ['file' => Rule::dimensions()->ratio($ratio)],
+                    )->passes()) {
+                        return;
+                    }
+                }
+
+                $fail('validation.dimensions')->translate();
+            };
+        }, static function (BaseFileUpload $component): bool {
+            return filled($component->getImageAspectRatio());
+        });
+
+        return $this;
+    }
+
+    /**
+     * @return string | array<string> | null
+     */
+    public function getImageAspectRatio(): string | array | null
+    {
+        $ratio = $this->evaluate($this->imageAspectRatio);
+
+        if (is_array($ratio)) {
+            return array_filter(array_map(
+                fn (string $ratio): ?string => $this->normalizeAspectRatio($ratio),
+                $ratio,
+            ));
+        }
+
+        return $this->normalizeAspectRatio($ratio);
+    }
+
+    protected function calculateAspectRatio(?string $ratio): ?float
+    {
+        if ($ratio === null) {
+            return null;
+        }
+
+        $parts = explode(':', $ratio);
+
+        if (count($parts) !== 2) {
+            return null;
+        }
+
+        [$numerator, $denominator] = $parts;
+
+        if (! is_numeric($numerator) || ! is_numeric($denominator) || ((float) $denominator === 0.0)) {
+            return null;
+        }
+
+        return (float) $numerator / (float) $denominator;
+    }
+
+    protected function normalizeAspectRatio(?string $ratio): ?string
+    {
+        if (blank($ratio)) {
+            return null;
+        }
+
+        if (str_contains($ratio, ':')) {
+            return $ratio;
+        }
+
+        if (str_contains($ratio, '/')) {
+            return str_replace('/', ':', $ratio);
+        }
+
+        return null;
     }
 
     public function getDefaultStateCasts(): array

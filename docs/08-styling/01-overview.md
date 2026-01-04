@@ -176,16 +176,46 @@ You can now customize the theme by editing the CSS file in `resources/css/filame
 
 ## Using Tailwind CSS classes in your Blade views or PHP files
 
-Even though Filament uses Tailwind CSS to compile the framework, it is not set up to automatically scan for any Tailwind classes you use in your project, so these classes will not be included in the compiled CSS.
+<Aside variant="warning">
+    **A custom theme is required to use Tailwind CSS classes in your own code.** Filament's default compiled stylesheet does not include arbitrary Tailwind classes - it only contains the styles needed for Filament's own UI components.
+</Aside>
 
-To use Tailwind CSS classes in your project, you need to set up a [custom theme](#creating-a-custom-theme) to customize the compiled CSS file in the panel. In the `theme.css` file of the theme, you will find two lines:
+If you want to use Tailwind CSS utility classes (like `text-primary-600`, `bg-gray-100`, `p-4`, etc.) in your own Blade views, Livewire components, or PHP files, **you must create a custom theme first**.
+
+Without a custom theme, any Tailwind classes you add to your code will simply not work - the styles won't be applied because they're not included in the compiled CSS.
+
+### Setting up Tailwind CSS for your project
+
+To use Tailwind CSS classes in your project, you need to set up a [custom theme](#creating-a-custom-theme). Run the following command:
+
+```bash
+php artisan make:filament-theme
+```
+
+In the generated `theme.css` file, you will find `@source` directives that tell Tailwind CSS where to scan for classes:
 
 ```css
 @source '../../../../app/Filament';
 @source '../../../../resources/views/filament';
 ```
 
-These lines tell Tailwind to scan the `app/Filament` and `resources/views/filament` directories for any Tailwind classes you use in your project. You can [add any other directories](https://tailwindcss.com/docs/detecting-classes-in-source-files#explicitly-registering-sources) you want to scan for Tailwind classes here.
+**Add your own directories** where you use Tailwind classes. For example:
+
+```css
+@source '../../../../app/Filament';
+@source '../../../../resources/views/filament';
+@source '../../../../resources/views/components';
+@source '../../../../resources/views/livewire';
+@source '../../../../app/Livewire';
+```
+
+After adding your directories, rebuild your theme:
+
+```bash
+npm run build
+```
+
+You can [learn more about the `@source` directive](https://tailwindcss.com/docs/detecting-classes-in-source-files#explicitly-registering-sources) in the Tailwind CSS documentation.
 
 ## Disabling dark mode
 

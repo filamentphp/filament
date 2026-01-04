@@ -48,7 +48,7 @@ class ViewManager
             return false;
         }
 
-        if (isset($this->renderHooks[$name][null]) && count($this->renderHooks[$name][null])) {
+        if (isset($this->renderHooks[$name]['']) && count($this->renderHooks[$name][''])) {
             return true;
         }
 
@@ -89,7 +89,7 @@ class ViewManager
 
         $hooks = array_map(
             $renderHook,
-            $this->renderHooks[$name][null] ?? [],
+            $this->renderHooks[$name][''] ?? [],
         );
 
         foreach ($scopes as $scopeName) {

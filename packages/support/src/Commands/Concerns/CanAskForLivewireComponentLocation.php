@@ -28,7 +28,7 @@ trait CanAskForLivewireComponentLocation
         }
 
         $options = [
-            null => app()->getNamespace() . 'Livewire',
+            '' => app()->getNamespace() . 'Livewire',
             ...array_combine(
                 array_keys($locations),
                 array_keys($locations),
