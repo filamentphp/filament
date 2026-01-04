@@ -33,10 +33,17 @@
         x-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('file-upload', 'filament/forms') }}"
         x-data="fileUploadFormComponent({
                     acceptedFileTypes: @js($getAcceptedFileTypes()),
-                    imageEditorEmptyFillColor: @js($getImageEditorEmptyFillColor()),
-                    imageEditorMode: @js($getImageEditorMode()),
-                    imageEditorViewportHeight: @js($getImageEditorViewportHeight()),
-                    imageEditorViewportWidth: @js($getImageEditorViewportWidth()),
+                    automaticImageCropAspectRatio: @js($automaticImageCropAspectRatio),
+                    automaticImageResizeMode: @js($getAutomaticImageResizeMode()),
+                    automaticImageResizeTargetHeight: @js($automaticImageResizeTargetHeight),
+                    automaticImageResizeTargetWidth: @js($automaticImageResizeTargetWidth),
+                    automaticImageResizeUpscale: @js($getAutomaticImageResizeUpscale()),
+                    automaticallyOpenImageEditorForAspectRatio: @js($getAutomaticallyOpenImageEditorForAspectRatioForJs()),
+                    cancelUploadUsing: (fileKey) => {
+                        $wire.cancelUpload(`{{ $statePath }}.${fileKey}`)
+                    },
+                    canEditSvgs: @js($canEditSvgs()),
+                    confirmSvgEditingMessage: @js(__('filament-forms::components.file_upload.editor.svg.messages.confirmation')),
                     deleteUploadedFileUsing: async (fileKey) => {
                         return await $wire.callSchemaComponentMethod(
                             @js($key),
@@ -44,49 +51,44 @@
                             { fileKey },
                         )
                     },
+                    disabledSvgEditingMessage: @js(__('filament-forms::components.file_upload.editor.svg.messages.disabled')),
                     getUploadedFilesUsing: async () => {
                         return await $wire.callSchemaComponentMethod(
                             @js($key),
                             'getUploadedFiles',
                         )
                     },
-                    hasImageEditor: @js($hasImageEditor),
-                    isImageEditorExplicitlyEnabled: @js($isImageEditorExplicitlyEnabled),
                     hasCircleCropper: @js($hasCircleCropper),
-                    canEditSvgs: @js($canEditSvgs()),
-                    cancelUploadUsing: (fileKey) => {
-                        $wire.cancelUpload(`{{ $statePath }}.${fileKey}`)
-                    },
-                    isSvgEditingConfirmed: @js($isSvgEditingConfirmed()),
-                    confirmSvgEditingMessage: @js(__('filament-forms::components.file_upload.editor.svg.messages.confirmation')),
-                    disabledSvgEditingMessage: @js(__('filament-forms::components.file_upload.editor.svg.messages.disabled')),
-                    automaticImageCropAspectRatio: @js($automaticImageCropAspectRatio),
-                    automaticImageResizeMode: @js($getAutomaticImageResizeMode()),
-                    automaticImageResizeTargetHeight: @js($automaticImageResizeTargetHeight),
-                    automaticImageResizeTargetWidth: @js($automaticImageResizeTargetWidth),
-                    automaticImageResizeUpscale: @js($getAutomaticImageResizeUpscale()),
+                    hasImageEditor: @js($hasImageEditor),
+                    imageEditorEmptyFillColor: @js($getImageEditorEmptyFillColor()),
+                    imageEditorMode: @js($getImageEditorMode()),
+                    imageEditorViewportHeight: @js($getImageEditorViewportHeight()),
+                    imageEditorViewportWidth: @js($getImageEditorViewportWidth()),
                     imagePreviewHeight: @js($getImagePreviewHeight()),
                     isAvatar: @js($isAvatar),
                     isDeletable: @js($isDeletable()),
                     isDisabled: @js($isDisabled),
                     isDownloadable: @js($isDownloadable()),
+                    isImageEditorExplicitlyEnabled: @js($isImageEditorExplicitlyEnabled),
                     isMultiple: @js($isMultiple),
                     isOpenable: @js($isOpenable()),
                     isPasteable: @js($isPasteable()),
                     isPreviewable: @js($isPreviewable()),
                     isReorderable: @js($isReorderable()),
+                    isSvgEditingConfirmed: @js($isSvgEditingConfirmed()),
                     itemPanelAspectRatio: @js($getItemPanelAspectRatio()),
                     loadingIndicatorPosition: @js($getLoadingIndicatorPosition()),
                     locale: @js(app()->getLocale()),
+                    maxFiles: @js($maxFiles = $getMaxFiles()),
+                    maxFilesValidationMessage: @js($maxFiles ? trans_choice('validation.max.array', $maxFiles, ['attribute' => $getValidationAttribute(), 'max' => $maxFiles]) : null),
+                    maxParallelUploads: @js($getMaxParallelUploads()),
+                    maxSize: @js(($size = $getMaxSize()) ? "{$size}KB" : null),
+                    mimeTypeMap: @js($getMimeTypeMap()),
+                    minSize: @js(($size = $getMinSize()) ? "{$size}KB" : null),
                     panelAspectRatio: @js($getPanelAspectRatio()),
                     panelLayout: @js($getPanelLayout()),
                     placeholder: @js($getPlaceholder()),
-                    maxFiles: @js($maxFiles = $getMaxFiles()),
-                    maxFilesValidationMessage: @js($maxFiles ? trans_choice('validation.max.array', $maxFiles, ['attribute' => $getValidationAttribute(), 'max' => $maxFiles]) : null),
-                    maxSize: @js(($size = $getMaxSize()) ? "{$size}KB" : null),
-                    minSize: @js(($size = $getMinSize()) ? "{$size}KB" : null),
-                    mimeTypeMap: @js($getMimeTypeMap()),
-                    maxParallelUploads: @js($getMaxParallelUploads()),
+                    removeUploadedFileButtonPosition: @js($getRemoveUploadedFileButtonPosition()),
                     removeUploadedFileUsing: async (fileKey) => {
                         return await $wire.callSchemaComponentMethod(
                             @js($key),
@@ -94,7 +96,6 @@
                             { fileKey },
                         )
                     },
-                    removeUploadedFileButtonPosition: @js($getRemoveUploadedFileButtonPosition()),
                     reorderUploadedFilesUsing: async (fileKeys) => {
                         return await $wire.callSchemaComponentMethod(
                             @js($key),
@@ -105,7 +106,6 @@
                     shouldAppendFiles: @js($shouldAppendFiles()),
                     shouldOrientImageFromExif: @js($shouldOrientImagesFromExif()),
                     shouldTransformImage: @js($automaticImageCropAspectRatio || $automaticImageResizeTargetHeight || $automaticImageResizeTargetWidth),
-                    automaticallyOpenImageEditorForAspectRatio: @js($getAutomaticallyOpenImageEditorForAspectRatioForJs()),
                     state: $wire.{{ $applyStateBindingModifiers("\$entangle('{$statePath}')") }},
                     uploadButtonPosition: @js($getUploadButtonPosition()),
                     uploadingMessage: @js($getUploadingMessage()),
