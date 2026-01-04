@@ -70,7 +70,11 @@ jobs:
       - name: Install npm dependencies
         run: npm ci
       - name: Install Playwright browsers
-        run: npx playwright install --with-deps
+        uses: nick-fields/retry@v3
+        with:
+          timeout_minutes: 10
+          max_attempts: 3
+          command: npx playwright install --with-deps
       - name: Wait for MySQL
         if: matrix.db == 'mysql'
         run: |
