@@ -23,6 +23,10 @@ trait CanReorderRecords
 
     protected ?Closure $modifyReorderRecordsTriggerActionUsing = null;
 
+    protected ?Closure $beforeReorderCallback = null;
+
+    protected ?Closure $afterReorderCallback = null;
+
     public function reorderRecordsTriggerAction(?Closure $callback): static
     {
         $this->modifyReorderRecordsTriggerActionUsing = $callback;
@@ -30,7 +34,7 @@ trait CanReorderRecords
         return $this;
     }
 
-    public function reorderable(string | Closure | null $column = null, bool | Closure | null $condition = null, string | Closure | null $direction = null): static
+    public function reorderable(string | Closure | null $column = null, bool | Closure | null $condition = null, string | Closure | null $direction = null, Closure | null $beforeReorder = null, Closure | null $afterReorder = null): static
     {
         $this->reorderColumn = $column;
 
@@ -39,6 +43,9 @@ trait CanReorderRecords
         }
 
         $this->reorderDirection = $direction;
+
+        $this->beforeReorderCallback = $beforeReorder;
+        $this->afterReorderCallback = $afterReorder;
 
         return $this;
     }
@@ -96,5 +103,25 @@ trait CanReorderRecords
     public function isReorderAuthorized(): bool
     {
         return (bool) $this->evaluate($this->isReorderAuthorized);
+    }
+
+    /**
+     * @param  array<int | string>  $order
+     */
+    public function callBeforeReorderCallback(array $order): void
+    {
+        if ($this->beforeReorderCallback !== null) {
+            $this->evaluate($this->beforeReorderCallback, ['order' => $order]);
+        }
+    }
+
+    /**
+     * @param  array<int | string>  $order
+     */
+    public function callAfterReorderCallback(array $order): void
+    {
+        if ($this->afterReorderCallback !== null) {
+            $this->evaluate($this->afterReorderCallback, ['order' => $order]);
+        }
     }
 }
