@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Gate;
 use LogicException;
+use UnitEnum;
 
 if (! function_exists('Filament\authorize')) {
     /**
@@ -16,7 +17,7 @@ if (! function_exists('Filament\authorize')) {
      *
      * @throws AuthorizationException
      */
-    function authorize(string $action, Model | string $model, bool $shouldCheckPolicyExistence = true): Response
+    function authorize(UnitEnum | string $action, Model | string $model, bool $shouldCheckPolicyExistence = true): Response
     {
         return get_authorization_response($action, $model, $shouldCheckPolicyExistence)->authorize();
     }
@@ -26,7 +27,7 @@ if (! function_exists('Filament\get_authorization_response')) {
     /**
      * @param  Model|class-string<Model>  $model
      */
-    function get_authorization_response(string $action, Model | string $model, bool $shouldCheckPolicyExistence = true): Response
+    function get_authorization_response(UnitEnum | string $action, Model | string $model, bool $shouldCheckPolicyExistence = true): Response
     {
         $user = Filament::auth()->user();
 
