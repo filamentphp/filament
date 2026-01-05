@@ -21,7 +21,7 @@ trait CanBeAuthorized
 
     protected bool | Closure $hasAuthorizationNotification = false;
 
-    protected bool | string | Closure | null $authorizeIndividualRecords = null;
+    protected bool | string | UnitEnum | Closure | null $authorizeIndividualRecords = null;
 
     /**
      * @param  Model | class-string | array<mixed> | null  $arguments
