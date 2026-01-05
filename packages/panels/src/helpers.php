@@ -11,8 +11,6 @@ use Illuminate\Support\Facades\Gate;
 use LogicException;
 use UnitEnum;
 
-use function Illuminate\Support\enum_value;
-
 if (! function_exists('Filament\authorize')) {
     /**
      * @param  Model|class-string<Model>  $model
@@ -39,7 +37,13 @@ if (! function_exists('Filament\get_authorization_response')) {
 
         $policy = Gate::getPolicyFor($model);
 
-        if (filled($policy) && method_exists($policy, enum_value($action))) {
+        $policyMethod = match (true) {
+            $action instanceof \BackedEnum => $action->value,
+            $action instanceof \UnitEnum => $action->name,
+            default => $action,
+        };
+
+        if (filled($policy) && method_exists($policy, $policyMethod)) {
             return Gate::forUser($user)->inspect($action, Arr::wrap($model));
         }
 
@@ -52,7 +56,7 @@ if (! function_exists('Filament\get_authorization_response')) {
 
             throw new LogicException(blank($policyClass)
                 ? "Strict authorization mode is enabled, but no policy was found for [{$model}]."
-                : 'Strict authorization mode is enabled, but no [' . enum_value($action) . "()] method was found on [{$policyClass}].");
+                : 'Strict authorization mode is enabled, but no [' . $policyMethod . "()] method was found on [{$policyClass}].");
         }
 
         /** @var bool | Response | null $response */
