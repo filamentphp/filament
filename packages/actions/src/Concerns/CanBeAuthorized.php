@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Gate;
 use LogicException;
+use UnitEnum;
 
 trait CanBeAuthorized
 {
@@ -211,7 +212,7 @@ trait CanBeAuthorized
         return $this->isAuthorized();
     }
 
-    public function authorizeIndividualRecords(bool | string | Closure | null $callback = true): static
+    public function authorizeIndividualRecords(bool | string | UnitEnum | Closure | null $callback = true): static
     {
         $this->authorizeIndividualRecords = $callback;
 
@@ -220,7 +221,7 @@ trait CanBeAuthorized
 
     public function getIndividualRecordAuthorizationResponse(Model $record): Response
     {
-        if (is_string($this->authorizeIndividualRecords)) {
+        if (is_string($this->authorizeIndividualRecords) || $this->authorizeIndividualRecords instanceof UnitEnum) {
             return Gate::inspect($this->authorizeIndividualRecords, Arr::wrap($record));
         }
 
