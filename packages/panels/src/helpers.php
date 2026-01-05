@@ -2,6 +2,7 @@
 
 namespace Filament;
 
+use BackedEnum;
 use Filament\Facades\Filament;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\Access\Response;
@@ -38,8 +39,8 @@ if (! function_exists('Filament\get_authorization_response')) {
         $policy = Gate::getPolicyFor($model);
 
         $policyMethod = match (true) {
-            $action instanceof \BackedEnum => $action->value,
-            $action instanceof \UnitEnum => $action->name,
+            $action instanceof BackedEnum => $action->value,
+            $action instanceof UnitEnum => $action->name,
             default => $action,
         };
 
