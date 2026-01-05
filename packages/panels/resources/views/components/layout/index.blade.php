@@ -29,7 +29,7 @@
             @endif
             @class([
                 'fi-main-ctn w-screen flex-1 flex-col',
-                'h-full opacity-0 transition-all' => filament()->isSidebarCollapsibleOnDesktop() || filament()->isSidebarFullyCollapsibleOnDesktop(),
+                'min-h-[calc(100dvh-4rem)] opacity-0 transition-all' => filament()->isSidebarCollapsibleOnDesktop() || filament()->isSidebarFullyCollapsibleOnDesktop(),
                 'opacity-0' => ! (filament()->isSidebarCollapsibleOnDesktop() || filament()->isSidebarFullyCollapsibleOnDesktop() || filament()->hasTopNavigation() || (! filament()->hasNavigation())),
                 'flex' => filament()->hasTopNavigation() || (! filament()->hasNavigation()),
             ])
