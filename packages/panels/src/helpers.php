@@ -34,7 +34,7 @@ if (! function_exists('Filament\get_authorization_response')) {
         $user = Filament::auth()->user();
 
         if (! $shouldCheckPolicyExistence) {
-            return Gate::forUser($user)->authorize($action, Arr::wrap($model));
+            return Gate::forUser($user)->inspect($action, Arr::wrap($model));
         }
 
         $policy = Gate::getPolicyFor($model);
