@@ -17,6 +17,17 @@ trait CanPollRecords
 
     public function getPollingInterval(): ?string
     {
-        return $this->evaluate($this->pollingInterval);
+        return $this->hasMountedActions()
+            ? null
+            : $this->evaluate($this->pollingInterval);
     }
+
+
+    protected function hasMountedActions(): bool
+    {
+        return
+            (property_exists($this, 'mountedActions') && count($this->mountedActions) > 0) ||
+            (property_exists($this, 'mountedAction') && $this->mountedAction !== null);
+    }
+
 }
