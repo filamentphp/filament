@@ -57,7 +57,7 @@ if (! function_exists('Filament\get_authorization_response')) {
 
             throw new LogicException(blank($policyClass)
                 ? "Strict authorization mode is enabled, but no policy was found for [{$model}]."
-                : 'Strict authorization mode is enabled, but no [' . $policyMethod . "()] method was found on [{$policyClass}].");
+                : "Strict authorization mode is enabled, but no [{$policyMethod}()] method was found on [{$policyClass}].");
         }
 
         /** @var bool | Response | null $response */
