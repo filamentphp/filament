@@ -23,9 +23,9 @@ trait CanReorderRecords
 
     protected ?Closure $modifyReorderRecordsTriggerActionUsing = null;
 
-    protected ?Closure $beforeReorderCallback = null;
+    protected ?Closure $beforeReorderingCallback = null;
 
-    protected ?Closure $afterReorderCallback = null;
+    protected ?Closure $afterReorderingCallback = null;
 
     public function reorderRecordsTriggerAction(?Closure $callback): static
     {
@@ -34,7 +34,7 @@ trait CanReorderRecords
         return $this;
     }
 
-    public function reorderable(string | Closure | null $column = null, bool | Closure | null $condition = null, string | Closure | null $direction = null, ?Closure $beforeReorder = null, ?Closure $afterReorder = null): static
+    public function reorderable(string | Closure | null $column = null, bool | Closure | null $condition = null, string | Closure | null $direction = null): static
     {
         $this->reorderColumn = $column;
 
@@ -44,8 +44,19 @@ trait CanReorderRecords
 
         $this->reorderDirection = $direction;
 
-        $this->beforeReorderCallback = $beforeReorder;
-        $this->afterReorderCallback = $afterReorder;
+        return $this;
+    }
+
+    public function beforeReordering(?Closure $callback): static
+    {
+        $this->beforeReorderingCallback = $callback;
+
+        return $this;
+    }
+
+    public function afterReordering(?Closure $callback): static
+    {
+        $this->afterReorderingCallback = $callback;
 
         return $this;
     }
@@ -108,20 +119,16 @@ trait CanReorderRecords
     /**
      * @param  array<int | string>  $order
      */
-    public function callBeforeReorderCallback(array $order): void
+    public function callBeforeReordering(array $order): void
     {
-        if ($this->beforeReorderCallback !== null) {
-            $this->evaluate($this->beforeReorderCallback, ['order' => $order]);
-        }
+        $this->evaluate($this->beforeReorderingCallback, ['order' => $order]);
     }
 
     /**
      * @param  array<int | string>  $order
      */
-    public function callAfterReorderCallback(array $order): void
+    public function callAfterReordering(array $order): void
     {
-        if ($this->afterReorderCallback !== null) {
-            $this->evaluate($this->afterReorderCallback, ['order' => $order]);
-        }
+        $this->evaluate($this->afterReorderingCallback, ['order' => $order]);
     }
 }
