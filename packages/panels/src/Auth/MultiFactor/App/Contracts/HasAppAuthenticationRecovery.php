@@ -5,7 +5,7 @@ namespace Filament\Auth\MultiFactor\App\Contracts;
 interface HasAppAuthenticationRecovery
 {
     /**
-     * @return ?array<string>
+     * @return array<string> | null
      */
     public function getAppAuthenticationRecoveryCodes(): ?array;
 
