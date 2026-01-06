@@ -75,7 +75,9 @@ export default async ({
         DetailsSummary,
         DetailsContent,
         Document,
-        Dropcursor,
+        Dropcursor.configure({
+            class: 'fi-not-prose',
+        }),
         Gapcursor,
         Grid,
         GridColumn,
