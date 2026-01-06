@@ -47,7 +47,6 @@ if (! function_exists('Filament\get_authorization_response')) {
                     ! filled($policyClass = Gate::getPolicyFor($model))
                     || ! method_exists($policyClass, $actionValue)
                 )
-
             ) {
                 throw new LogicException(blank($policyClass)
                 ? "Strict authorization mode is enabled, but no ability [{$actionValue}] or policy with method [{$actionValue}()] was found for [{$model}]."
