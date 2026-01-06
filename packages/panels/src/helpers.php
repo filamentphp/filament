@@ -39,12 +39,19 @@ if (! function_exists('Filament\get_authorization_response')) {
         };
 
         if (! $shouldCheckPolicyExistence) {
+            // In strict mode, we need to ensure that either the ability or the policy method exists.
             if (
                 Filament::isAuthorizationStrict()
                 && ! Gate::forUser($user)->has($action)
-                && ! filled(Gate::getPolicyFor($model))
+                && (
+                    ! filled($policyClass = Gate::getPolicyFor($model))
+                    || ! method_exists($policyClass, $actionValue)
+                )
+
             ) {
-                throw new LogicException("Strict authorization mode is enabled, but no ability [{$actionValue}] or [{$actionValue}()] policy method for [{$model}] is defined.");
+                throw new LogicException(blank($policyClass)
+                ? "Strict authorization mode is enabled, but no ability [{$actionValue}] or policy with method [{$actionValue}()] was found for [{$model}]."
+                : "Strict authorization mode is enabled, but no ability [{$actionValue}] or [{$actionValue}()] method was found on [{$policyClass}].");
             }
 
             return Gate::forUser($user)->inspect($action, Arr::wrap($model));
@@ -52,7 +59,7 @@ if (! function_exists('Filament\get_authorization_response')) {
 
         $policy = Gate::getPolicyFor($model);
 
-        if (filled($policy) && method_exists($policy, $policyMethod)) {
+        if (filled($policy) && method_exists($policy, $actionValue)) {
             return Gate::forUser($user)->inspect($action, Arr::wrap($model));
         }
 
@@ -65,7 +72,7 @@ if (! function_exists('Filament\get_authorization_response')) {
 
             throw new LogicException(blank($policyClass)
                 ? "Strict authorization mode is enabled, but no policy was found for [{$model}]."
-                : "Strict authorization mode is enabled, but no [{$policyMethod}()] method was found on [{$policyClass}].");
+                : "Strict authorization mode is enabled, but no [{$actionValue}()] method was found on [{$policyClass}].");
         }
 
         /** @var bool | Response | null $response */
