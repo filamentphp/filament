@@ -26,6 +26,7 @@ use Filament\Support\Exceptions\Halt;
 use Filament\Support\Facades\FilamentView;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Contracts\Translation\HasLocalePreference;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Hash;
@@ -234,12 +235,40 @@ class EditProfile extends Page
             'newEmail' => $newEmail,
         ]));
 
-        Notification::route('mail', $newEmail)
+        $newEmailRecipient = $this->getEmailChangeVerificationRecipientWithNewEmail($record, $notification, $newEmail);
+
+        if ($record instanceof HasLocalePreference) {
+            $notification->locale($record->preferredLocale());
+        }
+
+        Notification::route('mail', $newEmailRecipient)
             ->notify($notification);
 
         $this->getEmailChangeVerificationSentNotification($newEmail)?->send();
 
         $this->data['email'] = $record->getAttributeValue('email');
+    }
+
+    /**
+     * @return string | array<string, string>
+     */
+    protected function getEmailChangeVerificationRecipientWithNewEmail(Model $record, VerifyEmailChange $notification, string $newEmail): string | array
+    {
+        if (! method_exists($record, 'routeNotificationForMail')) {
+            return $newEmail;
+        }
+
+        $recipient = $record->routeNotificationForMail($notification);
+        $currentEmail = $record->getAttributeValue('email');
+
+        if (
+            (! is_array($recipient))
+            || (! array_key_exists($currentEmail, $recipient))
+        ) {
+            return $newEmail;
+        }
+
+        return [$newEmail => $recipient[$currentEmail]];
     }
 
     protected function getSavedNotification(): ?FilamentNotification

@@ -45,6 +45,10 @@
     if ($hasLoadingIndicator) {
         $loadingIndicatorTarget = html_entity_decode($wireTarget, ENT_QUOTES);
     }
+
+    $hasFocusInputListener = $attributes->has('x-on:focus-input.stop');
+    $canClickPrefixAffix = $hasFocusInputListener && ($prefixIcon || filled($prefix));
+    $canClickSuffixAffix = $hasFocusInputListener && ($suffixIcon || filled($suffix));
 @endphp
 
 <div
@@ -71,6 +75,9 @@
                 wire:target="{{ $loadingIndicatorTarget }}"
                 wire:key="{{ \Illuminate\Support\Str::random() }}" {{-- Makes sure the loading indicator gets hidden again. --}}
             @endif
+            @if ($canClickPrefixAffix)
+                x-on:click="$dispatch('focus-input')"
+            @endif
             @class([
                 'fi-input-wrp-prefix',
                 'fi-input-wrp-prefix-has-content' => $hasPrefix,
@@ -79,7 +86,10 @@
             ])
         >
             @if (count($prefixActions))
-                <div class="fi-input-wrp-actions">
+                <div
+                    @class(['fi-input-wrp-actions'])
+                    @if ($canClickPrefixAffix) x-on:click.stop @endif
+                >
                     @foreach ($prefixActions as $prefixAction)
                         {{ $prefixAction }}
                     @endforeach
@@ -130,6 +140,9 @@
 
     @if ($hasSuffix)
         <div
+            @if ($canClickSuffixAffix)
+                x-on:click="$dispatch('focus-input')"
+            @endif
             @class([
                 'fi-input-wrp-suffix',
                 'fi-inline' => $inlineSuffix,
@@ -152,7 +165,10 @@
             }}
 
             @if (count($suffixActions))
-                <div class="fi-input-wrp-actions">
+                <div
+                    @class(['fi-input-wrp-actions'])
+                    @if ($canClickSuffixAffix) x-on:click.stop @endif
+                >
                     @foreach ($suffixActions as $suffixAction)
                         {{ $suffixAction }}
                     @endforeach

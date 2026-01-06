@@ -679,6 +679,8 @@ return [
 
         'max_items_message' => 'Only :count can be selected.',
 
+        'no_options_message' => 'No options available.',
+
         'no_search_results_message' => 'No options match your search.',
 
         'placeholder' => 'Select an option',
@@ -690,7 +692,17 @@ return [
     ],
 
     'tags_input' => [
+
+        'actions' => [
+
+            'delete' => [
+                'label' => 'Delete',
+            ],
+
+        ],
+
         'placeholder' => 'New tag',
+
     ],
 
     'text_input' => [

@@ -10,7 +10,7 @@ uses(TestCase::class);
 
 it('can block an email change', function (): void {
     $userToVerify = User::factory()->create();
-    $newEmail = fake()->email;
+    $newEmail = fake()->email();
 
     expect($userToVerify->refresh())
         ->email->not->toBe($newEmail);
@@ -46,7 +46,7 @@ it('can block an email change', function (): void {
 
 it('cannot block an email change when signed in as another user', function (): void {
     $userToVerify = User::factory()->create();
-    $newEmail = fake()->email;
+    $newEmail = fake()->email();
 
     $verificationUrl = Filament::getVerifyEmailChangeUrl($userToVerify, $newEmail);
 
@@ -73,7 +73,7 @@ it('cannot block an email change when signed in as another user', function (): v
 
 it('cannot block an email change once it has been verified', function (): void {
     $userToVerify = User::factory()->create();
-    $newEmail = fake()->email;
+    $newEmail = fake()->email();
 
     $verificationUrl = Filament::getVerifyEmailChangeUrl($userToVerify, $newEmail);
 

@@ -12,6 +12,7 @@ export default function richEditorFormComponent({
     editCustomBlockButtonIconHtml,
     extensions,
     floatingToolbars,
+    hasResizableImages,
     isDisabled,
     isLiveDebounced,
     isLiveOnBlur,
@@ -71,6 +72,7 @@ export default function richEditorFormComponent({
                             { schemaComponent: key },
                         ),
                     floatingToolbars,
+                    hasResizableImages,
                     insertCustomBlockUsing: (id, dragPosition = null) =>
                         this.$wire.mountAction(
                             'customBlock',
@@ -91,6 +93,8 @@ export default function richEditorFormComponent({
                 }),
                 content: this.state,
             })
+
+            const hasParagraphToolbar = 'paragraph' in floatingToolbars
 
             Object.keys(floatingToolbars).forEach((key) => {
                 const element = this.$refs[`floatingToolbar::${key}`]
@@ -113,6 +117,14 @@ export default function richEditorFormComponent({
                                     editor.isActive(key) &&
                                     !editor.state.selection.empty
                                 )
+                            }
+
+                            if (
+                                hasParagraphToolbar &&
+                                !editor.state.selection.empty &&
+                                editor.isActive('paragraph')
+                            ) {
+                                return false
                             }
 
                             return editor.isFocused && editor.isActive(key)
@@ -158,6 +170,12 @@ export default function richEditorFormComponent({
 
                 this.editorUpdatedAt = Date.now()
                 this.editorSelection = transaction.selection.toJSON()
+            })
+
+            editor.on('transaction', () => {
+                if (isDestroyed) return
+
+                this.editorUpdatedAt = Date.now()
             })
 
             if (isLiveOnBlur) {

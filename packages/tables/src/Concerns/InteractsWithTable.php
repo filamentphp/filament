@@ -46,7 +46,7 @@ trait InteractsWithTable
     {
         $this->table = $this->table($this->makeTable());
 
-        $this->cacheSchema('tableFiltersForm', $this->getTableFiltersForm());
+        $this->cacheSchema('tableFiltersForm', $this->getTableFiltersForm(...));
 
         $this->cacheMountedActions($this->mountedActions);
 

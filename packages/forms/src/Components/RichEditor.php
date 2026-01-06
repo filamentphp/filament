@@ -98,6 +98,8 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
 
     protected bool | Closure | null $hasCustomTextColors = null;
 
+    protected bool | Closure | null $hasResizableImages = null;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -1044,6 +1046,18 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     public function hasCustomTextColors(): bool
     {
         return (bool) ($this->evaluate($this->hasCustomTextColors) ?? $this->getContentAttribute()?->hasCustomTextColors() ?? false);
+    }
+
+    public function resizableImages(bool | Closure | null $condition = true): static
+    {
+        $this->hasResizableImages = $condition;
+
+        return $this;
+    }
+
+    public function hasResizableImages(): bool
+    {
+        return (bool) $this->evaluate($this->hasResizableImages);
     }
 
     public function hasFileAttachmentsByDefault(): bool

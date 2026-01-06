@@ -2,6 +2,7 @@
 
 namespace Filament;
 
+use BackedEnum;
 use Filament\Facades\Filament;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\Access\Response;
@@ -9,6 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Gate;
 use LogicException;
+use UnitEnum;
 
 if (! function_exists('Filament\authorize')) {
     /**
@@ -16,7 +18,7 @@ if (! function_exists('Filament\authorize')) {
      *
      * @throws AuthorizationException
      */
-    function authorize(string $action, Model | string $model, bool $shouldCheckPolicyExistence = true): Response
+    function authorize(UnitEnum | string $action, Model | string $model, bool $shouldCheckPolicyExistence = true): Response
     {
         return get_authorization_response($action, $model, $shouldCheckPolicyExistence)->authorize();
     }
@@ -26,7 +28,7 @@ if (! function_exists('Filament\get_authorization_response')) {
     /**
      * @param  Model|class-string<Model>  $model
      */
-    function get_authorization_response(string $action, Model | string $model, bool $shouldCheckPolicyExistence = true): Response
+    function get_authorization_response(UnitEnum | string $action, Model | string $model, bool $shouldCheckPolicyExistence = true): Response
     {
         $user = Filament::auth()->user();
 
@@ -36,7 +38,13 @@ if (! function_exists('Filament\get_authorization_response')) {
 
         $policy = Gate::getPolicyFor($model);
 
-        if (filled($policy) && method_exists($policy, $action)) {
+        $policyMethod = match (true) {
+            $action instanceof BackedEnum => $action->value,
+            $action instanceof UnitEnum => $action->name,
+            default => $action,
+        };
+
+        if (filled($policy) && method_exists($policy, $policyMethod)) {
             return Gate::forUser($user)->inspect($action, Arr::wrap($model));
         }
 
@@ -49,7 +57,7 @@ if (! function_exists('Filament\get_authorization_response')) {
 
             throw new LogicException(blank($policyClass)
                 ? "Strict authorization mode is enabled, but no policy was found for [{$model}]."
-                : "Strict authorization mode is enabled, but no [{$action}()] method was found on [{$policyClass}].");
+                : "Strict authorization mode is enabled, but no [{$policyMethod}()] method was found on [{$policyClass}].");
         }
 
         /** @var bool | Response | null $response */

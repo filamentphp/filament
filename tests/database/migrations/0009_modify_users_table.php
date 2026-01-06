@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table): void {
             $table->after('password', function (Blueprint $table): void {
-                $table->json('json')->nullable();
+                $table->jsonb('json')->nullable();
                 $table->boolean('has_email_authentication')->default(false);
                 $table->text('app_authentication_secret')->nullable();
                 $table->text('app_authentication_recovery_codes')->nullable();

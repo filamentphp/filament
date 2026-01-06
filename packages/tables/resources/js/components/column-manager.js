@@ -20,6 +20,10 @@ export default function filamentTableColumnManager({ columns, isLive }) {
             }
 
             this.deferredColumns = JSON.parse(JSON.stringify(this.columns))
+
+            this.$watch('columns', () => {
+                this.resetDeferredColumns()
+            })
         },
 
         get groupedColumns() {
@@ -227,6 +231,11 @@ export default function filamentTableColumnManager({ columns, isLive }) {
             } finally {
                 this.isLoading = false
             }
+        },
+
+        resetDeferredColumns() {
+            this.deferredColumns = JSON.parse(JSON.stringify(this.columns))
+            this.hasReordered = false
         },
     }
 }

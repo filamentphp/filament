@@ -150,7 +150,38 @@ it('can generate a relation manager with a table class', function (): void {
         'resource' => 'Users',
         'relationship' => 'teams',
         'recordTitleAttribute' => 'name',
+        '--table' => app()->getNamespace() . 'Filament\\Resources\\Teams\\Tables\\TeamsTable',
+        '--panel' => 'admin',
+        '--no-interaction' => true,
+    ]);
+
+    assertFileExists($path = app_path('Filament/Resources/Users/RelationManagers/TeamsRelationManager.php'));
+    expect(file_get_contents($path))
+        ->toMatchSnapshot();
+});
+
+it('can generate a relation manager with a table class and attach actions', function (): void {
+    $this->artisan('make:filament-relation-manager', [
+        'resource' => 'Users',
+        'relationship' => 'teams',
+        'recordTitleAttribute' => 'name',
         '--attach' => true,
+        '--table' => app()->getNamespace() . 'Filament\\Resources\\Teams\\Tables\\TeamsTable',
+        '--panel' => 'admin',
+        '--no-interaction' => true,
+    ]);
+
+    assertFileExists($path = app_path('Filament/Resources/Users/RelationManagers/TeamsRelationManager.php'));
+    expect(file_get_contents($path))
+        ->toMatchSnapshot();
+});
+
+it('can generate a relation manager with a table class and associate actions', function (): void {
+    $this->artisan('make:filament-relation-manager', [
+        'resource' => 'Users',
+        'relationship' => 'teams',
+        'recordTitleAttribute' => 'name',
+        '--associate' => true,
         '--table' => app()->getNamespace() . 'Filament\\Resources\\Teams\\Tables\\TeamsTable',
         '--panel' => 'admin',
         '--no-interaction' => true,

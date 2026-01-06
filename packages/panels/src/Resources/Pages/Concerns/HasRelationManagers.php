@@ -123,8 +123,8 @@ trait HasRelationManagers
 
             if ($hasCombinedRelationManagerTabsWithContent) {
                 match ($this->getContentTabPosition()) {
-                    ContentTabPosition::After => $tabs = array_merge($tabs, [null => null]),
-                    default => $tabs = array_replace([null => null], $tabs),
+                    ContentTabPosition::After => $tabs = array_merge($tabs, ['' => null]),
+                    default => $tabs = array_replace(['' => null], $tabs),
                 };
             }
 

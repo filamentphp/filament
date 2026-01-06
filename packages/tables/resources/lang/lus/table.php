@@ -30,7 +30,9 @@ return [
 
             'loading_message' => 'Loading...',
 
-            'no_search_results_message' => 'I search hi a awmlo.',
+            'no_options_message' => 'Duh thlan tur a awmlo.',
+
+            'no_search_results_message' => 'I thilzawn hi a awmlo.',
 
             'placeholder' => 'I duh thlang rawh...',
 
@@ -133,9 +135,9 @@ return [
 
     'empty' => [
 
-        'heading' => ':Model an awm lo',
+        'heading' => ':Model a awm lo',
 
-        'description' => 'A bultan nan :model siam rawh.',
+        'description' => 'A bulṭan nan :model siam rawh.',
 
     ],
 

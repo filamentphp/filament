@@ -143,14 +143,14 @@ trait HasState
     public function callBeforeStateDehydrated(array &$state = []): void
     {
         foreach ($this->getComponents(withActions: false, withHidden: true) as $component) {
-            if ($component->isHidden()) {
+            if ($component->isHiddenAndNotDehydratedWhenHidden()) {
                 continue;
             }
 
             $component->callBeforeStateDehydrated($state);
 
-            foreach ($component->getChildSchemas() as $childSchema) {
-                if ($childSchema->isHidden()) {
+            foreach ($component->getChildSchemas(withHidden: true) as $childSchema) {
+                if ($childSchema->isHiddenAndNotDehydratedWhenHidden()) {
                     continue;
                 }
 
@@ -219,8 +219,8 @@ trait HasState
                 continue;
             }
 
-            foreach ($component->getChildSchemas() as $childSchema) {
-                if ($childSchema->isHidden()) {
+            foreach ($component->getChildSchemas(withHidden: true) as $childSchema) {
+                if ($childSchema->isHiddenAndNotDehydratedWhenHidden()) {
                     continue;
                 }
 
@@ -256,8 +256,8 @@ trait HasState
                 continue;
             }
 
-            foreach ($component->getChildSchemas() as $childSchema) {
-                if ($childSchema->isHidden()) {
+            foreach ($component->getChildSchemas(withHidden: true) as $childSchema) {
+                if ($childSchema->isHiddenAndNotDehydratedWhenHidden()) {
                     continue;
                 }
 
@@ -382,7 +382,7 @@ trait HasState
      */
     public function getConstantState(): array | object
     {
-        return $this->constantState
+        return $this->evaluate($this->constantState)
             ?? $this->getRecord(withParentComponentRecord: false)
             ?? $this->getParentComponent()?->getContainer()->getConstantState()
             ?? $this->getRecord()

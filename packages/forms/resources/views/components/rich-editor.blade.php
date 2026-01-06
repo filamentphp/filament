@@ -37,6 +37,7 @@
                         editCustomBlockButtonIconHtml: @js(\Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::PencilSquare, alias: \Filament\Forms\View\FormsIconAlias::COMPONENTS_RICH_EDITOR_PANELS_CUSTOM_BLOCK_EDIT_BUTTON)->toHtml()),
                         extensions: @js($getTipTapJsExtensions()),
                         floatingToolbars: @js($floatingToolbars),
+                        hasResizableImages: @js($hasResizableImages()),
                         isDisabled: @js($isDisabled),
                         isLiveDebounced: @js($isLiveDebounced()),
                         isLiveOnBlur: @js($isLiveOnBlur()),

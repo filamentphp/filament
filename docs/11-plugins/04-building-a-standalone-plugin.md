@@ -152,13 +152,6 @@ class Heading extends Component
         return app(static::class, ['level' => $level]);
     }
 
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->dehydrated(false);
-    }
-
     public function content(string | Closure $content): static
     {
         $this->content = $content;

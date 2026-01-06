@@ -75,31 +75,31 @@ return [
             ],
 
             'reorder' => [
-                'label' => 'Move',
+                'label' => 'Dah sawnna',
             ],
 
             'move_down' => [
-                'label' => 'Move down',
+                'label' => 'Chhukna',
             ],
 
             'move_up' => [
-                'label' => 'Move up',
+                'label' => 'Chhohna',
             ],
 
             'collapse' => [
-                'label' => 'Collapse',
+                'label' => 'Tihzimna',
             ],
 
             'expand' => [
-                'label' => 'Expand',
+                'label' => 'Tihzauna',
             ],
 
             'collapse_all' => [
-                'label' => 'Collapse all',
+                'label' => 'Avaia tihzimna',
             ],
 
             'expand_all' => [
-                'label' => 'Expand all',
+                'label' => 'Avaia tihzauhna',
             ],
 
         ],
@@ -342,47 +342,47 @@ return [
         'actions' => [
 
             'add' => [
-                'label' => 'Add to :label',
+                'label' => ':Label a belhna',
             ],
 
             'add_between' => [
-                'label' => 'Insert between',
+                'label' => 'A inkâra thunna',
             ],
 
             'delete' => [
-                'label' => 'Delete',
+                'label' => 'Paihna',
             ],
 
             'clone' => [
-                'label' => 'Clone',
+                'label' => 'A ang siamna',
             ],
 
             'reorder' => [
-                'label' => 'Move',
+                'label' => 'Dah sawnna',
             ],
 
             'move_down' => [
-                'label' => 'Move down',
+                'label' => 'Chhukna',
             ],
 
             'move_up' => [
-                'label' => 'Move up',
+                'label' => 'Chhohna',
             ],
 
             'collapse' => [
-                'label' => 'Collapse',
+                'label' => 'Tihzimna',
             ],
 
             'expand' => [
-                'label' => 'Expand',
+                'label' => 'Tihzauna',
             ],
 
             'collapse_all' => [
-                'label' => 'Collapse all',
+                'label' => 'Avaia tihzimna',
             ],
 
             'expand_all' => [
-                'label' => 'Expand all',
+                'label' => 'Avaia tihzauhna',
             ],
 
         ],
@@ -650,16 +650,16 @@ return [
 
             'edit_option' => [
 
-                'label' => 'Edit',
+                'label' => 'Tihdikna',
 
                 'modal' => [
 
-                    'heading' => 'Edit',
+                    'heading' => 'Tihdikna',
 
                     'actions' => [
 
                         'save' => [
-                            'label' => 'Save',
+                            'label' => 'Thlâkthlengna',
                         ],
 
                     ],
@@ -679,6 +679,8 @@ return [
 
         'max_items_message' => ':count chiah a select theih.',
 
+        'no_options_message' => 'Duh thlan tur a awmlo.',
+
         'no_search_results_message' => 'I thilzawn hi a awmlo.',
 
         'placeholder' => 'I duh thlang rawh...',
@@ -690,7 +692,7 @@ return [
     ],
 
     'tags_input' => [
-        'placeholder' => 'New tag',
+        'placeholder' => 'Tag thar',
     ],
 
     'text_input' => [
@@ -698,16 +700,16 @@ return [
         'actions' => [
 
             'copy' => [
-                'label' => 'Copy',
-                'message' => 'Copied',
+                'label' => 'Lâk chhâwnna',
+                'message' => 'Lâk chhâwn ani e',
             ],
 
             'hide_password' => [
-                'label' => 'Hide password',
+                'label' => 'Password hliahna',
             ],
 
             'show_password' => [
-                'label' => 'Show password',
+                'label' => 'Password tihlanna',
             ],
 
         ],

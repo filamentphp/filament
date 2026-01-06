@@ -434,6 +434,26 @@ public function table(Table $table): Table
 
 <AutoScreenshot name="tables/reordering/custom-trigger-action" alt="Table with reorderable rows and a custom trigger action" version="4.x" />
 
+### Running code before and after reordering
+
+You may run code before or after a record is reordered using the `beforeReordering()` and `afterReordering()` methods. Both methods accept a function that receives the new `$order` array of record keys:
+
+```php
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->reorderable('sort')
+        ->beforeReordering(function (array $order): void {
+            // Runs before records are reordered in the database.
+        })
+        ->afterReordering(function (array $order): void {
+            // Runs after records are reordered in the database.
+        });
+}
+```
+
 ## Customizing the table header
 
 You can add a heading to a table using the `$table->heading()` method:

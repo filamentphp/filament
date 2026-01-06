@@ -14,12 +14,12 @@ return new class extends Migration
             $table->text('content')->nullable();
             $table->boolean('is_published')->default(true);
             $table->unsignedTinyInteger('rating')->default(0);
-            $table->json('tags')->nullable();
+            $table->jsonb('tags')->nullable();
             $table->string('title');
             $table->string('title2')->nullable();
-            $table->json('config')->nullable();
-            $table->json('json')->nullable();
-            $table->json('json_array_of_objects')->nullable();
+            $table->jsonb('config')->nullable();
+            $table->jsonb('json')->nullable();
+            $table->jsonb('json_array_of_objects')->nullable();
             $table->string('string_backed_enum')->nullable();
             $table->timestamp('published_at')->nullable();
             $table->timestamps();

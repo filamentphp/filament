@@ -56,7 +56,11 @@ select.fi-select-input {
     }
 
     & .fi-select-input-value-remove-btn {
-        @apply ms-2 text-gray-500 hover:text-gray-600 focus-visible:text-gray-600 focus-visible:outline-none dark:hover:text-gray-300 dark:focus-visible:text-gray-300;
+        @apply absolute end-8 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-600 focus-visible:text-gray-600 focus-visible:outline-none dark:hover:text-gray-300 dark:focus-visible:text-gray-300;
+    }
+
+    & .fi-select-input-ctn-clearable .fi-select-input-btn {
+        @apply pe-14;
     }
 
     & .fi-dropdown-panel {
