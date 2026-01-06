@@ -2,6 +2,9 @@
 
 namespace Filament\Pages\Concerns;
 
+use Filament\Facades\Filament;
+use LogicException;
+
 trait CanAuthorizeAccess
 {
     public function mountCanAuthorizeAccess(): void
@@ -11,6 +14,8 @@ trait CanAuthorizeAccess
 
     public static function canAccess(): bool
     {
-        return true;
+        return Filament::isAuthorizationStrict()
+        ? throw new LogicException(sprintf('Strict authorization mode is enabled, but [canAccess()] method in [%s] class is not defined.', static::class))
+        : true;
     }
 }
