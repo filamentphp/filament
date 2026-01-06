@@ -5,6 +5,7 @@
 
 @props([
     'compact' => false,
+    'contained' => true,
     'description' => null,
     'footer' => null,
     'heading',
@@ -28,6 +29,7 @@
         $attributes->class([
             'fi-empty-state',
             'fi-compact' => $compact,
+            'fi-empty-state-not-contained' => ! $contained,
         ])
     }}
 >
