@@ -230,14 +230,13 @@ class SelectFilter extends BaseFilter
             $this->hasEmptyRelationshipOption() &&
             in_array(static::EMPTY_RELATIONSHIP_OPTION_KEY, Arr::wrap($values))
         ) {
-            $query->when(
-                $filteredValues,
-                fn (Builder $query) => $query
+            if (filled($filteredValues)) {
+                $query
                     ->where(fn (Builder $query) => $applyRelationshipScope($query))
-                    ->orWhereDoesntHave($this->getRelationshipName()),
-                fn (Builder $query) => $query
-                    ->whereDoesntHave($this->getRelationshipName()),
-            );
+                    ->orWhereDoesntHave($this->getRelationshipName());
+            } else {
+                $query->whereDoesntHave($this->getRelationshipName());
+            }
         } else {
             $applyRelationshipScope($query);
         }
@@ -625,8 +624,8 @@ class SelectFilter extends BaseFilter
     }
 
     /**
-     * @param  string | array<array-key, string>  $values
-     * @return array<array-key, string>
+     * @param  string | array<string>  $values
+     * @return array<string>
      */
     protected function getRelationshipQueryValues(string | array $values): array
     {
