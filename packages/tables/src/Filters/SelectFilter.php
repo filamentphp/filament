@@ -41,7 +41,7 @@ class SelectFilter extends BaseFilter
 
     protected ?Closure $getOptionLabelFromRecordUsing = null;
 
-    protected static string $emptyRelationshipOptionKey = '__empty';
+    protected const EMPTY_RELATIONSHIP_OPTION_KEY = '__empty';
 
     protected function setUp(): void
     {
@@ -66,7 +66,7 @@ class SelectFilter extends BaseFilter
 
                     if (
                         $filter->hasEmptyRelationshipOption() &&
-                        in_array(self::$emptyRelationshipOptionKey, $state['values'])
+                        in_array(static::EMPTY_RELATIONSHIP_OPTION_KEY, $state['values'])
                     ) {
                         $labels[] = $filter->getEmptyRelationshipOptionLabel();
                     }
@@ -80,7 +80,7 @@ class SelectFilter extends BaseFilter
                             )
                             ->when(
                                 $filter->getRelationshipKey(),
-                                fn (Builder $query, string $relationshipKey) => $query->whereIn($relationshipKey, self::getRelationshipQueryValues($state['values'])),
+                                fn (Builder $query, string $relationshipKey) => $query->whereIn($relationshipKey, $filter->getRelationshipQueryValues($state['values'])),
                                 fn (Builder $query) => $query->whereKey($state['values'])
                             )
                             ->pluck($relationshipQuery->qualifyColumn($filter->getRelationshipTitleAttribute()))
@@ -115,7 +115,7 @@ class SelectFilter extends BaseFilter
             if ($filter->queriesRelationships()) {
                 if (
                     $filter->hasEmptyRelationshipOption() &&
-                    ($state['value'] === self::$emptyRelationshipOptionKey)
+                    ($state['value'] === static::EMPTY_RELATIONSHIP_OPTION_KEY)
                 ) {
                     $label = $filter->getEmptyRelationshipOptionLabel();
                 } else {
@@ -194,32 +194,44 @@ class SelectFilter extends BaseFilter
             );
         }
 
-        $applyRelationshipScope = fn (Builder $query) => $query->whereHas(
-            $this->getRelationshipName(),
-            function (Builder $query) use ($isMultiple, $values) {
-                if ($this->modifyRelationshipQueryUsing) {
-                    $query = $this->evaluate($this->modifyRelationshipQueryUsing, [
-                        'query' => $query,
-                    ]) ?? $query;
-                }
+        $filteredValues = $this->getRelationshipQueryValues($values);
 
-                if ($relationshipKey = $this->getRelationshipKey($query)) {
-                    return $query->{$isMultiple ? 'whereIn' : 'where'}(
-                        $relationshipKey,
-                        self::getRelationshipQueryValues($values),
-                    );
-                }
+        $applyRelationshipScope = function (Builder $query) use ($isMultiple, $filteredValues): void {
+            if (empty($filteredValues)) {
+                return;
+            }
 
-                return $query->whereKey(self::getRelationshipQueryValues($values));
-            },
-        );
+            $query->whereHas(
+                $this->getRelationshipName(),
+                function (Builder $query) use ($isMultiple, $filteredValues): void {
+                    if ($this->modifyRelationshipQueryUsing) {
+                        $query = $this->evaluate($this->modifyRelationshipQueryUsing, [
+                            'query' => $query,
+                        ]) ?? $query;
+                    }
+
+                    $queryValues = $isMultiple ? $filteredValues : $filteredValues[0];
+
+                    if ($relationshipKey = $this->getRelationshipKey($query)) {
+                        $query->{$isMultiple ? 'whereIn' : 'where'}(
+                            $relationshipKey,
+                            $queryValues,
+                        );
+
+                        return;
+                    }
+
+                    $query->whereKey($queryValues);
+                },
+            );
+        };
 
         if (
             $this->hasEmptyRelationshipOption() &&
-            in_array(self::$emptyRelationshipOptionKey, Arr::wrap($values))
+            in_array(static::EMPTY_RELATIONSHIP_OPTION_KEY, Arr::wrap($values))
         ) {
             $query->when(
-                self::getRelationshipQueryValues($values),
+                $filteredValues,
                 fn (Builder $query) => $query
                     ->where(fn (Builder $query) => $applyRelationshipScope($query))
                     ->orWhereDoesntHave($this->getRelationshipName()),
@@ -357,7 +369,7 @@ class SelectFilter extends BaseFilter
                         $this->hasEmptyRelationshipOption() &&
                         str($this->getEmptyRelationshipOptionLabel())->lower()->contains(Str::lower($search))
                     ) {
-                        $options[self::$emptyRelationshipOptionKey] = $this->getEmptyRelationshipOptionLabel();
+                        $options[static::EMPTY_RELATIONSHIP_OPTION_KEY] = $this->getEmptyRelationshipOptionLabel();
                     }
 
                     $qualifiedRelatedKeyName = $component->getQualifiedRelatedKeyNameForRelationship($relationship);
@@ -423,7 +435,7 @@ class SelectFilter extends BaseFilter
                     $options = [];
 
                     if ($this->hasEmptyRelationshipOption()) {
-                        $options[self::$emptyRelationshipOptionKey] = $this->getEmptyRelationshipOptionLabel();
+                        $options[static::EMPTY_RELATIONSHIP_OPTION_KEY] = $this->getEmptyRelationshipOptionLabel();
                     }
 
                     $qualifiedRelatedKeyName = $component->getQualifiedRelatedKeyNameForRelationship($relationship);
@@ -464,7 +476,7 @@ class SelectFilter extends BaseFilter
                 ->getOptionLabelUsing(function (Select $component) {
                     if (
                         $this->hasEmptyRelationshipOption() &&
-                        ($component->getState() === self::$emptyRelationshipOptionKey)
+                        ($component->getState() === static::EMPTY_RELATIONSHIP_OPTION_KEY)
                     ) {
                         return $this->getEmptyRelationshipOptionLabel();
                     }
@@ -494,7 +506,7 @@ class SelectFilter extends BaseFilter
 
                     $qualifiedRelatedKeyName = $component->getQualifiedRelatedKeyNameForRelationship($relationship);
 
-                    $relationshipQuery->whereIn($qualifiedRelatedKeyName, self::getRelationshipQueryValues($values));
+                    $relationshipQuery->whereIn($qualifiedRelatedKeyName, $this->getRelationshipQueryValues($values));
 
                     if ($this->modifyRelationshipQueryUsing) {
                         $relationshipQuery = $component->evaluate($this->modifyRelationshipQueryUsing, [
@@ -507,9 +519,9 @@ class SelectFilter extends BaseFilter
 
                     if (
                         $this->hasEmptyRelationshipOption() &&
-                        in_array(self::$emptyRelationshipOptionKey, $values)
+                        in_array(static::EMPTY_RELATIONSHIP_OPTION_KEY, $values)
                     ) {
-                        $labels[self::$emptyRelationshipOptionKey] = $this->getEmptyRelationshipOptionLabel();
+                        $labels[static::EMPTY_RELATIONSHIP_OPTION_KEY] = $this->getEmptyRelationshipOptionLabel();
                     }
 
                     if ($component->hasOptionLabelFromRecordUsingCallback()) {
@@ -612,20 +624,15 @@ class SelectFilter extends BaseFilter
         return $this;
     }
 
-    public static function getRelationshipQueryValues(string | array $values): string | array
+    /**
+     * @param  string | array<array-key, string>  $values
+     * @return array<array-key, string>
+     */
+    protected function getRelationshipQueryValues(string | array $values): array
     {
-        if (is_string($values)) {
-            if ($values === self::$emptyRelationshipOptionKey) {
-                return '';
-            }
-
-            return $values;
-        }
-
-        if (in_array(self::$emptyRelationshipOptionKey, $values)) {
-            unset($values[array_search(self::$emptyRelationshipOptionKey, $values)]);
-        }
-
-        return $values;
+        return array_values(array_filter(
+            Arr::wrap($values),
+            fn (string $value): bool => $value !== static::EMPTY_RELATIONSHIP_OPTION_KEY,
+        ));
     }
 }
