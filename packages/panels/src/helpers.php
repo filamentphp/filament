@@ -32,17 +32,25 @@ if (! function_exists('Filament\get_authorization_response')) {
     {
         $user = Filament::auth()->user();
 
-        if (! $shouldCheckPolicyExistence) {
-            return Gate::forUser($user)->inspect($action, Arr::wrap($model));
-        }
-
-        $policy = Gate::getPolicyFor($model);
-
-        $policyMethod = match (true) {
+        $actionValue = match (true) {
             $action instanceof BackedEnum => $action->value,
             $action instanceof UnitEnum => $action->name,
             default => $action,
         };
+
+        if (! $shouldCheckPolicyExistence) {
+            if (
+                Filament::isAuthorizationStrict()
+                && ! Gate::forUser($user)->has($action)
+                && ! filled(Gate::getPolicyFor($model))
+            ) {
+                throw new LogicException("Strict authorization mode is enabled, but no ability [{$actionValue}] or [{$actionValue}()] policy method for [{$model}] is defined.");
+            }
+
+            return Gate::forUser($user)->inspect($action, Arr::wrap($model));
+        }
+
+        $policy = Gate::getPolicyFor($model);
 
         if (filled($policy) && method_exists($policy, $policyMethod)) {
             return Gate::forUser($user)->inspect($action, Arr::wrap($model));
