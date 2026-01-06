@@ -162,7 +162,7 @@ class RelationGroup extends Component
      */
     protected function resolveDefaultClosureDependencyForEvaluationByType(string $parameterType): array
     {
-        $ownerRecord = $this->getOwnerRecord();
+        $ownerRecord = is_a($parameterType, Model::class, allow_string: true) ? $this->getOwnerRecord() : null;
 
         if (! $ownerRecord) {
             return parent::resolveDefaultClosureDependencyForEvaluationByType($parameterType);

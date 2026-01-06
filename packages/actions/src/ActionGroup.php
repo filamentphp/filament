@@ -443,7 +443,7 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
 
     protected function resolveDefaultClosureDependencyForEvaluationByType(string $parameterType): array
     {
-        $record = $this->getRecord();
+        $record = is_a($parameterType, Model::class, allow_string: true) ? $this->getRecord() : null;
 
         return match ($parameterType) {
             Model::class, ($record instanceof Model) ? $record::class : null => [$record],
