@@ -782,6 +782,14 @@
         font-size: var(--text-base);
     }
 
+    & span[data-type='mention']:where(:not(.fi-not-prose, .fi-not-prose *)),
+    & a[data-type='mention']:where(:not(.fi-not-prose, .fi-not-prose *)) {
+        display: inline-block;
+        margin-block: 0;
+        font-weight: var(--font-weight-semibold);
+        white-space: nowrap;
+    }
+
     & .grid-layout:where(:not(.fi-not-prose, .fi-not-prose *)) {
         @apply grid grid-cols-1 gap-4;
 

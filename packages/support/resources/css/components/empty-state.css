@@ -1,5 +1,9 @@
 .fi-empty-state {
-    @apply rounded-xl bg-white px-6 py-12 shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10;
+    @apply px-6 py-12;
+
+    &:not(.fi-empty-state-not-contained) {
+        @apply rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10;
+    }
 
     & .fi-empty-state-content {
         @apply mx-auto grid max-w-lg justify-items-center text-center;

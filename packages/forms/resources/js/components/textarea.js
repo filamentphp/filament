@@ -31,13 +31,20 @@ export default function textareaFormComponent({
         },
 
         resize() {
-            this.setInitialHeight()
-
             if (this.$el.scrollHeight <= 0) {
                 return
             }
 
-            const newHeight = this.$el.scrollHeight + 'px'
+            const previousHeight = this.$el.style.height
+            this.$el.style.height = '0px'
+
+            const contentHeight = this.$el.scrollHeight
+            this.$el.style.height = previousHeight
+
+            const minHeightPx =
+                parseFloat(initialHeight) *
+                parseFloat(getComputedStyle(document.documentElement).fontSize)
+            const newHeight = Math.max(contentHeight, minHeightPx) + 'px'
 
             if (this.wrapperEl.style.height === newHeight) {
                 return

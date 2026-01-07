@@ -101,3 +101,15 @@ You can add actions below the description by using the `footer` slot. This is us
     </x-slot>
 </x-filament::empty-state>
 ```
+
+## Removing the empty state container
+
+By default, empty states have a background color, shadow and border. You can remove these styles and just render the content of the empty state without the container using the `:contained` attribute:
+
+```blade
+<x-filament::empty-state :contained="false">
+    <x-slot name="heading">
+        No users yet
+    </x-slot>
+</x-filament::empty-state>
+```
