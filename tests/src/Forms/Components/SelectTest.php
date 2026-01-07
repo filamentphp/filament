@@ -1021,3 +1021,66 @@ it('can remove individual items from a `multiple()` select dropdown in the brows
         ->assertSee('Banana')
         ->assertNoSmoke();
 });
+
+it('shows "no options" message when dynamic options returns empty array', function (): void {
+    $this->actingAs(User::factory()->create());
+
+    visit('/select-test')
+        ->assertSee('Dynamic Empty Options')
+        ->click('[data-testid="dynamic-empty-options-select"] .fi-select-input-btn')
+        ->waitForText('No options available')
+        ->assertSee('No options available')
+        ->assertDontSee('Loading')
+        ->assertNoSmoke();
+});
+
+it('shows options when dynamic options returns options', function (): void {
+    $this->actingAs(User::factory()->create());
+
+    visit('/select-test')
+        ->assertSee('Dynamic With Options')
+        ->click('[data-testid="dynamic-with-options-select"] .fi-select-input-btn')
+        ->waitForText('Option 1')
+        ->assertSee('Option 1')
+        ->assertSee('Option 2')
+        ->assertDontSee('No options available')
+        ->assertDontSee('Loading')
+        ->assertNoSmoke();
+});
+
+it('shows "no options" message when dynamic options and search returns empty array', function (): void {
+    $this->actingAs(User::factory()->create());
+
+    visit('/select-test')
+        ->assertSee('Dynamic Options And Search Empty')
+        ->click('[data-testid="dynamic-options-and-search-empty-select"] .fi-select-input-btn')
+        ->waitForText('No options available')
+        ->assertSee('No options available')
+        ->assertDontSee('Loading')
+        ->assertNoSmoke();
+});
+
+it('shows "no options" message when static options is empty array', function (): void {
+    $this->actingAs(User::factory()->create());
+
+    visit('/select-test')
+        ->assertSee('Static Empty Options')
+        ->click('[data-testid="static-empty-options-select"] .fi-select-input-btn')
+        ->waitForText('No options available')
+        ->assertSee('No options available')
+        ->assertNoSmoke();
+});
+
+it('shows options when dynamic options returns non-empty array', function (): void {
+    $this->actingAs(User::factory()->create());
+
+    visit('/select-test')
+        ->assertSee('Dynamic Options With Results')
+        ->click('[data-testid="dynamic-options-with-results-select"] .fi-select-input-btn')
+        ->waitForText('Dynamic Option 1')
+        ->assertSee('Dynamic Option 1')
+        ->assertSee('Dynamic Option 2')
+        ->assertDontSee('No options available')
+        ->assertDontSee('Loading')
+        ->assertNoSmoke();
+});
