@@ -815,7 +815,7 @@ FileUpload::make('banner')
     ->imageAspectRatio(['16:9', '4:3', '1:1'])
 ```
 
-<UtilityInjection set="formFields" version="5.x">As well as allowing a static value, the `imageAspectRatio()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `imageAspectRatio()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 You can also specify a range of acceptable aspect ratios using `Rule::dimensions()`:
 
