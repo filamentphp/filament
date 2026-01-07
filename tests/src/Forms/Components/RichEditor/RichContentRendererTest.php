@@ -1,5 +1,6 @@
 <?php
 
+use Filament\Forms\Components\RichEditor\MentionProvider;
 use Filament\Forms\Components\RichEditor\RichContentRenderer;
 use Filament\Tests\TestCase;
 use Illuminate\Contracts\Support\Htmlable;
@@ -445,4 +446,335 @@ it('handles dynamic merge tag values', function (): void {
     $html = $renderer->toUnsafeHtml();
 
     expect($html)->toContain('computed value');
+});
+
+it('renders mentions as `<span>` elements with `data-type="mention"`', function (): void {
+    $renderer = RichContentRenderer::make([
+        'type' => 'doc',
+        'content' => [
+            [
+                'type' => 'paragraph',
+                'content' => [
+                    [
+                        'type' => 'mention',
+                        'attrs' => [
+                            'id' => '1',
+                            'label' => 'John Doe',
+                            'char' => '@',
+                        ],
+                    ],
+                ],
+            ],
+        ],
+    ]);
+
+    $html = $renderer->toUnsafeHtml();
+
+    expect($html)->toContain('<span');
+    expect($html)->toContain('data-type="mention"');
+    expect($html)->toContain('@John Doe');
+});
+
+it('hydrates mention labels from `MentionProvider` when label is missing', function (): void {
+    $renderer = RichContentRenderer::make([
+        'type' => 'doc',
+        'content' => [
+            [
+                'type' => 'paragraph',
+                'content' => [
+                    [
+                        'type' => 'mention',
+                        'attrs' => [
+                            'id' => '1',
+                            'char' => '@',
+                        ],
+                    ],
+                ],
+            ],
+        ],
+    ]);
+
+    $renderer->mentions([
+        MentionProvider::make('@')
+            ->getLabelsUsing(fn (array $ids): array => ['1' => 'John Doe']),
+    ]);
+
+    $html = $renderer->toUnsafeHtml();
+
+    expect($html)->toContain('@John Doe');
+});
+
+it('renders mentions as `<a>` elements when `MentionProvider` has a `url()` configured', function (): void {
+    $renderer = RichContentRenderer::make([
+        'type' => 'doc',
+        'content' => [
+            [
+                'type' => 'paragraph',
+                'content' => [
+                    [
+                        'type' => 'mention',
+                        'attrs' => [
+                            'id' => '1',
+                            'char' => '@',
+                        ],
+                    ],
+                ],
+            ],
+        ],
+    ]);
+
+    $renderer->mentions([
+        MentionProvider::make('@')
+            ->getLabelsUsing(fn (array $ids): array => ['1' => 'John Doe'])
+            ->url(fn (string $id, string $label): string => "/users/{$id}"),
+    ]);
+
+    $html = $renderer->toUnsafeHtml();
+
+    expect($html)->toContain('<a');
+    expect($html)->toContain('href="/users/1"');
+    expect($html)->toContain('data-type="mention"');
+    expect($html)->toContain('@John Doe');
+});
+
+it('batch fetches labels for multiple mentions with the same char', function (): void {
+    $fetchedIds = [];
+
+    $renderer = RichContentRenderer::make([
+        'type' => 'doc',
+        'content' => [
+            [
+                'type' => 'paragraph',
+                'content' => [
+                    [
+                        'type' => 'mention',
+                        'attrs' => [
+                            'id' => '1',
+                            'char' => '@',
+                        ],
+                    ],
+                    [
+                        'type' => 'text',
+                        'text' => ' and ',
+                    ],
+                    [
+                        'type' => 'mention',
+                        'attrs' => [
+                            'id' => '2',
+                            'char' => '@',
+                        ],
+                    ],
+                ],
+            ],
+        ],
+    ]);
+
+    $renderer->mentions([
+        MentionProvider::make('@')
+            ->getLabelsUsing(function (array $ids) use (&$fetchedIds): array {
+                $fetchedIds = $ids;
+
+                return [
+                    '1' => 'John',
+                    '2' => 'Jane',
+                ];
+            }),
+    ]);
+
+    $html = $renderer->toUnsafeHtml();
+
+    expect($fetchedIds)->toBe(['1', '2']);
+    expect($html)->toContain('@John');
+    expect($html)->toContain('@Jane');
+});
+
+it('handles multiple mention providers with different chars', function (): void {
+    $renderer = RichContentRenderer::make([
+        'type' => 'doc',
+        'content' => [
+            [
+                'type' => 'paragraph',
+                'content' => [
+                    [
+                        'type' => 'mention',
+                        'attrs' => [
+                            'id' => '1',
+                            'char' => '@',
+                        ],
+                    ],
+                    [
+                        'type' => 'text',
+                        'text' => ' mentioned ',
+                    ],
+                    [
+                        'type' => 'mention',
+                        'attrs' => [
+                            'id' => '100',
+                            'char' => '#',
+                        ],
+                    ],
+                ],
+            ],
+        ],
+    ]);
+
+    $renderer->mentions([
+        MentionProvider::make('@')
+            ->getLabelsUsing(fn (array $ids): array => ['1' => 'John']),
+        MentionProvider::make('#')
+            ->getLabelsUsing(fn (array $ids): array => ['100' => 'issue-123']),
+    ]);
+
+    $html = $renderer->toUnsafeHtml();
+
+    expect($html)->toContain('@John');
+    expect($html)->toContain('#issue-123');
+});
+
+it('preserves existing labels and does not refetch them', function (): void {
+    $fetchCount = 0;
+
+    $renderer = RichContentRenderer::make([
+        'type' => 'doc',
+        'content' => [
+            [
+                'type' => 'paragraph',
+                'content' => [
+                    [
+                        'type' => 'mention',
+                        'attrs' => [
+                            'id' => '1',
+                            'label' => 'Existing Label',
+                            'char' => '@',
+                        ],
+                    ],
+                ],
+            ],
+        ],
+    ]);
+
+    $renderer->mentions([
+        MentionProvider::make('@')
+            ->getLabelsUsing(function (array $ids) use (&$fetchCount): array {
+                $fetchCount++;
+
+                return ['1' => 'New Label'];
+            }),
+    ]);
+
+    $html = $renderer->toUnsafeHtml();
+
+    expect($fetchCount)->toBe(0);
+    expect($html)->toContain('@Existing Label');
+    expect($html)->not->toContain('New Label');
+});
+
+it('falls back to id as label when provider returns no label', function (): void {
+    $renderer = RichContentRenderer::make([
+        'type' => 'doc',
+        'content' => [
+            [
+                'type' => 'paragraph',
+                'content' => [
+                    [
+                        'type' => 'mention',
+                        'attrs' => [
+                            'id' => '999',
+                            'char' => '@',
+                        ],
+                    ],
+                ],
+            ],
+        ],
+    ]);
+
+    $renderer->mentions([
+        MentionProvider::make('@')
+            ->getLabelsUsing(fn (array $ids): array => []),
+    ]);
+
+    $html = $renderer->toUnsafeHtml();
+
+    expect($html)->toContain('@999');
+});
+
+it('renders mentions without provider configured', function (): void {
+    $renderer = RichContentRenderer::make([
+        'type' => 'doc',
+        'content' => [
+            [
+                'type' => 'paragraph',
+                'content' => [
+                    [
+                        'type' => 'mention',
+                        'attrs' => [
+                            'id' => '1',
+                            'label' => 'John',
+                            'char' => '@',
+                        ],
+                    ],
+                ],
+            ],
+        ],
+    ]);
+
+    $html = $renderer->toUnsafeHtml();
+
+    expect($html)->toContain('@John');
+});
+
+it('uses static `items()` for label lookup when `getLabelsUsing()` is not configured', function (): void {
+    $renderer = RichContentRenderer::make([
+        'type' => 'doc',
+        'content' => [
+            [
+                'type' => 'paragraph',
+                'content' => [
+                    [
+                        'type' => 'mention',
+                        'attrs' => [
+                            'id' => 'admin',
+                            'char' => '@',
+                        ],
+                    ],
+                ],
+            ],
+        ],
+    ]);
+
+    $renderer->mentions([
+        MentionProvider::make('@')
+            ->items([
+                'admin' => 'Administrator',
+                'user' => 'Regular User',
+            ]),
+    ]);
+
+    $html = $renderer->toUnsafeHtml();
+
+    expect($html)->toContain('@Administrator');
+});
+
+it('renders mentions without labels as empty spans', function (): void {
+    $renderer = RichContentRenderer::make([
+        'type' => 'doc',
+        'content' => [
+            [
+                'type' => 'paragraph',
+                'content' => [
+                    [
+                        'type' => 'mention',
+                        'attrs' => [
+                            'id' => '1',
+                            'char' => '@',
+                        ],
+                    ],
+                ],
+            ],
+        ],
+    ]);
+
+    $html = $renderer->toUnsafeHtml();
+
+    expect($html)->toContain('<span data-type="mention" data-id="1" data-char="@"></span>');
 });

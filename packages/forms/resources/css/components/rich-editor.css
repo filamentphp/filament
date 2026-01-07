@@ -52,6 +52,8 @@
     }
 
     & span[data-type='mergeTag'] {
+        @apply my-0 inline-block whitespace-nowrap;
+
         &::before {
             @apply me-1 font-normal opacity-60;
             content: '{{';
@@ -61,6 +63,10 @@
             @apply ms-1 font-normal opacity-60;
             content: '}}';
         }
+    }
+
+    & span[data-type='mention'] {
+        @apply bg-primary-50 text-primary-600 dark:bg-primary-400/10 dark:text-primary-400 my-0 inline-block rounded px-1 font-medium whitespace-nowrap;
     }
 
     & .fi-fo-rich-editor-panels {
