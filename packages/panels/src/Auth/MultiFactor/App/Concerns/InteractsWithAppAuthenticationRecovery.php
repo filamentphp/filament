@@ -18,7 +18,7 @@ trait InteractsWithAppAuthenticationRecovery /** @phpstan-ignore trait.unused */
             'app_authentication_recovery_codes' => 'encrypted:array',
         ]);
 
-        if (version_compare(Application::VERSION, '12.0.0', '>')) {
+        if (version_compare(Application::VERSION, '12.0.0', '>=')) {
             $this->mergeHidden([
                 'app_authentication_recovery_codes',
             ]);
