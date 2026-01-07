@@ -930,7 +930,8 @@ export class Select {
             }
         })
 
-        target.appendChild(removeButton)
+        this.container.appendChild(removeButton)
+        this.container.classList.add('fi-select-input-ctn-clearable')
     }
 
     getSelectedOptionLabel(value) {

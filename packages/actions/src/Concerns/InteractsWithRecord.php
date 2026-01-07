@@ -112,10 +112,12 @@ trait InteractsWithRecord
             $this->record = $record;
         }
 
-        $ensureCorrectRecordType = function (Model | array | null $record): Model | array | null {
+        $customModel = $this->getCustomModel();
+
+        $ensureCorrectRecordType = function (Model | array | null $record) use ($customModel): Model | array | null {
             if (
                 ($record instanceof Model)
-                && filled($customModel = $this->getCustomModel())
+                && filled($customModel)
                 && (! $record instanceof $customModel)
             ) {
                 return null;

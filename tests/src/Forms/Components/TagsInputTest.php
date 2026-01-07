@@ -3,11 +3,17 @@
 use Filament\Forms\Components\TagsInput;
 use Filament\Schemas\Schema;
 use Filament\Tests\Fixtures\Livewire\Livewire;
+use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
+use Illuminate\Support\Facades\Artisan;
 
 use function Filament\Tests\livewire;
 
 uses(TestCase::class);
+
+beforeEach(function (): void {
+    Artisan::call('filament:assets');
+});
 
 it('can trim whitespace from TagsInput array values', function (mixed $input, mixed $expected): void {
     livewire(TestComponentWithTagsInputTrim::class)
@@ -73,3 +79,24 @@ class TestComponentWithTagsInputStripCharacters extends Livewire
         $this->data = $this->form->getState();
     }
 }
+
+it('can add and remove tags in the browser', function (): void {
+    $this->actingAs(User::factory()->create());
+
+    visit('/tags-input-test')
+        ->assertSee('Tags Input Test')
+        ->assertSee('Basic Tags')
+        ->assertDontSee('MyNewTag')
+        ->type('[data-testid="basic-tags"] input', 'MyNewTag')
+        ->keys('[data-testid="basic-tags"] input', 'Enter')
+        ->waitForText('MyNewTag')
+        ->assertSee('MyNewTag')
+        ->click('[data-testid="basic-tags"] .fi-badge-delete-btn')
+        ->assertDontSee('MyNewTag')
+        ->assertNoSmoke()
+        ->assertNoAccessibilityIssues();
+
+    visit('/tags-input-test')
+        ->inDarkMode()
+        ->assertNoAccessibilityIssues();
+});

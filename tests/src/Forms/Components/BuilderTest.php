@@ -7,7 +7,9 @@ use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
 use Filament\Tests\Fixtures\Livewire\Livewire;
+use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
+use Illuminate\Support\Facades\Artisan;
 
 use function Filament\Tests\livewire;
 
@@ -336,3 +338,33 @@ class TestComponentWithExtraItemActionInBuilder extends Livewire
             ->statePath('data');
     }
 }
+
+it('can add and delete blocks in the browser', function (): void {
+    Artisan::call('filament:assets');
+
+    $this->actingAs(User::factory()->create());
+
+    visit('/builder-test')
+        ->assertSee('Builder Test')
+        ->assertSee('Content')
+        ->assertNotPresent('[data-testid="builder"] .fi-fo-builder-item')
+        ->click('text=Add to content')
+        ->waitForText('Paragraph')
+        ->click('text=Paragraph')
+        ->wait(1)
+        ->assertPresent('[data-testid="builder"] .fi-fo-builder-item')
+        ->click('text=Add to content')
+        ->waitForText('Heading')
+        ->click('text=Heading')
+        ->wait(1)
+        ->assertCount('[data-testid="builder"] .fi-fo-builder-item', 2)
+        ->click('[data-testid="builder"] .fi-fo-builder-items > .fi-fo-builder-item:last-child .fi-fo-builder-item-header-end-actions button')
+        ->wait(1)
+        ->assertCount('[data-testid="builder"] .fi-fo-builder-item', 1)
+        ->assertNoSmoke()
+        ->assertNoAccessibilityIssues();
+
+    visit('/builder-test')
+        ->inDarkMode()
+        ->assertNoAccessibilityIssues();
+});

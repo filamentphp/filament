@@ -5,12 +5,17 @@ use Filament\Facades\Filament;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
 use Illuminate\Auth\Events\Failed;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Str;
 
 use function Filament\Tests\livewire;
 
 uses(TestCase::class);
+
+beforeEach(function (): void {
+    Artisan::call('filament:assets');
+});
 
 it('can render page', function (): void {
     expect(Filament::getLoginUrl())->toEndWith('/login');
@@ -182,4 +187,29 @@ it('can validate `password` is required', function (): void {
         ->fillForm(['password' => ''])
         ->call('authenticate')
         ->assertHasFormErrors(['password' => ['required']]);
+});
+
+it('can fill the login form, authenticate, and redirect to the dashboard in the browser', function (): void {
+    $user = User::factory()->create();
+
+    visit(Filament::getLoginUrl())
+        ->assertSee('Sign in')
+        ->assertNoSmoke()
+        ->assertNoAccessibilityIssues()
+        ->type('input[type="email"]', $user->email)
+        ->type('input[type="password"]', 'password')
+        ->click('button[type="submit"]')
+        ->waitForText('Dashboard')
+        ->assertPathIs('/')
+        ->assertSee('Dashboard')
+        ->assertNoSmoke()
+        ->assertNoAccessibilityIssues();
+
+    visit(Filament::getLoginUrl())
+        ->inDarkMode()
+        ->assertNoAccessibilityIssues();
+
+    visit(Filament::getUrl())
+        ->inDarkMode()
+        ->assertNoAccessibilityIssues();
 });

@@ -19,6 +19,7 @@ use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Livewire\Component;
@@ -986,3 +987,26 @@ class RepeaterWithHasManyRelationshipAndModifyQuery extends Component implements
         return view('livewire.form');
     }
 }
+
+it('can add and delete items in the browser', function (): void {
+    Artisan::call('filament:assets');
+
+    $this->actingAs(User::factory()->create());
+
+    visit('/repeater-test')
+        ->assertSee('Repeater Test')
+        ->assertSee('Items')
+        ->assertPresent('[data-testid="repeater"] .fi-fo-repeater-item')
+        ->click('[data-testid="repeater"] .fi-fo-repeater-add button')
+        ->wait(1)
+        ->assertPresent('[data-testid="repeater"] .fi-fo-repeater-item:nth-child(2)')
+        ->click('[data-testid="repeater"] .fi-fo-repeater-item:nth-child(2) .fi-fo-repeater-item-header-end-actions button')
+        ->wait(1)
+        ->assertNotPresent('[data-testid="repeater"] .fi-fo-repeater-item:nth-child(2)')
+        ->assertNoSmoke()
+        ->assertNoAccessibilityIssues();
+
+    visit('/repeater-test')
+        ->inDarkMode()
+        ->assertNoAccessibilityIssues();
+});

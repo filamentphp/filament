@@ -20,6 +20,8 @@ trait CanReorderRecords
             return;
         }
 
+        $this->getTable()->callBeforeReordering($order);
+
         $orderColumn = (string) str($this->getTable()->getReorderColumn())->afterLast('.');
 
         DB::transaction(function () use ($order, $orderColumn): void {
@@ -52,6 +54,8 @@ trait CanReorderRecords
                     ),
                 ]);
         });
+
+        $this->getTable()->callAfterReordering($order);
     }
 
     public function toggleTableReordering(): void

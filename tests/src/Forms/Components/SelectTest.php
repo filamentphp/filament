@@ -15,12 +15,17 @@ use Filament\Tests\Fixtures\Models\Team;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
 use function Filament\Tests\livewire;
 
 uses(TestCase::class);
+
+beforeEach(function (): void {
+    Artisan::call('filament:assets');
+});
 
 it('can automatically validate valid options', function (): void {
     livewire(TestComponentWithSelect::class)
@@ -911,3 +916,108 @@ class RepeaterWithSelectBelongsToManyRelationshipEagerLoaded extends Component i
         return view('livewire.form');
     }
 }
+
+it('can select an option from a `native(false)` select dropdown in the browser', function (): void {
+    $this->actingAs(User::factory()->create());
+
+    visit('/select-test')
+        ->assertSee('Select Test')
+        ->assertSee('Single Select')
+        ->assertDontSee('One')
+        ->assertDontSee('Two')
+        ->click('[data-testid="single-select"] .fi-select-input-btn')
+        ->waitForText('One')
+        ->assertSee('Two')
+        ->click('Two')
+        ->assertDontSee('One')
+        ->assertSee('Two')
+        ->assertNoSmoke()
+        ->assertNoAccessibilityIssues();
+
+    visit('/select-test')
+        ->inDarkMode()
+        ->assertNoAccessibilityIssues();
+});
+
+it('can select multiple options from a `multiple()` select dropdown in the browser', function (): void {
+    $this->actingAs(User::factory()->create());
+
+    visit('/select-test')
+        ->assertSee('Multiple Select')
+        ->assertDontSee('Apple')
+        ->assertDontSee('Cherry')
+        ->click('[data-testid="multiple-select"] .fi-select-input-btn')
+        ->waitForText('Apple')
+        ->click('Apple')
+        ->click('Cherry')
+        ->keys('[data-testid="multiple-select"] .fi-select-input-btn', 'Escape')
+        ->assertSee('Apple')
+        ->assertSee('Cherry')
+        ->assertNoSmoke();
+});
+
+it('can navigate options using keyboard in a `native(false)` select dropdown in the browser', function (): void {
+    $this->actingAs(User::factory()->create());
+
+    visit('/select-test')
+        ->assertSee('Single Select')
+        ->assertDontSee('Two')
+        ->click('[data-testid="single-select"] .fi-select-input-btn')
+        ->waitForText('One')
+        ->keys('[data-testid="single-select"] .fi-select-input-option.fi-selected', ['ArrowDown', 'Enter'])
+        ->assertDontSee('One')
+        ->assertSee('Two')
+        ->assertNoSmoke();
+});
+
+it('can search and select an option in a `searchable()` select dropdown in the browser', function (): void {
+    $this->actingAs(User::factory()->create());
+
+    visit('/select-test')
+        ->assertSee('Searchable Select')
+        ->assertDontSee('Purple')
+        ->click('[data-testid="searchable-select"] .fi-select-input-btn')
+        ->waitForText('Red')
+        ->assertSee('Purple')
+        ->type('[data-testid="searchable-select"] .fi-select-input-search-ctn input', 'pur')
+        ->waitForText('Purple')
+        ->assertDontSee('Red')
+        ->click('Purple')
+        ->assertSee('Purple')
+        ->assertNoSmoke();
+});
+
+it('can clear a selected value in a `native(false)` select dropdown in the browser', function (): void {
+    $this->actingAs(User::factory()->create());
+
+    visit('/select-test')
+        ->assertSee('Clearable Select')
+        ->assertDontSee('Active')
+        ->click('[data-testid="clearable-select"] .fi-select-input-btn')
+        ->waitForText('Active')
+        ->click('Active')
+        ->assertSee('Active')
+        ->click('[data-testid="clearable-select"] .fi-select-input-value-remove-btn')
+        ->assertDontSee('Active')
+        ->assertNoSmoke();
+});
+
+it('can remove individual items from a `multiple()` select dropdown in the browser', function (): void {
+    $this->actingAs(User::factory()->create());
+
+    visit('/select-test')
+        ->assertSee('Multiple Select')
+        ->assertDontSee('Apple')
+        ->assertDontSee('Banana')
+        ->click('[data-testid="multiple-select"] .fi-select-input-btn')
+        ->waitForText('Apple')
+        ->click('Apple')
+        ->click('Banana')
+        ->keys('[data-testid="multiple-select"] .fi-select-input-btn', 'Escape')
+        ->assertSee('Apple')
+        ->assertSee('Banana')
+        ->click('[data-testid="multiple-select"] [aria-label="Remove Apple"]')
+        ->assertDontSee('Apple')
+        ->assertSee('Banana')
+        ->assertNoSmoke();
+});

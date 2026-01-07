@@ -519,7 +519,7 @@ TextInput::make('slug')
 
 ### Running JavaScript when an action is clicked
 
-If you need a simple action that runs JavaScript directly in the browser without making a network request, you can use the `jsAction()` method. This is useful for simple interactions like updating form field values instantly:
+If you need a simple action that runs JavaScript directly in the browser without making a network request, you can use the `actionJs()` method. This is useful for simple interactions like updating form field values instantly:
 
 ```php
 use Filament\Actions\Action;
@@ -529,7 +529,7 @@ TextInput::make('title')
     ->live(onBlur: true)
     ->afterContent(
         Action::make('generateSlug')
-            ->jsAction(<<<'JS'
+            ->actionJs(<<<'JS'
                 $set('slug', $get('title').toLowerCase().replaceAll(' ', '-'))
                 JS)
     )
@@ -539,14 +539,14 @@ TextInput::make('slug')
 
 The JavaScript string has access to `$get()` and `$set()` utilities, which allow you to read and modify the state of form fields in the schema.
 
-<UtilityInjection set="actions" version="4.x">As well as allowing a static value, the `jsAction()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="actions" version="4.x">As well as allowing a static value, the `actionJs()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 <Aside variant="warning">
-    When using `jsAction()`, the action cannot open a modal or perform any server-side processing. It is intended for simple client-side interactions only. If you need to run PHP code, use the `action()` method instead.
+    When using `actionJs()`, the action cannot open a modal or perform any server-side processing. It is intended for simple client-side interactions only. If you need to run PHP code, use the `action()` method instead.
 </Aside>
 
 <Aside variant="danger">
-    Any JavaScript string passed to the `jsAction()` method will be executed in the browser, so you should never add user input directly into the string, as it could lead to cross-site scripting (XSS) vulnerabilities. User input from `$get()` should never be evaluated as JavaScript code, but is safe to use as a string value.
+    Any JavaScript string passed to the `actionJs()` method will be executed in the browser, so you should never add user input directly into the string, as it could lead to cross-site scripting (XSS) vulnerabilities. User input from `$get()` should never be evaluated as JavaScript code, but is safe to use as a string value.
 </Aside>
 
 ## Action utility injection

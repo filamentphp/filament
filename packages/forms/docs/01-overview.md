@@ -637,7 +637,7 @@ TextInput::make('name')
 <AutoScreenshot name="forms/fields/below-content/action" alt="Form field with action below content" version="4.x" />
 
 <Aside variant="tip">
-    If you need a simple action that runs JavaScript without making a network request, you can use the [`jsAction()` method](../actions/overview#running-javascript-when-an-action-is-clicked). This is useful for simple interactions like updating form field values using `$get()` and `$set()`. Actions using `jsAction()` cannot open modals.
+    If you need a simple action that runs JavaScript without making a network request, you can use the [`actionJs()` method](../actions/overview#running-javascript-when-an-action-is-clicked). This is useful for simple interactions like updating form field values using `$get()` and `$set()`. Actions using `actionJs()` cannot open modals.
 </Aside>
 
 You can insert any combination of content into the slots by passing an array of content to the method:
