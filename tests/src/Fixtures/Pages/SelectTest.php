@@ -70,6 +70,60 @@ class SelectTest extends Page
                     ])
                     ->native(false)
                     ->extraAttributes(['data-testid' => 'clearable-select']),
+
+                Select::make('dynamic_empty_options')
+                    ->label('Dynamic Empty Options')
+                    ->options(fn (): array => [])
+                    ->native(false)
+                    ->noOptionsMessage('No options available')
+                    ->extraAttributes(['data-testid' => 'dynamic-empty-options-select']),
+
+                Select::make('dynamic_with_options')
+                    ->label('Dynamic With Options')
+                    ->options(fn (): array => [
+                        'option1' => 'Option 1',
+                        'option2' => 'Option 2',
+                    ])
+                    ->native(false)
+                    ->noOptionsMessage('No options available')
+                    ->extraAttributes(['data-testid' => 'dynamic-with-options-select']),
+
+                Select::make('dynamic_options_and_search_empty')
+                    ->label('Dynamic Options And Search Empty')
+                    ->options(fn (): array => [])
+                    ->getSearchResultsUsing(fn (string $search): array => [])
+                    ->getOptionLabelUsing(fn ($value): ?string => null)
+                    ->native(false)
+                    ->searchable()
+                    ->noOptionsMessage('No options available')
+                    ->extraAttributes(['data-testid' => 'dynamic-options-and-search-empty-select']),
+
+                Select::make('static_empty_options')
+                    ->label('Static Empty Options')
+                    ->options([])
+                    ->native(false)
+                    ->noOptionsMessage('No options available')
+                    ->extraAttributes(['data-testid' => 'static-empty-options-select']),
+
+                Select::make('dynamic_options_with_results')
+                    ->label('Dynamic Options With Results')
+                    ->options(fn (): array => [
+                        'dynamic1' => 'Dynamic Option 1',
+                        'dynamic2' => 'Dynamic Option 2',
+                    ])
+                    ->getSearchResultsUsing(fn (string $search): array => [
+                        'result1' => 'Search Result 1',
+                    ])
+                    ->getOptionLabelUsing(fn ($value): ?string => match ($value) {
+                        'dynamic1' => 'Dynamic Option 1',
+                        'dynamic2' => 'Dynamic Option 2',
+                        'result1' => 'Search Result 1',
+                        default => null,
+                    })
+                    ->native(false)
+                    ->searchable()
+                    ->noOptionsMessage('No options available')
+                    ->extraAttributes(['data-testid' => 'dynamic-options-with-results-select']),
             ])
             ->statePath('data');
     }

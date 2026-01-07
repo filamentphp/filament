@@ -439,10 +439,14 @@ export class Select {
         if (totalRenderedCount === 0) {
             // Show a message if:
             // - There is an active search query (show "no search results" message), or
-            // - The field has hasInitialNoOptionsMessage enabled (show "no options" message)
+            // - The field has `hasInitialNoOptionsMessage` enabled (show "no options" message), or
+            // - The field has dynamic options and no options were returned (show "no options" message)
             if (this.searchQuery) {
                 this.showNoResultsMessage()
-            } else if (this.hasInitialNoOptionsMessage) {
+            } else if (
+                this.hasInitialNoOptionsMessage ||
+                this.hasDynamicOptions
+            ) {
                 this.showNoOptionsMessage()
             }
             // If in multiple mode and no search query, hide the dropdown
