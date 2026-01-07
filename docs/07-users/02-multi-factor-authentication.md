@@ -40,18 +40,18 @@ Schema::table('users', function (Blueprint $table) {
 });
 ```
 
-In the `User` model, you should implement the `HasAppAuthentication` interface and use the `ImplementsAppAuthentication` trait which provides the necessary methods to interact with the secret code and other information about the integration:
+In the `User` model, you should implement the `HasAppAuthentication` interface and use the `InteractsWithAppAuthentication` trait which provides the necessary methods to interact with the secret code and other information about the integration:
 
 ```php
 use Filament\Auth\MultiFactor\App\Contracts\HasAppAuthentication;
-use Filament\Auth\MultiFactor\App\Concerns\ImplementsAppAuthentication;
+use Filament\Auth\MultiFactor\App\Concerns\InteractsWithAppAuthentication;
 use Filament\Models\Contracts\FilamentUser;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable implements FilamentUser, HasAppAuthentication, MustVerifyEmail
 {
-    use ImplementsAppAuthentication;
+    use InteractsWithAppAuthentication;
     
     // ...
 }
@@ -92,21 +92,21 @@ Schema::table('users', function (Blueprint $table) {
 });
 ```
 
-Next, you should implement the `HasAppAuthenticationRecovery` interface on the `User` model and use the `ImplementsAppAuthenticationRecovery` trait which provides Filament with the necessary methods to interact with the recovery codes:
+Next, you should implement the `HasAppAuthenticationRecovery` interface on the `User` model and use the `InteractsWithAppAuthenticationRecovery` trait which provides Filament with the necessary methods to interact with the recovery codes:
 
 ```php
 use Filament\Auth\MultiFactor\App\Contracts\HasAppAuthentication;
-use Filament\Auth\MultiFactor\App\Concerns\ImplementsAppAuthentication;
+use Filament\Auth\MultiFactor\App\Concerns\InteractsWithAppAuthentication;
 use Filament\Auth\MultiFactor\App\Contracts\HasAppAuthenticationRecovery;
-use Filament\Auth\MultiFactor\App\Concerns\ImplementsAppAuthenticationRecovery;
+use Filament\Auth\MultiFactor\App\Concerns\InteractsWithAppAuthenticationRecovery;
 use Filament\Models\Contracts\FilamentUser;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable implements FilamentUser, HasAppAuthentication, HasAppAuthenticationRecovery, MustVerifyEmail
 {
-    use ImplementsAppAuthentication;
-    use ImplementsAppAuthenticationRecovery;
+    use InteractsWithAppAuthentication;
+    use InteractsWithAppAuthenticationRecovery;
     
     // ...
 }
@@ -228,18 +228,18 @@ Schema::table('users', function (Blueprint $table) {
 });
 ```
 
-Next, you should implement the `HasEmailAuthentication` interface on the `User` model and use the `ImplementsEmailAuthentication` trait which provides Filament with the necessary methods to interact with the column that indicates whether or not email authentication is enabled:
+Next, you should implement the `HasEmailAuthentication` interface on the `User` model and use the `InteractsWithEmailAuthentication` trait which provides Filament with the necessary methods to interact with the column that indicates whether or not email authentication is enabled:
 
 ```php
 use Filament\Auth\MultiFactor\Email\Contracts\HasEmailAuthentication;
-use Filament\Auth\MultiFactor\Email\Concerns\ImplementsEmailAuthentication;
+use Filament\Auth\MultiFactor\Email\Concerns\InteractsWithEmailAuthentication;
 use Filament\Models\Contracts\FilamentUser;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable implements FilamentUser, HasEmailAuthentication, MustVerifyEmail
 {
-    use ImplementsEmailAuthentication;
+    use InteractsWithEmailAuthentication;
     
     // ...
 }

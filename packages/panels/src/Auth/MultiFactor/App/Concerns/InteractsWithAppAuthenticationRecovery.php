@@ -2,14 +2,16 @@
 
 namespace Filament\Auth\MultiFactor\App\Concerns;
 
+use Illuminate\Database\Eloquent\Model;
+
 /**
  * @property array<string> | null $app_authentication_recovery_codes
  *
- * @mixin \Illuminate\Database\Eloquent\Model
+ * @mixin Model
  */
-trait ImplementsAppAuthenticationRecovery
+trait InteractsWithAppAuthenticationRecovery /** @phpstan-ignore trait.unused */
 {
-    protected function initializeImplementsAppAuthenticationRecovery(): void
+    protected function initializeInteractsWithAppAuthenticationRecovery(): void
     {
         $this->mergeCasts([
             'app_authentication_recovery_codes' => 'encrypted:array',
@@ -21,7 +23,7 @@ trait ImplementsAppAuthenticationRecovery
     }
 
     /**
-     * @return array<string> | null
+     * @return ?array<string>
      */
     public function getAppAuthenticationRecoveryCodes(): ?array
     {
@@ -29,7 +31,7 @@ trait ImplementsAppAuthenticationRecovery
     }
 
     /**
-     * @param  array<string> | null  $codes
+     * @param  ?array<string>  $codes
      */
     public function saveAppAuthenticationRecoveryCodes(?array $codes): void
     {

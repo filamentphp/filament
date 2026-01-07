@@ -2,14 +2,16 @@
 
 namespace Filament\Auth\MultiFactor\Email\Concerns;
 
+use Illuminate\Database\Eloquent\Model;
+
 /**
  * @property bool $has_email_authentication
  *
- * @mixin \Illuminate\Database\Eloquent\Model
+ * @mixin Model
  */
-trait ImplementsEmailAuthentication
+trait InteractsWithEmailAuthentication /** @phpstan-ignore trait.unused */
 {
-    protected function initializeImplementsEmailAuthentication(): void
+    protected function initializeInteractsWithEmailAuthentication(): void
     {
         $this->mergeCasts([
             'has_email_authentication' => 'boolean',
@@ -18,7 +20,7 @@ trait ImplementsEmailAuthentication
 
     public function hasEmailAuthentication(): bool
     {
-        return $this->has_email_authentication;
+        return (bool) $this->has_email_authentication;
     }
 
     public function toggleEmailAuthentication(bool $condition): void

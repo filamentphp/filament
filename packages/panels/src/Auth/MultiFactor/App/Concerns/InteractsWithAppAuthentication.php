@@ -2,14 +2,16 @@
 
 namespace Filament\Auth\MultiFactor\App\Concerns;
 
+use Illuminate\Database\Eloquent\Model;
+
 /**
  * @property ?string $app_authentication_secret
  *
- * @mixin \Illuminate\Database\Eloquent\Model
+ * @mixin Model
  */
-trait ImplementsAppAuthentication
+trait InteractsWithAppAuthentication /** @phpstan-ignore trait.unused */
 {
-    protected function initializeImplementsAppAuthentication(): void
+    protected function initializeInteractsWithAppAuthentication(): void
     {
         $this->mergeCasts([
             'app_authentication_secret' => 'encrypted',
