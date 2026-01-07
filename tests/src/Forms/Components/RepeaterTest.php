@@ -8,6 +8,7 @@ use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
@@ -15,6 +16,7 @@ use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
 use Filament\Tests\Fixtures\Livewire\Livewire;
 use Filament\Tests\Fixtures\Models\Post;
+use Filament\Tests\Fixtures\Models\PostMetadata;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
 use Illuminate\Contracts\View\View;
@@ -1010,3 +1012,191 @@ it('can add and delete items in the browser', function (): void {
         ->inDarkMode()
         ->assertNoAccessibilityIssues();
 });
+
+it('can save a nested singular relationship inside a repeater item', function (): void {
+    $user = User::factory()->create();
+
+    $undoRepeaterFake = Repeater::fake();
+
+    livewire(RepeaterWithNestedSingularRelationship::class, ['record' => $user])
+        ->fillForm([
+            'posts' => [
+                [
+                    'title' => 'Test Post Title',
+                    'metadata' => [
+                        'seo_title' => 'Test SEO Title',
+                    ],
+                ],
+            ],
+        ])
+        ->call('save');
+
+    $undoRepeaterFake();
+
+    $user->refresh();
+
+    expect($user->posts)->toHaveCount(1);
+
+    $post = $user->posts->first();
+    expect($post->title)->toBe('Test Post Title');
+    expect($post->metadata)->not->toBeNull();
+    expect($post->metadata->seo_title)->toBe('Test SEO Title');
+});
+
+it('can load a nested singular relationship inside a repeater item', function (): void {
+    $user = User::factory()->create();
+    $post = Post::factory()->create([
+        'author_id' => $user->id,
+        'title' => 'Existing Post',
+    ]);
+    PostMetadata::factory()->create([
+        'post_id' => $post->id,
+        'seo_title' => 'Existing SEO Title',
+    ]);
+
+    $undoRepeaterFake = Repeater::fake();
+
+    livewire(RepeaterWithNestedSingularRelationship::class, ['record' => $user])
+        ->assertFormSet(function (array $state): array {
+            expect($state['posts'])->toHaveCount(1);
+            expect($state['posts'][array_key_first($state['posts'])]['title'])->toBe('Existing Post');
+            expect($state['posts'][array_key_first($state['posts'])]['metadata']['seo_title'])->toBe('Existing SEO Title');
+
+            return [];
+        });
+
+    $undoRepeaterFake();
+});
+
+it('can update an existing nested singular relationship inside a repeater item', function (): void {
+    $user = User::factory()->create();
+    $post = Post::factory()->create([
+        'author_id' => $user->id,
+        'title' => 'Original Title',
+    ]);
+    $metadata = PostMetadata::factory()->create([
+        'post_id' => $post->id,
+        'seo_title' => 'Original SEO Title',
+    ]);
+
+    $undoRepeaterFake = Repeater::fake();
+
+    $component = livewire(RepeaterWithNestedSingularRelationship::class, ['record' => $user]);
+
+    $postKey = array_key_first($component->get('data.posts'));
+
+    $component
+        ->fillForm([
+            'posts' => [
+                $postKey => [
+                    'title' => 'Updated Title',
+                    'metadata' => [
+                        'seo_title' => 'Updated SEO Title',
+                    ],
+                ],
+            ],
+        ])
+        ->call('save');
+
+    $undoRepeaterFake();
+
+    $post->refresh();
+    $metadata->refresh();
+
+    expect($post->title)->toBe('Updated Title');
+    expect($metadata->seo_title)->toBe('Updated SEO Title');
+});
+
+it('can add a new repeater item with nested singular relationship to an existing repeater', function (): void {
+    $user = User::factory()->create();
+    $existingPost = Post::factory()->create([
+        'author_id' => $user->id,
+        'title' => 'Existing Post',
+    ]);
+    PostMetadata::factory()->create([
+        'post_id' => $existingPost->id,
+        'seo_title' => 'Existing SEO Title',
+    ]);
+
+    $undoRepeaterFake = Repeater::fake();
+
+    $component = livewire(RepeaterWithNestedSingularRelationship::class, ['record' => $user]);
+
+    $existingPostKey = array_key_first($component->get('data.posts'));
+
+    $component
+        ->fillForm([
+            'posts' => [
+                $existingPostKey => [
+                    'title' => 'Existing Post',
+                    'metadata' => [
+                        'seo_title' => 'Existing SEO Title',
+                    ],
+                ],
+                [
+                    'title' => 'New Post',
+                    'metadata' => [
+                        'seo_title' => 'New SEO Title',
+                    ],
+                ],
+            ],
+        ])
+        ->call('save');
+
+    $undoRepeaterFake();
+
+    $user->refresh();
+
+    expect($user->posts)->toHaveCount(2);
+
+    $newPost = $user->posts->where('title', 'New Post')->first();
+    expect($newPost)->not->toBeNull();
+    expect($newPost->metadata)->not->toBeNull();
+    expect($newPost->metadata->seo_title)->toBe('New SEO Title');
+});
+
+class RepeaterWithNestedSingularRelationship extends Component implements HasActions, HasSchemas
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+
+    public array $data = [];
+
+    public User $record;
+
+    public function mount(): void
+    {
+        $this->form->fill([]);
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                Repeater::make('posts')
+                    ->relationship('posts')
+                    ->schema([
+                        TextInput::make('title')
+                            ->required(),
+                        Group::make()
+                            ->relationship('metadata')
+                            ->schema([
+                                TextInput::make('seo_title'),
+                            ]),
+                    ]),
+            ])
+            ->model($this->record)
+            ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->form->getState();
+        $this->form->saveRelationships();
+    }
+
+    public function render(): View
+    {
+        return view('livewire.form');
+    }
+}
