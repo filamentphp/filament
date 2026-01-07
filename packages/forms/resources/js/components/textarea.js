@@ -41,7 +41,9 @@ export default function textareaFormComponent({
             const contentHeight = this.$el.scrollHeight
             this.$el.style.height = previousHeight
 
-            const minHeightPx = parseFloat(initialHeight) * parseFloat(getComputedStyle(document.documentElement).fontSize)
+            const minHeightPx =
+                parseFloat(initialHeight) *
+                parseFloat(getComputedStyle(document.documentElement).fontSize)
             const newHeight = Math.max(contentHeight, minHeightPx) + 'px'
 
             if (this.wrapperEl.style.height === newHeight) {
