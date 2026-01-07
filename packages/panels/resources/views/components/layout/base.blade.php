@@ -86,7 +86,7 @@
         {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::STYLES_AFTER, scopes: $renderHookScopes) }}
 
         <script>
-            const sidebarIsOpenDefault = @js(! filament()->isSidebarAlwaysCollapsed());
+            const sidebarIsOpenDefault = @js(! filament()->isSidebarAlwaysCollapsed())
         </script>
 
         @if (! filament()->hasDarkMode())
