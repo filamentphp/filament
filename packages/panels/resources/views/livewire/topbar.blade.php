@@ -3,6 +3,7 @@
         $isRtl = __('filament-panels::layout.direction') === 'rtl';
         $isSidebarCollapsibleOnDesktop = filament()->isSidebarCollapsibleOnDesktop();
         $isSidebarFullyCollapsibleOnDesktop = filament()->isSidebarFullyCollapsibleOnDesktop();
+        $isSidebarAlwaysCollapsed = filament()->isSidebarAlwaysCollapsed();
         $hasTopNavigation = filament()->hasTopNavigation();
         $hasNavigation = filament()->hasNavigation();
         $hasTenancy = filament()->hasTenancy();
@@ -40,7 +41,7 @@
         @endif
 
         <div class="fi-topbar-start">
-            @if ($isSidebarCollapsibleOnDesktop || $isSidebarFullyCollapsibleOnDesktop)
+            @if (($isSidebarCollapsibleOnDesktop || $isSidebarFullyCollapsibleOnDesktop) && ! $isSidebarAlwaysCollapsed)
                 <div
                     x-show="$store.sidebar.isOpen || @js($isSidebarCollapsibleOnDesktop)"
                     class="fi-topbar-collapse-sidebar-btn-ctn"

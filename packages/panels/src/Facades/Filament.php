@@ -154,6 +154,7 @@ use Livewire\Component;
  * @method static bool isProfilePageSimple()
  * @method static bool isServing()
  * @method static bool isSidebarCollapsibleOnDesktop()
+ * @method static bool isSidebarAlwaysCollapsed()
  * @method static bool isSidebarFullyCollapsibleOnDesktop()
  * @method static ?bool isTenantMenuSearchable()
  * @method static void serving(Closure $callback)

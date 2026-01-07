@@ -46,7 +46,7 @@
             <x-filament::icon-button
                 color="gray"
                 :icon="\Filament\Support\Icons\Heroicon::OutlinedBars3"
-                :icon-alias="\Filament\View\PanelsIconAlias::SIDEBAR_EXPAND_BUTTON"
+                :icon-alias="\Filament\View\PanelsIconAlias::TOPBAR_OPEN_SIDEBAR_BUTTON"
                 icon-size="lg"
                 :label="__('filament-panels::layout.actions.sidebar.expand.label')"
                 x-cloak

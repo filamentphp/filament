@@ -4,6 +4,7 @@
         $isRtl = __('filament-panels::layout.direction') === 'rtl';
         $isSidebarCollapsibleOnDesktop = filament()->isSidebarCollapsibleOnDesktop();
         $isSidebarFullyCollapsibleOnDesktop = filament()->isSidebarFullyCollapsibleOnDesktop();
+        $isSidebarAlwaysCollapsed = filament()->isSidebarAlwaysCollapsed();
         $hasNavigation = filament()->hasNavigation();
         $hasTopbar = filament()->hasTopbar();
     @endphp
@@ -11,7 +12,7 @@
     {{-- format-ignore-start --}}
     <aside
         x-data="{}"
-        @if ($isSidebarCollapsibleOnDesktop || $isSidebarFullyCollapsibleOnDesktop)
+        @if ($isSidebarCollapsibleOnDesktop || $isSidebarFullyCollapsibleOnDesktop || $isSidebarAlwaysCollapsed)
             x-cloak
         @else
             x-cloak="-lg"
@@ -25,7 +26,7 @@
             <header
                 class="fi-sidebar-header"
             >
-                @if ((! $hasTopbar) && $isSidebarCollapsibleOnDesktop)
+                @if ((! $hasTopbar) && $isSidebarCollapsibleOnDesktop && (! $isSidebarAlwaysCollapsed))
                     <x-filament::icon-button
                         color="gray"
                         :icon="$isRtl ? \Filament\Support\Icons\Heroicon::OutlinedChevronLeft : \Filament\Support\Icons\Heroicon::OutlinedChevronRight"

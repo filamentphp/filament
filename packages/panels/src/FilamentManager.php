@@ -820,6 +820,11 @@ class FilamentManager
         return $this->getCurrentOrDefaultPanel()->isSidebarFullyCollapsibleOnDesktop();
     }
 
+    public function isSidebarAlwaysCollapsed(): bool
+    {
+        return $this->getCurrentOrDefaultPanel()->isSidebarAlwaysCollapsed();
+    }
+
     public function registerPanel(Panel $panel): void
     {
         app(PanelRegistry::class)->register($panel);

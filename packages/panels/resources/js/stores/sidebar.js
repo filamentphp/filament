@@ -1,8 +1,9 @@
 const breakpoint = 1024
 
 export default () => ({
-    isOpen: window.Alpine.$persist(true).as('isOpen'),
-    isOpenDesktop: window.Alpine.$persist(true).as('isOpenDesktop'),
+    isOpen: window.Alpine.$persist(sidebarIsOpenDefault).as('isOpen'),
+    isOpenDesktop:
+        window.Alpine.$persist(sidebarIsOpenDefault).as('isOpenDesktop'),
 
     collapsedGroups: window.Alpine.$persist(null).as('collapsedGroups'),
 
