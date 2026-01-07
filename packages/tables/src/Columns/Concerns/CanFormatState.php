@@ -4,6 +4,7 @@ namespace Filament\Tables\Columns\Concerns;
 
 use BackedEnum;
 use Closure;
+use Filament\Forms\Components\RichEditor\RichContentAttribute;
 use Filament\Support\Concerns\CanConfigureCommonMark;
 use Filament\Support\Contracts\HasLabel as LabelInterface;
 use Filament\Support\Enums\ArgumentValue;
@@ -371,17 +372,18 @@ trait CanFormatState
             $state = json_encode($state);
         }
 
-        if ($isHtml) {
+        if ($state instanceof RichContentAttribute) {
+            $isHtml = true;
+            $state = Str::sanitizeHtml($state->toHtml());
+        } elseif ($state instanceof Htmlable) {
+            $isHtml = true;
+            $state = $state->toHtml();
+        } elseif ($isHtml) {
             if ($this->isMarkdown()) {
                 $state = Str::markdown($state, $this->getCommonMarkOptions(), $this->getCommonMarkExtensions());
             }
 
             $state = Str::sanitizeHtml($state);
-        }
-
-        if ($state instanceof Htmlable) {
-            $isHtml = true;
-            $state = $state->toHtml();
         }
 
         if ($state instanceof LabelInterface) {

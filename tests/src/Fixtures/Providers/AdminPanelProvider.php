@@ -14,7 +14,12 @@ use Filament\Tests\Fixtures\Clusters\UserManagement\Pages\GeneralSettings;
 use Filament\Tests\Fixtures\Clusters\UserManagement\Pages\ManageAdmins;
 use Filament\Tests\Fixtures\Clusters\UserManagement\Pages\ManageStaff;
 use Filament\Tests\Fixtures\Pages\Actions;
+use Filament\Tests\Fixtures\Pages\BuilderTest;
+use Filament\Tests\Fixtures\Pages\RepeaterTest;
+use Filament\Tests\Fixtures\Pages\SelectTest;
 use Filament\Tests\Fixtures\Pages\Settings;
+use Filament\Tests\Fixtures\Pages\TagsInputTest;
+use Filament\Tests\Fixtures\Pages\ToggleTest;
 use Filament\Tests\Fixtures\Resources\Companies\CompanyResource;
 use Filament\Tests\Fixtures\Resources\Companies\Resources\CompanyTeamResource;
 use Filament\Tests\Fixtures\Resources\Departments\DepartmentResource;
@@ -60,7 +65,12 @@ class AdminPanelProvider extends PanelProvider
             ->pages([
                 Pages\Dashboard::class,
                 Actions::class,
+                BuilderTest::class,
+                RepeaterTest::class,
+                SelectTest::class,
                 Settings::class,
+                TagsInputTest::class,
+                ToggleTest::class,
                 UserManagement::class,
                 ManageAdmins::class,
                 ManageStaff::class,

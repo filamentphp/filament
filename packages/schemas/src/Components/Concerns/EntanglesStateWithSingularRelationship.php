@@ -64,7 +64,7 @@ trait EntanglesStateWithSingularRelationship
                 return null;
             };
 
-            $firstComponentWithThisRelationship = $findFirstComponentWithThisRelationship($component->getRootContainer());
+            $firstComponentWithThisRelationship = $findFirstComponentWithThisRelationship($component->getModelRootContainer());
 
             $isFirstComponent = ($firstComponentWithThisRelationship === null) || ($firstComponentWithThisRelationship === $component);
 
@@ -108,7 +108,7 @@ trait EntanglesStateWithSingularRelationship
                 }
             };
 
-            $findComponentsWithThisRelationship($component->getRootContainer());
+            $findComponentsWithThisRelationship($component->getModelRootContainer());
 
             // The first layout component using this relationship is the one that will save the relationship for all of them.
             if (filled($componentsWithThisRelationship) && (Arr::first($componentsWithThisRelationship) !== $component)) {

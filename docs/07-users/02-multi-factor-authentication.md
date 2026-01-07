@@ -40,80 +40,25 @@ Schema::table('users', function (Blueprint $table) {
 });
 ```
 
-In the `User` model, you need to ensure that this column is encrypted and `$hidden`, since this is incredibly sensitive information that should be stored securely:
-
-```php
-use Filament\Models\Contracts\FilamentUser;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-
-class User extends Authenticatable implements FilamentUser, MustVerifyEmail
-{
-    // ...
-
-    /**
-     * @var array<string>
-     */
-    protected $hidden = [
-        // ...
-        'app_authentication_secret',
-    ];
-
-    /**
-     * @return array<string, string>
-     */
-    protected function casts(): array
-    {
-        return [
-            // ...
-            'app_authentication_secret' => 'encrypted',
-        ];
-    }
-    
-    // ...
-}
-```
-
-Next, you should implement the `HasAppAuthentication` interface on the `User` model. This provides Filament with the necessary methods to interact with the secret code and other information about the integration:
+In the `User` model, you should implement the `HasAppAuthentication` interface and use the `InteractsWithAppAuthentication` trait which provides the necessary methods to interact with the secret code and other information about the integration:
 
 ```php
 use Filament\Auth\MultiFactor\App\Contracts\HasAppAuthentication;
+use Filament\Auth\MultiFactor\App\Concerns\InteractsWithAppAuthentication;
 use Filament\Models\Contracts\FilamentUser;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable implements FilamentUser, HasAppAuthentication, MustVerifyEmail
 {
+    use InteractsWithAppAuthentication;
+    
     // ...
-
-    public function getAppAuthenticationSecret(): ?string
-    {
-        // This method should return the user's saved app authentication secret.
-    
-        return $this->app_authentication_secret;
-    }
-
-    public function saveAppAuthenticationSecret(?string $secret): void
-    {
-        // This method should save the user's app authentication secret.
-    
-        $this->app_authentication_secret = $secret;
-        $this->save();
-    }
-
-    public function getAppAuthenticationHolderName(): string
-    {
-        // In a user's authentication app, each account can be represented by a "holder name".
-        // If the user has multiple accounts in your app, it might be a good idea to use
-        // their email address as then they are still uniquely identifiable.
-    
-        return $this->email;
-    }
 }
 ```
 
 <Aside variant="tip">
-    Since Filament uses an interface on your `User` model instead of assuming that the `app_authentication_secret` column exists, you can use any column name you want. You could even use a different model entirely if you want to store the secret in a different table.
+    Filament provides a default implementation for speed and simplicity, but you could implement the required methods yourself and customize the column name or store the secret in a completely separate table.
 </Aside>
 
 Finally, you should activate the app authentication feature in your panel. To do this, use the `multiFactorAuthentication()` method in the [configuration](../panel-configuration), and pass a `AppAuthentication` instance to it:
@@ -147,79 +92,28 @@ Schema::table('users', function (Blueprint $table) {
 });
 ```
 
-In the `User` model, you need to ensure that this column is encrypted as an array and `$hidden`, since this is incredibly sensitive information that should be stored securely:
+Next, you should implement the `HasAppAuthenticationRecovery` interface on the `User` model and use the `InteractsWithAppAuthenticationRecovery` trait which provides Filament with the necessary methods to interact with the recovery codes:
 
 ```php
 use Filament\Auth\MultiFactor\App\Contracts\HasAppAuthentication;
-use Filament\Models\Contracts\FilamentUser;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-
-class User extends Authenticatable implements FilamentUser, HasAppAuthentication, MustVerifyEmail
-{
-    // ...
-
-    /**
-     * @var array<string>
-     */
-    protected $hidden = [
-        // ...
-        'app_authentication_recovery_codes',
-    ];
-
-    /**
-     * @return array<string, string>
-     */
-    protected function casts(): array
-    {
-        return [
-            // ...
-            'app_authentication_recovery_codes' => 'encrypted:array',
-        ];
-    }
-    
-    // ...
-}
-```
-
-Next, you should implement the `HasAppAuthenticationRecovery` interface on the `User` model. This provides Filament with the necessary methods to interact with the recovery codes:
-
-```php
-use Filament\Auth\MultiFactor\App\Contracts\HasAppAuthentication;
+use Filament\Auth\MultiFactor\App\Concerns\InteractsWithAppAuthentication;
 use Filament\Auth\MultiFactor\App\Contracts\HasAppAuthenticationRecovery;
+use Filament\Auth\MultiFactor\App\Concerns\InteractsWithAppAuthenticationRecovery;
 use Filament\Models\Contracts\FilamentUser;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable implements FilamentUser, HasAppAuthentication, HasAppAuthenticationRecovery, MustVerifyEmail
 {
+    use InteractsWithAppAuthentication;
+    use InteractsWithAppAuthenticationRecovery;
+    
     // ...
-
-    /**
-     * @return ?array<string>
-     */
-    public function getAppAuthenticationRecoveryCodes(): ?array
-    {
-        // This method should return the user's saved app authentication recovery codes.
-    
-        return $this->app_authentication_recovery_codes;
-    }
-
-    /**
-     * @param  array<string> | null  $codes
-     */
-    public function saveAppAuthenticationRecoveryCodes(?array $codes): void
-    {
-        // This method should save the user's app authentication recovery codes.
-    
-        $this->app_authentication_recovery_codes = $codes;
-        $this->save();
-    }
 }
 ```
 
 <Aside variant="tip">
-    Since Filament uses an interface on your `User` model instead of assuming that the `app_authentication_recovery_codes` column exists, you can use any column name you want. You could even use a different model entirely if you want to store the recovery codes in a different table.
+    Filament provides a default implementation for speed and simplicity, but you could implement the required methods yourself and customize the column name or store the recovery codes in a completely separate table.
 </Aside>
 
 Finally, you should activate the app authentication recovery codes feature in your panel. To do this, pass the `recoverable()` method to the `AppAuthentication` instance in the `multiFactorAuthentication()` method in the [configuration](../panel-configuration):
@@ -334,61 +228,25 @@ Schema::table('users', function (Blueprint $table) {
 });
 ```
 
-In the `User` model, you need to ensure that this column is cast to a boolean:
-
-```php
-use Filament\Models\Contracts\FilamentUser;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-
-class User extends Authenticatable implements FilamentUser, MustVerifyEmail
-{
-    /**
-     * @return array<string, string>
-     */
-    protected function casts(): array
-    {
-        return [
-            // ...
-            'has_email_authentication' => 'boolean',
-        ];
-    }
-    
-    // ...
-}
-```
-
-Next, you should implement the `HasEmailAuthentication` interface on the `User` model. This provides Filament with the necessary methods to interact with the column that indicates whether or not email authentication is enabled:
+Next, you should implement the `HasEmailAuthentication` interface on the `User` model and use the `InteractsWithEmailAuthentication` trait which provides Filament with the necessary methods to interact with the column that indicates whether or not email authentication is enabled:
 
 ```php
 use Filament\Auth\MultiFactor\Email\Contracts\HasEmailAuthentication;
+use Filament\Auth\MultiFactor\Email\Concerns\InteractsWithEmailAuthentication;
 use Filament\Models\Contracts\FilamentUser;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable implements FilamentUser, HasEmailAuthentication, MustVerifyEmail
 {
-    // ...
-
-    public function hasEmailAuthentication(): bool
-    {
-        // This method should return true if the user has enabled email authentication.
-        
-        return $this->has_email_authentication;
-    }
-
-    public function toggleEmailAuthentication(bool $condition): void
-    {
-        // This method should save whether or not the user has enabled email authentication.
+    use InteractsWithEmailAuthentication;
     
-        $this->has_email_authentication = $condition;
-        $this->save();
-    }
+    // ...
 }
 ```
 
 <Aside variant="tip">
-    Since Filament uses an interface on your `User` model instead of assuming that the `has_email_authentication` column exists, you can use any column name you want. You could even use a different model entirely if you want to store the setting in a different table.
+    Filament provides a default implementation for speed and simplicity, but you could implement the required methods yourself and customize the column name or store the value in a completely separate table.
 </Aside>
 
 Finally, you should activate the email authentication feature in your panel. To do this, use the `multiFactorAuthentication()` method in the [configuration](../panel-configuration), and pass an `EmailAuthentication` instance to it:

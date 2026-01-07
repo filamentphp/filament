@@ -310,7 +310,7 @@ class Action extends ViewComponent implements Arrayable
         return $this;
     }
 
-    public function jsAction(string | Closure | null $action): static
+    public function actionJs(string | Closure | null $action): static
     {
         $this->alpineClickHandler($action);
 
@@ -418,7 +418,7 @@ class Action extends ViewComponent implements Arrayable
             return $this->livewireTarget;
         }
 
-        if (! $this->canAccessSelectedRecords()) {
+        if ($this->getTable() && ! $this->canAccessSelectedRecords()) {
             return null;
         }
 
@@ -545,7 +545,7 @@ class Action extends ViewComponent implements Arrayable
      */
     protected function resolveDefaultClosureDependencyForEvaluationByType(string $parameterType): array
     {
-        $record = $this->getRecord();
+        $record = is_a($parameterType, Model::class, allow_string: true) ? $this->getRecord() : null;
 
         return match ($parameterType) {
             Builder::class => [$this->getSelectedRecordsQuery()],
