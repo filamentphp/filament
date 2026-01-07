@@ -3,6 +3,7 @@
 namespace Filament\Auth\MultiFactor\App\Concerns;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Application;
 
 /**
  * @property array<string> | null $app_authentication_recovery_codes
@@ -17,9 +18,15 @@ trait InteractsWithAppAuthenticationRecovery /** @phpstan-ignore trait.unused */
             'app_authentication_recovery_codes' => 'encrypted:array',
         ]);
 
-        $this->mergeHidden([
-            'app_authentication_recovery_codes',
-        ]);
+        if (version_compare(Application::VERSION, '12.0.0', '>')) {
+            $this->mergeHidden([
+                'app_authentication_recovery_codes',
+            ]);
+        } else {
+            $this->hidden = array_values(array_unique(array_merge($this->hidden, [
+                'app_authentication_recovery_codes',
+            ])));
+        }
     }
 
     /**
