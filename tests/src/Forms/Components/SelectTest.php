@@ -1084,3 +1084,74 @@ it('shows options when dynamic options returns non-empty array', function (): vo
         ->assertDontSee('Loading')
         ->assertNoSmoke();
 });
+
+it('only adds one remove button when selecting multiple options in sequence', function (): void {
+    $this->actingAs(User::factory()->create());
+
+    visit('/select-test')
+        ->assertSee('Clearable With Placeholder')
+        // Verify no remove button initially (placeholder shown)
+        ->assertMissing('[data-testid="clearable-with-placeholder-select"] .fi-select-input-value-remove-btn')
+        // Select first option
+        ->click('[data-testid="clearable-with-placeholder-select"] .fi-select-input-btn')
+        ->waitForText('First')
+        ->click('First')
+        // Verify exactly one remove button exists
+        ->assertVisible('[data-testid="clearable-with-placeholder-select"] .fi-select-input-value-remove-btn')
+        ->assertScript('document.querySelectorAll(\'[data-testid="clearable-with-placeholder-select"] .fi-select-input-value-remove-btn\').length', 1)
+        // Select second option
+        ->click('[data-testid="clearable-with-placeholder-select"] .fi-select-input-btn')
+        ->waitForText('Second')
+        ->click('Second')
+        // Verify still exactly one remove button exists (not duplicated)
+        ->assertVisible('[data-testid="clearable-with-placeholder-select"] .fi-select-input-value-remove-btn')
+        ->assertScript('document.querySelectorAll(\'[data-testid="clearable-with-placeholder-select"] .fi-select-input-value-remove-btn\').length', 1)
+        // Select third option
+        ->click('[data-testid="clearable-with-placeholder-select"] .fi-select-input-btn')
+        ->waitForText('Third')
+        ->click('Third')
+        // Verify still exactly one remove button exists
+        ->assertScript('document.querySelectorAll(\'[data-testid="clearable-with-placeholder-select"] .fi-select-input-value-remove-btn\').length', 1)
+        ->assertNoSmoke();
+});
+
+it('removes the clear button when selection is cleared', function (): void {
+    $this->actingAs(User::factory()->create());
+
+    visit('/select-test')
+        ->assertSee('Clearable With Placeholder')
+        // Verify no remove button initially
+        ->assertMissing('[data-testid="clearable-with-placeholder-select"] .fi-select-input-value-remove-btn')
+        // Select an option
+        ->click('[data-testid="clearable-with-placeholder-select"] .fi-select-input-btn')
+        ->waitForText('First')
+        ->click('First')
+        // Verify remove button exists
+        ->assertVisible('[data-testid="clearable-with-placeholder-select"] .fi-select-input-value-remove-btn')
+        // Clear the selection
+        ->click('[data-testid="clearable-with-placeholder-select"] .fi-select-input-value-remove-btn')
+        // Verify remove button is gone and placeholder is shown
+        ->assertMissing('[data-testid="clearable-with-placeholder-select"] .fi-select-input-value-remove-btn')
+        ->assertSee('Select an option...')
+        ->assertNoSmoke();
+});
+
+it('adds clearable class only when an option is selected', function (): void {
+    $this->actingAs(User::factory()->create());
+
+    visit('/select-test')
+        ->assertSee('Clearable With Placeholder')
+        // Verify no clearable class initially
+        ->assertMissing('[data-testid="clearable-with-placeholder-select"] .fi-select-input-ctn-clearable')
+        // Select an option
+        ->click('[data-testid="clearable-with-placeholder-select"] .fi-select-input-btn')
+        ->waitForText('First')
+        ->click('First')
+        // Verify clearable class is added
+        ->assertVisible('[data-testid="clearable-with-placeholder-select"] .fi-select-input-ctn-clearable')
+        // Clear the selection
+        ->click('[data-testid="clearable-with-placeholder-select"] .fi-select-input-value-remove-btn')
+        // Verify clearable class is removed
+        ->assertMissing('[data-testid="clearable-with-placeholder-select"] .fi-select-input-ctn-clearable')
+        ->assertNoSmoke();
+});
