@@ -445,3 +445,217 @@ class RepeaterWithModalTableSelectBelongsToManyRelationshipEagerLoaded extends C
         return view('livewire.form');
     }
 }
+
+it('can get `getOptionLabel()` from `BelongsTo` relationship', function (): void {
+    $team = Team::factory()->create(['name' => 'Test Team']);
+    $user = User::factory()->create(['team_id' => $team->id]);
+
+    livewire(ModalTableSelectWithBelongsToRelationship::class, ['record' => $user])
+        ->assertFormComponentExists('team_id', function (ModalTableSelect $select) use ($team): bool {
+            expect($select->getOptionLabel())->toBe($team->name);
+
+            return true;
+        });
+});
+
+it('can get `getOptionLabels()` from `BelongsToMany` relationship', function (): void {
+    $user = User::factory()->create();
+    $teams = Team::factory()->count(2)->create();
+    $user->teams()->attach($teams);
+
+    livewire(ModalTableSelectWithBelongsToManyRelationship::class, ['record' => $user])
+        ->assertFormComponentExists('teams', function (ModalTableSelect $select) use ($teams): bool {
+            $labels = $select->getOptionLabels();
+
+            expect($labels)->toHaveCount(2);
+            expect(array_values($labels))->toContain($teams[0]->name);
+            expect(array_values($labels))->toContain($teams[1]->name);
+
+            return true;
+        });
+});
+
+it('can get `getOptionLabels()` from `HasMany` relationship', function (): void {
+    $user = User::factory()->create();
+    $posts = Post::factory()->count(2)->create(['author_id' => $user->id]);
+
+    livewire(ModalTableSelectWithHasManyRelationship::class, ['record' => $user])
+        ->assertFormComponentExists('posts', function (ModalTableSelect $select) use ($posts): bool {
+            $labels = $select->getOptionLabels();
+
+            expect($labels)->toHaveCount(2);
+            expect(array_values($labels))->toContain($posts[0]->title);
+            expect(array_values($labels))->toContain($posts[1]->title);
+
+            return true;
+        });
+});
+
+it('can use `getOptionLabelFromRecordUsing()` for custom `BelongsTo` labels', function (): void {
+    $team = Team::factory()->create(['name' => 'Engineering']);
+    $user = User::factory()->create(['team_id' => $team->id]);
+
+    livewire(ModalTableSelectWithCustomBelongsToLabel::class, ['record' => $user])
+        ->assertFormComponentExists('team_id', function (ModalTableSelect $select) use ($team): bool {
+            expect($select->getOptionLabel())->toBe("Team: {$team->name}");
+
+            return true;
+        });
+});
+
+it('can use `getOptionLabelFromRecordUsing()` for custom `BelongsToMany` labels', function (): void {
+    $user = User::factory()->create();
+    $teams = Team::factory()->count(2)->create();
+    $user->teams()->attach($teams);
+
+    livewire(ModalTableSelectWithCustomBelongsToManyLabels::class, ['record' => $user])
+        ->assertFormComponentExists('teams', function (ModalTableSelect $select) use ($teams): bool {
+            $labels = $select->getOptionLabels();
+
+            expect($labels)->toHaveCount(2);
+            expect(array_values($labels))->toContain("Team: {$teams[0]->name}");
+            expect(array_values($labels))->toContain("Team: {$teams[1]->name}");
+
+            return true;
+        });
+});
+
+it('can use `getOptionLabelFromRecordUsing()` for custom `HasMany` labels', function (): void {
+    $user = User::factory()->create();
+    $posts = Post::factory()->count(2)->create(['author_id' => $user->id]);
+
+    livewire(ModalTableSelectWithCustomHasManyLabels::class, ['record' => $user])
+        ->assertFormComponentExists('posts', function (ModalTableSelect $select) use ($posts): bool {
+            $labels = $select->getOptionLabels();
+
+            expect($labels)->toHaveCount(2);
+            expect(array_values($labels))->toContain("Post: {$posts[0]->title}");
+            expect(array_values($labels))->toContain("Post: {$posts[1]->title}");
+
+            return true;
+        });
+});
+
+it('returns `null` for `getOptionLabel()` when no record is selected', function (): void {
+    $user = User::factory()->create(['team_id' => null]);
+
+    livewire(ModalTableSelectWithBelongsToRelationship::class, ['record' => $user])
+        ->assertFormComponentExists('team_id', function (ModalTableSelect $select): bool {
+            expect($select->getOptionLabel(withDefault: false))->toBeNull();
+
+            return true;
+        });
+});
+
+it('returns empty array for `getOptionLabels()` when no records are selected', function (): void {
+    $user = User::factory()->create();
+    // Don't attach any teams
+
+    livewire(ModalTableSelectWithBelongsToManyRelationship::class, ['record' => $user])
+        ->assertFormComponentExists('teams', function (ModalTableSelect $select): bool {
+            expect($select->getOptionLabels())->toBe([]);
+
+            return true;
+        });
+});
+
+class ModalTableSelectWithCustomBelongsToLabel extends Component implements HasActions, HasSchemas
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+
+    public $data = [];
+
+    public User $record;
+
+    public function mount(): void
+    {
+        $this->form->fill([]);
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                ModalTableSelect::make('team_id')
+                    ->relationship('team', 'name')
+                    ->tableConfiguration(TeamsTable::class)
+                    ->getOptionLabelFromRecordUsing(fn (Team $record): string => "Team: {$record->name}"),
+            ])
+            ->model($this->record)
+            ->statePath('data');
+    }
+
+    public function render(): View
+    {
+        return view('livewire.form');
+    }
+}
+
+class ModalTableSelectWithCustomBelongsToManyLabels extends Component implements HasActions, HasSchemas
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+
+    public $data = [];
+
+    public User $record;
+
+    public function mount(): void
+    {
+        $this->form->fill([]);
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                ModalTableSelect::make('teams')
+                    ->relationship('teams', 'name')
+                    ->tableConfiguration(TeamsTable::class)
+                    ->multiple()
+                    ->getOptionLabelFromRecordUsing(fn (Team $record): string => "Team: {$record->name}"),
+            ])
+            ->model($this->record)
+            ->statePath('data');
+    }
+
+    public function render(): View
+    {
+        return view('livewire.form');
+    }
+}
+
+class ModalTableSelectWithCustomHasManyLabels extends Component implements HasActions, HasSchemas
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+
+    public $data = [];
+
+    public User $record;
+
+    public function mount(): void
+    {
+        $this->form->fill([]);
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                ModalTableSelect::make('posts')
+                    ->relationship('posts', 'title')
+                    ->tableConfiguration(PostsTable::class)
+                    ->multiple()
+                    ->getOptionLabelFromRecordUsing(fn (Post $record): string => "Post: {$record->title}"),
+            ])
+            ->model($this->record)
+            ->statePath('data');
+    }
+
+    public function render(): View
+    {
+        return view('livewire.form');
+    }
+}

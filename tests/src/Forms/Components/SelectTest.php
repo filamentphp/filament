@@ -75,6 +75,121 @@ it('can automatically validate valid multiple options with custom search results
         ->assertHasFormErrors(['number.1' => ['in']]);
 });
 
+it('can automatically validate valid options with `BelongsTo` relationship', function (): void {
+    $users = User::factory()->count(3)->create();
+
+    livewire(TestComponentWithBelongsToRelationshipValidation::class)
+        ->fillForm(['author_id' => (string) $users->first()->id])
+        ->call('save')
+        ->assertHasNoFormErrors();
+
+    livewire(TestComponentWithBelongsToRelationshipValidation::class)
+        ->fillForm(['author_id' => '99999'])
+        ->call('save')
+        ->assertHasFormErrors(['author_id' => ['in']]);
+});
+
+it('can automatically validate valid options with searchable `BelongsTo` relationship', function (): void {
+    $users = User::factory()->count(3)->create();
+
+    livewire(TestComponentWithSearchableBelongsToRelationshipValidation::class)
+        ->fillForm(['author_id' => (string) $users->first()->id])
+        ->call('save')
+        ->assertHasNoFormErrors();
+
+    livewire(TestComponentWithSearchableBelongsToRelationshipValidation::class)
+        ->fillForm(['author_id' => '99999'])
+        ->call('save')
+        ->assertHasFormErrors(['author_id' => ['in']]);
+});
+
+it('can automatically validate valid multiple options with `BelongsToMany` relationship', function (): void {
+    $user = User::factory()->create();
+    $teams = Team::factory()->count(3)->create();
+
+    livewire(TestComponentWithBelongsToManyRelationshipValidation::class, ['record' => $user])
+        ->fillForm(['teams' => $teams->take(2)->pluck('id')->map(fn ($id) => (string) $id)->all()])
+        ->call('save')
+        ->assertHasNoFormErrors();
+
+    livewire(TestComponentWithBelongsToManyRelationshipValidation::class, ['record' => $user])
+        ->fillForm(['teams' => [(string) $teams->first()->id, '99999']])
+        ->call('save')
+        ->assertHasFormErrors(['teams.1' => ['in']]);
+});
+
+it('can automatically validate valid multiple options with searchable `BelongsToMany` relationship', function (): void {
+    $user = User::factory()->create();
+    $teams = Team::factory()->count(3)->create();
+
+    livewire(TestComponentWithSearchableBelongsToManyRelationshipValidation::class, ['record' => $user])
+        ->fillForm(['teams' => $teams->take(2)->pluck('id')->map(fn ($id) => (string) $id)->all()])
+        ->call('save')
+        ->assertHasNoFormErrors();
+
+    livewire(TestComponentWithSearchableBelongsToManyRelationshipValidation::class, ['record' => $user])
+        ->fillForm(['teams' => [(string) $teams->first()->id, '99999']])
+        ->call('save')
+        ->assertHasFormErrors(['teams.1' => ['in']]);
+});
+
+it('rejects disabled static options during validation', function (): void {
+    livewire(TestComponentWithDisabledOptions::class)
+        ->fillForm(['status' => 'active'])
+        ->call('save')
+        ->assertHasNoFormErrors();
+
+    livewire(TestComponentWithDisabledOptions::class)
+        ->fillForm(['status' => 'archived'])
+        ->call('save')
+        ->assertHasFormErrors(['status' => ['in']]);
+});
+
+it('rejects disabled static options during validation for multiple select', function (): void {
+    livewire(TestComponentWithMultipleDisabledOptions::class)
+        ->fillForm(['statuses' => ['active', 'pending']])
+        ->call('save')
+        ->assertHasNoFormErrors();
+
+    livewire(TestComponentWithMultipleDisabledOptions::class)
+        ->fillForm(['statuses' => ['active', 'archived']])
+        ->call('save')
+        ->assertHasFormErrors(['statuses.1' => ['in']]);
+});
+
+it('passes validation when state is blank for single select', function (): void {
+    livewire(TestComponentWithSelect::class)
+        ->fillForm(['number' => null])
+        ->call('save')
+        ->assertHasNoFormErrors();
+
+    livewire(TestComponentWithSelect::class)
+        ->fillForm(['number' => ''])
+        ->call('save')
+        ->assertHasNoFormErrors();
+});
+
+it('passes validation when state is blank for multiple select', function (): void {
+    livewire(TestComponentWithMultipleSelect::class)
+        ->fillForm(['number' => null])
+        ->call('save')
+        ->assertHasNoFormErrors();
+
+    livewire(TestComponentWithMultipleSelect::class)
+        ->fillForm(['number' => []])
+        ->call('save')
+        ->assertHasNoFormErrors();
+});
+
+it('passes validation when state is blank for relationship select', function (): void {
+    User::factory()->count(3)->create();
+
+    livewire(TestComponentWithBelongsToRelationshipValidation::class)
+        ->fillForm(['author_id' => null])
+        ->call('save')
+        ->assertHasNoFormErrors();
+});
+
 it('can use `BelongsToMany` relationship as multiple select', function (): void {
     $user = User::factory()->create();
     $teams = Team::factory()->count(3)->create();
@@ -1084,3 +1199,1019 @@ it('shows options when dynamic options returns non-empty array', function (): vo
         ->assertDontSee('Loading')
         ->assertNoSmoke();
 });
+
+it('can get `getOptionLabel()` from flat options', function (): void {
+    livewire(TestSelectWithFlatOptions::class)
+        ->fillForm(['category' => 'electronics'])
+        ->assertFormComponentExists('category', function (Select $select): bool {
+            expect($select->getOptionLabel())->toBe('Electronics');
+
+            return true;
+        });
+});
+
+it('can get `getOptionLabel()` from grouped options', function (): void {
+    livewire(TestSelectWithGroupedOptions::class)
+        ->fillForm(['product' => 'laptop'])
+        ->assertFormComponentExists('product', function (Select $select): bool {
+            expect($select->getOptionLabel())->toBe('Laptop');
+
+            return true;
+        });
+});
+
+it('returns state as default when option not found in `getOptionLabel()`', function (): void {
+    livewire(TestSelectWithFlatOptions::class)
+        ->fillForm(['category' => 'unknown'])
+        ->assertFormComponentExists('category', function (Select $select): bool {
+            expect($select->getOptionLabel())->toBe('unknown');
+
+            return true;
+        });
+});
+
+it('returns `null` when option not found and `withDefault` is `false` in `getOptionLabel()`', function (): void {
+    livewire(TestSelectWithFlatOptions::class)
+        ->fillForm(['category' => 'unknown'])
+        ->assertFormComponentExists('category', function (Select $select): bool {
+            expect($select->getOptionLabel(withDefault: false))->toBeNull();
+
+            return true;
+        });
+});
+
+it('can get `getOptionLabel()` using custom `getOptionLabelUsing()` closure', function (): void {
+    livewire(TestSelectWithCustomOptionLabel::class)
+        ->fillForm(['category' => 'electronics'])
+        ->assertFormComponentExists('category', function (Select $select): bool {
+            expect($select->getOptionLabel())->toBe('ELECTRONICS');
+
+            return true;
+        });
+});
+
+it('can get `getOptionLabels()` from flat options for multiple select', function (): void {
+    livewire(TestMultipleSelectWithFlatOptions::class)
+        ->fillForm(['categories' => ['electronics', 'books']])
+        ->assertFormComponentExists('categories', function (Select $select): bool {
+            expect($select->getOptionLabels())->toBe([
+                'electronics' => 'Electronics',
+                'books' => 'Books',
+            ]);
+
+            return true;
+        });
+});
+
+it('can get `getOptionLabels()` from grouped options for multiple select', function (): void {
+    livewire(TestMultipleSelectWithGroupedOptions::class)
+        ->fillForm(['products' => ['laptop', 'shirt']])
+        ->assertFormComponentExists('products', function (Select $select): bool {
+            expect($select->getOptionLabels())->toBe([
+                'laptop' => 'Laptop',
+                'shirt' => 'Shirt',
+            ]);
+
+            return true;
+        });
+});
+
+it('returns value as default when option not found in `getOptionLabels()`', function (): void {
+    livewire(TestMultipleSelectWithFlatOptions::class)
+        ->fillForm(['categories' => ['electronics', 'unknown']])
+        ->assertFormComponentExists('categories', function (Select $select): bool {
+            expect($select->getOptionLabels())->toBe([
+                'electronics' => 'Electronics',
+                'unknown' => 'unknown',
+            ]);
+
+            return true;
+        });
+});
+
+it('excludes missing options when `withDefaults` is `false` in `getOptionLabels()`', function (): void {
+    livewire(TestMultipleSelectWithFlatOptions::class)
+        ->fillForm(['categories' => ['electronics', 'unknown']])
+        ->assertFormComponentExists('categories', function (Select $select): bool {
+            expect($select->getOptionLabels(withDefaults: false))->toBe([
+                'electronics' => 'Electronics',
+            ]);
+
+            return true;
+        });
+});
+
+it('can get `getOptions()` from static array', function (): void {
+    $select = Select::make('category')
+        ->options([
+            'electronics' => 'Electronics',
+            'clothing' => 'Clothing',
+        ]);
+
+    expect($select->getOptions())->toBe([
+        'electronics' => 'Electronics',
+        'clothing' => 'Clothing',
+    ]);
+});
+
+it('can get `getOptions()` from closure', function (): void {
+    $select = Select::make('category')
+        ->options(fn (): array => [
+            'electronics' => 'Electronics',
+            'clothing' => 'Clothing',
+        ]);
+
+    expect($select->getOptions())->toBe([
+        'electronics' => 'Electronics',
+        'clothing' => 'Clothing',
+    ]);
+});
+
+it('can get `getOptions()` from enum class string', function (): void {
+    $select = Select::make('category')
+        ->options(\Filament\Tests\Fixtures\Enums\StringBackedEnum::class);
+
+    $options = $select->getOptions();
+
+    expect($options)->toBe([
+        'one' => 'One',
+        'two' => 'Two',
+        'three' => 'Three',
+    ]);
+});
+
+it('can check if option is disabled using `isOptionDisabled()`', function (): void {
+    $select = Select::make('category')
+        ->options([
+            'active' => 'Active',
+            'inactive' => 'Inactive',
+            'archived' => 'Archived',
+        ])
+        ->disableOptionWhen(fn (string $value): bool => $value === 'archived');
+
+    expect($select->isOptionDisabled('active', 'Active'))->toBeFalse();
+    expect($select->isOptionDisabled('archived', 'Archived'))->toBeTrue();
+});
+
+it('can get enabled options using `getEnabledOptions()`', function (): void {
+    $select = Select::make('category')
+        ->options([
+            'active' => 'Active',
+            'inactive' => 'Inactive',
+            'archived' => 'Archived',
+        ])
+        ->disableOptionWhen(fn (string $value): bool => $value === 'archived');
+
+    expect($select->getEnabledOptions())->toBe([
+        'active' => 'Active',
+        'inactive' => 'Inactive',
+    ]);
+});
+
+it('can get enabled options from grouped options using `getEnabledOptions()`', function (): void {
+    $select = Select::make('category')
+        ->options([
+            'Status' => [
+                'active' => 'Active',
+                'archived' => 'Archived',
+            ],
+            'Type' => [
+                'normal' => 'Normal',
+                'premium' => 'Premium',
+            ],
+        ])
+        ->disableOptionWhen(fn (string $value): bool => in_array($value, ['archived', 'premium']));
+
+    expect($select->getEnabledOptions())->toBe([
+        'active' => 'Active',
+        'normal' => 'Normal',
+    ]);
+});
+
+it('returns `true` for `hasDisabledOptions()` when closure is set', function (): void {
+    $select = Select::make('category')
+        ->options(['a' => 'A', 'b' => 'B'])
+        ->disableOptionWhen(fn (string $value): bool => $value === 'b');
+
+    expect($select->hasDisabledOptions())->toBeTrue();
+});
+
+it('returns `false` for `hasDisabledOptions()` when no closure is set', function (): void {
+    $select = Select::make('category')
+        ->options(['a' => 'A', 'b' => 'B']);
+
+    expect($select->hasDisabledOptions())->toBeFalse();
+});
+
+it('can transform options for JS using default transformer', function (): void {
+    $select = Select::make('category')
+        ->options([
+            'electronics' => 'Electronics',
+            'clothing' => 'Clothing',
+        ]);
+
+    $transformed = $select->getOptionsForJs();
+
+    expect($transformed)->toBe([
+        ['label' => 'Electronics', 'value' => 'electronics', 'isDisabled' => false],
+        ['label' => 'Clothing', 'value' => 'clothing', 'isDisabled' => false],
+    ]);
+});
+
+it('can transform grouped options for JS', function (): void {
+    $select = Select::make('category')
+        ->options([
+            'Electronics' => [
+                'phone' => 'Phone',
+                'laptop' => 'Laptop',
+            ],
+        ]);
+
+    $transformed = $select->getOptionsForJs();
+
+    expect($transformed)->toBe([
+        [
+            'label' => 'Electronics',
+            'options' => [
+                ['label' => 'Phone', 'value' => 'phone', 'isDisabled' => false],
+                ['label' => 'Laptop', 'value' => 'laptop', 'isDisabled' => false],
+            ],
+        ],
+    ]);
+});
+
+it('marks disabled options in JS transform', function (): void {
+    $select = Select::make('category')
+        ->options([
+            'active' => 'Active',
+            'archived' => 'Archived',
+        ])
+        ->disableOptionWhen(fn (string $value): bool => $value === 'archived');
+
+    $transformed = $select->getOptionsForJs();
+
+    expect($transformed)->toBe([
+        ['label' => 'Active', 'value' => 'active', 'isDisabled' => false],
+        ['label' => 'Archived', 'value' => 'archived', 'isDisabled' => true],
+    ]);
+});
+
+it('can use custom `transformOptionsForJsUsing()` callback', function (): void {
+    $select = Select::make('category')
+        ->options([
+            'electronics' => 'Electronics',
+        ])
+        ->transformOptionsForJsUsing(fn (Select $component, array $options): array => collect($options)
+            ->map(fn ($label, $value): array => ['id' => $value, 'name' => $label])
+            ->values()
+            ->all());
+
+    $transformed = $select->getOptionsForJs();
+
+    expect($transformed)->toBe([
+        ['id' => 'electronics', 'name' => 'Electronics'],
+    ]);
+});
+
+it('returns empty array when transforming empty options', function (): void {
+    $select = Select::make('category')
+        ->options([]);
+
+    expect($select->getOptionsForJs())->toBe([]);
+});
+
+it('can check `isMultiple()` returns correct value', function (): void {
+    $singleSelect = Select::make('category');
+    $multipleSelect = Select::make('categories')->multiple();
+
+    expect($singleSelect->isMultiple())->toBeFalse();
+    expect($multipleSelect->isMultiple())->toBeTrue();
+});
+
+it('can check `isSearchable()` defaults to `true` for multiple select', function (): void {
+    $singleSelect = Select::make('category');
+    $multipleSelect = Select::make('categories')->multiple();
+
+    expect($singleSelect->isSearchable())->toBeFalse();
+    expect($multipleSelect->isSearchable())->toBeTrue();
+});
+
+it('can get search results using `getSearchResultsUsing()`', function (): void {
+    $select = Select::make('category')
+        ->getSearchResultsUsing(fn (string $search): array => [
+            'result1' => "Found: {$search}",
+        ]);
+
+    $results = $select->getSearchResults('test');
+
+    expect($results)->toBe([
+        'result1' => 'Found: test',
+    ]);
+});
+
+it('returns empty array for `getSearchResults()` when no callback is set', function (): void {
+    $select = Select::make('category');
+
+    expect($select->getSearchResults('test'))->toBe([]);
+});
+
+it('can get options limit using `getOptionsLimit()`', function (): void {
+    $defaultSelect = Select::make('category');
+    $limitedSelect = Select::make('category')->optionsLimit(100);
+
+    expect($defaultSelect->getOptionsLimit())->toBe(50);
+    expect($limitedSelect->getOptionsLimit())->toBe(100);
+});
+
+it('can get `getOptions()` from `BelongsTo` relationship', function (): void {
+    $users = User::factory()->count(3)->create();
+
+    livewire(TestSelectWithBelongsToRelationship::class)
+        ->assertFormComponentExists('author_id', function (Select $select) use ($users): bool {
+            $options = $select->getOptions();
+
+            expect($options)->toHaveCount(3);
+            expect(array_values($options))->toContain($users[0]->name);
+            expect(array_values($options))->toContain($users[1]->name);
+            expect(array_values($options))->toContain($users[2]->name);
+
+            return true;
+        });
+});
+
+it('can get `getSearchResults()` from `BelongsTo` relationship', function (): void {
+    User::factory()->create(['name' => 'John Doe']);
+    User::factory()->create(['name' => 'Jane Smith']);
+    User::factory()->create(['name' => 'Bob Johnson']);
+
+    livewire(TestSelectWithSearchableBelongsToRelationship::class)
+        ->assertFormComponentExists('author_id', function (Select $select): bool {
+            $results = $select->getSearchResults('John');
+
+            expect($results)->toHaveCount(2);
+            expect(array_values($results))->toContain('John Doe');
+            expect(array_values($results))->toContain('Bob Johnson');
+
+            return true;
+        });
+});
+
+it('can get `getOptionLabel()` from `BelongsTo` relationship with preload', function (): void {
+    $author = User::factory()->create(['name' => 'Test Author']);
+    $post = Post::factory()->create(['author_id' => $author->id]);
+
+    livewire(TestSelectWithPreloadedBelongsToRelationship::class, ['record' => $post])
+        ->assertFormComponentExists('author_id', function (Select $select) use ($author): bool {
+            expect($select->getOptionLabel())->toBe($author->name);
+
+            return true;
+        });
+});
+
+it('can get `getOptions()` from `BelongsToMany` relationship with preload', function (): void {
+    $user = User::factory()->create();
+    $teams = Team::factory()->count(3)->create();
+
+    livewire(TestSelectWithPreloadedBelongsToManyRelationship::class, ['record' => $user])
+        ->assertFormComponentExists('teams', function (Select $select) use ($teams): bool {
+            $options = $select->getOptions();
+
+            expect($options)->toHaveCount(3);
+            expect(array_values($options))->toContain($teams[0]->name);
+            expect(array_values($options))->toContain($teams[1]->name);
+            expect(array_values($options))->toContain($teams[2]->name);
+
+            return true;
+        });
+});
+
+it('can get `getSearchResults()` from `BelongsToMany` relationship', function (): void {
+    Team::factory()->create(['name' => 'Alpha Team']);
+    Team::factory()->create(['name' => 'Beta Team']);
+    Team::factory()->create(['name' => 'Gamma Group']);
+
+    livewire(TestSelectWithSearchableBelongsToManyRelationship::class)
+        ->assertFormComponentExists('teams', function (Select $select): bool {
+            $results = $select->getSearchResults('Team');
+
+            expect($results)->toHaveCount(2);
+            expect(array_values($results))->toContain('Alpha Team');
+            expect(array_values($results))->toContain('Beta Team');
+
+            return true;
+        });
+});
+
+it('can get `getOptionLabels()` from `BelongsToMany` relationship with preload', function (): void {
+    $user = User::factory()->create();
+    $teams = Team::factory()->count(2)->create();
+    $user->teams()->attach($teams);
+
+    livewire(TestSelectWithPreloadedBelongsToManyRelationship::class, ['record' => $user])
+        ->assertFormComponentExists('teams', function (Select $select) use ($teams): bool {
+            $labels = $select->getOptionLabels();
+
+            expect($labels)->toHaveCount(2);
+            expect(array_values($labels))->toContain($teams[0]->name);
+            expect(array_values($labels))->toContain($teams[1]->name);
+
+            return true;
+        });
+});
+
+it('returns empty array for `getOptions()` when relationship is searchable without preload', function (): void {
+    User::factory()->count(3)->create();
+
+    livewire(TestSelectWithSearchableBelongsToRelationship::class)
+        ->assertFormComponentExists('author_id', function (Select $select): bool {
+            expect($select->getOptions())->toBe([]);
+
+            return true;
+        });
+});
+
+it('returns options when relationship is searchable with preload', function (): void {
+    $users = User::factory()->count(3)->create();
+    $post = Post::factory()->create(['author_id' => $users[0]->id]);
+
+    livewire(TestSelectWithPreloadedBelongsToRelationship::class, ['record' => $post])
+        ->assertFormComponentExists('author_id', function (Select $select): bool {
+            $options = $select->getOptions();
+
+            expect($options)->toHaveCount(3);
+
+            return true;
+        });
+});
+
+it('can use `modifyQueryUsing` to filter relationship options', function (): void {
+    User::factory()->create(['name' => 'Admin User']);
+    User::factory()->create(['name' => 'Normal User']);
+    User::factory()->create(['name' => 'Admin Manager']);
+
+    livewire(TestSelectWithModifiedRelationshipQuery::class)
+        ->assertFormComponentExists('author_id', function (Select $select): bool {
+            $options = $select->getOptions();
+
+            expect($options)->toHaveCount(2);
+            expect(array_values($options))->toContain('Admin User');
+            expect(array_values($options))->toContain('Admin Manager');
+            expect(array_values($options))->not->toContain('Normal User');
+
+            return true;
+        });
+});
+
+it('can use `getOptionLabelFromRecordUsing()` for custom relationship labels', function (): void {
+    User::factory()->create(['name' => 'John', 'email' => 'john@example.com']);
+    User::factory()->create(['name' => 'Jane', 'email' => 'jane@example.com']);
+
+    livewire(TestSelectWithCustomRelationshipLabel::class)
+        ->assertFormComponentExists('author_id', function (Select $select): bool {
+            $options = $select->getOptions();
+
+            expect(array_values($options))->toContain('John (john@example.com)');
+            expect(array_values($options))->toContain('Jane (jane@example.com)');
+
+            return true;
+        });
+});
+
+class TestSelectWithFlatOptions extends Livewire
+{
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                Select::make('category')
+                    ->options([
+                        'electronics' => 'Electronics',
+                        'clothing' => 'Clothing',
+                    ]),
+            ])
+            ->statePath('data');
+    }
+}
+
+class TestSelectWithGroupedOptions extends Livewire
+{
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                Select::make('product')
+                    ->options([
+                        'Electronics' => [
+                            'phone' => 'Phone',
+                            'laptop' => 'Laptop',
+                        ],
+                        'Clothing' => [
+                            'shirt' => 'Shirt',
+                        ],
+                    ]),
+            ])
+            ->statePath('data');
+    }
+}
+
+class TestSelectWithCustomOptionLabel extends Livewire
+{
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                Select::make('category')
+                    ->getOptionLabelUsing(static fn (string $value): string => strtoupper($value)),
+            ])
+            ->statePath('data');
+    }
+}
+
+class TestMultipleSelectWithFlatOptions extends Livewire
+{
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                Select::make('categories')
+                    ->multiple()
+                    ->options([
+                        'electronics' => 'Electronics',
+                        'clothing' => 'Clothing',
+                        'books' => 'Books',
+                    ]),
+            ])
+            ->statePath('data');
+    }
+}
+
+class TestMultipleSelectWithGroupedOptions extends Livewire
+{
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                Select::make('products')
+                    ->multiple()
+                    ->options([
+                        'Electronics' => [
+                            'phone' => 'Phone',
+                            'laptop' => 'Laptop',
+                        ],
+                        'Clothing' => [
+                            'shirt' => 'Shirt',
+                        ],
+                    ]),
+            ])
+            ->statePath('data');
+    }
+}
+
+class TestSelectWithBelongsToRelationship extends Component implements HasActions, HasSchemas
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+
+    public $data = [];
+
+    public ?Post $record = null;
+
+    public function mount(): void
+    {
+        $this->form->fill();
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                Select::make('author_id')
+                    ->relationship('author', 'name'),
+            ])
+            ->model($this->record ?? Post::class)
+            ->statePath('data');
+    }
+
+    public function render(): View
+    {
+        return view('livewire.form');
+    }
+}
+
+class TestSelectWithSearchableBelongsToRelationship extends Component implements HasActions, HasSchemas
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+
+    public $data = [];
+
+    public function mount(): void
+    {
+        $this->form->fill();
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                Select::make('author_id')
+                    ->relationship('author', 'name')
+                    ->searchable(),
+            ])
+            ->model(Post::class)
+            ->statePath('data');
+    }
+
+    public function render(): View
+    {
+        return view('livewire.form');
+    }
+}
+
+class TestSelectWithPreloadedBelongsToRelationship extends Component implements HasActions, HasSchemas
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+
+    public $data = [];
+
+    public Post $record;
+
+    public function mount(): void
+    {
+        $this->form->fill([]);
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                Select::make('author_id')
+                    ->relationship('author', 'name')
+                    ->preload(),
+            ])
+            ->model($this->record)
+            ->statePath('data');
+    }
+
+    public function render(): View
+    {
+        return view('livewire.form');
+    }
+}
+
+class TestSelectWithBelongsToManyRelationship extends Component implements HasActions, HasSchemas
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+
+    public $data = [];
+
+    public ?User $record = null;
+
+    public function mount(): void
+    {
+        $this->form->fill();
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                Select::make('teams')
+                    ->relationship('teams', 'name')
+                    ->multiple(),
+            ])
+            ->model($this->record ?? User::class)
+            ->statePath('data');
+    }
+
+    public function render(): View
+    {
+        return view('livewire.form');
+    }
+}
+
+class TestSelectWithSearchableBelongsToManyRelationship extends Component implements HasActions, HasSchemas
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+
+    public $data = [];
+
+    public function mount(): void
+    {
+        $this->form->fill();
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                Select::make('teams')
+                    ->relationship('teams', 'name')
+                    ->multiple()
+                    ->searchable(),
+            ])
+            ->model(User::class)
+            ->statePath('data');
+    }
+
+    public function render(): View
+    {
+        return view('livewire.form');
+    }
+}
+
+class TestSelectWithPreloadedBelongsToManyRelationship extends Component implements HasActions, HasSchemas
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+
+    public $data = [];
+
+    public User $record;
+
+    public function mount(): void
+    {
+        $this->form->fill([]);
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                Select::make('teams')
+                    ->relationship('teams', 'name')
+                    ->multiple()
+                    ->preload(),
+            ])
+            ->model($this->record)
+            ->statePath('data');
+    }
+
+    public function render(): View
+    {
+        return view('livewire.form');
+    }
+}
+
+class TestSelectWithModifiedRelationshipQuery extends Component implements HasActions, HasSchemas
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+
+    public $data = [];
+
+    public function mount(): void
+    {
+        $this->form->fill();
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                Select::make('author_id')
+                    ->relationship(
+                        'author',
+                        'name',
+                        modifyQueryUsing: fn ($query) => $query->where('name', 'like', 'Admin%'),
+                    ),
+            ])
+            ->model(Post::class)
+            ->statePath('data');
+    }
+
+    public function render(): View
+    {
+        return view('livewire.form');
+    }
+}
+
+class TestSelectWithCustomRelationshipLabel extends Component implements HasActions, HasSchemas
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+
+    public $data = [];
+
+    public function mount(): void
+    {
+        $this->form->fill();
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                Select::make('author_id')
+                    ->relationship('author', 'name')
+                    ->getOptionLabelFromRecordUsing(fn (User $record): string => "{$record->name} ({$record->email})"),
+            ])
+            ->model(Post::class)
+            ->statePath('data');
+    }
+
+    public function render(): View
+    {
+        return view('livewire.form');
+    }
+}
+
+class TestComponentWithBelongsToRelationshipValidation extends Component implements HasActions, HasSchemas
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+
+    public $data = [];
+
+    public function mount(): void
+    {
+        $this->form->fill();
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                Select::make('author_id')
+                    ->relationship('author', 'name')
+                    ->preload(),
+            ])
+            ->model(Post::class)
+            ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->form->getState();
+    }
+
+    public function render(): View
+    {
+        return view('livewire.form');
+    }
+}
+
+class TestComponentWithSearchableBelongsToRelationshipValidation extends Component implements HasActions, HasSchemas
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+
+    public $data = [];
+
+    public function mount(): void
+    {
+        $this->form->fill();
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                Select::make('author_id')
+                    ->relationship('author', 'name')
+                    ->searchable(),
+            ])
+            ->model(Post::class)
+            ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->form->getState();
+    }
+
+    public function render(): View
+    {
+        return view('livewire.form');
+    }
+}
+
+class TestComponentWithBelongsToManyRelationshipValidation extends Component implements HasActions, HasSchemas
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+
+    public $data = [];
+
+    public User $record;
+
+    public function mount(): void
+    {
+        $this->form->fill([]);
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                Select::make('teams')
+                    ->relationship('teams', 'name')
+                    ->multiple()
+                    ->preload(),
+            ])
+            ->model($this->record)
+            ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->form->getState();
+    }
+
+    public function render(): View
+    {
+        return view('livewire.form');
+    }
+}
+
+class TestComponentWithSearchableBelongsToManyRelationshipValidation extends Component implements HasActions, HasSchemas
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+
+    public $data = [];
+
+    public User $record;
+
+    public function mount(): void
+    {
+        $this->form->fill([]);
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                Select::make('teams')
+                    ->relationship('teams', 'name')
+                    ->multiple()
+                    ->searchable(),
+            ])
+            ->model($this->record)
+            ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->form->getState();
+    }
+
+    public function render(): View
+    {
+        return view('livewire.form');
+    }
+}
+
+class TestComponentWithDisabledOptions extends Livewire
+{
+    public $data = [];
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                Select::make('status')
+                    ->options([
+                        'active' => 'Active',
+                        'pending' => 'Pending',
+                        'archived' => 'Archived',
+                    ])
+                    ->disableOptionWhen(fn (string $value): bool => $value === 'archived'),
+            ])
+            ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->form->getState();
+    }
+}
+
+class TestComponentWithMultipleDisabledOptions extends Livewire
+{
+    public $data = [];
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                Select::make('statuses')
+                    ->options([
+                        'active' => 'Active',
+                        'pending' => 'Pending',
+                        'archived' => 'Archived',
+                    ])
+                    ->multiple()
+                    ->disableOptionWhen(fn (string $value): bool => $value === 'archived'),
+            ])
+            ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->form->getState();
+    }
+}
