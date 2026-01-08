@@ -653,7 +653,7 @@ class ImportColumn extends Component
 
     public function getValidationAttribute(): string
     {
-        return $this->evaluate($this->validationAttribute) ?? Str::lcfirst($this->getLabel());
+        return $this->evaluate($this->validationAttribute) ?? Str::lcfirst($this->getLabel() ?? $this->getName());
     }
 
     public function getLabel(): ?string
