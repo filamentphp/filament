@@ -89,7 +89,7 @@ it('can add and remove tags in the browser', function (): void {
         ->assertDontSee('MyNewTag')
         ->type('[data-testid="basic-tags"] input', 'MyNewTag')
         ->keys('[data-testid="basic-tags"] input', 'Enter')
-        ->waitForText('MyNewTag')
+        ->assertSee('MyNewTag')
         ->assertSee('MyNewTag')
         ->click('[data-testid="basic-tags"] .fi-badge-delete-btn')
         ->assertDontSee('MyNewTag')

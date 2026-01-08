@@ -82,7 +82,7 @@ it('can add a new row in the browser', function (): void {
     visit('/key-value-test')
         ->assertSee('Key Value Test')
         ->assertSee('Basic Key-Value')
-        ->waitForText('Add row')
+        ->assertSee('Add row')
         ->click('[data-testid="basic-key-value"] .fi-fo-key-value-add-action-ctn')
         ->assertNoSmoke()
         ->assertNoAccessibilityIssues();
@@ -97,9 +97,9 @@ it('can click add row button multiple times in the browser', function (): void {
 
     visit('/key-value-test')
         ->assertSee('Reorderable Key-Value')
-        ->waitForText('Add row')
+        ->assertSee('Add row')
         ->click('[data-testid="reorderable-key-value"] .fi-fo-key-value-add-action-ctn')
-        ->waitForText('Key')
+        ->assertSee('Key')
         ->click('[data-testid="reorderable-key-value"] .fi-fo-key-value-add-action-ctn')
         ->assertNoSmoke();
 });
@@ -155,7 +155,7 @@ it('shows reorder handles when `reorderable()` in the browser', function (): voi
     visit('/key-value-test')
         ->assertSee('Reorderable Key-Value')
         ->click('[data-testid="reorderable-key-value"] .fi-fo-key-value-add-action-ctn')
-        ->waitForText('Key')
+        ->assertSee('Key')
         ->assertPresent('[data-testid="reorderable-key-value"] .fi-fo-key-value-table-row-sortable-handle')
         ->assertNoSmoke();
 });
