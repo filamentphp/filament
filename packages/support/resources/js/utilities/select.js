@@ -923,9 +923,7 @@ export class Select {
         }
 
         // Only add the remove button if one doesn't already exist
-        if (
-            this.container.querySelector('.fi-select-input-value-remove-btn')
-        ) {
+        if (this.container.querySelector('.fi-select-input-value-remove-btn')) {
             return
         }
 
