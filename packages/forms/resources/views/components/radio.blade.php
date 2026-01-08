@@ -55,7 +55,7 @@
 
                         @if ($hasDescription($value))
                             <p class="text-gray-500 dark:text-gray-400">
-                                {{ $getDescription($value) }}
+                                {!! $getDescription($value) !!}
                             </p>
                         @endif
                     </div>

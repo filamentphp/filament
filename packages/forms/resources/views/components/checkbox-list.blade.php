@@ -215,7 +215,7 @@
                                 <p
                                     class="fi-fo-checkbox-list-option-description text-gray-500 dark:text-gray-400"
                                 >
-                                    {{ $getDescription($value) }}
+                                    {!! $getDescription($value) !!}
                                 </p>
                             @endif
                         </div>
