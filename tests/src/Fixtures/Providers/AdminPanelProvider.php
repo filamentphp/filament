@@ -15,6 +15,7 @@ use Filament\Tests\Fixtures\Clusters\UserManagement\Pages\ManageAdmins;
 use Filament\Tests\Fixtures\Clusters\UserManagement\Pages\ManageStaff;
 use Filament\Tests\Fixtures\Pages\Actions;
 use Filament\Tests\Fixtures\Pages\BuilderTest;
+use Filament\Tests\Fixtures\Pages\KeyValueTest;
 use Filament\Tests\Fixtures\Pages\RepeaterTest;
 use Filament\Tests\Fixtures\Pages\SelectTest;
 use Filament\Tests\Fixtures\Pages\Settings;
@@ -66,6 +67,7 @@ class AdminPanelProvider extends PanelProvider
                 Pages\Dashboard::class,
                 Actions::class,
                 BuilderTest::class,
+                KeyValueTest::class,
                 RepeaterTest::class,
                 SelectTest::class,
                 Settings::class,
