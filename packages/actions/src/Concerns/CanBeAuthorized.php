@@ -28,9 +28,11 @@ trait CanBeAuthorized
      */
     public function authorize(mixed $abilities, Model | string | array | null $arguments = null): static
     {
-        if ($abilities instanceof BackedEnum) {
-            $abilities = $abilities->value;
-        }
+        $abilities = match (true) {
+            $abilities instanceof BackedEnum => $abilities->value,
+            $abilities instanceof UnitEnum => $abilities->name,
+            default => $abilities,
+        };
 
         if (is_string($abilities) || is_array($abilities)) {
             $this->authorization = [
@@ -46,14 +48,16 @@ trait CanBeAuthorized
     }
 
     /**
-     * @param  string | BackedEnum | array<string>  $abilities
+     * @param  string | UnitEnum | array<string | UnitEnum>  $abilities
      * @param  Model | array<mixed> | null  $arguments
      */
-    public function authorizeAny(string | BackedEnum | array $abilities, Model | array | null $arguments = null): static
+    public function authorizeAny(string | UnitEnum | array $abilities, Model | array | null $arguments = null): static
     {
-        if ($abilities instanceof BackedEnum) {
-            $abilities = $abilities->value;
-        }
+        $abilities = match (true) {
+            $abilities instanceof BackedEnum => $abilities->value,
+            $abilities instanceof UnitEnum => $abilities->name,
+            default => $abilities,
+        };
 
         $this->authorization = [
             'type' => 'any',
@@ -221,7 +225,7 @@ trait CanBeAuthorized
 
     public function getIndividualRecordAuthorizationResponse(Model $record): Response
     {
-        if (is_string($this->authorizeIndividualRecords) || $this->authorizeIndividualRecords instanceof UnitEnum) {
+        if (is_string($this->authorizeIndividualRecords) || ($this->authorizeIndividualRecords instanceof UnitEnum)) {
             return Gate::inspect($this->authorizeIndividualRecords, Arr::wrap($record));
         }
 
