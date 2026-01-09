@@ -25,13 +25,15 @@
     }}
 >
     <div class="fi-wi-stats-overview-stat-content">
-        <div class="fi-wi-stats-overview-stat-label-ctn">
-            {{ \Filament\Support\generate_icon_html($getIcon()) }}
+        @if (!$isLabelHidden())
+            <div class="fi-wi-stats-overview-stat-label-ctn">
+                {{ \Filament\Support\generate_icon_html($getIcon()) }}
 
-            <span class="fi-wi-stats-overview-stat-label">
-                {{ $getLabel() }}
-            </span>
-        </div>
+                <span class="fi-wi-stats-overview-stat-label">
+                    {{ $getLabel() }}
+                </span>
+            </div>
+        @endif
 
         <div class="fi-wi-stats-overview-stat-value">
             {{ $getValue() }}
