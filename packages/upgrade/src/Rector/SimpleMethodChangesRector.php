@@ -20,7 +20,6 @@ class SimpleMethodChangesRector extends AbstractRector
     /**
      * @return array<array{
      *     class: class-string | array<class-string>,
-     *     classIdentifier: string,
      *     changes: array<string, Closure>,
      * }>
      */
@@ -86,7 +85,6 @@ class SimpleMethodChangesRector extends AbstractRector
     /**
      * @param array{
      *     class: class-string | array<class-string>,
-     *     classIdentifier: string,
      * } $change
      */
     public function isClassMatchingChange(Class_ | Enum_ $class, array $change): bool
