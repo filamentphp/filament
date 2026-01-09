@@ -11,6 +11,7 @@ use Filament\Forms\Components\RichEditor\Actions\LinkAction;
 use Filament\Forms\Components\RichEditor\Actions\TextColorAction;
 use Filament\Forms\Components\RichEditor\EditorCommand;
 use Filament\Forms\Components\RichEditor\FileAttachmentProviders\Contracts\FileAttachmentProvider;
+use Filament\Forms\Components\RichEditor\MentionProvider;
 use Filament\Forms\Components\RichEditor\Models\Contracts\HasRichContent;
 use Filament\Forms\Components\RichEditor\Plugins\Contracts\RichContentPlugin;
 use Filament\Forms\Components\RichEditor\RichContentAttribute;
@@ -21,12 +22,14 @@ use Filament\Forms\Components\RichEditor\StateCasts\RichEditorStateCast;
 use Filament\Forms\Components\RichEditor\TextColor;
 use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
 use Filament\Support\Colors\Color;
+use Filament\Support\Components\Attributes\ExposedLivewireMethod;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use Livewire\Attributes\Renderless;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Tiptap\Editor;
 
@@ -67,6 +70,11 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
      * @var array<string> | Closure | null
      */
     protected array | Closure | null $mergeTags = null;
+
+    /**
+     * @var array<MentionProvider> | Closure | null
+     */
+    protected array | Closure | null $mentions = null;
 
     /**
      * @var array<class-string<RichContentCustomBlock>> | Closure | null
@@ -813,6 +821,109 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
             $mergeTags,
             fn (string $label, int | string $id): array => [(is_string($id) ? $id : $label) => $label],
         );
+    }
+
+    /**
+     * @param  array<MentionProvider> | Closure  $providers
+     */
+    public function mentions(array | Closure $providers): static
+    {
+        $this->mentions = $providers;
+
+        return $this;
+    }
+
+    /**
+     * @return array<MentionProvider>
+     */
+    public function getMentionProviders(): array
+    {
+        return [
+            ...($this->getContentAttribute()?->getMentionProviders() ?? []),
+            ...($this->evaluate($this->mentions) ?? []),
+        ];
+    }
+
+    /**
+     * @return array<int, array{char: string, extraAttributes: array<string, mixed>, isSearchable: bool, items: array<string, string>, noOptionsMessage: string, noSearchResultsMessage: string, searchPrompt: string, searchingMessage: string}>
+     */
+    public function getMentionsForJs(): array
+    {
+        return array_map(
+            function (MentionProvider $provider): array {
+                return [
+                    'char' => $provider->getChar(),
+                    'extraAttributes' => $provider->getExtraAttributes(),
+                    'isSearchable' => $provider->hasSearchResultsUsing(),
+                    'items' => $provider->getItems(),
+                    'noOptionsMessage' => $provider->getNoItemsMessage(),
+                    'noSearchResultsMessage' => $provider->getNoSearchResultsMessage(),
+                    'searchPrompt' => $provider->getSearchPrompt(),
+                    'searchingMessage' => $provider->getSearchingMessage(),
+                ];
+            },
+            $this->getMentionProviders(),
+        );
+    }
+
+    /**
+     * @return array<mixed>
+     */
+    #[ExposedLivewireMethod]
+    #[Renderless]
+    public function getMentionSearchResultsForJs(?string $search = null, ?string $char = '@'): array
+    {
+        $char = $char ?? '@';
+
+        $providers = $this->getMentionProviders();
+
+        $provider = collect($providers)->first(function (MentionProvider $mentionProvider) use ($char): bool {
+            return $mentionProvider->getChar() === $char;
+        }) ?? ($providers[0] ?? null);
+
+        if (! $provider) {
+            return [];
+        }
+
+        return $provider->getSearchResults($search ?? '');
+    }
+
+    /**
+     * @param  array<array{id: mixed, char: string}>  $mentions
+     * @return array<mixed, string>
+     */
+    #[ExposedLivewireMethod]
+    #[Renderless]
+    public function getMentionLabelsForJs(array $mentions = []): array
+    {
+        $providers = $this->getMentionProviders();
+        $labels = [];
+
+        $mentionsByChar = collect($mentions)->groupBy('char');
+
+        foreach ($mentionsByChar as $char => $charMentions) {
+            $provider = collect($providers)->first(function (MentionProvider $mentionProvider) use ($char): bool {
+                return $mentionProvider->getChar() === $char;
+            }) ?? ($providers[0] ?? null);
+
+            if (! $provider) {
+                continue;
+            }
+
+            $ids = $charMentions->pluck('id')->all();
+            $charLabels = $provider->getLabels($ids);
+
+            foreach ($charLabels as $id => $label) {
+                $labels[$id] = $label;
+            }
+        }
+
+        return $labels;
+    }
+
+    public function hasMentions(): bool
+    {
+        return isset($this->mentions);
     }
 
     public function noMergeTagSearchResultsMessage(string | Closure | null $message): static

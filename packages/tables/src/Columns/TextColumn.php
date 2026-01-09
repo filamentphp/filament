@@ -184,7 +184,7 @@ class TextColumn extends Column implements HasEmbeddedView
                 ($alignment instanceof Alignment) ? "fi-align-{$alignment->value}" : (is_string($alignment) ? $alignment : ''),
             ]);
 
-        if (blank($state)) {
+        if (blank($state instanceof Htmlable ? $state->toHtml() : $state)) {
             $attributes = $attributes
                 ->merge([
                     'x-tooltip' => filled($tooltip = $this->getEmptyTooltip())

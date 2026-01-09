@@ -439,10 +439,14 @@ export class Select {
         if (totalRenderedCount === 0) {
             // Show a message if:
             // - There is an active search query (show "no search results" message), or
-            // - The field has hasInitialNoOptionsMessage enabled (show "no options" message)
+            // - The field has `hasInitialNoOptionsMessage` enabled (show "no options" message), or
+            // - The field has dynamic options and no options were returned (show "no options" message)
             if (this.searchQuery) {
                 this.showNoResultsMessage()
-            } else if (this.hasInitialNoOptionsMessage) {
+            } else if (
+                this.hasInitialNoOptionsMessage ||
+                this.hasDynamicOptions
+            ) {
                 this.showNoOptionsMessage()
             }
             // If in multiple mode and no search query, hide the dropdown
@@ -626,6 +630,15 @@ export class Select {
 
             if (renderVersion === this.selectedDisplayVersion) {
                 this.selectedDisplay.replaceChildren(fragment)
+
+                // Remove the remove button since there's no selection
+                const existingRemoveButton = this.container.querySelector(
+                    '.fi-select-input-value-remove-btn',
+                )
+                if (existingRemoveButton) {
+                    existingRemoveButton.remove()
+                }
+                this.container.classList.remove('fi-select-input-ctn-clearable')
             }
             return
         }
@@ -909,6 +922,11 @@ export class Select {
             return
         }
 
+        // Only add the remove button if one doesn't already exist
+        if (this.container.querySelector('.fi-select-input-value-remove-btn')) {
+            return
+        }
+
         const removeButton = document.createElement('button')
         removeButton.type = 'button'
         removeButton.className = 'fi-select-input-value-remove-btn'
@@ -930,7 +948,8 @@ export class Select {
             }
         })
 
-        target.appendChild(removeButton)
+        this.container.appendChild(removeButton)
+        this.container.classList.add('fi-select-input-ctn-clearable')
     }
 
     getSelectedOptionLabel(value) {

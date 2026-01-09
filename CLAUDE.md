@@ -52,6 +52,8 @@ it('returns null for getImageCropAspectRatio by default')
 
 ## Development Commands
 
+**Always update tests when making changes.** For UI components, add browser tests using Pest Browser with `visit()`. Always call `assertNoAccessibilityIssues()` in both light and dark modes (`->inDarkMode()`).
+
 ```bash
 composer test              # Run all tests (SQLite + commands + PHPStan)
 composer test:sqlite       # Run tests with SQLite
@@ -208,6 +210,8 @@ Hook class naming:
 - Abbreviations: `btn`, `col`, `ctn`, `wrp`
 
 ## Writing Documentation
+
+**Always update documentation for user-facing features** in `packages/{package}/docs/`.
 
 - **Tone**: Direct, second person ("You may set...", "You can do this using...")
 - **Structure**: Start with `## Introduction`, show simplest code first
