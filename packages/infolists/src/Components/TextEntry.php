@@ -4,6 +4,7 @@ namespace Filament\Infolists\Components;
 
 use Closure;
 use Filament\Actions\Action;
+use Filament\Forms\Components\RichEditor\Models\Contracts\HasRichContent;
 use Filament\Infolists\View\Components\TextEntryComponent\ItemComponent;
 use Filament\Infolists\View\Components\TextEntryComponent\ItemComponent\IconComponent;
 use Filament\Schemas\Components\Contracts\HasAffixActions;
@@ -132,7 +133,17 @@ class TextEntry extends Entry implements HasAffixActions, HasEmbeddedView
 
     public function isProse(): bool
     {
-        return (bool) $this->evaluate($this->isProse);
+        if ($this->evaluate($this->isProse)) {
+            return true;
+        }
+
+        $record = $this->getRecord();
+
+        if (! ($record instanceof HasRichContent)) {
+            return false;
+        }
+
+        return $record->hasRichContentAttribute($this->getName());
     }
 
     public function isListWithLineBreaks(): bool
@@ -174,7 +185,7 @@ class TextEntry extends Entry implements HasAffixActions, HasEmbeddedView
                 'fi-in-text',
             ]);
 
-        if (blank($state)) {
+        if (blank($state instanceof Htmlable ? $state->toHtml() : $state)) {
             $attributes = $attributes
                 ->merge([
                     'x-tooltip' => filled($tooltip = $this->getEmptyTooltip())

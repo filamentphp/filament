@@ -10,7 +10,7 @@ interface HasAppAuthenticationRecovery
     public function getAppAuthenticationRecoveryCodes(): ?array;
 
     /**
-     * @param  array<string> | null  $codes
+     * @param  ?array<string>  $codes
      */
     public function saveAppAuthenticationRecoveryCodes(?array $codes): void;
 }

@@ -145,7 +145,7 @@ class Component extends ViewComponent
      */
     protected function resolveDefaultClosureDependencyForEvaluationByType(string $parameterType): array
     {
-        $record = $this->getRecord();
+        $record = is_a($parameterType, Model::class, allow_string: true) ? $this->getRecord() : null;
 
         if (! $record) {
             return parent::resolveDefaultClosureDependencyForEvaluationByType($parameterType);

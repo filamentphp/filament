@@ -20,6 +20,7 @@
         "openspout/openspout": "^4.23",
         "orchestra/testbench": "^9.0|^10.0",
         "pestphp/pest": "^3.7|^4.0",
+        "pestphp/pest-plugin-browser": "^4.1",
         "pestphp/pest-plugin-laravel": "^3.0|^4.0",
         "phiki/phiki": "^2.0",
         "phpstan/extension-installer": "^1.1",

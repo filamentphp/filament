@@ -97,7 +97,6 @@ class MorphToSelect extends Component
 
             $keySelect = Select::make($keyColumn)
                 ->label(fn (Get $get): ?string => ($types[$get($typeColumn)] ?? null)?->getLabel())
-                ->model(fn (Get $get): ?string => ($types[$get($typeColumn)] ?? null)?->getModel())
                 ->hiddenLabel()
                 ->options(fn (Select $component, Get $get): ?array => $component->evaluate(($types[$get($typeColumn)] ?? null)?->getOptionsUsing))
                 ->getSearchResultsUsing(fn (Select $component, Get $get, $search): ?array => $component->evaluate(($types[$get($typeColumn)] ?? null)?->getSearchResultsUsing, ['search' => $search]))
@@ -110,6 +109,7 @@ class MorphToSelect extends Component
                 ->searchDebounce($component->getSearchDebounce())
                 ->searchPrompt($component->getSearchPrompt())
                 ->searchingMessage($component->getSearchingMessage())
+                ->noOptionsMessage($component->getNoOptionsMessage())
                 ->noSearchResultsMessage($component->getNoSearchResultsMessage())
                 ->loadingMessage($component->getLoadingMessage())
                 ->allowHtml($component->isHtmlAllowed())
@@ -121,7 +121,8 @@ class MorphToSelect extends Component
                 )
                 ->afterStateUpdated(function () use ($component): void {
                     $component->callAfterStateUpdated();
-                });
+                })
+                ->actionSchemaModel(fn (Get $get): ?string => ($types[$get($typeColumn)] ?? null)?->getModel());
 
             if ($callback = $component->getModifyTypeSelectUsingCallback()) {
                 $typeSelect = $component->evaluate($callback, [
