@@ -89,10 +89,6 @@ class SimpleMethodChangesRector extends AbstractRector
      */
     public function isClassMatchingChange(Class_ | Enum_ $class, array $change): bool
     {
-        if (! array_key_exists('class', $change)) {
-            return true;
-        }
-
         $classes = is_array($change['class']) ?
             $change['class'] :
             [$change['class']];
