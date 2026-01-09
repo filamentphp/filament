@@ -17,7 +17,23 @@ render(<<<'HTML'
 
                 <br />
 
+                This script will attempt to handle breaking changes for you, and will guide you through any manual steps that may be required.
+
+                <br />
+
                 If you have any questions, please reach out to us on <a href="https://filamentphp.com/discord" class="underline font-bold">Discord</a> or <a href="https://github.com/filamentphp/filament/discussions/new?category=q-a" class="underline font-bold">GitHub</a>.
+            </div>
+
+            <div>
+                To begin, please ensure that you are using a version control system such as Git.
+
+                <br />
+
+                We will make changes directly to your files, and you will need to be able to revert them if something goes wrong.
+
+                <br />
+
+                <strong>Please commit any changes you have made to your project before continuing.</strong>
             </div>
         </div>
 
@@ -26,6 +42,45 @@ render(<<<'HTML'
 HTML);
 
 require __DIR__ . '/../src/check-compatibility.php';
+
+$directories = $argv[1] ?? ask(<<<HTML
+    <div>
+        Please provide a comma-separated list of directories containing Filament code to upgrade (e.g. <strong>app</strong>, <strong>app-modules</strong>, <strong>src</strong>).
+
+        <br />
+
+        <span class="bg-amber-600 text-amber-50 mr-1">
+             You can skip this if you have a normal Laravel app structure:
+        </span>
+    </div>
+    HTML) ?: 'app';
+
+render(<<<HTML
+    <p class="bg-green-600 text-green-50">
+        Starting upgrade...
+    </p>
+HTML);
+
+$rectorScriptPath = implode(DIRECTORY_SEPARATOR, ['vendor', 'bin', 'rector']);
+
+foreach (explode(',', $directories) as $directory) {
+    $directory = trim($directory);
+    $directory = trim($directory, DIRECTORY_SEPARATOR);
+
+    render(<<<HTML
+        <p>
+            Start processing <strong>/{$directory}</strong> to fix code affected by breaking changes.
+        </p>
+        HTML);
+
+    exec("{$rectorScriptPath} process {$directory} --config vendor/filament/upgrade/src/rector.php --clear-cache");
+
+    render(<<<HTML
+        <p class="pt-2">
+            Finished processing <strong>/{$directory}</strong>.
+        </p>
+        HTML);
+}
 
 $requireCommands = [];
 

@@ -20,7 +20,7 @@ import Aside from "@components/Aside.astro"
     Some plugins you're using may not be available in v5 just yet. You could temporarily remove them from your `composer.json` file until they've been upgraded, replace them with a similar plugins that are v5-compatible, wait for the plugins to be upgraded before upgrading your app, or even write PRs to help the authors upgrade them.
 </Aside>
 
-You can upgrade your Filament app by running the automated upgrade script. This script will check your codebase for compatibility issues, and suggest Composer update commands to run:
+The first step to upgrade your Filament app is to run the automated upgrade script. This script will automatically upgrade your application to the latest version of Filament and make changes to your code, which handles breaking changes:
 
 ```bash
 composer require filament/upgrade:"^5.0" -W --dev
@@ -45,6 +45,8 @@ composer update
     composer update
     ```
 </Aside>
+
+Make sure to carefully follow the instructions, and review the changes made by the script. You may need to make some manual changes to your code afterwards, but the script should handle most of the repetitive work for you.
 
 You can now `composer remove filament/upgrade --dev` as you don't need it anymore.
 

@@ -5,6 +5,7 @@ namespace Filament\Resources\Resource\Concerns;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Database\Eloquent\Model;
+use UnitEnum;
 
 use function Filament\get_authorization_response;
 
@@ -19,7 +20,7 @@ trait HasAuthorization
         return static::canViewAny();
     }
 
-    public static function getAuthorizationResponse(string $action, ?Model $record = null): Response
+    public static function getAuthorizationResponse(string | UnitEnum $action, ?Model $record = null): Response
     {
         if (static::shouldSkipAuthorization()) {
             return Response::allow();
@@ -28,7 +29,7 @@ trait HasAuthorization
         return get_authorization_response($action, $record ?? static::getModel(), static::shouldCheckPolicyExistence());
     }
 
-    public static function can(string $action, ?Model $record = null): bool
+    public static function can(string | UnitEnum $action, ?Model $record = null): bool
     {
         return static::getAuthorizationResponse($action, $record)->allowed();
     }
@@ -36,7 +37,7 @@ trait HasAuthorization
     /**
      * @throws AuthorizationException
      */
-    public static function authorize(string $action, ?Model $record = null): ?Response
+    public static function authorize(string | UnitEnum $action, ?Model $record = null): ?Response
     {
         return static::getAuthorizationResponse($action, $record)->authorize();
     }
