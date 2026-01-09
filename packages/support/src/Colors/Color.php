@@ -518,26 +518,65 @@ class Color
     {
         $color = static::convertToOklch($color);
 
-        [, $chroma, $hue] = sscanf($color, 'oklch(%f %f %f)');
+        [$inputLightness, $chroma, $hue] = sscanf($color, 'oklch(%f %f %f)');
 
         $isAchromatic = $chroma < 0.03;
 
-        return array_map(
-            fn (array $constants): string => "oklch({$constants[0]} " . ($isAchromatic ? '0' : $constants[1]) . " {$hue})",
-            [
-                50 => [0.97717647058824, 0.01395454545455],
-                100 => [0.95035294117647, 0.03272727272727],
-                200 => [0.90547058823529, 0.06318181818182],
-                300 => [0.84047058823529, 0.10604545454546],
-                400 => [0.75352941176471, 0.15027272727273],
-                500 => [0.68270588235294, 0.17009090909091],
-                600 => [0.59782352941176, 0.16913636363636],
-                700 => [0.51494117647059, 0.14940909090909],
-                800 => [0.44611764705882, 0.12331818181818],
-                900 => [0.39458823529412, 0.09963636363636],
-                950 => [0.27788235294118, 0.07136363636364],
-            ],
-        );
+        $defaultLightness = [
+            50 => 0.97717647058824,
+            100 => 0.95035294117647,
+            200 => 0.90547058823529,
+            300 => 0.84047058823529,
+            400 => 0.75352941176471,
+            500 => 0.68270588235294,
+            600 => 0.59782352941176,
+            700 => 0.51494117647059,
+            800 => 0.44611764705882,
+            900 => 0.39458823529412,
+            950 => 0.27788235294118,
+        ];
+
+        $defaultChroma = [
+            50 => 0.01395454545455,
+            100 => 0.03272727272727,
+            200 => 0.06318181818182,
+            300 => 0.10604545454546,
+            400 => 0.15027272727273,
+            500 => 0.17009090909091,
+            600 => 0.16913636363636,
+            700 => 0.14940909090909,
+            800 => 0.12331818181818,
+            900 => 0.09963636363636,
+            950 => 0.07136363636364,
+        ];
+
+        $defaultL500 = $defaultLightness[500];
+        $palette = [];
+
+        foreach ($defaultLightness as $shade => $defaultL) {
+            if ($shade < 500) {
+                $ratio = ($defaultL - $defaultL500) / ($defaultLightness[50] - $defaultL500);
+                $lightness = $inputLightness + $ratio * (0.98 - $inputLightness);
+            } elseif ($shade > 500) {
+                $ratio = ($defaultL500 - $defaultL) / ($defaultL500 - $defaultLightness[950]);
+                $lightness = $inputLightness - $ratio * ($inputLightness - 0.15);
+            } else {
+                $lightness = $inputLightness;
+            }
+
+            $lightness = max(0.05, min(0.99, $lightness));
+
+            if ($isAchromatic) {
+                $shadeChroma = 0;
+            } else {
+                $chromaRatio = $defaultChroma[$shade] / $defaultChroma[500];
+                $shadeChroma = min($chroma * $chromaRatio, 0.4);
+            }
+
+            $palette[$shade] = "oklch({$lightness} {$shadeChroma} {$hue})";
+        }
+
+        return $palette;
     }
 
     /**
