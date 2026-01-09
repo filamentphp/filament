@@ -12,6 +12,7 @@ use Filament\Schemas\Components\StateCasts\SliderStateCast;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Filament\Support\RawJs;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Js;
 
 class Slider extends Field implements Contracts\HasNestedRecursiveValidationRules
 {
@@ -410,10 +411,18 @@ class Slider extends Field implements Contracts\HasNestedRecursiveValidationRule
         }
 
         if (is_array($value)) {
-            return array_map(
-                fn (mixed $value): mixed => $this->convertRawJsExpressionsToFormatterObjects($value),
+            return RawJs::make('[' . implode(', ', array_map(
+                function (mixed $value): string {
+                    $value = $this->convertRawJsExpressionsToFormatterObjects($value);
+
+                    if ($value instanceof RawJs) {
+                        return $value->toHtml();
+                    }
+
+                    return Js::from($value)->toHtml();
+                },
                 $value,
-            );
+            )) . ']');
         }
 
         return $value;
