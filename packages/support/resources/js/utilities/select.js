@@ -630,6 +630,15 @@ export class Select {
 
             if (renderVersion === this.selectedDisplayVersion) {
                 this.selectedDisplay.replaceChildren(fragment)
+
+                // Remove the remove button since there's no selection
+                const existingRemoveButton = this.container.querySelector(
+                    '.fi-select-input-value-remove-btn',
+                )
+                if (existingRemoveButton) {
+                    existingRemoveButton.remove()
+                }
+                this.container.classList.remove('fi-select-input-ctn-clearable')
             }
             return
         }
@@ -910,6 +919,11 @@ export class Select {
 
         // Add a cross button to clear the selection if canSelectPlaceholder is true
         if (!this.canSelectPlaceholder) {
+            return
+        }
+
+        // Only add the remove button if one doesn't already exist
+        if (this.container.querySelector('.fi-select-input-value-remove-btn')) {
             return
         }
 

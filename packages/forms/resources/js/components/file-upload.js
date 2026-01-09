@@ -96,6 +96,8 @@ export default function fileUploadFormComponent({
 
         isEditorOpen: false,
 
+        isEditorOpenedForAspectRatio: false,
+
         editingFile: {},
 
         currentRatio: '',
@@ -342,6 +344,8 @@ export default function fileUploadFormComponent({
 
             this.pond.on('processfilerevert', handleFileProcessing)
 
+            this.pond.on('removefile', handleFileProcessing)
+
             this.pond.on('warning', (warning) => {
                 if (warning.body === 'Max files') {
                     this.error = maxFilesValidationMessage
@@ -554,6 +558,21 @@ export default function fileUploadFormComponent({
         },
 
         closeEditor() {
+            if (this.isEditorOpenedForAspectRatio) {
+                const fileItem = this.pond
+                    .getFiles()
+                    .find(
+                        (uploadedFile) =>
+                            uploadedFile.filename === this.editingFile.name,
+                    )
+
+                if (fileItem) {
+                    this.pond.removeFile(fileItem.id, { revert: true })
+                }
+
+                this.isEditorOpenedForAspectRatio = false
+            }
+
             this.editingFile = {}
 
             this.isEditorOpen = false
@@ -705,6 +724,8 @@ export default function fileUploadFormComponent({
                 return
             }
 
+            this.isEditorOpenedForAspectRatio = false
+
             let croppedCanvas = this.editor.getCroppedCanvas({
                 fillColor: imageEditorEmptyFillColor ?? 'transparent',
                 height: automaticallyResizeImagesHeight,
@@ -815,6 +836,8 @@ export default function fileUploadFormComponent({
                         imageRatio - automaticallyOpenImageEditorForAspectRatio,
                     ) > tolerance
                 ) {
+                    this.isEditorOpenedForAspectRatio = true
+
                     this.loadEditor(file)
                 }
             }

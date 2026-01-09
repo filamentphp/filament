@@ -10,9 +10,9 @@ class MentionProvider
     protected ?Closure $getSearchResultsUsing = null;
 
     /**
-     * @var array<string, string>
+     * @var array<string> | Closure
      */
-    protected array $items = [];
+    protected array | Closure $items = [];
 
     /**
      * @var array<string, mixed>|Closure|null
@@ -48,15 +48,11 @@ class MentionProvider
     }
 
     /**
-     * @param  array<string, string>  $items
+     * @param  array<string> | Closure  $items
      */
-    public function items(array $items): static
+    public function items(array | Closure $items): static
     {
-        $this->items = [];
-
-        foreach ($items as $id => $label) {
-            $this->items[(string) $id] = (string) $label;
-        }
+        $this->items = $items;
 
         return $this;
     }
@@ -181,7 +177,7 @@ class MentionProvider
         if ($this->getLabelsUsing instanceof Closure) {
             $labels = ($this->getLabelsUsing)($ids);
         } else {
-            $labels = Arr::only($this->items, $ids);
+            $labels = Arr::only($this->getItems(), $ids);
         }
 
         $result = [];
@@ -208,7 +204,19 @@ class MentionProvider
      */
     public function getItems(): array
     {
-        return $this->items;
+        $items = $this->items;
+
+        if ($items instanceof Closure) {
+            $items = $items();
+        }
+
+        $normalized = [];
+
+        foreach ($items as $id => $label) {
+            $normalized[(string) $id] = (string) $label;
+        }
+
+        return $normalized;
     }
 
     /**
@@ -218,15 +226,19 @@ class MentionProvider
     {
         if ($this->getSearchResultsUsing instanceof Closure) {
             $results = ($this->getSearchResultsUsing)($search) ?? [];
-        } elseif (blank($search)) {
-            $results = $this->items;
         } else {
-            $searchLower = strtolower($search);
+            $items = $this->getItems();
 
-            $results = array_filter(
-                $this->items,
-                fn (string $label): bool => str_contains(strtolower($label), $searchLower),
-            );
+            if (blank($search)) {
+                $results = $items;
+            } else {
+                $searchLower = strtolower($search);
+
+                $results = array_filter(
+                    $items,
+                    static fn (string $label): bool => str_contains(strtolower($label), $searchLower),
+                );
+            }
         }
 
         $normalized = [];

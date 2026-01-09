@@ -345,6 +345,7 @@ export default Node.create({
                     ...suggestionConfig,
                     items: async (context) => {
                         if (
+                            context?.query &&
                             typeof getMentionSearchResultsUsing === 'function'
                         ) {
                             try {
@@ -380,9 +381,12 @@ export default Node.create({
                                 return []
                             }
 
+                            const items = toItemsArray(baseItems)
+
                             if (
+                                query &&
                                 typeof getMentionSearchResultsUsing ===
-                                'function'
+                                    'function'
                             ) {
                                 try {
                                     const results =
@@ -394,8 +398,6 @@ export default Node.create({
                                     return toItemsArray(results)
                                 } catch {}
                             }
-
-                            const items = toItemsArray(baseItems)
 
                             if (!query) {
                                 return items

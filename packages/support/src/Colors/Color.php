@@ -518,10 +518,12 @@ class Color
     {
         $color = static::convertToOklch($color);
 
-        [,, $hue] = sscanf($color, 'oklch(%f %f %f)');
+        [, $chroma, $hue] = sscanf($color, 'oklch(%f %f %f)');
+
+        $isAchromatic = $chroma < 0.03;
 
         return array_map(
-            fn (array $constants): string => "oklch({$constants[0]} {$constants[1]} {$hue})",
+            fn (array $constants): string => "oklch({$constants[0]} " . ($isAchromatic ? '0' : $constants[1]) . " {$hue})",
             [
                 50 => [0.97717647058824, 0.01395454545455],
                 100 => [0.95035294117647, 0.03272727272727],

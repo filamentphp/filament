@@ -124,6 +124,17 @@ class SelectTest extends Page
                     ->searchable()
                     ->noOptionsMessage('No options available')
                     ->extraAttributes(['data-testid' => 'dynamic-options-with-results-select']),
+
+                Select::make('clearable_with_placeholder')
+                    ->label('Clearable With Placeholder')
+                    ->placeholder('Select an option...')
+                    ->options([
+                        'first' => 'First',
+                        'second' => 'Second',
+                        'third' => 'Third',
+                    ])
+                    ->native(false)
+                    ->extraAttributes(['data-testid' => 'clearable-with-placeholder-select']),
             ])
             ->statePath('data');
     }

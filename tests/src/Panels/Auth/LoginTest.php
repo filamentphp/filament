@@ -199,7 +199,7 @@ it('can fill the login form, authenticate, and redirect to the dashboard in the 
         ->type('input[type="email"]', $user->email)
         ->type('input[type="password"]', 'password')
         ->click('button[type="submit"]')
-        ->waitForText('Dashboard')
+        ->assertSee('Dashboard')
         ->assertPathIs('/')
         ->assertSee('Dashboard')
         ->assertNoSmoke()

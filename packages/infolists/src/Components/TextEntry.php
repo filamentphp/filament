@@ -185,7 +185,7 @@ class TextEntry extends Entry implements HasAffixActions, HasEmbeddedView
                 'fi-in-text',
             ]);
 
-        if (blank($state)) {
+        if (blank($state instanceof Htmlable ? $state->toHtml() : $state)) {
             $attributes = $attributes
                 ->merge([
                     'x-tooltip' => filled($tooltip = $this->getEmptyTooltip())
