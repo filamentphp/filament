@@ -10,6 +10,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
+use Filament\Tests\Fixtures\Enums\StringBackedEnum;
 use Filament\Tests\Fixtures\Models\Company;
 use Filament\Tests\Fixtures\Models\Team;
 use Filament\Tests\Fixtures\Models\User;
@@ -182,7 +183,7 @@ it('can get `getOptions()` from closure', function (): void {
 
 it('can get `getOptions()` from enum class string', function (): void {
     $checkboxList = CheckboxList::make('options')
-        ->options(\Filament\Tests\Fixtures\Enums\StringBackedEnum::class);
+        ->options(StringBackedEnum::class);
 
     $options = $checkboxList->getOptions();
 
