@@ -18,6 +18,7 @@
                 stepQueryStringKey: @js($getStepQueryStringKey()),
             })"
     x-on:next-wizard-step.window="if ($event.detail.key === @js($key)) goToNextStep()"
+    x-on:wizard-go-to-step.window="($event.detail.key === @js($key)) && goToStep($event.detail.step)"
     wire:ignore.self
     {{
         $attributes

@@ -48,6 +48,23 @@ export default function wizardSchemaComponent({
             this.scroll()
         },
 
+        goToStep(stepKey) {
+            const stepIndex = this.getStepIndex(stepKey)
+
+            if (stepIndex <= -1) {
+                return
+            }
+
+            if (!isSkippable && stepIndex > this.getStepIndex(this.step)) {
+                return
+            }
+
+            this.step = stepKey
+
+            this.autofocusFields()
+            this.scroll()
+        },
+
         scroll() {
             this.$nextTick(() => {
                 this.$refs.header?.children[
