@@ -568,6 +568,13 @@ return [
 
         'no_merge_tag_search_results_message' => 'Nenašli sa žiadne výsledky pre značky zlúčenia.',
 
+        'mentions' => [
+            'no_options_message' => 'Nie sú dostupné žiadne možnosti.',
+            'no_search_results_message' => 'Žiadne výsledky nezodpovedajú vášmu hľadaniu.',
+            'search_prompt' => 'Začnite písať na vyhľadávanie...',
+            'searching_message' => 'Hľadám...',
+        ],
+
         'tools' => [
             'align_center' => 'Zarovnať na stred',
             'align_end' => 'Zarovnať vpravo',
@@ -679,6 +686,8 @@ return [
 
         'max_items_message' => 'Maximálny počet pre výber je: :count.',
 
+        'no_options_message' => 'Nie sú dostupné žiadne možnosti.',
+
         'no_search_results_message' => 'Žiadne možnosti neodpovedajú vášmu hľadaniu.',
 
         'placeholder' => 'Vyberte možnosť',
@@ -690,7 +699,17 @@ return [
     ],
 
     'tags_input' => [
+
+        'actions' => [
+
+            'delete' => [
+                'label' => 'Odstrániť',
+            ],
+
+        ],
+
         'placeholder' => 'Nová značka',
+
     ],
 
     'text_input' => [
