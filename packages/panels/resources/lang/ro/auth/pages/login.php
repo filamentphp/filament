@@ -43,17 +43,41 @@ return [
 
     ],
 
+    'multi_factor' => [
+
+        'heading' => 'Verificați-vă identitatea',
+
+        'subheading' => 'Pentru a continua autentificarea, trebuie să vă verificați identitatea.',
+
+        'form' => [
+
+            'provider' => [
+                'label' => 'Cum doriți să verificați?',
+            ],
+
+            'actions' => [
+
+                'authenticate' => [
+                    'label' => 'Confirmă autentificarea',
+                ],
+
+            ],
+
+        ],
+
+    ],
+
     'messages' => [
 
-        'failed' => 'Emailul sau parola nu sunt corecte',
+        'failed' => 'Emailul sau parola nu sunt corecte.',
 
     ],
 
     'notifications' => [
 
         'throttled' => [
-            'title' => 'Te rugăm să aștepți :seconds secunde înainte de a încerca din nou',
-            'body' => 'Te rugăm sa reîncerci in :seconds secunde.',
+            'title' => 'Prea multe încercări de autentificare',
+            'body' => 'Vă rugăm să încercați din nou în :seconds secunde.',
         ],
 
     ],
