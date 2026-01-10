@@ -38,4 +38,7 @@ return [
 
     ],
 
+
+    'navigation_label' => 'កែប្រែ',
+
 ];

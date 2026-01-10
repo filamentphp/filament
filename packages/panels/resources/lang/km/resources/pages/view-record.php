@@ -14,4 +14,7 @@ return [
 
     ],
 
+
+    'navigation_label' => 'មើល',
+
 ];
