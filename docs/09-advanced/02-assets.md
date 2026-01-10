@@ -73,9 +73,9 @@ Tailwind builds are unique to every application - they contain a minimal set of 
 ```css
 @import "tailwindcss";
 
-@source '../../../../app/Filament';
-@source '../../../../resources/views/filament';
-@source '../../../../vendor/danharrin/filament-blog/resources/views'; /* Your plugin's vendor directory */
+@source '../../../../app/Filament/**/*';
+@source '../../../../resources/views/filament/**/*';
+@source '../../../../vendor/danharrin/filament-blog/resources/views/**/*'; /* Your plugin's vendor directory */
 ```
 
 This means that when they build their Tailwind CSS file, it will include all the utility classes that are used in your plugin's views, as well as the utility classes that are used in their application and the Filament core.

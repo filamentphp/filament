@@ -195,18 +195,18 @@ php artisan make:filament-theme
 In the generated `theme.css` file, you will find `@source` directives that tell Tailwind CSS where to scan for classes:
 
 ```css
-@source '../../../../app/Filament';
-@source '../../../../resources/views/filament';
+@source '../../../../app/Filament/**/*';
+@source '../../../../resources/views/filament/**/*';
 ```
 
 **Add your own directories** where you use Tailwind classes. For example:
 
 ```css
-@source '../../../../app/Filament';
-@source '../../../../resources/views/filament';
-@source '../../../../resources/views/components';
-@source '../../../../resources/views/livewire';
-@source '../../../../app/Livewire';
+@source '../../../../app/Filament/**/*';
+@source '../../../../resources/views/filament/**/*';
+@source '../../../../resources/views/components/**/*';
+@source '../../../../resources/views/livewire/**/*';
+@source '../../../../app/Livewire/**/*';
 ```
 
 After adding your directories, rebuild your theme:

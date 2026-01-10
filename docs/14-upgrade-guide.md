@@ -256,8 +256,8 @@ Now, they should contain this:
 ```css
 @import '../../../../vendor/filament/filament/resources/css/theme.css';
 
-@source '../../../../app/Filament';
-@source '../../../../resources/views/filament';
+@source '../../../../app/Filament/**/*';
+@source '../../../../resources/views/filament/**/*';
 ```
 
 This will load Tailwind CSS. The `@source` entries tell Tailwind where to find the classes that are used in your app. You should check the `content` paths in your old `tailwind.config.js` file, and add them as `@source` entries like this. You **don't** need to include `vendor/filament` as a `@source`, but check plugins you have installed to see if they require `@source` entries.
@@ -285,10 +285,10 @@ Run `php artisan make:filament-theme` and follow the [theming documentation](sty
 ```css
 @import '../../../../vendor/filament/filament/resources/css/theme.css';
 
-@source '../../../../app/Filament';
-@source '../../../../resources/views/filament';
-@source '../../../../resources/views/components'; /* Add your own paths */
-@source '../../../../resources/views/livewire'; /* Add your own paths */
+@source '../../../../app/Filament/**/*';
+@source '../../../../resources/views/filament/**/*';
+@source '../../../../resources/views/components/**/*'; /* Add your own paths */
+@source '../../../../resources/views/livewire/**/*'; /* Add your own paths */
 ```
 
 <Aside variant="tip">
