@@ -4,10 +4,12 @@ namespace Filament\Tests\Tables\Filters;
 
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
+use Filament\Forms\Components\Select;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Filament\Tests\Fixtures\Enums\StringBackedEnum;
 use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Tables\TestCase;
@@ -254,7 +256,7 @@ it('can get `getOptions()` from closure', function (): void {
 
 it('can get `getOptions()` from enum class string', function (): void {
     $filter = Tables\Filters\SelectFilter::make('status')
-        ->options(\Filament\Tests\Fixtures\Enums\StringBackedEnum::class);
+        ->options(StringBackedEnum::class);
 
     $options = $filter->getOptions();
 
@@ -400,7 +402,7 @@ it('can get `getFormField()` returns `Select` component', function (): void {
 
     $formField = $filter->getFormField();
 
-    expect($formField)->toBeInstanceOf(\Filament\Forms\Components\Select::class);
+    expect($formField)->toBeInstanceOf(Select::class);
     expect($formField->getName())->toBe('value');
 });
 
@@ -411,7 +413,7 @@ it('can get `getFormField()` returns `Select` component with `values` name for m
 
     $formField = $filter->getFormField();
 
-    expect($formField)->toBeInstanceOf(\Filament\Forms\Components\Select::class);
+    expect($formField)->toBeInstanceOf(Select::class);
     expect($formField->getName())->toBe('values');
     expect($formField->isMultiple())->toBeTrue();
 });
@@ -424,7 +426,7 @@ it('can get `getFormField()` with relationship configuration', function (): void
 
     $formField = $filter->getFormField();
 
-    expect($formField)->toBeInstanceOf(\Filament\Forms\Components\Select::class);
+    expect($formField)->toBeInstanceOf(Select::class);
     expect($formField->isSearchable())->toBeTrue();
     expect($formField->isPreloaded())->toBeTrue();
 });
