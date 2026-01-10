@@ -8,6 +8,7 @@ use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
 use Filament\Tests\TestCase;
 use Livewire\Component;
+use Phiki\Grammar\Grammar;
 
 use function Filament\Tests\livewire;
 
@@ -61,7 +62,7 @@ class TestComponentWithPhpCodeEntry extends Component implements HasSchemas
             ])
             ->components([
                 CodeEntry::make('php_code')
-                    ->grammar(\Phiki\Grammar\Grammar::Php),
+                    ->grammar(Grammar::Php),
             ]);
     }
 

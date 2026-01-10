@@ -8,6 +8,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
+use Filament\Tests\Fixtures\Enums\StringBackedEnum;
 use Filament\Tests\Fixtures\Livewire\Livewire;
 use Filament\Tests\Fixtures\Models\Company;
 use Filament\Tests\Fixtures\Models\Post;
@@ -1400,7 +1401,7 @@ it('can get `getOptions()` from closure', function (): void {
 
 it('can get `getOptions()` from enum class string', function (): void {
     $select = Select::make('category')
-        ->options(\Filament\Tests\Fixtures\Enums\StringBackedEnum::class);
+        ->options(StringBackedEnum::class);
 
     $options = $select->getOptions();
 
