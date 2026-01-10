@@ -571,7 +571,7 @@ return [
         'mentions' => [
             'no_options_message' => 'Brak dostępnych opcji.',
             'no_search_results_message' => 'Brak wyników wyszukiwania.',
-            'search_prompt' => 'Zacznij pisać, aby wyszukać...',
+            'search_prompt' => 'Zacznij pisać aby wyszukać...',
             'searching_message' => 'Wyszukiwanie...',
         ],
 
