@@ -32,9 +32,13 @@ return [
 
     'notifications' => [
 
+        'sent' => [
+            'body' => 'Dacă contul dumneavoastră nu există, nu veți primi emailul.',
+        ],
+
         'throttled' => [
             'title' => 'Prea multe încercări consecutive',
-            'body' => 'Încearcă te rog din nou peste :seconds secunde.',
+            'body' => 'Vă rugăm să încercați din nou în :seconds secunde.',
         ],
 
     ],

@@ -11,8 +11,15 @@ return [
         'form' => [
 
             'file' => [
+
                 'label' => 'Fișier',
+
                 'placeholder' => 'Încarcă un fișier CSV',
+
+                'rules' => [
+                    'duplicate_columns' => '{0} Fișierul nu poate conține mai mult de un antet de coloană gol.|{1,*} Fișierul nu poate conține antete de coloane duplicate: :columns.',
+                ],
+
             ],
 
             'columns' => [
@@ -69,9 +76,10 @@ return [
     ],
 
     'failure_csv' => [
-        'file_name' => 'import-:import_id-:csv_name-câmpuri-gresite',
-        'error_header' => 'error',
+        'file_name' => 'import-:import_id-:csv_name-randuri-esuate',
+        'error_header' => 'eroare',
         'system_error' => 'Eroare de sistem, vă rugăm contactați echipa de suport.',
+        'column_mapping_required_for_new_record' => 'Coloana :attribute nu a fost mapată la o coloană din fișier, dar este necesară pentru crearea înregistrărilor noi.',
     ],
 
 ];
