@@ -4,11 +4,11 @@ return [
 
     'single' => [
 
-        'label' => 'ថ្មី :label',
+        'label' => 'បង្កើត :label ថ្មី',
 
         'modal' => [
 
-            'heading' => 'បង្កើត :label',
+            'heading' => 'បង្កើត :label ថ្មី',
 
             'actions' => [
 

@@ -6,29 +6,7 @@ return [
 
     'breadcrumb' => 'កែប្រែ',
 
-    'form' => [
-
-        'actions' => [
-
-            'cancel' => [
-                'label' => 'បោះបង់',
-            ],
-
-            'save' => [
-                'label' => 'រក្សាទុក',
-            ],
-
-        ],
-
-    ],
-
-    'content' => [
-
-        'tab' => [
-            'label' => 'កែប្រែ',
-        ],
-
-    ],
+    'navigation_label' => 'កែប្រែ',
 
     'notifications' => [
 
@@ -36,6 +14,28 @@ return [
             'title' => 'បានរក្សាទុក',
         ],
 
+    ],
+
+    'form' => [
+
+        'actions' => [
+
+            'cancel' => [
+                'label' => 'លុបចោល',
+            ],
+
+            'save' => [
+                'label' => 'រក្សាទុកការផ្លាស់ប្តូរ',
+            ],
+
+        ],
+
+    ],
+
+    'content' => [
+        'tab' => [
+            'label' => 'កែប្រែ',
+        ],
     ],
 
 ];

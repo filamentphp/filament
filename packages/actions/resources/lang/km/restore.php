@@ -54,6 +54,18 @@ return [
                 'title' => 'បានស្ដារឡើងវិញ',
             ],
 
+            'restored_partial' => [
+                'title' => 'បានស្ដារឡើងវិញ :count នៃ :total',
+                'missing_authorization_failure_message' => 'អ្នកមិនមានការអនុញ្ញាតឱ្យស្ដារ :count ទេ។',
+                'missing_processing_failure_message' => ':count មិនអាចស្ដារឡើងវិញបានទេ។',
+            ],
+
+            'restored_none' => [
+                'title' => 'បានបរាជ័យក្នុងការស្ដារឡើងវិញ',
+                'missing_authorization_failure_message' => 'អ្នកមិនមានការអនុញ្ញាតឱ្យស្ដារ :count ទេ។',
+                'missing_processing_failure_message' => ':count មិនអាចស្ដារឡើងវិញបានទេ។',
+            ],
+
         ],
 
     ],

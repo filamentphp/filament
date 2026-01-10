@@ -54,6 +54,18 @@ return [
                 'title' => 'បានលុប',
             ],
 
+            'deleted_partial' => [
+                'title' => 'បានលុប :count នៃ :total',
+                'missing_authorization_failure_message' => 'អ្នកមិនមានការអនុញ្ញាតឱ្យលុប :count ទេ។',
+                'missing_processing_failure_message' => ':count មិនអាចលុបបានទេ។',
+            ],
+
+            'deleted_none' => [
+                'title' => 'បានបរាជ័យក្នុងការលុប',
+                'missing_authorization_failure_message' => 'អ្នកមិនមានការអនុញ្ញាតឱ្យលុប :count ទេ។',
+                'missing_processing_failure_message' => ':count មិនអាចលុបបានទេ។',
+            ],
+
         ],
 
     ],

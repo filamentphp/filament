@@ -6,12 +6,40 @@ return [
 
         'heading' => 'ជួរឈរ',
 
+        'actions' => [
+
+            'apply' => [
+                'label' => 'អនុវត្តជួរឈរ',
+            ],
+
+            'reset' => [
+                'label' => 'កំណត់ឡើងវិញ',
+            ],
+
+        ],
+
     ],
 
     'columns' => [
 
         'actions' => [
             'label' => 'សកម្មភាព|សកម្មភាព',
+        ],
+
+        'select' => [
+
+            'loading_message' => 'កំពុងផ្ទុក...',
+
+            'no_options_message' => 'គ្មានជម្រើសដែលអាចប្រើបានទេ។',
+
+            'no_search_results_message' => 'គ្មានជម្រើសដែលត្រូវនឹងការស្វែងរករបស់អ្នកទេ។',
+
+            'placeholder' => 'ជ្រើសរើសជម្រើស',
+
+            'searching_message' => 'កំពុងស្វែងរក...',
+
+            'search_prompt' => 'ចាប់ផ្តើមវាយដើម្បីស្វែងរក...',
+
         ],
 
         'text' => [
@@ -145,7 +173,13 @@ return [
         ],
 
         'select' => [
+
             'placeholder' => 'ទាំងអស់',
+
+            'relationship' => [
+                'empty_option_label' => 'គ្មាន',
+            ],
+
         ],
 
         'trashed' => [
@@ -168,7 +202,6 @@ return [
 
             'group' => [
                 'label' => 'ដាក់ជាក្រុមដោយ',
-                'placeholder' => 'ដាក់ជាក្រុមដោយ',
             ],
 
             'direction' => [
@@ -228,5 +261,7 @@ return [
         ],
 
     ],
+
+    'default_model_label' => 'កំណត់ត្រា',
 
 ];
