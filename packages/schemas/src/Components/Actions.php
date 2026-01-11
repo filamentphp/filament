@@ -33,7 +33,7 @@ class Actions extends Component
     const BELOW_CONTENT_SCHEMA_KEY = 'below_content';
 
     /**
-     * @param  array<Action | ActionGroup> | Closure  $actions
+     * @param  array<Component | Action | ActionGroup | string | Htmlable> | Closure  $actions
      */
     final public function __construct(array | Closure $actions)
     {
@@ -41,7 +41,7 @@ class Actions extends Component
     }
 
     /**
-     * @param  array<Action | ActionGroup> | Closure  $actions
+     * @param  array<Component | Action | ActionGroup | string | Htmlable> | Closure  $actions
      */
     public static function make(array | Closure $actions): static
     {
@@ -52,7 +52,7 @@ class Actions extends Component
     }
 
     /**
-     * @param  array<Action | ActionGroup> | Closure  $actions
+     * @param  array<Component | Action | ActionGroup | string | Htmlable> | Closure  $actions
      */
     public function actions(array | Closure $actions): static
     {
