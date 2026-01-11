@@ -74,16 +74,16 @@ Authenticate before testing panel functionality. Filament uses Livewire, so use 
 <code-snippet name="Filament Create Resource Test" lang="php">
     livewire(CreateUser::class)
         ->fillForm([
-            'name' => 'Howdy',
-            'email' => 'howdy@example.com',
+            'name' => 'Test',
+            'email' => 'test@example.com',
         ])
         ->call('create')
         ->assertNotified()
         ->assertRedirect();
 
     assertDatabaseHas(User::class, [
-        'name' => 'Howdy',
-        'email' => 'howdy@example.com',
+        'name' => 'Test',
+        'email' => 'test@example.com',
     ]);
 </code-snippet>
 
