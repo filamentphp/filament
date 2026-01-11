@@ -568,6 +568,13 @@ return [
 
         'no_merge_tag_search_results_message' => 'Žádné výsledky pro značky slučování.',
 
+        'mentions' => [
+            'no_options_message' => 'Nejsou dostupné žádné možnosti.',
+            'no_search_results_message' => 'Žádné výsledky neodpovídají vašemu hledání.',
+            'search_prompt' => 'Začněte psát na vyhledávání...',
+            'searching_message' => 'Hledám...',
+        ],
+
         'tools' => [
             'align_center' => 'Zarovnat na střed',
             'align_end' => 'Zarovnat vpravo',
@@ -679,6 +686,8 @@ return [
 
         'max_items_message' => 'Lze vybrat pouze 1 položka.|Lze vybrat pouze :count položky.|Lze vybrat pouze :count položek.',
 
+        'no_options_message' => 'Nejsou dostupné žádné možnosti.',
+
         'no_search_results_message' => 'Vašemu hledání neodpovídají žádné výsledky.',
 
         'placeholder' => 'Zvolte některou z možností',
@@ -690,7 +699,17 @@ return [
     ],
 
     'tags_input' => [
+
+        'actions' => [
+
+            'delete' => [
+                'label' => 'Smazat',
+            ],
+
+        ],
+
         'placeholder' => 'Nový štítek',
+
     ],
 
     'text_input' => [

@@ -47,8 +47,10 @@ if (! function_exists('Filament\get_authorization_response')) {
                     || (! method_exists($policyClass, $actionValue))
                 )
             ) {
+                $modelName = is_string($model) ? $model : $model::class;
+
                 throw new LogicException(blank($policyClass)
-                    ? "Strict authorization mode is enabled, but no ability [{$actionValue}] or policy with method [{$actionValue}()] was found for [{$model}]."
+                    ? "Strict authorization mode is enabled, but no ability [{$actionValue}] or policy with method [{$actionValue}()] was found for [{$modelName}]."
                     : "Strict authorization mode is enabled, but no ability [{$actionValue}] or [{$actionValue}()] method was found on [{$policyClass}].");
             }
 
@@ -68,8 +70,10 @@ if (! function_exists('Filament\get_authorization_response')) {
                 default => null,
             };
 
+            $modelName = is_string($model) ? $model : $model::class;
+
             throw new LogicException(blank($policyClass)
-                ? "Strict authorization mode is enabled, but no policy was found for [{$model}]."
+                ? "Strict authorization mode is enabled, but no policy was found for [{$modelName}]."
                 : "Strict authorization mode is enabled, but no [{$actionValue}()] method was found on [{$policyClass}].");
         }
 

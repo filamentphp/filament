@@ -1,41 +1,63 @@
 ## Filament
-- Filament is used by this application, check how and where to follow existing application conventions.
-- Filament is a Server-Driven UI (SDUI) framework for Laravel. It allows developers to define user interfaces in PHP using structured configuration objects. It is built on top of Livewire, Alpine.js, and Tailwind CSS.
-- You can use the `search-docs` tool to get information from the official Filament documentation when needed. This is very useful for Artisan command arguments, specific code examples, testing functionality, relationship management, and ensuring you're following idiomatic practices.
-- Utilize static `make()` methods for consistent component initialization.
+- Filament is used by this application. Follow existing conventions for how and where it's implemented.
+- Filament is a Server-Driven UI (SDUI) framework for Laravel that lets you define user interfaces in PHP using structured configuration objects. Built on Livewire, Alpine.js, and Tailwind CSS.
+- Use the `search-docs` tool for official documentation on Artisan commands, code examples, testing, relationships, and idiomatic practices.
 
 ### Artisan
-- You must use the Filament specific Artisan commands to create new files or components for Filament. You can find these with the `list-artisan-commands` tool, or with `php artisan` and the `--help` option.
-- Inspect the required options, always pass `--no-interaction`, and valid arguments for other options when applicable.
+- Use Filament-specific Artisan commands to create files. Find them with `list-artisan-commands` or `php artisan --help`.
+- Inspect required options and always pass `--no-interaction`.
 
-### Filament's Core Features
-- Actions: Handle doing something within the application, often with a button or link. Actions encapsulate the UI, the interactive modal window, and the logic that should be executed when the modal window is submitted. They can be used anywhere in the UI and are commonly used to perform one-time actions like deleting a record, sending an email, or updating data in the database based on modal form input.
-- Forms: Dynamic forms rendered within other features, such as resources, action modals, table filters, and more.
-- Infolists: Read-only lists of data.
-- Notifications: Flash notifications displayed to users within the application.
-- Panels: The top-level container in Filament that can include all other features like pages, resources, forms, tables, notifications, actions, infolists, and widgets.
-- Resources: Static classes that are used to build CRUD interfaces for Eloquent models. Typically live in `app/Filament/Resources`.
-- Schemas: Represent components that define the structure and behavior of the UI, such as forms, tables, or lists.
-- Tables: Interactive tables with filtering, sorting, pagination, and more.
-- Widgets: Small component included within dashboards, often used for displaying data in charts, tables, or as a stat.
+### Features
+- **Panels**: The top-level container that includes pages, resources, forms, tables, notifications, actions, infolists, and widgets.
+- **Resources**: Static classes for building CRUD interfaces for Eloquent models. Located in `app/Filament/Resources`.
+- **Forms**: Dynamic forms rendered in resources, action modals, table filters, and more.
+- **Tables**: Interactive tables with filtering, sorting, and pagination.
+- **Actions**: Buttons or links that encapsulate UI (modal windows) and logic. Used for one-time operations like deleting records, sending emails, or updating data via modal form input.
+- **Infolists**: Read-only data displays.
+- **Notifications**: Flash notifications for users.
+- **Schemas**: Components that define UI structure and behavior for forms, tables, or lists.
+- **Widgets**: Dashboard components for charts, stats, and tables.
 
-### Relationships
-- Determine if you can use the `relationship()` method on form components when you need `options` for a select, checkbox, repeater, or when building a `Fieldset`:
+### Patterns
+Use static `make()` methods to initialize components. Most configuration methods accept a `Closure` for dynamic values:
 @verbatim
-<code-snippet name="Relationship example for Form Select" lang="php">
+<code-snippet name="Closure example" lang="php">
+TextInput::make('email')
+    ->required(fn () => auth()->check())
+    ->visible(fn (Get $get) => $get('type') === 'contact');
+</code-snippet>
+@endverbatim
+
+Use the `relationship()` method on form components when binding to Eloquent relationships:
+@verbatim
+<code-snippet name="Relationship example" lang="php">
 Forms\Components\Select::make('user_id')
     ->label('Author')
     ->relationship('author')
     ->required(),
+
+Repeater::make('addresses')
+    ->relationship()
+    ->schema([...]),
 </code-snippet>
 @endverbatim
 
-## Testing
-- It's important to test Filament functionality for user satisfaction.
-- Ensure that you are authenticated to access the application within the test.
-- Filament uses Livewire, so start assertions with `livewire()` or `Livewire::test()`.
+### Common Mistakes
 
-### Example Tests
+**Namespaces:**
+- Layout components (Grid, Section, Fieldset, Tabs, Wizard): `Filament\Schemas\Components\`
+- Form fields (TextInput, Select, etc.): `Filament\Forms\Components\`
+- Table columns: `Filament\Tables\Columns\`
+- Table filters: `Filament\Tables\Filters\`
+- Actions: `Filament\Actions\` (no `Filament\Tables\Actions\`)
+- Icons: `Filament\Support\Icons\Heroicon` enum (e.g., `Heroicon::PencilSquare`)
+
+**Recent breaking changes to Filament:**
+- File visibility is `private` by default. Use `->visibility('public')` for public access.
+- `Grid`, `Section`, and `Fieldset` no longer span all columns by default.
+
+### Testing
+Authenticate before testing panel functionality. Filament uses Livewire, so use `livewire()` or `Livewire::test()`:
 @verbatim
 <code-snippet name="Filament Table Test" lang="php">
     livewire(ListUsers::class)
@@ -64,13 +86,13 @@ Forms\Components\Select::make('user_id')
     ]);
 </code-snippet>
 
-<code-snippet name="Testing Multiple Panels (setup())" lang="php">
+<code-snippet name="Testing Multiple Panels" lang="php">
     use Filament\Facades\Filament;
 
     Filament::setCurrentPanel('app');
 </code-snippet>
 
-<code-snippet name="Calling an Action in a Test" lang="php">
+<code-snippet name="Calling an Action" lang="php">
     livewire(EditInvoice::class, [
         'invoice' => $invoice,
     ])->callAction('send');
@@ -78,19 +100,3 @@ Forms\Components\Select::make('user_id')
     expect($invoice->refresh())->isSent()->toBeTrue();
 </code-snippet>
 @endverbatim
-
-### Important Version 4 Changes
-- File visibility is now `private` by default.
-- The `deferFilters` method from Filament v3 is now the default behavior in Filament v4, so users must click a button before the filters are applied to the table. To disable this behavior, you can use the `deferFilters(false)` method.
-- The `Grid`, `Section`, and `Fieldset` layout components no longer span all columns by default.
-- The `all` pagination page method is not available for tables by default.
-- All action classes extend `Filament\Actions\Action`. No action classes exist in `Filament\Tables\Actions`.
-- The `Form` & `Infolist` layout components have been moved to `Filament\Schemas\Components`, for example `Grid`, `Section`, `Fieldset`, `Tabs`, `Wizard`, etc.
-- A new `Repeater` component for Forms has been added.
-- Icons now use the `Filament\Support\Icons\Heroicon` Enum by default. Other options are available and documented.
-
-### Organize Component Classes Structure
-- Schema components: `Schemas/Components/`
-- Table columns: `Tables/Columns/`
-- Table filters: `Tables/Filters/`
-- Actions: `Actions/`
