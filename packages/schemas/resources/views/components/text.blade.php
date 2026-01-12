@@ -17,8 +17,8 @@
     $weight = $getWeight();
     $fontFamily = $getFontFamily();
 
-    if (!$iconSize && $size instanceof TextSize) {
-        $iconSize = match($size) {
+    if (! $iconSize && $size instanceof TextSize) {
+        $iconSize = match ($size) {
             TextSize::ExtraSmall => IconSize::ExtraSmall,
             TextSize::Small => IconSize::Small,
             TextSize::Medium => IconSize::Medium,
@@ -87,7 +87,7 @@
                 ->merge($getExtraAttributes(), escape: false)
         }}
     >
-        @if ($icon && (!$iconPosition || $iconPosition === IconPosition::Before))
+        @if ($icon && (! $iconPosition || $iconPosition === IconPosition::Before))
             {{ \Filament\Support\generate_icon_html($icon, attributes: new \Illuminate\View\ComponentAttributeBag, size: $iconSize ?? \Filament\Support\Enums\IconSize::Small) }}
         @endif
 
