@@ -445,7 +445,5 @@ $team = Team::factory()->create();
 
 Filament::setTenant($this->team);
 
-$panel = Filament::getCurrentOrDefaultPanel();
-TenantScopedResource::observeTenancyModelCreation($panel);
-TenantScopedResource::registerTenancyModelGlobalScope($panel);
+Filament::bootCurrentPanel();
 ```
