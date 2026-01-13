@@ -28,8 +28,8 @@ trait CanBeDisabled
     {
         $this->disabled(static function (LivewireComponent & HasSchemas $livewire, string $operation) use ($operations): bool {
             foreach (Arr::wrap($operations) as $disabledOperation) {
-                if ($operation instanceof Operation) {
-                    $operation = $operation->value;
+                if ($disabledOperation instanceof Operation) {
+                    $disabledOperation = $disabledOperation->value;
                 }
 
                 if ($disabledOperation === $operation || $livewire instanceof $disabledOperation) {
