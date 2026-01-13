@@ -303,6 +303,7 @@ class TextInputColumn extends Column implements Editable, HasEmbeddedView
 
                 <div class="fi-input-wrp-content-ctn">
                     <input
+                        onclick="if (this.type === 'date' && typeof this.showPicker === 'function') { this.showPicker(); }"
                         x-model.lazy="state"
                         <?= $inputAttributes->toHtml() ?>
                     />
