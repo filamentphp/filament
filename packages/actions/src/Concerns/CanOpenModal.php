@@ -408,7 +408,7 @@ trait CanOpenModal
         }
 
         $actions = [];
-        
+
         foreach ($this->getModalFooterActions() as $key => $action) {
             if ($action instanceof ActionGroup) {
                 foreach ($action->getFlatActions() as $flatAction) {
@@ -458,11 +458,11 @@ trait CanOpenModal
                 fn (ActionGroup $group) => $group->record($this->getRecord()),
             )
             ->table($this->getTable());
-        
+
         foreach ($group->getFlatActions() as $nestedAction) {
             $this->prepareModalAction($nestedAction);
         }
-        
+
         return $group;
     }
 
