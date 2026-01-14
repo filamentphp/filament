@@ -303,3 +303,25 @@ ToggleButtons::make('status')
 ```
 
 For more information about the `in()` function, please see the [Validation documentation](validation#in).
+
+## Adding tooltips to option buttons
+
+You can add different tooltips to each option button using the `tooltips()` method.
+
+```php
+use Filament\Forms\Components\ToggleButtons;
+
+ToggleButtons::make('status')
+    ->options([
+        'draft' => 'Draft',
+        'scheduled' => 'Scheduled',
+        'published' => 'Published',
+    ])
+    ->tooltips([
+        'draft' => 'Set as a draft before publishing.',
+        'scheduled' => 'Schedule publishing on a specific date.',
+        'published' => 'Publish now',
+    ])
+```
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static array, the `tooltips()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
