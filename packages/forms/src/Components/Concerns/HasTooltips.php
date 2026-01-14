@@ -6,7 +6,6 @@ use Closure;
 
 trait HasTooltips
 {
-
     protected array | Closure | null $tooltips = null;
 
     public function tooltips(array | Closure | null $tooltips): static
@@ -24,9 +23,8 @@ trait HasTooltips
         return $this->getTooltips()[$value] ?? null;
     }
 
-    public function getTooltips(): array | null
+    public function getTooltips(): ?array
     {
         return $this->evaluate($this->tooltips);
     }
-
 }
