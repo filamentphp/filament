@@ -46,6 +46,22 @@ All methods on the action accept callback functions, where you can access the cu
 
 <AutoScreenshot name="tables/actions/simple" alt="Table with actions" version="4.x" />
 
+You can also provide a callback that returns an action
+
+```php
+use Filament\Tables\Enums\RecordActionsPosition;
+use Filament\Tables\Table;
+use App\Services\PdfRenderService;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->recordActions([
+            fn($record) => app(PdfRenderService::class,['document' => $record])->downloadAction()
+        ]);
+}
+```
+
 ### Positioning record actions before columns
 
 By default, the record actions in your table are rendered in the final cell of each row. You may move them before the columns by using the `position` argument:

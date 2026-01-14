@@ -47,6 +47,9 @@ trait HasRecordActions
     public function pushRecordActions(array | ActionGroup $actions): static
     {
         foreach (Arr::wrap($actions) as $action) {
+            if($action instanceof Closure) {
+                $action = $this->evaluate($action);
+            }
             $action->table($this);
 
             if ($action instanceof ActionGroup) {
