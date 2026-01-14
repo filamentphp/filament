@@ -440,7 +440,15 @@ it('can mount an action that has an ActionGroup in extraModalFooterActions', fun
 
     livewire(PostsTable::class)
         ->mountTableAction('withGroupedExtraActions', $post)
-        ->assertTableActionMounted('withGroupedExtraActions');
+        ->assertTableActionMounted([
+            [
+                'name' => 'withGroupedExtraActions',
+                'context' => [
+                    'table' => true,
+                    'recordKey' => (string) $post->getKey(),
+                ],
+            ],
+        ]);
 });
 
 it('can call multiple actions registered in an ActionGroup in extraModalFooterActions', function (): void {
