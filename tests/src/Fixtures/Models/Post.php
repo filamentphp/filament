@@ -7,6 +7,7 @@ use Filament\Tests\Fixtures\Enums\StringBackedEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Znck\Eloquent\Relations\BelongsToThrough;
 use Znck\Eloquent\Traits\BelongsToThrough as BelongsToThroughTrait;
@@ -46,6 +47,11 @@ class Post extends Model
             User::class,
             foreignKeyLookup: [User::class => 'author_id']
         );
+    }
+
+    public function metadata(): HasOne
+    {
+        return $this->hasOne(PostMetadata::class);
     }
 
     public function config(string $key): mixed

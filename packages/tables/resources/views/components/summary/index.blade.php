@@ -1,10 +1,12 @@
 @props([
     'actions' => false,
     'actionsPosition' => null,
+    'allTableSummary' => true,
     'columns',
     'extraHeadingColumn' => false,
     'groupColumn' => null,
     'groupsOnly' => false,
+    'pageSummary' => true,
     'placeholderColumns' => true,
     'pluralModelLabel',
     'recordCheckboxPosition' => null,
@@ -24,10 +26,10 @@
             ->all();
     }
 
-    $hasPageSummary = (! $groupsOnly) && $records instanceof \Illuminate\Contracts\Pagination\Paginator && $records->hasPages();
+    $hasPageSummary = $pageSummary && (! $groupsOnly) && $records instanceof \Illuminate\Contracts\Pagination\Paginator && $records->hasPages();
 
     $pageTableSummaryQuery = $hasPageSummary ? $this->getPageTableSummaryQuery() : null;
-    $allTableSummaryQuery = $this->getAllTableSummaryQuery();
+    $allTableSummaryQuery = $allTableSummary ? $this->getAllTableSummaryQuery() : null;
 @endphp
 
 @if ($hasPageSummary)
@@ -107,23 +109,25 @@
     />
 @endif
 
-@php
-    $selectedState = $this->getTableSummarySelectedState($allTableSummaryQuery)[0] ?? [];
-@endphp
+@if ($allTableSummary)
+    @php
+        $selectedState = $this->getTableSummarySelectedState($allTableSummaryQuery)[0] ?? [];
+    @endphp
 
-<x-filament-tables::summary.row
-    :actions="$actions"
-    :actions-position="$actionsPosition"
-    :columns="$columns"
-    :extra-heading-column="$extraHeadingColumn"
-    :groups-only="$groupsOnly"
-    :heading="__(($hasPageSummary ? 'filament-tables::table.summary.subheadings.all' : 'filament-tables::table.summary.heading'), ['label' => $pluralModelLabel])"
-    :placeholder-columns="$placeholderColumns"
-    :query="$allTableSummaryQuery"
-    :record-checkbox-position="$recordCheckboxPosition"
-    :selected-state="$selectedState"
-    :selection-enabled="$selectionEnabled"
-    @class([
-        'fi-striped' => ! $hasPageSummary,
-    ])
-/>
+    <x-filament-tables::summary.row
+        :actions="$actions"
+        :actions-position="$actionsPosition"
+        :columns="$columns"
+        :extra-heading-column="$extraHeadingColumn"
+        :groups-only="$groupsOnly"
+        :heading="__(($hasPageSummary ? 'filament-tables::table.summary.subheadings.all' : 'filament-tables::table.summary.heading'), ['label' => $pluralModelLabel])"
+        :placeholder-columns="$placeholderColumns"
+        :query="$allTableSummaryQuery"
+        :record-checkbox-position="$recordCheckboxPosition"
+        :selected-state="$selectedState"
+        :selection-enabled="$selectionEnabled"
+        @class([
+            'fi-striped' => ! $hasPageSummary,
+        ])
+    />
+@endif

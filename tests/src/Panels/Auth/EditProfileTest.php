@@ -155,43 +155,43 @@ it('can validate', function (array $formData, array $errors): void {
     }
 })->with([
     '`name` is required' => [
-        ['name' => '', 'email' => fake()->email],
+        ['name' => '', 'email' => fake()->email()],
         ['name' => ['required']],
     ],
     '`name` is max 255 characters' => [
-        ['name' => Str::random(256), 'email' => fake()->email],
+        ['name' => Str::random(256), 'email' => fake()->email()],
         ['name' => ['max']],
     ],
     '`email` is required' => [
-        ['name' => fake()->name, 'email' => ''],
+        ['name' => fake()->name(), 'email' => ''],
         ['email' => ['required']],
     ],
     '`email` is valid email address' => [
-        ['name' => fake()->name, 'email' => 'not-an-email'],
+        ['name' => fake()->name(), 'email' => 'not-an-email'],
         ['email' => ['email']],
     ],
     '`email` is unique' => fn (): array => [
-        ['name' => fake()->name, 'email' => User::factory()->create()->email],
+        ['name' => fake()->name(), 'email' => User::factory()->create()->email],
         ['email' => ['unique']],
     ],
     '`password` is confirmed' => fn (): array => [
-        ['name' => fake()->name, 'email' => fake()->email, 'password' => Str::random(), 'passwordConfirmation' => Str::random()],
+        ['name' => fake()->name(), 'email' => fake()->email(), 'password' => Str::random(), 'passwordConfirmation' => Str::random()],
         ['password' => ['same']],
     ],
     '`passwordConfirmation` is required when `password` is filled' => fn (): array => [
-        ['name' => fake()->name, 'email' => fake()->email, 'password' => Str::random(), 'passwordConfirmation' => ''],
+        ['name' => fake()->name(), 'email' => fake()->email(), 'password' => Str::random(), 'passwordConfirmation' => ''],
         ['passwordConfirmation' => ['required']],
     ],
     '`currentPassword` is required when `password` is filled' => fn (): array => [
-        ['name' => fake()->name, 'email' => fake()->email, 'password' => Str::random(), 'currentPassword' => ''],
+        ['name' => fake()->name(), 'email' => fake()->email(), 'password' => Str::random(), 'currentPassword' => ''],
         ['currentPassword' => ['required']],
     ],
     '`currentPassword` is required when `email` is changed' => fn (): array => [
-        ['name' => fake()->name, 'email' => fake()->email, 'currentPassword' => ''],
+        ['name' => fake()->name(), 'email' => fake()->email(), 'currentPassword' => ''],
         ['currentPassword' => ['required']],
     ],
     '`currentPassword` is valid password' => fn (): array => [
-        ['name' => fake()->name, 'email' => fake()->email, 'currentPassword' => 'invalid-password'],
+        ['name' => fake()->name(), 'email' => fake()->email(), 'currentPassword' => 'invalid-password'],
         ['currentPassword' => ['current_password']],
     ],
 ]);

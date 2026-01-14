@@ -436,6 +436,7 @@ trait CanOpenModal
     public function prepareModalAction(Action $action): Action
     {
         return $action
+            ->parentAction($this)
             ->schemaContainer($this->getSchemaContainer())
             ->schemaComponent($this->getSchemaComponent())
             ->livewire($this->getLivewire())
@@ -653,9 +654,14 @@ trait CanOpenModal
         return (bool) $this->evaluate($this->isModalSlideOver);
     }
 
+    public function hasModal(): ?bool
+    {
+        return $this->evaluate($this->hasModal);
+    }
+
     public function shouldOpenModal(?Closure $checkForSchemaUsing = null): bool
     {
-        if (is_bool($hasModal = $this->evaluate($this->hasModal))) {
+        if (is_bool($hasModal = $this->hasModal())) {
             return $hasModal;
         }
 

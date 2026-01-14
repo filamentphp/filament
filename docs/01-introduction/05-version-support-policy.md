@@ -8,7 +8,7 @@ contents: false
 | Version | New features               | Bug fixes                          | Security fixes                      |
 |---------|----------------------------|------------------------------------|-------------------------------------|
 | 1.x     | ❌ ended Jan 1 2022         | ❌ ended Jan 1 2025                 | ❌ ended Jul 1 2025                  |
-| 2.x     | ❌ ended Jul 1 2023         | ❌ ended Jan 1 2025                 | ✅ until Jan 1 2026                  |
+| 2.x     | ❌ ended Jul 1 2023         | ❌ ended Jan 1 2025                 | ❌ ended Jan 1 2026                  |
 | 3.x     | ❌ ended Aug 1 2024         | ✅ until Aug 1 2026                 | ✅ until Jan 1 2028                  |
 | 4.x     | ✅ until 5.x stable release | ✅ ~1 year after 5.x stable release | ✅ ~2 years after 5.x stable release |
 
@@ -29,3 +29,4 @@ The Filament team currently plans to continue providing security fixes for major
 If you discover a security vulnerability in Filament, please [report it through GitHub](https://github.com/filamentphp/filament/security/advisories). All security vulnerabilities will be addressed promptly.
 
 Please note that while a Filament version may receive security fixes, its underlying dependencies (PHP, Laravel, and Livewire) may no longer be supported. Therefore, applications using older versions of Filament could still be vulnerable to security issues in these dependencies.
+

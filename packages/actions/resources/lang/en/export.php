@@ -14,6 +14,18 @@ return [
 
                 'label' => 'Columns',
 
+                'actions' => [
+
+                    'select_all' => [
+                        'label' => 'Select all',
+                    ],
+
+                    'deselect_all' => [
+                        'label' => 'Deselect all',
+                    ],
+
+                ],
+
                 'form' => [
 
                     'is_enabled' => [
@@ -63,6 +75,11 @@ return [
         'max_rows' => [
             'title' => 'Export is too large',
             'body' => 'You may not export more than 1 row at once.|You may not export more than :count rows at once.',
+        ],
+
+        'no_columns' => [
+            'title' => 'No columns selected',
+            'body' => 'Please select at least one column to export.',
         ],
 
         'started' => [

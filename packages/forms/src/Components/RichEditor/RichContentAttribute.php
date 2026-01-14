@@ -33,6 +33,11 @@ class RichContentAttribute implements Htmlable
     protected ?array $mergeTagLabels = null;
 
     /**
+     * @var ?array<MentionProvider>
+     */
+    protected ?array $mentionProviders = null;
+
+    /**
      * @var ?array<class-string<RichContentCustomBlock> | array<string, mixed> | Closure>
      */
     protected ?array $customBlocks = null;
@@ -132,6 +137,7 @@ class RichContentAttribute implements Htmlable
             ->plugins($this->getPlugins())
             ->customBlocks($this->customBlocks)
             ->mergeTags($this->mergeTags)
+            ->mentions($this->mentionProviders)
             ->fileAttachmentsDisk($this->getFileAttachmentsDiskName())
             ->fileAttachmentsVisibility($this->getFileAttachmentsVisibility())
             ->fileAttachmentProvider($this->getFileAttachmentProvider())
@@ -172,6 +178,24 @@ class RichContentAttribute implements Htmlable
             ...array_combine(array_keys($this->mergeTags ?? []), array_keys($this->mergeTags ?? [])),
             ...($this->mergeTagLabels ?? []),
         ];
+    }
+
+    /**
+     * @param  ?array<MentionProvider>  $providers
+     */
+    public function mentions(?array $providers): static
+    {
+        $this->mentionProviders = $providers;
+
+        return $this;
+    }
+
+    /**
+     * @return ?array<MentionProvider>
+     */
+    public function getMentionProviders(): ?array
+    {
+        return $this->mentionProviders;
     }
 
     /**

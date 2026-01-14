@@ -10,6 +10,7 @@ use Filament\Forms\Components\Contracts\HasNestedRecursiveValidationRules;
 use Filament\Forms\Components\Field;
 use Filament\Schemas\Components\Component;
 use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Arr;
@@ -769,7 +770,17 @@ trait CanBeValidated
 
     public function getValidationAttribute(): string
     {
-        return $this->evaluate($this->validationAttribute) ?? Str::lcfirst($this->getLabel());
+        if (filled($validationAttribute = $this->evaluate($this->validationAttribute))) {
+            return $validationAttribute;
+        }
+
+        $label = $this->getLabel();
+
+        if ($label instanceof Htmlable) {
+            $label = $this->getDefaultLabel();
+        }
+
+        return Str::lcfirst($label);
     }
 
     /**

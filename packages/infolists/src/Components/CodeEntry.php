@@ -22,6 +22,8 @@ class CodeEntry extends Entry implements HasEmbeddedView
 
     protected string | Theme | Closure | null $darkTheme = null;
 
+    protected int | Closure $jsonFlags = JSON_PRETTY_PRINT;
+
     public function grammar(string | Grammar | Closure | null $grammar): static
     {
         $this->grammar = $grammar;
@@ -56,6 +58,18 @@ class CodeEntry extends Entry implements HasEmbeddedView
     public function getDarkTheme(): string | Theme | null
     {
         return $this->evaluate($this->darkTheme);
+    }
+
+    public function jsonFlags(int | Closure $flags): static
+    {
+        $this->jsonFlags = $flags;
+
+        return $this;
+    }
+
+    public function getJsonFlags(): int
+    {
+        return $this->evaluate($this->jsonFlags);
     }
 
     public function toEmbeddedHtml(): string
@@ -104,7 +118,7 @@ class CodeEntry extends Entry implements HasEmbeddedView
         $darkTheme = $this->getDarkTheme();
 
         if (is_array($state)) {
-            $state = json_encode($state, flags: JSON_PRETTY_PRINT);
+            $state = json_encode($state, flags: $this->getJsonFlags());
             $grammar ??= Grammar::Json;
         }
 

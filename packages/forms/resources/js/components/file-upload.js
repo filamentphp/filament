@@ -25,42 +25,44 @@ window.FilePond = FilePond
 
 export default function fileUploadFormComponent({
     acceptedFileTypes,
+    automaticallyCropImagesAspectRatio,
+    automaticallyOpenImageEditorForAspectRatio,
+    automaticallyResizeImagesHeight,
+    automaticallyResizeImagesMode,
+    automaticallyResizeImagesWidth,
+    cancelUploadUsing,
+    canEditSvgs,
+    confirmSvgEditingMessage,
+    deleteUploadedFileUsing,
+    disabledSvgEditingMessage,
+    getUploadedFilesUsing,
+    hasCircleCropper,
+    hasImageEditor,
     imageEditorEmptyFillColor,
     imageEditorMode,
     imageEditorViewportHeight,
     imageEditorViewportWidth,
-    deleteUploadedFileUsing,
+    imagePreviewHeight,
+    isAvatar,
     isDeletable,
     isDisabled,
-    getUploadedFilesUsing,
-    imageCropAspectRatio,
-    imagePreviewHeight,
-    imageResizeMode,
-    imageResizeTargetHeight,
-    imageResizeTargetWidth,
-    imageResizeUpscale,
-    isAvatar,
-    hasImageEditor,
-    hasCircleCropper,
-    canEditSvgs,
-    isSvgEditingConfirmed,
-    confirmSvgEditingMessage,
-    disabledSvgEditingMessage,
     isDownloadable,
+    isImageEditorExplicitlyEnabled,
     isMultiple,
     isOpenable,
     isPasteable,
     isPreviewable,
     isReorderable,
+    isSvgEditingConfirmed,
     itemPanelAspectRatio,
     loadingIndicatorPosition,
     locale,
     maxFiles,
     maxFilesValidationMessage,
-    maxSize,
-    minSize,
     maxParallelUploads,
+    maxSize,
     mimeTypeMap,
+    minSize,
     panelAspectRatio,
     panelLayout,
     placeholder,
@@ -68,6 +70,7 @@ export default function fileUploadFormComponent({
     removeUploadedFileUsing,
     reorderUploadedFilesUsing,
     shouldAppendFiles,
+    shouldAutomaticallyUpscaleImagesWhenResizing,
     shouldOrientImageFromExif,
     shouldTransformImage,
     state,
@@ -93,6 +96,8 @@ export default function fileUploadFormComponent({
 
         isEditorOpen: false,
 
+        isEditorOpenedForAspectRatio: false,
+
         editingFile: {},
 
         currentRatio: '',
@@ -114,12 +119,13 @@ export default function fileUploadFormComponent({
                 allowImageTransform: shouldTransformImage,
                 credits: false,
                 files: await this.getFiles(),
-                imageCropAspectRatio,
+                imageCropAspectRatio: automaticallyCropImagesAspectRatio,
                 imagePreviewHeight,
-                imageResizeTargetHeight,
-                imageResizeTargetWidth,
-                imageResizeMode,
-                imageResizeUpscale,
+                imageResizeTargetHeight: automaticallyResizeImagesHeight,
+                imageResizeTargetWidth: automaticallyResizeImagesWidth,
+                imageResizeMode: automaticallyResizeImagesMode,
+                imageResizeUpscale:
+                    shouldAutomaticallyUpscaleImagesWhenResizing,
                 imageTransformOutputStripImageHead: false,
                 itemInsertLocation: shouldAppendFiles ? 'after' : 'before',
                 ...(placeholder && { labelIdle: placeholder }),
@@ -150,6 +156,7 @@ export default function fileUploadFormComponent({
                         load,
                         error,
                         progress,
+                        abort,
                     ) => {
                         this.shouldUpdateState = false
 
@@ -178,6 +185,13 @@ export default function fileUploadFormComponent({
                             error,
                             progress,
                         )
+
+                        return {
+                            abort: () => {
+                                cancelUploadUsing(fileKey)
+                                abort()
+                            },
+                        }
                     },
                     remove: async (source, load) => {
                         let fileKey = this.uploadedFileIndex[source] ?? null
@@ -196,7 +210,7 @@ export default function fileUploadFormComponent({
                         load()
                     },
                 },
-                allowImageEdit: hasImageEditor,
+                allowImageEdit: isImageEditorExplicitlyEnabled,
                 imageEditEditor: {
                     open: (file) => this.loadEditor(file),
                     onconfirm: () => {},
@@ -330,6 +344,8 @@ export default function fileUploadFormComponent({
 
             this.pond.on('processfilerevert', handleFileProcessing)
 
+            this.pond.on('removefile', handleFileProcessing)
+
             this.pond.on('warning', (warning) => {
                 if (warning.body === 'Max files') {
                     this.error = maxFilesValidationMessage
@@ -353,6 +369,24 @@ export default function fileUploadFormComponent({
             }
 
             this.pond.on('removefile', () => (this.error = null))
+
+            if (automaticallyOpenImageEditorForAspectRatio) {
+                this.pond.on('addfile', (error, fileItem) => {
+                    if (error) {
+                        return
+                    }
+
+                    if (!(fileItem.file instanceof File)) {
+                        return
+                    }
+
+                    if (!fileItem.file.type.startsWith('image/')) {
+                        return
+                    }
+
+                    this.checkImageAspectRatio(fileItem.file)
+                })
+            }
         },
 
         destroy() {
@@ -493,20 +527,12 @@ export default function fileUploadFormComponent({
                 return
             }
 
-            this.editor = new Cropper(this.$refs.editor, {
+            const cropperOptions = {
                 aspectRatio:
+                    automaticallyOpenImageEditorForAspectRatio ??
                     imageEditorViewportWidth / imageEditorViewportHeight,
                 autoCropArea: 1,
                 center: true,
-                crop: (event) => {
-                    this.$refs.xPositionInput.value = Math.round(event.detail.x)
-                    this.$refs.yPositionInput.value = Math.round(event.detail.y)
-                    this.$refs.heightInput.value = Math.round(
-                        event.detail.height,
-                    )
-                    this.$refs.widthInput.value = Math.round(event.detail.width)
-                    this.$refs.rotationInput.value = event.detail.rotate
-                },
                 cropBoxResizable: true,
                 guides: true,
                 highlight: true,
@@ -514,10 +540,39 @@ export default function fileUploadFormComponent({
                 toggleDragModeOnDblclick: true,
                 viewMode: imageEditorMode,
                 wheelZoomRatio: 0.02,
-            })
+            }
+
+            if (isImageEditorExplicitlyEnabled) {
+                cropperOptions.crop = (event) => {
+                    this.$refs.xPositionInput.value = Math.round(event.detail.x)
+                    this.$refs.yPositionInput.value = Math.round(event.detail.y)
+                    this.$refs.heightInput.value = Math.round(
+                        event.detail.height,
+                    )
+                    this.$refs.widthInput.value = Math.round(event.detail.width)
+                    this.$refs.rotationInput.value = event.detail.rotate
+                }
+            }
+
+            this.editor = new Cropper(this.$refs.editor, cropperOptions)
         },
 
         closeEditor() {
+            if (this.isEditorOpenedForAspectRatio) {
+                const fileItem = this.pond
+                    .getFiles()
+                    .find(
+                        (uploadedFile) =>
+                            uploadedFile.filename === this.editingFile.name,
+                    )
+
+                if (fileItem) {
+                    this.pond.removeFile(fileItem.id, { revert: true })
+                }
+
+                this.isEditorOpenedForAspectRatio = false
+            }
+
             this.editingFile = {}
 
             this.isEditorOpen = false
@@ -669,12 +724,14 @@ export default function fileUploadFormComponent({
                 return
             }
 
+            this.isEditorOpenedForAspectRatio = false
+
             let croppedCanvas = this.editor.getCroppedCanvas({
                 fillColor: imageEditorEmptyFillColor ?? 'transparent',
-                height: imageResizeTargetHeight,
+                height: automaticallyResizeImagesHeight,
                 imageSmoothingEnabled: true,
                 imageSmoothingQuality: 'high',
-                width: imageResizeTargetWidth,
+                width: automaticallyResizeImagesWidth,
             })
 
             if (hasCircleCropper) {
@@ -683,18 +740,16 @@ export default function fileUploadFormComponent({
 
             croppedCanvas.toBlob(
                 (croppedImage) => {
-                    if (isMultiple) {
-                        this.pond.removeFile(
-                            this.pond
-                                .getFiles()
-                                .find(
-                                    (uploadedFile) =>
-                                        uploadedFile.filename ===
-                                        this.editingFile.name,
-                                )?.id,
-                            { revert: true },
-                        )
-                    }
+                    this.pond.removeFile(
+                        this.pond
+                            .getFiles()
+                            .find(
+                                (uploadedFile) =>
+                                    uploadedFile.filename ===
+                                    this.editingFile.name,
+                            )?.id,
+                        { revert: true },
+                    )
 
                     this.$nextTick(() => {
                         this.shouldUpdateState = false
@@ -760,6 +815,38 @@ export default function fileUploadFormComponent({
             }
 
             this.editor = null
+        },
+
+        checkImageAspectRatio(file) {
+            if (!automaticallyOpenImageEditorForAspectRatio) {
+                return
+            }
+
+            const img = new Image()
+            const objectUrl = URL.createObjectURL(file)
+
+            img.onload = () => {
+                URL.revokeObjectURL(objectUrl)
+
+                const imageRatio = img.width / img.height
+                const tolerance = 0.01
+
+                if (
+                    Math.abs(
+                        imageRatio - automaticallyOpenImageEditorForAspectRatio,
+                    ) > tolerance
+                ) {
+                    this.isEditorOpenedForAspectRatio = true
+
+                    this.loadEditor(file)
+                }
+            }
+
+            img.onerror = () => {
+                URL.revokeObjectURL(objectUrl)
+            }
+
+            img.src = objectUrl
         },
     }
 }

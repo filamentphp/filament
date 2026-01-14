@@ -70,6 +70,6 @@ class InfolistActions extends Component implements HasActions, HasSchemas
 
     public function render(): View
     {
-        return view('livewire.infolist-actions');
+        return view('livewire.infolist');
     }
 }

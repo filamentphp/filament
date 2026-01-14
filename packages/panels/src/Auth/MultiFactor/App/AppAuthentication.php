@@ -176,13 +176,24 @@ class AppAuthentication implements MultiFactorAuthenticationProvider
     {
         $user ??= Filament::auth()->user();
 
+        $remainingCodes = [];
+        $isValid = false;
+
         foreach ($this->getRecoveryCodes($user) as $hashedRecoveryCode) { /** @phpstan-ignore-line */
             if (Hash::check($recoveryCode, $hashedRecoveryCode)) {
-                return true;
+                $isValid = true;
+
+                continue;
             }
+
+            $remainingCodes[] = $hashedRecoveryCode;
         }
 
-        return false;
+        if ($isValid) {
+            $user->saveAppAuthenticationRecoveryCodes($remainingCodes);
+        }
+
+        return $isValid;
     }
 
     /**

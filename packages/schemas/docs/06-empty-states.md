@@ -58,3 +58,17 @@ EmptyState::make('No users yet')
 ```
 
 <UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `footer()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+## Removing the empty state container
+
+By default, empty states have a background color, shadow and border. You may remove these styles and just render the content of the empty state without the container using `contained(false)`:
+
+```php
+use Filament\Schemas\Components\EmptyState;
+
+EmptyState::make('No users yet')
+    ->description('Get started by creating a new user.')
+    ->contained(false)
+```
+
+<UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `contained()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>

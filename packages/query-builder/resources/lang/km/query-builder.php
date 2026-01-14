@@ -146,6 +146,50 @@ return [
 
             ],
 
+            'unit_labels' => [
+                'second' => 'វិនាទី',
+                'minute' => 'នាទី',
+                'hour' => 'ម៉ោង',
+                'day' => 'ថ្ងៃ',
+                'week' => 'សប្តាហ៍',
+                'month' => 'ខែ',
+                'quarter' => 'ត្រីមាស',
+                'year' => 'ឆ្នាំ',
+            ],
+
+            'presets' => [
+                'past_decade' => '១០ ឆ្នាំមុន',
+                'past_5_years' => '៥ ឆ្នាំមុន',
+                'past_2_years' => '២ ឆ្នាំមុន',
+                'past_year' => 'ឆ្នាំមុន',
+                'past_6_months' => '៦ ខែមុន',
+                'past_quarter' => 'ត្រីមាសមុន',
+                'past_month' => 'ខែមុន',
+                'past_2_weeks' => '២ សប្តាហ៍មុន',
+                'past_week' => 'សប្តាហ៍មុន',
+                'past_hour' => '១ ម៉ោងមុន',
+                'past_minute' => '១ នាទីមុន',
+                'this_decade' => '១០ ឆ្នាំនេះ',
+                'this_year' => 'ឆ្នាំនេះ',
+                'this_quarter' => 'ត្រីមាសនេះ',
+                'this_month' => 'ខែនេះ',
+                'today' => 'ថ្ងៃនេះ',
+                'this_hour' => 'ម៉ោងនេះ',
+                'this_minute' => 'នាទីនេះ',
+                'next_minute' => '១ នាទីបន្ទាប់',
+                'next_hour' => '១ ម៉ោងបន្ទាប់',
+                'next_week' => 'សប្តាហ៍បន្ទាប់',
+                'next_2_weeks' => '២ សប្តាហ៍បន្ទាប់',
+                'next_month' => 'ខែបន្ទាប់',
+                'next_quarter' => 'ត្រីមាសបន្ទាប់',
+                'next_6_months' => '៦ ខែបន្ទាប់',
+                'next_year' => 'ឆ្នាំបន្ទាប់',
+                'next_2_years' => '២ ឆ្នាំបន្ទាប់',
+                'next_5_years' => '៥ ឆ្នាំបន្ទាប់',
+                'next_decade' => '១០ ឆ្នាំបន្ទាប់',
+                'custom' => 'ផ្សេងៗ',
+            ],
+
             'form' => [
 
                 'date' => [
@@ -158,6 +202,34 @@ return [
 
                 'year' => [
                     'label' => 'ឆ្នាំ',
+                ],
+
+                'mode' => [
+                    'label' => 'ប្រភេទថ្ងៃខែ',
+                    'options' => [
+                        'absolute' => 'ថ្ងៃខែជាក់លាក់',
+                        'relative' => 'ការវិលជុំ',
+                    ],
+                ],
+
+                'preset' => [
+                    'label' => 'រយៈពេល',
+                ],
+
+                'relative_value' => [
+                    'label' => 'ចំនួន',
+                ],
+
+                'relative_unit' => [
+                    'label' => 'ឯកតាពេលវេលា',
+                ],
+
+                'tense' => [
+                    'label' => 'កាល',
+                    'options' => [
+                        'past' => 'អតីតកាល',
+                        'future' => 'អនាគតកាល',
+                    ],
                 ],
 
             ],

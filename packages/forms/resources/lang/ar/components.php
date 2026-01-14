@@ -447,6 +447,71 @@ return [
 
             ],
 
+            'grid' => [
+
+                'label' => 'شبكة',
+
+                'modal' => [
+
+                    'heading' => 'شبكة',
+
+                    'form' => [
+
+                        'preset' => [
+
+                            'label' => 'نمط جاهز',
+
+                            'placeholder' => 'بدون',
+
+                            'options' => [
+                                'two' => 'عمودان',
+                                'three' => 'ثلاث أعمدة',
+                                'four' => 'أربع أعمدة',
+                                'five' => 'خمس أعمدة',
+                                'two_start_third' => 'عمودان (الثلث في البداية)',
+                                'two_end_third' => 'عمودان (الثلث في النهاية)',
+                                'two_start_fourth' => 'عمودان (الربع في البداية)',
+                                'two_end_fourth' => 'عمودان (الربع في النهاية)',
+                            ],
+                        ],
+
+                        'columns' => [
+                            'label' => 'الأعمدة',
+                        ],
+
+                        'from_breakpoint' => [
+
+                            'label' => 'من نقطة التوقف',
+
+                            'options' => [
+                                'default' => 'الكل',
+                                'sm' => 'صغير',
+                                'md' => 'متوسط',
+                                'lg' => 'كبير',
+                                'xl' => 'كبير جداً',
+                                '2xl' => 'كبير جداً جداً',
+                            ],
+
+                        ],
+
+                        'is_asymmetric' => [
+                            'label' => 'عمودين غير متماثلين',
+                        ],
+
+                        'start_span' => [
+                            'label' => 'امتداد البداية',
+                        ],
+
+                        'end_span' => [
+                            'label' => 'امتداد النهاية',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
             'link' => [
 
                 'label' => 'تعديل',
@@ -520,6 +585,8 @@ return [
             'h1' => 'عنوان',
             'h2' => 'عنوان رئيسي',
             'h3' => 'عنوان فرعي',
+            'grid' => 'شبكة',
+            'grid_delete' => 'حذف الشبكة',
             'highlight' => 'تظليل',
             'horizontal_rule' => 'خط أفقي',
             'italic' => 'مائل',
@@ -610,6 +677,8 @@ return [
         'loading_message' => 'تحميل...',
 
         'max_items_message' => 'يمكنك اختيار :count فقط.',
+
+        'no_options_message' => 'لا توجد خيارات متاحة.',
 
         'no_search_results_message' => 'لا توجد خيارات تطابق بحثك.',
 

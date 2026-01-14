@@ -46,7 +46,7 @@ trait InteractsWithTable
     {
         $this->table = $this->table($this->makeTable());
 
-        $this->cacheSchema('tableFiltersForm', $this->getTableFiltersForm());
+        $this->cacheSchema('tableFiltersForm', $this->getTableFiltersForm(...));
 
         $this->cacheMountedActions($this->mountedActions);
 
@@ -143,7 +143,8 @@ trait InteractsWithTable
             $shouldPersistSortInSession &&
             session()->has($sortSessionKey)
         ) {
-            $this->tableSort = session()->get($sortSessionKey);
+            $sessionSort = session()->get($sortSessionKey);
+            $this->tableSort = is_string($sessionSort) ? $sessionSort : null;
         }
 
         if ($shouldPersistSortInSession) {

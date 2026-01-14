@@ -14,6 +14,8 @@ class Get
      */
     protected static array $skipComponentsChildContainersWhileSearching = [];
 
+    protected bool $shouldSkipComponentsChildContainersWhileSearching = true;
+
     public function __construct(
         protected Component $component,
     ) {}
@@ -32,7 +34,7 @@ class Get
                 $path,
                 withHidden: true,
                 withAbsoluteStatePath: true,
-                skipComponentsChildContainersWhileSearching: static::$skipComponentsChildContainersWhileSearching,
+                skipComponentsChildContainersWhileSearching: $this->shouldSkipComponentsChildContainersWhileSearching ? static::$skipComponentsChildContainersWhileSearching : [],
             );
 
         try {
@@ -179,5 +181,12 @@ class Get
     public function blank(string $key, bool $isAbsolute = false): bool
     {
         return blank($this($key, $isAbsolute));
+    }
+
+    public function skipComponentsChildContainersWhileSearching(bool $condition = true): static
+    {
+        $this->shouldSkipComponentsChildContainersWhileSearching = $condition;
+
+        return $this;
     }
 }

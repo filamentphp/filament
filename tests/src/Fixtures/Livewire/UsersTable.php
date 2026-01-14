@@ -27,6 +27,7 @@ class UsersTable extends Component implements HasActions, HasSchemas, Tables\Con
                 Tables\Grouping\Group::make('profile.company.name'),
                 Tables\Grouping\Group::make('profile.setting.theme'),
                 Tables\Grouping\Group::make('image.url'),
+                Tables\Grouping\Group::make('setting.theme'),
             ])
             ->columns([
                 Tables\Columns\TextColumn::make('name')
@@ -53,6 +54,14 @@ class UsersTable extends Component implements HasActions, HasSchemas, Tables\Con
                     ->searchable(),
                 Tables\Columns\TextColumn::make('image.url')
                     ->label('Image URL')
+                    ->sortable()
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('setting.theme')
+                    ->label('Setting Theme (HasOneThrough)')
+                    ->sortable()
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('setting.language')
+                    ->label('Setting Language (HasOneThrough)')
                     ->sortable()
                     ->searchable(),
             ]);

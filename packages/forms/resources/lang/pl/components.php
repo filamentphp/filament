@@ -568,6 +568,13 @@ return [
 
         'no_merge_tag_search_results_message' => 'Brak wyników.',
 
+        'mentions' => [
+            'no_options_message' => 'Brak dostępnych opcji.',
+            'no_search_results_message' => 'Brak wyników wyszukiwania.',
+            'search_prompt' => 'Zacznij pisać aby wyszukać...',
+            'searching_message' => 'Wyszukiwanie...',
+        ],
+
         'tools' => [
             'align_center' => 'Wyśrodkuj',
             'align_end' => 'Wyrównaj do prawej',
@@ -610,6 +617,7 @@ return [
             'table_merge_cells' => 'Scal komórki',
             'table_split_cell' => 'Podziel komórkę',
             'table_toggle_header_row' => 'Przełącz wiersz nagłówka',
+            'table_toggle_header_cell' => 'Przełącz komórkę nagłówka',
             'text_color' => 'Kolor tekstu',
             'underline' => 'Podkreślenie',
             'undo' => 'Cofnij',
@@ -678,6 +686,8 @@ return [
 
         'max_items_message' => 'Można wybrać tylko :count elementów.',
 
+        'no_options_message' => 'Brak dostępnych opcji.',
+
         'no_search_results_message' => 'Żadne wyniki nie pasują do Twojego wyszukiwania.',
 
         'placeholder' => 'Wybierz z listy',
@@ -689,7 +699,17 @@ return [
     ],
 
     'tags_input' => [
+
+        'actions' => [
+
+            'delete' => [
+                'label' => 'Usuń',
+            ],
+
+        ],
+
         'placeholder' => 'Nowy tag',
+
     ],
 
     'text_input' => [

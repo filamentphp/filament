@@ -16,6 +16,10 @@
             & .fi-input {
                 @apply min-h-full;
             }
+
+            & .fi-sc-actions {
+                @apply px-3 py-2;
+            }
         }
 
         & > :first-child .fi-input-wrp {

@@ -344,6 +344,21 @@ RichEditor::make('content')
     ->fileAttachmentsMaxSize(5120) // 5 MB
 ```
 
+### Allowing users to resize images
+
+By default, images in the editor cannot be resized by the user. You may enable image resizing using the `resizableImages()` method:
+
+```php
+use Filament\Forms\Components\RichEditor;
+
+RichEditor::make('content')
+    ->resizableImages()
+```
+
+When enabled, users can resize images by clicking on them and dragging the resize handles. The aspect ratio is always preserved when resizing.
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `resizableImages()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
 ## Using custom blocks
 
 Custom blocks are elements that users can drag and drop into the rich editor. You can define custom blocks that user can insert into the rich editor using the `customBlocks()` method:
@@ -618,13 +633,103 @@ RichEditor::make('content')
     ->activePanel('mergeTags')
 ```
 
+## Using mentions
+
+Mentions allow users to insert references to other records (such as users, issues, or tags) by typing a trigger character. When the user types a trigger character like `@`, a dropdown appears allowing them to search and select from available options. The selected mention is inserted as a non-editable inline token.
+
+To register mentions on an editor, use the `mentions()` method with one or more `MentionProvider` instances:
+
+```php
+use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\RichEditor\MentionProvider;
+
+RichEditor::make('content')
+    ->mentions([
+        MentionProvider::make('@')
+            ->items([
+                1 => 'Jane Doe',
+                2 => 'John Smith',
+            ]),
+    ])
+```
+
+Each provider is configured with a trigger character (passed to `make()`) that activates the mention search. You can have multiple providers with different triggers:
+
+```php
+use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\RichEditor\MentionProvider;
+
+RichEditor::make('content')
+    ->mentions([
+        MentionProvider::make('@')
+            ->items([
+                1 => 'Jane Doe',
+                2 => 'John Smith',
+            ]),
+        MentionProvider::make('#')
+            ->items([
+                'bug' => 'Bug',
+                'feature' => 'Feature',
+            ]),
+    ])
+```
+
+### Searching mentions from the database
+
+For large datasets, you should fetch results dynamically using `getSearchResultsUsing()`. The callback receives the search term and should return an array of options with the format `[id => label]`.
+
+When using dynamic search results, only the mention's `id` is stored in the content. To display the correct label when the content is loaded, you must also provide `getLabelsUsing()`. This callback receives an array of IDs and should return an array with the format `[id => label]`:
+
+```php
+use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\RichEditor\MentionProvider;
+
+RichEditor::make('content')
+    ->mentions([
+        MentionProvider::make('@')
+            ->getSearchResultsUsing(fn (string $search): array => User::query()
+                ->where('name', 'like', "%{$search}%")
+                ->orderBy('name')
+                ->limit(10)
+                ->pluck('name', 'id')
+                ->all())
+            ->getLabelsUsing(fn (array $ids): array => User::query()
+                ->whereIn('id', $ids)
+                ->pluck('name', 'id')
+                ->all()),
+    ])
+```
+
+### Rendering content with mentions
+
+When rendering the rich content, you can pass the array of mention providers to the `RichContentRenderer` to ensure that the mentions are rendered correctly.
+
+You can make mentions link to a URL when rendered using the `url()` method. The callback receives the mention's `id` and `label`, and should return a URL string:
+
+```php
+use Filament\Forms\Components\RichEditor\MentionProvider;
+use Filament\Forms\Components\RichEditor\RichContentRenderer;
+
+RichContentRenderer::make($record->content)
+    ->mentions([
+        MentionProvider::make('@')
+            ->getLabelsUsing(fn (array $ids): array => User::query()
+                ->whereIn('id', $ids)
+                ->pluck('name', 'id')
+                ->all())
+            ->url(fn (string $id, string $label): string => route('users.show', $id)),
+    ])
+    ->toHtml()
+```
+
 ## Registering rich content attributes
 
-There are elements of the rich editor configuration that apply to both the editor and the renderer. For example, if you are using [private images](#using-private-images-in-the-editor), [custom blocks](#using-custom-blocks), [merge tags](#using-merge-tags), or [plugins](#extending-the-rich-editor), you need to ensure that the same configuration is used in both places. To do this, Filament provides you with a way to register rich content attributes that can be used in both the editor and the renderer.
+There are elements of the rich editor configuration that apply to both the editor and the renderer. For example, if you are using [private images](#using-private-images-in-the-editor), [custom blocks](#using-custom-blocks), [merge tags](#using-merge-tags), [mentions](#using-mentions), or [plugins](#extending-the-rich-editor), you need to ensure that the same configuration is used in both places. To do this, Filament provides you with a way to register rich content attributes that can be used in both the editor and the renderer.
 
 To register rich content attributes on an Eloquent model, you should use the `InteractsWithRichContent` trait and implement the `HasRichContent` interface. This allows you to register the attributes in the `setUpRichContent()` method:
 
 ```php
+use Filament\Forms\Components\RichEditor\MentionProvider;
 use Filament\Forms\Components\RichEditor\Models\Concerns\InteractsWithRichContent;
 use Filament\Forms\Components\RichEditor\Models\Contracts\HasRichContent;
 use Illuminate\Database\Eloquent\Model;
@@ -651,6 +756,13 @@ class Post extends Model implements HasRichContent
             ->mergeTagLabels([
                 'name' => 'Full name',
                 'today' => 'Today\'s date',
+            ])
+            ->mentions([
+                MentionProvider::make('@')
+                    ->items([
+                        1 => 'Jane Doe',
+                        2 => 'John Smith',
+                    ]),
             ])
             ->textColors(
                 'brand' => TextColor::make('Brand', '#0ea5e9', darkColor: '#38bdf8'),

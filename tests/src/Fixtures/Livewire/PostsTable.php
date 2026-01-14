@@ -47,6 +47,7 @@ class PostsTable extends Component implements HasActions, HasSchemas, Tables\Con
                 Tables\Grouping\Group::make('author.profile.company.name'),
                 Tables\Grouping\Group::make('author.image.url'),
                 Tables\Grouping\Group::make('author.profile.image.alt_text'),
+                Tables\Grouping\Group::make('author.setting.theme'),
             ])
             ->columns([
                 Tables\Columns\TextColumn::make('title')
@@ -99,6 +100,10 @@ class PostsTable extends Component implements HasActions, HasSchemas, Tables\Con
                     ->searchable(),
                 Tables\Columns\TextColumn::make('author.profile.image.alt_text')
                     ->label('Profile Image Alt')
+                    ->sortable()
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('author.setting.theme')
+                    ->label('Author Setting Theme (BelongsTo -> HasOneThrough)')
                     ->sortable()
                     ->searchable(),
                 Tables\Columns\IconColumn::make('is_published')

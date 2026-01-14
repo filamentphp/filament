@@ -38,6 +38,7 @@
                                     'wire:click' => 'resetTableColumnManager',
                                     'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => '',
                                     'wire:target' => 'resetTableColumnManager',
+                                    'x-on:click' => 'resetDeferredColumns',
                                 ])
                             )
                         "
@@ -198,6 +199,7 @@
                     <x-filament::button
                         color="danger"
                         wire:click="resetTableColumnManager"
+                        x-on:click="resetDeferredColumns"
                     >
                         {{ __('filament-tables::table.column_manager.actions.reset.label') }}
                     </x-filament::button>

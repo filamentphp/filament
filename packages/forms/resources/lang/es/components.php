@@ -610,6 +610,7 @@ return [
             'table_merge_cells' => 'Combinar celdas',
             'table_split_cell' => 'Dividir celda',
             'table_toggle_header_row' => 'Alternar fila de encabezado',
+            'table_toggle_header_cell' => 'Alternar celda de encabezado',
             'text_color' => 'Color de texto',
             'underline' => 'Subrayar',
             'undo' => 'Deshacer',
@@ -677,6 +678,8 @@ return [
         'loading_message' => 'Cargando...',
 
         'max_items_message' => 'Solo :count pueden ser seleccionados.',
+
+        'no_options_message' => 'No hay opciones disponibles.',
 
         'no_search_results_message' => 'No se encontraron coincidencias con su búsqueda.',
 

@@ -88,7 +88,7 @@ class Schema extends ViewComponent implements HasEmbeddedView
      */
     protected function resolveDefaultClosureDependencyForEvaluationByType(string $parameterType): array
     {
-        $record = $this->getRecord();
+        $record = is_a($parameterType, Model::class, allow_string: true) ? $this->getRecord() : null;
 
         if (! ($record instanceof Model)) {
             return match ($parameterType) {

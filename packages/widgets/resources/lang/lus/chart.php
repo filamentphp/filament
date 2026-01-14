@@ -5,7 +5,7 @@ return [
     'actions' => [
 
         'filter' => [
-            'label' => 'Filter',
+            'label' => 'Thlit fîmna',
         ],
 
     ],

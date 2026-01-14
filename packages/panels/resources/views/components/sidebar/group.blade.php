@@ -29,7 +29,6 @@
         <div
             @if ($collapsible)
                 x-on:click="$store.sidebar.toggleCollapsedGroup(label)"
-                role="button"
             @endif
             @if ($sidebarCollapsible)
                 x-show="$store.sidebar.isOpen"

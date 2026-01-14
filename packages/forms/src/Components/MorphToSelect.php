@@ -109,6 +109,7 @@ class MorphToSelect extends Component
                 ->searchDebounce($component->getSearchDebounce())
                 ->searchPrompt($component->getSearchPrompt())
                 ->searchingMessage($component->getSearchingMessage())
+                ->noOptionsMessage($component->getNoOptionsMessage())
                 ->noSearchResultsMessage($component->getNoSearchResultsMessage())
                 ->loadingMessage($component->getLoadingMessage())
                 ->allowHtml($component->isHtmlAllowed())
@@ -120,7 +121,8 @@ class MorphToSelect extends Component
                 )
                 ->afterStateUpdated(function () use ($component): void {
                     $component->callAfterStateUpdated();
-                });
+                })
+                ->actionSchemaModel(fn (Get $get): ?string => ($types[$get($typeColumn)] ?? null)?->getModel());
 
             if ($callback = $component->getModifyTypeSelectUsingCallback()) {
                 $typeSelect = $component->evaluate($callback, [
