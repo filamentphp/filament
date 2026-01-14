@@ -447,7 +447,7 @@ trait CanOpenModal
             ->table($this->getTable());
     }
 
-    protected function prepareActionGroup(ActionGroup $group): ActionGroup
+    protected function prepareModalGroupAction(ActionGroup $group): ActionGroup
     {
         $group
             ->schemaContainer($this->getSchemaContainer())
@@ -533,7 +533,7 @@ trait CanOpenModal
         foreach ($this->evaluate($this->extraModalFooterActions) as $action) {
             if ($action instanceof ActionGroup) {
                 $key = 'group_' . spl_object_id($action);
-                $actions[$key] = $this->prepareActionGroup($action);
+                $actions[$key] = $this->prepareModalGroupAction($action);
             } else {
                 $actions[$action->getName()] = $this->prepareModalAction($action);
             }
