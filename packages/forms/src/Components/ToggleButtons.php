@@ -24,6 +24,7 @@ class ToggleButtons extends Field implements Contracts\CanDisableOptions
     use Concerns\HasIcons;
     use Concerns\HasNestedRecursiveValidationRules;
     use Concerns\HasOptions;
+    use Concerns\HasTooltips;
 
     public const GROUPED_VIEW = 'filament-forms::components.toggle-buttons.grouped';
 
