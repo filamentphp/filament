@@ -1045,6 +1045,10 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
             return str_replace('/', ':', $ratio);
         }
 
+        if (is_numeric($ratio)) {
+            return "{$ratio}:1";
+        }
+
         return null;
     }
 
