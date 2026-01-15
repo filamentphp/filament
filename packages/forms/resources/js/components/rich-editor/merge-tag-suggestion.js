@@ -153,6 +153,7 @@ export default ({ mergeTags, noMergeTagSearchResultsMessage }) => ({
 
                 element = createDropdown()
                 element.style.position = 'absolute'
+                element.style.zIndex = '50'
 
                 renderItems()
 

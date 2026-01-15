@@ -385,6 +385,13 @@ return [
             ],
         ],
 
+        'mentions' => [
+            'no_options_message' => 'אין אפשרויות זמינות.',
+            'no_search_results_message' => 'לא נמצאו תוצאות.',
+            'search_prompt' => 'התחל להקליד על מנת לחפש...',
+            'searching_message' => 'מחפש...',
+        ],
+
         'tools' => [
             'align_center' => 'יישר למרכז',
             'align_end' => 'יישר לשמאל',
@@ -489,6 +496,8 @@ return [
         'loading_message' => 'טוען...',
 
         'max_items_message' => 'ניתן לבחור רק :count',
+
+        'no_options_message' => 'אין אפשרויות זמינות.',
 
         'no_search_results_message' => 'לא נמצאו תוצאות.',
 
