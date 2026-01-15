@@ -98,7 +98,7 @@ abstract class ChartWidget extends Widget implements HasSchemas
     protected function getHeight(): ?string
     {
         return $this->height;
-    }    
+    }
 
     protected function getMaxHeight(): ?string
     {
