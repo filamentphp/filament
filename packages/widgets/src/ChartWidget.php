@@ -29,7 +29,7 @@ abstract class ChartWidget extends Widget implements HasSchemas
 
     protected ?string $description = null;
 
-    protected ?string $height = null;    
+    protected ?string $height = null;
 
     protected ?string $maxHeight = null;
 
