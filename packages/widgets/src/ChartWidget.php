@@ -29,6 +29,8 @@ abstract class ChartWidget extends Widget implements HasSchemas
 
     protected ?string $description = null;
 
+    protected ?string $height = null;    
+
     protected ?string $maxHeight = null;
 
     /**
@@ -92,6 +94,11 @@ abstract class ChartWidget extends Widget implements HasSchemas
     {
         return $this->description;
     }
+
+    protected function getHeight(): ?string
+    {
+        return $this->height;
+    }    
 
     protected function getMaxHeight(): ?string
     {

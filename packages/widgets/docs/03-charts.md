@@ -226,6 +226,14 @@ Alternatively, you may disable polling altogether:
 protected ?string $pollingInterval = null;
 ```
 
+## Setting a chart height
+
+To control the chart size, you can set a fixed height using the `$height`:
+
+```php
+protected ?string $height = '400px';
+```
+
 ## Setting a maximum chart height
 
 You may place a maximum height on the chart to ensure that it doesn't get too big, using the `$maxHeight` property:

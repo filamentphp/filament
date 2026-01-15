@@ -79,6 +79,7 @@
                             'fi-wi-chart-canvas-ctn-no-aspect-ratio' => filled($maxHeight = $this->getMaxHeight()),
                         ])
                         ->style([
+                            'height: ' . $this->getHeight() => filled($this->getHeight()),
                             'max-height: ' . $maxHeight => filled($maxHeight),
                         ])
                 }}
