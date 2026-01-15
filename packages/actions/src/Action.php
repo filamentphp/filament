@@ -418,7 +418,7 @@ class Action extends ViewComponent implements Arrayable
             return $this->livewireTarget;
         }
 
-        if ($this->getTable() && ! $this->canAccessSelectedRecords()) {
+        if (! $this->canAccessSelectedRecords()) {
             return null;
         }
 
