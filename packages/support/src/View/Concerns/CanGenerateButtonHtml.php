@@ -24,6 +24,7 @@ trait CanGenerateButtonHtml
      * @param  string | array<string> | null  $badgeColor,
      * @param  string | array<string> | null  $color,
      * @param  array<string>  $keyBindings
+     * @param  array{title: string | null, icon: string | null, color: string | null, duration: string | null, body: string | null} | null  $disabledNotification
      */
     public function generateButtonHtml(
         ComponentAttributeBag $attributes,

@@ -8,6 +8,7 @@ trait CanBeDisabled
 {
     protected bool | Closure $isDisabled = false;
 
+    /** @var array{title: string | Closure | null, icon: string | Closure | null, color: string | Closure | null, duration: string | Closure | null, body: string | Closure | null} | null */
     public ?array $disabledNotification = null;
 
     public function disabled(bool | Closure $condition = true): static
