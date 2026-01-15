@@ -7,6 +7,10 @@
         }
     }
 
+    &.fi-collapsible > .fi-sidebar-group-btn {
+        @apply cursor-pointer;
+    }
+
     &.fi-active {
         & .fi-sidebar-group-dropdown-trigger-btn {
             & .fi-icon {
@@ -283,8 +287,4 @@
 
 .fi-sidebar-close-sidebar-btn {
     @apply mx-0! lg:hidden;
-}
-
-.fi-sidebar-group.fi-collapsible > .fi-sidebar-group-btn {
-    cursor: pointer;
 }
