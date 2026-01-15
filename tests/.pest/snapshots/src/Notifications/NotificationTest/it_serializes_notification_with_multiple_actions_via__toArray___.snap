@@ -23,7 +23,8 @@
             "size": "sm",
             "tooltip": null,
             "url": "\/view",
-            "view": "filament::components.link"
+            "view": "filament::components.link",
+            "disabledNotification": null
         },
         {
             "name": "edit",
@@ -47,7 +48,8 @@
             "size": "sm",
             "tooltip": null,
             "url": "\/edit",
-            "view": "filament::components.link"
+            "view": "filament::components.link",
+            "disabledNotification": null
         },
         {
             "name": "delete",
@@ -71,7 +73,8 @@
             "size": "sm",
             "tooltip": null,
             "url": null,
-            "view": "filament::components.link"
+            "view": "filament::components.link",
+            "disabledNotification": null
         }
     ],
     "body": "Test Body",

@@ -22,7 +22,8 @@
             "size": "sm",
             "tooltip": null,
             "url": null,
-            "view": "filament::components.link"
+            "view": "filament::components.link",
+            "disabledNotification": null
         }
     ],
     "body": "Test Body",
