@@ -44,6 +44,7 @@ trait CanGenerateDropdownItemHtml
         ?string $target = null,
         string | Htmlable | null $tooltip = null,
         ?string $type = 'button',
+        ?array $disabledNotification = null,
     ): string {
         $color ??= 'gray';
 
@@ -72,7 +73,7 @@ trait CanGenerateDropdownItemHtml
             )
             ->merge([
                 'aria-disabled' => $isDisabled ? 'true' : null,
-                'disabled' => $isDisabled && blank($tooltip),
+                'disabled' => $isDisabled && blank($tooltip) && empty($disabledNotification),
                 'type' => match ($tag) {
                     'button' => $type,
                     'form' => 'submit',
@@ -82,7 +83,7 @@ trait CanGenerateDropdownItemHtml
                 'wire:target' => ($hasLoadingIndicator && $loadingIndicatorTarget) ? $loadingIndicatorTarget : null,
             ], escape: false)
             ->when(
-                $isDisabled && $hasTooltip,
+                $isDisabled && ($hasTooltip || ! empty($disabledNotification)),
                 fn (ComponentAttributeBag $attributes) => $attributes->filter(
                     fn (mixed $value, string $key): bool => ! str($key)->startsWith(['href', 'x-on:', 'wire:click']),
                 ),
@@ -111,6 +112,16 @@ trait CanGenerateDropdownItemHtml
                     theme: $store.theme,
                     allowHTML: <?= Js::from($tooltip instanceof Htmlable) ?>,
                 }"
+            <?php } ?>
+            <?php if ($isDisabled && ! empty($disabledNotification)) { ?>
+                data-disabled-notification
+                x-on:click="new FilamentNotification()
+                .title(<?= Js::from($disabledNotification['title']) ?>)
+                .icon(<?= Js::from($disabledNotification['icon']) ?>)
+                .color(<?= Js::from($disabledNotification['color']) ?>)
+                .duration(<?= Js::from($disabledNotification['duration']) ?>)
+                .body(<?= Js::from($disabledNotification['body']) ?>)
+                .send()"
             <?php } ?>
             <?= $attributes->toHtml() ?>
         >

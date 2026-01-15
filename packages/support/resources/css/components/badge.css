@@ -9,7 +9,7 @@
     &[disabled]:not(.fi-force-enabled) {
         @apply cursor-default opacity-70;
 
-        &:not([x-tooltip]) {
+        &:not([x-tooltip]):not([data-disabled-notification]) {
             @apply pointer-events-none;
         }
     }

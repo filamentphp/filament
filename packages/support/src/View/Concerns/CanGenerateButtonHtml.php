@@ -51,6 +51,7 @@ trait CanGenerateButtonHtml
         ?string $target = null,
         string | Htmlable | null $tooltip = null,
         ?string $type = 'button',
+        ?array $disabledNotification = null,
     ): string {
         $color ??= 'primary';
 
@@ -96,7 +97,7 @@ trait CanGenerateButtonHtml
             ->merge([
                 'aria-disabled' => $isDisabled ? 'true' : null,
                 'aria-label' => $isLabelSrOnly ? trim(strip_tags(e($label))) : null,
-                'disabled' => $isDisabled && blank($tooltip),
+                'disabled' => $isDisabled && blank($tooltip) && empty($disabledNotification),
                 'form' => $formId,
                 'type' => match ($tag) {
                     'button' => $type,
@@ -109,7 +110,7 @@ trait CanGenerateButtonHtml
                 'x-bind:aria-label' => ($isLabelSrOnly && $hasFormProcessingLoadingIndicator) ? ('isProcessing ? processingMessage : ' . Js::from(trim(strip_tags(e($label))))) : null,
             ], escape: false)
             ->when(
-                $isDisabled && $hasTooltip,
+                $isDisabled && ($hasTooltip || ! empty($disabledNotification)),
                 fn (ComponentAttributeBag $attributes) => $attributes->filter(
                     fn (mixed $value, string $key): bool => ! str($key)->startsWith(['href', 'x-on:', 'wire:click']),
                 ),
@@ -188,6 +189,16 @@ trait CanGenerateButtonHtml
             <?php if ($hasFormProcessingLoadingIndicator) { ?>
                 x-data="filamentFormButton"
                 x-bind:class="{ 'fi-processing': isProcessing }"
+            <?php } ?>
+            <?php if ($isDisabled && ! empty($disabledNotification)) { ?>
+                data-disabled-notification
+                x-on:click="new FilamentNotification()
+                .title(<?= Js::from($disabledNotification['title']) ?>)
+                .icon(<?= Js::from($disabledNotification['icon']) ?>)
+                .color(<?= Js::from($disabledNotification['color']) ?>)
+                .duration(<?= Js::from($disabledNotification['duration']) ?>)
+                .body(<?= Js::from($disabledNotification['body']) ?>)
+                .send()"
             <?php } ?>
             <?= $buttonAttributes->toHtml() ?>
         >

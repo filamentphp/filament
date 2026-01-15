@@ -199,6 +199,7 @@ class Action extends ViewComponent implements Arrayable
             'tooltip' => $this->getTooltip(),
             'url' => $this->getUrl(),
             'view' => $this->getView(),
+            'disabledNotification' => $this->getDisabledNotification(),
         ];
     }
 
@@ -787,6 +788,7 @@ class Action extends ViewComponent implements Arrayable
             target: ($url && $this->shouldOpenUrlInNewTab()) ? '_blank' : null,
             tooltip: $this->getTooltip(),
             type: $this->canSubmitForm() ? 'submit' : 'button',
+            disabledNotification: $this->getDisabledNotification(),
         );
     }
 
@@ -826,6 +828,7 @@ class Action extends ViewComponent implements Arrayable
             target: ($url && $this->shouldOpenUrlInNewTab()) ? '_blank' : null,
             tooltip: $this->getTooltip(),
             type: $this->canSubmitForm() ? 'submit' : 'button',
+            disabledNotification: $this->getDisabledNotification(),
         );
     }
 
@@ -859,6 +862,7 @@ class Action extends ViewComponent implements Arrayable
             target: ($url && $this->shouldOpenUrlInNewTab()) ? '_blank' : null,
             tooltip: $this->getTooltip(),
             type: $this->canSubmitForm() ? 'submit' : 'button',
+            disabledNotification: $this->getDisabledNotification(),
         );
     }
 
@@ -894,6 +898,7 @@ class Action extends ViewComponent implements Arrayable
             target: ($url && $this->shouldOpenUrlInNewTab()) ? '_blank' : null,
             tooltip: $this->getTooltip(),
             type: $this->canSubmitForm() ? 'submit' : 'button',
+            disabledNotification: $this->getDisabledNotification(),
         );
     }
 
@@ -931,6 +936,7 @@ class Action extends ViewComponent implements Arrayable
             target: ($url && $this->shouldOpenUrlInNewTab()) ? '_blank' : null,
             tooltip: $this->getTooltip(),
             type: $this->canSubmitForm() ? 'submit' : 'button',
+            disabledNotification: $this->getDisabledNotification(),
         );
     }
 
