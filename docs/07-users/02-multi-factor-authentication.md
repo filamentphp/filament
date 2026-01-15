@@ -267,7 +267,7 @@ public function panel(Panel $panel): Panel
 
 ### Changing the email code expiration time
 
-Email codes are issued with an lifetime of 4 minutes, after which they expire.
+Email codes are issued with a lifetime of 4 minutes, after which they expire.
 
 To change the expiration period, for example to only be valid for 2 minutes after codes are generated, you can use the `codeExpiryMinutes()` method on the `EmailAuthentication` instance, set to `2`:
 
