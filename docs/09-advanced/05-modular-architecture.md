@@ -61,7 +61,7 @@ Each module should require `filament/filament` and define its service provider:
     "name": "my-app/alerts",
     "type": "library",
     "require": {
-        "filament/filament": "^4.0"
+        "filament/filament": "^5.0"
     },
     "autoload": {
         "psr-4": {
