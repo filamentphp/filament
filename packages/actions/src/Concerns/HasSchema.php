@@ -44,6 +44,19 @@ trait HasSchema
 
     public function getSchema(Schema $schema): ?Schema
     {
+
+        $stepsResult = null;
+        if ($this->isWizard() && isset($this->steps)) {
+            $stepsResult = $this->evaluate($this->steps, [
+                'form' => $schema,
+                'schema' => $schema,
+            ]);
+
+            if ($stepsResult === null || (is_array($stepsResult) && ! count($stepsResult))) {
+                $this->isWizard = false;
+                $stepsResult = null;
+            }
+        }
         $modifiedSchema = $this->evaluate($this->schema ?? $this->getHasActionsLivewire()?->getDefaultActionSchemaResolver($this), [
             'form' => $schema,
             'schema' => $schema,

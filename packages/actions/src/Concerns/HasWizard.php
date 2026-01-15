@@ -16,12 +16,16 @@ trait HasWizard
     protected ?Closure $modifyWizardUsing = null;
 
     /**
-     * @param  array<Step> | Closure  $steps
+     * @param  array<Step> | Closure | null  $steps
      */
-    public function steps(array | Closure $steps): static
+    public function steps(array | Closure | null $steps): static
     {
+        if (is_null($steps)) {
+            return $this;
+        }
+
         $this->isWizard = true;
-        $this->schema($steps);
+        $this->steps = $steps;
 
         return $this;
     }
