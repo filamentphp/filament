@@ -42,7 +42,7 @@ body:
     attributes:
       label: Package Version
       description: Please provide the full version of the package you have installed.
-      placeholder: v3.0.0
+      placeholder: v5.0.0
     validations:
       required: true
   - type: input
@@ -58,7 +58,7 @@ body:
     attributes:
       label: Livewire Version
       description: Please provide the full Livewire version of your project, if applicable.
-      placeholder: v3.0.0
+      placeholder: v4.0.0
   - type: input
     id: php-version
     attributes:
