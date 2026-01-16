@@ -102,6 +102,14 @@ foreach (json_decode(file_get_contents('composer.json'), true)['require'] as $pa
 
     $isWindows = str_starts_with(php_uname(), 'Windows');
 
+    if ($package === 'filament/blueprint') {
+        $requireCommands[] = $isWindows
+            ? "composer require {$package}:\"~2.0\" -W --no-update"
+            : "composer require {$package}:\"^2.0\" -W --no-update";
+
+        continue;
+    }
+
     if (! $isWindows) {
         $requireCommands[] = "composer require {$package}:\"^5.0\" -W --no-update";
     } else {
