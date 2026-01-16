@@ -116,7 +116,9 @@ export default (Alpine) => {
                             return
                         }
 
-                        animation()
+                        if (typeof animation === 'function') {
+                            animation()
+                        }
                     })
                 })
             })
