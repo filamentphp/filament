@@ -2,15 +2,21 @@
     use Filament\Actions\Action;
     use Filament\Actions\ActionGroup;
     use Filament\Schemas\Components\Component;
+    use Filament\Support\Enums\Alignment;
     use Filament\Support\Enums\VerticalAlignment;
 
     $statePath = $getStatePath();
 
     $fromBreakpoint = $getFromBreakpoint();
     $verticalAlignment = $getVerticalAlignment();
+    $alignment = $getAlignment();
 
     if (! $verticalAlignment instanceof VerticalAlignment) {
         $verticalAlignment = filled($verticalAlignment) ? (VerticalAlignment::tryFrom($verticalAlignment) ?? $verticalAlignment) : null;
+    }
+
+    if (! $alignment instanceof Alignment) {
+        $alignment = filled($alignment) ? (Alignment::tryFrom($alignment) ?? $alignment) : null;
     }
 @endphp
 
@@ -23,6 +29,7 @@
                 'fi-dense' => $isDense(),
                 'fi-from-' . ($fromBreakpoint ?? 'default'),
                 ($verticalAlignment instanceof VerticalAlignment) ? "fi-vertical-align-{$verticalAlignment->value}" : $verticalAlignment,
+                ($alignment instanceof Alignment) ? "fi-align-{$alignment->value}" : $alignment,
             ])
     }}
 >
