@@ -5,14 +5,16 @@ namespace Filament\Schemas\Components;
 use Closure;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
-use Filament\Schemas\Components\Concerns\EntanglesStateWithSingularRelationship;
+use Illuminate\Contracts\Support\Htmlable;
+use Filament\Support\Concerns\HasAlignment;
 use Filament\Support\Concerns\HasFromBreakpoint;
 use Filament\Support\Concerns\HasVerticalAlignment;
-use Illuminate\Contracts\Support\Htmlable;
+use Filament\Schemas\Components\Concerns\EntanglesStateWithSingularRelationship;
 
 class Flex extends Component
 {
     use EntanglesStateWithSingularRelationship;
+    use HasAlignment;
     use HasFromBreakpoint;
     use HasVerticalAlignment;
 
