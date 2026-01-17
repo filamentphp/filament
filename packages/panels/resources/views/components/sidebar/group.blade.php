@@ -177,6 +177,7 @@
                 $itemIcon = $item->getIcon();
                 $shouldItemOpenUrlInNewTab = $item->shouldOpenUrlInNewTab();
                 $itemUrl = $item->getUrl();
+                $itemExtraAttributes = $item->getExtraAttributeBag();
 
                 if ($icon) {
                     if ($hasDropdown || (blank($itemIcon) && blank($itemActiveIcon))) {
@@ -189,6 +190,7 @@
             @endphp
 
             <x-filament-panels::sidebar.item
+                :attributes="\Filament\Support\prepare_inherited_attributes($itemExtraAttributes)"
                 :active="$isItemActive"
                 :active-child-items="$isItemChildItemsActive"
                 :active-icon="$itemActiveIcon"
