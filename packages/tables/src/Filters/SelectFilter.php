@@ -20,6 +20,11 @@ class SelectFilter extends BaseFilter
     use Concerns\HasPlaceholder;
     use Concerns\HasRelationship;
 
+    /**
+     * @var class-string<Select>
+     */
+    protected string $formComponent = Select::class;
+
     protected string | Closure | null $attribute = null;
 
     protected bool | Closure $isMultiple = false;
@@ -317,9 +322,19 @@ class SelectFilter extends BaseFilter
         return $this->evaluate($this->isSearchForcedCaseInsensitive);
     }
 
+    /**
+     * @param  class-string<Select>  $component
+     */
+    public function formComponent(string $component): static
+    {
+        $this->formComponent = $component;
+
+        return $this;
+    }
+
     public function getFormField(): Select
     {
-        $field = Select::make($this->isMultiple() ? 'values' : 'value')
+        $field = $this->formComponent::make($this->isMultiple() ? 'values' : 'value')
             ->label($this->getLabel())
             ->multiple($this->isMultiple())
             ->placeholder($this->getPlaceholder())

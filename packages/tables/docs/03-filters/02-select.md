@@ -170,3 +170,22 @@ SelectFilter::make('status')
 
 <UtilityInjection set="tableFilters" version="5.x">As well as allowing a static value, the `default()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
+## Using a custom select component class
+
+If you want to use your own custom select component class instead of the built-in `Select` component, you can use the `formComponent()` method:
+
+```php
+use App\Filament\Forms\Components\CustomSelect;
+use Filament\Tables\Filters\SelectFilter;
+
+SelectFilter::make('status')
+    ->formComponent(CustomSelect::class)
+    ->options([
+        'draft' => 'Draft',
+        'reviewing' => 'Reviewing',
+        'published' => 'Published',
+    ])
+```
+
+This is useful if you have extended the base [Select](../../forms/select) component with additional functionality, such as custom styling or behavior, that you want to use in your filter. Your custom component must extend `Filament\Forms\Components\Select`.
+

@@ -94,6 +94,20 @@ Filter::make('is_featured')
 
 <UtilityInjection set="tableFilters" version="5.x" extras="Field;;Filament\Forms\Components\Field;;$field;;The field object to modify.">The function passed to `modifyFormFieldUsing()` can inject various utilities as parameters.</UtilityInjection>
 
+### Using a custom form component class
+
+If you want to use your own custom form component class for the filter instead of the built-in ones, you can use the `formComponent()` method:
+
+```php
+use App\Filament\Forms\Components\CustomCheckbox;
+use Filament\Tables\Filters\Filter;
+
+Filter::make('is_featured')
+    ->formComponent(CustomCheckbox::class)
+```
+
+This is useful if you have extended the base [Checkbox](../../forms/checkbox) or [Toggle](../../forms/toggle) component with additional functionality that you want to use in your filter.
+
 ## Applying the filter by default
 
 You may set a filter to be enabled by default, using the `default()` method:

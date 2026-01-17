@@ -431,6 +431,17 @@ it('can get `getFormField()` with relationship configuration', function (): void
     expect($formField->isPreloaded())->toBeTrue();
 });
 
+it('can use `formComponent()` to change the component class', function (): void {
+    $filter = Tables\Filters\SelectFilter::make('status')
+        ->formComponent(CustomSelectComponent::class)
+        ->options(['active' => 'Active', 'inactive' => 'Inactive']);
+
+    $formField = $filter->getFormField();
+
+    expect($formField)->toBeInstanceOf(CustomSelectComponent::class);
+    expect($formField->getName())->toBe('value');
+});
+
 it('returns empty options when relationship is searchable without preload via `getFormField()`', function (): void {
     User::factory()->count(3)->create();
 
@@ -597,4 +608,9 @@ class TestTableWithCustomRelationshipLabelFilter extends Component implements Ha
     {
         return view('livewire.table');
     }
+}
+
+class CustomSelectComponent extends Select
+{
+    //
 }

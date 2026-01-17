@@ -8,6 +8,9 @@ use Filament\Forms\Components\Toggle;
 
 class Filter extends BaseFilter
 {
+    /**
+     * @var class-string<Field>
+     */
     protected string $formComponent = Checkbox::class;
 
     protected function setUp(): void
