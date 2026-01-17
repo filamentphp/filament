@@ -231,10 +231,6 @@ trait HasBulkActions
 
         $query = $this->getSelectedTableRecordsQuery($shouldFetchSelectedRecords, $chunkSize);
 
-        if (! $chunkSize) {
-            $this->applySortingToTableQuery($query);
-        }
-
         if (! $shouldFetchSelectedRecords) {
             return $this->cachedSelectedTableRecords = $query->toBase()->pluck($query->getModel()->getQualifiedKeyName());
         }
