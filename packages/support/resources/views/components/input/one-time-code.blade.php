@@ -23,6 +23,7 @@
     @endforeach
 
     <input
+        {{ $attributes }}
         autocomplete="one-time-code"
         inputmode="numeric"
         minlength="{{ $length }}"
