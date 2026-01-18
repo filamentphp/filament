@@ -7,7 +7,7 @@ import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 The table's "empty state" is rendered when there are no rows in the table.
 
-<AutoScreenshot name="tables/empty-state" alt="Table with empty state" version="4.x" />
+<AutoScreenshot name="tables/empty-state" alt="Table with empty state" version="5.x" />
 
 ## Setting the empty state heading
 
@@ -23,7 +23,7 @@ public function table(Table $table): Table
 }
 ```
 
-<AutoScreenshot name="tables/empty-state-heading" alt="Table with customized empty state heading" version="4.x" />
+<AutoScreenshot name="tables/empty-state-heading" alt="Table with customized empty state heading" version="5.x" />
 
 ## Setting the empty state description
 
@@ -39,7 +39,7 @@ public function table(Table $table): Table
 }
 ```
 
-<AutoScreenshot name="tables/empty-state-description" alt="Table with empty state description" version="4.x" />
+<AutoScreenshot name="tables/empty-state-description" alt="Table with empty state description" version="5.x" />
 
 ## Setting the empty state icon
 
@@ -55,7 +55,7 @@ public function table(Table $table): Table
 }
 ```
 
-<AutoScreenshot name="tables/empty-state-icon" alt="Table with customized empty state icon" version="4.x" />
+<AutoScreenshot name="tables/empty-state-icon" alt="Table with customized empty state icon" version="5.x" />
 
 ## Adding empty state actions
 
@@ -78,7 +78,7 @@ public function table(Table $table): Table
 }
 ```
 
-<AutoScreenshot name="tables/empty-state-actions" alt="Table with empty state actions" version="4.x" />
+<AutoScreenshot name="tables/empty-state-actions" alt="Table with empty state actions" version="5.x" />
 
 ## Using a custom empty state view
 

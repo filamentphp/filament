@@ -26,7 +26,7 @@ public function table(Table $table): Table
 }
 ```
 
-<AutoScreenshot name="tables/filters/simple" alt="Table with filter" version="4.x" />
+<AutoScreenshot name="tables/filters/simple" alt="Table with filter" version="5.x" />
 
 ## Available filters
 
@@ -50,7 +50,7 @@ Filter::make('is_featured')
     ->label('Featured')
 ```
 
-<UtilityInjection set="tableFilters" version="4.x">As well as allowing a static value, the `label()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="tableFilters" version="5.x">As well as allowing a static value, the `label()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 Customizing the label in this way is useful if you wish to use a [translation string for localization](https://laravel.com/docs/localization#retrieving-translation-strings):
 
@@ -78,7 +78,7 @@ Filter::make('is_featured')
     ->toggle()
 ```
 
-<AutoScreenshot name="tables/filters/toggle" alt="Table with toggle filter" version="4.x" />
+<AutoScreenshot name="tables/filters/toggle" alt="Table with toggle filter" version="5.x" />
 
 ### Customizing the built-in filter form field
 
@@ -92,7 +92,7 @@ Filter::make('is_featured')
     ->modifyFormFieldUsing(fn (Checkbox $field) => $field->inline(false))
 ```
 
-<UtilityInjection set="tableFilters" version="4.x" extras="Field;;Filament\Forms\Components\Field;;$field;;The field object to modify.">The function passed to `modifyFormFieldUsing()` can inject various utilities as parameters.</UtilityInjection>
+<UtilityInjection set="tableFilters" version="5.x" extras="Field;;Filament\Forms\Components\Field;;$field;;The field object to modify.">The function passed to `modifyFormFieldUsing()` can inject various utilities as parameters.</UtilityInjection>
 
 ## Applying the filter by default
 
@@ -222,7 +222,7 @@ public function table(Table $table): Table
 }
 ```
 
-<AutoScreenshot name="tables/filters/custom-trigger-action" alt="Table with custom filters trigger action" version="4.x" />
+<AutoScreenshot name="tables/filters/custom-trigger-action" alt="Table with custom filters trigger action" version="5.x" />
 
 ## Filter utility injection
 

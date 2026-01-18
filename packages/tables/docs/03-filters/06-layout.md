@@ -91,7 +91,7 @@ public function table(Table $table): Table
 }
 ```
 
-<AutoScreenshot name="tables/filters/above-content" alt="Table with filters above content" version="4.x" />
+<AutoScreenshot name="tables/filters/above-content" alt="Table with filters above content" version="5.x" />
 
 ### Allowing filters above the table content to be collapsed
 
@@ -126,7 +126,7 @@ public function table(Table $table): Table
 }
 ```
 
-<AutoScreenshot name="tables/filters/below-content" alt="Table with filters below content" version="4.x" />
+<AutoScreenshot name="tables/filters/below-content" alt="Table with filters below content" version="5.x" />
 
 ## Displaying filters to the left or right of the table content
 

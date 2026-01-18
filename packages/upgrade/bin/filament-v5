@@ -9,15 +9,15 @@ render(<<<'HTML'
     <div>
         <div class="space-y-1">
             <div class="py-1 px-3 bg-amber-600 text-amber-50">
-                <strong>Filament v4</strong> Upgrade
+                <strong>Filament v5</strong> Upgrade
             </div>
 
             <div>
-                Welcome to the <strong>Filament v4</strong> upgrade process!
+                Welcome to the <strong>Filament v5</strong> upgrade process!
 
                 <br />
 
-                This script will attempt to handle most of the breaking changes for you.
+                This script will attempt to handle breaking changes for you, and will guide you through any manual steps that may be required.
 
                 <br />
 
@@ -102,16 +102,40 @@ foreach (json_decode(file_get_contents('composer.json'), true)['require'] as $pa
 
     $isWindows = str_starts_with(php_uname(), 'Windows');
 
-    if (! $isWindows) {
-        $requireCommands[] = "composer require {$package}:\"^4.0\" -W --no-update";
-    } else {
-        $requireCommands[] = "composer require {$package}:\"~4.0\" -W --no-update";
+    if ($package === 'filament/blueprint') {
+        $requireCommands[] = $isWindows
+            ? "composer require {$package}:\"~2.0\" -W --no-update"
+            : "composer require {$package}:\"^2.0\" -W --no-update";
+
+        continue;
     }
+
+    if (! $isWindows) {
+        $requireCommands[] = "composer require {$package}:\"^5.0\" -W --no-update";
+    } else {
+        $requireCommands[] = "composer require {$package}:\"~5.0\" -W --no-update";
+    }
+}
+
+// If the project already depends on Livewire, suggest bumping it to v4 as part of the upgrade.
+try {
+    $composer = json_decode(file_get_contents('composer.json'), true) ?: [];
+    $require = $composer['require'] ?? [];
+    $requireDev = $composer['require-dev'] ?? [];
+
+    $hasLivewire = array_key_exists('livewire/livewire', $require) || array_key_exists('livewire/livewire', $requireDev);
+    if ($hasLivewire) {
+        $isWindows = str_starts_with(php_uname(), 'Windows');
+        $constraint = $isWindows ? '~4.0' : '^4.0';
+        $requireCommands[] = "composer require livewire/livewire:\"{$constraint}\" -W --no-update";
+    }
+} catch (Throwable $exception) {
+    // ignore detection errors
 }
 
 $requireCommandsHtml = implode("</strong><br /><strong>", $requireCommands);
 
-// Suggest commands for third-party Filament plugins that have v4-compatible releases
+// Suggest commands for third-party Filament plugins that have v5-compatible releases
 $thirdPartyCommands = [];
 
 try {
@@ -176,7 +200,7 @@ try {
                     if (!str_starts_with($dep, 'filament/')) {
                         continue;
                     }
-                    if (preg_match("/\^\s*4(?:\.|$)|~\s*4(?:\.|$)|>=\s*4(?:\.|$)/", (string) $constraint)) {
+                    if (preg_match("/\^\s*5(?:\.|$)|~\s*5(?:\.|$)|>=\s*5(?:\.|$)/", (string) $constraint)) {
                         $compatibility = [
                             'version' => (string) ($checkingVersion['version'] ?? ''),
                             'isPrerelease' => false,
@@ -197,7 +221,7 @@ try {
                             continue;
                         }
 
-                        if (preg_match("/\^\s*4(?:\.|$)|~\s*4(?:\.|$)|>=\s*4(?:\.|$)/", (string) $constraint)) {
+                        if (preg_match("/\^\s*5(?:\.|$)|~\s*5(?:\.|$)|>=\s*5(?:\.|$)/", (string) $constraint)) {
                             $compatibility = [
                                 'version' => (string) ($checkingVersion['version'] ?? ''),
                                 'isPrerelease' => true,
@@ -228,7 +252,7 @@ try {
                                 continue;
                             }
 
-                            if (preg_match("/\^\s*4(?:\.|$)|~\s*4(?:\.|$)|>=\s*4(?:\.|$)/", (string) $constraint)) {
+                            if (preg_match("/\^\s*5(?:\.|$)|~\s*5(?:\.|$)|>=\s*5(?:\.|$)/", (string) $constraint)) {
                                 $compatibility = [
                                     'version' => (string) ($checkingVersion['version'] ?? ''),
                                     'isPrerelease' => false,
@@ -257,7 +281,7 @@ try {
                                     continue;
                                 }
 
-                                if (preg_match("/\^\s*4(?:\.|$)|~\s*4(?:\.|$)|>=\s*4(?:\.|$)/", (string) $constraint)) {
+                                if (preg_match("/\^\s*5(?:\.|$)|~\s*5(?:\.|$)|>=\s*5(?:\.|$)/", (string) $constraint)) {
                                     $compatibility = [
                                         'version' => (string) ($checkingVersion['version'] ?? ''),
                                         'isPrerelease' => true,
@@ -297,7 +321,7 @@ try {
                         // For 0.x.y, constrain to the minor series, e.g. ^0.12 or ~0.12
                         $constraint = $isWindows ? "~0.{$minor}" : "^0.{$minor}";
                     } else {
-                        // For 1.x and above, stick to major series, e.g. ^4.0 or ~4.0
+                        // For 1.x and above, stick to major series, e.g. ^5.0 or ~5.0
                         $constraint = $isWindows ? "~{$major}.0" : "^{$major}.0";
                     }
                 } elseif (preg_match('/^(\d+)/', $version, $m)) {

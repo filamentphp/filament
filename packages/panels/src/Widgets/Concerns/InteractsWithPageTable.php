@@ -79,7 +79,7 @@ trait InteractsWithPageTable /** @phpstan-ignore trait.unused */
         /** @var HasTable $tableComponent */
         $page = app('livewire')->new($this->getTablePage());
 
-        trigger('mount', $page, [], null, null);
+        trigger('mount', $page, [], null, null, []);
 
         foreach ([
             'activeTab' => $this->activeTab,

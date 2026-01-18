@@ -7,7 +7,7 @@ import UtilityInjection from "@components/UtilityInjection.astro"
 
 ## Introduction
 
-<AutoScreenshot name="forms/overview" alt="Account settings form example" version="4.x" />
+<AutoScreenshot name="forms/overview" alt="Account settings form example" version="5.x" />
 
 Filament's forms package allows you to easily build dynamic forms in your app. It's used within other Filament packages to render forms within [panel resources](../resources), [action modals](../actions/modals), [table filters](../tables/filters), and more. Learning how to build forms is essential to learning how to use these Filament packages.
 
@@ -48,7 +48,7 @@ use Filament\Forms\Components\TextInput;
 TextInput::make('name')
 ```
 
-<AutoScreenshot name="forms/fields/simple" alt="Form field" version="4.x" />
+<AutoScreenshot name="forms/fields/simple" alt="Form field" version="5.x" />
 
 You may use "dot notation" to bind fields to keys in arrays:
 
@@ -89,7 +89,7 @@ TextInput::make('name')
     ->label('Full name')
 ```
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `label()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="5.x">As well as allowing a static value, the `label()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 Customizing the label in this way is useful if you wish to use a [translation string for localization](https://laravel.com/docs/localization#retrieving-translation-strings):
 
@@ -124,7 +124,7 @@ TextInput::make('name')
     ->hiddenLabel(FeatureFlag::active())
 ```
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `hiddenLabel()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="5.x">As well as allowing a static value, the `hiddenLabel()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Setting the default value of a field
 
@@ -137,7 +137,7 @@ TextInput::make('name')
     ->default('John')
 ```
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `default()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="5.x">As well as allowing a static value, the `default()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Disabling a field
 
@@ -150,7 +150,7 @@ TextInput::make('name')
     ->disabled()
 ```
 
-<AutoScreenshot name="forms/fields/disabled" alt="Disabled form field" version="4.x" />
+<AutoScreenshot name="forms/fields/disabled" alt="Disabled form field" version="5.x" />
 
 Optionally, you may pass a boolean value to control if the field should be disabled or not:
 
@@ -161,7 +161,7 @@ Toggle::make('is_admin')
     ->disabled(! FeatureFlag::active())
 ```
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `disabled()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="5.x">As well as allowing a static value, the `disabled()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 Disabling a field will prevent it from being saved. If you'd like it to be saved, but still not editable, use the `saved()` method:
 
@@ -187,7 +187,7 @@ Toggle::make('is_admin')
     ->saved(FeatureFlag::active())
 ```
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `saved()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="5.x">As well as allowing a static value, the `saved()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ### Disabling a field based on the current operation
 
@@ -245,7 +245,7 @@ TextInput::make('name')
     ->hidden(! FeatureFlag::active())
 ```
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `hidden()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="5.x">As well as allowing a static value, the `hidden()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 Alternatively, you may use the `visible()` method to control if the field should be hidden or not. In some situations, this may help to make your code more readable:
 
@@ -256,7 +256,7 @@ TextInput::make('name')
     ->visible(FeatureFlag::active())
 ```
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `visible()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="5.x">As well as allowing a static value, the `visible()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 <Aside variant="info">
     If both `hidden()` and `visible()` are used, they both need to indicate that the field should be visible for it to be shown.
@@ -398,7 +398,7 @@ TextInput::make('name')
     ->inlineLabel()
 ```
 
-<AutoScreenshot name="forms/fields/inline-label" alt="Form field with inline label" version="4.x" />
+<AutoScreenshot name="forms/fields/inline-label" alt="Form field with inline label" version="5.x" />
 
 Optionally, you may pass a boolean value to control if the label should be displayed inline or not:
 
@@ -409,7 +409,7 @@ TextInput::make('name')
     ->inlineLabel(FeatureFlag::active())
 ```
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `inlineLabel()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="5.x">As well as allowing a static value, the `inlineLabel()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ### Using inline labels in multiple places at once
 
@@ -430,7 +430,7 @@ Section::make('Details')
     ])
 ```
 
-<AutoScreenshot name="forms/fields/inline-label/section" alt="Form fields with inline labels in a section" version="4.x" />
+<AutoScreenshot name="forms/fields/inline-label/section" alt="Form fields with inline labels in a section" version="5.x" />
 
 You can also use `inlineLabel()` on the entire schema to display all labels inline:
 
@@ -485,7 +485,7 @@ TextInput::make('name')
     ->autofocus(FeatureFlag::active())
 ```
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `autofocus()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="5.x">As well as allowing a static value, the `autofocus()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Setting the placeholder of a field
 
@@ -498,9 +498,9 @@ TextInput::make('name')
     ->placeholder('John Doe')
 ```
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `placeholder()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="5.x">As well as allowing a static value, the `placeholder()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="forms/fields/placeholder" alt="Form field with placeholder" version="4.x" />
+<AutoScreenshot name="forms/fields/placeholder" alt="Form field with placeholder" version="5.x" />
 
 ## Fusing fields together into a group
 
@@ -529,7 +529,7 @@ FusedGroup::make([
 ])
 ```
 
-<AutoScreenshot name="forms/fields/fused" alt="Fused group of form fields" version="4.x" />
+<AutoScreenshot name="forms/fields/fused" alt="Fused group of form fields" version="5.x" />
 
 You can add a label above the group of fields using the `label()` method:
 
@@ -542,7 +542,7 @@ FusedGroup::make([
     ->label('Location')
 ```
 
-<AutoScreenshot name="forms/fields/fused-label" alt="Fused group of form fields with label" version="4.x" />
+<AutoScreenshot name="forms/fields/fused-label" alt="Fused group of form fields with label" version="5.x" />
 
 By default, each field will have its own row. On mobile devices, this is often the most optimal experience, but on desktop you can use the `columns()` method, the same as for [layout components](../schemas/layouts#grid-system) to display the fields horizontally:
 
@@ -556,7 +556,7 @@ FusedGroup::make([
     ->columns(2)
 ```
 
-<AutoScreenshot name="forms/fields/fused-columns" alt="Fused group of form fields in columns" version="4.x" />
+<AutoScreenshot name="forms/fields/fused-columns" alt="Fused group of form fields in columns" version="5.x" />
 
 You can adjust the width of the fields in the grid by passing `columnSpan()` to each field:
 
@@ -579,7 +579,7 @@ FusedGroup::make([
     ->columns(3)
 ```
 
-<AutoScreenshot name="forms/fields/fused-columns-span" alt="Fused group of form fields in columns with customized span" version="4.x" />
+<AutoScreenshot name="forms/fields/fused-columns-span" alt="Fused group of form fields in columns with customized span" version="5.x" />
 
 ## Adding extra content to a field
 
@@ -598,7 +598,7 @@ The following slots are available for all fields:
 - `aboveErrorMessage()`
 - `belowErrorMessage()`
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing static values, the slot methods also accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="5.x">As well as allowing static values, the slot methods also accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters.</UtilityInjection>
 
 To insert plain text, you can pass a string to these methods:
 
@@ -609,7 +609,7 @@ TextInput::make('name')
     ->belowContent('This is the user\'s full name.')
 ```
 
-<AutoScreenshot name="forms/fields/below-content/text" alt="Form field with text below content" version="4.x" />
+<AutoScreenshot name="forms/fields/below-content/text" alt="Form field with text below content" version="5.x" />
 
 To insert a schema component, often a [prime component](../schemas/primes), you can pass the component to the method:
 
@@ -622,7 +622,7 @@ TextInput::make('name')
     ->belowContent(Text::make('This is the user\'s full name.')->weight(FontWeight::Bold))
 ```
 
-<AutoScreenshot name="forms/fields/below-content/component" alt="Form field with component below content" version="4.x" />
+<AutoScreenshot name="forms/fields/below-content/component" alt="Form field with component below content" version="5.x" />
 
 To insert an [action](../actions) or [action group](../actions/grouping-actions), you can pass the action or action group to the method:
 
@@ -634,7 +634,7 @@ TextInput::make('name')
     ->belowContent(Action::make('generate'))
 ```
 
-<AutoScreenshot name="forms/fields/below-content/action" alt="Form field with action below content" version="4.x" />
+<AutoScreenshot name="forms/fields/below-content/action" alt="Form field with action below content" version="5.x" />
 
 <Aside variant="tip">
     If you need a simple action that runs JavaScript without making a network request, you can use the [`actionJs()` method](../actions/overview#running-javascript-when-an-action-is-clicked). This is useful for simple interactions like updating form field values using `$get()` and `$set()`. Actions using `actionJs()` cannot open modals.
@@ -656,7 +656,7 @@ TextInput::make('name')
     ])
 ```
 
-<AutoScreenshot name="forms/fields/below-content" alt="Form field with multiple components below content" version="4.x" />
+<AutoScreenshot name="forms/fields/below-content" alt="Form field with multiple components below content" version="5.x" />
 
 You can also align the content in the slots by passing the array of content to either `Schema::start()` (default), `Schema::end()` or `Schema::between()`:
 
@@ -697,7 +697,7 @@ TextInput::make('name')
     As you can see in the above example for `Schema::between()`, a [`Flex` component](../schemas/layouts#flex-component) is used to group the icon and text together so they do not have space between them. The icon uses `grow(false)` to prevent it from taking up half of the horizontal space, allowing the text to consume the remaining space.
 </Aside>
 
-<AutoScreenshot name="forms/fields/below-content/alignment" alt="Form field with aligned components below content" version="4.x" />
+<AutoScreenshot name="forms/fields/below-content/alignment" alt="Form field with aligned components below content" version="5.x" />
 
 ### Adding extra content above a field's label
 
@@ -715,9 +715,9 @@ TextInput::make('name')
     ])
 ```
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `aboveLabel()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="5.x">As well as allowing a static value, the `aboveLabel()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="forms/fields/above-label" alt="Form field with extra content above label" version="4.x" />
+<AutoScreenshot name="forms/fields/above-label" alt="Form field with extra content above label" version="5.x" />
 
 ### Adding extra content before a field's label
 
@@ -732,9 +732,9 @@ TextInput::make('name')
     ->beforeLabel(Icon::make(Heroicon::Star))
 ```
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `beforeLabel()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="5.x">As well as allowing a static value, the `beforeLabel()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="forms/fields/before-label" alt="Form field with extra content before label" version="4.x" />
+<AutoScreenshot name="forms/fields/before-label" alt="Form field with extra content before label" version="5.x" />
 
 ### Adding extra content after a field's label
 
@@ -752,9 +752,9 @@ TextInput::make('name')
     ])
 ```
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `afterLabel()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="5.x">As well as allowing a static value, the `afterLabel()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="forms/fields/after-label" alt="Form field with extra content after label" version="4.x" />
+<AutoScreenshot name="forms/fields/after-label" alt="Form field with extra content after label" version="5.x" />
 
 By default, the content in the `afterLabel()` schema is aligned to the end of the container. If you wish to align it to the start of the container, you should pass a `Schema::start()` object containing the content:
 
@@ -771,9 +771,9 @@ TextInput::make('name')
     ]))
 ```
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `afterLabel()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="5.x">As well as allowing a static value, the `afterLabel()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="forms/fields/after-label/aligned-start" alt="Form field with extra content after label aligned to the start" version="4.x" />
+<AutoScreenshot name="forms/fields/after-label/aligned-start" alt="Form field with extra content after label aligned to the start" version="5.x" />
 
 ### Adding extra content below a field's label
 
@@ -791,9 +791,9 @@ TextInput::make('name')
     ])
 ```
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `belowLabel()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="5.x">As well as allowing a static value, the `belowLabel()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="forms/fields/below-label" alt="Form field with extra content below label" version="4.x" />
+<AutoScreenshot name="forms/fields/below-label" alt="Form field with extra content below label" version="5.x" />
 
 <Aside variant="info">
     This may seem like the same as the [`aboveContent()` method](#adding-extra-content-above-a-fields-content). However, when using [inline labels](#inline-labels), the `aboveContent()` method will place the content above the field, not below the label, since the label is displayed in a separate column to the field content.
@@ -815,9 +815,9 @@ TextInput::make('name')
     ])
 ```
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `aboveContent()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="5.x">As well as allowing a static value, the `aboveContent()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="forms/fields/above-content" alt="Form field with extra content above content" version="4.x" />
+<AutoScreenshot name="forms/fields/above-content" alt="Form field with extra content above content" version="5.x" />
 
 <Aside variant="info">
     This may seem like the same as the [`belowLabel()` method](#adding-extra-content-below-a-fields-label). However, when using [inline labels](#inline-labels), the `belowLabel()` method will place the content below the label, not above the field's content, since the label is displayed in a separate column to the field content.
@@ -836,14 +836,14 @@ TextInput::make('name')
     ->beforeContent(Icon::make(Heroicon::Star))
 ```
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `beforeContent()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="5.x">As well as allowing a static value, the `beforeContent()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="forms/fields/before-content" alt="Form field with extra content before content" version="4.x" />
+<AutoScreenshot name="forms/fields/before-content" alt="Form field with extra content before content" version="5.x" />
 
 <Aside variant="tip">
     Some fields, such as the [text input](text-input#adding-affix-text-aside-the-field), [select](select#adding-affix-text-aside-the-field), and [date-time picker](date-time-picker#adding-affix-text-aside-the-field) fields, have a `prefix()` method to insert content before the field's content, adjoined to the field itself. This is often a better UI choice than using `beforeContent()`.
 
-    <AutoScreenshot name="forms/fields/text-input/affix" alt="Text input with affixes" version="4.x" />
+    <AutoScreenshot name="forms/fields/text-input/affix" alt="Text input with affixes" version="5.x" />
 </Aside>
 
 ### Adding extra content after a field's content
@@ -859,14 +859,14 @@ TextInput::make('name')
     ->afterContent(Icon::make(Heroicon::Star))
 ```
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `afterContent()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="5.x">As well as allowing a static value, the `afterContent()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="forms/fields/after-content" alt="Form field with extra content after content" version="4.x" />
+<AutoScreenshot name="forms/fields/after-content" alt="Form field with extra content after content" version="5.x" />
 
 <Aside variant="tip">
     Some fields, such as the [text input](text-input#adding-affix-text-aside-the-field), [select](select#adding-affix-text-aside-the-field), and [date-time picker](date-time-picker#adding-affix-text-aside-the-field) fields, have a `suffix()` method to insert content after the field's content, adjoined to the field itself. This is often a better UI choice than using `beforeContent()`.
 
-    <AutoScreenshot name="forms/fields/text-input/affix" alt="Text input with affixes" version="4.x" />
+    <AutoScreenshot name="forms/fields/text-input/affix" alt="Text input with affixes" version="5.x" />
 </Aside>
 
 ### Adding extra content above a field's error message
@@ -886,9 +886,9 @@ TextInput::make('name')
     ])
 ```
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `aboveErrorMessage()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="5.x">As well as allowing a static value, the `aboveErrorMessage()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="forms/fields/above-error-message" alt="Form field with extra content above error message" version="4.x" />
+<AutoScreenshot name="forms/fields/above-error-message" alt="Form field with extra content above error message" version="5.x" />
 
 ### Adding extra content below a field's error message
 
@@ -907,9 +907,9 @@ TextInput::make('name')
     ])
 ```
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `belowErrorMessage()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="5.x">As well as allowing a static value, the `belowErrorMessage()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="forms/fields/below-error-message" alt="Form field with extra content below error message" version="4.x" />
+<AutoScreenshot name="forms/fields/below-error-message" alt="Form field with extra content below error message" version="5.x" />
 
 ## Adding extra HTML attributes to a field
 
@@ -922,7 +922,7 @@ TextInput::make('name')
     ->extraAttributes(['title' => 'Text input'])
 ```
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `extraAttributes()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="5.x">As well as allowing a static value, the `extraAttributes()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 <Aside variant="tip">
     By default, calling `extraAttributes()` multiple times will overwrite the previous attributes. If you wish to merge the attributes instead, you can pass `merge: true` to the method.
@@ -939,7 +939,7 @@ TextInput::make('categories')
     ->extraInputAttributes(['width' => 200])
 ```
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `extraInputAttributes()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="5.x">As well as allowing a static value, the `extraInputAttributes()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 <Aside variant="tip">
     By default, calling `extraInputAttributes()` multiple times will overwrite the previous attributes. If you wish to merge the attributes instead, you can pass `merge: true` to the method.
@@ -956,7 +956,7 @@ TextInput::make('categories')
     ->extraFieldWrapperAttributes(['class' => 'components-locked'])
 ```
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `extraFieldWrapperAttributes()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="5.x">As well as allowing a static value, the `extraFieldWrapperAttributes()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 <Aside variant="tip">
     By default, calling `extraFieldWrapperAttributes()` multiple times will overwrite the previous attributes. If you wish to merge the attributes instead, you can pass `merge: true` to the method.
@@ -1241,7 +1241,7 @@ TextInput::make('name')
     })
 ```
 
-<UtilityInjection set="formFields" version="4.x" extras="Old state;;mixed;;$old;;The old value of the field, before it was updated.||Old raw state;;mixed;;$oldRaw;;The old value of the field, before state casts were applied.||Set function;;Filament\Schemas\Components\Utilities\Set;;$set;;A function to set values in the current form data.">The `afterStateUpdated()` method injects various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="5.x" extras="Old state;;mixed;;$old;;The old value of the field, before it was updated.||Old raw state;;mixed;;$oldRaw;;The old value of the field, before state casts were applied.||Set function;;Filament\Schemas\Components\Utilities\Set;;$set;;A function to set values in the current form data.">The `afterStateUpdated()` method injects various utilities into the function as parameters.</UtilityInjection>
 
 <Aside variant="tip">
     When using `afterStateUpdated()` on a reactive field, interactions will not feel instant since a network request is made. There are a few ways you can [optimize and avoid rendering](#field-rendering) which will make the interaction feel faster.
@@ -1699,7 +1699,7 @@ Group::make()
 
 In this example, `customer` is a `MorphTo` relationship, and could be an `Individual` or `Organization`. By specifying the `relatedModel` parameter, Filament will be able to create `Organization` records when the form is submitted. If you do not specify this parameter, Filament will only be able to update existing records.
 
-<UtilityInjection set="formFields" version="4.x">The `relatedModel` parameter also accepts a function that returns the related model class name. This is useful if you want to dynamically determine the related model based on the current state of the form. You can inject various utilities into this function.</UtilityInjection>
+<UtilityInjection set="formFields" version="5.x">The `relatedModel` parameter also accepts a function that returns the related model class name. This is useful if you want to dynamically determine the related model based on the current state of the form. You can inject various utilities into this function.</UtilityInjection>
 
 ### Conditionally saving data to a relationship
 

@@ -1,6 +1,6 @@
 {
     "name": "filament/upgrade",
-    "description": "Upgrade Filament v3 code to Filament v4.",
+    "description": "Upgrade Filament v4 code to Filament v5.",
     "license": "MIT",
     "homepage": "https://github.com/filamentphp/filament",
     "support": {
@@ -17,15 +17,8 @@
             "Filament\\Upgrade\\": "src"
         }
     },
-    "extra": {
-        "laravel": {
-            "providers": [
-                "Filament\\Upgrade\\UpgradeServiceProvider"
-            ]
-        }
-    },
     "bin": [
-        "bin/filament-v4"
+        "bin/filament-v5"
     ],
     "config": {
         "sort-packages": true

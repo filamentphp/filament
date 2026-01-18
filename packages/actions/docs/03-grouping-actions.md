@@ -19,7 +19,7 @@ ActionGroup::make([
 ])
 ```
 
-<AutoScreenshot name="actions/group/simple" alt="Action group" version="4.x" />
+<AutoScreenshot name="actions/group/simple" alt="Action group" version="5.x" />
 
 This page is about customizing the look of the group's trigger button and dropdown.
 
@@ -41,9 +41,9 @@ ActionGroup::make([
     ->button()
 ```
 
-<AutoScreenshot name="actions/group/customized" alt="Action group with custom trigger style" version="4.x" />
+<AutoScreenshot name="actions/group/customized" alt="Action group with custom trigger style" version="5.x" />
 
-<AutoScreenshot name="tables/actions/group-button" alt="Table with button action group" version="4.x" />
+<AutoScreenshot name="tables/actions/group-button" alt="Table with button action group" version="5.x" />
 
 ### Using a grouped button design
 
@@ -67,7 +67,7 @@ ActionGroup::make([
     ->buttonGroup()
 ```
 
-<AutoScreenshot name="actions/group/button-group" alt="Action group using the button group design" version="4.x" />
+<AutoScreenshot name="actions/group/button-group" alt="Action group using the button group design" version="5.x" />
 
 ## Setting the placement of the dropdown
 
@@ -82,9 +82,9 @@ ActionGroup::make([
     ->dropdownPlacement('top-start')
 ```
 
-<UtilityInjection set="actionGroups" version="4.x">The `dropdownPlacement()` method also accepts a function to dynamically calculate the value. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="actionGroups" version="5.x">The `dropdownPlacement()` method also accepts a function to dynamically calculate the value. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="actions/group/placement" alt="Action group with top placement style" version="4.x" />
+<AutoScreenshot name="actions/group/placement" alt="Action group with top placement style" version="5.x" />
 
 Alternatively, you may let the dropdown position be automatically determined based on the available space using the `dropdownAutoPlacement()` method:
 
@@ -114,9 +114,9 @@ ActionGroup::make([
 
 The `dropdown(false)` method puts the actions inside the parent dropdown, instead of a new nested dropdown.
 
-<UtilityInjection set="actionGroups" version="4.x">The `dropdown()` method also accepts a function to dynamically calculate the value. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="actionGroups" version="5.x">The `dropdown()` method also accepts a function to dynamically calculate the value. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="actions/group/nested" alt="Action groups nested with dividers" version="4.x" />
+<AutoScreenshot name="actions/group/nested" alt="Action groups nested with dividers" version="5.x" />
 
 ## Setting the width of the dropdown
 
@@ -132,7 +132,7 @@ ActionGroup::make([
     ->dropdownWidth(Width::ExtraSmall)
 ```
 
-<UtilityInjection set="actionGroups" version="4.x">The `dropdownWidth()` method also accepts a function to dynamically calculate the value. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="actionGroups" version="5.x">The `dropdownWidth()` method also accepts a function to dynamically calculate the value. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Controlling the dropdown offset
 
@@ -147,7 +147,7 @@ ActionGroup::make([
     ->dropdownOffset(16)
 ```
 
-<UtilityInjection set="actionGroups" version="4.x">The `dropdownOffset()` method also accepts a function to dynamically calculate the value. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="actionGroups" version="5.x">The `dropdownOffset()` method also accepts a function to dynamically calculate the value. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Controlling the maximum height of the dropdown
 
@@ -162,4 +162,4 @@ ActionGroup::make([
     ->maxHeight('400px')
 ```
 
-<UtilityInjection set="actionGroups" version="4.x">The `maxHeight()` method also accepts a function to dynamically calculate the value. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="actionGroups" version="5.x">The `maxHeight()` method also accepts a function to dynamically calculate the value. You can inject various utilities into the function as parameters.</UtilityInjection>

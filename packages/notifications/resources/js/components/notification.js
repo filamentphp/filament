@@ -76,56 +76,50 @@ export default (Alpine) => {
         configureAnimations() {
             let animation
 
-            Livewire.hook(
-                'commit',
-                ({ component, commit, succeed, fail, respond }) => {
-                    if (
-                        !component.snapshot.data
-                            .isFilamentNotificationsComponent
-                    ) {
-                        return
-                    }
+            Livewire.interceptMessage(({ onFinish, onSuccess }) => {
+                // Calling `el.getBoundingClientRect()` from outside `requestAnimationFrame()` can
+                // occasionally cause the page to scroll to the top.
+                requestAnimationFrame(() => {
+                    const getTop = () => this.$el.getBoundingClientRect().top
+                    const oldTop = getTop()
 
-                    // Calling `el.getBoundingClientRect()` from outside `requestAnimationFrame()` can
-                    // occasionally cause the page to scroll to the top.
-                    requestAnimationFrame(() => {
-                        const getTop = () =>
-                            this.$el.getBoundingClientRect().top
-                        const oldTop = getTop()
-
-                        respond(() => {
-                            animation = () => {
-                                if (!this.isShown) {
-                                    return
-                                }
-
-                                this.$el.animate(
-                                    [
-                                        {
-                                            transform: `translateY(${
-                                                oldTop - getTop()
-                                            }px)`,
-                                        },
-                                        { transform: 'translateY(0px)' },
-                                    ],
-                                    {
-                                        duration: this.transitionDuration,
-                                        easing: this.transitionEasing,
-                                    },
-                                )
+                    onFinish(() => {
+                        animation = () => {
+                            if (!this.isShown) {
+                                return
                             }
 
-                            this.$el
-                                .getAnimations()
-                                .forEach((animation) => animation.finish())
-                        })
+                            this.$el.animate(
+                                [
+                                    {
+                                        transform: `translateY(${oldTop - getTop()}px)`,
+                                    },
+                                    { transform: 'translateY(0px)' },
+                                ],
+                                {
+                                    duration: this.transitionDuration,
+                                    easing: this.transitionEasing,
+                                },
+                            )
+                        }
 
-                        succeed(({ snapshot, effect }) => {
-                            animation()
-                        })
+                        this.$el
+                            .getAnimations()
+                            .forEach((animation) => animation.finish())
                     })
-                },
-            )
+
+                    onSuccess(({ payload }) => {
+                        if (
+                            !payload?.snapshot?.data
+                                ?.isFilamentNotificationsComponent
+                        ) {
+                            return
+                        }
+
+                        animation()
+                    })
+                })
+            })
         },
 
         close() {

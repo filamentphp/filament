@@ -15,7 +15,7 @@ use Filament\Tables\Columns\ColorColumn;
 ColorColumn::make('color')
 ```
 
-<AutoScreenshot name="tables/columns/color/simple" alt="Color column" version="4.x" />
+<AutoScreenshot name="tables/columns/color/simple" alt="Color column" version="5.x" />
 
 ## Allowing the color to be copied to the clipboard
 
@@ -30,7 +30,7 @@ ColorColumn::make('color')
     ->copyMessageDuration(1500)
 ```
 
-<AutoScreenshot name="tables/columns/color/copyable" alt="Color column with a button to copy it" version="4.x" />
+<AutoScreenshot name="tables/columns/color/copyable" alt="Color column with a button to copy it" version="5.x" />
 
 Optionally, you may pass a boolean value to control if the text should be copyable or not:
 
@@ -41,7 +41,7 @@ ColorColumn::make('color')
     ->copyable(FeatureFlag::active())
 ```
 
-<UtilityInjection set="tableColumns" version="4.x">As well as allowing static values, the `copyable()`, `copyMessage()`, and `copyMessageDuration()` methods also accept functions to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="tableColumns" version="5.x">As well as allowing static values, the `copyable()`, `copyMessage()`, and `copyMessageDuration()` methods also accept functions to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Wrapping multiple color blocks
 

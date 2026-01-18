@@ -3,7 +3,7 @@ name: build-assets
 on:
   pull_request:
     branches:
-      - 4.x
+      - 5.x
     types:
       - closed
 
@@ -15,7 +15,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
         with:
-          ref: 4.x
+          ref: 5.x
       - name: Set up Node
         uses: actions/setup-node@v2
       - name: Install dependencies
@@ -27,6 +27,6 @@ jobs:
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
-          branch: 4.x
+          branch: 5.x
           commit_message: >
             chore: build assets

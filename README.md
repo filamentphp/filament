@@ -5,7 +5,7 @@
 <p align="center">
     <a href="https://github.com/filamentphp/filament/actions"><img alt="Tests passing" src="https://img.shields.io/badge/Tests-passing-green?style=for-the-badge&logo=github"></a>
     <a href="https://laravel.com"><img alt="Laravel v11+" src="https://img.shields.io/badge/Laravel-v11+-FF2D20?style=for-the-badge&logo=laravel"></a>
-    <a href="https://livewire.laravel.com"><img alt="Livewire v3" src="https://img.shields.io/badge/Livewire-v3-FB70A9?style=for-the-badge"></a>
+    <a href="https://livewire.laravel.com"><img alt="Livewire v4" src="https://img.shields.io/badge/Livewire-v4-FB70A9?style=for-the-badge"></a>
     <a href="https://php.net"><img alt="PHP 8.2+" src="https://img.shields.io/badge/PHP-8.2+-777BB4?style=for-the-badge&logo=php"></a>
 </p>
 
@@ -41,7 +41,7 @@ Why rebuild dashboards, forms, and tables from scratch every time?
 
 ## Contributing
 
-Please see our [contributing guide](https://filamentphp.com/docs/4.x/introduction/contributing).
+Please see our [contributing guide](https://filamentphp.com/docs/5.x/introduction/contributing).
 
 ## Need Help?
 
@@ -49,4 +49,4 @@ Please see our [contributing guide](https://filamentphp.com/docs/4.x/introductio
 
 🤔 If you have a question or feature request, please [start a new discussion](https://github.com/filamentphp/filament/discussions/new). We also have a [Discord community](https://filamentphp.com/discord). For quick help, ask questions in the appropriate channel.
 
-🔐 If you discover a vulnerability, please review our [security policy](https://github.com/filamentphp/filament/blob/4.x/SECURITY.md).
+🔐 If you discover a vulnerability, please review our [security policy](https://github.com/filamentphp/filament/blob/5.x/SECURITY.md).

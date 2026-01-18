@@ -3,13 +3,13 @@
 use function Laravel\Prompts\confirm;
 use function Termwind\render;
 
-render('<p class="text-blue font-bold">Checking PHP version compatibility with v4...</p>');
+render('<p class="text-blue font-bold">Checking PHP version compatibility with v5...</p>');
 
 if (version_compare(PHP_VERSION, '8.2.0', '<')) {
     $detected = PHP_VERSION;
 
     render('<p class="text-red font-bold">Incompatible PHP version detected</p>');
-    render("<p>Detected PHP {$detected}. Filament v4 and Laravel 11 require PHP 8.2+ for language features, performance improvements, and security fixes. Please upgrade your PHP runtime to 8.2 or higher before proceeding.</p>");
+    render("<p>Detected PHP {$detected}. Filament v5 and Laravel 11 require PHP 8.2+ for language features, performance improvements, and security fixes. Please upgrade your PHP runtime to 8.2 or higher before proceeding.</p>");
     render(<<<'HTML'
         <p class="bg-red-600 text-red-50 mt-1">
             <strong>Upgrade aborted because PHP version is below 8.2</strong>
@@ -19,7 +19,7 @@ if (version_compare(PHP_VERSION, '8.2.0', '<')) {
     exit(1);
 }
 
-render('<p class="text-blue font-bold">Checking Laravel version compatibility with v4...</p>');
+render('<p class="text-blue font-bold">Checking Laravel version compatibility with v5...</p>');
 
 $laravelVersion = null;
 
@@ -41,7 +41,7 @@ try {
 
 if ($laravelVersion !== null && version_compare($laravelVersion, '11.28.0', '<')) {
     render('<p class="text-red font-bold">Incompatible Laravel version detected</p>');
-    render("<p>Detected Laravel {$laravelVersion}. Filament v4 targets Laravel v11.28+ to rely on framework changes and fixes introduced in v11.28 and later. Please upgrade Laravel to at least v11.28 before continuing.</p>v");
+    render("<p>Detected Laravel {$laravelVersion}. Filament v5 targets Laravel v11.28+ to rely on framework changes and fixes introduced in v11.28 and later. Please upgrade Laravel to at least v11.28 before continuing.</p>v");
     render(<<<'HTML'
         <p class="bg-red-600 text-red-50 mt-1">
             <strong>Upgrade aborted because Laravel version is below 11.28</strong>
@@ -51,7 +51,7 @@ if ($laravelVersion !== null && version_compare($laravelVersion, '11.28.0', '<')
     exit(1);
 }
 
-render('<p class="text-blue font-bold">Checking plugin compatibility with v4...</p>');
+render('<p class="text-blue font-bold">Checking plugin compatibility with v5...</p>');
 
 $composer = json_decode(file_get_contents('composer.json'), true);
 $deps = $composer['require'] ?? [];
@@ -92,7 +92,7 @@ $plugins = array_filter($allPackages, function ($plugin) {
     return false;
 });
 
-// Initialize a shared global cache for Packagist data to be reused by the bin/filament-v4 script.
+// Initialize a shared global cache for Packagist data to be reused by the bin/filament-v5 script.
 $GLOBALS['FILAMENT_UPGRADE_PACKAGIST'] = $GLOBALS['FILAMENT_UPGRADE_PACKAGIST'] ?? [
     'versions' => [], // [plugin => ['stable' => versionsArray, 'dev' => versionsArray]]
     'compatibility' => [], // [plugin => ['version' => string, 'isPrerelease' => bool] | null]
@@ -132,7 +132,7 @@ foreach ($plugins as $plugin) {
                         continue;
                     }
 
-                    if (preg_match("/\^\s*4(?:\.|$)|~\s*4(?:\.|$)|>=\s*4(?:\.|$)/", (string) $constraint)) {
+                    if (preg_match("/\^\s*5(?:\.|$)|~\s*5(?:\.|$)|>=\s*5(?:\.|$)/", (string) $constraint)) {
                         $compatibility = [
                             'version' => $checkingVersion['version'],
                             'isPrerelease' => false,
@@ -168,7 +168,7 @@ foreach ($plugins as $plugin) {
                         continue;
                     }
 
-                    if (preg_match("/\^\s*4(?:\.|$)|~\s*4(?:\.|$)|>=\s*4(?:\.|$)/", (string) $constraint)) {
+                    if (preg_match("/\^\s*5(?:\.|$)|~\s*5(?:\.|$)|>=\s*5(?:\.|$)/", (string) $constraint)) {
                         $compatibility = [
                             'version' => $checkingVersion['version'],
                             'isPrerelease' => true,
@@ -212,9 +212,9 @@ if ($incompatiblePlugins) {
     $pluginList = implode(', ', $incompatiblePlugins);
 
     render('<p class="text-red font-bold mt-1">Incompatible plugins found!</p>');
-    render('<p>The following plugins are incompatible with Filament v4 and need to be removed before upgrading:</p>');
+    render('<p>The following plugins are incompatible with Filament v5 and need to be removed before upgrading:</p>');
     render("<p class=\"text-red\">{$pluginList}</p>");
-    render('<p>You could temporarily remove them from your composer.json file until they\'ve been upgraded, replace them with a similar plugin that is compatible with v4, wait for the plugins to be upgraded before upgrading your app, or even write PRs to help the authors upgrade them.</p>');
+    render('<p>You could temporarily remove them from your composer.json file until they\'ve been upgraded, replace them with a similar plugin that is compatible with v5, wait for the plugins to be upgraded before upgrading your app, or even write PRs to help the authors upgrade them.</p>');
 
     $continue = confirm(
         label: 'Do you want to continue even though there are incompatible plugins?',

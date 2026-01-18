@@ -17,7 +17,7 @@ CodeEntry::make('code')
     ->grammar(Grammar::Php)
 ```
 
-<AutoScreenshot name="infolists/entries/code/simple" alt="Code entry" version="4.x" />
+<AutoScreenshot name="infolists/entries/code/simple" alt="Code entry" version="5.x" />
 
 To use the code entry, you need to first install the [`phiki/phiki`](https://github.com/phikiphp/phiki) Composer package. Filament does not include it by default to allow you to choose which major version of Phiki to use explicitly, since major versions can have different grammars and themes available. You can install the latest version of Phiki using the following command:
 
@@ -37,7 +37,7 @@ CodeEntry::make('code')
     ->grammar(Grammar::Javascript)
 ```
 
-<UtilityInjection set="infolistEntries" version="4.x">As well as allowing a static value, the `grammar()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="infolistEntries" version="5.x">As well as allowing a static value, the `grammar()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 <Aside variant="tip">
     If your code entry's content is a PHP array, it will automatically be converted to a JSON string, and the grammar will be set to `Grammar::Json`. You can customize the `JSON_` flags used during conversion with the `jsonFlags()` method.
@@ -56,9 +56,9 @@ CodeEntry::make('code')
     ->darkTheme(Theme::Dracula)
 ```
 
-<UtilityInjection set="infolistEntries" version="4.x">As well as allowing static values, the `lightTheme()` and `darkTheme()` methods also accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters.</UtilityInjection>
+<UtilityInjection set="infolistEntries" version="5.x">As well as allowing static values, the `lightTheme()` and `darkTheme()` methods also accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters.</UtilityInjection>
 
-<AutoScreenshot name="infolists/entries/code/dracula" alt="Code entry with the Dracula theme" version="4.x" />
+<AutoScreenshot name="infolists/entries/code/dracula" alt="Code entry with the Dracula theme" version="5.x" />
 
 ## Allowing the code to be copied to the clipboard
 
@@ -82,4 +82,4 @@ CodeEntry::make('code')
     ->copyable(FeatureFlag::active())
 ```
 
-<UtilityInjection set="infolistEntries" version="4.x">As well as allowing static values, the `copyable()`, `copyMessage()`, and `copyMessageDuration()` methods also accept functions to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="infolistEntries" version="5.x">As well as allowing static values, the `copyable()`, `copyMessage()`, and `copyMessageDuration()` methods also accept functions to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>

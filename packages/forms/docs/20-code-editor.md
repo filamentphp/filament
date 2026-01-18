@@ -14,7 +14,7 @@ use Filament\Forms\Components\CodeEditor;
 CodeEditor::make('code')
 ```
 
-<AutoScreenshot name="forms/fields/code-editor/simple" alt="Code editor" version="4.x" />
+<AutoScreenshot name="forms/fields/code-editor/simple" alt="Code editor" version="5.x" />
 
 ## Using language syntax highlighting
 
@@ -44,9 +44,9 @@ CodeEditor::make('code')
     ->language(Language::JavaScript)
 ```
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `language()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="5.x">As well as allowing a static value, the `language()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="forms/fields/code-editor/language" alt="Code editor with syntax highlighting" version="4.x" />
+<AutoScreenshot name="forms/fields/code-editor/language" alt="Code editor with syntax highlighting" version="5.x" />
 
 ## Allowing lines to wrap
 

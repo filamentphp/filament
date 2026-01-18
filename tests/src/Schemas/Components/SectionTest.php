@@ -1,5 +1,7 @@
 <?php
 
+namespace Filament\Tests\Schemas\Components;
+
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Components\TextInput;

@@ -29,9 +29,9 @@ Tabs::make('Tabs')
     ])
 ```
 
-<UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `make()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="schemaComponents" version="5.x">As well as allowing a static value, the `make()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="schemas/layout/tabs/simple" alt="Tabs" version="4.x" />
+<AutoScreenshot name="schemas/layout/tabs/simple" alt="Tabs" version="5.x" />
 
 ## Setting the default active tab
 
@@ -59,7 +59,7 @@ Tabs::make('Tabs')
     ->activeTab(2)
 ```
 
-<UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `activeTab()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="schemaComponents" version="5.x">As well as allowing a static value, the `activeTab()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Setting a tab icon
 
@@ -81,9 +81,9 @@ Tabs::make('Tabs')
     ])
 ```
 
-<UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `icon()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="schemaComponents" version="5.x">As well as allowing a static value, the `icon()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="schemas/layout/tabs/icons" alt="Tabs with icons" version="4.x" />
+<AutoScreenshot name="schemas/layout/tabs/icons" alt="Tabs with icons" version="5.x" />
 
 ### Setting the tab icon position
 
@@ -107,9 +107,9 @@ Tabs::make('Tabs')
     ])
 ```
 
-<UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `iconPosition()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="schemaComponents" version="5.x">As well as allowing a static value, the `iconPosition()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="schemas/layout/tabs/icons-after" alt="Tabs with icons after their labels" version="4.x" />
+<AutoScreenshot name="schemas/layout/tabs/icons-after" alt="Tabs with icons after their labels" version="5.x" />
 
 ## Setting a tab badge
 
@@ -130,9 +130,9 @@ Tabs::make('Tabs')
     ])
 ```
 
-<UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `badge()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="schemaComponents" version="5.x">As well as allowing a static value, the `badge()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="schemas/layout/tabs/badges" alt="Tabs with badges" version="4.x" />
+<AutoScreenshot name="schemas/layout/tabs/badges" alt="Tabs with badges" version="5.x" />
 
 If you'd like to change the [color](../styling/colors) for a badge, you can use the `badgeColor()` method:
 
@@ -152,9 +152,9 @@ Tabs::make('Tabs')
     ])
 ```
 
-<UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `badgeColor()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="schemaComponents" version="5.x">As well as allowing a static value, the `badgeColor()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="schemas/layout/tabs/badges-color" alt="Tabs with badges with color" version="4.x" />
+<AutoScreenshot name="schemas/layout/tabs/badges-color" alt="Tabs with badges with color" version="5.x" />
 
 ## Using grid columns within a tab
 
@@ -175,7 +175,7 @@ Tabs::make('Tabs')
     ])
 ```
 
-<UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `columns()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="schemaComponents" version="5.x">As well as allowing a static value, the `columns()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Disabling scrollable tabs
 
@@ -195,7 +195,7 @@ Tabs::make('Tabs')
 
 When tabs are not scrollable, the component automatically detects the available width. If not all tabs can fit, a dropdown button will appear. Any tabs that exceed the available width will be grouped inside this dropdown automatically.
 
-<AutoScreenshot name="schemas/layout/tabs/not-scrollable" alt="Non-scrollable tabs with overflow dropdown" version="4.x" />
+<AutoScreenshot name="schemas/layout/tabs/not-scrollable" alt="Non-scrollable tabs with overflow dropdown" version="5.x" />
 
 ## Using vertical tabs
 
@@ -223,7 +223,7 @@ Tabs::make('Tabs')
     ->vertical()
 ```
 
-<AutoScreenshot name="schemas/layout/tabs/vertical" alt="Vertical tabs" version="4.x" />
+<AutoScreenshot name="schemas/layout/tabs/vertical" alt="Vertical tabs" version="5.x" />
 
 Optionally, you can pass a boolean value to the `vertical()` method to control if the tabs should be rendered vertically or not:
 
@@ -237,7 +237,7 @@ Tabs::make('Tabs')
     ->vertical(FeatureFlag::active())
 ```
 
-<UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `vertical()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="schemaComponents" version="5.x">As well as allowing a static value, the `vertical()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Removing the styled container
 
@@ -265,7 +265,7 @@ Tabs::make('Tabs')
     ->contained(false)
 ```
 
-<UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `contained()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="schemaComponents" version="5.x">As well as allowing a static value, the `contained()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Persisting the current tab in the user's session
 
@@ -295,7 +295,7 @@ Tabs::make('Tabs')
     ->id('order-tabs')
 ```
 
-<UtilityInjection set="schemaComponents" version="4.x">As well as allowing static values, the `persistTab()` and `id()` methods also accept functions to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="schemaComponents" version="5.x">As well as allowing static values, the `persistTab()` and `id()` methods also accept functions to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ### Persisting the current tab in the URL's query string
 
@@ -347,4 +347,4 @@ Tabs::make('Tabs')
     ->persistTabInQueryString('settings-tab')
 ```
 
-<UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `persistTabInQueryString()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="schemaComponents" version="5.x">As well as allowing a static value, the `persistTabInQueryString()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>

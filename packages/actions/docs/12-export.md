@@ -184,7 +184,7 @@ ExportColumn::make('amount_including_vat')
     })
 ```
 
-<UtilityInjection set="exportColumns" version="4.x">As well as `$record`, the `state()` function can inject various utilities as parameters.</UtilityInjection>
+<UtilityInjection set="exportColumns" version="5.x">As well as `$record`, the `state()` function can inject various utilities as parameters.</UtilityInjection>
 
 ### Formatting the value of an export column
 
@@ -197,7 +197,7 @@ ExportColumn::make('status')
     ->formatStateUsing(fn (string $state): string => __("statuses.{$state}"))
 ```
 
-<UtilityInjection set="exportColumns" version="4.x" extras="State;;mixed;;$state;;The state to format.">As well as `$state`, the `formatStateUsing()` function can inject various utilities as parameters.</UtilityInjection>
+<UtilityInjection set="exportColumns" version="5.x" extras="State;;mixed;;$state;;The state to format.">As well as `$state`, the `formatStateUsing()` function can inject various utilities as parameters.</UtilityInjection>
 
 If there are [multiple values](#exporting-multiple-values-in-a-cell) in the column, the function will be called for each value.
 
@@ -212,7 +212,7 @@ ExportColumn::make('description')
     ->limit(50)
 ```
 
-<UtilityInjection set="exportColumns" version="4.x">As well as allowing a static value, the `limit()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="exportColumns" version="5.x">As well as allowing a static value, the `limit()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 #### Limiting word count
 
@@ -225,7 +225,7 @@ ExportColumn::make('description')
     ->words(10)
 ```
 
-<UtilityInjection set="exportColumns" version="4.x">As well as allowing a static value, the `words()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="exportColumns" version="5.x">As well as allowing a static value, the `words()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 #### Adding a prefix or suffix
 
@@ -239,7 +239,7 @@ ExportColumn::make('domain')
     ->suffix('.com')
 ```
 
-<UtilityInjection set="exportColumns" version="4.x">As well as allowing static values, the `prefix()` and `suffix()` methods also accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters.</UtilityInjection>
+<UtilityInjection set="exportColumns" version="5.x">As well as allowing static values, the `prefix()` and `suffix()` methods also accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters.</UtilityInjection>
 
 ### Exporting multiple values in a cell
 
@@ -511,7 +511,7 @@ ExportAction::make()
     ])
 ```
 
-<UtilityInjection set="actions" version="4.x">As well as allowing a static value, the `options()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="actions" version="5.x">As well as allowing a static value, the `options()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 Now, you can access the data from these options inside the exporter class, by injecting the `$options` argument into any closure function. For example, you might want to use it inside `formatStateUsing()` to [format a column's value](#formatting-the-value-of-an-export-column):
 
@@ -598,7 +598,7 @@ ExportAction::make()
     ->chunkSize(250)
 ```
 
-<UtilityInjection set="actions" version="4.x">As well as allowing a static value, the `chunkSize()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="actions" version="5.x">As well as allowing a static value, the `chunkSize()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 <Aside variant="tip">
     If you are encountering memory or timeout issues when importing large CSV files, you may wish to reduce the chunk size.
@@ -615,7 +615,7 @@ public static function getCsvDelimiter(): string
 }
 ```
 
-<UtilityInjection set="actions" version="4.x">As well as allowing a static value, the `csvDelimiter()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="actions" version="5.x">As well as allowing a static value, the `csvDelimiter()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 You can only specify a single character, otherwise an exception will be thrown.
 
