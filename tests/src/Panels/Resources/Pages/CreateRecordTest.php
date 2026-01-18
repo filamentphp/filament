@@ -273,3 +273,11 @@ it('does not render page if the policy create returns a denied response', functi
 
     app()->bind(TicketPolicy::class . '::create', fn (): bool => true);
 });
+
+it('displays Filament validation errors when submitting a form with empty required fields in the browser', function (): void {
+    visit(PostResource::getUrl('create'))
+        ->assertSee('Create post')
+        ->click('.fi-sc-form button[type="submit"]')
+        ->waitForText('The title field is required')
+        ->assertSee('The title field is required');
+});
