@@ -3,6 +3,7 @@
         $attributes
             ->merge([
                 'id' => $getId(),
+                'novalidate' => true,
                 'wire:submit' => $getLivewireSubmitHandler(),
             ], escape: false)
             ->merge($getExtraAttributes(), escape: false)
