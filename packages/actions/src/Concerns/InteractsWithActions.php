@@ -170,6 +170,10 @@ trait InteractsWithActions
             $this->unmountAction(canCancelParentActions: false);
 
             return null;
+        } catch (ValidationException $exception) {
+            $this->unmountAction(canCancelParentActions: false);
+
+            throw $exception;
         }
 
         if (! $this->mountedActionShouldOpenModal(mountedAction: $action)) {
