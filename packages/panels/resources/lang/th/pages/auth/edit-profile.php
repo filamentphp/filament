@@ -22,10 +22,6 @@ return [
             'label' => 'ยืนยันรหัสผ่านใหม่',
         ],
 
-        'multi_factor_authentication' => [
-            'label' => 'การยืนยันตัวตนหลายขั้นตอน',
-        ],
-
         'actions' => [
 
             'save' => [
