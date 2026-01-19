@@ -204,8 +204,10 @@ You may use the `since()` method to format the column's state using [Carbon's `d
 use Filament\Tables\Columns\TextColumn;
 
 TextColumn::make('created_at')
+    ->dateTime()
     ->since()
 ```
+Because `TextColumn::make('event_at')` can resolve to a `string` or `null`, calling `since()` without chaining `dateTime()` may result in no output. Always chain `dateTime()` before `since()` to ensure proper formatting.
 
 #### Displaying a formatting date in a tooltip
 
@@ -215,26 +217,32 @@ Additionally, you can use the `dateTooltip()`, `dateTimeTooltip()`, `timeTooltip
 use Filament\Tables\Columns\TextColumn;
 
 TextColumn::make('created_at')
+    ->dateTime()
     ->since()
     ->dateTooltip() // Accepts a custom PHP date formatting string
 
 TextColumn::make('created_at')
+    ->dateTime()
     ->since()
     ->dateTimeTooltip() // Accepts a custom PHP date formatting string
 
 TextColumn::make('created_at')
+    ->dateTime()
     ->since()
     ->timeTooltip() // Accepts a custom PHP date formatting string
 
 TextColumn::make('created_at')
+    ->dateTime()
     ->since()
     ->isoDateTooltip() // Accepts a custom Carbon macro format string
 
 TextColumn::make('created_at')
+    ->dateTime()
     ->since()
     ->isoDateTimeTooltip() // Accepts a custom Carbon macro format string
 
 TextColumn::make('created_at')
+    ->dateTime()
     ->since()
     ->isoTimeTooltip() // Accepts a custom Carbon macro format string
 
@@ -242,6 +250,7 @@ TextColumn::make('created_at')
     ->dateTime()
     ->sinceTooltip()
 ```
+Because `TextColumn::make('event_at')` can resolve to a `string` or `null`, calling `since()` without chaining `dateTime()` may result in no output. Always chain `dateTime()` before `since()` to ensure proper formatting.
 
 #### Setting the timezone for date formatting
 
