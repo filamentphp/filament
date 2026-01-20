@@ -8,7 +8,7 @@ return [
 
         'modal' => [
 
-            'heading' => 'ลบ:label',
+            'heading' => 'ลบ :label',
 
             'actions' => [
 
@@ -36,7 +36,7 @@ return [
 
         'modal' => [
 
-            'heading' => 'ลบ:labelที่เลือก',
+            'heading' => 'ลบ :label ที่เลือก',
 
             'actions' => [
 
