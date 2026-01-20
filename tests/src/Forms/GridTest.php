@@ -2,6 +2,7 @@
 
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Schema;
+use Filament\Support\Facades\FilamentGrid;
 use Filament\Tests\Fixtures\Livewire\Livewire;
 use Filament\Tests\TestCase;
 
@@ -59,12 +60,12 @@ test('can get number of container columns from parent component', function (): v
         ->toHaveKey('2xl', $columnsAt2xl);
 });
 
-test('can set number of container columns at `lg` breakpoint', function (): void {
+test('can set number of container columns at default breakpoint', function (): void {
     $schema = Schema::make(Livewire::make())
-        ->columns($columnsAtLg = rand(1, 12));
+        ->columns($columnsAtDefaultBreakpoint = rand(1, 12));
 
     expect($schema)
-        ->getColumns('lg')->toBe($columnsAtLg);
+        ->getColumns(FilamentGrid::getDefaultBreakpoint())->toBe($columnsAtDefaultBreakpoint);
 });
 
 test('can get component column span at all breakpoints', function (): void {
@@ -100,13 +101,13 @@ test('can get component column span at one breakpoint', function (): void {
         ->getColumnSpan('2xl')->toBe($spanAt2xl);
 });
 
-test('can set component column span at `lg` breakpoint', function (): void {
+test('can set component column span at default breakpoint', function (): void {
     $component = (new Component)
         ->container(Schema::make(Livewire::make()))
-        ->columnSpan($spanAtLg = rand(1, 12));
+        ->columnSpan($spanAtDefaultBreakpoint = rand(1, 12));
 
     expect($component)
-        ->getColumnSpan('lg')->toBe($spanAtLg);
+        ->getColumnSpan(FilamentGrid::getDefaultBreakpoint())->toBe($spanAtDefaultBreakpoint);
 });
 
 test('can get component column order at all breakpoints', function (): void {
@@ -142,13 +143,13 @@ test('can get component column order at one breakpoint', function (): void {
         ->getColumnOrder('2xl')->toBe($orderAt2xl);
 });
 
-test('can set component column order at `lg` breakpoint', function (): void {
+test('can set component column order at default breakpoint', function (): void {
     $component = (new Component)
         ->container(Schema::make(Livewire::make()))
-        ->columnOrder($defaultOrder = rand(1, 12));
+        ->columnOrder($orderAtDefaultBreakpoint = rand(1, 12));
 
     expect($component)
-        ->getColumnOrder('lg')->toBe($defaultOrder);
+        ->getColumnOrder(FilamentGrid::getDefaultBreakpoint())->toBe($orderAtDefaultBreakpoint);
 });
 
 test('can get component column order with null default values', function (): void {
@@ -163,4 +164,25 @@ test('can get component column order with null default values', function (): voi
         ->toHaveKey('lg', null)
         ->toHaveKey('xl', null)
         ->toHaveKey('2xl', null);
+});
+
+test('can configure default grid breakpoint via config', function (): void {
+    config()->set('filament.default_grid_breakpoint', '2xl');
+
+    $schema = Schema::make(Livewire::make())
+        ->columns($columnsAt2xl = rand(1, 12));
+
+    expect($schema)
+        ->getColumns('2xl')->toBe($columnsAt2xl);
+});
+
+test('can configure default grid breakpoint via `FilamentGrid::defaultBreakpoint()` method', function (): void {
+    FilamentGrid::defaultBreakpoint('xl');
+
+    $component = (new Component)
+        ->container(Schema::make(Livewire::make()))
+        ->columnSpan($spanAtXl = rand(1, 12));
+
+    expect($component)
+        ->getColumnSpan('xl')->toBe($spanAtXl);
 });

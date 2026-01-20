@@ -23,7 +23,7 @@ You may also [create your own custom layout components](custom-components#custom
 
 All layout components have a `columns()` method that you can use in a couple of different ways:
 
-- You can pass an integer like `columns(2)`. This integer is the number of columns used on the `lg` breakpoint and higher. All smaller devices will have just 1 column.
+- You can pass an integer like `columns(2)`. This integer is the number of columns used on the [default grid breakpoint](#changing-the-default-grid-breakpoint) (`lg` by default) and higher. All smaller devices will have just 1 column.
 - You can pass an array, where the key is the breakpoint and the value is the number of columns. For example, `columns(['md' => 2, 'xl' => 4])` will create a 2 column layout on medium devices, and a 4 column layout on extra large devices. The default breakpoint for smaller devices uses 1 column, unless you use a `default` array key.
 
 Breakpoints (`sm`, `md`, `lg`, `xl`, `2xl`) are defined by Tailwind, and can be found in the [Tailwind documentation](https://tailwindcss.com/docs/responsive-design#overview).
@@ -34,9 +34,9 @@ Breakpoints (`sm`, `md`, `lg`, `xl`, `2xl`) are defined by Tailwind, and can be 
 
 In addition to specifying how many columns a layout component should have, you may also specify how many columns a component should fill within the parent grid, using the `columnSpan()` method. This method accepts an integer or an array of breakpoints and column spans:
 
-- You can pass an integer like `columnSpan(2)`. This integer is the number of columns that are consumed on the `lg` breakpoint and higher. All smaller devices span just 1 column.
+- You can pass an integer like `columnSpan(2)`. This integer is the number of columns that are consumed on the [default grid breakpoint](#changing-the-default-grid-breakpoint) (`lg` by default) and higher. All smaller devices span just 1 column.
 - `columnSpan(['md' => 2, 'xl' => 4])` will make the component fill up to 2 columns on medium devices, and up to 4 columns on extra large devices. The default breakpoint for smaller devices uses 1 column, unless you use a `default` array key.
-- `columnSpan('full')` will make the component fill the full width of the parent grid on the `lg` breakpoint and higher, regardless of how many columns there are. All smaller devices span just 1 column.
+- `columnSpan('full')` will make the component fill the full width of the parent grid on the [default grid breakpoint](#changing-the-default-grid-breakpoint) (`lg` by default) and higher, regardless of how many columns there are. All smaller devices span just 1 column.
 - `columnSpanFull()` will make the component fill the full width of the parent grid on all devices, regardless of how many columns it has.
 
 <UtilityInjection set="schemaComponents" version="5.x">As well as allowing a static value, the `columnSpan()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
@@ -45,7 +45,7 @@ In addition to specifying how many columns a layout component should have, you m
 
 If you want to start a component in a grid at a specific column, you can use the `columnStart()` method. This method accepts an integer, or an array of breakpoints and which column the component should start at:
 
-- You can pass an integer like `columnStart(2)`. This integer is column that the component will start on for the `lg` breakpoint and higher. All smaller devices start the component on the first column.
+- You can pass an integer like `columnStart(2)`. This integer is column that the component will start on for the [default grid breakpoint](#changing-the-default-grid-breakpoint) (`lg` by default) and higher. All smaller devices start the component on the first column.
 - `columnStart(['md' => 2, 'xl' => 4])` will make the component start at column 2 on medium devices, and at column 4 on extra large devices. The default breakpoint for smaller devices uses 1 column, unless you use a `default` array key.
 
 ```php
@@ -77,7 +77,7 @@ In this example, the grid has 3 columns on small devices, 6 columns on extra lar
 
 If you want to control the visual order of components in a grid without changing their position in the markup, you can use the `columnOrder()` method. This method accepts an integer, a closure, or an array of breakpoints and order values:
 
-- You can pass an integer like `columnOrder(2)`. This integer is the order that the component will appear in for the `lg` breakpoint and higher. All smaller devices use the default order, unless you use a `default` array key.
+- You can pass an integer like `columnOrder(2)`. This integer is the order that the component will appear in for the [default grid breakpoint](#changing-the-default-grid-breakpoint) (`lg` by default) and higher. All smaller devices use the default order, unless you use a `default` array key.
 - `columnOrder(['md' => 2, 'xl' => 4])` will set the component's order to 2 on medium devices, and to 4 on extra large devices. The default breakpoint for smaller devices uses the default order, unless you use a `default` array key.
 - `columnOrder(fn () => 1)` will dynamically calculate the order using a closure.
 
@@ -177,6 +177,24 @@ Section::make()
 ```
 
 In this example, on screens smaller than the `xl` breakpoint, the email field will appear first followed by the name field. On screens larger than the `xl` breakpoint, the order is reversed with the name field appearing first followed by the email field.
+
+### Changing the default grid breakpoint
+
+By default, when you pass a simple integer to `columns()`, `columnSpan()`, `columnStart()`, or `columnOrder()`, the value is applied at the `lg` breakpoint and higher. You can change this default breakpoint globally in your `config/filament.php` configuration file:
+
+```php
+'default_grid_breakpoint' => '2xl',
+```
+
+Alternatively, you can set the default breakpoint programmatically at runtime, typically in a service provider:
+
+```php
+use Filament\Support\Facades\FilamentGrid;
+
+FilamentGrid::defaultBreakpoint('xl');
+```
+
+After changing the default breakpoint, all integer values passed to grid methods will be applied at your configured breakpoint instead of `lg`. For example, with `'default_grid_breakpoint' => '2xl'`, calling `columns(3)` will apply 3 columns at the `2xl` breakpoint and higher.
 
 ## Basic layout components
 
