@@ -21,6 +21,8 @@ use Filament\Support\Components\Contracts\ScopedComponentManager;
 use Filament\Support\Enums\GridDirection;
 use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Facades\FilamentColor;
+use Filament\Support\Facades\FilamentGrid;
+use Filament\Support\Grid\GridManager;
 use Filament\Support\Icons\IconManager;
 use Filament\Support\Livewire\Partials\DataStoreOverride;
 use Filament\Support\Livewire\Partials\PartialsComponentHook;
@@ -86,6 +88,11 @@ class SupportServiceProvider extends PackageServiceProvider
         $this->app->scoped(
             ColorManager::class,
             fn () => new ColorManager,
+        );
+
+        $this->app->scoped(
+            GridManager::class,
+            fn () => new GridManager,
         );
 
         $this->app->scoped(
@@ -181,7 +188,7 @@ class SupportServiceProvider extends PackageServiceProvider
 
         ComponentAttributeBag::macro('grid', function (array | int | null $columns = [], GridDirection $direction = GridDirection::Row): ComponentAttributeBag {
             if (! is_array($columns)) {
-                $columns = ['lg' => $columns];
+                $columns = [FilamentGrid::getDefaultBreakpoint() => $columns];
             }
 
             $columns = array_filter($columns);
@@ -212,15 +219,15 @@ class SupportServiceProvider extends PackageServiceProvider
 
         ComponentAttributeBag::macro('gridColumn', function (array | int | string | null $span = [], array | int | null $start = [], array | int | string | null $order = [], bool $isHidden = false): ComponentAttributeBag {
             if (! is_array($span)) {
-                $span = ['lg' => $span];
+                $span = [FilamentGrid::getDefaultBreakpoint() => $span];
             }
 
             if (! is_array($start)) {
-                $start = ['lg' => $start];
+                $start = [FilamentGrid::getDefaultBreakpoint() => $start];
             }
 
             if (! is_array($order)) {
-                $order = ['lg' => $order];
+                $order = [FilamentGrid::getDefaultBreakpoint() => $order];
             }
 
             $span = array_filter($span);

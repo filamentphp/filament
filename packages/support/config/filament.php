@@ -117,4 +117,20 @@ return [
 
     'system_route_prefix' => 'filament',
 
+    /*
+    |--------------------------------------------------------------------------
+    | Default Grid Breakpoint
+    |--------------------------------------------------------------------------
+    |
+    | When using the grid system with a simple integer value (e.g.,
+    | `columns(2)` or `columnSpan(2)`), the value will be applied at this
+    | breakpoint and higher. On smaller devices, components will use their
+    | default responsive behavior (e.g., 1 column).
+    |
+    | Supported values: 'sm', 'md', 'lg', 'xl', '2xl'
+    |
+    */
+
+    'default_grid_breakpoint' => 'lg',
+
 ];
