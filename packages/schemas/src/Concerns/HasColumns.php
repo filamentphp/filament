@@ -4,6 +4,7 @@ namespace Filament\Schemas\Concerns;
 
 use Closure;
 use Filament\Schemas\Schema;
+use Filament\Support\Facades\FilamentGrid;
 
 trait HasColumns
 {
@@ -25,7 +26,7 @@ trait HasColumns
 
         if (! is_array($columns)) {
             $columns = [
-                'lg' => $columns,
+                FilamentGrid::getDefaultBreakpoint() => $columns,
             ];
         }
 
@@ -90,7 +91,7 @@ trait HasColumns
             }
 
             if (! is_string($columnBreakpoint)) {
-                $columns['lg'] = $column;
+                $columns[FilamentGrid::getDefaultBreakpoint()] = $column;
 
                 unset($columns[$columnBreakpoint]);
 

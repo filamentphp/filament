@@ -3,6 +3,7 @@
 namespace Filament\Schemas\Components\Concerns;
 
 use Closure;
+use Filament\Support\Facades\FilamentGrid;
 
 trait HasContainerGridLayout
 {
@@ -24,7 +25,7 @@ trait HasContainerGridLayout
 
         if (! is_array($columns)) {
             $columns = [
-                'lg' => $columns,
+                FilamentGrid::getDefaultBreakpoint() => $columns,
             ];
         }
 
@@ -71,7 +72,7 @@ trait HasContainerGridLayout
             }
 
             if (! is_string($gridColumnBreakpoint)) {
-                $columns['lg'] = $gridColumn;
+                $columns[FilamentGrid::getDefaultBreakpoint()] = $gridColumn;
 
                 unset($columns[$gridColumnBreakpoint]);
 
