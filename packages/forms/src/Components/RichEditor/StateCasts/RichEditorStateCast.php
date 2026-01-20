@@ -59,6 +59,10 @@ class RichEditorStateCast implements StateCast
                     return;
                 }
 
+                if (isset($node->attrs->label) && $node->attrs->label) {
+                    return;
+                }
+
                 unset($node->attrs->label);
             });
         }

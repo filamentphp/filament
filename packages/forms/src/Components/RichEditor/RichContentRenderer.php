@@ -294,10 +294,6 @@ class RichContentRenderer implements Htmlable
                 return;
             }
 
-            if (filled($node->attrs->label ?? null)) {
-                return;
-            }
-
             $char = $node->attrs->char ?? '@';
             $mentionsByChar[$char][] = (string) $id;
         });
@@ -330,7 +326,7 @@ class RichContentRenderer implements Htmlable
                 return;
             }
 
-            $label = $node->attrs->label ?? $labelsByChar[$char][(string) $id] ?? (string) $id;
+            $label = $labelsByChar[$char][(string) $id] ?? $node->attrs->label ?? (string) $id;
             $node->attrs->label = $label;
 
             $url = $provider->getUrl((string) $id, $label);
