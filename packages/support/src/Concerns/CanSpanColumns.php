@@ -3,6 +3,7 @@
 namespace Filament\Support\Concerns;
 
 use Closure;
+use Filament\Support\Facades\FilamentGrid;
 
 trait CanSpanColumns
 {
@@ -30,7 +31,7 @@ trait CanSpanColumns
         if (! is_array($span)) {
             $span = [
                 'default' => 1,
-                'lg' => $span,
+                FilamentGrid::getDefaultBreakpoint() => $span,
             ];
         }
 
@@ -62,7 +63,7 @@ trait CanSpanColumns
 
         if (! is_array($start)) {
             $start = [
-                'lg' => $start,
+                FilamentGrid::getDefaultBreakpoint() => $start,
             ];
         }
 

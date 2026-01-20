@@ -3,6 +3,7 @@
 namespace Filament\Support\Concerns;
 
 use Closure;
+use Filament\Support\Facades\FilamentGrid;
 
 trait CanOrderColumns
 {
@@ -24,7 +25,7 @@ trait CanOrderColumns
 
         if (! is_array($order)) {
             $order = [
-                'lg' => $order,
+                FilamentGrid::getDefaultBreakpoint() => $order,
             ];
         }
 
