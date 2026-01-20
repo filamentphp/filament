@@ -34,7 +34,7 @@ return [
 
             'recovery_codes' => [
 
-                'instruction' => 'Tallenna seuraava palautuskoodit turvalliseen paikkaan. Koodit näytetään vain kerran ja tarvitset niitä jos menetät pääsyn todennussovellukseen:',
+                'instruction' => 'Tallenna seuraavat palautuskoodit turvalliseen paikkaan. Koodit näytetään vain kerran ja tarvitset niitä jos menetät pääsyn todennussovellukseen:',
 
             ],
 
