@@ -53,20 +53,6 @@ class RichEditorStateCast implements StateCast
             });
         }
 
-        if ($this->richEditor->getMentionProviders()) {
-            $editor->descendants(function (object &$node): void {
-                if ($node->type !== 'mention') {
-                    return;
-                }
-
-                if (isset($node->attrs->label) && $node->attrs->label) {
-                    return;
-                }
-
-                unset($node->attrs->label);
-            });
-        }
-
         return $editor->{$this->richEditor->isJson() ? 'getDocument' : 'getHtml'}();
     }
 
