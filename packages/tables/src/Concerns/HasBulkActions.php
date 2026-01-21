@@ -308,7 +308,13 @@ trait HasBulkActions
 
         $relationship = $table->selectPivotDataInQuery($relationship);
 
-        return $relationship->getQuery();
+        $query = $relationship->getQuery();
+
+        if (! $chunkSize) {
+            $this->applySortingToTableQuery($query);
+        }
+
+        return $query;
     }
 
     /**
