@@ -64,7 +64,7 @@ class AssetManager
         foreach ($assets as $asset) {
             $asset->package($package);
 
-            match (true) {
+            match (true) { /** @phpstan-ignore expr.resultUnused */
                 $asset instanceof Theme => $this->themes[$asset->getId()] = $asset,
                 $asset instanceof AlpineComponent => $this->alpineComponents[$package][] = $asset,
                 $asset instanceof Css => $this->styles[$package][] = $asset,
