@@ -3,7 +3,7 @@
 Dokumen ini memetakan desain konseptual (Fase 1 & 2A) ke dalam komponen teknis implementasi menggunakan Framework Laravel dan Filament. Fokus utama adalah penerjemahan aturan bisnis yang ketat menjadi logika kode yang aman dan terstruktur.
 
 ## 1. Ringkasan Pendek
-Implementasi akan menggunakan pola **Service-Repository** (atau Service-Action) di dalam Laravel untuk memisahkan logika bisnis dari Controller/Livewire component Filament. Filament hanya berfungsi sebagai *Presentation Layer* (UI), sementara *Application Layer* ditangani oleh Service Class, dan *Authorization* dijaga ketat oleh Laravel Policies.
+Implementasi menggunakan **Service Layer (Service–Action Pattern)** sebagai Application Layer. Repository terpisah tidak digunakan; Eloquent Model diakses langsung oleh Service. Filament hanya berfungsi sebagai *Presentation Layer* (UI), sementara *Application Layer* ditangani oleh Service Class, dan *Authorization* dijaga ketat oleh Laravel Policies.
 
 ## 2. Mapping Entity → Laravel Model
 
@@ -62,7 +62,7 @@ Implementasi menggunakan Laravel Policies (`php artisan make:policy`). User memi
 | | View Detail | `view` | `ADMIN` OR `PU_PUSAT` |
 | | Create | `create` | **ONLY** `ADMIN` |
 | | Update | `update` | **ONLY** `ADMIN` |
-| | Delete | `delete` | **NOBODY** (Soft Delete only if necessary, or restricted to Super Admin) |
+| | Delete | `delete` | **Delete Program: Tidak diizinkan dalam sistem aplikasi (No Delete Policy).**<br>Program hanya dapat diarsipkan atau dihapus melalui prosedur administratif di luar aplikasi (database-level/manual), bukan melalui UI atau API aplikasi. |
 | **Catatan** | Create | `create` | **ONLY** `ADMIN` |
 | | View | `viewAny` | `ADMIN` OR `PU_PUSAT` |
 | **BeritaAcara** | Create | `create` | **ONLY** `ADMIN` |
@@ -128,7 +128,7 @@ Penting untuk dipahami bahwa Filament hanyalah antarmuka. Keamanan sesungguhnya 
 
 1.  **Request Manual:** Jika seseorang menggunakan Postman dengan token PU_PUSAT menembak endpoint `/admin/programs/create`, **ProgramPolicy** akan mencegat dan membatalkan request.
 2.  **Bypass Workflow:** Jika developer mencoba mengubah status langsung lewat Database Seeder atau Tinker tanpa lewat Service, audit log mungkin tidak tercatat (pelanggaran SOP). Oleh karena itu, di kode aplikasi, pemanggilan `Program::update(['status' => ...])` harus dihindari dan diganti `WorkflowService`.
-3.  **Model Observers:** Sebagai pertahanan lapis terakhir, Model Observer bisa dipasang pada `Program` untuk mencegah perubahan kolom `status` jika tidak ada flag khusus dari WorkflowService (defensive coding).
+3.  **Model Observers:** Model Observer **WAJIB** dipasang pada Model Program sebagai last-resort guard untuk kolom status. Observer hanya mengizinkan perubahan status jika perubahan tersebut dilakukan melalui `WorkflowService`. Perubahan status langsung melalui Eloquent (`$program->update()`, Seeder, Tinker, atau query manual) harus diblokir.
 
 ---
 *Dokumen ini menjadi panduan bagi developer dalam menulis kode, memastikan setiap baris kode Filament dan Laravel patuh pada Blueprint Fase 1.*
