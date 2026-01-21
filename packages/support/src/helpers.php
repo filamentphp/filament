@@ -116,14 +116,19 @@ if (! function_exists('Filament\Support\is_slot_empty')) {
 if (! function_exists('Filament\Support\is_app_url')) {
     function is_app_url(string $url): bool
     {
-        if (str($url)->startsWith('/') && ! str($url)->startsWith('//')) {
+        $url = str($url);
+
+        if ($url->startsWith('/') && (! $url->startsWith('//'))) {
             return true;
         }
 
         $appUrl = rtrim((string) config('app.url'), '/');
 
-        return ($appUrl !== '' && str($url)->startsWith($appUrl))
-            || rescue(fn () => str($url)->startsWith(request()->root()), false);
+        if (($appUrl !== '') && $url->startsWith($appUrl)) {
+            return true;
+        }
+
+        return $url->startsWith(request()->root());
     }
 }
 
