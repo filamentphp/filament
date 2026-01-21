@@ -3,6 +3,7 @@
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ForceDeleteAction;
 use Filament\Actions\RestoreAction;
+use Filament\Actions\Testing\TestAction;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tests\Fixtures\Livewire\PostsTable;
 use Filament\Tests\Fixtures\Models\Post;
@@ -102,4 +103,16 @@ it('can restore records that are already deleted', function (): void {
 
     assertModelExists($trashedPost);
     assertNotSoftDeleted($trashedPost);
+});
+
+it('can access record for action after record no longer matches filter', function (): void {
+    $post = Post::factory()->create(['is_published' => true]);
+
+    livewire(PostsTable::class)
+        ->filterTable('is_published')
+        ->assertCanSeeTableRecords([$post])
+        ->tap(fn () => $post->update(['is_published' => false]))
+        ->callAction(TestAction::make(DeleteAction::class)->table($post));
+
+    assertSoftDeleted($post);
 });

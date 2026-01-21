@@ -197,6 +197,30 @@ trait HasFilters
         }
     }
 
+    protected function applyBaseFiltersToTableQuery(Builder $query): Builder
+    {
+        $table = $this->getTable();
+
+        if ($table->hasDeferredFilters()) {
+            $this->getTableFiltersForm()->statePath('tableFilters')->flushCachedAbsoluteStatePaths();
+        }
+
+        try {
+            foreach ($table->getFilters() as $filter) {
+                $filter->applyToBaseQuery(
+                    $query,
+                    $this->getTableFilterState($filter->getName()) ?? [],
+                );
+            }
+
+            return $query;
+        } finally {
+            if ($table->hasDeferredFilters()) {
+                $this->getTableFiltersForm()->statePath('tableDeferredFilters')->flushCachedAbsoluteStatePaths();
+            }
+        }
+    }
+
     public function getTableFilterState(string $name): ?array
     {
         return Arr::get($this->tableFilters, $this->parseTableFilterName($name));
