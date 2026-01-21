@@ -44,7 +44,7 @@ const LocalFilesPlugin = ({
 }) => {
     const getFileAttachmentUrl = (fileKey) => {
         return Livewire.fireAction(
-            $wire.__instance,
+            get$WireUsing().__instance,
             'callSchemaComponentMethod',
             [
                 key,
