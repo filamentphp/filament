@@ -2,7 +2,7 @@
 
 return [
 
-    'title' => 'แก้ไข:label',
+    'title' => 'แก้ไข :label',
 
     'breadcrumb' => 'แก้ไข',
 
