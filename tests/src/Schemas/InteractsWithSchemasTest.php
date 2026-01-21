@@ -6,7 +6,7 @@ use Filament\Tests\TestCase;
 
 uses(TestCase::class);
 
-it('can resolve schema using the primary methodName', function (): void {
+it('can resolve schema using the primary method name', function (): void {
     $component = new class extends Livewire
     {
         public function test(Schema $schema): Schema
@@ -18,7 +18,7 @@ it('can resolve schema using the primary methodName', function (): void {
     expect($component->getSchema('test'))->toBeInstanceOf(Schema::class);
 });
 
-it('can resolve schema using the fallback methodName', function (): void {
+it('can resolve schema using the fallback method name', function (): void {
     $component = new class extends Livewire
     {
         public function testSchema(Schema $schema): Schema
@@ -30,7 +30,7 @@ it('can resolve schema using the fallback methodName', function (): void {
     expect($component->getSchema('test'))->toBeInstanceOf(Schema::class);
 });
 
-it('can resolve schema using fallback methodName without parameters', function (): void {
+it('can resolve schema using fallback method name without parameters', function (): void {
     $component = new class extends Livewire
     {
         public function testSchema(): Schema
