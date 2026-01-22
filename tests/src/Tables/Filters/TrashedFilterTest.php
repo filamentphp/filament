@@ -105,14 +105,28 @@ it('can restore records that are already deleted', function (): void {
     assertNotSoftDeleted($trashedPost);
 });
 
-it('can access record for action after record no longer matches filter', function (): void {
+it('can access record for action after record no longer matches `TrashedFilter`', function (): void {
+    $post = Post::factory()->create();
+
+    livewire(PostsTable::class)
+        ->filterTable(TrashedFilter::class, null)
+        ->assertCanSeeTableRecords([$post])
+        ->tap(fn () => $post->delete())
+        ->callAction(TestAction::make(RestoreAction::class)->table($post));
+
+    assertNotSoftDeleted($post);
+});
+
+it('cannot access record for action after record no longer matches non-excluded filter', function (): void {
     $post = Post::factory()->create(['is_published' => true]);
 
     livewire(PostsTable::class)
         ->filterTable('is_published')
         ->assertCanSeeTableRecords([$post])
-        ->tap(fn () => $post->update(['is_published' => false]))
-        ->callAction(TestAction::make(DeleteAction::class)->table($post));
+        ->tap(fn () => $post->update(['is_published' => false]));
 
-    assertSoftDeleted($post);
+    expect(fn () => livewire(PostsTable::class)
+        ->filterTable('is_published')
+        ->mountTableAction(DeleteAction::class, $post)
+    )->toThrow(TypeError::class);
 });

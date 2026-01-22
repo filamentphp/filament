@@ -166,7 +166,7 @@ trait HasFilters
         $this->handleTableFilterUpdates();
     }
 
-    protected function applyFiltersToTableQuery(Builder $query): Builder
+    protected function applyFiltersToTableQuery(Builder $query, bool $isResolvingRecord = false): Builder
     {
         $table = $this->getTable();
 
@@ -182,38 +182,18 @@ trait HasFilters
                 );
             }
 
-            return $query->where(function (Builder $query) use ($table): void {
+            return $query->where(function (Builder $query) use ($table, $isResolvingRecord): void {
                 foreach ($table->getFilters() as $filter) {
+                    if ($isResolvingRecord && $filter->shouldExcludeWhenResolvingRecord()) {
+                        continue;
+                    }
+
                     $filter->apply(
                         $query,
                         $this->getTableFilterState($filter->getName()) ?? [],
                     );
                 }
             });
-        } finally {
-            if ($table->hasDeferredFilters()) {
-                $this->getTableFiltersForm()->statePath('tableDeferredFilters')->flushCachedAbsoluteStatePaths();
-            }
-        }
-    }
-
-    protected function applyBaseFiltersToTableQuery(Builder $query): Builder
-    {
-        $table = $this->getTable();
-
-        if ($table->hasDeferredFilters()) {
-            $this->getTableFiltersForm()->statePath('tableFilters')->flushCachedAbsoluteStatePaths();
-        }
-
-        try {
-            foreach ($table->getFilters() as $filter) {
-                $filter->applyToBaseQuery(
-                    $query,
-                    $this->getTableFilterState($filter->getName()) ?? [],
-                );
-            }
-
-            return $query;
         } finally {
             if ($table->hasDeferredFilters()) {
                 $this->getTableFiltersForm()->statePath('tableDeferredFilters')->flushCachedAbsoluteStatePaths();

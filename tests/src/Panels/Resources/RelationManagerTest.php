@@ -253,7 +253,7 @@ it('can attach records when some are already related', function (): void {
     expect($ticket->departments()->count())->toBe(2);
 });
 
-it('can access record for action after record no longer matches filter in BelongsToMany relation manager', function (): void {
+it('can access record for action after record no longer matches `TrashedFilter` in BelongsToMany relation manager', function (): void {
     $ticket = Ticket::factory()->create();
     $department = Department::factory()->create();
     $ticket->departments()->attach($department);
