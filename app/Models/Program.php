@@ -10,7 +10,14 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Program extends Model
 {
-    protected $guarded = [];
+    protected $fillable = [
+        'nama_program',
+        'sektor',
+        'lokasi',
+        'estimasi_biaya',
+        'created_by',
+        // 'status' is EXCLUDED from fillable to prevent mass assignment
+    ];
 
     protected $casts = [
         'status' => ProgramStatus::class,
