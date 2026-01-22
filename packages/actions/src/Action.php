@@ -419,7 +419,7 @@ class Action extends ViewComponent implements Arrayable
         }
 
         if (! $this->canAccessSelectedRecords()) {
-            return null;
+            return $this->canSubmitForm() ? $this->getFormToSubmit() : null;
         }
 
         return $this->getJsClickHandler();
