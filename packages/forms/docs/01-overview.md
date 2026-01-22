@@ -197,15 +197,9 @@ You can disable a field based on the current operation by passing an operation t
 
 ```php
 use Filament\Forms\Components\Toggle;
-use Filament\Support\Enums\Operation;
 
 Toggle::make('is_admin')
     ->disabledOn('edit')
-    
-// or
-
-Toggle::make('is_admin')
-    ->disabledOn(Operation::Edit)
 
 // is the same as
 
@@ -217,16 +211,9 @@ You can also pass an array of operations to the `disabledOn()` method, and the f
 
 ```php
 use Filament\Forms\Components\Toggle;
-use Filament\Support\Enums\Operation;
 
 Toggle::make('is_admin')
     ->disabledOn(['edit', 'view'])
-    
-// or 
-
-
-Toggle::make('is_admin')
-    ->disabledOn([Operation::Edit, Operation::View])
     
 // is the same as
 
