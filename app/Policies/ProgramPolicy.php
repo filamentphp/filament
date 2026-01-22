@@ -12,7 +12,7 @@ class ProgramPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->isAdmin() || $user->isPUPusat();
+        return $user->isAdmin() || $user->isPUPusat() || $user->isPemda() || $user->isKL();
     }
 
     /**
@@ -20,7 +20,27 @@ class ProgramPolicy
      */
     public function view(User $user, Program $program): bool
     {
-        return $user->isAdmin() || $user->isPUPusat();
+        if ($user->isAdmin() || $user->isPUPusat()) {
+            return true;
+        }
+
+        if ($user->isPemda()) {
+            // Check scope location
+            $scope = $user->pemda_scope['lokasi'] ?? null;
+            // Simple string match or array containment
+            // Assuming scope['lokasi'] is a string like "Jawa Barat" and program->lokasi contains it
+            if (!$scope) return false;
+            return str_contains($program->lokasi, $scope);
+        }
+
+        if ($user->isKL()) {
+            // Check scope sector
+            $scope = $user->kl_scope['sektor'] ?? null;
+            if (!$scope) return false;
+            return $program->sektor === $scope;
+        }
+
+        return false;
     }
 
     /**

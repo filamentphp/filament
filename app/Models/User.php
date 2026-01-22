@@ -20,6 +20,8 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
+        'pemda_scope',
+        'kl_scope',
     ];
 
     /**
@@ -41,6 +43,8 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
         'role' => UserRole::class,
+        'pemda_scope' => 'array',
+        'kl_scope' => 'array',
     ];
 
     /**
@@ -57,5 +61,15 @@ class User extends Authenticatable
     public function isPUPusat(): bool
     {
         return $this->role === UserRole::PU_PUSAT;
+    }
+
+    public function isPemda(): bool
+    {
+        return $this->role === UserRole::PEMDA;
+    }
+
+    public function isKL(): bool
+    {
+        return $this->role === UserRole::KL;
     }
 }

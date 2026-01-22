@@ -39,5 +39,6 @@ $app->register(TablesServiceProvider::class);
 $app->register(WidgetsServiceProvider::class);
 
 $app->register(AdminPanelProvider::class);
+$app->register(\App\Providers\Filament\ExternalPanelProvider::class);
 
 return $app;
