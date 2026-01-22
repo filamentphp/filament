@@ -72,7 +72,7 @@ return [
         'search' => [
             'label' => 'Zawnna',
             'placeholder' => 'Zawnna',
-            'indicator' => 'Zawnna',
+            'indicator' => 'Zawnte',
         ],
 
     ],

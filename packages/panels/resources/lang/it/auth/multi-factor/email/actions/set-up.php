@@ -30,6 +30,10 @@ return [
                                 'title' => 'Ti abbiamo inviato un nuovo codice via email',
                             ],
 
+                            'throttled' => [
+                                'title' => 'Troppi tentativi di invio. Attendi prima di richiedere un nuovo codice.',
+                            ],
+
                         ],
 
                     ],

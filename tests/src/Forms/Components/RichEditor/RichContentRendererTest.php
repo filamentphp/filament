@@ -631,9 +631,7 @@ it('handles multiple mention providers with different chars', function (): void 
     expect($html)->toContain('#issue-123');
 });
 
-it('preserves existing labels and does not refetch them', function (): void {
-    $fetchCount = 0;
-
+it('falls back to existing label when provider returns no label', function (): void {
     $renderer = RichContentRenderer::make([
         'type' => 'doc',
         'content' => [
@@ -643,9 +641,9 @@ it('preserves existing labels and does not refetch them', function (): void {
                     [
                         'type' => 'mention',
                         'attrs' => [
-                            'id' => '1',
-                            'label' => 'Existing Label',
+                            'id' => '999',
                             'char' => '@',
+                            'label' => 'Existing Label',
                         ],
                     ],
                 ],
@@ -655,21 +653,15 @@ it('preserves existing labels and does not refetch them', function (): void {
 
     $renderer->mentions([
         MentionProvider::make('@')
-            ->getLabelsUsing(function (array $ids) use (&$fetchCount): array {
-                $fetchCount++;
-
-                return ['1' => 'New Label'];
-            }),
+            ->getLabelsUsing(fn (array $ids): array => []),
     ]);
 
     $html = $renderer->toUnsafeHtml();
 
-    expect($fetchCount)->toBe(0);
     expect($html)->toContain('@Existing Label');
-    expect($html)->not->toContain('New Label');
 });
 
-it('falls back to id as label when provider returns no label', function (): void {
+it('falls back to id as label when provider returns no label and no label is set', function (): void {
     $renderer = RichContentRenderer::make([
         'type' => 'doc',
         'content' => [

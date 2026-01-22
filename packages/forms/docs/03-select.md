@@ -678,6 +678,40 @@ MorphToSelect::make('commentable')
     ->modifyTypeSelectUsing(fn (Select $select): Select => $select->native())
 ```
 
+#### Using toggle buttons for the type selector
+
+By default, the type selector is a select field. You may switch it to use inline [toggle buttons](toggle-buttons) using the `typeSelectToggleButtons()` method:
+
+```php
+use Filament\Forms\Components\MorphToSelect;
+
+MorphToSelect::make('commentable')
+    ->typeSelectToggleButtons()
+    ->types([
+        MorphToSelect\Type::make(Product::class)
+            ->titleAttribute('name'),
+        MorphToSelect\Type::make(Post::class)
+            ->titleAttribute('title'),
+    ])
+```
+
+When using toggle buttons, you can customize them using the `modifyTypeSelectUsing()` method:
+
+```php
+use Filament\Forms\Components\MorphToSelect;
+use Filament\Forms\Components\ToggleButtons;
+
+MorphToSelect::make('commentable')
+    ->typeSelectToggleButtons()
+    ->types([
+        MorphToSelect\Type::make(Product::class)
+            ->titleAttribute('name'),
+        MorphToSelect\Type::make(Post::class)
+            ->titleAttribute('title'),
+    ])
+    ->modifyTypeSelectUsing(fn (ToggleButtons $toggleButtons): ToggleButtons => $toggleButtons->grouped())
+```
+
 ## Allowing HTML in the option labels
 
 By default, Filament will escape any HTML in the option labels. If you'd like to allow HTML, you can use the `allowHtml()` method:

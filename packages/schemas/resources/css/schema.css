@@ -3,6 +3,10 @@
 
     &.fi-inline {
         @apply flex grow flex-wrap items-center;
+
+        & > .fi-sc-action:not(.fi-hidden) {
+            @apply contents;
+        }
     }
 
     &.fi-sc-has-gap {

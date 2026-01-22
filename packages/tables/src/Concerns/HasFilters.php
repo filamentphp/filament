@@ -166,7 +166,7 @@ trait HasFilters
         $this->handleTableFilterUpdates();
     }
 
-    protected function applyFiltersToTableQuery(Builder $query): Builder
+    protected function applyFiltersToTableQuery(Builder $query, bool $isResolvingRecord = false): Builder
     {
         $table = $this->getTable();
 
@@ -182,8 +182,12 @@ trait HasFilters
                 );
             }
 
-            return $query->where(function (Builder $query) use ($table): void {
+            return $query->where(function (Builder $query) use ($table, $isResolvingRecord): void {
                 foreach ($table->getFilters() as $filter) {
+                    if ($isResolvingRecord && $filter->shouldExcludeWhenResolvingRecord()) {
+                        continue;
+                    }
+
                     $filter->apply(
                         $query,
                         $this->getTableFilterState($filter->getName()) ?? [],
