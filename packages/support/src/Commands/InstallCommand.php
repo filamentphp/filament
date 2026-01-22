@@ -118,10 +118,10 @@ class InstallCommand extends Command
                 default: true,
             ))
         ) {
-            $layout = $filesystem->get(resource_path('views/components/layouts/app.blade.php'));
+            $layout = $filesystem->get(resource_path('views/layouts/app.blade.php'));
             $layout = (string) str($layout)
                 ->replace('{{ $slot }}', '{{ $slot }}' . PHP_EOL . PHP_EOL . '        @livewire(\'notifications\')');
-            $filesystem->put(resource_path('views/components/layouts/app.blade.php'), $layout);
+            $filesystem->put(resource_path('views/layouts/app.blade.php'), $layout);
 
             $hasNotifications = true;
         }
