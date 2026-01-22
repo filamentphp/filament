@@ -562,10 +562,18 @@ return [
 
         ],
 
-        'no_merge_tag_search_results_message' => 'Nessun risultato per i tag mergiati.',
         'file_attachments_accepted_file_types_message' => 'I file caricati devono essere di tipo: :values.',
 
         'file_attachments_max_size_message' => 'I file caricati non devono superare i :max kilobyte.',
+
+        'no_merge_tag_search_results_message' => 'Nessun risultato per i tag mergiati.',
+
+        'mentions' => [
+            'no_options_message' => 'Nessuna opzione disponibile.',
+            'no_search_results_message' => 'Nessun risultato corrisponde alla tua ricerca.',
+            'search_prompt' => 'Inizia a digitare per cercare...',
+            'searching_message' => 'Ricerca in corso...',
+        ],
 
         'tools' => [
             'align_center' => 'Allinea al centro',
@@ -609,6 +617,7 @@ return [
             'table_merge_cells' => 'Unisci celle',
             'table_split_cell' => 'Dividi cella',
             'table_toggle_header_row' => 'Attiva/disattiva riga intestazione',
+            'table_toggle_header_cell' => 'Attiva/disattiva cella intestazione',
             'text_color' => 'Colore testo',
             'underline' => 'Sottolineato',
             'undo' => 'Annulla',
@@ -677,6 +686,8 @@ return [
 
         'max_items_message' => 'È possibile selezionare solo :count.',
 
+        'no_options_message' => 'Nessuna opzione disponibile.',
+
         'no_search_results_message' => 'Nessuna opzione corrisponde alla tua ricerca.',
 
         'placeholder' => "Seleziona un'opzione",
@@ -688,6 +699,14 @@ return [
     ],
 
     'tags_input' => [
+        'actions' => [
+
+            'delete' => [
+                'label' => 'Elimina',
+            ],
+
+        ],
+
         'placeholder' => 'Nuovo tag',
     ],
 

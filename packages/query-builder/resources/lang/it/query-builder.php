@@ -146,6 +146,50 @@ return [
 
             ],
 
+            'unit_labels' => [
+                'second' => 'Secondi',
+                'minute' => 'Minuti',
+                'hour' => 'Ore',
+                'day' => 'Giorni',
+                'week' => 'Settimane',
+                'month' => 'Mesi',
+                'quarter' => 'Trimestri',
+                'year' => 'Anni',
+            ],
+
+            'presets' => [
+                'past_decade' => 'Ultimo decennio',
+                'past_5_years' => 'Ultimi 5 anni',
+                'past_2_years' => 'Ultimi 2 anni',
+                'past_year' => 'Ultimo anno',
+                'past_6_months' => 'Ultimi 6 mesi',
+                'past_quarter' => 'Ultimo trimestre',
+                'past_month' => 'Ultimo mese',
+                'past_2_weeks' => 'Ultime 2 settimane',
+                'past_week' => 'Ultima settimana',
+                'past_hour' => 'Ultima ora',
+                'past_minute' => 'Ultimo minuto',
+                'this_decade' => 'Questo decennio',
+                'this_year' => "Quest'anno",
+                'this_quarter' => 'Questo trimestre',
+                'this_month' => 'Questo mese',
+                'today' => 'Oggi',
+                'this_hour' => "Quest'ora",
+                'this_minute' => 'Questo minuto',
+                'next_minute' => 'Prossimo minuto',
+                'next_hour' => 'Prossima ora',
+                'next_week' => 'Prossima settimana',
+                'next_2_weeks' => 'Prossime 2 settimane',
+                'next_month' => 'Prossimo mese',
+                'next_quarter' => 'Prossimo trimestre',
+                'next_6_months' => 'Prossimi 6 mesi',
+                'next_year' => 'Prossimo anno',
+                'next_2_years' => 'Prossimi 2 anni',
+                'next_5_years' => 'Prossimi 5 anni',
+                'next_decade' => 'Prossimo decennio',
+                'custom' => 'Personalizzato',
+            ],
+
             'form' => [
 
                 'date' => [
@@ -160,6 +204,39 @@ return [
                     'label' => 'Anno',
                 ],
 
+                'mode' => [
+
+                    'label' => 'Tipologia data',
+
+                    'options' => [
+                        'absolute' => 'Data specifica',
+                        'relative' => 'Intervallo',
+                    ],
+
+                ],
+
+                'preset' => [
+                    'label' => 'Periodo di tempo',
+                ],
+
+                'relative_value' => [
+                    'label' => 'Quanti',
+                ],
+
+                'relative_unit' => [
+                    'label' => 'Unità di tempo',
+                ],
+
+                'tense' => [
+
+                    'label' => 'Tempo',
+
+                    'options' => [
+                        'past' => 'Passato',
+                        'future' => 'Futuro',
+                    ],
+
+                ],
             ],
 
         ],

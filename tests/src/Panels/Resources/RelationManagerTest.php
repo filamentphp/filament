@@ -252,3 +252,22 @@ it('can attach records when some are already related', function (): void {
     // Verify total count is now 2
     expect($ticket->departments()->count())->toBe(2);
 });
+
+it('can access record for action after record no longer matches `TrashedFilter` in `BelongsToMany` relation manager', function (): void {
+    $ticket = Ticket::factory()->create();
+    $department = Department::factory()->create();
+    $ticket->departments()->attach($department);
+
+    $department->delete();
+
+    livewire(DepartmentsRelationManager::class, [
+        'ownerRecord' => $ticket,
+        'pageClass' => EditTicket::class,
+    ])
+        ->filterTable('trashed', false)
+        ->assertCanSeeTableRecords([$department])
+        ->tap(fn () => $department->restore())
+        ->callAction(TestAction::make(DeleteAction::class)->table($department));
+
+    expect($department->fresh()->trashed())->toBeTrue();
+});

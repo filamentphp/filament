@@ -41,6 +41,10 @@ return [
                             'title' => 'Olemme lähettänyt koodin sähköpostiisi',
                         ],
 
+                        'throttled' => [
+                            'title' => 'Liian monta lähetyksen yritystä. Odota ennen seuraavaa yritystä.',
+                        ],
+
                     ],
 
                 ],
