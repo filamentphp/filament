@@ -644,6 +644,8 @@ return [
 
         'max_items_message' => 'Uniquement :count peuvent être sélectionnés.',
 
+        'no_options_message' => 'Aucune option disponible.',
+
         'no_search_results_message' => 'Aucune option ne correspond à votre recherche.',
 
         'placeholder' => 'Sélectionnez une option',
