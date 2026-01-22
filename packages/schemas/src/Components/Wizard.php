@@ -128,7 +128,6 @@ class Wizard extends Component
         $this->currentStepIndex($currentStepIndex - 1);
     }
 
-    #[ExposedLivewireMethod]
     public function goToStep(string $step): void
     {
         $steps = array_values(
