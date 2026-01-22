@@ -230,7 +230,7 @@ Compile your new CSS and JavaScript assets using `npm run dev`.
 
 ### Configuring your layout
 
-If you don't have a Blade layout file yet, create it at `resources/views/components/layouts/app.blade.php` by running the following command:
+If you don't have a Blade layout file yet, create it at `resources/views/layouts/app.blade.php` by running the following command:
 
 ```bash
 php artisan livewire:layout
