@@ -9,7 +9,7 @@ if (
     Chart.register(...window.filamentChartJsGlobalPlugins)
 }
 
-export default function chart({ cachedData, options, type }) {
+export default function chart({ cachedData, maxHeight, options, type }) {
     return {
         userPointBackgroundColor: options?.pointBackgroundColor,
         userXGridColor: options?.scales?.x?.grid?.color,
@@ -102,7 +102,7 @@ export default function chart({ cachedData, options, type }) {
 
             options ??= {}
             options.borderWidth ??= 2
-            options.maintainAspectRatio ??= false
+            options.maintainAspectRatio ??= !!maxHeight
             options.pointBackgroundColor =
                 this.userPointBackgroundColor ?? borderColor
             options.pointHitRadius ??= 4

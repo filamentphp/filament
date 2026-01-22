@@ -2,7 +2,7 @@
 
 return [
 
-    'label' => 'Set up',
+    'label' => 'Käyttöönotto',
 
     'modal' => [
 
@@ -28,6 +28,10 @@ return [
 
                             'resent' => [
                                 'title' => 'Olemme lähettänyt koodin sähköpostiisi',
+                            ],
+
+                            'throttled' => [
+                                'title' => 'Liian monta lähetyksen yritystä. Odota ennen seuraavaa yritystä.',
                             ],
 
                         ],

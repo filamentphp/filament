@@ -433,3 +433,16 @@ use Filament\Facades\Filament;
 
 Filament::setCurrentPanel('app'); // Where `app` is the ID of the panel you want to test.
 ```
+
+## Testing multi-tenant panels
+
+When testing resources in multi-tenant panels, you may need to call `Filament::bootCurrentPanel()` after setting the tenant in order to apply tenant scopes and model event listeners:
+
+```php
+use Filament\Facades\Filament;
+
+$team = Team::factory()->create();
+
+Filament::setTenant($this->team);
+Filament::bootCurrentPanel();
+```

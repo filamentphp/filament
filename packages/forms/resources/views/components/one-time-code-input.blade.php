@@ -2,8 +2,8 @@
     $fieldWrapperView = $getFieldWrapperView();
     $placeholder = $getPlaceholder();
     $extraAttributes = $getExtraAttributeBag()
-        ->merge($getExtraInputAttributes(), escape: false)
-        ->merge($getExtraAlpineAttributes(), escape: false)
+        ->merge($getExtraAlpineAttributes(), escape: false);
+    $extraInputAttributes = $getExtraInputAttributeBag()
         ->merge([
             'autocomplete' => false,
             'autofocus' => $isAutofocused(),
@@ -20,5 +20,10 @@
 <x-dynamic-component :component="$fieldWrapperView" :field="$field">
     <x-filament::input.one-time-code
         :attributes="\Filament\Support\prepare_inherited_attributes($extraAttributes)"
-    />
+    >
+        <x-slot
+            name="input"
+            :attributes="\Filament\Support\prepare_inherited_attributes($extraInputAttributes)"
+        ></x-slot>
+    </x-filament::input.one-time-code>
 </x-dynamic-component>

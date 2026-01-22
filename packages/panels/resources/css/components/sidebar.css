@@ -7,6 +7,10 @@
         }
     }
 
+    &.fi-collapsible > .fi-sidebar-group-btn {
+        @apply cursor-pointer;
+    }
+
     &.fi-active {
         & .fi-sidebar-group-dropdown-trigger-btn {
             & .fi-icon {
