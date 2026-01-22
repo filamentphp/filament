@@ -12,7 +12,8 @@ class CatatanPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->isAdmin() || $user->isPUPusat();
+        // For scoped users (PEMDA/KL), we might return true here but filter in query
+        return $user->isAdmin() || $user->isPUPusat() || $user->isItjen() || $user->isBpk() || $user->isPemda() || $user->isKL();
     }
 
     /**
@@ -20,7 +21,14 @@ class CatatanPolicy
      */
     public function view(User $user, Catatan $catatan): bool
     {
-        return $user->isAdmin() || $user->isPUPusat();
+        if ($user->isAdmin() || $user->isPUPusat() || $user->isItjen() || $user->isBpk()) {
+            return true;
+        }
+
+        // Delegate to ProgramPolicy for scoped access
+        // Ideally we should inject ProgramPolicy but here we can just resolve it or instantiate
+        $programPolicy = new ProgramPolicy();
+        return $programPolicy->view($user, $catatan->program);
     }
 
     /**

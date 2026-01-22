@@ -12,7 +12,7 @@ class ProgramPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->isAdmin() || $user->isPUPusat() || $user->isPemda() || $user->isKL();
+        return $user->isAdmin() || $user->isPUPusat() || $user->isPemda() || $user->isKL() || $user->isItjen() || $user->isBpk();
     }
 
     /**
@@ -20,7 +20,7 @@ class ProgramPolicy
      */
     public function view(User $user, Program $program): bool
     {
-        if ($user->isAdmin() || $user->isPUPusat()) {
+        if ($user->isAdmin() || $user->isPUPusat() || $user->isItjen() || $user->isBpk()) {
             return true;
         }
 

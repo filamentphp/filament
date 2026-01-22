@@ -11,6 +11,8 @@ class AuditLog extends Model
 
     protected $casts = [
         'properties' => 'array',
+        'old_values' => 'array',
+        'new_values' => 'array',
     ];
 
     public function actor(): BelongsTo

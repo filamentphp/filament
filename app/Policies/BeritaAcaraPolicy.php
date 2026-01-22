@@ -12,7 +12,7 @@ class BeritaAcaraPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->isAdmin() || $user->isPUPusat();
+        return $user->isAdmin() || $user->isPUPusat() || $user->isItjen() || $user->isBpk() || $user->isPemda() || $user->isKL();
     }
 
     /**
@@ -20,7 +20,12 @@ class BeritaAcaraPolicy
      */
     public function view(User $user, BeritaAcara $beritaAcara): bool
     {
-        return $user->isAdmin() || $user->isPUPusat();
+        if ($user->isAdmin() || $user->isPUPusat() || $user->isItjen() || $user->isBpk()) {
+            return true;
+        }
+
+        $programPolicy = new ProgramPolicy();
+        return $programPolicy->view($user, $beritaAcara->program);
     }
 
     /**

@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Enums\ProgramStatus;
 use App\Models\Program;
+use App\Models\ProgramStatusHistory;
 use App\Support\WorkflowGuard;
 use DomainException;
 use Illuminate\Support\Facades\Auth;
@@ -39,6 +40,17 @@ final class WorkflowService
                 'from_status' => $oldStatusValue,
                 'to_status' => $newStatusValue,
                 'user_id' => Auth::id(),
+            ]);
+
+            // Task 4: Status History (State Transition Log)
+            $user = Auth::user();
+            ProgramStatusHistory::create([
+                'program_id' => $program->id,
+                'from_status' => $oldStatusValue,
+                'to_status' => $newStatusValue,
+                'changed_by' => $user?->id,
+                'changed_by_role' => $user?->role?->value,
+                'changed_at' => now(),
             ]);
 
             return $program;

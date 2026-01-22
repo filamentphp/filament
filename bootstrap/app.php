@@ -40,5 +40,6 @@ $app->register(WidgetsServiceProvider::class);
 
 $app->register(AdminPanelProvider::class);
 $app->register(\App\Providers\Filament\ExternalPanelProvider::class);
+$app->register(\App\Providers\Filament\AuditPanelProvider::class);
 
 return $app;

@@ -72,4 +72,14 @@ class User extends Authenticatable
     {
         return $this->role === UserRole::KL;
     }
+
+    public function isItjen(): bool
+    {
+        return $this->role === UserRole::ITJEN;
+    }
+
+    public function isBpk(): bool
+    {
+        return $this->role === UserRole::BPK;
+    }
 }

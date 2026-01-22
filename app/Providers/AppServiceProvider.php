@@ -22,5 +22,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Program::observe(ProgramObserver::class);
+        \App\Models\AuditLog::observe(\App\Observers\AuditLogObserver::class);
+        \App\Models\ProgramStatusHistory::observe(\App\Observers\ProgramStatusHistoryObserver::class);
     }
 }

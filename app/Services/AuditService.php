@@ -19,12 +19,20 @@ final class AuditService
      */
     public function log(string $event, string $subjectType, int|string $subjectId, array $properties = []): void
     {
+        $user = Auth::user();
+
         AuditLog::create([
-            'event' => $event,
+            'event_type' => $event,
             'subject_type' => $subjectType,
             'subject_id' => $subjectId,
-            'actor_id' => Auth::id(), // Nullable if system action
+            'actor_id' => $user?->id,
+            'actor_role' => $user?->role?->value,
+            'actor_type' => $properties['actor_type'] ?? 'INTERNAL',
             'properties' => $properties,
+            'old_values' => $properties['old'] ?? null,
+            'new_values' => $properties['new'] ?? null,
+            'ip_address' => request()->ip(),
+            'user_agent' => request()->userAgent(),
         ]);
     }
 
