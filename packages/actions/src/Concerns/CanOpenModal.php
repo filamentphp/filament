@@ -459,7 +459,7 @@ trait CanOpenModal
             )
             ->table($this->getTable());
 
-        foreach ($group->getFlatActions() as $nestedAction) {
+        foreach ($group->getActions() as $nestedAction) {
             if ($nestedAction instanceof ActionGroup) {
                 $this->prepareModalActionGroup($nestedAction);
 
