@@ -3,6 +3,7 @@
 namespace Filament\Tests\Fixtures\Pages;
 
 use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
@@ -121,6 +122,30 @@ class Actions extends Page
 
                     $action->halt();
                 }),
+            Action::make('withGroupedExtraActions')
+                ->schema([
+                    TextInput::make('content')
+                        ->required(),
+                ])
+                ->action(function (array $data): void {
+                    $this->dispatch('grouped-extra-actions-called', content: $data['content']);
+                })
+                ->extraModalFooterActions([
+                    Action::make('simpleExtra')
+                        ->action(fn () => $this->dispatch('simple-extra-called')),
+                    ActionGroup::make([
+                        Action::make('option1')
+                            ->action(fn () => $this->dispatch('option1-called')),
+                        Action::make('option2')
+                            ->action(fn () => $this->dispatch('option2-called')),
+                        Action::make('option3')
+                            ->schema([
+                                TextInput::make('value')
+                                    ->required(),
+                            ])
+                            ->action(fn (array $data) => $this->dispatch('option3-called', value: $data['value'])),
+                    ])->button()->label('More Options'),
+                ]),
             Action::make('visible'),
             Action::make('hidden')
                 ->hidden(),
