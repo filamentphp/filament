@@ -23,11 +23,10 @@ final class ProgramService
     public function createProgram(array $data): Program
     {
         return DB::transaction(function () use ($data) {
-            // Force status to initial state
-            $data['status'] = ProgramStatus::TERDAFTAR;
-            $data['created_by'] = Auth::id();
-
-            $program = Program::create($data);
+            $program = new Program($data);
+            $program->status = ProgramStatus::TERDAFTAR;
+            $program->created_by = Auth::id();
+            $program->save();
 
             $this->auditService->logModel('program.created', $program, [
                 'new' => $program->toArray(),
