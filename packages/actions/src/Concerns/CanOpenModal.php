@@ -538,7 +538,7 @@ trait CanOpenModal
 
         foreach ($this->evaluate($this->extraModalFooterActions) as $action) {
             if ($action instanceof ActionGroup) {
-                $actions = $this->prepareModalActionGroup($action);
+                $actions[] = $this->prepareModalActionGroup($action);
             } else {
                 $actions[$action->getName()] = $this->prepareModalAction($action);
             }
