@@ -53,6 +53,7 @@
                         $navigationItemIcon = $navigationItem->isActive() ? ($navigationItem->getActiveIcon() ?? $navigationItem->getIcon()) : $navigationItem->getIcon();
                         $navigationItemUrl = $navigationItem->getUrl();
                         $shouldNavigationItemOpenUrlInNewTab = $navigationItem->shouldOpenUrlInNewTab();
+                        $navigationItemExtraAttributes = $navigationItemChild->getExtraAttributeBag();
                     @endphp
 
                     <x-filament::dropdown.list.item
@@ -62,6 +63,7 @@
                         :icon="$navigationItemIcon"
                         tag="a"
                         :target="$shouldNavigationItemOpenUrlInNewTab ? '_blank' : null"
+                        :attributes="\Filament\Support\prepare_inherited_attributes($navigationItemExtraAttributes)"
                     >
                         {{ $navigationItemChild->getLabel() }}
                     </x-filament::dropdown.list.item>
