@@ -211,7 +211,7 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
      */
     public function getSubNavigation(): array
     {
-        if (filled($cluster = static::getCluster())) {
+        if (filled($cluster = static::getCluster()) && $cluster::shouldRegisterSubNavigation()) {
             return $this->generateNavigationItems($cluster::getClusteredComponents());
         }
 
