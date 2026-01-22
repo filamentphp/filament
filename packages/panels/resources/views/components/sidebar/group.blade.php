@@ -190,7 +190,6 @@
             @endphp
 
             <x-filament-panels::sidebar.item
-                :attributes="\Filament\Support\prepare_inherited_attributes($itemExtraAttributes)"
                 :active="$isItemActive"
                 :active-child-items="$isItemChildItemsActive"
                 :active-icon="$itemActiveIcon"
@@ -206,6 +205,7 @@
                 :sidebar-collapsible="$sidebarCollapsible"
                 :sub-navigation="$subNavigation"
                 :url="$itemUrl"
+                :attributes="\Filament\Support\prepare_inherited_attributes($itemExtraAttributes)"
             >
                 {{ $item->getLabel() }}
 
