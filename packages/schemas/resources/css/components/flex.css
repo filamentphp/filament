@@ -12,7 +12,7 @@
 
     &.fi-align-end,
     &.fi-align-right {
-        @apply flex-row-reverse;
+        @apply justify-end;
     }
 
     &.fi-align-between,
