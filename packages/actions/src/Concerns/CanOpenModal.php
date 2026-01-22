@@ -196,7 +196,7 @@ trait CanOpenModal
     }
 
     /**
-     * @param  array<Action | ActionGroup> | Closure  $actions
+     * @param  array<Action> | Closure  $actions
      *
      *@deprecated Use `extraModalFooterActions()` instead.
      */
@@ -447,7 +447,7 @@ trait CanOpenModal
             ->table($this->getTable());
     }
 
-    protected function prepareModalGroupAction(ActionGroup $group): ActionGroup
+    protected function prepareModalActionGroup(ActionGroup $group): ActionGroup
     {
         $group
             ->schemaContainer($this->getSchemaContainer())
@@ -460,6 +460,12 @@ trait CanOpenModal
             ->table($this->getTable());
 
         foreach ($group->getFlatActions() as $nestedAction) {
+            if ($nestedAction instanceof ActionGroup) {
+                $this->prepareModalActionGroup($nestedAction);
+
+                continue;
+            }
+
             $this->prepareModalAction($nestedAction);
         }
 
@@ -532,8 +538,7 @@ trait CanOpenModal
 
         foreach ($this->evaluate($this->extraModalFooterActions) as $action) {
             if ($action instanceof ActionGroup) {
-                $key = 'group_' . spl_object_id($action);
-                $actions[$key] = $this->prepareModalGroupAction($action);
+                $actions = $this->prepareModalActionGroup($action);
             } else {
                 $actions[$action->getName()] = $this->prepareModalAction($action);
             }

@@ -499,7 +499,7 @@ it('can mount an action that replaces itself and then call the replaced action',
         ->assertDispatched('replaced-action-called');
 });
 
-it('can call an action registered alongside an ActionGroup in extraModalFooterActions', function (): void {
+it('can call an action registered alongside a group in `extraModalFooterActions()`', function (): void {
     livewire(Actions::class)
         ->callAction([
             'withGroupedExtraActions',
@@ -508,7 +508,7 @@ it('can call an action registered alongside an ActionGroup in extraModalFooterAc
         ->assertDispatched('simple-extra-called');
 });
 
-it('can call an action with data registered in an ActionGroup in extraModalFooterActions', function (): void {
+it('can call an action with data registered in a group in `extraModalFooterActions()`', function (): void {
     livewire(Actions::class)
         ->callAction([
             'withGroupedExtraActions',
@@ -520,13 +520,13 @@ it('can call an action with data registered in an ActionGroup in extraModalFoote
         ->assertDispatched('option3-called', value: $value);
 });
 
-it('can mount an action that has an ActionGroup in extraModalFooterActions', function (): void {
+it('can mount an action that has a group in `extraModalFooterActions()`', function (): void {
     livewire(Actions::class)
         ->mountAction('withGroupedExtraActions')
         ->assertActionMounted('withGroupedExtraActions');
 });
 
-it('can call multiple actions registered in an ActionGroup in extraModalFooterActions', function (): void {
+it('can call multiple actions registered in a group in `extraModalFooterActions()`', function (): void {
     livewire(Actions::class)
         ->callAction([
             'withGroupedExtraActions',
@@ -542,7 +542,7 @@ it('can call multiple actions registered in an ActionGroup in extraModalFooterAc
         ->assertDispatched('option2-called');
 });
 
-it('can submit parent action after calling an action registered in an ActionGroup in extraModalFooterActions', function (): void {
+it('can submit parent action after calling an action registered in a group in `extraModalFooterActions()`', function (): void {
     livewire(Actions::class)
         ->callAction([
             'withGroupedExtraActions',

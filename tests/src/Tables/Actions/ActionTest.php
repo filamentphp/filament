@@ -410,7 +410,7 @@ it('can replicate a record', function (): void {
     ]);
 });
 
-it('can call an action registered alongside an ActionGroup in extraModalFooterActions', function (): void {
+it('can call an action registered alongside a group in `extraModalFooterActions()`', function (): void {
     $post = Post::factory()->create();
 
     livewire(PostsTable::class)
@@ -421,7 +421,7 @@ it('can call an action registered alongside an ActionGroup in extraModalFooterAc
         ->assertDispatched('simple-extra-called', recordKey: $post->getKey());
 });
 
-it('can call an action with data registered in an ActionGroup in extraModalFooterActions', function (): void {
+it('can call an action with data registered in a group in `extraModalFooterActions()`', function (): void {
     $post = Post::factory()->create();
 
     livewire(PostsTable::class)
@@ -435,7 +435,7 @@ it('can call an action with data registered in an ActionGroup in extraModalFoote
         ->assertDispatched('option3-called', value: $value, recordKey: $post->getKey());
 });
 
-it('can mount an action that has an ActionGroup in extraModalFooterActions', function (): void {
+it('can mount an action that has a group in `extraModalFooterActions()`', function (): void {
     $post = Post::factory()->create();
 
     livewire(PostsTable::class)
@@ -451,7 +451,7 @@ it('can mount an action that has an ActionGroup in extraModalFooterActions', fun
         ]);
 });
 
-it('can call multiple actions registered in an ActionGroup in extraModalFooterActions', function (): void {
+it('can call multiple actions registered in a group in `extraModalFooterActions()`', function (): void {
     $post = Post::factory()->create();
 
     livewire(PostsTable::class)
@@ -469,7 +469,7 @@ it('can call multiple actions registered in an ActionGroup in extraModalFooterAc
         ->assertDispatched('option2-called', recordKey: $post->getKey());
 });
 
-it('can submit parent action after calling an action registered in an ActionGroup in extraModalFooterActions', function (): void {
+it('can submit parent action after calling an action registered in a group in `extraModalFooterActions()`', function (): void {
     $post = Post::factory()->create();
 
     livewire(PostsTable::class)
