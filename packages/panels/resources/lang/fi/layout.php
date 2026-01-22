@@ -60,4 +60,13 @@ return [
         'alt' => ':name logo',
     ],
 
+    'tenant_menu' => [
+
+        'search_field' => [
+            'label' => 'Asiakkaiden haku',
+            'placeholder' => 'Hae',
+        ],
+
+    ],
+
 ];

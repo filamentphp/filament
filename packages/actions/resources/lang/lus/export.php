@@ -14,6 +14,18 @@ return [
 
                 'label' => 'Columns',
 
+                'actions' => [
+
+                    'select_all' => [
+                        'label' => 'Avaia thlanna',
+                    ],
+
+                    'deselect_all' => [
+                        'label' => 'Avaia paih na',
+                    ],
+
+                ],
+
                 'form' => [
 
                     'is_enabled' => [
@@ -63,6 +75,11 @@ return [
         'max_rows' => [
             'title' => 'Dah chhuah tum hi a lian lutuk',
             'body' => 'Vawikhatah row 1 ai a tam a dah chhuah theiloh.|Vawikhatah rows :count ai a tam a dah chhuah theiloh',
+        ],
+
+        'no_columns' => [
+            'title' => 'Column thlan a awmlo',
+            'body' => 'Khawngaihin dah chhuak turin column pakhat tal thlang rawh.',
         ],
 
         'started' => [

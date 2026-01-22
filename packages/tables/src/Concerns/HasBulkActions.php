@@ -231,10 +231,6 @@ trait HasBulkActions
 
         $query = $this->getSelectedTableRecordsQuery($shouldFetchSelectedRecords, $chunkSize);
 
-        if (! $chunkSize) {
-            $this->applySortingToTableQuery($query);
-        }
-
         if (! $shouldFetchSelectedRecords) {
             return $this->cachedSelectedTableRecords = $query->toBase()->pluck($query->getModel()->getQualifiedKeyName());
         }
@@ -312,7 +308,13 @@ trait HasBulkActions
 
         $relationship = $table->selectPivotDataInQuery($relationship);
 
-        return $relationship->getQuery();
+        $query = $relationship->getQuery();
+
+        if (! $chunkSize) {
+            $this->applySortingToTableQuery($query);
+        }
+
+        return $query;
     }
 
     /**
