@@ -140,7 +140,7 @@ class Wizard extends Component
                 continue;
             }
 
-            if (! $this->isSkippable() && $index > $this->getCurrentStepIndex()) {
+            if ((! $this->isSkippable()) && ($index > $this->getCurrentStepIndex())) {
                 return;
             }
 
@@ -150,7 +150,7 @@ class Wizard extends Component
             $livewire = $this->getLivewire();
 
             $livewire->dispatch(
-                'wizard-go-to-step',
+                'go-to-wizard-step',
                 key: $this->getKey(),
                 step: $step,
             );
