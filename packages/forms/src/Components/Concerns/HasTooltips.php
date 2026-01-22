@@ -7,12 +7,12 @@ use Closure;
 trait HasTooltips
 {
     /**
-     * @var array<int|string, string|int> | Closure | null
+     * @var array<string> | Closure | null
      */
     protected array | Closure | null $tooltips = null;
 
     /**
-     * @param  array<int|string, string|int> | Closure | null  $tooltips
+     * @param  array<string> | Closure | null  $tooltips
      */
     public function tooltips(array | Closure | null $tooltips): static
     {
@@ -22,7 +22,7 @@ trait HasTooltips
     }
 
     /**
-     * @return string | array<int | string, string | int> | null
+     * @return string | array<string> | null
      */
     public function getTooltip(mixed $value): string | array | null
     {
@@ -30,7 +30,7 @@ trait HasTooltips
     }
 
     /**
-     * @return array<int|string, string|int> | null
+     * @return ?array<string>
      */
     public function getTooltips(): ?array
     {
