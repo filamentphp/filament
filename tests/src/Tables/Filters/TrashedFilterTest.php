@@ -125,8 +125,9 @@ it('cannot access record for action after record no longer matches non-excluded 
         ->assertCanSeeTableRecords([$post])
         ->tap(fn () => $post->update(['is_published' => false]));
 
-    expect(fn () => livewire(PostsTable::class)
-        ->filterTable('is_published')
-        ->mountTableAction(DeleteAction::class, $post)
+    expect(
+        fn () => livewire(PostsTable::class)
+            ->filterTable('is_published')
+            ->mountTableAction(DeleteAction::class, $post)
     )->toThrow(TypeError::class);
 });
