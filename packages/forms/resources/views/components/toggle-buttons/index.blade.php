@@ -36,6 +36,7 @@
                 $shouldOptionBeDisabled = $isDisabled || $isOptionDisabled($value, $label);
                 $color = $getColor($value);
                 $icon = $getIcon($value);
+                $tooltip = $getTooltip($value);
             @endphp
 
             <div class="fi-fo-toggle-buttons-btn-ctn">
@@ -58,6 +59,7 @@
                     :icon="$icon"
                     :label-sr-only="$areButtonLabelsHidden"
                     tag="label"
+                    :tooltip="$tooltip"
                 >
                     {{ $label }}
                 </x-filament::button>

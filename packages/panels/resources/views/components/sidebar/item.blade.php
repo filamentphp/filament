@@ -125,6 +125,7 @@
                     $childItemIcon = $childItem->getIcon();
                     $shouldChildItemOpenUrlInNewTab = $childItem->shouldOpenUrlInNewTab();
                     $childItemUrl = $childItem->getUrl();
+                    $childItemExtraAttributes = $childItem->getExtraAttributeBag();
                 @endphp
 
                 <x-filament-panels::sidebar.item
@@ -142,6 +143,7 @@
                     sub-grouped
                     :sub-navigation="$subNavigation"
                     :url="$childItemUrl"
+                    :attributes="\Filament\Support\prepare_inherited_attributes($childItemExtraAttributes)"
                 >
                     {{ $childItem->getLabel() }}
                 </x-filament-panels::sidebar.item>

@@ -284,6 +284,10 @@ return [
 
     'markdown_editor' => [
 
+        'file_attachments_accepted_file_types_message' => 'Les fichiers joints doivent être de type : :values.',
+
+        'file_attachments_max_size_message' => 'Les fichiers joints ne doivent pas dépasser :max kilobytes.',
+
         'tools' => [
             'attach_files' => 'Joindre des fichiers',
             'blockquote' => 'Citation',
@@ -443,6 +447,71 @@ return [
 
             ],
 
+            'grid' => [
+
+                'label' => 'Grille',
+
+                'modal' => [
+
+                    'heading' => 'Grille',
+
+                    'form' => [
+
+                        'preset' => [
+
+                            'label' => 'Préréglage',
+
+                            'placeholder' => 'Aucun',
+
+                            'options' => [
+                                'two' => 'Deux',
+                                'three' => 'Trois',
+                                'four' => 'Quatre',
+                                'five' => 'Cinq',
+                                'two_start_third' => 'Deux (commence troisième)',
+                                'two_end_third' => 'Deux (fini troisième)',
+                                'two_start_fourth' => 'Deux (commence quatrième)',
+                                'two_end_fourth' => 'Deux (fini quatrième)',
+                            ],
+                        ],
+
+                        'columns' => [
+                            'label' => 'Columns',
+                        ],
+
+                        'from_breakpoint' => [
+
+                            'label' => 'From breakpoint',
+
+                            'options' => [
+                                'default' => 'All',
+                                'sm' => 'Small',
+                                'md' => 'Medium',
+                                'lg' => 'Large',
+                                'xl' => 'Extra large',
+                                '2xl' => 'Two extra large',
+                            ],
+
+                        ],
+
+                        'is_asymmetric' => [
+                            'label' => 'Two asymmetric columns',
+                        ],
+
+                        'start_span' => [
+                            'label' => 'Start span',
+                        ],
+
+                        'end_span' => [
+                            'label' => 'End span',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
             'link' => [
 
                 'label' => 'Modifier',
@@ -575,6 +644,8 @@ return [
 
         'max_items_message' => 'Uniquement :count peuvent être sélectionnés.',
 
+        'no_options_message' => 'Aucune option disponible.',
+
         'no_search_results_message' => 'Aucune option ne correspond à votre recherche.',
 
         'placeholder' => 'Sélectionnez une option',
@@ -586,12 +657,25 @@ return [
     ],
 
     'tags_input' => [
+
+        'actions' => [
+
+            'delete' => [
+                'label' => 'Supprimer',
+            ],
+
+        ],
         'placeholder' => 'Nouveau tag',
     ],
 
     'text_input' => [
 
         'actions' => [
+
+            'copy' => [
+                'label' => 'Copier',
+                'message' => 'Copié',
+            ],
 
             'hide_password' => [
                 'label' => 'Masquer le mot de passe',
