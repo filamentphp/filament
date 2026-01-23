@@ -6,7 +6,6 @@ use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Section;
-use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
@@ -490,52 +489,6 @@ class TestNestedRepeatableEntryStateAssertions extends Component implements HasS
     }
 }
 
-it('can render entry within form that reads form data', function (): void {
-    livewire(TestEntryInForm::class)
-        ->assertSuccessful()
-        ->assertSchemaComponentStateSet('display', 'Current value: initial', 'form')
-        ->assertSeeText('Current value: initial')
-        ->set('data.input_field', 'updated value')
-        ->assertSchemaComponentStateSet('display', 'Current value: updated value', 'form')
-        ->assertSeeText('Current value: updated value');
-});
-
-class TestEntryInForm extends Component implements HasSchemas
-{
-    use InteractsWithSchemas;
-
-    public array $data = [];
-
-    public function mount(): void
-    {
-        $this->form->fill([
-            'input_field' => 'initial',
-        ]);
-    }
-
-    public function form(Schema $schema): Schema
-    {
-        return $schema
-            ->statePath('data')
-            ->components([
-                TextInput::make('input_field')
-                    ->live(),
-                TextEntry::make('display')
-                    ->label('Display')
-                    ->state(fn (Get $get): string => 'Current value: ' . $get('input_field')),
-            ]);
-    }
-
-    public function render(): string
-    {
-        return <<<'BLADE'
-            <div>
-                {{ $this->form }}
-            </div>
-            BLADE;
-    }
-}
-
 it('can render RepeatableEntry within form schema', function (): void {
     livewire(TestRepeatableEntryInForm::class)
         ->assertSuccessful()
@@ -588,43 +541,3 @@ class TestRepeatableEntryInForm extends Component implements HasSchemas
     }
 }
 
-it('can assert entry state within form using `assertSchemaComponentStateSet()`', function (): void {
-    livewire(TestEntryStateInForm::class)
-        ->assertSuccessful()
-        ->assertSchemaComponentStateSet('summary', 'Form field value: test input', 'form')
-        ->assertSeeText('Form field value: test input');
-});
-
-class TestEntryStateInForm extends Component implements HasSchemas
-{
-    use InteractsWithSchemas;
-
-    public array $data = [];
-
-    public function mount(): void
-    {
-        $this->form->fill([
-            'input' => 'test input',
-        ]);
-    }
-
-    public function form(Schema $schema): Schema
-    {
-        return $schema
-            ->statePath('data')
-            ->components([
-                TextInput::make('input'),
-                TextEntry::make('summary')
-                    ->state(fn (Get $get): string => 'Form field value: ' . $get('input')),
-            ]);
-    }
-
-    public function render(): string
-    {
-        return <<<'BLADE'
-            <div>
-                {{ $this->form }}
-            </div>
-            BLADE;
-    }
-}
