@@ -299,6 +299,11 @@
             outline: 1px solid rgba(0, 0, 0, 0.25);
             border-radius: 0.125rem;
         }
+
+        /* Workaround for TipTap bug: https://github.com/filamentphp/filament/issues/18997 */
+        [data-resize-container] {
+            @apply !inline-block;
+        }
     }
 
     & .tiptap.ProseMirror {

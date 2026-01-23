@@ -1,6 +1,15 @@
 import * as esbuild from 'esbuild'
+import * as fs from 'fs'
 
 const isDev = process.argv.includes('--dev')
+
+function cleanDirectory(directory) {
+    if (fs.existsSync(directory)) {
+        fs.rmSync(directory, { recursive: true })
+    }
+
+    fs.mkdirSync(directory, { recursive: true })
+}
 
 async function compile(options) {
     const context = await esbuild.context(options)
@@ -98,6 +107,8 @@ compile({
     entryPoints: [`./packages/panels/resources/js/echo.js`],
     outfile: `./packages/panels/dist/echo.js`,
 })
+
+cleanDirectory('./packages/panels/dist/fonts/inter')
 
 compile({
     ...defaultOptions,

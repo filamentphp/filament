@@ -13,6 +13,8 @@ use Filament\Tests\Fixtures\Clusters\UserManagement;
 use Filament\Tests\Fixtures\Clusters\UserManagement\Pages\GeneralSettings;
 use Filament\Tests\Fixtures\Clusters\UserManagement\Pages\ManageAdmins;
 use Filament\Tests\Fixtures\Clusters\UserManagement\Pages\ManageStaff;
+use Filament\Tests\Fixtures\Clusters\WithoutSubNavigationCluster;
+use Filament\Tests\Fixtures\Clusters\WithoutSubNavigationCluster\Pages\ClusteredPageWithoutSubNavigation;
 use Filament\Tests\Fixtures\Pages\Actions;
 use Filament\Tests\Fixtures\Pages\BuilderTest;
 use Filament\Tests\Fixtures\Pages\KeyValueTest;
@@ -77,6 +79,8 @@ class AdminPanelProvider extends PanelProvider
                 ManageAdmins::class,
                 ManageStaff::class,
                 GeneralSettings::class,
+                WithoutSubNavigationCluster::class,
+                ClusteredPageWithoutSubNavigation::class,
             ])
             ->middleware([
                 EncryptCookies::class,
