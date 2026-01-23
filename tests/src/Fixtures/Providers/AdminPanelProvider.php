@@ -9,8 +9,8 @@ use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
-use Filament\Tests\Fixtures\Clusters\NoSubNavigationCluster;
-use Filament\Tests\Fixtures\Clusters\NoSubNavigationCluster\Pages\TestPage;
+use Filament\Tests\Fixtures\Clusters\ClusterWithoutSubNavigation;
+use Filament\Tests\Fixtures\Clusters\NoSubNavigationCluster\Pages\ClusteredPageWithoutSubNavigation;
 use Filament\Tests\Fixtures\Clusters\UserManagement;
 use Filament\Tests\Fixtures\Clusters\UserManagement\Pages\GeneralSettings;
 use Filament\Tests\Fixtures\Clusters\UserManagement\Pages\ManageAdmins;
@@ -79,8 +79,8 @@ class AdminPanelProvider extends PanelProvider
                 ManageAdmins::class,
                 ManageStaff::class,
                 GeneralSettings::class,
-                NoSubNavigationCluster::class,
-                TestPage::class,
+                ClusterWithoutSubNavigation::class,
+                ClusteredPageWithoutSubNavigation::class,
             ])
             ->middleware([
                 EncryptCookies::class,

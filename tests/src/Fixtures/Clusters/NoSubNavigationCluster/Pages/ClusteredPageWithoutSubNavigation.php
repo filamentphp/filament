@@ -3,11 +3,11 @@
 namespace Filament\Tests\Fixtures\Clusters\NoSubNavigationCluster\Pages;
 
 use Filament\Pages\Page;
-use Filament\Tests\Fixtures\Clusters\NoSubNavigationCluster;
+use Filament\Tests\Fixtures\Clusters\ClusterWithoutSubNavigation;
 
-class TestPage extends Page
+class ClusteredPageWithoutSubNavigation extends Page
 {
-    protected static ?string $cluster = NoSubNavigationCluster::class;
+    protected static ?string $cluster = ClusterWithoutSubNavigation::class;
 
     protected static ?string $navigationLabel = 'Test Page';
 

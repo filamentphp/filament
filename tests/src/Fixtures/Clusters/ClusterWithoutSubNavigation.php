@@ -4,7 +4,7 @@ namespace Filament\Tests\Fixtures\Clusters;
 
 use Filament\Clusters\Cluster;
 
-class NoSubNavigationCluster extends Cluster
+class ClusterWithoutSubNavigation extends Cluster
 {
     protected static bool $shouldRegisterSubNavigation = false;
 

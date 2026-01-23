@@ -116,3 +116,20 @@ public static function getClusterBreadcrumb(): string
     return __('filament/clusters/cluster.name');
 }
 ```
+
+## Removing the sub navigation from a cluster
+
+By default, all resources and pages in a cluster will show the sub-navigation. If you want to remove the sub-navigation from all resources and pages in a cluster, you can set the `$shouldRegisterSubNavigation` property to `false` in the cluster class:
+
+```php
+protected static bool $shouldRegisterSubNavigation = false;
+```
+
+Alternatively, you may override the `shouldRegisterSubNavigation()` method to define dynamic behavior:
+
+```php
+public static function shouldRegisterSubNavigation(): bool
+{
+    return FeatureFlag::active();
+}
+```

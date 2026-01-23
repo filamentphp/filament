@@ -5,8 +5,8 @@ use Filament\Navigation\NavigationGroup;
 use Filament\Navigation\NavigationItem;
 use Filament\Pages\Page;
 use Filament\Resources\Pages\ListRecords;
-use Filament\Tests\Fixtures\Clusters\NoSubNavigationCluster;
-use Filament\Tests\Fixtures\Clusters\NoSubNavigationCluster\Pages\TestPage;
+use Filament\Tests\Fixtures\Clusters\ClusterWithoutSubNavigation;
+use Filament\Tests\Fixtures\Clusters\NoSubNavigationCluster\Pages\ClusteredPageWithoutSubNavigation;
 use Filament\Tests\Fixtures\Clusters\UserManagement;
 use Filament\Tests\Fixtures\Clusters\UserManagement\Pages\ManageAdmins;
 use Filament\Tests\Fixtures\Resources\Users\UserResource;
@@ -315,9 +315,9 @@ it('can use enum `HasLabel` for cluster sub-navigation groups', function (): voi
 
 it('can disable sub-navigation for a cluster', function (): void {
     // Access a page within the cluster that has sub-navigation disabled
-    $this->get(TestPage::getUrl())->assertSuccessful();
+    $this->get(ClusteredPageWithoutSubNavigation::getUrl())->assertSuccessful();
 
-    $component = livewire(TestPage::class);
+    $component = livewire(ClusteredPageWithoutSubNavigation::class);
 
     $subNavigation = $component->instance()->getSubNavigation();
 
@@ -325,7 +325,7 @@ it('can disable sub-navigation for a cluster', function (): void {
 });
 
 it('returns sub-navigation when cluster has sub-navigation enabled', function (): void {
-    // UserManagement cluster has sub-navigation enabled by default
+    // `UserManagement` cluster has sub-navigation enabled by default
     $this->get(ManageAdmins::getUrl())->assertSuccessful();
 
     $component = livewire(ManageAdmins::class);
@@ -339,7 +339,7 @@ it('can disable sub-navigation for resource pages in a cluster', function (): vo
     // Create a test resource page that would be in a cluster with sub-navigation disabled
     $listRecordsPage = new class extends ListRecords
     {
-        protected static ?string $cluster = NoSubNavigationCluster::class;
+        protected static ?string $cluster = ClusterWithoutSubNavigation::class;
 
         protected static string $resource = UserResource::class;
     };
@@ -350,9 +350,9 @@ it('can disable sub-navigation for resource pages in a cluster', function (): vo
 });
 
 it('can check if cluster should register sub-navigation', function (): void {
-    // Test that UserManagement cluster has sub-navigation enabled by default
+    // Test that `UserManagement` cluster has sub-navigation enabled by default
     expect(UserManagement::shouldRegisterSubNavigation())->toBeTrue();
 
-    // Test that NoSubNavigationCluster has sub-navigation disabled
-    expect(NoSubNavigationCluster::shouldRegisterSubNavigation())->toBeFalse();
+    // Test that `NoSubNavigationCluster` has sub-navigation disabled
+    expect(ClusterWithoutSubNavigation::shouldRegisterSubNavigation())->toBeFalse();
 });
