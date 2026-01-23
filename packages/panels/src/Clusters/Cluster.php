@@ -58,7 +58,6 @@ class Cluster extends Page
         return static::$shouldRegisterSubNavigation;
     }
 
-
     /**
      * @param  array<string, string>  $breadcrumbs
      * @return array<string, string>
