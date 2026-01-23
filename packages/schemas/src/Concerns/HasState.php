@@ -403,7 +403,7 @@ trait HasState
         }
 
         if ($this->getParentComponent()?->getContainer()->getConstantState() !== null) {
-            return $this->getParentComponent()->getContainer()->getStatePath();
+            return $this->getParentComponent()->getContainer()->getConstantStatePath();
         }
 
         return $this->getParentComponent()?->getRecordConstantStatePath();
