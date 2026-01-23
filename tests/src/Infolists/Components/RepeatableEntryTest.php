@@ -103,7 +103,7 @@ class TestComponentWithNestedRepeatableEntry extends Component implements HasSch
     }
 }
 
-it('can resolve state for RepeatableEntry within nested sections with `statePath()`', function (): void {
+it('can resolve state for `RepeatableEntry` within nested sections with `statePath()`', function (): void {
     livewire(TestRepeatableEntryInNestedSections::class)
         ->assertSuccessful()
         ->assertSchemaComponentStateSet('page.block.items.0.name', 'Item One', 'infolist')
@@ -155,7 +155,7 @@ class TestRepeatableEntryInNestedSections extends Component implements HasSchema
     }
 }
 
-it('can resolve state for nested RepeatableEntry', function (): void {
+it('can resolve state for nested `RepeatableEntry`', function (): void {
     livewire(TestNestedRepeatableEntryState::class)
         ->assertSuccessful()
         ->assertSchemaComponentStateSet('users.0.name', 'User Alice', 'infolist')
@@ -216,7 +216,7 @@ class TestNestedRepeatableEntryState extends Component implements HasSchemas
     }
 }
 
-it('can resolve state for deeply nested RepeatableEntry within sections', function (): void {
+it('can resolve state for deeply nested `RepeatableEntry` within sections', function (): void {
     livewire(TestDeeplyNestedRepeatableEntry::class)
         ->assertSuccessful()
         ->assertSchemaComponentStateSet('store.categories.0.name', 'Category A', 'infolist')
@@ -290,7 +290,7 @@ class TestDeeplyNestedRepeatableEntry extends Component implements HasSchemas
     }
 }
 
-it('can resolve state for relationship-based RepeatableEntry', function (): void {
+it('can resolve state for relationship-based `RepeatableEntry`', function (): void {
     $user = User::factory()
         ->has(Post::factory()->count(2)->sequence(
             ['title' => 'First Post', 'content' => 'Content 1'],
@@ -342,7 +342,7 @@ class TestRelationshipRepeatableEntry extends Component implements HasSchemas
     }
 }
 
-it('can resolve state for relationship-based RepeatableEntry within nested sections', function (): void {
+it('can resolve state for relationship-based `RepeatableEntry` within nested sections', function (): void {
     $user = User::factory()
         ->has(Post::factory()->count(2)->sequence(
             ['title' => 'Post A'],
@@ -398,7 +398,7 @@ class TestRelationshipRepeatableEntryInSection extends Component implements HasS
     }
 }
 
-it('correctly asserts entry state within RepeatableEntry using `assertSchemaComponentStateSet()`', function (): void {
+it('correctly asserts entry state within `RepeatableEntry` using `assertSchemaComponentStateSet()`', function (): void {
     livewire(TestRepeatableEntryStateAssertions::class)
         ->assertSuccessful()
         ->assertSchemaComponentStateSet('items.0.name', 'First', 'infolist')
@@ -438,7 +438,7 @@ class TestRepeatableEntryStateAssertions extends Component implements HasSchemas
     }
 }
 
-it('correctly asserts nested RepeatableEntry state using `assertSchemaComponentStateSet()`', function (): void {
+it('correctly asserts nested `RepeatableEntry` state using `assertSchemaComponentStateSet()`', function (): void {
     livewire(TestNestedRepeatableEntryStateAssertions::class)
         ->assertSuccessful()
         ->assertSchemaComponentStateSet('users.0.name', 'Alice', 'infolist')
@@ -489,7 +489,7 @@ class TestNestedRepeatableEntryStateAssertions extends Component implements HasS
     }
 }
 
-it('can render RepeatableEntry within form schema', function (): void {
+it('can render `RepeatableEntry` within form schema', function (): void {
     livewire(TestRepeatableEntryInForm::class)
         ->assertSuccessful()
         ->assertSchemaComponentStateSet('tags.0.label', 'Tag One', 'form')
