@@ -1871,6 +1871,11 @@ export class Select {
             ? this.searchingMessage
             : this.loadingMessage
         this.dropdown.appendChild(loadingItem)
+
+        // Reposition dropdown after DOM changes
+        if (this.isOpen) {
+            this.deferPositionDropdown()
+        }
     }
 
     hideLoadingState() {
@@ -1897,6 +1902,11 @@ export class Select {
         noOptionsItem.className = 'fi-select-input-message'
         noOptionsItem.textContent = this.noOptionsMessage
         this.dropdown.appendChild(noOptionsItem)
+
+        // Reposition dropdown after DOM changes
+        if (this.isOpen) {
+            this.deferPositionDropdown()
+        }
     }
 
     showNoResultsMessage() {
@@ -1913,6 +1923,11 @@ export class Select {
         noResultsItem.className = 'fi-select-input-message'
         noResultsItem.textContent = this.noSearchResultsMessage
         this.dropdown.appendChild(noResultsItem)
+
+        // Reposition dropdown after DOM changes
+        if (this.isOpen) {
+            this.deferPositionDropdown()
+        }
     }
 
     filterOptions(query) {
