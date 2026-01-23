@@ -66,6 +66,9 @@
         @filamentStyles
 
         {{ filament()->getTheme()->getHtml() }}
+        {{ filament()->getFontPreloadHtml() }}
+        {{ filament()->getMonoFontPreloadHtml() }}
+        {{ filament()->getSerifFontPreloadHtml() }}
         {{ filament()->getFontHtml() }}
         {{ filament()->getMonoFontHtml() }}
         {{ filament()->getSerifFontHtml() }}
