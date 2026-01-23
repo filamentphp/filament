@@ -5,10 +5,10 @@ use Filament\Navigation\NavigationGroup;
 use Filament\Navigation\NavigationItem;
 use Filament\Pages\Page;
 use Filament\Resources\Pages\ListRecords;
-use Filament\Tests\Fixtures\Clusters\WithoutSubNavigationCluster;
-use Filament\Tests\Fixtures\Clusters\WithoutSubNavigationCluster\Pages\ClusteredPageWithoutSubNavigation;
 use Filament\Tests\Fixtures\Clusters\UserManagement;
 use Filament\Tests\Fixtures\Clusters\UserManagement\Pages\ManageAdmins;
+use Filament\Tests\Fixtures\Clusters\WithoutSubNavigationCluster;
+use Filament\Tests\Fixtures\Clusters\WithoutSubNavigationCluster\Pages\ClusteredPageWithoutSubNavigation;
 use Filament\Tests\Fixtures\Resources\Users\UserResource;
 use Filament\Tests\Panels\Navigation\TestCase;
 
