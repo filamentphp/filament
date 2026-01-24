@@ -16,6 +16,7 @@ use Filament\Tests\Fixtures\Clusters\UserManagement\Pages\ManageStaff;
 use Filament\Tests\Fixtures\Clusters\WithoutSubNavigationCluster;
 use Filament\Tests\Fixtures\Clusters\WithoutSubNavigationCluster\Pages\ClusteredPageWithoutSubNavigation;
 use Filament\Tests\Fixtures\Pages\Actions;
+use Filament\Tests\Fixtures\Pages\AfterStateUpdatedJsTest;
 use Filament\Tests\Fixtures\Pages\BuilderTest;
 use Filament\Tests\Fixtures\Pages\KeyValueTest;
 use Filament\Tests\Fixtures\Pages\RepeaterTest;
@@ -68,6 +69,7 @@ class AdminPanelProvider extends PanelProvider
             ->pages([
                 Pages\Dashboard::class,
                 Actions::class,
+                AfterStateUpdatedJsTest::class,
                 BuilderTest::class,
                 KeyValueTest::class,
                 RepeaterTest::class,
