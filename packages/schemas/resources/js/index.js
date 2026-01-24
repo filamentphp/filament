@@ -111,7 +111,9 @@ document.addEventListener('alpine:init', () => {
     )
 
     window.Alpine.data('filamentActionsSchemaComponent', actions)
+})
 
+document.addEventListener('livewire:init', () => {
     Livewire.interceptMessage(({ message, onSuccess }) => {
         onSuccess(({ payload }) => {
             payload.effects?.dispatches?.forEach((dispatch) => {
