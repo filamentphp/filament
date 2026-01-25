@@ -54,13 +54,11 @@ trait HasFiltersSchema /** @phpstan-ignore trait.unused */
 
     public function mountHasFiltersSchema(): void
     {
-        if (! $this->hasDeferredFilters()) {
-            return;
-        }
-
         $this->getFiltersSchema()->fill();
 
-        $this->filters = $this->deferredFilters;
+        if ($this->hasDeferredFilters()) {
+            $this->filters = $this->deferredFilters;
+        }
     }
 
     public function getFiltersTriggerAction(): Action
