@@ -197,16 +197,18 @@ class RichEditorTool extends ViewComponent implements HasEmbeddedView
             $activeJsExpression = 'editorUpdatedAt && $getEditor()?.isActive(' . Js::from($this->getActiveKey())->toHtml() . ', ' . Js::from($this->getActiveOptions())->toHtml() . ')';
         }
 
+        $label = $this->getLabel();
         $isLabelHidden = $this->isLabelHidden();
 
         $attributes = $this->getExtraAttributeBag()
             ->merge([
                 'tabindex' => -1,
                 'type' => 'button',
+                'aria-label' => $label,
                 'x-bind:class' => '{ \'fi-active\': ' . ($this->hasActiveStyling() ? $activeJsExpression : 'false') . ' }',
                 'x-bind:disabled' => $this->isDisabledWhenNotActive() ? '!(' . $activeJsExpression . ')' : null,
                 'x-on:click' => $this->getJsHandler(),
-                'x-tooltip' => (filled($label = $this->getLabel()) && $isLabelHidden)
+                'x-tooltip' => (filled($label) && $isLabelHidden)
                     ? '{ content: ' . Js::from($label) . ', theme: $store.theme }'
                     : null,
             ], escape: false)
@@ -219,7 +221,7 @@ class RichEditorTool extends ViewComponent implements HasEmbeddedView
 
         <button <?= $attributes->toHtml() ?>>
             <?= generate_icon_html($this->getIcon(), alias: $this->getIconAlias())->toHtml() ?>
-            <?= $isLabelHidden ? null : '<span class="fi-fo-rich-editor-tool-label">' . $this->getLabel() . '</span>' ?>
+            <?= $isLabelHidden ? null : '<span class="fi-fo-rich-editor-tool-label">' . $label . '</span>' ?>
         </button>
 
         <?php return ob_get_clean();
