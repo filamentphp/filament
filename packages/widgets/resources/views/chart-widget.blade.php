@@ -73,7 +73,7 @@
                     options: @js($this->getOptions()),
                     type: @js($type),
                 })"
-                {{ new ComponentAttributeBag()->color(ChartWidgetComponent::class, $color)->class(['fi-wi-chart-canvas-ctn', 'fi-wi-chart-canvas-ctn-no-aspect-ratio' => filled($maxHeight)]) }}>
+                {{ (new ComponentAttributeBag())->color(ChartWidgetComponent::class, $color)->class(['fi-wi-chart-canvas-ctn', 'fi-wi-chart-canvas-ctn-no-aspect-ratio' => filled($maxHeight)]) }}>
                 <canvas x-ref="canvas"
                     @if ($maxHeight) style="max-height: {{ $maxHeight }}" @endif></canvas>
 
