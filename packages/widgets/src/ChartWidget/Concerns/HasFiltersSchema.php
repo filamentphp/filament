@@ -2,19 +2,65 @@
 
 namespace Filament\Widgets\ChartWidget\Concerns;
 
+use Closure;
 use Filament\Actions\Action;
 use Filament\Schemas\Schema;
+use Filament\Support\Enums\ActionSize;
+use Filament\Support\Enums\Size;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
 use Filament\Widgets\View\WidgetsIconAlias;
 
 trait HasFiltersSchema /** @phpstan-ignore trait.unused */
 {
+    /**
+     * @var array<string, mixed> | null
+     */
     public ?array $filters = [];
+
+    /**
+     * @var array<string, mixed> | null
+     */
+    public ?array $deferredFilters = null;
+
+    protected bool|Closure|null $deferredFiltersEnabled = null;
 
     public function filtersSchema(Schema $schema): Schema
     {
         return $schema;
+    }
+
+    public function deferFilters(bool|Closure $condition = true): static
+    {
+        $this->deferredFiltersEnabled = $condition;
+
+        return $this;
+    }
+
+    public function hasDeferredFilters(): bool
+    {
+        if ($this->deferredFiltersEnabled !== null) {
+            $condition = $this->deferredFiltersEnabled;
+        } else {
+            $condition = property_exists($this, 'hasDeferredFilters')
+                ? $this->hasDeferredFilters
+                : false;
+        }
+
+        return $condition instanceof Closure
+            ? app()->call($condition, ['livewire' => $this])
+            : $condition;
+    }
+
+    public function mountHasFiltersSchema(): void
+    {
+        if (! $this->hasDeferredFilters()) {
+            return;
+        }
+
+        $this->getFiltersSchema()->fill();
+
+        $this->filters = $this->deferredFilters;
     }
 
     public function getFiltersTriggerAction(): Action
@@ -33,8 +79,86 @@ trait HasFiltersSchema /** @phpstan-ignore trait.unused */
             return $this->getSchema('filtersSchema');
         }
 
-        return $this->filtersSchema($this->makeSchema()
-            ->statePath('filters')
-            ->live());
+        return $this->filtersSchema($this->makeSchema())
+            ->when(
+                $this->hasDeferredFilters(),
+                fn (Schema $schema) => $schema
+                    ->statePath('deferredFilters')
+                    ->partiallyRender(),
+                fn (Schema $schema) => $schema
+                    ->statePath('filters')
+                    ->live(),
+            );
+    }
+
+    public function updatedFilters(): void
+    {
+        if ($this->hasDeferredFilters()) {
+            $this->deferredFilters = $this->filters;
+
+            return;
+        }
+
+        $this->handleFilterUpdates();
+    }
+
+    protected function handleFilterUpdates(): void
+    {
+        $this->cachedData = null;
+
+        $this->dispatch('filtersApplied');
+    }
+
+    public function applyFilters(): void
+    {
+        $this->filters = $this->deferredFilters;
+
+        $this->handleFilterUpdates();
+    }
+
+    public function resetFiltersForm(): void
+    {
+        $this->getFiltersSchema()->fill();
+
+        if ($this->hasDeferredFilters()) {
+            $this->applyFilters();
+
+            return;
+        }
+
+        $this->handleFilterUpdates();
+    }
+
+    public function getFiltersApplyAction(): Action
+    {
+        $action = Action::make('applyFilters')
+            ->label(__('filament-widgets::chart.actions.apply.label'))
+            ->action('applyFilters')
+            ->visible($this->hasDeferredFilters())
+            ->authorize(true)
+            ->button()
+            ->size(Size::Small);
+
+        if (method_exists($this, 'filtersApplyAction')) {
+            $action = $this->filtersApplyAction($action);
+        }
+
+        return $action;
+    }
+
+    public function getFiltersResetAction(): Action
+    {
+        $action = Action::make('resetFilters')
+            ->label(__('filament-widgets::chart.actions.reset.label'))
+            ->link()
+            ->action('resetFiltersForm')
+            ->color('gray')
+            ->authorize(true);
+
+        if (method_exists($this, 'filtersResetAction')) {
+            $action = $this->filtersResetAction($action);
+        }
+
+        return $action;
     }
 }
