@@ -116,6 +116,16 @@ it('uses statePath("filters") when not deferred', function (): void {
     expect($widget->instance()->getFiltersSchema()->getStatePath())->toBe('filters');
 });
 
+it('shows the count of active filters on the trigger action', function (): void {
+    $widget = Livewire::test(TestChartWidgetDefault::class);
+
+    expect($widget->instance()->getFiltersActiveCount())->toBe(1);
+
+    $widget->set('filters.year', null);
+
+    expect($widget->instance()->getFiltersActiveCount())->toBeNull();
+});
+
 class TestChartWidgetDefault extends ChartWidget
 {
     use ChartWidget\Concerns\HasFiltersSchema;

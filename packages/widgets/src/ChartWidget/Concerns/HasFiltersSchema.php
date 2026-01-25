@@ -68,7 +68,23 @@ trait HasFiltersSchema /** @phpstan-ignore trait.unused */
             ->iconButton()
             ->icon(FilamentIcon::resolve(WidgetsIconAlias::CHART_WIDGET_FILTER) ?? Heroicon::Funnel)
             ->color('gray')
+            ->badge($this->getFiltersActiveCount())
+            ->badgeColor('primary')
             ->livewireClickHandlerEnabled(false);
+    }
+
+    public function getFiltersActiveCount(): ?int
+    {
+        $count = count(array_filter(
+            $this->filters ?? [],
+            fn ($value) => filled($value),
+        ));
+
+        if ($count === 0) {
+            return null;
+        }
+
+        return $count;
     }
 
     public function getFiltersSchema(): Schema
