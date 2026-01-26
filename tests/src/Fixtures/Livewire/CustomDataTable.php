@@ -46,11 +46,11 @@ class CustomDataTable extends Component implements HasActions, HasSchemas, Table
                     ->boolean(),
                 TextColumn::make('formatted_state')
                     ->formatStateUsing(fn () => 'formatted state'),
-                Tables\Columns\TextColumn::make('extra_attributes')
+                TextColumn::make('extra_attributes')
                     ->extraAttributes([
                         'class' => 'text-danger-500',
                     ]),
-                Tables\Columns\TextColumn::make('with_description')
+                TextColumn::make('with_description')
                     ->description('description below')
                     ->description('description above', 'above'),
 
