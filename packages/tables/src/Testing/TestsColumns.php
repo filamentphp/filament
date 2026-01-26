@@ -63,6 +63,22 @@ class TestsColumns
         };
     }
 
+    public function assertTableRecordKeyExists(): Closure
+    {
+        return function (?string $recordKey): static {
+            $record = $this->instance()->getTableRecord($recordKey);
+
+            $livewireClass = $this->instance()::class;
+
+            Assert::assertNotEmpty(
+                $record,
+                "Failed asserting that a table row with key {$recordKey} exists on the [{$livewireClass}] component.",
+            );
+
+            return $this;
+        };
+    }
+
     public function assertTableColumnExists(): Closure
     {
         return function (string $name, ?Closure $checkColumnUsing = null, $record = null): static {
