@@ -14,6 +14,19 @@ return [
 
                 'label' => 'Colonnes',
 
+                'actions' => [
+
+                    'select_all' => [
+                        'label' => 'Sélectionner tout',
+                    ],
+
+                    'deselect_all' => [
+                        'label' => 'Désélectionner tout',
+                    ],
+
+                ],
+    
+
                 'form' => [
 
                     'is_enabled' => [
