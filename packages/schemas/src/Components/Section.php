@@ -3,30 +3,30 @@
 namespace Filament\Schemas\Components;
 
 use Closure;
+use Illuminate\Support\Str;
 use Filament\Actions\Action;
+use Filament\Schemas\Schema;
+use Filament\Support\Enums\Size;
 use Filament\Actions\ActionGroup;
-use Filament\Schemas\Components\Concerns\CanBeCollapsed;
+use Filament\Support\Enums\Alignment;
+use Filament\Support\Concerns\HasIcon;
+use Filament\Support\Concerns\HasIconSize;
+use Illuminate\Contracts\Support\Htmlable;
+use Filament\Support\Concerns\HasIconColor;
+use Filament\Support\Concerns\CanBeContained;
+use Filament\Schemas\Components\Concerns\HasLabel;
+use Filament\Schemas\Components\Concerns\HasHeading;
 use Filament\Schemas\Components\Concerns\CanBeCompact;
 use Filament\Schemas\Components\Concerns\CanBeDivided;
+use Filament\Support\Concerns\HasExtraAlpineAttributes;
+use Filament\Schemas\Components\Concerns\CanBeCollapsed;
 use Filament\Schemas\Components\Concerns\CanBeSecondary;
-use Filament\Schemas\Components\Concerns\EntanglesStateWithSingularRelationship;
 use Filament\Schemas\Components\Concerns\HasDescription;
 use Filament\Schemas\Components\Concerns\HasFooterActions;
 use Filament\Schemas\Components\Concerns\HasHeaderActions;
-use Filament\Schemas\Components\Concerns\HasHeading;
-use Filament\Schemas\Components\Concerns\HasLabel;
 use Filament\Schemas\Components\Contracts\CanConcealComponents;
 use Filament\Schemas\Components\Contracts\CanEntangleWithSingularRelationships;
-use Filament\Schemas\Schema;
-use Filament\Support\Concerns\CanBeContained;
-use Filament\Support\Concerns\HasExtraAlpineAttributes;
-use Filament\Support\Concerns\HasIcon;
-use Filament\Support\Concerns\HasIconColor;
-use Filament\Support\Concerns\HasIconSize;
-use Filament\Support\Enums\Alignment;
-use Filament\Support\Enums\Size;
-use Illuminate\Contracts\Support\Htmlable;
-use Illuminate\Support\Str;
+use Filament\Schemas\Components\Concerns\EntanglesStateWithSingularRelationship;
 
 class Section extends Component implements CanConcealComponents, CanEntangleWithSingularRelationships
 {
@@ -107,8 +107,10 @@ class Section extends Component implements CanConcealComponents, CanEntangleWith
         $this->afterHeader(fn (Section $component): array => $component->getHeaderActions());
         $this->footer(function (Section $component): Schema {
             return match ($component->getFooterActionsAlignment()) {
+                Alignment::Start, Alignment::Left => Schema::start($component->getFooterActions()),
                 Alignment::End, Alignment::Right => Schema::end($component->getFooterActions()),
                 Alignment::Center, => Schema::center($component->getFooterActions()),
+                Alignment::Between, Alignment::Justify => Schema::between($component->getFooterActions()),
                 default => Schema::start($component->getFooterActions()),
             };
         });
