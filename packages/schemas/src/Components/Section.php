@@ -107,7 +107,6 @@ class Section extends Component implements CanConcealComponents, CanEntangleWith
         $this->afterHeader(fn (Section $component): array => $component->getHeaderActions());
         $this->footer(function (Section $component): Schema {
             return match ($component->getFooterActionsAlignment()) {
-                Alignment::Start, Alignment::Left => Schema::start($component->getFooterActions()),
                 Alignment::End, Alignment::Right => Schema::end($component->getFooterActions()),
                 Alignment::Center, => Schema::center($component->getFooterActions()),
                 Alignment::Between, Alignment::Justify => Schema::between($component->getFooterActions()),
