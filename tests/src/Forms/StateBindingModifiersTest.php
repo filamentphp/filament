@@ -49,7 +49,7 @@ test('component state binding can be triggered on blur', function (): void {
         ->live(onBlur: true);
 
     expect($component)
-        ->getStateBindingModifiers()->toBe(['blur']);
+        ->getStateBindingModifiers()->toBe(['live', 'blur']);
 });
 
 test('component state binding can be debounced', function (): void {
