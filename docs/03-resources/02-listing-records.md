@@ -120,7 +120,7 @@ public function getDefaultActiveTab(): string | int | null
 }
 ```
 
-### Excluding tab query when resolving records
+### Excluding the tab query when resolving records
 
 When a user interacts with a table record (e.g., clicking an action button), Filament resolves that record from the database. By default, the active tab's query is applied, ensuring users cannot access records outside the current tab's scope.
 
