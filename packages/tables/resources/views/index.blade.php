@@ -99,6 +99,7 @@
     $selectsGroupsOnly = $selectsGroupsOnly();
     $recordCheckboxPosition = $getRecordCheckboxPosition();
     $isStriped = $isStriped();
+    $canBeStackedOnMobile = $canBeStackedOnMobile();
     $isLoaded = $isLoaded();
     $hasFilters = $isFilterable();
     $filtersLayout = $getFiltersLayout();
@@ -1278,7 +1279,7 @@
                             </table>
                         @endif
                     @elseif ((! ($content || $hasColumnsLayout)) && ($records !== null))
-                        <table class="fi-ta-table">
+                        <table class="fi-ta-table w-full table-fixed sm:table-auto">
                             <thead>
                                 @if ($hasColumnGroups)
                                     <tr class="fi-ta-table-head-groups-row">
@@ -2008,6 +2009,7 @@
                                                             {{
                                                                 $column->getExtraCellAttributeBag()->class([
                                                                     'fi-ta-cell',
+                                                                    'fi-ta-cell-is-stacked' => $canBeStackedOnMobile,
                                                                     'fi-ta-cell-' . str($column->getName())->camel()->kebab(),
                                                                     ((($columnAlignment = $column->getAlignment()) instanceof \Filament\Support\Enums\Alignment) ? "fi-align-{$columnAlignment->value}" : (is_string($columnAlignment) ? $columnAlignment : '')),
                                                                     ((($columnVerticalAlignment = $column->getVerticalAlignment()) instanceof \Filament\Support\Enums\VerticalAlignment) ? "fi-vertical-align-{$columnVerticalAlignment->value}" : (is_string($columnVerticalAlignment) ? $columnVerticalAlignment : '')),
@@ -2016,6 +2018,10 @@
                                                                 ])
                                                             }}
                                                         >
+                                                            @if($canBeStackedOnMobile)
+                                                            <div class="inline-block w-1/2 sm:hidden text-xs font-semibold text-gray-500 py-4 pl-4">{{ $column->getLabel() }}</div>
+                                                            <div class="inline-block sm:block w-1/2 sm:w-auto wrap-break-word text-sm text-gray-800 pr-4 sm:pr-0">
+                                                            @endif
                                                             <{{ $columnWrapperTag }}
                                                                 @if ($columnWrapperTag === 'a')
                                                                     {{ \Filament\Support\generate_href_html($columnUrl ?: $recordUrl, $columnUrl ? $column->shouldOpenUrlInNewTab() : $openRecordUrlInNewTab, hasNestedClickEventHandler: true) }}
@@ -2035,14 +2041,24 @@
                                                             >
                                                                 {{ $column }}
                                                             </{{ $columnWrapperTag }}>
+                                                            @if($canBeStackedOnMobile)
+                                                            </div>
+                                                            @endif
                                                         </td>
                                                     @endforeach
 
                                                     @if (count($defaultRecordActions) && $recordActionsPosition === RecordActionsPosition::AfterColumns && (! $isReordering))
-                                                        <td class="fi-ta-cell">
+                                                        <td @class([
+                                                            'fi-ta-cell',
+                                                            'flex w-full border-t border-gray-200 sm:table-cell sm:w-auto sm:border-none px-4' => $canBeStackedOnMobile
+                                                        ])>
+                                                            @if($canBeStackedOnMobile)
+                                                            <div class="inline-block w-1/2 sm:hidden text-xs font-semibold text-gray-500">{{ __('Actions') }}</div>
+                                                            @endif
                                                             <div
                                                                 @class([
                                                                     'fi-ta-actions',
+                                                                    'px-3 sm:px-0 gap-4 sm:gap-3' => $canBeStackedOnMobile,
                                                                     match ($recordActionsAlignment) {
                                                                         Alignment::Center => 'fi-align-center',
                                                                         Alignment::Start, Alignment::Left => 'fi-align-start',

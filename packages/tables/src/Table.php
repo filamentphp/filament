@@ -11,6 +11,7 @@ class Table extends ViewComponent
 {
     use HasDefaultDataFormattingSettings;
     use HasExtraAttributes;
+    use Table\Concerns\CanBeStackedOnMobile;
     use Table\Concerns\BelongsToLivewire;
     use Table\Concerns\CanBeStriped;
     use Table\Concerns\CanDeferLoading;
