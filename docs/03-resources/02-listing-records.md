@@ -1,6 +1,7 @@
 ---
 title: Listing records
 ---
+import Aside from "@components/Aside.astro"
 
 ## Using tabs to filter the records
 
@@ -118,6 +119,35 @@ public function getDefaultActiveTab(): string | int | null
     return 'active';
 }
 ```
+
+### Excluding the tab query when resolving records
+
+When a user interacts with a table record (e.g., clicking an action button), Filament resolves that record from the database. By default, the active tab's query is applied, ensuring users cannot access records outside the current tab's scope.
+
+However, when a record's state changes after the user saw it in the table, you may still want the user to interact with it. For example, if you have an "Active" tab and an action sets a record to inactive, subsequent actions in the same modal would fail to resolve that record.
+
+You may mark a tab to be excluded when resolving records using the `excludeQueryWhenResolvingRecord()` method:
+
+```php
+use Filament\Schemas\Components\Tabs\Tab;
+use Illuminate\Database\Eloquent\Builder;
+
+public function getTabs(): array
+{
+    return [
+        'active' => Tab::make()
+            ->modifyQueryUsing(fn (Builder $query) => $query->where('active', true))
+            ->excludeQueryWhenResolvingRecord(),
+        'inactive' => Tab::make()
+            ->modifyQueryUsing(fn (Builder $query) => $query->where('active', false))
+            ->excludeQueryWhenResolvingRecord(),
+    ];
+}
+```
+
+<Aside variant="danger">
+    Do not use `excludeQueryWhenResolvingRecord()` on tabs that enforce authorization rules. For example, if you have a tab that restricts records by tenant or user ownership, those tabs should remain enforced to prevent unauthorized access.
+</Aside>
 
 ## Authorization
 

@@ -193,7 +193,7 @@ trait HasRecords
 
         if (! ($this->getTable()->getRelationship() instanceof BelongsToMany)) {
             return $this->applyFiltersToTableQuery(
-                $this->getTable()->getQuery(),
+                $this->getTable()->getQuery(isResolvingRecord: true),
                 isResolvingRecord: true,
             )->find($key);
         }
@@ -206,7 +206,9 @@ trait HasRecords
 
         $table = $this->getTable();
 
-        $this->applyFiltersToTableQuery($relationship->getQuery(), isResolvingRecord: true);
+        $relationshipQuery = $relationship->getQuery();
+        $table->applyQueryScopes($relationshipQuery, isResolvingRecord: true);
+        $this->applyFiltersToTableQuery($relationshipQuery, isResolvingRecord: true);
 
         $query = $table->allowsDuplicates() ?
             $relationship->wherePivot($pivotKeyName, $key) :
