@@ -1,6 +1,7 @@
 ---
 title: Listing records
 ---
+import Aside from "@components/Aside.astro"
 
 ## Using tabs to filter the records
 
