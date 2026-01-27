@@ -152,10 +152,10 @@ enum Status: string implements HasIcon
     public function getIcon(): string | BackedEnum | Htmlable | null
     {
         return match ($this) {
-            self::Draft => Heroicon::OutlinedPencil,
-            self::Reviewing => Heroicon::OutlinedEye,
-            self::Published => Heroicon::OutlinedCheck,
-            self::Rejected => Heroicon::OutlinedXMark,
+            self::Draft => Heroicon::Pencil,
+            self::Reviewing => Heroicon::Eye,
+            self::Published => Heroicon::Check,
+            self::Rejected => Heroicon::XMark,
         };
     }
 }
