@@ -4,12 +4,11 @@ namespace Filament\Tables\Table\Concerns;
 
 use Closure;
 
-
 trait CanBeStackedOnMobile
 {
-    protected bool|Closure $stackedOnMobile = false;
+    protected bool | Closure $stackedOnMobile = false;
 
-    public function stackedOnMobile(bool|Closure $condition = true): static
+    public function stackedOnMobile(bool | Closure $condition = true): static
     {
         $this->stackedOnMobile = $condition;
 
