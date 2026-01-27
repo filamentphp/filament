@@ -113,6 +113,14 @@ trait InteractsWithRelationshipTable
 
                     $action->record($record);
 
+                    $actionGroup = $action->getGroup();
+
+                    while ($actionGroup) {
+                        $actionGroup->record($record);
+
+                        $actionGroup = $actionGroup->getGroup();
+                    }
+
                     if ($action->isHidden()) {
                         continue;
                     }
@@ -135,6 +143,14 @@ trait InteractsWithRelationshipTable
                     }
 
                     $action->record($record);
+
+                    $actionGroup = $action->getGroup();
+
+                    while ($actionGroup) {
+                        $actionGroup->record($record);
+
+                        $actionGroup = $actionGroup->getGroup();
+                    }
 
                     if ($action->isHidden()) {
                         continue;
