@@ -480,6 +480,11 @@ class FilamentManager
         return $this->getCurrentOrDefaultPanel()->getTenantMenuItems();
     }
 
+    public function canSwitchTenants(): bool
+    {
+        return $this->getCurrentOrDefaultPanel()->canSwitchTenants();
+    }
+
     public function isTenantMenuSearchable(): ?bool
     {
         return $this->getCurrentOrDefaultPanel()->isTenantMenuSearchable();

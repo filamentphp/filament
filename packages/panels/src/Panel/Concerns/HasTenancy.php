@@ -23,6 +23,8 @@ trait HasTenancy
 
     protected bool | Closure $hasTenantMenu = true;
 
+    protected bool | Closure $canSwitchTenants = true;
+
     protected bool | Closure | null $isTenantMenuSearchable = null;
 
     protected ?string $tenantRoutePrefix = null;
@@ -67,6 +69,13 @@ trait HasTenancy
             ...$this->tenantMenuItems,
             ...$items,
         ];
+
+        return $this;
+    }
+
+    public function switchableTenants(bool | Closure $condition = true): static
+    {
+        $this->canSwitchTenants = $condition;
 
         return $this;
     }
@@ -347,6 +356,11 @@ trait HasTenancy
         return $this->evaluate($item, [
             'action' => $action,
         ]) ?? $action;
+    }
+
+    public function canSwitchTenants(): bool
+    {
+        return (bool) $this->evaluate($this->canSwitchTenants);
     }
 
     public function isTenantMenuSearchable(): ?bool
