@@ -132,6 +132,10 @@ class QueryBuilder extends BaseFilter
         foreach ($rules as $ruleIndex => $rule) {
             $ruleBuilderBlockContainer = $ruleBuilder->getChildSchema($ruleIndex);
 
+            if ($ruleBuilderBlockContainer === null) {
+                continue;
+            }
+
             if ($rule['type'] === RuleBuilder::OR_BLOCK_NAME) {
                 foreach ($rule['data'][RuleBuilder::OR_BLOCK_GROUPS_REPEATER_NAME] as $orGroupIndex => $orGroup) {
                     $count += $this->countRules(
