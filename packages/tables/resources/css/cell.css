@@ -45,6 +45,22 @@
         }
     }
 
+    .fi-ta-cell-is-stacked-label {
+        @apply inline-block w-1/2 py-4 pl-4 text-xs font-semibold text-gray-500 sm:hidden;
+    }
+
+    .fi-ta-cell-is-stacked-contents {
+        @apply inline-block w-1/2 pr-4 text-sm wrap-break-word text-gray-800 sm:block sm:w-auto sm:pr-0;
+    }
+
+    &.fi-ta-cell-is-stacked-actions {
+        @apply flex w-full border-t border-gray-200 px-4 sm:table-cell sm:w-auto sm:border-none;
+    }
+
+    .fi-ta-cell-is-stacked-actions-label {
+        @apply inline-block w-1/2 text-xs font-semibold text-gray-500 sm:hidden;
+    }
+
     &.fi-vertical-align-start {
         @apply align-top;
     }

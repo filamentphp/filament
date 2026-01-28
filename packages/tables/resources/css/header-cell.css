@@ -74,6 +74,10 @@
         }
     }
 
+    &.fi-ta-header-hidden-on-mobile {
+        @apply hidden sm:table-cell;
+    }
+
     &.sm\:fi-hidden {
         @apply sm:hidden;
     }

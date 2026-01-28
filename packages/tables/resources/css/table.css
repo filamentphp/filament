@@ -1,6 +1,10 @@
 .fi-ta-table {
     @apply w-full table-auto divide-y divide-gray-200 text-start dark:divide-white/5;
 
+    &.fi-ta-table-stacked-on-mobile {
+        @apply table-fixed sm:table-auto;
+    }
+
     & > thead {
         @apply divide-y divide-gray-200 dark:divide-white/5;
 
