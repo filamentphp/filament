@@ -1,8 +1,48 @@
 .fi-ta-cell {
     @apply p-0 first-of-type:ps-1 last-of-type:pe-1 sm:first-of-type:ps-3 sm:last-of-type:pe-3;
 
-    &.fi-ta-cell-is-stacked {
+    .fi-ta-cell-is-stacked {
         @apply flex w-full border-t border-gray-200 first-of-type:ps-0 sm:table-cell sm:w-auto sm:border-none sm:first-of-type:ps-3;
+
+        &.sm\:fi-hidden {
+            @apply sm:hidden;
+        }
+
+        &.md\:fi-hidden {
+            @apply md:hidden;
+        }
+
+        &.lg\:fi-hidden {
+            @apply lg:hidden;
+        }
+
+        &.xl\:fi-hidden {
+            @apply xl:hidden;
+        }
+
+        &.\32xl\:fi-hidden {
+            @apply 2xl:hidden;
+        }
+
+        &.sm\:fi-visible {
+            @apply hidden sm:table-cell;
+        }
+
+        &.md\:fi-visible {
+            @apply hidden md:table-cell;
+        }
+
+        &.lg\:fi-visible {
+            @apply hidden lg:table-cell;
+        }
+
+        &.xl\:fi-visible {
+            @apply hidden xl:table-cell;
+        }
+
+        &.\32xl\:fi-visible {
+            @apply hidden 2xl:table-cell;
+        }
     }
 
     &.fi-vertical-align-start {
