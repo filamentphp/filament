@@ -186,6 +186,7 @@
     >
         @if ($hasFiltersBeforeContent)
             <div
+                wire:ignore.self
                 x-ref="filtersContentContainer"
                 x-transition:enter-start="fi-opacity-0"
                 x-transition:leave-end="fi-opacity-0"
@@ -2264,6 +2265,7 @@
 
         @if ($hasFiltersAfterContent)
             <div
+                wire:ignore.self
                 x-ref="filtersContentContainer"
                 x-transition:enter-start="fi-opacity-0"
                 x-transition:leave-end="fi-opacity-0"
