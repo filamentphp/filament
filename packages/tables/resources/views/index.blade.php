@@ -1453,6 +1453,7 @@
                                                             'fi-grouped' => $column->getGroup(),
                                                             'fi-wrapped' => $column->canHeaderWrap(),
                                                             'fi-ta-header-cell-sorted' => $isColumnActivelySorted,
+                                                            'hidden sm:table-cell' => $canBeStackedOnMobile,
                                                             ((($columnAlignment = $column->getAlignment()) instanceof \Filament\Support\Enums\Alignment) ? "fi-align-{$columnAlignment->value}" : (is_string($columnAlignment) ? $columnAlignment : '')),
                                                             (filled($columnHiddenFrom = $column->getHiddenFrom()) ? "{$columnHiddenFrom}:fi-hidden" : ''),
                                                             (filled($columnVisibleFrom = $column->getVisibleFrom()) ? "{$columnVisibleFrom}:fi-visible" : ''),
