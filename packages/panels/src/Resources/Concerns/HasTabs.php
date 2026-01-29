@@ -64,7 +64,7 @@ trait HasTabs
             ->ucfirst();
     }
 
-    protected function modifyQueryWithActiveTab(Builder $query): Builder
+    protected function modifyQueryWithActiveTab(Builder $query, bool $isResolvingRecord = false): Builder
     {
         if (blank(filled($this->activeTab))) {
             return $query;
@@ -76,7 +76,13 @@ trait HasTabs
             return $query;
         }
 
-        return $tabs[$this->activeTab]->modifyQuery($query);
+        $tab = $tabs[$this->activeTab];
+
+        if ($isResolvingRecord && $tab->shouldExcludeQueryWhenResolvingRecord()) {
+            return $query;
+        }
+
+        return $tab->modifyQuery($query);
     }
 
     public function getTabsContentComponent(): Component

@@ -23,6 +23,7 @@ use Filament\Support\Icons\Heroicon;
 use Illuminate\Bus\PendingBatch;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Filesystem\AwsS3V3Adapter;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Bus;
@@ -702,5 +703,14 @@ class ImportAction extends Action
         }
 
         return $authGuard->name;
+    }
+
+    /**
+     * @param  Model | array<string, mixed> | null  $record
+     * @return Model | array<string, mixed> | null
+     */
+    protected function ensureCorrectRecordType(Model | array | null $record): Model | array | null
+    {
+        return $record;
     }
 }

@@ -171,7 +171,10 @@ trait HasFilters
         $table = $this->getTable();
 
         if ($table->hasDeferredFilters()) {
-            $this->getTableFiltersForm()->statePath('tableFilters')->flushCachedAbsoluteStatePaths();
+            $filtersForm = $this->getTableFiltersForm()->statePath('tableFilters');
+
+            $filtersForm->flushCachedAbsoluteStatePaths();
+            $filtersForm->clearCachedDefaultChildSchemas();
         }
 
         try {
@@ -196,7 +199,10 @@ trait HasFilters
             });
         } finally {
             if ($table->hasDeferredFilters()) {
-                $this->getTableFiltersForm()->statePath('tableDeferredFilters')->flushCachedAbsoluteStatePaths();
+                $filtersForm = $this->getTableFiltersForm()->statePath('tableDeferredFilters');
+
+                $filtersForm->flushCachedAbsoluteStatePaths();
+                $filtersForm->clearCachedDefaultChildSchemas();
             }
         }
     }

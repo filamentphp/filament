@@ -18,6 +18,7 @@ use Filament\Tests\Fixtures\Models\TicketMessage;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Fixtures\Policies\TicketPolicy;
 use Filament\Tests\Fixtures\Resources\Posts\Pages\ListPosts;
+use Filament\Tests\Fixtures\Resources\Posts\Pages\ListPostsWithTabs;
 use Filament\Tests\Fixtures\Resources\Posts\PostResource;
 use Filament\Tests\Fixtures\Resources\TicketMessages\TicketMessageResource;
 use Filament\Tests\Fixtures\Resources\Tickets\Pages\ListTickets;
@@ -324,3 +325,32 @@ it('renders actions based on policy', function (string $action, string $policyMe
     'restore bulk action with policy returning false' => fn (): array => [RestoreBulkAction::class, 'restoreAny', false, false, true, true, true],
     'restore bulk action with policy returning denied response' => fn (): array => [RestoreBulkAction::class, 'restoreAny', Response::deny(), false, true, true, true],
 ]);
+
+it('can access record for action after record no longer matches tab query', function (): void {
+    $post = Post::factory()->create(['is_published' => true]);
+
+    livewire(ListPostsWithTabs::class)
+        ->set('activeTab', 'published')
+        ->assertCanSeeTableRecords([$post])
+        ->tap(fn () => $post->update(['is_published' => false]))
+        ->callAction(TestAction::make(DeleteAction::class)->table($post));
+
+    expect($post->fresh()->trashed())->toBeTrue();
+});
+
+it('cannot access record for action after record no longer matches tab without `excludeQueryWhenResolvingRecord()`', function (): void {
+    $post = Post::factory()->create(['is_published' => true]);
+
+    livewire(ListPostsWithTabs::class)
+        ->set('shouldExcludeTabQueryWhenResolvingRecord', false)
+        ->set('activeTab', 'published')
+        ->assertCanSeeTableRecords([$post])
+        ->tap(fn () => $post->update(['is_published' => false]));
+
+    expect(
+        fn () => livewire(ListPostsWithTabs::class)
+            ->set('shouldExcludeTabQueryWhenResolvingRecord', false)
+            ->set('activeTab', 'published')
+            ->mountTableAction(DeleteAction::class, $post)
+    )->toThrow(TypeError::class);
+});

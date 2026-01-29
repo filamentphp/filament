@@ -146,6 +146,50 @@ return [
 
             ],
 
+            'unit_labels' => [
+                'second' => 'Sekundės',
+                'minute' => 'Minutės',
+                'hour' => 'Valandos',
+                'day' => 'Dienos',
+                'week' => 'Savaitės',
+                'month' => 'Mėnesiai',
+                'quarter' => 'Ketvirčiai',
+                'year' => 'Metai',
+            ],
+
+            'presets' => [
+                'past_decade' => 'Praėjęs dešimtmetis',
+                'past_5_years' => 'Praėję 5 metai',
+                'past_2_years' => 'Praėję 2 metai',
+                'past_year' => 'Praėję metai',
+                'past_6_months' => 'Praėję 6 mėnesiai',
+                'past_quarter' => 'Praėję ketvirtis',
+                'past_month' => 'Praėjęs mėnesis',
+                'past_2_weeks' => 'Praėjusios 2 savaitės',
+                'past_week' => 'Praėjusi savaitė',
+                'past_hour' => 'Praėjusi valanda',
+                'past_minute' => 'Praėjusi minutė',
+                'this_decade' => 'Šis dešimtmetis',
+                'this_year' => 'Šie metai',
+                'this_quarter' => 'Šis ketvirtis',
+                'this_month' => 'Šis mėnesis',
+                'today' => 'Šiandien',
+                'this_hour' => 'Ši valanda',
+                'this_minute' => 'Ši minutė',
+                'next_minute' => 'Kita minutė',
+                'next_hour' => 'Kita valanda',
+                'next_week' => 'Kita savaitė',
+                'next_2_weeks' => 'Kitos 2 savaitės',
+                'next_month' => 'Kitas mėnesis',
+                'next_quarter' => 'Kitas ketvirtis',
+                'next_6_months' => 'Kiti 6 mėnesiai',
+                'next_year' => 'Kiti metai',
+                'next_2_years' => 'Kiti 2 metai',
+                'next_5_years' => 'Kiti 5 metai',
+                'next_decade' => 'Kitas dešimtmetis',
+                'custom' => 'Pasirinktinis',
+            ],
+
             'form' => [
 
                 'date' => [
@@ -158,6 +202,39 @@ return [
 
                 'year' => [
                     'label' => 'Metai',
+                ],
+
+                'mode' => [
+
+                    'label' => 'Datos tipas',
+
+                    'options' => [
+                        'absolute' => 'Specifinė data',
+                        'relative' => 'Slankusis langas',
+                    ],
+
+                ],
+
+                'preset' => [
+                    'label' => 'Laiko periodas',
+                ],
+
+                'relative_value' => [
+                    'label' => 'Kiek',
+                ],
+
+                'relative_unit' => [
+                    'label' => 'Laiko vienetas',
+                ],
+
+                'tense' => [
+
+                    'label' => 'Laiko nuosaka',
+                    'options' => [
+                        'past' => 'Praeitis',
+                        'future' => 'Ateitis',
+                    ],
+
                 ],
 
             ],
