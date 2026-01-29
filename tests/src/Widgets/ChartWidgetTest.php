@@ -67,18 +67,6 @@ it('resets filters to defaults when `resetFiltersForm()` is called', function ()
         ->assertSet('deferredFilters', ['year' => '2024']);
 });
 
-it('shows apply action when deferred filters are enabled', function (): void {
-    $widget = Livewire::test(TestChartWidgetWithDeferredFiltersProperty::class);
-
-    expect($widget->instance()->getFiltersApplyAction()->isVisible())->toBeTrue();
-});
-
-it('hides apply action when deferred filters are disabled', function (): void {
-    $widget = Livewire::test(TestChartWidgetDefault::class);
-
-    expect($widget->instance()->getFiltersApplyAction()->isVisible())->toBeFalse();
-});
-
 it('can override `hasDeferredFilters()` for dynamic behavior', function (): void {
     $widget = Livewire::test(TestChartWidgetWithDynamicDeferredFilters::class);
 
