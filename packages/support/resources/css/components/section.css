@@ -177,12 +177,12 @@
         }
 
         & > .fi-section-header-after-ctn {
-            & .fi-sc-text,
-            & .fi-link {
+            & .fi-sc-text:not(.fi-dropdown-panel *),
+            & .fi-link:not(.fi-dropdown-panel *) {
                 @apply leading-6;
             }
 
-            & .fi-btn {
+            & .fi-btn:not(.fi-dropdown-panel *) {
                 &.fi-size-xs {
                     @apply -my-0.5;
                 }
