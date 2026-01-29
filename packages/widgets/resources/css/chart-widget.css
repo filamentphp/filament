@@ -29,19 +29,19 @@
         }
 
         &.fi-dropdown {
-            & .fi-wi-chart-filters {
+            & .fi-wi-chart-filter-content {
                 @apply grid gap-y-4 p-6;
             }
 
-            & .fi-wi-chart-filters-header {
+            & .fi-wi-chart-filter-content-header {
                 @apply flex items-center justify-between;
             }
 
-            & .fi-wi-chart-filters-heading {
+            & .fi-wi-chart-filter-content-heading {
                 @apply text-base font-semibold leading-6 text-gray-950 dark:text-white;
             }
 
-            & .fi-wi-chart-filters-actions-ctn {
+            & .fi-wi-chart-filter-content-actions-ctn {
                 @apply flex gap-3;
             }
         }

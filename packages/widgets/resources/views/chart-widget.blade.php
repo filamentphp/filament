@@ -48,10 +48,10 @@
                             {{ $this->getFiltersTriggerAction() }}
                         </x-slot>
 
-                        <div class="fi-wi-chart-filters">
+                        <div class="fi-wi-chart-filter-content">
                             @if (method_exists($this, 'hasDeferredFilters') && $this->hasDeferredFilters())
-                                <div class="fi-wi-chart-filters-header">
-                                    <h3 class="fi-wi-chart-filters-heading">
+                                <div class="fi-wi-chart-filter-content-header">
+                                    <h3 class="fi-wi-chart-filter-content-heading">
                                         {{ __('filament-widgets::chart.filters.heading') }}
                                     </h3>
                                 </div>
@@ -65,7 +65,7 @@
                                 @endphp
 
                                 @if ($applyAction->isVisible())
-                                    <div class="fi-wi-chart-filters-actions-ctn">
+                                    <div class="fi-wi-chart-filter-content-actions-ctn">
                                         {{ $applyAction }}
 
                                         {{ $this->getFiltersResetAction() }}
