@@ -4,7 +4,6 @@ namespace Filament\Widgets\ChartWidget\Concerns;
 
 use Filament\Actions\Action;
 use Filament\Schemas\Schema;
-use Filament\Support\Enums\Size;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
 use Filament\Widgets\View\WidgetsIconAlias;
@@ -97,10 +96,7 @@ trait HasFiltersSchema /** @phpstan-ignore trait.unused */
         $action = Action::make('applyFilters')
             ->label(__('filament-widgets::chart.filters.actions.apply.label'))
             ->action('applyFilters')
-            ->visible($this->hasDeferredFilters())
-            ->authorize(true)
-            ->button()
-            ->size(Size::Small);
+            ->button();
 
         if (method_exists($this, 'filtersApplyAction')) {
             $action = $this->filtersApplyAction($action);
@@ -113,10 +109,9 @@ trait HasFiltersSchema /** @phpstan-ignore trait.unused */
     {
         $action = Action::make('resetFilters')
             ->label(__('filament-widgets::chart.filters.actions.reset.label'))
-            ->link()
             ->action('resetFiltersForm')
-            ->color('gray')
-            ->authorize(true);
+            ->color('danger')
+            ->button();
 
         if (method_exists($this, 'filtersResetAction')) {
             $action = $this->filtersResetAction($action);

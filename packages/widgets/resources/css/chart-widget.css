@@ -33,14 +33,6 @@
                 @apply grid gap-y-4 p-6;
             }
 
-            & .fi-wi-chart-filter-content-header {
-                @apply flex items-center justify-between;
-            }
-
-            & .fi-wi-chart-filter-content-heading {
-                @apply text-base leading-6 font-semibold text-gray-950 dark:text-white;
-            }
-
             & .fi-wi-chart-filter-content-actions-ctn {
                 @apply flex gap-3;
             }

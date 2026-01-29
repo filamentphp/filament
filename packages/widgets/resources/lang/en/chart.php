@@ -24,8 +24,6 @@ return [
 
         ],
 
-        'heading' => 'Filters',
-
     ],
 
 ];
