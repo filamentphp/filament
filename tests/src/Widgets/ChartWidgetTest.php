@@ -37,8 +37,7 @@ it('updates `$filters` immediately when deferred is disabled', function (): void
     Livewire::test(TestChartWidgetDefault::class)
         ->assertSet('filters', ['year' => '2024'])
         ->set('filters.year', '2023')
-        ->assertSet('filters', ['year' => '2023'])
-        ->assertDispatched('filtersApplied');
+        ->assertSet('filters', ['year' => '2023']);
 });
 
 it('updates only `$deferredFilters` when changed with deferred enabled', function (): void {
@@ -96,16 +95,6 @@ it('uses `statePath("filters")` when not deferred', function (): void {
     $widget = Livewire::test(TestChartWidgetDefault::class);
 
     expect($widget->instance()->getFiltersSchema()->getStatePath())->toBe('filters');
-});
-
-it('shows the count of active filters on the trigger action', function (): void {
-    $widget = Livewire::test(TestChartWidgetDefault::class);
-
-    expect($widget->instance()->getFiltersActiveCount())->toBe(1);
-
-    $widget->set('filters.year', null);
-
-    expect($widget->instance()->getFiltersActiveCount())->toBeNull();
 });
 
 class TestChartWidgetDefault extends ChartWidget

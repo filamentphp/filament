@@ -49,23 +49,7 @@ trait HasFiltersSchema /** @phpstan-ignore trait.unused */
             ->iconButton()
             ->icon(FilamentIcon::resolve(WidgetsIconAlias::CHART_WIDGET_FILTER) ?? Heroicon::Funnel)
             ->color('gray')
-            ->badge($this->getFiltersActiveCount())
-            ->badgeColor('primary')
             ->livewireClickHandlerEnabled(false);
-    }
-
-    public function getFiltersActiveCount(): ?int
-    {
-        $count = count(array_filter(
-            $this->filters ?? [],
-            fn ($value) => filled($value),
-        ));
-
-        if ($count === 0) {
-            return null;
-        }
-
-        return $count;
     }
 
     public function getFiltersSchema(): Schema
@@ -88,27 +72,13 @@ trait HasFiltersSchema /** @phpstan-ignore trait.unused */
 
     public function updatedFilters(): void
     {
-        if ($this->hasDeferredFilters()) {
-            $this->deferredFilters = $this->filters;
-
-            return;
-        }
-
-        $this->handleFilterUpdates();
-    }
-
-    protected function handleFilterUpdates(): void
-    {
         $this->cachedData = null;
-
-        $this->dispatch('filtersApplied');
     }
 
     public function applyFilters(): void
     {
         $this->filters = $this->deferredFilters;
-
-        $this->handleFilterUpdates();
+        $this->cachedData = null;
     }
 
     public function resetFiltersForm(): void
@@ -121,7 +91,7 @@ trait HasFiltersSchema /** @phpstan-ignore trait.unused */
             return;
         }
 
-        $this->handleFilterUpdates();
+        $this->cachedData = null;
     }
 
     public function getFiltersApplyAction(): Action
