@@ -651,9 +651,9 @@ class ImportColumn extends Component
         return $this;
     }
 
-    public function getValidationAttribute(): string
+    public function getValidationAttribute(): ?string
     {
-        return $this->evaluate($this->validationAttribute) ?? Str::lcfirst($this->getLabel());
+        return $this->evaluate($this->validationAttribute) ?? (filled($label = $this->getLabel()) ? Str::lcfirst($label) : null);
     }
 
     public function getLabel(): ?string
@@ -721,7 +721,7 @@ class ImportColumn extends Component
 
     protected function resolveDefaultClosureDependencyForEvaluationByType(string $parameterType): array
     {
-        $record = $this->getRecord();
+        $record = is_a($parameterType, Model::class, allow_string: true) ? $this->getRecord() : null;
 
         return match ($parameterType) {
             Importer::class => [$this->getImporter()],

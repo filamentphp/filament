@@ -52,6 +52,8 @@
     }
 
     & span[data-type='mergeTag'] {
+        @apply my-0 inline-block whitespace-nowrap;
+
         &::before {
             @apply me-1 font-normal opacity-60;
             content: '{{';
@@ -61,6 +63,10 @@
             @apply ms-1 font-normal opacity-60;
             content: '}}';
         }
+    }
+
+    & span[data-type='mention'] {
+        @apply bg-primary-50 text-primary-600 dark:bg-primary-400/10 dark:text-primary-400 my-0 inline-block rounded px-1 font-medium whitespace-nowrap;
     }
 
     & .fi-fo-rich-editor-panels {
@@ -206,6 +212,98 @@
         & .grid-layout > .grid-layout-col {
             @apply rounded-md border border-gray-950/20 p-4 dark:border-white/20;
         }
+
+        [data-resize-handle] {
+            position: absolute;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            border-radius: 2px;
+            z-index: 10;
+
+            &:hover {
+                background: rgba(0, 0, 0, 0.8);
+            }
+
+            &[data-resize-handle] {
+                margin: 0 !important;
+            }
+            &[data-resize-handle='top-left'],
+            &[data-resize-handle='top-right'],
+            &[data-resize-handle='bottom-left'],
+            &[data-resize-handle='bottom-right'] {
+                width: 8px;
+                height: 8px;
+            }
+
+            &[data-resize-handle='top-left'] {
+                top: -4px;
+                left: -4px;
+                cursor: nwse-resize;
+            }
+
+            &[data-resize-handle='top-right'] {
+                top: -4px;
+                right: -4px;
+                cursor: nesw-resize;
+            }
+
+            &[data-resize-handle='bottom-left'] {
+                bottom: -4px;
+                left: -4px;
+                cursor: nesw-resize;
+            }
+
+            &[data-resize-handle='bottom-right'] {
+                bottom: -4px;
+                right: -4px;
+                cursor: nwse-resize;
+            }
+
+            &[data-resize-handle='top'],
+            &[data-resize-handle='bottom'] {
+                height: 6px;
+                left: 8px;
+                right: 8px;
+            }
+
+            &[data-resize-handle='top'] {
+                top: -3px;
+                cursor: ns-resize;
+            }
+
+            &[data-resize-handle='bottom'] {
+                bottom: -3px;
+                cursor: ns-resize;
+            }
+
+            &[data-resize-handle='left'],
+            &[data-resize-handle='right'] {
+                width: 6px;
+                top: 8px;
+                bottom: 8px;
+            }
+
+            &[data-resize-handle='left'] {
+                left: -3px;
+                cursor: ew-resize;
+            }
+
+            &[data-resize-handle='right'] {
+                right: -3px;
+                cursor: ew-resize;
+            }
+        }
+
+        [data-resize-state='true'] [data-resize-wrapper] {
+            @apply relative;
+            outline: 1px solid rgba(0, 0, 0, 0.25);
+            border-radius: 0.125rem;
+        }
+
+        /* Workaround for TipTap bug: https://github.com/filamentphp/filament/issues/18997 */
+        [data-resize-container] {
+            @apply !inline-block;
+        }
     }
 
     & .tiptap.ProseMirror {
@@ -272,4 +370,8 @@
     & .fi-fo-rich-editor-text-color-select-option-preview {
         @apply h-5 w-5 shrink-0 rounded-full bg-(--color) dark:bg-(--dark-color);
     }
+}
+
+[x-sortable]:has(.fi-sortable-ghost) .fi-fo-rich-editor {
+    pointer-events: none;
 }

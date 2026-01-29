@@ -1,10 +1,12 @@
 <?php
 
+use Filament\Forms\Components\Field;
 use Filament\Forms\Components\FileUpload;
 use Filament\Schemas\Schema;
 use Filament\Tests\Fixtures\Livewire\Livewire;
 use Filament\Tests\TestCase;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Validation\ValidationException;
 use Livewire\Exceptions\RootTagMissingFromViewException;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
@@ -78,6 +80,118 @@ describe('visibility', function (): void {
         $upload2 = FileUpload::make('test_file')
             ->visibility('private');
         expect($upload2->getVisibility())->toBe('private');
+    });
+});
+
+describe('validation', function (): void {
+    it('can use `requiredIf()` and fails validation when condition is met', function (): void {
+        $rules = [];
+        $errors = [];
+
+        try {
+            Schema::make(Livewire::make())
+                ->statePath('data')
+                ->components([
+                    $field1 = (new Field('type'))
+                        ->default('file'),
+                    $field2 = FileUpload::make('document')
+                        ->requiredIf('type', 'file'),
+                ])
+                ->fill()
+                ->validate();
+        } catch (ValidationException $exception) {
+            $rules = array_keys($exception->validator->failed()[$field2->getStatePath()] ?? []);
+            $errors = $exception->validator->errors()->get($field2->getStatePath());
+        }
+
+        expect($rules)
+            ->toContain('RequiredIf');
+
+        expect($errors)
+            ->toContain('The document field is required when type is file.');
+    });
+
+    it('can use `requiredIf()` and passes validation when condition is not met', function (): void {
+        $validationPassed = false;
+
+        try {
+            Schema::make(Livewire::make())
+                ->statePath('data')
+                ->components([
+                    (new Field('type'))
+                        ->default('text'),
+                    FileUpload::make('document')
+                        ->requiredIf('type', 'file'),
+                ])
+                ->fill()
+                ->validate();
+
+            $validationPassed = true;
+        } catch (ValidationException) {
+            $validationPassed = false;
+        }
+
+        expect($validationPassed)->toBeTrue();
+    });
+
+    it('can use `requiredUnless()` and fails validation when condition is not met', function (): void {
+        $rules = [];
+        $errors = [];
+
+        try {
+            Schema::make(Livewire::make())
+                ->statePath('data')
+                ->components([
+                    $field1 = (new Field('type'))
+                        ->default('text'),
+                    $field2 = FileUpload::make('document')
+                        ->requiredUnless('type', 'file'),
+                ])
+                ->fill()
+                ->validate();
+        } catch (ValidationException $exception) {
+            $rules = array_keys($exception->validator->failed()[$field2->getStatePath()] ?? []);
+            $errors = $exception->validator->errors()->get($field2->getStatePath());
+        }
+
+        expect($rules)
+            ->toContain('RequiredUnless');
+
+        expect($errors)
+            ->toContain('The document field is required unless type is in file.');
+    });
+
+    it('can use `requiredUnless()` and passes validation when condition is met', function (): void {
+        $validationPassed = false;
+
+        try {
+            Schema::make(Livewire::make())
+                ->statePath('data')
+                ->components([
+                    (new Field('type'))
+                        ->default('file'),
+                    FileUpload::make('document')
+                        ->requiredUnless('type', 'file'),
+                ])
+                ->fill()
+                ->validate();
+
+            $validationPassed = true;
+        } catch (ValidationException) {
+            $validationPassed = false;
+        }
+
+        expect($validationPassed)->toBeTrue();
+    });
+
+    it('applies `rule()` to individual files, not the array', function (): void {
+        $field = FileUpload::make('document')
+            ->rule('mimetypes:image/png');
+
+        $rules = $field->getValidationRules();
+
+        $stringRules = array_filter($rules, fn ($rule) => is_string($rule));
+        expect($stringRules)->not->toContain('mimetypes:image/png');
     });
 });
 

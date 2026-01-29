@@ -32,7 +32,7 @@ return [
 
             'add_between' => [
 
-                'label' => 'Invoegen',
+                'label' => 'Invoegen tussen blokken',
 
                 'modal' => [
 
@@ -232,7 +232,7 @@ return [
                 'label' => 'Beeldverhoudingen',
 
                 'no_fixed' => [
-                    'label' => 'Geen',
+                    'label' => 'Vrij',
                 ],
 
             ],
@@ -301,7 +301,7 @@ return [
             'redo' => 'Opnieuw',
             'strike' => 'Doorhalen',
             'table' => 'Tabel',
-            'undo' => 'Herstellen',
+            'undo' => 'Ongedaan maken',
         ],
 
     ],
@@ -395,11 +395,11 @@ return [
 
             'attach_files' => [
 
-                'label' => 'Bestanden bijvoegen',
+                'label' => 'Bestand uploaden',
 
                 'modal' => [
 
-                    'heading' => 'Bestand bijvoegen',
+                    'heading' => 'Bestand uploaden',
 
                     'form' => [
 
@@ -416,7 +416,7 @@ return [
 
                             'label' => [
                                 'new' => 'Alt tekst',
-                                'existing' => 'Alt tekst veranderen',
+                                'existing' => 'Alt tekst wijzigen',
                             ],
 
                         ],
@@ -514,7 +514,7 @@ return [
 
             'link' => [
 
-                'label' => 'Bewerken',
+                'label' => 'Link',
 
                 'modal' => [
 
@@ -527,7 +527,31 @@ return [
                         ],
 
                         'should_open_in_new_tab' => [
-                            'label' => 'Open in nieuwe tab',
+                            'label' => 'Openen in nieuwe tab',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
+            'text_color' => [
+
+                'label' => 'Tekstkleur',
+
+                'modal' => [
+
+                    'heading' => 'Tekstkleur',
+
+                    'form' => [
+
+                        'color' => [
+                            'label' => 'Kleur',
+                        ],
+
+                        'custom_color' => [
+                            'label' => 'Aangepaste kleur',
                         ],
 
                     ],
@@ -543,6 +567,13 @@ return [
         'file_attachments_max_size_message' => 'Geüploade bestanden mogen niet groter zijn dan :max kilobytes.',
 
         'no_merge_tag_search_results_message' => 'Geen merge tags gevonden.',
+
+        'mentions' => [
+            'no_options_message' => 'Geen opties beschikbaar.',
+            'no_search_results_message' => 'Geen resultaten gevonden.',
+            'search_prompt' => 'Begin met typen om te zoeken...',
+            'searching_message' => 'Zoeken...',
+        ],
 
         'tools' => [
             'align_center' => 'Centreren',
@@ -562,7 +593,7 @@ return [
             'h2' => 'Kop',
             'h3' => 'Subkop',
             'grid' => 'Raster',
-            'grid_delete' => 'Verwijder raster',
+            'grid_delete' => 'Raster verwijderen',
             'highlight' => 'Markeren',
             'horizontal_rule' => 'Horizontale lijn',
             'italic' => 'Cursief',
@@ -586,11 +617,13 @@ return [
             'table_merge_cells' => 'Cellen samenvoegen',
             'table_split_cell' => 'Cel splitsen',
             'table_toggle_header_row' => 'Koprij wisselen',
+            'table_toggle_header_cell' => 'Kopcel wisselen',
+            'text_color' => 'Tekstkleur',
             'underline' => 'Onderstrepen',
             'undo' => 'Ongedaan maken',
         ],
 
-        'uploading_file_message' => 'Het bestand wordt geüpload...',
+        'uploading_file_message' => 'Bestand uploaden...',
 
     ],
 
@@ -653,18 +686,30 @@ return [
 
         'max_items_message' => 'Er kunnen maar :count geselecteerd worden.',
 
-        'no_search_results_message' => 'Er zijn geen resultaten voor je zoekopdracht.',
+        'no_options_message' => 'Geen opties beschikbaar.',
+
+        'no_search_results_message' => 'Geen resultaten gevonden.',
 
         'placeholder' => 'Selecteer een optie',
 
         'searching_message' => 'Zoeken...',
 
-        'search_prompt' => 'Start met typen om te zoeken...',
+        'search_prompt' => 'Begin met typen om te zoeken...',
 
     ],
 
     'tags_input' => [
+
+        'actions' => [
+
+            'delete' => [
+                'label' => 'Verwijderen',
+            ],
+
+        ],
+
         'placeholder' => 'Nieuwe tag',
+
     ],
 
     'text_input' => [

@@ -30,6 +30,8 @@ return [
 
             'loading_message' => 'Ladataan...',
 
+            'no_options_message' => 'Ei vaihtoehtoja saatavilla.',
+
             'no_search_results_message' => 'Ei hakuasi vastaavia vaihtoehtoja.',
 
             'placeholder' => 'Valitse vaihtoehto',

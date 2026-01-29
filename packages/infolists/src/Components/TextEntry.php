@@ -4,6 +4,7 @@ namespace Filament\Infolists\Components;
 
 use Closure;
 use Filament\Actions\Action;
+use Filament\Forms\Components\RichEditor\Models\Contracts\HasRichContent;
 use Filament\Infolists\View\Components\TextEntryComponent\ItemComponent;
 use Filament\Infolists\View\Components\TextEntryComponent\ItemComponent\IconComponent;
 use Filament\Schemas\Components\Contracts\HasAffixActions;
@@ -20,6 +21,7 @@ use Filament\Support\Enums\IconPosition;
 use Filament\Support\Enums\IconSize;
 use Filament\Support\Enums\TextSize;
 use Filament\Support\View\Components\BadgeComponent;
+use Illuminate\Contracts\Database\Query\Expression;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
@@ -132,7 +134,17 @@ class TextEntry extends Entry implements HasAffixActions, HasEmbeddedView
 
     public function isProse(): bool
     {
-        return (bool) $this->evaluate($this->isProse);
+        if ($this->evaluate($this->isProse)) {
+            return true;
+        }
+
+        $record = $this->getRecord();
+
+        if (! ($record instanceof HasRichContent)) {
+            return false;
+        }
+
+        return $record->hasRichContentAttribute($this->getName());
     }
 
     public function isListWithLineBreaks(): bool
@@ -174,7 +186,7 @@ class TextEntry extends Entry implements HasAffixActions, HasEmbeddedView
                 'fi-in-text',
             ]);
 
-        if (blank($state)) {
+        if (blank($state instanceof Htmlable ? $state->toHtml() : $state)) {
             $attributes = $attributes
                 ->merge([
                     'x-tooltip' => filled($tooltip = $this->getEmptyTooltip())
@@ -543,7 +555,7 @@ class TextEntry extends Entry implements HasAffixActions, HasEmbeddedView
     /**
      * @param  string | array<int | string, string | Closure> | Closure | null  $relationship
      */
-    public function avg(string | array | Closure | null $relationship, string | Closure | null $column): static
+    public function avg(string | array | Closure | null $relationship, string | Expression | Closure | null $column): static
     {
         $this->state(function (TextEntry $entry, ?Model $record) use ($relationship, $column): int | float | null {
             if (blank($record)) {
@@ -584,7 +596,7 @@ class TextEntry extends Entry implements HasAffixActions, HasEmbeddedView
     /**
      * @param  string | array<int | string, string | Closure> | Closure | null  $relationship
      */
-    public function max(string | array | Closure | null $relationship, string | Closure | null $column): static
+    public function max(string | array | Closure | null $relationship, string | Expression | Closure | null $column): static
     {
         $this->state(function (TextEntry $entry, ?Model $record) use ($relationship, $column): int | float | null {
             if (blank($record)) {
@@ -605,7 +617,7 @@ class TextEntry extends Entry implements HasAffixActions, HasEmbeddedView
     /**
      * @param  string | array<int | string, string | Closure> | Closure | null  $relationship
      */
-    public function min(string | array | Closure | null $relationship, string | Closure | null $column): static
+    public function min(string | array | Closure | null $relationship, string | Expression | Closure | null $column): static
     {
         $this->state(function (TextEntry $entry, ?Model $record) use ($relationship, $column): int | float | null {
             if (blank($record)) {
@@ -626,7 +638,7 @@ class TextEntry extends Entry implements HasAffixActions, HasEmbeddedView
     /**
      * @param  string | array<int | string, string | Closure> | Closure | null  $relationship
      */
-    public function sum(string | array | Closure | null $relationship, string | Closure | null $column): static
+    public function sum(string | array | Closure | null $relationship, string | Expression | Closure | null $column): static
     {
         $this->state(function (TextEntry $entry, ?Model $record) use ($relationship, $column): int | float | null {
             if (blank($record)) {

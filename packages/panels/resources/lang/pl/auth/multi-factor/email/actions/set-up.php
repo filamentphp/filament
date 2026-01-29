@@ -30,6 +30,10 @@ return [
                                 'title' => 'Nowy kod został wysłany na Twój adres e-mail',
                             ],
 
+                            'throttled' => [
+                                'title' => 'Zbyt wiele prób ponownego wysłania. Proszę poczekać przed żądaniem kolejnego kodu.',
+                            ],
+
                         ],
 
                     ],

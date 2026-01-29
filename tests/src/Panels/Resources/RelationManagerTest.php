@@ -18,6 +18,7 @@ use Filament\Tests\Fixtures\Models\Ticket;
 use Filament\Tests\Fixtures\Policies\DepartmentPolicy;
 use Filament\Tests\Fixtures\Resources\Tickets\Pages\EditTicket;
 use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsRelationManager;
+use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsRelationManagerWithTabs;
 use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsWithAttachTableSelectRelationManager;
 use Filament\Tests\Panels\Resources\TestCase;
 use Illuminate\Auth\Access\Response;
@@ -251,4 +252,65 @@ it('can attach records when some are already related', function (): void {
 
     // Verify total count is now 2
     expect($ticket->departments()->count())->toBe(2);
+});
+
+it('can access record for action after record no longer matches `TrashedFilter` in `BelongsToMany` relation manager', function (): void {
+    $ticket = Ticket::factory()->create();
+    $department = Department::factory()->create();
+    $ticket->departments()->attach($department);
+
+    $department->delete();
+
+    livewire(DepartmentsRelationManager::class, [
+        'ownerRecord' => $ticket,
+        'pageClass' => EditTicket::class,
+    ])
+        ->filterTable('trashed', false)
+        ->assertCanSeeTableRecords([$department])
+        ->tap(fn () => $department->restore())
+        ->callAction(TestAction::make(DeleteAction::class)->table($department));
+
+    expect($department->fresh()->trashed())->toBeTrue();
+});
+
+it('can access record for action after record no longer matches tab query in `BelongsToMany` relation manager', function (): void {
+    $ticket = Ticket::factory()->create();
+    $department = Department::factory()->create(['name' => 'Accounting']);
+    $ticket->departments()->attach($department);
+
+    livewire(DepartmentsRelationManagerWithTabs::class, [
+        'ownerRecord' => $ticket,
+        'pageClass' => EditTicket::class,
+    ])
+        ->set('activeTab', 'a_names')
+        ->assertCanSeeTableRecords([$department])
+        ->tap(fn () => $department->update(['name' => 'Billing']))
+        ->callAction(TestAction::make(DeleteAction::class)->table($department));
+
+    expect($department->fresh()->trashed())->toBeTrue();
+});
+
+it('cannot access record for action after record no longer matches tab without `excludeQueryWhenResolvingRecord()` in `BelongsToMany` relation manager', function (): void {
+    $ticket = Ticket::factory()->create();
+    $department = Department::factory()->create(['name' => 'Accounting']);
+    $ticket->departments()->attach($department);
+
+    livewire(DepartmentsRelationManagerWithTabs::class, [
+        'ownerRecord' => $ticket,
+        'pageClass' => EditTicket::class,
+    ])
+        ->set('shouldExcludeTabQueryWhenResolvingRecord', false)
+        ->set('activeTab', 'a_names')
+        ->assertCanSeeTableRecords([$department])
+        ->tap(fn () => $department->update(['name' => 'Billing']));
+
+    expect(
+        fn () => livewire(DepartmentsRelationManagerWithTabs::class, [
+            'ownerRecord' => $ticket,
+            'pageClass' => EditTicket::class,
+        ])
+            ->set('shouldExcludeTabQueryWhenResolvingRecord', false)
+            ->set('activeTab', 'a_names')
+            ->mountTableAction(DeleteAction::class, $department)
+    )->toThrow(TypeError::class);
 });

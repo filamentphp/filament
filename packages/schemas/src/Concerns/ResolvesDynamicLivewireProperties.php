@@ -30,7 +30,7 @@ trait ResolvesDynamicLivewireProperties
 
         if (
             $this instanceof HasActions &&
-            $action = $this->getAction($property)
+            $action = $this->getAction($property, isMounting: false)
         ) {
             return $action;
         }

@@ -14,6 +14,18 @@ return [
 
                 'label' => 'Sarakkeet',
 
+                'actions' => [
+
+                    'select_all' => [
+                        'label' => 'Valitse kaikki',
+                    ],
+
+                    'deselect_all' => [
+                        'label' => 'Poista valinta kaikista',
+                    ],
+
+                ],
+
                 'form' => [
 
                     'is_enabled' => [
@@ -65,6 +77,11 @@ return [
             'body' => 'Et voi viedä kuin yhden rivin kerralla.|Et voi viedä kuin :count riviä yhdellä kerralla.',
         ],
 
+        'no_columns' => [
+            'title' => 'Sarakkeita ei ole valittu',
+            'body' => 'Valitse ainakin yksi sarake vientiä varten.',
+        ],
+
         'started' => [
             'title' => 'Vienti aloitettu',
             'body' => 'Vienti on aloitettu ja 1 rivi käsitellään taustalla. Saat ilmoituksen latauslinkillä kun se on valmis.|Vienti on aloitettu ja :count riviä käsitellään taustalla. Saat ilmoituksen latauslinkillä kun se on valmis.',
@@ -72,6 +89,6 @@ return [
 
     ],
 
-    'file_name' => 'export-:export_id-:model',
+    'file_name' => 'vienti-:export_id-:model',
 
 ];

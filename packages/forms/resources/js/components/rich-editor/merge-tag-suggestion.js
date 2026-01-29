@@ -57,6 +57,7 @@ export default ({ mergeTags, noMergeTagSearchResultsMessage }) => ({
         const createDropdown = () => {
             const dropdown = document.createElement('div')
             dropdown.className = 'fi-dropdown-panel fi-dropdown-list'
+            dropdown.style.minWidth = '12rem'
 
             return dropdown
         }
@@ -66,7 +67,6 @@ export default ({ mergeTags, noMergeTagSearchResultsMessage }) => ({
 
             const items = currentProps.items || []
 
-            // Clear existing items
             element.innerHTML = ''
 
             if (items.length) {
@@ -79,11 +79,15 @@ export default ({ mergeTags, noMergeTagSearchResultsMessage }) => ({
                     element.appendChild(button)
                 })
             } else {
-                const noSearchResultsMessage = document.createElement('div')
-                noSearchResultsMessage.className = 'fi-dropdown-header'
-                noSearchResultsMessage.textContent =
-                    noMergeTagSearchResultsMessage
-                element.appendChild(noSearchResultsMessage)
+                const messageElement = document.createElement('div')
+                messageElement.className = 'fi-dropdown-header'
+
+                const messageSpan = document.createElement('span')
+                messageSpan.style.whiteSpace = 'normal'
+                messageSpan.textContent = noMergeTagSearchResultsMessage
+                messageElement.appendChild(messageSpan)
+
+                element.appendChild(messageElement)
             }
         }
 
@@ -144,20 +148,15 @@ export default ({ mergeTags, noMergeTagSearchResultsMessage }) => ({
 
         return {
             onStart: (props) => {
-                // Store current props
                 currentProps = props
-
-                // Reset selected index when items change
                 selectedIndex = 0
 
-                // Create dropdown element
                 element = createDropdown()
                 element.style.position = 'absolute'
+                element.style.zIndex = '50'
 
-                // Render initial items
                 renderItems()
 
-                // Append to DOM
                 document.body.appendChild(element)
 
                 if (!props.clientRect) {
@@ -168,13 +167,9 @@ export default ({ mergeTags, noMergeTagSearchResultsMessage }) => ({
             },
 
             onUpdate: (props) => {
-                // Store current props
                 currentProps = props
-
-                // Reset selected index when items change
                 selectedIndex = 0
 
-                // Update dropdown items
                 renderItems()
                 scrollToSelected()
 

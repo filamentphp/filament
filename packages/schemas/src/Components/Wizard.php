@@ -128,6 +128,36 @@ class Wizard extends Component
         $this->currentStepIndex($currentStepIndex - 1);
     }
 
+    public function goToStep(string $step): void
+    {
+        $steps = array_values(
+            $this->getChildSchema()->getComponents()
+        );
+
+        foreach ($steps as $index => $wizardStep) {
+            if ($wizardStep->getKey() !== $step) {
+                continue;
+            }
+
+            if ((! $this->isSkippable()) && ($index > $this->getCurrentStepIndex())) {
+                return;
+            }
+
+            $this->currentStepIndex($index);
+
+            /** @var HasSchemas&LivewireComponent $livewire */
+            $livewire = $this->getLivewire();
+
+            $livewire->dispatch(
+                'go-to-wizard-step',
+                key: $this->getKey(),
+                step: $step,
+            );
+
+            return;
+        }
+    }
+
     public function getNextAction(): Action
     {
         $action = Action::make($this->getNextActionName())

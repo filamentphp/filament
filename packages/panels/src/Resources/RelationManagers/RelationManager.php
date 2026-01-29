@@ -56,6 +56,7 @@ class RelationManager extends Component implements HasActions, HasRenderHookScop
     use InteractsWithActions;
     use InteractsWithRelationshipTable {
         InteractsWithRelationshipTable::makeTable as makeBaseRelationshipTable;
+        InteractsWithRelationshipTable::canReorder as baseCanReorder;
     }
     use InteractsWithSchemas;
 
@@ -323,6 +324,11 @@ class RelationManager extends Component implements HasActions, HasRenderHookScop
             ]);
     }
 
+    protected function canReorder(): bool
+    {
+        return $this->isReadOnly() ? false : $this->baseCanReorder();
+    }
+
     public function getDefaultActionAuthorizationResponse(Action $action): ?Response
     {
         if ($action instanceof ViewAction) {
@@ -371,23 +377,28 @@ class RelationManager extends Component implements HasActions, HasRenderHookScop
             return null;
         }
 
+        $actionModel = $action->getModel();
+
         if (
             ($action instanceof CreateAction) &&
-            ($relatedResource::hasPage('create'))
+            ($relatedResource::hasPage('create')) &&
+            (blank($actionModel) || ($actionModel === $relatedResource::getModel()))
         ) {
             return $relatedResource::getUrl('create', shouldGuessMissingParameters: true);
         }
 
         if (
             ($action instanceof EditAction) &&
-            ($relatedResource::hasPage('edit'))
+            ($relatedResource::hasPage('edit')) &&
+            (blank($actionModel) || ($actionModel === $relatedResource::getModel()))
         ) {
             return $relatedResource::getUrl('edit', ['record' => $action->getRecord()], shouldGuessMissingParameters: true);
         }
 
         if (
             ($action instanceof ViewAction) &&
-            ($relatedResource::hasPage('view'))
+            ($relatedResource::hasPage('view')) &&
+            (blank($actionModel) || ($actionModel === $relatedResource::getModel()))
         ) {
             return $relatedResource::getUrl('view', ['record' => $action->getRecord()], shouldGuessMissingParameters: true);
         }

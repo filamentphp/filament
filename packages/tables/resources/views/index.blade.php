@@ -42,7 +42,9 @@
     $columnManagerResetActionPosition = $getColumnManagerResetActionPosition();
     $hasColumnGroups = $hasColumnGroups();
     $hasColumnsLayout = $hasColumnsLayout();
-    $hasSummary = $hasSummary($this->getAllTableSummaryQuery());
+    $hasPageSummary = $hasPageSummary();
+    $hasAllTableSummary = $hasAllTableSummary();
+    $hasSummary = ($hasPageSummary || $hasAllTableSummary) && $hasSummary($this->getAllTableSummaryQuery());
     $header = $getHeader();
     $headerActions = array_filter(
         $getHeaderActions(),
@@ -183,6 +185,7 @@
     >
         @if ($hasFiltersBeforeContent)
             <div
+                wire:ignore.self
                 x-ref="filtersContentContainer"
                 x-transition:enter-start="fi-opacity-0"
                 x-transition:leave-end="fi-opacity-0"
@@ -1264,8 +1267,10 @@
                             <table class="fi-ta-table">
                                 <tbody>
                                     <x-filament-tables::summary
+                                        :all-table-summary="$hasAllTableSummary"
                                         :columns="$columns"
                                         extra-heading-column
+                                        :page-summary="$hasPageSummary"
                                         :placeholder-columns="false"
                                         :plural-model-label="$pluralModelLabel"
                                         :records="$records"
@@ -1430,6 +1435,9 @@
                                                 $isColumnActivelySorted = $getSortColumn() === $column->getName();
                                                 $isColumnSortable = $column->isSortable() && (! $isReordering);
                                                 $columnHeaderTooltip = $column->getHeaderTooltip();
+                                                $columnHeaderTooltipAttribute = ($columnHeaderTooltip instanceof \Illuminate\Contracts\Support\Htmlable)
+                                                    ? 'x-tooltip.html'
+                                                    : 'x-tooltip';
                                             @endphp
 
                                             <th
@@ -1467,7 +1475,7 @@
                                                     >
                                                         @if (filled($columnHeaderTooltip))
                                                             <span
-                                                                x-tooltip="{
+                                                                {{ $columnHeaderTooltipAttribute }}="{
                                                                     content: @js($columnHeaderTooltip),
                                                                     theme: $store.theme,
                                                                 }"
@@ -1490,7 +1498,7 @@
                                                 @else
                                                     @if (filled($columnHeaderTooltip))
                                                         <span
-                                                            x-tooltip="{
+                                                            {{ $columnHeaderTooltipAttribute }}="{
                                                                 content: @js($columnHeaderTooltip),
                                                                 theme: $store.theme,
                                                             }"
@@ -2136,9 +2144,11 @@
                                             <x-filament-tables::summary
                                                 :actions="count($defaultRecordActions)"
                                                 :actions-position="$recordActionsPosition"
+                                                :all-table-summary="$hasAllTableSummary"
                                                 :columns="$columns"
                                                 :group-column="$groupColumn"
                                                 :groups-only="$isGroupsOnly"
+                                                :page-summary="$hasPageSummary"
                                                 :plural-model-label="$pluralModelLabel"
                                                 :record-checkbox-position="$recordCheckboxPosition"
                                                 :records="$records"
@@ -2235,6 +2245,7 @@
 
         @if ($hasFiltersAfterContent)
             <div
+                wire:ignore.self
                 x-ref="filtersContentContainer"
                 x-transition:enter-start="fi-opacity-0"
                 x-transition:leave-end="fi-opacity-0"

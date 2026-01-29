@@ -205,11 +205,14 @@ return [
                 ],
 
                 'mode' => [
+
                     'label' => 'Date type',
+
                     'options' => [
                         'absolute' => 'Specific date',
                         'relative' => 'Rolling window',
                     ],
+
                 ],
 
                 'preset' => [
@@ -225,11 +228,14 @@ return [
                 ],
 
                 'tense' => [
+
                     'label' => 'Tense',
+
                     'options' => [
                         'past' => 'Past',
                         'future' => 'Future',
                     ],
+
                 ],
 
             ],

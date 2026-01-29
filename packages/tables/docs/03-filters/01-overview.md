@@ -1,6 +1,7 @@
 ---
 title: Overview
 ---
+import Aside from "@components/Aside.astro"
 import AutoScreenshot from "@components/AutoScreenshot.astro"
 import UtilityInjection from "@components/UtilityInjection.astro"
 
@@ -199,6 +200,35 @@ TernaryFilter::make('trashed')
         SoftDeletingScope::class,
     ]))
 ```
+
+## Excluding filters when resolving records
+
+When a user interacts with a table record (e.g., clicking an action button), Filament resolves that record from the database. By default, all active filter conditions are applied, ensuring users cannot access records outside their filter scope.
+
+However, some filters like `TrashedFilter` modify global scopes rather than restricting access. When a record's state changes after the user saw it in the table, you may still want the user to interact with it.
+
+You may mark a filter to be excluded when resolving records using the `excludeWhenResolvingRecord()` method:
+
+```php
+use Filament\Tables\Filters\Filter;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
+
+Filter::make('trashed')
+    ->query(fn (Builder $query) => $query->onlyTrashed())
+    ->baseQuery(fn (Builder $query) => $query->withoutGlobalScopes([
+        SoftDeletingScope::class,
+    ]))
+    ->excludeWhenResolvingRecord()
+```
+
+When `excludeWhenResolvingRecord()` is used:
+- The filter's `query()` callback is not applied when resolving records
+- The filter's `baseQuery()` callback is still applied when resolving records
+
+<Aside variant="danger">
+    Do not use `excludeWhenResolvingRecord()` on filters that enforce authorization rules. For example, if you have a filter that restricts records by tenant or user ownership, those filters should remain enforced to prevent unauthorized access.
+</Aside>
 
 ## Customizing the filters trigger action
 

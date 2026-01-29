@@ -146,18 +146,96 @@ return [
 
             ],
 
+            'unit_labels' => [
+                'second' => 'Seconds',
+                'minute' => 'Minutes',
+                'hour' => 'Dârkâr',
+                'day' => 'Ni',
+                'week' => 'Chawlhkâr',
+                'month' => 'Thla',
+                'quarter' => 'Quarters',
+                'year' => 'Kum',
+            ],
+
+            'presets' => [
+                'past_decade' => 'Kum sâwm kalta',
+                'past_5_years' => 'Kum 5 kalta',
+                'past_2_years' => 'Kum 2 kalta',
+                'past_year' => 'Nikum',
+                'past_6_months' => 'Thla 6 kalta',
+                'past_quarter' => 'Quarter kalta',
+                'past_month' => 'Thla hmasa',
+                'past_2_weeks' => 'Kar 2 kalta',
+                'past_week' => 'Kar hmasa',
+                'past_hour' => 'Dârkâr kalta',
+                'past_minute' => 'Minute kalta',
+                'this_decade' => 'Tun kum sâwm chhung',
+                'this_year' => 'Kumin',
+                'this_quarter' => 'Tun quarter',
+                'this_month' => 'Tun thla',
+                'today' => 'Voiin',
+                'this_hour' => 'Tun dârkâr',
+                'this_minute' => 'Tun minute',
+                'next_minute' => 'Minute dawt',
+                'next_hour' => 'Darkâr dawt',
+                'next_week' => 'Karleh',
+                'next_2_weeks' => 'Karleh lehpek',
+                'next_month' => 'Thla leh',
+                'next_quarter' => 'Quarter leh',
+                'next_6_months' => 'Thla 6 hnuah',
+                'next_year' => 'Nakum ah',
+                'next_2_years' => 'Kum 2 hnuah',
+                'next_5_years' => 'Kum 5 hnuah',
+                'next_decade' => 'Kum sâwm hnuah',
+                'custom' => 'Custom',
+            ],
+
             'form' => [
 
                 'date' => [
-                    'label' => 'Date',
+                    'label' => 'Ni',
                 ],
 
                 'month' => [
-                    'label' => 'Month',
+                    'label' => 'Thla',
                 ],
 
                 'year' => [
-                    'label' => 'Year',
+                    'label' => 'Kum',
+                ],
+
+                'mode' => [
+
+                    'label' => 'Date type',
+
+                    'options' => [
+                        'absolute' => 'Specific date',
+                        'relative' => 'Rolling window',
+                    ],
+
+                ],
+
+                'preset' => [
+                    'label' => 'Time period',
+                ],
+
+                'relative_value' => [
+                    'label' => 'How many',
+                ],
+
+                'relative_unit' => [
+                    'label' => 'Time unit',
+                ],
+
+                'tense' => [
+
+                    'label' => 'Tense',
+
+                    'options' => [
+                        'past' => 'Hun kal tawh',
+                        'future' => 'Hun la thleng tûr',
+                    ],
+
                 ],
 
             ],

@@ -950,6 +950,23 @@ public function table(Table $table): Table
 }
 ```
 
+#### Changing the number of display columns in the column manager
+
+By default, the column manager displays its options in a single column. You can increase this to multiple columns using the `columnManagerColumns()` method:
+
+```php
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->columns([
+            // ...
+        ])
+        ->columnManagerColumns(2);
+}
+```
+
 ## Adding extra HTML attributes to a column content
 
 You can pass extra HTML attributes to the column content via the `extraAttributes()` method, which will be merged onto its outer HTML element. The attributes should be represented by an array, where the key is the attribute name and the value is the attribute value:

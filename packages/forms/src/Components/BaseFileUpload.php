@@ -12,6 +12,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 use League\Flysystem\UnableToCheckFileExistence;
 use Livewire\Attributes\Renderless;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
@@ -76,6 +77,29 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
     protected ?Closure $reorderUploadedFilesUsing = null;
 
     protected ?Closure $saveUploadedFileUsing = null;
+
+    /**
+     * @var string | array<string> | Closure | null
+     */
+    protected string | array | Closure | null $imageAspectRatio = null;
+
+    /**
+     * @var array<string>
+     */
+    protected const ARRAY_VALIDATION_RULES = [
+        'filled',
+        'prohibited',
+        'prohibited_if',
+        'prohibited_unless',
+        'required_if',
+        'required_if_accepted',
+        'required_if_declined',
+        'required_unless',
+        'required_with',
+        'required_with_all',
+        'required_without',
+        'required_without_all',
+    ];
 
     protected function setUp(): void
     {
@@ -598,7 +622,23 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
             $rules[] = "min:{$count}";
         }
 
-        $rules[] = function (string $attribute, array $value, Closure $fail): void {
+        $arrayRules = [];
+        $fileRules = [];
+
+        foreach (parent::getValidationRules() as $rule) {
+            if ($this->isArrayValidationRule($rule)) {
+                $arrayRules[] = $rule;
+            } else {
+                $fileRules[] = $rule;
+            }
+        }
+
+        $rules = [
+            ...$rules,
+            ...$arrayRules,
+        ];
+
+        $rules[] = function (string $attribute, array $value, Closure $fail) use ($fileRules): void {
             $files = array_filter($value, fn (TemporaryUploadedFile | string $file): bool => $file instanceof TemporaryUploadedFile);
 
             $name = $this->getName();
@@ -607,7 +647,7 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
 
             $validator = Validator::make(
                 [$name => $files],
-                ["{$name}.*" => ['file', ...parent::getValidationRules()]],
+                ["{$name}.*" => ['file', ...$fileRules]],
                 $validationMessages ? ["{$name}.*" => $validationMessages] : [],
                 ["{$name}.*" => $this->getValidationAttribute()],
             );
@@ -620,6 +660,17 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
         };
 
         return $rules;
+    }
+
+    protected function isArrayValidationRule(mixed $rule): bool
+    {
+        if (! is_string($rule)) {
+            return false;
+        }
+
+        $ruleName = strtolower(explode(':', $rule)[0]);
+
+        return in_array($ruleName, static::ARRAY_VALIDATION_RULES, strict: true);
     }
 
     #[ExposedLivewireMethod]
@@ -900,6 +951,105 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
         if ($fileNamesStatePath = $this->getFileNamesStatePath()) {
             $rules[$fileNamesStatePath] = ['nullable'];
         }
+    }
+
+    /**
+     * @param  string | array<string> | Closure | null  $ratio
+     */
+    public function imageAspectRatio(string | array | Closure | null $ratio): static
+    {
+        $this->imageAspectRatio = $ratio;
+
+        $this->rule(static function (BaseFileUpload $component): Closure {
+            /** @var array<string> $ratios */
+            $ratios = Arr::wrap($component->getImageAspectRatio());
+
+            return static function (string $attribute, mixed $value, Closure $fail) use ($component, $ratios): void {
+                if (blank($value)) {
+                    return;
+                }
+
+                foreach ($ratios as $ratio) {
+                    $ratio = $component->calculateAspectRatio($ratio);
+
+                    if ($ratio === null) {
+                        continue;
+                    }
+
+                    if (Validator::make(
+                        ['file' => $value],
+                        ['file' => Rule::dimensions()->ratio($ratio)],
+                    )->passes()) {
+                        return;
+                    }
+                }
+
+                $fail('validation.dimensions')->translate();
+            };
+        }, static function (BaseFileUpload $component): bool {
+            return filled($component->getImageAspectRatio());
+        });
+
+        return $this;
+    }
+
+    /**
+     * @return string | array<string> | null
+     */
+    public function getImageAspectRatio(): string | array | null
+    {
+        $ratio = $this->evaluate($this->imageAspectRatio);
+
+        if (is_array($ratio)) {
+            return array_filter(array_map(
+                fn (string $ratio): ?string => $this->normalizeAspectRatio($ratio),
+                $ratio,
+            ));
+        }
+
+        return $this->normalizeAspectRatio($ratio);
+    }
+
+    protected function calculateAspectRatio(?string $ratio): ?float
+    {
+        if ($ratio === null) {
+            return null;
+        }
+
+        $parts = explode(':', $ratio);
+
+        if (count($parts) !== 2) {
+            return null;
+        }
+
+        [$numerator, $denominator] = $parts;
+
+        if (! is_numeric($numerator) || ! is_numeric($denominator) || ((float) $denominator === 0.0)) {
+            return null;
+        }
+
+        return (float) $numerator / (float) $denominator;
+    }
+
+    protected function normalizeAspectRatio(?string $ratio): ?string
+    {
+        if (blank($ratio)) {
+            return null;
+        }
+
+        if (str_contains($ratio, ':')) {
+            return $ratio;
+        }
+
+        if (str_contains($ratio, '/')) {
+            return str_replace('/', ':', $ratio);
+        }
+
+        if (is_numeric($ratio)) {
+            return "{$ratio}:1";
+        }
+
+        return null;
     }
 
     public function getDefaultStateCasts(): array

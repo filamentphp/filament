@@ -6,6 +6,15 @@ return [
 
         'heading' => 'ជួរឈរ',
 
+        'actions' => [
+            'apply' => [
+                'label' => 'អនុវត្ត',
+            ],
+            'reset' => [
+                'label' => 'កំណត់ឡើងវិញ',
+            ],
+        ],
+
     ],
 
     'columns' => [
@@ -23,6 +32,15 @@ return [
 
             'more_list_items' => 'និង :count ច្រើនទៀត',
 
+        ],
+
+        'select' => [
+            'loading_message' => 'កំពុងដំណើរការ...',
+            'no_options_message' => 'គ្មានជម្រើស.',
+            'no_search_results_message' => 'រកមិនឃើញទិន្នន័យ.',
+            'placeholder' => 'ជ្រើសរើស',
+            'searching_message' => 'កំពុងស្វែងរក...',
+            'search_prompt' => 'វាយបញ្ចូលដើម្បីស្វែងរក...',
         ],
 
     ],
@@ -146,6 +164,9 @@ return [
 
         'select' => [
             'placeholder' => 'ទាំងអស់',
+            'relationship' => [
+                'empty_option_label' => 'គ្មាន',
+            ],
         ],
 
         'trashed' => [
@@ -168,7 +189,6 @@ return [
 
             'group' => [
                 'label' => 'ដាក់ជាក្រុមដោយ',
-                'placeholder' => 'ដាក់ជាក្រុមដោយ',
             ],
 
             'direction' => [
@@ -228,5 +248,7 @@ return [
         ],
 
     ],
+
+    'default_model_label' => 'ទិន្នន័យ',
 
 ];

@@ -88,7 +88,7 @@ class Schema extends ViewComponent implements HasEmbeddedView
      */
     protected function resolveDefaultClosureDependencyForEvaluationByType(string $parameterType): array
     {
-        $record = $this->getRecord();
+        $record = is_a($parameterType, Model::class, allow_string: true) ? $this->getRecord() : null;
 
         if (! ($record instanceof Model)) {
             return match ($parameterType) {
@@ -196,7 +196,7 @@ class Schema extends ViewComponent implements HasEmbeddedView
         <div <?= $attributes->toHtml() ?>>
             <?php foreach ($componentsWithVisibility as [$schemaComponent, $isSchemaComponentVisible]) { ?>
                 <?php if (($schemaComponent instanceof Action) || ($schemaComponent instanceof ActionGroup)) { ?>
-                    <div <?php if (! $isSchemaComponentVisible) { ?> class="fi-hidden"<?php } ?>>
+                    <div class="fi-sc-action<?php if (! $isSchemaComponentVisible) { ?> fi-hidden<?php } ?>">
                         <?php if ($isSchemaComponentVisible) { ?>
                             <?= $schemaComponent->toHtml() ?>
                         <?php } ?>

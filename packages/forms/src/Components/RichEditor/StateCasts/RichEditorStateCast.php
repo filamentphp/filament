@@ -5,6 +5,7 @@ namespace Filament\Forms\Components\RichEditor\StateCasts;
 use Filament\Forms\Components\RichEditor;
 use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
 use Illuminate\Contracts\Support\Htmlable;
+use Tiptap\Editor;
 
 class RichEditorStateCast implements StateCast
 {
@@ -105,6 +106,65 @@ class RichEditorStateCast implements StateCast
             });
         }
 
+        $this->hydrateMentionLabels($editor);
+
         return $editor->getDocument();
+    }
+
+    protected function hydrateMentionLabels(Editor $editor): void
+    {
+        $mentionProviders = $this->richEditor->getMentionProviders();
+
+        if (blank($mentionProviders)) {
+            return;
+        }
+
+        $mentionsByChar = [];
+
+        $editor->descendants(function (object &$node) use (&$mentionsByChar): void {
+            if ($node->type !== 'mention') {
+                return;
+            }
+
+            $char = $node->attrs->char ?? '@';
+            $id = $node->attrs->id ?? null;
+
+            if (blank($id)) {
+                return;
+            }
+
+            $mentionsByChar[$char][] = (string) $id;
+        });
+
+        if (blank($mentionsByChar)) {
+            return;
+        }
+
+        $labelsByChar = [];
+
+        foreach ($mentionsByChar as $char => $ids) {
+            foreach ($mentionProviders as $provider) {
+                if ($provider->getChar() === $char) {
+                    $labelsByChar[$char] = $provider->getLabels(array_unique($ids));
+
+                    break;
+                }
+            }
+        }
+
+        $editor->descendants(function (object &$node) use ($labelsByChar): void {
+            if ($node->type !== 'mention') {
+                return;
+            }
+
+            $char = $node->attrs->char ?? '@';
+            $id = $node->attrs->id ?? null;
+
+            if (blank($id)) {
+                return;
+            }
+
+            $node->attrs->label = $labelsByChar[$char][(string) $id] ?? '';
+        });
     }
 }

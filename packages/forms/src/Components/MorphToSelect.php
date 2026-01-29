@@ -44,6 +44,8 @@ class MorphToSelect extends Component
 
     protected ?Closure $modifyKeySelectUsing = null;
 
+    protected bool | Closure $hasTypeSelectToggleButtons = false;
+
     final public function __construct(string $name)
     {
         $this->name($name);
@@ -80,20 +82,35 @@ class MorphToSelect extends Component
             $selectedTypeKey = $component->getRawState()[$typeColumn] ?? null;
             $selectedType = $selectedTypeKey ? ($component->getTypes()[$selectedTypeKey] ?? null) : null;
 
-            $typeSelect = Select::make($typeColumn)
-                ->label($component->getLabel())
-                ->hiddenLabel()
-                ->options(array_map(
-                    fn (Type $type): string => $type->getLabel(),
-                    $types,
-                ))
-                ->native($component->isNative())
-                ->required($isRequired)
-                ->live()
-                ->afterStateUpdated(function (Set $set) use ($component, $keyColumn): void {
-                    $set($keyColumn, null);
-                    $component->callAfterStateUpdated();
-                });
+            $typeSelect = $component->hasTypeSelectToggleButtons()
+                ? ToggleButtons::make($typeColumn)
+                    ->label($component->getLabel())
+                    ->hiddenLabel()
+                    ->options(array_map(
+                        static fn (Type $type): string => $type->getLabel(),
+                        $types,
+                    ))
+                    ->inline()
+                    ->required($isRequired)
+                    ->live()
+                    ->afterStateUpdated(function (Set $set) use ($component, $keyColumn): void {
+                        $set($keyColumn, null);
+                        $component->callAfterStateUpdated();
+                    })
+                : Select::make($typeColumn)
+                    ->label($component->getLabel())
+                    ->hiddenLabel()
+                    ->options(array_map(
+                        static fn (Type $type): string => $type->getLabel(),
+                        $types,
+                    ))
+                    ->native($component->isNative())
+                    ->required($isRequired)
+                    ->live()
+                    ->afterStateUpdated(function (Set $set) use ($component, $keyColumn): void {
+                        $set($keyColumn, null);
+                        $component->callAfterStateUpdated();
+                    });
 
             $keySelect = Select::make($keyColumn)
                 ->label(fn (Get $get): ?string => ($types[$get($typeColumn)] ?? null)?->getLabel())
@@ -109,6 +126,7 @@ class MorphToSelect extends Component
                 ->searchDebounce($component->getSearchDebounce())
                 ->searchPrompt($component->getSearchPrompt())
                 ->searchingMessage($component->getSearchingMessage())
+                ->noOptionsMessage($component->getNoOptionsMessage())
                 ->noSearchResultsMessage($component->getNoSearchResultsMessage())
                 ->loadingMessage($component->getLoadingMessage())
                 ->allowHtml($component->isHtmlAllowed())
@@ -120,11 +138,13 @@ class MorphToSelect extends Component
                 )
                 ->afterStateUpdated(function () use ($component): void {
                     $component->callAfterStateUpdated();
-                });
+                })
+                ->actionSchemaModel(fn (Get $get): ?string => ($types[$get($typeColumn)] ?? null)?->getModel());
 
             if ($callback = $component->getModifyTypeSelectUsingCallback()) {
                 $typeSelect = $component->evaluate($callback, [
                     'select' => $typeSelect,
+                    'toggleButtons' => $typeSelect,
                 ]) ?? $typeSelect;
             }
 
@@ -171,6 +191,18 @@ class MorphToSelect extends Component
     public function getModifyKeySelectUsingCallback(): ?Closure
     {
         return $this->modifyKeySelectUsing;
+    }
+
+    public function typeSelectToggleButtons(bool | Closure $condition = true): static
+    {
+        $this->hasTypeSelectToggleButtons = $condition;
+
+        return $this;
+    }
+
+    public function hasTypeSelectToggleButtons(): bool
+    {
+        return (bool) $this->evaluate($this->hasTypeSelectToggleButtons);
     }
 
     public function optionsLimit(int | Closure $limit): static

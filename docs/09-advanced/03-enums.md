@@ -19,6 +19,7 @@ The `HasLabel` interface transforms an enum instance into a textual label. This 
 
 ```php
 use Filament\Support\Contracts\HasLabel;
+use Illuminate\Contracts\Support\Htmlable;
 
 enum Status: string implements HasLabel
 {
@@ -27,7 +28,7 @@ enum Status: string implements HasLabel
     case Published = 'published';
     case Rejected = 'rejected';
     
-    public function getLabel(): ?string
+    public function getLabel(): string | Htmlable | null
     {
         return $this->name;
         
@@ -136,7 +137,10 @@ If you use a [`ToggleButtons`](../forms/toggle-buttons) form field, and it is se
 The `HasIcon` interface transforms an enum instance into an [icon](../styling/icons). This is useful for displaying icons alongside enum values in your UI.
 
 ```php
+use BackedEnum;
 use Filament\Support\Contracts\HasIcon;
+use Filament\Support\Icons\Heroicon;
+use Illuminate\Contracts\Support\Htmlable;
 
 enum Status: string implements HasIcon
 {
@@ -144,14 +148,14 @@ enum Status: string implements HasIcon
     case Reviewing = 'reviewing';
     case Published = 'published';
     case Rejected = 'rejected';
-    
-    public function getIcon(): ?string
+
+    public function getIcon(): string | BackedEnum | Htmlable | null
     {
         return match ($this) {
-            self::Draft => 'heroicon-m-pencil',
-            self::Reviewing => 'heroicon-m-eye',
-            self::Published => 'heroicon-m-check',
-            self::Rejected => 'heroicon-m-x-mark',
+            self::Draft => Heroicon::Pencil,
+            self::Reviewing => Heroicon::Eye,
+            self::Published => Heroicon::Check,
+            self::Rejected => Heroicon::XMark,
         };
     }
 }
@@ -176,6 +180,7 @@ The `HasDescription` interface transforms an enum instance into a textual descri
 ```php
 use Filament\Support\Contracts\HasDescription;
 use Filament\Support\Contracts\HasLabel;
+use Illuminate\Contracts\Support\Htmlable;
 
 enum Status: string implements HasLabel, HasDescription
 {
@@ -184,12 +189,12 @@ enum Status: string implements HasLabel, HasDescription
     case Published = 'published';
     case Rejected = 'rejected';
     
-    public function getLabel(): ?string
+    public function getLabel(): string | Htmlable | null
     {
         return $this->name;
     }
     
-    public function getDescription(): ?string
+    public function getDescription(): string | Htmlable | null
     {
         return match ($this) {
             self::Draft => 'This has not finished being written yet.',

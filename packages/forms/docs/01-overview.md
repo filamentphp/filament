@@ -163,31 +163,31 @@ Toggle::make('is_admin')
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `disabled()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-Disabling a field will prevent it from being saved. If you'd like it to be saved, but still not editable, use the `dehydrated()` method:
+Disabling a field will prevent it from being saved. If you'd like it to be saved, but still not editable, use the `saved()` method:
 
 ```php
 use Filament\Forms\Components\Toggle;
 
 Toggle::make('is_admin')
     ->disabled()
-    ->dehydrated()
+    ->saved()
 ```
 
 <Aside variant="danger">
-    If you choose to dehydrate the field, a skilled user could still edit the field's value by manipulating Livewire's JavaScript.
+    If you choose to save the field when disabled, a skilled user could still edit the field's value by manipulating Livewire's JavaScript.
 </Aside>
 
-Optionally, you may pass a boolean value to control if the field should be dehydrated or not:
+Optionally, you may pass a boolean value to control if the field should be saved or not:
 
 ```php
 use Filament\Forms\Components\Toggle;
 
 Toggle::make('is_admin')
     ->disabled()
-    ->dehydrated(FeatureFlag::active())
+    ->saved(FeatureFlag::active())
 ```
 
-<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `dehydrated()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `saved()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ### Disabling a field based on the current operation
 
@@ -306,7 +306,7 @@ Toggle::make('is_admin')
 Although the code passed to `hiddenJs()` looks very similar to PHP, it is actually JavaScript. Filament provides the `$get()` utility function to JavaScript that behaves very similar to its PHP equivalent, but without requiring the depended-on field to be `live()`.
 
 <Aside variant="danger">
-    Any JS string passed to the `hiddenJs()` method will be executed in the browser, so you should never add user input directly into the string, as it could lead to cross-site scripting (XSS) vulnerabilities. User input from `$state` or `$get()` should never be evaluated as JavaScript code, but is safe to use as a string value, like in the example above.
+    Any JavaScript string passed to the `hiddenJs()` method will be executed in the browser, so you should never add user input directly into the string, as it could lead to cross-site scripting (XSS) vulnerabilities. User input from `$state` or `$get()` should never be evaluated as JavaScript code, but is safe to use as a string value, like in the example above.
 </Aside>
 
 The `visibleJs()` method is also available, which works in the same way as `hiddenJs()`, but controls if the field should be visible or not:
@@ -328,7 +328,7 @@ Toggle::make('is_admin')
 ```
 
 <Aside variant="danger">
-    Any JS string passed to the `visibleJs()` method will be executed in the browser, so you should never add user input directly into the string, as it could lead to cross-site scripting (XSS) vulnerabilities. User input from `$state` or `$get()` should never be evaluated as JavaScript code, but is safe to use as a string value, like in the example above.
+    Any JavaScript string passed to the `visibleJs()` method will be executed in the browser, so you should never add user input directly into the string, as it could lead to cross-site scripting (XSS) vulnerabilities. User input from `$state` or `$get()` should never be evaluated as JavaScript code, but is safe to use as a string value, like in the example above.
 </Aside>
 
 <Aside variant="info">
@@ -635,6 +635,10 @@ TextInput::make('name')
 ```
 
 <AutoScreenshot name="forms/fields/below-content/action" alt="Form field with action below content" version="4.x" />
+
+<Aside variant="tip">
+    If you need a simple action that runs JavaScript without making a network request, you can use the [`actionJs()` method](../actions/overview#running-javascript-when-an-action-is-clicked). This is useful for simple interactions like updating form field values using `$get()` and `$set()`. Actions using `actionJs()` cannot open modals.
+</Aside>
 
 You can insert any combination of content into the slots by passing an array of content to the method:
 
@@ -1283,27 +1287,27 @@ TextInput::make('name')
     ->dehydrateStateUsing(fn (string $state): string => ucwords($state))
 ```
 
-#### Preventing a field from being dehydrated
+#### Preventing a field from being saved
 
-You may also prevent a field from being dehydrated altogether using `dehydrated(false)`. In this example, the field will not be present in the array returned from `getState()`:
+You may prevent a field from being saved altogether using `saved(false)`. In this example, the field will not be present in the array returned from `getState()`, and any relationships associated with the field will not be saved either:
 
 ```php
 use Filament\Forms\Components\TextInput;
 
 TextInput::make('password_confirmation')
     ->password()
-    ->dehydrated(false)
+    ->saved(false)
 ```
 
 If your schema auto-saves data to the database, like in a [resource](../resources), this is useful to prevent a field from being saved to the database if it is purely used for presentational purposes.
 
 <Aside variant="info">
-    Even when a field is not dehydrated, it is still validated. To learn more about this behavior, see the [validation](validation#disabling-validation-when-fields-are-not-dehydrated) section.
+    Even when a field is not saved, it is still validated. To learn more about this behavior, see the [validation](validation#disabling-validation-when-fields-are-not-saved) section.
 </Aside>
 
 ### Field rendering
 
-Each time a reactive field is updated, the HTML entire Livewire component that the schema belongs to is re-generated and sent to the frontend via a network request. In some cases, this may be overkill, especially if the schema is large and only certain components have changed.
+Each time a reactive field is updated, the HTML of the entire Livewire component that the schema belongs to is re-generated and sent to the frontend via a network request. In some cases, this may be overkill, especially if the schema is large and only certain components have changed.
 
 #### Field partial rendering
 
@@ -1378,7 +1382,7 @@ TextInput::make('email')
 ```
 
 <Aside variant="danger">
-    Any JS string passed to the `afterStateUpdatedJs()` method will be executed in the browser, so you should never add user input directly into the string, as it could lead to cross-site scripting (XSS) vulnerabilities. User input from `$state` or `$get()` should never be evaluated as JavaScript code, but is safe to use as a string value, like in the example above.
+    Any JavaScript string passed to the `afterStateUpdatedJs()` method will be executed in the browser, so you should never add user input directly into the string, as it could lead to cross-site scripting (XSS) vulnerabilities. User input from `$state` or `$get()` should never be evaluated as JavaScript code, but is safe to use as a string value, like in the example above.
 </Aside>
 
 ## Reactive forms cookbook
@@ -1602,7 +1606,7 @@ TextInput::make('password')
     ->dehydrateStateUsing(fn (string $state): string => Hash::make($state))
 ```
 
-But if your schema is used to change an existing password, you don't want to overwrite the existing password if the field is empty. You can [prevent the field from being dehydrated](#preventing-a-field-from-being-dehydrated) if the field is null or an empty string (using the `filled()` helper):
+But if your schema is used to change an existing password, you don't want to overwrite the existing password if the field is empty. You can [prevent the field from being saved](#preventing-a-field-from-being-saved) if the field is null or an empty string (using the `filled()` helper):
 
 ```php
 use Filament\Forms\Components\TextInput;
@@ -1611,7 +1615,7 @@ use Illuminate\Support\Facades\Hash;
 TextInput::make('password')
     ->password()
     ->dehydrateStateUsing(fn (string $state): string => Hash::make($state))
-    ->dehydrated(fn (?string $state): bool => filled($state))
+    ->saved(fn (?string $state): bool => filled($state))
 ```
 
 However, you want to require the password to be filled when the user is being created, by [injecting the `$operation` utility](#injecting-the-current-operation), and then [conditionally making the field required](#conditionally-making-a-field-required):
@@ -1623,7 +1627,7 @@ use Illuminate\Support\Facades\Hash;
 TextInput::make('password')
     ->password()
     ->dehydrateStateUsing(fn (string $state): string => Hash::make($state))
-    ->dehydrated(fn (?string $state): bool => filled($state))
+    ->saved(fn (?string $state): bool => filled($state))
     ->required(fn (string $operation): bool => $operation === 'create')
 ```
 

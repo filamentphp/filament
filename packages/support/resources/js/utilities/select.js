@@ -18,81 +18,85 @@ function filled(value) {
 
 export class Select {
     constructor({
-        element,
-        options,
-        placeholder,
-        state,
         canOptionLabelsWrap = true,
         canSelectPlaceholder = true,
-        initialOptionLabel = null,
-        initialOptionLabels = null,
-        initialState = null,
-        isHtmlAllowed = false,
-        isAutofocused = false,
-        isDisabled = false,
-        isMultiple = false,
-        isReorderable = false,
-        isSearchable = false,
+        element,
         getOptionLabelUsing = null,
         getOptionLabelsUsing = null,
         getOptionsUsing = null,
         getSearchResultsUsing = null,
         hasDynamicOptions = false,
         hasDynamicSearchResults = true,
-        searchPrompt = 'Search...',
-        searchDebounce = 1000,
+        hasInitialNoOptionsMessage = false,
+        initialOptionLabel = null,
+        initialOptionLabels = null,
+        initialState = null,
+        isAutofocused = false,
+        isDisabled = false,
+        isHtmlAllowed = false,
+        isMultiple = false,
+        isReorderable = false,
+        isSearchable = false,
+        livewireId = null,
         loadingMessage = 'Loading...',
-        searchingMessage = 'Searching...',
-        noSearchResultsMessage = 'No results found',
         maxItems = null,
         maxItemsMessage = 'Maximum number of items selected',
+        noOptionsMessage = 'No options available',
+        noSearchResultsMessage = 'No results found',
+        onStateChange = () => {},
+        options,
         optionsLimit = null,
+        placeholder,
         position = null,
         searchableOptionFields = ['label'],
-        livewireId = null,
+        searchDebounce = 1000,
+        searchingMessage = 'Searching...',
+        searchPrompt = 'Search...',
+        state,
         statePath = null,
-        onStateChange = () => {},
     }) {
-        this.element = element
-        this.options = options
-        this.originalOptions = JSON.parse(JSON.stringify(options)) // Keep a copy of original options
-        this.placeholder = placeholder
-        this.state = state
         this.canOptionLabelsWrap = canOptionLabelsWrap
         this.canSelectPlaceholder = canSelectPlaceholder
-        this.initialOptionLabel = initialOptionLabel
-        this.initialOptionLabels = initialOptionLabels
-        this.initialState = initialState
-        this.isHtmlAllowed = isHtmlAllowed
-        this.isAutofocused = isAutofocused
-        this.isDisabled = isDisabled
-        this.isMultiple = isMultiple
-        this.isReorderable = isReorderable
-        this.isSearchable = isSearchable
+        this.element = element
         this.getOptionLabelUsing = getOptionLabelUsing
         this.getOptionLabelsUsing = getOptionLabelsUsing
         this.getOptionsUsing = getOptionsUsing
         this.getSearchResultsUsing = getSearchResultsUsing
         this.hasDynamicOptions = hasDynamicOptions
         this.hasDynamicSearchResults = hasDynamicSearchResults
-        this.searchPrompt = searchPrompt
-        this.searchDebounce = searchDebounce
+        this.hasInitialNoOptionsMessage = hasInitialNoOptionsMessage
+        this.initialOptionLabel = initialOptionLabel
+        this.initialOptionLabels = initialOptionLabels
+        this.initialState = initialState
+        this.isAutofocused = isAutofocused
+        this.isDisabled = isDisabled
+        this.isHtmlAllowed = isHtmlAllowed
+        this.isMultiple = isMultiple
+        this.isReorderable = isReorderable
+        this.isSearchable = isSearchable
+        this.livewireId = livewireId
         this.loadingMessage = loadingMessage
-        this.searchingMessage = searchingMessage
-        this.noSearchResultsMessage = noSearchResultsMessage
-
-        // Tracks the latest initiated async search to invalidate stale results
-        this.activeSearchId = 0
         this.maxItems = maxItems
         this.maxItemsMessage = maxItemsMessage
+        this.noOptionsMessage = noOptionsMessage
+        this.noSearchResultsMessage = noSearchResultsMessage
+        this.onStateChange = onStateChange
+        this.options = options
         this.optionsLimit = optionsLimit
+        this.originalOptions = JSON.parse(JSON.stringify(options))
+        this.placeholder = placeholder
         this.position = position
         this.searchableOptionFields = Array.isArray(searchableOptionFields)
             ? searchableOptionFields
             : ['label']
-        this.livewireId = livewireId
+        this.searchDebounce = searchDebounce
+        this.searchingMessage = searchingMessage
+        this.searchPrompt = searchPrompt
+        this.state = state
         this.statePath = statePath
-        this.onStateChange = onStateChange
+
+        // Tracks the latest initiated async search to invalidate stale results
+        this.activeSearchId = 0
 
         // Central repository for option labels
         this.labelRepository = {}
@@ -433,9 +437,17 @@ export class Select {
 
         // If no options were rendered
         if (totalRenderedCount === 0) {
-            // If there's a search query, show "No results" message
+            // Show a message if:
+            // - There is an active search query (show "no search results" message), or
+            // - The field has `hasInitialNoOptionsMessage` enabled (show "no options" message), or
+            // - The field has dynamic options and no options were returned (show "no options" message)
             if (this.searchQuery) {
                 this.showNoResultsMessage()
+            } else if (
+                this.hasInitialNoOptionsMessage ||
+                this.hasDynamicOptions
+            ) {
+                this.showNoOptionsMessage()
             }
             // If in multiple mode and no search query, hide the dropdown
             else if (this.isMultiple && this.isOpen && !this.isSearchable) {
@@ -618,6 +630,15 @@ export class Select {
 
             if (renderVersion === this.selectedDisplayVersion) {
                 this.selectedDisplay.replaceChildren(fragment)
+
+                // Remove the remove button since there's no selection
+                const existingRemoveButton = this.container.querySelector(
+                    '.fi-select-input-value-remove-btn',
+                )
+                if (existingRemoveButton) {
+                    existingRemoveButton.remove()
+                }
+                this.container.classList.remove('fi-select-input-ctn-clearable')
             }
             return
         }
@@ -901,6 +922,11 @@ export class Select {
             return
         }
 
+        // Only add the remove button if one doesn't already exist
+        if (this.container.querySelector('.fi-select-input-value-remove-btn')) {
+            return
+        }
+
         const removeButton = document.createElement('button')
         removeButton.type = 'button'
         removeButton.className = 'fi-select-input-value-remove-btn'
@@ -922,7 +948,8 @@ export class Select {
             }
         })
 
-        target.appendChild(removeButton)
+        this.container.appendChild(removeButton)
+        this.container.classList.add('fi-select-input-ctn-clearable')
     }
 
     getSelectedOptionLabel(value) {
@@ -1441,10 +1468,9 @@ export class Select {
                 // Hide loading state
                 this.hideLoadingState()
             }
+        } else if (!this.hasInitialNoOptionsMessage || this.searchQuery) {
+            this.hideLoadingState()
         }
-
-        // Hide any existing messages (like "No results")
-        this.hideLoadingState()
 
         // If searchable, focus the search input
         if (this.isSearchable && this.searchInput) {
@@ -1836,6 +1862,22 @@ export class Select {
         if (loadingItem) {
             loadingItem.remove()
         }
+    }
+
+    showNoOptionsMessage() {
+        // Ensure the options list is not rendered empty while showing the message
+        if (this.optionsList.parentNode === this.dropdown) {
+            this.dropdown.removeChild(this.optionsList)
+        }
+
+        // Remove any existing message
+        this.hideLoadingState()
+
+        // Add "No options" message
+        const noOptionsItem = document.createElement('div')
+        noOptionsItem.className = 'fi-select-input-message'
+        noOptionsItem.textContent = this.noOptionsMessage
+        this.dropdown.appendChild(noOptionsItem)
     }
 
     showNoResultsMessage() {

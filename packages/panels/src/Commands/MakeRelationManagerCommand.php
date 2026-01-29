@@ -279,6 +279,8 @@ class MakeRelationManagerCommand extends Command
                     $this->configureIsSoftDeletable();
 
                     $this->configureRelationshipType();
+                } elseif ($this->option('attach') || $this->option('associate')) {
+                    $this->configureRelationshipType();
                 }
             }
 

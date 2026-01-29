@@ -30,6 +30,8 @@ return [
 
             'loading_message' => 'Ładowanie...',
 
+            'no_options_message' => 'Brak dostępnych opcji.',
+
             'no_search_results_message' => 'Brak wyników.',
 
             'placeholder' => 'Wybierz opcję',

@@ -5,6 +5,7 @@ namespace Filament\Actions\Concerns;
 use BackedEnum;
 use Closure;
 use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Actions\View\ActionsIconAlias;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\Width;
@@ -18,12 +19,12 @@ use Illuminate\Support\Arr;
 trait CanOpenModal
 {
     /**
-     * @var array<string, Action>
+     * @var array<string, Action | ActionGroup>
      */
     protected array $cachedExtraModalFooterActions;
 
     /**
-     * @var array<Action> | Closure
+     * @var array<Action | ActionGroup> | Closure
      */
     protected array | Closure $extraModalFooterActions = [];
 
@@ -46,7 +47,7 @@ trait CanOpenModal
     protected Alignment | string | Closure | null $modalAlignment = null;
 
     /**
-     * @var array<string, Action>
+     * @var array<string, Action | ActionGroup>
      */
     protected array $cachedModalFooterActions;
 
@@ -207,7 +208,7 @@ trait CanOpenModal
     }
 
     /**
-     * @param  array<Action> | Closure  $actions
+     * @param  array<Action | ActionGroup> | Closure  $actions
      */
     public function extraModalFooterActions(array | Closure $actions): static
     {
@@ -340,7 +341,7 @@ trait CanOpenModal
     }
 
     /**
-     * @return array<string, Action>
+     * @return array<string, Action | ActionGroup>
      */
     public function getModalFooterActions(): array
     {
@@ -406,7 +407,17 @@ trait CanOpenModal
             return $this->cachedModalActions;
         }
 
-        $actions = $this->getModalFooterActions();
+        $actions = [];
+
+        foreach ($this->getModalFooterActions() as $key => $action) {
+            if ($action instanceof ActionGroup) {
+                foreach ($action->getFlatActions() as $flatAction) {
+                    $actions[$flatAction->getName()] = $flatAction;
+                }
+            } else {
+                $actions[$key] = $action;
+            }
+        }
 
         foreach ($this->modalActions as $action) {
             foreach (Arr::wrap($this->evaluate($action)) as $modalAction) {
@@ -425,6 +436,7 @@ trait CanOpenModal
     public function prepareModalAction(Action $action): Action
     {
         return $action
+            ->parentAction($this)
             ->schemaContainer($this->getSchemaContainer())
             ->schemaComponent($this->getSchemaComponent())
             ->livewire($this->getLivewire())
@@ -435,14 +447,39 @@ trait CanOpenModal
             ->table($this->getTable());
     }
 
+    protected function prepareModalActionGroup(ActionGroup $group): ActionGroup
+    {
+        $group
+            ->schemaContainer($this->getSchemaContainer())
+            ->schemaComponent($this->getSchemaComponent())
+            ->livewire($this->getLivewire())
+            ->when(
+                ! $group->hasRecord(),
+                fn (ActionGroup $group) => $group->record($this->getRecord()),
+            )
+            ->table($this->getTable());
+
+        foreach ($group->getActions() as $nestedAction) {
+            if ($nestedAction instanceof ActionGroup) {
+                $this->prepareModalActionGroup($nestedAction);
+
+                continue;
+            }
+
+            $this->prepareModalAction($nestedAction);
+        }
+
+        return $group;
+    }
+
     /**
-     * @return array<Action>
+     * @return array<Action | ActionGroup>
      */
     public function getVisibleModalFooterActions(): array
     {
         return array_filter(
             $this->getModalFooterActions(),
-            fn (Action $action): bool => $action->isVisible(),
+            fn (Action | ActionGroup $action): bool => $action->isVisible(),
         );
     }
 
@@ -489,7 +526,7 @@ trait CanOpenModal
     }
 
     /**
-     * @return array<Action>
+     * @return array<Action | ActionGroup>
      */
     public function getExtraModalFooterActions(): array
     {
@@ -500,7 +537,11 @@ trait CanOpenModal
         $actions = [];
 
         foreach ($this->evaluate($this->extraModalFooterActions) as $action) {
-            $actions[$action->getName()] = $this->prepareModalAction($action);
+            if ($action instanceof ActionGroup) {
+                $actions[] = $this->prepareModalActionGroup($action);
+            } else {
+                $actions[$action->getName()] = $this->prepareModalAction($action);
+            }
         }
 
         return $this->cachedExtraModalFooterActions = $actions;
@@ -618,9 +659,14 @@ trait CanOpenModal
         return (bool) $this->evaluate($this->isModalSlideOver);
     }
 
+    public function hasModal(): ?bool
+    {
+        return $this->evaluate($this->hasModal);
+    }
+
     public function shouldOpenModal(?Closure $checkForSchemaUsing = null): bool
     {
-        if (is_bool($hasModal = $this->evaluate($this->hasModal))) {
+        if (is_bool($hasModal = $this->hasModal())) {
             return $hasModal;
         }
 

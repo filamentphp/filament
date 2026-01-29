@@ -47,6 +47,7 @@ class PostsTable extends Component implements HasActions, HasSchemas, Tables\Con
                 Tables\Grouping\Group::make('author.profile.company.name'),
                 Tables\Grouping\Group::make('author.image.url'),
                 Tables\Grouping\Group::make('author.profile.image.alt_text'),
+                Tables\Grouping\Group::make('author.setting.theme'),
             ])
             ->columns([
                 Tables\Columns\TextColumn::make('title')
@@ -99,6 +100,10 @@ class PostsTable extends Component implements HasActions, HasSchemas, Tables\Con
                     ->searchable(),
                 Tables\Columns\TextColumn::make('author.profile.image.alt_text')
                     ->label('Profile Image Alt')
+                    ->sortable()
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('author.setting.theme')
+                    ->label('Author Setting Theme (BelongsTo -> HasOneThrough)')
                     ->sortable()
                     ->searchable(),
                 Tables\Columns\IconColumn::make('is_published')
@@ -327,6 +332,30 @@ class PostsTable extends Component implements HasActions, HasSchemas, Tables\Con
                                 ->action(fn (array $data, Post $record) => $this->dispatch('nested-called', bar: $data['bar'], recordKey: $record->getKey())),
                         ]),
                 ]),
+                Action::make('withGroupedExtraActions')
+                    ->schema([
+                        TextInput::make('content')
+                            ->required(),
+                    ])
+                    ->action(function (array $data, Post $record): void {
+                        $this->dispatch('grouped-extra-actions-called', content: $data['content'], recordKey: $record->getKey());
+                    })
+                    ->extraModalFooterActions([
+                        Action::make('simpleExtra')
+                            ->action(fn (Post $record) => $this->dispatch('simple-extra-called', recordKey: $record->getKey())),
+                        ActionGroup::make([
+                            Action::make('option1')
+                                ->action(fn (Post $record) => $this->dispatch('option1-called', recordKey: $record->getKey())),
+                            Action::make('option2')
+                                ->action(fn (Post $record) => $this->dispatch('option2-called', recordKey: $record->getKey())),
+                            Action::make('option3')
+                                ->schema([
+                                    TextInput::make('value')
+                                        ->required(),
+                                ])
+                                ->action(fn (array $data, Post $record) => $this->dispatch('option3-called', value: $data['value'], recordKey: $record->getKey())),
+                        ])->button()->label('More Options'),
+                    ]),
             ])
             ->toolbarActions([
                 DeleteBulkAction::make(),

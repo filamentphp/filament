@@ -445,3 +445,114 @@ it('will assert that a notification was not sent', function (): void {
         ->callAction('shows-notification-with-id')
         ->assertNotNotified('A notification');
 });
+
+it('preserves predefined arguments after calling an action with a modal', function (): void {
+    livewire(Actions::class)
+        ->assertActionHasLabel('predefined-arguments', 'Action for bar')
+        ->callAction('predefined-arguments')
+        ->assertDispatched('predefined-arguments-called', arguments: [
+            'foo' => 'bar',
+            'baz' => 'qux',
+        ])
+        ->assertActionHasLabel('predefined-arguments', 'Action for bar')
+        ->callAction('predefined-arguments')
+        ->assertDispatched('predefined-arguments-called', arguments: [
+            'foo' => 'bar',
+            'baz' => 'qux',
+        ]);
+});
+
+it('restores original arguments after calling an action with call-time arguments', function (): void {
+    livewire(Actions::class)
+        ->assertActionHasLabel('predefined-arguments', 'Action for bar')
+        ->mountAction('predefined-arguments')
+        ->callMountedAction([
+            'foo' => 'overridden',
+            'extra' => 'call-time-value',
+        ])
+        ->assertDispatched('predefined-arguments-called', arguments: [
+            'foo' => 'overridden',
+            'baz' => 'qux',
+            'extra' => 'call-time-value',
+        ])
+        ->assertActionHasLabel('predefined-arguments', 'Action for bar')
+        ->callAction('predefined-arguments')
+        ->assertDispatched('predefined-arguments-called', arguments: [
+            'foo' => 'bar',
+            'baz' => 'qux',
+        ]);
+});
+
+it('can call an action that replaces itself with another action', function (): void {
+    livewire(Actions::class)
+        ->callAction('replaces-action')
+        ->assertActionMounted('replaced-action')
+        ->callMountedAction()
+        ->assertDispatched('replaced-action-called');
+});
+
+it('can mount an action that replaces itself and then call the replaced action', function (): void {
+    livewire(Actions::class)
+        ->mountAction('replaces-action')
+        ->assertActionMounted('replaced-action')
+        ->callMountedAction()
+        ->assertDispatched('replaced-action-called');
+});
+
+it('can call an action registered alongside a group in `extraModalFooterActions()`', function (): void {
+    livewire(Actions::class)
+        ->callAction([
+            'withGroupedExtraActions',
+            TestAction::make('simpleExtra'),
+        ])
+        ->assertDispatched('simple-extra-called');
+});
+
+it('can call an action with data registered in a group in `extraModalFooterActions()`', function (): void {
+    livewire(Actions::class)
+        ->callAction([
+            'withGroupedExtraActions',
+            TestAction::make('option3'),
+        ], [
+            'value' => $value = Str::random(),
+        ])
+        ->assertHasNoFormErrors()
+        ->assertDispatched('option3-called', value: $value);
+});
+
+it('can mount an action that has a group in `extraModalFooterActions()`', function (): void {
+    livewire(Actions::class)
+        ->mountAction('withGroupedExtraActions')
+        ->assertActionMounted('withGroupedExtraActions');
+});
+
+it('can call multiple actions registered in a group in `extraModalFooterActions()`', function (): void {
+    livewire(Actions::class)
+        ->callAction([
+            'withGroupedExtraActions',
+            TestAction::make('option1'),
+        ])
+        ->assertDispatched('option1-called');
+
+    livewire(Actions::class)
+        ->callAction([
+            'withGroupedExtraActions',
+            TestAction::make('option2'),
+        ])
+        ->assertDispatched('option2-called');
+});
+
+it('can submit parent action after calling an action registered in a group in `extraModalFooterActions()`', function (): void {
+    livewire(Actions::class)
+        ->callAction([
+            'withGroupedExtraActions',
+            TestAction::make('option1'),
+        ])
+        ->assertDispatched('option1-called')
+        ->fillForm([
+            'content' => $content = Str::random(),
+        ])
+        ->callMountedAction()
+        ->assertHasNoActionErrors()
+        ->assertDispatched('grouped-extra-actions-called', content: $content);
+});

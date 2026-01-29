@@ -164,6 +164,10 @@ trait HasBulkActions
 
     public function canTrackDeselectedRecords(): bool
     {
+        if (! $this->shouldDeselectAllRecordsWhenFiltered()) {
+            return false;
+        }
+
         return (bool) $this->evaluate($this->canTrackDeselectedRecords);
     }
 

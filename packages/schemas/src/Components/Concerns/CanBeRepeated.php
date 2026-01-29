@@ -2,6 +2,7 @@
 
 namespace Filament\Schemas\Components\Concerns;
 
+use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\Repeater;
 use Filament\Schemas\Schema;
 
@@ -9,11 +10,11 @@ trait CanBeRepeated
 {
     protected Schema | bool | null $cachedParentRepeaterItem = null;
 
-    public function getParentRepeater(): ?Repeater
+    public function getParentRepeater(): Repeater | Builder | null
     {
         $repeater = $this->getParentRepeaterItem()?->getParentComponent();
 
-        assert($repeater instanceof Repeater);
+        assert(($repeater instanceof Repeater) || ($repeater instanceof Builder) || (! $repeater));
 
         return $repeater;
     }
@@ -30,7 +31,7 @@ trait CanBeRepeated
 
         if (! $parentComponent) {
             $this->cachedParentRepeaterItem = false;
-        } elseif ($parentComponent instanceof Repeater) {
+        } elseif (($parentComponent instanceof Repeater) || ($parentComponent instanceof Builder)) {
             $this->cachedParentRepeaterItem = $container;
         } else {
             $this->cachedParentRepeaterItem = $parentComponent->getParentRepeaterItem();

@@ -23,6 +23,7 @@ import Link from '@tiptap/extension-link'
 import { BulletList, ListItem, OrderedList } from '@tiptap/extension-list'
 import LocalFiles from './extension-local-files.js'
 import MergeTag from './extension-merge-tag.js'
+import Mention from './extension-mention.js'
 import Paragraph from '@tiptap/extension-paragraph'
 import Placeholder from '@tiptap/extension-placeholder'
 import Small from './extension-small.js'
@@ -38,6 +39,7 @@ import Underline from '@tiptap/extension-underline'
 import getMergeTagSuggestion from './merge-tag-suggestion.js'
 
 export default async ({
+    $wire,
     acceptedFileTypes,
     acceptedFileTypesValidationMessage,
     canAttachFiles,
@@ -45,18 +47,21 @@ export default async ({
     deleteCustomBlockButtonIconHtml,
     editCustomBlockButtonIconHtml,
     editCustomBlockUsing,
+    getMentionLabelsUsing,
+    getMentionSearchResultsUsing,
+    hasResizableImages,
     insertCustomBlockUsing,
-    linkProtocols,
     key,
+    linkProtocols,
     maxFileSize,
     maxFileSizeValidationMessage,
+    mentions,
     mergeTags,
     noMergeTagSearchResultsMessage,
     placeholder,
     statePath,
     textColors,
     uploadingFileMessage,
-    $wire,
 }) => {
     const extensions = [
         Blockquote,
@@ -74,7 +79,9 @@ export default async ({
         DetailsSummary,
         DetailsContent,
         Document,
-        Dropcursor,
+        Dropcursor.configure({
+            class: 'fi-not-prose',
+        }),
         Gapcursor,
         Grid,
         GridColumn,
@@ -85,6 +92,11 @@ export default async ({
         Italic,
         Image.configure({
             inline: true,
+            resize: {
+                enabled: hasResizableImages,
+                alwaysPreserveAspectRatio: true,
+                allowBase64: true,
+            },
         }),
         Lead,
         Link.configure({
@@ -117,6 +129,16 @@ export default async ({
                           noMergeTagSearchResultsMessage,
                       }),
                       mergeTags,
+                  }),
+              ]
+            : []),
+        ...(mentions.length
+            ? [
+                  Mention.configure({
+                      HTMLAttributes: { class: 'fi-fo-rich-editor-mention' },
+                      suggestions: mentions,
+                      getMentionSearchResultsUsing,
+                      getMentionLabelsUsing,
                   }),
               ]
             : []),

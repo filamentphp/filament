@@ -52,4 +52,21 @@ return [
 
     ],
 
+    'avatar' => [
+        'alt' => 'Avatarul lui :name',
+    ],
+
+    'logo' => [
+        'alt' => 'Logo :name',
+    ],
+
+    'tenant_menu' => [
+
+        'search_field' => [
+            'label' => 'Căutare organizație',
+            'placeholder' => 'Căutare',
+        ],
+
+    ],
+
 ];

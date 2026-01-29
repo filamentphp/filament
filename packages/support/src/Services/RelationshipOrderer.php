@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Query\Builder;
@@ -49,12 +50,12 @@ class RelationshipOrderer
 
     protected function validateRelationshipType(Relation $relationship): void
     {
-        if ($relationship instanceof BelongsTo || $relationship instanceof HasOne || $relationship instanceof MorphOne || $relationship instanceof BelongsToThrough) {
+        if ($relationship instanceof BelongsTo || $relationship instanceof HasOne || $relationship instanceof MorphOne || $relationship instanceof BelongsToThrough || $relationship instanceof HasOneThrough) {
             return;
         }
 
         throw new InvalidArgumentException(
-            'Nested sorting only supports [BelongsTo], [HasOne], [MorphOne], and [BelongsToThrough] relationships, [' . $relationship::class . '] found.'
+            'Nested sorting only supports [BelongsTo], [HasOne], [MorphOne], [BelongsToThrough], and [HasOneThrough] relationships, [' . $relationship::class . '] found.'
         );
     }
 
@@ -96,7 +97,7 @@ class RelationshipOrderer
 
     protected function applyFirstRelationshipConstraint(
         EloquentBuilder $subquery,
-        BelongsTo | HasOne | MorphOne | BelongsToThrough $relationship,
+        BelongsTo | HasOne | MorphOne | BelongsToThrough | HasOneThrough $relationship,
         Model $baseModel
     ): void {
         $baseTable = $baseModel->getTable();
@@ -109,6 +110,8 @@ class RelationshipOrderer
             $this->applyHasOneConstraint($subquery, $relationship, $baseModel);
         } elseif ($relationship instanceof BelongsToThrough) {
             $this->applyBelongsToThroughConstraint($subquery, $relationship, $baseModel);
+        } elseif ($relationship instanceof HasOneThrough) {
+            $this->applyHasOneThroughConstraint($subquery, $relationship);
         }
     }
 
@@ -179,10 +182,27 @@ class RelationshipOrderer
         );
     }
 
+    protected function applyHasOneThroughConstraint(EloquentBuilder $subquery, HasOneThrough $relationship): void
+    {
+        /** @var Model $throughParent */
+        $throughParent = invade($relationship)->throughParent; /** @phpstan-ignore property.protected */
+        $subquery->join(
+            $throughParent->getTable(),
+            $relationship->getQualifiedFirstKeyName(),
+            '=',
+            $relationship->getQualifiedLocalKeyName()
+        );
+
+        $subquery->whereColumn(
+            $relationship->getQualifiedForeignKeyName(),
+            $relationship->getQualifiedParentKeyName()
+        );
+    }
+
     protected function applyIntermediateRelationshipJoin(
         EloquentBuilder $subquery,
-        BelongsTo | HasOne | MorphOne | BelongsToThrough $currentRelationship,
-        BelongsTo | HasOne | MorphOne | BelongsToThrough $previousRelationship
+        BelongsTo | HasOne | MorphOne | BelongsToThrough | HasOneThrough $currentRelationship,
+        BelongsTo | HasOne | MorphOne | BelongsToThrough | HasOneThrough $previousRelationship
     ): void {
         $previousTable = $previousRelationship->getRelated()->getTable();
 
@@ -194,6 +214,8 @@ class RelationshipOrderer
             $this->joinHasOne($subquery, $currentRelationship, $previousTable);
         } elseif ($currentRelationship instanceof BelongsToThrough) {
             $this->joinBelongsToThrough($subquery, $currentRelationship, $previousTable);
+        } elseif ($currentRelationship instanceof HasOneThrough) {
+            $this->joinHasOneThrough($subquery, $currentRelationship, $previousTable);
         }
     }
 
@@ -279,6 +301,28 @@ class RelationshipOrderer
             $lastThroughParent->qualifyColumn($relationship->getLocalKeyName($lastThroughParent)),
             '=',
             "{$previousTable}.{$relationship->getForeignKeyName($lastThroughParent)}",
+        );
+    }
+
+    protected function joinHasOneThrough(
+        EloquentBuilder $subquery,
+        HasOneThrough $relationship,
+        string $previousTable
+    ): void {
+        /** @var Model $throughParent */
+        $throughParent = invade($relationship)->throughParent; /** @phpstan-ignore property.protected */
+        $subquery->join(
+            $throughParent->getTable(),
+            $relationship->getQualifiedParentKeyName(),
+            '=',
+            $relationship->getQualifiedFarKeyName()
+        );
+
+        $subquery->join(
+            $previousTable,
+            $relationship->getQualifiedLocalKeyName(),
+            '=',
+            $relationship->getQualifiedFirstKeyName(),
         );
     }
 }

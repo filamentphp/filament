@@ -7,6 +7,10 @@
         }
     }
 
+    &.fi-collapsible > .fi-sidebar-group-btn {
+        @apply cursor-pointer;
+    }
+
     &.fi-active {
         & .fi-sidebar-group-dropdown-trigger-btn {
             & .fi-icon {
@@ -155,17 +159,17 @@
             @apply bg-gray-100 dark:bg-white/5;
 
             & > .fi-icon {
-                @apply text-primary-600 dark:text-primary-400;
+                @apply text-primary-700 dark:text-primary-400;
             }
 
             &
                 > .fi-sidebar-item-grouped-border
                 > .fi-sidebar-item-grouped-border-part {
-                @apply bg-primary-600 dark:bg-primary-400;
+                @apply bg-primary-700 dark:bg-primary-400;
             }
 
             & > .fi-sidebar-item-label {
-                @apply text-primary-600 dark:text-primary-400;
+                @apply text-primary-700 dark:text-primary-400;
             }
 
             .fi-sidebar-item-grouped-border-part {

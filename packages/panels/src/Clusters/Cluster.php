@@ -11,6 +11,8 @@ class Cluster extends Page
 {
     protected static ?string $clusterBreadcrumb = null;
 
+    protected static bool $shouldRegisterSubNavigation = true;
+
     /**
      * @return array<class-string>
      */
@@ -49,6 +51,11 @@ class Cluster extends Page
     public function getSubNavigation(): array
     {
         return $this->generateNavigationItems(static::getClusteredComponents());
+    }
+
+    public static function shouldRegisterSubNavigation(): bool
+    {
+        return static::$shouldRegisterSubNavigation;
     }
 
     /**

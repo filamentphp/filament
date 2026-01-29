@@ -30,6 +30,10 @@ class ViewManager
      */
     public function registerRenderHook(string $name, Closure $hook, string | array | null $scopes = null): void
     {
+        if ($scopes === null) {
+            $scopes = [''];
+        }
+
         if (! is_array($scopes)) {
             $scopes = [$scopes];
         }
@@ -48,7 +52,7 @@ class ViewManager
             return false;
         }
 
-        if (isset($this->renderHooks[$name][null]) && count($this->renderHooks[$name][null])) {
+        if (isset($this->renderHooks[$name]['']) && count($this->renderHooks[$name][''])) {
             return true;
         }
 
@@ -89,7 +93,7 @@ class ViewManager
 
         $hooks = array_map(
             $renderHook,
-            $this->renderHooks[$name][null] ?? [],
+            $this->renderHooks[$name][''] ?? [],
         );
 
         foreach ($scopes as $scopeName) {

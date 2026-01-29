@@ -2,7 +2,7 @@
 
 return [
 
-    'label' => 'Ota käyttöön',
+    'label' => 'Käyttöönotto',
 
     'modal' => [
 
@@ -34,7 +34,7 @@ return [
 
             'recovery_codes' => [
 
-                'instruction' => 'Please save the following recovery codes in a safe place. They will only be shown once, but you\'ll need them if you lose access to your authenticator app:',
+                'instruction' => 'Tallenna seuraavat palautuskoodit turvalliseen paikkaan. Koodit näytetään vain kerran ja tarvitset niitä jos menetät pääsyn todennussovellukseen:',
 
             ],
 
@@ -46,13 +46,13 @@ return [
 
                 'label' => 'Syötä todennussovelluksen antama koodi',
 
-                'validation_attribute' => 'code',
+                'validation_attribute' => 'koodi',
 
-                'below_content' => 'You will need to enter the 6-digit code from your authenticator app each time you sign in or perform sensitive actions.',
+                'below_content' => 'Sinun tulee syöttää 6-merkkinen koodi todennussovelluksesta joka kerta kun kirjaudut tai teet arkaluonteisia toimintoja.',
 
                 'messages' => [
 
-                    'invalid' => 'The code you entered is invalid.',
+                    'invalid' => 'Antamasi koodi on viallinen.',
 
                 ],
 
@@ -63,7 +63,7 @@ return [
         'actions' => [
 
             'submit' => [
-                'label' => 'Enable authenticator app',
+                'label' => 'Ota todennussovellus käyttöön',
             ],
 
         ],

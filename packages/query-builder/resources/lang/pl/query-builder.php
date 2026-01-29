@@ -146,6 +146,50 @@ return [
 
             ],
 
+            'unit_labels' => [
+                'second' => 'Sekundy',
+                'minute' => 'Minuty',
+                'hour' => 'Godziny',
+                'day' => 'Dni',
+                'week' => 'Tygodnie',
+                'month' => 'Miesiące',
+                'quarter' => 'Kwartały',
+                'year' => 'Lata',
+            ],
+
+            'presets' => [
+                'past_decade' => 'Ostatnia dekada',
+                'past_5_years' => 'Ostatnie 5 lat',
+                'past_2_years' => 'Ostatnie 2 lata',
+                'past_year' => 'Ostatni rok',
+                'past_6_months' => 'Ostatnie 6 miesięcy',
+                'past_quarter' => 'Ostatni kwartał',
+                'past_month' => 'Ostatni miesiąc',
+                'past_2_weeks' => 'Ostatnie 2 tygodnie',
+                'past_week' => 'Ostatni tydzień',
+                'past_hour' => 'Ostatnia godzina',
+                'past_minute' => 'Ostatnia minuta',
+                'this_decade' => 'Ta dekada',
+                'this_year' => 'Ten rok',
+                'this_quarter' => 'Ten kwartał',
+                'this_month' => 'Ten miesiąc',
+                'today' => 'Dzisiaj',
+                'this_hour' => 'Obecna godzina',
+                'this_minute' => 'Obecna minuta',
+                'next_minute' => 'Następna minuta',
+                'next_hour' => 'Następna godzina',
+                'next_week' => 'Następny tydzień',
+                'next_2_weeks' => 'Następne 2 tygodnie',
+                'next_month' => 'Następny miesiąc',
+                'next_quarter' => 'Następny kwartał',
+                'next_6_months' => 'Następne 6 miesięcy',
+                'next_year' => 'Następny rok',
+                'next_2_years' => 'Następne 2 lata',
+                'next_5_years' => 'Następne 5 lat',
+                'next_decade' => 'Następna dekada',
+                'custom' => 'Niestandardowy zakres',
+            ],
+
             'form' => [
 
                 'date' => [
@@ -158,6 +202,40 @@ return [
 
                 'year' => [
                     'label' => 'Rok',
+                ],
+
+                'mode' => [
+
+                    'label' => 'Typ daty',
+
+                    'options' => [
+                        'absolute' => 'Konkretna data',
+                        'relative' => 'Okno przesuwne',
+                    ],
+
+                ],
+
+                'preset' => [
+                    'label' => 'Okres czasu',
+                ],
+
+                'relative_value' => [
+                    'label' => 'Ile',
+                ],
+
+                'relative_unit' => [
+                    'label' => 'Jednostka czasu',
+                ],
+
+                'tense' => [
+
+                    'label' => 'Czas',
+
+                    'options' => [
+                        'past' => 'Przeszłość',
+                        'future' => 'Przyszłość',
+                    ],
+
                 ],
 
             ],

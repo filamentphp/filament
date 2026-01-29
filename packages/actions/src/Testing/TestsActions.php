@@ -83,10 +83,24 @@ class TestsActions
             /** @phpstan-ignore-next-line */
             $this->assertActionVisible($actions, $arguments);
 
+            /** @var array<array<string, mixed>> $parsedActions */
+            /** @phpstan-ignore-next-line */
+            $parsedActions = $this->parseNestedActions($actions, $arguments);
+
             /** @phpstan-ignore-next-line */
             $this->mountAction($actions, $arguments);
 
             if (count($this->instance()->mountedActions) !== ($initialMountedActionsCount + count(Arr::wrap($actions)))) {
+                return $this;
+            }
+
+            $lastParsedAction = Arr::last($parsedActions);
+            $lastMountedActionIndex = count($this->instance()->mountedActions) - 1;
+
+            if (
+                $lastMountedActionIndex >= 0 &&
+                ($this->instance()->mountedActions[$lastMountedActionIndex]['name'] ?? null) !== ($lastParsedAction['name'] ?? null)
+            ) {
                 return $this;
             }
 
