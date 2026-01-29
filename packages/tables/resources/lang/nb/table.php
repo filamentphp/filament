@@ -30,6 +30,8 @@ return [
 
             'loading_message' => 'Laster...',
 
+            'no_options_message' => 'Ingen alternativer tilgjengelig.',
+
             'no_search_results_message' => 'Ingen alternativer samsvarer med søket ditt.',
 
             'placeholder' => 'Velg et alternativ',
