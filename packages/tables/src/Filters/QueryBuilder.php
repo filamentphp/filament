@@ -69,7 +69,7 @@ class QueryBuilder extends BaseFilter
             $ruleBuilderBlockContainer = $ruleBuilder->getChildSchema($ruleIndex);
 
             if (! $ruleBuilderBlockContainer) {
-                throw new LogicException('No query builder block found for [' . $rule['type'] ?? $ruleIndex . '].');
+                throw new LogicException('No query builder block found for [' . ($rule['type'] ?? $ruleIndex) . '].');
             }
 
             if ($rule['type'] === RuleBuilder::OR_BLOCK_NAME) {
@@ -137,7 +137,7 @@ class QueryBuilder extends BaseFilter
             $ruleBuilderBlockContainer = $ruleBuilder->getChildSchema($ruleIndex);
 
             if (! $ruleBuilderBlockContainer) {
-                throw new LogicException('No query builder block found for [' . $rule['type'] ?? $ruleIndex . '].');
+                throw new LogicException('No query builder block found for [' . ($rule['type'] ?? $ruleIndex) . '].');
             }
 
             if ($rule['type'] === RuleBuilder::OR_BLOCK_NAME) {
@@ -176,7 +176,7 @@ class QueryBuilder extends BaseFilter
             $ruleBuilderBlockContainer = $ruleBuilder->getChildSchema($ruleIndex);
 
             if (! $ruleBuilderBlockContainer) {
-                throw new LogicException('No query builder block found for [' . $rule['type'] ?? $ruleIndex . '].');
+                throw new LogicException('No query builder block found for [' . ($rule['type'] ?? $ruleIndex) . '].');
             }
 
             if ($rule['type'] === RuleBuilder::OR_BLOCK_NAME) {
@@ -222,7 +222,7 @@ class QueryBuilder extends BaseFilter
             $ruleBuilderBlockContainer = $ruleBuilder->getChildSchema($ruleIndex);
 
             if (! $ruleBuilderBlockContainer) {
-                throw new LogicException('No query builder block found for [' . $rule['type'] ?? $ruleIndex . '].');
+                throw new LogicException('No query builder block found for [' . ($rule['type'] ?? $ruleIndex) . '].');
             }
 
             if ($rule['type'] === RuleBuilder::OR_BLOCK_NAME) {
