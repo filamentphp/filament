@@ -41,15 +41,17 @@ php artisan make:module alerts
 This scaffolds a module structure:
 
 ```
-app-modules/alerts/
-├── composer.json
-├── src/
-│   └── Providers/
-│       └── AlertsServiceProvider.php
-├── routes/
-├── resources/
-├── database/
-└── tests/
+.
++-- app-modules
+|   +-- alerts
+|   |   +-- composer.json
+|   |   +-- src
+|   |   |   +-- Providers
+|   |   |   |   +-- AlertsServiceProvider.php
+|   |   +-- routes
+|   |   +-- resources
+|   |   +-- database
+|   |   +-- tests
 ```
 
 ### Configuring the module's composer.json
@@ -191,37 +193,39 @@ This approach lets you configure each plugin instance differently based on the p
 A well-organized module with Filament integration might look like this:
 
 ```
-app-modules/alerts/
-├── composer.json
-├── config/
-│   └── alerts.php
-├── database/
-│   ├── factories/
-│   ├── migrations/
-│   └── seeders/
-├── resources/
-│   └── views/
-│       └── filament/
-│           └── pages/
-├── routes/
-│   └── web.php
-├── src/
-│   ├── AlertsPlugin.php
-│   ├── Filament/
-│   │   ├── Pages/
-│   │   ├── Resources/
-│   │   │   └── Alerts/
-│   │   │       ├── AlertResource.php
-│   │   │       └── Pages/
-│   │   │           ├── CreateAlert.php
-│   │   │           ├── EditAlert.php
-│   │   │           └── ListAlerts.php
-│   │   └── Widgets/
-│   ├── Models/
-│   │   └── Alert.php
-│   └── Providers/
-│       └── AlertsServiceProvider.php
-└── tests/
+.
++-- app-modules
+|   +-- alerts
+|   |   +-- composer.json
+|   |   +-- config
+|   |   |   +-- alerts.php
+|   |   +-- database
+|   |   |   +-- factories
+|   |   |   +-- migrations
+|   |   |   +-- seeders
+|   |   +-- resources
+|   |   |   +-- views
+|   |   |   |   +-- filament
+|   |   |   |   |   +-- pages
+|   |   +-- routes
+|   |   |   +-- web.php
+|   |   +-- src
+|   |   |   +-- AlertsPlugin.php
+|   |   |   +-- Filament
+|   |   |   |   +-- Pages
+|   |   |   |   +-- Resources
+|   |   |   |   |   +-- Alerts
+|   |   |   |   |   |   +-- AlertResource.php
+|   |   |   |   |   |   +-- Pages
+|   |   |   |   |   |   |   +-- CreateAlert.php
+|   |   |   |   |   |   |   +-- EditAlert.php
+|   |   |   |   |   |   |   +-- ListAlerts.php
+|   |   |   |   +-- Widgets
+|   |   |   +-- Models
+|   |   |   |   +-- Alert.php
+|   |   |   +-- Providers
+|   |   |   |   +-- AlertsServiceProvider.php
+|   |   +-- tests
 ```
 
 ## Sharing resources between panels

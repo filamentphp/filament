@@ -77,7 +77,7 @@ trait EvaluatesClosures
                 isset($this->evaluationIdentifier) &&
                 ($parameterName === $this->evaluationIdentifier)
             ) ||
-            ($typedParameterClassName === static::class)
+            (is_string($typedParameterClassName) && ($this instanceof $typedParameterClassName))
         ) {
             return $this;
         }
