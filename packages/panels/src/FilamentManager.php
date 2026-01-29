@@ -790,6 +790,14 @@ class FilamentManager
         return $this->getCurrentOrDefaultPanel()->getDatabaseNotificationsPosition();
     }
 
+    /**
+     * @return class-string<Component>
+     */
+    public function getDatabaseNotificationsLivewireComponent(): string
+    {
+        return $this->getCurrentOrDefaultPanel()->getDatabaseNotificationsLivewireComponent();
+    }
+
     public function hasTopNavigation(): bool
     {
         return $this->getCurrentOrDefaultPanel()->hasTopNavigation();
