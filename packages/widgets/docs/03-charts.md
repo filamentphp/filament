@@ -206,6 +206,10 @@ protected function getData(): array
 
 The `$this->filters` array will always reflect the current form data. Please note that this data is not validated, as it is available live and not intended to be used for anything other than querying the database. You must ensure that the data is valid before using it.
 
+<Aside variant="info">
+    If you want to add filters that apply to multiple widgets at once, see [filtering widget data](overview#filtering-widget-data) in the dashboard.
+</Aside>
+
 #### Deferring filter updates
 
 By default, filters using the `filtersSchema()` method update the chart data immediately as they are changed. However, for complex queries or better user experience, you may want to **defer** filter updates until the user clicks an "Apply" button.
@@ -263,10 +267,6 @@ public function filtersResetAction(Action $action): Action
         ->color('danger');
 }
 ```
-
-<Aside variant="info">
-    If you want to add filters that apply to multiple widgets at once, see [filtering widget data](overview#filtering-widget-data) in the dashboard.
-</Aside>
 
 ## Live updating chart data (polling)
 
