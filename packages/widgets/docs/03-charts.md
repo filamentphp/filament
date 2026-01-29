@@ -224,27 +224,27 @@ class BlogPostsChart extends ChartWidget
     use HasFiltersSchema;
 
     protected bool $hasDeferredFilters = true;
-    
+
     // ...
 }
 ```
 
-Alternatively, you can use the `deferFilters()` method in your `mount()` method:
+If you need dynamic control over whether filters are deferred, you may override the `hasDeferredFilters()` method:
 
 ```php
-public function mount(): void
+public function hasDeferredFilters(): bool
 {
-    $this->deferFilters();
+    return auth()->user()->prefersDeferredFilters();
 }
 ```
 
 #### Resetting filters to defaults
 
-When using deferred filters, a "Reset" link appears in the filter dropdown header. Clicking this link restores all filters to their default values as defined in the `filtersSchema()` method. For example, if you set `->default(now()->subDays(30))` on a `DatePicker`, the reset action will restore that default date, not an empty value.
+When using deferred filters, a "Reset" link appears in the filter dropdown footer alongside the "Apply" button. Clicking this link restores all filters to their default values as defined in the `filtersSchema()` method. For example, if you set `->default(now()->subDays(30))` on a `DatePicker`, the reset action will restore that default date, not an empty value.
 
 #### Customizing filter actions
 
-You may customize the apply and reset actions that appear when using deferred filters:
+You may customize the apply and reset actions that appear when using deferred filters. All methods that are available to [customize action trigger buttons](../actions/overview) can be used:
 
 ```php
 use Filament\Actions\Action;

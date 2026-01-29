@@ -2,7 +2,6 @@
 
 namespace Filament\Widgets\ChartWidget\Concerns;
 
-use Closure;
 use Filament\Actions\Action;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\Size;
@@ -22,33 +21,16 @@ trait HasFiltersSchema /** @phpstan-ignore trait.unused */
      */
     public ?array $deferredFilters = null;
 
-    protected bool | Closure | null $deferredFiltersEnabled = null;
+    protected bool $hasDeferredFilters = false;
 
     public function filtersSchema(Schema $schema): Schema
     {
         return $schema;
     }
 
-    public function deferFilters(bool | Closure $condition = true): static
-    {
-        $this->deferredFiltersEnabled = $condition;
-
-        return $this;
-    }
-
     public function hasDeferredFilters(): bool
     {
-        if ($this->deferredFiltersEnabled !== null) {
-            $condition = $this->deferredFiltersEnabled;
-        } else {
-            $condition = property_exists($this, 'hasDeferredFilters')
-                ? $this->hasDeferredFilters
-                : false;
-        }
-
-        return $condition instanceof Closure
-            ? app()->call($condition, ['livewire' => $this])
-            : $condition;
+        return $this->hasDeferredFilters;
     }
 
     public function mountHasFiltersSchema(): void
