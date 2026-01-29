@@ -3,6 +3,7 @@
 namespace Filament\Tables\Testing;
 
 use Closure;
+use Filament\Support\ArrayRecord;
 use Filament\Tables\Columns\Column;
 use Filament\Tables\Columns\SelectColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -199,7 +200,7 @@ class TestsColumns
                 /** @phpstan-ignore-next-line */
                 $this->assertTableRecordKeyExists((string) $record);
                 $record = $this->instance()->getTableRecord($record);
-                $key = $record['__key'];
+                $key = $record[ArrayRecord::getKeyName()];
             } else {
                 $key = $record->getKey();
             }
@@ -244,7 +245,7 @@ class TestsColumns
                 /** @phpstan-ignore-next-line */
                 $this->assertTableRecordKeyExists((string) $record);
                 $record = $this->instance()->getTableRecord($record);
-                $key = $record['__key'];
+                $key = $record[ArrayRecord::getKeyName()];
             } else {
                 $key = $record->getKey();
             }
@@ -290,7 +291,7 @@ class TestsColumns
                 /** @phpstan-ignore-next-line */
                 $this->assertTableRecordKeyExists((string) $record);
                 $record = $this->instance()->getTableRecord($record);
-                $key = $record['__key'];
+                $key = $record[ArrayRecord::getKeyName()];
             } else {
                 $key = $record->getKey();
             }
@@ -324,7 +325,7 @@ class TestsColumns
                 /** @phpstan-ignore-next-line */
                 $this->assertTableRecordKeyExists((string) $record);
                 $record = $this->instance()->getTableRecord($record);
-                $key = $record['__key'];
+                $key = $record[ArrayRecord::getKeyName()];
             } else {
                 $key = $record->getKey();
             }
@@ -357,7 +358,7 @@ class TestsColumns
                 /** @phpstan-ignore-next-line */
                 $this->assertTableRecordKeyExists((string) $record);
                 $record = $this->instance()->getTableRecord($record);
-                $key = $record['__key'];
+                $key = $record[ArrayRecord::getKeyName()];
             } else {
                 $key = $record->getKey();
             }
@@ -390,7 +391,7 @@ class TestsColumns
                 /** @phpstan-ignore-next-line */
                 $this->assertTableRecordKeyExists((string) $record);
                 $record = $this->instance()->getTableRecord($record);
-                $key = $record['__key'];
+                $key = $record[ArrayRecord::getKeyName()];
             } else {
                 $key = $record->getKey();
             }
@@ -424,7 +425,7 @@ class TestsColumns
                 /** @phpstan-ignore-next-line */
                 $this->assertTableRecordKeyExists((string) $record);
                 $record = $this->instance()->getTableRecord($record);
-                $key = $record['__key'];
+                $key = $record[ArrayRecord::getKeyName()];
             } else {
                 $key = $record->getKey();
             }
@@ -458,7 +459,7 @@ class TestsColumns
                 /** @phpstan-ignore-next-line */
                 $this->assertTableRecordKeyExists((string) $record);
                 $record = $this->instance()->getTableRecord($record);
-                $key = $record['__key'];
+                $key = $record[ArrayRecord::getKeyName()];
             } else {
                 $key = $record->getKey();
             }
@@ -492,7 +493,7 @@ class TestsColumns
                 /** @phpstan-ignore-next-line */
                 $this->assertTableRecordKeyExists((string) $record);
                 $record = $this->instance()->getTableRecord($record);
-                $key = $record['__key'];
+                $key = $record[ArrayRecord::getKeyName()];
             } else {
                 $key = $record->getKey();
             }
@@ -526,7 +527,7 @@ class TestsColumns
                 /** @phpstan-ignore-next-line */
                 $this->assertTableRecordKeyExists((string) $record);
                 $record = $this->instance()->getTableRecord($record);
-                $key = $record['__key'];
+                $key = $record[ArrayRecord::getKeyName()];
             } else {
                 $key = $record->getKey();
             }
