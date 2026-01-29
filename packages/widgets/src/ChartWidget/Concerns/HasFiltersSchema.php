@@ -5,7 +5,6 @@ namespace Filament\Widgets\ChartWidget\Concerns;
 use Closure;
 use Filament\Actions\Action;
 use Filament\Schemas\Schema;
-use Filament\Support\Enums\ActionSize;
 use Filament\Support\Enums\Size;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
@@ -23,14 +22,14 @@ trait HasFiltersSchema /** @phpstan-ignore trait.unused */
      */
     public ?array $deferredFilters = null;
 
-    protected bool|Closure|null $deferredFiltersEnabled = null;
+    protected bool | Closure | null $deferredFiltersEnabled = null;
 
     public function filtersSchema(Schema $schema): Schema
     {
         return $schema;
     }
 
-    public function deferFilters(bool|Closure $condition = true): static
+    public function deferFilters(bool | Closure $condition = true): static
     {
         $this->deferredFiltersEnabled = $condition;
 

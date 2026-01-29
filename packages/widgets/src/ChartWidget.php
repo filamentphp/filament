@@ -79,12 +79,12 @@ abstract class ChartWidget extends Widget implements HasSchemas
         return null;
     }
 
-    public function getHeading(): string|Htmlable|null
+    public function getHeading(): string | Htmlable | null
     {
         return $this->heading;
     }
 
-    public function getDescription(): string|Htmlable|null
+    public function getDescription(): string | Htmlable | null
     {
         return $this->description;
     }
@@ -97,7 +97,7 @@ abstract class ChartWidget extends Widget implements HasSchemas
     /**
      * @return array<string, mixed> | RawJs | null
      */
-    protected function getOptions(): array|RawJs|null
+    protected function getOptions(): array | RawJs | null
     {
         return $this->options;
     }
