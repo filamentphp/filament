@@ -289,8 +289,10 @@ enum NavigationGroup implements HasLabel
 You can also implement the `HasIcon` interface on the enum class, to define a custom icon for each group:
 
 ```php
+use BackedEnum;
 use Filament\Support\Contracts\HasIcon;
 use Filament\Support\Icons\Heroicon;
+use Illuminate\Contracts\Support\Htmlable;
 
 enum NavigationGroup implements HasIcon
 {
