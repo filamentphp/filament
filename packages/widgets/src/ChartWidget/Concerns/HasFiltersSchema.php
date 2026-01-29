@@ -21,8 +21,6 @@ trait HasFiltersSchema /** @phpstan-ignore trait.unused */
      */
     public ?array $deferredFilters = null;
 
-    protected bool $hasDeferredFilters = false;
-
     public function filtersSchema(Schema $schema): Schema
     {
         return $schema;
@@ -30,7 +28,7 @@ trait HasFiltersSchema /** @phpstan-ignore trait.unused */
 
     public function hasDeferredFilters(): bool
     {
-        return $this->hasDeferredFilters;
+        return property_exists($this, 'hasDeferredFilters') && $this->hasDeferredFilters;
     }
 
     public function mountHasFiltersSchema(): void
