@@ -706,7 +706,7 @@ class ImportAction extends Action
     }
 
     /**
-     * @param Model | array<string, mixed> | null $record
+     * @param  Model | array<string, mixed> | null  $record
      * @return Model | array<string, mixed> | null
      */
     protected function ensureCorrectRecordType(Model | array | null $record): Model | array | null
