@@ -97,7 +97,7 @@ trait HasFiltersSchema /** @phpstan-ignore trait.unused */
     public function getFiltersApplyAction(): Action
     {
         $action = Action::make('applyFilters')
-            ->label(__('filament-widgets::chart.actions.apply.label'))
+            ->label(__('filament-widgets::chart.filters.actions.apply.label'))
             ->action('applyFilters')
             ->visible($this->hasDeferredFilters())
             ->authorize(true)
@@ -114,7 +114,7 @@ trait HasFiltersSchema /** @phpstan-ignore trait.unused */
     public function getFiltersResetAction(): Action
     {
         $action = Action::make('resetFilters')
-            ->label(__('filament-widgets::chart.actions.reset.label'))
+            ->label(__('filament-widgets::chart.filters.actions.reset.label'))
             ->link()
             ->action('resetFiltersForm')
             ->color('gray')
