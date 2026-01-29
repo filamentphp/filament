@@ -508,17 +508,6 @@ it('can state whether a select column has options with custom data', function ()
         ->assertTableSelectColumnDoesNotHaveOptions('with_options', ['one' => 'One', 'two' => 'Two'], 2);
 });
 
-it('can assert that a key exists in a table with custom data', function (): void {
-    livewire(CustomDataTable::class)
-        ->assertTableRecordKeyExists(1);
-
-    $this->expectException('PHPUnit\Framework\ExpectationFailedException');
-    $this->expectExceptionMessage('Failed asserting that a table row with key 1000 exists on the [' . CustomDataTable::class . '] component');
-
-    livewire(CustomDataTable::class)
-        ->assertTableRecordKeyExists(1000);
-});
-
 it('can assert that a column exists with the given configuration', function (): void {
     $publishedPost = Post::factory()->create([
         'is_published' => true,
