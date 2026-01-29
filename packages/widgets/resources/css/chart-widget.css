@@ -30,23 +30,19 @@
 
         &.fi-dropdown {
             & .fi-wi-chart-filters {
-                @apply grid gap-y-6 p-6;
+                @apply grid gap-y-4 p-6;
             }
 
             & .fi-wi-chart-filters-header {
-                @apply flex items-center justify-between gap-x-3 pb-2;
+                @apply flex items-center justify-between;
             }
 
             & .fi-wi-chart-filters-heading {
-                @apply text-sm font-medium text-gray-950 dark:text-white;
+                @apply text-base font-semibold leading-6 text-gray-950 dark:text-white;
             }
 
-            & .fi-wi-chart-filters-content {
-                @apply grid gap-y-4;
-            }
-
-            & .fi-wi-chart-filters-actions {
-                @apply mt-4 flex items-center justify-between gap-x-3 border-t border-gray-200 pt-6 dark:border-gray-700;
+            & .fi-wi-chart-filters-actions-ctn {
+                @apply flex gap-3;
             }
         }
     }

@@ -57,9 +57,7 @@
                                 </div>
                             @endif
 
-                            <div class="fi-wi-chart-filters-content">
-                                {{ $this->getFiltersSchema() }}
-                            </div>
+                            {{ $this->getFiltersSchema() }}
 
                             @if (method_exists($this, 'hasDeferredFilters') && $this->hasDeferredFilters())
                                 @php
@@ -67,7 +65,7 @@
                                 @endphp
 
                                 @if ($applyAction->isVisible())
-                                    <div class="fi-wi-chart-filters-actions">
+                                    <div class="fi-wi-chart-filters-actions-ctn">
                                         {{ $applyAction }}
 
                                         {{ $this->getFiltersResetAction() }}
