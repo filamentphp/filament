@@ -300,7 +300,7 @@ enum NavigationGroup implements HasIcon
     
     case Settings;
 
-    public function getIcon(): ?string
+    public function getIcon(): string | BackedEnum | Htmlable | null
     {
         return match ($this) {
             self::Shop => Heroicon::OutlinedShoppingCart,
