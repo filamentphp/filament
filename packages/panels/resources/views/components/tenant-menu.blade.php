@@ -11,7 +11,7 @@
 
     $items = $this->getTenantMenuItems();
 
-    $canSwitchTenants = filament()->canSwitchTenants() && filled($tenants = array_filter(
+    $canSwitchTenants = filament()->hasTenantSwitcher() && filled($tenants = array_filter(
         filament()->getUserTenants(filament()->auth()->user()),
         fn (\Illuminate\Database\Eloquent\Model $tenant): bool => ! $tenant->is($currentTenant),
     ));
