@@ -48,6 +48,7 @@ use Livewire\Component;
  * @method static Panel | null getCurrentPanel()
  * @method static Panel | null getCurrentOrDefaultPanel()
  * @method static string | Htmlable | null getDarkModeBrandLogo()
+ * @method static class-string<Component> getDatabaseNotificationsLivewireComponent()
  * @method static string | null getDatabaseNotificationsPollingInterval()
  * @method static DatabaseNotificationsPosition getDatabaseNotificationsPosition()
  * @method static string getDefaultAvatarProvider()
