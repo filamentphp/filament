@@ -37,6 +37,17 @@ use Filament\Tables\Columns\TextInputColumn;
 TextInputColumn::make('background_color')->type('color')
 ```
 
+For numeric fields (e.g. quantity, price), use `type('number')`. You can combine it with `inputMode('decimal')` and `step('any')` for decimal values, or `step(1)` for integers:
+
+```php
+TextInputColumn::make('quantity')
+    ->label('Quantity')
+    ->type('number')
+    ->inputMode('decimal')
+    ->step('1')
+    ->rules(['required', 'numeric', 'min:1'])
+```
+
 ## Lifecycle hooks
 
 Hooks may be used to execute code at various points within the input's lifecycle:
