@@ -21,7 +21,7 @@
         }
 
         & > tbody {
-            @apply block sm:table-row-group;
+            @apply block whitespace-normal sm:table-row-group sm:whitespace-nowrap;
         }
 
         & > tbody > tr {
@@ -41,10 +41,6 @@
 
         & > tbody > tr > .fi-ta-cell {
             @apply flex w-full sm:table-cell sm:w-auto;
-
-            &:not(:first-child) {
-                @apply border-t border-gray-200 sm:border-t-0 dark:border-white/5;
-            }
 
             &.sm\:fi-hidden {
                 @apply sm:hidden;
@@ -91,7 +87,7 @@
             }
 
             & > .fi-ta-cell-content {
-                @apply flex-1 pr-4 text-sm break-words text-gray-800 sm:block sm:w-auto sm:pr-0 dark:text-gray-200;
+                @apply min-w-0 flex-1 pr-4 text-sm break-words text-gray-800 sm:block sm:w-auto sm:pr-0 dark:text-gray-200;
             }
 
             &:has(.fi-ta-actions) {
