@@ -457,6 +457,34 @@ it('can state whether a column has extra attributes', function (): void {
         ->assertTableColumnDoesNotHaveExtraAttributes('extra_attributes', ['class' => 'text-primary-500'], $post);
 });
 
+it('can state whether a image column has extra image attributes', function (): void {
+    $post = Post::factory()->create();
+
+    livewire(UsersTable::class)
+        ->assertTableColumnHasExtraImgAttributes('image', ['class' => 'border border-emerald-500'], $post)
+        ->assertTableColumnDoesNotHaveExtraImgAttributes('image', ['class' => 'border border-red-500'], $post);
+});
+
+it('cannot assert for extra image attributes on non image column', function (): void {
+    $post = Post::factory()->create();
+
+    $this->expectException('PHPUnit\Framework\AssertionFailedError');
+    $this->expectExceptionMessage('Extra Image attributes can only be asserted on columns of type Filament\Tables\Columns\ImageColumn');
+
+    livewire(UsersTable::class)
+        ->assertTableColumnHasExtraImgAttributes('image.url', ['class' => 'border border-emerald-500'], $post);
+});
+
+it('cannot assert for not having extra image attributes on non image column', function (): void {
+    $post = Post::factory()->create();
+
+    $this->expectException('PHPUnit\Framework\AssertionFailedError');
+    $this->expectExceptionMessage('Extra Image attributes can only be asserted on columns of type Filament\Tables\Columns\ImageColumn');
+
+    livewire(UsersTable::class)
+        ->assertTableColumnDoesNotHaveExtraImgAttributes('image.url', ['class' => 'border border-emerald-500'], $post);
+});
+
 it('can state whether a column has a description', function (): void {
     $post = Post::factory()->create();
 

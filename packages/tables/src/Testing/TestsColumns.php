@@ -3,7 +3,9 @@
 namespace Filament\Tables\Testing;
 
 use Closure;
+use Filament\Support\ArrayRecord;
 use Filament\Tables\Columns\Column;
+use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\SelectColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Contracts\HasTable;
@@ -359,6 +361,80 @@ class TestsColumns
                 $attributes,
                 $column->getExtraAttributes(),
                 "Failed asserting that a table column with name [{$name}] does not have extra attributes [{$attributesString}] for record [{$record->getKey()}] on the [{$livewireClass}] component.",
+            );
+
+            return $this;
+        };
+    }
+
+    public function assertTableColumnHasExtraImgAttributes(): Closure
+    {
+        return function (string $name, array $attributes, $record) {
+            /** @phpstan-ignore-next-line */
+            $this->assertTableColumnExists($name);
+
+            $column = $this->instance()->getTable()->getColumn($name);
+
+            if (! ($record instanceof Model)) {
+                /** @phpstan-ignore-next-line */
+                $this->assertTableRecordKeyExists((string) $record);
+                $record = $this->instance()->getTableRecord($record);
+                $recordKey = $record[ArrayRecord::getKeyName()];
+            } else {
+                $recordKey = $record->getKey();
+            }
+
+            $column->record($record);
+
+            $attributesString = print_r($attributes, true);
+
+            $livewireClass = $this->instance()::class;
+
+            if (! $column instanceof ImageColumn) {
+                Assert::fail('Extra Image attributes can only be asserted on columns of type ' . ImageColumn::class);
+            }
+
+            Assert::assertEquals(
+                $attributes,
+                $column->getExtraImgAttributes(),
+                "Failed asserting that a table column with name [{$name}] has extra img attributes [{$attributesString}] for record [{$recordKey}] on the [{$livewireClass}] component.",
+            );
+
+            return $this;
+        };
+    }
+
+    public function assertTableColumnDoesNotHaveExtraImgAttributes(): Closure
+    {
+        return function (string $name, array $attributes, $record) {
+            /** @phpstan-ignore-next-line */
+            $this->assertTableColumnExists($name);
+
+            $column = $this->instance()->getTable()->getColumn($name);
+
+            if (! ($record instanceof Model)) {
+                /** @phpstan-ignore-next-line */
+                $this->assertTableRecordKeyExists((string) $record);
+                $record = $this->instance()->getTableRecord($record);
+                $recordKey = $record[ArrayRecord::getKeyName()];
+            } else {
+                $recordKey = $record->getKey();
+            }
+
+            $column->record($record);
+
+            $attributesString = print_r($attributes, true);
+
+            $livewireClass = $this->instance()::class;
+
+            if (! $column instanceof ImageColumn) {
+                Assert::fail('Extra Image attributes can only be asserted on columns of type ' . ImageColumn::class);
+            }
+
+            Assert::assertNotEquals(
+                $attributes,
+                $column->getExtraImgAttributes(),
+                "Failed asserting that a table column with name [{$name}] does not have extra img attributes [{$attributesString}] for record [{$recordKey}] on the [{$livewireClass}] component.",
             );
 
             return $this;

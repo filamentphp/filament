@@ -242,6 +242,20 @@ it('displays author in red', function () {
 });
 ```
 
+When using image columns, the extra image attributes can also be tested to ensure that a column has the correct extra img attributes, you can use the `assertTableColumnHasExtraImgAttributes()` and `assertTableColumnDoesNotHaveExtraImgAttributes()` methods:
+
+```php
+use function Pest\Livewire\livewire;
+
+it('displays author in red', function () {
+    $post = Post::factory()->create();
+
+    livewire(PostsTable::class)
+        ->assertTableColumnHasExtraImgAttributes('author.image.url', ['class' => 'border border-emerald-500'], $post)
+        ->assertTableColumnDoesNotHaveExtraImgAttributes('author.image.url', ['class' => 'border border-red-500'], $post);
+});
+```
+
 ### Testing the options in a `SelectColumn`
 
 If you have a select column, you can ensure it has the correct options with `assertTableSelectColumnHasOptions()` and `assertTableSelectColumnDoesNotHaveOptions()`:

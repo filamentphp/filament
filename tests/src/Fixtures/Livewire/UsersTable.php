@@ -52,6 +52,10 @@ class UsersTable extends Component implements HasActions, HasSchemas, Tables\Con
                     ->label('Language')
                     ->sortable()
                     ->searchable(),
+                Tables\Columns\ImageColumn::make('image')
+                    ->state(fn (User $record) => $record->image?->url)
+                    ->extraImgAttributes(['class' => 'border border-emerald-500'])
+                    ->label('Image'),
                 Tables\Columns\TextColumn::make('image.url')
                     ->label('Image URL')
                     ->sortable()
