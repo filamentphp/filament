@@ -28,8 +28,4 @@
     &.md\:fi-align-end {
         @apply md:justify-end;
     }
-
-    &.fi-ta-actions-is-stacked {
-        @apply gap-4 px-3 sm:gap-3 sm:px-0;
-    }
 }

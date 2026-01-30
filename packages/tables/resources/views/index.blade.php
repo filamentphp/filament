@@ -99,7 +99,7 @@
     $selectsGroupsOnly = $selectsGroupsOnly();
     $recordCheckboxPosition = $getRecordCheckboxPosition();
     $isStriped = $isStriped();
-    $canBeStackedOnMobile = $canBeStackedOnMobile();
+    $isStackedOnMobile = $isStackedOnMobile();
     $isLoaded = $isLoaded();
     $hasFilters = $isFilterable();
     $filtersLayout = $getFiltersLayout();
@@ -1282,7 +1282,7 @@
                     @elseif ((! ($content || $hasColumnsLayout)) && ($records !== null))
                         <table @class([
                             'fi-ta-table',
-                            'fi-ta-table-stacked-on-mobile' => $canBeStackedOnMobile
+                            'fi-stacked-on-mobile' => $isStackedOnMobile,
                         ])>
                             <thead>
                                 @if ($hasColumnGroups)
@@ -1457,7 +1457,6 @@
                                                             'fi-grouped' => $column->getGroup(),
                                                             'fi-wrapped' => $column->canHeaderWrap(),
                                                             'fi-ta-header-cell-sorted' => $isColumnActivelySorted,
-                                                            'fi-ta-header-hidden-on-mobile' => $canBeStackedOnMobile,
                                                             ((($columnAlignment = $column->getAlignment()) instanceof \Filament\Support\Enums\Alignment) ? "fi-align-{$columnAlignment->value}" : (is_string($columnAlignment) ? $columnAlignment : '')),
                                                             (filled($columnHiddenFrom = $column->getHiddenFrom()) ? "{$columnHiddenFrom}:fi-hidden" : ''),
                                                             (filled($columnVisibleFrom = $column->getVisibleFrom()) ? "{$columnVisibleFrom}:fi-visible" : ''),
@@ -2014,7 +2013,6 @@
                                                             {{
                                                                 $column->getExtraCellAttributeBag()->class([
                                                                     'fi-ta-cell',
-                                                                    'fi-ta-cell-is-stacked' => $canBeStackedOnMobile,
                                                                     'fi-ta-cell-' . str($column->getName())->camel()->kebab(),
                                                                     ((($columnAlignment = $column->getAlignment()) instanceof \Filament\Support\Enums\Alignment) ? "fi-align-{$columnAlignment->value}" : (is_string($columnAlignment) ? $columnAlignment : '')),
                                                                     ((($columnVerticalAlignment = $column->getVerticalAlignment()) instanceof \Filament\Support\Enums\VerticalAlignment) ? "fi-vertical-align-{$columnVerticalAlignment->value}" : (is_string($columnVerticalAlignment) ? $columnVerticalAlignment : '')),
@@ -2023,9 +2021,9 @@
                                                                 ])
                                                             }}
                                                         >
-                                                            @if($canBeStackedOnMobile)
-                                                            <div class="fi-ta-cell-is-stacked-label">{{ $column->getLabel() }}</div>
-                                                            <div class="fi-ta-cell-is-stacked-contents">
+                                                            @if ($isStackedOnMobile)
+                                                                <div class="fi-ta-cell-label">{{ $column->getLabel() }}</div>
+                                                                <div class="fi-ta-cell-content">
                                                             @endif
                                                             <{{ $columnWrapperTag }}
                                                                 @if ($columnWrapperTag === 'a')
@@ -2046,24 +2044,20 @@
                                                             >
                                                                 {{ $column }}
                                                             </{{ $columnWrapperTag }}>
-                                                            @if($canBeStackedOnMobile)
-                                                            </div>
+                                                            @if ($isStackedOnMobile)
+                                                                </div>
                                                             @endif
                                                         </td>
                                                     @endforeach
 
                                                     @if (count($defaultRecordActions) && $recordActionsPosition === RecordActionsPosition::AfterColumns && (! $isReordering))
-                                                        <td @class([
-                                                            'fi-ta-cell',
-                                                            'fi-ta-cell-is-stacked-actions' => $canBeStackedOnMobile
-                                                        ])>
-                                                            @if($canBeStackedOnMobile)
-                                                            <div class="fi-ta-cell-is-stacked-actions-label">{{ __('Actions') }}</div>
+                                                        <td class="fi-ta-cell">
+                                                            @if ($isStackedOnMobile)
+                                                                <div class="fi-ta-actions-label">{{ __('filament-tables::table.columns.actions.label', [], 2) }}</div>
                                                             @endif
                                                             <div
                                                                 @class([
                                                                     'fi-ta-actions',
-                                                                    'fi-ta-actions-is-stacked' => $canBeStackedOnMobile,
                                                                     match ($recordActionsAlignment) {
                                                                         Alignment::Center => 'fi-align-center',
                                                                         Alignment::Start, Alignment::Left => 'fi-align-start',
