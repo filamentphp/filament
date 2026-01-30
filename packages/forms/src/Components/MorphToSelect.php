@@ -116,6 +116,7 @@ class MorphToSelect extends Component
                 ->label(fn (Get $get): ?string => ($types[$get($typeColumn)] ?? null)?->getLabel())
                 ->hiddenLabel()
                 ->options(fn (Select $component, Get $get): ?array => $component->evaluate(($types[$get($typeColumn)] ?? null)?->getOptionsUsing))
+                ->dynamicOptions(fn (Select $component): ?bool => $component->isPreloaded() ? null : false)
                 ->getSearchResultsUsing(fn (Select $component, Get $get, $search): ?array => $component->evaluate(($types[$get($typeColumn)] ?? null)?->getSearchResultsUsing, ['search' => $search]))
                 ->getOptionLabelUsing(fn (Select $component, Get $get, $value): ?string => $component->evaluate(($types[$get($typeColumn)] ?? null)?->getOptionLabelUsing, ['value' => $value]))
                 ->native($component->isNative())
