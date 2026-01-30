@@ -7,7 +7,15 @@
         & > thead {
             @apply block sm:table-header-group;
 
+            & > tr:not(.fi-ta-stacked-header-row) {
+                @apply hidden sm:table-row;
+            }
+
             & > tr > .fi-ta-header-cell {
+                @apply hidden sm:table-cell;
+            }
+
+            & > tr > .fi-ta-selection-cell {
                 @apply hidden sm:table-cell;
             }
         }
@@ -79,22 +87,18 @@
             }
 
             & > .fi-ta-cell-label {
-                @apply inline-block w-1/2 py-4 pl-4 text-xs font-semibold text-gray-500 sm:hidden dark:text-gray-400;
+                @apply min-w-40 shrink-0 py-4 pl-4 text-sm leading-6 font-semibold text-gray-500 sm:hidden dark:text-gray-400;
             }
 
             & > .fi-ta-cell-content {
-                @apply inline-block w-1/2 pr-4 text-sm break-words text-gray-800 sm:block sm:w-auto sm:pr-0 dark:text-gray-200;
+                @apply flex-1 pr-4 text-sm break-words text-gray-800 sm:block sm:w-auto sm:pr-0 dark:text-gray-200;
             }
 
             &:has(.fi-ta-actions) {
-                @apply px-4 sm:px-3;
-
-                & > .fi-ta-actions-label {
-                    @apply inline-block w-1/2 text-xs font-semibold text-gray-500 sm:hidden dark:text-gray-400;
-                }
+                @apply justify-start px-4 py-4 sm:px-3 sm:py-0;
 
                 & > .fi-ta-actions {
-                    @apply gap-4 sm:gap-3;
+                    @apply w-full justify-start gap-4 sm:w-auto sm:justify-end sm:gap-3;
                 }
             }
         }
@@ -118,5 +122,21 @@
 
     & > tfoot {
         @apply bg-gray-50 dark:bg-white/5;
+    }
+}
+
+.fi-ta-stacked-header-row {
+    @apply block w-full border-none sm:hidden;
+
+    & .fi-ta-stacked-header-cell {
+        @apply flex w-full items-center gap-4 bg-gray-50 px-4 py-3 font-normal dark:bg-white/5;
+
+        & .fi-ta-page-checkbox {
+            @apply shrink-0;
+        }
+
+        & .fi-ta-stacked-sorting {
+            @apply flex flex-1 gap-x-3;
+        }
     }
 }
