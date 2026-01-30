@@ -158,7 +158,7 @@
     }
 
     & > .fi-section-header {
-        @apply flex items-center gap-3;
+        @apply flex gap-3;
 
         & > .fi-icon {
             @apply shrink-0 text-gray-400 dark:text-gray-500;
