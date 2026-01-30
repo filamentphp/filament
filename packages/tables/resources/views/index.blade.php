@@ -1307,92 +1307,98 @@
                                                         column: null,
                                                         direction: null,
                                                     }"
-                                                x-init="
-                                                    if (sort) {
-                                                        ;[column, direction] = sort.split(':')
-                                                        direction ??= 'asc'
-                                                    }
-
-                                                    $watch('sort', function () {
-                                                        if (! sort) {
-                                                            return
+                                                    x-init="
+                                                        if (sort) {
+                                                            ;[column, direction] = sort.split(':')
+                                                            direction ??= 'asc'
                                                         }
 
-                                                        ;[column, direction] = sort.split(':')
-                                                        direction ??= 'asc'
-                                                    })
+                                                        $watch('sort', function () {
+                                                            if (! sort) {
+                                                                return
+                                                            }
 
-                                                    $watch('direction', function () {
-                                                        sort = column ? `${column}:${direction}` : null
-                                                    })
+                                                            ;[column, direction] = sort.split(':')
+                                                            direction ??= 'asc'
+                                                        })
 
-                                                    $watch('column', function (newColumn, oldColumn) {
-                                                        if (! newColumn) {
-                                                            direction = null
+                                                        $watch('direction', function () {
                                                             sort = column ? `${column}:${direction}` : null
+                                                        })
 
-                                                            return
-                                                        }
+                                                        $watch('column', function (newColumn, oldColumn) {
+                                                            if (! newColumn) {
+                                                                direction = null
+                                                                sort = column ? `${column}:${direction}` : null
 
-                                                        if (oldColumn) {
+                                                                return
+                                                            }
+
+                                                            if (oldColumn) {
+                                                                sort = column ? `${column}:${direction}` : null
+
+                                                                return
+                                                            }
+
+                                                            direction = 'asc'
                                                             sort = column ? `${column}:${direction}` : null
-
-                                                            return
-                                                        }
-
-                                                        direction = 'asc'
-                                                        sort = column ? `${column}:${direction}` : null
-                                                    })
-                                                "
-                                                class="fi-ta-stacked-sorting"
-                                            >
-                                                <label>
-                                                    <x-filament::input.wrapper
-                                                        :prefix="__('filament-tables::table.sorting.fields.column.label')"
-                                                    >
-                                                        <x-filament::input.select
-                                                            x-model="column"
-                                                        >
-                                                            <option value="">
-                                                                {{ $defaultSortOptionLabel }}
-                                                            </option>
-
-                                                            @foreach ($sortableColumns as $sortableColumn)
-                                                                <option
-                                                                    value="{{ $sortableColumn->getName() }}"
-                                                                >
-                                                                    {{ $sortableColumn->getLabel() }}
-                                                                </option>
-                                                            @endforeach
-                                                        </x-filament::input.select>
-                                                    </x-filament::input.wrapper>
-                                                </label>
-
-                                                <label
-                                                    x-cloak
-                                                    x-show="column"
+                                                        })
+                                                    "
+                                                    class="fi-ta-stacked-sorting"
                                                 >
-                                                    <span class="fi-sr-only">
-                                                        {{ __('filament-tables::table.sorting.fields.direction.label') }}
-                                                    </span>
-
-                                                    <x-filament::input.wrapper>
-                                                        <x-filament::input.select
-                                                            x-model="direction"
+                                                    <label>
+                                                        <x-filament::input.wrapper
+                                                            :prefix="__('filament-tables::table.sorting.fields.column.label')"
                                                         >
-                                                            <option value="asc">
-                                                                {{ __('filament-tables::table.sorting.fields.direction.options.asc') }}
-                                                            </option>
-
-                                                            <option
-                                                                value="desc"
+                                                            <x-filament::input.select
+                                                                x-model="column"
                                                             >
-                                                                {{ __('filament-tables::table.sorting.fields.direction.options.desc') }}
-                                                            </option>
-                                                        </x-filament::input.select>
-                                                    </x-filament::input.wrapper>
-                                                </label>
-                                            </div>
+                                                                <option
+                                                                    value=""
+                                                                >
+                                                                    {{ $defaultSortOptionLabel }}
+                                                                </option>
+
+                                                                @foreach ($sortableColumns as $sortableColumn)
+                                                                    <option
+                                                                        value="{{ $sortableColumn->getName() }}"
+                                                                    >
+                                                                        {{ $sortableColumn->getLabel() }}
+                                                                    </option>
+                                                                @endforeach
+                                                            </x-filament::input.select>
+                                                        </x-filament::input.wrapper>
+                                                    </label>
+
+                                                    <label
+                                                        x-cloak
+                                                        x-show="column"
+                                                    >
+                                                        <span
+                                                            class="fi-sr-only"
+                                                        >
+                                                            {{ __('filament-tables::table.sorting.fields.direction.label') }}
+                                                        </span>
+
+                                                        <x-filament::input.wrapper>
+                                                            <x-filament::input.select
+                                                                x-model="direction"
+                                                            >
+                                                                <option
+                                                                    value="asc"
+                                                                >
+                                                                    {{ __('filament-tables::table.sorting.fields.direction.options.asc') }}
+                                                                </option>
+
+                                                                <option
+                                                                    value="desc"
+                                                                >
+                                                                    {{ __('filament-tables::table.sorting.fields.direction.options.desc') }}
+                                                                </option>
+                                                            </x-filament::input.select>
+                                                        </x-filament::input.wrapper>
+                                                    </label>
+                                                </div>
                                             @endif
 
                                             @if ($isSelectionEnabled && ($maxSelectableRecords !== 1) && (! $selectsGroupsOnly))
