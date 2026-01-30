@@ -104,7 +104,26 @@ export default function fileUploadFormComponent({
 
         editor: {},
 
+        visibilityObserver: null,
+
         async init() {
+            if (this.pond) {
+                return
+            }
+
+            if (this.$el.offsetParent === null) {
+                this.visibilityObserver?.disconnect()
+                this.visibilityObserver = new ResizeObserver(() => {
+                    if (this.$el.offsetWidth > 0) {
+                        this.visibilityObserver.disconnect()
+                        this.init()
+                    }
+                })
+                this.visibilityObserver.observe(this.$el)
+
+                return
+            }
+
             FilePond.setOptions(locales[locale] ?? locales['en'])
 
             this.pond = FilePond.create(this.$refs.input, {
@@ -390,10 +409,14 @@ export default function fileUploadFormComponent({
         },
 
         destroy() {
+            this.visibilityObserver?.disconnect()
+
             this.destroyEditor()
 
-            FilePond.destroy(this.$refs.input)
-            this.pond = null
+            if (this.pond) {
+                FilePond.destroy(this.$refs.input)
+                this.pond = null
+            }
         },
 
         dispatchFormEvent(name, detail = {}) {
