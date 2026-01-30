@@ -1294,53 +1294,19 @@
                             ])
                         >
                             <thead>
-                                @if ($isStackedOnMobile && count($sortableColumns) && (! $isReordering))
+                                @if ($isStackedOnMobile && (count($sortableColumns) || ($isSelectionEnabled && ($maxSelectableRecords !== 1) && (! $selectsGroupsOnly))) && (! $isReordering))
                                     <tr class="fi-ta-stacked-header-row">
                                         <th
                                             colspan="100%"
                                             class="fi-ta-stacked-header-cell"
                                         >
-                                            @if ($isSelectionEnabled && ($maxSelectableRecords !== 1) && (! $selectsGroupsOnly))
-                                                <input
-                                                    aria-label="{{ __('filament-tables::table.fields.bulk_select_page.label') }}"
-                                                    type="checkbox"
-                                                    @if ($isSelectionDisabled)
-                                                        disabled
-                                                    @elseif ($maxSelectableRecords)
-                                                        x-bind:disabled="
-                                                            const recordsOnPage = getRecordsOnPage()
-
-                                                            return recordsOnPage.length && ! areRecordsToggleable(recordsOnPage)
-                                                        "
-                                                    @endif
-                                                    x-bind:checked="
-                                                        const recordsOnPage = getRecordsOnPage()
-
-                                                        if (recordsOnPage.length && areRecordsSelected(recordsOnPage)) {
-                                                            $el.checked = true
-
-                                                            return 'checked'
-                                                        }
-
-                                                        $el.checked = false
-
-                                                        return null
-                                                    "
-                                                    x-on:click="toggleSelectRecordsOnPage"
-                                                    {{-- Make sure the "checked" state gets re-evaluated after a Livewire request: --}}
-                                                    wire:key="{{ $this->getId() }}.table.bulk-select-page.checkbox.stacked.{{ \Illuminate\Support\Str::random() }}"
-                                                    wire:loading.attr="disabled"
-                                                    wire:target="{{ implode(',', \Filament\Tables\Table::LOADING_TARGETS) }}"
-                                                    class="fi-ta-page-checkbox fi-checkbox-input"
-                                                />
-                                            @endif
-
-                                            <div
-                                                x-data="{
-                                                    sort: $wire.$entangle('tableSort', true),
-                                                    column: null,
-                                                    direction: null,
-                                                }"
+                                            @if (count($sortableColumns))
+                                                <div
+                                                    x-data="{
+                                                        sort: $wire.$entangle('tableSort', true),
+                                                        column: null,
+                                                        direction: null,
+                                                    }"
                                                 x-init="
                                                     if (sort) {
                                                         ;[column, direction] = sort.split(':')
@@ -1427,6 +1393,42 @@
                                                     </x-filament::input.wrapper>
                                                 </label>
                                             </div>
+                                            @endif
+
+                                            @if ($isSelectionEnabled && ($maxSelectableRecords !== 1) && (! $selectsGroupsOnly))
+                                                <input
+                                                    aria-label="{{ __('filament-tables::table.fields.bulk_select_page.label') }}"
+                                                    type="checkbox"
+                                                    @if ($isSelectionDisabled)
+                                                        disabled
+                                                    @elseif ($maxSelectableRecords)
+                                                        x-bind:disabled="
+                                                            const recordsOnPage = getRecordsOnPage()
+
+                                                            return recordsOnPage.length && ! areRecordsToggleable(recordsOnPage)
+                                                        "
+                                                    @endif
+                                                    x-bind:checked="
+                                                        const recordsOnPage = getRecordsOnPage()
+
+                                                        if (recordsOnPage.length && areRecordsSelected(recordsOnPage)) {
+                                                            $el.checked = true
+
+                                                            return 'checked'
+                                                        }
+
+                                                        $el.checked = false
+
+                                                        return null
+                                                    "
+                                                    x-on:click="toggleSelectRecordsOnPage"
+                                                    {{-- Make sure the "checked" state gets re-evaluated after a Livewire request: --}}
+                                                    wire:key="{{ $this->getId() }}.table.bulk-select-page.checkbox.stacked.{{ \Illuminate\Support\Str::random() }}"
+                                                    wire:loading.attr="disabled"
+                                                    wire:target="{{ implode(',', \Filament\Tables\Table::LOADING_TARGETS) }}"
+                                                    class="fi-ta-page-checkbox fi-checkbox-input"
+                                                />
+                                            @endif
                                         </th>
                                     </tr>
                                 @endif
