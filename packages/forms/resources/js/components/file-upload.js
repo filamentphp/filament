@@ -112,6 +112,7 @@ export default function fileUploadFormComponent({
             }
 
             if (this.$el.offsetParent === null) {
+                this.visibilityObserver?.disconnect()
                 this.visibilityObserver = new ResizeObserver(() => {
                     if (this.$el.offsetWidth > 0) {
                         this.visibilityObserver.disconnect()
