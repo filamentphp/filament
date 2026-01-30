@@ -21,7 +21,7 @@
 
             &.fi-selected {
                 &::before {
-                    @apply bg-primary-600 absolute inset-y-0 start-0 w-0.5 sm:hidden dark:bg-primary-500;
+                    @apply bg-primary-600 dark:bg-primary-500 absolute inset-y-0 start-0 w-0.5 sm:hidden;
                     content: '';
                 }
 
@@ -35,7 +35,7 @@
             @apply flex w-full sm:table-cell sm:w-auto;
 
             &:not(:first-child) {
-                @apply border-t border-gray-200 dark:border-white/5 sm:border-t-0;
+                @apply border-t border-gray-200 sm:border-t-0 dark:border-white/5;
             }
 
             &.sm\:fi-hidden {
@@ -83,7 +83,7 @@
             }
 
             & > .fi-ta-cell-content {
-                @apply inline-block w-1/2 break-words pr-4 text-sm text-gray-800 sm:block sm:w-auto sm:pr-0 dark:text-gray-200;
+                @apply inline-block w-1/2 pr-4 text-sm break-words text-gray-800 sm:block sm:w-auto sm:pr-0 dark:text-gray-200;
             }
 
             &:has(.fi-ta-actions) {
