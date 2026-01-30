@@ -1280,10 +1280,12 @@
                             </table>
                         @endif
                     @elseif ((! ($content || $hasColumnsLayout)) && ($records !== null))
-                        <table @class([
-                            'fi-ta-table',
-                            'fi-stacked-on-mobile' => $isStackedOnMobile,
-                        ])>
+                        <table
+                            @class([
+                                'fi-ta-table',
+                                'fi-stacked-on-mobile' => $isStackedOnMobile,
+                            ])
+                        >
                             <thead>
                                 @if ($hasColumnGroups)
                                     <tr class="fi-ta-table-head-groups-row">
@@ -2021,10 +2023,7 @@
                                                                 ])
                                                             }}
                                                         >
-                                                            @if ($isStackedOnMobile)
-                                                                <div class="fi-ta-cell-label">{{ $column->getLabel() }}</div>
-                                                                <div class="fi-ta-cell-content">
-                                                            @endif
+                                                            {!! $isStackedOnMobile ? '<div class="fi-ta-cell-label">' . e($column->getLabel()) . '</div><div class="fi-ta-cell-content">' : '' !!}
                                                             <{{ $columnWrapperTag }}
                                                                 @if ($columnWrapperTag === 'a')
                                                                     {{ \Filament\Support\generate_href_html($columnUrl ?: $recordUrl, $columnUrl ? $column->shouldOpenUrlInNewTab() : $openRecordUrlInNewTab, hasNestedClickEventHandler: true) }}
@@ -2044,17 +2043,13 @@
                                                             >
                                                                 {{ $column }}
                                                             </{{ $columnWrapperTag }}>
-                                                            @if ($isStackedOnMobile)
-                                                                </div>
-                                                            @endif
+                                                            {!! $isStackedOnMobile ? '</div>' : '' !!}
                                                         </td>
                                                     @endforeach
 
                                                     @if (count($defaultRecordActions) && $recordActionsPosition === RecordActionsPosition::AfterColumns && (! $isReordering))
                                                         <td class="fi-ta-cell">
-                                                            @if ($isStackedOnMobile)
-                                                                <div class="fi-ta-actions-label">{{ __('filament-tables::table.columns.actions.label', [], 2) }}</div>
-                                                            @endif
+                                                            {!! $isStackedOnMobile ? '<div class="fi-ta-actions-label">' . e(__('filament-tables::table.columns.actions.label', [], 2)) . '</div>' : '' !!}
                                                             <div
                                                                 @class([
                                                                     'fi-ta-actions',
