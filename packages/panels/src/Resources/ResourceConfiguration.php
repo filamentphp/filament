@@ -7,7 +7,7 @@ class ResourceConfiguration
     protected ?string $slug = null;
 
     /**
-     * @param  class-string<Resource>  $resource
+     * @param  class-string  $resource
      */
     public function __construct(
         public readonly string $resource,
@@ -15,7 +15,7 @@ class ResourceConfiguration
     ) {}
 
     /**
-     * @param  class-string<Resource>  $resource
+     * @param  class-string  $resource
      */
     public static function make(string $resource, string $key): static
     {
@@ -28,7 +28,7 @@ class ResourceConfiguration
     }
 
     /**
-     * @return class-string<Resource>
+     * @return class-string
      */
     public function getResource(): string
     {
