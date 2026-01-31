@@ -5,6 +5,7 @@ namespace Filament\Resources\Resource\Concerns;
 use Closure;
 use Filament\Facades\Filament;
 use Filament\Panel;
+use Filament\Resources\ResourceConfiguration;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Route;
@@ -77,11 +78,17 @@ trait HasRoutes
             ->group($registerPageRoutes);
     }
 
-    public static function registerRoutes(Panel $panel, ?Closure $registerPageRoutes = null): void
+    public static function registerRoutes(Panel $panel, ?Closure $registerPageRoutes = null, ?ResourceConfiguration $configuration = null): void
     {
-        $registerPageRoutes ??= function () use ($panel): void {
+        $registerPageRoutes ??= function () use ($panel, $configuration): void {
             foreach (static::getPages() as $name => $page) {
-                $page->registerRoute($panel)?->name($name);
+                $route = $page->registerRoute($panel);
+
+                if ($configuration) {
+                    $route?->middleware("resource-configuration:{$configuration->getKey()}");
+                }
+
+                $route?->name($name);
             }
         };
 
@@ -146,6 +153,12 @@ trait HasRoutes
 
     public static function getSlug(?Panel $panel = null): string
     {
+        if ($configuration = static::getConfiguration($panel)) {
+            if (filled($configSlug = $configuration->getSlug())) {
+                return $configSlug;
+            }
+        }
+
         if (filled(static::$slug)) {
             return static::$slug;
         }

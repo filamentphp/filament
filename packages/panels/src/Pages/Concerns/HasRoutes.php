@@ -2,6 +2,7 @@
 
 namespace Filament\Pages\Concerns;
 
+use Filament\Pages\PageConfiguration;
 use Filament\Panel;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Route;
@@ -20,15 +21,24 @@ trait HasRoutes
      */
     protected static string | array $withoutRouteMiddleware = [];
 
-    public static function registerRoutes(Panel $panel): void
+    public static function registerRoutes(Panel $panel, ?PageConfiguration $configuration = null): void
     {
-        static::routes($panel);
+        static::routes($panel, $configuration);
     }
 
-    public static function routes(Panel $panel): void
+    public static function routes(Panel $panel, ?PageConfiguration $configuration = null): void
     {
+        $middleware = static::getRouteMiddleware($panel);
+
+        if ($configuration) {
+            $middleware = [
+                ...$middleware,
+                "page-configuration:{$configuration->getKey()}",
+            ];
+        }
+
         Route::get(static::getRoutePath($panel), static::class)
-            ->middleware(static::getRouteMiddleware($panel))
+            ->middleware($middleware)
             ->withoutMiddleware(static::getWithoutRouteMiddleware($panel))
             ->name(static::getRelativeRouteName($panel));
     }
@@ -45,6 +55,12 @@ trait HasRoutes
 
     public static function getSlug(?Panel $panel = null): string
     {
+        if ($configuration = static::getConfiguration($panel)) {
+            if (filled($configSlug = $configuration->getSlug())) {
+                return $configSlug;
+            }
+        }
+
         if (filled(static::$slug)) {
             return static::$slug;
         }

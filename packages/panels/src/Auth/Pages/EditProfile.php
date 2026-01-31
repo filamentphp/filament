@@ -12,6 +12,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification as FilamentNotification;
 use Filament\Pages\Concerns;
 use Filament\Pages\Page;
+use Filament\Pages\PageConfiguration;
 use Filament\Panel;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Component;
@@ -115,17 +116,17 @@ class EditProfile extends Page
         $this->callHook('afterFill');
     }
 
-    public static function registerRoutes(Panel $panel): void
+    public static function registerRoutes(Panel $panel, ?PageConfiguration $configuration = null): void
     {
         if (filled(static::getCluster())) {
             Route::name(static::prependClusterRouteBaseName($panel, ''))
                 ->prefix(static::prependClusterSlug($panel, ''))
-                ->group(fn () => static::routes($panel));
+                ->group(fn () => static::routes($panel, $configuration));
 
             return;
         }
 
-        static::routes($panel);
+        static::routes($panel, $configuration);
     }
 
     public static function getRouteName(?Panel $panel = null): string

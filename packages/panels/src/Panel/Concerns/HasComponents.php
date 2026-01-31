@@ -9,11 +9,13 @@ use Filament\Livewire\GlobalSearch;
 use Filament\Livewire\Notifications;
 use Filament\Livewire\SimpleUserMenu;
 use Filament\Pages\Page;
+use Filament\Pages\PageConfiguration;
 use Filament\Resources\Pages\Page as ResourcePage;
 use Filament\Resources\RelationManagers\RelationGroup;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\RelationManagers\RelationManagerConfiguration;
 use Filament\Resources\Resource;
+use Filament\Resources\ResourceConfiguration;
 use Filament\Widgets\Widget;
 use Filament\Widgets\WidgetConfiguration;
 use Illuminate\Database\Eloquent\Model;
@@ -34,6 +36,11 @@ trait HasComponents
      * @var array<class-string>
      */
     protected array $pages = [];
+
+    /**
+     * @var array<string, PageConfiguration>
+     */
+    protected array $pageConfigurations = [];
 
     /**
      * @var array<string>
@@ -71,6 +78,11 @@ trait HasComponents
     protected array $resources = [];
 
     /**
+     * @var array<string, ResourceConfiguration>
+     */
+    protected array $resourceConfigurations = [];
+
+    /**
      * @var array<string>
      */
     protected array $resourceDirectories = [];
@@ -104,7 +116,7 @@ trait HasComponents
     protected string | Closure | null $resourceEditPageRedirect = null;
 
     /**
-     * @param  array<class-string>  $pages
+     * @param  array<class-string | PageConfiguration>  $pages
      */
     public function pages(array $pages): static
     {
@@ -112,21 +124,27 @@ trait HasComponents
             return $this;
         }
 
-        $this->pages = [
-            ...$this->pages,
-            ...$pages,
-        ];
-
         foreach ($pages as $page) {
-            $this->queueLivewireComponentForRegistration($page);
-            $this->registerToCluster($page);
+            if ($page instanceof PageConfiguration) {
+                $compositeKey = "{$page->page}:{$page->getKey()}";
+                $this->pageConfigurations[$compositeKey] = $page;
+
+                $pageClass = $page->page;
+            } else {
+                $this->pages[] = $page;
+
+                $pageClass = $page;
+            }
+
+            $this->queueLivewireComponentForRegistration($pageClass);
+            $this->registerToCluster($pageClass);
         }
 
         return $this;
     }
 
     /**
-     * @param  array<class-string>  $resources
+     * @param  array<class-string | ResourceConfiguration>  $resources
      */
     public function resources(array $resources): static
     {
@@ -134,13 +152,19 @@ trait HasComponents
             return $this;
         }
 
-        $this->resources = [
-            ...$this->resources,
-            ...$resources,
-        ];
-
         foreach ($resources as $resource) {
-            $this->registerToCluster($resource);
+            if ($resource instanceof ResourceConfiguration) {
+                $compositeKey = "{$resource->resource}:{$resource->getKey()}";
+                $this->resourceConfigurations[$compositeKey] = $resource;
+
+                $resourceClass = $resource->resource;
+            } else {
+                $this->resources[] = $resource;
+
+                $resourceClass = $resource;
+            }
+
+            $this->registerToCluster($resourceClass);
         }
 
         return $this;
@@ -387,11 +411,43 @@ trait HasComponents
     }
 
     /**
+     * @return array<string, PageConfiguration>
+     */
+    public function getPageConfigurations(): array
+    {
+        return $this->pageConfigurations;
+    }
+
+    /**
+     * @param  class-string  $pageClass
+     */
+    public function getPageConfiguration(string $pageClass, string $key): ?PageConfiguration
+    {
+        return $this->pageConfigurations["{$pageClass}:{$key}"] ?? null;
+    }
+
+    /**
      * @return array<class-string>
      */
     public function getResources(): array
     {
         return array_unique($this->resources);
+    }
+
+    /**
+     * @return array<string, ResourceConfiguration>
+     */
+    public function getResourceConfigurations(): array
+    {
+        return $this->resourceConfigurations;
+    }
+
+    /**
+     * @param  class-string  $resourceClass
+     */
+    public function getResourceConfiguration(string $resourceClass, string $key): ?ResourceConfiguration
+    {
+        return $this->resourceConfigurations["{$resourceClass}:{$key}"] ?? null;
     }
 
     /**
@@ -646,9 +702,23 @@ trait HasComponents
                 'clusterDirectories' => $this->clusterDirectories,
                 'clusterNamespaces' => $this->clusterNamespaces,
                 'pages' => $this->pages,
+                'pageConfigurations' => array_map(
+                    static fn (PageConfiguration $configuration): array => [
+                        'page' => $configuration->page,
+                        'key' => $configuration->getKey(),
+                    ],
+                    $this->pageConfigurations,
+                ),
                 'pageDirectories' => $this->pageDirectories,
                 'pageNamespaces' => $this->pageNamespaces,
                 'resources' => $this->resources,
+                'resourceConfigurations' => array_map(
+                    static fn (ResourceConfiguration $configuration): array => [
+                        'resource' => $configuration->resource,
+                        'key' => $configuration->getKey(),
+                    ],
+                    $this->resourceConfigurations,
+                ),
                 'resourceDirectories' => $this->resourceDirectories,
                 'resourceNamespaces' => $this->resourceNamespaces,
                 'widgets' => $this->widgets,
@@ -674,9 +744,19 @@ trait HasComponents
         $this->clusterDirectories = $cache['clusterDirectories'] ?? [];
         $this->clusterNamespaces = $cache['clusterNamespaces'] ?? [];
         $this->pages = $cache['pages'] ?? [];
+        $this->pageConfigurations = collect($cache['pageConfigurations'] ?? [])
+            ->mapWithKeys(static fn (array $configuration): array => [
+                "{$configuration['page']}:{$configuration['key']}" => $configuration['page']::make($configuration['key']),
+            ])
+            ->all();
         $this->pageDirectories = $cache['pageDirectories'] ?? [];
         $this->pageNamespaces = $cache['pageNamespaces'] ?? [];
         $this->resources = $cache['resources'] ?? [];
+        $this->resourceConfigurations = collect($cache['resourceConfigurations'] ?? [])
+            ->mapWithKeys(static fn (array $configuration): array => [
+                "{$configuration['resource']}:{$configuration['key']}" => $configuration['resource']::make($configuration['key']),
+            ])
+            ->all();
         $this->resourceDirectories = $cache['resourceDirectories'] ?? [];
         $this->resourceNamespaces = $cache['resourceNamespaces'] ?? [];
         $this->widgets = $cache['widgets'] ?? [];
