@@ -744,19 +744,20 @@ trait HasComponents
         $this->clusterDirectories = $cache['clusterDirectories'] ?? [];
         $this->clusterNamespaces = $cache['clusterNamespaces'] ?? [];
         $this->pages = $cache['pages'] ?? [];
-        $this->pageConfigurations = collect($cache['pageConfigurations'] ?? [])
-            ->mapWithKeys(static fn (array $configuration): array => [
-                "{$configuration['page']}:{$configuration['key']}" => $configuration['page']::make($configuration['key']),
-            ])
-            ->all();
+        $this->pageConfigurations = [];
+
+        foreach ($cache['pageConfigurations'] ?? [] as $configuration) {
+            $this->pageConfigurations["{$configuration['page']}:{$configuration['key']}"] = $configuration['page']::make($configuration['key']);
+        }
+
         $this->pageDirectories = $cache['pageDirectories'] ?? [];
         $this->pageNamespaces = $cache['pageNamespaces'] ?? [];
         $this->resources = $cache['resources'] ?? [];
-        $this->resourceConfigurations = collect($cache['resourceConfigurations'] ?? [])
-            ->mapWithKeys(static fn (array $configuration): array => [
-                "{$configuration['resource']}:{$configuration['key']}" => $configuration['resource']::make($configuration['key']),
-            ])
-            ->all();
+        $this->resourceConfigurations = [];
+
+        foreach ($cache['resourceConfigurations'] ?? [] as $configuration) {
+            $this->resourceConfigurations["{$configuration['resource']}:{$configuration['key']}"] = $configuration['resource']::make($configuration['key']);
+        }
         $this->resourceDirectories = $cache['resourceDirectories'] ?? [];
         $this->resourceNamespaces = $cache['resourceNamespaces'] ?? [];
         $this->widgets = $cache['widgets'] ?? [];
