@@ -111,16 +111,33 @@ export default function fileUploadFormComponent({
                 return
             }
 
-            if (this.$el.offsetParent === null) {
+            // https://github.com/filamentphp/filament/issues/16253
+            // https://github.com/filamentphp/filament/issues/15394
+            if (!this.visibilityObserver) {
                 this.visibilityObserver?.disconnect()
                 this.visibilityObserver = new ResizeObserver(() => {
-                    if (this.$el.offsetWidth > 0) {
-                        this.visibilityObserver.disconnect()
+                    const isHidden =
+                        this.$el.offsetParent === null ||
+                        getComputedStyle(this.$el).visibility === 'hidden'
+
+                    if (isHidden) {
+                        return
+                    }
+
+                    if (!this.pond) {
                         this.init()
+                    } else {
+                        document.dispatchEvent(new Event('visibilitychange'))
                     }
                 })
                 this.visibilityObserver.observe(this.$el)
+            }
 
+            const isHidden =
+                this.$el.offsetParent === null ||
+                getComputedStyle(this.$el).visibility === 'hidden'
+
+            if (isHidden) {
                 return
             }
 
