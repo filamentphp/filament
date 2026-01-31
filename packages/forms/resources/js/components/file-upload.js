@@ -111,8 +111,8 @@ export default function fileUploadFormComponent({
                 return
             }
 
-            // https://github.com/filamentphp/filament/issues/16253
             // https://github.com/filamentphp/filament/issues/15394
+            // https://github.com/filamentphp/filament/issues/16253
             if (!this.visibilityObserver) {
                 this.visibilityObserver?.disconnect()
                 this.visibilityObserver = new ResizeObserver(() => {
