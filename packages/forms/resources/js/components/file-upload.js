@@ -114,7 +114,6 @@ export default function fileUploadFormComponent({
             // https://github.com/filamentphp/filament/issues/15394
             // https://github.com/filamentphp/filament/issues/16253
             if (!this.visibilityObserver) {
-                this.visibilityObserver?.disconnect()
                 this.visibilityObserver = new ResizeObserver(() => {
                     const isHidden =
                         this.$el.offsetParent === null ||
@@ -130,6 +129,7 @@ export default function fileUploadFormComponent({
                         document.dispatchEvent(new Event('visibilitychange'))
                     }
                 })
+                
                 this.visibilityObserver.observe(this.$el)
             }
 
