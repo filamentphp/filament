@@ -8,6 +8,7 @@ use Filament\Support\Enums\Size;
 use Filament\Support\Enums\Width;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Enums\ColumnManagerApplyActionPosition;
 use Filament\Tables\Enums\ColumnManagerResetActionPosition;
 use Filament\Tables\View\TablesIconAlias;
 
@@ -15,9 +16,13 @@ trait HasColumnManager
 {
     protected ColumnManagerResetActionPosition | Closure | null $columnManagerResetActionPosition = null;
 
+    protected ColumnManagerApplyActionPosition | Closure | null $columnManagerApplyActionPosition = null;
+
     protected bool | Closure | null $hasColumnManager = null;
 
     protected bool | Closure $hasReorderableColumns = false;
+
+    protected bool | Closure $hasColumnManagerGroupsOnly = false;
 
     /**
      * @var int | array<string, int | null> | Closure
@@ -57,6 +62,13 @@ trait HasColumnManager
         return $this;
     }
 
+    public function columnManagerGroupsOnly(bool | Closure $condition = true): static
+    {
+        $this->hasColumnManagerGroupsOnly = $condition;
+
+        return $this;
+    }
+
     public function hasColumnManager(): bool
     {
         return (bool) (
@@ -71,6 +83,11 @@ trait HasColumnManager
     public function hasReorderableColumns(): bool
     {
         return (bool) $this->evaluate($this->hasReorderableColumns);
+    }
+
+    public function hasColumnManagerGroupsOnly(): bool
+    {
+        return (bool) $this->evaluate($this->hasColumnManagerGroupsOnly);
     }
 
     public function hasDeferredColumnManager(): bool
@@ -99,6 +116,13 @@ trait HasColumnManager
         return $this;
     }
 
+    public function columnManagerApplyActionPosition(ColumnManagerApplyActionPosition | Closure | null $position): static
+    {
+        $this->columnManagerApplyActionPosition = $position;
+
+        return $this;
+    }
+
     public function persistsColumnsInSession(): bool
     {
         return (bool) $this->evaluate($this->persistsColumnsInSession);
@@ -107,6 +131,11 @@ trait HasColumnManager
     public function getColumnManagerResetActionPosition(): ColumnManagerResetActionPosition
     {
         return $this->evaluate($this->columnManagerResetActionPosition) ?? ColumnManagerResetActionPosition::Header;
+    }
+
+    public function getColumnManagerApplyActionPosition(): ColumnManagerApplyActionPosition
+    {
+        return $this->evaluate($this->columnManagerApplyActionPosition) ?? ColumnManagerApplyActionPosition::Header;
     }
 
     /**
@@ -263,7 +292,7 @@ trait HasColumnManager
             ->label(__('filament-tables::table.column_manager.actions.apply.label'))
             ->button()
             ->visible($this->hasDeferredColumnManager())
-            ->alpineClickHandler('applyTableColumnManager')
+            ->alpineClickHandler('applyTableColumnManager(); close()')
             ->table($this)
             ->authorize(true);
 

@@ -7,6 +7,7 @@
     use Filament\Tables\Columns\Column;
     use Filament\Tables\Columns\ColumnGroup;
     use Filament\Tables\Enums\ColumnManagerResetActionPosition;
+    use Filament\Tables\Enums\ColumnManagerApplyActionPosition;
     use Filament\Tables\Enums\FiltersLayout;
     use Filament\Tables\Enums\FiltersResetActionPosition;
     use Filament\Tables\Enums\RecordActionsPosition;
@@ -40,6 +41,7 @@
     $filtersFormWidth = $getFiltersFormWidth();
     $filtersResetActionPosition = $getFiltersResetActionPosition();
     $columnManagerResetActionPosition = $getColumnManagerResetActionPosition();
+    $columnManagerApplyActionPosition = $getColumnManagerApplyActionPosition();
     $hasColumnGroups = $hasColumnGroups();
     $hasColumnsLayout = $hasColumnsLayout();
     $hasPageSummary = $hasPageSummary();
@@ -600,6 +602,7 @@
                                             :apply-action="$columnManagerApplyAction"
                                             :columns="$columnManagerColumns"
                                             :reset-action-position="$columnManagerResetActionPosition"
+                                            :apply-action-position="$columnManagerApplyActionPosition"
                                             :has-reorderable-columns="$hasReorderableColumns"
                                             :has-toggleable-columns="$hasToggleableColumns"
                                             :heading-tag="$secondLevelHeadingTag"

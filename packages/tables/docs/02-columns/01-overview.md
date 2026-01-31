@@ -915,9 +915,18 @@ public function table(Table $table): Table
 }
 ```
 
+### Column Manager Actions
+
+Filament Tables allows you to customize the placement of the **Reset** and **Apply** actions in the Column Manager. By default:
+
+- The **Reset** action appears in the header.
+- The **Apply** action appears in the footer.
+
+You can change their positions using the corresponding methods.
+
 #### Displaying the reset action in the footer
 
-By default, the reset action appears in the header of the column manager. You may move it to the footer, next to the apply action, using the `columnManagerResetActionPosition()` method:
+By default, the reset action appears in the header of the column manager. You may move it to the footer, using the `columnManagerResetActionPosition()` method:
 
 ```php
 use Filament\Tables\Enums\ColumnManagerResetActionPosition;
@@ -930,6 +939,24 @@ public function table(Table $table): Table
             // ...
         ])
         ->columnManagerResetActionPosition(ColumnManagerResetActionPosition::Footer);
+}
+```
+
+#### Displaying the apply action in the header
+
+By default, the apply action appears in the footer of the column manager. You may move it to the header using the `columnManagerApplyActionPosition()` method:
+
+```php
+use Filament\Tables\Enums\ColumnManagerApplyActionPosition;
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->columns([
+            // ...
+        ])
+        ->columnManagerApplyActionPosition(ColumnManagerApplyActionPosition::Header);
 }
 ```
 
@@ -965,6 +992,26 @@ public function table(Table $table): Table
         ])
         ->columnManagerColumns(2);
 }
+```
+
+#### Displaying only column groups in the column manager
+
+If your table contains a large number of columns organized into `ColumnGroup`, the column manager can become cluttered. You can use the `columnManagerGroupsOnly()` method to display only column group titles.
+
+When enabled, users will not see individual columns in the column manager. Toggling a group will toggle the visibility of all columns within that group.
+
+```php
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->columns([
+            // ...
+        ])
+        ->columnManagerGroupsOnly();
+}
+
 ```
 
 ## Adding extra HTML attributes to a column content
