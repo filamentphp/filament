@@ -28,6 +28,7 @@
 
     if ($field) {
         $hasInlineLabel ??= $field->hasInlineLabel();
+        $labelCanGrow ??= $field->labelCanGrow();
         $hasNestedRecursiveValidationRules ??= $field instanceof \Filament\Forms\Components\Contracts\HasNestedRecursiveValidationRules;
         $id ??= $field->getId();
         $isDisabled ??= $field->isDisabled();
@@ -74,6 +75,7 @@
             ->class([
                 'fi-fo-field',
                 'fi-fo-field-has-inline-label' => $hasInlineLabel,
+                'fi-fo-field-label-can-grow' => $hasInlineLabel && $labelCanGrow,
             ])
     }}
 >

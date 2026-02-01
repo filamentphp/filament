@@ -2,11 +2,17 @@
     @apply grid gap-y-2;
 
     &.fi-fo-field-has-inline-label {
-        @apply sm:grid-cols-3 sm:items-start sm:gap-x-4;
+        &:not(.fi-fo-field-label-can-grow) {
+            @apply sm:grid-cols-3;
 
-        & .fi-fo-field-content-col {
-            @apply sm:col-span-2;
+            & .fi-fo-field-content-col {
+                @apply sm:col-span-2;
+            }
         }
+        &.fi-fo-field-label-can-grow {
+            @apply sm:grid-cols-[1fr_auto];
+        }
+        @apply sm:items-start sm:gap-x-4;
     }
 
     & .fi-fo-field-label-ctn,
