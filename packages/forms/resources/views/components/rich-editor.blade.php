@@ -20,6 +20,7 @@
 <x-dynamic-component :component="$fieldWrapperView" :field="$field">
     <x-filament::input.wrapper
         :valid="! $errors->has($statePath)"
+        :disabled="$isDisabled"
         x-cloak
         :attributes="
             \Filament\Support\prepare_inherited_attributes($extraAttributeBag)
