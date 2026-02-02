@@ -42,7 +42,6 @@ class AfterStateUpdatedJsTest extends Page
                         ->label('Name')
                         ->extraAttributes(['data-testid' => 'flex-name-input'])
                         ->afterStateUpdatedJs(<<<'JS'
-                                const parts = ($state ?? '').split(' ');
                                 $set('flex_email', ($state ?? '').replaceAll(' ', '.').toLowerCase() + '@example.com')
                             JS),
                     TextInput::make('flex_email')
