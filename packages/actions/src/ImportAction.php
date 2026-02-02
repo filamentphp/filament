@@ -111,7 +111,7 @@ class ImportAction extends Action
                         return;
                     }
 
-                    $csvReader = CsvReader::createFromStream($csvStream);
+                    $csvReader = CsvReader::from($csvStream);
 
                     if (filled($csvDelimiter = $this->getCsvDelimiter($csvReader))) {
                         $csvReader->setDelimiter($csvDelimiter);
@@ -160,7 +160,7 @@ class ImportAction extends Action
                         return [];
                     }
 
-                    $csvReader = CsvReader::createFromStream($csvStream);
+                    $csvReader = CsvReader::from($csvStream);
 
                     if (filled($csvDelimiter = $this->getCsvDelimiter($csvReader))) {
                         $csvReader->setDelimiter($csvDelimiter);
@@ -190,7 +190,7 @@ class ImportAction extends Action
                 return;
             }
 
-            $csvReader = CsvReader::createFromStream($csvStream);
+            $csvReader = CsvReader::from($csvStream);
 
             if (filled($csvDelimiter = $this->getCsvDelimiter($csvReader))) {
                 $csvReader->setDelimiter($csvDelimiter);
@@ -629,7 +629,7 @@ class ImportAction extends Action
                     return;
                 }
 
-                $csvReader = CsvReader::createFromStream($csvStream);
+                $csvReader = CsvReader::from($csvStream);
 
                 if (filled($csvDelimiter = $this->getCsvDelimiter($csvReader))) {
                     $csvReader->setDelimiter($csvDelimiter);
