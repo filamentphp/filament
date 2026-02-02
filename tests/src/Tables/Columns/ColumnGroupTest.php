@@ -11,6 +11,7 @@ use Filament\Tables\Table;
 use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Tables\TestCase;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\HtmlString;
 use Livewire\Component;
 
 use function Filament\Tests\livewire;
@@ -32,6 +33,15 @@ it('can render grouped columns', function (): void {
         ->assertCanRenderTableColumn('author.email');
 });
 
+it('can use `HtmlString` as label', function (): void {
+    Post::factory()->count(5)->create();
+
+    livewire(TestTableWithColumnGroupWithHtmlStringLabel::class)
+        ->assertSuccessful()
+        ->assertCanRenderTableColumn('author.name')
+        ->assertCanRenderTableColumn('author.email');
+});
+
 class TestTableWithColumnGroup extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
 {
     use InteractsWithActions;
@@ -45,6 +55,31 @@ class TestTableWithColumnGroup extends Component implements HasActions, HasSchem
             ->columns([
                 Tables\Columns\TextColumn::make('title'),
                 Tables\Columns\ColumnGroup::make('Author', [
+                    Tables\Columns\TextColumn::make('author.name'),
+                    Tables\Columns\TextColumn::make('author.email'),
+                ]),
+            ]);
+    }
+
+    public function render(): View
+    {
+        return view('livewire.table');
+    }
+}
+
+class TestTableWithColumnGroupWithHtmlStringLabel extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+    use Tables\Concerns\InteractsWithTable;
+
+    public function table(Table $table): Table
+    {
+        return $table
+            ->query(Post::query())
+            ->columns([
+                Tables\Columns\TextColumn::make('title'),
+                Tables\Columns\ColumnGroup::make(new HtmlString('<span>Author</span>'), [
                     Tables\Columns\TextColumn::make('author.name'),
                     Tables\Columns\TextColumn::make('author.email'),
                 ]),
