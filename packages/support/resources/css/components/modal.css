@@ -100,6 +100,17 @@
         @apply fixed inset-0 z-40 bg-gray-950/50 dark:bg-gray-950/75;
     }
 
+    &.fi-modal-open ~ .fi-modal.fi-modal-open {
+        & > .fi-modal-close-overlay,
+        & > .fi-modal-window-ctn {
+            @apply z-50;
+        }
+
+        & > .fi-modal-close-overlay {
+            @apply bg-gray-950/25 dark:bg-gray-950/50;
+        }
+    }
+
     & > .fi-modal-window-ctn {
         @apply fixed inset-0 z-40 grid min-h-full grid-rows-[1fr_auto_1fr] justify-items-center sm:grid-rows-[1fr_auto_3fr];
 

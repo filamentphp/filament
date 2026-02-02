@@ -20,7 +20,12 @@ export default ({ livewireId }) => ({
             return
         }
 
-        if (this.actionNestingIndex !== null) {
+        const isNestingIncrease =
+            this.actionNestingIndex !== null &&
+            newActionNestingIndex !== null &&
+            newActionNestingIndex > this.actionNestingIndex
+
+        if (this.actionNestingIndex !== null && !isNestingIncrease) {
             this.closeModal()
         }
 
