@@ -6,6 +6,8 @@ export default function checkboxListFormComponent({ livewireId }) {
 
         search: '',
 
+        unsubscribeLivewireHook: null,
+
         visibleCheckboxListOptions: [],
 
         init() {
@@ -19,25 +21,27 @@ export default function checkboxListFormComponent({ livewireId }) {
                 this.checkIfAllCheckboxesAreChecked()
             })
 
-            Livewire.interceptMessage(({ message, onSuccess }) => {
-                onSuccess(() => {
-                    this.$nextTick(() => {
-                        if (message.component.id !== livewireId) {
-                            return
-                        }
+            this.unsubscribeLivewireHook = Livewire.interceptMessage(
+                ({ message, onSuccess }) => {
+                    onSuccess(() => {
+                        this.$nextTick(() => {
+                            if (message.component.id !== livewireId) {
+                                return
+                            }
 
-                        this.checkboxListOptions = Array.from(
-                            this.$root.querySelectorAll(
-                                '.fi-fo-checkbox-list-option',
-                            ),
-                        )
+                            this.checkboxListOptions = Array.from(
+                                this.$root.querySelectorAll(
+                                    '.fi-fo-checkbox-list-option',
+                                ),
+                            )
 
-                        this.updateVisibleCheckboxListOptions()
+                            this.updateVisibleCheckboxListOptions()
 
-                        this.checkIfAllCheckboxesAreChecked()
+                            this.checkIfAllCheckboxesAreChecked()
+                        })
                     })
-                })
-            })
+                },
+            )
 
             this.$watch('search', () => {
                 this.updateVisibleCheckboxListOptions()
@@ -104,6 +108,10 @@ export default function checkboxListFormComponent({ livewireId }) {
                         .includes(this.search.toLowerCase())
                 },
             )
+        },
+
+        destroy() {
+            this.unsubscribeLivewireHook?.()
         },
     }
 }
