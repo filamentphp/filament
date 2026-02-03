@@ -45,18 +45,21 @@ trait HasFilters
                     ->statePath('tableDeferredFilters')
                     ->partiallyRender(),
                 fn (Schema $schema) => $schema
-                    ->statePath('tableFilters')
+                    ->statePath('tableDeferredFilters')
                     ->live(),
             );
     }
 
     public function updatedTableFilters(): void
     {
-        if ($this->getTable()->hasDeferredFilters()) {
-            $this->tableDeferredFilters = $this->tableFilters;
-        }
-
         $this->handleTableFilterUpdates();
+    }
+
+    public function updatedTableDeferredFilters(): void
+    {
+        if (! $this->getTable()->hasDeferredFilters()) {
+            $this->applyTableFilters();
+        }
     }
 
     protected function handleTableFilterUpdates(): void
@@ -112,13 +115,7 @@ trait HasFilters
             return;
         }
 
-        if ($this->getTable()->hasDeferredFilters()) {
-            $this->applyTableFilters();
-
-            return;
-        }
-
-        $this->handleTableFilterUpdates();
+        $this->applyTableFilters();
     }
 
     public function removeTableFilters(): void
@@ -137,31 +134,19 @@ trait HasFilters
         $this->resetTableSearch();
         $this->resetTableColumnSearches();
 
-        if ($this->getTable()->hasDeferredFilters()) {
-            $this->applyTableFilters();
-
-            return;
-        }
-
-        $this->handleTableFilterUpdates();
+        $this->applyTableFilters();
     }
 
     public function resetTableFiltersForm(): void
     {
         $this->getTableFiltersForm()->fill();
 
-        if ($this->getTable()->hasDeferredFilters()) {
-            $this->applyTableFilters();
-
-            return;
-        }
-
-        $this->handleTableFilterUpdates();
+        $this->applyTableFilters();
     }
 
     public function applyTableFilters(): void
     {
-        $this->tableFilters = $this->tableDeferredFilters;
+        $this->tableFilters = $this->getTableFiltersForm()->getStateSnapshot();
 
         $this->handleTableFilterUpdates();
     }
@@ -170,41 +155,25 @@ trait HasFilters
     {
         $table = $this->getTable();
 
-        if ($table->hasDeferredFilters()) {
-            $filtersForm = $this->getTableFiltersForm()->statePath('tableFilters');
-
-            $filtersForm->flushCachedAbsoluteStatePaths();
-            $filtersForm->clearCachedDefaultChildSchemas();
+        foreach ($table->getFilters() as $filter) {
+            $filter->applyToBaseQuery(
+                $query,
+                $this->getTableFilterState($filter->getName()) ?? [],
+            );
         }
 
-        try {
+        return $query->where(function (Builder $query) use ($table, $isResolvingRecord): void {
             foreach ($table->getFilters() as $filter) {
-                $filter->applyToBaseQuery(
+                if ($isResolvingRecord && $filter->shouldExcludeWhenResolvingRecord()) {
+                    continue;
+                }
+
+                $filter->apply(
                     $query,
                     $this->getTableFilterState($filter->getName()) ?? [],
                 );
             }
-
-            return $query->where(function (Builder $query) use ($table, $isResolvingRecord): void {
-                foreach ($table->getFilters() as $filter) {
-                    if ($isResolvingRecord && $filter->shouldExcludeWhenResolvingRecord()) {
-                        continue;
-                    }
-
-                    $filter->apply(
-                        $query,
-                        $this->getTableFilterState($filter->getName()) ?? [],
-                    );
-                }
-            });
-        } finally {
-            if ($table->hasDeferredFilters()) {
-                $filtersForm = $this->getTableFiltersForm()->statePath('tableDeferredFilters');
-
-                $filtersForm->flushCachedAbsoluteStatePaths();
-                $filtersForm->clearCachedDefaultChildSchemas();
-            }
-        }
+        });
     }
 
     public function getTableFilterState(string $name): ?array
@@ -214,7 +183,7 @@ trait HasFilters
 
     public function getTableFilterFormState(string $name): ?array
     {
-        return Arr::get($this->getTable()->hasDeferredFilters() ? $this->tableDeferredFilters : $this->tableFilters, $this->parseTableFilterName($name));
+        return Arr::get($this->tableDeferredFilters, $this->parseTableFilterName($name));
     }
 
     public function parseTableFilterName(string $name): string

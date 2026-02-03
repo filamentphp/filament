@@ -132,7 +132,8 @@ class Constraint extends Component
                                         ->key('settings')
                                         ->columnSpan(['@xl' => 2, '!@md' => 2])
                                         ->columns(['@xl' => 2, '!@md' => 2])
-                                        ->visible(fn (Group $component): bool => filled($component->getChildSchema()->getComponents())),
+                                        ->visible(fn (Group $component): bool => filled($component->getChildSchema()->getComponents()))
+                                        ->dehydratedWhenHidden()
                                 ])
                                 ->dense(),
                             Actions::make([

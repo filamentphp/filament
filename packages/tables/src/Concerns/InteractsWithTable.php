@@ -78,16 +78,7 @@ trait InteractsWithTable
 
         $this->getTableFiltersForm()->fill($this->tableFilters);
 
-        if ($this->getTable()->hasDeferredFilters()) {
-            $this->tableFilters = $this->tableDeferredFilters;
-        }
-
-        if ($shouldPersistFiltersInSession) {
-            session()->put(
-                $filtersSessionKey,
-                $this->tableFilters,
-            );
-        }
+        $this->applyTableFilters();
 
         if ($this->getTable()->isDefaultGroupSelectable()) {
             $this->tableGrouping = "{$this->getTable()->getDefaultGroup()->getId()}:asc";
