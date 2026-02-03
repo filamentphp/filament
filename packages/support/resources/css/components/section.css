@@ -179,12 +179,15 @@
         & > .fi-section-header-after-ctn {
             @apply self-center;
 
-            & .fi-sc-text,
-            & .fi-link {
+            &
+                .fi-sc-text:not(
+                    .fi-section-header-after-ctn .fi-dropdown-panel *
+                ),
+            & .fi-link:not(.fi-section-header-after-ctn .fi-dropdown-panel *) {
                 @apply leading-6;
             }
 
-            & .fi-btn {
+            & .fi-btn:not(.fi-section-header-after-ctn .fi-dropdown-panel *) {
                 &.fi-size-xs {
                     @apply -my-0.5;
                 }
