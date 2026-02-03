@@ -7,11 +7,17 @@ use Filament\Actions\Testing\TestAction;
 use Filament\Schemas\Components\Callout;
 use Filament\Schemas\Schema;
 use Filament\Tests\Fixtures\Livewire\Livewire;
+use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
+use Illuminate\Support\Facades\Artisan;
 
 use function Filament\Tests\livewire;
 
 uses(TestCase::class);
+
+beforeEach(function (): void {
+    Artisan::call('filament:assets');
+});
 
 it('can render', function (): void {
     livewire(TestComponentWithCallout::class)
@@ -72,6 +78,20 @@ it('can call footer `actions()`', function (): void {
         ->assertSet('actionCalled', true);
 });
 
+it('has no accessibility issues in light mode', function (): void {
+    $this->actingAs(User::factory()->create());
+
+    visit('/callout-browser-test')
+        ->assertNoAccessibilityIssues();
+});
+
+it('has no accessibility issues in dark mode', function (): void {
+    $this->actingAs(User::factory()->create());
+
+    visit('/callout-browser-test')
+        ->inDarkMode()
+        ->assertNoAccessibilityIssues();
+});
 
 class TestComponentWithCallout extends Livewire
 {

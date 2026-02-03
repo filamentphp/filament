@@ -11,8 +11,9 @@ Callouts are used to draw attention to important information or messages. They a
 ```php
 use Filament\Schemas\Components\Callout;
 
-Callout::make('Important Notice')
-    ->description('Please read this information carefully before proceeding.')
+Callout::make('New version available')
+    ->description('Filament v4 has been released with exciting new features and improvements.')
+    ->info()
 ```
 
 <UtilityInjection set="schemaComponents" version="4.x">As well as allowing static values, the `make()` and `description()` methods also accept functions to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
@@ -26,21 +27,17 @@ Callouts have built-in status variants that automatically set the appropriate ic
 ```php
 use Filament\Schemas\Components\Callout;
 
-Callout::make('Error')
-    ->description('Something went wrong. Please try again.')
-    ->danger()
-
-Callout::make('Information')
-    ->description('Here is some helpful information.')
-    ->info()
-
-Callout::make('Success')
-    ->description('Your changes have been saved.')
+Callout::make('Payment successful')
+    ->description('Your order has been confirmed and is being processed.')
     ->success()
 
-Callout::make('Warning')
-    ->description('Please review the following items.')
+Callout::make('Session expiring soon')
+    ->description('Your session will expire in 5 minutes. Save your work to avoid losing changes.')
     ->warning()
+
+Callout::make('Connection failed')
+    ->description('Unable to connect to the server. Please check your internet connection.')
+    ->danger()
 ```
 
 <AutoScreenshot name="schemas/layout/callout/statuses" alt="Callout statuses" version="4.x" />
@@ -52,9 +49,9 @@ By default, status callouts have a colored background. You can remove the backgr
 ```php
 use Filament\Schemas\Components\Callout;
 
-Callout::make('Important Notice')
-    ->description('This callout has no background color.')
-    ->danger()
+Callout::make('Scheduled maintenance')
+    ->description('The system will be unavailable on Sunday from 2:00 AM to 4:00 AM.')
+    ->warning()
     ->color(null)
 ```
 
@@ -70,9 +67,9 @@ You can add a custom [icon](../styling/icons) to the callout using the `icon()` 
 use Filament\Schemas\Components\Callout;
 use Filament\Support\Icons\Heroicon;
 
-Callout::make('Tip')
-    ->description('You can use custom icons for your callouts.')
-    ->icon(Heroicon::Sparkles)
+Callout::make('Pro tip')
+    ->description('You can use keyboard shortcuts to navigate faster. Press ? to see all available shortcuts.')
+    ->icon(Heroicon::OutlinedLightBulb)
 ```
 
 <UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `icon()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
@@ -85,10 +82,10 @@ You can change the icon color using the `iconColor()` method:
 use Filament\Schemas\Components\Callout;
 use Filament\Support\Icons\Heroicon;
 
-Callout::make('Custom Icon')
-    ->description('The icon color is independent of the background color.')
-    ->icon(Heroicon::ShieldCheck)
-    ->iconColor('success')
+Callout::make('Pro tip')
+    ->description('You can use keyboard shortcuts to navigate faster. Press ? to see all available shortcuts.')
+    ->icon(Heroicon::OutlinedLightBulb)
+    ->iconColor('primary')
 ```
 
 <UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `iconColor()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
@@ -101,7 +98,7 @@ By default, the icon size is "large". You can change it to "small" or "medium" u
 use Filament\Schemas\Components\Callout;
 use Filament\Support\Enums\IconSize;
 
-Callout::make('Small Icon')
+Callout::make('Quick note')
     ->description('This callout has a smaller icon.')
     ->info()
     ->iconSize(IconSize::Small)
@@ -117,10 +114,10 @@ You can set a custom background color using the `color()` method:
 use Filament\Schemas\Components\Callout;
 use Filament\Support\Icons\Heroicon;
 
-Callout::make('Announcement')
-    ->description('A special announcement with a custom color.')
+Callout::make('Pro tip')
+    ->description('You can use keyboard shortcuts to navigate faster. Press ? to see all available shortcuts.')
     ->color('primary')
-    ->icon(Heroicon::Star)
+    ->icon(Heroicon::OutlinedLightBulb)
     ->iconColor('primary')
 ```
 
@@ -134,15 +131,15 @@ You can add [actions](../actions) to the callout footer using the `actions()` me
 use Filament\Actions\Action;
 use Filament\Schemas\Components\Callout;
 
-Callout::make('Subscription Expiring')
-    ->description('Your subscription will expire in 7 days.')
+Callout::make('Your trial ends in 3 days')
+    ->description('Upgrade now to keep access to all premium features.')
     ->warning()
     ->actions([
-        Action::make('renew')
-            ->label('Renew Now')
+        Action::make('upgrade')
+            ->label('Upgrade to Pro')
             ->button(),
-        Action::make('dismiss')
-            ->label('Remind Me Later'),
+        Action::make('compare')
+            ->label('Compare plans'),
     ])
 ```
 
@@ -159,12 +156,12 @@ use Filament\Actions\Action;
 use Filament\Schemas\Components\Callout;
 use Filament\Support\Enums\Alignment;
 
-Callout::make('Notice')
-    ->description('Actions can be aligned to different positions.')
+Callout::make('Updates available')
+    ->description('New features and improvements are ready to install.')
     ->info()
     ->actions([
-        Action::make('action1')->label('Action 1'),
-        Action::make('action2')->label('Action 2'),
+        Action::make('install')->label('Install Now'),
+        Action::make('later')->label('Remind Me Later'),
     ])
     ->footerActionsAlignment(Alignment::End)
 ```
@@ -182,14 +179,14 @@ use Filament\Actions\Action;
 use Filament\Schemas\Components\Callout;
 use Filament\Schemas\Components\Text;
 
-Callout::make('System Status')
-    ->description('All systems are operational.')
+Callout::make('Backup complete')
+    ->description('Your data has been successfully backed up.')
     ->success()
     ->footer([
-        Text::make('Last updated: January 15, 2025')
+        Text::make('Last backup: 5 minutes ago')
             ->color('gray'),
-        Action::make('refresh')
-            ->label('Refresh')
+        Action::make('viewBackups')
+            ->label('View All Backups')
             ->button(),
     ])
 ```

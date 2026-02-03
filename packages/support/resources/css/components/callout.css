@@ -45,5 +45,9 @@
                 var(--color-400)
             );
         }
+
+        & .fi-callout-description {
+            @apply text-gray-700/75 dark:text-gray-300/75;
+        }
     }
 }
