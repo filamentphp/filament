@@ -30,6 +30,8 @@ return [
 
             'loading_message' => 'جاري التحميل...',
 
+            'no_options_message' => 'لا توجد خيارات متاحة.',
+
             'no_search_results_message' => 'لا توجد خيارات مطابقة لبحثك.',
 
             'placeholder' => 'اختر',
