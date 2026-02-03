@@ -573,29 +573,6 @@ Action::make('first')
 
 In this example, if the `fourth` action is run, the `second` action is canceled, but so is the `third` action since it is a child of `second`. The `first` action is not canceled, however, since it is the parent of `second`. The `first` action's modal will remain open.
 
-### Overlaying child actions on top of parent actions
-
-By default, when a child action opens its modal, the parent action's modal is temporarily closed and then reopened after the child action is dismissed. If you'd like the child action's modal to instead appear on top of the parent action's modal (keeping the parent visible underneath), you can use the `overlayParentActions()` method on the child action:
-
-```php
-use Filament\Actions\Action;
-use Filament\Schemas\Components\Repeater;
-
-Action::make('editItems')
-    ->slideOver()
-    ->schema([
-        Repeater::make('items')
-            ->deleteAction(
-                static fn (Action $action) => $action->overlayParentActions(),
-            ),
-    ])
-    ->action(function () {
-        // ...
-    })
-```
-
-In this example, when the user clicks the delete button on a repeater item, the confirmation dialog appears on top of the slide-over instead of the slide-over closing first. This creates a smoother experience, especially for actions inside slide-overs or complex forms where closing and reopening the parent would be disorienting.
-
 ## Accessing information about parent actions from a child
 
 You can access the instances of parent actions and their raw data and arguments by injecting the `$mountedActions` array in a function used by your nested action. For example, to get the top-most parent action currently active on the page, you can use `$mountedActions[0]`. From there, you can get the raw data for that action by calling `$mountedActions[0]->getRawData()`. Please be aware that raw data is not validated since the action has not been submitted yet:
@@ -782,6 +759,34 @@ use Filament\Support\View\Components\ModalComponent;
 
 ModalComponent::autofocus(false);
 ```
+
+## Overlaying child action modals on top of parent action modals
+
+By default, when a child action opens its modal, the parent action's modal is temporarily closed and then reopened after the child action is dismissed. If you'd like the child action's modal to instead appear on top of the parent action's modal (keeping the parent visible underneath), you can use the `overlayParentActions()` method on the child action:
+
+```php
+use Filament\Actions\Action;
+use Filament\Schemas\Components\Repeater;
+
+Action::make('editItems')
+    ->slideOver()
+    ->schema([
+        Repeater::make('items')
+            ->schema([
+                // ...
+            ])
+            ->deleteAction(
+                fn (Action $action) => $action
+                    ->requiresConfirmation()
+                    ->overlayParentActions(),
+            ),
+    ])
+    ->action(function () {
+        // ...
+    })
+```
+
+In this example, when the user clicks the delete button on a repeater item, the confirmation dialog appears on top of the slide-over instead of the slide-over closing first. This creates a smoother experience, especially for actions inside slide-overs or complex forms where closing and reopening the parent would be disorienting.
 
 ## Optimizing modal configuration methods
 

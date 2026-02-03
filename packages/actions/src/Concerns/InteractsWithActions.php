@@ -755,7 +755,7 @@ trait InteractsWithActions
             'sync-action-modals',
             id: $this->getId(),
             newActionNestingIndex: array_key_last($this->mountedActions),
-            overlayParentActions: $this->getMountedAction()?->shouldOverlayParentActions() ?? false,
+            shouldOverlayParentActions: $this->getMountedAction()?->shouldOverlayParentActions() ?? false,
         );
     }
 
