@@ -3748,6 +3748,27 @@ export default {
             return image.extract({ width: 1920, height: 1200, left: 0, top: 0 })
         },
     },
+    'tables/layout/stacked-on-mobile': {
+        url: 'tables?table=layoutStackedOnMobile',
+        selector: 'body',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'tables/layout/stacked-on-mobile/mobile': {
+        url: 'tables?table=layoutStackedOnMobile',
+        selector: 'body',
+        viewport: {
+            width: 375,
+            height: 812,
+            deviceScaleFactor: 3,
+        },
+        crop: (image) => {
+            return image.extract({ width: 1125, height: 1800, left: 0, top: 0 })
+        },
+    },
     'tables/summaries': {
         url: 'tables?table=summaries',
         selector: 'body',
