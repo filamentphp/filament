@@ -8,9 +8,9 @@
             ])
     }}
 >
-    @foreach ($getChildSchema()->getComponents() as $component)
+    @foreach ($getChildSchema()->getComponents() as $schemaComponent)
         <li>
-            {{ $component }}
+            {{ $schemaComponent }}
         </li>
     @endforeach
 </ul>

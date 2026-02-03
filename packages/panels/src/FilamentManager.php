@@ -480,6 +480,11 @@ class FilamentManager
         return $this->getCurrentOrDefaultPanel()->getTenantMenuItems();
     }
 
+    public function hasTenantSwitcher(): bool
+    {
+        return $this->getCurrentOrDefaultPanel()->hasTenantSwitcher();
+    }
+
     public function isTenantMenuSearchable(): ?bool
     {
         return $this->getCurrentOrDefaultPanel()->isTenantMenuSearchable();
@@ -788,6 +793,14 @@ class FilamentManager
     public function getDatabaseNotificationsPosition(): DatabaseNotificationsPosition
     {
         return $this->getCurrentOrDefaultPanel()->getDatabaseNotificationsPosition();
+    }
+
+    /**
+     * @return class-string<Component>
+     */
+    public function getDatabaseNotificationsLivewireComponent(): string
+    {
+        return $this->getCurrentOrDefaultPanel()->getDatabaseNotificationsLivewireComponent();
     }
 
     public function hasTopNavigation(): bool

@@ -37,6 +37,31 @@ use Filament\Tables\Columns\TextInputColumn;
 TextInputColumn::make('background_color')->type('color')
 ```
 
+## Setting the HTML input mode
+
+You may use the `inputMode()` method to set the [HTML inputmode attribute](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/inputmode), which hints at the type of keyboard to show on mobile. For numeric inputs, use `inputMode('decimal')` for decimal values or `inputMode('numeric')` for integers:
+
+```php
+use Filament\Tables\Columns\TextInputColumn;
+
+TextInputColumn::make('quantity')
+    ->type('number')
+    ->inputMode('decimal')
+```
+
+## Setting the numeric step
+
+When using `type('number')`, you may use the `step()` method to set the [HTML step attribute](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/number#step). Use `step('any')` for decimal values or `step('1')` for integers:
+
+```php
+use Filament\Tables\Columns\TextInputColumn;
+
+TextInputColumn::make('quantity')
+    ->type('number')
+    ->inputMode('decimal')
+    ->step('1')
+```
+
 ## Lifecycle hooks
 
 Hooks may be used to execute code at various points within the input's lifecycle:

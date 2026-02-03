@@ -11,12 +11,12 @@
 
     $items = $this->getTenantMenuItems();
 
-    $canSwitchTenants = count($tenants = array_filter(
+    $canSwitchTenants = filament()->hasTenantSwitcher() && filled($tenants = array_filter(
         filament()->getUserTenants(filament()->auth()->user()),
         fn (\Illuminate\Database\Eloquent\Model $tenant): bool => ! $tenant->is($currentTenant),
     ));
 
-    $isSearchable = filled($canSwitchTenants) ? (filament()->isTenantMenuSearchable() ?? (count($tenants) >= 10)) : false;
+    $isSearchable = $canSwitchTenants && (filament()->isTenantMenuSearchable() ?? (count($tenants) >= 10));
 
     $itemsBeforeAndAfterTenantSwitcher = collect($items)
         ->groupBy(fn (Action $item): bool => $canSwitchTenants && ($item->getSort() < 0), preserveKeys: true)

@@ -49,47 +49,6 @@ test('fields can save relationships', function (): void {
         ->toBe(2);
 });
 
-test('hidden fields can save relationships when requested', function (): void {
-    $numberOfRelationshipsSaved = 0;
-    $shouldSaveRelationships = true;
-
-    $saveRelationshipsUsing = function () use (&$numberOfRelationshipsSaved): void {
-        $numberOfRelationshipsSaved++;
-    };
-
-    $schema = Schema::make(Livewire::make())
-        ->statePath('data')
-        ->components([
-            (new Field(Str::random()))
-                ->saveRelationshipsUsing($saveRelationshipsUsing)
-                ->hidden()
-                ->saveRelationshipsWhenHidden(function () use (&$shouldSaveRelationships) {
-                    return $shouldSaveRelationships;
-                }),
-        ])
-        ->model(Post::factory()->create());
-
-    $schema
-        ->saveRelationships();
-
-    expect($numberOfRelationshipsSaved)
-        ->toBe(1);
-
-    $schema
-        ->saveRelationships();
-
-    expect($numberOfRelationshipsSaved)
-        ->toBe(2);
-
-    $shouldSaveRelationships = false;
-
-    $schema
-        ->saveRelationships();
-
-    expect($numberOfRelationshipsSaved)
-        ->toBe(2);
-});
-
 test('fields with `saved(false)` do not save relationships', function (): void {
     $numberOfRelationshipsSaved = 0;
     $isSaved = true;
@@ -122,6 +81,47 @@ test('fields with `saved(false)` do not save relationships', function (): void {
         ->toBe(2);
 
     $isSaved = false;
+
+    $schema
+        ->saveRelationships();
+
+    expect($numberOfRelationshipsSaved)
+        ->toBe(2);
+});
+
+test('hidden fields can save relationships when `saveRelationshipsWhenHidden()` is called', function (): void {
+    $numberOfRelationshipsSaved = 0;
+    $shouldSaveRelationships = true;
+
+    $saveRelationshipsUsing = function () use (&$numberOfRelationshipsSaved): void {
+        $numberOfRelationshipsSaved++;
+    };
+
+    $schema = Schema::make(Livewire::make())
+        ->statePath('data')
+        ->components([
+            (new Field(Str::random()))
+                ->saveRelationshipsUsing($saveRelationshipsUsing)
+                ->hidden()
+                ->saveRelationshipsWhenHidden(function () use (&$shouldSaveRelationships) {
+                    return $shouldSaveRelationships;
+                }),
+        ])
+        ->model(Post::factory()->create());
+
+    $schema
+        ->saveRelationships();
+
+    expect($numberOfRelationshipsSaved)
+        ->toBe(1);
+
+    $schema
+        ->saveRelationships();
+
+    expect($numberOfRelationshipsSaved)
+        ->toBe(2);
+
+    $shouldSaveRelationships = false;
 
     $schema
         ->saveRelationships();
@@ -177,7 +177,7 @@ test('disabled fields do not save relationships', function (): void {
         ->toBe(0);
 });
 
-test('disabled fields can save relationships when saveRelationshipsWhenDisabled is called', function (): void {
+test('disabled fields can save relationships when `saveRelationshipsWhenDisabled()` is called', function (): void {
     $numberOfRelationshipsSaved = 0;
 
     $saveRelationshipsUsing = function () use (&$numberOfRelationshipsSaved): void {
@@ -190,8 +190,31 @@ test('disabled fields can save relationships when saveRelationshipsWhenDisabled 
             (new Field(Str::random()))
                 ->saveRelationshipsUsing($saveRelationshipsUsing)
                 ->disabled()
-                ->saved()
                 ->saveRelationshipsWhenDisabled(),
+        ])
+        ->model(Post::factory()->create());
+
+    $schema
+        ->saveRelationships();
+
+    expect($numberOfRelationshipsSaved)
+        ->toBe(1);
+});
+
+test('disabled fields can save relationships when `saved()` is called', function (): void {
+    $numberOfRelationshipsSaved = 0;
+
+    $saveRelationshipsUsing = function () use (&$numberOfRelationshipsSaved): void {
+        $numberOfRelationshipsSaved++;
+    };
+
+    $schema = Schema::make(Livewire::make())
+        ->statePath('data')
+        ->components([
+            (new Field(Str::random()))
+                ->saveRelationshipsUsing($saveRelationshipsUsing)
+                ->disabled()
+                ->saved(),
         ])
         ->model(Post::factory()->create());
 

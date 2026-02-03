@@ -2,6 +2,7 @@
 
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tests\Fixtures\Livewire\CustomDataTable;
 use Filament\Tests\Fixtures\Livewire\PostsTable;
 use Filament\Tests\Fixtures\Livewire\PostsTableWithQualifiedColumns;
 use Filament\Tests\Fixtures\Livewire\PostsTableWithTableSearchableColumns;
@@ -371,7 +372,7 @@ it('can call a column action object', function (): void {
         ->assertDispatched('column-action-object-called');
 });
 
-it('can state whether a column has the correct value', function (): void {
+it('can state whether a column has the correct value with Eloquent records', function (): void {
     $post = Post::factory()->create();
 
     livewire(PostsTable::class)
@@ -379,12 +380,24 @@ it('can state whether a column has the correct value', function (): void {
         ->assertTableColumnStateNotSet('with_state', 'incorrect state', $post);
 });
 
-it('can state whether a column has the correct formatted value', function (): void {
+it('can state whether a column has the correct value with custom data', function (): void {
+    livewire(CustomDataTable::class)
+        ->assertTableColumnStateSet('title', 'Second item', 2)
+        ->assertTableColumnStateNotSet('title', 'incorrect state', 2);
+});
+
+it('can state whether a column has the correct formatted value with Eloquent records', function (): void {
     $post = Post::factory()->create();
 
     livewire(PostsTable::class)
         ->assertTableColumnFormattedStateSet('formatted_state', 'formatted state', $post)
         ->assertTableColumnFormattedStateNotSet('formatted_state', 'incorrect formatted state', $post);
+});
+
+it('can state whether a column has the correct formatted value with custom data', function (): void {
+    livewire(CustomDataTable::class)
+        ->assertTableColumnFormattedStateSet('formatted_state', 'formatted state', 1)
+        ->assertTableColumnFormattedStateNotSet('formatted_state', 'incorrect formatted state', 1);
 });
 
 it('can output JSON values', function (): void {
@@ -449,7 +462,7 @@ it('can output values in a JSON column with a non-relationship accessor method',
         ->assertTableColumnStateSet('config.setting', 'foo', $post);
 });
 
-it('can state whether a column has extra attributes', function (): void {
+it('can state whether a column has extra attributes with Eloquent records', function (): void {
     $post = Post::factory()->create();
 
     livewire(PostsTable::class)
@@ -457,7 +470,13 @@ it('can state whether a column has extra attributes', function (): void {
         ->assertTableColumnDoesNotHaveExtraAttributes('extra_attributes', ['class' => 'text-primary-500'], $post);
 });
 
-it('can state whether a column has a description', function (): void {
+it('can state whether a column has extra attributes with custom data', function (): void {
+    livewire(CustomDataTable::class)
+        ->assertTableColumnHasExtraAttributes('extra_attributes', ['class' => 'text-danger-500'], 1)
+        ->assertTableColumnDoesNotHaveExtraAttributes('extra_attributes', ['class' => 'text-primary-500'], 1);
+});
+
+it('can state whether a column has a description with Eloquent records', function (): void {
     $post = Post::factory()->create();
 
     livewire(PostsTable::class)
@@ -467,12 +486,26 @@ it('can state whether a column has a description', function (): void {
         ->assertTableColumnDoesNotHaveDescription('with_description', 'incorrect description above', $post, 'above');
 });
 
-it('can state whether a select column has options', function (): void {
+it('can state whether a column has a description with custom data', function (): void {
+    livewire(CustomDataTable::class)
+        ->assertTableColumnHasDescription('with_description', 'description below', 1)
+        ->assertTableColumnHasDescription('with_description', 'description above', 1, 'above')
+        ->assertTableColumnDoesNotHaveDescription('with_description', 'incorrect description below', 1)
+        ->assertTableColumnDoesNotHaveDescription('with_description', 'incorrect description above', 1, 'above');
+});
+
+it('can state whether a select column has options with Eloquent records', function (): void {
     $post = Post::factory()->create();
 
     livewire(PostsTable::class)
         ->assertTableSelectColumnHasOptions('with_options', ['red' => 'Red', 'blue' => 'Blue'], $post)
         ->assertTableSelectColumnDoesNotHaveOptions('with_options', ['one' => 'One', 'two' => 'Two'], $post);
+});
+
+it('can state whether a select column has options with custom data', function (): void {
+    livewire(CustomDataTable::class)
+        ->assertTableSelectColumnHasOptions('with_options', ['red' => 'Red', 'blue' => 'Blue'], 2)
+        ->assertTableSelectColumnDoesNotHaveOptions('with_options', ['one' => 'One', 'two' => 'Two'], 2);
 });
 
 it('can assert that a column exists with the given configuration', function (): void {

@@ -95,7 +95,7 @@ class MorphToSelect extends Component
                     ->live()
                     ->afterStateUpdated(function (Set $set) use ($component, $keyColumn): void {
                         $set($keyColumn, null);
-                        $component->callAfterStateUpdated();
+                        $component->callAfterStateUpdatedForChildComponent();
                     })
                 : Select::make($typeColumn)
                     ->label($component->getLabel())
@@ -109,13 +109,14 @@ class MorphToSelect extends Component
                     ->live()
                     ->afterStateUpdated(function (Set $set) use ($component, $keyColumn): void {
                         $set($keyColumn, null);
-                        $component->callAfterStateUpdated();
+                        $component->callAfterStateUpdatedForChildComponent();
                     });
 
             $keySelect = Select::make($keyColumn)
                 ->label(fn (Get $get): ?string => ($types[$get($typeColumn)] ?? null)?->getLabel())
                 ->hiddenLabel()
                 ->options(fn (Select $component, Get $get): ?array => $component->evaluate(($types[$get($typeColumn)] ?? null)?->getOptionsUsing))
+                ->dynamicOptions(fn (Select $component): ?bool => $component->isPreloaded() ? null : false)
                 ->getSearchResultsUsing(fn (Select $component, Get $get, $search): ?array => $component->evaluate(($types[$get($typeColumn)] ?? null)?->getSearchResultsUsing, ['search' => $search]))
                 ->getOptionLabelUsing(fn (Select $component, Get $get, $value): ?string => $component->evaluate(($types[$get($typeColumn)] ?? null)?->getOptionLabelUsing, ['value' => $value]))
                 ->native($component->isNative())
@@ -137,7 +138,7 @@ class MorphToSelect extends Component
                     fn (Select $component) => $component->live(onBlur: $this->isLiveOnBlur()),
                 )
                 ->afterStateUpdated(function () use ($component): void {
-                    $component->callAfterStateUpdated();
+                    $component->callAfterStateUpdatedForChildComponent();
                 })
                 ->actionSchemaModel(fn (Get $get): ?string => ($types[$get($typeColumn)] ?? null)?->getModel());
 
@@ -279,5 +280,19 @@ class MorphToSelect extends Component
             ->ucfirst();
 
         return $this->shouldTranslateLabel ? __($label) : $label;
+    }
+
+    public function callAfterStateUpdatedForChildComponent(bool $shouldBubbleToParents = true): static
+    {
+        return parent::callAfterStateUpdated($shouldBubbleToParents);
+    }
+
+    public function callAfterStateUpdated(bool $shouldBubbleToParents = true): static
+    {
+        if ($shouldBubbleToParents) {
+            $this->getContainer()->getParentComponent()?->callAfterStateUpdated();
+        }
+
+        return $this;
     }
 }

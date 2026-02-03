@@ -30,6 +30,10 @@ return [
                                 'title' => 'Vi har sendt deg en ny kode på e-post',
                             ],
 
+                            'throttled' => [
+                                'title' => 'For mange forsøk. Vent litt før du ber om ny kode.',
+                            ],
+
                         ],
 
                     ],
