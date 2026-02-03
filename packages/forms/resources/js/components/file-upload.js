@@ -166,7 +166,7 @@ export default function fileUploadFormComponent({
                 itemInsertLocation: shouldAppendFiles ? 'after' : 'before',
                 ...(placeholder && { labelIdle: placeholder }),
                 maxFiles,
-                fileAttachmentsMaxFileSize: maxSize,
+                maxFileSize: maxSize,
                 minFileSize: minSize,
                 ...(maxParallelUploads && { maxParallelUploads }),
                 styleButtonProcessItemPosition: uploadButtonPosition,
