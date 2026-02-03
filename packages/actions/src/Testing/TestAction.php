@@ -15,7 +15,7 @@ class TestAction implements Arrayable
     /** @var array<string, mixed> */
     protected array $context = [];
 
-    protected ?string $schemaComponent = null;
+    protected string | bool | null $schemaComponent = null;
 
     protected ?string $schema = null;
 
@@ -42,7 +42,7 @@ class TestAction implements Arrayable
         return $this;
     }
 
-    public function schemaComponent(?string $component, ?string $schema = null): static
+    public function schemaComponent(string | bool | null $component = true, ?string $schema = null): static
     {
         $this->schemaComponent = $component;
         $this->schema = $schema;
@@ -83,12 +83,18 @@ class TestAction implements Arrayable
     {
         $schema = $this->schema ?? $defaultSchema;
 
+        $schemaComponentContext = match (true) {
+            is_string($this->schemaComponent) => (filled($schema) ? "{$schema}." : '') . $this->schemaComponent,
+            $this->schemaComponent === true => $schema,
+            default => null,
+        };
+
         $array = [
             'name' => $this->name,
             ...((is_array($this->arguments)) ? ['arguments' => $this->arguments] : []),
             'context' => [
                 ...($this->isBulk ? ['bulk' => true] : []),
-                ...($this->schemaComponent ? ['schemaComponent' => (filled($schema) ? "{$schema}." : '') . $this->schemaComponent] : []),
+                ...(filled($schemaComponentContext) ? ['schemaComponent' => $schemaComponentContext] : []),
                 ...$this->context,
             ],
         ];
