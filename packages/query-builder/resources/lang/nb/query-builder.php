@@ -146,6 +146,50 @@ return [
 
             ],
 
+            'unit_labels' => [
+                'second' => 'Sekunder',
+                'minute' => 'Minutter',
+                'hour' => 'Timer',
+                'day' => 'Dager',
+                'week' => 'Uker',
+                'month' => 'Måneder',
+                'quarter' => 'Kvartal',
+                'year' => 'År',
+            ],
+
+            'presets' => [
+                'past_decade' => 'Siste tiår',
+                'past_5_years' => 'Siste 5 år',
+                'past_2_years' => 'Siste 2 år',
+                'past_year' => 'Siste år',
+                'past_6_months' => 'Siste 6 måneder',
+                'past_quarter' => 'Siste kvartal',
+                'past_month' => 'Siste måned',
+                'past_2_weeks' => 'Siste 2 uker',
+                'past_week' => 'Siste uke',
+                'past_hour' => 'Siste time',
+                'past_minute' => 'Siste minutt',
+                'this_decade' => 'Dette tiåret',
+                'this_year' => 'I år',
+                'this_quarter' => 'Dette kvartalet',
+                'this_month' => 'Denne måneden',
+                'today' => 'I dag',
+                'this_hour' => 'Denne timen',
+                'this_minute' => 'Dette minuttet',
+                'next_minute' => 'Neste minutt',
+                'next_hour' => 'Neste time',
+                'next_week' => 'Neste uke',
+                'next_2_weeks' => 'Neste 2 uker',
+                'next_month' => 'Neste måned',
+                'next_quarter' => 'Neste kvartal',
+                'next_6_months' => 'Neste 6 måneder',
+                'next_year' => 'Neste år',
+                'next_2_years' => 'Neste 2 år',
+                'next_5_years' => 'Neste 5 år',
+                'next_decade' => 'Neste tiår',
+                'custom' => 'Egendefinert',
+            ],
+
             'form' => [
 
                 'date' => [
@@ -158,6 +202,40 @@ return [
 
                 'year' => [
                     'label' => 'År',
+                ],
+
+                'mode' => [
+
+                    'label' => 'Datovalg',
+
+                    'options' => [
+                        'absolute' => 'Spesifikk dato',
+                        'relative' => 'Dynamisk periode',
+                    ],
+
+                ],
+
+                'preset' => [
+                    'label' => 'Tidsperiode',
+                ],
+
+                'relative_value' => [
+                    'label' => 'Hvor mange',
+                ],
+
+                'relative_unit' => [
+                    'label' => 'Tidsenhet',
+                ],
+
+                'tense' => [
+
+                    'label' => 'Retning',
+
+                    'options' => [
+                        'past' => 'Fortid',
+                        'future' => 'Fremtid',
+                    ],
+
                 ],
 
             ],

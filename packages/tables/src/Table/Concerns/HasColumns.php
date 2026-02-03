@@ -62,7 +62,7 @@ trait HasColumns
             if ($component instanceof ColumnGroup) {
                 $this->hasColumnGroups = true;
 
-                $this->columnGroups[$component->getLabel()] = $component;
+                $this->columnGroups[e($component->getLabel())] = $component;
 
                 $this->columns = [
                     ...$this->columns,

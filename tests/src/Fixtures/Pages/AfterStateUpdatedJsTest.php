@@ -5,6 +5,7 @@ namespace Filament\Tests\Fixtures\Pages;
 use BackedEnum;
 use Filament\Forms\Components\TextInput;
 use Filament\Pages\Page;
+use Filament\Schemas\Components\Flex;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 
@@ -36,6 +37,17 @@ class AfterStateUpdatedJsTest extends Page
                 TextInput::make('email')
                     ->label('Email')
                     ->extraAttributes(['data-testid' => 'email-input']),
+                Flex::make([
+                    TextInput::make('flex_name')
+                        ->label('Name')
+                        ->extraAttributes(['data-testid' => 'flex-name-input'])
+                        ->afterStateUpdatedJs(<<<'JS'
+                                $set('flex_email', ($state ?? '').replaceAll(' ', '.').toLowerCase() + '@example.com')
+                            JS),
+                    TextInput::make('flex_email')
+                        ->label('Email')
+                        ->extraAttributes(['data-testid' => 'flex-email-input']),
+                ]),
             ])
             ->statePath('data');
     }

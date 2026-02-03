@@ -9,7 +9,6 @@ document.addEventListener('livewire:init', () => {
 
             try {
                 const payload = request?.payload
-
                 if (payload && JSON.parse(payload).components.length === 1) {
                     for (const component of JSON.parse(payload).components) {
                         if (
@@ -45,7 +44,6 @@ document.addEventListener('livewire:init', () => {
             }
 
             const errorNotification = errorNotifications['']
-
             new FilamentNotification()
                 .title(errorNotification.title)
                 .body(errorNotification.body)
