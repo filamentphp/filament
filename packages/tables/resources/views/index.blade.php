@@ -1290,15 +1290,15 @@
                         <table
                             @class([
                                 'fi-ta-table',
-                                'fi-stacked-on-mobile' => $isStackedOnMobile,
+                                'fi-ta-table-stacked-on-mobile' => $isStackedOnMobile,
                             ])
                         >
                             <thead>
                                 @if ($isStackedOnMobile && (count($sortableColumns) || ($isSelectionEnabled && ($maxSelectableRecords !== 1) && (! $selectsGroupsOnly))) && (! $isReordering))
-                                    <tr class="fi-ta-stacked-header-row">
+                                    <tr class="fi-ta-table-stacked-header-row">
                                         <th
                                             colspan="100%"
-                                            class="fi-ta-stacked-header-cell"
+                                            class="fi-ta-table-stacked-header-cell"
                                         >
                                             @if (count($sortableColumns))
                                                 <div
@@ -1344,7 +1344,7 @@
                                                             sort = column ? `${column}:${direction}` : null
                                                         })
                                                     "
-                                                    class="fi-ta-stacked-sorting"
+                                                    class="fi-ta-table-stacked-sorting"
                                                 >
                                                     <label>
                                                         <x-filament::input.wrapper

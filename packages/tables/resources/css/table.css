@@ -1,17 +1,17 @@
 .fi-ta-table {
     @apply w-full table-auto divide-y divide-gray-200 text-start dark:divide-white/5;
 
-    &.fi-stacked-on-mobile {
+    &.fi-ta-table-stacked-on-mobile {
         @apply block sm:table sm:table-auto;
 
         & > thead {
             @apply block sm:table-header-group;
 
-            &:not(:has(.fi-ta-stacked-header-row)) {
+            &:not(:has(.fi-ta-table-stacked-header-row)) {
                 @apply hidden sm:table-header-group;
             }
 
-            & > tr:not(.fi-ta-stacked-header-row) {
+            & > tr:not(.fi-ta-table-stacked-header-row) {
                 @apply hidden sm:table-row;
             }
 
@@ -129,17 +129,17 @@
     }
 }
 
-.fi-ta-stacked-header-row {
+.fi-ta-table-stacked-header-row {
     @apply block w-full border-y-0 sm:hidden;
 
-    & .fi-ta-stacked-header-cell {
+    & .fi-ta-table-stacked-header-cell {
         @apply flex w-full items-center gap-4 bg-gray-50 px-4 py-3 font-normal dark:bg-white/5;
 
         & .fi-ta-page-checkbox {
             @apply ms-auto shrink-0;
         }
 
-        & .fi-ta-stacked-sorting {
+        & .fi-ta-table-stacked-sorting {
             @apply flex flex-1 gap-x-3;
         }
     }

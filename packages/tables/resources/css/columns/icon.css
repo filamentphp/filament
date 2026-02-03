@@ -13,7 +13,7 @@
         @apply px-3 py-4;
     }
 
-    .fi-stacked-on-mobile & {
+    .fi-ta-table-stacked-on-mobile & {
         @apply p-0 sm:px-3 sm:py-4;
     }
 
