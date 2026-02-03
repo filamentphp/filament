@@ -96,17 +96,6 @@
 
             & > .fi-ta-cell-content {
                 @apply text-sm break-words text-gray-800 sm:block dark:text-gray-200;
-
-                & .fi-ta-text,
-                & .fi-ta-checkbox,
-                & .fi-ta-color,
-                & .fi-ta-icon,
-                & .fi-ta-image,
-                & .fi-ta-select,
-                & .fi-ta-text-input,
-                & .fi-ta-toggle {
-                    @apply px-0 pt-0 pb-1 sm:px-3 sm:py-4;
-                }
             }
 
             &:has(.fi-ta-actions) {
