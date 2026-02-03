@@ -1,6 +1,7 @@
 ---
 title: Testing schemas
 ---
+import Aside from "@components/Aside.astro"
 
 ## Filling a form in a test
 
@@ -178,7 +179,9 @@ test('title is hidden', function () {
 });
 ```
 
-> For both `assertFormFieldHidden()` and `assertFormFieldVisible()` you can pass the name of a specific form the field belongs to as the second argument like `assertFormFieldHidden('title', 'createPostForm')`.
+<Aside variant="tip">
+    For both `assertFormFieldHidden()` and `assertFormFieldVisible()` you can pass the name of a specific form the field belongs to as the second argument like `assertFormFieldHidden('title', 'createPostForm')`.
+</Aside>
 
 ## Testing disabled form fields
 
@@ -204,7 +207,9 @@ test('title is disabled', function () {
 });
 ```
 
-> For both `assertFormFieldEnabled()` and `assertFormFieldDisabled()` you can pass the name of a specific form the field belongs to as the second argument like `assertFormFieldEnabled('title', 'createPostForm')`.
+<Aside variant="tip">
+    For both `assertFormFieldEnabled()` and `assertFormFieldDisabled()` you can pass the name of a specific form the field belongs to as the second argument like `assertFormFieldEnabled('title', 'createPostForm')`.
+</Aside>
 
 ## Testing other schema components
 
@@ -306,7 +311,9 @@ test('comments section is hidden', function () {
 });
 ```
 
-> For both `assertSchemaComponentHidden()` and `assertSchemaComponentVisible()` you can pass the name of a specific schema the component belongs to as the second argument like `assertSchemaComponentHidden('comments-section', 'createPostForm')`.
+<Aside variant="tip">
+    For both `assertSchemaComponentHidden()` and `assertSchemaComponentVisible()` you can pass the name of a specific schema the component belongs to as the second argument like `assertSchemaComponentHidden('comments-section', 'createPostForm')`.
+</Aside>
 
 ## Testing repeaters
 
