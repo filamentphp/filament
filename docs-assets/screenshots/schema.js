@@ -1790,6 +1790,33 @@ export default {
             deviceScaleFactor: 3,
         },
     },
+    'schemas/layout/callout/custom-icon': {
+        url: 'schemas/layout',
+        selector: '#calloutCustomIcon',
+        viewport: {
+            width: 1920,
+            height: 320,
+            deviceScaleFactor: 3,
+        },
+    },
+    'schemas/layout/callout/footer': {
+        url: 'schemas/layout',
+        selector: '#calloutFooter',
+        viewport: {
+            width: 1920,
+            height: 320,
+            deviceScaleFactor: 3,
+        },
+    },
+    'schemas/layout/callout/actions-aligned-end': {
+        url: 'schemas/layout',
+        selector: '#calloutActionsAlignedEnd',
+        viewport: {
+            width: 1920,
+            height: 320,
+            deviceScaleFactor: 3,
+        },
+    },
     'schemas/layout/flex/simple': {
         url: 'schemas/layout',
         selector: '#flex',

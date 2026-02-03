@@ -21,6 +21,7 @@ use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Text;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Components\Wizard;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
@@ -824,6 +825,52 @@ class LayoutDemo extends Component implements HasActions, HasSchemas
                                 Action::make('compare')
                                     ->label('Compare plans'),
                             ]),
+                    ]),
+                Group::make()
+                    ->id('calloutCustomIcon')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-2xl',
+                    ])
+                    ->schema([
+                        Callout::make('Pro tip')
+                            ->description('You can use keyboard shortcuts to navigate faster. Press ? to see all available shortcuts.')
+                            ->icon(Heroicon::OutlinedLightBulb)
+                            ->iconColor('primary'),
+                    ]),
+                Group::make()
+                    ->id('calloutFooter')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-2xl',
+                    ])
+                    ->schema([
+                        Callout::make('Backup complete')
+                            ->description('Your data has been successfully backed up to the cloud.')
+                            ->success()
+                            ->footer([
+                                Text::make('Last backup: 5 minutes ago')
+                                    ->color('gray'),
+                                Action::make('viewBackups')
+                                    ->label('View All Backups')
+                                    ->button(),
+                            ]),
+                    ]),
+                Group::make()
+                    ->id('calloutActionsAlignedEnd')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-2xl',
+                    ])
+                    ->schema([
+                        Callout::make('Updates available')
+                            ->description('New features and improvements are ready to install.')
+                            ->info()
+                            ->actions([
+                                Action::make('install')
+                                    ->label('Install Now')
+                                    ->button(),
+                                Action::make('later')
+                                    ->label('Remind Me Later'),
+                            ])
+                            ->footerActionsAlignment(Alignment::End),
                     ]),
                 Group::make()
                     ->id('emptyState')

@@ -242,16 +242,19 @@ Screenshots are in `docs-assets/screenshots/`. To add new screenshots:
    },
    ```
 
-3. **Generate screenshots** (from `docs-assets/screenshots/`):
+3. **Generate screenshots**:
    ```bash
-   # Terminal 1: Start the app server
+   # Terminal 1: Start the app server (must use default port 8000)
    cd docs-assets/app && php artisan serve
 
-   # Terminal 2: Run screenshot script (Apple Silicon needs these exports)
+   # Terminal 2: Run from the screenshots directory
+   cd docs-assets/screenshots
    export PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
    export PUPPETEER_EXECUTABLE_PATH=$(which chromium)
    node script.js "schemas/layout/my-component/*"  # Filter pattern
    ```
+
+   **Important:** The script expects `http://127.0.0.1:8000`. Don't use a custom port.
 
 4. **Use in docs** with `<AutoScreenshot name="schemas/layout/my-component/simple" alt="Description" version="4.x" />`
 

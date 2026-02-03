@@ -90,6 +90,8 @@ Callout::make('Pro tip')
 
 <UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `iconColor()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
+<AutoScreenshot name="schemas/layout/callout/custom-icon" alt="Callout with custom icon" version="4.x" />
+
 ### Changing the icon size
 
 By default, the icon size is "large". You can change it to "small" or "medium" using the `iconSize()` method:
@@ -170,6 +172,8 @@ The available alignment options are `Alignment::Start`, `Alignment::Center`, `Al
 
 <UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `footerActionsAlignment()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
+<AutoScreenshot name="schemas/layout/callout/actions-aligned-end" alt="Callout with actions aligned to the end" version="4.x" />
+
 ## Adding custom footer content
 
 You can add custom content to the footer using the `footer()` method. This accepts an array of schema components:
@@ -180,7 +184,7 @@ use Filament\Schemas\Components\Callout;
 use Filament\Schemas\Components\Text;
 
 Callout::make('Backup complete')
-    ->description('Your data has been successfully backed up.')
+    ->description('Your data has been successfully backed up to the cloud.')
     ->success()
     ->footer([
         Text::make('Last backup: 5 minutes ago')
@@ -192,3 +196,5 @@ Callout::make('Backup complete')
 ```
 
 <UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `footer()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+<AutoScreenshot name="schemas/layout/callout/footer" alt="Callout with custom footer content" version="4.x" />
