@@ -97,7 +97,18 @@
     }
 
     & > .fi-modal-close-overlay {
-        @apply fixed inset-0 z-40 bg-gray-950/50 dark:bg-gray-950/75;
+        @apply fixed inset-0 z-40 bg-gray-950/50 transition-opacity duration-300 dark:bg-gray-950/75;
+    }
+
+    &.fi-modal-open:has(~ .fi-modal.fi-modal-open) > .fi-modal-close-overlay {
+        @apply opacity-0;
+    }
+
+    &.fi-modal-open ~ .fi-modal.fi-modal-open {
+        & > .fi-modal-close-overlay,
+        & > .fi-modal-window-ctn {
+            @apply z-50;
+        }
     }
 
     & > .fi-modal-window-ctn {

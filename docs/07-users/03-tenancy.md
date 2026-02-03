@@ -466,6 +466,23 @@ Action::make('lockSession')
     ->postToUrl()
 ```
 
+### Disabling the tenant switcher
+
+By default, users can switch between tenants using the tenant menu. If you want to keep the tenant menu visible but prevent users from switching tenants, you can use the `tenantSwitcher()` method in the [configuration](../panel-configuration):
+
+```php
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->tenantSwitcher(false);
+}
+```
+
+This keeps the tenant menu visible, showing the current tenant name and any custom menu items, but hides the list of other tenants. This is useful when you want to display tenant information without allowing switching, or when switching should be controlled through other means.
+
 ### Hiding the tenant menu
 
 You can hide the tenant menu by using the `tenantMenu(false)`

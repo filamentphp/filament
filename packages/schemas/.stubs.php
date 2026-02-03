@@ -10,6 +10,10 @@ namespace Livewire\Features\SupportTesting {
 
         public function assertSchemaComponentDoesNotExist(string $key, ?string $schema = null): static {}
 
+        public function assertSchemaComponentVisible(string $key, ?string $schema = null): static {}
+
+        public function assertSchemaComponentHidden(string $key, ?string $schema = null): static {}
+
         public function assertSchemaExists(string $name): static {}
 
         public function assertSchemaStateSet(array | Closure $state, ?string $schema = null): static {}

@@ -45,10 +45,6 @@ abstract class ChartWidget extends Widget implements HasSchemas
 
     public function mount(): void
     {
-        if (method_exists($this, 'getFiltersSchema')) {
-            $this->getFiltersSchema()->fill();
-        }
-
         $this->dataChecksum = $this->generateDataChecksum();
     }
 
