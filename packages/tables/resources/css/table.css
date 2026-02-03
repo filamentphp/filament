@@ -33,8 +33,14 @@
 
             &.fi-selected {
                 &::before {
-                    @apply bg-primary-600 dark:bg-primary-500 absolute inset-y-0 start-0 w-0.5 sm:hidden;
+                    @apply bg-primary-600 absolute inset-y-0 start-0 w-0.5 sm:hidden;
                     content: '';
+                }
+
+                @variant dark {
+                    &::before {
+                        @apply bg-primary-500;
+                    }
                 }
 
                 & > *:first-child::before {
