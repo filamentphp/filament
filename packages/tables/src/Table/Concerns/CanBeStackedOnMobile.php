@@ -6,17 +6,17 @@ use Closure;
 
 trait CanBeStackedOnMobile
 {
-    protected bool | Closure $stackedOnMobile = false;
+    protected bool | Closure $isStackedOnMobile = false;
 
     public function stackedOnMobile(bool | Closure $condition = true): static
     {
-        $this->stackedOnMobile = $condition;
+        $this->isStackedOnMobile = $condition;
 
         return $this;
     }
 
     public function isStackedOnMobile(): bool
     {
-        return (bool) $this->evaluate($this->stackedOnMobile);
+        return (bool) $this->evaluate($this->isStackedOnMobile);
     }
 }
