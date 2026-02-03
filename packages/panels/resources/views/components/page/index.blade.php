@@ -167,55 +167,10 @@
         @endif
     @endif
 
-    @if ((! app()->hasDebugModeEnabled()) && $this->hasErrorNotifications())
+    @if (! app()->hasDebugModeEnabled())
         @script
             <script>
-                const errorNotifications = @js($this->getErrorNotifications())
-
-                Livewire.interceptRequest(({ request, onError, onFailure }) => {
-                    onError(({ response, preventDefault }) => {
-                        try {
-                            const payload = request?.payload
-                            if (
-                                payload &&
-                                JSON.parse(payload).components.length === 1
-                            ) {
-                                for (const component of JSON.parse(payload)
-                                    .components) {
-                                    if (
-                                        JSON.parse(component.snapshot).data
-                                            .isFilamentNotificationsComponent
-                                    ) {
-                                        return
-                                    }
-                                }
-                            }
-                        } catch (error) {
-                            //
-                        }
-
-                        preventDefault()
-
-                        const status = response?.status ?? ''
-                        const errorNotification =
-                            errorNotifications[status] ?? errorNotifications['']
-
-                        new FilamentNotification()
-                            .title(errorNotification.title)
-                            .body(errorNotification.body)
-                            .danger()
-                            .send()
-                    })
-
-                    onFailure(() => {
-                        const errorNotification = errorNotifications['']
-                        new FilamentNotification()
-                            .title(errorNotification.title)
-                            .body(errorNotification.body)
-                            .danger()
-                            .send()
-                    })
-                })
+                window.filamentErrorNotifications = @js($this->hasErrorNotifications() ? $this->getErrorNotifications() : null)
             </script>
         @endscript
     @endif
