@@ -11,6 +11,7 @@ export default function tabsSchemaComponent({
         isScrollable,
         resizeDebounceTimer: null,
         tab,
+        unsubscribeLivewireHook: null,
         withinDropdownIndex: null,
         withinDropdownMounted: false,
 
@@ -32,7 +33,7 @@ export default function tabsSchemaComponent({
                 this.tab = tabs[activeTab - 1]
             }
 
-            Livewire.hook(
+            this.unsubscribeLivewireHook = Livewire.hook(
                 'commit',
                 ({ component, commit, succeed, fail, respond }) => {
                     succeed(({ snapshot, effect }) => {
@@ -245,6 +246,8 @@ export default function tabsSchemaComponent({
         },
 
         destroy() {
+            this.unsubscribeLivewireHook?.()
+
             if (this.boundResizeHandler) {
                 window.removeEventListener('resize', this.boundResizeHandler)
             }
