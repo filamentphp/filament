@@ -275,12 +275,38 @@ test('comments section is enabled', function () {
                     $component->isEnabled(),
                     'Failed asserting that comments-section is enabled.',
                 );
-                
+
                 return true;
             },
         );
 });
 ```
+
+### Testing the visibility of schema components
+
+To ensure that a schema component is visible, pass the key to `assertSchemaComponentVisible()`:
+
+```php
+use function Pest\Livewire\livewire;
+
+test('comments section is visible', function () {
+    livewire(EditPost::class)
+        ->assertSchemaComponentVisible('comments-section');
+});
+```
+
+Or to ensure that a schema component is hidden you can pass the key to `assertSchemaComponentHidden()`:
+
+```php
+use function Pest\Livewire\livewire;
+
+test('comments section is hidden', function () {
+    livewire(EditPost::class)
+        ->assertSchemaComponentHidden('comments-section');
+});
+```
+
+> For both `assertSchemaComponentHidden()` and `assertSchemaComponentVisible()` you can pass the name of a specific schema the component belongs to as the second argument like `assertSchemaComponentHidden('comments-section', 'createPostForm')`.
 
 ## Testing repeaters
 

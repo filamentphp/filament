@@ -109,6 +109,28 @@ it('does not have layout components', function (): void {
         ->assertFormComponentDoesNotExist('no-such-section');
 });
 
+it('can have hidden schema components', function (): void {
+    livewire(TestComponentWithForm::class)
+        ->assertSchemaComponentHidden('hidden.section');
+});
+
+it('can have hidden schema components on multiple schemas', function (): void {
+    livewire(TestComponentWithMultipleForms::class)
+        ->assertSchemaComponentHidden('hidden.section', 'fooForm')
+        ->assertSchemaComponentHidden('hidden.section', 'barForm');
+});
+
+it('can have visible schema components', function (): void {
+    livewire(TestComponentWithForm::class)
+        ->assertSchemaComponentVisible('visible.section');
+});
+
+it('can have visible schema components on multiple schemas', function (): void {
+    livewire(TestComponentWithMultipleForms::class)
+        ->assertSchemaComponentVisible('visible.section', 'fooForm')
+        ->assertSchemaComponentVisible('visible.section', 'barForm');
+});
+
 it('can go to next wizard step on multiple forms', function (): void {
     livewire(TestComponentWithMultipleWizardForms::class)
         ->assertHasNoFormErrors(form: 'fooForm')
@@ -146,6 +168,13 @@ class TestComponentWithForm extends Livewire
                         Section::make('I am nested')
                             ->key('nested.section'),
                     ]),
+
+                Section::make()
+                    ->key('hidden.section')
+                    ->hidden(),
+
+                Section::make()
+                    ->key('visible.section'),
             ])
             ->statePath('data');
     }
@@ -195,6 +224,13 @@ class TestComponentWithMultipleForms extends Livewire
                 ->hidden(),
 
             TextInput::make('visible'),
+
+            Section::make()
+                ->key('hidden.section')
+                ->hidden(),
+
+            Section::make()
+                ->key('visible.section'),
         ];
     }
 }
