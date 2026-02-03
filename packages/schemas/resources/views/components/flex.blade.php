@@ -52,7 +52,7 @@
                             containerPath: @js($statePath),
                             $wire,
                         })"
-                @if ($afterStateUpdatedJs = $schemaComponent->getAfterStateUpdatedJs())
+                @if ($afterStateUpdatedJs = $component->getAfterStateUpdatedJs())
                     x-init="{!! implode(';', array_map(
                         fn (string $js): string => '$wire; $wire.watch(' . Js::from($componentStatePath) . ', ($state, $old) => isStateChanged($state, $old) && eval(' . Js::from($js) . '))',
                         $afterStateUpdatedJs,

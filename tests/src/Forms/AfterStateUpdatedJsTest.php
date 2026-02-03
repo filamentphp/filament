@@ -24,6 +24,12 @@ it('can use `$set()` in `afterStateUpdatedJs()` to set another field value', fun
         ->fill('#form\.name', 'Jane Smith')
         ->wait(1)
         ->assertValue('#form\.email', 'jane.smith@example.com')
+        ->fill('#form\.flex_name', 'Jane Doe')
+        ->wait(1)
+        ->assertValue('#form\.flex_email', 'jane.doe@example.com')
+        ->fill('#form\.flex_name', 'John Smith')
+        ->wait(1)
+        ->assertValue('#form\.flex_email', 'john.smith@example.com')
         ->assertNoSmoke()
         ->assertNoAccessibilityIssues();
 
