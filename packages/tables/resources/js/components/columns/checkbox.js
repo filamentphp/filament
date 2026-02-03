@@ -6,36 +6,40 @@ export default function checkboxTableColumn({ name, recordKey, state }) {
 
         state,
 
+        unsubscribeLivewireHook: null,
+
         init() {
-            Livewire.interceptMessage(({ message, onSuccess }) => {
-                onSuccess(() => {
-                    this.$nextTick(() => {
-                        if (this.isLoading) {
-                            return
-                        }
+            this.unsubscribeLivewireHook = Livewire.interceptMessage(
+                ({ message, onSuccess }) => {
+                    onSuccess(() => {
+                        this.$nextTick(() => {
+                            if (this.isLoading) {
+                                return
+                            }
 
-                        if (
-                            message.component.id !==
-                            this.$root.closest('[wire\\:id]')?.attributes[
-                                'wire:id'
-                            ].value
-                        ) {
-                            return
-                        }
+                            if (
+                                message.component.id !==
+                                this.$root.closest('[wire\\:id]')?.attributes[
+                                    'wire:id'
+                                ].value
+                            ) {
+                                return
+                            }
 
-                        const serverState = this.getServerState()
+                            const serverState = this.getServerState()
 
-                        if (
-                            serverState === undefined ||
-                            Alpine.raw(this.state) === serverState
-                        ) {
-                            return
-                        }
+                            if (
+                                serverState === undefined ||
+                                Alpine.raw(this.state) === serverState
+                            ) {
+                                return
+                            }
 
-                        this.state = serverState
+                            this.state = serverState
+                        })
                     })
-                })
-            })
+                },
+            )
 
             this.$watch('state', async () => {
                 const serverState = this.getServerState()
@@ -71,6 +75,10 @@ export default function checkboxTableColumn({ name, recordKey, state }) {
             }
 
             return [1, '1'].includes(this.$refs.serverState.value)
+        },
+
+        destroy() {
+            this.unsubscribeLivewireHook?.()
         },
     }
 }

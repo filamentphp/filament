@@ -10,6 +10,8 @@ export default (Alpine) => {
 
         transitionEasing: null,
 
+        unsubscribeLivewireHook: null,
+
         init() {
             this.computedStyle = window.getComputedStyle(this.$el)
 
@@ -76,52 +78,55 @@ export default (Alpine) => {
         configureAnimations() {
             let animation
 
-            Livewire.interceptMessage(({ onFinish, onSuccess }) => {
-                // Calling `el.getBoundingClientRect()` from outside `requestAnimationFrame()` can
-                // occasionally cause the page to scroll to the top.
-                requestAnimationFrame(() => {
-                    const getTop = () => this.$el.getBoundingClientRect().top
-                    const oldTop = getTop()
+            this.unsubscribeLivewireHook = Livewire.interceptMessage(
+                ({ onFinish, onSuccess }) => {
+                    // Calling `el.getBoundingClientRect()` from outside `requestAnimationFrame()` can
+                    // occasionally cause the page to scroll to the top.
+                    requestAnimationFrame(() => {
+                        const getTop = () =>
+                            this.$el.getBoundingClientRect().top
+                        const oldTop = getTop()
 
-                    onFinish(() => {
-                        animation = () => {
-                            if (!this.isShown) {
+                        onFinish(() => {
+                            animation = () => {
+                                if (!this.isShown) {
+                                    return
+                                }
+
+                                this.$el.animate(
+                                    [
+                                        {
+                                            transform: `translateY(${oldTop - getTop()}px)`,
+                                        },
+                                        { transform: 'translateY(0px)' },
+                                    ],
+                                    {
+                                        duration: this.transitionDuration,
+                                        easing: this.transitionEasing,
+                                    },
+                                )
+                            }
+
+                            this.$el
+                                .getAnimations()
+                                .forEach((animation) => animation.finish())
+                        })
+
+                        onSuccess(({ payload }) => {
+                            if (
+                                !payload?.snapshot?.data
+                                    ?.isFilamentNotificationsComponent
+                            ) {
                                 return
                             }
 
-                            this.$el.animate(
-                                [
-                                    {
-                                        transform: `translateY(${oldTop - getTop()}px)`,
-                                    },
-                                    { transform: 'translateY(0px)' },
-                                ],
-                                {
-                                    duration: this.transitionDuration,
-                                    easing: this.transitionEasing,
-                                },
-                            )
-                        }
-
-                        this.$el
-                            .getAnimations()
-                            .forEach((animation) => animation.finish())
+                            if (typeof animation === 'function') {
+                                animation()
+                            }
+                        })
                     })
-
-                    onSuccess(({ payload }) => {
-                        if (
-                            !payload?.snapshot?.data
-                                ?.isFilamentNotificationsComponent
-                        ) {
-                            return
-                        }
-
-                        if (typeof animation === 'function') {
-                            animation()
-                        }
-                    })
-                })
-            })
+                },
+            )
         },
 
         close() {
@@ -158,6 +163,10 @@ export default (Alpine) => {
                     },
                 }),
             )
+        },
+
+        destroy() {
+            this.unsubscribeLivewireHook?.()
         },
     }))
 }

@@ -38,6 +38,8 @@ export default function selectTableColumn({
 
         state,
 
+        unsubscribeLivewireHook: null,
+
         init() {
             if (!isNative) {
                 this.select = new Select({
@@ -72,35 +74,37 @@ export default function selectTableColumn({
                 })
             }
 
-            Livewire.interceptMessage(({ message, onSuccess }) => {
-                onSuccess(() => {
-                    this.$nextTick(() => {
-                        if (this.isLoading) {
-                            return
-                        }
+            this.unsubscribeLivewireHook = Livewire.interceptMessage(
+                ({ message, onSuccess }) => {
+                    onSuccess(() => {
+                        this.$nextTick(() => {
+                            if (this.isLoading) {
+                                return
+                            }
 
-                        if (
-                            message.component.id !==
-                            this.$root.closest('[wire\\:id]')?.attributes[
-                                'wire:id'
-                            ].value
-                        ) {
-                            return
-                        }
+                            if (
+                                message.component.id !==
+                                this.$root.closest('[wire\\:id]')?.attributes[
+                                    'wire:id'
+                                ].value
+                            ) {
+                                return
+                            }
 
-                        const serverState = this.getServerState()
+                            const serverState = this.getServerState()
 
-                        if (
-                            serverState === undefined ||
-                            this.getNormalizedState() === serverState
-                        ) {
-                            return
-                        }
+                            if (
+                                serverState === undefined ||
+                                this.getNormalizedState() === serverState
+                            ) {
+                                return
+                            }
 
-                        this.state = serverState
+                            this.state = serverState
+                        })
                     })
-                })
-            })
+                },
+            )
 
             this.$watch('state', async (newState) => {
                 if (
@@ -164,6 +168,8 @@ export default function selectTableColumn({
         },
 
         destroy() {
+            this.unsubscribeLivewireHook?.()
+
             if (this.select) {
                 this.select.destroy()
                 this.select = null
