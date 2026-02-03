@@ -1745,6 +1745,78 @@ export default {
             deviceScaleFactor: 3,
         },
     },
+    'schemas/layout/callout/simple': {
+        url: 'schemas/layout',
+        selector: '#callout',
+        viewport: {
+            width: 1920,
+            height: 320,
+            deviceScaleFactor: 3,
+        },
+    },
+    'schemas/layout/callout/statuses': {
+        url: 'schemas/layout',
+        selector: '#calloutStatuses',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'schemas/layout/callout/without-background': {
+        url: 'schemas/layout',
+        selector: '#calloutWithoutBackground',
+        viewport: {
+            width: 1920,
+            height: 320,
+            deviceScaleFactor: 3,
+        },
+    },
+    'schemas/layout/callout/custom-color': {
+        url: 'schemas/layout',
+        selector: '#calloutCustomColor',
+        viewport: {
+            width: 1920,
+            height: 320,
+            deviceScaleFactor: 3,
+        },
+    },
+    'schemas/layout/callout/actions': {
+        url: 'schemas/layout',
+        selector: '#calloutActions',
+        viewport: {
+            width: 1920,
+            height: 320,
+            deviceScaleFactor: 3,
+        },
+    },
+    'schemas/layout/callout/custom-icon': {
+        url: 'schemas/layout',
+        selector: '#calloutCustomIcon',
+        viewport: {
+            width: 1920,
+            height: 320,
+            deviceScaleFactor: 3,
+        },
+    },
+    'schemas/layout/callout/footer': {
+        url: 'schemas/layout',
+        selector: '#calloutFooter',
+        viewport: {
+            width: 1920,
+            height: 320,
+            deviceScaleFactor: 3,
+        },
+    },
+    'schemas/layout/callout/actions-aligned-end': {
+        url: 'schemas/layout',
+        selector: '#calloutActionsAlignedEnd',
+        viewport: {
+            width: 1920,
+            height: 320,
+            deviceScaleFactor: 3,
+        },
+    },
     'schemas/layout/flex/simple': {
         url: 'schemas/layout',
         selector: '#flex',

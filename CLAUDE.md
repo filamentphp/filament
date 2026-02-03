@@ -218,3 +218,44 @@ Hook class naming:
 - **Headings**: Use gerunds ("Setting the type" not "Type settings", "Enabling search" not "Search")
 - **Formatting**: Backticks for code (`method()`, `ClassName`), include `use` statements
 - **Asides**: `<Aside variant="tip|info|danger">...</Aside>`
+
+### Documentation Screenshots
+
+Screenshots are in `docs-assets/screenshots/`. To add new screenshots:
+
+1. **Add component examples** to the appropriate Livewire component in `docs-assets/app/app/Livewire/` (e.g., `Schemas/LayoutDemo.php`). Give each example a unique `->id()` for the selector:
+   ```php
+   Group::make()
+       ->id('myComponent')
+       ->extraAttributes(['class' => 'p-16 max-w-2xl'])
+       ->schema([
+           // Your component here
+       ]),
+   ```
+
+2. **Add screenshot definitions** to `docs-assets/screenshots/schema.js`:
+   ```js
+   'schemas/layout/my-component/simple': {
+       url: 'schemas/layout',
+       selector: '#myComponent',
+       viewport: { width: 1920, height: 640, deviceScaleFactor: 3 },
+   },
+   ```
+
+3. **Generate screenshots**:
+   ```bash
+   # Terminal 1: Start the app server (must use default port 8000)
+   cd docs-assets/app && php artisan serve
+
+   # Terminal 2: Run from the screenshots directory
+   cd docs-assets/screenshots
+   export PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
+   export PUPPETEER_EXECUTABLE_PATH=$(which chromium)
+   node script.js "schemas/layout/my-component/*"  # Filter pattern
+   ```
+
+   **Important:** The script expects `http://127.0.0.1:8000`. Don't use a custom port.
+
+4. **Use in docs** with `<AutoScreenshot name="schemas/layout/my-component/simple" alt="Description" version="4.x" />`
+
+Screenshots are generated in `images/light/` and `images/dark/`. Use natural, realistic content - not test-like examples.

@@ -18,6 +18,7 @@ use Filament\Tests\Fixtures\Clusters\WithoutSubNavigationCluster\Pages\Clustered
 use Filament\Tests\Fixtures\Pages\Actions;
 use Filament\Tests\Fixtures\Pages\AfterStateUpdatedJsTest;
 use Filament\Tests\Fixtures\Pages\BuilderTest;
+use Filament\Tests\Fixtures\Pages\CalloutBrowserTest;
 use Filament\Tests\Fixtures\Pages\KeyValueTest;
 use Filament\Tests\Fixtures\Pages\RepeaterTest;
 use Filament\Tests\Fixtures\Pages\SelectTest;
@@ -71,6 +72,7 @@ class AdminPanelProvider extends PanelProvider
                 Actions::class,
                 AfterStateUpdatedJsTest::class,
                 BuilderTest::class,
+                CalloutBrowserTest::class,
                 KeyValueTest::class,
                 RepeaterTest::class,
                 SelectTest::class,
