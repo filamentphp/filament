@@ -127,7 +127,7 @@
 
     &.fi-divided {
         & > .fi-section-content-ctn > .fi-section-content {
-            @apply divide-y divide-gray-200 dark:divide-white/10;
+            @apply gap-0 divide-y divide-gray-200 dark:divide-white/10;
         }
     }
 
