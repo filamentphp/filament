@@ -3,6 +3,7 @@
     "actions": [
         {
             "name": "view",
+            "alpineClickHandler": null,
             "color": null,
             "event": null,
             "eventData": [],
@@ -23,11 +24,11 @@
             "size": "sm",
             "tooltip": null,
             "url": "\/view",
-            "view": "filament::components.link",
-            "alpineClickHandler": null
+            "view": "filament::components.link"
         },
         {
             "name": "edit",
+            "alpineClickHandler": null,
             "color": null,
             "event": null,
             "eventData": [],
@@ -48,11 +49,11 @@
             "size": "sm",
             "tooltip": null,
             "url": "\/edit",
-            "view": "filament::components.link",
-            "alpineClickHandler": null
+            "view": "filament::components.link"
         },
         {
             "name": "delete",
+            "alpineClickHandler": null,
             "color": "danger",
             "event": null,
             "eventData": [],
@@ -73,8 +74,7 @@
             "size": "sm",
             "tooltip": null,
             "url": null,
-            "view": "filament::components.link",
-            "alpineClickHandler": null
+            "view": "filament::components.link"
         }
     ],
     "body": "Test Body",

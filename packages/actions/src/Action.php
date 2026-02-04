@@ -178,6 +178,7 @@ class Action extends ViewComponent implements Arrayable
 
         return [
             'name' => $this->getName(),
+            'alpineClickHandler' => $this->getCustomAlpineClickHandler(),
             'color' => $this->getColor(),
             'event' => $this->getEvent(),
             'eventData' => $this->getEventData(),
@@ -199,7 +200,6 @@ class Action extends ViewComponent implements Arrayable
             'tooltip' => $this->getTooltip(),
             'url' => $this->getUrl(),
             'view' => $this->getView(),
-            'alpineClickHandler' => $this->evaluate($this->alpineClickHandler),
         ];
     }
 
@@ -387,7 +387,7 @@ class Action extends ViewComponent implements Arrayable
 
     public function getAlpineClickHandler(): ?string
     {
-        if (filled($handler = $this->evaluate($this->alpineClickHandler))) {
+        if (filled($handler = $this->getCustomAlpineClickHandler())) {
             return $handler;
         }
 
@@ -408,6 +408,11 @@ class Action extends ViewComponent implements Arrayable
         }
 
         return $this->getJsClickHandler();
+    }
+
+    public function getCustomAlpineClickHandler(): ?string
+    {
+        return $this->evaluate($this->alpineClickHandler);
     }
 
     public function livewireTarget(?string $target): static

@@ -3,6 +3,7 @@
     "actions": [
         {
             "name": "view",
+            "alpineClickHandler": null,
             "color": null,
             "event": null,
             "eventData": [],
@@ -23,8 +24,7 @@
             "size": "sm",
             "tooltip": null,
             "url": null,
-            "view": "filament::components.link",
-            "alpineClickHandler": null
+            "view": "filament::components.link"
         }
     ],
     "body": null,
