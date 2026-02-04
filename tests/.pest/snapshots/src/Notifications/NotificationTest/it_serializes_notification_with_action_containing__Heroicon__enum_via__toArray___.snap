@@ -23,7 +23,8 @@
             "size": "sm",
             "tooltip": null,
             "url": null,
-            "view": "filament::components.link"
+            "view": "filament::components.link",
+            "alpineClickHandler": null
         }
     ],
     "body": null,
