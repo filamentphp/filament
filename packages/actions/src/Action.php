@@ -199,6 +199,7 @@ class Action extends ViewComponent implements Arrayable
             'tooltip' => $this->getTooltip(),
             'url' => $this->getUrl(),
             'view' => $this->getView(),
+            'alpineClickHandler' => $this->evaluate($this->alpineClickHandler),
         ];
     }
 
@@ -223,6 +224,10 @@ class Action extends ViewComponent implements Arrayable
 
         if (filled($size = $data['size'] ?? null)) {
             $static->size($size);
+        }
+
+        if (filled($data['alpineClickHandler'] ?? null)) {
+            $static->alpineClickHandler($data['alpineClickHandler']);
         }
 
         $static->close($data['shouldClose'] ?? false);
