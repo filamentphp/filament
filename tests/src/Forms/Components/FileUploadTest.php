@@ -193,6 +193,86 @@ describe('validation', function (): void {
         $stringRules = array_filter($rules, fn ($rule) => is_string($rule));
         expect($stringRules)->not->toContain('mimetypes:image/png');
     });
+
+    it('can use `maxSize()` and fails validation when file exceeds limit', function (): void {
+        livewire(TestComponentWithMaxSizeFileUpload::class)
+            ->fillForm([
+                'document' => UploadedFile::fake()->create('document.pdf', 200),
+            ])
+            ->call('save')
+            ->assertHasFormErrors(['document']);
+    });
+
+    it('can use `maxSize()` and passes validation when file is within limit', function (): void {
+        livewire(TestComponentWithMaxSizeFileUpload::class)
+            ->fillForm([
+                'document' => UploadedFile::fake()->create('document.pdf', 50),
+            ])
+            ->call('save')
+            ->assertHasNoFormErrors(['document']);
+    });
+
+    it('can use `minSize()` and fails validation when file is below limit', function (): void {
+        livewire(TestComponentWithMinSizeFileUpload::class)
+            ->fillForm([
+                'document' => UploadedFile::fake()->create('document.pdf', 50),
+            ])
+            ->call('save')
+            ->assertHasFormErrors(['document']);
+    });
+
+    it('can use `minSize()` and passes validation when file meets limit', function (): void {
+        livewire(TestComponentWithMinSizeFileUpload::class)
+            ->fillForm([
+                'document' => UploadedFile::fake()->create('document.pdf', 150),
+            ])
+            ->call('save')
+            ->assertHasNoFormErrors(['document']);
+    });
+
+    it('can use `maxSize()` with nested state path and fails validation when file exceeds limit', function (): void {
+        livewire(TestComponentWithNestedMaxSizeFileUpload::class)
+            ->fillForm([
+                'files' => [
+                    'test' => UploadedFile::fake()->create('document.pdf', 200),
+                ],
+            ])
+            ->call('save')
+            ->assertHasFormErrors(['files.test']);
+    });
+
+    it('can use `maxSize()` with nested state path and passes validation when file is within limit', function (): void {
+        livewire(TestComponentWithNestedMaxSizeFileUpload::class)
+            ->fillForm([
+                'files' => [
+                    'test' => UploadedFile::fake()->create('document.pdf', 50),
+                ],
+            ])
+            ->call('save')
+            ->assertHasNoFormErrors(['files.test']);
+    });
+
+    it('can use `minSize()` with nested state path and fails validation when file is below limit', function (): void {
+        livewire(TestComponentWithNestedMinSizeFileUpload::class)
+            ->fillForm([
+                'files' => [
+                    'test' => UploadedFile::fake()->create('document.pdf', 50),
+                ],
+            ])
+            ->call('save')
+            ->assertHasFormErrors(['files.test']);
+    });
+
+    it('can use `minSize()` with nested state path and passes validation when file meets limit', function (): void {
+        livewire(TestComponentWithNestedMinSizeFileUpload::class)
+            ->fillForm([
+                'files' => [
+                    'test' => UploadedFile::fake()->create('document.pdf', 150),
+                ],
+            ])
+            ->call('save')
+            ->assertHasNoFormErrors(['files.test']);
+    });
 });
 
 class TestComponentWithFileUpload extends Livewire
@@ -205,5 +285,77 @@ class TestComponentWithFileUpload extends Livewire
                 FileUpload::make('multiple-files')->multiple(),
             ])
             ->statePath('data');
+    }
+}
+
+class TestComponentWithMaxSizeFileUpload extends Livewire
+{
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->components([
+                FileUpload::make('document')
+                    ->maxSize(100),
+            ])
+            ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->form->getState();
+    }
+}
+
+class TestComponentWithMinSizeFileUpload extends Livewire
+{
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->components([
+                FileUpload::make('document')
+                    ->minSize(100),
+            ])
+            ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->form->getState();
+    }
+}
+
+class TestComponentWithNestedMaxSizeFileUpload extends Livewire
+{
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->components([
+                FileUpload::make('files.test')
+                    ->maxSize(100),
+            ])
+            ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->form->getState();
+    }
+}
+
+class TestComponentWithNestedMinSizeFileUpload extends Livewire
+{
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->components([
+                FileUpload::make('files.test')
+                    ->minSize(100),
+            ])
+            ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->form->getState();
     }
 }
