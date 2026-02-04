@@ -94,9 +94,15 @@ class TestsColumns
             );
 
             if ($record) {
-                if (! ($record instanceof Model)) {
-                    $record = $this->instance()->getTableRecord($record);
+                if ($record instanceof Model) {
+                    $recordKey = (string) $record->getKey();
+                } elseif (is_array($record)) {
+                    $recordKey = (string) $record[ArrayRecord::getKeyName()];
+                } else {
+                    $recordKey = (string) $record;
                 }
+
+                $record = $this->instance()->getTableRecord($recordKey);
 
                 $column->record($record);
             }
@@ -126,9 +132,15 @@ class TestsColumns
             }
 
             if ($record) {
-                if (! ($record instanceof Model)) {
-                    $record = $this->instance()->getTableRecord($record);
+                if ($record instanceof Model) {
+                    $recordKey = (string) $record->getKey();
+                } elseif (is_array($record)) {
+                    $recordKey = (string) $record[ArrayRecord::getKeyName()];
+                } else {
+                    $recordKey = (string) $record;
                 }
+
+                $record = $this->instance()->getTableRecord($recordKey);
 
                 $column->record($record);
             }
@@ -196,14 +208,18 @@ class TestsColumns
 
             $column = $this->instance()->getTable()->getColumn($name);
 
-            if (! ($record instanceof Model)) {
-                /** @phpstan-ignore-next-line */
-                $this->assertTableRecordKeyExists((string) $record);
-                $record = $this->instance()->getTableRecord($record);
-                $recordKey = $record[ArrayRecord::getKeyName()];
+            if ($record instanceof Model) {
+                $recordKey = (string) $record->getKey();
+            } elseif (is_array($record)) {
+                $recordKey = (string) $record[ArrayRecord::getKeyName()];
             } else {
-                $recordKey = $record->getKey();
+                $recordKey = (string) $record;
             }
+
+            /** @phpstan-ignore-next-line */
+            $this->assertTableRecordKeyExists($recordKey);
+
+            $record = $this->instance()->getTableRecord($recordKey);
 
             $column->record($record);
 
@@ -241,14 +257,18 @@ class TestsColumns
 
             $column = $this->instance()->getTable()->getColumn($name);
 
-            if (! ($record instanceof Model)) {
-                /** @phpstan-ignore-next-line */
-                $this->assertTableRecordKeyExists((string) $record);
-                $record = $this->instance()->getTableRecord($record);
-                $recordKey = $record[ArrayRecord::getKeyName()];
+            if ($record instanceof Model) {
+                $recordKey = (string) $record->getKey();
+            } elseif (is_array($record)) {
+                $recordKey = (string) $record[ArrayRecord::getKeyName()];
             } else {
-                $recordKey = $record->getKey();
+                $recordKey = (string) $record;
             }
+
+            /** @phpstan-ignore-next-line */
+            $this->assertTableRecordKeyExists($recordKey);
+
+            $record = $this->instance()->getTableRecord($recordKey);
 
             $column->record($record);
 
@@ -287,14 +307,18 @@ class TestsColumns
             /** @var TextColumn $column */
             $column = $this->instance()->getTable()->getColumn($name);
 
-            if (! ($record instanceof Model)) {
-                /** @phpstan-ignore-next-line */
-                $this->assertTableRecordKeyExists((string) $record);
-                $record = $this->instance()->getTableRecord($record);
-                $recordKey = $record[ArrayRecord::getKeyName()];
+            if ($record instanceof Model) {
+                $recordKey = (string) $record->getKey();
+            } elseif (is_array($record)) {
+                $recordKey = (string) $record[ArrayRecord::getKeyName()];
             } else {
-                $recordKey = $record->getKey();
+                $recordKey = (string) $record;
             }
+
+            /** @phpstan-ignore-next-line */
+            $this->assertTableRecordKeyExists($recordKey);
+
+            $record = $this->instance()->getTableRecord($recordKey);
 
             $column->record($record);
 
@@ -321,14 +345,18 @@ class TestsColumns
             /** @var TextColumn $column */
             $column = $this->instance()->getTable()->getColumn($name);
 
-            if (! ($record instanceof Model)) {
-                /** @phpstan-ignore-next-line */
-                $this->assertTableRecordKeyExists((string) $record);
-                $record = $this->instance()->getTableRecord($record);
-                $recordKey = $record[ArrayRecord::getKeyName()];
+            if ($record instanceof Model) {
+                $recordKey = (string) $record->getKey();
+            } elseif (is_array($record)) {
+                $recordKey = (string) $record[ArrayRecord::getKeyName()];
             } else {
-                $recordKey = $record->getKey();
+                $recordKey = (string) $record;
             }
+
+            /** @phpstan-ignore-next-line */
+            $this->assertTableRecordKeyExists($recordKey);
+
+            $record = $this->instance()->getTableRecord($recordKey);
 
             $column->record($record);
 
@@ -354,14 +382,18 @@ class TestsColumns
 
             $column = $this->instance()->getTable()->getColumn($name);
 
-            if (! ($record instanceof Model)) {
-                /** @phpstan-ignore-next-line */
-                $this->assertTableRecordKeyExists((string) $record);
-                $record = $this->instance()->getTableRecord($record);
-                $recordKey = $record[ArrayRecord::getKeyName()];
+            if ($record instanceof Model) {
+                $recordKey = (string) $record->getKey();
+            } elseif (is_array($record)) {
+                $recordKey = (string) $record[ArrayRecord::getKeyName()];
             } else {
-                $recordKey = $record->getKey();
+                $recordKey = (string) $record;
             }
+
+            /** @phpstan-ignore-next-line */
+            $this->assertTableRecordKeyExists($recordKey);
+
+            $record = $this->instance()->getTableRecord($recordKey);
 
             $column->record($record);
 
@@ -387,14 +419,18 @@ class TestsColumns
 
             $column = $this->instance()->getTable()->getColumn($name);
 
-            if (! ($record instanceof Model)) {
-                /** @phpstan-ignore-next-line */
-                $this->assertTableRecordKeyExists((string) $record);
-                $record = $this->instance()->getTableRecord($record);
-                $recordKey = $record[ArrayRecord::getKeyName()];
+            if ($record instanceof Model) {
+                $recordKey = (string) $record->getKey();
+            } elseif (is_array($record)) {
+                $recordKey = (string) $record[ArrayRecord::getKeyName()];
             } else {
-                $recordKey = $record->getKey();
+                $recordKey = (string) $record;
             }
+
+            /** @phpstan-ignore-next-line */
+            $this->assertTableRecordKeyExists($recordKey);
+
+            $record = $this->instance()->getTableRecord($recordKey);
 
             $column->record($record);
 
@@ -421,14 +457,18 @@ class TestsColumns
             /** @var TextColumn $column */
             $column = $this->instance()->getTable()->getColumn($name);
 
-            if (! ($record instanceof Model)) {
-                /** @phpstan-ignore-next-line */
-                $this->assertTableRecordKeyExists((string) $record);
-                $record = $this->instance()->getTableRecord($record);
-                $recordKey = $record[ArrayRecord::getKeyName()];
+            if ($record instanceof Model) {
+                $recordKey = (string) $record->getKey();
+            } elseif (is_array($record)) {
+                $recordKey = (string) $record[ArrayRecord::getKeyName()];
             } else {
-                $recordKey = $record->getKey();
+                $recordKey = (string) $record;
             }
+
+            /** @phpstan-ignore-next-line */
+            $this->assertTableRecordKeyExists($recordKey);
+
+            $record = $this->instance()->getTableRecord($recordKey);
 
             $column->record($record);
 
@@ -455,14 +495,18 @@ class TestsColumns
             /** @var TextColumn $column */
             $column = $this->instance()->getTable()->getColumn($name);
 
-            if (! ($record instanceof Model)) {
-                /** @phpstan-ignore-next-line */
-                $this->assertTableRecordKeyExists((string) $record);
-                $record = $this->instance()->getTableRecord($record);
-                $recordKey = $record[ArrayRecord::getKeyName()];
+            if ($record instanceof Model) {
+                $recordKey = (string) $record->getKey();
+            } elseif (is_array($record)) {
+                $recordKey = (string) $record[ArrayRecord::getKeyName()];
             } else {
-                $recordKey = $record->getKey();
+                $recordKey = (string) $record;
             }
+
+            /** @phpstan-ignore-next-line */
+            $this->assertTableRecordKeyExists($recordKey);
+
+            $record = $this->instance()->getTableRecord($recordKey);
 
             $column->record($record);
 
@@ -489,14 +533,18 @@ class TestsColumns
             /** @var SelectColumn $column */
             $column = $this->instance()->getTable()->getColumn($name);
 
-            if (! ($record instanceof Model)) {
-                /** @phpstan-ignore-next-line */
-                $this->assertTableRecordKeyExists((string) $record);
-                $record = $this->instance()->getTableRecord($record);
-                $recordKey = $record[ArrayRecord::getKeyName()];
+            if ($record instanceof Model) {
+                $recordKey = (string) $record->getKey();
+            } elseif (is_array($record)) {
+                $recordKey = (string) $record[ArrayRecord::getKeyName()];
             } else {
-                $recordKey = $record->getKey();
+                $recordKey = (string) $record;
             }
+
+            /** @phpstan-ignore-next-line */
+            $this->assertTableRecordKeyExists($recordKey);
+
+            $record = $this->instance()->getTableRecord($recordKey);
 
             $column->record($record);
 
@@ -523,14 +571,18 @@ class TestsColumns
             /** @var SelectColumn $column */
             $column = $this->instance()->getTable()->getColumn($name);
 
-            if (! ($record instanceof Model)) {
-                /** @phpstan-ignore-next-line */
-                $this->assertTableRecordKeyExists((string) $record);
-                $record = $this->instance()->getTableRecord($record);
-                $recordKey = $record[ArrayRecord::getKeyName()];
+            if ($record instanceof Model) {
+                $recordKey = (string) $record->getKey();
+            } elseif (is_array($record)) {
+                $recordKey = (string) $record[ArrayRecord::getKeyName()];
             } else {
-                $recordKey = $record->getKey();
+                $recordKey = (string) $record;
             }
+
+            /** @phpstan-ignore-next-line */
+            $this->assertTableRecordKeyExists($recordKey);
+
+            $record = $this->instance()->getTableRecord($recordKey);
 
             $column->record($record);
 

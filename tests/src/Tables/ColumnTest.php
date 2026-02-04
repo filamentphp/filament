@@ -386,6 +386,16 @@ it('can state whether a column has the correct value with custom data', function
         ->assertTableColumnStateNotSet('title', 'incorrect state', 2);
 });
 
+it('can state whether a column with `counts()` has the correct value', function (): void {
+    $user = User::factory()
+        ->has(Post::factory()->count(3))
+        ->create();
+
+    livewire(UsersTable::class)
+        ->assertTableColumnStateSet('posts_count', 3, $user)
+        ->assertTableColumnStateNotSet('posts_count', 0, $user);
+});
+
 it('can state whether a column has the correct formatted value with Eloquent records', function (): void {
     $post = Post::factory()->create();
 
