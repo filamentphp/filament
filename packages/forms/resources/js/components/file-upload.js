@@ -429,6 +429,8 @@ export default function fileUploadFormComponent({
                     this.checkImageAspectRatio(fileItem.file)
                 })
             }
+
+            this.isInitializing = false
         },
 
         destroy() {
