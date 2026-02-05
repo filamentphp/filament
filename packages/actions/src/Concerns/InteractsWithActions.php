@@ -506,12 +506,12 @@ trait InteractsWithActions
                 continue;
             }
 
-            $resolvedAction->nestingIndex($actionNestingIndex);
-            $resolvedAction->boot();
-
             if (filled($action['arguments'] ?? [])) {
                 $resolvedAction->mergeArguments($action['arguments']);
             }
+
+            $resolvedAction->nestingIndex($actionNestingIndex);
+            $resolvedAction->boot();
 
             $resolvedActions[] = $resolvedAction;
 
