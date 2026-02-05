@@ -509,6 +509,10 @@ trait InteractsWithActions
             $resolvedAction->nestingIndex($actionNestingIndex);
             $resolvedAction->boot();
 
+            if (filled($action['arguments'] ?? [])) {
+                $resolvedAction->mergeArguments($action['arguments']);
+            }
+
             $resolvedActions[] = $resolvedAction;
 
             if ($isMounting) {
