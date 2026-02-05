@@ -8,15 +8,25 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           ref: ${{ github.head_ref }}
+      - name: Cache Composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.composer/cache/files
+          key: composer-cs-${{ hashFiles('composer.json') }}
+          restore-keys: |
+            composer-cs-
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: 8.5
       - name: Set up Node
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: npm
       - name: Install dependencies
         run: |
           composer install --no-interaction
