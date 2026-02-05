@@ -19,6 +19,7 @@
 
 <x-dynamic-component :component="$fieldWrapperView" :field="$field">
     <x-filament::input.wrapper
+        :disabled="$isDisabled"
         :valid="! $errors->has($statePath)"
         x-cloak
         :attributes="

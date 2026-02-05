@@ -64,6 +64,8 @@ class UsersTable extends Component implements HasActions, HasSchemas, Tables\Con
                     ->label('Setting Language (HasOneThrough)')
                     ->sortable()
                     ->searchable(),
+                Tables\Columns\TextColumn::make('posts_count')
+                    ->counts('posts'),
             ]);
     }
 
