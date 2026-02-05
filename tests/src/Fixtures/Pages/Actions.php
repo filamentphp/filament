@@ -9,6 +9,7 @@ use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
+use Filament\Tests\Fixtures\Models\Post;
 
 class Actions extends Page
 {
@@ -212,6 +213,15 @@ class Actions extends Page
                 ->action(function (): void {
                     $this->dispatch('replaced-action-called');
                 }),
+            Action::make('arguments-with-record-and-schema')
+                ->schema(
+                    fn (Post $record, Schema $schema) => $schema
+                        ->record($record)
+                        ->schema([
+                            TextInput::make('foo'),
+                        ])
+                )
+                ->record(fn (array $arguments) => Post::findOrFail($arguments['post_id'])),
         ];
     }
 }
