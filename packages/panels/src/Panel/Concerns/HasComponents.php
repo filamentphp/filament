@@ -19,6 +19,7 @@ use Filament\Resources\ResourceConfiguration;
 use Filament\Widgets\Widget;
 use Filament\Widgets\WidgetConfiguration;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
 use Illuminate\Filesystem\Filesystem;
 use Livewire\Component;
 use Livewire\Livewire;
@@ -409,11 +410,11 @@ trait HasComponents
     }
 
     /**
-     * @return array<string, PageConfiguration>
+     * @return array<PageConfiguration>
      */
     public function getPageConfigurations(): array
     {
-        return array_merge(...array_values($this->pageConfigurations));
+        return Arr::flatten($this->pageConfigurations);
     }
 
     /**
@@ -433,11 +434,11 @@ trait HasComponents
     }
 
     /**
-     * @return array<string, ResourceConfiguration>
+     * @return array<ResourceConfiguration>
      */
     public function getResourceConfigurations(): array
     {
-        return array_merge(...array_values($this->resourceConfigurations));
+        return Arr::flatten($this->resourceConfigurations);
     }
 
     /**
