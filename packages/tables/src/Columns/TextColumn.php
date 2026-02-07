@@ -231,7 +231,9 @@ class TextColumn extends Column implements HasEmbeddedView
             return $item;
         };
 
+        /** @var array<mixed> $state */
         $state = Arr::wrap($state);
+
         $stateCount = count($state);
 
         $listLimit = $this->getListLimit() ?? $stateCount;

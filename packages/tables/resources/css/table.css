@@ -1,6 +1,119 @@
 .fi-ta-table {
     @apply w-full table-auto divide-y divide-gray-200 text-start dark:divide-white/5;
 
+    &.fi-ta-table-stacked-on-mobile {
+        @apply block sm:table sm:table-auto;
+
+        & > thead {
+            @apply block sm:table-header-group;
+
+            &:not(:has(.fi-ta-table-stacked-header-row)) {
+                @apply hidden sm:table-header-group;
+            }
+
+            & > tr:not(.fi-ta-table-stacked-header-row) {
+                @apply hidden sm:table-row;
+            }
+
+            & > tr > .fi-ta-header-cell {
+                @apply hidden sm:table-cell;
+            }
+
+            & > tr > .fi-ta-selection-cell {
+                @apply hidden sm:table-cell;
+            }
+        }
+
+        & > tbody {
+            @apply block whitespace-normal sm:table-row-group sm:whitespace-nowrap;
+        }
+
+        & > tbody > tr {
+            @apply relative block py-2 sm:static sm:table-row sm:py-0;
+
+            &.fi-selected {
+                &::before {
+                    @apply bg-primary-600 absolute inset-y-0 start-0 w-0.5 sm:hidden;
+                    content: '';
+                }
+
+                @variant dark {
+                    &::before {
+                        @apply bg-primary-500;
+                    }
+                }
+
+                & > *:first-child::before {
+                    @apply hidden sm:block;
+                }
+            }
+        }
+
+        & > tbody > tr > .fi-ta-selection-cell {
+            @apply absolute end-5 top-0 sm:static sm:table-cell sm:w-1 sm:px-3 sm:py-4 sm:first-of-type:ps-6 sm:last-of-type:pe-6;
+        }
+
+        & > tbody > tr > .fi-ta-cell:not(.fi-ta-selection-cell) {
+            @apply block px-4 sm:table-cell sm:px-0;
+
+            &.sm\:fi-hidden {
+                @apply sm:hidden;
+            }
+
+            &.md\:fi-hidden {
+                @apply md:hidden;
+            }
+
+            &.lg\:fi-hidden {
+                @apply lg:hidden;
+            }
+
+            &.xl\:fi-hidden {
+                @apply xl:hidden;
+            }
+
+            &.\32xl\:fi-hidden {
+                @apply 2xl:hidden;
+            }
+
+            &.sm\:fi-visible {
+                @apply hidden sm:table-cell;
+            }
+
+            &.md\:fi-visible {
+                @apply hidden md:table-cell;
+            }
+
+            &.lg\:fi-visible {
+                @apply hidden lg:table-cell;
+            }
+
+            &.xl\:fi-visible {
+                @apply hidden xl:table-cell;
+            }
+
+            &.\32xl\:fi-visible {
+                @apply hidden 2xl:table-cell;
+            }
+
+            & > .fi-ta-cell-label {
+                @apply pt-2 text-sm leading-6 font-semibold text-gray-500 sm:hidden dark:text-gray-400;
+            }
+
+            & > .fi-ta-cell-content {
+                @apply text-sm break-words text-gray-800 sm:block dark:text-gray-200;
+            }
+
+            &:has(.fi-ta-actions) {
+                @apply py-2 sm:px-3 sm:py-0;
+
+                & > .fi-ta-actions {
+                    @apply w-full flex-wrap justify-start gap-x-3 gap-y-2 sm:w-auto sm:flex-nowrap sm:justify-end sm:gap-3;
+                }
+            }
+        }
+    }
+
     & > thead {
         @apply divide-y divide-gray-200 dark:divide-white/5;
 
@@ -19,5 +132,21 @@
 
     & > tfoot {
         @apply bg-gray-50 dark:bg-white/5;
+    }
+}
+
+.fi-ta-table-stacked-header-row {
+    @apply block w-full border-y-0 sm:hidden;
+
+    & .fi-ta-table-stacked-header-cell {
+        @apply flex w-full items-center gap-4 bg-gray-50 px-4 py-3 font-normal dark:bg-white/5;
+
+        & .fi-ta-page-checkbox {
+            @apply ms-auto shrink-0;
+        }
+
+        & .fi-ta-table-stacked-sorting {
+            @apply flex flex-1 gap-x-3;
+        }
     }
 }

@@ -50,6 +50,16 @@
 
                         <div class="fi-wi-chart-filter-content">
                             {{ $this->getFiltersSchema() }}
+
+                            @if (method_exists($this, 'hasDeferredFilters') && $this->hasDeferredFilters())
+                                <div
+                                    class="fi-wi-chart-filter-content-actions-ctn"
+                                >
+                                    {{ $this->getFiltersApplyAction() }}
+
+                                    {{ $this->getFiltersResetAction() }}
+                                </div>
+                            @endif
                         </div>
                     </x-filament::dropdown>
                 @endif
