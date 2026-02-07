@@ -8,6 +8,9 @@ use Filament\Facades\Filament;
 use Filament\Panel;
 use Filament\Resources\ResourceConfiguration;
 
+/**
+ * @template TConfiguration of ResourceConfiguration = ResourceConfiguration
+ */
 trait HasConfiguration
 {
     /**

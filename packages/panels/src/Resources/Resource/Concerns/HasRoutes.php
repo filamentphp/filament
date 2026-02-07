@@ -11,6 +11,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Stringable;
 
+/**
+ * @template TModel of Model = Model
+ */
 trait HasRoutes
 {
     protected static ?string $slug = null;

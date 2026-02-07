@@ -85,7 +85,7 @@ abstract class Resource
             }
         }
 
-        return $query;
+        return $query; /** @phpstan-ignore return.type */
     }
 
     /**

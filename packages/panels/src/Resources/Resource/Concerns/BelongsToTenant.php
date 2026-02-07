@@ -13,6 +13,9 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use LogicException;
 use Znck\Eloquent\Relations\BelongsToThrough;
 
+/**
+ * @template TModel of Model = Model
+ */
 trait BelongsToTenant
 {
     protected static bool $isScopedToTenant = true;
