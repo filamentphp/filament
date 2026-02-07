@@ -19,11 +19,12 @@ use Filament\Resources\ResourceConfiguration;
 use Filament\Widgets\Widget;
 use Filament\Widgets\WidgetConfiguration;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Arr;
 use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Arr;
 use Livewire\Component;
 use Livewire\Livewire;
 use Livewire\Mechanisms\ComponentRegistry;
+use LogicException;
 use ReflectionClass;
 
 trait HasComponents
@@ -127,6 +128,18 @@ trait HasComponents
 
         foreach ($pages as $page) {
             if ($page instanceof PageConfiguration) {
+                if (isset($this->pageConfigurations[$page->page][$page->getKey()])) {
+                    $message = "A configuration with the key [{$page->getKey()}] has already been registered for the page [{$page->page}].";
+
+                    if ($page->getKey() === 'default') {
+                        $message .= ' Pass a unique key to each `::make()` call to register multiple configurations for the same page.';
+                    } else {
+                        $message .= ' Each configuration for the same page must have a unique key.';
+                    }
+
+                    throw new LogicException($message);
+                }
+
                 $this->pageConfigurations[$page->page][$page->getKey()] = $page;
 
                 $pageClass = $page->page;
@@ -154,6 +167,18 @@ trait HasComponents
 
         foreach ($resources as $resource) {
             if ($resource instanceof ResourceConfiguration) {
+                if (isset($this->resourceConfigurations[$resource->resource][$resource->getKey()])) {
+                    $message = "A configuration with the key [{$resource->getKey()}] has already been registered for the resource [{$resource->resource}].";
+
+                    if ($resource->getKey() === 'default') {
+                        $message .= ' Pass a unique key to each `::make()` call to register multiple configurations for the same resource.';
+                    } else {
+                        $message .= ' Each configuration for the same resource must have a unique key.';
+                    }
+
+                    throw new LogicException($message);
+                }
+
                 $this->resourceConfigurations[$resource->resource][$resource->getKey()] = $resource;
 
                 $resourceClass = $resource->resource;

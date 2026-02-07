@@ -446,7 +446,7 @@ abstract class Page extends BasePage
     /**
      * @return TConfiguration
      */
-    public static function make(string $key): PageConfiguration
+    public static function make(string $key = 'default'): PageConfiguration
     {
         if (! static::$configurationClass) {
             throw new Exception('Page ' . static::class . ' does not define a $configurationClass.');
@@ -466,7 +466,7 @@ abstract class Page extends BasePage
             return null;
         }
 
-        $panel ??= Filament::getCurrentOrDefaultPanel();
+        $panel ??= Filament::getCurrentPanel();
 
         return $panel->getPageConfiguration(static::class, $key);
     }
@@ -484,7 +484,7 @@ abstract class Page extends BasePage
      */
     public static function withConfiguration(string $key, Closure $callback): mixed
     {
-        $configuration = Filament::getCurrentOrDefaultPanel()->getPageConfiguration(static::class, $key);
+        $configuration = Filament::getCurrentPanel()->getPageConfiguration(static::class, $key);
 
         if (! $configuration) {
             throw new Exception("Configuration '{$key}' not found for page " . static::class);

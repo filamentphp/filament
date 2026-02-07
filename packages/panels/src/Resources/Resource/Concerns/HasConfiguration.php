@@ -41,7 +41,7 @@ trait HasConfiguration
             return null;
         }
 
-        $panel ??= Filament::getCurrentOrDefaultPanel();
+        $panel ??= Filament::getCurrentPanel();
 
         return $panel->getResourceConfiguration(static::class, $key);
     }
@@ -59,7 +59,7 @@ trait HasConfiguration
      */
     public static function withConfiguration(string $key, Closure $callback): mixed
     {
-        $configuration = Filament::getCurrentOrDefaultPanel()->getResourceConfiguration(static::class, $key);
+        $configuration = Filament::getCurrentPanel()->getResourceConfiguration(static::class, $key);
 
         if (! $configuration) {
             throw new Exception("Configuration '{$key}' not found for resource " . static::class);
