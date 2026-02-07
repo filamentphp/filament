@@ -587,7 +587,15 @@ trait HasComponents
                 $this->queueLivewireComponentForRegistration($tenantProfileComponent);
             }
 
-            foreach ($this->getResources() as $resource) {
+            $resourceClasses = $this->getResources();
+
+            foreach ($this->getResourceConfigurations() as $configuration) {
+                if (! in_array($configuration->resource, $resourceClasses, true)) {
+                    $resourceClasses[] = $configuration->resource;
+                }
+            }
+
+            foreach ($resourceClasses as $resource) {
                 foreach ($resource::getPages() as $pageRegistration) {
                     $this->queueLivewireComponentForRegistration($pageRegistration->getPage());
                 }
