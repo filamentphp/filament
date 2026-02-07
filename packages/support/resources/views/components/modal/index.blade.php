@@ -71,6 +71,10 @@
         close: function () {
             this.isOpen = false
 
+            if (! this.$refs.modalContainer.isConnected) {
+                return
+            }
+
             this.$refs.modalContainer.dispatchEvent(
                 new CustomEvent('modal-closed', { detail: { id: '{{ $id }}' } }),
             )
