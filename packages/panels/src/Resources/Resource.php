@@ -123,7 +123,7 @@ abstract class Resource
         return static::$isDiscovered;
     }
 
-    public static function make(string $key): ResourceConfiguration
+    public static function make(string $key = 'default'): ResourceConfiguration
     {
         if (! static::$configurationClass) {
             throw new Exception('Resource ' . static::class . ' does not define a $configurationClass.');
