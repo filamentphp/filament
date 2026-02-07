@@ -96,6 +96,9 @@ trait HasLabels
         return static::$recordTitleAttribute;
     }
 
+    /**
+     * @param  ?TModel  $record
+     */
     public static function getRecordTitle(?Model $record): string | Htmlable | null
     {
         return $record?->getAttribute(static::getRecordTitleAttribute()) ?? static::getModelLabel();

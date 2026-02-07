@@ -17,6 +17,9 @@ use Filament\Tests\Fixtures\Models\Post;
 use Illuminate\Database\Eloquent\Builder;
 use UnitEnum;
 
+/**
+ * @extends resource<Post, PostResourceConfiguration>
+ */
 class ConfigurablePostResource extends Resource
 {
     protected static ?string $model = Post::class;
@@ -27,9 +30,6 @@ class ConfigurablePostResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'title';
 
-    /**
-     * @var class-string<PostResourceConfiguration>|null
-     */
     protected static ?string $configurationClass = PostResourceConfiguration::class;
 
     public static function getEloquentQuery(): Builder
@@ -37,7 +37,6 @@ class ConfigurablePostResource extends Resource
         $query = parent::getEloquentQuery();
 
         if ($configuration = static::getConfiguration()) {
-            /** @var PostResourceConfiguration $configuration */
             if ($configuration->isFeatured()) {
                 $query->where('is_published', true);
             } elseif ($configuration->isArchived()) {
@@ -51,7 +50,6 @@ class ConfigurablePostResource extends Resource
     public static function getNavigationLabel(): string
     {
         if ($configuration = static::getConfiguration()) {
-            /** @var PostResourceConfiguration $configuration */
             if ($label = $configuration->getNavigationLabel()) {
                 return $label;
             }
@@ -63,7 +61,6 @@ class ConfigurablePostResource extends Resource
     public static function getNavigationGroup(): string | UnitEnum | null
     {
         if ($configuration = static::getConfiguration()) {
-            /** @var PostResourceConfiguration $configuration */
             if ($group = $configuration->getNavigationGroup()) {
                 return $group;
             }
@@ -75,7 +72,6 @@ class ConfigurablePostResource extends Resource
     public static function getNavigationSort(): ?int
     {
         if ($configuration = static::getConfiguration()) {
-            /** @var PostResourceConfiguration $configuration */
             if ($sort = $configuration->getNavigationSort()) {
                 return $sort;
             }

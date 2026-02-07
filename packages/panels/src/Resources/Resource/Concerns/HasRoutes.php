@@ -27,11 +27,17 @@ trait HasRoutes
      */
     protected static string | array $withoutRouteMiddleware = [];
 
+    /**
+     * @return Builder<TModel>
+     */
     public static function getRecordRouteBindingEloquentQuery(): Builder
     {
         return static::getEloquentQuery();
     }
 
+    /**
+     * @return ?TModel
+     */
     public static function resolveRecordRouteBinding(int | string $key, ?Closure $modifyQuery = null): ?Model
     {
         $query = static::getRecordRouteBindingEloquentQuery();

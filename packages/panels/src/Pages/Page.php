@@ -27,6 +27,9 @@ use UnitEnum;
 
 use function Filament\Support\original_request;
 
+/**
+ * @template TConfiguration of PageConfiguration = PageConfiguration
+ */
 abstract class Page extends BasePage
 {
     use Concerns\CanAuthorizeAccess;
@@ -45,7 +48,7 @@ abstract class Page extends BasePage
     protected static bool $isDiscovered = true;
 
     /**
-     * @var class-string<PageConfiguration>|null
+     * @var ?class-string<TConfiguration>
      */
     protected static ?string $configurationClass = null;
 
@@ -440,6 +443,9 @@ abstract class Page extends BasePage
         return $this->getSchema('form') ? 'form' : 'content';
     }
 
+    /**
+     * @return TConfiguration
+     */
     public static function make(string $key): PageConfiguration
     {
         if (! static::$configurationClass) {
@@ -449,6 +455,9 @@ abstract class Page extends BasePage
         return static::$configurationClass::make(static::class, $key);
     }
 
+    /**
+     * @return ?TConfiguration
+     */
     public static function getConfiguration(?Panel $panel = null): ?PageConfiguration
     {
         $key = Filament::getCurrentPageConfigurationKey();

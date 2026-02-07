@@ -235,6 +235,9 @@ trait HasGlobalSearch
         return $query;
     }
 
+    /**
+     * @return Builder<TModel>
+     */
     public static function getGlobalSearchEloquentQuery(): Builder
     {
         return static::getEloquentQuery();

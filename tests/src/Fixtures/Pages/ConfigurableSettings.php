@@ -9,6 +9,9 @@ use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use UnitEnum;
 
+/**
+ * @extends Page<ConfigurableSettingsConfiguration>
+ */
 class ConfigurableSettings extends Page
 {
     protected string $view = 'pages.settings';
@@ -17,9 +20,6 @@ class ConfigurableSettings extends Page
 
     protected static ?int $navigationSort = 2;
 
-    /**
-     * @var class-string<ConfigurableSettingsConfiguration>|null
-     */
     protected static ?string $configurationClass = ConfigurableSettingsConfiguration::class;
 
     public $name;
@@ -29,7 +29,6 @@ class ConfigurableSettings extends Page
     public function mount(): void
     {
         if ($configuration = static::getConfiguration()) {
-            /** @var ConfigurableSettingsConfiguration $configuration */
             $this->settingsCategory = $configuration->getSettingsCategory();
         }
     }
@@ -37,7 +36,6 @@ class ConfigurableSettings extends Page
     public static function getNavigationLabel(): string
     {
         if ($configuration = static::getConfiguration()) {
-            /** @var ConfigurableSettingsConfiguration $configuration */
             if ($label = $configuration->getNavigationLabel()) {
                 return $label;
             }
@@ -49,7 +47,6 @@ class ConfigurableSettings extends Page
     public static function getNavigationGroup(): string | UnitEnum | null
     {
         if ($configuration = static::getConfiguration()) {
-            /** @var ConfigurableSettingsConfiguration $configuration */
             if ($group = $configuration->getNavigationGroup()) {
                 return $group;
             }
@@ -61,7 +58,6 @@ class ConfigurableSettings extends Page
     public static function getNavigationSort(): ?int
     {
         if ($configuration = static::getConfiguration()) {
-            /** @var ConfigurableSettingsConfiguration $configuration */
             if ($sort = $configuration->getNavigationSort()) {
                 return $sort;
             }
