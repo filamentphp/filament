@@ -29,14 +29,13 @@ it('can register default resource without configuration', function (): void {
 });
 
 it('can generate different slugs for each configuration', function (): void {
-    $panel = Filament::getCurrentOrDefaultPanel();
-    $configurations = $panel->getResourceConfigurations();
+    Filament::forResourceConfiguration(ConfigurablePostResource::class, 'featured');
+    expect(ConfigurablePostResource::getSlug())->toBe('featured-posts');
+    Filament::setCurrentResourceConfigurationKey(null);
 
-    $featuredConfig = collect($configurations)->first(fn ($configuration) => $configuration->getKey() === 'featured');
-    $archivedConfig = collect($configurations)->first(fn ($configuration) => $configuration->getKey() === 'archived');
-
-    expect($featuredConfig->getSlug())->toBe('featured-posts');
-    expect($archivedConfig->getSlug())->toBe('archived-posts');
+    Filament::forResourceConfiguration(ConfigurablePostResource::class, 'archived');
+    expect(ConfigurablePostResource::getSlug())->toBe('archived-posts');
+    Filament::setCurrentResourceConfigurationKey(null);
 });
 
 it('can access configuration using `getConfiguration()`', function (): void {
@@ -190,6 +189,10 @@ it('can use `make()` factory method to create configuration', function (): void 
     expect($configuration->getSlug())->toBe('test-posts');
     expect($configuration->getNavigationLabel())->toBe('Test Posts');
     expect($configuration->isFeatured())->toBeTrue();
+
+    $configurationWithoutSlug = ConfigurablePostResource::make('custom');
+
+    expect($configurationWithoutSlug->getSlug())->toBeNull();
 });
 
 it('preserves configuration context when calling `getUrl()` for a different configuration', function (): void {

@@ -141,13 +141,15 @@ abstract class Page extends BasePage
      */
     public static function getNavigationItems(): array
     {
+        $activeRoutePattern = static::getNavigationItemActiveRoutePattern();
+
         return [
             NavigationItem::make(static::getNavigationLabel())
                 ->group(static::getNavigationGroup())
                 ->parentItem(static::getNavigationParentItem())
                 ->icon(static::getNavigationIcon())
                 ->activeIcon(static::getActiveNavigationIcon())
-                ->isActiveWhen(fn (): bool => original_request()->routeIs(static::getNavigationItemActiveRoutePattern()))
+                ->isActiveWhen(fn (): bool => original_request()->routeIs($activeRoutePattern))
                 ->sort(static::getNavigationSort())
                 ->badge(static::getNavigationBadge(), color: static::getNavigationBadgeColor())
                 ->badgeTooltip(static::getNavigationBadgeTooltip())

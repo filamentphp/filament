@@ -72,7 +72,7 @@ trait HasNavigation
                 ->parentItem(static::getNavigationParentItem())
                 ->icon(static::getNavigationIcon())
                 ->activeIcon(static::getActiveNavigationIcon())
-                ->isActiveWhen(fn () => original_request()->routeIs($activeRoutePattern))
+                ->isActiveWhen(fn (): bool => original_request()->routeIs($activeRoutePattern))
                 ->badge(static::getNavigationBadge(), color: static::getNavigationBadgeColor())
                 ->badgeTooltip(static::getNavigationBadgeTooltip())
                 ->sort(static::getNavigationSort())

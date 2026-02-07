@@ -26,14 +26,13 @@ it('can register default page without configuration', function (): void {
 });
 
 it('can generate different slugs for each configuration', function (): void {
-    $panel = Filament::getCurrentOrDefaultPanel();
-    $configurations = $panel->getPageConfigurations();
+    Filament::forPageConfiguration(ConfigurableSettings::class, 'general');
+    expect(ConfigurableSettings::getSlug())->toBe('general-settings');
+    Filament::setCurrentPageConfigurationKey(null);
 
-    $generalConfig = collect($configurations)->first(fn ($configuration) => $configuration->getKey() === 'general');
-    $advancedConfig = collect($configurations)->first(fn ($configuration) => $configuration->getKey() === 'advanced');
-
-    expect($generalConfig->getSlug())->toBe('general-settings');
-    expect($advancedConfig->getSlug())->toBe('advanced-settings');
+    Filament::forPageConfiguration(ConfigurableSettings::class, 'advanced');
+    expect(ConfigurableSettings::getSlug())->toBe('advanced-settings');
+    Filament::setCurrentPageConfigurationKey(null);
 });
 
 it('can access configuration using `getConfiguration()`', function (): void {

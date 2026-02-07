@@ -157,8 +157,15 @@ trait HasRoutes
             if (filled($configSlug = $configuration->getSlug())) {
                 return $configSlug;
             }
+
+            return static::getDefaultSlug() . '/' . $configuration->getKey();
         }
 
+        return static::getDefaultSlug();
+    }
+
+    public static function getDefaultSlug(): string
+    {
         if (filled(static::$slug)) {
             return static::$slug;
         }
