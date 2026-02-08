@@ -186,7 +186,7 @@ class RepeatableEntry extends Entry implements HasEmbeddedView
 
         ob_start(); ?>
 
-        <style nonce="<?= csp_nonce() ?>" scoped>
+        <style nonce="<?= csp_nonce() ?>">
           <?php foreach (array_filter(array_unique(array_map(static fn ($column): string => $column->getWidth(), $tableColumns)), static fn (string $value) => trim($value) !== '') as $width) { ?>
               <?= '.fi-internal-components-repeatable-' . $width ?> {
                   width: <?= $width ?>;

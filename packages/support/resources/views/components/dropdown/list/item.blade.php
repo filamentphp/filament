@@ -107,7 +107,7 @@
 
     @if ($image)
         @php($uniqueClass = 'fi-unique-' . \Illuminate\Support\Str::random())
-        <style nonce="{{ \Filament\csp_nonce() }}" scoped>
+        <style nonce="{{ \Filament\csp_nonce() }}">
             .{{ $uniqueClass }} {
                 background-image: url('{{ $image }}');
             }
