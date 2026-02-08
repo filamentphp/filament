@@ -15,6 +15,7 @@ use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Js;
+use function Filament\csp_nonce;
 
 class RepeatableEntry extends Entry implements HasEmbeddedView
 {
@@ -185,6 +186,13 @@ class RepeatableEntry extends Entry implements HasEmbeddedView
 
         ob_start(); ?>
 
+        <style nonce="<?= csp_nonce() ?>" scoped>
+          <?php foreach (array_filter(array_unique(array_map(static fn ($column): string => $column->getWidth(), $tableColumns)), static fn (string $value) => trim($value) !== '') as $width) { ?>
+              <?= '.fi-internal-components-repeatable-' . $width ?> {
+                  width: <?= $width ?>;
+              }
+          <?php } ?>
+        </style>
         <div <?= $attributes->toHtml() ?>>
             <table>
                 <thead>
@@ -194,10 +202,8 @@ class RepeatableEntry extends Entry implements HasEmbeddedView
                                 class="<?= Arr::toCssClasses([
                                     'fi-wrapped' => $column->canHeaderWrap(),
                                     (($columnAlignment = $column->getAlignment()) instanceof Alignment) ? ('fi-align-' . $columnAlignment->value) : $columnAlignment,
+                                    'fi-internal-components-repeatable-' . ($columnWidth = $column->getWidth()) => filled($columnWidth),
                                 ]) ?>"
-                                <?php if (filled($columnWidth = $column->getWidth())) { ?>
-                                    style="width: <?= $columnWidth ?>"
-                                <?php } ?>
                             >
                                 <?php if (! $column->isHeaderLabelHidden()) { ?>
                                     <?= e($column->getLabel()) ?>

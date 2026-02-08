@@ -91,10 +91,18 @@
                         ])
                 }}
             >
+                <style nonce="{{ \Filament\csp_nonce() }}" scoped>
+                    @if ($maxHeight)
+                        .fi-internal-views-chart-widget-{{ $maxHeight }} {
+                            max-height: {{ $maxHeight }};
+                        }
+                    @endif
+                </style>
+
                 <canvas
                     x-ref="canvas"
                     @if ($maxHeight)
-                        style="max-height: {{ $maxHeight }}"
+                        class="fi-internal-views-chart-widget-{{ $maxHeight }}"
                     @endif
                 ></canvas>
 
