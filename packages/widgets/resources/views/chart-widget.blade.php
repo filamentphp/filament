@@ -91,7 +91,7 @@
                         ])
                 }}
             >
-                <style nonce="{{ \Filament\csp_nonce() }}" scoped>
+                <style nonce="{{ \Filament\csp_nonce() }}">
                     @if ($maxHeight)
                         .fi-internal-views-chart-widget-{{ $maxHeight }} {
                             max-height: {{ $maxHeight }};
