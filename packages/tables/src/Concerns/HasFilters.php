@@ -64,7 +64,7 @@ trait HasFilters
         if ($this->getTable()->persistsFiltersInSession()) {
             session()->put(
                 $this->getTableFiltersSessionKey(),
-                $this->tableFilters,
+                $this->getDehydratedTableFilters(),
             );
         }
 
@@ -209,7 +209,44 @@ trait HasFilters
 
     public function getTableFilterState(string $name): ?array
     {
-        return Arr::get($this->tableFilters, $this->parseTableFilterName($name));
+        $name = $this->parseTableFilterName($name);
+
+        $state = Arr::get($this->tableFilters, $name);
+
+        if ($state === null) {
+            return null;
+        }
+
+        $filter = $this->getTable()->getFilter($name);
+
+        if (! $filter) {
+            return $state;
+        }
+
+        try {
+            return $filter->getSchema()->getStateSnapshot();
+        } catch (\Throwable) {
+            return $state;
+        }
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    protected function getDehydratedTableFilters(): array
+    {
+        $dehydrated = [];
+
+        foreach ($this->getTable()->getFilters() as $filter) {
+            $name = $filter->getName();
+            $state = $this->getTableFilterState($name);
+
+            if ($state !== null) {
+                $dehydrated[$name] = $state;
+            }
+        }
+
+        return $dehydrated;
     }
 
     public function getTableFilterFormState(string $name): ?array
