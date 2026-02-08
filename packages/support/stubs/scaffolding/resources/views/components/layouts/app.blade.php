@@ -9,7 +9,7 @@
 
         <title>{{ config('app.name') }}</title>
 
-        <style>
+        <style nonce="{{ \Filament\csp_nonce() }}">
             [x-cloak] {
                 display: none !important;
             }

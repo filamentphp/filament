@@ -19,7 +19,7 @@
 
     @if ($broadcastChannel = $this->getBroadcastChannel())
         @script
-            <script>
+            <script nonce="{{ \Filament\csp_nonce() }}">
                 window.addEventListener('EchoLoaded', () => {
                     window.Echo.private(@js($broadcastChannel)).notification(
                         (notification) => {
