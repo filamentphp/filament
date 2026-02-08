@@ -51,6 +51,8 @@ class FilamentManager
 
     protected ?Model $tenant = null;
 
+    protected string|Closure|null $cspNonce = null;
+
     public function auth(): Guard
     {
         return $this->getCurrentOrDefaultPanel()->auth();
@@ -1103,5 +1105,18 @@ class FilamentManager
     public function getErrorNotifications(): array
     {
         return $this->getCurrentOrDefaultPanel()->getErrorNotifications();
+    }
+
+    /**
+     * @param string|(\Closure(): string)|null $nonce
+     */
+    public function useCspNonce(string|Closure|null $nonce): void
+    {
+        $this->cspNonce = $nonce;
+    }
+
+    public function getCspNonce(): ?string
+    {
+        return value($this->cspNonce);
     }
 }

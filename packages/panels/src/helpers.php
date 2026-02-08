@@ -95,3 +95,10 @@ if (! function_exists('Filament\get_authorization_response')) {
         return $response;
     }
 }
+
+if (!function_exists('Filament\csp_nonce')) {
+    function csp_nonce(): ?string
+    {
+        return Filament::getCspNonce();
+    }
+}
