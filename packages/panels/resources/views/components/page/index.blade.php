@@ -150,7 +150,7 @@
     @if (method_exists($this, 'hasUnsavedDataChangesAlert') && $this->hasUnsavedDataChangesAlert())
         @if (\Filament\Support\Facades\FilamentView::hasSpaMode())
             @script
-                <script>
+                <script nonce="{{ \Filament\csp_nonce() }}">
                     setUpSpaModeUnsavedDataChangesAlert({
                         body: @js(__('filament-panels::unsaved-changes-alert.body')),
                         resolveLivewireComponentUsing: () => @this,
@@ -160,7 +160,7 @@
             @endscript
         @else
             @script
-                <script>
+                <script nonce="{{ \Filament\csp_nonce() }}">
                     setUpUnsavedDataChangesAlert({ $wire })
                 </script>
             @endscript
@@ -169,7 +169,7 @@
 
     @if (! app()->hasDebugModeEnabled())
         @script
-            <script>
+            <script nonce="{{ \Filament\csp_nonce() }}">
                 window.filamentErrorNotifications = @js($this->hasErrorNotifications() ? $this->getErrorNotifications() : null)
             </script>
         @endscript
