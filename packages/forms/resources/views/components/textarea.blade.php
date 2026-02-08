@@ -28,7 +28,10 @@
                 ])
         "
     >
-        <div wire:ignore.self style="height: '{{ $initialHeight . 'rem' }}'">
+        <style nonce="{{ \Filament\csp_nonce() }}" scoped>
+            .fi-internal-components-textarea {height: '{{ $initialHeight . 'rem' }}'; }
+        </style>
+        <div wire:ignore.self class="fi-internal-components-textarea">
             <textarea
                 x-load
                 x-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('textarea', 'filament/forms') }}"

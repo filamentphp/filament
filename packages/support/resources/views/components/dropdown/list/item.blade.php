@@ -106,9 +106,14 @@
     @endif
 
     @if ($image)
+        @php($uniqueClass = 'fi-unique-' . \Illuminate\Support\Str::random())
+        <style nonce="{{ \Filament\csp_nonce() }}" scoped>
+            .{{ $uniqueClass }} {
+                background-image: url('{{ $image }}');
+            }
+        </style>
         <div
-            class="fi-dropdown-list-item-image"
-            style="background-image: url('{{ $image }}')"
+            class="fi-dropdown-list-item-image {{ $uniqueClass }}"
             @if ($hasLoadingIndicator)
                 wire:loading.remove.delay.{{ config('filament.livewire_loading_delay', 'default') }}
                 wire:target="{{ $loadingIndicatorTarget }}"
