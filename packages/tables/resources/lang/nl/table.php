@@ -30,6 +30,8 @@ return [
 
             'loading_message' => 'Laden...',
 
+            'no_options_message' => 'Geen opties beschikbaar.',
+
             'no_search_results_message' => 'Geen opties komen overeen met je zoekopdracht.',
 
             'placeholder' => 'Selecteer een optie',
