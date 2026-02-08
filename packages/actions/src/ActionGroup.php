@@ -16,6 +16,8 @@ use Filament\Support\Concerns\HasIcon;
 use Filament\Support\Concerns\HasIconPosition;
 use Filament\Support\Concerns\HasIconSize;
 use Filament\Support\Concerns\HasTooltip;
+use Filament\Support\Contracts\ScalableIcon;
+use Filament\Support\Enums\IconSize;
 use Filament\Support\Enums\Width;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
@@ -143,7 +145,7 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
             $action->group($this);
 
             if ($action instanceof ActionGroup) {
-                $action->dropdownPlacement('right-top');
+                $action->defaultDropdownPlacement('right-top');
 
                 $this->flatActions = [
                     ...$this->flatActions,
@@ -263,7 +265,7 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
         return false;
     }
 
-    public function getIcon(): string | BackedEnum
+    public function getIcon(): string | BackedEnum | Htmlable
     {
         return $this->getBaseIcon() ?? FilamentIcon::resolve(ActionsIconAlias::ACTION_GROUP) ?? Heroicon::EllipsisVertical;
     }
@@ -290,6 +292,14 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
      */
     public function toArray(): array
     {
+        $icon = $this->getIcon();
+
+        if ($icon instanceof ScalableIcon) {
+            $icon = $icon->getIconForSize($this->getIconSize() ?? IconSize::Medium);
+        } elseif ($icon instanceof BackedEnum) {
+            $icon = $icon->value;
+        }
+
         return [
             'actions' => collect($this->getActions())->toArray(),
             'color' => $this->getColor(),
@@ -299,7 +309,9 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
             'dropdownWidth' => $this->getDropdownWidth(),
             'extraAttributes' => $this->getExtraAttributes(),
             'hasDropdown' => $this->hasDropdown(),
-            'icon' => $this->getIcon(),
+            'hasDropdownFlip' => $this->hasDropdownFlip(),
+            'hasDropdownTeleport' => $this->hasDropdownTeleport(),
+            'icon' => $icon,
             'iconPosition' => $this->getIconPosition(),
             'iconSize' => $this->getIconSize(),
             'isOutlined' => $this->isOutlined(),
@@ -344,6 +356,8 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
 
         $static->color($data['color'] ?? null);
         $static->dropdown($data['hasDropdown'] ?? false);
+        $static->dropdownFlip($data['hasDropdownFlip'] ?? false);
+        $static->dropdownTeleport($data['hasDropdownTeleport'] ?? false);
         $static->dropdownMaxHeight($data['dropdownMaxHeight'] ?? null);
         $static->dropdownOffset($data['dropdownOffset'] ?? null);
         $static->dropdownPlacement($data['dropdownPlacement'] ?? null);
@@ -371,22 +385,65 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
     {
         return match ($parameterName) {
             'livewire' => [$this->getLivewire()],
-            'model' => [$this->getModel() ?? $this->getSchemaContainer()?->getModel() ?? $this->getSchemaComponent()?->getModel()],
+            'model' => [$this->getModel()],
             'mountedActions' => [$this->getLivewire()->getMountedActions()],
-            'record' => [$this->getRecord() ?? $this->getSchemaContainer()?->getRecord() ?? $this->getSchemaComponent()?->getRecord()],
+            'record' => [$this->getRecord()],
             'schema' => [$this->getSchemaContainer()],
             'schemaComponent', 'component' => [$this->getSchemaComponent()],
             'schemaOperation', 'context', 'operation' => [$this->getSchemaContainer()?->getOperation() ?? $this->getSchemaComponent()?->getContainer()->getOperation()],
             'schemaGet', 'get' => [$this->getSchemaComponent()->makeGetUtility()],
-            'schemaComponentState', 'state' => [$this->getSchemaComponent()->getState()],
+            'schemaComponentState', 'state' => [$this->getSchemaComponentState()],
+            'schemaState' => [$this->getSchemaState()],
             'table' => [$this->getTable()],
             default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
         };
     }
 
+    public function getSchemaComponentState(): mixed
+    {
+        $schemaContainer = $this->getSchemaContainer();
+
+        while ($schemaContainer) {
+            $parentComponent = $schemaContainer->getParentComponent();
+
+            if (! $parentComponent) {
+                break;
+            }
+
+            if ($parentComponent->hasStatePath()) {
+                return $parentComponent->getState();
+            }
+
+            $schemaContainer = $parentComponent->getContainer();
+        }
+
+        return $this->getSchemaComponent()?->getState();
+    }
+
+    public function getSchemaState(): mixed
+    {
+        $schemaContainer = $this->getSchemaContainer();
+
+        while ($schemaContainer) {
+            if (filled($schemaContainer->getStatePath(isAbsolute: false))) {
+                return $schemaContainer->getStateSnapshot();
+            }
+
+            $parentComponent = $schemaContainer->getParentComponent();
+
+            if (! $parentComponent) {
+                return $schemaContainer->getStateSnapshot();
+            }
+
+            $schemaContainer = $parentComponent->getContainer();
+        }
+
+        return null;
+    }
+
     protected function resolveDefaultClosureDependencyForEvaluationByType(string $parameterType): array
     {
-        $record = $this->getRecord();
+        $record = is_a($parameterType, Model::class, allow_string: true) ? $this->getRecord() : null;
 
         return match ($parameterType) {
             Model::class, ($record instanceof Model) ? $record::class : null => [$record],
@@ -472,7 +529,7 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
 
             <div
                 x-cloak
-                x-float.placement.<?= $this->getDropdownPlacement() ?? 'bottom-start' ?>.teleport.offset="{ offset: <?= $this->getDropdownOffset() ?? 8 ?> }"
+                x-float.placement.<?= $this->getDropdownPlacement() ?? 'bottom-start' ?><?= $this->hasDropdownFlip() ? '.flip' : '' ?><?= $this->hasDropdownTeleport() ? '.teleport' : '' ?>.offset="{ offset: <?= $this->getDropdownOffset() ?? 8 ?> }"
                 x-ref="panel"
                 x-transition:enter-start="fi-opacity-0"
                 x-transition:leave-end="fi-opacity-0"

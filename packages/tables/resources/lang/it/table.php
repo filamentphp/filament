@@ -35,6 +35,7 @@ return [
 
         'select' => [
             'loading_message' => 'Caricamento...',
+            'no_options_message' => 'Nessuna opzione disponibile.',
             'no_search_results_message' => 'Nessuna opzione corrisponde alla tua ricerca.',
             'placeholder' => "Seleziona un'opzione",
             'searching_message' => 'Ricerca...',
@@ -187,7 +188,6 @@ return [
 
             'group' => [
                 'label' => 'Raggruppa per',
-                'placeholder' => 'Raggruppa per',
             ],
 
             'direction' => [

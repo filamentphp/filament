@@ -1,7 +1,8 @@
 @props([
     'actions' => [],
+    'actionsAlignment' => null,
     'breadcrumbs' => [],
-    'heading',
+    'heading' => null,
     'subheading' => null,
 ])
 
@@ -18,11 +19,13 @@
             <x-filament::breadcrumbs :breadcrumbs="$breadcrumbs" />
         @endif
 
-        <h1 class="fi-header-heading">
-            {{ $heading }}
-        </h1>
+        @if (filled($heading))
+            <h1 class="fi-header-heading">
+                {{ $heading }}
+            </h1>
+        @endif
 
-        @if ($subheading)
+        @if (filled($subheading))
             <p class="fi-header-subheading">
                 {{ $subheading }}
             </p>
@@ -39,7 +42,10 @@
             {{ $beforeActions }}
 
             @if ($actions)
-                <x-filament::actions :actions="$actions" />
+                <x-filament::actions
+                    :actions="$actions"
+                    :alignment="$actionsAlignment"
+                />
             @endif
 
             {{ $afterActions }}

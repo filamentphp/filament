@@ -143,6 +143,14 @@ class Type
                 ]) ?? $query;
             }
 
+            $baseQuery = $query->getQuery();
+
+            if (isset($baseQuery->limit)) {
+                $component->optionsLimit($baseQuery->limit);
+            } elseif ($component->isSearchable() && filled($this->getSearchColumns())) {
+                $query->limit($component->getOptionsLimit());
+            }
+
             $keyName = $query->getModel()->getKeyName();
 
             if ($this->hasOptionLabelFromRecordUsingCallback()) {

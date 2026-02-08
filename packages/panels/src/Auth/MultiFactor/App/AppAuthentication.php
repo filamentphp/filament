@@ -2,6 +2,8 @@
 
 namespace Filament\Auth\MultiFactor\App;
 
+use BaconQrCode\Renderer\ImageRenderer;
+use BaconQrCode\Writer;
 use Closure;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
@@ -123,7 +125,7 @@ class AppAuthentication implements MultiFactorAuthenticationProvider
 
     public function generateSecret(): string
     {
-        return $this->google2FA->generateSecretKey();
+        return $this->google2FA->generateSecretKey(16);
     }
 
     public function getCurrentCode(HasAppAuthentication $user, ?string $secret = null): string
@@ -136,11 +138,22 @@ class AppAuthentication implements MultiFactorAuthenticationProvider
         /** @var HasAppAuthentication $user */
         $user = Filament::auth()->user();
 
-        return $this->google2FA->getQRCodeInline(
+        $inlineQrCode = $this->google2FA->getQRCodeInline(
             $this->getBrandName(),
             $this->getHolderName($user),
             $secret,
         );
+
+        // This is a fallback for when `bacon/bacon-qr-code` is installed but the `imagick` extension is not.
+        if (
+            class_exists(Writer::class)
+            && class_exists(ImageRenderer::class)
+            && (! extension_loaded('imagick'))
+        ) {
+            $inlineQrCode = 'data:image/svg+xml;base64,' . base64_encode($inlineQrCode);
+        }
+
+        return $inlineQrCode;
     }
 
     /**
@@ -163,13 +176,24 @@ class AppAuthentication implements MultiFactorAuthenticationProvider
     {
         $user ??= Filament::auth()->user();
 
+        $remainingCodes = [];
+        $isValid = false;
+
         foreach ($this->getRecoveryCodes($user) as $hashedRecoveryCode) { /** @phpstan-ignore-line */
             if (Hash::check($recoveryCode, $hashedRecoveryCode)) {
-                return true;
+                $isValid = true;
+
+                continue;
             }
+
+            $remainingCodes[] = $hashedRecoveryCode;
         }
 
-        return false;
+        if ($isValid) {
+            $user->saveAppAuthenticationRecoveryCodes($remainingCodes);
+        }
+
+        return $isValid;
     }
 
     /**

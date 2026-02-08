@@ -1,13 +1,33 @@
 import Chart from 'chart.js/auto'
 import 'chartjs-adapter-luxon'
 
-export default function chart({ cachedData, options, type }) {
+if (
+    window.filamentChartJsGlobalPlugins &&
+    Array.isArray(window.filamentChartJsGlobalPlugins) &&
+    window.filamentChartJsGlobalPlugins.length > 0
+) {
+    Chart.register(...window.filamentChartJsGlobalPlugins)
+}
+
+export default function chart({ cachedData, maxHeight, options, type }) {
     return {
+        userPointBackgroundColor: options?.pointBackgroundColor,
+        userXGridColor: options?.scales?.x?.grid?.color,
+        userYGridColor: options?.scales?.y?.grid?.color,
+        userRadialGridColor: options?.scales?.r?.grid?.color,
+        userRadialTicksColor: options?.scales?.r?.ticks?.color,
+
         init() {
             this.initChart()
 
             this.$wire.$on('updateChartData', ({ data }) => {
-                chart = this.getChart()
+                const chart = this.getChart()
+
+                if (!chart) {
+                    return
+                }
+
+                cachedData = data
                 chart.data = data
                 chart.update('resize')
             })
@@ -16,11 +36,13 @@ export default function chart({ cachedData, options, type }) {
                 Alpine.store('theme')
 
                 this.$nextTick(() => {
-                    if (!this.getChart()) {
+                    const chart = this.getChart()
+
+                    if (!chart) {
                         return
                     }
 
-                    this.getChart().destroy()
+                    chart.destroy()
                     this.initChart()
                 })
             })
@@ -33,10 +55,32 @@ export default function chart({ cachedData, options, type }) {
                     }
 
                     this.$nextTick(() => {
-                        this.getChart().destroy()
+                        const chart = this.getChart()
+
+                        if (!chart) {
+                            return
+                        }
+
+                        chart.destroy()
                         this.initChart()
                     })
                 })
+
+            this.resizeHandler = Alpine.debounce(() => {
+                const chart = this.getChart()
+
+                if (!chart) {
+                    return
+                }
+
+                chart.destroy()
+                this.initChart()
+            }, 250)
+
+            window.addEventListener('resize', this.resizeHandler)
+
+            this.resizeObserver = new ResizeObserver(() => this.resizeHandler())
+            this.resizeObserver.observe(this.$el)
         },
 
         initChart(data = null) {
@@ -77,7 +121,9 @@ export default function chart({ cachedData, options, type }) {
 
             options ??= {}
             options.borderWidth ??= 2
-            options.pointBackgroundColor ??= borderColor
+            options.maintainAspectRatio ??= !!maxHeight
+            options.pointBackgroundColor =
+                this.userPointBackgroundColor ?? borderColor
             options.pointHitRadius ??= 4
             options.pointRadius ??= 2
             options.scales ??= {}
@@ -85,18 +131,33 @@ export default function chart({ cachedData, options, type }) {
             options.scales.x.border ??= {}
             options.scales.x.border.display ??= false
             options.scales.x.grid ??= {}
-            options.scales.x.grid.color ??= gridColor
+            options.scales.x.grid.color = this.userXGridColor ?? gridColor
             options.scales.x.grid.display ??= false
             options.scales.y ??= {}
             options.scales.y.border ??= {}
             options.scales.y.border.display ??= false
             options.scales.y.grid ??= {}
-            options.scales.y.grid.color ??= gridColor
+            options.scales.y.grid.color = this.userYGridColor ?? gridColor
 
-            if (['doughnut', 'pie'].includes(type)) {
+            if (['doughnut', 'pie', 'polarArea'].includes(type)) {
                 options.scales.x.display ??= false
                 options.scales.y.display ??= false
                 options.scales.y.grid.display ??= false
+            }
+
+            if (type === 'polarArea') {
+                const textColor = getComputedStyle(
+                    this.$refs.textColorElement,
+                ).color
+
+                options.scales.r ??= {}
+                options.scales.r.grid ??= {}
+                options.scales.r.grid.color =
+                    this.userRadialGridColor ?? gridColor
+                options.scales.r.ticks ??= {}
+                options.scales.r.ticks.color =
+                    this.userRadialTicksColor ?? textColor
+                options.scales.r.ticks.backdropColor ??= 'transparent'
             }
 
             return new Chart(this.$refs.canvas, {
@@ -113,6 +174,16 @@ export default function chart({ cachedData, options, type }) {
             }
 
             return Chart.getChart(this.$refs.canvas)
+        },
+
+        destroy() {
+            window.removeEventListener('resize', this.resizeHandler)
+
+            if (this.resizeObserver) {
+                this.resizeObserver.disconnect()
+            }
+
+            this.getChart()?.destroy()
         },
     }
 }

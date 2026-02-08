@@ -13,10 +13,14 @@
     $tag = $url ? 'a' : 'button';
 @endphp
 
-<li @class([
-    'fi-topbar-item',
-    'fi-active' => $active,
-])>
+<li
+    {{
+        $attributes->class([
+            'fi-topbar-item',
+            'fi-active' => $active,
+        ])
+    }}
+>
     <{{ $tag }}
         @if ($url)
             {{ \Filament\Support\generate_href_html($url, $shouldOpenUrlInNewTab) }}

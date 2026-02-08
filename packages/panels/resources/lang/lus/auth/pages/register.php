@@ -4,13 +4,13 @@ return [
 
     'title' => 'Register',
 
-    'heading' => 'Sign up',
+    'heading' => 'In ziah luhna',
 
     'actions' => [
 
         'login' => [
-            'before' => 'or',
-            'label' => 'I account ah sign in rawh',
+            'before' => 'emaw',
+            'label' => 'I account ah lut rawh',
         ],
 
     ],
@@ -18,11 +18,11 @@ return [
     'form' => [
 
         'email' => [
-            'label' => 'Email address',
+            'label' => 'Email',
         ],
 
         'name' => [
-            'label' => 'Name',
+            'label' => 'Hming',
         ],
 
         'password' => [
@@ -31,13 +31,13 @@ return [
         ],
 
         'password_confirmation' => [
-            'label' => 'Confirm password',
+            'label' => 'Password nemnghehna',
         ],
 
         'actions' => [
 
             'register' => [
-                'label' => 'Sign up',
+                'label' => 'Ziah luhna',
             ],
 
         ],
@@ -47,7 +47,7 @@ return [
     'notifications' => [
 
         'throttled' => [
-            'title' => 'Registration tumna a tam lutuk',
+            'title' => 'In ziah luh tumna a tam lutuk',
             'body' => 'Khawngaihin seconds :seconds hnuah ti nawn leh rawh.',
         ],
 

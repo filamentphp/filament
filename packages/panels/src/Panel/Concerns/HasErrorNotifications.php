@@ -48,7 +48,7 @@ trait HasErrorNotifications
             $this->errorNotifications,
         );
 
-        $notifications[null] ??= [
+        $notifications[''] ??= [
             'title' => __('filament-panels::error-notifications.title'),
             'body' => __('filament-panels::error-notifications.body'),
         ];

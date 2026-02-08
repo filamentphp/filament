@@ -8,13 +8,18 @@
     $key = $getKey();
     $mergeTags = $getMergeTags();
     $statePath = $getStatePath();
+    $mentions = $getMentionsForJs();
     $tools = $getTools();
     $toolbarButtons = $getToolbarButtons();
     $floatingToolbars = $getFloatingToolbars();
+    $linkProtocols = $getLinkProtocols();
+    $fileAttachmentsMaxSize = $getFileAttachmentsMaxSize();
+    $fileAttachmentsAcceptedFileTypes = $getFileAttachmentsAcceptedFileTypes();
 @endphp
 
 <x-dynamic-component :component="$fieldWrapperView" :field="$field">
     <x-filament::input.wrapper
+        :disabled="$isDisabled"
         :valid="! $errors->has($statePath)"
         x-cloak
         :attributes="
@@ -26,23 +31,46 @@
             x-load
             x-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('rich-editor', 'filament/forms') }}"
             x-data="richEditorFormComponent({
+                        acceptedFileTypes: @js($fileAttachmentsAcceptedFileTypes),
+                        acceptedFileTypesValidationMessage: @js($fileAttachmentsAcceptedFileTypes ? __('filament-forms::components.rich_editor.file_attachments_accepted_file_types_message', ['values' => implode(', ', $fileAttachmentsAcceptedFileTypes)]) : null),
                         activePanel: @js($getActivePanel()),
+                        canAttachFiles: @js($hasFileAttachments()),
                         deleteCustomBlockButtonIconHtml: @js(\Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::Trash, alias: \Filament\Forms\View\FormsIconAlias::COMPONENTS_RICH_EDITOR_PANELS_CUSTOM_BLOCK_DELETE_BUTTON)->toHtml()),
                         editCustomBlockButtonIconHtml: @js(\Filament\Support\generate_icon_html(\Filament\Support\Icons\Heroicon::PencilSquare, alias: \Filament\Forms\View\FormsIconAlias::COMPONENTS_RICH_EDITOR_PANELS_CUSTOM_BLOCK_EDIT_BUTTON)->toHtml()),
                         extensions: @js($getTipTapJsExtensions()),
-                        key: @js($key),
+                        floatingToolbars: @js($floatingToolbars),
+                        getMentionLabelsUsing: async (mentions) => {
+                            return await $wire.callSchemaComponentMethod(
+                                @js($key),
+                                'getMentionLabelsForJs',
+                                { mentions },
+                            )
+                        },
+                        getMentionSearchResultsUsing: async (query, char) => {
+                            return await $wire.callSchemaComponentMethod(
+                                @js($key),
+                                'getMentionSearchResultsForJs',
+                                { search: query, char },
+                            )
+                        },
+                        hasResizableImages: @js($hasResizableImages()),
                         isDisabled: @js($isDisabled),
                         isLiveDebounced: @js($isLiveDebounced()),
                         isLiveOnBlur: @js($isLiveOnBlur()),
+                        key: @js($key),
+                        linkProtocols: @js($linkProtocols),
                         liveDebounce: @js($getNormalizedLiveDebounce()),
                         livewireId: @js($this->getId()),
+                        maxFileSize: @js($fileAttachmentsMaxSize),
+                        maxFileSizeValidationMessage: @js($fileAttachmentsMaxSize ? trans_choice('filament-forms::components.rich_editor.file_attachments_max_size_message', $fileAttachmentsMaxSize, ['max' => $fileAttachmentsMaxSize]) : null),
+                        mentions: @js($mentions),
                         mergeTags: @js($mergeTags),
                         noMergeTagSearchResultsMessage: @js($getNoMergeTagSearchResultsMessage()),
                         placeholder: @js($getPlaceholder()),
                         state: $wire.{{ $applyStateBindingModifiers("\$entangle('{$statePath}')", isOptimisticallyLive: false) }},
                         statePath: @js($statePath),
+                        textColors: @js($getTextColorsForJs()),
                         uploadingFileMessage: @js($getUploadingFileMessage()),
-                        floatingToolbars: @js($floatingToolbars),
                     })"
             x-bind:class="{
                 'fi-fo-rich-editor-uploading-file': isUploadingFile,
@@ -65,6 +93,29 @@
                     @endforeach
                 </div>
             @endif
+
+            <div
+                x-show="isUploadingFile"
+                x-cloak
+                class="fi-fo-rich-editor-uploading-file-message"
+            >
+                {{ \Filament\Support\generate_loading_indicator_html() }}
+
+                <span>
+                    {{ $getUploadingFileMessage() }}
+                </span>
+            </div>
+
+            <div
+                x-show="! isUploadingFile && fileValidationMessage"
+                x-cloak
+                class="fi-fo-rich-editor-file-validation-message"
+            >
+                <span
+                    x-text="fileValidationMessage"
+                    x-show="! isUploadingFile && fileValidationMessage"
+                ></span>
+            </div>
 
             <div
                 {{ $getExtraInputAttributeBag()->class(['fi-fo-rich-editor-main']) }}
@@ -171,19 +222,19 @@
                             </div>
 
                             <div class="fi-fo-rich-editor-merge-tags-list">
-                                @foreach ($mergeTags as $tag)
+                                @foreach ($mergeTags as $tagId => $tagLabel)
                                     <button
                                         draggable="true"
                                         type="button"
-                                        x-on:click="insertMergeTag(@js($tag))"
-                                        x-on:dragstart="$event.dataTransfer.setData('mergeTag', @js($tag))"
+                                        x-on:click="insertMergeTag(@js($tagId))"
+                                        x-on:dragstart="$event.dataTransfer.setData('mergeTag', @js($tagId))"
                                         class="fi-fo-rich-editor-merge-tag-btn"
                                     >
                                         <span
                                             data-type="mergeTag"
-                                            data-id="{{ $tag }}"
+                                            data-id="{{ $tagId }}"
                                         >
-                                            {{ $tag }}
+                                            {{ $tagLabel }}
                                         </span>
                                     </button>
                                 @endforeach

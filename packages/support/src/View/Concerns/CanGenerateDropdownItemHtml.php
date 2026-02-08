@@ -28,7 +28,7 @@ trait CanGenerateDropdownItemHtml
         ComponentAttributeBag $attributes,
         string | Htmlable | null $badge = null,
         string | array | null $badgeColor = null,
-        ?string $badgeTooltip = null,
+        string | Htmlable | null $badgeTooltip = null,
         string | array | null $color = 'primary',
         bool $hasLoadingIndicator = true,
         ?bool $hasSpaMode = null,
@@ -42,7 +42,7 @@ trait CanGenerateDropdownItemHtml
         string | Htmlable | null $label = null,
         string $tag = 'button',
         ?string $target = null,
-        ?string $tooltip = null,
+        string | Htmlable | null $tooltip = null,
         ?string $type = 'button',
     ): string {
         $color ??= 'gray';
@@ -103,12 +103,13 @@ trait CanGenerateDropdownItemHtml
             <?php } ?>
             <?php if ($keyBindings) { ?>
                 x-bind:id="$id('key-bindings')"
-                x-mousetrap.global.<?= collect($keyBindings)->map(fn (string $keyBinding): string => str_replace('+', '-', $keyBinding))->implode('.') ?>="document.getElementById($el.id).click()"
+                x-mousetrap.global.<?= collect($keyBindings)->map(fn (string $keyBinding): string => str_replace('+', '-', $keyBinding))->implode('.') ?>="document.getElementById($el.id)?.click()"
             <?php } ?>
             <?php if ($hasTooltip) { ?>
                 x-tooltip="{
                     content: <?= Js::from($tooltip) ?>,
                     theme: $store.theme,
+                    allowHTML: <?= Js::from($tooltip instanceof Htmlable) ?>,
                 }"
             <?php } ?>
             <?= $attributes->toHtml() ?>
@@ -132,6 +133,7 @@ trait CanGenerateDropdownItemHtml
                         x-tooltip="{
                             content: <?= Js::from($badgeTooltip) ?>,
                             theme: $store.theme,
+                            allowHTML: <?= Js::from($badgeTooltip instanceof Htmlable) ?>,
                         }"
                     <?php } ?>
                     <?= (new ComponentAttributeBag)->color(BadgeComponent::class, $badgeColor)->class(['fi-badge'])->toHtml() ?>

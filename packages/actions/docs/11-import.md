@@ -8,23 +8,16 @@ import UtilityInjection from "@components/UtilityInjection.astro"
 
 Filament includes an action that is able to import rows from a CSV. When the trigger button is clicked, a modal asks the user for a file. Once they upload one, they are able to map each column in the CSV to a real column in the database. If any rows fail validation, they will be compiled into a downloadable CSV for the user to review after the rest of the rows have been imported. Users can also download an example CSV file containing all the columns that can be imported.
 
-This feature uses [job batches](https://laravel.com/docs/queues#job-batching) and [database notifications](../../notifications/database-notifications), so you need to publish those migrations from Laravel. Also, you need to publish the migrations for tables that Filament uses to store information about imports:
+This feature uses [job batches](https://laravel.com/docs/queues#job-batching) and [database notifications](../notifications/database-notifications), so you need to publish those migrations from Laravel. Also, you need to publish the migrations for tables that Filament uses to store information about imports:
 
 ```bash
-# Laravel 11 and higher
 php artisan make:queue-batches-table
 php artisan make:notifications-table
-
-# Laravel 10
-php artisan queue:batches-table
-php artisan notifications:table
-```
-
-```bash
-# All apps
 php artisan vendor:publish --tag=filament-actions-migrations
 php artisan migrate
 ```
+
+If you'd like to receive import notifications in a panel, you can enable them in the [panel configuration](../notifications/database-notifications#enabling-database-notifications-in-a-panel).
 
 <Aside variant="info">
     If you're using PostgreSQL, make sure that the `data` column in the notifications migration is using `json()`: `$table->json('data')`.
@@ -360,10 +353,10 @@ use Filament\Actions\Imports\ImportColumn;
 use Illuminate\Database\Eloquent\Collection;
 
 ImportColumn::make('authors')
-    ->relationship(resolveUsing: function (array $states): Collection {
+    ->relationship(resolveUsing: function (array $state): Collection {
         return Author::query()
-            ->whereIn('email', $states)
-            ->orWhereIn('username', $states)
+            ->whereIn('email', $state)
+            ->orWhereIn('username', $state)
             ->get();
     })
 ```

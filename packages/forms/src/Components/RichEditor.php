@@ -6,9 +6,12 @@ use Closure;
 use Filament\Actions\Action;
 use Filament\Forms\Components\RichEditor\Actions\AttachFilesAction;
 use Filament\Forms\Components\RichEditor\Actions\CustomBlockAction;
+use Filament\Forms\Components\RichEditor\Actions\GridAction;
 use Filament\Forms\Components\RichEditor\Actions\LinkAction;
+use Filament\Forms\Components\RichEditor\Actions\TextColorAction;
 use Filament\Forms\Components\RichEditor\EditorCommand;
 use Filament\Forms\Components\RichEditor\FileAttachmentProviders\Contracts\FileAttachmentProvider;
+use Filament\Forms\Components\RichEditor\MentionProvider;
 use Filament\Forms\Components\RichEditor\Models\Contracts\HasRichContent;
 use Filament\Forms\Components\RichEditor\Plugins\Contracts\RichContentPlugin;
 use Filament\Forms\Components\RichEditor\RichContentAttribute;
@@ -16,13 +19,17 @@ use Filament\Forms\Components\RichEditor\RichContentCustomBlock;
 use Filament\Forms\Components\RichEditor\RichContentRenderer;
 use Filament\Forms\Components\RichEditor\RichEditorTool;
 use Filament\Forms\Components\RichEditor\StateCasts\RichEditorStateCast;
+use Filament\Forms\Components\RichEditor\TextColor;
 use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
+use Filament\Support\Colors\Color;
+use Filament\Support\Components\Attributes\ExposedLivewireMethod;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use Livewire\Attributes\Renderless;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Tiptap\Editor;
 
@@ -42,6 +49,11 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
 
     protected string | Closure | null $uploadingFileMessage = null;
 
+    /**
+     * @var array<string> | Closure
+     */
+    protected array | Closure $linkProtocols = ['http', 'https', 'mailto'];
+
     protected bool | Closure | null $isJson = null;
 
     /**
@@ -58,6 +70,11 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
      * @var array<string> | Closure | null
      */
     protected array | Closure | null $mergeTags = null;
+
+    /**
+     * @var array<MentionProvider> | Closure | null
+     */
+    protected array | Closure | null $mentions = null;
 
     /**
      * @var array<class-string<RichContentCustomBlock>> | Closure | null
@@ -81,6 +98,15 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
      * @var array<string | array<string>> | Closure | null
      */
     protected array | Closure | null $floatingToolbars = null;
+
+    /**
+     * @var array<string, string | TextColor> | Closure | null
+     */
+    protected array | Closure | null $textColors = null;
+
+    protected bool | Closure | null $hasCustomTextColors = null;
+
+    protected bool | Closure | null $hasResizableImages = null;
 
     protected function setUp(): void
     {
@@ -122,21 +148,29 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
                 ->action(arguments: '{ url: $getEditor().getAttributes(\'link\')?.href, shouldOpenInNewTab: $getEditor().getAttributes(\'link\')?.target === \'_blank\' }')
                 ->icon(Heroicon::Link)
                 ->iconAlias('forms:components.rich-editor.toolbar.link'),
+            RichEditorTool::make('textColor')
+                ->label(__('filament-forms::components.rich_editor.tools.text_color'))
+                ->action(arguments: '{ color: $getEditor().getAttributes(\'textColor\')[\'data-color\'] ?? null }')
+                ->icon(Heroicon::Swatch)
+                ->iconAlias('forms:components.rich-editor.toolbar.text-color'),
             RichEditorTool::make('h1')
                 ->label(__('filament-forms::components.rich_editor.tools.h1'))
                 ->jsHandler('$getEditor()?.chain().focus().toggleHeading({ level: 1 }).run()')
+                ->activeKey('heading')
                 ->activeOptions(['level' => 1])
                 ->icon(Heroicon::H1)
                 ->iconAlias('forms:components.rich-editor.toolbar.h1'),
             RichEditorTool::make('h2')
                 ->label(__('filament-forms::components.rich_editor.tools.h2'))
                 ->jsHandler('$getEditor()?.chain().focus().toggleHeading({ level: 2 }).run()')
+                ->activeKey('heading')
                 ->activeOptions(['level' => 2])
                 ->icon(Heroicon::H2)
                 ->iconAlias('forms:components.rich-editor.toolbar.h2'),
             RichEditorTool::make('h3')
                 ->label(__('filament-forms::components.rich_editor.tools.h3'))
                 ->jsHandler('$getEditor()?.chain().focus().toggleHeading({ level: 3 }).run()')
+                ->activeKey('heading')
                 ->activeOptions(['level' => 3])
                 ->icon(Heroicon::H3)
                 ->iconAlias('forms:components.rich-editor.toolbar.h3'),
@@ -215,6 +249,11 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
                 ->jsHandler('$getEditor()?.chain().focus().toggleHeaderRow().run()')
                 ->icon('fi-o-table-toggle-header-row')
                 ->iconAlias('forms:components.rich-editor.toolbar.table_toggle_header_row'),
+            RichEditorTool::make('tableToggleHeaderCell')
+                ->label(__('filament-forms::components.rich_editor.tools.table_toggle_header_cell'))
+                ->jsHandler('$getEditor()?.chain().focus().toggleHeaderCell().run()')
+                ->icon('fi-o-table-toggle-header-cell')
+                ->iconAlias('forms:components.rich-editor.toolbar.table_toggle_header_cell'),
             RichEditorTool::make('tableDelete')
                 ->label(__('filament-forms::components.rich_editor.tools.table_delete'))
                 ->jsHandler('$getEditor()?.chain().focus().deleteTable().run()')
@@ -288,6 +327,20 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
                 ->jsHandler('$getEditor()?.chain().focus().setTextAlign(\'justify\').run()')
                 ->icon('fi-o-align-justify')
                 ->iconAlias('forms:components.rich-editor.toolbar.align-justify'),
+            RichEditorTool::make('grid')
+                ->label(__('filament-forms::components.rich_editor.tools.grid'))
+                ->action()
+                ->activeJsExpression('false')
+                ->icon('fi-o-columns')
+                ->iconAlias('forms:components.rich-editor.toolbar.grid'),
+            RichEditorTool::make('gridDelete')
+                ->label(__('filament-forms::components.rich_editor.tools.grid_delete'))
+                ->jsHandler('$getEditor()?.chain().focus().deleteNode(\'grid\').run()')
+                ->activeKey('grid')
+                ->activeStyling(false)
+                ->disabledWhenNotActive()
+                ->icon('fi-o-columns-delete')
+                ->iconAlias('forms:components.rich-editor.toolbar.grid_delete'),
             RichEditorTool::make('details')
                 ->label(__('filament-forms::components.rich_editor.tools.details'))
                 ->jsHandler('$getEditor()?.chain().focus().setDetails().run()')
@@ -502,7 +555,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
 
     public function getUploadingFileMessage(): string
     {
-        return $this->evaluate($this->uploadingFileMessage) ?? __('filament::components/button.messages.uploading_file');
+        return $this->evaluate($this->uploadingFileMessage) ?? __('filament-forms::components.rich_editor.uploading_file_message');
     }
 
     public function json(bool | Closure | null $condition = true): static
@@ -522,6 +575,24 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
         return RichContentRenderer::make()
             ->plugins($this->getPlugins())
             ->getEditor();
+    }
+
+    /**
+     * @param  array<string> | Closure  $protocols
+     */
+    public function linkProtocols(array | Closure $protocols): static
+    {
+        $this->linkProtocols = $protocols;
+
+        return $this;
+    }
+
+    /**
+     * @return array<string>
+     */
+    public function getLinkProtocols(): array
+    {
+        return $this->evaluate($this->linkProtocols);
     }
 
     /**
@@ -571,14 +642,6 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
         return array_reduce(
             [
                 ...array_reduce(
-                    $this->getPlugins(),
-                    fn (array $carry, RichContentPlugin $plugin): array => [
-                        ...$carry,
-                        ...$plugin->getEditorTools(),
-                    ],
-                    initial: [],
-                ),
-                ...array_reduce(
                     $this->tools,
                     function (array $carry, RichEditorTool | Closure $tool): array {
                         if ($tool instanceof Closure) {
@@ -592,6 +655,14 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
                     },
                     initial: [],
                 ),
+                ...array_reduce(
+                    $this->getPlugins(),
+                    fn (array $carry, RichContentPlugin $plugin): array => [
+                        ...$carry,
+                        ...$plugin->getEditorTools(),
+                    ],
+                    initial: [],
+                ),
             ],
             fn (array $carry, RichEditorTool $tool): array => [
                 ...$carry,
@@ -603,6 +674,13 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
 
     public function getContentAttribute(): ?RichContentAttribute
     {
+        // Do not read content attributes from the model when the rich editor is nested
+        // inside a custom block action modal, since the content attribute should only
+        // be used to configure the parent rich editor.
+        if ($this->getRootContainer()->getOperation() === CustomBlockAction::NAME) {
+            return null;
+        }
+
         $model = $this->getModelInstance();
 
         if (! ($model instanceof HasRichContent)) {
@@ -647,7 +725,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
                 'tableAddColumnBefore', 'tableAddColumnAfter', 'tableDeleteColumn',
                 'tableAddRowBefore', 'tableAddRowAfter', 'tableDeleteRow',
                 'tableMergeCells', 'tableSplitCell',
-                'tableToggleHeaderRow',
+                'tableToggleHeaderRow', 'tableToggleHeaderCell',
                 'tableDelete',
             ],
         ];
@@ -664,7 +742,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
             ['blockquote', 'codeBlock', 'bulletList', 'orderedList'],
             [
                 'table',
-                'attachFiles',
+                ...($this->hasFileAttachments(default: true) ? ['attachFiles'] : []),
                 ...(filled($this->getCustomBlocks()) ? ['customBlocks'] : []),
                 ...(filled($this->getMergeTags()) ? ['mergeTags'] : []),
             ],
@@ -708,7 +786,9 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
         return [
             AttachFilesAction::make(),
             CustomBlockAction::make(),
+            GridAction::make(),
             LinkAction::make(),
+            TextColorAction::make(),
             ...array_reduce(
                 $this->getPlugins(),
                 fn (array $carry, RichContentPlugin $plugin): array => [
@@ -731,11 +811,119 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     }
 
     /**
-     * @return array<string>
+     * @return array<string, string>
      */
     public function getMergeTags(): array
     {
-        return $this->evaluate($this->mergeTags) ?? $this->getContentAttribute()?->getMergeTags() ?? [];
+        $mergeTags = $this->evaluate($this->mergeTags) ?? $this->getContentAttribute()?->getMergeTags() ?? [];
+
+        return Arr::mapWithKeys(
+            $mergeTags,
+            fn (string $label, int | string $id): array => [(is_string($id) ? $id : $label) => $label],
+        );
+    }
+
+    /**
+     * @param  array<MentionProvider> | Closure  $providers
+     */
+    public function mentions(array | Closure $providers): static
+    {
+        $this->mentions = $providers;
+
+        return $this;
+    }
+
+    /**
+     * @return array<MentionProvider>
+     */
+    public function getMentionProviders(): array
+    {
+        return [
+            ...($this->getContentAttribute()?->getMentionProviders() ?? []),
+            ...($this->evaluate($this->mentions) ?? []),
+        ];
+    }
+
+    /**
+     * @return array<int, array{char: string, extraAttributes: array<string, mixed>, isSearchable: bool, items: array<string, string>, noOptionsMessage: string, noSearchResultsMessage: string, searchPrompt: string, searchingMessage: string}>
+     */
+    public function getMentionsForJs(): array
+    {
+        return array_map(
+            function (MentionProvider $provider): array {
+                return [
+                    'char' => $provider->getChar(),
+                    'extraAttributes' => $provider->getExtraAttributes(),
+                    'isSearchable' => $provider->hasSearchResultsUsing(),
+                    'items' => $provider->getItems(),
+                    'noOptionsMessage' => $provider->getNoItemsMessage(),
+                    'noSearchResultsMessage' => $provider->getNoSearchResultsMessage(),
+                    'searchPrompt' => $provider->getSearchPrompt(),
+                    'searchingMessage' => $provider->getSearchingMessage(),
+                ];
+            },
+            $this->getMentionProviders(),
+        );
+    }
+
+    /**
+     * @return array<mixed>
+     */
+    #[ExposedLivewireMethod]
+    #[Renderless]
+    public function getMentionSearchResultsForJs(?string $search = null, ?string $char = '@'): array
+    {
+        $char = $char ?? '@';
+
+        $providers = $this->getMentionProviders();
+
+        $provider = collect($providers)->first(function (MentionProvider $mentionProvider) use ($char): bool {
+            return $mentionProvider->getChar() === $char;
+        }) ?? ($providers[0] ?? null);
+
+        if (! $provider) {
+            return [];
+        }
+
+        return $provider->getSearchResults($search ?? '');
+    }
+
+    /**
+     * @param  array<array{id: mixed, char: string}>  $mentions
+     * @return array<mixed, string>
+     */
+    #[ExposedLivewireMethod]
+    #[Renderless]
+    public function getMentionLabelsForJs(array $mentions = []): array
+    {
+        $providers = $this->getMentionProviders();
+        $labels = [];
+
+        $mentionsByChar = collect($mentions)->groupBy('char');
+
+        foreach ($mentionsByChar as $char => $charMentions) {
+            $provider = collect($providers)->first(function (MentionProvider $mentionProvider) use ($char): bool {
+                return $mentionProvider->getChar() === $char;
+            }) ?? ($providers[0] ?? null);
+
+            if (! $provider) {
+                continue;
+            }
+
+            $ids = $charMentions->pluck('id')->all();
+            $charLabels = $provider->getLabels($ids);
+
+            foreach ($charLabels as $id => $label) {
+                $labels[$id] = $label;
+            }
+        }
+
+        return $labels;
+    }
+
+    public function hasMentions(): bool
+    {
+        return isset($this->mentions);
     }
 
     public function noMergeTagSearchResultsMessage(string | Closure | null $message): static
@@ -904,5 +1092,87 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
                 $fail('validation.required')->translate();
             }
         };
+    }
+
+    public function callAfterStateUpdated(bool $shouldBubbleToParents = true): static
+    {
+        $rawState = $this->getRawState();
+
+        // https://github.com/filamentphp/filament/issues/17472
+        if (! is_array($rawState)) {
+            foreach ($this->getStateCasts() as $stateCast) {
+                $rawState = $stateCast->set($rawState);
+            }
+
+            $this->rawState($rawState);
+        }
+
+        return parent::callAfterStateUpdated($shouldBubbleToParents);
+    }
+
+    /**
+     * @param  array<string, string | TextColor> | Closure | null  $colors
+     */
+    public function textColors(array | Closure | null $colors): static
+    {
+        $this->textColors = $colors;
+
+        return $this;
+    }
+
+    /**
+     * @return array<string, string | TextColor>
+     */
+    public function getTextColors(): array
+    {
+        $textColors = $this->evaluate($this->textColors) ?? $this->getContentAttribute()?->getTextColors() ?? TextColor::getDefaults();
+
+        return Arr::mapWithKeys(
+            $textColors,
+            fn (string | TextColor $color, string $name): array => [$name => ($color instanceof TextColor) ? $color : TextColor::make($color, $name)],
+        );
+    }
+
+    /**
+     * @return array<string, array{color: string, darkColor: string}>
+     */
+    public function getTextColorsForJs(): array
+    {
+        return array_map(
+            fn (TextColor $color): array => [
+                'color' => $color->getColor(),
+                'darkColor' => $color->getDarkColor(),
+            ],
+            $this->getTextColors(),
+        );
+    }
+
+    public function customTextColors(bool | Closure | null $condition = true): static
+    {
+        $this->hasCustomTextColors = $condition;
+
+        return $this;
+    }
+
+    public function hasCustomTextColors(): bool
+    {
+        return (bool) ($this->evaluate($this->hasCustomTextColors) ?? $this->getContentAttribute()?->hasCustomTextColors() ?? false);
+    }
+
+    public function resizableImages(bool | Closure | null $condition = true): static
+    {
+        $this->hasResizableImages = $condition;
+
+        return $this;
+    }
+
+    public function hasResizableImages(): bool
+    {
+        return (bool) $this->evaluate($this->hasResizableImages);
+    }
+
+    public function hasFileAttachmentsByDefault(): bool
+    {
+        return $this->hasToolbarButton('attachFiles');
     }
 }

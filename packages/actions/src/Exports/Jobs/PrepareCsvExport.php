@@ -52,7 +52,7 @@ class PrepareCsvExport implements ShouldQueue
 
     public function handle(): void
     {
-        $csv = Writer::createFromFileObject(new SplTempFileObject);
+        $csv = Writer::from(new SplTempFileObject);
         $csv->setOutputBOM(Bom::Utf8);
         $csv->setDelimiter($this->exporter::getCsvDelimiter());
         $csv->insertOne(array_values($this->columnMap));
@@ -66,6 +66,7 @@ class PrepareCsvExport implements ShouldQueue
 
         /** @var Connection $databaseConnection */
         $databaseConnection = $query->getConnection();
+        $databaseGrammar = $query->getGrammar();
 
         if ($databaseConnection->getDriverName() === 'pgsql') {
             $originalOrders = collect($query->getQuery()->orders)
@@ -76,9 +77,13 @@ class PrepareCsvExport implements ShouldQueue
 
                     return ($order['column'] ?? null) === $qualifiedKeyName;
                 })
-                ->unique(function (array $order): string {
+                ->unique(function (array $order) use ($databaseGrammar): string {
                     if (($order['type'] ?? null) === 'Raw') {
                         return 'raw:' . ($order['sql'] ?? '');
+                    }
+
+                    if ($databaseGrammar->isExpression($order['column'] ?? null)) {
+                        return 'expression:' . $order['column']->getValue($databaseGrammar);
                     }
 
                     return 'column:' . ($order['column'] ?? '');

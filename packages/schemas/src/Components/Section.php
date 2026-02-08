@@ -93,7 +93,7 @@ class Section extends Component implements CanConcealComponents, CanEntangleWith
         parent::setUp();
 
         $this->key(function (Section $component): ?string {
-            $heading = $this->getHeading();
+            $heading = $component->getHeading();
 
             if (blank($heading)) {
                 return null;
@@ -109,6 +109,7 @@ class Section extends Component implements CanConcealComponents, CanEntangleWith
             return match ($component->getFooterActionsAlignment()) {
                 Alignment::End, Alignment::Right => Schema::end($component->getFooterActions()),
                 Alignment::Center, => Schema::center($component->getFooterActions()),
+                Alignment::Between, Alignment::Justify => Schema::between($component->getFooterActions()),
                 default => Schema::start($component->getFooterActions()),
             };
         });

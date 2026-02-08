@@ -3,6 +3,9 @@
 namespace Filament\Forms\Components;
 
 use Closure;
+use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
+use Filament\Schemas\Components\StateCasts\OptionsArrayStateCast;
+use Filament\Schemas\Components\StateCasts\OptionStateCast;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -27,6 +30,8 @@ class TableSelect extends Field
     protected string $view = 'filament-forms::components.table-select';
 
     protected string | Closure | null $tableConfiguration = null;
+
+    protected bool | Closure $shouldIgnoreRelatedRecords = false;
 
     protected string | Closure | null $relationship = null;
 
@@ -54,6 +59,18 @@ class TableSelect extends Field
         return $this;
     }
 
+    public function ignoreRelatedRecords(bool | Closure $condition = true): static
+    {
+        $this->shouldIgnoreRelatedRecords = $condition;
+
+        return $this;
+    }
+
+    public function shouldIgnoreRelatedRecords(): bool
+    {
+        return (bool) $this->evaluate($this->shouldIgnoreRelatedRecords);
+    }
+
     public function getTableConfiguration(): string
     {
         return $this->evaluate($this->tableConfiguration) ?? throw new LogicException('The [tableConfiguration()] method must be set when using a [TableSelect] component.');
@@ -77,6 +94,68 @@ class TableSelect extends Field
             }
 
             $relationship = $component->getRelationship();
+            $relationshipName = $component->getRelationshipName();
+
+            if (
+                (! str_contains($relationshipName, '.')) &&
+                ($record = $component->getRecord()) instanceof Model &&
+                $record->relationLoaded($relationshipName)
+            ) {
+                $relatedRecords = $record->getRelationValue($relationshipName);
+
+                if (
+                    ($relationship instanceof BelongsToMany) ||
+                    ($relationship instanceof HasOneOrManyThrough)
+                ) {
+                    $component->state(
+                        $relatedRecords
+                            ->pluck(($relationship instanceof BelongsToMany) ? $relationship->getRelatedKeyName() : $relationship->getRelated()->getKeyName())
+                            ->map(static fn ($key): string => strval($key))
+                            ->all(),
+                    );
+
+                    return;
+                }
+
+                if ($relationship instanceof BelongsToThrough) {
+                    $component->state(
+                        $relatedRecords?->getAttribute(
+                            $relationship->getRelated()->getKeyName(),
+                        ),
+                    );
+
+                    return;
+                }
+
+                if ($relationship instanceof HasMany) {
+                    $component->state(
+                        $relatedRecords
+                            ->pluck($relationship->getLocalKeyName())
+                            ->all(),
+                    );
+
+                    return;
+                }
+
+                if ($relationship instanceof HasOne) {
+                    $component->state(
+                        $relatedRecords?->getAttribute(
+                            $relationship->getLocalKeyName(),
+                        ),
+                    );
+
+                    return;
+                }
+
+                /** @var BelongsTo $relationship */
+                $component->state(
+                    $relatedRecords?->getAttribute(
+                        $relationship->getOwnerKeyName(),
+                    ),
+                );
+
+                return;
+            }
 
             if (
                 ($relationship instanceof BelongsToMany) ||
@@ -225,7 +304,7 @@ class TableSelect extends Field
             $relationship->syncWithPivotValues($state, $pivotData, detaching: false);
         });
 
-        $this->dehydrated(fn (TableSelect $component): bool => ! $component->isMultiple());
+        $this->dehydrated(fn (TableSelect $component): bool => (! $component->isMultiple()) && $component->isSaved());
 
         return $this;
     }
@@ -250,6 +329,12 @@ class TableSelect extends Field
         $relationshipName = $this->getRelationshipName();
 
         foreach (explode('.', $relationshipName) as $nestedRelationshipName) {
+            if ($record->hasAttribute($nestedRelationshipName)) {
+                $relationship = null;
+
+                break;
+            }
+
             if (! $record->isRelation($nestedRelationshipName)) {
                 $relationship = null;
 
@@ -302,5 +387,21 @@ class TableSelect extends Field
     public function isMultiple(): bool
     {
         return (bool) $this->evaluate($this->isMultiple);
+    }
+
+    /**
+     * @return array<StateCast>
+     */
+    public function getDefaultStateCasts(): array
+    {
+        if ($this->hasCustomStateCasts()) {
+            return parent::getDefaultStateCasts();
+        }
+
+        if ($this->isMultiple()) {
+            return [app(OptionsArrayStateCast::class)];
+        }
+
+        return [app(OptionStateCast::class, ['isNullable' => true])];
     }
 }

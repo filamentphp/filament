@@ -30,7 +30,7 @@ RichEditor::make('content')
 
 The JSON is in [TipTap's](https://tiptap.dev) format, which is a structured representation of the content.
 
-If you're saving the JSON tags using Eloquent, you should be sure to add an `array` [cast](https://laravel.com/docs/eloquent-mutators#array-and-json-casting) to the model property:
+If you're saving the JSON content using Eloquent, you should be sure to add an `array` [cast](https://laravel.com/docs/eloquent-mutators#array-and-json-casting) to the model property:
 
 ```php
 use Illuminate\Database\Eloquent\Model;
@@ -76,11 +76,14 @@ Additional tools available in the toolbar include:
 - `alignJustify` - Justifies the text.
 - `clearFormatting` - Clears all formatting from the selected text.
 - `details` - Inserts a `<details>` tag, which allows users to create collapsible sections in their content.
+- `grid` - Inserts a grid layout into the editor, allowing users to create responsive columns of content.
+- `gridDelete` - Deletes the current grid layout.
 - `highlight` - Highlights the selected text with a `<mark>` tag around it.
 - `horizontalRule` - Inserts a horizontal rule.
 - `lead` - Applies a `lead` class around the text, which is typically used for the first paragraph of an article.
 - `small` - Applies the `<small>` tag to the text, which is typically used for small print or disclaimers.
 - `code` - Format the selected text as inline code.
+- `textColor` - Changes the [text color](#customizing-text-colors) of the selected text.
 - `table` - Creates a table in the editor with a default layout of 3 columns and 2 rows, with the first row configured as a header row.
 - `tableAddColumnBefore` - Adds a new column before the current column.
 - `tableAddColumnAfter` - Adds a new column after the current column.
@@ -91,6 +94,7 @@ Additional tools available in the toolbar include:
 - `tableMergeCells` - Merges the selected cells into one cell.
 - `tableSplitCell` - Splits the selected cell into multiple cells.
 - `tableToggleHeaderRow` - Toggles the header row of the table.
+- `tableToggleHeaderCell` - Toggles the header cell of the table.
 - `tableDelete` - Deletes the table.
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `toolbarButtons()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
@@ -118,11 +122,73 @@ RichEditor::make('content')
             'tableAddColumnBefore', 'tableAddColumnAfter', 'tableDeleteColumn',
             'tableAddRowBefore', 'tableAddRowAfter', 'tableDeleteRow',
             'tableMergeCells', 'tableSplitCell',
-            'tableToggleHeaderRow',
+            'tableToggleHeaderRow', 'tableToggleHeaderCell',
             'tableDelete',
         ],
     ])
 ```
+
+## Customizing text colors
+
+The rich editor includes a text color tool for styling inline text. By default, it uses the [Tailwind CSS color palette](https://tailwindcss.com/docs/colors). In light mode, the 600 shades are applied to text, and in dark mode, the 400 shades are used.
+
+You can customize which colors are available in the picker using the `textColors()` method:
+
+```php
+use Filament\Forms\Components\RichEditor;
+
+RichEditor::make('content')
+    ->textColors([
+        '#ef4444' => 'Red',
+        '#10b981' => 'Green',
+        '#0ea5e9' => 'Sky',
+    ])
+```
+
+If you would like to define different colors for light and dark mode, you can use the a `TextColor` object to define the color:
+
+```php
+use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\RichEditor\TextColor;
+
+RichEditor::make('content')
+    ->textColors([
+        'brand' => TextColor::make('Brand', '#0ea5e9'),
+        'warning' => TextColor::make('Warning', '#f59e0b', darkColor: '#fbbf24'),
+    ])
+```
+
+If you would like to add new colors onto the existing Tailwind palette, you can merge your colors into the `TextColor::getDefaults()` array:
+
+```php
+use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\RichEditor\TextColor;
+
+RichEditor::make('content')
+    ->textColors([
+        'brand' => TextColor::make('Brand', '#0ea5e9'),
+        'warning' => TextColor::make('Warning', '#f59e0b', darkColor: '#fbbf24'),
+        ...TextColor::getDefaults(),
+    ])
+```
+
+When you use a `TextColor` object, the key of the array becomes the stored `data-color` attribute on the `<span>` tag, allowing you to reference the color in your CSS if needed. When you use the color as the array values, the actual color value (e.g., a HEX string) is stored as the `data-color` attribute.
+
+You can also pass `textColors()` to the [content renderer](#rendering-rich-content) and [rich content attribute](#registering-rich-content-attributes) so that server-side rendering matches your editor configuration.
+
+You can also allow users to pick custom colors that aren't in the predefined list by using the `customTextColors()` method:
+
+```php
+use Filament\Forms\Components\RichEditor;
+
+RichEditor::make('content')
+    ->textColors([
+        // ...
+    ])
+    ->customTextColors()
+```
+
+You do not need to use `customTextColors()` on the [content renderer](#rendering-rich-content), as it will automatically render any custom colors that are used in the content.
 
 ## Rendering rich content
 
@@ -179,6 +245,39 @@ RichContentRenderer::make($record->content)
     ->toHtml()
 ```
 
+If you are using [custom text colors](#customizing-text-colors), you can pass an array of colors to the renderer to ensure that the colors are rendered correctly:
+
+```php
+use Filament\Forms\Components\RichEditor\RichContentRenderer;
+use Filament\Forms\Components\RichEditor\TextColor;
+
+RichContentRenderer::make($record->content)
+    ->textColors([
+        'brand' => TextColor::make('Brand', '#0ea5e9', darkColor: '#38bdf8'),
+    ])
+    ->toHtml();
+```
+
+### Styling the rendered content
+
+The rich editor HTML uses a combination of HTML elements, CSS classes, and inline styles to style the content, depending on the features used in the editor. If you render the content in a Filament table column or infolist entry with `prose()`, Filament will automatically apply the necessary styles for you. If you are outputting the content in your own Blade view, you may need to add some additional styles to ensure that the content is styled correctly.
+
+One way of styling the content is to use [Tailwind CSS Typography](https://tailwindcss.com/docs/typography-plugin). This plugin provides a set of pre-defined styles for common HTML elements, such as headings, paragraphs, lists, and tables. You can apply these styles to a container element using the `prose` class:
+
+```blade
+<div class="prose dark:prose-invert">
+    {!! \Filament\Forms\Components\RichEditor\RichContentRenderer::make($record->content) !!}
+</div>
+```
+
+However, some features, such as the grid layout and text colors, require additional styles that are not included in the Tailwind CSS Typography plugin. Filament also includes its own `fi-prose` CSS class that adds these additional styles. Any app that loads Filament's `vendor/filament/support/resources/css/index.css` CSS will have access to this class. The styling is different to the `prose` class, but fits with Filament's design system better:
+
+```blade
+<div class="fi-prose">
+    {!! \Filament\Forms\Components\RichEditor\RichContentRenderer::make($record->content) !!}
+</div>
+```
+
 ## Security
 
 By default, the editor outputs raw HTML, and sends it to the backend. Attackers are able to intercept the value of the component and send a different raw HTML string to the backend. As such, it is important that when outputting the HTML from a rich editor, it is sanitized; otherwise your site may be exposed to Cross-Site Scripting (XSS) vulnerabilities.
@@ -207,7 +306,7 @@ RichEditor::make('content')
 <UtilityInjection set="formFields" version="4.x">As well as allowing static values, the `fileAttachmentsDisk()`, `fileAttachmentsDirectory()`, and `fileAttachmentsVisibility()` methods also accept functions to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 <Aside variant="tip">
-    Filament also supports [`spatie/laravel-medialibrary`](https://github.com/spatie/laravel-medialibrary) for storing rich editor file attachments. See our [plugin documentation](/plugins/filament-spatie-media-library#using-media-library-for-rich-editor-file-attachments) for more information.
+    Filament also supports [`spatie/laravel-medialibrary`](https://github.com/spatie/laravel-medialibrary) for storing rich editor file attachments. See our [plugin documentation](https://filamentphp.com/plugins/filament-spatie-media-library#using-media-library-for-rich-editor-file-attachments) for more information.
 </Aside>
 
 ### Using private images in the editor
@@ -224,6 +323,41 @@ RichContentRenderer::make($record->content)
     ->fileAttachmentsVisibility('private')
     ->toHtml()
 ```
+
+### Validating uploaded images
+
+You may use the `fileAttachmentsAcceptedFileTypes()` method to control a list of accepted mime types for uploaded images. By default, `image/png`, `image/jpeg`, `image/gif`, and `image/webp` are accepted:
+
+```php
+use Filament\Forms\Components\RichEditor;
+
+RichEditor::make('content')
+    ->fileAttachmentsAcceptedFileTypes(['image/png', 'image/jpeg'])
+```
+
+You may use the `fileAttachmentsMaxSize()` method to control the maximum file size for uploaded images. The size is specified in kilobytes. By default, the maximum size is 12288 KB (12 MB):
+
+```php
+use Filament\Forms\Components\RichEditor;
+
+RichEditor::make('content')
+    ->fileAttachmentsMaxSize(5120) // 5 MB
+```
+
+### Allowing users to resize images
+
+By default, images in the editor cannot be resized by the user. You may enable image resizing using the `resizableImages()` method:
+
+```php
+use Filament\Forms\Components\RichEditor;
+
+RichEditor::make('content')
+    ->resizableImages()
+```
+
+When enabled, users can resize images by clicking on them and dragging the resize handles. The aspect ratio is always preserved when resizing.
+
+<UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `resizableImages()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Using custom blocks
 
@@ -450,6 +584,40 @@ RichContentRenderer::make($record->content)
     ->toHtml()
 ```
 
+#### Using HTML content in merge tags
+
+By default, merge tags render their values as plain text. However, you can render HTML content in merge tags by providing values that implement Laravel's `Htmlable` interface. This is useful for inserting formatted content, links, or other HTML elements:
+
+```php
+use Filament\Forms\Components\RichEditor\RichContentRenderer;
+use Illuminate\Support\HtmlString;
+
+RichContentRenderer::make($record->content)
+    ->mergeTags([
+        'user_name' => $record->user->name, // Plain text
+        'user_profile_link' => new HtmlString('<a href="' . route('profile', $record->user) . '">View Profile</a>'),
+    ])
+    ->toHtml()
+```
+
+When a merge tag value implements the `Htmlable` interface (such as `HtmlString`), the system automatically detects this and renders the HTML content without escaping it. Non-`Htmlable` values continue to be rendered as plain text for security.
+
+### Using custom merge tag labels
+
+You may provide custom labels for merge tags that will be displayed in the editor's side panel and content preview using an associative array where the keys are the merge tag names and the values are the labels:
+
+```php
+use Filament\Forms\Components\RichEditor;
+
+RichEditor::make('content')
+    ->mergeTags([
+        'name' => 'Full name',
+        'today' => 'Today\'s date',
+    ])
+```
+
+The labels aren't saved in the content of the editor and are only used for display purposes.
+
 ### Opening the merge tags panel by default
 
 If you want the merge tags panel to be open by default when the rich editor is loaded, you can use the `activePanel('mergeTags')` method:
@@ -465,13 +633,103 @@ RichEditor::make('content')
     ->activePanel('mergeTags')
 ```
 
+## Using mentions
+
+Mentions allow users to insert references to other records (such as users, issues, or tags) by typing a trigger character. When the user types a trigger character like `@`, a dropdown appears allowing them to search and select from available options. The selected mention is inserted as a non-editable inline token.
+
+To register mentions on an editor, use the `mentions()` method with one or more `MentionProvider` instances:
+
+```php
+use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\RichEditor\MentionProvider;
+
+RichEditor::make('content')
+    ->mentions([
+        MentionProvider::make('@')
+            ->items([
+                1 => 'Jane Doe',
+                2 => 'John Smith',
+            ]),
+    ])
+```
+
+Each provider is configured with a trigger character (passed to `make()`) that activates the mention search. You can have multiple providers with different triggers:
+
+```php
+use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\RichEditor\MentionProvider;
+
+RichEditor::make('content')
+    ->mentions([
+        MentionProvider::make('@')
+            ->items([
+                1 => 'Jane Doe',
+                2 => 'John Smith',
+            ]),
+        MentionProvider::make('#')
+            ->items([
+                'bug' => 'Bug',
+                'feature' => 'Feature',
+            ]),
+    ])
+```
+
+### Searching mentions from the database
+
+For large datasets, you should fetch results dynamically using `getSearchResultsUsing()`. The callback receives the search term and should return an array of options with the format `[id => label]`.
+
+When using dynamic search results, only the mention's `id` is stored in the content. To display the correct label when the content is loaded, you must also provide `getLabelsUsing()`. This callback receives an array of IDs and should return an array with the format `[id => label]`:
+
+```php
+use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\RichEditor\MentionProvider;
+
+RichEditor::make('content')
+    ->mentions([
+        MentionProvider::make('@')
+            ->getSearchResultsUsing(fn (string $search): array => User::query()
+                ->where('name', 'like', "%{$search}%")
+                ->orderBy('name')
+                ->limit(10)
+                ->pluck('name', 'id')
+                ->all())
+            ->getLabelsUsing(fn (array $ids): array => User::query()
+                ->whereIn('id', $ids)
+                ->pluck('name', 'id')
+                ->all()),
+    ])
+```
+
+### Rendering content with mentions
+
+When rendering the rich content, you can pass the array of mention providers to the `RichContentRenderer` to ensure that the mentions are rendered correctly.
+
+You can make mentions link to a URL when rendered using the `url()` method. The callback receives the mention's `id` and `label`, and should return a URL string:
+
+```php
+use Filament\Forms\Components\RichEditor\MentionProvider;
+use Filament\Forms\Components\RichEditor\RichContentRenderer;
+
+RichContentRenderer::make($record->content)
+    ->mentions([
+        MentionProvider::make('@')
+            ->getLabelsUsing(fn (array $ids): array => User::query()
+                ->whereIn('id', $ids)
+                ->pluck('name', 'id')
+                ->all())
+            ->url(fn (string $id, string $label): string => route('users.show', $id)),
+    ])
+    ->toHtml()
+```
+
 ## Registering rich content attributes
 
-There are elements of the rich editor configuration that apply to both the editor and the renderer. For example, if you are using [private images](#using-private-images-in-the-editor), [custom blocks](#using-custom-blocks), [merge tags](#using-merge-tags), or [plugins](#extending-the-rich-editor), you need to ensure that the same configuration is used in both places. To do this, Filament provides you with a way to register rich content attributes that can be used in both the editor and the renderer.
+There are elements of the rich editor configuration that apply to both the editor and the renderer. For example, if you are using [private images](#using-private-images-in-the-editor), [custom blocks](#using-custom-blocks), [merge tags](#using-merge-tags), [mentions](#using-mentions), or [plugins](#extending-the-rich-editor), you need to ensure that the same configuration is used in both places. To do this, Filament provides you with a way to register rich content attributes that can be used in both the editor and the renderer.
 
 To register rich content attributes on an Eloquent model, you should use the `InteractsWithRichContent` trait and implement the `HasRichContent` interface. This allows you to register the attributes in the `setUpRichContent()` method:
 
 ```php
+use Filament\Forms\Components\RichEditor\MentionProvider;
 use Filament\Forms\Components\RichEditor\Models\Concerns\InteractsWithRichContent;
 use Filament\Forms\Components\RichEditor\Models\Contracts\HasRichContent;
 use Illuminate\Database\Eloquent\Model;
@@ -495,6 +753,21 @@ class Post extends Model implements HasRichContent
                 'name' => fn (): string => $this->user->name,
                 'today' => now()->toFormattedDateString(),
             ])
+            ->mergeTagLabels([
+                'name' => 'Full name',
+                'today' => 'Today\'s date',
+            ])
+            ->mentions([
+                MentionProvider::make('@')
+                    ->items([
+                        1 => 'Jane Doe',
+                        2 => 'John Smith',
+                    ]),
+            ])
+            ->textColors(
+                'brand' => TextColor::make('Brand', '#0ea5e9', darkColor: '#38bdf8'),
+            )
+            ->customTextColors()
             ->plugins([
                 HighlightRichContentPlugin::make(),
             ]);
@@ -607,7 +880,7 @@ class HighlightRichContentPlugin implements RichContentPlugin
                 ->jsHandler('$getEditor()?.chain().focus().toggleHighlight().run()')
                 ->icon(Heroicon::CursorArrowRays),
             RichEditorTool::make('highlightWithCustomColor')
-                ->action(arguments: '{ color: $getEditor().getAttributes(\'mark\')?.data-color }')
+                ->action(arguments: '{ color: $getEditor().getAttributes(\'highlight\')?.[\'data-color\'] }')
                 ->icon(Heroicon::CursorArrowRipple),
         ];
     }

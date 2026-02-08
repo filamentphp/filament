@@ -112,7 +112,7 @@ class Column extends ViewComponent
      */
     protected function resolveDefaultClosureDependencyForEvaluationByType(string $parameterType): array
     {
-        $record = $this->getRecord();
+        $record = is_a($parameterType, Model::class, allow_string: true) ? $this->getRecord() : null;
 
         if (! $record) {
             return parent::resolveDefaultClosureDependencyForEvaluationByType($parameterType);
@@ -160,7 +160,7 @@ class Column extends ViewComponent
         $attributes = $attributes
             ->merge([
                 'type' => ($wrapperTag === 'button') ? 'button' : null,
-                'wire:click' => $wireClickAction = match (true) {
+                'wire:click.prevent.stop' => $wireClickAction = match (true) {
                     ($wrapperTag !== 'button') => null,
                     $action instanceof Action => "mountTableAction('{$action->getName()}', '{$this->getRecordKey()}')",
                     filled($action) => "callTableColumnAction('{$this->getName()}', '{$this->getRecordKey()}')",
@@ -187,5 +187,15 @@ class Column extends ViewComponent
         </<?= $wrapperTag ?>>
 
         <?php return new HtmlString(ob_get_clean());
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function getExtraViewData(): array
+    {
+        return [
+            'record' => $this->getRecord(),
+        ];
     }
 }

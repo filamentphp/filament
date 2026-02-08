@@ -7,15 +7,15 @@ return [
     'actions' => [
 
         'cancel' => [
-            'label' => 'Cancel',
+            'label' => 'Sûtna',
         ],
 
         'confirm' => [
-            'label' => 'Confirm',
+            'label' => 'Nemnghehna',
         ],
 
         'submit' => [
-            'label' => 'Submit',
+            'label' => 'Theh lûhna',
         ],
 
     ],

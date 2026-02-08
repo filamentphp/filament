@@ -7,7 +7,10 @@ use Filament\Actions\Action;
 use Filament\Auth\MultiFactor\Contracts\MultiFactorAuthenticationProvider;
 use Filament\Billing\Providers\Contracts\BillingProvider;
 use Filament\Contracts\Plugin;
+use Filament\Enums\DatabaseNotificationsPosition;
+use Filament\Enums\GlobalSearchPosition;
 use Filament\Enums\ThemeMode;
+use Filament\Enums\UserMenuPosition;
 use Filament\FilamentManager;
 use Filament\GlobalSearch\Providers\Contracts\GlobalSearchProvider;
 use Filament\Models\Contracts\HasTenants;
@@ -45,7 +48,9 @@ use Livewire\Component;
  * @method static Panel | null getCurrentPanel()
  * @method static Panel | null getCurrentOrDefaultPanel()
  * @method static string | Htmlable | null getDarkModeBrandLogo()
+ * @method static class-string<Component> getDatabaseNotificationsLivewireComponent()
  * @method static string | null getDatabaseNotificationsPollingInterval()
+ * @method static DatabaseNotificationsPosition getDatabaseNotificationsPosition()
  * @method static string getDefaultAvatarProvider()
  * @method static Panel getDefaultPanel()
  * @method static string | null getEmailVerificationPromptUrl(array<string, mixed> $parameters = [])
@@ -59,6 +64,9 @@ use Livewire\Component;
  * @method static Htmlable getFontHtml()
  * @method static Htmlable getMonoFontHtml()
  * @method static Htmlable getSerifFontHtml()
+ * @method static Htmlable getFontPreloadHtml()
+ * @method static Htmlable getMonoFontPreloadHtml()
+ * @method static Htmlable getSerifFontPreloadHtml()
  * @method static string getFontProvider()
  * @method static string getMonoFontProvider()
  * @method static string getSerifFontProvider()
@@ -68,6 +76,7 @@ use Livewire\Component;
  * @method static string getGlobalSearchDebounce()
  * @method static array<string> getGlobalSearchKeyBindings()
  * @method static GlobalSearchProvider | null getGlobalSearchProvider()
+ * @method static GlobalSearchPosition getGlobalSearchPosition()
  * @method static string | null getHomeUrl()
  * @method static string | null getLoginUrl(array<string, mixed> $parameters = [])
  * @method static string getLogoutUrl(array<string, mixed> $parameters = [])
@@ -112,6 +121,7 @@ use Livewire\Component;
  * @method static string | null getUserAvatarUrl(Model | Authenticatable $user)
  * @method static Model | null getUserDefaultTenant(HasTenants | Model | Authenticatable $user)
  * @method static array<Action> getUserMenuItems()
+ * @method static UserMenuPosition getUserMenuPosition()
  * @method static string getUserName(Model | Authenticatable $user)
  * @method static array<Model> getUserTenants(HasTenants | Model | Authenticatable $user)
  * @method static string | null getUrl(Model | null $tenant = null)
@@ -149,6 +159,8 @@ use Livewire\Component;
  * @method static bool isServing()
  * @method static bool isSidebarCollapsibleOnDesktop()
  * @method static bool isSidebarFullyCollapsibleOnDesktop()
+ * @method static bool hasTenantSwitcher()
+ * @method static ?bool isTenantMenuSearchable()
  * @method static void serving(Closure $callback)
  * @method static void setCurrentPanel(Panel | string | null $panel = null)
  * @method static void setServingStatus(bool $condition = true)

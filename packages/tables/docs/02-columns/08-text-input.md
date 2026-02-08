@@ -2,6 +2,7 @@
 title: Text input column
 ---
 import AutoScreenshot from "@components/AutoScreenshot.astro"
+import UtilityInjection from "@components/UtilityInjection.astro"
 
 ## Introduction
 
@@ -36,6 +37,31 @@ use Filament\Tables\Columns\TextInputColumn;
 TextInputColumn::make('background_color')->type('color')
 ```
 
+## Setting the HTML input mode
+
+You may use the `inputMode()` method to set the [HTML inputmode attribute](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/inputmode), which hints at the type of keyboard to show on mobile. For numeric inputs, use `inputMode('decimal')` for decimal values or `inputMode('numeric')` for integers:
+
+```php
+use Filament\Tables\Columns\TextInputColumn;
+
+TextInputColumn::make('quantity')
+    ->type('number')
+    ->inputMode('decimal')
+```
+
+## Setting the numeric step
+
+When using `type('number')`, you may use the `step()` method to set the [HTML step attribute](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/number#step). Use `step('any')` for decimal values or `step('1')` for integers:
+
+```php
+use Filament\Tables\Columns\TextInputColumn;
+
+TextInputColumn::make('quantity')
+    ->type('number')
+    ->inputMode('decimal')
+    ->step('1')
+```
+
 ## Lifecycle hooks
 
 Hooks may be used to execute code at various points within the input's lifecycle:
@@ -49,3 +75,47 @@ TextInputColumn::make()
         // Runs after the state is saved to the database.
     })
 ```
+
+## Adding affix text aside the field
+
+You may place text before and after the input using the `prefix()` and `suffix()` methods:
+
+```php
+use Filament\Tables\Columns\TextInputColumn;
+
+TextInputColumn::make('domain')
+    ->prefix('https://')
+    ->suffix('.com')
+```
+
+<UtilityInjection set="tableColumns" version="4.x">As well as allowing static values, the `prefix()` and `suffix()` methods also accept a function to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+### Using icons as affixes
+
+You may place an [icon](../../styling/icons) before and after the input using the `prefixIcon()` and `suffixIcon()` methods:
+
+```php
+use Filament\Tables\Columns\TextInputColumn;
+use Filament\Support\Icons\Heroicon;
+
+TextInputColumn::make('domain')
+    ->prefixIcon(Heroicon::GlobeAlt)
+    ->suffixIcon(Heroicon::CheckCircle)
+```
+
+<UtilityInjection set="tableColumns" version="4.x">As well as allowing static values, the `prefixIcon()` and `suffixIcon()` methods also accept a function to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+#### Setting the affix icon's color
+
+Affix icons are gray by default, but you may set a different color using the `prefixIconColor()` and `suffixIconColor()` methods:
+
+```php
+use Filament\Tables\Columns\TextInputColumn;
+use Filament\Support\Icons\Heroicon;
+
+TextInputColumn::make('status')
+    ->suffixIcon(Heroicon::CheckCircle)
+    ->suffixIconColor('success')
+```
+
+<UtilityInjection set="tableColumns" version="4.x">As well as allowing static values, the `prefixIconColor()` and `suffixIconColor()` methods also accept a function to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>

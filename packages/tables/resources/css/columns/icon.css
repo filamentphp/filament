@@ -13,6 +13,10 @@
         @apply px-3 py-4;
     }
 
+    .fi-ta-table-stacked-on-mobile & {
+        @apply p-0 sm:px-3 sm:py-4;
+    }
+
     &.fi-align-start,
     &.fi-align-left {
         @apply justify-start;
@@ -32,7 +36,8 @@
         @apply justify-between;
     }
 
-    & > .fi-icon {
+    & > .fi-icon,
+    & > a > .fi-icon {
         @apply text-gray-400 dark:text-gray-500;
 
         &.fi-color {

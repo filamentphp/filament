@@ -6,6 +6,17 @@ return [
 
         'heading' => 'คอลัมน์',
 
+        'actions' => [
+
+            'apply' => [
+                'label' => 'ใช้งาน',
+            ],
+
+            'reset' => [
+                'label' => 'รีเซ็ต',
+            ],
+
+        ],
     ],
 
     'columns' => [
@@ -103,9 +114,9 @@ return [
 
     'empty' => [
 
-        'heading' => 'ไม่มี:model',
+        'heading' => 'ไม่พบข้อมูล :model',
 
-        'description' => 'เพิ่ม:modelเพื่อเริ่มต้น',
+        'description' => 'เริ่มสร้าง :model เพื่อเริ่มต้นใช้งาน',
 
     ],
 

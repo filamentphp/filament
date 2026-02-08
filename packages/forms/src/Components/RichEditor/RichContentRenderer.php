@@ -9,12 +9,18 @@ use Filament\Forms\Components\RichEditor\TipTapExtensions\CustomBlockExtension;
 use Filament\Forms\Components\RichEditor\TipTapExtensions\DetailsContentExtension;
 use Filament\Forms\Components\RichEditor\TipTapExtensions\DetailsExtension;
 use Filament\Forms\Components\RichEditor\TipTapExtensions\DetailsSummaryExtension;
+use Filament\Forms\Components\RichEditor\TipTapExtensions\GridColumnExtension;
+use Filament\Forms\Components\RichEditor\TipTapExtensions\GridExtension;
 use Filament\Forms\Components\RichEditor\TipTapExtensions\ImageExtension;
 use Filament\Forms\Components\RichEditor\TipTapExtensions\LeadExtension;
+use Filament\Forms\Components\RichEditor\TipTapExtensions\MentionExtension;
 use Filament\Forms\Components\RichEditor\TipTapExtensions\MergeTagExtension;
+use Filament\Forms\Components\RichEditor\TipTapExtensions\RawHtmlMergeTagExtension;
 use Filament\Forms\Components\RichEditor\TipTapExtensions\RenderedCustomBlockExtension;
 use Filament\Forms\Components\RichEditor\TipTapExtensions\SmallExtension;
+use Filament\Forms\Components\RichEditor\TipTapExtensions\TextColorExtension;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Support\Traits\Macroable;
@@ -79,9 +85,24 @@ class RichContentRenderer implements Htmlable
     protected ?array $customBlocks = null;
 
     /**
+     * @var ?array<MentionProvider>
+     */
+    protected ?array $mentionProviders = null;
+
+    /**
      * @var array<string, mixed>
      */
     protected array $cachedMergeTagValues = [];
+
+    /**
+     * @var array<Closure>
+     */
+    protected array $nodeProcessors = [];
+
+    /**
+     * @var ?array<string, string | TextColor>
+     */
+    protected ?array $textColors = null;
 
     /**
      * @param  string | array<string, mixed> | null  $content
@@ -214,6 +235,15 @@ class RichContentRenderer implements Htmlable
 
     protected function processMergeTags(Editor $editor): void
     {
+        $editor->descendants(function (object &$node): void {
+            if ($node->type !== 'rawHtmlMergeTag') {
+                return;
+            }
+
+            $node->type = 'mergeTag';
+            unset($node->html);
+        });
+
         if (blank($this->mergeTags)) {
             return;
         }
@@ -227,13 +257,98 @@ class RichContentRenderer implements Htmlable
                 return;
             }
 
+            $value = $this->getMergeTagValue($node->attrs->id);
+
+            if ($value instanceof Htmlable) {
+                $node->type = 'rawHtmlMergeTag';
+                $node->html = $value->toHtml();
+
+                return;
+            }
+
             $node->content = [
                 (object) [
                     'type' => 'text',
-                    'text' => $this->getMergeTagValue($node->attrs->id),
+                    'text' => $value,
                 ],
             ];
         });
+    }
+
+    protected function processMentions(Editor $editor): void
+    {
+        if (blank($this->mentionProviders)) {
+            return;
+        }
+
+        $mentionsByChar = [];
+
+        $editor->descendants(function (object &$node) use (&$mentionsByChar): void {
+            if ($node->type !== 'mention') {
+                return;
+            }
+
+            $id = $node->attrs->id ?? null;
+
+            if (blank($id)) {
+                return;
+            }
+
+            $char = $node->attrs->char ?? '@';
+            $mentionsByChar[$char][] = (string) $id;
+        });
+
+        $labelsByChar = [];
+
+        foreach ($mentionsByChar as $char => $ids) {
+            $provider = $this->getMentionProvider($char);
+
+            if ($provider) {
+                $labelsByChar[$char] = $provider->getLabels(array_unique($ids));
+            }
+        }
+
+        $editor->descendants(function (object &$node) use ($labelsByChar): void {
+            if ($node->type !== 'mention') {
+                return;
+            }
+
+            $id = $node->attrs->id ?? null;
+            $char = $node->attrs->char ?? '@';
+
+            if (blank($id)) {
+                return;
+            }
+
+            $provider = $this->getMentionProvider($char);
+
+            if (! $provider) {
+                return;
+            }
+
+            $label = $labelsByChar[$char][(string) $id] ?? $node->attrs->label ?? (string) $id;
+            $node->attrs->label = $label;
+
+            $url = $provider->getUrl((string) $id, $label);
+
+            if ($url) {
+                $node->attrs->href = $url;
+            }
+        });
+    }
+
+    public function processNodesUsing(Closure $callback): static
+    {
+        $this->nodeProcessors[] = $callback;
+
+        return $this;
+    }
+
+    protected function processNodes(Editor $editor): void
+    {
+        foreach ($this->nodeProcessors as $processor) {
+            $editor->descendants($processor);
+        }
     }
 
     /**
@@ -250,6 +365,14 @@ class RichContentRenderer implements Htmlable
     public function getTipTapPhpExtensions(): array
     {
         return [
+            ...array_reduce(
+                $this->getPlugins(),
+                fn (array $carry, RichContentPlugin $plugin): array => [
+                    ...$carry,
+                    ...$plugin->getTipTapPhpExtensions(),
+                ],
+                initial: [],
+            ),
             app(Blockquote::class),
             app(Bold::class),
             app(BulletList::class),
@@ -260,6 +383,8 @@ class RichContentRenderer implements Htmlable
             app(DetailsExtension::class),
             app(DetailsSummaryExtension::class),
             app(Document::class),
+            app(GridColumnExtension::class),
+            app(GridExtension::class),
             app(HardBreak::class),
             app(Heading::class),
             app(Highlight::class),
@@ -269,11 +394,18 @@ class RichContentRenderer implements Htmlable
             app(LeadExtension::class),
             app(Link::class),
             app(ListItem::class),
+            app(MentionExtension::class),
             app(MergeTagExtension::class),
             app(OrderedList::class),
             app(Paragraph::class),
+            app(RawHtmlMergeTagExtension::class),
             app(RenderedCustomBlockExtension::class),
             app(SmallExtension::class),
+            app(TextColorExtension::class, [
+                'options' => [
+                    'textColors' => $this->getTextColors(),
+                ],
+            ]),
             app(Strike::class),
             app(Subscript::class),
             app(Superscript::class),
@@ -290,14 +422,6 @@ class RichContentRenderer implements Htmlable
                 ],
             ]),
             app(Underline::class),
-            ...array_reduce(
-                $this->getPlugins(),
-                fn (array $carry, RichContentPlugin $plugin): array => [
-                    ...$carry,
-                    ...$plugin->getTipTapPhpExtensions(),
-                ],
-                initial: [],
-            ),
         ];
     }
 
@@ -341,6 +465,8 @@ class RichContentRenderer implements Htmlable
         $this->processCustomBlocks($editor);
         $this->processFileAttachments($editor);
         $this->processMergeTags($editor);
+        $this->processMentions($editor);
+        $this->processNodes($editor);
 
         return $editor->getHTML();
     }
@@ -357,6 +483,21 @@ class RichContentRenderer implements Htmlable
         $this->processMergeTags($editor);
 
         return $editor->getText();
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function toArray(): array
+    {
+        if (empty($this->content)) {
+            return [];
+        }
+
+        $editor = $this->getEditor();
+        $this->processMergeTags($editor);
+
+        return json_decode($editor->getJSON(), true);
     }
 
     /**
@@ -399,5 +540,61 @@ class RichContentRenderer implements Htmlable
         }
 
         return null;
+    }
+
+    /**
+     * @param  ?array<MentionProvider>  $providers
+     */
+    public function mentions(?array $providers): static
+    {
+        $this->mentionProviders = $providers;
+
+        return $this;
+    }
+
+    /**
+     * @return ?array<MentionProvider>
+     */
+    public function getMentionProviders(): ?array
+    {
+        return $this->mentionProviders;
+    }
+
+    public function getMentionProvider(string $char): ?MentionProvider
+    {
+        if (blank($this->mentionProviders)) {
+            return null;
+        }
+
+        foreach ($this->mentionProviders as $provider) {
+            if ($provider->getChar() === $char) {
+                return $provider;
+            }
+        }
+
+        return $this->mentionProviders[0] ?? null;
+    }
+
+    /**
+     * @param  ?array<string, string | TextColor>  $colors
+     */
+    public function textColors(?array $colors): static
+    {
+        $this->textColors = $colors;
+
+        return $this;
+    }
+
+    /**
+     * @return array<string, string | TextColor>
+     */
+    public function getTextColors(): array
+    {
+        $textColors = $this->textColors ?? TextColor::getDefaults();
+
+        return Arr::mapWithKeys(
+            $textColors,
+            fn (string | TextColor $color, string $name): array => [$name => ($color instanceof TextColor) ? $color : TextColor::make($color, $name)],
+        );
     }
 }

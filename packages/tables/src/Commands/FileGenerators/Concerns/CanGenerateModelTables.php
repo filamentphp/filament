@@ -134,21 +134,16 @@ trait CanGenerateModelTables
                     default => TextColumn::class,
                 };
 
-                if ((in_array($type['name'], [
-                    'string',
-                    'char',
-                ]) && ($columnData['type'] === TextColumn::class)) || filled($guessedRelationshipName)) {
-                    $columnData['searchable'] = [];
+                if (($type['name'] === 'enum') || array_key_exists($columnName, $this->getEnumCasts($model))) {
+                    $columnData['badge'] = [];
                 }
 
                 if ($type['name'] === 'date') {
                     $columnData['date'] = [];
-                    $columnData['sortable'] = [];
                 }
 
                 if ($type['name'] === 'time') {
                     $columnData['time'] = [];
-                    $columnData['sortable'] = [];
                 }
 
                 if (in_array($type['name'], [
@@ -156,7 +151,6 @@ trait CanGenerateModelTables
                     'timestamp',
                 ])) {
                     $columnData['dateTime'] = [];
-                    $columnData['sortable'] = [];
                 }
 
                 if (in_array($type['name'], [
@@ -166,11 +160,34 @@ trait CanGenerateModelTables
                     'double',
                     'money',
                 ]) && blank($guessedRelationshipName)) {
-                    $columnData[in_array($columnName, [
+                    $columnData[(in_array($columnName, [
                         'cost',
                         'money',
                         'price',
-                    ]) || $type['name'] === 'money' ? 'money' : 'numeric'] = [];
+                    ]) || str($columnName)->endsWith([
+                        '_cost',
+                        '_price',
+                    ]) || $type['name'] === 'money') ? 'money' : 'numeric'] = [];
+                }
+
+                if ((in_array($type['name'], [
+                    'string',
+                    'char',
+                ]) && ($columnData['type'] === TextColumn::class)) || filled($guessedRelationshipName)) {
+                    $columnData['searchable'] = [];
+                }
+
+                if (in_array($type['name'], [
+                    'date',
+                    'time',
+                    'datetime',
+                    'timestamp',
+                    'integer',
+                    'decimal',
+                    'float',
+                    'double',
+                    'money',
+                ]) && blank($guessedRelationshipName)) {
                     $columnData['sortable'] = [];
                 }
             }

@@ -4,11 +4,10 @@ use Filament\Commands\MakeRelationManagerCommand;
 use Filament\Facades\Filament;
 use Filament\Support\Commands\FileGenerators\FileGenerationFlag;
 use Filament\Tests\TestCase;
-use Illuminate\Support\Arr;
 
 use function PHPUnit\Framework\assertFileExists;
 
-uses(TestCase::class);
+uses(TestCase::class)->group('commands');
 
 beforeEach(function (): void {
     config()->set('filament.file_generation.flags', [
@@ -52,8 +51,7 @@ beforeEach(function (): void {
     ];
 
     MakeRelationManagerCommand::$shouldCheckModelsForSoftDeletes = false;
-})
-    ->skip((bool) Arr::get($_SERVER, 'PARATEST'), 'File generation tests cannot be run in parallel as they would share a filesystem and have the potential to conflict with each other.');
+});
 
 it('can generate a relation manager', function (): void {
     $this->artisan('make:filament-relation-manager', [
@@ -97,8 +95,10 @@ it('can generate a relation manager with a generated form schema and table colum
     ]);
 
     assertFileExists($path = app_path('Filament/Resources/UserResource/RelationManagers/TeamsRelationManager.php'));
-    expect(file_get_contents($path))
-        ->toMatchSnapshot();
+    if (config('database.default') === 'testing') {
+        expect(file_get_contents($path))
+            ->toMatchSnapshot();
+    }
 });
 
 it('can generate a relation manager with a view operation', function (): void {

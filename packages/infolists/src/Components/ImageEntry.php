@@ -8,6 +8,7 @@ use Filament\Support\Concerns\CanWrap;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\TextSize;
 use Illuminate\Contracts\Filesystem\Filesystem;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
@@ -439,6 +440,8 @@ class ImageEntry extends Entry implements HasEmbeddedView
                         ? '{
                             content: ' . Js::from($tooltip) . ',
                             theme: $store.theme,
+                            allowHTML: ' . Js::from($tooltip instanceof Htmlable) . ',
+
                         }'
                         : null,
                 ], escape: false);
@@ -448,7 +451,7 @@ class ImageEntry extends Entry implements HasEmbeddedView
             ob_start(); ?>
 
             <div <?= $attributes->toHtml() ?>>
-                <?php if (filled($placeholder !== null)) { ?>
+                <?php if (filled($placeholder)) { ?>
                     <p class="fi-in-placeholder">
                         <?= e($placeholder) ?>
                     </p>
@@ -500,6 +503,7 @@ class ImageEntry extends Entry implements HasEmbeddedView
                         ? '{
                                 content: ' . Js::from($tooltip) . ',
                                 theme: $store.theme,
+                                allowHTML: ' . Js::from($tooltip instanceof Htmlable) . ',
                             }'
                         : null,
                 ], escape: false)

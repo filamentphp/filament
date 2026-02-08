@@ -10,6 +10,7 @@ use Filament\Forms\Components\Contracts\HasNestedRecursiveValidationRules;
 use Filament\Forms\Components\Field;
 use Filament\Schemas\Components\Component;
 use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Arr;
@@ -769,7 +770,17 @@ trait CanBeValidated
 
     public function getValidationAttribute(): string
     {
-        return $this->evaluate($this->validationAttribute) ?? Str::lcfirst($this->getLabel());
+        if (filled($validationAttribute = $this->evaluate($this->validationAttribute))) {
+            return $validationAttribute;
+        }
+
+        $label = $this->getLabel();
+
+        if ($label instanceof Htmlable) {
+            $label = $this->getDefaultLabel();
+        }
+
+        return Str::lcfirst($label);
     }
 
     /**
@@ -941,11 +952,7 @@ trait CanBeValidated
             $date = $component->evaluate($date);
 
             if (! (strtotime($date) || $isStatePathAbsolute)) {
-                $containerStatePath = $component->getContainer()->getStatePath();
-
-                if ($containerStatePath) {
-                    $date = "{$containerStatePath}.{$date}";
-                }
+                $date = $component->resolveRelativeStatePath($date);
             }
 
             return "{$rule}:{$date}";
@@ -960,11 +967,7 @@ trait CanBeValidated
             $statePath = $component->evaluate($statePath);
 
             if (! $isStatePathAbsolute) {
-                $containerStatePath = $component->getContainer()->getStatePath();
-
-                if ($containerStatePath) {
-                    $statePath = "{$containerStatePath}.{$statePath}";
-                }
+                $statePath = $component->resolveRelativeStatePath($statePath);
             }
 
             return "{$rule}:{$statePath}";
@@ -986,15 +989,10 @@ trait CanBeValidated
                     $statePaths = explode(',', $statePaths);
                 }
 
-                $containerStatePath = $component->getContainer()->getStatePath();
-
-                if ($containerStatePath) {
-                    $statePaths = array_map(function ($statePath) use ($containerStatePath) {
-                        $statePath = trim($statePath);
-
-                        return "{$containerStatePath}.{$statePath}";
-                    }, $statePaths);
-                }
+                $statePaths = array_map(
+                    fn (string $statePath): string => $component->resolveRelativeStatePath(trim($statePath)),
+                    $statePaths,
+                );
             }
 
             if (is_array($statePaths)) {
@@ -1014,17 +1012,19 @@ trait CanBeValidated
             $stateValues = $component->evaluate($stateValues);
 
             if (! $isStatePathAbsolute) {
-                $containerStatePath = $component->getContainer()->getStatePath();
-
-                if ($containerStatePath) {
-                    $statePath = "{$containerStatePath}.{$statePath}";
-                }
+                $statePath = $component->resolveRelativeStatePath($statePath);
             }
 
             if (is_array($stateValues)) {
+                $stateValues = array_map(
+                    static fn ($value) => $value instanceof BackedEnum ? $value->value : $value,
+                    $stateValues
+                );
                 $stateValues = implode(',', $stateValues);
             } elseif (is_bool($stateValues)) {
                 $stateValues = $stateValues ? 'true' : 'false';
+            } elseif ($stateValues instanceof BackedEnum) {
+                $stateValues = $stateValues->value;
             }
 
             return "{$rule}:{$statePath},{$stateValues}";

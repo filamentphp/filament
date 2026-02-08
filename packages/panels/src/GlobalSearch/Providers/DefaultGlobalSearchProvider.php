@@ -11,7 +11,14 @@ class DefaultGlobalSearchProvider implements Contracts\GlobalSearchProvider
     {
         $builder = GlobalSearchResults::make();
 
-        foreach (Filament::getResources() as $resource) {
+        $resources = Filament::getResources();
+
+        usort(
+            $resources,
+            fn (string $a, string $b): int => ($a::getGlobalSearchSort() ?? 0) <=> ($b::getGlobalSearchSort() ?? 0),
+        );
+
+        foreach ($resources as $resource) {
             if (! $resource::canGloballySearch()) {
                 continue;
             }

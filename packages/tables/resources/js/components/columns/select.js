@@ -8,6 +8,7 @@ export default function selectTableColumn({
     getSearchResultsUsing,
     hasDynamicOptions,
     hasDynamicSearchResults,
+    hasInitialNoOptionsMessage,
     initialOptionLabel,
     isDisabled,
     isHtmlAllowed,
@@ -15,6 +16,7 @@ export default function selectTableColumn({
     isSearchable,
     loadingMessage,
     name,
+    noOptionsMessage,
     noSearchResultsMessage,
     options,
     optionsLimit,
@@ -36,39 +38,43 @@ export default function selectTableColumn({
 
         state,
 
+        unsubscribeLivewireHook: null,
+
         init() {
             if (!isNative) {
                 this.select = new Select({
-                    element: this.$refs.select,
-                    options,
-                    placeholder,
-                    state: this.state,
                     canOptionLabelsWrap,
                     canSelectPlaceholder,
-                    initialOptionLabel,
-                    isHtmlAllowed,
-                    isDisabled,
-                    isSearchable,
+                    element: this.$refs.select,
                     getOptionLabelUsing,
                     getOptionsUsing,
                     getSearchResultsUsing,
                     hasDynamicOptions,
                     hasDynamicSearchResults,
-                    searchPrompt,
-                    searchDebounce,
+                    hasInitialNoOptionsMessage,
+                    initialOptionLabel,
+                    isDisabled,
+                    isHtmlAllowed,
+                    isSearchable,
                     loadingMessage,
-                    searchingMessage,
+                    noOptionsMessage,
                     noSearchResultsMessage,
-                    optionsLimit,
-                    position,
-                    searchableOptionFields,
                     onStateChange: (newState) => {
                         this.state = newState
                     },
+                    options,
+                    optionsLimit,
+                    placeholder,
+                    position,
+                    searchableOptionFields,
+                    searchDebounce,
+                    searchingMessage,
+                    searchPrompt,
+                    state: this.state,
                 })
             }
 
-            Livewire.hook(
+            this.unsubscribeLivewireHook = Livewire.hook(
                 'commit',
                 ({ component, commit, succeed, fail, respond }) => {
                     succeed(({ snapshot, effect }) => {
@@ -160,6 +166,15 @@ export default function selectTableColumn({
             }
 
             return state
+        },
+
+        destroy() {
+            this.unsubscribeLivewireHook?.()
+
+            if (this.select) {
+                this.select.destroy()
+                this.select = null
+            }
         },
     }
 }

@@ -284,6 +284,10 @@ return [
 
     'markdown_editor' => [
 
+        'file_attachments_accepted_file_types_message' => 'يجب أن تكون الملفات المرفوعة من نوع: :values.',
+
+        'file_attachments_max_size_message' => 'يجب ألا يتجاوز حجم الملفات المرفوعة :max كيلوبايت.',
+
         'tools' => [
             'attach_files' => 'إرفاق ملفات',
             'blockquote' => 'اقتباس',
@@ -443,6 +447,71 @@ return [
 
             ],
 
+            'grid' => [
+
+                'label' => 'شبكة',
+
+                'modal' => [
+
+                    'heading' => 'شبكة',
+
+                    'form' => [
+
+                        'preset' => [
+
+                            'label' => 'نمط جاهز',
+
+                            'placeholder' => 'بدون',
+
+                            'options' => [
+                                'two' => 'عمودان',
+                                'three' => 'ثلاث أعمدة',
+                                'four' => 'أربع أعمدة',
+                                'five' => 'خمس أعمدة',
+                                'two_start_third' => 'عمودان (الثلث في البداية)',
+                                'two_end_third' => 'عمودان (الثلث في النهاية)',
+                                'two_start_fourth' => 'عمودان (الربع في البداية)',
+                                'two_end_fourth' => 'عمودان (الربع في النهاية)',
+                            ],
+                        ],
+
+                        'columns' => [
+                            'label' => 'الأعمدة',
+                        ],
+
+                        'from_breakpoint' => [
+
+                            'label' => 'من نقطة التوقف',
+
+                            'options' => [
+                                'default' => 'الكل',
+                                'sm' => 'صغير',
+                                'md' => 'متوسط',
+                                'lg' => 'كبير',
+                                'xl' => 'كبير جداً',
+                                '2xl' => 'كبير جداً جداً',
+                            ],
+
+                        ],
+
+                        'is_asymmetric' => [
+                            'label' => 'عمودين غير متماثلين',
+                        ],
+
+                        'start_span' => [
+                            'label' => 'امتداد البداية',
+                        ],
+
+                        'end_span' => [
+                            'label' => 'امتداد النهاية',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
             'link' => [
 
                 'label' => 'تعديل',
@@ -467,9 +536,44 @@ return [
 
             ],
 
+            'text_color' => [
+
+                'label' => 'لون النص',
+
+                'modal' => [
+
+                    'heading' => 'لون النص',
+
+                    'form' => [
+
+                        'color' => [
+                            'label' => 'اللون',
+                        ],
+
+                        'custom_color' => [
+                            'label' => 'لون مخصص',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
         ],
 
+        'file_attachments_accepted_file_types_message' => 'يجب أن تكون الملفات المرفوعة من نوع: :values.',
+
+        'file_attachments_max_size_message' => 'يجب ألا يتجاوز حجم الملفات المرفوعة :max كيلوبايت.',
+
         'no_merge_tag_search_results_message' => 'لا توجد نتائج لوسوم الدمج.',
+
+        'mentions' => [
+            'no_options_message' => 'لا توجد خيارات متاحة.',
+            'no_search_results_message' => 'لا توجد نتائج تتطابق مع بحثك.',
+            'search_prompt' => 'ابدأ بالكتابة للبحث...',
+            'searching_message' => 'جاري البحث...',
+        ],
 
         'tools' => [
             'align_center' => 'محاذاة للوسط',
@@ -488,6 +592,8 @@ return [
             'h1' => 'عنوان',
             'h2' => 'عنوان رئيسي',
             'h3' => 'عنوان فرعي',
+            'grid' => 'شبكة',
+            'grid_delete' => 'حذف الشبكة',
             'highlight' => 'تظليل',
             'horizontal_rule' => 'خط أفقي',
             'italic' => 'مائل',
@@ -511,9 +617,13 @@ return [
             'table_merge_cells' => 'دمج الخلايا',
             'table_split_cell' => 'فصل الخلايا',
             'table_toggle_header_row' => 'إظهار/إخفاء الترويسة',
+            'table_toggle_header_cell' => 'إظهار/إخفاء الخلية',
+            'text_color' => 'لون النص',
             'underline' => 'خط اسفل النص',
             'undo' => 'تراجع',
         ],
+
+        'uploading_file_message' => 'جاري رفع الملف...',
 
     ],
 
@@ -576,6 +686,8 @@ return [
 
         'max_items_message' => 'يمكنك اختيار :count فقط.',
 
+        'no_options_message' => 'لا توجد خيارات متاحة.',
+
         'no_search_results_message' => 'لا توجد خيارات تطابق بحثك.',
 
         'placeholder' => 'اختر',
@@ -587,7 +699,17 @@ return [
     ],
 
     'tags_input' => [
+
+        'actions' => [
+
+            'delete' => [
+                'label' => 'حذف',
+            ],
+
+        ],
+
         'placeholder' => 'كلمة مفتاحية جديدة',
+
     ],
 
     'text_input' => [

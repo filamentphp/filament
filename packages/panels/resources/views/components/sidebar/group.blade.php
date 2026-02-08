@@ -29,7 +29,6 @@
         <div
             @if ($collapsible)
                 x-on:click="$store.sidebar.toggleCollapsedGroup(label)"
-                role="button"
             @endif
             @if ($sidebarCollapsible)
                 x-show="$store.sidebar.isOpen"
@@ -64,7 +63,6 @@
     @if ($hasDropdown)
         <x-filament::dropdown
             :placement="(__('filament-panels::layout.direction') === 'rtl') ? 'left-start' : 'right-start'"
-            teleport
             x-show="! $store.sidebar.isOpen"
         >
             <x-slot name="trigger">
@@ -131,6 +129,7 @@
                             $itemUrl = $item->getUrl();
                             $itemIcon = $itemIsActive ? ($item->getActiveIcon() ?? $item->getIcon()) : $item->getIcon();
                             $shouldItemOpenUrlInNewTab = $item->shouldOpenUrlInNewTab();
+                            $itemExtraAttributes = $item->getExtraAttributeBag();
                         @endphp
 
                         <x-filament::dropdown.list.item
@@ -142,6 +141,7 @@
                             :icon="$itemIcon"
                             tag="a"
                             :target="$shouldItemOpenUrlInNewTab ? '_blank' : null"
+                            :attributes="\Filament\Support\prepare_inherited_attributes($itemExtraAttributes)"
                         >
                             {{ $item->getLabel() }}
                         </x-filament::dropdown.list.item>
@@ -169,8 +169,8 @@
     >
         @foreach ($items as $item)
             @php
-                $isItemActive = $item->isActive();
                 $isItemChildItemsActive = $item->isChildItemsActive();
+                $isItemActive = (! $isItemChildItemsActive) && $item->isActive();
                 $itemActiveIcon = $item->getActiveIcon();
                 $itemBadge = $item->getBadge();
                 $itemBadgeColor = $item->getBadgeColor();
@@ -179,6 +179,7 @@
                 $itemIcon = $item->getIcon();
                 $shouldItemOpenUrlInNewTab = $item->shouldOpenUrlInNewTab();
                 $itemUrl = $item->getUrl();
+                $itemExtraAttributes = $item->getExtraAttributeBag();
 
                 if ($icon) {
                     if ($hasDropdown || (blank($itemIcon) && blank($itemActiveIcon))) {
@@ -204,7 +205,9 @@
                 :last="$loop->last"
                 :should-open-url-in-new-tab="$shouldItemOpenUrlInNewTab"
                 :sidebar-collapsible="$sidebarCollapsible"
+                :sub-navigation="$subNavigation"
                 :url="$itemUrl"
+                :attributes="\Filament\Support\prepare_inherited_attributes($itemExtraAttributes)"
             >
                 {{ $item->getLabel() }}
 

@@ -6,7 +6,7 @@ import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Introduction
 
-By default, Filament will register navigation items for each of your [resources](../resources), [custom pages](custom-pages), and [clusters](clusters). These classes contain static properties and methods that you can override, to configure that navigation item.
+By default, Filament will register navigation items for each of your [resources](../resources/overview), [custom pages](custom-pages), and [clusters](clusters). These classes contain static properties and methods that you can override, to configure that navigation item.
 
 If you're looking to add a second layer of navigation to your app, you can use [clusters](clusters). These are useful for grouping resources and pages together.
 
@@ -29,12 +29,13 @@ public static function getNavigationLabel(): string
 
 ## Customizing a navigation item's icon
 
-To customize a navigation item's [icon](../styling/icons), you may override the `$navigationIcon` property on the [resource](resources) or [page](pages) class:
+To customize a navigation item's [icon](../styling/icons), you may override the `$navigationIcon` property on the [resource](../resources/overview) or [page](custom-pages) class:
 
 ```php
 use BackedEnum;
+use Filament\Support\Icons\Heroicon;
 
-protected static string | BackedEnum | null $navigationIcon = 'heroicon-o-document-text';
+protected static string | BackedEnum | null $navigationIcon = Heroicon::OutlinedDocumentText;
 ```
 
 <AutoScreenshot name="panels/navigation/change-icon" alt="Changed navigation item icon" version="3.x" />
@@ -46,7 +47,10 @@ If you set `$navigationIcon = null` on all items within the same navigation grou
 You may assign a navigation [icon](../styling/icons) which will only be used for active items using the `$activeNavigationIcon` property:
 
 ```php
-protected static ?string $activeNavigationIcon = 'heroicon-o-document-text';
+use BackedEnum;
+use Filament\Support\Icons\Heroicon;
+
+protected static string | BackedEnum | null $activeNavigationIcon = Heroicon::OutlinedDocumentText;
 ```
 
 <AutoScreenshot name="panels/navigation/active-icon" alt="Different navigation item icon when active" version="3.x" />
@@ -106,7 +110,7 @@ public static function getNavigationBadgeTooltip(): ?string
 
 ## Grouping navigation items
 
-You may group navigation items by specifying a `$navigationGroup` property on a [resource](resources) and [custom page](custom-pages):
+You may group navigation items by specifying a `$navigationGroup` property on a [resource](../resources/overview) and [custom page](custom-pages):
 
 ```php
 use UnitEnum;
@@ -152,6 +156,7 @@ You may customize navigation groups by calling `navigationGroups()` in the [conf
 ```php
 use Filament\Navigation\NavigationGroup;
 use Filament\Panel;
+use Filament\Support\Icons\Heroicon;
 
 public function panel(Panel $panel): Panel
 {
@@ -160,13 +165,13 @@ public function panel(Panel $panel): Panel
         ->navigationGroups([
             NavigationGroup::make()
                  ->label('Shop')
-                 ->icon('heroicon-o-shopping-cart'),
+                 ->icon(Heroicon::OutlinedShoppingCart),
             NavigationGroup::make()
                 ->label('Blog')
-                ->icon('heroicon-o-pencil'),
+                ->icon(Heroicon::OutlinedPencil),
             NavigationGroup::make()
                 ->label(fn (): string => __('navigation.settings'))
-                ->icon('heroicon-o-cog-6-tooth')
+                ->icon(Heroicon::OutlinedCog6Tooth)
                 ->collapsed(),
         ]);
 }
@@ -197,10 +202,11 @@ You may disable this behavior by calling `collapsible(false)` on the `Navigation
 
 ```php
 use Filament\Navigation\NavigationGroup;
+use Filament\Support\Icons\Heroicon;
 
 NavigationGroup::make()
     ->label('Settings')
-    ->icon('heroicon-o-cog-6-tooth')
+    ->icon(Heroicon::OutlinedCog6Tooth)
     ->collapsible(false);
 ```
 
@@ -248,7 +254,7 @@ enum NavigationGroup
 }
 ```
 
-To order that the cases are defined in will control the order of the navigation groups.
+The order that the cases are defined in will control the order of the navigation groups.
 
 To use an enum navigation group for a resource or custom page, you can set the `$navigationGroup` property to the enum case:
 
@@ -283,7 +289,10 @@ enum NavigationGroup implements HasLabel
 You can also implement the `HasIcon` interface on the enum class, to define a custom icon for each group:
 
 ```php
+use BackedEnum;
 use Filament\Support\Contracts\HasIcon;
+use Filament\Support\Icons\Heroicon;
+use Illuminate\Contracts\Support\Htmlable;
 
 enum NavigationGroup implements HasIcon
 {
@@ -293,12 +302,12 @@ enum NavigationGroup implements HasIcon
     
     case Settings;
 
-    public function getIcon(): ?string
+    public function getIcon(): string | BackedEnum | Htmlable | null
     {
         return match ($this) {
-            self::Shop => 'heroicon-o-shopping-cart',
-            self::Blog => 'heroicon-o-pencil',
-            self::Settings => 'heroicon-o-cog-6-tooth',
+            self::Shop => Heroicon::OutlinedShoppingCart,
+            self::Blog => Heroicon::OutlinedPencil,
+            self::Settings => Heroicon::OutlinedCog6Tooth,
         };
     }
 }
@@ -356,6 +365,7 @@ To register new navigation items, you can use the [configuration](../panel-confi
 use Filament\Navigation\NavigationItem;
 use Filament\Pages\Dashboard;
 use Filament\Panel;
+use Filament\Support\Icons\Heroicon;
 use function Filament\Support\original_request;
 
 public function panel(Panel $panel): Panel
@@ -365,7 +375,7 @@ public function panel(Panel $panel): Panel
         ->navigationItems([
             NavigationItem::make('Analytics')
                 ->url('https://filament.pirsch.io', shouldOpenInNewTab: true)
-                ->icon('heroicon-o-presentation-chart-line')
+                ->icon(Heroicon::OutlinedPresentationChartLine)
                 ->group('Reports')
                 ->sort(3),
             NavigationItem::make('dashboard')
@@ -470,6 +480,7 @@ use Filament\Navigation\NavigationBuilder;
 use Filament\Navigation\NavigationItem;
 use Filament\Pages\Dashboard;
 use Filament\Panel;
+use Filament\Support\Icons\Heroicon;
 use function Filament\Support\original_request;
 
 public function panel(Panel $panel): Panel
@@ -479,7 +490,7 @@ public function panel(Panel $panel): Panel
         ->navigation(function (NavigationBuilder $builder): NavigationBuilder {
             return $builder->items([
                 NavigationItem::make('Dashboard')
-                    ->icon('heroicon-o-home')
+                    ->icon(Heroicon::OutlinedHome)
                     ->isActiveWhen(fn (): bool => original_request()->routeIs('filament.admin.pages.dashboard'))
                     ->url(fn (): string => Dashboard::getUrl()),
                 ...UserResource::getNavigationItems(),

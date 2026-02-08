@@ -399,6 +399,23 @@ public function table(Table $table): Table
 }
 ```
 
+### Restricting bulk selection to groups only
+
+The `selectGroupsOnly()` method can be used to restrict bulk selection to only records within the same group, preventing bulk selection across multiple groups at once:
+
+```php
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->toolbarActions([
+            // ...
+        ])
+        ->selectGroupsOnly();
+}
+```
+
 ### Improving the performance of bulk actions
 
 By default, a bulk action will load all Eloquent records into memory before passing them to the `action()` function.

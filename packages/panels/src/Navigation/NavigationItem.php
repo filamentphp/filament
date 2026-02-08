@@ -6,6 +6,7 @@ use BackedEnum;
 use Closure;
 use Filament\Support\Components\Component;
 use Filament\Support\Concerns\HasBadgeTooltip;
+use Filament\Support\Concerns\HasExtraAttributes;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Htmlable;
 use LogicException;
@@ -14,6 +15,7 @@ use UnitEnum;
 class NavigationItem extends Component
 {
     use HasBadgeTooltip;
+    use HasExtraAttributes;
 
     protected string | UnitEnum | Closure | null $group = null;
 

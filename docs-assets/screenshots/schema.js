@@ -986,6 +986,15 @@ export default {
             deviceScaleFactor: 3,
         },
     },
+    'forms/fields/repeater/table-compact': {
+        url: 'forms/fields',
+        selector: '#repeaterTableCompact',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
     'forms/fields/repeater/reorderable-with-buttons': {
         url: 'forms/fields',
         selector: '#repeaterReorderableWithButtons',
@@ -1529,6 +1538,24 @@ export default {
             deviceScaleFactor: 3,
         },
     },
+    'schemas/layout/dense': {
+        url: 'schemas/layout',
+        selector: '#dense',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'schemas/layout/no-gap': {
+        url: 'schemas/layout',
+        selector: '#noGap',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
     'schemas/layout/tabs/simple': {
         url: 'schemas/layout',
         selector: '#tabs',
@@ -1583,6 +1610,15 @@ export default {
             deviceScaleFactor: 3,
         },
     },
+    'schemas/layout/tabs/not-scrollable': {
+        url: 'schemas/layout',
+        selector: '#tabsNotScrollable',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
     'schemas/layout/wizard/simple': {
         url: 'schemas/layout',
         selector: '#wizard',
@@ -1613,6 +1649,15 @@ export default {
     'schemas/layout/wizard/descriptions': {
         url: 'schemas/layout',
         selector: '#wizardDescriptions',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'schemas/layout/empty-state/simple': {
+        url: 'schemas/layout',
+        selector: '#emptyState',
         viewport: {
             width: 1920,
             height: 640,
@@ -1697,6 +1742,78 @@ export default {
         viewport: {
             width: 1920,
             height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'schemas/layout/callout/simple': {
+        url: 'schemas/layout',
+        selector: '#callout',
+        viewport: {
+            width: 1920,
+            height: 320,
+            deviceScaleFactor: 3,
+        },
+    },
+    'schemas/layout/callout/statuses': {
+        url: 'schemas/layout',
+        selector: '#calloutStatuses',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'schemas/layout/callout/without-background': {
+        url: 'schemas/layout',
+        selector: '#calloutWithoutBackground',
+        viewport: {
+            width: 1920,
+            height: 320,
+            deviceScaleFactor: 3,
+        },
+    },
+    'schemas/layout/callout/custom-color': {
+        url: 'schemas/layout',
+        selector: '#calloutCustomColor',
+        viewport: {
+            width: 1920,
+            height: 320,
+            deviceScaleFactor: 3,
+        },
+    },
+    'schemas/layout/callout/actions': {
+        url: 'schemas/layout',
+        selector: '#calloutActions',
+        viewport: {
+            width: 1920,
+            height: 320,
+            deviceScaleFactor: 3,
+        },
+    },
+    'schemas/layout/callout/custom-icon': {
+        url: 'schemas/layout',
+        selector: '#calloutCustomIcon',
+        viewport: {
+            width: 1920,
+            height: 320,
+            deviceScaleFactor: 3,
+        },
+    },
+    'schemas/layout/callout/footer': {
+        url: 'schemas/layout',
+        selector: '#calloutFooter',
+        viewport: {
+            width: 1920,
+            height: 320,
+            deviceScaleFactor: 3,
+        },
+    },
+    'schemas/layout/callout/actions-aligned-end': {
+        url: 'schemas/layout',
+        selector: '#calloutActionsAlignedEnd',
+        viewport: {
+            width: 1920,
+            height: 320,
             deviceScaleFactor: 3,
         },
     },
@@ -2204,6 +2321,15 @@ export default {
     'infolists/entries/repeatable/grid': {
         url: 'infolists/entries',
         selector: '#repeatableGrid',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'infolists/entries/repeatable/table': {
+        url: 'infolists/entries',
+        selector: '#repeatableTable',
         viewport: {
             width: 1920,
             height: 640,
@@ -3620,6 +3746,27 @@ export default {
         },
         crop: (image) => {
             return image.extract({ width: 1920, height: 1200, left: 0, top: 0 })
+        },
+    },
+    'tables/layout/stacked-on-mobile': {
+        url: 'tables?table=layoutStackedOnMobile',
+        selector: 'body',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'tables/layout/stacked-on-mobile/mobile': {
+        url: 'tables?table=layoutStackedOnMobile',
+        selector: 'body',
+        viewport: {
+            width: 375,
+            height: 812,
+            deviceScaleFactor: 3,
+        },
+        crop: (image) => {
+            return image.extract({ width: 1125, height: 1800, left: 0, top: 0 })
         },
     },
     'tables/summaries': {

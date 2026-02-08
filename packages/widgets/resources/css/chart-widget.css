@@ -1,4 +1,28 @@
 .fi-wi-chart {
+    & .fi-wi-chart-canvas-ctn {
+        @apply mx-auto;
+
+        &:not(.fi-wi-chart-canvas-ctn-no-aspect-ratio) {
+            @apply aspect-square;
+        }
+    }
+
+    @supports (container-type: inline-size) {
+        & .fi-section-content {
+            @apply @container;
+        }
+
+        & .fi-wi-chart-canvas-ctn:not(.fi-wi-chart-canvas-ctn-no-aspect-ratio) {
+            @apply @sm:aspect-[1.5];
+        }
+    }
+
+    @supports not (container-type: inline-size) {
+        & .fi-wi-chart-canvas-ctn:not(.fi-wi-chart-canvas-ctn-no-aspect-ratio) {
+            @apply sm:aspect-[1.5];
+        }
+    }
+
     & .fi-wi-chart-filter {
         &.fi-input-wrp {
             @apply w-max sm:-my-2;
@@ -6,7 +30,11 @@
 
         &.fi-dropdown {
             & .fi-wi-chart-filter-content {
-                @apply p-6;
+                @apply grid gap-y-4 p-6;
+            }
+
+            & .fi-wi-chart-filter-content-actions-ctn {
+                @apply flex gap-3;
             }
         }
     }

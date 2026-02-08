@@ -66,6 +66,8 @@ To arrange components into a [layout](layouts), Filament includes layout compone
 - [Section](sections)
 - [Tabs](tabs)
 - [Wizard](wizards)
+- [Callout](callouts)
+- [Empty states](empty-states)
 - Or, build your own [custom layout component](custom-components#custom-layout-components)
 
 For displaying arbitrary content, Filament includes [prime](primes) components:
@@ -88,6 +90,7 @@ use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\TextEntry;
+use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 
 $schema

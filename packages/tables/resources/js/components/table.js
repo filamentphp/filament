@@ -1,13 +1,18 @@
+import { autoUpdate, computePosition, offset, shift } from '@floating-ui/dom'
+
 export default ({
+    areGroupsCollapsedByDefault,
     canTrackDeselectedRecords,
     currentSelectionLivewireProperty,
     maxSelectableRecords,
     selectsCurrentPageOnly,
     $wire,
 }) => ({
+    areFiltersOpen: false,
+
     checkboxClickController: null,
 
-    collapsedGroups: [],
+    groupVisibility: [],
 
     isLoading: false,
 
@@ -27,11 +32,18 @@ export default ({
         ? $wire.$entangle(currentSelectionLivewireProperty)
         : null,
 
+    cleanUpFiltersDropdown: null,
+
+    unsubscribeLivewireHook: null,
+
     init() {
         this.livewireId =
             this.$root.closest('[wire\\:id]')?.attributes['wire:id'].value
 
         $wire.$on('deselectAllTableRecords', () => this.deselectAllRecords())
+        $wire.$on('scrollToTopOfTable', () =>
+            this.$root.scrollIntoView({ block: 'start', inline: 'nearest' }),
+        )
 
         if (currentSelectionLivewireProperty) {
             if (maxSelectableRecords !== 1) {
@@ -47,11 +59,14 @@ export default ({
 
         this.$nextTick(() => this.watchForCheckboxClicks())
 
-        Livewire.hook('element.init', ({ component }) => {
-            if (component.id === this.livewireId) {
-                this.watchForCheckboxClicks()
-            }
-        })
+        this.unsubscribeLivewireHook = Livewire.hook(
+            'element.init',
+            ({ component }) => {
+                if (component.id === this.livewireId) {
+                    this.watchForCheckboxClicks()
+                }
+            },
+        )
     },
 
     mountAction(...args) {
@@ -263,20 +278,36 @@ export default ({
 
     toggleCollapseGroup(group) {
         if (this.isGroupCollapsed(group)) {
-            this.collapsedGroups.splice(this.collapsedGroups.indexOf(group), 1)
-
-            return
+            if (areGroupsCollapsedByDefault) {
+                this.groupVisibility.push(group)
+            } else {
+                this.groupVisibility.splice(
+                    this.groupVisibility.indexOf(group),
+                    1,
+                )
+            }
+        } else {
+            if (areGroupsCollapsedByDefault) {
+                this.groupVisibility.splice(
+                    this.groupVisibility.indexOf(group),
+                    1,
+                )
+            } else {
+                this.groupVisibility.push(group)
+            }
         }
-
-        this.collapsedGroups.push(group)
     },
 
     isGroupCollapsed(group) {
-        return this.collapsedGroups.includes(group)
+        if (areGroupsCollapsedByDefault) {
+            return !this.groupVisibility.includes(group)
+        }
+
+        return this.groupVisibility.includes(group)
     },
 
     resetCollapsedGroups() {
-        this.collapsedGroups = []
+        this.groupVisibility = []
     },
 
     watchForCheckboxClicks() {
@@ -341,5 +372,77 @@ export default ({
         }
 
         this.lastChecked = checkbox
+    },
+
+    toggleFiltersDropdown() {
+        this.areFiltersOpen = !this.areFiltersOpen
+
+        if (this.areFiltersOpen) {
+            const cleanUpAutoUpdate = autoUpdate(
+                this.$refs.filtersTriggerActionContainer,
+                this.$refs.filtersContentContainer,
+                async () => {
+                    const { x, y } = await computePosition(
+                        this.$refs.filtersTriggerActionContainer,
+                        this.$refs.filtersContentContainer,
+                        {
+                            placement: 'bottom-end',
+                            middleware: [offset(8), shift({ padding: 8 })],
+                        },
+                    )
+
+                    Object.assign(this.$refs.filtersContentContainer.style, {
+                        left: `${x}px`,
+                        top: `${y}px`,
+                    })
+                },
+            )
+
+            const onClickAway = (event) => {
+                const trigger = this.$refs.filtersTriggerActionContainer
+                const filters = this.$refs.filtersContentContainer
+
+                if (
+                    (filters && filters.contains(event.target)) ||
+                    (trigger && trigger.contains(event.target))
+                ) {
+                    return
+                }
+
+                this.areFiltersOpen = false
+
+                if (this.cleanUpFiltersDropdown) {
+                    this.cleanUpFiltersDropdown()
+                    this.cleanUpFiltersDropdown = null
+                }
+            }
+
+            document.addEventListener('mousedown', onClickAway)
+            document.addEventListener('touchstart', onClickAway, {
+                passive: true,
+            })
+            const onKeydown = (event) => {
+                if (event.key === 'Escape') {
+                    onClickAway(event)
+                }
+            }
+            document.addEventListener('keydown', onKeydown)
+
+            this.cleanUpFiltersDropdown = () => {
+                cleanUpAutoUpdate()
+                document.removeEventListener('mousedown', onClickAway)
+                document.removeEventListener('touchstart', onClickAway, {
+                    passive: true,
+                })
+                document.removeEventListener('keydown', onKeydown)
+            }
+        } else if (this.cleanUpFiltersDropdown) {
+            this.cleanUpFiltersDropdown()
+            this.cleanUpFiltersDropdown = null
+        }
+    },
+
+    destroy() {
+        this.unsubscribeLivewireHook?.()
     },
 })

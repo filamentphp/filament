@@ -37,6 +37,7 @@
             currentNumberOfDigits = $el.value.length
         "
         x-bind:class="{ 'fi-valid': currentNumberOfDigits >= {{ $length }} }"
+        {{ $input?->attributes }}
         class="fi-one-time-code-input"
     />
 </div>

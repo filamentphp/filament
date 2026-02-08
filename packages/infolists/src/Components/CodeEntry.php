@@ -5,6 +5,8 @@ namespace Filament\Infolists\Components;
 use Closure;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Concerns\CanBeCopied;
+use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Js;
 use Phiki\Grammar\Grammar;
 use Phiki\Phiki;
@@ -19,6 +21,8 @@ class CodeEntry extends Entry implements HasEmbeddedView
     protected string | Theme | Closure | null $lightTheme = null;
 
     protected string | Theme | Closure | null $darkTheme = null;
+
+    protected int | Closure $jsonFlags = JSON_PRETTY_PRINT;
 
     public function grammar(string | Grammar | Closure | null $grammar): static
     {
@@ -56,9 +60,25 @@ class CodeEntry extends Entry implements HasEmbeddedView
         return $this->evaluate($this->darkTheme);
     }
 
+    public function jsonFlags(int | Closure $flags): static
+    {
+        $this->jsonFlags = $flags;
+
+        return $this;
+    }
+
+    public function getJsonFlags(): int
+    {
+        return $this->evaluate($this->jsonFlags);
+    }
+
     public function toEmbeddedHtml(): string
     {
         $state = $this->getState();
+
+        if ($state instanceof Collection) {
+            $state = $state->all();
+        }
 
         $attributes = $this->getExtraAttributeBag()
             ->class([
@@ -72,6 +92,7 @@ class CodeEntry extends Entry implements HasEmbeddedView
                         ? '{
                             content: ' . Js::from($tooltip) . ',
                             theme: $store.theme,
+                            allowHTML: ' . Js::from($tooltip instanceof Htmlable) . ',
                         }'
                         : null,
                 ], escape: false);
@@ -81,7 +102,7 @@ class CodeEntry extends Entry implements HasEmbeddedView
             ob_start(); ?>
 
             <div <?= $attributes->toHtml() ?>>
-                <?php if (filled($placeholder !== null)) { ?>
+                <?php if (filled($placeholder)) { ?>
                     <p class="fi-in-placeholder">
                         <?= e($placeholder) ?>
                     </p>
@@ -97,7 +118,7 @@ class CodeEntry extends Entry implements HasEmbeddedView
         $darkTheme = $this->getDarkTheme();
 
         if (is_array($state)) {
-            $state = json_encode($state, flags: JSON_PRETTY_PRINT);
+            $state = json_encode($state, flags: $this->getJsonFlags());
             $grammar ??= Grammar::Json;
         }
 
@@ -132,6 +153,7 @@ class CodeEntry extends Entry implements HasEmbeddedView
                     ? '{
                         content: ' . Js::from($tooltip) . ',
                         theme: $store.theme,
+                        allowHTML: ' . Js::from($tooltip instanceof Htmlable) . ',
                     }'
                     : null,
             ], escape: false)
@@ -142,7 +164,7 @@ class CodeEntry extends Entry implements HasEmbeddedView
         ob_start(); ?>
 
         <div <?= $attributes->toHtml() ?>>
-            <?= $phiki->codeToHtml($state, $grammar, [
+            <?= (string) $phiki->codeToHtml($state, $grammar, [
                 'light' => $lightTheme,
                 'dark' => $darkTheme,
             ]) ?>

@@ -31,7 +31,7 @@ class SpatieTagsColumn extends TextColumn
         return $this->cacheState(function (): array {
             $state = parent::getState();
 
-            if ($state && (! $state instanceof Collection)) {
+            if ($state && (! $state instanceof Collection) && (! is_array($state))) {
                 return $state;
             }
 

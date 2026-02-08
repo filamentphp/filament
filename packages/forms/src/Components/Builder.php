@@ -56,6 +56,8 @@ class Builder extends Field implements CanConcealComponents, HasExtraItemActions
 
     protected bool | Closure $hasBlockIcons = false;
 
+    protected bool | Closure $hasBlockHeaders = true;
+
     protected bool | Closure $hasBlockPreviews = false;
 
     protected bool | Closure $hasInteractiveBlockPreviews = false;
@@ -96,6 +98,8 @@ class Builder extends Field implements CanConcealComponents, HasExtraItemActions
     protected ?array $blockPickerColumns = [];
 
     protected Width | string | Closure | null $blockPickerWidth = null;
+
+    protected bool | Closure $shouldPartiallyRenderAfterActionsCalled = true;
 
     protected function setUp(): void
     {
@@ -189,7 +193,7 @@ class Builder extends Field implements CanConcealComponents, HasExtraItemActions
                 ]))
                 ->modalSubmitActionLabel(__('filament-forms::components.builder.actions.add.modal.actions.add.label'))
                 ->schema(function (array $arguments, Builder $component): array {
-                    return $component->getBlock($arguments['block'])->getDefaultChildComponents();
+                    return $component->getBlock($arguments['block'])->getClone()->getDefaultChildComponents();
                 });
         }
 
@@ -270,7 +274,7 @@ class Builder extends Field implements CanConcealComponents, HasExtraItemActions
 
                 $component->callAfterStateUpdated();
 
-                $component->partiallyRender();
+                $component->shouldPartiallyRenderAfterActionsCalled() ? $component->partiallyRender() : null;
             })
             ->livewireClickHandlerEnabled(false)
             ->button()
@@ -284,7 +288,7 @@ class Builder extends Field implements CanConcealComponents, HasExtraItemActions
                 ]))
                 ->modalSubmitActionLabel(__('filament-forms::components.builder.actions.add_between.modal.actions.add.label'))
                 ->schema(function (array $arguments, Builder $component): array {
-                    return $component->getBlock($arguments['block'])->getDefaultChildComponents();
+                    return $component->getBlock($arguments['block'])->getClone()->getDefaultChildComponents();
                 });
         }
 
@@ -332,7 +336,7 @@ class Builder extends Field implements CanConcealComponents, HasExtraItemActions
 
                 $component->callAfterStateUpdated();
 
-                $component->partiallyRender();
+                $component->shouldPartiallyRenderAfterActionsCalled() ? $component->partiallyRender() : null;
             })
             ->iconButton()
             ->size(Size::Small)
@@ -373,7 +377,7 @@ class Builder extends Field implements CanConcealComponents, HasExtraItemActions
 
                 $component->callAfterStateUpdated();
 
-                $component->partiallyRender();
+                $component->shouldPartiallyRenderAfterActionsCalled() ? $component->partiallyRender() : null;
             })
             ->iconButton()
             ->size(Size::Small)
@@ -413,7 +417,7 @@ class Builder extends Field implements CanConcealComponents, HasExtraItemActions
 
                 $component->callAfterStateUpdated();
 
-                $component->partiallyRender();
+                $component->shouldPartiallyRenderAfterActionsCalled() ? $component->partiallyRender() : null;
             })
             ->iconButton()
             ->size(Size::Small)
@@ -453,7 +457,7 @@ class Builder extends Field implements CanConcealComponents, HasExtraItemActions
 
                 $component->callAfterStateUpdated();
 
-                $component->partiallyRender();
+                $component->shouldPartiallyRenderAfterActionsCalled() ? $component->partiallyRender() : null;
             })
             ->iconButton()
             ->size(Size::Small)
@@ -503,7 +507,7 @@ class Builder extends Field implements CanConcealComponents, HasExtraItemActions
 
                 $component->callAfterStateUpdated();
 
-                $component->partiallyRender();
+                $component->shouldPartiallyRenderAfterActionsCalled() ? $component->partiallyRender() : null;
             })
             ->livewireClickHandlerEnabled(false)
             ->iconButton()
@@ -667,6 +671,7 @@ class Builder extends Field implements CanConcealComponents, HasExtraItemActions
             })
             ->schema(function (array $arguments, Builder $component) {
                 return $component->getChildSchema($arguments['item'])
+                    ->getClone()
                     ->getComponents(withHidden: true);
             })
             ->action(function (array $arguments, Builder $component, $data): void {
@@ -680,7 +685,7 @@ class Builder extends Field implements CanConcealComponents, HasExtraItemActions
 
                 $component->callAfterStateUpdated();
 
-                $component->partiallyRender();
+                $component->shouldPartiallyRenderAfterActionsCalled() ? $component->partiallyRender() : null;
             })
             ->iconButton()
             ->icon(Heroicon::Cog6Tooth)
@@ -1135,7 +1140,7 @@ class Builder extends Field implements CanConcealComponents, HasExtraItemActions
      */
     public function getRawItemState(string $key): array
     {
-        return $this->getChildSchema($key)->getRawState();
+        return $this->getChildSchema($key)->getStateSnapshot();
     }
 
     public function getHeadingsCount(): int
@@ -1155,5 +1160,29 @@ class Builder extends Field implements CanConcealComponents, HasExtraItemActions
         parent::dehydrateValidationRules($rules);
 
         $rules["{$this->getStatePath()}.*.type"] = ['required'];
+    }
+
+    public function partiallyRenderAfterActionsCalled(bool | Closure $condition = true): static
+    {
+        $this->shouldPartiallyRenderAfterActionsCalled = $condition;
+
+        return $this;
+    }
+
+    public function shouldPartiallyRenderAfterActionsCalled(): bool
+    {
+        return (bool) $this->evaluate($this->shouldPartiallyRenderAfterActionsCalled);
+    }
+
+    public function blockHeaders(bool | Closure $condition = true): static
+    {
+        $this->hasBlockHeaders = $condition;
+
+        return $this;
+    }
+
+    public function hasBlockHeaders(): bool
+    {
+        return (bool) $this->evaluate($this->hasBlockHeaders);
     }
 }

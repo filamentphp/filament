@@ -15,8 +15,10 @@ use Filament\Facades\Filament;
 use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Models\Ticket;
 use Filament\Tests\Fixtures\Models\TicketMessage;
+use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Fixtures\Policies\TicketPolicy;
 use Filament\Tests\Fixtures\Resources\Posts\Pages\ListPosts;
+use Filament\Tests\Fixtures\Resources\Posts\Pages\ListPostsWithTabs;
 use Filament\Tests\Fixtures\Resources\Posts\PostResource;
 use Filament\Tests\Fixtures\Resources\TicketMessages\TicketMessageResource;
 use Filament\Tests\Fixtures\Resources\Tickets\Pages\ListTickets;
@@ -63,40 +65,66 @@ it('can render post authors', function (): void {
 });
 
 it('can sort posts by title', function (): void {
-    $posts = Post::factory()->count(10)->create();
+    Post::factory()->count(10)->create();
+
+    $sortedAsc = Post::query()->orderBy('title')->orderBy('id')->get();
+    $sortedDesc = Post::query()->orderByDesc('title')->orderBy('id')->get();
 
     livewire(ListPosts::class)
         ->sortTable('title')
-        ->assertCanSeeTableRecords($posts->sortBy('title'), inOrder: true)
+        ->assertCanSeeTableRecords($sortedAsc, inOrder: true)
         ->sortTable('title', 'desc')
-        ->assertCanSeeTableRecords($posts->sortByDesc('title'), inOrder: true);
+        ->assertCanSeeTableRecords($sortedDesc, inOrder: true);
 });
 
 it('can sort posts by author', function (): void {
-    $posts = Post::factory()->count(10)->create();
+    Post::factory()->count(10)->create();
+
+    $sortedAsc = Post::query()
+        ->orderBy(
+            User::query()
+                ->select('name')
+                ->whereColumn('users.id', 'posts.author_id')
+                ->limit(1)
+        )
+        ->orderBy('posts.id')
+        ->get();
+
+    $sortedDesc = Post::query()
+        ->orderByDesc(
+            User::query()
+                ->select('name')
+                ->whereColumn('users.id', 'posts.author_id')
+                ->limit(1)
+        )
+        ->orderBy('posts.id')
+        ->get();
 
     livewire(ListPosts::class)
         ->sortTable('author.name')
-        ->assertCanSeeTableRecords($posts->sortBy('author.name'), inOrder: true)
+        ->assertCanSeeTableRecords($sortedAsc, inOrder: true)
         ->sortTable('author.name', 'desc')
-        ->assertCanSeeTableRecords($posts->sortByDesc('author.name'), inOrder: true);
+        ->assertCanSeeTableRecords($sortedDesc, inOrder: true);
 });
 
 it('can sort posts with default sort key', function (): void {
 
     $faker = fake()->unique();
-    $posts = Post::factory()->count(10)->state(function () use ($faker) {
+    Post::factory()->count(10)->state(function () use ($faker) {
         return [
             'id' => $faker->randomDigit(),
             'title' => 'Lorem Ipsum',
         ];
     })->create();
 
+    $sortedAsc = Post::query()->orderBy('title')->orderBy('id')->get();
+    $sortedDesc = Post::query()->orderByDesc('title')->orderByDesc('id')->get();
+
     livewire(ListPosts::class)
         ->sortTable('title')
-        ->assertCanSeeTableRecords($posts->sortBy([['title', 'asc'], ['id', 'asc']]), inOrder: true)
+        ->assertCanSeeTableRecords($sortedAsc, inOrder: true)
         ->sortTable('title', 'desc')
-        ->assertCanSeeTableRecords($posts->sortBy([['title', 'desc'], ['id', 'asc']]), inOrder: true);
+        ->assertCanSeeTableRecords($sortedDesc, inOrder: true);
 });
 
 it('can search posts by title', function (): void {
@@ -297,3 +325,32 @@ it('renders actions based on policy', function (string $action, string $policyMe
     'restore bulk action with policy returning false' => fn (): array => [RestoreBulkAction::class, 'restoreAny', false, false, true, true, true],
     'restore bulk action with policy returning denied response' => fn (): array => [RestoreBulkAction::class, 'restoreAny', Response::deny(), false, true, true, true],
 ]);
+
+it('can access record for action after record no longer matches tab query', function (): void {
+    $post = Post::factory()->create(['is_published' => true]);
+
+    livewire(ListPostsWithTabs::class)
+        ->set('activeTab', 'published')
+        ->assertCanSeeTableRecords([$post])
+        ->tap(fn () => $post->update(['is_published' => false]))
+        ->callAction(TestAction::make(DeleteAction::class)->table($post));
+
+    expect($post->fresh()->trashed())->toBeTrue();
+});
+
+it('cannot access record for action after record no longer matches tab without `excludeQueryWhenResolvingRecord()`', function (): void {
+    $post = Post::factory()->create(['is_published' => true]);
+
+    livewire(ListPostsWithTabs::class)
+        ->set('shouldExcludeTabQueryWhenResolvingRecord', false)
+        ->set('activeTab', 'published')
+        ->assertCanSeeTableRecords([$post])
+        ->tap(fn () => $post->update(['is_published' => false]));
+
+    expect(
+        fn () => livewire(ListPostsWithTabs::class)
+            ->set('shouldExcludeTabQueryWhenResolvingRecord', false)
+            ->set('activeTab', 'published')
+            ->mountTableAction(DeleteAction::class, $post)
+    )->toThrow(TypeError::class);
+});

@@ -3,11 +3,13 @@
 namespace Filament\Tests\Fixtures\Pages;
 
 use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
+use Filament\Tests\Fixtures\Models\Post;
 
 class Actions extends Page
 {
@@ -121,6 +123,30 @@ class Actions extends Page
 
                     $action->halt();
                 }),
+            Action::make('withGroupedExtraActions')
+                ->schema([
+                    TextInput::make('content')
+                        ->required(),
+                ])
+                ->action(function (array $data): void {
+                    $this->dispatch('grouped-extra-actions-called', content: $data['content']);
+                })
+                ->extraModalFooterActions([
+                    Action::make('simpleExtra')
+                        ->action(fn () => $this->dispatch('simple-extra-called')),
+                    ActionGroup::make([
+                        Action::make('option1')
+                            ->action(fn () => $this->dispatch('option1-called')),
+                        Action::make('option2')
+                            ->action(fn () => $this->dispatch('option2-called')),
+                        Action::make('option3')
+                            ->schema([
+                                TextInput::make('value')
+                                    ->required(),
+                            ])
+                            ->action(fn (array $data) => $this->dispatch('option3-called', value: $data['value'])),
+                    ])->button()->label('More Options'),
+                ]),
             Action::make('visible'),
             Action::make('hidden')
                 ->hidden(),
@@ -171,6 +197,31 @@ class Actions extends Page
                 ->action(fn () => $this->dispatch(
                     'rate-limited-called',
                 )),
+            Action::make('predefined-arguments')
+                ->arguments(['foo' => 'bar', 'baz' => 'qux'])
+                ->label(fn (array $arguments): string => "Action for {$arguments['foo']}")
+                ->requiresConfirmation()
+                ->action(function (array $arguments): void {
+                    $this->dispatch('predefined-arguments-called', arguments: $arguments);
+                }),
+            Action::make('replaces-action')
+                ->action(function (): void {
+                    $this->replaceMountedAction('replaced-action');
+                }),
+            Action::make('replaced-action')
+                ->requiresConfirmation()
+                ->action(function (): void {
+                    $this->dispatch('replaced-action-called');
+                }),
+            Action::make('arguments-with-record-and-schema')
+                ->schema(
+                    fn (Post $record, Schema $schema) => $schema
+                        ->record($record)
+                        ->schema([
+                            TextInput::make('foo'),
+                        ])
+                )
+                ->record(fn (array $arguments) => Post::findOrFail($arguments['post_id'])),
         ];
     }
 }

@@ -23,7 +23,7 @@ return [
         'actions' => [
 
             'request' => [
-                'label' => 'שלח אימייל',
+                'label' => 'שלח דוא"ל',
             ],
 
         ],
@@ -34,7 +34,7 @@ return [
 
         'throttled' => [
             'title' => 'יותר מדי בקשות',
-            'body' => 'נסה שוב בעוד :seconds שניות',
+            'body' => 'אנא נסה שוב בעוד :seconds שניות.',
         ],
 
     ],

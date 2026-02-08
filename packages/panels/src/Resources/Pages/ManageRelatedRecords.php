@@ -38,10 +38,15 @@ use Livewire\Attributes\Url;
 
 use function Filament\authorize;
 
+/**
+ * @template TModel of Model = Model
+ */
 class ManageRelatedRecords extends Page implements Tables\Contracts\HasTable
 {
     use Concerns\HasRelationManagers;
-    use Concerns\InteractsWithRecord;
+    use Concerns\InteractsWithRecord {
+        getRecord as getBaseRecord;
+    }
     use InteractsWithRelationshipTable;
 
     public ?string $previousUrl = null;
@@ -295,23 +300,28 @@ class ManageRelatedRecords extends Page implements Tables\Contracts\HasTable
             return null;
         }
 
+        $actionModel = $action->getModel();
+
         if (
             ($action instanceof CreateAction) &&
-            ($relatedResource::hasPage('create'))
+            ($relatedResource::hasPage('create')) &&
+            (blank($actionModel) || ($actionModel === $relatedResource::getModel()))
         ) {
             return $relatedResource::getUrl('create', shouldGuessMissingParameters: true);
         }
 
         if (
             ($action instanceof EditAction) &&
-            ($relatedResource::hasPage('edit'))
+            ($relatedResource::hasPage('edit')) &&
+            (blank($actionModel) || ($actionModel === $relatedResource::getModel()))
         ) {
             return $relatedResource::getUrl('edit', ['record' => $action->getRecord()], shouldGuessMissingParameters: true);
         }
 
         if (
             ($action instanceof ViewAction) &&
-            ($relatedResource::hasPage('view'))
+            ($relatedResource::hasPage('view')) &&
+            (blank($actionModel) || ($actionModel === $relatedResource::getModel()))
         ) {
             return $relatedResource::getUrl('view', ['record' => $action->getRecord()], shouldGuessMissingParameters: true);
         }
@@ -329,5 +339,13 @@ class ManageRelatedRecords extends Page implements Tables\Contracts\HasTable
             'label' => $this->getRecordTitle(),
             'relationship' => static::getRelationshipTitle(),
         ]);
+    }
+
+    /**
+     * @return TModel
+     */
+    public function getRecord(): Model
+    {
+        return $this->getBaseRecord();
     }
 }

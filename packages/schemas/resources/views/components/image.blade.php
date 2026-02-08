@@ -15,7 +15,7 @@
     alt="{{ $getAlt() }}"
     src="{{ $getUrl() }}"
     @if (filled($tooltip))
-        x-tooltip="{ content: @js($tooltip), theme: $store.theme }"
+        x-tooltip="{ content: @js($tooltip), theme: $store.theme, allowHTML: @js($tooltip instanceof \Illuminate\Contracts\Support\Htmlable) }"
     @endif
     {{
         $getExtraAttributeBag()

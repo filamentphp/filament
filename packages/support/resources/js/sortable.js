@@ -19,11 +19,21 @@ export default (Alpine) => {
             ghostClass: 'fi-sortable-ghost',
             onEnd(event) {
                 // https://github.com/filamentphp/filament/issues/17402
+                const {
+                    item: draggedNode,
+                    to: parentNode,
+                    oldDraggableIndex,
+                    newDraggableIndex,
+                } = event
 
-                const { item: draggedNode, to: parentNode, newIndex } = event
+                if (oldDraggableIndex === newDraggableIndex) {
+                    return
+                }
+
                 const draggableSelector = this.options.draggable
-                const previousNode =
-                    parentNode.querySelectorAll(draggableSelector)[newIndex - 1]
+                const previousNode = parentNode.querySelectorAll(
+                    `:scope > ${draggableSelector}`,
+                )[newDraggableIndex - 1]
 
                 if (previousNode) {
                     parentNode.insertBefore(

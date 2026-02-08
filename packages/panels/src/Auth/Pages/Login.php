@@ -223,20 +223,18 @@ class Login extends SimplePage
             ->email()
             ->required()
             ->autocomplete()
-            ->autofocus()
-            ->extraInputAttributes(['tabindex' => 1]);
+            ->autofocus();
     }
 
     protected function getPasswordFormComponent(): Component
     {
         return TextInput::make('password')
             ->label(__('filament-panels::auth/pages/login.form.password.label'))
-            ->hint(filament()->hasPasswordReset() ? new HtmlString(Blade::render('<x-filament::link :href="filament()->getRequestPasswordResetUrl()" tabindex="3"> {{ __(\'filament-panels::auth/pages/login.actions.request_password_reset.label\') }}</x-filament::link>')) : null)
+            ->hint(filament()->hasPasswordReset() ? new HtmlString(Blade::render('<x-filament::link :href="filament()->getRequestPasswordResetUrl()"> {{ __(\'filament-panels::auth/pages/login.actions.request_password_reset.label\') }}</x-filament::link>')) : null)
             ->password()
             ->revealable(filament()->arePasswordsRevealable())
             ->autocomplete('current-password')
-            ->required()
-            ->extraInputAttributes(['tabindex' => 2]);
+            ->required();
     }
 
     protected function getRememberFormComponent(): Component
@@ -308,7 +306,7 @@ class Login extends SimplePage
         return __('filament-panels::auth/pages/login.title');
     }
 
-    public function getHeading(): string | Htmlable
+    public function getHeading(): string | Htmlable | null
     {
         if (filled($this->userUndertakingMultiFactorAuthentication)) {
             return __('filament-panels::auth/pages/login.multi_factor.heading');
@@ -405,7 +403,8 @@ class Login extends SimplePage
             ->footer([
                 Actions::make($this->getFormActions())
                     ->alignment($this->getFormActionsAlignment())
-                    ->fullWidth($this->hasFullWidthFormActions()),
+                    ->fullWidth($this->hasFullWidthFormActions())
+                    ->key('form-actions'),
             ])
             ->visible(fn (): bool => blank($this->userUndertakingMultiFactorAuthentication));
     }
@@ -426,10 +425,5 @@ class Login extends SimplePage
     public function getMultiFactorChallengeFormActionsAlignment(): string | Alignment
     {
         return $this->getFormActionsAlignment();
-    }
-
-    public function getDefaultTestingSchemaName(): ?string
-    {
-        return 'form';
     }
 }

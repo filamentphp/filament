@@ -3,11 +3,7 @@
 ])
 
 <x-filament::tabs
-    wire:ignore
-    :attributes="
-        \Filament\Support\prepare_inherited_attributes($attributes)
-            ->class(['fi-page-sub-navigation-tabs'])
-    "
+    :attributes="\Filament\Support\prepare_inherited_attributes($attributes)->class(['fi-page-sub-navigation-tabs'])"
 >
     @foreach ($navigation as $navigationGroup)
         @php
@@ -35,6 +31,7 @@
                             $navigationItemIcon = $navigationItem->isActive() ? ($navigationItem->getActiveIcon() ?? $navigationItem->getIcon()) : $navigationItem->getIcon();
                             $navigationItemUrl = $navigationItem->getUrl();
                             $shouldNavigationItemOpenUrlInNewTab = $navigationItem->shouldOpenUrlInNewTab();
+                            $navigationItemExtraAttributes = $navigationItem->getExtraAttributeBag();
                         @endphp
 
                         <x-filament::dropdown.list.item
@@ -44,6 +41,7 @@
                             :icon="$navigationItemIcon"
                             tag="a"
                             :target="$shouldNavigationItemOpenUrlInNewTab ? '_blank' : null"
+                            :attributes="\Filament\Support\prepare_inherited_attributes($navigationItemExtraAttributes)"
                         >
                             {{ $navigationItem->getLabel() }}
 
@@ -65,6 +63,7 @@
                     $navigationItemIcon = $navigationItem->isActive() ? ($navigationItem->getActiveIcon() ?? $navigationItem->getIcon()) : $navigationItem->getIcon();
                     $navigationItemUrl = $navigationItem->getUrl();
                     $shouldNavigationItemOpenUrlInNewTab = $navigationItem->shouldOpenUrlInNewTab();
+                    $navigationItemExtraAttributes = $navigationItem->getExtraAttributeBag();
                 @endphp
 
                 <x-filament::tabs.item
@@ -75,6 +74,7 @@
                     :icon="$navigationItemIcon"
                     tag="a"
                     :target="$shouldNavigationItemOpenUrlInNewTab ? '_blank' : null"
+                    :attributes="\Filament\Support\prepare_inherited_attributes($navigationItemExtraAttributes)"
                 >
                     {{ $navigationItem->getLabel() }}
 

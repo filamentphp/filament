@@ -40,13 +40,18 @@
 
     &:not(.fi-modal-slide-over) {
         &:not(.fi-width-screen) {
-            & > .fi-modal-window-ctn {
-                @apply overflow-y-auto;
+            &:not(.fi-modal-has-sticky-header):not(
+                    .fi-modal-has-sticky-footer
+                ) {
+                & > .fi-modal-window-ctn {
+                    @apply overflow-y-auto;
+                }
+            }
 
-                & .fi-modal-footer {
-                    &.fi-sticky {
-                        @apply rounded-b-xl;
-                    }
+            &.fi-modal-has-sticky-header,
+            &.fi-modal-has-sticky-footer {
+                & > .fi-modal-window-ctn > .fi-modal-window {
+                    @apply max-h-[calc(100dvh-2rem)] overflow-y-auto;
                 }
             }
         }
@@ -68,17 +73,15 @@
         }
     }
 
-    &.fi-align-start {
+    &.fi-align-start:not(.fi-modal-has-sticky-header) {
         & > .fi-modal-window-ctn > .fi-modal-window-has-icon {
-            &:not(.fi-modal-window-has-sticky-header) {
-                & .fi-modal-content {
-                    @apply ps-[5.25rem] pe-6;
-                }
+            & .fi-modal-content {
+                @apply ps-[5.25rem] pe-6;
+            }
 
-                & .fi-modal-footer {
-                    &:not(.fi-align-center) {
-                        @apply ps-[5.25rem] pe-6;
-                    }
+            & .fi-modal-footer {
+                &:not(.fi-align-center) {
+                    @apply ps-[5.25rem] pe-6;
                 }
             }
         }
@@ -94,7 +97,18 @@
     }
 
     & > .fi-modal-close-overlay {
-        @apply fixed inset-0 z-40 bg-gray-950/50 dark:bg-gray-950/75;
+        @apply fixed inset-0 z-40 bg-gray-950/50 transition-opacity duration-300 dark:bg-gray-950/75;
+    }
+
+    &.fi-modal-open:has(~ .fi-modal.fi-modal-open) > .fi-modal-close-overlay {
+        @apply opacity-0;
+    }
+
+    &.fi-modal-open ~ .fi-modal.fi-modal-open {
+        & > .fi-modal-close-overlay,
+        & > .fi-modal-window-ctn {
+            @apply z-50;
+        }
     }
 
     & > .fi-modal-window-ctn {
@@ -111,29 +125,30 @@
 
             & .fi-modal-window {
                 @apply mx-auto rounded-xl;
+            }
+        }
 
-                & .fi-modal-header {
-                    &.fi-sticky {
-                        @apply rounded-t-xl;
-                    }
-                }
+        &.fi-modal-has-sticky-header {
+            & > .fi-modal-window-ctn > .fi-modal-window > .fi-modal-header {
+                @apply rounded-t-xl;
+            }
+        }
+
+        &.fi-modal-has-sticky-footer {
+            & > .fi-modal-window-ctn > .fi-modal-window > .fi-modal-footer {
+                @apply rounded-b-xl;
             }
         }
     }
 
     & > .fi-modal-window-ctn > .fi-modal-window {
         @apply pointer-events-auto relative row-start-2 flex w-full cursor-default flex-col bg-white shadow-xl ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10;
-        contain: layout;
 
         & .fi-modal-header {
             @apply flex px-6 pt-6;
 
             &.fi-vertical-align-center {
                 @apply items-center;
-            }
-
-            &.fi-sticky {
-                @apply sticky top-0 z-10 border-b border-gray-200 bg-white pb-6 dark:border-white/10 dark:bg-gray-900;
             }
         }
 
@@ -271,28 +286,6 @@
             @apply duration-300;
         }
 
-        &:not(.fi-modal-window-has-content) {
-            & .fi-modal-footer {
-                &:not(.fi-sticky) {
-                    @apply mt-6;
-                }
-            }
-
-            &:not(.fi-modal-window-has-footer) {
-                & .fi-modal-header {
-                    @apply pb-6;
-                }
-            }
-        }
-
-        &:not(.fi-modal-window-has-icon),
-        &.fi-modal-window-has-sticky-header {
-            & .fi-modal-content,
-            & .fi-modal-footer {
-                @apply px-6;
-            }
-        }
-
         &.fi-modal-window-has-close-btn {
             &.fi-align-center:not(.fi-modal-window-has-icon) {
                 & .fi-modal-heading {
@@ -315,18 +308,6 @@
 
         & .fi-modal-footer {
             @apply w-full;
-
-            &.fi-sticky {
-                @apply sticky bottom-0 border-t border-gray-200 bg-white py-5 dark:border-white/10 dark:bg-gray-900;
-            }
-
-            &:not(.fi-sticky) {
-                @apply pb-6;
-            }
-
-            &:is(.fi-modal-slide-over .fi-modal-footer) {
-                @apply mt-auto;
-            }
 
             & .fi-modal-footer-actions {
                 @apply gap-3;
@@ -372,12 +353,68 @@
         }
     }
 
-    @supports (container-type: inline-size) {
+    &.fi-modal-has-sticky-header {
         & > .fi-modal-window-ctn > .fi-modal-window {
-            @apply @container;
+            & > .fi-modal-header {
+                @apply sticky top-0 z-10 border-b border-gray-200 bg-white pb-6 dark:border-white/10 dark:bg-gray-900;
+            }
+
+            & .fi-modal-content,
+            & .fi-modal-footer {
+                @apply px-6;
+            }
+        }
+    }
+
+    &.fi-modal-has-sticky-footer {
+        & > .fi-modal-window-ctn > .fi-modal-window > .fi-modal-footer {
+            @apply sticky bottom-0 border-t border-gray-200 bg-white py-5 dark:border-white/10 dark:bg-gray-900;
+        }
+    }
+
+    &:not(.fi-modal-has-sticky-footer) {
+        & > .fi-modal-window-ctn > .fi-modal-window {
+            &:not(.fi-modal-window-has-content) {
+                & .fi-modal-footer {
+                    @apply mt-6;
+                }
+
+                &:not(.fi-modal-window-has-footer) {
+                    & .fi-modal-header {
+                        @apply pb-6;
+                    }
+                }
+            }
 
             & .fi-modal-footer {
+                @apply pb-6;
+            }
+        }
+    }
+
+    &:not(.fi-modal-has-sticky-header) {
+        &
+            > .fi-modal-window-ctn
+            > .fi-modal-window:not(.fi-modal-window-has-icon) {
+            & .fi-modal-content,
+            & .fi-modal-footer {
+                @apply px-6;
+            }
+        }
+    }
+
+    &.fi-modal-slide-over {
+        & > .fi-modal-window-ctn > .fi-modal-window > .fi-modal-footer {
+            @apply mt-auto;
+        }
+    }
+
+    @supports (container-type: inline-size) {
+        & > .fi-modal-window-ctn > .fi-modal-window {
+            & .fi-modal-footer {
                 &.fi-align-center {
+                    @apply @container;
+
                     & .fi-modal-footer-actions {
                         @apply @sm:grid @sm:grid-cols-[repeat(auto-fit,minmax(0,1fr))];
                     }

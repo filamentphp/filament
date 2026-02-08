@@ -11,11 +11,7 @@ import AutoScreenshot from "@components/AutoScreenshot.astro"
 Before we start, make sure that the [Laravel notifications table](https://laravel.com/docs/notifications#database-prerequisites) is added to your database:
 
 ```bash
-# Laravel 11 and higher
 php artisan make:notifications-table
-
-# Laravel 10
-php artisan notifications:table
 ```
 
 > If you're using PostgreSQL, make sure that the `data` column in the migration is using `json()`: `$table->json('data')`.
@@ -80,6 +76,24 @@ public function toDatabase(User $notifiable): array
     return Notification::make()
         ->title('Saved successfully')
         ->getDatabaseMessage();
+}
+```
+
+## Moving the database notifications trigger to the panel sidebar
+
+By default, the database notifications trigger is positioned in the topbar. If the topbar is disabled, it is added to the sidebar.
+
+You can choose to always move it to the sidebar by passing a `position` argument to the `databaseNotifications()` method in the [configuration](../panel-configuration):
+
+```php
+use Filament\Enums\DatabaseNotificationsPosition;
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->databaseNotifications(position: DatabaseNotificationsPosition::Sidebar);
 }
 ```
 

@@ -40,7 +40,45 @@ trait EntanglesStateWithSingularRelationship
         $this->loadStateFromRelationshipsUsing(static function (Component | CanEntangleWithSingularRelationships $component): void {
             $component->clearCachedExistingRecord();
 
-            $component->fillFromRelationship();
+            $findFirstComponentWithThisRelationship = function (Schema $schema) use ($component, &$findFirstComponentWithThisRelationship): ?CanEntangleWithSingularRelationships {
+                foreach ($schema->getComponents(withActions: false, withHidden: true) as $childComponent) {
+                    if (
+                        ($childComponent->getStatePath() === $component->getStatePath()) &&
+                        ($childComponent->getModel() === $component->getModel()) &&
+                        ($childComponent->getRecord() === $component->getRecord()) &&
+                        ($childComponent instanceof CanEntangleWithSingularRelationships) &&
+                        ($childComponent->getRelationshipName() === $component->getRelationshipName()) &&
+                        ($childComponent->hasRelationship())
+                    ) {
+                        return $childComponent;
+                    }
+
+                    foreach ($childComponent->getChildSchemas() as $schema) {
+                        $found = $findFirstComponentWithThisRelationship($schema);
+
+                        if ($found) {
+                            return $found;
+                        }
+                    }
+                }
+
+                return null;
+            };
+
+            $firstComponentWithThisRelationship = $findFirstComponentWithThisRelationship($component->getModelRootContainer());
+
+            $isFirstComponent = ($firstComponentWithThisRelationship === null) || ($firstComponentWithThisRelationship === $component);
+
+            if ($isFirstComponent) {
+                // The first layout component using this relationship is the one that will fill the relationship data for all of them,
+                // but it will only hydrate the state correctly for itself.
+                $component->fillFromRelationship();
+            } else {
+                // If this is not the first layout component using this relationship, the data has already been filled by the first one,
+                // so we just need to hydrate the state without calling any hydration hooks. This ensures that state casts have run.
+                $hydratedDefaultState = null;
+                $component->getChildSchema()->hydrateState($hydratedDefaultState, shouldCallHydrationHooks: false);
+            }
         });
 
         $this->saveRelationshipsBeforeChildrenUsing(static function (Component | CanEntangleWithSingularRelationships $component, LivewireComponent & HasSchemas $livewire): void {
@@ -53,15 +91,9 @@ trait EntanglesStateWithSingularRelationship
                         continue;
                     }
 
-                    if ($childComponent->getModel() !== $component->getModel()) {
-                        continue;
-                    }
-
-                    if ($childComponent->getRecord() !== $component->getRecord()) {
-                        continue;
-                    }
-
                     if (
+                        ($childComponent->getModel() === $component->getModel()) &&
+                        ($childComponent->getRecord() === $component->getRecord()) &&
                         ($childComponent instanceof CanEntangleWithSingularRelationships) &&
                         ($childComponent->getRelationshipName() === $component->getRelationshipName()) &&
                         ($childComponent->hasRelationship())
@@ -77,7 +109,7 @@ trait EntanglesStateWithSingularRelationship
                 }
             };
 
-            $findComponentsWithThisRelationship($component->getRootContainer());
+            $findComponentsWithThisRelationship($component->getModelRootContainer());
 
             // The first layout component using this relationship is the one that will save the relationship for all of them.
             if (filled($componentsWithThisRelationship) && (Arr::first($componentsWithThisRelationship) !== $component)) {
@@ -232,6 +264,8 @@ trait EntanglesStateWithSingularRelationship
     public function cachedExistingRecord(?Model $record): static
     {
         $this->cachedExistingRecord = $record;
+
+        $this->clearCachedDefaultChildSchemas();
 
         return $this;
     }

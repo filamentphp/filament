@@ -43,7 +43,7 @@ This is the basis of how fields work in Filament. Each field is assigned to a pu
 </x-dynamic-component>
 ```
 
-If your component heavily relies on third party libraries, we advise that you asynchronously load the Alpine.js component using the Filament asset system. This ensures that the Alpine.js component is only loaded when it's needed, and not on every page load. To find out how to do this, check out our [Assets documentation](../assets#asynchronous-alpinejs-components).
+If your component heavily relies on third party libraries, we advise that you asynchronously load the Alpine.js component using the Filament asset system. This ensures that the Alpine.js component is only loaded when it's needed, and not on every page load. To find out how to do this, check out our [Assets documentation](../advanced/assets#asynchronous-alpinejs-components).
 
 ### Custom field classes
 
@@ -253,11 +253,102 @@ Filament provides a `$applyStateBindingModifiers()` function that you may use in
     :field="$field"
 >
     <input {{ $applyStateBindingModifiers('wire:model') }}="{{ $getStatePath() }}" />
-    
+
     <!-- Or -->
-    
+
     <div x-data="{ state: $wire.{{ $applyStateBindingModifiers("\$entangle('{$getStatePath()}')") }} }">
         <input x-model="state" />
     </div>
 </x-dynamic-component>
+```
+
+## Calling field methods from JavaScript
+
+Sometimes you need to call a method on the field class from JavaScript in the Blade view. For example, you might want to fetch data asynchronously, process a file upload, or perform some server-side computation. Filament provides a way to expose methods on your field class to JavaScript using the `#[ExposedLivewireMethod]` attribute.
+
+### Exposing a method
+
+To expose a method to JavaScript, add the `#[ExposedLivewireMethod]` attribute to a public method on your custom field class:
+
+```php
+use Filament\Forms\Components\Field;
+use Filament\Support\Components\Attributes\ExposedLivewireMethod;
+
+class LocationPicker extends Field
+{
+    protected string $view = 'filament.forms.components.location-picker';
+
+    #[ExposedLivewireMethod]
+    public function geocodeAddress(string $address): array
+    {
+        // Perform geocoding logic...
+
+        return [
+            'latitude' => $latitude,
+            'longitude' => $longitude,
+        ];
+    }
+}
+```
+
+<Aside variant="info">
+    Only methods marked with `#[ExposedLivewireMethod]` can be called from JavaScript. This is a security measure to prevent arbitrary method execution.
+</Aside>
+
+### Calling the method from JavaScript
+
+In your Blade view, you may call the exposed method using `$wire.callSchemaComponentMethod()`. The first argument is the component's key (available via `$getKey()`), and the second argument is the method name. You may pass arguments as a third argument:
+
+```blade
+@php
+    $key = $getKey();
+@endphp
+
+<x-dynamic-component
+    :component="$getFieldWrapperView()"
+    :field="$field"
+>
+    <div
+        x-data="{
+            address: '',
+            coordinates: null,
+            async geocode() {
+                this.coordinates = await $wire.callSchemaComponentMethod(
+                    @js($key),
+                    'geocodeAddress',
+                    { address: this.address },
+                )
+            },
+        }"
+    >
+        <input type="text" x-model="address" />
+        <button type="button" x-on:click="geocode">Geocode</button>
+
+        <template x-if="coordinates">
+            <p x-text="`${coordinates.latitude}, ${coordinates.longitude}`"></p>
+        </template>
+    </div>
+</x-dynamic-component>
+```
+
+### Preventing re-renders
+
+By default, calling an exposed method will trigger a re-render of the Livewire component. If your method doesn't need to update the UI, you may add Livewire's `#[Renderless]` attribute alongside `#[ExposedLivewireMethod]` to skip the re-render:
+
+```php
+use Filament\Forms\Components\Field;
+use Filament\Support\Components\Attributes\ExposedLivewireMethod;
+use Livewire\Attributes\Renderless;
+
+class LocationPicker extends Field
+{
+    protected string $view = 'filament.forms.components.location-picker';
+
+    #[ExposedLivewireMethod]
+    #[Renderless]
+    public function geocodeAddress(string $address): array
+    {
+        // ...
+    }
+}
 ```

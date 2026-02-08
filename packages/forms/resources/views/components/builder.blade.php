@@ -32,6 +32,7 @@
 
     $collapseAllActionIsVisible = $isCollapsible && $collapseAllAction->isVisible();
     $expandAllActionIsVisible = $isCollapsible && $expandAllAction->isVisible();
+    $persistCollapsed = $shouldPersistCollapsed();
 
     $key = $getKey();
     $statePath = $getStatePath();
@@ -82,12 +83,11 @@
                 x-sortable
                 data-sortable-animation-duration="{{ $getReorderAnimationDuration() }}"
                 x-on:end.stop="
-                    $event.oldIndex !== $event.newIndex &&
-                        $wire.mountAction(
-                            'reorder',
-                            { items: $event.target.sortable.toArray() },
-                            { schemaComponent: '{{ $key }}' },
-                        )
+                    $wire.mountAction(
+                        'reorder',
+                        { items: $event.target.sortable.toArray() },
+                        { schemaComponent: '{{ $key }}' },
+                    )
                 "
                 class="fi-fo-builder-items"
             >
@@ -95,6 +95,7 @@
                     $hasBlockLabels = $hasBlockLabels();
                     $hasBlockIcons = $hasBlockIcons();
                     $hasBlockNumbers = $hasBlockNumbers();
+                    $hasBlockHeaders = $hasBlockHeaders();
                 @endphp
 
                 @foreach ($items as $itemKey => $item)
@@ -114,13 +115,14 @@
                         $moveUpAction = $moveUpAction(['item' => $itemKey])->disabled($loop->first);
                         $moveUpActionIsVisible = $isReorderableWithButtons && $moveUpAction->isVisible();
                         $reorderActionIsVisible = $isReorderableWithDragAndDrop && $reorderAction->isVisible();
+                        $hasItemHeader = $hasBlockHeaders && ($reorderActionIsVisible || $moveUpActionIsVisible || $moveDownActionIsVisible || $hasBlockIcons || $hasBlockLabels || $editActionIsVisible || $cloneActionIsVisible || $deleteActionIsVisible || $isCollapsible || $visibleExtraItemActions);
                     @endphp
 
                     <li
                         wire:ignore.self
                         wire:key="{{ $item->getLivewireKey() }}.item"
                         x-data="{
-                            isCollapsed: @js($isCollapsed($item)),
+                            isCollapsed: @if ($persistCollapsed) $persist(@js($isCollapsed($item))).as(`builder-${@js($key)}-${@js($itemKey)}-isCollapsed`) @else @js($isCollapsed($item)) @endif,
                         }"
                         x-on:builder-expand.window="$event.detail === '{{ $statePath }}' && (isCollapsed = false)"
                         x-on:builder-collapse.window="$event.detail === '{{ $statePath }}' && (isCollapsed = true)"
@@ -128,11 +130,14 @@
                         x-sortable-item="{{ $itemKey }}"
                         {{
                             $item->getParentComponent()->getExtraAttributeBag()
-                                ->class(['fi-fo-builder-item'])
+                                ->class([
+                                    'fi-fo-builder-item',
+                                    'fi-fo-builder-item-has-header' => $hasItemHeader,
+                                ])
                         }}
                         x-bind:class="{ 'fi-collapsed': isCollapsed }"
                     >
-                        @if ($reorderActionIsVisible || $moveUpActionIsVisible || $moveDownActionIsVisible || $hasBlockIcons || $hasBlockLabels || $editActionIsVisible || $cloneActionIsVisible || $deleteActionIsVisible || $isCollapsible || $visibleExtraItemActions)
+                        @if ($hasItemHeader)
                             <div
                                 @if ($isCollapsible)
                                     x-on:click.stop="isCollapsed = !isCollapsed"
@@ -144,11 +149,8 @@
                                         class="fi-fo-builder-item-header-start-actions"
                                     >
                                         @if ($reorderActionIsVisible)
-                                            <li
-                                                x-sortable-handle
-                                                x-on:click.stop
-                                            >
-                                                {{ $reorderAction }}
+                                            <li x-on:click.stop>
+                                                {{ $reorderAction->extraAttributes(['x-sortable-handle' => true], merge: true) }}
                                             </li>
                                         @endif
 
@@ -290,9 +292,17 @@
                             </li>
                         @elseif (filled($labelBetweenItems))
                             <li class="fi-fo-builder-label-between-items-ctn">
+                                <div
+                                    class="fi-fo-builder-label-between-items-divider-before"
+                                ></div>
+
                                 <span class="fi-fo-builder-label-between-items">
                                     {{ $labelBetweenItems }}
                                 </span>
+
+                                <div
+                                    class="fi-fo-builder-label-between-items-divider-after"
+                                ></div>
                             </li>
                         @endif
                     @endif
@@ -303,11 +313,11 @@
         @if ($isAddable && $addAction->isVisible())
             <x-filament-forms::builder.block-picker
                 :action="$addAction"
+                :action-alignment="$addActionAlignment"
                 :blocks="$blockPickerBlocks"
                 :columns="$blockPickerColumns"
                 :key="$key"
                 :width="$blockPickerWidth"
-                :class="($addActionAlignment instanceof Alignment) ? ('fi-align-' . $addActionAlignment->value) : $addActionAlignment"
             >
                 <x-slot name="trigger">
                     {{ $addAction }}

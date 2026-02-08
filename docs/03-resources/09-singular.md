@@ -10,7 +10,7 @@ Sometimes there is no need for a table that lists records in a resource. There i
 
 For example, a CMS might have a `Page` Eloquent model and a `PageResource`, but you may also want to create a singular page outside the `PageResource` for editing the "homepage" of the website. This allows the user to directly edit the homepage without having to navigate to the `PageResource` and find the homepage record in the table.
 
-Other examples of this include a "Settings" page, or a "Profile" page for the currently logged-in user. For these use cases, though, we recommend that you use the [Spatie Settings plugin](/plugins/filament-spatie-settings) and the [Profile](../users#authentication-features) features of Filament, which require less code to implement.
+Other examples of this include a "Settings" page, or a "Profile" page for the currently logged-in user. For these use cases, though, we recommend that you use the [Spatie Settings plugin](https://filamentphp.com/plugins/filament-spatie-settings) and the [Profile](../users/overview#authentication-features) features of Filament, which require less code to implement.
 
 ## Creating a singular resource
 
@@ -35,10 +35,13 @@ The page class should contain the following elements:
 namespace App\Filament\Pages;
 
 use App\Models\WebsitePage;
+use Filament\Actions\Action;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
+use Filament\Schemas\Components\Actions;
+use Filament\Schemas\Components\Form;
 use Filament\Schemas\Schema;
 
 /**
@@ -46,6 +49,8 @@ use Filament\Schemas\Schema;
  */
 class ManageHomepage extends Page
 {
+    protected string $view = 'filament.pages.manage-homepage';
+
     /**
      * @var array<string, mixed> | null
      */
@@ -60,11 +65,21 @@ class ManageHomepage extends Page
     {
         return $schema
             ->components([
-                TextInput::make('title')
-                    ->required()
-                    ->maxLength(255),
-                RichEditor::make('content'),
-                // ...
+                Form::make([
+                    TextInput::make('title')
+                        ->required()
+                        ->maxLength(255),
+                    RichEditor::make('content'),
+                    // ...
+                ])
+                    ->livewireSubmitHandler('save')
+                    ->footer([
+                        Actions::make([
+                            Action::make('save')
+                                ->submit('save')
+                                ->keyBindings(['mod+s']),
+                        ]),
+                    ]),
             ])
             ->record($this->getRecord())
             ->statePath('data');
@@ -103,18 +118,10 @@ class ManageHomepage extends Page
 }
 ```
 
-The page Blade view should render the form and a Save button. The `wire:submit` directive should be used to call the `save()` method when the form is submitted:
+The page Blade view should render the form:
 
 ```blade
 <x-filament::page>
-    <form wire:submit="save">
-        {{ $this->form }}
-    
-        <div>
-            <x-filament::button type="submit">
-                Save
-            </x-filament::button>
-        </div>
-    </form>
+    {{ $this->form }}
 </x-filament::page>
 ```

@@ -14,6 +14,8 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\LazyCollection;
 use LogicException;
 
+use function Livewire\invade;
+
 trait HasBulkActions
 {
     /**
@@ -86,7 +88,7 @@ trait HasBulkActions
 
     public function deselectAllTableRecords(): void
     {
-        $this->dispatch('deselectAllTableRecords');
+        $this->dispatch('deselectAllTableRecords')->self();
     }
 
     /**
@@ -131,7 +133,7 @@ trait HasBulkActions
     /**
      * @return array<string>
      */
-    public function getGroupedSelectableTableRecordKeys(string $group): array
+    public function getGroupedSelectableTableRecordKeys(?string $group): array
     {
         $query = $this->getFilteredTableQuery();
 
@@ -204,12 +206,6 @@ trait HasBulkActions
 
         $table = $this->getTable();
 
-        if ($shouldFetchSelectedRecords && $table->getRelationship() instanceof BelongsToMany && $table->allowsDuplicates()) {
-            return $this->cachedSelectedTableRecords = $this->hydratePivotRelationForTableRecords(
-                $this->getSelectedTableRecordsQuery($shouldFetchSelectedRecords, $chunkSize)->get(),
-            );
-        }
-
         if (! $table->hasQuery()) {
             $resolveSelectedRecords = $table->getResolveSelectedRecordsCallback();
 
@@ -235,19 +231,22 @@ trait HasBulkActions
 
         $query = $this->getSelectedTableRecordsQuery($shouldFetchSelectedRecords, $chunkSize);
 
-        if (! $chunkSize) {
-            $this->applySortingToTableQuery($query);
-        }
-
         if (! $shouldFetchSelectedRecords) {
             return $this->cachedSelectedTableRecords = $query->toBase()->pluck($query->getModel()->getQualifiedKeyName());
+        }
+
+        if ($chunkSize && $table->getRelationship() instanceof BelongsToMany && ! $table->allowsDuplicates()) {
+            $invadedRelationship = invade($table->getRelationship());
+
+            return $this->cachedSelectedTableRecords = $query->lazyById($chunkSize)
+                ->tapEach(fn (Model $record) => $invadedRelationship->hydratePivotRelation([$record]));
         }
 
         if ($chunkSize) {
             return $this->cachedSelectedTableRecords = $query->lazyById($chunkSize);
         }
 
-        return $this->cachedSelectedTableRecords = $query->get();
+        return $this->cachedSelectedTableRecords = $this->hydratePivotRelationForTableRecords($query->get());
     }
 
     public function getSelectedTableRecordsQuery(bool $shouldFetchSelectedRecords = true, ?int $chunkSize = null): Builder
@@ -307,7 +306,15 @@ trait HasBulkActions
             }
         }
 
-        return $table->selectPivotDataInQuery($relationship);
+        $relationship = $table->selectPivotDataInQuery($relationship);
+
+        $query = $relationship->getQuery();
+
+        if (! $chunkSize) {
+            $this->applySortingToTableQuery($query);
+        }
+
+        return $query;
     }
 
     /**

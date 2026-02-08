@@ -24,6 +24,8 @@ trait HasGlobalSearch
 
     protected static bool $isGloballySearchable = true;
 
+    protected static ?int $globalSearchSort = null;
+
     public static function canGloballySearch(): bool
     {
         return static::$isGloballySearchable && count(static::getGloballySearchableAttributes()) && static::canAccess();
@@ -66,6 +68,13 @@ trait HasGlobalSearch
 
     public static function getGlobalSearchResultUrl(Model $record): ?string
     {
+        // In the future, Filament will support global search in nested resources.
+        // For now, you must specify custom global search result URLs to do so,
+        // since there are missing URL parameters from the parent records.
+        if (static::getParentResourceRegistration()) {
+            return null;
+        }
+
         $canView = static::canView($record);
 
         if (static::hasPage('view') && $canView) {
@@ -151,22 +160,24 @@ trait HasGlobalSearch
         $search = generate_search_term_expression($search, static::isGlobalSearchForcedCaseInsensitive(), $databaseConnection);
 
         if (! static::shouldSplitGlobalSearchTerms()) {
-            $isFirst = true;
+            $query->where(function (Builder $query) use ($search): void {
+                $isFirst = true;
 
-            foreach (static::getGloballySearchableAttributes() as $attributes) {
-                static::applyGlobalSearchAttributeConstraint(
-                    query: $query,
-                    search: $search,
-                    searchAttributes: Arr::wrap($attributes),
-                    isFirst: $isFirst,
-                );
-            }
+                foreach (static::getGloballySearchableAttributes() as $attributes) {
+                    static::applyGlobalSearchAttributeConstraint(
+                        query: $query,
+                        search: $search,
+                        searchAttributes: Arr::wrap($attributes),
+                        isFirst: $isFirst,
+                    );
+                }
+            });
 
             return;
         }
 
         $searchWords = array_filter(
-            str_getcsv(preg_replace('/\s+/', ' ', $search), separator: ' ', escape: '\\'),
+            str_getcsv(preg_replace('/(\s|\x{3164}|\x{1160})+/u', ' ', $search), separator: ' ', escape: '\\'),
             fn ($word): bool => filled($word),
         );
 
@@ -227,5 +238,15 @@ trait HasGlobalSearch
     public static function getGlobalSearchEloquentQuery(): Builder
     {
         return static::getEloquentQuery();
+    }
+
+    public static function getGlobalSearchSort(): ?int
+    {
+        return static::$globalSearchSort;
+    }
+
+    public static function globalSearchSort(?int $sort): void
+    {
+        static::$globalSearchSort = $sort;
     }
 }

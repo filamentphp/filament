@@ -357,7 +357,7 @@ public function table(Table $table): Table
 }
 ```
 
-If you're using mass assignment protection on your model, you will also need to add the `sort` attribute to the `$fillable` array there.
+The `sort` database column in this example will be used to store the order of records in the table. Whenever you order a database query using that column, they will be returned in the defined order. If you're using mass assignment protection on your model, you will also need to add the `sort` attribute to the `$fillable` array there.
 
 When making the table reorderable, a new button will be available on the table to toggle reordering.
 
@@ -433,6 +433,26 @@ public function table(Table $table): Table
 ```
 
 <AutoScreenshot name="tables/reordering/custom-trigger-action" alt="Table with reorderable rows and a custom trigger action" version="4.x" />
+
+### Running code before and after reordering
+
+You may run code before or after a record is reordered using the `beforeReordering()` and `afterReordering()` methods. Both methods accept a function that receives the new `$order` array of record keys:
+
+```php
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->reorderable('sort')
+        ->beforeReordering(function (array $order): void {
+            // Runs before records are reordered in the database.
+        })
+        ->afterReordering(function (array $order): void {
+            // Runs after records are reordered in the database.
+        });
+}
+```
 
 ## Customizing the table header
 

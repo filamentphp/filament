@@ -2,16 +2,16 @@
 
 return [
 
-    'title' => ':Label siam na',
+    'title' => ':Label siamna',
 
-    'breadcrumb' => 'Create',
+    'breadcrumb' => 'Siamna',
 
     'form' => [
 
         'actions' => [
 
             'cancel' => [
-                'label' => 'Cancel',
+                'label' => 'Sûtna',
             ],
 
             'create' => [

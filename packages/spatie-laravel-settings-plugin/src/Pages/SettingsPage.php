@@ -221,7 +221,8 @@ class SettingsPage extends Page
         return Actions::make($this->getFormActions())
             ->alignment($this->getFormActionsAlignment())
             ->fullWidth($this->hasFullWidthFormActions())
-            ->sticky($this->areFormActionsSticky());
+            ->sticky($this->areFormActionsSticky())
+            ->key('form-actions');
     }
 
     protected function getSubmitFormLivewireMethodName(): string
@@ -247,10 +248,5 @@ class SettingsPage extends Page
     public function canEdit(): bool
     {
         return true;
-    }
-
-    public function getDefaultTestingSchemaName(): ?string
-    {
-        return 'form';
     }
 }

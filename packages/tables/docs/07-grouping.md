@@ -202,6 +202,27 @@ public function table(Table $table): Table
 }
 ```
 
+### Collapsing groups by default
+
+By default, groups with the `collapsible()` method are expanded when the table loads.
+
+If you want all groups to be collapsed by default when the table loads, use `$table->collapsedGroupsByDefault()`:
+
+```php
+use Filament\Tables\Grouping\Group;
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->groups([
+            Group::make('author.name')
+                ->collapsible(),
+        ])
+        ->collapsedGroupsByDefault();
+}
+```
+
 ## Summarising groups
 
 You can use [summaries](summaries) with groups to display a summary of the records inside a group. This works automatically if you choose to add a summariser to a column in a grouped table.

@@ -143,14 +143,14 @@ trait HasState
     public function callBeforeStateDehydrated(array &$state = []): void
     {
         foreach ($this->getComponents(withActions: false, withHidden: true) as $component) {
-            if ($component->isHidden()) {
+            if ($component->isHiddenAndNotDehydratedWhenHidden()) {
                 continue;
             }
 
             $component->callBeforeStateDehydrated($state);
 
-            foreach ($component->getChildSchemas() as $childSchema) {
-                if ($childSchema->isHidden()) {
+            foreach ($component->getChildSchemas(withHidden: true) as $childSchema) {
+                if ($childSchema->isHiddenAndNotDehydratedWhenHidden()) {
                     continue;
                 }
 
@@ -219,8 +219,8 @@ trait HasState
                 continue;
             }
 
-            foreach ($component->getChildSchemas() as $childSchema) {
-                if ($childSchema->isHidden()) {
+            foreach ($component->getChildSchemas(withHidden: true) as $childSchema) {
+                if ($childSchema->isHiddenAndNotDehydratedWhenHidden()) {
                     continue;
                 }
 
@@ -228,22 +228,16 @@ trait HasState
             }
 
             if (filled($component->getStatePath(isAbsolute: false))) {
-                $componentStatePath = $component->getStatePath();
-                $componentState = data_get($state, $componentStatePath);
-
-                if ($componentState === '') {
-                    data_set($state, $componentStatePath, null);
-                    $componentState = null;
-                }
-
                 if (! $component->mutatesDehydratedState()) {
                     continue;
                 }
 
+                $componentStatePath = $component->getStatePath();
+
                 data_set(
                     $state,
                     $componentStatePath,
-                    $component->mutateDehydratedState($componentState),
+                    $component->mutateDehydratedState(data_get($state, $componentStatePath)),
                 );
             }
         }
@@ -262,8 +256,8 @@ trait HasState
                 continue;
             }
 
-            foreach ($component->getChildSchemas() as $childSchema) {
-                if ($childSchema->isHidden()) {
+            foreach ($component->getChildSchemas(withHidden: true) as $childSchema) {
+                if ($childSchema->isHiddenAndNotDehydratedWhenHidden()) {
                     continue;
                 }
 
@@ -388,11 +382,11 @@ trait HasState
      */
     public function getConstantState(): array | object
     {
-        return $this->constantState
+        return $this->evaluate($this->constantState)
             ?? $this->getRecord(withParentComponentRecord: false)
             ?? $this->getParentComponent()?->getContainer()->getConstantState()
             ?? $this->getRecord()
-            ?? throw new LogicException('Schema has no [record()] or [state()] set.');
+            ?? [];
     }
 
     /**
@@ -409,7 +403,7 @@ trait HasState
         }
 
         if ($this->getParentComponent()?->getContainer()->getConstantState() !== null) {
-            return $this->getParentComponent()->getContainer()->getStatePath();
+            return $this->getParentComponent()->getContainer()->getConstantStatePath();
         }
 
         return $this->getParentComponent()?->getRecordConstantStatePath();
@@ -442,6 +436,34 @@ trait HasState
 
                 $shouldCallHooksBefore && $this->saveRelationships();
                 $shouldCallHooksBefore && $this->loadStateFromRelationships(shouldHydrate: true);
+            }
+
+            return $state;
+        });
+    }
+
+    /**
+     * @internal Do not use this method outside the internals of Filament. It is subject to breaking changes in minor and patch releases.
+     *
+     * @return array<string, mixed>
+     */
+    public function getStateSnapshot(): array
+    {
+        return Component::withVisibilityCache(function (): array {
+            $statePath = $this->getStatePath();
+
+            if (filled($statePath)) {
+                $state = [];
+                data_set($state, $statePath, $this->getRawState());
+            } else {
+                $state = $this->getRawState();
+            }
+
+            $this->dehydrateState($state);
+            $this->mutateDehydratedState($state);
+
+            if ($statePath) {
+                $state = data_get($state, $statePath) ?? [];
             }
 
             return $state;
@@ -497,10 +519,23 @@ trait HasState
         return $this->cachedAbsoluteStatePath = implode('.', $pathComponents);
     }
 
-    protected function flushCachedAbsoluteStatePath(): void
+    public function flushCachedAbsoluteStatePath(): void
     {
         /** @phpstan-ignore unset.possiblyHookedProperty */
         unset($this->cachedAbsoluteStatePath);
+    }
+
+    public function flushCachedAbsoluteStatePaths(): void
+    {
+        $this->flushCachedAbsoluteStatePath();
+
+        foreach ($this->getComponents(withActions: false, withHidden: true) as $component) {
+            $component->flushCachedAbsoluteStatePath();
+
+            foreach ($component->getChildSchemas(withHidden: true) as $childSchema) {
+                $childSchema->flushCachedAbsoluteStatePaths();
+            }
+        }
     }
 
     public function shouldPartiallyRender(?string $updatedStatePath = null): bool

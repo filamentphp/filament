@@ -2,6 +2,7 @@
 
 namespace Filament;
 
+use BackedEnum;
 use Filament\Facades\Filament;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\Access\Response;
@@ -9,6 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Gate;
 use LogicException;
+use UnitEnum;
 
 if (! function_exists('Filament\authorize')) {
     /**
@@ -16,7 +18,7 @@ if (! function_exists('Filament\authorize')) {
      *
      * @throws AuthorizationException
      */
-    function authorize(string $action, Model | string $model, bool $shouldCheckPolicyExistence = true): Response
+    function authorize(UnitEnum | string $action, Model | string $model, bool $shouldCheckPolicyExistence = true): Response
     {
         return get_authorization_response($action, $model, $shouldCheckPolicyExistence)->authorize();
     }
@@ -26,17 +28,38 @@ if (! function_exists('Filament\get_authorization_response')) {
     /**
      * @param  Model|class-string<Model>  $model
      */
-    function get_authorization_response(string $action, Model | string $model, bool $shouldCheckPolicyExistence = true): Response
+    function get_authorization_response(UnitEnum | string $action, Model | string $model, bool $shouldCheckPolicyExistence = true): Response
     {
         $user = Filament::auth()->user();
 
+        $actionValue = match (true) {
+            $action instanceof BackedEnum => $action->value,
+            $action instanceof UnitEnum => $action->name,
+            default => $action,
+        };
+
         if (! $shouldCheckPolicyExistence) {
+            if (
+                Filament::isAuthorizationStrict()
+                && (! Gate::forUser($user)->has($action))
+                && (
+                    blank($policyClass = Gate::getPolicyFor($model))
+                    || (! method_exists($policyClass, $actionValue))
+                )
+            ) {
+                $modelName = is_string($model) ? $model : $model::class;
+
+                throw new LogicException(blank($policyClass)
+                    ? "Strict authorization mode is enabled, but no ability [{$actionValue}] or policy with method [{$actionValue}()] was found for [{$modelName}]."
+                    : "Strict authorization mode is enabled, but no ability [{$actionValue}] or [{$actionValue}()] method was found on [{$policyClass}].");
+            }
+
             return Gate::forUser($user)->inspect($action, Arr::wrap($model));
         }
 
         $policy = Gate::getPolicyFor($model);
 
-        if (filled($policy) && method_exists($policy, $action)) {
+        if (filled($policy) && method_exists($policy, $actionValue)) {
             return Gate::forUser($user)->inspect($action, Arr::wrap($model));
         }
 
@@ -47,9 +70,11 @@ if (! function_exists('Filament\get_authorization_response')) {
                 default => null,
             };
 
+            $modelName = is_string($model) ? $model : $model::class;
+
             throw new LogicException(blank($policyClass)
-                ? "Strict authorization mode is enabled, but no policy was found for [{$model}]."
-                : "Strict authorization mode is enabled, but no [{$action}()] method was found on [{$policyClass}].");
+                ? "Strict authorization mode is enabled, but no policy was found for [{$modelName}]."
+                : "Strict authorization mode is enabled, but no [{$actionValue}()] method was found on [{$policyClass}].");
         }
 
         /** @var bool | Response | null $response */

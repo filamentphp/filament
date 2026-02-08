@@ -116,7 +116,7 @@ Once a table and form have been defined for the relation manager, visit the [Edi
 
 ### Customizing the relation manager's URL parameter
 
-If you pass a key to the array returned from `getRelations()`, it will be used in the URL for that relation manager when switching been multiple relation managers. For example, you can pass `posts` to use `?relation=posts` in the URL instead of a numeric array index:
+If you pass a key to the array returned from `getRelations()`, it will be used in the URL for that relation manager when switching between multiple relation managers. For example, you can pass `posts` to use `?relation=posts` in the URL instead of a numeric array index:
 
 ```php
 public static function getRelations(): array
@@ -377,6 +377,38 @@ AttachAction::make()
     ->recordSelect(
         fn (Select $select) => $select->placeholder('Select a post'),
     )
+```
+
+#### Selecting records to attach using a modal table
+
+You may use the `tableSelect()` method to select records in the attachment modal using a full Filament table, instead of a simple select dropdown:
+
+```php
+use App\Filament\Resources\Products\Tables\ProductsTable;
+use Filament\Actions\AttachAction;
+
+AttachAction::make()
+    ->tableSelect(ProductsTable::class)
+```
+
+In this example, the `ProductsTable` class is a standard Filament table class, with a `configure()` method that defines the table's columns:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
+
+public static function configure(Table $table): Table
+{
+    return $table
+        ->columns([
+            TextColumn::make('name'),
+            TextColumn::make('sku'),
+            // ...
+        ])
+        ->filters([
+            // ...
+        ]);
+}
 ```
 
 ### Handling duplicates

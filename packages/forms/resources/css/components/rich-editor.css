@@ -8,7 +8,7 @@
     }
 
     & .fi-fo-rich-editor-floating-toolbar {
-        @apply invisible absolute z-[20] -mt-1 flex flex-wrap gap-x-3 gap-y-1 rounded-lg border border-gray-300 bg-white p-1 shadow dark:border-gray-600 dark:bg-gray-800;
+        @apply invisible absolute z-[20] -mt-1 flex max-w-full flex-wrap gap-x-3 gap-y-1 rounded-lg border border-gray-300 bg-white p-1 shadow dark:border-gray-600 dark:bg-gray-800;
     }
 
     & .fi-fo-rich-editor-toolbar-group {
@@ -18,9 +18,29 @@
     & .fi-fo-rich-editor-tool {
         @apply flex h-8 min-w-8 items-center justify-center rounded-lg text-sm font-semibold text-gray-700 transition duration-75 hover:bg-gray-50 focus-visible:bg-gray-50 dark:text-gray-200 dark:hover:bg-white/5 dark:focus-visible:bg-white/5;
 
+        &[disabled] {
+            @apply pointer-events-none cursor-default opacity-70;
+        }
+
         &.fi-active {
             @apply text-primary-600 dark:text-primary-400 bg-gray-50 dark:bg-white/5;
         }
+
+        &.fi-fo-rich-editor-tool-with-label {
+            @apply items-center gap-x-1 px-1.5;
+        }
+    }
+
+    & .fi-fo-rich-editor-uploading-file-message {
+        @apply flex items-center gap-x-3 border-b border-gray-200 bg-gray-50 px-5 py-1.5 text-sm leading-6 font-medium text-gray-700 dark:border-white/10 dark:bg-white/5 dark:text-gray-200;
+
+        & .fi-loading-indicator {
+            @apply text-gray-400 dark:text-gray-500;
+        }
+    }
+
+    & .fi-fo-rich-editor-file-validation-message {
+        @apply border-danger-200 bg-danger-50 text-danger-700 dark:text-danger-200 flex items-center gap-x-3 border-b px-5 py-1.5 text-sm leading-6 font-medium dark:border-white/10 dark:bg-white/5;
     }
 
     & .fi-fo-rich-editor-main {
@@ -28,10 +48,12 @@
     }
 
     & .fi-fo-rich-editor-content {
-        @apply min-h-12 w-full flex-1 px-5 py-3;
+        @apply relative min-h-12 w-full flex-1 px-5 py-3;
     }
 
     & span[data-type='mergeTag'] {
+        @apply my-0 inline-block whitespace-nowrap;
+
         &::before {
             @apply me-1 font-normal opacity-60;
             content: '{{';
@@ -41,6 +63,10 @@
             @apply ms-1 font-normal opacity-60;
             content: '}}';
         }
+    }
+
+    & span[data-type='mention'] {
+        @apply bg-primary-50 text-primary-600 dark:bg-primary-400/10 dark:text-primary-400 my-0 inline-block rounded px-1 font-medium whitespace-nowrap;
     }
 
     & .fi-fo-rich-editor-panels {
@@ -147,7 +173,7 @@
 
             & td,
             & th {
-                @apply relative min-w-[1em] border border-gray-300 !px-2 py-2 align-top dark:border-gray-600;
+                @apply relative min-w-[1em] border border-gray-300 !p-2 align-top dark:border-gray-600;
 
                 & > * {
                     @apply mb-0;
@@ -182,14 +208,113 @@
         &.resize-cursor {
             @apply cursor-col-resize cursor-ew-resize;
         }
+
+        & .grid-layout > .grid-layout-col {
+            @apply rounded-md border border-gray-950/20 p-4 dark:border-white/20;
+        }
+
+        [data-resize-handle] {
+            position: absolute;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            border-radius: 2px;
+            z-index: 10;
+
+            &:hover {
+                background: rgba(0, 0, 0, 0.8);
+            }
+
+            &[data-resize-handle] {
+                margin: 0 !important;
+            }
+            &[data-resize-handle='top-left'],
+            &[data-resize-handle='top-right'],
+            &[data-resize-handle='bottom-left'],
+            &[data-resize-handle='bottom-right'] {
+                width: 8px;
+                height: 8px;
+            }
+
+            &[data-resize-handle='top-left'] {
+                top: -4px;
+                left: -4px;
+                cursor: nwse-resize;
+            }
+
+            &[data-resize-handle='top-right'] {
+                top: -4px;
+                right: -4px;
+                cursor: nesw-resize;
+            }
+
+            &[data-resize-handle='bottom-left'] {
+                bottom: -4px;
+                left: -4px;
+                cursor: nesw-resize;
+            }
+
+            &[data-resize-handle='bottom-right'] {
+                bottom: -4px;
+                right: -4px;
+                cursor: nwse-resize;
+            }
+
+            &[data-resize-handle='top'],
+            &[data-resize-handle='bottom'] {
+                height: 6px;
+                left: 8px;
+                right: 8px;
+            }
+
+            &[data-resize-handle='top'] {
+                top: -3px;
+                cursor: ns-resize;
+            }
+
+            &[data-resize-handle='bottom'] {
+                bottom: -3px;
+                cursor: ns-resize;
+            }
+
+            &[data-resize-handle='left'],
+            &[data-resize-handle='right'] {
+                width: 6px;
+                top: 8px;
+                bottom: 8px;
+            }
+
+            &[data-resize-handle='left'] {
+                left: -3px;
+                cursor: ew-resize;
+            }
+
+            &[data-resize-handle='right'] {
+                right: -3px;
+                cursor: ew-resize;
+            }
+        }
+
+        [data-resize-state='true'] [data-resize-wrapper] {
+            @apply relative;
+            outline: 1px solid rgba(0, 0, 0, 0.25);
+            border-radius: 0.125rem;
+        }
+
+        /* Workaround for TipTap bug: https://github.com/filamentphp/filament/issues/18997 */
+        [data-resize-container] {
+            @apply !inline-block;
+        }
+    }
+
+    & .tiptap.ProseMirror {
+        /* https://defensivecss.dev/tip/input-zoom-safari */
+        @supports (-webkit-touch-callout: none) {
+            @apply text-base;
+        }
     }
 
     & img {
         @apply inline-block;
-
-        &.fi-loading {
-            @apply animate-pulse;
-        }
     }
 
     & div[data-type='customBlock'] {
@@ -237,4 +362,16 @@
             @apply md:max-w-3xs md:rounded-ee-lg md:border-s md:border-b-0;
         }
     }
+}
+
+& .fi-fo-rich-editor-text-color-select-option {
+    @apply flex items-center gap-2;
+
+    & .fi-fo-rich-editor-text-color-select-option-preview {
+        @apply h-5 w-5 shrink-0 rounded-full bg-(--color) dark:bg-(--dark-color);
+    }
+}
+
+[x-sortable]:has(.fi-sortable-ghost) .fi-fo-rich-editor {
+    pointer-events: none;
 }

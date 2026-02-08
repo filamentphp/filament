@@ -57,6 +57,8 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
 
     protected bool | Closure $areOptionsSearchable = false;
 
+    protected string | Htmlable | Closure | null $noOptionsMessage = null;
+
     protected string | Htmlable | Closure | null $noOptionsSearchResultsMessage = null;
 
     protected int | Closure $optionsSearchDebounce = 1000;
@@ -66,8 +68,6 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
     protected string | Htmlable | Closure | null $optionsSearchPrompt = null;
 
     protected ?Closure $getOptionLabelUsing = null;
-
-    protected ?Closure $getOptionLabelsUsing = null;
 
     protected ?Closure $getOptionsSearchResultsUsing = null;
 
@@ -144,6 +144,12 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
      */
     public function getRules(): array
     {
+        $state = $this->getState();
+
+        if (blank($state)) {
+            return $this->getBaseRules();
+        }
+
         $optionLabel = $this->getOptionLabel(withDefault: false);
 
         if (blank($optionLabel)) {
@@ -152,8 +158,6 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
                 Rule::in([]),
             ];
         }
-
-        $state = $this->getState();
 
         if ($state instanceof BackedEnum) {
             $state = $state->value;
@@ -216,6 +220,13 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
         return (bool) $this->evaluate($this->areOptionsSearchable);
     }
 
+    public function noOptionsMessage(string | Htmlable | Closure | null $message): static
+    {
+        $this->noOptionsMessage = $message;
+
+        return $this;
+    }
+
     public function noOptionsSearchResultsMessage(string | Htmlable | Closure | null $message): static
     {
         $this->noOptionsSearchResultsMessage = $message;
@@ -256,6 +267,11 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
         $this->shouldSearchOptionValues = $condition;
 
         return $this;
+    }
+
+    public function getNoOptionsMessage(): string | Htmlable
+    {
+        return $this->evaluate($this->noOptionsMessage) ?? __('filament-tables::table.columns.select.no_options_message');
     }
 
     public function getNoOptionsSearchResultsMessage(): string | Htmlable
@@ -490,6 +506,15 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
         return $this->options instanceof Closure;
     }
 
+    public function hasInitialNoOptionsMessage(): bool
+    {
+        if ($this->hasOptionsRelationship()) {
+            return $this->areOptionsPreloaded();
+        }
+
+        return ! $this->hasDynamicOptionsSearchResults();
+    }
+
     public function getOptionLabelFromRecordUsing(?Closure $callback): static
     {
         $this->getOptionLabelFromRecordUsing = $callback;
@@ -592,7 +617,13 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
             $relationshipTitleAttribute = $column->getOptionsRelationshipTitleAttribute();
 
             if (empty($relationshipQuery->getQuery()->orders)) {
-                $relationshipQuery->orderBy($relationshipQuery->qualifyColumn($relationshipTitleAttribute));
+                $relationshipOrderByAttribute = $relationshipTitleAttribute;
+
+                if (str_contains($relationshipOrderByAttribute, ' as ')) {
+                    $relationshipOrderByAttribute = (string) str($relationshipOrderByAttribute)->before(' as ');
+                }
+
+                $relationshipQuery->orderBy($relationshipQuery->qualifyColumn($relationshipOrderByAttribute));
             }
 
             if (str_contains($relationshipTitleAttribute, '->')) {
@@ -646,7 +677,13 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
             $relationshipTitleAttribute = $column->getOptionsRelationshipTitleAttribute();
 
             if (empty($relationshipQuery->getQuery()->orders)) {
-                $relationshipQuery->orderBy($relationshipQuery->qualifyColumn($relationshipTitleAttribute));
+                $relationshipOrderByAttribute = $relationshipTitleAttribute;
+
+                if (str_contains($relationshipOrderByAttribute, ' as ')) {
+                    $relationshipOrderByAttribute = (string) str($relationshipOrderByAttribute)->before(' as ');
+                }
+
+                $relationshipQuery->orderBy($relationshipQuery->qualifyColumn($relationshipOrderByAttribute));
             }
 
             if (str_contains($relationshipTitleAttribute, '->')) {
@@ -772,6 +809,12 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
         $relationshipName = $this->getOptionsRelationshipName();
 
         foreach (explode('.', $relationshipName) as $nestedRelationshipName) {
+            if ($record->hasAttribute($nestedRelationshipName)) {
+                $relationship = null;
+
+                break;
+            }
+
             if (! $record->isRelation($nestedRelationshipName)) {
                 $relationship = null;
 
@@ -901,6 +944,7 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
                     },
                     hasDynamicOptions: ' . Js::from($this->hasDynamicOptions()) . ',
                     hasDynamicSearchResults: ' . Js::from($this->hasDynamicOptionsSearchResults()) . ',
+                    hasInitialNoOptionsMessage: ' . Js::from($this->hasInitialNoOptionsMessage()) . ',
                     initialOptionLabel: ' . Js::from($this->getOptionLabel()) . ',
                     isDisabled: ' . Js::from($isDisabled) . ',
                     isHtmlAllowed: ' . Js::from($this->isOptionsHtmlAllowed()) . ',
@@ -908,6 +952,7 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
                     isSearchable: ' . Js::from($this->areOptionsSearchable()) . ',
                     loadingMessage: ' . Js::from($this->getOptionsLoadingMessage()) . ',
                     name: ' . Js::from($name) . ',
+                    noOptionsMessage: ' . Js::from($this->getNoOptionsMessage()) . ',
                     noSearchResultsMessage: ' . Js::from($this->getNoOptionsSearchResultsMessage()) . ',
                     options: ' . Js::from($isNative ? [] : $this->getOptionsForJs()) . ',
                     optionsLimit: ' . Js::from($this->getOptionsLimit()) . ',
@@ -936,6 +981,7 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
                     ? '{
                         content: ' . Js::from($tooltip) . ',
                         theme: $store.theme,
+                        allowHTML: ' . Js::from($tooltip instanceof Htmlable) . ',
                     }'
                     : null,
             ], escape: false)

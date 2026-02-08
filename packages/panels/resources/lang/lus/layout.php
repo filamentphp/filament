@@ -15,7 +15,7 @@ return [
         ],
 
         'open_database_notifications' => [
-            'label' => 'Notifications hawnna',
+            'label' => 'Hriattîrna',
         ],
 
         'open_user_menu' => [
@@ -41,7 +41,7 @@ return [
             ],
 
             'light' => [
-                'label' => 'Theme eng hmanna',
+                'label' => 'Theme êng hmanna',
             ],
 
             'system' => [
@@ -58,6 +58,15 @@ return [
 
     'logo' => [
         'alt' => ':name logo',
+    ],
+
+    'tenant_menu' => [
+
+        'search_field' => [
+            'label' => 'Tenant zawnna',
+            'placeholder' => 'Zawnna',
+        ],
+
     ],
 
 ];

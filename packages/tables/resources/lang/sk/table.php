@@ -30,6 +30,8 @@ return [
 
             'loading_message' => 'Načítava sa...',
 
+            'no_options_message' => 'Nie sú dostupné žiadne možnosti.',
+
             'no_search_results_message' => 'Žiadne možnosti nezodpovedajú vášmu vyhľadávaniu.',
 
             'placeholder' => 'Vyberte možnosť',

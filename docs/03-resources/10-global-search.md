@@ -68,7 +68,7 @@ public static function getGlobalSearchEloquentQuery(): Builder
 
 ## Customizing global search result URLs
 
-Global search results will link to the [Edit page](editing-records) of your resource, or the [View page](viewing-page) if the user does not have [edit permissions](editing-records#authorization). To customize this, you may override the `getGlobalSearchResultUrl()` method and return a route of your choice:
+Global search results will link to the [Edit page](editing-records) of your resource, or the [View page](viewing-records) if the user does not have [edit permissions](editing-records#authorization). To customize this, you may override the `getGlobalSearchResultUrl()` method and return a route of your choice:
 
 ```php
 public static function getGlobalSearchResultUrl(Model $record): string
@@ -126,6 +126,34 @@ By default, global search will return up to 50 results per resource. You can cus
 ```php
 protected static int $globalSearchResultsLimit = 20;
 ```
+
+## Moving the global search to the sidebar
+
+By default, the global search field is positioned in the topbar. If the topbar is disabled, it is added to the sidebar.
+
+You can choose to always move it to the sidebar by passing a `position` argument to the `globalSearch()` method in the [configuration](../panel-configuration):
+
+```php
+use Filament\Enums\GlobalSearchPosition;
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->globalSearch(position: GlobalSearchPosition::Sidebar);
+}
+```
+
+## Sorting global search results
+
+By default, global search results are ordered alphabetically by resource name. You can customize this order by setting the `$globalSearchSort` property on your resource:
+
+```php
+protected static ?int $globalSearchSort = 3;
+```
+
+Now, navigation items with a lower sort value will appear before those with a higher sort value - the order is ascending.
 
 ## Disabling global search
 

@@ -22,7 +22,7 @@ CreateAction::make()
 
 ## Customizing data before saving
 
-Sometimes, you may wish to modify form data before it is finally saved to the database. To do this, you may use the `mutateFormDataUsing()` method, which has access to the `$data` as an array, and returns the modified version:
+Sometimes, you may wish to modify form data before it is finally saved to the database. To do this, you may use the `mutateDataUsing()` method, which has access to the `$data` as an array, and returns the modified version:
 
 ```php
 use Filament\Actions\CreateAction;
@@ -254,7 +254,7 @@ If you'd like to modify the "create another" action, you may use the `createAnot
 use Filament\Actions\CreateAction;
 
 CreateAction::make()
-    ->createAnotherAction(fn (Action $action): Action => $aciton->label('Custom create another label'))
+    ->createAnotherAction(fn (Action $action): Action => $action->label('Custom create another label'))
 ```
 
 ### Disabling create another

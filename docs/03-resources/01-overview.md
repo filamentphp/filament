@@ -91,7 +91,7 @@ In this example, the model should exist at `Custom\Path\Models\Customer`. Please
 
 Now when [generating the resource](#automatically-generating-forms-and-tables), Filament will be able to locate the model and read the database schema.
 
-### Generating the model, migration and factory at the same name
+### Generating the model, migration and factory at the same time
 
 If you'd like to save time when scaffolding your resources, Filament can also generate the model, migration and factory for the new resource at the same time using the `--model`, `--migration` and `--factory` flags in any combination:
 
@@ -148,7 +148,7 @@ public static function configure(Schema $schema): Schema
 }
 ```
 
-The `components()` method is used to define the structure of your form. It is an array of [fields](../forms#available-fields) and [layout components](../schemas/layout#available-layout-components), in the order they should appear in your form.
+The `components()` method is used to define the structure of your form. It is an array of [fields](../forms/overview#available-fields) and [layout components](../schemas/layouts#available-layout-components), in the order they should appear in your form.
 
 Check out the Forms docs for a [guide](../forms) on how to build forms with Filament.
 
@@ -206,7 +206,7 @@ Resource classes contain a `table()` method that is used to build the table on t
 By default, Filament creates a table file for you, which is referenced in the `table()` method. This is to keep your resource class clean and organized, otherwise it can get quite large:
 
 ```php
-use App\Filament\Resources\Customers\Schemas\CustomersTable;
+use App\Filament\Resources\Customers\Tables\CustomersTable;
 use Filament\Tables\Table;
 
 public static function table(Table $table): Table
@@ -443,7 +443,7 @@ public static function getNavigationParentItem(): ?string
 
 ## Generating URLs to resource pages
 
-Filament provides `getUrl()` static method on resource classes to generate URLs to resources and specific pages within them. Traditionally, you would need to construct the URL by hand or by using Laravel's `route()` helper, but these methods depend on knowledge of the resource's slug or route naming conventions.
+Filament provides a `getUrl()` static method on resource classes to generate URLs to resources and specific pages within them. Traditionally, you would need to construct the URL by hand or by using Laravel's `route()` helper, but these methods depend on knowledge of the resource's slug or route naming conventions.
 
 The `getUrl()` method, without any arguments, will generate a URL to the resource's [List page](listing-records):
 

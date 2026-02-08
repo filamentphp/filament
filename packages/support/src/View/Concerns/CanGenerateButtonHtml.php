@@ -49,7 +49,7 @@ trait CanGenerateButtonHtml
         Size | string | null $size = null,
         string $tag = 'button',
         ?string $target = null,
-        ?string $tooltip = null,
+        string | Htmlable | null $tooltip = null,
         ?string $type = 'button',
     ): string {
         $color ??= 'primary';
@@ -176,12 +176,13 @@ trait CanGenerateButtonHtml
             <?php } ?>
             <?php if ($keyBindings) { ?>
                 x-bind:id="$id('key-bindings')"
-                x-mousetrap.global.<?= collect($keyBindings)->map(fn (string $keyBinding): string => str_replace('+', '-', $keyBinding))->implode('.') ?>="document.getElementById($el.id).click()"
+                x-mousetrap.global.<?= collect($keyBindings)->map(fn (string $keyBinding): string => str_replace('+', '-', $keyBinding))->implode('.') ?>="document.getElementById($el.id)?.click()"
             <?php } ?>
             <?php if ($hasTooltip) { ?>
                 x-tooltip="{
                     content: <?= Js::from($tooltip) ?>,
                     theme: $store.theme,
+                    allowHTML: <?= Js::from($tooltip instanceof Htmlable) ?>,
                 }"
             <?php } ?>
             <?php if ($hasFormProcessingLoadingIndicator) { ?>

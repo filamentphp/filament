@@ -9,33 +9,9 @@ use Illuminate\Database\Query\Expression;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
-use Kirschbaum\PowerJoins\JoinsHelper;
 
 class RelationshipJoiner
 {
-    public function leftJoinRelationship(Builder $query, string $relationship): Builder
-    {
-        if (str($relationship)->contains('.')) {
-            /** @phpstan-ignore-next-line */
-            $query->joinNestedRelationship(
-                $relationship,
-                callback: null,
-                joinType: JoinsHelper::$joinMethodsMap['leftJoin'] ?? 'leftJoin',
-            );
-
-            return $query;
-        }
-
-        /** @phpstan-ignore-next-line */
-        $query->joinRelationship(
-            $relationship,
-            callback: null,
-            joinType: 'leftJoin',
-        );
-
-        return $query;
-    }
-
     /**
      * @return array<JoinClause>
      */
@@ -96,6 +72,10 @@ class RelationshipJoiner
                 // Sub-query orders: { column: Illuminate\Database\Query\Expression, direction: 'asc' | 'desc' }
                 // Raw orders: { type: 'Raw', sql: string }
                 if (! array_key_exists('column', $order) && ! array_key_exists('sql', $order)) {
+                    continue;
+                }
+
+                if (array_key_exists('type', $order) && $order['type'] === 'Raw' && preg_match('/\b(asc|desc)\b/i', $order['sql'])) {
                     continue;
                 }
 

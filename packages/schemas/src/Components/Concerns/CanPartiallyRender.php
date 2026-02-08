@@ -69,7 +69,7 @@ trait CanPartiallyRender
             }
 
             return [
-                "schema-component::{$key}" => $this->hasView() ? $this->render() : $this->toHtml(...),
+                "schema-component::{$key}" => $this->toSchemaHtml(...),
             ];
         });
     }

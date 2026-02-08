@@ -2,6 +2,7 @@
     use Filament\Actions\Action;
     use Filament\Actions\ActionGroup;
     use Filament\Support\Enums\Alignment;
+    use Filament\Support\Enums\VerticalAlignment;
     use Illuminate\Support\Js;
     use Illuminate\View\ComponentAttributeBag;
 
@@ -29,16 +30,21 @@
     $statePath = $getStatePath();
 
     $tableColumns = $getTableColumns();
+
+    $isCompact = $isCompact();
 @endphp
 
 <x-dynamic-component :component="$fieldWrapperView" :field="$field">
     <div
         {{ $attributes
                 ->merge($getExtraAttributes(), escape: false)
-                ->class(['fi-fo-table-repeater']) }}
+                ->class([
+                    'fi-fo-table-repeater',
+                    'fi-compact' => $isCompact,
+                ]) }}
     >
         @if (count($items))
-            <table class="fi-absolute-positioning-context">
+            <table>
                 <thead>
                     <tr>
                         @if ((count($items) > 1) && ($isReorderableWithButtons || $isReorderableWithDragAndDrop))
@@ -81,7 +87,7 @@
                     {{ (new ComponentAttributeBag)
                             ->merge([
                                 'data-sortable-animation-duration' => $getReorderAnimationDuration(),
-                                'x-on:end.stop' => '$event.oldIndex !== $event.newIndex && $wire.mountAction(\'reorder\', { items: $event.target.sortable.toArray() }, { schemaComponent: \'' . $key . '\' })',
+                                'x-on:end.stop' => '$wire.mountAction(\'reorder\', { items: $event.target.sortable.toArray() }, { schemaComponent: \'' . $key . '\' })',
                             ], escape: false) }}
                 >
                     @foreach ($items as $itemKey => $item)
@@ -113,11 +119,8 @@
                                             class="fi-fo-table-repeater-actions"
                                         >
                                             @if ($reorderActionIsVisible)
-                                                <div
-                                                    x-sortable-handle
-                                                    x-on:click.stop
-                                                >
-                                                    {{ $reorderAction }}
+                                                <div x-on:click.stop>
+                                                    {{ $reorderAction->extraAttributes(['x-sortable-handle' => true], merge: true) }}
                                                 </div>
                                             @endif
 
@@ -156,27 +159,17 @@
                                         @endphp
 
                                         @if ($schemaComponent->isVisible())
-                                            <td
-                                                @if (! (($schemaComponent instanceof Action) || ($schemaComponent instanceof ActionGroup)))
-                                                    @php
-                                                        $schemaComponentStatePath = $schemaComponent->getStatePath();
-                                                    @endphp
+                                            @php
+                                                $currentColumn = $tableColumns[$counter - 1] ?? null;
+                                                $columnVerticalAlignment = $currentColumn?->getVerticalAlignment();
+                                            @endphp
 
-                                                    x-data="filamentSchemaComponent({
-                                                        path: @js($schemaComponentStatePath),
-                                                        containerPath: @js($itemStatePath),
-                                                        isLive: @js($schemaComponent->isLive()),
-                                                        $wire,
-                                                    })"
-                                                    @if ($afterStateUpdatedJs = $schemaComponent->getAfterStateUpdatedJs())
-                                                        x-init="{{ implode(';', array_map(
-                                                            fn (string $js): string => '$wire.watch(' . Js::from($schemaComponentStatePath) . ', ($state, $old) => ($state !== undefined) && eval(' . Js::from($js) . '))',
-                                                            $afterStateUpdatedJs,
-                                                        )) }}"
-                                                    @endif
-                                                @endif
+                                            <td
+                                                @class([
+                                                    ($columnVerticalAlignment instanceof VerticalAlignment) ? ('fi-vertical-align-' . $columnVerticalAlignment->value) : (is_string($columnVerticalAlignment) ? $columnVerticalAlignment : ''),
+                                                ])
                                             >
-                                                {{ $schemaComponent }}
+                                                {!! $schemaComponent->toSchemaHtml() !!}
                                             </td>
                                         @else
                                             <td class="fi-hidden"></td>

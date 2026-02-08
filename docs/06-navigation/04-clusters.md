@@ -59,7 +59,7 @@ The [`$navigationIcon`](../navigation#customizing-a-navigation-items-icon) prope
 To add resources and pages to a cluster, you just need to define the `$cluster` property on the resource or page class, and set it to the cluster class [you created](#creating-a-cluster):
 
 ```php
-use App\Filament\Clusters\Settings;
+use App\Filament\Clusters\SettingsCluster;
 
 protected static ?string $cluster = SettingsCluster::class;
 ```
@@ -77,8 +77,8 @@ When using clusters, it is recommended that you move all of your resources and p
 |   |   |   +-- ManageBranding.php
 |   |   |   +-- ManageNotifications.php
 |   |   +-- Resources
-|   |   |   +-- ColorResource.php
-|   |   |   +-- ColorResource
+|   |   |   +-- Colors
+|   |   |   |   +-- ColorResource.php
 |   |   |   |   +-- Pages
 |   |   |   |   |   +-- CreateColor.php
 |   |   |   |   |   +-- EditColor.php
@@ -115,5 +115,22 @@ Alternatively, you may use the `getClusterBreadcrumb()` to define a dynamic brea
 public static function getClusterBreadcrumb(): string
 {
     return __('filament/clusters/cluster.name');
+}
+```
+
+## Removing the sub navigation from a cluster
+
+By default, all resources and pages in a cluster will show the sub-navigation. If you want to remove the sub-navigation from all resources and pages in a cluster, you can set the `$shouldRegisterSubNavigation` property to `false` in the cluster class:
+
+```php
+protected static bool $shouldRegisterSubNavigation = false;
+```
+
+Alternatively, you may override the `shouldRegisterSubNavigation()` method to define dynamic behavior:
+
+```php
+public static function shouldRegisterSubNavigation(): bool
+{
+    return FeatureFlag::active();
 }
 ```

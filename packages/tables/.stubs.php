@@ -73,6 +73,8 @@ namespace Livewire\Features\SupportTesting {
 
         public function assertCountTableRecords(int $count): static {}
 
+        public function toggleAllTableColumns(bool $condition = true): static {}
+
         public function loadTable(): static {}
 
         /**
@@ -159,7 +161,7 @@ namespace Livewire\Features\SupportTesting {
         public function assertTableActionHalted(string | array $name): static {}
 
         /**
-         * @deprecated Use `assertHasTableActionErrors()` instead.
+         * @deprecated Use `assertHasFormErrors()` instead.
          */
         public function assertHasTableActionErrors(array $keys = []): static {}
 

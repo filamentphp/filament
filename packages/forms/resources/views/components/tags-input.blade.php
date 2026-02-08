@@ -3,7 +3,6 @@
     $extraAttributes = $getExtraAttributes();
     $extraInputAttributeBag = $getExtraInputAttributeBag();
     $color = $getColor() ?? 'primary';
-    $hasInlineLabel = $hasInlineLabel();
     $id = $getId();
     $isAutofocused = $isAutofocused();
     $isDisabled = $isDisabled();
@@ -25,7 +24,6 @@
 <x-dynamic-component
     :component="$fieldWrapperView"
     :field="$field"
-    :has-inline-label="$hasInlineLabel"
     class="fi-fo-tags-input-wrp"
 >
     <x-filament::input.wrapper
@@ -41,6 +39,7 @@
         :suffix-icon="$suffixIcon"
         :suffix-icon-color="$suffixIconColor"
         :valid="! $errors->has($statePath)"
+        x-on:focus-input.stop="$el.querySelector('input')?.focus()"
         :attributes="
             \Filament\Support\prepare_inherited_attributes($attributes)
                 ->merge($extraAttributes, escape: false)
@@ -122,6 +121,7 @@
                                 <x-slot
                                     name="deleteButton"
                                     x-on:click.stop="deleteTag(tag)"
+                                    :x-bind:aria-label="'\'' . __('filament-forms::components.tags_input.actions.delete.label') . ': \' + tag'"
                                 ></x-slot>
                             </x-filament::badge>
                         </template>

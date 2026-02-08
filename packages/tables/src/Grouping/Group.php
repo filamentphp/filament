@@ -8,6 +8,7 @@ use Carbon\CarbonInterface;
 use Closure;
 use Filament\Support\Components\Component;
 use Filament\Support\Contracts\HasLabel as LabelInterface;
+use Filament\Support\Services\RelationshipOrderer;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Model;
@@ -35,7 +36,7 @@ class Group extends Component
 
     protected ?Closure $scopeQueryByKeyUsing = null;
 
-    protected string | Closure | null $label = null;
+    protected string | Htmlable | Closure | null $label = null;
 
     protected string $id;
 
@@ -88,7 +89,7 @@ class Group extends Component
         return $this;
     }
 
-    public function label(string | Closure | null $label): static
+    public function label(string | Htmlable | Closure | null $label): static
     {
         $this->label = $label;
 
@@ -181,7 +182,7 @@ class Group extends Component
         return $this->id;
     }
 
-    public function getLabel(): string
+    public function getLabel(): string | Htmlable
     {
         return $this->evaluate($this->label) ?? (string) str($this->getId())
             ->beforeLast('.')
@@ -191,7 +192,7 @@ class Group extends Component
             ->ucfirst();
     }
 
-    public function getDescription(Model $record, ?string $title): ?string
+    public function getDescription(Model $record, string | Htmlable | null $title): string | Htmlable | null
     {
         if (! $this->getDescriptionFromRecordUsing) {
             return null;
@@ -321,41 +322,14 @@ class Group extends Component
             ]) ?? $query;
         }
 
-        return $query->orderBy($this->getSortColumnForQuery($query, $this->getRelationshipAttribute()), $direction);
-    }
-
-    /**
-     * @param  array<string> | null  $relationships
-     */
-    protected function getSortColumnForQuery(EloquentBuilder $query, string $sortColumn, ?array $relationships = null, ?Relation $lastRelationship = null): string | Builder
-    {
-        $relationships ??= ($relationshipName = $this->getRelationshipName()) ?
-            explode('.', $relationshipName) :
-            [];
-
-        if (! count($relationships)) {
-            return $lastRelationship ? $lastRelationship->getQuery()->getModel()->qualifyColumn($sortColumn) : $sortColumn;
+        if (filled($relationshipName = $this->getRelationshipName())) {
+            return $query->orderBy(
+                app(RelationshipOrderer::class)->buildSubquery($query, $relationshipName, $this->getRelationshipAttribute()),
+                $direction
+            );
         }
 
-        $currentRelationshipName = array_shift($relationships);
-
-        $relationship = $this->getRelationship($query->getModel(), $currentRelationshipName);
-
-        $relatedQuery = $relationship->getRelated()::query();
-
-        return $relationship
-            ->getRelationExistenceQuery(
-                $relatedQuery,
-                $query,
-                [$currentRelationshipName => $this->getSortColumnForQuery(
-                    $relatedQuery,
-                    $sortColumn,
-                    $relationships,
-                    $relationship,
-                )],
-            )
-            ->applyScopes()
-            ->getQuery();
+        return $query->orderBy($this->getRelationshipAttribute(), $direction);
     }
 
     public function scopeQuery(EloquentBuilder $query, Model $record): EloquentBuilder
@@ -380,7 +354,7 @@ class Group extends Component
         return $query;
     }
 
-    public function scopeQueryByKey(EloquentBuilder $query, string $key): EloquentBuilder
+    public function scopeQueryByKey(EloquentBuilder $query, ?string $key): EloquentBuilder
     {
         $column = $this->getColumn();
 
@@ -399,7 +373,7 @@ class Group extends Component
             return $query->whereHas(
                 $relationshipName,
                 fn (EloquentBuilder $query) => $this->applyDefaultScopeToQuery($query, $this->getRelationshipAttribute(), $key),
-            );
+            )->when(blank($key), fn (EloquentBuilder $query) => $query->orWhereDoesntHave($relationshipName));
         }
 
         return $this->applyDefaultScopeToQuery($query, $column, $key);
@@ -423,6 +397,12 @@ class Group extends Component
         $relationship = null;
 
         foreach (explode('.', $name ?? $this->getRelationshipName()) as $nestedRelationshipName) {
+            if ($record->hasAttribute($nestedRelationshipName)) {
+                $relationship = null;
+
+                break;
+            }
+
             if (! $record->isRelation($nestedRelationshipName)) {
                 $relationship = null;
 

@@ -29,6 +29,7 @@
     'slideOver' => false,
     'stickyFooter' => false,
     'stickyHeader' => false,
+    'teleport' => null,
     'trigger' => null,
     'visible' => true,
     'width' => 'sm',
@@ -65,12 +66,21 @@
 
     <div
         @if (! $trigger->attributes->get('disabled'))
-            x-on:click="$el.nextElementSibling.dispatchEvent(new CustomEvent(@js($openEventName)))"
+            @if ($id)
+                x-on:click="$dispatch(@js($openEventName), { id: @js($id) })"
+            @else
+                x-on:click="$el.nextElementSibling.dispatchEvent(new CustomEvent(@js($openEventName)))"
+            @endif
         @endif
         {{ $trigger->attributes->except(['disabled'])->class(['fi-modal-trigger']) }}
     >
         {{ $trigger }}
     </div>
+@endif
+
+@if (filled($teleport))
+    {!! "<template x-teleport=\"{$teleport}\">" !!}
+    {{-- Avoid formatting issues with unclosed elements --}}
 @endif
 
 <div
@@ -90,10 +100,11 @@
         x-on:{{ $closeEventName }}.window="if (($event.detail.id === @js($id)) && isOpen) close()"
         x-on:{{ $closeQuietlyEventName }}.window="if (($event.detail.id === @js($id)) && isOpen) closeQuietly()"
         x-on:{{ $openEventName }}.window="if (($event.detail.id === @js($id)) && (! isOpen)) open()"
+    @else
+        x-on:{{ $closeEventName }}.stop="if (isOpen) close()"
+        x-on:{{ $closeQuietlyEventName }}.stop="if (isOpen) closeQuietly()"
+        x-on:{{ $openEventName }}.stop="if (! isOpen) open()"
     @endif
-    x-on:{{ $closeEventName }}.stop="if (isOpen) close()"
-    x-on:{{ $closeQuietlyEventName }}.stop="if (isOpen) closeQuietly()"
-    x-on:{{ $openEventName }}.stop="if (! isOpen) open()"
     x-bind:class="{
         'fi-modal-open': isOpen,
     }"
@@ -103,7 +114,10 @@
     {{
         $attributes->class([
             'fi-modal',
+            'fi-absolute-positioning-context',
             'fi-modal-slide-over' => $slideOver,
+            'fi-modal-has-sticky-header' => $stickyHeader,
+            'fi-modal-has-sticky-footer' => $stickyFooter,
             'fi-width-screen' => $width === Width::Screen,
         ])
     }}
@@ -117,12 +131,7 @@
 
     <div
         @if ($closeByClickingAway)
-            {{-- Ensure that the click element is not triggered from a user selecting text inside an input. --}}
-            x-on:click.self="
-                document.activeElement.selectionStart === undefined &&
-                    document.activeElement.selectionEnd === undefined &&
-                    {{ $closeEventHandler }}
-            "
+            x-on:click.self="{{ $closeEventHandler }}"
         @endif
         @class([
             'fi-modal-window-ctn',
@@ -155,7 +164,6 @@
                     'fi-modal-window-has-content' => $hasContent,
                     'fi-modal-window-has-footer' => $hasFooter,
                     'fi-modal-window-has-icon' => $hasIcon,
-                    'fi-modal-window-has-sticky-header' => $stickyHeader,
                     'fi-hidden' => ! $visible,
                     ($alignment instanceof Alignment) ? "fi-align-{$alignment->value}" : null,
                     ($width instanceof Width) ? "fi-width-{$width->value}" : (is_string($width) ? $width : null),
@@ -169,7 +177,6 @@
                     @endif
                     @class([
                         'fi-modal-header',
-                        'fi-sticky' => $stickyHeader,
                         'fi-vertical-align-center' => $hasIcon && $hasHeading && (! $hasDescription) && in_array($alignment, [Alignment::Start, Alignment::Left]),
                     ])
                 >
@@ -232,7 +239,6 @@
                     @endif
                     @class([
                         'fi-modal-footer',
-                        'fi-sticky' => $stickyFooter,
                         ($footerActionsAlignment instanceof Alignment) ? "fi-align-{$footerActionsAlignment->value}" : null,
                     ])
                 >
@@ -254,6 +260,11 @@
         </{{ filled($wireSubmitHandler) ? 'form' : 'div' }}>
     </div>
 </div>
+
+@if (filled($teleport))
+    {!! '</template>' !!}
+    {{-- Avoid formatting issues with unclosed elements --}}
+@endif
 
 @if ($trigger)
     {!! '</div>' !!}

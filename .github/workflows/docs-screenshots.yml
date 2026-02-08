@@ -10,31 +10,48 @@ jobs:
     strategy:
       fail-fast: false
     steps:
-      - uses: actions/checkout@v2
-      - name: Cache dependencies
-        uses: actions/cache@v2
+      - uses: actions/checkout@v4
+      - name: Cache Composer dependencies
+        uses: actions/cache@v4
         with:
           path: ~/.composer/cache/files
-          key: dependencies-composer-${{ hashFiles('composer.json') }}
-      - name: Setup PHP
+          key: composer-screenshots-${{ hashFiles('docs-assets/app/composer.json') }}
+          restore-keys: |
+            composer-screenshots-
+      - name: Set up PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: 8.3
+          php-version: 8.5
           extensions: mbstring, pdo, pdo_sqlite
           coverage: none
-      - name: Setup Node
-        uses: actions/setup-node@v2
-      - name: Install dependencies
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+      - name: Cache Puppeteer browser
+        id: puppeteer-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/puppeteer
+          key: puppeteer-${{ runner.os }}-${{ hashFiles('docs-assets/screenshots/package-lock.json') }}
+      - name: Install screenshot dependencies
         run: |
           cd docs-assets/screenshots
           npm ci
-      - name: Setup app
+        env:
+          PUPPETEER_SKIP_DOWNLOAD: ${{ steps.puppeteer-cache.outputs.cache-hit }}
+      - name: Cache app npm dependencies
+        uses: actions/cache@v4
+        with:
+          path: docs-assets/app/node_modules
+          key: npm-screenshots-app-${{ hashFiles('docs-assets/app/package-lock.json') }}
+      - name: Set up app
         run: |
           cd docs-assets/app
           composer install --no-interaction
           npm ci && npm run build
           php artisan serve &
-      - name: Run script
+      - name: Take screenshots
         run: |
           cd docs-assets/screenshots
           node script

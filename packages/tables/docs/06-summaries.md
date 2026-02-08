@@ -393,3 +393,24 @@ public function table(Table $table): Table
         ->groupsOnly();
 }
 ```
+
+## Hiding summary rows
+
+By default, both the page summary and total summary rows are displayed when columns have summarizers. You can control which summary rows appear using the `summaries()` method on the table:
+
+```php
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->summaries(
+            pageCondition: false,
+            allTableCondition: false
+        );
+}
+```
+
+`pageCondition` controls whether the "this page" summary row is shown, and `allTableCondition` controls whether the total summary row for the entire table is shown.
+
+This is useful when using [group summaries](#summarising-groups-of-rows) where you only want to display summaries per group, or when the page summary is redundant and you only need the total across all records.

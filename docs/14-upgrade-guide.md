@@ -14,7 +14,7 @@ import Disclosure from "@components/Disclosure.astro"
 
 - PHP 8.2+
 - Laravel v11.28+
-- Tailwind CSS v4.0+, if you’re currently using Tailwind CSS v3.0 with Filament. This doesn’t apply if you’re just using a Filament panel without a custom theme CSS file.
+- Tailwind CSS v4.1+, if you’re currently using Tailwind CSS v3.0 with Filament. This doesn’t apply if you’re just using a Filament panel without a custom theme CSS file.
 - Filament no longer requires `doctrine/dbal`, but if your application still does, and you don’t have it installed directly, you should add it to your `composer.json` file.
 
 ## Running the automated upgrade script
@@ -24,7 +24,7 @@ import Disclosure from "@components/Disclosure.astro"
 </Aside>
 
 <Aside variant="info">
-    Some plugins you're using may not be available in v4 just yet. You could temporarily remove them from your `composer.json` file until they've been upgraded, replace them with a similar plugins that are v4-compatible, wait for the plugins to be upgraded before upgrading your app, or even write PRs to help the authors upgrade them.
+    Some plugins you're using may not be available in v4 just yet. You could temporarily remove them from your `composer.json` file until they've been upgraded, replace them with similar plugins that are v4-compatible, wait for the plugins to be upgraded before upgrading your app, or even write PRs to help the authors upgrade them.
 </Aside>
 
 The first step to upgrade your Filament app is to run the automated upgrade script. This script will automatically upgrade your application to the latest version of Filament and make changes to your code, which handles most breaking changes:
@@ -256,8 +256,8 @@ Now, they should contain this:
 ```css
 @import '../../../../vendor/filament/filament/resources/css/theme.css';
 
-@source '../../../../app/Filament';
-@source '../../../../resources/views/filament';
+@source '../../../../app/Filament/**/*';
+@source '../../../../resources/views/filament/**/*';
 ```
 
 This will load Tailwind CSS. The `@source` entries tell Tailwind where to find the classes that are used in your app. You should check the `content` paths in your old `tailwind.config.js` file, and add them as `@source` entries like this. You **don't** need to include `vendor/filament` as a `@source`, but check plugins you have installed to see if they require `@source` entries.
@@ -269,6 +269,31 @@ npx @tailwindcss/upgrade
 ```
 
 The `tailwind.config.js` file for your theme is no longer used, since Tailwind CSS v4 defines [configuration in CSS](https://tailwindcss.com/docs/adding-custom-styles). Any customizations you made to the `tailwind.config.js` file should be added to the CSS file.
+</Disclosure>
+
+<Disclosure open x-show="packages.includes('panels')">
+<span slot="summary">Tailwind CSS classes from Filament views no longer available without a custom theme</span>
+
+In v3, Filament's Blade views contained Tailwind CSS classes directly in the HTML. This meant that if you used any of those same Tailwind classes in your own code (such as `hidden` or `text-primary-600`), they would "just work" without you needing to set up a custom theme - Filament's asset compilation would include them for you.
+
+In v4, Filament's Tailwind classes have been moved into CSS files using Tailwind's `@apply` directive. This means those classes are no longer scanned by Tailwind when compiling assets, so they won't be included in Filament's default stylesheet.
+
+If you're using Tailwind classes in your own Blade views, Livewire components, or other code, and you don't have a custom theme, those styles will no longer work. To fix this, you need to create a custom theme.
+
+Run `php artisan make:filament-theme` and follow the [theming documentation](styling/overview#creating-a-custom-theme). In your theme CSS file, add `@source` entries pointing to your files that use Tailwind classes:
+
+```css
+@import '../../../../vendor/filament/filament/resources/css/theme.css';
+
+@source '../../../../app/Filament/**/*';
+@source '../../../../resources/views/filament/**/*';
+@source '../../../../resources/views/components/**/*'; /* Add your own paths */
+@source '../../../../resources/views/livewire/**/*'; /* Add your own paths */
+```
+
+<Aside variant="tip">
+    This change only affects you if you were relying on Filament's compiled styles to include Tailwind classes that you used in your own code. If you already have a custom theme, you likely won't notice any difference.
+</Aside>
 </Disclosure>
 
 <Disclosure open x-show="packages.includes('tables')">
@@ -402,6 +427,54 @@ The [automated upgrade script](#running-the-automated-upgrade-script) suggests c
 
 ### Medium-impact changes
 
+<Disclosure x-show="packages.includes('forms') || packages.includes('infolists')">
+<span slot="summary">`columnSpan()` now targets >= `lg` devices by default</span>
+
+Similar to the `columns()` method, which accepts a number and affects >= `lg` devices by default, the `columnSpan()` method has been changed to do the same. This improves consistency between the APIs, making them easier to use and less prone to causing layout issues.
+
+In v3, the following code might have been written. If you used `columnSpan(2)` instead of `columnSpan(['lg' => 2])`, the layout would have been a little broken on < `lg` devices:
+
+```php
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Section;
+
+Section::make()
+    ->columns(3)
+    ->schema([
+        TextInput::make()
+            ->columnSpan(['lg' => 2]),
+    ])
+```
+
+In v4, the `columnSpan()` affects >= `lg` devices by default, in the same way that `columns()` does, so the following code is required instead:
+
+```php
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Section;
+
+Section::make()
+    ->columns(3)
+    ->schema([
+        TextInput::make()
+            ->columnSpan(2),
+    ])
+```
+
+Of course, you can still continue to use an array to define how many columns a component should span at different breakpoints:
+
+```php
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Section;
+
+Section::make()
+    ->columns(3)
+    ->schema([
+        TextInput::make()
+            ->columnSpan(['lg' => 3, 'xl' => 2, '2xl' => 1]),
+    ])
+```
+</Disclosure>
+
 <Disclosure x-show="packages.includes('forms')">
 <span slot="summary">Enum field state</span>
 
@@ -486,7 +559,7 @@ In Filament v3, import and export jobs were retries continuously for 24 hours if
 
 In v4, they’re retried 3 times with a 60 second backoff between each retry.
 
-This behavior can be customized in the [importer](import#customizing-the-import-job-retries) and [exporter](export#customizing-the-export-job-retries) classes.
+This behavior can be customized in the [importer](actions/import#customizing-the-import-job-retries) and [exporter](actions/export#customizing-the-export-job-retries) classes.
 </Disclosure>
 
 ### Low-impact changes
@@ -669,7 +742,7 @@ public function table(Table $table): Table
 <Disclosure x-show="packages.includes('panels')">
 <span slot="summary">Overriding the `can*()` authorization methods on a `Resource`, `RelationManager` or `ManageRelatedRecords` class</span>
 
-Although these methods, such as `canCreate()`, `canViewAny()` and `canDelete()`weren’t documented, if you’re overriding those to provide custom authorization logic in v3, you should be aware that they aren’t always called in v4. The authorization logic has been improved to properly support [policy response objects](https://laravel.com/docs/authorization#policy-responses), and these methods were too simple as they are just able to return booleans.
+Although these methods, such as `canCreate()`, `canViewAny()` and `canDelete()` weren't documented, if you're overriding those to provide custom authorization logic in v3, you should be aware that they aren't always called in v4. The authorization logic has been improved to properly support [policy response objects](https://laravel.com/docs/authorization#policy-responses), and these methods were too simple as they are just able to return booleans.
 
 If you can make the authorization customization inside the policy of the model instead, you should do that. If you need to customize the authorization logic in the resource or relation manager class, you should override the `get*AuthorizationResponse()` methods instead, such as `getCreateAuthorizationResponse()`, `getViewAnyAuthorizationResponse()` and `getDeleteAuthorizationResponse()`. These methods are called when the authorization logic is executed, and they return a [policy response object](https://laravel.com/docs/authorization#policy-responses). If you remove the override for the `can*()` methods, the `get*AuthorizationResponse()` methods will be used to determine the authorization response boolean, so you don't have to maintain the logic twice.
 </Disclosure>

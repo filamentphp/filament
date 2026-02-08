@@ -45,7 +45,13 @@ trait CanBeHidden
         }
 
         if ($this instanceof ActionGroup) {
-            return false;
+            foreach ($this->getActions() as $action) {
+                if (! $action->isHiddenInGroup()) {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         return ! $this->isAuthorizedOrNotHiddenWhenUnauthorized();

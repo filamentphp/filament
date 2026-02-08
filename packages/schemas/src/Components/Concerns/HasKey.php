@@ -32,7 +32,9 @@ trait HasKey
             return $this->cachedAbsoluteKey;
         }
 
-        $key = $this->evaluate($this->key) ?? $this->getStatePath(isAbsolute: false);
+        $key = ($this->isKeyInheritable() || (! $this->hasStatePath()))
+            ? ($this->evaluate($this->key) ?? $this->getStatePath(isAbsolute: false))
+            : $this->getStatePath(isAbsolute: false);
 
         if (! $isAbsolute) {
             return $key;
@@ -60,18 +62,33 @@ trait HasKey
         }
 
         if (! $isAbsolute) {
-            return $this->isKeyInheritable ? $this->getKey(isAbsolute: false) : null;
+            return $this->isKeyInheritable() ? $this->getKey(isAbsolute: false) : $this->getStatePath(isAbsolute: false);
         }
 
-        if ($this->isKeyInheritable) {
+        if ($this->isKeyInheritable()) {
             $key = $this->getKey();
 
             if (filled($key)) {
                 return $this->cacheAbsoluteInheritanceKey($key);
             }
+        } elseif ($this->hasStatePath()) {
+            $keyComponents = [];
+
+            if (filled($containerInheritanceKey = $this->getContainer()->getInheritanceKey())) {
+                $keyComponents[] = $containerInheritanceKey;
+            }
+
+            $keyComponents[] = $this->getStatePath(isAbsolute: false);
+
+            return $this->cacheAbsoluteInheritanceKey(implode('.', $keyComponents));
         }
 
         return $this->cacheAbsoluteInheritanceKey($this->getContainer()->getInheritanceKey());
+    }
+
+    public function isKeyInheritable(): bool
+    {
+        return $this->isKeyInheritable;
     }
 
     protected function cacheAbsoluteKey(?string $key): ?string

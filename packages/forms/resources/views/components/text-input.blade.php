@@ -6,7 +6,6 @@
     $datalistOptions = $getDatalistOptions();
     $extraAlpineAttributes = $getExtraAlpineAttributes();
     $extraAttributeBag = $getExtraAttributeBag();
-    $hasInlineLabel = $hasInlineLabel();
     $id = $getId();
     $isConcealed = $isConcealed();
     $isDisabled = $isDisabled();
@@ -74,8 +73,7 @@
 <x-dynamic-component
     :component="$fieldWrapperView"
     :field="$field"
-    :has-inline-label="$hasInlineLabel"
-    class="fi-fo-text-input-wrp"
+    :inline-label-vertical-alignment="\Filament\Support\Enums\VerticalAlignment::Center"
 >
     <x-filament::input.wrapper
         :disabled="$isDisabled"
@@ -91,6 +89,7 @@
         :suffix-icon-color="$suffixIconColor"
         :valid="! $errors->has($statePath)"
         :x-data="$xData"
+        x-on:focus-input.stop="$el.querySelector('input')?.focus()"
         :attributes="
             \Filament\Support\prepare_inherited_attributes($extraAttributeBag)
                 ->class(['fi-fo-text-input'])

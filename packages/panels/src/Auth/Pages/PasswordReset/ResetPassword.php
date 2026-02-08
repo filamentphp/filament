@@ -90,8 +90,8 @@ class ResetPassword extends SimplePage
                 }
 
                 $user->forceFill([
-                    'password' => Hash::make($data['password']),
-                    'remember_token' => Str::random(60),
+                    $user->getAuthPasswordName() => Hash::make($data['password']),
+                    $user->getRememberTokenName() => Str::random(60),
                 ])->save();
 
                 event(new PasswordReset($user));
@@ -156,6 +156,7 @@ class ResetPassword extends SimplePage
         return TextInput::make('password')
             ->label(__('filament-panels::auth/pages/password-reset/reset-password.form.password.label'))
             ->password()
+            ->autocomplete('new-password')
             ->revealable(filament()->arePasswordsRevealable())
             ->required()
             ->rule(PasswordRule::default())
@@ -168,6 +169,7 @@ class ResetPassword extends SimplePage
         return TextInput::make('passwordConfirmation')
             ->label(__('filament-panels::auth/pages/password-reset/reset-password.form.password_confirmation.label'))
             ->password()
+            ->autocomplete('new-password')
             ->revealable(filament()->arePasswordsRevealable())
             ->required()
             ->dehydrated(false);
@@ -178,7 +180,7 @@ class ResetPassword extends SimplePage
         return __('filament-panels::auth/pages/password-reset/reset-password.title');
     }
 
-    public function getHeading(): string | Htmlable
+    public function getHeading(): string | Htmlable | null
     {
         return __('filament-panels::auth/pages/password-reset/reset-password.heading');
     }
@@ -223,13 +225,9 @@ class ResetPassword extends SimplePage
             ->footer([
                 Actions::make($this->getFormActions())
                     ->alignment($this->getFormActionsAlignment())
-                    ->fullWidth($this->hasFullWidthFormActions()),
+                    ->fullWidth($this->hasFullWidthFormActions())
+                    ->key('form-actions'),
             ]);
-    }
-
-    public function getDefaultTestingSchemaName(): ?string
-    {
-        return 'form';
     }
 
     /**

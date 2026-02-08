@@ -33,6 +33,7 @@ trait InteractsWithTable
     use HasRecords;
     use WithPagination {
         WithPagination::resetPage as resetLivewirePage;
+        WithPagination::setPage as setLivewirePage;
     }
 
     protected Table $table;
@@ -45,7 +46,7 @@ trait InteractsWithTable
     {
         $this->table = $this->table($this->makeTable());
 
-        $this->cacheSchema('tableFiltersForm', $this->getTableFiltersForm());
+        $this->cacheSchema('tableFiltersForm', $this->getTableFiltersForm(...));
 
         $this->cacheMountedActions($this->mountedActions);
 
@@ -142,7 +143,8 @@ trait InteractsWithTable
             $shouldPersistSortInSession &&
             session()->has($sortSessionKey)
         ) {
-            $this->tableSort = session()->get($sortSessionKey);
+            $sessionSort = session()->get($sortSessionKey);
+            $this->tableSort = is_string($sessionSort) ? $sessionSort : null;
         }
 
         if ($shouldPersistSortInSession) {
@@ -236,12 +238,22 @@ trait InteractsWithTable
         return null;
     }
 
-    /**
-     * @param  ?string  $pageName
-     */
-    public function resetPage($pageName = null): void
+    public function resetPage(?string $pageName = null): void
     {
         $this->resetLivewirePage($pageName ?? $this->getTablePaginationPageName());
+    }
+
+    public function setPage(int | string $page, ?string $pageName = null): void
+    {
+        $defaultPageName = $this->getTablePaginationPageName();
+
+        $pageName ??= $defaultPageName;
+
+        $this->setLivewirePage($page, $pageName);
+
+        if (($pageName === $defaultPageName) && $this->getTable()->shouldScrollToTopOnPageChange()) {
+            $this->dispatch('scrollToTopOfTable')->self();
+        }
     }
 
     /**

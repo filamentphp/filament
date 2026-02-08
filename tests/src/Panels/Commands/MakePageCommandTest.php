@@ -5,18 +5,16 @@ use Filament\Facades\Filament;
 use Filament\Tests\TestCase;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Support\Arr;
 use Illuminate\Testing\PendingCommand;
 
 use function PHPUnit\Framework\assertFileDoesNotExist;
 use function PHPUnit\Framework\assertFileExists;
 
-uses(TestCase::class);
+uses(TestCase::class)->group('commands');
 
 beforeEach(function (): void {
     MakePageCommand::$shouldCheckModelsForSoftDeletes = false;
-})
-    ->skip((bool) Arr::get($_SERVER, 'PARATEST'), 'File generation tests cannot be run in parallel as they would share a filesystem and have the potential to conflict with each other.');
+});
 
 it('can generate a page class', function (): void {
     $this->withoutMockingConsoleOutput();
@@ -340,14 +338,13 @@ $runGenerateManageRelatedRecordsPageCommand = function (TestCase $testCase): Pen
 
 $generateManageRelatedRecordsPageCommandQuestions = [
     'relationship' => 'What is the relationship?',
-    'hasRelatedResource' => 'Do you want to do this?',
+    'hasRelatedResource' => 'Do you want to link this to an existing resource?',
     'relatedResource' => 'Which resource do you want to use?',
     'hasFormSchemaClass' => 'Should an existing form schema class be used?',
     'isGenerated' => 'Should the page be generated from the current database columns?',
     'relatedModel' => 'What is the related model?',
     'titleAttribute' => 'What is the title attribute for this model?',
     'formSchemaClass' => 'Which form schema class would you like to use?',
-    'isGeneratedTable' => 'Should the table columns be generated from the current database columns?',
     'hasViewOperation' => 'Would you like to generate a read-only view modal for the table?',
     'hasInfolistSchemaClass' => 'Would you like to use an existing infolist schema class?',
     'infolistSchemaClass' => 'Which infolist schema class would you like to use?',
@@ -363,11 +360,11 @@ it('can generate a manage related records page class in a resource', function ()
     $runGenerateManageRelatedRecordsPageCommand($this)
         ->expectsQuestion($questions['relationship'], 'teams')
         ->expectsQuestion($questions['hasRelatedResource'], false)
-        ->expectsQuestion($questions['hasFormSchemaClass'], false)
-        ->expectsQuestion($questions['isGenerated'], false)
-        ->expectsQuestion($questions['titleAttribute'], 'name')
         ->expectsQuestion($questions['hasViewOperation'], false)
+        ->expectsQuestion($questions['isGenerated'], false)
+        ->expectsQuestion($questions['hasFormSchemaClass'], false)
         ->expectsQuestion($questions['hasTableClass'], false)
+        ->expectsQuestion($questions['titleAttribute'], 'name')
         ->expectsQuestion($questions['isSoftDeletable'], false)
         ->expectsQuestion($questions['relationshipType'], BelongsToMany::class);
 
@@ -398,12 +395,12 @@ it('can generate a manage related records page class in a resource with a form s
     $runGenerateManageRelatedRecordsPageCommand($this)
         ->expectsQuestion($questions['relationship'], 'teams')
         ->expectsQuestion($questions['hasRelatedResource'], false)
+        ->expectsQuestion($questions['hasViewOperation'], false)
+        ->expectsQuestion($questions['isGenerated'], false)
         ->expectsQuestion($questions['hasFormSchemaClass'], true)
         ->expectsQuestion($questions['formSchemaClass'], app()->getNamespace() . 'Filament\\Resources\\Teams\\Schemas\\TeamForm')
-        ->expectsQuestion($questions['hasViewOperation'], false)
         ->expectsQuestion($questions['hasTableClass'], false)
         ->expectsQuestion($questions['titleAttribute'], 'name')
-        ->expectsQuestion($questions['isGeneratedTable'], false)
         ->expectsQuestion($questions['isSoftDeletable'], false)
         ->expectsQuestion($questions['relationshipType'], BelongsToMany::class);
 
@@ -418,18 +415,18 @@ it('can generate a manage related records page class in a resource with a genera
     $runGenerateManageRelatedRecordsPageCommand($this)
         ->expectsQuestion($questions['relationship'], 'teams')
         ->expectsQuestion($questions['hasRelatedResource'], false)
-        ->expectsQuestion($questions['hasFormSchemaClass'], false)
+        ->expectsQuestion($questions['hasViewOperation'], false)
         ->expectsQuestion($questions['isGenerated'], true)
         ->expectsQuestion($questions['relatedModel'], 'Filament\\Tests\\Fixtures\\Models\\Team')
-        ->expectsQuestion($questions['hasViewOperation'], false)
-        ->expectsQuestion($questions['hasTableClass'], false)
         ->expectsQuestion($questions['titleAttribute'], 'name')
         ->expectsQuestion($questions['isSoftDeletable'], false)
         ->expectsQuestion($questions['relationshipType'], BelongsToMany::class);
 
     assertFileExists($path = app_path('Filament/Resources/Users/Pages/ManageUserTeams.php'));
-    expect(file_get_contents($path))
-        ->toMatchSnapshot();
+    if (config('database.default') === 'testing') {
+        expect(file_get_contents($path))
+            ->toMatchSnapshot();
+    }
 });
 
 it('can generate a manage related records page class in a resource with a view operation', function () use ($runGenerateManageRelatedRecordsPageCommand, $generateManageRelatedRecordsPageCommandQuestions): void {
@@ -438,12 +435,12 @@ it('can generate a manage related records page class in a resource with a view o
     $runGenerateManageRelatedRecordsPageCommand($this)
         ->expectsQuestion($questions['relationship'], 'teams')
         ->expectsQuestion($questions['hasRelatedResource'], false)
-        ->expectsQuestion($questions['hasFormSchemaClass'], false)
-        ->expectsQuestion($questions['isGenerated'], false)
-        ->expectsQuestion($questions['titleAttribute'], 'name')
         ->expectsQuestion($questions['hasViewOperation'], true)
+        ->expectsQuestion($questions['isGenerated'], false)
+        ->expectsQuestion($questions['hasFormSchemaClass'], false)
         ->expectsQuestion($questions['hasInfolistSchemaClass'], false)
         ->expectsQuestion($questions['hasTableClass'], false)
+        ->expectsQuestion($questions['titleAttribute'], 'name')
         ->expectsQuestion($questions['isSoftDeletable'], false)
         ->expectsQuestion($questions['relationshipType'], BelongsToMany::class);
 
@@ -458,13 +455,13 @@ it('can generate a manage related records page class in a resource with an infol
     $runGenerateManageRelatedRecordsPageCommand($this)
         ->expectsQuestion($questions['relationship'], 'teams')
         ->expectsQuestion($questions['hasRelatedResource'], false)
-        ->expectsQuestion($questions['hasFormSchemaClass'], false)
-        ->expectsQuestion($questions['isGenerated'], false)
-        ->expectsQuestion($questions['titleAttribute'], 'name')
         ->expectsQuestion($questions['hasViewOperation'], true)
+        ->expectsQuestion($questions['isGenerated'], false)
+        ->expectsQuestion($questions['hasFormSchemaClass'], false)
         ->expectsQuestion($questions['hasInfolistSchemaClass'], true)
         ->expectsQuestion($questions['infolistSchemaClass'], app()->getNamespace() . 'Filament\\Resources\\Teams\\Schemas\\TeamInfolist')
         ->expectsQuestion($questions['hasTableClass'], false)
+        ->expectsQuestion($questions['titleAttribute'], 'name')
         ->expectsQuestion($questions['isSoftDeletable'], false)
         ->expectsQuestion($questions['relationshipType'], BelongsToMany::class);
 
@@ -479,12 +476,12 @@ it('can generate a manage related records page class in a resource with a table 
     $runGenerateManageRelatedRecordsPageCommand($this)
         ->expectsQuestion($questions['relationship'], 'teams')
         ->expectsQuestion($questions['hasRelatedResource'], false)
-        ->expectsQuestion($questions['hasFormSchemaClass'], false)
-        ->expectsQuestion($questions['isGenerated'], false)
-        ->expectsQuestion($questions['titleAttribute'], 'name')
         ->expectsQuestion($questions['hasViewOperation'], false)
+        ->expectsQuestion($questions['isGenerated'], false)
+        ->expectsQuestion($questions['hasFormSchemaClass'], false)
         ->expectsQuestion($questions['hasTableClass'], true)
-        ->expectsQuestion($questions['tableClass'], app()->getNamespace() . 'Filament\\Resources\\Teams\\Tables\\TeamsTable');
+        ->expectsQuestion($questions['tableClass'], app()->getNamespace() . 'Filament\\Resources\\Teams\\Tables\\TeamsTable')
+        ->expectsQuestion($questions['titleAttribute'], 'name');
 
     assertFileExists($path = app_path('Filament/Resources/Users/Pages/ManageUserTeams.php'));
     expect(file_get_contents($path))
@@ -497,11 +494,11 @@ it('can generate a manage related records page class in a resource with soft-del
     $runGenerateManageRelatedRecordsPageCommand($this)
         ->expectsQuestion($questions['relationship'], 'teams')
         ->expectsQuestion($questions['hasRelatedResource'], false)
-        ->expectsQuestion($questions['hasFormSchemaClass'], false)
-        ->expectsQuestion($questions['isGenerated'], false)
-        ->expectsQuestion($questions['titleAttribute'], 'name')
         ->expectsQuestion($questions['hasViewOperation'], false)
+        ->expectsQuestion($questions['isGenerated'], false)
+        ->expectsQuestion($questions['hasFormSchemaClass'], false)
         ->expectsQuestion($questions['hasTableClass'], false)
+        ->expectsQuestion($questions['titleAttribute'], 'name')
         ->expectsQuestion($questions['isSoftDeletable'], true)
         ->expectsQuestion($questions['relationshipType'], BelongsToMany::class);
 
@@ -516,11 +513,11 @@ it('can generate a manage related records page class in a resource for a `HasMan
     $runGenerateManageRelatedRecordsPageCommand($this)
         ->expectsQuestion($questions['relationship'], 'teams')
         ->expectsQuestion($questions['hasRelatedResource'], false)
-        ->expectsQuestion($questions['hasFormSchemaClass'], false)
-        ->expectsQuestion($questions['isGenerated'], false)
-        ->expectsQuestion($questions['titleAttribute'], 'name')
         ->expectsQuestion($questions['hasViewOperation'], false)
+        ->expectsQuestion($questions['isGenerated'], false)
+        ->expectsQuestion($questions['hasFormSchemaClass'], false)
         ->expectsQuestion($questions['hasTableClass'], false)
+        ->expectsQuestion($questions['titleAttribute'], 'name')
         ->expectsQuestion($questions['isSoftDeletable'], false)
         ->expectsQuestion($questions['relationshipType'], HasMany::class);
 

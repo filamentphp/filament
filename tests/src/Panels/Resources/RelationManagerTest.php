@@ -1,5 +1,6 @@
 <?php
 
+use Filament\Actions\AttachAction;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
@@ -11,15 +12,20 @@ use Filament\Actions\RestoreAction;
 use Filament\Actions\RestoreBulkAction;
 use Filament\Actions\Testing\TestAction;
 use Filament\Actions\ViewAction;
+use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tests\Fixtures\Models\Department;
 use Filament\Tests\Fixtures\Models\Ticket;
 use Filament\Tests\Fixtures\Policies\DepartmentPolicy;
 use Filament\Tests\Fixtures\Resources\Tickets\Pages\EditTicket;
 use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsRelationManager;
+use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsRelationManagerWithTabs;
+use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsWithAttachTableSelectRelationManager;
 use Filament\Tests\Panels\Resources\TestCase;
 use Illuminate\Auth\Access\Response;
+use Illuminate\Support\Str;
 
 use function Filament\Tests\livewire;
+use function Pest\Laravel\assertDatabaseHas;
 
 uses(TestCase::class);
 
@@ -150,3 +156,161 @@ it('renders actions based on policy', function (string $action, string $policyMe
     'restore bulk action with policy returning allowed response' => fn (): array => [RestoreBulkAction::class, 'restoreAny', Response::allow(), true, true, true],
     'restore bulk action with policy returning false' => fn (): array => [RestoreBulkAction::class, 'restoreAny', false, false, true, true],
     'restore bulk action with policy returning denied response' => fn (): array => [RestoreBulkAction::class, 'restoreAny', Response::deny(), false, true, true]]);
+
+it('can force render relation manager after create another', function (): void {
+    $ticket = Ticket::factory()
+        ->create();
+
+    CreateAction::configureUsing(function (CreateAction $action): void {
+        $action->forceRenderAfterCreateAnother(fn (mixed $livewire): bool => $livewire instanceof RelationManager);
+    });
+
+    $action = TestAction::make(CreateAction::class)->table();
+
+    livewire(DepartmentsRelationManager::class, ['ownerRecord' => $ticket, 'pageClass' => EditTicket::class])
+        ->assertSuccessful()
+        ->assertCountTableRecords(0)
+        ->assertActionExists($action)
+        ->mountAction($action, ['another' => true])
+        ->fillForm([
+            'name' => $name = Str::random(),
+        ])
+        ->callMountedAction()
+        ->assertHasNoFormErrors()
+        ->assertCountTableRecords(1)
+        ->assertSeeText($name);
+
+    assertDatabaseHas(Department::class, ['name' => $name]);
+});
+
+it('can attach a single record with table select', function (): void {
+    $ticket = Ticket::factory()->create();
+    $department = Department::factory()->create();
+
+    livewire(DepartmentsWithAttachTableSelectRelationManager::class, [
+        'ownerRecord' => $ticket,
+        'pageClass' => EditTicket::class,
+    ])
+        ->callAction(TestAction::make(AttachAction::class)->table(), [
+            'recordId' => $department->getKey(),
+        ])
+        ->assertHasNoFormErrors();
+
+    assertDatabaseHas('department_ticket', [
+        'department_id' => $department->getKey(),
+        'ticket_id' => $ticket->getKey(),
+    ]);
+});
+
+it('can attach multiple records with table select', function (): void {
+    $ticket = Ticket::factory()->create();
+    $departments = Department::factory(3)->create();
+
+    livewire(DepartmentsWithAttachTableSelectRelationManager::class, [
+        'ownerRecord' => $ticket,
+        'pageClass' => EditTicket::class,
+    ])
+        ->callAction(TestAction::make(AttachAction::class)->table(), [
+            'recordId' => $departments->pluck('id')->toArray(),
+        ])
+        ->assertHasNoFormErrors();
+
+    foreach ($departments as $department) {
+        assertDatabaseHas('department_ticket', [
+            'department_id' => $department->getKey(),
+            'ticket_id' => $ticket->getKey(),
+        ]);
+    }
+});
+
+it('can attach records when some are already related', function (): void {
+    $ticket = Ticket::factory()->create();
+    $alreadyAttachedDepartment = Department::factory()->create();
+    $newDepartment = Department::factory()->create();
+
+    // First, attach a department to the ticket
+    $ticket->departments()->attach($alreadyAttachedDepartment);
+
+    // Verify initial state
+    expect($ticket->departments()->count())->toBe(1);
+
+    // Now attach only the new department (the UI would filter out already-attached ones)
+    livewire(DepartmentsWithAttachTableSelectRelationManager::class, [
+        'ownerRecord' => $ticket,
+        'pageClass' => EditTicket::class,
+    ])
+        ->callAction(TestAction::make(AttachAction::class)->table(), [
+            'recordId' => $newDepartment->getKey(),
+        ])
+        ->assertHasNoFormErrors();
+
+    // Verify the new department was attached
+    assertDatabaseHas('department_ticket', [
+        'department_id' => $newDepartment->getKey(),
+        'ticket_id' => $ticket->getKey(),
+    ]);
+
+    // Verify total count is now 2
+    expect($ticket->departments()->count())->toBe(2);
+});
+
+it('can access record for action after record no longer matches `TrashedFilter` in `BelongsToMany` relation manager', function (): void {
+    $ticket = Ticket::factory()->create();
+    $department = Department::factory()->create();
+    $ticket->departments()->attach($department);
+
+    $department->delete();
+
+    livewire(DepartmentsRelationManager::class, [
+        'ownerRecord' => $ticket,
+        'pageClass' => EditTicket::class,
+    ])
+        ->filterTable('trashed', false)
+        ->assertCanSeeTableRecords([$department])
+        ->tap(fn () => $department->restore())
+        ->callAction(TestAction::make(DeleteAction::class)->table($department));
+
+    expect($department->fresh()->trashed())->toBeTrue();
+});
+
+it('can access record for action after record no longer matches tab query in `BelongsToMany` relation manager', function (): void {
+    $ticket = Ticket::factory()->create();
+    $department = Department::factory()->create(['name' => 'Accounting']);
+    $ticket->departments()->attach($department);
+
+    livewire(DepartmentsRelationManagerWithTabs::class, [
+        'ownerRecord' => $ticket,
+        'pageClass' => EditTicket::class,
+    ])
+        ->set('activeTab', 'a_names')
+        ->assertCanSeeTableRecords([$department])
+        ->tap(fn () => $department->update(['name' => 'Billing']))
+        ->callAction(TestAction::make(DeleteAction::class)->table($department));
+
+    expect($department->fresh()->trashed())->toBeTrue();
+});
+
+it('cannot access record for action after record no longer matches tab without `excludeQueryWhenResolvingRecord()` in `BelongsToMany` relation manager', function (): void {
+    $ticket = Ticket::factory()->create();
+    $department = Department::factory()->create(['name' => 'Accounting']);
+    $ticket->departments()->attach($department);
+
+    livewire(DepartmentsRelationManagerWithTabs::class, [
+        'ownerRecord' => $ticket,
+        'pageClass' => EditTicket::class,
+    ])
+        ->set('shouldExcludeTabQueryWhenResolvingRecord', false)
+        ->set('activeTab', 'a_names')
+        ->assertCanSeeTableRecords([$department])
+        ->tap(fn () => $department->update(['name' => 'Billing']));
+
+    expect(
+        fn () => livewire(DepartmentsRelationManagerWithTabs::class, [
+            'ownerRecord' => $ticket,
+            'pageClass' => EditTicket::class,
+        ])
+            ->set('shouldExcludeTabQueryWhenResolvingRecord', false)
+            ->set('activeTab', 'a_names')
+            ->mountTableAction(DeleteAction::class, $department)
+    )->toThrow(TypeError::class);
+});

@@ -3,7 +3,7 @@
 return [
 
     'messages' => [
-        'copied' => 'Copied',
+        'copied' => 'Lâk chhâwn ani e',
     ],
 
 ];

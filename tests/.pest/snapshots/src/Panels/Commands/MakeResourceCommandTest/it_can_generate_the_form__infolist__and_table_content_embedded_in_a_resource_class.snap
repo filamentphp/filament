@@ -11,6 +11,7 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
+use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
@@ -37,8 +38,7 @@ class PostResource extends Resource
         return $schema
             ->components([
                 Select::make('author_id')
-                    ->relationship('author', 'name')
-                    ->required(),
+                    ->relationship('author', 'name'),
                 Textarea::make('content')
                     ->columnSpanFull(),
                 Toggle::make('is_published')
@@ -51,12 +51,16 @@ class PostResource extends Resource
                     ->columnSpanFull(),
                 TextInput::make('title')
                     ->required(),
+                TextInput::make('title2'),
+                Textarea::make('config')
+                    ->columnSpanFull(),
                 Textarea::make('json')
                     ->columnSpanFull(),
                 Textarea::make('json_array_of_objects')
                     ->columnSpanFull(),
                 Select::make('string_backed_enum')
                     ->options(StringBackedEnum::class),
+                DateTimePicker::make('published_at'),
             ]);
     }
 
@@ -64,19 +68,46 @@ class PostResource extends Resource
     {
         return $schema
             ->components([
-                TextEntry::make('author.name'),
+                TextEntry::make('author.name')
+                    ->label('Author')
+                    ->placeholder('-'),
+                TextEntry::make('content')
+                    ->placeholder('-')
+                    ->columnSpanFull(),
                 IconEntry::make('is_published')
                     ->boolean(),
                 TextEntry::make('rating')
                     ->numeric(),
+                TextEntry::make('tags')
+                    ->placeholder('-')
+                    ->columnSpanFull(),
                 TextEntry::make('title'),
-                TextEntry::make('string_backed_enum'),
+                TextEntry::make('title2')
+                    ->placeholder('-'),
+                TextEntry::make('config')
+                    ->placeholder('-')
+                    ->columnSpanFull(),
+                TextEntry::make('json')
+                    ->placeholder('-')
+                    ->columnSpanFull(),
+                TextEntry::make('json_array_of_objects')
+                    ->placeholder('-')
+                    ->columnSpanFull(),
+                TextEntry::make('string_backed_enum')
+                    ->badge()
+                    ->placeholder('-'),
+                TextEntry::make('published_at')
+                    ->dateTime()
+                    ->placeholder('-'),
                 TextEntry::make('created_at')
-                    ->dateTime(),
+                    ->dateTime()
+                    ->placeholder('-'),
                 TextEntry::make('updated_at')
-                    ->dateTime(),
+                    ->dateTime()
+                    ->placeholder('-'),
                 TextEntry::make('deleted_at')
-                    ->dateTime(),
+                    ->dateTime()
+                    ->visible(fn (Post $record): bool => $record->trashed()),
             ]);
     }
 
@@ -93,8 +124,14 @@ class PostResource extends Resource
                     ->sortable(),
                 TextColumn::make('title')
                     ->searchable(),
-                TextColumn::make('string_backed_enum')
+                TextColumn::make('title2')
                     ->searchable(),
+                TextColumn::make('string_backed_enum')
+                    ->badge()
+                    ->searchable(),
+                TextColumn::make('published_at')
+                    ->dateTime()
+                    ->sortable(),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

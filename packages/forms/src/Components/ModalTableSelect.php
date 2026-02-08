@@ -4,6 +4,9 @@ namespace Filament\Forms\Components;
 
 use Closure;
 use Filament\Actions\Action;
+use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
+use Filament\Schemas\Components\StateCasts\OptionsArrayStateCast;
+use Filament\Schemas\Components\StateCasts\OptionStateCast;
 use Filament\Support\Enums\IconPosition;
 use Filament\Support\Icons\Heroicon;
 use Filament\Support\Services\RelationshipJoiner;
@@ -56,6 +59,10 @@ class ModalTableSelect extends Field
 
     protected ?Closure $modifySelectActionUsing = null;
 
+    protected bool | Closure | null $hasBadges = null;
+
+    protected string | Closure | null $badgeColor = null;
+
     /**
      * @var array<mixed> | Closure
      */
@@ -64,20 +71,6 @@ class ModalTableSelect extends Field
     protected function setUp(): void
     {
         parent::setUp();
-
-        $this->default(static fn (ModalTableSelect $component): ?array => $component->isMultiple() ? [] : null);
-
-        $this->afterStateHydrated(static function (ModalTableSelect $component, $state): void {
-            if (! $component->isMultiple()) {
-                return;
-            }
-
-            if (is_array($state)) {
-                return;
-            }
-
-            $component->state([]);
-        });
 
         $this->registerActions([
             fn (ModalTableSelect $component): Action => $component->getSelectAction(),
@@ -143,7 +136,7 @@ class ModalTableSelect extends Field
             ->hiddenLabel()
             ->tableConfiguration($this->getTableConfiguration())
             ->relationshipName($this->getRelationshipName())
-            ->multiple()
+            ->multiple($this->isMultiple())
             ->maxItems($this->getMaxItems())
             ->tableArguments($this->getTableArguments());
 
@@ -254,6 +247,70 @@ class ModalTableSelect extends Field
             }
 
             $relationship = $component->getRelationship();
+            $relationshipName = $component->getRelationshipName();
+
+            if (
+                (! $modifyQueryUsing) &&
+                (! str_contains($relationshipName, '.')) &&
+                ($record = $component->getRecord()) instanceof Model &&
+                $record->relationLoaded($relationshipName)
+            ) {
+                $relatedRecords = $record->getRelationValue($relationshipName);
+
+                if (
+                    ($relationship instanceof BelongsToMany) ||
+                    ($relationship instanceof HasOneOrManyThrough)
+                ) {
+                    $component->state(
+                        $relatedRecords
+                            ->pluck(($relationship instanceof BelongsToMany) ? $relationship->getRelatedKeyName() : $relationship->getRelated()->getKeyName())
+                            ->map(static fn ($key): string => strval($key))
+                            ->all(),
+                    );
+
+                    return;
+                }
+
+                if ($relationship instanceof BelongsToThrough) {
+                    $component->state(
+                        $relatedRecords?->getAttribute(
+                            $relationship->getRelated()->getKeyName(),
+                        ),
+                    );
+
+                    return;
+                }
+
+                if ($relationship instanceof HasMany) {
+                    $component->state(
+                        $relatedRecords
+                            ->pluck($relationship->getLocalKeyName())
+                            ->map(static fn ($key): string => strval($key))
+                            ->all(),
+                    );
+
+                    return;
+                }
+
+                if ($relationship instanceof HasOne) {
+                    $component->state(
+                        $relatedRecords?->getAttribute(
+                            $relationship->getLocalKeyName(),
+                        ),
+                    );
+
+                    return;
+                }
+
+                /** @var BelongsTo $relationship */
+                $component->state(
+                    $relatedRecords?->getAttribute(
+                        $relationship->getOwnerKeyName(),
+                    ),
+                );
+
+                return;
+            }
 
             if (
                 ($relationship instanceof BelongsToMany) ||
@@ -356,6 +413,29 @@ class ModalTableSelect extends Field
         });
 
         $this->getSelectedRecordUsing(static function (ModalTableSelect $component, $state) use ($modifyQueryUsing): ?Model {
+            $relationship = $component->getRelationship();
+
+            if (
+                (! $modifyQueryUsing) &&
+                ($relationship instanceof BelongsTo)
+            ) {
+                $record = $component->getRecord();
+
+                if (
+                    ($record instanceof Model) &&
+                    $record->relationLoaded($component->getRelationshipName())
+                ) {
+                    $relatedRecord = $record->getRelationValue($component->getRelationshipName());
+
+                    if (
+                        ($relatedRecord instanceof Model) &&
+                        ((string) $relatedRecord->getAttribute($relationship->getOwnerKeyName()) === (string) $state)
+                    ) {
+                        return $relatedRecord;
+                    }
+                }
+            }
+
             $relationship = Relation::noConstraints(fn () => $component->getRelationship());
 
             $relationshipQuery = app(RelationshipJoiner::class)->prepareQueryForNoConstraints($relationship);
@@ -373,6 +453,59 @@ class ModalTableSelect extends Field
         });
 
         $this->getOptionLabelsUsing(static function (ModalTableSelect $component, array $values) use ($modifyQueryUsing): array {
+            $relationship = $component->getRelationship();
+            $record = $component->getRecord();
+            $relationshipName = $component->getRelationshipName();
+
+            if (
+                (! $modifyQueryUsing) &&
+                ($record instanceof Model) &&
+                $record->relationLoaded($relationshipName) &&
+                (
+                    ($relationship instanceof BelongsToMany) ||
+                    ($relationship instanceof HasOneOrMany)
+                )
+            ) {
+                $relatedRecords = $record->getRelationValue($relationshipName);
+
+                if ($relatedRecords instanceof Collection) {
+                    $relatedKeyName = ($relationship instanceof BelongsToMany)
+                        ? $relationship->getRelatedKeyName()
+                        : $relationship->getRelated()->getKeyName();
+
+                    $loadedKeys = $relatedRecords->pluck($relatedKeyName)->map(fn ($key) => (string) $key)->all();
+                    $requestedKeys = array_map(fn ($value) => (string) $value, $values);
+
+                    if (empty(array_diff($requestedKeys, $loadedKeys))) {
+                        $relationshipTitleAttribute = $component->getRelationshipTitleAttribute();
+
+                        if (str_contains($relationshipTitleAttribute, '->')) {
+                            $relationshipTitleAttribute = str_replace('->', '.', $relationshipTitleAttribute);
+                        }
+
+                        $filteredRecords = $relatedRecords->filter(
+                            fn (Model $relatedRecord): bool => in_array(
+                                (string) $relatedRecord->getAttribute($relatedKeyName),
+                                $requestedKeys,
+                                strict: true,
+                            ),
+                        );
+
+                        if ($component->hasOptionLabelFromRecordUsingCallback()) {
+                            return $filteredRecords
+                                ->mapWithKeys(static fn (Model $relatedRecord) => [
+                                    $relatedRecord->getAttribute($relatedKeyName) => $component->getOptionLabelFromRecord($relatedRecord),
+                                ])
+                                ->toArray();
+                        }
+
+                        return $filteredRecords
+                            ->pluck($relationshipTitleAttribute, $relatedKeyName)
+                            ->toArray();
+                    }
+                }
+            }
+
             $relationship = Relation::noConstraints(fn () => $component->getRelationship());
 
             $relationshipQuery = app(RelationshipJoiner::class)->prepareQueryForNoConstraints($relationship);
@@ -511,7 +644,7 @@ class ModalTableSelect extends Field
             $relationship->syncWithPivotValues($state, $pivotData, detaching: false);
         });
 
-        $this->dehydrated(fn (ModalTableSelect $component): bool => ! $component->isMultiple());
+        $this->dehydrated(fn (ModalTableSelect $component): bool => (! $component->isMultiple()) && $component->isSaved());
 
         return $this;
     }
@@ -575,6 +708,12 @@ class ModalTableSelect extends Field
         $relationshipName = $this->getRelationshipName();
 
         foreach (explode('.', $relationshipName) as $nestedRelationshipName) {
+            if ($record->hasAttribute($nestedRelationshipName)) {
+                $relationship = null;
+
+                break;
+            }
+
             if (! $record->isRelation($nestedRelationshipName)) {
                 $relationship = null;
 
@@ -648,6 +787,12 @@ class ModalTableSelect extends Field
             return $values;
         }
 
+        $state = $this->getState();
+
+        if (blank($state)) {
+            return null;
+        }
+
         if ($this->isMultiple()) {
             return array_keys($this->getOptionLabels(withDefaults: false));
         }
@@ -678,5 +823,45 @@ class ModalTableSelect extends Field
     public function getTableArguments(): array
     {
         return $this->evaluate($this->tableArguments) ?? [];
+    }
+
+    public function badge(bool | Closure | null $condition = true): static
+    {
+        $this->hasBadges = $condition;
+
+        return $this;
+    }
+
+    public function hasBadges(): bool
+    {
+        return $this->evaluate($this->hasBadges) ?? $this->isMultiple();
+    }
+
+    public function badgeColor(string | Closure | null $color): static
+    {
+        $this->badgeColor = $color;
+
+        return $this;
+    }
+
+    public function getBadgeColor(): ?string
+    {
+        return $this->evaluate($this->badgeColor);
+    }
+
+    /**
+     * @return array<StateCast>
+     */
+    public function getDefaultStateCasts(): array
+    {
+        if ($this->hasCustomStateCasts()) {
+            return parent::getDefaultStateCasts();
+        }
+
+        if ($this->isMultiple()) {
+            return [app(OptionsArrayStateCast::class)];
+        }
+
+        return [app(OptionStateCast::class, ['isNullable' => true])];
     }
 }

@@ -30,6 +30,11 @@ trait HasComponents
     protected ?array $cachedComponents = null;
 
     /**
+     * @var array<array<array<string, Component>>>
+     */
+    protected array $cachedComponentsByStatePath = [];
+
+    /**
      * @param  array<Component | Action | ActionGroup | string | Htmlable> | Component | Action | ActionGroup | string | Htmlable | Closure  $components
      */
     public function components(array | Component | Action | ActionGroup | string | Htmlable | Closure $components): static
@@ -37,6 +42,7 @@ trait HasComponents
         $this->components = $components;
         $this->cachedComponents = null;
         $this->cachedFlatComponents = [];
+        $this->cachedComponentsByStatePath = [];
 
         return $this;
     }
@@ -104,7 +110,28 @@ trait HasComponents
             }
 
             foreach ($component->getChildSchemas() as $childSchema) {
-                if ($action = $childSchema->getAction($actionName, $componentNestedContainerKey)) {
+                $childSchemaName = $childSchema->getKey(isAbsolute: false);
+
+                if (filled($childSchemaName)) {
+                    if (blank($componentNestedContainerKey)) {
+                        continue;
+                    }
+
+                    if (
+                        ($componentNestedContainerKey !== $childSchemaName)
+                        && (! str($componentNestedContainerKey)->startsWith("{$childSchemaName}."))
+                    ) {
+                        continue;
+                    }
+
+                    $childSchemaNestedContainerKey = ($componentNestedContainerKey === $childSchemaName)
+                        ? null
+                        : (string) str($componentNestedContainerKey)->after("{$childSchemaName}.");
+                } else {
+                    $childSchemaNestedContainerKey = $componentNestedContainerKey;
+                }
+
+                if ($action = $childSchema->getAction($actionName, $childSchemaNestedContainerKey)) {
                     return $action;
                 }
             }
@@ -113,26 +140,29 @@ trait HasComponents
         return null;
     }
 
-    public function getComponent(string | Closure $findComponentUsing, bool $withActions = true, bool $withHidden = false, bool $isAbsoluteKey = false, ?Component $skipComponentChildContainersWhileSearching = null): Component | Action | ActionGroup | null
+    /**
+     * @param  array<Component>  $skipComponentsChildContainersWhileSearching
+     */
+    public function getComponent(string | Closure $findComponentUsing, bool $withActions = true, bool $withHidden = false, bool $isAbsoluteKey = false, array $skipComponentsChildContainersWhileSearching = []): Component | Action | ActionGroup | null
     {
         if (is_string($findComponentUsing) && (! $isAbsoluteKey) && filled($key = $this->getKey())) {
             $findComponentUsing = "{$key}.$findComponentUsing";
             $isAbsoluteKey = true;
         }
 
-        if ($skipComponentChildContainersWhileSearching) {
+        if ($skipComponentsChildContainersWhileSearching) {
             foreach ($this->getComponents($withActions, $withHidden) as $component) {
                 if ($findComponentUsing instanceof Closure) {
                     if ($findComponentUsing($component)) {
                         return $component;
                     }
 
-                    if ($component === $skipComponentChildContainersWhileSearching) {
+                    if (in_array($component, $skipComponentsChildContainersWhileSearching, strict: true)) {
                         continue;
                     }
 
                     foreach ($component->getChildSchemas($withHidden) as $childSchema) {
-                        if ($foundComponent = $childSchema->getComponent($findComponentUsing, $withActions, $withHidden, $isAbsoluteKey, skipComponentChildContainersWhileSearching: $skipComponentChildContainersWhileSearching)) {
+                        if ($foundComponent = $childSchema->getComponent($findComponentUsing, $withActions, $withHidden, $isAbsoluteKey, $skipComponentsChildContainersWhileSearching)) {
                             return $foundComponent;
                         }
                     }
@@ -150,7 +180,7 @@ trait HasComponents
                     return $component;
                 }
 
-                if ($component === $skipComponentChildContainersWhileSearching) {
+                if (in_array($component, $skipComponentsChildContainersWhileSearching, strict: true)) {
                     continue;
                 }
 
@@ -158,7 +188,7 @@ trait HasComponents
 
                 if (blank($componentInheritanceKey) || str_starts_with($findComponentUsing, "{$componentInheritanceKey}.")) {
                     foreach ($component->getChildSchemas($withHidden) as $childSchema) {
-                        if ($foundComponent = $childSchema->getComponent($findComponentUsing, $withActions, $withHidden, $isAbsoluteKey, $skipComponentChildContainersWhileSearching)) {
+                        if ($foundComponent = $childSchema->getComponent($findComponentUsing, $withActions, $withHidden, $isAbsoluteKey, $skipComponentsChildContainersWhileSearching)) {
                             return $foundComponent;
                         }
                     }
@@ -175,13 +205,16 @@ trait HasComponents
         return $this->getFlatComponents($withActions, $withHidden, withAbsoluteKeys: true)[$findComponentUsing] ?? null;
     }
 
-    public function getComponentByStatePath(string $statePath, bool $withHidden = false, bool $withAbsoluteStatePath = false, ?Component $skipComponentChildContainersWhileSearching = null): ?Component
+    /**
+     * @param  array<Component>  $skipComponentsChildContainersWhileSearching
+     */
+    public function getComponentByStatePath(string $statePath, bool $withHidden = false, bool $withAbsoluteStatePath = false, array $skipComponentsChildContainersWhileSearching = []): ?Component
     {
         if ((! $withAbsoluteStatePath) && filled($containerStatePath = $this->getStatePath())) {
             $statePath = "{$containerStatePath}.{$statePath}";
         }
 
-        $search = function (self $container) use ($statePath, $withHidden, $skipComponentChildContainersWhileSearching): ?Component {
+        $search = function (self $container) use ($statePath, $withHidden, $skipComponentsChildContainersWhileSearching): ?Component {
             foreach ($container->getComponents(withActions: false, withHidden: $withHidden) as $component) {
                 $componentStatePath = $component->getStatePath();
 
@@ -189,13 +222,13 @@ trait HasComponents
                     return $component;
                 }
 
-                if ($component === $skipComponentChildContainersWhileSearching) {
+                if (in_array($component, $skipComponentsChildContainersWhileSearching, strict: true)) {
                     continue;
                 }
 
                 if (blank($componentStatePath) || str_starts_with($statePath, "{$componentStatePath}.")) {
                     foreach ($component->getChildSchemas($withHidden) as $childSchema) {
-                        if ($found = $childSchema->getComponentByStatePath($statePath, $withHidden, withAbsoluteStatePath: true, skipComponentChildContainersWhileSearching: $skipComponentChildContainersWhileSearching)) {
+                        if ($found = $childSchema->getComponentByStatePath($statePath, $withHidden, withAbsoluteStatePath: true, skipComponentsChildContainersWhileSearching: $skipComponentsChildContainersWhileSearching)) {
                             return $found;
                         }
                     }
@@ -205,7 +238,11 @@ trait HasComponents
             return null;
         };
 
-        return $search($this);
+        $skipIds = array_map('spl_object_id', $skipComponentsChildContainersWhileSearching);
+        sort($skipIds);
+        $cacheKey = $skipIds ? implode('-', $skipIds) : null;
+
+        return $this->cachedComponentsByStatePath[$withHidden][$cacheKey][$statePath] ??= $search($this);
     }
 
     /**
@@ -299,8 +336,8 @@ trait HasComponents
         $components = array_filter(
             $allComponents,
             function (Component | Action | ActionGroup $component) use ($withActions, $withHidden): bool {
-                if (($component instanceof Action) || ($component instanceof ActionGroup)) {
-                    return $withActions;
+                if ((($component instanceof Action) || ($component instanceof ActionGroup)) && (! $withActions)) {
+                    return false;
                 }
 
                 return $withHidden || ! $component->isHidden();
@@ -331,8 +368,20 @@ trait HasComponents
 
             $this->cachedComponents = null;
             $this->cachedFlatComponents = [];
+            $this->cachedComponentsByStatePath = [];
         }
 
         return $this;
+    }
+
+    public function clearCachedDefaultChildSchemas(): void
+    {
+        foreach ($this->getComponents(withActions: false, withHidden: true) as $component) {
+            $component->clearCachedDefaultChildSchemas();
+
+            foreach ($component->getChildSchemas(withHidden: true) as $childSchema) {
+                $childSchema->clearCachedDefaultChildSchemas();
+            }
+        }
     }
 }

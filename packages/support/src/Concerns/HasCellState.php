@@ -33,6 +33,10 @@ trait HasCellState
      */
     protected array $cachedState = [];
 
+    protected ?bool $hasMultipleRelationshipCache = null;
+
+    protected ?Relation $relationshipCache = null;
+
     public function inverseRelationship(?string $name): static
     {
         $this->inverseRelationshipName = $name;
@@ -103,6 +107,48 @@ trait HasCellState
     public function getStateFromRecord(): mixed
     {
         $record = $this->getRecord();
+
+        if ($record instanceof Model) {
+            $relationship = $this->getRelationship($record);
+
+            if ($relationship) {
+                $relationshipAttribute = $this->getFullAttributeName($record);
+
+                $state = collect($this->getRelationshipResults($record))
+                    ->reduce(
+                        function (Collection $carry, Model $record) use ($relationshipAttribute): Collection {
+                            if (
+                                ($record instanceof HasRichContent) &&
+                                $record->hasRichContentAttribute($relationshipAttribute)
+                            ) {
+                                $state = $record->getRichContentAttribute($relationshipAttribute);
+                            } else {
+                                $state = data_get($record, $relationshipAttribute);
+                            }
+
+                            if (blank($state)) {
+                                return $carry;
+                            }
+
+                            return $carry->push($state);
+                        },
+                        initial: collect(),
+                    )
+                    ->when($this->isDistinctList(), fn (Collection $state) => $state->unique())
+                    ->values();
+
+                if (! $state->count()) {
+                    return null;
+                }
+
+                if (($state->count() < 2) && (! $this->hasMultipleRelationship($record))) {
+                    return $state->first();
+                }
+
+                return $state->all();
+            }
+        }
+
         $name = $this->getName();
 
         if (
@@ -114,39 +160,7 @@ trait HasCellState
             $state = data_get($record, $name);
         }
 
-        if ($state !== null) {
-            return $state;
-        }
-
-        if (($this instanceof Column) && is_array($record)) { /** @phpstan-ignore function.impossibleType, booleanAnd.alwaysFalse */
-            return null;
-        }
-
-        if (! $this->hasRelationship($record)) {
-            return null;
-        }
-
-        $relationship = $this->getRelationship($record);
-
-        if (! $relationship) {
-            return null;
-        }
-
-        $attributeName = $this->getAttributeName($record);
-        $fullAttributeName = $this->getFullAttributeName($record);
-
-        $state = collect($this->getRelationshipResults($record))
-            ->filter(fn (Model $record): bool => array_key_exists($attributeName, $record->attributesToArray()))
-            ->pluck($fullAttributeName)
-            ->filter(fn ($state): bool => filled($state))
-            ->when($this->isDistinctList(), fn (Collection $state) => $state->unique())
-            ->values();
-
-        if (! $state->count()) {
-            return null;
-        }
-
-        return $state->all();
+        return $state;
     }
 
     public function clearCachedState(): void
@@ -174,6 +188,10 @@ trait HasCellState
             return false;
         }
 
+        if ($record->hasAttribute((string) str($name)->before('.'))) {
+            return false;
+        }
+
         return $record->isRelation((string) str($name)->before('.'));
     }
 
@@ -187,6 +205,10 @@ trait HasCellState
 
     public function getRelationship(Model $record, ?string $relationshipName = null): ?Relation
     {
+        if ($this->relationshipCache) {
+            return $this->relationshipCache;
+        }
+
         if (isset($relationshipName)) {
             $nameParts = explode('.', $relationshipName);
         } else {
@@ -203,6 +225,10 @@ trait HasCellState
         $relationship = null;
 
         foreach ($nameParts as $namePart) {
+            if ($record->hasAttribute($namePart)) {
+                break;
+            }
+
             if (! $record->isRelation($namePart)) {
                 break;
             }
@@ -211,7 +237,38 @@ trait HasCellState
             $record = $relationship->getRelated();
         }
 
-        return $relationship;
+        return $this->relationshipCache = $relationship;
+    }
+
+    public function hasMultipleRelationship(Model $record): bool
+    {
+        if (isset($this->hasMultipleRelationshipCache)) {
+            return $this->hasMultipleRelationshipCache;
+        }
+
+        $relationships = explode('.', $this->getRelationshipName($record));
+
+        while (count($relationships)) {
+            $currentRelationshipName = array_shift($relationships);
+
+            $currentRelationshipValue = $record->getRelationValue($currentRelationshipName);
+
+            if ($currentRelationshipValue instanceof Collection) {
+                return $this->hasMultipleRelationshipCache = true;
+            }
+
+            if (! $currentRelationshipValue instanceof Model) {
+                break;
+            }
+
+            if (! count($relationships)) {
+                break;
+            }
+
+            $record = $currentRelationshipValue;
+        }
+
+        return $this->hasMultipleRelationshipCache = false;
     }
 
     /**
@@ -277,8 +334,13 @@ trait HasCellState
         }
 
         $nameParts = explode('.', $name);
+        $lastPart = array_pop($nameParts);
 
         foreach ($nameParts as $namePart) {
+            if ($record->hasAttribute($namePart)) {
+                break;
+            }
+
             if (! $record->isRelation($namePart)) {
                 break;
             }
@@ -287,7 +349,7 @@ trait HasCellState
             $record = $record->{$namePart}()->getRelated();
         }
 
-        return Arr::first($nameParts);
+        return Arr::first([...$nameParts, $lastPart]);
     }
 
     public function getFullAttributeName(Model $record): string
@@ -299,8 +361,13 @@ trait HasCellState
         }
 
         $nameParts = explode('.', $name);
+        $lastPart = array_pop($nameParts);
 
         foreach ($nameParts as $namePart) {
+            if ($record->hasAttribute($namePart)) {
+                break;
+            }
+
             if (! $record->isRelation($namePart)) {
                 break;
             }
@@ -309,7 +376,7 @@ trait HasCellState
             $record = $record->{$namePart}()->getRelated();
         }
 
-        return implode('.', $nameParts);
+        return implode('.', [...$nameParts, $lastPart]);
     }
 
     public function getInverseRelationshipName(Model $record): string
@@ -324,6 +391,10 @@ trait HasCellState
         $inverseRelationshipParts = [];
 
         foreach ($nameParts as $namePart) {
+            if ($record->hasAttribute($namePart)) {
+                break;
+            }
+
             if (! $record->isRelation($namePart)) {
                 break;
             }
@@ -340,11 +411,11 @@ trait HasCellState
                 )
                 ->camel();
 
-            if (! $record->isRelation($inverseNestedRelationshipName)) {
+            if ($record->hasAttribute($inverseNestedRelationshipName) || (! $record->isRelation($inverseNestedRelationshipName))) {
                 // The conventional relationship doesn't exist, but we can
                 // attempt to use the original relationship name instead.
 
-                if (! $record->isRelation($namePart)) {
+                if ($record->hasAttribute($namePart) || (! $record->isRelation($namePart))) {
                     $recordClass = $record::class;
 
                     throw new LogicException("When trying to guess the inverse relationship for column [{$this->getName()}], relationship [{$inverseNestedRelationshipName}] was not found on model [{$recordClass}]. Please define a custom [inverseRelationship()] for this column.");
@@ -373,6 +444,10 @@ trait HasCellState
         $relationshipParts = [];
 
         foreach ($nameParts as $namePart) {
+            if ($record->hasAttribute($namePart)) {
+                break;
+            }
+
             if (! $record->isRelation($namePart)) {
                 break;
             }

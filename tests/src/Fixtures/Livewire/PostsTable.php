@@ -39,8 +39,15 @@ class PostsTable extends Component implements HasActions, HasSchemas, Tables\Con
         return $table
             ->query(Post::query())
             ->groups(fn () => [
+                Tables\Grouping\Group::make('title'),
                 Tables\Grouping\Group::make('author.name')
                     ->label(fn (Table $table, self $livewire) => 'Dynamic label'),
+                Tables\Grouping\Group::make('author.team.name'),
+                Tables\Grouping\Group::make('author.profile.bio'),
+                Tables\Grouping\Group::make('author.profile.company.name'),
+                Tables\Grouping\Group::make('author.image.url'),
+                Tables\Grouping\Group::make('author.profile.image.alt_text'),
+                Tables\Grouping\Group::make('author.setting.theme'),
             ])
             ->columns([
                 Tables\Columns\TextColumn::make('title')
@@ -64,6 +71,41 @@ class PostsTable extends Component implements HasActions, HasSchemas, Tables\Con
                     ]),
                 Tables\Columns\TextColumn::make('author.email')
                     ->searchable(isIndividual: true, isGlobal: false),
+                Tables\Columns\TextColumn::make('author.team.name')
+                    ->label('Author Team')
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('author.company.name')
+                    ->label('Author Company (BelongsTo -> BelongsToThrough)')
+                    ->sortable()
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('team.name')
+                    ->label('Team (BelongsToThrough)')
+                    ->sortable()
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('team.company.name')
+                    ->label('Team Company (Nested BelongsToThrough)')
+                    ->sortable()
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('author.profile.bio')
+                    ->label('Author Profile Bio')
+                    ->sortable()
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('author.profile.company.name')
+                    ->label('Author Company')
+                    ->sortable()
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('author.image.url')
+                    ->label('Author Image URL')
+                    ->sortable()
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('author.profile.image.alt_text')
+                    ->label('Profile Image Alt')
+                    ->sortable()
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('author.setting.theme')
+                    ->label('Author Setting Theme (BelongsTo -> HasOneThrough)')
+                    ->sortable()
+                    ->searchable(),
                 Tables\Columns\IconColumn::make('is_published')
                     ->boolean()
                     ->summarize([
@@ -97,6 +139,7 @@ class PostsTable extends Component implements HasActions, HasSchemas, Tables\Con
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('json_array_of_objects.*.value'),
+                Tables\Columns\TextColumn::make('config.setting'),
                 Tables\Columns\TextColumn::make('author.json.foo')
                     ->searchable()
                     ->sortable(),
@@ -119,6 +162,9 @@ class PostsTable extends Component implements HasActions, HasSchemas, Tables\Con
                     ->sortable()
                     ->searchable()
                     ->prefix(fn (Post $record): string => $record->is_published ? 'published' : 'unpublished'),
+                Tables\Columns\TextColumn::make('toggleable_column')
+                    ->state('Toggleable column state')
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 Tables\Filters\Filter::make('is_published')
@@ -286,6 +332,30 @@ class PostsTable extends Component implements HasActions, HasSchemas, Tables\Con
                                 ->action(fn (array $data, Post $record) => $this->dispatch('nested-called', bar: $data['bar'], recordKey: $record->getKey())),
                         ]),
                 ]),
+                Action::make('withGroupedExtraActions')
+                    ->schema([
+                        TextInput::make('content')
+                            ->required(),
+                    ])
+                    ->action(function (array $data, Post $record): void {
+                        $this->dispatch('grouped-extra-actions-called', content: $data['content'], recordKey: $record->getKey());
+                    })
+                    ->extraModalFooterActions([
+                        Action::make('simpleExtra')
+                            ->action(fn (Post $record) => $this->dispatch('simple-extra-called', recordKey: $record->getKey())),
+                        ActionGroup::make([
+                            Action::make('option1')
+                                ->action(fn (Post $record) => $this->dispatch('option1-called', recordKey: $record->getKey())),
+                            Action::make('option2')
+                                ->action(fn (Post $record) => $this->dispatch('option2-called', recordKey: $record->getKey())),
+                            Action::make('option3')
+                                ->schema([
+                                    TextInput::make('value')
+                                        ->required(),
+                                ])
+                                ->action(fn (array $data, Post $record) => $this->dispatch('option3-called', value: $data['value'], recordKey: $record->getKey())),
+                        ])->button()->label('More Options'),
+                    ]),
             ])
             ->toolbarActions([
                 DeleteBulkAction::make(),

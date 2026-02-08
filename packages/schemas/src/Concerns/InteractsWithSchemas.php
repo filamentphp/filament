@@ -9,6 +9,7 @@ use Filament\Schemas\Components\Component;
 use Filament\Schemas\Schema;
 use Filament\Support\Components\Attributes\ExposedLivewireMethod;
 use Filament\Support\Contracts\TranslatableContentDriver;
+use Filament\Support\Livewire\Partials\PartialsComponentHook;
 use Illuminate\Support\Arr;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Locked;
@@ -79,6 +80,23 @@ trait InteractsWithSchemas
 
         if ($methodReflection->getAttributes(Renderless::class)) {
             $this->skipRender();
+        } else {
+            $schema = $component->getContainer();
+            $schemaToPartiallyRender = null;
+
+            while ($schema !== null) {
+                if ($schema->shouldPartiallyRender()) {
+                    $schemaToPartiallyRender = $schema;
+                }
+
+                $schema = $schema->getParentComponent()?->getContainer();
+            }
+
+            if ($schemaToPartiallyRender) {
+                app(PartialsComponentHook::class)->renderPartial($this, fn (): array => [
+                    "schema.{$schemaToPartiallyRender->getKey()}" => $schemaToPartiallyRender->toHtml(...),
+                ]);
+            }
         }
 
         return $component->{$method}(...$arguments);
@@ -158,7 +176,10 @@ trait InteractsWithSchemas
         $this->skipRender();
     }
 
-    public function getSchemaComponent(string $key, bool $withHidden = false, ?Component $skipComponentChildContainersWhileSearching = null): Component | Action | ActionGroup | null
+    /**
+     * @param  array<Component>  $skipComponentsChildContainersWhileSearching
+     */
+    public function getSchemaComponent(string $key, bool $withHidden = false, array $skipComponentsChildContainersWhileSearching = []): Component | Action | ActionGroup | null
     {
         if (! str($key)->contains('.')) {
             return null;
@@ -168,7 +189,7 @@ trait InteractsWithSchemas
 
         $schema = $this->getSchema($schemaName);
 
-        return $schema?->getComponent($key, withHidden: $withHidden, isAbsoluteKey: true, skipComponentChildContainersWhileSearching: $skipComponentChildContainersWhileSearching);
+        return $schema?->getComponent($key, withHidden: $withHidden, isAbsoluteKey: true, skipComponentsChildContainersWhileSearching: $skipComponentsChildContainersWhileSearching);
     }
 
     protected function cacheSchema(string $name, Schema | Closure | null $schema = null): ?Schema
@@ -199,7 +220,7 @@ trait InteractsWithSchemas
                 return null;
             }
 
-            $methodReflection = new ReflectionMethod($this, $name);
+            $methodReflection = new ReflectionMethod($this, $methodName);
             $parameterReflection = $methodReflection->getParameters()[0] ?? null;
 
             if (! $parameterReflection) {

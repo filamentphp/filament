@@ -27,7 +27,9 @@ class Tab extends Component implements CanConcealComponents
 
     protected ?Closure $modifyQueryUsing = null;
 
-    protected string | BackedEnum | Closure | null $badgeIcon = null;
+    protected bool | Closure $shouldExcludeQueryWhenResolvingRecord = false;
+
+    protected string | BackedEnum | Htmlable | Closure | null $badgeIcon = null;
 
     protected IconPosition | string | Closure | null $badgeIconPosition = null;
 
@@ -54,7 +56,7 @@ class Tab extends Component implements CanConcealComponents
         parent::setUp();
 
         $this->key(function (Tab $component): string {
-            $label = $this->getLabel();
+            $label = $component->getLabel();
             $statePath = $component->getStatePath();
 
             return Str::slug(Str::transliterate($label, strict: true)) . '::' . (filled($statePath) ? "{$statePath}::tab" : 'tab');
@@ -66,7 +68,11 @@ class Tab extends Component implements CanConcealComponents
      */
     public function getAllColumns(): array
     {
-        return $this->columns ?? $this->getContainer()->getAllColumns();
+        if ($this->columns === null) {
+            return $this->getContainer()->getAllColumns();
+        }
+
+        return parent::getAllColumns();
     }
 
     public function canConcealComponents(): bool
@@ -101,7 +107,7 @@ class Tab extends Component implements CanConcealComponents
         ]) ?? $query;
     }
 
-    public function badgeIcon(string | BackedEnum | Closure | null $icon): static
+    public function badgeIcon(string | BackedEnum | Htmlable | Closure | null $icon): static
     {
         $this->badgeIcon = $icon;
 
@@ -115,7 +121,7 @@ class Tab extends Component implements CanConcealComponents
         return $this;
     }
 
-    public function getBadgeIcon(): string | BackedEnum | null
+    public function getBadgeIcon(): string | BackedEnum | Htmlable | null
     {
         return $this->evaluate($this->badgeIcon);
     }
@@ -123,5 +129,17 @@ class Tab extends Component implements CanConcealComponents
     public function getBadgeIconPosition(): IconPosition | string
     {
         return $this->evaluate($this->badgeIconPosition) ?? IconPosition::Before;
+    }
+
+    public function excludeQueryWhenResolvingRecord(bool | Closure $condition = true): static
+    {
+        $this->shouldExcludeQueryWhenResolvingRecord = $condition;
+
+        return $this;
+    }
+
+    public function shouldExcludeQueryWhenResolvingRecord(): bool
+    {
+        return (bool) $this->evaluate($this->shouldExcludeQueryWhenResolvingRecord);
     }
 }

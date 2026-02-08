@@ -7,11 +7,3 @@
         }
     }
 }
-
-.fi-fo-text-input-wrp {
-    &.fi-fo-field-has-inline-label {
-        & .fi-fo-field-label-col {
-            @apply sm:pt-1.5;
-        }
-    }
-}

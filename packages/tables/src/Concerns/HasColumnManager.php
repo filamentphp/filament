@@ -69,13 +69,13 @@ trait HasColumnManager
     /**
      * @param  array<int, array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool, columns?: array<int, array{type: string, name: string, label: string, isHidden: bool, isToggled: bool, isToggleable: bool, isToggledHiddenByDefault: ?bool}>}>|null  $state
      */
-    public function applyTableColumnManager(?array $state = null): void
+    public function applyTableColumnManager(?array $state = null, bool $wasReordered = false): void
     {
         if (filled($state)) {
             $this->tableColumns = $state;
 
             if ($this->hasReorderableTableColumns()) {
-                $this->persistHasReorderedTableColumns();
+                $this->persistHasReorderedTableColumns($wasReordered);
             }
         }
 
@@ -152,17 +152,19 @@ trait HasColumnManager
 
     protected function persistTableColumns(): void
     {
-        session()->put(
-            $this->getTableColumnsSessionKey(),
-            $this->tableColumns
-        );
+        if ($this->getTable()->persistsColumnsInSession()) {
+            session()->put(
+                $this->getTableColumnsSessionKey(),
+                $this->tableColumns
+            );
+        }
     }
 
-    protected function persistHasReorderedTableColumns(): void
+    protected function persistHasReorderedTableColumns(bool $wasReordered = false): void
     {
         session()->put(
             $this->getHasReorderedTableColumnsSessionKey(),
-            $this->hasReorderedTableColumns()
+            $wasReordered || $this->hasReorderedTableColumns()
         );
     }
 
@@ -197,10 +199,12 @@ trait HasColumnManager
      */
     protected function mapTableColumnGroupToArray(ColumnGroup $group): array
     {
+        $label = e($group->getLabel());
+
         return [
             'type' => self::TABLE_COLUMN_MANAGER_GROUP_TYPE,
-            'name' => (string) $group->getLabel(),
-            'label' => (string) $group->getLabel(),
+            'name' => $label,
+            'label' => $label,
             'isHidden' => empty(array_filter($group->getColumns(), fn (Column $column): bool => ! $column->isHidden())),
             'isToggled' => true,
             'isToggleable' => true,
@@ -219,7 +223,7 @@ trait HasColumnManager
      */
     protected function mapTableColumnToArray(Column $column): array
     {
-        $label = (string) $column->getLabel();
+        $label = e($column->getLabel());
 
         if (blank($label) && $this->hasReorderableTableColumns()) {
             throw new LogicException("The table column [{$column->getName()}] has a blank label. All columns must have labels when they are reorderable.");

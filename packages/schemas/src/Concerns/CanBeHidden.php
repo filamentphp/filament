@@ -29,4 +29,13 @@ trait CanBeHidden
     {
         return ! $this->isHidden();
     }
+
+    public function isHiddenAndNotDehydratedWhenHidden(): bool
+    {
+        if (! $this->isHidden()) {
+            return false;
+        }
+
+        return ! $this->getParentComponent()?->isDehydratedWhenHidden();
+    }
 }

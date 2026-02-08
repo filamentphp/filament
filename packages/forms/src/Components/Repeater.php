@@ -6,8 +6,8 @@ use Closure;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Repeater\TableColumn;
 use Filament\Forms\View\FormsIconAlias;
-use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Concerns\CanBeCollapsed;
+use Filament\Schemas\Components\Concerns\CanBeCompact;
 use Filament\Schemas\Components\Concerns\HasContainerGridLayout;
 use Filament\Schemas\Components\Contracts\CanConcealComponents;
 use Filament\Schemas\Components\Contracts\HasExtraItemActions;
@@ -32,6 +32,7 @@ use function Filament\Forms\array_move_before;
 class Repeater extends Field implements CanConcealComponents, HasExtraItemActions
 {
     use CanBeCollapsed;
+    use CanBeCompact;
     use Concerns\CanBeCloned;
     use Concerns\CanGenerateUuids;
     use Concerns\CanLimitItemsLength;
@@ -61,11 +62,17 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
 
     protected string | Closure | null $itemLabel = null;
 
+    protected bool | Closure $hasItemNumbers = false;
+
+    protected bool | Closure $hasItemHeaders = true;
+
     protected Field | Closure | null $simpleField = null;
 
     protected Alignment | string | Closure | null $addActionAlignment = null;
 
     protected ?Closure $modifyRelationshipQueryUsing = null;
+
+    protected ?Closure $modifyRelationshipRecordsUsing = null;
 
     protected ?Closure $modifyAddActionUsing = null;
 
@@ -112,6 +119,8 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
     protected array | Closure | null $tableColumns = null;
 
     protected bool $shouldMergeHydratedDefaultStateWithItemsStateAfterStateHydrated = true;
+
+    protected bool | Closure $shouldPartiallyRenderAfterActionsCalled = true;
 
     protected function setUp(): void
     {
@@ -200,7 +209,7 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
 
                 $component->callAfterStateUpdated();
 
-                $component->partiallyRender();
+                $component->shouldPartiallyRenderAfterActionsCalled() ? $component->partiallyRender() : null;
             })
             ->button()
             ->size(Size::Small)
@@ -277,7 +286,7 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
 
                 $component->callAfterStateUpdated();
 
-                $component->partiallyRender();
+                $component->shouldPartiallyRenderAfterActionsCalled() ? $component->partiallyRender() : null;
             })
             ->button()
             ->size(Size::Small)
@@ -339,7 +348,7 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
 
                 $component->callAfterStateUpdated();
 
-                $component->partiallyRender();
+                $component->shouldPartiallyRenderAfterActionsCalled() ? $component->partiallyRender() : null;
             })
             ->iconButton()
             ->size(Size::Small)
@@ -380,7 +389,7 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
 
                 $component->callAfterStateUpdated();
 
-                $component->partiallyRender();
+                $component->shouldPartiallyRenderAfterActionsCalled() ? $component->partiallyRender() : null;
             })
             ->iconButton()
             ->size(Size::Small)
@@ -420,7 +429,7 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
 
                 $component->callAfterStateUpdated();
 
-                $component->partiallyRender();
+                $component->shouldPartiallyRenderAfterActionsCalled() ? $component->partiallyRender() : null;
             })
             ->iconButton()
             ->size(Size::Small)
@@ -460,7 +469,7 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
 
                 $component->callAfterStateUpdated();
 
-                $component->partiallyRender();
+                $component->shouldPartiallyRenderAfterActionsCalled() ? $component->partiallyRender() : null;
             })
             ->iconButton()
             ->size(Size::Small)
@@ -503,7 +512,7 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
 
                 $component->callAfterStateUpdated();
 
-                $component->partiallyRender();
+                $component->shouldPartiallyRenderAfterActionsCalled() ? $component->partiallyRender() : null;
             })
             ->livewireClickHandlerEnabled(false)
             ->iconButton()
@@ -903,12 +912,13 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
         return $this;
     }
 
-    public function relationship(string | Closure | null $name = null, ?Closure $modifyQueryUsing = null): static
+    public function relationship(string | Closure | null $name = null, ?Closure $modifyQueryUsing = null, ?Closure $modifyRecordsUsing = null): static
     {
         $this->relationship = $name ?? $this->getName();
         $this->modifyRelationshipQueryUsing = $modifyQueryUsing;
+        $this->modifyRelationshipRecordsUsing = $modifyRecordsUsing;
 
-        $this->afterStateHydrated(function (Repeater $component): void {
+        $this->afterStateHydrated(static function (Repeater $component): void {
             if (! is_array($component->hydratedDefaultState)) {
                 return;
             }
@@ -1036,6 +1046,20 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
         return $this;
     }
 
+    public function itemNumbers(bool | Closure $condition = true): static
+    {
+        $this->hasItemNumbers = $condition;
+
+        return $this;
+    }
+
+    public function itemHeaders(bool | Closure $condition = true): static
+    {
+        $this->hasItemHeaders = $condition;
+
+        return $this;
+    }
+
     public function fillFromRelationship(): void
     {
         $this->state(
@@ -1095,7 +1119,7 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
 
         $relationshipName = $this->getRelationshipName();
 
-        if (! $record->isRelation($relationshipName)) {
+        if ($record->hasAttribute($relationshipName) || (! $record->isRelation($relationshipName))) {
             throw new LogicException("The relationship [{$relationshipName}] does not exist on the model [{$this->getModel()}].");
         }
 
@@ -1105,6 +1129,19 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
     public function getRelationshipName(): ?string
     {
         return $this->evaluate($this->relationship);
+    }
+
+    protected function modifyRelationshipRecords(Collection $records): Collection
+    {
+        return $this->evaluate(
+            $this->modifyRelationshipRecordsUsing,
+            namedInjections: [
+                'records' => $records,
+            ],
+            typedInjections: [
+                Collection::class => $records,
+            ],
+        ) ?? $records;
     }
 
     public function getCachedExistingRecords(): Collection
@@ -1123,11 +1160,11 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
             $this->getModelInstance()->relationLoaded($relationshipName) &&
             (! $this->modifyRelationshipQueryUsing)
         ) {
-            return $this->cachedExistingRecords = $this->getRecord()->getRelationValue($relationshipName)
+            return $this->cachedExistingRecords = $this->modifyRelationshipRecords($this->getRecord()->getRelationValue($relationshipName)
                 ->when(filled($orderColumn), fn (Collection $records) => $records->sortBy($orderColumn))
                 ->mapWithKeys(
                     fn (Model $item): array => ["record-{$item[$relatedKeyName]}" => $item],
-                );
+                ));
         }
 
         $relationshipQuery = $relationship->getQuery();
@@ -1149,9 +1186,9 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
             $relationshipQuery->orderBy($orderColumn);
         }
 
-        return $this->cachedExistingRecords = $relationshipQuery->get()->mapWithKeys(
+        return $this->cachedExistingRecords = $this->modifyRelationshipRecords($relationshipQuery->get()->mapWithKeys(
             fn (Model $item): array => ["record-{$item[$relatedKeyName]}" => $item],
-        );
+        ));
     }
 
     public function getItemLabel(string $key): string | Htmlable | null
@@ -1163,7 +1200,7 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
             'item' => $container,
             'key' => $key,
             'schema' => $container,
-            'state' => $container->getRawState(),
+            'state' => $container->getStateSnapshot(),
             'uuid' => $key,
         ]);
     }
@@ -1171,6 +1208,16 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
     public function hasItemLabels(): bool
     {
         return $this->itemLabel !== null;
+    }
+
+    public function hasItemNumbers(): bool
+    {
+        return (bool) $this->evaluate($this->hasItemNumbers);
+    }
+
+    public function hasItemHeaders(): bool
+    {
+        return (bool) $this->evaluate($this->hasItemHeaders);
     }
 
     public function simple(Field | Closure | null $field): static
@@ -1350,7 +1397,7 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
      */
     public function getRawItemState(string $key): array
     {
-        return $this->getChildSchema($key)->getRawState();
+        return $this->getChildSchema($key)->getStateSnapshot();
     }
 
     public function getHeadingsCount(): int
@@ -1360,5 +1407,17 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
         }
 
         return 1;
+    }
+
+    public function partiallyRenderAfterActionsCalled(bool | Closure $condition = true): static
+    {
+        $this->shouldPartiallyRenderAfterActionsCalled = $condition;
+
+        return $this;
+    }
+
+    public function shouldPartiallyRenderAfterActionsCalled(): bool
+    {
+        return (bool) $this->evaluate($this->shouldPartiallyRenderAfterActionsCalled);
     }
 }

@@ -135,7 +135,14 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
                     }
 
                     $action->record($record);
-                    $action->getGroup()?->record($record);
+
+                    $actionGroup = $action->getGroup();
+
+                    while ($actionGroup) {
+                        $actionGroup->record($record);
+
+                        $actionGroup = $actionGroup->getGroup();
+                    }
 
                     if ($action->isHidden()) {
                         continue;
@@ -161,7 +168,14 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
                     $action = clone $action;
 
                     $action->record($record);
-                    $action->getGroup()?->record($record);
+
+                    $actionGroup = $action->getGroup();
+
+                    while ($actionGroup) {
+                        $actionGroup->record($record);
+
+                        $actionGroup = $actionGroup->getGroup();
+                    }
 
                     if ($action->isHidden()) {
                         continue;
@@ -211,7 +225,7 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
      */
     public function getSubNavigation(): array
     {
-        if (filled($cluster = static::getCluster())) {
+        if (filled($cluster = static::getCluster()) && $cluster::shouldRegisterSubNavigation()) {
             return $this->generateNavigationItems($cluster::getClusteredComponents());
         }
 

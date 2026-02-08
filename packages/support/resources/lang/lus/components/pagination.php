@@ -10,10 +10,10 @@ return [
 
         'records_per_page' => [
 
-            'label' => 'Page tinah',
+            'label' => 'Phêk tinah',
 
             'options' => [
-                'all' => 'All',
+                'all' => 'A vaiin',
             ],
 
         ],
@@ -23,23 +23,23 @@ return [
     'actions' => [
 
         'first' => [
-            'label' => 'First',
+            'label' => 'A hmasa ber',
         ],
 
         'go_to_page' => [
-            'label' => 'Go to page :page',
+            'label' => 'Phêk :page naa kalna',
         ],
 
         'last' => [
-            'label' => 'Last',
+            'label' => 'A tawpna',
         ],
 
         'next' => [
-            'label' => 'Next',
+            'label' => 'A dawttu',
         ],
 
         'previous' => [
-            'label' => 'Previous',
+            'label' => 'A hmasa',
         ],
 
     ],

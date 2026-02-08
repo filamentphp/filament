@@ -3,3 +3,11 @@
         @apply hidden;
     }
 }
+
+.fi-fo-select-wrp {
+    &.fi-fo-field-has-inline-label {
+        & .fi-fo-field-label-col {
+            @apply sm:pt-1.5;
+        }
+    }
+}

@@ -25,8 +25,7 @@ class PostResource extends Resource
         return $schema
             ->components([
                 Forms\Components\Select::make('author_id')
-                    ->relationship('author', 'name')
-                    ->required(),
+                    ->relationship('author', 'name'),
                 Forms\Components\Textarea::make('content')
                     ->columnSpanFull(),
                 Forms\Components\Toggle::make('is_published')
@@ -39,12 +38,16 @@ class PostResource extends Resource
                     ->columnSpanFull(),
                 Forms\Components\TextInput::make('title')
                     ->required(),
+                Forms\Components\TextInput::make('title2'),
+                Forms\Components\Textarea::make('config')
+                    ->columnSpanFull(),
                 Forms\Components\Textarea::make('json')
                     ->columnSpanFull(),
                 Forms\Components\Textarea::make('json_array_of_objects')
                     ->columnSpanFull(),
                 Forms\Components\Select::make('string_backed_enum')
                     ->options(StringBackedEnum::class),
+                Forms\Components\DateTimePicker::make('published_at'),
             ]);
     }
 
@@ -61,8 +64,14 @@ class PostResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('title')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('string_backed_enum')
+                Tables\Columns\TextColumn::make('title2')
                     ->searchable(),
+                Tables\Columns\TextColumn::make('string_backed_enum')
+                    ->badge()
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('published_at')
+                    ->dateTime()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

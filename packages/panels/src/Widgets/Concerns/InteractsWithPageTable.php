@@ -19,6 +19,9 @@ trait InteractsWithPageTable /** @phpstan-ignore trait.unused */
     #[Reactive]
     public $paginators = [];
 
+    #[Reactive]
+    public ?int $tableRecordsCount = null;
+
     /**
      * @var array<string, string | array<string, string | null> | null>
      */
@@ -75,7 +78,10 @@ trait InteractsWithPageTable /** @phpstan-ignore trait.unused */
 
         /** @var HasTable $tableComponent */
         $page = app('livewire')->new($this->getTablePage());
-        trigger('mount', $page, [
+
+        trigger('mount', $page, [], null, null);
+
+        foreach ([
             'activeTab' => $this->activeTab,
             'paginators' => $this->paginators,
             'parentRecord' => $this->parentRecord,
@@ -86,7 +92,11 @@ trait InteractsWithPageTable /** @phpstan-ignore trait.unused */
             'tableSearch' => $this->tableSearch,
             'tableSort' => $this->tableSort,
             ...$this->getTablePageMountParameters(),
-        ], null, null);
+        ] as $property => $value) {
+            $page->{$property} = $value;
+        }
+
+        $page->bootedInteractsWithTable();
 
         return $this->tablePage = $page;
     }

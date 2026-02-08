@@ -4,12 +4,12 @@ return [
 
     'modal' => [
 
-        'heading' => 'Notifications',
+        'heading' => 'Hriattîrna',
 
         'actions' => [
 
             'clear' => [
-                'label' => 'Clear',
+                'label' => 'Then faina',
             ],
 
             'mark_all_as_read' => [
@@ -19,8 +19,8 @@ return [
         ],
 
         'empty' => [
-            'heading' => 'Notifications a awmlo',
-            'description' => 'Nakinah ilo check leh dawn nia.',
+            'heading' => 'Hriattîrna a awmlo',
+            'description' => 'Nakinah ilo en leh dawn nia.',
         ],
 
     ],

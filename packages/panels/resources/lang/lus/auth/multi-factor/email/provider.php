@@ -41,6 +41,10 @@ return [
                             'title' => 'Email ah code thar kan rawn thawn e',
                         ],
 
+                        'throttled' => [
+                            'title' => 'Thawnnawn tumna a tam lutuk, Khawngaihin code dang dîl leh hmain nghak phawt rawh.',
+                        ],
+
                     ],
 
                 ],

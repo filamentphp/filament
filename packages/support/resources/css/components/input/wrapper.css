@@ -76,7 +76,7 @@
 
     & .fi-input-wrp-prefix,
     & .fi-input-wrp-suffix {
-        & .fi-icon {
+        & > .fi-icon {
             @apply text-gray-400 dark:text-gray-500;
 
             &.fi-color {

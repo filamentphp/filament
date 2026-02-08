@@ -12,6 +12,7 @@ use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Livewire;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Arr;
 use Livewire\Attributes\Url;
 
@@ -95,7 +96,7 @@ trait HasRelationManagers
         return null;
     }
 
-    public function getContentTabIcon(): string | BackedEnum | null
+    public function getContentTabIcon(): string | BackedEnum | Htmlable | null
     {
         return null;
     }
@@ -122,8 +123,8 @@ trait HasRelationManagers
 
             if ($hasCombinedRelationManagerTabsWithContent) {
                 match ($this->getContentTabPosition()) {
-                    ContentTabPosition::After => $tabs = array_merge($tabs, [null => null]),
-                    default => $tabs = array_replace([null => null], $tabs),
+                    ContentTabPosition::After => $tabs = array_merge($tabs, ['' => null]),
+                    default => $tabs = array_replace(['' => null], $tabs),
                 };
             }
 

@@ -15,6 +15,8 @@ Filament's grid system allows you to create responsive, multi-column layouts usi
 - [Section](sections)
 - [Tabs](tabs)
 - [Wizard](wizards)
+- [Callout](callouts)
+- [Empty state](empty-states)
 
 You may also [create your own custom layout components](custom-components#custom-layout-components) to display components however you wish.
 
@@ -33,9 +35,10 @@ Breakpoints (`sm`, `md`, `lg`, `xl`, `2xl`) are defined by Tailwind, and can be 
 
 In addition to specifying how many columns a layout component should have, you may also specify how many columns a component should fill within the parent grid, using the `columnSpan()` method. This method accepts an integer or an array of breakpoints and column spans:
 
-- `columnSpan(2)` will make the component fill up to 2 columns on all breakpoints.
+- You can pass an integer like `columnSpan(2)`. This integer is the number of columns that are consumed on the `lg` breakpoint and higher. All smaller devices span just 1 column.
 - `columnSpan(['md' => 2, 'xl' => 4])` will make the component fill up to 2 columns on medium devices, and up to 4 columns on extra large devices. The default breakpoint for smaller devices uses 1 column, unless you use a `default` array key.
-- `columnSpan('full')` or `columnSpanFull()` or `columnSpan(['default' => 'full'])` will make the component fill the full width of the parent grid, regardless of how many columns it has.
+- `columnSpan('full')` will make the component fill the full width of the parent grid on the `lg` breakpoint and higher, regardless of how many columns there are. All smaller devices span just 1 column.
+- `columnSpanFull()` will make the component fill the full width of the parent grid on all devices, regardless of how many columns it has.
 
 <UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `columnSpan()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
@@ -43,7 +46,7 @@ In addition to specifying how many columns a layout component should have, you m
 
 If you want to start a component in a grid at a specific column, you can use the `columnStart()` method. This method accepts an integer, or an array of breakpoints and which column the component should start at:
 
-- `columnStart(2)` will make the component start at column 2 on all breakpoints.
+- You can pass an integer like `columnStart(2)`. This integer is column that the component will start on for the `lg` breakpoint and higher. All smaller devices start the component on the first column.
 - `columnStart(['md' => 2, 'xl' => 4])` will make the component start at column 2 on medium devices, and at column 4 on extra large devices. The default breakpoint for smaller devices uses 1 column, unless you use a `default` array key.
 
 ```php
@@ -75,7 +78,7 @@ In this example, the grid has 3 columns on small devices, 6 columns on extra lar
 
 If you want to control the visual order of components in a grid without changing their position in the markup, you can use the `columnOrder()` method. This method accepts an integer, a closure, or an array of breakpoints and order values:
 
-- `columnOrder(2)` will set the component's order to 2 on all breakpoints.
+- You can pass an integer like `columnOrder(2)`. This integer is the order that the component will appear in for the `lg` breakpoint and higher. All smaller devices use the default order, unless you use a `default` array key.
 - `columnOrder(['md' => 2, 'xl' => 4])` will set the component's order to 2 on medium devices, and to 4 on extra large devices. The default breakpoint for smaller devices uses the default order, unless you use a `default` array key.
 - `columnOrder(fn () => 1)` will dynamically calculate the order using a closure.
 
@@ -401,6 +404,40 @@ Grid::make()
 ```
 
 In this example, the fallback breakpoints ensure that even in browsers that don't support container queries, the layout will still respond to viewport size changes, with the name field appearing first and the email field second on larger screens.
+
+## Controlling spacing between components
+
+### Reducing space between components
+
+The `dense()` method creates a more compact layout by reducing the spacing between components by 50%:
+
+```php
+use Filament\Schemas\Components\Grid;
+
+Grid::make()
+    ->dense()
+    ->schema([
+        // ...
+    ])
+```
+
+<AutoScreenshot name="schemas/layout/dense" alt="A layout with dense spacing" version="4.x" />
+
+### Removing space between components
+
+The `gap(false)` method removes space between components:
+
+```php
+use Filament\Schemas\Components\Grid;
+
+Grid::make()
+    ->gap(false)
+    ->schema([
+        // ...
+    ])
+```
+
+<AutoScreenshot name="schemas/layout/no-gap" alt="A layout with no gap" version="4.x" />
 
 ## Adding extra HTML attributes to a layout component
 

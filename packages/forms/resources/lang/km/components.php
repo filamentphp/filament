@@ -91,11 +91,11 @@ return [
             ],
 
             'collapse_all' => [
-                'label' => 'ដួលរលំទាំងអស់។',
+                'label' => 'ដួលរលំទាំងអស់',
             ],
 
             'expand_all' => [
-                'label' => 'ពង្រីកទាំងអស់។',
+                'label' => 'ពង្រីកទាំងអស់',
             ],
 
         ],
@@ -296,6 +296,23 @@ return [
             'undo' => 'មិនធ្វើវិញ',
         ],
 
+        'file_attachments_accepted_file_types_message' => 'ប្រភេទឯកសារដែលត្រូវបានអនុញ្ញាត៖ :values.',
+
+        'file_attachments_max_size_message' => 'ទំហំឯកសារមិនត្រូវលើសពី :max kilobytes ឡើយ។',
+
+    ],
+
+    'modal_table_select' => [
+        'actions' => [
+            'select' => [
+                'label' => 'ជ្រើសរើស',
+                'actions' => [
+                    'select' => [
+                        'label' => 'ជ្រើសរើស',
+                    ],
+                ],
+            ],
+        ],
     ],
 
     'radio' => [
@@ -348,11 +365,11 @@ return [
             ],
 
             'collapse_all' => [
-                'label' => 'ដួលរលំទាំងអស់។',
+                'label' => 'ដួលរលំទាំងអស់',
             ],
 
             'expand_all' => [
-                'label' => 'ពង្រីកទាំងអស់។',
+                'label' => 'ពង្រីកទាំងអស់',
             ],
 
         ],
@@ -361,40 +378,227 @@ return [
 
     'rich_editor' => [
 
-        'dialogs' => [
+        'actions' => [
+
+            'attach_files' => [
+                'label' => 'ភ្ជាប់ឯកសារ',
+
+                'modal' => [
+
+                    'heading' => 'ភ្ជាប់ឯកសារ',
+
+                    'form' => [
+
+                        'file' => [
+                            'label' => [
+                                'new' => 'ឯកសារ',
+                                'existing' => 'ប្ដូរឯកសារ',
+                            ],
+                        ],
+
+                        'alt' => [
+                            'label' => [
+                                'new' => 'អត្ថបទជំនួស (Alt text)',
+                                'existing' => 'កែប្រែអត្ថបទជំនួស',
+                            ],
+                        ],
+
+                    ],
+
+                ],
+            ],
+
+            'custom_block' => [
+
+                'modal' => [
+
+                    'actions' => [
+
+                        'insert' => [
+                            'label' => 'បញ្ចូល',
+                        ],
+
+                        'save' => [
+                            'label' => 'រក្សាទុក',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
+            'grid' => [
+
+                'label' => 'ក្រឡាចត្រង្គ (Grid)',
+
+                'modal' => [
+
+                    'heading' => 'ក្រឡាចត្រង្គ',
+
+                    'form' => [
+
+                        'preset' => [
+                            'label' => 'ការកំណត់ទុកជាមុន (Preset)',
+                            'placeholder' => 'គ្មាន',
+                            'options' => [
+                                'two' => 'ពីរ',
+                                'three' => 'បី',
+                                'four' => 'បួន',
+                                'five' => 'ប្រាំ',
+                                'two_start_third' => 'ពីរ (ចាប់ផ្តើមមួយភាគបី)',
+                                'two_end_third' => 'ពីរ (បញ្ចប់មួយភាគបី)',
+                                'two_start_fourth' => 'ពីរ (ចាប់ផ្តើមមួយភាគបួន)',
+                                'two_end_fourth' => 'ពីរ (បញ្ចប់មួយភាគបួន)',
+                            ],
+                        ],
+
+                        'columns' => [
+                            'label' => 'ជួរឈរ',
+                        ],
+
+                        'from_breakpoint' => [
+                            'label' => 'ពីចំណុចបំបែក (Breakpoint)',
+                            'options' => [
+                                'default' => 'ទាំងអស់',
+                                'sm' => 'តូច',
+                                'md' => 'មធ្យម',
+                                'lg' => 'ធំ',
+                                'xl' => 'ធំបំផុត',
+                                '2xl' => 'ពីរដងធំបំផុត',
+                            ],
+                        ],
+
+                        'is_asymmetric' => [
+                            'label' => 'ពីរជួរឈរមិនស្មើគ្នា',
+                        ],
+
+                        'start_span' => [
+                            'label' => 'ចម្ងាយចាប់ផ្តើម',
+                        ],
+
+                        'end_span' => [
+                            'label' => 'ចម្ងាយបញ្ចប់',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
 
             'link' => [
 
-                'actions' => [
-                    'link' => 'តំណភ្ជាប់',
-                    'unlink' => 'ផ្ដាច់',
+                'label' => 'តំណភ្ជាប់',
+
+                'modal' => [
+
+                    'heading' => 'តំណភ្ជាប់',
+
+                    'form' => [
+
+                        'url' => [
+                            'label' => 'URL',
+                        ],
+
+                        'should_open_in_new_tab' => [
+                            'label' => 'បើកក្នុងផ្ទាំងថ្មី',
+                        ],
+
+                    ],
+
                 ],
 
-                'label' => 'URL',
+            ],
 
-                'placeholder' => 'បញ្ចូល URL',
+            'text_color' => [
+
+                'label' => 'ពណ៌អត្ថបទ',
+
+                'modal' => [
+
+                    'heading' => 'ពណ៌អត្ថបទ',
+
+                    'form' => [
+
+                        'color' => [
+                            'label' => 'ពណ៌',
+                        ],
+
+                        'custom_color' => [
+                            'label' => 'ពណ៌តាមចំណូលចិត្ត',
+                        ],
+
+                    ],
+
+                ],
 
             ],
 
         ],
 
+        'file_attachments_accepted_file_types_message' => 'ប្រភេទឯកសារដែលត្រូវបានអនុញ្ញាត៖ :values.',
+
+        'file_attachments_max_size_message' => 'ទំហំឯកសារមិនត្រូវលើសពី :max kilobytes ឡើយ។',
+
+        'no_merge_tag_search_results_message' => 'រកមិនឃើញលទ្ធផលស្លាកច្របាច់បញ្ចូលគ្នា (Merge tag) ទេ។',
+
+        'mentions' => [
+            'no_options_message' => 'គ្មានជម្រើស។',
+            'no_search_results_message' => 'រកមិនឃើញលទ្ធផលត្រូវនឹងការស្វែងរករបស់អ្នកទេ។',
+            'search_prompt' => 'ចាប់ផ្តើមវាយដើម្បីស្វែងរក...',
+            'searching_message' => 'កំពុងស្វែងរក...',
+        ],
+
         'tools' => [
+            'align_center' => 'តម្រឹមចំកណ្តាល',
+            'align_end' => 'តម្រឹមខាងចុង',
+            'align_justify' => 'តម្រឹមសងខាង',
+            'align_start' => 'តម្រឹមខាងដើម',
             'attach_files' => 'ភ្ជាប់ឯកសារ',
             'blockquote' => 'ប្លុកសម្រង់',
             'bold' => 'ដិត',
             'bullet_list' => 'បញ្ជីគ្រាប់',
+            'clear_formatting' => 'សម្អាតទម្រង់ (Clear formatting)',
+            'code' => 'កូដ',
             'code_block' => 'ប្លុកកូដ',
+            'custom_blocks' => 'ប្លុក',
+            'details' => 'ព័ត៌មានលម្អិត',
             'h1' => 'ចំណងជើង',
             'h2' => 'ក្បាល',
             'h3' => 'ចំណងជើងរង',
+            'grid' => 'ក្រឡាចត្រង្គ',
+            'grid_delete' => 'លុបក្រឡាចត្រង្គ',
+            'highlight' => 'រំលេច (Highlight)',
+            'horizontal_rule' => 'បន្ទាត់ដេក',
             'italic' => 'ទ្រេត',
+            'lead' => 'អត្ថបទដឹកនាំ (Lead text)',
             'link' => 'តំណភ្ជាប់',
+            'merge_tags' => 'ស្លាកច្របាច់បញ្ចូលគ្នា (Merge tags)',
             'ordered_list' => 'បញ្ជីលេខ',
             'redo' => 'ធ្វើឡើងវិញ',
+            'small' => 'អត្ថបទតូច',
             'strike' => 'ការវាយឆ្មក់',
+            'subscript' => 'អក្សរក្រោម (Subscript)',
+            'superscript' => 'អក្សរលើ (Superscript)',
+            'table' => 'តារាង',
+            'table_delete' => 'លុបតារាង',
+            'table_add_column_before' => 'បន្ថែមជួរឈរខាងមុខ',
+            'table_add_column_after' => 'បន្ថែមជួរឈរខាងក្រោយ',
+            'table_delete_column' => 'លុបជួរឈរ',
+            'table_add_row_before' => 'បន្ថែមជួរដេកខាងលើ',
+            'table_add_row_after' => 'បន្ថែមជួរដេកខាងក្រោម',
+            'table_delete_row' => 'លុបជួរដេក',
+            'table_merge_cells' => 'ច្របាច់បញ្ចូលក្រឡា',
+            'table_split_cell' => 'បំបែកក្រឡា',
+            'table_toggle_header_row' => 'បិទ/បើកជួរដេកចំណងជើង',
+            'table_toggle_header_cell' => 'បិទ/បើកក្រឡាចំណងជើង',
+            'text_color' => 'ពណ៌អត្ថបទ',
             'underline' => 'គូសបន្ទាត់ពីក្រោម',
             'undo' => 'មិនធ្វើវិញ',
         ],
+
+        'uploading_file_message' => 'កំពុងផ្ញើឯកសារ...',
 
     ],
 
@@ -459,6 +663,8 @@ return [
 
         'no_search_results_message' => 'មិនមានជម្រើសត្រូវជាមួយការស្វែងរក.',
 
+        'no_options_message' => 'គ្មានជម្រើស។',
+
         'placeholder' => 'ជ្រើសរើសជម្រើស',
 
         'searching_message' => 'ស្វែងរក...',
@@ -468,7 +674,12 @@ return [
     ],
 
     'tags_input' => [
-        'placeholder' => 'ស្លាកថ្មី។',
+        'placeholder' => 'ស្លាកថ្មី',
+        'actions' => [
+            'delete' => [
+                'label' => 'លុប',
+            ],
+        ],
     ],
 
     'text_input' => [
@@ -481,6 +692,11 @@ return [
 
             'show_password' => [
                 'label' => 'បង្ហាញពាក្យសម្ងាត់',
+            ],
+
+            'copy' => [
+                'label' => 'ចម្លង',
+                'message' => 'បានចម្លង',
             ],
 
         ],

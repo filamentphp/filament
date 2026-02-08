@@ -284,6 +284,10 @@ return [
 
     'markdown_editor' => [
 
+        'file_attachments_accepted_file_types_message' => 'Nahrané soubory musí být typu: :values.',
+
+        'file_attachments_max_size_message' => 'Nahrané soubory nesmí být větší než :max kilobajtů.',
+
         'tools' => [
             'attach_files' => 'Přidat soubory',
             'blockquote' => 'Bloková citace',
@@ -443,6 +447,71 @@ return [
 
             ],
 
+            'grid' => [
+
+                'label' => 'Mřížka',
+
+                'modal' => [
+
+                    'heading' => 'Mřížka',
+
+                    'form' => [
+
+                        'preset' => [
+
+                            'label' => 'Přednastavení',
+
+                            'placeholder' => 'Žádné',
+
+                            'options' => [
+                                'two' => 'Dvě',
+                                'three' => 'Tři',
+                                'four' => 'Čtyři',
+                                'five' => 'Pět',
+                                'two_start_third' => 'Dvě (Začátek třetí)',
+                                'two_end_third' => 'Dvě (Konec třetí)',
+                                'two_start_fourth' => 'Dvě (Začátek čtvrté)',
+                                'two_end_fourth' => 'Dvě (Konec čtvrté)',
+                            ],
+                        ],
+
+                        'columns' => [
+                            'label' => 'Sloupce',
+                        ],
+
+                        'from_breakpoint' => [
+
+                            'label' => 'Od breakpointu',
+
+                            'options' => [
+                                'default' => 'Vše',
+                                'sm' => 'Malý',
+                                'md' => 'Střední',
+                                'lg' => 'Velký',
+                                'xl' => 'Extra velký',
+                                '2xl' => 'Dvakrát extra velký',
+                            ],
+
+                        ],
+
+                        'is_asymmetric' => [
+                            'label' => 'Dva asymetrické sloupce',
+                        ],
+
+                        'start_span' => [
+                            'label' => 'Začátek rozsahu',
+                        ],
+
+                        'end_span' => [
+                            'label' => 'Konec rozsahu',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
             'link' => [
 
                 'label' => 'Upravit',
@@ -467,9 +536,44 @@ return [
 
             ],
 
+            'text_color' => [
+
+                'label' => 'Barva textu',
+
+                'modal' => [
+
+                    'heading' => 'Barva textu',
+
+                    'form' => [
+
+                        'color' => [
+                            'label' => 'Barva',
+                        ],
+
+                        'custom_color' => [
+                            'label' => 'Vlastní barva',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
         ],
 
+        'file_attachments_accepted_file_types_message' => 'Nahrané soubory musí být typu: :values.',
+
+        'file_attachments_max_size_message' => 'Nahrané soubory nesmí být větší než :max kilobajtů.',
+
         'no_merge_tag_search_results_message' => 'Žádné výsledky pro značky slučování.',
+
+        'mentions' => [
+            'no_options_message' => 'Nejsou dostupné žádné možnosti.',
+            'no_search_results_message' => 'Žádné výsledky neodpovídají vašemu hledání.',
+            'search_prompt' => 'Začněte psát na vyhledávání...',
+            'searching_message' => 'Hledám...',
+        ],
 
         'tools' => [
             'align_center' => 'Zarovnat na střed',
@@ -488,6 +592,8 @@ return [
             'h1' => 'Nadpis 1',
             'h2' => 'Nadpis 2',
             'h3' => 'Nadpis 3',
+            'grid' => 'Mřížka',
+            'grid_delete' => 'Smazat mřížku',
             'highlight' => 'Zvýraznit',
             'horizontal_rule' => 'Vodorovná čára',
             'italic' => 'Kurzíva',
@@ -511,9 +617,13 @@ return [
             'table_merge_cells' => 'Sloučit buňky',
             'table_split_cell' => 'Rozdělit buňku',
             'table_toggle_header_row' => 'Přepnout řádek záhlaví',
+            'table_toggle_header_cell' => 'Přepnout buňku záhlaví',
+            'text_color' => 'Barva textu',
             'underline' => 'Podtržení',
             'undo' => 'Zpět',
         ],
+
+        'uploading_file_message' => 'Nahrávání souboru...',
 
     ],
 
@@ -576,6 +686,8 @@ return [
 
         'max_items_message' => 'Lze vybrat pouze 1 položka.|Lze vybrat pouze :count položky.|Lze vybrat pouze :count položek.',
 
+        'no_options_message' => 'Nejsou dostupné žádné možnosti.',
+
         'no_search_results_message' => 'Vašemu hledání neodpovídají žádné výsledky.',
 
         'placeholder' => 'Zvolte některou z možností',
@@ -587,7 +699,17 @@ return [
     ],
 
     'tags_input' => [
+
+        'actions' => [
+
+            'delete' => [
+                'label' => 'Smazat',
+            ],
+
+        ],
+
         'placeholder' => 'Nový štítek',
+
     ],
 
     'text_input' => [

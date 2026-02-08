@@ -38,7 +38,7 @@ The media library file upload supports all the customization options of the [ori
 
 ### Passing a collection
 
-Optionally, you may pass a [`collection()`](https://spatie.be/docs/laravel-medialibrary/working-with-media-collections/simple-media-collections) allows you to group files into categories:
+Optionally, you may pass a [`collection()`](https://spatie.be/docs/laravel-medialibrary/working-with-media-collections/simple-media-collections) that allows you to group files into categories:
 
 ```php
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
@@ -88,6 +88,25 @@ use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 SpatieMediaLibraryFileUpload::make('attachments')
     ->multiple()
     ->customProperties(['zip_filename_prefix' => 'folder/subfolder/'])
+```
+
+You may use a function to dynamically set the properties based on the uploaded file:
+
+```php
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
+use Spatie\Image\Image;
+
+SpatieMediaLibraryFileUpload::make('image')
+    ->image()
+    ->customProperties(function (TemporaryUploadedFile $file): array {
+        $image = Image::load($file->getRealPath());
+
+        return [
+            'height' => $image->getHeight(),
+            'width' => $image->getWidth(),
+        ];
+    })
 ```
 
 ### Adding custom headers
@@ -190,7 +209,7 @@ class Post extends Model implements HasRichContent
     public function setUpRichContent(): void
     {
         $this->registerRichContent('content')
-            ->fileAttachmentsProvider(SpatieMediaLibraryFileAttachmentProvider::make());
+            ->fileAttachmentProvider(SpatieMediaLibraryFileAttachmentProvider::make());
     }
 }
 ```
@@ -212,12 +231,41 @@ class Post extends Model implements HasRichContent
     public function setUpRichContent(): void
     {
         $this->registerRichContent('content')
-            ->fileAttachmentsProvider(
+            ->fileAttachmentProvider(
                 SpatieMediaLibraryFileAttachmentProvider::make()
                     ->collection('content-file-attachments'),
             );
     }
 }
+```
+
+You may want to preserve the original filenames of the uploaded files, using the `preserveFilenames()` method:
+
+```php
+use Filament\Forms\Components\RichEditor\FileAttachmentProviders\SpatieMediaLibraryFileAttachmentProvider;
+
+SpatieMediaLibraryFileAttachmentProvider::make()
+    ->preserveFilenames()
+```
+
+You can customize the [media name](https://spatie.be/docs/laravel-medialibrary/api/adding-files#content-usingname) using the `mediaName()` method:
+
+```php
+use Filament\Forms\Components\RichEditor\FileAttachmentProviders\SpatieMediaLibraryFileAttachmentProvider;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
+use Illuminate\Support\Str;
+
+SpatieMediaLibraryFileAttachmentProvider::make()
+    ->mediaName(fn (TemporaryUploadedFile $file): string => Str::random() . '_' . $file->getClientOriginalName())
+```
+
+You may pass in [custom properties](https://spatie.be/docs/laravel-medialibrary/advanced-usage/using-custom-properties) when uploading files using the `customProperties()` method:
+
+```php
+use Filament\Forms\Components\RichEditor\FileAttachmentProviders\SpatieMediaLibraryFileAttachmentProvider;
+
+SpatieMediaLibraryFileAttachmentProvider::make()
+    ->customProperties(['archived' => false])
 ```
 
 ## Table column

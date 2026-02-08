@@ -5,7 +5,9 @@
     $extraAlpineAttributes = $getExtraAlpineAttributes();
     $extraAttributeBag = $getExtraAttributeBag();
     $extraInputAttributeBag = $getExtraInputAttributeBag();
+    $hasDate = $hasDate();
     $hasTime = $hasTime();
+    $hasSeconds = $hasSeconds();
     $id = $getId();
     $isDisabled = $isDisabled();
     $isAutofocused = $isAutofocused();
@@ -13,6 +15,7 @@
     $isSuffixInline = $isSuffixInline();
     $maxDate = $getMaxDate();
     $minDate = $getMinDate();
+    $defaultFocusedDate = $getDefaultFocusedDate();
     $prefixActions = $getPrefixActions();
     $prefixIcon = $getPrefixIcon();
     $prefixIconColor = $getPrefixIconColor();
@@ -49,6 +52,7 @@
         :suffix-icon="$suffixIcon"
         :suffix-icon-color="$suffixIconColor"
         :valid="! $errors->has($statePath)"
+        x-on:focus-input.stop="$el.querySelector('input:not([type=hidden])')?.focus()"
         :attributes="\Filament\Support\prepare_inherited_attributes($extraAttributeBag)->class(['fi-fo-date-time-picker'])"
     >
         @if ($isNative())
@@ -100,6 +104,9 @@
                         $isReadOnly,
                         $maxDate,
                         $minDate,
+                        $hasDate,
+                        $hasTime,
+                        $hasSeconds,
                     ])), 0, 64)
                 }}"
                 x-on:keydown.esc="isOpen() && $event.stopPropagation()"
@@ -163,7 +170,7 @@
                         'fi-fo-date-time-picker-panel',
                     ])
                 >
-                    @if ($hasDate())
+                    @if ($hasDate)
                         <div class="fi-fo-date-time-picker-panel-header">
                             <select
                                 x-model="focusedMonth"
@@ -256,7 +263,7 @@
                                 x-model.debounce="minute"
                             />
 
-                            @if ($hasSeconds())
+                            @if ($hasSeconds)
                                 <span
                                     class="fi-fo-date-time-picker-time-input-separator"
                                 >

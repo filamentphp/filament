@@ -26,6 +26,7 @@ use Filament\Support\Exceptions\Halt;
 use Filament\Support\Facades\FilamentView;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Contracts\Translation\HasLocalePreference;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Hash;
@@ -234,12 +235,40 @@ class EditProfile extends Page
             'newEmail' => $newEmail,
         ]));
 
-        Notification::route('mail', $newEmail)
+        $newEmailRecipient = $this->getEmailChangeVerificationRecipientWithNewEmail($record, $notification, $newEmail);
+
+        if ($record instanceof HasLocalePreference) {
+            $notification->locale($record->preferredLocale());
+        }
+
+        Notification::route('mail', $newEmailRecipient)
             ->notify($notification);
 
         $this->getEmailChangeVerificationSentNotification($newEmail)?->send();
 
         $this->data['email'] = $record->getAttributeValue('email');
+    }
+
+    /**
+     * @return string | array<string, string>
+     */
+    protected function getEmailChangeVerificationRecipientWithNewEmail(Model $record, VerifyEmailChange $notification, string $newEmail): string | array
+    {
+        if (! method_exists($record, 'routeNotificationForMail')) {
+            return $newEmail;
+        }
+
+        $recipient = $record->routeNotificationForMail($notification);
+        $currentEmail = $record->getAttributeValue('email');
+
+        if (
+            (! is_array($recipient))
+            || (! array_key_exists($currentEmail, $recipient))
+        ) {
+            return $newEmail;
+        }
+
+        return [$newEmail => $recipient[$currentEmail]];
     }
 
     protected function getSavedNotification(): ?FilamentNotification
@@ -315,6 +344,7 @@ class EditProfile extends Page
             ->label(__('filament-panels::auth/pages/edit-profile.form.password_confirmation.label'))
             ->validationAttribute(__('filament-panels::auth/pages/edit-profile.form.password_confirmation.validation_attribute'))
             ->password()
+            ->autocomplete('new-password')
             ->revealable(filament()->arePasswordsRevealable())
             ->required()
             ->visible(fn (Get $get): bool => filled($get('password')))
@@ -328,6 +358,7 @@ class EditProfile extends Page
             ->validationAttribute(__('filament-panels::auth/pages/edit-profile.form.current_password.validation_attribute'))
             ->belowContent(__('filament-panels::auth/pages/edit-profile.form.current_password.below_content'))
             ->password()
+            ->autocomplete('current-password')
             ->currentPassword(guard: Filament::getAuthGuard())
             ->revealable(filament()->arePasswordsRevealable())
             ->required()
@@ -426,7 +457,8 @@ class EditProfile extends Page
     {
         return [
             'hasTopbar' => $this->hasTopbar(),
-            'maxWidth' => $this->getMaxWidth(),
+            'maxContentWidth' => $maxContentWidth = $this->getMaxWidth() ?? $this->getMaxContentWidth(),
+            'maxWidth' => $maxContentWidth,
         ];
     }
 
@@ -448,7 +480,8 @@ class EditProfile extends Page
                 Actions::make($this->getFormActions())
                     ->alignment($this->getFormActionsAlignment())
                     ->fullWidth($this->hasFullWidthFormActions())
-                    ->sticky((! static::isSimple()) && $this->areFormActionsSticky()),
+                    ->sticky((! static::isSimple()) && $this->areFormActionsSticky())
+                    ->key('form-actions'),
             ]);
     }
 
@@ -470,10 +503,5 @@ class EditProfile extends Page
                 ->map(fn (MultiFactorAuthenticationProvider $multiFactorAuthenticationProvider): Component => Group::make($multiFactorAuthenticationProvider->getManagementSchemaComponents())
                     ->statePath($multiFactorAuthenticationProvider->getId()))
                 ->all());
-    }
-
-    public function getDefaultTestingSchemaName(): ?string
-    {
-        return 'form';
     }
 }
