@@ -893,9 +893,29 @@ public function table(Table $table): Table
 }
 ```
 
-#### Customizing the column manager dropdown trigger action
+#### Displaying the column manager in a modal
 
-To customize the column manager dropdown trigger button, you may use the `columnManagerTriggerAction()` method, passing a closure that returns an action. All methods that are available to [customize action trigger buttons](../../actions/overview) can be used:
+To render the column manager in a modal instead of in a dropdown, you may use the `columnManagerLayout()` method:
+
+```php
+use Filament\Tables\Enums\ColumnManagerLayout;
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->columns([
+            // ...
+        ])
+        ->columnManagerLayout(ColumnManagerLayout::Modal);
+}
+```
+
+You may use the [trigger action API](#customizing-the-column-manager-trigger-action) to [customize the modal](../../actions/modals), including [using a `slideOver()`](../../actions/modals#using-a-slide-over-instead-of-a-modal).
+
+#### Customizing the column manager trigger action
+
+To customize the column manager trigger button, you may use the `columnManagerTriggerAction()` method, passing a closure that returns an action. All methods that are available to [customize action trigger buttons](../../actions/overview) can be used:
 
 ```php
 use Filament\Actions\Action;
@@ -904,7 +924,7 @@ use Filament\Tables\Table;
 public function table(Table $table): Table
 {
     return $table
-        ->filters([
+        ->columns([
             // ...
         ])
         ->columnManagerTriggerAction(

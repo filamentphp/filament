@@ -6,6 +6,7 @@
     use Filament\Tables\Actions\HeaderActionsPosition;
     use Filament\Tables\Columns\Column;
     use Filament\Tables\Columns\ColumnGroup;
+    use Filament\Tables\Enums\ColumnManagerLayout;
     use Filament\Tables\Enums\ColumnManagerResetActionPosition;
     use Filament\Tables\Enums\FiltersLayout;
     use Filament\Tables\Enums\FiltersResetActionPosition;
@@ -111,13 +112,14 @@
     $hasCollapsibleFilters = $hasFilters && in_array($filtersLayout, [FiltersLayout::AboveContentCollapsible, FiltersLayout::BeforeContentCollapsible, FiltersLayout::AfterContentCollapsible]);
     $hasFiltersTrigger = $hasFilters && ($hasFiltersDialog || $hasFiltersBeforeContent || $hasFiltersAfterContent);
     $filtersFormMaxHeight = $getFiltersFormMaxHeight();
-    $hasColumnManagerDropdown = $hasColumnManager();
+    $hasColumnManager = $hasColumnManager();
+    $columnManagerLayout = $getColumnManagerLayout();
     $hasReorderableColumns = $hasReorderableColumns();
     $hasToggleableColumns = $hasToggleableColumns();
     $columnManagerApplyAction = $getColumnManagerApplyAction();
     $columnManagerTriggerAction = $getColumnManagerTriggerAction();
-    $hasHeader = $header || $heading || $description || ($headerActions && (! $isReordering)) || $isReorderable || $areGroupingSettingsVisible || $isGlobalSearchVisible || $hasFilters || count($filterIndicators) || $hasColumnManagerDropdown;
-    $hasHeaderToolbar = $isReorderable || $areGroupingSettingsVisible || $isGlobalSearchVisible || $hasFiltersTrigger || $hasColumnManagerDropdown;
+    $hasHeader = $header || $heading || $description || ($headerActions && (! $isReordering)) || $isReorderable || $areGroupingSettingsVisible || $isGlobalSearchVisible || $hasFilters || count($filterIndicators) || $hasColumnManager;
+    $hasHeaderToolbar = $isReorderable || $areGroupingSettingsVisible || $isGlobalSearchVisible || $hasFiltersTrigger || $hasColumnManager;
     $headingTag = $getHeadingTag();
     $secondLevelHeadingTag = $heading ? $getHeadingTag(1) : $headingTag;
     $pluralModelLabel = $getPluralModelLabel();
@@ -472,7 +474,7 @@
                         {{ FilamentView::renderHook(TablesRenderHook::TOOLBAR_GROUPING_SELECTOR_AFTER, scopes: static::class) }}
                     </div>
 
-                    @if ($isGlobalSearchVisible || $hasFiltersTrigger || $hasColumnManagerDropdown)
+                    @if ($isGlobalSearchVisible || $hasFiltersTrigger || $hasColumnManager)
                         <div>
                             {{ FilamentView::renderHook(TablesRenderHook::TOOLBAR_SEARCH_BEFORE, scopes: static::class) }}
 
@@ -490,7 +492,7 @@
 
                             {{ FilamentView::renderHook(TablesRenderHook::TOOLBAR_SEARCH_AFTER, scopes: static::class) }}
 
-                            @if ($hasFiltersTrigger || $hasColumnManagerDropdown)
+                            @if ($hasFiltersTrigger || $hasColumnManager)
                                 @if ($hasFiltersDialog)
                                     @if (($filtersLayout === FiltersLayout::Modal) || $filtersTriggerAction->isModalSlideOver())
                                         @php
@@ -576,36 +578,93 @@
 
                                 {{ FilamentView::renderHook(TablesRenderHook::TOOLBAR_COLUMN_MANAGER_TRIGGER_BEFORE, scopes: static::class) }}
 
-                                @if ($hasColumnManagerDropdown)
+                                @if ($hasColumnManager)
                                     @php
                                         $columnManagerMaxHeight = $getColumnManagerMaxHeight();
                                         $columnManagerWidth = $getColumnManagerWidth();
                                         $columnManagerColumns = $getColumnManagerColumns();
                                     @endphp
 
-                                    <x-filament::dropdown
-                                        :max-height="$columnManagerMaxHeight"
-                                        placement="bottom-end"
-                                        shift
-                                        :flip="false"
-                                        :width="$columnManagerWidth"
-                                        :wire:key="$this->getId() . '.table.column-manager'"
-                                        class="fi-ta-col-manager-dropdown"
-                                    >
-                                        <x-slot name="trigger">
-                                            {{ $columnManagerTriggerAction }}
-                                        </x-slot>
+                                    @if (($columnManagerLayout === ColumnManagerLayout::Modal) || $columnManagerTriggerAction->isModalSlideOver())
+                                        @php
+                                            $columnManagerTriggerActionModalAlignment = $columnManagerTriggerAction->getModalAlignment();
+                                            $columnManagerTriggerActionIsModalAutofocused = $columnManagerTriggerAction->isModalAutofocused();
+                                            $columnManagerTriggerActionHasModalCloseButton = $columnManagerTriggerAction->hasModalCloseButton();
+                                            $columnManagerTriggerActionIsModalClosedByClickingAway = $columnManagerTriggerAction->isModalClosedByClickingAway();
+                                            $columnManagerTriggerActionIsModalClosedByEscaping = $columnManagerTriggerAction->isModalClosedByEscaping();
+                                            $columnManagerTriggerActionModalDescription = $columnManagerTriggerAction->getModalDescription();
+                                            $columnManagerTriggerActionVisibleModalFooterActions = $columnManagerTriggerAction->getVisibleModalFooterActions();
+                                            $columnManagerTriggerActionModalFooterActionsAlignment = $columnManagerTriggerAction->getModalFooterActionsAlignment();
+                                            $columnManagerTriggerActionModalHeading = $columnManagerTriggerAction->getCustomModalHeading() ?? __('filament-tables::table.column_manager.heading');
+                                            $columnManagerTriggerActionModalIcon = $columnManagerTriggerAction->getModalIcon();
+                                            $columnManagerTriggerActionModalIconColor = $columnManagerTriggerAction->getModalIconColor();
+                                            $columnManagerTriggerActionIsModalSlideOver = $columnManagerTriggerAction->isModalSlideOver();
+                                            $columnManagerTriggerActionIsModalFooterSticky = $columnManagerTriggerAction->isModalFooterSticky();
+                                            $columnManagerTriggerActionIsModalHeaderSticky = $columnManagerTriggerAction->isModalHeaderSticky();
+                                        @endphp
 
-                                        <x-filament-tables::column-manager
-                                            :apply-action="$columnManagerApplyAction"
-                                            :columns="$columnManagerColumns"
-                                            :reset-action-position="$columnManagerResetActionPosition"
-                                            :has-reorderable-columns="$hasReorderableColumns"
-                                            :has-toggleable-columns="$hasToggleableColumns"
-                                            :heading-tag="$secondLevelHeadingTag"
-                                            :reorder-animation-duration="$getReorderAnimationDuration()"
-                                        />
-                                    </x-filament::dropdown>
+                                        <x-filament::modal
+                                            :alignment="$columnManagerTriggerActionModalAlignment"
+                                            :autofocus="$columnManagerTriggerActionIsModalAutofocused"
+                                            :close-button="$columnManagerTriggerActionHasModalCloseButton"
+                                            :close-by-clicking-away="$columnManagerTriggerActionIsModalClosedByClickingAway"
+                                            :close-by-escaping="$columnManagerTriggerActionIsModalClosedByEscaping"
+                                            :description="$columnManagerTriggerActionModalDescription"
+                                            :footer-actions="$columnManagerTriggerActionVisibleModalFooterActions"
+                                            :footer-actions-alignment="$columnManagerTriggerActionModalFooterActionsAlignment"
+                                            :heading="$columnManagerTriggerActionModalHeading"
+                                            :icon="$columnManagerTriggerActionModalIcon"
+                                            :icon-color="$columnManagerTriggerActionModalIconColor"
+                                            :slide-over="$columnManagerTriggerActionIsModalSlideOver"
+                                            :sticky-footer="$columnManagerTriggerActionIsModalFooterSticky"
+                                            :sticky-header="$columnManagerTriggerActionIsModalHeaderSticky"
+                                            :width="$columnManagerWidth"
+                                            :wire:key="$this->getId() . '.table.column-manager'"
+                                            class="fi-ta-col-manager-modal"
+                                        >
+                                            <x-slot name="trigger">
+                                                {{ $columnManagerTriggerAction }}
+                                            </x-slot>
+
+                                            {{ $columnManagerTriggerAction->getModalContent() }}
+
+                                            <x-filament-tables::column-manager
+                                                :apply-action="$columnManagerApplyAction"
+                                                :columns="$columnManagerColumns"
+                                                :reset-action-position="$columnManagerResetActionPosition"
+                                                :has-reorderable-columns="$hasReorderableColumns"
+                                                :has-toggleable-columns="$hasToggleableColumns"
+                                                :heading-tag="$secondLevelHeadingTag"
+                                                :reorder-animation-duration="$getReorderAnimationDuration()"
+                                            />
+
+                                            {{ $columnManagerTriggerAction->getModalContentFooter() }}
+                                        </x-filament::modal>
+                                    @else
+                                        <x-filament::dropdown
+                                            :max-height="$columnManagerMaxHeight"
+                                            placement="bottom-end"
+                                            shift
+                                            :flip="false"
+                                            :width="$columnManagerWidth"
+                                            :wire:key="$this->getId() . '.table.column-manager'"
+                                            class="fi-ta-col-manager-dropdown"
+                                        >
+                                            <x-slot name="trigger">
+                                                {{ $columnManagerTriggerAction }}
+                                            </x-slot>
+
+                                            <x-filament-tables::column-manager
+                                                :apply-action="$columnManagerApplyAction"
+                                                :columns="$columnManagerColumns"
+                                                :reset-action-position="$columnManagerResetActionPosition"
+                                                :has-reorderable-columns="$hasReorderableColumns"
+                                                :has-toggleable-columns="$hasToggleableColumns"
+                                                :heading-tag="$secondLevelHeadingTag"
+                                                :reorder-animation-duration="$getReorderAnimationDuration()"
+                                            />
+                                        </x-filament::dropdown>
+                                    @endif
                                 @endif
 
                                 {{ FilamentView::renderHook(TablesRenderHook::TOOLBAR_COLUMN_MANAGER_TRIGGER_AFTER, scopes: static::class) }}
