@@ -235,18 +235,7 @@ trait HasFilters
      */
     protected function getDehydratedTableFilters(): array
     {
-        $dehydrated = [];
-
-        foreach ($this->getTable()->getFilters() as $filter) {
-            $name = $filter->getName();
-            $state = $this->getTableFilterState($name);
-
-            if ($state !== null) {
-                $dehydrated[$name] = $state;
-            }
-        }
-
-        return $dehydrated;
+        return $this->getTableFiltersForm()->getStateSnapshot();
     }
 
     public function getTableFilterFormState(string $name): ?array
