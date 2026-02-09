@@ -1,13 +1,10 @@
 @if ($this instanceof \Filament\Actions\Contracts\HasActions && (! $this->hasActionsModalRendered))
-    <style nonce="{{ \Filament\csp_nonce() }}" scoped>
-        .fi-internal-components-modals {height: 0;}
-    </style>
     <div
         wire:partial="action-modals"
         x-data="filamentActionModals({
                     livewireId: @js($this->getId()),
                 })"
-        class="fi-internal-components-modals"
+        style="height: 0"
     >
         @foreach ($this->getMountedActions() as $action)
             @if ((! $loop->last) || $this->mountedActionShouldOpenModal())

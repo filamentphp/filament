@@ -3,7 +3,6 @@
 namespace Filament\Forms\Components\RichEditor\Actions;
 
 use Filament\Actions\Action;
-use Filament\Facades\Filament;
 use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\RichEditor\EditorCommand;
@@ -11,7 +10,6 @@ use Filament\Forms\Components\RichEditor\TextColor;
 use Filament\Forms\Components\Select;
 use Filament\Support\Enums\Width;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
 
 class TextColorAction
 {
@@ -28,26 +26,13 @@ class TextColorAction
             ->schema(function (RichEditor $component) {
                 $options = Arr::mapWithKeys(
                     $component->getTextColors(),
-                    function (TextColor $color, string $name): array {
-                        $uniqueClass = 'fi-unique-' . Str::random();
-                        $nonce       = Filament::getCspNonce();
+                    fn (TextColor $color, string $name): array => [$name => <<<HTML
+                        <div class="fi-fo-rich-editor-text-color-select-option">
+                            <div class="fi-fo-rich-editor-text-color-select-option-preview" style="--color: {$color->getColor()}; --dark-color: {$color->getDarkColor()}"></div>
 
-                        return [
-                            $name => <<<HTML
-                                <div class="fi-fo-rich-editor-text-color-select-option">
-                                    <style nonce="{$nonce}" scoped>
-                                        .{$uniqueClass} {
-                                            --color: '{$color->getColor()}';
-                                            --dark-color: '{$color->getColor()}';
-                                        }
-                                    </style>
-                                    <div class="fi-fo-rich-editor-text-color-select-option-preview {$uniqueClass}" ></div>
-
-                                    <div>{$color->getSafeLabelHtml()}</div>
-                                </div>
-                            HTML
-                        ];
-                    },
+                            <div>{$color->getSafeLabelHtml()}</div>
+                        </div>
+                        HTML],
                 );
 
                 return [
