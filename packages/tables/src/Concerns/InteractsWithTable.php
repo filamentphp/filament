@@ -53,6 +53,18 @@ trait InteractsWithTable
         $this->initTableColumnManager();
 
         if (! $this->shouldMountInteractsWithTable) {
+            // Re-hydrate filter form state from (possibly dehydrated) property
+            // values on subsequent Livewire requests. The dehydrate hook stores
+            // dehydrated values in the wire snapshot, so we must run fill() to
+            // invoke formatStateUsing / afterStateHydrated callbacks.
+            $stateToHydrate = $this->getTable()->hasDeferredFilters()
+                ? $this->tableDeferredFilters
+                : $this->tableFilters;
+
+            if ($stateToHydrate !== null) {
+                $this->getTableFiltersForm()->fill($stateToHydrate);
+            }
+
             return;
         }
 
@@ -85,7 +97,7 @@ trait InteractsWithTable
         if ($shouldPersistFiltersInSession) {
             session()->put(
                 $filtersSessionKey,
-                $this->tableFilters,
+                $this->getDehydratedTableFilters(),
             );
         }
 
@@ -162,6 +174,29 @@ trait InteractsWithTable
     public function mountInteractsWithTable(): void
     {
         $this->shouldMountInteractsWithTable = true;
+    }
+
+    /**
+     * Dehydrate filter state before Livewire serializes it to the URL query
+     * string and wire snapshot. This ensures that `dehydrateStateUsing`
+     * callbacks are applied and `formatStateUsing` does not compound on
+     * every page reload.
+     */
+    public function dehydrateInteractsWithTable(): void
+    {
+        if (! isset($this->table)) {
+            return;
+        }
+
+        $dehydrated = $this->getDehydratedTableFilters();
+
+        if ($dehydrated !== ($this->tableFilters ?? [])) {
+            $this->tableFilters = $dehydrated ?: null;
+        }
+
+        if ($this->getTable()->hasDeferredFilters() && $this->tableDeferredFilters !== null) {
+            $this->tableDeferredFilters = $dehydrated ?: null;
+        }
     }
 
     public function table(Table $table): Table
