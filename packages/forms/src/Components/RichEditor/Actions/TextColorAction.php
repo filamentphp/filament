@@ -35,7 +35,7 @@ class TextColorAction
                         return [
                             $name => <<<HTML
                                 <div class="fi-fo-rich-editor-text-color-select-option">
-                                    <style nonce="{$nonce}">
+                                    <style nonce="{$nonce}" scoped>
                                         .{$uniqueClass} {
                                             --color: '{$color->getColor()}';
                                             --dark-color: '{$color->getColor()}';

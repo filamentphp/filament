@@ -1,5 +1,5 @@
 @if ($this instanceof \Filament\Actions\Contracts\HasActions && (! $this->hasActionsModalRendered))
-    <style nonce="{{ \Filament\csp_nonce() }}">
+    <style nonce="{{ \Filament\csp_nonce() }}" scoped>
         .fi-internal-components-modals {height: 0;}
     </style>
     <div

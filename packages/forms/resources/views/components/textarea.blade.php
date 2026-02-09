@@ -28,7 +28,7 @@
                 ])
         "
     >
-        <style nonce="{{ \Filament\csp_nonce() }}">
+        <style nonce="{{ \Filament\csp_nonce() }}" scoped>
             .fi-internal-components-textarea {height: '{{ $initialHeight . 'rem' }}'; }
         </style>
         <div wire:ignore.self class="fi-internal-components-textarea">
