@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "59a7b82f69d887fc3e9495951f135152",
+    "content-hash": "dc8c580c7dda4560698702b25135a519",
     "packages": [],
     "packages-dev": [
         {
@@ -14219,20 +14219,20 @@
         },
         {
             "name": "ueberdosis/tiptap-php",
-            "version": "1.4.0",
+            "version": "2.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ueberdosis/tiptap-php.git",
-                "reference": "640667176da4cdfaa84c32093171e0674c3c807f"
+                "reference": "6ea321fa665080e1a72ac5f52dfab19f6a292e2d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ueberdosis/tiptap-php/zipball/640667176da4cdfaa84c32093171e0674c3c807f",
-                "reference": "640667176da4cdfaa84c32093171e0674c3c807f",
+                "url": "https://api.github.com/repos/ueberdosis/tiptap-php/zipball/6ea321fa665080e1a72ac5f52dfab19f6a292e2d",
+                "reference": "6ea321fa665080e1a72ac5f52dfab19f6a292e2d",
                 "shasum": ""
             },
             "require": {
-                "php": "^7.4|^8.0",
+                "php": "^8.0",
                 "scrivo/highlight.php": "^9.18",
                 "spatie/shiki-php": "^2.0"
             },
@@ -14268,7 +14268,7 @@
             ],
             "support": {
                 "issues": "https://github.com/ueberdosis/tiptap-php/issues",
-                "source": "https://github.com/ueberdosis/tiptap-php/tree/1.4.0"
+                "source": "https://github.com/ueberdosis/tiptap-php/tree/2.1.0"
             },
             "funding": [
                 {
@@ -14284,7 +14284,7 @@
                     "type": "open_collective"
                 }
             ],
-            "time": "2024-08-12T08:25:45+00:00"
+            "time": "2026-01-10T16:40:02+00:00"
         },
         {
             "name": "vlucas/phpdotenv",
