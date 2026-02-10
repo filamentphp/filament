@@ -92,6 +92,24 @@ class PartialsComponentHook extends ComponentHook
         return $originallyMountedActionIndex === $mountedActionIndex;
     }
 
+    public function shouldSkipMountedActionRerender(): bool
+    {
+        if (! property_exists($this->component, 'mountedActions')) {
+            return false;
+        }
+
+        $mountedActionIndex = array_key_last($this->component->mountedActions);
+
+        if (blank($mountedActionIndex)) {
+            return false;
+        }
+
+        $updatesCount = $this->storeGet('updatesCount') ?? 0;
+        $callsCount = $this->storeGet('callsCount') ?? 0;
+
+        return ($updatesCount + $callsCount) === 0;
+    }
+
     public function shouldRenderMountedActionsOnly(bool $whenActionMounted = true): bool
     {
         if (! property_exists($this->component, 'mountedActions')) {
@@ -110,6 +128,12 @@ class PartialsComponentHook extends ComponentHook
     public function dehydrate(ComponentContext $context): void
     {
         if ($this->shouldForceRender()) {
+            return;
+        }
+
+        // Re-rendering action modal partials during a pure poll would re-mount
+        // nested Livewire components inside the modal, discarding their state.
+        if ($this->shouldSkipMountedActionRerender()) {
             return;
         }
 
