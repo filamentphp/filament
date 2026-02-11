@@ -132,7 +132,7 @@ foreach ($plugins as $plugin) {
                         continue;
                     }
 
-                    if (preg_match("/\^\s*5(?:\.|$)|~\s*5(?:\.|$)|>=\s*5(?:\.|$)/", (string) $constraint)) {
+                    if (preg_match("/\^\s*v?5(?:\.|$)|~\s*v?5(?:\.|$)|>=\s*v?5(?:\.|$)/", (string) $constraint)) {
                         $compatibility = [
                             'version' => $checkingVersion['version'],
                             'isPrerelease' => false,
@@ -168,7 +168,7 @@ foreach ($plugins as $plugin) {
                         continue;
                     }
 
-                    if (preg_match("/\^\s*5(?:\.|$)|~\s*5(?:\.|$)|>=\s*5(?:\.|$)/", (string) $constraint)) {
+                    if (preg_match("/\^\s*v?5(?:\.|$)|~\s*v?5(?:\.|$)|>=\s*v?5(?:\.|$)/", (string) $constraint)) {
                         $compatibility = [
                             'version' => $checkingVersion['version'],
                             'isPrerelease' => true,
