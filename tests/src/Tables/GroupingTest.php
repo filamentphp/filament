@@ -502,3 +502,64 @@ it('can group records with nullable `BelongsTo` -> `HasOneThrough` relationship'
         ->set('tableGrouping', 'author.setting.theme')
         ->assertCanSeeTableRecords($allPosts);
 });
+
+it('can handle array records in `getKey()`', function (): void {
+    $livewire = livewire(PostsTable::class)->instance();
+    $group = \Filament\Tables\Grouping\Group::make('status')->table($livewire->getTable());
+
+    $arrayRecord = ['__key' => '1', 'name' => 'John', 'status' => 'active'];
+
+    expect($group->getKey($arrayRecord))->toBe('active');
+});
+
+it('can handle array records in `getStringKey()`', function (): void {
+    $livewire = livewire(PostsTable::class)->instance();
+    $group = \Filament\Tables\Grouping\Group::make('status')->table($livewire->getTable());
+
+    $arrayRecord = ['__key' => '1', 'name' => 'John', 'status' => 'active'];
+
+    expect($group->getStringKey($arrayRecord))->toBe('active');
+});
+
+it('can handle array records in `getTitle()`', function (): void {
+    $livewire = livewire(PostsTable::class)->instance();
+    $group = \Filament\Tables\Grouping\Group::make('status')->table($livewire->getTable());
+
+    $arrayRecord = ['__key' => '1', 'name' => 'John', 'status' => 'active'];
+
+    expect($group->getTitle($arrayRecord))->toBe('active');
+});
+
+it('can handle array records in `getDescription()`', function (): void {
+    $livewire = livewire(PostsTable::class)->instance();
+    $group = \Filament\Tables\Grouping\Group::make('status')
+        ->getDescriptionFromRecordUsing(fn (array $record): string => 'User: ' . $record['name'])
+        ->table($livewire->getTable());
+
+    $arrayRecord = ['__key' => '1', 'name' => 'John', 'status' => 'active'];
+
+    expect($group->getDescription($arrayRecord, 'Active'))->toBe('User: John');
+});
+
+it('can use custom `getKeyFromRecordUsing()` with array records', function (): void {
+    $livewire = livewire(PostsTable::class)->instance();
+    $group = \Filament\Tables\Grouping\Group::make('status')
+        ->getKeyFromRecordUsing(fn (array $record): string => strtoupper($record['status']))
+        ->table($livewire->getTable());
+
+    $arrayRecord = ['__key' => '1', 'name' => 'John', 'status' => 'active'];
+
+    expect($group->getKey($arrayRecord))->toBe('ACTIVE')
+        ->and($group->getStringKey($arrayRecord))->toBe('ACTIVE');
+});
+
+it('can use custom `getTitleFromRecordUsing()` with array records', function (): void {
+    $livewire = livewire(PostsTable::class)->instance();
+    $group = \Filament\Tables\Grouping\Group::make('status')
+        ->getTitleFromRecordUsing(fn (array $record): string => 'Status: ' . ucfirst($record['status']))
+        ->table($livewire->getTable());
+
+    $arrayRecord = ['__key' => '1', 'name' => 'John', 'status' => 'active'];
+
+    expect($group->getTitle($arrayRecord))->toBe('Status: Active');
+});
