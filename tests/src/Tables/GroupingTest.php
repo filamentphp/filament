@@ -1,6 +1,7 @@
 <?php
 
 use Filament\Tables;
+use Filament\Tests\Fixtures\Livewire\GroupedCustomDataTable;
 use Filament\Tests\Fixtures\Livewire\PostsTable;
 use Filament\Tests\Fixtures\Livewire\UsersTable;
 use Filament\Tests\Fixtures\Models\Company;
@@ -562,4 +563,36 @@ it('can use custom `getTitleFromRecordUsing()` with array records', function ():
     $arrayRecord = ['__key' => '1', 'name' => 'John', 'status' => 'active'];
 
     expect($group->getTitle($arrayRecord))->toBe('Status: Active');
+});
+
+it('can get grouped selectable record keys for array tables', function (): void {
+    livewire(GroupedCustomDataTable::class)
+        ->set('tableGrouping', 'status')
+        ->tap(function (Testable $testable): void {
+            /** @var GroupedCustomDataTable $livewire */
+            $livewire = $testable->instance();
+
+            $activeKeys = $livewire->getGroupedSelectableTableRecordKeys('active');
+            $inactiveKeys = $livewire->getGroupedSelectableTableRecordKeys('inactive');
+
+            expect($activeKeys)
+                ->toHaveCount(3)
+                ->each->toBeString()
+                ->and($inactiveKeys)
+                ->toHaveCount(2)
+                ->each->toBeString();
+        });
+});
+
+it('returns an empty array for a non-existent group in array tables', function (): void {
+    livewire(GroupedCustomDataTable::class)
+        ->set('tableGrouping', 'status')
+        ->tap(function (Testable $testable): void {
+            /** @var GroupedCustomDataTable $livewire */
+            $livewire = $testable->instance();
+
+            $keys = $livewire->getGroupedSelectableTableRecordKeys('nonexistent');
+
+            expect($keys)->toBeEmpty();
+        });
 });
