@@ -108,7 +108,7 @@ return [
         ],
 
         'open_bulk_actions' => [
-            'label' => 'Aktionen öffnen',
+            'label' => 'Mehrfachaktionen',
         ],
 
         'column_manager' => [

@@ -160,7 +160,6 @@
 
                                         @if ($schemaComponent->isVisible())
                                             @php
-                                                $schemaComponentStatePath = $schemaComponent->getStatePath();
                                                 $currentColumn = $tableColumns[$counter - 1] ?? null;
                                                 $columnVerticalAlignment = $currentColumn?->getVerticalAlignment();
                                             @endphp
@@ -169,19 +168,8 @@
                                                 @class([
                                                     ($columnVerticalAlignment instanceof VerticalAlignment) ? ('fi-vertical-align-' . $columnVerticalAlignment->value) : (is_string($columnVerticalAlignment) ? $columnVerticalAlignment : ''),
                                                 ])
-                                                x-data="filamentSchemaComponent({
-                                                    path: @js($schemaComponentStatePath),
-                                                    containerPath: @js($itemStatePath),
-                                                    $wire,
-                                                })"
-                                                @if ($afterStateUpdatedJs = $schemaComponent->getAfterStateUpdatedJs())
-                                                    x-init="{{ implode(';', array_map(
-                                                        fn (string $js): string => '$wire.watch(' . Js::from($schemaComponentStatePath) . ', ($state, $old) => isStateChanged($state, $old) && eval(' . Js::from($js) . '))',
-                                                        $afterStateUpdatedJs,
-                                                    )) }}"
-                                                @endif
                                             >
-                                                {{ $schemaComponent }}
+                                                {!! $schemaComponent->toSchemaHtml() !!}
                                             </td>
                                         @else
                                             <td class="fi-hidden"></td>
