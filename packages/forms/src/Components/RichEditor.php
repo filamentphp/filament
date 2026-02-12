@@ -13,6 +13,7 @@ use Filament\Forms\Components\RichEditor\EditorCommand;
 use Filament\Forms\Components\RichEditor\FileAttachmentProviders\Contracts\FileAttachmentProvider;
 use Filament\Forms\Components\RichEditor\MentionProvider;
 use Filament\Forms\Components\RichEditor\Models\Contracts\HasRichContent;
+use Filament\Forms\Components\RichEditor\Plugins\Contracts\HasToolbarButtons;
 use Filament\Forms\Components\RichEditor\Plugins\Contracts\RichContentPlugin;
 use Filament\Forms\Components\RichEditor\RichContentAttribute;
 use Filament\Forms\Components\RichEditor\RichContentCustomBlock;
@@ -729,6 +730,40 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
                 'tableDelete',
             ],
         ];
+    }
+
+    /**
+     * @return array<array{type: string, buttons?: array<string>}>
+     */
+    protected function getExtraToolbarButtonsModifications(): array
+    {
+        $modifications = [];
+
+        foreach ($this->getPlugins() as $plugin) {
+            if (! ($plugin instanceof HasToolbarButtons)) {
+                continue;
+            }
+
+            $enabledButtons = $plugin->getEnabledToolbarButtons();
+
+            if ($enabledButtons) {
+                $modifications[] = [
+                    'type' => 'enable',
+                    'buttons' => $enabledButtons,
+                ];
+            }
+
+            $disabledButtons = $plugin->getDisabledToolbarButtons();
+
+            if ($disabledButtons) {
+                $modifications[] = [
+                    'type' => 'disable',
+                    'buttons' => $disabledButtons,
+                ];
+            }
+        }
+
+        return $modifications;
     }
 
     /**

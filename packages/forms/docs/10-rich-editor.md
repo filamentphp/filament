@@ -949,6 +949,50 @@ RichContentRenderer::make($record->content)
     ])
 ```
 
+### Enabling or disabling toolbar buttons from a plugin
+
+By default, when a plugin provides tools via `getEditorTools()`, those tools are registered but not automatically shown in the toolbar. The user needs to manually add them using `toolbarButtons()` or `enableToolbarButtons()`.
+
+If you want your plugin to automatically enable or disable toolbar buttons, you can implement the `HasToolbarButtons` interface alongside `RichContentPlugin`. This is an optional, separate interface:
+
+```php
+use Filament\Forms\Components\RichEditor\Plugins\Contracts\HasToolbarButtons;
+use Filament\Forms\Components\RichEditor\Plugins\Contracts\RichContentPlugin;
+
+class HighlightRichContentPlugin implements RichContentPlugin, HasToolbarButtons
+{
+    // ... other methods ...
+
+    /**
+     * @return array<string | array<string | array<string>>>
+     */
+    public function getEnabledToolbarButtons(): array
+    {
+        return ['highlight', 'highlightWithCustomColor'];
+    }
+
+    /**
+     * @return array<string>
+     */
+    public function getDisabledToolbarButtons(): array
+    {
+        return [];
+    }
+}
+```
+
+The `getEnabledToolbarButtons()` method returns button names to add to the toolbar. The `getDisabledToolbarButtons()` method returns button names to remove from the toolbar.
+
+Plugin toolbar modifications are applied before user-level modifications. This means the user can always override the plugin's behavior using `enableToolbarButtons()` or `disableToolbarButtons()`:
+
+```php
+RichEditor::make('content')
+    ->plugins([
+        HighlightRichContentPlugin::make(),
+    ])
+    ->disableToolbarButtons(['highlightWithCustomColor'])
+```
+
 ### Setting up a TipTap JavaScript extension
 
 Filament is able to asynchronously load JavaScript extensions for TipTap. To do this, you need to create a JavaScript file that contains the extension, and register it in the `getTipTapJsExtensions()` method of your [plugin](#extending-the-rich-editor).

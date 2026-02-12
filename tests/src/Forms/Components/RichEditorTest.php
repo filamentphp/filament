@@ -1,10 +1,15 @@
 <?php
 
+use Filament\Actions\Action;
 use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\RichEditor\Plugins\Contracts\HasToolbarButtons;
+use Filament\Forms\Components\RichEditor\Plugins\Contracts\RichContentPlugin;
+use Filament\Forms\Components\RichEditor\RichEditorTool;
 use Filament\Schemas\Schema;
 use Filament\Tests\Fixtures\Livewire\Livewire;
 use Filament\Tests\TestCase;
 use Illuminate\Validation\ValidationException;
+use Tiptap\Core\Extension;
 
 uses(TestCase::class);
 
@@ -361,4 +366,192 @@ test('`fileAttachments(true)` does not force `attachFiles` button to appear when
     // File attachments are enabled (drag/drop works), but the toolbar button remains hidden
     expect($richEditor->hasFileAttachments())->toBeTrue()
         ->and($richEditor->hasToolbarButton('attachFiles'))->toBeFalse();
+});
+
+test('plugin implementing `HasToolbarButtons` can enable toolbar buttons', function (): void {
+    $plugin = new class implements RichContentPlugin, HasToolbarButtons
+    {
+        /** @return array<Extension> */
+        public function getTipTapPhpExtensions(): array { return []; }
+
+        /** @return array<string> */
+        public function getTipTapJsExtensions(): array { return []; }
+
+        /** @return array<RichEditorTool> */
+        public function getEditorTools(): array { return []; }
+
+        /** @return array<Action> */
+        public function getEditorActions(): array { return []; }
+
+        /** @return array<string | array<string | array<string>>> */
+        public function getEnabledToolbarButtons(): array { return ['highlight']; }
+
+        /** @return array<string> */
+        public function getDisabledToolbarButtons(): array { return []; }
+    };
+
+    $richEditor = Schema::make(Livewire::make())
+        ->statePath('data')
+        ->components([
+            RichEditor::make('content')
+                ->plugins([$plugin]),
+        ])
+        ->getComponents()[0];
+
+    $flatButtons = array_merge(...$richEditor->getToolbarButtons());
+
+    expect($flatButtons)
+        ->toContain('highlight')
+        ->toContain('bold');
+});
+
+test('plugin implementing `HasToolbarButtons` can disable toolbar buttons', function (): void {
+    $plugin = new class implements RichContentPlugin, HasToolbarButtons
+    {
+        /** @return array<Extension> */
+        public function getTipTapPhpExtensions(): array { return []; }
+
+        /** @return array<string> */
+        public function getTipTapJsExtensions(): array { return []; }
+
+        /** @return array<RichEditorTool> */
+        public function getEditorTools(): array { return []; }
+
+        /** @return array<Action> */
+        public function getEditorActions(): array { return []; }
+
+        /** @return array<string | array<string | array<string>>> */
+        public function getEnabledToolbarButtons(): array { return []; }
+
+        /** @return array<string> */
+        public function getDisabledToolbarButtons(): array { return ['bold', 'italic']; }
+    };
+
+    $richEditor = Schema::make(Livewire::make())
+        ->statePath('data')
+        ->components([
+            RichEditor::make('content')
+                ->plugins([$plugin]),
+        ])
+        ->getComponents()[0];
+
+    $flatButtons = array_merge(...$richEditor->getToolbarButtons());
+
+    expect($flatButtons)
+        ->not->toContain('bold')
+        ->not->toContain('italic')
+        ->toContain('underline')
+        ->toContain('undo');
+});
+
+test('user `disableToolbarButtons()` overrides plugin-enabled toolbar buttons', function (): void {
+    $plugin = new class implements RichContentPlugin, HasToolbarButtons
+    {
+        /** @return array<Extension> */
+        public function getTipTapPhpExtensions(): array { return []; }
+
+        /** @return array<string> */
+        public function getTipTapJsExtensions(): array { return []; }
+
+        /** @return array<RichEditorTool> */
+        public function getEditorTools(): array { return []; }
+
+        /** @return array<Action> */
+        public function getEditorActions(): array { return []; }
+
+        /** @return array<string | array<string | array<string>>> */
+        public function getEnabledToolbarButtons(): array { return ['highlight']; }
+
+        /** @return array<string> */
+        public function getDisabledToolbarButtons(): array { return []; }
+    };
+
+    $schema = Schema::make(Livewire::make())
+        ->statePath('data')
+        ->components([
+            RichEditor::make('content')
+                ->plugins([$plugin]),
+        ]);
+
+    $richEditor = $schema->getComponents()[0];
+    $richEditor->disableToolbarButtons(['highlight']);
+
+    $flatButtons = array_merge(...$richEditor->getToolbarButtons());
+
+    expect($flatButtons)
+        ->not->toContain('highlight')
+        ->toContain('bold');
+});
+
+test('user `enableToolbarButtons()` overrides plugin-disabled toolbar buttons', function (): void {
+    $plugin = new class implements RichContentPlugin, HasToolbarButtons
+    {
+        /** @return array<Extension> */
+        public function getTipTapPhpExtensions(): array { return []; }
+
+        /** @return array<string> */
+        public function getTipTapJsExtensions(): array { return []; }
+
+        /** @return array<RichEditorTool> */
+        public function getEditorTools(): array { return []; }
+
+        /** @return array<Action> */
+        public function getEditorActions(): array { return []; }
+
+        /** @return array<string | array<string | array<string>>> */
+        public function getEnabledToolbarButtons(): array { return []; }
+
+        /** @return array<string> */
+        public function getDisabledToolbarButtons(): array { return ['bold']; }
+    };
+
+    $schema = Schema::make(Livewire::make())
+        ->statePath('data')
+        ->components([
+            RichEditor::make('content')
+                ->plugins([$plugin]),
+        ]);
+
+    $richEditor = $schema->getComponents()[0];
+    $richEditor->enableToolbarButtons(['bold']);
+
+    $flatButtons = array_merge(...$richEditor->getToolbarButtons());
+
+    expect($flatButtons)
+        ->toContain('bold');
+});
+
+test('plugin without `HasToolbarButtons` does not affect toolbar buttons', function (): void {
+    $plugin = new class implements RichContentPlugin
+    {
+        /** @return array<Extension> */
+        public function getTipTapPhpExtensions(): array { return []; }
+
+        /** @return array<string> */
+        public function getTipTapJsExtensions(): array { return []; }
+
+        /** @return array<RichEditorTool> */
+        public function getEditorTools(): array { return []; }
+
+        /** @return array<Action> */
+        public function getEditorActions(): array { return []; }
+    };
+
+    $richEditor = Schema::make(Livewire::make())
+        ->statePath('data')
+        ->components([
+            RichEditor::make('content')
+                ->plugins([$plugin]),
+        ])
+        ->getComponents()[0];
+
+    $defaultRichEditor = Schema::make(Livewire::make())
+        ->statePath('data')
+        ->components([
+            RichEditor::make('content'),
+        ])
+        ->getComponents()[0];
+
+    expect($richEditor->getToolbarButtons())
+        ->toEqual($defaultRichEditor->getToolbarButtons());
 });
