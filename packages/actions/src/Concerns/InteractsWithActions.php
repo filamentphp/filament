@@ -506,6 +506,10 @@ trait InteractsWithActions
                 continue;
             }
 
+            if (filled($action['arguments'] ?? [])) {
+                $resolvedAction->mergeArguments($action['arguments']);
+            }
+
             $resolvedAction->nestingIndex($actionNestingIndex);
             $resolvedAction->boot();
 
@@ -631,7 +635,7 @@ trait InteractsWithActions
     }
 
     /**
-     * @param  string | array<string>  $actions
+     * @param  string | array<string | array<string, mixed>>  $actions
      */
     public function getAction(string | array $actions, bool $isMounting = true): ?Action
     {
