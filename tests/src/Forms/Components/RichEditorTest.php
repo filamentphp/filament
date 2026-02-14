@@ -56,11 +56,16 @@ test('can get default toolbar buttons using `getDefaultToolbarButtons()`', funct
 });
 
 test('can overwrite toolbar buttons array using `toolbarButtons()`', function (): void {
-    $richEditor = RichEditor::make('content')
-        ->toolbarButtons([
-            ['bold', 'italic'],
-            ['undo', 'redo'],
-        ]);
+    $richEditor = Schema::make(Livewire::make())
+        ->statePath('data')
+        ->components([
+            RichEditor::make('content')
+                ->toolbarButtons([
+                    ['bold', 'italic'],
+                    ['undo', 'redo'],
+                ]),
+        ])
+        ->getComponents()[0];
 
     $buttons = $richEditor->getToolbarButtons();
 
@@ -72,10 +77,15 @@ test('can overwrite toolbar buttons array using `toolbarButtons()`', function ()
 });
 
 test('can overwrite toolbar buttons with closure using `toolbarButtons()`', function (): void {
-    $richEditor = RichEditor::make('content')
-        ->toolbarButtons(fn () => [
-            ['bold', 'italic'],
-        ]);
+    $richEditor = Schema::make(Livewire::make())
+        ->statePath('data')
+        ->components([
+            RichEditor::make('content')
+                ->toolbarButtons(fn () => [
+                    ['bold', 'italic'],
+                ]),
+        ])
+        ->getComponents()[0];
 
     $buttons = $richEditor->getToolbarButtons();
 
@@ -198,12 +208,17 @@ test('can check if custom toolbar buttons are set using `hasCustomToolbarButtons
 });
 
 test('toolbar buttons are properly grouped by `getToolbarButtons()`', function (): void {
-    $richEditor = RichEditor::make('content')
-        ->toolbarButtons([
-            ['bold', 'italic'],
-            'underline',
-            'strike',
-        ]);
+    $richEditor = Schema::make(Livewire::make())
+        ->statePath('data')
+        ->components([
+            RichEditor::make('content')
+                ->toolbarButtons([
+                    ['bold', 'italic'],
+                    'underline',
+                    'strike',
+                ]),
+        ])
+        ->getComponents()[0];
 
     $buttons = $richEditor->getToolbarButtons();
 
@@ -218,12 +233,17 @@ test('toolbar buttons are properly grouped by `getToolbarButtons()`', function (
 });
 
 test('blank button groups are filtered out by `getToolbarButtons()`', function (): void {
-    $richEditor = RichEditor::make('content')
-        ->toolbarButtons([
-            ['bold', 'italic'],
-            [],
-            ['undo', 'redo'],
-        ]);
+    $richEditor = Schema::make(Livewire::make())
+        ->statePath('data')
+        ->components([
+            RichEditor::make('content')
+                ->toolbarButtons([
+                    ['bold', 'italic'],
+                    [],
+                    ['undo', 'redo'],
+                ]),
+        ])
+        ->getComponents()[0];
 
     $buttons = $richEditor->getToolbarButtons();
 
@@ -277,22 +297,32 @@ test('`hasFileAttachments()` returns false when `attachFiles` button is removed 
 });
 
 test('`hasFileAttachments()` returns true when `attachFiles` is in custom toolbar buttons', function (): void {
-    $richEditor = RichEditor::make('content')
-        ->toolbarButtons([
-            ['bold', 'italic'],
-            ['attachFiles'],
-        ]);
+    $richEditor = Schema::make(Livewire::make())
+        ->statePath('data')
+        ->components([
+            RichEditor::make('content')
+                ->toolbarButtons([
+                    ['bold', 'italic'],
+                    ['attachFiles'],
+                ]),
+        ])
+        ->getComponents()[0];
 
     expect($richEditor->hasFileAttachments())->toBeTrue()
         ->and($richEditor->hasToolbarButton('attachFiles'))->toBeTrue();
 });
 
 test('`hasFileAttachments()` returns false with custom toolbar buttons without `attachFiles`', function (): void {
-    $richEditor = RichEditor::make('content')
-        ->toolbarButtons([
-            ['bold', 'italic'],
-            ['undo', 'redo'],
-        ]);
+    $richEditor = Schema::make(Livewire::make())
+        ->statePath('data')
+        ->components([
+            RichEditor::make('content')
+                ->toolbarButtons([
+                    ['bold', 'italic'],
+                    ['undo', 'redo'],
+                ]),
+        ])
+        ->getComponents()[0];
 
     expect($richEditor->hasFileAttachments())->toBeFalse()
         ->and($richEditor->hasToolbarButton('attachFiles'))->toBeFalse();
