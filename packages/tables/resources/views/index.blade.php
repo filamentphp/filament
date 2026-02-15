@@ -628,23 +628,21 @@
 
                                             {{ $columnManagerTriggerAction->getModalContent() }}
 
-                                            <div class="fi-ta-col-manager">
-                                                <div
-                                                    x-data="filamentTableColumnManager({
-                                                                columns: $wire.entangle('tableColumns'),
-                                                                isLive: {{ $columnManagerApplyAction->isVisible() ? 'false' : 'true' }},
-                                                            })"
-                                                    x-on:apply-table-column-manager.window="applyTableColumnManager()"
-                                                    x-on:reset-table-column-manager.window="resetDeferredColumns()"
-                                                    class="fi-ta-col-manager-ctn"
-                                                >
-                                                    <x-filament-tables::column-manager.content
-                                                        :columns="$columnManagerColumns"
-                                                        :has-reorderable-columns="$hasReorderableColumns"
-                                                        :has-toggleable-columns="$hasToggleableColumns"
-                                                        :reorder-animation-duration="$getReorderAnimationDuration()"
-                                                    />
-                                                </div>
+                                            <div
+                                                x-data="filamentTableColumnManager({
+                                                            columns: $wire.entangle('tableColumns'),
+                                                            isLive: {{ $columnManagerApplyAction->isVisible() ? 'false' : 'true' }},
+                                                        })"
+                                                x-on:apply-table-column-manager.window="applyTableColumnManager()"
+                                                x-on:reset-table-column-manager.window="resetDeferredColumns()"
+                                                class="fi-ta-col-manager"
+                                            >
+                                                <x-filament-tables::column-manager.content
+                                                    :columns="$columnManagerColumns"
+                                                    :has-reorderable-columns="$hasReorderableColumns"
+                                                    :has-toggleable-columns="$hasToggleableColumns"
+                                                    :reorder-animation-duration="$getReorderAnimationDuration()"
+                                                />
                                             </div>
 
                                             {{ $columnManagerTriggerAction->getModalContentFooter() }}
