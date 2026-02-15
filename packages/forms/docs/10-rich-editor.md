@@ -949,6 +949,133 @@ RichContentRenderer::make($record->content)
     ])
 ```
 
+### Grouping toolbar tools into dropdowns
+
+If your toolbar has many related tools (like headings, text alignment, or table operations), you can group them into a single dropdown button using `RichEditorDropdownTool`. This keeps the toolbar compact while still providing access to all options.
+
+`RichEditorDropdownTool` extends `RichEditorTool`, so it can be returned from `getEditorTools()` in a plugin and referenced by name in `toolbarButtons()`.
+
+#### Icon mode (default)
+
+In icon mode, the dropdown trigger displays the currently active option's icon. When the user clicks the trigger, a horizontal row of icon buttons appears:
+
+```php
+use Filament\Forms\Components\RichEditor\RichEditorDropdownTool;
+use Filament\Forms\Components\RichEditor\RichEditorTool;
+
+RichEditorDropdownTool::make('alignDropdown')
+    ->label('Text alignment')
+    ->icon('fi-o-align-start')
+    ->options([
+        RichEditorTool::make('alignStart')
+            ->icon('fi-o-align-start')
+            ->label('Align left')
+            ->jsHandler("\$getEditor()?.chain().focus().setTextAlign('start').run()")
+            ->activeJsExpression("!\$getEditor()?.isActive({ textAlign: 'center' }) && !\$getEditor()?.isActive({ textAlign: 'end' }) && !\$getEditor()?.isActive({ textAlign: 'justify' })"),
+        RichEditorTool::make('alignCenter')
+            ->icon('fi-o-align-center')
+            ->label('Align center')
+            ->jsHandler("\$getEditor()?.chain().focus().setTextAlign('center').run()")
+            ->activeJsExpression("\$getEditor()?.isActive({ textAlign: 'center' })"),
+        RichEditorTool::make('alignEnd')
+            ->icon('fi-o-align-end')
+            ->label('Align right')
+            ->jsHandler("\$getEditor()?.chain().focus().setTextAlign('end').run()")
+            ->activeJsExpression("\$getEditor()?.isActive({ textAlign: 'end' })"),
+        RichEditorTool::make('alignJustify')
+            ->icon('fi-o-align-justify')
+            ->label('Justify')
+            ->jsHandler("\$getEditor()?.chain().focus().setTextAlign('justify').run()")
+            ->activeJsExpression("\$getEditor()?.isActive({ textAlign: 'justify' })"),
+    ])
+```
+
+The icon passed to the dropdown itself (via `->icon()`) is used as the default trigger icon when no option is active.
+
+#### Select mode
+
+In select mode, the dropdown trigger displays the currently active option's text label, similar to a `<select>` element. The menu appears as a vertical list of text options:
+
+```php
+use Filament\Forms\Components\RichEditor\RichEditorDropdownTool;
+use Filament\Forms\Components\RichEditor\RichEditorTool;
+use Filament\Support\Icons\Heroicon;
+
+RichEditorDropdownTool::make('headingDropdown')
+    ->label('Text style')
+    ->icon(Heroicon::Bars3BottomLeft)
+    ->selectMode()
+    ->options([
+        RichEditorTool::make('paragraph')
+            ->icon(Heroicon::Bars3BottomLeft)
+            ->label('Paragraph')
+            ->jsHandler('$getEditor()?.chain().focus().setParagraph().run()')
+            ->activeKey('paragraph'),
+        RichEditorTool::make('heading1')
+            ->icon(Heroicon::H1)
+            ->label('Heading 1')
+            ->jsHandler('$getEditor()?.chain().focus().toggleHeading({ level: 1 }).run()')
+            ->activeKey('heading')
+            ->activeOptions(['level' => 1]),
+        RichEditorTool::make('heading2')
+            ->icon(Heroicon::H2)
+            ->label('Heading 2')
+            ->jsHandler('$getEditor()?.chain().focus().toggleHeading({ level: 2 }).run()')
+            ->activeKey('heading')
+            ->activeOptions(['level' => 2]),
+        RichEditorTool::make('heading3')
+            ->icon(Heroicon::H3)
+            ->label('Heading 3')
+            ->jsHandler('$getEditor()?.chain().focus().toggleHeading({ level: 3 }).run()')
+            ->activeKey('heading')
+            ->activeOptions(['level' => 3]),
+    ])
+```
+
+#### Registering dropdown tools in a plugin
+
+Return `RichEditorDropdownTool` instances from `getEditorTools()`, then reference them by name in `toolbarButtons()`:
+
+```php
+use Filament\Forms\Components\RichEditor\Plugins\Contracts\RichContentPlugin;
+use Filament\Forms\Components\RichEditor\RichEditorDropdownTool;
+use Filament\Forms\Components\RichEditor\RichEditorTool;
+
+class MyPlugin implements RichContentPlugin
+{
+    // ...
+
+    public function getEditorTools(): array
+    {
+        return [
+            RichEditorDropdownTool::make('headingDropdown')
+                ->label('Text style')
+                ->icon(Heroicon::Bars3BottomLeft)
+                ->selectMode()
+                ->options([/* ... */]),
+            RichEditorDropdownTool::make('alignDropdown')
+                ->label('Text alignment')
+                ->icon('fi-o-align-start')
+                ->options([/* ... */]),
+        ];
+    }
+}
+```
+
+```php
+use Filament\Forms\Components\RichEditor;
+
+RichEditor::make('content')
+    ->toolbarButtons([
+        ['bold', 'italic', 'underline'],
+        ['headingDropdown', 'alignDropdown'],
+        ['bulletList', 'orderedList'],
+    ])
+    ->plugins([MyPlugin::make()])
+```
+
+Each option in the dropdown is a regular `RichEditorTool` instance, so all existing tool features work — including `jsHandler()`, `activeKey()`, `activeOptions()`, `activeJsExpression()`, and `action()`.
+
 ### Setting up a TipTap JavaScript extension
 
 Filament is able to asynchronously load JavaScript extensions for TipTap. To do this, you need to create a JavaScript file that contains the extension, and register it in the `getTipTapJsExtensions()` method of your [plugin](#extending-the-rich-editor).
