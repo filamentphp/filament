@@ -628,15 +628,24 @@
 
                                             {{ $columnManagerTriggerAction->getModalContent() }}
 
-                                            <x-filament-tables::column-manager
-                                                :apply-action="$columnManagerApplyAction"
-                                                :columns="$columnManagerColumns"
-                                                :reset-action-position="$columnManagerResetActionPosition"
-                                                :has-reorderable-columns="$hasReorderableColumns"
-                                                :has-toggleable-columns="$hasToggleableColumns"
-                                                :heading-tag="$secondLevelHeadingTag"
-                                                :reorder-animation-duration="$getReorderAnimationDuration()"
-                                            />
+                                            <div class="fi-ta-col-manager">
+                                                <div
+                                                    x-data="filamentTableColumnManager({
+                                                                columns: $wire.entangle('tableColumns'),
+                                                                isLive: {{ $columnManagerApplyAction->isVisible() ? 'false' : 'true' }},
+                                                            })"
+                                                    x-on:apply-table-column-manager.window="applyTableColumnManager()"
+                                                    x-on:reset-table-column-manager.window="resetDeferredColumns()"
+                                                    class="fi-ta-col-manager-ctn"
+                                                >
+                                                    <x-filament-tables::column-manager.content
+                                                        :columns="$columnManagerColumns"
+                                                        :has-reorderable-columns="$hasReorderableColumns"
+                                                        :has-toggleable-columns="$hasToggleableColumns"
+                                                        :reorder-animation-duration="$getReorderAnimationDuration()"
+                                                    />
+                                                </div>
+                                            </div>
 
                                             {{ $columnManagerTriggerAction->getModalContentFooter() }}
                                         </x-filament::modal>

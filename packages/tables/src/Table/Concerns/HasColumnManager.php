@@ -257,11 +257,11 @@ trait HasColumnManager
             ->modalSubmitAction(false)
             ->extraModalFooterActions([
                 $this->getColumnManagerApplyAction()
-                    ->close(),
+                    ->alpineClickHandler("\$dispatch('apply-table-column-manager'); close()"),
                 Action::make('resetColumnManager')
                     ->label(__('filament-tables::table.column_manager.actions.reset.label'))
                     ->color('danger')
-                    ->action('resetTableColumnManager')
+                    ->alpineClickHandler("\$dispatch('reset-table-column-manager'); \$wire.resetTableColumnManager()")
                     ->button(),
             ])
             ->modalCancelActionLabel(__('filament::components/modal.actions.close.label'))
