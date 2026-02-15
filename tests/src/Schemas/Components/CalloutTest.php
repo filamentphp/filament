@@ -78,13 +78,13 @@ it('can call footer `actions()`', function (): void {
         ->assertSet('actionCalled', true);
 });
 
-it('can use `controls()`', function (): void {
+it('can use `controlActions()`', function (): void {
     livewire(TestComponentWithCalloutControlActions::class)
         ->assertSuccessful()
         ->assertSeeHtml('dismiss');
 });
 
-it('can call control `actions()`', function (): void {
+it('can call `controlActions()`', function (): void {
     livewire(TestComponentWithCallableControlsAction::class)
         ->callAction(TestAction::make('set_value')->schemaComponent())
         ->assertSet('actionCalled', true);

@@ -244,6 +244,15 @@ class Callout extends Component
                 ->modifyActionGroupsUsing(fn (ActionGroup $actionGroup) => $actionGroup->defaultSize(Size::Small));
         }
 
+        if ($key === static::CONTROLS_SCHEMA_KEY) {
+            $schema
+                ->inline()
+                ->embeddedInParentComponent()
+                ->modifyActionsUsing(fn (Action $action) => $action
+                    ->defaultSize(Size::Small))
+                ->modifyActionGroupsUsing(fn (ActionGroup $actionGroup) => $actionGroup->defaultSize(Size::Small));
+        }
+
         return $schema;
     }
 }

@@ -194,8 +194,6 @@ Callout::make('Dismissible notice')
     ])
 ```
 
-<UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `controlActions()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
-
 ## Adding custom footer content
 
 You can add custom content to the footer using the `footer()` method. This accepts an array of schema components:
