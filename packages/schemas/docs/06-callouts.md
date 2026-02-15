@@ -222,22 +222,24 @@ Callout::make('Backup complete')
 
 ## Adding control actions to the callout
 
-You can add control [actions](../actions) to the top-right corner of the callout using the `controlActions()` method:
+You can add control [actions](../actions) to the top-right corner of the callout using the `controlActions()` method. For example, you could add a dismiss button that hides the callout for the duration of the user's session:
 
 ```php
 use Filament\Actions\Action;
 use Filament\Schemas\Components\Callout;
 use Filament\Support\Icons\Heroicon;
 
-Callout::make('Dismissible notice')
-    ->description('This callout can be dismissed using the icon button in the top-right corner.')
+Callout::make('New version available')
+    ->description('Filament v4 has been released with exciting new features and improvements.')
     ->info()
     ->controlActions([
         Action::make('dismiss')
             ->icon(Heroicon::XMark)
             ->iconButton()
-            ->color('gray'),
+            ->color('gray')
+            ->action(fn () => session()->put('new-version-callout-dismissed', true)),
     ])
+    ->visible(fn (): bool => ! session()->get('new-version-callout-dismissed'))
 ```
 
 <AutoScreenshot name="schemas/layout/callout/control-actions" alt="Callout with control actions" version="4.x" />

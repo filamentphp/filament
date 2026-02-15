@@ -242,7 +242,12 @@ Screenshots are in `docs-assets/screenshots/`. To add new screenshots:
    },
    ```
 
-3. **Generate screenshots**:
+3. **Build assets** if you changed any CSS or JS files (the docs app uses the compiled output):
+   ```bash
+   npm run build
+   ```
+
+4. **Generate screenshots**:
    ```bash
    # Terminal 1: Start the app server (must use default port 8000)
    cd docs-assets/app && php artisan serve
@@ -256,6 +261,6 @@ Screenshots are in `docs-assets/screenshots/`. To add new screenshots:
 
    **Important:** The script expects `http://127.0.0.1:8000`. Don't use a custom port.
 
-4. **Use in docs** with `<AutoScreenshot name="schemas/layout/my-component/simple" alt="Description" version="4.x" />`
+5. **Use in docs** with `<AutoScreenshot name="schemas/layout/my-component/simple" alt="Description" version="4.x" />`
 
 Screenshots are generated in `images/light/` and `images/dark/`. Use natural, realistic content - not test-like examples.

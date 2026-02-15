@@ -860,8 +860,8 @@ class LayoutDemo extends Component implements HasActions, HasSchemas
                         'class' => 'p-16 max-w-2xl',
                     ])
                     ->schema([
-                        Callout::make('Dismissible notice')
-                            ->description('This callout can be dismissed using the icon button in the top-right corner.')
+                        Callout::make('New version available')
+                            ->description('Filament v4 has been released with exciting new features and improvements.')
                             ->info()
                             ->controlActions([
                                 Action::make('dismiss')
