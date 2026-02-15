@@ -855,6 +855,22 @@ class LayoutDemo extends Component implements HasActions, HasSchemas
                             ]),
                     ]),
                 Group::make()
+                    ->id('calloutControlActions')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-2xl',
+                    ])
+                    ->schema([
+                        Callout::make('Dismissible notice')
+                            ->description('This callout can be dismissed using the icon button in the top-right corner.')
+                            ->info()
+                            ->controlActions([
+                                Action::make('dismiss')
+                                    ->icon(Heroicon::XMark)
+                                    ->iconButton()
+                                    ->color('gray'),
+                            ]),
+                    ]),
+                Group::make()
                     ->id('calloutActionsAlignedEnd')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-2xl',

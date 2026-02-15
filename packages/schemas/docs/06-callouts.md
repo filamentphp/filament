@@ -174,26 +174,6 @@ The available alignment options are `Alignment::Start`, `Alignment::Center`, `Al
 
 <AutoScreenshot name="schemas/layout/callout/actions-aligned-end" alt="Callout with actions aligned to the end" version="4.x" />
 
-## Adding control actions to the callout
-
-You can add control [actions](../actions) to the top-right corner of the callout using the `controlActions()` method:
-
-```php
-use Filament\Actions\Action;
-use Filament\Schemas\Components\Callout;
-
-Callout::make('Dismissible notice')
-    ->description('This callout can be dismissed using the icon button in the top-right corner.')
-    ->info()
-    ->controlActions([
-        Action::make('dismiss')
-            ->label('Dismiss')
-            ->icon('heroicon-m-x-mark')
-            ->iconButton()
-            ->color('gray'),
-    ])
-```
-
 ## Adding custom footer content
 
 You can add custom content to the footer using the `footer()` method. This accepts an array of schema components:
@@ -239,3 +219,25 @@ Callout::make('Backup complete')
 ```
 
 <UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `controls()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+## Adding control actions to the callout
+
+You can add control [actions](../actions) to the top-right corner of the callout using the `controlActions()` method:
+
+```php
+use Filament\Actions\Action;
+use Filament\Schemas\Components\Callout;
+use Filament\Support\Icons\Heroicon;
+
+Callout::make('Dismissible notice')
+    ->description('This callout can be dismissed using the icon button in the top-right corner.')
+    ->info()
+    ->controlActions([
+        Action::make('dismiss')
+            ->icon(Heroicon::XMark)
+            ->iconButton()
+            ->color('gray'),
+    ])
+```
+
+<AutoScreenshot name="schemas/layout/callout/control-actions" alt="Callout with control actions" version="4.x" />
