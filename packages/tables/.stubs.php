@@ -161,7 +161,7 @@ namespace Livewire\Features\SupportTesting {
         public function assertTableActionHalted(string | array $name): static {}
 
         /**
-         * @deprecated Use `assertHasTableActionErrors()` instead.
+         * @deprecated Use `assertHasFormErrors()` instead.
          */
         public function assertHasTableActionErrors(array $keys = []): static {}
 

@@ -168,6 +168,10 @@ trait HasBulkActions
             return false;
         }
 
+        if ($this->checksIfRecordIsSelectable()) {
+            return false;
+        }
+
         return (bool) $this->evaluate($this->canTrackDeselectedRecords);
     }
 

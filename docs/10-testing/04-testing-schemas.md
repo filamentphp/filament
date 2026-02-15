@@ -1,6 +1,7 @@
 ---
 title: Testing schemas
 ---
+import Aside from "@components/Aside.astro"
 
 ## Filling a form in a test
 
@@ -178,7 +179,9 @@ test('title is hidden', function () {
 });
 ```
 
-> For both `assertFormFieldHidden()` and `assertFormFieldVisible()` you can pass the name of a specific form the field belongs to as the second argument like `assertFormFieldHidden('title', 'createPostForm')`.
+<Aside variant="tip">
+    For both `assertFormFieldHidden()` and `assertFormFieldVisible()` you can pass the name of a specific form the field belongs to as the second argument like `assertFormFieldHidden('title', 'createPostForm')`.
+</Aside>
 
 ## Testing disabled form fields
 
@@ -204,7 +207,9 @@ test('title is disabled', function () {
 });
 ```
 
-> For both `assertFormFieldEnabled()` and `assertFormFieldDisabled()` you can pass the name of a specific form the field belongs to as the second argument like `assertFormFieldEnabled('title', 'createPostForm')`.
+<Aside variant="tip">
+    For both `assertFormFieldEnabled()` and `assertFormFieldDisabled()` you can pass the name of a specific form the field belongs to as the second argument like `assertFormFieldEnabled('title', 'createPostForm')`.
+</Aside>
 
 ## Testing other schema components
 
@@ -275,12 +280,40 @@ test('comments section is enabled', function () {
                     $component->isEnabled(),
                     'Failed asserting that comments-section is enabled.',
                 );
-                
+
                 return true;
             },
         );
 });
 ```
+
+### Testing the visibility of schema components
+
+To ensure that a schema component is visible, pass the key to `assertSchemaComponentVisible()`:
+
+```php
+use function Pest\Livewire\livewire;
+
+test('comments section is visible', function () {
+    livewire(EditPost::class)
+        ->assertSchemaComponentVisible('comments-section');
+});
+```
+
+Or to ensure that a schema component is hidden you can pass the key to `assertSchemaComponentHidden()`:
+
+```php
+use function Pest\Livewire\livewire;
+
+test('comments section is hidden', function () {
+    livewire(EditPost::class)
+        ->assertSchemaComponentHidden('comments-section');
+});
+```
+
+<Aside variant="tip">
+    For both `assertSchemaComponentHidden()` and `assertSchemaComponentVisible()` you can pass the name of a specific schema the component belongs to as the second argument like `assertSchemaComponentHidden('comments-section', 'createPostForm')`.
+</Aside>
 
 ## Testing repeaters
 

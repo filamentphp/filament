@@ -641,7 +641,7 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
         $rules[] = function (string $attribute, array $value, Closure $fail) use ($fileRules): void {
             $files = array_filter($value, fn (TemporaryUploadedFile | string $file): bool => $file instanceof TemporaryUploadedFile);
 
-            $name = $this->getName();
+            $name = Str::afterLast($this->getName(), '.');
 
             $validationMessages = $this->getValidationMessages();
 

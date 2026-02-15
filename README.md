@@ -47,6 +47,6 @@ Please see our [contributing guide](https://filamentphp.com/docs/4.x/introductio
 
 🐞 If you spot a bug, please [submit a detailed issue](https://github.com/filamentphp/filament/issues/new?template=bug_report.yml), and wait for assistance.
 
-🤔 If you have a question or feature request, please [start a new discussion](https://github.com/filamentphp/filament/discussions/new). We also have a [Discord community](https://filamentphp.com/discord). For quick help, ask questions in the appropriate channel.
+🤔 If you have a question or feature request, please [start a new discussion](https://github.com/filamentphp/filament/discussions/new/choose). We also have a [Discord community](https://filamentphp.com/discord). For quick help, ask questions in the appropriate channel.
 
 🔐 If you discover a vulnerability, please review our [security policy](https://github.com/filamentphp/filament/blob/4.x/SECURITY.md).

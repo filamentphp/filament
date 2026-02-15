@@ -4,7 +4,7 @@ contact_links:
     url: https://github.com/filamentphp/filament/discussions/new?category=ideas
     about: Share ideas for new features
   - name: Support question
-    url: https://github.com/filamentphp/filament/discussions/new?category=q-a
+    url: https://github.com/filamentphp/filament/discussions/new?category=help
     about: Ask the community for help
   - name: Discord
     url: https://filamentphp.com/discord

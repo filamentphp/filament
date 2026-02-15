@@ -3,6 +3,7 @@
     "actions": [
         {
             "name": "view",
+            "alpineClickHandler": null,
             "color": null,
             "event": null,
             "eventData": [],
@@ -27,6 +28,7 @@
         },
         {
             "name": "edit",
+            "alpineClickHandler": null,
             "color": null,
             "event": null,
             "eventData": [],
@@ -51,6 +53,7 @@
         },
         {
             "name": "delete",
+            "alpineClickHandler": null,
             "color": "danger",
             "event": null,
             "eventData": [],
