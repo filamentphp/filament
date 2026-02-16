@@ -1656,10 +1656,12 @@
                                                             ])))
                                                         }}
 
-                                                        {{ \Filament\Support\generate_loading_indicator_html(new \Illuminate\View\ComponentAttributeBag([
-                                                            'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
-                                                            'wire:target' => "sortTable('{$columnName}')",
-                                                        ])) }}
+                                                        {{
+                                                            \Filament\Support\generate_loading_indicator_html(new \Illuminate\View\ComponentAttributeBag([
+                                                                'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
+                                                                'wire:target' => "sortTable('{$columnName}')",
+                                                            ]))
+                                                        }}
                                                     </span>
                                                 @else
                                                     @if (filled($columnHeaderTooltip))
