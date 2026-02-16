@@ -36,7 +36,7 @@
     }
 
     & .fi-fo-rich-editor-dropdown-tool-trigger {
-        @apply flex h-8 cursor-pointer items-center justify-center gap-0.5 rounded-lg border-none bg-transparent px-1 text-sm font-semibold text-gray-700 outline-none transition duration-75 hover:bg-gray-50 dark:text-gray-200 dark:hover:bg-white/5;
+        @apply flex h-8 cursor-pointer items-center justify-center gap-0.5 rounded-lg border-none bg-transparent px-1 text-sm font-semibold text-gray-700 transition duration-75 outline-none hover:bg-gray-50 dark:text-gray-200 dark:hover:bg-white/5;
     }
 
     & .fi-fo-rich-editor-dropdown-tool-chevron {
@@ -48,7 +48,7 @@
     }
 
     & .fi-fo-rich-editor-dropdown-tool-option {
-        @apply flex h-8 min-w-8 cursor-pointer items-center justify-center rounded-lg border-none bg-transparent p-0 text-sm font-semibold text-gray-700 outline-none transition duration-75 hover:bg-gray-50 dark:text-gray-200 dark:hover:bg-white/5;
+        @apply flex h-8 min-w-8 cursor-pointer items-center justify-center rounded-lg border-none bg-transparent p-0 text-sm font-semibold text-gray-700 transition duration-75 outline-none hover:bg-gray-50 dark:text-gray-200 dark:hover:bg-white/5;
 
         &.fi-active {
             @apply text-primary-600 dark:text-primary-400 bg-gray-50 dark:bg-white/5;
@@ -65,7 +65,7 @@
         }
 
         & .fi-fo-rich-editor-dropdown-tool-option {
-            @apply min-w-0 justify-start whitespace-nowrap px-2 py-1 text-[0.8125rem] font-normal;
+            @apply min-w-0 justify-start px-2 py-1 text-[0.8125rem] font-normal whitespace-nowrap;
         }
     }
 
