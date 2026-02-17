@@ -404,3 +404,30 @@ test('RichEditor receives file attachment provider from rich content attribute w
     expect($richEditor->getFileAttachmentProvider())
         ->toBe($expectedProvider);
 });
+
+test('rich content attribute resolves file attachment provider from plugin implementing `HasFileAttachmentProvider` without calling `fileAttachmentProvider()`', function (): void {
+    $record = new PostWithRichContent;
+
+    $richContentAttribute = $record->getRichContentAttribute('content');
+    $plugin = $richContentAttribute->getPlugins()[0];
+
+    expect($richContentAttribute)
+        ->getFileAttachmentProvider()->toBe($plugin->getFileAttachmentProvider());
+});
+
+test('RichEditor receives file attachment provider from rich content attribute when attribute resolves it from plugin', function (): void {
+    $record = new PostWithRichContent;
+
+    $plugin = $record->getRichContentAttribute('content')->getPlugins()[0];
+
+    $richEditor = Schema::make(Livewire::make())
+        ->model($record)
+        ->statePath('data')
+        ->components([
+            RichEditor::make('content'),
+        ])
+        ->getComponents()[0];
+
+    expect($richEditor)
+        ->getFileAttachmentProvider()->toBe($plugin->getFileAttachmentProvider());
+});
