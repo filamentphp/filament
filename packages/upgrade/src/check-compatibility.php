@@ -1,7 +1,25 @@
 <?php
 
+use Laravel\Prompts\ConfirmPrompt;
+use Laravel\Prompts\Prompt;
 use function Laravel\Prompts\confirm;
 use function Termwind\render;
+
+Prompt::fallbackWhen(windows_os());
+
+ConfirmPrompt::fallbackUsing(function (ConfirmPrompt $prompt) {
+    $default = $prompt->default ? 'yes' : 'no';
+
+    render("<p class=\"text-cyan\">{$prompt->label} (yes/no) [{$default}]</p>");
+
+    $input = strtolower(trim(fgets(STDIN)));
+
+    if ($input === '') {
+        return $prompt->default;
+    }
+
+    return in_array($input, ['y', 'yes', '1']);
+});
 
 render('<p class="text-blue font-bold">Checking PHP version compatibility with v4...</p>');
 
@@ -132,7 +150,7 @@ foreach ($plugins as $plugin) {
                         continue;
                     }
 
-                    if (preg_match("/\^\s*4(?:\.|$)|~\s*4(?:\.|$)|>=\s*4(?:\.|$)/", (string) $constraint)) {
+                    if (preg_match("/\^\s*v?4(?:\.|$)|~\s*v?4(?:\.|$)|>=\s*v?4(?:\.|$)/", (string) $constraint)) {
                         $compatibility = [
                             'version' => $checkingVersion['version'],
                             'isPrerelease' => false,
@@ -168,7 +186,7 @@ foreach ($plugins as $plugin) {
                         continue;
                     }
 
-                    if (preg_match("/\^\s*4(?:\.|$)|~\s*4(?:\.|$)|>=\s*4(?:\.|$)/", (string) $constraint)) {
+                    if (preg_match("/\^\s*v?4(?:\.|$)|~\s*v?4(?:\.|$)|>=\s*v?4(?:\.|$)/", (string) $constraint)) {
                         $compatibility = [
                             'version' => $checkingVersion['version'],
                             'isPrerelease' => true,

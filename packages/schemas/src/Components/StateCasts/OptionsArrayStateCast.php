@@ -21,8 +21,11 @@ class OptionsArrayStateCast implements StateCast
             $state = json_decode($state, associative: true);
         }
 
+        /** @var array<mixed> $state */
+        $state = Arr::wrap($state);
+
         return array_reduce(
-            Arr::wrap($state),
+            $state,
             function (array $carry, $stateItem): array {
                 if (blank($stateItem)) {
                     return $carry;
@@ -73,8 +76,11 @@ class OptionsArrayStateCast implements StateCast
             $state = json_decode($state, associative: true);
         }
 
+        /** @var array<mixed> $state */
+        $state = Arr::wrap($state);
+
         return array_reduce(
-            Arr::wrap($state),
+            $state,
             function (array $carry, $stateItem): array {
                 if (blank($stateItem)) {
                     return $carry;
