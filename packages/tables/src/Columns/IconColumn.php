@@ -248,7 +248,7 @@ class IconColumn extends Column implements HasEmbeddedView
     public function isBoolean(): bool
     {
         if (blank($this->isBoolean)) {
-            $this->isBoolean = $this->getRecord()?->hasCast($this->getName(), ['bool', 'boolean']);
+            $this->isBoolean = ! is_array($this->getRecord()) && $this->getRecord()?->hasCast($this->getName(), ['bool', 'boolean']);
         }
 
         return (bool) $this->evaluate($this->isBoolean);
