@@ -347,10 +347,9 @@ it('cannot access record for action after record no longer matches tab without `
         ->assertCanSeeTableRecords([$post])
         ->tap(fn () => $post->update(['is_published' => false]));
 
-    expect(
-        fn () => livewire(ListPostsWithTabs::class)
-            ->set('shouldExcludeTabQueryWhenResolvingRecord', false)
-            ->set('activeTab', 'published')
-            ->mountTableAction(DeleteAction::class, $post)
-    )->toThrow(TypeError::class);
+    livewire(ListPostsWithTabs::class)
+        ->set('shouldExcludeTabQueryWhenResolvingRecord', false)
+        ->set('activeTab', 'published')
+        ->mountTableAction(DeleteAction::class, $post)
+        ->assertTableActionNotMounted(DeleteAction::class);
 });
