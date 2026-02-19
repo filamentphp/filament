@@ -100,6 +100,10 @@ TextColumn::make('status')
 
 You may add other things to the badge, like an [icon](#adding-an-icon).
 
+<Aside variant="warning">
+    When using `->badge()` you cannot set `->iconColor()` this is so that we match consistently with the background color, if you want you can override this behavior with the `.fi-icon` and `.fi-color` [CSS Hooks](../../styling/css-hooks)
+</Aside>
+
 Optionally, you may pass a boolean value to control if the text should be in a badge or not:
 
 ```php
