@@ -165,6 +165,8 @@ trait InteractsWithActions
                 $action->callAfterFormFilled();
             }
         } catch (Halt $exception) {
+            $this->unmountAction(canCancelParentActions: false);
+
             return null;
         } catch (Cancel $exception) {
             $this->unmountAction(canCancelParentActions: false);
