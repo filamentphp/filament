@@ -78,7 +78,7 @@ class Count extends Summarizer
 
     public function getSelectedState(): int | float | null
     {
-        if ($this->selectAlias === null || ! array_key_exists($this->selectAlias, $this->selectedState)) {
+        if (! array_key_exists($this->selectAlias ?? '', $this->selectedState)) {
             return null;
         }
 
