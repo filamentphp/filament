@@ -1,6 +1,6 @@
 <?php
 
-use Filament\Tables;
+use Filament\Tables\Grouping\Group;
 use Filament\Tests\Fixtures\Livewire\GroupedCustomDataTable;
 use Filament\Tests\Fixtures\Livewire\PostsTable;
 use Filament\Tests\Fixtures\Livewire\UsersTable;
@@ -44,7 +44,7 @@ it('can group a table', function (): void {
             $table = $livewire->getTable();
 
             expect($table)
-                ->getGrouping()->toBeInstanceOf(Tables\Grouping\Group::class)
+                ->getGrouping()->toBeInstanceOf(Group::class)
                 ->and($table->getGrouping())
                 ->getLabel()->toBe('Dynamic label');
         });
@@ -506,7 +506,7 @@ it('can group records with nullable `BelongsTo` -> `HasOneThrough` relationship'
 
 it('can handle array records in `getKey()`', function (): void {
     $livewire = livewire(PostsTable::class)->instance();
-    $group = \Filament\Tables\Grouping\Group::make('status')->table($livewire->getTable());
+    $group = Group::make('status')->table($livewire->getTable());
 
     $arrayRecord = ['__key' => '1', 'name' => 'John', 'status' => 'active'];
 
@@ -515,7 +515,7 @@ it('can handle array records in `getKey()`', function (): void {
 
 it('can handle array records in `getStringKey()`', function (): void {
     $livewire = livewire(PostsTable::class)->instance();
-    $group = \Filament\Tables\Grouping\Group::make('status')->table($livewire->getTable());
+    $group = Group::make('status')->table($livewire->getTable());
 
     $arrayRecord = ['__key' => '1', 'name' => 'John', 'status' => 'active'];
 
@@ -524,7 +524,7 @@ it('can handle array records in `getStringKey()`', function (): void {
 
 it('can handle array records in `getTitle()`', function (): void {
     $livewire = livewire(PostsTable::class)->instance();
-    $group = \Filament\Tables\Grouping\Group::make('status')->table($livewire->getTable());
+    $group = Group::make('status')->table($livewire->getTable());
 
     $arrayRecord = ['__key' => '1', 'name' => 'John', 'status' => 'active'];
 
@@ -533,7 +533,7 @@ it('can handle array records in `getTitle()`', function (): void {
 
 it('can handle array records in `getDescription()`', function (): void {
     $livewire = livewire(PostsTable::class)->instance();
-    $group = \Filament\Tables\Grouping\Group::make('status')
+    $group = Group::make('status')
         ->getDescriptionFromRecordUsing(fn (array $record): string => 'User: ' . $record['name'])
         ->table($livewire->getTable());
 
@@ -544,7 +544,7 @@ it('can handle array records in `getDescription()`', function (): void {
 
 it('can use custom `getKeyFromRecordUsing()` with array records', function (): void {
     $livewire = livewire(PostsTable::class)->instance();
-    $group = \Filament\Tables\Grouping\Group::make('status')
+    $group = Group::make('status')
         ->getKeyFromRecordUsing(fn (array $record): string => strtoupper($record['status']))
         ->table($livewire->getTable());
 
@@ -556,7 +556,7 @@ it('can use custom `getKeyFromRecordUsing()` with array records', function (): v
 
 it('can use custom `getTitleFromRecordUsing()` with array records', function (): void {
     $livewire = livewire(PostsTable::class)->instance();
-    $group = \Filament\Tables\Grouping\Group::make('status')
+    $group = Group::make('status')
         ->getTitleFromRecordUsing(fn (array $record): string => 'Status: ' . ucfirst($record['status']))
         ->table($livewire->getTable());
 
