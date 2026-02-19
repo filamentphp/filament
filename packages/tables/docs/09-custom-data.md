@@ -329,6 +329,10 @@ In this example, the `forPage()` method is used to paginate the data. This proba
     It might seem like Filament should paginate the data for you, but in many cases, it's better to let your data source—like a custom query or API call—handle the pagination instead.
 </Aside>
 
+<Aside variant="warning">
+    If you have multiple custom tables on a page and are using the `queryStringIdentifier('customIdentifier')` method to distinguish them, you will need to add an `options` argument to the `LengthAwarePaginator` with the `pageName`, like `options: ['pageName' => 'customIdentifierPage']`. Note that adding the `Page` suffix to your custom identifier is required here.
+</Aside>
+
 ## Actions
 
 [Actions](actions) in the table work similarly to how they do when using [Eloquent models](https://laravel.com/docs/eloquent). The only difference is that the `$record` parameter in the action's callback function will be an `array` instead of a `Model`.

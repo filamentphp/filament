@@ -14,6 +14,7 @@ use Filament\Tables\View\Components\Columns\IconColumnComponent\IconComponent;
 use Filament\Tables\View\TablesIconAlias;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Js;
@@ -248,7 +249,9 @@ class IconColumn extends Column implements HasEmbeddedView
     public function isBoolean(): bool
     {
         if (blank($this->isBoolean)) {
-            $this->isBoolean = $this->getRecord()?->hasCast($this->getName(), ['bool', 'boolean']);
+            $record = $this->getRecord();
+
+            $this->isBoolean = ($record instanceof Model) && $this->getRecord()->hasCast($this->getName(), ['bool', 'boolean']);
         }
 
         return (bool) $this->evaluate($this->isBoolean);
