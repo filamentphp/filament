@@ -250,7 +250,7 @@ class IconColumn extends Column implements HasEmbeddedView
     {
         if (blank($this->isBoolean)) {
             $record = $this->getRecord();
-            
+
             $this->isBoolean = ($record instanceof Model) && $this->getRecord()->hasCast($this->getName(), ['bool', 'boolean']);
         }
 
