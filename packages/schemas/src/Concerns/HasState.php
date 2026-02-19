@@ -452,20 +452,27 @@ trait HasState
             // should only affect validation rules, not the dehydrated output. Replace
             // the mutated values with clean Livewire data, preserving the validated
             // array's sparse key structure.
-            $rawState = $this->getRawState();
+            $statePath = $this->getStatePath();
+            $livewire = $this->getLivewire();
 
-            if (is_array($rawState)) {
-                $statePath = $this->getStatePath();
+            if (filled($statePath)) {
+                $rawState = data_get($livewire, $statePath);
 
-                if (filled($statePath)) {
+                if (is_array($rawState)) {
                     $validatedFormData = data_get($state, $statePath);
 
                     if (is_array($validatedFormData)) {
                         data_set($state, $statePath, $this->pruneStateToMatchKeys($rawState, $validatedFormData));
                     }
-                } else {
-                    $state = $this->pruneStateToMatchKeys($rawState, $state);
                 }
+            } else {
+                $rawState = [];
+
+                foreach (array_keys($state) as $key) {
+                    $rawState[$key] = data_get($livewire, $key);
+                }
+
+                $state = $this->pruneStateToMatchKeys($rawState, $state);
             }
 
             if ($shouldCallHooksBefore) {
