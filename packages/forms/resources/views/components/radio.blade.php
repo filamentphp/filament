@@ -27,7 +27,7 @@
             @php
                 $inputAttributes = $extraInputAttributeBag
                     ->merge([
-                        'autofocus' => $isAutofocused() && $loop->first,
+                        'autofocus' => $loop->first && $isAutofocused(),
                         'disabled' => $isDisabled || $isOptionDisabled($value, $label),
                         'id' => $id . '-' . $value,
                         'name' => $id,
