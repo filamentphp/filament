@@ -41,7 +41,7 @@
 
             <div class="fi-fo-toggle-buttons-btn-ctn">
                 <input
-                    @if ($isAutofocused() && $loop->first) autofocus @endif
+                    @if ($loop->first && $isAutofocused()) autofocus @endif
                     @disabled($shouldOptionBeDisabled)
                     id="{{ $inputId }}"
                     @if (! $isMultiple)
