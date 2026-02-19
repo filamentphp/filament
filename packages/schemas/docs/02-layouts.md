@@ -414,7 +414,7 @@ The `dense()` method creates a more compact layout by reducing the spacing betwe
 ```php
 use Filament\Schemas\Components\Fieldset;
 
-Fieldset::make()
+Fieldset::make('Dense')
     ->dense()
     ->schema([
         // ...
@@ -430,7 +430,7 @@ The `gap(false)` method removes space between components:
 ```php
 use Filament\Schemas\Components\Fieldset;
 
-Fieldset::make()
+Fieldset::make('No gap')
     ->gap(false)
     ->schema([
         // ...
