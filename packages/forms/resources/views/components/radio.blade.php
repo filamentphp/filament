@@ -38,6 +38,7 @@
                         :attributes="
                             \Filament\Support\prepare_inherited_attributes($getExtraInputAttributeBag())
                                 ->merge([
+                                    'autofocus' => $isAutofocused() && $loop->first,
                                     'disabled' => $isDisabled || $isOptionDisabled($value, $label),
                                     'id' => $id . '-' . $value,
                                     'name' => $id,
