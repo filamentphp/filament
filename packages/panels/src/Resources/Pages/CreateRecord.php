@@ -292,8 +292,11 @@ class CreateRecord extends Page
 
     public function defaultForm(Schema $schema): Schema
     {
+        if (! $schema->hasCustomColumns()) {
+            $schema->columns($this->hasInlineLabels() ? 1 : 2);
+        }
+
         return $schema
-            ->columns($this->hasInlineLabels() ? 1 : 2)
             ->inlineLabel($this->hasInlineLabels())
             ->model($this->getModel())
             ->operation('create')

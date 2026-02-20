@@ -17,7 +17,7 @@ class SpatieMediaLibraryFileAttachmentProvider implements FileAttachmentProvider
 {
     use EvaluatesClosures;
 
-    protected MediaCollection $media;
+    protected ?MediaCollection $media = null;
 
     protected RichContentAttribute $attribute;
 
@@ -92,11 +92,11 @@ class SpatieMediaLibraryFileAttachmentProvider implements FileAttachmentProvider
 
     public function getMedia(): ?MediaCollection
     {
-        if (isset($this->media)) {
+        if ($this->media) {
             return $this->media;
         }
 
-        /** @var MediaCollection $media */
+        /** @var ?MediaCollection $media */
         $media = $this->getExistingModel()?->getMedia($this->getCollection())->keyBy('uuid');
 
         return $this->media = $media;

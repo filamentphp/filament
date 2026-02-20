@@ -31,6 +31,10 @@
         & > tbody > tr {
             @apply relative block py-2 sm:static sm:table-row sm:py-0;
 
+            &.fi-collapsed {
+                @apply hidden;
+            }
+
             &.fi-selected {
                 &::before {
                     @apply bg-primary-600 absolute inset-y-0 start-0 w-0.5 sm:hidden;
@@ -47,6 +51,18 @@
                     @apply hidden sm:block;
                 }
             }
+
+            &.fi-ta-group-header-row {
+                @apply py-0;
+
+                & > td {
+                    @apply block w-full sm:table-cell sm:w-auto;
+                }
+            }
+
+            &.fi-ta-summary-row {
+                @apply py-0;
+            }
         }
 
         & > tbody > tr > .fi-ta-selection-cell {
@@ -55,6 +71,24 @@
 
         & > tbody > tr > .fi-ta-cell:not(.fi-ta-selection-cell) {
             @apply block px-4 sm:table-cell sm:px-0;
+
+            @variant sm {
+                &:first-of-type {
+                    @apply ps-3;
+                }
+
+                &:last-of-type {
+                    @apply pe-3;
+                }
+            }
+
+            &.fi-ta-summary-row-heading-cell {
+                @apply sm:px-3 sm:first-of-type:ps-6 sm:last-of-type:pe-6;
+            }
+
+            &.fi-ta-summary-header-cell {
+                @apply sm:px-3 sm:first-of-type:ps-6;
+            }
 
             &.sm\:fi-hidden {
                 @apply sm:hidden;
@@ -105,7 +139,17 @@
             }
 
             &:has(.fi-ta-actions) {
-                @apply py-2 sm:px-3 sm:py-0;
+                @apply py-2 sm:px-3 sm:py-4;
+
+                @variant sm {
+                    &:first-of-type {
+                        @apply ps-6;
+                    }
+
+                    &:last-of-type {
+                        @apply pe-6;
+                    }
+                }
 
                 & > .fi-ta-actions {
                     @apply w-full flex-wrap justify-start gap-x-3 gap-y-2 sm:w-auto sm:flex-nowrap sm:justify-end sm:gap-3;
