@@ -109,7 +109,7 @@ trait HasNavigation
         return static::$navigationParentItem;
     }
 
-    public static function navigationGroup(?string $group): void
+    public static function navigationGroup(string | UnitEnum | null $group): void
     {
         static::$navigationGroup = $group;
     }

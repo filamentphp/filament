@@ -172,6 +172,11 @@ abstract class Page extends BasePage
         return static::$navigationGroup;
     }
 
+    public static function navigationGroup(string | UnitEnum | null $group): void
+    {
+        static::$navigationGroup = $group;
+    }
+
     public static function getNavigationParentItem(): ?string
     {
         return static::$navigationParentItem;
