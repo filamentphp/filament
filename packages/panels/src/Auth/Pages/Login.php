@@ -166,7 +166,7 @@ class Login extends SimplePage
 
     protected function isLoginRateLimited(string $email): bool
     {
-        $rateLimitingKey = "filament-login:{$email}";
+        $rateLimitingKey = 'filament-login:' . sha1($email);
 
         if (RateLimiter::tooManyAttempts($rateLimitingKey, maxAttempts: 5)) {
             $this->getRateLimitedNotification(new TooManyRequestsException(

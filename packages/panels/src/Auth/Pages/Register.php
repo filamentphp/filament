@@ -129,7 +129,7 @@ class Register extends SimplePage
             return false;
         }
 
-        $rateLimitingKey = "filament-register:{$email}";
+        $rateLimitingKey = 'filament-register:' . sha1($email);
 
         if (RateLimiter::tooManyAttempts($rateLimitingKey, maxAttempts: 2)) {
             $this->getRateLimitedNotification(new TooManyRequestsException(
