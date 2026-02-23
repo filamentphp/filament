@@ -10,6 +10,7 @@ use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\RateLimiter;
 
 use function Filament\Tests\livewire;
 use function Pest\Laravel\actingAs;
@@ -179,6 +180,35 @@ test('codes must be 6 digits', function (): void {
         ->assertHasFormErrors([
             'code' => 'digits',
         ]);
+
+    expect($user->hasEmailAuthentication())
+        ->toBeTrue();
+});
+
+it('can throttle code verification attempts per user', function (): void {
+    /** @var EmailAuthentication $emailAuthentication */
+    $emailAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
+
+    $user = auth()->user();
+
+    // Pre-fill the per-user rate limiter to simulate 5 prior attempts
+    $rateLimitingKey = 'filament-disable-email-authentication:' . $user->getAuthIdentifier();
+
+    foreach (range(1, 5) as $i) {
+        RateLimiter::hit($rateLimitingKey);
+    }
+
+    $code = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+    $emailAuthentication->generateCodesUsing(fn (): string => $code);
+
+    // Even with a valid code, the rate limit should block the attempt
+    livewire(EditProfile::class)
+        ->callAction(
+            TestAction::make('disableEmailAuthentication')
+                ->schemaComponent('email_code', schema: 'content'),
+            ['code' => $code],
+        )
+        ->assertHasFormErrors(['code']);
 
     expect($user->hasEmailAuthentication())
         ->toBeTrue();

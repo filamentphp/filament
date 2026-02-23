@@ -2,6 +2,8 @@
 
 namespace Filament\Auth\Pages;
 
+use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;
+use DanHarrin\LivewireRateLimiting\WithRateLimiting;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Auth\MultiFactor\Contracts\MultiFactorAuthenticationProvider;
@@ -31,6 +33,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Js;
 use Illuminate\Validation\Rules\Password;
@@ -46,6 +49,7 @@ class EditProfile extends Page
     use Concerns\CanUseDatabaseTransactions;
     use Concerns\HasMaxWidth;
     use Concerns\HasTopbar;
+    use WithRateLimiting;
 
     /**
      * @var array<string, mixed> | null
@@ -155,6 +159,29 @@ class EditProfile extends Page
 
     public function save(): void
     {
+        try {
+            $this->rateLimit(5);
+        } catch (TooManyRequestsException $exception) {
+            $this->getRateLimitedNotification($exception)?->send();
+
+            return;
+        }
+
+        $rateLimitingKey = 'filament-edit-profile:' . Filament::auth()->id();
+
+        if (RateLimiter::tooManyAttempts($rateLimitingKey, maxAttempts: 5)) {
+            $this->getRateLimitedNotification(new TooManyRequestsException(
+                static::class,
+                'save',
+                request()->ip(),
+                RateLimiter::availableIn($rateLimitingKey),
+            ))?->send();
+
+            return;
+        }
+
+        RateLimiter::hit($rateLimitingKey);
+
         try {
             $this->beginDatabaseTransaction();
 
@@ -295,6 +322,20 @@ class EditProfile extends Page
     protected function getSavedNotificationTitle(): ?string
     {
         return __('filament-panels::auth/pages/edit-profile.notifications.saved.title');
+    }
+
+    protected function getRateLimitedNotification(TooManyRequestsException $exception): ?FilamentNotification
+    {
+        return FilamentNotification::make()
+            ->title(__('filament-panels::auth/pages/edit-profile.notifications.throttled.title', [
+                'seconds' => $exception->secondsUntilAvailable,
+                'minutes' => $exception->minutesUntilAvailable,
+            ]))
+            ->body(array_key_exists('body', __('filament-panels::auth/pages/edit-profile.notifications.throttled') ?: []) ? __('filament-panels::auth/pages/edit-profile.notifications.throttled.body', [
+                'seconds' => $exception->secondsUntilAvailable,
+                'minutes' => $exception->minutesUntilAvailable,
+            ]) : null)
+            ->danger();
     }
 
     protected function getRedirectUrl(): ?string
