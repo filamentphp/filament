@@ -90,7 +90,7 @@ trait InteractsWithForms
     protected function unsetMissingNumericArrayKeys(array &$target, array $state): void
     {
         foreach ($target as $key => $value) {
-            if (is_numeric($key) && (! array_key_exists($key, $state))) {
+            if ((is_numeric($key) || array_is_list($state)) && (! array_key_exists($key, $state))) {
                 unset($target[$key]);
 
                 continue;
