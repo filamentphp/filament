@@ -574,6 +574,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     {
         return RichContentRenderer::make()
             ->plugins($this->getPlugins())
+            ->linkProtocols($this->getLinkProtocols())
             ->getEditor();
     }
 
