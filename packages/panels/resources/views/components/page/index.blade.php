@@ -59,6 +59,10 @@
                     :actions-alignment="$headerActionsAlignment"
                     :breadcrumbs="$breadcrumbs"
                     :heading="$heading"
+                    :overflow-actions-icon="$this->getOverflowHeaderActionsIcon()"
+                    :overflow-actions-label="$this->getOverflowHeaderActionsLabel()"
+                    :responsive="$this->hasResponsiveHeaderActions()"
+                    :responsive-breakpoint="$this->getResponsiveHeaderActionsBreakpoint()"
                     :subheading="$subheading"
                 >
                     @if ($heading instanceof \Illuminate\Contracts\Support\Htmlable)

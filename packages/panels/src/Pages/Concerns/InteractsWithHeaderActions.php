@@ -15,6 +15,14 @@ trait InteractsWithHeaderActions
 
     protected ?Alignment $headerActionsAlignment = null;
 
+    protected bool $hasResponsiveHeaderActions = false;
+
+    protected string $responsiveHeaderActionsBreakpoint = 'md';
+
+    protected ?string $overflowHeaderActionsIcon = null;
+
+    protected ?string $overflowHeaderActionsLabel = null;
+
     public function cacheInteractsWithHeaderActions(): void
     {
         $actions = $this->getHeaderActions();
@@ -70,5 +78,25 @@ trait InteractsWithHeaderActions
     public function getHeaderActionsAlignment(): ?Alignment
     {
         return $this->headerActionsAlignment;
+    }
+
+    public function hasResponsiveHeaderActions(): bool
+    {
+        return $this->hasResponsiveHeaderActions;
+    }
+
+    public function getResponsiveHeaderActionsBreakpoint(): string
+    {
+        return $this->responsiveHeaderActionsBreakpoint;
+    }
+
+    public function getOverflowHeaderActionsIcon(): ?string
+    {
+        return $this->overflowHeaderActionsIcon;
+    }
+
+    public function getOverflowHeaderActionsLabel(): ?string
+    {
+        return $this->overflowHeaderActionsLabel;
     }
 }

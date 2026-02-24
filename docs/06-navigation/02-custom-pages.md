@@ -64,6 +64,34 @@ use Filament\Support\Enums\Alignment;
 protected ?Alignment $headerActionsAlignment = Alignment::End;
 ```
 
+#### Making header actions responsive
+
+If a page has many header actions, they can overflow on smaller screens. You can make them responsive by setting `$hasResponsiveHeaderActions` to `true`. When the container is too narrow to fit the actions, they will collapse into a single dropdown menu:
+
+```php
+protected bool $hasResponsiveHeaderActions = true;
+```
+
+By default, the actions will expand from the dropdown at the `md` container breakpoint. You can customize this using `$responsiveHeaderActionsBreakpoint`:
+
+```php
+protected bool $hasResponsiveHeaderActions = true;
+
+protected string $responsiveHeaderActionsBreakpoint = 'lg';
+```
+
+The available breakpoints are `sm`, `md`, `lg`, `xl`, and `2xl`. These are [container query](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_containment/Container_queries) breakpoints, so they respond to the width of the header actions container rather than the viewport.
+
+You can customize the icon and label of the overflow dropdown using `$overflowHeaderActionsIcon` and `$overflowHeaderActionsLabel`:
+
+```php
+protected bool $hasResponsiveHeaderActions = true;
+
+protected ?string $overflowHeaderActionsIcon = 'heroicon-m-bars-3';
+
+protected ?string $overflowHeaderActionsLabel = 'More actions';
+```
+
 ### Opening an action modal when a page loads
 
 You can also open an action when a page loads by setting the `$defaultAction` property to the name of the action you want to open:
