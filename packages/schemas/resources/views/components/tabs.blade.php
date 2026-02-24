@@ -82,17 +82,19 @@
             :vertical="$isVertical"
             x-cloak
             :x-bind:class="! $isScrollable ? '{ \'fi-invisible\': ! withinDropdownMounted }' : null"
-            :x-data="$hasDeferredBadges ? '{
-                deferredBadges: {},
-                isLoadingDeferredBadges: true,
+            :x-data="
+                $hasDeferredBadges ? '{
+                    deferredBadges: {},
+                    isLoadingDeferredBadges: true,
 
-                async init() {
-                    const badges = await $wire.callSchemaComponentMethod(' . \Illuminate\Support\Js::from($tabsKey) . ', \'getDeferredTabBadges\')
+                    async init() {
+                        const badges = await $wire.callSchemaComponentMethod(' . \Illuminate\Support\Js::from($tabsKey) . ', \'getDeferredTabBadges\')
 
-                    this.deferredBadges = badges ?? {}
-                    this.isLoadingDeferredBadges = false
-                },
-            }' : null"
+                        this.deferredBadges = badges ?? {}
+                        this.isLoadingDeferredBadges = false
+                    },
+                }' : null
+            "
         >
             @foreach ($getStartRenderHooks() as $startRenderHook)
                 {{ \Filament\Support\Facades\FilamentView::renderHook($startRenderHook, scopes: $renderHookScopes) }}
@@ -238,7 +240,10 @@
                 isLoadingDeferredBadges: true,
 
                 async init() {
-                    const badges = await $wire.callSchemaComponentMethod(@js($tabsKey), 'getDeferredTabBadges')
+                    const badges = await $wire.callSchemaComponentMethod(
+                        @js($tabsKey),
+                        'getDeferredTabBadges',
+                    )
 
                     this.deferredBadges = badges ?? {}
                     this.isLoadingDeferredBadges = false

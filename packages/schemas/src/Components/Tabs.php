@@ -9,6 +9,8 @@ use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Contracts\HasRenderHookScopes;
 use Filament\Support\Components\Attributes\ExposedLivewireMethod;
 use Filament\Support\Concerns;
+use Filament\Support\Enums\IconPosition;
+use Filament\Support\Enums\IconSize;
 use Filament\Support\Facades\FilamentColor;
 use Filament\Support\View\Components\BadgeComponent;
 use Illuminate\Contracts\Support\Htmlable;
@@ -246,7 +248,7 @@ class Tabs extends Component
 
             $badgeIcon = $tab->getBadgeIcon();
             $badgeIconHtml = $badgeIcon
-                ? \Filament\Support\generate_icon_html($badgeIcon, size: \Filament\Support\Enums\IconSize::Small)?->toHtml()
+                ? \Filament\Support\generate_icon_html($badgeIcon, size: IconSize::Small)?->toHtml()
                 : null;
 
             $badgeIconPosition = $tab->getBadgeIconPosition();
@@ -256,7 +258,7 @@ class Tabs extends Component
                 'badgeColorClasses' => $badgeColorClasses,
                 'badgeColorStyles' => $badgeColorStyles,
                 'badgeIconHtml' => $badgeIconHtml,
-                'badgeIconPosition' => $badgeIconPosition instanceof \Filament\Support\Enums\IconPosition ? $badgeIconPosition->value : $badgeIconPosition,
+                'badgeIconPosition' => $badgeIconPosition instanceof IconPosition ? $badgeIconPosition->value : $badgeIconPosition,
                 'badgeTooltip' => $tab->getBadgeTooltip() ? strval($tab->getBadgeTooltip()) : null,
             ];
         }
