@@ -909,21 +909,23 @@ class Repeater extends Field implements Contracts\CanConcealComponents, Contract
 
             $existingRecords = $component->getCachedExistingRecords();
 
-            $recordsToDelete = [];
+            if ($component->isDeletable()) {
+                $recordsToDelete = [];
 
-            foreach ($existingRecords->pluck($relationship->getRelated()->getKeyName()) as $keyToCheckForDeletion) {
-                if (array_key_exists("record-{$keyToCheckForDeletion}", $state)) {
-                    continue;
+                foreach ($existingRecords->pluck($relationship->getRelated()->getKeyName()) as $keyToCheckForDeletion) {
+                    if (array_key_exists("record-{$keyToCheckForDeletion}", $state)) {
+                        continue;
+                    }
+
+                    $recordsToDelete[] = $keyToCheckForDeletion;
+                    $existingRecords->forget("record-{$keyToCheckForDeletion}");
                 }
 
-                $recordsToDelete[] = $keyToCheckForDeletion;
-                $existingRecords->forget("record-{$keyToCheckForDeletion}");
+                $relationship
+                    ->whereKey($recordsToDelete)
+                    ->get()
+                    ->each(static fn (Model $record) => $record->delete());
             }
-
-            $relationship
-                ->whereKey($recordsToDelete)
-                ->get()
-                ->each(static fn (Model $record) => $record->delete());
 
             $childComponentContainers = $component->getChildComponentContainers(
                 withHidden: $component->shouldSaveRelationshipsWhenHidden(),
