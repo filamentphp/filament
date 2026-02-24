@@ -90,6 +90,7 @@ trait HasTabs
         $tabs = $this->getCachedTabs();
 
         return Tabs::make()
+            ->key('resourceTabs')
             ->livewireProperty('activeTab')
             ->contained(false)
             ->tabs($tabs)

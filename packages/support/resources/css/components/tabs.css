@@ -63,4 +63,8 @@
     & .fi-badge {
         @apply w-max;
     }
+
+    & .fi-tabs-item-badge-placeholder {
+        @apply flex items-center text-gray-400 dark:text-gray-500;
+    }
 }

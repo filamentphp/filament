@@ -156,6 +156,34 @@ Tabs::make('Tabs')
 
 <AutoScreenshot name="schemas/layout/tabs/badges-color" alt="Tabs with badges with color" version="4.x" />
 
+### Deferring the loading of tab badges
+
+If you have expensive queries powering your tab badges, the initial page load may be slow. You can defer the loading of tab badges using the `deferBadge()` method, which will load the badge values asynchronously after the page has rendered:
+
+```php
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
+
+Tabs::make('Tabs')
+    ->tabs([
+        Tab::make('Notifications')
+            ->badge(fn () => Notification::query()->where('unread', true)->count())
+            ->deferBadge()
+            ->schema([
+                // ...
+            ]),
+        // ...
+    ])
+```
+
+<Aside variant="danger">
+    The `badge()` value must be a closure when using `deferBadge()`. If you pass a raw value like `->badge(Notification::query()->count())`, the query runs immediately when the tab is built, defeating the purpose of deferral.
+</Aside>
+
+<UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `deferBadge()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+While the badges are loading, a small loading indicator will appear in place of each deferred badge. Once the data is fetched, the loading indicators will be replaced with the actual badge values.
+
 ## Using grid columns within a tab
 
 You may use the `columns()` method to customize the [grid](layouts#grid-system) within the tab:
