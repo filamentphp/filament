@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="https://github.com/filamentphp/filament/blob/4.x/art/banner.webp?raw=true" alt="Banner" style="width: 100%; max-width: 800px;" />
+    <img src="https://github.com/filamentphp/filament/blob/5.x/art/banner.webp?raw=true" alt="Banner" style="width: 100%; max-width: 800px;" />
 </p>
 
 <p align="center">
