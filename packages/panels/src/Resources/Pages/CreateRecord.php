@@ -138,7 +138,7 @@ class CreateRecord extends Page
 
             $this->fillForm();
 
-            $this->form->rawState([
+            $this->form->fill([
                 ...$this->form->getRawState(),
                 ...$preserveRawState,
             ]);
