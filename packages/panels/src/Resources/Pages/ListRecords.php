@@ -158,7 +158,7 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
                 return null;
             });
 
-        if (! $table->isRecordUrlCustom()) {
+        if (! $table->hasCustomRecordUrl()) {
             $table->recordUrl(function (Model $record, Table $table): ?string {
                 foreach (['view', 'edit'] as $action) {
                     $action = $table->getAction($action);

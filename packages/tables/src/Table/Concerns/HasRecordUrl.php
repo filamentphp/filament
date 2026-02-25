@@ -12,7 +12,7 @@ trait HasRecordUrl
 
     protected string | Closure | null $recordUrl = null;
 
-    protected bool $isRecordUrlCustom = false;
+    protected bool $hasCustomRecordUrl = false;
 
     /**
      * @var array<array<mixed> | Closure>
@@ -33,14 +33,14 @@ trait HasRecordUrl
         }
 
         $this->recordUrl = $url;
-        $this->isRecordUrlCustom = true;
+        $this->hasCustomRecordUrl = true;
 
         return $this;
     }
 
-    public function isRecordUrlCustom(): bool
+    public function hasCustomRecordUrl(): bool
     {
-        return $this->isRecordUrlCustom;
+        return $this->hasCustomRecordUrl;
     }
 
     /**
