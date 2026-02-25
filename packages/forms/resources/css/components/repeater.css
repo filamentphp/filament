@@ -48,7 +48,7 @@
     }
 
     & .fi-fo-repeater-item-header-icon {
-        @apply text-gray-400 dark:text-gray-500;
+        @apply shrink-0 text-gray-400 dark:text-gray-500;
     }
 
     & .fi-fo-repeater-item-header-label {
