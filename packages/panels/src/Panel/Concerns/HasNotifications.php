@@ -85,7 +85,7 @@ trait HasNotifications
 
     public function getDatabaseNotificationsFormatDateUsing(): ?Closure
     {
-        return $this->evaluate($this->databaseNotificationsFormatDateUsing);
+        return $this->databaseNotificationsFormatDateUsing;
     }
 
     public function getDatabaseNotificationsPollingInterval(): ?string
