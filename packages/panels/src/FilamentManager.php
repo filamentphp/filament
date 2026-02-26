@@ -123,6 +123,11 @@ class FilamentManager
         return $this->getCurrentOrDefaultPanel()->getDarkModeBrandLogo();
     }
 
+    public function getDatabaseNotificationsFormatDateUsing(): ?string
+    {
+        return $this->getCurrentOrDefaultPanel()->getDatabaseNotificationsFormatDateUsing();
+    }
+
     public function getDatabaseNotificationsPollingInterval(): ?string
     {
         return $this->getCurrentOrDefaultPanel()->getDatabaseNotificationsPollingInterval();
