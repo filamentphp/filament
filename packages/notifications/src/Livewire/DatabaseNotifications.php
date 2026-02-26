@@ -3,6 +3,7 @@
 namespace Filament\Notifications\Livewire;
 
 use Carbon\CarbonInterface;
+use Closure;
 use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
@@ -30,6 +31,8 @@ class DatabaseNotifications extends Component implements HasActions, HasSchemas
     public static bool $isPaginated = true;
 
     public static ?string $trigger = null;
+
+    public static ?Closure $formatDateUsing = null;
 
     public static ?string $pollingInterval = '30s';
 
@@ -110,6 +113,11 @@ class DatabaseNotifications extends Component implements HasActions, HasSchemas
         return $this->getUnreadNotificationsQuery()->count();
     }
 
+    public function getFormatDateUsing(): ?Closure
+    {
+        return static::$formatDateUsing;
+    }
+
     public function getPollingInterval(): ?string
     {
         return static::$pollingInterval;
@@ -176,7 +184,7 @@ class DatabaseNotifications extends Component implements HasActions, HasSchemas
 
     protected function formatNotificationDate(CarbonInterface $date): string
     {
-        return $date->diffForHumans();
+        return value($this->getFormatDateUsing(), $date) ?? $date->diffForHumans();
     }
 
     public static function trigger(?string $trigger): void
