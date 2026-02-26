@@ -101,6 +101,26 @@ public function panel(Panel $panel): Panel
 
 Without any setup, new database notifications will only be received when the page is first loaded.
 
+### Formatting Datebase Notification Date
+
+By default the database notification date is reltaive to `now()` by using Carbons's `diffForHumans()` method.
+
+You can customize this behavior by passing a closure to `databaseNotificationsFormatDateUsing` panel's configuration method. This closure receives the date Carbon instance and should return the formatted date string.
+
+```php
+use Carbon\CarbonInterface;
+use Filament\Enums\DatabaseNotificationsPosition;
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->databaseNotifications()
+        ->databaseNotificationsFormatDateUsing(fn(CarbonInterface $date): string => $date->toDateTimeString());
+}
+```
+
 ### Polling for new database notifications
 
 Polling is the practice of periodically making a request to the server to check for new notifications. This is a good approach as the setup is simple, but some may say that it is not a scalable solution as it increases server load.
