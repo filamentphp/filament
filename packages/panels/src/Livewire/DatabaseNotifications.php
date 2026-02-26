@@ -20,6 +20,11 @@ class DatabaseNotifications extends BaseComponent
         return Filament::auth()->user();
     }
 
+    public function getFormatDateUsing(): ?Closure
+    {
+        return Filament::getDatabaseNotificationsFormatDateUsing();
+    }
+
     public function getPollingInterval(): ?string
     {
         return Filament::getDatabaseNotificationsPollingInterval();
