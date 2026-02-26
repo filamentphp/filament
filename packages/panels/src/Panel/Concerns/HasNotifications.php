@@ -15,6 +15,8 @@ trait HasNotifications
 
     protected string | Closure | null $databaseNotificationsLivewireComponent = null;
 
+    protected ?Closure $databaseNotificationsFormatDateUsing = null;
+
     protected string | Closure | null $databaseNotificationsPolling = '30s';
 
     protected DatabaseNotificationsPosition | Closure | null $databaseNotificationsPosition = null;
@@ -38,6 +40,13 @@ trait HasNotifications
     public function databaseNotificationsLivewireComponent(string | Closure | null $component): static
     {
         $this->databaseNotificationsLivewireComponent = $component;
+
+        return $this;
+    }
+
+    public function databaseNotificationsFormatDateUsing(?Closure $callback): static
+    {
+        $this->databaseNotificationsFormatDateUsing = $callback;
 
         return $this;
     }
@@ -72,6 +81,11 @@ trait HasNotifications
     public function getDatabaseNotificationsLivewireComponent(): string
     {
         return $this->evaluate($this->databaseNotificationsLivewireComponent) ?? DatabaseNotifications::class;
+    }
+
+    public function getDatabaseNotificationsFormatDateUsing(): ?Closure
+    {
+        return $this->evaluate($this->databaseNotificationsFormatDateUsing);
     }
 
     public function getDatabaseNotificationsPollingInterval(): ?string
