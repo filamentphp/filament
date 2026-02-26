@@ -149,9 +149,8 @@ trait HasBulkActions
                 });
 
             if (! $this->getTable()->checksIfRecordIsSelectable()) {
-                /** @phpstan-ignore-next-line */
                 return $records
-                    ->map(fn (array $record): string => $this->getTableRecordKey($record))
+                    ->map(fn (array $record): string => $this->getTableRecordKey($record)) /** @phpstan-ignore method.notFound */
                     ->values()
                     ->all();
             }
@@ -177,10 +176,9 @@ trait HasBulkActions
 
         if (! $this->getTable()->checksIfRecordIsSelectable()) {
             $records = $this->getTable()->selectsCurrentPageOnly() ?
-                /** @phpstan-ignore-next-line */
                 $this->getTableRecords()
                     ->filter(fn (Model $record): bool => $tableGrouping->getStringKey($record) === $group)
-                    ->pluck($query->getModel()->getKeyName()) :
+                    ->pluck($query->getModel()->getKeyName()) : /** @phpstan-ignore method.notFound */
                 $query->toBase()->pluck($query->getModel()->getQualifiedKeyName());
 
             return $records
