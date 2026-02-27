@@ -132,8 +132,7 @@ use Filament\Actions\Testing\TestAction;
 use function Pest\Livewire\livewire;
 
 livewire(ListUsers::class)
-    ->callAction(TestAction::make('promote')
-    ->table($user), [
+    ->callAction(TestAction::make('promote')->table($user), [
         'role' => 'admin',
     ])
     ->assertNotified();
