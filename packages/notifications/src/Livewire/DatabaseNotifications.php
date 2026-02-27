@@ -10,6 +10,7 @@ use Filament\Actions\Contracts\HasActions;
 use Filament\Notifications\Notification;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
+use Filament\Support\Facades\FilamentTimezone;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Contracts\View\View;
@@ -184,7 +185,7 @@ class DatabaseNotifications extends Component implements HasActions, HasSchemas
 
     protected function formatNotificationDate(CarbonInterface $date): string
     {
-        return value($this->getFormatDateUsing(), $date) ?? $date->diffForHumans();
+        return value($this->getFormatDateUsing(), $date->setTimezone(FilamentTimezone::get())) ?? $date->diffForHumans();
     }
 
     public static function trigger(?string $trigger): void
