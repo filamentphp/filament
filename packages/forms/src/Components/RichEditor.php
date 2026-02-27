@@ -52,7 +52,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     /**
      * @var array<string> | Closure
      */
-    protected array | Closure $linkProtocols = ['http', 'https', 'mailto'];
+    protected array | Closure $linkProtocols = ['http', 'https', 'ftp', 'ftps', 'mailto', 'tel', 'callto', 'sms', 'cid', 'xmpp'];
 
     protected bool | Closure | null $isJson = null;
 

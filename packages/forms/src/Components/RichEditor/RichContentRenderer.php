@@ -622,6 +622,6 @@ class RichContentRenderer implements Htmlable
      */
     public function getLinkProtocols(): array
     {
-        return $this->linkProtocols ?? (new Link)->options['allowedProtocols'];
+        return $this->linkProtocols ?? app(Link::class)->options['allowedProtocols'];
     }
 }
