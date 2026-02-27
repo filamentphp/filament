@@ -568,6 +568,13 @@ return [
 
         'no_merge_tag_search_results_message' => 'No se encontraron etiquetas dinámicas.',
 
+        'mentions' => [
+            'no_options_message' => 'No hay opciones disponibles.',
+            'no_search_results_message' => 'No hay resultados que coincidan con su búsqueda.',
+            'search_prompt' => 'Comience a escribir para buscar...',
+            'searching_message' => 'Buscando...',
+        ],
+
         'tools' => [
             'align_center' => 'Alinear al centro',
             'align_end' => 'Alinear al final',
@@ -692,7 +699,17 @@ return [
     ],
 
     'tags_input' => [
+
+        'actions' => [
+
+            'delete' => [
+                'label' => 'Eliminar',
+            ],
+
+        ],
+
         'placeholder' => 'Nueva etiqueta',
+
     ],
 
     'text_input' => [
