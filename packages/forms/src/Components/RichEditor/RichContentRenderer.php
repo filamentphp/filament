@@ -105,6 +105,11 @@ class RichContentRenderer implements Htmlable
     protected ?array $textColors = null;
 
     /**
+     * @var ?array<string>
+     */
+    protected ?array $linkProtocols = null;
+
+    /**
      * @param  string | array<string, mixed> | null  $content
      */
     public function __construct(string | array | null $content = null)
@@ -392,7 +397,11 @@ class RichContentRenderer implements Htmlable
             app(Italic::class),
             app(ImageExtension::class),
             app(LeadExtension::class),
-            app(Link::class),
+            app(Link::class, [
+                'options' => [
+                    'allowedProtocols' => $this->getLinkProtocols(),
+                ],
+            ]),
             app(ListItem::class),
             app(MentionExtension::class),
             app(MergeTagExtension::class),
@@ -596,5 +605,23 @@ class RichContentRenderer implements Htmlable
             $textColors,
             fn (string | TextColor $color, string $name): array => [$name => ($color instanceof TextColor) ? $color : TextColor::make($color, $name)],
         );
+    }
+
+    /**
+     * @param  ?array<string>  $protocols
+     */
+    public function linkProtocols(?array $protocols): static
+    {
+        $this->linkProtocols = $protocols;
+
+        return $this;
+    }
+
+    /**
+     * @return array<string>
+     */
+    public function getLinkProtocols(): array
+    {
+        return $this->linkProtocols ?? app(Link::class)->options['allowedProtocols'];
     }
 }
