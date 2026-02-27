@@ -359,10 +359,35 @@ window.filamentData.user.name // 'Dan Harrin'
 If you want to register a JavaScript file from a URL, you may do so. These assets will be loaded on every page as normal, but not copied into the `/public` directory when the `php artisan filament:assets` command is run. This is useful for registering external scripts from a CDN, or scripts that you are already compiling directly into the `/public` directory:
 
 ```php
+use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Assets\Js;
 
 FilamentAsset::register([
     Js::make('example-external-script', 'https://example.com/external.js'),
     Js::make('example-local-script', asset('js/local.js')),
+]);
+```
+
+### Registering JavaScript files that has import statement
+
+Command `php artisan filament:assets` only copies the selected file to the public directory. However, if you use `import` statement in your JavaScript file, it will not work. Example:
+```js
+import moment from "moment-timezone";
+console.log(moment.tz.guess());
+```
+
+You need to run the Vite build process first:
+```bash
+npm run build
+```
+
+Then use Vite::asset() to get the URL of the compiled asset:
+```php
+use Filament\Support\Facades\FilamentAsset;
+use Filament\Support\Assets\Js;
+use Illuminate\Support\Facades\Vite;
+
+FilamentAsset::register([
+	Js::make('timezone', Vite::asset('resources/js/timezone.js')),
 ]);
 ```
