@@ -138,10 +138,14 @@ class CreateRecord extends Page
 
             $this->fillForm();
 
-            $this->form->fill([
+            $this->form->rawState([
                 ...$this->form->getRawState(),
                 ...$preserveRawState,
             ]);
+
+            // Rebuild child schemas without double-firing `afterStateHydrated()` hooks.
+            $hydratedDefaultState = null;
+            $this->form->hydrateState($hydratedDefaultState, shouldCallHydrationHooks: false);
 
             $this->isCreating = false;
 
