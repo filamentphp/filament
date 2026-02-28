@@ -1650,7 +1650,17 @@
                                                                 $isColumnActivelySorted && ($sortDirection === 'asc') => \Filament\Tables\View\TablesIconAlias::HEADER_CELL_SORT_ASC_BUTTON,
                                                                 $isColumnActivelySorted && ($sortDirection === 'desc') => \Filament\Tables\View\TablesIconAlias::HEADER_CELL_SORT_DESC_BUTTON,
                                                                 default => \Filament\Tables\View\TablesIconAlias::HEADER_CELL_SORT_BUTTON,
-                                                            })
+                                                            }, attributes: (new \Illuminate\View\ComponentAttributeBag([
+                                                                'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => true,
+                                                                'wire:target' => "sortTable('{$columnName}')",
+                                                            ])))
+                                                        }}
+
+                                                        {{
+                                                            \Filament\Support\generate_loading_indicator_html(new \Illuminate\View\ComponentAttributeBag([
+                                                                'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
+                                                                'wire:target' => "sortTable('{$columnName}')",
+                                                            ]))
                                                         }}
                                                     </span>
                                                 @else

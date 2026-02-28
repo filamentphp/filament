@@ -192,7 +192,7 @@ if (! function_exists('Filament\Support\generate_icon_html')) {
             $icon = $icon->value;
         }
 
-        return svg($icon, $attributes->get('class'), array_filter($attributes->except('class')->getAttributes()));
+        return svg($icon, $attributes->get('class'), array_filter($attributes->except('class')->getAttributes(), static fn ($value): bool => $value !== false && $value !== null));
     }
 }
 
