@@ -764,9 +764,9 @@ class Post extends Model implements HasRichContent
                         2 => 'John Smith',
                     ]),
             ])
-            ->textColors(
+            ->textColors([
                 'brand' => TextColor::make('Brand', '#0ea5e9', darkColor: '#38bdf8'),
-            )
+            ])
             ->customTextColors()
             ->plugins([
                 HighlightRichContentPlugin::make(),

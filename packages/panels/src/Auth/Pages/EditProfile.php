@@ -263,7 +263,7 @@ class EditProfile extends Page
 
         if (
             (! is_array($recipient))
-            || (! array_key_exists($currentEmail, $recipient))
+            || (! array_key_exists($currentEmail ?? '', $recipient))
         ) {
             return $newEmail;
         }

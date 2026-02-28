@@ -286,9 +286,9 @@ class EditRecord extends Page
     public function getDefaultActionSchemaResolver(Action $action): ?Closure
     {
         return match (true) {
-            $action instanceof CreateAction => fn (Schema $schema): Schema => static::getResource()::form($schema->columns(2)),
+            $action instanceof CreateAction => fn (Schema $schema): Schema => static::getResource()::form($schema->hasCustomColumns() ? $schema : $schema->columns(2)),
             $action instanceof EditAction => fn (Schema $schema): Schema => $schema->components([EmbeddedSchema::make('form')]),
-            $action instanceof ViewAction => fn (Schema $schema): Schema => static::getResource()::infolist(static::getResource()::form($schema->columns(2))),
+            $action instanceof ViewAction => fn (Schema $schema): Schema => static::getResource()::infolist(static::getResource()::form($schema->hasCustomColumns() ? $schema : $schema->columns(2))),
             default => null,
         };
     }
@@ -352,8 +352,11 @@ class EditRecord extends Page
 
     public function defaultForm(Schema $schema): Schema
     {
+        if (! $schema->hasCustomColumns()) {
+            $schema->columns($this->hasInlineLabels() ? 1 : 2);
+        }
+
         return $schema
-            ->columns($this->hasInlineLabels() ? 1 : 2)
             ->inlineLabel($this->hasInlineLabels())
             ->model($this->getRecord())
             ->operation('edit')

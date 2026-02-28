@@ -109,7 +109,7 @@
                     } . '-color-picker';
                 @endphp
 
-                <{{ $tag }} color="{{ $getState() }}" />
+                <{{ $tag }} x-ref="picker" color="{{ $getState() }}" />
             </div>
         </div>
     </x-filament::input.wrapper>
