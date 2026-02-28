@@ -1808,6 +1808,15 @@ export default {
             deviceScaleFactor: 3,
         },
     },
+    'schemas/layout/callout/control-actions': {
+        url: 'schemas/layout',
+        selector: '#calloutControlActions',
+        viewport: {
+            width: 1920,
+            height: 320,
+            deviceScaleFactor: 3,
+        },
+    },
     'schemas/layout/callout/actions-aligned-end': {
         url: 'schemas/layout',
         selector: '#calloutActionsAlignedEnd',

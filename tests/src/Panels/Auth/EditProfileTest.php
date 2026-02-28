@@ -7,6 +7,7 @@ use Filament\Facades\Filament;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use League\Uri\Components\Query;
 
@@ -136,6 +137,70 @@ it('can save password', function (): void {
         'email' => $this->user->email,
         'password' => $newPassword,
     ]))->toBeTrue();
+});
+
+it('can throttle profile save attempts', function (): void {
+    $newUserData = User::factory()->make();
+
+    foreach (range(1, 5) as $i) {
+        livewire(EditProfile::class)
+            ->fillForm([
+                'name' => $newUserData->name,
+            ])
+            ->call('save')
+            ->assertHasNoFormErrors()
+            ->assertNotified('Saved');
+    }
+
+    livewire(EditProfile::class)
+        ->fillForm([
+            'name' => $newUserData->name,
+        ])
+        ->call('save')
+        ->assertNotified();
+
+    // The 6th attempt should be throttled and name should remain unchanged from previous save
+    expect($this->user->refresh())
+        ->name->toBe($newUserData->name);
+});
+
+it('can throttle profile save attempts per user', function (): void {
+    $newUserData = User::factory()->make();
+    $originalName = $this->user->name;
+
+    // Clear the IP-based rate limiter between attempts to isolate the
+    // user-based rate limit (simulates an attacker rotating IPs).
+    $clearIpRateLimiter = function (): void {
+        RateLimiter::clear('livewire-rate-limiter:' . sha1(EditProfile::class . '|save|' . request()->ip()));
+    };
+
+    foreach (range(1, 5) as $i) {
+        $clearIpRateLimiter();
+
+        livewire(EditProfile::class)
+            ->fillForm([
+                'name' => $newUserData->name,
+            ])
+            ->call('save')
+            ->assertHasNoFormErrors()
+            ->assertNotified('Saved');
+    }
+
+    $clearIpRateLimiter();
+
+    $anotherName = fake()->name();
+
+    // The 6th attempt should be rate limited by user ID
+    livewire(EditProfile::class)
+        ->fillForm([
+            'name' => $anotherName,
+        ])
+        ->call('save')
+        ->assertNotified();
+
+    // Name should not have changed to the new value
+    expect($this->user->refresh())
+        ->name->not->toBe($anotherName);
 });
 
 it('can validate', function (array $formData, array $errors): void {

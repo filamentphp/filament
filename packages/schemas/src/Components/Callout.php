@@ -20,6 +20,7 @@ use Filament\Support\Enums\Size;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Support\Arr;
 
 class Callout extends Component
 {
@@ -45,9 +46,16 @@ class Callout extends Component
 
     public const FOOTER_SCHEMA_KEY = 'footer';
 
+    public const CONTROLS_SCHEMA_KEY = 'controls';
+
     protected bool $hasColor = false;
 
     protected string | Closure | null $status = null;
+
+    /**
+     * @var array<Action | Closure>
+     */
+    protected array $controlActions = [];
 
     final public function __construct(string | Htmlable | Closure | null $heading = null)
     {
@@ -73,6 +81,10 @@ class Callout extends Component
                 Alignment::Between, Alignment::Justify => Schema::between($component->getFooterActions()),
                 default => Schema::start($component->getFooterActions()),
             };
+        });
+
+        $this->controls(function (Callout $component): Schema {
+            return Schema::start($component->getControlActions());
         });
     }
 
@@ -179,6 +191,45 @@ class Callout extends Component
         return $this->getFooterActions();
     }
 
+    /**
+     * @param  array<Action | Closure>  $actions
+     */
+    public function controlActions(array $actions): static
+    {
+        $this->controlActions = [
+            ...$this->controlActions,
+            ...$actions,
+        ];
+
+        return $this;
+    }
+
+    /**
+     * @return array<Action>
+     */
+    public function getControlActions(): array
+    {
+        $actions = [];
+
+        foreach ($this->controlActions as $controlAction) {
+            foreach (Arr::wrap($this->evaluate($controlAction)) as $action) {
+                $actions[] = $this->prepareAction($action);
+            }
+        }
+
+        return $actions;
+    }
+
+    /**
+     * @param  array<Component | Action | ActionGroup | string | Htmlable> | Schema | Component | Action | ActionGroup | string | Htmlable | Closure | null  $components
+     */
+    public function controls(array | Schema | Component | Action | ActionGroup | string | Htmlable | Closure | null $components): static
+    {
+        $this->childComponents($components, static::CONTROLS_SCHEMA_KEY);
+
+        return $this;
+    }
+
     protected function configureChildSchema(Schema $schema, string $key): Schema
     {
         $schema = parent::configureChildSchema($schema, $key);
@@ -190,6 +241,15 @@ class Callout extends Component
                 ->modifyActionsUsing(fn (Action $action) => $action
                     ->defaultSize(Size::Small)
                     ->defaultView(Action::LINK_VIEW))
+                ->modifyActionGroupsUsing(fn (ActionGroup $actionGroup) => $actionGroup->defaultSize(Size::Small));
+        }
+
+        if ($key === static::CONTROLS_SCHEMA_KEY) {
+            $schema
+                ->inline()
+                ->embeddedInParentComponent()
+                ->modifyActionsUsing(fn (Action $action) => $action
+                    ->defaultSize(Size::Small))
                 ->modifyActionGroupsUsing(fn (ActionGroup $actionGroup) => $actionGroup->defaultSize(Size::Small));
         }
 

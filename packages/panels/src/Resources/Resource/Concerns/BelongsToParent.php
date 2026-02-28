@@ -8,6 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
+/**
+ * @template TModel of Model = Model
+ */
 trait BelongsToParent
 {
     /**
@@ -36,6 +39,10 @@ trait BelongsToParent
         return $parentResource;
     }
 
+    /**
+     * @param  Builder<TModel>  $query
+     * @return Builder<TModel>
+     */
     public static function scopeEloquentQueryToParent(Builder $query, Model $parentRecord): Builder
     {
         $parentResourceRegistration = static::getParentResourceRegistration();

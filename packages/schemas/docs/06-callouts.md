@@ -198,3 +198,48 @@ Callout::make('Backup complete')
 <UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `footer()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 <AutoScreenshot name="schemas/layout/callout/footer" alt="Callout with custom footer content" version="4.x" />
+
+## Adding custom control content
+
+You can add custom content to the controls (top-right corner) using the `controls()` method. This accepts an array of schema components:
+
+```php
+use Filament\Actions\Action;
+use Filament\Schemas\Components\Callout;
+
+Callout::make('Backup complete')
+    ->description('Your data has been successfully backed up to the cloud.')
+    ->success()
+    ->controls([
+        Action::make('dismiss')
+            ->icon('heroicon-m-x-mark')
+            ->iconButton()
+            ->color('gray'),
+    ])
+```
+
+<UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `controls()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+## Adding control actions to the callout
+
+You can add control [actions](../actions) to the top-right corner of the callout using the `controlActions()` method. For example, you could add a dismiss button that hides the callout for the duration of the user's session:
+
+```php
+use Filament\Actions\Action;
+use Filament\Schemas\Components\Callout;
+use Filament\Support\Icons\Heroicon;
+
+Callout::make('New version available')
+    ->description('Filament v4 has been released with exciting new features and improvements.')
+    ->info()
+    ->controlActions([
+        Action::make('dismiss')
+            ->icon(Heroicon::XMark)
+            ->iconButton()
+            ->color('gray')
+            ->action(fn () => session()->put('new-version-callout-dismissed', true)),
+    ])
+    ->visible(fn (): bool => ! session()->get('new-version-callout-dismissed'))
+```
+
+<AutoScreenshot name="schemas/layout/callout/control-actions" alt="Callout with control actions" version="4.x" />

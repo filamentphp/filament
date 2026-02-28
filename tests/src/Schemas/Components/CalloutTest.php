@@ -78,6 +78,18 @@ it('can call footer `actions()`', function (): void {
         ->assertSet('actionCalled', true);
 });
 
+it('can use `controlActions()`', function (): void {
+    livewire(TestComponentWithCalloutControlActions::class)
+        ->assertSuccessful()
+        ->assertSeeHtml('dismiss');
+});
+
+it('can call `controlActions()`', function (): void {
+    livewire(TestComponentWithCallableControlsAction::class)
+        ->callAction(TestAction::make('set_value')->schemaComponent())
+        ->assertSet('actionCalled', true);
+});
+
 it('has no accessibility issues in light mode', function (): void {
     $this->actingAs(User::factory()->create());
 
@@ -248,6 +260,43 @@ class TestComponentWithCallableAction extends Livewire
                         Action::make('set_value')
                             ->label('Set Value')
                             ->action(fn (TestComponentWithCallableAction $livewire) => $livewire->actionCalled = true),
+                    ]),
+            ])
+            ->statePath('data');
+    }
+}
+
+class TestComponentWithCalloutControlActions extends Livewire
+{
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                Callout::make('Notice with Control Actions')
+                    ->description('This callout has control actions.')
+                    ->info()
+                    ->controlActions([
+                        Action::make('dismiss')
+                            ->icon('heroicon-o-x-mark')
+                            ->iconButton(),
+                    ]),
+            ])
+            ->statePath('data');
+    }
+}
+
+class TestComponentWithCallableControlsAction extends Livewire
+{
+    public bool $actionCalled = false;
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                Callout::make('Notice')
+                    ->controlActions([
+                        Action::make('set_value')
+                            ->action(fn (TestComponentWithCallableControlsAction $livewire) => $livewire->actionCalled = true),
                     ]),
             ])
             ->statePath('data');

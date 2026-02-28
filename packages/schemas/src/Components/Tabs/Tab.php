@@ -33,6 +33,8 @@ class Tab extends Component implements CanConcealComponents
 
     protected IconPosition | string | Closure | null $badgeIconPosition = null;
 
+    protected bool | Closure $isBadgeDeferred = false;
+
     /**
      * @var view-string
      */
@@ -129,6 +131,18 @@ class Tab extends Component implements CanConcealComponents
     public function getBadgeIconPosition(): IconPosition | string
     {
         return $this->evaluate($this->badgeIconPosition) ?? IconPosition::Before;
+    }
+
+    public function deferBadge(bool | Closure $condition = true): static
+    {
+        $this->isBadgeDeferred = $condition;
+
+        return $this;
+    }
+
+    public function isBadgeDeferred(): bool
+    {
+        return (bool) $this->evaluate($this->isBadgeDeferred);
     }
 
     public function excludeQueryWhenResolvingRecord(bool | Closure $condition = true): static
