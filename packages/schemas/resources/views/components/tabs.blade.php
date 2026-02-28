@@ -145,7 +145,7 @@
 
                 <x-filament::tabs.item
                     :alpine-active="'tab === \'' . $tabKey . '\''"
-                    :alpine-deferred-badge-data="$isTabBadgeDeferred ? 'deferredBadges[' . \Illuminate\Support\Js::from($tabKey) . ']' : null"
+                    :alpine-deferred-badge-data="$isTabBadgeDeferred ? 'deferredBadges[' . \Illuminate\Support\Js::from($index) . ']' : null"
                     :alpine-deferred-badge-loading="$isTabBadgeDeferred ? 'isLoadingDeferredBadges' : null"
                     :attributes="$tabExtraAttributeBag"
                     :badge="$tabBadge"
@@ -183,7 +183,7 @@
 
                             <x-filament::tabs.item
                                 :alpine-active="'tab === \'' . $tabKey . '\''"
-                                :alpine-deferred-badge-data="$isTabBadgeDeferred ? 'deferredBadges[' . \Illuminate\Support\Js::from($tabKey) . ']' : null"
+                                :alpine-deferred-badge-data="$isTabBadgeDeferred ? 'deferredBadges[' . \Illuminate\Support\Js::from($index) . ']' : null"
                                 :alpine-deferred-badge-loading="$isTabBadgeDeferred ? 'isLoadingDeferredBadges' : null"
                                 :attributes="$tabExtraAttributeBag"
                                 :badge="$tabBadge"
@@ -221,7 +221,7 @@
                             @endphp
 
                             <x-filament::dropdown.list.item
-                                :alpine-deferred-badge-data="$isTabBadgeDeferred ? 'deferredBadges[' . \Illuminate\Support\Js::from($tabKey) . ']' : null"
+                                :alpine-deferred-badge-data="$isTabBadgeDeferred ? 'deferredBadges[' . \Illuminate\Support\Js::from($index) . ']' : null"
                                 :alpine-deferred-badge-loading="$isTabBadgeDeferred ? 'isLoadingDeferredBadges' : null"
                                 :badge="$tabBadge"
                                 :badge-color="$tabBadgeColor"
