@@ -121,13 +121,17 @@
         color: var(--color-cm-sky);
     }
 
-    & .EasyMDEContainer .cm-s-easymde .cm-formatting-quote + .cm-quote {
+    & .EasyMDEContainer .cm-s-easymde .cm-formatting-quote ~ .cm-quote {
         color: var(--color-cm-gray-muted);
     }
 
     & .EasyMDEContainer .cm-s-easymde .cm-formatting-list,
-    & .EasyMDEContainer .cm-s-easymde .cm-formatting-list + .cm-variable-2,
-    & .EasyMDEContainer .cm-s-easymde .cm-tab + .cm-variable-2 {
+    & .EasyMDEContainer .cm-s-easymde .cm-formatting-list ~ .cm-variable-2,
+    & .EasyMDEContainer .cm-s-easymde .cm-formatting-list ~ .cm-variable-3,
+    & .EasyMDEContainer .cm-s-easymde .cm-formatting-list ~ .cm-keyword,
+    & .EasyMDEContainer .cm-s-easymde .cm-tab ~ .cm-variable-2,
+    & .EasyMDEContainer .cm-s-easymde .cm-tab ~ .cm-variable-3,
+    & .EasyMDEContainer .cm-s-easymde .cm-tab ~ .cm-keyword {
         color: var(--color-cm-gray);
     }
 
@@ -185,7 +189,7 @@
     }
 
     & .EasyMDEContainer .cm-s-easymde .cm-formatting-code-block,
-    & .EasyMDEContainer .cm-s-easymde .cm-tab + .cm-comment {
+    & .EasyMDEContainer .cm-s-easymde .cm-tab ~ .cm-comment {
         @apply bg-transparent text-inherit;
     }
 

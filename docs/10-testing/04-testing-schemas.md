@@ -103,18 +103,18 @@ livewire(CreatePost::class)
 
 ## Testing the existence of a form
 
-To check that a Livewire component has a form, use `assertFormExists()`:
+To check that a Livewire component has a form, use `assertSchemaExists('form')`:
 
 ```php
 use function Pest\Livewire\livewire;
 
 it('has a form', function () {
     livewire(CreatePost::class)
-        ->assertFormExists();
+        ->assertSchemaExists('form');
 });
 ```
 
-> If you have multiple schemas on a Livewire component, you can pass the name of a specific form like `assertFormExists('createPostForm')`.
+> If you have multiple schemas on a Livewire component, you can pass the name of a specific form like `assertSchemaExists('createPostForm')`.
 
 ## Testing the existence of form fields
 

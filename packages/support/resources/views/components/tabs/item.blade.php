@@ -5,6 +5,8 @@
 @props([
     'active' => false,
     'alpineActive' => null,
+    'alpineDeferredBadgeData' => null,
+    'alpineDeferredBadgeLoading' => null,
     'badge' => null,
     'badgeColor' => null,
     'badgeTooltip' => null,
@@ -26,6 +28,7 @@
     }
 
     $hasAlpineActiveClasses = filled($alpineActive);
+    $hasDeferredBadge = filled($alpineDeferredBadgeData);
 @endphp
 
 <{{ $tag }}
@@ -77,5 +80,66 @@
                 {{ $badge }}
             </x-filament::badge>
         @endif
+    @elseif ($hasDeferredBadge)
+        <span
+            x-show="{{ $alpineDeferredBadgeLoading }}"
+            x-cloak
+            class="fi-tabs-item-badge-placeholder"
+        >
+            {{ \Filament\Support\generate_loading_indicator_html(size: \Filament\Support\Enums\IconSize::Small) }}
+        </span>
+
+        <template
+            x-if="
+                ! {{ $alpineDeferredBadgeLoading }} &&
+                    {{ $alpineDeferredBadgeData }}?.badge != null
+            "
+        >
+            <span
+                x-bind:class="
+                    'fi-badge fi-size-sm ' +
+                        ({{ $alpineDeferredBadgeData }}?.badgeColorClasses ?? '')
+                "
+                x-bind:style="{{ $alpineDeferredBadgeData }}?.badgeColorStyles ?? ''"
+                x-init="
+                    let tooltip = {{ $alpineDeferredBadgeData }}?.badgeTooltip
+                    if (tooltip) {
+                        window.tippy?.($el, {
+                            content: tooltip,
+                            theme: $store.theme,
+                        })
+                    }
+                "
+            >
+                <template
+                    x-if="
+                        {{ $alpineDeferredBadgeData }}?.badgeIconHtml &&
+                            {{ $alpineDeferredBadgeData }}?.badgeIconPosition !== 'after'
+                    "
+                >
+                    <span
+                        x-html="{{ $alpineDeferredBadgeData }}.badgeIconHtml"
+                    ></span>
+                </template>
+
+                <span class="fi-badge-label-ctn">
+                    <span
+                        class="fi-badge-label"
+                        x-text="{{ $alpineDeferredBadgeData }}?.badge"
+                    ></span>
+                </span>
+
+                <template
+                    x-if="
+                        {{ $alpineDeferredBadgeData }}?.badgeIconHtml &&
+                            {{ $alpineDeferredBadgeData }}?.badgeIconPosition === 'after'
+                    "
+                >
+                    <span
+                        x-html="{{ $alpineDeferredBadgeData }}.badgeIconHtml"
+                    ></span>
+                </template>
+            </span>
+        </template>
     @endif
 </{{ $tag }}>
