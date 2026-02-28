@@ -375,7 +375,7 @@ public function table(Table $table): Table
 ```
 
 <Aside variant="warning">
-    Note that when using custom data, the table is not automatically refreshed when returning from an action.  If you have an action which changes the state of the table, you should call `$this->resetTable()` before returning from your action closure.
+    When using custom data, the table data is not automatically refreshed after an action is executed.  If you have an action that changes the state of a table record in the current pagination page, you should call `$this->resetTable()` in your action function.
 </Aside>
 
 ### Bulk actions
