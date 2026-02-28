@@ -95,12 +95,12 @@ If you have expensive queries powering your tab badges (such as counting large d
 use Filament\Schemas\Components\Tabs\Tab;
 
 Tab::make()
-    ->badge(static fn () => Customer::query()->where('active', true)->count())
+    ->badge(static fn (): int => Customer::query()->where('active', true)->count())
     ->deferBadge()
 ```
 
 <Aside variant="danger">
-    The `badge()` value must be a closure when using `deferBadge()`. If you pass a raw value like `->badge(Customer::query()->count())`, the query runs immediately when the tab is built, defeating the purpose of deferral.
+    The `badge()` value must be returned from a function when using `deferBadge()`. If you pass a raw value like `badge(Customer::query()->count())`, the query runs immediately when the tab is built, defeating the purpose of deferral.
 </Aside>
 
 While the badges are loading, a small loading indicator will appear in place of each deferred badge. Once the data is fetched, the loading indicators will be replaced with the actual badge values.

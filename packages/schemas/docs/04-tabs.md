@@ -179,7 +179,7 @@ Tabs::make('Tabs')
 ```
 
 <Aside variant="warning">
-    The `badge()` value must be a closure when using `deferBadge()`. If you pass a raw value like `badge(Notification::query()->count())`, the query runs immediately when the tab is built, defeating the purpose of deferral.
+    The `badge()` value must be returned from a function when using `deferBadge()`. If you pass a raw value like `badge(Notification::query()->count())`, the query runs immediately when the tab is built, defeating the purpose of deferral.
 
     The `Tabs` component must have a `key()` set when using `deferBadge()`. Without a key, the deferred badge request cannot identify the correct component on the server.
 </Aside>
