@@ -66,7 +66,7 @@ trait HasTabs
 
     protected function modifyQueryWithActiveTab(Builder $query, bool $isResolvingRecord = false): Builder
     {
-        if (blank(filled($this->activeTab))) {
+        if (blank($this->activeTab)) {
             return $query;
         }
 
