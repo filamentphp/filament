@@ -16,6 +16,7 @@ use Filament\Support\View\Components\BadgeComponent;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Renderless;
+
 use function Filament\Support\generate_icon_html;
 
 class Tabs extends Component
