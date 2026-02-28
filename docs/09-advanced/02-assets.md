@@ -368,26 +368,49 @@ FilamentAsset::register([
 ]);
 ```
 
-### Registering JavaScript files that has import statement
+### Using Vite-compiled JavaScript files
 
-Command `php artisan filament:assets` only copies the selected file to the public directory. However, if you use `import` statement in your JavaScript file, it will not work. Example:
+The `php artisan filament:assets` command copies files as-is into the `/public` directory without bundling or resolving dependencies. This means that if your JavaScript file uses `import` statements to pull in npm packages, the browser will not be able to resolve them. To use JavaScript files that require bundling, you should compile them with [Vite](https://vitejs.dev) first, and then register the compiled output as a URL-based asset.
+
+First, add your JavaScript file as an entry point in your `vite.config.js`:
+
 ```js
-import moment from "moment-timezone";
-console.log(moment.tz.guess());
+import { defineConfig } from 'vite'
+import laravel from 'laravel-vite-plugin'
+
+export default defineConfig({
+    plugins: [
+        laravel({
+            input: [
+                'resources/css/app.css',
+                'resources/js/app.js',
+                'resources/js/timezone.js', // Your custom script
+            ],
+        }),
+    ],
+})
 ```
 
-You need to run the Vite build process first:
+Then, compile the assets using Vite:
+
 ```bash
 npm run build
 ```
 
-Then use Vite::asset() to get the URL of the compiled asset:
+Finally, register the compiled asset using `Vite::asset()` to resolve the versioned URL:
+
 ```php
-use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Assets\Js;
+use Filament\Support\Facades\FilamentAsset;
 use Illuminate\Support\Facades\Vite;
 
 FilamentAsset::register([
-	Js::make('timezone', Vite::asset('resources/js/timezone.js')),
+    Js::make('timezone', Vite::asset('resources/js/timezone.js')),
 ]);
 ```
+
+This approach also works for TypeScript files or any other JavaScript that needs a build step. Since `Vite::asset()` returns a URL, the asset will not be copied by `php artisan filament:assets` — it is served directly from Vite's build output.
+
+<Aside variant="info">
+If you need to bundle JavaScript for an [asynchronous Alpine.js component](#asynchronous-alpinejs-components), consider using esbuild instead, as documented in that section.
+</Aside>
