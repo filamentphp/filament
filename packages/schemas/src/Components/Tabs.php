@@ -16,6 +16,7 @@ use Filament\Support\View\Components\BadgeComponent;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Renderless;
+use function Filament\Support\generate_icon_html;
 
 class Tabs extends Component
 {
@@ -248,7 +249,7 @@ class Tabs extends Component
 
             $badgeIcon = $tab->getBadgeIcon();
             $badgeIconHtml = $badgeIcon
-                ? \Filament\Support\generate_icon_html($badgeIcon, size: IconSize::Small)?->toHtml()
+                ? generate_icon_html($badgeIcon, size: IconSize::Small)?->toHtml()
                 : null;
 
             $badgeIconPosition = $tab->getBadgeIconPosition();
