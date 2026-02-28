@@ -108,6 +108,10 @@
                                     return
                                 }
 
+                                if (this.isLoadingDeferredBadges) {
+                                    return
+                                }
+
                                 this.fetchDeferredBadges()
                             })
                         })
@@ -285,9 +289,19 @@
 
                     this.unsubscribeLivewireHook = Livewire.hook(
                         'commit',
-                        ({ component, succeed }) => {
+                        ({ component, commit, succeed }) => {
                             succeed(() => {
                                 if (component.id !== $wire.__instance.id) {
+                                    return
+                                }
+
+                                if (this.isLoadingDeferredBadges) {
+                                    return
+                                }
+
+                                const updateKeys = Object.keys(commit.updates ?? {})
+
+                                if (updateKeys.length === 1 && updateKeys[0] === @js($livewireProperty)) {
                                     return
                                 }
 

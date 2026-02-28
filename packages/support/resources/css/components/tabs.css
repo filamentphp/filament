@@ -33,7 +33,7 @@
         @apply bg-gray-50 dark:bg-white/5;
 
         & .fi-tabs-item-label,
-        & .fi-icon {
+        & > .fi-icon {
             @apply text-primary-700 dark:text-primary-400;
         }
     }
@@ -56,7 +56,7 @@
         @apply text-gray-500 transition duration-75 dark:text-gray-400;
     }
 
-    & .fi-icon {
+    & > .fi-icon {
         @apply shrink-0 text-gray-400 transition duration-75 dark:text-gray-500;
     }
 
