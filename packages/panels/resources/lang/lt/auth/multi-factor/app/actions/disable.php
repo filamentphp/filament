@@ -2,33 +2,33 @@
 
 return [
 
-    'label' => 'Turn off',
+    'label' => 'Išjungti',
 
     'modal' => [
 
-        'heading' => 'Disable authenticator app',
+        'heading' => 'Išjungti autentifikavimo programą',
 
-        'description' => 'Are you sure you want to stop using the authenticator app? Disabling this will remove an extra layer of security from your account.',
+        'description' => 'Ar tikrai norite sustabdyti autentifikavimo programos naudojimą? Išjungus šią funkciją, jūsų paskyrai bus pašalintas papildomas saugos lygis.',
 
         'form' => [
 
             'code' => [
 
-                'label' => 'Enter the 6-digit code from the authenticator app',
+                'label' => 'Įveskite 6 skaitmenų kodą iš autentifikavimo programos',
 
                 'validation_attribute' => 'code',
 
                 'actions' => [
 
                     'use_recovery_code' => [
-                        'label' => 'Use a recovery code instead',
+                        'label' => 'Naudoti atsarginį kodą',
                     ],
 
                 ],
 
                 'messages' => [
 
-                    'invalid' => 'The code you entered is invalid.',
+                    'invalid' => 'Įvestas kodas yra neteisingas.',
 
                 ],
 
@@ -36,13 +36,13 @@ return [
 
             'recovery_code' => [
 
-                'label' => 'Or, enter a recovery code',
+                'label' => 'Arba įveskite atsarginį kodą',
 
                 'validation_attribute' => 'recovery code',
 
                 'messages' => [
 
-                    'invalid' => 'The recovery code you entered is invalid.',
+                    'invalid' => 'Įvestas atsarginis kodas yra neteisingas.',
 
                 ],
 
@@ -53,7 +53,7 @@ return [
         'actions' => [
 
             'submit' => [
-                'label' => 'Disable authenticator app',
+                'label' => 'Išjungti autentifikavimo programą',
             ],
 
         ],
@@ -63,7 +63,7 @@ return [
     'notifications' => [
 
         'disabled' => [
-            'title' => 'Authenticator app has been disabled',
+            'title' => 'Autentifikavimo programa išjungta',
         ],
 
     ],
