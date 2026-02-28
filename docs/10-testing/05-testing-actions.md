@@ -314,7 +314,7 @@ it('can only print a sent invoice', function () {
 });
 ```
 
-To ensure sets of actions exist in the correct order, you can use `assertActionsExistInOrder()`:
+To ensure sets of actions exist in the correct order, you can use `assertActionListInOrder()`:
 
 ```php
 use function Pest\Livewire\livewire;
@@ -325,7 +325,7 @@ it('can have actions in order', function () {
     livewire(EditInvoice::class, [
         'invoice' => $invoice,
     ])
-        ->assertActionsExistInOrder(['send', 'export']);
+        ->assertActionListInOrder(['send', 'export']);
 });
 ```
 

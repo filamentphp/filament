@@ -53,7 +53,7 @@ export default () => ({
                 this.close()
             }
         } else {
-            this.isOpenDesktop = this.isOpen
+            this.isOpen = this.isOpenDesktop
         }
     },
 

@@ -17,6 +17,10 @@ use Filament\Tests\Fixtures\Clusters\WithoutSubNavigationCluster;
 use Filament\Tests\Fixtures\Clusters\WithoutSubNavigationCluster\Pages\ClusteredPageWithoutSubNavigation;
 use Filament\Tests\Fixtures\Pages\Actions;
 use Filament\Tests\Fixtures\Pages\AfterStateUpdatedJsTest;
+use Filament\Tests\Fixtures\Pages\AutofocusBasicBrowserTest;
+use Filament\Tests\Fixtures\Pages\AutofocusBrowserTest;
+use Filament\Tests\Fixtures\Pages\AutofocusSecondTabBrowserTest;
+use Filament\Tests\Fixtures\Pages\AutofocusWizardBrowserTest;
 use Filament\Tests\Fixtures\Pages\BuilderTest;
 use Filament\Tests\Fixtures\Pages\CalloutBrowserTest;
 use Filament\Tests\Fixtures\Pages\KeyValueTest;
@@ -71,6 +75,10 @@ class AdminPanelProvider extends PanelProvider
                 Pages\Dashboard::class,
                 Actions::class,
                 AfterStateUpdatedJsTest::class,
+                AutofocusBasicBrowserTest::class,
+                AutofocusBrowserTest::class,
+                AutofocusSecondTabBrowserTest::class,
+                AutofocusWizardBrowserTest::class,
                 BuilderTest::class,
                 CalloutBrowserTest::class,
                 KeyValueTest::class,

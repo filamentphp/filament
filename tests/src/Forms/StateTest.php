@@ -859,6 +859,43 @@ test('dehydrated state can be mutated when parent schema is hidden and dehydrate
         ]);
 });
 
+test('`mutateStateForValidationUsing()` does not affect the dehydrated state', function (): void {
+    $schema = Schema::make(Livewire::make())
+        ->statePath('data')
+        ->components([
+            Field::make($statePath = Str::random())
+                ->default($state = Str::random())
+                ->mutateStateForValidationUsing(fn ($state) => $state . '_MUTATED_FOR_VALIDATION'),
+        ])
+        ->fill();
+
+    invade($schema->getLivewire())->cacheSchema('form', $schema);
+
+    expect($schema->getState())
+        ->toBe([
+            $statePath => $state,
+        ]);
+});
+
+test('`mutateStateForValidationUsing()` does not affect the dehydrated state when using `dehydrateStateUsing()`', function (): void {
+    $schema = Schema::make(Livewire::make())
+        ->statePath('data')
+        ->components([
+            Field::make($statePath = Str::random())
+                ->default($state = Str::random())
+                ->mutateStateForValidationUsing(fn ($state) => $state . '_MUTATED_FOR_VALIDATION')
+                ->dehydrateStateUsing(fn ($state) => $state . '_DEHYDRATED'),
+        ])
+        ->fill();
+
+    invade($schema->getLivewire())->cacheSchema('form', $schema);
+
+    expect($schema->getState())
+        ->toBe([
+            $statePath => $state . '_DEHYDRATED',
+        ]);
+});
+
 test('sibling state can be retrieved relatively from another component', function (): void {
     Schema::make(Livewire::make())
         ->statePath('data')

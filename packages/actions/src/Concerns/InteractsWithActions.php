@@ -598,6 +598,10 @@ trait InteractsWithActions
         if (filled($action['context']['recordKey'] ?? null)) {
             $record = $this->getTableRecord($action['context']['recordKey']);
 
+            if (! $record) {
+                throw new ActionNotResolvableException("Record [{$action['context']['recordKey']}] no longer exists.");
+            }
+
             $resolvedAction->getRootGroup()?->record($record) ?? $resolvedAction->record($record);
         }
 

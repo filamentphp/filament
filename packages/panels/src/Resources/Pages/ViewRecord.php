@@ -133,7 +133,7 @@ class ViewRecord extends Page
     public function getDefaultActionSchemaResolver(Action $action): ?Closure
     {
         return match (true) {
-            $action instanceof CreateAction, $action instanceof EditAction => fn (Schema $schema): Schema => static::getResource()::form($schema->columns(2)),
+            $action instanceof CreateAction, $action instanceof EditAction => fn (Schema $schema): Schema => static::getResource()::form($schema->hasCustomColumns() ? $schema : $schema->columns(2)),
             $action instanceof ViewAction => fn (Schema $schema): Schema => $this->hasInfolist() ? $schema->components([EmbeddedSchema::make('infolist')]) : $schema->components([EmbeddedSchema::make('form')]),
             default => null,
         };
@@ -152,8 +152,11 @@ class ViewRecord extends Page
 
     public function defaultForm(Schema $schema): Schema
     {
+        if (! $schema->hasCustomColumns()) {
+            $schema->columns($this->hasInlineLabels() ? 1 : 2);
+        }
+
         return $schema
-            ->columns($this->hasInlineLabels() ? 1 : 2)
             ->disabled()
             ->inlineLabel($this->hasInlineLabels())
             ->model($this->getRecord())
@@ -168,8 +171,11 @@ class ViewRecord extends Page
 
     public function defaultInfolist(Schema $schema): Schema
     {
+        if (! $schema->hasCustomColumns()) {
+            $schema->columns($this->hasInlineLabels() ? 1 : 2);
+        }
+
         return $schema
-            ->columns($this->hasInlineLabels() ? 1 : 2)
             ->inlineLabel($this->hasInlineLabels())
             ->record($this->getRecord());
     }

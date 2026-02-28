@@ -2,10 +2,17 @@
 
 use Filament\Actions\CreateAction;
 use Filament\Actions\Testing\TestAction;
+use Filament\Forms\Components\Repeater;
 use Filament\Tests\Fixtures\Models\Department;
+use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Models\Ticket;
+use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Fixtures\Resources\Tickets\Pages\EditTicket;
 use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsRelationManager;
+use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsRelationManagerWithPreservation;
+use Filament\Tests\Fixtures\Resources\Users\Pages\EditUser;
+use Filament\Tests\Fixtures\Resources\Users\RelationManagers\PostsWithCreateAndPreserveRepeaterRelationManager;
+use Filament\Tests\Fixtures\Resources\Users\RelationManagers\PostsWithCreateAndPreserveRepeaterWithDefaultRelationManager;
 use Filament\Tests\Panels\Resources\TestCase;
 use Illuminate\Support\Str;
 
@@ -100,6 +107,108 @@ it('can create another record using `CreateAction`', function (): void {
         ->assertHasNoFormErrors();
 
     assertDatabaseHas(Department::class, ['name' => $firstName]);
+});
+
+it('can create another record and preserve data using `CreateAction`', function (): void {
+    $ticket = Ticket::factory()->create();
+
+    livewire(DepartmentsRelationManagerWithPreservation::class, ['ownerRecord' => $ticket, 'pageClass' => EditTicket::class])
+        ->mountAction(TestAction::make(CreateAction::class)->table(), ['another' => true])
+        ->fillForm([
+            'name' => $firstName = Str::random(),
+        ])
+        ->callMountedAction()
+        ->assertHasNoFormErrors()
+        ->assertSchemaStateSet([
+            'name' => $firstName,
+        ])
+        ->fillForm([
+            'name' => $secondName = Str::random(),
+        ])
+        ->callMountedAction()
+        ->assertHasNoFormErrors();
+
+    assertDatabaseHas(Department::class, ['name' => $firstName]);
+    assertDatabaseHas(Department::class, ['name' => $secondName]);
+});
+
+it('can create another record and preserve repeater data using `CreateAction`', function (): void {
+    $undoRepeaterFake = Repeater::fake();
+
+    $user = User::factory()->create();
+
+    $repeaterItems = [
+        ['name' => 'First Item', 'email' => 'first@example.com'],
+        ['name' => 'Second Item', 'email' => 'second@example.com'],
+    ];
+
+    livewire(PostsWithCreateAndPreserveRepeaterRelationManager::class, ['ownerRecord' => $user, 'pageClass' => EditUser::class])
+        ->mountAction(TestAction::make(CreateAction::class)->table(), ['another' => true])
+        ->fillForm([
+            'title' => $firstTitle = Str::random(),
+            'rating' => 5,
+            'json_array_of_objects' => $repeaterItems,
+        ])
+        ->callMountedAction()
+        ->assertHasNoFormErrors()
+        ->fillForm([
+            'title' => $secondTitle = Str::random(),
+            'rating' => 3,
+        ])
+        ->callMountedAction()
+        ->assertHasNoFormErrors();
+
+    $record = Post::query()->where('title', $firstTitle)->first();
+
+    expect($record)->not->toBeNull();
+    expect($record->json_array_of_objects)->toBe($repeaterItems);
+
+    $record2 = Post::query()->where('title', $secondTitle)->first();
+
+    expect($record2)->not->toBeNull();
+    expect($record2->json_array_of_objects)->toBe($repeaterItems);
+
+    $undoRepeaterFake();
+});
+
+it('can create another record and preserve repeater data with `default()` values using `CreateAction`', function (): void {
+    $undoRepeaterFake = Repeater::fake();
+
+    $user = User::factory()->create();
+
+    $repeaterItems = [
+        ['name' => 'Custom A', 'email' => 'a@example.com'],
+        ['name' => 'Custom B', 'email' => 'b@example.com'],
+        ['name' => 'Custom C', 'email' => 'c@example.com'],
+    ];
+
+    livewire(PostsWithCreateAndPreserveRepeaterWithDefaultRelationManager::class, ['ownerRecord' => $user, 'pageClass' => EditUser::class])
+        ->mountAction(TestAction::make(CreateAction::class)->table(), ['another' => true])
+        ->fillForm([
+            'title' => $firstTitle = Str::random(),
+            'rating' => 5,
+            'json_array_of_objects' => $repeaterItems,
+        ])
+        ->callMountedAction()
+        ->assertHasNoFormErrors()
+        ->fillForm([
+            'title' => $secondTitle = Str::random(),
+            'rating' => 3,
+        ])
+        ->callMountedAction()
+        ->assertHasNoFormErrors();
+
+    $record = Post::query()->where('title', $firstTitle)->first();
+
+    expect($record)->not->toBeNull();
+    expect($record->json_array_of_objects)->toBe($repeaterItems);
+
+    $record2 = Post::query()->where('title', $secondTitle)->first();
+
+    expect($record2)->not->toBeNull();
+    expect($record2->json_array_of_objects)->toBe($repeaterItems);
+
+    $undoRepeaterFake();
 });
 
 it('can cancel `CreateAction` without creating record', function (): void {

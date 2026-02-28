@@ -304,13 +304,12 @@ it('cannot access record for action after record no longer matches tab without `
         ->assertCanSeeTableRecords([$department])
         ->tap(fn () => $department->update(['name' => 'Billing']));
 
-    expect(
-        fn () => livewire(DepartmentsRelationManagerWithTabs::class, [
-            'ownerRecord' => $ticket,
-            'pageClass' => EditTicket::class,
-        ])
-            ->set('shouldExcludeTabQueryWhenResolvingRecord', false)
-            ->set('activeTab', 'a_names')
-            ->mountTableAction(DeleteAction::class, $department)
-    )->toThrow(TypeError::class);
+    livewire(DepartmentsRelationManagerWithTabs::class, [
+        'ownerRecord' => $ticket,
+        'pageClass' => EditTicket::class,
+    ])
+        ->set('shouldExcludeTabQueryWhenResolvingRecord', false)
+        ->set('activeTab', 'a_names')
+        ->mountTableAction(DeleteAction::class, $department)
+        ->assertTableActionNotMounted(DeleteAction::class);
 });

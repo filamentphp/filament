@@ -770,3 +770,50 @@ it('renders mentions without labels as empty spans', function (): void {
 
     expect($html)->toContain('<span data-type="mention" data-id="1" data-char="@"></span>');
 });
+
+it('preserves links with default protocols', function (): void {
+    $renderer = RichContentRenderer::make(
+        '<p><a href="https://example.com">Link</a></p>',
+    );
+
+    $html = $renderer->toUnsafeHtml();
+
+    expect($html)->toContain('href="https://example.com"');
+});
+
+it('strips links with unknown protocols by default', function (): void {
+    $renderer = RichContentRenderer::make(
+        '<p><a href="myapp:///path"><strong>Link</strong></a></p>',
+    );
+
+    $html = $renderer->toUnsafeHtml();
+
+    expect($html)->not->toContain('myapp:///path');
+});
+
+it('preserves links with custom protocols when `linkProtocols()` includes them', function (): void {
+    $renderer = RichContentRenderer::make(
+        '<p><a href="myapp:///cards?id=123"><strong>Open App</strong></a></p>',
+    );
+
+    $renderer->linkProtocols([
+        ...RichContentRenderer::make()->getLinkProtocols(),
+        'myapp',
+    ]);
+
+    $html = $renderer->toUnsafeHtml();
+
+    expect($html)->toContain('href="myapp:///cards?id=123"');
+});
+
+it('uses default protocols from `Link` when `linkProtocols()` is not set', function (): void {
+    $renderer = RichContentRenderer::make();
+
+    $protocols = $renderer->getLinkProtocols();
+
+    expect($protocols)
+        ->toContain('http')
+        ->toContain('https')
+        ->toContain('mailto')
+        ->toContain('tel');
+});
