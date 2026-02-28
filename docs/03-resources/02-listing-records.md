@@ -95,7 +95,7 @@ If you have expensive queries powering your tab badges (such as counting large d
 use Filament\Schemas\Components\Tabs\Tab;
 
 Tab::make()
-    ->badge(fn () => Customer::query()->where('active', true)->count())
+    ->badge(static fn () => Customer::query()->where('active', true)->count())
     ->deferBadge()
 ```
 

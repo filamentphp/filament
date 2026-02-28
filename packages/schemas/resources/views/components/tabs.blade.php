@@ -86,12 +86,35 @@
                 $hasDeferredBadges ? '{
                     deferredBadges: {},
                     isLoadingDeferredBadges: true,
+                    unsubscribeLivewireHook: null,
+
+                    async fetchDeferredBadges() {
+                        this.isLoadingDeferredBadges = true
+
+                        try {
+                            const badges = await $wire.callSchemaComponentMethod(' . \Illuminate\Support\Js::from($tabsKey) . ', \'getDeferredTabBadges\')
+                            this.deferredBadges = badges ?? {}
+                        } finally {
+                            this.isLoadingDeferredBadges = false
+                        }
+                    },
 
                     async init() {
-                        const badges = await $wire.callSchemaComponentMethod(' . \Illuminate\Support\Js::from($tabsKey) . ', \'getDeferredTabBadges\')
+                        await this.fetchDeferredBadges()
 
-                        this.deferredBadges = badges ?? {}
-                        this.isLoadingDeferredBadges = false
+                        this.unsubscribeLivewireHook = Livewire.hook(\'commit\', ({ component, succeed }) => {
+                            succeed(() => {
+                                if (component.id !== $wire.__instance.id) {
+                                    return
+                                }
+
+                                this.fetchDeferredBadges()
+                            })
+                        })
+                    },
+
+                    destroy() {
+                        this.unsubscribeLivewireHook?.()
                     },
                 }' : null
             "
@@ -194,6 +217,8 @@
                             @endphp
 
                             <x-filament::dropdown.list.item
+                                :alpine-deferred-badge-data="$isTabBadgeDeferred ? 'deferredBadges[' . \Illuminate\Support\Js::from($tabKey) . ']' : null"
+                                :alpine-deferred-badge-loading="$isTabBadgeDeferred ? 'isLoadingDeferredBadges' : null"
                                 :badge="$tabBadge"
                                 :badge-color="$tabBadgeColor"
                                 :badge-tooltip="$tabBadgeTooltip"
@@ -238,15 +263,42 @@
             x-data="{
                 deferredBadges: {},
                 isLoadingDeferredBadges: true,
+                unsubscribeLivewireHook: null,
+
+                async fetchDeferredBadges() {
+                    this.isLoadingDeferredBadges = true
+
+                    try {
+                        const badges = await $wire.callSchemaComponentMethod(
+                            @js($tabsKey),
+                            'getDeferredTabBadges',
+                        )
+
+                        this.deferredBadges = badges ?? {}
+                    } finally {
+                        this.isLoadingDeferredBadges = false
+                    }
+                },
 
                 async init() {
-                    const badges = await $wire.callSchemaComponentMethod(
-                        @js($tabsKey),
-                        'getDeferredTabBadges',
-                    )
+                    await this.fetchDeferredBadges()
 
-                    this.deferredBadges = badges ?? {}
-                    this.isLoadingDeferredBadges = false
+                    this.unsubscribeLivewireHook = Livewire.hook(
+                        'commit',
+                        ({ component, succeed }) => {
+                            succeed(() => {
+                                if (component.id !== $wire.__instance.id) {
+                                    return
+                                }
+
+                                this.fetchDeferredBadges()
+                            })
+                        },
+                    )
+                },
+
+                destroy() {
+                    this.unsubscribeLivewireHook?.()
                 },
             }"
         @endif

@@ -1,6 +1,7 @@
 ---
 title: Tabs
 ---
+import Aside from "@components/Aside.astro"
 import AutoScreenshot from "@components/AutoScreenshot.astro"
 import UtilityInjection from "@components/UtilityInjection.astro"
 
@@ -165,9 +166,10 @@ use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
 
 Tabs::make('Tabs')
+    ->key('notifications-tabs')
     ->tabs([
         Tab::make('Notifications')
-            ->badge(fn () => Notification::query()->where('unread', true)->count())
+            ->badge(static fn (): int => Notification::query()->where('unread', true->count())
             ->deferBadge()
             ->schema([
                 // ...
@@ -176,8 +178,10 @@ Tabs::make('Tabs')
     ])
 ```
 
-<Aside variant="danger">
-    The `badge()` value must be a closure when using `deferBadge()`. If you pass a raw value like `->badge(Notification::query()->count())`, the query runs immediately when the tab is built, defeating the purpose of deferral.
+<Aside variant="warning">
+    The `badge()` value must be a closure when using `deferBadge()`. If you pass a raw value like `badge(Notification::query()->count())`, the query runs immediately when the tab is built, defeating the purpose of deferral.
+
+    The `Tabs` component must have a `key()` set when using `deferBadge()`. Without a key, the deferred badge request cannot identify the correct component on the server.
 </Aside>
 
 <UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `deferBadge()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
