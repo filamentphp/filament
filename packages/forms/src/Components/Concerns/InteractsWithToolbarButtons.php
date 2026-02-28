@@ -157,7 +157,7 @@ trait InteractsWithToolbarButtons
     }
 
     /**
-     * @return array<array{type: string, buttons?: array<string>}>
+     * @return array<array{type: string, buttons?: array<string | array<string | array<string>>>}>
      */
     protected function getExtraToolbarButtonsModifications(): array
     {

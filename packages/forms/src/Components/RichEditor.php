@@ -734,7 +734,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     }
 
     /**
-     * @return array<array{type: string, buttons?: array<string>}>
+     * @return array<array{type: string, buttons?: array<string | array<string | array<string>>>}>
      */
     protected function getExtraToolbarButtonsModifications(): array
     {
@@ -747,7 +747,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
 
             $enabledButtons = $plugin->getEnabledToolbarButtons();
 
-            if ($enabledButtons) {
+            if (filled($enabledButtons)) {
                 $modifications[] = [
                     'type' => 'enable',
                     'buttons' => $enabledButtons,
@@ -756,7 +756,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
 
             $disabledButtons = $plugin->getDisabledToolbarButtons();
 
-            if ($disabledButtons) {
+            if (filled($disabledButtons)) {
                 $modifications[] = [
                     'type' => 'disable',
                     'buttons' => $disabledButtons,
