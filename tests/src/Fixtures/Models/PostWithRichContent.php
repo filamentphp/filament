@@ -10,6 +10,8 @@ class PostWithRichContent extends Post implements HasRichContent
 {
     use InteractsWithRichContent;
 
+    protected $table = 'posts';
+
     protected function setUpRichContent(): void
     {
         $this

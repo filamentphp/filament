@@ -463,7 +463,7 @@ class RichContentRenderer implements Htmlable
                 $provider = $plugin->getFileAttachmentProvider();
 
                 if ($provider) {
-                    return $provider;
+                    return $this->fileAttachmentProvider = $provider;
                 }
             }
         }

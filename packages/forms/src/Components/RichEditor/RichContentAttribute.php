@@ -122,7 +122,7 @@ class RichContentAttribute implements Htmlable
                 $provider = $plugin->getFileAttachmentProvider();
 
                 if ($provider) {
-                    return $provider->attribute($this);
+                    return $this->fileAttachmentProvider = $provider->attribute($this);
                 }
             }
         }

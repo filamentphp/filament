@@ -2,7 +2,9 @@
 
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\RichEditor\Plugins\Contracts\HasFileAttachmentProvider;
+use Filament\Forms\Components\RichEditor\RichContentRenderer;
 use Filament\Schemas\Schema;
+use Filament\Tests\Fixtures\Forms\RichEditor\PluginWithFileAttachmentProvider;
 use Filament\Tests\Fixtures\Livewire\Livewire;
 use Filament\Tests\Fixtures\Models\PostWithRichContent;
 use Filament\Tests\TestCase;
@@ -405,29 +407,12 @@ test('RichEditor receives file attachment provider from rich content attribute w
         ->toBe($expectedProvider);
 });
 
-test('rich content attribute resolves file attachment provider from plugin implementing `HasFileAttachmentProvider` without calling `fileAttachmentProvider()`', function (): void {
-    $record = new PostWithRichContent;
+test('`RichContentRenderer` resolves file attachment provider from plugin implementing `HasFileAttachmentProvider`', function (): void {
+    $plugin = PluginWithFileAttachmentProvider::make();
 
-    $richContentAttribute = $record->getRichContentAttribute('content');
-    $plugin = $richContentAttribute->getPlugins()[0];
+    $renderer = RichContentRenderer::make()
+        ->plugins([$plugin]);
 
-    expect($richContentAttribute)
-        ->getFileAttachmentProvider()->toBe($plugin->getFileAttachmentProvider());
-});
-
-test('RichEditor receives file attachment provider from rich content attribute when attribute resolves it from plugin', function (): void {
-    $record = new PostWithRichContent;
-
-    $plugin = $record->getRichContentAttribute('content')->getPlugins()[0];
-
-    $richEditor = Schema::make(Livewire::make())
-        ->model($record)
-        ->statePath('data')
-        ->components([
-            RichEditor::make('content'),
-        ])
-        ->getComponents()[0];
-
-    expect($richEditor)
-        ->getFileAttachmentProvider()->toBe($plugin->getFileAttachmentProvider());
+    expect($renderer->getFileAttachmentProvider())
+        ->toBe($plugin->getFileAttachmentProvider());
 });
