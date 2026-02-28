@@ -1,6 +1,7 @@
 ---
 title: Registering assets
 ---
+import Aside from "@components/Aside.astro"
 
 ## Introduction
 
@@ -412,5 +413,5 @@ FilamentAsset::register([
 This approach also works for TypeScript files or any other JavaScript that needs a build step. Since `Vite::asset()` returns a URL, the asset will not be copied by `php artisan filament:assets` — it is served directly from Vite's build output.
 
 <Aside variant="info">
-If you need to bundle JavaScript for an [asynchronous Alpine.js component](#asynchronous-alpinejs-components), consider using esbuild instead, as documented in that section.
+    If you need to bundle JavaScript for an [asynchronous Alpine.js component](#asynchronous-alpinejs-components), consider using esbuild instead, as documented in that section.
 </Aside>
