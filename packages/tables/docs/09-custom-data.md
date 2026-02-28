@@ -374,6 +374,10 @@ public function table(Table $table): Table
 }
 ```
 
+<Aside variant="warning">
+    When using custom data, the table data is not automatically refreshed after an action is executed.  If you have an action that changes the state of a table record in the current pagination page, you should call `$this->resetTable()` in your action function.
+</Aside>
+
 ### Bulk actions
 
 For actions that interact with a single record, the record is always present on the current table page, so the `records()` method can be used to fetch the data. However for bulk actions, records can be selected across pagination pages. If you would like to use a bulk action that selects records across pages, you need to give Filament a way to fetch records across pages, otherwise it will only return the records from the current page. The `resolveSelectedRecordsUsing()` method should accept a function which has a `$keys` parameter, and returns an array of record data:
@@ -412,7 +416,7 @@ public function table(Table $table): Table
         ->columns([
             // ...
         ])
-        ->recordActions([
+        ->toolbarActions([
             BulkAction::make('feature')
                 ->requiresConfirmation()
                 ->action(function (Collection $records): void {
@@ -476,7 +480,7 @@ public function table(Table $table): Table
         ->columns([
             // ...
         ])
-        ->recordActions([
+        ->toolbarActions([
             BulkAction::make('feature')
                 ->requiresConfirmation()
                 ->action(function (Collection $records): void {

@@ -157,8 +157,24 @@ Route::name('filament.')
                                             $page::registerRoutes($panel);
                                         }
 
+                                        foreach ($panel->getPageConfigurations() as $configuration) {
+                                            Filament::setCurrentPageConfigurationKey($configuration->getKey());
+
+                                            $configuration->page::registerRoutes($panel, $configuration);
+
+                                            Filament::setCurrentPageConfigurationKey(null);
+                                        }
+
                                         foreach ($panel->getResources() as $resource) {
                                             $resource::registerRoutes($panel);
+                                        }
+
+                                        foreach ($panel->getResourceConfigurations() as $configuration) {
+                                            Filament::setCurrentResourceConfigurationKey($configuration->getKey());
+
+                                            $configuration->resource::registerRoutes($panel, configuration: $configuration);
+
+                                            Filament::setCurrentResourceConfigurationKey(null);
                                         }
                                     });
 

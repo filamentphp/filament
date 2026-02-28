@@ -14,6 +14,9 @@ use Illuminate\Support\Collection;
 use function Filament\Support\generate_search_column_expression;
 use function Filament\Support\generate_search_term_expression;
 
+/**
+ * @template TModel of Model = Model
+ */
 trait HasGlobalSearch
 {
     protected static int $globalSearchResultsLimit = 50;
@@ -235,6 +238,9 @@ trait HasGlobalSearch
         return $query;
     }
 
+    /**
+     * @return Builder<TModel>
+     */
     public static function getGlobalSearchEloquentQuery(): Builder
     {
         return static::getEloquentQuery();

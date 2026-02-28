@@ -1,10 +1,14 @@
 <?php
 
 use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\RichEditor\Plugins\Contracts\HasFileAttachmentProvider;
+use Filament\Forms\Components\RichEditor\RichContentRenderer;
 use Filament\Schemas\Schema;
+use Filament\Tests\Fixtures\Forms\RichEditor\PluginWithFileAttachmentProvider;
 use Filament\Tests\Fixtures\Livewire\Livewire;
 use Filament\Tests\Fixtures\RichEditor\TestRichContentPlugin;
 use Filament\Tests\Fixtures\RichEditor\TestRichContentPluginWithoutToolbarButtons;
+use Filament\Tests\Fixtures\Models\PostWithRichContent;
 use Filament\Tests\TestCase;
 use Illuminate\Validation\ValidationException;
 
@@ -482,4 +486,54 @@ test('plugin without `HasToolbarButtons` does not affect toolbar buttons', funct
 
     expect($richEditor->getToolbarButtons())
         ->toEqual($defaultRichEditor->getToolbarButtons());
+});
+
+test('rich content attribute resolves file attachment provider from plugin implementing `HasFileAttachmentProvider` without calling `fileAttachmentProvider()`', function (): void {
+    $record = new PostWithRichContent;
+
+    $contentAttribute = $record->getRichContentAttribute('content');
+
+    $pluginWithProvider = $contentAttribute->getPlugins()[0];
+
+    expect($pluginWithProvider)
+        ->toBeInstanceOf(HasFileAttachmentProvider::class);
+
+    $expectedProvider = $pluginWithProvider->getFileAttachmentProvider();
+
+    expect($contentAttribute->getFileAttachmentProvider())
+        ->toBe($expectedProvider);
+});
+
+test('RichEditor receives file attachment provider from rich content attribute when attribute resolves it from plugin', function (): void {
+    $record = new PostWithRichContent;
+
+    $contentAttribute = $record->getRichContentAttribute('content');
+
+    $expectedProvider = $contentAttribute->getPlugins()[0]->getFileAttachmentProvider();
+
+    $schema = Schema::make(Livewire::make())
+        ->model($record)
+        ->statePath('data')
+        ->components([
+            RichEditor::make('content'),
+        ]);
+
+    $richEditor = $schema->getComponents()[0];
+
+    expect($richEditor->getContentAttribute())
+        ->not->toBeNull()
+        ->getFileAttachmentProvider()->toBe($expectedProvider);
+
+    expect($richEditor->getFileAttachmentProvider())
+        ->toBe($expectedProvider);
+});
+
+test('`RichContentRenderer` resolves file attachment provider from plugin implementing `HasFileAttachmentProvider`', function (): void {
+    $plugin = PluginWithFileAttachmentProvider::make();
+
+    $renderer = RichContentRenderer::make()
+        ->plugins([$plugin]);
+
+    expect($renderer->getFileAttachmentProvider())
+        ->toBe($plugin->getFileAttachmentProvider());
 });

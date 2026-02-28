@@ -4,6 +4,7 @@ namespace Filament\Clusters;
 
 use Filament\Facades\Filament;
 use Filament\Pages\Page;
+use Filament\Pages\PageConfiguration;
 use Filament\Panel;
 use Illuminate\Support\Arr;
 
@@ -130,8 +131,8 @@ class Cluster extends Page
         return static::getRouteName() . '.*';
     }
 
-    public static function registerRoutes(Panel $panel): void
+    public static function registerRoutes(Panel $panel, ?PageConfiguration $configuration = null): void
     {
-        static::routes($panel);
+        static::routes($panel, $configuration);
     }
 }

@@ -21,6 +21,7 @@ use Filament\Tests\Fixtures\Policies\DepartmentPolicy;
 use Filament\Tests\Fixtures\Policies\TicketPolicy;
 use Filament\Tests\Fixtures\Providers\AdminPanelProvider;
 use Filament\Tests\Fixtures\Providers\AppAuthenticationPanelProvider;
+use Filament\Tests\Fixtures\Providers\ConfigurationPanelProvider;
 use Filament\Tests\Fixtures\Providers\CustomPanelProvider;
 use Filament\Tests\Fixtures\Providers\DomainTenancyPanelProvider;
 use Filament\Tests\Fixtures\Providers\EmailAuthenticationPanelProvider;
@@ -64,6 +65,7 @@ abstract class TestCase extends BaseTestCase
             TablesServiceProvider::class,
             WidgetsServiceProvider::class,
             AdminPanelProvider::class,
+            ConfigurationPanelProvider::class,
             CustomPanelProvider::class,
             EmailAuthenticationPanelProvider::class,
             AppAuthenticationPanelProvider::class,
