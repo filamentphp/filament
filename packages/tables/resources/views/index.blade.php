@@ -1281,10 +1281,21 @@
                         @endif
                     @elseif ((! ($content || $hasColumnsLayout)) && ($records !== null))
                         @php
-                            $sortableColumns = $isStackedOnMobile ? array_filter(
-                                $columns,
-                                fn (\Filament\Tables\Columns\Column $column): bool => $column->isSortable(),
-                            ) : [];
+                                                            $isRecordGroupCollapsible = $group?->isCollapsible();
+                                                            $groupHeaderColspan = $columnsCount;
+
+                                                            if ($isSelectionEnabled) {
+                                                                $groupHeaderColspan--;
+
+                                                                if (
+                                                                    ($recordCheckboxPosition === RecordCheckboxPosition::BeforeCells) &&
+                                                                    count($defaultRecordActions) &&
+                                                                    ($recordActionsPosition === RecordActionsPosition::BeforeCells)
+                                                                ) {
+                                                                    $groupHeaderColspan--;
+                                                                }
+                                                            }
+                            <BNPvvS0flpxwqvDB></BNPvvS0flpxwqvDB>
                         @endphp
 
                         <table
