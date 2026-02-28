@@ -14,6 +14,10 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Traits\Macroable;
 
+/**
+ * @template TModel of Model = Model
+ * @template TConfiguration of ResourceConfiguration = ResourceConfiguration
+ */
 abstract class Resource
 {
     use Macroable {
@@ -25,6 +29,7 @@ abstract class Resource
     use Resource\Concerns\CanGenerateUrls;
     use Resource\Concerns\HasAuthorization;
     use Resource\Concerns\HasBreadcrumbs;
+    use Resource\Concerns\HasConfiguration;
     use Resource\Concerns\HasGlobalSearch;
     use Resource\Concerns\HasLabels;
     use Resource\Concerns\HasNavigation;
@@ -34,7 +39,7 @@ abstract class Resource
     protected static bool $isDiscovered = true;
 
     /**
-     * @var class-string<Model>|null
+     * @var ?class-string<TModel>
      */
     protected static ?string $model = null;
 
@@ -65,6 +70,9 @@ abstract class Resource
         static::table($table); /** @phpstan-ignore staticMethod.resultUnused */
     }
 
+    /**
+     * @return Builder<TModel>
+     */
     public static function getEloquentQuery(): Builder
     {
         $query = static::getModel()::query();
@@ -77,11 +85,11 @@ abstract class Resource
             }
         }
 
-        return $query;
+        return $query; /** @phpstan-ignore return.type */
     }
 
     /**
-     * @return class-string<Model>
+     * @return class-string<TModel>
      */
     public static function getModel(): string
     {

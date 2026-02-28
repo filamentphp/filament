@@ -6,6 +6,7 @@ use Filament\Facades\Filament;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 
 use function Filament\Tests\livewire;
@@ -201,6 +202,38 @@ test('the user\'s current password must be valid', function (): void {
         ->assertHasFormErrors([
             'password' => 'current_password',
         ])
+        ->assertActionNotMounted([
+            TestAction::make('regenerateAppAuthenticationRecoveryCodes')
+                ->schemaComponent('app', schema: 'content'),
+            TestAction::make('showNewRecoveryCodes'),
+        ]);
+
+    expect($user->getAppAuthenticationRecoveryCodes())
+        ->toBe($recoveryCodes);
+});
+
+it('can throttle code verification attempts per user', function (): void {
+    $appAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
+
+    $user = auth()->user();
+
+    $recoveryCodes = $user->getAppAuthenticationRecoveryCodes();
+
+    // Pre-fill the per-user rate limiter to simulate 5 prior attempts
+    $rateLimitingKey = 'filament-regenerate-recovery-codes:' . $user->getAuthIdentifier();
+
+    foreach (range(1, 5) as $i) {
+        RateLimiter::hit($rateLimitingKey);
+    }
+
+    // Even with a valid code, the rate limit should block the attempt
+    livewire(EditProfile::class)
+        ->callAction(
+            TestAction::make('regenerateAppAuthenticationRecoveryCodes')
+                ->schemaComponent('app', schema: 'content'),
+            ['code' => $appAuthentication->getCurrentCode($user)],
+        )
+        ->assertHasFormErrors(['code'])
         ->assertActionNotMounted([
             TestAction::make('regenerateAppAuthenticationRecoveryCodes')
                 ->schemaComponent('app', schema: 'content'),

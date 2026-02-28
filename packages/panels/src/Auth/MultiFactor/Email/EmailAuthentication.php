@@ -67,7 +67,7 @@ class EmailAuthentication implements HasBeforeChallengeHook, MultiFactorAuthenti
             throw new LogicException("Model [{$userClass}] does not have a [notify()] method.");
         }
 
-        $rateLimitingKey = "filament_email_authentication.{$user->getKey()}";
+        $rateLimitingKey = "filament-email-authentication:{$user->getKey()}";
 
         if (RateLimiter::tooManyAttempts($rateLimitingKey, maxAttempts: 2)) {
             return false;

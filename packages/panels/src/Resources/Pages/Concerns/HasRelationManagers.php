@@ -69,7 +69,7 @@ trait HasRelationManagers
     {
         $managers = $this->getRelationManagers();
 
-        if (array_key_exists($this->activeRelationManager, $managers)) {
+        if (array_key_exists($this->activeRelationManager ?? '', $managers)) {
             return;
         }
 

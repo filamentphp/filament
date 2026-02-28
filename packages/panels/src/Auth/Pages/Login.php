@@ -34,6 +34,7 @@ use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\HtmlString;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Locked;
@@ -77,6 +78,10 @@ class Login extends SimplePage
 
         $data = $this->form->getState();
 
+        if ($this->isLoginRateLimited($data['email'])) {
+            return null;
+        }
+
         /** @var SessionGuard $authGuard */
         $authGuard = Filament::auth();
 
@@ -96,6 +101,10 @@ class Login extends SimplePage
             filled($this->userUndertakingMultiFactorAuthentication) &&
             (decrypt($this->userUndertakingMultiFactorAuthentication) === $user->getAuthIdentifier())
         ) {
+            if ($this->isMultiFactorChallengeRateLimited($user)) {
+                return null;
+            }
+
             $this->multiFactorChallengeForm->validate();
         } else {
             foreach (Filament::getMultiFactorAuthenticationProviders() as $multiFactorAuthenticationProvider) {
@@ -133,6 +142,46 @@ class Login extends SimplePage
         session()->regenerate();
 
         return app(LoginResponse::class);
+    }
+
+    protected function isMultiFactorChallengeRateLimited(Authenticatable $user): bool
+    {
+        $rateLimitingKey = "filament-multi-factor-challenge:{$user->getAuthIdentifier()}";
+
+        if (RateLimiter::tooManyAttempts($rateLimitingKey, maxAttempts: 5)) {
+            $this->getRateLimitedNotification(new TooManyRequestsException(
+                static::class,
+                'authenticate',
+                request()->ip(),
+                RateLimiter::availableIn($rateLimitingKey),
+            ))?->send();
+
+            return true;
+        }
+
+        RateLimiter::hit($rateLimitingKey);
+
+        return false;
+    }
+
+    protected function isLoginRateLimited(string $email): bool
+    {
+        $rateLimitingKey = 'filament-login:' . sha1(request()->ip() . '|' . $email);
+
+        if (RateLimiter::tooManyAttempts($rateLimitingKey, maxAttempts: 5)) {
+            $this->getRateLimitedNotification(new TooManyRequestsException(
+                static::class,
+                'authenticate',
+                request()->ip(),
+                RateLimiter::availableIn($rateLimitingKey),
+            ))?->send();
+
+            return true;
+        }
+
+        RateLimiter::hit($rateLimitingKey);
+
+        return false;
     }
 
     protected function getRateLimitedNotification(TooManyRequestsException $exception): ?Notification

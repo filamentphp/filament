@@ -104,9 +104,13 @@ trait HasFileAttachments
             return $savedFile;
         }
 
-        $storeMethod = $this->getFileAttachmentsVisibility() === 'public' ? 'storePublicly' : 'store';
+        $path = $file->store($this->getFileAttachmentsDirectory(), $this->getFileAttachmentsDiskName());
 
-        return $file->{$storeMethod}($this->getFileAttachmentsDirectory(), $this->getFileAttachmentsDiskName());
+        if ($this->getFileAttachmentsVisibility() === 'public') {
+            rescue(fn () => $this->getFileAttachmentsDisk()->setVisibility($path, 'public'), report: false);
+        }
+
+        return $path;
     }
 
     public function defaultSaveUploadedFileAttachment(TemporaryUploadedFile $file): mixed

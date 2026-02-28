@@ -8,6 +8,7 @@ use Filament\Support\Enums\Size;
 use Filament\Support\Enums\Width;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Enums\ColumnManagerLayout;
 use Filament\Tables\Enums\ColumnManagerResetActionPosition;
 use Filament\Tables\View\TablesIconAlias;
 
@@ -29,6 +30,8 @@ trait HasColumnManager
     protected Width | string | Closure | null $columnManagerWidth = null;
 
     protected ?Closure $modifyColumnManagerTriggerActionUsing = null;
+
+    protected ColumnManagerLayout | Closure | null $columnManagerLayout = null;
 
     protected bool | Closure $hasDeferredColumnManager = true;
 
@@ -90,6 +93,18 @@ trait HasColumnManager
         $this->persistsColumnsInSession = $condition;
 
         return $this;
+    }
+
+    public function columnManagerLayout(ColumnManagerLayout | Closure | null $layout): static
+    {
+        $this->columnManagerLayout = $layout;
+
+        return $this;
+    }
+
+    public function getColumnManagerLayout(): ColumnManagerLayout
+    {
+        return $this->evaluate($this->columnManagerLayout) ?? ColumnManagerLayout::Dropdown;
     }
 
     public function columnManagerResetActionPosition(ColumnManagerResetActionPosition | Closure | null $position): static
@@ -239,6 +254,17 @@ trait HasColumnManager
             ->icon(FilamentIcon::resolve(TablesIconAlias::ACTIONS_COLUMN_MANAGER) ?? Heroicon::ViewColumns)
             ->color('gray')
             ->livewireClickHandlerEnabled(false)
+            ->modalSubmitAction(false)
+            ->extraModalFooterActions([
+                $this->getColumnManagerApplyAction()
+                    ->alpineClickHandler("\$dispatch('apply-table-column-manager'); close()"),
+                Action::make('resetColumnManager')
+                    ->label(__('filament-tables::table.column_manager.actions.reset.label'))
+                    ->color('danger')
+                    ->alpineClickHandler("\$dispatch('reset-table-column-manager'); \$wire.resetTableColumnManager()")
+                    ->button(),
+            ])
+            ->modalCancelActionLabel(__('filament::components/modal.actions.close.label'))
             ->table($this)
             ->authorize(true);
 

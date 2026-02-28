@@ -7,6 +7,7 @@ use Filament\Tests\TestCase;
 use Illuminate\Auth\Events\Failed;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 
 use function Filament\Tests\livewire;
@@ -212,4 +213,84 @@ it('can fill the login form, authenticate, and redirect to the dashboard in the 
     visit(Filament::getUrl())
         ->inDarkMode()
         ->assertNoAccessibilityIssues();
+});
+
+it('can throttle login attempts per IP and email', function (): void {
+    $this->assertGuest();
+
+    $userToAuthenticate = User::factory()->create();
+
+    // Clear the IP-only rate limiter between attempts to isolate the
+    // IP+email rate limit.
+    $clearIpRateLimiter = function (): void {
+        RateLimiter::clear('livewire-rate-limiter:' . sha1(Login::class . '|authenticate|' . request()->ip()));
+    };
+
+    foreach (range(1, 5) as $i) {
+        $clearIpRateLimiter();
+
+        livewire(Login::class)
+            ->fillForm([
+                'email' => $userToAuthenticate->email,
+                'password' => 'password',
+            ])
+            ->call('authenticate');
+
+        $this->assertAuthenticated();
+
+        auth()->logout();
+    }
+
+    $clearIpRateLimiter();
+
+    // The 6th attempt from the same IP + email should be rate limited
+    livewire(Login::class)
+        ->fillForm([
+            'email' => $userToAuthenticate->email,
+            'password' => 'password',
+        ])
+        ->call('authenticate')
+        ->assertNotified();
+
+    $this->assertGuest();
+
+    $clearIpRateLimiter();
+
+    // A different email from the same IP should not be affected
+    $secondUser = User::factory()->create();
+
+    livewire(Login::class)
+        ->fillForm([
+            'email' => $secondUser->email,
+            'password' => 'password',
+        ])
+        ->call('authenticate')
+        ->assertRedirect(Filament::getUrl());
+
+    $this->assertAuthenticatedAs($secondUser);
+});
+
+it('does not lock out a user when an attacker exhausts login attempts from a different IP', function (): void {
+    $this->assertGuest();
+
+    $userToAuthenticate = User::factory()->create();
+
+    // Simulate an attacker exhausting login attempts from a different IP.
+    $attackerIp = '192.168.1.100';
+    $attackerKey = 'filament-login:' . sha1($attackerIp . '|' . $userToAuthenticate->email);
+
+    foreach (range(1, 5) as $i) {
+        RateLimiter::hit($attackerKey);
+    }
+
+    // The legitimate user on a different IP should still be able to log in.
+    livewire(Login::class)
+        ->fillForm([
+            'email' => $userToAuthenticate->email,
+            'password' => 'password',
+        ])
+        ->call('authenticate')
+        ->assertRedirect(Filament::getUrl());
+
+    $this->assertAuthenticatedAs($userToAuthenticate);
 });
