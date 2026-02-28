@@ -1651,7 +1651,7 @@
                                                                 $isColumnActivelySorted && ($sortDirection === 'desc') => \Filament\Tables\View\TablesIconAlias::HEADER_CELL_SORT_DESC_BUTTON,
                                                                 default => \Filament\Tables\View\TablesIconAlias::HEADER_CELL_SORT_BUTTON,
                                                             }, attributes: (new \Illuminate\View\ComponentAttributeBag([
-                                                                'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => '',
+                                                                'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => true,
                                                                 'wire:target' => "sortTable('{$columnName}')",
                                                             ])))
                                                         }}
