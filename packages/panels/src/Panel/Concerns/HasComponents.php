@@ -159,7 +159,6 @@ trait HasComponents
             }
 
             $this->queueLivewireComponentForRegistration($pageClass);
-            // $this->registerToCluster($pageClass);
         }
 
         return $this;
@@ -203,8 +202,6 @@ trait HasComponents
                 // added
                 $this->registerToCluster($resourceClass);
             }
-
-            // $this->registerToCluster($resourceClass);
         }
 
         return $this;
