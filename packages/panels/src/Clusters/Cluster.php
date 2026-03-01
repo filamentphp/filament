@@ -22,6 +22,14 @@ class Cluster extends Page
         return Filament::getClusteredComponents(static::class);
     }
 
+    /**
+     * @return array<string | int, array<class-string> | class-string>
+     */
+    public static function getClusteredComponentsConfigured(): array
+    {
+        return Filament::getClusteredComponentsConfigured(static::class);
+    }
+
     public static function canAccessClusteredComponents(): bool
     {
         foreach (static::getClusteredComponents() as $component) {

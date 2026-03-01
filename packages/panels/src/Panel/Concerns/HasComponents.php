@@ -75,6 +75,11 @@ trait HasComponents
     protected array $clusteredComponents = [];
 
     /**
+     * @var array<class-string<Cluster>, array<class-string, array<string>>>
+     */
+    protected array $clusteredComponentsConfigured = [];
+
+    /**
      * @var array<class-string>
      */
     protected array $resources = [];
@@ -143,14 +148,18 @@ trait HasComponents
                 $this->pageConfigurations[$page->page][$page->getKey()] = $page;
 
                 $pageClass = $page->page;
+
+                $this->registerToClusterConfigured($pageClass, $page->getKey());
             } else {
                 $this->pages[] = $page;
 
                 $pageClass = $page;
+
+                $this->registerToCluster($pageClass);
             }
 
             $this->queueLivewireComponentForRegistration($pageClass);
-            $this->registerToCluster($pageClass);
+            // $this->registerToCluster($pageClass);
         }
 
         return $this;
@@ -167,6 +176,7 @@ trait HasComponents
 
         foreach ($resources as $resource) {
             if ($resource instanceof ResourceConfiguration) {
+                // dump($resource->resource, $resource->getKey()); // "App\Filament\Resources\Users\UserResource", "active"
                 if (isset($this->resourceConfigurations[$resource->resource][$resource->getKey()])) {
                     $message = "A configuration with the key [{$resource->getKey()}] has already been registered for the resource [{$resource->resource}].";
 
@@ -182,13 +192,19 @@ trait HasComponents
                 $this->resourceConfigurations[$resource->resource][$resource->getKey()] = $resource;
 
                 $resourceClass = $resource->resource;
+
+                // added
+                $this->registerToClusterConfigured($resourceClass, $resource->getKey());
             } else {
                 $this->resources[] = $resource;
 
                 $resourceClass = $resource;
+
+                // added
+                $this->registerToCluster($resourceClass);
             }
 
-            $this->registerToCluster($resourceClass);
+            // $this->registerToCluster($resourceClass);
         }
 
         return $this;
@@ -530,7 +546,8 @@ trait HasComponents
                 $this->queueLivewireComponentForRegistration($class);
             }
 
-            if (! is_subclass_of($class, $baseClass)) { /** @phpstan-ignore function.alreadyNarrowedType */
+            if (! is_subclass_of($class, $baseClass)) {
+                /** @phpstan-ignore function.alreadyNarrowedType */
                 continue;
             }
 
@@ -676,6 +693,25 @@ trait HasComponents
         $this->clusteredComponents[$cluster][] = $component;
     }
 
+    protected function registerToClusterConfigured(string $component, string $key): void
+    {
+        if (! method_exists($component, 'getCluster')) {
+            return;
+        }
+
+        if (is_subclass_of($component, ResourcePage::class)) {
+            return;
+        }
+
+        $cluster = $component::getCluster();
+
+        if (blank($cluster)) {
+            return;
+        }
+
+        $this->clusteredComponentsConfigured[$cluster][$component][] = $key;
+    }
+
     protected function queueLivewireComponentForRegistration(string $component): void
     {
         $componentName = app(ComponentRegistry::class)->getName($component);
@@ -705,6 +741,18 @@ trait HasComponents
         }
 
         return $this->clusteredComponents[$cluster] ?? [];
+    }
+
+    /**
+     * @return array<class-string<Cluster>, array<class-string, array<string>>> | array<class-string, array<string>>
+     */
+    public function getClusteredComponentsConfigured(?string $cluster = null): array
+    {
+        if (blank($cluster)) {
+            return $this->clusteredComponentsConfigured;
+        }
+
+        return $this->clusteredComponentsConfigured[$cluster] ?? [];
     }
 
     public function hasCachedComponents(): bool

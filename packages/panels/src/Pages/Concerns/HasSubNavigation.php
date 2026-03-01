@@ -191,6 +191,56 @@ trait HasSubNavigation
     }
 
     /**
+     * @param  array<class-string, array<string>>  $components
+     * @return array<NavigationItem>
+     */
+    public function generateNavigationItemsConfigured(array $components): array
+    {
+        $parameters = $this->getSubNavigationParameters();
+
+        $items = [];
+
+        foreach ($components as $component => $configurations) {
+            foreach ($configurations as $configurationKey) {
+                Filament::setCurrentResourceConfigurationKey($configurationKey);
+
+                $isResourcePage = is_subclass_of($component, ResourcePage::class);
+
+                $shouldRegisterNavigation = $isResourcePage ?
+                    $component::shouldRegisterNavigation($parameters) :
+                    $component::shouldRegisterNavigation();
+
+                if (! $shouldRegisterNavigation) {
+                    Filament::setCurrentResourceConfigurationKey(null);
+
+                    continue;
+                }
+
+                $canAccess = $isResourcePage ?
+                    $component::canAccess($parameters) :
+                    $component::canAccess();
+
+                if (! $canAccess) {
+                    continue;
+                }
+
+                $pageItems = $isResourcePage ?
+                    $component::getNavigationItems($parameters) :
+                    $component::getNavigationItems();
+
+                Filament::setCurrentResourceConfigurationKey(null);
+
+                $items = [
+                    ...$items,
+                    ...$pageItems,
+                ];
+            }
+        }
+
+        return $items;
+    }
+
+    /**
      * @return array<string, mixed>
      */
     public function getSubNavigationParameters(): array
