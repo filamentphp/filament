@@ -206,7 +206,7 @@ namespace Livewire\Features\SupportTesting {
         public function assertTableBulkActionDoesNotExist(string $name): static {}
 
         /**
-         * @deprecated Use `assertActionsExistInOrder()` instead.
+         * @deprecated Use `assertActionListInOrder()` instead.
          */
         public function assertTableBulkActionsExistInOrder(array $names): static {}
 

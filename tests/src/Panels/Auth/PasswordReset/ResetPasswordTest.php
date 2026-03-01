@@ -8,6 +8,7 @@ use Filament\Tests\TestCase;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 
 use function Filament\Tests\livewire;
@@ -213,4 +214,71 @@ it('can validate `passwordConfirmation` is required', function (): void {
         ->set('passwordConfirmation', '')
         ->call('resetPassword')
         ->assertHasErrors(['passwordConfirmation' => ['required']]);
+});
+
+it('can throttle reset password attempts per email', function (): void {
+    Event::fake();
+
+    $this->assertGuest();
+
+    $userToResetPassword = User::factory()->create();
+
+    // Clear the IP-based rate limiter between attempts to isolate the
+    // email-based rate limit (simulates an attacker rotating IPs).
+    $clearIpRateLimiter = function (): void {
+        RateLimiter::clear('livewire-rate-limiter:' . sha1(ResetPassword::class . '|resetPassword|' . request()->ip()));
+    };
+
+    foreach (range(1, 2) as $i) {
+        $clearIpRateLimiter();
+
+        $token = Password::createToken($userToResetPassword);
+
+        livewire(ResetPassword::class, [
+            'email' => $userToResetPassword->email,
+            'token' => $token,
+        ])
+            ->set('password', 'new-password')
+            ->set('passwordConfirmation', 'new-password')
+            ->call('resetPassword')
+            ->assertNotified()
+            ->assertRedirect(Filament::getLoginUrl());
+    }
+
+    Event::assertDispatchedTimes(PasswordReset::class, times: 2);
+
+    $clearIpRateLimiter();
+
+    // The 3rd attempt should be rate limited by email
+    $token = Password::createToken($userToResetPassword);
+
+    livewire(ResetPassword::class, [
+        'email' => $userToResetPassword->email,
+        'token' => $token,
+    ])
+        ->set('password', 'newer-password')
+        ->set('passwordConfirmation', 'newer-password')
+        ->call('resetPassword')
+        ->assertNotified()
+        ->assertNoRedirect();
+
+    Event::assertDispatchedTimes(PasswordReset::class, times: 2);
+
+    $clearIpRateLimiter();
+
+    // A different email should not be affected
+    $secondUser = User::factory()->create();
+    $secondToken = Password::createToken($secondUser);
+
+    livewire(ResetPassword::class, [
+        'email' => $secondUser->email,
+        'token' => $secondToken,
+    ])
+        ->set('password', 'new-password')
+        ->set('passwordConfirmation', 'new-password')
+        ->call('resetPassword')
+        ->assertNotified()
+        ->assertRedirect(Filament::getLoginUrl());
+
+    Event::assertDispatchedTimes(PasswordReset::class, times: 3);
 });

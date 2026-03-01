@@ -47,10 +47,6 @@
         @apply flex items-center gap-x-3;
     }
 
-    & .fi-fo-repeater-item-header-icon {
-        @apply text-gray-400 dark:text-gray-500;
-    }
-
     & .fi-fo-repeater-item-header-label {
         @apply text-sm font-medium text-gray-950 dark:text-white;
 

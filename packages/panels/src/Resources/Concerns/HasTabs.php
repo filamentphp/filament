@@ -66,7 +66,7 @@ trait HasTabs
 
     protected function modifyQueryWithActiveTab(Builder $query, bool $isResolvingRecord = false): Builder
     {
-        if (blank(filled($this->activeTab))) {
+        if (blank($this->activeTab)) {
             return $query;
         }
 
@@ -90,6 +90,7 @@ trait HasTabs
         $tabs = $this->getCachedTabs();
 
         return Tabs::make()
+            ->key('resourceTabs')
             ->livewireProperty('activeTab')
             ->contained(false)
             ->tabs($tabs)

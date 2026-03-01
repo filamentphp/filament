@@ -80,8 +80,12 @@ trait InteractsWithToolbarButtons
         // Start with either custom buttons or default buttons
         $buttons = $this->evaluate($this->toolbarButtons) ?? $this->getDefaultToolbarButtons(); /** @phpstan-ignore method.notFound */
 
-        // Apply all queued modifications in order
-        foreach ($this->toolbarButtonsModifications as $modification) {
+        // Apply all queued modifications in order.
+        // Extra modifications (e.g. from plugins) are applied first,
+        // so that user-level modifications always take precedence.
+        $modifications = [...$this->getExtraToolbarButtonsModifications(), ...$this->toolbarButtonsModifications];
+
+        foreach ($modifications as $modification) {
             $buttons = match ($modification['type']) {
                 'disableAll' => [],
                 'disable' => $this->applyDisableToolbarButtonsModification($buttons, $modification['buttons']),
@@ -150,6 +154,14 @@ trait InteractsWithToolbarButtons
             },
             initial: [],
         );
+    }
+
+    /**
+     * @return array<array{type: string, buttons?: array<string | array<string | array<string>>>}>
+     */
+    protected function getExtraToolbarButtonsModifications(): array
+    {
+        return [];
     }
 
     /**

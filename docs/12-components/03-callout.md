@@ -213,6 +213,33 @@ You can also include buttons or other interactive elements in the footer:
 </x-filament::callout>
 ```
 
+## Adding content to the controls
+
+You can add custom content to the callout controls (top-right corner) using the `controls` slot:
+
+```blade
+<x-filament::callout
+    icon="heroicon-o-information-circle"
+    color="info"
+>
+    <x-slot name="heading">
+        Dismissible Callout
+    </x-slot>
+
+    <x-slot name="description">
+        This callout can be dismissed using the control in the top-right corner.
+    </x-slot>
+
+    <x-slot name="controls">
+        <x-filament::icon-button
+            icon="heroicon-m-x-mark"
+            color="gray"
+            label="Dismiss"
+        />
+    </x-slot>
+</x-filament::callout>
+```
+
 ## Callouts without an icon
 
 Callouts can be rendered without an icon if needed:

@@ -165,6 +165,8 @@ trait InteractsWithActions
                 $action->callAfterFormFilled();
             }
         } catch (Halt $exception) {
+            $this->unmountAction(canCancelParentActions: false);
+
             return null;
         } catch (Cancel $exception) {
             $this->unmountAction(canCancelParentActions: false);
@@ -595,6 +597,10 @@ trait InteractsWithActions
 
         if (filled($action['context']['recordKey'] ?? null)) {
             $record = $this->getTableRecord($action['context']['recordKey']);
+
+            if (! $record) {
+                throw new ActionNotResolvableException("Record [{$action['context']['recordKey']}] no longer exists.");
+            }
 
             $resolvedAction->getRootGroup()?->record($record) ?? $resolvedAction->record($record);
         }

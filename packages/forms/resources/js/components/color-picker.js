@@ -24,6 +24,17 @@ export default function colorPickerFormComponent({
                 this.togglePanelVisibility(this.$refs.input)
             }
 
+            this.$watch(
+                'state',
+                Alpine.debounce((value) => {
+                    if (!CSS.supports('color', value)) {
+                        return
+                    }
+
+                    this.$refs.picker.color = value
+                }, 200),
+            )
+
             this.$refs.input.addEventListener('change', (event) => {
                 this.setState(event.target.value)
             })
@@ -69,7 +80,7 @@ export default function colorPickerFormComponent({
             this.state = value
 
             this.$refs.input.value = value
-            this.$refs.panel.color = value
+            this.$refs.picker.color = value
         },
 
         isOpen() {
