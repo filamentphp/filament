@@ -540,8 +540,7 @@ trait HasComponents
                 $this->queueLivewireComponentForRegistration($class);
             }
 
-            if (! is_subclass_of($class, $baseClass)) {
-                /** @phpstan-ignore function.alreadyNarrowedType */
+            if (! is_subclass_of($class, $baseClass)) { /** @phpstan-ignore function.alreadyNarrowedType */
                 continue;
             }
 
