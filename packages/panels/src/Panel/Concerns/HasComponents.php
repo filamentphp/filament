@@ -191,14 +191,12 @@ trait HasComponents
 
                 $resourceClass = $resource->resource;
 
-                // added
                 $this->registerToClusterConfigured($resourceClass, $resource->getKey());
             } else {
                 $this->resources[] = $resource;
 
                 $resourceClass = $resource;
 
-                // added
                 $this->registerToCluster($resourceClass);
             }
         }
