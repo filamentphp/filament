@@ -175,7 +175,6 @@ trait HasComponents
 
         foreach ($resources as $resource) {
             if ($resource instanceof ResourceConfiguration) {
-                // dump($resource->resource, $resource->getKey()); // "App\Filament\Resources\Users\UserResource", "active"
                 if (isset($this->resourceConfigurations[$resource->resource][$resource->getKey()])) {
                     $message = "A configuration with the key [{$resource->getKey()}] has already been registered for the resource [{$resource->resource}].";
 
