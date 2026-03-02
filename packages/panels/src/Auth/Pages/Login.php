@@ -78,10 +78,6 @@ class Login extends SimplePage
 
         $data = $this->form->getState();
 
-        if ($this->isLoginRateLimited($data['email'])) {
-            return null;
-        }
-
         /** @var SessionGuard $authGuard */
         $authGuard = Filament::auth();
 
@@ -147,26 +143,6 @@ class Login extends SimplePage
     protected function isMultiFactorChallengeRateLimited(Authenticatable $user): bool
     {
         $rateLimitingKey = "filament-multi-factor-challenge:{$user->getAuthIdentifier()}";
-
-        if (RateLimiter::tooManyAttempts($rateLimitingKey, maxAttempts: 5)) {
-            $this->getRateLimitedNotification(new TooManyRequestsException(
-                static::class,
-                'authenticate',
-                request()->ip(),
-                RateLimiter::availableIn($rateLimitingKey),
-            ))?->send();
-
-            return true;
-        }
-
-        RateLimiter::hit($rateLimitingKey);
-
-        return false;
-    }
-
-    protected function isLoginRateLimited(string $email): bool
-    {
-        $rateLimitingKey = 'filament-login:' . sha1(request()->ip() . '|' . $email);
 
         if (RateLimiter::tooManyAttempts($rateLimitingKey, maxAttempts: 5)) {
             $this->getRateLimitedNotification(new TooManyRequestsException(
