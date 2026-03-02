@@ -100,6 +100,7 @@
     $selectsGroupsOnly = $selectsGroupsOnly();
     $recordCheckboxPosition = $getRecordCheckboxPosition();
     $isStriped = $isStriped();
+    $isCompact = $isCompact();
     $isStackedOnMobile = $isStackedOnMobile();
     $isLoaded = $isLoaded();
     $hasFilters = $isFilterable();
@@ -2125,6 +2126,7 @@
                                                         'fi-ta-row',
                                                         'fi-clickable' => $recordAction || $recordUrl,
                                                         'fi-striped' => $isStriped && $isRecordRowStriped,
+                                                        'fi-compact' => $isCompact,
                                                         ...$getRecordClasses($record),
                                                     ])
                                                 >

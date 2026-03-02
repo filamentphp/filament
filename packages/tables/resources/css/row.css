@@ -9,6 +9,26 @@
         @apply bg-gray-50 dark:bg-white/5;
     }
 
+    &.fi-compact {
+        & .fi-ta-text:not(.fi-inline) {
+            @apply py-2;
+        }
+
+        & .fi-ta-cell {
+            &:has(.fi-ta-actions) {
+                @apply py-2;
+            }
+
+            &:has(.fi-ta-record-checkbox) {
+                @apply py-2;
+            }
+
+            &.fi-ta-selection-cell {
+                @apply py-2;
+            }
+        }
+    }
+
     &.fi-collapsed {
         @apply hidden;
     }
