@@ -194,9 +194,15 @@ trait InteractsWithActions
      */
     public function callMountedAction(array $arguments = []): mixed
     {
-        $action = $this->getMountedAction();
+        try {
+            $action = $this->getMountedAction();
+        } catch (ActionNotResolvableException $exception) {
+            $action = null;
+        }
 
         if (! $action) {
+            $this->unmountAction(canCancelParentActions: false);
+
             return null;
         }
 

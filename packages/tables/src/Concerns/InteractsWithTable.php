@@ -2,6 +2,7 @@
 
 namespace Filament\Tables\Concerns;
 
+use Filament\Actions\Exceptions\ActionNotResolvableException;
 use Filament\Tables\Table;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
@@ -48,7 +49,12 @@ trait InteractsWithTable
 
         $this->cacheSchema('tableFiltersForm', $this->getTableFiltersForm(...));
 
-        $this->cacheMountedActions($this->mountedActions);
+        try {
+            $this->cacheMountedActions($this->mountedActions);
+        } catch (ActionNotResolvableException) {
+            $this->mountedActions = [];
+            $this->cachedMountedActions = [];
+        }
 
         $this->initTableColumnManager();
 
