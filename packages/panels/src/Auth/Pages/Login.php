@@ -78,6 +78,10 @@ class Login extends SimplePage
 
         $data = $this->form->getState();
 
+        if ($this->isLoginRateLimited($data[$this->getEmailFormComponent()->getName()])) {
+            return null;
+        }
+
         /** @var SessionGuard $authGuard */
         $authGuard = Filament::auth();
 
@@ -160,6 +164,26 @@ class Login extends SimplePage
         return false;
     }
 
+    protected function isLoginRateLimited(string $email): bool
+    {
+        $rateLimitingKey = 'filament-login:' . sha1(request()->ip() . '|' . $email);
+
+        if (RateLimiter::tooManyAttempts($rateLimitingKey, maxAttempts: 5)) {
+            $this->getRateLimitedNotification(new TooManyRequestsException(
+                static::class,
+                'authenticate',
+                request()->ip(),
+                RateLimiter::availableIn($rateLimitingKey),
+            ))?->send();
+
+            return true;
+        }
+
+        RateLimiter::hit($rateLimitingKey);
+
+        return false;
+    }
+
     protected function getRateLimitedNotification(TooManyRequestsException $exception): ?Notification
     {
         return Notification::make()
@@ -184,8 +208,10 @@ class Login extends SimplePage
 
     protected function throwFailureValidationException(): never
     {
+        $loginField = $this->getEmailFormComponent()->getName();
+
         throw ValidationException::withMessages([
-            'data.email' => __('filament-panels::auth/pages/login.messages.failed'),
+            "data.$loginField" => __('filament-panels::auth/pages/login.messages.failed'),
         ]);
     }
 
