@@ -40,35 +40,35 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
     use HasContainerGridLayout;
     use HasReorderAnimationDuration;
 
-    protected string | Closure | null $addActionLabel = null;
+    protected string|Closure|null $addActionLabel = null;
 
-    protected string | Closure | null $addBetweenActionLabel = null;
+    protected string|Closure|null $addBetweenActionLabel = null;
 
-    protected bool | Closure $isAddable = true;
+    protected bool|Closure $isAddable = true;
 
-    protected bool | Closure $isDeletable = true;
+    protected bool|Closure $isDeletable = true;
 
-    protected bool | Closure $isReorderable = true;
+    protected bool|Closure $isReorderable = true;
 
-    protected bool | Closure $isReorderableWithDragAndDrop = true;
+    protected bool|Closure $isReorderableWithDragAndDrop = true;
 
-    protected bool | Closure $isReorderableWithButtons = false;
+    protected bool|Closure $isReorderableWithButtons = false;
 
     protected ?Collection $cachedExistingRecords = null;
 
-    protected string | Closure | null $orderColumn = null;
+    protected string|Closure|null $orderColumn = null;
 
-    protected string | Closure | null $relationship = null;
+    protected string|Closure|null $relationship = null;
 
-    protected string | Htmlable | Closure | null $itemLabel = null;
+    protected string|Htmlable|Closure|null $itemLabel = null;
 
-    protected bool | Closure $hasItemNumbers = false;
+    protected bool|Closure $hasItemNumbers = false;
 
-    protected bool | Closure $hasItemHeaders = true;
+    protected bool|Closure $hasItemHeaders = true;
 
-    protected Field | Closure | null $simpleField = null;
+    protected Field|Closure|null $simpleField = null;
 
-    protected Alignment | string | Closure | null $addActionAlignment = null;
+    protected Alignment|string|Closure|null $addActionAlignment = null;
 
     protected ?Closure $modifyRelationshipQueryUsing = null;
 
@@ -102,25 +102,27 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
 
     protected ?Closure $mutateRelationshipDataBeforeSaveUsing = null;
 
+    protected ?Closure $afterCreateUsing = null;
+
     /**
      * @var array<string, mixed> | null
      */
     protected ?array $hydratedDefaultState = null;
 
-    protected string | Closure | null $labelBetweenItems = null;
+    protected string|Closure|null $labelBetweenItems = null;
 
-    protected bool | Closure $isItemLabelTruncated = true;
+    protected bool|Closure $isItemLabelTruncated = true;
 
     protected ?Field $cachedSimpleField = null;
 
     /**
      * @var array<TableColumn> | Closure | null
      */
-    protected array | Closure | null $tableColumns = null;
+    protected array|Closure|null $tableColumns = null;
 
     protected bool $shouldMergeHydratedDefaultStateWithItemsStateAfterStateHydrated = true;
 
-    protected bool | Closure $shouldPartiallyRenderAfterActionsCalled = true;
+    protected bool|Closure $shouldPartiallyRenderAfterActionsCalled = true;
 
     protected function setUp(): void
     {
@@ -224,14 +226,14 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
         return $action;
     }
 
-    public function addActionAlignment(Alignment | string | Closure | null $addActionAlignment): static
+    public function addActionAlignment(Alignment|string|Closure|null $addActionAlignment): static
     {
         $this->addActionAlignment = $addActionAlignment;
 
         return $this;
     }
 
-    public function getAddActionAlignment(): Alignment | string | null
+    public function getAddActionAlignment(): Alignment|string|null
     {
         $alignment = $this->evaluate($this->addActionAlignment);
 
@@ -313,7 +315,7 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
         return 'addBetween';
     }
 
-    public function addBetweenActionLabel(string | Closure | null $label): static
+    public function addBetweenActionLabel(string|Closure|null $label): static
     {
         $this->addBetweenActionLabel = $label;
 
@@ -662,7 +664,7 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
         return 'expandAll';
     }
 
-    public function addActionLabel(string | Closure | null $label): static
+    public function addActionLabel(string|Closure|null $label): static
     {
         $this->addActionLabel = $label;
 
@@ -672,28 +674,28 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
     /**
      * @deprecated Use `addActionLabel()` instead.
      */
-    public function createItemButtonLabel(string | Closure | null $label): static
+    public function createItemButtonLabel(string|Closure|null $label): static
     {
         $this->addActionLabel($label);
 
         return $this;
     }
 
-    public function labelBetweenItems(string | Closure | null $label): static
+    public function labelBetweenItems(string|Closure|null $label): static
     {
         $this->labelBetweenItems = $label;
 
         return $this;
     }
 
-    public function truncateItemLabel(bool | Closure $condition = true): static
+    public function truncateItemLabel(bool|Closure $condition = true): static
     {
         $this->isItemLabelTruncated = $condition;
 
         return $this;
     }
 
-    public function defaultItems(int | Closure $count): static
+    public function defaultItems(int|Closure $count): static
     {
         $this->default(static function (Repeater $component) use ($count): array {
             $count = $component->evaluate($count);
@@ -741,21 +743,21 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
         return $this;
     }
 
-    public function addable(bool | Closure $condition = true): static
+    public function addable(bool|Closure $condition = true): static
     {
         $this->isAddable = $condition;
 
         return $this;
     }
 
-    public function deletable(bool | Closure $condition = true): static
+    public function deletable(bool|Closure $condition = true): static
     {
         $this->isDeletable = $condition;
 
         return $this;
     }
 
-    public function reorderable(bool | Closure $condition = true): static
+    public function reorderable(bool|Closure $condition = true): static
     {
         $this->isReorderable = $condition;
 
@@ -765,7 +767,7 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
     /**
      * @deprecated Use `addable()` instead.
      */
-    public function disableItemCreation(bool | Closure $condition = true): static
+    public function disableItemCreation(bool|Closure $condition = true): static
     {
         $this->addable(fn (Repeater $component): bool => ! $this->evaluate($condition));
 
@@ -775,7 +777,7 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
     /**
      * @deprecated Use `deletable()` instead.
      */
-    public function disableItemDeletion(bool | Closure $condition = true): static
+    public function disableItemDeletion(bool|Closure $condition = true): static
     {
         $this->deletable(fn (Repeater $component): bool => ! $this->evaluate($condition));
 
@@ -785,21 +787,21 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
     /**
      * @deprecated Use `reorderable()` instead.
      */
-    public function disableItemMovement(bool | Closure $condition = true): static
+    public function disableItemMovement(bool|Closure $condition = true): static
     {
         $this->reorderable(fn (Repeater $component): bool => ! $this->evaluate($condition));
 
         return $this;
     }
 
-    public function reorderableWithDragAndDrop(bool | Closure $condition = true): static
+    public function reorderableWithDragAndDrop(bool|Closure $condition = true): static
     {
         $this->isReorderableWithDragAndDrop = $condition;
 
         return $this;
     }
 
-    public function reorderableWithButtons(bool | Closure $condition = true): static
+    public function reorderableWithButtons(bool|Closure $condition = true): static
     {
         $this->isReorderableWithButtons = $condition;
 
@@ -809,7 +811,7 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
     /**
      * @deprecated No longer part of the design system.
      */
-    public function inset(bool | Closure $condition = true): static
+    public function inset(bool|Closure $condition = true): static
     {
         return $this;
     }
@@ -894,7 +896,7 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
         return (bool) $this->evaluate($this->isDeletable);
     }
 
-    public function orderColumn(string | Closure | null $column = 'sort'): static
+    public function orderColumn(string|Closure|null $column = 'sort'): static
     {
         $this->orderColumn = $column;
         $this->reorderable($column);
@@ -905,14 +907,14 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
     /**
      * @deprecated Use `orderColumn()` instead.
      */
-    public function orderable(string | Closure | null $column = 'sort'): static
+    public function orderable(string|Closure|null $column = 'sort'): static
     {
         $this->orderColumn($column);
 
         return $this;
     }
 
-    public function relationship(string | Closure | null $name = null, ?Closure $modifyQueryUsing = null, ?Closure $modifyRecordsUsing = null): static
+    public function relationship(string|Closure|null $name = null, ?Closure $modifyQueryUsing = null, ?Closure $modifyRecordsUsing = null): static
     {
         $this->relationship = $name ?? $this->getName();
         $this->modifyRelationshipQueryUsing = $modifyQueryUsing;
@@ -1003,6 +1005,7 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
                 }
 
                 $record = $relationship->save($record);
+                $component->afterCreate($itemData, $record);
                 $item->model($record)->saveRelationships();
                 $existingRecords->push($record);
             }
@@ -1039,21 +1042,21 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
         $this->rawState($items);
     }
 
-    public function itemLabel(string | Htmlable | Closure | null $label): static
+    public function itemLabel(string|Htmlable|Closure|null $label): static
     {
         $this->itemLabel = $label;
 
         return $this;
     }
 
-    public function itemNumbers(bool | Closure $condition = true): static
+    public function itemNumbers(bool|Closure $condition = true): static
     {
         $this->hasItemNumbers = $condition;
 
         return $this;
     }
 
-    public function itemHeaders(bool | Closure $condition = true): static
+    public function itemHeaders(bool|Closure $condition = true): static
     {
         $this->hasItemHeaders = $condition;
 
@@ -1089,7 +1092,7 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
             ->toArray();
     }
 
-    public function getLabel(): string | Htmlable | null
+    public function getLabel(): string|Htmlable|null
     {
         if ($this->label === null && $this->hasRelationship()) {
             $label = (string) str($this->getRelationshipName())
@@ -1109,7 +1112,7 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
         return $this->evaluate($this->orderColumn);
     }
 
-    public function getRelationship(): HasOneOrMany | BelongsToMany | null
+    public function getRelationship(): HasOneOrMany|BelongsToMany|null
     {
         if (! $this->hasRelationship()) {
             return null;
@@ -1191,7 +1194,7 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
         ));
     }
 
-    public function getItemLabel(string $key): string | Htmlable | null
+    public function getItemLabel(string $key): string|Htmlable|null
     {
         $container = $this->getChildSchema($key);
 
@@ -1220,7 +1223,7 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
         return (bool) $this->evaluate($this->hasItemHeaders);
     }
 
-    public function simple(Field | Closure | null $field): static
+    public function simple(Field|Closure|null $field): static
     {
         $this->simpleField = $field;
         $this->schema(fn (Repeater $component): array => [$component->getSimpleField()]);
@@ -1236,7 +1239,7 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
     /**
      * @param  array<TableColumn> | Closure | null  $columns
      */
-    public function table(array | Closure | null $columns): static
+    public function table(array|Closure|null $columns): static
     {
         $this->tableColumns = $columns;
 
@@ -1353,6 +1356,30 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
         return $data;
     }
 
+    public function afterCreateUsing(?Closure $callback): static
+    {
+        $this->afterCreateUsing = $callback;
+
+        return $this;
+    }
+
+    public function afterCreate(array $data, Model $record): void
+    {
+        if ($this->afterCreateUsing instanceof Closure) {
+            $this->evaluate(
+                $this->afterCreateUsing,
+                namedInjections: [
+                    'data' => $data,
+                    'record' => $record,
+                ],
+                typedInjections: [
+                    Model::class => $record,
+                    $record::class => $record,
+                ],
+            );
+        }
+    }
+
     public function canConcealComponents(): bool
     {
         return $this->isCollapsible();
@@ -1409,7 +1436,7 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
         return 1;
     }
 
-    public function partiallyRenderAfterActionsCalled(bool | Closure $condition = true): static
+    public function partiallyRenderAfterActionsCalled(bool|Closure $condition = true): static
     {
         $this->shouldPartiallyRenderAfterActionsCalled = $condition;
 
