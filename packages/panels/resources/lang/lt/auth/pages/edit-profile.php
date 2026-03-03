@@ -55,6 +55,11 @@ return [
             'title' => 'Išsaugota',
         ],
 
+        'throttled' => [
+            'title' => 'Per daug užklausų. Pabandykite dar kartą po :seconds sekundžių. ',
+            'body' => 'Pabandykite dar kartą po :seconds sekundžių.',
+        ],
+
     ],
 
     'actions' => [
