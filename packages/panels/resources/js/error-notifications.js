@@ -23,6 +23,10 @@ document.addEventListener('livewire:init', () => {
             const errorNotification =
                 errorNotifications[status] ?? errorNotifications['']
 
+            if (errorNotification.hidden === true) {
+                return
+            }
+
             new FilamentNotification()
                 .title(errorNotification.title)
                 .body(errorNotification.body)
