@@ -489,6 +489,23 @@ public function panel(Panel $panel): Panel
 }
 ```
 
+You may also choose to disable a notification for a specific HTTP status code, such as `503`, by passing that status code to the `hideErrorNotification` method:
+
+```php
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->registerErrorNotification(
+            title: 'An error occurred',
+            body: 'Please try again later.',
+        )
+        ->hideErrorNotification(503);
+}
+```
+
 You can also enable or disable error notifications for specific pages in a panel by setting the `$hasErrorNotifications` property on the page class:
 
 ```php
@@ -560,6 +577,27 @@ class Dashboard extends BaseDashboard
             body: 'A record you are looking for does not exist.',
             statusCode: 404,
         );
+    }
+
+    // ...
+}
+```
+
+You may also choose to disable a notification for a specific HTTP status code, such as `503`, by passing that status code to the `hideErrorNotification` method:
+
+```php
+use Filament\Pages\Dashboard as BaseDashboard;
+
+class Dashboard extends BaseDashboard
+{
+    protected function setUpErrorNotifications(): void
+    {
+        $this->registerErrorNotification(
+            title: 'An error occurred',
+            body: 'Please try again later.',
+        );
+    
+        $this->hideErrorNotification(503);
     }
 
     // ...

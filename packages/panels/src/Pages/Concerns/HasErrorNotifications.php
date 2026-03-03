@@ -20,6 +20,18 @@ trait HasErrorNotifications
         $this->errorNotifications[$statusCode] = [
             'title' => $title,
             'body' => $body,
+            'hidden' => false,
+        ];
+
+        return $this;
+    }
+
+    public function hideErrorNotification(int $statusCode): static
+    {
+        $this->errorNotifications[$statusCode] = [
+            'title' => null,
+            'body' => null,
+            'hidden' => true,
         ];
 
         return $this;

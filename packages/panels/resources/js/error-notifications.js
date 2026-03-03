@@ -18,14 +18,14 @@ document.addEventListener('livewire:init', () => {
                 }
             }
 
-            preventDefault()
-
             const errorNotification =
                 errorNotifications[status] ?? errorNotifications['']
 
             if (errorNotification.hidden === true) {
                 return
             }
+
+            preventDefault()
 
             new FilamentNotification()
                 .title(errorNotification.title)
