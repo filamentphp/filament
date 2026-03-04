@@ -30,7 +30,7 @@ trait HasErrorNotifications
         $this->errorNotifications[$statusCode] = [
             'title' => $title,
             'body' => $body,
-            'hidden' => false,
+            'isHidden' => false,
         ];
 
         return $this;
@@ -41,7 +41,7 @@ trait HasErrorNotifications
         $this->errorNotifications[$statusCode] = [
             'title' => null,
             'body' => null,
-            'hidden' => true,
+            'isHidden' => true,
         ];
 
         return $this;

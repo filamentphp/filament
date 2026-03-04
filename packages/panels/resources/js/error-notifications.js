@@ -21,7 +21,7 @@ document.addEventListener('livewire:init', () => {
             const errorNotification =
                 errorNotifications[status] ?? errorNotifications['']
 
-            if (errorNotification.hidden === true) {
+            if (errorNotification.isHidden === true) {
                 return
             }
 
