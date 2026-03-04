@@ -9,8 +9,8 @@
     $mergeTags = $getMergeTags();
     $statePath = $getStatePath();
     $mentions = $getMentionsForJs();
-    $tools = $getTools();
     $toolbarButtons = $getToolbarButtons();
+    $tools = $getTools();
     $floatingToolbars = $getFloatingToolbars();
     $linkProtocols = $getLinkProtocols();
     $fileAttachmentsMaxSize = $getFileAttachmentsMaxSize();

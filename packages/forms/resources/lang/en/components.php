@@ -601,6 +601,7 @@ return [
             'link' => 'Link',
             'merge_tags' => 'Merge tags',
             'ordered_list' => 'Numbered list',
+            'paragraph' => 'Paragraph',
             'redo' => 'Redo',
             'small' => 'Small text',
             'strike' => 'Strikethrough',

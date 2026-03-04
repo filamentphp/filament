@@ -18,6 +18,7 @@ use Filament\Forms\Components\RichEditor\Plugins\Contracts\RichContentPlugin;
 use Filament\Forms\Components\RichEditor\RichContentAttribute;
 use Filament\Forms\Components\RichEditor\RichContentCustomBlock;
 use Filament\Forms\Components\RichEditor\RichContentRenderer;
+use Filament\Forms\Components\RichEditor\RichEditorDropdownTool;
 use Filament\Forms\Components\RichEditor\RichEditorTool;
 use Filament\Forms\Components\RichEditor\StateCasts\RichEditorStateCast;
 use Filament\Forms\Components\RichEditor\TextColor;
@@ -175,6 +176,11 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
                 ->activeOptions(['level' => 3])
                 ->icon(Heroicon::H3)
                 ->iconAlias('forms:components.rich-editor.toolbar.h3'),
+            RichEditorTool::make('paragraph')
+                ->label(__('filament-forms::components.rich_editor.tools.paragraph'))
+                ->jsHandler('$getEditor()?.chain().focus().setParagraph().run()')
+                ->icon(Heroicon::Bars3BottomLeft)
+                ->iconAlias('forms:components.rich-editor.toolbar.paragraph'),
             RichEditorTool::make('blockquote')
                 ->label(__('filament-forms::components.rich_editor.tools.blockquote'))
                 ->jsHandler('$getEditor()?.chain().focus().toggleBlockquote().run()')
@@ -641,7 +647,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
      */
     public function getTools(): array
     {
-        return array_reduce(
+        $tools = array_reduce(
             [
                 ...array_reduce(
                     $this->tools,
@@ -672,6 +678,37 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
             ],
             initial: [],
         );
+
+        // Create `RichEditorDropdownTool` instances from `ToolbarButtonGroup` configurations
+        foreach ($this->resolveToolbarButtonGroups() as $syntheticName => $group) {
+            $triggerTool = $tools[$group->getName()] ?? null;
+
+            if (! $triggerTool) {
+                continue;
+            }
+
+            $optionTools = [];
+
+            foreach ($group->getButtons() as $optionName) {
+                if (isset($tools[$optionName])) {
+                    $optionTools[] = $tools[$optionName];
+                }
+            }
+
+            if (empty($optionTools)) {
+                continue;
+            }
+
+            $tools[$syntheticName] = RichEditorDropdownTool::make($syntheticName)
+                ->icon($triggerTool->getIcon())
+                ->iconAlias($triggerTool->getIconAlias())
+                ->label($triggerTool->getLabel())
+                ->options($optionTools)
+                ->selectMode($group->hasTextualButtons())
+                ->editor($this);
+        }
+
+        return $tools;
     }
 
     public function getContentAttribute(): ?RichContentAttribute

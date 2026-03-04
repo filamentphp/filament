@@ -81,6 +81,7 @@ Additional tools available in the toolbar include:
 - `highlight` - Highlights the selected text with a `<mark>` tag around it.
 - `horizontalRule` - Inserts a horizontal rule.
 - `lead` - Applies a `lead` class around the text, which is typically used for the first paragraph of an article.
+- `paragraph` - Sets the current block to a paragraph, removing any heading formatting.
 - `small` - Applies the `<small>` tag to the text, which is typically used for small print or disclaimers.
 - `code` - Format the selected text as inline code.
 - `textColor` - Changes the [text color](#customizing-text-colors) of the selected text.
@@ -127,6 +128,48 @@ RichEditor::make('content')
         ],
     ])
 ```
+
+### Grouping toolbar buttons into dropdowns
+
+You may group related toolbar buttons into a dropdown menu using `ToolbarButtonGroup`. The group's name is the trigger button (used for the dropdown's icon and label), and `buttons()` defines the options shown in the dropdown:
+
+```php
+use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\RichEditor\ToolbarButtonGroup;
+
+RichEditor::make('content')
+    ->toolbarButtons([
+        ['bold', 'italic', 'underline', 'strike'],
+        [ToolbarButtonGroup::make('paragraph')->buttons(['paragraph', 'h1', 'h2', 'h3'])],
+        [ToolbarButtonGroup::make('alignStart')->buttons(['alignStart', 'alignCenter', 'alignEnd', 'alignJustify'])],
+        ['blockquote', 'codeBlock', 'bulletList', 'orderedList'],
+        ['undo', 'redo'],
+    ])
+```
+
+In this example, the `paragraph` and `alignStart` buttons become dropdown triggers. Clicking on them reveals the nested options as icons.
+
+When options are disabled using `disableToolbarButtons()`, the dropdown automatically adjusts. If only one option remains, the dropdown collapses back into a plain button. If the trigger itself is disabled, the entire dropdown is removed.
+
+### Using textual dropdown toolbar buttons
+
+By default, dropdown toolbar buttons display icons. If you'd prefer a text-label dropdown that resembles a select input (showing labels like "Paragraph", "Heading 1", etc.), you can use the `textualButtons()` method on a `ToolbarButtonGroup`:
+
+```php
+use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\RichEditor\ToolbarButtonGroup;
+
+RichEditor::make('content')
+    ->toolbarButtons([
+        ['bold', 'italic', 'underline', 'strike', 'link'],
+        [ToolbarButtonGroup::make('paragraph')->buttons(['paragraph', 'h1', 'h2', 'h3'])->textualButtons()],
+        [ToolbarButtonGroup::make('alignStart')->buttons(['alignStart', 'alignCenter', 'alignEnd', 'alignJustify'])],
+        ['blockquote', 'codeBlock', 'bulletList', 'orderedList'],
+        ['undo', 'redo'],
+    ])
+```
+
+In this example, the `paragraph` dropdown displays text labels ("Paragraph", "Heading 1", etc.) and updates the trigger label to match the currently active option. The `alignStart` dropdown remains icon-based.
 
 ## Customizing text colors
 

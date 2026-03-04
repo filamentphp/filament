@@ -3,6 +3,8 @@
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\RichEditor\Plugins\Contracts\HasFileAttachmentProvider;
 use Filament\Forms\Components\RichEditor\RichContentRenderer;
+use Filament\Forms\Components\RichEditor\RichEditorDropdownTool;
+use Filament\Forms\Components\RichEditor\ToolbarButtonGroup;
 use Filament\Schemas\Schema;
 use Filament\Tests\Fixtures\Forms\RichEditor\PluginWithFileAttachmentProvider;
 use Filament\Tests\Fixtures\Livewire\Livewire;
@@ -397,6 +399,279 @@ test('`fileAttachments(true)` does not force `attachFiles` button to appear when
     // File attachments are enabled (drag/drop works), but the toolbar button remains hidden
     expect($richEditor->hasFileAttachments())->toBeTrue()
         ->and($richEditor->hasToolbarButton('attachFiles'))->toBeFalse();
+});
+
+test('`ToolbarButtonGroup` in `toolbarButtons()` produces dropdown buttons', function (): void {
+    $richEditor = Schema::make(Livewire::make())
+        ->statePath('data')
+        ->components([
+            RichEditor::make('content')
+                ->toolbarButtons([
+                    ['bold', 'italic'],
+                    [ToolbarButtonGroup::make('alignStart')->buttons(['alignStart', 'alignCenter', 'alignEnd'])],
+                    ['undo', 'redo'],
+                ]),
+        ])
+        ->getComponents()[0];
+
+    $buttons = $richEditor->getToolbarButtons();
+
+    expect($buttons)
+        ->toBeArray()
+        ->toHaveCount(3)
+        ->and($buttons[0])->toEqual(['bold', 'italic'])
+        ->and($buttons[1])->toEqual(['dropdown::alignStart'])
+        ->and($buttons[2])->toEqual(['undo', 'redo']);
+});
+
+test('top-level `ToolbarButtonGroup` in `toolbarButtons()` produces dropdown buttons', function (): void {
+    $richEditor = Schema::make(Livewire::make())
+        ->statePath('data')
+        ->components([
+            RichEditor::make('content')
+                ->toolbarButtons([
+                    ['bold', 'italic'],
+                    ToolbarButtonGroup::make('alignStart')->buttons(['alignStart', 'alignCenter', 'alignEnd']),
+                    ['undo', 'redo'],
+                ]),
+        ])
+        ->getComponents()[0];
+
+    $buttons = $richEditor->getToolbarButtons();
+
+    expect($buttons)
+        ->toBeArray()
+        ->toHaveCount(3)
+        ->and($buttons[0])->toEqual(['bold', 'italic'])
+        ->and($buttons[1])->toEqual(['dropdown::alignStart'])
+        ->and($buttons[2])->toEqual(['undo', 'redo']);
+});
+
+test('`disableToolbarButtons()` removes an option from a `ToolbarButtonGroup`', function (): void {
+    $richEditor = Schema::make(Livewire::make())
+        ->statePath('data')
+        ->components([
+            RichEditor::make('content')
+                ->toolbarButtons([
+                    ['bold', 'italic'],
+                    [ToolbarButtonGroup::make('alignStart')->buttons(['alignStart', 'alignCenter', 'alignEnd'])],
+                ]),
+        ])
+        ->getComponents()[0];
+
+    $richEditor->disableToolbarButtons(['alignCenter']);
+
+    $buttons = $richEditor->getToolbarButtons();
+
+    expect($buttons)
+        ->toBeArray()
+        ->toHaveCount(2)
+        ->and($buttons[0])->toEqual(['bold', 'italic'])
+        ->and($buttons[1])->toEqual(['dropdown::alignStart']);
+
+    // The group should only have 2 options remaining
+    $groups = $richEditor->resolveToolbarButtonGroups();
+
+    expect($groups)->toHaveKey('dropdown::alignStart')
+        ->and($groups['dropdown::alignStart']->getButtons())->toEqual(['alignStart', 'alignEnd']);
+});
+
+test('`disableToolbarButtons()` converts `ToolbarButtonGroup` to plain button when one option remains', function (): void {
+    $richEditor = Schema::make(Livewire::make())
+        ->statePath('data')
+        ->components([
+            RichEditor::make('content')
+                ->toolbarButtons([
+                    ['bold', 'italic'],
+                    [ToolbarButtonGroup::make('alignStart')->buttons(['alignStart', 'alignCenter', 'alignEnd'])],
+                ]),
+        ])
+        ->getComponents()[0];
+
+    $richEditor->disableToolbarButtons(['alignCenter', 'alignEnd']);
+
+    $buttons = $richEditor->getToolbarButtons();
+    $flatButtons = array_merge(...$buttons);
+
+    // Group collapsed to a plain button since only `alignStart` remains
+    expect($flatButtons)
+        ->toContain('alignStart')
+        ->not->toContain('dropdown::alignStart');
+});
+
+test('`disableToolbarButtons()` removes entire `ToolbarButtonGroup` when trigger is disabled', function (): void {
+    $richEditor = Schema::make(Livewire::make())
+        ->statePath('data')
+        ->components([
+            RichEditor::make('content')
+                ->toolbarButtons([
+                    ['bold', 'italic'],
+                    [ToolbarButtonGroup::make('alignStart')->buttons(['alignStart', 'alignCenter', 'alignEnd'])],
+                ]),
+        ])
+        ->getComponents()[0];
+
+    $richEditor->disableToolbarButtons(['alignStart']);
+
+    $buttons = $richEditor->getToolbarButtons();
+    $flatButtons = array_merge(...$buttons);
+
+    // The trigger was disabled, so the whole group is removed
+    expect($flatButtons)
+        ->not->toContain('dropdown::alignStart')
+        ->not->toContain('alignStart')
+        ->not->toContain('alignCenter')
+        ->not->toContain('alignEnd');
+});
+
+test('`hasToolbarButton()` finds tools inside `ToolbarButtonGroup` options', function (): void {
+    $richEditor = Schema::make(Livewire::make())
+        ->statePath('data')
+        ->components([
+            RichEditor::make('content')
+                ->toolbarButtons([
+                    ['bold', 'italic'],
+                    [ToolbarButtonGroup::make('alignStart')->buttons(['alignStart', 'alignCenter', 'alignEnd'])],
+                ]),
+        ])
+        ->getComponents()[0];
+
+    expect($richEditor->hasToolbarButton('bold'))->toBeTrue()
+        ->and($richEditor->hasToolbarButton('alignStart'))->toBeTrue()
+        ->and($richEditor->hasToolbarButton('alignCenter'))->toBeTrue()
+        ->and($richEditor->hasToolbarButton('alignEnd'))->toBeTrue()
+        ->and($richEditor->hasToolbarButton('nonexistent'))->toBeFalse();
+});
+
+test('`hasToolbarButton()` finds tools inside `ToolbarButtonGroup` options with array syntax', function (): void {
+    $richEditor = Schema::make(Livewire::make())
+        ->statePath('data')
+        ->components([
+            RichEditor::make('content')
+                ->toolbarButtons([
+                    ['bold', 'italic'],
+                    [ToolbarButtonGroup::make('alignStart')->buttons(['alignStart', 'alignCenter', 'alignEnd'])],
+                ]),
+        ])
+        ->getComponents()[0];
+
+    expect($richEditor->hasToolbarButton(['alignCenter', 'nonexistent']))->toBeTrue()
+        ->and($richEditor->hasToolbarButton(['nonexistent1', 'nonexistent2']))->toBeFalse();
+});
+
+test('`getTools()` creates `RichEditorDropdownTool` for `ToolbarButtonGroup` configs', function (): void {
+    $richEditor = Schema::make(Livewire::make())
+        ->statePath('data')
+        ->components([
+            RichEditor::make('content')
+                ->toolbarButtons([
+                    ['bold', 'italic'],
+                    [ToolbarButtonGroup::make('alignStart')->buttons(['alignStart', 'alignCenter', 'alignEnd'])],
+                ]),
+        ])
+        ->getComponents()[0];
+
+    $tools = $richEditor->getTools();
+
+    expect($tools)->toHaveKey('dropdown::alignStart')
+        ->and($tools['dropdown::alignStart'])->toBeInstanceOf(RichEditorDropdownTool::class)
+        ->and($tools['dropdown::alignStart']->getOptions())->toHaveCount(3);
+});
+
+test('`ToolbarButtonGroup` inside a group with other buttons works correctly', function (): void {
+    $richEditor = Schema::make(Livewire::make())
+        ->statePath('data')
+        ->components([
+            RichEditor::make('content')
+                ->toolbarButtons([
+                    ['bold', 'italic', ToolbarButtonGroup::make('alignStart')->buttons(['alignStart', 'alignCenter', 'alignEnd']), 'undo', 'redo'],
+                ]),
+        ])
+        ->getComponents()[0];
+
+    $buttons = $richEditor->getToolbarButtons();
+
+    expect($buttons)
+        ->toBeArray()
+        ->toHaveCount(1)
+        ->and($buttons[0])->toEqual(['bold', 'italic', 'dropdown::alignStart', 'undo', 'redo']);
+});
+
+test('`ToolbarButtonGroup` cache is invalidated when `disableToolbarButtons()` is called after resolution', function (): void {
+    $richEditor = Schema::make(Livewire::make())
+        ->statePath('data')
+        ->components([
+            RichEditor::make('content')
+                ->toolbarButtons([
+                    ['bold', 'italic'],
+                    [ToolbarButtonGroup::make('alignStart')->buttons(['alignStart', 'alignCenter', 'alignEnd'])],
+                ]),
+        ])
+        ->getComponents()[0];
+
+    // Force resolution
+    $richEditor->getToolbarButtons();
+
+    expect($richEditor->hasToolbarButton('alignCenter'))->toBeTrue();
+
+    // Now disable an option after resolution
+    $richEditor->disableToolbarButtons(['alignCenter']);
+
+    expect($richEditor->hasToolbarButton('alignCenter'))->toBeFalse();
+
+    $groups = $richEditor->resolveToolbarButtonGroups();
+
+    expect($groups['dropdown::alignStart']->getButtons())->toEqual(['alignStart', 'alignEnd']);
+});
+
+test('`textualButtons()` creates select-mode `RichEditorDropdownTool` instances', function (): void {
+    $richEditor = Schema::make(Livewire::make())
+        ->statePath('data')
+        ->components([
+            RichEditor::make('content')
+                ->toolbarButtons([
+                    ['bold', 'italic'],
+                    [ToolbarButtonGroup::make('paragraph')->buttons(['h1', 'h2', 'h3'])->textualButtons()],
+                    [ToolbarButtonGroup::make('alignStart')->buttons(['alignStart', 'alignCenter', 'alignEnd'])],
+                ]),
+        ])
+        ->getComponents()[0];
+
+    $tools = $richEditor->getTools();
+
+    $paragraphDropdown = $tools['dropdown::paragraph'] ?? null;
+    $alignDropdown = $tools['dropdown::alignStart'] ?? null;
+
+    expect($paragraphDropdown)
+        ->toBeInstanceOf(RichEditorDropdownTool::class)
+        ->and($paragraphDropdown->isSelectMode())->toBeTrue()
+        ->and($alignDropdown)
+        ->toBeInstanceOf(RichEditorDropdownTool::class)
+        ->and($alignDropdown->isSelectMode())->toBeFalse();
+});
+
+test('`ToolbarButtonGroup` cache is invalidated when `disableAllToolbarButtons()` is called after resolution', function (): void {
+    $richEditor = Schema::make(Livewire::make())
+        ->statePath('data')
+        ->components([
+            RichEditor::make('content')
+                ->toolbarButtons([
+                    ['bold', 'italic'],
+                    [ToolbarButtonGroup::make('alignStart')->buttons(['alignStart', 'alignCenter', 'alignEnd'])],
+                ]),
+        ])
+        ->getComponents()[0];
+
+    // Force resolution
+    $richEditor->getToolbarButtons();
+
+    expect($richEditor->hasToolbarButton('alignCenter'))->toBeTrue();
+
+    // Now disable all buttons after resolution
+    $richEditor->disableAllToolbarButtons();
+
+    expect($richEditor->hasToolbarButton('alignCenter'))->toBeFalse()
+        ->and($richEditor->resolveToolbarButtonGroups())->toBeEmpty();
 });
 
 test('plugin implementing `HasToolbarButtons` can enable toolbar buttons', function (): void {
