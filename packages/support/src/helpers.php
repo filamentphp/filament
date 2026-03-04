@@ -206,7 +206,7 @@ if (! function_exists('Filament\Support\generate_loading_indicator_html')) {
             "fi-size-{$size->value}",
         ]);
 
-        return new HtmlString(<<<HTML
+     $defaultSvg = <<<HTML
             <svg
                 fill="none"
                 viewBox="0 0 24 24"
@@ -225,7 +225,15 @@ if (! function_exists('Filament\Support\generate_loading_indicator_html')) {
                     fill="currentColor"
                 ></path>
             </svg>
-            HTML);
+            HTML;
+
+        $svg = config('filament.loading_indicator_svg');
+
+        if (is_callable($svg)) {
+            return new HtmlString($svg($attributes));
+        }
+
+        return new HtmlString($svg ?? $defaultSvg);
     }
 }
 
