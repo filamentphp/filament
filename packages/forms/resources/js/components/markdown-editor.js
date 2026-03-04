@@ -211,11 +211,18 @@ export default function markdownEditorFormComponent({
                     return
                 }
 
-                if (this.editor.codemirror.hasFocus()) {
+                const newValue = this.state ?? ''
+
+                // Only update the editor when the value has actually
+                // changed. This prevents cursor jumps during debounced
+                // typing while still allowing external state changes
+                // (e.g. form reset after keybinding submit) to update
+                // the editor content.
+                if (Alpine.raw(this.editor).value() === newValue) {
                     return
                 }
 
-                Alpine.raw(this.editor).value(this.state ?? '')
+                Alpine.raw(this.editor).value(newValue)
             })
 
             if (setUpUsing) {
