@@ -1,11 +1,11 @@
 <div
-    x-data="{ theme: null }"
+    x-data="{ theme: null, storageKey: 'theme-{{ filament()->getId() }}' }"
     x-init="
         $watch('theme', () => {
             $dispatch('theme-changed', theme)
         })
 
-        theme = localStorage.getItem('theme') || @js(filament()->getDefaultThemeMode()->value)
+        theme = localStorage.getItem(storageKey) || localStorage.getItem('theme') || @js(filament()->getDefaultThemeMode()->value)
     "
     class="fi-theme-switcher"
 >

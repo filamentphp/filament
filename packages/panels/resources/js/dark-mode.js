@@ -1,5 +1,13 @@
 document.addEventListener('alpine:init', () => {
+    const panelId = getComputedStyle(document.documentElement)
+        .getPropertyValue('--panel-id')
+        .trim()
+        .replace(/['"]/g, '')
+
+    const storageKey = panelId ? `theme-${panelId}` : 'theme'
+
     const theme =
+        localStorage.getItem(storageKey) ??
         localStorage.getItem('theme') ??
         getComputedStyle(document.documentElement).getPropertyValue(
             '--default-theme-mode',
@@ -17,7 +25,7 @@ document.addEventListener('alpine:init', () => {
     window.addEventListener('theme-changed', (event) => {
         let theme = event.detail
 
-        localStorage.setItem('theme', theme)
+        localStorage.setItem(storageKey, theme)
 
         if (theme === 'system') {
             theme = window.matchMedia('(prefers-color-scheme: dark)').matches
@@ -31,7 +39,7 @@ document.addEventListener('alpine:init', () => {
     window
         .matchMedia('(prefers-color-scheme: dark)')
         .addEventListener('change', (event) => {
-            if (localStorage.getItem('theme') === 'system') {
+            if (localStorage.getItem(storageKey) === 'system') {
                 window.Alpine.store('theme', event.matches ? 'dark' : 'light')
             }
         })
