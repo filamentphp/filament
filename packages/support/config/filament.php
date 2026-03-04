@@ -117,4 +117,16 @@ return [
 
     'system_route_prefix' => 'filament',
 
+    /*
+    |--------------------------------------------------------------------------
+    | Loading Indicator SVG
+    |--------------------------------------------------------------------------
+    | Customize the loading indicator SVG by providing a string or a callable
+    | that receives a ComponentAttributeBag and returns an SVG string.
+    |
+    */
+    
+    // 'loading_indicator_svg' => function (ComponentAttributeBag $attributes): string {
+    //     return "<svg {$attributes->toHtml()} ...</svg>";
+    // },
 ];
