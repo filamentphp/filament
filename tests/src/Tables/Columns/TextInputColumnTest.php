@@ -25,6 +25,14 @@ it('can render', function (): void {
         ->assertCanRenderTableColumn('rating');
 });
 
+it('renders showPicker onclick for date type inputs', function (): void {
+    Post::factory()->count(1)->create();
+
+    livewire(TestTableWithDateTextInputColumn::class)
+        ->assertSuccessful()
+        ->assertSeeHtml('showPicker');
+});
+
 it('can display different values', function (): void {
     Post::factory()->create(['rating' => 1]);
     Post::factory()->create(['rating' => 5]);
@@ -33,6 +41,29 @@ it('can display different values', function (): void {
     livewire(TestTableWithTextInputColumn::class)
         ->assertSuccessful();
 });
+
+class TestTableWithDateTextInputColumn extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+    use Tables\Concerns\InteractsWithTable;
+
+    public function table(Table $table): Table
+    {
+        return $table
+            ->query(Post::query())
+            ->columns([
+                Tables\Columns\TextColumn::make('title'),
+                Tables\Columns\TextInputColumn::make('created_at')
+                    ->type('date'),
+            ]);
+    }
+
+    public function render(): View
+    {
+        return view('livewire.table');
+    }
+}
 
 class TestTableWithTextInputColumn extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
 {
