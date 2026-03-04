@@ -194,11 +194,7 @@ trait InteractsWithActions
      */
     public function callMountedAction(array $arguments = []): mixed
     {
-        try {
-            $action = $this->getMountedAction();
-        } catch (ActionNotResolvableException $exception) {
-            $action = null;
-        }
+        $action = $this->getMountedAction();
 
         if (! $action) {
             $this->unmountAction(canCancelParentActions: false);
@@ -486,7 +482,13 @@ trait InteractsWithActions
      */
     protected function cacheMountedActions(array $mountedActions): array
     {
-        return $this->cachedMountedActions = $this->resolveActions($mountedActions);
+        try {
+            return $this->cachedMountedActions = $this->resolveActions($mountedActions);
+        } catch (ActionNotResolvableException) {
+            $this->mountedActions = [];
+
+            return $this->cachedMountedActions = [];
+        }
     }
 
     /**
@@ -597,6 +599,14 @@ trait InteractsWithActions
 
         if ($action['context']['bulk'] ?? false) {
             $resolvedAction = $this->getTable()->getBulkAction($action['name']);
+
+            if ($resolvedAction && ! empty($this->selectedTableRecords) && $this->getTable()->hasQuery()) {
+                $count = $this->getSelectedTableRecordsQuery(shouldFetchSelectedRecords: false)->count();
+
+                if ($count === 0) {
+                    throw new ActionNotResolvableException('The selected records for the bulk action no longer exist.');
+                }
+            }
         }
 
         $resolvedAction ??= $this->getTable()->getAction($action['name']) ?? throw new ActionNotResolvableException("Action [{$action['name']}] not found on table.");
