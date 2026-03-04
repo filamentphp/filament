@@ -43,16 +43,16 @@
             & .fi-ta-record {
                 @apply rounded-xl shadow-sm ring-1 ring-gray-950/5 dark:bg-white/5 dark:ring-white/10;
 
+                &:not(.fi-selected) {
+                    @apply bg-white;
+                }
+
                 &.fi-clickable {
-                    @apply dark:hover:bg-white/10 dark:hover:ring-white/20;
+                    @apply hover:bg-gray-50 dark:hover:bg-white/10 dark:hover:ring-white/20;
                 }
 
                 &.fi-selected {
-                    @apply dark:bg-white/10 dark:ring-white/20;
-                }
-
-                &:not(.fi-selected) {
-                    @apply bg-white dark:bg-white/5 dark:ring-white/10;
+                    @apply bg-gray-50 dark:bg-white/10 dark:ring-white/20;
                 }
 
                 &.fi-ta-record-with-content-prefix {
