@@ -21,16 +21,47 @@ export default function chart({ cachedData, maxHeight, options, type }) {
             this.initChart()
 
             this.$wire.$on('updateChartData', ({ data }) => {
+                cachedData = data
+
                 const chart = this.getChart()
 
                 if (!chart) {
+                    // Chart may not exist yet if the container was hidden
+                    // when updateChartData fired. It will be initialized
+                    // when the container becomes visible via the
+                    // IntersectionObserver below.
                     return
                 }
 
-                cachedData = data
                 chart.data = data
                 chart.update('resize')
             })
+
+            // Reinitialize the chart when its container becomes visible.
+            // Chart.js cannot render correctly in hidden containers (e.g.
+            // non-active tabs) because the canvas has zero dimensions.
+            this.intersectionObserver = new IntersectionObserver(
+                (entries) => {
+                    for (const entry of entries) {
+                        if (!entry.isIntersecting) {
+                            continue
+                        }
+
+                        const chart = this.getChart()
+
+                        if (chart) {
+                            // Chart exists but may have stale dimensions
+                            chart.resize()
+                        } else {
+                            // Chart was never initialized (container was
+                            // hidden on mount), initialize it now
+                            this.initChart()
+                        }
+                    }
+                },
+                { threshold: 0.1 },
+            )
+            this.intersectionObserver.observe(this.$el)
 
             Alpine.effect(() => {
                 Alpine.store('theme')
@@ -181,6 +212,10 @@ export default function chart({ cachedData, maxHeight, options, type }) {
 
             if (this.resizeObserver) {
                 this.resizeObserver.disconnect()
+            }
+
+            if (this.intersectionObserver) {
+                this.intersectionObserver.disconnect()
             }
 
             this.getChart()?.destroy()
