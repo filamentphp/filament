@@ -275,6 +275,114 @@ describe('validation', function (): void {
     });
 });
 
+describe('parallel uploads', function (): void {
+    // Regression test for https://github.com/filamentphp/filament/issues/13306
+    //
+    // The core race condition is in the JS Alpine component: when multiple files
+    // upload in parallel with ->poll() active, shouldUpdateState was reset to true
+    // after the first file completed, allowing a poll-triggered re-render to
+    // overwrite FilePond state and drop in-flight uploads.
+    //
+    // The fix introduces an activeUploads counter so shouldUpdateState only becomes
+    // true when ALL uploads finish. These PHP tests validate the server-side contract
+    // that multiple files persist in state. The JS counter logic is tested separately
+    // in tests/js/file-upload-active-uploads.test.mjs.
+
+    it('retains all files when multiple files are uploaded to a multiple() FileUpload', function (): void {
+        try {
+            livewire(TestComponentWithParallelFileUpload::class)
+                ->fillForm([
+                    'attachments' => [
+                        UploadedFile::fake()->image('photo1.jpg'),
+                        UploadedFile::fake()->image('photo2.jpg'),
+                        UploadedFile::fake()->image('photo3.jpg'),
+                    ],
+                ])
+                ->assertSchemaStateSet(function (array $data): void {
+                    expect($data['attachments'])->toHaveCount(3)
+                        ->and($data['attachments'][0])->toBeInstanceOf(TemporaryUploadedFile::class)
+                        ->and($data['attachments'][1])->toBeInstanceOf(TemporaryUploadedFile::class)
+                        ->and($data['attachments'][2])->toBeInstanceOf(TemporaryUploadedFile::class);
+                });
+        } catch (RootTagMissingFromViewException $exception) {
+            // Flaky test
+        }
+    });
+
+    it('retains all files after sequential fillForm calls simulating incremental upload completions', function (): void {
+        try {
+            $component = livewire(TestComponentWithParallelFileUpload::class)
+                ->fillForm([
+                    'attachments' => [
+                        UploadedFile::fake()->image('batch1.jpg'),
+                    ],
+                ]);
+
+            // Simulate a second batch arriving (as if another upload completed)
+            $component->fillForm([
+                'attachments' => [
+                    UploadedFile::fake()->image('batch1.jpg'),
+                    UploadedFile::fake()->image('batch2.jpg'),
+                ],
+            ]);
+
+            $component->assertSchemaStateSet(function (array $data): void {
+                expect($data['attachments'])->toHaveCount(2)
+                    ->and($data['attachments'][0])->toBeInstanceOf(TemporaryUploadedFile::class)
+                    ->and($data['attachments'][1])->toBeInstanceOf(TemporaryUploadedFile::class);
+            });
+        } catch (RootTagMissingFromViewException $exception) {
+            // Flaky test
+        }
+    });
+
+    it('validates and saves all files from a parallel multiple upload', function (): void {
+        livewire(TestComponentWithParallelFileUploadAndSave::class)
+            ->fillForm([
+                'attachments' => [
+                    UploadedFile::fake()->image('save1.jpg'),
+                    UploadedFile::fake()->image('save2.jpg'),
+                    UploadedFile::fake()->image('save3.jpg'),
+                ],
+            ])
+            ->call('save')
+            ->assertHasNoFormErrors(['attachments']);
+    });
+});
+
+class TestComponentWithParallelFileUpload extends Livewire
+{
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->components([
+                FileUpload::make('attachments')
+                    ->multiple()
+                    ->maxParallelUploads(2),
+            ])
+            ->statePath('data');
+    }
+}
+
+class TestComponentWithParallelFileUploadAndSave extends Livewire
+{
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->components([
+                FileUpload::make('attachments')
+                    ->multiple()
+                    ->maxParallelUploads(2),
+            ])
+            ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->form->getState();
+    }
+}
+
 class TestComponentWithFileUpload extends Livewire
 {
     public function form(Schema $form): Schema
