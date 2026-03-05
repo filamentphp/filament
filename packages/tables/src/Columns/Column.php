@@ -44,6 +44,7 @@ class Column extends ViewComponent
     use Concerns\CanOpenUrl;
     use Concerns\HasExtraCellAttributes;
     use Concerns\HasExtraHeaderAttributes;
+    use Concerns\HasHeaderFilter;
     use Concerns\HasLabel;
     use Concerns\HasName;
     use Concerns\HasRecord;

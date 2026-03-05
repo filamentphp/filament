@@ -87,6 +87,10 @@ trait HasColumns
         }
 
         foreach ($this->columns as $column) {
+            if ($column->hasHeaderFilter()) {
+                $column->getHeaderFilter()->table($this);
+            }
+
             $action = $column->getAction();
 
             if (($action === null) || ($action instanceof Closure)) {

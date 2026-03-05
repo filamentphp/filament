@@ -47,6 +47,7 @@ trait InteractsWithTable
         $this->table = $this->table($this->makeTable());
 
         $this->cacheSchema('tableFiltersForm', $this->getTableFiltersForm(...));
+        $this->cacheSchema('tableHeaderFiltersForm', $this->getTableHeaderFiltersForm(...));
 
         $this->cacheMountedActions($this->mountedActions);
 
@@ -87,6 +88,35 @@ trait InteractsWithTable
                 $filtersSessionKey,
                 $this->tableFilters,
             );
+        }
+
+        if ($this->getTable()->hasHeaderFilters()) {
+            $headerFiltersSessionKey = $this->getTableHeaderFiltersSessionKey();
+
+            if (! count($this->tableHeaderFilters ?? [])) {
+                $this->tableHeaderFilters = null;
+            }
+
+            if (
+                ($this->tableHeaderFilters === null) &&
+                $shouldPersistFiltersInSession &&
+                session()->has($headerFiltersSessionKey)
+            ) {
+                $this->tableHeaderFilters = session()->get($headerFiltersSessionKey) ?? [];
+            }
+
+            if ($this->tableHeaderFilters) {
+                $this->normalizeTableFilterValuesFromQueryString($this->tableHeaderFilters);
+            }
+
+            $this->getTableHeaderFiltersForm()->fill($this->tableHeaderFilters);
+
+            if ($shouldPersistFiltersInSession) {
+                session()->put(
+                    $headerFiltersSessionKey,
+                    $this->tableHeaderFilters,
+                );
+            }
         }
 
         if ($this->getTable()->isDefaultGroupSelectable()) {

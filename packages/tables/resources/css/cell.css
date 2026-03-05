@@ -114,6 +114,10 @@
         @apply min-w-48 px-3 py-2;
     }
 
+    &.fi-ta-header-filter-cell {
+        @apply min-w-48 px-3 py-2;
+    }
+
     & .fi-ta-reorder-handle {
         @apply cursor-move;
     }

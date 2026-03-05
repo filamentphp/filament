@@ -174,6 +174,58 @@ trait HasFilters
         );
     }
 
+    /**
+     * @return array<string, BaseFilter>
+     */
+    public function getHeaderFilters(): array
+    {
+        $headerFilters = [];
+
+        foreach ($this->getColumns() as $column) {
+            if (! $column->hasHeaderFilter()) {
+                continue;
+            }
+
+            if ($column->isHidden()) {
+                continue;
+            }
+
+            $filter = $column->getHeaderFilter();
+
+            if (! $filter->isVisible()) {
+                continue;
+            }
+
+            $headerFilters[$filter->getName()] = $filter;
+        }
+
+        return $headerFilters;
+    }
+
+    public function hasHeaderFilters(): bool
+    {
+        return count($this->getHeaderFilters()) > 0;
+    }
+
+    /**
+     * @return array<Group>
+     */
+    public function getHeaderFiltersFormSchema(): array
+    {
+        $filters = [];
+
+        foreach ($this->getHeaderFilters() as $filterName => $filter) {
+            $filters[] = Group::make()
+                ->schema($filter->getSchemaComponents())
+                ->statePath($filterName)
+                ->key($filterName)
+                ->columns($filter->getColumns())
+                ->dense();
+        }
+
+        return $filters;
+    }
+
     public function getFilter(string $name, bool $withHidden = false): ?BaseFilter
     {
         return $this->getFilters($withHidden)[$name] ?? null;
@@ -329,6 +381,14 @@ trait HasFilters
 
     public function isFiltered(): bool
     {
-        return $this->getActiveFiltersCount() > 0;
+        if ($this->getActiveFiltersCount() > 0) {
+            return true;
+        }
+
+        return array_reduce(
+            $this->getHeaderFilters(),
+            fn (int $carry, BaseFilter $filter): int => $carry + $filter->getActiveCount(),
+            0,
+        ) > 0;
     }
 }

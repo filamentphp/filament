@@ -36,6 +36,20 @@ trait HasFilterIndicators
                 ],
                 [],
             ),
+            ...array_reduce(
+                $this->getHeaderFilters(),
+                fn (array $carry, BaseFilter $filter): array => [
+                    ...$carry,
+                    ...collect($filter->getIndicators())
+                        ->map(function (Indicator $indicator) use ($filter): Indicator {
+                            $removeField = $indicator->getRemoveField();
+
+                            return $indicator->removeLivewireClickHandler("removeTableHeaderFilter('{$filter->getName()}'" . (filled($removeField) ? ', \'' . $removeField . '\'' : null) . ')');
+                        })
+                        ->all(),
+                ],
+                [],
+            ),
         ];
     }
 

@@ -14,6 +14,7 @@ use Illuminate\Support\Arr;
 
 /**
  * @property-read Schema $tableFiltersForm
+ * @property-read Schema $tableHeaderFiltersForm
  */
 trait HasFilters
 {
@@ -26,6 +27,11 @@ trait HasFilters
      * @var array<string, mixed> | null
      */
     public ?array $tableDeferredFilters = null;
+
+    /**
+     * @var array<string, mixed> | null
+     */
+    public ?array $tableHeaderFilters = null;
 
     public function getTableFiltersForm(): Schema
     {
@@ -48,6 +54,85 @@ trait HasFilters
                     ->statePath('tableFilters')
                     ->live(),
             );
+    }
+
+    public function getTableHeaderFiltersForm(): Schema
+    {
+        if ((! $this->isCachingSchemas) && $this->hasCachedSchema('tableHeaderFiltersForm')) {
+            return $this->getSchema('tableHeaderFiltersForm');
+        }
+
+        $table = $this->getTable();
+
+        return $this->makeSchema()
+            ->model($table->getModel())
+            ->schema($table->getHeaderFiltersFormSchema())
+            ->statePath('tableHeaderFilters')
+            ->live();
+    }
+
+    public function updatedTableHeaderFilters(): void
+    {
+        if ($this->getTable()->persistsFiltersInSession()) {
+            session()->put(
+                $this->getTableHeaderFiltersSessionKey(),
+                $this->tableHeaderFilters,
+            );
+        }
+
+        if ($this->getTable()->shouldDeselectAllRecordsWhenFiltered()) {
+            $this->deselectAllTableRecords();
+        }
+
+        $this->resetPage();
+    }
+
+    protected function applyHeaderFiltersToTableQuery(Builder $query): Builder
+    {
+        $table = $this->getTable();
+
+        foreach ($table->getHeaderFilters() as $filter) {
+            $filter->applyToBaseQuery(
+                $query,
+                $this->getTableHeaderFilterState($filter->getName()) ?? [],
+            );
+        }
+
+        return $query->where(function (Builder $query) use ($table): void {
+            foreach ($table->getHeaderFilters() as $filter) {
+                $filter->apply(
+                    $query,
+                    $this->getTableHeaderFilterState($filter->getName()) ?? [],
+                );
+            }
+        });
+    }
+
+    /**
+     * @return array<string, mixed> | null
+     */
+    public function getTableHeaderFilterState(string $name): ?array
+    {
+        return Arr::get($this->tableHeaderFilters, $name);
+    }
+
+    public function getTableHeaderFiltersSessionKey(): string
+    {
+        $namespace = $this::class;
+
+        $tenantKey = null;
+
+        if (class_exists(Filament::class)) {
+            $tenantKey = Filament::getTenant()?->getKey();
+        }
+
+        if (filled($tenantKey)) {
+            $namespace .= '|' . $tenantKey;
+        }
+
+        $table = md5($namespace);
+
+        return "tables.{$table}_header_filters";
     }
 
     public function updatedTableFilters(): void
@@ -121,6 +206,41 @@ trait HasFilters
         $this->handleTableFilterUpdates();
     }
 
+    public function removeTableHeaderFilter(string $filterName, ?string $field = null, bool $isRemovingAllFilters = false): void
+    {
+        $filter = $this->getTable()->getHeaderFilters()[$filterName] ?? null;
+
+        if (! $filter) {
+            return;
+        }
+
+        $filterResetState = $filter->getResetState();
+
+        $filterFormGroup = $this->getTableHeaderFiltersForm()->getComponentByStatePath($filterName);
+
+        $filterFields = $filterFormGroup?->getChildSchema()->getFlatFields() ?? [];
+
+        if (filled($field) && array_key_exists($field, $filterFields)) {
+            $filterFields = [$field => $filterFields[$field]];
+        }
+
+        foreach ($filterFields as $fieldName => $field) {
+            $state = $field->getState();
+
+            $field->state($filterResetState[$fieldName] ?? match (true) {
+                is_array($state) => [],
+                is_bool($state) => $field->hasNullableBooleanState() ? null : false,
+                default => null,
+            });
+        }
+
+        if ($isRemovingAllFilters) {
+            return;
+        }
+
+        $this->updatedTableHeaderFilters();
+    }
+
     public function removeTableFilters(): void
     {
         $filters = $this->getTable()->getFilters();
@@ -134,8 +254,24 @@ trait HasFilters
             }
         }
 
+        foreach ($this->getTable()->getHeaderFilters() as $filterName => $filter) {
+            if (collect($filter->getIndicators())->every(fn (Indicator $indicator): bool => $indicator->isRemovable())) {
+                $this->removeTableHeaderFilter(
+                    $filterName,
+                    isRemovingAllFilters: true,
+                );
+            }
+        }
+
         $this->resetTableSearch();
         $this->resetTableColumnSearches();
+
+        if ($this->getTable()->persistsFiltersInSession()) {
+            session()->put(
+                $this->getTableHeaderFiltersSessionKey(),
+                $this->tableHeaderFilters,
+            );
+        }
 
         if ($this->getTable()->hasDeferredFilters()) {
             $this->applyTableFilters();
@@ -149,6 +285,10 @@ trait HasFilters
     public function resetTableFiltersForm(): void
     {
         $this->getTableFiltersForm()->fill();
+
+        if ($this->getTable()->hasHeaderFilters()) {
+            $this->getTableHeaderFiltersForm()->fill();
+        }
 
         if ($this->getTable()->hasDeferredFilters()) {
             $this->applyTableFilters();

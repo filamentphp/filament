@@ -55,6 +55,14 @@ trait HasSchema
         $schema = $this->evaluate($this->schema);
 
         if ($schema !== null) {
+            if ($this->isHeaderFilter()) {
+                foreach ($schema as $component) {
+                    if ($component instanceof Field) {
+                        $component->hiddenLabel();
+                    }
+                }
+            }
+
             return $schema;
         }
 
@@ -75,6 +83,10 @@ trait HasSchema
                 $field::class => $field,
             ],
         ) ?? $field;
+
+        if ($this->isHeaderFilter() && $field instanceof Field) {
+            $field->hiddenLabel();
+        }
 
         return [$field];
     }
@@ -101,8 +113,13 @@ trait HasSchema
 
     public function getSchema(): Schema
     {
-        return $this->getLivewire()
-            ->getTableFiltersForm()
+        $livewire = $this->getLivewire();
+
+        $form = $this->isHeaderFilter()
+            ? $livewire->getTableHeaderFiltersForm() /** @phpstan-ignore method.notFound */
+            : $livewire->getTableFiltersForm();
+
+        return $form
             ->getComponent($this->getName())
             ->getChildSchema();
     }

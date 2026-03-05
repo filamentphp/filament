@@ -473,6 +473,58 @@ TextColumn::make('title')
     ->searchable(isIndividual: true, isGlobal: false)
 ```
 
+### Adding header filters to columns
+
+Instead of a simple text search input, you may attach a [filter](../filters/overview) to a column using the `headerFilter()` method. The filter renders inline under the column header, giving you complete control over how the column is filtered.
+
+For example, you may use a [select filter](../filters/select) to filter a column by exact value:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
+
+TextColumn::make('status')
+    ->headerFilter(
+        SelectFilter::make('status')
+            ->options([
+                'draft' => 'Draft',
+                'published' => 'Published',
+            ])
+            ->native(false)
+    )
+```
+
+You may use any [filter type](../filters/overview), including a [custom filter](../filters/custom) with its own schema. For example, a numeric range filter with two fields side-by-side:
+
+```php
+use Filament\Forms\Components\TextInput;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\Filter;
+use Illuminate\Database\Eloquent\Builder;
+
+TextColumn::make('price')
+    ->headerFilter(
+        Filter::make('price')
+            ->columns(2)
+            ->schema([
+                TextInput::make('min')
+                    ->numeric()
+                    ->placeholder('Min'),
+                TextInput::make('max')
+                    ->numeric()
+                    ->placeholder('Max'),
+            ])
+            ->query(static fn (Builder $query, array $data): Builder => $query
+                ->when($data['min'] ?? null, static fn (Builder $query, $min): Builder => $query->where('price', '>=', $min))
+                ->when($data['max'] ?? null, static fn (Builder $query, $max): Builder => $query->where('price', '<=', $max))
+            )
+    )
+```
+
+Header filters are always live — they apply immediately when changed, regardless of the table's `deferFilters()` setting. Labels on filter fields are automatically hidden since the column header already serves as the label.
+
+You may use the `columns()` method on the filter to display multiple fields side-by-side, which is useful for range filters.
+
 ### Customizing the table search debounce
 
 You may customize the debounce time in all table search fields using the `searchDebounce()` method on the `$table`. By default, it is set to `500ms`:

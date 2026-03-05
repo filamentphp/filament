@@ -7,6 +7,7 @@ use LogicException;
 
 class BaseFilter extends Component
 {
+    use Concerns\BelongsToColumn;
     use Concerns\BelongsToTable;
     use Concerns\CanBeHidden;
     use Concerns\CanResetState;

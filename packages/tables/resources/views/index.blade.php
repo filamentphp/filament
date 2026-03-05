@@ -1857,13 +1857,17 @@
                                             @foreach ($columns as $column)
                                                 @php
                                                     $columnName = $column->getName();
+                                                    $isIndividuallySearchable = $column->isIndividuallySearchable();
+                                                    $hasHeaderFilter = $column->hasHeaderFilter();
                                                 @endphp
 
                                                 <td
                                                     @class([
                                                         'fi-ta-cell',
-                                                        'fi-ta-individual-search-cell' => $isIndividuallySearchable = $column->isIndividuallySearchable(),
+                                                        'fi-ta-individual-search-cell' => $isIndividuallySearchable,
                                                         'fi-ta-individual-search-cell-' . str($columnName)->camel()->kebab() => $isIndividuallySearchable,
+                                                        'fi-ta-header-filter-cell' => $hasHeaderFilter && ! $isIndividuallySearchable,
+                                                        'fi-ta-header-filter-cell-' . str($columnName)->camel()->kebab() => $hasHeaderFilter && ! $isIndividuallySearchable,
                                                     ])
                                                 >
                                                     @if ($isIndividuallySearchable)
@@ -1871,6 +1875,10 @@
                                                             :debounce="$searchDebounce"
                                                             :on-blur="$isSearchOnBlur"
                                                             :wire-model="'tableColumnSearches.' . $columnName"
+                                                        />
+                                                    @elseif ($hasHeaderFilter)
+                                                        <x-filament-tables::header-filter
+                                                            :column="$column"
                                                         />
                                                     @endif
                                                 </td>
