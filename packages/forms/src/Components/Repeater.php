@@ -102,6 +102,8 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
 
     protected ?Closure $mutateRelationshipDataBeforeSaveUsing = null;
 
+    protected ?Closure $afterCreateUsing = null;
+
     /**
      * @var array<string, mixed> | null
      */
@@ -1003,6 +1005,7 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
                 }
 
                 $record = $relationship->save($record);
+                $component->afterCreate($itemData, $record);
                 $item->model($record)->saveRelationships();
                 $existingRecords->push($record);
             }
@@ -1351,6 +1354,30 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
         }
 
         return $data;
+    }
+
+    public function afterCreateUsing(?Closure $callback): static
+    {
+        $this->afterCreateUsing = $callback;
+
+        return $this;
+    }
+
+    public function afterCreate(array $data, Model $record): void
+    {
+        if ($this->afterCreateUsing instanceof Closure) {
+            $this->evaluate(
+                $this->afterCreateUsing,
+                namedInjections: [
+                    'data' => $data,
+                    'record' => $record,
+                ],
+                typedInjections: [
+                    Model::class => $record,
+                    $record::class => $record,
+                ],
+            );
+        }
     }
 
     public function canConcealComponents(): bool
