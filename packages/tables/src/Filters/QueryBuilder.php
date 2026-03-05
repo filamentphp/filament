@@ -68,6 +68,10 @@ class QueryBuilder extends BaseFilter
         foreach ($rules as $ruleIndex => $rule) {
             $ruleBuilderBlockContainer = $ruleBuilder->getChildSchema($ruleIndex);
 
+            if (! $ruleBuilderBlockContainer) {
+                throw new LogicException('No query builder block found for [' . ($rule['type'] ?? $ruleIndex) . '].');
+            }
+
             if ($rule['type'] === RuleBuilder::OR_BLOCK_NAME) {
                 $orSummaries = [];
 
@@ -132,6 +136,10 @@ class QueryBuilder extends BaseFilter
         foreach ($rules as $ruleIndex => $rule) {
             $ruleBuilderBlockContainer = $ruleBuilder->getChildSchema($ruleIndex);
 
+            if (! $ruleBuilderBlockContainer) {
+                throw new LogicException('No query builder block found for [' . ($rule['type'] ?? $ruleIndex) . '].');
+            }
+
             if ($rule['type'] === RuleBuilder::OR_BLOCK_NAME) {
                 foreach ($rule['data'][RuleBuilder::OR_BLOCK_GROUPS_REPEATER_NAME] as $orGroupIndex => $orGroup) {
                     $count += $this->countRules(
@@ -166,6 +174,10 @@ class QueryBuilder extends BaseFilter
     {
         foreach ($rules as $ruleIndex => $rule) {
             $ruleBuilderBlockContainer = $ruleBuilder->getChildSchema($ruleIndex);
+
+            if (! $ruleBuilderBlockContainer) {
+                throw new LogicException('No query builder block found for [' . ($rule['type'] ?? $ruleIndex) . '].');
+            }
 
             if ($rule['type'] === RuleBuilder::OR_BLOCK_NAME) {
                 $query->where(function (Builder $query) use ($rule, $ruleBuilderBlockContainer): void {
@@ -208,6 +220,10 @@ class QueryBuilder extends BaseFilter
     {
         foreach ($rules as $ruleIndex => $rule) {
             $ruleBuilderBlockContainer = $ruleBuilder->getChildSchema($ruleIndex);
+
+            if (! $ruleBuilderBlockContainer) {
+                throw new LogicException('No query builder block found for [' . ($rule['type'] ?? $ruleIndex) . '].');
+            }
 
             if ($rule['type'] === RuleBuilder::OR_BLOCK_NAME) {
                 foreach ($rule['data'][RuleBuilder::OR_BLOCK_GROUPS_REPEATER_NAME] as $orGroupIndex => $orGroup) {
@@ -298,8 +314,8 @@ class QueryBuilder extends BaseFilter
     {
         $builder = $schema
             ->getComponent(fn (Component $component): bool => $component instanceof Repeater)
-            ->getChildSchema($orGroupIndex)
-            ->getComponent(fn (Component $component): bool => $component instanceof RuleBuilder);
+            ?->getChildSchema($orGroupIndex)
+            ?->getComponent(fn (Component $component): bool => $component instanceof RuleBuilder);
 
         if (! ($builder instanceof RuleBuilder)) {
             throw new LogicException('No nested rule builder component found.');

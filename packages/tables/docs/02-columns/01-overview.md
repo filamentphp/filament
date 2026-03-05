@@ -188,7 +188,7 @@ TextColumn::make('name')
     ->label('Full name')
 ```
 
-<UtilityInjection set="tableColumns" version="4.x">As well as allowing a static value, the `label()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="tableColumns" except="$state" version="4.x">As well as allowing a static value, the `label()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 Customizing the label in this way is useful if you wish to use a [translation string for localization](https://laravel.com/docs/localization#retrieving-translation-strings):
 
@@ -241,7 +241,7 @@ TextColumn::make('full_name')
     })
 ```
 
-<UtilityInjection set="tableColumns" version="4.x" extras="Direction;;string;;$direction;;The direction that the column is currently being sorted on, either <code>'asc'</code> or <code>'desc'</code>.||Eloquent query builder;;Illuminate\Database\Eloquent\Builder;;$query;;The query builder to modify.">The `query` parameter's function can inject various utilities as parameters.</UtilityInjection>
+<UtilityInjection set="tableColumns" except="$state" version="4.x" extras="Direction;;string;;$direction;;The direction that the column is currently being sorted on, either <code>'asc'</code> or <code>'desc'</code>.||Eloquent query builder;;Illuminate\Database\Eloquent\Builder;;$query;;The query builder to modify.">The `query` parameter's function can inject various utilities as parameters.</UtilityInjection>
 
 ### Sorting by default
 
@@ -373,7 +373,7 @@ TextColumn::make('full_name')
     })
 ```
 
-<UtilityInjection set="tableColumns" version="4.x" extras="Search;;string;;$search;;The current search input value.||Eloquent query builder;;Illuminate\Database\Eloquent\Builder;;$query;;The query builder to modify.">The `query` parameter's function can inject various utilities as parameters.</UtilityInjection>
+<UtilityInjection set="tableColumns" except="$state" version="4.x" extras="Search;;string;;$search;;The current search input value.||Eloquent query builder;;Illuminate\Database\Eloquent\Builder;;$query;;The query builder to modify.">The `query` parameter's function can inject various utilities as parameters.</UtilityInjection>
 
 ### Adding extra searchable columns to the table
 
@@ -759,7 +759,7 @@ IconColumn::make('is_paid')
     ->width('1%')
 ```
 
-<UtilityInjection set="tableColumns" version="4.x">The `width()` method also accepts a function to dynamically calculate the value. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="tableColumns" except="$state" version="4.x">The `width()` method also accepts a function to dynamically calculate the value. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Grouping columns
 
@@ -893,9 +893,29 @@ public function table(Table $table): Table
 }
 ```
 
-#### Customizing the column manager dropdown trigger action
+#### Displaying the column manager in a modal
 
-To customize the column manager dropdown trigger button, you may use the `columnManagerTriggerAction()` method, passing a closure that returns an action. All methods that are available to [customize action trigger buttons](../../actions/overview) can be used:
+To render the column manager in a modal instead of in a dropdown, you may use the `columnManagerLayout()` method:
+
+```php
+use Filament\Tables\Enums\ColumnManagerLayout;
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->columns([
+            // ...
+        ])
+        ->columnManagerLayout(ColumnManagerLayout::Modal);
+}
+```
+
+You may use the [trigger action API](#customizing-the-column-manager-trigger-action) to [customize the modal](../../actions/modals), including [using a `slideOver()`](../../actions/modals#using-a-slide-over-instead-of-a-modal).
+
+#### Customizing the column manager trigger action
+
+To customize the column manager trigger button, you may use the `columnManagerTriggerAction()` method, passing a closure that returns an action. All methods that are available to [customize action trigger buttons](../../actions/overview) can be used:
 
 ```php
 use Filament\Actions\Action;
@@ -904,7 +924,7 @@ use Filament\Tables\Table;
 public function table(Table $table): Table
 {
     return $table
-        ->filters([
+        ->columns([
             // ...
         ])
         ->columnManagerTriggerAction(

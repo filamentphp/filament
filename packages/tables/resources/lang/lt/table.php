@@ -6,9 +6,41 @@ return [
 
         'heading' => 'Stulpeliai',
 
+        'actions' => [
+
+            'apply' => [
+                'label' => 'Taikyti stulpelius',
+            ],
+
+            'reset' => [
+                'label' => 'Atstatyti',
+            ],
+
+        ],
+
     ],
 
     'columns' => [
+
+        'actions' => [
+            'label' => 'Veiksmas|Veiksmai',
+        ],
+
+        'select' => [
+
+            'loading_message' => 'Kraunama...',
+
+            'no_options_message' => 'Nėra galimų parinkčių.',
+
+            'no_search_results_message' => 'Paieškos atitikmenų nėra.',
+
+            'placeholder' => 'Pasirinkite parinktį',
+
+            'searching_message' => 'Ieškoma...',
+
+            'search_prompt' => 'Pradėkite rašyti, kad ieškotumėte...',
+
+        ],
 
         'text' => [
 
@@ -141,6 +173,10 @@ return [
 
         'select' => [
             'placeholder' => 'Visi',
+
+            'relationship' => [
+                'empty_option_label' => 'Nėra',
+            ],
         ],
 
         'trashed' => [
@@ -163,7 +199,6 @@ return [
 
             'group' => [
                 'label' => 'Grupuoti pagal',
-                'placeholder' => 'Grupuoti pagal',
             ],
 
             'direction' => [
@@ -224,4 +259,5 @@ return [
 
     ],
 
+    'default_model_label' => 'įrašas',
 ];

@@ -64,13 +64,15 @@ trait HasNavigation
             return [];
         }
 
+        $activeRoutePattern = static::getNavigationItemActiveRoutePattern();
+
         return [
             NavigationItem::make(static::getNavigationLabel())
                 ->group(static::getNavigationGroup())
                 ->parentItem(static::getNavigationParentItem())
                 ->icon(static::getNavigationIcon())
                 ->activeIcon(static::getActiveNavigationIcon())
-                ->isActiveWhen(fn () => original_request()->routeIs(static::getNavigationItemActiveRoutePattern()))
+                ->isActiveWhen(fn (): bool => original_request()->routeIs($activeRoutePattern))
                 ->badge(static::getNavigationBadge(), color: static::getNavigationBadgeColor())
                 ->badgeTooltip(static::getNavigationBadgeTooltip())
                 ->sort(static::getNavigationSort())
@@ -109,7 +111,7 @@ trait HasNavigation
         return static::$navigationParentItem;
     }
 
-    public static function navigationGroup(?string $group): void
+    public static function navigationGroup(string | UnitEnum | null $group): void
     {
         static::$navigationGroup = $group;
     }

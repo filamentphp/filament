@@ -47,10 +47,6 @@
         @apply flex items-center gap-x-3;
     }
 
-    & .fi-fo-repeater-item-header-icon {
-        @apply text-gray-400 dark:text-gray-500;
-    }
-
     & .fi-fo-repeater-item-header-label {
         @apply text-sm font-medium text-gray-950 dark:text-white;
 
@@ -167,7 +163,7 @@
 
             & > tr {
                 & > th {
-                    @apply border-gray-200 bg-gray-50 px-3 py-2 text-sm font-semibold text-gray-950 first-of-type:rounded-tl-xl last-of-type:rounded-tr-xl dark:border-white/5 dark:bg-white/5 dark:text-white [&:not(:first-of-type)]:border-s [&:not(:last-of-type)]:border-e;
+                    @apply border-gray-200 bg-gray-50 px-3 py-2 text-sm font-semibold text-gray-950 first-of-type:rounded-ss-xl last-of-type:rounded-se-xl dark:border-white/5 dark:bg-white/5 dark:text-white [&:not(:first-of-type)]:border-s [&:not(:last-of-type)]:border-e;
 
                     &.fi-align-start,
                     &.fi-align-left {

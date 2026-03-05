@@ -17,8 +17,10 @@ use Filament\Models\Contracts\HasTenants;
 use Filament\Navigation\NavigationGroup;
 use Filament\Navigation\NavigationItem;
 use Filament\Pages\Enums\SubNavigationPosition;
+use Filament\Pages\PageConfiguration;
 use Filament\Panel;
 use Filament\PanelRegistry;
+use Filament\Resources\ResourceConfiguration;
 use Filament\Support\Assets\Theme;
 use Filament\Support\Enums\Width;
 use Filament\Widgets\Widget;
@@ -48,6 +50,7 @@ use Livewire\Component;
  * @method static Panel | null getCurrentPanel()
  * @method static Panel | null getCurrentOrDefaultPanel()
  * @method static string | Htmlable | null getDarkModeBrandLogo()
+ * @method static class-string<Component> getDatabaseNotificationsLivewireComponent()
  * @method static string | null getDatabaseNotificationsPollingInterval()
  * @method static DatabaseNotificationsPosition getDatabaseNotificationsPosition()
  * @method static string getDefaultAvatarProvider()
@@ -158,11 +161,20 @@ use Livewire\Component;
  * @method static bool isServing()
  * @method static bool isSidebarCollapsibleOnDesktop()
  * @method static bool isSidebarFullyCollapsibleOnDesktop()
+ * @method static bool hasTenantSwitcher()
  * @method static ?bool isTenantMenuSearchable()
  * @method static void serving(Closure $callback)
  * @method static void setCurrentPanel(Panel | string | null $panel = null)
  * @method static void setServingStatus(bool $condition = true)
  * @method static void setTenant(Model | null $tenant = null, bool $isQuiet = false)
+ * @method static void setCurrentResourceConfigurationKey(string | null $key)
+ * @method static string | null getCurrentResourceConfigurationKey()
+ * @method static ResourceConfiguration | null getResourceConfiguration(string $resourceClass)
+ * @method static void setCurrentPageConfigurationKey(string | null $key)
+ * @method static string | null getCurrentPageConfigurationKey()
+ * @method static PageConfiguration | null getPageConfiguration(string $pageClass)
+ * @method static void forResourceConfiguration(string $resourceClass, string $key)
+ * @method static void forPageConfiguration(string $pageClass, string $key)
  *
  * @see FilamentManager
  */

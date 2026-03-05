@@ -568,6 +568,13 @@ return [
 
         'no_merge_tag_search_results_message' => 'لا توجد نتائج لوسوم الدمج.',
 
+        'mentions' => [
+            'no_options_message' => 'لا توجد خيارات متاحة.',
+            'no_search_results_message' => 'لا توجد نتائج تتطابق مع بحثك.',
+            'search_prompt' => 'ابدأ بالكتابة للبحث...',
+            'searching_message' => 'جاري البحث...',
+        ],
+
         'tools' => [
             'align_center' => 'محاذاة للوسط',
             'align_end' => 'محاذاة للنهاية',
@@ -610,6 +617,7 @@ return [
             'table_merge_cells' => 'دمج الخلايا',
             'table_split_cell' => 'فصل الخلايا',
             'table_toggle_header_row' => 'إظهار/إخفاء الترويسة',
+            'table_toggle_header_cell' => 'إظهار/إخفاء الخلية',
             'text_color' => 'لون النص',
             'underline' => 'خط اسفل النص',
             'undo' => 'تراجع',
@@ -691,7 +699,17 @@ return [
     ],
 
     'tags_input' => [
+
+        'actions' => [
+
+            'delete' => [
+                'label' => 'حذف',
+            ],
+
+        ],
+
         'placeholder' => 'كلمة مفتاحية جديدة',
+
     ],
 
     'text_input' => [

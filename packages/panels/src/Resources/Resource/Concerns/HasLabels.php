@@ -9,6 +9,9 @@ use Illuminate\Support\Str;
 use function Filament\Support\get_model_label;
 use function Filament\Support\locale_has_pluralization;
 
+/**
+ * @template TModel of Model = Model
+ */
 trait HasLabels
 {
     /**
@@ -96,6 +99,9 @@ trait HasLabels
         return static::$recordTitleAttribute;
     }
 
+    /**
+     * @param  ?TModel  $record
+     */
     public static function getRecordTitle(?Model $record): string | Htmlable | null
     {
         return $record?->getAttribute(static::getRecordTitleAttribute()) ?? static::getModelLabel();

@@ -129,7 +129,6 @@ trait CanSortRecords
 
             if (
                 is_string($order['column'] ?? null) &&
-                str($order['column'] ?? null)->contains('.') &&
                 str($order['column'] ?? null)->afterLast('.')->is(
                     str($qualifiedKeyName)->afterLast('.')
                 )

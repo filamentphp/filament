@@ -13,6 +13,7 @@ use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\RateLimiter;
 
 class SetUpEmailAuthenticationAction
 {
@@ -62,6 +63,16 @@ class SetUpEmailAuthenticationAction
                     ->required()
                     ->rule(function () use ($emailAuthentication): Closure {
                         return function (string $attribute, $value, Closure $fail) use ($emailAuthentication): void {
+                            $rateLimitingKey = 'filament-set-up-email-authentication:' . Filament::auth()->id();
+
+                            if (RateLimiter::tooManyAttempts($rateLimitingKey, maxAttempts: 5)) {
+                                $fail(__('filament-panels::auth/multi-factor/email/actions/set-up.modal.form.code.messages.rate_limited'));
+
+                                return;
+                            }
+
+                            RateLimiter::hit($rateLimitingKey);
+
                             if ($emailAuthentication->verifyCode($value)) {
                                 return;
                             }

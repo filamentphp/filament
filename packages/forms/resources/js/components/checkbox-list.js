@@ -6,6 +6,8 @@ export default function checkboxListFormComponent({ livewireId }) {
 
         search: '',
 
+        unsubscribeLivewireHook: null,
+
         visibleCheckboxListOptions: [],
 
         init() {
@@ -19,7 +21,7 @@ export default function checkboxListFormComponent({ livewireId }) {
                 this.checkIfAllCheckboxesAreChecked()
             })
 
-            Livewire.hook(
+            this.unsubscribeLivewireHook = Livewire.hook(
                 'commit',
                 ({ component, commit, succeed, fail, respond }) => {
                     succeed(({ snapshot, effect }) => {
@@ -107,6 +109,10 @@ export default function checkboxListFormComponent({ livewireId }) {
                         .includes(this.search.toLowerCase())
                 },
             )
+        },
+
+        destroy() {
+            this.unsubscribeLivewireHook?.()
         },
     }
 }

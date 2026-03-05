@@ -293,7 +293,8 @@ class AssociateAction extends Action
                     ->mapWithKeys(fn (Model $record): array => [$record->getKey() => $this->getRecordTitle($record)])
                     ->all();
             })
-            ->options(fn (Select $component): array => $this->isRecordSelectPreloaded() ? $getOptions(optionsLimit: $component->getOptionsLimit()) : [])
+            ->options(fn (Select $component): ?array => $this->isRecordSelectPreloaded() ? $getOptions(optionsLimit: $component->getOptionsLimit()) : null)
+            ->dynamicOptions(fn (): ?bool => $this->isRecordSelectPreloaded() ? null : false)
             ->hiddenLabel();
 
         if ($this->modifyRecordSelectUsing) {

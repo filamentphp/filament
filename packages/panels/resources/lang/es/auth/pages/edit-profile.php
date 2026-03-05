@@ -55,6 +55,11 @@ return [
             'title' => 'Cambios guardados',
         ],
 
+        'throttled' => [
+            'title' => 'Demasiados intentos. Por favor intente nuevamente en :seconds segundos.',
+            'body' => 'Por favor intente nuevamente en :seconds segundos.',
+        ],
+
     ],
 
     'actions' => [

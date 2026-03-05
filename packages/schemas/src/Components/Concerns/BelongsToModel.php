@@ -40,19 +40,23 @@ trait BelongsToModel
             return;
         }
 
-        if (! $this->isSaved()) {
+        $isDisabled = $this->isDisabled();
+        $isHidden = $this->isHidden();
+        $isSaved = $this->isSaved();
+
+        if ($isDisabled && (! $this->shouldSaveRelationshipsWhenDisabled()) && (! $isSaved)) {
+            return;
+        }
+
+        if ($isHidden && (! $this->shouldSaveRelationshipsWhenHidden())) {
+            return;
+        }
+
+        if ((! $isDisabled) && (! $isHidden) && (! $isSaved)) {
             return;
         }
 
         if (! ($this->getRecord()?->exists)) {
-            return;
-        }
-
-        if ((! $this->shouldSaveRelationshipsWhenDisabled()) && $this->isDisabled()) {
-            return;
-        }
-
-        if ((! $this->shouldSaveRelationshipsWhenHidden()) && $this->isHidden()) {
             return;
         }
 
@@ -67,19 +71,23 @@ trait BelongsToModel
             return;
         }
 
-        if (! $this->isSaved()) {
+        $isDisabled = $this->isDisabled();
+        $isHidden = $this->isHidden();
+        $isSaved = $this->isSaved();
+
+        if ($isDisabled && (! $this->shouldSaveRelationshipsWhenDisabled()) && (! $isSaved)) {
+            return;
+        }
+
+        if ($isHidden && (! $this->shouldSaveRelationshipsWhenHidden())) {
+            return;
+        }
+
+        if ((! $isDisabled) && (! $isHidden) && (! $isSaved)) {
             return;
         }
 
         if (! ($this->getRecord()?->exists)) {
-            return;
-        }
-
-        if ((! $this->shouldSaveRelationshipsWhenDisabled()) && $this->isDisabled()) {
-            return;
-        }
-
-        if ((! $this->shouldSaveRelationshipsWhenHidden()) && $this->isHidden()) {
             return;
         }
 

@@ -12,6 +12,8 @@ trait HasRecordUrl
 
     protected string | Closure | null $recordUrl = null;
 
+    protected bool $hasCustomRecordUrl = false;
+
     /**
      * @var array<array<mixed> | Closure>
      */
@@ -24,12 +26,21 @@ trait HasRecordUrl
         return $this;
     }
 
-    public function recordUrl(string | Closure | null $url, bool | Closure $shouldOpenInNewTab = false): static
+    public function recordUrl(string | Closure | null $url, bool | Closure | null $shouldOpenInNewTab = null): static
     {
-        $this->openRecordUrlInNewTab($shouldOpenInNewTab);
+        if ($shouldOpenInNewTab !== null) {
+            $this->openRecordUrlInNewTab($shouldOpenInNewTab);
+        }
+
         $this->recordUrl = $url;
+        $this->hasCustomRecordUrl = true;
 
         return $this;
+    }
+
+    public function hasCustomRecordUrl(): bool
+    {
+        return $this->hasCustomRecordUrl;
     }
 
     /**

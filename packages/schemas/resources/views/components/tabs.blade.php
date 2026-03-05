@@ -4,6 +4,7 @@
     use Filament\Support\Icons\Heroicon;
 
     $activeTab = $getActiveTab();
+    $hasDeferredBadges = $hasDeferredBadges();
     $id = $getId();
     $isContained = $isContained();
     $isScrollable = $isScrollable();
@@ -12,6 +13,7 @@
     $livewireProperty = $getLivewireProperty();
     $renderHookScopes = $getRenderHookScopes();
     $tabs = $getChildSchema()->getComponents();
+    $tabsKey = $getKey();
 
     $getTabVisibilityJs = function (Tab $tab, ?int $index = null, ?string $mode = null) use ($isScrollable): ?string {
         $hiddenJs = $tab->getHiddenJs();
@@ -80,6 +82,46 @@
             :vertical="$isVertical"
             x-cloak
             :x-bind:class="! $isScrollable ? '{ \'fi-invisible\': ! withinDropdownMounted }' : null"
+            :x-data="
+                $hasDeferredBadges ? '{
+                    deferredBadges: {},
+                    isLoadingDeferredBadges: true,
+                    unsubscribeLivewireHook: null,
+
+                    async fetchDeferredBadges() {
+                        this.isLoadingDeferredBadges = true
+
+                        try {
+                            const badges = await $wire.callSchemaComponentMethod(' . \Illuminate\Support\Js::from($tabsKey) . ', \'getDeferredTabBadges\')
+                            this.deferredBadges = badges ?? {}
+                        } finally {
+                            this.isLoadingDeferredBadges = false
+                        }
+                    },
+
+                    async init() {
+                        await this.fetchDeferredBadges()
+
+                        this.unsubscribeLivewireHook = Livewire.hook(\'commit\', ({ component, succeed }) => {
+                            succeed(() => {
+                                if (component.id !== $wire.__instance.id) {
+                                    return
+                                }
+
+                                if (this.isLoadingDeferredBadges) {
+                                    return
+                                }
+
+                                this.fetchDeferredBadges()
+                            })
+                        })
+                    },
+
+                    destroy() {
+                        this.unsubscribeLivewireHook?.()
+                    },
+                }' : null
+            "
         >
             @foreach ($getStartRenderHooks() as $startRenderHook)
                 {{ \Filament\Support\Facades\FilamentView::renderHook($startRenderHook, scopes: $renderHookScopes) }}
@@ -87,11 +129,12 @@
 
             @foreach ($tabs as $index => $tab)
                 @php
-                    $tabBadge = $tab->getBadge();
-                    $tabBadgeColor = $tab->getBadgeColor();
-                    $tabBadgeIcon = $tab->getBadgeIcon();
-                    $tabBadgeIconPosition = $tab->getBadgeIconPosition();
-                    $tabBadgeTooltip = $tab->getBadgeTooltip();
+                    $isTabBadgeDeferred = $tab->isBadgeDeferred();
+                    $tabBadge = $isTabBadgeDeferred ? null : $tab->getBadge();
+                    $tabBadgeColor = $isTabBadgeDeferred ? null : $tab->getBadgeColor();
+                    $tabBadgeIcon = $isTabBadgeDeferred ? null : $tab->getBadgeIcon();
+                    $tabBadgeIconPosition = $isTabBadgeDeferred ? null : $tab->getBadgeIconPosition();
+                    $tabBadgeTooltip = $isTabBadgeDeferred ? null : $tab->getBadgeTooltip();
                     $tabExtraAttributeBag = $tab->getExtraAttributeBag();
                     $tabIcon = $tab->getIcon();
                     $tabIconPosition = $tab->getIconPosition();
@@ -102,6 +145,8 @@
 
                 <x-filament::tabs.item
                     :alpine-active="'tab === \'' . $tabKey . '\''"
+                    :alpine-deferred-badge-data="$isTabBadgeDeferred ? 'deferredBadges[' . \Illuminate\Support\Js::from($index) . ']' : null"
+                    :alpine-deferred-badge-loading="$isTabBadgeDeferred ? 'isLoadingDeferredBadges' : null"
                     :attributes="$tabExtraAttributeBag"
                     :badge="$tabBadge"
                     :badge-color="$tabBadgeColor"
@@ -126,9 +171,10 @@
                     <x-slot name="trigger">
                         @foreach ($tabs as $index => $tab)
                             @php
-                                $tabBadge = $tab->getBadge();
-                                $tabBadgeColor = $tab->getBadgeColor();
-                                $tabBadgeTooltip = $tab->getBadgeTooltip();
+                                $isTabBadgeDeferred = $tab->isBadgeDeferred();
+                                $tabBadge = $isTabBadgeDeferred ? null : $tab->getBadge();
+                                $tabBadgeColor = $isTabBadgeDeferred ? null : $tab->getBadgeColor();
+                                $tabBadgeTooltip = $isTabBadgeDeferred ? null : $tab->getBadgeTooltip();
                                 $tabExtraAttributeBag = $tab->getExtraAttributeBag();
                                 $tabKey = $tab->getKey(isAbsolute: false);
                                 $tabLabel = $tab->getLabel();
@@ -137,6 +183,8 @@
 
                             <x-filament::tabs.item
                                 :alpine-active="'tab === \'' . $tabKey . '\''"
+                                :alpine-deferred-badge-data="$isTabBadgeDeferred ? 'deferredBadges[' . \Illuminate\Support\Js::from($index) . ']' : null"
+                                :alpine-deferred-badge-loading="$isTabBadgeDeferred ? 'isLoadingDeferredBadges' : null"
                                 :attributes="$tabExtraAttributeBag"
                                 :badge="$tabBadge"
                                 :badge-color="$tabBadgeColor"
@@ -163,15 +211,18 @@
                     <x-filament::dropdown.list>
                         @foreach ($tabs as $index => $tab)
                             @php
-                                $tabBadge = $tab->getBadge();
-                                $tabBadgeColor = $tab->getBadgeColor();
-                                $tabBadgeTooltip = $tab->getBadgeTooltip();
+                                $isTabBadgeDeferred = $tab->isBadgeDeferred();
+                                $tabBadge = $isTabBadgeDeferred ? null : $tab->getBadge();
+                                $tabBadgeColor = $isTabBadgeDeferred ? null : $tab->getBadgeColor();
+                                $tabBadgeTooltip = $isTabBadgeDeferred ? null : $tab->getBadgeTooltip();
                                 $tabIcon = $tab->getIcon();
                                 $tabKey = $tab->getKey(isAbsolute: false);
                                 $tabLabel = $tab->getLabel();
                             @endphp
 
                             <x-filament::dropdown.list.item
+                                :alpine-deferred-badge-data="$isTabBadgeDeferred ? 'deferredBadges[' . \Illuminate\Support\Js::from($index) . ']' : null"
+                                :alpine-deferred-badge-loading="$isTabBadgeDeferred ? 'isLoadingDeferredBadges' : null"
                                 :badge="$tabBadge"
                                 :badge-color="$tabBadgeColor"
                                 :badge-tooltip="$tabBadgeTooltip"
@@ -212,6 +263,59 @@
     @endphp
 
     <div
+        @if ($hasDeferredBadges)
+            x-data="{
+                deferredBadges: {},
+                isLoadingDeferredBadges: true,
+                unsubscribeLivewireHook: null,
+
+                async fetchDeferredBadges() {
+                    this.isLoadingDeferredBadges = true
+
+                    try {
+                        const badges = await $wire.callSchemaComponentMethod(
+                            @js($tabsKey),
+                            'getDeferredTabBadges',
+                        )
+
+                        this.deferredBadges = badges ?? {}
+                    } finally {
+                        this.isLoadingDeferredBadges = false
+                    }
+                },
+
+                async init() {
+                    await this.fetchDeferredBadges()
+
+                    this.unsubscribeLivewireHook = Livewire.hook(
+                        'commit',
+                        ({ component, commit, succeed }) => {
+                            succeed(() => {
+                                if (component.id !== $wire.__instance.id) {
+                                    return
+                                }
+
+                                if (this.isLoadingDeferredBadges) {
+                                    return
+                                }
+
+                                const updateKeys = Object.keys(commit.updates ?? {})
+
+                                if (updateKeys.length === 1 && updateKeys[0] === @js($livewireProperty)) {
+                                    return
+                                }
+
+                                this.fetchDeferredBadges()
+                            })
+                        },
+                    )
+                },
+
+                destroy() {
+                    this.unsubscribeLivewireHook?.()
+                },
+            }"
+        @endif
         {{
             $attributes
                 ->merge([
@@ -237,11 +341,12 @@
 
             @foreach ($getChildSchema()->getComponents(withOriginalKeys: true) as $tabKey => $tab)
                 @php
-                    $tabBadge = $tab->getBadge();
-                    $tabBadgeColor = $tab->getBadgeColor();
-                    $tabBadgeIcon = $tab->getBadgeIcon();
-                    $tabBadgeIconPosition = $tab->getBadgeIconPosition();
-                    $tabBadgeTooltip = $tab->getBadgeTooltip();
+                    $isTabBadgeDeferred = $tab->isBadgeDeferred();
+                    $tabBadge = $isTabBadgeDeferred ? null : $tab->getBadge();
+                    $tabBadgeColor = $isTabBadgeDeferred ? null : $tab->getBadgeColor();
+                    $tabBadgeIcon = $isTabBadgeDeferred ? null : $tab->getBadgeIcon();
+                    $tabBadgeIconPosition = $isTabBadgeDeferred ? null : $tab->getBadgeIconPosition();
+                    $tabBadgeTooltip = $isTabBadgeDeferred ? null : $tab->getBadgeTooltip();
                     $tabExtraAttributeBag = $tab->getExtraAttributeBag();
                     $tabIcon = $tab->getIcon();
                     $tabIconPosition = $tab->getIconPosition();
@@ -251,6 +356,8 @@
 
                 <x-filament::tabs.item
                     :active="$activeTab === $tabKey"
+                    :alpine-deferred-badge-data="$isTabBadgeDeferred ? 'deferredBadges[' . \Illuminate\Support\Js::from($tabKey) . ']' : null"
+                    :alpine-deferred-badge-loading="$isTabBadgeDeferred ? 'isLoadingDeferredBadges' : null"
                     :attributes="$tabExtraAttributeBag"
                     :badge="$tabBadge"
                     :badge-color="$tabBadgeColor"

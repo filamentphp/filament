@@ -30,6 +30,10 @@ class ViewManager
      */
     public function registerRenderHook(string $name, Closure $hook, string | array | null $scopes = null): void
     {
+        if ($scopes === null) {
+            $scopes = [''];
+        }
+
         if (! is_array($scopes)) {
             $scopes = [$scopes];
         }

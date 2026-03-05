@@ -7,6 +7,7 @@ use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 
 use function Filament\Tests\livewire;
@@ -209,4 +210,33 @@ test('codes must be 6 digits', function (): void {
 
     expect($user->getAppAuthenticationRecoveryCodes())
         ->toBeNull();
+});
+
+it('can throttle code verification attempts per user', function (): void {
+    $appAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
+
+    $user = auth()->user();
+
+    // Pre-fill the per-user rate limiter to simulate 5 prior attempts
+    $rateLimitingKey = 'filament-set-up-app-authentication:' . $user->getAuthIdentifier();
+
+    foreach (range(1, 5) as $i) {
+        RateLimiter::hit($rateLimitingKey);
+    }
+
+    $livewire = livewire(EditProfile::class)
+        ->mountAction(TestAction::make('setUpAppAuthentication')
+            ->schemaComponent('app', schema: 'content'));
+
+    $encryptedActionArguments = decrypt($livewire->instance()->mountedActions[0]['arguments']['encrypted']);
+    $secret = $encryptedActionArguments['secret'];
+
+    // Even with a valid code, the rate limit should block the attempt
+    $livewire
+        ->fillForm(['code' => $appAuthentication->getCurrentCode($user, $secret)])
+        ->callMountedAction()
+        ->assertHasFormErrors(['code']);
+
+    expect(filled($user->getAppAuthenticationSecret()))
+        ->toBeFalse();
 });

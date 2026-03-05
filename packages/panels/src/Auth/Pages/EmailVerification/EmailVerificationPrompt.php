@@ -13,6 +13,7 @@ use Filament\Schemas\Components\Text;
 use Filament\Schemas\Schema;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\HtmlString;
 use LogicException;
 
@@ -70,6 +71,21 @@ class EmailVerificationPrompt extends SimplePage
 
                     return;
                 }
+
+                $rateLimitingKey = 'filament-resend-email-verification:' . Filament::auth()->id();
+
+                if (RateLimiter::tooManyAttempts($rateLimitingKey, maxAttempts: 2)) {
+                    $this->getRateLimitedNotification(new TooManyRequestsException(
+                        static::class,
+                        'resendNotification',
+                        request()->ip(),
+                        RateLimiter::availableIn($rateLimitingKey),
+                    ))?->send();
+
+                    return;
+                }
+
+                RateLimiter::hit($rateLimitingKey);
 
                 $this->sendEmailVerificationNotification($this->getVerifiable());
 

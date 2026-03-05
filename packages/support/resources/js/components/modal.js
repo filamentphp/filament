@@ -89,6 +89,20 @@ export default ({ id }) => ({
         )
     },
 
+    isTopmost() {
+        if (!id) {
+            return true
+        }
+
+        const openModals = document.querySelectorAll('.fi-modal-open')
+
+        if (openModals.length === 0) {
+            return false
+        }
+
+        return openModals[openModals.length - 1].id === id
+    },
+
     close() {
         this.closeQuietly()
 

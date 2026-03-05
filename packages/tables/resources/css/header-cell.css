@@ -129,6 +129,10 @@
     & .fi-icon {
         @apply shrink-0 transition duration-75;
     }
+
+    & .fi-loading-indicator {
+        @apply text-gray-400 dark:text-gray-500;
+    }
 }
 
 .fi-ta-header-group-cell {

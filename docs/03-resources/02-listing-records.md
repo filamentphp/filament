@@ -1,6 +1,7 @@
 ---
 title: Listing records
 ---
+import Aside from "@components/Aside.astro"
 
 ## Using tabs to filter the records
 
@@ -86,6 +87,24 @@ Tab::make()
     ->badgeColor('success')
 ```
 
+#### Deferring the loading of filter tab badges
+
+If you have expensive queries powering your tab badges (such as counting large datasets), the initial page load may be slow. You can defer the loading of tab badges using the `deferBadge()` method, which will load the badge values asynchronously after the page has rendered:
+
+```php
+use Filament\Schemas\Components\Tabs\Tab;
+
+Tab::make()
+    ->badge(static fn (): int => Customer::query()->where('active', true)->count())
+    ->deferBadge()
+```
+
+<Aside variant="danger">
+    The `badge()` value must be returned from a function when using `deferBadge()`. If you pass a raw value like `badge(Customer::query()->count())`, the query runs immediately when the tab is built, defeating the purpose of deferral.
+</Aside>
+
+While the badges are loading, a small loading indicator will appear in place of each deferred badge. Once the data is fetched, the loading indicators will be replaced with the actual badge values.
+
 ### Adding extra attributes to filter tabs
 
 You may also pass extra HTML attributes to filter tabs using `extraAttributes()`:
@@ -118,6 +137,35 @@ public function getDefaultActiveTab(): string | int | null
     return 'active';
 }
 ```
+
+### Excluding the tab query when resolving records
+
+When a user interacts with a table record (e.g., clicking an action button), Filament resolves that record from the database. By default, the active tab's query is applied, ensuring users cannot access records outside the current tab's scope.
+
+However, when a record's state changes after the user saw it in the table, you may still want the user to interact with it. For example, if you have an "Active" tab and an action sets a record to inactive, subsequent actions in the same modal would fail to resolve that record.
+
+You may mark a tab to be excluded when resolving records using the `excludeQueryWhenResolvingRecord()` method:
+
+```php
+use Filament\Schemas\Components\Tabs\Tab;
+use Illuminate\Database\Eloquent\Builder;
+
+public function getTabs(): array
+{
+    return [
+        'active' => Tab::make()
+            ->modifyQueryUsing(fn (Builder $query) => $query->where('active', true))
+            ->excludeQueryWhenResolvingRecord(),
+        'inactive' => Tab::make()
+            ->modifyQueryUsing(fn (Builder $query) => $query->where('active', false))
+            ->excludeQueryWhenResolvingRecord(),
+    ];
+}
+```
+
+<Aside variant="danger">
+    Do not use `excludeQueryWhenResolvingRecord()` on tabs that enforce authorization rules. For example, if you have a tab that restricts records by tenant or user ownership, those tabs should remain enforced to prevent unauthorized access.
+</Aside>
 
 ## Authorization
 

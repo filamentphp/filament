@@ -116,19 +116,13 @@ if (! function_exists('Filament\Support\is_slot_empty')) {
 if (! function_exists('Filament\Support\is_app_url')) {
     function is_app_url(string $url): bool
     {
-        $url = str($url);
-
-        if ($url->startsWith('/') && (! $url->startsWith('//'))) {
+        if (str($url)->startsWith('/') && ! str($url)->startsWith('//')) {
             return true;
         }
 
-        $appUrl = rtrim((string) config('app.url'), '/');
+        $urlHost = parse_url($url, PHP_URL_HOST);
 
-        if (($appUrl !== '') && $url->startsWith($appUrl)) {
-            return true;
-        }
-
-        return $url->startsWith(request()->root());
+        return (! $urlHost) || $urlHost === request()->getHost();
     }
 }
 
@@ -139,7 +133,7 @@ if (! function_exists('Filament\Support\generate_href_html')) {
             return new HtmlString('');
         }
 
-        $html = "href=\"{$url}\"";
+        $html = 'href="' . e($url) . '"';
 
         if ($shouldOpenInNewTab) {
             $html .= ' target="_blank"';
@@ -147,7 +141,7 @@ if (! function_exists('Filament\Support\generate_href_html')) {
             if (FilamentView::hasSpaPrefetching()) {
                 $html .= ' wire:navigate.hover';
             } elseif ($hasNestedClickEventHandler) {
-                $html .= ' x-on:click="if (! ($event.altKey || $event.ctrlKey || $event.metaKey || $event.shiftKey)) { $event.preventDefault(); Alpine.navigate(' . "'{$url}'" . ') }"';
+                $html .= ' x-on:click="if (! ($event.altKey || $event.ctrlKey || $event.metaKey || $event.shiftKey)) { $event.preventDefault(); Alpine.navigate($el.getAttribute(\'href\')) }"';
             } else {
                 $html .= ' wire:navigate';
             }
@@ -198,7 +192,7 @@ if (! function_exists('Filament\Support\generate_icon_html')) {
             $icon = $icon->value;
         }
 
-        return svg($icon, $attributes->get('class'), array_filter($attributes->except('class')->getAttributes()));
+        return svg($icon, $attributes->get('class'), array_filter($attributes->except('class')->getAttributes(), static fn ($value): bool => $value !== false && $value !== null));
     }
 }
 

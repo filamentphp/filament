@@ -209,3 +209,87 @@ use App\Filament\Infolists\Components\AudioPlayerEntry;
 AudioPlayerEntry::make('recording')
     ->speed(fn (Conference $record): float => $record->isGlobal() ? 1 : 0.5)
 ```
+
+## Calling entry methods from JavaScript
+
+Sometimes you need to call a method on the entry class from JavaScript in the Blade view. For example, you might want to fetch data asynchronously or perform some server-side computation. Filament provides a way to expose methods on your entry class to JavaScript using the `#[ExposedLivewireMethod]` attribute.
+
+### Exposing a method
+
+To expose a method to JavaScript, add the `#[ExposedLivewireMethod]` attribute to a public method on your custom entry class:
+
+```php
+use Filament\Infolists\Components\Entry;
+use Filament\Support\Components\Attributes\ExposedLivewireMethod;
+
+class AudioPlayerEntry extends Entry
+{
+    protected string $view = 'filament.infolists.components.audio-player-entry';
+
+    #[ExposedLivewireMethod]
+    public function getWaveformData(): array
+    {
+        // Generate waveform data from the audio file...
+
+        return $waveformData;
+    }
+}
+```
+
+<Aside variant="info">
+    Only methods marked with `#[ExposedLivewireMethod]` can be called from JavaScript. This is a security measure to prevent arbitrary method execution.
+</Aside>
+
+### Calling the method from JavaScript
+
+In your Blade view, you may call the exposed method using `$wire.callSchemaComponentMethod()`. The first argument is the component's key (available via `$getKey()`), and the second argument is the method name. You may pass arguments as a third argument:
+
+```blade
+@php
+    $key = $getKey();
+@endphp
+
+<x-dynamic-component
+    :component="$getEntryWrapperView()"
+    :entry="$entry"
+>
+    <div
+        x-data="{
+            waveform: null,
+            async loadWaveform() {
+                this.waveform = await $wire.callSchemaComponentMethod(
+                    @js($key),
+                    'getWaveformData',
+                )
+            },
+        }"
+        x-init="loadWaveform"
+    >
+        <template x-if="waveform">
+            {{-- Render the waveform visualization --}}
+        </template>
+    </div>
+</x-dynamic-component>
+```
+
+### Preventing re-renders
+
+By default, calling an exposed method will trigger a re-render of the Livewire component. If your method doesn't need to update the UI, you may add Livewire's `#[Renderless]` attribute alongside `#[ExposedLivewireMethod]` to skip the re-render:
+
+```php
+use Filament\Infolists\Components\Entry;
+use Filament\Support\Components\Attributes\ExposedLivewireMethod;
+use Livewire\Attributes\Renderless;
+
+class AudioPlayerEntry extends Entry
+{
+    protected string $view = 'filament.infolists.components.audio-player-entry';
+
+    #[ExposedLivewireMethod]
+    #[Renderless]
+    public function getWaveformData(): array
+    {
+        // ...
+    }
+}
+```

@@ -135,18 +135,50 @@ trait HasBulkActions
      */
     public function getGroupedSelectableTableRecordKeys(?string $group): array
     {
-        $query = $this->getFilteredTableQuery();
-
         $tableGrouping = $this->getTableGrouping();
+
+        if (! $this->getTable()->hasQuery()) {
+            $groupColumn = $tableGrouping->getColumn();
+
+            $records = $this->getTableRecords()
+                ->filter(static function (array $record) use ($groupColumn, $group): bool {
+                    $key = $record[$groupColumn] ?? null;
+                    $stringKey = filled($key) ? strval($key) : null;
+
+                    return $stringKey === $group;
+                });
+
+            if (! $this->getTable()->checksIfRecordIsSelectable()) {
+                return $records
+                    ->map(fn (array $record): string => $this->getTableRecordKey($record)) /** @phpstan-ignore method.notFound */
+                    ->values()
+                    ->all();
+            }
+
+            /** @phpstan-ignore-next-line */
+            return $records->reduce(
+                function (array $carry, array $record): array {
+                    if (! $this->getTable()->isRecordSelectable($record)) {
+                        return $carry;
+                    }
+
+                    $carry[] = $this->getTableRecordKey($record);
+
+                    return $carry;
+                },
+                initial: [],
+            );
+        }
+
+        $query = $this->getFilteredTableQuery();
 
         $tableGrouping->scopeQueryByKey($query, $group);
 
         if (! $this->getTable()->checksIfRecordIsSelectable()) {
             $records = $this->getTable()->selectsCurrentPageOnly() ?
-                /** @phpstan-ignore-next-line */
                 $this->getTableRecords()
                     ->filter(fn (Model $record): bool => $tableGrouping->getStringKey($record) === $group)
-                    ->pluck($query->getModel()->getKeyName()) :
+                    ->pluck($query->getModel()->getKeyName()) : /** @phpstan-ignore method.notFound */
                 $query->toBase()->pluck($query->getModel()->getQualifiedKeyName());
 
             return $records

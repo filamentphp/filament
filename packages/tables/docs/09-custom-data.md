@@ -329,6 +329,10 @@ In this example, the `forPage()` method is used to paginate the data. This proba
     It might seem like Filament should paginate the data for you, but in many cases, it's better to let your data source—like a custom query or API call—handle the pagination instead.
 </Aside>
 
+<Aside variant="warning">
+    If you have multiple custom tables on a page and are using the `queryStringIdentifier('customIdentifier')` method to distinguish them, you will need to add an `options` argument to the `LengthAwarePaginator` with the `pageName`, like `options: ['pageName' => 'customIdentifierPage']`. Note that adding the `Page` suffix to your custom identifier is required here.
+</Aside>
+
 ## Actions
 
 [Actions](actions) in the table work similarly to how they do when using [Eloquent models](https://laravel.com/docs/eloquent). The only difference is that the `$record` parameter in the action's callback function will be an `array` instead of a `Model`.
@@ -370,6 +374,10 @@ public function table(Table $table): Table
 }
 ```
 
+<Aside variant="warning">
+    When using custom data, the table data is not automatically refreshed after an action is executed.  If you have an action that changes the state of a table record in the current pagination page, you should call `$this->resetTable()` in your action function.
+</Aside>
+
 ### Bulk actions
 
 For actions that interact with a single record, the record is always present on the current table page, so the `records()` method can be used to fetch the data. However for bulk actions, records can be selected across pagination pages. If you would like to use a bulk action that selects records across pages, you need to give Filament a way to fetch records across pages, otherwise it will only return the records from the current page. The `resolveSelectedRecordsUsing()` method should accept a function which has a `$keys` parameter, and returns an array of record data:
@@ -408,7 +416,7 @@ public function table(Table $table): Table
         ->columns([
             // ...
         ])
-        ->recordActions([
+        ->toolbarActions([
             BulkAction::make('feature')
                 ->requiresConfirmation()
                 ->action(function (Collection $records): void {
@@ -472,7 +480,7 @@ public function table(Table $table): Table
         ->columns([
             // ...
         ])
-        ->recordActions([
+        ->toolbarActions([
             BulkAction::make('feature')
                 ->requiresConfirmation()
                 ->action(function (Collection $records): void {

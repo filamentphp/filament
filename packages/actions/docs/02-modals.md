@@ -760,6 +760,34 @@ use Filament\Support\View\Components\ModalComponent;
 ModalComponent::autofocus(false);
 ```
 
+## Overlaying child action modals on top of parent action modals
+
+By default, when a child action opens its modal, the parent action's modal is temporarily closed and then reopened after the child action is dismissed. If you'd like the child action's modal to instead appear on top of the parent action's modal (keeping the parent visible underneath), you can use the `overlayParentActions()` method on the child action:
+
+```php
+use Filament\Actions\Action;
+use Filament\Schemas\Components\Repeater;
+
+Action::make('editItems')
+    ->slideOver()
+    ->schema([
+        Repeater::make('items')
+            ->schema([
+                // ...
+            ])
+            ->deleteAction(
+                fn (Action $action) => $action
+                    ->requiresConfirmation()
+                    ->overlayParentActions(),
+            ),
+    ])
+    ->action(function () {
+        // ...
+    })
+```
+
+In this example, when the user clicks the delete button on a repeater item, the confirmation dialog appears on top of the slide-over instead of the slide-over closing first. This creates a smoother experience, especially for actions inside slide-overs or complex forms where closing and reopening the parent would be disorienting.
+
 ## Optimizing modal configuration methods
 
 When you use database queries or other heavy operations inside modal configuration methods like `modalHeading()`, they can be executed more than once. This is because Filament uses these methods to decide whether to render the modal or not, and also to render the modal's content.

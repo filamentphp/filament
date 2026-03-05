@@ -15,6 +15,7 @@ Filament's grid system allows you to create responsive, multi-column layouts usi
 - [Section](sections)
 - [Tabs](tabs)
 - [Wizard](wizards)
+- [Callout](callouts)
 - [Empty state](empty-states)
 
 You may also [create your own custom layout components](custom-components#custom-layout-components) to display components however you wish.
@@ -411,9 +412,9 @@ In this example, the fallback breakpoints ensure that even in browsers that don'
 The `dense()` method creates a more compact layout by reducing the spacing between components by 50%:
 
 ```php
-use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Fieldset;
 
-Grid::make()
+Fieldset::make('Dense')
     ->dense()
     ->schema([
         // ...
@@ -427,9 +428,9 @@ Grid::make()
 The `gap(false)` method removes space between components:
 
 ```php
-use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Fieldset;
 
-Grid::make()
+Fieldset::make('No gap')
     ->gap(false)
     ->schema([
         // ...

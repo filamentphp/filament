@@ -60,7 +60,7 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
 
     protected string | Closure | null $relationship = null;
 
-    protected string | Closure | null $itemLabel = null;
+    protected string | Htmlable | Closure | null $itemLabel = null;
 
     protected bool | Closure $hasItemNumbers = false;
 
@@ -1039,7 +1039,7 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
         $this->rawState($items);
     }
 
-    public function itemLabel(string | Closure | null $label): static
+    public function itemLabel(string | Htmlable | Closure | null $label): static
     {
         $this->itemLabel = $label;
 

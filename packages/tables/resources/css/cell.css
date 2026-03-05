@@ -49,7 +49,7 @@
         @apply hidden 2xl:table-cell;
     }
 
-    & > .fi-ta-col {
+    & .fi-ta-col {
         @apply flex w-full justify-start text-start disabled:pointer-events-none;
     }
 

@@ -26,6 +26,7 @@ use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Password as PasswordRule;
 use Livewire\Attributes\Locked;
@@ -67,6 +68,10 @@ class ResetPassword extends SimplePage
         } catch (TooManyRequestsException $exception) {
             $this->getRateLimitedNotification($exception)?->send();
 
+            return null;
+        }
+
+        if ($this->isResetPasswordRateLimited($this->email)) {
             return null;
         }
 
@@ -131,6 +136,30 @@ class ResetPassword extends SimplePage
                 'minutes' => $exception->minutesUntilAvailable,
             ]) : null)
             ->danger();
+    }
+
+    protected function isResetPasswordRateLimited(?string $email): bool
+    {
+        if (blank($email)) {
+            return false;
+        }
+
+        $rateLimitingKey = 'filament-reset-password:' . sha1($email);
+
+        if (RateLimiter::tooManyAttempts($rateLimitingKey, maxAttempts: 2)) {
+            $this->getRateLimitedNotification(new TooManyRequestsException(
+                static::class,
+                'resetPassword',
+                request()->ip(),
+                RateLimiter::availableIn($rateLimitingKey),
+            ))?->send();
+
+            return true;
+        }
+
+        RateLimiter::hit($rateLimitingKey);
+
+        return false;
     }
 
     public function form(Schema $schema): Schema

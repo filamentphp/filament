@@ -32,6 +32,10 @@ return [
 
     'notifications' => [
 
+        'sent' => [
+            'body' => 'Jei jūsų paskyra neegzistuoja, el. laiško negausite.',
+        ],
+
         'throttled' => [
             'title' => 'Per daug bandymų',
             'body' => 'Bandykite dar kartą už :seconds sekundžių.',

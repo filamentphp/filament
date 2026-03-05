@@ -27,9 +27,13 @@ class Tab extends Component implements CanConcealComponents
 
     protected ?Closure $modifyQueryUsing = null;
 
+    protected bool | Closure $shouldExcludeQueryWhenResolvingRecord = false;
+
     protected string | BackedEnum | Htmlable | Closure | null $badgeIcon = null;
 
     protected IconPosition | string | Closure | null $badgeIconPosition = null;
+
+    protected bool | Closure $isBadgeDeferred = false;
 
     /**
      * @var view-string
@@ -66,7 +70,11 @@ class Tab extends Component implements CanConcealComponents
      */
     public function getAllColumns(): array
     {
-        return $this->columns ?? $this->getContainer()->getAllColumns();
+        if ($this->columns === null) {
+            return $this->getContainer()->getAllColumns();
+        }
+
+        return parent::getAllColumns();
     }
 
     public function canConcealComponents(): bool
@@ -123,5 +131,29 @@ class Tab extends Component implements CanConcealComponents
     public function getBadgeIconPosition(): IconPosition | string
     {
         return $this->evaluate($this->badgeIconPosition) ?? IconPosition::Before;
+    }
+
+    public function deferBadge(bool | Closure $condition = true): static
+    {
+        $this->isBadgeDeferred = $condition;
+
+        return $this;
+    }
+
+    public function isBadgeDeferred(): bool
+    {
+        return (bool) $this->evaluate($this->isBadgeDeferred);
+    }
+
+    public function excludeQueryWhenResolvingRecord(bool | Closure $condition = true): static
+    {
+        $this->shouldExcludeQueryWhenResolvingRecord = $condition;
+
+        return $this;
+    }
+
+    public function shouldExcludeQueryWhenResolvingRecord(): bool
+    {
+        return (bool) $this->evaluate($this->shouldExcludeQueryWhenResolvingRecord);
     }
 }

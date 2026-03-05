@@ -210,6 +210,64 @@ The `$this->filters` array will always reflect the current form data. Please not
     If you want to add filters that apply to multiple widgets at once, see [filtering widget data](overview#filtering-widget-data) in the dashboard.
 </Aside>
 
+#### Deferring filter updates
+
+By default, filters using the `filtersSchema()` method update the chart data immediately as they are changed. However, for complex queries or better user experience, you may want to **defer** filter updates until the user clicks an "Apply" button.
+
+When deferred, filter changes are only applied when the user clicks the "Apply" button. This ensures that the chart only re-renders when the user has finished adjusting all of their filters.
+
+The chart will display data using the default filter values when the page first loads, ensuring users see meaningful data immediately without needing to take action.
+
+To enable deferred filters, set the `$hasDeferredFilters` property to `true`:
+
+```php
+use Filament\Widgets\ChartWidget\Concerns\HasFiltersSchema;
+
+class BlogPostsChart extends ChartWidget
+{
+    use HasFiltersSchema;
+
+    protected bool $hasDeferredFilters = true;
+
+    // ...
+}
+```
+
+If you need dynamic control over whether filters are deferred, you may override the `hasDeferredFilters()` method:
+
+```php
+public function hasDeferredFilters(): bool
+{
+    return auth()->user()->prefersDeferredFilters();
+}
+```
+
+#### Resetting filters to defaults
+
+When using deferred filters, a "Reset" link appears in the filter dropdown footer alongside the "Apply" button. Clicking this link restores all filters to their default values as defined in the `filtersSchema()` method. For example, if you set `->default(now()->subDays(30))` on a `DatePicker`, the reset action will restore that default date, not an empty value.
+
+#### Customizing filter actions
+
+You may customize the apply and reset actions that appear when using deferred filters. All methods that are available to [customize action trigger buttons](../actions/overview) can be used:
+
+```php
+use Filament\Actions\Action;
+
+public function filtersApplyAction(Action $action): Action
+{
+    return $action
+        ->label('Update Chart')
+        ->color('success');
+}
+
+public function filtersResetAction(Action $action): Action
+{
+    return $action
+        ->label('Clear Filters')
+        ->color('danger');
+}
+```
+
 ## Live updating chart data (polling)
 
 By default, chart widgets refresh their data every 5 seconds.

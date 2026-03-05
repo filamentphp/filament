@@ -1255,6 +1255,20 @@ class TablesDemo extends Component implements HasActions, HasSchemas, HasTable
             ->defaultPaginationPageOption(6);
     }
 
+    public function layoutStackedOnMobile(Table $table): Table
+    {
+        return $this->layoutTable($table)
+            ->columns([
+                TextColumn::make('name')
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('email'),
+                TextColumn::make('phone'),
+                TextColumn::make('job'),
+            ])
+            ->stackedOnMobile();
+    }
+
     public function summaries(Table $table): Table
     {
         return $this->postsTable($table)

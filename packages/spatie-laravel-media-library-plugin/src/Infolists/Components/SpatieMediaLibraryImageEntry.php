@@ -38,6 +38,10 @@ class SpatieMediaLibraryImageEntry extends ImageEntry
             }
 
             foreach ($records as $record) {
+                if (! method_exists($record, 'getFallbackMediaUrl')) {
+                    continue;
+                }
+
                 $url = $record->getFallbackMediaUrl($collection, $component->getConversion() ?? '');
 
                 if (blank($url)) {

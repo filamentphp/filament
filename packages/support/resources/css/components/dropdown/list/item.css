@@ -60,3 +60,7 @@
 .fi-dropdown-list-item-label {
     @apply flex-1 truncate text-start text-gray-700 dark:text-gray-200;
 }
+
+.fi-dropdown-list-item-badge-placeholder {
+    @apply flex items-center text-gray-400 dark:text-gray-500;
+}

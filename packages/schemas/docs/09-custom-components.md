@@ -363,7 +363,7 @@ use Filament\Schemas\Components\Component;
 class Chart extends Component
 {
     protected string $view = 'filament.schemas.components.chart';
-    
+
     protected string | Closure | null $heading = null;
 
     public function __construct(string | Closure | null $heading = null)
@@ -375,7 +375,7 @@ class Chart extends Component
     {
         return app(static::class, ['heading' => $heading]);
     }
-    
+
     public function heading(string | Closure | null $heading): static
     {
         $this->heading = $heading;
@@ -386,6 +386,128 @@ class Chart extends Component
     public function getHeading(): ?string
     {
         return $this->evaluate($this->heading);
+    }
+}
+```
+
+### Calling component methods from JavaScript
+
+Sometimes you need to call a method on the component class from JavaScript in the Blade view. For example, you might want to fetch data asynchronously or perform some server-side computation. Filament provides a way to expose methods on your component class to JavaScript using the `#[ExposedLivewireMethod]` attribute.
+
+#### Exposing a method
+
+To expose a method to JavaScript, add the `#[ExposedLivewireMethod]` attribute to a public method on your custom component class:
+
+```php
+use Filament\Schemas\Components\Component;
+use Filament\Support\Components\Attributes\ExposedLivewireMethod;
+
+class Chart extends Component
+{
+    protected string $view = 'filament.schemas.components.chart';
+
+    public static function make(): static
+    {
+        return app(static::class);
+    }
+
+    #[ExposedLivewireMethod]
+    public function getChartData(): array
+    {
+        // Fetch and process chart data...
+
+        return $chartData;
+    }
+}
+```
+
+<Aside variant="info">
+    Only methods marked with `#[ExposedLivewireMethod]` can be called from JavaScript. This is a security measure to prevent arbitrary method execution.
+</Aside>
+
+#### Calling the method from JavaScript
+
+In your Blade view, you may call the exposed method using `$wire.callSchemaComponentMethod()`. The first argument is the component's key (available via `$getKey()`), and the second argument is the method name. You may pass arguments as a third argument:
+
+```blade
+@php
+    $key = $getKey();
+@endphp
+
+<div
+    x-data="{
+        data: null,
+        async loadData() {
+            this.data = await $wire.callSchemaComponentMethod(
+                @js($key),
+                'getChartData',
+            )
+        },
+    }"
+    x-init="loadData"
+>
+    <template x-if="data">
+        {{-- Render the chart using the data --}}
+    </template>
+</div>
+```
+
+You may pass arguments to the method by providing an object as the third argument:
+
+```blade
+@php
+    $key = $getKey();
+@endphp
+
+<div
+    x-data="{
+        data: null,
+        dateRange: 'week',
+        async loadData() {
+            this.data = await $wire.callSchemaComponentMethod(
+                @js($key),
+                'getChartData',
+                { dateRange: this.dateRange },
+            )
+        },
+    }"
+    x-init="loadData"
+>
+    <select x-model="dateRange" x-on:change="loadData">
+        <option value="week">This Week</option>
+        <option value="month">This Month</option>
+        <option value="year">This Year</option>
+    </select>
+
+    <template x-if="data">
+        {{-- Render the chart using the data --}}
+    </template>
+</div>
+```
+
+#### Preventing re-renders
+
+By default, calling an exposed method will trigger a re-render of the Livewire component. If your method doesn't need to update the UI, you may add Livewire's `#[Renderless]` attribute alongside `#[ExposedLivewireMethod]` to skip the re-render:
+
+```php
+use Filament\Schemas\Components\Component;
+use Filament\Support\Components\Attributes\ExposedLivewireMethod;
+use Livewire\Attributes\Renderless;
+
+class Chart extends Component
+{
+    protected string $view = 'filament.schemas.components.chart';
+
+    public static function make(): static
+    {
+        return app(static::class);
+    }
+
+    #[ExposedLivewireMethod]
+    #[Renderless]
+    public function getChartData(): array
+    {
+        // ...
     }
 }
 ```

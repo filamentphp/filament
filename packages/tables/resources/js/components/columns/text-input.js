@@ -6,8 +6,10 @@ export default function textInputTableColumn({ name, recordKey, state }) {
 
         state,
 
+        unsubscribeLivewireHook: null,
+
         init() {
-            Livewire.hook(
+            this.unsubscribeLivewireHook = Livewire.hook(
                 'commit',
                 ({ component, commit, succeed, fail, respond }) => {
                     succeed(({ snapshot, effect }) => {
@@ -89,6 +91,10 @@ export default function textInputTableColumn({ name, recordKey, state }) {
             }
 
             return state
+        },
+
+        destroy() {
+            this.unsubscribeLivewireHook?.()
         },
     }
 }

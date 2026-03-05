@@ -1,6 +1,7 @@
 ---
 title: Tabs
 ---
+import Aside from "@components/Aside.astro"
 import AutoScreenshot from "@components/AutoScreenshot.astro"
 import UtilityInjection from "@components/UtilityInjection.astro"
 
@@ -155,6 +156,37 @@ Tabs::make('Tabs')
 <UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `badgeColor()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 <AutoScreenshot name="schemas/layout/tabs/badges-color" alt="Tabs with badges with color" version="4.x" />
+
+### Deferring the loading of tab badges
+
+If you have expensive queries powering your tab badges, the initial page load may be slow. You can defer the loading of tab badges using the `deferBadge()` method, which will load the badge values asynchronously after the page has rendered:
+
+```php
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
+
+Tabs::make('Tabs')
+    ->key('notifications-tabs')
+    ->tabs([
+        Tab::make('Notifications')
+            ->badge(static fn (): int => Notification::query()->where('unread', true->count())
+            ->deferBadge()
+            ->schema([
+                // ...
+            ]),
+        // ...
+    ])
+```
+
+<Aside variant="warning">
+    The `badge()` value must be returned from a function when using `deferBadge()`. If you pass a raw value like `badge(Notification::query()->count())`, the query runs immediately when the tab is built, defeating the purpose of deferral.
+
+    The `Tabs` component must have a `key()` set when using `deferBadge()`. Without a key, the deferred badge request cannot identify the correct component on the server.
+</Aside>
+
+<UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `deferBadge()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+While the badges are loading, a small loading indicator will appear in place of each deferred badge. Once the data is fetched, the loading indicators will be replaced with the actual badge values.
 
 ## Using grid columns within a tab
 

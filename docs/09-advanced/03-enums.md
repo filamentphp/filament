@@ -139,6 +139,7 @@ The `HasIcon` interface transforms an enum instance into an [icon](../styling/ic
 ```php
 use BackedEnum;
 use Filament\Support\Contracts\HasIcon;
+use Filament\Support\Icons\Heroicon;
 use Illuminate\Contracts\Support\Htmlable;
 
 enum Status: string implements HasIcon
@@ -147,14 +148,14 @@ enum Status: string implements HasIcon
     case Reviewing = 'reviewing';
     case Published = 'published';
     case Rejected = 'rejected';
-    
+
     public function getIcon(): string | BackedEnum | Htmlable | null
     {
         return match ($this) {
-            self::Draft => 'heroicon-m-pencil',
-            self::Reviewing => 'heroicon-m-eye',
-            self::Published => 'heroicon-m-check',
-            self::Rejected => 'heroicon-m-x-mark',
+            self::Draft => Heroicon::Pencil,
+            self::Reviewing => Heroicon::Eye,
+            self::Published => Heroicon::Check,
+            self::Rejected => Heroicon::XMark,
         };
     }
 }

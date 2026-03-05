@@ -21,13 +21,51 @@ TextColumn::make('slug')
 
 This is fine, but there is still a glaring issue - **on mobile, the user is unable to see much information in a table row at once without scrolling**.
 
-Thankfully, Filament lets you build responsive table-like interfaces, without touching HTML or CSS. These layouts let you define exactly where content appears in a table row, at each responsive breakpoint.
+Filament offers two solutions to this problem:
+
+1. **Simple stacking** - Use `stackedOnMobile()` to automatically stack all cells vertically on mobile without changing your column definitions
+2. **Custom layouts** - Use `Split`, `Stack`, and other layout components for fine-grained control over how content appears at each breakpoint
+
+## Stacking table cells on mobile
+
+The simplest way to make your table responsive is to use the `stackedOnMobile()` method on the table. This automatically converts the traditional horizontal table layout into a vertical card-like layout on mobile screens, while preserving the standard table appearance on larger screens:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->columns([
+            TextColumn::make('name')
+                ->searchable()
+                ->sortable(),
+            TextColumn::make('email'),
+            TextColumn::make('phone'),
+            TextColumn::make('job'),
+        ])
+        ->stackedOnMobile();
+}
+```
+
+<AutoScreenshot name="tables/layout/stacked-on-mobile" alt="Table with stacked mobile layout on desktop" version="4.x" />
+
+<AutoScreenshot name="tables/layout/stacked-on-mobile/mobile" alt="Table with stacked mobile layout on mobile" version="4.x" />
+
+On mobile, each row displays as a card with the column label above its value. If you have sortable columns, a sort dropdown appears at the top of the table on mobile, allowing users to sort without the traditional header row. Bulk selection is also supported, with a checkbox appearing in the header area.
+
+This approach works well when you want a quick responsive solution without restructuring your columns. However, for more complex layouts or fine-grained control over how content appears at different breakpoints, you may prefer to use the layout components described below.
+
+## Custom column layouts
+
+Filament lets you build responsive table-like interfaces, without touching HTML or CSS. These layouts let you define exactly where content appears in a table row, at each responsive breakpoint.
 
 <AutoScreenshot name="tables/layout/demo" alt="Table with responsive layout" version="4.x" />
 
 <AutoScreenshot name="tables/layout/demo/mobile" alt="Table with responsive layout on mobile" version="4.x" />
 
-## Allowing columns to stack on mobile
+### Allowing columns to stack on mobile
 
 Let's introduce a component - `Split`:
 
@@ -220,7 +258,7 @@ Stack::make([
 ])->space(1)
 ```
 
-## Controlling column width using a grid
+### Controlling column width using a grid
 
 Sometimes, using a `Split` creates inconsistent widths when columns contain lots of content. This is because it's powered by Flexbox internally and each row individually controls how much space is allocated to content.
 
@@ -295,7 +333,7 @@ Grid::make([
     ])
 ```
 
-## Collapsible content
+### Collapsible content
 
 When you're using a column layout like split or stack, then you can also add collapsible content. This is very useful for when you don't want to display all data in the table at once, but still want it to be accessible to the user if they need to access it, without navigating away.
 
@@ -350,7 +388,7 @@ Panel::make([
 
 <AutoScreenshot name="tables/layout/collapsible/mobile" alt="Table with collapsible content on mobile" version="4.x" />
 
-## Arranging records into a grid
+### Arranging records into a grid
 
 Sometimes, you may find that your data fits into a grid format better than a list. Filament can handle that too!
 
@@ -387,7 +425,7 @@ These settings are fully customizable, any [breakpoint](https://tailwindcss.com/
 
 <AutoScreenshot name="tables/layout/grid/mobile" alt="Table with grid layout on mobile" version="4.x" />
 
-## Custom HTML
+### Custom HTML
 
 You may add custom HTML to your table using a `View` component. It can even be `collapsible()`:
 
@@ -426,7 +464,7 @@ Now, create a `/resources/views/users/table/collapsible-row-content.blade.php` f
 </p>
 ```
 
-### Embedding other components
+#### Embedding other components
 
 You could even pass in columns or other layout components to the `components()` method:
 

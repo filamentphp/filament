@@ -2,6 +2,7 @@
     "actions": [
         {
             "name": "view",
+            "alpineClickHandler": null,
             "color": null,
             "event": null,
             "eventData": [],

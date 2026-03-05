@@ -373,4 +373,15 @@ trait HasComponents
 
         return $this;
     }
+
+    public function clearCachedDefaultChildSchemas(): void
+    {
+        foreach ($this->getComponents(withActions: false, withHidden: true) as $component) {
+            $component->clearCachedDefaultChildSchemas();
+
+            foreach ($component->getChildSchemas(withHidden: true) as $childSchema) {
+                $childSchema->clearCachedDefaultChildSchemas();
+            }
+        }
+    }
 }

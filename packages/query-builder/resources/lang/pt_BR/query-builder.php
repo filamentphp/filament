@@ -2,7 +2,7 @@
 
 return [
 
-    'label' => 'Construtor de Consultas',
+    'label' => 'Query Builder',
 
     'form' => [
 
@@ -15,7 +15,7 @@ return [
             'label' => 'Grupos',
 
             'block' => [
-                'label' => 'Disjunção (OU)',
+                'label' => 'Condição OU',
                 'or' => 'OU',
             ],
 
@@ -45,13 +45,13 @@ return [
         'is_filled' => [
 
             'label' => [
-                'direct' => 'Preenchido',
-                'inverse' => 'Em branco',
+                'direct' => 'Está preenchido',
+                'inverse' => 'Está vazio',
             ],
 
             'summary' => [
-                'direct' => ':attribute preenchido',
-                'inverse' => ':attribute em branco',
+                'direct' => ':attribute está preenchido',
+                'inverse' => ':attribute está vazio',
             ],
 
         ],
@@ -85,7 +85,7 @@ return [
 
                 'summary' => [
                     'direct' => ':attribute é posterior a :date',
-                    'inverse' => ':attribute não é posterir a :date',
+                    'inverse' => ':attribute não é posterior a :date',
                 ],
 
             ],
@@ -107,8 +107,8 @@ return [
             'is_date' => [
 
                 'label' => [
-                    'direct' => 'É data',
-                    'inverse' => 'Não é data',
+                    'direct' => 'É a data',
+                    'inverse' => 'Não é a data',
                 ],
 
                 'summary' => [
@@ -121,8 +121,8 @@ return [
             'is_month' => [
 
                 'label' => [
-                    'direct' => 'É mês',
-                    'inverse' => 'Não é mês',
+                    'direct' => 'É o mês',
+                    'inverse' => 'Não é o mês',
                 ],
 
                 'summary' => [
@@ -135,8 +135,8 @@ return [
             'is_year' => [
 
                 'label' => [
-                    'direct' => 'É ano',
-                    'inverse' => 'Não é ano',
+                    'direct' => 'É o ano',
+                    'inverse' => 'Não é o ano',
                 ],
 
                 'summary' => [
@@ -144,6 +144,50 @@ return [
                     'inverse' => ':attribute não é :year',
                 ],
 
+            ],
+
+            'unit_labels' => [
+                'second' => 'Segundos',
+                'minute' => 'Minutos',
+                'hour' => 'Horas',
+                'day' => 'Dias',
+                'week' => 'Semanas',
+                'month' => 'Meses',
+                'quarter' => 'Trimestres',
+                'year' => 'Anos',
+            ],
+
+            'presets' => [
+                'past_decade' => 'Última década',
+                'past_5_years' => 'Últimos 5 anos',
+                'past_2_years' => 'Últimos 2 anos',
+                'past_year' => 'Último ano',
+                'past_6_months' => 'Últimos 6 meses',
+                'past_quarter' => 'Último trimestre',
+                'past_month' => 'Último mês',
+                'past_2_weeks' => 'Últimas 2 semanas',
+                'past_week' => 'Última semana',
+                'past_hour' => 'Última hora',
+                'past_minute' => 'Último minuto',
+                'this_decade' => 'Esta década',
+                'this_year' => 'Este ano',
+                'this_quarter' => 'Este trimestre',
+                'this_month' => 'Este mês',
+                'today' => 'Hoje',
+                'this_hour' => 'Esta hora',
+                'this_minute' => 'Este minuto',
+                'next_minute' => 'Próximo minuto',
+                'next_hour' => 'Próxima hora',
+                'next_week' => 'Próxima semana',
+                'next_2_weeks' => 'Próximas 2 semanas',
+                'next_month' => 'Próximo mês',
+                'next_quarter' => 'Próximo trimestre',
+                'next_6_months' => 'Próximos 6 meses',
+                'next_year' => 'Próximo ano',
+                'next_2_years' => 'Próximos 2 anos',
+                'next_5_years' => 'Próximos 5 anos',
+                'next_decade' => 'Próxima década',
+                'custom' => 'Personalizado',
             ],
 
             'form' => [
@@ -160,6 +204,40 @@ return [
                     'label' => 'Ano',
                 ],
 
+                'mode' => [
+
+                    'label' => 'Tipo',
+
+                    'options' => [
+                        'absolute' => 'Data específica',
+                        'relative' => 'Período',
+                    ],
+
+                ],
+
+                'preset' => [
+                    'label' => 'Período',
+                ],
+
+                'relative_value' => [
+                    'label' => 'Quantidade',
+                ],
+
+                'relative_unit' => [
+                    'label' => 'Unidade de tempo',
+                ],
+
+                'tense' => [
+
+                    'label' => 'Direção',
+
+                    'options' => [
+                        'past' => 'Passado',
+                        'future' => 'Futuro',
+                    ],
+
+                ],
+
             ],
 
         ],
@@ -169,13 +247,13 @@ return [
             'equals' => [
 
                 'label' => [
-                    'direct' => 'É igual',
-                    'inverse' => 'É diferente',
+                    'direct' => 'É igual a',
+                    'inverse' => 'Diferente de',
                 ],
 
                 'summary' => [
                     'direct' => ':attribute é igual a :number',
-                    'inverse' => ':attribute é diferente de :number',
+                    'inverse' => ':attribute diferente de :number',
                 ],
 
             ],
@@ -183,12 +261,12 @@ return [
             'is_max' => [
 
                 'label' => [
-                    'direct' => 'É máximo',
+                    'direct' => 'É no máximo',
                     'inverse' => 'É maior que',
                 ],
 
                 'summary' => [
-                    'direct' => ':attribute é máximo :number',
+                    'direct' => ':attribute é no máximo :number',
                     'inverse' => ':attribute é maior que :number',
                 ],
 
@@ -197,12 +275,12 @@ return [
             'is_min' => [
 
                 'label' => [
-                    'direct' => 'É mínimo',
+                    'direct' => 'É no mínimo',
                     'inverse' => 'É menor que',
                 ],
 
                 'summary' => [
-                    'direct' => ':attribute é mínimo :number',
+                    'direct' => ':attribute é no mínimo :number',
                     'inverse' => ':attribute é menor que :number',
                 ],
 
@@ -216,13 +294,13 @@ return [
                 ],
 
                 'max' => [
-                    'label' => 'Máx.',
-                    'summary' => 'Máx. de :attribute',
+                    'label' => 'Máximo',
+                    'summary' => 'Máximo de :attribute',
                 ],
 
                 'min' => [
-                    'label' => 'Mín.',
-                    'summary' => 'Mín. de :attribute',
+                    'label' => 'Mínimo',
+                    'summary' => 'Mínimo de :attribute',
                 ],
 
                 'sum' => [
@@ -251,8 +329,8 @@ return [
             'equals' => [
 
                 'label' => [
-                    'direct' => 'Contém',
-                    'inverse' => 'Não contém',
+                    'direct' => 'Tem',
+                    'inverse' => 'Não tem',
                 ],
 
                 'summary' => [
@@ -265,13 +343,13 @@ return [
             'has_max' => [
 
                 'label' => [
-                    'direct' => 'Tem máximo',
-                    'inverse' => 'Tem mais de',
+                    'direct' => 'Tem no máximo',
+                    'inverse' => 'Tem mais que',
                 ],
 
                 'summary' => [
-                    'direct' => 'Tem máximo de :count :relationship',
-                    'inverse' => 'Tem mais de :count :relationship',
+                    'direct' => 'Tem no máximo :count :relationship',
+                    'inverse' => 'Tem mais que :count :relationship',
                 ],
 
             ],
@@ -279,13 +357,13 @@ return [
             'has_min' => [
 
                 'label' => [
-                    'direct' => 'Tem mínimo',
-                    'inverse' => 'Tem menos de',
+                    'direct' => 'Tem no mínimo',
+                    'inverse' => 'Tem menos que',
                 ],
 
                 'summary' => [
-                    'direct' => 'Tem mínimo de :count :relationship',
-                    'inverse' => 'Tem emnos de :count :relationship',
+                    'direct' => 'Tem no mínimo :count :relationship',
+                    'inverse' => 'Tem menos que :count :relationship',
                 ],
 
             ],
@@ -293,13 +371,13 @@ return [
             'is_empty' => [
 
                 'label' => [
-                    'direct' => 'É vazio',
-                    'inverse' => 'Não é vazio',
+                    'direct' => 'Está vazio',
+                    'inverse' => 'Não está vazio',
                 ],
 
                 'summary' => [
-                    'direct' => ':relationship é vazio',
-                    'inverse' => ':relationship não é vazio',
+                    'direct' => ':relationship está vazio',
+                    'inverse' => ':relationship não está vazio',
                 ],
 
             ],
@@ -356,7 +434,7 @@ return [
             'form' => [
 
                 'count' => [
-                    'label' => 'Contagem',
+                    'label' => 'Quantidade',
                 ],
 
             ],
@@ -416,13 +494,13 @@ return [
             'ends_with' => [
 
                 'label' => [
-                    'direct' => 'Termina em',
-                    'inverse' => 'Não termina em',
+                    'direct' => 'Termina com',
+                    'inverse' => 'Não termina com',
                 ],
 
                 'summary' => [
-                    'direct' => ':attribute termina em :text',
-                    'inverse' => ':attribute não termina em :text',
+                    'direct' => ':attribute termina com :text',
+                    'inverse' => ':attribute não termina com :text',
                 ],
 
             ],
@@ -430,13 +508,13 @@ return [
             'equals' => [
 
                 'label' => [
-                    'direct' => 'É igual',
-                    'inverse' => 'Não é igual',
+                    'direct' => 'É igual a',
+                    'inverse' => 'Diferente de',
                 ],
 
                 'summary' => [
-                    'direct' => ':attribute é igual :text',
-                    'inverse' => ':attribute não é igual :text',
+                    'direct' => ':attribute é igual a :text',
+                    'inverse' => ':attribute diferente de :text',
                 ],
 
             ],
@@ -444,13 +522,13 @@ return [
             'starts_with' => [
 
                 'label' => [
-                    'direct' => 'Inicia por',
-                    'inverse' => 'Não inicia por',
+                    'direct' => 'Começa com',
+                    'inverse' => 'Não começa com',
                 ],
 
                 'summary' => [
-                    'direct' => ':attribute inicia por :text',
-                    'inverse' => ':attribute não inicia por :text',
+                    'direct' => ':attribute começa com :text',
+                    'inverse' => ':attribute não começa com :text',
                 ],
 
             ],
@@ -474,7 +552,7 @@ return [
         ],
 
         'add_rule_group' => [
-            'label' => 'Adicionar grupo de regras',
+            'label' => 'Adicionar OU',
         ],
 
     ],

@@ -30,7 +30,11 @@
 
         &.fi-dropdown {
             & .fi-wi-chart-filter-content {
-                @apply p-6;
+                @apply grid gap-y-4 p-6;
+            }
+
+            & .fi-wi-chart-filter-content-actions-ctn {
+                @apply flex gap-3;
             }
         }
     }

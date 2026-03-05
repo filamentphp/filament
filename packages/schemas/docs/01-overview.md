@@ -66,6 +66,7 @@ To arrange components into a [layout](layouts), Filament includes layout compone
 - [Section](sections)
 - [Tabs](tabs)
 - [Wizard](wizards)
+- [Callout](callouts)
 - [Empty states](empty-states)
 - Or, build your own [custom layout component](custom-components#custom-layout-components)
 

@@ -21,6 +21,10 @@
         @apply px-3 py-4;
     }
 
+    .fi-ta-table-stacked-on-mobile & {
+        @apply p-0 sm:px-3 sm:py-4;
+    }
+
     ul&.fi-bulleted,
     &.fi-bulleted ul {
         @apply list-inside list-disc;

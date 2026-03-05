@@ -179,7 +179,7 @@
         @if ($shouldRenderFooter)
             <div class="fi-sidebar-footer">
                 @if ($hasDatabaseNotificationsInSidebar)
-                    @livewire(Filament\Livewire\DatabaseNotifications::class, [
+                    @livewire(filament()->getDatabaseNotificationsLivewireComponent(), [
                         'lazy' => filament()->hasLazyLoadedDatabaseNotifications(),
                     ])
                 @endif

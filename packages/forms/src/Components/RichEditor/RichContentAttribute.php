@@ -4,6 +4,7 @@ namespace Filament\Forms\Components\RichEditor;
 
 use Closure;
 use Filament\Forms\Components\RichEditor\FileAttachmentProviders\Contracts\FileAttachmentProvider;
+use Filament\Forms\Components\RichEditor\Plugins\Contracts\HasFileAttachmentProvider;
 use Filament\Forms\Components\RichEditor\Plugins\Contracts\RichContentPlugin;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
@@ -112,7 +113,21 @@ class RichContentAttribute implements Htmlable
 
     public function getFileAttachmentProvider(): ?FileAttachmentProvider
     {
-        return $this->fileAttachmentProvider;
+        if ($this->fileAttachmentProvider) {
+            return $this->fileAttachmentProvider;
+        }
+
+        foreach ($this->getPlugins() as $plugin) {
+            if ($plugin instanceof HasFileAttachmentProvider) {
+                $provider = $plugin->getFileAttachmentProvider();
+
+                if ($provider) {
+                    return $this->fileAttachmentProvider = $provider->attribute($this);
+                }
+            }
+        }
+
+        return null;
     }
 
     public function getModel(): Model
@@ -133,7 +148,23 @@ class RichContentAttribute implements Htmlable
             return '';
         }
 
-        return RichContentRenderer::make($content)
+        return $this->getRenderer()->toHtml();
+    }
+
+    public function toText(): string
+    {
+        $content = $this->model->getAttribute($this->name);
+
+        if (blank($content)) {
+            return '';
+        }
+
+        return $this->getRenderer()->toText();
+    }
+
+    public function getRenderer(): RichContentRenderer
+    {
+        return RichContentRenderer::make($this->model->getAttribute($this->name) ?? '')
             ->plugins($this->getPlugins())
             ->customBlocks($this->customBlocks)
             ->mergeTags($this->mergeTags)
@@ -141,8 +172,7 @@ class RichContentAttribute implements Htmlable
             ->fileAttachmentsDisk($this->getFileAttachmentsDiskName())
             ->fileAttachmentsVisibility($this->getFileAttachmentsVisibility())
             ->fileAttachmentProvider($this->getFileAttachmentProvider())
-            ->textColors($this->getTextColors())
-            ->toHtml();
+            ->textColors($this->getTextColors());
     }
 
     /**

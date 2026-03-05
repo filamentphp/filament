@@ -22,6 +22,8 @@ use Filament\Navigation\MenuItem;
 use Filament\Navigation\NavigationGroup;
 use Filament\Navigation\NavigationItem;
 use Filament\Pages\Enums\SubNavigationPosition;
+use Filament\Pages\PageConfiguration;
+use Filament\Resources\ResourceConfiguration;
 use Filament\Support\Assets\Theme;
 use Filament\Support\Enums\Width;
 use Filament\Support\Facades\FilamentAsset;
@@ -50,6 +52,10 @@ class FilamentManager
     protected bool $isCurrentPanelBooted = false;
 
     protected ?Model $tenant = null;
+
+    protected ?string $currentResourceConfigurationKey = null;
+
+    protected ?string $currentPageConfigurationKey = null;
 
     public function auth(): Guard
     {
@@ -480,6 +486,11 @@ class FilamentManager
         return $this->getCurrentOrDefaultPanel()->getTenantMenuItems();
     }
 
+    public function hasTenantSwitcher(): bool
+    {
+        return $this->getCurrentOrDefaultPanel()->hasTenantSwitcher();
+    }
+
     public function isTenantMenuSearchable(): ?bool
     {
         return $this->getCurrentOrDefaultPanel()->isTenantMenuSearchable();
@@ -790,6 +801,14 @@ class FilamentManager
         return $this->getCurrentOrDefaultPanel()->getDatabaseNotificationsPosition();
     }
 
+    /**
+     * @return class-string<Component>
+     */
+    public function getDatabaseNotificationsLivewireComponent(): string
+    {
+        return $this->getCurrentOrDefaultPanel()->getDatabaseNotificationsLivewireComponent();
+    }
+
     public function hasTopNavigation(): bool
     {
         return $this->getCurrentOrDefaultPanel()->hasTopNavigation();
@@ -879,6 +898,70 @@ class FilamentManager
         if ($tenant && (! $isQuiet)) {
             event(new TenantSet($tenant, $this->auth()->user()));
         }
+    }
+
+    public function setCurrentResourceConfigurationKey(?string $key): void
+    {
+        $this->currentResourceConfigurationKey = $key;
+    }
+
+    public function getCurrentResourceConfigurationKey(): ?string
+    {
+        return $this->currentResourceConfigurationKey;
+    }
+
+    /**
+     * @param  class-string  $resourceClass
+     */
+    public function getResourceConfiguration(string $resourceClass): ?ResourceConfiguration
+    {
+        $key = $this->currentResourceConfigurationKey;
+
+        if ($key === null) {
+            return null;
+        }
+
+        return $this->getCurrentOrDefaultPanel()->getResourceConfiguration($resourceClass, $key);
+    }
+
+    public function setCurrentPageConfigurationKey(?string $key): void
+    {
+        $this->currentPageConfigurationKey = $key;
+    }
+
+    public function getCurrentPageConfigurationKey(): ?string
+    {
+        return $this->currentPageConfigurationKey;
+    }
+
+    /**
+     * @param  class-string  $pageClass
+     */
+    public function getPageConfiguration(string $pageClass): ?PageConfiguration
+    {
+        $key = $this->currentPageConfigurationKey;
+
+        if ($key === null) {
+            return null;
+        }
+
+        return $this->getCurrentOrDefaultPanel()->getPageConfiguration($pageClass, $key);
+    }
+
+    /**
+     * @param  class-string  $resourceClass
+     */
+    public function forResourceConfiguration(string $resourceClass, string $key): void
+    {
+        $this->setCurrentResourceConfigurationKey($key);
+    }
+
+    /**
+     * @param  class-string  $pageClass
+     */
+    public function forPageConfiguration(string $pageClass, string $key): void
+    {
+        $this->setCurrentPageConfigurationKey($key);
     }
 
     /**

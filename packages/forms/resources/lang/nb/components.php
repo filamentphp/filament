@@ -284,6 +284,10 @@ return [
 
     'markdown_editor' => [
 
+        'file_attachments_accepted_file_types_message' => 'Opplastede filer må være av typen :values.',
+
+        'file_attachments_max_size_message' => 'Opplastede filer må ikke være større enn :max kilobytes.',
+
         'tools' => [
             'attach_files' => 'Legg til filer',
             'blockquote' => 'Sitat',
@@ -443,6 +447,71 @@ return [
 
             ],
 
+            'grid' => [
+
+                'label' => 'Rutenett',
+
+                'modal' => [
+
+                    'heading' => 'Rutenett',
+
+                    'form' => [
+
+                        'preset' => [
+
+                            'label' => 'Mal',
+
+                            'placeholder' => 'Ingen',
+
+                            'options' => [
+                                'two' => 'To',
+                                'three' => 'Tre',
+                                'four' => 'Fire',
+                                'five' => 'Fem',
+                                'two_start_third' => 'To (Start tredje)',
+                                'two_end_third' => 'To (Slutt tredje)',
+                                'two_start_fourth' => 'To (Start fjerde)',
+                                'two_end_fourth' => 'To (Slutt fjerde)',
+                            ],
+                        ],
+
+                        'columns' => [
+                            'label' => 'Kolonner',
+                        ],
+
+                        'from_breakpoint' => [
+
+                            'label' => 'Fra brytepunkt',
+
+                            'options' => [
+                                'default' => 'Alle',
+                                'sm' => 'Liten',
+                                'md' => 'Middels',
+                                'lg' => 'Stor',
+                                'xl' => 'Ekstra stor',
+                                '2xl' => 'Dobbel ekstra stor',
+                            ],
+
+                        ],
+
+                        'is_asymmetric' => [
+                            'label' => ' To asymmetriske kolonner',
+                        ],
+
+                        'start_span' => [
+                            'label' => 'Start spenn',
+                        ],
+
+                        'end_span' => [
+                            'label' => 'Slutt spenn',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
             'link' => [
 
                 'label' => 'Endre',
@@ -467,9 +536,44 @@ return [
 
             ],
 
+            'text_color' => [
+
+                'label' => 'Tekstfarge',
+
+                'modal' => [
+
+                    'heading' => 'Tekstfarge',
+
+                    'form' => [
+
+                        'color' => [
+                            'label' => 'Farge',
+                        ],
+
+                        'custom_color' => [
+                            'label' => 'Egendefinert farge',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
         ],
 
+        'file_attachments_accepted_file_types_message' => 'Opplastede filer må være av typen :values.',
+
+        'file_attachments_max_size_message' => 'Opplastede filer må ikke være større enn :max kilobytes.',
+
         'no_merge_tag_search_results_message' => 'Ingen treff for flettefelt.',
+
+        'mentions' => [
+            'no_options_message' => 'Ingen valg tilgjengelige.',
+            'no_search_results_message' => 'Ingen resultater passer ditt søk.',
+            'search_prompt' => 'Skriv for å søke...',
+            'searching_message' => 'Søker...',
+        ],
 
         'tools' => [
             'align_center' => 'Midtstill',
@@ -488,6 +592,8 @@ return [
             'h1' => 'Tittel',
             'h2' => 'Overskrift',
             'h3' => 'Underoverskrift',
+            'grid' => 'Rutenett',
+            'grid_delete' => 'Slett rutenett',
             'highlight' => 'Uthev',
             'horizontal_rule' => 'Horisontal linje',
             'italic' => 'Kursiv',
@@ -511,9 +617,13 @@ return [
             'table_merge_cells' => 'Slå sammen celler',
             'table_split_cell' => 'Del celle',
             'table_toggle_header_row' => 'Slå av/på overskriftsrad',
+            'table_toggle_header_cell' => 'Veksle overskriftscelle',
+            'text_color' => 'Tekstfarge',
             'underline' => 'Understrek',
             'undo' => 'Angre',
         ],
+
+        'uploading_file_message' => 'Laster opp filen...',
 
     ],
 
@@ -576,6 +686,8 @@ return [
 
         'max_items_message' => 'Bare :count kan velges.',
 
+        'no_options_message' => 'Ingen alternativer tilgjengelige.',
+
         'no_search_results_message' => 'Ingen alternativer matcher ditt søk.',
 
         'placeholder' => 'Velg et alternativ',
@@ -587,6 +699,15 @@ return [
     ],
 
     'tags_input' => [
+
+        'actions' => [
+
+            'delete' => [
+                'label' => 'Slett',
+            ],
+
+        ],
+
         'placeholder' => 'Ny emneknagg',
     ],
 

@@ -83,9 +83,11 @@ class Panel extends Component
 
     public function boot(): void
     {
-        foreach ($this->getResources() as $resource) {
-            $resource::observeTenancyModelCreation($this);
-            $resource::registerTenancyModelGlobalScope($this);
+        if ($this->hasTenancy()) {
+            foreach ($this->getResources() as $resource) {
+                $resource::observeTenancyModelCreation($this);
+                $resource::registerTenancyModelGlobalScope($this);
+            }
         }
 
         $this->registerAssets();

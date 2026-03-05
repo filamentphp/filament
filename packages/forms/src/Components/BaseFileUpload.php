@@ -194,13 +194,17 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
                 return $newPath;
             }
 
-            $storeMethod = $component->getVisibility() === 'public' ? 'storePubliclyAs' : 'storeAs';
-
-            return $file->{$storeMethod}(
+            $path = $file->storeAs(
                 $component->getDirectory(),
                 $component->getUploadedFileNameForStorage($file),
                 $component->getDiskName(),
             );
+
+            if ($component->getVisibility() === 'public') {
+                rescue(fn () => $component->getDisk()->setVisibility($path, 'public'), report: false);
+            }
+
+            return $path;
         });
     }
 
@@ -641,7 +645,7 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
         $rules[] = function (string $attribute, array $value, Closure $fail) use ($fileRules): void {
             $files = array_filter($value, fn (TemporaryUploadedFile | string $file): bool => $file instanceof TemporaryUploadedFile);
 
-            $name = $this->getName();
+            $name = Str::afterLast($this->getName(), '.');
 
             $validationMessages = $this->getValidationMessages();
 

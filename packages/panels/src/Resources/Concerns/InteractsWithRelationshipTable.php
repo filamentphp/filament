@@ -71,7 +71,11 @@ trait InteractsWithRelationshipTable
 
     public function defaultForm(Schema $schema): Schema
     {
-        return $schema->columns(2);
+        if (! $schema->hasCustomColumns()) {
+            $schema->columns(2);
+        }
+
+        return $schema;
     }
 
     public function form(Schema $schema): Schema
@@ -85,7 +89,11 @@ trait InteractsWithRelationshipTable
 
     public function defaultInfolist(Schema $schema): Schema
     {
-        return $schema->columns(2);
+        if (! $schema->hasCustomColumns()) {
+            $schema->columns(2);
+        }
+
+        return $schema;
     }
 
     public function infolist(Schema $schema): Schema
@@ -113,6 +121,14 @@ trait InteractsWithRelationshipTable
 
                     $action->record($record);
 
+                    $actionGroup = $action->getGroup();
+
+                    while ($actionGroup) {
+                        $actionGroup->record($record);
+
+                        $actionGroup = $actionGroup->getGroup();
+                    }
+
                     if ($action->isHidden()) {
                         continue;
                     }
@@ -125,8 +141,10 @@ trait InteractsWithRelationshipTable
                 }
 
                 return null;
-            })
-            ->recordUrl(function (Model $record, Table $table): ?string {
+            });
+
+        if (! $table->hasCustomRecordUrl()) {
+            $table->recordUrl(function (Model $record, Table $table): ?string {
                 foreach (['view', 'edit'] as $action) {
                     $action = $table->getAction($action);
 
@@ -135,6 +153,14 @@ trait InteractsWithRelationshipTable
                     }
 
                     $action->record($record);
+
+                    $actionGroup = $action->getGroup();
+
+                    while ($actionGroup) {
+                        $actionGroup->record($record);
+
+                        $actionGroup = $actionGroup->getGroup();
+                    }
 
                     if ($action->isHidden()) {
                         continue;
@@ -150,8 +176,10 @@ trait InteractsWithRelationshipTable
                 }
 
                 return null;
-            })
-            ->authorizeReorder(fn (): bool => $this->canReorder());
+            });
+        }
+
+        $table->authorizeReorder(fn (): bool => $this->canReorder());
 
         if ($relatedResource = static::getRelatedResource()) {
             $table->modelLabel($relatedResource::getModelLabel());

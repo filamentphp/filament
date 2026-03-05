@@ -372,7 +372,7 @@ export class Select {
         let renderedCount = 0
 
         for (const option of optionsToRender) {
-            if (this.optionsLimit && renderedCount >= this.optionsLimit) {
+            if (this.optionsLimit > 0 && renderedCount >= this.optionsLimit) {
                 break
             }
 
@@ -394,7 +394,7 @@ export class Select {
 
                 if (groupOptions.length > 0) {
                     // Apply limit to group options if needed
-                    if (this.optionsLimit) {
+                    if (this.optionsLimit > 0) {
                         const remainingSlots = this.optionsLimit - renderedCount
                         if (remainingSlots < groupOptions.length) {
                             groupOptions = groupOptions.slice(0, remainingSlots)

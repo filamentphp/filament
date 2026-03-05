@@ -38,6 +38,8 @@ export default function selectTableColumn({
 
         state,
 
+        unsubscribeLivewireHook: null,
+
         init() {
             if (!isNative) {
                 this.select = new Select({
@@ -72,7 +74,7 @@ export default function selectTableColumn({
                 })
             }
 
-            Livewire.hook(
+            this.unsubscribeLivewireHook = Livewire.hook(
                 'commit',
                 ({ component, commit, succeed, fail, respond }) => {
                     succeed(({ snapshot, effect }) => {
@@ -167,6 +169,8 @@ export default function selectTableColumn({
         },
 
         destroy() {
+            this.unsubscribeLivewireHook?.()
+
             if (this.select) {
                 this.select.destroy()
                 this.select = null

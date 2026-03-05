@@ -10,6 +10,7 @@ use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 
 use function Filament\Tests\livewire;
@@ -330,4 +331,90 @@ test('challenge codes must be 6 digits', function (): void {
         ->assertNoRedirect();
 
     $this->assertGuest();
+});
+
+it('can throttle multi-factor challenge attempts per user', function (): void {
+    /** @var EmailAuthentication $emailAuthentication */
+    $emailAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
+
+    $userToAuthenticate = User::factory()
+        ->hasEmailAuthentication()
+        ->create();
+
+    $code = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+    $emailAuthentication->generateCodesUsing(fn (): string => $code);
+
+    // Clear the IP-based rate limiter between attempts to isolate the
+    // user-based rate limit (simulates an attacker rotating IPs).
+    $clearIpRateLimiter = function (): void {
+        RateLimiter::clear('livewire-rate-limiter:' . sha1(Login::class . '|authenticate|' . request()->ip()));
+    };
+
+    $livewire = livewire(Login::class)
+        ->fillForm([
+            'email' => $userToAuthenticate->email,
+            'password' => 'password',
+        ])
+        ->call('authenticate')
+        ->assertNotSet('userUndertakingMultiFactorAuthentication', null)
+        ->assertNoRedirect();
+
+    $invalidCode = ($code === '000000') ? '111111' : '000000';
+
+    foreach (range(1, 5) as $i) {
+        $clearIpRateLimiter();
+
+        $livewire
+            ->fillForm([
+                $emailAuthentication->getId() => [
+                    'code' => $invalidCode,
+                ],
+            ], 'multiFactorChallengeForm')
+            ->call('authenticate')
+            ->assertNoRedirect();
+    }
+
+    $clearIpRateLimiter();
+
+    // The 6th attempt should be rate limited by user ID, even with the valid code
+    $livewire
+        ->fillForm([
+            $emailAuthentication->getId() => [
+                'code' => $code,
+            ],
+        ], 'multiFactorChallengeForm')
+        ->call('authenticate')
+        ->assertNotified()
+        ->assertNoRedirect();
+
+    $this->assertGuest();
+
+    $clearIpRateLimiter();
+
+    // A different user should not be affected by the first user's rate limit
+    $secondUser = User::factory()
+        ->hasEmailAuthentication()
+        ->create();
+
+    $secondCode = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+    $emailAuthentication->generateCodesUsing(fn (): string => $secondCode);
+
+    livewire(Login::class)
+        ->fillForm([
+            'email' => $secondUser->email,
+            'password' => 'password',
+        ])
+        ->call('authenticate')
+        ->assertNotSet('userUndertakingMultiFactorAuthentication', null)
+        ->assertNoRedirect()
+        ->fillForm([
+            $emailAuthentication->getId() => [
+                'code' => $secondCode,
+            ],
+        ], 'multiFactorChallengeForm')
+        ->call('authenticate')
+        ->assertHasNoErrors()
+        ->assertRedirect(Filament::getUrl());
+
+    $this->assertAuthenticatedAs($secondUser);
 });

@@ -54,6 +54,18 @@ return [
                 'title' => 'Atkurta',
             ],
 
+            'restored_partial' => [
+                'title' => 'Atkurta :count iš :total',
+                'missing_authorization_failure_message' => 'Neturite leidimo atkurti :count.',
+                'missing_processing_failure_message' => ':count negalėjo būti atkurta.',
+            ],
+
+            'restored_none' => [
+                'title' => 'Nepavyko atkurti',
+                'missing_authorization_failure_message' => 'Neturite leidimo atkurti :count.',
+                'missing_processing_failure_message' => ':count negalėjo būti atkurta.',
+            ],
+
         ],
 
     ],

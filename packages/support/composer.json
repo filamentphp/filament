@@ -20,7 +20,7 @@
         "ryangjchandler/blade-capture-directive": "^1.0",
         "spatie/invade": "^2.0",
         "spatie/laravel-package-tools": "^1.9",
-        "symfony/html-sanitizer": "^7.0",
+        "symfony/html-sanitizer": "^7.0|^8.0",
         "symfony/console": "^7.0"
     },
     "autoload": {

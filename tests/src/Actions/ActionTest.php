@@ -5,6 +5,7 @@ use Filament\Actions\Testing\TestAction;
 use Filament\Notifications\Notification;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tests\Actions\TestCase;
+use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Pages\Actions;
 use Illuminate\Support\Str;
 
@@ -555,4 +556,16 @@ it('can submit parent action after calling an action registered in a group in `e
         ->callMountedAction()
         ->assertHasNoActionErrors()
         ->assertDispatched('grouped-extra-actions-called', content: $content);
+});
+
+it('can assert an action exists with arguments that are used to resolve a record for a schema', function (): void {
+    $postId = Post::factory()->create()->getKey();
+
+    livewire(Actions::class)
+        ->assertActionExists('arguments-with-record-and-schema', arguments: [
+            'post_id' => $postId,
+        ])
+        ->assertActionVisible('arguments-with-record-and-schema', arguments: [
+            'post_id' => $postId,
+        ]);
 });

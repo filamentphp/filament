@@ -12,7 +12,12 @@ return [
 
             'file' => [
                 'label' => 'Failas',
+
                 'placeholder' => 'Įkelti CSV failą',
+
+                'rules' => [
+                    'duplicate_columns' => '{0} Failas neturi turėti daugiau nei vieną tuščią stulpelio antraštę.|{1,*} Failas neturi turėti pasikartojančių stulpelio antraščių: :columns.',
+                ],
             ],
 
             'columns' => [
@@ -72,6 +77,7 @@ return [
         'file_name' => 'import-:import_id-:csv_name-failed-rows',
         'error_header' => 'klaida',
         'system_error' => 'Sistemos klaida, susisiekite su klientų aptarnavimu.',
+        'column_mapping_required_for_new_record' => 'Stulpelis :attribute nebuvo susietas su failo stulpeliu, tačiau jis yra būtinas naujiems įrašams kurti.',
     ],
 
 ];

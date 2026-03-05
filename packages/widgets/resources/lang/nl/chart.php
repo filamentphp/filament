@@ -5,7 +5,23 @@ return [
     'actions' => [
 
         'filter' => [
-            'label' => 'Filter',
+            'label' => 'Filteren',
+        ],
+
+    ],
+
+    'filters' => [
+
+        'actions' => [
+
+            'apply' => [
+                'label' => 'Toepassen',
+            ],
+
+            'reset' => [
+                'label' => 'Resetten',
+            ],
+
         ],
 
     ],

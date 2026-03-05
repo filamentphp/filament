@@ -143,6 +143,10 @@ class CreateRecord extends Page
                 ...$preserveRawState,
             ]);
 
+            // Rebuild child schemas without double-firing `afterStateHydrated()` hooks.
+            $hydratedDefaultState = null;
+            $this->form->hydrateState($hydratedDefaultState, shouldCallHydrationHooks: false);
+
             $this->isCreating = false;
 
             return;
@@ -292,8 +296,11 @@ class CreateRecord extends Page
 
     public function defaultForm(Schema $schema): Schema
     {
+        if (! $schema->hasCustomColumns()) {
+            $schema->columns($this->hasInlineLabels() ? 1 : 2);
+        }
+
         return $schema
-            ->columns($this->hasInlineLabels() ? 1 : 2)
             ->inlineLabel($this->hasInlineLabels())
             ->model($this->getModel())
             ->operation('create')

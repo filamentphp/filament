@@ -7,6 +7,7 @@
 @import './components/badge.css' layer(components);
 @import './components/breadcrumbs.css' layer(components);
 @import './components/button.css' layer(components);
+@import './components/callout.css' layer(components);
 @import './components/dropdown/header.css' layer(components);
 @import './components/dropdown/index.css' layer(components);
 @import './components/dropdown/list/index.css' layer(components);

@@ -55,6 +55,10 @@
                 var(--color-400)
             );
         }
+
+        & .fi-no-notification-body {
+            @apply text-gray-700/75 dark:text-gray-300/75;
+        }
     }
 
     &.fi-transition-enter-start {

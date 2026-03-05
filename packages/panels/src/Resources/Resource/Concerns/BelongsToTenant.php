@@ -13,6 +13,9 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use LogicException;
 use Znck\Eloquent\Relations\BelongsToThrough;
 
+/**
+ * @template TModel of Model = Model
+ */
 trait BelongsToTenant
 {
     protected static bool $isScopedToTenant = true;
@@ -21,6 +24,10 @@ trait BelongsToTenant
 
     protected static ?string $tenantRelationshipName = null;
 
+    /**
+     * @param  Builder<TModel>  $query
+     * @return Builder<TModel>
+     */
     public static function scopeEloquentQueryToTenant(Builder $query, ?Model $tenant): Builder
     {
         $tenant ??= Filament::getTenant();
@@ -121,7 +128,7 @@ trait BelongsToTenant
         }
 
         $model::addGlobalScope($panel->getTenancyScopeName(), function (Builder $query) use ($panel): void {
-            if (Filament::getCurrentOrDefaultPanel() !== $panel) {
+            if (Filament::getCurrentPanel() !== $panel) {
                 return;
             }
 
@@ -148,7 +155,7 @@ trait BelongsToTenant
         }
 
         $model::creating(function (Model $record) use ($panel): void {
-            if (Filament::getCurrentOrDefaultPanel() !== $panel) {
+            if (Filament::getCurrentPanel() !== $panel) {
                 return;
             }
 
@@ -166,7 +173,7 @@ trait BelongsToTenant
         });
 
         $model::created(function (Model $record) use ($panel): void {
-            if (Filament::getCurrentOrDefaultPanel() !== $panel) {
+            if (Filament::getCurrentPanel() !== $panel) {
                 return;
             }
 

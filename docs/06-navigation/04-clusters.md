@@ -69,19 +69,20 @@ protected static ?string $cluster = SettingsCluster::class;
 When using clusters, it is recommended that you move all of your resources and pages into a directory with the same name as the cluster. For example, here is a directory structure for a panel that uses a cluster called `Settings`, containing a `ColorResource` and two custom pages:
 
 ```
-Clusters/
-└── Settings/
-    ├── SettingsCluster.php
-    ├── Pages/
-    │   ├── ManageBranding.php
-    │   └── ManageNotifications.php
-    └── Resources/
-        └── Colors/
-            ├── ColorResource.php
-            └── Pages/
-                ├── CreateColor.php
-                ├── EditColor.php
-                └── ListColors.php
+.
++-- Clusters
+|   +-- Settings
+|   |   +-- SettingsCluster.php
+|   |   +-- Pages
+|   |   |   +-- ManageBranding.php
+|   |   |   +-- ManageNotifications.php
+|   |   +-- Resources
+|   |   |   +-- Colors
+|   |   |   |   +-- ColorResource.php
+|   |   |   |   +-- Pages
+|   |   |   |   |   +-- CreateColor.php
+|   |   |   |   |   +-- EditColor.php
+|   |   |   |   |   +-- ListColors.php
 ```
 
 This is a recommendation, not a requirement. You can structure your panel however you like, as long as the resources and pages in your cluster use the [`$cluster`](#adding-resources-and-pages-to-a-cluster) property. This is just a suggestion to help you keep your panel organized.

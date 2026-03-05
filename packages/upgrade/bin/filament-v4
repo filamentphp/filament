@@ -176,7 +176,7 @@ try {
                     if (!str_starts_with($dep, 'filament/')) {
                         continue;
                     }
-                    if (preg_match("/\^\s*4(?:\.|$)|~\s*4(?:\.|$)|>=\s*4(?:\.|$)/", (string) $constraint)) {
+                    if (preg_match("/\^\s*v?4(?:\.|$)|~\s*v?4(?:\.|$)|>=\s*v?4(?:\.|$)/", (string) $constraint)) {
                         $compatibility = [
                             'version' => (string) ($checkingVersion['version'] ?? ''),
                             'isPrerelease' => false,
@@ -197,7 +197,7 @@ try {
                             continue;
                         }
 
-                        if (preg_match("/\^\s*4(?:\.|$)|~\s*4(?:\.|$)|>=\s*4(?:\.|$)/", (string) $constraint)) {
+                        if (preg_match("/\^\s*v?4(?:\.|$)|~\s*v?4(?:\.|$)|>=\s*v?4(?:\.|$)/", (string) $constraint)) {
                             $compatibility = [
                                 'version' => (string) ($checkingVersion['version'] ?? ''),
                                 'isPrerelease' => true,
@@ -228,7 +228,7 @@ try {
                                 continue;
                             }
 
-                            if (preg_match("/\^\s*4(?:\.|$)|~\s*4(?:\.|$)|>=\s*4(?:\.|$)/", (string) $constraint)) {
+                            if (preg_match("/\^\s*v?4(?:\.|$)|~\s*v?4(?:\.|$)|>=\s*v?4(?:\.|$)/", (string) $constraint)) {
                                 $compatibility = [
                                     'version' => (string) ($checkingVersion['version'] ?? ''),
                                     'isPrerelease' => false,
@@ -257,7 +257,7 @@ try {
                                     continue;
                                 }
 
-                                if (preg_match("/\^\s*4(?:\.|$)|~\s*4(?:\.|$)|>=\s*4(?:\.|$)/", (string) $constraint)) {
+                                if (preg_match("/\^\s*v?4(?:\.|$)|~\s*v?4(?:\.|$)|>=\s*v?4(?:\.|$)/", (string) $constraint)) {
                                     $compatibility = [
                                         'version' => (string) ($checkingVersion['version'] ?? ''),
                                         'isPrerelease' => true,

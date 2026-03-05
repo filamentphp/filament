@@ -8,6 +8,7 @@ use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 
 use function Filament\Tests\livewire;
@@ -192,4 +193,71 @@ it('can validate `passwordConfirmation` is required', function (): void {
         ->fillForm(['passwordConfirmation' => ''])
         ->call('register')
         ->assertHasFormErrors(['passwordConfirmation' => ['required']]);
+});
+
+it('can throttle registration attempts per email', function (): void {
+    Notification::fake();
+    Event::fake();
+
+    $this->assertGuest();
+
+    $email = fake()->unique()->safeEmail();
+
+    // Clear the IP-based rate limiter between attempts to isolate the
+    // email-based rate limit (simulates an attacker rotating IPs).
+    $clearIpRateLimiter = function (): void {
+        RateLimiter::clear('livewire-rate-limiter:' . sha1(Register::class . '|register|' . request()->ip()));
+    };
+
+    foreach (range(1, 2) as $i) {
+        $clearIpRateLimiter();
+
+        livewire(Register::class)
+            ->fillForm([
+                'name' => fake()->name(),
+                'email' => $email,
+                'password' => 'password',
+                'passwordConfirmation' => 'password',
+            ])
+            ->call('register');
+
+        // Only the first attempt actually registers (second will fail unique validation on email)
+        if ($i === 1) {
+            $this->assertAuthenticated();
+            auth()->logout();
+        }
+    }
+
+    $clearIpRateLimiter();
+
+    // The 3rd attempt should be rate limited by email
+    livewire(Register::class)
+        ->fillForm([
+            'name' => fake()->name(),
+            'email' => $email,
+            'password' => 'password',
+            'passwordConfirmation' => 'password',
+        ])
+        ->call('register')
+        ->assertNotified()
+        ->assertNoRedirect();
+
+    $this->assertGuest();
+
+    $clearIpRateLimiter();
+
+    // A different email should not be affected
+    $differentEmail = fake()->unique()->safeEmail();
+
+    livewire(Register::class)
+        ->fillForm([
+            'name' => fake()->name(),
+            'email' => $differentEmail,
+            'password' => 'password',
+            'passwordConfirmation' => 'password',
+        ])
+        ->call('register')
+        ->assertRedirect(Filament::getUrl());
+
+    $this->assertAuthenticated();
 });

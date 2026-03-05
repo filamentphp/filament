@@ -34,6 +34,8 @@ export default ({
 
     cleanUpFiltersDropdown: null,
 
+    unsubscribeLivewireHook: null,
+
     init() {
         this.livewireId =
             this.$root.closest('[wire\\:id]')?.attributes['wire:id'].value
@@ -57,11 +59,14 @@ export default ({
 
         this.$nextTick(() => this.watchForCheckboxClicks())
 
-        Livewire.hook('element.init', ({ component }) => {
-            if (component.id === this.livewireId) {
-                this.watchForCheckboxClicks()
-            }
-        })
+        this.unsubscribeLivewireHook = Livewire.hook(
+            'element.init',
+            ({ component }) => {
+                if (component.id === this.livewireId) {
+                    this.watchForCheckboxClicks()
+                }
+            },
+        )
     },
 
     mountAction(...args) {
@@ -435,5 +440,9 @@ export default ({
             this.cleanUpFiltersDropdown()
             this.cleanUpFiltersDropdown = null
         }
+    },
+
+    destroy() {
+        this.unsubscribeLivewireHook?.()
     },
 })

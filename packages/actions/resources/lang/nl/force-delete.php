@@ -61,7 +61,7 @@ return [
             ],
 
             'deleted_none' => [
-                'title' => 'Failed to delete',
+                'title' => 'Verwijderen mislukt',
                 'missing_authorization_failure_message' => 'Je hebt geen toestemming om :count te verwijderen.',
                 'missing_processing_failure_message' => ':count kon niet worden verwijderd.',
             ],

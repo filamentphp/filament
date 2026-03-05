@@ -18,16 +18,17 @@ php artisan make:filament-resource Customer
 This will create several files in the `app/Filament/Resources` directory:
 
 ```
-Customers/
-├── CustomerResource.php
-├── Pages/
-│   ├── CreateCustomer.php
-│   ├── EditCustomer.php
-│   └── ListCustomers.php
-├── Schemas/
-│   └── CustomerForm.php
-└── Tables/
-    └── CustomersTable.php
+.
++-- Customers
+|   +-- CustomerResource.php
+|   +-- Pages
+|   |   +-- CreateCustomer.php
+|   |   +-- EditCustomer.php
+|   |   +-- ListCustomers.php
+|   +-- Schemas
+|   |   +-- CustomerForm.php
+|   +-- Tables
+|   |   +-- CustomersTable.php
 ```
 
 Your new resource class lives in `CustomerResource.php`.

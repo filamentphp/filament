@@ -1,8 +1,6 @@
-import { v4 as uuid } from 'uuid-browser'
-
 class Notification {
     constructor() {
-        this.id(uuid())
+        this.id(crypto.randomUUID())
 
         return this
     }

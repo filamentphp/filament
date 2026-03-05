@@ -27,6 +27,7 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\HtmlString;
 use Illuminate\Validation\Rules\Password;
 use LogicException;
@@ -73,6 +74,10 @@ class Register extends SimplePage
             return null;
         }
 
+        if ($this->isRegisterRateLimited($this->data['email'] ?? '')) {
+            return null;
+        }
+
         $user = $this->wrapInDatabaseTransaction(function (): Model {
             $this->callHook('beforeValidate');
 
@@ -116,6 +121,30 @@ class Register extends SimplePage
                 'minutes' => $exception->minutesUntilAvailable,
             ]) : null)
             ->danger();
+    }
+
+    protected function isRegisterRateLimited(string $email): bool
+    {
+        if (blank($email)) {
+            return false;
+        }
+
+        $rateLimitingKey = 'filament-register:' . sha1($email);
+
+        if (RateLimiter::tooManyAttempts($rateLimitingKey, maxAttempts: 2)) {
+            $this->getRateLimitedNotification(new TooManyRequestsException(
+                static::class,
+                'register',
+                request()->ip(),
+                RateLimiter::availableIn($rateLimitingKey),
+            ))?->send();
+
+            return true;
+        }
+
+        RateLimiter::hit($rateLimitingKey);
+
+        return false;
     }
 
     /**

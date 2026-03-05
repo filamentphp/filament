@@ -51,6 +51,24 @@ document.addEventListener('livewire:init', () => {
 
                     to.__livewire = component
 
+                    let existingComponentsMap = {}
+
+                    el.querySelectorAll('[wire\\:id]').forEach((comp) => {
+                        existingComponentsMap[comp.getAttribute('wire:id')] =
+                            comp
+                    })
+
+                    to.querySelectorAll('[wire\\:id]').forEach((child) => {
+                        if (child.hasAttribute('wire:snapshot')) return
+
+                        let wireId = child.getAttribute('wire:id')
+                        let existingComponent = existingComponentsMap[wireId]
+
+                        if (existingComponent) {
+                            child.replaceWith(existingComponent.cloneNode(true))
+                        }
+                    })
+
                     window.Alpine.morph(el, to, {
                         updating: (el, toEl, childrenOnly, skip) => {
                             if (isntElement(el)) {

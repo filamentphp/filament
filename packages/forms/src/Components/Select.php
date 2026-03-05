@@ -131,6 +131,8 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
 
     protected bool | Closure $isReorderable = false;
 
+    protected bool | Closure | null $hasDynamicOptions = null;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -1517,14 +1519,29 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         return filled($this->getRelationshipName());
     }
 
+    public function dynamicOptions(bool | Closure | null $condition = true): static
+    {
+        $this->hasDynamicOptions = $condition;
+
+        return $this;
+    }
+
     public function hasDynamicOptions(): bool
     {
+        if (($condition = $this->evaluate($this->hasDynamicOptions)) !== null) {
+            return $condition;
+        }
+
         if ($this->hasDynamicDisabledOptions()) {
             return true;
         }
 
         if ($this->hasRelationship()) {
             return (! $this->isSearchable()) || $this->isPreloaded();
+        }
+
+        if ($this->isPreloaded()) {
+            return true;
         }
 
         return $this->options instanceof Closure;
@@ -1543,6 +1560,10 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
     {
         if ($this->hasRelationship()) {
             return (! $this->isSearchable()) || $this->isPreloaded();
+        }
+
+        if ($this->isPreloaded()) {
+            return true;
         }
 
         return ! $this->hasDynamicSearchResults();

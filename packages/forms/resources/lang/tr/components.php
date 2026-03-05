@@ -284,6 +284,10 @@ return [
 
     'markdown_editor' => [
 
+        'file_attachments_accepted_file_types_message' => 'Yüklenen dosyalar şu türlerden olmalıdır: :values.',
+
+        'file_attachments_max_size_message' => 'Yüklenen dosyalar :max kilobayttan büyük olmamalıdır.',
+
         'tools' => [
             'attach_files' => 'Dosya ekle',
             'blockquote' => 'Alıntı',
@@ -443,6 +447,71 @@ return [
 
             ],
 
+            'grid' => [
+
+                'label' => 'Grid',
+
+                'modal' => [
+
+                    'heading' => 'Grid',
+
+                    'form' => [
+
+                        'preset' => [
+
+                            'label' => 'Ön ayar',
+
+                            'placeholder' => 'Yok',
+
+                            'options' => [
+                                'two' => 'İki',
+                                'three' => 'Üç',
+                                'four' => 'Dört',
+                                'five' => 'Beş',
+                                'two_start_third' => 'İki (Başta Üçte Bir)',
+                                'two_end_third' => 'İki (Sonda Üçte Bir)',
+                                'two_start_fourth' => 'İki (Başta Dörtte Bir)',
+                                'two_end_fourth' => 'İki (Sonda Dörtte Bir)',
+                            ],
+                        ],
+
+                        'columns' => [
+                            'label' => 'Sütunlar',
+                        ],
+
+                        'from_breakpoint' => [
+
+                            'label' => 'Kesme noktasından',
+
+                            'options' => [
+                                'default' => 'Tümü',
+                                'sm' => 'Küçük (sm)',
+                                'md' => 'Orta (md)',
+                                'lg' => 'Büyük (lg)',
+                                'xl' => 'Çok büyük (xl)',
+                                '2xl' => 'İki kat büyük (2xl)',
+                            ],
+
+                        ],
+
+                        'is_asymmetric' => [
+                            'label' => 'İki asimetrik sütun',
+                        ],
+
+                        'start_span' => [
+                            'label' => 'Başlangıç aralığı',
+                        ],
+
+                        'end_span' => [
+                            'label' => 'Bitiş aralığı',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
             'link' => [
 
                 'label' => 'Düzenle',
@@ -467,9 +536,44 @@ return [
 
             ],
 
+            'text_color' => [
+
+                'label' => 'Yazı rengi',
+
+                'modal' => [
+
+                    'heading' => 'Yazı rengi',
+
+                    'form' => [
+
+                        'color' => [
+                            'label' => 'Renk',
+                        ],
+
+                        'custom_color' => [
+                            'label' => 'Özel renk',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
         ],
 
+        'file_attachments_accepted_file_types_message' => 'Yüklenen dosyalar şu türlerden olmalıdır: :values.',
+
+        'file_attachments_max_size_message' => 'Yüklenen dosyalar :max kilobayttan büyük olmamalıdır.',
+
         'no_merge_tag_search_results_message' => 'Uygun birleşme etiketi bulunamadı.',
+
+        'mentions' => [
+            'no_options_message' => 'Seçenek bulunamadı.',
+            'no_search_results_message' => 'Aramanızla eşleşen sonuç bulunamadı.',
+            'search_prompt' => 'Aramak için yazmaya başlayın...',
+            'searching_message' => 'Aranıyor...',
+        ],
 
         'tools' => [
             'align_center' => 'Ortaya hizala',
@@ -488,6 +592,8 @@ return [
             'h1' => 'Başlık',
             'h2' => 'Başlık 2',
             'h3' => 'Alt başlık',
+            'grid' => 'Grid',
+            'grid_delete' => 'Grid\'i sil',
             'highlight' => 'Vurgula',
             'horizontal_rule' => 'Yatay çizgi',
             'italic' => 'Eğik',
@@ -511,9 +617,13 @@ return [
             'table_merge_cells' => 'Hücreleri birleştir',
             'table_split_cell' => 'Hücreyi böl',
             'table_toggle_header_row' => 'Başlık satırını aç/kapat',
+            'table_toggle_header_cell' => 'Başlık hücresini aç/kapat',
+            'text_color' => 'Yazı rengi',
             'underline' => 'Altı çizili',
             'undo' => 'Geri al',
         ],
+
+        'uploading_file_message' => 'Dosya yükleniyor...',
 
     ],
 
@@ -576,6 +686,8 @@ return [
 
         'max_items_message' => 'Sadece :count adet seçilebilir.',
 
+        'no_options_message' => 'Seçenek bulunamadı.',
+
         'no_search_results_message' => 'Arama kriterlerinize uyan seçenek yok.',
 
         'placeholder' => 'Bir seçenek seçin',
@@ -587,7 +699,17 @@ return [
     ],
 
     'tags_input' => [
+
+        'actions' => [
+
+            'delete' => [
+                'label' => 'Sil',
+            ],
+
+        ],
+
         'placeholder' => 'Yeni etiket',
+
     ],
 
     'text_input' => [

@@ -167,37 +167,10 @@
         @endif
     @endif
 
-    @if ((! app()->hasDebugModeEnabled()) && $this->hasErrorNotifications())
+    @if (! app()->hasDebugModeEnabled())
         @script
             <script>
-                const errorNotifications = @js($this->getErrorNotifications())
-
-                Livewire.hook('request', ({ payload, fail }) => {
-                    fail(({ status, preventDefault }) => {
-                        if (JSON.parse(payload).components.length === 1) {
-                            for (const component of JSON.parse(payload)
-                                .components) {
-                                if (
-                                    JSON.parse(component.snapshot).data
-                                        .isFilamentNotificationsComponent
-                                ) {
-                                    return
-                                }
-                            }
-                        }
-
-                        preventDefault()
-
-                        const errorNotification =
-                            errorNotifications[status] ?? errorNotifications['']
-
-                        new FilamentNotification()
-                            .title(errorNotification.title)
-                            .body(errorNotification.body)
-                            .danger()
-                            .send()
-                    })
-                })
+                window.filamentErrorNotifications = @js($this->hasErrorNotifications() ? $this->getErrorNotifications() : null)
             </script>
         @endscript
     @endif

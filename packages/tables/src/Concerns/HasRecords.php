@@ -192,10 +192,16 @@ trait HasRecords
         }
 
         if (! ($this->getTable()->getRelationship() instanceof BelongsToMany)) {
-            return $this->applyFiltersToTableQuery(
-                $this->getTable()->getQuery(),
+            $query = $this->applyFiltersToTableQuery(
+                $this->getTable()->getQuery(isResolvingRecord: true),
                 isResolvingRecord: true,
-            )->find($key);
+            );
+
+            foreach ($this->getTable()->getVisibleColumns() as $column) {
+                $column->applyRelationshipAggregates($query);
+            }
+
+            return $query->find($key);
         }
 
         /** @var BelongsToMany $relationship */
@@ -206,11 +212,17 @@ trait HasRecords
 
         $table = $this->getTable();
 
-        $this->applyFiltersToTableQuery($relationship->getQuery(), isResolvingRecord: true);
+        $relationshipQuery = $relationship->getQuery();
+        $table->applyQueryScopes($relationshipQuery, isResolvingRecord: true);
+        $this->applyFiltersToTableQuery($relationshipQuery, isResolvingRecord: true);
 
         $query = $table->allowsDuplicates() ?
             $relationship->wherePivot($pivotKeyName, $key) :
             $relationship->where($relationship->getQualifiedRelatedKeyName(), $key);
+
+        foreach ($table->getVisibleColumns() as $column) {
+            $column->applyRelationshipAggregates($query);
+        }
 
         $record = $table->selectPivotDataInQuery($query)->first();
 

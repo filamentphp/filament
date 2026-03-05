@@ -21,8 +21,13 @@ export default function chart({ cachedData, maxHeight, options, type }) {
             this.initChart()
 
             this.$wire.$on('updateChartData', ({ data }) => {
+                const chart = this.getChart()
+
+                if (!chart) {
+                    return
+                }
+
                 cachedData = data
-                chart = this.getChart()
                 chart.data = data
                 chart.update('resize')
             })
@@ -31,11 +36,13 @@ export default function chart({ cachedData, maxHeight, options, type }) {
                 Alpine.store('theme')
 
                 this.$nextTick(() => {
-                    if (!this.getChart()) {
+                    const chart = this.getChart()
+
+                    if (!chart) {
                         return
                     }
 
-                    this.getChart().destroy()
+                    chart.destroy()
                     this.initChart()
                 })
             })
@@ -48,13 +55,25 @@ export default function chart({ cachedData, maxHeight, options, type }) {
                     }
 
                     this.$nextTick(() => {
-                        this.getChart().destroy()
+                        const chart = this.getChart()
+
+                        if (!chart) {
+                            return
+                        }
+
+                        chart.destroy()
                         this.initChart()
                     })
                 })
 
             this.resizeHandler = Alpine.debounce(() => {
-                this.getChart().destroy()
+                const chart = this.getChart()
+
+                if (!chart) {
+                    return
+                }
+
+                chart.destroy()
                 this.initChart()
             }, 250)
 

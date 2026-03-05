@@ -131,7 +131,11 @@ class Step extends Component implements CanConcealComponents
      */
     public function getAllColumns(): array
     {
-        return $this->columns ?? $this->getContainer()->getAllColumns();
+        if ($this->columns === null) {
+            return $this->getContainer()->getAllColumns();
+        }
+
+        return parent::getAllColumns();
     }
 
     public function canConcealComponents(): bool

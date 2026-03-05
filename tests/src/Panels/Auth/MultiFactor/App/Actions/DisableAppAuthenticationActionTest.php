@@ -6,6 +6,7 @@ use Filament\Facades\Filament;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 
 use function Filament\Tests\livewire;
@@ -264,4 +265,55 @@ it('will not disable authentication with a recovery code if recovery is disabled
     expect($user->getAppAuthenticationRecoveryCodes())
         ->toBeArray()
         ->toHaveCount(8);
+});
+
+it('can throttle code verification attempts per user', function (): void {
+    $appAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
+
+    $user = auth()->user();
+
+    // Pre-fill the per-user rate limiter to simulate 5 prior attempts
+    $rateLimitingKey = 'filament-disable-app-authentication:' . $user->getAuthIdentifier();
+
+    foreach (range(1, 5) as $i) {
+        RateLimiter::hit($rateLimitingKey);
+    }
+
+    // Even with a valid code, the rate limit should block the attempt
+    livewire(EditProfile::class)
+        ->callAction(
+            TestAction::make('disableAppAuthentication')
+                ->schemaComponent('app', schema: 'content'),
+            ['code' => $appAuthentication->getCurrentCode($user)],
+        )
+        ->assertHasFormErrors(['code']);
+
+    expect(filled($user->getAppAuthenticationSecret()))
+        ->toBeTrue();
+});
+
+it('can throttle recovery code verification attempts per user', function (): void {
+    $user = auth()->user();
+
+    // Pre-fill the per-user rate limiter to simulate 5 prior attempts
+    $rateLimitingKey = 'filament-disable-app-authentication:' . $user->getAuthIdentifier();
+
+    foreach (range(1, 5) as $i) {
+        RateLimiter::hit($rateLimitingKey);
+    }
+
+    // Even with a valid recovery code, the rate limit should block the attempt
+    livewire(EditProfile::class)
+        ->mountAction(TestAction::make('disableAppAuthentication')
+            ->schemaComponent('app', schema: 'content'))
+        ->callAction(TestAction::make('useRecoveryCode')
+            ->schemaComponent('code'))
+        ->fillForm([
+            'recoveryCode' => Arr::first($this->recoveryCodes),
+        ])
+        ->callMountedAction()
+        ->assertHasFormErrors(['recoveryCode']);
+
+    expect(filled($user->getAppAuthenticationSecret()))
+        ->toBeTrue();
 });

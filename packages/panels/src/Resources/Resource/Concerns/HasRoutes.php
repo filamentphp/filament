@@ -5,11 +5,15 @@ namespace Filament\Resources\Resource\Concerns;
 use Closure;
 use Filament\Facades\Filament;
 use Filament\Panel;
+use Filament\Resources\ResourceConfiguration;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Stringable;
 
+/**
+ * @template TModel of Model = Model
+ */
 trait HasRoutes
 {
     protected static ?string $slug = null;
@@ -26,11 +30,17 @@ trait HasRoutes
      */
     protected static string | array $withoutRouteMiddleware = [];
 
+    /**
+     * @return Builder<TModel>
+     */
     public static function getRecordRouteBindingEloquentQuery(): Builder
     {
         return static::getEloquentQuery();
     }
 
+    /**
+     * @return ?TModel
+     */
     public static function resolveRecordRouteBinding(int | string $key, ?Closure $modifyQuery = null): ?Model
     {
         $query = static::getRecordRouteBindingEloquentQuery();
@@ -77,11 +87,17 @@ trait HasRoutes
             ->group($registerPageRoutes);
     }
 
-    public static function registerRoutes(Panel $panel, ?Closure $registerPageRoutes = null): void
+    public static function registerRoutes(Panel $panel, ?Closure $registerPageRoutes = null, ?ResourceConfiguration $configuration = null): void
     {
-        $registerPageRoutes ??= function () use ($panel): void {
+        $registerPageRoutes ??= function () use ($panel, $configuration): void {
             foreach (static::getPages() as $name => $page) {
-                $page->registerRoute($panel)?->name($name);
+                $route = $page->registerRoute($panel);
+
+                if ($configuration) {
+                    $route?->middleware("resource-configuration:{$configuration->getKey()}");
+                }
+
+                $route?->name($name);
             }
         };
 
@@ -145,6 +161,19 @@ trait HasRoutes
     }
 
     public static function getSlug(?Panel $panel = null): string
+    {
+        if ($configuration = static::getConfiguration($panel)) {
+            if (filled($configSlug = $configuration->getSlug())) {
+                return $configSlug;
+            }
+
+            return static::getDefaultSlug() . '/' . $configuration->getKey();
+        }
+
+        return static::getDefaultSlug();
+    }
+
+    public static function getDefaultSlug(): string
     {
         if (filled(static::$slug)) {
             return static::$slug;

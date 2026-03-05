@@ -10,12 +10,14 @@ jobs:
     strategy:
       fail-fast: false
     steps:
-      - uses: actions/checkout@v2
-      - name: Cache dependencies
-        uses: actions/cache@v2
+      - uses: actions/checkout@v4
+      - name: Cache Composer dependencies
+        uses: actions/cache@v4
         with:
           path: ~/.composer/cache/files
-          key: dependencies-composer-${{ hashFiles('composer.json') }}
+          key: composer-screenshots-${{ hashFiles('docs-assets/app/composer.json') }}
+          restore-keys: |
+            composer-screenshots-
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
         with:
@@ -23,11 +25,26 @@ jobs:
           extensions: mbstring, pdo, pdo_sqlite
           coverage: none
       - name: Set up Node
-        uses: actions/setup-node@v2
-      - name: Install dependencies
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+      - name: Cache Puppeteer browser
+        id: puppeteer-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/puppeteer
+          key: puppeteer-${{ runner.os }}-${{ hashFiles('docs-assets/screenshots/package-lock.json') }}
+      - name: Install screenshot dependencies
         run: |
           cd docs-assets/screenshots
           npm ci
+        env:
+          PUPPETEER_SKIP_DOWNLOAD: ${{ steps.puppeteer-cache.outputs.cache-hit }}
+      - name: Cache app npm dependencies
+        uses: actions/cache@v4
+        with:
+          path: docs-assets/app/node_modules
+          key: npm-screenshots-app-${{ hashFiles('docs-assets/app/package-lock.json') }}
       - name: Set up app
         run: |
           cd docs-assets/app

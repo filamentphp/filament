@@ -1,11 +1,14 @@
 <?php
 
 use Filament\Facades\Filament;
+use Filament\Forms\Components\Repeater;
 use Filament\Resources\Events\RecordCreated;
 use Filament\Resources\Events\RecordSaved;
 use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Policies\TicketPolicy;
 use Filament\Tests\Fixtures\Resources\Posts\Pages\CreateAnotherPreservingDataPost;
+use Filament\Tests\Fixtures\Resources\Posts\Pages\CreateAnotherPreservingRepeaterPost;
+use Filament\Tests\Fixtures\Resources\Posts\Pages\CreateAnotherPreservingRepeaterWithDefaultPost;
 use Filament\Tests\Fixtures\Resources\Posts\Pages\CreatePost;
 use Filament\Tests\Fixtures\Resources\Posts\PostResource;
 use Filament\Tests\Fixtures\Resources\TicketMessages\TicketMessageResource;
@@ -179,6 +182,105 @@ it('can create another and preserve data', function (): void {
 
     expect($record2)->not->toBeNull();
     expect($record2->tags)->toBe($newData->tags);
+});
+
+it('can create another and preserve repeater data', function (): void {
+    $undoRepeaterFake = Repeater::fake();
+
+    $newData = Post::factory()->make();
+    $newData2 = Post::factory()->make();
+
+    $repeaterItems = [
+        ['name' => 'First Item', 'email' => 'first@example.com'],
+        ['name' => 'Second Item', 'email' => 'second@example.com'],
+    ];
+
+    livewire(CreateAnotherPreservingRepeaterPost::class)
+        ->fillForm([
+            'author_id' => $newData->author->getKey(),
+            'title' => $newData->title,
+            'rating' => $newData->rating,
+            'json_array_of_objects' => $repeaterItems,
+        ])
+        ->call('create', true)
+        ->assertHasNoFormErrors()
+        ->assertNoRedirect()
+        ->fillForm([
+            'author_id' => $newData2->author->getKey(),
+            'title' => $newData2->title,
+            'rating' => $newData2->rating,
+        ])
+        ->call('create')
+        ->assertHasNoFormErrors()
+        ->assertRedirect();
+
+    $record = Post::query()
+        ->where('title', $newData->title)
+        ->where('rating', $newData->rating)
+        ->first();
+
+    expect($record)->not->toBeNull();
+    expect($record->json_array_of_objects)->toBe($repeaterItems);
+
+    $record2 = Post::query()
+        ->where('title', $newData2->title)
+        ->where('rating', $newData2->rating)
+        ->first();
+
+    expect($record2)->not->toBeNull();
+    expect($record2->json_array_of_objects)->toBe($repeaterItems);
+
+    $undoRepeaterFake();
+});
+
+it('can create another and preserve repeater data with `default()` values', function (): void {
+    $undoRepeaterFake = Repeater::fake();
+
+    $newData = Post::factory()->make();
+    $newData2 = Post::factory()->make();
+
+    $repeaterItems = [
+        ['name' => 'Custom Item A', 'email' => 'a@example.com'],
+        ['name' => 'Custom Item B', 'email' => 'b@example.com'],
+        ['name' => 'Custom Item C', 'email' => 'c@example.com'],
+    ];
+
+    livewire(CreateAnotherPreservingRepeaterWithDefaultPost::class)
+        ->fillForm([
+            'author_id' => $newData->author->getKey(),
+            'title' => $newData->title,
+            'rating' => $newData->rating,
+            'json_array_of_objects' => $repeaterItems,
+        ])
+        ->call('create', true)
+        ->assertHasNoFormErrors()
+        ->assertNoRedirect()
+        ->fillForm([
+            'author_id' => $newData2->author->getKey(),
+            'title' => $newData2->title,
+            'rating' => $newData2->rating,
+        ])
+        ->call('create')
+        ->assertHasNoFormErrors()
+        ->assertRedirect();
+
+    $record = Post::query()
+        ->where('title', $newData->title)
+        ->where('rating', $newData->rating)
+        ->first();
+
+    expect($record)->not->toBeNull();
+    expect($record->json_array_of_objects)->toBe($repeaterItems);
+
+    $record2 = Post::query()
+        ->where('title', $newData2->title)
+        ->where('rating', $newData2->rating)
+        ->first();
+
+    expect($record2)->not->toBeNull();
+    expect($record2->json_array_of_objects)->toBe($repeaterItems);
+
+    $undoRepeaterFake();
 });
 
 it('can validate input', function (): void {
