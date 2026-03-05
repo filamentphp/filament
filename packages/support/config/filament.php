@@ -117,4 +117,23 @@ return [
 
     'system_route_prefix' => 'filament',
 
+    /*
+    |--------------------------------------------------------------------------
+    | Custom Loading Indicator SVG
+    |--------------------------------------------------------------------------
+    |
+    | Define a custom SVG icon to use as the loading indicator.
+    |
+    | The "__attributes__" placeholder will be automatically replaced
+    | at runtime with dynamic attributes (e.g. class, style, wire:loading).
+    |
+    | Example: <svg __attributes__ xmlns='...' ...> </svg>
+    |           ↑ becomes → <svg wire:loading ...>
+    |
+    | You can swap this for any SVG icon you like.
+    |
+    */
+    
+    'loading_indicator_svg' => ""
+
 ];
