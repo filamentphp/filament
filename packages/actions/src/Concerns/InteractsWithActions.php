@@ -197,8 +197,6 @@ trait InteractsWithActions
         $action = $this->getMountedAction();
 
         if (! $action) {
-            $this->unmountAction(canCancelParentActions: false);
-
             return null;
         }
 
