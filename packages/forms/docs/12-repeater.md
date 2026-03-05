@@ -439,6 +439,28 @@ Repeater::make('qualifications')
 
 <UtilityInjection set="formFields" version="4.x" extras="Data;;array<string, mixed>;;$data;;The data that is being saved by the repeater.">You can inject various utilities into the function passed to `mutateRelationshipDataBeforeSaveUsing()` as parameters.</UtilityInjection>
 
+### Running code after creating a related item
+
+You may run code after a new related item is created in the database using the `afterCreateUsing()` method. This method accepts a closure that receives the current item's data in a `$data` variable and the newly created record in a `$record` variable. This is useful when you need the record's ID to perform additional operations, such as attaching pivot data:
+
+```php
+use Filament\Forms\Components\Repeater;
+use Illuminate\Database\Eloquent\Model;
+
+Repeater::make('variants')
+    ->relationship()
+    ->schema([
+        // ...
+    ])
+    ->afterCreateUsing(function (array $data, Model $record): void {
+        if (isset($data['attributes'])) {
+            $record->attributes()->attach($data['attributes']);
+        }
+    })
+```
+
+<UtilityInjection set="formFields" version="5.x" extras="Data;;array<string, mixed>;;$data;;The data that was used to create the record.||Record;;Illuminate\Database\Eloquent\Model;;$record;;The newly created record.">You can inject various utilities into the function passed to `afterCreateUsing()` as parameters.</UtilityInjection>
+
 ### Modifying related records after retrieval
 
 You may filter or modify the related records of a repeater after they are retrieved from the database using the `modifyRecordsUsing` argument. This method accepts a function that receives a `Collection` of related records. You should return the modified collection.
