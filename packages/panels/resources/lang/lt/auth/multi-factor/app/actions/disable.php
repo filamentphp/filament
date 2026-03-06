@@ -30,6 +30,8 @@ return [
 
                     'invalid' => 'Įvestas kodas yra neteisingas.',
 
+                    'rate_limited' => 'Per daug bandymų. Pabandykite vėliau.',
+
                 ],
 
             ],
@@ -43,6 +45,8 @@ return [
                 'messages' => [
 
                     'invalid' => 'Įvestas atsarginis kodas yra neteisingas.',
+
+                    'rate_limited' => 'Per daug bandymų. Pabandykite vėliau.',
 
                 ],
 
