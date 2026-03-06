@@ -597,12 +597,6 @@ trait InteractsWithActions
 
         if ($action['context']['bulk'] ?? false) {
             $resolvedAction = $this->getTable()->getBulkAction($action['name']);
-
-            if ($resolvedAction && ! empty($this->selectedTableRecords) && $this->getTable()->hasQuery()) {
-                if (! $this->getSelectedTableRecordsQuery(shouldFetchSelectedRecords: false)->exists()) {
-                    throw new ActionNotResolvableException('The selected records for the bulk action no longer exist.');
-                }
-            }
         }
 
         $resolvedAction ??= $this->getTable()->getAction($action['name']) ?? throw new ActionNotResolvableException("Action [{$action['name']}] not found on table.");
