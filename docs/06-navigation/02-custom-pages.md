@@ -93,6 +93,24 @@ Alternatively, you can open an action modal when a page loads by specifying the 
 /admin/products/edit/932510?action=onboarding
 ```
 
+Additionnally to an action returned by a method, you can execute a table, header and toolbar action and even pass arguments by specifying the `actionArguments` query string parameter:
+
+```php
+use Filament\Tables\Table;
+use Filament\Actions\ViewAction;
+
+public function table(Table $table): Table
+{
+    return $table
+        // ...
+        ->recordActions([
+            ViewAction::make()
+        ]);
+}
+
+// /admin/products?action=view&actionArguments[recordKey]=6
+```
+
 ### Refreshing form data
 
 If you're using actions on an [Edit](../resources/editing-records) or [View](../resources/viewing-records) resource page, you can refresh data within the main form using the `refreshFormData()` method:
