@@ -31,7 +31,7 @@ trait HasActions
     public function getActions(): array
     {
         return array_map(
-            fn (Action $action) => $action
+            fn (Action|ActionGroup $action) => $action
                 ->defaultView(Action::LINK_VIEW)
                 ->defaultSize(Size::Small),
             Arr::wrap($this->evaluate($this->actions)),
