@@ -32,7 +32,7 @@ return [
         'actions' => [
 
             'download_example' => [
-                'label' => '下载示例 CSV 文件',
+                'label' => '下载示例 CSV 模板',
             ],
 
             'import' => [
@@ -52,7 +52,7 @@ return [
             'actions' => [
 
                 'download_failed_rows_csv' => [
-                    'label' => '下载失败行的信息|下载失败行的信息',
+                    'label' => '下载导入失败的记录|下载导入失败的记录',
                 ],
 
             ],
