@@ -65,7 +65,7 @@ return [
     'notifications' => [
 
         'enabled' => [
-            'title' => 'S\'han habilitat els codis de verificació per correu electrònic',
+            'title' => 'S\'han activat els codis de verificació per correu electrònic',
         ],
 
     ],

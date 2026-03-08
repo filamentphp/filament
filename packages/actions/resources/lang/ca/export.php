@@ -29,7 +29,7 @@ return [
                 'form' => [
 
                     'is_enabled' => [
-                        'label' => ':column habilitada',
+                        'label' => ':column activada',
                     ],
 
                     'label' => [

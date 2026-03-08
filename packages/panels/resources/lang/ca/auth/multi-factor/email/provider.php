@@ -11,8 +11,8 @@ return [
             'below_content' => 'Rep un codi temporal al teu correu electrònic per verificar la teva identitat durant l\'inici de sessió.',
 
             'messages' => [
-                'enabled' => 'Habilitats',
-                'disabled' => 'Deshabilitats',
+                'enabled' => 'Activats',
+                'disabled' => 'Desactivats',
             ],
 
         ],

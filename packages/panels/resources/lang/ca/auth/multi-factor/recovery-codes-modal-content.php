@@ -4,7 +4,7 @@ return [
 
     'actions' => [
 
-        'Fer clic per',
+        'Fes clic per',
 
         'copy' => [
             'label' => 'copiar',

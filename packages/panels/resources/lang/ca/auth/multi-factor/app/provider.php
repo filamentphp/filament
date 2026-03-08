@@ -11,8 +11,8 @@ return [
             'below_content' => 'Fes servir una aplicació segura per generar un codi temporal per verificar l\'inici de sessió.',
 
             'messages' => [
-                'enabled' => 'Habilitada',
-                'disabled' => 'Deshabilitada',
+                'enabled' => 'Activada',
+                'disabled' => 'Desactivada',
             ],
 
         ],

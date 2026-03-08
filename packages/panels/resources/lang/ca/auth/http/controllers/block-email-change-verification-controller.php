@@ -10,7 +10,7 @@ return [
         ],
 
         'failed' => [
-            'title' => 'Error en bloquejar el canvi d\'emaila',
+            'title' => 'Error en bloquejar el canvi d\'email',
             'body' => 'Lamentablement, no s\'ha pogut evitar que l\'adreça de correu electrònica hagi canviat a :email, ja que estava verificat abans que es bloquegés. Si no has realitzat la sol·licitud original, posa\'t en contacte amb nosaltres immediatament.',
         ],
 

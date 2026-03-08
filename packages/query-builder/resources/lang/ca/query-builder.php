@@ -548,11 +548,11 @@ return [
     'actions' => [
 
         'add_rule' => [
-            'label' => 'Agregar regla',
+            'label' => 'Afegir regla',
         ],
 
         'add_rule_group' => [
-            'label' => 'Agregar grup de regles',
+            'label' => 'Afegir grup de regles',
         ],
 
     ],

@@ -2,13 +2,13 @@
 
 return [
 
-    'label' => 'Deshabilitar',
+    'label' => 'Desactivar',
 
     'modal' => [
 
-        'heading' => 'Deshabilitar l\'aplicació d\'autenticació',
+        'heading' => 'Desactivar l\'aplicació d\'autenticació',
 
-        'description' => 'Estàs segur que vols deixar de fer servir l\'aplicació d\'autenticació? Deshabilitar-la eliminarà una capa addicional de seguretat del teu compte.',
+        'description' => 'Estàs segur que vols deixar de fer servir l\'aplicació d\'autenticació? Desactivar-la eliminarà una capa addicional de seguretat del teu compte.',
 
         'form' => [
 
@@ -57,7 +57,7 @@ return [
         'actions' => [
 
             'submit' => [
-                'label' => 'Deshabilitar l\'aplicació d\'autenticació',
+                'label' => 'Desactivar l\'aplicació d\'autenticació',
             ],
 
         ],

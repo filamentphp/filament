@@ -6,7 +6,7 @@ return [
 
     'heading' => 'Configura l\'autenticació de doble factor',
 
-    'subheading' => '2FA agrega una capa addicional de seguretat al teu compte en requerir una segona forma de verificació en iniciar sessió.',
+    'subheading' => '2FA afegeix una capa addicional de seguretat al teu compte en requerir una segona forma de verificació en iniciar sessió.',
 
     'actions' => [
 

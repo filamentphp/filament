@@ -6,7 +6,7 @@ return [
 
     'modal' => [
 
-        'heading' => 'Deshabilitar codis de verificació per correu',
+        'heading' => 'Desactivar codis de verificació per correu',
 
         'description' => 'Segur que vols deixar de rebre codis de verificació per correu? Desactivar aquesta opció eliminarà una capa addicional de seguretat del teu compte.',
 
@@ -55,7 +55,7 @@ return [
         'actions' => [
 
             'submit' => [
-                'label' => 'Deshabilitar codis de verificació per correu',
+                'label' => 'Desactivar codis de verificació per correu',
             ],
 
         ],
@@ -65,7 +65,7 @@ return [
     'notifications' => [
 
         'disabled' => [
-            'title' => 'Els codis de verificació per correu han estat desahabilitats',
+            'title' => 'Els codis de verificació per correu han estat desactivats',
         ],
 
     ],

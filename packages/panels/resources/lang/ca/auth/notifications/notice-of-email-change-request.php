@@ -2,7 +2,7 @@
 
 return [
 
-    'subject' => 'La seva adreça de correu electrònica està siguent canviada',
+    'subject' => 'La seva adreça de correu electrònica està sent canviada',
 
     'lines' => [
         'Hem rebut una sol·licitud per canviar l\'adreça de correu electrònica associada al teu compte. S\'ha utilitzat la teva contrasenya per confirmar el canvi.',

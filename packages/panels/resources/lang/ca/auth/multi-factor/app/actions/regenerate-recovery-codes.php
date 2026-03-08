@@ -8,7 +8,7 @@ return [
 
         'heading' => 'Regenerar codis de recuperació de l\'aplicació d\'autenticació',
 
-        'description' => 'Si perds els codis de recuperació, pots regenerar-los aquí. Els codis de recuperació antics s\'invalidaran inmediatament.',
+        'description' => 'Si perds els codis de recuperació, pots regenerar-los aquí. Els codis de recuperació antics s\'invalidaran immediatament.',
 
         'form' => [
 
