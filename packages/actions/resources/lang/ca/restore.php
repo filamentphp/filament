@@ -61,7 +61,7 @@ return [
             ],
 
             'restored_none' => [
-                'title' => 'Ningún registre restaurat',
+                'title' => 'Cap registre restaurat',
                 'missing_authorization_failure_message' => 'No tens permís per restaurar :count.',
                 'missing_processing_failure_message' => ':count no s\'han pogut restaurar.',
             ],

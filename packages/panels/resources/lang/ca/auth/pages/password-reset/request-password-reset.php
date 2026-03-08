@@ -37,7 +37,7 @@ return [
         ],
 
         'throttled' => [
-            'title' => 'Masses sol·licituds',
+            'title' => 'Massa sol·licituds',
             'body' => 'Si us plau, torna a provar-ho en :seconds segons.',
         ],
 

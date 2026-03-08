@@ -54,7 +54,7 @@ return [
 
                     'invalid' => 'El codi introduït no és vàlid.',
 
-                    'rate_limited' => 'Masses intents. Si us plau, intenta-ho més tard.',
+                    'rate_limited' => 'Massa intents. Si us plau, intenta-ho més tard.',
 
                 ],
 
