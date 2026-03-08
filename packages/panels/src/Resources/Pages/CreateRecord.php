@@ -27,6 +27,7 @@ use Throwable;
 
 /**
  * @template TModel of Model = Model
+ *
  * @property-read Schema $form
  */
 class CreateRecord extends Page
@@ -34,7 +35,7 @@ class CreateRecord extends Page
     use CanUseDatabaseTransactions;
     use HasUnsavedDataChangesAlert;
 
-    /** @var TModel|null */
+    /** @var ?TModel */
     public ?Model $record = null;
 
     /**
@@ -368,7 +369,7 @@ class CreateRecord extends Page
     }
 
     /**
-     * @return TModel|null
+     * @return ?TModel
      */
     public function getRecord(): ?Model
     {
