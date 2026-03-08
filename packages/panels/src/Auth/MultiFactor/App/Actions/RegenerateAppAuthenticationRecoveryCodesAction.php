@@ -123,8 +123,8 @@ class RegenerateAppAuthenticationRecoveryCodesAction
                                 Action::make('download')
                                     ->label(__('filament-panels::auth/multi-factor/recovery-codes-modal-content.actions.download.label'))
                                     ->link()
-                                    ->url('data:application/octet-stream,' . urlencode(implode(PHP_EOL, $arguments['recoveryCodes'])))
-                                    ->extraAttributes(['download' => true])
+                                    ->url('data:application/octet-stream,' . urlencode(implode(PHP_EOL, $arguments['recoveryCodes'])), shouldOpenInNewTab: true)
+                                    ->extraAttributes(['download' => 'recovery-codes.txt'])
                                     ->toHtml() .
                                 ' ' .
                                 __('filament-panels::auth/multi-factor/recovery-codes-modal-content.actions.2')
