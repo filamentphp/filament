@@ -1,7 +1,7 @@
 class Notification {
     constructor() {
-        // crypto.randomUUID() requires a secure context (HTTPS); fall back to
-        // crypto.getRandomValues() which works in all contexts including HTTP.
+        // `crypto.randomUUID()` requires a secure context (HTTPS); fall back to
+        // `crypto.getRandomValues()` which works in all contexts including HTTP.
         this.id(
             crypto.randomUUID?.() ??
                 '10000000-1000-4000-8000-100000000000'.replace(/[018]/g, (c) =>
