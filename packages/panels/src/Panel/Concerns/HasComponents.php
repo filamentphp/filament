@@ -122,9 +122,7 @@ trait HasComponents
      */
     public function pages(array $pages): static
     {
-        if ($this->hasCachedComponents()) {
-            return $this;
-        }
+        $hasCachedComponents = $this->hasCachedComponents();
 
         foreach ($pages as $page) {
             if ($page instanceof PageConfiguration) {
@@ -142,15 +140,16 @@ trait HasComponents
 
                 $this->pageConfigurations[$page->page][$page->getKey()] = $page;
 
-                $pageClass = $page->page;
-            } else {
+                if (! $hasCachedComponents) {
+                    $this->queueLivewireComponentForRegistration($page->page);
+                    $this->registerToCluster($page->page);
+                }
+            } elseif (! $hasCachedComponents) {
                 $this->pages[] = $page;
 
-                $pageClass = $page;
+                $this->queueLivewireComponentForRegistration($page);
+                $this->registerToCluster($page);
             }
-
-            $this->queueLivewireComponentForRegistration($pageClass);
-            $this->registerToCluster($pageClass);
         }
 
         return $this;
@@ -161,9 +160,7 @@ trait HasComponents
      */
     public function resources(array $resources): static
     {
-        if ($this->hasCachedComponents()) {
-            return $this;
-        }
+        $hasCachedComponents = $this->hasCachedComponents();
 
         foreach ($resources as $resource) {
             if ($resource instanceof ResourceConfiguration) {
@@ -181,14 +178,14 @@ trait HasComponents
 
                 $this->resourceConfigurations[$resource->resource][$resource->getKey()] = $resource;
 
-                $resourceClass = $resource->resource;
-            } else {
+                if (! $hasCachedComponents) {
+                    $this->registerToCluster($resource->resource);
+                }
+            } elseif (! $hasCachedComponents) {
                 $this->resources[] = $resource;
 
-                $resourceClass = $resource;
+                $this->registerToCluster($resource);
             }
-
-            $this->registerToCluster($resourceClass);
         }
 
         return $this;
@@ -731,29 +728,11 @@ trait HasComponents
                 'clusterDirectories' => $this->clusterDirectories,
                 'clusterNamespaces' => $this->clusterNamespaces,
                 'pages' => $this->pages,
-                'pageConfigurations' => array_map(
-                    static fn (array $configurations): array => array_map(
-                        static fn (PageConfiguration $configuration): array => [
-                            'page' => $configuration->page,
-                            'key' => $configuration->getKey(),
-                        ],
-                        $configurations,
-                    ),
-                    $this->pageConfigurations,
-                ),
+                'pageConfigurations' => [],
                 'pageDirectories' => $this->pageDirectories,
                 'pageNamespaces' => $this->pageNamespaces,
                 'resources' => $this->resources,
-                'resourceConfigurations' => array_map(
-                    static fn (array $configurations): array => array_map(
-                        static fn (ResourceConfiguration $configuration): array => [
-                            'resource' => $configuration->resource,
-                            'key' => $configuration->getKey(),
-                        ],
-                        $configurations,
-                    ),
-                    $this->resourceConfigurations,
-                ),
+                'resourceConfigurations' => [],
                 'resourceDirectories' => $this->resourceDirectories,
                 'resourceNamespaces' => $this->resourceNamespaces,
                 'widgets' => $this->widgets,
@@ -779,24 +758,9 @@ trait HasComponents
         $this->clusterDirectories = $cache['clusterDirectories'] ?? [];
         $this->clusterNamespaces = $cache['clusterNamespaces'] ?? [];
         $this->pages = $cache['pages'] ?? [];
-        $this->pageConfigurations = [];
-
-        foreach ($cache['pageConfigurations'] ?? [] as $pageClass => $configurations) {
-            foreach ($configurations as $configuration) {
-                $this->pageConfigurations[$pageClass][$configuration['key']] = $configuration['page']::make($configuration['key']);
-            }
-        }
-
         $this->pageDirectories = $cache['pageDirectories'] ?? [];
         $this->pageNamespaces = $cache['pageNamespaces'] ?? [];
         $this->resources = $cache['resources'] ?? [];
-        $this->resourceConfigurations = [];
-
-        foreach ($cache['resourceConfigurations'] ?? [] as $resourceClass => $configurations) {
-            foreach ($configurations as $configuration) {
-                $this->resourceConfigurations[$resourceClass][$configuration['key']] = $configuration['resource']::make($configuration['key']);
-            }
-        }
         $this->resourceDirectories = $cache['resourceDirectories'] ?? [];
         $this->resourceNamespaces = $cache['resourceNamespaces'] ?? [];
         $this->widgets = $cache['widgets'] ?? [];

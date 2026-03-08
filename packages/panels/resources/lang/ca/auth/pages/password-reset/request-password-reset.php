@@ -17,13 +17,13 @@ return [
     'form' => [
 
         'email' => [
-            'label' => 'Adreça de correu electrònic',
+            'label' => 'Email',
         ],
 
         'actions' => [
 
             'request' => [
-                'label' => 'Enviar correu electrònic',
+                'label' => 'Enviar email',
             ],
 
         ],
@@ -32,9 +32,13 @@ return [
 
     'notifications' => [
 
+        'sent' => [
+            'body' => 'Si el teu compte no existeix, no rebràs l\'email.',
+        ],
+
         'throttled' => [
-            'title' => 'Too many requests',
-            'body' => 'Please try again in :seconds seconds.',
+            'title' => 'Massa sol·licituds',
+            'body' => 'Si us plau, torna a provar-ho en :seconds segons.',
         ],
 
     ],

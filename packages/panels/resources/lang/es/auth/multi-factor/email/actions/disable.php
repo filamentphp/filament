@@ -44,7 +44,7 @@ return [
 
                     'invalid' => 'El código ingresado no es válido.',
 
-                    'rate_limited' => 'Demasiados intentos. Favor intente más tarde.',
+                    'rate_limited' => 'Demasiados intentos. Por favor inténtelo más tarde.',
 
                 ],
 

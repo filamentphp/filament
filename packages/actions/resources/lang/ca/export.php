@@ -14,10 +14,22 @@ return [
 
                 'label' => 'Columnes',
 
+                'actions' => [
+
+                    'select_all' => [
+                        'label' => 'Seleccionar tot',
+                    ],
+
+                    'deselect_all' => [
+                        'label' => 'Deseleccionar tot',
+                    ],
+
+                ],
+
                 'form' => [
 
                     'is_enabled' => [
-                        'label' => ':column habilitada',
+                        'label' => ':column activada',
                     ],
 
                     'label' => [
@@ -63,6 +75,11 @@ return [
         'max_rows' => [
             'title' => 'L\'exportació és massa gran',
             'body' => 'No es pot exportar més d\'una fila alhora.|No es poden exportar més de :count files alhora.',
+        ],
+
+        'no_columns' => [
+            'title' => 'No s\'ha seleccionat cap columna',
+            'body' => 'Si us plau, selecciona almenys una columna per exportar.',
         ],
 
         'started' => [
