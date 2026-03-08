@@ -11,7 +11,7 @@ return [
                 'expand_list' => '展开 :count 项',
             ],
 
-            'more_list_items' => '还有 :count 条记录',
+            'more_list_items' => '还有 :count 项',
 
         ],
 
