@@ -53,7 +53,7 @@ trait HasActions
         return array_key_exists($name, $this->getFlatBulkActions());
     }
 
-    protected function cacheAction(Action $action, bool $shouldOverwriteExistingAction = true): void
+    public function cacheAction(Action $action, bool $shouldOverwriteExistingAction = true): void
     {
         if (! $shouldOverwriteExistingAction) {
             if ($action instanceof BulkAction) {
