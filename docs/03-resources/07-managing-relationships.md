@@ -839,6 +839,37 @@ RelationGroup::make('Contacts', [
         ->icon('heroicon-m-document-text'));
 ```
 
+#### Deferring the loading of relation manager tab badges
+
+If `getBadge()` runs an expensive query, set `$deferBadge = true` to load it asynchronously after the page renders:
+
+```php
+use Illuminate\Database\Eloquent\Model;
+
+protected static bool $deferBadge = true;
+
+public static function getBadge(Model $ownerRecord, string $pageClass): ?string
+{
+    $count = $ownerRecord->tickets()->count();
+
+    return $count > 0 ? (string) $count : null;
+}
+```
+
+> `getBadge()` is automatically wrapped in a closure when `$deferBadge` is `true`. Override `isBadgeDeferred()` for dynamic, per-record control.
+
+If you are using a [relation group](#grouping-relation-managers), use the fluent `deferBadge()` method:
+
+```php
+use Filament\Resources\RelationManagers\RelationGroup;
+
+RelationGroup::make('Contacts', [
+    // ...
+])
+    ->badge(fn (Model $ownerRecord): string => (string) $ownerRecord->contacts()->count())
+    ->deferBadge();
+```
+
 ## Sharing a resource's form and table with a relation manager
 
 You may decide that you want a resource's form and table to be identical to a relation manager's, and subsequently want to reuse the code you previously wrote. This is easy, by calling the `form()` and `table()` methods of the resource from the relation manager:

@@ -113,6 +113,8 @@ class RelationManager extends Component implements HasActions, HasRenderHookScop
 
     protected static string | Htmlable | null $badgeTooltip = null;
 
+    protected static bool $deferBadge = false;
+
     public function mount(): void
     {
         $this->loadDefaultActiveTab();
@@ -152,12 +154,22 @@ class RelationManager extends Component implements HasActions, HasRenderHookScop
 
     public static function getTabComponent(Model $ownerRecord, string $pageClass): Tab
     {
+        $isDeferred = static::isBadgeDeferred($ownerRecord, $pageClass);
+
         return Tab::make(static::class::getTitle($ownerRecord, $pageClass))
-            ->badge(static::class::getBadge($ownerRecord, $pageClass))
+            ->badge($isDeferred
+                ? static fn () => static::class::getBadge($ownerRecord, $pageClass)
+                : static::class::getBadge($ownerRecord, $pageClass))
+            ->deferBadge($isDeferred)
             ->badgeColor(static::class::getBadgeColor($ownerRecord, $pageClass))
             ->badgeTooltip(static::class::getBadgeTooltip($ownerRecord, $pageClass))
             ->icon(static::class::getIcon($ownerRecord, $pageClass))
             ->iconPosition(static::class::getIconPosition($ownerRecord, $pageClass));
+    }
+
+    public static function isBadgeDeferred(Model $ownerRecord, string $pageClass): bool
+    {
+        return static::$deferBadge;
     }
 
     public static function getIcon(Model $ownerRecord, string $pageClass): string | BackedEnum | Htmlable | null
