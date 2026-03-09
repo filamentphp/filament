@@ -31,6 +31,7 @@ trait HasErrorNotifications
             'title' => $title,
             'body' => $body,
             'isHidden' => false,
+            'isDisabled' => false,
         ];
 
         return $this;
@@ -42,6 +43,19 @@ trait HasErrorNotifications
             'title' => null,
             'body' => null,
             'isHidden' => true,
+            'isDisabled' => false,
+        ];
+
+        return $this;
+    }
+
+    public function disableErrorNotification(int $statusCode): static
+    {
+        $this->errorNotifications[$statusCode] = [
+            'title' => null,
+            'body' => null,
+            'isHidden' => false,
+            'isDisabled' => true,
         ];
 
         return $this;
