@@ -20,6 +20,7 @@ use Filament\Tests\Fixtures\Resources\Tickets\Pages\EditTicket;
 use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsRelationManager;
 use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsRelationManagerWithTabs;
 use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsWithAttachTableSelectRelationManager;
+use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsWithDeferredBadgeRelationManager;
 use Filament\Tests\Panels\Resources\TestCase;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Support\Str;
@@ -312,4 +313,31 @@ it('cannot access record for action after record no longer matches tab without `
         ->set('activeTab', 'a_names')
         ->mountTableAction(DeleteAction::class, $department)
         ->assertTableActionNotMounted(DeleteAction::class);
+});
+
+it('defers badge loading when $deferBadge is true', function (): void {
+    $ticket = Ticket::factory()->create();
+
+    $tab = DepartmentsWithDeferredBadgeRelationManager::getTabComponent($ticket, EditTicket::class);
+
+    expect($tab->isBadgeDeferred())->toBeTrue();
+});
+
+it('returns the correct deferred badge value', function (): void {
+    $ticket = Ticket::factory()
+        ->hasAttached(Department::factory(3))
+        ->create();
+
+    $tab = DepartmentsWithDeferredBadgeRelationManager::getTabComponent($ticket, EditTicket::class);
+
+    expect($tab->isBadgeDeferred())->toBeTrue()
+        ->and($tab->getBadge())->toBe('3');
+});
+
+it('does not defer badge loading by default', function (): void {
+    $ticket = Ticket::factory()->create();
+
+    $tab = DepartmentsRelationManager::getTabComponent($ticket, EditTicket::class);
+
+    expect($tab->isBadgeDeferred())->toBeFalse();
 });
