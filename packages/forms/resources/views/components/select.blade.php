@@ -161,7 +161,7 @@
                             hasInitialNoOptionsMessage: @js($hasInitialNoOptionsMessage),
                             initialOptionLabel: @js((blank($state) || $isMultiple) ? null : $getOptionLabel()),
                             initialOptionLabels: @js((filled($state) && $isMultiple) ? $getOptionLabelsForJs() : []),
-                            initialState: @js($state),
+                            initialState: @js(is_array($state) ? $state : ($state !== null ? (string) $state : null)),
                             isAutofocused: @js($isAutofocused),
                             isDisabled: @js($isDisabled),
                             isHtmlAllowed: @js($isHtmlAllowed),
