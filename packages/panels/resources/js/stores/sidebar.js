@@ -12,6 +12,7 @@ export default () => ({
         this.resizeObserver = null
 
         this.setUpResizeObserver()
+
         document.addEventListener('livewire:navigate', () => {
             const nav = document.querySelector(
                 '.fi-main-sidebar .fi-sidebar-nav',
