@@ -122,7 +122,7 @@ if (! function_exists('Filament\Support\is_app_url')) {
 
         $scheme = parse_url($url, PHP_URL_SCHEME);
 
-        if ($scheme !== null && ! in_array($scheme, ['http', 'https'], true)) {
+        if ($scheme && (! in_array($scheme, ['http', 'https'], strict: true))) {
             return false;
         }
 
