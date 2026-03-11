@@ -146,6 +146,50 @@ return [
 
             ],
 
+            'unit_labels' => [
+                'second' => 'Sekunder',
+                'minute' => 'Minuter',
+                'hour' => 'Timmar',
+                'day' => 'Dagar',
+                'week' => 'Veckor',
+                'month' => 'Månader',
+                'quarter' => 'Kvartal',
+                'year' => 'År',
+            ],
+
+            'presets' => [
+                'past_decade' => 'Senaste decenniet',
+                'past_5_years' => 'Senaste 5 åren',
+                'past_2_years' => 'Senaste 2 åren',
+                'past_year' => 'Senaste året',
+                'past_6_months' => 'Senaste 6 månaderna',
+                'past_quarter' => 'Senaste kvartalet',
+                'past_month' => 'Senaste månaden',
+                'past_2_weeks' => 'Senaste 2 veckorna',
+                'past_week' => 'Senaste veckan',
+                'past_hour' => 'Senaste timmen',
+                'past_minute' => 'Senaste minuten',
+                'this_decade' => 'Detta decennium',
+                'this_year' => 'I år',
+                'this_quarter' => 'Detta kvartal',
+                'this_month' => 'Denna månad',
+                'today' => 'Idag',
+                'this_hour' => 'Denna timme',
+                'this_minute' => 'Denna minut',
+                'next_minute' => 'Nästa minut',
+                'next_hour' => 'Nästa timme',
+                'next_week' => 'Nästa vecka',
+                'next_2_weeks' => 'Nästa 2 veckor',
+                'next_month' => 'Nästa månad',
+                'next_quarter' => 'Nästa kvartal',
+                'next_6_months' => 'Nästa 6 månader',
+                'next_year' => 'Nästa år',
+                'next_2_years' => 'Nästa 2 år',
+                'next_5_years' => 'Nästa 5 år',
+                'next_decade' => 'Nästa decennium',
+                'custom' => 'Anpassad',
+            ],
+
             'form' => [
 
                 'date' => [
@@ -158,6 +202,40 @@ return [
 
                 'year' => [
                     'label' => 'År',
+                ],
+
+                'mode' => [
+
+                    'label' => 'Datumtyp',
+
+                    'options' => [
+                        'absolute' => 'Specifikt datum',
+                        'relative' => 'Rullande fönster',
+                    ],
+
+                ],
+
+                'preset' => [
+                    'label' => 'Tidsperiod',
+                ],
+
+                'relative_value' => [
+                    'label' => 'Antal',
+                ],
+
+                'relative_unit' => [
+                    'label' => 'Tidsenhet',
+                ],
+
+                'tense' => [
+
+                    'label' => 'Tempus',
+
+                    'options' => [
+                        'past' => 'Förflutet',
+                        'future' => 'Framtid',
+                    ],
+
                 ],
 
             ],
