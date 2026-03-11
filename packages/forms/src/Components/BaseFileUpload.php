@@ -461,7 +461,6 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
         return $this;
     }
 
-
     public function getDownloadableUrlUsing(?Closure $callback): static
     {
         $this->getDownloadableUrlUsing = $callback;
@@ -831,7 +830,7 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
                 'storedFileNames' => $this->getStoredFileNames(),
             ]) ?: null;
 
-            if ($this->isOpenable() && $this->getOpenableUrlUsing){
+            if ($this->isOpenable() && $this->getOpenableUrlUsing) {
                 $openableUrl = $this->evaluate($this->getOpenableUrlUsing, [
                     'file' => $file,
                     'storedFileNames' => $this->getStoredFileNames(),
@@ -840,7 +839,7 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
                 $urls[$fileKey]['metadata']['openableUrl'] = $openableUrl;
             }
 
-            if ($this->isDownloadable() && $this->getDownloadableUrlUsing){
+            if ($this->isDownloadable() && $this->getDownloadableUrlUsing) {
                 $downloadableUrl = $this->evaluate($this->getDownloadableUrlUsing, [
                     'file' => $file,
                     'storedFileNames' => $this->getStoredFileNames(),
