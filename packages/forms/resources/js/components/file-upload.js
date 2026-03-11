@@ -538,7 +538,8 @@ export default function fileUploadFormComponent({
         },
 
         getDownloadLink(file) {
-            let downloadableUrl = file.getMetadata('downloadableUrl') ?? file.source
+            let downloadableUrl =
+                file.getMetadata('downloadableUrl') ?? file.source
 
             if (!downloadableUrl) {
                 return
