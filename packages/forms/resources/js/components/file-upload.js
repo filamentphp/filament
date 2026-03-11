@@ -481,6 +481,7 @@ export default function fileUploadFormComponent({
                 files.push({
                     source: uploadedFile.url,
                     options: {
+                        metadata: uploadedFile.metadata,
                         type: 'local',
                         ...(!uploadedFile.type ||
                         (isPreviewable &&
@@ -552,15 +553,15 @@ export default function fileUploadFormComponent({
         },
 
         getOpenLink(file) {
-            let fileSource = file.source
+            let openableUrl = file.getMetadata('openableUrl') ?? file.source
 
-            if (!fileSource) {
+            if (!openableUrl) {
                 return
             }
 
             const anchor = document.createElement('a')
             anchor.className = 'filepond--open-icon'
-            anchor.href = fileSource
+            anchor.href = openableUrl
             anchor.target = '_blank'
 
             return anchor
