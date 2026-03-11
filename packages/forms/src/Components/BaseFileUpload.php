@@ -821,7 +821,7 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
                 'storedFileNames' => $this->getStoredFileNames(),
             ]) ?: null;
 
-            if ($this->getOpenableUrlUsing){
+            if ($this->getOpenableUrlUsing) {
                 $openableUrl = $this->evaluate($this->getOpenableUrlUsing, [
                     'file' => $file,
                     'storedFileNames' => $this->getStoredFileNames(),
