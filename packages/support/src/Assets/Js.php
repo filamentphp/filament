@@ -150,7 +150,11 @@ class Js extends Asset
         $attributes = '';
 
         foreach ($this->getExtraAttributes() as $key => $value) {
-            $attributes .= " {$key}=\"{$value}\"";
+            if (is_int($key)) {
+                $attributes .= " {$value}";
+            } else {
+                $attributes .= " {$key}=\"{$value}\"";
+            }
         }
 
         return $attributes;

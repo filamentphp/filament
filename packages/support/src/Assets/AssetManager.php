@@ -189,7 +189,7 @@ class AssetManager
     /**
      * @param  array<string> | null  $packages
      */
-    public function renderScripts(?array $packages = null, bool $withCore = false): string
+    public function renderScripts(?array $packages = null, bool $withCore = false, array $attributes = []): string
     {
         /** @var array<Js> $assets */
         $assets = $this->getScripts($packages, $withCore);
@@ -201,9 +201,17 @@ class AssetManager
             );
         }
 
+        $globalAttributes = config('filament.scripts.attributes', []);
+        $mergedAttributes = array_merge($globalAttributes, $attributes);
+
+        foreach ($assets as $asset) {
+            $asset->extraAttributes($mergedAttributes);
+        }
+
         return view('filament::assets', [
             'assets' => $assets,
             'data' => $this->getScriptData($packages),
+            'dataScriptAttributes' => $mergedAttributes,
         ])->render();
     }
 

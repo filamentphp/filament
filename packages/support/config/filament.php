@@ -59,6 +59,22 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Script Attributes
+    |--------------------------------------------------------------------------
+    | This is an array of attributes that will be added to all script tags
+    | rendered by Filament. You can use this to add attributes like `data-cfasync` or `async` to
+    | all scripts, or to add custom data attributes that your application may require.
+    |
+    */
+
+    'scripts' => [
+        'attributes' => [
+            // 'data-cfasync' => 'false',
+        ],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Cache Path
     |--------------------------------------------------------------------------
     |
