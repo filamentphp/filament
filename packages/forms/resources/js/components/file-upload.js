@@ -538,15 +538,15 @@ export default function fileUploadFormComponent({
         },
 
         getDownloadLink(file) {
-            let fileSource = file.source
+            let downloadableUrl = file.getMetadata('downloadableUrl') ?? file.source
 
-            if (!fileSource) {
+            if (!downloadableUrl) {
                 return
             }
 
             const anchor = document.createElement('a')
             anchor.className = 'filepond--download-icon'
-            anchor.href = fileSource
+            anchor.href = downloadableUrl
             anchor.download = file.file.name
 
             return anchor
