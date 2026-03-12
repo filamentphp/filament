@@ -82,6 +82,10 @@
                 --collapsed-sidebar-width: {{ filament()->getCollapsedSidebarWidth() }};
                 --default-theme-mode: {{ filament()->getDefaultThemeMode()->value }};
             }
+
+            html.fi {
+                --livewire-progress-bar-color: var(--primary-500);
+            }
         </style>
 
         @stack('styles')
