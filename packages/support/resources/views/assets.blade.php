@@ -1,5 +1,11 @@
 @if (isset($data))
-    <script @foreach($dataScriptAttributes ?? [] as $key => $value) @if(is_int($key)) {{ $value }} @else {{ $key }}="{{ $value }}" @endif @endforeach>
+    <script @foreach ($dataScriptAttributes ?? [] as $key => $value)
+        @if (is_int($key))
+            {{ $value }}
+        @else
+            {{ $key }}="{{ $value }}"
+        @endif
+    @endforeach>
         window.filamentData = @js($data)
     </script>
 @endif

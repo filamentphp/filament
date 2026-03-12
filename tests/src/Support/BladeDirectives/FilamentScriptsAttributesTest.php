@@ -22,8 +22,8 @@ it('renders script tags without extra attributes', function (): void {
 */
 
 it('applies inline attributes to every rendered script tag', function (): void {
-    $html         = Blade::render("@filamentScripts(attributes: ['data-cfasync' => 'false'])");
-    $htmlWithout  = Blade::render('@filamentScripts');
+    $html = Blade::render("@filamentScripts(attributes: ['data-cfasync' => 'false'])");
+    $htmlWithout = Blade::render('@filamentScripts');
 
     preg_match_all('/<script[\s\S]*?src=[\s\S]*?>/m', $html, $withMatches);
     preg_match_all('/<script[\s\S]*?src=[\s\S]*?>/m', $htmlWithout, $withoutMatches);
