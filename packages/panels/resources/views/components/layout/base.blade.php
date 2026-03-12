@@ -12,7 +12,7 @@
     dir="{{ __('filament-panels::layout.direction') ?? 'ltr' }}"
     @class([
         'fi',
-        'dark' => filament()->hasDarkModeForced(),
+        'dark' => filament()->hasDarkMode() && filament()->hasDarkModeForced(),
     ])
 >
     <head>
