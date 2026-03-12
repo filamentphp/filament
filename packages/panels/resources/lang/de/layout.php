@@ -63,7 +63,7 @@ return [
     'tenant_menu' => [
 
         'search_field' => [
-            'label' => 'Mandantensuche',
+            'label' => 'Mandant suchen',
             'placeholder' => 'Suchen',
         ],
 
