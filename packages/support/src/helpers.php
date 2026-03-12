@@ -120,6 +120,12 @@ if (! function_exists('Filament\Support\is_app_url')) {
             return true;
         }
 
+        $scheme = parse_url($url, PHP_URL_SCHEME);
+
+        if ($scheme && (! in_array($scheme, ['http', 'https'], strict: true))) {
+            return false;
+        }
+
         $urlHost = parse_url($url, PHP_URL_HOST);
 
         return (! $urlHost) || $urlHost === request()->getHost();
