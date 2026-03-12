@@ -147,9 +147,11 @@ class Js extends Asset
 
     public function getExtraAttributesHtml(): string
     {
+        /** @var array<int|string, string> $extraAttributes */
+        $extraAttributes = $this->getExtraAttributes();
         $attributes = '';
 
-        foreach ($this->getExtraAttributes() as $key => $value) {
+        foreach ($extraAttributes as $key => $value) {
             if (is_int($key)) {
                 $attributes .= " {$value}";
             } else {

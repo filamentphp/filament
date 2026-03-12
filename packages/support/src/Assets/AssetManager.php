@@ -188,6 +188,7 @@ class AssetManager
 
     /**
      * @param  array<string> | null  $packages
+     * @param  array<int|string, string>  $attributes
      */
     public function renderScripts(?array $packages = null, bool $withCore = false, array $attributes = []): string
     {
