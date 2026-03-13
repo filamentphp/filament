@@ -3944,3 +3944,19 @@ it('can filter records using datetime constraint with is before operator with `c
         ->assertCanSeeTableRecords($veryOldPosts)
         ->assertCanNotSeeTableRecords($recentPosts);
 });
+
+it('can delete a rule in the query builder filter in the browser', function (): void {
+    $this->actingAs(User::factory()->create());
+
+    visit('/query-builder-table-test')
+        ->assertSee('Query Builder Table Test')
+        ->click('button[title="Filter"]')
+        ->assertSee('Add rule')
+        ->click('text=Add rule')
+        ->assertSee('Title')
+        ->click('.fi-dropdown-list-item >> text=Title')
+        ->assertPresent('.fi-fo-builder-item')
+        ->click('.fi-fo-builder-item button[title="Delete"]')
+        ->assertNotPresent('.fi-fo-builder-item')
+        ->assertNoSmoke();
+});
