@@ -8,7 +8,7 @@ return [
 
             'clone' => [
 
-                'label' => 'نقل بنائیں'
+                'label' => 'نقل بنائیں',
             ],
 
             'add' => [
@@ -22,7 +22,7 @@ return [
                     'actions' => [
 
                         'add' => [
-                            'label' => 'شامل کریں'
+                            'label' => 'شامل کریں',
                         ],
                     ],
                 ],
@@ -39,7 +39,7 @@ return [
                     'actions' => [
 
                         'add' => [
-                            'label' => 'شامل کریں'
+                            'label' => 'شامل کریں',
                         ],
 
                     ],
@@ -49,7 +49,7 @@ return [
             ],
 
             'delete' => [
-                'label' => 'حذف کریں'
+                'label' => 'حذف کریں',
             ],
 
             'edit' => [
@@ -63,7 +63,7 @@ return [
                     'actions' => [
 
                         'save' => [
-                            'label' => 'تبدیلیاں محفوظ کریں'
+                            'label' => 'تبدیلیاں محفوظ کریں',
                         ],
 
                     ],
@@ -73,31 +73,31 @@ return [
             ],
 
             'reorder' => [
-                'label' => 'منتقل کریں'
+                'label' => 'منتقل کریں',
             ],
 
             'move_down' => [
-                'label' => 'نیچے کریں'
+                'label' => 'نیچے کریں',
             ],
 
             'move_up' => [
-                'label' => 'اوپر کریں'
+                'label' => 'اوپر کریں',
             ],
 
             'collapse' => [
-                'label' => 'سمیٹیں'
+                'label' => 'سمیٹیں',
             ],
 
             'expand' => [
-                'label' => 'پھیلائیں'
+                'label' => 'پھیلائیں',
             ],
 
             'collapse_all' => [
-                'label' => 'سب سمیٹیں'
+                'label' => 'سب سمیٹیں',
             ],
 
             'expand_all' => [
-                'label' => 'سب پھیلائیں'
+                'label' => 'سب پھیلائیں',
             ],
 
         ],
@@ -109,11 +109,11 @@ return [
         'actions' => [
 
             'deselect_all' => [
-                'label' => 'سب غیر منتخب کریں'
+                'label' => 'سب غیر منتخب کریں',
             ],
 
             'select_all' => [
-                'label' => 'سب منتخب کریں'
+                'label' => 'سب منتخب کریں',
             ],
 
         ],
@@ -127,71 +127,71 @@ return [
             'actions' => [
 
                 'cancel' => [
-                    'label' => 'منسوخ کریں'
+                    'label' => 'منسوخ کریں',
                 ],
 
                 'drag_crop' => [
-                    'label' => 'کٹائی موڈ منتخب کریں'
+                    'label' => 'کٹائی موڈ منتخب کریں',
                 ],
 
                 'drag_move' => [
-                    'label' => 'منتقل موڈ منتخب کریں'
+                    'label' => 'منتقل موڈ منتخب کریں',
                 ],
 
                 'flip_horizontal' => [
-                    'label' => 'تصویر افقی پلٹائیں'
+                    'label' => 'تصویر افقی پلٹائیں',
                 ],
 
                 'flip_vertical' => [
-                    'label' => 'تصویر عمودی پلٹائیں'
+                    'label' => 'تصویر عمودی پلٹائیں',
                 ],
 
                 'move_down' => [
-                    'label' => 'تصویر نیچے منتقل کریں'
+                    'label' => 'تصویر نیچے منتقل کریں',
                 ],
 
                 'move_left' => [
-                    'label' => 'تصویر بائیں منتقل کریں'
+                    'label' => 'تصویر بائیں منتقل کریں',
                 ],
 
                 'move_right' => [
-                    'label' => 'تصویر دائیں منتقل کریں'
+                    'label' => 'تصویر دائیں منتقل کریں',
                 ],
 
                 'move_up' => [
-                    'label' => 'تصویر اوپر منتقل کریں'
+                    'label' => 'تصویر اوپر منتقل کریں',
                 ],
 
                 'reset' => [
-                    'label' => 'ری سیٹ کریں'
+                    'label' => 'ری سیٹ کریں',
                 ],
 
                 'rotate_left' => [
-                    'label' => 'بائیں گھمائیں'
+                    'label' => 'بائیں گھمائیں',
                 ],
 
                 'rotate_right' => [
-                    'label' => 'دائیں گھمائیں'
+                    'label' => 'دائیں گھمائیں',
                 ],
 
                 'set_aspect_ratio' => [
-                    'label' => ':ratio تناسب مقرر کریں'
+                    'label' => ':ratio تناسب مقرر کریں',
                 ],
 
                 'save' => [
-                    'label' => 'محفوظ کریں'
+                    'label' => 'محفوظ کریں',
                 ],
 
                 'zoom_100' => [
-                    'label' => '100% زوم'
+                    'label' => '100% زوم',
                 ],
 
                 'zoom_in' => [
-                    'label' => 'زوم ان کریں'
+                    'label' => 'زوم ان کریں',
                 ],
 
                 'zoom_out' => [
-                    'label' => 'زوم آؤٹ کریں'
+                    'label' => 'زوم آؤٹ کریں',
                 ],
 
             ],
@@ -200,27 +200,27 @@ return [
 
                 'height' => [
                     'label' => 'اونچائی',
-                    'unit' => 'px'
+                    'unit' => 'px',
                 ],
 
                 'rotation' => [
                     'label' => 'گھوماؤ',
-                    'unit' => 'ڈگری'
+                    'unit' => 'ڈگری',
                 ],
 
                 'width' => [
                     'label' => 'چوڑائی',
-                    'unit' => 'px'
+                    'unit' => 'px',
                 ],
 
                 'x_position' => [
                     'label' => 'محور X',
-                    'unit' => 'px'
+                    'unit' => 'px',
                 ],
 
                 'y_position' => [
                     'label' => 'محور Y',
-                    'unit' => 'px'
+                    'unit' => 'px',
                 ],
 
             ],
@@ -230,7 +230,7 @@ return [
                 'label' => 'تناسب',
 
                 'no_fixed' => [
-                    'label' => 'آزادی سے'
+                    'label' => 'آزادی سے',
                 ],
 
             ],
@@ -253,15 +253,15 @@ return [
         'actions' => [
 
             'add' => [
-                'label' => 'نئی قطار شامل کریں'
+                'label' => 'نئی قطار شامل کریں',
             ],
 
             'delete' => [
-                'label' => 'قطار حذف کریں'
+                'label' => 'قطار حذف کریں',
             ],
 
             'reorder' => [
-                'label' => 'قطار ترتیب دیں'
+                'label' => 'قطار ترتیب دیں',
             ],
 
         ],
@@ -269,11 +269,11 @@ return [
         'fields' => [
 
             'key' => [
-                'label' => 'کلید'
+                'label' => 'کلید',
             ],
 
             'value' => [
-                'label' => 'قدر'
+                'label' => 'قدر',
             ],
 
         ],
@@ -315,8 +315,8 @@ return [
                 'actions' => [
 
                     'select' => [
-                        'label' => 'منتخب کریں'
-                    ]
+                        'label' => 'منتخب کریں',
+                    ],
 
                 ],
 
@@ -340,47 +340,47 @@ return [
         'actions' => [
 
             'add' => [
-                'label' => ':label میں شامل کریں'
+                'label' => ':label میں شامل کریں',
             ],
 
             'add_between' => [
-                'label' => 'درمیان شامل کریں'
+                'label' => 'درمیان شامل کریں',
             ],
 
             'delete' => [
-                'label' => 'حذف کریں'
+                'label' => 'حذف کریں',
             ],
 
             'clone' => [
-                'label' => 'نقل بنائیں'
+                'label' => 'نقل بنائیں',
             ],
 
             'reorder' => [
-                'label' => 'منتقل کریں'
+                'label' => 'منتقل کریں',
             ],
 
             'move_down' => [
-                'label' => 'نیچے جائیں'
+                'label' => 'نیچے جائیں',
             ],
 
             'move_up' => [
-                'label' => 'اوپر جائیں'
+                'label' => 'اوپر جائیں',
             ],
 
             'collapse' => [
-                'label' => 'سمیٹیں'
+                'label' => 'سمیٹیں',
             ],
 
             'expand' => [
-                'label' => 'پھیلائیں'
+                'label' => 'پھیلائیں',
             ],
 
             'collapse_all' => [
-                'label' => 'سب سمیٹیں'
+                'label' => 'سب سمیٹیں',
             ],
 
             'expand_all' => [
-                'label' => 'سب پھیلائیں'
+                'label' => 'سب پھیلائیں',
             ],
 
         ],
@@ -405,8 +405,8 @@ return [
 
                             'label' => [
                                 'new' => 'فائل',
-                                'existing' => 'فائل بدلیں'
-                            ]
+                                'existing' => 'فائل بدلیں',
+                            ],
 
                         ],
 
@@ -414,8 +414,8 @@ return [
 
                             'label' => [
                                 'new' => 'Alt متن',
-                                'existing' => 'Alt متن بدلیں'
-                            ]
+                                'existing' => 'Alt متن بدلیں',
+                            ],
 
                         ],
 
@@ -432,16 +432,16 @@ return [
                     'actions' => [
 
                         'insert' => [
-                            'label' => 'داخل کریں'
+                            'label' => 'داخل کریں',
                         ],
 
                         'save' => [
-                            'label' => 'محفوظ کریں'
-                        ]
+                            'label' => 'محفوظ کریں',
+                        ],
 
-                    ]
+                    ],
 
-                ]
+                ],
 
             ],
 
@@ -521,11 +521,11 @@ return [
                     'form' => [
 
                         'url' => [
-                            'label' => 'URL'
+                            'label' => 'URL',
                         ],
 
                         'should_open_in_new_tab' => [
-                            'label' => 'نئی ٹیب میں کھولیں'
+                            'label' => 'نئی ٹیب میں کھولیں',
                         ],
 
                     ],
@@ -565,7 +565,7 @@ return [
         'file_attachments_max_size_message' => 'صرف :max کلو بائٹس سے کم حجم کی فائلیں اپلوڈ کی جا سکتی ہیں۔',
 
         'no_merge_tag_search_results_message' => 'کوئی مرج ٹیگ نہیں ملا۔',
-        
+
         'tools' => [
             'align_center' => 'مرکز میں سیدھ کریں',
             'align_end' => 'دائیں سیدھ کریں',
@@ -627,11 +627,11 @@ return [
                     'actions' => [
 
                         'create' => [
-                            'label' => 'بنائیں'
+                            'label' => 'بنائیں',
                         ],
 
                         'create_another' => [
-                            'label' => 'بنائیں اور مزید بنائیں'
+                            'label' => 'بنائیں اور مزید بنائیں',
                         ],
 
                     ],
@@ -650,8 +650,8 @@ return [
                     'actions' => [
 
                         'save' => [
-                            'label' => 'محفوظ کریں'
-                        ]
+                            'label' => 'محفوظ کریں',
+                        ],
 
                     ],
 
@@ -663,7 +663,7 @@ return [
 
         'boolean' => [
             'true' => 'ہاں',
-            'false' => 'نہیں'
+            'false' => 'نہیں',
         ],
 
         'loading_message' => 'لوڈ ہو رہا ہے...',
@@ -683,7 +683,7 @@ return [
     ],
 
     'tags_input' => [
-        'placeholder' => 'نیا ٹیگ'
+        'placeholder' => 'نیا ٹیگ',
     ],
 
     'text_input' => [
@@ -695,11 +695,11 @@ return [
             ],
 
             'hide_password' => [
-                'label' => 'پاسورڈ چھپائیں'
+                'label' => 'پاسورڈ چھپائیں',
             ],
 
             'show_password' => [
-                'label' => 'پاسورڈ دکھائیں'
+                'label' => 'پاسورڈ دکھائیں',
             ],
 
         ],
@@ -709,9 +709,9 @@ return [
 
         'boolean' => [
             'true' => 'ہاں',
-            'false' => 'نہیں'
-        ]
-        
+            'false' => 'نہیں',
+        ],
+
     ],
 
 ];

@@ -262,15 +262,15 @@ return [
         ],
 
         'loading_message' => 'Kargatzen...',
-        
+
         'max_items_message' => 'Soilik :count hauta daiteke.',
-        
+
         'no_options_message' => 'Ez dago aukera erabilgarririk.',
-        
+
         'no_search_results_message' => 'Ez da bat datorren bilaketarekin.',
-        
+
         'placeholder' => 'Aukeratu aukera bat',
-        
+
         'searching_message' => 'Bilatzen...',
 
         'search_prompt' => 'Idatzi bilatzeko...',
