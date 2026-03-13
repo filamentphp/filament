@@ -404,6 +404,8 @@ return [
 
         'max_items_message' => 'Kun :count kan vælges.',
 
+        'no_options_message' => 'Der er ingen tilgængelige indstillinger.',
+
         'no_search_results_message' => 'Ingen muligheder der matcher din søgning.',
 
         'placeholder' => 'Vælg en indstilling',

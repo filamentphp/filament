@@ -222,6 +222,8 @@ return [
 
         'max_items_message' => 'Ni :count pekee ndiyo inaweza kuchaguliwa.',
 
+        'no_options_message' => 'Hakuna chaguzi zinazopatikana.',
+
         'no_search_results_message' => 'Hakuna chaguzi zinazolingana na utafutaji wako.',
 
         'placeholder' => 'Chagua chaguo',

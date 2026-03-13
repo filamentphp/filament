@@ -678,6 +678,8 @@ return [
 
         'max_items_message' => ':count個のみ選択されてます',
 
+        'no_options_message' => '利用可能なオプションはありません',
+
         'no_search_results_message' => '検索結果はありませんでした',
 
         'placeholder' => 'オプションを選択',

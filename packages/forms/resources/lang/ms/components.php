@@ -552,6 +552,8 @@ return [
 
         'max_items_message' => 'Hanya :count boleh dipilih.',
 
+        'no_options_message' => 'Tiada pilihan yang tersedia.',
+
         'no_search_results_message' => 'Tiada pilihan yang sepadan dengan carian anda.',
 
         'placeholder' => 'Pilih satu pilihan',

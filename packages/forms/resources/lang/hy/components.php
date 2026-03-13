@@ -677,6 +677,8 @@ return [
 
         'max_items_message' => 'Կարող եք :count ընտրել միայն մեկը:',
 
+        'no_options_message' => 'Ոչ մի հասանելի տարբերակ չկա։',
+
         'no_search_results_message' => 'Ոչ մի տվյալ չի համապատասխանում ձեր հարցմանը:',
 
         'placeholder' => 'Ընտրել տարբերակ',

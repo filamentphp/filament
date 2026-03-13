@@ -383,6 +383,8 @@ return [
 
         'max_items_message' => 'Mund të zgjidhet vetëm :count.',
 
+        'no_options_message' => 'Nuk ka opsione të disponueshme.',
+
         'no_search_results_message' => 'Asnjë opsion nuk përputhet me kërkimin tuaj.',
 
         'placeholder' => 'Zgjidhni një opsion',

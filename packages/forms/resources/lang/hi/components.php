@@ -138,9 +138,20 @@ return [
     ],
 
     'select' => [
+        'loading_message' => 'लोड हो रहा है...',
+
+        'max_items_message' => 'केवल :count का चयन किया जा सकता है।',
+
+        'no_options_message' => 'कोई विकल्प उपलब्ध नहीं है',
+
         'no_search_results_message' => 'आपकी खोज से मेल खाने वाला कोई विकल्प नहीं मिला',
+
         'placeholder' => 'किसी विकल्प का चयन करें',
+
+        'searching_message' => 'खोज रहा है...',
+        
         'search_prompt' => 'खोज करने के लिए लिखना प्रारंभ करें...',
+
     ],
 
     'tags_input' => [

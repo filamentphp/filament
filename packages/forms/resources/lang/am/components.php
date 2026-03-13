@@ -407,11 +407,19 @@ return [
             'false' => 'ኣይ',
         ],
         'loading_message' => 'በመጫን ላይ...',
+
         'max_items_message' => 'መምረጥ የምቻለው :count ብቻ ነው።',
+
+        'no_options_message' => 'ምንም አማራጮች የሉም።',
+
         'no_search_results_message' => 'ከፍለጋዎ ጋር የሚዛመዱ አማራጮች የሉም።',
+
         'placeholder' => 'ከአማራጮች ይምረጡ',
+
         'searching_message' => 'በመፈለግ ላይ...',
+
         'search_prompt' => 'ለመፈለግ መተየብ ይጀምሩ...',
+
     ],
     'tags_input' => [
 

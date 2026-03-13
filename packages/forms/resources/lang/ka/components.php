@@ -458,6 +458,8 @@ return [
 
         'max_items_message' => 'შეიძლება მხოლოდ :count აირჩიოთ.',
 
+        'no_options_message' => 'არ არის ხელმისაწვდომი ვარიანტი.',
+
         'no_search_results_message' => 'არჩევანი ვერ მოიძებნა.',
 
         'placeholder' => 'აირჩიეთ ვარიანტი',

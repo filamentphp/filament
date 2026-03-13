@@ -679,6 +679,8 @@ return [
 
         'max_items_message' => 'تنها :count مورد می‌تواند انتخاب شود.',
 
+        'no_options_message' => 'هیچ گزینه در دسترس نیست.',
+
         'no_search_results_message' => 'هیچ گزینه‌ای با جستجوی شما مطابقت ندارد.',
 
         'placeholder' => 'یک گزینه را انتخاب کنید',

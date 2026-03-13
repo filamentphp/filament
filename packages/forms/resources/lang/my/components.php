@@ -341,12 +341,20 @@ return [
             'false' => 'မဟုတ်',
         ],
 
-        'loading_message' => 'ဖွင့်နေသည်...',
+        'loading_message' => 'တင်နေသည်...',
+
         'max_items_message' => ':count ခုသာ ရွေးချယ်နိုင်ပါသည်။',
+
+        'no_options_message' => 'အသုံးပြုနိုင်သည့် ရွေးချယ်စရာများမရှိပါ။',
+
         'no_search_results_message' => 'ရှာဖွေမှုနှင့် ကိုက်ညီသော ရွေးချယ်စရာများ မရှိပါ။',
+
         'placeholder' => 'ရွေးချယ်စရာတစ်ခုကို ရွေးချယ်ပါ',
+
         'searching_message' => 'ရှာဖွေနေသည်...',
+
         'search_prompt' => 'ရှာဖွေရန် စာရိုက်ထည့်ပါ...',
+
     ],
 
     'tags_input' => [

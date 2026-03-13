@@ -453,6 +453,8 @@ return [
 
         'max_items_message' => 'Samo :count može biti odabrano.',
 
+        'no_options_message' => 'Nema dostupnih mogućnosti.',
+
         'no_search_results_message' => 'Nema opcija koje odgovaraju tvojem pretraživanju.',
 
         'placeholder' => 'Odaberi opciju',

@@ -396,6 +396,8 @@ return [
 
         'max_items_message' => 'Tikai :count var atzīmēt.',
 
+        'no_options_message' => 'Nav pieejamu opciju.',
+
         'no_search_results_message' => 'Jūsu meklēšanai neatbilst neviena opcija.',
 
         'placeholder' => 'Atlasiet opciju',

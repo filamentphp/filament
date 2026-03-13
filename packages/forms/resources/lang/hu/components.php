@@ -530,6 +530,8 @@ return [
 
         'max_items_message' => 'Csak :count elem választható ki.',
 
+        'no_options_message' => 'Nincs elérhető lehetőség.',
+
         'no_search_results_message' => 'Nincs találat.',
 
         'placeholder' => 'Válassz ki egy elemet',

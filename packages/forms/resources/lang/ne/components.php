@@ -383,6 +383,8 @@ return [
 
         'max_items_message' => ':count वस्तुहरू मात्र चयन गर्न सकिन्छ।',
 
+        'no_options_message' => 'कोई विकल्प उपलब्ध छैन।',
+
         'no_search_results_message' => 'कुनै पनि विकल्प तपाईंको खोजसँग मेल खाँदैन।',
 
         'placeholder' => 'एक विकल्प चयन गर्नुहोस्',

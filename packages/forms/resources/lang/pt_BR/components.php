@@ -678,6 +678,8 @@ return [
 
         'max_items_message' => 'Apenas :count item pode ser selecionado.|Apenas :count itens podem ser selecionados.',
 
+        'no_options_message' => 'Nenhuma opção disponível.',
+
         'no_search_results_message' => 'Nenhuma opção corresponde à sua pesquisa.',
 
         'placeholder' => 'Selecione uma opção',

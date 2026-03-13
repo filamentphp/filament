@@ -238,7 +238,9 @@ return [
 
         'max_items_message' => 'মাত্র :count টা নির্বাচন করা যাবে।',
 
-        'no_search_results_message' => 'খুঁজে পাওয়া যায় নি।',
+        'no_options_message' => 'কোন অপশন নেই।',
+
+        'no_search_results_message' => 'কোন ফলাফল পাওয়া যায়নি।',
 
         'placeholder' => 'নির্বাচন করুন',
 

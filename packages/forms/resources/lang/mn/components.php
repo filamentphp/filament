@@ -457,6 +457,8 @@ return [
 
         'max_items_message' => 'Зөвхөн :count сонгох боломжтой.',
 
+        'no_options_message' => 'Боломжтой сонголт байхгүй байна.',
+
         'no_search_results_message' => 'Хайлтанд тохирох сонголт олдсонгүй.',
 
         'placeholder' => 'Сонголтоо хийнэ үү',

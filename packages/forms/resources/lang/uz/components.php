@@ -441,6 +441,8 @@ return [
 
         'max_items_message' => 'Faqat :countta tanlash mumkin.',
 
+        'no_options_message' => 'Mavjud variantlar yo\'q.',
+
         'no_search_results_message' => 'So\'rovingizga mos keladigan natijalar yo\'q.',
 
         'placeholder' => 'Variant tanlash',

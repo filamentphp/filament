@@ -678,6 +678,8 @@ return [
 
         'max_items_message' => 'Можна вибрати лише :count.',
 
+        'no_options_message' => 'Немає доступних варіантів.',
+
         'no_search_results_message' => 'Немає відповідних варіантів.',
 
         'placeholder' => 'Виберіть варіант',

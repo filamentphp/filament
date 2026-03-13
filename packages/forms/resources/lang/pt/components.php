@@ -578,6 +578,8 @@ return [
 
         'max_items_message' => 'Apenas :count item pode ser seleccionado.|Apenas :count itens podem ser seleccionados.',
 
+        'no_options_message' => 'Nenhuma opção disponível.',
+
         'no_search_results_message' => 'Nenhuma opção corresponde à sua pesquisa.',
 
         'placeholder' => 'Seleccione uma opção',

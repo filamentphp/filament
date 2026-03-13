@@ -660,6 +660,8 @@ return [
 
         'max_items_message' => 'Chỉ có thể chọn :count mục.',
 
+        'no_options_message' => 'Không có tùy chọn nào khả dụng.',
+
         'no_search_results_message' => 'Không có kết quả tìm kiếm phù hợp.',
 
         'placeholder' => 'Chọn một tùy chọn',

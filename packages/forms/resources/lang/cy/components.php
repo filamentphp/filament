@@ -238,6 +238,8 @@ return [
 
         'max_items_message' => 'Gall dim on :count gael eu dewis.',
 
+        'no_options_message' => 'Nid oes unrhyw opsiwn ar gael.',
+
         'no_search_results_message' => 'Nid oes unrhyw opsiynau yn cyfateb i`ch chwiliad.',
 
         'placeholder' => 'Dewis opsiwn',

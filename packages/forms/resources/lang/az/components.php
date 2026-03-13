@@ -453,6 +453,8 @@ return [
 
         'max_items_message' => 'Sadəcə :count seçiləbilər.',
 
+        'no_options_message' => 'Seçim yoxdur.',
+
         'no_search_results_message' => 'Axtarışa uyğun seçim yoxdur.',
 
         'placeholder' => 'Bir seçim seçin',

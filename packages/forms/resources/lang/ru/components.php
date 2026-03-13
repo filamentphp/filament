@@ -578,6 +578,8 @@ return [
 
         'max_items_message' => 'Только :count можно выбрать.',
 
+        'no_options_message' => 'Нет доступных вариантов.',
+
         'no_search_results_message' => 'Нет вариантов, соответствующих вашему запросу.',
 
         'placeholder' => 'Выбрать вариант',

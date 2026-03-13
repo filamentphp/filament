@@ -674,6 +674,8 @@ return [
 
         'max_items_message' => 'Samo :count može biti izabrano.',
 
+        'no_options_message' => 'Nema dostupnih opcija.',
+
         'no_search_results_message' => 'Nema opcija koje odgovaraju pretrazi.',
 
         'placeholder' => 'Izaberi opciju',

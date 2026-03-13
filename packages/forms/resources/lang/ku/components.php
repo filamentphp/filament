@@ -383,6 +383,8 @@ return [
 
         'max_items_message' => 'تەنها :count دەتواندرێت دیاری بکرێت.',
 
+        'no_options_message' => 'هیچ هەڵبژاردەیەک بەردەست نیە.',
+
         'no_search_results_message' => 'هیچ هەڵبژاردەیەک بۆ گەڕانەکەت نەدۆزرایەوە.',
 
         'placeholder' => 'هەڵبژاردەیەک دیاری بکە',

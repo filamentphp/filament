@@ -571,6 +571,8 @@ return [
 
         'max_items_message' => ':count개까지만 선택할 수 있습니다.',
 
+        'no_options_message' => '사용 가능한 옵션이 없습니다.',
+
         'no_search_results_message' => '검색 결과가 없습니다.',
 
         'placeholder' => '옵션을 선택하세요',

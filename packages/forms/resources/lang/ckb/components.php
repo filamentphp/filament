@@ -575,6 +575,8 @@ return [
 
         'max_items_message' => 'دەتوانرێت تەنها :count هەڵبژێردرێت.',
 
+        'no_options_message' => 'هیچ هەڵبژاردنێکی بەردەست نییە.',
+
         'no_search_results_message' => 'هیچ شتێک هاوشێوەی گەڕانەکەت نیە.',
 
         'placeholder' => 'هەڵبژێرە',

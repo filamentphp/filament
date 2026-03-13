@@ -383,6 +383,8 @@ return [
 
         'max_items_message' => 'Само :count могат да бъдат избрани.',
 
+        'no_options_message' => 'Няма налични опции.',
+
         'no_search_results_message' => 'Няма намерени резултати.',
 
         'placeholder' => 'Избери опция',
