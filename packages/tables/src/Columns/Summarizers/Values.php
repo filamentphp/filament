@@ -47,7 +47,7 @@ class Values extends Summarizer
                 <ul <?= $this->isBulleted() ? 'class="fi-bulleted"' : '' ?>>
                     <?php foreach ($state as $stateItem) { ?>
                         <li>
-                            <?= $this->formatState($stateItem) ?>
+                            <?= e($this->formatState($stateItem)) ?>
                         </li>
                     <?php } ?>
                 </ul>

@@ -155,11 +155,11 @@ class Range extends Summarizer
 
             <?php if (filled($from) || filled($to)) { ?>
                 <span>
-                    <?= $from ?>
+                    <?= e($from) ?>
 
                     <?= (filled($from) && filled($to)) ? '-' : '' ?>
 
-                    <?= $to ?>
+                    <?= e($to) ?>
                 </span>
             <?php } ?>
         </div>
