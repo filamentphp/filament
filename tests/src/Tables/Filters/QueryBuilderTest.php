@@ -6,6 +6,7 @@ use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Models\Team;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\Tables\TestCase;
+use Illuminate\Support\Facades\Artisan;
 
 use function Filament\Tests\livewire;
 
@@ -3943,4 +3944,22 @@ it('can filter records using datetime constraint with is before operator with `c
         ]))
         ->assertCanSeeTableRecords($veryOldPosts)
         ->assertCanNotSeeTableRecords($recentPosts);
+});
+
+it('can delete a rule in the query builder filter in the browser', function (): void {
+    Artisan::call('filament:assets');
+
+    $this->actingAs(User::factory()->create());
+
+    visit('/query-builder-table-test')
+        ->assertSee('Query Builder Table Test')
+        ->click('button[title="Filter"]')
+        ->assertSee('Add rule')
+        ->click('text=Add rule')
+        ->assertSee('Title')
+        ->click('.fi-dropdown-list-item >> text=Title')
+        ->assertPresent('.fi-fo-builder-item')
+        ->click('.fi-fo-builder-item button[title="Delete"]')
+        ->assertNotPresent('.fi-fo-builder-item')
+        ->assertNoSmoke();
 });

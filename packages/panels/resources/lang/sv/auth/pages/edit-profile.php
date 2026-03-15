@@ -55,6 +55,11 @@ return [
             'title' => 'Sparades',
         ],
 
+        'throttled' => [
+            'title' => 'För många försök inom begränsad tidsintervall. Vänligen försök igen om :seconds sekunder.',
+            'body' => 'Vänligen försök igen om :seconds sekunder.',
+        ],
+
     ],
 
     'actions' => [

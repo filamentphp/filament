@@ -54,6 +54,18 @@ return [
                 'title' => 'Registres esborrats',
             ],
 
+            'deleted_partial' => [
+                'title' => 'Esborrats :count de :total',
+                'missing_authorization_failure_message' => 'No tens permís per esborrar :count.',
+                'missing_processing_failure_message' => ':count no s\'han pogut esborrar.',
+            ],
+
+            'deleted_none' => [
+                'title' => 'No s\'ha pogut esborrar',
+                'missing_authorization_failure_message' => 'No tens permís per esborrar :count.',
+                'missing_processing_failure_message' => ':count no s\'han pogut esborrar.',
+            ],
+
         ],
 
     ],

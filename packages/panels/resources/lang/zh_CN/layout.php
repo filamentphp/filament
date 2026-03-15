@@ -52,4 +52,21 @@ return [
 
     ],
 
+    'avatar' => [
+        'alt' => ':name 的头像',
+    ],
+
+    'logo' => [
+        'alt' => ':name 标志',
+    ],
+
+    'tenant_menu' => [
+
+        'search_field' => [
+            'label' => '租户搜索',
+            'placeholder' => '搜索',
+        ],
+
+    ],
+
 ];

@@ -30,6 +30,8 @@ return [
 
             'loading_message' => 'Laddar...',
 
+            'no_options_message' => 'Inga alternativ tillgängliga.',
+
             'no_search_results_message' => 'Inga alternativ matchar din sökning.',
 
             'placeholder' => 'Välj ett alternativ',

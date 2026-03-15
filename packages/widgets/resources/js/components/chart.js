@@ -66,20 +66,18 @@ export default function chart({ cachedData, maxHeight, options, type }) {
                     })
                 })
 
-            this.resizeHandler = Alpine.debounce(() => {
-                const chart = this.getChart()
+            this.resizeObserver = new ResizeObserver(
+                Alpine.debounce(() => {
+                    const chart = this.getChart()
 
-                if (!chart) {
-                    return
-                }
+                    if (!chart) {
+                        return
+                    }
 
-                chart.destroy()
-                this.initChart()
-            }, 250)
-
-            window.addEventListener('resize', this.resizeHandler)
-
-            this.resizeObserver = new ResizeObserver(() => this.resizeHandler())
+                    chart.destroy()
+                    this.initChart()
+                }, 250),
+            )
             this.resizeObserver.observe(this.$el)
         },
 
@@ -177,8 +175,6 @@ export default function chart({ cachedData, maxHeight, options, type }) {
         },
 
         destroy() {
-            window.removeEventListener('resize', this.resizeHandler)
-
             if (this.resizeObserver) {
                 this.resizeObserver.disconnect()
             }

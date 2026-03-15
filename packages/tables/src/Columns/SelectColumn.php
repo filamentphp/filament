@@ -995,7 +995,7 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
             wire:ignore.self
             <?= $attributes->toHtml() ?>
         >
-            <input type="hidden" value="<?= str(($state instanceof BackedEnum) ? $state->value : $state)->replace('"', '\\"') ?>" x-ref="serverState" />
+            <input type="hidden" value="<?= e(($state instanceof BackedEnum) ? $state->value : $state) ?>" x-ref="serverState" />
 
             <div
                 x-bind:class="{
@@ -1023,15 +1023,15 @@ class SelectColumn extends Column implements Editable, HasEmbeddedView
                         <?= $inputAttributes->toHtml() ?>
                     >
                         <?php if ($canSelectPlaceholder) { ?>
-                            <option value=""><?= $placeholder ?></option>
+                            <option value=""><?= e($placeholder) ?></option>
                         <?php } ?>
 
                         <?php foreach ($options as $value => $label) { ?>
                             <option
                                 <?= $this->isOptionDisabled($value, $label) ? 'disabled' : null ?>
-                                value="<?= $value ?>"
+                                value="<?= e($value) ?>"
                             >
-                                <?= $label ?>
+                                <?= e($label) ?>
                             </option>
                         <?php } ?>
                     </select>

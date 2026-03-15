@@ -172,7 +172,7 @@
         }
 
         &:not(:nth-child(1 of .fi-btn)) {
-            @apply shadow-[-1px_0_0_0_var(--color-gray-200)] dark:shadow-[-1px_0_0_0_rgba(255,255,255,0.2)];
+            @apply shadow-[-1px_0_0_0_var(--color-gray-200)] rtl:shadow-[1px_0_0_0_var(--color-gray-200)] dark:shadow-[-1px_0_0_0_rgba(255,255,255,0.2)] rtl:dark:shadow-[1px_0_0_0_rgba(255,255,255,0.2)];
         }
 
         &:not(:nth-last-child(1 of .fi-btn)) {

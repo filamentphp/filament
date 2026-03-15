@@ -39,7 +39,7 @@ class Values extends Summarizer
         <div <?= $attributes->toHtml() ?>>
             <?php if (filled($label = $this->getLabel())) { ?>
                 <span class="fi-ta-values-summary-label">
-                    <?= $label ?>
+                    <?= e($label) ?>
                 </span>
             <?php } ?>
 
@@ -47,7 +47,7 @@ class Values extends Summarizer
                 <ul <?= $this->isBulleted() ? 'class="fi-bulleted"' : '' ?>>
                     <?php foreach ($state as $stateItem) { ?>
                         <li>
-                            <?= $this->formatState($stateItem) ?>
+                            <?= e($this->formatState($stateItem)) ?>
                         </li>
                     <?php } ?>
                 </ul>

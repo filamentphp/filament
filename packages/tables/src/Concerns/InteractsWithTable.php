@@ -48,7 +48,9 @@ trait InteractsWithTable
 
         $this->cacheSchema('tableFiltersForm', $this->getTableFiltersForm(...));
 
-        $this->cacheMountedActions($this->mountedActions);
+        if (empty($this->cacheMountedActions($this->mountedActions))) {
+            $this->mountedActions = [];
+        }
 
         $this->initTableColumnManager();
 

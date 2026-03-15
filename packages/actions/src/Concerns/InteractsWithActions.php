@@ -98,7 +98,9 @@ trait InteractsWithActions
 
         // Boot the InteractsWithTable trait first so the table object is available.
         if (! ($this instanceof HasTable)) {
-            $this->cacheMountedActions($this->mountedActions);
+            if (empty($this->cacheMountedActions($this->mountedActions))) {
+                $this->mountedActions = [];
+            }
         }
     }
 
@@ -480,7 +482,11 @@ trait InteractsWithActions
      */
     protected function cacheMountedActions(array $mountedActions): array
     {
-        return $this->cachedMountedActions = $this->resolveActions($mountedActions);
+        try {
+            return $this->cachedMountedActions = $this->resolveActions($mountedActions);
+        } catch (ActionNotResolvableException) {
+            return $this->cachedMountedActions = [];
+        }
     }
 
     /**

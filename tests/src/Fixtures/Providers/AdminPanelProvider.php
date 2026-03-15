@@ -24,6 +24,7 @@ use Filament\Tests\Fixtures\Pages\AutofocusWizardBrowserTest;
 use Filament\Tests\Fixtures\Pages\BuilderTest;
 use Filament\Tests\Fixtures\Pages\CalloutBrowserTest;
 use Filament\Tests\Fixtures\Pages\KeyValueTest;
+use Filament\Tests\Fixtures\Pages\QueryBuilderTableTest;
 use Filament\Tests\Fixtures\Pages\RepeaterTest;
 use Filament\Tests\Fixtures\Pages\SelectTest;
 use Filament\Tests\Fixtures\Pages\Settings;
@@ -82,6 +83,7 @@ class AdminPanelProvider extends PanelProvider
                 BuilderTest::class,
                 CalloutBrowserTest::class,
                 KeyValueTest::class,
+                QueryBuilderTableTest::class,
                 RepeaterTest::class,
                 SelectTest::class,
                 Settings::class,

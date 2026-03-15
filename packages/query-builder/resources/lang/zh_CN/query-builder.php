@@ -146,6 +146,50 @@ return [
 
             ],
 
+            'unit_labels' => [
+                'second' => '秒',
+                'minute' => '分钟',
+                'hour' => '小时',
+                'day' => '天',
+                'week' => '周',
+                'month' => '月',
+                'quarter' => '季度',
+                'year' => '年',
+            ],
+
+            'presets' => [
+                'past_decade' => '过去十年',
+                'past_5_years' => '过去五年',
+                'past_2_years' => '过去两年',
+                'past_year' => '过去一年',
+                'past_6_months' => '过去六个月',
+                'past_quarter' => '过去一季度',
+                'past_month' => '过去一个月',
+                'past_2_weeks' => '过去两周',
+                'past_week' => '过去一周',
+                'past_hour' => '过去一小时',
+                'past_minute' => '过去一分钟',
+                'this_decade' => '本十年',
+                'this_year' => '今年',
+                'this_quarter' => '本季度',
+                'this_month' => '本月',
+                'today' => '今天',
+                'this_hour' => '本小时',
+                'this_minute' => '本分钟',
+                'next_minute' => '下一分钟',
+                'next_hour' => '下一小时',
+                'next_week' => '下周',
+                'next_2_weeks' => '未来两周',
+                'next_month' => '下个月',
+                'next_quarter' => '下季度',
+                'next_6_months' => '未来六个月',
+                'next_year' => '明年',
+                'next_2_years' => '未来两年',
+                'next_5_years' => '未来五年',
+                'next_decade' => '未来十年',
+                'custom' => '自定义',
+            ],
+
             'form' => [
 
                 'date' => [
@@ -158,6 +202,40 @@ return [
 
                 'year' => [
                     'label' => '年份',
+                ],
+
+                'mode' => [
+
+                    'label' => '日期类型',
+
+                    'options' => [
+                        'absolute' => '具体日期',
+                        'relative' => '滚动窗口',
+                    ],
+
+                ],
+
+                'preset' => [
+                    'label' => '时间段',
+                ],
+
+                'relative_value' => [
+                    'label' => '数量',
+                ],
+
+                'relative_unit' => [
+                    'label' => '时间单位',
+                ],
+
+                'tense' => [
+
+                    'label' => '时态',
+
+                    'options' => [
+                        'past' => '过去',
+                        'future' => '未来',
+                    ],
+
                 ],
 
             ],

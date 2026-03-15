@@ -142,14 +142,14 @@ class Constraint extends Component
                                     ->color('gray')
                                     ->iconButton()
                                     ->size(Size::Small)
-                                    ->action($builder->getAction($cloneActionName)->arguments(['item' => (string) str($component->getContainer()->getStatePath(isAbsolute: false))->beforeLast('.data')])->getLivewireClickHandler()),
+                                    ->action($builder->getAction($cloneActionName)(['item' => (string) str($component->getContainer()->getStatePath(isAbsolute: false))->beforeLast('.data')])->getLivewireClickHandler()),
                                 Action::make($deleteActionName = $builder->getDeleteActionName())
                                     ->label(__('filament-forms::components.builder.actions.delete.label'))
                                     ->icon(FilamentIcon::resolve(FormsIconAlias::COMPONENTS_BUILDER_ACTIONS_DELETE) ?? Heroicon::Trash)
                                     ->color('danger')
                                     ->iconButton()
                                     ->size(Size::Small)
-                                    ->action($builder->getAction($deleteActionName)->arguments(['item' => (string) str($component->getContainer()->getStatePath(isAbsolute: false))->beforeLast('.data')])->getLivewireClickHandler()),
+                                    ->action($builder->getAction($deleteActionName)(['item' => (string) str($component->getContainer()->getStatePath(isAbsolute: false))->beforeLast('.data')])->getLivewireClickHandler()),
                             ])->grow(false),
                         ];
                     })->gridContainer(),

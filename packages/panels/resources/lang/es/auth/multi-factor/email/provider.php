@@ -21,7 +21,7 @@ return [
 
     'login_form' => [
 
-        'label' => 'Envíar un código a su correo electrónico',
+        'label' => 'Enviar un código a su correo electrónico',
 
         'code' => [
 
