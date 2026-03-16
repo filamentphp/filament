@@ -45,6 +45,19 @@ MarkdownEditor::make('content')
 
 Each nested array in the main array represents a group of buttons in the toolbar.
 
+Alternatively, you may use the `Filament\Support\Enums\ToolbarButton` enum cases instead of string values:
+
+```php
+use Filament\Forms\Components\MarkdownEditor;
+use Filament\Support\Enums\ToolbarButton;
+
+MarkdownEditor::make('content')
+    ->toolbarButtons([
+        [ToolbarButton::Bold, ToolbarButton::Italic],
+        [ToolbarButton::Undo, ToolbarButton::Redo],
+    ])
+```
+
 <UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `toolbarButtons()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Uploading images to the editor

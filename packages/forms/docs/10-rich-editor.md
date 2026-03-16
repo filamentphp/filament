@@ -70,6 +70,19 @@ RichEditor::make('content')
 
 Each nested array in the main array represents a group of buttons in the toolbar.
 
+Alternatively, you may use the `Filament\Support\Enums\ToolbarButton` enum cases instead of string values:
+
+```php
+use Filament\Forms\Components\RichEditor;
+use Filament\Support\Enums\ToolbarButton;
+
+RichEditor::make('content')
+    ->toolbarButtons([
+        [ToolbarButton::Bold, ToolbarButton::Italic],
+        [ToolbarButton::Undo, ToolbarButton::Redo],
+    ])
+```
+
 Additional tools available in the toolbar include:
 
 - `h1` - Applies the "h1" tag to the text.
