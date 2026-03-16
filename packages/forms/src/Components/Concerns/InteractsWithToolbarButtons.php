@@ -4,6 +4,7 @@ namespace Filament\Forms\Components\Concerns;
 
 use Closure;
 use Exception;
+use Filament\Support\Enums\ToolbarButton;
 use LogicException;
 
 trait InteractsWithToolbarButtons
@@ -28,13 +29,15 @@ trait InteractsWithToolbarButtons
     }
 
     /**
-     * @param  array<string | array<string>>  $buttonsToDisable
+     * @param  array<string | array<string> | ToolbarButton>  $buttonsToDisable
      */
     public function disableToolbarButtons(array $buttonsToDisable = []): static
     {
         if ($this->toolbarButtons instanceof Closure) {
             throw new LogicException('You cannot use the `disableToolbarButtons()` method when the toolbar buttons are dynamically returned from a function. Instead, do not return the disabled buttons from the function.');
         }
+
+        $buttonsToDisable = $this->normalizeToolbarButtons($buttonsToDisable);
 
         $this->toolbarButtonsModifications[] = [
             'type' => 'disable',
@@ -45,13 +48,15 @@ trait InteractsWithToolbarButtons
     }
 
     /**
-     * @param  array<string | array<string | array<string>>>  $buttonsToEnable
+     * @param  array<string | array<string | array<string>> | ToolbarButton>  $buttonsToEnable
      */
     public function enableToolbarButtons(array $buttonsToEnable = []): static
     {
         if ($this->toolbarButtons instanceof Closure) {
             throw new LogicException('You cannot use the `enableToolbarButtons()` method when the toolbar buttons are dynamically returned from a function. Instead, return the enabled buttons from the function.');
         }
+
+        $buttonsToEnable = $this->normalizeToolbarButtons($buttonsToEnable);
 
         $this->toolbarButtonsModifications[] = [
             'type' => 'enable',
@@ -62,10 +67,14 @@ trait InteractsWithToolbarButtons
     }
 
     /**
-     * @param  array<string | array<string>> | Closure | null  $buttons
+     * @param  array<string | array<string> | ToolbarButton> | Closure | null  $buttons
      */
     public function toolbarButtons(array | Closure | null $buttons): static
     {
+        if (is_array($buttons)) {
+            $buttons = $this->normalizeToolbarButtons($buttons);
+        }
+
         $this->toolbarButtons = $buttons;
         $this->toolbarButtonsModifications = [];
 
@@ -173,10 +182,16 @@ trait InteractsWithToolbarButtons
     }
 
     /**
-     * @param  string | array<string>  $button
+     * @param  string | array<string> | ToolbarButton  $button
      */
-    public function hasToolbarButton(string | array $button): bool
+    public function hasToolbarButton(string | array | ToolbarButton $button): bool
     {
+        if (is_array($button)) {
+            $button = $this->normalizeToolbarButtons($button);
+        } else {
+            $button = $button instanceof ToolbarButton ? $button->value : $button;
+        }
+
         foreach ($this->getToolbarButtons() as $buttonGroup) {
             if (is_array($button)) {
                 foreach ($button as $singleButton) {
@@ -195,5 +210,25 @@ trait InteractsWithToolbarButtons
     public function hasCustomToolbarButtons(): bool
     {
         return $this->evaluate($this->toolbarButtons) !== null;
+    }
+
+    /**
+     * @param  array<string | array<string | array<string>> | ToolbarButton>  $buttons
+     */
+    private function normalizeToolbarButtons(array $buttons): array
+    {
+        return collect($buttons)
+            ->map(function (array|string|ToolbarButton $buttonGroup): string|array {
+                if (is_array($buttonGroup)) {
+                    return $this->normalizeToolbarButtons($buttonGroup);
+                }
+
+                if ($buttonGroup instanceof ToolbarButton) {
+                    return $buttonGroup->value;
+                }
+
+                return $buttonGroup;
+            })
+            ->all();
     }
 }
