@@ -248,6 +248,7 @@ class Login extends SimplePage
             ->email()
             ->required()
             ->autocomplete()
+            ->extraInputAttributes(['tabindex' => 1])
             ->autofocus();
     }
 
@@ -259,6 +260,7 @@ class Login extends SimplePage
             ->password()
             ->revealable(filament()->arePasswordsRevealable())
             ->autocomplete('current-password')
+            ->extraInputAttributes(['tabindex' => 2])
             ->required();
     }
 
@@ -354,6 +356,7 @@ class Login extends SimplePage
     {
         return Action::make('authenticate')
             ->label(__('filament-panels::auth/pages/login.form.actions.authenticate.label'))
+            ->extraAttributes(['tabindex' => 3])
             ->submit('authenticate');
     }
 
