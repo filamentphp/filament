@@ -218,7 +218,7 @@ trait InteractsWithToolbarButtons
     private function normalizeToolbarButtons(array $buttons): array
     {
         return collect($buttons)
-            ->map(function (array|string|ToolbarButton $buttonGroup): string|array {
+            ->map(function (array | string | ToolbarButton $buttonGroup): string | array {
                 if (is_array($buttonGroup)) {
                     return $this->normalizeToolbarButtons($buttonGroup);
                 }
