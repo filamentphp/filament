@@ -193,16 +193,10 @@ trait InteractsWithToolbarButtons
     {
         $buttonsToCheck = is_array($button) ? $button : [$button];
 
-        foreach ($this->getToolbarButtons() as $item) {
-            if (is_string($item) && in_array($item, $buttonsToCheck)) {
-                return true;
-            }
-
-            if (is_array($item)) {
-                foreach ($item as $innerItem) {
-                    if (is_string($innerItem) && in_array($innerItem, $buttonsToCheck)) {
-                        return true;
-                    }
+        foreach ($this->getToolbarButtons() as $buttonGroup) {
+            foreach ($buttonGroup as $item) {
+                if (is_string($item) && in_array($item, $buttonsToCheck)) {
+                    return true;
                 }
             }
         }
