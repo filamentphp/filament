@@ -92,7 +92,7 @@
     $isGroupingDirectionSettingHidden = $isGroupingDirectionSettingHidden();
     $areGroupsCollapsedByDefault = $areGroupsCollapsedByDefault();
     $areGroupingSettingsInDropdownOnDesktop = $areGroupingSettingsInDropdownOnDesktop();
-    $isColumnSearchVisible = $isSearchableByColumn();
+    $isColumnSearchVisible = $isSearchableByColumn() || $table->hasHeaderFilters();
     $isGlobalSearchVisible = $isSearchable();
     $isSearchOnBlur = $isSearchOnBlur();
     $isSelectionEnabled = $isSelectionEnabled() && (! $isGroupsOnly);

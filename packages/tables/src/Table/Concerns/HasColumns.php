@@ -88,7 +88,9 @@ trait HasColumns
 
         foreach ($this->columns as $column) {
             if ($column->hasHeaderFilter()) {
-                $column->getHeaderFilter()->table($this);
+                $column->getHeaderFilter()
+                    ->columnName($column->getName())
+                    ->table($this);
             }
 
             $action = $column->getAction();

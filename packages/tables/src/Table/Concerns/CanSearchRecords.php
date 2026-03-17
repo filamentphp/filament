@@ -98,17 +98,15 @@ trait CanSearchRecords
     public function isSearchableByColumn(): bool
     {
         foreach ($this->getColumns() as $column) {
+            if (! $column->isIndividuallySearchable()) {
+                continue;
+            }
+
             if ($column->isHidden()) {
                 continue;
             }
 
-            if ($column->isIndividuallySearchable()) {
-                return true;
-            }
-
-            if ($column->hasHeaderFilter()) {
-                return true;
-            }
+            return true;
         }
 
         return false;

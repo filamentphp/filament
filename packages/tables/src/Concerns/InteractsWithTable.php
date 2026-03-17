@@ -90,35 +90,6 @@ trait InteractsWithTable
             );
         }
 
-        if ($this->getTable()->hasHeaderFilters()) {
-            $headerFiltersSessionKey = $this->getTableHeaderFiltersSessionKey();
-
-            if (! count($this->tableHeaderFilters ?? [])) {
-                $this->tableHeaderFilters = null;
-            }
-
-            if (
-                ($this->tableHeaderFilters === null) &&
-                $shouldPersistFiltersInSession &&
-                session()->has($headerFiltersSessionKey)
-            ) {
-                $this->tableHeaderFilters = session()->get($headerFiltersSessionKey) ?? [];
-            }
-
-            if ($this->tableHeaderFilters) {
-                $this->normalizeTableFilterValuesFromQueryString($this->tableHeaderFilters);
-            }
-
-            $this->getTableHeaderFiltersForm()->fill($this->tableHeaderFilters);
-
-            if ($shouldPersistFiltersInSession) {
-                session()->put(
-                    $headerFiltersSessionKey,
-                    $this->tableHeaderFilters,
-                );
-            }
-        }
-
         if ($this->getTable()->isDefaultGroupSelectable()) {
             $this->tableGrouping = "{$this->getTable()->getDefaultGroup()->getId()}:asc";
         }

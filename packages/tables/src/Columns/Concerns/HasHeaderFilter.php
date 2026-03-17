@@ -12,10 +12,6 @@ trait HasHeaderFilter
     {
         $this->headerFilter = $filter;
 
-        if ($filter) {
-            $filter->columnName($this->getName());
-        }
-
         return $this;
     }
 

@@ -38,7 +38,6 @@ trait HasRecords
     public function filterTableQuery(Builder $query): Builder
     {
         $this->applyFiltersToTableQuery($query);
-        $this->applyHeaderFiltersToTableQuery($query);
 
         $this->applySearchToTableQuery($query);
 
@@ -75,7 +74,6 @@ trait HasRecords
         $query = $this->getTable()->getQuery();
 
         $this->applyFiltersToTableQuery($query);
-        $this->applyHeaderFiltersToTableQuery($query);
         $this->applySearchToTableQuery($query);
         $this->applySortingToTableQuery($query);
 
@@ -104,7 +102,7 @@ trait HasRecords
             $records = $this->getTable()->evaluate($this->getTable()->getDataSource(), [
                 'columnSearches' => fn (): array => $this->getTableColumnSearches(),
                 'filters' => fn (): ?array => $this->tableFilters,
-                'headerFilters' => fn (): ?array => $this->tableHeaderFilters,
+                'headerFilters' => fn (): ?array => $this->tableFilters,
                 'page' => fn (): int | string => $this->getTablePage(),
                 'recordsPerPage' => fn (): int | string => $this->getTableRecordsPerPage(),
                 'search' => fn (): ?string => $this->getTableSearch(),
@@ -199,7 +197,6 @@ trait HasRecords
                 $this->getTable()->getQuery(isResolvingRecord: true),
                 isResolvingRecord: true,
             );
-            $this->applyHeaderFiltersToTableQuery($query);
 
             foreach ($this->getTable()->getVisibleColumns() as $column) {
                 $column->applyRelationshipAggregates($query);
@@ -219,7 +216,6 @@ trait HasRecords
         $relationshipQuery = $relationship->getQuery();
         $table->applyQueryScopes($relationshipQuery, isResolvingRecord: true);
         $this->applyFiltersToTableQuery($relationshipQuery, isResolvingRecord: true);
-        $this->applyHeaderFiltersToTableQuery($relationshipQuery);
 
         $query = $table->allowsDuplicates() ?
             $relationship->wherePivot($pivotKeyName, $key) :
