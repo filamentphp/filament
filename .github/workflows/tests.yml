@@ -15,15 +15,19 @@ jobs:
       fail-fast: true
       matrix:
         php: [8.5, 8.4, 8.3]
-        laravel: [12.*, 11.*]
+        laravel: [13.*, 12.*, 11.*]
         db: [sqlite, mysql, pgsql]
         dependency-version: [prefer-stable]
         include:
+          - laravel: 13.*
+            testbench: 11.*
           - laravel: 12.*
             testbench: 10.*
           - laravel: 11.*
             testbench: 9.*
         exclude:
+          - laravel: 13.*
+            php: 8.2
           - laravel: 11.*
             php: 8.5
     name: P${{ matrix.php }} - L${{ matrix.laravel }} - DB:${{ matrix.db }}

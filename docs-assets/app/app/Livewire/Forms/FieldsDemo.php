@@ -19,6 +19,7 @@ use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\RichEditor\ToolbarButtonGroup;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Slider;
 use Filament\Forms\Components\Slider\Enums\PipsMode;
@@ -940,6 +941,38 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                     ->schema([
                         RichEditor::make('richEditor')
                             ->label('Content'),
+                    ]),
+                Group::make()
+                    ->id('richEditorToolbarButtonGroup')
+                    ->extraAttributes([
+                        'class' => 'p-16 pb-32 max-w-5xl',
+                    ])
+                    ->schema([
+                        RichEditor::make('richEditorToolbarButtonGroup')
+                            ->label('Content')
+                            ->toolbarButtons([
+                                ['bold', 'italic', 'underline', 'strike', 'link'],
+                                [ToolbarButtonGroup::make('Heading', ['h2', 'h3'])->icon('fi-o-heading')],
+                                [ToolbarButtonGroup::make('Alignment', ['alignStart', 'alignCenter', 'alignEnd', 'alignJustify'])],
+                                ['blockquote', 'codeBlock', 'bulletList', 'orderedList'],
+                                ['undo', 'redo'],
+                            ]),
+                    ]),
+                Group::make()
+                    ->id('richEditorTextualToolbarButtonGroup')
+                    ->extraAttributes([
+                        'class' => 'p-16 pb-48 max-w-5xl',
+                    ])
+                    ->schema([
+                        RichEditor::make('richEditorTextualToolbarButtonGroup')
+                            ->label('Content')
+                            ->toolbarButtons([
+                                ['bold', 'italic', 'underline', 'strike', 'link'],
+                                [ToolbarButtonGroup::make('Paragraph', ['paragraph', 'h1', 'h2', 'h3'])->textualButtons()],
+                                [ToolbarButtonGroup::make('Alignment', ['alignStart', 'alignCenter', 'alignEnd', 'alignJustify'])],
+                                ['blockquote', 'codeBlock', 'bulletList', 'orderedList'],
+                                ['undo', 'redo'],
+                            ]),
                     ]),
                 Group::make()
                     ->id('markdownEditor')

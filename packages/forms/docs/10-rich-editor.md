@@ -73,6 +73,9 @@ Each nested array in the main array represents a group of buttons in the toolbar
 Additional tools available in the toolbar include:
 
 - `h1` - Applies the "h1" tag to the text.
+- `h4` - Applies the "h4" tag to the text.
+- `h5` - Applies the "h5" tag to the text.
+- `h6` - Applies the "h6" tag to the text.
 - `alignJustify` - Justifies the text.
 - `clearFormatting` - Clears all formatting from the selected text.
 - `details` - Inserts a `<details>` tag, which allows users to create collapsible sections in their content.
@@ -81,6 +84,7 @@ Additional tools available in the toolbar include:
 - `highlight` - Highlights the selected text with a `<mark>` tag around it.
 - `horizontalRule` - Inserts a horizontal rule.
 - `lead` - Applies a `lead` class around the text, which is typically used for the first paragraph of an article.
+- `paragraph` - Sets the current block to a paragraph, removing any heading formatting.
 - `small` - Applies the `<small>` tag to the text, which is typically used for small print or disclaimers.
 - `code` - Format the selected text as inline code.
 - `textColor` - Changes the [text color](#customizing-text-colors) of the selected text.
@@ -127,6 +131,66 @@ RichEditor::make('content')
         ],
     ])
 ```
+
+### Grouping toolbar buttons into dropdowns
+
+You may group related toolbar buttons into a dropdown menu using `ToolbarButtonGroup`. The first argument is a label used for the dropdown's tooltip and accessibility, and the second argument is an array of button names to include in the dropdown:
+
+```php
+use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\RichEditor\ToolbarButtonGroup;
+
+RichEditor::make('content')
+    ->toolbarButtons([
+        ['bold', 'italic', 'underline', 'strike'],
+        [ToolbarButtonGroup::make('Paragraph', ['paragraph', 'h1', 'h2', 'h3'])],
+        [ToolbarButtonGroup::make('Alignment', ['alignStart', 'alignCenter', 'alignEnd', 'alignJustify'])],
+        ['blockquote', 'codeBlock', 'bulletList', 'orderedList'],
+        ['undo', 'redo'],
+    ])
+```
+
+By default, the first button's icon is used as the dropdown trigger, and it updates reactively to reflect the currently active button. Clicking on the trigger reveals the grouped buttons.
+
+You can set a fixed icon for the dropdown trigger using the `icon()` method. When a custom icon is set, the trigger icon remains static and does not change based on the active button:
+
+```php
+use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\RichEditor\ToolbarButtonGroup;
+
+RichEditor::make('content')
+    ->toolbarButtons([
+        ['bold', 'italic', 'underline', 'strike'],
+        [ToolbarButtonGroup::make('Heading', ['h1', 'h2', 'h3'])->icon('fi-o-heading')],
+        [ToolbarButtonGroup::make('Alignment', ['alignStart', 'alignCenter', 'alignEnd', 'alignJustify'])],
+        ['blockquote', 'codeBlock', 'bulletList', 'orderedList'],
+        ['undo', 'redo'],
+    ])
+```
+
+<AutoScreenshot name="forms/fields/rich-editor/toolbar-button-group-open" alt="Rich editor with an open toolbar button group dropdown" version="4.x" />
+
+### Using textual dropdown toolbar buttons
+
+By default, dropdown toolbar buttons display icons only. If you'd like to show text labels alongside icons in the dropdown items, you can use the `textualButtons()` method on a `ToolbarButtonGroup`:
+
+```php
+use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\RichEditor\ToolbarButtonGroup;
+
+RichEditor::make('content')
+    ->toolbarButtons([
+        ['bold', 'italic', 'underline', 'strike', 'link'],
+        [ToolbarButtonGroup::make('Paragraph', ['paragraph', 'h1', 'h2', 'h3'])->textualButtons()],
+        [ToolbarButtonGroup::make('Alignment', ['alignStart', 'alignCenter', 'alignEnd', 'alignJustify'])],
+        ['blockquote', 'codeBlock', 'bulletList', 'orderedList'],
+        ['undo', 'redo'],
+    ])
+```
+
+<AutoScreenshot name="forms/fields/rich-editor/textual-toolbar-button-group-open" alt="Rich editor with an open textual toolbar button group dropdown" version="4.x" />
+
+In this example, the `Paragraph` dropdown items display their icon alongside a text label (e.g., "Paragraph", "Heading 1"). The `Alignment` dropdown remains icon-only.
 
 ## Customizing text colors
 

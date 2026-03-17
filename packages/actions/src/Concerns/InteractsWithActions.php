@@ -595,6 +595,12 @@ trait InteractsWithActions
             throw new ActionNotResolvableException('Failed to resolve table action for Livewire component without the [' . HasTable::class . '] trait.');
         }
 
+        if (count($parentActions)) {
+            $parentAction = Arr::last($parentActions);
+
+            return $parentAction->getModalAction($action['name']) ?? throw new ActionNotResolvableException("Action [{$action['name']}] was not found for action [{$parentAction->getName()}].");
+        }
+
         if ($action['context']['bulk'] ?? false) {
             $resolvedAction = $this->getTable()->getBulkAction($action['name']);
         }

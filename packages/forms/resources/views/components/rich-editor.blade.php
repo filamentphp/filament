@@ -9,8 +9,8 @@
     $mergeTags = $getMergeTags();
     $statePath = $getStatePath();
     $mentions = $getMentionsForJs();
-    $tools = $getTools();
     $toolbarButtons = $getToolbarButtons();
+    $tools = $getTools();
     $floatingToolbars = $getFloatingToolbars();
     $linkProtocols = $getLinkProtocols();
     $fileAttachmentsMaxSize = $getFileAttachmentsMaxSize();
@@ -87,7 +87,11 @@
                     @foreach ($toolbarButtons as $button => $buttonGroup)
                         <div class="fi-fo-rich-editor-toolbar-group">
                             @foreach ($buttonGroup as $button)
-                                {{ $tools[$button] ?? throw new LogicException("Toolbar button [{$button}] cannot be found.") }}
+                                @if (is_string($button))
+                                    {{ $tools[$button] ?? throw new LogicException("Toolbar button [{$button}] cannot be found.") }}
+                                @else
+                                    {{ $button }}
+                                @endif
                             @endforeach
                         </div>
                     @endforeach
@@ -127,7 +131,11 @@
                             class="fi-fo-rich-editor-floating-toolbar fi-not-prose"
                         >
                             @foreach ($buttons as $button)
-                                {{ $tools[$button] }}
+                                @if (is_string($button))
+                                    {{ $tools[$button] }}
+                                @else
+                                    {{ $button }}
+                                @endif
                             @endforeach
                         </div>
                     @endforeach

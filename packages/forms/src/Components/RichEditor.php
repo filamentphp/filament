@@ -21,6 +21,7 @@ use Filament\Forms\Components\RichEditor\RichContentRenderer;
 use Filament\Forms\Components\RichEditor\RichEditorTool;
 use Filament\Forms\Components\RichEditor\StateCasts\RichEditorStateCast;
 use Filament\Forms\Components\RichEditor\TextColor;
+use Filament\Forms\Components\RichEditor\ToolbarButtonGroup;
 use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
 use Filament\Support\Colors\Color;
 use Filament\Support\Components\Attributes\ExposedLivewireMethod;
@@ -40,7 +41,9 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     use Concerns\HasExtraInputAttributes;
     use Concerns\HasFileAttachments;
     use Concerns\HasPlaceholder;
-    use Concerns\InteractsWithToolbarButtons;
+    use Concerns\InteractsWithToolbarButtons {
+        Concerns\InteractsWithToolbarButtons::getToolbarButtons as getBaseToolbarButtons;
+    }
     use HasExtraAlpineAttributes;
 
     /**
@@ -159,22 +162,48 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
                 ->jsHandler('$getEditor()?.chain().focus().toggleHeading({ level: 1 }).run()')
                 ->activeKey('heading')
                 ->activeOptions(['level' => 1])
-                ->icon(Heroicon::H1)
+                ->icon('fi-o-h1')
                 ->iconAlias('forms:components.rich-editor.toolbar.h1'),
             RichEditorTool::make('h2')
                 ->label(__('filament-forms::components.rich_editor.tools.h2'))
                 ->jsHandler('$getEditor()?.chain().focus().toggleHeading({ level: 2 }).run()')
                 ->activeKey('heading')
                 ->activeOptions(['level' => 2])
-                ->icon(Heroicon::H2)
+                ->icon('fi-o-h2')
                 ->iconAlias('forms:components.rich-editor.toolbar.h2'),
             RichEditorTool::make('h3')
                 ->label(__('filament-forms::components.rich_editor.tools.h3'))
                 ->jsHandler('$getEditor()?.chain().focus().toggleHeading({ level: 3 }).run()')
                 ->activeKey('heading')
                 ->activeOptions(['level' => 3])
-                ->icon(Heroicon::H3)
+                ->icon('fi-o-h3')
                 ->iconAlias('forms:components.rich-editor.toolbar.h3'),
+            RichEditorTool::make('paragraph')
+                ->label(__('filament-forms::components.rich_editor.tools.paragraph'))
+                ->jsHandler('$getEditor()?.chain().focus().setParagraph().run()')
+                ->icon('fi-o-paragraph')
+                ->iconAlias('forms:components.rich-editor.toolbar.paragraph'),
+            RichEditorTool::make('h4')
+                ->label(__('filament-forms::components.rich_editor.tools.h4'))
+                ->jsHandler('$getEditor()?.chain().focus().toggleHeading({ level: 4 }).run()')
+                ->activeKey('heading')
+                ->activeOptions(['level' => 4])
+                ->icon('fi-o-h4')
+                ->iconAlias('forms:components.rich-editor.toolbar.h4'),
+            RichEditorTool::make('h5')
+                ->label(__('filament-forms::components.rich_editor.tools.h5'))
+                ->jsHandler('$getEditor()?.chain().focus().toggleHeading({ level: 5 }).run()')
+                ->activeKey('heading')
+                ->activeOptions(['level' => 5])
+                ->icon('fi-o-h5')
+                ->iconAlias('forms:components.rich-editor.toolbar.h5'),
+            RichEditorTool::make('h6')
+                ->label(__('filament-forms::components.rich_editor.tools.h6'))
+                ->jsHandler('$getEditor()?.chain().focus().toggleHeading({ level: 6 }).run()')
+                ->activeKey('heading')
+                ->activeOptions(['level' => 6])
+                ->icon('fi-o-h6')
+                ->iconAlias('forms:components.rich-editor.toolbar.h6'),
             RichEditorTool::make('blockquote')
                 ->label(__('filament-forms::components.rich_editor.tools.blockquote'))
                 ->jsHandler('$getEditor()?.chain().focus().toggleBlockquote().run()')
@@ -311,21 +340,25 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
             RichEditorTool::make('alignStart')
                 ->label(__('filament-forms::components.rich_editor.tools.align_start'))
                 ->jsHandler('$getEditor()?.chain().focus().setTextAlign(\'start\').run()')
+                ->activeJsExpression('$getEditor()?.isActive({ textAlign: \'start\' })')
                 ->icon('fi-o-align-start')
                 ->iconAlias('forms:components.rich-editor.toolbar.align-start'),
             RichEditorTool::make('alignCenter')
                 ->label(__('filament-forms::components.rich_editor.tools.align_center'))
                 ->jsHandler('$getEditor()?.chain().focus().setTextAlign(\'center\').run()')
+                ->activeJsExpression('$getEditor()?.isActive({ textAlign: \'center\' })')
                 ->icon('fi-o-align-center')
                 ->iconAlias('forms:components.rich-editor.toolbar.align-center'),
             RichEditorTool::make('alignEnd')
                 ->label(__('filament-forms::components.rich_editor.tools.align_end'))
                 ->jsHandler('$getEditor()?.chain().focus().setTextAlign(\'end\').run()')
+                ->activeJsExpression('$getEditor()?.isActive({ textAlign: \'end\' })')
                 ->icon('fi-o-align-end')
                 ->iconAlias('forms:components.rich-editor.toolbar.align-end'),
             RichEditorTool::make('alignJustify')
                 ->label(__('filament-forms::components.rich_editor.tools.align_justify'))
                 ->jsHandler('$getEditor()?.chain().focus().setTextAlign(\'justify\').run()')
+                ->activeJsExpression('$getEditor()?.isActive({ textAlign: \'justify\' })')
                 ->icon('fi-o-align-justify')
                 ->iconAlias('forms:components.rich-editor.toolbar.align-justify'),
             RichEditorTool::make('grid')
@@ -671,6 +704,25 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
                 $tool->getName() => $tool->editor($this),
             ],
             initial: [],
+        );
+    }
+
+    /**
+     * @return array<array<string | ToolbarButtonGroup>>
+     */
+    public function getToolbarButtons(): array
+    {
+        $groups = $this->getBaseToolbarButtons();
+        $tools = $this->getTools();
+
+        return array_map(
+            fn (array $group): array => array_map(
+                fn (string | ToolbarButtonGroup $item): string | ToolbarButtonGroup => $item instanceof ToolbarButtonGroup
+                    ? $item->resolve($tools)
+                    : $item,
+                $group,
+            ),
+            $groups,
         );
     }
 
@@ -1029,7 +1081,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     }
 
     /**
-     * @param  array<string | array<string>> | Closure | null  $toolbars
+     * @param  array<string, array<string | ToolbarButtonGroup>> | Closure | null  $toolbars
      */
     public function floatingToolbars(array | Closure | null $toolbars): static
     {
@@ -1039,11 +1091,22 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     }
 
     /**
-     * @return array<string, array<string>>
+     * @return array<string, array<string | ToolbarButtonGroup>>
      */
     public function getFloatingToolbars(): array
     {
-        return $this->evaluate($this->floatingToolbars) ?? $this->getDefaultFloatingToolbars();
+        $toolbars = $this->evaluate($this->floatingToolbars) ?? $this->getDefaultFloatingToolbars();
+        $tools = $this->getTools();
+
+        return array_map(
+            fn (array $buttons): array => array_map(
+                fn (string | ToolbarButtonGroup $item): string | ToolbarButtonGroup => $item instanceof ToolbarButtonGroup
+                    ? $item->resolve($tools)
+                    : $item,
+                $buttons,
+            ),
+            $toolbars,
+        );
     }
 
     public function getLengthValidationRules(): array
