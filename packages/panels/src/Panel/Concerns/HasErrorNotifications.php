@@ -9,7 +9,7 @@ trait HasErrorNotifications
     protected bool | Closure $hasErrorNotifications = true;
 
     /**
-     * @var array<array{ title: string | Closure, body: string | Closure | null }>
+     * @var array<array{ title: string | Closure | null, body: string | Closure | null, isHidden: bool, isDisabled: bool }>
      */
     protected array $errorNotifications = [];
 
@@ -37,7 +37,7 @@ trait HasErrorNotifications
         return $this;
     }
 
-    public function hideErrorNotification(int $statusCode): static
+    public function hiddenErrorNotification(int $statusCode): static
     {
         $this->errorNotifications[$statusCode] = [
             'title' => null,
@@ -49,7 +49,7 @@ trait HasErrorNotifications
         return $this;
     }
 
-    public function disableErrorNotification(int $statusCode): static
+    public function disabledErrorNotification(int $statusCode): static
     {
         $this->errorNotifications[$statusCode] = [
             'title' => null,
@@ -62,7 +62,7 @@ trait HasErrorNotifications
     }
 
     /**
-     * @return array<array{ title: string | Closure, body: string | Closure | null }>
+     * @return array<array{ title: ?string, body: ?string, isHidden: bool, isDisabled: bool }>
      */
     public function getErrorNotifications(): array
     {
@@ -70,6 +70,8 @@ trait HasErrorNotifications
             fn (array $notification): array => [
                 'title' => $this->evaluate($notification['title']),
                 'body' => $this->evaluate($notification['body']),
+                'isHidden' => $notification['isHidden'],
+                'isDisabled' => $notification['isDisabled'],
             ],
             $this->errorNotifications,
         );
@@ -77,6 +79,8 @@ trait HasErrorNotifications
         $notifications[''] ??= [
             'title' => __('filament-panels::error-notifications.title'),
             'body' => __('filament-panels::error-notifications.body'),
+            'isHidden' => false,
+            'isDisabled' => false,
         ];
 
         return $notifications;

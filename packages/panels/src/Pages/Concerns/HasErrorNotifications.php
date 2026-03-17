@@ -2,7 +2,6 @@
 
 namespace Filament\Pages\Concerns;
 
-use Closure;
 use Filament\Facades\Filament;
 
 trait HasErrorNotifications
@@ -10,7 +9,7 @@ trait HasErrorNotifications
     protected ?bool $hasErrorNotifications = null;
 
     /**
-     * @var array<array{ title: string, body: ?string }>
+     * @var array<array{ title: ?string, body: ?string, isHidden: bool, isDisabled: bool }>
      */
     protected array $errorNotifications = [];
 
@@ -28,7 +27,7 @@ trait HasErrorNotifications
         return $this;
     }
 
-    public function hideErrorNotification(int $statusCode): static
+    public function hiddenErrorNotification(int $statusCode): static
     {
         $this->errorNotifications[$statusCode] = [
             'title' => null,
@@ -40,7 +39,7 @@ trait HasErrorNotifications
         return $this;
     }
 
-    public function disableErrorNotification(int $statusCode): static
+    public function disabledErrorNotification(int $statusCode): static
     {
         $this->errorNotifications[$statusCode] = [
             'title' => null,
@@ -58,7 +57,7 @@ trait HasErrorNotifications
     }
 
     /**
-     * @return array<array{ title: string, body: ?string }>
+     * @return array<array{ title: ?string, body: ?string, isHidden: bool, isDisabled: bool }>
      */
     public function getErrorNotifications(): array
     {
