@@ -8,7 +8,6 @@
         "ext-intl": "*"
     },
     "require-dev": {
-        "anourvalar/eloquent-serialize": "^1.2",
         "chillerlan/php-qrcode": "^5.0",
         "filament/support": "*",
         "larastan/larastan": "^3.0",
