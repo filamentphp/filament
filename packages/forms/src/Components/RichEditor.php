@@ -18,10 +18,10 @@ use Filament\Forms\Components\RichEditor\Plugins\Contracts\RichContentPlugin;
 use Filament\Forms\Components\RichEditor\RichContentAttribute;
 use Filament\Forms\Components\RichEditor\RichContentCustomBlock;
 use Filament\Forms\Components\RichEditor\RichContentRenderer;
-use Filament\Forms\Components\RichEditor\RichEditorDropdownTool;
 use Filament\Forms\Components\RichEditor\RichEditorTool;
 use Filament\Forms\Components\RichEditor\StateCasts\RichEditorStateCast;
 use Filament\Forms\Components\RichEditor\TextColor;
+use Filament\Forms\Components\RichEditor\ToolbarButtonGroup;
 use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
 use Filament\Support\Colors\Color;
 use Filament\Support\Components\Attributes\ExposedLivewireMethod;
@@ -41,7 +41,9 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     use Concerns\HasExtraInputAttributes;
     use Concerns\HasFileAttachments;
     use Concerns\HasPlaceholder;
-    use Concerns\InteractsWithToolbarButtons;
+    use Concerns\InteractsWithToolbarButtons {
+        Concerns\InteractsWithToolbarButtons::getToolbarButtons as getBaseToolbarButtons;
+    }
     use HasExtraAlpineAttributes;
 
     /**
@@ -338,21 +340,25 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
             RichEditorTool::make('alignStart')
                 ->label(__('filament-forms::components.rich_editor.tools.align_start'))
                 ->jsHandler('$getEditor()?.chain().focus().setTextAlign(\'start\').run()')
+                ->activeJsExpression('$getEditor()?.isActive({ textAlign: \'start\' })')
                 ->icon('fi-o-align-start')
                 ->iconAlias('forms:components.rich-editor.toolbar.align-start'),
             RichEditorTool::make('alignCenter')
                 ->label(__('filament-forms::components.rich_editor.tools.align_center'))
                 ->jsHandler('$getEditor()?.chain().focus().setTextAlign(\'center\').run()')
+                ->activeJsExpression('$getEditor()?.isActive({ textAlign: \'center\' })')
                 ->icon('fi-o-align-center')
                 ->iconAlias('forms:components.rich-editor.toolbar.align-center'),
             RichEditorTool::make('alignEnd')
                 ->label(__('filament-forms::components.rich_editor.tools.align_end'))
                 ->jsHandler('$getEditor()?.chain().focus().setTextAlign(\'end\').run()')
+                ->activeJsExpression('$getEditor()?.isActive({ textAlign: \'end\' })')
                 ->icon('fi-o-align-end')
                 ->iconAlias('forms:components.rich-editor.toolbar.align-end'),
             RichEditorTool::make('alignJustify')
                 ->label(__('filament-forms::components.rich_editor.tools.align_justify'))
                 ->jsHandler('$getEditor()?.chain().focus().setTextAlign(\'justify\').run()')
+                ->activeJsExpression('$getEditor()?.isActive({ textAlign: \'justify\' })')
                 ->icon('fi-o-align-justify')
                 ->iconAlias('forms:components.rich-editor.toolbar.align-justify'),
             RichEditorTool::make('grid')
@@ -668,7 +674,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
      */
     public function getTools(): array
     {
-        $tools = array_reduce(
+        return array_reduce(
             [
                 ...array_reduce(
                     $this->tools,
@@ -699,37 +705,25 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
             ],
             initial: [],
         );
+    }
 
-        // Create `RichEditorDropdownTool` instances from `ToolbarButtonGroup` configurations
-        foreach ($this->resolveToolbarButtonGroups() as $syntheticName => $group) {
-            $triggerTool = $tools[$group->getName()] ?? null;
+    /**
+     * @return array<array<string | ToolbarButtonGroup>>
+     */
+    public function getToolbarButtons(): array
+    {
+        $groups = $this->getBaseToolbarButtons();
+        $tools = $this->getTools();
 
-            if (! $triggerTool) {
-                continue;
-            }
-
-            $optionTools = [];
-
-            foreach ($group->getButtons() as $optionName) {
-                if (isset($tools[$optionName])) {
-                    $optionTools[] = $tools[$optionName];
-                }
-            }
-
-            if (empty($optionTools)) {
-                continue;
-            }
-
-            $tools[$syntheticName] = RichEditorDropdownTool::make($syntheticName)
-                ->icon($triggerTool->getIcon())
-                ->iconAlias($triggerTool->getIconAlias())
-                ->label($triggerTool->getLabel())
-                ->options($optionTools)
-                ->selectMode($group->hasTextualButtons())
-                ->editor($this);
-        }
-
-        return $tools;
+        return array_map(
+            fn (array $group): array => array_map(
+                fn (string | ToolbarButtonGroup $item): string | ToolbarButtonGroup => $item instanceof ToolbarButtonGroup
+                    ? $item->resolve($tools)
+                    : $item,
+                $group,
+            ),
+            $groups,
+        );
     }
 
     public function getContentAttribute(): ?RichContentAttribute
@@ -1087,7 +1081,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     }
 
     /**
-     * @param  array<string | array<string>> | Closure | null  $toolbars
+     * @param  array<string, array<string | ToolbarButtonGroup>> | Closure | null  $toolbars
      */
     public function floatingToolbars(array | Closure | null $toolbars): static
     {
@@ -1097,11 +1091,22 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     }
 
     /**
-     * @return array<string, array<string>>
+     * @return array<string, array<string | ToolbarButtonGroup>>
      */
     public function getFloatingToolbars(): array
     {
-        return $this->evaluate($this->floatingToolbars) ?? $this->getDefaultFloatingToolbars();
+        $toolbars = $this->evaluate($this->floatingToolbars) ?? $this->getDefaultFloatingToolbars();
+        $tools = $this->getTools();
+
+        return array_map(
+            fn (array $buttons): array => array_map(
+                fn (string | ToolbarButtonGroup $item): string | ToolbarButtonGroup => $item instanceof ToolbarButtonGroup
+                    ? $item->resolve($tools)
+                    : $item,
+                $buttons,
+            ),
+            $toolbars,
+        );
     }
 
     public function getLengthValidationRules(): array

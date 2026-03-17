@@ -134,7 +134,7 @@ RichEditor::make('content')
 
 ### Grouping toolbar buttons into dropdowns
 
-You may group related toolbar buttons into a dropdown menu using `ToolbarButtonGroup`. The group's name is the trigger button (used for the dropdown's icon and label), and `buttons()` defines the options shown in the dropdown:
+You may group related toolbar buttons into a dropdown menu using `ToolbarButtonGroup`. The first argument is a label used for the dropdown's tooltip and accessibility, and the second argument is an array of button names to include in the dropdown:
 
 ```php
 use Filament\Forms\Components\RichEditor;
@@ -143,20 +143,36 @@ use Filament\Forms\Components\RichEditor\ToolbarButtonGroup;
 RichEditor::make('content')
     ->toolbarButtons([
         ['bold', 'italic', 'underline', 'strike'],
-        [ToolbarButtonGroup::make('paragraph')->buttons(['paragraph', 'h1', 'h2', 'h3'])],
-        [ToolbarButtonGroup::make('alignStart')->buttons(['alignStart', 'alignCenter', 'alignEnd', 'alignJustify'])],
+        [ToolbarButtonGroup::make('Paragraph', ['paragraph', 'h1', 'h2', 'h3'])],
+        [ToolbarButtonGroup::make('Alignment', ['alignStart', 'alignCenter', 'alignEnd', 'alignJustify'])],
         ['blockquote', 'codeBlock', 'bulletList', 'orderedList'],
         ['undo', 'redo'],
     ])
 ```
 
-In this example, the `paragraph` and `alignStart` buttons become dropdown triggers. Clicking on them reveals the nested options as icons.
+By default, the first button's icon is used as the dropdown trigger, and it updates reactively to reflect the currently active button. Clicking on the trigger reveals the grouped buttons.
 
-When options are disabled using `disableToolbarButtons()`, the dropdown automatically adjusts. If only one option remains, the dropdown collapses back into a plain button. If the trigger itself is disabled, the entire dropdown is removed.
+You can set a fixed icon for the dropdown trigger using the `icon()` method. When a custom icon is set, the trigger icon remains static and does not change based on the active button:
+
+```php
+use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\RichEditor\ToolbarButtonGroup;
+
+RichEditor::make('content')
+    ->toolbarButtons([
+        ['bold', 'italic', 'underline', 'strike'],
+        [ToolbarButtonGroup::make('Heading', ['h1', 'h2', 'h3'])->icon('fi-o-heading')],
+        [ToolbarButtonGroup::make('Alignment', ['alignStart', 'alignCenter', 'alignEnd', 'alignJustify'])],
+        ['blockquote', 'codeBlock', 'bulletList', 'orderedList'],
+        ['undo', 'redo'],
+    ])
+```
+
+When buttons are disabled using `disableToolbarButtons()`, the dropdown automatically adjusts. If only one button remains, the dropdown collapses back into a plain button. If all buttons are disabled, the entire dropdown is removed. You can also disable an entire group by its label (e.g., `disableToolbarButtons(['Alignment'])`).
 
 ### Using textual dropdown toolbar buttons
 
-By default, dropdown toolbar buttons display icons. If you'd prefer a text-label dropdown that resembles a select input (showing labels like "Paragraph", "Heading 1", etc.), you can use the `textualButtons()` method on a `ToolbarButtonGroup`:
+By default, dropdown toolbar buttons display icons only. If you'd like to show text labels alongside icons in the dropdown items, you can use the `textualButtons()` method on a `ToolbarButtonGroup`:
 
 ```php
 use Filament\Forms\Components\RichEditor;
@@ -165,14 +181,14 @@ use Filament\Forms\Components\RichEditor\ToolbarButtonGroup;
 RichEditor::make('content')
     ->toolbarButtons([
         ['bold', 'italic', 'underline', 'strike', 'link'],
-        [ToolbarButtonGroup::make('paragraph')->buttons(['paragraph', 'h1', 'h2', 'h3'])->textualButtons()],
-        [ToolbarButtonGroup::make('alignStart')->buttons(['alignStart', 'alignCenter', 'alignEnd', 'alignJustify'])],
+        [ToolbarButtonGroup::make('Paragraph', ['paragraph', 'h1', 'h2', 'h3'])->textualButtons()],
+        [ToolbarButtonGroup::make('Alignment', ['alignStart', 'alignCenter', 'alignEnd', 'alignJustify'])],
         ['blockquote', 'codeBlock', 'bulletList', 'orderedList'],
         ['undo', 'redo'],
     ])
 ```
 
-In this example, the `paragraph` dropdown displays text labels ("Paragraph", "Heading 1", etc.) and updates the trigger label to match the currently active option. The `alignStart` dropdown remains icon-based.
+In this example, the `Paragraph` dropdown items display their icon alongside a text label (e.g., "Paragraph", "Heading 1"). The `Alignment` dropdown remains icon-only.
 
 ## Customizing text colors
 

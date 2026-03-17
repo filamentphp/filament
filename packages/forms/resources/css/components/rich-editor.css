@@ -21,6 +21,10 @@
 
     & .fi-fo-rich-editor-dropdown-tool-trigger {
         @apply flex h-8 cursor-pointer items-center justify-center gap-0.5 rounded-lg border-none bg-transparent px-1 text-sm font-semibold text-gray-700 transition duration-75 outline-none hover:bg-gray-50 focus-visible:bg-gray-50 dark:text-gray-200 dark:hover:bg-white/5 dark:focus-visible:bg-white/5;
+
+        &.fi-active {
+            @apply text-primary-600 dark:text-primary-400 bg-gray-50 dark:bg-white/5;
+        }
     }
 
     & .fi-fo-rich-editor-dropdown-tool-chevron {
@@ -39,17 +43,13 @@
         }
     }
 
-    & .fi-fo-rich-editor-dropdown-tool-select {
-        & .fi-fo-rich-editor-dropdown-tool-trigger {
-            @apply min-w-26 justify-between px-1.5 text-[0.8125rem] font-normal;
-        }
-
+    & .fi-fo-rich-editor-dropdown-tool-textual {
         & .fi-fo-rich-editor-dropdown-tool-menu {
             @apply min-w-32 flex-col;
         }
 
         & .fi-fo-rich-editor-dropdown-tool-option {
-            @apply min-w-0 justify-start px-2 py-1 text-[0.8125rem] font-normal whitespace-nowrap;
+            @apply min-w-0 justify-start gap-2 px-2 py-1 text-[0.8125rem] font-normal whitespace-nowrap;
         }
     }
 

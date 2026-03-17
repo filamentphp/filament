@@ -4,13 +4,12 @@ namespace Filament\Forms\Components\Concerns;
 
 use Closure;
 use Exception;
-use Filament\Forms\Components\RichEditor\ToolbarButtonGroup;
 use LogicException;
 
 trait InteractsWithToolbarButtons
 {
     /**
-     * @var array<int, string | ToolbarButtonGroup | array<int, string | ToolbarButtonGroup>> | Closure | null
+     * @var array<int, string | object | array<int, string | object>> | Closure | null
      */
     protected array | Closure | null $toolbarButtons = null;
 
@@ -20,7 +19,7 @@ trait InteractsWithToolbarButtons
     protected array $toolbarButtonsModifications = [];
 
     /**
-     * @var array<int, string | ToolbarButtonGroup | array<int, string | ToolbarButtonGroup>> | null
+     * @var array<int, string | object | array<int, string | object>> | null
      */
     protected ?array $cachedModifiedToolbarButtons = null;
 
@@ -54,7 +53,7 @@ trait InteractsWithToolbarButtons
     }
 
     /**
-     * @param  array<string | ToolbarButtonGroup | array<string | ToolbarButtonGroup>>  $buttonsToEnable
+     * @param  array<string | object | array<string | object>>  $buttonsToEnable
      */
     public function enableToolbarButtons(array $buttonsToEnable = []): static
     {
@@ -73,7 +72,7 @@ trait InteractsWithToolbarButtons
     }
 
     /**
-     * @param  array<int, string | ToolbarButtonGroup | array<int, string | ToolbarButtonGroup>> | Closure | null  $buttons
+     * @param  array<int, string | object | array<int, string | object>> | Closure | null  $buttons
      */
     public function toolbarButtons(array | Closure | null $buttons): static
     {
@@ -85,9 +84,7 @@ trait InteractsWithToolbarButtons
     }
 
     /**
-     * Apply all queued modifications to the toolbar buttons and return the cached result.
-     *
-     * @return array<int, string | ToolbarButtonGroup | array<int, string | ToolbarButtonGroup>>
+     * @return array<int, string | object | array<int, string | object>>
      */
     protected function getModifiedToolbarButtons(): array
     {
@@ -114,24 +111,18 @@ trait InteractsWithToolbarButtons
     }
 
     /**
-     * @return array<array<string>>
+     * @return array<array<string | object>>
      */
     public function getToolbarButtons(): array
     {
         $buttons = $this->getModifiedToolbarButtons();
 
-        // Group the buttons, replacing `ToolbarButtonGroup` instances with synthetic names
+        // Group consecutive non-array items together; arrays become their own groups
         $toolbar = [];
         $newButtonGroup = [];
 
         foreach ($buttons as $buttonGroup) {
             if (blank($buttonGroup)) {
-                continue;
-            }
-
-            if ($buttonGroup instanceof ToolbarButtonGroup) {
-                $newButtonGroup[] = $buttonGroup->getSyntheticName();
-
                 continue;
             }
 
@@ -141,24 +132,13 @@ trait InteractsWithToolbarButtons
                 continue;
             }
 
-            // Process group array, replacing `ToolbarButtonGroup` instances within groups
-            $processedGroup = [];
-
-            foreach ($buttonGroup as $item) {
-                if ($item instanceof ToolbarButtonGroup) {
-                    $processedGroup[] = $item->getSyntheticName();
-                } else {
-                    $processedGroup[] = $item;
-                }
-            }
-
             if (filled($newButtonGroup)) {
                 $toolbar[] = $newButtonGroup;
                 $newButtonGroup = [];
             }
 
-            if (filled($processedGroup)) {
-                $toolbar[] = $processedGroup;
+            if (filled($buttonGroup)) {
+                $toolbar[] = $buttonGroup;
             }
         }
 
@@ -170,50 +150,17 @@ trait InteractsWithToolbarButtons
     }
 
     /**
-     * Resolve all `ToolbarButtonGroup` instances from the (modified) toolbar buttons.
-     *
-     * @return array<string, ToolbarButtonGroup>
-     */
-    public function resolveToolbarButtonGroups(): array
-    {
-        $groups = [];
-
-        foreach ($this->getModifiedToolbarButtons() as $buttonGroup) {
-            if ($buttonGroup instanceof ToolbarButtonGroup) {
-                $groups[$buttonGroup->getSyntheticName()] = $buttonGroup;
-
-                continue;
-            }
-
-            if (is_array($buttonGroup)) {
-                foreach ($buttonGroup as $item) {
-                    if ($item instanceof ToolbarButtonGroup) {
-                        $groups[$item->getSyntheticName()] = $item;
-                    }
-                }
-            }
-        }
-
-        return $groups;
-    }
-
-    /**
-     * @param  array<int, string | ToolbarButtonGroup | array<int, string | ToolbarButtonGroup>>  $buttons
+     * @param  array<int, string | object | array<int, string | object>>  $buttons
      * @param  array<string>  $buttonsToDisable
-     * @return array<int, string | ToolbarButtonGroup | array<int, string | ToolbarButtonGroup>>
+     * @return array<int, string | object | array<int, string | object>>
      */
     protected function applyDisableToolbarButtonsModification(array $buttons, array $buttonsToDisable): array
     {
         $modified = [];
 
         foreach ($buttons as $button) {
-            // Handle `ToolbarButtonGroup` at top level
-            if ($button instanceof ToolbarButtonGroup) {
-                $filtered = $this->filterToolbarButtonGroup($button, $buttonsToDisable);
-
-                if ($filtered !== null) {
-                    $modified[] = $filtered;
-                }
+            if (is_object($button)) {
+                $modified[] = $button;
 
                 continue;
             }
@@ -222,13 +169,8 @@ trait InteractsWithToolbarButtons
                 $filteredGroup = [];
 
                 foreach ($button as $item) {
-                    // Handle `ToolbarButtonGroup` inside a group
-                    if ($item instanceof ToolbarButtonGroup) {
-                        $filtered = $this->filterToolbarButtonGroup($item, $buttonsToDisable);
-
-                        if ($filtered !== null) {
-                            $filteredGroup[] = $filtered;
-                        }
+                    if (is_object($item)) {
+                        $filteredGroup[] = $item;
 
                         continue;
                     }
@@ -251,40 +193,6 @@ trait InteractsWithToolbarButtons
         }
 
         return $modified;
-    }
-
-    /**
-     * Filter a `ToolbarButtonGroup` by removing disabled buttons.
-     *
-     * Returns `null` if the group should be removed entirely, a plain `string` if
-     * only one option remains, or a cloned `ToolbarButtonGroup` with filtered buttons.
-     *
-     * @param  array<string>  $buttonsToDisable
-     */
-    protected function filterToolbarButtonGroup(ToolbarButtonGroup $group, array $buttonsToDisable): ToolbarButtonGroup | string | null
-    {
-        // If the trigger name is disabled, remove the whole group
-        if (in_array($group->getName(), $buttonsToDisable)) {
-            return null;
-        }
-
-        $filteredButtons = array_values(array_filter(
-            $group->getButtons(),
-            static fn (string $button): bool => ! in_array($button, $buttonsToDisable),
-        ));
-
-        if (count($filteredButtons) === 0) {
-            return null;
-        }
-
-        if (count($filteredButtons) === 1) {
-            return $filteredButtons[0];
-        }
-
-        $newGroup = clone $group;
-        $newGroup->buttons($filteredButtons);
-
-        return $newGroup;
     }
 
     /**
@@ -311,37 +219,17 @@ trait InteractsWithToolbarButtons
         $buttonsToCheck = is_array($button) ? $button : [$button];
 
         foreach ($this->getModifiedToolbarButtons() as $item) {
-            if ($this->toolbarItemMatchesButtons($item, $buttonsToCheck)) {
+            if (is_string($item) && in_array($item, $buttonsToCheck)) {
                 return true;
             }
 
             if (is_array($item)) {
                 foreach ($item as $innerItem) {
-                    if ($this->toolbarItemMatchesButtons($innerItem, $buttonsToCheck)) {
+                    if (is_string($innerItem) && in_array($innerItem, $buttonsToCheck)) {
                         return true;
                     }
                 }
             }
-        }
-
-        return false;
-    }
-
-    /**
-     * Check if a single toolbar item (string or `ToolbarButtonGroup`) matches any of the given button names.
-     *
-     * @param  string | ToolbarButtonGroup | array<int, string | ToolbarButtonGroup>  $item
-     * @param  array<string>  $buttonsToCheck
-     */
-    protected function toolbarItemMatchesButtons(string | ToolbarButtonGroup | array $item, array $buttonsToCheck): bool
-    {
-        if ($item instanceof ToolbarButtonGroup) {
-            return in_array($item->getName(), $buttonsToCheck)
-                || (bool) array_intersect($buttonsToCheck, $item->getButtons());
-        }
-
-        if (is_string($item)) {
-            return in_array($item, $buttonsToCheck);
         }
 
         return false;
