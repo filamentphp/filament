@@ -399,7 +399,6 @@ test('`fileAttachments(true)` does not force `attachFiles` button to appear when
         ->and($richEditor->hasToolbarButton('attachFiles'))->toBeFalse();
 });
 
-
 test('plugin implementing `HasToolbarButtons` can enable toolbar buttons', function (): void {
     $richEditor = Schema::make(Livewire::make())
         ->statePath('data')
