@@ -459,7 +459,7 @@ Repeater::make('variants')
     })
 ```
 
-<UtilityInjection set="formFields" version="4.x" extras="Data;;array<string, mixed>;;$data;;The data that was used to create the record.||Record;;Illuminate\Database\Eloquent\Model;;$record;;The newly created record.">You can inject various utilities into the function passed to `afterCreate()` as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="5.x" extras="Data;;array<string, mixed>;;$data;;The data that was used to create the record.||Record;;Illuminate\Database\Eloquent\Model;;$record;;The newly created record.">You can inject various utilities into the function passed to `afterCreate()` as parameters.</UtilityInjection>
 
 ### Running code after updating a related item
 
@@ -481,7 +481,7 @@ Repeater::make('variants')
     })
 ```
 
-<UtilityInjection set="formFields" version="4.x" extras="Data;;array<string, mixed>;;$data;;The data that was used to update the record.||Record;;Illuminate\Database\Eloquent\Model;;$record;;The updated record.">You can inject various utilities into the function passed to `afterUpdate()` as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="5.x" extras="Data;;array<string, mixed>;;$data;;The data that was used to update the record.||Record;;Illuminate\Database\Eloquent\Model;;$record;;The updated record.">You can inject various utilities into the function passed to `afterUpdate()` as parameters.</UtilityInjection>
 
 ### Running code after deleting a related item
 
@@ -502,7 +502,7 @@ Repeater::make('attachments')
     })
 ```
 
-<UtilityInjection set="formFields" version="4.x" extras="Record;;Illuminate\Database\Eloquent\Model;;$record;;The record that was just deleted.">You can inject various utilities into the function passed to `afterDelete()` as parameters.</UtilityInjection>
+<UtilityInjection set="formFields" version="5.x" extras="Record;;Illuminate\Database\Eloquent\Model;;$record;;The record that was just deleted.">You can inject various utilities into the function passed to `afterDelete()` as parameters.</UtilityInjection>
 
 ### Modifying related records after retrieval
 

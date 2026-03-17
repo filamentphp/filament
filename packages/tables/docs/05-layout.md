@@ -49,9 +49,9 @@ public function table(Table $table): Table
 }
 ```
 
-<AutoScreenshot name="tables/layout/stacked-on-mobile" alt="Table with stacked mobile layout on desktop" version="4.x" />
+<AutoScreenshot name="tables/layout/stacked-on-mobile" alt="Table with stacked mobile layout on desktop" version="5.x" />
 
-<AutoScreenshot name="tables/layout/stacked-on-mobile/mobile" alt="Table with stacked mobile layout on mobile" version="4.x" />
+<AutoScreenshot name="tables/layout/stacked-on-mobile/mobile" alt="Table with stacked mobile layout on mobile" version="5.x" />
 
 On mobile, each row displays as a card with the column label above its value. If you have sortable columns, a sort dropdown appears at the top of the table on mobile, allowing users to sort without the traditional header row. Bulk selection is also supported, with a checkbox appearing in the header area.
 
