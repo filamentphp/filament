@@ -135,8 +135,8 @@ return [
             'is_year' => [
 
                 'label' => [
-                    'direct' => "És a l'any",
-                    'inverse' => "No és a l'any",
+                    'direct' => 'És a l\'any',
+                    'inverse' => 'No és a l\'any',
                 ],
 
                 'summary' => [
@@ -144,6 +144,50 @@ return [
                     'inverse' => ':attribute no és al :year',
                 ],
 
+            ],
+
+            'unit_labels' => [
+                'second' => 'Segons',
+                'minute' => 'Minuts',
+                'hour' => 'Hores',
+                'day' => 'Dies',
+                'week' => 'Setmanes',
+                'month' => 'Mesos',
+                'quarter' => 'Trimestres',
+                'year' => 'Anys',
+            ],
+
+            'presets' => [
+                'past_decade' => 'Última dècada',
+                'past_5_years' => 'Últims 5 anys',
+                'past_2_years' => 'Últims 2 anys',
+                'past_year' => 'Últim any',
+                'past_6_months' => 'Últims 6 mesos',
+                'past_quarter' => 'Últim trimestre',
+                'past_month' => 'Últim mes',
+                'past_2_weeks' => 'Últimes 2 setmanes',
+                'past_week' => 'Última setmana',
+                'past_hour' => 'Última hora',
+                'past_minute' => 'Últim minut',
+                'this_decade' => 'Aquesta dècada',
+                'this_year' => 'Aquest any',
+                'this_quarter' => 'Aquest trimestre',
+                'this_month' => 'Aquest mes',
+                'today' => 'Avui',
+                'this_hour' => 'Aquesta hora',
+                'this_minute' => 'Aquest minut',
+                'next_minute' => 'Pròxim minut',
+                'next_hour' => 'Pròxima hora',
+                'next_week' => 'Pròxima setmana',
+                'next_2_weeks' => 'Pròximes 2 setmanes',
+                'next_month' => 'Pròxim mes',
+                'next_quarter' => 'Pròxim trimestre',
+                'next_6_months' => 'Pròxims 6 mesos',
+                'next_year' => 'Pròxim any',
+                'next_2_years' => 'Pròxims 2 anys',
+                'next_5_years' => 'Pròxims 5 anys',
+                'next_decade' => 'Pròxima dècada',
+                'custom' => 'Personalitzat',
             ],
 
             'form' => [
@@ -158,6 +202,40 @@ return [
 
                 'year' => [
                     'label' => 'Any',
+                ],
+
+                'mode' => [
+
+                    'label' => 'Tipus de data',
+
+                    'options' => [
+                        'absolute' => 'Data específica',
+                        'relative' => 'Finestra ajustable',
+                    ],
+
+                ],
+
+                'preset' => [
+                    'label' => 'Període de temps',
+                ],
+
+                'relative_value' => [
+                    'label' => 'Quantitat',
+                ],
+
+                'relative_unit' => [
+                    'label' => 'Unitat de temps',
+                ],
+
+                'tense' => [
+
+                    'label' => 'Temps',
+
+                    'options' => [
+                        'past' => 'Passat',
+                        'future' => 'Futur',
+                    ],
+
                 ],
 
             ],
@@ -470,11 +548,11 @@ return [
     'actions' => [
 
         'add_rule' => [
-            'label' => 'Agregar regla',
+            'label' => 'Afegir regla',
         ],
 
         'add_rule_group' => [
-            'label' => 'Agregar grup de regles',
+            'label' => 'Afegir grup de regles',
         ],
 
     ],

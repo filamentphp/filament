@@ -41,6 +41,10 @@ return [
                             'title' => 'Vi har skickat dig en ny kod via mejl',
                         ],
 
+                        'throttled' => [
+                            'title' => 'För många försök inom begränsad tidsintervall. Vänta innan du begär en ny kod.',
+                        ],
+
                     ],
 
                 ],

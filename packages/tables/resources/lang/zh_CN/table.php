@@ -30,6 +30,8 @@ return [
 
             'loading_message' => '加载中...',
 
+            'no_options_message' => '没有可用选项。',
+
             'no_search_results_message' => '无匹配选项',
 
             'placeholder' => '请选择',

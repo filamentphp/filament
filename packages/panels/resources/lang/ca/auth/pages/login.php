@@ -22,7 +22,7 @@ return [
     'form' => [
 
         'email' => [
-            'label' => 'Adreça de correu electrònic',
+            'label' => 'Email',
         ],
 
         'password' => [
@@ -36,7 +36,31 @@ return [
         'actions' => [
 
             'authenticate' => [
-                'label' => 'Accedir',
+                'label' => 'Entrar',
+            ],
+
+        ],
+
+    ],
+
+    'multi_factor' => [
+
+        'heading' => 'Verifica la teva identitat',
+
+        'subheading' => 'Per continuar amb l\'inici de sessió, has de verificar la teva identitat.',
+
+        'form' => [
+
+            'provider' => [
+                'label' => 'Com vols verificar-te?',
+            ],
+
+            'actions' => [
+
+                'authenticate' => [
+                    'label' => 'Confirmar inici de sessió',
+                ],
+
             ],
 
         ],
