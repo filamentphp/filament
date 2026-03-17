@@ -87,7 +87,7 @@ trait EloquentBuilderGrammar
                 continue;
             }
 
-            $value = function ($query) use ($value) {
+            $value = function ($query) use ($value): void {
                 if (isset($value['extra']) && $query instanceof Relation) {
                     $this->setExtraRelationParameters($query, $value['extra']);
                 }

@@ -128,7 +128,7 @@ trait ModelGrammar
                     continue;
                 }
 
-                $item = function ($query) use ($item) {
+                $item = function ($query) use ($item): void {
                     if ($query instanceof Builder) {
                         $this->unpackEloquentBuilder($item['eloquent'], $query);
                         $this->unpackQueryBuilder($item['builder'], $query->getQuery());
