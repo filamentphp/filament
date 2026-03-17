@@ -517,9 +517,9 @@ use Filament\Pages\Dashboard as BaseDashboard;
 class Dashboard extends BaseDashboard
 {
     protected ?bool $hasErrorNotifications = true;
-    
+
     // or
-    
+
     protected ?bool $hasErrorNotifications = false;
 
     // ...
@@ -574,7 +574,7 @@ class Dashboard extends BaseDashboard
             title: 'An error occurred',
             body: 'Please try again later.',
         );
-    
+
         $this->registerErrorNotification(
             title: 'Record not found',
             body: 'A record you are looking for does not exist.',
