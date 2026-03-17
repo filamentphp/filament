@@ -73,6 +73,9 @@ Each nested array in the main array represents a group of buttons in the toolbar
 Additional tools available in the toolbar include:
 
 - `h1` - Applies the "h1" tag to the text.
+- `h4` - Applies the "h4" tag to the text.
+- `h5` - Applies the "h5" tag to the text.
+- `h6` - Applies the "h6" tag to the text.
 - `alignJustify` - Justifies the text.
 - `clearFormatting` - Clears all formatting from the selected text.
 - `details` - Inserts a `<details>` tag, which allows users to create collapsible sections in their content.

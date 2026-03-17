@@ -10,4 +10,20 @@ return [
 
     ],
 
+    'filters' => [
+
+        'actions' => [
+
+            'apply' => [
+                'label' => 'Tillämpa',
+            ],
+
+            'reset' => [
+                'label' => 'Återställ',
+            ],
+
+        ],
+
+    ],
+
 ];

@@ -163,7 +163,7 @@
 
             & > tr {
                 & > th {
-                    @apply border-gray-200 bg-gray-50 px-3 py-2 text-sm font-semibold text-gray-950 first-of-type:rounded-tl-xl last-of-type:rounded-tr-xl dark:border-white/5 dark:bg-white/5 dark:text-white [&:not(:first-of-type)]:border-s [&:not(:last-of-type)]:border-e;
+                    @apply border-gray-200 bg-gray-50 px-3 py-2 text-sm font-semibold text-gray-950 first-of-type:rounded-ss-xl last-of-type:rounded-se-xl dark:border-white/5 dark:bg-white/5 dark:text-white [&:not(:first-of-type)]:border-s [&:not(:last-of-type)]:border-e;
 
                     &.fi-align-start,
                     &.fi-align-left {
@@ -265,6 +265,10 @@
                         & .fi-in-entry-label {
                             @apply @xl:hidden;
                         }
+
+                        & .fi-fo-toggle-buttons-wrp .fi-fo-field-content-col {
+                            @apply @xl:auto-cols-[1fr];
+                        }
                     }
                 }
             }
@@ -338,6 +342,10 @@
 
                         & .fi-in-entry-label {
                             @apply lg:hidden;
+                        }
+
+                        & .fi-fo-toggle-buttons-wrp .fi-fo-field-content-col {
+                            @apply lg:auto-cols-[1fr];
                         }
                     }
                 }

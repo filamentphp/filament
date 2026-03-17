@@ -319,7 +319,7 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
             'size' => $this->getSize(),
             'tooltip' => $this->getTooltip(),
             'triggerView' => $this->getTriggerView(),
-            'view' => $this->getView(),
+            'view' => $this->hasView() ? $this->getView() : null,
         ];
     }
 

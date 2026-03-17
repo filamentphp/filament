@@ -120,6 +120,12 @@ if (! function_exists('Filament\Support\is_app_url')) {
             return true;
         }
 
+        $scheme = parse_url($url, PHP_URL_SCHEME);
+
+        if ($scheme && (! in_array($scheme, ['http', 'https'], strict: true))) {
+            return false;
+        }
+
         $urlHost = parse_url($url, PHP_URL_HOST);
 
         return (! $urlHost) || $urlHost === request()->getHost();
@@ -133,7 +139,7 @@ if (! function_exists('Filament\Support\generate_href_html')) {
             return new HtmlString('');
         }
 
-        $html = "href=\"{$url}\"";
+        $html = 'href="' . e($url) . '"';
 
         if ($shouldOpenInNewTab) {
             $html .= ' target="_blank"';
@@ -141,7 +147,7 @@ if (! function_exists('Filament\Support\generate_href_html')) {
             if (FilamentView::hasSpaPrefetching()) {
                 $html .= ' wire:navigate.hover';
             } elseif ($hasNestedClickEventHandler) {
-                $html .= ' x-on:click="if (! ($event.altKey || $event.ctrlKey || $event.metaKey || $event.shiftKey)) { $event.preventDefault(); Alpine.navigate(' . "'{$url}'" . ') }"';
+                $html .= ' x-on:click="if (! ($event.altKey || $event.ctrlKey || $event.metaKey || $event.shiftKey)) { $event.preventDefault(); Alpine.navigate($el.getAttribute(\'href\')) }"';
             } else {
                 $html .= ' wire:navigate';
             }

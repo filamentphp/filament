@@ -26,7 +26,7 @@
     $suffixIconColor = $getSuffixIconColor();
     $suffixLabel = $getSuffixLabel();
     $statePath = $getStatePath();
-    $state = $getState();
+    $state = $getRawState();
     $livewireKey = $getLivewireKey();
 @endphp
 
@@ -189,6 +189,7 @@
                 wire:key="{{ $livewireKey }}.{{
                     substr(md5(serialize([
                         $isDisabled,
+                        $isReorderable,
                     ])), 0, 64)
                 }}"
                 x-on:keydown.esc="select.dropdown.isActive && $event.stopPropagation()"

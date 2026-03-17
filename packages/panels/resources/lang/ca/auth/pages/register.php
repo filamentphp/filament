@@ -18,7 +18,7 @@ return [
     'form' => [
 
         'email' => [
-            'label' => 'Adreça de correu electrònic',
+            'label' => 'Email',
         ],
 
         'name' => [

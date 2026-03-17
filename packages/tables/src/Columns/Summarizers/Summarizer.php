@@ -202,12 +202,12 @@ class Summarizer extends ViewComponent implements HasEmbeddedView
         <div <?= $attributes->toHtml() ?>>
             <?php if (filled($label = $this->getLabel())) { ?>
                 <span class="fi-ta-text-summary-label">
-                    <?= $label ?>
+                    <?= e($label) ?>
                 </span>
             <?php } ?>
 
             <span>
-                <?= $this->formatState($this->getState()) ?>
+                <?= e($this->formatState($this->getState())) ?>
             </span>
         </div>
 
