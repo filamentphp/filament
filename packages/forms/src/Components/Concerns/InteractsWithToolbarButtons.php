@@ -18,16 +18,10 @@ trait InteractsWithToolbarButtons
      */
     protected array $toolbarButtonsModifications = [];
 
-    /**
-     * @var array<int, string | object | array<int, string | object>> | null
-     */
-    protected ?array $cachedModifiedToolbarButtons = null;
-
     public function disableAllToolbarButtons(bool $condition = true): static
     {
         if ($condition) {
             $this->toolbarButtonsModifications[] = ['type' => 'disableAll'];
-            $this->cachedModifiedToolbarButtons = null;
         }
 
         return $this;
@@ -47,8 +41,6 @@ trait InteractsWithToolbarButtons
             'buttons' => $buttonsToDisable,
         ];
 
-        $this->cachedModifiedToolbarButtons = null;
-
         return $this;
     }
 
@@ -66,8 +58,6 @@ trait InteractsWithToolbarButtons
             'buttons' => $buttonsToEnable,
         ];
 
-        $this->cachedModifiedToolbarButtons = null;
-
         return $this;
     }
 
@@ -78,20 +68,15 @@ trait InteractsWithToolbarButtons
     {
         $this->toolbarButtons = $buttons;
         $this->toolbarButtonsModifications = [];
-        $this->cachedModifiedToolbarButtons = null;
 
         return $this;
     }
 
     /**
-     * @return array<int, string | object | array<int, string | object>>
+     * @return array<array<string | object>>
      */
-    protected function getModifiedToolbarButtons(): array
+    public function getToolbarButtons(): array
     {
-        if ($this->cachedModifiedToolbarButtons !== null) {
-            return $this->cachedModifiedToolbarButtons;
-        }
-
         $buttons = $this->evaluate($this->toolbarButtons) ?? $this->getDefaultToolbarButtons(); /** @phpstan-ignore method.notFound */
 
         // Extra modifications (e.g. from plugins) are applied first,
@@ -106,16 +91,6 @@ trait InteractsWithToolbarButtons
                 default => throw new Exception('Unknown toolbar buttons modification type: [' . $modification['type'] . '].'),
             };
         }
-
-        return $this->cachedModifiedToolbarButtons = $buttons;
-    }
-
-    /**
-     * @return array<array<string | object>>
-     */
-    public function getToolbarButtons(): array
-    {
-        $buttons = $this->getModifiedToolbarButtons();
 
         // Group consecutive non-array items together; arrays become their own groups
         $toolbar = [];
@@ -218,7 +193,7 @@ trait InteractsWithToolbarButtons
     {
         $buttonsToCheck = is_array($button) ? $button : [$button];
 
-        foreach ($this->getModifiedToolbarButtons() as $item) {
+        foreach ($this->getToolbarButtons() as $item) {
             if (is_string($item) && in_array($item, $buttonsToCheck)) {
                 return true;
             }
