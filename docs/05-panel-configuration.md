@@ -489,9 +489,9 @@ public function panel(Panel $panel): Panel
 }
 ```
 
-You may also choose to hide a notification for a specific HTTP status code, such as `403`, by passing that status code to the `hiddenErrorNotification` method. A hidden status code will still be caught by filament, but no notification will be shown.
+You may also choose to hide a notification for a specific HTTP status code, such as `403`, by passing that status code to the `hiddenErrorNotification()` method. A hidden status code will still be caught by filament, but no notification will be shown.
 
-Alternatively, you can use the `disabledErrorNotification` method to fall back to Livewire's built-in error handling for that status code. This is useful if you want to hook into the Livewire error handling system to customize the error handling behavior for a specific status code but maintain Filament's error notification system for everything else.
+Alternatively, you can use the `disabledErrorNotification()` method to fall back to Livewire's built-in error handling for that status code. This is useful if you want to hook into the Livewire error handling system to customize the error handling behavior for a specific status code but maintain Filament's error notification system for everything else.
 
 ```php
 use Filament\Panel;
@@ -586,9 +586,9 @@ class Dashboard extends BaseDashboard
 }
 ```
 
-You may also choose to hide a notification for a specific HTTP status code, such as `403`, by passing that status code to the `hiddenErrorNotification` method. A hidden status code will still be caught by filament, but no notification will be shown.
+You may also choose to hide a notification for a specific HTTP status code, such as `403`, by passing that status code to the `hiddenErrorNotification()` method. A hidden status code will still be caught by filament, but no notification will be shown.
 
-Alternatively, you can use the `disabledErrorNotification` method to fall back to Livewire's built-in error handling for that status code. This is useful if you want to hook into the Livewire error handling system to customize the error handling behavior for a specific status code but maintain Filament's error notification system for everything else.
+Alternatively, you can use the `disabledErrorNotification()` method to fall back to Livewire's built-in error handling for that status code. This is useful if you want to hook into the Livewire error handling system to customize the error handling behavior for a specific status code but maintain Filament's error notification system for everything else.
 
 ```php
 use Filament\Pages\Dashboard as BaseDashboard;
