@@ -24,7 +24,7 @@
     {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_START, scopes: $this->getRenderHookScopes()) }}
 
     <div class="fi-page-header-main-ctn">
-        @if ($subNavigation)
+        @if ($subNavigation && $subNavigationPosition !== SubNavigationPosition::Top)
             <div
                 class="fi-page-main-sub-navigation-mobile-menu-render-hook-ctn"
             >
@@ -91,9 +91,13 @@
                 @if ($subNavigationPosition === SubNavigationPosition::Top)
                     {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_SUB_NAVIGATION_TOP_BEFORE, scopes: $this->getRenderHookScopes()) }}
 
+                    {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_SUB_NAVIGATION_MOBILE_MENU_BEFORE, scopes: $this->getRenderHookScopes()) }}
+
                     <x-filament-panels::page.sub-navigation.tabs
                         :navigation="$subNavigation"
                     />
+
+                    {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_SUB_NAVIGATION_MOBILE_MENU_AFTER, scopes: $this->getRenderHookScopes()) }}
 
                     {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_SUB_NAVIGATION_TOP_AFTER, scopes: $this->getRenderHookScopes()) }}
                 @endif
