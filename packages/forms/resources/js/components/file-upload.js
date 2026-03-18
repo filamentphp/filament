@@ -106,6 +106,8 @@ export default function fileUploadFormComponent({
 
         visibilityObserver: null,
 
+        intersectionObserver: null,
+
         isInitializing: false,
 
         async init() {
@@ -117,8 +119,9 @@ export default function fileUploadFormComponent({
 
             // https://github.com/filamentphp/filament/issues/15394
             // https://github.com/filamentphp/filament/issues/16253
+            // https://github.com/filamentphp/filament/issues/19522
             if (!this.visibilityObserver) {
-                this.visibilityObserver = new ResizeObserver(() => {
+                const onVisible = () => {
                     const isHidden =
                         this.$el.offsetParent === null ||
                         getComputedStyle(this.$el).visibility === 'hidden'
@@ -132,9 +135,20 @@ export default function fileUploadFormComponent({
                     } else {
                         document.dispatchEvent(new Event('visibilitychange'))
                     }
-                })
+                }
 
+                this.visibilityObserver = new ResizeObserver(() => onVisible())
                 this.visibilityObserver.observe(this.$el)
+
+                this.intersectionObserver = new IntersectionObserver(
+                    (entries) => {
+                        if (entries[0]?.isIntersecting) {
+                            onVisible()
+                        }
+                    },
+                    { threshold: 0 },
+                )
+                this.intersectionObserver.observe(this.$el)
             }
 
             const isHidden =
@@ -435,6 +449,7 @@ export default function fileUploadFormComponent({
 
         destroy() {
             this.visibilityObserver?.disconnect()
+            this.intersectionObserver?.disconnect()
 
             this.destroyEditor()
 
