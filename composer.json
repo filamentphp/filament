@@ -16,7 +16,7 @@
         "league/csv": "^9.27",
         "league/flysystem-aws-s3-v3": "^3.0",
         "nunomaduro/termwind": "^2.0",
-        "openspout/openspout": "^4.23",
+        "openspout/openspout": "^4.23|^5.0",
         "orchestra/testbench": "^9.0|^10.0|^11.0",
         "pestphp/pest": "^3.7|^4.0",
         "pestphp/pest-plugin-browser": "^4.1",
