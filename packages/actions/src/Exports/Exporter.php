@@ -227,7 +227,7 @@ abstract class Exporter
         // @phpstan-ignore-next-line - We need to ignore this for now, as we still support OpenSpout v4, which does not have the `fromValuesWithStyle` method.
         return \method_exists(Row::class, 'fromValuesWithStyle')
             ? Row::fromValuesWithStyle($values, $style)
-            // @phpstan-ignore -next-line - We need to ignore this for now, as we still support OpenSpout v4, which does not have the `fromValuesWithStyle` method.
+            // @phpstan-ignore-next-line - We need to ignore this for now, as we still support OpenSpout v4, which does not have the `fromValuesWithStyle` method.
             : Row::fromValues($values, $style);
     }
 
