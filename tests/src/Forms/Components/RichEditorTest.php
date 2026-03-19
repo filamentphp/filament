@@ -48,12 +48,13 @@ test('can get default toolbar buttons using `getDefaultToolbarButtons()`', funct
 
     expect($defaultButtons)
         ->toBeArray()
-        ->toHaveCount(5)
+        ->toHaveCount(6)
         ->and($defaultButtons[0])->toEqual(['bold', 'italic', 'underline', 'strike', 'subscript', 'superscript', 'link'])
-        ->and($defaultButtons[1])->toEqual(['h2', 'h3', 'alignStart', 'alignCenter', 'alignEnd'])
-        ->and($defaultButtons[2])->toEqual(['blockquote', 'codeBlock', 'bulletList', 'orderedList'])
-        ->and($defaultButtons[3])->toEqual(['table', 'attachFiles'])
-        ->and($defaultButtons[4])->toEqual(['undo', 'redo']);
+        ->and($defaultButtons[1])->toEqual(['h2', 'h3'])
+        ->and($defaultButtons[2])->toEqual(['alignStart', 'alignCenter', 'alignEnd'])
+        ->and($defaultButtons[3])->toEqual(['blockquote', 'codeBlock', 'bulletList', 'orderedList'])
+        ->and($defaultButtons[4])->toEqual(['table', 'attachFiles'])
+        ->and($defaultButtons[5])->toEqual(['undo', 'redo']);
 });
 
 test('can overwrite toolbar buttons array using `toolbarButtons()`', function (): void {
