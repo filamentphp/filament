@@ -112,6 +112,9 @@ class RichEditorStateCast implements StateCast
         return $editor->getDocument();
     }
 
+    /**
+     * https://github.com/filamentphp/filament/issues/19529
+     */
     protected function normalizeListItemContent(Editor $editor): void
     {
         $editor->descendants(function (object &$node): void {
