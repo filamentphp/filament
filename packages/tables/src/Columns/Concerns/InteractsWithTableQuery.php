@@ -96,8 +96,7 @@ trait InteractsWithTableQuery
 
                         $relatedTable = $model->getTable();
 
-                        if ($relationship instanceof BelongsToThrough || (class_exists('Staudenmeir\\EloquentHasManyDeep\\HasManyDeep') && $relationship instanceof HasManyDeep)) {
-
+                        if (($relationship instanceof BelongsToThrough) || ($relationship instanceof HasManyDeep)) {
                             $relatedTable = $relationship->getRelated()->getTable();
                             $searchColumn = str($searchColumn)->startsWith("{$relatedTable}.")
                                 ? $searchColumn
