@@ -224,10 +224,10 @@ abstract class Exporter
      */
     public function makeXlsxRow(array $values, ?Style $style = null): Row
     {
-        // @phpstan-ignore function.alreadyNarrowedType
+        // @phpstan-ignore-next-line - We need to ignore this for now, as we still support OpenSpout v4, which does not have the `fromValuesWithStyle` method.
         return \method_exists(Row::class, 'fromValuesWithStyle')
             ? Row::fromValuesWithStyle($values, $style)
-            // @phpstan-ignore argument.type
+            // @phpstan-ignore -next-line - We need to ignore this for now, as we still support OpenSpout v4, which does not have the `fromValuesWithStyle` method.
             : Row::fromValues($values, $style);
     }
 
