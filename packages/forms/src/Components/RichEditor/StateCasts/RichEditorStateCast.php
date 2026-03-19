@@ -107,8 +107,33 @@ class RichEditorStateCast implements StateCast
         }
 
         $this->hydrateMentionLabels($editor);
+        $this->normalizeListItemContent($editor);
 
         return $editor->getDocument();
+    }
+
+    protected function normalizeListItemContent(Editor $editor): void
+    {
+        $editor->descendants(function (object &$node): void {
+            if ($node->type !== 'listItem') {
+                return;
+            }
+
+            if (! isset($node->content) || ! is_array($node->content)) {
+                return;
+            }
+
+            $firstChild = $node->content[0] ?? null;
+
+            if (! $firstChild || $firstChild->type !== 'text') {
+                return;
+            }
+
+            $node->content = [(object) [
+                'type' => 'paragraph',
+                'content' => $node->content,
+            ]];
+        });
     }
 
     protected function hydrateMentionLabels(Editor $editor): void
