@@ -224,7 +224,11 @@ abstract class Exporter
      */
     public function makeXlsxRow(array $values, ?Style $style = null): Row
     {
-        return Row::fromValues($values, $style);
+        // @phpstan-ignore function.alreadyNarrowedType
+        return \method_exists(Row::class, 'fromValuesWithStyle')
+            ? Row::fromValuesWithStyle($values, $style)
+            // @phpstan-ignore argument.type
+            : Row::fromValues($values, $style);
     }
 
     public function configureXlsxWriterBeforeClose(Writer $writer): Writer
