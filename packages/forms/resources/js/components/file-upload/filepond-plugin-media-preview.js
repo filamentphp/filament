@@ -3,6 +3,7 @@
  * Changes:
  * - Merged all source modules into a single file.
  * - Fixed `mediaPreviewHeight` option type from `Type.STRING` to `Type.INT`.
+ * - Fixed audio preview not displaying due to `videoWidth`/`videoHeight` being accessed on audio elements.
  */
 
 const isPreviewableVideo = (file) => /^video/.test(file.type)
@@ -194,20 +195,19 @@ const createMediaView = (_) =>
                     () => {
                         let height = 75
 
-                        if (
-                            isPreviewableVideo(item.file) &&
-                            mediaPreviewHeight
-                        ) {
-                            height = mediaPreviewHeight
-                            root.element
-                                .querySelector('video')
-                                .setAttribute('height', height)
-                        } else {
-                            let containerWidth = root.ref.media.offsetWidth
-                            let factor =
-                                root.ref.media.videoWidth / containerWidth
+                        if (isPreviewableVideo(item.file)) {
+                            if (mediaPreviewHeight) {
+                                height = mediaPreviewHeight
+                                root.element
+                                    .querySelector('video')
+                                    .setAttribute('height', height)
+                            } else {
+                                let containerWidth = root.ref.media.offsetWidth
+                                let factor =
+                                    root.ref.media.videoWidth / containerWidth
 
-                            height = root.ref.media.videoHeight / factor
+                                height = root.ref.media.videoHeight / factor
+                            }
                         }
 
                         root.dispatch('DID_UPDATE_PANEL_HEIGHT', {
