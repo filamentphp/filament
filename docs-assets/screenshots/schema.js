@@ -4170,7 +4170,7 @@ export default {
         selector: 'body',
         viewport: {
             width: 1440,
-            height: 700,
+            height: 900,
             deviceScaleFactor: 3,
         },
         before: async (page) => {
