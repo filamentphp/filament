@@ -2,8 +2,7 @@
  * Source: https://github.com/nielsboogaard/filepond-plugin-media-preview (MIT)
  * Changes:
  * - Merged all source modules into a single file.
- * - Fixed `mediaPreviewHeight` option type from `Type.STRING` to `Type.INT`.
- * - Fixed audio preview not displaying due to `videoWidth`/`videoHeight` being accessed on audio elements.
+ * - Fixed upstream PR #33 `mediaPreviewHeight` implementation.
  */
 
 const isPreviewableVideo = (file) => /^video/.test(file.type)
@@ -198,9 +197,9 @@ const createMediaView = (_) =>
                         if (isPreviewableVideo(item.file)) {
                             if (mediaPreviewHeight) {
                                 height = mediaPreviewHeight
-                                root.element
-                                    .querySelector('video')
-                                    .setAttribute('height', height)
+                                root.element.querySelector(
+                                    'video',
+                                ).style.height = `${height}px`
                             } else {
                                 let containerWidth = root.ref.media.offsetWidth
                                 let factor =
@@ -327,7 +326,7 @@ const plugin = (fpAPI) => {
         options: {
             allowVideoPreview: [true, Type.BOOLEAN],
             allowAudioPreview: [true, Type.BOOLEAN],
-            mediaPreviewHeight: [undefined, Type.INT],
+            mediaPreviewHeight: [null, Type.INT],
         },
     }
 }
