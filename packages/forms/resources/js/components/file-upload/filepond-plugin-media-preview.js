@@ -2,6 +2,7 @@
  * Source: https://github.com/nielsboogaard/filepond-plugin-media-preview (MIT)
  * Changes:
  * - Merged all source modules into a single file.
+ * - Fixed `mediaPreviewHeight` option type from `Type.STRING` to `Type.INT`.
  */
 
 const isPreviewableVideo = (file) => /^video/.test(file.type)
@@ -326,7 +327,7 @@ const plugin = (fpAPI) => {
         options: {
             allowVideoPreview: [true, Type.BOOLEAN],
             allowAudioPreview: [true, Type.BOOLEAN],
-            mediaPreviewHeight: [undefined, Type.STRING],
+            mediaPreviewHeight: [undefined, Type.INT],
         },
     }
 }
