@@ -317,6 +317,20 @@ trait HasState
                 $statePath = $this->getStatePath();
 
                 if (! $this->getRootContainer()->hasDehydratedComponent($statePath)) {
+                    $descendantStatePathsToForget = $this->getDescendantStatePathsToForget($statePath);
+
+                    if (filled($descendantStatePathsToForget)) {
+                        Arr::forget($state, $descendantStatePathsToForget); /** @phpstan-ignore parameterByRef.type */
+
+                        // If removing descendant paths leaves an empty parent, remove the parent path too,
+                        // so non-dehydrated relationship containers don't leak empty arrays into saved data.
+                        if (Arr::get($state, $statePath) === []) {
+                            Arr::forget($state, $statePath); /** @phpstan-ignore parameterByRef.type */
+                        }
+
+                        return;
+                    }
+
                     Arr::forget($state, $statePath); /** @phpstan-ignore parameterByRef.type */
 
                     return;
@@ -345,6 +359,25 @@ trait HasState
                 Arr::set($state, $key, $value); /** @phpstan-ignore parameterByRef.type */
             }
         }
+    }
+
+    /**
+     * @return array<string>
+     */
+    protected function getDescendantStatePathsToForget(string $statePath): array
+    {
+        $descendantStatePathPrefix = "{$statePath}.";
+
+        return collect($this->getChildSchemas(withHidden: true))
+            ->flatMap(fn ($childSchema): array => $childSchema->getFlatComponents(withActions: false, withHidden: true))
+            ->filter(fn (Component $component): bool => $component->hasStatePath())
+            ->map(fn (Component $component): ?string => $component->getStatePath())
+            ->filter(
+                fn (?string $childStatePath): bool => filled($childStatePath)
+                    && str($childStatePath)->startsWith($descendantStatePathPrefix)
+            )
+            ->values()
+            ->all();
     }
 
     public function dehydrateStateUsing(?Closure $callback): static
