@@ -1,10 +1,13 @@
 ---
 title: Custom pages
 ---
+import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Introduction
 
 Filament allows you to create completely custom pages for the app.
+
+<AutoScreenshot name="panels/custom-page" alt="A custom page with header actions" version="4.x" />
 
 ## Creating a page
 

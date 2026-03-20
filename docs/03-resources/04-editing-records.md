@@ -1,6 +1,9 @@
 ---
 title: Editing records
 ---
+import AutoScreenshot from "@components/AutoScreenshot.astro"
+
+<AutoScreenshot name="panels/resources/editing" alt="Resource edit page" version="4.x" />
 
 ## Customizing data before filling the form
 

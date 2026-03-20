@@ -1,6 +1,7 @@
 ---
 title: Chart widgets
 ---
+import AutoScreenshot from "@components/AutoScreenshot.astro"
 import Aside from "@components/Aside.astro"
 
 ## Introduction
@@ -52,6 +53,8 @@ class BlogPostsChart extends ChartWidget
 
 Now, check out your widget in the dashboard.
 
+<AutoScreenshot name="widgets/chart/line" alt="Line chart" version="4.x" />
+
 ## Available chart types
 
 Below is a list of available chart widget classes which you may extend, and their corresponding [Chart.js](https://www.chartjs.org/docs) documentation page, for inspiration on what to return from `getData()`:
@@ -64,6 +67,10 @@ Below is a list of available chart widget classes which you may extend, and thei
 - Polar area chart - [Chart.js documentation](https://www.chartjs.org/docs/latest/charts/polar)
 - Radar chart - [Chart.js documentation](https://www.chartjs.org/docs/latest/charts/radar)
 - Scatter chart - [Chart.js documentation](https://www.chartjs.org/docs/latest/charts/scatter)
+
+For example, you could use a bar chart by returning `'bar'` from the `getType()` method:
+
+<AutoScreenshot name="widgets/chart/bar" alt="Bar chart" version="4.x" />
 
 ## Customizing the chart color
 
@@ -160,6 +167,8 @@ protected function getData(): array
     // ...
 }
 ```
+
+<AutoScreenshot name="widgets/chart/filter" alt="Chart with filter" version="4.x" />
 
 ### Custom filters
 
@@ -352,6 +361,8 @@ public function getDescription(): ?string
     return 'The number of blog posts published per month.';
 }
 ```
+
+<AutoScreenshot name="widgets/chart/description" alt="Chart with description" version="4.x" />
 
 ## Disabling lazy loading
 

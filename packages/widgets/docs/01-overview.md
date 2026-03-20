@@ -1,10 +1,13 @@
 ---
 title: Overview
 ---
+import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Introduction
 
 Filament allows you to build dynamic dashboards, comprised of "widgets". Each widget is an element on the dashboard that displays data in a specific way. For example, you can display [stats](stats-overview), [chart](charts), or a [table](#table-widgets).
+
+<AutoScreenshot name="panels/dashboard" alt="Dashboard with widgets" version="4.x" />
 
 ## Creating a widget
 

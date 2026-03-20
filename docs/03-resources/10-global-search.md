@@ -1,11 +1,14 @@
 ---
 title: Global search
 ---
+import AutoScreenshot from "@components/AutoScreenshot.astro"
 import Aside from "@components/Aside.astro"
 
 ## Introduction
 
 Global search allows you to search across all of your resource records, from anywhere in the app.
+
+<AutoScreenshot name="panels/resources/global-search" alt="Global search" version="4.x" />
 
 ## Setting global search result titles
 

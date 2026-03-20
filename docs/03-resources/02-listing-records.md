@@ -1,7 +1,10 @@
 ---
 title: Listing records
 ---
+import AutoScreenshot from "@components/AutoScreenshot.astro"
 import Aside from "@components/Aside.astro"
+
+<AutoScreenshot name="panels/resources/listing" alt="Resource listing page" version="4.x" />
 
 ## Using tabs to filter the records
 
@@ -22,6 +25,8 @@ public function getTabs(): array
     ];
 }
 ```
+
+<AutoScreenshot name="panels/resources/listing-tabs" alt="Resource listing page with tabs" version="4.x" />
 
 ### Customizing the filter tab labels
 

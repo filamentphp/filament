@@ -1,6 +1,7 @@
 ---
 title: Managing relationships
 ---
+import AutoScreenshot from "@components/AutoScreenshot.astro"
 import Aside from "@components/Aside.astro"
 
 ## Choosing the right tool for the job
@@ -113,6 +114,8 @@ public static function getRelations(): array
 ```
 
 Once a table and form have been defined for the relation manager, visit the [Edit](editing-records) or [View](viewing-records) page of your resource to see it in action.
+
+<AutoScreenshot name="panels/resources/relation-manager" alt="Relation manager" version="4.x" />
 
 ### Customizing the relation manager's URL parameter
 

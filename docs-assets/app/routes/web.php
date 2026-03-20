@@ -1,5 +1,6 @@
 <?php
 
+use App\Livewire\ActionsCrudDemo;
 use App\Livewire\ActionsDemo;
 use App\Livewire\Forms\FieldsDemo;
 use App\Livewire\Forms\FieldsOverview;
@@ -25,6 +26,7 @@ use App\Livewire\PrimesDemo;
 use App\Livewire\Schemas\LayoutDemo;
 use App\Livewire\Schemas\OverviewDemo;
 use App\Livewire\TablesDemo;
+use App\Livewire\WidgetsDemo;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -39,6 +41,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/actions', ActionsDemo::class);
+Route::get('/actions-crud', ActionsCrudDemo::class);
 
 Route::prefix('forms')->group(function (): void {
     Route::get('overview', FieldsOverview::class);
@@ -54,7 +57,7 @@ Route::get('primes', PrimesDemo::class);
 
 Route::get('/notifications', NotificationsDemo::class);
 
-Route::prefix('panels')->middleware(['panel:admin'])->group(function (): void {
+Route::prefix('panels')->middleware(['panel:nav'])->group(function (): void {
     Route::prefix('navigation')->group(function (): void {
         Route::get('user-menu-customization', UserMenuCustomization::class);
         Route::get('disabled-navigation', DisabledNavigation::class);
@@ -80,3 +83,5 @@ Route::prefix('schemas')->group(function (): void {
 });
 
 Route::get('/tables', TablesDemo::class);
+
+Route::get('/widgets', WidgetsDemo::class);

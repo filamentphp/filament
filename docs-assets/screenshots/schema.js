@@ -1,4 +1,65 @@
 export default {
+    'actions/create-action/modal': {
+        url: 'actions-crud',
+        selector: '.fi-modal-window-ctn',
+        viewport: {
+            width: 640,
+            height: 720,
+            deviceScaleFactor: 3,
+        },
+        before: async (page) => {
+            await page.click('[wire\\:click*="mountAction(\'create\'"]')
+            await page.waitForSelector('.fi-modal-window-ctn')
+            await new Promise((resolve) => setTimeout(resolve, 500))
+            await page.$eval('.fi-modal-window-ctn input', (el) => el.blur())
+        },
+    },
+    'actions/edit-action/modal': {
+        url: 'actions-crud',
+        selector: '.fi-modal-window-ctn',
+        viewport: {
+            width: 640,
+            height: 720,
+            deviceScaleFactor: 3,
+        },
+        before: async (page) => {
+            const buttons = await page.$$('[wire\\:click*="mountAction(\'edit\'"]')
+            if (buttons.length > 0) await buttons[0].click()
+            await page.waitForSelector('.fi-modal-window-ctn')
+            await new Promise((resolve) => setTimeout(resolve, 500))
+            await page.$eval('.fi-modal-window-ctn input', (el) => el.blur())
+        },
+    },
+    'actions/view-action/modal': {
+        url: 'actions-crud',
+        selector: '.fi-modal-window-ctn',
+        viewport: {
+            width: 640,
+            height: 720,
+            deviceScaleFactor: 3,
+        },
+        before: async (page) => {
+            const buttons = await page.$$('[wire\\:click*="mountAction(\'view\'"]')
+            if (buttons.length > 0) await buttons[0].click()
+            await page.waitForSelector('.fi-modal-window-ctn')
+            await new Promise((resolve) => setTimeout(resolve, 500))
+        },
+    },
+    'actions/delete-action/modal': {
+        url: 'actions-crud',
+        selector: '.fi-modal-window-ctn',
+        viewport: {
+            width: 640,
+            height: 300,
+            deviceScaleFactor: 3,
+        },
+        before: async (page) => {
+            const buttons = await page.$$('[wire\\:click*="mountAction(\'delete\'"]')
+            if (buttons.length > 0) await buttons[0].click()
+            await page.waitForSelector('.fi-modal-window-ctn')
+            await new Promise((resolve) => setTimeout(resolve, 500))
+        },
+    },
     'actions/trigger-button/button': {
         url: 'actions',
         selector: '#buttonAction',
@@ -2512,7 +2573,7 @@ export default {
             deviceScaleFactor: 0,
         },
         crop: (image) => {
-            return image.extract({ width: 650, height: 540, left: 0, top: 0 })
+            return image.extract({ width: 650, height: 500, left: 0, top: 0 })
         },
     },
     'panels/navigation/sidebar-collapsible-on-desktop': {
@@ -2611,7 +2672,7 @@ export default {
             deviceScaleFactor: 0,
         },
         crop: (image) => {
-            return image.extract({ width: 750, height: 500, left: 0, top: 0 })
+            return image.extract({ width: 750, height: 400, left: 0, top: 60 })
         },
         before: async (page) => {
             await page.hover('.fi-badge')
@@ -2624,11 +2685,11 @@ export default {
         selector: 'body',
         viewport: {
             width: 1080,
-            height: 640,
+            height: 800,
             deviceScaleFactor: 0,
         },
         crop: (image) => {
-            return image.extract({ width: 650, height: 550, left: 0, top: 0 })
+            return image.extract({ width: 650, height: 750, left: 0, top: 0 })
         },
     },
     'panels/navigation/group-collapsible': {
@@ -2636,11 +2697,11 @@ export default {
         selector: 'body',
         viewport: {
             width: 1080,
-            height: 640,
+            height: 800,
             deviceScaleFactor: 0,
         },
         crop: (image) => {
-            return image.extract({ width: 650, height: 550, left: 0, top: 0 })
+            return image.extract({ width: 650, height: 750, left: 0, top: 0 })
         },
     },
     'panels/navigation/group-not-collapsible': {
@@ -2648,11 +2709,11 @@ export default {
         selector: 'body',
         viewport: {
             width: 1080,
-            height: 640,
+            height: 800,
             deviceScaleFactor: 0,
         },
         crop: (image) => {
-            return image.extract({ width: 650, height: 550, left: 0, top: 0 })
+            return image.extract({ width: 650, height: 750, left: 0, top: 0 })
         },
     },
     'primes/overview/example': {
@@ -3918,6 +3979,239 @@ export default {
             width: 1080,
             height: 640,
             deviceScaleFactor: 3,
+        },
+    },
+    'widgets/stats-overview/simple': {
+        url: 'widgets',
+        selector: '#statsSimple',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'widgets/stats-overview/description': {
+        url: 'widgets',
+        selector: '#statsDescription',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'widgets/stats-overview/color': {
+        url: 'widgets',
+        selector: '#statsColor',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'widgets/stats-overview/chart': {
+        url: 'widgets',
+        selector: '#statsChart',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'widgets/stats-overview/heading': {
+        url: 'widgets',
+        selector: '#statsHeading',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'widgets/chart/line': {
+        url: 'widgets',
+        selector: '#chartLine',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'widgets/chart/bar': {
+        url: 'widgets',
+        selector: '#chartBar',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'widgets/chart/description': {
+        url: 'widgets',
+        selector: '#chartDescription',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'widgets/chart/filter': {
+        url: 'widgets',
+        selector: '#chartFilter',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'panels/login': {
+        url: 'admin/login?no_auto_login=1',
+        selector: 'body',
+        viewport: {
+            width: 640,
+            height: 700,
+            deviceScaleFactor: 3,
+        },
+        needsReloadForDarkMode: true,
+        before: async (page) => {
+            // Blur the auto-focused email input to remove orange outline
+            await page.$eval('input[type="email"]', (el) => el.blur())
+            await new Promise((resolve) => setTimeout(resolve, 300))
+        },
+    },
+    'panels/dashboard': {
+        url: 'admin',
+        selector: 'body',
+        viewport: {
+            width: 1440,
+            height: 820,
+            deviceScaleFactor: 3,
+        },
+    },
+    'panels/resources/listing': {
+        url: 'admin/posts',
+        selector: 'body',
+        viewport: {
+            width: 1440,
+            height: 900,
+            deviceScaleFactor: 3,
+        },
+        before: async (page) => {
+            await new Promise((resolve) => setTimeout(resolve, 2000))
+            await page.evaluate(() => {
+                document.querySelectorAll('.fi-wi-stats-overview, .fi-sc-tabs').forEach(el => el.remove())
+            })
+
+            await new Promise((resolve) => setTimeout(resolve, 200))
+        },
+    },
+    'panels/resources/listing-tabs': {
+        url: 'admin/posts',
+        selector: 'body',
+        viewport: {
+            width: 1440,
+            height: 900,
+            deviceScaleFactor: 3,
+        },
+        before: async (page) => {
+            await new Promise((resolve) => setTimeout(resolve, 2000))
+            await page.evaluate(() => {
+                document.querySelectorAll('.fi-wi-stats-overview').forEach(el => el.remove())
+            })
+
+            await new Promise((resolve) => setTimeout(resolve, 200))
+        },
+    },
+    'panels/resources/creating': {
+        url: 'admin/posts/create',
+        selector: 'body',
+        viewport: {
+            width: 1440,
+            height: 820,
+            deviceScaleFactor: 3,
+        },
+    },
+    'panels/resources/editing': {
+        url: 'admin/posts/1/edit',
+        selector: 'body',
+        viewport: {
+            width: 1440,
+            height: 820,
+            deviceScaleFactor: 3,
+        },
+    },
+    'panels/resources/viewing': {
+        url: 'admin/posts/1',
+        selector: 'body',
+        viewport: {
+            width: 1440,
+            height: 820,
+            deviceScaleFactor: 3,
+        },
+    },
+    'panels/resources/relation-manager': {
+        url: 'admin/users/1/edit',
+        selector: 'body',
+        viewport: {
+            width: 1440,
+            height: 820,
+            deviceScaleFactor: 3,
+        },
+    },
+    'panels/custom-page': {
+        url: 'admin/analytics',
+        selector: 'body',
+        viewport: {
+            width: 1440,
+            height: 820,
+            deviceScaleFactor: 3,
+        },
+    },
+    'panels/resources/trashed': {
+        url: 'admin/posts',
+        selector: 'body',
+        viewport: {
+            width: 1440,
+            height: 700,
+            deviceScaleFactor: 3,
+        },
+        before: async (page) => {
+            // Click the filter icon to open filters panel
+            await page.click('.fi-ta-header-ctn .fi-icon-btn:last-child')
+            await new Promise((resolve) => setTimeout(resolve, 500))
+        },
+    },
+    'panels/cluster': {
+        url: 'admin/settings/manage-general',
+        selector: 'body',
+        viewport: {
+            width: 1440,
+            height: 820,
+            deviceScaleFactor: 3,
+        },
+    },
+    'panels/resources/widgets': {
+        url: 'admin/posts',
+        selector: 'body',
+        viewport: {
+            width: 1440,
+            height: 1000,
+            deviceScaleFactor: 3,
+        },
+    },
+    'panels/resources/global-search': {
+        url: 'admin/posts',
+        selector: 'body',
+        viewport: {
+            width: 1440,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+        before: async (page) => {
+            await page.click('.fi-global-search-field input')
+            await page.type('.fi-global-search-field input', 'Filament')
+            await new Promise((resolve) => setTimeout(resolve, 1500))
+        },
+        crop: (image) => {
+            return image.extract({ width: 840 * 3, height: 440 * 3, left: 600 * 3, top: 0 })
         },
     },
 }

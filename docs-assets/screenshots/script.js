@@ -48,6 +48,12 @@ const processScreenshot = async (file, options, theme) => {
             },
         ])
 
+        if (options.needsReloadForDarkMode) {
+            await page.goto(`http://127.0.0.1:8000/${options.url}`, {
+                waitUntil: 'networkidle2',
+            })
+        }
+
         await new Promise((resolve) => setTimeout(resolve, 500))
     } else {
         await page.emulateMediaFeatures([
@@ -89,7 +95,9 @@ const stringMatchesRule = (string, rule) => {
 
 for (const theme of themes) {
     for (const [file, options] of Object.entries(schema)) {
-        if ((process.argv[2] ?? null) && (! stringMatchesRule(file, (process.argv[2] ?? null)))) {
+        const filters = process.argv.slice(2)
+
+        if (filters.length && ! filters.some((filter) => stringMatchesRule(file, filter))) {
             continue
         }
 

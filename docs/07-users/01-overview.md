@@ -1,10 +1,13 @@
 ---
 title: Overview
 ---
+import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Introduction
 
 By default, all `App\Models\User`s can access Filament locally. To allow them to access Filament in production, you must take a few extra steps to ensure that only the correct users have access to the app.
+
+<AutoScreenshot name="panels/login" alt="The default login page" version="4.x" />
 
 ## Authorizing access to the panel
 

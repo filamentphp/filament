@@ -1,11 +1,14 @@
 ---
 title: Overview
 ---
+import AutoScreenshot from "@components/AutoScreenshot.astro"
 import Aside from "@components/Aside.astro"
 
 ## Introduction
 
 Resources are static classes that are used to build CRUD interfaces for your Eloquent models. They describe how administrators should be able to interact with data from your app using tables and forms.
+
+<AutoScreenshot name="panels/resources/listing" alt="A resource listing page" version="4.x" />
 
 ## Creating a resource
 
