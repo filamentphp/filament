@@ -1,6 +1,7 @@
 ---
 title: Markdown editor
 ---
+import Aside from "@components/Aside.astro"
 import AutoScreenshot from "@components/AutoScreenshot.astro"
 import UtilityInjection from "@components/UtilityInjection.astro"
 
@@ -25,6 +26,10 @@ When Filament outputs raw HTML from the database in components such as `TextColu
 ```blade
 {!! str($record->content)->markdown()->sanitizeHtml() !!}
 ```
+
+<Aside variant="danger">
+    Filament's built-in HTML sanitizer permits inline `style` attributes in order to support rich text formatting features such as font colors, text highlighting, and image sizing. This means that CSS properties like `background: url(...)` or `position: fixed` will not be stripped from sanitized HTML. If your content comes from untrusted users, you should consider implementing a more restrictive custom sanitizer. See the [security documentation](../advanced/security#html-sanitization) for details on how to customize the sanitizer.
+</Aside>
 
 ## Customizing the toolbar buttons
 

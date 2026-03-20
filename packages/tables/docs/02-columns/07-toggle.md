@@ -28,3 +28,9 @@ ToggleColumn::make()
         // Runs after the state is saved to the database.
     })
 ```
+
+## Security
+
+### Authorization
+
+The toggle column does not automatically check Laravel Model Policies before saving changes. When a user updates a value via the toggle column, Filament checks whether the column is `disabled()` but does not run any `update` policy gate check. This means that if a user can see a record in the table and the column is not disabled, they can update that column's value regardless of any `update` policy you have defined. If you need to restrict who can edit this column, you should use the `disabled()` method to conditionally prevent editing based on your own authorization logic, for example `disabled(fn ($record) => $record->user_id !== auth()->id())`. Alternatively, consider using a full edit page or modal action where Filament's resource authorization is enforced.
