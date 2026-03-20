@@ -206,6 +206,10 @@ TextEntry::make('title')
 
 <UtilityInjection set="infolistEntries" version="4.x">As well as allowing a static value, the `openUrlInNewTab()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
+<Aside variant="danger">
+    If you are passing user-controlled data to the `url()` method, you should validate that the URL does not use a dangerous scheme such as `javascript:` or `data:`. Failing to do so could expose your application to XSS attacks.
+</Aside>
+
 ## Hiding an entry
 
 You may hide an entry:
