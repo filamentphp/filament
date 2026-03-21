@@ -72,6 +72,20 @@ For example, you could use a bar chart by returning `'bar'` from the `getType()`
 
 <AutoScreenshot name="widgets/chart/bar" alt="Bar chart" version="4.x" />
 
+Here are examples of the other available chart types:
+
+<AutoScreenshot name="widgets/chart/pie" alt="Pie chart" version="4.x" />
+
+<AutoScreenshot name="widgets/chart/doughnut" alt="Doughnut chart" version="4.x" />
+
+<AutoScreenshot name="widgets/chart/radar" alt="Radar chart" version="4.x" />
+
+<AutoScreenshot name="widgets/chart/polar-area" alt="Polar area chart" version="4.x" />
+
+<AutoScreenshot name="widgets/chart/scatter" alt="Scatter chart" version="4.x" />
+
+<AutoScreenshot name="widgets/chart/bubble" alt="Bubble chart" version="4.x" />
+
 ## Customizing the chart color
 
 You can customize the [color](../styling/colors) of the chart data by setting the `$color` property:
@@ -215,6 +229,8 @@ protected function getData(): array
 
 The `$this->filters` array will always reflect the current form data. Please note that this data is not validated, as it is available live and not intended to be used for anything other than querying the database. You must ensure that the data is valid before using it.
 
+<AutoScreenshot name="widgets/chart/custom-filters" alt="Chart with custom filters" version="4.x" />
+
 <Aside variant="info">
     If you want to add filters that apply to multiple widgets at once, see [filtering widget data](overview#filtering-widget-data) in the dashboard.
 </Aside>
@@ -301,6 +317,8 @@ You may place a maximum height on the chart to ensure that it doesn't get too bi
 protected ?string $maxHeight = '300px';
 ```
 
+<AutoScreenshot name="widgets/chart/max-height" alt="Chart with maximum height" version="4.x" />
+
 ## Setting chart configuration options
 
 You may specify an `$options` variable on the chart class to control the many configuration options that the Chart.js library provides. For instance, you could turn off the [legend](https://www.chartjs.org/docs/latest/configuration/legend.html) for a line chart:
@@ -381,6 +399,8 @@ You may allow the chart to be collapsible by setting the `$isCollapsible` proper
 ```php
 protected bool $isCollapsible = true;
 ```
+
+<AutoScreenshot name="widgets/chart/collapsible" alt="Collapsible chart" version="4.x" />
 
 ## Using custom Chart.js plugins
 

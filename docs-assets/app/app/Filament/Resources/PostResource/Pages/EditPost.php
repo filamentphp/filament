@@ -17,4 +17,9 @@ class EditPost extends EditRecord
             Actions\DeleteAction::make(),
         ];
     }
+
+    public function hasCombinedRelationManagerTabsWithContent(): bool
+    {
+        return request()->query('combinedTabs') === '1';
+    }
 }

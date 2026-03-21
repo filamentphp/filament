@@ -78,6 +78,8 @@ If you are using an enum for the options, you can use the [`HasIcon` interface](
 
 If you want to display only icons, you can use `hiddenButtonLabels()` to hide the option labels.
 
+<AutoScreenshot name="forms/fields/toggle-buttons/hidden-labels" alt="Toggle buttons with hidden labels" version="4.x" />
+
 ## Adding tooltips to option buttons
 
 You can add different tooltips to each option button using the `tooltips()` method.
@@ -99,6 +101,8 @@ ToggleButtons::make('status')
 ```
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing a static array, the `tooltips()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+<AutoScreenshot name="forms/fields/toggle-buttons/tooltips" alt="Toggle buttons with tooltips" version="4.x" />
 
 ## Boolean options
 

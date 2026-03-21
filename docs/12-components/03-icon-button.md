@@ -2,6 +2,8 @@
 title: Icon button Blade component
 ---
 
+import AutoScreenshot from "@components/AutoScreenshot.astro"
+
 ## Introduction
 
 The button component is used to render a clickable button that can perform an action:
@@ -13,6 +15,8 @@ The button component is used to render a clickable button that can perform an ac
     label="New label"
 />
 ```
+
+<AutoScreenshot name="components/icon-button/simple" alt="Icon buttons" version="4.x" />
 
 ## Using an icon button as an anchor link
 
@@ -57,6 +61,8 @@ By default, the size of an icon button is "medium". You can make it "extra small
 />
 ```
 
+<AutoScreenshot name="components/icon-button/sizes" alt="Icon buttons in different sizes" version="4.x" />
+
 ## Changing the color of an icon button
 
 By default, the color of an icon button is "primary". You can change it to be `danger`, `gray`, `info`, `success` or `warning` by using the `color` attribute:
@@ -92,6 +98,8 @@ By default, the color of an icon button is "primary". You can change it to be `d
     label="New label"
 />
 ```
+
+<AutoScreenshot name="components/icon-button/colors" alt="Icon buttons in different colors" version="4.x" />
 
 ## Adding a tooltip to an icon button
 
@@ -133,3 +141,5 @@ You can [change the color](badge#changing-the-color-of-the-badge) of the badge u
     </x-slot>
 </x-filament::icon-button>
 ```
+
+<AutoScreenshot name="components/icon-button/badge" alt="Icon buttons with badges" version="4.x" />

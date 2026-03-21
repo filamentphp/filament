@@ -198,6 +198,8 @@ Actions can also open modals to request confirmation from the user, as well as r
 
 By default, Filament tables will be paginated. The user can choose between 5, 10, 25, and 50 records per page. If there are more records than the selected number, the user can navigate between pages using the pagination buttons.
 
+<AutoScreenshot name="tables/pagination/default" alt="Table with default pagination" version="4.x" />
+
 ### Customizing the pagination options
 
 You may customize the options for the paginated records per page select by passing them to the `paginated()` method:
@@ -248,6 +250,8 @@ public function table(Table $table): Table
 }
 ```
 
+<AutoScreenshot name="tables/pagination/extreme" alt="Table with extreme pagination links" version="4.x" />
+
 ### Using simple pagination
 
 You may use simple pagination by using the `paginationMode(PaginationMode::Simple)` method:
@@ -263,6 +267,8 @@ public function table(Table $table): Table
 }
 ```
 
+<AutoScreenshot name="tables/pagination/simple" alt="Table with simple pagination" version="4.x" />
+
 ### Using cursor pagination
 
 You may use cursor pagination by using the `paginationMode(PaginationMode::Cursor)` method:
@@ -277,6 +283,8 @@ public function table(Table $table): Table
         ->paginationMode(PaginationMode::Cursor);
 }
 ```
+
+<AutoScreenshot name="tables/pagination/cursor" alt="Table with cursor pagination" version="4.x" />
 
 ### Preventing query string conflicts with the pagination page
 
@@ -485,6 +493,8 @@ public function table(Table $table): Table
         ]);
 ```
 
+<AutoScreenshot name="tables/heading" alt="Table with heading and description" version="4.x" />
+
 You can pass a view to the `$table->header()` method to customize the entire header HTML:
 
 ```php
@@ -597,6 +607,8 @@ public function table(Table $table): Table
         });
 }
 ```
+
+<AutoScreenshot name="tables/custom-row-classes" alt="Table with custom row classes" version="4.x" />
 
 ## Global settings
 

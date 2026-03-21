@@ -59,6 +59,8 @@ Tab::make()
     ->icon('heroicon-m-user-group')
 ```
 
+<AutoScreenshot name="panels/resources/listing-tabs-icons" alt="Resource listing page with tab icons" version="4.x" />
+
 You can also change the icon's position to be after the label instead of before it, using the `iconPosition()` method:
 
 ```php
@@ -91,6 +93,8 @@ Tab::make()
     ->badge(Customer::query()->where('active', true)->count())
     ->badgeColor('success')
 ```
+
+<AutoScreenshot name="panels/resources/listing-tabs-badge-colors" alt="Resource listing page with colored tab badges" version="4.x" />
 
 #### Deferring the loading of filter tab badges
 

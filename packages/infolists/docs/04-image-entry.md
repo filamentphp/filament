@@ -65,6 +65,8 @@ ImageEntry::make('author.avatar')
 
 <UtilityInjection set="infolistEntries" version="4.x">As well as allowing a static values, the `imageWidth()`, `imageHeight()` and `imageSize()` methods also accept functions to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
 
+<AutoScreenshot name="infolists/entries/image/size" alt="Image entry with custom size" version="4.x" />
+
 ### Square images
 
 You may display the image using a 1:1 aspect ratio:
@@ -172,6 +174,8 @@ ImageEntry::make('colleagues.avatar')
     ->ring(5)
 ```
 
+<AutoScreenshot name="infolists/entries/image/stacked-ring" alt="Image entry with stacked ring width" version="4.x" />
+
 <UtilityInjection set="infolistEntries" version="4.x">As well as allowing a static value, the `ring()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ### Customizing the stacked overlap
@@ -187,6 +191,8 @@ ImageEntry::make('colleagues.avatar')
     ->stacked()
     ->overlap(2)
 ```
+
+<AutoScreenshot name="infolists/entries/image/stacked-overlap" alt="Image entry with stacked overlap" version="4.x" />
 
 <UtilityInjection set="infolistEntries" version="4.x">As well as allowing a static value, the `overlap()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 

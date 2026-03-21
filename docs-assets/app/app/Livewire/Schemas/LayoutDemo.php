@@ -29,8 +29,11 @@ use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\IconPosition;
+use Filament\Support\Enums\IconSize;
 use Filament\Support\Enums\VerticalAlignment;
 use Filament\Support\Icons\Heroicon;
+use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\HtmlString;
 use Livewire\Component;
 
 class LayoutDemo extends Component implements HasActions, HasSchemas
@@ -309,6 +312,33 @@ class LayoutDemo extends Component implements HasActions, HasSchemas
                             ->scrollable(false),
                     ]),
                 Group::make()
+                    ->id('tabsNotContained')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-2xl',
+                    ])
+                    ->schema([
+                        Tabs::make('Tabs')
+                            ->statePath('tabsNotContained')
+                            ->schema([
+                                Tab::make('Rate Limiting')
+                                    ->schema([
+                                        TextInput::make('hits')
+                                            ->default(30),
+                                        Select::make('period')
+                                            ->default('hour')
+                                            ->options([
+                                                'hour' => 'Hour',
+                                            ]),
+                                        TextInput::make('maximum')
+                                            ->default(100),
+                                    ])
+                                    ->columns(3),
+                                Tab::make('Proxy'),
+                                Tab::make('Meta'),
+                            ])
+                            ->contained(false),
+                    ]),
+                Group::make()
                     ->id('wizard')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-5xl',
@@ -456,6 +486,53 @@ class LayoutDemo extends Component implements HasActions, HasSchemas
                                 ->description('Select a payment method'),
                         ])
                             ->statePath('wizardDescriptions'),
+                    ]),
+                Group::make()
+                    ->id('wizardSubmitAction')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-5xl',
+                    ])
+                    ->schema([
+                        Wizard::make([
+                            Wizard\Step::make('Order')
+                                ->icon(Heroicon::ShoppingBag),
+                            Wizard\Step::make('Delivery')
+                                ->icon(Heroicon::Truck),
+                            Wizard\Step::make('Billing')
+                                ->icon(Heroicon::CreditCard)
+                                ->schema([
+                                    Select::make('paymentMethod')
+                                        ->label('Payment method')
+                                        ->options([
+                                            'credit_card' => 'Credit card',
+                                            'bank_transfer' => 'Bank transfer',
+                                            'paypal' => 'PayPal',
+                                        ])
+                                        ->default('credit_card'),
+                                    TextInput::make('cardNumber')
+                                        ->label('Card number')
+                                        ->default('4242 4242 4242 4242'),
+                                    Grid::make(2)
+                                        ->schema([
+                                            TextInput::make('expiryDate')
+                                                ->label('Expiry date')
+                                                ->default('12/28'),
+                                            TextInput::make('cvc')
+                                                ->label('CVC')
+                                                ->default('123'),
+                                        ]),
+                                ]),
+                        ])
+                            ->submitAction(new HtmlString(Blade::render(<<<'BLADE'
+                                <x-filament::button
+                                    type="submit"
+                                    size="sm"
+                                >
+                                    Submit
+                                </x-filament::button>
+                            BLADE)))
+                            ->startOnStep(3)
+                            ->statePath('wizardSubmitAction'),
                     ]),
                 Group::make()
                     ->id('section')
@@ -657,6 +734,27 @@ class LayoutDemo extends Component implements HasActions, HasSchemas
                             ->columns(3),
                     ]),
                 Group::make()
+                    ->id('sectionColumns')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-2xl',
+                    ])
+                    ->schema([
+                        Section::make('User details')
+                            ->description('Enter the user information below')
+                            ->statePath('sectionColumns')
+                            ->schema([
+                                TextInput::make('first_name')
+                                    ->default('Dan'),
+                                TextInput::make('last_name')
+                                    ->default('Harrin'),
+                                TextInput::make('email')
+                                    ->default('dan@filamentphp.com'),
+                                TextInput::make('phone')
+                                    ->default('+1 (555) 123-4567'),
+                            ])
+                            ->columns(2),
+                    ]),
+                Group::make()
                     ->id('sectionWithoutHeader')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-2xl',
@@ -677,6 +775,99 @@ class LayoutDemo extends Component implements HasActions, HasSchemas
                         ])
                             ->statePath('sectionWithoutHeader')
                             ->columns(3),
+                    ]),
+                Group::make()
+                    ->id('grid')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-2xl',
+                    ])
+                    ->schema([
+                        Grid::make(3)
+                            ->statePath('grid')
+                            ->schema([
+                                TextInput::make('first_name')
+                                    ->default('Dan'),
+                                TextInput::make('last_name')
+                                    ->default('Harrin'),
+                                TextInput::make('email')
+                                    ->default('dan@filamentphp.com')
+                                    ->columnSpanFull(),
+                                Select::make('role')
+                                    ->default('admin')
+                                    ->options([
+                                        'admin' => 'Admin',
+                                        'editor' => 'Editor',
+                                        'viewer' => 'Viewer',
+                                    ]),
+                                Select::make('status')
+                                    ->default('active')
+                                    ->options([
+                                        'active' => 'Active',
+                                        'inactive' => 'Inactive',
+                                    ]),
+                                Select::make('department')
+                                    ->default('engineering')
+                                    ->options([
+                                        'engineering' => 'Engineering',
+                                        'marketing' => 'Marketing',
+                                        'sales' => 'Sales',
+                                    ]),
+                            ]),
+                    ]),
+                Group::make()
+                    ->id('gridColumnSpan')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-2xl',
+                    ])
+                    ->schema([
+                        Grid::make(3)
+                            ->statePath('gridColumnSpan')
+                            ->schema([
+                                TextInput::make('name')
+                                    ->default('Dan Harrin')
+                                    ->columnSpan(2),
+                                TextInput::make('email')
+                                    ->default('dan@filament.test'),
+                                Textarea::make('bio')
+                                    ->default('Full-stack developer and creator of Filament.')
+                                    ->columnSpanFull(),
+                            ]),
+                    ]),
+                Group::make()
+                    ->id('gridColumnStart')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-3xl',
+                    ])
+                    ->schema([
+                        Grid::make(3)
+                            ->statePath('gridColumnStart')
+                            ->schema([
+                                TextInput::make('name')
+                                    ->default('Dan Harrin'),
+                                TextInput::make('email')
+                                    ->default('dan@filament.test')
+                                    ->columnStart(3),
+                            ]),
+                    ]),
+                Group::make()
+                    ->id('gridColumnOrder')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-3xl',
+                    ])
+                    ->schema([
+                        Grid::make(3)
+                            ->statePath('gridColumnOrder')
+                            ->schema([
+                                TextInput::make('first')
+                                    ->default('First in markup')
+                                    ->columnOrder(3),
+                                TextInput::make('second')
+                                    ->default('Second in markup')
+                                    ->columnOrder(1),
+                                TextInput::make('third')
+                                    ->default('Third in markup')
+                                    ->columnOrder(2),
+                            ]),
                     ]),
                 Group::make()
                     ->id('flex')
@@ -838,6 +1029,17 @@ class LayoutDemo extends Component implements HasActions, HasSchemas
                             ->iconColor('primary'),
                     ]),
                 Group::make()
+                    ->id('calloutIconSize')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-2xl',
+                    ])
+                    ->schema([
+                        Callout::make('Quick note')
+                            ->description('This callout has a smaller icon.')
+                            ->info()
+                            ->iconSize(IconSize::Small),
+                    ]),
+                Group::make()
                     ->id('calloutFooter')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-2xl',
@@ -901,6 +1103,22 @@ class LayoutDemo extends Component implements HasActions, HasSchemas
                                 Action::make('createUser')
                                     ->icon(Heroicon::Plus),
                             ]),
+                    ]),
+                Group::make()
+                    ->id('emptyStateContainedFalse')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-5xl',
+                    ])
+                    ->schema([
+                        EmptyState::make('No users yet')
+                            ->description('Get started by creating a new user.')
+                            ->icon(Heroicon::OutlinedUser)
+                            ->footer([
+                                Action::make('createUser')
+                                    ->label('Create user')
+                                    ->icon(Heroicon::Plus),
+                            ])
+                            ->contained(false),
                     ]),
             ]);
     }

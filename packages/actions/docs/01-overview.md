@@ -262,6 +262,8 @@ Action::make('edit')
     ->authorizationTooltip()
 ```
 
+<AutoScreenshot name="actions/trigger-button/authorization-tooltip" alt="Disabled action button with an authorization tooltip" version="4.x" />
+
 You may instead allow the action to still be clickable even if the user is not authorized, but send a notification containing the response message, using the `authorizationNotification()` method:
 
 ```php
@@ -294,6 +296,8 @@ Action::make('delete')
 ```
 
 <UtilityInjection set="actions" version="4.x">As well as allowing a static value, the `disabled()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+<AutoScreenshot name="actions/trigger-button/disabled" alt="Disabled action button" version="4.x" />
 
 ## Registering keybindings
 

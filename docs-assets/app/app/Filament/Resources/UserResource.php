@@ -6,6 +6,8 @@ use App\Filament\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource\RelationManagers;
 use App\Models\User;
 use Filament\Forms;
+use Filament\Pages\Enums\SubNavigationPosition;
+use Filament\Resources\Pages\Page;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables;
@@ -16,6 +18,17 @@ class UserResource extends Resource
     protected static ?string $model = User::class;
 
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-users';
+
+    public static function getSubNavigationPosition(): SubNavigationPosition
+    {
+        $position = request()->query('subNavPosition');
+
+        return match ($position) {
+            'end' => SubNavigationPosition::End,
+            'top' => SubNavigationPosition::Top,
+            default => SubNavigationPosition::Start,
+        };
+    }
 
     public static function form(Schema $schema): Schema
     {
@@ -46,6 +59,15 @@ class UserResource extends Resource
             ]);
     }
 
+    public static function getRecordSubNavigation(Page $page): array
+    {
+        return $page->generateNavigationItems([
+            Pages\ViewUser::class,
+            Pages\EditUser::class,
+            Pages\ManageUserPosts::class,
+        ]);
+    }
+
     public static function getRelations(): array
     {
         return [
@@ -58,7 +80,9 @@ class UserResource extends Resource
         return [
             'index' => Pages\ListUsers::route('/'),
             'create' => Pages\CreateUser::route('/create'),
+            'view' => Pages\ViewUser::route('/{record}'),
             'edit' => Pages\EditUser::route('/{record}/edit'),
+            'posts' => Pages\ManageUserPosts::route('/{record}/posts'),
         ];
     }
 }

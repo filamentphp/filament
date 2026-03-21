@@ -132,6 +132,8 @@ ActionGroup::make([
     ->dropdownWidth(Width::ExtraSmall)
 ```
 
+<AutoScreenshot name="actions/group/dropdown-width" alt="Action group with custom dropdown width" version="4.x" />
+
 <UtilityInjection set="actionGroups" version="4.x">The `dropdownWidth()` method also accepts a function to dynamically calculate the value. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Controlling the dropdown offset
@@ -163,3 +165,5 @@ ActionGroup::make([
 ```
 
 <UtilityInjection set="actionGroups" version="4.x">The `maxHeight()` method also accepts a function to dynamically calculate the value. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+<AutoScreenshot name="actions/group/max-height" alt="Action group dropdown with a maximum height" version="4.x" />

@@ -19,6 +19,7 @@ use Filament\Schemas\Components\Text;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
+use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\FontFamily;
 use Filament\Support\Enums\FontWeight;
 use Filament\Support\Enums\IconPosition;
@@ -85,6 +86,21 @@ class EntriesDemo extends Component implements HasSchemas
                             ->inlineLabel(),
                     ]),
                 Group::make()
+                    ->id('hiddenLabel')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        TextEntry::make('title')
+                            ->hiddenLabel()
+                            ->state('What is Filament?')
+                            ->size(TextSize::Large)
+                            ->weight(FontWeight::Bold),
+                        TextEntry::make('description')
+                            ->hiddenLabel()
+                            ->state('Filament is a collection of full-stack components for accelerated Laravel development.'),
+                    ]),
+                Group::make()
                     ->id('tooltips')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
@@ -93,6 +109,22 @@ class EntriesDemo extends Component implements HasSchemas
                         TextEntry::make('title')
                             ->state('What is Filament?')
                             ->tooltip('Shown at the top of the page'),
+                    ]),
+                Group::make()
+                    ->id('alignment')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        TextEntry::make('name')
+                            ->state('Dan Harrin')
+                            ->alignStart(),
+                        TextEntry::make('email')
+                            ->state('dan@filamentphp.com')
+                            ->alignCenter(),
+                        TextEntry::make('role')
+                            ->state('Administrator')
+                            ->alignEnd(),
                     ]),
                 Group::make()
                     ->id('textBelowContent')
@@ -290,6 +322,17 @@ class EntriesDemo extends Component implements HasSchemas
                             }),
                     ]),
                 Group::make()
+                    ->id('textSeparatorBadge')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        TextEntry::make('tags')
+                            ->state('Laravel, Livewire, Filament, Alpine.js')
+                            ->badge()
+                            ->separator(','),
+                    ]),
+                Group::make()
                     ->id('textList')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
@@ -308,6 +351,18 @@ class EntriesDemo extends Component implements HasSchemas
                         TextEntry::make('authors.name')
                             ->listWithLineBreaks()
                             ->bulleted()
+                            ->state(['Dan Harrin', 'Ryan Chandler', 'Zep Fietje', 'Dennis Koch', 'Adam Weston']),
+                    ]),
+                Group::make()
+                    ->id('textExpandableLimitedList')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        TextEntry::make('authors.name')
+                            ->listWithLineBreaks()
+                            ->limitList(2)
+                            ->expandableLimitedList()
                             ->state(['Dan Harrin', 'Ryan Chandler', 'Zep Fietje', 'Dennis Koch', 'Adam Weston']),
                     ]),
                 Group::make()
@@ -384,6 +439,47 @@ class EntriesDemo extends Component implements HasSchemas
                             ->fontFamily(FontFamily::Mono),
                     ]),
                 Group::make()
+                    ->id('textLimit')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        TextEntry::make('description')
+                            ->state('Filament is a collection of full-stack components for accelerated Laravel development. They are beautifully designed, intuitive to use, and fully extensible.')
+                            ->limit(50),
+                    ]),
+                Group::make()
+                    ->id('textWords')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        TextEntry::make('description')
+                            ->state('Filament is a collection of full-stack components for accelerated Laravel development. They are beautifully designed, intuitive to use, and fully extensible.')
+                            ->words(10),
+                    ]),
+                Group::make()
+                    ->id('textWrap')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        TextEntry::make('description')
+                            ->state('Filament is a collection of full-stack components for accelerated Laravel development. They are beautifully designed, intuitive to use, and fully extensible. Build admin panels, customer-facing apps, and SaaS platforms with ease.')
+                            ->wrap(),
+                    ]),
+                Group::make()
+                    ->id('textLineClamp')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        TextEntry::make('description')
+                            ->state('Filament is a collection of full-stack components for accelerated Laravel development. They are beautifully designed, intuitive to use, and fully extensible. Build admin panels, customer-facing apps, and SaaS platforms with ease.')
+                            ->wrap()
+                            ->lineClamp(2),
+                    ]),
+                Group::make()
                     ->id('textCopyable')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
@@ -395,6 +491,77 @@ class EntriesDemo extends Component implements HasSchemas
                             ->copyable()
                             ->copyMessage('Copied!')
                             ->copyMessageDuration(1500),
+                    ]),
+                Group::make()
+                    ->id('textNumeric')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        TextEntry::make('stock')
+                            ->state(1234567)
+                            ->numeric(),
+                    ]),
+                Group::make()
+                    ->id('textMoney')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        TextEntry::make('price')
+                            ->state(12999)
+                            ->money('USD', divideBy: 100),
+                    ]),
+                Group::make()
+                    ->id('textDate')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        TextEntry::make('created_at')
+                            ->state('2025-01-15 09:30:00')
+                            ->dateTime(),
+                    ]),
+                Group::make()
+                    ->id('textSince')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        TextEntry::make('created_at')
+                            ->state('2024-06-15 09:30:00')
+                            ->since(),
+                    ]),
+                Group::make()
+                    ->id('textDateTooltip')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        TextEntry::make('created_at')
+                            ->state('2024-06-15 09:30:00')
+                            ->since()
+                            ->dateTooltip(),
+                    ]),
+                Group::make()
+                    ->id('textMarkdown')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        TextEntry::make('description')
+                            ->state("Filament is a **full-stack** UI framework for [Laravel](https://laravel.com). It provides:\n\n- Admin panels\n- Form builder\n- Table builder\n- *And much more*")
+                            ->markdown(),
+                    ]),
+                Group::make()
+                    ->id('textHtml')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        TextEntry::make('description')
+                            ->state('Filament is a <strong>full-stack</strong> UI framework for <a href="https://laravel.com">Laravel</a>. It provides <em>beautiful</em> admin panels, <u>form builders</u>, and table components.')
+                            ->html(),
                     ]),
                 Group::make()
                     ->id('icon')
@@ -508,6 +675,16 @@ class EntriesDemo extends Component implements HasSchemas
                             ->state('https://picsum.photos/id/12/1200/800'),
                     ]),
                 Group::make()
+                    ->id('imageSize')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-3xl',
+                    ])
+                    ->schema([
+                        ImageEntry::make('author.avatar')
+                            ->imageSize(80)
+                            ->state('https://picsum.photos/id/177/1200/800'),
+                    ]),
+                Group::make()
                     ->id('imageSquare')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-3xl',
@@ -607,6 +784,44 @@ class EntriesDemo extends Component implements HasSchemas
                             ->limitedRemainingText(isSeparate: true),
                     ]),
                 Group::make()
+                    ->id('imageStackedRing')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-3xl',
+                    ])
+                    ->schema([
+                        ImageEntry::make('colleagues')
+                            ->height(40)
+                            ->state([
+                                'https://avatars.githubusercontent.com/u/41837763?v=4',
+                                'https://avatars.githubusercontent.com/u/44533235?v=4',
+                                'https://avatars.githubusercontent.com/u/22632550?v=4',
+                                'https://avatars.githubusercontent.com/u/3596800?v=4',
+                                'https://avatars.githubusercontent.com/u/881938?v=4',
+                            ])
+                            ->circular()
+                            ->stacked()
+                            ->ring(5),
+                    ]),
+                Group::make()
+                    ->id('imageStackedOverlap')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-3xl',
+                    ])
+                    ->schema([
+                        ImageEntry::make('colleagues')
+                            ->height(40)
+                            ->state([
+                                'https://avatars.githubusercontent.com/u/41837763?v=4',
+                                'https://avatars.githubusercontent.com/u/44533235?v=4',
+                                'https://avatars.githubusercontent.com/u/22632550?v=4',
+                                'https://avatars.githubusercontent.com/u/3596800?v=4',
+                                'https://avatars.githubusercontent.com/u/881938?v=4',
+                            ])
+                            ->circular()
+                            ->stacked()
+                            ->overlap(2),
+                    ]),
+                Group::make()
                     ->id('color')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
@@ -672,12 +887,55 @@ class EntriesDemo extends Component implements HasSchemas
                                 PHP),
                     ]),
                 Group::make()
+                    ->id('codeJavascript')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        CodeEntry::make('code')
+                            ->grammar(Grammar::Javascript)
+                            ->state(<<<'JS'
+                                import { createApp } from 'vue'
+
+                                const app = createApp({
+                                    data() {
+                                        return {
+                                            message: 'Hello World',
+                                            count: 0,
+                                        }
+                                    },
+                                    methods: {
+                                        increment() {
+                                            this.count++
+                                        },
+                                    },
+                                })
+
+                                app.mount('#app')
+                                JS),
+                    ]),
+                Group::make()
                     ->id('keyValue')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
                     ])
                     ->schema([
                         KeyValueEntry::make('meta')
+                            ->state([
+                                'description' => 'Filament is a collection of Laravel packages',
+                                'og:type' => 'website',
+                                'og:site_name' => 'Filament',
+                            ]),
+                    ]),
+                Group::make()
+                    ->id('keyValueCustomLabels')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        KeyValueEntry::make('meta')
+                            ->keyLabel('Property name')
+                            ->valueLabel('Property value')
                             ->state([
                                 'description' => 'Filament is a collection of Laravel packages',
                                 'og:type' => 'website',
@@ -714,6 +972,22 @@ class EntriesDemo extends Component implements HasSchemas
                             ])
                             ->columns(2)
                             ->grid(2),
+                    ]),
+                Group::make()
+                    ->id('repeatableContainedFalse')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        RepeatableEntry::make('comments')
+                            ->schema([
+                                TextEntry::make('author'),
+                                TextEntry::make('title'),
+                                TextEntry::make('content')
+                                    ->columnSpan(2),
+                            ])
+                            ->columns(2)
+                            ->contained(false),
                     ]),
                 Group::make()
                     ->id('repeatableTable')

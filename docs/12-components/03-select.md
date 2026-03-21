@@ -2,6 +2,8 @@
 title: Select Blade component
 ---
 
+import AutoScreenshot from "@components/AutoScreenshot.astro"
+
 ## Introduction
 
 The select component is a wrapper around the native `<select>` element. It provides a simple interface for selecting a single value from a list of options:
@@ -15,5 +17,7 @@ The select component is a wrapper around the native `<select>` element. It provi
     </x-filament::input.select>
 </x-filament::input.wrapper>
 ```
+
+<AutoScreenshot name="components/select/simple" alt="A select input" version="4.x" />
 
 To use the select component, you must wrap it in an "input wrapper" component, which provides a border and other elements such as a prefix or suffix. You can learn more about customizing the input wrapper component [here](input-wrapper).

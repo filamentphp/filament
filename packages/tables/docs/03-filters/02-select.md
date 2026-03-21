@@ -21,6 +21,8 @@ SelectFilter::make('status')
 
 The `options()` that are passed to the filter are the same as those that are passed to the [select field](../../forms/select).
 
+<AutoScreenshot name="tables/filters/select" alt="Table with select filter" version="4.x" />
+
 <UtilityInjection set="tableFilters" version="4.x">As well as allowing a static value, the `options()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Customizing the column used by a select filter
@@ -56,6 +58,8 @@ SelectFilter::make('status')
         'published' => 'Published',
     ])
 ```
+
+<AutoScreenshot name="tables/filters/multi-select" alt="Table with a multi-select filter" version="4.x" />
 
 ## Relationship select filters
 

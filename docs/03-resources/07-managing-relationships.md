@@ -304,6 +304,8 @@ public function table(Table $table): Table
 }
 ```
 
+<AutoScreenshot name="panels/resources/relation-manager-attach" alt="Relation manager attach modal" version="4.x" />
+
 ### Preloading the attachment modal select options
 
 By default, as you search for a record to attach, options will load from the database via AJAX. If you wish to preload these options when the form is first loaded instead, you can use the `preloadRecordSelect()` method of `AttachAction`:
@@ -754,6 +756,8 @@ public static function getRelations(): array
 }
 ```
 
+<AutoScreenshot name="panels/resources/relation-manager-grouped" alt="Relation managers with grouped tabs" version="4.x" />
+
 ## Conditionally showing relation managers
 
 By default, relation managers will be visible if the `viewAny()` method for the related model policy returns `true`.
@@ -779,6 +783,8 @@ public function hasCombinedRelationManagerTabsWithContent(): bool
     return true;
 }
 ```
+
+<AutoScreenshot name="panels/resources/editing-combined-tabs" alt="Resource edit page with combined relation manager tabs" version="4.x" />
 
 ### Customizing the content tab
 

@@ -2,7 +2,10 @@
 
 namespace Database\Seeders;
 
+use App\Models\Comment;
 use App\Models\Post;
+use App\Models\Tag;
+use App\Models\Team;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -11,10 +14,19 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
+        // Pin timestamps so screenshots are reproducible across reseeds
+        $baseDate = '2025-06-01 09:00:00';
+
+        // Use a fixed password hash so the database is byte-identical across reseeds.
+        // This is bcrypt('password') with a fixed salt — only used for doc screenshots.
+        $passwordHash = '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi';
+
         $admin = User::create([
             'name' => 'Dan Harrin',
             'email' => 'dan@filamentphp.com',
-            'password' => Hash::make('password'),
+            'password' => $passwordHash,
+            'created_at' => $baseDate,
+            'updated_at' => $baseDate,
         ]);
 
         $users = collect([
@@ -25,7 +37,9 @@ class DatabaseSeeder extends Seeder
             ['name' => 'Leandro Ferreira', 'email' => 'leandro@filamentphp.com'],
         ])->map(fn (array $data) => User::create([
             ...$data,
-            'password' => Hash::make('password'),
+            'password' => $passwordHash,
+            'created_at' => $baseDate,
+            'updated_at' => $baseDate,
         ]));
 
         $allUsers = collect([$admin, ...$users]);
@@ -52,13 +66,84 @@ class DatabaseSeeder extends Seeder
                 'rating' => $post['rating'],
                 'description' => $post['description'],
                 'author_id' => $allUsers[$post['author_index']]->id,
-                'created_at' => now()->subDays(count($posts) - $index),
-                'updated_at' => now()->subDays(count($posts) - $index),
+                'created_at' => \Carbon\Carbon::parse($baseDate)->subDays(count($posts) - $index),
+                'updated_at' => \Carbon\Carbon::parse($baseDate)->subDays(count($posts) - $index),
+            ]);
+        }
+
+        // Create comments on the first few posts
+        $comments = [
+            ['post_index' => 0, 'user_index' => 1, 'body' => 'This is a great introduction to the new version! Looking forward to trying it out.', 'is_approved' => true],
+            ['post_index' => 0, 'user_index' => 2, 'body' => 'The performance improvements alone make this worth upgrading.', 'is_approved' => true],
+            ['post_index' => 0, 'user_index' => 3, 'body' => 'Will there be a migration guide for v3 users?', 'is_approved' => false],
+            ['post_index' => 1, 'user_index' => 0, 'body' => 'Excellent tutorial! The step-by-step examples are really clear.', 'is_approved' => true],
+            ['post_index' => 1, 'user_index' => 4, 'body' => 'Could you add a section about custom themes?', 'is_approved' => true],
+            ['post_index' => 2, 'user_index' => 5, 'body' => 'The bulk actions section was exactly what I needed.', 'is_approved' => true],
+            ['post_index' => 3, 'user_index' => 1, 'body' => 'How does this work with Livewire v3 validation?', 'is_approved' => false],
+            ['post_index' => 4, 'user_index' => 2, 'body' => 'The CSS overrides section needs more examples.', 'is_approved' => true],
+        ];
+
+        $allPosts = Post::all();
+
+        foreach ($comments as $index => $comment) {
+            Comment::create([
+                'post_id' => $allPosts[$comment['post_index']]->id,
+                'user_id' => $allUsers[$comment['user_index']]->id,
+                'body' => $comment['body'],
+                'is_approved' => $comment['is_approved'],
+                'created_at' => \Carbon\Carbon::parse($baseDate)->subDays(count($comments) - $index),
+                'updated_at' => \Carbon\Carbon::parse($baseDate)->subDays(count($comments) - $index),
             ]);
         }
 
         // Soft-delete two posts for demonstrating trashed filter
         Post::where('slug', 'deploying-filament-applications')->delete();
         Post::where('slug', 'plugin-development-guide')->delete();
+
+        // Create tags for simple modal resource demo
+        $tags = [
+            ['name' => 'Laravel', 'slug' => 'laravel', 'color' => 'danger'],
+            ['name' => 'Livewire', 'slug' => 'livewire', 'color' => 'primary'],
+            ['name' => 'Filament', 'slug' => 'filament', 'color' => 'warning'],
+            ['name' => 'Alpine.js', 'slug' => 'alpinejs', 'color' => 'info'],
+            ['name' => 'Tailwind CSS', 'slug' => 'tailwind-css', 'color' => 'success'],
+        ];
+
+        foreach ($tags as $tag) {
+            Tag::create([...$tag, 'created_at' => $baseDate, 'updated_at' => $baseDate]);
+        }
+
+        // Attach tags to posts for relation manager demo
+        $allTags = Tag::all();
+        $allPosts = Post::withTrashed()->get();
+
+        // Post 1 (Introducing Filament v4) — Laravel, Filament, Livewire
+        $allPosts[0]->tags()->attach([$allTags[0]->id, $allTags[2]->id, $allTags[1]->id]);
+        // Post 2 (Building Admin Panels) — Laravel, Filament
+        $allPosts[1]->tags()->attach([$allTags[0]->id, $allTags[2]->id]);
+        // Post 3 (Advanced Table Techniques) — Filament, Alpine.js
+        $allPosts[2]->tags()->attach([$allTags[2]->id, $allTags[3]->id]);
+        // Post 4 (Form Validation) — Laravel, Livewire
+        $allPosts[3]->tags()->attach([$allTags[0]->id, $allTags[1]->id]);
+        // Post 5 (Custom Themes) — Tailwind CSS, Filament
+        $allPosts[4]->tags()->attach([$allTags[4]->id, $allTags[2]->id]);
+
+        // Enable app MFA on admin user for challenge screenshot
+        $admin->saveAppAuthenticationSecret('JBSWY3DPEHPK3PXP');
+
+        // Create teams for tenancy demo
+        $acme = Team::create(['name' => 'Acme Inc', 'slug' => 'acme-inc', 'created_at' => $baseDate, 'updated_at' => $baseDate]);
+        $starlight = Team::create(['name' => 'Starlight Labs', 'slug' => 'starlight-labs', 'created_at' => $baseDate, 'updated_at' => $baseDate]);
+        $forge = Team::create(['name' => 'Forge Digital', 'slug' => 'forge-digital', 'created_at' => $baseDate, 'updated_at' => $baseDate]);
+
+        // Admin belongs to all teams
+        $admin->teams()->attach([$acme->id, $starlight->id, $forge->id]);
+
+        // Other users belong to one or two teams
+        $users[0]->teams()->attach([$acme->id, $starlight->id]);
+        $users[1]->teams()->attach([$acme->id]);
+        $users[2]->teams()->attach([$starlight->id, $forge->id]);
+        $users[3]->teams()->attach([$forge->id]);
+        $users[4]->teams()->attach([$acme->id, $forge->id]);
     }
 }

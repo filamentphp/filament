@@ -34,4 +34,40 @@
     <div id="chartFilter" class="p-16 max-w-3xl">
         @livewire(\App\Filament\Widgets\ChartWithFilterDemo::class)
     </div>
+
+    <div id="chartPie" class="p-16 max-w-3xl">
+        @livewire(\App\Filament\Widgets\PieChartDemo::class)
+    </div>
+
+    <div id="chartDoughnut" class="p-16 max-w-3xl">
+        @livewire(\App\Filament\Widgets\DoughnutChartDemo::class)
+    </div>
+
+    <div id="chartRadar" class="p-16 max-w-3xl">
+        @livewire(\App\Filament\Widgets\RadarChartDemo::class)
+    </div>
+
+    <div id="chartPolarArea" class="p-16 max-w-3xl">
+        @livewire(\App\Filament\Widgets\PolarAreaChartDemo::class)
+    </div>
+
+    <div id="chartScatter" class="p-16 max-w-3xl">
+        @livewire(\App\Filament\Widgets\ScatterChartDemo::class)
+    </div>
+
+    <div id="chartBubble" class="p-16 max-w-3xl">
+        @livewire(\App\Filament\Widgets\BubbleChartDemo::class)
+    </div>
+
+    <div id="chartCustomFilters" class="p-16 max-w-3xl">
+        @livewire(\App\Filament\Widgets\ChartWithCustomFiltersDemo::class)
+    </div>
+
+    <div id="chartCollapsible" class="p-16 max-w-3xl">
+        @livewire(\App\Filament\Widgets\CollapsibleChartDemo::class)
+    </div>
+
+    <div id="chartMaxHeight" class="p-16 max-w-3xl">
+        @livewire(\App\Filament\Widgets\MaxHeightChartDemo::class)
+    </div>
 </div>

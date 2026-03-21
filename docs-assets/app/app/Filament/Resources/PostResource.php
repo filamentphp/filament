@@ -5,11 +5,13 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\PostResource\Pages;
 use App\Models\Post;
 use Filament\Actions;
+use Filament\Actions\Action;
 use Filament\Forms;
 use Filament\Infolists;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Resources\RelationManagers\RelationGroup;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\FontWeight;
@@ -34,6 +36,17 @@ class PostResource extends Resource
         return [
             'Author' => $record->author?->name,
             'Status' => ucfirst($record->status),
+        ];
+    }
+
+    public static function getGlobalSearchResultActions(Model $record): array
+    {
+        return [
+            Action::make('edit')
+                ->url(static::getUrl('edit', ['record' => $record]))
+                ->icon('heroicon-m-pencil-square'),
+            Action::make('view')
+                ->url(static::getUrl('view', ['record' => $record])),
         ];
     }
 
@@ -161,7 +174,19 @@ class PostResource extends Resource
 
     public static function getRelations(): array
     {
-        return [];
+        if (request()->query('groupedRelations') === '1') {
+            return [
+                PostResource\RelationManagers\CommentsRelationManager::class,
+                RelationGroup::make('Metadata', [
+                    PostResource\RelationManagers\TagsRelationManager::class,
+                ]),
+            ];
+        }
+
+        return [
+            'comments' => PostResource\RelationManagers\CommentsRelationManager::class,
+            'tags' => PostResource\RelationManagers\TagsRelationManager::class,
+        ];
     }
 
     public static function getPages(): array
@@ -169,8 +194,13 @@ class PostResource extends Resource
         return [
             'index' => Pages\ListPosts::route('/'),
             'create' => Pages\CreatePost::route('/create'),
+            'create-wizard' => Pages\CreatePostWizard::route('/create-wizard'),
+            'create-header-action' => Pages\CreatePostHeaderAction::route('/create-header-action'),
             'view' => Pages\ViewPost::route('/{record}'),
             'edit' => Pages\EditPost::route('/{record}/edit'),
+            'edit-section-actions' => Pages\EditPostSectionActions::route('/{record}/edit-section-actions'),
+            'edit-header-actions' => Pages\EditPostHeaderActions::route('/{record}/edit-header-actions'),
+            'edit-save-in-header' => Pages\EditPostSaveInHeader::route('/{record}/edit-save-in-header'),
         ];
     }
 }

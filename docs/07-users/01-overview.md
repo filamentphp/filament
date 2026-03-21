@@ -182,6 +182,12 @@ public function panel(Panel $panel): Panel
 }
 ```
 
+<AutoScreenshot name="panels/registration" alt="The default registration page" version="4.x" />
+
+<AutoScreenshot name="panels/password-reset" alt="The default password reset page" version="4.x" />
+
+<AutoScreenshot name="panels/profile" alt="The default profile page" version="4.x" />
+
 Filament also supports multi-factor authentication, which you can learn about in the [Multi-factor authentication](multi-factor-authentication) section.
 
 ### Customizing the authentication features

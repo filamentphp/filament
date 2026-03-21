@@ -19,6 +19,8 @@ use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\RichEditor\MentionProvider;
+use Filament\Forms\Components\RichEditor\TextColor;
 use Filament\Forms\Components\RichEditor\ToolbarButtonGroup;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Slider;
@@ -38,6 +40,7 @@ use Filament\Schemas\Components\Text;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
+use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\FontWeight;
 use Filament\Support\Icons\Heroicon;
 use Filament\Support\RawJs;
@@ -112,6 +115,18 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                                     ->label('Phone number'),
                             ])
                             ->inlineLabel(),
+                    ]),
+                Group::make()
+                    ->id('hiddenLabel')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        TextInput::make('hiddenLabelSearch')
+                            ->label('Search')
+                            ->hiddenLabel()
+                            ->placeholder('Search posts...')
+                            ->prefixIcon('heroicon-m-magnifying-glass'),
                     ]),
                 Group::make()
                     ->id('placeholder')
@@ -406,6 +421,18 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                             ->suffixIcon(Heroicon::GlobeAlt),
                     ]),
                 Group::make()
+                    ->id('textInputSuffixIconColor')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        TextInput::make('textInputSuffixIconColor')
+                            ->label('Domain')
+                            ->default('https://filamentphp.com')
+                            ->suffixIcon(Heroicon::CheckCircle)
+                            ->suffixIconColor('success'),
+                    ]),
+                Group::make()
                     ->id('textInputRevealablePassword')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
@@ -423,6 +450,40 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                                 TextInput\Actions\HidePasswordAction::make()
                                     ->extraAttributes([]),
                             ]),
+                    ]),
+                Group::make()
+                    ->id('textInputMask')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        TextInput::make('textInputMask')
+                            ->label('Phone number')
+                            ->mask('(999) 999-9999')
+                            ->placeholder('(555) 555-5555')
+                            ->tel(),
+                    ]),
+                Group::make()
+                    ->id('textInputCopyable')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        TextInput::make('textInputCopyable')
+                            ->label('API key')
+                            ->default('flm_sk_1a2b3c4d5e6f7g8h9i0j')
+                            ->copyable(copyMessage: 'Copied!'),
+                    ]),
+                Group::make()
+                    ->id('textInputColor')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        TextInput::make('textInputColor')
+                            ->label('Background color')
+                            ->type('color')
+                            ->default('#6366f1'),
                     ]),
                 Group::make()
                     ->id('select')
@@ -558,6 +619,84 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                                 'filament' => 'filamentphp',
                             ])
                             ->suffixIcon(Heroicon::GlobeAlt),
+                    ]),
+                Group::make()
+                    ->id('selectSuffixIconColor')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        Select::make('selectSuffixIconColor')
+                            ->label('Domain')
+                            ->default('filament')
+                            ->options([
+                                'filament' => 'filamentphp',
+                            ])
+                            ->suffixIcon(Heroicon::CheckCircle)
+                            ->suffixIconColor('success'),
+                    ]),
+                Group::make()
+                    ->id('selectBoolean')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        Select::make('selectBoolean')
+                            ->label('Like this post?')
+                            ->boolean()
+                            ->default(true),
+                    ]),
+                Group::make()
+                    ->id('selectDisabledOptions')
+                    ->extraAttributes([
+                        'class' => 'px-16 pt-16 pb-48 max-w-xl',
+                    ])
+                    ->schema([
+                        Select::make('selectDisabledOptions')
+                            ->label('Status')
+                            ->native(false)
+                            ->options([
+                                'draft' => 'Draft',
+                                'reviewing' => 'Reviewing',
+                                'published' => 'Published',
+                            ])
+                            ->default('draft')
+                            ->disableOptionWhen(fn (string $value): bool => $value === 'published'),
+                    ]),
+                Group::make()
+                    ->id('selectHtmlLabels')
+                    ->extraAttributes([
+                        'class' => 'px-16 pt-16 pb-96 max-w-xl',
+                    ])
+                    ->schema([
+                        Select::make('selectHtmlLabels')
+                            ->label('Technology')
+                            ->options([
+                                'tailwind' => '<span style="color: #3b82f6; font-weight: 600;">Tailwind CSS</span>',
+                                'alpine' => '<span style="color: #22c55e; font-weight: 600;">Alpine.js</span>',
+                                'laravel' => '<span style="color: #ef4444; font-weight: 600;">Laravel</span>',
+                                'livewire' => '<span style="color: #ec4899; font-weight: 600;">Livewire</span>',
+                            ])
+                            ->searchable()
+                            ->allowHtml(),
+                    ]),
+                Group::make()
+                    ->id('selectTruncateLabels')
+                    ->extraAttributes([
+                        'class' => 'px-16 pt-16 max-w-xl',
+                        'style' => 'padding-bottom: 18rem',
+                    ])
+                    ->schema([
+                        Select::make('selectTruncateLabels')
+                            ->label('Framework')
+                            ->options([
+                                'tailwind' => 'Tailwind CSS - A utility-first CSS framework for rapid UI development',
+                                'alpine' => 'Alpine.js - A lightweight JavaScript framework for composing behavior',
+                                'laravel' => 'Laravel - A PHP web application framework with expressive, elegant syntax',
+                                'livewire' => 'Livewire - A full-stack framework for building dynamic interfaces',
+                            ])
+                            ->searchable()
+                            ->wrapOptionLabels(false),
                     ]),
                 Group::make()
                     ->id('checkbox')
@@ -724,6 +863,23 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                             ->gridDirection('row'),
                     ]),
                 Group::make()
+                    ->id('checkboxListHtmlLabels')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        CheckboxList::make('checkboxListHtmlLabels')
+                            ->label('Technologies')
+                            ->options([
+                                'tailwind' => '<span style="color: #3b82f6">Tailwind CSS</span>',
+                                'alpine' => '<span style="color: #22c55e">Alpine.js</span>',
+                                'laravel' => '<span style="color: #ef4444">Laravel</span>',
+                                'livewire' => '<span style="color: #ec4899">Livewire</span>',
+                            ])
+                            ->default(['tailwind', 'laravel'])
+                            ->allowHtml(),
+                    ]),
+                Group::make()
                     ->id('searchableCheckboxList')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
@@ -756,6 +912,23 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                             ])
                             ->default(['tailwind', 'laravel'])
                             ->bulkToggleable(),
+                    ]),
+                Group::make()
+                    ->id('checkboxListDisabledOptions')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        CheckboxList::make('checkboxListDisabledOptions')
+                            ->label('Technologies')
+                            ->options([
+                                'tailwind' => 'Tailwind CSS',
+                                'alpine' => 'Alpine.js',
+                                'laravel' => 'Laravel',
+                                'livewire' => 'Laravel Livewire',
+                            ])
+                            ->default(['tailwind', 'laravel'])
+                            ->disableOptionWhen(static fn (string $value): bool => in_array($value, ['laravel', 'livewire'])),
                     ]),
                 Group::make()
                     ->id('radio')
@@ -801,6 +974,17 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                         Radio::make('booleanRadio')
                             ->label('Like this post?')
                             ->boolean()
+                            ->default(true),
+                    ]),
+                Group::make()
+                    ->id('booleanRadioCustomLabels')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        Radio::make('booleanRadioCustomLabels')
+                            ->label('Receive notifications?')
+                            ->boolean('Enable', 'Disable')
                             ->default(true),
                     ]),
                 Group::make()
@@ -902,6 +1086,18 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                             ->default('2000-01-01'),
                     ]),
                 Group::make()
+                    ->id('dateTimePickerDefaultFocusedDate')
+                    ->extraAttributes([
+                        'class' => 'px-16 pt-16 pb-96 max-w-xl',
+                    ])
+                    ->schema([
+                        DatePicker::make('dateTimePickerDefaultFocusedDate')
+                            ->label('Custom starts at')
+                            ->native(false)
+                            ->placeholder('Jan 1, 2000')
+                            ->defaultFocusedDate(\Carbon\Carbon::parse('2000-01-01')),
+                    ]),
+                Group::make()
                     ->id('dateTimePickerAffix')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
@@ -922,7 +1118,19 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                         TimePicker::make('dateTimePickerPrefixIcon')
                             ->label('At')
                             ->prefixIcon(Heroicon::Play)
-                            ->default('2000-01-01'),
+                            ->default('14:00:00'),
+                    ]),
+                Group::make()
+                    ->id('dateTimePickerPrefixIconColor')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        TimePicker::make('dateTimePickerPrefixIconColor')
+                            ->label('At')
+                            ->prefixIcon(Heroicon::CheckCircle)
+                            ->prefixIconColor('success')
+                            ->default('09:30:00'),
                     ]),
                 Group::make()
                     ->id('fileUpload')
@@ -934,6 +1142,118 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                             ->label('Attachment'),
                     ]),
                 Group::make()
+                    ->id('fileUploadAvatar')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        FileUpload::make('fileUploadAvatar')
+                            ->label('Avatar')
+                            ->avatar(),
+                    ]),
+                Group::make()
+                    ->id('fileUploadMultiple')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        FileUpload::make('fileUploadMultiple')
+                            ->label('Attachments')
+                            ->multiple(),
+                    ]),
+                Group::make()
+                    ->id('fileUploadImage')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        FileUpload::make('fileUploadImage')
+                            ->label('Image')
+                            ->image()
+                            ->imageEditor(),
+                    ]),
+                Group::make()
+                    ->id('fileUploadImageEditor')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        FileUpload::make('fileUploadImageEditor')
+                            ->label('Image')
+                            ->disk('public')
+                            ->image()
+                            ->imageEditor()
+                            ->imageEditorAspectRatioOptions([
+                                null,
+                                '16:9',
+                                '4:3',
+                                '1:1',
+                            ])
+                            ->default('test/sample-image.jpg'),
+                    ]),
+                Group::make()
+                    ->id('fileUploadImagePreview')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        FileUpload::make('fileUploadImagePreview')
+                            ->label('Featured image')
+                            ->disk('public')
+                            ->image()
+                            ->default('test/sample-image.jpg'),
+                    ]),
+                Group::make()
+                    ->id('fileUploadMultipleGrid')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        FileUpload::make('fileUploadMultipleGrid')
+                            ->label('Gallery')
+                            ->disk('public')
+                            ->image()
+                            ->multiple()
+                            ->panelLayout('grid')
+                            ->default([
+                                'test/sample-image.jpg',
+                                'test/sample-image-2.jpg',
+                                'test/sample-image-3.jpg',
+                            ]),
+                    ]),
+                Group::make()
+                    ->id('fileUploadOpenable')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        FileUpload::make('fileUploadOpenable')
+                            ->label('Attachments')
+                            ->disk('public')
+                            ->multiple()
+                            ->openable()
+                            ->default([
+                                'test/sample-image.jpg',
+                                'test/sample-image-2.jpg',
+                            ]),
+                    ]),
+                Group::make()
+                    ->id('fileUploadDownloadable')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        FileUpload::make('fileUploadDownloadable')
+                            ->label('Attachments')
+                            ->disk('public')
+                            ->multiple()
+                            ->downloadable()
+                            ->default([
+                                'test/sample-image.jpg',
+                                'test/sample-image-2.jpg',
+                            ]),
+                    ]),
+                Group::make()
                     ->id('richEditor')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-5xl',
@@ -941,6 +1261,21 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                     ->schema([
                         RichEditor::make('richEditor')
                             ->label('Content'),
+                    ]),
+                Group::make()
+                    ->id('richEditorCustomToolbar')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-5xl',
+                    ])
+                    ->schema([
+                        RichEditor::make('richEditorCustomToolbar')
+                            ->label('Content')
+                            ->toolbarButtons([
+                                ['bold', 'italic', 'underline', 'strike', 'link'],
+                                ['h2', 'h3'],
+                                ['blockquote', 'bulletList', 'orderedList'],
+                                ['undo', 'redo'],
+                            ]),
                     ]),
                 Group::make()
                     ->id('richEditorToolbarButtonGroup')
@@ -975,6 +1310,103 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                             ]),
                     ]),
                 Group::make()
+                    ->id('richEditorMergeTags')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-5xl',
+                    ])
+                    ->schema([
+                        RichEditor::make('richEditorMergeTags')
+                            ->label('Email template')
+                            ->mergeTags([
+                                'first_name',
+                                'last_name',
+                                'company',
+                                'unsubscribe_url',
+                            ])
+                            ->activePanel('mergeTags'),
+                    ]),
+                Group::make()
+                    ->id('richEditorTextColors')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-5xl',
+                    ])
+                    ->schema([
+                        RichEditor::make('richEditorTextColors')
+                            ->label('Content')
+                            ->toolbarButtons([
+                                ['bold', 'italic', 'underline', 'strike', 'textColor'],
+                                ['h2', 'h3'],
+                                ['blockquote', 'bulletList', 'orderedList'],
+                                ['undo', 'redo'],
+                            ])
+                            ->textColors([
+                                'red' => TextColor::make('Red', '#ef4444'),
+                                'orange' => TextColor::make('Orange', '#f97316'),
+                                'green' => TextColor::make('Green', '#10b981'),
+                                'sky' => TextColor::make('Sky', '#0ea5e9'),
+                                'blue' => TextColor::make('Blue', '#3b82f6'),
+                                'violet' => TextColor::make('Violet', '#8b5cf6'),
+                            ]),
+                    ]),
+                Group::make()
+                    ->id('richEditorMentions')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-5xl',
+                    ])
+                    ->schema([
+                        RichEditor::make('richEditorMentions')
+                            ->label('Content')
+                            ->mentions([
+                                MentionProvider::make('@')
+                                    ->items([
+                                        1 => 'Dan Harrin',
+                                        2 => 'Ryan Chandler',
+                                        3 => 'Zep Fietje',
+                                        4 => 'Dennis Koch',
+                                        5 => 'Adam Weston',
+                                        6 => 'Patrick Boivin',
+                                    ]),
+                            ]),
+                    ]),
+                Group::make()
+                    ->id('richEditorCustomBlocks')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-5xl',
+                    ])
+                    ->schema([
+                        RichEditor::make('richEditorCustomBlocks')
+                            ->label('Content')
+                            ->customBlocks([
+                                \App\RichContentBlocks\HeroBlock::class,
+                                \App\RichContentBlocks\CallToActionBlock::class,
+                                \App\RichContentBlocks\TestimonialBlock::class,
+                            ]),
+                    ]),
+                Group::make()
+                    ->id('richEditorFloatingToolbar')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-5xl',
+                    ])
+                    ->schema([
+                        RichEditor::make('richEditorFloatingToolbar')
+                            ->label('Content')
+                            ->toolbarButtons([
+                                ['bold', 'italic', 'underline', 'strike', 'link'],
+                                ['h2', 'h3'],
+                                ['blockquote', 'bulletList', 'orderedList'],
+                                ['undo', 'redo'],
+                            ])
+                            ->floatingToolbars([
+                                'paragraph' => [
+                                    'bold', 'italic', 'underline', 'strike', 'subscript', 'superscript',
+                                ],
+                                'heading' => [
+                                    'h1', 'h2', 'h3',
+                                ],
+                            ])
+                            ->default('<p>Filament is a collection of beautiful full-stack components for Laravel. It helps you build admin panels, customer-facing apps, and more.</p>'),
+                    ]),
+                Group::make()
                     ->id('markdownEditor')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-5xl',
@@ -982,6 +1414,19 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                     ->schema([
                         MarkdownEditor::make('markdownEditor')
                             ->label('Content'),
+                    ]),
+                Group::make()
+                    ->id('markdownEditorCustomToolbar')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-5xl',
+                    ])
+                    ->schema([
+                        MarkdownEditor::make('markdownEditorCustomToolbar')
+                            ->label('Content')
+                            ->toolbarButtons([
+                                ['bold', 'italic', 'strike', 'link'],
+                                ['heading'],
+                            ]),
                     ]),
                 Group::make()
                     ->id('repeater')
@@ -1142,6 +1587,24 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                             ->reorderableWithButtons(),
                     ]),
                 Group::make()
+                    ->id('collapsibleRepeater')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-5xl',
+                    ])
+                    ->schema([
+                        Repeater::make('collapsibleRepeater')
+                            ->label('Qualifications')
+                            ->schema([
+                                TextInput::make('name')->required(),
+                            ])
+                            ->collapsible()
+                            ->default([
+                                ['name' => 'Tailwind CSS Level 1'],
+                                ['name' => 'Alpine.js Level 1'],
+                                ['name' => 'Laravel Level 1'],
+                            ]),
+                    ]),
+                Group::make()
                     ->id('collapsedRepeater')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-5xl',
@@ -1226,6 +1689,42 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                             ->itemLabel(fn (array $state): ?string => $state['name'] ?? null),
                     ]),
                 Group::make()
+                    ->id('numberedRepeater')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-5xl',
+                    ])
+                    ->schema([
+                        Repeater::make('numberedRepeater')
+                            ->label('Members')
+                            ->schema([
+                                TextInput::make('name')->required(),
+                                Select::make('role')
+                                    ->options([
+                                        'member' => 'Member',
+                                        'administrator' => 'Administrator',
+                                        'owner' => 'Owner',
+                                    ])
+                                    ->required(),
+                            ])
+                            ->columns(2)
+                            ->default([
+                                [
+                                    'name' => 'Dan Harrin',
+                                    'role' => 'owner',
+                                ],
+                                [
+                                    'name' => 'Ryan Chandler',
+                                    'role' => 'administrator',
+                                ],
+                                [
+                                    'name' => 'Zep Fietje',
+                                    'role' => 'member',
+                                ],
+                            ])
+                            ->itemLabel(fn (array $state): ?string => $state['name'] ?? null)
+                            ->itemNumbers(),
+                    ]),
+                Group::make()
                     ->id('simpleRepeater')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-5xl',
@@ -1241,6 +1740,33 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                             ->default([
                                 'dan@filamentphp.com',
                                 'ryan@filamentphp.com',
+                            ]),
+                    ]),
+                Group::make()
+                    ->id('repeaterAddActionAlignment')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-5xl',
+                    ])
+                    ->schema([
+                        Repeater::make('repeaterAddActionAlignment')
+                            ->label('Members')
+                            ->schema([
+                                TextInput::make('name')->required(),
+                                Select::make('role')
+                                    ->options([
+                                        'member' => 'Member',
+                                        'administrator' => 'Administrator',
+                                        'owner' => 'Owner',
+                                    ])
+                                    ->required(),
+                            ])
+                            ->columns(2)
+                            ->addActionAlignment(Alignment::Start)
+                            ->default([
+                                [
+                                    'name' => 'Dan Harrin',
+                                    'role' => 'owner',
+                                ],
                             ]),
                     ]),
                 Group::make()
@@ -1402,6 +1928,103 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                             ]),
                     ]),
                 Group::make()
+                    ->id('builderBlockIcons')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-5xl',
+                    ])
+                    ->schema([
+                        Builder::make('builderBlockIcons')
+                            ->label('Content')
+                            ->schema([
+                                Builder\Block::make('paragraph')
+                                    ->schema([
+                                        Textarea::make('content')
+                                            ->label('Paragraph')
+                                            ->required(),
+                                    ])
+                                    ->icon(Heroicon::Bars3BottomLeft),
+                                Builder\Block::make('image')
+                                    ->icon(Heroicon::Photo),
+                            ])
+                            ->blockIcons()
+                            ->default([
+                                [
+                                    'type' => 'paragraph',
+                                    'data' => [
+                                        'content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam euismod, nisl eget aliquam ultricies.',
+                                    ],
+                                ],
+                            ]),
+                    ]),
+                Group::make()
+                    ->id('builderAddActionAlignment')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-5xl',
+                    ])
+                    ->schema([
+                        Builder::make('builderAddActionAlignment')
+                            ->label('Content')
+                            ->schema([
+                                Builder\Block::make('paragraph')
+                                    ->schema([
+                                        Textarea::make('content')
+                                            ->label('Paragraph')
+                                            ->required(),
+                                    ])
+                                    ->icon(Heroicon::Bars3BottomLeft),
+                                Builder\Block::make('image')
+                                    ->icon(Heroicon::Photo),
+                            ])
+                            ->addActionAlignment(Alignment::Start)
+                            ->default([
+                                [
+                                    'type' => 'paragraph',
+                                    'data' => [
+                                        'content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam euismod, nisl eget aliquam ultricies.',
+                                    ],
+                                ],
+                            ]),
+                    ]),
+                Group::make()
+                    ->id('builderBlockPreviews')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-5xl',
+                    ])
+                    ->schema([
+                        Builder::make('builderBlockPreviews')
+                            ->label('Content')
+                            ->schema([
+                                Builder\Block::make('heading')
+                                    ->schema([
+                                        TextInput::make('text')
+                                            ->placeholder('Default heading'),
+                                    ])
+                                    ->preview('filament.content.block-previews.heading'),
+                                Builder\Block::make('paragraph')
+                                    ->schema([
+                                        Textarea::make('content')
+                                            ->label('Paragraph')
+                                            ->required(),
+                                    ])
+                                    ->preview('filament.content.block-previews.paragraph'),
+                            ])
+                            ->blockPreviews()
+                            ->default([
+                                [
+                                    'type' => 'heading',
+                                    'data' => [
+                                        'text' => 'Introducing Filament v4',
+                                    ],
+                                ],
+                                [
+                                    'type' => 'paragraph',
+                                    'data' => [
+                                        'content' => 'Filament is a collection of full-stack components for accelerated Laravel development. They are beautifully designed, intuitive to use, and fully extensible.',
+                                    ],
+                                ],
+                            ]),
+                    ]),
+                Group::make()
                     ->id('builderReorderableWithButtons')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-5xl',
@@ -1439,6 +2062,39 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                                 ],
                             ])
                             ->reorderableWithButtons(),
+                    ]),
+                Group::make()
+                    ->id('collapsibleBuilder')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-5xl',
+                    ])
+                    ->schema([
+                        Builder::make('collapsibleBuilder')
+                            ->label('Content')
+                            ->schema([
+                                Builder\Block::make('paragraph')
+                                    ->schema([
+                                        Textarea::make('content')
+                                            ->label('Paragraph')
+                                            ->required(),
+                                    ])
+                                    ->icon(Heroicon::Bars3BottomLeft),
+                            ])
+                            ->default([
+                                [
+                                    'type' => 'paragraph',
+                                    'data' => [
+                                        'content' => 'Filament is a collection of full-stack components for accelerated Laravel development.',
+                                    ],
+                                ],
+                                [
+                                    'type' => 'paragraph',
+                                    'data' => [
+                                        'content' => 'They are beautifully designed, intuitive to use, and fully extensible.',
+                                    ],
+                                ],
+                            ])
+                            ->collapsible(),
                     ]),
                 Group::make()
                     ->id('collapsedBuilder')
@@ -1519,6 +2175,48 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                             ->cloneable(),
                     ]),
                 Group::make()
+                    ->id('builderBlockPickerColumns')
+                    ->extraAttributes([
+                        'class' => 'px-16 pt-16 max-w-5xl',
+                        'style' => 'padding-bottom: 12rem',
+                    ])
+                    ->schema([
+                        Builder::make('builderBlockPickerColumns')
+                            ->label('Content')
+                            ->blockPickerColumns(2)
+                            ->blockPickerWidth('2xl')
+                            ->schema([
+                                Builder\Block::make('heading')
+                                    ->schema([
+                                        TextInput::make('content')
+                                            ->label('Heading')
+                                            ->required(),
+                                    ])
+                                    ->icon(Heroicon::Hashtag),
+                                Builder\Block::make('paragraph')
+                                    ->schema([
+                                        Textarea::make('content')
+                                            ->label('Paragraph')
+                                            ->required(),
+                                    ])
+                                    ->icon(Heroicon::Bars3BottomLeft),
+                                Builder\Block::make('image')
+                                    ->schema([
+                                        FileUpload::make('url')
+                                            ->label('Image')
+                                            ->image(),
+                                    ])
+                                    ->icon(Heroicon::Photo),
+                                Builder\Block::make('quote')
+                                    ->schema([
+                                        Textarea::make('content')
+                                            ->label('Quote')
+                                            ->required(),
+                                    ])
+                                    ->icon(Heroicon::ChatBubbleBottomCenterText),
+                            ]),
+                    ]),
+                Group::make()
                     ->id('tagsInput')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
@@ -1529,6 +2227,56 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                             ->default(['Tailwind CSS', 'Alpine.js']),
                     ]),
                 Group::make()
+                    ->id('tagsInputSuggestions')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                        'style' => 'padding-bottom: 12rem',
+                    ])
+                    ->schema([
+                        TagsInput::make('tagsInputSuggestions')
+                            ->label('Tags')
+                            ->suggestions([
+                                'tailwindcss',
+                                'alpinejs',
+                                'laravel',
+                                'livewire',
+                            ])
+                            ->default(['tailwindcss']),
+                    ]),
+                Group::make()
+                    ->id('tagsInputTagPrefix')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        TagsInput::make('tagsInputTagPrefix')
+                            ->label('Hashtags')
+                            ->tagPrefix('#')
+                            ->default(['filament', 'laravel', 'livewire']),
+                    ]),
+                Group::make()
+                    ->id('tagsInputColor')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        TagsInput::make('tagsInputColor')
+                            ->label('Tags')
+                            ->color('danger')
+                            ->default(['urgent', 'critical', 'review']),
+                    ]),
+                Group::make()
+                    ->id('tagsInputReorderable')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        TagsInput::make('tagsInputReorderable')
+                            ->label('Tags')
+                            ->reorderable()
+                            ->default(['Tailwind CSS', 'Alpine.js', 'Laravel', 'Livewire']),
+                    ]),
+                Group::make()
                     ->id('textarea')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
@@ -1537,6 +2285,17 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                         Textarea::make('textarea')
                             ->label('Description')
                             ->default('Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam euismod, nisl eget aliquam ultricies, quam sapien aliquet nunc, eget aliquam velit nisl quis nunc.'),
+                    ]),
+                Group::make()
+                    ->id('textareaRows')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        Textarea::make('textareaRows')
+                            ->label('Description')
+                            ->rows(10)
+                            ->default("Filament is a collection of full-stack components for accelerated Laravel development. They are beautifully designed, intuitive to use, and fully extensible — the perfect starting point for your next Laravel app.\n\nWith Filament, you can build admin panels, customer-facing apps, SaaS platforms, and more — all with a consistent, polished UI.\n\nIt includes a form builder, table builder, notification system, action modals, infolist builder, and a complete admin panel framework."),
                     ]),
                 Group::make()
                     ->id('keyValue')
@@ -1568,6 +2327,24 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                             ->reorderable(),
                     ]),
                 Group::make()
+                    ->id('keyValueCustomLabels')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-5xl',
+                    ])
+                    ->schema([
+                        KeyValue::make('keyValueCustomLabels')
+                            ->label('Environment Variables')
+                            ->keyLabel('Variable')
+                            ->valueLabel('Value')
+                            ->keyPlaceholder('e.g. APP_NAME')
+                            ->valuePlaceholder('e.g. My Application')
+                            ->default([
+                                'APP_NAME' => 'Filament',
+                                'APP_ENV' => 'production',
+                                'APP_DEBUG' => 'false',
+                            ]),
+                    ]),
+                Group::make()
                     ->id('colorPicker')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
@@ -1576,6 +2353,32 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                         ColorPicker::make('colorPicker')
                             ->label('Color')
                             ->default('#3490dc'),
+                    ]),
+                Group::make()
+                    ->id('colorPickerOpen')
+                    ->extraAttributes([
+                        'class' => 'px-16 pt-16 pb-96 max-w-xl',
+                    ])
+                    ->schema([
+                        ColorPicker::make('colorPickerOpen')
+                            ->label('Color')
+                            ->default('#e3342f'),
+                    ]),
+                Group::make()
+                    ->id('colorPickerFormats')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-2xl',
+                    ])
+                    ->schema([
+                        ColorPicker::make('hsl_color')
+                            ->hsl()
+                            ->default('hsl(210, 68%, 53%)'),
+                        ColorPicker::make('rgb_color')
+                            ->rgb()
+                            ->default('rgb(52, 144, 220)'),
+                        ColorPicker::make('rgba_color')
+                            ->rgba()
+                            ->default('rgba(52, 144, 220, 0.5)'),
                     ]),
                 Group::make()
                     ->id('toggleButtons')
@@ -1631,6 +2434,57 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                                 'published' => Heroicon::OutlinedCheckCircle,
                             ])
                             ->default('scheduled'),
+                    ]),
+                Group::make()
+                    ->id('toggleButtonsHiddenLabels')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        ToggleButtons::make('toggleButtonsHiddenLabels')
+                            ->label('Status')
+                            ->options([
+                                'draft' => 'Draft',
+                                'scheduled' => 'Scheduled',
+                                'published' => 'Published',
+                            ])
+                            ->icons([
+                                'draft' => Heroicon::OutlinedPencil,
+                                'scheduled' => Heroicon::OutlinedClock,
+                                'published' => Heroicon::OutlinedCheckCircle,
+                            ])
+                            ->colors([
+                                'draft' => 'info',
+                                'scheduled' => 'warning',
+                                'published' => 'success',
+                            ])
+                            ->hiddenButtonLabels()
+                            ->default('published'),
+                    ]),
+                Group::make()
+                    ->id('toggleButtonsTooltips')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        ToggleButtons::make('toggleButtonsTooltips')
+                            ->label('Status')
+                            ->options([
+                                'draft' => 'Draft',
+                                'scheduled' => 'Scheduled',
+                                'published' => 'Published',
+                            ])
+                            ->icons([
+                                'draft' => Heroicon::OutlinedPencil,
+                                'scheduled' => Heroicon::OutlinedClock,
+                                'published' => Heroicon::OutlinedCheckCircle,
+                            ])
+                            ->tooltips([
+                                'draft' => 'Set as a draft before publishing.',
+                                'scheduled' => 'Schedule publishing on a specific date.',
+                                'published' => 'Publish now',
+                            ])
+                            ->default('draft'),
                     ]),
                 Group::make()
                     ->id('toggleButtonsBoolean')
@@ -1791,6 +2645,20 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                             ->label('Slider')
                             ->vertical()
                             ->default(50),
+                    ]),
+                Group::make()
+                    ->id('sliderTopToBottom')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        Slider::make('sliderTopToBottom')
+                            ->label('Slider')
+                            ->range(minValue: 0, maxValue: 100)
+                            ->vertical()
+                            ->rtl(false)
+                            ->pips()
+                            ->default(30),
                     ]),
                 Group::make()
                     ->id('sliderTooltips')
@@ -2033,6 +2901,32 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                             ->default(50),
                     ]),
                 Group::make()
+                    ->id('sliderRangePadding')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        Slider::make('sliderRangePadding')
+                            ->label('Slider')
+                            ->range(minValue: 0, maxValue: 100)
+                            ->rangePadding(15)
+                            ->pips()
+                            ->default(50),
+                    ]),
+                Group::make()
+                    ->id('sliderRtl')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        Slider::make('sliderRtl')
+                            ->label('Slider')
+                            ->range(minValue: 0, maxValue: 100)
+                            ->rtl()
+                            ->pips()
+                            ->default(30),
+                    ]),
+                Group::make()
                     ->id('codeEditor')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
@@ -2071,6 +2965,33 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                                     .then((user) => console.log(`👤 ${user.name}`))
                                     .catch((error) => console.error('⚠️', error.message))
                                 JS),
+                    ]),
+                Group::make()
+                    ->id('codeEditorWrap')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        CodeEditor::make('codeWrap')
+                            ->label('Code')
+                            ->wrap()
+                            ->language(Language::Php)
+                            ->default(<<<'PHP'
+                                public function getUserDisplayName(User $user): string { return $user->first_name . ' ' . $user->last_name . ' (' . $user->email . ')'; }
+
+                                public function getFormattedAddress(Address $address): string { return $address->street . ', ' . $address->city . ', ' . $address->state . ' ' . $address->zip; }
+                                PHP),
+                    ]),
+                Group::make()
+                    ->id('textareaAutosize')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        Textarea::make('textareaAutosize')
+                            ->label('Description')
+                            ->autosize()
+                            ->default("Filament is a collection of full-stack components for accelerated Laravel development. They are beautifully designed, intuitive to use, and fully extensible — the perfect starting point for your next Laravel app.\n\nWith Filament, you can build admin panels, customer-facing apps, SaaS platforms, and more — all with a consistent, polished UI."),
                     ]),
             ]);
     }

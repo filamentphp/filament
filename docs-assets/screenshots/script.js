@@ -36,18 +36,21 @@ const processScreenshot = async (file, options, theme) => {
             deviceScaleFactor: 3,
         },
     )
+
+    // Set color scheme preference before navigating so server-rendered
+    // pages (like auth pages) pick up the correct theme on first load.
+    await page.emulateMediaFeatures([
+        {
+            name: 'prefers-color-scheme',
+            value: theme === 'dark' ? 'dark' : 'light',
+        },
+    ])
+
     await page.goto(`http://127.0.0.1:8000/${options.url}`, {
         waitUntil: 'networkidle2',
     })
 
     if (theme === 'dark') {
-        await page.emulateMediaFeatures([
-            {
-                name: 'prefers-color-scheme',
-                value: 'dark',
-            },
-        ])
-
         if (options.needsReloadForDarkMode) {
             await page.goto(`http://127.0.0.1:8000/${options.url}`, {
                 waitUntil: 'networkidle2',
@@ -56,13 +59,6 @@ const processScreenshot = async (file, options, theme) => {
 
         await new Promise((resolve) => setTimeout(resolve, 500))
     } else {
-        await page.emulateMediaFeatures([
-            {
-                name: 'prefers-color-scheme',
-                value: 'light'
-            }
-        ])
-
         await new Promise((resolve) => setTimeout(resolve, 500))
     }
 
@@ -71,7 +67,24 @@ const processScreenshot = async (file, options, theme) => {
     }
 
     const element = await page.waitForSelector(options.selector)
-    await element.screenshot({ path: `images/${theme}/${file}.jpg` })
+
+    if (options.selectorPadding) {
+        await element.scrollIntoView()
+        await new Promise((resolve) => setTimeout(resolve, 100))
+        const boundingBox = await element.boundingBox()
+        const padding = options.selectorPadding
+        await page.screenshot({
+            path: `images/${theme}/${file}.jpg`,
+            clip: {
+                x: Math.max(0, boundingBox.x - (padding.left ?? 0)),
+                y: Math.max(0, boundingBox.y - (padding.top ?? 0)),
+                width: boundingBox.width + (padding.left ?? 0) + (padding.right ?? 0),
+                height: boundingBox.height + (padding.top ?? 0) + (padding.bottom ?? 0),
+            },
+        })
+    } else {
+        await element.screenshot({ path: `images/${theme}/${file}.jpg` })
+    }
 
     await element.dispose()
     await browser.close()

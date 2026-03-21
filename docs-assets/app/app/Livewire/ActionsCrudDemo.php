@@ -3,11 +3,18 @@
 namespace App\Livewire;
 
 use App\Models\Post;
+use App\Filament\Exports\PostExporter;
+use App\Filament\Imports\PostImporter;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
+use Filament\Actions\ExportAction;
+use Filament\Actions\ForceDeleteAction;
+use Filament\Actions\ImportAction;
+use Filament\Actions\ReplicateAction;
+use Filament\Actions\RestoreAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -31,7 +38,7 @@ class ActionsCrudDemo extends Component implements HasActions, HasSchemas, HasTa
     public function table(Table $table): Table
     {
         return $table
-            ->query(Post::query()->with('author'))
+            ->query(Post::withTrashed()->with('author'))
             ->columns([
                 TextColumn::make('title'),
                 TextColumn::make('author.name'),
@@ -50,13 +57,29 @@ class ActionsCrudDemo extends Component implements HasActions, HasSchemas, HasTa
                 CreateAction::make()
                     ->model(Post::class)
                     ->form(static::getPostForm()),
+                ImportAction::make()
+                    ->importer(PostImporter::class),
+                ExportAction::make()
+                    ->exporter(PostExporter::class),
             ])
             ->actions([
                 ViewAction::make()
                     ->form(static::getPostForm()),
                 EditAction::make()
                     ->form(static::getPostForm()),
+                ReplicateAction::make()
+                    ->excludeAttributes(['slug'])
+                    ->form([
+                        TextInput::make('title')
+                            ->required()
+                            ->maxLength(255),
+                        TextInput::make('slug')
+                            ->required()
+                            ->maxLength(255),
+                    ]),
                 DeleteAction::make(),
+                ForceDeleteAction::make(),
+                RestoreAction::make(),
             ]);
     }
 
