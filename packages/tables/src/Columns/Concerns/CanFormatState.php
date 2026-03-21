@@ -115,18 +115,18 @@ trait CanFormatState
         return $this;
     }
 
-    public function since(string | Closure | null $timezone = null): static
+    public function since(string | Closure | null $timezone = null, bool | Closure $short = false): static
     {
         $this->isDateTime = true;
 
-        $this->formatStateUsing(static function (TextColumn $column, $state) use ($timezone): ?string {
+        $this->formatStateUsing(static function (TextColumn $column, $state) use ($timezone, $short): ?string {
             if (blank($state)) {
                 return null;
             }
 
             return Carbon::parse($state)
                 ->setTimezone($column->evaluate($timezone) ?? $column->getTimezone())
-                ->diffForHumans();
+                ->diffForHumans(short: (bool) $column->evaluate($short));
         });
 
         return $this;
@@ -165,16 +165,16 @@ trait CanFormatState
         return $this;
     }
 
-    public function sinceTooltip(string | Closure | null $timezone = null): static
+    public function sinceTooltip(string | Closure | null $timezone = null, bool | Closure $short = false): static
     {
-        $this->tooltip(static function (TextColumn $column, mixed $state) use ($timezone): ?string {
+        $this->tooltip(static function (TextColumn $column, mixed $state) use ($timezone, $short): ?string {
             if (blank($state)) {
                 return null;
             }
 
             return Carbon::parse($state)
                 ->setTimezone($column->evaluate($timezone) ?? $column->getTimezone())
-                ->diffForHumans();
+                ->diffForHumans(short: (bool) $column->evaluate($short));
         });
 
         return $this;

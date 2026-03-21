@@ -207,6 +207,15 @@ TextEntry::make('created_at')
     ->since()
 ```
 
+You may pass `short: true` to use abbreviated units (e.g., "1h ago" instead of "1 hour ago"):
+
+```php
+use Filament\Infolists\Components\TextEntry;
+
+TextEntry::make('created_at')
+    ->since(short: true)
+```
+
 #### Displaying a formatting date in a tooltip
 
 Additionally, you can use the `dateTooltip()`, `dateTimeTooltip()`, `timeTooltip()`, `isoDateTooltip()`, `isoDateTimeTooltip()`, `isoTime()`, `isoTimeTooltip()`, or `sinceTooltip()` method to display a formatted date in a [tooltip](overview#adding-a-tooltip-to-an-entry), often to provide extra information:
