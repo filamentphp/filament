@@ -68,6 +68,21 @@ class User extends Authenticatable implements FilamentUser, HasAppAuthentication
         return $this->hasMany(Post::class, 'author_id');
     }
 
+    public function comments(): HasMany
+    {
+        return $this->hasMany(Comment::class);
+    }
+
+    public function orders(): HasMany
+    {
+        return $this->hasMany(Order::class);
+    }
+
+    public function payments(): HasMany
+    {
+        return $this->hasMany(Payment::class);
+    }
+
     public function teams(): BelongsToMany
     {
         return $this->belongsToMany(Team::class);

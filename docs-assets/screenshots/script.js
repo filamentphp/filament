@@ -2,12 +2,15 @@
 //   node script.js
 //   node script.js "absolute/schema/key"
 //   node script.js "wildcard/schema/key/*"
+//   node script.js --clean          # Delete screenshot files with no schema.js entry
+//   node script.js --clean --dry    # Preview what --clean would delete
 //
 // For Apple Silicon, you might need to export the following variables if Chromium cannot be found:
 // export PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
 // export PUPPETEER_EXECUTABLE_PATH=`which chromium`
 
 import fs from 'fs'
+import path from 'path'
 import puppeteer from 'puppeteer'
 import schema from './schema.js'
 import emitter from 'events'
@@ -17,6 +20,62 @@ import sharp from 'sharp'
 emitter.setMaxListeners(1024)
 
 const themes = ['light', 'dark']
+
+if (process.argv.includes('--clean')) {
+    const dryRun = process.argv.includes('--dry')
+    const schemaKeys = new Set(Object.keys(schema))
+    let deletedCount = 0
+
+    for (const theme of themes) {
+        const imagesDir = `images/${theme}`
+
+        if (! fs.existsSync(imagesDir)) {
+            continue
+        }
+
+        const walkDirectory = (directory) => {
+            for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {
+                const fullPath = path.join(directory, entry.name)
+
+                if (entry.isDirectory()) {
+                    walkDirectory(fullPath)
+                    continue
+                }
+
+                if (! entry.name.endsWith('.jpg')) {
+                    continue
+                }
+
+                const schemaKey = fullPath
+                    .replace(`${imagesDir}/`, '')
+                    .replace(/\.jpg$/, '')
+
+                if (! schemaKeys.has(schemaKey)) {
+                    if (dryRun) {
+                        console.log(`🗑️  Would delete ${fullPath}`)
+                    } else {
+                        fs.unlinkSync(fullPath)
+                        console.log(`🗑️  Deleted ${fullPath}`)
+                    }
+
+                    deletedCount++
+                }
+            }
+        }
+
+        walkDirectory(imagesDir)
+    }
+
+    if (deletedCount === 0) {
+        console.log('✅  No orphaned screenshots found.')
+    } else if (dryRun) {
+        console.log(`\n${deletedCount} file(s) would be deleted. Run without --dry to delete.`)
+    } else {
+        console.log(`\n🗑️  Deleted ${deletedCount} orphaned screenshot(s).`)
+    }
+
+    process.exit(0)
+}
 
 const processScreenshot = async (file, options, theme) => {
     configure(options.configure)
@@ -68,9 +127,11 @@ const processScreenshot = async (file, options, theme) => {
 
     const element = await page.waitForSelector(options.selector)
 
+    // Always scroll to element and wait for lazy-loaded content to initialize
+    await element.scrollIntoView()
+    await new Promise((resolve) => setTimeout(resolve, 500))
+
     if (options.selectorPadding) {
-        await element.scrollIntoView()
-        await new Promise((resolve) => setTimeout(resolve, 100))
         const boundingBox = await element.boundingBox()
         const padding = options.selectorPadding
         await page.screenshot({

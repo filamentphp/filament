@@ -1230,12 +1230,8 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                         FileUpload::make('fileUploadOpenable')
                             ->label('Attachments')
                             ->disk('public')
-                            ->multiple()
                             ->openable()
-                            ->default([
-                                'test/sample-image.jpg',
-                                'test/sample-image-2.jpg',
-                            ]),
+                            ->default('test/sample-image.jpg'),
                     ]),
                 Group::make()
                     ->id('fileUploadDownloadable')
@@ -1246,12 +1242,8 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                         FileUpload::make('fileUploadDownloadable')
                             ->label('Attachments')
                             ->disk('public')
-                            ->multiple()
                             ->downloadable()
-                            ->default([
-                                'test/sample-image.jpg',
-                                'test/sample-image-2.jpg',
-                            ]),
+                            ->default('test/sample-image.jpg'),
                     ]),
                 Group::make()
                     ->id('richEditor')
@@ -1398,10 +1390,7 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                             ])
                             ->floatingToolbars([
                                 'paragraph' => [
-                                    'bold', 'italic', 'underline', 'strike', 'subscript', 'superscript',
-                                ],
-                                'heading' => [
-                                    'h1', 'h2', 'h3',
+                                    'bold', 'italic', 'underline',
                                 ],
                             ])
                             ->default('<p>Filament is a collection of beautiful full-stack components for Laravel. It helps you build admin panels, customer-facing apps, and more.</p>'),
@@ -2371,12 +2360,15 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                     ])
                     ->schema([
                         ColorPicker::make('hsl_color')
+                            ->label('HSL')
                             ->hsl()
                             ->default('hsl(210, 68%, 53%)'),
                         ColorPicker::make('rgb_color')
+                            ->label('RGB')
                             ->rgb()
                             ->default('rgb(52, 144, 220)'),
                         ColorPicker::make('rgba_color')
+                            ->label('RGBA')
                             ->rgba()
                             ->default('rgba(52, 144, 220, 0.5)'),
                     ]),
@@ -2990,8 +2982,9 @@ class FieldsDemo extends Component implements HasActions, HasSchemas
                     ->schema([
                         Textarea::make('textareaAutosize')
                             ->label('Description')
+                            ->rows(1)
                             ->autosize()
-                            ->default("Filament is a collection of full-stack components for accelerated Laravel development. They are beautifully designed, intuitive to use, and fully extensible — the perfect starting point for your next Laravel app.\n\nWith Filament, you can build admin panels, customer-facing apps, SaaS platforms, and more — all with a consistent, polished UI."),
+                            ->default('Short note.'),
                     ]),
             ]);
     }

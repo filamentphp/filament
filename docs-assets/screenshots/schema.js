@@ -437,7 +437,7 @@ export default {
         selector: 'body',
         viewport: {
             width: 1080,
-            height: 720,
+            height: 620,
             deviceScaleFactor: 3,
         },
         before: async (page) => {
@@ -580,6 +580,7 @@ export default {
             height: 640,
             deviceScaleFactor: 3,
         },
+        selectorPadding: 32,
         before: async (page) => {
             await page.click('#actionGroupDropdownWidth button')
             await page.waitForSelector('#actionGroupDropdownWidth .fi-dropdown-list')
@@ -597,6 +598,7 @@ export default {
             height: 640,
             deviceScaleFactor: 3,
         },
+        selectorPadding: 32,
         before: async (page) => {
             await page.click('#actionGroupMaxHeight button')
             await page.waitForSelector('#actionGroupMaxHeight .fi-dropdown-list')
@@ -2051,15 +2053,6 @@ export default {
     'forms/fields/tags-input/color': {
         url: 'forms/fields',
         selector: '#tagsInputColor',
-        viewport: {
-            width: 1920,
-            height: 640,
-            deviceScaleFactor: 3,
-        },
-    },
-    'forms/fields/tags-input/reorderable': {
-        url: 'forms/fields',
-        selector: '#tagsInputReorderable',
         viewport: {
             width: 1920,
             height: 640,
@@ -3875,12 +3868,19 @@ export default {
         url: 'panels/navigation/top-navigation',
         selector: 'body',
         viewport: {
-            width: 1440,
+            width: 1080,
             height: 640,
             deviceScaleFactor: 3,
         },
+        before: async (page) => {
+            // Click a navigation group button to open its dropdown
+            const groupButtons = await page.$$('.fi-topbar-item:not(.fi-active) .fi-topbar-item-btn')
+            if (groupButtons.length > 0) await groupButtons[0].click()
+            await new Promise((resolve) => setTimeout(resolve, 500))
+        },
         crop: (image) => {
-            return image.extract({ width: 4320, height: 240, left: 0, top: 0 })
+            const scale = 3;
+            return image.extract({ width: 1080 * scale, height: 350 * scale, left: 0, top: 0 })
         },
     },
     'panels/navigation/badge': {
@@ -3916,7 +3916,7 @@ export default {
             deviceScaleFactor: 3,
         },
         crop: (image) => {
-            return image.extract({ width: 2250, height: 1200, left: 0, top: 180 })
+            return image.extract({ width: 2250, height: 900, left: 0, top: 0 })
         },
         before: async (page) => {
             await page.hover('.fi-badge')
@@ -4594,6 +4594,16 @@ export default {
             height: 640,
             deviceScaleFactor: 3,
         },
+        before: async (page) => {
+            await new Promise((resolve) => setTimeout(resolve, 1000))
+
+            // Click the "Show 2 more" expand link on the second row via evaluate
+            await page.evaluate(() => {
+                const expandBtns = document.querySelectorAll('.fi-ta-text-list-limited-message [role="button"][x-on\\:click\\.prevent\\.stop="isLimited = false"]')
+                if (expandBtns.length > 1) expandBtns[1].click()
+            })
+            await new Promise((resolve) => setTimeout(resolve, 500))
+        },
     },
     'tables/columns/text/copyable': {
         url: 'tables?table=textColumnCopyable',
@@ -4994,12 +5004,26 @@ export default {
             deviceScaleFactor: 3,
         },
         before: async (page) => {
+            // Open filters dropdown
             await page.click('.fi-ta-filters-dropdown button')
-
             await new Promise((resolve) => setTimeout(resolve, 500))
 
+            // Open the multi-select dropdown
             await page.click('.fi-select-input-btn')
+            await new Promise((resolve) => setTimeout(resolve, 500))
 
+            // Select "Reviewing" and "Published" options
+            const options = await page.$$('.fi-select-dropdown-option')
+            for (const option of options) {
+                const text = await option.evaluate((el) => el.textContent.trim())
+                if (text === 'Reviewing' || text === 'Published') {
+                    await option.click()
+                    await new Promise((resolve) => setTimeout(resolve, 300))
+                }
+            }
+
+            // Re-open the dropdown to show it with selections made
+            await page.click('.fi-select-input-btn')
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
     },
@@ -5986,7 +6010,7 @@ export default {
         },
         crop: (image) => {
             const scale = 3
-            return image.extract({ width: 1080 * scale, height: 370 * scale, left: 0, top: 580 * scale })
+            return image.extract({ width: 1080 * scale, height: 420 * scale, left: 0, top: 530 * scale })
         },
     },
     'panels/mfa-challenge': {
@@ -6083,7 +6107,7 @@ export default {
         },
         crop: (image) => {
             const scale = 3;
-            return image.extract({ width: 260 * scale, height: 50 * scale, left: 0, top: 0 });
+            return image.extract({ width: 500 * scale, height: 200 * scale, left: 0, top: 0 });
         },
     },
     'panels/styling/brand-logo': {
@@ -6103,7 +6127,7 @@ export default {
         },
         crop: (image) => {
             const scale = 3;
-            return image.extract({ width: 260 * scale, height: 50 * scale, left: 0, top: 0 });
+            return image.extract({ width: 500 * scale, height: 200 * scale, left: 0, top: 0 });
         },
     },
     'panels/styling/sidebar-width': {
@@ -6169,7 +6193,7 @@ export default {
     },
     'panels/resources/listing-tabs-icons': {
         url: 'admin/posts?tabStyle=icons',
-        selector: '.fi-tabs',
+        selector: 'body',
         viewport: {
             width: 1440,
             height: 820,
@@ -6177,11 +6201,15 @@ export default {
         },
         before: async (page) => {
             await new Promise((resolve) => setTimeout(resolve, 2000))
+        },
+        crop: (image) => {
+            const scale = 3;
+            return image.extract({ width: 1200 * scale, height: 300 * scale, left: 240 * scale, top: 50 * scale })
         },
     },
     'panels/resources/listing-tabs-badge-colors': {
         url: 'admin/posts?tabStyle=badgeColors',
-        selector: '.fi-tabs',
+        selector: 'body',
         viewport: {
             width: 1440,
             height: 820,
@@ -6189,6 +6217,10 @@ export default {
         },
         before: async (page) => {
             await new Promise((resolve) => setTimeout(resolve, 2000))
+        },
+        crop: (image) => {
+            const scale = 3;
+            return image.extract({ width: 1200 * scale, height: 300 * scale, left: 240 * scale, top: 50 * scale })
         },
     },
     'panels/resources/creating': {
@@ -6202,15 +6234,6 @@ export default {
     },
     'panels/resources/creating-wizard': {
         url: 'admin/posts/create-wizard',
-        selector: 'body',
-        viewport: {
-            width: 1440,
-            height: 820,
-            deviceScaleFactor: 3,
-        },
-    },
-    'panels/resources/simple-modal': {
-        url: 'admin/tags',
         selector: 'body',
         viewport: {
             width: 1440,
@@ -6261,7 +6284,7 @@ export default {
         },
     },
     'panels/resources/relation-manager': {
-        url: 'admin/users/1/edit',
+        url: 'admin/users/1/edit?noSubNav=1',
         selector: 'body',
         viewport: {
             width: 1440,
@@ -6270,7 +6293,7 @@ export default {
         },
     },
     'panels/resources/sub-navigation': {
-        url: 'admin/users/1/edit',
+        url: 'admin/users/1/edit?noPostsSubNav=1',
         selector: 'body',
         viewport: {
             width: 1440,
@@ -6279,7 +6302,7 @@ export default {
         },
     },
     'panels/resources/sub-navigation-end': {
-        url: 'admin/users/1/edit?subNavPosition=end',
+        url: 'admin/users/1/edit?subNavPosition=end&noPostsSubNav=1',
         selector: 'body',
         viewport: {
             width: 1440,
@@ -6288,7 +6311,7 @@ export default {
         },
     },
     'panels/resources/sub-navigation-top': {
-        url: 'admin/users/1/edit?subNavPosition=top',
+        url: 'admin/users/1/edit?subNavPosition=top&noPostsSubNav=1',
         selector: 'body',
         viewport: {
             width: 1440,
@@ -6408,13 +6431,16 @@ export default {
     },
     'panels/resources/global-search-key-binding': {
         url: 'admin/posts',
-        selector: '.fi-global-search-field',
+        selector: 'body',
         viewport: {
             width: 1440,
-            height: 200,
+            height: 820,
             deviceScaleFactor: 3,
         },
-        selectorPadding: 24,
+        crop: (image) => {
+            const scale = 3;
+            return image.extract({ width: 1200 * scale, height: 200 * scale, left: 240 * scale, top: 0 })
+        },
     },
     'actions/import-action/modal': {
         url: 'actions-crud',
@@ -6751,11 +6777,11 @@ export default {
     },
     'components/modal/simple': {
         url: 'components',
-        selector: '.fi-modal-window-ctn',
+        selector: '.fi-modal-window',
         viewport: { width: 576, height: 500, deviceScaleFactor: 3 },
         before: async (page) => {
             await page.click('#modalSimple button')
-            await page.waitForSelector('.fi-modal-window-ctn')
+            await page.waitForSelector('.fi-modal-window')
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
     },
@@ -6863,7 +6889,7 @@ export default {
     },
     'components/modal/heading': {
         url: 'components',
-        selector: '[data-fi-modal-id="demo-modal-heading"] .fi-modal-window-ctn',
+        selector: '[data-fi-modal-id="demo-modal-heading"] .fi-modal-window',
         viewport: { width: 576, height: 500, deviceScaleFactor: 3 },
         before: async (page) => {
             await page.evaluate(() => {
@@ -6904,7 +6930,7 @@ export default {
     },
     'components/modal/icon': {
         url: 'components',
-        selector: '[data-fi-modal-id="demo-modal-icon"] .fi-modal-window-ctn',
+        selector: '[data-fi-modal-id="demo-modal-icon"] .fi-modal-window',
         viewport: { width: 576, height: 500, deviceScaleFactor: 3 },
         before: async (page) => {
             await page.evaluate(() => {
@@ -6951,7 +6977,7 @@ export default {
     },
     'components/modal/footer': {
         url: 'components',
-        selector: '[data-fi-modal-id="demo-modal-footer"] .fi-modal-window-ctn',
+        selector: '[data-fi-modal-id="demo-modal-footer"] .fi-modal-window',
         viewport: { width: 576, height: 500, deviceScaleFactor: 3 },
         before: async (page) => {
             await page.evaluate(() => {
@@ -6962,7 +6988,7 @@ export default {
     },
     'components/modal/alignment': {
         url: 'components',
-        selector: '[data-fi-modal-id="demo-modal-alignment"] .fi-modal-window-ctn',
+        selector: '[data-fi-modal-id="demo-modal-alignment"] .fi-modal-window',
         viewport: { width: 576, height: 500, deviceScaleFactor: 3 },
         before: async (page) => {
             await page.evaluate(() => {
@@ -6973,7 +6999,7 @@ export default {
     },
     'components/modal/width': {
         url: 'components',
-        selector: '[data-fi-modal-id="demo-modal-width"] .fi-modal-window-ctn',
+        selector: '[data-fi-modal-id="demo-modal-width"] .fi-modal-window',
         viewport: { width: 1920, height: 640, deviceScaleFactor: 2 },
         before: async (page) => {
             await page.evaluate(() => {
@@ -6984,7 +7010,7 @@ export default {
     },
     'components/modal/sticky-header': {
         url: 'components',
-        selector: '[data-fi-modal-id="demo-modal-sticky-header"] .fi-modal-window-ctn',
+        selector: '[data-fi-modal-id="demo-modal-sticky-header"] .fi-modal-window',
         viewport: { width: 768, height: 600, deviceScaleFactor: 2 },
         before: async (page) => {
             await page.evaluate(() => {
@@ -7001,7 +7027,7 @@ export default {
     },
     'components/modal/sticky-footer': {
         url: 'components',
-        selector: '[data-fi-modal-id="demo-modal-sticky-footer"] .fi-modal-window-ctn',
+        selector: '[data-fi-modal-id="demo-modal-sticky-footer"] .fi-modal-window',
         viewport: { width: 768, height: 600, deviceScaleFactor: 2 },
         before: async (page) => {
             await page.evaluate(() => {
@@ -7012,7 +7038,7 @@ export default {
     },
     'components/modal/slide-over': {
         url: 'components',
-        selector: '[data-fi-modal-id="demo-modal-slide-over"] .fi-modal-window-ctn',
+        selector: '[data-fi-modal-id="demo-modal-slide-over"] .fi-modal-window',
         viewport: { width: 1200, height: 600, deviceScaleFactor: 2 },
         before: async (page) => {
             await page.evaluate(() => {
@@ -7077,7 +7103,8 @@ export default {
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
         crop: (image) => {
-            return image.extract({ width: 320 * 3, height: 220 * 3, left: 0, top: 0 })
+            const scale = 3;
+            return image.extract({ width: 600 * scale, height: 250 * scale, left: 0, top: 0 })
         },
     },
     'panels/tenancy/registration': {
@@ -7255,19 +7282,6 @@ export default {
             deviceScaleFactor: 3,
         },
     },
-    'panels/dashboard-table-widget': {
-        url: 'admin/dashboard-column-spans',
-        selector: 'body',
-        viewport: {
-            width: 1440,
-            height: 1200,
-            deviceScaleFactor: 3,
-        },
-        crop: (image) => {
-            const scale = 3
-            return image.extract({ width: 1200 * scale, height: 480 * scale, left: 230 * scale, top: 700 * scale })
-        },
-    },
     'panels/custom-page-subheading': {
         url: 'admin/analytics-subheading',
         selector: 'body',
@@ -7278,7 +7292,7 @@ export default {
         },
         crop: (image) => {
             const scale = 3
-            return image.extract({ width: 1170 * scale, height: 120 * scale, left: 270 * scale, top: 60 * scale })
+            return image.extract({ width: 1200 * scale, height: 200 * scale, left: 240 * scale, top: 30 * scale })
         },
     },
 }

@@ -28,8 +28,6 @@ class DashboardOrdersChart extends ChartWidget
                 [
                     'label' => 'Orders',
                     'data' => [234, 287, 312, 268, 341, 395, 421, 378, 462, 501, 489, 534],
-                    'backgroundColor' => '#f59e0b',
-                    'borderColor' => '#f59e0b',
                 ],
             ],
             'labels' => ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],

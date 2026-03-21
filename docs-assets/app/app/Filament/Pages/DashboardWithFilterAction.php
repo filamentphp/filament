@@ -24,15 +24,18 @@ class DashboardWithFilterAction extends BaseDashboard
             FilterAction::make()
                 ->schema([
                     DatePicker::make('startDate')
-                        ->label('Start date'),
+                        ->label('Start date')
+                        ->columnSpanFull(),
                     DatePicker::make('endDate')
-                        ->label('End date'),
+                        ->label('End date')
+                        ->columnSpanFull(),
                     Select::make('status')
                         ->options([
                             'all' => 'All statuses',
                             'active' => 'Active',
                             'inactive' => 'Inactive',
-                        ]),
+                        ])
+                        ->columnSpanFull(),
                 ]),
         ];
     }

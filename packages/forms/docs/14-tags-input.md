@@ -116,8 +116,6 @@ TagsInput::make('tags')
     ->reorderable()
 ```
 
-<AutoScreenshot name="forms/fields/tags-input/reorderable" alt="Reorderable tags input" version="4.x" />
-
 Optionally, you may pass a boolean value to control if the tags should be reorderable or not:
 
 ```php

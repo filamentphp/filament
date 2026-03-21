@@ -29,8 +29,6 @@ class DashboardRevenueChart extends ChartWidget
                     'label' => 'Revenue',
                     'data' => [12400, 14800, 13200, 16100, 15400, 17800, 19200, 21400, 18900, 22100, 24800, 26200],
                     'fill' => 'start',
-                    'borderColor' => '#f59e0b',
-                    'backgroundColor' => 'rgba(245, 158, 11, 0.1)',
                 ],
             ],
             'labels' => ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],

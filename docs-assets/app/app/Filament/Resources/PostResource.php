@@ -176,8 +176,8 @@ class PostResource extends Resource
     {
         if (request()->query('groupedRelations') === '1') {
             return [
-                PostResource\RelationManagers\CommentsRelationManager::class,
-                RelationGroup::make('Metadata', [
+                RelationGroup::make('Related', [
+                    PostResource\RelationManagers\CommentsRelationManager::class,
                     PostResource\RelationManagers\TagsRelationManager::class,
                 ]),
             ];

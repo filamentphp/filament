@@ -61,11 +61,29 @@ class UserResource extends Resource
 
     public static function getRecordSubNavigation(Page $page): array
     {
-        return $page->generateNavigationItems([
+        if (request()->query('noSubNav') === '1') {
+            return [];
+        }
+
+        $pages = [
             Pages\ViewUser::class,
             Pages\EditUser::class,
-            Pages\ManageUserPosts::class,
+        ];
+
+        // Sub-nav screenshot excludes Posts to avoid confusion with relation manager screenshots
+        if (request()->query('noPostsSubNav') !== '1') {
+            $pages[] = Pages\ManageUserPosts::class;
+        }
+
+        $pages = array_merge($pages, [
+            Pages\ManageUserComments::class,
+            Pages\ManageUserOrders::class,
+            Pages\ManageUserPayments::class,
+            Pages\ManageUserNotifications::class,
+            Pages\ManageUserSettings::class,
         ]);
+
+        return $page->generateNavigationItems($pages);
     }
 
     public static function getRelations(): array
@@ -83,6 +101,11 @@ class UserResource extends Resource
             'view' => Pages\ViewUser::route('/{record}'),
             'edit' => Pages\EditUser::route('/{record}/edit'),
             'posts' => Pages\ManageUserPosts::route('/{record}/posts'),
+            'comments' => Pages\ManageUserComments::route('/{record}/comments'),
+            'orders' => Pages\ManageUserOrders::route('/{record}/orders'),
+            'payments' => Pages\ManageUserPayments::route('/{record}/payments'),
+            'notifications' => Pages\ManageUserNotifications::route('/{record}/notifications'),
+            'settings' => Pages\ManageUserSettings::route('/{record}/settings'),
         ];
     }
 }

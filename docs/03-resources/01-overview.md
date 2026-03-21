@@ -56,8 +56,6 @@ Your resource will have a "Manage" page, which is a List page with modals added.
 
 Additionally, your simple resource will have no `getRelations()` method, as [relation managers](managing-relationships) are only displayed on the Edit and View pages, which are not present in simple resources. Everything else is the same.
 
-<AutoScreenshot name="panels/resources/simple-modal" alt="Simple (modal) resource" version="4.x" />
-
 <AutoScreenshot name="panels/resources/simple-modal-create" alt="Simple (modal) resource create modal" version="4.x" />
 
 ### Automatically generating forms and tables

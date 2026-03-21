@@ -178,8 +178,6 @@ php artisan make:filament-widget LatestOrders --table
 
 You may now [customize the table](../tables) by editing the widget file.
 
-<AutoScreenshot name="panels/dashboard-table-widget" alt="Table widget on dashboard" version="4.x" />
-
 ## Custom widgets
 
 To get started building a `BlogPostsOverview` widget:

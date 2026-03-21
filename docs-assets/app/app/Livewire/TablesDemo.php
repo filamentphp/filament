@@ -442,15 +442,15 @@ class TablesDemo extends Component implements HasActions, HasSchemas, HasTable
         return $this->usersTable($table)
             ->columns([
                 TextColumn::make('name')
-                    ->label('Full name of user')
+                    ->label('Full legal name of the registered user')
                     ->wrapHeader()
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('email')
-                    ->label('Email address for notifications')
+                    ->label('Email address used for account notifications')
                     ->wrapHeader(),
                 TextColumn::make('phone')
-                    ->label('Primary phone number')
+                    ->label('Primary contact phone number on file')
                     ->wrapHeader(),
             ]);
     }
@@ -969,14 +969,16 @@ class TablesDemo extends Component implements HasActions, HasSchemas, HasTable
     {
         return $this->postsTable($table)
             ->columns([
-                TextColumn::make('title'),
+                TextColumn::make('title')
+                    ->grow(),
                 IconColumn::make('icons')
+                    ->width('1%')
                     ->getStateUsing(fn ($rowLoop): array => match ($rowLoop->index) {
-                        0 => ['draft', 'reviewing', 'published', 'draft', 'published'],
-                        1 => ['published', 'reviewing', 'draft'],
-                        2 => ['draft', 'published', 'reviewing', 'published'],
-                        3 => ['reviewing', 'draft'],
-                        default => ['published', 'draft', 'reviewing', 'draft', 'published'],
+                        0 => ['draft', 'reviewing', 'published', 'draft', 'published', 'reviewing', 'draft', 'published'],
+                        1 => ['published', 'reviewing', 'draft', 'published', 'draft', 'reviewing'],
+                        2 => ['draft', 'published', 'reviewing', 'published', 'draft', 'reviewing', 'published'],
+                        3 => ['reviewing', 'draft', 'published', 'reviewing', 'draft', 'published', 'reviewing', 'draft'],
+                        default => ['published', 'draft', 'reviewing', 'draft', 'published', 'reviewing', 'published', 'draft'],
                     })
                     ->icon(fn (string $state): Heroicon => match ($state) {
                         'draft' => Heroicon::OutlinedPencil,
@@ -1156,8 +1158,10 @@ class TablesDemo extends Component implements HasActions, HasSchemas, HasTable
     {
         return $this->postsTable($table)
             ->columns([
-                TextColumn::make('title'),
+                TextColumn::make('title')
+                    ->grow(),
                 ColorColumn::make('colors')
+                    ->width('1%')
                     ->getStateUsing(fn ($rowLoop): array => match ($rowLoop->index) {
                         0 => ['#ef4444', '#fde047', '#22c55e', '#0ea5e9', '#8b5cf6', '#ec4899'],
                         1 => ['#ef4444', '#22c55e', '#0ea5e9', '#8b5cf6'],
@@ -1410,7 +1414,7 @@ class TablesDemo extends Component implements HasActions, HasSchemas, HasTable
     {
         return $this->filtersTable($table)
             ->filters([
-                Filter::make('is_featured'),
+                TernaryFilter::make('is_featured'),
                 SelectFilter::make('status')
                     ->options([
                         'draft' => 'Draft',
@@ -1458,7 +1462,7 @@ class TablesDemo extends Component implements HasActions, HasSchemas, HasTable
                         'published' => 'Published',
                     ]),
                 SelectFilter::make('author'),
-                Filter::make('is_featured'),
+                TernaryFilter::make('is_featured'),
             ])
             ->filtersFormColumns(3)
             ->filtersFormWidth(Width::FourExtraLarge);
@@ -2121,7 +2125,8 @@ class TablesDemo extends Component implements HasActions, HasSchemas, HasTable
             ->groups([
                 Group::make('status'),
                 Group::make('author.name'),
-            ]);
+            ])
+            ->defaultGroup('status');
     }
 
     public function groupingDate(Table $table): Table
