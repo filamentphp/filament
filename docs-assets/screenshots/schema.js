@@ -1514,7 +1514,8 @@ export default {
             await page.evaluate(() => {
                 document.querySelector('#fileUploadOpenable').scrollIntoView()
             })
-            await new Promise((resolve) => setTimeout(resolve, 2000))
+            // Wait for FilePond to finish loading the file.
+            await new Promise((resolve) => setTimeout(resolve, 5000))
         },
     },
     'forms/fields/file-upload/downloadable': {
