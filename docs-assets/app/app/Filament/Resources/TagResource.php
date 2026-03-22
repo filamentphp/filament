@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\TagResource\Pages;
 use App\Models\Tag;
+use Filament\Actions;
 use Filament\Forms;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
@@ -57,7 +58,11 @@ class TagResource extends Resource
                     ->dateTime()
                     ->sortable(),
             ])
-            ->defaultSort('name');
+            ->defaultSort('name')
+            ->actions([
+                Actions\EditAction::make(),
+                Actions\DeleteAction::make(),
+            ]);
     }
 
     public static function getPages(): array

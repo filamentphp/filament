@@ -184,7 +184,7 @@
         />
     </div>
 
-    <div id="actionGroupMaxHeight" class="pr-40 pt-8 pb-40 flex items-center justify-center max-w-xl">
+    <div id="actionGroupMaxHeight" class="pr-40 pt-8 pb-72 flex items-center justify-center max-w-xl">
         <x-filament-actions::group
             :actions="[
                 Action::make('view')->icon(Heroicon::Eye),
@@ -197,7 +197,7 @@
                 Action::make('print')->icon(Heroicon::Printer),
                 Action::make('delete')->icon(Heroicon::Trash)->color('danger'),
             ]"
-            max-height="200px"
+            max-height="120px"
         />
     </div>
 

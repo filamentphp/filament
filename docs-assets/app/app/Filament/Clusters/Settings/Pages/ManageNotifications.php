@@ -10,6 +10,8 @@ class ManageNotifications extends Page
 {
     protected static ?string $cluster = SettingsCluster::class;
 
+    protected static ?string $navigationLabel = 'Notifications';
+
     protected static string | \BackedEnum | null $navigationIcon = Heroicon::OutlinedBell;
 
     protected static ?int $navigationSort = 2;

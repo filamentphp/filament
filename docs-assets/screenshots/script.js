@@ -121,28 +121,45 @@ const processScreenshot = async (file, options, theme) => {
         await new Promise((resolve) => setTimeout(resolve, 500))
     }
 
+    // Scroll element into view so that lazy-loaded / JS-initialised content
+    // renders correctly.  Skip the automatic scroll when a `before` callback
+    // is present — those callbacks manage their own scrolling and a global
+    // scroll beforehand can break them (e.g. modals that click buttons,
+    // dropdowns that rely on page position).
+    if (! options.before) {
+        const preElement = await page.waitForSelector(options.selector)
+        await preElement.scrollIntoView()
+        await preElement.dispose()
+        await new Promise((resolve) => setTimeout(resolve, 500))
+    }
+
     if (options.before) {
         await options.before(page, browser)
     }
 
     const element = await page.waitForSelector(options.selector)
 
-    // Always scroll to element and wait for lazy-loaded content to initialize
-    await element.scrollIntoView()
-    await new Promise((resolve) => setTimeout(resolve, 500))
-
     if (options.selectorPadding) {
         const boundingBox = await element.boundingBox()
-        const padding = options.selectorPadding
+        const raw = options.selectorPadding
+        const padding = typeof raw === 'number'
+            ? { top: raw, right: raw, bottom: raw, left: raw }
+            : raw
+        const rawX = boundingBox.x - (padding.left ?? 0)
+        const rawY = boundingBox.y - (padding.top ?? 0)
+        const clippedX = Math.max(0, rawX)
+        const clippedY = Math.max(0, rawY)
         await page.screenshot({
             path: `images/${theme}/${file}.jpg`,
             clip: {
-                x: Math.max(0, boundingBox.x - (padding.left ?? 0)),
-                y: Math.max(0, boundingBox.y - (padding.top ?? 0)),
-                width: boundingBox.width + (padding.left ?? 0) + (padding.right ?? 0),
-                height: boundingBox.height + (padding.top ?? 0) + (padding.bottom ?? 0),
+                x: clippedX,
+                y: clippedY,
+                width: boundingBox.width + (padding.left ?? 0) + (padding.right ?? 0) - (clippedX - rawX),
+                height: boundingBox.height + (padding.top ?? 0) + (padding.bottom ?? 0) - (clippedY - rawY),
             },
         })
+    } else if (options.selector === 'body') {
+        await page.screenshot({ path: `images/${theme}/${file}.jpg` })
     } else {
         await element.screenshot({ path: `images/${theme}/${file}.jpg` })
     }

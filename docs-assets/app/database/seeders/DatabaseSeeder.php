@@ -3,10 +3,12 @@
 namespace Database\Seeders;
 
 use App\Models\Comment;
+use App\Models\Link;
 use App\Models\Post;
 use App\Models\Tag;
 use App\Models\Team;
 use App\Models\User;
+use App\Models\WebsitePage;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
@@ -127,6 +129,32 @@ class DatabaseSeeder extends Seeder
         $allPosts[3]->tags()->attach([$allTags[0]->id, $allTags[1]->id]);
         // Post 5 (Custom Themes) — Tailwind CSS, Filament
         $allPosts[4]->tags()->attach([$allTags[4]->id, $allTags[2]->id]);
+
+        // Create links on first post for relation manager demo
+        $links = [
+            ['post_index' => 0, 'url' => 'https://filamentphp.com/docs', 'label' => 'Documentation'],
+            ['post_index' => 0, 'url' => 'https://github.com/filamentphp/filament', 'label' => 'GitHub Repository'],
+            ['post_index' => 1, 'url' => 'https://laravel.com/docs', 'label' => 'Laravel Docs'],
+        ];
+
+        foreach ($links as $index => $link) {
+            Link::create([
+                'post_id' => $allPosts[$link['post_index']]->id,
+                'url' => $link['url'],
+                'label' => $link['label'],
+                'created_at' => \Carbon\Carbon::parse($baseDate)->subDays(count($links) - $index),
+                'updated_at' => \Carbon\Carbon::parse($baseDate)->subDays(count($links) - $index),
+            ]);
+        }
+
+        // Create homepage for singular resource demo
+        WebsitePage::create([
+            'title' => 'Welcome to Filament',
+            'content' => '<p>Filament is a collection of beautiful full-stack components for Laravel. You can use it to build admin panels, customer-facing apps, Software-as-a-Service platforms, and more.</p><h2>Getting Started</h2><p>Visit the <strong>documentation</strong> to learn how to install Filament and start building your first application. Our step-by-step guides will walk you through creating resources, forms, tables, and widgets.</p>',
+            'is_homepage' => true,
+            'created_at' => $baseDate,
+            'updated_at' => $baseDate,
+        ]);
 
         // Enable app MFA on admin user for challenge screenshot
         $admin->saveAppAuthenticationSecret('JBSWY3DPEHPK3PXP');

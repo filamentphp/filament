@@ -746,12 +746,13 @@ use Filament\Resources\RelationManagers\RelationGroup;
 public static function getRelations(): array
 {
     return [
-        // ...
-        RelationGroup::make('Contacts', [
-            RelationManagers\IndividualsRelationManager::class,
-            RelationManagers\OrganizationsRelationManager::class,
+        RelationGroup::make('Interactions', [
+            RelationManagers\CommentsRelationManager::class,
+            RelationManagers\TagsRelationManager::class,
         ]),
-        // ...
+        RelationGroup::make('Links', [
+            RelationManagers\LinksRelationManager::class,
+        ]),
     ];
 }
 ```

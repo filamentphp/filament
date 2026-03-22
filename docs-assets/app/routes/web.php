@@ -50,13 +50,13 @@ Route::get('/actions-crud', ActionsCrudDemo::class);
 
 Route::prefix('forms')->group(function (): void {
     Route::get('overview', FieldsOverview::class);
-    Route::get('fields', FieldsDemo::class);
+    Route::get('fields/{component}', FieldsDemo::class);
     Route::get('modal-table-select', ModalTableSelectDemo::class);
 });
 
 Route::prefix('infolists')->group(function (): void {
     Route::get('overview', EntriesOverview::class);
-    Route::get('entries', EntriesDemo::class);
+    Route::get('entries/{component}', EntriesDemo::class);
 });
 
 Route::get('primes', PrimesDemo::class);
@@ -86,7 +86,7 @@ Route::prefix('panels')->middleware(['panel:nav'])->group(function (): void {
 });
 
 Route::prefix('schemas')->group(function (): void {
-    Route::get('layout', LayoutDemo::class);
+    Route::get('layout/{component}', LayoutDemo::class);
     Route::get('overview', OverviewDemo::class);
 });
 
@@ -94,6 +94,6 @@ Route::get('/tables', TablesDemo::class);
 
 Route::get('/widgets', WidgetsDemo::class);
 
-Route::get('/components', ComponentsDemo::class);
+Route::get('/components/{component}', ComponentsDemo::class);
 
 Route::get('/pagination', PaginationDemo::class);

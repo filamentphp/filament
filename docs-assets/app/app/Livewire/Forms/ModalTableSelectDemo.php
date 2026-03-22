@@ -26,7 +26,10 @@ class ModalTableSelectDemo extends Component implements HasActions, HasSchemas
     {
         $this->record = Post::with('tags')->first();
 
-        $this->form->fill($this->record->attributesToArray());
+        $this->form->fill([
+            ...$this->record->attributesToArray(),
+            'tags' => $this->record->tags->pluck('id')->toArray(),
+        ]);
     }
 
     public function form(Schema $form): Schema

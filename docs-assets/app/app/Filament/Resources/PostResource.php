@@ -176,9 +176,12 @@ class PostResource extends Resource
     {
         if (request()->query('groupedRelations') === '1') {
             return [
-                RelationGroup::make('Related', [
+                RelationGroup::make('Interactions', [
                     PostResource\RelationManagers\CommentsRelationManager::class,
                     PostResource\RelationManagers\TagsRelationManager::class,
+                ]),
+                RelationGroup::make('Links', [
+                    PostResource\RelationManagers\LinksRelationManager::class,
                 ]),
             ];
         }

@@ -10,6 +10,8 @@ class ManageBilling extends Page
 {
     protected static ?string $cluster = SettingsCluster::class;
 
+    protected static ?string $navigationLabel = 'Billing';
+
     protected static string | \BackedEnum | null $navigationIcon = Heroicon::OutlinedCreditCard;
 
     protected static ?int $navigationSort = 6;

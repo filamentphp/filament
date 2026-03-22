@@ -10,6 +10,8 @@ class ManageAppearance extends Page
 {
     protected static ?string $cluster = SettingsCluster::class;
 
+    protected static ?string $navigationLabel = 'Appearance';
+
     protected static string | \BackedEnum | null $navigationIcon = Heroicon::OutlinedPaintBrush;
 
     protected static ?int $navigationSort = 4;

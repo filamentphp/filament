@@ -36,7 +36,8 @@ class DashboardWithFilters extends BaseDashboard
                                 'inactive' => 'Inactive',
                             ]),
                     ])
-                    ->columns(3),
+                    ->columns(3)
+                    ->columnSpanFull(),
             ]);
     }
 }

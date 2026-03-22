@@ -10,6 +10,8 @@ class ManageApi extends Page
 {
     protected static ?string $cluster = SettingsCluster::class;
 
+    protected static ?string $navigationLabel = 'API';
+
     protected static ?string $title = 'API';
 
     protected static string | \BackedEnum | null $navigationIcon = Heroicon::OutlinedCodeBracket;

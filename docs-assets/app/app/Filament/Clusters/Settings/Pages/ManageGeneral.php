@@ -19,6 +19,8 @@ class ManageGeneral extends Page
 {
     protected static ?string $cluster = SettingsCluster::class;
 
+    protected static ?string $navigationLabel = 'General';
+
     protected static string | \BackedEnum | null $navigationIcon = Heroicon::OutlinedCog6Tooth;
 
     protected static ?int $navigationSort = 1;

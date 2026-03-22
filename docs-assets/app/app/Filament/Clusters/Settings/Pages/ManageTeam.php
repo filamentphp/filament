@@ -10,6 +10,8 @@ class ManageTeam extends Page
 {
     protected static ?string $cluster = SettingsCluster::class;
 
+    protected static ?string $navigationLabel = 'Team';
+
     protected static string | \BackedEnum | null $navigationIcon = Heroicon::OutlinedUserGroup;
 
     protected static ?int $navigationSort = 7;

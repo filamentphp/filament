@@ -23,6 +23,10 @@ class ListPosts extends ListRecords
 
     protected function getHeaderWidgets(): array
     {
+        if (! request()->query('headerWidgets')) {
+            return [];
+        }
+
         return [
             PostStatsOverview::class,
         ];
@@ -31,6 +35,10 @@ class ListPosts extends ListRecords
     public function getTabs(): array
     {
         $tabStyle = request()->query('tabStyle');
+
+        if (! $tabStyle) {
+            return [];
+        }
 
         if ($tabStyle === 'icons') {
             return [

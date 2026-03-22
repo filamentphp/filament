@@ -58,6 +58,8 @@ Additionally, your simple resource will have no `getRelations()` method, as [rel
 
 <AutoScreenshot name="panels/resources/simple-modal-create" alt="Simple (modal) resource create modal" version="4.x" />
 
+<AutoScreenshot name="panels/resources/simple-modal-edit" alt="Simple (modal) resource edit modal" version="4.x" />
+
 ### Automatically generating forms and tables
 
 If you'd like to save time, Filament can automatically generate the [form](#resource-forms) and [table](#resource-tables) for you, based on your model's database columns, using `--generate`:

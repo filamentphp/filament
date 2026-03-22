@@ -107,12 +107,17 @@ class AdminPanelProvider extends PanelProvider
                             ]),
                     ]);
             })
-            ->globalSearchKeyBindings(['command+k', 'ctrl+k'])
+            ->globalSearchKeyBindings(
+                request()->query('globalSearchKeyBindings')
+                    ? ['command+k', 'ctrl+k']
+                    : [],
+            )
             ->globalSearchFieldKeyBindingSuffix()
             ->widgets([
                 \App\Filament\Widgets\DashboardStatsOverview::class,
                 \App\Filament\Widgets\DashboardRevenueChart::class,
                 \App\Filament\Widgets\DashboardOrdersChart::class,
+                \App\Filament\Widgets\DashboardTableWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,
