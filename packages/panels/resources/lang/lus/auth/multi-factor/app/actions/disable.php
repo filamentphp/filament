@@ -30,6 +30,8 @@ return [
 
                     'invalid' => 'Hemi code hi a diklo.',
 
+                    'rate_limited' => 'Tumna a tam lutuk. Khawngaihin nakinah tinawn leh rawh.',
+
                 ],
 
             ],
@@ -43,6 +45,8 @@ return [
                 'messages' => [
 
                     'invalid' => 'Hemi recovery code hi a diklo.',
+
+                    'rate_limited' => 'Tumna a tam lutuk. Khawngaihin nakinah tinawn leh rawh.',
 
                 ],
 

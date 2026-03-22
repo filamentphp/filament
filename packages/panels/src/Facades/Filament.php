@@ -58,7 +58,7 @@ use Livewire\Component;
  * @method static string | null getEmailVerificationPromptUrl(array<string, mixed> $parameters = [])
  * @method static string | null getSetUpRequiredMultiFactorAuthenticationUrl(array<string, mixed> $parameters = [])
  * @method static string getEmailVerifiedMiddleware()
- * @method static array<array{ title: string | Closure, body: string | Closure | null }> getErrorNotifications()
+ * @method static array<array{ title: ?string, body: ?string, isHidden: bool, isDisabled: bool }> getErrorNotifications()
  * @method static string | null getFavicon()
  * @method static string getFontFamily()
  * @method static string getMonoFontFamily()

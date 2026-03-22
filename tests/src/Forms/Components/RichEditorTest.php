@@ -48,12 +48,13 @@ test('can get default toolbar buttons using `getDefaultToolbarButtons()`', funct
 
     expect($defaultButtons)
         ->toBeArray()
-        ->toHaveCount(5)
+        ->toHaveCount(6)
         ->and($defaultButtons[0])->toEqual(['bold', 'italic', 'underline', 'strike', 'subscript', 'superscript', 'link'])
-        ->and($defaultButtons[1])->toEqual(['h2', 'h3', 'alignStart', 'alignCenter', 'alignEnd'])
-        ->and($defaultButtons[2])->toEqual(['blockquote', 'codeBlock', 'bulletList', 'orderedList'])
-        ->and($defaultButtons[3])->toEqual(['table', 'attachFiles'])
-        ->and($defaultButtons[4])->toEqual(['undo', 'redo']);
+        ->and($defaultButtons[1])->toEqual(['h2', 'h3'])
+        ->and($defaultButtons[2])->toEqual(['alignStart', 'alignCenter', 'alignEnd'])
+        ->and($defaultButtons[3])->toEqual(['blockquote', 'codeBlock', 'bulletList', 'orderedList'])
+        ->and($defaultButtons[4])->toEqual(['table', 'attachFiles'])
+        ->and($defaultButtons[5])->toEqual(['undo', 'redo']);
 });
 
 test('can overwrite toolbar buttons array using `toolbarButtons()`', function (): void {
@@ -536,4 +537,82 @@ test('`RichContentRenderer` resolves file attachment provider from plugin implem
 
     expect($renderer->getFileAttachmentProvider())
         ->toBe($plugin->getFileAttachmentProvider());
+});
+
+test('list items with bare text content are wrapped in paragraphs on fill', function (): void {
+    $schema = Schema::make(Livewire::make())
+        ->statePath('data')
+        ->components([
+            RichEditor::make('content')->json(),
+        ])
+        ->fill([
+            'content' => '<ul><li>First item</li><li>Second item</li></ul>',
+        ]);
+
+    $state = $schema->getState()['content'];
+
+    $bulletList = collect($state['content'])->firstWhere('type', 'bulletList');
+
+    expect($bulletList)->not->toBeNull();
+
+    foreach ($bulletList['content'] as $listItem) {
+        expect($listItem['type'])->toBe('listItem');
+        expect($listItem['content'][0]['type'])->toBe('paragraph');
+    }
+
+    $firstParagraph = $bulletList['content'][0]['content'][0];
+    $secondParagraph = $bulletList['content'][1]['content'][0];
+
+    expect($firstParagraph['content'][0]['text'])->toBe('First item');
+    expect($secondParagraph['content'][0]['text'])->toBe('Second item');
+});
+
+test('list items with marked text content are wrapped in paragraphs on fill', function (): void {
+    $schema = Schema::make(Livewire::make())
+        ->statePath('data')
+        ->components([
+            RichEditor::make('content')->json(),
+        ])
+        ->fill([
+            'content' => '<ul><li><strong>Bold item</strong> with text</li></ul>',
+        ]);
+
+    $state = $schema->getState()['content'];
+
+    $bulletList = collect($state['content'])->firstWhere('type', 'bulletList');
+    $firstLi = $bulletList['content'][0];
+    $paragraph = $firstLi['content'][0];
+
+    expect($paragraph['type'])->toBe('paragraph');
+
+    $boldText = $paragraph['content'][0];
+    $plainText = $paragraph['content'][1];
+
+    expect($boldText['type'])->toBe('text');
+    expect($boldText['text'])->toBe('Bold item');
+    expect($boldText['marks'][0]['type'])->toBe('bold');
+
+    expect($plainText['type'])->toBe('text');
+    expect($plainText['text'])->toBe(' with text');
+    expect($plainText)->not->toHaveKey('marks');
+});
+
+test('list items already containing paragraphs are not double-wrapped on fill', function (): void {
+    $schema = Schema::make(Livewire::make())
+        ->statePath('data')
+        ->components([
+            RichEditor::make('content')->json(),
+        ])
+        ->fill([
+            'content' => '<ul><li><p>Already wrapped</p></li></ul>',
+        ]);
+
+    $state = $schema->getState()['content'];
+
+    $bulletList = collect($state['content'])->firstWhere('type', 'bulletList');
+    $firstLi = $bulletList['content'][0];
+
+    expect($firstLi['content'][0]['type'])->toBe('paragraph');
+    expect($firstLi['content'][0]['content'][0]['type'])->toBe('text');
+    expect($firstLi['content'][0]['content'][0]['text'])->toBe('Already wrapped');
 });

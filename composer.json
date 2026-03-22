@@ -8,7 +8,6 @@
         "ext-intl": "*"
     },
     "require-dev": {
-        "anourvalar/eloquent-serialize": "^1.2",
         "chillerlan/php-qrcode": "^5.0",
         "filament/support": "*",
         "larastan/larastan": "^3.0",
@@ -18,7 +17,7 @@
         "league/flysystem-aws-s3-v3": "^3.0",
         "nunomaduro/termwind": "^2.0",
         "openspout/openspout": "^4.23",
-        "orchestra/testbench": "^9.0|^10.0",
+        "orchestra/testbench": "^9.0|^10.0|^11.0",
         "pestphp/pest": "^3.7|^4.0",
         "pestphp/pest-plugin-browser": "^4.1",
         "pestphp/pest-plugin-laravel": "^3.0|^4.0",

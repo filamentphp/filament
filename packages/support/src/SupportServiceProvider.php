@@ -153,6 +153,26 @@ class SupportServiceProvider extends PackageServiceProvider
             Js::make('support', __DIR__ . '/../dist/index.js'),
         ], 'filament/support');
 
+        Blade::directive('capture', function (string $expression): string {
+            [$name, $arguments] = str_contains($expression, ',') ?
+                array_map('trim', explode(',', $expression, 2)) :
+                [$expression, ''];
+
+            return "
+                <?php {$name} = (function (\$args) {
+                    return function ({$arguments}) use (\$args) {
+                        extract(\$args, EXTR_SKIP);
+                        ob_start(); ?>
+            ";
+        });
+
+        Blade::directive('endcapture', function (): string {
+            return "
+                <?php return new \Illuminate\Support\HtmlString(ob_get_clean()); };
+                    })(get_defined_vars()); ?>
+            ";
+        });
+
         Blade::directive('captureSlots', function (string $expression): string {
             return "<?php \$slotContents = get_defined_vars(); \$slots = collect({$expression})->mapWithKeys(fn (string \$slot): array => [\$slot => \$slotContents[\$slot] ?? null])->all(); unset(\$slotContents) ?>";
         });

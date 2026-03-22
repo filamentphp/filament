@@ -102,6 +102,12 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
 
     protected ?Closure $mutateRelationshipDataBeforeSaveUsing = null;
 
+    protected ?Closure $afterCreate = null;
+
+    protected ?Closure $afterUpdate = null;
+
+    protected ?Closure $afterDelete = null;
+
     /**
      * @var array<string, mixed> | null
      */
@@ -956,7 +962,10 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
                 $relationship
                     ->whereKey($recordsToDelete)
                     ->get()
-                    ->each(static fn (Model $record) => $record->delete());
+                    ->each(static function (Model $record) use ($component): void {
+                        $record->delete();
+                        $component->callAfterDelete($record);
+                    });
             }
 
             $itemOrder = 1;
@@ -984,6 +993,8 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
                         $translatableContentDriver->updateRecord($record, $itemData) :
                         $record->fill($itemData)->save();
 
+                    $component->callAfterUpdate($itemData, $record);
+
                     continue;
                 }
 
@@ -1004,6 +1015,7 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
 
                 $record = $relationship->save($record);
                 $item->model($record)->saveRelationships();
+                $component->callAfterCreate($itemData, $record);
                 $existingRecords->push($record);
             }
 
@@ -1351,6 +1363,83 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
         }
 
         return $data;
+    }
+
+    public function afterCreate(?Closure $callback): static
+    {
+        $this->afterCreate = $callback;
+
+        return $this;
+    }
+
+    public function afterUpdate(?Closure $callback): static
+    {
+        $this->afterUpdate = $callback;
+
+        return $this;
+    }
+
+    public function afterDelete(?Closure $callback): static
+    {
+        $this->afterDelete = $callback;
+
+        return $this;
+    }
+
+    /**
+     * @param  array<string, mixed>  $data
+     */
+    protected function callAfterCreate(array $data, Model $record): void
+    {
+        if ($this->afterCreate instanceof Closure) {
+            $this->evaluate(
+                $this->afterCreate,
+                namedInjections: [
+                    'data' => $data,
+                    'record' => $record,
+                ],
+                typedInjections: [
+                    Model::class => $record,
+                    $record::class => $record,
+                ],
+            );
+        }
+    }
+
+    /**
+     * @param  array<string, mixed>  $data
+     */
+    protected function callAfterUpdate(array $data, Model $record): void
+    {
+        if ($this->afterUpdate instanceof Closure) {
+            $this->evaluate(
+                $this->afterUpdate,
+                namedInjections: [
+                    'data' => $data,
+                    'record' => $record,
+                ],
+                typedInjections: [
+                    Model::class => $record,
+                    $record::class => $record,
+                ],
+            );
+        }
+    }
+
+    protected function callAfterDelete(Model $record): void
+    {
+        if ($this->afterDelete instanceof Closure) {
+            $this->evaluate(
+                $this->afterDelete,
+                namedInjections: [
+                    'record' => $record,
+                ],
+                typedInjections: [
+                    Model::class => $record,
+                    $record::class => $record,
+                ],
+            );
+        }
     }
 
     public function canConcealComponents(): bool

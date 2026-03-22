@@ -439,6 +439,71 @@ Repeater::make('qualifications')
 
 <UtilityInjection set="formFields" version="4.x" extras="Data;;array<string, mixed>;;$data;;The data that is being saved by the repeater.">You can inject various utilities into the function passed to `mutateRelationshipDataBeforeSaveUsing()` as parameters.</UtilityInjection>
 
+### Running code after creating a related item
+
+You may run code after a new related item is created in the database using the `afterCreate()` method. This method accepts a closure that receives the current item's data in a `$data` variable and the newly created record in a `$record` variable. This is useful when you need the record's ID to perform additional operations, such as attaching pivot data:
+
+```php
+use Filament\Forms\Components\Repeater;
+use Illuminate\Database\Eloquent\Model;
+
+Repeater::make('variants')
+    ->relationship()
+    ->schema([
+        // ...
+    ])
+    ->afterCreate(function (array $data, Model $record): void {
+        if (isset($data['attributes'])) {
+            $record->attributes()->attach($data['attributes']);
+        }
+    })
+```
+
+<UtilityInjection set="formFields" version="4.x" extras="Data;;array<string, mixed>;;$data;;The data that was used to create the record.||Record;;Illuminate\Database\Eloquent\Model;;$record;;The newly created record.">You can inject various utilities into the function passed to `afterCreate()` as parameters.</UtilityInjection>
+
+### Running code after updating a related item
+
+You may run code after an existing related item is updated in the database using the `afterUpdate()` method. This method accepts a closure that receives the current item's data in a `$data` variable and the updated record in a `$record` variable:
+
+```php
+use Filament\Forms\Components\Repeater;
+use Illuminate\Database\Eloquent\Model;
+
+Repeater::make('variants')
+    ->relationship()
+    ->schema([
+        // ...
+    ])
+    ->afterUpdate(function (array $data, Model $record): void {
+        if (isset($data['attributes'])) {
+            $record->attributes()->sync($data['attributes']);
+        }
+    })
+```
+
+<UtilityInjection set="formFields" version="4.x" extras="Data;;array<string, mixed>;;$data;;The data that was used to update the record.||Record;;Illuminate\Database\Eloquent\Model;;$record;;The updated record.">You can inject various utilities into the function passed to `afterUpdate()` as parameters.</UtilityInjection>
+
+### Running code after deleting a related item
+
+You may run code after a related item is deleted from the database using the `afterDelete()` method. This method accepts a closure that receives the record that was just deleted in a `$record` variable. The record will no longer exist in the database at this point, but you can still access its attributes, such as its ID:
+
+```php
+use Filament\Forms\Components\Repeater;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
+
+Repeater::make('attachments')
+    ->relationship()
+    ->schema([
+        // ...
+    ])
+    ->afterDelete(function (Model $record): void {
+        Storage::delete($record->file_path);
+    })
+```
+
+<UtilityInjection set="formFields" version="4.x" extras="Record;;Illuminate\Database\Eloquent\Model;;$record;;The record that was just deleted.">You can inject various utilities into the function passed to `afterDelete()` as parameters.</UtilityInjection>
+
 ### Modifying related records after retrieval
 
 You may filter or modify the related records of a repeater after they are retrieved from the database using the `modifyRecordsUsing` argument. This method accepts a function that receives a `Collection` of related records. You should return the modified collection.

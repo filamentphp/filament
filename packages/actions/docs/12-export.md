@@ -889,3 +889,9 @@ public function view(User $user, Export $export): bool
     return $export->user()->is($user);
 }
 ```
+
+## Security
+
+### CSV formula injection
+
+Filament's export system writes data to CSV and XLSX files exactly as it is stored in the database, without any transformation. This means that if your database contains values beginning with characters like `=`, `+`, `-`, or `@`, they will appear unchanged in the exported file. When opened in spreadsheet software such as Microsoft Excel or Google Sheets, these values may be interpreted as formulas, which could pose a security risk if your data includes untrusted or user-submitted content. You should ensure that your users are aware of this risk, or sanitize the data before export using the [`formatStateUsing()` method](export#formatting-the-value-of-an-export-column) on each column, for example by prefixing values with a single quote (`'`) to prevent formula interpretation.

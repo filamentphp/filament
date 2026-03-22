@@ -187,6 +187,8 @@ if (! function_exists('Filament\Support\generate_icon_html')) {
         }
 
         if (is_string($icon) && str_contains($icon, '/')) {
+            $icon = e($icon);
+
             return new HtmlString(<<<HTML
                 <img src="{$icon}" {$attributes->toHtml()} />
                 HTML);

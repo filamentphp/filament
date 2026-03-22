@@ -12,16 +12,15 @@
         "ext-intl": "*",
         "blade-ui-kit/blade-heroicons": "^2.5",
         "danharrin/livewire-rate-limiting": "^2.0",
-        "illuminate/contracts": "^11.28|^12.0",
+        "illuminate/contracts": "^11.28|^12.0|^13.0",
         "kirschbaum-development/eloquent-power-joins": "^4.0",
         "league/uri-components": "^7.0",
         "livewire/livewire": "^3.5",
         "nette/php-generator": "^4.0",
-        "ryangjchandler/blade-capture-directive": "^1.0",
         "spatie/invade": "^2.0",
         "spatie/laravel-package-tools": "^1.9",
         "symfony/html-sanitizer": "^7.0|^8.0",
-        "symfony/console": "^7.0"
+        "symfony/console": "^7.0|^8.0"
     },
     "autoload": {
         "files": [

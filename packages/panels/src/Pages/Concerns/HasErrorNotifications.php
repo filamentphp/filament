@@ -9,7 +9,7 @@ trait HasErrorNotifications
     protected ?bool $hasErrorNotifications = null;
 
     /**
-     * @var array<array{ title: string, body: ?string }>
+     * @var array<array{ title: ?string, body: ?string, isHidden: bool, isDisabled: bool }>
      */
     protected array $errorNotifications = [];
 
@@ -20,6 +20,32 @@ trait HasErrorNotifications
         $this->errorNotifications[$statusCode] = [
             'title' => $title,
             'body' => $body,
+            'isHidden' => false,
+            'isDisabled' => false,
+        ];
+
+        return $this;
+    }
+
+    public function hiddenErrorNotification(int $statusCode): static
+    {
+        $this->errorNotifications[$statusCode] = [
+            'title' => null,
+            'body' => null,
+            'isHidden' => true,
+            'isDisabled' => false,
+        ];
+
+        return $this;
+    }
+
+    public function disabledErrorNotification(int $statusCode): static
+    {
+        $this->errorNotifications[$statusCode] = [
+            'title' => null,
+            'body' => null,
+            'isHidden' => false,
+            'isDisabled' => true,
         ];
 
         return $this;
@@ -31,7 +57,7 @@ trait HasErrorNotifications
     }
 
     /**
-     * @return array<array{ title: string, body: ?string }>
+     * @return array<array{ title: ?string, body: ?string, isHidden: bool, isDisabled: bool }>
      */
     public function getErrorNotifications(): array
     {

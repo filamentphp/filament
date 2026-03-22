@@ -575,6 +575,10 @@ TextColumn::make('title')
     ->openUrlInNewTab()
 ```
 
+<Aside variant="danger">
+    If you are passing user-controlled data to the `url()` method, you should validate that the URL does not use a dangerous scheme such as `javascript:` or `data:`. Failing to do so could expose your application to XSS attacks.
+</Aside>
+
 ### Triggering actions
 
 To run a function when a cell is clicked, you may use the `action()` method. Each method accepts a `$record` parameter which you may use to customize the behavior of the action:

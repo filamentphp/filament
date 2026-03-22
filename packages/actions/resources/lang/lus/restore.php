@@ -61,7 +61,7 @@ return [
             ],
 
             'restored_none' => [
-                'title' => 'Failed to restore',
+                'title' => 'Ngai awhtîr leh tumna a hlawhchham',
                 'missing_authorization_failure_message' => 'Hemi :count ngai awhtîr leh tur hian phalna I neilo.',
                 'missing_processing_failure_message' => ':count hi ngai a awhtîr leh theihloh.',
             ],

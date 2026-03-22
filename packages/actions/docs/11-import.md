@@ -954,3 +954,9 @@ public function view(User $user, Import $import): bool
     return $import->user()->is($user);
 }
 ```
+
+## Security
+
+### CSV formula injection
+
+When rows fail validation during import, Filament compiles them into a downloadable CSV for the user to review. This failure CSV contains the original data from the uploaded file exactly as it was submitted, without any transformation. If the uploaded CSV contains values beginning with characters like `=`, `+`, `-`, or `@`, they will appear unchanged in the failure CSV. When opened in spreadsheet software such as Microsoft Excel or Google Sheets, these values may be interpreted as formulas, which could pose a security risk if the original CSV was provided by an untrusted source. You should ensure that your users are aware of this risk when reviewing failure CSVs, or implement sanitization in your importer's lifecycle hooks to neutralize potentially dangerous values before they are stored as failed rows.

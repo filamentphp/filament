@@ -26,6 +26,8 @@ trait HasGlobalSearch
 
     protected string | Closure | null $globalSearchFieldSuffix = null;
 
+    protected bool $isGlobalSearchResourceOptIn = false;
+
     public function globalSearch(string | bool $provider = true, GlobalSearchPosition | Closure | null $position = null): static
     {
         if (is_string($provider) && (! in_array(GlobalSearchProvider::class, class_implements($provider)))) {
@@ -119,6 +121,18 @@ trait HasGlobalSearch
     public function getGlobalSearchFieldSuffix(): ?string
     {
         return $this->evaluate($this->globalSearchFieldSuffix);
+    }
+
+    public function globalSearchResourceOptIn(bool $condition = true): static
+    {
+        $this->isGlobalSearchResourceOptIn = $condition;
+
+        return $this;
+    }
+
+    public function isGlobalSearchResourceOptIn(): bool
+    {
+        return $this->isGlobalSearchResourceOptIn;
     }
 
     public function getGlobalSearchProvider(): ?GlobalSearchProvider

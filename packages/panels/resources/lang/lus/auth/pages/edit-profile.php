@@ -52,7 +52,12 @@ return [
         ],
 
         'saved' => [
-            'title' => 'Saved',
+            'title' => 'A in thlâkthleng e.',
+        ],
+
+        'throttled' => [
+            'title' => 'Tumna a tam lutuk. Khawngaihin seconds :seconds hnuah ti nawn leh rawh.',
+            'body' => 'Khawngaihin seconds :seconds hnuah ti nawn leh rawh.',
         ],
 
     ],
