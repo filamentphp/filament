@@ -7,12 +7,21 @@ use Filament\Schemas\Components\Concerns\CanStripCharactersFromState;
 use Filament\Schemas\Components\Concerns\CanTrimState;
 use Filament\Schemas\Components\Contracts\HasAffixActions;
 use Filament\Schemas\Components\StateCasts\StripCharactersStateCast;
+use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Concerns\HasColor;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Filament\Support\Concerns\HasReorderAnimationDuration;
+use Filament\Support\Facades\FilamentAsset;
+use Filament\Support\Icons\Heroicon;
+use Filament\Support\View\Components\BadgeComponent;
+use Filament\Support\View\Components\InputComponent\WrapperComponent\IconComponent;
 use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Support\Js;
+use Illuminate\View\ComponentAttributeBag;
 
-class TagsInput extends Field implements Contracts\HasNestedRecursiveValidationRules, HasAffixActions
+use function Filament\Support\generate_icon_html;
+
+class TagsInput extends Field implements Contracts\HasNestedRecursiveValidationRules, HasAffixActions, HasEmbeddedView
 {
     use CanStripCharactersFromState;
     use CanTrimState;
@@ -23,11 +32,6 @@ class TagsInput extends Field implements Contracts\HasNestedRecursiveValidationR
     use HasColor;
     use HasExtraAlpineAttributes;
     use HasReorderAnimationDuration;
-
-    /**
-     * @var view-string
-     */
-    protected string $view = 'filament-forms::components.tags-input';
 
     protected bool | Closure $isReorderable = false;
 
@@ -212,6 +216,206 @@ class TagsInput extends Field implements Contracts\HasNestedRecursiveValidationR
         }
 
         return parent::mutateStateForValidation($state);
+    }
+
+    public function toEmbeddedHtml(): string
+    {
+        $extraAttributes = $this->getExtraAttributes();
+        $extraInputAttributeBag = $this->getExtraInputAttributeBag();
+        $color = $this->getColor() ?? 'primary';
+        $id = $this->getId();
+        $isAutofocused = $this->isAutofocused();
+        $isDisabled = $this->isDisabled();
+        $isPrefixInline = $this->isPrefixInline();
+        $isReorderable = (! $isDisabled) && $this->isReorderable();
+        $isSuffixInline = $this->isSuffixInline();
+        $placeholder = $this->getPlaceholder();
+        $prefixActions = $this->getPrefixActions();
+        $prefixIcon = $this->getPrefixIcon();
+        $prefixIconColor = $this->getPrefixIconColor();
+        $prefixLabel = $this->getPrefixLabel();
+        $statePath = $this->getStatePath();
+        $suffixActions = $this->getSuffixActions();
+        $suffixIcon = $this->getSuffixIcon();
+        $suffixIconColor = $this->getSuffixIconColor();
+        $suffixLabel = $this->getSuffixLabel();
+
+        // Filter visible prefix/suffix actions
+        $prefixActions = array_filter(
+            $prefixActions,
+            static fn (\Filament\Actions\Action $action): bool => $action->isVisible(),
+        );
+        $suffixActions = array_filter(
+            $suffixActions,
+            static fn (\Filament\Actions\Action $action): bool => $action->isVisible(),
+        );
+
+        $hasPrefix = count($prefixActions) || $prefixIcon || filled($prefixLabel);
+        $hasSuffix = count($suffixActions) || $suffixIcon || filled($suffixLabel);
+
+        $wrapperAttributes = \Filament\Support\prepare_inherited_attributes($this->getExtraAttributeBag())
+            ->merge($extraAttributes, escape: false)
+            ->merge([
+                'x-on:focus-input.stop' => "\$el.querySelector('input')?.focus()",
+            ], escape: false)
+            ->class([
+                'fi-input-wrp',
+                'fi-fo-tags-input',
+                'fi-disabled' => $isDisabled,
+                'fi-invalid' => filled($statePath) && view()->shared('errors')?->has($statePath),
+            ]);
+
+        $deleteLabel = __('filament-forms::components.tags_input.actions.delete.label');
+
+        // Badge color classes for the tag badges
+        $badgeColorClasses = (new ComponentAttributeBag)->color(BadgeComponent::class, $color)->getAttributes()['class'] ?? '';
+
+        $deleteIconHtml = generate_icon_html(
+            Heroicon::XMark,
+            alias: \Filament\Support\View\SupportIconAlias::BADGE_DELETE_BUTTON,
+            size: \Filament\Support\Enums\IconSize::ExtraSmall,
+        )?->toHtml();
+
+        ob_start(); ?>
+
+        <div <?= $wrapperAttributes->toHtml() ?>>
+            <?php if ($hasPrefix) { ?>
+                <div
+                    <?= (new ComponentAttributeBag)->class([
+                        'fi-input-wrp-prefix',
+                        'fi-input-wrp-prefix-has-content' => true,
+                        'fi-inline' => $isPrefixInline,
+                        'fi-input-wrp-prefix-has-label' => filled($prefixLabel),
+                    ])->toHtml() ?>
+                >
+                    <?php if (count($prefixActions)) { ?>
+                        <div class="fi-input-wrp-actions">
+                            <?php foreach ($prefixActions as $prefixAction) { ?>
+                                <?= $prefixAction->toHtml() ?>
+                            <?php } ?>
+                        </div>
+                    <?php } ?>
+
+                    <?= generate_icon_html($prefixIcon, null, (new ComponentAttributeBag)->color(IconComponent::class, $prefixIconColor))?->toHtml() ?>
+
+                    <?php if (filled($prefixLabel)) { ?>
+                        <span class="fi-input-wrp-label"><?= e($prefixLabel) ?></span>
+                    <?php } ?>
+                </div>
+            <?php } ?>
+
+            <div class="fi-input-wrp-content-ctn">
+                <div
+                    x-load
+                    x-load-src="<?= e(FilamentAsset::getAlpineComponentSrc('tags-input', 'filament/forms')) ?>"
+                    x-data="tagsInputFormComponent({
+                                state: $wire.<?= $this->applyStateBindingModifiers("\$entangle('{$statePath}')") ?>,
+                                splitKeys: <?= Js::from($this->getSplitKeys()) ?>,
+                            })"
+                    <?= $this->getExtraAlpineAttributeBag()->toHtml() ?>
+                >
+                    <input
+                        <?= $extraInputAttributeBag
+                            ->merge([
+                                'autocomplete' => 'off',
+                                'autofocus' => $isAutofocused,
+                                'disabled' => $isDisabled,
+                                'id' => $id,
+                                'list' => $id . '-suggestions',
+                                'placeholder' => filled($placeholder) ? e($placeholder) : null,
+                                'type' => 'text',
+                                'x-bind' => 'input',
+                            ], escape: false)
+                            ->class([
+                                'fi-input',
+                                'fi-input-has-inline-prefix' => $isPrefixInline && $hasPrefix,
+                                'fi-input-has-inline-suffix' => $isSuffixInline && $hasSuffix,
+                            ])
+                            ->toHtml() ?>
+                    />
+
+                    <datalist id="<?= e($id) ?>-suggestions">
+                        <?php foreach ($this->getSuggestions() as $suggestion) { ?>
+                            <template
+                                x-bind:key="<?= Js::from($suggestion) ?>"
+                                x-if="! (state?.includes(<?= Js::from($suggestion) ?>) ?? true)"
+                            >
+                                <option value="<?= e($suggestion) ?>" />
+                            </template>
+                        <?php } ?>
+                    </datalist>
+
+                    <div wire:ignore>
+                        <template x-cloak x-if="state?.length">
+                            <div
+                                <?php if ($isReorderable) { ?>
+                                    x-on:end.stop="reorderTags($event)"
+                                    x-sortable
+                                    data-sortable-animation-duration="<?= e($this->getReorderAnimationDuration()) ?>"
+                                <?php } ?>
+                                class="fi-fo-tags-input-tags-ctn"
+                            >
+                                <template
+                                    x-for="(tag, index) in state"
+                                    x-bind:key="`${tag}-${index}`"
+                                >
+                                    <span
+                                        <?php if ($isReorderable) { ?>
+                                            x-bind:x-sortable-item="index"
+                                            x-sortable-handle
+                                        <?php } ?>
+                                        class="fi-badge <?= e($badgeColorClasses) ?> <?php if ($isReorderable) { ?>fi-reorderable<?php } ?>"
+                                    >
+                                        <span class="fi-badge-label-ctn">
+                                            <span class="fi-badge-label">
+                                                <?= e($this->getTagPrefix()) ?>
+                                                <span x-text="tag"></span>
+                                                <?= e($this->getTagSuffix()) ?>
+                                            </span>
+                                        </span>
+
+                                        <button
+                                            type="button"
+                                            x-on:click.stop="deleteTag(tag)"
+                                            x-bind:aria-label="'<?= e($deleteLabel) ?>: ' + tag"
+                                            class="fi-badge-delete-btn"
+                                        >
+                                            <?= $deleteIconHtml ?>
+                                        </button>
+                                    </span>
+                                </template>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+            </div>
+
+            <?php if ($hasSuffix) { ?>
+                <div
+                    <?= (new ComponentAttributeBag)->class([
+                        'fi-input-wrp-suffix',
+                        'fi-inline' => $isSuffixInline,
+                        'fi-input-wrp-suffix-has-label' => filled($suffixLabel),
+                    ])->toHtml() ?>
+                >
+                    <?php if (filled($suffixLabel)) { ?>
+                        <span class="fi-input-wrp-label"><?= e($suffixLabel) ?></span>
+                    <?php } ?>
+
+                    <?= generate_icon_html($suffixIcon, null, (new ComponentAttributeBag)->color(IconComponent::class, $suffixIconColor))?->toHtml() ?>
+
+                    <?php if (count($suffixActions)) { ?>
+                        <div class="fi-input-wrp-actions">
+                            <?php foreach ($suffixActions as $suffixAction) { ?>
+                                <?= $suffixAction->toHtml() ?>
+                            <?php } ?>
+                        </div>
+                    <?php } ?>
+                </div>
+            <?php } ?>
+        </div>
+
+        <?php return $this->wrapEmbeddedHtml(ob_get_clean(), extraWrapperAttributes: ['class' => 'fi-fo-tags-input-wrp']);
     }
 
     public function mutatesDehydratedState(): bool

@@ -10,10 +10,19 @@ use Filament\Schemas\Components\StateCasts\EnumArrayStateCast;
 use Filament\Schemas\Components\StateCasts\EnumStateCast;
 use Filament\Schemas\Components\StateCasts\OptionsArrayStateCast;
 use Filament\Schemas\Components\StateCasts\OptionStateCast;
+use Filament\Support\Components\Contracts\HasEmbeddedView;
+use Filament\Support\Enums\GridDirection;
+use Filament\Support\Enums\Size;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
+use Filament\Support\View\Components\ButtonComponent;
+use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Support\Js;
+use Illuminate\View\ComponentAttributeBag;
 
-class ToggleButtons extends Field implements Contracts\CanDisableOptions
+use function Filament\Support\generate_icon_html;
+
+class ToggleButtons extends Field implements Contracts\CanDisableOptions, HasEmbeddedView
 {
     use Concerns\CanDisableOptions;
     use Concerns\CanDisableOptionsWhenSelectedInSiblingRepeaterItems;
@@ -30,11 +39,6 @@ class ToggleButtons extends Field implements Contracts\CanDisableOptions
 
     protected bool | Closure $isMultiple = false;
 
-    /**
-     * @var view-string
-     */
-    protected string $view = 'filament-forms::components.toggle-buttons.index';
-
     protected bool | Closure $isInline = false;
 
     protected bool | Closure $areButtonLabelsHidden = false;
@@ -42,6 +46,95 @@ class ToggleButtons extends Field implements Contracts\CanDisableOptions
     public function grouped(): static
     {
         return $this->view(static::GROUPED_VIEW);
+    }
+
+    public function toEmbeddedHtml(): string
+    {
+        $gridDirection = $this->getGridDirection() ?? GridDirection::Column;
+        $id = $this->getId();
+        $isDisabled = $this->isDisabled();
+        $isInline = $this->isInline();
+        $isMultiple = $this->isMultiple();
+        $statePath = $this->getStatePath();
+        $areButtonLabelsHidden = $this->areButtonLabelsHidden();
+        $wireModelAttribute = $this->applyStateBindingModifiers('wire:model');
+        $extraInputAttributeBag = $this->getExtraInputAttributeBag()->class(['fi-fo-toggle-buttons-input']);
+        $isAutofocused = $this->isAutofocused();
+
+        $containerAttributes = $this->getExtraAttributeBag();
+
+        if (! $isInline) {
+            $containerAttributes = $containerAttributes->grid($this->getColumns(), $gridDirection);
+        }
+
+        $containerAttributes = $containerAttributes->class([
+            'fi-fo-toggle-buttons',
+            'fi-inline' => $isInline,
+        ]);
+
+        $first = true;
+
+        ob_start(); ?>
+
+        <div <?= $containerAttributes->toHtml() ?>>
+            <?php foreach ($this->getOptions() as $value => $label) { ?>
+                <?php
+                    $inputId = "{$id}-{$value}";
+                    $shouldOptionBeDisabled = $isDisabled || $this->isOptionDisabled($value, $label);
+                    $color = $this->getColor($value);
+                    $icon = $this->getIcon($value);
+                    $tooltip = $this->getTooltip($value);
+
+                    // Simplified button rendering for label tags
+                    $buttonAttributes = (new ComponentAttributeBag)
+                        ->merge([
+                            'aria-disabled' => $shouldOptionBeDisabled ? 'true' : null,
+                            'aria-label' => $areButtonLabelsHidden ? trim(strip_tags($label)) : null,
+                            'disabled' => $shouldOptionBeDisabled,
+                            'for' => $inputId,
+                        ], escape: false)
+                        ->class([
+                            'fi-btn',
+                            'fi-size-md',
+                            'fi-disabled' => $shouldOptionBeDisabled,
+                        ])
+                        ->color(app(ButtonComponent::class, ['isOutlined' => false]), $color);
+                ?>
+
+                <div class="fi-fo-toggle-buttons-btn-ctn">
+                    <input
+                        <?php if ($first && $isAutofocused) { ?> autofocus <?php } ?>
+                        <?php if ($shouldOptionBeDisabled) { ?> disabled <?php } ?>
+                        id="<?= e($inputId) ?>"
+                        <?php if (! $isMultiple) { ?>
+                            name="<?= e($id) ?>"
+                        <?php } ?>
+                        type="<?= $isMultiple ? 'checkbox' : 'radio' ?>"
+                        value="<?= e($value) ?>"
+                        <?= $wireModelAttribute ?>="<?= e($statePath) ?>"
+                        <?= $extraInputAttributeBag->toHtml() ?>
+                    />
+
+                    <label
+                        <?php if (filled($tooltip)) { ?>
+                            x-tooltip="{ content: <?= Js::from($tooltip) ?>, theme: $store.theme, allowHTML: <?= Js::from($tooltip instanceof Htmlable) ?> }"
+                        <?php } ?>
+                        <?= $buttonAttributes->toHtml() ?>
+                    >
+                        <?php if (filled($icon)) { ?>
+                            <?= generate_icon_html($icon)?->toHtml() ?>
+                        <?php } ?>
+
+                        <?php if (! $areButtonLabelsHidden) { ?>
+                            <?= e($label) ?>
+                        <?php } ?>
+                    </label>
+                </div>
+                <?php $first = false; ?>
+            <?php } ?>
+        </div>
+
+        <?php return $this->wrapEmbeddedHtml(ob_get_clean(), extraWrapperAttributes: ['class' => 'fi-fo-toggle-buttons-wrp', 'tabindex' => '-1']);
     }
 
     public function boolean(?string $trueLabel = null, ?string $falseLabel = null): static

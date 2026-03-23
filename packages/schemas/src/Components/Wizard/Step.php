@@ -7,10 +7,14 @@ use Closure;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Concerns\HasLabel;
 use Filament\Schemas\Components\Contracts\CanConcealComponents;
+use Filament\Schemas\Components\Wizard;
+use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Support\Js;
 use Illuminate\Support\Str;
+use Illuminate\View\ComponentAttributeBag;
 
-class Step extends Component implements CanConcealComponents
+class Step extends Component implements CanConcealComponents, HasEmbeddedView
 {
     use HasLabel;
 
@@ -25,11 +29,6 @@ class Step extends Component implements CanConcealComponents
     protected string | BackedEnum | Htmlable | Closure | null $completedIcon = null;
 
     protected bool | Closure $hasFormWrapper = true;
-
-    /**
-     * @var view-string
-     */
-    protected string $view = 'filament-schemas::components.wizard.step';
 
     final public function __construct(string $label)
     {
@@ -153,5 +152,55 @@ class Step extends Component implements CanConcealComponents
     public function hasFormWrapper(): bool
     {
         return (bool) $this->evaluate($this->hasFormWrapper);
+    }
+
+    public function toEmbeddedHtml(): string
+    {
+        $id = $this->getId();
+        $key = $this->getKey();
+        /** @var Wizard $wizard */
+        $wizard = $this->getContainer()->getParentComponent();
+        $alpineSubmitHandler = $this->hasFormWrapper() ? $wizard->getAlpineSubmitHandler() : null;
+
+        $tag = filled($alpineSubmitHandler) ? 'form' : 'div';
+
+        $attributes = (new ComponentAttributeBag)
+            ->merge([
+                'aria-labelledby' => $id,
+                'id' => $id,
+                'role' => 'tabpanel',
+            ], escape: false)
+            ->merge($this->getExtraAttributes(), escape: false)
+            ->class(['fi-sc-wizard-step']);
+
+        ob_start(); ?>
+
+        <<?= $tag ?>
+            x-bind:tabindex="$el.querySelector('[autofocus]') ? '-1' : '0'"
+            x-bind:class="{
+                'fi-active': step === <?= Js::from($key) ?>,
+            }"
+            x-on:expand="
+                if (! isStepAccessible(<?= Js::from($key) ?>)) {
+                    return
+                }
+
+                step = <?= Js::from($key) ?>
+            "
+            <?php if (filled($alpineSubmitHandler)) { ?>
+                x-on:submit.prevent="isLastStep() ? <?= $alpineSubmitHandler ?> : requestNextStep()"
+            <?php } ?>
+            x-cloak
+            x-ref="step-<?= e($key) ?>"
+            <?= $attributes->toHtml() ?>
+        >
+            <?= $this->getChildSchema()->toHtml() ?>
+
+            <?php if (filled($alpineSubmitHandler)) { ?>
+                <input type="submit" hidden />
+            <?php } ?>
+        </<?= $tag ?>>
+
+        <?php return ob_get_clean();
     }
 }

@@ -3,13 +3,11 @@
 namespace Filament\Schemas\Components;
 
 use Closure;
+use Filament\Support\Components\Contracts\HasEmbeddedView;
+use Illuminate\View\ComponentAttributeBag;
 
-class Livewire extends Component
+class Livewire extends Component implements HasEmbeddedView
 {
-    /**
-     * @var view-string
-     */
-    protected string $view = 'filament-schemas::components.livewire';
 
     protected bool | Closure $isLazy = false;
 
@@ -107,5 +105,34 @@ class Livewire extends Component
     public function getId(): ?string
     {
         return $this->getCustomId();
+    }
+
+    public function toEmbeddedHtml(): string
+    {
+        $extraAttributes = $this->getExtraAttributes();
+        $id = $this->getId();
+        $hasWrapper = filled($id) || filled($extraAttributes);
+
+        $livewireHtml = '';
+
+        $key = $this->getLivewireKey();
+        $component = $this->getComponent();
+        $properties = $this->getComponentProperties();
+
+        if (filled($key)) {
+            $livewireHtml = \Livewire\Livewire::mount($component, $properties, $key)->html();
+        } else {
+            $livewireHtml = \Livewire\Livewire::mount($component, $properties)->html();
+        }
+
+        if ($hasWrapper) {
+            $attributes = (new ComponentAttributeBag)
+                ->merge(['id' => $id], escape: false)
+                ->merge($extraAttributes, escape: false);
+
+            return '<div ' . $attributes->toHtml() . '>' . $livewireHtml . '</div>';
+        }
+
+        return $livewireHtml;
     }
 }

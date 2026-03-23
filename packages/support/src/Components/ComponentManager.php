@@ -6,6 +6,7 @@ use Closure;
 use Filament\Support\Components\Contracts\ScopedComponentManager;
 use ReflectionClass;
 use ReflectionMethod;
+use ReflectionNamedType;
 
 class ComponentManager implements ScopedComponentManager
 {
@@ -121,10 +122,26 @@ class ComponentManager implements ScopedComponentManager
         if (! isset($this->methodCache[$component::class])) {
             $reflection = new ReflectionClass($component);
 
-            $this->methodCache[$component::class] = array_map(
-                fn (ReflectionMethod $method): string => $method->getName(),
-                $reflection->getMethods(ReflectionMethod::IS_PUBLIC),
-            );
+            $this->methodCache[$component::class] = [];
+
+            foreach ($reflection->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
+                $name = $method->getName();
+
+                // Skip magic methods and fluent setter methods (return `static`)
+                // which are never called from Blade views. This roughly halves
+                // the number of closures created per component instance.
+                if (str_starts_with($name, '__')) {
+                    continue;
+                }
+
+                $returnType = $method->getReturnType();
+
+                if ($returnType instanceof ReflectionNamedType && $returnType->getName() === 'static') {
+                    continue;
+                }
+
+                $this->methodCache[$component::class][] = $name;
+            }
         }
 
         $values = [];

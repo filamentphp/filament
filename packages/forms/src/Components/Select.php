@@ -17,10 +17,13 @@ use Filament\Schemas\Components\StateCasts\OptionsArrayStateCast;
 use Filament\Schemas\Components\StateCasts\OptionStateCast;
 use Filament\Schemas\Schema;
 use Filament\Support\Components\Attributes\ExposedLivewireMethod;
+use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
+use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
 use Filament\Support\Services\RelationshipJoiner;
+use Filament\Support\View\Components\InputComponent\WrapperComponent\IconComponent;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Connection;
@@ -35,15 +38,18 @@ use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
 use Illuminate\Database\Eloquent\Relations\HasOneOrManyThrough;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Js;
 use Illuminate\Support\Str;
+use Illuminate\View\ComponentAttributeBag;
 use Livewire\Attributes\Renderless;
 use LogicException;
 use Znck\Eloquent\Relations\BelongsToThrough;
 
+use function Filament\Support\generate_icon_html;
 use function Filament\Support\generate_search_column_expression;
 use function Filament\Support\generate_search_term_expression;
 
-class Select extends Field implements Contracts\CanDisableOptions, Contracts\HasNestedRecursiveValidationRules, HasAffixActions
+class Select extends Field implements Contracts\CanDisableOptions, Contracts\HasNestedRecursiveValidationRules, HasAffixActions, HasEmbeddedView
 {
     use Concerns\CanAllowHtml;
     use Concerns\CanBeNative;
@@ -62,11 +68,6 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
     use Concerns\HasPivotData;
     use Concerns\HasPlaceholder;
     use HasExtraAlpineAttributes;
-
-    /**
-     * @var view-string
-     */
-    protected string $view = 'filament-forms::components.select';
 
     /**
      * @var array<Component | Action | ActionGroup> | Closure | null
@@ -1765,5 +1766,261 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
     public function hasNullableBooleanState(): bool
     {
         return true;
+    }
+
+    public function toEmbeddedHtml(): string
+    {
+        $extraInputAttributeBag = $this->getExtraInputAttributeBag();
+        $canSelectPlaceholder = $this->canSelectPlaceholder();
+        $isAutofocused = $this->isAutofocused();
+        $isDisabled = $this->isDisabled();
+        $isMultiple = $this->isMultiple();
+        $isReorderable = $this->isReorderable();
+        $isSearchable = $this->isSearchable();
+        $hasInitialNoOptionsMessage = $this->hasInitialNoOptionsMessage();
+        $canOptionLabelsWrap = $this->canOptionLabelsWrap();
+        $isRequired = $this->isRequired();
+        $isConcealed = $this->isConcealed();
+        $isHtmlAllowed = $this->isHtmlAllowed();
+        $isNative = (! ($isSearchable || $isMultiple) && $this->isNative());
+        $isPrefixInline = $this->isPrefixInline();
+        $isSuffixInline = $this->isSuffixInline();
+        $key = $this->getKey();
+        $id = $this->getId();
+        $prefixActions = $this->getPrefixActions();
+        $prefixIcon = $this->getPrefixIcon();
+        $prefixIconColor = $this->getPrefixIconColor();
+        $prefixLabel = $this->getPrefixLabel();
+        $suffixActions = $this->getSuffixActions();
+        $suffixIcon = $this->getSuffixIcon();
+        $suffixIconColor = $this->getSuffixIconColor();
+        $suffixLabel = $this->getSuffixLabel();
+        $statePath = $this->getStatePath();
+        $state = $this->getRawState();
+        $livewireKey = $this->getLivewireKey();
+
+        // Filter visible prefix/suffix actions
+        $prefixActions = array_filter(
+            $prefixActions,
+            static fn (Action $action): bool => $action->isVisible(),
+        );
+        $suffixActions = array_filter(
+            $suffixActions,
+            static fn (Action $action): bool => $action->isVisible(),
+        );
+
+        $hasPrefix = count($prefixActions) || $prefixIcon || filled($prefixLabel);
+        $hasSuffix = count($suffixActions) || $suffixIcon || filled($suffixLabel);
+
+        $wrapperAttributes = \Filament\Support\prepare_inherited_attributes($this->getExtraAttributeBag())
+            ->merge([
+                'x-on:focus-input.stop' => $isNative
+                    ? "\$el.querySelector('select')?.focus()"
+                    : "\$el.querySelector('.fi-select-input-btn')?.focus()",
+            ], escape: false)
+            ->class([
+                'fi-input-wrp',
+                'fi-fo-select',
+                'fi-fo-select-has-inline-prefix' => $isPrefixInline && $hasPrefix,
+                'fi-fo-select-native' => $isNative,
+                'fi-disabled' => $isDisabled,
+                'fi-invalid' => filled($statePath) && view()->shared('errors')?->has($statePath),
+            ]);
+
+        ob_start(); ?>
+
+        <div <?= $wrapperAttributes->toHtml() ?>>
+            <?php if ($hasPrefix) { ?>
+                <div
+                    <?= (new ComponentAttributeBag)->class([
+                        'fi-input-wrp-prefix',
+                        'fi-input-wrp-prefix-has-content' => true,
+                        'fi-inline' => $isPrefixInline,
+                        'fi-input-wrp-prefix-has-label' => filled($prefixLabel),
+                    ])->toHtml() ?>
+                >
+                    <?php if (count($prefixActions)) { ?>
+                        <div class="fi-input-wrp-actions">
+                            <?php foreach ($prefixActions as $prefixAction) { ?>
+                                <?= $prefixAction->toHtml() ?>
+                            <?php } ?>
+                        </div>
+                    <?php } ?>
+
+                    <?= generate_icon_html($prefixIcon, null, (new ComponentAttributeBag)->color(IconComponent::class, $prefixIconColor))?->toHtml() ?>
+
+                    <?php if (filled($prefixLabel)) { ?>
+                        <span class="fi-input-wrp-label"><?= e($prefixLabel) ?></span>
+                    <?php } ?>
+                </div>
+            <?php } ?>
+
+            <div class="fi-input-wrp-content-ctn">
+                <?php if ($isNative) { ?>
+                    <select
+                        <?= $extraInputAttributeBag
+                            ->merge([
+                                'autofocus' => $isAutofocused,
+                                'disabled' => $isDisabled,
+                                'id' => $id,
+                                'required' => $isRequired && (! $isConcealed),
+                                $this->applyStateBindingModifiers('wire:model') => $statePath,
+                            ], escape: false)
+                            ->class([
+                                'fi-select-input',
+                                'fi-select-input-has-inline-prefix' => $isPrefixInline && $hasPrefix,
+                            ])
+                            ->toHtml() ?>
+                    >
+                        <?php if ($canSelectPlaceholder) { ?>
+                            <option value="">
+                                <?php if (! $isDisabled) { ?>
+                                    <?= e($this->getPlaceholder()) ?>
+                                <?php } ?>
+                            </option>
+                        <?php } ?>
+
+                        <?php foreach ($this->getOptions() as $value => $label) { ?>
+                            <?php if (is_array($label)) { ?>
+                                <optgroup label="<?= e($value) ?>">
+                                    <?php foreach ($label as $groupedValue => $groupedLabel) { ?>
+                                        <option
+                                            <?php if ($this->isOptionDisabled($groupedValue, $groupedLabel)) { ?> disabled <?php } ?>
+                                            value="<?= e($groupedValue) ?>"
+                                        >
+                                            <?php if ($isHtmlAllowed) { ?>
+                                                <?= $groupedLabel ?>
+                                            <?php } else { ?>
+                                                <?= e($groupedLabel) ?>
+                                            <?php } ?>
+                                        </option>
+                                    <?php } ?>
+                                </optgroup>
+                            <?php } else { ?>
+                                <option
+                                    <?php if ($this->isOptionDisabled($value, $label)) { ?> disabled <?php } ?>
+                                    value="<?= e($value) ?>"
+                                >
+                                    <?php if ($isHtmlAllowed) { ?>
+                                        <?= $label ?>
+                                    <?php } else { ?>
+                                        <?= e($label) ?>
+                                    <?php } ?>
+                                </option>
+                            <?php } ?>
+                        <?php } ?>
+                    </select>
+                <?php } else { ?>
+                    <div
+                        class="fi-hidden"
+                        x-data="{
+                            isDisabled: <?= Js::from($isDisabled) ?>,
+                            init() {
+                                const container = $el.nextElementSibling
+                                container.dispatchEvent(
+                                    new CustomEvent('set-select-property', {
+                                        detail: { isDisabled: this.isDisabled },
+                                    }),
+                                )
+                            },
+                        }"
+                    ></div>
+                    <div
+                        x-load
+                        x-load-src="<?= e(FilamentAsset::getAlpineComponentSrc('select', 'filament/forms')) ?>"
+                        x-data="selectFormComponent({
+                                    canOptionLabelsWrap: <?= Js::from($canOptionLabelsWrap) ?>,
+                                    canSelectPlaceholder: <?= Js::from($canSelectPlaceholder) ?>,
+                                    getOptionLabelUsing: async () => {
+                                        return await $wire.callSchemaComponentMethod(<?= Js::from($key) ?>, 'getOptionLabel')
+                                    },
+                                    getOptionLabelsUsing: async () => {
+                                        return await $wire.callSchemaComponentMethod(
+                                            <?= Js::from($key) ?>,
+                                            'getOptionLabelsForJs',
+                                        )
+                                    },
+                                    getOptionsUsing: async () => {
+                                        return await $wire.callSchemaComponentMethod(
+                                            <?= Js::from($key) ?>,
+                                            'getOptionsForJs',
+                                        )
+                                    },
+                                    getSearchResultsUsing: async (search) => {
+                                        return await $wire.callSchemaComponentMethod(
+                                            <?= Js::from($key) ?>,
+                                            'getSearchResultsForJs',
+                                            { search },
+                                        )
+                                    },
+                                    hasDynamicOptions: <?= Js::from($this->hasDynamicOptions()) ?>,
+                                    hasDynamicSearchResults: <?= Js::from($this->hasDynamicSearchResults()) ?>,
+                                    hasInitialNoOptionsMessage: <?= Js::from($hasInitialNoOptionsMessage) ?>,
+                                    initialOptionLabel: <?= Js::from((blank($state) || $isMultiple) ? null : $this->getOptionLabel()) ?>,
+                                    initialOptionLabels: <?= Js::from((filled($state) && $isMultiple) ? $this->getOptionLabelsForJs() : []) ?>,
+                                    initialState: <?= Js::from($state) ?>,
+                                    isAutofocused: <?= Js::from($isAutofocused) ?>,
+                                    isDisabled: <?= Js::from($isDisabled) ?>,
+                                    isHtmlAllowed: <?= Js::from($isHtmlAllowed) ?>,
+                                    isMultiple: <?= Js::from($isMultiple) ?>,
+                                    isReorderable: <?= Js::from($isReorderable) ?>,
+                                    isSearchable: <?= Js::from($isSearchable) ?>,
+                                    livewireId: <?= Js::from($this->getLivewire()->getId()) ?>,
+                                    loadingMessage: <?= Js::from($this->getLoadingMessage()) ?>,
+                                    maxItems: <?= Js::from($this->getMaxItems()) ?>,
+                                    maxItemsMessage: <?= Js::from($this->getMaxItemsMessage()) ?>,
+                                    noOptionsMessage: <?= Js::from($this->getNoOptionsMessage()) ?>,
+                                    noSearchResultsMessage: <?= Js::from($this->getNoSearchResultsMessage()) ?>,
+                                    options: <?= Js::from($this->getOptionsForJs()) ?>,
+                                    optionsLimit: <?= Js::from($this->getOptionsLimit()) ?>,
+                                    placeholder: <?= Js::from($this->getPlaceholder()) ?>,
+                                    position: <?= Js::from($this->getPosition()) ?>,
+                                    searchDebounce: <?= Js::from($this->getSearchDebounce()) ?>,
+                                    searchingMessage: <?= Js::from($this->getSearchingMessage()) ?>,
+                                    searchPrompt: <?= Js::from($this->getSearchPrompt()) ?>,
+                                    searchableOptionFields: <?= Js::from($this->getSearchableOptionFields()) ?>,
+                                    state: $wire.<?= $this->applyStateBindingModifiers("\$entangle('{$statePath}')") ?>,
+                                    statePath: <?= Js::from($statePath) ?>,
+                                })"
+                        wire:ignore
+                        wire:key="<?= e($livewireKey) ?>.<?= substr(md5(serialize([$isDisabled, $isReorderable])), 0, 64) ?>"
+                        x-on:keydown.esc="select.dropdown.isActive && $event.stopPropagation()"
+                        x-on:set-select-property="$event.detail.isDisabled ? select.disable() : select.enable()"
+                        <?= (new ComponentAttributeBag)
+                            ->merge($this->getExtraAlpineAttributes(), escape: false)
+                            ->class(['fi-select-input'])
+                            ->toHtml() ?>
+                    >
+                        <div x-ref="select"></div>
+                    </div>
+                <?php } ?>
+            </div>
+
+            <?php if ($hasSuffix) { ?>
+                <div
+                    <?= (new ComponentAttributeBag)->class([
+                        'fi-input-wrp-suffix',
+                        'fi-inline' => $isSuffixInline,
+                        'fi-input-wrp-suffix-has-label' => filled($suffixLabel),
+                    ])->toHtml() ?>
+                >
+                    <?php if (filled($suffixLabel)) { ?>
+                        <span class="fi-input-wrp-label"><?= e($suffixLabel) ?></span>
+                    <?php } ?>
+
+                    <?= generate_icon_html($suffixIcon, null, (new ComponentAttributeBag)->color(IconComponent::class, $suffixIconColor))?->toHtml() ?>
+
+                    <?php if (count($suffixActions)) { ?>
+                        <div class="fi-input-wrp-actions">
+                            <?php foreach ($suffixActions as $suffixAction) { ?>
+                                <?= $suffixAction->toHtml() ?>
+                            <?php } ?>
+                        </div>
+                    <?php } ?>
+                </div>
+            <?php } ?>
+        </div>
+
+        <?php return $this->wrapEmbeddedHtml(ob_get_clean(), extraWrapperAttributes: ['class' => 'fi-fo-select-wrp']);
     }
 }

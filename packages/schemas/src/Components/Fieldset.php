@@ -7,20 +7,17 @@ use Filament\Forms\Components\Concerns\CanBeMarkedAsRequired;
 use Filament\Schemas\Components\Concerns\EntanglesStateWithSingularRelationship;
 use Filament\Schemas\Components\Concerns\HasLabel;
 use Filament\Schemas\Components\Contracts\CanEntangleWithSingularRelationships;
+use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Concerns\CanBeContained;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\View\ComponentAttributeBag;
 
-class Fieldset extends Component implements CanEntangleWithSingularRelationships
+class Fieldset extends Component implements CanEntangleWithSingularRelationships, HasEmbeddedView
 {
     use CanBeContained;
     use CanBeMarkedAsRequired;
     use EntanglesStateWithSingularRelationship;
     use HasLabel;
-
-    /**
-     * @var view-string
-     */
-    protected string $view = 'filament-schemas::components.fieldset';
 
     final public function __construct(string | Htmlable | Closure | null $label = null)
     {
@@ -45,5 +42,33 @@ class Fieldset extends Component implements CanEntangleWithSingularRelationships
     public function isRequired(): bool
     {
         return false;
+    }
+
+    public function toEmbeddedHtml(): string
+    {
+        $id = $this->getId();
+        $isLabelHidden = $this->isLabelHidden();
+        $label = $this->getLabel();
+        $isContained = $this->isContained();
+        $isRequired = method_exists($this, 'isMarkedAsRequired') ? $this->isMarkedAsRequired() : false;
+
+        $attributes = \Filament\Support\prepare_inherited_attributes(new ComponentAttributeBag)
+            ->merge(['id' => $id], escape: false)
+            ->merge($this->getExtraAttributes(), escape: false)
+            ->class([
+                'fi-sc-fieldset',
+                'fi-fieldset',
+                'fi-fieldset-label-hidden' => $isLabelHidden,
+                'fi-fieldset-not-contained' => ! $isContained,
+            ]);
+
+        ob_start(); ?>
+        <fieldset <?= $attributes->toHtml() ?>>
+            <?php if (filled($label)) { ?>
+                <legend><?= e($label) ?><?php if ($isRequired) { ?><sup class="fi-fieldset-label-required-mark">*</sup><?php } ?></legend>
+            <?php } ?>
+            <?= $this->getChildSchema()->toHtml() ?>
+        </fieldset>
+        <?php return ob_get_clean();
     }
 }

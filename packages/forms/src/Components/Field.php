@@ -12,7 +12,12 @@ use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
 use Filament\Schemas\Components\StateCasts\EnumStateCast;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\Size;
+use Filament\Support\Enums\VerticalAlignment;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Support\Arr;
+use Illuminate\Support\ViewErrorBag;
+use Illuminate\View\ComponentAttributeBag;
+use Illuminate\View\ComponentSlot;
 use InvalidArgumentException;
 
 class Field extends Component implements Contracts\HasValidationRules
@@ -251,6 +256,200 @@ class Field extends Component implements Contracts\HasValidationRules
         }
 
         return $schema;
+    }
+
+    /**
+     * @param  array<string, mixed>  $extraWrapperAttributes
+     */
+    public function wrapEmbeddedHtml(string $html, ?string $labelPrefix = null, ?string $labelSuffix = null, ?VerticalAlignment $inlineLabelVerticalAlignment = null, string $labelTag = 'label', array $extraWrapperAttributes = []): string
+    {
+        $fieldWrapperView = $this->getFieldWrapperView();
+
+        if ($fieldWrapperView !== 'filament-forms::field-wrapper') {
+            $absoluteView = str($fieldWrapperView)->contains('::')
+                ? str($fieldWrapperView)->replaceFirst('::', '::components.')
+                : "components.{$fieldWrapperView}";
+
+            return view((string) $absoluteView, [
+                'field' => $this,
+                'slot' => new ComponentSlot($html),
+            ])->toHtml();
+        }
+
+        $hasInlineLabel = $this->hasInlineLabel();
+        $id = $this->getId();
+        $isDisabled = $this->isDisabled();
+        $label = $this->getLabel();
+        $labelSrOnly = $this->isLabelHidden();
+        $required = $this->isMarkedAsRequired();
+        $statePath = $this->getStatePath();
+
+        $aboveLabelSchema = $this->getChildSchema(static::ABOVE_LABEL_SCHEMA_KEY)?->toHtmlString();
+        $belowLabelSchema = $this->getChildSchema(static::BELOW_LABEL_SCHEMA_KEY)?->toHtmlString();
+        $beforeLabelSchema = $this->getChildSchema(static::BEFORE_LABEL_SCHEMA_KEY)?->toHtmlString();
+        $afterLabelSchema = $this->getChildSchema(static::AFTER_LABEL_SCHEMA_KEY)?->toHtmlString();
+        $aboveContentSchema = $this->getChildSchema(static::ABOVE_CONTENT_SCHEMA_KEY)?->toHtmlString();
+        $belowContentSchema = $this->getChildSchema(static::BELOW_CONTENT_SCHEMA_KEY)?->toHtmlString();
+        $beforeContentSchema = $this->getChildSchema(static::BEFORE_CONTENT_SCHEMA_KEY)?->toHtmlString();
+        $afterContentSchema = $this->getChildSchema(static::AFTER_CONTENT_SCHEMA_KEY)?->toHtmlString();
+        $aboveErrorMessageSchema = $this->getChildSchema(static::ABOVE_ERROR_MESSAGE_SCHEMA_KEY)?->toHtmlString();
+        $belowErrorMessageSchema = $this->getChildSchema(static::BELOW_ERROR_MESSAGE_SCHEMA_KEY)?->toHtmlString();
+
+        $hasNestedRecursiveValidationRules = $this instanceof Contracts\HasNestedRecursiveValidationRules;
+
+        /** @var \Illuminate\Support\MessageBag $errors */
+        $errors = view()->shared('errors') instanceof ViewErrorBag
+            ? view()->shared('errors')->getBag('default')
+            : new \Illuminate\Support\MessageBag;
+
+        $hasError = filled($statePath) && ($errors->has($statePath) || ($hasNestedRecursiveValidationRules && $errors->has("{$statePath}.*")));
+
+        $errorMessage = null;
+        $errorMessages = [];
+
+        if ($hasError) {
+            if ($this->shouldShowAllValidationMessages()) {
+                $errorMessages = $errors->has($statePath)
+                    ? $errors->get($statePath)
+                    : ($hasNestedRecursiveValidationRules ? $errors->get("{$statePath}.*") : []);
+
+                if (count($errorMessages) === 1) {
+                    $errorMessage = Arr::first($errorMessages);
+                    $errorMessages = [];
+                }
+            } else {
+                $errorMessage = $errors->has($statePath)
+                    ? $errors->first($statePath)
+                    : ($hasNestedRecursiveValidationRules ? $errors->first("{$statePath}.*") : null);
+            }
+        }
+
+        $areHtmlErrorMessagesAllowed = $this->areHtmlValidationMessagesAllowed();
+
+        $wrapperAttributes = (new ComponentAttributeBag)
+            ->merge($extraWrapperAttributes, escape: false)
+            ->merge($this->getExtraFieldWrapperAttributes(), escape: false)
+            ->class([
+                'fi-fo-field',
+                'fi-fo-field-has-inline-label' => $hasInlineLabel,
+            ]);
+
+        $inlineLabelVerticalAlignment ??= VerticalAlignment::Start;
+
+        ob_start(); ?>
+
+        <div data-field-wrapper <?= $wrapperAttributes->toHtml() ?>>
+            <?php if (filled($label) && $labelSrOnly) { ?>
+                <<?= $labelTag ?>
+                    <?php if ($labelTag === 'label') { ?>
+                        for="<?= e($id) ?>"
+                    <?php } else { ?>
+                        id="<?= e($id) ?>-label"
+                    <?php } ?>
+                    class="fi-fo-field-label fi-sr-only"
+                >
+                    <?= e($label) ?>
+                </<?= $labelTag ?>>
+            <?php } ?>
+
+            <?php if ((filled($label) && (! $labelSrOnly)) || $hasInlineLabel || $aboveLabelSchema || $belowLabelSchema || $beforeLabelSchema || $afterLabelSchema || $labelPrefix || $labelSuffix) { ?>
+                <div
+                    <?= (new ComponentAttributeBag)->class([
+                        'fi-fo-field-label-col',
+                        "fi-vertical-align-{$inlineLabelVerticalAlignment->value}" => $hasInlineLabel,
+                    ])->toHtml() ?>
+                >
+                    <?= $aboveLabelSchema?->toHtml() ?>
+
+                    <div
+                        <?= (new ComponentAttributeBag)->class([
+                            'fi-fo-field-label-ctn',
+                            ($label instanceof ComponentSlot) ? $label->attributes->get('class') : null,
+                        ])->toHtml() ?>
+                    >
+                        <?= $beforeLabelSchema?->toHtml() ?>
+
+                        <?php if ((filled($label) && (! $labelSrOnly)) || $labelPrefix || $labelSuffix) { ?>
+                            <<?= $labelTag ?>
+                                <?php if ($labelTag === 'label') { ?>
+                                    for="<?= e($id) ?>"
+                                <?php } else { ?>
+                                    id="<?= e($id) ?>-label"
+                                <?php } ?>
+                                class="fi-fo-field-label"
+                            >
+                                <?= $labelPrefix ?>
+
+                                <?php if (filled($label) && (! $labelSrOnly)) { ?>
+                                    <span class="fi-fo-field-label-content">
+                                        <?= e($label) ?><?php if ($required && (! $isDisabled)) { ?><sup class="fi-fo-field-label-required-mark">*</sup>
+                                        <?php } ?>
+                                    </span>
+                                <?php } ?>
+
+                                <?= $labelSuffix ?>
+                            </<?= $labelTag ?>>
+                        <?php } ?>
+
+                        <?= $afterLabelSchema?->toHtml() ?>
+                    </div>
+
+                    <?= $belowLabelSchema?->toHtml() ?>
+                </div>
+            <?php } ?>
+
+            <?php if (filled($html) || $hasError || $aboveContentSchema || $belowContentSchema || $beforeContentSchema || $afterContentSchema || $aboveErrorMessageSchema || $belowErrorMessageSchema) { ?>
+                <div class="fi-fo-field-content-col">
+                    <?= $aboveContentSchema?->toHtml() ?>
+
+                    <?php if ($beforeContentSchema || $afterContentSchema) { ?>
+                        <div class="fi-fo-field-content-ctn">
+                            <?= $beforeContentSchema?->toHtml() ?>
+
+                            <div class="fi-fo-field-content">
+                                <?= $html ?>
+                            </div>
+
+                            <?= $afterContentSchema?->toHtml() ?>
+                        </div>
+                    <?php } else { ?>
+                        <?= $html ?>
+                    <?php } ?>
+
+                    <?= $belowContentSchema?->toHtml() ?>
+
+                    <?php if ($hasError) { ?>
+                        <?= $aboveErrorMessageSchema?->toHtml() ?>
+
+                        <?php if (filled($errorMessages)) { ?>
+                            <ul data-validation-error class="fi-fo-field-wrp-error-list">
+                                <?php foreach ($errorMessages as $errorMsg) { ?>
+                                    <li class="fi-fo-field-wrp-error-message">
+                                        <?php if ($areHtmlErrorMessagesAllowed) { ?>
+                                            <?= $errorMsg ?>
+                                        <?php } else { ?>
+                                            <?= e($errorMsg) ?>
+                                        <?php } ?>
+                                    </li>
+                                <?php } ?>
+                            </ul>
+                        <?php } elseif ($areHtmlErrorMessagesAllowed) { ?>
+                            <div data-validation-error class="fi-fo-field-wrp-error-message">
+                                <?= $errorMessage ?>
+                            </div>
+                        <?php } else { ?>
+                            <p data-validation-error class="fi-fo-field-wrp-error-message">
+                                <?= e($errorMessage) ?>
+                            </p>
+                        <?php } ?>
+
+                        <?= $belowErrorMessageSchema?->toHtml() ?>
+                    <?php } ?>
+                </div>
+            <?php } ?>
+        </div>
+
+        <?php return ob_get_clean();
     }
 
     public function hasNullableBooleanState(): bool

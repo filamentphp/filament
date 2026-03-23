@@ -22,20 +22,29 @@ use Filament\Forms\Components\RichEditor\RichEditorTool;
 use Filament\Forms\Components\RichEditor\StateCasts\RichEditorStateCast;
 use Filament\Forms\Components\RichEditor\TextColor;
 use Filament\Forms\Components\RichEditor\ToolbarButtonGroup;
+use Filament\Forms\View\FormsIconAlias;
 use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
 use Filament\Support\Colors\Color;
 use Filament\Support\Components\Attributes\ExposedLivewireMethod;
+use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
+use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Js;
 use Illuminate\Support\Str;
+use Illuminate\View\ComponentAttributeBag;
 use Livewire\Attributes\Renderless;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
+use LogicException;
 use Tiptap\Editor;
 
-class RichEditor extends Field implements Contracts\CanBeLengthConstrained
+use function Filament\Support\generate_icon_html;
+use function Filament\Support\generate_loading_indicator_html;
+
+class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasEmbeddedView
 {
     use Concerns\CanBeLengthConstrained;
     use Concerns\HasExtraInputAttributes;
@@ -45,11 +54,6 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
         Concerns\InteractsWithToolbarButtons::getToolbarButtons as getBaseToolbarButtons;
     }
     use HasExtraAlpineAttributes;
-
-    /**
-     * @var view-string
-     */
-    protected string $view = 'filament-forms::components.rich-editor';
 
     protected string | Closure | null $uploadingFileMessage = null;
 
@@ -1274,5 +1278,235 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     public function hasFileAttachmentsByDefault(): bool
     {
         return $this->hasToolbarButton('attachFiles');
+    }
+
+    public function toEmbeddedHtml(): string
+    {
+        $customBlocks = $this->getCustomBlocks();
+        $extraAttributeBag = $this->getExtraAttributeBag();
+        $id = $this->getId();
+        $isDisabled = $this->isDisabled();
+        $livewireKey = $this->getLivewireKey();
+        $key = $this->getKey();
+        $mergeTags = $this->getMergeTags();
+        $statePath = $this->getStatePath();
+        $mentions = $this->getMentionsForJs();
+        $toolbarButtons = $this->getToolbarButtons();
+        $tools = $this->getTools();
+        $floatingToolbars = $this->getFloatingToolbars();
+        $linkProtocols = $this->getLinkProtocols();
+        $fileAttachmentsMaxSize = $this->getFileAttachmentsMaxSize();
+        $fileAttachmentsAcceptedFileTypes = $this->getFileAttachmentsAcceptedFileTypes();
+
+        $wrapperAttributes = \Filament\Support\prepare_inherited_attributes($extraAttributeBag)
+            ->class([
+                'fi-input-wrp',
+                'fi-fo-rich-editor',
+                'fi-disabled' => $isDisabled,
+                'fi-invalid' => filled($statePath) && view()->shared('errors')?->has($statePath),
+            ]);
+
+        $deleteIconHtml = generate_icon_html(Heroicon::Trash, alias: FormsIconAlias::COMPONENTS_RICH_EDITOR_PANELS_CUSTOM_BLOCK_DELETE_BUTTON);
+        $editIconHtml = generate_icon_html(Heroicon::PencilSquare, alias: FormsIconAlias::COMPONENTS_RICH_EDITOR_PANELS_CUSTOM_BLOCK_EDIT_BUTTON);
+
+        ob_start(); ?>
+
+        <div x-cloak <?= $wrapperAttributes->toHtml() ?>>
+            <div
+                x-load
+                x-load-src="<?= e(FilamentAsset::getAlpineComponentSrc('rich-editor', 'filament/forms')) ?>"
+                x-data="richEditorFormComponent({
+                            acceptedFileTypes: <?= Js::from($fileAttachmentsAcceptedFileTypes) ?>,
+                            acceptedFileTypesValidationMessage: <?= Js::from($fileAttachmentsAcceptedFileTypes ? __('filament-forms::components.rich_editor.file_attachments_accepted_file_types_message', ['values' => implode(', ', $fileAttachmentsAcceptedFileTypes)]) : null) ?>,
+                            activePanel: <?= Js::from($this->getActivePanel()) ?>,
+                            canAttachFiles: <?= Js::from($this->hasFileAttachments()) ?>,
+                            deleteCustomBlockButtonIconHtml: <?= Js::from($deleteIconHtml?->toHtml()) ?>,
+                            editCustomBlockButtonIconHtml: <?= Js::from($editIconHtml?->toHtml()) ?>,
+                            extensions: <?= Js::from($this->getTipTapJsExtensions()) ?>,
+                            floatingToolbars: <?= Js::from($floatingToolbars) ?>,
+                            getMentionLabelsUsing: async (mentions) => {
+                                return await $wire.callSchemaComponentMethod(
+                                    <?= Js::from($key) ?>,
+                                    'getMentionLabelsForJs',
+                                    { mentions },
+                                )
+                            },
+                            getMentionSearchResultsUsing: async (query, char) => {
+                                return await $wire.callSchemaComponentMethod(
+                                    <?= Js::from($key) ?>,
+                                    'getMentionSearchResultsForJs',
+                                    { search: query, char },
+                                )
+                            },
+                            hasResizableImages: <?= Js::from($this->hasResizableImages()) ?>,
+                            isDisabled: <?= Js::from($isDisabled) ?>,
+                            isLiveDebounced: <?= Js::from($this->isLiveDebounced()) ?>,
+                            isLiveOnBlur: <?= Js::from($this->isLiveOnBlur()) ?>,
+                            key: <?= Js::from($key) ?>,
+                            linkProtocols: <?= Js::from($linkProtocols) ?>,
+                            liveDebounce: <?= Js::from($this->getNormalizedLiveDebounce()) ?>,
+                            livewireId: <?= Js::from($this->getLivewire()->getId()) ?>,
+                            maxFileSize: <?= Js::from($fileAttachmentsMaxSize) ?>,
+                            maxFileSizeValidationMessage: <?= Js::from($fileAttachmentsMaxSize ? trans_choice('filament-forms::components.rich_editor.file_attachments_max_size_message', $fileAttachmentsMaxSize, ['max' => $fileAttachmentsMaxSize]) : null) ?>,
+                            mentions: <?= Js::from($mentions) ?>,
+                            mergeTags: <?= Js::from($mergeTags) ?>,
+                            noMergeTagSearchResultsMessage: <?= Js::from($this->getNoMergeTagSearchResultsMessage()) ?>,
+                            placeholder: <?= Js::from($this->getPlaceholder()) ?>,
+                            state: $wire.<?= $this->applyStateBindingModifiers("\$entangle('{$statePath}')", isOptimisticallyLive: false) ?>,
+                            statePath: <?= Js::from($statePath) ?>,
+                            textColors: <?= Js::from($this->getTextColorsForJs()) ?>,
+                            uploadingFileMessage: <?= Js::from($this->getUploadingFileMessage()) ?>,
+                        })"
+                x-bind:class="{
+                    'fi-fo-rich-editor-uploading-file': isUploadingFile,
+                }"
+                wire:ignore
+                wire:key="<?= e($livewireKey) ?>.<?= substr(md5(serialize([$isDisabled])), 0, 64) ?>"
+            >
+                <?php if ((! $isDisabled) && filled($toolbarButtons)) { ?>
+                    <div class="fi-fo-rich-editor-toolbar">
+                        <?php foreach ($toolbarButtons as $buttonGroup) { ?>
+                            <div class="fi-fo-rich-editor-toolbar-group">
+                                <?php foreach ($buttonGroup as $button) { ?>
+                                    <?php if (is_string($button)) { ?>
+                                        <?= ($tools[$button] ?? throw new LogicException("Toolbar button [{$button}] cannot be found."))->toHtml() ?>
+                                    <?php } else { ?>
+                                        <?= $button->toHtml() ?>
+                                    <?php } ?>
+                                <?php } ?>
+                            </div>
+                        <?php } ?>
+                    </div>
+                <?php } ?>
+
+                <div
+                    x-show="isUploadingFile"
+                    x-cloak
+                    class="fi-fo-rich-editor-uploading-file-message"
+                >
+                    <?= generate_loading_indicator_html()->toHtml() ?>
+
+                    <span><?= e($this->getUploadingFileMessage()) ?></span>
+                </div>
+
+                <div
+                    x-show="! isUploadingFile && fileValidationMessage"
+                    x-cloak
+                    class="fi-fo-rich-editor-file-validation-message"
+                >
+                    <span
+                        x-text="fileValidationMessage"
+                        x-show="! isUploadingFile && fileValidationMessage"
+                    ></span>
+                </div>
+
+                <div <?= $this->getExtraInputAttributeBag()->class(['fi-fo-rich-editor-main'])->toHtml() ?>>
+                    <div class="fi-fo-rich-editor-content fi-prose" x-ref="editor">
+                        <?php foreach ($floatingToolbars as $nodeName => $buttons) { ?>
+                            <div
+                                x-ref="floatingToolbar::<?= e($nodeName) ?>"
+                                class="fi-fo-rich-editor-floating-toolbar fi-not-prose"
+                            >
+                                <?php foreach ($buttons as $button) { ?>
+                                    <?php if (is_string($button)) { ?>
+                                        <?= $tools[$button]->toHtml() ?>
+                                    <?php } else { ?>
+                                        <?= $button->toHtml() ?>
+                                    <?php } ?>
+                                <?php } ?>
+                            </div>
+                        <?php } ?>
+                    </div>
+
+                    <?php if (! $isDisabled) { ?>
+                        <div
+                            x-show="isPanelActive()"
+                            x-cloak
+                            class="fi-fo-rich-editor-panels"
+                        >
+                            <div
+                                x-show="isPanelActive('customBlocks')"
+                                x-cloak
+                                class="fi-fo-rich-editor-panel"
+                            >
+                                <div class="fi-fo-rich-editor-panel-header">
+                                    <p class="fi-fo-rich-editor-panel-heading">
+                                        <?= e(__('filament-forms::components.rich_editor.tools.custom_blocks')) ?>
+                                    </p>
+
+                                    <div class="fi-fo-rich-editor-panel-close-btn-ctn">
+                                        <button type="button" x-on:click="togglePanel()" class="fi-icon-btn">
+                                            <?= generate_icon_html(Heroicon::XMark, alias: FormsIconAlias::COMPONENTS_RICH_EDITOR_PANELS_CUSTOM_BLOCKS_CLOSE_BUTTON)?->toHtml() ?>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="fi-fo-rich-editor-custom-blocks-list">
+                                    <?php foreach ($customBlocks as $block) { ?>
+                                        <?php $blockId = $block::getId(); ?>
+                                        <button
+                                            draggable="true"
+                                            type="button"
+                                            x-data="{ isLoading: false }"
+                                            x-on:click="
+                                                isLoading = true
+                                                $wire.mountAction(
+                                                    'customBlock',
+                                                    { editorSelection, id: <?= Js::from($blockId) ?>, mode: 'insert' },
+                                                    { schemaComponent: <?= Js::from($key) ?> },
+                                                )
+                                            "
+                                            x-on:dragstart="$event.dataTransfer.setData('customBlock', <?= Js::from($blockId) ?>)"
+                                            x-on:open-modal.window="isLoading = false"
+                                            x-on:run-rich-editor-commands.window="isLoading = false"
+                                            class="fi-fo-rich-editor-custom-block-btn"
+                                        >
+                                            <?= generate_loading_indicator_html((new ComponentAttributeBag(['x-show' => 'isLoading'])))->toHtml() ?>
+                                            <?= e($block::getLabel()) ?>
+                                        </button>
+                                    <?php } ?>
+                                </div>
+                            </div>
+
+                            <div
+                                x-show="isPanelActive('mergeTags')"
+                                x-cloak
+                                class="fi-fo-rich-editor-panel"
+                            >
+                                <div class="fi-fo-rich-editor-panel-header">
+                                    <p class="fi-fo-rich-editor-panel-heading">
+                                        <?= e(__('filament-forms::components.rich_editor.tools.merge_tags')) ?>
+                                    </p>
+
+                                    <div class="fi-fo-rich-editor-panel-close-btn-ctn">
+                                        <button type="button" x-on:click="togglePanel()" class="fi-icon-btn">
+                                            <?= generate_icon_html(Heroicon::XMark, alias: FormsIconAlias::COMPONENTS_RICH_EDITOR_PANELS_MERGE_TAGS_CLOSE_BUTTON)?->toHtml() ?>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="fi-fo-rich-editor-merge-tags-list">
+                                    <?php foreach ($mergeTags as $tagId => $tagLabel) { ?>
+                                        <button
+                                            draggable="true"
+                                            type="button"
+                                            x-on:click="insertMergeTag(<?= Js::from($tagId) ?>)"
+                                            x-on:dragstart="$event.dataTransfer.setData('mergeTag', <?= Js::from($tagId) ?>)"
+                                            class="fi-fo-rich-editor-merge-tag-btn"
+                                        >
+                                            <span data-type="mergeTag" data-id="<?= e($tagId) ?>">
+                                                <?= e($tagLabel) ?>
+                                            </span>
+                                        </button>
+                                    <?php } ?>
+                                </div>
+                            </div>
+                        </div>
+                    <?php } ?>
+                </div>
+            </div>
+        </div>
+
+        <?php return $this->wrapEmbeddedHtml(ob_get_clean());
     }
 }

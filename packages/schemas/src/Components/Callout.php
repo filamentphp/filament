@@ -11,18 +11,26 @@ use Filament\Schemas\Components\Concerns\HasFooterActions;
 use Filament\Schemas\Components\Concerns\HasHeading;
 use Filament\Schemas\Schema;
 use Filament\Schemas\View\SchemaIconAlias;
+use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Concerns\HasColor;
 use Filament\Support\Concerns\HasIcon;
 use Filament\Support\Concerns\HasIconColor;
 use Filament\Support\Concerns\HasIconSize;
 use Filament\Support\Enums\Alignment;
+use Filament\Support\Enums\IconSize;
 use Filament\Support\Enums\Size;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
+use Filament\Support\View\Components\CalloutComponent;
+use Filament\Support\View\Components\CalloutComponent\IconComponent;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Arr;
+use Illuminate\View\ComponentAttributeBag;
 
-class Callout extends Component
+use function Filament\Support\generate_icon_html;
+use function Filament\Support\is_slot_empty;
+
+class Callout extends Component implements HasEmbeddedView
 {
     use HasColor {
         color as baseColor;
@@ -38,11 +46,6 @@ class Callout extends Component
         getIconColor as getBaseIconColor;
     }
     use HasIconSize;
-
-    /**
-     * @var view-string
-     */
-    protected string $view = 'filament-schemas::components.callout';
 
     public const FOOTER_SCHEMA_KEY = 'footer';
 
@@ -228,6 +231,72 @@ class Callout extends Component
         $this->childComponents($components, static::CONTROLS_SCHEMA_KEY);
 
         return $this;
+    }
+
+    public function toEmbeddedHtml(): string
+    {
+        $controls = $this->getChildSchema(static::CONTROLS_SCHEMA_KEY)?->toHtmlString();
+        $footer = $this->getChildSchema(static::FOOTER_SCHEMA_KEY)?->toHtmlString();
+        $color = $this->getColor() ?? 'gray';
+        $description = $this->getDescription();
+        $heading = $this->getHeading();
+        $icon = $this->getIcon();
+        $iconColor = $this->getIconColor() ?? $color;
+        $iconSize = $this->getIconSize() ?? IconSize::Large;
+
+        if (filled($iconSize) && (! $iconSize instanceof IconSize)) {
+            $iconSize = IconSize::tryFrom($iconSize) ?? $iconSize;
+        }
+
+        $hasDescription = filled((string) $description);
+        $hasHeading = filled($heading);
+        $hasFooter = filled($footer?->toHtml());
+        $hasIcon = filled($icon);
+        $hasControls = filled($controls?->toHtml());
+
+        $attributes = \Filament\Support\prepare_inherited_attributes($this->getExtraAttributeBag())
+            ->color(CalloutComponent::class, $color)
+            ->class(['fi-sc-callout', 'fi-callout']);
+
+        ob_start(); ?>
+
+        <div <?= $attributes->toHtml() ?>>
+            <?php if ($hasIcon) { ?>
+                <?= generate_icon_html(
+                    $icon,
+                    attributes: (new ComponentAttributeBag)
+                        ->color(IconComponent::class, $iconColor)
+                        ->class(['fi-callout-icon']),
+                    size: $iconSize,
+                )?->toHtml() ?>
+            <?php } ?>
+
+            <?php if ($hasHeading || $hasDescription || $hasFooter) { ?>
+                <div class="fi-callout-main">
+                    <?php if ($hasHeading || $hasDescription) { ?>
+                        <div class="fi-callout-text">
+                            <?php if ($hasHeading) { ?>
+                                <h4 class="fi-callout-heading"><?= e($heading) ?></h4>
+                            <?php } ?>
+
+                            <?php if ($hasDescription) { ?>
+                                <p class="fi-callout-description"><?= e($description) ?></p>
+                            <?php } ?>
+                        </div>
+                    <?php } ?>
+
+                    <?php if ($hasFooter) { ?>
+                        <div class="fi-callout-footer"><?= $footer ?></div>
+                    <?php } ?>
+                </div>
+            <?php } ?>
+
+            <?php if ($hasControls) { ?>
+                <div class="fi-callout-controls"><?= $controls ?></div>
+            <?php } ?>
+        </div>
+
+        <?php return ob_get_clean();
     }
 
     protected function configureChildSchema(Schema $schema, string $key): Schema

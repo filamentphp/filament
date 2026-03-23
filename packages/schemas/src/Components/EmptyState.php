@@ -8,13 +8,19 @@ use Filament\Actions\ActionGroup;
 use Filament\Schemas\Components\Concerns\CanBeCompact;
 use Filament\Schemas\Components\Concerns\HasDescription;
 use Filament\Schemas\Schema;
+use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Concerns\CanBeContained;
 use Filament\Support\Concerns\HasIcon;
 use Filament\Support\Concerns\HasIconColor;
 use Filament\Support\Concerns\HasIconSize;
+use Filament\Support\Enums\IconSize;
+use Filament\Support\View\Components\SectionComponent\IconComponent;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\View\ComponentAttributeBag;
 
-class EmptyState extends Component
+use function Filament\Support\generate_icon_html;
+
+class EmptyState extends Component implements HasEmbeddedView
 {
     use CanBeCompact;
     use CanBeContained;
@@ -22,11 +28,6 @@ class EmptyState extends Component
     use HasIcon;
     use HasIconColor;
     use HasIconSize;
-
-    /**
-     * @var view-string
-     */
-    protected string $view = 'filament-schemas::components.empty-state';
 
     protected string | Htmlable | Closure $heading;
 
@@ -80,5 +81,72 @@ class EmptyState extends Component
     public function getHeading(): string | Htmlable
     {
         return $this->evaluate($this->heading);
+    }
+
+    public function toEmbeddedHtml(): string
+    {
+        $description = $this->getDescription();
+        $footer = $this->getChildSchema(static::FOOTER_SCHEMA_KEY)?->toHtmlString();
+        $heading = $this->getHeading();
+        $headingTag = $this->getHeadingTag();
+        $icon = $this->getIcon();
+        $iconColor = $this->getIconColor() ?? 'primary';
+        $iconSize = $this->getIconSize();
+        $isCompact = $this->isCompact();
+        $isContained = $this->isContained();
+
+        if (filled($iconSize) && (! $iconSize instanceof IconSize)) {
+            $iconSize = IconSize::tryFrom($iconSize) ?? $iconSize;
+        }
+
+        $hasDescription = filled((string) $description);
+        $hasIcon = filled($icon);
+
+        $outerAttributes = (new ComponentAttributeBag)
+            ->merge($this->getExtraAttributes(), escape: false)
+            ->class(['fi-sc-empty-state']);
+
+        $sectionAttributes = (new ComponentAttributeBag)
+            ->class([
+                'fi-empty-state',
+                'fi-compact' => $isCompact,
+                'fi-empty-state-not-contained' => ! $isContained,
+            ]);
+
+        ob_start(); ?>
+
+        <div <?= $outerAttributes->toHtml() ?>>
+            <section <?= $sectionAttributes->toHtml() ?>>
+                <div class="fi-empty-state-content">
+                    <?php if ($hasIcon) { ?>
+                        <div
+                            <?= (new ComponentAttributeBag)->class([
+                                'fi-empty-state-icon-bg',
+                                'fi-color ' . ('fi-color-' . $iconColor) => $iconColor !== 'gray',
+                            ])->toHtml() ?>
+                        >
+                            <?= generate_icon_html($icon, attributes: (new ComponentAttributeBag)
+                                ->color(IconComponent::class, $iconColor), size: $iconSize ?? IconSize::Large)?->toHtml() ?>
+                        </div>
+                    <?php } ?>
+
+                    <div class="fi-empty-state-text-ctn">
+                        <<?= $headingTag ?> class="fi-empty-state-heading">
+                            <?= e($heading) ?>
+                        </<?= $headingTag ?>>
+
+                        <?php if ($hasDescription) { ?>
+                            <p class="fi-empty-state-description"><?= e($description) ?></p>
+                        <?php } ?>
+
+                        <footer class="fi-empty-state-footer">
+                            <?= $footer?->toHtml() ?>
+                        </footer>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <?php return ob_get_clean();
     }
 }

@@ -10,11 +10,18 @@ use Filament\Schemas\Components\Contracts\HasAffixActions;
 use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
 use Filament\Schemas\Components\StateCasts\NumberStateCast;
 use Filament\Schemas\Components\StateCasts\StripCharactersStateCast;
+use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
+use Filament\Support\Enums\VerticalAlignment;
 use Filament\Support\RawJs;
+use Filament\Support\View\Components\InputComponent\WrapperComponent\IconComponent;
+use Illuminate\Support\Js;
+use Illuminate\View\ComponentAttributeBag;
 use LogicException;
 
-class TextInput extends Field implements CanHaveNumericState, Contracts\CanBeLengthConstrained, HasAffixActions
+use function Filament\Support\generate_icon_html;
+
+class TextInput extends Field implements CanHaveNumericState, Contracts\CanBeLengthConstrained, HasAffixActions, HasEmbeddedView
 {
     use CanStripCharactersFromState;
     use CanTrimState;
@@ -29,11 +36,6 @@ class TextInput extends Field implements CanHaveNumericState, Contracts\CanBeLen
     use Concerns\HasPlaceholder;
     use Concerns\HasStep;
     use HasExtraAlpineAttributes;
-
-    /**
-     * @var view-string
-     */
-    protected string $view = 'filament-forms::components.text-input';
 
     protected string | RawJs | Closure | null $mask = null;
 
@@ -306,6 +308,173 @@ class TextInput extends Field implements CanHaveNumericState, Contracts\CanBeLen
             ...($this->hasStripCharacters() ? [app(StripCharactersStateCast::class, ['characters' => $this->getStripCharacters()])] : []),
             ...($this->isNumeric() ? [app(NumberStateCast::class, ['isNullable' => true])] : []),
         ];
+    }
+
+    public function toEmbeddedHtml(): string
+    {
+        $extraAlpineAttributes = $this->getExtraAlpineAttributes();
+        $extraAttributeBag = $this->getExtraAttributeBag();
+        $id = $this->getId();
+        $isConcealed = $this->isConcealed();
+        $isDisabled = $this->isDisabled();
+        $isPasswordRevealable = $this->isPasswordRevealable();
+        $isPrefixInline = $this->isPrefixInline();
+        $isSuffixInline = $this->isSuffixInline();
+        $mask = $this->getMask();
+        $prefixActions = $this->getPrefixActions();
+        $prefixIcon = $this->getPrefixIcon();
+        $prefixIconColor = $this->getPrefixIconColor();
+        $prefixLabel = $this->getPrefixLabel();
+        $suffixActions = $this->getSuffixActions();
+        $suffixIcon = $this->getSuffixIcon();
+        $suffixIconColor = $this->getSuffixIconColor();
+        $suffixLabel = $this->getSuffixLabel();
+        $statePath = $this->getStatePath();
+        $placeholder = $this->getPlaceholder();
+
+        if ($isPasswordRevealable) {
+            $xData = '{ isPasswordRevealed: false }';
+        } elseif (count($extraAlpineAttributes) || filled($mask)) {
+            $xData = '{}';
+        } else {
+            $xData = null;
+        }
+
+        if ($isPasswordRevealable) {
+            $type = null;
+        } elseif (filled($mask)) {
+            $type = 'text';
+        } else {
+            $type = $this->getType();
+        }
+
+        $inputAttributes = $this->getExtraInputAttributeBag()
+            ->merge($extraAlpineAttributes, escape: false)
+            ->merge([
+                'autocapitalize' => $this->getAutocapitalize(),
+                'autocomplete' => $this->getAutocomplete(),
+                'autofocus' => $this->isAutofocused(),
+                'disabled' => $isDisabled,
+                'id' => $id,
+                'inlinePrefix' => $isPrefixInline && (count($prefixActions) || $prefixIcon || filled($prefixLabel)),
+                'inlineSuffix' => $isSuffixInline && (count($suffixActions) || $suffixIcon || filled($suffixLabel)),
+                'inputmode' => $this->getInputMode(),
+                'list' => ($datalistOptions = $this->getDatalistOptions()) ? $id . '-list' : null,
+                'max' => (! $isConcealed) ? $this->getMaxValue() : null,
+                'maxlength' => (! $isConcealed) ? $this->getMaxLength() : null,
+                'min' => (! $isConcealed) ? $this->getMinValue() : null,
+                'minlength' => (! $isConcealed) ? $this->getMinLength() : null,
+                'placeholder' => filled($placeholder) ? e($placeholder) : null,
+                'readonly' => $this->isReadOnly(),
+                'required' => $this->isRequired() && (! $isConcealed),
+                'step' => $this->getStep(),
+                'type' => $type,
+                $this->applyStateBindingModifiers('wire:model') => $statePath,
+                'x-bind:type' => $isPasswordRevealable ? 'isPasswordRevealed ? \'text\' : \'password\'' : null,
+                'x-mask' . ($mask instanceof RawJs ? ':dynamic' : '') => filled($mask) ? $mask : null,
+            ], escape: false)
+            ->class([
+                'fi-input',
+                'fi-input-has-inline-prefix' => $isPrefixInline && (count($prefixActions) || $prefixIcon || filled($prefixLabel)),
+                'fi-input-has-inline-suffix' => $isSuffixInline && (count($suffixActions) || $suffixIcon || filled($suffixLabel)),
+                'fi-revealable' => $isPasswordRevealable,
+            ]);
+
+        // Filter visible prefix/suffix actions
+        $prefixActions = array_filter(
+            $prefixActions,
+            static fn (\Filament\Actions\Action $action): bool => $action->isVisible(),
+        );
+        $suffixActions = array_filter(
+            $suffixActions,
+            static fn (\Filament\Actions\Action $action): bool => $action->isVisible(),
+        );
+
+        $hasPrefix = count($prefixActions) || $prefixIcon || filled($prefixLabel);
+        $hasSuffix = count($suffixActions) || $suffixIcon || filled($suffixLabel);
+
+        $wrapperAttributes = \Filament\Support\prepare_inherited_attributes($extraAttributeBag)
+            ->merge([
+                'x-data' => $xData,
+                'x-on:focus-input.stop' => "\$el.querySelector('input')?.focus()",
+            ], escape: false)
+            ->class([
+                'fi-input-wrp',
+                'fi-fo-text-input',
+                'fi-disabled' => $isDisabled,
+                'fi-invalid' => filled($statePath) && view()->shared('errors')?->has($statePath),
+            ]);
+
+        ob_start(); ?>
+
+        <div <?= $wrapperAttributes->toHtml() ?>>
+            <?php if ($hasPrefix) { ?>
+                <div
+                    <?= (new ComponentAttributeBag)->class([
+                        'fi-input-wrp-prefix',
+                        'fi-input-wrp-prefix-has-content' => true,
+                        'fi-inline' => $isPrefixInline,
+                        'fi-input-wrp-prefix-has-label' => filled($prefixLabel),
+                    ])->toHtml() ?>
+                >
+                    <?php if (count($prefixActions)) { ?>
+                        <div class="fi-input-wrp-actions">
+                            <?php foreach ($prefixActions as $prefixAction) { ?>
+                                <?= $prefixAction->toHtml() ?>
+                            <?php } ?>
+                        </div>
+                    <?php } ?>
+
+                    <?= generate_icon_html($prefixIcon, null, (new ComponentAttributeBag)->color(IconComponent::class, $prefixIconColor))?->toHtml() ?>
+
+                    <?php if (filled($prefixLabel)) { ?>
+                        <span class="fi-input-wrp-label">
+                            <?= e($prefixLabel) ?>
+                        </span>
+                    <?php } ?>
+                </div>
+            <?php } ?>
+
+            <div class="fi-input-wrp-content-ctn">
+                <input <?= $inputAttributes->toHtml() ?> />
+            </div>
+
+            <?php if ($hasSuffix) { ?>
+                <div
+                    <?= (new ComponentAttributeBag)->class([
+                        'fi-input-wrp-suffix',
+                        'fi-inline' => $isSuffixInline,
+                        'fi-input-wrp-suffix-has-label' => filled($suffixLabel),
+                    ])->toHtml() ?>
+                >
+                    <?php if (filled($suffixLabel)) { ?>
+                        <span class="fi-input-wrp-label">
+                            <?= e($suffixLabel) ?>
+                        </span>
+                    <?php } ?>
+
+                    <?= generate_icon_html($suffixIcon, null, (new ComponentAttributeBag)->color(IconComponent::class, $suffixIconColor))?->toHtml() ?>
+
+                    <?php if (count($suffixActions)) { ?>
+                        <div class="fi-input-wrp-actions">
+                            <?php foreach ($suffixActions as $suffixAction) { ?>
+                                <?= $suffixAction->toHtml() ?>
+                            <?php } ?>
+                        </div>
+                    <?php } ?>
+                </div>
+            <?php } ?>
+        </div>
+
+        <?php if ($datalistOptions) { ?>
+            <datalist id="<?= e($id) ?>-list">
+                <?php foreach ($datalistOptions as $option) { ?>
+                    <option value="<?= e($option) ?>"></option>
+                <?php } ?>
+            </datalist>
+        <?php } ?>
+
+        <?php return $this->wrapEmbeddedHtml(ob_get_clean(), inlineLabelVerticalAlignment: VerticalAlignment::Center);
     }
 
     public function mutateDehydratedState(mixed $state): mixed

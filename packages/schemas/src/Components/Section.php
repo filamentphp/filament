@@ -18,17 +18,26 @@ use Filament\Schemas\Components\Concerns\HasLabel;
 use Filament\Schemas\Components\Contracts\CanConcealComponents;
 use Filament\Schemas\Components\Contracts\CanEntangleWithSingularRelationships;
 use Filament\Schemas\Schema;
+use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Concerns\CanBeContained;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Filament\Support\Concerns\HasIcon;
 use Filament\Support\Concerns\HasIconColor;
 use Filament\Support\Concerns\HasIconSize;
 use Filament\Support\Enums\Alignment;
+use Filament\Support\Enums\IconSize;
 use Filament\Support\Enums\Size;
+use Filament\Support\Icons\Heroicon;
+use Filament\Support\View\Components\SectionComponent\IconComponent;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Support\Js;
 use Illuminate\Support\Str;
+use Illuminate\View\ComponentAttributeBag;
 
-class Section extends Component implements CanConcealComponents, CanEntangleWithSingularRelationships
+use function Filament\Support\generate_icon_html;
+use function Filament\Support\is_slot_empty;
+
+class Section extends Component implements CanConcealComponents, CanEntangleWithSingularRelationships, HasEmbeddedView
 {
     use CanBeCollapsed;
     use CanBeCompact;
@@ -45,11 +54,6 @@ class Section extends Component implements CanConcealComponents, CanEntangleWith
     use HasIconColor;
     use HasIconSize;
     use HasLabel;
-
-    /**
-     * @var view-string
-     */
-    protected string $view = 'filament-schemas::components.section';
 
     protected bool | Closure | null $isAside = null;
 
@@ -246,6 +250,173 @@ class Section extends Component implements CanConcealComponents, CanEntangleWith
         }
 
         return $schema;
+    }
+
+    public function toEmbeddedHtml(): string
+    {
+        $afterHeader = $this->getChildSchema(static::AFTER_HEADER_SCHEMA_KEY)?->toHtmlString();
+        $isAside = $this->isAside();
+        $isCollapsed = $this->isCollapsed();
+        $isCollapsible = $this->isCollapsible();
+        $isCompact = $this->isCompact();
+        $isContained = $this->isContained();
+        $isDivided = $this->isDivided();
+        $isFormBefore = $this->isFormBefore();
+        $description = $this->getDescription();
+        $footer = $this->getChildSchema(static::FOOTER_SCHEMA_KEY)?->toHtmlString();
+        $heading = $this->getHeading();
+        $headingTag = $this->getHeadingTag();
+        $icon = $this->getIcon();
+        $iconColor = $this->getIconColor();
+        $iconSize = $this->getIconSize();
+        $shouldPersistCollapsed = $this->shouldPersistCollapsed();
+        $isSecondary = $this->isSecondary();
+        $id = $this->getId();
+
+        if (filled($iconSize) && (! $iconSize instanceof IconSize)) {
+            $iconSize = IconSize::tryFrom($iconSize) ?? $iconSize;
+        }
+
+        $hasDescription = filled((string) $description);
+        $hasHeading = filled($heading);
+        $hasIcon = filled($icon);
+        $hasHeader = $hasIcon || $hasHeading || $hasDescription || ($isCollapsible && (! $isAside)) || filled($afterHeader?->toHtml());
+
+        // Outer wrapper attributes (from schema section view)
+        $outerAttributes = (new ComponentAttributeBag)
+            ->merge(['id' => $id], escape: false)
+            ->merge($this->getExtraAttributes(), escape: false)
+            ->merge($this->getExtraAlpineAttributes(), escape: false)
+            ->class(['fi-sc-section']);
+
+        // Inner section attributes
+        $sectionAttributes = (new ComponentAttributeBag)
+            ->class([
+                'fi-section',
+                'fi-section-not-contained' => ! $isContained,
+                'fi-section-has-content-before' => $isFormBefore,
+                'fi-section-has-header' => $hasHeader,
+                'fi-aside' => $isAside,
+                'fi-compact' => $isCompact,
+                'fi-collapsible' => $isCollapsible && (! $isAside),
+                'fi-divided' => $isDivided,
+                'fi-secondary' => $isSecondary,
+            ]);
+
+        $collapsible = $isCollapsible && (! $isAside);
+        $collapseId = $id;
+
+        // Render child schema content
+        $contentHtml = $this->getChildSchema()?->extraAttributes(['class' => 'fi-section-content'])->toHtml();
+
+        // Label schemas
+        $label = $this->getLabel();
+        $beforeLabelSchema = $this->getChildSchema(static::BEFORE_LABEL_SCHEMA_KEY)?->toHtmlString();
+        $afterLabelSchema = $this->getChildSchema(static::AFTER_LABEL_SCHEMA_KEY)?->toHtmlString();
+        $aboveContentSchema = $this->getChildSchema(static::ABOVE_CONTENT_SCHEMA_KEY)?->toHtmlString();
+        $belowContentSchema = $this->getChildSchema(static::BELOW_CONTENT_SCHEMA_KEY)?->toHtmlString();
+
+        ob_start(); ?>
+
+        <div <?= $outerAttributes->toHtml() ?>>
+            <?php if (filled($label)) { ?>
+                <div class="fi-sc-section-label-ctn">
+                    <?= $beforeLabelSchema?->toHtml() ?>
+
+                    <div class="fi-sc-section-label">
+                        <?= e($label) ?>
+                    </div>
+
+                    <?= $afterLabelSchema?->toHtml() ?>
+                </div>
+            <?php } ?>
+
+            <?= $aboveContentSchema?->toHtml() ?>
+
+            <section
+                x-data="{
+                    isCollapsed: <?php if ($shouldPersistCollapsed) { ?>$persist(<?= Js::from($isCollapsed) ?>).as(`section-${<?= Js::from($collapseId) ?> ?? $el.id}-isCollapsed`)<?php } else { ?><?= Js::from($isCollapsed) ?><?php } ?>,
+                }"
+                <?php if ($collapsible) { ?>
+                    x-on:collapse-section.window="if ($event.detail.id == <?= Js::from($collapseId) ?> ?? $el.id) isCollapsed = true"
+                    x-on:expand="isCollapsed = false"
+                    x-on:expand-section.window="if ($event.detail.id == <?= Js::from($collapseId) ?> ?? $el.id) isCollapsed = false"
+                    x-on:open-section.window="if ($event.detail.id == <?= Js::from($collapseId) ?> ?? $el.id) isCollapsed = false"
+                    x-on:toggle-section.window="if ($event.detail.id == <?= Js::from($collapseId) ?> ?? $el.id) isCollapsed = ! isCollapsed"
+                    x-bind:class="isCollapsed && 'fi-collapsed'"
+                <?php } ?>
+                <?= $sectionAttributes->toHtml() ?>
+            >
+                <?php if ($hasHeader) { ?>
+                    <header
+                        <?php if ($collapsible) { ?>
+                            x-on:click="isCollapsed = ! isCollapsed"
+                        <?php } ?>
+                        class="fi-section-header"
+                    >
+                        <?= generate_icon_html($icon, attributes: (new ComponentAttributeBag)
+                            ->color(IconComponent::class, $iconColor), size: $iconSize ?? IconSize::Large)?->toHtml() ?>
+
+                        <?php if ($hasHeading || $hasDescription) { ?>
+                            <div class="fi-section-header-text-ctn">
+                                <?php if ($hasHeading) { ?>
+                                    <<?= $headingTag ?> class="fi-section-header-heading">
+                                        <?= e($heading) ?>
+                                    </<?= $headingTag ?>>
+                                <?php } ?>
+
+                                <?php if ($hasDescription) { ?>
+                                    <p class="fi-section-header-description">
+                                        <?= e($description) ?>
+                                    </p>
+                                <?php } ?>
+                            </div>
+                        <?php } ?>
+
+                        <?php if (filled($afterHeader?->toHtml())) { ?>
+                            <div x-on:click.stop class="fi-section-header-after-ctn">
+                                <?= $afterHeader ?>
+                            </div>
+                        <?php } ?>
+
+                        <?php if ($collapsible) { ?>
+                            <?= view('filament::components.icon-button', [
+                                'color' => 'gray',
+                                'icon' => Heroicon::ChevronUp,
+                                'iconAlias' => \Filament\Support\View\SupportIconAlias::SECTION_COLLAPSE_BUTTON,
+                                'attributes' => (new ComponentAttributeBag)
+                                    ->merge(['x-on:click.stop' => 'isCollapsed = ! isCollapsed'], escape: false)
+                                    ->class(['fi-section-collapse-btn']),
+                            ])->toHtml() ?>
+                        <?php } ?>
+                    </header>
+                <?php } ?>
+
+                <?php if (filled($contentHtml) || filled($footer?->toHtml())) { ?>
+                    <div
+                        <?php if ($collapsible) { ?>
+                            x-bind:aria-expanded="(! isCollapsed).toString()"
+                            <?php if ($isCollapsed || $shouldPersistCollapsed) { ?>
+                                x-cloak
+                            <?php } ?>
+                        <?php } ?>
+                        class="fi-section-content-ctn"
+                    >
+                        <?= $contentHtml ?>
+
+                        <?php if (filled($footer?->toHtml())) { ?>
+                            <footer class="fi-section-footer">
+                                <?= $footer ?>
+                            </footer>
+                        <?php } ?>
+                    </div>
+                <?php } ?>
+            </section>
+
+            <?= $belowContentSchema?->toHtml() ?>
+        </div>
+
+        <?php return ob_get_clean();
     }
 
     public function getHeadingsCount(): int

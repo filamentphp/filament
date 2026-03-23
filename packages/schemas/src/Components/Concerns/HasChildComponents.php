@@ -72,6 +72,17 @@ trait HasChildComponents
      */
     public function getChildSchema($key = null): ?Schema
     {
+        // Fast path: named slot keys (e.g. ABOVE_LABEL_SCHEMA_KEY) that have no
+        // registered child components can return null immediately, avoiding
+        // evaluate(), blank(), and lazy cachedDefaultChildSchemas initialization.
+        if (filled($key) && ! array_key_exists($key, $this->childComponents)) {
+            if (isset($this->cachedDefaultChildSchemas)) {
+                return $this->cachedDefaultChildSchemas[$key] ?? null;
+            }
+
+            return null;
+        }
+
         if (filled($key) && array_key_exists($key, $this->cachedDefaultChildSchemas ??= $this->getDefaultChildSchemas())) {
             return $this->cachedDefaultChildSchemas[$key];
         }
