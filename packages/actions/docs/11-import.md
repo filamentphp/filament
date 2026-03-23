@@ -2,6 +2,7 @@
 title: Import action
 ---
 import Aside from "@components/Aside.astro"
+import AutoScreenshot from "@components/AutoScreenshot.astro"
 import UtilityInjection from "@components/UtilityInjection.astro"
 
 ## Introduction
@@ -36,6 +37,8 @@ use Filament\Actions\ImportAction;
 ImportAction::make()
     ->importer(ProductImporter::class)
 ```
+
+<AutoScreenshot name="actions/import-action/modal" alt="Import action modal" version="4.x" />
 
 If you want to add this action to the header of a table, you may do so like this:
 

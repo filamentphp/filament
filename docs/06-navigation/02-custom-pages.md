@@ -1,10 +1,13 @@
 ---
 title: Custom pages
 ---
+import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Introduction
 
 Filament allows you to create completely custom pages for the app.
+
+<AutoScreenshot name="panels/custom-page" alt="A custom page with header actions" version="4.x" />
 
 ## Creating a page
 
@@ -294,6 +297,8 @@ public function getSubheading(): ?string
 }
 ```
 
+<AutoScreenshot name="panels/custom-page-subheading" alt="A custom page with a subheading" version="4.x" />
+
 ## Replacing the page header with a custom view
 
 You may replace the default [heading](#customizing-the-page-heading), [subheading](#adding-a-page-subheading) and [actions](#header-actions) with a custom header view for any page. You may return it from the `getHeader()` method:
@@ -380,6 +385,12 @@ use Filament\Pages\Enums\SubNavigationPosition;
 
 protected static ?SubNavigationPosition $subNavigationPosition = SubNavigationPosition::End;
 ```
+
+<AutoScreenshot name="panels/cluster-end" alt="Page with end sub-navigation position" version="4.x" />
+
+The `SubNavigationPosition::Top` option renders the sub-navigation as tabs above the page content:
+
+<AutoScreenshot name="panels/cluster-top" alt="Page with top sub-navigation position" version="4.x" />
 
 ## Adding extra attributes to the body tag of a page
 

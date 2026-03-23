@@ -1,8 +1,17 @@
 ---
 title: Deleting records
 ---
+import AutoScreenshot from "@components/AutoScreenshot.astro"
+
+## Deleting records
+
+By default, each resource has a delete button on its Edit page. When clicked, it opens a confirmation modal to ensure the user wants to proceed.
+
+<AutoScreenshot name="panels/resources/deleting" alt="A delete confirmation modal" version="4.x" />
 
 ## Handling soft-deletes
+
+<AutoScreenshot name="panels/resources/trashed" alt="A resource listing with the trashed filter" version="4.x" />
 
 ## Creating a resource with soft-delete
 

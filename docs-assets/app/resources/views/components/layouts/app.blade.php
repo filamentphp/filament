@@ -30,6 +30,21 @@
                         document.documentElement.classList.remove('dark')
                     }
                 })
+
+            document.addEventListener('alpine:init', () => {
+                window.Alpine.store(
+                    'theme',
+                    window.matchMedia('(prefers-color-scheme: dark)').matches
+                        ? 'dark'
+                        : 'light',
+                )
+
+                window
+                    .matchMedia('(prefers-color-scheme: dark)')
+                    .addEventListener('change', (event) => {
+                        window.Alpine.store('theme', event.matches ? 'dark' : 'light')
+                    })
+            })
         </script>
     </head>
 

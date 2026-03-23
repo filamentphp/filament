@@ -38,7 +38,7 @@ use Filament\Support\Icons\Heroicon;
 protected static string | BackedEnum | null $navigationIcon = Heroicon::OutlinedDocumentText;
 ```
 
-<AutoScreenshot name="panels/navigation/change-icon" alt="Changed navigation item icon" version="3.x" />
+<AutoScreenshot name="panels/navigation/change-icon" alt="Changed navigation item icon" version="4.x" />
 
 If you set `$navigationIcon = null` on all items within the same navigation group, those items will be joined with a vertical bar below the group label.
 
@@ -53,7 +53,7 @@ use Filament\Support\Icons\Heroicon;
 protected static string | BackedEnum | null $activeNavigationIcon = Heroicon::OutlinedDocumentText;
 ```
 
-<AutoScreenshot name="panels/navigation/active-icon" alt="Different navigation item icon when active" version="3.x" />
+<AutoScreenshot name="panels/navigation/active-icon" alt="Different navigation item icon when active" version="4.x" />
 
 ## Sorting navigation items
 
@@ -65,7 +65,7 @@ protected static ?int $navigationSort = 3;
 
 Now, navigation items with a lower sort value will appear before those with a higher sort value - the order is ascending.
 
-<AutoScreenshot name="panels/navigation/sort-items" alt="Sort navigation items" version="3.x" />
+<AutoScreenshot name="panels/navigation/sort-items" alt="Sort navigation items" version="4.x" />
 
 ## Adding a badge to a navigation item
 
@@ -78,7 +78,7 @@ public static function getNavigationBadge(): ?string
 }
 ```
 
-<AutoScreenshot name="panels/navigation/badge" alt="Navigation item with badge" version="3.x" />
+<AutoScreenshot name="panels/navigation/badge" alt="Navigation item with badge" version="4.x" />
 
 If a badge value is returned by `getNavigationBadge()`, it will display using the primary color by default. To style the badge contextually, return either `danger`, `gray`, `info`, `primary`, `success` or `warning` from the `getNavigationBadgeColor()` method:
 
@@ -89,7 +89,7 @@ public static function getNavigationBadgeColor(): ?string
 }
 ```
 
-<AutoScreenshot name="panels/navigation/badge-color" alt="Navigation item with badge color" version="3.x" />
+<AutoScreenshot name="panels/navigation/badge-color" alt="Navigation item with badge color" version="4.x" />
 
 A custom tooltip for the navigation badge can be set in `$navigationBadgeTooltip`:
 
@@ -106,7 +106,7 @@ public static function getNavigationBadgeTooltip(): ?string
 }
 ```
 
-<AutoScreenshot name="panels/navigation/badge-tooltip" alt="Navigation item with badge tooltip" version="3.x" />
+<AutoScreenshot name="panels/navigation/badge-tooltip" alt="Navigation item with badge tooltip" version="4.x" />
 
 ## Grouping navigation items
 
@@ -118,7 +118,7 @@ use UnitEnum;
 protected static string | UnitEnum | null $navigationGroup = 'Settings';
 ```
 
-<AutoScreenshot name="panels/navigation/group" alt="Grouped navigation items" version="3.x" />
+<AutoScreenshot name="panels/navigation/group" alt="Grouped navigation items" version="4.x" />
 
 All items in the same navigation group will be displayed together under the same group label, "Settings" in this case. Ungrouped items will remain at the start of the navigation.
 
@@ -196,7 +196,7 @@ $panel
 
 By default, navigation groups are collapsible.
 
-<AutoScreenshot name="panels/navigation/group-collapsible" alt="Collapsible navigation groups" version="3.x" />
+<AutoScreenshot name="panels/navigation/group-collapsible" alt="Collapsible navigation groups" version="4.x" />
 
 You may disable this behavior by calling `collapsible(false)` on the `NavigationGroup` object:
 
@@ -210,7 +210,7 @@ NavigationGroup::make()
     ->collapsible(false);
 ```
 
-<AutoScreenshot name="panels/navigation/group-not-collapsible" alt="Not collapsible navigation groups" version="3.x" />
+<AutoScreenshot name="panels/navigation/group-not-collapsible" alt="Not collapsible navigation groups" version="4.x" />
 
 Or, you can do it globally for all groups in the [configuration](../panel-configuration):
 
@@ -328,7 +328,7 @@ public function panel(Panel $panel): Panel
 }
 ```
 
-<AutoScreenshot name="panels/navigation/sidebar-collapsible-on-desktop" alt="Collapsible sidebar on desktop" version="3.x" />
+<AutoScreenshot name="panels/navigation/sidebar-collapsible-on-desktop" alt="Collapsible sidebar on desktop" version="4.x" />
 
 By default, when you collapse the sidebar on desktop, the navigation icons still show. You can fully collapse the sidebar using the `sidebarFullyCollapsibleOnDesktop()` method:
 
@@ -343,7 +343,7 @@ public function panel(Panel $panel): Panel
 }
 ```
 
-<AutoScreenshot name="panels/navigation/sidebar-fully-collapsible-on-desktop" alt="Fully collapsible sidebar on desktop" version="3.x" />
+<AutoScreenshot name="panels/navigation/sidebar-fully-collapsible-on-desktop" alt="Fully collapsible sidebar on desktop" version="4.x" />
 
 ### Navigation groups in a collapsible sidebar on desktop
 
@@ -356,6 +356,8 @@ When using a collapsible sidebar on desktop, you will also often be using [navig
 These issues can be solved, to achieve a very minimal sidebar design, by [passing an `icon()`](#customizing-navigation-groups) to the navigation group objects. When an icon is defined, the icon will be displayed in the collapsed sidebar instead of the items at all times. When the icon is clicked, a dropdown will open to the side of the icon, revealing the items in the group.
 
 When passing an icon to a navigation group, even if the items also have icons, the expanded sidebar UI will not show the item icons. This is to keep the navigation hierarchy clear, and the design minimal. However, the icons for the items will be shown in the collapsed sidebar's dropdowns though, since the hierarchy is already clear from the fact that the dropdown is open.
+
+<AutoScreenshot name="panels/navigation/sidebar-collapsible-with-group-icons" alt="Collapsible sidebar with navigation group icons" version="4.x" />
 
 ## Registering custom navigation items
 
@@ -434,7 +436,7 @@ public function panel(Panel $panel): Panel
 }
 ```
 
-<AutoScreenshot name="panels/navigation/top-navigation" alt="Top navigation" version="3.x" />
+<AutoScreenshot name="panels/navigation/top-navigation" alt="Top navigation" version="4.x" />
 
 ## Customizing the width of the sidebar
 
@@ -450,6 +452,8 @@ public function panel(Panel $panel): Panel
         ->sidebarWidth('40rem');
 }
 ```
+
+<AutoScreenshot name="panels/styling/sidebar-width" alt="Panel with custom sidebar width" version="4.x" />
 
 Additionally, if you are using the `sidebarCollapsibleOnDesktop()` method, you can customize width of the collapsed icons by using the `collapsedSidebarWidth()` method in the [configuration](../panel-configuration):
 
@@ -500,7 +504,7 @@ public function panel(Panel $panel): Panel
 }
 ```
 
-<AutoScreenshot name="panels/navigation/custom-items" alt="Custom navigation items" version="3.x" />
+<AutoScreenshot name="panels/navigation/custom-items" alt="Custom navigation items" version="4.x" />
 
 ### Registering custom navigation groups
 
@@ -546,7 +550,7 @@ public function panel(Panel $panel): Panel
 }
 ```
 
-<AutoScreenshot name="panels/navigation/disabled-navigation" alt="Disabled navigation sidebar" version="3.x" />
+<AutoScreenshot name="panels/navigation/disabled-navigation" alt="Disabled navigation sidebar" version="4.x" />
 
 ### Disabling the topbar
 

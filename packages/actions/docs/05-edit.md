@@ -1,6 +1,7 @@
 ---
 title: Edit action
 ---
+import AutoScreenshot from "@components/AutoScreenshot.astro"
 import UtilityInjection from "@components/UtilityInjection.astro"
 
 ## Introduction
@@ -19,6 +20,8 @@ EditAction::make()
         // ...
     ])
 ```
+
+<AutoScreenshot name="actions/edit-action/modal" alt="Edit action modal" version="4.x" />
 
 ## Customizing data before filling the form
 

@@ -2,6 +2,8 @@
 title: Pagination Blade component
 ---
 
+import AutoScreenshot from "@components/AutoScreenshot.astro"
+
 ## Introduction
 
 The pagination component can be used in a Livewire Blade view only. It can render a list of paginated links:
@@ -14,7 +16,7 @@ use Livewire\Component;
 class ListUsers extends Component
 {
     // ...
-    
+
     public function render(): View
     {
         return view('livewire.list-users', [
@@ -28,6 +30,8 @@ class ListUsers extends Component
 <x-filament::pagination :paginator="$users" />
 ```
 
+<AutoScreenshot name="components/pagination/simple" alt="Pagination" version="4.x" />
+
 Alternatively, you can use simple pagination or cursor pagination, which will just render a "previous" and "next" button:
 
 ```php
@@ -36,6 +40,8 @@ use App\Models\User;
 User::query()->simplePaginate(10)
 User::query()->cursorPaginate(10)
 ```
+
+<AutoScreenshot name="components/pagination/simple-paginator" alt="Simple pagination" version="4.x" />
 
 ## Allowing the user to customize the number of items per page
 
@@ -69,6 +75,8 @@ class ListUsers extends Component
 />
 ```
 
+<AutoScreenshot name="components/pagination/page-options" alt="Pagination with page size options" version="4.x" />
+
 ## Displaying links to the first and the last page
 
 Extreme links are the first and last page links. You can add them by passing the `extreme-links` attribute to the component:
@@ -79,3 +87,5 @@ Extreme links are the first and last page links. You can add them by passing the
     extreme-links
 />
 ```
+
+<AutoScreenshot name="components/pagination/extreme-links" alt="Pagination with extreme links" version="4.x" />

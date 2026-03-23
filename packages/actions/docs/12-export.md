@@ -2,6 +2,7 @@
 title: Export action
 ---
 import Aside from "@components/Aside.astro"
+import AutoScreenshot from "@components/AutoScreenshot.astro"
 import UtilityInjection from "@components/UtilityInjection.astro"
 
 ## Introduction
@@ -34,6 +35,8 @@ use Filament\Actions\ExportAction;
 ExportAction::make()
     ->exporter(ProductExporter::class)
 ```
+
+<AutoScreenshot name="actions/export-action/modal" alt="Export action modal" version="4.x" />
 
 If you want to add this action to the header of a table, you may do so like this:
 
