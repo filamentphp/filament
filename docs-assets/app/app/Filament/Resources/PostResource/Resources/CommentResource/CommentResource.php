@@ -4,6 +4,7 @@ namespace App\Filament\Resources\PostResource\Resources\CommentResource;
 
 use App\Filament\Resources\PostResource;
 use App\Models\Comment;
+use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -15,7 +16,7 @@ class CommentResource extends Resource
 
     protected static ?string $parentResource = PostResource::class;
 
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-chat-bubble-left-right';
+    protected static string | BackedEnum | null $navigationIcon = 'heroicon-o-chat-bubble-left-right';
 
     public static function table(Table $table): Table
     {
