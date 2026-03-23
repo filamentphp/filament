@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Forms\Fields;
 
+use Carbon\Carbon;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\TimePicker;
@@ -93,7 +94,7 @@ class DateTimePickerSchema
                         ->label('Custom starts at')
                         ->native(false)
                         ->placeholder('Jan 1, 2000')
-                        ->defaultFocusedDate(\Carbon\Carbon::parse('2000-01-01')),
+                        ->defaultFocusedDate(Carbon::parse('2000-01-01')),
                 ]),
             Group::make()
                 ->id('dateTimePickerAffix')

@@ -3,6 +3,7 @@
 namespace Filament\Support;
 
 use BackedEnum;
+use Filament\Support\Contracts\LoadingIndicator;
 use Filament\Support\Contracts\ScalableIcon;
 use Filament\Support\Enums\IconSize;
 use Filament\Support\Facades\FilamentColor;
@@ -215,11 +216,10 @@ if (! function_exists('Filament\Support\generate_loading_indicator_html')) {
         ]);
 
         return new HtmlString(
-            app(\Filament\Support\Contracts\LoadingIndicator::class, ['attributes' => $attributes])->toHtml()
+            app(LoadingIndicator::class, ['attributes' => $attributes])->toHtml()
         );
     }
 }
-
 
 if (! function_exists('Filament\Support\generate_search_column_expression')) {
     /**

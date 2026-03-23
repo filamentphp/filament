@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Pagination\Paginator;
 use Livewire\Component;
 
 class PaginationDemo extends Component
@@ -22,7 +23,7 @@ class PaginationDemo extends Component
         );
 
         // Pass perPage + 1 items so Paginator knows there are more pages
-        $simplePaginator = new \Illuminate\Pagination\Paginator(
+        $simplePaginator = new Paginator(
             $items->forPage(2, 10)->push(21),
             10,
             2,

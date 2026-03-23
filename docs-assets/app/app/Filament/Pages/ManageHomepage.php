@@ -3,6 +3,7 @@
 namespace App\Filament\Pages;
 
 use App\Models\WebsitePage;
+use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\TextInput;
@@ -20,7 +21,7 @@ class ManageHomepage extends Page
 {
     protected string $view = 'filament.pages.manage-homepage';
 
-    protected static string | \BackedEnum | null $navigationIcon = Heroicon::OutlinedHome;
+    protected static string | BackedEnum | null $navigationIcon = Heroicon::OutlinedHome;
 
     protected static ?int $navigationSort = 5;
 

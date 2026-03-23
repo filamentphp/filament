@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages;
 
+use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\Section;
@@ -11,7 +12,7 @@ use Filament\Support\Icons\Heroicon;
 
 class AnalyticsWithSubheading extends Page
 {
-    protected static string | \BackedEnum | null $navigationIcon = Heroicon::OutlinedChartBarSquare;
+    protected static string | BackedEnum | null $navigationIcon = Heroicon::OutlinedChartBarSquare;
 
     protected static bool $shouldRegisterNavigation = false;
 

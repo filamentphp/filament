@@ -9,6 +9,7 @@ use App\Models\Tag;
 use App\Models\Team;
 use App\Models\User;
 use App\Models\WebsitePage;
+use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
@@ -68,8 +69,8 @@ class DatabaseSeeder extends Seeder
                 'rating' => $post['rating'],
                 'description' => $post['description'],
                 'author_id' => $allUsers[$post['author_index']]->id,
-                'created_at' => \Carbon\Carbon::parse($baseDate)->subDays(count($posts) - $index),
-                'updated_at' => \Carbon\Carbon::parse($baseDate)->subDays(count($posts) - $index),
+                'created_at' => Carbon::parse($baseDate)->subDays(count($posts) - $index),
+                'updated_at' => Carbon::parse($baseDate)->subDays(count($posts) - $index),
             ]);
         }
 
@@ -93,8 +94,8 @@ class DatabaseSeeder extends Seeder
                 'user_id' => $allUsers[$comment['user_index']]->id,
                 'body' => $comment['body'],
                 'is_approved' => $comment['is_approved'],
-                'created_at' => \Carbon\Carbon::parse($baseDate)->subDays(count($comments) - $index),
-                'updated_at' => \Carbon\Carbon::parse($baseDate)->subDays(count($comments) - $index),
+                'created_at' => Carbon::parse($baseDate)->subDays(count($comments) - $index),
+                'updated_at' => Carbon::parse($baseDate)->subDays(count($comments) - $index),
             ]);
         }
 
@@ -142,8 +143,8 @@ class DatabaseSeeder extends Seeder
                 'post_id' => $allPosts[$link['post_index']]->id,
                 'url' => $link['url'],
                 'label' => $link['label'],
-                'created_at' => \Carbon\Carbon::parse($baseDate)->subDays(count($links) - $index),
-                'updated_at' => \Carbon\Carbon::parse($baseDate)->subDays(count($links) - $index),
+                'created_at' => Carbon::parse($baseDate)->subDays(count($links) - $index),
+                'updated_at' => Carbon::parse($baseDate)->subDays(count($links) - $index),
             ]);
         }
 
