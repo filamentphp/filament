@@ -136,6 +136,7 @@ class SupportServiceProvider extends PackageServiceProvider
         );
 
         $this->app->bind(DataStore::class, DataStoreOverride::class);
+        $this->app->bind(LoadingIndicator::class, DefaultLoadingIndicator::class);
 
         $this->callAfterResolving(BladeIconsFactory::class, function (BladeIconsFactory $factory): void {
             $factory->add('filament', [
