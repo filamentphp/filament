@@ -42,7 +42,7 @@ In addition to specifying how many columns a layout component should have, you m
 
 <UtilityInjection set="schemaComponents" version="5.x">As well as allowing a static value, the `columnSpan()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="schemas/layout/grid/column-span" alt="Grid with column spans" version="4.x" />
+<AutoScreenshot name="schemas/layout/grid/column-span" alt="Grid with column spans" version="5.x" />
 
 ### Grid column starts
 
@@ -76,7 +76,7 @@ In this example, the grid has 3 columns on small devices, 6 columns on extra lar
 
 <UtilityInjection set="schemaComponents" version="5.x">As well as allowing a static value, the `columnStart()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="schemas/layout/grid/column-start" alt="Grid with column start" version="4.x" />
+<AutoScreenshot name="schemas/layout/grid/column-start" alt="Grid with column start" version="5.x" />
 
 ### Grid column ordering
 
@@ -102,7 +102,7 @@ Grid::make()
     ])
 ```
 
-<AutoScreenshot name="schemas/layout/grid/column-order" alt="Grid with reordered columns" version="4.x" />
+<AutoScreenshot name="schemas/layout/grid/column-order" alt="Grid with reordered columns" version="5.x" />
 
 You can also use responsive ordering to change the visual order of components based on the screen size:
 
@@ -207,7 +207,7 @@ Grid::make([
     ])
 ```
 
-<AutoScreenshot name="schemas/layout/grid/simple" alt="Grid" version="4.x" />
+<AutoScreenshot name="schemas/layout/grid/simple" alt="Grid" version="5.x" />
 
 ### Flex component
 

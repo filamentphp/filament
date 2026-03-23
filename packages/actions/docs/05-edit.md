@@ -21,7 +21,7 @@ EditAction::make()
     ])
 ```
 
-<AutoScreenshot name="actions/edit-action/modal" alt="Edit action modal" version="4.x" />
+<AutoScreenshot name="actions/edit-action/modal" alt="Edit action modal" version="5.x" />
 
 ## Customizing data before filling the form
 

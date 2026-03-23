@@ -42,7 +42,7 @@ SelectColumn::make('status')
 
 <UtilityInjection set="tableColumns" version="5.x">As well as allowing a static value, the `native()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="tables/columns/select/javascript" alt="Table with JavaScript select column" version="4.x" />
+<AutoScreenshot name="tables/columns/select/javascript" alt="Table with JavaScript select column" version="5.x" />
 
 ## Searching options
 

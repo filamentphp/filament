@@ -734,7 +734,7 @@ Select::make('technology')
     Be aware that you will need to ensure that the HTML is safe to render, otherwise your application will be vulnerable to XSS attacks.
 </Aside>
 
-<AutoScreenshot name="forms/fields/select/html-labels" alt="Select with HTML option labels" version="4.x" />
+<AutoScreenshot name="forms/fields/select/html-labels" alt="Select with HTML option labels" version="5.x" />
 
 Optionally, you may pass a boolean value to control if the input should allow HTML or not:
 
@@ -807,7 +807,7 @@ Select::make('status')
 
 <UtilityInjection set="formFields" version="5.x" extras="Option value;;mixed;;$value;;The value of the option to disable.||Option label;;string | Illuminate\Contracts\Support\Htmlable;;$label;;The label of the option to disable.">You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="forms/fields/select/disabled-options" alt="Select with disabled options" version="4.x" />
+<AutoScreenshot name="forms/fields/select/disabled-options" alt="Select with disabled options" version="5.x" />
 
 ## Adding affix text aside the field
 
@@ -856,7 +856,7 @@ Select::make('domain')
 
 <UtilityInjection set="formFields" version="5.x">As well as allowing static values, the `prefixIconColor()` and `suffixIconColor()` methods also accept a function to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="forms/fields/select/suffix-icon-color" alt="Select with suffix icon in color" version="4.x" />
+<AutoScreenshot name="forms/fields/select/suffix-icon-color" alt="Select with suffix icon in color" version="5.x" />
 
 ## Limiting the number of options
 
@@ -887,7 +887,7 @@ Select::make('feedback')
     ->boolean()
 ```
 
-<AutoScreenshot name="forms/fields/select/boolean" alt="Boolean select" version="4.x" />
+<AutoScreenshot name="forms/fields/select/boolean" alt="Boolean select" version="5.x" />
 
 To customize the "Yes" label, you can use the `trueLabel` argument on the `boolean()` method:
 

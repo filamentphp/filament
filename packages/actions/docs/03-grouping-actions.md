@@ -58,7 +58,7 @@ ActionGroup::make([
     ->tooltip('Actions')
 ```
 
-<AutoScreenshot name="tables/actions/group-tooltip" alt="Table with action group tooltip" version="4.x" />
+<AutoScreenshot name="tables/actions/group-tooltip" alt="Table with action group tooltip" version="5.x" />
 
 ### Using a grouped button design
 
@@ -147,9 +147,9 @@ ActionGroup::make([
     ->dropdownWidth(Width::ExtraSmall)
 ```
 
-<AutoScreenshot name="actions/group/dropdown-width" alt="Action group with custom dropdown width" version="4.x" />
+<AutoScreenshot name="actions/group/dropdown-width" alt="Action group with custom dropdown width" version="5.x" />
 
-<UtilityInjection set="actionGroups" version="4.x">The `dropdownWidth()` method also accepts a function to dynamically calculate the value. You can inject various utilities into the function as parameters.</UtilityInjection>
+<UtilityInjection set="actionGroups" version="5.x">The `dropdownWidth()` method also accepts a function to dynamically calculate the value. You can inject various utilities into the function as parameters.</UtilityInjection>
 
 ## Controlling the dropdown offset
 

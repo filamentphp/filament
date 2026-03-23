@@ -14,7 +14,7 @@ use Filament\Actions\RestoreAction;
 RestoreAction::make()
 ```
 
-<AutoScreenshot name="actions/restore-action/modal" alt="Restore action modal" version="4.x" />
+<AutoScreenshot name="actions/restore-action/modal" alt="Restore action modal" version="5.x" />
 
 Or if you want to add it as a table bulk action, so that the user can choose which rows to restore, use `Filament\Actions\RestoreBulkAction`:
 

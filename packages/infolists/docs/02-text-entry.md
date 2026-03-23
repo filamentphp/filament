@@ -145,7 +145,7 @@ TextEntry::make('created_at')
     ->time()
 ```
 
-<AutoScreenshot name="infolists/entries/text/date" alt="Text entry with date formatting" version="4.x" />
+<AutoScreenshot name="infolists/entries/text/date" alt="Text entry with date formatting" version="5.x" />
 
 You may customize the date format by passing a custom format string to the `date()`, `dateTime()`, or `time()` method. You may use any [PHP date formatting tokens](https://www.php.net/manual/en/datetime.format.php):
 
@@ -209,7 +209,7 @@ TextEntry::make('created_at')
     ->since()
 ```
 
-<AutoScreenshot name="infolists/entries/text/since" alt="Text entry with relative date formatting" version="4.x" />
+<AutoScreenshot name="infolists/entries/text/since" alt="Text entry with relative date formatting" version="5.x" />
 
 #### Displaying a formatting date in a tooltip
 
@@ -247,7 +247,7 @@ TextEntry::make('created_at')
     ->sinceTooltip()
 ```
 
-<AutoScreenshot name="infolists/entries/text/date-tooltip" alt="Text entry with a date tooltip on relative dates" version="4.x" />
+<AutoScreenshot name="infolists/entries/text/date-tooltip" alt="Text entry with a date tooltip on relative dates" version="5.x" />
 
 #### Setting the timezone for date formatting
 
@@ -300,7 +300,7 @@ TextEntry::make('stock')
     ->numeric()
 ```
 
-<AutoScreenshot name="infolists/entries/text/numeric" alt="Text entry with numeric formatting" version="4.x" />
+<AutoScreenshot name="infolists/entries/text/numeric" alt="Text entry with numeric formatting" version="5.x" />
 
 If you would like to customize the number of decimal places used to format the number with, you can use the `decimalPlaces` argument:
 
@@ -383,7 +383,7 @@ TextEntry::make('description')
     ->markdown()
 ```
 
-<AutoScreenshot name="infolists/entries/text/markdown" alt="Text entry with Markdown rendering" version="4.x" />
+<AutoScreenshot name="infolists/entries/text/markdown" alt="Text entry with Markdown rendering" version="5.x" />
 
 Optionally, you may pass a boolean value to control if the text should be rendered as Markdown or not:
 
@@ -407,7 +407,7 @@ TextEntry::make('description')
     ->html()
 ```
 
-<AutoScreenshot name="infolists/entries/text/html" alt="Text entry with HTML rendering" version="4.x" />
+<AutoScreenshot name="infolists/entries/text/html" alt="Text entry with HTML rendering" version="5.x" />
 
 Optionally, you may pass a boolean value to control if the text should be rendered as HTML or not:
 
@@ -545,7 +545,7 @@ TextEntry::make('authors.name')
 
 <UtilityInjection set="infolistEntries" version="5.x">As well as allowing a static value, the `expandableLimitedList()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="infolists/entries/text/expandable-limited-list" alt="Text entry with an expandable limited list" version="4.x" />
+<AutoScreenshot name="infolists/entries/text/expandable-limited-list" alt="Text entry with an expandable limited list" version="5.x" />
 
 ### Splitting a single value into multiple list items
 
@@ -654,7 +654,7 @@ TextEntry::make('description')
 
 <UtilityInjection set="infolistEntries" version="5.x">As well as allowing a static value, the `limit()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="infolists/entries/text/limit" alt="Text entry with limited text length" version="4.x" />
+<AutoScreenshot name="infolists/entries/text/limit" alt="Text entry with limited text length" version="5.x" />
 
 By default, when text is truncated, an ellipsis (`...`) is appended to the end of the text. You may customize this by passing a custom string to the `end` argument:
 
@@ -699,7 +699,7 @@ TextEntry::make('description')
 
 <UtilityInjection set="infolistEntries" version="5.x">As well as allowing a static value, the `words()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="infolists/entries/text/words" alt="Text entry with limited word count" version="4.x" />
+<AutoScreenshot name="infolists/entries/text/words" alt="Text entry with limited word count" version="5.x" />
 
 By default, when text is truncated, an ellipsis (`...`) is appended to the end of the text. You may customize this by passing a custom string to the `end` argument:
 
@@ -725,7 +725,7 @@ TextEntry::make('description')
 
 <UtilityInjection set="infolistEntries" version="5.x">As well as allowing a static value, the `lineClamp()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="infolists/entries/text/line-clamp" alt="Text entry with line clamping" version="4.x" />
+<AutoScreenshot name="infolists/entries/text/line-clamp" alt="Text entry with line clamping" version="5.x" />
 
 ### Preventing text wrapping
 
@@ -740,7 +740,7 @@ TextEntry::make('description')
 
 <UtilityInjection set="infolistEntries" version="5.x">As well as allowing a static value, the `wrap()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="infolists/entries/text/wrap" alt="Text entry with wrapping disabled" version="4.x" />
+<AutoScreenshot name="infolists/entries/text/wrap" alt="Text entry with wrapping disabled" version="5.x" />
 
 ## Allowing the text to be copied to the clipboard
 
@@ -791,4 +791,4 @@ TextEntry::make('cost')
     )
 ```
 
-<AutoScreenshot name="infolists/entries/actions/suffix" alt="Text entry with suffix action" version="4.x" />
+<AutoScreenshot name="infolists/entries/actions/suffix" alt="Text entry with suffix action" version="5.x" />

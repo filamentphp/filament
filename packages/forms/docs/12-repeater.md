@@ -100,7 +100,7 @@ Repeater::make('members')
 
 <UtilityInjection set="formFields" version="5.x">As well as allowing a static value, the `addActionAlignment()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="forms/fields/repeater/add-action-alignment" alt="Repeater with add action aligned to the start" version="4.x" />
+<AutoScreenshot name="forms/fields/repeater/add-action-alignment" alt="Repeater with add action aligned to the start" version="5.x" />
 
 ### Preventing the user from adding items
 
@@ -218,7 +218,7 @@ Repeater::make('qualifications')
     ->collapsible()
 ```
 
-<AutoScreenshot name="forms/fields/repeater/collapsible" alt="Collapsible repeater" version="4.x" />
+<AutoScreenshot name="forms/fields/repeater/collapsible" alt="Collapsible repeater" version="5.x" />
 
 You may also collapse all items by default:
 
@@ -594,7 +594,7 @@ Repeater::make('members')
     ->itemNumbers()
 ```
 
-<AutoScreenshot name="forms/fields/repeater/numbered" alt="Repeater with numbered items" version="4.x" />
+<AutoScreenshot name="forms/fields/repeater/numbered" alt="Repeater with numbered items" version="5.x" />
 
 ## Simple repeaters with one field
 

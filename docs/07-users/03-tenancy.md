@@ -110,7 +110,7 @@ class User extends Authenticatable implements FilamentUser, HasTenants
 
 In this example, users belong to many teams, so there is a `teams()` relationship. The `getTenants()` method returns the teams that the user belongs to. Filament uses this to list the tenants that the user has access to.
 
-<AutoScreenshot name="panels/tenancy" alt="A panel with multi-tenancy and a tenant switcher" version="4.x" />
+<AutoScreenshot name="panels/tenancy" alt="A panel with multi-tenancy and a tenant switcher" version="5.x" />
 
 For security, you also need to implement the `canAccessTenant()` method of the `HasTenants` interface to prevent users from accessing the data of other tenants by guessing their tenant ID and putting it into the URL.
 
@@ -175,7 +175,7 @@ public function panel(Panel $panel): Panel
 }
 ```
 
-<AutoScreenshot name="panels/tenancy/registration" alt="Tenant registration page" version="4.x" />
+<AutoScreenshot name="panels/tenancy/registration" alt="Tenant registration page" version="5.x" />
 
 ### Customizing the tenant registration page
 
@@ -228,7 +228,7 @@ public function panel(Panel $panel): Panel
 }
 ```
 
-<AutoScreenshot name="panels/tenancy/profile" alt="Tenant profile page" version="4.x" />
+<AutoScreenshot name="panels/tenancy/profile" alt="Tenant profile page" version="5.x" />
 
 ### Customizing the tenant profile page
 

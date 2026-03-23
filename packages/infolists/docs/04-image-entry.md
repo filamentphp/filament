@@ -65,7 +65,7 @@ ImageEntry::make('author.avatar')
 
 <UtilityInjection set="infolistEntries" version="5.x">As well as allowing a static values, the `imageWidth()`, `imageHeight()` and `imageSize()` methods also accept functions to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="infolists/entries/image/size" alt="Image entry with custom size" version="4.x" />
+<AutoScreenshot name="infolists/entries/image/size" alt="Image entry with custom size" version="5.x" />
 
 ### Square images
 

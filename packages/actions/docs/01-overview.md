@@ -262,7 +262,7 @@ Action::make('edit')
     ->authorizationTooltip()
 ```
 
-<AutoScreenshot name="actions/trigger-button/authorization-tooltip" alt="Disabled action button with an authorization tooltip" version="4.x" />
+<AutoScreenshot name="actions/trigger-button/authorization-tooltip" alt="Disabled action button with an authorization tooltip" version="5.x" />
 
 You may instead allow the action to still be clickable even if the user is not authorized, but send a notification containing the response message, using the `authorizationNotification()` method:
 
@@ -297,7 +297,7 @@ Action::make('delete')
 
 <UtilityInjection set="actions" version="5.x">As well as allowing a static value, the `disabled()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="actions/trigger-button/disabled" alt="Disabled action button" version="4.x" />
+<AutoScreenshot name="actions/trigger-button/disabled" alt="Disabled action button" version="5.x" />
 
 ## Registering keybindings
 
@@ -542,7 +542,7 @@ Actions::make([
 ])
 ```
 
-<AutoScreenshot name="schemas/layout/actions/independent/simple" alt="Independent actions in a schema" version="4.x" />
+<AutoScreenshot name="schemas/layout/actions/independent/simple" alt="Independent actions in a schema" version="5.x" />
 
 You can make the actions span the full width of the schema using the `fullWidth()` method:
 
@@ -559,7 +559,7 @@ Actions::make([
 ])->fullWidth()
 ```
 
-<AutoScreenshot name="schemas/layout/actions/independent/full-width" alt="Full width independent actions in a schema" version="4.x" />
+<AutoScreenshot name="schemas/layout/actions/independent/full-width" alt="Full width independent actions in a schema" version="5.x" />
 
 You can change the horizontal alignment of the actions using the `alignment()` method:
 
@@ -577,7 +577,7 @@ Actions::make([
 ])->alignment(Alignment::Center)
 ```
 
-<AutoScreenshot name="schemas/layout/actions/independent/horizontally-aligned-center" alt="Center-aligned independent actions in a schema" version="4.x" />
+<AutoScreenshot name="schemas/layout/actions/independent/horizontally-aligned-center" alt="Center-aligned independent actions in a schema" version="5.x" />
 
 If the `Actions` component is in a grid alongside other components, you can change its vertical alignment using the `verticalAlignment()` method:
 
@@ -595,7 +595,7 @@ Actions::make([
 ])->verticalAlignment(VerticalAlignment::End)
 ```
 
-<AutoScreenshot name="schemas/layout/actions/independent/vertically-aligned-end" alt="Independent actions vertically aligned to the end in a schema" version="4.x" />
+<AutoScreenshot name="schemas/layout/actions/independent/vertically-aligned-end" alt="Independent actions vertically aligned to the end in a schema" version="5.x" />
 
 ### Running JavaScript when an action is clicked
 

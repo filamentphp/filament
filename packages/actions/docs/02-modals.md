@@ -87,7 +87,7 @@ Action::make('viewUser')
 
 <UtilityInjection set="actions" version="5.x">As well as allowing a static value, the `schema()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="actions/modal/schema" alt="Modal with schema layout" version="4.x" />
+<AutoScreenshot name="actions/modal/schema" alt="Modal with schema layout" version="5.x" />
 
 #### Rendering a form in a modal
 
@@ -163,7 +163,7 @@ Action::make('approvePost')
     })
 ```
 
-<AutoScreenshot name="actions/modal/disabled-form" alt="Modal with disabled form fields" version="4.x" />
+<AutoScreenshot name="actions/modal/disabled-form" alt="Modal with disabled form fields" version="5.x" />
 
 #### Rendering a wizard in a modal
 
@@ -242,7 +242,7 @@ Action::make('delete')
 
 <UtilityInjection set="actions" version="5.x">The `modalIconColor()` method also accepts a function to dynamically calculate the value. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="actions/modal/icon-color" alt="Confirmation modal with custom icon color" version="4.x" />
+<AutoScreenshot name="actions/modal/icon-color" alt="Confirmation modal with custom icon color" version="5.x" />
 
 ### Customizing the alignment of modal content
 
@@ -264,7 +264,7 @@ Action::make('updateAuthor')
 
 <UtilityInjection set="actions" version="5.x">The `modalAlignment()` method also accepts a function to dynamically calculate the value. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="actions/modal/alignment" alt="Modal with centered content alignment" version="4.x" />
+<AutoScreenshot name="actions/modal/alignment" alt="Modal with centered content alignment" version="5.x" />
 
 ### Making the modal header sticky
 
@@ -300,7 +300,7 @@ Action::make('updateAuthor')
     ->stickyModalFooter()
 ```
 
-<AutoScreenshot name="actions/modal/sticky-header" alt="Modal with sticky header and footer" version="4.x" />
+<AutoScreenshot name="actions/modal/sticky-header" alt="Modal with sticky header and footer" version="5.x" />
 
 ### Custom modal content
 
@@ -419,7 +419,7 @@ Action::make('updateAuthor')
 
 <UtilityInjection set="actions" version="5.x">The `modalWidth()` method also accepts a function to dynamically calculate the value. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="actions/modal/wide" alt="Modal with custom width" version="4.x" />
+<AutoScreenshot name="actions/modal/wide" alt="Modal with custom width" version="5.x" />
 
 ## Executing code when the modal opens
 
@@ -492,7 +492,7 @@ Action::make('create')
 
 <UtilityInjection set="actions" version="5.x">The `extraModalFooterActions()` method also accepts a function to dynamically calculate the value. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="actions/modal/extra-footer-actions" alt="Modal with extra footer action buttons" version="4.x" />
+<AutoScreenshot name="actions/modal/extra-footer-actions" alt="Modal with extra footer action buttons" version="5.x" />
 
 `$action->makeModalSubmitAction()` returns an action instance that can be customized using the [methods available to customize trigger buttons](overview).
 
@@ -747,7 +747,7 @@ use Filament\Support\View\Components\ModalComponent;
 ModalComponent::closeButton(false);
 ```
 
-<AutoScreenshot name="actions/modal/no-close-button" alt="Modal without a close button" version="4.x" />
+<AutoScreenshot name="actions/modal/no-close-button" alt="Modal without a close button" version="5.x" />
 
 ## Preventing the modal from autofocusing
 
@@ -804,7 +804,7 @@ Action::make('editItems')
 
 In this example, when the user clicks the delete button on a repeater item, the confirmation dialog appears on top of the slide-over instead of the slide-over closing first. This creates a smoother experience, especially for actions inside slide-overs or complex forms where closing and reopening the parent would be disorienting.
 
-<AutoScreenshot name="actions/modal/overlaying-child" alt="Child confirmation modal overlaying a parent slide-over" version="4.x" />
+<AutoScreenshot name="actions/modal/overlaying-child" alt="Child confirmation modal overlaying a parent slide-over" version="5.x" />
 
 ## Optimizing modal configuration methods
 

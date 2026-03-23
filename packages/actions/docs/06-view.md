@@ -21,7 +21,7 @@ ViewAction::make()
     ])
 ```
 
-<AutoScreenshot name="actions/view-action/modal" alt="View action modal" version="4.x" />
+<AutoScreenshot name="actions/view-action/modal" alt="View action modal" version="5.x" />
 
 ## Customizing data before filling the form
 

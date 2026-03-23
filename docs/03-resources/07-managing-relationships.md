@@ -115,7 +115,7 @@ public static function getRelations(): array
 
 Once a table and form have been defined for the relation manager, visit the [Edit](editing-records) or [View](viewing-records) page of your resource to see it in action.
 
-<AutoScreenshot name="panels/resources/relation-manager" alt="Relation manager" version="4.x" />
+<AutoScreenshot name="panels/resources/relation-manager" alt="Relation manager" version="5.x" />
 
 ### Customizing the relation manager's URL parameter
 
@@ -304,7 +304,7 @@ public function table(Table $table): Table
 }
 ```
 
-<AutoScreenshot name="panels/resources/relation-manager-attach" alt="Relation manager attach modal" version="4.x" />
+<AutoScreenshot name="panels/resources/relation-manager-attach" alt="Relation manager attach modal" version="5.x" />
 
 ### Preloading the attachment modal select options
 
@@ -757,7 +757,7 @@ public static function getRelations(): array
 }
 ```
 
-<AutoScreenshot name="panels/resources/relation-manager-grouped" alt="Relation managers with grouped tabs" version="4.x" />
+<AutoScreenshot name="panels/resources/relation-manager-grouped" alt="Relation managers with grouped tabs" version="5.x" />
 
 ## Conditionally showing relation managers
 
@@ -785,7 +785,7 @@ public function hasCombinedRelationManagerTabsWithContent(): bool
 }
 ```
 
-<AutoScreenshot name="panels/resources/editing-combined-tabs" alt="Resource edit page with combined relation manager tabs" version="4.x" />
+<AutoScreenshot name="panels/resources/editing-combined-tabs" alt="Resource edit page with combined relation manager tabs" version="5.x" />
 
 ### Customizing the content tab
 

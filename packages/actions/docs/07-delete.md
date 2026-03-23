@@ -14,7 +14,7 @@ use Filament\Actions\DeleteAction;
 DeleteAction::make()
 ```
 
-<AutoScreenshot name="actions/delete-action/modal" alt="Delete action modal" version="4.x" />
+<AutoScreenshot name="actions/delete-action/modal" alt="Delete action modal" version="5.x" />
 
 Or if you want to add it as a table bulk action, so that the user can choose which rows to delete, use `Filament\Actions\DeleteBulkAction`:
 

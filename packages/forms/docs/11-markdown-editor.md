@@ -52,7 +52,7 @@ Each nested array in the main array represents a group of buttons in the toolbar
 
 <UtilityInjection set="formFields" version="5.x">As well as allowing a static value, the `toolbarButtons()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="forms/fields/markdown-editor/custom-toolbar" alt="Markdown editor with customized toolbar buttons" version="4.x" />
+<AutoScreenshot name="forms/fields/markdown-editor/custom-toolbar" alt="Markdown editor with customized toolbar buttons" version="5.x" />
 
 ## Uploading images to the editor
 

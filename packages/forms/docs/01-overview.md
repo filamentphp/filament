@@ -115,7 +115,7 @@ TextInput::make('name')
     ->hiddenLabel()
 ```
 
-<AutoScreenshot name="forms/fields/hidden-label" alt="Form field with a hidden label" version="4.x" />
+<AutoScreenshot name="forms/fields/hidden-label" alt="Form field with a hidden label" version="5.x" />
 
 Optionally, you may pass a boolean value to control if the label should be hidden or not:
 

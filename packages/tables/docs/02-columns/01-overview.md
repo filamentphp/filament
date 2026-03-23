@@ -653,7 +653,7 @@ TextColumn::make('sku')
 
 <UtilityInjection set="tableColumns" version="5.x">As well as allowing a static value, the `headerTooltip()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="tables/columns/header-tooltips" alt="Table with header tooltip on a column" version="4.x" />
+<AutoScreenshot name="tables/columns/header-tooltips" alt="Table with header tooltip on a column" version="5.x" />
 
 ## Aligning column content
 
@@ -742,7 +742,7 @@ TextColumn::make('name')
 
 <UtilityInjection set="tableColumns" version="5.x">The `wrapHeader()` method also accepts a function to dynamically calculate the value. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="tables/columns/wrap-header" alt="Table with wrapped column headers" version="4.x" />
+<AutoScreenshot name="tables/columns/wrap-header" alt="Table with wrapped column headers" version="5.x" />
 
 ## Controlling the width of columns
 
@@ -768,7 +768,7 @@ IconColumn::make('is_paid')
 
 <UtilityInjection set="tableColumns" except="$state" version="5.x">The `width()` method also accepts a function to dynamically calculate the value. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="tables/columns/width" alt="Table with column width controls" version="4.x" />
+<AutoScreenshot name="tables/columns/width" alt="Table with column width controls" version="5.x" />
 
 ## Grouping columns
 
@@ -920,7 +920,7 @@ public function table(Table $table): Table
 }
 ```
 
-<AutoScreenshot name="tables/columns/column-manager-modal" alt="Table with column manager in a modal" version="4.x" />
+<AutoScreenshot name="tables/columns/column-manager-modal" alt="Table with column manager in a modal" version="5.x" />
 
 You may use the [trigger action API](#customizing-the-column-manager-trigger-action) to [customize the modal](../../actions/modals), including [using a `slideOver()`](../../actions/modals#using-a-slide-over-instead-of-a-modal).
 
@@ -998,7 +998,7 @@ public function table(Table $table): Table
 }
 ```
 
-<AutoScreenshot name="tables/columns/column-manager-columns" alt="Table with a 2-column column manager" version="4.x" />
+<AutoScreenshot name="tables/columns/column-manager-columns" alt="Table with a 2-column column manager" version="5.x" />
 
 ## Adding extra HTML attributes to a column content
 

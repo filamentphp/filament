@@ -142,7 +142,7 @@ IconColumn::make('icon')
     ->wrap()
 ```
 
-<AutoScreenshot name="tables/columns/icon/wrap" alt="Icon column with wrapping" version="4.x" />
+<AutoScreenshot name="tables/columns/icon/wrap" alt="Icon column with wrapping" version="5.x" />
 
 <Aside variant="tip">
     The "width" for wrapping is affected by the column label, so you may need to use a shorter or hidden label to wrap more tightly.

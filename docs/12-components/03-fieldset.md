@@ -18,4 +18,4 @@ You can use a fieldset to group multiple form fields together, optionally with a
 </x-filament::fieldset>
 ```
 
-<AutoScreenshot name="components/fieldset/simple" alt="A fieldset with form fields" version="4.x" />
+<AutoScreenshot name="components/fieldset/simple" alt="A fieldset with form fields" version="5.x" />

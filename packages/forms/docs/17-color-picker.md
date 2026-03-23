@@ -19,7 +19,7 @@ ColorPicker::make('color')
 
 Clicking the color swatch opens a color picker panel where users can visually select a color:
 
-<AutoScreenshot name="forms/fields/color-picker/panel" alt="Color picker with panel open" version="4.x" />
+<AutoScreenshot name="forms/fields/color-picker/panel" alt="Color picker with panel open" version="5.x" />
 
 ## Setting the color format
 
@@ -38,7 +38,7 @@ ColorPicker::make('rgba_color')
     ->rgba()
 ```
 
-<AutoScreenshot name="forms/fields/color-picker/formats" alt="Color pickers with different format options" version="4.x" />
+<AutoScreenshot name="forms/fields/color-picker/formats" alt="Color pickers with different format options" version="5.x" />
 
 ## Color picker validation
 

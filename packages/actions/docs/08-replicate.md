@@ -14,7 +14,7 @@ use Filament\Actions\ReplicateAction;
 ReplicateAction::make()
 ```
 
-<AutoScreenshot name="actions/replicate-action/modal" alt="Replicate action modal" version="4.x" />
+<AutoScreenshot name="actions/replicate-action/modal" alt="Replicate action modal" version="5.x" />
 
 ## Excluding attributes
 

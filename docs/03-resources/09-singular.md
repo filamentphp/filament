@@ -13,7 +13,7 @@ For example, a CMS might have a `Page` Eloquent model and a `PageResource`, but 
 
 Other examples of this include a "Settings" page, or a "Profile" page for the currently logged-in user. For these use cases, though, we recommend that you use the [Spatie Settings plugin](https://filamentphp.com/plugins/filament-spatie-settings) and the [Profile](../users/overview#authentication-features) features of Filament, which require less code to implement.
 
-<AutoScreenshot name="panels/resources/singular" alt="A singular resource page for managing a homepage" version="4.x" />
+<AutoScreenshot name="panels/resources/singular" alt="A singular resource page for managing a homepage" version="5.x" />
 
 ## Creating a singular resource
 

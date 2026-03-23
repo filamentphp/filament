@@ -196,7 +196,7 @@ FileUpload::make('avatar')
 
 This will only allow images to be uploaded, and when they are, it will display them in a compact circle layout that is perfect for avatars.
 
-<AutoScreenshot name="forms/fields/file-upload/avatar" alt="File upload with avatar mode" version="4.x" />
+<AutoScreenshot name="forms/fields/file-upload/avatar" alt="File upload with avatar mode" version="5.x" />
 
 This feature pairs well with the [circle cropper](#allowing-users-to-crop-images-as-a-circle).
 
@@ -214,7 +214,7 @@ FileUpload::make('image')
 
 You can open the editor once you upload an image by clicking the pencil icon. You can also open the editor by clicking the pencil icon on an existing image, which will remove and re-upload it on save.
 
-<AutoScreenshot name="forms/fields/file-upload/image-editor" alt="File upload image editor with cropping controls" version="4.x" />
+<AutoScreenshot name="forms/fields/file-upload/image-editor" alt="File upload image editor with cropping controls" version="5.x" />
 
 Optionally, you may pass a boolean value to control if the image editor is enabled:
 
@@ -519,7 +519,7 @@ FileUpload::make('attachments')
 
 <UtilityInjection set="formFields" version="5.x">As well as allowing a static value, the `openable()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="forms/fields/file-upload/openable" alt="File upload with openable files" version="4.x" />
+<AutoScreenshot name="forms/fields/file-upload/openable" alt="File upload with openable files" version="5.x" />
 
 ## Downloading files
 
@@ -545,7 +545,7 @@ FileUpload::make('attachments')
 
 <UtilityInjection set="formFields" version="5.x">As well as allowing a static value, the `downloadable()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="forms/fields/file-upload/downloadable" alt="File upload with downloadable files" version="4.x" />
+<AutoScreenshot name="forms/fields/file-upload/downloadable" alt="File upload with downloadable files" version="5.x" />
 
 ## Previewing files
 
@@ -699,7 +699,7 @@ FileUpload::make('image')
     ->image()
 ```
 
-<AutoScreenshot name="forms/fields/file-upload/image-preview" alt="File upload with image preview" version="4.x" />
+<AutoScreenshot name="forms/fields/file-upload/image-preview" alt="File upload with image preview" version="5.x" />
 
 #### Custom MIME type mapping
 

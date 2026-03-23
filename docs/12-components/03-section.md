@@ -18,7 +18,7 @@ A section can be used to group content together, with an optional heading:
 </x-filament::section>
 ```
 
-<AutoScreenshot name="components/section/simple" alt="A simple section" version="4.x" />
+<AutoScreenshot name="components/section/simple" alt="A simple section" version="5.x" />
 
 ## Adding a description to the section
 
@@ -38,7 +38,7 @@ You can add a description below the heading to the section by using the `descrip
 </x-filament::section>
 ```
 
-<AutoScreenshot name="components/section/description" alt="A section with a description and icon" version="4.x" />
+<AutoScreenshot name="components/section/description" alt="A section with a description and icon" version="5.x" />
 
 ## Adding an icon to the section header
 
@@ -54,7 +54,7 @@ You can add an [icon](../styling/icons) to a section by using the `icon` attribu
 </x-filament::section>
 ```
 
-<AutoScreenshot name="components/section/icon" alt="A section with an icon" version="4.x" />
+<AutoScreenshot name="components/section/icon" alt="A section with an icon" version="5.x" />
 
 ### Changing the color of the section icon
 
@@ -73,7 +73,7 @@ By default, the color of the section icon is "gray". You can change it to be `da
 </x-filament::section>
 ```
 
-<AutoScreenshot name="components/section/icon-color" alt="A section with a colored icon" version="4.x" />
+<AutoScreenshot name="components/section/icon-color" alt="A section with a colored icon" version="5.x" />
 
 ### Changing the size of the section icon
 
@@ -103,7 +103,7 @@ By default, the size of the section icon is "large". You can change it to be "sm
 </x-filament::section>
 ```
 
-<AutoScreenshot name="components/section/icon-sizes" alt="Sections with different icon sizes" version="4.x" />
+<AutoScreenshot name="components/section/icon-sizes" alt="Sections with different icon sizes" version="5.x" />
 
 ## Adding content to the end of the header
 
@@ -123,7 +123,7 @@ You may render additional content at the end of the header, next to the heading 
 </x-filament::section>
 ```
 
-<AutoScreenshot name="components/section/after-header" alt="A section with content after the header" version="4.x" />
+<AutoScreenshot name="components/section/after-header" alt="A section with content after the header" version="5.x" />
 
 ## Making a section collapsible
 
@@ -139,7 +139,7 @@ You can make the content of a section collapsible by using the `collapsible` att
 </x-filament::section>
 ```
 
-<AutoScreenshot name="components/section/collapsible" alt="A collapsible section" version="4.x" />
+<AutoScreenshot name="components/section/collapsible" alt="A collapsible section" version="5.x" />
 
 ### Making a section collapsed by default
 
@@ -158,7 +158,7 @@ You can make a section collapsed by default by using the `collapsed` attribute:
 </x-filament::section>
 ```
 
-<AutoScreenshot name="components/section/collapsed" alt="A collapsed section" version="4.x" />
+<AutoScreenshot name="components/section/collapsed" alt="A collapsed section" version="5.x" />
 
 ### Persisting collapsed sections
 
@@ -193,7 +193,7 @@ You can change the position of the section header to be aside the content instea
 </x-filament::section>
 ```
 
-<AutoScreenshot name="components/section/aside" alt="A section with the header aside the content" version="4.x" />
+<AutoScreenshot name="components/section/aside" alt="A section with the header aside the content" version="5.x" />
 
 ### Positioning the content before the header
 
@@ -212,4 +212,4 @@ You can change the position of the content to be before the header instead of af
 </x-filament::section>
 ```
 
-<AutoScreenshot name="components/section/content-before" alt="A section with content before the header" version="4.x" />
+<AutoScreenshot name="components/section/content-before" alt="A section with content before the header" version="5.x" />

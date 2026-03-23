@@ -81,7 +81,7 @@ RepeatableEntry::make('comments')
 
 <UtilityInjection set="infolistEntries" version="5.x">As well as allowing a static value, the `contained()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="infolists/entries/repeatable/contained-false" alt="Repeatable entry without styled container" version="4.x" />
+<AutoScreenshot name="infolists/entries/repeatable/contained-false" alt="Repeatable entry without styled container" version="5.x" />
 
 ## Table repeatable layout
 

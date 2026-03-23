@@ -151,4 +151,4 @@ Radio::make('feedback')
     ->boolean(falseLabel: 'Not at all!')
 ```
 
-<AutoScreenshot name="forms/fields/radio/boolean-custom-labels" alt="Boolean radio with custom labels" version="4.x" />
+<AutoScreenshot name="forms/fields/radio/boolean-custom-labels" alt="Boolean radio with custom labels" version="5.x" />

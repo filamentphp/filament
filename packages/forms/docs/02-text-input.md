@@ -42,7 +42,7 @@ TextInput::make('backgroundColor')
     ->type('color')
 ```
 
-<AutoScreenshot name="forms/fields/text-input/color" alt="Text input with color type" version="4.x" />
+<AutoScreenshot name="forms/fields/text-input/color" alt="Text input with color type" version="5.x" />
 
 The individual type methods also allow you to pass in a boolean value to control if the field should be that or not:
 
@@ -196,7 +196,7 @@ TextInput::make('domain')
 
 <UtilityInjection set="formFields" version="5.x">As well as allowing static values, the `prefixIconColor()` and `suffixIconColor()` methods also accept a function to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="forms/fields/text-input/suffix-icon-color" alt="Text input with suffix icon in color" version="4.x" />
+<AutoScreenshot name="forms/fields/text-input/suffix-icon-color" alt="Text input with suffix icon in color" version="5.x" />
 
 ### Using actions as affixes
 
@@ -215,7 +215,7 @@ TextInput::make('cost')
     )
 ```
 
-<AutoScreenshot name="forms/fields/actions/suffix" alt="Text input with suffix action" version="4.x" />
+<AutoScreenshot name="forms/fields/actions/suffix" alt="Text input with suffix action" version="5.x" />
 
 ## Revealable password inputs
 
@@ -255,7 +255,7 @@ TextInput::make('apiKey')
     ->copyable(copyMessage: 'Copied!', copyMessageDuration: 1500)
 ```
 
-<AutoScreenshot name="forms/fields/text-input/copyable" alt="Text input with copyable button" version="4.x" />
+<AutoScreenshot name="forms/fields/text-input/copyable" alt="Text input with copyable button" version="5.x" />
 
 Optionally, you may pass a boolean value to control if the text should be copyable or not:
 
@@ -287,7 +287,7 @@ TextInput::make('birthday')
     ->placeholder('MM/DD/YYYY')
 ```
 
-<AutoScreenshot name="forms/fields/text-input/mask" alt="Text input with mask" version="4.x" />
+<AutoScreenshot name="forms/fields/text-input/mask" alt="Text input with mask" version="5.x" />
 
 To use a [dynamic mask](https://alpinejs.dev/plugins/mask#mask-functions), wrap the JavaScript in a `RawJs` object:
 

@@ -82,7 +82,7 @@ Slider::make('slider')
 
 <UtilityInjection set="formFields" version="5.x">As well as allowing a static value, the `rangePadding()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="forms/fields/slider/range-padding" alt="Slider with range padding" version="4.x" />
+<AutoScreenshot name="forms/fields/slider/range-padding" alt="Slider with range padding" version="5.x" />
 
 In this example, even though the minimum value is 0 and the maximum value is 100, the user will only be able to select values between 10 and 90. The padding will be applied to both ends of the track, so the selected value will always be at least 10 units away from the edges of the track.
 
@@ -120,7 +120,7 @@ Slider::make('slider')
 
 <UtilityInjection set="formFields" version="5.x">As well as allowing a static value, the `rtl()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="forms/fields/slider/rtl" alt="Right-to-left slider" version="4.x" />
+<AutoScreenshot name="forms/fields/slider/rtl" alt="Right-to-left slider" version="5.x" />
 
 ## Adding multiple values to a slider
 
@@ -196,7 +196,7 @@ Slider::make('slider')
     ->rtl(false)
 ```
 
-<AutoScreenshot name="forms/fields/slider/top-to-bottom" alt="Top-to-bottom vertical slider" version="4.x" />
+<AutoScreenshot name="forms/fields/slider/top-to-bottom" alt="Top-to-bottom vertical slider" version="5.x" />
 
 ## Adding tooltips to handles
 

@@ -14,7 +14,7 @@ The avatar component is used to render a circular or square image, often used to
 />
 ```
 
-<AutoScreenshot name="components/avatar/simple" alt="Avatars" version="4.x" />
+<AutoScreenshot name="components/avatar/simple" alt="Avatars" version="5.x" />
 
 ## Setting the rounding of an avatar
 
@@ -28,7 +28,7 @@ Avatars are fully rounded by default, but you may make them square by setting th
 />
 ```
 
-<AutoScreenshot name="components/avatar/square" alt="Square avatars" version="4.x" />
+<AutoScreenshot name="components/avatar/square" alt="Square avatars" version="5.x" />
 
 ## Setting the size of an avatar
 
@@ -42,7 +42,7 @@ By default, the avatar will be "medium" size. You can set the size to either `sm
 />
 ```
 
-<AutoScreenshot name="components/avatar/sizes" alt="Avatars in different sizes" version="4.x" />
+<AutoScreenshot name="components/avatar/sizes" alt="Avatars in different sizes" version="5.x" />
 
 You can also pass your own custom size classes into the `size` attribute:
 

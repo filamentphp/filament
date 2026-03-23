@@ -16,7 +16,7 @@ An empty state can be used to communicate that there is no content to display ye
 </x-filament::empty-state>
 ```
 
-<AutoScreenshot name="components/empty-state/simple" alt="An empty state with icon, description and action button" version="4.x" />
+<AutoScreenshot name="components/empty-state/simple" alt="An empty state with icon, description and action button" version="5.x" />
 
 ## Adding a description to the empty state
 
@@ -34,7 +34,7 @@ You can add a description below the heading to the empty state by using the `des
 </x-filament::empty-state>
 ```
 
-<AutoScreenshot name="components/empty-state/description" alt="An empty state with a description" version="4.x" />
+<AutoScreenshot name="components/empty-state/description" alt="An empty state with a description" version="5.x" />
 
 ## Adding an icon to the empty state
 
@@ -65,7 +65,7 @@ By default, the color of the empty state icon is `primary`. You can change it to
 </x-filament::empty-state>
 ```
 
-<AutoScreenshot name="components/empty-state/icon-color" alt="An empty state with a colored icon" version="4.x" />
+<AutoScreenshot name="components/empty-state/icon-color" alt="An empty state with a colored icon" version="5.x" />
 
 ### Changing the size of the empty state icon
 
@@ -91,7 +91,7 @@ By default, the size of the empty state icon is "large". You can change it to be
 </x-filament::empty-state>
 ```
 
-<AutoScreenshot name="components/empty-state/icon-sizes" alt="Empty states with different icon sizes" version="4.x" />
+<AutoScreenshot name="components/empty-state/icon-sizes" alt="Empty states with different icon sizes" version="5.x" />
 
 ## Adding footer actions to the empty state
 
@@ -111,7 +111,7 @@ You can add actions below the description by using the `footer` slot. This is us
 </x-filament::empty-state>
 ```
 
-<AutoScreenshot name="components/empty-state/actions" alt="An empty state with footer actions" version="4.x" />
+<AutoScreenshot name="components/empty-state/actions" alt="An empty state with footer actions" version="5.x" />
 
 ## Removing the empty state container
 
@@ -125,4 +125,4 @@ By default, empty states have a background color, shadow and border. You can rem
 </x-filament::empty-state>
 ```
 
-<AutoScreenshot name="components/empty-state/not-contained" alt="An empty state without a container" version="4.x" />
+<AutoScreenshot name="components/empty-state/not-contained" alt="An empty state without a container" version="5.x" />

@@ -14,7 +14,7 @@ The badge component is used to render a small box with some text inside:
 </x-filament::badge>
 ```
 
-<AutoScreenshot name="components/badge/simple" alt="A simple badge" version="4.x" />
+<AutoScreenshot name="components/badge/simple" alt="A simple badge" version="5.x" />
 
 ## Setting the size of a badge
 
@@ -30,7 +30,7 @@ By default, the size of a badge is "medium". You can make it "extra small" or "s
 </x-filament::badge>
 ```
 
-<AutoScreenshot name="components/badge/sizes" alt="Badges in different sizes" version="4.x" />
+<AutoScreenshot name="components/badge/sizes" alt="Badges in different sizes" version="5.x" />
 
 ## Changing the color of the badge
 
@@ -58,7 +58,7 @@ By default, the color of a badge is "primary". You can change it to be `danger`,
 </x-filament::badge>
 ```
 
-<AutoScreenshot name="components/badge/colors" alt="Badges in different colors" version="4.x" />
+<AutoScreenshot name="components/badge/colors" alt="Badges in different colors" version="5.x" />
 
 ## Adding an icon to a badge
 
@@ -81,4 +81,4 @@ You can also change the icon's position to be after the text instead of before i
 </x-filament::badge>
 ```
 
-<AutoScreenshot name="components/badge/icon" alt="Badges with icons" version="4.x" />
+<AutoScreenshot name="components/badge/icon" alt="Badges with icons" version="5.x" />

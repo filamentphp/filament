@@ -258,7 +258,7 @@ Stack::make([
 ])->space(1)
 ```
 
-<AutoScreenshot name="tables/layout/stack-spaced" alt="Table with spaced stacked content" version="4.x" />
+<AutoScreenshot name="tables/layout/stack-spaced" alt="Table with spaced stacked content" version="5.x" />
 
 ### Controlling column width using a grid
 
@@ -283,7 +283,7 @@ Grid::make([
 
 These columns will always consume equal width within the grid, from the `lg` [breakpoint](https://tailwindcss.com/docs/responsive-design#overview).
 
-<AutoScreenshot name="tables/layout/column-grid" alt="Table with a grid column layout" version="4.x" />
+<AutoScreenshot name="tables/layout/column-grid" alt="Table with a grid column layout" version="5.x" />
 
 You may choose to customize the number of columns within the grid at other breakpoints:
 

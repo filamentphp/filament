@@ -17,6 +17,6 @@ The breadcrumbs component is used to render a simple, linear navigation that inf
 ]" />
 ```
 
-<AutoScreenshot name="components/breadcrumbs/simple" alt="Breadcrumbs navigation" version="4.x" />
+<AutoScreenshot name="components/breadcrumbs/simple" alt="Breadcrumbs navigation" version="5.x" />
 
 The keys of the array are URLs that the user is able to click on to navigate, and the values are the text that will be displayed for each link.

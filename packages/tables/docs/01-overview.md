@@ -8,7 +8,7 @@ import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 Tables are a common UI pattern for displaying lists of records in web applications. Filament provides a PHP-based API for defining tables with many features, while also being incredibly customizable.
 
-<AutoScreenshot name="tables/example" alt="Table" version="4.x" />
+<AutoScreenshot name="tables/example" alt="Table" version="5.x" />
 
 ### Defining table columns
 
@@ -200,7 +200,7 @@ Actions can also open modals to request confirmation from the user, as well as r
 
 By default, Filament tables will be paginated. The user can choose between 5, 10, 25, and 50 records per page. If there are more records than the selected number, the user can navigate between pages using the pagination buttons.
 
-<AutoScreenshot name="tables/pagination/default" alt="Table with default pagination" version="4.x" />
+<AutoScreenshot name="tables/pagination/default" alt="Table with default pagination" version="5.x" />
 
 ### Customizing the pagination options
 
@@ -252,7 +252,7 @@ public function table(Table $table): Table
 }
 ```
 
-<AutoScreenshot name="tables/pagination/extreme" alt="Table with extreme pagination links" version="4.x" />
+<AutoScreenshot name="tables/pagination/extreme" alt="Table with extreme pagination links" version="5.x" />
 
 ### Using simple pagination
 
@@ -269,7 +269,7 @@ public function table(Table $table): Table
 }
 ```
 
-<AutoScreenshot name="tables/pagination/simple" alt="Table with simple pagination" version="4.x" />
+<AutoScreenshot name="tables/pagination/simple" alt="Table with simple pagination" version="5.x" />
 
 ### Using cursor pagination
 
@@ -286,7 +286,7 @@ public function table(Table $table): Table
 }
 ```
 
-<AutoScreenshot name="tables/pagination/cursor" alt="Table with cursor pagination" version="4.x" />
+<AutoScreenshot name="tables/pagination/cursor" alt="Table with cursor pagination" version="5.x" />
 
 ### Preventing query string conflicts with the pagination page
 
@@ -495,7 +495,7 @@ public function table(Table $table): Table
         ]);
 ```
 
-<AutoScreenshot name="tables/heading" alt="Table with heading and description" version="4.x" />
+<AutoScreenshot name="tables/heading" alt="Table with heading and description" version="5.x" />
 
 You can pass a view to the `$table->header()` method to customize the entire header HTML:
 
@@ -610,7 +610,7 @@ public function table(Table $table): Table
 }
 ```
 
-<AutoScreenshot name="tables/custom-row-classes" alt="Table with custom row classes" version="4.x" />
+<AutoScreenshot name="tables/custom-row-classes" alt="Table with custom row classes" version="5.x" />
 
 ## Global settings
 

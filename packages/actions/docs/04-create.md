@@ -21,7 +21,7 @@ CreateAction::make()
     ])
 ```
 
-<AutoScreenshot name="actions/create-action/modal" alt="Create action modal" version="4.x" />
+<AutoScreenshot name="actions/create-action/modal" alt="Create action modal" version="5.x" />
 
 ## Customizing data before saving
 

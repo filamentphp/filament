@@ -14,7 +14,7 @@ The button component is used to render a clickable button that can perform an ac
 </x-filament::button>
 ```
 
-<AutoScreenshot name="components/button/simple" alt="A simple button" version="4.x" />
+<AutoScreenshot name="components/button/simple" alt="A simple button" version="5.x" />
 
 ## Using a button as an anchor link
 
@@ -51,7 +51,7 @@ By default, the size of a button is "medium". You can make it "extra small", "sm
 </x-filament::button>
 ```
 
-<AutoScreenshot name="components/button/sizes" alt="Buttons in different sizes" version="4.x" />
+<AutoScreenshot name="components/button/sizes" alt="Buttons in different sizes" version="5.x" />
 
 ## Changing the color of a button
 
@@ -79,7 +79,7 @@ By default, the color of a button is "primary". You can change it to be `danger`
 </x-filament::button>
 ```
 
-<AutoScreenshot name="components/button/colors" alt="Buttons in different colors" version="4.x" />
+<AutoScreenshot name="components/button/colors" alt="Buttons in different colors" version="5.x" />
 
 ## Adding an icon to a button
 
@@ -102,7 +102,7 @@ You can also change the icon's position to be after the text instead of before i
 </x-filament::button>
 ```
 
-<AutoScreenshot name="components/button/icon" alt="Buttons with icons" version="4.x" />
+<AutoScreenshot name="components/button/icon" alt="Buttons with icons" version="5.x" />
 
 ## Making a button outlined
 
@@ -114,11 +114,11 @@ You can make a button use an "outlined" design using the `outlined` attribute:
 </x-filament::button>
 ```
 
-<AutoScreenshot name="components/button/outlined" alt="Outlined buttons" version="4.x" />
+<AutoScreenshot name="components/button/outlined" alt="Outlined buttons" version="5.x" />
 
 You can combine the `outlined` attribute with any [color](#changing-the-color-of-a-button):
 
-<AutoScreenshot name="components/button/outlined-colors" alt="Outlined buttons in different colors" version="4.x" />
+<AutoScreenshot name="components/button/outlined-colors" alt="Outlined buttons in different colors" version="5.x" />
 
 ## Adding a tooltip to a button
 
@@ -156,4 +156,4 @@ You can [change the color](badge#changing-the-color-of-the-badge) of the badge u
 </x-filament::button>
 ```
 
-<AutoScreenshot name="components/button/badge" alt="Buttons with badges" version="4.x" />
+<AutoScreenshot name="components/button/badge" alt="Buttons with badges" version="5.x" />

@@ -54,7 +54,7 @@ Textarea::make('description')
 
 <UtilityInjection set="formFields" version="5.x">As well as allowing a static value, the `autosize()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="forms/fields/textarea/autosize" alt="Textarea with autosize" version="4.x" />
+<AutoScreenshot name="forms/fields/textarea/autosize" alt="Textarea with autosize" version="5.x" />
 
 ## Making the field read-only
 

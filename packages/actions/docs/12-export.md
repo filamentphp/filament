@@ -36,7 +36,7 @@ ExportAction::make()
     ->exporter(ProductExporter::class)
 ```
 
-<AutoScreenshot name="actions/export-action/modal" alt="Export action modal" version="4.x" />
+<AutoScreenshot name="actions/export-action/modal" alt="Export action modal" version="5.x" />
 
 If you want to add this action to the header of a table, you may do so like this:
 

@@ -59,7 +59,7 @@ SelectFilter::make('status')
     ])
 ```
 
-<AutoScreenshot name="tables/filters/multi-select" alt="Table with a multi-select filter" version="4.x" />
+<AutoScreenshot name="tables/filters/multi-select" alt="Table with a multi-select filter" version="5.x" />
 
 ## Relationship select filters
 

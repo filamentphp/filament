@@ -145,7 +145,7 @@ TextColumn::make('created_at')
     ->time()
 ```
 
-<AutoScreenshot name="tables/columns/text/date" alt="Text column with date formatting" version="4.x" />
+<AutoScreenshot name="tables/columns/text/date" alt="Text column with date formatting" version="5.x" />
 
 You may customize the date format by passing a custom format string to the `date()`, `dateTime()`, or `time()` method. You may use any [PHP date formatting tokens](https://www.php.net/manual/en/datetime.format.php):
 
@@ -209,7 +209,7 @@ TextColumn::make('created_at')
     ->since()
 ```
 
-<AutoScreenshot name="tables/columns/text/since" alt="Text column with relative date formatting" version="4.x" />
+<AutoScreenshot name="tables/columns/text/since" alt="Text column with relative date formatting" version="5.x" />
 
 #### Displaying a formatting date in a tooltip
 
@@ -247,7 +247,7 @@ TextColumn::make('created_at')
     ->sinceTooltip()
 ```
 
-<AutoScreenshot name="tables/columns/text/date-tooltip" alt="Text column with a date tooltip on relative dates" version="4.x" />
+<AutoScreenshot name="tables/columns/text/date-tooltip" alt="Text column with a date tooltip on relative dates" version="5.x" />
 
 #### Setting the timezone for date formatting
 
@@ -300,7 +300,7 @@ TextColumn::make('stock')
     ->numeric()
 ```
 
-<AutoScreenshot name="tables/columns/text/numeric" alt="Text column with numeric formatting" version="4.x" />
+<AutoScreenshot name="tables/columns/text/numeric" alt="Text column with numeric formatting" version="5.x" />
 
 If you would like to customize the number of decimal places used to format the number with, you can use the `decimalPlaces` argument:
 
@@ -383,7 +383,7 @@ TextColumn::make('description')
     ->markdown()
 ```
 
-<AutoScreenshot name="tables/columns/text/markdown" alt="Text column with Markdown rendering" version="4.x" />
+<AutoScreenshot name="tables/columns/text/markdown" alt="Text column with Markdown rendering" version="5.x" />
 
 Optionally, you may pass a boolean value to control if the text should be rendered as Markdown or not:
 
@@ -407,7 +407,7 @@ TextColumn::make('description')
     ->html()
 ```
 
-<AutoScreenshot name="tables/columns/text/html" alt="Text column with HTML rendering" version="4.x" />
+<AutoScreenshot name="tables/columns/text/html" alt="Text column with HTML rendering" version="5.x" />
 
 Optionally, you may pass a boolean value to control if the text should be rendered as HTML or not:
 
@@ -503,7 +503,7 @@ TextColumn::make('authors.name')
 
 <UtilityInjection set="tableColumns" version="5.x">As well as allowing a static value, the `listWithLineBreaks()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="tables/columns/text/list" alt="Text column with values displayed on separate lines" version="4.x" />
+<AutoScreenshot name="tables/columns/text/list" alt="Text column with values displayed on separate lines" version="5.x" />
 
 ### Adding bullet points to the list
 
@@ -527,7 +527,7 @@ TextColumn::make('authors.name')
 
 <UtilityInjection set="tableColumns" version="5.x">As well as allowing a static value, the `bulleted()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="tables/columns/text/bulleted" alt="Text column with bulleted list of values" version="4.x" />
+<AutoScreenshot name="tables/columns/text/bulleted" alt="Text column with bulleted list of values" version="5.x" />
 
 ### Limiting the number of values in the list
 
@@ -573,7 +573,7 @@ TextColumn::make('authors.name')
 
 <UtilityInjection set="tableColumns" version="5.x">As well as allowing a static value, the `expandableLimitedList()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="tables/columns/text/expandable-limited-list" alt="Text column with an expandable limited list" version="4.x" />
+<AutoScreenshot name="tables/columns/text/expandable-limited-list" alt="Text column with an expandable limited list" version="5.x" />
 
 ### Splitting a single value into multiple list items
 
@@ -658,7 +658,7 @@ TextColumn::make('description')
 
 <UtilityInjection set="tableColumns" version="5.x">As well as allowing a static value, the `limit()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="tables/columns/text/limit" alt="Text column with limited text length" version="4.x" />
+<AutoScreenshot name="tables/columns/text/limit" alt="Text column with limited text length" version="5.x" />
 
 By default, when text is truncated, an ellipsis (`...`) is appended to the end of the text. You may customize this by passing a custom string to the `end` argument:
 
@@ -703,7 +703,7 @@ TextColumn::make('description')
 
 <UtilityInjection set="tableColumns" version="5.x">As well as allowing a static value, the `words()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="tables/columns/text/words" alt="Text column with limited word count" version="4.x" />
+<AutoScreenshot name="tables/columns/text/words" alt="Text column with limited word count" version="5.x" />
 
 By default, when text is truncated, an ellipsis (`...`) is appended to the end of the text. You may customize this by passing a custom string to the `end` argument:
 
@@ -738,7 +738,7 @@ TextColumn::make('description')
 
 <UtilityInjection set="tableColumns" version="5.x">As well as allowing a static value, the `wrap()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="tables/columns/text/wrap" alt="Text column with wrapping text" version="4.x" />
+<AutoScreenshot name="tables/columns/text/wrap" alt="Text column with wrapping text" version="5.x" />
 
 #### Limiting text to a specific number of lines
 
@@ -754,7 +754,7 @@ TextColumn::make('description')
 
 <UtilityInjection set="tableColumns" version="5.x">As well as allowing a static value, the `lineClamp()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="tables/columns/text/line-clamp" alt="Text column with line clamping" version="4.x" />
+<AutoScreenshot name="tables/columns/text/line-clamp" alt="Text column with line clamping" version="5.x" />
 
 ## Allowing the text to be copied to the clipboard
 

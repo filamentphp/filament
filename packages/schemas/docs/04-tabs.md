@@ -299,7 +299,7 @@ Tabs::make('Tabs')
 
 <UtilityInjection set="schemaComponents" version="5.x">As well as allowing a static value, the `contained()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
-<AutoScreenshot name="schemas/layout/tabs/not-contained" alt="Tabs without a styled container" version="4.x" />
+<AutoScreenshot name="schemas/layout/tabs/not-contained" alt="Tabs without a styled container" version="5.x" />
 
 ## Persisting the current tab in the user's session
 

@@ -18,6 +18,6 @@ The select component is a wrapper around the native `<select>` element. It provi
 </x-filament::input.wrapper>
 ```
 
-<AutoScreenshot name="components/select/simple" alt="A select input" version="4.x" />
+<AutoScreenshot name="components/select/simple" alt="A select input" version="5.x" />
 
 To use the select component, you must wrap it in an "input wrapper" component, which provides a border and other elements such as a prefix or suffix. You can learn more about customizing the input wrapper component [here](input-wrapper).

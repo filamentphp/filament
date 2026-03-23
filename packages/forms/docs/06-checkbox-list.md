@@ -235,7 +235,7 @@ CheckboxList::make('technology')
     ->allowHtml()
 ```
 
-<AutoScreenshot name="forms/fields/checkbox-list/html-labels" alt="Checkbox list with HTML labels" version="4.x" />
+<AutoScreenshot name="forms/fields/checkbox-list/html-labels" alt="Checkbox list with HTML labels" version="5.x" />
 
 <Aside variant="danger">
     Be aware that you will need to ensure that the HTML is safe to render, otherwise your application will be vulnerable to XSS attacks.

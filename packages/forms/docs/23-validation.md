@@ -13,7 +13,7 @@ In Laravel, validation rules are usually defined in arrays like `['required', 'm
 
 Filament includes many [dedicated validation methods](#available-rules), but you can also use any [other Laravel validation rules](#other-rules), including [custom validation rules](#custom-rules).
 
-<AutoScreenshot name="forms/validation" alt="A form with validation errors" version="4.x" />
+<AutoScreenshot name="forms/validation" alt="A form with validation errors" version="5.x" />
 
 <Aside variant="warning">
     Some default Laravel validation rules rely on the correct attribute names and won't work when passed via `rule()`/`rules()`. Use the dedicated validation methods whenever you can.

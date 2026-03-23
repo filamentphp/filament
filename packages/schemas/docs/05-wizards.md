@@ -73,7 +73,7 @@ BLADE)))
 
 You could extract this component to a separate Blade view if you prefer.
 
-<AutoScreenshot name="schemas/layout/wizard/submit-action" alt="Wizard with a submit button on the last step" version="4.x" />
+<AutoScreenshot name="schemas/layout/wizard/submit-action" alt="Wizard with a submit button on the last step" version="5.x" />
 
 ## Setting a step icon
 

@@ -27,7 +27,7 @@ public function panel(Panel $panel): Panel
 }
 ```
 
-<AutoScreenshot name="panels/navigation/user-menu" alt="User menu with custom menu item" version="4.x" />
+<AutoScreenshot name="panels/navigation/user-menu" alt="User menu with custom menu item" version="5.x" />
 
 ## Moving the user menu to the sidebar
 
@@ -47,7 +47,7 @@ public function panel(Panel $panel): Panel
 }
 ```
 
-<AutoScreenshot name="panels/navigation/user-menu-sidebar" alt="User menu moved to the sidebar" version="4.x" />
+<AutoScreenshot name="panels/navigation/user-menu-sidebar" alt="User menu moved to the sidebar" version="5.x" />
 
 ## Customizing the profile link
 
