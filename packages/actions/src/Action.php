@@ -466,7 +466,7 @@ class Action extends ViewComponent implements Arrayable
 
         $argumentsParameter = '';
 
-        if (count($arguments = $this->getInvokedArguments() ?? [])) {
+        if (count($arguments = $this->getInvokedArguments() ?? $this->getArguments())) {
             $argumentsParameter .= ', ';
             $argumentsParameter .= Js::from($arguments);
         }
