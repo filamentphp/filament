@@ -23,7 +23,6 @@ use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use LogicException;
@@ -171,13 +170,16 @@ class AppAuthentication implements MultiFactorAuthenticationProvider
         $user = Filament::auth()->user();
 
         $secret = $secret ?? $this->getSecret($user);
-        $cacheKey = 'filament.totp_timestamp.' . hash('sha256', $secret);
-        $oldTimestamp = cache()->get($cacheKey, 0);
+        $cacheKey = 'filament.app_authentication_codes.' . md5($secret . $code);
 
-        $timestamp = $this->google2FA->verifyKeyNewer($secret, $code, $oldTimestamp, $this->getCodeWindow());
+        $timestamp = $this->google2FA->verifyKeyNewer($secret, $code, cache()->get($cacheKey), $this->getCodeWindow());
 
         if ($timestamp !== false) {
-            cache()->put($cacheKey, $timestamp, ($this->getCodeWindow() + 1) * 30);
+            if ($timestamp === true) {
+                $timestamp = $this->google2FA->getTimestamp();
+            }
+
+            cache()->put($cacheKey, $timestamp, ($this->getCodeWindow() + 1) * 60);
 
             return true;
         }
