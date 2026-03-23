@@ -8,6 +8,8 @@ import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 Tables are a common UI pattern for displaying lists of records in web applications. Filament provides a PHP-based API for defining tables with many features, while also being incredibly customizable.
 
+<AutoScreenshot name="tables/example" alt="Table" version="4.x" />
+
 ### Defining table columns
 
 The basis of any table is rows and columns. Filament uses Eloquent to get the data for rows in the table, and you are responsible for defining the columns that are used in that row.

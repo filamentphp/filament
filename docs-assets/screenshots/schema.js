@@ -603,10 +603,6 @@ export default {
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
     },
-    'app/dashboard': {
-        url: 'admin',
-        selector: 'body',
-    },
     'forms/fields/simple': {
         url: 'forms/fields/field',
         selector: '#simple',
@@ -5256,78 +5252,8 @@ export default {
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
     },
-    'tables/actions/group-icon-button': {
-        url: 'tables?table=groupedActionsIconButton',
-        selector: '#table',
-        viewport: {
-            width: 1080,
-            height: 640,
-            deviceScaleFactor: 3,
-        },
-        before: async (page) => {
-            await page.click('.fi-dropdown-trigger')
-
-            await new Promise((resolve) => setTimeout(resolve, 500))
-        },
-    },
     'tables/actions/group-button': {
         url: 'tables?table=groupedActionsButton',
-        selector: '#table',
-        viewport: {
-            width: 1080,
-            height: 640,
-            deviceScaleFactor: 3,
-        },
-        before: async (page) => {
-            await page.click('.fi-dropdown-trigger')
-
-            await new Promise((resolve) => setTimeout(resolve, 500))
-        },
-    },
-    'tables/actions/group-link': {
-        url: 'tables?table=groupedActionsLink',
-        selector: '#table',
-        viewport: {
-            width: 1080,
-            height: 640,
-            deviceScaleFactor: 3,
-        },
-        before: async (page) => {
-            await page.click('.fi-dropdown-trigger')
-
-            await new Promise((resolve) => setTimeout(resolve, 500))
-        },
-    },
-    'tables/actions/group-icon': {
-        url: 'tables?table=groupedActionsIcon',
-        selector: '#table',
-        viewport: {
-            width: 1080,
-            height: 640,
-            deviceScaleFactor: 3,
-        },
-        before: async (page) => {
-            await page.click('.fi-dropdown-trigger')
-
-            await new Promise((resolve) => setTimeout(resolve, 500))
-        },
-    },
-    'tables/actions/group-color': {
-        url: 'tables?table=groupedActionsColor',
-        selector: '#table',
-        viewport: {
-            width: 1080,
-            height: 640,
-            deviceScaleFactor: 3,
-        },
-        before: async (page) => {
-            await page.click('.fi-dropdown-trigger')
-
-            await new Promise((resolve) => setTimeout(resolve, 500))
-        },
-    },
-    'tables/actions/group-small': {
-        url: 'tables?table=groupedActionsSmall',
         selector: '#table',
         viewport: {
             width: 1080,
@@ -7282,33 +7208,6 @@ export default {
             }
             await page.waitForSelector('.fi-modal-window-ctn')
             await new Promise((resolve) => setTimeout(resolve, 500))
-        },
-    },
-    'panels/configuration/top-navigation': {
-        url: 'admin?topNavigation=1',
-        selector: 'body',
-        viewport: {
-            width: 1440,
-            height: 820,
-            deviceScaleFactor: 3,
-        },
-    },
-    'panels/configuration/sidebar-fully-collapsible': {
-        url: 'admin?sidebarFullyCollapsibleOnDesktop=1',
-        selector: 'body',
-        viewport: {
-            width: 1440,
-            height: 820,
-            deviceScaleFactor: 3,
-        },
-        before: async (page) => {
-            await new Promise((resolve) => setTimeout(resolve, 500))
-            // Click the sidebar collapse button
-            const collapseBtn = await page.$('button[x-on\\:click*="isOpen"]')
-            if (collapseBtn) {
-                await collapseBtn.click()
-                await new Promise((resolve) => setTimeout(resolve, 500))
-            }
         },
     },
     'panels/resources/singular': {

@@ -525,6 +525,78 @@ TextInput::make('title')
 TextInput::make('slug')
 ```
 
+### Adding a list of actions to a schema
+
+If you want to render a list of action buttons on their own row in a schema, without attaching them to a specific field, you can wrap them in an `Actions` layout component:
+
+```php
+use Filament\Actions\Action;
+use Filament\Schemas\Components\Actions;
+
+Actions::make([
+    Action::make('star')
+        ->icon('heroicon-m-star'),
+    Action::make('resetStars')
+        ->icon('heroicon-m-x-mark')
+        ->color('danger'),
+])
+```
+
+<AutoScreenshot name="schemas/layout/actions/independent/simple" alt="Independent actions in a schema" version="4.x" />
+
+You can make the actions span the full width of the schema using the `fullWidth()` method:
+
+```php
+use Filament\Actions\Action;
+use Filament\Schemas\Components\Actions;
+
+Actions::make([
+    Action::make('star')
+        ->icon('heroicon-m-star'),
+    Action::make('resetStars')
+        ->icon('heroicon-m-x-mark')
+        ->color('danger'),
+])->fullWidth()
+```
+
+<AutoScreenshot name="schemas/layout/actions/independent/full-width" alt="Full width independent actions in a schema" version="4.x" />
+
+You can change the horizontal alignment of the actions using the `alignment()` method:
+
+```php
+use Filament\Actions\Action;
+use Filament\Schemas\Components\Actions;
+use Filament\Support\Enums\Alignment;
+
+Actions::make([
+    Action::make('star')
+        ->icon('heroicon-m-star'),
+    Action::make('resetStars')
+        ->icon('heroicon-m-x-mark')
+        ->color('danger'),
+])->alignment(Alignment::Center)
+```
+
+<AutoScreenshot name="schemas/layout/actions/independent/horizontally-aligned-center" alt="Center-aligned independent actions in a schema" version="4.x" />
+
+If the `Actions` component is in a grid alongside other components, you can change its vertical alignment using the `verticalAlignment()` method:
+
+```php
+use Filament\Actions\Action;
+use Filament\Schemas\Components\Actions;
+use Filament\Support\Enums\VerticalAlignment;
+
+Actions::make([
+    Action::make('star')
+        ->icon('heroicon-m-star'),
+    Action::make('resetStars')
+        ->icon('heroicon-m-x-mark')
+        ->color('danger'),
+])->verticalAlignment(VerticalAlignment::End)
+```
+
+<AutoScreenshot name="schemas/layout/actions/independent/vertically-aligned-end" alt="Independent actions vertically aligned to the end in a schema" version="4.x" />
+
 ### Running JavaScript when an action is clicked
 
 If you need a simple action that runs JavaScript directly in the browser without making a network request, you can use the `actionJs()` method. This is useful for simple interactions like updating form field values instantly:

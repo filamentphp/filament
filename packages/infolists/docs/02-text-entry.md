@@ -773,3 +773,22 @@ TextEntry::make('apiKey')
 <Aside variant="warning">
     This feature only works when SSL is enabled for the app.
 </Aside>
+
+## Adding suffix and prefix actions
+
+You may place an [action](../actions) before and after the entry using the `prefixAction()` and `suffixAction()` methods:
+
+```php
+use Filament\Actions\Action;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Support\Icons\Heroicon;
+
+TextEntry::make('cost')
+    ->prefix('€')
+    ->suffixAction(
+        Action::make('copyCostToPrice')
+            ->icon(Heroicon::Clipboard),
+    )
+```
+
+<AutoScreenshot name="infolists/entries/actions/suffix" alt="Text entry with suffix action" version="4.x" />

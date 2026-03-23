@@ -198,6 +198,25 @@ TextInput::make('domain')
 
 <AutoScreenshot name="forms/fields/text-input/suffix-icon-color" alt="Text input with suffix icon in color" version="4.x" />
 
+### Using actions as affixes
+
+You may place an [action](../actions) before and after the input using the `prefixAction()` and `suffixAction()` methods:
+
+```php
+use Filament\Actions\Action;
+use Filament\Forms\Components\TextInput;
+use Filament\Support\Icons\Heroicon;
+
+TextInput::make('cost')
+    ->prefix('€')
+    ->suffixAction(
+        Action::make('copyCostToPrice')
+            ->icon(Heroicon::Clipboard),
+    )
+```
+
+<AutoScreenshot name="forms/fields/actions/suffix" alt="Text input with suffix action" version="4.x" />
+
 ## Revealable password inputs
 
 When using `password()`, you can also make the input `revealable()`, so that the user can see a plain text version of the password they're typing by clicking a button:
