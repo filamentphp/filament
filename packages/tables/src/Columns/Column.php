@@ -19,7 +19,7 @@ use Filament\Tables\Columns\Concerns\HasTooltip;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\HtmlString;
-use Illuminate\View\ComponentAttributeBag;
+use Filament\Support\View\ComponentAttributeBag;
 use LogicException;
 
 use function Filament\Support\generate_href_html;
@@ -60,6 +60,13 @@ class Column extends ViewComponent
     protected string $evaluationIdentifier = 'column';
 
     protected string $viewIdentifier = 'column';
+
+    /**
+     * Cached `<td>` cell attribute HTML for the standard table layout.
+     * All components (cell classes, alignment, visibility) are column-level
+     * config that doesn't change per row.
+     */
+    protected ?string $cachedCellAttributeHtml = null;
 
     final public function __construct(string $name)
     {
@@ -134,6 +141,14 @@ class Column extends ViewComponent
             return null;
         }
 
+        $this->inline();
+
+        // When the column has no action and no URL configured (the common case),
+        // skip evaluating `$isClickDisabled` and building wire attributes since
+        // the wrapper will always be a plain `<div>`.
+        $hasAction = $this->action !== null;
+        $hasUrl = $this->url !== null;
+
         $attributes = (new ComponentAttributeBag)
             ->gridColumn(
                 $this->getColumnSpan(),
@@ -145,35 +160,46 @@ class Column extends ViewComponent
                 (filled($visibleFrom = $this->getVisibleFrom()) ? "{$visibleFrom}:fi-visible" : ''),
             ]);
 
-        $this->inline();
+        if ($hasAction || $hasUrl) {
+            $action = $this->getAction();
+            $url = $this->getUrl();
+            $isClickDisabled = $this->isClickDisabled();
 
-        $action = $this->getAction();
-        $url = $this->getUrl();
-        $isClickDisabled = $this->isClickDisabled();
+            $wrapperTag = match (true) {
+                $url && (! $isClickDisabled) => 'a',
+                $action && (! $isClickDisabled) => 'button',
+                default => 'div',
+            };
 
-        $wrapperTag = match (true) {
-            $url && (! $isClickDisabled) => 'a',
-            $action && (! $isClickDisabled) => 'button',
-            default => 'div',
-        };
+            $attributes = $attributes
+                ->merge([
+                    'type' => ($wrapperTag === 'button') ? 'button' : null,
+                    'wire:click.prevent.stop' => $wireClickAction = match (true) {
+                        ($wrapperTag !== 'button') => null,
+                        $action instanceof Action => "mountTableAction('{$action->getName()}', '{$this->getRecordKey()}')",
+                        filled($action) => "callTableColumnAction('{$this->getName()}', '{$this->getRecordKey()}')",
+                        default => null,
+                    },
+                    'wire:loading.attr' => ($wrapperTag === 'button') ? 'disabled' : null,
+                    'wire:target' => $wireClickAction,
+                ], escape: false)
+                ->class([
+                    'fi-ta-col',
+                    ((($alignment = $this->getAlignment()) instanceof Alignment) ? "fi-align-{$alignment->value}" : (is_string($alignment) ? $alignment : '')),
+                    'fi-ta-col-has-column-url' => ($wrapperTag === 'a') && filled($url),
+                ]);
+        } else {
+            $wrapperTag = 'div';
+            $url = null;
 
-        $attributes = $attributes
-            ->merge([
-                'type' => ($wrapperTag === 'button') ? 'button' : null,
-                'wire:click.prevent.stop' => $wireClickAction = match (true) {
-                    ($wrapperTag !== 'button') => null,
-                    $action instanceof Action => "mountTableAction('{$action->getName()}', '{$this->getRecordKey()}')",
-                    filled($action) => "callTableColumnAction('{$this->getName()}', '{$this->getRecordKey()}')",
-                    default => null,
-                },
-                'wire:loading.attr' => ($wrapperTag === 'button') ? 'disabled' : null,
-                'wire:target' => $wireClickAction,
-            ], escape: false)
-            ->class([
-                'fi-ta-col',
-                ((($alignment = $this->getAlignment()) instanceof Alignment) ? "fi-align-{$alignment->value}" : (is_string($alignment) ? $alignment : '')),
-                'fi-ta-col-has-column-url' => ($wrapperTag === 'a') && filled($url),
-            ]);
+            $alignment = $this->getAlignment();
+
+            $attributes = $attributes
+                ->class([
+                    'fi-ta-col',
+                    (($alignment instanceof Alignment) ? "fi-align-{$alignment->value}" : (is_string($alignment) ? $alignment : '')),
+                ]);
+        }
 
         ob_start(); ?>
 
@@ -187,6 +213,51 @@ class Column extends ViewComponent
         </<?= $wrapperTag ?>>
 
         <?php return new HtmlString(ob_get_clean());
+    }
+
+    /**
+     * Returns pre-cached `<td>` cell attribute HTML for the standard table layout.
+     * Column-level properties (name, alignment, visibility breakpoints) are
+     * constant across rows, so we compute the attribute string once and reuse.
+     *
+     * Returns null if caching is not possible (e.g., Closure-based extra cell attributes).
+     */
+    public function getCachedCellAttributeHtml(): ?string
+    {
+        if ($this->cachedCellAttributeHtml !== null) {
+            return $this->cachedCellAttributeHtml;
+        }
+
+        // Can't cache if extra cell attributes might depend on the record
+        foreach ($this->extraCellAttributes as $attributes) {
+            if ($attributes instanceof \Closure) {
+                return null;
+            }
+        }
+
+        $columnAlignment = $this->getAlignment();
+        $columnVerticalAlignment = $this->getVerticalAlignment();
+
+        $this->cachedCellAttributeHtml = $this->getExtraCellAttributeBag()->class([
+            'fi-ta-cell',
+            'fi-ta-cell-' . str($this->getName())->camel()->kebab(),
+            (($columnAlignment instanceof Alignment) ? "fi-align-{$columnAlignment->value}" : (is_string($columnAlignment) ? $columnAlignment : '')),
+            (($columnVerticalAlignment instanceof \Filament\Support\Enums\VerticalAlignment) ? "fi-vertical-align-{$columnVerticalAlignment->value}" : (is_string($columnVerticalAlignment) ? $columnVerticalAlignment : '')),
+            (filled($columnHiddenFrom = $this->getHiddenFrom()) ? "{$columnHiddenFrom}:fi-hidden" : ''),
+            (filled($columnVisibleFrom = $this->getVisibleFrom()) ? "{$columnVisibleFrom}:fi-visible" : ''),
+        ])->toHtml();
+
+        return $this->cachedCellAttributeHtml;
+    }
+
+    /**
+     * Whether this column has its own action or URL configured.
+     * Used by the Blade template to skip per-cell evaluate() calls
+     * when the wrapper tag depends only on row-level config.
+     */
+    public function hasActionOrUrlConfigured(): bool
+    {
+        return $this->action !== null || $this->url !== null;
     }
 
     /**

@@ -864,7 +864,7 @@
                                             {{-- Make sure the "checked" state gets re-evaluated after a Livewire request: --}}
                                             wire:key="{{ $this->getId() }}.table.bulk-select-page.checkbox.{{ \Illuminate\Support\Str::random() }}"
                                             wire:loading.attr="disabled"
-                                            wire:target="{{ implode(',', \Filament\Tables\Table::LOADING_TARGETS) }}"
+                                            wire:target="{{ \Filament\Tables\Table::LOADING_TARGETS_WIRE_TARGET }}"
                                             class="fi-ta-page-checkbox fi-checkbox-input"
                                         />
                                     @endif
@@ -1100,7 +1100,7 @@
                                                     "
                                                     wire:key="{{ $this->getId() }}.table.bulk_select_group.checkbox.{{ $page }}"
                                                     wire:loading.attr="disabled"
-                                                    wire:target="{{ implode(',', \Filament\Tables\Table::LOADING_TARGETS) }}"
+                                                    wire:target="{{ \Filament\Tables\Table::LOADING_TARGETS_WIRE_TARGET }}"
                                                     class="fi-ta-group-checkbox fi-checkbox-input"
                                                 />
                                             @endif
@@ -1189,7 +1189,7 @@
                                                 x-bind:checked="isRecordSelected(@js($recordKey)) ? 'checked' : null"
                                                 data-group="{{ $recordGroupKey }}"
                                                 wire:loading.attr="disabled"
-                                                wire:target="{{ implode(',', \Filament\Tables\Table::LOADING_TARGETS) }}"
+                                                wire:target="{{ \Filament\Tables\Table::LOADING_TARGETS_WIRE_TARGET }}"
                                                 class="fi-ta-record-checkbox fi-checkbox-input"
                                             />
                                         @endif
@@ -1497,7 +1497,7 @@
                                                     {{-- Make sure the "checked" state gets re-evaluated after a Livewire request: --}}
                                                     wire:key="{{ $this->getId() }}.table.bulk-select-page.checkbox.stacked.{{ \Illuminate\Support\Str::random() }}"
                                                     wire:loading.attr="disabled"
-                                                    wire:target="{{ implode(',', \Filament\Tables\Table::LOADING_TARGETS) }}"
+                                                    wire:target="{{ \Filament\Tables\Table::LOADING_TARGETS_WIRE_TARGET }}"
                                                     class="fi-ta-page-checkbox fi-checkbox-input"
                                                 />
                                             @endif
@@ -1616,7 +1616,7 @@
                                                             {{-- Make sure the "checked" state gets re-evaluated after a Livewire request: --}}
                                                             wire:key="{{ $this->getId() }}.table.bulk-select-page.checkbox.{{ \Illuminate\Support\Str::random() }}"
                                                             wire:loading.attr="disabled"
-                                                            wire:target="{{ implode(',', \Filament\Tables\Table::LOADING_TARGETS) }}"
+                                                            wire:target="{{ \Filament\Tables\Table::LOADING_TARGETS_WIRE_TARGET }}"
                                                             class="fi-ta-page-checkbox fi-checkbox-input"
                                                         />
                                                     @endif
@@ -1798,7 +1798,7 @@
                                                         {{-- Make sure the "checked" state gets re-evaluated after a Livewire request: --}}
                                                         wire:key="{{ $this->getId() }}.table.bulk-select-page.checkbox.{{ \Illuminate\Support\Str::random() }}"
                                                         wire:loading.attr="disabled"
-                                                        wire:target="{{ implode(',', \Filament\Tables\Table::LOADING_TARGETS) }}"
+                                                        wire:target="{{ \Filament\Tables\Table::LOADING_TARGETS_WIRE_TARGET }}"
                                                         class="fi-ta-page-checkbox fi-checkbox-input"
                                                     />
                                                 @endif
@@ -2008,7 +2008,7 @@
                                                                         "
                                                                         wire:key="{{ $this->getId() }}.table.bulk_select_group.checkbox.{{ $page }}"
                                                                         wire:loading.attr="disabled"
-                                                                        wire:target="{{ implode(',', \Filament\Tables\Table::LOADING_TARGETS) }}"
+                                                                        wire:target="{{ \Filament\Tables\Table::LOADING_TARGETS_WIRE_TARGET }}"
                                                                         class="fi-ta-group-checkbox fi-checkbox-input"
                                                                     />
                                                                 @endif
@@ -2098,7 +2098,7 @@
                                                                         "
                                                                         wire:key="{{ $this->getId() }}.table.bulk_select_group.checkbox.{{ $page }}"
                                                                         wire:loading.attr="disabled"
-                                                                        wire:target="{{ implode(',', \Filament\Tables\Table::LOADING_TARGETS) }}"
+                                                                        wire:target="{{ \Filament\Tables\Table::LOADING_TARGETS_WIRE_TARGET }}"
                                                                         class="fi-ta-group-checkbox fi-checkbox-input"
                                                                     />
                                                                 @endif
@@ -2178,7 +2178,7 @@
                                                                     x-bind:checked="isRecordSelected(@js($recordKey)) ? 'checked' : null"
                                                                     data-group="{{ $recordGroupKey }}"
                                                                     wire:loading.attr="disabled"
-                                                                    wire:target="{{ implode(',', \Filament\Tables\Table::LOADING_TARGETS) }}"
+                                                                    wire:target="{{ \Filament\Tables\Table::LOADING_TARGETS_WIRE_TARGET }}"
                                                                     class="fi-ta-record-checkbox fi-checkbox-input"
                                                                 />
                                                             @endif
@@ -2212,16 +2212,30 @@
                                                             $column->rowLoop($loop->parent);
                                                             $column->recordKey($recordKey);
 
-                                                            $columnAction = $column->getAction();
-                                                            $columnUrl = $column->getUrl();
-                                                            $columnHasStateBasedUrls = $column->hasStateBasedUrls();
-                                                            $isColumnClickDisabled = $column->isClickDisabled() || $isReordering;
+                                                            // When the column has no action/URL configured, the wrapper tag
+                                                            // depends only on row-level $recordUrl/$recordAction — skip the
+                                                            // per-cell getUrl()/hasStateBasedUrls()/isClickDisabled() calls.
+                                                            if ($column->hasActionOrUrlConfigured()) {
+                                                                $columnAction = $column->getAction();
+                                                                $columnUrl = $column->getUrl();
+                                                                $columnHasStateBasedUrls = $column->hasStateBasedUrls();
+                                                                $isColumnClickDisabled = $column->isClickDisabled() || $isReordering;
 
-                                                            $columnWrapperTag = match (true) {
-                                                                ($columnUrl || ($recordUrl && $columnAction === null)) && (! $columnHasStateBasedUrls) && (! $isColumnClickDisabled) => 'a',
-                                                                ($columnAction || $recordAction) && (! $columnHasStateBasedUrls) && (! $isColumnClickDisabled) => 'button',
-                                                                default => 'div',
-                                                            };
+                                                                $columnWrapperTag = match (true) {
+                                                                    ($columnUrl || ($recordUrl && $columnAction === null)) && (! $columnHasStateBasedUrls) && (! $isColumnClickDisabled) => 'a',
+                                                                    ($columnAction || $recordAction) && (! $columnHasStateBasedUrls) && (! $isColumnClickDisabled) => 'button',
+                                                                    default => 'div',
+                                                                };
+                                                            } else {
+                                                                $columnAction = null;
+                                                                $columnUrl = null;
+
+                                                                $columnWrapperTag = match (true) {
+                                                                    $recordUrl && (! $isReordering) => 'a',
+                                                                    $recordAction && (! $isReordering) => 'button',
+                                                                    default => 'div',
+                                                                };
+                                                            }
 
                                                             if ($columnWrapperTag === 'button') {
                                                                 if ($columnAction instanceof \Filament\Actions\Action) {
@@ -2240,16 +2254,20 @@
 
                                                         <td
                                                             wire:key="{{ $this->getId() }}.table.record.{{ $recordKey }}.column.{{ $column->getName() }}"
-                                                            {{
-                                                                $column->getExtraCellAttributeBag()->class([
-                                                                    'fi-ta-cell',
-                                                                    'fi-ta-cell-' . str($column->getName())->camel()->kebab(),
-                                                                    ((($columnAlignment = $column->getAlignment()) instanceof \Filament\Support\Enums\Alignment) ? "fi-align-{$columnAlignment->value}" : (is_string($columnAlignment) ? $columnAlignment : '')),
-                                                                    ((($columnVerticalAlignment = $column->getVerticalAlignment()) instanceof \Filament\Support\Enums\VerticalAlignment) ? "fi-vertical-align-{$columnVerticalAlignment->value}" : (is_string($columnVerticalAlignment) ? $columnVerticalAlignment : '')),
-                                                                    (filled($columnHiddenFrom = $column->getHiddenFrom()) ? "{$columnHiddenFrom}:fi-hidden" : ''),
-                                                                    (filled($columnVisibleFrom = $column->getVisibleFrom()) ? "{$columnVisibleFrom}:fi-visible" : ''),
-                                                                ])
-                                                            }}
+                                                            @if ($cachedCellAttrHtml = $column->getCachedCellAttributeHtml())
+                                                                {!! $cachedCellAttrHtml !!}
+                                                            @else
+                                                                {{
+                                                                    $column->getExtraCellAttributeBag()->class([
+                                                                        'fi-ta-cell',
+                                                                        'fi-ta-cell-' . str($column->getName())->camel()->kebab(),
+                                                                        ((($columnAlignment = $column->getAlignment()) instanceof \Filament\Support\Enums\Alignment) ? "fi-align-{$columnAlignment->value}" : (is_string($columnAlignment) ? $columnAlignment : '')),
+                                                                        ((($columnVerticalAlignment = $column->getVerticalAlignment()) instanceof \Filament\Support\Enums\VerticalAlignment) ? "fi-vertical-align-{$columnVerticalAlignment->value}" : (is_string($columnVerticalAlignment) ? $columnVerticalAlignment : '')),
+                                                                        (filled($columnHiddenFrom = $column->getHiddenFrom()) ? "{$columnHiddenFrom}:fi-hidden" : ''),
+                                                                        (filled($columnVisibleFrom = $column->getVisibleFrom()) ? "{$columnVisibleFrom}:fi-visible" : ''),
+                                                                    ])
+                                                                }}
+                                                            @endif
                                                         >
                                                             {!! $isStackedOnMobile ? '<div class="fi-ta-cell-label">' . e($column->getLabel()) . '</div><div class="fi-ta-cell-content">' : '' !!}
                                                             <{{ $columnWrapperTag }}
@@ -2314,7 +2332,7 @@
                                                                     x-bind:checked="isRecordSelected(@js($recordKey)) ? 'checked' : null"
                                                                     data-group="{{ $recordGroupKey }}"
                                                                     wire:loading.attr="disabled"
-                                                                    wire:target="{{ implode(',', \Filament\Tables\Table::LOADING_TARGETS) }}"
+                                                                    wire:target="{{ \Filament\Tables\Table::LOADING_TARGETS_WIRE_TARGET }}"
                                                                     class="fi-ta-record-checkbox fi-checkbox-input"
                                                                 />
                                                             @endif

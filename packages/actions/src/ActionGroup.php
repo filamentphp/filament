@@ -31,7 +31,7 @@ use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
-use Illuminate\View\ComponentAttributeBag;
+use Filament\Support\View\ComponentAttributeBag;
 use LogicException;
 
 class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
@@ -106,6 +106,13 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
      * @var array<array<mixed> | Closure>
      */
     protected array $extraDropdownAttributes = [];
+
+    /**
+     * Shared cache for trigger HTML and dropdown wrapper.
+     * PHP's shallow clone ensures all clones from the same template
+     * share this reference, enabling reuse across table rows.
+     */
+    protected ?\stdClass $triggerHtmlCache = null;
 
     /**
      * @param  array<Action | ActionGroup>  $actions
@@ -501,20 +508,27 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
             $actionLists[] = $singleActions;
         }
 
-        $maxHeight = $this->getDropdownMaxHeight();
-        $width = $this->getDropdownWidth();
+        // Cache the trigger HTML and dropdown wrapper since they're
+        // identical across all rows (don't depend on the record).
+        $cache = $this->triggerHtmlCache;
 
-        $panelAttributes = (new ComponentAttributeBag)
-            ->class([
-                'fi-dropdown-panel',
-                ($width instanceof Width) ? "fi-width-{$width->value}" : (is_string($width) ? $width : ''),
-                'fi-scrollable' => $maxHeight,
-            ])
-            ->style([
-                "max-height: {$maxHeight}" => $maxHeight,
-            ]);
+        if ($cache !== null && isset($cache->dropdownOpen)) {
+            $html = $cache->dropdownOpen;
+        } else {
+            $maxHeight = $this->getDropdownMaxHeight();
+            $width = $this->getDropdownWidth();
 
-        ob_start(); ?>
+            $panelAttributes = (new ComponentAttributeBag)
+                ->class([
+                    'fi-dropdown-panel',
+                    ($width instanceof Width) ? "fi-width-{$width->value}" : (is_string($width) ? $width : ''),
+                    'fi-scrollable' => $maxHeight,
+                ])
+                ->style([
+                    "max-height: {$maxHeight}" => $maxHeight,
+                ]);
+
+            ob_start(); ?>
 
         <div
             x-data="filamentDropdown"
@@ -537,7 +551,20 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
                 x-transition:leave-end="fi-opacity-0"
                 <?= $panelAttributes->toHtml() ?>
             >
-                <?php foreach ($actionLists as $actions) { ?>
+
+            <?php
+            $html = ob_get_clean();
+
+            if ($cache !== null) {
+                $cache->dropdownOpen = $html;
+            }
+        }
+
+        // Render per-row sub-action content
+        ob_start();
+        echo $html;
+
+                foreach ($actionLists as $actions) { ?>
                     <div class="fi-dropdown-list">
                         <?php foreach ($actions as $action) { ?>
                             <?= $action->toHtml() ?>
@@ -720,6 +747,8 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
 
     public function getClone(): static
     {
+        $this->triggerHtmlCache ??= new \stdClass();
+
         $clone = clone $this;
         $clone->cloneActions();
 

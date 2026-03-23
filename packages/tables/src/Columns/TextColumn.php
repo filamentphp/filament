@@ -23,7 +23,7 @@ use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Js;
-use Illuminate\View\ComponentAttributeBag;
+use Filament\Support\View\ComponentAttributeBag;
 use stdClass;
 
 use function Filament\Support\generate_href_html;
@@ -159,13 +159,105 @@ class TextColumn extends Column implements HasEmbeddedView
         return (bool) $this->evaluate($this->isLimitedListExpandable);
     }
 
+    /**
+     * Checks whether the fast rendering path can be used for a given state
+     * value. The fast path avoids creating multiple ComponentAttributeBag
+     * instances and skips evaluating dozens of properties that are irrelevant
+     * for a plain text column with no special features configured.
+     */
+    protected function canUseFastPath(mixed $state): bool
+    {
+        // Must be a single scalar value (not array, Collection, or Htmlable)
+        if (
+            is_array($state) ||
+            $state instanceof Collection ||
+            $state instanceof Htmlable
+        ) {
+            return false;
+        }
+
+        // Blank state needs the placeholder path
+        if (blank($state)) {
+            return false;
+        }
+
+        // Check that none of the expensive features are configured.
+        // We check the raw property values (not through evaluate()) because
+        // the defaults are all false/null scalars, so if they haven't been
+        // set via a setter, they'll still be their default values and we can
+        // skip all the evaluate() + attribute bag work.
+        return $this->isBadge === false
+            && $this->isBulleted === false
+            && $this->isListWithLineBreaks === false
+            && $this->icon === null
+            && $this->color === null
+            && $this->tooltip === null
+            && $this->isCopyable === false
+            && $this->weight === null
+            && $this->fontFamily === null
+            && $this->lineClamp === null
+            && $this->size === null
+            && $this->descriptionAbove === null
+            && $this->descriptionBelow === null
+            && $this->url === null
+            && empty($this->extraAttributes);
+    }
+
+    /**
+     * Fast rendering path for the common case: a single scalar value with
+     * default styling. Produces the same HTML output as the normal path but
+     * avoids creating ComponentAttributeBag instances and skips evaluating
+     * properties that are at their default values.
+     */
+    protected function toFastPathHtml(mixed $state): string
+    {
+        // When no formatting features are configured, skip the entire
+        // formatState() call chain (which does ~7 evaluate() calls).
+        if (
+            $this->formatStateUsing === null
+            && $this->characterLimit === null
+            && $this->wordLimit === null
+            && $this->prefix === null
+            && $this->suffix === null
+            && $this->isHtml === false
+        ) {
+            $formattedState = e($state);
+        } else {
+            $formattedState = e($this->formatState($state));
+        }
+
+        $classString = 'fi-ta-text fi-ta-text-item fi-size-sm';
+
+        if ($this->isInline()) {
+            $classString .= ' fi-inline';
+        }
+
+        $alignment = $this->getAlignment();
+
+        if ($alignment instanceof Alignment) {
+            $classString .= " fi-align-{$alignment->value}";
+        } elseif (is_string($alignment) && $alignment !== '') {
+            $classString .= " {$alignment}";
+        }
+
+        return '<div class="' . $classString . '">' . $formattedState . '</div>';
+    }
+
     public function toEmbeddedHtml(): string
     {
+        $state = $this->getState();
+
+        // Fast path: for the common case of a single scalar value with no
+        // special features (no badge, icon, description, copy, tooltip, color,
+        // font, weight, list, line clamp, etc.), skip all the heavy attribute
+        // bag construction and produce minimal HTML directly.
+        if ($this->canUseFastPath($state)) {
+            return $this->toFastPathHtml($state);
+        }
+
         $isBadge = $this->isBadge();
         $isListWithLineBreaks = $this->isListWithLineBreaks();
         $isLimitedListExpandable = $this->isLimitedListExpandable();
-
-        $state = $this->getState();
 
         if ($state instanceof Collection) {
             $state = $state->all();

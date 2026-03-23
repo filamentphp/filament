@@ -18,6 +18,7 @@ use Illuminate\Support\HtmlString;
 use Illuminate\Support\Number;
 use Illuminate\Support\Str;
 use Illuminate\Translation\MessageSelector;
+use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 use Illuminate\View\ComponentAttributeBag;
 use Illuminate\View\ComponentSlot;
 use Throwable;
@@ -173,7 +174,7 @@ if (! function_exists('Filament\Support\generate_icon_html')) {
 
         $size ??= IconSize::Medium;
 
-        $attributes = ($attributes ?? new ComponentAttributeBag)->class([
+        $attributes = ($attributes ?? new FilamentComponentAttributeBag)->class([
             'fi-icon',
             "fi-size-{$size->value}",
         ]);
@@ -209,7 +210,7 @@ if (! function_exists('Filament\Support\generate_loading_indicator_html')) {
     {
         $size ??= IconSize::Medium;
 
-        $attributes = ($attributes ?? new ComponentAttributeBag)->class([
+        $attributes = ($attributes ?? new FilamentComponentAttributeBag)->class([
             'fi-icon fi-loading-indicator',
             "fi-size-{$size->value}",
         ]);

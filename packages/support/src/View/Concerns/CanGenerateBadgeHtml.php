@@ -9,7 +9,7 @@ use Filament\Support\Enums\Size;
 use Filament\Support\View\Components\BadgeComponent;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Js;
-use Illuminate\View\ComponentAttributeBag;
+use Filament\Support\View\ComponentAttributeBag;
 
 use function Filament\Support\generate_href_html;
 use function Filament\Support\generate_icon_html;

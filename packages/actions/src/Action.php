@@ -35,7 +35,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Js;
 use Illuminate\Support\Str;
-use Illuminate\View\ComponentAttributeBag;
+use Filament\Support\View\ComponentAttributeBag;
 use Livewire\Drawer\Utils;
 
 class Action extends ViewComponent implements Arrayable
@@ -126,6 +126,14 @@ class Action extends ViewComponent implements Arrayable
     protected ?ActionStatus $status = null;
 
     protected ?Action $parentAction = null;
+
+    /**
+     * Shared cache object for link HTML template rendering.
+     * PHP's shallow `clone` ensures all clones from the same
+     * template action share this object reference, enabling
+     * template reuse across table rows.
+     */
+    protected ?\stdClass $linkHtmlTemplateCache = null;
 
     final public function __construct(?string $name)
     {
@@ -756,6 +764,36 @@ class Action extends ViewComponent implements Arrayable
             return $this->toEmbeddedHtml();
         }
 
+        $cache = $this->linkHtmlTemplateCache;
+
+        // Fast path: reuse cached HTML template, substituting the per-row wire handler.
+        // Works for all view types (button, iconButton, link, badge, grouped).
+        if ($cache !== null && isset($cache->template)) {
+            return str_replace(
+                $cache->placeholder,
+                e($this->getLivewireClickHandler() ?? ''),
+                $cache->template,
+            );
+        }
+
+        // Check if all rendered properties are static (non-Closure),
+        // meaning only the wire:click handler varies per row
+        if ($cache !== null
+            && ! ($this->isDisabled instanceof Closure)
+            && ! ($this->url instanceof Closure)
+            && ! ($this->badge instanceof Closure)
+            && ! ($this->badgeColor instanceof Closure)
+            && ! ($this->color instanceof Closure)
+            && ! ($this->icon instanceof Closure)
+            && ! ($this->label instanceof Closure)
+            && ! ($this->isLabelHidden instanceof Closure)
+            && ! ($this->tooltip instanceof Closure)
+            && ! ($this->alpineClickHandler instanceof Closure)
+        ) {
+            return $this->renderWithTemplateCache($cache);
+        }
+
+        // Standard path: no caching (has Closures that vary per row)
         return match ($this->getView()) {
             static::BADGE_VIEW => $this->toBadgeHtml(),
             static::BUTTON_VIEW => $this->toButtonHtml(),
@@ -764,6 +802,38 @@ class Action extends ViewComponent implements Arrayable
             static::LINK_VIEW => $this->toLinkHtml(),
             default => $this->render()->render(),
         };
+    }
+
+    /**
+     * Renders the action normally, then caches the output as a template
+     * by replacing the HTML-encoded wire:click handler with a placeholder.
+     * Shared by all view types (button, iconButton, link, badge, grouped).
+     */
+    protected function renderWithTemplateCache(\stdClass $cache): string
+    {
+        $html = match ($this->getView()) {
+            static::BADGE_VIEW => $this->toBadgeHtml(),
+            static::BUTTON_VIEW => $this->toButtonHtml(),
+            static::GROUPED_VIEW => $this->toGroupedHtml(),
+            static::ICON_BUTTON_VIEW => $this->toIconButtonHtml(),
+            static::LINK_VIEW => $this->toLinkHtml(),
+            default => $this->render()->render(),
+        };
+
+        // Replace the HTML-encoded wire:click handler value with a
+        // unique placeholder to create a reusable template.
+        // The encoded handler (e.g. mountAction(&#039;view&#039;,...))
+        // appears in wire:click, wire:target, and icon wire:target
+        // attributes — str_replace catches all occurrences.
+        $encodedHandler = e($this->getLivewireClickHandler() ?? '');
+
+        if ($encodedHandler !== '') {
+            $placeholder = '__FIL_WIRE_' . spl_object_id($cache) . '__';
+            $cache->template = str_replace($encodedHandler, $placeholder, $html);
+            $cache->placeholder = $placeholder;
+        }
+
+        return $html;
     }
 
     protected function toBadgeHtml(): string
@@ -946,6 +1016,8 @@ class Action extends ViewComponent implements Arrayable
 
     public function getClone(): static
     {
+        $this->linkHtmlTemplateCache ??= new \stdClass();
+
         return clone $this;
     }
 

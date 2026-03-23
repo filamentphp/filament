@@ -3,7 +3,7 @@
 namespace Filament\Support\Concerns;
 
 use Closure;
-use Illuminate\View\ComponentAttributeBag;
+use Filament\Support\View\ComponentAttributeBag;
 
 trait HasExtraAttributes
 {
