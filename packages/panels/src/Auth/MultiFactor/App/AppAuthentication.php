@@ -23,6 +23,7 @@ use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use LogicException;
@@ -169,7 +170,19 @@ class AppAuthentication implements MultiFactorAuthenticationProvider
         /** @var HasAppAuthentication $user */
         $user = Filament::auth()->user();
 
-        return $this->google2FA->verifyKey($secret ?? $this->getSecret($user), $code, $this->getCodeWindow());
+        $secret = $secret ?? $this->getSecret($user);
+        $cacheKey = 'filament.totp_timestamp.' . hash('sha256', $secret);
+        $oldTimestamp = cache()->get($cacheKey, 0);
+
+        $timestamp = $this->google2FA->verifyKeyNewer($secret, $code, $oldTimestamp, $this->getCodeWindow());
+
+        if ($timestamp !== false) {
+            cache()->put($cacheKey, $timestamp, ($this->getCodeWindow() + 1) * 30);
+
+            return true;
+        }
+
+        return false;
     }
 
     public function verifyRecoveryCode(string $recoveryCode, ?HasAppAuthenticationRecovery $user = null): bool
