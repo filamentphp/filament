@@ -3,7 +3,6 @@
 namespace App\Filament\Widgets;
 
 use App\Models\Post;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;

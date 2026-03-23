@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('website_pages', function (Blueprint $table) {
+        Schema::create('website_pages', function (Blueprint $table): void {
             $table->id();
             $table->string('title');
             $table->text('content')->nullable();

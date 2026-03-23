@@ -52,7 +52,7 @@ class EditPostSectionActions extends EditRecord
                     ])
                     ->footerActions([
                         fn (string $operation): Action => Action::make('save')
-                            ->action(function (Section $component) {
+                            ->action(function (Section $component): void {
                                 $this->saveFormComponentOnly($component);
 
                                 Notification::make()

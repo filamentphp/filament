@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('links', function (Blueprint $table) {
+        Schema::create('links', function (Blueprint $table): void {
             $table->id();
             $table->foreignId('post_id')->constrained()->cascadeOnDelete();
             $table->string('url');

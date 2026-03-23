@@ -64,7 +64,7 @@ class ManageHomepage extends Page
         $record = $this->getRecord();
 
         if (! $record) {
-            $record = new WebsitePage();
+            $record = new WebsitePage;
             $record->is_homepage = true;
         }
 

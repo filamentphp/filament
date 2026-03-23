@@ -4,9 +4,6 @@ namespace App\Filament\Resources\PostResource\Resources\CommentResource;
 
 use App\Filament\Resources\PostResource;
 use App\Models\Comment;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\Toggle;
 use Filament\Resources\Resource;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
