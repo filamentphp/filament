@@ -133,11 +133,17 @@ const formComponents = [
 ]
 
 formComponents.forEach((component) => {
+    // The rich-editor uses a wrapper entry point that exposes
+    // TipTap/ProseMirror on window.Filament.TipTap so custom extensions
+    // loaded via getTipTapJsExtensions() can share the same instance.
+    const entryFile =
+        component === 'rich-editor'
+            ? `./packages/forms/resources/js/components/rich-editor-entry.js`
+            : `./packages/forms/resources/js/components/${component}.js`
+
     compile({
         ...defaultOptions,
-        entryPoints: [
-            `./packages/forms/resources/js/components/${component}.js`,
-        ],
+        entryPoints: [entryFile],
         outfile: `./packages/forms/dist/components/${component}.js`,
     })
 })
