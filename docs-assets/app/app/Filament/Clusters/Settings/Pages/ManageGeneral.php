@@ -3,6 +3,8 @@
 namespace App\Filament\Clusters\Settings\Pages;
 
 use App\Filament\Clusters\Settings\SettingsCluster;
+use BackedEnum;
+use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -21,7 +23,7 @@ class ManageGeneral extends Page
 
     protected static ?string $navigationLabel = 'General';
 
-    protected static string | \BackedEnum | null $navigationIcon = Heroicon::OutlinedCog6Tooth;
+    protected static string | BackedEnum | null $navigationIcon = Heroicon::OutlinedCog6Tooth;
 
     protected static ?int $navigationSort = 1;
 
@@ -113,7 +115,7 @@ class ManageGeneral extends Page
     protected function getFormActions(): array
     {
         return [
-            \Filament\Actions\Action::make('save')
+            Action::make('save')
                 ->label('Save changes')
                 ->submit('form'),
         ];

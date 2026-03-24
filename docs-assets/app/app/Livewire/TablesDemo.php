@@ -17,6 +17,11 @@ use Filament\Actions\EditAction;
 use Filament\Actions\ForceDeleteBulkAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\DatePicker;
+use Filament\QueryBuilder\Constraints\BooleanConstraint;
+use Filament\QueryBuilder\Constraints\DateConstraint;
+use Filament\QueryBuilder\Constraints\SelectConstraint;
+use Filament\QueryBuilder\Constraints\TextConstraint;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Support\Enums\Alignment;
@@ -49,6 +54,7 @@ use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Enums\ColumnManagerLayout;
 use Filament\Tables\Enums\FiltersLayout;
+use Filament\Tables\Enums\PaginationMode;
 use Filament\Tables\Enums\RecordActionsPosition;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\Indicator;
@@ -1426,7 +1432,7 @@ class TablesDemo extends Component implements HasActions, HasSchemas, HasTable
             ->filtersFormColumns(2)
             ->filtersFormWidth(Width::FourExtraLarge)
             ->filtersFormSchema(fn (array $filters): array => [
-                \Filament\Schemas\Components\Section::make('Visibility')
+                Section::make('Visibility')
                     ->description('These filters affect the visibility of the records in the table.')
                     ->schema([
                         $filters['is_featured'],
@@ -1497,15 +1503,15 @@ class TablesDemo extends Component implements HasActions, HasSchemas, HasTable
             ->filters([
                 QueryBuilder::make()
                     ->constraints([
-                        \Filament\QueryBuilder\Constraints\TextConstraint::make('title'),
-                        \Filament\QueryBuilder\Constraints\BooleanConstraint::make('is_featured'),
-                        \Filament\QueryBuilder\Constraints\SelectConstraint::make('status')
+                        TextConstraint::make('title'),
+                        BooleanConstraint::make('is_featured'),
+                        SelectConstraint::make('status')
                             ->options([
                                 'draft' => 'Draft',
                                 'reviewing' => 'Reviewing',
                                 'published' => 'Published',
                             ]),
-                        \Filament\QueryBuilder\Constraints\DateConstraint::make('created_at'),
+                        DateConstraint::make('created_at'),
                     ]),
             ], layout: FiltersLayout::AboveContent);
     }
@@ -2562,7 +2568,7 @@ class TablesDemo extends Component implements HasActions, HasSchemas, HasTable
                     }),
                 TextColumn::make('author.name'),
             ])
-            ->paginationMode(\Filament\Tables\Enums\PaginationMode::Cursor)
+            ->paginationMode(PaginationMode::Cursor)
             ->defaultPaginationPageOption(5);
     }
 
@@ -2583,7 +2589,7 @@ class TablesDemo extends Component implements HasActions, HasSchemas, HasTable
                     }),
                 TextColumn::make('author.name'),
             ])
-            ->paginationMode(\Filament\Tables\Enums\PaginationMode::Simple)
+            ->paginationMode(PaginationMode::Simple)
             ->defaultPaginationPageOption(3);
     }
 
