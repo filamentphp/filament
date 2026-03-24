@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\UserResource\Pages;
 
 use App\Filament\Resources\UserResource;
+use BackedEnum;
 use Filament\Forms;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use Filament\Schemas\Schema;
@@ -15,7 +16,7 @@ class ManageUserPayments extends ManageRelatedRecords
 
     protected static string $relationship = 'payments';
 
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-credit-card';
+    protected static string | BackedEnum | null $navigationIcon = 'heroicon-o-credit-card';
 
     public static function getNavigationLabel(): string
     {
