@@ -19,7 +19,7 @@ import * as TipTapPmModel from '@tiptap/pm/model'
 
 window.Filament = window.Filament || {}
 window.Filament.TipTap = {
-    'core': TipTapCore,
+    core: TipTapCore,
     'pm/state': TipTapPmState,
     'pm/view': TipTapPmView,
     'pm/model': TipTapPmModel,

@@ -2,6 +2,9 @@
 
 namespace App\Livewire\Forms\Fields;
 
+use App\RichContentBlocks\CallToActionBlock;
+use App\RichContentBlocks\HeroBlock;
+use App\RichContentBlocks\TestimonialBlock;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\RichEditor\MentionProvider;
 use Filament\Forms\Components\RichEditor\TextColor;
@@ -114,9 +117,9 @@ class RichEditorSchema
                     RichEditor::make('richEditorCustomBlocks')
                         ->label('Content')
                         ->customBlocks([
-                            \App\RichContentBlocks\HeroBlock::class,
-                            \App\RichContentBlocks\CallToActionBlock::class,
-                            \App\RichContentBlocks\TestimonialBlock::class,
+                            HeroBlock::class,
+                            CallToActionBlock::class,
+                            TestimonialBlock::class,
                         ]),
                 ]),
             Group::make()
