@@ -81,6 +81,8 @@ RepeatableEntry::make('comments')
 
 <UtilityInjection set="infolistEntries" version="4.x">As well as allowing a static value, the `contained()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
+<AutoScreenshot name="infolists/entries/repeatable/contained-false" alt="Repeatable entry without styled container" version="4.x" />
+
 ## Table repeatable layout
 
 You can present repeatable items in a table format using the `table()` method, which accepts an array of `TableColumn` objects. These objects represent the columns of the table, which correspond to any components in the schema of the entry:

@@ -483,3 +483,59 @@ it('can throttle multi-factor challenge attempts per user', function (): void {
 
     $this->assertAuthenticatedAs($secondUser);
 });
+
+it('will not allow a TOTP code to be reused within the same time window', function (): void {
+    $appAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
+
+    $userToAuthenticate = User::factory()
+        ->hasAppAuthentication()
+        ->create();
+
+    $validCode = $appAuthentication->getCurrentCode($userToAuthenticate);
+
+    // First login with the TOTP code should succeed
+    livewire(Login::class)
+        ->fillForm([
+            'email' => $userToAuthenticate->email,
+            'password' => 'password',
+        ])
+        ->call('authenticate')
+        ->assertNotSet('userUndertakingMultiFactorAuthentication', null)
+        ->assertNoRedirect()
+        ->fillForm([
+            $appAuthentication->getId() => [
+                'code' => $validCode,
+            ],
+        ], 'multiFactorChallengeForm')
+        ->call('authenticate')
+        ->assertHasNoErrors()
+        ->assertRedirect(Filament::getUrl());
+
+    $this->assertAuthenticatedAs($userToAuthenticate);
+
+    auth()->logout();
+
+    $this->assertGuest();
+
+    // Second login with the same TOTP code should fail (replay protection)
+    livewire(Login::class)
+        ->fillForm([
+            'email' => $userToAuthenticate->email,
+            'password' => 'password',
+        ])
+        ->call('authenticate')
+        ->assertNotSet('userUndertakingMultiFactorAuthentication', null)
+        ->assertNoRedirect()
+        ->fillForm([
+            $appAuthentication->getId() => [
+                'code' => $validCode,
+            ],
+        ], 'multiFactorChallengeForm')
+        ->call('authenticate')
+        ->assertHasFormErrors([
+            "{$appAuthentication->getId()}.code",
+        ], 'multiFactorChallengeForm')
+        ->assertNoRedirect();
+
+    $this->assertGuest();
+});

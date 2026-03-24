@@ -2,6 +2,7 @@
 title: Multi-tenancy
 ---
 import Aside from "@components/Aside.astro"
+import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Introduction
 
@@ -109,6 +110,8 @@ class User extends Authenticatable implements FilamentUser, HasTenants
 
 In this example, users belong to many teams, so there is a `teams()` relationship. The `getTenants()` method returns the teams that the user belongs to. Filament uses this to list the tenants that the user has access to.
 
+<AutoScreenshot name="panels/tenancy" alt="A panel with multi-tenancy and a tenant switcher" version="4.x" />
+
 For security, you also need to implement the `canAccessTenant()` method of the `HasTenants` interface to prevent users from accessing the data of other tenants by guessing their tenant ID and putting it into the URL.
 
 You'll also want users to be able to [register new teams](#adding-a-tenant-registration-page).
@@ -172,6 +175,8 @@ public function panel(Panel $panel): Panel
 }
 ```
 
+<AutoScreenshot name="panels/tenancy/registration" alt="Tenant registration page" version="4.x" />
+
 ### Customizing the tenant registration page
 
 You can override any method you want on the base registration page class to make it act as you want. Even the `$view` property can be overridden to use a custom view of your choice.
@@ -222,6 +227,8 @@ public function panel(Panel $panel): Panel
         ->tenantProfile(EditTeamProfile::class);
 }
 ```
+
+<AutoScreenshot name="panels/tenancy/profile" alt="Tenant profile page" version="4.x" />
 
 ### Customizing the tenant profile page
 

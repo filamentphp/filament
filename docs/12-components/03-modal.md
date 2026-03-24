@@ -2,6 +2,8 @@
 title: Modal Blade component
 ---
 
+import AutoScreenshot from "@components/AutoScreenshot.astro"
+
 ## Introduction
 
 The modal component is able to open a dialog window or slide-over with any content:
@@ -17,6 +19,8 @@ The modal component is able to open a dialog window or slide-over with any conte
     {{-- Modal content --}}
 </x-filament::modal>
 ```
+
+<AutoScreenshot name="components/modal/simple" alt="A modal with heading, description and footer actions" version="4.x" />
 
 ## Controlling a modal from JavaScript
 
@@ -72,6 +76,8 @@ You can add a description, below the heading, to a modal by using the `descripti
 </x-filament::modal>
 ```
 
+<AutoScreenshot name="components/modal/heading" alt="A modal with heading and description" version="4.x" />
+
 ## Adding an icon to a modal
 
 You can add an [icon](../styling/icons) to a modal by using the `icon` attribute:
@@ -101,6 +107,8 @@ By default, the color of an icon is "primary". You can change it to be `danger`,
 </x-filament::modal>
 ```
 
+<AutoScreenshot name="components/modal/icon" alt="A modal with a danger icon" version="4.x" />
+
 ## Adding a footer to a modal
 
 You can add a footer to a modal by using the `footer` slot:
@@ -120,12 +128,14 @@ Alternatively, you can add actions into the footer by using the `footerActions` 
 ```blade
 <x-filament::modal>
     {{-- Modal content --}}
-    
+
     <x-slot name="footerActions">
         {{-- Modal footer actions --}}
     </x-slot>
 </x-filament::modal>
 ```
+
+<AutoScreenshot name="components/modal/footer" alt="A modal with a custom footer" version="4.x" />
 
 ## Changing the modal's alignment
 
@@ -137,6 +147,8 @@ By default, modal content will be aligned to the start, or centered if the modal
 </x-filament::modal>
 ```
 
+<AutoScreenshot name="components/modal/alignment" alt="A modal with center-aligned content" version="4.x" />
+
 ## Using a slide-over instead of a modal
 
 You can open a "slide-over" dialog instead of a modal by using the `slide-over` attribute:
@@ -146,6 +158,8 @@ You can open a "slide-over" dialog instead of a modal by using the `slide-over` 
     {{-- Slide-over content --}}
 </x-filament::modal>
 ```
+
+<AutoScreenshot name="components/modal/slide-over" alt="A slide-over modal" version="4.x" />
 
 ## Making the modal header sticky
 
@@ -161,6 +175,8 @@ The header of a modal scrolls out of view with the modal content when it overflo
 </x-filament::modal>
 ```
 
+<AutoScreenshot name="components/modal/sticky-header" alt="A modal with a sticky header" version="4.x" />
+
 ## Making the modal footer sticky
 
 The footer of a modal is rendered inline after the content by default. Slide-overs, however, have a sticky footer that always shows when scrolling the content. You may enable this for a modal too using the `sticky-footer` attribute:
@@ -168,12 +184,14 @@ The footer of a modal is rendered inline after the content by default. Slide-ove
 ```blade
 <x-filament::modal sticky-footer>
     {{-- Modal content --}}
-    
+
     <x-slot name="footer">
         {{-- Modal footer content --}}
     </x-slot>
 </x-filament::modal>
 ```
+
+<AutoScreenshot name="components/modal/sticky-footer" alt="A modal with a sticky footer" version="4.x" />
 
 ## Changing the modal width
 
@@ -184,6 +202,8 @@ You can change the width of the modal by using the `width` attribute. Options co
     {{-- Modal content --}}
 </x-filament::modal>
 ```
+
+<AutoScreenshot name="components/modal/width" alt="A modal with a custom width" version="4.x" />
 
 ## Closing the modal by clicking away
 

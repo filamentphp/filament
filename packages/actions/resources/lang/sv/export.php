@@ -14,6 +14,18 @@ return [
 
                 'label' => 'Kolumner',
 
+                'actions' => [
+
+                    'select_all' => [
+                        'label' => 'Markera alla',
+                    ],
+
+                    'deselect_all' => [
+                        'label' => 'Avmarkera alla',
+                    ],
+
+                ],
+
                 'form' => [
 
                     'is_enabled' => [
@@ -63,6 +75,11 @@ return [
         'max_rows' => [
             'title' => 'Exporten är för stor',
             'body' => 'Du kan inte exportera fler än 1 rad åt gången.|Du kan inte exportera fler än :count rader åt gången.',
+        ],
+
+        'no_columns' => [
+            'title' => 'Inga kolumner valda',
+            'body' => 'Välj minst en kolumn att exportera.',
         ],
 
         'started' => [

@@ -2,6 +2,8 @@
 title: Dropdown Blade component
 ---
 
+import AutoScreenshot from "@components/AutoScreenshot.astro"
+
 ## Introduction
 
 The dropdown component allows you to render a dropdown menu with a button that triggers it:
@@ -13,22 +15,24 @@ The dropdown component allows you to render a dropdown menu with a button that t
             More actions
         </x-filament::button>
     </x-slot>
-    
+
     <x-filament::dropdown.list>
         <x-filament::dropdown.list.item wire:click="openViewModal">
             View
         </x-filament::dropdown.list.item>
-        
+
         <x-filament::dropdown.list.item wire:click="openEditModal">
             Edit
         </x-filament::dropdown.list.item>
-        
+
         <x-filament::dropdown.list.item wire:click="openDeleteModal">
             Delete
         </x-filament::dropdown.list.item>
     </x-filament::dropdown.list>
 </x-filament::dropdown>
 ```
+
+<AutoScreenshot name="components/dropdown/simple" alt="A dropdown menu with action items" version="4.x" />
 
 ## Using a dropdown item as an anchor link
 
@@ -69,6 +73,8 @@ By default, the color of a dropdown item is "gray". You can change it to be `dan
 </x-filament::dropdown.list.item>
 ```
 
+<AutoScreenshot name="components/dropdown/colors" alt="Dropdown items in different colors" version="4.x" />
+
 ## Adding an icon to a dropdown item
 
 You can add an [icon](../styling/icons) to a dropdown item by using the `icon` attribute:
@@ -78,6 +84,8 @@ You can add an [icon](../styling/icons) to a dropdown item by using the `icon` a
     Edit
 </x-filament::dropdown.list.item>
 ```
+
+<AutoScreenshot name="components/dropdown/icons" alt="Dropdown items with icons" version="4.x" />
 
 ### Changing the icon color of a dropdown item
 
@@ -105,6 +113,8 @@ By default, the icon color uses the [same color as the item itself](#changing-th
 </x-filament::dropdown.list.item>
 ```
 
+<AutoScreenshot name="components/dropdown/icon-colors" alt="Dropdown items with different icon colors" version="4.x" />
+
 ## Adding an image to a dropdown item
 
 You can add a circular image to a dropdown item by using the `image` attribute:
@@ -114,6 +124,8 @@ You can add a circular image to a dropdown item by using the `image` attribute:
     Dan Harrin
 </x-filament::dropdown.list.item>
 ```
+
+<AutoScreenshot name="components/dropdown/image" alt="Dropdown items with images" version="4.x" />
 
 ## Adding a badge to a dropdown item
 
@@ -134,12 +146,14 @@ You can [change the color](badge#changing-the-color-of-the-badge) of the badge u
 ```blade
 <x-filament::dropdown.list.item badge-color="danger">
     Mark notifications as read
-    
+
     <x-slot name="badge">
         3
     </x-slot>
 </x-filament::dropdown.list.item>
 ```
+
+<AutoScreenshot name="components/dropdown/badge" alt="Dropdown items with badges" version="4.x" />
 
 ## Setting the placement of a dropdown
 
@@ -161,6 +175,8 @@ The dropdown may be set to a width by using the `width` attribute. Options corre
 </x-filament::dropdown>
 ```
 
+<AutoScreenshot name="components/dropdown/width" alt="A dropdown with a custom width" version="4.x" />
+
 ## Controlling the maximum height of a dropdown
 
 The dropdown content can have a maximum height using the `max-height` attribute, so that it scrolls. You can pass a [CSS length](https://developer.mozilla.org/en-US/docs/Web/CSS/length):
@@ -170,3 +186,5 @@ The dropdown content can have a maximum height using the `max-height` attribute,
     {{-- Dropdown items --}}
 </x-filament::dropdown>
 ```
+
+<AutoScreenshot name="components/dropdown/max-height" alt="A dropdown with a maximum height" version="4.x" />

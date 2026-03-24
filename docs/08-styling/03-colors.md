@@ -1,6 +1,7 @@
 ---
 title: Colors
 ---
+import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Introduction
 
@@ -65,6 +66,8 @@ FilamentColor::register([
 ```
 
 The `Color` class contains every [Tailwind CSS color](https://tailwindcss.com/docs/customizing-colors#color-palette-reference) to choose from.
+
+<AutoScreenshot name="panels/configuration/colors" alt="Panel with custom primary color" version="4.x" />
 
 You can also pass in a function to `register()` which will only get called when the app is getting rendered. This is useful if you are calling `register()` from a service provider, and want to access objects like the currently authenticated user, which are initialized later in middleware.
 

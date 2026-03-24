@@ -6,13 +6,35 @@ export default () => ({
 
     collapsedGroups: window.Alpine.$persist(null).as('collapsedGroups'),
 
+    scrollTop: 0,
+
     init() {
         this.resizeObserver = null
 
         this.setUpResizeObserver()
 
+        document.addEventListener('livewire:navigate', () => {
+            const nav = document.querySelector(
+                '.fi-main-sidebar .fi-sidebar-nav',
+            )
+
+            if (nav) {
+                this.scrollTop = nav.scrollTop
+            }
+        })
+
         document.addEventListener('livewire:navigated', () => {
             this.setUpResizeObserver()
+
+            requestAnimationFrame(() => {
+                const nav = document.querySelector(
+                    '.fi-main-sidebar .fi-sidebar-nav',
+                )
+
+                if (nav && this.scrollTop) {
+                    nav.scrollTop = this.scrollTop
+                }
+            })
         })
     },
 

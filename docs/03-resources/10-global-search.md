@@ -1,11 +1,14 @@
 ---
 title: Global search
 ---
+import AutoScreenshot from "@components/AutoScreenshot.astro"
 import Aside from "@components/Aside.astro"
 
 ## Introduction
 
 Global search allows you to search across all of your resource records, from anywhere in the app.
+
+<AutoScreenshot name="panels/resources/global-search" alt="Global search" version="4.x" />
 
 ## Setting global search result titles
 
@@ -57,7 +60,11 @@ public static function getGlobalSearchResultDetails(Model $record): array
 }
 ```
 
-In this example, the category and author of the record will be displayed below its title in the search result. However, the `category` and `author` relationships will be lazy-loaded, which will result in poor results performance. To [eager-load](https://laravel.com/docs/eloquent-relationships#eager-loading) these relationships, we must override the `getGlobalSearchEloquentQuery()` method:
+In this example, the category and author of the record will be displayed below its title in the search result.
+
+<AutoScreenshot name="panels/resources/global-search-details" alt="Global search with extra details" version="4.x" />
+
+However, the `category` and `author` relationships will be lazy-loaded, which will result in poor results performance. To [eager-load](https://laravel.com/docs/eloquent-relationships#eager-loading) these relationships, we must override the `getGlobalSearchEloquentQuery()` method:
 
 ```php
 public static function getGlobalSearchEloquentQuery(): Builder
@@ -96,6 +103,8 @@ public static function getGlobalSearchResultActions(Model $record): array
 ```
 
 You can learn more about how to style action buttons [here](../actions/overview).
+
+<AutoScreenshot name="panels/resources/global-search-actions" alt="Global search with actions" version="4.x" />
 
 ### Opening URLs from global search actions
 
@@ -172,6 +181,29 @@ public function panel(Panel $panel): Panel
 }
 ```
 
+## Requiring resources to opt in to global search
+
+By default, all resources with a [title attribute](#setting-global-search-result-titles) are included in global search results. If you'd prefer resources to explicitly opt in, you can use the `globalSearchResourceOptIn()` method in the [configuration](../panel-configuration):
+
+```php
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->globalSearchResourceOptIn();
+}
+```
+
+Now, only resources that explicitly set `$isGloballySearchable` to `true` will be included in global search results:
+
+```php
+protected static bool $isGloballySearchable = true;
+```
+
+Resources that do not declare this property will be excluded from global search, even if they have a title attribute set.
+
 ## Registering global search key bindings
 
 The global search field can be opened using keyboard shortcuts. To configure these, pass the `globalSearchKeyBindings()` method to the [configuration](../panel-configuration):
@@ -218,6 +250,8 @@ public function panel(Panel $panel): Panel
         ->globalSearchFieldKeyBindingSuffix();
 }
 ```
+
+<AutoScreenshot name="panels/resources/global-search-key-binding" alt="Global search field with key binding suffix" version="4.x" />
 
 To customize the suffix yourself, you can pass a string or function to the `globalSearchFieldSuffix()` method. For example, to provide a custom key binding suffix for each platform manually:
 

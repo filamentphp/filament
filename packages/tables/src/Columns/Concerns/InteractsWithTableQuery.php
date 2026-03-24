@@ -7,6 +7,7 @@ use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Arr;
+use Staudenmeir\EloquentHasManyDeep\HasManyDeep;
 use Znck\Eloquent\Relations\BelongsToThrough;
 
 use function Filament\Support\generate_search_column_expression;
@@ -95,7 +96,7 @@ trait InteractsWithTableQuery
 
                         $relatedTable = $model->getTable();
 
-                        if ($relationship instanceof BelongsToThrough) {
+                        if (($relationship instanceof BelongsToThrough) || ($relationship instanceof HasManyDeep)) {
                             $relatedTable = $relationship->getRelated()->getTable();
                             $searchColumn = str($searchColumn)->startsWith("{$relatedTable}.")
                                 ? $searchColumn

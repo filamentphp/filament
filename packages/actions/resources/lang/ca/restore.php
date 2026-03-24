@@ -54,6 +54,18 @@ return [
                 'title' => 'Registres restaurats',
             ],
 
+            'restored_partial' => [
+                'title' => 'Restaurats :count de :total',
+                'missing_authorization_failure_message' => 'No tens permís per restaurar :count.',
+                'missing_processing_failure_message' => ':count no s\'han pogut restaurar.',
+            ],
+
+            'restored_none' => [
+                'title' => 'Cap registre restaurat',
+                'missing_authorization_failure_message' => 'No tens permís per restaurar :count.',
+                'missing_processing_failure_message' => ':count no s\'han pogut restaurar.',
+            ],
+
         ],
 
     ],

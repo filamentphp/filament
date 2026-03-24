@@ -15,6 +15,44 @@
         @apply flex gap-x-1;
     }
 
+    & .fi-fo-rich-editor-dropdown-tool {
+        @apply relative inline-flex;
+    }
+
+    & .fi-fo-rich-editor-dropdown-tool-trigger {
+        @apply flex h-8 cursor-pointer items-center justify-center gap-0.5 rounded-lg border-none bg-transparent px-1 text-sm font-semibold text-gray-700 transition duration-75 outline-none hover:bg-gray-50 focus-visible:bg-gray-50 dark:text-gray-200 dark:hover:bg-white/5 dark:focus-visible:bg-white/5;
+
+        &.fi-active {
+            @apply text-primary-600 dark:text-primary-400 bg-gray-50 dark:bg-white/5;
+        }
+    }
+
+    & .fi-fo-rich-editor-dropdown-tool-chevron {
+        @apply h-3 w-3 text-gray-400 dark:text-gray-500;
+    }
+
+    & .fi-fo-rich-editor-dropdown-tool-menu {
+        @apply absolute start-0 top-[calc(100%+0.25rem)] z-30 flex gap-1 rounded-lg border border-gray-300 bg-white p-1 shadow-lg dark:border-gray-600 dark:bg-gray-800;
+    }
+
+    & .fi-fo-rich-editor-dropdown-tool-option {
+        @apply flex h-8 min-w-8 cursor-pointer items-center justify-center rounded-lg border-none bg-transparent p-0 text-sm font-semibold text-gray-700 transition duration-75 outline-none hover:bg-gray-50 focus-visible:bg-gray-50 dark:text-gray-200 dark:hover:bg-white/5 dark:focus-visible:bg-white/5;
+
+        &.fi-active {
+            @apply text-primary-600 dark:text-primary-400 bg-gray-50 dark:bg-white/5;
+        }
+    }
+
+    & .fi-fo-rich-editor-dropdown-tool-textual {
+        & .fi-fo-rich-editor-dropdown-tool-menu {
+            @apply min-w-32 flex-col;
+        }
+
+        & .fi-fo-rich-editor-dropdown-tool-option {
+            @apply min-w-0 justify-start gap-2 px-2 py-1 text-[0.8125rem] font-normal whitespace-nowrap;
+        }
+    }
+
     & .fi-fo-rich-editor-tool {
         @apply flex h-8 min-w-8 items-center justify-center rounded-lg text-sm font-semibold text-gray-700 transition duration-75 hover:bg-gray-50 focus-visible:bg-gray-50 dark:text-gray-200 dark:hover:bg-white/5 dark:focus-visible:bg-white/5;
 

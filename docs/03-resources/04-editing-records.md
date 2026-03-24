@@ -1,6 +1,9 @@
 ---
 title: Editing records
 ---
+import AutoScreenshot from "@components/AutoScreenshot.astro"
+
+<AutoScreenshot name="panels/resources/editing" alt="Resource edit page" version="4.x" />
 
 ## Customizing data before filling the form
 
@@ -223,6 +226,8 @@ Section::make('Rate limiting')
 
 The `$operation` helper is available, to ensure that the action is only visible when the form is being edited.
 
+<AutoScreenshot name="panels/resources/editing-section-actions" alt="Resource edit page with section footer save action" version="4.x" />
+
 ## Halting the saving process
 
 At any time, you may call `$this->halt()` from inside a lifecycle hook or mutation method, which will halt the entire saving process:
@@ -290,6 +295,8 @@ class EditUser extends EditRecord
 }
 ```
 
+<AutoScreenshot name="panels/resources/editing-header-actions" alt="Resource edit page with custom header actions" version="4.x" />
+
 Or, a new button next to "Save" below the form:
 
 ```php
@@ -339,6 +346,8 @@ protected function getFormActions(): array
     return [];
 }
 ```
+
+<AutoScreenshot name="panels/resources/editing-save-in-header" alt="Resource edit page with save action in the header" version="4.x" />
 
 ## Creating another Edit page
 
