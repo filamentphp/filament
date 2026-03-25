@@ -65,9 +65,7 @@ export default ({ livewireId }) => ({
             return
         }
 
-        if (
-            !this.$el.querySelector(`#${modalId}`)
-        ) {
+        if (!this.$el.querySelector(`#${modalId}`)) {
             this.$nextTick(() => this.openModal())
 
             return
