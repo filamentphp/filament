@@ -1,7 +1,15 @@
 export default ({ livewireId }) => ({
     actionNestingIndex: null,
 
+    userClosedModals: new Set(),
+
     init() {
+        this.$el.addEventListener('modal-closed', (event) => {
+            if (event.detail?.id) {
+                this.userClosedModals.add(event.detail.id)
+            }
+        })
+
         window.addEventListener('sync-action-modals', (event) => {
             if (event.detail.id !== livewireId) {
                 return
@@ -41,13 +49,24 @@ export default ({ livewireId }) => ({
         this.actionNestingIndex = newActionNestingIndex
 
         if (this.actionNestingIndex === null) {
+            this.userClosedModals.clear()
+
+            return
+        }
+
+        const modalId = this.generateModalId(newActionNestingIndex)
+
+        // If the user already closed this modal locally (e.g. by pressing
+        // Escape twice quickly), do not reopen it. The pending Livewire
+        // request will handle the server-side unmount.
+        if (this.userClosedModals.has(modalId)) {
+            this.userClosedModals.delete(modalId)
+
             return
         }
 
         if (
-            !this.$el.querySelector(
-                `#${this.generateModalId(newActionNestingIndex)}`,
-            )
+            !this.$el.querySelector(`#${modalId}`)
         ) {
             this.$nextTick(() => this.openModal())
 
