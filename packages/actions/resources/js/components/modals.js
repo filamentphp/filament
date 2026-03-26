@@ -56,9 +56,6 @@ export default ({ livewireId }) => ({
 
         const modalId = this.generateModalId(newActionNestingIndex)
 
-        // If the user already closed this modal locally (e.g. by pressing
-        // Escape twice quickly), do not reopen it. The pending Livewire
-        // request will handle the server-side unmount.
         if (this.dismissedModals.has(modalId)) {
             this.dismissedModals.delete(modalId)
 
