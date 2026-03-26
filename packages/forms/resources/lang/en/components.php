@@ -548,6 +548,35 @@ return [
 
                         'color' => [
                             'label' => 'Color',
+
+                            'options' => [
+                                'slate' => 'Slate',
+                                'gray' => 'Gray',
+                                'zinc' => 'Zinc',
+                                'neutral' => 'Neutral',
+                                'stone' => 'Stone',
+                                'mauve' => 'Mauve',
+                                'olive' => 'Olive',
+                                'mist' => 'Mist',
+                                'taupe' => 'Taupe',
+                                'red' => 'Red',
+                                'orange' => 'Orange',
+                                'amber' => 'Amber',
+                                'yellow' => 'Yellow',
+                                'lime' => 'Lime',
+                                'green' => 'Green',
+                                'emerald' => 'Emerald',
+                                'teal' => 'Teal',
+                                'cyan' => 'Cyan',
+                                'sky' => 'Sky',
+                                'blue' => 'Blue',
+                                'indigo' => 'Indigo',
+                                'violet' => 'Violet',
+                                'purple' => 'Purple',
+                                'fuchsia' => 'Fuchsia',
+                                'pink' => 'Pink',
+                                'rose' => 'Rose',
+                            ],
                         ],
 
                         'custom_color' => [

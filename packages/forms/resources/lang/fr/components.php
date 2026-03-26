@@ -536,6 +536,59 @@ return [
 
             ],
 
+            'text_color' => [
+
+                'label' => 'Couleur du texte',
+
+                'modal' => [
+
+                    'heading' => 'Couleur du texte',
+
+                    'form' => [
+
+                        'color' => [
+                            'label' => 'Couleur',
+
+                            'options' => [
+                                'slate' => 'Ardoise',
+                                'gray' => 'Gris',
+                                'zinc' => 'Zinc',
+                                'neutral' => 'Neutre',
+                                'stone' => 'Pierre',
+                                'mauve' => 'Mauve',
+                                'olive' => 'Olive',
+                                'mist' => 'Brume',
+                                'taupe' => 'Taupe',
+                                'red' => 'Rouge',
+                                'orange' => 'Orange',
+                                'amber' => 'Ambre',
+                                'yellow' => 'Jaune',
+                                'lime' => 'Citron vert',
+                                'green' => 'Vert',
+                                'emerald' => 'Émeraude',
+                                'teal' => 'Sarcelle',
+                                'cyan' => 'Cyan',
+                                'sky' => 'Ciel',
+                                'blue' => 'Bleu',
+                                'indigo' => 'Indigo',
+                                'violet' => 'Violet',
+                                'purple' => 'Pourpre',
+                                'fuchsia' => 'Fuchsia',
+                                'pink' => 'Rose',
+                                'rose' => 'Rosé',
+                            ],
+                        ],
+
+                        'custom_color' => [
+                            'label' => 'Couleur personnalisée',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
         ],
 
         'no_merge_tag_search_results_message' => 'Aucun résultat de balise de fusion.',
