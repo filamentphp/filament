@@ -140,8 +140,6 @@ Route::name('filament.')
                                             $routes($panel);
                                         }
 
-                                        Route::get('/', RedirectToHomeController::class)->name('home');
-
                                         Route::name('tenant.')->group(function () use ($panel): void {
                                             if ($panel->hasTenantBilling()) {
                                                 Route::get($panel->getTenantBillingRouteSlug(), $panel->getTenantBillingProvider()->getRouteAction())
@@ -175,6 +173,12 @@ Route::name('filament.')
                                             $configuration->resource::registerRoutes($panel, configuration: $configuration);
 
                                             Filament::setCurrentResourceConfigurationKey(null);
+                                        }
+
+                                        if (! collect($panel->getPages())->contains(
+                                            static fn (string $page): bool => blank($page::getCluster()) && $page::getRoutePath($panel) === '/',
+                                        )) {
+                                            Route::get('/', RedirectToHomeController::class)->name('home');
                                         }
                                     });
 
