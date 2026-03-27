@@ -183,12 +183,6 @@ trait HasRoutes
             return route($homeRouteName, $tenant ? ['tenant' => $tenant] : []);
         }
 
-        foreach ($this->getPages() as $page) {
-            if (((! $hasTenancy) || $tenant) && blank($page::getCluster()) && $page::getRoutePath($this) === '/' && Route::has($pageRouteName = $page::getRouteName($this))) {
-                return route($pageRouteName, $tenant ? ['tenant' => $tenant] : []);
-            }
-        }
-
         if ($tenant) {
             $tenantSlugAttribute = $this->getTenantSlugAttribute();
             $tenantRoutePrefix = $this->getTenantRoutePrefix() ?? '';
