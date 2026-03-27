@@ -175,9 +175,11 @@ Route::name('filament.')
                                             Filament::setCurrentResourceConfigurationKey(null);
                                         }
 
-                                        if (! collect($panel->getPages())->contains(
-                                            static fn (string $page): bool => blank($page::getCluster()) && $page::getRoutePath($panel) === '/',
-                                        )) {
+                                        $rootUri = trim(Route::getLastGroupPrefix(), '/') ?: '/';
+                                        $groupStack = Route::getGroupStack();
+                                        $rootKey = (end($groupStack)['domain'] ?? '') . $rootUri;
+
+                                        if (! isset(Route::getRoutes()->getRoutesByMethod()['GET'][$rootKey])) {
                                             Route::get('/', RedirectToHomeController::class)->name('home');
                                         }
                                     });

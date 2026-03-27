@@ -39,3 +39,7 @@ it('does not register the home route when a page already owns the root path', fu
     expect(Route::getRoutes()->getByName('filament.single-domain.home'))->toBeNull();
     expect(Route::getRoutes()->getByName('filament.single-domain.pages.dashboard'))->not->toBeNull();
 });
+
+it('preserves the dashboard route when registered on a panel without a domain', function (): void {
+    expect(Route::getRoutes()->getByName('filament.admin.pages.dashboard'))->not->toBeNull();
+});
