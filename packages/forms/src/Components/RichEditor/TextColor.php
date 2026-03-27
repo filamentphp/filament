@@ -4,6 +4,7 @@ namespace Filament\Forms\Components\RichEditor;
 
 use Filament\Support\Colors\Color;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 
 class TextColor
 {
@@ -47,10 +48,14 @@ class TextColor
      */
     public static function getDefaults(): array
     {
+        $translations = __('filament-forms::components.rich_editor.actions.text_color.modal.form.color.options');
+
         return Arr::mapWithKeys(
             Color::all(),
             fn (array $color, string $name): array => [$name => TextColor::make(
-                __("filament-forms::components.rich_editor.actions.text_color.modal.form.color.options.{$name}"),
+                is_array($translations) && array_key_exists($name, $translations)
+                    ? $translations[$name]
+                    : Str::ucwords($name),
                 $color['600'],
                 $color['400'] ?? null,
             )],
