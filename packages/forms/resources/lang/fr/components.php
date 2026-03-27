@@ -548,7 +548,6 @@ return [
 
                         'color' => [
                             'label' => 'Couleur',
-
                             'options' => [
                                 'slate' => 'Ardoise',
                                 'gray' => 'Gris',
@@ -591,7 +590,18 @@ return [
 
         ],
 
+        'file_attachments_accepted_file_types_message' => 'Les fichiers joints doivent être de type : :values.',
+
+        'file_attachments_max_size_message' => 'Les fichiers joints ne doivent pas dépasser :max kilobytes.',
+
         'no_merge_tag_search_results_message' => 'Aucun résultat de balise de fusion.',
+
+        'mentions' => [
+            'no_options_message' => 'Aucune option disponible.',
+            'no_search_results_message' => 'Aucun résultat ne correspond à votre recherche.',
+            'search_prompt' => 'Commencez à taper pour rechercher...',
+            'searching_message' => 'En recherche...',
+        ],
 
         'tools' => [
             'align_center' => 'Centrer',
@@ -603,12 +613,18 @@ return [
             'bold' => 'Gras',
             'bullet_list' => 'Liste à puces',
             'clear_formatting' => 'Effacer la mise en forme',
+            'code' => 'Code',
             'code_block' => 'Bloc de code',
             'custom_blocks' => 'Blocs',
             'details' => 'Détails',
             'h1' => 'Titre',
-            'h2' => 'Titre',
-            'h3' => 'Sous-titre',
+            'h2' => 'Titre 2',
+            'h3' => 'Titre 3',
+            'h4' => 'Titre 4',
+            'h5' => 'Titre 5',
+            'h6' => 'Titre 6',
+            'grid' => 'Grille',
+            'grid_delete' => 'Supprimer la grille',
             'highlight' => 'Surligner',
             'horizontal_rule' => 'Ligne horizontale',
             'italic' => 'Italique',
@@ -616,6 +632,7 @@ return [
             'link' => 'Lien',
             'merge_tags' => 'Balises de fusion',
             'ordered_list' => 'Liste numérotée',
+            'paragraph' => 'Paragraphe',
             'redo' => 'Refaire',
             'small' => 'Petit texte',
             'strike' => 'Barré',
@@ -632,6 +649,8 @@ return [
             'table_merge_cells' => 'Fusionner les cellules',
             'table_split_cell' => 'Diviser la cellule',
             'table_toggle_header_row' => 'Basculer la ligne d\'en-tête',
+            'table_toggle_header_cell' => 'Basculer la cellule d\'en-tête',
+            'text_color' => 'Couleur du texte',
             'underline' => 'Souligné',
             'undo' => 'Annuler',
         ],
