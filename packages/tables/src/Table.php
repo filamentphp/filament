@@ -67,12 +67,6 @@ class Table extends ViewComponent
         'tableSearch',
     ];
 
-    /**
-     * Pre-computed wire target string for use in Blade templates,
-     * avoiding repeated `implode()` calls per-row.
-     */
-    public const LOADING_TARGETS_WIRE_TARGET = 'gotoPage,nextPage,previousPage,removeTableFilter,removeTableFilters,reorderTable,resetTableFiltersForm,sortTable,tableColumnSearches,tableFilters,tableRecordsPerPage,tableSearch';
-
     final public function __construct(HasTable $livewire)
     {
         $this->livewire($livewire);

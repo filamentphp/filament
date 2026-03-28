@@ -151,6 +151,8 @@
     if (is_string($filtersFormWidth)) {
         $filtersFormWidth = Width::tryFrom($filtersFormWidth) ?? $filtersFormWidth;
     }
+
+    $loadingTargetsWireTarget = implode(',', \Filament\Tables\Table::LOADING_TARGETS);
 @endphp
 
 <div
@@ -864,7 +866,7 @@
                                             {{-- Make sure the "checked" state gets re-evaluated after a Livewire request: --}}
                                             wire:key="{{ $this->getId() }}.table.bulk-select-page.checkbox.{{ \Illuminate\Support\Str::random() }}"
                                             wire:loading.attr="disabled"
-                                            wire:target="{{ \Filament\Tables\Table::LOADING_TARGETS_WIRE_TARGET }}"
+                                            wire:target="{{ $loadingTargetsWireTarget }}"
                                             class="fi-ta-page-checkbox fi-checkbox-input"
                                         />
                                     @endif
@@ -1100,7 +1102,7 @@
                                                     "
                                                     wire:key="{{ $this->getId() }}.table.bulk_select_group.checkbox.{{ $page }}"
                                                     wire:loading.attr="disabled"
-                                                    wire:target="{{ \Filament\Tables\Table::LOADING_TARGETS_WIRE_TARGET }}"
+                                                    wire:target="{{ $loadingTargetsWireTarget }}"
                                                     class="fi-ta-group-checkbox fi-checkbox-input"
                                                 />
                                             @endif
@@ -1189,7 +1191,7 @@
                                                 x-bind:checked="isRecordSelected(@js($recordKey)) ? 'checked' : null"
                                                 data-group="{{ $recordGroupKey }}"
                                                 wire:loading.attr="disabled"
-                                                wire:target="{{ \Filament\Tables\Table::LOADING_TARGETS_WIRE_TARGET }}"
+                                                wire:target="{{ $loadingTargetsWireTarget }}"
                                                 class="fi-ta-record-checkbox fi-checkbox-input"
                                             />
                                         @endif
@@ -1497,7 +1499,7 @@
                                                     {{-- Make sure the "checked" state gets re-evaluated after a Livewire request: --}}
                                                     wire:key="{{ $this->getId() }}.table.bulk-select-page.checkbox.stacked.{{ \Illuminate\Support\Str::random() }}"
                                                     wire:loading.attr="disabled"
-                                                    wire:target="{{ \Filament\Tables\Table::LOADING_TARGETS_WIRE_TARGET }}"
+                                                    wire:target="{{ $loadingTargetsWireTarget }}"
                                                     class="fi-ta-page-checkbox fi-checkbox-input"
                                                 />
                                             @endif
@@ -1616,7 +1618,7 @@
                                                             {{-- Make sure the "checked" state gets re-evaluated after a Livewire request: --}}
                                                             wire:key="{{ $this->getId() }}.table.bulk-select-page.checkbox.{{ \Illuminate\Support\Str::random() }}"
                                                             wire:loading.attr="disabled"
-                                                            wire:target="{{ \Filament\Tables\Table::LOADING_TARGETS_WIRE_TARGET }}"
+                                                            wire:target="{{ $loadingTargetsWireTarget }}"
                                                             class="fi-ta-page-checkbox fi-checkbox-input"
                                                         />
                                                     @endif
@@ -1798,7 +1800,7 @@
                                                         {{-- Make sure the "checked" state gets re-evaluated after a Livewire request: --}}
                                                         wire:key="{{ $this->getId() }}.table.bulk-select-page.checkbox.{{ \Illuminate\Support\Str::random() }}"
                                                         wire:loading.attr="disabled"
-                                                        wire:target="{{ \Filament\Tables\Table::LOADING_TARGETS_WIRE_TARGET }}"
+                                                        wire:target="{{ $loadingTargetsWireTarget }}"
                                                         class="fi-ta-page-checkbox fi-checkbox-input"
                                                     />
                                                 @endif
@@ -2008,7 +2010,7 @@
                                                                         "
                                                                         wire:key="{{ $this->getId() }}.table.bulk_select_group.checkbox.{{ $page }}"
                                                                         wire:loading.attr="disabled"
-                                                                        wire:target="{{ \Filament\Tables\Table::LOADING_TARGETS_WIRE_TARGET }}"
+                                                                        wire:target="{{ $loadingTargetsWireTarget }}"
                                                                         class="fi-ta-group-checkbox fi-checkbox-input"
                                                                     />
                                                                 @endif
@@ -2098,7 +2100,7 @@
                                                                         "
                                                                         wire:key="{{ $this->getId() }}.table.bulk_select_group.checkbox.{{ $page }}"
                                                                         wire:loading.attr="disabled"
-                                                                        wire:target="{{ \Filament\Tables\Table::LOADING_TARGETS_WIRE_TARGET }}"
+                                                                        wire:target="{{ $loadingTargetsWireTarget }}"
                                                                         class="fi-ta-group-checkbox fi-checkbox-input"
                                                                     />
                                                                 @endif
@@ -2178,7 +2180,7 @@
                                                                     x-bind:checked="isRecordSelected(@js($recordKey)) ? 'checked' : null"
                                                                     data-group="{{ $recordGroupKey }}"
                                                                     wire:loading.attr="disabled"
-                                                                    wire:target="{{ \Filament\Tables\Table::LOADING_TARGETS_WIRE_TARGET }}"
+                                                                    wire:target="{{ $loadingTargetsWireTarget }}"
                                                                     class="fi-ta-record-checkbox fi-checkbox-input"
                                                                 />
                                                             @endif
@@ -2332,7 +2334,7 @@
                                                                     x-bind:checked="isRecordSelected(@js($recordKey)) ? 'checked' : null"
                                                                     data-group="{{ $recordGroupKey }}"
                                                                     wire:loading.attr="disabled"
-                                                                    wire:target="{{ \Filament\Tables\Table::LOADING_TARGETS_WIRE_TARGET }}"
+                                                                    wire:target="{{ $loadingTargetsWireTarget }}"
                                                                     class="fi-ta-record-checkbox fi-checkbox-input"
                                                                 />
                                                             @endif
