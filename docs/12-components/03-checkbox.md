@@ -2,6 +2,8 @@
 title: Checkbox Blade component
 ---
 
+import AutoScreenshot from "@components/AutoScreenshot.astro"
+
 ## Introduction
 
 You can use the checkbox component to render a checkbox input that can be used to toggle a boolean value:
@@ -15,6 +17,8 @@ You can use the checkbox component to render a checkbox input that can be used t
     </span>
 </label>
 ```
+
+<AutoScreenshot name="components/checkbox/simple" alt="Checkboxes with labels" version="4.x" />
 
 ## Triggering the error state of the checkbox
 

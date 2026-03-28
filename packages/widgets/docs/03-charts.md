@@ -1,6 +1,7 @@
 ---
 title: Chart widgets
 ---
+import AutoScreenshot from "@components/AutoScreenshot.astro"
 import Aside from "@components/Aside.astro"
 
 ## Introduction
@@ -52,6 +53,8 @@ class BlogPostsChart extends ChartWidget
 
 Now, check out your widget in the dashboard.
 
+<AutoScreenshot name="widgets/chart/line" alt="Line chart" version="4.x" />
+
 ## Available chart types
 
 Below is a list of available chart widget classes which you may extend, and their corresponding [Chart.js](https://www.chartjs.org/docs) documentation page, for inspiration on what to return from `getData()`:
@@ -64,6 +67,24 @@ Below is a list of available chart widget classes which you may extend, and thei
 - Polar area chart - [Chart.js documentation](https://www.chartjs.org/docs/latest/charts/polar)
 - Radar chart - [Chart.js documentation](https://www.chartjs.org/docs/latest/charts/radar)
 - Scatter chart - [Chart.js documentation](https://www.chartjs.org/docs/latest/charts/scatter)
+
+For example, you could use a bar chart by returning `'bar'` from the `getType()` method:
+
+<AutoScreenshot name="widgets/chart/bar" alt="Bar chart" version="4.x" />
+
+Here are examples of the other available chart types:
+
+<AutoScreenshot name="widgets/chart/pie" alt="Pie chart" version="4.x" />
+
+<AutoScreenshot name="widgets/chart/doughnut" alt="Doughnut chart" version="4.x" />
+
+<AutoScreenshot name="widgets/chart/radar" alt="Radar chart" version="4.x" />
+
+<AutoScreenshot name="widgets/chart/polar-area" alt="Polar area chart" version="4.x" />
+
+<AutoScreenshot name="widgets/chart/scatter" alt="Scatter chart" version="4.x" />
+
+<AutoScreenshot name="widgets/chart/bubble" alt="Bubble chart" version="4.x" />
 
 ## Customizing the chart color
 
@@ -161,6 +182,8 @@ protected function getData(): array
 }
 ```
 
+<AutoScreenshot name="widgets/chart/filter" alt="Chart with filter" version="4.x" />
+
 ### Custom filters
 
 You can use [schema components](../schemas) to build custom filters for your chart widget. This approach offers a more flexible way to define filters.
@@ -205,6 +228,8 @@ protected function getData(): array
 ```
 
 The `$this->filters` array will always reflect the current form data. Please note that this data is not validated, as it is available live and not intended to be used for anything other than querying the database. You must ensure that the data is valid before using it.
+
+<AutoScreenshot name="widgets/chart/custom-filters" alt="Chart with custom filters" version="4.x" />
 
 <Aside variant="info">
     If you want to add filters that apply to multiple widgets at once, see [filtering widget data](overview#filtering-widget-data) in the dashboard.
@@ -292,6 +317,8 @@ You may place a maximum height on the chart to ensure that it doesn't get too bi
 protected ?string $maxHeight = '300px';
 ```
 
+<AutoScreenshot name="widgets/chart/max-height" alt="Chart with maximum height" version="4.x" />
+
 ## Setting chart configuration options
 
 You may specify an `$options` variable on the chart class to control the many configuration options that the Chart.js library provides. For instance, you could turn off the [legend](https://www.chartjs.org/docs/latest/configuration/legend.html) for a line chart:
@@ -353,6 +380,8 @@ public function getDescription(): ?string
 }
 ```
 
+<AutoScreenshot name="widgets/chart/description" alt="Chart with description" version="4.x" />
+
 ## Disabling lazy loading
 
 By default, widgets are lazy-loaded. This means that they will only be loaded when they are visible on the page.
@@ -370,6 +399,8 @@ You may allow the chart to be collapsible by setting the `$isCollapsible` proper
 ```php
 protected bool $isCollapsible = true;
 ```
+
+<AutoScreenshot name="widgets/chart/collapsible" alt="Collapsible chart" version="4.x" />
 
 ## Using custom Chart.js plugins
 

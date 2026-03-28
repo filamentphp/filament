@@ -253,6 +253,8 @@ DatePicker::make('custom_starts_at')
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `defaultFocusedDate()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
+<AutoScreenshot name="forms/fields/date-time-picker/default-focused-date" alt="Date time picker with a default focused date" version="4.x" />
+
 ## Adding affix text aside the field
 
 You may place text before and after the input using the `prefix()` and `suffix()` methods:
@@ -299,6 +301,8 @@ TimePicker::make('at')
 ```
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing static values, the `prefixIconColor()` and `suffixIconColor()` methods also accept a function to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+<AutoScreenshot name="forms/fields/date-time-picker/prefix-icon-color" alt="Date time picker with prefix icon in color" version="4.x" />
 
 ## Making the field read-only
 

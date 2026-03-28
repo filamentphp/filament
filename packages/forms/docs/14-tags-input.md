@@ -101,6 +101,8 @@ TagsInput::make('percentages')
     ->tagSuffix('%')
 ```
 
+<AutoScreenshot name="forms/fields/tags-input/tag-prefix" alt="Tags input with tag prefix" version="4.x" />
+
 <UtilityInjection set="formFields" version="4.x">As well as allowing static values, the `tagPrefix()` and `tagSuffix()` methods also accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters.</UtilityInjection>
 
 ## Reordering tags
@@ -135,6 +137,8 @@ use Filament\Forms\Components\TagsInput;
 TagsInput::make('tags')
     ->color('danger')
 ```
+
+<AutoScreenshot name="forms/fields/tags-input/color" alt="Tags input with colored tags" version="4.x" />
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `color()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 

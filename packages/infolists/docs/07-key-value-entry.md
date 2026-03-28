@@ -72,3 +72,5 @@ KeyValueEntry::make('meta')
 ```
 
 <UtilityInjection set="infolistEntries" version="4.x">As well as allowing a static value, the `valueLabel()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+<AutoScreenshot name="infolists/entries/key-value/custom-labels" alt="Key-value entry with custom column labels" version="4.x" />
