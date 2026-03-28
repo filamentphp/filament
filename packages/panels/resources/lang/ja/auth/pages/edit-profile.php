@@ -55,6 +55,11 @@ return [
             'title' => '保存しました',
         ],
 
+        'throttled' => [
+            'title' => '試行回数が多すぎます。:seconds 秒後に再度お試しください。',
+            'body' => ':seconds 秒後に再度お試しください。',
+        ],
+
     ],
 
     'actions' => [
