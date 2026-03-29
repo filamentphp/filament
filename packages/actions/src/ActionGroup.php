@@ -79,7 +79,7 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
     public const LINK_VIEW = 'filament::components.link';
 
     /**
-     * @var array<Action | ActionGroup>
+     * @var array<Action | ActionGroup | ActionSeparator>
      */
     protected array $actions;
 
@@ -108,7 +108,7 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
     protected array $extraDropdownAttributes = [];
 
     /**
-     * @param  array<Action | ActionGroup>  $actions
+     * @param  array<Action | ActionGroup | ActionSeparator>  $actions
      */
     public function __construct(array $actions)
     {
@@ -116,7 +116,7 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
     }
 
     /**
-     * @param  array<Action | ActionGroup>  $actions
+     * @param  array<Action | ActionGroup | ActionSeparator>  $actions
      */
     public static function make(array $actions): static
     {
@@ -134,7 +134,7 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
     }
 
     /**
-     * @param  array<Action | ActionGroup>  $actions
+     * @param  array<Action | ActionGroup | ActionSeparator>  $actions
      */
     public function actions(array $actions): static
     {
@@ -144,7 +144,9 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
         foreach ($actions as $action) {
             $action->group($this);
 
-            if ($action instanceof ActionGroup) {
+            if ($action instanceof ActionSeparator) {
+                // Separators are visual-only, not added to flatActions.
+            } elseif ($action instanceof ActionGroup) {
                 $action->defaultDropdownPlacement('right-top');
 
                 $this->flatActions = [
@@ -233,12 +235,13 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
     }
 
     /**
-     * @return array<Action | ActionGroup>
+     * @return array<Action | ActionGroup | ActionSeparator>
      */
     public function getActions(): array
     {
         return array_map(
-            fn (Action | ActionGroup $action) => match (true) {
+            fn (Action | ActionGroup | ActionSeparator $action) => match (true) {
+                $action instanceof ActionSeparator => $action,
                 $action instanceof Action => $action->defaultView($this->isButtonGroup() ? $action::BUTTON_VIEW : $action::GROUPED_VIEW),
                 $action instanceof ActionGroup => $action->defaultTriggerView($this->isButtonGroup() ? $action::BUTTON_VIEW : $action::GROUPED_VIEW),
             },
@@ -469,8 +472,8 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
 
         if (! $this->hasDropdown()) {
             return collect($this->getActions())
-                ->filter(fn (Action | ActionGroup $action): bool => $action->isVisible())
-                ->map(fn (Action | ActionGroup $action): string => $action->toHtml())
+                ->filter(fn (Action | ActionGroup | ActionSeparator $action): bool => $action->isVisible())
+                ->map(fn (Action | ActionGroup | ActionSeparator $action): string => $action->toHtml())
                 ->implode('');
         }
 
@@ -727,7 +730,7 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
     protected function cloneActions(): void
     {
         $this->actions = array_map(
-            fn (Action | ActionGroup $action): Action | ActionGroup => $action->getClone()->group($this),
+            fn (Action | ActionGroup | ActionSeparator $action): Action | ActionGroup | ActionSeparator => $action->getClone()->group($this),
             $this->actions,
         );
 

@@ -1,3 +1,7 @@
+.fi-ac-separator {
+    @apply h-6 w-px self-stretch bg-gray-200 dark:bg-white/10;
+}
+
 .fi-ac {
     @apply gap-3;
 
