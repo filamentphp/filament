@@ -14,6 +14,7 @@ use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Filament\Support\Facades\FilamentTimezone;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Carbon;
+use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 use Illuminate\View\ComponentAttributeBag;
 
 class DateTimePicker extends Field implements HasAffixActions
@@ -416,7 +417,7 @@ class DateTimePicker extends Field implements HasAffixActions
      */
     public function getExtraTriggerAttributes(): array
     {
-        $temporaryAttributeBag = new ComponentAttributeBag;
+        $temporaryAttributeBag = new FilamentComponentAttributeBag;
 
         foreach ($this->extraTriggerAttributes as $extraTriggerAttributes) {
             $temporaryAttributeBag = $temporaryAttributeBag->merge($this->evaluate($extraTriggerAttributes), escape: false);
@@ -427,7 +428,7 @@ class DateTimePicker extends Field implements HasAffixActions
 
     public function getExtraTriggerAttributeBag(): ComponentAttributeBag
     {
-        return new ComponentAttributeBag($this->getExtraTriggerAttributes());
+        return new FilamentComponentAttributeBag($this->getExtraTriggerAttributes());
     }
 
     public function getFirstDayOfWeek(): int

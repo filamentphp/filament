@@ -10,7 +10,7 @@ use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Js;
-use Filament\Support\View\ComponentAttributeBag;
+use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 
 class ColorColumn extends Column implements HasEmbeddedView
 {
@@ -86,7 +86,7 @@ class ColorColumn extends Column implements HasEmbeddedView
                     : null;
                 ?>
 
-                <div <?= (new ComponentAttributeBag)
+                <div <?= (new FilamentComponentAttributeBag)
                     ->merge([
                         'x-on:click.prevent.stop' => $isCopyable
                             ? <<<JS

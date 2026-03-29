@@ -10,7 +10,8 @@ use Filament\Support\View\Components\BadgeComponent;
 use Filament\Support\View\Components\ButtonComponent;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Js;
-use Filament\Support\View\ComponentAttributeBag;
+use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
+use Illuminate\View\ComponentAttributeBag;
 
 use function Filament\Support\generate_href_html;
 use function Filament\Support\generate_icon_html;
@@ -125,17 +126,17 @@ trait CanGenerateButtonHtml
             ])
             ->color(app(ButtonComponent::class, ['isOutlined' => $isOutlined]), $color);
 
-        $iconHtml = $icon ? generate_icon_html($icon, $iconAlias, (new ComponentAttributeBag([
+        $iconHtml = $icon ? generate_icon_html($icon, $iconAlias, (new FilamentComponentAttributeBag([
             'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator,
             'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
         ])), size: $iconSize)->toHtml() : '';
 
-        $loadingIndicatorHtml = $hasLoadingIndicator ? generate_loading_indicator_html((new ComponentAttributeBag([
+        $loadingIndicatorHtml = $hasLoadingIndicator ? generate_loading_indicator_html((new FilamentComponentAttributeBag([
             'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
             'wire:target' => $loadingIndicatorTarget,
         ])), size: $iconSize)->toHtml() : '';
 
-        $formProcessingLoadingIndicatorHtml = $hasFormProcessingLoadingIndicator ? generate_loading_indicator_html((new ComponentAttributeBag([
+        $formProcessingLoadingIndicatorHtml = $hasFormProcessingLoadingIndicator ? generate_loading_indicator_html((new FilamentComponentAttributeBag([
             'x-cloak' => 'x-cloak',
             'x-show' => 'isProcessing',
         ])), size: $iconSize)->toHtml() : '';
@@ -223,7 +224,7 @@ trait CanGenerateButtonHtml
 
             <?php if (filled($badge)) { ?>
                 <div class="fi-btn-badge-ctn">
-                    <span <?= (new ComponentAttributeBag)->color(BadgeComponent::class, $badgeColor)->class([
+                    <span <?= (new FilamentComponentAttributeBag)->color(BadgeComponent::class, $badgeColor)->class([
                         'fi-badge',
                         ($badgeSize instanceof Size) ? "fi-size-{$badgeSize->value}" : $badgeSize,
                     ])->toHtml() ?>>

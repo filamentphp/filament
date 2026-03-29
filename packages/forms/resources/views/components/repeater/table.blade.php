@@ -4,7 +4,7 @@
     use Filament\Support\Enums\Alignment;
     use Filament\Support\Enums\VerticalAlignment;
     use Illuminate\Support\Js;
-    use Illuminate\View\ComponentAttributeBag;
+    use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 
     $fieldWrapperView = $getFieldWrapperView();
 
@@ -84,7 +84,7 @@
 
                 <tbody
                     x-sortable
-                    {{ (new ComponentAttributeBag)
+                    {{ (new FilamentComponentAttributeBag)
                             ->merge([
                                 'data-sortable-animation-duration' => $getReorderAnimationDuration(),
                                 'x-on:end.stop' => '$wire.mountAction(\'reorder\', { items: $event.target.sortable.toArray() }, { schemaComponent: \'' . $key . '\' })',

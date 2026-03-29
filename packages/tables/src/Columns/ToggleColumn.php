@@ -14,6 +14,7 @@ use Filament\Tables\Table;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Js;
+use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 use Illuminate\View\ComponentAttributeBag;
 
 use function Filament\Support\generate_icon_html;
@@ -66,7 +67,7 @@ class ToggleColumn extends Column implements Editable, HasEmbeddedView
                 'fi-inline' => $this->isInline(),
             ]);
 
-        $buttonAttributes = (new ComponentAttributeBag)
+        $buttonAttributes = (new FilamentComponentAttributeBag)
             ->merge([
                 'disabled' => $this->isDisabled(),
                 'wire:loading.attr' => 'disabled',

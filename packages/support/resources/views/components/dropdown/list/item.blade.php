@@ -4,6 +4,7 @@
     use Filament\Support\View\Components\BadgeComponent;
     use Filament\Support\View\Components\DropdownComponent\ItemComponent;
     use Filament\Support\View\Components\DropdownComponent\ItemComponent\IconComponent;
+    use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
     use Illuminate\View\ComponentAttributeBag;
 @endphp
 
@@ -101,7 +102,7 @@
 >
     @if ($icon)
         {{
-            \Filament\Support\generate_icon_html($icon, $iconAlias, (new ComponentAttributeBag([
+            \Filament\Support\generate_icon_html($icon, $iconAlias, (new FilamentComponentAttributeBag([
                 'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator,
                 'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
             ]))->color(IconComponent::class, $iconColor), size: $iconSize)
@@ -121,7 +122,7 @@
 
     @if ($hasLoadingIndicator)
         {{
-            \Filament\Support\generate_loading_indicator_html((new ComponentAttributeBag([
+            \Filament\Support\generate_loading_indicator_html((new FilamentComponentAttributeBag([
                 'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
                 'wire:target' => $loadingIndicatorTarget,
             ]))->color(IconComponent::class, $iconColor), size: $iconSize)
@@ -144,7 +145,7 @@
                         allowHTML: @js($badgeTooltip instanceof \Illuminate\Contracts\Support\Htmlable),
                     }"
                 @endif
-                {{ (new ComponentAttributeBag)->color(BadgeComponent::class, $badgeColor)->class(['fi-badge']) }}
+                {{ (new FilamentComponentAttributeBag)->color(BadgeComponent::class, $badgeColor)->class(['fi-badge']) }}
             >
                 {{ $badge }}
             </span>

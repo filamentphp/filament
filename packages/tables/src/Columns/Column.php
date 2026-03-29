@@ -19,7 +19,7 @@ use Filament\Tables\Columns\Concerns\HasTooltip;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\HtmlString;
-use Filament\Support\View\ComponentAttributeBag;
+use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 use LogicException;
 
 use function Filament\Support\generate_href_html;
@@ -149,7 +149,7 @@ class Column extends ViewComponent
         $hasAction = $this->action !== null;
         $hasUrl = $this->url !== null;
 
-        $attributes = (new ComponentAttributeBag)
+        $attributes = (new FilamentComponentAttributeBag)
             ->gridColumn(
                 $this->getColumnSpan(),
                 $this->getColumnStart(),

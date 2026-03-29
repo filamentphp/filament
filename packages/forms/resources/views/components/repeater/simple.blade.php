@@ -1,7 +1,7 @@
 @php
     use Filament\Actions\Action;
     use Filament\Support\Enums\Alignment;
-    use Illuminate\View\ComponentAttributeBag;
+    use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 
     $fieldWrapperView = $getFieldWrapperView();
 
@@ -38,7 +38,7 @@
             <ul
                 x-sortable
                 {{
-                    (new ComponentAttributeBag)
+                    (new FilamentComponentAttributeBag)
                         ->grid($getGridColumns())
                         ->merge([
                             'data-sortable-animation-duration' => $getReorderAnimationDuration(),

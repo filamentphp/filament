@@ -14,6 +14,7 @@
     use Filament\Tables\Enums\RecordCheckboxPosition;
     use Filament\Tables\View\TablesRenderHook;
     use Illuminate\Support\Str;
+    use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
     use Illuminate\View\ComponentAttributeBag;
 
     $defaultRecordActions = $getRecordActions();
@@ -979,7 +980,7 @@
                                     data-sortable-animation-duration="{{ $getReorderAnimationDuration() }}"
                                 @endif
                                 {{
-                                    (new ComponentAttributeBag)
+                                    (new FilamentComponentAttributeBag)
                                         ->when($contentGrid, fn (ComponentAttributeBag $attributes) => $attributes->grid($contentGrid))
                                         ->class([
                                             'fi-ta-content',

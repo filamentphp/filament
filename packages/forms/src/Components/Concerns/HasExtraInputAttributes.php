@@ -3,6 +3,7 @@
 namespace Filament\Forms\Components\Concerns;
 
 use Closure;
+use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 use Illuminate\View\ComponentAttributeBag;
 
 trait HasExtraInputAttributes
@@ -31,7 +32,7 @@ trait HasExtraInputAttributes
      */
     public function getExtraInputAttributes(): array
     {
-        $temporaryAttributeBag = new ComponentAttributeBag;
+        $temporaryAttributeBag = new FilamentComponentAttributeBag;
 
         foreach ($this->extraInputAttributes as $extraInputAttributes) {
             $temporaryAttributeBag = $temporaryAttributeBag->merge($this->evaluate($extraInputAttributes), escape: false);
@@ -42,6 +43,6 @@ trait HasExtraInputAttributes
 
     public function getExtraInputAttributeBag(): ComponentAttributeBag
     {
-        return new ComponentAttributeBag($this->getExtraInputAttributes());
+        return new FilamentComponentAttributeBag($this->getExtraInputAttributes());
     }
 }

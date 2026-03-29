@@ -8,6 +8,7 @@ use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Arr;
 use Illuminate\Support\HtmlString;
+use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 use Illuminate\View\ComponentAttributeBag;
 use LogicException;
 
@@ -152,7 +153,7 @@ abstract class ViewComponent extends Component implements Htmlable
         ]);
 
         return $this->viewInstance->with([
-            'attributes' => new ComponentAttributeBag,
+            'attributes' => new FilamentComponentAttributeBag,
             ...$this->getExtraViewData(),
             ...$this->getViewData(),
         ]);

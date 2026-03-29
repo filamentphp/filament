@@ -1,6 +1,6 @@
 @php
     use Filament\Tables\Enums\ColumnManagerResetActionPosition;
-    use Illuminate\View\ComponentAttributeBag;
+    use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 @endphp
 
 @props([
@@ -30,7 +30,7 @@
                 <x-filament::link
                     :attributes="
                         \Filament\Support\prepare_inherited_attributes(
-                            new ComponentAttributeBag([
+                            new FilamentComponentAttributeBag([
                                 'color' => 'danger',
                                 'tag' => 'button',
                                 'wire:click' => 'resetTableColumnManager',

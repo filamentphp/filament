@@ -26,6 +26,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Js;
 use Illuminate\Support\Str;
+use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 use Illuminate\View\ComponentAttributeBag;
 use PHPUnit\Framework\Assert;
 
@@ -340,7 +341,7 @@ class Notification extends ViewComponent implements Arrayable, HasEmbeddedView
         $body = $this->getBody();
         $hasBody = filled($body);
 
-        $attributes = (new ComponentAttributeBag)
+        $attributes = (new FilamentComponentAttributeBag)
             ->merge([
                 'wire:key' => "{$this->getId()}.notifications.{$this->getId()}",
                 'x-on:close-notification.window' => "if (\$event.detail.id == '{$this->getId()}') close()",
@@ -364,7 +365,7 @@ class Notification extends ViewComponent implements Arrayable, HasEmbeddedView
         >
             <?= generate_icon_html(
                 $this->getIcon(),
-                attributes: (new ComponentAttributeBag)->color(IconComponent::class, $this->getIconColor())->class(['fi-no-notification-icon']),
+                attributes: (new FilamentComponentAttributeBag)->color(IconComponent::class, $this->getIconColor())->class(['fi-no-notification-icon']),
                 size: $this->getIconSize(),
             )?->toHtml() ?>
 

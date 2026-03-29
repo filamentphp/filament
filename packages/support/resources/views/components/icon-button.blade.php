@@ -3,6 +3,7 @@
     use Filament\Support\Enums\Size;
     use Filament\Support\View\Components\BadgeComponent;
     use Filament\Support\View\Components\IconButtonComponent;
+    use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
     use Illuminate\View\ComponentAttributeBag;
 @endphp
 
@@ -125,7 +126,7 @@
             @else
                 <span
                     {{
-                        (new ComponentAttributeBag)->color(BadgeComponent::class, $badgeColor)->class([
+                        (new FilamentComponentAttributeBag)->color(BadgeComponent::class, $badgeColor)->class([
                             'fi-badge',
                             ($badgeSize instanceof Size) ? "fi-size-{$badgeSize->value}" : (is_string($badgeSize) ? $badgeSize : ''),
                         ])

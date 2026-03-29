@@ -7,6 +7,7 @@ use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\View\Components\Columns\Summarizers\CountComponent\IconComponent;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Str;
+use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 use Illuminate\View\ComponentAttributeBag;
 use LogicException;
 
@@ -142,7 +143,7 @@ class Count extends Summarizer
 
                                     <?= generate_icon_html(
                                         unserialize($icon),
-                                        attributes: (new ComponentAttributeBag)->color(IconComponent::class, $color),
+                                        attributes: (new FilamentComponentAttributeBag)->color(IconComponent::class, $color),
                                         size: IconSize::Large,
                                     )->toHtml() ?>
                                 </li>

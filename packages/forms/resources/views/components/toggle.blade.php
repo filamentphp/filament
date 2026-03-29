@@ -1,10 +1,10 @@
 @php
-    use Illuminate\View\ComponentAttributeBag;
+    use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 
     $fieldWrapperView = $getFieldWrapperView();
     $statePath = $getStatePath();
 
-    $attributes = (new ComponentAttributeBag)
+    $attributes = (new FilamentComponentAttributeBag)
         ->merge([
             'aria-checked' => 'false',
             'autofocus' => $isAutofocused(),

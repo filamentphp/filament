@@ -1,6 +1,6 @@
 @php
     use Filament\Widgets\View\Components\ChartWidgetComponent;
-    use Illuminate\View\ComponentAttributeBag;
+    use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 
     $color = $this->getColor();
     $heading = $this->getHeading();
@@ -83,7 +83,7 @@
                             type: @js($type),
                         })"
                 {{
-                    (new ComponentAttributeBag)
+                    (new FilamentComponentAttributeBag)
                         ->color(ChartWidgetComponent::class, $color)
                         ->class([
                             'fi-wi-chart-canvas-ctn',

@@ -31,7 +31,8 @@ use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
-use Filament\Support\View\ComponentAttributeBag;
+use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
+use Illuminate\View\ComponentAttributeBag;
 use LogicException;
 
 class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
@@ -518,7 +519,7 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
             $maxHeight = $this->getDropdownMaxHeight();
             $width = $this->getDropdownWidth();
 
-            $panelAttributes = (new ComponentAttributeBag)
+            $panelAttributes = (new FilamentComponentAttributeBag)
                 ->class([
                     'fi-dropdown-panel',
                     ($width instanceof Width) ? "fi-width-{$width->value}" : (is_string($width) ? $width : ''),
@@ -640,7 +641,7 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
     protected function toBadgeTriggerHtml(): string
     {
         return $this->generateBadgeHtml(
-            attributes: (new ComponentAttributeBag)
+            attributes: (new FilamentComponentAttributeBag)
                 ->merge($this->getExtraAttributes(), escape: false)
                 ->class(['fi-ac-badge-group']),
             color: $this->getColor(),
@@ -657,7 +658,7 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
     protected function toButtonTriggerHtml(): string
     {
         return $this->generateButtonHtml(
-            attributes: (new ComponentAttributeBag)
+            attributes: (new FilamentComponentAttributeBag)
                 ->merge($this->getExtraAttributes(), escape: false)
                 ->class(['fi-ac-btn-group']),
             badge: $this->getBadge(),
@@ -679,7 +680,7 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
     protected function toGroupedTriggerHtml(): string
     {
         return $this->generateDropdownItemHtml(
-            attributes: (new ComponentAttributeBag)
+            attributes: (new FilamentComponentAttributeBag)
                 ->merge($this->getExtraAttributes(), escape: false)
                 ->class(['fi-ac-grouped-group']),
             badge: $this->getBadge(),
@@ -697,7 +698,7 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
     protected function toIconButtonTriggerHtml(): string
     {
         return $this->generateIconButtonHtml(
-            attributes: (new ComponentAttributeBag)
+            attributes: (new FilamentComponentAttributeBag)
                 ->merge($this->getExtraAttributes(), escape: false)
                 ->class(['fi-ac-icon-btn-group']),
             badge: $this->getBadge(),
@@ -715,7 +716,7 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
     protected function toLinkTriggerHtml(): string
     {
         return $this->generateLinkHtml(
-            attributes: (new ComponentAttributeBag)
+            attributes: (new FilamentComponentAttributeBag)
                 ->merge($this->getExtraAttributes(), escape: false)
                 ->class(['fi-ac-link-group']),
             badge: $this->getBadge(),
@@ -737,7 +738,7 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
         return view(
             $this->getTriggerView(),
             [
-                'attributes' => new ComponentAttributeBag,
+                'attributes' => new FilamentComponentAttributeBag,
                 ...$this->extractPublicMethods(),
                 ...(isset($this->viewIdentifier) ? [$this->viewIdentifier => $this] : []),
                 ...$this->viewData,
@@ -787,7 +788,7 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
      */
     public function getExtraDropdownAttributes(): array
     {
-        $temporaryAttributeBag = new ComponentAttributeBag;
+        $temporaryAttributeBag = new FilamentComponentAttributeBag;
 
         foreach ($this->extraDropdownAttributes as $extraDropdownAttributes) {
             $temporaryAttributeBag = $temporaryAttributeBag->merge($this->evaluate($extraDropdownAttributes), escape: false);
@@ -798,6 +799,6 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
 
     public function getExtraDropdownAttributeBag(): ComponentAttributeBag
     {
-        return new ComponentAttributeBag($this->getExtraDropdownAttributes());
+        return new FilamentComponentAttributeBag($this->getExtraDropdownAttributes());
     }
 }

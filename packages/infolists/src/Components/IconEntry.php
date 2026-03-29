@@ -16,6 +16,7 @@ use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Js;
+use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 use Illuminate\View\ComponentAttributeBag;
 
 use function Filament\Support\generate_href_html;
@@ -295,7 +296,7 @@ class IconEntry extends Entry implements HasEmbeddedView
             $color = $this->getColor($stateItem);
             $size = $this->getSize($stateItem);
 
-            $item = generate_icon_html($icon, attributes: (new ComponentAttributeBag)
+            $item = generate_icon_html($icon, attributes: (new FilamentComponentAttributeBag)
                 ->merge([
                     'x-tooltip' => filled($tooltip = $this->getTooltip($stateItem))
                         ? '{

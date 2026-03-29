@@ -23,7 +23,8 @@ use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Js;
-use Filament\Support\View\ComponentAttributeBag;
+use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
+use Illuminate\View\ComponentAttributeBag;
 use stdClass;
 
 use function Filament\Support\generate_href_html;
@@ -373,7 +374,7 @@ class TextColumn extends Column implements HasEmbeddedView
 
             $size = $this->getSize($stateItem);
 
-            $iconHtml = generate_icon_html($this->getIcon($stateItem), attributes: (new ComponentAttributeBag)
+            $iconHtml = generate_icon_html($this->getIcon($stateItem), attributes: (new FilamentComponentAttributeBag)
                 ->color(IconComponent::class, $iconColor), size: match ($size) {
                     TextSize::Medium => IconSize::Medium,
                     TextSize::Large => IconSize::Large,
@@ -391,7 +392,7 @@ class TextColumn extends Column implements HasEmbeddedView
             $tooltip = $this->getTooltip($stateItem);
 
             return [
-                'attributes' => (new ComponentAttributeBag)
+                'attributes' => (new FilamentComponentAttributeBag)
                     ->class([
                         'fi-ta-text-item',
                         (($fontFamily = $this->getFontFamily($stateItem)) instanceof FontFamily) ? "fi-font-{$fontFamily->value}" : (is_string($fontFamily) ? $fontFamily : ''),
@@ -409,7 +410,7 @@ class TextColumn extends Column implements HasEmbeddedView
                             ->color(ItemComponent::class, $color)
                     ),
                 'contentAttributes' => ($isBadge || $isCopyable || filled($tooltip))
-                    ? (new ComponentAttributeBag)
+                    ? (new FilamentComponentAttributeBag)
                         ->merge([
                             'x-on:click.prevent.stop' => $isCopyable
                                 ? <<<JS

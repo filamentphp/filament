@@ -18,7 +18,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Js;
-use Filament\Support\View\ComponentAttributeBag;
+use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 
 use function Filament\Support\generate_href_html;
 use function Filament\Support\generate_icon_html;
@@ -326,7 +326,7 @@ class IconColumn extends Column implements HasEmbeddedView
             $color = $this->getColor($stateItem);
             $size = $this->getSize($stateItem);
 
-            $item = generate_icon_html($icon, attributes: (new ComponentAttributeBag)
+            $item = generate_icon_html($icon, attributes: (new FilamentComponentAttributeBag)
                 ->merge([
                     'x-tooltip' => filled($tooltip = $this->getTooltip($stateItem))
                         ? '{

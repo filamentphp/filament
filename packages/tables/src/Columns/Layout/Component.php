@@ -16,6 +16,7 @@ use Filament\Tables\Columns\Concerns\HasRowLoopObject;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\HtmlString;
+use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 use Illuminate\View\ComponentAttributeBag;
 use LogicException;
 
@@ -167,7 +168,7 @@ class Component extends ViewComponent
             return null;
         }
 
-        $attributes = (new ComponentAttributeBag)
+        $attributes = (new FilamentComponentAttributeBag)
             ->gridColumn(
                 $this->getColumnSpan(),
                 $this->getColumnStart(),

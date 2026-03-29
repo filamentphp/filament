@@ -35,7 +35,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Js;
 use Illuminate\Support\Str;
-use Filament\Support\View\ComponentAttributeBag;
+use Filament\Support\View\ComponentAttributeBag as FilamentComponentAttributeBag;
 use Livewire\Drawer\Utils;
 
 class Action extends ViewComponent implements Arrayable
@@ -843,7 +843,7 @@ class Action extends ViewComponent implements Arrayable
         $shouldPostToUrl = $this->shouldPostToUrl();
 
         return $this->generateBadgeHtml(
-            attributes: (new ComponentAttributeBag([
+            attributes: (new FilamentComponentAttributeBag([
                 'action' => $shouldPostToUrl ? $url : null,
                 'method' => $shouldPostToUrl ? 'post' : null,
                 'wire:click' => $this->getLivewireClickHandler(),
@@ -877,7 +877,7 @@ class Action extends ViewComponent implements Arrayable
         $shouldPostToUrl = $this->shouldPostToUrl();
 
         return $this->generateButtonHtml(
-            attributes: (new ComponentAttributeBag([
+            attributes: (new FilamentComponentAttributeBag([
                 'action' => $shouldPostToUrl ? $url : null,
                 'method' => $shouldPostToUrl ? 'post' : null,
                 'wire:click' => $this->getLivewireClickHandler(),
@@ -916,7 +916,7 @@ class Action extends ViewComponent implements Arrayable
         $shouldPostToUrl = $this->shouldPostToUrl();
 
         return $this->generateDropdownItemHtml(
-            attributes: (new ComponentAttributeBag([
+            attributes: (new FilamentComponentAttributeBag([
                 'action' => $shouldPostToUrl ? $url : null,
                 'method' => $shouldPostToUrl ? 'post' : null,
                 'wire:click' => $this->getLivewireClickHandler(),
@@ -949,7 +949,7 @@ class Action extends ViewComponent implements Arrayable
         $shouldPostToUrl = $this->shouldPostToUrl();
 
         return $this->generateIconButtonHtml(
-            attributes: (new ComponentAttributeBag([
+            attributes: (new FilamentComponentAttributeBag([
                 'action' => $shouldPostToUrl ? $url : null,
                 'method' => $shouldPostToUrl ? 'post' : null,
                 'wire:click' => $this->getLivewireClickHandler(),
@@ -984,7 +984,7 @@ class Action extends ViewComponent implements Arrayable
         $shouldPostToUrl = $this->shouldPostToUrl();
 
         return $this->generateLinkHtml(
-            attributes: (new ComponentAttributeBag([
+            attributes: (new FilamentComponentAttributeBag([
                 'action' => $shouldPostToUrl ? $url : null,
                 'method' => $shouldPostToUrl ? 'post' : null,
                 'wire:click' => $this->getLivewireClickHandler(),
