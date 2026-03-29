@@ -293,6 +293,96 @@ public function filtersResetAction(Action $action): Action
 }
 ```
 
+## Empty State
+
+When `getData()` method returns an empty array, the chart widget will automatically render an empty state.
+
+To customize this behavior, override the `isEmpty()` method:
+
+```php
+public function isEmpty(): bool
+{
+    $data = $this->getCachedData();
+
+    return empty($data['datasets'][0]['data'] ?? []);
+}
+```
+
+### Setting the empty state heading
+
+To customize the heading of the empty state, use the `$emptyStateHeading` property or `getEmptyStateHeading()` method:
+
+```php
+protected ?string $emptyStateHeading = 'No data available';
+```
+
+```php
+public function getEmptyStateHeading(): string | Htmlable
+{
+    return 'No sales yet for ' . $this->filter;
+}
+```
+
+### Setting the empty state description
+
+To customize the description of the empty state, use the `$emptyStateDescription` property or `getEmptyStateDescription()` method:
+
+```php
+protected ?string $emptyStateDescription = 'Check back later once data has been collected.';
+```
+
+```php
+public function getEmptyStateDescription(): string | Htmlable | null
+{
+    return 'Sales data will appear here once orders are placed.';
+}
+```
+
+### Setting the empty state icon
+
+To customize the [icon](../styling/icons) of the empty state, use the `$emptyStateIcon` property or `getEmptyStateIcon()` method:
+
+```php
+protected string | BackedEnum | null $emptyStateIcon = Heroicon::OutlinedChartBar;
+```
+
+```php
+public function getEmptyStateIcon(): string | BackedEnum | Htmlable
+{
+    return Heroicon::OutlinedShoppingCart;
+}
+```
+
+### Adding empty state actions
+
+You can add [Actions](../actions/overview) to the empty state to prompt users to take action using `getEmptyStateActions()` method:
+
+```php
+public function getEmptyStateActions(): array
+{
+    return [
+        Action::make('refresh')
+            ->label('Refresh')
+            ->action('refresh'),
+    ];
+}
+```
+
+### Using a custom empty state view
+
+You may use a completely custom empty state view by `$emptyState` property or `getEmptyState()` method:
+
+```php
+protected ?string $emptyState = 'widgets.charts.custom-empty-state';
+```
+
+```php
+public function getEmptyState(): View | Htmlable | null
+{
+    return view('widgets.charts.custom-empty-state');
+}
+```
+
 ## Live updating chart data (polling)
 
 By default, chart widgets refresh their data every 5 seconds.
