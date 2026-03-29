@@ -99,7 +99,32 @@ ActionGroup::make([
 
 ## Adding dividers between actions
 
-You may add dividers between groups of actions by using nested `ActionGroup` objects:
+You may add visual dividers between actions using `ActionSeparator`. It adapts to its context automatically — rendering as a vertical line between inline actions, or splitting a dropdown into separate sections:
+
+```php
+use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
+use Filament\Actions\ActionSeparator;
+
+// Between inline actions (e.g., page header actions)
+[
+    ActionGroup::make([
+        // Array of actions
+    ]),
+    ActionSeparator::make(),
+    Action::make('create'),
+]
+
+// Inside a dropdown — creates a visual section break
+ActionGroup::make([
+    Action::make('view'),
+    Action::make('edit'),
+    ActionSeparator::make(),
+    Action::make('delete'),
+])
+```
+
+Alternatively, you may add dividers inside a dropdown by using nested `ActionGroup` objects:
 
 ```php
 use Filament\Actions\ActionGroup;
