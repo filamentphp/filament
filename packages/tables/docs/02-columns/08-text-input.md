@@ -90,6 +90,8 @@ TextInputColumn::make('domain')
 
 <UtilityInjection set="tableColumns" version="4.x">As well as allowing static values, the `prefix()` and `suffix()` methods also accept a function to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
 
+<AutoScreenshot name="tables/columns/text-input/affix" alt="Text input column with affixes" version="4.x" />
+
 ### Using icons as affixes
 
 You may place an [icon](../../styling/icons) before and after the input using the `prefixIcon()` and `suffixIcon()` methods:
@@ -105,6 +107,8 @@ TextInputColumn::make('domain')
 
 <UtilityInjection set="tableColumns" version="4.x">As well as allowing static values, the `prefixIcon()` and `suffixIcon()` methods also accept a function to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
 
+<AutoScreenshot name="tables/columns/text-input/prefix-icon" alt="Text input column with prefix icon" version="4.x" />
+
 #### Setting the affix icon's color
 
 Affix icons are gray by default, but you may set a different color using the `prefixIconColor()` and `suffixIconColor()` methods:
@@ -119,6 +123,8 @@ TextInputColumn::make('status')
 ```
 
 <UtilityInjection set="tableColumns" version="4.x">As well as allowing static values, the `prefixIconColor()` and `suffixIconColor()` methods also accept a function to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+<AutoScreenshot name="tables/columns/text-input/suffix-icon-color" alt="Text input column with suffix icon in color" version="4.x" />
 
 ## Security
 

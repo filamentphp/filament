@@ -42,6 +42,8 @@ SelectColumn::make('status')
 
 <UtilityInjection set="tableColumns" version="4.x">As well as allowing a static value, the `native()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
+<AutoScreenshot name="tables/columns/select/javascript" alt="Table with JavaScript select column" version="4.x" />
+
 ## Searching options
 
 You may enable a search input to allow easier access to many options, using the `searchableOptions()` method:

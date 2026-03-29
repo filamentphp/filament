@@ -28,6 +28,8 @@ Textarea::make('description')
     ->cols(20)
 ```
 
+<AutoScreenshot name="forms/fields/textarea/rows" alt="Textarea with custom row size" version="4.x" />
+
 <UtilityInjection set="formFields" version="4.x">As well as allowing static values, the `rows()` and `cols()` methods also accept functions to dynamically calculate them. You can inject various utilities into the functions as parameters.</UtilityInjection>
 
 ### Autosizing the textarea
@@ -51,6 +53,8 @@ Textarea::make('description')
 ```
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `autosize()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+<AutoScreenshot name="forms/fields/textarea/autosize" alt="Textarea with autosize" version="4.x" />
 
 ## Making the field read-only
 

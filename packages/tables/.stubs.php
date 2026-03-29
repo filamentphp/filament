@@ -171,7 +171,7 @@ namespace Livewire\Features\SupportTesting {
         public function assertHasNoTableActionErrors(array $keys = []): static {}
 
         /**
-         * @deprecated Use `mountBulkAction()` instead.
+         * @deprecated Use `selectTableRecords()` and `mountAction()` instead.
          */
         public function mountTableBulkAction(string $name, array | Collection $records): static {}
 

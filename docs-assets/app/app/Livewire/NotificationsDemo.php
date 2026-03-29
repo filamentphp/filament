@@ -92,6 +92,15 @@ class NotificationsDemo extends Component
             ->send();
     }
 
+    public function positioning(): void
+    {
+        Notification::make()
+            ->title('Saved successfully')
+            ->success()
+            ->body('Changes to the post have been saved.')
+            ->send();
+    }
+
     public function openDatabaseNotifications()
     {
         $user = auth()->user();

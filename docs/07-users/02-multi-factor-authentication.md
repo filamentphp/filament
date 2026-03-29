@@ -2,12 +2,15 @@
 title: Multi-factor authentication
 ---
 import Aside from "@components/Aside.astro"
+import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Introduction
 
 Users in Filament can sign in with their email address and password by default. However, you can enable multi-factor authentication (MFA) to add an extra layer of security to your users' accounts.
 
 When MFA is enabled, users must perform an extra step before they are authenticated and have access to the application.
+
+<AutoScreenshot name="panels/mfa-challenge" alt="The multi-factor authentication challenge page" version="4.x" />
 
 Filament includes two methods of MFA which you can enable out of the box:
 
@@ -26,6 +29,8 @@ public function panel(Panel $panel): Panel
         ->profile();
 }
 ```
+
+<AutoScreenshot name="panels/mfa" alt="Multi-factor authentication options on the profile page" version="4.x" />
 
 ## App authentication
 

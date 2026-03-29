@@ -42,6 +42,8 @@ public function table(Table $table): Table
 }
 ```
 
+<AutoScreenshot name="tables/grouping-selectable" alt="Table with selectable grouping" version="4.x" />
+
 You can use both `groups()` and `defaultGroup()` together to allow users to choose between different groupings, but have a default grouping set:
 
 ```php
@@ -184,6 +186,8 @@ public function table(Table $table): Table
 }
 ```
 
+<AutoScreenshot name="tables/grouping-date" alt="Table with date grouping" version="4.x" />
+
 ## Collapsible groups
 
 You can allow rows inside a group to be collapsed underneath their group title. To enable this, use a `Group` object with the `collapsible()` method:
@@ -201,6 +205,8 @@ public function table(Table $table): Table
         ]);
 }
 ```
+
+<AutoScreenshot name="tables/grouping-collapsible" alt="Table with collapsible groups" version="4.x" />
 
 ### Collapsing groups by default
 
@@ -249,6 +255,8 @@ public function table(Table $table): Table
         ->groupsOnly();
 }
 ```
+
+<AutoScreenshot name="tables/grouping-groups-only" alt="Table with groups only mode" version="4.x" />
 
 ## Customizing the Eloquent query ordering behavior
 

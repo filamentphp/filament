@@ -71,6 +71,8 @@ RichEditor::make('content')
 
 Each nested array in the main array represents a group of buttons in the toolbar.
 
+<AutoScreenshot name="forms/fields/rich-editor/custom-toolbar" alt="Rich editor with customized toolbar buttons" version="4.x" />
+
 Additional tools available in the toolbar include:
 
 - `h1` - Applies the "h1" tag to the text.
@@ -132,6 +134,8 @@ RichEditor::make('content')
         ],
     ])
 ```
+
+<AutoScreenshot name="forms/fields/rich-editor/floating-toolbar" alt="Rich editor with floating toolbar below selected text" version="4.x" />
 
 ### Grouping toolbar buttons into dropdowns
 
@@ -209,6 +213,8 @@ RichEditor::make('content')
         '#0ea5e9' => 'Sky',
     ])
 ```
+
+<AutoScreenshot name="forms/fields/rich-editor/text-colors" alt="Rich editor text color picker modal" version="4.x" />
 
 If you would like to define different colors for light and dark mode, you can use the a `TextColor` object to define the color:
 
@@ -442,6 +448,8 @@ RichEditor::make('content')
     ])
 ```
 
+<AutoScreenshot name="forms/fields/rich-editor/custom-blocks" alt="Rich editor with custom blocks panel open" version="4.x" />
+
 To create a custom block, you can use the following command:
 
 ```bash
@@ -621,6 +629,8 @@ RichEditor::make('content')
     ])
 ```
 
+<AutoScreenshot name="forms/fields/rich-editor/merge-tags" alt="Rich editor with merge tags panel" version="4.x" />
+
 Merge tags are surrounded by double curly braces, like `{{ name }}`. When the content is rendered, these tags will be replaced with the corresponding values.
 
 To insert a merge tag into the content, users can start typing `{{` to search for a tag to insert. Alternatively, they can click on the "merge tags" tool in the editor's toolbar, which opens a panel containing all the merge tags. They can then drag a merge tag from the editor's side panel into the content or click to insert it.
@@ -721,6 +731,8 @@ RichEditor::make('content')
             ]),
     ])
 ```
+
+<AutoScreenshot name="forms/fields/rich-editor/mentions" alt="Rich editor with mention suggestions" version="4.x" />
 
 Each provider is configured with a trigger character (passed to `make()`) that activates the mention search. You can have multiple providers with different triggers:
 

@@ -125,7 +125,7 @@
     $secondLevelHeadingTag = $heading ? $getHeadingTag(1) : $headingTag;
     $pluralModelLabel = $getPluralModelLabel();
     $records = $isLoaded ? $getRecords() : null;
-    $hasPagination = (($records instanceof \Illuminate\Contracts\Pagination\Paginator) || ($records instanceof \Illuminate\Contracts\Pagination\CursorPaginator)) && ((! ($records instanceof \Illuminate\Contracts\Pagination\LengthAwarePaginator)) || $records->total());
+    $hasPagination = (($records instanceof \Illuminate\Contracts\Pagination\Paginator) || ($records instanceof \Illuminate\Contracts\Pagination\CursorPaginator)) && (($records instanceof \Illuminate\Contracts\Pagination\LengthAwarePaginator) ? $records->total() : $records->isNotEmpty());
     $hasEmptyState = ($records !== null) && ! count($records);
     $hasContentLayout = $content || $hasColumnsLayout;
     $searchDebounce = $getSearchDebounce();

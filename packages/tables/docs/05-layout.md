@@ -258,6 +258,8 @@ Stack::make([
 ])->space(1)
 ```
 
+<AutoScreenshot name="tables/layout/stack-spaced" alt="Table with spaced stacked content" version="4.x" />
+
 ### Controlling column width using a grid
 
 Sometimes, using a `Split` creates inconsistent widths when columns contain lots of content. This is because it's powered by Flexbox internally and each row individually controls how much space is allocated to content.
@@ -280,6 +282,8 @@ Grid::make([
 ```
 
 These columns will always consume equal width within the grid, from the `lg` [breakpoint](https://tailwindcss.com/docs/responsive-design#overview).
+
+<AutoScreenshot name="tables/layout/column-grid" alt="Table with a grid column layout" version="4.x" />
 
 You may choose to customize the number of columns within the grid at other breakpoints:
 

@@ -76,6 +76,11 @@ class SupportServiceProvider extends PackageServiceProvider
             fn () => new CliManager,
         );
 
+        $this->app->singleton(
+            TimezoneManager::class,
+            fn () => new TimezoneManager,
+        );
+
         $this->app->scoped(
             ScopedComponentManager::class,
             fn () => $this->app->make(ComponentManager::class)->clone(),

@@ -58,3 +58,5 @@ use Filament\Forms\Components\CodeEditor;
 CodeEditor::make('code')
     ->wrap()
 ```
+
+<AutoScreenshot name="forms/fields/code-editor/wrap" alt="Code editor with line wrapping" version="4.x" />

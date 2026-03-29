@@ -1,6 +1,7 @@
 ---
 title: Delete action
 ---
+import AutoScreenshot from "@components/AutoScreenshot.astro"
 import UtilityInjection from "@components/UtilityInjection.astro"
 
 ## Introduction
@@ -12,6 +13,8 @@ use Filament\Actions\DeleteAction;
 
 DeleteAction::make()
 ```
+
+<AutoScreenshot name="actions/delete-action/modal" alt="Delete action modal" version="4.x" />
 
 Or if you want to add it as a table bulk action, so that the user can choose which rows to delete, use `Filament\Actions\DeleteBulkAction`:
 

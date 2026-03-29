@@ -2,6 +2,8 @@
 
 namespace App\Livewire\Panels\Navigation;
 
+use Filament\Navigation\NavigationBuilder;
+use Filament\Navigation\NavigationGroup;
 use Filament\Navigation\NavigationItem;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
@@ -14,12 +16,37 @@ class Group extends Page
     {
         filament()
             ->getCurrentPanel()
-            ->navigationItems([
-                NavigationItem::make()
-                    ->label('Bank Accounts')
-                    ->url(fn (): string => '#')
-                    ->group('Settings')
-                    ->icon(Heroicon::OutlinedCurrencyDollar),
-            ]);
+            ->navigation(function (NavigationBuilder $builder): NavigationBuilder {
+                return $builder
+                    ->items([
+                        NavigationItem::make('Dashboard')
+                            ->icon(Heroicon::OutlinedHome)
+                            ->isActiveWhen(static fn () => true)
+                            ->url('#'),
+                    ])
+                    ->groups([
+                        NavigationGroup::make('Shop')
+                            ->items([
+                                NavigationItem::make('Products')
+                                    ->icon(Heroicon::OutlinedShoppingBag)
+                                    ->url('#'),
+                                NavigationItem::make('Orders')
+                                    ->icon(Heroicon::OutlinedShoppingCart)
+                                    ->url('#'),
+                                NavigationItem::make('Customers')
+                                    ->icon(Heroicon::OutlinedUserGroup)
+                                    ->url('#'),
+                            ]),
+                        NavigationGroup::make('Settings')
+                            ->items([
+                                NavigationItem::make('General')
+                                    ->icon(Heroicon::OutlinedCog6Tooth)
+                                    ->url('#'),
+                                NavigationItem::make('Integrations')
+                                    ->icon(Heroicon::OutlinedBolt)
+                                    ->url('#'),
+                            ]),
+                    ]);
+            });
     }
 }

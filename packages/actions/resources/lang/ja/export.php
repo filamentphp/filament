@@ -14,6 +14,18 @@ return [
 
                 'label' => 'カラム',
 
+                'actions' => [
+
+                    'select_all' => [
+                        'label' => 'すべて選択',
+                    ],
+
+                    'deselect_all' => [
+                        'label' => 'すべて解除',
+                    ],
+
+                ],
+
                 'form' => [
 
                     'is_enabled' => [
@@ -41,6 +53,11 @@ return [
     ],
 
     'notifications' => [
+
+        'no_columns' => [
+            'title' => 'カラムが選択されていません',
+            'body' => 'エクスポートするカラムを少なくとも1つ選択してください。',
+        ],
 
         'completed' => [
 

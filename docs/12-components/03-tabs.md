@@ -2,6 +2,8 @@
 title: Tabs Blade component
 ---
 
+import AutoScreenshot from "@components/AutoScreenshot.astro"
+
 ## Introduction
 
 The tabs component allows you to render a set of tabs, which can be used to toggle between multiple sections of content:
@@ -21,6 +23,8 @@ The tabs component allows you to render a set of tabs, which can be used to togg
     </x-filament::tabs.item>
 </x-filament::tabs>
 ```
+
+<AutoScreenshot name="components/tabs/simple" alt="Tabs with icons" version="4.x" />
 
 ## Triggering the active state of the tab
 
@@ -80,6 +84,8 @@ Tabs may have an [icon](../styling/icons), which you can set using the `icon` at
 </x-filament::tabs>
 ```
 
+<AutoScreenshot name="components/tabs/icon" alt="Tabs with icons" version="4.x" />
+
 ### Setting the tab icon position
 
 The icon of the tab may be positioned before or after the label using the `icon-position` attribute:
@@ -96,6 +102,8 @@ The icon of the tab may be positioned before or after the label using the `icon-
     {{-- Other tabs --}}
 </x-filament::tabs>
 ```
+
+<AutoScreenshot name="components/tabs/icon-position-after" alt="Tabs with icons positioned after the label" version="4.x" />
 
 ## Setting a tab badge
 
@@ -114,6 +122,8 @@ Tabs may have a [badge](badge), which you can set using the `badge` slot:
     {{-- Other tabs --}}
 </x-filament::tabs>
 ```
+
+<AutoScreenshot name="components/tabs/badge" alt="Tabs with badges" version="4.x" />
 
 ## Using a tab as an anchor link
 
@@ -151,3 +161,5 @@ You can render the tabs vertically by using the `vertical` attribute:
     </x-filament::tabs.item>
 </x-filament::tabs>
 ```
+
+<AutoScreenshot name="components/tabs/vertical" alt="Vertical tabs" version="4.x" />

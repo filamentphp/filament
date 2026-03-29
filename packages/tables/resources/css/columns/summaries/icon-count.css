@@ -13,7 +13,7 @@
         @apply grid gap-y-1.5;
 
         & > li {
-            @apply flex items-center justify-end gap-x-1.5;
+            @apply flex items-center gap-x-1.5;
 
             & > .fi-icon {
                 @apply text-gray-400 dark:text-gray-500;

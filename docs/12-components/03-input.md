@@ -2,6 +2,8 @@
 title: Input Blade component
 ---
 
+import AutoScreenshot from "@components/AutoScreenshot.astro"
+
 ## Introduction
 
 The input component is a wrapper around the native `<input>` element. It provides a simple interface for entering a single line of text.
@@ -14,5 +16,7 @@ The input component is a wrapper around the native `<input>` element. It provide
     />
 </x-filament::input.wrapper>
 ```
+
+<AutoScreenshot name="components/input/simple" alt="A simple input" version="4.x" />
 
 To use the input component, you must wrap it in an "input wrapper" component, which provides a border and other elements such as a prefix or suffix. You can learn more about customizing the input wrapper component [here](input-wrapper).

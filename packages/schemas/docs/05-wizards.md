@@ -73,6 +73,8 @@ BLADE)))
 
 You could extract this component to a separate Blade view if you prefer.
 
+<AutoScreenshot name="schemas/layout/wizard/submit-action" alt="Wizard with a submit button on the last step" version="4.x" />
+
 ## Setting a step icon
 
 Steps may have an [icon](../styling/icons), which you can set using the `icon()` method:

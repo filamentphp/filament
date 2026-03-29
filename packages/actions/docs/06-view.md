@@ -1,6 +1,7 @@
 ---
 title: View action
 ---
+import AutoScreenshot from "@components/AutoScreenshot.astro"
 import UtilityInjection from "@components/UtilityInjection.astro"
 
 ## Introduction
@@ -19,6 +20,8 @@ ViewAction::make()
         // ...
     ])
 ```
+
+<AutoScreenshot name="actions/view-action/modal" alt="View action modal" version="4.x" />
 
 ## Customizing data before filling the form
 

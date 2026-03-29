@@ -1,6 +1,7 @@
 ---
 title: Force-delete action
 ---
+import AutoScreenshot from "@components/AutoScreenshot.astro"
 import UtilityInjection from "@components/UtilityInjection.astro"
 
 ## Introduction
@@ -12,6 +13,8 @@ use Filament\Actions\ForceDeleteAction;
 
 ForceDeleteAction::make()
 ```
+
+<AutoScreenshot name="actions/force-delete-action/modal" alt="Force-delete action modal" version="4.x" />
 
 Or if you want to add it as a table bulk action, so that the user can choose which rows to force-delete, use `Filament\Actions\ForceDeleteBulkAction`:
 

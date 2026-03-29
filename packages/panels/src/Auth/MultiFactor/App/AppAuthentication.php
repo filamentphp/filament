@@ -169,7 +169,22 @@ class AppAuthentication implements MultiFactorAuthenticationProvider
         /** @var HasAppAuthentication $user */
         $user = Filament::auth()->user();
 
-        return $this->google2FA->verifyKey($secret ?? $this->getSecret($user), $code, $this->getCodeWindow());
+        $secret = $secret ?? $this->getSecret($user);
+        $cacheKey = 'filament.app_authentication_codes.' . md5($secret . $code);
+
+        $timestamp = $this->google2FA->verifyKeyNewer($secret, $code, cache()->get($cacheKey), $this->getCodeWindow());
+
+        if ($timestamp !== false) {
+            if ($timestamp === true) {
+                $timestamp = $this->google2FA->getTimestamp();
+            }
+
+            cache()->put($cacheKey, $timestamp, ($this->getCodeWindow() + 1) * 60);
+
+            return true;
+        }
+
+        return false;
     }
 
     public function verifyRecoveryCode(string $recoveryCode, ?HasAppAuthenticationRecovery $user = null): bool
