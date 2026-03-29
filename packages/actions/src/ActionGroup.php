@@ -485,7 +485,12 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
                 continue;
             }
 
-            if ($action instanceof ActionGroup && (! $action->hasDropdown())) {
+            if ($action instanceof ActionSeparator) {
+                if (count($singleActions)) {
+                    $actionLists[] = $singleActions;
+                    $singleActions = [];
+                }
+            } elseif ($action instanceof ActionGroup && (! $action->hasDropdown())) {
                 if (count($singleActions)) {
                     $actionLists[] = $singleActions;
                     $singleActions = [];
