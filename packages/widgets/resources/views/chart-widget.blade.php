@@ -8,6 +8,7 @@
     $filters = $this->getFilters();
     $isCollapsible = $this->isCollapsible();
     $type = $this->getType();
+    $isEmpty = $this->isEmpty();
 @endphp
 
 <x-filament-widgets::widget class="fi-wi-chart">
@@ -71,53 +72,88 @@
                 wire:poll.{{ $pollingInterval }}="updateChartData"
             @endif
         >
-            <div
-                x-load
-                x-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('chart', 'filament/widgets') }}"
-                wire:ignore
-                data-chart-type="{{ $type }}"
-                x-data="chart({
-                            cachedData: @js($this->getCachedData()),
-                            maxHeight: @js($maxHeight = $this->getMaxHeight()),
-                            options: @js($this->getOptions()),
-                            type: @js($type),
-                        })"
-                {{
-                    (new ComponentAttributeBag)
-                        ->color(ChartWidgetComponent::class, $color)
-                        ->class([
-                            'fi-wi-chart-canvas-ctn',
-                            'fi-wi-chart-canvas-ctn-no-aspect-ratio' => filled($maxHeight),
-                        ])
-                }}
-            >
-                <canvas
-                    x-ref="canvas"
-                    @if ($maxHeight)
-                        style="max-height: {{ $maxHeight }}"
-                    @endif
-                ></canvas>
+            @if ($isEmpty)
+                @if ($emptyState = $this->getEmptyState())
+                    {{ $emptyState }}
+                @else
+                    <div class="fi-wi-chart-empty-state">
+                        <div class="fi-wi-chart-empty-state-content">
+                            <div class="fi-wi-chart-empty-state-icon-bg">
+                                {{ \Filament\Support\generate_icon_html($this->getEmptyStateIcon(), size: \Filament\Support\Enums\IconSize::Large) }}
+                            </div>
 
-                <span
-                    x-ref="backgroundColorElement"
-                    class="fi-wi-chart-bg-color"
-                ></span>
+                            <h2 class="fi-wi-chart-empty-state-heading">
+                                {{ $this->getEmptyStateHeading() }}
+                            <h2>
 
-                <span
-                    x-ref="borderColorElement"
-                    class="fi-wi-chart-border-color"
-                ></span>
+                            @if (filled($emptyStateDescription = $this->getEmptyStateDescription()))
+                                <p class="fi-wi-chart-empty-state-description">
+                                    {{ $emptyStateDescription }}
+                                </p>
+                            @endif
 
-                <span
-                    x-ref="gridColorElement"
-                    class="fi-wi-chart-grid-color"
-                ></span>
+                            @if ($emptyStateActions = array_filter(
+                                $this->getEmptyStateActions(),
+                                fn (\Filament\Actions\Action | \Filament\Actions\ActionGroup $action): bool => $action->isVisible()
+                            ))
+                                <div class="fi-wi-chart-actions fi-align-center fi-wrapped">
+                                    @foreach ($emptyStateActions as $action)
+                                        {{ $action }}
+                                    @endforeach
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+                @endif
+            @else
+                <div
+                    x-load
+                    x-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('chart', 'filament/widgets') }}"
+                    wire:ignore
+                    data-chart-type="{{ $type }}"
+                    x-data="chart({
+                                cachedData: @js($this->getCachedData()),
+                                maxHeight: @js($maxHeight = $this->getMaxHeight()),
+                                options: @js($this->getOptions()),
+                                type: @js($type),
+                            })"
+                    {{
+                        (new ComponentAttributeBag)
+                            ->color(ChartWidgetComponent::class, $color)
+                            ->class([
+                                'fi-wi-chart-canvas-ctn',
+                                'fi-wi-chart-canvas-ctn-no-aspect-ratio' => filled($maxHeight),
+                            ])
+                    }}
+                >
+                    <canvas
+                        x-ref="canvas"
+                        @if ($maxHeight)
+                            style="max-height: {{ $maxHeight }}"
+                        @endif
+                    ></canvas>
 
-                <span
-                    x-ref="textColorElement"
-                    class="fi-wi-chart-text-color"
-                ></span>
-            </div>
+                    <span
+                        x-ref="backgroundColorElement"
+                        class="fi-wi-chart-bg-color"
+                    ></span>
+
+                    <span
+                        x-ref="borderColorElement"
+                        class="fi-wi-chart-border-color"
+                    ></span>
+
+                    <span
+                        x-ref="gridColorElement"
+                        class="fi-wi-chart-grid-color"
+                    ></span>
+
+                    <span
+                        x-ref="textColorElement"
+                        class="fi-wi-chart-text-color"
+                    ></span>
+                </div>
+            @endif
         </div>
     </x-filament::section>
 </x-filament-widgets::widget>
