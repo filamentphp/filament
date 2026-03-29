@@ -2,18 +2,20 @@
 
 namespace App\Filament\Pages;
 
+use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\View;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
+use UnitEnum;
 
 class Analytics extends Page
 {
-    protected static string | \BackedEnum | null $navigationIcon = Heroicon::OutlinedChartBarSquare;
+    protected static string | BackedEnum | null $navigationIcon = Heroicon::OutlinedChartBarSquare;
 
-    protected static string | \UnitEnum | null $navigationGroup = 'Reports';
+    protected static string | UnitEnum | null $navigationGroup = 'Reports';
 
     public function content(Schema $schema): Schema
     {

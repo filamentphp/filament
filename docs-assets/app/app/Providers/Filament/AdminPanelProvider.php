@@ -7,6 +7,10 @@ use App\Filament\Pages\Analytics;
 use App\Filament\Resources\PostResource;
 use App\Filament\Resources\TagResource;
 use App\Filament\Resources\UserResource;
+use App\Filament\Widgets\DashboardOrdersChart;
+use App\Filament\Widgets\DashboardRevenueChart;
+use App\Filament\Widgets\DashboardStatsOverview;
+use App\Filament\Widgets\DashboardTableWidget;
 use App\Http\Middleware\AutoLogin;
 use Filament\Auth\MultiFactor\App\AppAuthentication;
 use Filament\Auth\MultiFactor\Email\EmailAuthentication;
@@ -17,7 +21,6 @@ use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Navigation\NavigationBuilder;
 use Filament\Navigation\NavigationGroup;
 use Filament\Navigation\NavigationItem;
-use Filament\Pages;
 use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
@@ -63,7 +66,7 @@ class AdminPanelProvider extends PanelProvider
             ->discoverPages(in: app_path('Filament/Pages'), for: app()->getNamespace() . 'Filament\\Pages')
             ->discoverClusters(in: app_path('Filament/Clusters'), for: app()->getNamespace() . 'Filament\\Clusters')
             ->pages([
-                Pages\Dashboard::class,
+                Dashboard::class,
             ])
             ->navigation(function (NavigationBuilder $builder): NavigationBuilder {
                 return $builder
@@ -114,10 +117,10 @@ class AdminPanelProvider extends PanelProvider
             )
             ->globalSearchFieldKeyBindingSuffix()
             ->widgets([
-                \App\Filament\Widgets\DashboardStatsOverview::class,
-                \App\Filament\Widgets\DashboardRevenueChart::class,
-                \App\Filament\Widgets\DashboardOrdersChart::class,
-                \App\Filament\Widgets\DashboardTableWidget::class,
+                DashboardStatsOverview::class,
+                DashboardRevenueChart::class,
+                DashboardOrdersChart::class,
+                DashboardTableWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,
