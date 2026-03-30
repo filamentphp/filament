@@ -253,14 +253,6 @@ trait CanBeValidated
 
         $this->inValidationRuleValues = $values;
 
-        match ($condition) {
-            true => $this->inValidationRuleValues = $values,
-            false => null,
-            default => $this->inValidationRuleValues = fn (Component $component): ?Closure => $component->evaluate($condition) ?
-                $values :
-                null,
-        };
-
         return $this;
     }
 
