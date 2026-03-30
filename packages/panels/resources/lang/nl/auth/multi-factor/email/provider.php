@@ -41,6 +41,10 @@ return [
                             'title' => 'We hebben je een nieuwe code per e-mail gestuurd',
                         ],
 
+                        'throttled' => [
+                            'title' => 'Je hebt te vaak om een nieuwe code gevraagd. Wacht even en probeer het daarna opnieuw.',
+                        ],
+
                     ],
 
                 ],
