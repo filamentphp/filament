@@ -146,6 +146,50 @@ return [
 
             ],
 
+            'unit_labels' => [
+                'second' => '秒',
+                'minute' => '分',
+                'hour' => '時',
+                'day' => '日',
+                'week' => '週',
+                'month' => '月',
+                'quarter' => '四半期',
+                'year' => '年',
+            ],
+
+            'presets' => [
+                'past_decade' => '過去10年間',
+                'past_5_years' => '過去5年間',
+                'past_2_years' => '過去2年間',
+                'past_year' => '過去1年間',
+                'past_6_months' => '過去6ヶ月間',
+                'past_quarter' => '過去3ヶ月間',
+                'past_month' => '先月',
+                'past_2_weeks' => '過去2週間',
+                'past_week' => '先週',
+                'past_hour' => '過去1時間',
+                'past_minute' => '過去1分間',
+                'this_decade' => 'この10年間',
+                'this_year' => '今年',
+                'this_quarter' => '今四半期',
+                'this_month' => '今月',
+                'today' => '今日',
+                'this_hour' => 'この1時間',
+                'this_minute' => 'この1分間',
+                'next_minute' => '1分後',
+                'next_hour' => '1時間後',
+                'next_week' => '来週',
+                'next_2_weeks' => '2週間後',
+                'next_month' => '来月',
+                'next_quarter' => '次四半期',
+                'next_6_months' => '6ヶ月後',
+                'next_year' => '来年',
+                'next_2_years' => '2年後',
+                'next_5_years' => '5年後',
+                'next_decade' => '10年後',
+                'custom' => 'カスタム',
+            ],
+
             'form' => [
 
                 'date' => [
@@ -158,6 +202,40 @@ return [
 
                 'year' => [
                     'label' => '年',
+                ],
+
+                'mode' => [
+
+                    'label' => '指定方法',
+
+                    'options' => [
+                        'absolute' => '日付指定',
+                        'relative' => '期間指定',
+                    ],
+
+                ],
+
+                'preset' => [
+                    'label' => '期間',
+                ],
+
+                'relative_value' => [
+                    'label' => '数値',
+                ],
+
+                'relative_unit' => [
+                    'label' => '単位',
+                ],
+
+                'tense' => [
+
+                    'label' => '時制',
+
+                    'options' => [
+                        'past' => '過去',
+                        'future' => '今後',
+                    ],
+
                 ],
 
             ],
