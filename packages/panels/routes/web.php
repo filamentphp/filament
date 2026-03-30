@@ -175,7 +175,7 @@ Route::name('filament.')
                                             Filament::setCurrentResourceConfigurationKey(null);
                                         }
 
-                                        $rootUri = trim(Route::getLastGroupPrefix(), '/') ?: '/';
+                                        $rootUri = preg_replace('/\{(\w+):\w+\}/', '{$1}', trim(Route::getLastGroupPrefix(), '/')) ?: '/';
                                         $groupStack = Route::getGroupStack();
                                         $rootKey = (end($groupStack)['domain'] ?? '') . $rootUri;
 

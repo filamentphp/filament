@@ -35,6 +35,7 @@ class ManageUserTeams extends ManageRelatedRecords
             ->components([
                 TextInput::make('name')
                     ->required(),
+                TextInput::make('slug'),
                 Textarea::make('description')
                     ->columnSpanFull(),
                 TextInput::make('budget')
@@ -52,6 +53,8 @@ class ManageUserTeams extends ManageRelatedRecords
             ->recordTitleAttribute('name')
             ->columns([
                 TextColumn::make('name')
+                    ->searchable(),
+                TextColumn::make('slug')
                     ->searchable(),
                 TextColumn::make('budget')
                     ->numeric()

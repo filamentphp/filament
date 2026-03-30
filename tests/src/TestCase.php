@@ -29,6 +29,7 @@ use Filament\Tests\Fixtures\Providers\Fixtures\Providers\SingleDomainPanel;
 use Filament\Tests\Fixtures\Providers\MultiDomainPanel;
 use Filament\Tests\Fixtures\Providers\RequiredMultiFactorAuthenticationPanelProvider;
 use Filament\Tests\Fixtures\Providers\SlugsPanelProvider;
+use Filament\Tests\Fixtures\Providers\SlugTenancyPanelProvider;
 use Filament\Tests\Fixtures\Providers\TenancyPanelProvider;
 use Filament\Widgets\WidgetsServiceProvider;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -72,6 +73,7 @@ abstract class TestCase extends BaseTestCase
             MultiDomainPanel::class,
             SingleDomainPanel::class,
             SlugsPanelProvider::class,
+            SlugTenancyPanelProvider::class,
             TenancyPanelProvider::class,
             PowerJoinsServiceProvider::class,
         ];
