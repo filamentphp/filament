@@ -45,7 +45,7 @@
     $hasColumnsLayout = $hasColumnsLayout();
     $hasPageSummary = $hasPageSummary();
     $hasAllTableSummary = $hasAllTableSummary();
-    $hasSummary = ($hasPageSummary || $hasAllTableSummary) && $hasSummary($this->getAllTableSummaryQuery());
+    $hasSummary = $hasSummary($this->getAllTableSummaryQuery());
     $header = $getHeader();
     $headerActions = array_filter(
         $getHeaderActions(),

@@ -1,8 +1,17 @@
 <?php
 
+use Filament\Actions\Concerns\InteractsWithActions;
+use Filament\Actions\Contracts\HasActions;
+use Filament\Schemas\Concerns\InteractsWithSchemas;
+use Filament\Schemas\Contracts\HasSchemas;
+use Filament\Tables;
+use Filament\Tables\Table;
 use Filament\Tests\Fixtures\Livewire\PostsTable;
 use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Tables\TestCase;
+use Illuminate\Contracts\View\View;
+use Illuminate\Database\Query\Builder;
+use Livewire\Component;
 
 use function Filament\Tests\livewire;
 
@@ -151,3 +160,40 @@ it('can sum subset of values in a column on this pagination page', function (): 
         ->assertCanSeeTableRecords($posts->take(10))
         ->assertTableColumnSummarySet('rating', 'published_sum', $posts->take(10)->where('is_published', true)->sum('rating'), isCurrentPaginationPageOnly: true);
 });
+
+it('renders group summaries when page and all-table summaries are disabled', function (): void {
+    Post::factory()->count(5)->create();
+
+    livewire(TestTableWithGroupSummariesOnly::class)
+        ->assertSeeHtml('fi-ta-summary-row')
+        ->assertDontSeeHtml('fi-ta-summary-header-row');
+});
+
+class TestTableWithGroupSummariesOnly extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
+{
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+    use Tables\Concerns\InteractsWithTable;
+
+    public function table(Table $table): Table
+    {
+        return $table
+            ->query(Post::query())
+            ->columns([
+                Tables\Columns\TextColumn::make('title'),
+                Tables\Columns\TextColumn::make('rating')
+                    ->summarize([
+                        Tables\Columns\Summarizers\Sum::make('sum'),
+                    ]),
+            ])
+            ->defaultGroup(
+                Tables\Grouping\Group::make('is_published'),
+            )
+            ->summaries(pageCondition: false, allTableCondition: false);
+    }
+
+    public function render(): View
+    {
+        return view('livewire.table');
+    }
+}
