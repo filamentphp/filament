@@ -256,7 +256,7 @@ trait CanBeValidated
         match ($condition) {
             true => $this->inValidationRuleValues = $values,
             false => null,
-            default => $this->inValidationRuleValues = fn (Component $component): array | Arrayable | string | Closure | null => $component->evaluate($condition) ?
+            default => $this->inValidationRuleValues = fn (Component $component): ?Closure => $component->evaluate($condition) ?
                 $values :
                 null,
         };
