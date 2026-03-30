@@ -151,3 +151,14 @@ it('can sum subset of values in a column on this pagination page', function (): 
         ->assertCanSeeTableRecords($posts->take(10))
         ->assertTableColumnSummarySet('rating', 'published_sum', $posts->take(10)->where('is_published', true)->sum('rating'), isCurrentPaginationPageOnly: true);
 });
+
+it('renders the trailing group summary when the next page starts a different group', function (): void {
+    Post::factory()->count(10)->create(['title' => 'A']);
+    Post::factory()->create(['title' => 'B']);
+
+    livewire(PostsTable::class)
+        ->set('tableRecordsPerPage', 10)
+        ->set('tableGrouping', 'title')
+        ->assertSee('A summary')
+        ->assertDontSee('B summary');
+});
