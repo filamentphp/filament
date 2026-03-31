@@ -161,6 +161,7 @@ trait CanOpenModal
 
     public function slideOver(bool | Closure $condition = true): static
     {
+        $this->hasModal = $condition;
         $this->isModalSlideOver = $condition;
 
         return $this;
