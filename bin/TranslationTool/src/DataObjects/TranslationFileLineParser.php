@@ -44,6 +44,7 @@ final class TranslationFileLineParser
                             $pendingKey = $key;
                             $pendingKeyLine = $line;
                         }
+
                         break;
                     }
                 }

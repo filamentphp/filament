@@ -48,8 +48,6 @@ final class ListOutdatedTranslationKeys
                         $missingTranslations = $fileGroup->flatMap(fn (FileResult $result) => $result->missingTranslations)->unique();
                         $removedTranslations = $fileGroup->flatMap(fn (FileResult $result) => $result->removedTranslations)->unique();
 
-
-
                         $missingTranslations = $missingTranslations->map(fn (array $value, string $key) => [
                             'key' => createLink($file->getFileUrl('en', $value['line'] ?? null), $key),
                             'line' => isset($value['line']) ? createLink($file->getFileUrl($locale, $value['line'] ?? null), $value['line']) : null,
@@ -70,7 +68,7 @@ final class ListOutdatedTranslationKeys
                             'header' => "[{$result->package->name}] {$file->name} ⋅ " .
                                 (
                                     ($file->exists($locale)
-                                        ? createLink($file->getFileUrl($locale), '↗ Open file') .' | '
+                                        ? createLink($file->getFileUrl($locale), '↗ Open file') . ' | '
                                         : \null)
 
                                         . createLink($file->getFileUrl('en'), '↗ Open EN file')

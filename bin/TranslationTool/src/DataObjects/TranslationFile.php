@@ -23,7 +23,7 @@ final class TranslationFile
 
     public function getFileUrl(Locale | string $locale, ?int $line = null): string
     {
-        return match(env('IDE')) {
+        return match (env('IDE')) {
             'vscode' => $this->getVSCodeUrl($locale, $line),
             'phpstorm' => $this->getPhpStormUrl($locale, $line),
             default => $this->getDefaultFileUrl($locale, $line),
@@ -36,6 +36,7 @@ final class TranslationFile
         if ($line !== null) {
             $url .= "#L{$line}";
         }
+
         return $url;
     }
 
@@ -45,6 +46,7 @@ final class TranslationFile
         if ($line !== null) {
             $url .= ":{$line}";
         }
+
         return $url;
     }
 
@@ -54,6 +56,7 @@ final class TranslationFile
         if ($line !== null) {
             $url .= "&line={$line}";
         }
+
         return $url;
     }
 
@@ -68,7 +71,7 @@ final class TranslationFile
         $dotted = Arr::dot($translations);
 
         // Build a map of full dotted key => line using PHP tokenizer
-        $keyLines = (new TranslationFileLineParser())->parse($filePath);
+        $keyLines = (new TranslationFileLineParser)->parse($filePath);
 
         $result = [];
 

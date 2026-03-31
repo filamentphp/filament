@@ -64,7 +64,6 @@ class FindOutdatedTranslations
             $missingKeys = array_diff_key($originKeys, $localeKeys);
             $removedKeys = array_diff_key($localeKeys, $originKeys);
 
-
             $results[] = new FileResult(
                 package: $package,
                 file: $file,
