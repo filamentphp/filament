@@ -852,3 +852,21 @@ Action::make('updateAuthor')
 <Aside variant="tip">
     By default, calling `extraModalWindowAttributes()` multiple times will overwrite the previous attributes. If you wish to merge the attributes instead, you can pass `merge: true` to the method.
 </Aside>
+
+
+## Adding extra attributes to the modal overlay
+
+You can pass extra HTML attributes to the modal overlay via the `extraModalOverlayAttributes()`. The attributes should be represented by an array, where the key is the attribute name and the value is the attribute value:
+
+```php
+use Filament\Actions\Action;
+
+Action::make('updateAuthor')
+    ->extraModalOverlayAttributes(['class' => 'update-author-overlay'])
+```
+
+<UtilityInjection set="actions" version="4.x">As well as allowing a static value, the `extraModalOverlayAttributes()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+<Aside variant="tip">
+    By default, calling `extraModalOverlayAttributes()` multiple times will overwrite the previous attributes. If you wish to merge the attributes instead, you can pass <code>merge: true</code> to the method.
+</Aside>
