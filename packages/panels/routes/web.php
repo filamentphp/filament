@@ -8,6 +8,7 @@ use Filament\Facades\Filament;
 use Filament\Http\Controllers\RedirectToHomeController;
 use Filament\Http\Controllers\RedirectToTenantController;
 use Filament\Panel;
+use Illuminate\Routing\RouteUri;
 use Illuminate\Support\Facades\Route;
 
 Route::name('filament.')
@@ -175,9 +176,10 @@ Route::name('filament.')
                                             Filament::setCurrentResourceConfigurationKey(null);
                                         }
 
-                                        $rootUri = preg_replace('/\{(\w+):\w+\}/', '{$1}', trim(Route::getLastGroupPrefix(), '/')) ?: '/';
                                         $groupStack = Route::getGroupStack();
-                                        $rootKey = (end($groupStack)['domain'] ?? '') . $rootUri;
+                                        $rootDomain = RouteUri::parse(end($groupStack)['domain'] ?? '')->uri;
+                                        $rootUri = RouteUri::parse(trim(Route::getLastGroupPrefix(), '/') ?: '/')->uri;
+                                        $rootKey = $rootDomain . $rootUri;
 
                                         if (! isset(Route::getRoutes()->getRoutesByMethod()['GET'][$rootKey])) {
                                             Route::get('/', RedirectToHomeController::class)->name('home');
