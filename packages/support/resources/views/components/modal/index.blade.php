@@ -128,9 +128,9 @@
         x-show="isOpen"
         x-transition.duration.300ms.opacity
         {{
-                ($extraModalOverlayAttributeBag ?? new \Illuminate\View\ComponentAttributeBag)->class([
-                    'fi-modal-close-overlay'
-                ])
+            ($extraModalOverlayAttributeBag ?? new \Illuminate\View\ComponentAttributeBag)->class([
+                'fi-modal-close-overlay',
+            ])
         }}
     ></div>
 
