@@ -21,17 +21,57 @@ final class TranslationFile
         return $this->package->getLangFolder($locale) . DIRECTORY_SEPARATOR . $this->name;
     }
 
-    public function getFileUrl(Locale | string $locale): string
+    public function getFileUrl(Locale | string $locale, ?int $line = null): string
     {
-        return 'file://' . $this->getFilePath($locale);
+        $url = 'vscode://file/' . $this->getFilePath($locale);
+        if ($line !== null) {
+            $url .= ":{$line}";
+        }
+        return $url;
     }
 
     public function getTranslations(Locale | string $locale): array
     {
-        if (! file_exists($this->getFilePath($locale))) {
+        $filePath = $this->getFilePath($locale);
+        if (! file_exists($filePath)) {
             return [];
         }
 
-        return Arr::dot(require $this->getFilePath($locale));
+        $translations = require $filePath;
+        $dotted = Arr::dot($translations);
+
+        // Build a map of key => line using PHP tokenizer
+        $tokens = token_get_all(file_get_contents($filePath));
+        $keyLines = [];
+
+        foreach ($tokens as $token) {
+            if (is_array($token)) {
+                [$type, $content, $line] = $token;
+
+                if ($type === T_CONSTANT_ENCAPSED_STRING) {
+                    $key = trim($content, "'\"");
+                    // Store first occurrence only
+                    if (! isset($keyLines[$key])) {
+                        $keyLines[$key] = $line;
+                    }
+                }
+            }
+        }
+
+        $result = [];
+
+        foreach ($dotted as $key => $value) {
+            // Find line for the last segment of the key (the actual array key in the file)
+            $segments = explode('.', $key);
+            $lastSegment = end($segments);
+            $line = $keyLines[$lastSegment] ?? null;
+
+            $result[$key] = [
+                'line' => $line,
+                'value' => $value,
+            ];
+        }
+
+        return $result;
     }
 }

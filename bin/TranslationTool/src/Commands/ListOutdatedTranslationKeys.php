@@ -43,11 +43,16 @@ final class ListOutdatedTranslationKeys
                          */
                         $result = $fileGroup->first();
 
-                        $missingTranslations = $fileGroup->flatMap(fn (FileResult $result) => $result->missingTranslations)->keys()->unique();
+                        $file = $result->file;
+
+                        $missingTranslations = $fileGroup->flatMap(fn (FileResult $result) => $result->missingTranslations)->unique();
                         $removedTranslations = $fileGroup->flatMap(fn (FileResult $result) => $result->removedTranslations)->keys()->unique();
 
-                        $missingTranslations = $missingTranslations->map(fn (string $key) => [
-                            'key' => $key,
+
+
+                        $missingTranslations = $missingTranslations->map(fn (array $value, string $key) => [
+                            'key' => createLink($file->getFileUrl('en', $value['line'] ?? null), $key),
+                            'line' => $value['line'] ?? null,
                             'status' => 'Missing',
                         ]);
 
@@ -86,7 +91,7 @@ final class ListOutdatedTranslationKeys
                 Prompts\info($table['header']);
 
                 Prompts\table(
-                    ['Key', 'Status'],
+                    ['Key', 'Line', 'Status'],
                     $table['rows'],
                 );
             } else {
