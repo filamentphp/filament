@@ -16,6 +16,7 @@
     'closeQuietlyEventName' => 'close-modal-quietly',
     'description' => null,
     'extraModalWindowAttributeBag' => null,
+    'extraModalOverlayAttributeBag' => null,
     'footer' => null,
     'footerActions' => [],
     'footerActionsAlignment' => Alignment::Start,
@@ -126,7 +127,11 @@
         aria-hidden="true"
         x-show="isOpen"
         x-transition.duration.300ms.opacity
-        class="fi-modal-close-overlay"
+        {{
+                ($extraModalOverlayAttributeBag ?? new \Illuminate\View\ComponentAttributeBag)->class([
+                    'fi-modal-close-overlay'
+                ])
+        }}
     ></div>
 
     <div

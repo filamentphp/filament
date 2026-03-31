@@ -9,6 +9,7 @@
     $actionIsModalClosedByEscaping = $action->isModalClosedByEscaping();
     $actionModalDescription = $action->getModalDescription();
     $actionExtraModalWindowAttributeBag = $action->getExtraModalWindowAttributeBag();
+    $actionExtraModalOverlayAttributeBag = $action->getExtraModalOverlayAttributeBag();
     $actionModalFooterActions = $action->getVisibleModalFooterActions();
     $actionModalFooterActionsAlignment = $action->getModalFooterActionsAlignment();
     $actionModalHeading = $action->getModalHeading();
@@ -31,6 +32,7 @@
     :close-by-escaping="$actionIsModalClosedByEscaping"
     :description="$actionModalDescription"
     :extra-modal-window-attribute-bag="$actionExtraModalWindowAttributeBag"
+    :extra-modal-overlay-attribute-bag="$actionExtraModalOverlayAttributeBag"
     :footer-actions="$actionModalFooterActions"
     :footer-actions-alignment="$actionModalFooterActionsAlignment"
     :heading="$actionModalHeading"
