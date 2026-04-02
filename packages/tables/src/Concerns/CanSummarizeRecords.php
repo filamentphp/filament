@@ -35,6 +35,22 @@ trait CanSummarizeRecords
 
         $selects = [];
 
+        // https://github.com/filamentphp/filament/issues/19594
+        // Check if we have pivot columns selected (BelongsToMany RelationManager context)
+        $queryColumns = $query->getQuery()->getColumns() ?? [];
+        $hasPivotColumns = collect($queryColumns)->contains(
+            fn (mixed $column): bool => is_string($column) && str($column)->contains(' as pivot_'),
+        );
+
+        // If we have pivot columns, remove wildcards to prevent duplicate column errors
+        // when the query is used as a subquery in MySQL.
+        if ($hasPivotColumns) {
+            $query->getQuery()->columns = array_filter(
+                $queryColumns,
+                fn (mixed $column): bool => ! is_string($column) || ! str($column)->endsWith('.*'),
+            );
+        }
+
         foreach ($this->getTable()->getVisibleColumns() as $column) {
             $summarizers = $column->getSummarizers($query);
 
@@ -46,7 +62,18 @@ trait CanSummarizeRecords
                 continue;
             }
 
-            $qualifiedAttribute = $query->getModel()->qualifyColumn($column->getName());
+            $columnName = $column->getName();
+
+            // https://github.com/filamentphp/filament/issues/19594
+            // Check if this column is actually a pivot column by looking for its alias
+            $pivotAlias = 'pivot_' . $columnName;
+            $isPivotColumn = $hasPivotColumns && collect($query->getQuery()->getColumns())
+                ->contains(fn (mixed $col): bool => is_string($col) && str($col)->endsWith(" as {$pivotAlias}"));
+
+            // Use the pivot alias if this is a pivot column, otherwise qualify with the model's table
+            $qualifiedAttribute = $isPivotColumn
+                ? $pivotAlias
+                : $query->getModel()->qualifyColumn($columnName);
 
             foreach ($summarizers as $summarizer) {
                 if ($summarizer->hasQueryModification()) {

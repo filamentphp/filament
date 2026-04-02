@@ -113,23 +113,29 @@ class Summarizer extends ViewComponent implements HasEmbeddedView
                         return $relatedQuery;
                     },
                 );
-        } elseif ($query && str($attribute)->startsWith('pivot.')) {
+        } elseif ($query) {
             // https://github.com/filamentphp/filament/issues/12501
+            // Handle pivot columns in BelongsToMany context.
+            // This handles two cases:
+            // 1. Columns defined as 'pivot.quantity' (direct pivot access)
+            // 2. Columns defined as 'quantity' in a RelationManager (implicit pivot column)
 
-            $pivotAttribute = (string) str($attribute)
-                ->after('pivot.')
-                ->prepend('pivot_');
+            $pivotAttribute = str($attribute)->startsWith('pivot.')
+                ? (string) str($attribute)->after('pivot.')->prepend('pivot_')
+                : 'pivot_' . $attribute;
 
             $isPivotAttributeSelected = collect($query->getQuery()->getColumns())
                 ->contains(fn (string $column): bool => str($column)->endsWith(" as {$pivotAttribute}"));
 
-            $attribute = $isPivotAttributeSelected ? $pivotAttribute : $attribute;
-
-            // Avoid duplicate columns in the subquery by selecting pivot columns individually.
             if ($isPivotAttributeSelected) {
+                $attribute = $pivotAttribute;
+
+                // Remove ALL wildcards to prevent duplicate column errors when
+                // this query is used as a subquery. Both pivot table and related
+                // model table wildcards can cause "Duplicate column name 'id'" errors.
                 $query->getQuery()->columns = array_filter(
                     $query->getQuery()->columns,
-                    fn (mixed $column): bool => $column !== "{$query->getQuery()->joins[0]->table}.*",
+                    fn (mixed $column): bool => ! is_string($column) || ! str($column)->endsWith('.*'),
                 );
             }
         }
