@@ -39,7 +39,7 @@ trait CanSummarizeRecords
         // Check if we have pivot columns selected (BelongsToMany RelationManager context)
         $queryColumns = $query->getQuery()->getColumns();
         $hasPivotColumns = collect($queryColumns)->contains(
-            fn (mixed $column): bool => is_string($column) && str($column)->contains(' as pivot_'),
+            fn (string $column): bool => str($column)->contains(' as pivot_'),
         );
 
         // If we have pivot columns, remove wildcards to prevent duplicate column errors
@@ -47,7 +47,7 @@ trait CanSummarizeRecords
         if ($hasPivotColumns) {
             $query->getQuery()->columns = array_filter(
                 $queryColumns,
-                fn (mixed $column): bool => ! is_string($column) || ! str($column)->endsWith('.*'),
+                fn (string $column): bool => ! str($column)->endsWith('.*'),
             );
         }
 
@@ -71,7 +71,7 @@ trait CanSummarizeRecords
                 ? (string) str($columnName)->after('pivot.')->prepend('pivot_')
                 : 'pivot_' . $columnName;
             $isPivotColumn = $hasPivotColumns && collect($query->getQuery()->getColumns())
-                ->contains(fn (mixed $col): bool => is_string($col) && str($col)->endsWith(" as {$pivotAlias}"));
+                ->contains(fn (string $col): bool => str($col)->endsWith(" as {$pivotAlias}"));
 
             // Use the pivot alias if this is a pivot column, otherwise qualify with the model's table
             $qualifiedAttribute = $isPivotColumn
