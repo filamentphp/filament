@@ -65,8 +65,11 @@ trait CanSummarizeRecords
             $columnName = $column->getName();
 
             // https://github.com/filamentphp/filament/issues/19594
-            // Check if this column is actually a pivot column by looking for its alias
-            $pivotAlias = 'pivot_' . $columnName;
+            // Check if this column is actually a pivot column by looking for its alias.
+            // Handle both 'pivot.amount_total' (explicit) and 'quantity' (implicit) column names.
+            $pivotAlias = str($columnName)->startsWith('pivot.')
+                ? (string) str($columnName)->after('pivot.')->prepend('pivot_')
+                : 'pivot_' . $columnName;
             $isPivotColumn = $hasPivotColumns && collect($query->getQuery()->getColumns())
                 ->contains(fn (mixed $col): bool => is_string($col) && str($col)->endsWith(" as {$pivotAlias}"));
 
