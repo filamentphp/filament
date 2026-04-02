@@ -8,6 +8,7 @@ use Filament\Facades\Filament;
 use Filament\Http\Controllers\RedirectToHomeController;
 use Filament\Http\Controllers\RedirectToTenantController;
 use Filament\Panel;
+use Illuminate\Foundation\Application;
 use Illuminate\Routing\RouteUri;
 use Illuminate\Support\Facades\Route;
 
@@ -141,6 +142,10 @@ Route::name('filament.')
                                             $routes($panel);
                                         }
 
+                                        if (version_compare(Application::VERSION, '13.0.0', '<')) {
+                                            Route::get('/', RedirectToHomeController::class)->name('home');
+                                        }
+
                                         Route::name('tenant.')->group(function () use ($panel): void {
                                             if ($panel->hasTenantBilling()) {
                                                 Route::get($panel->getTenantBillingRouteSlug(), $panel->getTenantBillingProvider()->getRouteAction())
@@ -176,13 +181,15 @@ Route::name('filament.')
                                             Filament::setCurrentResourceConfigurationKey(null);
                                         }
 
-                                        $groupStack = Route::getGroupStack();
-                                        $rootDomain = RouteUri::parse(end($groupStack)['domain'] ?? '')->uri;
-                                        $rootUri = RouteUri::parse(trim(Route::getLastGroupPrefix(), '/') ?: '/')->uri;
-                                        $rootKey = $rootDomain . $rootUri;
+                                        if (version_compare(Application::VERSION, '13.0.0', '>=')) {
+                                            $groupStack = Route::getGroupStack();
+                                            $rootDomain = RouteUri::parse(end($groupStack)['domain'] ?? '')->uri;
+                                            $rootUri = RouteUri::parse(trim(Route::getLastGroupPrefix(), '/') ?: '/')->uri;
+                                            $rootKey = $rootDomain . $rootUri;
 
-                                        if (! isset(Route::getRoutes()->getRoutesByMethod()['GET'][$rootKey])) {
-                                            Route::get('/', RedirectToHomeController::class)->name('home');
+                                            if (! isset(Route::getRoutes()->getRoutesByMethod()['GET'][$rootKey])) {
+                                                Route::get('/', RedirectToHomeController::class)->name('home');
+                                            }
                                         }
                                     });
 
