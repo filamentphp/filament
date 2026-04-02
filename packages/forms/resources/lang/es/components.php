@@ -590,6 +590,7 @@ return [
             'custom_blocks' => 'Bloques',
             'details' => 'Detalles',
             'h1' => 'Título',
+
             'h2' => 'Encabezado 2',
             'h3' => 'Encabezado 3',
             'h4' => 'Encabezado 4',

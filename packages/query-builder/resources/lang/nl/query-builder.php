@@ -146,6 +146,50 @@ return [
 
             ],
 
+            'unit_labels' => [
+                'second' => 'Seconden',
+                'minute' => 'Minuten',
+                'hour' => 'Uren',
+                'day' => 'Dagen',
+                'week' => 'Weken',
+                'month' => 'Maanden',
+                'quarter' => 'Kwartalen',
+                'year' => 'Jaren',
+            ],
+
+            'presets' => [
+                'past_decade' => 'Afgelopen decennium',
+                'past_5_years' => 'Afgelopen 5 jaar',
+                'past_2_years' => 'Afgelopen 2 jaar',
+                'past_year' => 'Afgelopen jaar',
+                'past_6_months' => 'Afgelopen 6 maanden',
+                'past_quarter' => 'Afgelopen kwartaal',
+                'past_month' => 'Afgelopen maand',
+                'past_2_weeks' => 'Afgelopen 2 weken',
+                'past_week' => 'Afgelopen week',
+                'past_hour' => 'Afgelopen uur',
+                'past_minute' => 'Afgelopen minuut',
+                'this_decade' => 'Dit decennium',
+                'this_year' => 'Dit jaar',
+                'this_quarter' => 'Dit kwartaal',
+                'this_month' => 'Deze maand',
+                'today' => 'Vandaag',
+                'this_hour' => 'Dit uur',
+                'this_minute' => 'Deze minuut',
+                'next_minute' => 'Komende minuut',
+                'next_hour' => 'Komend uur',
+                'next_week' => 'Volgende week',
+                'next_2_weeks' => 'Volgende 2 weken',
+                'next_month' => 'Volgende maand',
+                'next_quarter' => 'Volgend kwartaal',
+                'next_6_months' => 'Volgende 6 maanden',
+                'next_year' => 'Volgend jaar',
+                'next_2_years' => 'Volgende 2 jaar',
+                'next_5_years' => 'Volgende 5 jaar',
+                'next_decade' => 'Volgend decennium',
+                'custom' => 'Aangepast',
+            ],
+
             'form' => [
 
                 'date' => [
@@ -158,6 +202,40 @@ return [
 
                 'year' => [
                     'label' => 'Jaar',
+                ],
+
+                'mode' => [
+
+                    'label' => 'Datumtype',
+
+                    'options' => [
+                        'absolute' => 'Specifieke datum',
+                        'relative' => 'Relatieve periode',
+                    ],
+
+                ],
+
+                'preset' => [
+                    'label' => 'Tijdsperiode',
+                ],
+
+                'relative_value' => [
+                    'label' => 'Aantal',
+                ],
+
+                'relative_unit' => [
+                    'label' => 'Tijdseenheid',
+                ],
+
+                'tense' => [
+
+                    'label' => 'Tijd',
+
+                    'options' => [
+                        'past' => 'Verleden',
+                        'future' => 'Toekomst',
+                    ],
+
                 ],
 
             ],
