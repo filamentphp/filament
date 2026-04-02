@@ -30,6 +30,7 @@ use Filament\Tests\Fixtures\Pages\SelectTest;
 use Filament\Tests\Fixtures\Pages\Settings;
 use Filament\Tests\Fixtures\Pages\TagsInputTest;
 use Filament\Tests\Fixtures\Pages\ToggleTest;
+use Filament\Tests\Fixtures\Pages\WizardTest;
 use Filament\Tests\Fixtures\Resources\Companies\CompanyResource;
 use Filament\Tests\Fixtures\Resources\Companies\Resources\CompanyTeamResource;
 use Filament\Tests\Fixtures\Resources\Departments\DepartmentResource;
@@ -94,6 +95,7 @@ class AdminPanelProvider extends PanelProvider
                 ManageAdmins::class,
                 ManageStaff::class,
                 GeneralSettings::class,
+                WizardTest::class,
                 WithoutSubNavigationCluster::class,
                 ClusteredPageWithoutSubNavigation::class,
             ])
