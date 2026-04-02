@@ -36,8 +36,8 @@ it('panels with multiple domains should use the domain in names of all routes', 
 });
 
 it('does not register the home route when a page already owns the root path', function (): void {
-    expect(Route::getRoutes()->getByName('filament.single-domain.home'))->toBeNull();
-    expect(Route::getRoutes()->getByName('filament.single-domain.pages.dashboard'))->not->toBeNull();
+    expect(Route::getRoutes()->getByName('filament.single-domain.home'))->toBeNull()
+        ->and(Route::getRoutes()->getByName('filament.single-domain.pages.dashboard'))->not->toBeNull();
 });
 
 it('preserves the dashboard route when registered on a panel without a domain', function (): void {
