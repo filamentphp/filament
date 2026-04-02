@@ -30,6 +30,8 @@ return [
 
                     'invalid' => 'De ingevoerde code is ongeldig.',
 
+                    'rate_limited' => 'Te veel pogingen. Probeer het later opnieuw.',
+
                 ],
 
             ],
@@ -43,6 +45,8 @@ return [
                 'messages' => [
 
                     'invalid' => 'De ingevoerde herstelcode is ongeldig.',
+
+                    'rate_limited' => 'Te veel pogingen. Probeer het later opnieuw.',
 
                 ],
 
