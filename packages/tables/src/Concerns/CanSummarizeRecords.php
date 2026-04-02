@@ -37,7 +37,7 @@ trait CanSummarizeRecords
 
         // https://github.com/filamentphp/filament/issues/19594
         // Check if we have pivot columns selected (BelongsToMany RelationManager context)
-        $queryColumns = $query->getQuery()->getColumns() ?? [];
+        $queryColumns = $query->getQuery()->getColumns();
         $hasPivotColumns = collect($queryColumns)->contains(
             fn (mixed $column): bool => is_string($column) && str($column)->contains(' as pivot_'),
         );
