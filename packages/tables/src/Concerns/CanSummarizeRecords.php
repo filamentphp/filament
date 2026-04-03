@@ -36,18 +36,18 @@ trait CanSummarizeRecords
         $selects = [];
 
         // https://github.com/filamentphp/filament/issues/19594
-        // Check if we have pivot columns selected (BelongsToMany RelationManager context)
-        $queryColumns = $query->getQuery()->getColumns();
-        $hasPivotColumns = collect($queryColumns)->contains(
-            fn (string $column): bool => str($column)->contains(' as pivot_'),
-        );
+        // Check if we have pivot columns selected (`BelongsToMany` `RelationManager` context)
+        $hasPivotColumns = collect($query->getQuery()->getColumns())
+            ->contains(fn (string $column): bool => str($column)->contains(' as pivot_'));
 
-        // If we have pivot columns, remove wildcards to prevent duplicate column errors
-        // when the query is used as a subquery in MySQL.
-        if ($hasPivotColumns) {
+        // If we have pivot columns, remove the join table's wildcard to prevent
+        // duplicate column errors (e.g., both tables have `id`) when the query
+        // is used as a subquery in MySQL. Only the join table's wildcard is removed
+        // so that non-pivot columns from the related model remain accessible.
+        if ($hasPivotColumns && ($joinTable = ($query->getQuery()->joins[0]->table ?? null))) {
             $query->getQuery()->columns = array_filter(
-                $queryColumns,
-                fn (string $column): bool => ! str($column)->endsWith('.*'),
+                $query->getQuery()->columns,
+                fn (mixed $column): bool => ! is_string($column) || $column !== "{$joinTable}.*",
             );
         }
 
@@ -66,7 +66,7 @@ trait CanSummarizeRecords
 
             // https://github.com/filamentphp/filament/issues/19594
             // Check if this column is actually a pivot column by looking for its alias.
-            // Handle both 'pivot.amount_total' (explicit) and 'quantity' (implicit) column names.
+            // Handle both `pivot.amount_total` (explicit) and `quantity` (implicit) column names.
             $pivotAlias = str($columnName)->startsWith('pivot.')
                 ? (string) str($columnName)->after('pivot.')->prepend('pivot_')
                 : 'pivot_' . $columnName;

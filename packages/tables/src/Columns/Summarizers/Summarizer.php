@@ -115,10 +115,10 @@ class Summarizer extends ViewComponent implements HasEmbeddedView
                 );
         } elseif ($query) {
             // https://github.com/filamentphp/filament/issues/12501
-            // Handle pivot columns in BelongsToMany context.
+            // Handle pivot columns in `BelongsToMany` context.
             // This handles two cases:
-            // 1. Columns defined as 'pivot.quantity' (direct pivot access)
-            // 2. Columns defined as 'quantity' in a RelationManager (implicit pivot column)
+            // 1. Columns defined as `pivot.quantity` (direct pivot access)
+            // 2. Columns defined as `quantity` in a `RelationManager` (implicit pivot column)
 
             $pivotAttribute = str($attribute)->startsWith('pivot.')
                 ? (string) str($attribute)->after('pivot.')->prepend('pivot_')
@@ -130,13 +130,15 @@ class Summarizer extends ViewComponent implements HasEmbeddedView
             if ($isPivotAttributeSelected) {
                 $attribute = $pivotAttribute;
 
-                // Remove ALL wildcards to prevent duplicate column errors when
-                // this query is used as a subquery. Both pivot table and related
-                // model table wildcards can cause "Duplicate column name 'id'" errors.
-                $query->getQuery()->columns = array_filter(
-                    $query->getQuery()->columns,
-                    fn (mixed $column): bool => ! is_string($column) || ! str($column)->endsWith('.*'),
-                );
+                // Remove the join table's wildcard to prevent duplicate column
+                // errors (e.g., both tables have `id`) when the query is used
+                // as a subquery in MySQL.
+                if ($joinTable = ($query->getQuery()->joins[0]->table ?? null)) {
+                    $query->getQuery()->columns = array_filter(
+                        $query->getQuery()->columns,
+                        fn (mixed $column): bool => ! is_string($column) || $column !== "{$joinTable}.*",
+                    );
+                }
             }
         }
 

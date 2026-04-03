@@ -3,11 +3,12 @@
 namespace Filament\Tests\Fixtures\Resources\Tickets\RelationManagers;
 
 use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Tables\Columns\Summarizers\Count;
 use Filament\Tables\Columns\Summarizers\Sum;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
-class DepartmentsWithPivotSummaryRelationManager extends RelationManager
+class DepartmentsWithMixedSummaryRelationManager extends RelationManager
 {
     protected static string $relationship = 'departments';
 
@@ -15,11 +16,10 @@ class DepartmentsWithPivotSummaryRelationManager extends RelationManager
     {
         return $table
             ->columns([
-                TextColumn::make('name'),
-                // Test implicit pivot column (just `quantity`)
+                TextColumn::make('name')
+                    ->summarize(Count::make('name_count')),
                 TextColumn::make('quantity')
                     ->summarize(Sum::make('quantity_sum')),
-                // Test explicit pivot column (`pivot.price`)
                 TextColumn::make('pivot.price')
                     ->summarize(Sum::make('price_sum')),
             ]);
