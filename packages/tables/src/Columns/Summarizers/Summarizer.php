@@ -129,16 +129,20 @@ class Summarizer extends ViewComponent implements HasEmbeddedView
 
             if ($isPivotAttributeSelected) {
                 $attribute = $pivotAttribute;
+            }
 
-                // Remove the join table's wildcard to prevent duplicate column
-                // errors (e.g., both tables have `id`) when the query is used
-                // as a subquery in MySQL.
-                if ($joinTable = ($query->getQuery()->joins[0]->table ?? null)) {
-                    $query->getQuery()->columns = array_filter(
-                        $query->getQuery()->columns,
-                        fn (mixed $column): bool => ! is_string($column) || $column !== "{$joinTable}.*",
-                    );
-                }
+            // Remove the join table's wildcard to prevent duplicate column
+            // errors (e.g., both tables have `id`) when the query is used
+            // as a subquery in MySQL. This applies to all columns in a
+            // `BelongsToMany` context, not just pivot columns.
+            $hasPivotColumns = collect($query->getQuery()->getColumns())
+                ->contains(fn (string $column): bool => str($column)->contains(' as pivot_'));
+
+            if ($hasPivotColumns && ($joinTable = ($query->getQuery()->joins[0]->table ?? null))) {
+                $query->getQuery()->columns = array_filter(
+                    $query->getQuery()->columns,
+                    fn (mixed $column): bool => ! is_string($column) || $column !== "{$joinTable}.*",
+                );
             }
         }
 
