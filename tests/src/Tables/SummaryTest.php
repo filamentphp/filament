@@ -11,7 +11,6 @@ use Filament\Tests\Fixtures\Livewire\PostsTableWithCursorPagination;
 use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Tables\TestCase;
 use Illuminate\Contracts\View\View;
-use Illuminate\Database\Query\Builder;
 use Livewire\Component;
 
 use function Filament\Tests\livewire;
