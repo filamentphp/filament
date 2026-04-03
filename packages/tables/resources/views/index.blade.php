@@ -46,6 +46,7 @@
     $hasPageSummary = $hasPageSummary();
     $hasAllTableSummary = $hasAllTableSummary();
     $hasSummary = $hasSummary($this->getAllTableSummaryQuery());
+    $hasTopLevelSummary = $hasSummary && ($hasPageSummary || $hasAllTableSummary);
     $header = $getHeader();
     $headerActions = array_filter(
         $getHeaderActions(),
@@ -1330,7 +1331,7 @@
                             }}
                         @endif
 
-                        @if ($hasSummary && (! $isReordering))
+                        @if ($hasTopLevelSummary && (! $isReordering))
                             <table class="fi-ta-table">
                                 <tbody>
                                     <x-filament-tables::summary
