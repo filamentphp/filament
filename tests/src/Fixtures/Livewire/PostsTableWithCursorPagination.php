@@ -11,7 +11,6 @@ use Filament\Tables\Enums\PaginationMode;
 use Filament\Tables\Table;
 use Filament\Tests\Fixtures\Models\Post;
 use Illuminate\Contracts\View\View;
-use Illuminate\Database\Query\Builder;
 use Livewire\Component;
 
 class PostsTableWithCursorPagination extends Component implements HasActions, HasSchemas, Tables\Contracts\HasTable
