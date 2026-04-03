@@ -73,11 +73,12 @@
 
                 {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::SIDEBAR_LOGO_BEFORE) }}
 
-                @if ($isSidebarCollapsibleOnDesktop)
-                    <div x-show="$store.sidebar.isOpen" class="fi-sidebar-header-logo-ctn">
-                @else
-                    <div class="fi-sidebar-header-logo-ctn">
-                @endif
+                <div
+                    @if ($isSidebarCollapsibleOnDesktop || $isSidebarFullyCollapsibleOnDesktop)
+                        x-show="$store.sidebar.isOpen"
+                    @endif
+                    class="fi-sidebar-header-logo-ctn"
+                >
                     @if ($homeUrl = filament()->getHomeUrl())
                         <a {{ \Filament\Support\generate_href_html($homeUrl) }}>
                             <x-filament-panels::logo />
