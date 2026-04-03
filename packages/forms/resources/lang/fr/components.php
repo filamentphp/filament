@@ -548,6 +548,7 @@ return [
 
                         'color' => [
                             'label' => 'Couleur',
+
                             'options' => [
                                 'slate' => 'Ardoise',
                                 'gray' => 'Gris',

@@ -52,7 +52,7 @@ class TextColor
 
         return Arr::mapWithKeys(
             Color::all(),
-            fn (array $color, string $name): array => [$name => TextColor::make(
+            static fn (array $color, string $name): array => [$name => TextColor::make(
                 is_array($translations) && array_key_exists($name, $translations)
                     ? $translations[$name]
                     : Str::ucwords($name),
