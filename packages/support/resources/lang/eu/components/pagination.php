@@ -22,8 +22,16 @@ return [
 
     'actions' => [
 
+        'first' => [
+            'label' => 'Lehena',
+        ],
+
         'go_to_page' => [
             'label' => 'Joan :page orrira',
+        ],
+
+        'last' => [
+            'label' => 'Azkena',
         ],
 
         'next' => [
