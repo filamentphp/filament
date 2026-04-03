@@ -20,6 +20,8 @@ class Ticket extends Model
 
     public function departments(): BelongsToMany
     {
-        return $this->belongsToMany(Department::class);
+        return $this->belongsToMany(Department::class)
+            ->withPivot(['quantity', 'price'])
+            ->withTimestamps();
     }
 }
