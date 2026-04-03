@@ -22,6 +22,8 @@ return [
 
                     'invalid' => 'De ingevoerde code is ongeldig.',
 
+                    'rate_limited' => 'Te veel pogingen. Probeer het later opnieuw.',
+
                 ],
 
             ],
