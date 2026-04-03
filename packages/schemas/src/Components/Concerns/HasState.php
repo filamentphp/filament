@@ -317,14 +317,19 @@ trait HasState
                 $statePath = $this->getStatePath();
 
                 if (! $this->getRootContainer()->hasDehydratedComponent($statePath)) {
-                    $descendantStatePathsToForget = $this->getDescendantStatePathsToForget($statePath);
+                    // When another component in the same scope shares this
+                    // `statePath`, removing the entire key would destroy that
+                    // sibling's data. Instead, only remove the state paths
+                    // owned by *this* component's descendants.
+                    if ($this->hasComponentWithStatePath($statePath)) {
+                        $descendantStatePathsToForget = $this->getDescendantStatePathsToForget($statePath);
 
-                    if (filled($descendantStatePathsToForget)) {
                         Arr::forget($state, $descendantStatePathsToForget); /** @phpstan-ignore parameterByRef.type */
 
-                        // If removing descendant paths leaves an empty parent, remove the parent path too,
-                        // so non-dehydrated relationship containers don't leak empty arrays into saved data.
-                        if (Arr::get($state, $statePath) === []) {
+                        // Clean up the parent key when nothing meaningful
+                        // remains (e.g. all siblings sharing this path were
+                        // also non-dehydrated and removed their descendants).
+                        if (blank(Arr::get($state, $statePath))) {
                             Arr::forget($state, $statePath); /** @phpstan-ignore parameterByRef.type */
                         }
 
@@ -362,22 +367,60 @@ trait HasState
     }
 
     /**
+     * Check whether another component in the same schema scope shares the
+     * given absolute `statePath`. The scope is determined by walking up
+     * through parent containers that don't introduce their own `statePath`
+     * (e.g. `Section`, `Tabs`) until a `statePath`-bearing ancestor is
+     * found — that ancestor's container defines the boundary.
+     */
+    protected function hasComponentWithStatePath(string $statePath): bool
+    {
+        $container = $this->getContainer();
+
+        while ($parentComponent = $container->getParentComponent()) {
+            if ($parentComponent->hasStatePath()) {
+                break;
+            }
+
+            $container = $parentComponent->getContainer();
+        }
+
+        foreach ($container->getFlatComponents(withActions: false, withHidden: true) as $component) {
+            if ($component === $this) {
+                continue;
+            }
+
+            if ($component->hasStatePath() && $component->getStatePath() === $statePath) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * @return array<string>
      */
     protected function getDescendantStatePathsToForget(string $statePath): array
     {
         $descendantStatePathPrefix = "{$statePath}.";
+        $paths = [];
 
-        return collect($this->getChildSchemas(withHidden: true))
-            ->flatMap(fn ($childSchema): array => $childSchema->getFlatComponents(withActions: false, withHidden: true))
-            ->filter(fn (Component $component): bool => $component->hasStatePath())
-            ->map(fn (Component $component): ?string => $component->getStatePath())
-            ->filter(
-                fn (?string $childStatePath): bool => filled($childStatePath)
-                    && str($childStatePath)->startsWith($descendantStatePathPrefix)
-            )
-            ->values()
-            ->all();
+        foreach ($this->getChildSchemas(withHidden: true) as $childSchema) {
+            foreach ($childSchema->getFlatComponents(withActions: false, withHidden: true) as $component) {
+                if (! $component->hasStatePath()) {
+                    continue;
+                }
+
+                $childStatePath = $component->getStatePath();
+
+                if (filled($childStatePath) && str_starts_with($childStatePath, $descendantStatePathPrefix)) {
+                    $paths[] = $childStatePath;
+                }
+            }
+        }
+
+        return $paths;
     }
 
     public function dehydrateStateUsing(?Closure $callback): static

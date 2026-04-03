@@ -1155,6 +1155,411 @@ it('can add a new repeater item with nested singular relationship to an existing
     expect($newPost->metadata->seo_title)->toBe('New SEO Title');
 });
 
+it('preserves visible sibling `Group` state when a hidden `Group` shares the same `statePath`', function (): void {
+    $user = User::factory()->create();
+    $existingPost = Post::factory()->create([
+        'author_id' => $user->id,
+    ]);
+
+    $component = livewire(RepeaterSharedStatePathOneHiddenOneVisible::class, ['record' => $user]);
+
+    $existingPostKey = array_key_first($component->get('data.posts'));
+
+    $undoRepeaterFake = Repeater::fake();
+
+    $component
+        ->fillForm([
+            'posts' => [
+                $existingPostKey => [
+                    'config' => [
+                        'internal_notes' => 'Do not publish',
+                        'seo_title' => 'New SEO Title',
+                    ],
+                ],
+            ],
+        ])
+        ->call('save');
+
+    $undoRepeaterFake();
+
+    $existingPost->refresh();
+
+    expect($existingPost->config)
+        ->not->toHaveKey('internal_notes')
+        ->toHaveKey('seo_title', 'New SEO Title');
+});
+
+it('does not save hidden fields when all sibling `Group` components sharing a `statePath` are hidden', function (): void {
+    $user = User::factory()->create();
+    $existingPost = Post::factory()->create([
+        'author_id' => $user->id,
+        'config' => ['seo_title' => 'Old Title', 'internal_notes' => 'Old Notes'],
+    ]);
+
+    $component = livewire(RepeaterSharedStatePathBothHidden::class, ['record' => $user]);
+
+    $existingPostKey = array_key_first($component->get('data.posts'));
+
+    $undoRepeaterFake = Repeater::fake();
+
+    $component
+        ->fillForm([
+            'posts' => [
+                $existingPostKey => [
+                    'title' => 'Updated Title',
+                    'config' => [
+                        'internal_notes' => 'Attempted override',
+                        'seo_title' => 'Attempted override',
+                    ],
+                ],
+            ],
+        ])
+        ->call('save');
+
+    $undoRepeaterFake();
+
+    $existingPost->refresh();
+
+    // The visible `title` field saves normally.
+    expect($existingPost->title)->toBe('Updated Title');
+
+    // Both `Group` components sharing `config` are hidden, so neither
+    // field is dehydrated. The original database value is preserved
+    // because Eloquent's `fill()` does not touch keys absent from
+    // the dehydrated data.
+    expect($existingPost->config)
+        ->toBe(['seo_title' => 'Old Title', 'internal_notes' => 'Old Notes']);
+});
+
+it('preserves shared `statePath` state when `Group` components are in different `Section` components', function (): void {
+    $user = User::factory()->create();
+    $existingPost = Post::factory()->create([
+        'author_id' => $user->id,
+    ]);
+
+    $component = livewire(RepeaterSharedStatePathInsideSection::class, ['record' => $user]);
+
+    $existingPostKey = array_key_first($component->get('data.posts'));
+
+    $undoRepeaterFake = Repeater::fake();
+
+    $component
+        ->fillForm([
+            'posts' => [
+                $existingPostKey => [
+                    'config' => [
+                        'internal_notes' => 'Secret',
+                        'seo_title' => 'Visible Title',
+                    ],
+                ],
+            ],
+        ])
+        ->call('save');
+
+    $undoRepeaterFake();
+
+    $existingPost->refresh();
+
+    expect($existingPost->config)
+        ->not->toHaveKey('internal_notes')
+        ->toHaveKey('seo_title', 'Visible Title');
+});
+
+it('does not leak relationship data into `getState()` return value', function (): void {
+    $user = User::factory()->create();
+    Post::factory()->create([
+        'author_id' => $user->id,
+        'title' => 'Existing Post',
+    ]);
+
+    $component = livewire(RepeaterGetStateLeakCheck::class, ['record' => $user]);
+
+    $undoRepeaterFake = Repeater::fake();
+
+    $component->call('saveAndCapture');
+
+    $undoRepeaterFake();
+
+    $captured = $component->get('capturedState');
+
+    expect($captured)->not->toHaveKey('posts');
+});
+
+it('preserves shared `statePath` state with deeply nested `Group` components', function (): void {
+    $user = User::factory()->create();
+    $existingPost = Post::factory()->create([
+        'author_id' => $user->id,
+    ]);
+
+    $component = livewire(RepeaterSharedStatePathDeeplyNested::class, ['record' => $user]);
+
+    $existingPostKey = array_key_first($component->get('data.posts'));
+
+    $undoRepeaterFake = Repeater::fake();
+
+    $component
+        ->fillForm([
+            'posts' => [
+                $existingPostKey => [
+                    'config' => [
+                        'admin_note' => 'Hidden deep note',
+                        'seo_title' => 'Deep SEO Title',
+                    ],
+                ],
+            ],
+        ])
+        ->call('save');
+
+    $undoRepeaterFake();
+
+    $existingPost->refresh();
+
+    expect($existingPost->config)
+        ->not->toHaveKey('admin_note')
+        ->toHaveKey('seo_title', 'Deep SEO Title');
+});
+
+class RepeaterSharedStatePathOneHiddenOneVisible extends Component implements HasSchemas
+{
+    use InteractsWithSchemas;
+
+    public array $data = [];
+
+    public User $record;
+
+    public function mount(): void
+    {
+        $this->form->fill([]);
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                Repeater::make('posts')
+                    ->relationship('posts')
+                    ->schema([
+                        Group::make([
+                            TextInput::make('internal_notes'),
+                        ])
+                            ->hidden()
+                            ->statePath('config'),
+                        Group::make([
+                            TextInput::make('seo_title'),
+                        ])
+                            ->statePath('config'),
+                    ]),
+            ])
+            ->model($this->record)
+            ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->form->getState();
+        $this->form->saveRelationships();
+    }
+
+    public function render(): View
+    {
+        return view('livewire.form');
+    }
+}
+
+class RepeaterSharedStatePathBothHidden extends Component implements HasSchemas
+{
+    use InteractsWithSchemas;
+
+    public array $data = [];
+
+    public User $record;
+
+    public function mount(): void
+    {
+        $this->form->fill([]);
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                Repeater::make('posts')
+                    ->relationship('posts')
+                    ->schema([
+                        TextInput::make('title'),
+                        Group::make([
+                            TextInput::make('internal_notes'),
+                        ])
+                            ->hidden()
+                            ->statePath('config'),
+                        Group::make([
+                            TextInput::make('seo_title'),
+                        ])
+                            ->hidden()
+                            ->statePath('config'),
+                    ]),
+            ])
+            ->model($this->record)
+            ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->form->getState();
+        $this->form->saveRelationships();
+    }
+
+    public function render(): View
+    {
+        return view('livewire.form');
+    }
+}
+
+class RepeaterSharedStatePathInsideSection extends Component implements HasSchemas
+{
+    use InteractsWithSchemas;
+
+    public array $data = [];
+
+    public User $record;
+
+    public function mount(): void
+    {
+        $this->form->fill([]);
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                Repeater::make('posts')
+                    ->relationship('posts')
+                    ->schema([
+                        Section::make('Internal')
+                            ->schema([
+                                Group::make([
+                                    TextInput::make('internal_notes'),
+                                ])
+                                    ->hidden()
+                                    ->statePath('config'),
+                            ]),
+                        Section::make('Public')
+                            ->schema([
+                                Group::make([
+                                    TextInput::make('seo_title'),
+                                ])
+                                    ->statePath('config'),
+                            ]),
+                    ]),
+            ])
+            ->model($this->record)
+            ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->form->getState();
+        $this->form->saveRelationships();
+    }
+
+    public function render(): View
+    {
+        return view('livewire.form');
+    }
+}
+
+class RepeaterGetStateLeakCheck extends Component implements HasSchemas
+{
+    use InteractsWithSchemas;
+
+    public array $data = [];
+
+    public array $capturedState = [];
+
+    public User $record;
+
+    public function mount(): void
+    {
+        $this->form->fill([]);
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                Repeater::make('posts')
+                    ->relationship('posts')
+                    ->schema([
+                        TextInput::make('title'),
+                    ]),
+            ])
+            ->model($this->record)
+            ->statePath('data');
+    }
+
+    public function saveAndCapture(): void
+    {
+        $this->capturedState = $this->form->getState();
+        $this->form->saveRelationships();
+    }
+
+    public function render(): View
+    {
+        return view('livewire.form');
+    }
+}
+
+class RepeaterSharedStatePathDeeplyNested extends Component implements HasSchemas
+{
+    use InteractsWithSchemas;
+
+    public array $data = [];
+
+    public User $record;
+
+    public function mount(): void
+    {
+        $this->form->fill([]);
+    }
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                Repeater::make('posts')
+                    ->relationship('posts')
+                    ->schema([
+                        Group::make([
+                            Group::make([
+                                TextInput::make('admin_note'),
+                            ]),
+                        ])
+                            ->hidden()
+                            ->statePath('config'),
+                        Group::make([
+                            Group::make([
+                                TextInput::make('seo_title'),
+                            ]),
+                        ])
+                            ->statePath('config'),
+                    ]),
+            ])
+            ->model($this->record)
+            ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->form->getState();
+        $this->form->saveRelationships();
+    }
+
+    public function render(): View
+    {
+        return view('livewire.form');
+    }
+}
+
 class RepeaterWithNestedSingularRelationship extends Component implements HasActions, HasSchemas
 {
     use InteractsWithActions;
