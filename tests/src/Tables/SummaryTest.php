@@ -1,6 +1,7 @@
 <?php
 
 use Filament\Tests\Fixtures\Livewire\PostsTable;
+use Filament\Tests\Fixtures\Livewire\PostsTableWithCursorPagination;
 use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Tables\TestCase;
 
@@ -161,4 +162,33 @@ it('renders the trailing group summary when the next page starts a different gro
         ->set('tableGrouping', 'title')
         ->assertSee('A summary')
         ->assertDontSee('B summary');
+});
+
+it('does not render the trailing group summary when the next page continues the same group', function (): void {
+    Post::factory()->count(15)->create(['title' => 'A']);
+
+    livewire(PostsTable::class)
+        ->set('tableRecordsPerPage', 10)
+        ->set('tableGrouping', 'title')
+        ->assertDontSee('A summary');
+});
+
+it('renders the trailing group summary with cursor pagination when the next page starts a different group', function (): void {
+    Post::factory()->count(10)->create(['title' => 'A']);
+    Post::factory()->create(['title' => 'B']);
+
+    livewire(PostsTableWithCursorPagination::class)
+        ->set('tableRecordsPerPage', 10)
+        ->set('tableGrouping', 'title')
+        ->assertSee('A summary')
+        ->assertDontSee('B summary');
+});
+
+it('does not render the trailing group summary with cursor pagination when the next page continues the same group', function (): void {
+    Post::factory()->count(15)->create(['title' => 'A']);
+
+    livewire(PostsTableWithCursorPagination::class)
+        ->set('tableRecordsPerPage', 10)
+        ->set('tableGrouping', 'title')
+        ->assertDontSee('A summary');
 });

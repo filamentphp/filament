@@ -4,6 +4,7 @@ namespace Filament\Tables\Concerns;
 
 use Closure;
 use Filament\Support\Services\RelationshipJoiner;
+use Illuminate\Contracts\Pagination\CursorPaginator;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -24,7 +25,9 @@ trait CanSummarizeRecords
 
         $records = $this->getTableRecords();
 
-        if ((! $records instanceof Paginator) || (! $records->hasMorePages())) {
+        $isPaginated = ($records instanceof Paginator) || ($records instanceof CursorPaginator);
+
+        if ((! $isPaginated) || (! $records->hasMorePages())) {
             return true;
         }
 
@@ -40,9 +43,21 @@ trait CanSummarizeRecords
             return true;
         }
 
-        $nextPageFirstRecord = (clone $query)
-            ->skip($records->currentPage() * $records->perPage())
-            ->first();
+        if ($records instanceof CursorPaginator) {
+            $nextCursor = $records->nextCursor();
+
+            if (! $nextCursor) {
+                return true;
+            }
+
+            $nextPageFirstRecord = (clone $query)
+                ->cursorPaginate(perPage: 1, cursor: $nextCursor)
+                ->items()[0] ?? null;
+        } else {
+            $nextPageFirstRecord = (clone $query)
+                ->skip($records->currentPage() * $records->perPage())
+                ->first();
+        }
 
         if ($nextPageFirstRecord === null) {
             return true;
