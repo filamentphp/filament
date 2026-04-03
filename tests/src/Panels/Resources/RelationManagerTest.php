@@ -20,6 +20,8 @@ use Filament\Tests\Fixtures\Resources\Tickets\Pages\EditTicket;
 use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsRelationManager;
 use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsRelationManagerWithTabs;
 use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsWithAttachTableSelectRelationManager;
+use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsWithMixedSummaryRelationManager;
+use Filament\Tests\Fixtures\Resources\Tickets\RelationManagers\DepartmentsWithPivotSummaryRelationManager;
 use Filament\Tests\Panels\Resources\TestCase;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Support\Str;
@@ -312,4 +314,42 @@ it('cannot access record for action after record no longer matches tab without `
         ->set('activeTab', 'a_names')
         ->mountTableAction(DeleteAction::class, $department)
         ->assertTableActionNotMounted(DeleteAction::class);
+});
+
+// https://github.com/filamentphp/filament/issues/19594
+it('can summarize pivot columns in a `BelongsToMany` `RelationManager`', function (): void {
+    $ticket = Ticket::factory()->create();
+    $departments = Department::factory()->count(3)->create();
+
+    // Attach departments with pivot data
+    $ticket->departments()->attach($departments[0], ['quantity' => 10, 'price' => 1000]);
+    $ticket->departments()->attach($departments[1], ['quantity' => 20, 'price' => 2000]);
+    $ticket->departments()->attach($departments[2], ['quantity' => 30, 'price' => 3000]);
+
+    // Test both implicit (`quantity`) and explicit (`pivot.price`) pivot column summarizers
+    livewire(DepartmentsWithPivotSummaryRelationManager::class, [
+        'ownerRecord' => $ticket,
+        'pageClass' => EditTicket::class,
+    ])
+        ->assertSuccessful()
+        ->assertTableColumnSummarySet('quantity', 'quantity_sum', 60)    // 10 + 20 + 30
+        ->assertTableColumnSummarySet('pivot.price', 'price_sum', 6000); // 1000 + 2000 + 3000
+});
+
+it('can summarize both pivot and non-pivot columns in a `BelongsToMany` `RelationManager`', function (): void {
+    $ticket = Ticket::factory()->create();
+    $departments = Department::factory()->count(3)->create();
+
+    $ticket->departments()->attach($departments[0], ['quantity' => 10, 'price' => 1000]);
+    $ticket->departments()->attach($departments[1], ['quantity' => 20, 'price' => 2000]);
+    $ticket->departments()->attach($departments[2], ['quantity' => 30, 'price' => 3000]);
+
+    livewire(DepartmentsWithMixedSummaryRelationManager::class, [
+        'ownerRecord' => $ticket,
+        'pageClass' => EditTicket::class,
+    ])
+        ->assertSuccessful()
+        ->assertTableColumnSummarySet('name', 'name_count', 3)
+        ->assertTableColumnSummarySet('quantity', 'quantity_sum', 60)
+        ->assertTableColumnSummarySet('pivot.price', 'price_sum', 6000);
 });

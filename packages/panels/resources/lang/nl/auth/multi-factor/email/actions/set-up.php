@@ -30,6 +30,10 @@ return [
                                 'title' => 'We hebben je een nieuwe code per e-mail gestuurd',
                             ],
 
+                            'throttled' => [
+                                'title' => 'Je hebt te vaak om een nieuwe code gevraagd. Wacht even en probeer het daarna opnieuw.',
+                            ],
+
                         ],
 
                     ],
@@ -39,6 +43,8 @@ return [
                 'messages' => [
 
                     'invalid' => 'De ingevoerde code is ongeldig.',
+
+                    'rate_limited' => 'Te veel pogingen. Probeer het later opnieuw.',
 
                 ],
 

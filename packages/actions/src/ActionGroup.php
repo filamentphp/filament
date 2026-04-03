@@ -712,7 +712,7 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
             [
                 'attributes' => new ComponentAttributeBag,
                 ...$this->extractPublicMethods(),
-                ...(isset($this->viewIdentifier) ? [$this->viewIdentifier => $this] : []),
+                $this->viewIdentifier => $this,
                 ...$this->viewData,
             ],
         );

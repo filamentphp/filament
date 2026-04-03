@@ -128,7 +128,7 @@ trait InteractsWithTable
         }
 
         $this->tableColumnSearches = $this->castTableColumnSearches(
-            $this->tableColumnSearches ?? [],
+            $this->tableColumnSearches,
         );
 
         if ($shouldPersistColumnSearchesInSession) {

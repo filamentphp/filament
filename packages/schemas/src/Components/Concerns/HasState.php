@@ -317,6 +317,25 @@ trait HasState
                 $statePath = $this->getStatePath();
 
                 if (! $this->getRootContainer()->hasDehydratedComponent($statePath)) {
+                    // When another component in the same scope shares this
+                    // `statePath`, removing the entire key would destroy that
+                    // sibling's data. Instead, only remove the state paths
+                    // owned by *this* component's descendants.
+                    if ($this->hasComponentWithStatePath($statePath)) {
+                        $descendantStatePathsToForget = $this->getDescendantStatePathsToForget($statePath);
+
+                        Arr::forget($state, $descendantStatePathsToForget); /** @phpstan-ignore parameterByRef.type */
+
+                        // Clean up the parent key when nothing meaningful
+                        // remains (e.g. all siblings sharing this path were
+                        // also non-dehydrated and removed their descendants).
+                        if (blank(Arr::get($state, $statePath))) {
+                            Arr::forget($state, $statePath); /** @phpstan-ignore parameterByRef.type */
+                        }
+
+                        return;
+                    }
+
                     Arr::forget($state, $statePath); /** @phpstan-ignore parameterByRef.type */
 
                     return;
@@ -345,6 +364,63 @@ trait HasState
                 Arr::set($state, $key, $value); /** @phpstan-ignore parameterByRef.type */
             }
         }
+    }
+
+    /**
+     * Check whether another component in the same schema scope shares the
+     * given absolute `statePath`. The scope is determined by walking up
+     * through parent containers that don't introduce their own `statePath`
+     * (e.g. `Section`, `Tabs`) until a `statePath`-bearing ancestor is
+     * found — that ancestor's container defines the boundary.
+     */
+    protected function hasComponentWithStatePath(string $statePath): bool
+    {
+        $container = $this->getContainer();
+
+        while ($parentComponent = $container->getParentComponent()) {
+            if ($parentComponent->hasStatePath()) {
+                break;
+            }
+
+            $container = $parentComponent->getContainer();
+        }
+
+        foreach ($container->getFlatComponents(withActions: false, withHidden: true) as $component) {
+            if ($component === $this) {
+                continue;
+            }
+
+            if ($component->hasStatePath() && $component->getStatePath() === $statePath) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * @return array<string>
+     */
+    protected function getDescendantStatePathsToForget(string $statePath): array
+    {
+        $descendantStatePathPrefix = "{$statePath}.";
+        $paths = [];
+
+        foreach ($this->getChildSchemas(withHidden: true) as $childSchema) {
+            foreach ($childSchema->getFlatComponents(withActions: false, withHidden: true) as $component) {
+                if (! $component->hasStatePath()) {
+                    continue;
+                }
+
+                $childStatePath = $component->getStatePath();
+
+                if (filled($childStatePath) && str_starts_with($childStatePath, $descendantStatePathPrefix)) {
+                    $paths[] = $childStatePath;
+                }
+            }
+        }
+
+        return $paths;
     }
 
     public function dehydrateStateUsing(?Closure $callback): static
