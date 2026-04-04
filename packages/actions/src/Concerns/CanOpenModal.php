@@ -669,7 +669,7 @@ trait CanOpenModal
         return (bool) $this->evaluate($this->isModalSlideOver);
     }
 
-    public function getSlideOverPosition(): SlideOverPosition
+    public function getSlideOverPosition(): ?SlideOverPosition
     {
         return $this->evaluate($this->slideOverPosition);
     }
