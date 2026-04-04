@@ -785,7 +785,10 @@ describe('link protocols', function (): void {
 
         $html = $renderer->toUnsafeHtml();
 
-        expect($html)->toContain('href="https://example.com"');
+        expect($html)
+            ->toContain('href="https://example.com"')
+            ->not->toContain('target=')
+            ->not->toContain('rel=');
     });
 
     it('strips links with unknown protocols by default', function (): void {
@@ -823,6 +826,19 @@ describe('link protocols', function (): void {
             ->toContain('https')
             ->toContain('mailto')
             ->toContain('tel');
+    });
+
+    it('preserves explicit link attributes during HTML round-trip', function (): void {
+        $renderer = RichContentRenderer::make(
+            '<p><a href="https://example.com" target="_blank" rel="noopener noreferrer">Link</a></p>',
+        );
+
+        $html = $renderer->toUnsafeHtml();
+
+        expect($html)
+            ->toContain('href="https://example.com"')
+            ->toContain('target="_blank"')
+            ->toContain('rel="noopener noreferrer"');
     });
 });
 
