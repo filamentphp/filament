@@ -312,7 +312,7 @@
             &.fi-align-start,
             &.fi-align-left {
                 & .fi-modal-heading {
-                    @apply ms-6;
+                    @apply me-6;
                 }
             }
         }
