@@ -1,5 +1,6 @@
 @php
     use Filament\Support\Enums\Alignment;
+    use Filament\Support\Enums\SlideOverPosition;
     use Filament\Support\Enums\Width;
     use Filament\Support\View\Components\ModalComponent\IconComponent;
     use Illuminate\View\ComponentAttributeBag;
@@ -27,6 +28,7 @@
     'id' => null,
     'openEventName' => 'open-modal',
     'slideOver' => false,
+    'slideOverPosition' => SlideOverPosition::End,
     'stickyFooter' => false,
     'stickyHeader' => false,
     'teleport' => null,
@@ -116,6 +118,8 @@
             'fi-modal',
             'fi-absolute-positioning-context',
             'fi-modal-slide-over' => $slideOver,
+            'fi-modal-slide-over-from-start' => $slideOver && $slideOverPosition === SlideOverPosition::Start,
+            'fi-modal-slide-over-from-end' => $slideOver && $slideOverPosition === SlideOverPosition::End,
             'fi-modal-has-sticky-header' => $stickyHeader,
             'fi-modal-has-sticky-footer' => $stickyFooter,
             'fi-width-screen' => $width === Width::Screen,
