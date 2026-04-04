@@ -539,6 +539,38 @@ test('`RichContentRenderer` resolves file attachment provider from plugin implem
         ->toBe($plugin->getFileAttachmentProvider());
 });
 
+test('links without explicit HTML attributes do not gain them during HTML round-trip', function (): void {
+    $schema = Schema::make(Livewire::make())
+        ->statePath('data')
+        ->components([
+            RichEditor::make('content'),
+        ])
+        ->fill([
+            'content' => '<p><a href="https://example.com">Link</a></p>',
+        ]);
+
+    expect($schema->getState()['content'])
+        ->toContain('href="https://example.com"')
+        ->not->toContain('target=')
+        ->not->toContain('rel=');
+});
+
+test('links with explicit HTML attributes preserve them during HTML round-trip', function (): void {
+    $schema = Schema::make(Livewire::make())
+        ->statePath('data')
+        ->components([
+            RichEditor::make('content'),
+        ])
+        ->fill([
+            'content' => '<p><a href="https://example.com" target="_blank" rel="noopener noreferrer">Link</a></p>',
+        ]);
+
+    expect($schema->getState()['content'])
+        ->toContain('href="https://example.com"')
+        ->toContain('target="_blank"')
+        ->toContain('rel="noopener noreferrer"');
+});
+
 test('list items with bare text content are wrapped in paragraphs on fill', function (): void {
     $schema = Schema::make(Livewire::make())
         ->statePath('data')

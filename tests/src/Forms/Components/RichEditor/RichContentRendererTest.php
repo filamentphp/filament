@@ -778,7 +778,23 @@ it('preserves links with default protocols', function (): void {
 
     $html = $renderer->toUnsafeHtml();
 
-    expect($html)->toContain('href="https://example.com"');
+    expect($html)
+        ->toContain('href="https://example.com"')
+        ->not->toContain('target=')
+        ->not->toContain('rel=');
+});
+
+it('preserves explicit link attributes during HTML round-trip', function (): void {
+    $renderer = RichContentRenderer::make(
+        '<p><a href="https://example.com" target="_blank" rel="noopener noreferrer">Link</a></p>',
+    );
+
+    $html = $renderer->toUnsafeHtml();
+
+    expect($html)
+        ->toContain('href="https://example.com"')
+        ->toContain('target="_blank"')
+        ->toContain('rel="noopener noreferrer"');
 });
 
 it('strips links with unknown protocols by default', function (): void {
