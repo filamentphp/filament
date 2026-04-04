@@ -400,6 +400,7 @@ class RichContentRenderer implements Htmlable
             app(LeadExtension::class),
             app(Link::class, [
                 'options' => [
+                    'HTMLAttributes' => [],
                     'allowedProtocols' => $this->getLinkProtocols(),
                 ],
             ]),
