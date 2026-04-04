@@ -4,15 +4,15 @@ namespace Filament\Tests\Forms\Components;
 
 use Filament\Forms\Components\Field;
 use Filament\Forms\Components\FileUpload;
-use Illuminate\Support\Facades\Config;
-use InvalidArgumentException;
 use Filament\Schemas\Schema;
 use Filament\Tests\Fixtures\Livewire\Livewire;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Validation\ValidationException;
+use InvalidArgumentException;
 use Livewire\Exceptions\RootTagMissingFromViewException;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
