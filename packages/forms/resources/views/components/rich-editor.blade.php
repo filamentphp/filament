@@ -4,6 +4,7 @@
     $fieldWrapperView = $getFieldWrapperView();
     $id = $getId();
     $isDisabled = $isDisabled();
+    $label = $getLabel();
     $livewireKey = $getLivewireKey();
     $key = $getKey();
     $mergeTags = $getMergeTags();
@@ -55,6 +56,7 @@
                         },
                         hasResizableImages: @js($hasResizableImages()),
                         isDisabled: @js($isDisabled),
+                        label: @js($label),
                         isLiveDebounced: @js($isLiveDebounced()),
                         isLiveOnBlur: @js($isLiveOnBlur()),
                         key: @js($key),

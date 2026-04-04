@@ -63,3 +63,7 @@ it('can view multiple records sequentially', function (): void {
         ->mountAction(TestAction::make(ViewAction::class)->table($department2))
         ->assertSchemaStateSet(['name' => 'Department 2']);
 });
+
+it('returns `view` from `getDefaultName()`', function (): void {
+    expect(ViewAction::getDefaultName())->toBe('view');
+});
