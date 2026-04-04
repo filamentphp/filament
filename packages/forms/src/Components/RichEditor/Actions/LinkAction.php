@@ -56,7 +56,6 @@ class LinkAction
                             'setLink',
                             arguments: [[
                                 'href' => $data['url'],
-                                'rel' => $data['shouldOpenInNewTab'] ? 'noopener noreferrer' : null,
                                 'target' => $data['shouldOpenInNewTab'] ? '_blank' : null,
                             ]],
                         ),
