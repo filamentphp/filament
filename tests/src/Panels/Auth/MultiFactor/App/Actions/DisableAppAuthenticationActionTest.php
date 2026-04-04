@@ -26,294 +26,302 @@ beforeEach(function (): void {
         ->create());
 });
 
-it('can disable authentication when valid challenge code is used', function (): void {
-    $appAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
+describe('disabling authentication', function (): void {
+    it('can disable authentication when valid challenge code is used', function (): void {
+        $appAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
 
-    $user = auth()->user();
+        $user = auth()->user();
 
-    expect(filled($user->getAppAuthenticationSecret()))
-        ->toBeTrue();
+        expect(filled($user->getAppAuthenticationSecret()))
+            ->toBeTrue();
 
-    expect($user->getAppAuthenticationSecret())
-        ->not()->toBeNull();
+        expect($user->getAppAuthenticationSecret())
+            ->not()->toBeNull();
 
-    expect($user->getAppAuthenticationRecoveryCodes())
-        ->toBeArray()
-        ->toHaveCount(8);
+        expect($user->getAppAuthenticationRecoveryCodes())
+            ->toBeArray()
+            ->toHaveCount(8);
 
-    livewire(EditProfile::class)
-        ->callAction(
-            TestAction::make('disableAppAuthentication')
-                ->schemaComponent('app', schema: 'content'),
-            ['code' => $appAuthentication->getCurrentCode($user)],
-        )
-        ->assertHasNoFormErrors();
+        livewire(EditProfile::class)
+            ->callAction(
+                TestAction::make('disableAppAuthentication')
+                    ->schemaComponent('app', schema: 'content'),
+                ['code' => $appAuthentication->getCurrentCode($user)],
+            )
+            ->assertHasNoFormErrors();
 
-    expect(filled($user->getAppAuthenticationSecret()))
-        ->toBeFalse();
+        expect(filled($user->getAppAuthenticationSecret()))
+            ->toBeFalse();
 
-    expect($user->getAppAuthenticationSecret())
-        ->toBeEmpty();
+        expect($user->getAppAuthenticationSecret())
+            ->toBeEmpty();
 
-    expect($user->getAppAuthenticationRecoveryCodes())
-        ->toBeNull();
+        expect($user->getAppAuthenticationRecoveryCodes())
+            ->toBeNull();
+    });
+
+    it('can disable authentication when a valid recovery code is used', function (): void {
+        $user = auth()->user();
+
+        expect(filled($user->getAppAuthenticationSecret()))
+            ->toBeTrue();
+
+        expect($user->getAppAuthenticationSecret())
+            ->not()->toBeNull();
+
+        expect($user->getAppAuthenticationRecoveryCodes())
+            ->toBeArray()
+            ->toHaveCount(8);
+
+        livewire(EditProfile::class)
+            ->mountAction(TestAction::make('disableAppAuthentication')
+                ->schemaComponent('app', schema: 'content'))
+            ->callAction(TestAction::make('useRecoveryCode')
+                ->schemaComponent('code'))
+            ->fillForm([
+                'recoveryCode' => Arr::first($this->recoveryCodes),
+            ])
+            ->callMountedAction()
+            ->assertHasNoFormErrors();
+
+        expect(filled($user->getAppAuthenticationSecret()))
+            ->toBeFalse();
+
+        expect($user->getAppAuthenticationSecret())
+            ->toBeEmpty();
+
+        expect($user->getAppAuthenticationRecoveryCodes())
+            ->toBeNull();
+    });
+
+    it('will not disable authentication when an invalid code is used', function (): void {
+        $appAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
+
+        $user = auth()->user();
+
+        expect(filled($user->getAppAuthenticationSecret()))
+            ->toBeTrue();
+
+        expect($user->getAppAuthenticationSecret())
+            ->not()->toBeNull();
+
+        expect($user->getAppAuthenticationRecoveryCodes())
+            ->toBeArray()
+            ->toHaveCount(8);
+
+        livewire(EditProfile::class)
+            ->callAction(
+                TestAction::make('disableAppAuthentication')
+                    ->schemaComponent('app', schema: 'content'),
+                ['code' => ($appAuthentication->getCurrentCode($user) === '000000') ? '111111' : '000000'],
+            )
+            ->assertHasFormErrors();
+
+        expect(filled($user->getAppAuthenticationSecret()))
+            ->toBeTrue();
+
+        expect($user->getAppAuthenticationSecret())
+            ->not()->toBeNull();
+
+        expect($user->getAppAuthenticationRecoveryCodes())
+            ->toBeArray()
+            ->toHaveCount(8);
+    });
 });
 
-it('can disable authentication when a valid recovery code is used', function (): void {
-    $user = auth()->user();
+describe('validation', function (): void {
+    test('codes are required without a recovery code', function (): void {
+        $user = auth()->user();
 
-    expect(filled($user->getAppAuthenticationSecret()))
-        ->toBeTrue();
+        expect(filled($user->getAppAuthenticationSecret()))
+            ->toBeTrue();
 
-    expect($user->getAppAuthenticationSecret())
-        ->not()->toBeNull();
+        expect($user->getAppAuthenticationSecret())
+            ->not()->toBeNull();
 
-    expect($user->getAppAuthenticationRecoveryCodes())
-        ->toBeArray()
-        ->toHaveCount(8);
+        expect($user->getAppAuthenticationRecoveryCodes())
+            ->toBeArray()
+            ->toHaveCount(8);
 
-    livewire(EditProfile::class)
-        ->mountAction(TestAction::make('disableAppAuthentication')
-            ->schemaComponent('app', schema: 'content'))
-        ->callAction(TestAction::make('useRecoveryCode')
-            ->schemaComponent('code'))
-        ->fillForm([
-            'recoveryCode' => Arr::first($this->recoveryCodes),
-        ])
-        ->callMountedAction()
-        ->assertHasNoFormErrors();
+        livewire(EditProfile::class)
+            ->callAction(
+                TestAction::make('disableAppAuthentication')
+                    ->schemaComponent('app', schema: 'content'),
+                ['code' => ''],
+            )
+            ->assertHasFormErrors([
+                'code' => 'required',
+            ]);
 
-    expect(filled($user->getAppAuthenticationSecret()))
-        ->toBeFalse();
+        expect(filled($user->getAppAuthenticationSecret()))
+            ->toBeTrue();
 
-    expect($user->getAppAuthenticationSecret())
-        ->toBeEmpty();
+        expect($user->getAppAuthenticationSecret())
+            ->not()->toBeNull();
 
-    expect($user->getAppAuthenticationRecoveryCodes())
-        ->toBeNull();
+        expect($user->getAppAuthenticationRecoveryCodes())
+            ->toBeArray()
+            ->toHaveCount(8);
+    });
+
+    test('codes must be 6 digits', function (): void {
+        $appAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
+
+        $user = auth()->user();
+
+        expect(filled($user->getAppAuthenticationSecret()))
+            ->toBeTrue();
+
+        expect($user->getAppAuthenticationSecret())
+            ->not()->toBeNull();
+
+        expect($user->getAppAuthenticationRecoveryCodes())
+            ->toBeArray()
+            ->toHaveCount(8);
+
+        livewire(EditProfile::class)
+            ->callAction(
+                TestAction::make('disableAppAuthentication')
+                    ->schemaComponent('app', schema: 'content'),
+                ['code' => Str::limit($appAuthentication->getCurrentCode($user), limit: 5, end: '')],
+            )
+            ->assertHasFormErrors([
+                'code' => 'digits',
+            ]);
+
+        expect(filled($user->getAppAuthenticationSecret()))
+            ->toBeTrue();
+
+        expect($user->getAppAuthenticationSecret())
+            ->not()->toBeNull();
+
+        expect($user->getAppAuthenticationRecoveryCodes())
+            ->toBeArray()
+            ->toHaveCount(8);
+    });
 });
 
-it('will not disable authentication when an invalid code is used', function (): void {
-    $appAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
+describe('recovery code failures', function (): void {
+    it('will not disable authentication when an invalid recovery code is used', function (): void {
+        $user = auth()->user();
 
-    $user = auth()->user();
+        expect(filled($user->getAppAuthenticationSecret()))
+            ->toBeTrue();
 
-    expect(filled($user->getAppAuthenticationSecret()))
-        ->toBeTrue();
+        expect($user->getAppAuthenticationSecret())
+            ->not()->toBeNull();
 
-    expect($user->getAppAuthenticationSecret())
-        ->not()->toBeNull();
+        expect($user->getAppAuthenticationRecoveryCodes())
+            ->toBeArray()
+            ->toHaveCount(8);
 
-    expect($user->getAppAuthenticationRecoveryCodes())
-        ->toBeArray()
-        ->toHaveCount(8);
+        livewire(EditProfile::class)
+            ->mountAction(TestAction::make('disableAppAuthentication')
+                ->schemaComponent('app', schema: 'content'))
+            ->callAction(TestAction::make('useRecoveryCode')
+                ->schemaComponent('code'))
+            ->fillForm([
+                'recoveryCode' => 'invalid-recovery-code',
+            ])
+            ->callMountedAction()
+            ->assertHasFormErrors();
 
-    livewire(EditProfile::class)
-        ->callAction(
-            TestAction::make('disableAppAuthentication')
-                ->schemaComponent('app', schema: 'content'),
-            ['code' => ($appAuthentication->getCurrentCode($user) === '000000') ? '111111' : '000000'],
-        )
-        ->assertHasFormErrors();
+        expect(filled($user->getAppAuthenticationSecret()))
+            ->toBeTrue();
 
-    expect(filled($user->getAppAuthenticationSecret()))
-        ->toBeTrue();
+        expect($user->getAppAuthenticationSecret())
+            ->not()->toBeNull();
 
-    expect($user->getAppAuthenticationSecret())
-        ->not()->toBeNull();
+        expect($user->getAppAuthenticationRecoveryCodes())
+            ->toBeArray()
+            ->toHaveCount(8);
+    });
 
-    expect($user->getAppAuthenticationRecoveryCodes())
-        ->toBeArray()
-        ->toHaveCount(8);
+    it('will not disable authentication with a recovery code if recovery is disabled', function (): void {
+        Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders())
+            ->recoverable(false);
+
+        $user = auth()->user();
+
+        expect(filled($user->getAppAuthenticationSecret()))
+            ->toBeTrue();
+
+        expect($user->getAppAuthenticationSecret())
+            ->not()->toBeNull();
+
+        expect($user->getAppAuthenticationRecoveryCodes())
+            ->toBeArray()
+            ->toHaveCount(8);
+
+        livewire(EditProfile::class)
+            ->callAction(
+                TestAction::make('disableAppAuthentication')
+                    ->schemaComponent('app', schema: 'content'),
+                ['recoveryCode' => Arr::first($this->recoveryCodes)],
+            )
+            ->assertHasFormErrors();
+
+        expect(filled($user->getAppAuthenticationSecret()))
+            ->toBeTrue();
+
+        expect($user->getAppAuthenticationSecret())
+            ->not()->toBeNull();
+
+        expect($user->getAppAuthenticationRecoveryCodes())
+            ->toBeArray()
+            ->toHaveCount(8);
+    });
 });
 
-test('codes are required without a recovery code', function (): void {
-    $user = auth()->user();
+describe('throttling', function (): void {
+    it('can throttle code verification attempts per user', function (): void {
+        $appAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
 
-    expect(filled($user->getAppAuthenticationSecret()))
-        ->toBeTrue();
+        $user = auth()->user();
 
-    expect($user->getAppAuthenticationSecret())
-        ->not()->toBeNull();
+        // Pre-fill the per-user rate limiter to simulate 5 prior attempts
+        $rateLimitingKey = 'filament-disable-app-authentication:' . $user->getAuthIdentifier();
 
-    expect($user->getAppAuthenticationRecoveryCodes())
-        ->toBeArray()
-        ->toHaveCount(8);
+        foreach (range(1, 5) as $i) {
+            RateLimiter::hit($rateLimitingKey);
+        }
 
-    livewire(EditProfile::class)
-        ->callAction(
-            TestAction::make('disableAppAuthentication')
-                ->schemaComponent('app', schema: 'content'),
-            ['code' => ''],
-        )
-        ->assertHasFormErrors([
-            'code' => 'required',
-        ]);
+        // Even with a valid code, the rate limit should block the attempt
+        livewire(EditProfile::class)
+            ->callAction(
+                TestAction::make('disableAppAuthentication')
+                    ->schemaComponent('app', schema: 'content'),
+                ['code' => $appAuthentication->getCurrentCode($user)],
+            )
+            ->assertHasFormErrors(['code']);
 
-    expect(filled($user->getAppAuthenticationSecret()))
-        ->toBeTrue();
+        expect(filled($user->getAppAuthenticationSecret()))
+            ->toBeTrue();
+    });
 
-    expect($user->getAppAuthenticationSecret())
-        ->not()->toBeNull();
+    it('can throttle recovery code verification attempts per user', function (): void {
+        $user = auth()->user();
 
-    expect($user->getAppAuthenticationRecoveryCodes())
-        ->toBeArray()
-        ->toHaveCount(8);
-});
+        // Pre-fill the per-user rate limiter to simulate 5 prior attempts
+        $rateLimitingKey = 'filament-disable-app-authentication:' . $user->getAuthIdentifier();
 
-test('codes must be 6 digits', function (): void {
-    $appAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
+        foreach (range(1, 5) as $i) {
+            RateLimiter::hit($rateLimitingKey);
+        }
 
-    $user = auth()->user();
+        // Even with a valid recovery code, the rate limit should block the attempt
+        livewire(EditProfile::class)
+            ->mountAction(TestAction::make('disableAppAuthentication')
+                ->schemaComponent('app', schema: 'content'))
+            ->callAction(TestAction::make('useRecoveryCode')
+                ->schemaComponent('code'))
+            ->fillForm([
+                'recoveryCode' => Arr::first($this->recoveryCodes),
+            ])
+            ->callMountedAction()
+            ->assertHasFormErrors(['recoveryCode']);
 
-    expect(filled($user->getAppAuthenticationSecret()))
-        ->toBeTrue();
-
-    expect($user->getAppAuthenticationSecret())
-        ->not()->toBeNull();
-
-    expect($user->getAppAuthenticationRecoveryCodes())
-        ->toBeArray()
-        ->toHaveCount(8);
-
-    livewire(EditProfile::class)
-        ->callAction(
-            TestAction::make('disableAppAuthentication')
-                ->schemaComponent('app', schema: 'content'),
-            ['code' => Str::limit($appAuthentication->getCurrentCode($user), limit: 5, end: '')],
-        )
-        ->assertHasFormErrors([
-            'code' => 'digits',
-        ]);
-
-    expect(filled($user->getAppAuthenticationSecret()))
-        ->toBeTrue();
-
-    expect($user->getAppAuthenticationSecret())
-        ->not()->toBeNull();
-
-    expect($user->getAppAuthenticationRecoveryCodes())
-        ->toBeArray()
-        ->toHaveCount(8);
-});
-
-it('will not disable authentication when an invalid recovery code is used', function (): void {
-    $user = auth()->user();
-
-    expect(filled($user->getAppAuthenticationSecret()))
-        ->toBeTrue();
-
-    expect($user->getAppAuthenticationSecret())
-        ->not()->toBeNull();
-
-    expect($user->getAppAuthenticationRecoveryCodes())
-        ->toBeArray()
-        ->toHaveCount(8);
-
-    livewire(EditProfile::class)
-        ->mountAction(TestAction::make('disableAppAuthentication')
-            ->schemaComponent('app', schema: 'content'))
-        ->callAction(TestAction::make('useRecoveryCode')
-            ->schemaComponent('code'))
-        ->fillForm([
-            'recoveryCode' => 'invalid-recovery-code',
-        ])
-        ->callMountedAction()
-        ->assertHasFormErrors();
-
-    expect(filled($user->getAppAuthenticationSecret()))
-        ->toBeTrue();
-
-    expect($user->getAppAuthenticationSecret())
-        ->not()->toBeNull();
-
-    expect($user->getAppAuthenticationRecoveryCodes())
-        ->toBeArray()
-        ->toHaveCount(8);
-});
-
-it('will not disable authentication with a recovery code if recovery is disabled', function (): void {
-    Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders())
-        ->recoverable(false);
-
-    $user = auth()->user();
-
-    expect(filled($user->getAppAuthenticationSecret()))
-        ->toBeTrue();
-
-    expect($user->getAppAuthenticationSecret())
-        ->not()->toBeNull();
-
-    expect($user->getAppAuthenticationRecoveryCodes())
-        ->toBeArray()
-        ->toHaveCount(8);
-
-    livewire(EditProfile::class)
-        ->callAction(
-            TestAction::make('disableAppAuthentication')
-                ->schemaComponent('app', schema: 'content'),
-            ['recoveryCode' => Arr::first($this->recoveryCodes)],
-        )
-        ->assertHasFormErrors();
-
-    expect(filled($user->getAppAuthenticationSecret()))
-        ->toBeTrue();
-
-    expect($user->getAppAuthenticationSecret())
-        ->not()->toBeNull();
-
-    expect($user->getAppAuthenticationRecoveryCodes())
-        ->toBeArray()
-        ->toHaveCount(8);
-});
-
-it('can throttle code verification attempts per user', function (): void {
-    $appAuthentication = Arr::first(Filament::getCurrentOrDefaultPanel()->getMultiFactorAuthenticationProviders());
-
-    $user = auth()->user();
-
-    // Pre-fill the per-user rate limiter to simulate 5 prior attempts
-    $rateLimitingKey = 'filament-disable-app-authentication:' . $user->getAuthIdentifier();
-
-    foreach (range(1, 5) as $i) {
-        RateLimiter::hit($rateLimitingKey);
-    }
-
-    // Even with a valid code, the rate limit should block the attempt
-    livewire(EditProfile::class)
-        ->callAction(
-            TestAction::make('disableAppAuthentication')
-                ->schemaComponent('app', schema: 'content'),
-            ['code' => $appAuthentication->getCurrentCode($user)],
-        )
-        ->assertHasFormErrors(['code']);
-
-    expect(filled($user->getAppAuthenticationSecret()))
-        ->toBeTrue();
-});
-
-it('can throttle recovery code verification attempts per user', function (): void {
-    $user = auth()->user();
-
-    // Pre-fill the per-user rate limiter to simulate 5 prior attempts
-    $rateLimitingKey = 'filament-disable-app-authentication:' . $user->getAuthIdentifier();
-
-    foreach (range(1, 5) as $i) {
-        RateLimiter::hit($rateLimitingKey);
-    }
-
-    // Even with a valid recovery code, the rate limit should block the attempt
-    livewire(EditProfile::class)
-        ->mountAction(TestAction::make('disableAppAuthentication')
-            ->schemaComponent('app', schema: 'content'))
-        ->callAction(TestAction::make('useRecoveryCode')
-            ->schemaComponent('code'))
-        ->fillForm([
-            'recoveryCode' => Arr::first($this->recoveryCodes),
-        ])
-        ->callMountedAction()
-        ->assertHasFormErrors(['recoveryCode']);
-
-    expect(filled($user->getAppAuthenticationSecret()))
-        ->toBeTrue();
+        expect(filled($user->getAppAuthenticationSecret()))
+            ->toBeTrue();
+    });
 });

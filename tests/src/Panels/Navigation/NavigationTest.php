@@ -16,343 +16,351 @@ use function Filament\Tests\livewire;
 
 uses(TestCase::class);
 
-it('can register navigation items from resources and pages', function (): void {
-    $navigation = Filament::getNavigation();
-    $groups = collect($navigation);
+describe('registration and ordering', function (): void {
+    it('can register navigation items from resources and pages', function (): void {
+        $navigation = Filament::getNavigation();
+        $groups = collect($navigation);
 
-    expect($groups)->each->toBeInstanceOf(NavigationGroup::class);
+        expect($groups)->each->toBeInstanceOf(NavigationGroup::class);
 
-    $allItems = $groups->flatMap(fn (NavigationGroup $group) => $group->getItems());
-    expect($allItems)->each->toBeInstanceOf(NavigationItem::class);
+        $allItems = $groups->flatMap(fn (NavigationGroup $group) => $group->getItems());
+        expect($allItems)->each->toBeInstanceOf(NavigationItem::class);
 
-    $itemLabels = $allItems->map(fn (NavigationItem $item) => $item->getLabel());
+        $itemLabels = $allItems->map(fn (NavigationItem $item) => $item->getLabel());
 
-    // Verify core pages and resources are registered
-    expect($itemLabels)
-        ->toContain('Dashboard')
-        ->toContain('Companies')
-        ->toContain('Users')
-        ->toContain('Posts')
-        ->toContain('Products');
+        // Verify core pages and resources are registered
+        expect($itemLabels)
+            ->toContain('Dashboard')
+            ->toContain('Companies')
+            ->toContain('Users')
+            ->toContain('Posts')
+            ->toContain('Products');
 
-    // Verify navigation groups contain expected items
-    $groupLabels = $groups->map(fn (NavigationGroup $group) => $group->getLabel());
-    expect($groupLabels)->toContain(null)->toContain('Blog')->toContain('Shop');
+        // Verify navigation groups contain expected items
+        $groupLabels = $groups->map(fn (NavigationGroup $group) => $group->getLabel());
+        expect($groupLabels)->toContain(null)->toContain('Blog')->toContain('Shop');
 
-    $blogItemLabels = collect($groups->first(fn (NavigationGroup $group) => $group->getLabel() === 'Blog')->getItems())
-        ->map(fn (NavigationItem $item) => $item->getLabel());
-    expect($blogItemLabels)->toContain('Posts')->toContain('Post Categories');
+        $blogItemLabels = collect($groups->first(fn (NavigationGroup $group) => $group->getLabel() === 'Blog')->getItems())
+            ->map(fn (NavigationItem $item) => $item->getLabel());
+        expect($blogItemLabels)->toContain('Posts')->toContain('Post Categories');
 
-    $shopItemLabels = collect($groups->first(fn (NavigationGroup $group) => $group->getLabel() === 'Shop')->getItems())
-        ->map(fn (NavigationItem $item) => $item->getLabel());
-    expect($shopItemLabels)->toContain('Products');
+        $shopItemLabels = collect($groups->first(fn (NavigationGroup $group) => $group->getLabel() === 'Shop')->getItems())
+            ->map(fn (NavigationItem $item) => $item->getLabel());
+        expect($shopItemLabels)->toContain('Products');
 
-    // Verify Dashboard appears first (has lowest sort order)
-    $defaultGroupItems = collect($groups->first(fn (NavigationGroup $group) => $group->getLabel() === null)->getItems());
-    expect($defaultGroupItems->first()->getLabel())->toBe('Dashboard');
+        // Verify Dashboard appears first (has lowest sort order)
+        $defaultGroupItems = collect($groups->first(fn (NavigationGroup $group) => $group->getLabel() === null)->getItems());
+        expect($defaultGroupItems->first()->getLabel())->toBe('Dashboard');
+    });
+
+    it('can reorder navigation groups by registering them', function (): void {
+        Filament::getCurrentOrDefaultPanel()->navigationGroups([
+            NavigationGroup::make()->label('Shop'),
+            NavigationGroup::make()->label('Blog'),
+        ]);
+
+        expect(Filament::getNavigation())
+            ->sequence(
+                fn ($group) => $group
+                    ->toBeInstanceOf(NavigationGroup::class)
+                    ->getLabel()->toBeNull(),
+                fn ($group) => $group
+                    ->toBeInstanceOf(NavigationGroup::class)
+                    ->getLabel()->toBe('Shop'),
+                fn ($group) => $group
+                    ->toBeInstanceOf(NavigationGroup::class)
+                    ->getLabel()->toBe('Blog'),
+            );
+    });
+
+    it('can reorder navigation groups by registering them with different labels', function (): void {
+        Filament::getCurrentOrDefaultPanel()->navigationGroups([
+            'Shop' => NavigationGroup::make()->label('Store'),
+            'Blog' => NavigationGroup::make()->label('Posts'),
+        ]);
+
+        expect(Filament::getNavigation())
+            ->sequence(
+                fn ($group) => $group
+                    ->toBeInstanceOf(NavigationGroup::class)
+                    ->getLabel()->toBeNull(),
+                fn ($group) => $group
+                    ->toBeInstanceOf(NavigationGroup::class)
+                    ->getLabel()->toBe('Store'),
+                fn ($group) => $group
+                    ->toBeInstanceOf(NavigationGroup::class)
+                    ->getLabel()->toBe('Posts'),
+            );
+    });
+
+    it('can reorder navigation groups by registering their labels', function (): void {
+        Filament::getCurrentOrDefaultPanel()->navigationGroups([
+            'Shop',
+            'Blog',
+        ]);
+
+        expect(Filament::getNavigation())
+            ->sequence(
+                fn ($group) => $group
+                    ->toBeInstanceOf(NavigationGroup::class)
+                    ->getLabel()->toBeNull(),
+                fn ($group) => $group
+                    ->toBeInstanceOf(NavigationGroup::class)
+                    ->getLabel()->toBe('Shop'),
+                fn ($group) => $group
+                    ->toBeInstanceOf(NavigationGroup::class)
+                    ->getLabel()->toBe('Blog'),
+            );
+    });
+
 });
 
-it('can reorder navigation groups by registering them', function (): void {
-    Filament::getCurrentOrDefaultPanel()->navigationGroups([
-        NavigationGroup::make()->label('Shop'),
-        NavigationGroup::make()->label('Blog'),
-    ]);
-
-    expect(Filament::getNavigation())
-        ->sequence(
-            fn ($group) => $group
-                ->toBeInstanceOf(NavigationGroup::class)
-                ->getLabel()->toBeNull(),
-            fn ($group) => $group
-                ->toBeInstanceOf(NavigationGroup::class)
-                ->getLabel()->toBe('Shop'),
-            fn ($group) => $group
-                ->toBeInstanceOf(NavigationGroup::class)
-                ->getLabel()->toBe('Blog'),
-        );
-});
-
-it('can reorder navigation groups by registering them with different labels', function (): void {
-    Filament::getCurrentOrDefaultPanel()->navigationGroups([
-        'Shop' => NavigationGroup::make()->label('Store'),
-        'Blog' => NavigationGroup::make()->label('Posts'),
-    ]);
-
-    expect(Filament::getNavigation())
-        ->sequence(
-            fn ($group) => $group
-                ->toBeInstanceOf(NavigationGroup::class)
-                ->getLabel()->toBeNull(),
-            fn ($group) => $group
-                ->toBeInstanceOf(NavigationGroup::class)
-                ->getLabel()->toBe('Store'),
-            fn ($group) => $group
-                ->toBeInstanceOf(NavigationGroup::class)
-                ->getLabel()->toBe('Posts'),
-        );
-});
-
-it('can reorder navigation groups by registering their labels', function (): void {
-    Filament::getCurrentOrDefaultPanel()->navigationGroups([
-        'Shop',
-        'Blog',
-    ]);
-
-    expect(Filament::getNavigation())
-        ->sequence(
-            fn ($group) => $group
-                ->toBeInstanceOf(NavigationGroup::class)
-                ->getLabel()->toBeNull(),
-            fn ($group) => $group
-                ->toBeInstanceOf(NavigationGroup::class)
-                ->getLabel()->toBe('Shop'),
-            fn ($group) => $group
-                ->toBeInstanceOf(NavigationGroup::class)
-                ->getLabel()->toBe('Blog'),
-        );
-});
-
-it('can establish parent-child relationships in sub-navigation', function (): void {
-    // Create a test class that uses the `HasSubNavigation` trait
-    $page = new class extends Page
-    {
-        protected string $view = 'filament-panels::pages.page';
-
-        public function getSubNavigation(): array
+describe('sub-navigation parent-child', function (): void {
+    it('can establish parent-child relationships in sub-navigation', function (): void {
+        // Create a test class that uses the `HasSubNavigation` trait
+        $page = new class extends Page
         {
-            return [
-                NavigationItem::make('Users')
-                    ->url('/users'),
-                NavigationItem::make('Products')
-                    ->parentItem('Users')
-                    ->url('/products'),
-            ];
-        }
-    };
+            protected string $view = 'filament-panels::pages.page';
 
-    $navigation = $page->getCachedSubNavigation();
+            public function getSubNavigation(): array
+            {
+                return [
+                    NavigationItem::make('Users')
+                        ->url('/users'),
+                    NavigationItem::make('Products')
+                        ->parentItem('Users')
+                        ->url('/products'),
+                ];
+            }
+        };
 
-    // Should have one group
-    expect($navigation)->toHaveCount(1);
+        $navigation = $page->getCachedSubNavigation();
 
-    $group = $navigation[0];
-    $items = $group->getItems();
+        // Should have one group
+        expect($navigation)->toHaveCount(1);
 
-    // Should only have the parent item at the top level (child is nested)
-    expect($items)->toHaveCount(1);
-    expect($items[0]->getLabel())->toBe('Users');
+        $group = $navigation[0];
+        $items = $group->getItems();
 
-    // Parent should have the child item
-    $childItems = $items[0]->getChildItems();
-    expect($childItems)->toHaveCount(1);
-    expect($childItems->first()->getLabel())->toBe('Products');
-});
+        // Should only have the parent item at the top level (child is nested)
+        expect($items)->toHaveCount(1);
+        expect($items[0]->getLabel())->toBe('Users');
 
-it('keeps parent items without children in sub-navigation', function (): void {
-    $page = new class extends Page
-    {
-        protected string $view = 'filament-panels::pages.page';
+        // Parent should have the child item
+        $childItems = $items[0]->getChildItems();
+        expect($childItems)->toHaveCount(1);
+        expect($childItems->first()->getLabel())->toBe('Products');
+    });
 
-        public function getSubNavigation(): array
+    it('keeps parent items without children in sub-navigation', function (): void {
+        $page = new class extends Page
         {
-            return [
-                NavigationItem::make('Settings')
-                    ->url('/settings'),
-                NavigationItem::make('Users')
-                    ->url('/users'),
-                NavigationItem::make('Products')
-                    ->parentItem('Users')
-                    ->url('/products'),
-            ];
-        }
-    };
+            protected string $view = 'filament-panels::pages.page';
 
-    $navigation = $page->getCachedSubNavigation();
+            public function getSubNavigation(): array
+            {
+                return [
+                    NavigationItem::make('Settings')
+                        ->url('/settings'),
+                    NavigationItem::make('Users')
+                        ->url('/users'),
+                    NavigationItem::make('Products')
+                        ->parentItem('Users')
+                        ->url('/products'),
+                ];
+            }
+        };
 
-    $group = $navigation[0];
-    $items = collect($group->getItems());
+        $navigation = $page->getCachedSubNavigation();
 
-    // Should have two top-level items: Settings and Users
-    expect($items)->toHaveCount(2);
+        $group = $navigation[0];
+        $items = collect($group->getItems());
 
-    $settings = $items->first(fn ($i) => $i->getLabel() === 'Settings');
-    $users = $items->first(fn ($i) => $i->getLabel() === 'Users');
+        // Should have two top-level items: Settings and Users
+        expect($items)->toHaveCount(2);
 
-    expect($settings)->not()->toBeNull();
-    expect($settings->getChildItems())->toBeEmpty();
+        $settings = $items->first(fn ($i) => $i->getLabel() === 'Settings');
+        $users = $items->first(fn ($i) => $i->getLabel() === 'Users');
 
-    expect($users)->not()->toBeNull();
-    expect($users->getChildItems())->toHaveCount(1);
-    expect($users->getChildItems()->first()->getLabel())->toBe('Products');
-});
+        expect($settings)->not()->toBeNull();
+        expect($settings->getChildItems())->toBeEmpty();
 
-it('handles child items with non-existent parent in sub-navigation', function (): void {
-    $page = new class extends Page
-    {
-        protected string $view = 'filament-panels::pages.page';
+        expect($users)->not()->toBeNull();
+        expect($users->getChildItems())->toHaveCount(1);
+        expect($users->getChildItems()->first()->getLabel())->toBe('Products');
+    });
 
-        public function getSubNavigation(): array
+    it('handles child items with non-existent parent in sub-navigation', function (): void {
+        $page = new class extends Page
         {
-            return [
-                NavigationItem::make('Settings')
-                    ->url('/settings'),
-                NavigationItem::make('Products')
-                    ->parentItem('NonExistentParent')
-                    ->url('/products'),
-            ];
-        }
-    };
+            protected string $view = 'filament-panels::pages.page';
 
-    $navigation = $page->getCachedSubNavigation();
+            public function getSubNavigation(): array
+            {
+                return [
+                    NavigationItem::make('Settings')
+                        ->url('/settings'),
+                    NavigationItem::make('Products')
+                        ->parentItem('NonExistentParent')
+                        ->url('/products'),
+                ];
+            }
+        };
 
-    $group = $navigation[0];
-    $items = collect($group->getItems());
+        $navigation = $page->getCachedSubNavigation();
 
-    // Only Settings should appear (Products has non-existent parent and is dropped)
-    expect($items)->toHaveCount(1);
-    expect($items->first()->getLabel())->toBe('Settings');
-});
+        $group = $navigation[0];
+        $items = collect($group->getItems());
 
-it('establishes parent-child relationships within navigation groups', function (): void {
-    $page = new class extends Page
-    {
-        protected string $view = 'filament-panels::pages.page';
+        // Only Settings should appear (Products has non-existent parent and is dropped)
+        expect($items)->toHaveCount(1);
+        expect($items->first()->getLabel())->toBe('Settings');
+    });
 
-        public function getSubNavigation(): array
+    it('establishes parent-child relationships within navigation groups', function (): void {
+        $page = new class extends Page
         {
-            return [
-                NavigationGroup::make('System'),
-                NavigationItem::make('Users')
-                    ->group('System')
-                    ->url('/users'),
-                NavigationItem::make('Roles')
-                    ->group('System')
-                    ->parentItem('Users')
-                    ->url('/roles'),
-            ];
-        }
-    };
+            protected string $view = 'filament-panels::pages.page';
 
-    $navigation = $page->getCachedSubNavigation();
+            public function getSubNavigation(): array
+            {
+                return [
+                    NavigationGroup::make('System'),
+                    NavigationItem::make('Users')
+                        ->group('System')
+                        ->url('/users'),
+                    NavigationItem::make('Roles')
+                        ->group('System')
+                        ->parentItem('Users')
+                        ->url('/roles'),
+                ];
+            }
+        };
 
-    // Find the System group
-    $systemGroup = collect($navigation)->first(fn ($g) => $g->getLabel() === 'System');
-    expect($systemGroup)->not()->toBeNull();
+        $navigation = $page->getCachedSubNavigation();
 
-    $items = collect($systemGroup->getItems());
+        // Find the System group
+        $systemGroup = collect($navigation)->first(fn ($g) => $g->getLabel() === 'System');
+        expect($systemGroup)->not()->toBeNull();
 
-    // Should only have Users at top level
-    expect($items)->toHaveCount(1);
-    expect($items->first()->getLabel())->toBe('Users');
+        $items = collect($systemGroup->getItems());
 
-    // Users should have Roles as child
-    $childItems = $items->first()->getChildItems();
-    expect($childItems)->toHaveCount(1);
-    expect($childItems->first()->getLabel())->toBe('Roles');
-});
+        // Should only have Users at top level
+        expect($items)->toHaveCount(1);
+        expect($items->first()->getLabel())->toBe('Users');
 
-it('supports multiple children under one parent in sub-navigation', function (): void {
-    $page = new class extends Page
-    {
-        protected string $view = 'filament-panels::pages.page';
+        // Users should have Roles as child
+        $childItems = $items->first()->getChildItems();
+        expect($childItems)->toHaveCount(1);
+        expect($childItems->first()->getLabel())->toBe('Roles');
+    });
 
-        public function getSubNavigation(): array
+    it('supports multiple children under one parent in sub-navigation', function (): void {
+        $page = new class extends Page
         {
-            return [
-                NavigationItem::make('Users')
-                    ->url('/users'),
-                NavigationItem::make('Roles')
-                    ->parentItem('Users')
-                    ->url('/roles'),
-                NavigationItem::make('Permissions')
-                    ->parentItem('Users')
-                    ->url('/permissions'),
-            ];
-        }
-    };
+            protected string $view = 'filament-panels::pages.page';
 
-    $navigation = $page->getCachedSubNavigation();
+            public function getSubNavigation(): array
+            {
+                return [
+                    NavigationItem::make('Users')
+                        ->url('/users'),
+                    NavigationItem::make('Roles')
+                        ->parentItem('Users')
+                        ->url('/roles'),
+                    NavigationItem::make('Permissions')
+                        ->parentItem('Users')
+                        ->url('/permissions'),
+                ];
+            }
+        };
 
-    $group = $navigation[0];
-    $items = $group->getItems();
+        $navigation = $page->getCachedSubNavigation();
 
-    // Should only have Users at top level
-    expect($items)->toHaveCount(1);
-    expect($items[0]->getLabel())->toBe('Users');
+        $group = $navigation[0];
+        $items = $group->getItems();
 
-    // Users should have both Roles and Permissions as children
-    $childItems = $items[0]->getChildItems();
-    expect($childItems)->toHaveCount(2);
+        // Should only have Users at top level
+        expect($items)->toHaveCount(1);
+        expect($items[0]->getLabel())->toBe('Users');
 
-    $childLabels = $childItems->map(fn ($item) => $item->getLabel())->all();
-    expect($childLabels)->toContain('Roles');
-    expect($childLabels)->toContain('Permissions');
+        // Users should have both Roles and Permissions as children
+        $childItems = $items[0]->getChildItems();
+        expect($childItems)->toHaveCount(2);
+
+        $childLabels = $childItems->map(fn ($item) => $item->getLabel())->all();
+        expect($childLabels)->toContain('Roles');
+        expect($childLabels)->toContain('Permissions');
+    });
+
 });
 
-it('can use enum `HasLabel` for cluster sub-navigation groups', function (): void {
-    // Access a page within the cluster
-    $this->get(ManageAdmins::getUrl())->assertSuccessful();
+describe('cluster sub-navigation', function (): void {
+    it('can use enum `HasLabel` for cluster sub-navigation groups', function (): void {
+        // Access a page within the cluster
+        $this->get(ManageAdmins::getUrl())->assertSuccessful();
 
-    // Get the page instance to test sub-navigation (pages within cluster also have sub-navigation)
-    $component = livewire(ManageAdmins::class);
+        // Get the page instance to test sub-navigation (pages within cluster also have sub-navigation)
+        $component = livewire(ManageAdmins::class);
 
-    $subNavigation = $component->instance()->getCachedSubNavigation();
+        $subNavigation = $component->instance()->getCachedSubNavigation();
 
-    // Should have groups with proper labels from `HasLabel` interface
-    $groupLabels = collect($subNavigation)
-        ->filter(fn (NavigationGroup $group) => filled($group->getLabel()))
-        ->map(fn (NavigationGroup $group) => $group->getLabel())
-        ->values()
-        ->all();
+        // Should have groups with proper labels from `HasLabel` interface
+        $groupLabels = collect($subNavigation)
+            ->filter(fn (NavigationGroup $group) => filled($group->getLabel()))
+            ->map(fn (NavigationGroup $group) => $group->getLabel())
+            ->values()
+            ->all();
 
-    // The enum `NavigationGroupEnum` has `getLabel()` returning 'User Management' for Users
-    // and 'System Settings' for Settings - NOT the raw enum name like 'Users' or 'Settings'
-    expect($groupLabels)->toContain('User Management');
-    expect($groupLabels)->toContain('System Settings');
-    expect($groupLabels)->not->toContain('Users');
-    expect($groupLabels)->not->toContain('Settings');
-});
+        // The enum `NavigationGroupEnum` has `getLabel()` returning 'User Management' for Users
+        // and 'System Settings' for Settings - NOT the raw enum name like 'Users' or 'Settings'
+        expect($groupLabels)->toContain('User Management');
+        expect($groupLabels)->toContain('System Settings');
+        expect($groupLabels)->not->toContain('Users');
+        expect($groupLabels)->not->toContain('Settings');
+    });
 
-it('can disable sub-navigation for a cluster', function (): void {
-    // Access a page within the cluster that has sub-navigation disabled
-    $this->get(ClusteredPageWithoutSubNavigation::getUrl())->assertSuccessful();
+    it('can disable sub-navigation for a cluster', function (): void {
+        // Access a page within the cluster that has sub-navigation disabled
+        $this->get(ClusteredPageWithoutSubNavigation::getUrl())->assertSuccessful();
 
-    $component = livewire(ClusteredPageWithoutSubNavigation::class);
+        $component = livewire(ClusteredPageWithoutSubNavigation::class);
 
-    $subNavigation = $component->instance()->getSubNavigation();
+        $subNavigation = $component->instance()->getSubNavigation();
 
-    expect($subNavigation)->toBe([]);
-});
+        expect($subNavigation)->toBe([]);
+    });
 
-it('returns sub-navigation when cluster has sub-navigation enabled', function (): void {
-    // `UserManagement` cluster has sub-navigation enabled by default
-    $this->get(ManageAdmins::getUrl())->assertSuccessful();
+    it('returns sub-navigation when cluster has sub-navigation enabled', function (): void {
+        // `UserManagement` cluster has sub-navigation enabled by default
+        $this->get(ManageAdmins::getUrl())->assertSuccessful();
 
-    $component = livewire(ManageAdmins::class);
+        $component = livewire(ManageAdmins::class);
 
-    $subNavigation = $component->instance()->getSubNavigation();
+        $subNavigation = $component->instance()->getSubNavigation();
 
-    expect($subNavigation)->not->toBeEmpty();
-});
+        expect($subNavigation)->not->toBeEmpty();
+    });
 
-it('can disable sub-navigation for resource pages in a cluster', function (): void {
-    // Create a test resource page that would be in a cluster with sub-navigation disabled
-    $listRecordsPage = new class extends ListRecords
-    {
-        protected static ?string $cluster = WithoutSubNavigationCluster::class;
+    it('can disable sub-navigation for resource pages in a cluster', function (): void {
+        // Create a test resource page that would be in a cluster with sub-navigation disabled
+        $listRecordsPage = new class extends ListRecords
+        {
+            protected static ?string $cluster = WithoutSubNavigationCluster::class;
 
-        protected static string $resource = UserResource::class;
-    };
+            protected static string $resource = UserResource::class;
+        };
 
-    $subNavigation = $listRecordsPage->getSubNavigation();
+        $subNavigation = $listRecordsPage->getSubNavigation();
 
-    expect($subNavigation)->toBeEmpty();
-});
+        expect($subNavigation)->toBeEmpty();
+    });
 
-it('can check if cluster should register sub-navigation', function (): void {
-    // Test that `UserManagement` cluster has sub-navigation enabled by default
-    expect(UserManagement::shouldRegisterSubNavigation())->toBeTrue();
+    it('can check if cluster should register sub-navigation', function (): void {
+        // Test that `UserManagement` cluster has sub-navigation enabled by default
+        expect(UserManagement::shouldRegisterSubNavigation())->toBeTrue();
 
-    // Test that `WithoutSubNavigationCluster` has sub-navigation disabled
-    expect(WithoutSubNavigationCluster::shouldRegisterSubNavigation())->toBeFalse();
+        // Test that `WithoutSubNavigationCluster` has sub-navigation disabled
+        expect(WithoutSubNavigationCluster::shouldRegisterSubNavigation())->toBeFalse();
+    });
 });
