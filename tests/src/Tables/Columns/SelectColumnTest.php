@@ -461,7 +461,7 @@ class TestTableWithRelationshipSelectColumn extends Component implements HasActi
         return $table
             ->query(Post::query())
             ->columns([
-                Tables\Columns\SelectColumn::make('author_id')
+                SelectColumn::make('author_id')
                     ->optionsRelationship('author', 'name'),
             ]);
     }
@@ -483,7 +483,7 @@ class TestTableWithSearchableRelationshipSelectColumn extends Component implemen
         return $table
             ->query(Post::query())
             ->columns([
-                Tables\Columns\SelectColumn::make('author_id')
+                SelectColumn::make('author_id')
                     ->optionsRelationship('author', 'name')
                     ->searchableOptions(),
             ]);
@@ -506,7 +506,7 @@ class TestTableWithCustomLabelRelationshipSelectColumn extends Component impleme
         return $table
             ->query(Post::query())
             ->columns([
-                Tables\Columns\SelectColumn::make('author_id')
+                SelectColumn::make('author_id')
                     ->optionsRelationship('author', 'name')
                     ->getOptionLabelFromRecordUsing(static fn (User $record): string => "Author: {$record->name}"),
             ]);
@@ -530,7 +530,7 @@ class TestTableWithSelectColumn extends Component implements HasActions, HasSche
             ->query(Post::query())
             ->columns([
                 Tables\Columns\TextColumn::make('title'),
-                Tables\Columns\SelectColumn::make('rating')
+                SelectColumn::make('rating')
                     ->options([
                         1 => '1 Star',
                         2 => '2 Stars',
@@ -556,7 +556,7 @@ class RenderSelectColumnWithNonNative extends Component implements HasActions, H
     public function table(Table $table): Table
     {
         return $table->query(Post::query())->columns([
-            Tables\Columns\SelectColumn::make('rating')->options([1 => '1', 2 => '2', 3 => '3'])->native(false),
+            SelectColumn::make('rating')->options([1 => '1', 2 => '2', 3 => '3'])->native(false),
         ]);
     }
 
@@ -575,7 +575,7 @@ class RenderSelectColumnWithClosureNative extends Component implements HasAction
     public function table(Table $table): Table
     {
         return $table->query(Post::query())->columns([
-            Tables\Columns\SelectColumn::make('rating')->options([1 => '1', 2 => '2'])->native(static fn (): bool => false),
+            SelectColumn::make('rating')->options([1 => '1', 2 => '2'])->native(static fn (): bool => false),
         ]);
     }
 
@@ -594,7 +594,7 @@ class RenderSelectColumnWithSearchable extends Component implements HasActions, 
     public function table(Table $table): Table
     {
         return $table->query(Post::query())->columns([
-            Tables\Columns\SelectColumn::make('rating')->options([1 => '1', 2 => '2', 3 => '3'])->searchableOptions(),
+            SelectColumn::make('rating')->options([1 => '1', 2 => '2', 3 => '3'])->searchableOptions(),
         ]);
     }
 
@@ -613,7 +613,7 @@ class RenderSelectColumnWithOptionsLimit extends Component implements HasActions
     public function table(Table $table): Table
     {
         return $table->query(Post::query())->columns([
-            Tables\Columns\SelectColumn::make('rating')->options([1 => '1', 2 => '2'])->optionsLimit(100),
+            SelectColumn::make('rating')->options([1 => '1', 2 => '2'])->optionsLimit(100),
         ]);
     }
 
@@ -632,7 +632,7 @@ class RenderSelectColumnWithClosureOptionsLimit extends Component implements Has
     public function table(Table $table): Table
     {
         return $table->query(Post::query())->columns([
-            Tables\Columns\SelectColumn::make('rating')->options([1 => '1'])->optionsLimit(static fn (): int => 100),
+            SelectColumn::make('rating')->options([1 => '1'])->optionsLimit(static fn (): int => 100),
         ]);
     }
 
@@ -651,7 +651,7 @@ class RenderSelectColumnWithPosition extends Component implements HasActions, Ha
     public function table(Table $table): Table
     {
         return $table->query(Post::query())->columns([
-            Tables\Columns\SelectColumn::make('rating')->options([1 => '1'])->native(false)->position('bottom'),
+            SelectColumn::make('rating')->options([1 => '1'])->native(false)->position('bottom'),
         ]);
     }
 
@@ -670,7 +670,7 @@ class RenderSelectColumnWithClosurePosition extends Component implements HasActi
     public function table(Table $table): Table
     {
         return $table->query(Post::query())->columns([
-            Tables\Columns\SelectColumn::make('rating')->options([1 => '1'])->native(false)->position(static fn (): string => 'bottom'),
+            SelectColumn::make('rating')->options([1 => '1'])->native(false)->position(static fn (): string => 'bottom'),
         ]);
     }
 
@@ -689,7 +689,7 @@ class RenderSelectColumnWithNoWrapLabels extends Component implements HasActions
     public function table(Table $table): Table
     {
         return $table->query(Post::query())->columns([
-            Tables\Columns\SelectColumn::make('rating')->options([1 => '1'])->native(false)->wrapOptionLabels(false),
+            SelectColumn::make('rating')->options([1 => '1'])->native(false)->wrapOptionLabels(false),
         ]);
     }
 
@@ -708,7 +708,7 @@ class RenderSelectColumnWithClosureWrapLabels extends Component implements HasAc
     public function table(Table $table): Table
     {
         return $table->query(Post::query())->columns([
-            Tables\Columns\SelectColumn::make('rating')->options([1 => '1'])->native(false)->wrapOptionLabels(static fn (): bool => false),
+            SelectColumn::make('rating')->options([1 => '1'])->native(false)->wrapOptionLabels(static fn (): bool => false),
         ]);
     }
 
@@ -727,7 +727,7 @@ class RenderSelectColumnWithAllowHtml extends Component implements HasActions, H
     public function table(Table $table): Table
     {
         return $table->query(Post::query())->columns([
-            Tables\Columns\SelectColumn::make('rating')->options([1 => '<b>1</b>'])->allowOptionsHtml(),
+            SelectColumn::make('rating')->options([1 => '<b>1</b>'])->allowOptionsHtml(),
         ]);
     }
 
@@ -746,7 +746,7 @@ class RenderSelectColumnWithPreload extends Component implements HasActions, Has
     public function table(Table $table): Table
     {
         return $table->query(Post::query())->columns([
-            Tables\Columns\SelectColumn::make('rating')->options([1 => '1', 2 => '2'])->native(false)->preloadOptions(),
+            SelectColumn::make('rating')->options([1 => '1', 2 => '2'])->native(false)->preloadOptions(),
         ]);
     }
 
@@ -765,7 +765,7 @@ class RenderSelectColumnWithNoOptionsMessage extends Component implements HasAct
     public function table(Table $table): Table
     {
         return $table->query(Post::query())->columns([
-            Tables\Columns\SelectColumn::make('rating')->options([1 => '1'])->native(false)->noOptionsMessage('Nothing here'),
+            SelectColumn::make('rating')->options([1 => '1'])->native(false)->noOptionsMessage('Nothing here'),
         ]);
     }
 
@@ -784,7 +784,7 @@ class RenderSelectColumnWithSearchDebounce extends Component implements HasActio
     public function table(Table $table): Table
     {
         return $table->query(Post::query())->columns([
-            Tables\Columns\SelectColumn::make('rating')->options([1 => '1'])->searchableOptions()->optionsSearchDebounce(500),
+            SelectColumn::make('rating')->options([1 => '1'])->searchableOptions()->optionsSearchDebounce(500),
         ]);
     }
 
@@ -803,7 +803,7 @@ class RenderSelectColumnWithLoadingMessage extends Component implements HasActio
     public function table(Table $table): Table
     {
         return $table->query(Post::query())->columns([
-            Tables\Columns\SelectColumn::make('rating')->options([1 => '1'])->native(false)->optionsLoadingMessage('Please wait...'),
+            SelectColumn::make('rating')->options([1 => '1'])->native(false)->optionsLoadingMessage('Please wait...'),
         ]);
     }
 

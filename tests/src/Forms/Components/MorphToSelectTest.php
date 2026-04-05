@@ -6,6 +6,7 @@ use Filament\Forms\Components\MorphToSelect;
 use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
+use InvalidArgumentException;
 
 uses(TestCase::class);
 
@@ -64,7 +65,7 @@ it('can set `modifyKeySelectUsing()` callback', function (): void {
 
 it('throws `InvalidArgumentException` when name is blank', function (): void {
     MorphToSelect::make('');
-})->throws(\InvalidArgumentException::class);
+})->throws(InvalidArgumentException::class);
 
 describe('label auto-generation', function (): void {
     it('auto-generates label from kebab name', function (): void {

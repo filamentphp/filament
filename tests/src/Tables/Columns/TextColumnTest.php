@@ -209,7 +209,7 @@ class RenderTextColumn extends Component implements HasActions, HasSchemas, Tabl
     public function table(Table $table): Table
     {
         return $table->query(Post::query())->columns([
-            Tables\Columns\TextColumn::make('title'),
+            TextColumn::make('title'),
         ]);
     }
 
@@ -228,7 +228,7 @@ class RenderTextColumnWithBadge extends Component implements HasActions, HasSche
     public function table(Table $table): Table
     {
         return $table->query(Post::query())->columns([
-            Tables\Columns\TextColumn::make('title')->badge(),
+            TextColumn::make('title')->badge(),
         ]);
     }
 
@@ -247,7 +247,7 @@ class RenderTextColumnWithClosureBadge extends Component implements HasActions, 
     public function table(Table $table): Table
     {
         return $table->query(Post::query())->columns([
-            Tables\Columns\TextColumn::make('title')->badge(static fn (): bool => true),
+            TextColumn::make('title')->badge(static fn (): bool => true),
         ]);
     }
 
@@ -266,7 +266,7 @@ class RenderTextColumnWithBadgeUndone extends Component implements HasActions, H
     public function table(Table $table): Table
     {
         return $table->query(Post::query())->columns([
-            Tables\Columns\TextColumn::make('title')->badge()->badge(false),
+            TextColumn::make('title')->badge()->badge(false),
         ]);
     }
 
@@ -285,7 +285,7 @@ class RenderTextColumnWithBulleted extends Component implements HasActions, HasS
     public function table(Table $table): Table
     {
         return $table->query(Post::query())->columns([
-            Tables\Columns\TextColumn::make('title')->bulleted(),
+            TextColumn::make('title')->bulleted(),
         ]);
     }
 
@@ -304,7 +304,7 @@ class RenderTextColumnWithListWithLineBreaks extends Component implements HasAct
     public function table(Table $table): Table
     {
         return $table->query(Post::query())->columns([
-            Tables\Columns\TextColumn::make('title')->listWithLineBreaks(),
+            TextColumn::make('title')->listWithLineBreaks(),
         ]);
     }
 
@@ -323,7 +323,7 @@ class RenderTextColumnWithLimitList extends Component implements HasActions, Has
     public function table(Table $table): Table
     {
         return $table->query(Post::query())->columns([
-            Tables\Columns\TextColumn::make('title')->limitList(5),
+            TextColumn::make('title')->limitList(5),
         ]);
     }
 
@@ -342,7 +342,7 @@ class RenderTextColumnWithClosureLimitList extends Component implements HasActio
     public function table(Table $table): Table
     {
         return $table->query(Post::query())->columns([
-            Tables\Columns\TextColumn::make('title')->limitList(static fn (): int => 10),
+            TextColumn::make('title')->limitList(static fn (): int => 10),
         ]);
     }
 
@@ -361,7 +361,7 @@ class RenderTextColumnWithDefaultLimitList extends Component implements HasActio
     public function table(Table $table): Table
     {
         return $table->query(Post::query())->columns([
-            Tables\Columns\TextColumn::make('title')->limitList(),
+            TextColumn::make('title')->limitList(),
         ]);
     }
 
@@ -380,7 +380,7 @@ class RenderTextColumnWithSizeEnum extends Component implements HasActions, HasS
     public function table(Table $table): Table
     {
         return $table->query(Post::query())->columns([
-            Tables\Columns\TextColumn::make('title')->size(TextSize::Large),
+            TextColumn::make('title')->size(TextSize::Large),
         ]);
     }
 
@@ -399,7 +399,7 @@ class RenderTextColumnWithClosureSize extends Component implements HasActions, H
     public function table(Table $table): Table
     {
         return $table->query(Post::query())->columns([
-            Tables\Columns\TextColumn::make('title')->size(static fn (): TextSize => TextSize::Large),
+            TextColumn::make('title')->size(static fn (): TextSize => TextSize::Large),
         ]);
     }
 
@@ -418,7 +418,7 @@ class RenderTextColumnWithSizeBase extends Component implements HasActions, HasS
     public function table(Table $table): Table
     {
         return $table->query(Post::query())->columns([
-            Tables\Columns\TextColumn::make('title')->size('base'),
+            TextColumn::make('title')->size('base'),
         ]);
     }
 
@@ -437,7 +437,7 @@ class RenderTextColumnWithSizeString extends Component implements HasActions, Ha
     public function table(Table $table): Table
     {
         return $table->query(Post::query())->columns([
-            Tables\Columns\TextColumn::make('title')->size('lg'),
+            TextColumn::make('title')->size('lg'),
         ]);
     }
 
@@ -456,7 +456,7 @@ class RenderTextColumnWithExpandableLimitedList extends Component implements Has
     public function table(Table $table): Table
     {
         return $table->query(Post::query())->columns([
-            Tables\Columns\TextColumn::make('title')->listWithLineBreaks()->limitList(1)->expandableLimitedList(),
+            TextColumn::make('title')->listWithLineBreaks()->limitList(1)->expandableLimitedList(),
         ]);
     }
 
@@ -475,7 +475,7 @@ class RenderTextColumnWithClosureExpandableLimitedList extends Component impleme
     public function table(Table $table): Table
     {
         return $table->query(Post::query())->columns([
-            Tables\Columns\TextColumn::make('title')->listWithLineBreaks()->limitList(1)->expandableLimitedList(static fn (): bool => true),
+            TextColumn::make('title')->listWithLineBreaks()->limitList(1)->expandableLimitedList(static fn (): bool => true),
         ]);
     }
 

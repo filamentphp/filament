@@ -254,7 +254,7 @@ describe('relationship serialization', function (): void {
 
 describe('error handling', function (): void {
     it('throws when unserializing invalid data', function (): void {
-        $this->expectException(\Throwable::class);
+        $this->expectException(Throwable::class);
 
         $this->serializer->unserialize('invalid');
     });

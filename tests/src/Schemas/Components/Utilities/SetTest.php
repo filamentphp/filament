@@ -67,7 +67,7 @@ it('returns the state value from `__invoke()`', function (): void {
 });
 
 it('can set `skipComponentsChildContainersWhileSearching()`', function (): void {
-    $component = (new \Filament\Schemas\Components\Component)
+    $component = (new Filament\Schemas\Components\Component)
         ->container(Schema::make(Livewire::make()));
 
     $set = new Set($component);
