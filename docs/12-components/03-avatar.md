@@ -52,3 +52,4 @@ You can also pass your own custom size classes into the `size` attribute:
     alt="Dan Harrin"
     size="w-12 h-12"
 />
+```

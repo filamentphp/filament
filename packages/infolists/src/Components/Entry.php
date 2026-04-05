@@ -295,9 +295,9 @@ class Entry extends Component
 
         <div <?= $attributes->toHtml() ?>>
             <?php if (filled($label) && $labelSrOnly) { ?>
-                <dt class="fi-in-entry-label fi-hidden">
+                <div class="fi-in-entry-label fi-hidden" role="term">
                     <?= e($label) ?>
-                </dt>
+                </div>
             <?php } ?>
 
             <?php if ((filled($label) && (! $labelSrOnly)) || $hasInlineLabel || $aboveLabelSchema || $belowLabelSchema || $beforeLabelSchema || $afterLabelSchema) { ?>
@@ -309,9 +309,9 @@ class Entry extends Component
                             <?= $beforeLabelSchema?->toHtml() ?>
 
                             <?php if (filled($label) && (! $labelSrOnly)) { ?>
-                                <dt class="fi-in-entry-label">
+                                <div class="fi-in-entry-label" role="term">
                                     <?= e($label) ?>
-                                </dt>
+                                </div>
                             <?php } ?>
 
                             <?= $afterLabelSchema?->toHtml() ?>
@@ -325,7 +325,7 @@ class Entry extends Component
             <div class="fi-in-entry-content-col">
                 <?= $this->getChildSchema($this::ABOVE_CONTENT_SCHEMA_KEY)?->toHtml() ?>
 
-                <dd class="fi-in-entry-content-ctn">
+                <div class="fi-in-entry-content-ctn" role="definition">
                     <?= $beforeContentSchema?->toHtml() ?>
 
                     <<?= $wrapperTag ?> <?php if ($wrapperTag === 'a') {
@@ -335,7 +335,7 @@ class Entry extends Component
                     </<?= $wrapperTag ?>>
 
                     <?= $afterContentSchema?->toHtml() ?>
-                </dd>
+                </div>
 
                 <?= $this->getChildSchema($this::BELOW_CONTENT_SCHEMA_KEY)?->toHtml() ?>
             </div>

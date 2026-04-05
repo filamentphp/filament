@@ -55,6 +55,11 @@ return [
             'title' => 'Opgeslagen',
         ],
 
+        'throttled' => [
+            'title' => 'Te veel aanvragen. Probeer het over :seconds seconden opnieuw.',
+            'body' => 'Probeer het over :seconds seconden opnieuw.',
+        ],
+
     ],
 
     'actions' => [

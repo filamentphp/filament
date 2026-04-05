@@ -596,3 +596,70 @@ it('returns an empty array for a non-existent group in array tables', function (
             expect($keys)->toBeEmpty();
         });
 });
+
+it('can set `collapsible()` and get with `isCollapsible()`', function (): void {
+    expect(Group::make('status')->collapsible()->isCollapsible())->toBeTrue();
+});
+
+it('defaults `isCollapsible()` to `false`', function (): void {
+    expect(Group::make('status')->isCollapsible())->toBeFalse();
+});
+
+it('can set `column()` and get with `getColumn()`', function (): void {
+    expect(Group::make('status')->column('custom_column')->getColumn())->toBe('custom_column');
+});
+
+it('returns `getId()` from `getColumn()` when no custom column is set', function (): void {
+    expect(Group::make('status')->getColumn())->toBe('status');
+});
+
+it('can set `date()` and get with `isDate()`', function (): void {
+    expect(Group::make('created_at')->date()->isDate())->toBeTrue();
+});
+
+it('defaults `isDate()` to `false`', function (): void {
+    expect(Group::make('created_at')->isDate())->toBeFalse();
+});
+
+it('can set `label()` and get with `getLabel()`', function (): void {
+    expect(Group::make('status')->label('Status Group')->getLabel())->toBe('Status Group');
+});
+
+it('generates a default label from `getId()` when no label is set', function (): void {
+    expect(Group::make('author_name')->getLabel())->toBe('Author name');
+});
+
+it('can set `titlePrefixedWithLabel()` to `false` and get with `isTitlePrefixedWithLabel()`', function (): void {
+    expect(Group::make('status')->titlePrefixedWithLabel(false)->isTitlePrefixedWithLabel())->toBeFalse();
+});
+
+it('defaults `isTitlePrefixedWithLabel()` to `true`', function (): void {
+    expect(Group::make('status')->isTitlePrefixedWithLabel())->toBeTrue();
+});
+
+it('can set `id()` and get with `getId()`', function (): void {
+    $group = Group::make('status')
+        ->id('custom-id');
+
+    expect($group->getId())->toBe('custom-id');
+});
+
+it('can set `label()` with a `Closure`', function (): void {
+    $group = Group::make('status')
+        ->label(static fn (): string => 'Dynamic Label');
+
+    expect($group->getLabel())->toBe('Dynamic Label');
+});
+
+it('returns fluent `$this` from callback setters', function (): void {
+    $group = Group::make('status');
+
+    expect($group->getDescriptionFromRecordUsing(static fn () => 'desc'))->toBe($group);
+    expect($group->getDescriptionUsing(static fn () => 'desc'))->toBe($group);
+    expect($group->getTitleFromRecordUsing(static fn () => 'title'))->toBe($group);
+    expect($group->getKeyFromRecordUsing(static fn () => 'key'))->toBe($group);
+    expect($group->groupQueryUsing(static fn ($query) => $query))->toBe($group);
+    expect($group->orderQueryUsing(static fn ($query) => $query))->toBe($group);
+    expect($group->scopeQueryUsing(static fn ($query) => $query))->toBe($group);
+    expect($group->scopeQueryByKeyUsing(static fn ($query) => $query))->toBe($group);
+});

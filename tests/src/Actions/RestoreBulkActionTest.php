@@ -91,3 +91,7 @@ it('only restores selected records', function (): void {
         assertSoftDeleted($department);
     }
 });
+
+it('returns `restore` from `getDefaultName()`', function (): void {
+    expect(RestoreBulkAction::getDefaultName())->toBe('restore');
+});

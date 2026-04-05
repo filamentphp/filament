@@ -91,3 +91,7 @@ it('only force deletes selected records', function (): void {
         assertSoftDeleted($department);
     }
 });
+
+it('returns `forceDelete` from `getDefaultName()`', function (): void {
+    expect(ForceDeleteBulkAction::getDefaultName())->toBe('forceDelete');
+});

@@ -45,7 +45,8 @@
     $hasColumnsLayout = $hasColumnsLayout();
     $hasPageSummary = $hasPageSummary();
     $hasAllTableSummary = $hasAllTableSummary();
-    $hasSummary = ($hasPageSummary || $hasAllTableSummary) && $hasSummary($this->getAllTableSummaryQuery());
+    $hasSummary = $hasSummary($this->getAllTableSummaryQuery());
+    $hasTopLevelSummary = $hasSummary && ($hasPageSummary || $hasAllTableSummary);
     $header = $getHeader();
     $headerActions = array_filter(
         $getHeaderActions(),
@@ -1300,7 +1301,7 @@
                                     @endphp
                                 @endforeach
 
-                                @if ($hasSummary && (! $isReordering) && filled($previousRecordGroupTitle) && ((! $records instanceof \Illuminate\Contracts\Pagination\Paginator) || (! $records->hasMorePages())))
+                                @if ($hasSummary && (! $isReordering) && filled($previousRecordGroupTitle) && $this->shouldRenderTrailingGroupedTableSummary($previousRecord))
                                     <table class="fi-ta-table">
                                         <tbody>
                                             @php
@@ -1330,7 +1331,7 @@
                             }}
                         @endif
 
-                        @if ($hasSummary && (! $isReordering))
+                        @if ($hasTopLevelSummary && (! $isReordering))
                             <table class="fi-ta-table">
                                 <tbody>
                                     <x-filament-tables::summary
@@ -2352,7 +2353,7 @@
                                             @endphp
                                         @endforeach
 
-                                        @if ($hasSummary && (! $isReordering) && filled($previousRecordGroupTitle) && ((! $records instanceof \Illuminate\Contracts\Pagination\Paginator) || (! $records->hasMorePages())))
+                                        @if ($hasSummary && (! $isReordering) && filled($previousRecordGroupTitle) && $this->shouldRenderTrailingGroupedTableSummary($previousRecord))
                                             @php
                                                 $groupColumn = $group->getColumn();
                                                 $groupScopedAllTableSummaryQuery = $group->scopeQuery($this->getAllTableSummaryQuery(), $previousRecord);

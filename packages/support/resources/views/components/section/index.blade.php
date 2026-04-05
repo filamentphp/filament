@@ -69,7 +69,7 @@
     @if ($hasHeader)
         <header
             @if ($collapsible)
-                x-on:click="isCollapsed = ! isCollapsed"
+                x-on:click="if (! $event.target.closest('.fi-section-header-after-ctn')) isCollapsed = ! isCollapsed"
             @endif
             class="fi-section-header"
         >
@@ -95,7 +95,7 @@
             @endif
 
             @if (! is_slot_empty($afterHeader))
-                <div x-on:click.stop class="fi-section-header-after-ctn">
+                <div class="fi-section-header-after-ctn">
                     {{ $afterHeader }}
                 </div>
             @endif

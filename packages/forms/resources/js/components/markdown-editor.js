@@ -86,6 +86,7 @@ export default function markdownEditorFormComponent({
     canAttachFiles,
     isLiveDebounced,
     isLiveOnBlur,
+    label,
     liveDebounce,
     maxHeight,
     minHeight,
@@ -137,6 +138,14 @@ export default function markdownEditorFormComponent({
                 toolbar: this.getToolbar(),
                 uploadImage: canAttachFiles,
             })
+
+            if (label) {
+                const inputField = this.editor.codemirror.getInputField()
+
+                if (inputField) {
+                    inputField.setAttribute('aria-label', label)
+                }
+            }
 
             this.editor.codemirror.setOption(
                 'direction',

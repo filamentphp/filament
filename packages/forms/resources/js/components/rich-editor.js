@@ -17,6 +17,7 @@ export default function richEditorFormComponent({
     isLiveDebounced,
     isLiveOnBlur,
     key,
+    label,
     linkProtocols,
     liveDebounce,
     livewireId,
@@ -56,6 +57,11 @@ export default function richEditorFormComponent({
             editor = new Editor({
                 editable: !isDisabled,
                 element: this.$refs.editor,
+                editorProps: {
+                    attributes: {
+                        ...(label ? { 'aria-label': label } : {}),
+                    },
+                },
                 extensions: await getExtensions({
                     acceptedFileTypes,
                     acceptedFileTypesValidationMessage,

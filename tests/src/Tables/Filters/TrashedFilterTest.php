@@ -117,6 +117,18 @@ it('can access record for action after record no longer matches `TrashedFilter`'
     assertNotSoftDeleted($post);
 });
 
+it('has default name `trashed`', function (): void {
+    expect(TrashedFilter::getDefaultName())->toBe('trashed');
+});
+
+it('has translated labels', function (): void {
+    $filter = TrashedFilter::make('trashed');
+
+    expect($filter->getTrueLabel())->toBeString()->not->toBeEmpty();
+    expect($filter->getFalseLabel())->toBeString()->not->toBeEmpty();
+    expect($filter->getLabel())->toBeString()->not->toBeEmpty();
+});
+
 it('cannot access record for action after record no longer matches non-excluded filter', function (): void {
     $post = Post::factory()->create(['is_published' => true]);
 

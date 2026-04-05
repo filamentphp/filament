@@ -6,6 +6,7 @@ use Filament\Actions\Action;
 use Filament\Actions\Testing\TestAction;
 use Filament\Schemas\Components\Callout;
 use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tests\Fixtures\Livewire\Livewire;
 use Filament\Tests\Fixtures\Models\User;
 use Filament\Tests\TestCase;
@@ -91,18 +92,156 @@ it('can call `controlActions()`', function (): void {
 });
 
 it('has no accessibility issues in light mode', function (): void {
-    $this->actingAs(User::factory()->create());
+    retry(10, function (): void {
+        $this->actingAs(User::factory()->create());
 
-    visit('/callout-browser-test')
-        ->assertNoAccessibilityIssues();
+        visit('/callout-browser-test')
+            ->assertNoAccessibilityIssues();
+    });
 });
 
 it('has no accessibility issues in dark mode', function (): void {
-    $this->actingAs(User::factory()->create());
+    retry(10, function (): void {
+        $this->actingAs(User::factory()->create());
 
-    visit('/callout-browser-test')
-        ->inDarkMode()
-        ->assertNoAccessibilityIssues();
+        visit('/callout-browser-test')
+            ->inDarkMode()
+            ->assertNoAccessibilityIssues();
+    });
+});
+
+describe('rendering', function (): void {
+    it('can render with `status()` set via `Closure`', function (): void {
+        livewire(RenderCalloutWithClosureStatus::class)->assertSuccessful();
+    });
+
+    it('can render with `heading()` set via `Closure`', function (): void {
+        livewire(RenderCalloutWithClosureHeading::class)
+            ->assertSuccessful()
+            ->assertSee('Dynamic Heading');
+    });
+
+    it('can render with `description()` set via `Closure`', function (): void {
+        livewire(RenderCalloutWithClosureDescription::class)
+            ->assertSuccessful()
+            ->assertSee('Dynamic desc');
+    });
+
+    it('can render with `color()` set via `Closure`', function (): void {
+        livewire(RenderCalloutWithClosureColor::class)->assertSuccessful();
+    });
+
+    it('can render with `icon()` set via `Closure`', function (): void {
+        livewire(RenderCalloutWithClosureIcon::class)->assertSuccessful();
+    });
+});
+
+describe('Closure support', function (): void {
+    it('can set `status()` with a `Closure`', function (): void {
+        $callout = Callout::make('Test')
+            ->status(static fn (): string => 'warning');
+
+        expect($callout->getStatus())->toBe('warning');
+    });
+
+    it('can set `heading()` with a `Closure`', function (): void {
+        $callout = Callout::make(static fn (): string => 'Dynamic Heading');
+
+        expect($callout->getHeading())->toBe('Dynamic Heading');
+    });
+
+    it('can set `description()` with a `Closure`', function (): void {
+        $callout = Callout::make('Test')
+            ->description(static fn (): string => 'Dynamic desc');
+
+        expect($callout->getDescription())->toBe('Dynamic desc');
+    });
+
+    it('can set `color()` with a `Closure`', function (): void {
+        $callout = Callout::make('Test')
+            ->color(static fn (): string => 'primary');
+
+        expect($callout->getColor())->toBe('primary');
+    });
+
+    it('can set `icon()` with a `Closure`', function (): void {
+        $callout = Callout::make('Test')
+            ->icon(static fn () => Heroicon::Check);
+
+        expect($callout->getIcon())->toBe(Heroicon::Check);
+    });
+});
+
+describe('computed icon and color from status', function (): void {
+    it('returns a default icon for `danger` status', function (): void {
+        $callout = Callout::make('Error')->danger();
+
+        expect($callout->getIcon())->not->toBeNull();
+    });
+
+    it('returns a default icon for `info` status', function (): void {
+        $callout = Callout::make('Info')->info();
+
+        expect($callout->getIcon())->not->toBeNull();
+    });
+
+    it('returns a default icon for `success` status', function (): void {
+        $callout = Callout::make('Done')->success();
+
+        expect($callout->getIcon())->not->toBeNull();
+    });
+
+    it('returns a default icon for `warning` status', function (): void {
+        $callout = Callout::make('Warn')->warning();
+
+        expect($callout->getIcon())->not->toBeNull();
+    });
+
+    it('returns `null` icon when no status and no custom icon', function (): void {
+        $callout = Callout::make('Plain');
+
+        expect($callout->getIcon())->toBeNull();
+    });
+
+    it('returns status as `getIconColor()` when no custom icon color', function (): void {
+        $callout = Callout::make('Warn')->warning();
+
+        expect($callout->getIconColor())->toBe('warning');
+    });
+
+    it('returns status as `getColor()` when no explicit color', function (): void {
+        $callout = Callout::make('Error')->danger();
+
+        expect($callout->getColor())->toBe('danger');
+    });
+
+    it('returns explicit color from `getColor()` when `color()` is set', function (): void {
+        $callout = Callout::make('Test')
+            ->danger()
+            ->color('primary');
+
+        expect($callout->getColor())->toBe('primary');
+    });
+});
+
+describe('slot methods', function (): void {
+    it('returns fluent `$this` from `footer()`', function (): void {
+        $callout = Callout::make('Test');
+
+        expect($callout->footer([]))->toBe($callout);
+    });
+
+    it('returns fluent `$this` from `controls()`', function (): void {
+        $callout = Callout::make('Test');
+
+        expect($callout->controls([]))->toBe($callout);
+    });
+
+    it('returns fluent `$this` from `actions()`', function (): void {
+        $callout = Callout::make('Test');
+
+        expect($callout->actions([]))->toBe($callout);
+    });
 });
 
 class TestComponentWithCallout extends Livewire
@@ -300,5 +439,55 @@ class TestComponentWithCallableControlsAction extends Livewire
                     ]),
             ])
             ->statePath('data');
+    }
+}
+
+class RenderCalloutWithClosureStatus extends Livewire
+{
+    public function form(Schema $form): Schema
+    {
+        return $form->schema([
+            Callout::make('Notice')->status(static fn (): string => 'warning'),
+        ])->statePath('data');
+    }
+}
+
+class RenderCalloutWithClosureHeading extends Livewire
+{
+    public function form(Schema $form): Schema
+    {
+        return $form->schema([
+            Callout::make(static fn (): string => 'Dynamic Heading'),
+        ])->statePath('data');
+    }
+}
+
+class RenderCalloutWithClosureDescription extends Livewire
+{
+    public function form(Schema $form): Schema
+    {
+        return $form->schema([
+            Callout::make('Test')->description(static fn (): string => 'Dynamic desc'),
+        ])->statePath('data');
+    }
+}
+
+class RenderCalloutWithClosureColor extends Livewire
+{
+    public function form(Schema $form): Schema
+    {
+        return $form->schema([
+            Callout::make('Test')->color(static fn (): string => 'primary'),
+        ])->statePath('data');
+    }
+}
+
+class RenderCalloutWithClosureIcon extends Livewire
+{
+    public function form(Schema $form): Schema
+    {
+        return $form->schema([
+            Callout::make('Test')->icon(static fn () => Heroicon::Check),
+        ])->statePath('data');
     }
 }

@@ -108,7 +108,10 @@ trait HasHint
     public function hintIcon(string | BackedEnum | Htmlable | Closure | null $icon, string | Closure | null $tooltip = null): static
     {
         $this->hintIcon = $icon;
-        $this->hintIconTooltip($tooltip);
+
+        if (func_num_args() >= 2) {
+            $this->hintIconTooltip($tooltip);
+        }
 
         return $this;
     }

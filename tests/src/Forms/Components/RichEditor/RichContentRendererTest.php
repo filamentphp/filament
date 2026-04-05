@@ -1,143 +1,146 @@
 <?php
 
 use Filament\Forms\Components\RichEditor\MentionProvider;
+use Filament\Forms\Components\RichEditor\RichContentCustomBlock;
 use Filament\Forms\Components\RichEditor\RichContentRenderer;
+use Filament\Forms\Components\RichEditor\TextColor;
 use Filament\Tests\TestCase;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\HtmlString;
 
 uses(TestCase::class);
 
-it('processes merge tags with string values as text nodes', function (): void {
-    $renderer = RichContentRenderer::make([
-        'type' => 'doc',
-        'content' => [
-            [
-                'type' => 'paragraph',
-                'content' => [
-                    [
-                        'type' => 'mergeTag',
-                        'attrs' => [
-                            'id' => 'name',
+describe('merge tags', function (): void {
+    it('processes merge tags with string values as text nodes', function (): void {
+        $renderer = RichContentRenderer::make([
+            'type' => 'doc',
+            'content' => [
+                [
+                    'type' => 'paragraph',
+                    'content' => [
+                        [
+                            'type' => 'mergeTag',
+                            'attrs' => [
+                                'id' => 'name',
+                            ],
                         ],
                     ],
                 ],
             ],
-        ],
-    ]);
+        ]);
 
-    $renderer->mergeTags([
-        'name' => 'John Doe',
-    ]);
+        $renderer->mergeTags([
+            'name' => 'John Doe',
+        ]);
 
-    $html = $renderer->toUnsafeHtml();
+        $html = $renderer->toUnsafeHtml();
 
-    expect($html)->toContain('John Doe');
-});
+        expect($html)->toContain('John Doe');
+    });
 
-it('processes merge tags with `Htmlable` values as raw HTML nodes', function (): void {
-    $renderer = RichContentRenderer::make([
-        'type' => 'doc',
-        'content' => [
-            [
-                'type' => 'paragraph',
-                'content' => [
-                    [
-                        'type' => 'mergeTag',
-                        'attrs' => [
-                            'id' => 'formatted_name',
+    it('processes merge tags with `Htmlable` values as raw HTML nodes', function (): void {
+        $renderer = RichContentRenderer::make([
+            'type' => 'doc',
+            'content' => [
+                [
+                    'type' => 'paragraph',
+                    'content' => [
+                        [
+                            'type' => 'mergeTag',
+                            'attrs' => [
+                                'id' => 'formatted_name',
+                            ],
                         ],
                     ],
                 ],
             ],
-        ],
-    ]);
+        ]);
 
-    $renderer->mergeTags([
-        'formatted_name' => new HtmlString('<strong>John Doe</strong>'),
-    ]);
+        $renderer->mergeTags([
+            'formatted_name' => new HtmlString('<strong>John Doe</strong>'),
+        ]);
 
-    $html = $renderer->toUnsafeHtml();
+        $html = $renderer->toUnsafeHtml();
 
-    expect($html)->toContain('<strong>John Doe</strong>');
-});
+        expect($html)->toContain('<strong>John Doe</strong>');
+    });
 
-it('handles mixed `Htmlable` and non-`Htmlable` values in the same merge tags array', function (): void {
-    $renderer = RichContentRenderer::make([
-        'type' => 'doc',
-        'content' => [
-            [
-                'type' => 'paragraph',
-                'content' => [
-                    [
-                        'type' => 'mergeTag',
-                        'attrs' => [
-                            'id' => 'plain_text',
+    it('handles mixed `Htmlable` and non-`Htmlable` values in the same merge tags array', function (): void {
+        $renderer = RichContentRenderer::make([
+            'type' => 'doc',
+            'content' => [
+                [
+                    'type' => 'paragraph',
+                    'content' => [
+                        [
+                            'type' => 'mergeTag',
+                            'attrs' => [
+                                'id' => 'plain_text',
+                            ],
                         ],
-                    ],
-                    [
-                        'type' => 'text',
-                        'text' => ' and ',
-                    ],
-                    [
-                        'type' => 'mergeTag',
-                        'attrs' => [
-                            'id' => 'html_content',
+                        [
+                            'type' => 'text',
+                            'text' => ' and ',
+                        ],
+                        [
+                            'type' => 'mergeTag',
+                            'attrs' => [
+                                'id' => 'html_content',
+                            ],
                         ],
                     ],
                 ],
             ],
-        ],
-    ]);
+        ]);
 
-    $renderer->mergeTags([
-        'plain_text' => 'Regular text',
-        'html_content' => new HtmlString('<em>emphasized text</em>'),
-    ]);
+        $renderer->mergeTags([
+            'plain_text' => 'Regular text',
+            'html_content' => new HtmlString('<em>emphasized text</em>'),
+        ]);
 
-    $html = $renderer->toUnsafeHtml();
+        $html = $renderer->toUnsafeHtml();
 
-    expect($html)->toContain('Regular text');
-    expect($html)->toContain('<em>emphasized text</em>');
-});
+        expect($html)->toContain('Regular text');
+        expect($html)->toContain('<em>emphasized text</em>');
+    });
 
-it('calls `toHtml()` on `Htmlable` instances for merge tag values', function (): void {
-    $htmlable = new class implements Htmlable
-    {
-        public function toHtml(): string
+    it('calls `toHtml()` on `Htmlable` instances for merge tag values', function (): void {
+        $htmlable = new class implements Htmlable
         {
-            return '<div class="custom">Custom HTML content</div>';
-        }
-    };
+            public function toHtml(): string
+            {
+                return '<div class="custom">Custom HTML content</div>';
+            }
+        };
 
-    $renderer = RichContentRenderer::make([
-        'type' => 'doc',
-        'content' => [
-            [
-                'type' => 'paragraph',
-                'content' => [
-                    [
-                        'type' => 'mergeTag',
-                        'attrs' => [
-                            'id' => 'custom',
+        $renderer = RichContentRenderer::make([
+            'type' => 'doc',
+            'content' => [
+                [
+                    'type' => 'paragraph',
+                    'content' => [
+                        [
+                            'type' => 'mergeTag',
+                            'attrs' => [
+                                'id' => 'custom',
+                            ],
                         ],
                     ],
                 ],
             ],
-        ],
-    ]);
+        ]);
 
-    $renderer->mergeTags([
-        'custom' => $htmlable,
-    ]);
+        $renderer->mergeTags([
+            'custom' => $htmlable,
+        ]);
 
-    $html = $renderer->toUnsafeHtml();
+        $html = $renderer->toUnsafeHtml();
 
-    expect($html)->toContain('<div class="custom">Custom HTML content</div>');
-});
+        expect($html)->toContain('<div class="custom">Custom HTML content</div>');
+    });
 
-it('handles complex HTML structures from `Htmlable` instances for merge tag values', function (): void {
-    $complexHtml = new HtmlString('
+    it('handles complex HTML structures from `Htmlable` instances for merge tag values', function (): void {
+        $complexHtml = new HtmlString('
         <div class="card">
             <h3>Title</h3>
             <p>Description with <a href="https://example.com">link</a></p>
@@ -148,153 +151,153 @@ it('handles complex HTML structures from `Htmlable` instances for merge tag valu
         </div>
     ');
 
-    $renderer = RichContentRenderer::make([
-        'type' => 'doc',
-        'content' => [
-            [
-                'type' => 'paragraph',
-                'content' => [
-                    [
-                        'type' => 'mergeTag',
-                        'attrs' => [
-                            'id' => 'complex',
+        $renderer = RichContentRenderer::make([
+            'type' => 'doc',
+            'content' => [
+                [
+                    'type' => 'paragraph',
+                    'content' => [
+                        [
+                            'type' => 'mergeTag',
+                            'attrs' => [
+                                'id' => 'complex',
+                            ],
                         ],
                     ],
                 ],
             ],
-        ],
-    ]);
+        ]);
 
-    $renderer->mergeTags([
-        'complex' => $complexHtml,
-    ]);
+        $renderer->mergeTags([
+            'complex' => $complexHtml,
+        ]);
 
-    $html = $renderer->toUnsafeHtml();
+        $html = $renderer->toUnsafeHtml();
 
-    expect($html)->toContain('<div class="card">');
-    expect($html)->toContain('<h3>Title</h3>');
-    expect($html)->toContain('<a href="https://example.com">link</a>');
-    expect($html)->toContain('<ul>');
-});
+        expect($html)->toContain('<div class="card">');
+        expect($html)->toContain('<h3>Title</h3>');
+        expect($html)->toContain('<a href="https://example.com">link</a>');
+        expect($html)->toContain('<ul>');
+    });
 
-it('handles `null` and empty merge tag values correctly', function (): void {
-    $renderer = RichContentRenderer::make([
-        'type' => 'doc',
-        'content' => [
-            [
-                'type' => 'paragraph',
-                'content' => [
-                    [
-                        'type' => 'mergeTag',
-                        'attrs' => [
-                            'id' => 'null_value',
+    it('handles `null` and empty merge tag values correctly', function (): void {
+        $renderer = RichContentRenderer::make([
+            'type' => 'doc',
+            'content' => [
+                [
+                    'type' => 'paragraph',
+                    'content' => [
+                        [
+                            'type' => 'mergeTag',
+                            'attrs' => [
+                                'id' => 'null_value',
+                            ],
                         ],
-                    ],
-                    [
-                        'type' => 'text',
-                        'text' => ' | ',
-                    ],
-                    [
-                        'type' => 'mergeTag',
-                        'attrs' => [
-                            'id' => 'empty_string',
+                        [
+                            'type' => 'text',
+                            'text' => ' | ',
                         ],
-                    ],
-                    [
-                        'type' => 'text',
-                        'text' => ' | ',
-                    ],
-                    [
-                        'type' => 'mergeTag',
-                        'attrs' => [
-                            'id' => 'empty_html',
+                        [
+                            'type' => 'mergeTag',
+                            'attrs' => [
+                                'id' => 'empty_string',
+                            ],
                         ],
-                    ],
-                ],
-            ],
-        ],
-    ]);
-
-    $renderer->mergeTags([
-        'null_value' => null,
-        'empty_string' => '',
-        'empty_html' => new HtmlString(''),
-    ]);
-
-    $html = $renderer->toUnsafeHtml();
-
-    // Should not throw errors and should render the separators
-    expect($html)->toContain(' | ');
-});
-
-it('renders complete document with mixed merge tag content types', function (): void {
-    $renderer = RichContentRenderer::make([
-        'type' => 'doc',
-        'content' => [
-            [
-                'type' => 'heading',
-                'attrs' => ['level' => 1],
-                'content' => [
-                    [
-                        'type' => 'text',
-                        'text' => 'Welcome ',
-                    ],
-                    [
-                        'type' => 'mergeTag',
-                        'attrs' => [
-                            'id' => 'user_name',
+                        [
+                            'type' => 'text',
+                            'text' => ' | ',
+                        ],
+                        [
+                            'type' => 'mergeTag',
+                            'attrs' => [
+                                'id' => 'empty_html',
+                            ],
                         ],
                     ],
                 ],
             ],
-            [
-                'type' => 'paragraph',
-                'content' => [
-                    [
-                        'type' => 'text',
-                        'text' => 'Your profile: ',
+        ]);
+
+        $renderer->mergeTags([
+            'null_value' => null,
+            'empty_string' => '',
+            'empty_html' => new HtmlString(''),
+        ]);
+
+        $html = $renderer->toUnsafeHtml();
+
+        // Should not throw errors and should render the separators
+        expect($html)->toContain(' | ');
+    });
+
+    it('renders complete document with mixed merge tag content types', function (): void {
+        $renderer = RichContentRenderer::make([
+            'type' => 'doc',
+            'content' => [
+                [
+                    'type' => 'heading',
+                    'attrs' => ['level' => 1],
+                    'content' => [
+                        [
+                            'type' => 'text',
+                            'text' => 'Welcome ',
+                        ],
+                        [
+                            'type' => 'mergeTag',
+                            'attrs' => [
+                                'id' => 'user_name',
+                            ],
+                        ],
                     ],
-                    [
-                        'type' => 'mergeTag',
-                        'attrs' => [
-                            'id' => 'profile_card',
+                ],
+                [
+                    'type' => 'paragraph',
+                    'content' => [
+                        [
+                            'type' => 'text',
+                            'text' => 'Your profile: ',
+                        ],
+                        [
+                            'type' => 'mergeTag',
+                            'attrs' => [
+                                'id' => 'profile_card',
+                            ],
+                        ],
+                    ],
+                ],
+                [
+                    'type' => 'paragraph',
+                    'content' => [
+                        [
+                            'type' => 'text',
+                            'text' => 'Status: ',
+                        ],
+                        [
+                            'type' => 'mergeTag',
+                            'attrs' => [
+                                'id' => 'status',
+                            ],
                         ],
                     ],
                 ],
             ],
-            [
-                'type' => 'paragraph',
-                'content' => [
-                    [
-                        'type' => 'text',
-                        'text' => 'Status: ',
-                    ],
-                    [
-                        'type' => 'mergeTag',
-                        'attrs' => [
-                            'id' => 'status',
-                        ],
-                    ],
-                ],
-            ],
-        ],
-    ]);
+        ]);
 
-    $renderer->mergeTags([
-        'user_name' => 'John Doe',
-        'profile_card' => new HtmlString('<div class="profile"><img src="avatar.jpg" alt="Avatar"><span>Premium User</span></div>'),
-        'status' => 'Active',
-    ]);
+        $renderer->mergeTags([
+            'user_name' => 'John Doe',
+            'profile_card' => new HtmlString('<div class="profile"><img src="avatar.jpg" alt="Avatar"><span>Premium User</span></div>'),
+            'status' => 'Active',
+        ]);
 
-    $html = $renderer->toUnsafeHtml();
+        $html = $renderer->toUnsafeHtml();
 
-    expect($html)->toContain('Welcome <span data-type="mergeTag" data-id="user_name">John Doe</span>');
-    expect($html)->toContain('<div class="profile"><img src="avatar.jpg" alt="Avatar"><span>Premium User</span></div>');
-    expect($html)->toContain('Status: <span data-type="mergeTag" data-id="status">Active</span>');
-});
+        expect($html)->toContain('Welcome <span data-type="mergeTag" data-id="user_name">John Doe</span>');
+        expect($html)->toContain('<div class="profile"><img src="avatar.jpg" alt="Avatar"><span>Premium User</span></div>');
+        expect($html)->toContain('Status: <span data-type="mergeTag" data-id="status">Active</span>');
+    });
 
-it('handles nested HTML structures in merge tags', function (): void {
-    $nestedHtml = new HtmlString('
+    it('handles nested HTML structures in merge tags', function (): void {
+        $nestedHtml = new HtmlString('
         <div class="notification">
             <div class="header">
                 <strong>Alert</strong>
@@ -310,510 +313,682 @@ it('handles nested HTML structures in merge tags', function (): void {
         </div>
     ');
 
-    $renderer = RichContentRenderer::make([
-        'type' => 'doc',
-        'content' => [
-            [
-                'type' => 'paragraph',
-                'content' => [
-                    [
-                        'type' => 'mergeTag',
-                        'attrs' => [
-                            'id' => 'notification',
+        $renderer = RichContentRenderer::make([
+            'type' => 'doc',
+            'content' => [
+                [
+                    'type' => 'paragraph',
+                    'content' => [
+                        [
+                            'type' => 'mergeTag',
+                            'attrs' => [
+                                'id' => 'notification',
+                            ],
                         ],
                     ],
                 ],
             ],
-        ],
-    ]);
+        ]);
 
-    $renderer->mergeTags([
-        'notification' => $nestedHtml,
-    ]);
+        $renderer->mergeTags([
+            'notification' => $nestedHtml,
+        ]);
 
-    $html = $renderer->toUnsafeHtml();
+        $html = $renderer->toUnsafeHtml();
 
-    expect($html)->toContain('<div class="notification">');
-    expect($html)->toContain('<strong>Alert</strong>');
-    expect($html)->toContain('<a href="/messages">3 new messages</a>');
-    expect($html)->toContain('<button type="button">Mark as Read</button>');
-});
+        expect($html)->toContain('<div class="notification">');
+        expect($html)->toContain('<strong>Alert</strong>');
+        expect($html)->toContain('<a href="/messages">3 new messages</a>');
+        expect($html)->toContain('<button type="button">Mark as Read</button>');
+    });
 
-it('processes multiple HTML merge tags in same document', function (): void {
-    $renderer = RichContentRenderer::make([
-        'type' => 'doc',
-        'content' => [
-            [
-                'type' => 'paragraph',
-                'content' => [
-                    [
-                        'type' => 'mergeTag',
-                        'attrs' => [
-                            'id' => 'header',
+    it('processes multiple HTML merge tags in same document', function (): void {
+        $renderer = RichContentRenderer::make([
+            'type' => 'doc',
+            'content' => [
+                [
+                    'type' => 'paragraph',
+                    'content' => [
+                        [
+                            'type' => 'mergeTag',
+                            'attrs' => [
+                                'id' => 'header',
+                            ],
+                        ],
+                    ],
+                ],
+                [
+                    'type' => 'paragraph',
+                    'content' => [
+                        [
+                            'type' => 'mergeTag',
+                            'attrs' => [
+                                'id' => 'content',
+                            ],
+                        ],
+                    ],
+                ],
+                [
+                    'type' => 'paragraph',
+                    'content' => [
+                        [
+                            'type' => 'mergeTag',
+                            'attrs' => [
+                                'id' => 'footer',
+                            ],
                         ],
                     ],
                 ],
             ],
-            [
-                'type' => 'paragraph',
-                'content' => [
-                    [
-                        'type' => 'mergeTag',
-                        'attrs' => [
-                            'id' => 'content',
+        ]);
+
+        $renderer->mergeTags([
+            'header' => new HtmlString('<header><h1>Page Title</h1></header>'),
+            'content' => new HtmlString('<main><p>Main content goes here</p></main>'),
+            'footer' => new HtmlString('<footer><p>&copy; 2024 Company</p></footer>'),
+        ]);
+
+        $html = $renderer->toUnsafeHtml();
+
+        expect($html)->toContain('<header><h1>Page Title</h1></header>');
+        expect($html)->toContain('<main><p>Main content goes here</p></main>');
+        expect($html)->toContain('<footer><p>&copy; 2024 Company</p></footer>');
+    });
+
+    it('handles HTML merge tags with special characters and entities', function (): void {
+        $specialHtml = new HtmlString('<p>Price: $100 &amp; up • Available in &lt;24hrs&gt;</p>');
+
+        $renderer = RichContentRenderer::make([
+            'type' => 'doc',
+            'content' => [
+                [
+                    'type' => 'paragraph',
+                    'content' => [
+                        [
+                            'type' => 'mergeTag',
+                            'attrs' => [
+                                'id' => 'price_info',
+                            ],
                         ],
                     ],
                 ],
             ],
-            [
-                'type' => 'paragraph',
-                'content' => [
-                    [
-                        'type' => 'mergeTag',
-                        'attrs' => [
-                            'id' => 'footer',
+        ]);
+
+        $renderer->mergeTags([
+            'price_info' => $specialHtml,
+        ]);
+
+        $html = $renderer->toUnsafeHtml();
+
+        expect($html)->toContain('Price: $100 &amp; up • Available in &lt;24hrs&gt;');
+    });
+
+    it('handles dynamic merge tag values', function (): void {
+        $renderer = RichContentRenderer::make([
+            'type' => 'doc',
+            'content' => [
+                [
+                    'type' => 'paragraph',
+                    'content' => [
+                        [
+                            'type' => 'mergeTag',
+                            'attrs' => [
+                                'id' => 'dynamic_value',
+                            ],
                         ],
                     ],
                 ],
             ],
-        ],
-    ]);
+        ]);
 
-    $renderer->mergeTags([
-        'header' => new HtmlString('<header><h1>Page Title</h1></header>'),
-        'content' => new HtmlString('<main><p>Main content goes here</p></main>'),
-        'footer' => new HtmlString('<footer><p>&copy; 2024 Company</p></footer>'),
-    ]);
+        $renderer->mergeTags([
+            'dynamic_value' => fn () => 'computed value',
+        ]);
 
-    $html = $renderer->toUnsafeHtml();
+        $html = $renderer->toUnsafeHtml();
 
-    expect($html)->toContain('<header><h1>Page Title</h1></header>');
-    expect($html)->toContain('<main><p>Main content goes here</p></main>');
-    expect($html)->toContain('<footer><p>&copy; 2024 Company</p></footer>');
+        expect($html)->toContain('computed value');
+    });
 });
 
-it('handles HTML merge tags with special characters and entities', function (): void {
-    $specialHtml = new HtmlString('<p>Price: $100 &amp; up • Available in &lt;24hrs&gt;</p>');
-
-    $renderer = RichContentRenderer::make([
-        'type' => 'doc',
-        'content' => [
-            [
-                'type' => 'paragraph',
-                'content' => [
-                    [
-                        'type' => 'mergeTag',
-                        'attrs' => [
-                            'id' => 'price_info',
+describe('mentions', function (): void {
+    it('renders mentions as `<span>` elements with `data-type="mention"`', function (): void {
+        $renderer = RichContentRenderer::make([
+            'type' => 'doc',
+            'content' => [
+                [
+                    'type' => 'paragraph',
+                    'content' => [
+                        [
+                            'type' => 'mention',
+                            'attrs' => [
+                                'id' => '1',
+                                'label' => 'John Doe',
+                                'char' => '@',
+                            ],
                         ],
                     ],
                 ],
             ],
-        ],
-    ]);
+        ]);
 
-    $renderer->mergeTags([
-        'price_info' => $specialHtml,
-    ]);
+        $html = $renderer->toUnsafeHtml();
 
-    $html = $renderer->toUnsafeHtml();
+        expect($html)->toContain('<span');
+        expect($html)->toContain('data-type="mention"');
+        expect($html)->toContain('@John Doe');
+    });
 
-    expect($html)->toContain('Price: $100 &amp; up • Available in &lt;24hrs&gt;');
-});
-
-it('handles dynamic merge tag values', function (): void {
-    $renderer = RichContentRenderer::make([
-        'type' => 'doc',
-        'content' => [
-            [
-                'type' => 'paragraph',
-                'content' => [
-                    [
-                        'type' => 'mergeTag',
-                        'attrs' => [
-                            'id' => 'dynamic_value',
+    it('hydrates mention labels from `MentionProvider` when label is missing', function (): void {
+        $renderer = RichContentRenderer::make([
+            'type' => 'doc',
+            'content' => [
+                [
+                    'type' => 'paragraph',
+                    'content' => [
+                        [
+                            'type' => 'mention',
+                            'attrs' => [
+                                'id' => '1',
+                                'char' => '@',
+                            ],
                         ],
                     ],
                 ],
             ],
-        ],
-    ]);
+        ]);
 
-    $renderer->mergeTags([
-        'dynamic_value' => fn () => 'computed value',
-    ]);
+        $renderer->mentions([
+            MentionProvider::make('@')
+                ->getLabelsUsing(fn (array $ids): array => ['1' => 'John Doe']),
+        ]);
 
-    $html = $renderer->toUnsafeHtml();
+        $html = $renderer->toUnsafeHtml();
 
-    expect($html)->toContain('computed value');
-});
+        expect($html)->toContain('@John Doe');
+    });
 
-it('renders mentions as `<span>` elements with `data-type="mention"`', function (): void {
-    $renderer = RichContentRenderer::make([
-        'type' => 'doc',
-        'content' => [
-            [
-                'type' => 'paragraph',
-                'content' => [
-                    [
-                        'type' => 'mention',
-                        'attrs' => [
-                            'id' => '1',
-                            'label' => 'John Doe',
-                            'char' => '@',
+    it('renders mentions as `<a>` elements when `MentionProvider` has a `url()` configured', function (): void {
+        $renderer = RichContentRenderer::make([
+            'type' => 'doc',
+            'content' => [
+                [
+                    'type' => 'paragraph',
+                    'content' => [
+                        [
+                            'type' => 'mention',
+                            'attrs' => [
+                                'id' => '1',
+                                'char' => '@',
+                            ],
                         ],
                     ],
                 ],
             ],
-        ],
-    ]);
+        ]);
 
-    $html = $renderer->toUnsafeHtml();
+        $renderer->mentions([
+            MentionProvider::make('@')
+                ->getLabelsUsing(fn (array $ids): array => ['1' => 'John Doe'])
+                ->url(fn (string $id, string $label): string => "/users/{$id}"),
+        ]);
 
-    expect($html)->toContain('<span');
-    expect($html)->toContain('data-type="mention"');
-    expect($html)->toContain('@John Doe');
-});
+        $html = $renderer->toUnsafeHtml();
 
-it('hydrates mention labels from `MentionProvider` when label is missing', function (): void {
-    $renderer = RichContentRenderer::make([
-        'type' => 'doc',
-        'content' => [
-            [
-                'type' => 'paragraph',
-                'content' => [
-                    [
-                        'type' => 'mention',
-                        'attrs' => [
-                            'id' => '1',
-                            'char' => '@',
+        expect($html)->toContain('<a');
+        expect($html)->toContain('href="/users/1"');
+        expect($html)->toContain('data-type="mention"');
+        expect($html)->toContain('@John Doe');
+    });
+
+    it('batch fetches labels for multiple mentions with the same char', function (): void {
+        $fetchedIds = [];
+
+        $renderer = RichContentRenderer::make([
+            'type' => 'doc',
+            'content' => [
+                [
+                    'type' => 'paragraph',
+                    'content' => [
+                        [
+                            'type' => 'mention',
+                            'attrs' => [
+                                'id' => '1',
+                                'char' => '@',
+                            ],
+                        ],
+                        [
+                            'type' => 'text',
+                            'text' => ' and ',
+                        ],
+                        [
+                            'type' => 'mention',
+                            'attrs' => [
+                                'id' => '2',
+                                'char' => '@',
+                            ],
                         ],
                     ],
                 ],
             ],
-        ],
-    ]);
+        ]);
 
-    $renderer->mentions([
-        MentionProvider::make('@')
-            ->getLabelsUsing(fn (array $ids): array => ['1' => 'John Doe']),
-    ]);
+        $renderer->mentions([
+            MentionProvider::make('@')
+                ->getLabelsUsing(function (array $ids) use (&$fetchedIds): array {
+                    $fetchedIds = $ids;
 
-    $html = $renderer->toUnsafeHtml();
+                    return [
+                        '1' => 'John',
+                        '2' => 'Jane',
+                    ];
+                }),
+        ]);
 
-    expect($html)->toContain('@John Doe');
-});
+        $html = $renderer->toUnsafeHtml();
 
-it('renders mentions as `<a>` elements when `MentionProvider` has a `url()` configured', function (): void {
-    $renderer = RichContentRenderer::make([
-        'type' => 'doc',
-        'content' => [
-            [
-                'type' => 'paragraph',
-                'content' => [
-                    [
-                        'type' => 'mention',
-                        'attrs' => [
-                            'id' => '1',
-                            'char' => '@',
+        expect($fetchedIds)->toBe(['1', '2']);
+        expect($html)->toContain('@John');
+        expect($html)->toContain('@Jane');
+    });
+
+    it('handles multiple mention providers with different chars', function (): void {
+        $renderer = RichContentRenderer::make([
+            'type' => 'doc',
+            'content' => [
+                [
+                    'type' => 'paragraph',
+                    'content' => [
+                        [
+                            'type' => 'mention',
+                            'attrs' => [
+                                'id' => '1',
+                                'char' => '@',
+                            ],
+                        ],
+                        [
+                            'type' => 'text',
+                            'text' => ' mentioned ',
+                        ],
+                        [
+                            'type' => 'mention',
+                            'attrs' => [
+                                'id' => '100',
+                                'char' => '#',
+                            ],
                         ],
                     ],
                 ],
             ],
-        ],
-    ]);
+        ]);
 
-    $renderer->mentions([
-        MentionProvider::make('@')
-            ->getLabelsUsing(fn (array $ids): array => ['1' => 'John Doe'])
-            ->url(fn (string $id, string $label): string => "/users/{$id}"),
-    ]);
+        $renderer->mentions([
+            MentionProvider::make('@')
+                ->getLabelsUsing(fn (array $ids): array => ['1' => 'John']),
+            MentionProvider::make('#')
+                ->getLabelsUsing(fn (array $ids): array => ['100' => 'issue-123']),
+        ]);
 
-    $html = $renderer->toUnsafeHtml();
+        $html = $renderer->toUnsafeHtml();
 
-    expect($html)->toContain('<a');
-    expect($html)->toContain('href="/users/1"');
-    expect($html)->toContain('data-type="mention"');
-    expect($html)->toContain('@John Doe');
-});
+        expect($html)->toContain('@John');
+        expect($html)->toContain('#issue-123');
+    });
 
-it('batch fetches labels for multiple mentions with the same char', function (): void {
-    $fetchedIds = [];
-
-    $renderer = RichContentRenderer::make([
-        'type' => 'doc',
-        'content' => [
-            [
-                'type' => 'paragraph',
-                'content' => [
-                    [
-                        'type' => 'mention',
-                        'attrs' => [
-                            'id' => '1',
-                            'char' => '@',
-                        ],
-                    ],
-                    [
-                        'type' => 'text',
-                        'text' => ' and ',
-                    ],
-                    [
-                        'type' => 'mention',
-                        'attrs' => [
-                            'id' => '2',
-                            'char' => '@',
+    it('falls back to existing label when provider returns no label', function (): void {
+        $renderer = RichContentRenderer::make([
+            'type' => 'doc',
+            'content' => [
+                [
+                    'type' => 'paragraph',
+                    'content' => [
+                        [
+                            'type' => 'mention',
+                            'attrs' => [
+                                'id' => '999',
+                                'char' => '@',
+                                'label' => 'Existing Label',
+                            ],
                         ],
                     ],
                 ],
             ],
-        ],
-    ]);
+        ]);
 
-    $renderer->mentions([
-        MentionProvider::make('@')
-            ->getLabelsUsing(function (array $ids) use (&$fetchedIds): array {
-                $fetchedIds = $ids;
+        $renderer->mentions([
+            MentionProvider::make('@')
+                ->getLabelsUsing(fn (array $ids): array => []),
+        ]);
 
-                return [
-                    '1' => 'John',
-                    '2' => 'Jane',
-                ];
-            }),
-    ]);
+        $html = $renderer->toUnsafeHtml();
 
-    $html = $renderer->toUnsafeHtml();
+        expect($html)->toContain('@Existing Label');
+    });
 
-    expect($fetchedIds)->toBe(['1', '2']);
-    expect($html)->toContain('@John');
-    expect($html)->toContain('@Jane');
-});
-
-it('handles multiple mention providers with different chars', function (): void {
-    $renderer = RichContentRenderer::make([
-        'type' => 'doc',
-        'content' => [
-            [
-                'type' => 'paragraph',
-                'content' => [
-                    [
-                        'type' => 'mention',
-                        'attrs' => [
-                            'id' => '1',
-                            'char' => '@',
-                        ],
-                    ],
-                    [
-                        'type' => 'text',
-                        'text' => ' mentioned ',
-                    ],
-                    [
-                        'type' => 'mention',
-                        'attrs' => [
-                            'id' => '100',
-                            'char' => '#',
+    it('falls back to id as label when provider returns no label and no label is set', function (): void {
+        $renderer = RichContentRenderer::make([
+            'type' => 'doc',
+            'content' => [
+                [
+                    'type' => 'paragraph',
+                    'content' => [
+                        [
+                            'type' => 'mention',
+                            'attrs' => [
+                                'id' => '999',
+                                'char' => '@',
+                            ],
                         ],
                     ],
                 ],
             ],
-        ],
-    ]);
+        ]);
 
-    $renderer->mentions([
-        MentionProvider::make('@')
-            ->getLabelsUsing(fn (array $ids): array => ['1' => 'John']),
-        MentionProvider::make('#')
-            ->getLabelsUsing(fn (array $ids): array => ['100' => 'issue-123']),
-    ]);
+        $renderer->mentions([
+            MentionProvider::make('@')
+                ->getLabelsUsing(fn (array $ids): array => []),
+        ]);
 
-    $html = $renderer->toUnsafeHtml();
+        $html = $renderer->toUnsafeHtml();
 
-    expect($html)->toContain('@John');
-    expect($html)->toContain('#issue-123');
-});
+        expect($html)->toContain('@999');
+    });
 
-it('falls back to existing label when provider returns no label', function (): void {
-    $renderer = RichContentRenderer::make([
-        'type' => 'doc',
-        'content' => [
-            [
-                'type' => 'paragraph',
-                'content' => [
-                    [
-                        'type' => 'mention',
-                        'attrs' => [
-                            'id' => '999',
-                            'char' => '@',
-                            'label' => 'Existing Label',
+    it('renders mentions without provider configured', function (): void {
+        $renderer = RichContentRenderer::make([
+            'type' => 'doc',
+            'content' => [
+                [
+                    'type' => 'paragraph',
+                    'content' => [
+                        [
+                            'type' => 'mention',
+                            'attrs' => [
+                                'id' => '1',
+                                'label' => 'John',
+                                'char' => '@',
+                            ],
                         ],
                     ],
                 ],
             ],
-        ],
-    ]);
+        ]);
 
-    $renderer->mentions([
-        MentionProvider::make('@')
-            ->getLabelsUsing(fn (array $ids): array => []),
-    ]);
+        $html = $renderer->toUnsafeHtml();
 
-    $html = $renderer->toUnsafeHtml();
+        expect($html)->toContain('@John');
+    });
 
-    expect($html)->toContain('@Existing Label');
-});
-
-it('falls back to id as label when provider returns no label and no label is set', function (): void {
-    $renderer = RichContentRenderer::make([
-        'type' => 'doc',
-        'content' => [
-            [
-                'type' => 'paragraph',
-                'content' => [
-                    [
-                        'type' => 'mention',
-                        'attrs' => [
-                            'id' => '999',
-                            'char' => '@',
+    it('uses static `items()` for label lookup when `getLabelsUsing()` is not configured', function (): void {
+        $renderer = RichContentRenderer::make([
+            'type' => 'doc',
+            'content' => [
+                [
+                    'type' => 'paragraph',
+                    'content' => [
+                        [
+                            'type' => 'mention',
+                            'attrs' => [
+                                'id' => 'admin',
+                                'char' => '@',
+                            ],
                         ],
                     ],
                 ],
             ],
-        ],
-    ]);
+        ]);
 
-    $renderer->mentions([
-        MentionProvider::make('@')
-            ->getLabelsUsing(fn (array $ids): array => []),
-    ]);
+        $renderer->mentions([
+            MentionProvider::make('@')
+                ->items([
+                    'admin' => 'Administrator',
+                    'user' => 'Regular User',
+                ]),
+        ]);
 
-    $html = $renderer->toUnsafeHtml();
+        $html = $renderer->toUnsafeHtml();
 
-    expect($html)->toContain('@999');
-});
+        expect($html)->toContain('@Administrator');
+    });
 
-it('renders mentions without provider configured', function (): void {
-    $renderer = RichContentRenderer::make([
-        'type' => 'doc',
-        'content' => [
-            [
-                'type' => 'paragraph',
-                'content' => [
-                    [
-                        'type' => 'mention',
-                        'attrs' => [
-                            'id' => '1',
-                            'label' => 'John',
-                            'char' => '@',
+    it('renders mentions without labels as empty spans', function (): void {
+        $renderer = RichContentRenderer::make([
+            'type' => 'doc',
+            'content' => [
+                [
+                    'type' => 'paragraph',
+                    'content' => [
+                        [
+                            'type' => 'mention',
+                            'attrs' => [
+                                'id' => '1',
+                                'char' => '@',
+                            ],
                         ],
                     ],
                 ],
             ],
-        ],
-    ]);
+        ]);
 
-    $html = $renderer->toUnsafeHtml();
+        $html = $renderer->toUnsafeHtml();
 
-    expect($html)->toContain('@John');
+        expect($html)->toContain('<span data-type="mention" data-id="1" data-char="@"></span>');
+    });
 });
 
-it('uses static `items()` for label lookup when `getLabelsUsing()` is not configured', function (): void {
-    $renderer = RichContentRenderer::make([
-        'type' => 'doc',
-        'content' => [
-            [
-                'type' => 'paragraph',
-                'content' => [
-                    [
-                        'type' => 'mention',
-                        'attrs' => [
-                            'id' => 'admin',
-                            'char' => '@',
-                        ],
-                    ],
-                ],
-            ],
-        ],
-    ]);
+describe('link protocols', function (): void {
+    it('preserves links with default protocols', function (): void {
+        $renderer = RichContentRenderer::make(
+            '<p><a href="https://example.com">Link</a></p>',
+        );
 
-    $renderer->mentions([
-        MentionProvider::make('@')
-            ->items([
-                'admin' => 'Administrator',
-                'user' => 'Regular User',
-            ]),
-    ]);
+        $html = $renderer->toUnsafeHtml();
 
-    $html = $renderer->toUnsafeHtml();
+        expect($html)->toContain('href="https://example.com"');
+    });
 
-    expect($html)->toContain('@Administrator');
+    it('strips links with unknown protocols by default', function (): void {
+        $renderer = RichContentRenderer::make(
+            '<p><a href="myapp:///path"><strong>Link</strong></a></p>',
+        );
+
+        $html = $renderer->toUnsafeHtml();
+
+        expect($html)->not->toContain('myapp:///path');
+    });
+
+    it('preserves links with custom protocols when `linkProtocols()` includes them', function (): void {
+        $renderer = RichContentRenderer::make(
+            '<p><a href="myapp:///cards?id=123"><strong>Open App</strong></a></p>',
+        );
+
+        $renderer->linkProtocols([
+            ...RichContentRenderer::make()->getLinkProtocols(),
+            'myapp',
+        ]);
+
+        $html = $renderer->toUnsafeHtml();
+
+        expect($html)->toContain('href="myapp:///cards?id=123"');
+    });
+
+    it('uses default protocols from `Link` when `linkProtocols()` is not set', function (): void {
+        $renderer = RichContentRenderer::make();
+
+        $protocols = $renderer->getLinkProtocols();
+
+        expect($protocols)
+            ->toContain('http')
+            ->toContain('https')
+            ->toContain('mailto')
+            ->toContain('tel');
+    });
 });
 
-it('renders mentions without labels as empty spans', function (): void {
-    $renderer = RichContentRenderer::make([
-        'type' => 'doc',
-        'content' => [
-            [
-                'type' => 'paragraph',
-                'content' => [
-                    [
-                        'type' => 'mention',
-                        'attrs' => [
-                            'id' => '1',
-                            'char' => '@',
-                        ],
-                    ],
-                ],
-            ],
-        ],
-    ]);
+// Concrete test blocks for getCustomBlockHtml tests
+class RendererTestAlertBlock extends RichContentCustomBlock
+{
+    public static function getId(): string
+    {
+        return 'alert';
+    }
 
-    $html = $renderer->toUnsafeHtml();
+    public static function toHtml(array $config, array $data): ?string
+    {
+        return '<div class="alert-' . ($config['type'] ?? 'info') . '">' . ($data['message'] ?? '') . '</div>';
+    }
+}
 
-    expect($html)->toContain('<span data-type="mention" data-id="1" data-char="@"></span>');
+class RendererTestBannerBlock extends RichContentCustomBlock
+{
+    public static function getId(): string
+    {
+        return 'banner';
+    }
+
+    public static function toHtml(array $config, array $data): ?string
+    {
+        return '<div class="banner">' . ($config['text'] ?? '') . '</div>';
+    }
+}
+
+describe('`getMergeTagValue()` logic', function (): void {
+    it('resolves a merge tag value', function (): void {
+        $renderer = RichContentRenderer::make('')
+            ->mergeTags(['name' => 'John Doe']);
+
+        expect($renderer->getMergeTagValue('name'))->toBe('John Doe');
+    });
+
+    it('resolves a `Closure` merge tag value and caches it', function (): void {
+        $callCount = 0;
+        $renderer = RichContentRenderer::make('')
+            ->mergeTags(['name' => static function () use (&$callCount) {
+                $callCount++;
+
+                return 'Computed';
+            }]);
+
+        expect($renderer->getMergeTagValue('name'))->toBe('Computed');
+        expect($renderer->getMergeTagValue('name'))->toBe('Computed');
+        expect($callCount)->toBe(1);
+    });
+
+    it('returns `null` for missing merge tag', function (): void {
+        $renderer = RichContentRenderer::make('')
+            ->mergeTags(['name' => 'John']);
+
+        expect($renderer->getMergeTagValue('missing'))->toBeNull();
+    });
 });
 
-it('preserves links with default protocols', function (): void {
-    $renderer = RichContentRenderer::make(
-        '<p><a href="https://example.com">Link</a></p>',
-    );
+describe('`getCustomBlockHtml()` logic', function (): void {
+    it('finds block by string value (class name)', function (): void {
+        $renderer = RichContentRenderer::make('')
+            ->customBlocks([RendererTestAlertBlock::class]);
 
-    $html = $renderer->toUnsafeHtml();
+        expect($renderer->getCustomBlockHtml('alert', ['type' => 'warning']))->toBe('<div class="alert-warning"></div>');
+    });
 
-    expect($html)->toContain('href="https://example.com"');
+    it('finds block by string key with config data', function (): void {
+        $renderer = RichContentRenderer::make('')
+            ->customBlocks([RendererTestAlertBlock::class => ['message' => 'Hello']]);
+
+        expect($renderer->getCustomBlockHtml('alert', ['type' => 'info']))->toBe('<div class="alert-info">Hello</div>');
+    });
+
+    it('returns `null` for non-existent block ID', function (): void {
+        $renderer = RichContentRenderer::make('')
+            ->customBlocks([RendererTestAlertBlock::class]);
+
+        expect($renderer->getCustomBlockHtml('nonexistent', []))->toBeNull();
+    });
+
+    it('finds correct block among multiple blocks', function (): void {
+        $renderer = RichContentRenderer::make('')
+            ->customBlocks([RendererTestAlertBlock::class, RendererTestBannerBlock::class]);
+
+        expect($renderer->getCustomBlockHtml('banner', ['text' => 'Hi']))->toBe('<div class="banner">Hi</div>');
+        expect($renderer->getCustomBlockHtml('alert', ['type' => 'error']))->toBe('<div class="alert-error"></div>');
+    });
 });
 
-it('strips links with unknown protocols by default', function (): void {
-    $renderer = RichContentRenderer::make(
-        '<p><a href="myapp:///path"><strong>Link</strong></a></p>',
-    );
+describe('`getMentionProvider()` logic', function (): void {
+    it('returns `null` when no providers are set', function (): void {
+        $renderer = RichContentRenderer::make('');
 
-    $html = $renderer->toUnsafeHtml();
+        expect($renderer->getMentionProvider('@'))->toBeNull();
+    });
 
-    expect($html)->not->toContain('myapp:///path');
+    it('finds provider by matching character', function (): void {
+        $atProvider = MentionProvider::make('@');
+        $hashProvider = MentionProvider::make('#');
+
+        $renderer = RichContentRenderer::make('')
+            ->mentions([$atProvider, $hashProvider]);
+
+        expect($renderer->getMentionProvider('#'))->toBe($hashProvider);
+    });
+
+    it('falls back to first provider when no character matches', function (): void {
+        $atProvider = MentionProvider::make('@');
+
+        $renderer = RichContentRenderer::make('')
+            ->mentions([$atProvider]);
+
+        expect($renderer->getMentionProvider('!'))->toBe($atProvider);
+    });
 });
 
-it('preserves links with custom protocols when `linkProtocols()` includes them', function (): void {
-    $renderer = RichContentRenderer::make(
-        '<p><a href="myapp:///cards?id=123"><strong>Open App</strong></a></p>',
-    );
+describe('`getTextColors()` logic', function (): void {
+    it('returns defaults when no colors are set', function (): void {
+        $renderer = RichContentRenderer::make('');
 
-    $renderer->linkProtocols([
-        ...RichContentRenderer::make()->getLinkProtocols(),
-        'myapp',
-    ]);
+        $colors = $renderer->getTextColors();
 
-    $html = $renderer->toUnsafeHtml();
+        expect($colors)->toBeArray()->not->toBeEmpty();
+        expect(array_values($colors)[0])->toBeInstanceOf(TextColor::class);
+    });
 
-    expect($html)->toContain('href="myapp:///cards?id=123"');
+    it('transforms string colors to `TextColor` objects', function (): void {
+        $renderer = RichContentRenderer::make('')
+            ->textColors(['red' => '#ff0000']);
+
+        expect($renderer->getTextColors()['red'])->toBeInstanceOf(TextColor::class);
+    });
+
+    it('passes through `TextColor` objects unchanged', function (): void {
+        $tc = TextColor::make('#ff0000', 'red');
+        $renderer = RichContentRenderer::make('')
+            ->textColors(['red' => $tc]);
+
+        expect($renderer->getTextColors()['red'])->toBe($tc);
+    });
 });
 
-it('uses default protocols from `Link` when `linkProtocols()` is not set', function (): void {
-    $renderer = RichContentRenderer::make();
+describe('`toArray()` logic', function (): void {
+    it('returns empty array when content is empty', function (): void {
+        expect(RichContentRenderer::make('')->toArray())->toBe([]);
+    });
 
-    $protocols = $renderer->getLinkProtocols();
+    it('returns empty array when content is `null`', function (): void {
+        expect(RichContentRenderer::make(null)->toArray())->toBe([]);
+    });
+});
 
-    expect($protocols)
-        ->toContain('http')
-        ->toContain('https')
-        ->toContain('mailto')
-        ->toContain('tel');
+describe('fluent API', function (): void {
+    it('returns fluent `$this` from setters', function (): void {
+        $renderer = RichContentRenderer::make('');
+
+        expect($renderer->content(''))->toBe($renderer);
+        expect($renderer->fileAttachmentsDisk('public'))->toBe($renderer);
+        expect($renderer->fileAttachmentsVisibility('public'))->toBe($renderer);
+        expect($renderer->plugins([]))->toBe($renderer);
+        expect($renderer->mergeTags(null))->toBe($renderer);
+        expect($renderer->customBlocks(null))->toBe($renderer);
+        expect($renderer->mentions(null))->toBe($renderer);
+        expect($renderer->textColors(null))->toBe($renderer);
+        expect($renderer->linkProtocols(null))->toBe($renderer);
+    });
 });

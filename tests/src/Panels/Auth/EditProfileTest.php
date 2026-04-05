@@ -34,173 +34,179 @@ it('can retrieve data', function (): void {
         ]);
 });
 
-it('can save name', function (): void {
-    $newUserData = User::factory()->make();
+describe('saving profile', function (): void {
+    it('can save name', function (): void {
+        $newUserData = User::factory()->make();
 
-    livewire(EditProfile::class)
-        ->fillForm([
-            'name' => $newUserData->name,
-        ])
-        ->call('save')
-        ->assertHasNoFormErrors()
-        ->assertNotified('Saved');
+        livewire(EditProfile::class)
+            ->fillForm([
+                'name' => $newUserData->name,
+            ])
+            ->call('save')
+            ->assertHasNoFormErrors()
+            ->assertNotified('Saved');
 
-    expect($this->user->refresh())
-        ->name->toBe($newUserData->name);
+        expect($this->user->refresh())
+            ->name->toBe($newUserData->name);
+    });
+
+    it('can save email', function (): void {
+        Filament::getCurrentOrDefaultPanel()->emailChangeVerification(false);
+
+        $newUserData = User::factory()->make();
+
+        livewire(EditProfile::class)
+            ->fillForm([
+                'email' => $newUserData->email,
+                'currentPassword' => 'password',
+            ])
+            ->call('save')
+            ->assertHasNoFormErrors()
+            ->assertNotified('Saved');
+
+        expect($this->user->refresh())
+            ->email->toBe($newUserData->email);
+    });
+
+    it('can send email change verification', function (): void {
+        Notification::fake();
+
+        Filament::getCurrentOrDefaultPanel()->emailChangeVerification();
+
+        $oldEmail = $this->user->email;
+
+        $newUserData = User::factory()->make();
+
+        livewire(EditProfile::class)
+            ->fillForm([
+                'email' => $newUserData->email,
+                'currentPassword' => 'password',
+            ])
+            ->call('save')
+            ->assertHasNoFormErrors()
+            ->assertNotified('Email address change request sent')
+            ->assertSchemaStateSet([
+                'email' => $oldEmail,
+            ]);
+
+        expect($this->user->refresh())
+            ->email->toBe($oldEmail);
+
+        Notification::assertSentTo($this->user, NoticeOfEmailChangeRequest::class, function (NoticeOfEmailChangeRequest $notification) use ($newUserData): bool {
+            if (blank($notification->blockVerificationUrl)) {
+                return false;
+            }
+
+            return $notification->newEmail === $newUserData->email;
+        });
+
+        Notification::assertSentOnDemand(VerifyEmailChange::class, function (VerifyEmailChange $notification): bool {
+            $verificationSignature = Query::new($notification->url)->get('signature');
+
+            return cache()->has($verificationSignature);
+        });
+    });
+
+    it('can save password', function (): void {
+        expect(Filament::auth()->attempt([
+            'email' => $this->user->email,
+            'password' => 'password',
+        ]))->toBeTrue();
+
+        $newPassword = Str::random();
+
+        livewire(EditProfile::class)
+            ->fillForm([
+                'password' => $newPassword,
+                'passwordConfirmation' => $newPassword,
+                'currentPassword' => 'password',
+            ])
+            ->call('save')
+            ->assertHasNoFormErrors()
+            ->assertNotified('Saved')
+            ->assertSchemaStateSet([
+                'password' => '',
+                'passwordConfirmation' => '',
+            ]);
+
+        expect(Filament::auth()->attempt([
+            'email' => $this->user->email,
+            'password' => 'password',
+        ]))->toBeFalse();
+
+        expect(Filament::auth()->attempt([
+            'email' => $this->user->email,
+            'password' => $newPassword,
+        ]))->toBeTrue();
+    });
+
 });
 
-it('can save email', function (): void {
-    Filament::getCurrentOrDefaultPanel()->emailChangeVerification(false);
+describe('rate limiting', function (): void {
+    it('can throttle profile save attempts', function (): void {
+        $newUserData = User::factory()->make();
 
-    $newUserData = User::factory()->make();
-
-    livewire(EditProfile::class)
-        ->fillForm([
-            'email' => $newUserData->email,
-            'currentPassword' => 'password',
-        ])
-        ->call('save')
-        ->assertHasNoFormErrors()
-        ->assertNotified('Saved');
-
-    expect($this->user->refresh())
-        ->email->toBe($newUserData->email);
-});
-
-it('can send email change verification', function (): void {
-    Notification::fake();
-
-    Filament::getCurrentOrDefaultPanel()->emailChangeVerification();
-
-    $oldEmail = $this->user->email;
-
-    $newUserData = User::factory()->make();
-
-    livewire(EditProfile::class)
-        ->fillForm([
-            'email' => $newUserData->email,
-            'currentPassword' => 'password',
-        ])
-        ->call('save')
-        ->assertHasNoFormErrors()
-        ->assertNotified('Email address change request sent')
-        ->assertSchemaStateSet([
-            'email' => $oldEmail,
-        ]);
-
-    expect($this->user->refresh())
-        ->email->toBe($oldEmail);
-
-    Notification::assertSentTo($this->user, NoticeOfEmailChangeRequest::class, function (NoticeOfEmailChangeRequest $notification) use ($newUserData): bool {
-        if (blank($notification->blockVerificationUrl)) {
-            return false;
+        foreach (range(1, 5) as $i) {
+            livewire(EditProfile::class)
+                ->fillForm([
+                    'name' => $newUserData->name,
+                ])
+                ->call('save')
+                ->assertHasNoFormErrors()
+                ->assertNotified('Saved');
         }
 
-        return $notification->newEmail === $newUserData->email;
-    });
-
-    Notification::assertSentOnDemand(VerifyEmailChange::class, function (VerifyEmailChange $notification): bool {
-        $verificationSignature = Query::new($notification->url)->get('signature');
-
-        return cache()->has($verificationSignature);
-    });
-});
-
-it('can save password', function (): void {
-    expect(Filament::auth()->attempt([
-        'email' => $this->user->email,
-        'password' => 'password',
-    ]))->toBeTrue();
-
-    $newPassword = Str::random();
-
-    livewire(EditProfile::class)
-        ->fillForm([
-            'password' => $newPassword,
-            'passwordConfirmation' => $newPassword,
-            'currentPassword' => 'password',
-        ])
-        ->call('save')
-        ->assertHasNoFormErrors()
-        ->assertNotified('Saved')
-        ->assertSchemaStateSet([
-            'password' => '',
-            'passwordConfirmation' => '',
-        ]);
-
-    expect(Filament::auth()->attempt([
-        'email' => $this->user->email,
-        'password' => 'password',
-    ]))->toBeFalse();
-
-    expect(Filament::auth()->attempt([
-        'email' => $this->user->email,
-        'password' => $newPassword,
-    ]))->toBeTrue();
-});
-
-it('can throttle profile save attempts', function (): void {
-    $newUserData = User::factory()->make();
-
-    foreach (range(1, 5) as $i) {
         livewire(EditProfile::class)
             ->fillForm([
                 'name' => $newUserData->name,
             ])
             ->call('save')
-            ->assertHasNoFormErrors()
-            ->assertNotified('Saved');
-    }
+            ->assertNotified();
 
-    livewire(EditProfile::class)
-        ->fillForm([
-            'name' => $newUserData->name,
-        ])
-        ->call('save')
-        ->assertNotified();
+        // The 6th attempt should be throttled and name should remain unchanged from previous save
+        expect($this->user->refresh())
+            ->name->toBe($newUserData->name);
+    });
 
-    // The 6th attempt should be throttled and name should remain unchanged from previous save
-    expect($this->user->refresh())
-        ->name->toBe($newUserData->name);
-});
+    it('can throttle profile save attempts per user', function (): void {
+        $newUserData = User::factory()->make();
+        $originalName = $this->user->name;
 
-it('can throttle profile save attempts per user', function (): void {
-    $newUserData = User::factory()->make();
-    $originalName = $this->user->name;
+        // Clear the IP-based rate limiter between attempts to isolate the
+        // user-based rate limit (simulates an attacker rotating IPs).
+        $clearIpRateLimiter = function (): void {
+            RateLimiter::clear('livewire-rate-limiter:' . sha1(EditProfile::class . '|save|' . request()->ip()));
+        };
 
-    // Clear the IP-based rate limiter between attempts to isolate the
-    // user-based rate limit (simulates an attacker rotating IPs).
-    $clearIpRateLimiter = function (): void {
-        RateLimiter::clear('livewire-rate-limiter:' . sha1(EditProfile::class . '|save|' . request()->ip()));
-    };
+        foreach (range(1, 5) as $i) {
+            $clearIpRateLimiter();
 
-    foreach (range(1, 5) as $i) {
+            livewire(EditProfile::class)
+                ->fillForm([
+                    'name' => $newUserData->name,
+                ])
+                ->call('save')
+                ->assertHasNoFormErrors()
+                ->assertNotified('Saved');
+        }
+
         $clearIpRateLimiter();
 
+        $anotherName = fake()->name();
+
+        // The 6th attempt should be rate limited by user ID
         livewire(EditProfile::class)
             ->fillForm([
-                'name' => $newUserData->name,
+                'name' => $anotherName,
             ])
             ->call('save')
-            ->assertHasNoFormErrors()
-            ->assertNotified('Saved');
-    }
+            ->assertNotified();
 
-    $clearIpRateLimiter();
+        // Name should not have changed to the new value
+        expect($this->user->refresh())
+            ->name->not->toBe($anotherName);
+    });
 
-    $anotherName = fake()->name();
-
-    // The 6th attempt should be rate limited by user ID
-    livewire(EditProfile::class)
-        ->fillForm([
-            'name' => $anotherName,
-        ])
-        ->call('save')
-        ->assertNotified();
-
-    // Name should not have changed to the new value
-    expect($this->user->refresh())
-        ->name->not->toBe($anotherName);
 });
 
 it('can validate', function (array $formData, array $errors): void {

@@ -30,39 +30,52 @@ it('can render page with a custom slug', function (): void {
         ->assertSuccessful();
 });
 
-it('can request password reset', function (): void {
-    Notification::fake();
-    Event::fake();
+describe('requesting password reset', function (): void {
+    it('can request password reset', function (): void {
+        Notification::fake();
+        Event::fake();
 
-    $this->assertGuest();
+        $this->assertGuest();
 
-    $userToResetPassword = User::factory()->create();
+        $userToResetPassword = User::factory()->create();
 
-    livewire(RequestPasswordReset::class)
-        ->fillForm([
-            'email' => $userToResetPassword->email,
-        ])
-        ->call('request')
-        ->assertNotified(
-            FilamentNotification::make()
-                ->success()
-                ->title(__('passwords.sent'))
-                ->body(__('filament-panels::auth/pages/password-reset/request-password-reset.notifications.sent.body'))
-        );
+        livewire(RequestPasswordReset::class)
+            ->fillForm([
+                'email' => $userToResetPassword->email,
+            ])
+            ->call('request')
+            ->assertNotified(
+                FilamentNotification::make()
+                    ->success()
+                    ->title(__('passwords.sent'))
+                    ->body(__('filament-panels::auth/pages/password-reset/request-password-reset.notifications.sent.body'))
+            );
 
-    Notification::assertSentTo($userToResetPassword, ResetPassword::class);
+        Notification::assertSentTo($userToResetPassword, ResetPassword::class);
 
-    if (class_exists(PasswordResetLinkSent::class)) {
-        Event::assertDispatched(PasswordResetLinkSent::class, fn (PasswordResetLinkSent $event): bool => $event->user->is($userToResetPassword));
-    }
-});
+        if (class_exists(PasswordResetLinkSent::class)) {
+            Event::assertDispatched(PasswordResetLinkSent::class, fn (PasswordResetLinkSent $event): bool => $event->user->is($userToResetPassword));
+        }
+    });
 
-it('can throttle requests', function (): void {
-    Notification::fake();
+    it('can throttle requests', function (): void {
+        Notification::fake();
 
-    $this->assertGuest();
+        $this->assertGuest();
 
-    foreach (range(1, 2) as $i) {
+        foreach (range(1, 2) as $i) {
+            $userToResetPassword = User::factory()->create();
+
+            livewire(RequestPasswordReset::class)
+                ->fillForm([
+                    'email' => $userToResetPassword->email,
+                ])
+                ->call('request')
+                ->assertNotified();
+
+            Notification::assertSentToTimes($userToResetPassword, ResetPassword::class, times: 1);
+        }
+
         $userToResetPassword = User::factory()->create();
 
         livewire(RequestPasswordReset::class)
@@ -72,43 +85,32 @@ it('can throttle requests', function (): void {
             ->call('request')
             ->assertNotified();
 
-        Notification::assertSentToTimes($userToResetPassword, ResetPassword::class, times: 1);
-    }
+        Notification::assertNotSentTo($userToResetPassword, ResetPassword::class);
+    });
 
-    $userToResetPassword = User::factory()->create();
+    it('cannot request password reset without panel access', function (): void {
+        Notification::fake();
 
-    livewire(RequestPasswordReset::class)
-        ->fillForm([
-            'email' => $userToResetPassword->email,
-        ])
-        ->call('request')
-        ->assertNotified();
+        $this->assertGuest();
 
-    Notification::assertNotSentTo($userToResetPassword, ResetPassword::class);
-});
+        $userToResetPassword = User::factory()->create();
 
-it('cannot request password reset without panel access', function (): void {
-    Notification::fake();
+        Filament::setCurrentPanel(Filament::getPanel('custom'));
 
-    $this->assertGuest();
+        livewire(RequestPasswordReset::class)
+            ->fillForm([
+                'email' => $userToResetPassword->email,
+            ])
+            ->call('request')
+            ->assertNotified(
+                FilamentNotification::make()
+                    ->success()
+                    ->title(__('passwords.sent'))
+                    ->body(__('filament-panels::auth/pages/password-reset/request-password-reset.notifications.sent.body'))
+            );
 
-    $userToResetPassword = User::factory()->create();
-
-    Filament::setCurrentPanel(Filament::getPanel('custom'));
-
-    livewire(RequestPasswordReset::class)
-        ->fillForm([
-            'email' => $userToResetPassword->email,
-        ])
-        ->call('request')
-        ->assertNotified(
-            FilamentNotification::make()
-                ->success()
-                ->title(__('passwords.sent'))
-                ->body(__('filament-panels::auth/pages/password-reset/request-password-reset.notifications.sent.body'))
-        );
-
-    Notification::assertNotSentTo($userToResetPassword, ResetPassword::class);
+        Notification::assertNotSentTo($userToResetPassword, ResetPassword::class);
+    });
 });
 
 it('can validate `email` is required', function (): void {

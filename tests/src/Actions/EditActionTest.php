@@ -108,3 +108,43 @@ it('can edit multiple records sequentially', function (): void {
     expect($department1->refresh()->name)->toBe($newName1);
     expect($department2->refresh()->name)->toBe($newName2);
 });
+
+it('can set `mutateRecordDataUsing()` callback and returns fluent `$this`', function (): void {
+    $action = EditAction::make();
+    $callback = static fn (array $data): array => array_merge($data, ['extra' => 'value']);
+
+    $result = $action->mutateRecordDataUsing($callback);
+
+    expect($result)->toBe($action);
+});
+
+it('can clear `mutateRecordDataUsing()` with `null`', function (): void {
+    $action = EditAction::make()
+        ->mutateRecordDataUsing(static fn (array $data): array => $data)
+        ->mutateRecordDataUsing(null);
+
+    expect($action)->toBeInstanceOf(EditAction::class);
+});
+
+it('has `edit` as default name', function (): void {
+    expect(EditAction::getDefaultName())->toBe('edit');
+});
+
+it('preserves original record when `EditAction` is cancelled after filling form', function (): void {
+    $ticket = Ticket::factory()->create();
+    $department = Department::factory()->hasAttached($ticket)->create(['name' => 'Do Not Change']);
+
+    livewire(DepartmentsRelationManager::class, ['ownerRecord' => $ticket, 'pageClass' => EditTicket::class])
+        ->mountAction(TestAction::make(EditAction::class)->table($department))
+        ->fillForm([
+            'name' => 'Attempted Change',
+        ]);
+
+    expect($department->refresh()->name)->toBe('Do Not Change');
+});
+
+it('returns fluent `$this` from `using()`', function (): void {
+    $action = EditAction::make();
+
+    expect($action->using(static fn () => null))->toBe($action);
+});

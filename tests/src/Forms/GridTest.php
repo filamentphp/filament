@@ -7,160 +7,166 @@ use Filament\Tests\TestCase;
 
 uses(TestCase::class);
 
-test('can get number of container columns at all breakpoints', function (): void {
-    $schema = Schema::make(Livewire::make())
-        ->columns([
-            'default' => $defaultColumns = rand(1, 12),
-            'sm' => $columnsAtSm = rand(1, 12),
-            'md' => $columnsAtMd = rand(1, 12),
-            'lg' => $columnsAtLg = rand(1, 12),
-            'xl' => $columnsAtXl = rand(1, 12),
-            '2xl' => $columnsAt2xl = rand(1, 12),
-        ]);
+describe('container columns', function (): void {
+    test('can get number of container columns at all breakpoints', function (): void {
+        $schema = Schema::make(Livewire::make())
+            ->columns([
+                'default' => $defaultColumns = rand(1, 12),
+                'sm' => $columnsAtSm = rand(1, 12),
+                'md' => $columnsAtMd = rand(1, 12),
+                'lg' => $columnsAtLg = rand(1, 12),
+                'xl' => $columnsAtXl = rand(1, 12),
+                '2xl' => $columnsAt2xl = rand(1, 12),
+            ]);
 
-    expect($schema)
-        ->getColumns()
-        ->toHaveKey('default', $defaultColumns)
-        ->toHaveKey('sm', $columnsAtSm)
-        ->toHaveKey('md', $columnsAtMd)
-        ->toHaveKey('lg', $columnsAtLg)
-        ->toHaveKey('xl', $columnsAtXl)
-        ->toHaveKey('2xl', $columnsAt2xl);
+        expect($schema)
+            ->getColumns()
+            ->toHaveKey('default', $defaultColumns)
+            ->toHaveKey('sm', $columnsAtSm)
+            ->toHaveKey('md', $columnsAtMd)
+            ->toHaveKey('lg', $columnsAtLg)
+            ->toHaveKey('xl', $columnsAtXl)
+            ->toHaveKey('2xl', $columnsAt2xl);
+    });
+
+    test('can get number of container columns at one breakpoint', function (): void {
+        $schema = Schema::make(Livewire::make())
+            ->columns([
+                '2xl' => $columnsAt2xl = rand(1, 12),
+            ]);
+
+        expect($schema)
+            ->getColumns('2xl')->toBe($columnsAt2xl);
+    });
+
+    test('can set number of container columns at `lg` breakpoint', function (): void {
+        $schema = Schema::make(Livewire::make())
+            ->columns($columnsAtLg = rand(1, 12));
+
+        expect($schema)
+            ->getColumns('lg')->toBe($columnsAtLg);
+    });
+
+    test('can get number of container columns from parent component', function (): void {
+        $schema = Schema::make(Livewire::make())
+            ->parentComponent((new Component)->columns([
+                'default' => $defaultColumns = rand(1, 12),
+                'sm' => $columnsAtSm = rand(1, 12),
+                'md' => $columnsAtMd = rand(1, 12),
+                'lg' => $columnsAtLg = rand(1, 12),
+                'xl' => $columnsAtXl = rand(1, 12),
+                '2xl' => $columnsAt2xl = rand(1, 12),
+            ]));
+
+        expect($schema)
+            ->getColumns()
+            ->toHaveKey('default', $defaultColumns)
+            ->toHaveKey('sm', $columnsAtSm)
+            ->toHaveKey('md', $columnsAtMd)
+            ->toHaveKey('lg', $columnsAtLg)
+            ->toHaveKey('xl', $columnsAtXl)
+            ->toHaveKey('2xl', $columnsAt2xl);
+    });
 });
 
-test('can get number of container columns at one breakpoint', function (): void {
-    $schema = Schema::make(Livewire::make())
-        ->columns([
-            '2xl' => $columnsAt2xl = rand(1, 12),
-        ]);
+describe('column span', function (): void {
+    test('can get component column span at all breakpoints', function (): void {
+        $component = (new Component)
+            ->container(Schema::make(Livewire::make()))
+            ->columnSpan([
+                'default' => $defaultSpan = rand(1, 12),
+                'sm' => $spanAtSm = rand(1, 12),
+                'md' => $spanAtMd = rand(1, 12),
+                'lg' => $spanAtLg = rand(1, 12),
+                'xl' => $spanAtXl = rand(1, 12),
+                '2xl' => $spanAt2xl = rand(1, 12),
+            ]);
 
-    expect($schema)
-        ->getColumns('2xl')->toBe($columnsAt2xl);
+        expect($component)
+            ->getColumnSpan()
+            ->toHaveKey('default', $defaultSpan)
+            ->toHaveKey('sm', $spanAtSm)
+            ->toHaveKey('md', $spanAtMd)
+            ->toHaveKey('lg', $spanAtLg)
+            ->toHaveKey('xl', $spanAtXl)
+            ->toHaveKey('2xl', $spanAt2xl);
+    });
+
+    test('can get component column span at one breakpoint', function (): void {
+        $component = (new Component)
+            ->container(Schema::make(Livewire::make()))
+            ->columnSpan([
+                '2xl' => $spanAt2xl = rand(1, 12),
+            ]);
+
+        expect($component)
+            ->getColumnSpan('2xl')->toBe($spanAt2xl);
+    });
+
+    test('can set component column span at `lg` breakpoint', function (): void {
+        $component = (new Component)
+            ->container(Schema::make(Livewire::make()))
+            ->columnSpan($spanAtLg = rand(1, 12));
+
+        expect($component)
+            ->getColumnSpan('lg')->toBe($spanAtLg);
+    });
 });
 
-test('can get number of container columns from parent component', function (): void {
-    $schema = Schema::make(Livewire::make())
-        ->parentComponent((new Component)->columns([
-            'default' => $defaultColumns = rand(1, 12),
-            'sm' => $columnsAtSm = rand(1, 12),
-            'md' => $columnsAtMd = rand(1, 12),
-            'lg' => $columnsAtLg = rand(1, 12),
-            'xl' => $columnsAtXl = rand(1, 12),
-            '2xl' => $columnsAt2xl = rand(1, 12),
-        ]));
+describe('column order', function (): void {
+    test('can get component column order at all breakpoints', function (): void {
+        $component = (new Component)
+            ->container(Schema::make(Livewire::make()))
+            ->columnOrder([
+                'default' => $defaultOrder = rand(1, 12),
+                'sm' => $orderAtSm = rand(1, 12),
+                'md' => $orderAtMd = rand(1, 12),
+                'lg' => $orderAtLg = rand(1, 12),
+                'xl' => $orderAtXl = rand(1, 12),
+                '2xl' => $orderAt2xl = rand(1, 12),
+            ]);
 
-    expect($schema)
-        ->getColumns()
-        ->toHaveKey('default', $defaultColumns)
-        ->toHaveKey('sm', $columnsAtSm)
-        ->toHaveKey('md', $columnsAtMd)
-        ->toHaveKey('lg', $columnsAtLg)
-        ->toHaveKey('xl', $columnsAtXl)
-        ->toHaveKey('2xl', $columnsAt2xl);
-});
+        expect($component)
+            ->getColumnOrder()
+            ->toHaveKey('default', $defaultOrder)
+            ->toHaveKey('sm', $orderAtSm)
+            ->toHaveKey('md', $orderAtMd)
+            ->toHaveKey('lg', $orderAtLg)
+            ->toHaveKey('xl', $orderAtXl)
+            ->toHaveKey('2xl', $orderAt2xl);
+    });
 
-test('can set number of container columns at `lg` breakpoint', function (): void {
-    $schema = Schema::make(Livewire::make())
-        ->columns($columnsAtLg = rand(1, 12));
+    test('can get component column order at one breakpoint', function (): void {
+        $component = (new Component)
+            ->container(Schema::make(Livewire::make()))
+            ->columnOrder([
+                '2xl' => $orderAt2xl = rand(1, 12),
+            ]);
 
-    expect($schema)
-        ->getColumns('lg')->toBe($columnsAtLg);
-});
+        expect($component)
+            ->getColumnOrder('2xl')->toBe($orderAt2xl);
+    });
 
-test('can get component column span at all breakpoints', function (): void {
-    $component = (new Component)
-        ->container(Schema::make(Livewire::make()))
-        ->columnSpan([
-            'default' => $defaultSpan = rand(1, 12),
-            'sm' => $spanAtSm = rand(1, 12),
-            'md' => $spanAtMd = rand(1, 12),
-            'lg' => $spanAtLg = rand(1, 12),
-            'xl' => $spanAtXl = rand(1, 12),
-            '2xl' => $spanAt2xl = rand(1, 12),
-        ]);
+    test('can set component column order at `lg` breakpoint', function (): void {
+        $component = (new Component)
+            ->container(Schema::make(Livewire::make()))
+            ->columnOrder($defaultOrder = rand(1, 12));
 
-    expect($component)
-        ->getColumnSpan()
-        ->toHaveKey('default', $defaultSpan)
-        ->toHaveKey('sm', $spanAtSm)
-        ->toHaveKey('md', $spanAtMd)
-        ->toHaveKey('lg', $spanAtLg)
-        ->toHaveKey('xl', $spanAtXl)
-        ->toHaveKey('2xl', $spanAt2xl);
-});
+        expect($component)
+            ->getColumnOrder('lg')->toBe($defaultOrder);
+    });
 
-test('can get component column span at one breakpoint', function (): void {
-    $component = (new Component)
-        ->container(Schema::make(Livewire::make()))
-        ->columnSpan([
-            '2xl' => $spanAt2xl = rand(1, 12),
-        ]);
+    test('can get component column order with `null` default values', function (): void {
+        $component = (new Component)
+            ->container(Schema::make(Livewire::make()));
 
-    expect($component)
-        ->getColumnSpan('2xl')->toBe($spanAt2xl);
-});
-
-test('can set component column span at `lg` breakpoint', function (): void {
-    $component = (new Component)
-        ->container(Schema::make(Livewire::make()))
-        ->columnSpan($spanAtLg = rand(1, 12));
-
-    expect($component)
-        ->getColumnSpan('lg')->toBe($spanAtLg);
-});
-
-test('can get component column order at all breakpoints', function (): void {
-    $component = (new Component)
-        ->container(Schema::make(Livewire::make()))
-        ->columnOrder([
-            'default' => $defaultOrder = rand(1, 12),
-            'sm' => $orderAtSm = rand(1, 12),
-            'md' => $orderAtMd = rand(1, 12),
-            'lg' => $orderAtLg = rand(1, 12),
-            'xl' => $orderAtXl = rand(1, 12),
-            '2xl' => $orderAt2xl = rand(1, 12),
-        ]);
-
-    expect($component)
-        ->getColumnOrder()
-        ->toHaveKey('default', $defaultOrder)
-        ->toHaveKey('sm', $orderAtSm)
-        ->toHaveKey('md', $orderAtMd)
-        ->toHaveKey('lg', $orderAtLg)
-        ->toHaveKey('xl', $orderAtXl)
-        ->toHaveKey('2xl', $orderAt2xl);
-});
-
-test('can get component column order at one breakpoint', function (): void {
-    $component = (new Component)
-        ->container(Schema::make(Livewire::make()))
-        ->columnOrder([
-            '2xl' => $orderAt2xl = rand(1, 12),
-        ]);
-
-    expect($component)
-        ->getColumnOrder('2xl')->toBe($orderAt2xl);
-});
-
-test('can set component column order at `lg` breakpoint', function (): void {
-    $component = (new Component)
-        ->container(Schema::make(Livewire::make()))
-        ->columnOrder($defaultOrder = rand(1, 12));
-
-    expect($component)
-        ->getColumnOrder('lg')->toBe($defaultOrder);
-});
-
-test('can get component column order with null default values', function (): void {
-    $component = (new Component)
-        ->container(Schema::make(Livewire::make()));
-
-    expect($component)
-        ->getColumnOrder()
-        ->toHaveKey('default', null)
-        ->toHaveKey('sm', null)
-        ->toHaveKey('md', null)
-        ->toHaveKey('lg', null)
-        ->toHaveKey('xl', null)
-        ->toHaveKey('2xl', null);
+        expect($component)
+            ->getColumnOrder()
+            ->toHaveKey('default', null)
+            ->toHaveKey('sm', null)
+            ->toHaveKey('md', null)
+            ->toHaveKey('lg', null)
+            ->toHaveKey('xl', null)
+            ->toHaveKey('2xl', null);
+    });
 });

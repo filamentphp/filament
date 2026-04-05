@@ -85,6 +85,54 @@ it('uses `statePath("filters")` when not deferred', function (): void {
     expect($widget->instance()->getFiltersSchema()->getStatePath())->toBe('filters');
 });
 
+it('returns `primary` as default value from `getColor()`', function (): void {
+    $widget = Livewire::test(TestChartWidgetDefault::class);
+
+    expect($widget->instance()->getColor())->toBe('primary');
+});
+
+it('returns custom color from `getColor()` when `$color` is overridden', function (): void {
+    $widget = Livewire::test(TestChartWidgetWithCustomColor::class);
+
+    expect($widget->instance()->getColor())->toBe('success');
+});
+
+it('returns `false` from `isCollapsible()` by default', function (): void {
+    $widget = Livewire::test(TestChartWidgetDefault::class);
+
+    expect($widget->instance()->isCollapsible())->toBeFalse();
+});
+
+it('returns `true` from `isCollapsible()` when `$isCollapsible` is overridden', function (): void {
+    $widget = Livewire::test(TestChartWidgetCollapsible::class);
+
+    expect($widget->instance()->isCollapsible())->toBeTrue();
+});
+
+it('returns heading from `getHeading()`', function (): void {
+    $widget = Livewire::test(TestChartWidgetWithHeading::class);
+
+    expect($widget->instance()->getHeading())->toBe('Sales over time');
+});
+
+it('returns `null` from `getHeading()` by default', function (): void {
+    $widget = Livewire::test(TestChartWidgetDefault::class);
+
+    expect($widget->instance()->getHeading())->toBeNull();
+});
+
+it('returns description from `getDescription()`', function (): void {
+    $widget = Livewire::test(TestChartWidgetWithDescription::class);
+
+    expect($widget->instance()->getDescription())->toBe('A summary of sales');
+});
+
+it('returns `null` from `getDescription()` by default', function (): void {
+    $widget = Livewire::test(TestChartWidgetDefault::class);
+
+    expect($widget->instance()->getDescription())->toBeNull();
+});
+
 class TestChartWidgetDefault extends ChartWidget
 {
     use ChartWidget\Concerns\HasFiltersSchema;
@@ -193,5 +241,65 @@ class TestChartWidgetWithDynamicDeferredFilters extends ChartWidget
             ->components([
                 Select::make('year')->options(['2024' => '2024', '2023' => '2023'])->default('2024'),
             ]);
+    }
+}
+
+class TestChartWidgetWithCustomColor extends ChartWidget
+{
+    protected string $color = 'success';
+
+    protected function getType(): string
+    {
+        return 'bar';
+    }
+
+    protected function getData(): array
+    {
+        return ['datasets' => [], 'labels' => []];
+    }
+}
+
+class TestChartWidgetCollapsible extends ChartWidget
+{
+    protected bool $isCollapsible = true;
+
+    protected function getType(): string
+    {
+        return 'bar';
+    }
+
+    protected function getData(): array
+    {
+        return ['datasets' => [], 'labels' => []];
+    }
+}
+
+class TestChartWidgetWithHeading extends ChartWidget
+{
+    protected ?string $heading = 'Sales over time';
+
+    protected function getType(): string
+    {
+        return 'line';
+    }
+
+    protected function getData(): array
+    {
+        return ['datasets' => [], 'labels' => []];
+    }
+}
+
+class TestChartWidgetWithDescription extends ChartWidget
+{
+    protected ?string $description = 'A summary of sales';
+
+    protected function getType(): string
+    {
+        return 'line';
+    }
+
+    protected function getData(): array
+    {
+        return ['datasets' => [], 'labels' => []];
     }
 }

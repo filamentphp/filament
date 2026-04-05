@@ -8,134 +8,142 @@ use Livewire\Livewire;
 
 uses(TestCase::class);
 
-it('can register page configurations', function (): void {
-    $configurations = Filament::getCurrentOrDefaultPanel()->getPageConfigurations();
+describe('registration', function (): void {
+    it('can register page configurations', function (): void {
+        $configurations = Filament::getCurrentOrDefaultPanel()->getPageConfigurations();
 
-    expect($configurations)->toHaveCount(2);
+        expect($configurations)->toHaveCount(2);
 
-    $keys = collect($configurations)->map(fn ($configuration) => $configuration->getKey())->all();
+        $keys = collect($configurations)->map(fn ($configuration) => $configuration->getKey())->all();
 
-    expect($keys)->toContain('general');
-    expect($keys)->toContain('advanced');
-});
-
-it('can register default page without configuration', function (): void {
-    $pages = Filament::getPages();
-
-    expect($pages)->toContain(ConfigurableSettings::class);
-});
-
-it('can generate different slugs for each configuration', function (): void {
-    Filament::forPageConfiguration(ConfigurableSettings::class, 'general');
-    expect(ConfigurableSettings::getSlug())->toBe('general-settings');
-    Filament::setCurrentPageConfigurationKey(null);
-
-    Filament::forPageConfiguration(ConfigurableSettings::class, 'advanced');
-    expect(ConfigurableSettings::getSlug())->toBe('advanced-settings');
-    Filament::setCurrentPageConfigurationKey(null);
-});
-
-it('can access configuration using `getConfiguration()`', function (): void {
-    // Without configuration context, returns null
-    expect(ConfigurableSettings::getConfiguration())->toBeNull();
-
-    // Set configuration context
-    $panel = Filament::getCurrentOrDefaultPanel();
-    $generalConfig = $panel->getPageConfiguration(ConfigurableSettings::class, 'general');
-
-    Filament::setCurrentPageConfigurationKey('general');
-
-    expect(ConfigurableSettings::getConfiguration())->toBe($generalConfig);
-    expect(ConfigurableSettings::hasConfiguration())->toBeTrue();
-
-    // Clean up
-    Filament::setCurrentPageConfigurationKey(null);
-});
-
-it('can use `withConfiguration()` to execute callback in configuration context', function (): void {
-    $result = ConfigurableSettings::withConfiguration('general', function () {
-        $configuration = ConfigurableSettings::getConfiguration();
-
-        return $configuration?->getKey();
+        expect($keys)->toContain('general');
+        expect($keys)->toContain('advanced');
     });
 
-    expect($result)->toBe('general');
+    it('can register default page without configuration', function (): void {
+        $pages = Filament::getPages();
 
-    // After callback, configuration context is restored
-    expect(ConfigurableSettings::getConfiguration())->toBeNull();
+        expect($pages)->toContain(ConfigurableSettings::class);
+    });
+
+    it('can generate different slugs for each configuration', function (): void {
+        Filament::forPageConfiguration(ConfigurableSettings::class, 'general');
+        expect(ConfigurableSettings::getSlug())->toBe('general-settings');
+        Filament::setCurrentPageConfigurationKey(null);
+
+        Filament::forPageConfiguration(ConfigurableSettings::class, 'advanced');
+        expect(ConfigurableSettings::getSlug())->toBe('advanced-settings');
+        Filament::setCurrentPageConfigurationKey(null);
+    });
 });
 
-it('can generate URLs for specific configurations', function (): void {
-    $defaultUrl = ConfigurableSettings::getUrl();
-    $generalUrl = ConfigurableSettings::getUrl(configuration: 'general');
-    $advancedUrl = ConfigurableSettings::getUrl(configuration: 'advanced');
+describe('configuration access', function (): void {
+    it('can access configuration using `getConfiguration()`', function (): void {
+        // Without configuration context, returns null
+        expect(ConfigurableSettings::getConfiguration())->toBeNull();
 
-    expect($defaultUrl)->toContain('/configurable-settings');
-    expect($generalUrl)->toContain('/general-settings');
-    expect($advancedUrl)->toContain('/advanced-settings');
+        // Set configuration context
+        $panel = Filament::getCurrentOrDefaultPanel();
+        $generalConfig = $panel->getPageConfiguration(ConfigurableSettings::class, 'general');
+
+        Filament::setCurrentPageConfigurationKey('general');
+
+        expect(ConfigurableSettings::getConfiguration())->toBe($generalConfig);
+        expect(ConfigurableSettings::hasConfiguration())->toBeTrue();
+
+        // Clean up
+        Filament::setCurrentPageConfigurationKey(null);
+    });
+
+    it('can use `withConfiguration()` to execute callback in configuration context', function (): void {
+        $result = ConfigurableSettings::withConfiguration('general', function () {
+            $configuration = ConfigurableSettings::getConfiguration();
+
+            return $configuration?->getKey();
+        });
+
+        expect($result)->toBe('general');
+
+        // After callback, configuration context is restored
+        expect(ConfigurableSettings::getConfiguration())->toBeNull();
+    });
 });
 
-it('can render page with configuration context', function (): void {
-    Filament::forPageConfiguration(ConfigurableSettings::class, 'general');
+describe('URLs and rendering', function (): void {
+    it('can generate URLs for specific configurations', function (): void {
+        $defaultUrl = ConfigurableSettings::getUrl();
+        $generalUrl = ConfigurableSettings::getUrl(configuration: 'general');
+        $advancedUrl = ConfigurableSettings::getUrl(configuration: 'advanced');
 
-    Livewire::test(ConfigurableSettings::class)
-        ->assertSuccessful()
-        ->assertSet('settingsCategory', 'general');
+        expect($defaultUrl)->toContain('/configurable-settings');
+        expect($generalUrl)->toContain('/general-settings');
+        expect($advancedUrl)->toContain('/advanced-settings');
+    });
 
-    Filament::setCurrentPageConfigurationKey(null);
+    it('can render page with configuration context', function (): void {
+        Filament::forPageConfiguration(ConfigurableSettings::class, 'general');
 
-    Filament::forPageConfiguration(ConfigurableSettings::class, 'advanced');
+        Livewire::test(ConfigurableSettings::class)
+            ->assertSuccessful()
+            ->assertSet('settingsCategory', 'general');
 
-    Livewire::test(ConfigurableSettings::class)
-        ->assertSuccessful()
-        ->assertSet('settingsCategory', 'advanced');
+        Filament::setCurrentPageConfigurationKey(null);
 
-    Filament::setCurrentPageConfigurationKey(null);
+        Filament::forPageConfiguration(ConfigurableSettings::class, 'advanced');
+
+        Livewire::test(ConfigurableSettings::class)
+            ->assertSuccessful()
+            ->assertSet('settingsCategory', 'advanced');
+
+        Filament::setCurrentPageConfigurationKey(null);
+    });
 });
 
-it('can get navigation label from configuration', function (): void {
-    // Default label
-    expect(ConfigurableSettings::getNavigationLabel())->toBe('Configurable Settings');
+describe('navigation properties', function (): void {
+    it('can get navigation label from configuration', function (): void {
+        // Default label
+        expect(ConfigurableSettings::getNavigationLabel())->toBe('Configurable Settings');
 
-    // General configuration label
-    Filament::forPageConfiguration(ConfigurableSettings::class, 'general');
-    expect(ConfigurableSettings::getNavigationLabel())->toBe('General Settings');
-    Filament::setCurrentPageConfigurationKey(null);
+        // General configuration label
+        Filament::forPageConfiguration(ConfigurableSettings::class, 'general');
+        expect(ConfigurableSettings::getNavigationLabel())->toBe('General Settings');
+        Filament::setCurrentPageConfigurationKey(null);
 
-    // Advanced configuration label
-    Filament::forPageConfiguration(ConfigurableSettings::class, 'advanced');
-    expect(ConfigurableSettings::getNavigationLabel())->toBe('Advanced Settings');
-    Filament::setCurrentPageConfigurationKey(null);
-});
+        // Advanced configuration label
+        Filament::forPageConfiguration(ConfigurableSettings::class, 'advanced');
+        expect(ConfigurableSettings::getNavigationLabel())->toBe('Advanced Settings');
+        Filament::setCurrentPageConfigurationKey(null);
+    });
 
-it('can get navigation group from configuration', function (): void {
-    // Default group (null)
-    expect(ConfigurableSettings::getNavigationGroup())->toBeNull();
+    it('can get navigation group from configuration', function (): void {
+        // Default group (null)
+        expect(ConfigurableSettings::getNavigationGroup())->toBeNull();
 
-    // General configuration group
-    Filament::forPageConfiguration(ConfigurableSettings::class, 'general');
-    expect(ConfigurableSettings::getNavigationGroup())->toBe('Settings');
-    Filament::setCurrentPageConfigurationKey(null);
+        // General configuration group
+        Filament::forPageConfiguration(ConfigurableSettings::class, 'general');
+        expect(ConfigurableSettings::getNavigationGroup())->toBe('Settings');
+        Filament::setCurrentPageConfigurationKey(null);
 
-    // Advanced configuration group
-    Filament::forPageConfiguration(ConfigurableSettings::class, 'advanced');
-    expect(ConfigurableSettings::getNavigationGroup())->toBe('Settings');
-    Filament::setCurrentPageConfigurationKey(null);
-});
+        // Advanced configuration group
+        Filament::forPageConfiguration(ConfigurableSettings::class, 'advanced');
+        expect(ConfigurableSettings::getNavigationGroup())->toBe('Settings');
+        Filament::setCurrentPageConfigurationKey(null);
+    });
 
-it('can get navigation sort from configuration', function (): void {
-    // Default sort
-    expect(ConfigurableSettings::getNavigationSort())->toBe(2);
+    it('can get navigation sort from configuration', function (): void {
+        // Default sort
+        expect(ConfigurableSettings::getNavigationSort())->toBe(2);
 
-    // General configuration sort
-    Filament::forPageConfiguration(ConfigurableSettings::class, 'general');
-    expect(ConfigurableSettings::getNavigationSort())->toBe(1);
-    Filament::setCurrentPageConfigurationKey(null);
+        // General configuration sort
+        Filament::forPageConfiguration(ConfigurableSettings::class, 'general');
+        expect(ConfigurableSettings::getNavigationSort())->toBe(1);
+        Filament::setCurrentPageConfigurationKey(null);
 
-    // Advanced configuration sort
-    Filament::forPageConfiguration(ConfigurableSettings::class, 'advanced');
-    expect(ConfigurableSettings::getNavigationSort())->toBe(2);
-    Filament::setCurrentPageConfigurationKey(null);
+        // Advanced configuration sort
+        Filament::forPageConfiguration(ConfigurableSettings::class, 'advanced');
+        expect(ConfigurableSettings::getNavigationSort())->toBe(2);
+        Filament::setCurrentPageConfigurationKey(null);
+    });
 });
 
 it('throws exception when using `withConfiguration()` with unknown key', function (): void {

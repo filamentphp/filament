@@ -15,221 +15,383 @@ use function Filament\Tests\livewire;
 
 uses(TestCase::class);
 
-it('can render `AssociateAction`', function (): void {
-    $user = User::factory()->create();
+describe('associating records', function (): void {
+    it('can render `AssociateAction`', function (): void {
+        $user = User::factory()->create();
 
-    livewire(PostsWithAssociateActionRelationManager::class, ['ownerRecord' => $user, 'pageClass' => EditUser::class])
-        ->assertActionExists(TestAction::make(AssociateAction::class)->table());
-});
+        livewire(PostsWithAssociateActionRelationManager::class, ['ownerRecord' => $user, 'pageClass' => EditUser::class])
+            ->assertActionExists(TestAction::make(AssociateAction::class)->table());
+    });
 
-it('can mount `AssociateAction` modal', function (): void {
-    $user = User::factory()->create();
+    it('can mount `AssociateAction` modal', function (): void {
+        $user = User::factory()->create();
 
-    livewire(PostsWithAssociateActionRelationManager::class, ['ownerRecord' => $user, 'pageClass' => EditUser::class])
-        ->mountAction(TestAction::make(AssociateAction::class)->table())
-        ->assertActionMounted(TestAction::make(AssociateAction::class)->table());
-});
+        livewire(PostsWithAssociateActionRelationManager::class, ['ownerRecord' => $user, 'pageClass' => EditUser::class])
+            ->mountAction(TestAction::make(AssociateAction::class)->table())
+            ->assertActionMounted(TestAction::make(AssociateAction::class)->table());
+    });
 
-it('can associate a record using `AssociateAction`', function (): void {
-    $user = User::factory()->create();
-    $post = Post::factory()->create(['author_id' => null]);
+    it('can associate a record using `AssociateAction`', function (): void {
+        $user = User::factory()->create();
+        $post = Post::factory()->create(['author_id' => null]);
 
-    livewire(PostsWithAssociateActionRelationManager::class, ['ownerRecord' => $user, 'pageClass' => EditUser::class])
-        ->callAction(TestAction::make(AssociateAction::class)->table(), [
-            'recordId' => $post->getKey(),
-        ])
-        ->assertHasNoFormErrors();
+        livewire(PostsWithAssociateActionRelationManager::class, ['ownerRecord' => $user, 'pageClass' => EditUser::class])
+            ->callAction(TestAction::make(AssociateAction::class)->table(), [
+                'recordId' => $post->getKey(),
+            ])
+            ->assertHasNoFormErrors();
 
-    expect($post->refresh()->author_id)->toBe($user->id);
-});
-
-it('can associate multiple records using `AssociateAction`', function (): void {
-    $user = User::factory()->create();
-    $posts = Post::factory()->count(3)->create(['author_id' => null]);
-
-    livewire(PostsWithPreloadedAssociateRelationManager::class, ['ownerRecord' => $user, 'pageClass' => EditUser::class])
-        ->callAction(TestAction::make(AssociateAction::class)->table(), [
-            'recordId' => $posts->pluck('id')->all(),
-        ])
-        ->assertHasNoFormErrors();
-
-    foreach ($posts as $post) {
         expect($post->refresh()->author_id)->toBe($user->id);
-    }
+    });
+
+    it('can associate multiple records using `AssociateAction`', function (): void {
+        $user = User::factory()->create();
+        $posts = Post::factory()->count(3)->create(['author_id' => null]);
+
+        livewire(PostsWithPreloadedAssociateRelationManager::class, ['ownerRecord' => $user, 'pageClass' => EditUser::class])
+            ->callAction(TestAction::make(AssociateAction::class)->table(), [
+                'recordId' => $posts->pluck('id')->all(),
+            ])
+            ->assertHasNoFormErrors();
+
+        foreach ($posts as $post) {
+            expect($post->refresh()->author_id)->toBe($user->id);
+        }
+    });
+
+    it('can show success notification after associating a record', function (): void {
+        $user = User::factory()->create();
+        $post = Post::factory()->create(['author_id' => null]);
+
+        livewire(PostsWithAssociateActionRelationManager::class, ['ownerRecord' => $user, 'pageClass' => EditUser::class])
+            ->callAction(TestAction::make(AssociateAction::class)->table(), [
+                'recordId' => $post->getKey(),
+            ])
+            ->assertNotified();
+    });
+
+    it('shows associated record in table', function (): void {
+        $user = User::factory()->create();
+        $post = Post::factory()->create(['author_id' => null]);
+
+        livewire(PostsWithAssociateActionRelationManager::class, ['ownerRecord' => $user, 'pageClass' => EditUser::class])
+            ->assertCanNotSeeTableRecords([$post])
+            ->callAction(TestAction::make(AssociateAction::class)->table(), [
+                'recordId' => $post->getKey(),
+            ])
+            ->assertCanSeeTableRecords([$post]);
+    });
 });
 
-it('can show success notification after associating a record', function (): void {
-    $user = User::factory()->create();
-    $post = Post::factory()->create(['author_id' => null]);
+describe('record select options', function (): void {
+    it('can get `getOptions()` for record select with preload', function (): void {
+        $user = User::factory()->create();
+        $posts = Post::factory()->count(3)->create(['author_id' => null]);
 
-    livewire(PostsWithAssociateActionRelationManager::class, ['ownerRecord' => $user, 'pageClass' => EditUser::class])
-        ->callAction(TestAction::make(AssociateAction::class)->table(), [
-            'recordId' => $post->getKey(),
-        ])
-        ->assertNotified();
+        livewire(PostsWithPreloadedAssociateRelationManager::class, ['ownerRecord' => $user, 'pageClass' => EditUser::class])
+            ->mountAction(TestAction::make(AssociateAction::class)->table())
+            ->assertSchemaComponentExists('recordId', checkComponentUsing: function (Select $select) use ($posts): bool {
+                $options = $select->getOptions();
+
+                expect($options)->toHaveCount(3);
+                expect(array_values($options))->toContain($posts[0]->title);
+                expect(array_values($options))->toContain($posts[1]->title);
+                expect(array_values($options))->toContain($posts[2]->title);
+
+                return true;
+            });
+    });
+
+    it('returns empty array for `getOptions()` when not preloaded', function (): void {
+        $user = User::factory()->create();
+        Post::factory()->count(3)->create(['author_id' => null]);
+
+        livewire(PostsWithAssociateActionRelationManager::class, ['ownerRecord' => $user, 'pageClass' => EditUser::class])
+            ->mountAction(TestAction::make(AssociateAction::class)->table())
+            ->assertSchemaComponentExists('recordId', checkComponentUsing: function (Select $select): bool {
+                expect($select->getOptions())->toBe([]);
+
+                return true;
+            });
+    });
+
+    it('can get `getSearchResults()` for record select', function (): void {
+        $user = User::factory()->create();
+        Post::factory()->create(['title' => 'First Article', 'author_id' => null]);
+        Post::factory()->create(['title' => 'Second Post', 'author_id' => null]);
+        Post::factory()->create(['title' => 'Third Article', 'author_id' => null]);
+
+        livewire(PostsWithAssociateActionRelationManager::class, ['ownerRecord' => $user, 'pageClass' => EditUser::class])
+            ->mountAction(TestAction::make(AssociateAction::class)->table())
+            ->assertSchemaComponentExists('recordId', checkComponentUsing: function (Select $select): bool {
+                $results = $select->getSearchResults('Article');
+
+                expect($results)->toHaveCount(2);
+                expect(array_values($results))->toContain('First Article');
+                expect(array_values($results))->toContain('Third Article');
+                expect(array_values($results))->not->toContain('Second Post');
+
+                return true;
+            });
+    });
+
+    it('excludes already associated records from options', function (): void {
+        $user = User::factory()->create();
+        $associatedPost = Post::factory()->create(['title' => 'Already Associated', 'author_id' => $user->id]);
+        $availablePost = Post::factory()->create(['title' => 'Available Post', 'author_id' => null]);
+
+        livewire(PostsWithPreloadedAssociateRelationManager::class, ['ownerRecord' => $user, 'pageClass' => EditUser::class])
+            ->mountAction(TestAction::make(AssociateAction::class)->table())
+            ->assertSchemaComponentExists('recordId', checkComponentUsing: function (Select $select): bool {
+                $options = $select->getOptions();
+
+                expect($options)->toHaveCount(1);
+                expect(array_values($options))->toContain('Available Post');
+                expect(array_values($options))->not->toContain('Already Associated');
+
+                return true;
+            });
+    });
+
+    it('excludes already associated records from search results', function (): void {
+        $user = User::factory()->create();
+        $associatedPost = Post::factory()->create(['title' => 'Associated Post', 'author_id' => $user->id]);
+        $availablePost = Post::factory()->create(['title' => 'Available Post', 'author_id' => null]);
+
+        livewire(PostsWithAssociateActionRelationManager::class, ['ownerRecord' => $user, 'pageClass' => EditUser::class])
+            ->mountAction(TestAction::make(AssociateAction::class)->table())
+            ->assertSchemaComponentExists('recordId', checkComponentUsing: function (Select $select): bool {
+                $results = $select->getSearchResults('Post');
+
+                expect($results)->toHaveCount(1);
+                expect(array_values($results))->toContain('Available Post');
+                expect(array_values($results))->not->toContain('Associated Post');
+
+                return true;
+            });
+    });
+
+    it('can use `recordSelectOptionsQuery()` to modify query', function (): void {
+        $user = User::factory()->create();
+        Post::factory()->create(['title' => 'Published Article', 'author_id' => null]);
+        Post::factory()->create(['title' => 'Draft Post', 'author_id' => null]);
+        Post::factory()->create(['title' => 'Published Guide', 'author_id' => null]);
+
+        livewire(PostsWithModifiedAssociateQueryRelationManager::class, ['ownerRecord' => $user, 'pageClass' => EditUser::class])
+            ->mountAction(TestAction::make(AssociateAction::class)->table())
+            ->assertSchemaComponentExists('recordId', checkComponentUsing: function (Select $select): bool {
+                $options = $select->getOptions();
+
+                expect($options)->toHaveCount(2);
+                expect(array_values($options))->toContain('Published Article');
+                expect(array_values($options))->toContain('Published Guide');
+                expect(array_values($options))->not->toContain('Draft Post');
+
+                return true;
+            });
+    });
+
+    it('respects `optionsLimit()` on record select', function (): void {
+        $user = User::factory()->create();
+        Post::factory()->count(10)->create(['author_id' => null]);
+
+        livewire(PostsWithPreloadedAssociateRelationManager::class, ['ownerRecord' => $user, 'pageClass' => EditUser::class])
+            ->mountAction(TestAction::make(AssociateAction::class)->table())
+            ->assertSchemaComponentExists('recordId', checkComponentUsing: function (Select $select): bool {
+                // Default options limit is 50
+                expect($select->getOptionsLimit())->toBe(50);
+
+                return true;
+            });
+    });
 });
 
-it('shows associated record in table', function (): void {
-    $user = User::factory()->create();
-    $post = Post::factory()->create(['author_id' => null]);
+describe('option labels', function (): void {
+    it('can get `getOptionLabel()` for selected record', function (): void {
+        $user = User::factory()->create();
+        $post = Post::factory()->create(['title' => 'Test Post', 'author_id' => null]);
 
-    livewire(PostsWithAssociateActionRelationManager::class, ['ownerRecord' => $user, 'pageClass' => EditUser::class])
-        ->assertCanNotSeeTableRecords([$post])
-        ->callAction(TestAction::make(AssociateAction::class)->table(), [
-            'recordId' => $post->getKey(),
-        ])
-        ->assertCanSeeTableRecords([$post]);
+        livewire(PostsWithAssociateActionRelationManager::class, ['ownerRecord' => $user, 'pageClass' => EditUser::class])
+            ->mountAction(TestAction::make(AssociateAction::class)->table())
+            ->fillForm(['recordId' => $post->id])
+            ->assertSchemaComponentExists('recordId', checkComponentUsing: function (Select $select) use ($post): bool {
+                expect($select->getOptionLabel())->toBe($post->title);
+
+                return true;
+            });
+    });
+
+    it('can get `getOptionLabels()` for multiple selected records', function (): void {
+        $user = User::factory()->create();
+        $posts = Post::factory()->count(2)->create(['author_id' => null]);
+
+        livewire(PostsWithPreloadedAssociateRelationManager::class, ['ownerRecord' => $user, 'pageClass' => EditUser::class])
+            ->mountAction(TestAction::make(AssociateAction::class)->table())
+            ->fillForm(['recordId' => $posts->pluck('id')->all()])
+            ->assertSchemaComponentExists('recordId', checkComponentUsing: function (Select $select) use ($posts): bool {
+                $labels = $select->getOptionLabels();
+
+                expect($labels)->toHaveCount(2);
+                expect(array_values($labels))->toContain($posts[0]->title);
+                expect(array_values($labels))->toContain($posts[1]->title);
+
+                return true;
+            });
+    });
 });
 
-it('can get `getOptions()` for record select with preload', function (): void {
-    $user = User::factory()->create();
-    $posts = Post::factory()->count(3)->create(['author_id' => null]);
+it('can set `associateAnother()`', function (): void {
+    $action = AssociateAction::make();
 
-    livewire(PostsWithPreloadedAssociateRelationManager::class, ['ownerRecord' => $user, 'pageClass' => EditUser::class])
-        ->mountAction(TestAction::make(AssociateAction::class)->table())
-        ->assertSchemaComponentExists('recordId', checkComponentUsing: function (Select $select) use ($posts): bool {
-            $options = $select->getOptions();
+    expect($action->canAssociateAnother())->toBeTrue();
 
-            expect($options)->toHaveCount(3);
-            expect(array_values($options))->toContain($posts[0]->title);
-            expect(array_values($options))->toContain($posts[1]->title);
-            expect(array_values($options))->toContain($posts[2]->title);
+    $action->associateAnother(false);
 
-            return true;
-        });
+    expect($action->canAssociateAnother())->toBeFalse();
 });
 
-it('returns empty array for `getOptions()` when not preloaded', function (): void {
-    $user = User::factory()->create();
-    Post::factory()->count(3)->create(['author_id' => null]);
+it('can set `recordSelectSearchColumns()`', function (): void {
+    $action = AssociateAction::make()
+        ->recordSelectSearchColumns(['name', 'email']);
 
-    livewire(PostsWithAssociateActionRelationManager::class, ['ownerRecord' => $user, 'pageClass' => EditUser::class])
-        ->mountAction(TestAction::make(AssociateAction::class)->table())
-        ->assertSchemaComponentExists('recordId', checkComponentUsing: function (Select $select): bool {
-            expect($select->getOptions())->toBe([]);
-
-            return true;
-        });
+    expect($action->getRecordSelectSearchColumns())->toBe(['name', 'email']);
 });
 
-it('can get `getSearchResults()` for record select', function (): void {
-    $user = User::factory()->create();
-    Post::factory()->create(['title' => 'First Article', 'author_id' => null]);
-    Post::factory()->create(['title' => 'Second Post', 'author_id' => null]);
-    Post::factory()->create(['title' => 'Third Article', 'author_id' => null]);
+it('can set `forceSearchCaseInsensitive()`', function (): void {
+    $action = AssociateAction::make();
 
-    livewire(PostsWithAssociateActionRelationManager::class, ['ownerRecord' => $user, 'pageClass' => EditUser::class])
-        ->mountAction(TestAction::make(AssociateAction::class)->table())
-        ->assertSchemaComponentExists('recordId', checkComponentUsing: function (Select $select): bool {
-            $results = $select->getSearchResults('Article');
+    expect($action->isSearchForcedCaseInsensitive())->toBeNull();
 
-            expect($results)->toHaveCount(2);
-            expect(array_values($results))->toContain('First Article');
-            expect(array_values($results))->toContain('Third Article');
-            expect(array_values($results))->not->toContain('Second Post');
+    $action->forceSearchCaseInsensitive();
 
-            return true;
-        });
+    expect($action->isSearchForcedCaseInsensitive())->toBeTrue();
 });
 
-it('excludes already associated records from options', function (): void {
-    $user = User::factory()->create();
-    $associatedPost = Post::factory()->create(['title' => 'Already Associated', 'author_id' => $user->id]);
-    $availablePost = Post::factory()->create(['title' => 'Available Post', 'author_id' => null]);
+it('can set `multiple()`', function (): void {
+    $action = AssociateAction::make();
 
-    livewire(PostsWithPreloadedAssociateRelationManager::class, ['ownerRecord' => $user, 'pageClass' => EditUser::class])
-        ->mountAction(TestAction::make(AssociateAction::class)->table())
-        ->assertSchemaComponentExists('recordId', checkComponentUsing: function (Select $select): bool {
-            $options = $select->getOptions();
+    expect($action->isMultiple())->toBeFalse();
 
-            expect($options)->toHaveCount(1);
-            expect(array_values($options))->toContain('Available Post');
-            expect(array_values($options))->not->toContain('Already Associated');
+    $action->multiple();
 
-            return true;
-        });
+    expect($action->isMultiple())->toBeTrue();
 });
 
-it('excludes already associated records from search results', function (): void {
-    $user = User::factory()->create();
-    $associatedPost = Post::factory()->create(['title' => 'Associated Post', 'author_id' => $user->id]);
-    $availablePost = Post::factory()->create(['title' => 'Available Post', 'author_id' => null]);
-
-    livewire(PostsWithAssociateActionRelationManager::class, ['ownerRecord' => $user, 'pageClass' => EditUser::class])
-        ->mountAction(TestAction::make(AssociateAction::class)->table())
-        ->assertSchemaComponentExists('recordId', checkComponentUsing: function (Select $select): bool {
-            $results = $select->getSearchResults('Post');
-
-            expect($results)->toHaveCount(1);
-            expect(array_values($results))->toContain('Available Post');
-            expect(array_values($results))->not->toContain('Associated Post');
-
-            return true;
-        });
+it('has `associate` as default name', function (): void {
+    expect(AssociateAction::getDefaultName())->toBe('associate');
 });
 
-it('can get `getOptionLabel()` for selected record', function (): void {
-    $user = User::factory()->create();
-    $post = Post::factory()->create(['title' => 'Test Post', 'author_id' => null]);
+it('can set `associateAnother()` with a `Closure`', function (): void {
+    $action = AssociateAction::make()
+        ->associateAnother(static fn (): bool => false);
 
-    livewire(PostsWithAssociateActionRelationManager::class, ['ownerRecord' => $user, 'pageClass' => EditUser::class])
-        ->mountAction(TestAction::make(AssociateAction::class)->table())
-        ->fillForm(['recordId' => $post->id])
-        ->assertSchemaComponentExists('recordId', checkComponentUsing: function (Select $select) use ($post): bool {
-            expect($select->getOptionLabel())->toBe($post->title);
-
-            return true;
-        });
+    expect($action->canAssociateAnother())->toBeFalse();
 });
 
-it('can get `getOptionLabels()` for multiple selected records', function (): void {
-    $user = User::factory()->create();
-    $posts = Post::factory()->count(2)->create(['author_id' => null]);
+it('can disable `associateAnother()` via deprecated `disableAssociateAnother()`', function (): void {
+    $action = AssociateAction::make();
 
-    livewire(PostsWithPreloadedAssociateRelationManager::class, ['ownerRecord' => $user, 'pageClass' => EditUser::class])
-        ->mountAction(TestAction::make(AssociateAction::class)->table())
-        ->fillForm(['recordId' => $posts->pluck('id')->all()])
-        ->assertSchemaComponentExists('recordId', checkComponentUsing: function (Select $select) use ($posts): bool {
-            $labels = $select->getOptionLabels();
+    expect($action->canAssociateAnother())->toBeTrue();
 
-            expect($labels)->toHaveCount(2);
-            expect(array_values($labels))->toContain($posts[0]->title);
-            expect(array_values($labels))->toContain($posts[1]->title);
+    $action->disableAssociateAnother();
 
-            return true;
-        });
+    expect($action->canAssociateAnother())->toBeFalse();
 });
 
-it('can use `recordSelectOptionsQuery()` to modify query', function (): void {
-    $user = User::factory()->create();
-    Post::factory()->create(['title' => 'Published Article', 'author_id' => null]);
-    Post::factory()->create(['title' => 'Draft Post', 'author_id' => null]);
-    Post::factory()->create(['title' => 'Published Guide', 'author_id' => null]);
+it('can set `preloadRecordSelect()`', function (): void {
+    $action = AssociateAction::make();
 
-    livewire(PostsWithModifiedAssociateQueryRelationManager::class, ['ownerRecord' => $user, 'pageClass' => EditUser::class])
-        ->mountAction(TestAction::make(AssociateAction::class)->table())
-        ->assertSchemaComponentExists('recordId', checkComponentUsing: function (Select $select): bool {
-            $options = $select->getOptions();
+    expect($action->isRecordSelectPreloaded())->toBeFalse();
 
-            expect($options)->toHaveCount(2);
-            expect(array_values($options))->toContain('Published Article');
-            expect(array_values($options))->toContain('Published Guide');
-            expect(array_values($options))->not->toContain('Draft Post');
+    $action->preloadRecordSelect();
 
-            return true;
-        });
+    expect($action->isRecordSelectPreloaded())->toBeTrue();
 });
 
-it('respects `optionsLimit()` on record select', function (): void {
-    $user = User::factory()->create();
-    Post::factory()->count(10)->create(['author_id' => null]);
+it('can set `recordSelectSearchColumns()` with a `Closure`', function (): void {
+    $action = AssociateAction::make()
+        ->recordSelectSearchColumns(static fn (): array => ['title', 'slug']);
 
-    livewire(PostsWithPreloadedAssociateRelationManager::class, ['ownerRecord' => $user, 'pageClass' => EditUser::class])
-        ->mountAction(TestAction::make(AssociateAction::class)->table())
-        ->assertSchemaComponentExists('recordId', checkComponentUsing: function (Select $select): bool {
-            // Default options limit is 50
-            expect($select->getOptionsLimit())->toBe(50);
+    expect($action->getRecordSelectSearchColumns())->toBe(['title', 'slug']);
+});
 
-            return true;
-        });
+it('can clear `recordSelectSearchColumns()` with `null`', function (): void {
+    $action = AssociateAction::make()
+        ->recordSelectSearchColumns(['title'])
+        ->recordSelectSearchColumns(null);
+
+    expect($action->getRecordSelectSearchColumns())->toBeNull();
+});
+
+it('returns fluent `$this` from `recordSelect()`', function (): void {
+    $action = AssociateAction::make();
+
+    $result = $action->recordSelect(static fn ($select) => $select);
+
+    expect($result)->toBe($action);
+});
+
+it('returns fluent `$this` from `recordSelectOptionsQuery()`', function (): void {
+    $action = AssociateAction::make();
+
+    $result = $action->recordSelectOptionsQuery(static fn ($query) => $query);
+
+    expect($result)->toBe($action);
+});
+
+it('can set `forceSearchCaseInsensitive()` to `false`', function (): void {
+    $action = AssociateAction::make()
+        ->forceSearchCaseInsensitive()
+        ->forceSearchCaseInsensitive(false);
+
+    expect($action->isSearchForcedCaseInsensitive())->toBeFalse();
+});
+
+describe('Closure support', function (): void {
+    it('can set `associateAnother()` with a `Closure`', function (): void {
+        $action = AssociateAction::make()
+            ->associateAnother(static fn (): bool => false);
+
+        expect($action->canAssociateAnother())->toBeFalse();
+    });
+
+    it('can set `preloadRecordSelect()` with a `Closure`', function (): void {
+        $action = AssociateAction::make()
+            ->preloadRecordSelect(static fn (): bool => true);
+
+        expect($action->isRecordSelectPreloaded())->toBeTrue();
+    });
+
+    it('can set `multiple()` with a `Closure`', function (): void {
+        $action = AssociateAction::make()
+            ->multiple(static fn (): bool => true);
+
+        expect($action->isMultiple())->toBeTrue();
+    });
+
+    it('can set `forceSearchCaseInsensitive()` with a `Closure`', function (): void {
+        $action = AssociateAction::make()
+            ->forceSearchCaseInsensitive(static fn (): bool => true);
+
+        expect($action->isSearchForcedCaseInsensitive())->toBeTrue();
+    });
+
+    it('can set `recordSelectSearchColumns()` with a `Closure`', function (): void {
+        $action = AssociateAction::make()
+            ->recordSelectSearchColumns(static fn (): array => ['name', 'email']);
+
+        expect($action->getRecordSelectSearchColumns())->toBe(['name', 'email']);
+    });
+});
+
+it('returns `associate` from `getDefaultName()`', function (): void {
+    expect(AssociateAction::getDefaultName())->toBe('associate');
+});
+
+it('returns `Select` component from `getRecordSelect()`', function (): void {
+    $action = AssociateAction::make();
+
+    $select = $action->getRecordSelect();
+
+    expect($select)->toBeInstanceOf(Select::class);
 });

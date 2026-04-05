@@ -71,3 +71,32 @@ it('can delete multiple records sequentially', function (): void {
     assertSoftDeleted($department1);
     assertSoftDeleted($department2);
 });
+
+it('returns `delete` from `getDefaultName()`', function (): void {
+    expect(DeleteAction::getDefaultName())->toBe('delete');
+});
+
+it('has danger color by default', function (): void {
+    $action = DeleteAction::make();
+
+    expect($action->getColor())->toBe('danger');
+});
+
+it('requires confirmation by default', function (): void {
+    $action = DeleteAction::make();
+
+    expect($action->isConfirmationRequired())->toBeTrue();
+});
+
+it('can set custom process via `using()`', function (): void {
+    $action = DeleteAction::make()
+        ->using(static fn (): string => 'custom-result');
+
+    expect($action)->toBeInstanceOf(DeleteAction::class);
+});
+
+it('returns fluent `$this` from `using()`', function (): void {
+    $action = DeleteAction::make();
+
+    expect($action->using(static fn () => null))->toBe($action);
+});

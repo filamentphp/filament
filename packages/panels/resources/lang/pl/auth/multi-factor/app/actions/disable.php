@@ -30,6 +30,8 @@ return [
 
                     'invalid' => 'Wprowadzony kod jest nieprawidłowy.',
 
+                    'rate_limited' => 'Zbyt wiele prób. Spróbuj ponownie później.',
+
                 ],
 
             ],
@@ -43,6 +45,8 @@ return [
                 'messages' => [
 
                     'invalid' => 'Wprowadzony kod odzyskiwania jest nieprawidłowy.',
+
+                    'rate_limited' => 'Zbyt wiele prób. Spróbuj ponownie później.',
 
                 ],
 

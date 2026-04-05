@@ -24,546 +24,549 @@ use function Pest\Laravel\assertSoftDeleted;
 
 uses(TestCase::class);
 
-it('can render list page', function (): void {
-    $parentRecord = User::factory()->create();
+describe('soft-deletable nested resource', function (): void {
+    it('can render list page', function (): void {
+        $parentRecord = User::factory()->create();
 
-    $this->get(UserPostResource::getUrl('index', [
-        'author' => $parentRecord,
-    ]))->assertSuccessful();
-});
+        $this->get(UserPostResource::getUrl('index', [
+            'author' => $parentRecord,
+        ]))->assertSuccessful();
+    });
 
-it('can list records', function (): void {
-    $parentRecord = User::factory()->create();
-    $posts = Post::factory()->count(10)->create([
-        'author_id' => $parentRecord->getKey(),
-    ]);
-
-    livewire(ListUserPosts::class, [
-        'parentRecord' => $parentRecord,
-    ])
-        ->assertCanSeeTableRecords($posts);
-});
-
-it('can render create page', function (): void {
-    $parentRecord = User::factory()->create();
-
-    $this->get(UserPostResource::getUrl('create', [
-        'author' => $parentRecord,
-    ]))->assertSuccessful();
-});
-
-it('can create', function (): void {
-    $parentRecord = User::factory()->create();
-    $newData = Post::factory()->make();
-
-    livewire(CreateUserPost::class, [
-        'parentRecord' => $parentRecord,
-    ])
-        ->fillForm([
-            'content' => $newData->content,
-            'tags' => $newData->tags,
-            'title' => $newData->title,
-            'rating' => $newData->rating,
-        ])
-        ->call('create')
-        ->assertHasNoFormErrors();
-
-    $this->assertDatabaseHas(Post::class, [
-        'author_id' => $parentRecord->getKey(),
-        'title' => $newData->title,
-        'content' => $newData->content,
-        'rating' => $newData->rating,
-    ]);
-});
-
-it('can validate input on create', function (): void {
-    $parentRecord = User::factory()->create();
-
-    livewire(CreateUserPost::class, [
-        'parentRecord' => $parentRecord,
-    ])
-        ->fillForm([
-            'title' => null,
-        ])
-        ->call('create')
-        ->assertHasFormErrors(['title' => 'required']);
-});
-
-it('can render view page', function (): void {
-    $parentRecord = User::factory()->create();
-    $post = Post::factory()->create([
-        'author_id' => $parentRecord->getKey(),
-    ]);
-
-    $this->get(UserPostResource::getUrl('view', [
-        'author' => $parentRecord,
-        'record' => $post,
-    ]))->assertSuccessful();
-});
-
-it('can retrieve data on view page', function (): void {
-    $parentRecord = User::factory()->create();
-    $post = Post::factory()->create([
-        'author_id' => $parentRecord->getKey(),
-    ]);
-
-    livewire(ViewUserPost::class, [
-        'parentRecord' => $parentRecord,
-        'record' => $post->getKey(),
-    ])
-        ->assertSchemaStateSet([
-            'content' => $post->content,
-            'tags' => $post->tags,
-            'title' => $post->title,
+    it('can list records', function (): void {
+        $parentRecord = User::factory()->create();
+        $posts = Post::factory()->count(10)->create([
+            'author_id' => $parentRecord->getKey(),
         ]);
-});
 
-it('can render edit page', function (): void {
-    $parentRecord = User::factory()->create();
-    $post = Post::factory()->create([
-        'author_id' => $parentRecord->getKey(),
-    ]);
+        livewire(ListUserPosts::class, [
+            'parentRecord' => $parentRecord,
+        ])
+            ->assertCanSeeTableRecords($posts);
+    });
 
-    $this->get(UserPostResource::getUrl('edit', [
-        'author' => $parentRecord,
-        'record' => $post,
-    ]))->assertSuccessful();
-});
+    it('can render create page', function (): void {
+        $parentRecord = User::factory()->create();
 
-it('can retrieve data on edit page', function (): void {
-    $parentRecord = User::factory()->create();
-    $post = Post::factory()->create([
-        'author_id' => $parentRecord->getKey(),
-    ]);
+        $this->get(UserPostResource::getUrl('create', [
+            'author' => $parentRecord,
+        ]))->assertSuccessful();
+    });
 
-    livewire(EditUserPost::class, [
-        'parentRecord' => $parentRecord,
-        'record' => $post->getKey(),
-    ])
-        ->assertSchemaStateSet([
-            'content' => $post->content,
-            'tags' => $post->tags,
-            'title' => $post->title,
-            'rating' => $post->rating,
-        ]);
-});
+    it('can create', function (): void {
+        $parentRecord = User::factory()->create();
+        $newData = Post::factory()->make();
 
-it('can save', function (): void {
-    $parentRecord = User::factory()->create();
-    $post = Post::factory()->create([
-        'author_id' => $parentRecord->getKey(),
-    ]);
-    $newData = Post::factory()->make();
+        livewire(CreateUserPost::class, [
+            'parentRecord' => $parentRecord,
+        ])
+            ->fillForm([
+                'content' => $newData->content,
+                'tags' => $newData->tags,
+                'title' => $newData->title,
+                'rating' => $newData->rating,
+            ])
+            ->call('create')
+            ->assertHasNoFormErrors();
 
-    livewire(EditUserPost::class, [
-        'parentRecord' => $parentRecord,
-        'record' => $post->getKey(),
-    ])
-        ->fillForm([
-            'content' => $newData->content,
-            'tags' => $newData->tags,
+        $this->assertDatabaseHas(Post::class, [
+            'author_id' => $parentRecord->getKey(),
             'title' => $newData->title,
+            'content' => $newData->content,
             'rating' => $newData->rating,
+        ]);
+    });
+
+    it('can validate input on create', function (): void {
+        $parentRecord = User::factory()->create();
+
+        livewire(CreateUserPost::class, [
+            'parentRecord' => $parentRecord,
         ])
-        ->call('save')
-        ->assertHasNoFormErrors();
+            ->fillForm([
+                'title' => null,
+            ])
+            ->call('create')
+            ->assertHasFormErrors(['title' => 'required']);
+    });
 
-    expect($post->refresh())
-        ->content->toBe($newData->content)
-        ->tags->toBe($newData->tags)
-        ->title->toBe($newData->title)
-        ->rating->toBe($newData->rating);
-});
+    it('can render view page', function (): void {
+        $parentRecord = User::factory()->create();
+        $post = Post::factory()->create([
+            'author_id' => $parentRecord->getKey(),
+        ]);
 
-it('can validate input on edit', function (): void {
-    $parentRecord = User::factory()->create();
-    $post = Post::factory()->create([
-        'author_id' => $parentRecord->getKey(),
-    ]);
+        $this->get(UserPostResource::getUrl('view', [
+            'author' => $parentRecord,
+            'record' => $post,
+        ]))->assertSuccessful();
+    });
 
-    livewire(EditUserPost::class, [
-        'parentRecord' => $parentRecord,
-        'record' => $post->getKey(),
-    ])
-        ->fillForm([
-            'title' => null,
+    it('can retrieve data on view page', function (): void {
+        $parentRecord = User::factory()->create();
+        $post = Post::factory()->create([
+            'author_id' => $parentRecord->getKey(),
+        ]);
+
+        livewire(ViewUserPost::class, [
+            'parentRecord' => $parentRecord,
+            'record' => $post->getKey(),
         ])
-        ->call('save')
-        ->assertHasFormErrors(['title' => 'required']);
-});
+            ->assertSchemaStateSet([
+                'content' => $post->content,
+                'tags' => $post->tags,
+                'title' => $post->title,
+            ]);
+    });
 
-it('can delete from edit page', function (): void {
-    $parentRecord = User::factory()->create();
-    $post = Post::factory()->create([
-        'author_id' => $parentRecord->getKey(),
-    ]);
+    it('can render edit page', function (): void {
+        $parentRecord = User::factory()->create();
+        $post = Post::factory()->create([
+            'author_id' => $parentRecord->getKey(),
+        ]);
 
-    livewire(EditUserPost::class, [
-        'parentRecord' => $parentRecord,
-        'record' => $post->getKey(),
-    ])
-        ->callAction(DeleteAction::class);
+        $this->get(UserPostResource::getUrl('edit', [
+            'author' => $parentRecord,
+            'record' => $post,
+        ]))->assertSuccessful();
+    });
 
-    assertSoftDeleted($post);
-});
+    it('can retrieve data on edit page', function (): void {
+        $parentRecord = User::factory()->create();
+        $post = Post::factory()->create([
+            'author_id' => $parentRecord->getKey(),
+        ]);
 
-it('can delete from table', function (): void {
-    $parentRecord = User::factory()->create();
-    $post = Post::factory()->create([
-        'author_id' => $parentRecord->getKey(),
-    ]);
+        livewire(EditUserPost::class, [
+            'parentRecord' => $parentRecord,
+            'record' => $post->getKey(),
+        ])
+            ->assertSchemaStateSet([
+                'content' => $post->content,
+                'tags' => $post->tags,
+                'title' => $post->title,
+                'rating' => $post->rating,
+            ]);
+    });
 
-    livewire(ListUserPosts::class, [
-        'parentRecord' => $parentRecord,
-    ])
-        ->callTableAction(DeleteAction::class, $post);
+    it('can save', function (): void {
+        $parentRecord = User::factory()->create();
+        $post = Post::factory()->create([
+            'author_id' => $parentRecord->getKey(),
+        ]);
+        $newData = Post::factory()->make();
 
-    assertSoftDeleted($post);
-});
+        livewire(EditUserPost::class, [
+            'parentRecord' => $parentRecord,
+            'record' => $post->getKey(),
+        ])
+            ->fillForm([
+                'content' => $newData->content,
+                'tags' => $newData->tags,
+                'title' => $newData->title,
+                'rating' => $newData->rating,
+            ])
+            ->call('save')
+            ->assertHasNoFormErrors();
 
-it('can bulk delete from table', function (): void {
-    $parentRecord = User::factory()->create();
-    $posts = Post::factory()->count(10)->create([
-        'author_id' => $parentRecord->getKey(),
-    ]);
+        expect($post->refresh())
+            ->content->toBe($newData->content)
+            ->tags->toBe($newData->tags)
+            ->title->toBe($newData->title)
+            ->rating->toBe($newData->rating);
+    });
 
-    livewire(ListUserPosts::class, [
-        'parentRecord' => $parentRecord,
-    ])
-        ->callTableBulkAction(DeleteBulkAction::class, $posts);
+    it('can validate input on edit', function (): void {
+        $parentRecord = User::factory()->create();
+        $post = Post::factory()->create([
+            'author_id' => $parentRecord->getKey(),
+        ]);
 
-    foreach ($posts as $post) {
+        livewire(EditUserPost::class, [
+            'parentRecord' => $parentRecord,
+            'record' => $post->getKey(),
+        ])
+            ->fillForm([
+                'title' => null,
+            ])
+            ->call('save')
+            ->assertHasFormErrors(['title' => 'required']);
+    });
+
+    it('can delete from edit page', function (): void {
+        $parentRecord = User::factory()->create();
+        $post = Post::factory()->create([
+            'author_id' => $parentRecord->getKey(),
+        ]);
+
+        livewire(EditUserPost::class, [
+            'parentRecord' => $parentRecord,
+            'record' => $post->getKey(),
+        ])
+            ->callAction(DeleteAction::class);
+
         assertSoftDeleted($post);
-    }
+    });
+
+    it('can delete from table', function (): void {
+        $parentRecord = User::factory()->create();
+        $post = Post::factory()->create([
+            'author_id' => $parentRecord->getKey(),
+        ]);
+
+        livewire(ListUserPosts::class, [
+            'parentRecord' => $parentRecord,
+        ])
+            ->callTableAction(DeleteAction::class, $post);
+
+        assertSoftDeleted($post);
+    });
+
+    it('can bulk delete from table', function (): void {
+        $parentRecord = User::factory()->create();
+        $posts = Post::factory()->count(10)->create([
+            'author_id' => $parentRecord->getKey(),
+        ]);
+
+        livewire(ListUserPosts::class, [
+            'parentRecord' => $parentRecord,
+        ])
+            ->callTableBulkAction(DeleteBulkAction::class, $posts);
+
+        foreach ($posts as $post) {
+            assertSoftDeleted($post);
+        }
+    });
+
+    it('can search records', function (): void {
+        $parentRecord = User::factory()->create();
+        $posts = Post::factory()->count(10)->create([
+            'author_id' => $parentRecord->getKey(),
+        ]);
+
+        $title = $posts->first()->title;
+
+        livewire(ListUserPosts::class, [
+            'parentRecord' => $parentRecord,
+        ])
+            ->searchTable($title)
+            ->assertCanSeeTableRecords($posts->where('title', $title))
+            ->assertCanNotSeeTableRecords($posts->where('title', '!=', $title));
+    });
+
+    it('can sort records by title', function (): void {
+        $parentRecord = User::factory()->create();
+        Post::factory()->count(10)->create([
+            'author_id' => $parentRecord->getKey(),
+        ]);
+
+        $sortedAsc = Post::query()
+            ->where('author_id', $parentRecord->getKey())
+            ->orderBy('title')
+            ->orderBy('id')
+            ->get();
+        $sortedDesc = Post::query()
+            ->where('author_id', $parentRecord->getKey())
+            ->orderByDesc('title')
+            ->orderBy('id')
+            ->get();
+
+        livewire(ListUserPosts::class, [
+            'parentRecord' => $parentRecord,
+        ])
+            ->sortTable('title')
+            ->assertCanSeeTableRecords($sortedAsc, inOrder: true)
+            ->sortTable('title', 'desc')
+            ->assertCanSeeTableRecords($sortedDesc, inOrder: true);
+    });
+
+    it('only lists records belonging to parent', function (): void {
+        $parentRecord = User::factory()->create();
+        $otherParentRecord = User::factory()->create();
+
+        $postsForParent = Post::factory()->count(5)->create([
+            'author_id' => $parentRecord->getKey(),
+        ]);
+        $postsForOtherParent = Post::factory()->count(5)->create([
+            'author_id' => $otherParentRecord->getKey(),
+        ]);
+
+        livewire(ListUserPosts::class, [
+            'parentRecord' => $parentRecord,
+        ])
+            ->assertCanSeeTableRecords($postsForParent)
+            ->assertCanNotSeeTableRecords($postsForOtherParent);
+    });
+
 });
 
-it('can search records', function (): void {
-    $parentRecord = User::factory()->create();
-    $posts = Post::factory()->count(10)->create([
-        'author_id' => $parentRecord->getKey(),
-    ]);
+describe('non-soft-deletable nested resource', function (): void {
+    it('can render list page for non-soft-deletable nested resource', function (): void {
+        $parentRecord = Company::factory()->create();
 
-    $title = $posts->first()->title;
+        $this->get(CompanyTeamResource::getUrl('index', [
+            'company' => $parentRecord,
+        ]))->assertSuccessful();
+    });
 
-    livewire(ListUserPosts::class, [
-        'parentRecord' => $parentRecord,
-    ])
-        ->searchTable($title)
-        ->assertCanSeeTableRecords($posts->where('title', $title))
-        ->assertCanNotSeeTableRecords($posts->where('title', '!=', $title));
-});
+    it('can list records for non-soft-deletable nested resource', function (): void {
+        $parentRecord = Company::factory()->create();
+        $teams = Team::factory()->count(10)->create([
+            'company_id' => $parentRecord->getKey(),
+        ]);
 
-it('can sort records by title', function (): void {
-    $parentRecord = User::factory()->create();
-    Post::factory()->count(10)->create([
-        'author_id' => $parentRecord->getKey(),
-    ]);
+        livewire(ListCompanyTeams::class, [
+            'parentRecord' => $parentRecord,
+        ])
+            ->assertCanSeeTableRecords($teams);
+    });
 
-    $sortedAsc = Post::query()
-        ->where('author_id', $parentRecord->getKey())
-        ->orderBy('title')
-        ->orderBy('id')
-        ->get();
-    $sortedDesc = Post::query()
-        ->where('author_id', $parentRecord->getKey())
-        ->orderByDesc('title')
-        ->orderBy('id')
-        ->get();
+    it('can render create page for non-soft-deletable nested resource', function (): void {
+        $parentRecord = Company::factory()->create();
 
-    livewire(ListUserPosts::class, [
-        'parentRecord' => $parentRecord,
-    ])
-        ->sortTable('title')
-        ->assertCanSeeTableRecords($sortedAsc, inOrder: true)
-        ->sortTable('title', 'desc')
-        ->assertCanSeeTableRecords($sortedDesc, inOrder: true);
-});
+        $this->get(CompanyTeamResource::getUrl('create', [
+            'company' => $parentRecord,
+        ]))->assertSuccessful();
+    });
 
-it('only lists records belonging to parent', function (): void {
-    $parentRecord = User::factory()->create();
-    $otherParentRecord = User::factory()->create();
+    it('can create for non-soft-deletable nested resource', function (): void {
+        $parentRecord = Company::factory()->create();
+        $newData = Team::factory()->make();
 
-    $postsForParent = Post::factory()->count(5)->create([
-        'author_id' => $parentRecord->getKey(),
-    ]);
-    $postsForOtherParent = Post::factory()->count(5)->create([
-        'author_id' => $otherParentRecord->getKey(),
-    ]);
+        livewire(CreateCompanyTeam::class, [
+            'parentRecord' => $parentRecord,
+        ])
+            ->fillForm([
+                'name' => $newData->name,
+                'description' => $newData->description,
+            ])
+            ->call('create')
+            ->assertHasNoFormErrors();
 
-    livewire(ListUserPosts::class, [
-        'parentRecord' => $parentRecord,
-    ])
-        ->assertCanSeeTableRecords($postsForParent)
-        ->assertCanNotSeeTableRecords($postsForOtherParent);
-});
-
-// Non-soft-deletable nested resource tests (Company -> Team)
-
-it('can render list page for non-soft-deletable nested resource', function (): void {
-    $parentRecord = Company::factory()->create();
-
-    $this->get(CompanyTeamResource::getUrl('index', [
-        'company' => $parentRecord,
-    ]))->assertSuccessful();
-});
-
-it('can list records for non-soft-deletable nested resource', function (): void {
-    $parentRecord = Company::factory()->create();
-    $teams = Team::factory()->count(10)->create([
-        'company_id' => $parentRecord->getKey(),
-    ]);
-
-    livewire(ListCompanyTeams::class, [
-        'parentRecord' => $parentRecord,
-    ])
-        ->assertCanSeeTableRecords($teams);
-});
-
-it('can render create page for non-soft-deletable nested resource', function (): void {
-    $parentRecord = Company::factory()->create();
-
-    $this->get(CompanyTeamResource::getUrl('create', [
-        'company' => $parentRecord,
-    ]))->assertSuccessful();
-});
-
-it('can create for non-soft-deletable nested resource', function (): void {
-    $parentRecord = Company::factory()->create();
-    $newData = Team::factory()->make();
-
-    livewire(CreateCompanyTeam::class, [
-        'parentRecord' => $parentRecord,
-    ])
-        ->fillForm([
+        $this->assertDatabaseHas(Team::class, [
+            'company_id' => $parentRecord->getKey(),
             'name' => $newData->name,
             'description' => $newData->description,
-        ])
-        ->call('create')
-        ->assertHasNoFormErrors();
-
-    $this->assertDatabaseHas(Team::class, [
-        'company_id' => $parentRecord->getKey(),
-        'name' => $newData->name,
-        'description' => $newData->description,
-    ]);
-});
-
-it('can validate input on create for non-soft-deletable nested resource', function (): void {
-    $parentRecord = Company::factory()->create();
-
-    livewire(CreateCompanyTeam::class, [
-        'parentRecord' => $parentRecord,
-    ])
-        ->fillForm([
-            'name' => null,
-        ])
-        ->call('create')
-        ->assertHasFormErrors(['name' => 'required']);
-});
-
-it('can render view page for non-soft-deletable nested resource', function (): void {
-    $parentRecord = Company::factory()->create();
-    $team = Team::factory()->create([
-        'company_id' => $parentRecord->getKey(),
-    ]);
-
-    $this->get(CompanyTeamResource::getUrl('view', [
-        'company' => $parentRecord,
-        'record' => $team,
-    ]))->assertSuccessful();
-});
-
-it('can retrieve data on view page for non-soft-deletable nested resource', function (): void {
-    $parentRecord = Company::factory()->create();
-    $team = Team::factory()->create([
-        'company_id' => $parentRecord->getKey(),
-    ]);
-
-    livewire(ViewCompanyTeam::class, [
-        'parentRecord' => $parentRecord,
-        'record' => $team->getKey(),
-    ])
-        ->assertSchemaStateSet([
-            'name' => $team->name,
-            'description' => $team->description,
         ]);
-});
+    });
 
-it('can render edit page for non-soft-deletable nested resource', function (): void {
-    $parentRecord = Company::factory()->create();
-    $team = Team::factory()->create([
-        'company_id' => $parentRecord->getKey(),
-    ]);
+    it('can validate input on create for non-soft-deletable nested resource', function (): void {
+        $parentRecord = Company::factory()->create();
 
-    $this->get(CompanyTeamResource::getUrl('edit', [
-        'company' => $parentRecord,
-        'record' => $team,
-    ]))->assertSuccessful();
-});
+        livewire(CreateCompanyTeam::class, [
+            'parentRecord' => $parentRecord,
+        ])
+            ->fillForm([
+                'name' => null,
+            ])
+            ->call('create')
+            ->assertHasFormErrors(['name' => 'required']);
+    });
 
-it('can retrieve data on edit page for non-soft-deletable nested resource', function (): void {
-    $parentRecord = Company::factory()->create();
-    $team = Team::factory()->create([
-        'company_id' => $parentRecord->getKey(),
-    ]);
-
-    livewire(EditCompanyTeam::class, [
-        'parentRecord' => $parentRecord,
-        'record' => $team->getKey(),
-    ])
-        ->assertSchemaStateSet([
-            'name' => $team->name,
-            'description' => $team->description,
+    it('can render view page for non-soft-deletable nested resource', function (): void {
+        $parentRecord = Company::factory()->create();
+        $team = Team::factory()->create([
+            'company_id' => $parentRecord->getKey(),
         ]);
-});
 
-it('can save for non-soft-deletable nested resource', function (): void {
-    $parentRecord = Company::factory()->create();
-    $team = Team::factory()->create([
-        'company_id' => $parentRecord->getKey(),
-    ]);
-    $newData = Team::factory()->make();
+        $this->get(CompanyTeamResource::getUrl('view', [
+            'company' => $parentRecord,
+            'record' => $team,
+        ]))->assertSuccessful();
+    });
 
-    livewire(EditCompanyTeam::class, [
-        'parentRecord' => $parentRecord,
-        'record' => $team->getKey(),
-    ])
-        ->fillForm([
-            'name' => $newData->name,
-            'description' => $newData->description,
+    it('can retrieve data on view page for non-soft-deletable nested resource', function (): void {
+        $parentRecord = Company::factory()->create();
+        $team = Team::factory()->create([
+            'company_id' => $parentRecord->getKey(),
+        ]);
+
+        livewire(ViewCompanyTeam::class, [
+            'parentRecord' => $parentRecord,
+            'record' => $team->getKey(),
         ])
-        ->call('save')
-        ->assertHasNoFormErrors();
+            ->assertSchemaStateSet([
+                'name' => $team->name,
+                'description' => $team->description,
+            ]);
+    });
 
-    expect($team->refresh())
-        ->name->toBe($newData->name)
-        ->description->toBe($newData->description);
-});
+    it('can render edit page for non-soft-deletable nested resource', function (): void {
+        $parentRecord = Company::factory()->create();
+        $team = Team::factory()->create([
+            'company_id' => $parentRecord->getKey(),
+        ]);
 
-it('can validate input on edit for non-soft-deletable nested resource', function (): void {
-    $parentRecord = Company::factory()->create();
-    $team = Team::factory()->create([
-        'company_id' => $parentRecord->getKey(),
-    ]);
+        $this->get(CompanyTeamResource::getUrl('edit', [
+            'company' => $parentRecord,
+            'record' => $team,
+        ]))->assertSuccessful();
+    });
 
-    livewire(EditCompanyTeam::class, [
-        'parentRecord' => $parentRecord,
-        'record' => $team->getKey(),
-    ])
-        ->fillForm([
-            'name' => null,
+    it('can retrieve data on edit page for non-soft-deletable nested resource', function (): void {
+        $parentRecord = Company::factory()->create();
+        $team = Team::factory()->create([
+            'company_id' => $parentRecord->getKey(),
+        ]);
+
+        livewire(EditCompanyTeam::class, [
+            'parentRecord' => $parentRecord,
+            'record' => $team->getKey(),
         ])
-        ->call('save')
-        ->assertHasFormErrors(['name' => 'required']);
-});
+            ->assertSchemaStateSet([
+                'name' => $team->name,
+                'description' => $team->description,
+            ]);
+    });
 
-it('can delete from edit page for non-soft-deletable nested resource', function (): void {
-    $parentRecord = Company::factory()->create();
-    $team = Team::factory()->create([
-        'company_id' => $parentRecord->getKey(),
-    ]);
+    it('can save for non-soft-deletable nested resource', function (): void {
+        $parentRecord = Company::factory()->create();
+        $team = Team::factory()->create([
+            'company_id' => $parentRecord->getKey(),
+        ]);
+        $newData = Team::factory()->make();
 
-    livewire(EditCompanyTeam::class, [
-        'parentRecord' => $parentRecord,
-        'record' => $team->getKey(),
-    ])
-        ->callAction(DeleteAction::class);
+        livewire(EditCompanyTeam::class, [
+            'parentRecord' => $parentRecord,
+            'record' => $team->getKey(),
+        ])
+            ->fillForm([
+                'name' => $newData->name,
+                'description' => $newData->description,
+            ])
+            ->call('save')
+            ->assertHasNoFormErrors();
 
-    assertDatabaseMissing(Team::class, [
-        'id' => $team->getKey(),
-    ]);
-});
+        expect($team->refresh())
+            ->name->toBe($newData->name)
+            ->description->toBe($newData->description);
+    });
 
-it('can delete from table for non-soft-deletable nested resource', function (): void {
-    $parentRecord = Company::factory()->create();
-    $team = Team::factory()->create([
-        'company_id' => $parentRecord->getKey(),
-    ]);
+    it('can validate input on edit for non-soft-deletable nested resource', function (): void {
+        $parentRecord = Company::factory()->create();
+        $team = Team::factory()->create([
+            'company_id' => $parentRecord->getKey(),
+        ]);
 
-    livewire(ListCompanyTeams::class, [
-        'parentRecord' => $parentRecord,
-    ])
-        ->callTableAction(DeleteAction::class, $team);
+        livewire(EditCompanyTeam::class, [
+            'parentRecord' => $parentRecord,
+            'record' => $team->getKey(),
+        ])
+            ->fillForm([
+                'name' => null,
+            ])
+            ->call('save')
+            ->assertHasFormErrors(['name' => 'required']);
+    });
 
-    assertDatabaseMissing(Team::class, [
-        'id' => $team->getKey(),
-    ]);
-});
+    it('can delete from edit page for non-soft-deletable nested resource', function (): void {
+        $parentRecord = Company::factory()->create();
+        $team = Team::factory()->create([
+            'company_id' => $parentRecord->getKey(),
+        ]);
 
-it('can bulk delete from table for non-soft-deletable nested resource', function (): void {
-    $parentRecord = Company::factory()->create();
-    $teams = Team::factory()->count(10)->create([
-        'company_id' => $parentRecord->getKey(),
-    ]);
+        livewire(EditCompanyTeam::class, [
+            'parentRecord' => $parentRecord,
+            'record' => $team->getKey(),
+        ])
+            ->callAction(DeleteAction::class);
 
-    livewire(ListCompanyTeams::class, [
-        'parentRecord' => $parentRecord,
-    ])
-        ->callTableBulkAction(DeleteBulkAction::class, $teams);
-
-    foreach ($teams as $team) {
         assertDatabaseMissing(Team::class, [
             'id' => $team->getKey(),
         ]);
-    }
-});
+    });
 
-it('can search records for non-soft-deletable nested resource', function (): void {
-    $parentRecord = Company::factory()->create();
-    $teams = Team::factory()->count(10)->create([
-        'company_id' => $parentRecord->getKey(),
-    ]);
+    it('can delete from table for non-soft-deletable nested resource', function (): void {
+        $parentRecord = Company::factory()->create();
+        $team = Team::factory()->create([
+            'company_id' => $parentRecord->getKey(),
+        ]);
 
-    $name = $teams->first()->name;
+        livewire(ListCompanyTeams::class, [
+            'parentRecord' => $parentRecord,
+        ])
+            ->callTableAction(DeleteAction::class, $team);
 
-    livewire(ListCompanyTeams::class, [
-        'parentRecord' => $parentRecord,
-    ])
-        ->searchTable($name)
-        ->assertCanSeeTableRecords($teams->where('name', $name))
-        ->assertCanNotSeeTableRecords($teams->where('name', '!=', $name));
-});
+        assertDatabaseMissing(Team::class, [
+            'id' => $team->getKey(),
+        ]);
+    });
 
-it('can sort records by name for non-soft-deletable nested resource', function (): void {
-    $parentRecord = Company::factory()->create();
-    Team::factory()->count(10)->create([
-        'company_id' => $parentRecord->getKey(),
-    ]);
+    it('can bulk delete from table for non-soft-deletable nested resource', function (): void {
+        $parentRecord = Company::factory()->create();
+        $teams = Team::factory()->count(10)->create([
+            'company_id' => $parentRecord->getKey(),
+        ]);
 
-    $sortedAsc = Team::query()
-        ->where('company_id', $parentRecord->getKey())
-        ->orderBy('name')
-        ->orderBy('id')
-        ->get();
-    $sortedDesc = Team::query()
-        ->where('company_id', $parentRecord->getKey())
-        ->orderByDesc('name')
-        ->orderBy('id')
-        ->get();
+        livewire(ListCompanyTeams::class, [
+            'parentRecord' => $parentRecord,
+        ])
+            ->callTableBulkAction(DeleteBulkAction::class, $teams);
 
-    livewire(ListCompanyTeams::class, [
-        'parentRecord' => $parentRecord,
-    ])
-        ->sortTable('name')
-        ->assertCanSeeTableRecords($sortedAsc, inOrder: true)
-        ->sortTable('name', 'desc')
-        ->assertCanSeeTableRecords($sortedDesc, inOrder: true);
-});
+        foreach ($teams as $team) {
+            assertDatabaseMissing(Team::class, [
+                'id' => $team->getKey(),
+            ]);
+        }
+    });
 
-it('only lists records belonging to parent for non-soft-deletable nested resource', function (): void {
-    $parentRecord = Company::factory()->create();
-    $otherParentRecord = Company::factory()->create();
+    it('can search records for non-soft-deletable nested resource', function (): void {
+        $parentRecord = Company::factory()->create();
+        $teams = Team::factory()->count(10)->create([
+            'company_id' => $parentRecord->getKey(),
+        ]);
 
-    $teamsForParent = Team::factory()->count(5)->create([
-        'company_id' => $parentRecord->getKey(),
-    ]);
-    $teamsForOtherParent = Team::factory()->count(5)->create([
-        'company_id' => $otherParentRecord->getKey(),
-    ]);
+        $name = $teams->first()->name;
 
-    livewire(ListCompanyTeams::class, [
-        'parentRecord' => $parentRecord,
-    ])
-        ->assertCanSeeTableRecords($teamsForParent)
-        ->assertCanNotSeeTableRecords($teamsForOtherParent);
+        livewire(ListCompanyTeams::class, [
+            'parentRecord' => $parentRecord,
+        ])
+            ->searchTable($name)
+            ->assertCanSeeTableRecords($teams->where('name', $name))
+            ->assertCanNotSeeTableRecords($teams->where('name', '!=', $name));
+    });
+
+    it('can sort records by name for non-soft-deletable nested resource', function (): void {
+        $parentRecord = Company::factory()->create();
+        Team::factory()->count(10)->create([
+            'company_id' => $parentRecord->getKey(),
+        ]);
+
+        $sortedAsc = Team::query()
+            ->where('company_id', $parentRecord->getKey())
+            ->orderBy('name')
+            ->orderBy('id')
+            ->get();
+        $sortedDesc = Team::query()
+            ->where('company_id', $parentRecord->getKey())
+            ->orderByDesc('name')
+            ->orderBy('id')
+            ->get();
+
+        livewire(ListCompanyTeams::class, [
+            'parentRecord' => $parentRecord,
+        ])
+            ->sortTable('name')
+            ->assertCanSeeTableRecords($sortedAsc, inOrder: true)
+            ->sortTable('name', 'desc')
+            ->assertCanSeeTableRecords($sortedDesc, inOrder: true);
+    });
+
+    it('only lists records belonging to parent for non-soft-deletable nested resource', function (): void {
+        $parentRecord = Company::factory()->create();
+        $otherParentRecord = Company::factory()->create();
+
+        $teamsForParent = Team::factory()->count(5)->create([
+            'company_id' => $parentRecord->getKey(),
+        ]);
+        $teamsForOtherParent = Team::factory()->count(5)->create([
+            'company_id' => $otherParentRecord->getKey(),
+        ]);
+
+        livewire(ListCompanyTeams::class, [
+            'parentRecord' => $parentRecord,
+        ])
+            ->assertCanSeeTableRecords($teamsForParent)
+            ->assertCanNotSeeTableRecords($teamsForOtherParent);
+    });
 });

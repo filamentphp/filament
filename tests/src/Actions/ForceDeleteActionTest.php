@@ -87,3 +87,7 @@ it('can force delete multiple records sequentially', function (): void {
     assertDatabaseMissing('departments', ['id' => $department1->getKey()]);
     assertDatabaseMissing('departments', ['id' => $department2->getKey()]);
 });
+
+it('returns `forceDelete` from `getDefaultName()`', function (): void {
+    expect(ForceDeleteAction::getDefaultName())->toBe('forceDelete');
+});

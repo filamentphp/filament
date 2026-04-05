@@ -17,6 +17,7 @@
         "league/uri-components": "^7.0",
         "livewire/livewire": "^3.5",
         "nette/php-generator": "^4.0",
+        "ryangjchandler/blade-capture-directive": "^1.0",
         "spatie/invade": "^2.0",
         "spatie/laravel-package-tools": "^1.9",
         "symfony/html-sanitizer": "^7.0|^8.0",

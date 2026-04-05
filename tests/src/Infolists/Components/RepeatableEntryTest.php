@@ -4,6 +4,7 @@ namespace Filament\Tests\Infolists\Components;
 
 use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\RepeatableEntry;
+use Filament\Infolists\Components\RepeatableEntry\TableColumn;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
@@ -38,6 +39,131 @@ it('can render nested entries', function (): void {
         ->assertSeeText('Jane')
         ->assertSchemaComponentStateSet('users.1.email', 'jane@example.com', 'infolist')
         ->assertSeeText('jane@example.com');
+});
+
+it('can set `table()` columns', function (): void {
+    $columns = [
+        TableColumn::make('Name'),
+        TableColumn::make('Email'),
+    ];
+
+    $entry = RepeatableEntry::make('items')->table($columns);
+
+    expect($entry->getTableColumns())->toBe($columns);
+});
+
+it('returns `null` for `getTableColumns()` by default', function (): void {
+    $entry = RepeatableEntry::make('items');
+    expect($entry->getTableColumns())->toBeNull();
+});
+
+it('`isTable()` returns `false` when no table columns are set', function (): void {
+    $entry = RepeatableEntry::make('items');
+    expect($entry->isTable())->toBeFalse();
+});
+
+it('`isTable()` returns `true` when table columns are set', function (): void {
+    $entry = RepeatableEntry::make('items')->table([TableColumn::make('Name')]);
+    expect($entry->isTable())->toBeTrue();
+});
+
+it('can set `table()` columns using a `Closure`', function (): void {
+    $entry = RepeatableEntry::make('items')
+        ->table(static fn (): array => [TableColumn::make('Name')]);
+
+    expect($entry->getTableColumns())->toHaveCount(1);
+});
+
+it('can clear `table()` columns with `null`', function (): void {
+    $entry = RepeatableEntry::make('items')
+        ->table([TableColumn::make('Name')])
+        ->table(null);
+
+    expect($entry->isTable())->toBeFalse();
+    expect($entry->getTableColumns())->toBeNull();
+});
+
+it('returns fluent `$this` from `table()`', function (): void {
+    $entry = RepeatableEntry::make('items');
+
+    expect($entry->table([]))->toBe($entry);
+});
+
+describe('rendering', function (): void {
+    it('can render with `contained(false)`', function (): void {
+        livewire(RenderRepeatableEntryWithContainedFalse::class)->assertSuccessful();
+    });
+
+    it('can render with `contained()` set via `Closure`', function (): void {
+        livewire(RenderRepeatableEntryWithClosureContained::class)->assertSuccessful();
+    });
+
+    it('can render with `grid()` int', function (): void {
+        livewire(RenderRepeatableEntryWithGridInt::class)->assertSuccessful();
+    });
+
+    it('can render with `grid()` array', function (): void {
+        livewire(RenderRepeatableEntryWithGridArray::class)->assertSuccessful();
+    });
+
+    it('can render with `grid()` set via `Closure`', function (): void {
+        livewire(RenderRepeatableEntryWithClosureGrid::class)->assertSuccessful();
+    });
+
+    it('can render with `table()` columns', function (): void {
+        livewire(RenderRepeatableEntryWithTable::class)->assertSuccessful();
+    });
+
+    it('can render with `table()` columns set via `Closure`', function (): void {
+        livewire(RenderRepeatableEntryWithClosureTable::class)->assertSuccessful();
+    });
+});
+
+describe('containment', function (): void {
+    it('defaults `isContained()` to `true`', function (): void {
+        $entry = RepeatableEntry::make('items');
+
+        expect($entry->isContained())->toBeTrue();
+    });
+
+    it('can set `contained()` to `false`', function (): void {
+        $entry = RepeatableEntry::make('items')
+            ->contained(false);
+
+        expect($entry->isContained())->toBeFalse();
+    });
+
+    it('can set `contained()` with a `Closure`', function (): void {
+        $entry = RepeatableEntry::make('items')
+            ->contained(static fn (): bool => false);
+
+        expect($entry->isContained())->toBeFalse();
+    });
+});
+
+describe('grid layout', function (): void {
+    it('can set `grid()` with int', function (): void {
+        $entry = RepeatableEntry::make('items')
+            ->grid(3);
+
+        expect($entry->getGridColumns('lg'))->toBe(3);
+    });
+
+    it('can set `grid()` with array', function (): void {
+        $entry = RepeatableEntry::make('items')
+            ->grid(['default' => 1, 'sm' => 2, 'lg' => 3]);
+
+        expect($entry->getGridColumns('default'))->toBe(1);
+        expect($entry->getGridColumns('sm'))->toBe(2);
+        expect($entry->getGridColumns('lg'))->toBe(3);
+    });
+
+    it('can set `grid()` with a `Closure`', function (): void {
+        $entry = RepeatableEntry::make('items')
+            ->grid(static fn (): int => 4);
+
+        expect($entry->getGridColumns('lg'))->toBe(4);
+    });
 });
 
 class TestComponentWithRepeatableEntry extends Component implements HasSchemas
@@ -103,300 +229,306 @@ class TestComponentWithNestedRepeatableEntry extends Component implements HasSch
     }
 }
 
-it('can resolve state for `RepeatableEntry` within nested sections with `statePath()`', function (): void {
-    livewire(TestRepeatableEntryInNestedSections::class)
-        ->assertSuccessful()
-        ->assertSchemaComponentStateSet('page.block.items.0.name', 'Item One', 'infolist')
-        ->assertSeeText('Item One')
-        ->assertSchemaComponentStateSet('page.block.items.1.name', 'Item Two', 'infolist')
-        ->assertSeeText('Item Two');
-});
+describe('nested state resolution', function (): void {
+    it('can resolve state for `RepeatableEntry` within nested sections with `statePath()`', function (): void {
+        livewire(TestRepeatableEntryInNestedSections::class)
+            ->assertSuccessful()
+            ->assertSchemaComponentStateSet('page.block.items.0.name', 'Item One', 'infolist')
+            ->assertSeeText('Item One')
+            ->assertSchemaComponentStateSet('page.block.items.1.name', 'Item Two', 'infolist')
+            ->assertSeeText('Item Two');
+    });
 
-class TestRepeatableEntryInNestedSections extends Component implements HasSchemas
-{
-    use InteractsWithSchemas;
-
-    public function infolist(Schema $schema): Schema
+    class TestRepeatableEntryInNestedSections extends Component implements HasSchemas
     {
-        return $schema
-            ->state([
-                'page' => [
-                    'block' => [
-                        'items' => [
-                            ['name' => 'Item One'],
-                            ['name' => 'Item Two'],
+        use InteractsWithSchemas;
+
+        public function infolist(Schema $schema): Schema
+        {
+            return $schema
+                ->state([
+                    'page' => [
+                        'block' => [
+                            'items' => [
+                                ['name' => 'Item One'],
+                                ['name' => 'Item Two'],
+                            ],
                         ],
                     ],
-                ],
-            ])
-            ->components([
-                Section::make('Page')
-                    ->statePath('page')
-                    ->schema([
-                        Section::make('Block')
-                            ->statePath('block')
-                            ->schema([
-                                RepeatableEntry::make('items')
-                                    ->schema([
-                                        TextEntry::make('name'),
-                                    ]),
-                            ]),
-                    ]),
-            ]);
-    }
+                ])
+                ->components([
+                    Section::make('Page')
+                        ->statePath('page')
+                        ->schema([
+                            Section::make('Block')
+                                ->statePath('block')
+                                ->schema([
+                                    RepeatableEntry::make('items')
+                                        ->schema([
+                                            TextEntry::make('name'),
+                                        ]),
+                                ]),
+                        ]),
+                ]);
+        }
 
-    public function render(): string
-    {
-        return <<<'BLADE'
+        public function render(): string
+        {
+            return <<<'BLADE'
             <div>
                 {{ $this->infolist }}
             </div>
             BLADE;
-    }
-}
-
-it('can resolve state for nested `RepeatableEntry`', function (): void {
-    livewire(TestNestedRepeatableEntryState::class)
-        ->assertSuccessful()
-        ->assertSchemaComponentStateSet('users.0.name', 'User Alice', 'infolist')
-        ->assertSeeText('User Alice')
-        ->assertSchemaComponentStateSet('users.0.comments.0.text', 'Comment from Alice: Hello', 'infolist')
-        ->assertSeeText('Comment from Alice: Hello')
-        ->assertSchemaComponentStateSet('users.0.comments.1.text', 'Comment from Alice: World', 'infolist')
-        ->assertSeeText('Comment from Alice: World')
-        ->assertSchemaComponentStateSet('users.1.name', 'User Bob', 'infolist')
-        ->assertSeeText('User Bob')
-        ->assertSchemaComponentStateSet('users.1.comments.0.text', 'Comment from Bob: Hi', 'infolist')
-        ->assertSeeText('Comment from Bob: Hi');
-});
-
-class TestNestedRepeatableEntryState extends Component implements HasSchemas
-{
-    use InteractsWithSchemas;
-
-    public function infolist(Schema $schema): Schema
-    {
-        return $schema
-            ->state([
-                'users' => [
-                    [
-                        'name' => 'User Alice',
-                        'comments' => [
-                            ['text' => 'Comment from Alice: Hello'],
-                            ['text' => 'Comment from Alice: World'],
-                        ],
-                    ],
-                    [
-                        'name' => 'User Bob',
-                        'comments' => [
-                            ['text' => 'Comment from Bob: Hi'],
-                        ],
-                    ],
-                ],
-            ])
-            ->components([
-                RepeatableEntry::make('users')
-                    ->schema([
-                        TextEntry::make('name'),
-                        RepeatableEntry::make('comments')
-                            ->schema([
-                                TextEntry::make('text'),
-                            ]),
-                    ]),
-            ]);
+        }
     }
 
-    public function render(): string
+    it('can resolve state for nested `RepeatableEntry`', function (): void {
+        livewire(TestNestedRepeatableEntryState::class)
+            ->assertSuccessful()
+            ->assertSchemaComponentStateSet('users.0.name', 'User Alice', 'infolist')
+            ->assertSeeText('User Alice')
+            ->assertSchemaComponentStateSet('users.0.comments.0.text', 'Comment from Alice: Hello', 'infolist')
+            ->assertSeeText('Comment from Alice: Hello')
+            ->assertSchemaComponentStateSet('users.0.comments.1.text', 'Comment from Alice: World', 'infolist')
+            ->assertSeeText('Comment from Alice: World')
+            ->assertSchemaComponentStateSet('users.1.name', 'User Bob', 'infolist')
+            ->assertSeeText('User Bob')
+            ->assertSchemaComponentStateSet('users.1.comments.0.text', 'Comment from Bob: Hi', 'infolist')
+            ->assertSeeText('Comment from Bob: Hi');
+    });
+
+    class TestNestedRepeatableEntryState extends Component implements HasSchemas
     {
-        return <<<'BLADE'
-            <div>
-                {{ $this->infolist }}
-            </div>
-            BLADE;
-    }
-}
+        use InteractsWithSchemas;
 
-it('can resolve state for deeply nested `RepeatableEntry` within sections', function (): void {
-    livewire(TestDeeplyNestedRepeatableEntry::class)
-        ->assertSuccessful()
-        ->assertSchemaComponentStateSet('store.categories.0.name', 'Category A', 'infolist')
-        ->assertSeeText('Category A')
-        ->assertSchemaComponentStateSet('store.categories.0.products.0.name', 'Product 1', 'infolist')
-        ->assertSeeText('Product 1')
-        ->assertSchemaComponentStateSet('store.categories.0.products.0.variants.0.sku', 'SKU-001', 'infolist')
-        ->assertSeeText('SKU-001')
-        ->assertSchemaComponentStateSet('store.categories.0.products.0.variants.1.sku', 'SKU-002', 'infolist')
-        ->assertSeeText('SKU-002')
-        ->assertSchemaComponentStateSet('store.categories.0.products.1.name', 'Product 2', 'infolist')
-        ->assertSeeText('Product 2');
-});
-
-class TestDeeplyNestedRepeatableEntry extends Component implements HasSchemas
-{
-    use InteractsWithSchemas;
-
-    public function infolist(Schema $schema): Schema
-    {
-        return $schema
-            ->state([
-                'store' => [
-                    'categories' => [
+        public function infolist(Schema $schema): Schema
+        {
+            return $schema
+                ->state([
+                    'users' => [
                         [
-                            'name' => 'Category A',
-                            'products' => [
-                                [
-                                    'name' => 'Product 1',
-                                    'variants' => [
-                                        ['sku' => 'SKU-001'],
-                                        ['sku' => 'SKU-002'],
+                            'name' => 'User Alice',
+                            'comments' => [
+                                ['text' => 'Comment from Alice: Hello'],
+                                ['text' => 'Comment from Alice: World'],
+                            ],
+                        ],
+                        [
+                            'name' => 'User Bob',
+                            'comments' => [
+                                ['text' => 'Comment from Bob: Hi'],
+                            ],
+                        ],
+                    ],
+                ])
+                ->components([
+                    RepeatableEntry::make('users')
+                        ->schema([
+                            TextEntry::make('name'),
+                            RepeatableEntry::make('comments')
+                                ->schema([
+                                    TextEntry::make('text'),
+                                ]),
+                        ]),
+                ]);
+        }
+
+        public function render(): string
+        {
+            return <<<'BLADE'
+            <div>
+                {{ $this->infolist }}
+            </div>
+            BLADE;
+        }
+    }
+
+    it('can resolve state for deeply nested `RepeatableEntry` within sections', function (): void {
+        livewire(TestDeeplyNestedRepeatableEntry::class)
+            ->assertSuccessful()
+            ->assertSchemaComponentStateSet('store.categories.0.name', 'Category A', 'infolist')
+            ->assertSeeText('Category A')
+            ->assertSchemaComponentStateSet('store.categories.0.products.0.name', 'Product 1', 'infolist')
+            ->assertSeeText('Product 1')
+            ->assertSchemaComponentStateSet('store.categories.0.products.0.variants.0.sku', 'SKU-001', 'infolist')
+            ->assertSeeText('SKU-001')
+            ->assertSchemaComponentStateSet('store.categories.0.products.0.variants.1.sku', 'SKU-002', 'infolist')
+            ->assertSeeText('SKU-002')
+            ->assertSchemaComponentStateSet('store.categories.0.products.1.name', 'Product 2', 'infolist')
+            ->assertSeeText('Product 2');
+    });
+
+    class TestDeeplyNestedRepeatableEntry extends Component implements HasSchemas
+    {
+        use InteractsWithSchemas;
+
+        public function infolist(Schema $schema): Schema
+        {
+            return $schema
+                ->state([
+                    'store' => [
+                        'categories' => [
+                            [
+                                'name' => 'Category A',
+                                'products' => [
+                                    [
+                                        'name' => 'Product 1',
+                                        'variants' => [
+                                            ['sku' => 'SKU-001'],
+                                            ['sku' => 'SKU-002'],
+                                        ],
                                     ],
-                                ],
-                                [
-                                    'name' => 'Product 2',
-                                    'variants' => [],
+                                    [
+                                        'name' => 'Product 2',
+                                        'variants' => [],
+                                    ],
                                 ],
                             ],
                         ],
                     ],
-                ],
-            ])
-            ->components([
-                Section::make('Store')
-                    ->statePath('store')
-                    ->schema([
-                        RepeatableEntry::make('categories')
-                            ->schema([
-                                TextEntry::make('name'),
-                                RepeatableEntry::make('products')
-                                    ->schema([
-                                        TextEntry::make('name'),
-                                        RepeatableEntry::make('variants')
-                                            ->schema([
-                                                TextEntry::make('sku'),
-                                            ]),
-                                    ]),
-                            ]),
-                    ]),
-            ]);
-    }
+                ])
+                ->components([
+                    Section::make('Store')
+                        ->statePath('store')
+                        ->schema([
+                            RepeatableEntry::make('categories')
+                                ->schema([
+                                    TextEntry::make('name'),
+                                    RepeatableEntry::make('products')
+                                        ->schema([
+                                            TextEntry::make('name'),
+                                            RepeatableEntry::make('variants')
+                                                ->schema([
+                                                    TextEntry::make('sku'),
+                                                ]),
+                                        ]),
+                                ]),
+                        ]),
+                ]);
+        }
 
-    public function render(): string
-    {
-        return <<<'BLADE'
+        public function render(): string
+        {
+            return <<<'BLADE'
             <div>
                 {{ $this->infolist }}
             </div>
             BLADE;
+        }
     }
-}
 
-it('can resolve state for relationship-based `RepeatableEntry`', function (): void {
-    $user = User::factory()
-        ->has(Post::factory()->count(2)->sequence(
-            ['title' => 'First Post', 'content' => 'Content 1'],
-            ['title' => 'Second Post', 'content' => 'Content 2'],
-        ), 'posts')
-        ->create(['name' => 'Test User']);
-
-    livewire(TestRelationshipRepeatableEntry::class, ['user' => $user])
-        ->assertSuccessful()
-        ->assertSchemaComponentStateSet('name', 'Test User', 'infolist')
-        ->assertSeeText('Test User')
-        ->assertSchemaComponentStateSet('posts.0.title', 'First Post', 'infolist')
-        ->assertSeeText('First Post')
-        ->assertSchemaComponentStateSet('posts.1.title', 'Second Post', 'infolist')
-        ->assertSeeText('Second Post');
 });
 
-class TestRelationshipRepeatableEntry extends Component implements HasSchemas
-{
-    use InteractsWithSchemas;
+describe('relationships', function (): void {
+    it('can resolve state for relationship-based `RepeatableEntry`', function (): void {
+        $user = User::factory()
+            ->has(Post::factory()->count(2)->sequence(
+                ['title' => 'First Post', 'content' => 'Content 1'],
+                ['title' => 'Second Post', 'content' => 'Content 2'],
+            ), 'posts')
+            ->create(['name' => 'Test User']);
 
-    public User $user;
+        livewire(TestRelationshipRepeatableEntry::class, ['user' => $user])
+            ->assertSuccessful()
+            ->assertSchemaComponentStateSet('name', 'Test User', 'infolist')
+            ->assertSeeText('Test User')
+            ->assertSchemaComponentStateSet('posts.0.title', 'First Post', 'infolist')
+            ->assertSeeText('First Post')
+            ->assertSchemaComponentStateSet('posts.1.title', 'Second Post', 'infolist')
+            ->assertSeeText('Second Post');
+    });
 
-    public function mount(User $user): void
+    class TestRelationshipRepeatableEntry extends Component implements HasSchemas
     {
-        $this->user = $user;
-    }
+        use InteractsWithSchemas;
 
-    public function infolist(Schema $schema): Schema
-    {
-        return $schema
-            ->record($this->user)
-            ->components([
-                TextEntry::make('name'),
-                RepeatableEntry::make('posts')
-                    ->schema([
-                        TextEntry::make('title'),
-                    ]),
-            ]);
-    }
+        public User $user;
 
-    public function render(): string
-    {
-        return <<<'BLADE'
+        public function mount(User $user): void
+        {
+            $this->user = $user;
+        }
+
+        public function infolist(Schema $schema): Schema
+        {
+            return $schema
+                ->record($this->user)
+                ->components([
+                    TextEntry::make('name'),
+                    RepeatableEntry::make('posts')
+                        ->schema([
+                            TextEntry::make('title'),
+                        ]),
+                ]);
+        }
+
+        public function render(): string
+        {
+            return <<<'BLADE'
             <div>
                 {{ $this->infolist }}
             </div>
             BLADE;
+        }
     }
-}
 
-it('can resolve state for relationship-based `RepeatableEntry` within nested sections', function (): void {
-    $user = User::factory()
-        ->has(Post::factory()->count(2)->sequence(
-            ['title' => 'Post A'],
-            ['title' => 'Post B'],
-        ), 'posts')
-        ->create();
+    it('can resolve state for relationship-based `RepeatableEntry` within nested sections', function (): void {
+        $user = User::factory()
+            ->has(Post::factory()->count(2)->sequence(
+                ['title' => 'Post A'],
+                ['title' => 'Post B'],
+            ), 'posts')
+            ->create();
 
-    livewire(TestRelationshipRepeatableEntryInSection::class, ['user' => $user])
-        ->assertSuccessful()
-        ->assertSchemaComponentStateSet('posts.0.title', 'Post A', 'infolist')
-        ->assertSeeText('Post A')
-        ->assertSchemaComponentStateSet('posts.1.title', 'Post B', 'infolist')
-        ->assertSeeText('Post B');
+        livewire(TestRelationshipRepeatableEntryInSection::class, ['user' => $user])
+            ->assertSuccessful()
+            ->assertSchemaComponentStateSet('posts.0.title', 'Post A', 'infolist')
+            ->assertSeeText('Post A')
+            ->assertSchemaComponentStateSet('posts.1.title', 'Post B', 'infolist')
+            ->assertSeeText('Post B');
+    });
+
+    class TestRelationshipRepeatableEntryInSection extends Component implements HasSchemas
+    {
+        use InteractsWithSchemas;
+
+        public User $user;
+
+        public function mount(User $user): void
+        {
+            $this->user = $user;
+        }
+
+        public function infolist(Schema $schema): Schema
+        {
+            return $schema
+                ->record($this->user)
+                ->components([
+                    Section::make('User Details')
+                        ->schema([
+                            TextEntry::make('name'),
+                            Section::make('Posts')
+                                ->schema([
+                                    RepeatableEntry::make('posts')
+                                        ->schema([
+                                            TextEntry::make('title'),
+                                        ]),
+                                ]),
+                        ]),
+                ]);
+        }
+
+        public function render(): string
+        {
+            return <<<'BLADE'
+            <div>
+                {{ $this->infolist }}
+            </div>
+            BLADE;
+        }
+    }
+
 });
-
-class TestRelationshipRepeatableEntryInSection extends Component implements HasSchemas
-{
-    use InteractsWithSchemas;
-
-    public User $user;
-
-    public function mount(User $user): void
-    {
-        $this->user = $user;
-    }
-
-    public function infolist(Schema $schema): Schema
-    {
-        return $schema
-            ->record($this->user)
-            ->components([
-                Section::make('User Details')
-                    ->schema([
-                        TextEntry::make('name'),
-                        Section::make('Posts')
-                            ->schema([
-                                RepeatableEntry::make('posts')
-                                    ->schema([
-                                        TextEntry::make('title'),
-                                    ]),
-                            ]),
-                    ]),
-            ]);
-    }
-
-    public function render(): string
-    {
-        return <<<'BLADE'
-            <div>
-                {{ $this->infolist }}
-            </div>
-            BLADE;
-    }
-}
 
 it('correctly asserts entry state within `RepeatableEntry` using `assertSchemaComponentStateSet()`', function (): void {
     livewire(TestRepeatableEntryStateAssertions::class)
@@ -538,5 +670,128 @@ class TestRepeatableEntryInForm extends Component implements HasSchemas
                 {{ $this->form }}
             </div>
             BLADE;
+    }
+}
+
+class RenderRepeatableEntryWithContainedFalse extends Component implements HasSchemas
+{
+    use InteractsWithSchemas;
+
+    public function infolist(Schema $schema): Schema
+    {
+        return $schema->state(['items' => [['name' => 'A']]])->components([
+            RepeatableEntry::make('items')->schema([TextEntry::make('name')])->contained(false),
+        ]);
+    }
+
+    public function render(): string
+    {
+        return '<div>{{ $this->infolist }}</div>';
+    }
+}
+
+class RenderRepeatableEntryWithClosureContained extends Component implements HasSchemas
+{
+    use InteractsWithSchemas;
+
+    public function infolist(Schema $schema): Schema
+    {
+        return $schema->state(['items' => [['name' => 'A']]])->components([
+            RepeatableEntry::make('items')->schema([TextEntry::make('name')])->contained(static fn (): bool => false),
+        ]);
+    }
+
+    public function render(): string
+    {
+        return '<div>{{ $this->infolist }}</div>';
+    }
+}
+
+class RenderRepeatableEntryWithGridInt extends Component implements HasSchemas
+{
+    use InteractsWithSchemas;
+
+    public function infolist(Schema $schema): Schema
+    {
+        return $schema->state(['items' => [['name' => 'A']]])->components([
+            RepeatableEntry::make('items')->schema([TextEntry::make('name')])->grid(3),
+        ]);
+    }
+
+    public function render(): string
+    {
+        return '<div>{{ $this->infolist }}</div>';
+    }
+}
+
+class RenderRepeatableEntryWithGridArray extends Component implements HasSchemas
+{
+    use InteractsWithSchemas;
+
+    public function infolist(Schema $schema): Schema
+    {
+        return $schema->state(['items' => [['name' => 'A']]])->components([
+            RepeatableEntry::make('items')->schema([TextEntry::make('name')])->grid(['default' => 1, 'sm' => 2, 'lg' => 3]),
+        ]);
+    }
+
+    public function render(): string
+    {
+        return '<div>{{ $this->infolist }}</div>';
+    }
+}
+
+class RenderRepeatableEntryWithClosureGrid extends Component implements HasSchemas
+{
+    use InteractsWithSchemas;
+
+    public function infolist(Schema $schema): Schema
+    {
+        return $schema->state(['items' => [['name' => 'A']]])->components([
+            RepeatableEntry::make('items')->schema([TextEntry::make('name')])->grid(static fn (): int => 4),
+        ]);
+    }
+
+    public function render(): string
+    {
+        return '<div>{{ $this->infolist }}</div>';
+    }
+}
+
+class RenderRepeatableEntryWithTable extends Component implements HasSchemas
+{
+    use InteractsWithSchemas;
+
+    public function infolist(Schema $schema): Schema
+    {
+        return $schema->state(['items' => [['name' => 'A', 'email' => 'a@test.com']]])->components([
+            RepeatableEntry::make('items')
+                ->schema([TextEntry::make('name'), TextEntry::make('email')])
+                ->table([TableColumn::make('name'), TableColumn::make('email')]),
+        ]);
+    }
+
+    public function render(): string
+    {
+        return '<div>{{ $this->infolist }}</div>';
+    }
+}
+
+class RenderRepeatableEntryWithClosureTable extends Component implements HasSchemas
+{
+    use InteractsWithSchemas;
+
+    public function infolist(Schema $schema): Schema
+    {
+        return $schema->state(['items' => [['name' => 'A']]])->components([
+            RepeatableEntry::make('items')
+                ->schema([TextEntry::make('name')])
+                ->table(static fn (): array => [TableColumn::make('name')]),
+        ]);
+    }
+
+    public function render(): string
+    {
+        return '<div>{{ $this->infolist }}</div>';
     }
 }

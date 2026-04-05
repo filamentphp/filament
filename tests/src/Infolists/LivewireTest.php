@@ -22,6 +22,13 @@ it('can evaluate livewire closure dependency by name', function (): void {
         ->assertSee('Third Entry State (dynamic)');
 });
 
+it('can render multiple infolists on the same component', function (): void {
+    livewire(LivewireInfolists::class)
+        ->assertOk()
+        ->assertSee('First Entry Label')
+        ->assertSee('Second Entry Label');
+});
+
 class LivewireInfolists extends Component implements HasSchemas
 {
     use InteractsWithSchemas;

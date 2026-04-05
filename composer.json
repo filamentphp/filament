@@ -9,6 +9,7 @@
     },
     "require-dev": {
         "chillerlan/php-qrcode": "^5.0",
+        "danharrin/date-format-converter": "^0.3.1",
         "filament/support": "*",
         "larastan/larastan": "^3.0",
         "laravel/pint": "1.25.1",
@@ -27,7 +28,8 @@
         "pragmarx/google2fa": "^8.0|^9.0",
         "pragmarx/google2fa-qrcode": "^3.0",
         "rector/rector": "^2.0",
-        "spatie/laravel-medialibrary": "^11.0",
+        "spatie/laravel-google-fonts": "^1.5",
+        "spatie/laravel-medialibrary": "^11.21",
         "spatie/laravel-settings": "^3.0",
         "spatie/laravel-tags": "^4.2",
         "staudenmeir/belongs-to-through": "^2.5",

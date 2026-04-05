@@ -7,80 +7,84 @@ use Illuminate\Support\Facades\Route;
 
 uses(TestCase::class);
 
-it('registers default resource route', function (): void {
-    $routeName = 'filament.configuration.resources.posts.configurable-posts.index';
-    $route = Route::getRoutes()->getByName($routeName);
+describe('resource routes', function (): void {
+    it('registers default resource route', function (): void {
+        $routeName = 'filament.configuration.resources.posts.configurable-posts.index';
+        $route = Route::getRoutes()->getByName($routeName);
 
-    expect($route)->not->toBeNull();
-    expect($route->uri())->toContain('configurable-posts');
+        expect($route)->not->toBeNull();
+        expect($route->uri())->toContain('configurable-posts');
+    });
+
+    it('registers resource configuration routes with correct slugs', function (): void {
+        // Featured posts route
+        $featuredRouteName = 'filament.configuration.resources.featured-posts.index';
+        $featuredRoute = Route::getRoutes()->getByName($featuredRouteName);
+
+        expect($featuredRoute)->not->toBeNull();
+        expect($featuredRoute->uri())->toContain('featured-posts');
+
+        // Archived posts route
+        $archivedRouteName = 'filament.configuration.resources.archived-posts.index';
+        $archivedRoute = Route::getRoutes()->getByName($archivedRouteName);
+
+        expect($archivedRoute)->not->toBeNull();
+        expect($archivedRoute->uri())->toContain('archived-posts');
+    });
 });
 
-it('registers resource configuration routes with correct slugs', function (): void {
-    // Featured posts route
-    $featuredRouteName = 'filament.configuration.resources.featured-posts.index';
-    $featuredRoute = Route::getRoutes()->getByName($featuredRouteName);
+describe('page routes', function (): void {
+    it('registers default page route', function (): void {
+        $routeName = 'filament.configuration.pages.configurable-settings';
+        $route = Route::getRoutes()->getByName($routeName);
 
-    expect($featuredRoute)->not->toBeNull();
-    expect($featuredRoute->uri())->toContain('featured-posts');
+        expect($route)->not->toBeNull();
+        expect($route->uri())->toContain('configurable-settings');
+    });
 
-    // Archived posts route
-    $archivedRouteName = 'filament.configuration.resources.archived-posts.index';
-    $archivedRoute = Route::getRoutes()->getByName($archivedRouteName);
+    it('registers page configuration routes with correct slugs', function (): void {
+        // General settings route
+        $generalRouteName = 'filament.configuration.pages.general-settings';
+        $generalRoute = Route::getRoutes()->getByName($generalRouteName);
 
-    expect($archivedRoute)->not->toBeNull();
-    expect($archivedRoute->uri())->toContain('archived-posts');
-});
+        expect($generalRoute)->not->toBeNull();
+        expect($generalRoute->uri())->toContain('general-settings');
 
-it('registers default page route', function (): void {
-    $routeName = 'filament.configuration.pages.configurable-settings';
-    $route = Route::getRoutes()->getByName($routeName);
+        // Advanced settings route
+        $advancedRouteName = 'filament.configuration.pages.advanced-settings';
+        $advancedRoute = Route::getRoutes()->getByName($advancedRouteName);
 
-    expect($route)->not->toBeNull();
-    expect($route->uri())->toContain('configurable-settings');
-});
+        expect($advancedRoute)->not->toBeNull();
+        expect($advancedRoute->uri())->toContain('advanced-settings');
+    });
 
-it('registers page configuration routes with correct slugs', function (): void {
-    // General settings route
-    $generalRouteName = 'filament.configuration.pages.general-settings';
-    $generalRoute = Route::getRoutes()->getByName($generalRouteName);
+    it('applies resource configuration middleware to configuration routes', function (): void {
+        // Featured posts route should have configuration middleware
+        $featuredRouteName = 'filament.configuration.resources.featured-posts.index';
+        $featuredRoute = Route::getRoutes()->getByName($featuredRouteName);
 
-    expect($generalRoute)->not->toBeNull();
-    expect($generalRoute->uri())->toContain('general-settings');
+        expect($featuredRoute->middleware())->toContain('resource-configuration:featured');
 
-    // Advanced settings route
-    $advancedRouteName = 'filament.configuration.pages.advanced-settings';
-    $advancedRoute = Route::getRoutes()->getByName($advancedRouteName);
+        // Archived posts route should have configuration middleware
+        $archivedRouteName = 'filament.configuration.resources.archived-posts.index';
+        $archivedRoute = Route::getRoutes()->getByName($archivedRouteName);
 
-    expect($advancedRoute)->not->toBeNull();
-    expect($advancedRoute->uri())->toContain('advanced-settings');
-});
+        expect($archivedRoute->middleware())->toContain('resource-configuration:archived');
+    });
 
-it('applies resource configuration middleware to configuration routes', function (): void {
-    // Featured posts route should have configuration middleware
-    $featuredRouteName = 'filament.configuration.resources.featured-posts.index';
-    $featuredRoute = Route::getRoutes()->getByName($featuredRouteName);
+    it('applies page configuration middleware to configuration routes', function (): void {
+        // General settings route should have configuration middleware
+        $generalRouteName = 'filament.configuration.pages.general-settings';
+        $generalRoute = Route::getRoutes()->getByName($generalRouteName);
 
-    expect($featuredRoute->middleware())->toContain('resource-configuration:featured');
+        expect($generalRoute->middleware())->toContain('page-configuration:general');
 
-    // Archived posts route should have configuration middleware
-    $archivedRouteName = 'filament.configuration.resources.archived-posts.index';
-    $archivedRoute = Route::getRoutes()->getByName($archivedRouteName);
+        // Advanced settings route should have configuration middleware
+        $advancedRouteName = 'filament.configuration.pages.advanced-settings';
+        $advancedRoute = Route::getRoutes()->getByName($advancedRouteName);
 
-    expect($archivedRoute->middleware())->toContain('resource-configuration:archived');
-});
-
-it('applies page configuration middleware to configuration routes', function (): void {
-    // General settings route should have configuration middleware
-    $generalRouteName = 'filament.configuration.pages.general-settings';
-    $generalRoute = Route::getRoutes()->getByName($generalRouteName);
-
-    expect($generalRoute->middleware())->toContain('page-configuration:general');
-
-    // Advanced settings route should have configuration middleware
-    $advancedRouteName = 'filament.configuration.pages.advanced-settings';
-    $advancedRoute = Route::getRoutes()->getByName($advancedRouteName);
-
-    expect($advancedRoute->middleware())->toContain('page-configuration:advanced');
+        expect($advancedRoute->middleware())->toContain('page-configuration:advanced');
+    });
 });
 
 it('does not apply configuration middleware to default resource route', function (): void {

@@ -11,6 +11,7 @@ return new class extends Migration
         Schema::create('teams', function (Blueprint $table): void {
             $table->id();
             $table->string('name');
+            $table->string('slug')->unique()->nullable();
             $table->text('description')->nullable();
             $table->decimal('budget', 10, 2)->default(0);
             $table->foreignId('company_id')->nullable();

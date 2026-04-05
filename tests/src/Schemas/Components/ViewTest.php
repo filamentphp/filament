@@ -5,6 +5,12 @@ use Filament\Tests\TestCase;
 
 uses(TestCase::class);
 
+it('can be constructed with a view name', function (): void {
+    $component = View::make('filament-schemas::components.section');
+
+    expect($component)->toBeInstanceOf(View::class);
+});
+
 it('can have view data', function (): void {
     $component = View::make('test')
         ->viewData([
