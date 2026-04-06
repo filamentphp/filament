@@ -296,7 +296,7 @@ class TestTableWithImageColumn extends Component implements HasActions, HasSchem
             ->query(Post::query())
             ->columns([
                 Tables\Columns\TextColumn::make('title'),
-                Tables\Columns\ImageColumn::make('title'),
+                ImageColumn::make('title'),
             ]);
     }
 
@@ -315,7 +315,7 @@ class RenderImageColumnWithCircular extends Component implements HasActions, Has
     public function table(Table $table): Table
     {
         return $table->query(Post::query())->columns([
-            Tables\Columns\ImageColumn::make('title')->circular(),
+            ImageColumn::make('title')->circular(),
         ]);
     }
 
@@ -334,7 +334,7 @@ class RenderImageColumnWithClosureCircular extends Component implements HasActio
     public function table(Table $table): Table
     {
         return $table->query(Post::query())->columns([
-            Tables\Columns\ImageColumn::make('title')->circular(static fn (): bool => true),
+            ImageColumn::make('title')->circular(static fn (): bool => true),
         ]);
     }
 
@@ -353,7 +353,7 @@ class RenderImageColumnWithSquare extends Component implements HasActions, HasSc
     public function table(Table $table): Table
     {
         return $table->query(Post::query())->columns([
-            Tables\Columns\ImageColumn::make('title')->square(),
+            ImageColumn::make('title')->square(),
         ]);
     }
 
@@ -372,7 +372,7 @@ class RenderImageColumnWithStacked extends Component implements HasActions, HasS
     public function table(Table $table): Table
     {
         return $table->query(Post::query())->columns([
-            Tables\Columns\ImageColumn::make('title')->stacked(),
+            ImageColumn::make('title')->stacked(),
         ]);
     }
 
@@ -391,7 +391,7 @@ class RenderImageColumnWithClosureStacked extends Component implements HasAction
     public function table(Table $table): Table
     {
         return $table->query(Post::query())->columns([
-            Tables\Columns\ImageColumn::make('title')->stacked(static fn (): bool => true),
+            ImageColumn::make('title')->stacked(static fn (): bool => true),
         ]);
     }
 
@@ -410,7 +410,7 @@ class RenderImageColumnWithOverlap extends Component implements HasActions, HasS
     public function table(Table $table): Table
     {
         return $table->query(Post::query())->columns([
-            Tables\Columns\ImageColumn::make('title')->stacked()->overlap(3),
+            ImageColumn::make('title')->stacked()->overlap(3),
         ]);
     }
 
@@ -429,7 +429,7 @@ class RenderImageColumnWithClosureOverlap extends Component implements HasAction
     public function table(Table $table): Table
     {
         return $table->query(Post::query())->columns([
-            Tables\Columns\ImageColumn::make('title')->stacked()->overlap(static fn (): int => 5),
+            ImageColumn::make('title')->stacked()->overlap(static fn (): int => 5),
         ]);
     }
 
@@ -448,7 +448,7 @@ class RenderImageColumnWithRing extends Component implements HasActions, HasSche
     public function table(Table $table): Table
     {
         return $table->query(Post::query())->columns([
-            Tables\Columns\ImageColumn::make('title')->stacked()->ring(2),
+            ImageColumn::make('title')->stacked()->ring(2),
         ]);
     }
 
@@ -467,7 +467,7 @@ class RenderImageColumnWithClosureRing extends Component implements HasActions, 
     public function table(Table $table): Table
     {
         return $table->query(Post::query())->columns([
-            Tables\Columns\ImageColumn::make('title')->stacked()->ring(static fn (): int => 4),
+            ImageColumn::make('title')->stacked()->ring(static fn (): int => 4),
         ]);
     }
 
@@ -486,7 +486,7 @@ class RenderImageColumnWithLimit extends Component implements HasActions, HasSch
     public function table(Table $table): Table
     {
         return $table->query(Post::query())->columns([
-            Tables\Columns\ImageColumn::make('title')->limit(5),
+            ImageColumn::make('title')->limit(5),
         ]);
     }
 
@@ -505,7 +505,7 @@ class RenderImageColumnWithClosureLimit extends Component implements HasActions,
     public function table(Table $table): Table
     {
         return $table->query(Post::query())->columns([
-            Tables\Columns\ImageColumn::make('title')->limit(static fn (): int => 10),
+            ImageColumn::make('title')->limit(static fn (): int => 10),
         ]);
     }
 
@@ -524,7 +524,7 @@ class RenderImageColumnWithLimitedRemainingText extends Component implements Has
     public function table(Table $table): Table
     {
         return $table->query(Post::query())->columns([
-            Tables\Columns\ImageColumn::make('title')->limit(1)->limitedRemainingText(),
+            ImageColumn::make('title')->limit(1)->limitedRemainingText(),
         ]);
     }
 
@@ -543,7 +543,7 @@ class RenderImageColumnWithImageHeightInt extends Component implements HasAction
     public function table(Table $table): Table
     {
         return $table->query(Post::query())->columns([
-            Tables\Columns\ImageColumn::make('title')->imageHeight(100),
+            ImageColumn::make('title')->imageHeight(100),
         ]);
     }
 
@@ -562,7 +562,7 @@ class RenderImageColumnWithImageHeightString extends Component implements HasAct
     public function table(Table $table): Table
     {
         return $table->query(Post::query())->columns([
-            Tables\Columns\ImageColumn::make('title')->imageHeight('4rem'),
+            ImageColumn::make('title')->imageHeight('4rem'),
         ]);
     }
 
@@ -581,7 +581,7 @@ class RenderImageColumnWithImageWidth extends Component implements HasActions, H
     public function table(Table $table): Table
     {
         return $table->query(Post::query())->columns([
-            Tables\Columns\ImageColumn::make('title')->imageWidth(80),
+            ImageColumn::make('title')->imageWidth(80),
         ]);
     }
 
@@ -600,7 +600,7 @@ class RenderImageColumnWithImageSize extends Component implements HasActions, Ha
     public function table(Table $table): Table
     {
         return $table->query(Post::query())->columns([
-            Tables\Columns\ImageColumn::make('title')->imageSize(64),
+            ImageColumn::make('title')->imageSize(64),
         ]);
     }
 
@@ -619,7 +619,7 @@ class RenderImageColumnWithDefaultImageUrl extends Component implements HasActio
     public function table(Table $table): Table
     {
         return $table->query(Post::query())->columns([
-            Tables\Columns\ImageColumn::make('title')->defaultImageUrl('https://example.com/default.jpg'),
+            ImageColumn::make('title')->defaultImageUrl('https://example.com/default.jpg'),
         ]);
     }
 
@@ -638,7 +638,7 @@ class RenderImageColumnWithExtraImgAttributes extends Component implements HasAc
     public function table(Table $table): Table
     {
         return $table->query(Post::query())->columns([
-            Tables\Columns\ImageColumn::make('title')->extraImgAttributes(['loading' => 'lazy']),
+            ImageColumn::make('title')->extraImgAttributes(['loading' => 'lazy']),
         ]);
     }
 
@@ -657,7 +657,7 @@ class RenderImageColumnWithNoCheckFileExistence extends Component implements Has
     public function table(Table $table): Table
     {
         return $table->query(Post::query())->columns([
-            Tables\Columns\ImageColumn::make('title')->checkFileExistence(false),
+            ImageColumn::make('title')->checkFileExistence(false),
         ]);
     }
 
@@ -676,7 +676,7 @@ class RenderImageColumnWithClosureCheckFileExistence extends Component implement
     public function table(Table $table): Table
     {
         return $table->query(Post::query())->columns([
-            Tables\Columns\ImageColumn::make('title')->checkFileExistence(static fn (): bool => false),
+            ImageColumn::make('title')->checkFileExistence(static fn (): bool => false),
         ]);
     }
 

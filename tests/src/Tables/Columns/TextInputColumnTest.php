@@ -271,7 +271,7 @@ class TestTableWithTextInputColumn extends Component implements HasActions, HasS
             ->query(Post::query())
             ->columns([
                 Tables\Columns\TextColumn::make('title'),
-                Tables\Columns\TextInputColumn::make('rating'),
+                TextInputColumn::make('rating'),
             ]);
     }
 
@@ -290,7 +290,7 @@ class RenderTextInputColumnWithType extends Component implements HasActions, Has
     public function table(Table $table): Table
     {
         return $table->query(Post::query())->columns([
-            Tables\Columns\TextInputColumn::make('rating')->type('number'),
+            TextInputColumn::make('rating')->type('number'),
         ]);
     }
 
@@ -309,7 +309,7 @@ class RenderTextInputColumnWithClosureType extends Component implements HasActio
     public function table(Table $table): Table
     {
         return $table->query(Post::query())->columns([
-            Tables\Columns\TextInputColumn::make('rating')->type(static fn (): string => 'email'),
+            TextInputColumn::make('rating')->type(static fn (): string => 'email'),
         ]);
     }
 
@@ -328,7 +328,7 @@ class RenderTextInputColumnWithMask extends Component implements HasActions, Has
     public function table(Table $table): Table
     {
         return $table->query(Post::query())->columns([
-            Tables\Columns\TextInputColumn::make('title')->mask('999-999-9999'),
+            TextInputColumn::make('title')->mask('999-999-9999'),
         ]);
     }
 
@@ -347,7 +347,7 @@ class RenderTextInputColumnWithClosureMask extends Component implements HasActio
     public function table(Table $table): Table
     {
         return $table->query(Post::query())->columns([
-            Tables\Columns\TextInputColumn::make('title')->mask(static fn (): string => '(999) 999-9999'),
+            TextInputColumn::make('title')->mask(static fn (): string => '(999) 999-9999'),
         ]);
     }
 
@@ -366,7 +366,7 @@ class RenderTextInputColumnWithRawJsMask extends Component implements HasActions
     public function table(Table $table): Table
     {
         return $table->query(Post::query())->columns([
-            Tables\Columns\TextInputColumn::make('title')->mask(RawJs::make('$money($input)')),
+            TextInputColumn::make('title')->mask(RawJs::make('$money($input)')),
         ]);
     }
 
@@ -385,7 +385,7 @@ class RenderTextInputColumnWithPrefix extends Component implements HasActions, H
     public function table(Table $table): Table
     {
         return $table->query(Post::query())->columns([
-            Tables\Columns\TextInputColumn::make('rating')->prefix('$'),
+            TextInputColumn::make('rating')->prefix('$'),
         ]);
     }
 
@@ -404,7 +404,7 @@ class RenderTextInputColumnWithClosurePrefix extends Component implements HasAct
     public function table(Table $table): Table
     {
         return $table->query(Post::query())->columns([
-            Tables\Columns\TextInputColumn::make('rating')->prefix(static fn (): string => '€'),
+            TextInputColumn::make('rating')->prefix(static fn (): string => '€'),
         ]);
     }
 
@@ -423,7 +423,7 @@ class RenderTextInputColumnWithInlinePrefix extends Component implements HasActi
     public function table(Table $table): Table
     {
         return $table->query(Post::query())->columns([
-            Tables\Columns\TextInputColumn::make('rating')->prefix('$', isInline: true),
+            TextInputColumn::make('rating')->prefix('$', isInline: true),
         ]);
     }
 
@@ -442,7 +442,7 @@ class RenderTextInputColumnWithSuffix extends Component implements HasActions, H
     public function table(Table $table): Table
     {
         return $table->query(Post::query())->columns([
-            Tables\Columns\TextInputColumn::make('rating')->suffix('USD'),
+            TextInputColumn::make('rating')->suffix('USD'),
         ]);
     }
 
@@ -461,7 +461,7 @@ class RenderTextInputColumnWithClosureSuffix extends Component implements HasAct
     public function table(Table $table): Table
     {
         return $table->query(Post::query())->columns([
-            Tables\Columns\TextInputColumn::make('rating')->suffix(static fn (): string => 'EUR'),
+            TextInputColumn::make('rating')->suffix(static fn (): string => 'EUR'),
         ]);
     }
 
@@ -480,7 +480,7 @@ class RenderTextInputColumnWithInlineSuffix extends Component implements HasActi
     public function table(Table $table): Table
     {
         return $table->query(Post::query())->columns([
-            Tables\Columns\TextInputColumn::make('rating')->suffix('USD', isInline: true),
+            TextInputColumn::make('rating')->suffix('USD', isInline: true),
         ]);
     }
 
@@ -499,7 +499,7 @@ class RenderTextInputColumnWithPrefixIcon extends Component implements HasAction
     public function table(Table $table): Table
     {
         return $table->query(Post::query())->columns([
-            Tables\Columns\TextInputColumn::make('rating')->prefixIcon('heroicon-o-currency-dollar'),
+            TextInputColumn::make('rating')->prefixIcon('heroicon-o-currency-dollar'),
         ]);
     }
 
@@ -518,7 +518,7 @@ class RenderTextInputColumnWithSuffixIcon extends Component implements HasAction
     public function table(Table $table): Table
     {
         return $table->query(Post::query())->columns([
-            Tables\Columns\TextInputColumn::make('rating')->suffixIcon('heroicon-o-check'),
+            TextInputColumn::make('rating')->suffixIcon('heroicon-o-check'),
         ]);
     }
 
@@ -537,7 +537,7 @@ class RenderTextInputColumnWithPrefixIconColor extends Component implements HasA
     public function table(Table $table): Table
     {
         return $table->query(Post::query())->columns([
-            Tables\Columns\TextInputColumn::make('rating')->prefixIcon('heroicon-o-currency-dollar')->prefixIconColor('success'),
+            TextInputColumn::make('rating')->prefixIcon('heroicon-o-currency-dollar')->prefixIconColor('success'),
         ]);
     }
 
@@ -556,7 +556,7 @@ class RenderTextInputColumnWithClosurePrefixIconColor extends Component implemen
     public function table(Table $table): Table
     {
         return $table->query(Post::query())->columns([
-            Tables\Columns\TextInputColumn::make('rating')->prefixIcon('heroicon-o-currency-dollar')->prefixIconColor(static fn (): string => 'info'),
+            TextInputColumn::make('rating')->prefixIcon('heroicon-o-currency-dollar')->prefixIconColor(static fn (): string => 'info'),
         ]);
     }
 
@@ -575,7 +575,7 @@ class RenderTextInputColumnWithSuffixIconColor extends Component implements HasA
     public function table(Table $table): Table
     {
         return $table->query(Post::query())->columns([
-            Tables\Columns\TextInputColumn::make('rating')->suffixIcon('heroicon-o-check')->suffixIconColor('danger'),
+            TextInputColumn::make('rating')->suffixIcon('heroicon-o-check')->suffixIconColor('danger'),
         ]);
     }
 
@@ -594,7 +594,7 @@ class RenderTextInputColumnWithInlinePrefixMethod extends Component implements H
     public function table(Table $table): Table
     {
         return $table->query(Post::query())->columns([
-            Tables\Columns\TextInputColumn::make('rating')->prefix('$')->inlinePrefix(),
+            TextInputColumn::make('rating')->prefix('$')->inlinePrefix(),
         ]);
     }
 
@@ -613,7 +613,7 @@ class RenderTextInputColumnWithInlineSuffixMethod extends Component implements H
     public function table(Table $table): Table
     {
         return $table->query(Post::query())->columns([
-            Tables\Columns\TextInputColumn::make('rating')->suffix('USD')->inlineSuffix(),
+            TextInputColumn::make('rating')->suffix('USD')->inlineSuffix(),
         ]);
     }
 

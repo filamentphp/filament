@@ -223,7 +223,7 @@ class TestTableWithIconColumn extends Component implements HasActions, HasSchema
             ->query(Post::query())
             ->columns([
                 Tables\Columns\TextColumn::make('title'),
-                Tables\Columns\IconColumn::make('is_published')
+                IconColumn::make('is_published')
                     ->boolean(),
             ]);
     }
@@ -243,7 +243,7 @@ class RenderIconColumnWithSize extends Component implements HasActions, HasSchem
     public function table(Table $table): Table
     {
         return $table->query(Post::query())->columns([
-            Tables\Columns\IconColumn::make('is_published')->boolean()->size(IconSize::Small),
+            IconColumn::make('is_published')->boolean()->size(IconSize::Small),
         ]);
     }
 
@@ -262,7 +262,7 @@ class RenderIconColumnWithClosureSize extends Component implements HasActions, H
     public function table(Table $table): Table
     {
         return $table->query(Post::query())->columns([
-            Tables\Columns\IconColumn::make('is_published')->boolean()->size(static fn (): IconSize => IconSize::Large),
+            IconColumn::make('is_published')->boolean()->size(static fn (): IconSize => IconSize::Large),
         ]);
     }
 
@@ -281,7 +281,7 @@ class RenderIconColumnWithStringSize extends Component implements HasActions, Ha
     public function table(Table $table): Table
     {
         return $table->query(Post::query())->columns([
-            Tables\Columns\IconColumn::make('is_published')->boolean()->size('lg'),
+            IconColumn::make('is_published')->boolean()->size('lg'),
         ]);
     }
 
@@ -300,7 +300,7 @@ class RenderIconColumnWithFalseColor extends Component implements HasActions, Ha
     public function table(Table $table): Table
     {
         return $table->query(Post::query())->columns([
-            Tables\Columns\IconColumn::make('is_published')->boolean()->falseColor('warning'),
+            IconColumn::make('is_published')->boolean()->falseColor('warning'),
         ]);
     }
 
@@ -319,7 +319,7 @@ class RenderIconColumnWithTrueColor extends Component implements HasActions, Has
     public function table(Table $table): Table
     {
         return $table->query(Post::query())->columns([
-            Tables\Columns\IconColumn::make('is_published')->boolean()->trueColor('info'),
+            IconColumn::make('is_published')->boolean()->trueColor('info'),
         ]);
     }
 
@@ -338,7 +338,7 @@ class RenderIconColumnWithFalseIcon extends Component implements HasActions, Has
     public function table(Table $table): Table
     {
         return $table->query(Post::query())->columns([
-            Tables\Columns\IconColumn::make('is_published')->boolean()->falseIcon('heroicon-o-x-mark'),
+            IconColumn::make('is_published')->boolean()->falseIcon('heroicon-o-x-mark'),
         ]);
     }
 
@@ -357,7 +357,7 @@ class RenderIconColumnWithTrueIcon extends Component implements HasActions, HasS
     public function table(Table $table): Table
     {
         return $table->query(Post::query())->columns([
-            Tables\Columns\IconColumn::make('is_published')->boolean()->trueIcon('heroicon-o-check'),
+            IconColumn::make('is_published')->boolean()->trueIcon('heroicon-o-check'),
         ]);
     }
 
@@ -376,7 +376,7 @@ class RenderIconColumnWithListWithLineBreaks extends Component implements HasAct
     public function table(Table $table): Table
     {
         return $table->query(Post::query())->columns([
-            Tables\Columns\IconColumn::make('is_published')->boolean()->listWithLineBreaks(),
+            IconColumn::make('is_published')->boolean()->listWithLineBreaks(),
         ]);
     }
 
@@ -395,7 +395,7 @@ class RenderIconColumnWithClosureBoolean extends Component implements HasActions
     public function table(Table $table): Table
     {
         return $table->query(Post::query())->columns([
-            Tables\Columns\IconColumn::make('is_published')->boolean(static fn (): bool => true),
+            IconColumn::make('is_published')->boolean(static fn (): bool => true),
         ]);
     }
 
@@ -414,7 +414,7 @@ class RenderIconColumnWithTrueCombined extends Component implements HasActions, 
     public function table(Table $table): Table
     {
         return $table->query(Post::query())->columns([
-            Tables\Columns\IconColumn::make('is_published')->boolean()->true('heroicon-o-star', 'warning'),
+            IconColumn::make('is_published')->boolean()->true('heroicon-o-star', 'warning'),
         ]);
     }
 
@@ -433,7 +433,7 @@ class RenderIconColumnWithFalseCombined extends Component implements HasActions,
     public function table(Table $table): Table
     {
         return $table->query(Post::query())->columns([
-            Tables\Columns\IconColumn::make('is_published')->boolean()->false('heroicon-o-x-circle', 'gray'),
+            IconColumn::make('is_published')->boolean()->false('heroicon-o-x-circle', 'gray'),
         ]);
     }
 

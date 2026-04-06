@@ -159,9 +159,9 @@ class TestTableWithSelectFilter extends Component implements HasActions, HasSche
                 Tables\Columns\TextColumn::make('rating'),
             ])
             ->filters([
-                Tables\Filters\SelectFilter::make('author')
+                SelectFilter::make('author')
                     ->relationship('author', 'name'),
-                Tables\Filters\SelectFilter::make('rating')
+                SelectFilter::make('rating')
                     ->options([
                         1 => '1 Star',
                         2 => '2 Stars',
@@ -193,7 +193,7 @@ class TestTableWithEmptyRelationshipFilter extends Component implements HasActio
                 Tables\Columns\TextColumn::make('author.name'),
             ])
             ->filters([
-                Tables\Filters\SelectFilter::make('author')
+                SelectFilter::make('author')
                     ->relationship('author', 'name', hasEmptyOption: true),
             ]);
     }
@@ -219,7 +219,7 @@ class TestTableWithMultipleEmptyRelationshipFilter extends Component implements 
                 Tables\Columns\TextColumn::make('author.name'),
             ])
             ->filters([
-                Tables\Filters\SelectFilter::make('author')
+                SelectFilter::make('author')
                     ->relationship('author', 'name', hasEmptyOption: true)
                     ->multiple(),
             ]);
@@ -233,7 +233,7 @@ class TestTableWithMultipleEmptyRelationshipFilter extends Component implements 
 
 describe('options and properties', function (): void {
     it('can get `getOptions()` from static array', function (): void {
-        $filter = Tables\Filters\SelectFilter::make('status')
+        $filter = SelectFilter::make('status')
             ->options([
                 'active' => 'Active',
                 'inactive' => 'Inactive',
@@ -246,7 +246,7 @@ describe('options and properties', function (): void {
     });
 
     it('can get `getOptions()` from closure', function (): void {
-        $filter = Tables\Filters\SelectFilter::make('status')
+        $filter = SelectFilter::make('status')
             ->options(fn (): array => [
                 'active' => 'Active',
                 'inactive' => 'Inactive',
@@ -259,7 +259,7 @@ describe('options and properties', function (): void {
     });
 
     it('can get `getOptions()` from enum class string', function (): void {
-        $filter = Tables\Filters\SelectFilter::make('status')
+        $filter = SelectFilter::make('status')
             ->options(StringBackedEnum::class);
 
         $options = $filter->getOptions();
@@ -272,40 +272,40 @@ describe('options and properties', function (): void {
     });
 
     it('returns empty array for `getOptions()` when no options set', function (): void {
-        $filter = Tables\Filters\SelectFilter::make('status');
+        $filter = SelectFilter::make('status');
 
         expect($filter->getOptions())->toBe([]);
     });
 
     it('can check `isMultiple()` returns correct value', function (): void {
-        $singleFilter = Tables\Filters\SelectFilter::make('status');
-        $multipleFilter = Tables\Filters\SelectFilter::make('status')->multiple();
+        $singleFilter = SelectFilter::make('status');
+        $multipleFilter = SelectFilter::make('status')->multiple();
 
         expect($singleFilter->isMultiple())->toBeFalse();
         expect($multipleFilter->isMultiple())->toBeTrue();
     });
 
     it('can check `isSearchable()` returns correct value', function (): void {
-        $nonSearchableFilter = Tables\Filters\SelectFilter::make('status');
-        $searchableFilter = Tables\Filters\SelectFilter::make('status')->searchable();
+        $nonSearchableFilter = SelectFilter::make('status');
+        $searchableFilter = SelectFilter::make('status')->searchable();
 
         expect($nonSearchableFilter->getSearchable())->toBeFalse();
         expect($searchableFilter->getSearchable())->toBeTrue();
     });
 
     it('can get options limit using `getOptionsLimit()`', function (): void {
-        $defaultFilter = Tables\Filters\SelectFilter::make('status');
-        $limitedFilter = Tables\Filters\SelectFilter::make('status')->optionsLimit(100);
+        $defaultFilter = SelectFilter::make('status');
+        $limitedFilter = SelectFilter::make('status')->optionsLimit(100);
 
         expect($defaultFilter->getOptionsLimit())->toBe(50);
         expect($limitedFilter->getOptionsLimit())->toBe(100);
     });
 
     it('can check `queriesRelationships()` returns `true` when relationship is set', function (): void {
-        $withoutRelationship = Tables\Filters\SelectFilter::make('status')
+        $withoutRelationship = SelectFilter::make('status')
             ->options(['active' => 'Active']);
 
-        $withRelationship = Tables\Filters\SelectFilter::make('author')
+        $withRelationship = SelectFilter::make('author')
             ->relationship('author', 'name');
 
         expect($withoutRelationship->queriesRelationships())->toBeFalse();
@@ -313,31 +313,31 @@ describe('options and properties', function (): void {
     });
 
     it('can get `getRelationshipName()` from string', function (): void {
-        $filter = Tables\Filters\SelectFilter::make('author')
+        $filter = SelectFilter::make('author')
             ->relationship('author', 'name');
 
         expect($filter->getRelationshipName())->toBe('author');
     });
 
     it('can get `getRelationshipName()` from closure', function (): void {
-        $filter = Tables\Filters\SelectFilter::make('author')
+        $filter = SelectFilter::make('author')
             ->relationship(fn (): string => 'author', 'name');
 
         expect($filter->getRelationshipName())->toBe('author');
     });
 
     it('can get `getRelationshipTitleAttribute()`', function (): void {
-        $filter = Tables\Filters\SelectFilter::make('author')
+        $filter = SelectFilter::make('author')
             ->relationship('author', 'name');
 
         expect($filter->getRelationshipTitleAttribute())->toBe('name');
     });
 
     it('can check `hasEmptyRelationshipOption()` returns `true` when `hasEmptyOption` is set', function (): void {
-        $withoutEmptyOption = Tables\Filters\SelectFilter::make('author')
+        $withoutEmptyOption = SelectFilter::make('author')
             ->relationship('author', 'name');
 
-        $withEmptyOption = Tables\Filters\SelectFilter::make('author')
+        $withEmptyOption = SelectFilter::make('author')
             ->relationship('author', 'name', hasEmptyOption: true);
 
         expect($withoutEmptyOption->hasEmptyRelationshipOption())->toBeFalse();
@@ -345,14 +345,14 @@ describe('options and properties', function (): void {
     });
 
     it('can get default empty relationship option label', function (): void {
-        $filter = Tables\Filters\SelectFilter::make('author')
+        $filter = SelectFilter::make('author')
             ->relationship('author', 'name', hasEmptyOption: true);
 
         expect($filter->getEmptyRelationshipOptionLabel())->toBe(__('filament-tables::table.filters.select.relationship.empty_option_label'));
     });
 
     it('can get custom empty relationship option label', function (): void {
-        $filter = Tables\Filters\SelectFilter::make('author')
+        $filter = SelectFilter::make('author')
             ->relationship('author', 'name', hasEmptyOption: true)
             ->emptyRelationshipOptionLabel('No Author');
 
@@ -360,10 +360,10 @@ describe('options and properties', function (): void {
     });
 
     it('can check `isPreloaded()` returns correct value', function (): void {
-        $notPreloaded = Tables\Filters\SelectFilter::make('author')
+        $notPreloaded = SelectFilter::make('author')
             ->relationship('author', 'name');
 
-        $preloaded = Tables\Filters\SelectFilter::make('author')
+        $preloaded = SelectFilter::make('author')
             ->relationship('author', 'name')
             ->preload();
 
@@ -372,48 +372,48 @@ describe('options and properties', function (): void {
     });
 
     it('can check `isNative()` returns correct value', function (): void {
-        $nativeFilter = Tables\Filters\SelectFilter::make('status');
-        $nonNativeFilter = Tables\Filters\SelectFilter::make('status')->native(false);
+        $nativeFilter = SelectFilter::make('status');
+        $nonNativeFilter = SelectFilter::make('status')->native(false);
 
         expect($nativeFilter->isNative())->toBeTrue();
         expect($nonNativeFilter->isNative())->toBeFalse();
     });
 
     it('can check `canSelectPlaceholder()` returns correct value', function (): void {
-        $withPlaceholder = Tables\Filters\SelectFilter::make('status');
-        $withoutPlaceholder = Tables\Filters\SelectFilter::make('status')->selectablePlaceholder(false);
+        $withPlaceholder = SelectFilter::make('status');
+        $withoutPlaceholder = SelectFilter::make('status')->selectablePlaceholder(false);
 
         expect($withPlaceholder->canSelectPlaceholder())->toBeTrue();
         expect($withoutPlaceholder->canSelectPlaceholder())->toBeFalse();
     });
 
     it('can get `getAttribute()` returns filter name by default', function (): void {
-        $filter = Tables\Filters\SelectFilter::make('status');
+        $filter = SelectFilter::make('status');
 
         expect($filter->getAttribute())->toBe('status');
     });
 
     it('can get custom `getAttribute()`', function (): void {
-        $filter = Tables\Filters\SelectFilter::make('status')
+        $filter = SelectFilter::make('status')
             ->attribute('custom_status');
 
         expect($filter->getAttribute())->toBe('custom_status');
     });
 
     it('can set `forceSearchCaseInsensitive()` and get with `isSearchForcedCaseInsensitive()`', function (): void {
-        $filter = Tables\Filters\SelectFilter::make('status')->forceSearchCaseInsensitive();
+        $filter = SelectFilter::make('status')->forceSearchCaseInsensitive();
 
         expect($filter->isSearchForcedCaseInsensitive())->toBeTrue();
     });
 
     it('can set `forceSearchCaseInsensitive()` to `false` and get with `isSearchForcedCaseInsensitive()`', function (): void {
-        $filter = Tables\Filters\SelectFilter::make('status')->forceSearchCaseInsensitive(false);
+        $filter = SelectFilter::make('status')->forceSearchCaseInsensitive(false);
 
         expect($filter->isSearchForcedCaseInsensitive())->toBeFalse();
     });
 
     it('defaults `isSearchForcedCaseInsensitive()` to `null`', function (): void {
-        $filter = Tables\Filters\SelectFilter::make('status');
+        $filter = SelectFilter::make('status');
 
         expect($filter->isSearchForcedCaseInsensitive())->toBeNull();
     });
@@ -421,7 +421,7 @@ describe('options and properties', function (): void {
 
 describe('form field generation', function (): void {
     it('can get `getFormField()` returns `Select` component', function (): void {
-        $filter = Tables\Filters\SelectFilter::make('status')
+        $filter = SelectFilter::make('status')
             ->options(['active' => 'Active', 'inactive' => 'Inactive']);
 
         $formField = $filter->getFormField();
@@ -431,7 +431,7 @@ describe('form field generation', function (): void {
     });
 
     it('can get `getFormField()` returns `Select` component with `values` name for multiple filter', function (): void {
-        $filter = Tables\Filters\SelectFilter::make('status')
+        $filter = SelectFilter::make('status')
             ->multiple()
             ->options(['active' => 'Active', 'inactive' => 'Inactive']);
 
@@ -443,7 +443,7 @@ describe('form field generation', function (): void {
     });
 
     it('can get `getFormField()` with relationship configuration', function (): void {
-        $filter = Tables\Filters\SelectFilter::make('author')
+        $filter = SelectFilter::make('author')
             ->relationship('author', 'name')
             ->searchable()
             ->preload();
@@ -459,7 +459,7 @@ describe('form field generation', function (): void {
         User::factory()->count(3)->create();
 
         livewire(TestTableWithSearchableRelationshipFilter::class)
-            ->assertTableFilterExists('author', function (Tables\Filters\SelectFilter $filter): bool {
+            ->assertTableFilterExists('author', function (SelectFilter $filter): bool {
                 $formField = $filter->getFormField();
 
                 expect($formField->getOptions())->toBe([]);
@@ -527,7 +527,7 @@ describe('relationship filtering', function (): void {
                     Tables\Columns\TextColumn::make('author.name'),
                 ])
                 ->filters([
-                    Tables\Filters\SelectFilter::make('author')
+                    SelectFilter::make('author')
                         ->relationship('author', 'name')
                         ->searchable(),
                 ]);
@@ -554,7 +554,7 @@ describe('relationship filtering', function (): void {
                     Tables\Columns\TextColumn::make('author.name'),
                 ])
                 ->filters([
-                    Tables\Filters\SelectFilter::make('author')
+                    SelectFilter::make('author')
                         ->relationship('author', 'name')
                         ->preload(),
                 ]);
@@ -581,7 +581,7 @@ describe('relationship filtering', function (): void {
                     Tables\Columns\TextColumn::make('author.name'),
                 ])
                 ->filters([
-                    Tables\Filters\SelectFilter::make('author')
+                    SelectFilter::make('author')
                         ->relationship(
                             'author',
                             'name',
@@ -612,7 +612,7 @@ describe('relationship filtering', function (): void {
                     Tables\Columns\TextColumn::make('author.name'),
                 ])
                 ->filters([
-                    Tables\Filters\SelectFilter::make('author')
+                    SelectFilter::make('author')
                         ->relationship('author', 'name')
                         ->getOptionLabelFromRecordUsing(fn (User $record): string => "{$record->name} ({$record->email})")
                         ->preload(),
