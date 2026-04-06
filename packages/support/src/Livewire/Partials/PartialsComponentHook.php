@@ -172,7 +172,7 @@ class PartialsComponentHook extends ComponentHook
                     "action-modals.{$action->getNestingIndex()}" => $action->renderModal(),
                 ]);
             }
-            
+
         }
 
         if ($this->shouldRenderMountedActionsOnly(whenActionMounted: $isLackingPartialRendersToCoverAllCallsAndUpdates)) {

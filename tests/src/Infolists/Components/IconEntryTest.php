@@ -2,7 +2,6 @@
 
 namespace Filament\Tests\Infolists\Components;
 
-use Filament\Infolists;
 use Filament\Infolists\Components\IconEntry;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
@@ -279,7 +278,7 @@ class TestComponentWithIconEntry extends Component implements HasSchemas
                 'status' => 'active',
             ])
             ->components([
-                Infolists\Components\IconEntry::make('status')
+                IconEntry::make('status')
                     ->icon(Heroicon::Check),
             ]);
     }
@@ -305,7 +304,7 @@ class IconEntryWithUrl extends Component implements HasSchemas
                 'icon_with_url' => 'https://example.com/icon-link',
             ])
             ->components([
-                Infolists\Components\IconEntry::make('icon_with_url')
+                IconEntry::make('icon_with_url')
                     ->icon(Heroicon::Link)
                     ->url(static fn (?string $state): ?string => $state),
             ]);

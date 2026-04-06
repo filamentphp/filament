@@ -237,7 +237,7 @@ class RenderColumnWithCustomLabel extends Component implements HasActions, HasSc
     public function table(Table $table): Table
     {
         return $table->query(Post::query())->columns([
-            Tables\Columns\TextColumn::make('title')->label('Custom Title'),
+            TextColumn::make('title')->label('Custom Title'),
         ]);
     }
 
@@ -256,7 +256,7 @@ class RenderColumnWithAlignment extends Component implements HasActions, HasSche
     public function table(Table $table): Table
     {
         return $table->query(Post::query())->columns([
-            Tables\Columns\TextColumn::make('title')->alignment(Alignment::Center),
+            TextColumn::make('title')->alignment(Alignment::Center),
         ]);
     }
 
@@ -275,7 +275,7 @@ class RenderColumnWithPlaceholder extends Component implements HasActions, HasSc
     public function table(Table $table): Table
     {
         return $table->query(Post::query())->columns([
-            Tables\Columns\TextColumn::make('content')->placeholder('N/A'),
+            TextColumn::make('content')->placeholder('N/A'),
         ]);
     }
 
@@ -294,7 +294,7 @@ class RenderColumnWithWidth extends Component implements HasActions, HasSchemas,
     public function table(Table $table): Table
     {
         return $table->query(Post::query())->columns([
-            Tables\Columns\TextColumn::make('title')->width('200px'),
+            TextColumn::make('title')->width('200px'),
         ]);
     }
 
@@ -313,8 +313,8 @@ class RenderColumnWithHidden extends Component implements HasActions, HasSchemas
     public function table(Table $table): Table
     {
         return $table->query(Post::query())->columns([
-            Tables\Columns\TextColumn::make('title'),
-            Tables\Columns\TextColumn::make('content')->hidden(),
+            TextColumn::make('title'),
+            TextColumn::make('content')->hidden(),
         ]);
     }
 
@@ -333,7 +333,7 @@ class RenderColumnWithSortable extends Component implements HasActions, HasSchem
     public function table(Table $table): Table
     {
         return $table->query(Post::query())->columns([
-            Tables\Columns\TextColumn::make('title')->sortable(),
+            TextColumn::make('title')->sortable(),
         ]);
     }
 
@@ -352,7 +352,7 @@ class RenderColumnWithSearchable extends Component implements HasActions, HasSch
     public function table(Table $table): Table
     {
         return $table->query(Post::query())->columns([
-            Tables\Columns\TextColumn::make('title')->searchable(),
+            TextColumn::make('title')->searchable(),
         ]);
     }
 
@@ -371,7 +371,7 @@ class RenderColumnWithToggleable extends Component implements HasActions, HasSch
     public function table(Table $table): Table
     {
         return $table->query(Post::query())->columns([
-            Tables\Columns\TextColumn::make('title')->toggleable(),
+            TextColumn::make('title')->toggleable(),
         ]);
     }
 
@@ -390,7 +390,7 @@ class RenderColumnWithGrowFalse extends Component implements HasActions, HasSche
     public function table(Table $table): Table
     {
         return $table->query(Post::query())->columns([
-            Tables\Columns\TextColumn::make('title')->grow(false),
+            TextColumn::make('title')->grow(false),
         ]);
     }
 

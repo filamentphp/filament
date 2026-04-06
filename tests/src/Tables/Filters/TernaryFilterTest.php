@@ -151,7 +151,7 @@ class TestTableWithNullableTernaryFilter extends Component implements HasActions
                 Tables\Columns\TextColumn::make('content'),
             ])
             ->filters([
-                Tables\Filters\TernaryFilter::make('content')
+                TernaryFilter::make('content')
                     ->nullable(),
             ]);
     }
@@ -178,7 +178,7 @@ class TestTableWithTernaryFilter extends Component implements HasActions, HasSch
                     ->boolean(),
             ])
             ->filters([
-                Tables\Filters\TernaryFilter::make('is_published'),
+                TernaryFilter::make('is_published'),
             ]);
     }
 

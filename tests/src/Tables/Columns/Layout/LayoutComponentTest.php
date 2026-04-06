@@ -266,7 +266,7 @@ class RenderTableWithStackAlignment extends LivewireComponent implements HasActi
         ]);
     }
 
-    public function render(): \Illuminate\Contracts\View\View
+    public function render(): Illuminate\Contracts\View\View
     {
         return view('livewire.table');
     }
@@ -285,7 +285,7 @@ class RenderTableWithStackSpace extends LivewireComponent implements HasActions,
         ]);
     }
 
-    public function render(): \Illuminate\Contracts\View\View
+    public function render(): Illuminate\Contracts\View\View
     {
         return view('livewire.table');
     }
@@ -304,7 +304,7 @@ class RenderTableWithStackCollapsible extends LivewireComponent implements HasAc
         ]);
     }
 
-    public function render(): \Illuminate\Contracts\View\View
+    public function render(): Illuminate\Contracts\View\View
     {
         return view('livewire.table');
     }
@@ -323,7 +323,7 @@ class RenderTableWithStackCollapsed extends LivewireComponent implements HasActi
         ]);
     }
 
-    public function render(): \Illuminate\Contracts\View\View
+    public function render(): Illuminate\Contracts\View\View
     {
         return view('livewire.table');
     }
@@ -342,7 +342,7 @@ class RenderTableWithGridColumns extends LivewireComponent implements HasActions
         ]);
     }
 
-    public function render(): \Illuminate\Contracts\View\View
+    public function render(): Illuminate\Contracts\View\View
     {
         return view('livewire.table');
     }
@@ -361,7 +361,7 @@ class RenderTableWithGridResponsive extends LivewireComponent implements HasActi
         ]);
     }
 
-    public function render(): \Illuminate\Contracts\View\View
+    public function render(): Illuminate\Contracts\View\View
     {
         return view('livewire.table');
     }
@@ -380,7 +380,7 @@ class RenderTableWithSplit extends LivewireComponent implements HasActions, HasS
         ]);
     }
 
-    public function render(): \Illuminate\Contracts\View\View
+    public function render(): Illuminate\Contracts\View\View
     {
         return view('livewire.table');
     }
@@ -399,7 +399,7 @@ class RenderTableWithSplitFrom extends LivewireComponent implements HasActions, 
         ]);
     }
 
-    public function render(): \Illuminate\Contracts\View\View
+    public function render(): Illuminate\Contracts\View\View
     {
         return view('livewire.table');
     }
@@ -418,7 +418,7 @@ class RenderTableWithPanel extends LivewireComponent implements HasActions, HasS
         ]);
     }
 
-    public function render(): \Illuminate\Contracts\View\View
+    public function render(): Illuminate\Contracts\View\View
     {
         return view('livewire.table');
     }
