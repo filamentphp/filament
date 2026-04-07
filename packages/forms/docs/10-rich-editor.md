@@ -621,6 +621,8 @@ RichEditor::make('content')
     ])
 ```
 
+<AutoScreenshot name="forms/fields/rich-editor/grouped-custom-blocks" alt="Rich editor with grouped custom blocks panel open" version="4.x" />
+
 Groups are displayed in the order they are defined in the array, with sticky headings in the side panel.
 
 When rendering content with grouped blocks, you can pass the same grouped array structure to the `RichContentRenderer`. Groups are ignored during rendering — only the block classes are used:
