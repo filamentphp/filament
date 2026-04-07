@@ -9,42 +9,18 @@ if (
     Chart.register(...window.filamentChartJsGlobalPlugins)
 }
 
-export default function chart({ cachedData, maxHeight, options, type }) {
+Chart.defaults.plugins.legend.labels.boxWidth = 12
+Chart.defaults.plugins.legend.position = 'bottom'
+
+export default function chart({ cachedData, options, type }) {
     return {
-        userPointBackgroundColor: options?.pointBackgroundColor,
-        userXGridColor: options?.scales?.x?.grid?.color,
-        userYGridColor: options?.scales?.y?.grid?.color,
-        userRadialGridColor: options?.scales?.r?.grid?.color,
-        userRadialTicksColor: options?.scales?.r?.ticks?.color,
-
         init() {
-            this.initChart()
-
-            this.$wire.$on('updateChartData', ({ data }) => {
-                const chart = this.getChart()
-
-                if (!chart) {
-                    return
-                }
-
-                cachedData = data
-                chart.data = data
-                chart.update('resize')
-            })
+            this.$wire.$on('updateChartData', ({ data }) => this.updateChartData(data))
 
             Alpine.effect(() => {
                 Alpine.store('theme')
 
-                this.$nextTick(() => {
-                    const chart = this.getChart()
-
-                    if (!chart) {
-                        return
-                    }
-
-                    chart.destroy()
-                    this.initChart()
-                })
+                this.$nextTick(() => this.updateChartTheme())
             })
 
             window
@@ -54,34 +30,18 @@ export default function chart({ cachedData, maxHeight, options, type }) {
                         return
                     }
 
-                    this.$nextTick(() => {
-                        const chart = this.getChart()
-
-                        if (!chart) {
-                            return
-                        }
-
-                        chart.destroy()
-                        this.initChart()
-                    })
+                    this.$nextTick(() => this.updateChartTheme())
                 })
 
+            this.$nextTick(() => this._initChart())
+
             this.resizeObserver = new ResizeObserver(
-                Alpine.debounce(() => {
-                    const chart = this.getChart()
-
-                    if (!chart) {
-                        return
-                    }
-
-                    chart.destroy()
-                    this.initChart()
-                }, 250),
+                Alpine.debounce(() => this.whenChart((chart) => chart.resize()), 250)
             )
-            this.resizeObserver.observe(this.$el)
+            this.$nextTick(() => this.resizeObserver.observe(this.$el))
         },
 
-        initChart(data = null) {
+        _initChart() {
             if (
                 !this.$refs.canvas ||
                 !this.$refs.backgroundColorElement ||
@@ -92,78 +52,184 @@ export default function chart({ cachedData, maxHeight, options, type }) {
                 return
             }
 
-            Chart.defaults.animation.duration = 0
+            const { backgroundColor, borderColor, textColor, gridColor } = this.getChartFallbackColors()
+            const fontFamily = getComputedStyle(this.$el).fontFamily
+            const hasMaxHeight = this.$refs.canvas.style.maxHeight !== '100%'
 
-            Chart.defaults.backgroundColor = getComputedStyle(
-                this.$refs.backgroundColorElement,
-            ).color
-
-            const borderColor = getComputedStyle(
-                this.$refs.borderColorElement,
-            ).color
-
-            Chart.defaults.borderColor = borderColor
-
-            Chart.defaults.color = getComputedStyle(
-                this.$refs.textColorElement,
-            ).color
-
-            Chart.defaults.font.family = getComputedStyle(this.$el).fontFamily
-
-            Chart.defaults.plugins.legend.labels.boxWidth = 12
-            Chart.defaults.plugins.legend.position = 'bottom'
-
-            const gridColor = getComputedStyle(
-                this.$refs.gridColorElement,
-            ).color
-
-            options ??= {}
-            options.borderWidth ??= 2
-            options.maintainAspectRatio ??= !!maxHeight
-            options.pointBackgroundColor =
-                this.userPointBackgroundColor ?? borderColor
-            options.pointHitRadius ??= 4
-            options.pointRadius ??= 2
-            options.scales ??= {}
-            options.scales.x ??= {}
-            options.scales.x.border ??= {}
-            options.scales.x.border.display ??= false
-            options.scales.x.grid ??= {}
-            options.scales.x.grid.color = this.userXGridColor ?? gridColor
-            options.scales.x.grid.display ??= false
-            options.scales.y ??= {}
-            options.scales.y.border ??= {}
-            options.scales.y.border.display ??= false
-            options.scales.y.grid ??= {}
-            options.scales.y.grid.color = this.userYGridColor ?? gridColor
+            const chartOptions = { ...(options ?? {}) }
+            chartOptions.backgroundColor ??= backgroundColor
+            chartOptions.borderColor ??= borderColor
+            chartOptions.color ??= textColor
+            chartOptions.font ??= {}
+            chartOptions.font.family ??= fontFamily
+            chartOptions.borderWidth ??= 2
+            chartOptions.responsive ??= false
+            chartOptions.maintainAspectRatio ??= hasMaxHeight
+            chartOptions.pointBackgroundColor ??= borderColor
+            chartOptions.pointHitRadius ??= 4
+            chartOptions.pointRadius ??= 2
+            chartOptions.scales ??= {}
+            chartOptions.scales.x ??= {}
+            chartOptions.scales.x.border ??= {}
+            chartOptions.scales.x.border.display ??= false
+            chartOptions.scales.x.grid ??= {}
+            chartOptions.scales.x.grid.color ??= gridColor
+            chartOptions.scales.x.grid.display ??= false
+            chartOptions.scales.y ??= {}
+            chartOptions.scales.y.border ??= {}
+            chartOptions.scales.y.border.display ??= false
+            chartOptions.scales.y.grid ??= {}
+            chartOptions.scales.y.grid.color ??= gridColor
 
             if (['doughnut', 'pie', 'polarArea'].includes(type)) {
-                options.scales.x.display ??= false
-                options.scales.y.display ??= false
-                options.scales.y.grid.display ??= false
+                chartOptions.scales.x.display ??= false
+                chartOptions.scales.y.display ??= false
+                chartOptions.scales.y.grid.display ??= false
             }
 
             if (type === 'polarArea') {
-                const textColor = getComputedStyle(
-                    this.$refs.textColorElement,
-                ).color
-
-                options.scales.r ??= {}
-                options.scales.r.grid ??= {}
-                options.scales.r.grid.color =
-                    this.userRadialGridColor ?? gridColor
-                options.scales.r.ticks ??= {}
-                options.scales.r.ticks.color =
-                    this.userRadialTicksColor ?? textColor
-                options.scales.r.ticks.backdropColor ??= 'transparent'
+                chartOptions.scales.r ??= {}
+                chartOptions.scales.r.grid ??= {}
+                chartOptions.scales.r.grid.color ??= gridColor
+                chartOptions.scales.r.ticks ??= {}
+                chartOptions.scales.r.ticks.color ??= textColor
+                chartOptions.scales.r.ticks.backdropColor ??= 'transparent'
             }
 
-            return new Chart(this.$refs.canvas, {
+            new Chart(this.$refs.canvas, {
                 type,
-                data: data ?? cachedData,
-                options,
+                data: cachedData,
+                options: chartOptions,
                 plugins: window.filamentChartJsPlugins ?? [],
             })
+        },
+
+        updateChartData(newData) {
+            this.whenChart((chart) => {
+                if (
+                    typeof newData !== 'object' ||
+                    Object.keys(newData).length === 0
+                ) {
+                    chart.data = {}
+                    chart.update()
+
+                    cachedData = {}
+
+                    return
+                }
+
+                const newDatasets = Array.isArray(newData.datasets) ? newData.datasets : []
+                const cachedDatasets = Array.isArray(cachedData?.datasets) ? cachedData.datasets : []
+
+                const rootKeys = new Set([
+                    ...Object.keys(cachedData || {}),
+                    ...Object.keys(newData),
+                ])
+
+                rootKeys.forEach((key) => {
+                    if (key === 'datasets') {
+                        return
+                    }
+
+                    if (!(key in newData)) {
+                        delete chart.data[key]
+                    } else {
+                        chart.data[key] = newData[key]
+                    }
+                })
+
+                if (newDatasets.length === 0) {
+                    chart.data.datasets.length = 0
+                    chart.update()
+
+                    cachedData = { ...newData }
+
+                    return
+                }
+
+                for (let i = cachedDatasets.length - 1; i >= 0; i--) {
+                    if (!newDatasets[i] && chart.data.datasets[i]) {
+                        chart.data.datasets.splice(i, 1)
+                    }
+                }
+
+                newDatasets.forEach((newDs, index) => {
+                    if (!cachedDatasets[index]) {
+                        chart.data.datasets[index] = { ...newDs }
+                    }
+                })
+
+                newDatasets.forEach((newDs, index) => {
+                    const cachedDs = cachedDatasets[index]
+                    const currentDs = chart.data.datasets[index]
+
+                    if (!cachedDs || !currentDs) return
+
+                    const dsKeys = new Set([
+                        ...Object.keys(cachedDs),
+                        ...Object.keys(newDs),
+                    ])
+
+                    dsKeys.forEach((key) => {
+                        if (!(key in newDs)) {
+                            delete currentDs[key]
+
+                            return
+                        }
+
+                        if (key === 'data') {
+                            const newArr = Array.isArray(newDs.data) ? newDs.data : []
+
+                            if (!Array.isArray(currentDs.data)) {
+                                currentDs.data = []
+                            }
+
+                            currentDs.data.length = newArr.length
+
+                            for (let i = 0; i < newArr.length; i++) {
+                                currentDs.data[i] = newArr[i]
+                            }
+
+                            return
+                        }
+
+                        currentDs[key] = newDs[key]
+                    })
+                })
+
+                chart.update()
+                cachedData = { ...newData }
+            })
+        },
+
+        updateChartTheme() {
+            this.whenChart((chart) => {
+                const { backgroundColor, borderColor, textColor, gridColor } = this.getChartFallbackColors()
+
+                chart.options.backgroundColor = options?.backgroundColor ?? backgroundColor
+                chart.options.borderColor = options?.borderColor ?? borderColor
+                chart.options.color = options?.color ?? textColor
+                chart.options.pointBackgroundColor = options?.pointBackgroundColor ?? borderColor
+                chart.options.scales.x.grid.color = options?.scales?.x?.grid?.color ?? gridColor
+                chart.options.scales.y.grid.color = options?.scales?.y?.grid?.color ?? gridColor
+
+                if (type === 'polarArea') {
+                    chart.options.scales.r.grid.color = options?.scales?.r?.grid?.color ?? gridColor
+                    chart.options.scales.r.ticks.color = options?.scales?.r?.ticks?.color ?? textColor
+                }
+
+                chart.update('none')
+            })
+        },
+
+        whenChart(callback) {
+            const chart = this.getChart()
+
+            if (!chart) {
+                return
+            }
+
+            callback(chart)
         },
 
         getChart() {
@@ -172,6 +238,15 @@ export default function chart({ cachedData, maxHeight, options, type }) {
             }
 
             return Chart.getChart(this.$refs.canvas)
+        },
+
+        getChartFallbackColors() {
+            return {
+                backgroundColor: getComputedStyle(this.$refs.backgroundColorElement).color,
+                borderColor: getComputedStyle(this.$refs.borderColorElement).color,
+                textColor: getComputedStyle(this.$refs.textColorElement).color,
+                gridColor: getComputedStyle(this.$refs.gridColorElement).color,
+            }
         },
 
         destroy() {
