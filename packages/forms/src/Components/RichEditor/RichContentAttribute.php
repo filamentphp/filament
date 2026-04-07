@@ -39,7 +39,7 @@ class RichContentAttribute implements Htmlable
     protected ?array $mentionProviders = null;
 
     /**
-     * @var ?array<class-string<RichContentCustomBlock> | array<string, mixed> | Closure>
+     * @var ?array<class-string<RichContentCustomBlock> | array<int | string, mixed> | Closure>
      */
     protected ?array $customBlocks = null;
 
