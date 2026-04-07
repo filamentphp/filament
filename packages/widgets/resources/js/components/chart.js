@@ -33,12 +33,12 @@ export default function chart({ cachedData, options, type }) {
                     this.$nextTick(() => this.updateChartTheme())
                 })
 
-            this.$nextTick(() => this._initChart())
+            this.$nextTick(() => {
+                this._initChart()
 
-            this.resizeObserver = new ResizeObserver(
-                Alpine.debounce(() => this.whenChart((chart) => chart.resize()), 250)
-            )
-            this.$nextTick(() => this.resizeObserver.observe(this.$el))
+                this.resizeObserver = new ResizeObserver(() => this.whenChart((chart) => chart.resize()))
+                this.resizeObserver.observe(this.$el)
+            })
         },
 
         _initChart() {
@@ -163,7 +163,9 @@ export default function chart({ cachedData, options, type }) {
                     const cachedDs = cachedDatasets[index]
                     const currentDs = chart.data.datasets[index]
 
-                    if (!cachedDs || !currentDs) return
+                    if (!cachedDs || !currentDs) {
+                        return
+                    }
 
                     const dsKeys = new Set([
                         ...Object.keys(cachedDs),
