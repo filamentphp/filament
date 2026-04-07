@@ -38,6 +38,28 @@ export default function statsOverviewStatChart({
                         this.initChart()
                     })
                 })
+
+            this.intersectionObserver = new IntersectionObserver(
+                (entries) => {
+                    const entry = entries[0]
+
+                    if (!entry?.isIntersecting) {
+                        return
+                    }
+
+                    const chart = this.getChart()
+
+                    if (chart) {
+                        chart.resize()
+
+                        return
+                    }
+
+                    this.initChart()
+                },
+                { threshold: 0 },
+            )
+            this.intersectionObserver.observe(this.$el)
         },
 
         initChart() {

@@ -24,6 +24,8 @@ export default function chart({ cachedData, maxHeight, options, type }) {
                 const chart = this.getChart()
 
                 if (!chart) {
+                    cachedData = data
+
                     return
                 }
 
@@ -79,6 +81,28 @@ export default function chart({ cachedData, maxHeight, options, type }) {
                 }, 250),
             )
             this.resizeObserver.observe(this.$el)
+
+            this.intersectionObserver = new IntersectionObserver(
+                (entries) => {
+                    const entry = entries[0]
+
+                    if (!entry?.isIntersecting) {
+                        return
+                    }
+
+                    const chart = this.getChart()
+
+                    if (chart) {
+                        chart.resize()
+
+                        return
+                    }
+
+                    this.initChart()
+                },
+                { threshold: 0 },
+            )
+            this.intersectionObserver.observe(this.$el)
         },
 
         initChart(data = null) {
@@ -175,6 +199,10 @@ export default function chart({ cachedData, maxHeight, options, type }) {
         },
 
         destroy() {
+            if (this.intersectionObserver) {
+                this.intersectionObserver.disconnect()
+            }
+
             if (this.resizeObserver) {
                 this.resizeObserver.disconnect()
             }
