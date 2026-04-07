@@ -31,10 +31,17 @@ class Notifications extends Component
         $this->pullNotificationsFromSession();
     }
 
+    /**
+     * @param  array<int, array<string, mixed>>  $notifications
+     */
     #[On('notificationsSent')]
-    public function pullNotificationsFromSession(): void
+    public function pullNotificationsFromSession(array $notifications = []): void
     {
-        foreach (session()->pull('filament.notifications') ?? [] as $notification) {
+        if (empty($notifications)) {
+            $notifications = session()->pull('filament.notifications') ?? [];
+        }
+
+        foreach ($notifications as $notification) {
             $notification = Notification::fromArray($notification);
 
             $this->pushNotification($notification);
