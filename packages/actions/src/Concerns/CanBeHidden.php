@@ -35,6 +35,14 @@ trait CanBeHidden
     {
         $this->isHiddenCache = null;
         $this->isHiddenInGroupCache = null;
+
+        if ($this instanceof ActionGroup) {
+            foreach ($this->getActions() as $action) {
+                if (method_exists($action, 'flushHiddenCache')) {
+                    $action->flushHiddenCache();
+                }
+            }
+        }
     }
 
     public function isHidden(): bool
