@@ -11,9 +11,14 @@ trait CanBeHidden
 
     protected bool | Closure $isVisible = true;
 
+    protected ?bool $isHiddenCache = null;
+
+    protected ?bool $isHiddenInGroupCache = null;
+
     public function hidden(bool | Closure $condition = true): static
     {
         $this->isHidden = $condition;
+        $this->flushHiddenCache();
 
         return $this;
     }
@@ -21,40 +26,55 @@ trait CanBeHidden
     public function visible(bool | Closure $condition = true): static
     {
         $this->isVisible = $condition;
+        $this->flushHiddenCache();
 
         return $this;
     }
 
+    public function flushHiddenCache(): void
+    {
+        $this->isHiddenCache = null;
+        $this->isHiddenInGroupCache = null;
+    }
+
     public function isHidden(): bool
     {
-        if ($this->getGroup()?->baseIsHidden()) {
-            return true;
+        if ($this->isHiddenCache !== null) {
+            return $this->isHiddenCache;
         }
 
-        return $this->isHiddenInGroup();
+        if ($this->getGroup()?->baseIsHidden()) {
+            return $this->isHiddenCache = true;
+        }
+
+        return $this->isHiddenCache = $this->isHiddenInGroup();
     }
 
     public function isHiddenInGroup(): bool
     {
+        if ($this->isHiddenInGroupCache !== null) {
+            return $this->isHiddenInGroupCache;
+        }
+
         if ($this->evaluate($this->isHidden)) {
-            return true;
+            return $this->isHiddenInGroupCache = true;
         }
 
         if (! $this->evaluate($this->isVisible)) {
-            return true;
+            return $this->isHiddenInGroupCache = true;
         }
 
         if ($this instanceof ActionGroup) {
             foreach ($this->getActions() as $action) {
                 if (! $action->isHiddenInGroup()) {
-                    return false;
+                    return $this->isHiddenInGroupCache = false;
                 }
             }
 
-            return true;
+            return $this->isHiddenInGroupCache = true;
         }
 
-        return ! $this->isAuthorizedOrNotHiddenWhenUnauthorized();
+        return $this->isHiddenInGroupCache = (! $this->isAuthorizedOrNotHiddenWhenUnauthorized());
     }
 
     public function isVisible(): bool
