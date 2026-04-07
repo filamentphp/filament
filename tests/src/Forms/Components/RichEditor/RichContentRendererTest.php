@@ -928,6 +928,196 @@ describe('`getCustomBlockHtml()` logic', function (): void {
         expect($renderer->getCustomBlockHtml('banner', ['text' => 'Hi']))->toBe('<div class="banner">Hi</div>');
         expect($renderer->getCustomBlockHtml('alert', ['type' => 'error']))->toBe('<div class="alert-error"></div>');
     });
+
+    it('flattens grouped blocks and finds them by ID', function (): void {
+        $renderer = RichContentRenderer::make('')
+            ->customBlocks([
+                'Alerts' => [RendererTestAlertBlock::class],
+                RendererTestBannerBlock::class,
+            ]);
+
+        expect($renderer->getCustomBlockHtml('alert', ['type' => 'info']))->toBe('<div class="alert-info"></div>');
+        expect($renderer->getCustomBlockHtml('banner', ['text' => 'Hi']))->toBe('<div class="banner">Hi</div>');
+    });
+
+    it('preserves data associations alongside groups', function (): void {
+        $renderer = RichContentRenderer::make('')
+            ->customBlocks([
+                RendererTestAlertBlock::class => ['message' => 'With data'],
+                'Banners' => [
+                    RendererTestBannerBlock::class,
+                ],
+            ]);
+
+        expect($renderer->getCustomBlockHtml('alert', ['type' => 'warning']))->toBe('<div class="alert-warning">With data</div>');
+        expect($renderer->getCustomBlockHtml('banner', ['text' => 'Hi']))->toBe('<div class="banner">Hi</div>');
+    });
+
+    it('preserves data associations within groups', function (): void {
+        $renderer = RichContentRenderer::make('')
+            ->customBlocks([
+                'Alerts' => [
+                    RendererTestAlertBlock::class => ['message' => 'From group'],
+                ],
+            ]);
+
+        expect($renderer->getCustomBlockHtml('alert', ['type' => 'warning']))->toBe('<div class="alert-warning">From group</div>');
+    });
+});
+
+describe('`processCustomBlocks()` end-to-end rendering', function (): void {
+    it('renders custom block HTML in output', function (): void {
+        $renderer = RichContentRenderer::make([
+            'type' => 'doc',
+            'content' => [
+                [
+                    'type' => 'customBlock',
+                    'attrs' => [
+                        'id' => 'alert',
+                        'config' => ['type' => 'warning'],
+                        'label' => 'Alert',
+                        'preview' => '',
+                    ],
+                ],
+            ],
+        ]);
+
+        $renderer->customBlocks([RendererTestAlertBlock::class]);
+
+        $html = $renderer->toUnsafeHtml();
+
+        expect($html)->toContain('<div class="alert-warning"></div>');
+    });
+
+    it('renders custom block with keyed data in output', function (): void {
+        $renderer = RichContentRenderer::make([
+            'type' => 'doc',
+            'content' => [
+                [
+                    'type' => 'customBlock',
+                    'attrs' => [
+                        'id' => 'alert',
+                        'config' => ['type' => 'info'],
+                        'label' => 'Alert',
+                        'preview' => '',
+                    ],
+                ],
+            ],
+        ]);
+
+        $renderer->customBlocks([RendererTestAlertBlock::class => ['message' => 'Hello World']]);
+
+        $html = $renderer->toUnsafeHtml();
+
+        expect($html)->toContain('<div class="alert-info">Hello World</div>');
+    });
+
+    it('does not crash when content contains an unknown custom block ID', function (): void {
+        $renderer = RichContentRenderer::make([
+            'type' => 'doc',
+            'content' => [
+                [
+                    'type' => 'customBlock',
+                    'attrs' => [
+                        'id' => 'nonexistent',
+                        'config' => [],
+                        'label' => 'Missing',
+                        'preview' => '',
+                    ],
+                ],
+            ],
+        ]);
+
+        $renderer->customBlocks([RendererTestAlertBlock::class]);
+
+        $html = $renderer->toUnsafeHtml();
+
+        expect($html)->toBeString();
+    });
+
+    it('renders multiple custom blocks in content', function (): void {
+        $renderer = RichContentRenderer::make([
+            'type' => 'doc',
+            'content' => [
+                [
+                    'type' => 'customBlock',
+                    'attrs' => [
+                        'id' => 'alert',
+                        'config' => ['type' => 'error'],
+                        'label' => 'Alert',
+                        'preview' => '',
+                    ],
+                ],
+                [
+                    'type' => 'paragraph',
+                    'content' => [
+                        ['type' => 'text', 'text' => 'Between blocks'],
+                    ],
+                ],
+                [
+                    'type' => 'customBlock',
+                    'attrs' => [
+                        'id' => 'banner',
+                        'config' => ['text' => 'Welcome'],
+                        'label' => 'Banner',
+                        'preview' => '',
+                    ],
+                ],
+            ],
+        ]);
+
+        $renderer->customBlocks([RendererTestAlertBlock::class, RendererTestBannerBlock::class]);
+
+        $html = $renderer->toUnsafeHtml();
+
+        expect($html)
+            ->toContain('<div class="alert-error"></div>')
+            ->toContain('Between blocks')
+            ->toContain('<div class="banner">Welcome</div>');
+    });
+
+    it('skips custom blocks when no blocks are registered', function (): void {
+        $renderer = RichContentRenderer::make([
+            'type' => 'doc',
+            'content' => [
+                [
+                    'type' => 'customBlock',
+                    'attrs' => [
+                        'id' => 'alert',
+                        'config' => ['type' => 'info'],
+                        'label' => 'Alert',
+                        'preview' => '',
+                    ],
+                ],
+            ],
+        ]);
+
+        $html = $renderer->toUnsafeHtml();
+
+        expect($html)->toBeString();
+    });
+
+    it('skips custom block nodes without an ID', function (): void {
+        $renderer = RichContentRenderer::make([
+            'type' => 'doc',
+            'content' => [
+                [
+                    'type' => 'customBlock',
+                    'attrs' => [
+                        'config' => [],
+                        'label' => 'No ID',
+                        'preview' => '',
+                    ],
+                ],
+            ],
+        ]);
+
+        $renderer->customBlocks([RendererTestAlertBlock::class]);
+
+        $html = $renderer->toUnsafeHtml();
+
+        expect($html)->toBeString();
+    });
 });
 
 describe('`getMentionProvider()` logic', function (): void {

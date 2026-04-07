@@ -542,10 +542,34 @@ class RichContentRenderer implements Htmlable
     }
 
     /**
-     * @param  ?array<class-string<RichContentCustomBlock> | array<string, mixed> | Closure>  $blocks
+     * @param  ?array<class-string<RichContentCustomBlock> | array<class-string<RichContentCustomBlock> | array<string, mixed> | Closure> | array<string, mixed> | Closure>  $blocks
      */
     public function customBlocks(?array $blocks): static
     {
+        if ($blocks !== null) {
+            $flattened = [];
+
+            foreach ($blocks as $key => $value) {
+                if (is_string($key) && is_a($key, RichContentCustomBlock::class, allow_string: true)) {
+                    // Data association: `BlockClass::class => $data`
+                    $flattened[$key] = $value;
+                } elseif (is_array($value)) {
+                    // Group or ungrouped section: `'Label' => [...]` or `[...]`
+                    foreach ($value as $innerKey => $innerValue) {
+                        if (is_string($innerKey)) {
+                            $flattened[$innerKey] = $innerValue;
+                        } else {
+                            $flattened[] = $innerValue;
+                        }
+                    }
+                } else {
+                    $flattened[] = $value;
+                }
+            }
+
+            $blocks = $flattened;
+        }
+
         $this->customBlocks = $blocks;
 
         return $this;
