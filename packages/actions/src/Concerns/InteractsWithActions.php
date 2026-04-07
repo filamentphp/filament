@@ -110,6 +110,11 @@ trait InteractsWithActions
      */
     public function mountAction(string $name, array $arguments = [], array $context = []): mixed
     {
+        $this->mountedActions = array_values(array_filter(
+            $this->mountedActions ?? [],
+            fn (array $action): bool => array_key_exists('name', $action),
+        ));
+
         $this->mountedActions[] = [
             'name' => $name,
             'arguments' => $arguments,
