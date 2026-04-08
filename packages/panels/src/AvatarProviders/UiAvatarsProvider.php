@@ -20,6 +20,6 @@ class UiAvatarsProvider implements Contracts\AvatarProvider
 
         $background = Color::convertToHex(FilamentColor::getColor('gray')[950] ?? Color::Gray[950]);
 
-        return 'https://ui-avatars.com/api/?name=' . urlencode($name) . '&color=FFFFFF&background=' . urlencode($background);
+        return 'https://ui-avatars.com/api/?name=' . urlencode($name) . '&format=png&color=FFFFFF&background=' . urlencode($background);
     }
 }
