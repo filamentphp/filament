@@ -478,6 +478,19 @@ class Color
         return "rgb({$red}, {$green}, {$blue})";
     }
 
+    public static function convertToHex(string $color): string
+    {
+        if (str_starts_with($color, '#')) {
+            return strtoupper($color);
+        }
+
+        $color = static::convertToRgb($color);
+
+        [$red, $green, $blue] = sscanf($color, 'rgb(%d, %d, %d)');
+
+        return sprintf('#%02X%02X%02X', $red, $green, $blue);
+    }
+
     public static function calculateContrastRatio(string $color1, string $color2): float
     {
         $color1 = str_replace(' ', '', static::convertToRgb($color1));
