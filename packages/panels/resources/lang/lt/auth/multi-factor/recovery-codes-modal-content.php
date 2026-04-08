@@ -4,19 +4,19 @@ return [
 
     'actions' => [
 
-        'Click to' => 'Spustelėkite, kad',
+        '0' => 'Spustelėkite, kad',
 
         'copy' => [
             'label' => 'kopijuoti',
         ],
 
-        'or' => 'arba',
+        '1' => 'arba',
 
         'download' => [
             'label' => 'atsisiųsti',
         ],
 
-        'all the codes at once.' => 'visus kodus iš karto.',
+        '2' => 'visus kodus iš karto.',
 
     ],
 

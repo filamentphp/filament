@@ -111,9 +111,7 @@ class Component extends ViewComponent
         }
 
         return match ($parameterType) {
-            Get::class => [$this->makeGetUtility()],
             Model::class, $record::class => [$record],
-            Set::class => [$this->makeSetUtility()],
             default => parent::resolveDefaultClosureDependencyForEvaluationByType($parameterType),
         };
     }

@@ -141,8 +141,10 @@ trait InteractsWithRelationshipTable
                 }
 
                 return null;
-            })
-            ->recordUrl(function (Model $record, Table $table): ?string {
+            });
+
+        if (! $table->hasCustomRecordUrl()) {
+            $table->recordUrl(function (Model $record, Table $table): ?string {
                 foreach (['view', 'edit'] as $action) {
                     $action = $table->getAction($action);
 
@@ -174,8 +176,10 @@ trait InteractsWithRelationshipTable
                 }
 
                 return null;
-            })
-            ->authorizeReorder(fn (): bool => $this->canReorder());
+            });
+        }
+
+        $table->authorizeReorder(fn (): bool => $this->canReorder());
 
         if ($relatedResource = static::getRelatedResource()) {
             $table->modelLabel($relatedResource::getModelLabel());

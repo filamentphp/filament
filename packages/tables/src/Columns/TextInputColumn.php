@@ -268,7 +268,7 @@ class TextInputColumn extends Column implements Editable, HasEmbeddedView
             wire:ignore.self
             <?= $attributes->toHtml() ?>
         >
-            <input type="hidden" value="<?= str($state)->replace('"', '\\"') ?>" x-ref="serverState" />
+            <input type="hidden" value="<?= e($state) ?>" x-ref="serverState" />
 
             <div
                 x-bind:class="{

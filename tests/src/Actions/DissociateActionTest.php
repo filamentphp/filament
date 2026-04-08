@@ -80,3 +80,7 @@ it('can dissociate multiple records sequentially', function (): void {
     expect($post1->refresh()->author_id)->toBeNull();
     expect($post2->refresh()->author_id)->toBeNull();
 });
+
+it('returns `dissociate` from `getDefaultName()`', function (): void {
+    expect(DissociateAction::getDefaultName())->toBe('dissociate');
+});

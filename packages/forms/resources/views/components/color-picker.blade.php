@@ -57,6 +57,7 @@
                         state: $wire.$entangle('{{ $statePath }}'),
                     })"
             x-on:keydown.esc="isOpen() && $event.stopPropagation()"
+            x-on:focusout="if (isOpen() && ! $el.contains($event.relatedTarget)) $refs.panel.close()"
             {{ $getExtraAlpineAttributeBag()->class(['fi-input-wrp-content']) }}
         >
             <input

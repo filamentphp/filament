@@ -1,6 +1,7 @@
 ---
 title: Stats overview widgets
 ---
+import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Introduction
 
@@ -37,6 +38,8 @@ class StatsOverview extends BaseWidget
 
 Now, check out your widget in the dashboard.
 
+<AutoScreenshot name="widgets/stats-overview/simple" alt="Stats overview" version="4.x" />
+
 ## Adding a description and icon to a stat
 
 You may add a `description()` to provide additional information, along with a `descriptionIcon()`:
@@ -71,6 +74,8 @@ Stat::make('Unique views', '192.1k')
     ->descriptionIcon('heroicon-m-arrow-trending-up', IconPosition::Before)
 ```
 
+<AutoScreenshot name="widgets/stats-overview/description" alt="Stats overview with descriptions" version="4.x" />
+
 ## Changing the color of the stat
 
 You may also give stats a [color](../styling/colors):
@@ -96,6 +101,8 @@ protected function getStats(): array
     ];
 }
 ```
+
+<AutoScreenshot name="widgets/stats-overview/color" alt="Stats overview with colors" version="4.x" />
 
 ## Adding extra HTML attributes to a stat
 
@@ -139,6 +146,8 @@ protected function getStats(): array
     ];
 }
 ```
+
+<AutoScreenshot name="widgets/stats-overview/chart" alt="Stats overview with charts" version="4.x" />
 
 ## Live updating stats (polling)
 
@@ -189,3 +198,5 @@ protected function getDescription(): ?string
     return 'An overview of some analytics.';
 }
 ```
+
+<AutoScreenshot name="widgets/stats-overview/heading" alt="Stats overview with heading and description" version="4.x" />

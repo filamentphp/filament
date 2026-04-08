@@ -1,6 +1,7 @@
 ---
 title: Managing relationships
 ---
+import AutoScreenshot from "@components/AutoScreenshot.astro"
 import Aside from "@components/Aside.astro"
 
 ## Choosing the right tool for the job
@@ -113,6 +114,8 @@ public static function getRelations(): array
 ```
 
 Once a table and form have been defined for the relation manager, visit the [Edit](editing-records) or [View](viewing-records) page of your resource to see it in action.
+
+<AutoScreenshot name="panels/resources/relation-manager" alt="Relation manager" version="4.x" />
 
 ### Customizing the relation manager's URL parameter
 
@@ -300,6 +303,8 @@ public function table(Table $table): Table
         ]);
 }
 ```
+
+<AutoScreenshot name="panels/resources/relation-manager-attach" alt="Relation manager attach modal" version="4.x" />
 
 ### Preloading the attachment modal select options
 
@@ -741,15 +746,18 @@ use Filament\Resources\RelationManagers\RelationGroup;
 public static function getRelations(): array
 {
     return [
-        // ...
-        RelationGroup::make('Contacts', [
-            RelationManagers\IndividualsRelationManager::class,
-            RelationManagers\OrganizationsRelationManager::class,
+        RelationGroup::make('Interactions', [
+            RelationManagers\CommentsRelationManager::class,
+            RelationManagers\TagsRelationManager::class,
         ]),
-        // ...
+        RelationGroup::make('Links', [
+            RelationManagers\LinksRelationManager::class,
+        ]),
     ];
 }
 ```
+
+<AutoScreenshot name="panels/resources/relation-manager-grouped" alt="Relation managers with grouped tabs" version="4.x" />
 
 ## Conditionally showing relation managers
 
@@ -776,6 +784,8 @@ public function hasCombinedRelationManagerTabsWithContent(): bool
     return true;
 }
 ```
+
+<AutoScreenshot name="panels/resources/editing-combined-tabs" alt="Resource edit page with combined relation manager tabs" version="4.x" />
 
 ### Customizing the content tab
 

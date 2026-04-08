@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="https://github.com/filamentphp/filament/assets/41773797/8d5a0b12-4643-4b5c-964a-56f0db91b90a" alt="Banner" style="width: 100%; max-width: 800px;" />
+    <img src="https://github.com/filamentphp/filament/blob/4.x/art/banner.webp?raw=true" alt="Banner" style="width: 100%; max-width: 800px;" />
 </p>
 
 <p align="center">
@@ -13,13 +13,18 @@
     <a href="https://trendshift.io/repositories/238" target="_blank"><img src="https://trendshift.io/api/badge/repositories/238" alt="filamentphp%2Ffilament | Trendshift" style="width: 250px; height: 55px;" /></a>
 </p>
 
-**Filament is a powerful open source UI framework for Laravel, built with Livewire to help you ship admin panels & apps fast.**
+**Build apps & admin panels fast, for your bright ideas.**
 
-It includes a collection of beautifully designed, fully extensible components that handle the hard parts, so you can focus on what matters.
+With a solid Laravel foundation and a polished UI, you can focus on what makes your product unique. Filament gives you UI components that you won't outgrow — a cohesive set of well-considered building blocks that adapt as your application grows in complexity.
 
-Why rebuild dashboards, forms, and tables from scratch every time?
+- **Tables** — Browse and filter large datasets with powerful columns, actions, and bulk operations.
+- **Forms** — Build complex, reactive forms using a set of reusable, state-aware components.
+- **Infolists** — Render read-only record views with structured layouts and custom formatting.
+- **Notifications** — Trigger in-app feedback for actions, errors, and system events with minimal setup.
+- **Dashboard widgets** — Surface key metrics and trends using live, data-driven widgets tailored to each user.
+- **Action modals** — Handle confirmations and data entry with focused modal workflows tied to actions.
 
-[Read the documentation](https://filamentphp.com/docs) • [Check out the demo](https://demo.filamentphp.com) • [Chat with us on Discord](https://filamentphp.com/discord)
+[Get Started](https://filamentphp.com/docs) • [Launch Demo](https://demo.filamentphp.com) • [Join Discord](https://filamentphp.com/discord)
 
 ---
 

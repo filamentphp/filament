@@ -568,6 +568,13 @@ return [
 
         'no_merge_tag_search_results_message' => '未找到合并标签结果。',
 
+        'mentions' => [
+            'no_options_message' => '暂无可选项。',
+            'no_search_results_message' => '无匹配结果。',
+            'search_prompt' => '输入内容以搜索...',
+            'searching_message' => '搜索中...',
+        ],
+
         'tools' => [
             'align_center' => '居中对齐',
             'align_end' => '靠右对齐',
@@ -610,6 +617,7 @@ return [
             'table_merge_cells' => '合并单元格',
             'table_split_cell' => '拆分单元格',
             'table_toggle_header_row' => '切换表头行',
+            'table_toggle_header_cell' => '切换表头单元格',
             'text_color' => '文字颜色',
             'underline' => '下划线',
             'undo' => '撤销',
@@ -678,7 +686,9 @@ return [
 
         'max_items_message' => '只能选择 :count 个。',
 
-        'no_search_results_message' => '没有选项匹配您的搜索',
+        'no_options_message' => '暂无可选项。',
+
+        'no_search_results_message' => '没有选项匹配您的搜索。',
 
         'placeholder' => '选择选项',
 
@@ -689,7 +699,17 @@ return [
     ],
 
     'tags_input' => [
+
+        'actions' => [
+
+            'delete' => [
+                'label' => '删除',
+            ],
+
+        ],
+
         'placeholder' => '新标签',
+
     ],
 
     'text_input' => [

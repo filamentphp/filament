@@ -7,9 +7,17 @@ use Filament\Schemas\Components\Concerns\CanPersistTab;
 use Filament\Schemas\Components\Concerns\HasLabel;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Contracts\HasRenderHookScopes;
+use Filament\Support\Components\Attributes\ExposedLivewireMethod;
 use Filament\Support\Concerns;
+use Filament\Support\Enums\IconPosition;
+use Filament\Support\Enums\IconSize;
+use Filament\Support\Facades\FilamentColor;
+use Filament\Support\View\Components\BadgeComponent;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Str;
+use Livewire\Attributes\Renderless;
+
+use function Filament\Support\generate_icon_html;
 
 class Tabs extends Component
 {
@@ -208,5 +216,70 @@ class Tabs extends Component
     public function isVertical(): bool
     {
         return (bool) $this->evaluate($this->isVertical);
+    }
+
+    /**
+     * @return array<string, array{badge: string | int | float | null, badgeColorClasses: string, badgeColorStyles: string, badgeIconHtml: string | null, badgeIconPosition: string | null, badgeTooltip: string | null}>
+     */
+    #[ExposedLivewireMethod]
+    #[Renderless]
+    public function getDeferredTabBadges(): array
+    {
+        $badges = [];
+
+        foreach ($this->getChildSchema()->getComponents(withOriginalKeys: true) as $tabKey => $tab) {
+            if (! $tab instanceof Tab) {
+                continue;
+            }
+
+            if (! $tab->isBadgeDeferred()) {
+                continue;
+            }
+
+            $badgeColor = $tab->getBadgeColor();
+
+            $badgeColorClasses = '';
+            $badgeColorStyles = '';
+
+            if (is_array($badgeColor)) {
+                $badgeColorClasses = 'fi-color';
+                $badgeColorStyles = implode('; ', FilamentColor::getComponentCustomStyles(BadgeComponent::class, $badgeColor));
+            } elseif (is_string($badgeColor)) {
+                $badgeColorClasses = implode(' ', FilamentColor::getComponentClasses(BadgeComponent::class, $badgeColor));
+            }
+
+            $badgeIcon = $tab->getBadgeIcon();
+            $badgeIconHtml = $badgeIcon
+                ? generate_icon_html($badgeIcon, size: IconSize::Small)?->toHtml()
+                : null;
+
+            $badgeIconPosition = $tab->getBadgeIconPosition();
+
+            $badges[strval($tabKey)] = [
+                'badge' => $tab->getBadge(),
+                'badgeColorClasses' => $badgeColorClasses,
+                'badgeColorStyles' => $badgeColorStyles,
+                'badgeIconHtml' => $badgeIconHtml,
+                'badgeIconPosition' => $badgeIconPosition instanceof IconPosition ? $badgeIconPosition->value : $badgeIconPosition,
+                'badgeTooltip' => $tab->getBadgeTooltip() ? strval($tab->getBadgeTooltip()) : null,
+            ];
+        }
+
+        return $badges;
+    }
+
+    public function hasDeferredBadges(): bool
+    {
+        foreach ($this->getChildSchema()->getComponents() as $tab) {
+            if (! $tab instanceof Tab) {
+                continue;
+            }
+
+            if ($tab->isBadgeDeferred()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

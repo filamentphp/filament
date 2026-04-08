@@ -562,7 +562,18 @@ return [
 
         ],
 
+        'file_attachments_accepted_file_types_message' => 'Yüklenen dosyalar şu türlerden olmalıdır: :values.',
+
+        'file_attachments_max_size_message' => 'Yüklenen dosyalar :max kilobayttan büyük olmamalıdır.',
+
         'no_merge_tag_search_results_message' => 'Uygun birleşme etiketi bulunamadı.',
+
+        'mentions' => [
+            'no_options_message' => 'Seçenek bulunamadı.',
+            'no_search_results_message' => 'Aramanızla eşleşen sonuç bulunamadı.',
+            'search_prompt' => 'Aramak için yazmaya başlayın...',
+            'searching_message' => 'Aranıyor...',
+        ],
 
         'tools' => [
             'align_center' => 'Ortaya hizala',
@@ -611,6 +622,8 @@ return [
             'underline' => 'Altı çizili',
             'undo' => 'Geri al',
         ],
+
+        'uploading_file_message' => 'Dosya yükleniyor...',
 
     ],
 
@@ -673,6 +686,8 @@ return [
 
         'max_items_message' => 'Sadece :count adet seçilebilir.',
 
+        'no_options_message' => 'Seçenek bulunamadı.',
+
         'no_search_results_message' => 'Arama kriterlerinize uyan seçenek yok.',
 
         'placeholder' => 'Bir seçenek seçin',
@@ -684,7 +699,17 @@ return [
     ],
 
     'tags_input' => [
+
+        'actions' => [
+
+            'delete' => [
+                'label' => 'Sil',
+            ],
+
+        ],
+
         'placeholder' => 'Yeni etiket',
+
     ],
 
     'text_input' => [

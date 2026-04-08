@@ -9,18 +9,22 @@ use Filament\Livewire\GlobalSearch;
 use Filament\Livewire\Notifications;
 use Filament\Livewire\SimpleUserMenu;
 use Filament\Pages\Page;
+use Filament\Pages\PageConfiguration;
 use Filament\Resources\Pages\Page as ResourcePage;
 use Filament\Resources\RelationManagers\RelationGroup;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\RelationManagers\RelationManagerConfiguration;
 use Filament\Resources\Resource;
+use Filament\Resources\ResourceConfiguration;
 use Filament\Widgets\Widget;
 use Filament\Widgets\WidgetConfiguration;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Arr;
 use Livewire\Component;
 use Livewire\Livewire;
 use Livewire\Mechanisms\ComponentRegistry;
+use LogicException;
 use ReflectionClass;
 
 trait HasComponents
@@ -34,6 +38,11 @@ trait HasComponents
      * @var array<class-string>
      */
     protected array $pages = [];
+
+    /**
+     * @var array<class-string, array<string, PageConfiguration>>
+     */
+    protected array $pageConfigurations = [];
 
     /**
      * @var array<string>
@@ -71,6 +80,11 @@ trait HasComponents
     protected array $resources = [];
 
     /**
+     * @var array<class-string, array<string, ResourceConfiguration>>
+     */
+    protected array $resourceConfigurations = [];
+
+    /**
      * @var array<string>
      */
     protected array $resourceDirectories = [];
@@ -104,43 +118,74 @@ trait HasComponents
     protected string | Closure | null $resourceEditPageRedirect = null;
 
     /**
-     * @param  array<class-string>  $pages
+     * @param  array<class-string | PageConfiguration>  $pages
      */
     public function pages(array $pages): static
     {
-        if ($this->hasCachedComponents()) {
-            return $this;
-        }
-
-        $this->pages = [
-            ...$this->pages,
-            ...$pages,
-        ];
+        $hasCachedComponents = $this->hasCachedComponents();
 
         foreach ($pages as $page) {
-            $this->queueLivewireComponentForRegistration($page);
-            $this->registerToCluster($page);
+            if ($page instanceof PageConfiguration) {
+                if (isset($this->pageConfigurations[$page->page][$page->getKey()])) {
+                    $message = "A configuration with the key [{$page->getKey()}] has already been registered for the page [{$page->page}].";
+
+                    if ($page->getKey() === 'default') {
+                        $message .= ' Pass a unique key to each `::make()` call to register multiple configurations for the same page.';
+                    } else {
+                        $message .= ' Each configuration for the same page must have a unique key.';
+                    }
+
+                    throw new LogicException($message);
+                }
+
+                $this->pageConfigurations[$page->page][$page->getKey()] = $page;
+
+                if (! $hasCachedComponents) {
+                    $this->queueLivewireComponentForRegistration($page->page);
+                    $this->registerToCluster($page->page);
+                }
+            } elseif (! $hasCachedComponents) {
+                $this->pages[] = $page;
+
+                $this->queueLivewireComponentForRegistration($page);
+                $this->registerToCluster($page);
+            }
         }
 
         return $this;
     }
 
     /**
-     * @param  array<class-string>  $resources
+     * @param  array<class-string | ResourceConfiguration>  $resources
      */
     public function resources(array $resources): static
     {
-        if ($this->hasCachedComponents()) {
-            return $this;
-        }
-
-        $this->resources = [
-            ...$this->resources,
-            ...$resources,
-        ];
+        $hasCachedComponents = $this->hasCachedComponents();
 
         foreach ($resources as $resource) {
-            $this->registerToCluster($resource);
+            if ($resource instanceof ResourceConfiguration) {
+                if (isset($this->resourceConfigurations[$resource->resource][$resource->getKey()])) {
+                    $message = "A configuration with the key [{$resource->getKey()}] has already been registered for the resource [{$resource->resource}].";
+
+                    if ($resource->getKey() === 'default') {
+                        $message .= ' Pass a unique key to each `::make()` call to register multiple configurations for the same resource.';
+                    } else {
+                        $message .= ' Each configuration for the same resource must have a unique key.';
+                    }
+
+                    throw new LogicException($message);
+                }
+
+                $this->resourceConfigurations[$resource->resource][$resource->getKey()] = $resource;
+
+                if (! $hasCachedComponents) {
+                    $this->registerToCluster($resource->resource);
+                }
+            } elseif (! $hasCachedComponents) {
+                $this->resources[] = $resource;
+
+                $this->registerToCluster($resource);
+            }
         }
 
         return $this;
@@ -387,11 +432,43 @@ trait HasComponents
     }
 
     /**
+     * @return array<PageConfiguration>
+     */
+    public function getPageConfigurations(): array
+    {
+        return Arr::flatten($this->pageConfigurations);
+    }
+
+    /**
+     * @param  class-string  $pageClass
+     */
+    public function getPageConfiguration(string $pageClass, string $key): ?PageConfiguration
+    {
+        return $this->pageConfigurations[$pageClass][$key] ?? null;
+    }
+
+    /**
      * @return array<class-string>
      */
     public function getResources(): array
     {
         return array_unique($this->resources);
+    }
+
+    /**
+     * @return array<ResourceConfiguration>
+     */
+    public function getResourceConfigurations(): array
+    {
+        return Arr::flatten($this->resourceConfigurations);
+    }
+
+    /**
+     * @param  class-string  $resourceClass
+     */
+    public function getResourceConfiguration(string $resourceClass, string $key): ?ResourceConfiguration
+    {
+        return $this->resourceConfigurations[$resourceClass][$key] ?? null;
     }
 
     /**
@@ -531,7 +608,12 @@ trait HasComponents
                 $this->queueLivewireComponentForRegistration($tenantProfileComponent);
             }
 
-            foreach ($this->getResources() as $resource) {
+            $resourceClasses = array_unique([
+                ...$this->getResources(),
+                ...array_keys($this->resourceConfigurations),
+            ]);
+
+            foreach ($resourceClasses as $resource) {
                 foreach ($resource::getPages() as $pageRegistration) {
                     $this->queueLivewireComponentForRegistration($pageRegistration->getPage());
                 }
@@ -646,9 +728,11 @@ trait HasComponents
                 'clusterDirectories' => $this->clusterDirectories,
                 'clusterNamespaces' => $this->clusterNamespaces,
                 'pages' => $this->pages,
+                'pageConfigurations' => [],
                 'pageDirectories' => $this->pageDirectories,
                 'pageNamespaces' => $this->pageNamespaces,
                 'resources' => $this->resources,
+                'resourceConfigurations' => [],
                 'resourceDirectories' => $this->resourceDirectories,
                 'resourceNamespaces' => $this->resourceNamespaces,
                 'widgets' => $this->widgets,

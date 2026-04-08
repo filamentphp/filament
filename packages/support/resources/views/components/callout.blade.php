@@ -8,6 +8,7 @@
 
 @props([
     'color' => 'gray',
+    'controls' => null,
     'description' => null,
     'footer' => null,
     'heading' => null,
@@ -27,6 +28,7 @@
     $hasHeading = filled($heading);
     $hasFooter = ! is_slot_empty($footer);
     $hasIcon = filled($icon);
+    $hasControls = ! is_slot_empty($controls);
 @endphp
 
 <div
@@ -71,6 +73,12 @@
                     {{ $footer }}
                 </div>
             @endif
+        </div>
+    @endif
+
+    @if ($hasControls)
+        <div class="fi-callout-controls">
+            {{ $controls }}
         </div>
     @endif
 </div>

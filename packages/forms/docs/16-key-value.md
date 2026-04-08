@@ -112,6 +112,8 @@ KeyValue::make('meta')
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `keyPlaceholder()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
+<AutoScreenshot name="forms/fields/key-value/custom-labels" alt="Key-value with custom labels and placeholders" version="4.x" />
+
 ### Preventing the user from editing keys
 
 You may prevent the user from editing keys using the `editableKeys(false)` method:

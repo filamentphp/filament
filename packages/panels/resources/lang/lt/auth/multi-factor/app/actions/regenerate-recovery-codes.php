@@ -2,25 +2,27 @@
 
 return [
 
-    'label' => 'Regenerate recovery codes',
+    'label' => 'Regeneruoti atsarginius kodus',
 
     'modal' => [
 
-        'heading' => 'Regenerate authenticator app recovery codes',
+        'heading' => 'Regeneruoti autentifikavimo programos atsarginius kodus',
 
-        'description' => 'If you lose your recovery codes, you can regenerate them here. Your old recovery codes will be invalidated immediately.',
+        'description' => 'Jei praradote atsarginius kodus, galite juos regeneruoti čia. Jūsų seni atsarginiai kodai bus nedelsiant panaikinti.',
 
         'form' => [
 
             'code' => [
 
-                'label' => 'Enter the 6-digit code from the authenticator app',
+                'label' => 'Įveskite 6 skaitmenų kodą iš autentifikavimo programos',
 
                 'validation_attribute' => 'code',
 
                 'messages' => [
 
-                    'invalid' => 'The code you entered is invalid.',
+                    'invalid' => 'Įvestas kodas yra neteisingas.',
+
+                    'rate_limited' => 'Per daug bandymų. Pabandykite vėliau.',
 
                 ],
 
@@ -28,7 +30,7 @@ return [
 
             'password' => [
 
-                'label' => 'Or, enter your current password',
+                'label' => 'Arba įveskite dabartinį slaptažodį',
 
                 'validation_attribute' => 'password',
 
@@ -39,7 +41,7 @@ return [
         'actions' => [
 
             'submit' => [
-                'label' => 'Regenerate recovery codes',
+                'label' => 'Regeneruoti atsarginius kodus',
             ],
 
         ],
@@ -49,7 +51,7 @@ return [
     'notifications' => [
 
         'regenerated' => [
-            'title' => 'New authenticator app recovery codes have been generated',
+            'title' => 'Nauji autentifikavimo programos atsarginiai kodai buvo sugeneruoti',
         ],
 
     ],
@@ -58,14 +60,14 @@ return [
 
         'modal' => [
 
-            'heading' => 'New recovery codes',
+            'heading' => 'Nauji atsarginiai kodai',
 
-            'description' => 'Please save the following recovery codes in a safe place. They will only be shown once, but you\'ll need them if you lose access to your authenticator app:',
+            'description' => 'Prašome išsaugoti šiuos naujus atsarginius kodus saugioje vietoje. Jie bus rodomi tik vieną kartą, bet jums reikės jų, jei prarasite prieigą prie autentifikavimo programos:',
 
             'actions' => [
 
                 'submit' => [
-                    'label' => 'Close',
+                    'label' => 'Uždaryti',
                 ],
 
             ],

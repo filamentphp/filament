@@ -34,6 +34,7 @@ use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\HtmlString;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Locked;
@@ -96,6 +97,10 @@ class Login extends SimplePage
             filled($this->userUndertakingMultiFactorAuthentication) &&
             (decrypt($this->userUndertakingMultiFactorAuthentication) === $user->getAuthIdentifier())
         ) {
+            if ($this->isMultiFactorChallengeRateLimited($user)) {
+                return null;
+            }
+
             $this->multiFactorChallengeForm->validate();
         } else {
             foreach (Filament::getMultiFactorAuthenticationProviders() as $multiFactorAuthenticationProvider) {
@@ -133,6 +138,26 @@ class Login extends SimplePage
         session()->regenerate();
 
         return app(LoginResponse::class);
+    }
+
+    protected function isMultiFactorChallengeRateLimited(Authenticatable $user): bool
+    {
+        $rateLimitingKey = "filament-multi-factor-challenge:{$user->getAuthIdentifier()}";
+
+        if (RateLimiter::tooManyAttempts($rateLimitingKey, maxAttempts: 5)) {
+            $this->getRateLimitedNotification(new TooManyRequestsException(
+                static::class,
+                'authenticate',
+                request()->ip(),
+                RateLimiter::availableIn($rateLimitingKey),
+            ))?->send();
+
+            return true;
+        }
+
+        RateLimiter::hit($rateLimitingKey);
+
+        return false;
     }
 
     protected function getRateLimitedNotification(TooManyRequestsException $exception): ?Notification
@@ -230,7 +255,7 @@ class Login extends SimplePage
     {
         return TextInput::make('password')
             ->label(__('filament-panels::auth/pages/login.form.password.label'))
-            ->hint(filament()->hasPasswordReset() ? new HtmlString(Blade::render('<x-filament::link :href="filament()->getRequestPasswordResetUrl()"> {{ __(\'filament-panels::auth/pages/login.actions.request_password_reset.label\') }}</x-filament::link>')) : null)
+            ->hint(filament()->hasPasswordReset() ? new HtmlString(Blade::render('<x-filament::link :href="filament()->getRequestPasswordResetUrl()" tabindex="-1"> {{ __(\'filament-panels::auth/pages/login.actions.request_password_reset.label\') }}</x-filament::link>')) : null)
             ->password()
             ->revealable(filament()->arePasswordsRevealable())
             ->autocomplete('current-password')

@@ -194,13 +194,17 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
                 return $newPath;
             }
 
-            $storeMethod = $component->getVisibility() === 'public' ? 'storePubliclyAs' : 'storeAs';
-
-            return $file->{$storeMethod}(
+            $path = $file->storeAs(
                 $component->getDirectory(),
                 $component->getUploadedFileNameForStorage($file),
                 $component->getDiskName(),
             );
+
+            if ($component->getVisibility() === 'public') {
+                rescue(fn () => $component->getDisk()->setVisibility($path, 'public'), report: false);
+            }
+
+            return $path;
         });
     }
 

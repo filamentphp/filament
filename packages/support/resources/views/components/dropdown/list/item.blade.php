@@ -8,6 +8,8 @@
 @endphp
 
 @props([
+    'alpineDeferredBadgeData' => null,
+    'alpineDeferredBadgeLoading' => null,
     'badge' => null,
     'badgeColor' => 'primary',
     'badgeTooltip' => null,
@@ -42,6 +44,7 @@
         $loadingIndicatorTarget = html_entity_decode($wireTarget, ENT_QUOTES);
     }
 
+    $hasDeferredBadge = filled($alpineDeferredBadgeData);
     $hasTooltip = filled($tooltip);
 @endphp
 
@@ -146,6 +149,42 @@
                 {{ $badge }}
             </span>
         @endif
+    @elseif ($hasDeferredBadge)
+        <span
+            x-show="{{ $alpineDeferredBadgeLoading }}"
+            x-cloak
+            class="fi-dropdown-list-item-badge-placeholder"
+        >
+            {{ \Filament\Support\generate_loading_indicator_html(size: \Filament\Support\Enums\IconSize::Small) }}
+        </span>
+
+        <template
+            x-if="
+                ! {{ $alpineDeferredBadgeLoading }} &&
+                    {{ $alpineDeferredBadgeData }}?.badge != null
+            "
+        >
+            <span
+                x-bind:class="'fi-badge ' + ({{ $alpineDeferredBadgeData }}?.badgeColorClasses ?? '')"
+                x-bind:style="{{ $alpineDeferredBadgeData }}?.badgeColorStyles ?? ''"
+                x-init="
+                    let tooltip = {{ $alpineDeferredBadgeData }}?.badgeTooltip
+                    if (tooltip) {
+                        window.tippy?.($el, {
+                            content: tooltip,
+                            theme: $store.theme,
+                        })
+                    }
+                "
+            >
+                <span class="fi-badge-label-ctn">
+                    <span
+                        class="fi-badge-label"
+                        x-text="{{ $alpineDeferredBadgeData }}?.badge"
+                    ></span>
+                </span>
+            </span>
+        </template>
     @endif
 </{{ ($tag === 'form') ? 'button' : $tag }}>
 

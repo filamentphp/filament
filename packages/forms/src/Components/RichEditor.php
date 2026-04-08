@@ -13,6 +13,7 @@ use Filament\Forms\Components\RichEditor\EditorCommand;
 use Filament\Forms\Components\RichEditor\FileAttachmentProviders\Contracts\FileAttachmentProvider;
 use Filament\Forms\Components\RichEditor\MentionProvider;
 use Filament\Forms\Components\RichEditor\Models\Contracts\HasRichContent;
+use Filament\Forms\Components\RichEditor\Plugins\Contracts\HasToolbarButtons;
 use Filament\Forms\Components\RichEditor\Plugins\Contracts\RichContentPlugin;
 use Filament\Forms\Components\RichEditor\RichContentAttribute;
 use Filament\Forms\Components\RichEditor\RichContentCustomBlock;
@@ -20,6 +21,7 @@ use Filament\Forms\Components\RichEditor\RichContentRenderer;
 use Filament\Forms\Components\RichEditor\RichEditorTool;
 use Filament\Forms\Components\RichEditor\StateCasts\RichEditorStateCast;
 use Filament\Forms\Components\RichEditor\TextColor;
+use Filament\Forms\Components\RichEditor\ToolbarButtonGroup;
 use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
 use Filament\Support\Colors\Color;
 use Filament\Support\Components\Attributes\ExposedLivewireMethod;
@@ -28,6 +30,7 @@ use Filament\Support\Icons\Heroicon;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Renderless;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
@@ -39,7 +42,9 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     use Concerns\HasExtraInputAttributes;
     use Concerns\HasFileAttachments;
     use Concerns\HasPlaceholder;
-    use Concerns\InteractsWithToolbarButtons;
+    use Concerns\InteractsWithToolbarButtons {
+        Concerns\InteractsWithToolbarButtons::getToolbarButtons as getBaseToolbarButtons;
+    }
     use HasExtraAlpineAttributes;
 
     /**
@@ -52,7 +57,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     /**
      * @var array<string> | Closure
      */
-    protected array | Closure $linkProtocols = ['http', 'https', 'mailto'];
+    protected array | Closure $linkProtocols = ['http', 'https', 'ftp', 'ftps', 'mailto', 'tel', 'callto', 'sms', 'cid', 'xmpp'];
 
     protected bool | Closure | null $isJson = null;
 
@@ -158,22 +163,48 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
                 ->jsHandler('$getEditor()?.chain().focus().toggleHeading({ level: 1 }).run()')
                 ->activeKey('heading')
                 ->activeOptions(['level' => 1])
-                ->icon(Heroicon::H1)
+                ->icon('fi-o-h1')
                 ->iconAlias('forms:components.rich-editor.toolbar.h1'),
             RichEditorTool::make('h2')
                 ->label(__('filament-forms::components.rich_editor.tools.h2'))
                 ->jsHandler('$getEditor()?.chain().focus().toggleHeading({ level: 2 }).run()')
                 ->activeKey('heading')
                 ->activeOptions(['level' => 2])
-                ->icon(Heroicon::H2)
+                ->icon('fi-o-h2')
                 ->iconAlias('forms:components.rich-editor.toolbar.h2'),
             RichEditorTool::make('h3')
                 ->label(__('filament-forms::components.rich_editor.tools.h3'))
                 ->jsHandler('$getEditor()?.chain().focus().toggleHeading({ level: 3 }).run()')
                 ->activeKey('heading')
                 ->activeOptions(['level' => 3])
-                ->icon(Heroicon::H3)
+                ->icon('fi-o-h3')
                 ->iconAlias('forms:components.rich-editor.toolbar.h3'),
+            RichEditorTool::make('paragraph')
+                ->label(__('filament-forms::components.rich_editor.tools.paragraph'))
+                ->jsHandler('$getEditor()?.chain().focus().setParagraph().run()')
+                ->icon('fi-o-paragraph')
+                ->iconAlias('forms:components.rich-editor.toolbar.paragraph'),
+            RichEditorTool::make('h4')
+                ->label(__('filament-forms::components.rich_editor.tools.h4'))
+                ->jsHandler('$getEditor()?.chain().focus().toggleHeading({ level: 4 }).run()')
+                ->activeKey('heading')
+                ->activeOptions(['level' => 4])
+                ->icon('fi-o-h4')
+                ->iconAlias('forms:components.rich-editor.toolbar.h4'),
+            RichEditorTool::make('h5')
+                ->label(__('filament-forms::components.rich_editor.tools.h5'))
+                ->jsHandler('$getEditor()?.chain().focus().toggleHeading({ level: 5 }).run()')
+                ->activeKey('heading')
+                ->activeOptions(['level' => 5])
+                ->icon('fi-o-h5')
+                ->iconAlias('forms:components.rich-editor.toolbar.h5'),
+            RichEditorTool::make('h6')
+                ->label(__('filament-forms::components.rich_editor.tools.h6'))
+                ->jsHandler('$getEditor()?.chain().focus().toggleHeading({ level: 6 }).run()')
+                ->activeKey('heading')
+                ->activeOptions(['level' => 6])
+                ->icon('fi-o-h6')
+                ->iconAlias('forms:components.rich-editor.toolbar.h6'),
             RichEditorTool::make('blockquote')
                 ->label(__('filament-forms::components.rich_editor.tools.blockquote'))
                 ->jsHandler('$getEditor()?.chain().focus().toggleBlockquote().run()')
@@ -310,21 +341,25 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
             RichEditorTool::make('alignStart')
                 ->label(__('filament-forms::components.rich_editor.tools.align_start'))
                 ->jsHandler('$getEditor()?.chain().focus().setTextAlign(\'start\').run()')
+                ->activeJsExpression('$getEditor()?.isActive({ textAlign: \'start\' })')
                 ->icon('fi-o-align-start')
                 ->iconAlias('forms:components.rich-editor.toolbar.align-start'),
             RichEditorTool::make('alignCenter')
                 ->label(__('filament-forms::components.rich_editor.tools.align_center'))
                 ->jsHandler('$getEditor()?.chain().focus().setTextAlign(\'center\').run()')
+                ->activeJsExpression('$getEditor()?.isActive({ textAlign: \'center\' })')
                 ->icon('fi-o-align-center')
                 ->iconAlias('forms:components.rich-editor.toolbar.align-center'),
             RichEditorTool::make('alignEnd')
                 ->label(__('filament-forms::components.rich_editor.tools.align_end'))
                 ->jsHandler('$getEditor()?.chain().focus().setTextAlign(\'end\').run()')
+                ->activeJsExpression('$getEditor()?.isActive({ textAlign: \'end\' })')
                 ->icon('fi-o-align-end')
                 ->iconAlias('forms:components.rich-editor.toolbar.align-end'),
             RichEditorTool::make('alignJustify')
                 ->label(__('filament-forms::components.rich_editor.tools.align_justify'))
                 ->jsHandler('$getEditor()?.chain().focus().setTextAlign(\'justify\').run()')
+                ->activeJsExpression('$getEditor()?.isActive({ textAlign: \'justify\' })')
                 ->icon('fi-o-align-justify')
                 ->iconAlias('forms:components.rich-editor.toolbar.align-justify'),
             RichEditorTool::make('grid')
@@ -574,6 +609,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     {
         return RichContentRenderer::make()
             ->plugins($this->getPlugins())
+            ->linkProtocols($this->getLinkProtocols())
             ->getEditor();
     }
 
@@ -672,6 +708,25 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
         );
     }
 
+    /**
+     * @return array<array<string | ToolbarButtonGroup>>
+     */
+    public function getToolbarButtons(): array
+    {
+        $groups = $this->getBaseToolbarButtons();
+        $tools = $this->getTools();
+
+        return array_map(
+            fn (array $group): array => array_map(
+                fn (string | ToolbarButtonGroup $item): string | ToolbarButtonGroup => $item instanceof ToolbarButtonGroup
+                    ? $item->resolve($tools)
+                    : $item,
+                $group,
+            ),
+            $groups,
+        );
+    }
+
     public function getContentAttribute(): ?RichContentAttribute
     {
         // Do not read content attributes from the model when the rich editor is nested
@@ -732,13 +787,48 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     }
 
     /**
+     * @return array<array{type: string, buttons?: array<string | array<string | array<string>>>}>
+     */
+    protected function getExtraToolbarButtonsModifications(): array
+    {
+        $modifications = [];
+
+        foreach ($this->getPlugins() as $plugin) {
+            if (! ($plugin instanceof HasToolbarButtons)) {
+                continue;
+            }
+
+            $enabledButtons = $plugin->getEnabledToolbarButtons();
+
+            if (filled($enabledButtons)) {
+                $modifications[] = [
+                    'type' => 'enable',
+                    'buttons' => $enabledButtons,
+                ];
+            }
+
+            $disabledButtons = $plugin->getDisabledToolbarButtons();
+
+            if (filled($disabledButtons)) {
+                $modifications[] = [
+                    'type' => 'disable',
+                    'buttons' => $disabledButtons,
+                ];
+            }
+        }
+
+        return $modifications;
+    }
+
+    /**
      * @return array<string | array<string>>
      */
     public function getDefaultToolbarButtons(): array
     {
         return [
             ['bold', 'italic', 'underline', 'strike', 'subscript', 'superscript', 'link'],
-            ['h2', 'h3', 'alignStart', 'alignCenter', 'alignEnd'],
+            ['h2', 'h3'],
+            ['alignStart', 'alignCenter', 'alignEnd'],
             ['blockquote', 'codeBlock', 'bulletList', 'orderedList'],
             [
                 'table',
@@ -951,7 +1041,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     }
 
     /**
-     * @param  array<class-string<RichContentCustomBlock>> | Closure | null  $blocks
+     * @param  array<class-string<RichContentCustomBlock> | array<class-string<RichContentCustomBlock>>> | Closure | null  $blocks
      */
     public function customBlocks(array | Closure | null $blocks): static
     {
@@ -961,11 +1051,32 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     }
 
     /**
+     * @return array<class-string<RichContentCustomBlock> | array<class-string<RichContentCustomBlock>>>
+     */
+    protected function resolveCustomBlocks(): array
+    {
+        return $this->evaluate($this->customBlocks) ?? $this->getContentAttribute()?->getCustomBlocksConfig() ?? [];
+    }
+
+    /**
      * @return array<class-string<RichContentCustomBlock>>
      */
     public function getCustomBlocks(): array
     {
-        return $this->evaluate($this->customBlocks) ?? $this->getContentAttribute()?->getCustomBlocks() ?? [];
+        $blocks = $this->resolveCustomBlocks();
+        $result = [];
+
+        foreach ($blocks as $value) {
+            if (is_array($value)) {
+                foreach ($value as $innerKey => $innerValue) {
+                    $result[] = is_string($innerKey) ? $innerKey : $innerValue;
+                }
+            } else {
+                $result[] = $value;
+            }
+        }
+
+        return $result;
     }
 
     /**
@@ -976,6 +1087,8 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
         if (isset($this->cachedCustomBlocks)) {
             return $this->cachedCustomBlocks;
         }
+
+        $this->cachedCustomBlocks = [];
 
         foreach ($this->getCustomBlocks() as $block) {
             $this->cachedCustomBlocks[$block::getId()] = $block;
@@ -993,7 +1106,43 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     }
 
     /**
-     * @param  array<string | array<string>> | Closure | null  $toolbars
+     * @return Collection<string, Collection<int, class-string<RichContentCustomBlock>>>
+     */
+    public function getGroupedCustomBlocks(): Collection
+    {
+        $blocks = $this->resolveCustomBlocks();
+        $ungrouped = [];
+        $groups = collect();
+
+        foreach ($blocks as $key => $value) {
+            if (is_string($key) && is_array($value)) {
+                $groupBlocks = [];
+
+                foreach ($value as $innerKey => $innerValue) {
+                    $groupBlocks[] = is_string($innerKey) ? $innerKey : $innerValue;
+                }
+
+                $groups->put($key, collect($groupBlocks));
+            } elseif (is_array($value)) {
+                foreach ($value as $innerKey => $innerValue) {
+                    $ungrouped[] = is_string($innerKey) ? $innerKey : $innerValue;
+                }
+            } else {
+                $ungrouped[] = $value;
+            }
+        }
+
+        $result = collect();
+
+        if (! empty($ungrouped)) {
+            $result->put('', collect($ungrouped));
+        }
+
+        return $result->merge($groups);
+    }
+
+    /**
+     * @param  array<string, array<string | ToolbarButtonGroup>> | Closure | null  $toolbars
      */
     public function floatingToolbars(array | Closure | null $toolbars): static
     {
@@ -1003,11 +1152,22 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
     }
 
     /**
-     * @return array<string, array<string>>
+     * @return array<string, array<string | ToolbarButtonGroup>>
      */
     public function getFloatingToolbars(): array
     {
-        return $this->evaluate($this->floatingToolbars) ?? $this->getDefaultFloatingToolbars();
+        $toolbars = $this->evaluate($this->floatingToolbars) ?? $this->getDefaultFloatingToolbars();
+        $tools = $this->getTools();
+
+        return array_map(
+            fn (array $buttons): array => array_map(
+                fn (string | ToolbarButtonGroup $item): string | ToolbarButtonGroup => $item instanceof ToolbarButtonGroup
+                    ? $item->resolve($tools)
+                    : $item,
+                $buttons,
+            ),
+            $toolbars,
+        );
     }
 
     public function getLengthValidationRules(): array

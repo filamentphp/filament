@@ -45,6 +45,10 @@
         {{ $this->successBadgedAction }}
     </div>
 
+    <div id="disabledAction" class="p-16 flex items-center justify-center max-w-xl">
+        {{ $this->disabledAction }}
+    </div>
+
     <div id="outlinedAction" class="p-16 flex items-center justify-center max-w-xl">
         {{ $this->outlinedAction }}
     </div>
@@ -69,8 +73,40 @@
         {{ $this->wizardAction }}
     </div>
 
+    <div id="modalSchemaAction" class="p-16 flex items-center justify-center max-w-xl">
+        {{ $this->modalSchemaAction }}
+    </div>
+
+    <div id="wideModalAction" class="p-16 flex items-center justify-center max-w-xl">
+        {{ $this->wideModalAction }}
+    </div>
+
+    <div id="modalAlignmentAction" class="p-16 flex items-center justify-center max-w-xl">
+        {{ $this->modalAlignmentAction }}
+    </div>
+
+    <div id="stickyModalHeaderAction" class="p-16 flex items-center justify-center max-w-xl">
+        {{ $this->stickyModalHeaderAction }}
+    </div>
+
     <div id="slideOverAction" class="p-16 flex items-center justify-center max-w-xl">
         {{ $this->slideOverAction }}
+    </div>
+
+    <div id="modalNoCloseButtonAction" class="p-16 flex items-center justify-center max-w-xl">
+        {{ $this->modalNoCloseButtonAction }}
+    </div>
+
+    <div id="disabledFormAction" class="p-16 flex items-center justify-center max-w-xl">
+        {{ $this->disabledFormAction }}
+    </div>
+
+    <div id="modalIconColorAction" class="p-16 flex items-center justify-center max-w-xl">
+        {{ $this->modalIconColorAction }}
+    </div>
+
+    <div id="extraFooterActionsAction" class="p-16 flex items-center justify-center max-w-xl">
+        {{ $this->extraFooterActionsAction }}
     </div>
 
     <div id="actionGroup" class="pr-40 pt-8 pb-40 flex items-center justify-center max-w-xl">
@@ -130,6 +166,43 @@
                 Action::make('delete'),
             ]"
         />
+    </div>
+
+    <div id="overlayingChildModalAction" class="p-16 flex items-center justify-center max-w-xl">
+        {{ $this->overlayingChildModalAction }}
+    </div>
+
+    <div id="actionGroupDropdownWidth" class="pr-40 pt-8 pb-40 flex items-center justify-center max-w-xl">
+        <x-filament-actions::group
+            :actions="[
+                Action::make('view'),
+                Action::make('edit'),
+                Action::make('duplicate'),
+                Action::make('delete'),
+            ]"
+            :dropdown-width="\Filament\Support\Enums\Width::ExtraSmall"
+        />
+    </div>
+
+    <div id="actionGroupMaxHeight" class="pr-40 pt-8 pb-72 flex items-center justify-center max-w-xl">
+        <x-filament-actions::group
+            :actions="[
+                Action::make('view')->icon(Heroicon::Eye),
+                Action::make('edit')->icon(Heroicon::PencilSquare),
+                Action::make('duplicate')->icon(Heroicon::DocumentDuplicate),
+                Action::make('archive')->icon(Heroicon::ArchiveBox),
+                Action::make('move')->icon(Heroicon::ArrowsRightLeft),
+                Action::make('share')->icon(Heroicon::Share),
+                Action::make('export')->icon(Heroicon::ArrowDownTray),
+                Action::make('print')->icon(Heroicon::Printer),
+                Action::make('delete')->icon(Heroicon::Trash)->color('danger'),
+            ]"
+            max-height="120px"
+        />
+    </div>
+
+    <div id="authorizationTooltipAction" class="p-16 flex items-center justify-center max-w-xl">
+        {{ $this->authorizationTooltipAction }}
     </div>
 
     <div id="modal">

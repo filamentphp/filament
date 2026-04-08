@@ -1,6 +1,7 @@
 ---
 title: Create action
 ---
+import AutoScreenshot from "@components/AutoScreenshot.astro"
 import UtilityInjection from "@components/UtilityInjection.astro"
 
 ## Introduction
@@ -19,6 +20,8 @@ CreateAction::make()
         // ...
     ])
 ```
+
+<AutoScreenshot name="actions/create-action/modal" alt="Create action modal" version="4.x" />
 
 ## Customizing data before saving
 

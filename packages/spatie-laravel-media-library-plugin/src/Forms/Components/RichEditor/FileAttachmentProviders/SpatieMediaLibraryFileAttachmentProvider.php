@@ -131,8 +131,8 @@ class SpatieMediaLibraryFileAttachmentProvider implements FileAttachmentProvider
 
     public function saveUploadedFileAttachment(TemporaryUploadedFile $file): mixed
     {
-        $media = $this->getExistingModel() /** @phpstan-ignore method.notFound */
-            ->addMediaFromString($file->get())
+        $media = $this->getExistingModel()
+            ->addMediaFromString($file->get()) /** @phpstan-ignore method.notFound */
             ->usingFileName($this->shouldPreserveFilenames() ? $file->getClientOriginalName() : (Str::ulid() . '.' . $file->getClientOriginalExtension()))
             ->usingName($this->getMediaName($file) ?? pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME))
             ->withCustomProperties($this->getCustomProperties())

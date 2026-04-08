@@ -2,39 +2,39 @@
 
 return [
 
-    'label' => 'Set up',
+    'label' => 'Įgalinti',
 
     'modal' => [
 
-        'heading' => 'Set up authenticator app',
+        'heading' => 'Įgalinti autentifikavimo programą',
 
         'description' => <<<'BLADE'
-            You'll need an app like Google Authenticator (<x-filament::link href="https://itunes.apple.com/us/app/google-authenticator/id388497605" target="_blank">iOS</x-filament::link>, <x-filament::link href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2" target="_blank">Android</x-filament::link>) to complete this process.
+            Jums reikės programos tokios kaip Google Authenticator (<x-filament::link href="https://itunes.apple.com/us/app/google-authenticator/id388497605" target="_blank">iOS</x-filament::link>, <x-filament::link href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2" target="_blank">Android</x-filament::link>) norint užbaigti šį procesą.
             BLADE,
 
         'content' => [
 
             'qr_code' => [
 
-                'instruction' => 'Scan this QR code with your authenticator app:',
+                'instruction' => 'Nuskaitykite šį QR kodą naudodami autentifikavimo programą:',
 
-                'alt' => 'QR code to scan with an authenticator app',
+                'alt' => 'QR kodas, kurį reikia nuskaityti naudojant autentifikavimo programą',
 
             ],
 
             'text_code' => [
 
-                'instruction' => 'Or enter this code manually:',
+                'instruction' => 'Arba įveskite šį kodą rankiniu būdu:',
 
                 'messages' => [
-                    'copied' => 'Copied',
+                    'copied' => 'Nukopijuota',
                 ],
 
             ],
 
             'recovery_codes' => [
 
-                'instruction' => 'Please save the following recovery codes in a safe place. They will only be shown once, but you\'ll need them if you lose access to your authenticator app:',
+                'instruction' => 'Prašome išsaugoti šiuos atsarginius kodus saugioje vietoje. Jie bus rodomi tik vieną kartą, bet jums reikės jų, jei prarasite prieigą prie autentifikavimo programos:',
 
             ],
 
@@ -44,15 +44,17 @@ return [
 
             'code' => [
 
-                'label' => 'Enter the 6-digit code from the authenticator app',
+                'label' => 'Įveskite 6 skaitmenų kodą iš autentifikavimo programos',
 
                 'validation_attribute' => 'code',
 
-                'below_content' => 'You will need to enter the 6-digit code from your authenticator app each time you sign in or perform sensitive actions.',
+                'below_content' => 'Jums reikės įvesti 6 skaitmenų kodą iš savo autentifikavimo programos kaskart, kai prisijungsite arba atliksite jautrius veiksmus.',
 
                 'messages' => [
 
-                    'invalid' => 'The code you entered is invalid.',
+                    'invalid' => 'Įvestas kodas yra neteisingas.',
+
+                    'rate_limited' => 'Per daug bandymų. Pabandykite vėliau.',
 
                 ],
 
@@ -63,7 +65,7 @@ return [
         'actions' => [
 
             'submit' => [
-                'label' => 'Enable authenticator app',
+                'label' => 'Įgalinti autentifikavimo programą',
             ],
 
         ],
@@ -73,7 +75,7 @@ return [
     'notifications' => [
 
         'enabled' => [
-            'title' => 'Authenticator app has been enabled',
+            'title' => 'Autentifikavimo programa įjungta',
         ],
 
     ],

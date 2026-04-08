@@ -2,6 +2,8 @@
 title: Link Blade component
 ---
 
+import AutoScreenshot from "@components/AutoScreenshot.astro"
+
 ## Introduction
 
 The link component is used to render a clickable link that can perform an action:
@@ -11,6 +13,8 @@ The link component is used to render a clickable link that can perform an action
     New user
 </x-filament::link>
 ```
+
+<AutoScreenshot name="components/link/simple" alt="A simple link" version="4.x" />
 
 ## Using a link as a button
 
@@ -46,6 +50,8 @@ By default, the size of a link is "medium". You can make it "small", "large", "e
     New user
 </x-filament::link>
 ```
+
+<AutoScreenshot name="components/link/sizes" alt="Links in different sizes" version="4.x" />
 
 ## Setting the font weight of a link
 
@@ -93,6 +99,8 @@ Alternatively, you can pass in a custom CSS class to define the weight:
 </x-filament::link>
 ```
 
+<AutoScreenshot name="components/link/weights" alt="Links in different font weights" version="4.x" />
+
 ## Changing the color of a link
 
 By default, the color of a link is "primary". You can change it to be `danger`, `gray`, `info`, `success` or `warning` by using the `color` attribute:
@@ -119,6 +127,8 @@ By default, the color of a link is "primary". You can change it to be `danger`, 
 </x-filament::link>
 ```
 
+<AutoScreenshot name="components/link/colors" alt="Links in different colors" version="4.x" />
+
 ## Adding an icon to a link
 
 You can add an [icon](../styling/icons) to a link by using the `icon` attribute:
@@ -139,6 +149,8 @@ You can also change the icon's position to be after the text instead of before i
     New user
 </x-filament::link>
 ```
+
+<AutoScreenshot name="components/link/icon" alt="Links with icons" version="4.x" />
 
 ## Adding a tooltip to a link
 
@@ -175,3 +187,5 @@ You can [change the color](badge#changing-the-color-of-the-badge) of the badge u
     </x-slot>
 </x-filament::link>
 ```
+
+<AutoScreenshot name="components/link/badge" alt="Links with badges" version="4.x" />

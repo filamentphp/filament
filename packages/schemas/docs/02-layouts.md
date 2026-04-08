@@ -42,6 +42,8 @@ In addition to specifying how many columns a layout component should have, you m
 
 <UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `columnSpan()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
+<AutoScreenshot name="schemas/layout/grid/column-span" alt="Grid with column spans" version="4.x" />
+
 ### Grid column starts
 
 If you want to start a component in a grid at a specific column, you can use the `columnStart()` method. This method accepts an integer, or an array of breakpoints and which column the component should start at:
@@ -74,6 +76,8 @@ In this example, the grid has 3 columns on small devices, 6 columns on extra lar
 
 <UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `columnStart()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
+<AutoScreenshot name="schemas/layout/grid/column-start" alt="Grid with column start" version="4.x" />
+
 ### Grid column ordering
 
 If you want to control the visual order of components in a grid without changing their position in the markup, you can use the `columnOrder()` method. This method accepts an integer, a closure, or an array of breakpoints and order values:
@@ -97,6 +101,8 @@ Grid::make()
             ->columnOrder(2), // This will appear second
     ])
 ```
+
+<AutoScreenshot name="schemas/layout/grid/column-order" alt="Grid with reordered columns" version="4.x" />
 
 You can also use responsive ordering to change the visual order of components based on the screen size:
 
@@ -200,6 +206,8 @@ Grid::make([
         // ...
     ])
 ```
+
+<AutoScreenshot name="schemas/layout/grid/simple" alt="Grid" version="4.x" />
 
 ### Flex component
 

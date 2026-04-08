@@ -2,6 +2,7 @@
 title: Panel configuration
 ---
 import Aside from "@components/Aside.astro"
+import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Introduction
 
@@ -116,6 +117,8 @@ public function panel(Panel $panel): Panel
 }
 ```
 
+<AutoScreenshot name="panels/configuration/content-width-full" alt="Panel with full content width" version="4.x" />
+
 If you'd like to set the max content width for pages of the type `SimplePage`, like login and registration pages, you may do so using the `simplePageMaxContentWidth()` method. The default is `Large`:
 
 ```php
@@ -129,6 +132,8 @@ public function panel(Panel $panel): Panel
         ->simplePageMaxContentWidth(Width::Small);
 }
 ```
+
+<AutoScreenshot name="panels/configuration/simple-page-max-content-width" alt="Login page with small max content width" version="4.x" />
 
 ## Setting the default sub-navigation position
 
@@ -489,6 +494,26 @@ public function panel(Panel $panel): Panel
 }
 ```
 
+You may also choose to hide a notification for a specific HTTP status code, such as `403`, by passing that status code to the `hiddenErrorNotification()` method. A hidden status code will still be caught by filament, but no notification will be shown.
+
+Alternatively, you can use the `disabledErrorNotification()` method to fall back to Livewire's built-in error handling for that status code. This is useful if you want to hook into the Livewire error handling system to customize the error handling behavior for a specific status code but maintain Filament's error notification system for everything else.
+
+```php
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->registerErrorNotification(
+            title: 'An error occurred',
+            body: 'Please try again later.',
+        )
+        ->hiddenErrorNotification(403)
+        ->disabledErrorNotification(503);
+}
+```
+
 You can also enable or disable error notifications for specific pages in a panel by setting the `$hasErrorNotifications` property on the page class:
 
 ```php
@@ -497,9 +522,9 @@ use Filament\Pages\Dashboard as BaseDashboard;
 class Dashboard extends BaseDashboard
 {
     protected ?bool $hasErrorNotifications = true;
-    
+
     // or
-    
+
     protected ?bool $hasErrorNotifications = false;
 
     // ...
@@ -554,12 +579,37 @@ class Dashboard extends BaseDashboard
             title: 'An error occurred',
             body: 'Please try again later.',
         );
-    
+
         $this->registerErrorNotification(
             title: 'Record not found',
             body: 'A record you are looking for does not exist.',
             statusCode: 404,
         );
+    }
+
+    // ...
+}
+```
+
+You may also choose to hide a notification for a specific HTTP status code, such as `403`, by passing that status code to the `hiddenErrorNotification()` method. A hidden status code will still be caught by filament, but no notification will be shown.
+
+Alternatively, you can use the `disabledErrorNotification()` method to fall back to Livewire's built-in error handling for that status code. This is useful if you want to hook into the Livewire error handling system to customize the error handling behavior for a specific status code but maintain Filament's error notification system for everything else.
+
+```php
+use Filament\Pages\Dashboard as BaseDashboard;
+
+class Dashboard extends BaseDashboard
+{
+    protected function setUpErrorNotifications(): void
+    {
+        $this->registerErrorNotification(
+            title: 'An error occurred',
+            body: 'Please try again later.',
+        );
+
+        $this->hiddenErrorNotification(403);
+
+        $this->disabledErrorNotification(503);
     }
 
     // ...

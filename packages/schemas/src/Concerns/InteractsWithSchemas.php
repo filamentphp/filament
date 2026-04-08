@@ -469,7 +469,7 @@ trait InteractsWithSchemas
             $currentStatePath .= ".{$key}";
 
             if (
-                is_numeric($key) &&
+                (is_numeric($key) || array_is_list($state)) &&
                 (! array_key_exists($key, $state)) &&
                 str($currentStatePath)->startsWith($schemaStatePath)
             ) {

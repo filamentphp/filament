@@ -6,13 +6,13 @@ return [
 
         'actions' => [
 
-            'label' => 'Authenticator app',
+            'label' => 'Autentifikavimo programa',
 
-            'below_content' => 'Use a secure app to generate a temporary code for login verification.',
+            'below_content' => 'Naudokite saugią programą, kad sugeneruotumėte laikiną kodą prisijungimui.',
 
             'messages' => [
-                'enabled' => 'Enabled',
-                'disabled' => 'Disabled',
+                'enabled' => 'Įjungta',
+                'disabled' => 'Išjungta',
             ],
 
         ],
@@ -21,25 +21,25 @@ return [
 
     'login_form' => [
 
-        'label' => 'Use a code from your authenticator app',
+        'label' => 'Naudokite kodą iš savo autentifikavimo programos',
 
         'code' => [
 
-            'label' => 'Enter the 6-digit code from the authenticator app',
+            'label' => 'Įveskite 6 skaitmenų kodą iš autentifikavimo programos',
 
             'validation_attribute' => 'code',
 
             'actions' => [
 
                 'use_recovery_code' => [
-                    'label' => 'Use a recovery code instead',
+                    'label' => 'Arba naudokite atsarginį kodą',
                 ],
 
             ],
 
             'messages' => [
 
-                'invalid' => 'The code you entered is invalid.',
+                'invalid' => 'Įvestas kodas yra neteisingas.',
 
             ],
 
@@ -47,13 +47,13 @@ return [
 
         'recovery_code' => [
 
-            'label' => 'Or, enter a recovery code',
+            'label' => 'Arba įveskite atsarginį kodą',
 
             'validation_attribute' => 'recovery code',
 
             'messages' => [
 
-                'invalid' => 'The recovery code you entered is invalid.',
+                'invalid' => 'Įvestas atsarginis kodas yra neteisingas.',
 
             ],
 

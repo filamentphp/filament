@@ -33,6 +33,10 @@
         @apply flex flex-wrap gap-3;
     }
 
+    & .fi-callout-controls {
+        @apply self-start;
+    }
+
     &.fi-color {
         @apply ring-color-600/20 dark:ring-color-400/30;
 

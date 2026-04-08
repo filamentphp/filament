@@ -26,7 +26,7 @@ return [
         //     'authEndpoint' => '/broadcasting/auth',
         //     'disableStats' => true,
         //     'encrypted' => true,
-        //     'forceTLS' => true,
+        //     'forceTLS' => env('VITE_PUSHER_SCHEME', 'https') === 'https',
         // ],
 
     ],

@@ -1,6 +1,7 @@
 ---
 title: Replicate action
 ---
+import AutoScreenshot from "@components/AutoScreenshot.astro"
 import UtilityInjection from "@components/UtilityInjection.astro"
 
 ## Introduction
@@ -12,6 +13,8 @@ use Filament\Actions\ReplicateAction;
 
 ReplicateAction::make()
 ```
+
+<AutoScreenshot name="actions/replicate-action/modal" alt="Replicate action modal" version="4.x" />
 
 ## Excluding attributes
 
@@ -87,7 +90,7 @@ ReplicateAction::make()
 To disable the notification altogether, use the `successNotification(null)` method:
 
 ```php
-use Filament\Actions\RestoreAction;
+use Filament\Actions\ReplicateAction;
 
 ReplicateAction::make()
     ->successNotification(null)

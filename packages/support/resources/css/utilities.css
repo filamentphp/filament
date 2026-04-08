@@ -525,7 +525,7 @@
         line-height: calc(28 / 18);
         letter-spacing: -0.025em;
         color: var(--prose-code-color);
-        font-weight: var(--font-weight-bold);
+        font-weight: var(--font-weight-extrabold);
     }
 
     h2:where(:not(.fi-not-prose, .fi-not-prose *)) {
@@ -533,23 +533,35 @@
         line-height: calc(28 / 18);
         letter-spacing: -0.025em;
         color: var(--prose-code-color);
-        font-weight: var(--font-weight-semibold);
+        font-weight: var(--font-weight-bold);
     }
 
     h3:where(:not(.fi-not-prose, .fi-not-prose *)) {
         font-size: var(--text-base);
         line-height: calc(28 / 18);
         color: var(--prose-heading-color);
-        font-weight: var(--font-weight-semibold);
+        font-weight: var(--font-weight-bold);
     }
 
-    h4:where(:not(.fi-not-prose, .fi-not-prose *)),
-    h5:where(:not(.fi-not-prose, .fi-not-prose *)),
-    h6:where(:not(.fi-not-prose, .fi-not-prose *)) {
+    h4:where(:not(.fi-not-prose, .fi-not-prose *)) {
+        font-size: var(--text-sm);
+        line-height: calc(28 / 14);
+        color: var(--prose-heading-color);
+        font-weight: var(--font-weight-bold);
+    }
+
+    h5:where(:not(.fi-not-prose, .fi-not-prose *)) {
         font-size: var(--text-sm);
         line-height: calc(28 / 14);
         color: var(--prose-heading-color);
         font-weight: var(--font-weight-semibold);
+    }
+
+    h6:where(:not(.fi-not-prose, .fi-not-prose *)) {
+        font-size: var(--text-sm);
+        line-height: calc(28 / 14);
+        color: var(--prose-heading-color);
+        font-weight: var(--font-weight-medium);
     }
 
     :is(h2, h3, h4, h5, h6):where(:not(.fi-not-prose, .fi-not-prose *)) {

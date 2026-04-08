@@ -48,6 +48,10 @@ trait HasColumns
             return null;
         }
 
+        if ($column->isHidden()) {
+            return null;
+        }
+
         $record = $this->getTableRecord($record);
 
         if (! $record) {
@@ -79,6 +83,10 @@ trait HasColumns
         $column = $this->getTable()->getColumn($name);
 
         if (! $column) {
+            return null;
+        }
+
+        if ($column->isHidden()) {
             return null;
         }
 

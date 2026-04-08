@@ -4,6 +4,7 @@ namespace Filament\Forms\Components\RichEditor;
 
 use Closure;
 use Filament\Forms\Components\RichEditor\FileAttachmentProviders\Contracts\FileAttachmentProvider;
+use Filament\Forms\Components\RichEditor\Plugins\Contracts\HasFileAttachmentProvider;
 use Filament\Forms\Components\RichEditor\Plugins\Contracts\RichContentPlugin;
 use Filament\Forms\Components\RichEditor\TipTapExtensions\CustomBlockExtension;
 use Filament\Forms\Components\RichEditor\TipTapExtensions\DetailsContentExtension;
@@ -103,6 +104,11 @@ class RichContentRenderer implements Htmlable
      * @var ?array<string, string | TextColor>
      */
     protected ?array $textColors = null;
+
+    /**
+     * @var ?array<string>
+     */
+    protected ?array $linkProtocols = null;
 
     /**
      * @param  string | array<string, mixed> | null  $content
@@ -392,7 +398,12 @@ class RichContentRenderer implements Htmlable
             app(Italic::class),
             app(ImageExtension::class),
             app(LeadExtension::class),
-            app(Link::class),
+            app(Link::class, [
+                'options' => [
+                    'HTMLAttributes' => [],
+                    'allowedProtocols' => $this->getLinkProtocols(),
+                ],
+            ]),
             app(ListItem::class),
             app(MentionExtension::class),
             app(MergeTagExtension::class),
@@ -444,7 +455,21 @@ class RichContentRenderer implements Htmlable
 
     public function getFileAttachmentProvider(): ?FileAttachmentProvider
     {
-        return $this->fileAttachmentProvider;
+        if ($this->fileAttachmentProvider) {
+            return $this->fileAttachmentProvider;
+        }
+
+        foreach ($this->plugins as $plugin) {
+            if ($plugin instanceof HasFileAttachmentProvider) {
+                $provider = $plugin->getFileAttachmentProvider();
+
+                if ($provider) {
+                    return $this->fileAttachmentProvider = $provider;
+                }
+            }
+        }
+
+        return null;
     }
 
     public function getEditor(): Editor
@@ -517,10 +542,34 @@ class RichContentRenderer implements Htmlable
     }
 
     /**
-     * @param  ?array<class-string<RichContentCustomBlock> | array<string, mixed> | Closure>  $blocks
+     * @param  ?array<class-string<RichContentCustomBlock> | array<class-string<RichContentCustomBlock> | array<string, mixed> | Closure> | array<string, mixed> | Closure>  $blocks
      */
     public function customBlocks(?array $blocks): static
     {
+        if ($blocks !== null) {
+            $flattened = [];
+
+            foreach ($blocks as $key => $value) {
+                if (is_string($key) && is_a($key, RichContentCustomBlock::class, allow_string: true)) {
+                    // Data association: `BlockClass::class => $data`
+                    $flattened[$key] = $value;
+                } elseif (is_array($value)) {
+                    // Group or ungrouped section: `'Label' => [...]` or `[...]`
+                    foreach ($value as $innerKey => $innerValue) {
+                        if (is_string($innerKey)) {
+                            $flattened[$innerKey] = $innerValue;
+                        } else {
+                            $flattened[] = $innerValue;
+                        }
+                    }
+                } else {
+                    $flattened[] = $value;
+                }
+            }
+
+            $blocks = $flattened;
+        }
+
         $this->customBlocks = $blocks;
 
         return $this;
@@ -596,5 +645,23 @@ class RichContentRenderer implements Htmlable
             $textColors,
             fn (string | TextColor $color, string $name): array => [$name => ($color instanceof TextColor) ? $color : TextColor::make($color, $name)],
         );
+    }
+
+    /**
+     * @param  ?array<string>  $protocols
+     */
+    public function linkProtocols(?array $protocols): static
+    {
+        $this->linkProtocols = $protocols;
+
+        return $this;
+    }
+
+    /**
+     * @return array<string>
+     */
+    public function getLinkProtocols(): array
+    {
+        return $this->linkProtocols ?? app(Link::class)->options['allowedProtocols'];
     }
 }

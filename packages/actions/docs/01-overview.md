@@ -54,6 +54,10 @@ Action::make('edit')
 
 <UtilityInjection set="actions" version="4.x">As well as allowing a static value, the `url()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
+<Aside variant="danger">
+    If you are passing user-controlled data to the `url()` method, you should validate that the URL does not use a dangerous scheme such as `javascript:` or `data:`. Failing to do so could expose your application to XSS attacks.
+</Aside>
+
 The entire look of the action's trigger button and the modal is customizable using fluent PHP methods. We provide a sensible and consistent styling for the UI, but all of this is customizable with CSS.
 
 ## Available actions
@@ -258,6 +262,8 @@ Action::make('edit')
     ->authorizationTooltip()
 ```
 
+<AutoScreenshot name="actions/trigger-button/authorization-tooltip" alt="Disabled action button with an authorization tooltip" version="4.x" />
+
 You may instead allow the action to still be clickable even if the user is not authorized, but send a notification containing the response message, using the `authorizationNotification()` method:
 
 ```php
@@ -290,6 +296,8 @@ Action::make('delete')
 ```
 
 <UtilityInjection set="actions" version="4.x">As well as allowing a static value, the `disabled()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+<AutoScreenshot name="actions/trigger-button/disabled" alt="Disabled action button" version="4.x" />
 
 ## Registering keybindings
 
@@ -516,6 +524,78 @@ TextInput::make('title')
 
 TextInput::make('slug')
 ```
+
+### Adding a list of actions to a schema
+
+If you want to render a list of action buttons on their own row in a schema, without attaching them to a specific field, you can wrap them in an `Actions` layout component:
+
+```php
+use Filament\Actions\Action;
+use Filament\Schemas\Components\Actions;
+
+Actions::make([
+    Action::make('star')
+        ->icon('heroicon-m-star'),
+    Action::make('resetStars')
+        ->icon('heroicon-m-x-mark')
+        ->color('danger'),
+])
+```
+
+<AutoScreenshot name="schemas/layout/actions/independent/simple" alt="Independent actions in a schema" version="4.x" />
+
+You can make the actions span the full width of the schema using the `fullWidth()` method:
+
+```php
+use Filament\Actions\Action;
+use Filament\Schemas\Components\Actions;
+
+Actions::make([
+    Action::make('star')
+        ->icon('heroicon-m-star'),
+    Action::make('resetStars')
+        ->icon('heroicon-m-x-mark')
+        ->color('danger'),
+])->fullWidth()
+```
+
+<AutoScreenshot name="schemas/layout/actions/independent/full-width" alt="Full width independent actions in a schema" version="4.x" />
+
+You can change the horizontal alignment of the actions using the `alignment()` method:
+
+```php
+use Filament\Actions\Action;
+use Filament\Schemas\Components\Actions;
+use Filament\Support\Enums\Alignment;
+
+Actions::make([
+    Action::make('star')
+        ->icon('heroicon-m-star'),
+    Action::make('resetStars')
+        ->icon('heroicon-m-x-mark')
+        ->color('danger'),
+])->alignment(Alignment::Center)
+```
+
+<AutoScreenshot name="schemas/layout/actions/independent/horizontally-aligned-center" alt="Center-aligned independent actions in a schema" version="4.x" />
+
+If the `Actions` component is in a grid alongside other components, you can change its vertical alignment using the `verticalAlignment()` method:
+
+```php
+use Filament\Actions\Action;
+use Filament\Schemas\Components\Actions;
+use Filament\Support\Enums\VerticalAlignment;
+
+Actions::make([
+    Action::make('star')
+        ->icon('heroicon-m-star'),
+    Action::make('resetStars')
+        ->icon('heroicon-m-x-mark')
+        ->color('danger'),
+])->verticalAlignment(VerticalAlignment::End)
+```
+
+<AutoScreenshot name="schemas/layout/actions/independent/vertically-aligned-end" alt="Independent actions vertically aligned to the end in a schema" version="4.x" />
 
 ### Running JavaScript when an action is clicked
 
