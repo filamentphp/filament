@@ -38,6 +38,13 @@ use Tiptap\Editor;
 
 class RichEditor extends Field implements Contracts\CanBeLengthConstrained
 {
+    // Security: The rich editor outputs raw HTML. Attackers can intercept
+    // the value and send arbitrary HTML to the backend. When rendering
+    // in Blade views, always sanitize using `sanitizeHtml()` or the
+    // `RichContentRenderer`. Never use `{!! $content !!}` unsanitized.
+    // The default sanitizer permits inline `style` attributes —
+    // configure a restrictive one for untrusted user content.
+
     use Concerns\CanBeLengthConstrained;
     use Concerns\HasExtraInputAttributes;
     use Concerns\HasFileAttachments;
@@ -729,9 +736,10 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
 
     public function getContentAttribute(): ?RichContentAttribute
     {
-        // Do not read content attributes from the model when the rich editor is nested
-        // inside a custom block action modal, since the content attribute should only
-        // be used to configure the parent rich editor.
+        // Do not read content attributes from the model when the
+        // rich editor is nested inside a custom block action
+        // modal — the content attribute should only be used
+        // to configure the parent rich editor.
         if ($this->getRootContainer()->getOperation() === CustomBlockAction::NAME) {
             return null;
         }

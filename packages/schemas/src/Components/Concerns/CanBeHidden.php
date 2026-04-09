@@ -192,6 +192,9 @@ trait CanBeHidden
 
     public function visibleJs(string | Closure | null $condition): static
     {
+        // Security: This JavaScript is evaluated on the client via `eval()`.
+        // Never pass user input — only developer-defined expressions.
+
         $this->visibleJs = $condition;
 
         return $this;
@@ -199,6 +202,9 @@ trait CanBeHidden
 
     public function hiddenJs(string | Closure | null $condition): static
     {
+        // Security: This JavaScript is evaluated on the client via `eval()`.
+        // Never pass user input — only developer-defined expressions.
+
         $this->hiddenJs = $condition;
 
         return $this;
