@@ -45,11 +45,17 @@ class NotificationsServiceProvider extends PackageServiceProvider
                 return;
             }
 
+            if (app()->bound('filament.notifications.sent')) {
+                return;
+            }
+
             if (count(session()->get('filament.notifications') ?? []) <= 0) {
                 return;
             }
 
             $component->dispatch('notificationsSent');
+
+            app()->instance('filament.notifications.sent', true);
         });
 
         Testable::mixin(new TestsNotifications);
