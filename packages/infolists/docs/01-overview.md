@@ -141,6 +141,8 @@ TextEntry::make('name')
     ->hiddenLabel()
 ```
 
+<AutoScreenshot name="infolists/entries/hidden-label" alt="Entry with a hidden label" version="4.x" />
+
 Optionally, you may pass a boolean value to control if the label should be hidden or not:
 
 ```php
@@ -494,6 +496,8 @@ TextEntry::make('title')
 ```
 
 <UtilityInjection set="infolistEntries" version="4.x">As well as allowing a static value, the `alignment()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
+
+<AutoScreenshot name="infolists/entries/alignment" alt="Entries with different alignments" version="4.x" />
 
 ## Adding extra content to an entry
 

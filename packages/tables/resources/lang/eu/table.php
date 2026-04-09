@@ -6,12 +6,51 @@ return [
 
         'heading' => 'Zutabeak',
 
+        'actions' => [
+
+            'apply' => [
+                'label' => 'Aplikatu zutabeak',
+            ],
+
+            'reset' => [
+                'label' => 'Berrezarri',
+            ],
+
+        ],
+
     ],
 
     'columns' => [
 
+        'actions' => [
+            'label' => 'Ekintza|Ekintzak',
+        ],
+
+        'select' => [
+
+            'loading_message' => 'Kargatzen...',
+
+            'no_options_message' => 'Ez dago aukerarik.',
+
+            'no_search_results_message' => 'Ez da bat datorren bilaketarekin.',
+
+            'placeholder' => 'Aukeratu aukera bat',
+
+            'searching_message' => 'Bilatzen...',
+
+            'search_prompt' => 'Idatzi bilatzeko...',
+
+        ],
+
         'text' => [
+
+            'actions' => [
+                'collapse_list' => 'Erakutsi :count gutxiago',
+                'expand_list' => 'Erakutsi :count gehiago',
+            ],
+
             'more_list_items' => 'eta :count gehiago',
+
         ],
 
     ],
@@ -24,6 +63,10 @@ return [
 
         'bulk_select_record' => [
             'label' => 'Aukeratu/deselektatu :key ekintza masiboetarako.',
+        ],
+
+        'bulk_select_group' => [
+            'label' => 'Aukeratu/deselektatu :title taldea ekintza masiboetarako.',
         ],
 
         'search' => [
@@ -102,6 +145,10 @@ return [
 
         'actions' => [
 
+            'apply' => [
+                'label' => 'Aplikatu iragazkiak',
+            ],
+
             'remove' => [
                 'label' => 'Iragazkia kendu',
             ],
@@ -126,7 +173,13 @@ return [
         ],
 
         'select' => [
+
             'placeholder' => 'Guztiak',
+
+            'relationship' => [
+                'empty_option_label' => 'Bat ere ez',
+            ],
+
         ],
 
         'trashed' => [
@@ -149,7 +202,6 @@ return [
 
             'group' => [
                 'label' => 'Taldekatu',
-                'placeholder' => 'Taldekatu',
             ],
 
             'direction' => [
@@ -209,5 +261,7 @@ return [
         ],
 
     ],
+
+    'default_model_label' => 'erregistroa',
 
 ];

@@ -34,6 +34,7 @@ use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Js;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Illuminate\View\ComponentAttributeBag;
 use Livewire\Attributes\Renderless;
@@ -46,6 +47,13 @@ use function Filament\Support\generate_loading_indicator_html;
 
 class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasEmbeddedView
 {
+    // Security: The rich editor outputs raw HTML. Attackers can intercept
+    // the value and send arbitrary HTML to the backend. When rendering
+    // in Blade views, always sanitize using `sanitizeHtml()` or the
+    // `RichContentRenderer`. Never use `{!! $content !!}` unsanitized.
+    // The default sanitizer permits inline `style` attributes —
+    // configure a restrictive one for untrusted user content.
+
     use Concerns\CanBeLengthConstrained;
     use Concerns\HasExtraInputAttributes;
     use Concerns\HasFileAttachments;
@@ -732,9 +740,10 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
 
     public function getContentAttribute(): ?RichContentAttribute
     {
-        // Do not read content attributes from the model when the rich editor is nested
-        // inside a custom block action modal, since the content attribute should only
-        // be used to configure the parent rich editor.
+        // Do not read content attributes from the model when the
+        // rich editor is nested inside a custom block action
+        // modal — the content attribute should only be used
+        // to configure the parent rich editor.
         if ($this->getRootContainer()->getOperation() === CustomBlockAction::NAME) {
             return null;
         }
@@ -1044,7 +1053,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
     }
 
     /**
-     * @param  array<class-string<RichContentCustomBlock>> | Closure | null  $blocks
+     * @param  array<class-string<RichContentCustomBlock> | array<class-string<RichContentCustomBlock>>> | Closure | null  $blocks
      */
     public function customBlocks(array | Closure | null $blocks): static
     {
@@ -1054,11 +1063,32 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
     }
 
     /**
+     * @return array<class-string<RichContentCustomBlock> | array<class-string<RichContentCustomBlock>>>
+     */
+    protected function resolveCustomBlocks(): array
+    {
+        return $this->evaluate($this->customBlocks) ?? $this->getContentAttribute()?->getCustomBlocksConfig() ?? [];
+    }
+
+    /**
      * @return array<class-string<RichContentCustomBlock>>
      */
     public function getCustomBlocks(): array
     {
-        return $this->evaluate($this->customBlocks) ?? $this->getContentAttribute()?->getCustomBlocks() ?? [];
+        $blocks = $this->resolveCustomBlocks();
+        $result = [];
+
+        foreach ($blocks as $value) {
+            if (is_array($value)) {
+                foreach ($value as $innerKey => $innerValue) {
+                    $result[] = is_string($innerKey) ? $innerKey : $innerValue;
+                }
+            } else {
+                $result[] = $value;
+            }
+        }
+
+        return $result;
     }
 
     /**
@@ -1069,6 +1099,8 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
         if (isset($this->cachedCustomBlocks)) {
             return $this->cachedCustomBlocks;
         }
+
+        $this->cachedCustomBlocks = [];
 
         foreach ($this->getCustomBlocks() as $block) {
             $this->cachedCustomBlocks[$block::getId()] = $block;
@@ -1083,6 +1115,42 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, HasE
     public function getCustomBlock(string $id): ?string
     {
         return $this->getCachedCustomBlocks()[$id] ?? null;
+    }
+
+    /**
+     * @return Collection<string, Collection<int, class-string<RichContentCustomBlock>>>
+     */
+    public function getGroupedCustomBlocks(): Collection
+    {
+        $blocks = $this->resolveCustomBlocks();
+        $ungrouped = [];
+        $groups = collect();
+
+        foreach ($blocks as $key => $value) {
+            if (is_string($key) && is_array($value)) {
+                $groupBlocks = [];
+
+                foreach ($value as $innerKey => $innerValue) {
+                    $groupBlocks[] = is_string($innerKey) ? $innerKey : $innerValue;
+                }
+
+                $groups->put($key, collect($groupBlocks));
+            } elseif (is_array($value)) {
+                foreach ($value as $innerKey => $innerValue) {
+                    $ungrouped[] = is_string($innerKey) ? $innerKey : $innerValue;
+                }
+            } else {
+                $ungrouped[] = $value;
+            }
+        }
+
+        $result = collect();
+
+        if (! empty($ungrouped)) {
+            $result->put('', collect($ungrouped));
+        }
+
+        return $result->merge($groups);
     }
 
     /**

@@ -71,6 +71,8 @@ RichEditor::make('content')
 
 Each nested array in the main array represents a group of buttons in the toolbar.
 
+<AutoScreenshot name="forms/fields/rich-editor/custom-toolbar" alt="Rich editor with customized toolbar buttons" version="4.x" />
+
 Additional tools available in the toolbar include:
 
 - `h1` - Applies the "h1" tag to the text.
@@ -132,6 +134,8 @@ RichEditor::make('content')
         ],
     ])
 ```
+
+<AutoScreenshot name="forms/fields/rich-editor/floating-toolbar" alt="Rich editor with floating toolbar below selected text" version="4.x" />
 
 ### Grouping toolbar buttons into dropdowns
 
@@ -209,6 +213,8 @@ RichEditor::make('content')
         '#0ea5e9' => 'Sky',
     ])
 ```
+
+<AutoScreenshot name="forms/fields/rich-editor/text-colors" alt="Rich editor text color picker modal" version="4.x" />
 
 If you would like to define different colors for light and dark mode, you can use the a `TextColor` object to define the color:
 
@@ -442,6 +448,8 @@ RichEditor::make('content')
     ])
 ```
 
+<AutoScreenshot name="forms/fields/rich-editor/custom-blocks" alt="Rich editor with custom blocks panel open" version="4.x" />
+
 To create a custom block, you can use the following command:
 
 ```bash
@@ -590,6 +598,50 @@ RichContentRenderer::make($record->content)
     ->toHtml()
 ```
 
+### Grouping custom blocks
+
+You can organize custom blocks into groups using string keys in the `customBlocks()` array. Blocks passed directly (without a string key) are ungrouped and appear first in the panel:
+
+```php
+use Filament\Forms\Components\RichEditor;
+
+RichEditor::make('content')
+    ->customBlocks([
+        AlertBlock::class,
+        DividerBlock::class,
+        'Marketing' => [
+            HeroBlock::class,
+            CallToActionBlock::class,
+            BannerBlock::class,
+        ],
+        'Media' => [
+            ImageGalleryBlock::class,
+            VideoEmbedBlock::class,
+        ],
+    ])
+```
+
+<AutoScreenshot name="forms/fields/rich-editor/grouped-custom-blocks" alt="Rich editor with grouped custom blocks panel open" version="4.x" />
+
+Groups are displayed in the order they are defined in the array, with sticky headings in the side panel.
+
+When rendering content with grouped blocks, you can pass the same grouped array structure to the `RichContentRenderer`. Groups are ignored during rendering — only the block classes are used:
+
+```php
+use Filament\Forms\Components\RichEditor\RichContentRenderer;
+
+RichContentRenderer::make($record->content)
+    ->customBlocks([
+        'Marketing' => [
+            HeroBlock::class => [
+                'categoryUrl' => $record->category->getUrl(),
+            ],
+            CallToActionBlock::class,
+        ],
+    ])
+    ->toHtml()
+```
+
 ### Opening the custom blocks panel by default
 
 If you want the custom blocks panel to be open by default when the rich editor is loaded, you can use the `activePanel('customBlocks')` method:
@@ -620,6 +672,8 @@ RichEditor::make('content')
         'today',
     ])
 ```
+
+<AutoScreenshot name="forms/fields/rich-editor/merge-tags" alt="Rich editor with merge tags panel" version="4.x" />
 
 Merge tags are surrounded by double curly braces, like `{{ name }}`. When the content is rendered, these tags will be replaced with the corresponding values.
 
@@ -721,6 +775,8 @@ RichEditor::make('content')
             ]),
     ])
 ```
+
+<AutoScreenshot name="forms/fields/rich-editor/mentions" alt="Rich editor with mention suggestions" version="4.x" />
 
 Each provider is configured with a trigger character (passed to `make()`) that activates the mention search. You can have multiple providers with different triggers:
 

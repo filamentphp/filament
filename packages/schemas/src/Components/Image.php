@@ -39,6 +39,10 @@ class Image extends Component implements HasEmbeddedView
 
     public function url(string | Closure $url): static
     {
+        // Security: If this URL is derived from user input, validate it
+        // to prevent XSS via `javascript:` protocol URLs rendered
+        // in `src` attributes.
+
         $this->url = $url;
 
         return $this;

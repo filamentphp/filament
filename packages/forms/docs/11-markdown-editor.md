@@ -52,6 +52,8 @@ Each nested array in the main array represents a group of buttons in the toolbar
 
 <UtilityInjection set="formFields" version="4.x">As well as allowing a static value, the `toolbarButtons()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
 
+<AutoScreenshot name="forms/fields/markdown-editor/custom-toolbar" alt="Markdown editor with customized toolbar buttons" version="4.x" />
+
 ## Uploading images to the editor
 
 Images may be uploaded to the editor. They will always be uploaded to a publicly available URL with public storage permissions, since generating temporary file upload URLs is not supported in static content. You may customize where images are uploaded using configuration methods:

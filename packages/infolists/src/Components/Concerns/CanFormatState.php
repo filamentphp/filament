@@ -52,6 +52,9 @@ trait CanFormatState
 
     public function markdown(bool | Closure $condition = true): static
     {
+        // Security: Markdown is converted to HTML and then sanitized via
+        // `Str::sanitizeHtml()`. Same inline `style` caveat as `html()`.
+
         $this->isMarkdown = $condition;
 
         return $this;
@@ -348,6 +351,12 @@ trait CanFormatState
 
     public function html(bool | Closure $condition = true): static
     {
+        // Security: Content is automatically sanitized via Symfony's
+        // `HtmlSanitizer`. The default config permits inline `style`
+        // attributes, which can enable CSS-based attacks (e.g.
+        // `background: url(...)`). Configure a custom sanitizer
+        // if rendering untrusted user content.
+
         $this->isHtml = $condition;
 
         return $this;

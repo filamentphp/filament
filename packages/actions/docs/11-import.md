@@ -2,6 +2,7 @@
 title: Import action
 ---
 import Aside from "@components/Aside.astro"
+import AutoScreenshot from "@components/AutoScreenshot.astro"
 import UtilityInjection from "@components/UtilityInjection.astro"
 
 ## Introduction
@@ -36,6 +37,8 @@ use Filament\Actions\ImportAction;
 ImportAction::make()
     ->importer(ProductImporter::class)
 ```
+
+<AutoScreenshot name="actions/import-action/modal" alt="Import action modal" version="4.x" />
 
 If you want to add this action to the header of a table, you may do so like this:
 
@@ -752,7 +755,7 @@ If you'd like to customize the middleware that is applied to jobs of a certain i
 
 ### Customizing the import job retries
 
-By default, the import system will retry a job for 24 hours, or until it fails 5 times with unhandled exceptions, whichever happens first. This is to allow for temporary issues, such as the database being unavailable, to be resolved. You may change the time period for the job to retry, which is defined in the `getJobRetryUntil()` method on the exporter class:
+By default, the import system will retry a job for 24 hours, or until it fails 5 times with unhandled exceptions, whichever happens first. This is to allow for temporary issues, such as the database being unavailable, to be resolved. You may change the time period for the job to retry, which is defined in the `getJobRetryUntil()` method on the importer class:
 
 ```php
 use Carbon\CarbonInterface;
@@ -956,6 +959,16 @@ public function view(User $user, Import $import): bool
 ```
 
 ## Security
+
+### Per-record authorization
+
+The import system does not perform per-record authorization checks when creating or updating records. Each row from the CSV is processed by the importer's `resolveRecord()`, `fillRecord()`, and `saveRecord()` methods without consulting your application's [Laravel policies](https://laravel.com/docs/authorization#creating-policies). This means that if a user is allowed to trigger an import, they can create or update any record that the importer supports, regardless of whether they would normally be authorized to do so through your application's UI.
+
+If you need per-record authorization during import, you should add checks in your importer's [lifecycle hooks](#lifecycle-hooks), such as `beforeCreate()` or `beforeUpdate()`, to authorize the current user against the record.
+
+<Aside variant="danger">
+    If your application allows untrusted users to trigger imports, you should implement per-record authorization checks to prevent unauthorized record creation or modification.
+</Aside>
 
 ### CSV formula injection
 

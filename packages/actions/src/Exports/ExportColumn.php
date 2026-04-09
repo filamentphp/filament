@@ -13,6 +13,12 @@ use InvalidArgumentException;
 
 class ExportColumn extends Component
 {
+    // Security: Export column values are written to CSV/XLSX without
+    // transformation. Values starting with `=`, `+`, `-`, or `@`
+    // may be interpreted as formulas by spreadsheet software.
+    // Use `formatStateUsing()` to sanitize untrusted user
+    // content, e.g. by prefixing with a single quote.
+
     use CanAggregateRelatedModels;
     use Concerns\CanFormatState;
     use HasCellState;

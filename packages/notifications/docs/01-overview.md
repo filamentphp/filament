@@ -497,3 +497,5 @@ use Filament\Support\Enums\VerticalAlignment;
 Notifications::alignment(Alignment::Start);
 Notifications::verticalAlignment(VerticalAlignment::End);
 ```
+
+<AutoScreenshot name="notifications/positioning" alt="Notification positioned at the bottom start of the page" version="4.x" />

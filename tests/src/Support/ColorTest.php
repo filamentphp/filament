@@ -88,6 +88,103 @@ it('returns all colors', function (): void {
         ->toBe($colors);
 });
 
+it('converts a HEX color to OKLCH via `convertToOklch()`', function (): void {
+    $result = Color::convertToOklch('#ff0000');
+
+    expect($result)->toStartWith('oklch(');
+});
+
+it('passes through an OKLCH color unchanged via `convertToOklch()`', function (): void {
+    $oklch = 'oklch(0.637 0.237 25.331)';
+
+    expect(Color::convertToOklch($oklch))->toBe($oklch);
+});
+
+it('converts an RGB color to OKLCH via `convertToOklch()`', function (): void {
+    $result = Color::convertToOklch('rgb(255, 0, 0)');
+
+    expect($result)->toStartWith('oklch(');
+});
+
+it('converts a HEX color to RGB via `convertToRgb()`', function (): void {
+    expect(Color::convertToRgb('#ff0000'))->toBe('rgb(255, 0, 0)');
+});
+
+it('passes through an RGB color unchanged via `convertToRgb()`', function (): void {
+    $rgb = 'rgb(128, 64, 32)';
+
+    expect(Color::convertToRgb($rgb))->toBe($rgb);
+});
+
+it('converts an OKLCH color to RGB via `convertToRgb()`', function (): void {
+    $result = Color::convertToRgb('oklch(0.637 0.237 25.331)');
+
+    expect($result)->toStartWith('rgb(');
+});
+
+it('calculates a contrast ratio greater than 1 via `calculateContrastRatio()`', function (): void {
+    $ratio = Color::calculateContrastRatio('#ffffff', '#000000');
+
+    expect($ratio)->toBeGreaterThan(1);
+});
+
+it('returns `1.0` contrast ratio for identical colors via `calculateContrastRatio()`', function (): void {
+    $ratio = Color::calculateContrastRatio('#ffffff', '#ffffff');
+
+    expect($ratio)->toEqual(1.0);
+});
+
+it('identifies black-on-white as text-contrast-accessible via `isTextContrastRatioAccessible()`', function (): void {
+    expect(Color::isTextContrastRatioAccessible('#ffffff', '#000000'))->toBeTrue();
+});
+
+it('identifies white-on-white as NOT text-contrast-accessible via `isTextContrastRatioAccessible()`', function (): void {
+    expect(Color::isTextContrastRatioAccessible('#ffffff', '#ffffff'))->toBeFalse();
+});
+
+it('identifies black-on-white as non-text-contrast-accessible via `isNonTextContrastRatioAccessible()`', function (): void {
+    expect(Color::isNonTextContrastRatioAccessible('#ffffff', '#000000'))->toBeTrue();
+});
+
+it('identifies white-on-white as NOT non-text-contrast-accessible via `isNonTextContrastRatioAccessible()`', function (): void {
+    expect(Color::isNonTextContrastRatioAccessible('#ffffff', '#ffffff'))->toBeFalse();
+});
+
+it('generates a palette via `hex()` that matches `generatePalette()`', function (): void {
+    $color = '#3b82f6';
+
+    expect(Color::hex($color))->toBe(Color::generatePalette($color));
+});
+
+it('generates a palette via `rgb()` that matches `generatePalette()`', function (): void {
+    $color = 'rgb(59, 130, 246)';
+
+    expect(Color::rgb($color))->toBe(Color::generatePalette($color));
+});
+
+it('identifies a light color via `isLight()`', function (): void {
+    // White is very light
+    expect(Color::isLight('#ffffff'))->toBeTrue();
+});
+
+it('identifies a dark color as not light via `isLight()`', function (): void {
+    // Black is very dark
+    expect(Color::isLight('#000000'))->toBeFalse();
+});
+
+it('generates a palette with expected shade keys via `generatePalette()`', function (): void {
+    $palette = Color::generatePalette('#3b82f6');
+
+    expect($palette)->toHaveKeys([50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950]);
+    expect($palette[500])->toBeString();
+});
+
+it('calculates maximum contrast ratio between black and white', function (): void {
+    $ratio = Color::calculateContrastRatio('#000000', '#ffffff');
+
+    expect($ratio)->toBeGreaterThan(20.0);
+});
+
 it('generates component classes', function (string | HasColor $component, string $color): void {
     expect(FilamentColor::getComponentClasses($component, $color))
         ->toMatchSnapshot();

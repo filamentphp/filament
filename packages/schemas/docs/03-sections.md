@@ -297,4 +297,6 @@ Section::make('Heading')
     ->columns(2)
 ```
 
+<AutoScreenshot name="schemas/layout/section/columns" alt="Section with grid columns" version="4.x" />
+
 <UtilityInjection set="schemaComponents" version="4.x">As well as allowing a static value, the `columns()` method also accepts a function to dynamically calculate it. You can inject various utilities into the function as parameters.</UtilityInjection>
