@@ -13,6 +13,7 @@ class TeamFactory extends Factory
     {
         return [
             'name' => $this->faker->company(),
+            'slug' => $this->faker->unique()->slug(),
             'description' => $this->faker->sentence(),
         ];
     }

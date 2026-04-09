@@ -191,6 +191,92 @@ it('can load state from a `BelongsToMany` relationship inside a Repeater using e
     $undoRepeaterFake();
 });
 
+describe('properties', function (): void {
+    it('defaults `isMultiple()` to `false`', function (): void {
+        $select = TableSelect::make('team');
+
+        expect($select->isMultiple())->toBeFalse();
+    });
+
+    it('can set `multiple()`', function (): void {
+        $select = TableSelect::make('teams')->multiple();
+
+        expect($select->isMultiple())->toBeTrue();
+    });
+
+    it('can set `multiple()` with a `Closure`', function (): void {
+        $select = TableSelect::make('teams')
+            ->multiple(static fn (): bool => true);
+
+        expect($select->isMultiple())->toBeTrue();
+    });
+
+    it('throws `LogicException` for `getTableConfiguration()` when not set', function (): void {
+        $select = TableSelect::make('team');
+
+        $select->getTableConfiguration();
+    })->throws(LogicException::class);
+
+    it('can set `tableConfiguration()`', function (): void {
+        $select = TableSelect::make('team')
+            ->tableConfiguration(TeamsTable::class);
+
+        expect($select->getTableConfiguration())->toBe(TeamsTable::class);
+    });
+
+    it('can set `tableConfiguration()` with a `Closure`', function (): void {
+        $select = TableSelect::make('team')
+            ->tableConfiguration(static fn (): string => TeamsTable::class);
+
+        expect($select->getTableConfiguration())->toBe(TeamsTable::class);
+    });
+
+    it('returns empty array for `getTableArguments()` by default', function (): void {
+        $select = TableSelect::make('team');
+
+        expect($select->getTableArguments())->toBe([]);
+    });
+
+    it('can set `tableArguments()`', function (): void {
+        $select = TableSelect::make('team')
+            ->tableArguments(['filter' => 'active']);
+
+        expect($select->getTableArguments())->toBe(['filter' => 'active']);
+    });
+
+    it('defaults `shouldIgnoreRelatedRecords()` to `false`', function (): void {
+        $select = TableSelect::make('team');
+
+        expect($select->shouldIgnoreRelatedRecords())->toBeFalse();
+    });
+
+    it('can set `ignoreRelatedRecords()`', function (): void {
+        $select = TableSelect::make('team')->ignoreRelatedRecords();
+
+        expect($select->shouldIgnoreRelatedRecords())->toBeTrue();
+    });
+
+    it('can set `ignoreRelatedRecords()` with a `Closure`', function (): void {
+        $select = TableSelect::make('team')
+            ->ignoreRelatedRecords(static fn (): bool => true);
+
+        expect($select->shouldIgnoreRelatedRecords())->toBeTrue();
+    });
+
+    it('returns `false` for `hasRelationship()` by default', function (): void {
+        $select = TableSelect::make('team');
+
+        expect($select->hasRelationship())->toBeFalse();
+    });
+
+    it('returns `true` for `hasRelationship()` after `relationship()` is called', function (): void {
+        $select = TableSelect::make('teams')
+            ->relationship('teams');
+
+        expect($select->hasRelationship())->toBeTrue();
+    });
+});
+
 class TableSelectWithBelongsToManyRelationship extends Component implements HasActions, HasSchemas
 {
     use InteractsWithActions;

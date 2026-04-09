@@ -29,6 +29,10 @@ trait HasRecordUrl
 
     public function recordUrl(string | Closure | null $url, bool | Closure | null $shouldOpenInNewTab = null): static
     {
+        // Security: If this URL is derived from user input, validate it
+        // to prevent XSS via `javascript:` protocol URLs rendered
+        // in `href` attributes.
+
         if ($shouldOpenInNewTab !== null) {
             $this->openRecordUrlInNewTab($shouldOpenInNewTab);
         }
@@ -83,6 +87,9 @@ trait HasRecordUrl
      */
     public function extraRecordLinkAttributes(array | Closure $attributes, bool $merge = false): static
     {
+        // Security: Attribute values are not escaped when rendered. Never
+        // pass unsanitized user input as attribute names or values.
+
         if ($merge) {
             $this->extraRecordLinkAttributes[] = $attributes;
         } else {

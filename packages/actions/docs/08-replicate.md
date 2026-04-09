@@ -90,7 +90,7 @@ ReplicateAction::make()
 To disable the notification altogether, use the `successNotification(null)` method:
 
 ```php
-use Filament\Actions\RestoreAction;
+use Filament\Actions\ReplicateAction;
 
 ReplicateAction::make()
     ->successNotification(null)

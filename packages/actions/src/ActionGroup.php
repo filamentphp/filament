@@ -740,7 +740,7 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
             [
                 'attributes' => new FilamentComponentAttributeBag,
                 ...$this->extractPublicMethods(),
-                ...(isset($this->viewIdentifier) ? [$this->viewIdentifier => $this] : []),
+                $this->viewIdentifier => $this,
                 ...$this->viewData,
             ],
         );
@@ -774,6 +774,9 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
      */
     public function extraDropdownAttributes(array | Closure $attributes, bool $merge = false): static
     {
+        // Security: Attribute values are not escaped when rendered. Never
+        // pass unsanitized user input as attribute names or values.
+
         if ($merge) {
             $this->extraDropdownAttributes[] = $attributes;
         } else {

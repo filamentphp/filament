@@ -1,9 +1,11 @@
 @php
     $customBlocks = $getCustomBlocks();
+    $groupedCustomBlocks = $getGroupedCustomBlocks();
     $extraAttributeBag = $getExtraAttributeBag();
     $fieldWrapperView = $getFieldWrapperView();
     $id = $getId();
     $isDisabled = $isDisabled();
+    $label = $getLabel();
     $livewireKey = $getLivewireKey();
     $key = $getKey();
     $mergeTags = $getMergeTags();
@@ -55,6 +57,7 @@
                         },
                         hasResizableImages: @js($hasResizableImages()),
                         isDisabled: @js($isDisabled),
+                        label: @js($label),
                         isLiveDebounced: @js($isLiveDebounced()),
                         isLiveOnBlur: @js($isLiveOnBlur()),
                         key: @js($key),
@@ -170,38 +173,52 @@
                                 </div>
                             </div>
 
-                            <div class="fi-fo-rich-editor-custom-blocks-list">
-                                @foreach ($customBlocks as $block)
-                                    @php
-                                        $blockId = $block::getId();
-                                    @endphp
+                            <div class="fi-fo-rich-editor-custom-blocks-ctn">
+                                @foreach ($groupedCustomBlocks as $customBlockGroupLabel => $groupBlocks)
+                                    @if (filled($customBlockGroupLabel))
+                                        <h4
+                                            class="fi-fo-rich-editor-custom-blocks-group-header"
+                                        >
+                                            {{ $customBlockGroupLabel }}
+                                        </h4>
+                                    @endif
 
-                                    <button
-                                        draggable="true"
-                                        type="button"
-                                        x-data="{ isLoading: false }"
-                                        x-on:click="
-                                            isLoading = true
-
-                                            $wire.mountAction(
-                                                'customBlock',
-                                                { editorSelection, id: @js($blockId), mode: 'insert' },
-                                                { schemaComponent: @js($key) },
-                                            )
-                                        "
-                                        x-on:dragstart="$event.dataTransfer.setData('customBlock', @js($blockId))"
-                                        x-on:open-modal.window="isLoading = false"
-                                        x-on:run-rich-editor-commands.window="isLoading = false"
-                                        class="fi-fo-rich-editor-custom-block-btn"
+                                    <div
+                                        class="fi-fo-rich-editor-custom-blocks-list"
                                     >
-                                        {{
-                                            \Filament\Support\generate_loading_indicator_html((new \Illuminate\View\ComponentAttributeBag([
-                                                'x-show' => 'isLoading',
-                                            ])))
-                                        }}
+                                        @foreach ($groupBlocks as $block)
+                                            @php
+                                                $blockId = $block::getId();
+                                            @endphp
 
-                                        {{ $block::getLabel() }}
-                                    </button>
+                                            <button
+                                                draggable="true"
+                                                type="button"
+                                                x-data="{ isLoading: false }"
+                                                x-on:click="
+                                                    isLoading = true
+
+                                                    $wire.mountAction(
+                                                        'customBlock',
+                                                        { editorSelection, id: @js($blockId), mode: 'insert' },
+                                                        { schemaComponent: @js($key) },
+                                                    )
+                                                "
+                                                x-on:dragstart="$event.dataTransfer.setData('customBlock', @js($blockId))"
+                                                x-on:open-modal.window="isLoading = false"
+                                                x-on:run-rich-editor-commands.window="isLoading = false"
+                                                class="fi-fo-rich-editor-custom-block-btn"
+                                            >
+                                                {{
+                                                    \Filament\Support\generate_loading_indicator_html((new \Illuminate\View\ComponentAttributeBag([
+                                                        'x-show' => 'isLoading',
+                                                    ])))
+                                                }}
+
+                                                {{ $block::getLabel() }}
+                                            </button>
+                                        @endforeach
+                                    </div>
                                 @endforeach
                             </div>
                         </div>

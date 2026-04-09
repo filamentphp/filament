@@ -135,8 +135,25 @@
         @apply cursor-move rounded-lg bg-white p-1 text-start text-sm text-gray-600 ring-1 ring-gray-600/10 dark:bg-gray-400/10 dark:text-gray-200 dark:ring-gray-400/20;
     }
 
+    & .fi-fo-rich-editor-custom-blocks-ctn {
+        @apply grid overflow-y-auto;
+    }
+
+    & .fi-fo-rich-editor-custom-blocks-group-header {
+        @apply sticky -top-px z-10 border-b border-gray-200 bg-gray-50 px-4 py-2 text-sm font-semibold text-gray-950 capitalize dark:border-white/10 dark:bg-gray-800 dark:text-white;
+
+        &:not(:first-child) {
+            @apply border-t;
+        }
+    }
+
     & .fi-fo-rich-editor-custom-blocks-list {
         @apply flex flex-wrap gap-2 px-4 py-3;
+    }
+
+    &:has(.fi-fo-rich-editor-custom-blocks-group-header)
+        .fi-fo-rich-editor-custom-blocks-list {
+        @apply bg-white dark:bg-gray-900;
     }
 
     & .fi-fo-rich-editor-custom-block-btn {
