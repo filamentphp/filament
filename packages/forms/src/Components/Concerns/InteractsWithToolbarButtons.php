@@ -87,7 +87,6 @@ trait InteractsWithToolbarButtons
             $buttons = match ($modification['type']) {
                 'disableAll' => [],
                 'disable' => $this->applyDisableToolbarButtonsModification($buttons, $modification['buttons']),
-                // 'enable' => [...$buttons, ...$modification['buttons']],
                 'enable' => $this->applyEnableToolbarButtonsModification($buttons, $modification['buttons']),
                 default => throw new Exception('Unknown toolbar buttons modification type: [' . $modification['type'] . '].'),
             };
