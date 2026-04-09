@@ -87,7 +87,8 @@ trait InteractsWithToolbarButtons
             $buttons = match ($modification['type']) {
                 'disableAll' => [],
                 'disable' => $this->applyDisableToolbarButtonsModification($buttons, $modification['buttons']),
-                'enable' => [...$buttons, ...$modification['buttons']],
+                // 'enable' => [...$buttons, ...$modification['buttons']],
+                'enable' => $this->applyEnableToolbarButtonsModification($buttons, $modification['buttons']),
                 default => throw new Exception('Unknown toolbar buttons modification type: [' . $modification['type'] . '].'),
             };
         }
@@ -168,6 +169,84 @@ trait InteractsWithToolbarButtons
         }
 
         return $modified;
+    }
+
+    /**
+     * @param  array<int, string | object | array<int, string | object>>  $buttons
+     * @param  array<int, string | object | array<int, string | object>>  $buttonsToEnable
+     * @return array<int, string | object | array<int, string | object>>
+     */
+    protected function applyEnableToolbarButtonsModification(array $buttons, array $buttonsToEnable): array
+    {
+        $modified = $buttons;
+
+        foreach ($buttonsToEnable as $button) {
+            if (is_object($button)) {
+                $modified[] = $button;
+
+                continue;
+            }
+
+            if (is_array($button)) {
+                $filteredGroup = [];
+
+                foreach ($button as $item) {
+                    if (is_object($item)) {
+                        $filteredGroup[] = $item;
+
+                        continue;
+                    }
+
+                    if ($this->hasToolbarButtonInArray($modified, $item) || in_array($item, $filteredGroup, true)) {
+                        continue;
+                    }
+
+                    $filteredGroup[] = $item;
+                }
+
+                if (filled($filteredGroup)) {
+                    $modified[] = $filteredGroup;
+                }
+
+                continue;
+            }
+
+            if ($this->hasToolbarButtonInArray($modified, $button)) {
+                continue;
+            }
+
+            $modified[] = $button;
+        }
+
+        return $modified;
+    }
+
+    /**
+     * @param  array<int, string | object | array<int, string | object>>  $buttons
+     */
+    protected function hasToolbarButtonInArray(array $buttons, string $button): bool
+    {
+        foreach ($buttons as $item) {
+            if (is_object($item)) {
+                continue;
+            }
+
+            if (is_array($item)) {
+                foreach ($item as $groupedItem) {
+                    if (is_string($groupedItem) && ($groupedItem === $button)) {
+                        return true;
+                    }
+                }
+
+                continue;
+            }
+
+            if ($item === $button) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
