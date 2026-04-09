@@ -331,6 +331,12 @@ class RelationManager extends Component implements HasActions, HasRenderHookScop
 
     public function getDefaultActionAuthorizationResponse(Action $action): ?Response
     {
+        // Security: `AssociateAction`, `AttachAction`, `DetachAction`, and
+        // `DissociateAction` only check `isReadOnly()` — they do not check
+        // specific policy methods. `DeleteBulkAction`, `ForceDeleteBulkAction`,
+        // and `RestoreBulkAction` use `*Any()` policy methods for performance.
+        // Use `authorizeIndividualRecords()` if per-record checks are needed.
+
         if ($action instanceof ViewAction) {
             return $this->getViewAuthorizationResponse($action->getRecord());
         }

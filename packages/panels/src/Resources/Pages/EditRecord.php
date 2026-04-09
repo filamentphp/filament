@@ -142,6 +142,12 @@ class EditRecord extends Page
      */
     protected function mutateFormDataBeforeFill(array $data): array
     {
+        // Security: All non-`$hidden` model attributes are sent to the
+        // browser via Livewire. Override this to `unset()` sensitive
+        // attributes (API keys, internal flags, etc.). Only form
+        // field attributes are writable — not a mass assignment
+        // issue, but a data exposure concern.
+
         return $data;
     }
 

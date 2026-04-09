@@ -485,6 +485,9 @@ class RichContentRenderer implements Htmlable
 
     public function toUnsafeHtml(): string
     {
+        // Security: This method returns unsanitized HTML. Only use for
+        // internal processing — never render in Blade. Use `toHtml()`.
+
         $editor = $this->getEditor();
 
         $this->processCustomBlocks($editor);
@@ -498,6 +501,10 @@ class RichContentRenderer implements Htmlable
 
     public function toHtml(): string
     {
+        // Security: Always use `toHtml()` (not `toUnsafeHtml()`) when
+        // rendering user-provided rich content. This applies
+        // Symfony's `HtmlSanitizer` to prevent XSS.
+
         return Str::sanitizeHtml($this->toUnsafeHtml());
     }
 
