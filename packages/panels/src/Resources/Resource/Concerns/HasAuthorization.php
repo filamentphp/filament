@@ -10,6 +10,16 @@ use function Filament\get_authorization_response;
 
 trait HasAuthorization
 {
+    // Security: Resource authorization delegates to Laravel Model Policies.
+    // Standard CRUD operations (`viewAny`, `create`, `update`, `view`,
+    // `delete`, `forceDelete`, `restore`, `reorder`) are checked
+    // automatically. Bulk actions use `*Any()` policy methods
+    // (`deleteAny`, `forceDeleteAny`, `restoreAny`) for performance —
+    // use `authorizeIndividualRecords()` if per-record checks are
+    // needed. Inline editable table columns bypass these checks —
+    // they only respect `disabled()`. Custom actions require manual
+    // authorization via `authorize()`, `visible()`, or `hidden()`.
+
     protected static bool $shouldCheckPolicyExistence = true;
 
     protected static bool $shouldSkipAuthorization = false;
@@ -48,6 +58,10 @@ trait HasAuthorization
 
     public static function skipAuthorization(bool $condition = true): void
     {
+        // Security: Disabling authorization removes all policy checks for
+        // this resource. All panel users will be able to perform any
+        // operation. Not recommended for production.
+
         static::$shouldSkipAuthorization = $condition;
     }
 

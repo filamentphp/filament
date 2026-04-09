@@ -138,6 +138,9 @@ class Notification extends ViewComponent implements Arrayable, HasEmbeddedView
 
     protected function isViewSafe(string $view): bool
     {
+        // Security: Only explicitly whitelisted views can be rendered in
+        // notifications, preventing view injection from stored data.
+
         return in_array($view, $this->safeViews, strict: true);
     }
 
