@@ -452,6 +452,714 @@ describe('merge tags', function (): void {
     });
 });
 
+describe('merge tag output', function (): void {
+    it('wraps a string merge tag in a `<span>` with `data-type` and `data-id` via `toUnsafeHtml()`', function (): void {
+        $renderer = RichContentRenderer::make([
+            'type' => 'doc',
+            'content' => [
+                ['type' => 'paragraph', 'content' => [
+                    ['type' => 'mergeTag', 'attrs' => ['id' => 'name']],
+                ]],
+            ],
+        ])->mergeTags(['name' => 'John']);
+
+        expect($renderer->toUnsafeHtml())
+            ->toBe('<p><span data-type="mergeTag" data-id="name">John</span></p>');
+    });
+
+    it('strips `data-id` from the merge tag `<span>` via `toHtml()`', function (): void {
+        $renderer = RichContentRenderer::make([
+            'type' => 'doc',
+            'content' => [
+                ['type' => 'paragraph', 'content' => [
+                    ['type' => 'mergeTag', 'attrs' => ['id' => 'name']],
+                ]],
+            ],
+        ])->mergeTags(['name' => 'John']);
+
+        expect($renderer->toHtml())
+            ->toBe('<p><span data-type="mergeTag">John</span></p>');
+    });
+
+    it('renders only the text value via `toText()` for a string merge tag', function (): void {
+        $renderer = RichContentRenderer::make([
+            'type' => 'doc',
+            'content' => [
+                ['type' => 'paragraph', 'content' => [
+                    ['type' => 'mergeTag', 'attrs' => ['id' => 'name']],
+                ]],
+            ],
+        ])->mergeTags(['name' => 'John']);
+
+        expect($renderer->toText())->toBe('John');
+    });
+
+    it('nests a text node inside the merge tag node via `toArray()` for a string merge tag', function (): void {
+        $renderer = RichContentRenderer::make([
+            'type' => 'doc',
+            'content' => [
+                ['type' => 'paragraph', 'content' => [
+                    ['type' => 'text', 'text' => 'Hello '],
+                    ['type' => 'mergeTag', 'attrs' => ['id' => 'name']],
+                ]],
+            ],
+        ])->mergeTags(['name' => 'John']);
+
+        expect($renderer->toArray())->toBe([
+            'type' => 'doc',
+            'content' => [
+                [
+                    'type' => 'paragraph',
+                    'content' => [
+                        ['type' => 'text', 'text' => 'Hello '],
+                        [
+                            'type' => 'mergeTag',
+                            'attrs' => ['id' => 'name'],
+                            'content' => [
+                                ['type' => 'text', 'text' => 'John'],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ]);
+    });
+
+    it('renders a string merge tag inline with surrounding text via `toUnsafeHtml()`', function (): void {
+        $renderer = RichContentRenderer::make([
+            'type' => 'doc',
+            'content' => [
+                ['type' => 'paragraph', 'content' => [
+                    ['type' => 'text', 'text' => 'Hello '],
+                    ['type' => 'mergeTag', 'attrs' => ['id' => 'name']],
+                    ['type' => 'text', 'text' => ', welcome!'],
+                ]],
+            ],
+        ])->mergeTags(['name' => 'John']);
+
+        expect($renderer->toUnsafeHtml())
+            ->toBe('<p>Hello <span data-type="mergeTag" data-id="name">John</span>, welcome!</p>');
+    });
+
+    it('renders a string merge tag inline with surrounding text via `toHtml()`', function (): void {
+        $renderer = RichContentRenderer::make([
+            'type' => 'doc',
+            'content' => [
+                ['type' => 'paragraph', 'content' => [
+                    ['type' => 'text', 'text' => 'Hello '],
+                    ['type' => 'mergeTag', 'attrs' => ['id' => 'name']],
+                    ['type' => 'text', 'text' => ', welcome!'],
+                ]],
+            ],
+        ])->mergeTags(['name' => 'John']);
+
+        expect($renderer->toHtml())
+            ->toBe('<p>Hello <span data-type="mergeTag">John</span>, welcome!</p>');
+    });
+
+    it('renders a string merge tag inline with surrounding text via `toText()`', function (): void {
+        $renderer = RichContentRenderer::make([
+            'type' => 'doc',
+            'content' => [
+                ['type' => 'paragraph', 'content' => [
+                    ['type' => 'text', 'text' => 'Hello '],
+                    ['type' => 'mergeTag', 'attrs' => ['id' => 'name']],
+                    ['type' => 'text', 'text' => ', welcome!'],
+                ]],
+            ],
+        ])->mergeTags(['name' => 'John']);
+
+        expect($renderer->toText())->toBe('Hello John, welcome!');
+    });
+
+    it('renders an `Htmlable` merge tag as raw HTML without a wrapping `<span>` via `toUnsafeHtml()`', function (): void {
+        $renderer = RichContentRenderer::make([
+            'type' => 'doc',
+            'content' => [
+                ['type' => 'paragraph', 'content' => [
+                    ['type' => 'mergeTag', 'attrs' => ['id' => 'badge']],
+                ]],
+            ],
+        ])->mergeTags(['badge' => new HtmlString('<strong>Admin</strong>')]);
+
+        expect($renderer->toUnsafeHtml())
+            ->toBe('<p><strong>Admin</strong></p>');
+    });
+
+    it('renders an `Htmlable` merge tag as raw HTML without a wrapping `<span>` via `toHtml()`', function (): void {
+        $renderer = RichContentRenderer::make([
+            'type' => 'doc',
+            'content' => [
+                ['type' => 'paragraph', 'content' => [
+                    ['type' => 'mergeTag', 'attrs' => ['id' => 'badge']],
+                ]],
+            ],
+        ])->mergeTags(['badge' => new HtmlString('<strong>Admin</strong>')]);
+
+        expect($renderer->toHtml())
+            ->toBe('<p><strong>Admin</strong></p>');
+    });
+
+    it('extracts text from an `Htmlable` merge tag by stripping HTML via `toText()`', function (): void {
+        $renderer = RichContentRenderer::make([
+            'type' => 'doc',
+            'content' => [
+                ['type' => 'paragraph', 'content' => [
+                    ['type' => 'mergeTag', 'attrs' => ['id' => 'badge']],
+                ]],
+            ],
+        ])->mergeTags(['badge' => new HtmlString('<strong>Admin</strong>')]);
+
+        expect($renderer->toText())->toBe('Admin');
+    });
+
+    it('converts an `Htmlable` merge tag to a `rawHtmlMergeTag` node via `toArray()`', function (): void {
+        $renderer = RichContentRenderer::make([
+            'type' => 'doc',
+            'content' => [
+                ['type' => 'paragraph', 'content' => [
+                    ['type' => 'text', 'text' => 'Hello '],
+                    ['type' => 'mergeTag', 'attrs' => ['id' => 'name']],
+                ]],
+            ],
+        ])->mergeTags(['name' => new HtmlString('<b>John</b>')]);
+
+        expect($renderer->toArray())->toBe([
+            'type' => 'doc',
+            'content' => [
+                [
+                    'type' => 'paragraph',
+                    'content' => [
+                        ['type' => 'text', 'text' => 'Hello '],
+                        [
+                            'type' => 'rawHtmlMergeTag',
+                            'attrs' => ['id' => 'name'],
+                            'html' => '<b>John</b>',
+                        ],
+                    ],
+                ],
+            ],
+        ]);
+    });
+
+    it('renders an `Htmlable` merge tag inline with surrounding text via `toUnsafeHtml()`', function (): void {
+        $renderer = RichContentRenderer::make([
+            'type' => 'doc',
+            'content' => [
+                ['type' => 'paragraph', 'content' => [
+                    ['type' => 'text', 'text' => 'Role: '],
+                    ['type' => 'mergeTag', 'attrs' => ['id' => 'badge']],
+                    ['type' => 'text', 'text' => ' assigned'],
+                ]],
+            ],
+        ])->mergeTags(['badge' => new HtmlString('<strong>Admin</strong>')]);
+
+        expect($renderer->toUnsafeHtml())
+            ->toBe('<p>Role: <strong>Admin</strong> assigned</p>');
+    });
+
+    it('renders an `Htmlable` merge tag inline with surrounding text via `toText()`', function (): void {
+        $renderer = RichContentRenderer::make([
+            'type' => 'doc',
+            'content' => [
+                ['type' => 'paragraph', 'content' => [
+                    ['type' => 'text', 'text' => 'Role: '],
+                    ['type' => 'mergeTag', 'attrs' => ['id' => 'badge']],
+                    ['type' => 'text', 'text' => ' assigned'],
+                ]],
+            ],
+        ])->mergeTags(['badge' => new HtmlString('<strong>Admin</strong>')]);
+
+        expect($renderer->toText())->toBe('Role: Admin assigned');
+    });
+
+    it('renders mixed string and `Htmlable` merge tags inline via `toUnsafeHtml()`', function (): void {
+        $renderer = RichContentRenderer::make([
+            'type' => 'doc',
+            'content' => [
+                ['type' => 'paragraph', 'content' => [
+                    ['type' => 'mergeTag', 'attrs' => ['id' => 'greeting']],
+                    ['type' => 'text', 'text' => ' '],
+                    ['type' => 'mergeTag', 'attrs' => ['id' => 'badge']],
+                ]],
+            ],
+        ])->mergeTags([
+            'greeting' => 'Hello',
+            'badge' => new HtmlString('<strong>Admin</strong>'),
+        ]);
+
+        expect($renderer->toUnsafeHtml())
+            ->toBe('<p><span data-type="mergeTag" data-id="greeting">Hello</span> <strong>Admin</strong></p>');
+    });
+
+    it('renders mixed string and `Htmlable` merge tags via `toHtml()`', function (): void {
+        $renderer = RichContentRenderer::make([
+            'type' => 'doc',
+            'content' => [
+                ['type' => 'paragraph', 'content' => [
+                    ['type' => 'mergeTag', 'attrs' => ['id' => 'greeting']],
+                    ['type' => 'text', 'text' => ' '],
+                    ['type' => 'mergeTag', 'attrs' => ['id' => 'badge']],
+                ]],
+            ],
+        ])->mergeTags([
+            'greeting' => 'Hello',
+            'badge' => new HtmlString('<strong>Admin</strong>'),
+        ]);
+
+        expect($renderer->toHtml())
+            ->toBe('<p><span data-type="mergeTag">Hello</span> <strong>Admin</strong></p>');
+    });
+
+    it('renders mixed string and `Htmlable` merge tags inline via `toText()`', function (): void {
+        $renderer = RichContentRenderer::make([
+            'type' => 'doc',
+            'content' => [
+                ['type' => 'paragraph', 'content' => [
+                    ['type' => 'mergeTag', 'attrs' => ['id' => 'greeting']],
+                    ['type' => 'text', 'text' => ' '],
+                    ['type' => 'mergeTag', 'attrs' => ['id' => 'badge']],
+                ]],
+            ],
+        ])->mergeTags([
+            'greeting' => 'Hello',
+            'badge' => new HtmlString('<strong>Admin</strong>'),
+        ]);
+
+        expect($renderer->toText())->toBe('Hello Admin');
+    });
+
+    it('renders `null`, empty string, and missing merge tags as empty `<span>` elements via `toUnsafeHtml()`', function (): void {
+        $renderer = RichContentRenderer::make([
+            'type' => 'doc',
+            'content' => [
+                ['type' => 'paragraph', 'content' => [
+                    ['type' => 'text', 'text' => 'A'],
+                    ['type' => 'mergeTag', 'attrs' => ['id' => 'null_val']],
+                    ['type' => 'text', 'text' => 'B'],
+                    ['type' => 'mergeTag', 'attrs' => ['id' => 'empty_str']],
+                    ['type' => 'text', 'text' => 'C'],
+                    ['type' => 'mergeTag', 'attrs' => ['id' => 'missing']],
+                    ['type' => 'text', 'text' => 'D'],
+                ]],
+            ],
+        ])->mergeTags(['null_val' => null, 'empty_str' => '']);
+
+        expect($renderer->toUnsafeHtml())
+            ->toBe('<p>A<span data-type="mergeTag" data-id="null_val"></span>B<span data-type="mergeTag" data-id="empty_str"></span>C<span data-type="mergeTag" data-id="missing"></span>D</p>');
+    });
+
+    it('renders `null`, empty string, and missing merge tags as empty `<span>` elements via `toHtml()`', function (): void {
+        $renderer = RichContentRenderer::make([
+            'type' => 'doc',
+            'content' => [
+                ['type' => 'paragraph', 'content' => [
+                    ['type' => 'text', 'text' => 'A'],
+                    ['type' => 'mergeTag', 'attrs' => ['id' => 'null_val']],
+                    ['type' => 'text', 'text' => 'B'],
+                    ['type' => 'mergeTag', 'attrs' => ['id' => 'empty_str']],
+                    ['type' => 'text', 'text' => 'C'],
+                    ['type' => 'mergeTag', 'attrs' => ['id' => 'missing']],
+                    ['type' => 'text', 'text' => 'D'],
+                ]],
+            ],
+        ])->mergeTags(['null_val' => null, 'empty_str' => '']);
+
+        expect($renderer->toHtml())
+            ->toBe('<p>A<span data-type="mergeTag"></span>B<span data-type="mergeTag"></span>C<span data-type="mergeTag"></span>D</p>');
+    });
+
+    it('renders `null`, empty string, and missing merge tags as empty inline content via `toText()`', function (): void {
+        $renderer = RichContentRenderer::make([
+            'type' => 'doc',
+            'content' => [
+                ['type' => 'paragraph', 'content' => [
+                    ['type' => 'text', 'text' => 'A'],
+                    ['type' => 'mergeTag', 'attrs' => ['id' => 'null_val']],
+                    ['type' => 'text', 'text' => 'B'],
+                    ['type' => 'mergeTag', 'attrs' => ['id' => 'empty_str']],
+                    ['type' => 'text', 'text' => 'C'],
+                    ['type' => 'mergeTag', 'attrs' => ['id' => 'missing']],
+                    ['type' => 'text', 'text' => 'D'],
+                ]],
+            ],
+        ])->mergeTags(['null_val' => null, 'empty_str' => '']);
+
+        expect($renderer->toText())->toBe('ABCD');
+    });
+
+    it('renders an unresolved merge tag as an empty `<span>` when no `mergeTags()` is called via `toUnsafeHtml()`', function (): void {
+        $renderer = RichContentRenderer::make([
+            'type' => 'doc',
+            'content' => [
+                ['type' => 'paragraph', 'content' => [
+                    ['type' => 'mergeTag', 'attrs' => ['id' => 'name']],
+                ]],
+            ],
+        ]);
+
+        expect($renderer->toUnsafeHtml())
+            ->toBe('<p><span data-type="mergeTag" data-id="name"></span></p>');
+    });
+
+    it('renders an unresolved merge tag as an empty `<span>` when no `mergeTags()` is called via `toHtml()`', function (): void {
+        $renderer = RichContentRenderer::make([
+            'type' => 'doc',
+            'content' => [
+                ['type' => 'paragraph', 'content' => [
+                    ['type' => 'mergeTag', 'attrs' => ['id' => 'name']],
+                ]],
+            ],
+        ]);
+
+        expect($renderer->toHtml())
+            ->toBe('<p><span data-type="mergeTag"></span></p>');
+    });
+
+    it('renders an unresolved merge tag as empty text via `toText()`', function (): void {
+        $renderer = RichContentRenderer::make([
+            'type' => 'doc',
+            'content' => [
+                ['type' => 'paragraph', 'content' => [
+                    ['type' => 'mergeTag', 'attrs' => ['id' => 'name']],
+                ]],
+            ],
+        ]);
+
+        expect($renderer->toText())->toBe('');
+    });
+
+    it('renders merge tags across multiple paragraphs via `toUnsafeHtml()`', function (): void {
+        $renderer = RichContentRenderer::make([
+            'type' => 'doc',
+            'content' => [
+                ['type' => 'paragraph', 'content' => [
+                    ['type' => 'text', 'text' => 'Hello '],
+                    ['type' => 'mergeTag', 'attrs' => ['id' => 'name']],
+                ]],
+                ['type' => 'paragraph', 'content' => [
+                    ['type' => 'text', 'text' => 'Your role is '],
+                    ['type' => 'mergeTag', 'attrs' => ['id' => 'role']],
+                    ['type' => 'text', 'text' => '.'],
+                ]],
+            ],
+        ])->mergeTags(['name' => 'John', 'role' => new HtmlString('<em>admin</em>')]);
+
+        expect($renderer->toUnsafeHtml())
+            ->toBe('<p>Hello <span data-type="mergeTag" data-id="name">John</span></p><p>Your role is <em>admin</em>.</p>');
+    });
+
+    it('renders merge tags across multiple paragraphs via `toHtml()`', function (): void {
+        $renderer = RichContentRenderer::make([
+            'type' => 'doc',
+            'content' => [
+                ['type' => 'paragraph', 'content' => [
+                    ['type' => 'text', 'text' => 'Hello '],
+                    ['type' => 'mergeTag', 'attrs' => ['id' => 'name']],
+                ]],
+                ['type' => 'paragraph', 'content' => [
+                    ['type' => 'text', 'text' => 'Your role is '],
+                    ['type' => 'mergeTag', 'attrs' => ['id' => 'role']],
+                    ['type' => 'text', 'text' => '.'],
+                ]],
+            ],
+        ])->mergeTags(['name' => 'John', 'role' => new HtmlString('<em>admin</em>')]);
+
+        expect($renderer->toHtml())
+            ->toBe('<p>Hello <span data-type="mergeTag">John</span></p><p>Your role is <em>admin</em>.</p>');
+    });
+
+    it('renders merge tags inline within each paragraph, with paragraph separators preserved via `toText()`', function (): void {
+        $renderer = RichContentRenderer::make([
+            'type' => 'doc',
+            'content' => [
+                ['type' => 'paragraph', 'content' => [
+                    ['type' => 'text', 'text' => 'Hello '],
+                    ['type' => 'mergeTag', 'attrs' => ['id' => 'name']],
+                ]],
+                ['type' => 'paragraph', 'content' => [
+                    ['type' => 'text', 'text' => 'Your role is '],
+                    ['type' => 'mergeTag', 'attrs' => ['id' => 'role']],
+                    ['type' => 'text', 'text' => '.'],
+                ]],
+            ],
+        ])->mergeTags(['name' => 'John', 'role' => new HtmlString('<em>admin</em>')]);
+
+        expect($renderer->toText())->toBe("Hello John\n\nYour role is admin.");
+    });
+
+    it('renders a string merge tag inside a heading via `toUnsafeHtml()`', function (): void {
+        $renderer = RichContentRenderer::make([
+            'type' => 'doc',
+            'content' => [
+                ['type' => 'heading', 'attrs' => ['level' => 2], 'content' => [
+                    ['type' => 'text', 'text' => 'Welcome '],
+                    ['type' => 'mergeTag', 'attrs' => ['id' => 'name']],
+                ]],
+            ],
+        ])->mergeTags(['name' => 'John']);
+
+        expect($renderer->toUnsafeHtml())
+            ->toBe('<h2>Welcome <span data-type="mergeTag" data-id="name">John</span></h2>');
+    });
+
+    it('renders a string merge tag inline inside a heading via `toText()`', function (): void {
+        $renderer = RichContentRenderer::make([
+            'type' => 'doc',
+            'content' => [
+                ['type' => 'heading', 'attrs' => ['level' => 2], 'content' => [
+                    ['type' => 'text', 'text' => 'Welcome '],
+                    ['type' => 'mergeTag', 'attrs' => ['id' => 'name']],
+                ]],
+            ],
+        ])->mergeTags(['name' => 'John']);
+
+        expect($renderer->toText())->toBe('Welcome John');
+    });
+
+    it('normalizes a stored `rawHtmlMergeTag` back to a `mergeTag` and re-resolves the value via `toUnsafeHtml()`', function (): void {
+        $renderer = RichContentRenderer::make([
+            'type' => 'doc',
+            'content' => [
+                ['type' => 'paragraph', 'content' => [
+                    ['type' => 'rawHtmlMergeTag', 'attrs' => ['id' => 'name'], 'html' => '<b>stale</b>'],
+                ]],
+            ],
+        ])->mergeTags(['name' => 'Fresh']);
+
+        expect($renderer->toUnsafeHtml())
+            ->toBe('<p><span data-type="mergeTag" data-id="name">Fresh</span></p>');
+    });
+
+    it('normalizes a stored `rawHtmlMergeTag` back to a `mergeTag` and re-resolves the value via `toText()`', function (): void {
+        $renderer = RichContentRenderer::make([
+            'type' => 'doc',
+            'content' => [
+                ['type' => 'paragraph', 'content' => [
+                    ['type' => 'rawHtmlMergeTag', 'attrs' => ['id' => 'name'], 'html' => '<b>stale</b>'],
+                ]],
+            ],
+        ])->mergeTags(['name' => 'Fresh']);
+
+        expect($renderer->toText())->toBe('Fresh');
+    });
+
+    it('resolves a `Closure` returning a string via `toUnsafeHtml()`', function (): void {
+        $renderer = RichContentRenderer::make([
+            'type' => 'doc',
+            'content' => [
+                ['type' => 'paragraph', 'content' => [
+                    ['type' => 'mergeTag', 'attrs' => ['id' => 'lazy']],
+                ]],
+            ],
+        ])->mergeTags(['lazy' => fn () => 'resolved']);
+
+        expect($renderer->toUnsafeHtml())
+            ->toBe('<p><span data-type="mergeTag" data-id="lazy">resolved</span></p>');
+    });
+
+    it('resolves a `Closure` returning an `Htmlable` via `toUnsafeHtml()`', function (): void {
+        $renderer = RichContentRenderer::make([
+            'type' => 'doc',
+            'content' => [
+                ['type' => 'paragraph', 'content' => [
+                    ['type' => 'mergeTag', 'attrs' => ['id' => 'lazy_html']],
+                ]],
+            ],
+        ])->mergeTags(['lazy_html' => fn () => new HtmlString('<b>bold</b>')]);
+
+        expect($renderer->toUnsafeHtml())
+            ->toBe('<p><b>bold</b></p>');
+    });
+
+    it('resolves a `Closure` returning an `Htmlable` and extracts text via `toText()`', function (): void {
+        $renderer = RichContentRenderer::make([
+            'type' => 'doc',
+            'content' => [
+                ['type' => 'paragraph', 'content' => [
+                    ['type' => 'mergeTag', 'attrs' => ['id' => 'lazy_html']],
+                ]],
+            ],
+        ])->mergeTags(['lazy_html' => fn () => new HtmlString('<b>bold</b>')]);
+
+        expect($renderer->toText())->toBe('bold');
+    });
+
+    it('renders an empty `Htmlable` merge tag as nothing between surrounding text via `toUnsafeHtml()`', function (): void {
+        $renderer = RichContentRenderer::make([
+            'type' => 'doc',
+            'content' => [
+                ['type' => 'paragraph', 'content' => [
+                    ['type' => 'text', 'text' => 'before'],
+                    ['type' => 'mergeTag', 'attrs' => ['id' => 'empty_html']],
+                    ['type' => 'text', 'text' => 'after'],
+                ]],
+            ],
+        ])->mergeTags(['empty_html' => new HtmlString('')]);
+
+        expect($renderer->toUnsafeHtml())
+            ->toBe('<p>beforeafter</p>');
+    });
+
+    it('renders an empty `Htmlable` merge tag as nothing between surrounding text via `toText()`', function (): void {
+        $renderer = RichContentRenderer::make([
+            'type' => 'doc',
+            'content' => [
+                ['type' => 'paragraph', 'content' => [
+                    ['type' => 'text', 'text' => 'before'],
+                    ['type' => 'mergeTag', 'attrs' => ['id' => 'empty_html']],
+                    ['type' => 'text', 'text' => 'after'],
+                ]],
+            ],
+        ])->mergeTags(['empty_html' => new HtmlString('')]);
+
+        expect($renderer->toText())->toBe('beforeafter');
+    });
+
+    it('renders two adjacent string merge tags without spacing between them via `toUnsafeHtml()`', function (): void {
+        $renderer = RichContentRenderer::make([
+            'type' => 'doc',
+            'content' => [
+                ['type' => 'paragraph', 'content' => [
+                    ['type' => 'mergeTag', 'attrs' => ['id' => 'first']],
+                    ['type' => 'mergeTag', 'attrs' => ['id' => 'second']],
+                ]],
+            ],
+        ])->mergeTags(['first' => 'Hello', 'second' => 'World']);
+
+        expect($renderer->toUnsafeHtml())
+            ->toBe('<p><span data-type="mergeTag" data-id="first">Hello</span><span data-type="mergeTag" data-id="second">World</span></p>');
+    });
+
+    it('renders two adjacent string merge tags without spacing between them via `toText()`', function (): void {
+        $renderer = RichContentRenderer::make([
+            'type' => 'doc',
+            'content' => [
+                ['type' => 'paragraph', 'content' => [
+                    ['type' => 'mergeTag', 'attrs' => ['id' => 'first']],
+                    ['type' => 'mergeTag', 'attrs' => ['id' => 'second']],
+                ]],
+            ],
+        ])->mergeTags(['first' => 'Hello', 'second' => 'World']);
+
+        expect($renderer->toText())->toBe('HelloWorld');
+    });
+
+    it('renders two adjacent `Htmlable` merge tags without spacing between them via `toUnsafeHtml()`', function (): void {
+        $renderer = RichContentRenderer::make([
+            'type' => 'doc',
+            'content' => [
+                ['type' => 'paragraph', 'content' => [
+                    ['type' => 'mergeTag', 'attrs' => ['id' => 'first']],
+                    ['type' => 'mergeTag', 'attrs' => ['id' => 'second']],
+                ]],
+            ],
+        ])->mergeTags([
+            'first' => new HtmlString('<b>Hello</b>'),
+            'second' => new HtmlString('<em>World</em>'),
+        ]);
+
+        expect($renderer->toUnsafeHtml())
+            ->toBe('<p><b>Hello</b><em>World</em></p>');
+    });
+
+    it('renders a string merge tag touching parentheses without whitespace via `toText()`', function (): void {
+        $renderer = RichContentRenderer::make([
+            'type' => 'doc',
+            'content' => [
+                ['type' => 'paragraph', 'content' => [
+                    ['type' => 'text', 'text' => '('],
+                    ['type' => 'mergeTag', 'attrs' => ['id' => 'name']],
+                    ['type' => 'text', 'text' => ')'],
+                ]],
+            ],
+        ])->mergeTags(['name' => 'John']);
+
+        expect($renderer->toText())->toBe('(John)');
+    });
+
+    it('renders an `Htmlable` merge tag touching parentheses without whitespace via `toText()`', function (): void {
+        $renderer = RichContentRenderer::make([
+            'type' => 'doc',
+            'content' => [
+                ['type' => 'paragraph', 'content' => [
+                    ['type' => 'text', 'text' => '('],
+                    ['type' => 'mergeTag', 'attrs' => ['id' => 'name']],
+                    ['type' => 'text', 'text' => ')'],
+                ]],
+            ],
+        ])->mergeTags(['name' => new HtmlString('<strong>John</strong>')]);
+
+        expect($renderer->toText())->toBe('(John)');
+    });
+
+    it('renders a merge tag inline with differently-marked adjacent text via `toText()`', function (): void {
+        $renderer = RichContentRenderer::make([
+            'type' => 'doc',
+            'content' => [
+                ['type' => 'paragraph', 'content' => [
+                    ['type' => 'text', 'text' => 'Hello ', 'marks' => [['type' => 'bold']]],
+                    ['type' => 'mergeTag', 'attrs' => ['id' => 'name']],
+                    ['type' => 'text', 'text' => '!'],
+                ]],
+            ],
+        ])->mergeTags(['name' => 'John']);
+
+        expect($renderer->toText())->toBe('Hello John!');
+    });
+
+    it('normalizes whitespace from multi-line `Htmlable` merge tags via `toText()`', function (): void {
+        $renderer = RichContentRenderer::make([
+            'type' => 'doc',
+            'content' => [
+                ['type' => 'paragraph', 'content' => [
+                    ['type' => 'text', 'text' => 'Info: '],
+                    ['type' => 'mergeTag', 'attrs' => ['id' => 'card']],
+                ]],
+            ],
+        ])->mergeTags(['card' => new HtmlString('
+            <div class="card">
+                <h3>Title</h3>
+                <p>Description</p>
+            </div>
+        ')]);
+
+        expect($renderer->toText())->toBe('Info: Title Description');
+    });
+
+    it('normalizes whitespace from block-level `Htmlable` merge tags via `toText()`', function (): void {
+        $renderer = RichContentRenderer::make([
+            'type' => 'doc',
+            'content' => [
+                ['type' => 'paragraph', 'content' => [
+                    ['type' => 'text', 'text' => '('],
+                    ['type' => 'mergeTag', 'attrs' => ['id' => 'items']],
+                    ['type' => 'text', 'text' => ')'],
+                ]],
+            ],
+        ])->mergeTags(['items' => new HtmlString('<ul><li>Item 1</li><li>Item 2</li></ul>')]);
+
+        expect($renderer->toText())->toBe('(Item 1Item 2)');
+    });
+
+    it('renders two adjacent `Htmlable` merge tags without spacing between them via `toText()`', function (): void {
+        $renderer = RichContentRenderer::make([
+            'type' => 'doc',
+            'content' => [
+                ['type' => 'paragraph', 'content' => [
+                    ['type' => 'mergeTag', 'attrs' => ['id' => 'first']],
+                    ['type' => 'mergeTag', 'attrs' => ['id' => 'second']],
+                ]],
+            ],
+        ])->mergeTags([
+            'first' => new HtmlString('<b>Hello</b>'),
+            'second' => new HtmlString('<em>World</em>'),
+        ]);
+
+        expect($renderer->toText())->toBe('HelloWorld');
+    });
+});
+
 describe('mentions', function (): void {
     it('renders mentions as `<span>` elements with `data-type="mention"`', function (): void {
         $renderer = RichContentRenderer::make([
