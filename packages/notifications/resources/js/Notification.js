@@ -1,71 +1,75 @@
+/**
+ * Setter methods use `_`-prefixed backing properties (e.g. `_id`) to avoid
+ * JavaScript's method-shadowing bug where `this.id = value` would overwrite
+ * the `id()` method itself with the value.
+ */
 class Notification {
     constructor() {
         // `crypto.randomUUID()` requires a secure context (HTTPS); fall back to
         // `crypto.getRandomValues()` which works in all contexts including HTTP.
-        this.id(
+        this._id =
             crypto.randomUUID?.() ??
-                '10000000-1000-4000-8000-100000000000'.replace(/[018]/g, (c) =>
-                    (
-                        +c ^
-                        (crypto.getRandomValues(new Uint8Array(1))[0] &
-                            (15 >> (+c / 4)))
-                    ).toString(16),
-                ),
-        )
+            '10000000-1000-4000-8000-100000000000'.replace(/[018]/g, (c) =>
+                (
+                    +c ^
+                    (crypto.getRandomValues(new Uint8Array(1))[0] &
+                        (15 >> (+c / 4)))
+                ).toString(16),
+            )
 
         return this
     }
 
     id(id) {
-        this.id = id
+        this._id = id
 
         return this
     }
 
     title(title) {
-        this.title = title
+        this._title = title
 
         return this
     }
 
     body(body) {
-        this.body = body
+        this._body = body
 
         return this
     }
 
     actions(actions) {
-        this.actions = actions
+        this._actions = actions
 
         return this
     }
 
     status(status) {
-        this.status = status
+        this._status = status
 
         return this
     }
 
     color(color) {
-        this.color = color
+        this._color = color
 
         return this
     }
 
     icon(icon) {
-        this.icon = icon
+        this._icon = icon
 
         return this
     }
 
     iconColor(color) {
-        this.iconColor = color
+        this._iconColor = color
 
         return this
     }
 
     duration(duration) {
-        this.duration = duration
+        this._duration = duration
 
         return this
     }
@@ -107,22 +111,38 @@ class Notification {
     }
 
     view(view) {
-        this.view = view
+        this._view = view
 
         return this
     }
 
     viewData(viewData) {
-        this.viewData = viewData
+        this._viewData = viewData
 
         return this
+    }
+
+    toJSON() {
+        return {
+            id: this._id,
+            title: this._title,
+            body: this._body,
+            actions: this._actions,
+            status: this._status,
+            color: this._color,
+            icon: this._icon,
+            iconColor: this._iconColor,
+            duration: this._duration,
+            view: this._view,
+            viewData: this._viewData,
+        }
     }
 
     send() {
         window.dispatchEvent(
             new CustomEvent('notificationSent', {
                 detail: {
-                    notification: this,
+                    notification: this.toJSON(),
                 },
             }),
         )
@@ -133,19 +153,19 @@ class Notification {
 
 class Action {
     constructor(name) {
-        this.name(name)
+        this._name = name
 
         return this
     }
 
     name(name) {
-        this.name = name
+        this._name = name
 
         return this
     }
 
     color(color) {
-        this.color = color
+        this._color = color
 
         return this
     }
@@ -159,15 +179,15 @@ class Action {
 
     dispatchSelf(event, data) {
         this.dispatch(event, data)
-        this.dispatchDirection = 'self'
+        this._dispatchDirection = 'self'
 
         return this
     }
 
     dispatchTo(component, event, data) {
         this.dispatch(event, data)
-        this.dispatchDirection = 'to'
-        this.dispatchToComponent = component
+        this._dispatchDirection = 'to'
+        this._dispatchToComponent = component
 
         return this
     }
@@ -200,91 +220,91 @@ class Action {
     }
 
     dispatchDirection(dispatchDirection) {
-        this.dispatchDirection = dispatchDirection
+        this._dispatchDirection = dispatchDirection
 
         return this
     }
 
     dispatchToComponent(component) {
-        this.dispatchToComponent = component
+        this._dispatchToComponent = component
 
         return this
     }
 
     event(event) {
-        this.event = event
+        this._event = event
 
         return this
     }
 
     eventData(data) {
-        this.eventData = data
+        this._eventData = data
 
         return this
     }
 
     extraAttributes(attributes) {
-        this.extraAttributes = attributes
+        this._extraAttributes = attributes
 
         return this
     }
 
     icon(icon) {
-        this.icon = icon
+        this._icon = icon
 
         return this
     }
 
     iconPosition(position) {
-        this.iconPosition = position
+        this._iconPosition = position
 
         return this
     }
 
     outlined(condition = true) {
-        this.isOutlined = condition
+        this._isOutlined = condition
 
         return this
     }
 
     disabled(condition = true) {
-        this.isDisabled = condition
+        this._isDisabled = condition
 
         return this
     }
 
     label(label) {
-        this.label = label
+        this._label = label
 
         return this
     }
 
     close(condition = true) {
-        this.shouldClose = condition
+        this._shouldClose = condition
 
         return this
     }
 
     openUrlInNewTab(condition = true) {
-        this.shouldOpenUrlInNewTab = condition
+        this._shouldOpenUrlInNewTab = condition
 
         return this
     }
 
     size(size) {
-        this.size = size
+        this._size = size
 
         return this
     }
 
     url(url) {
-        this.url = url
+        this._url = url
 
         return this
     }
 
     view(view) {
-        this.view = view
+        this._view = view
 
         return this
     }
@@ -312,49 +332,82 @@ class Action {
 
         return this
     }
+
+    toJSON() {
+        return {
+            name: this._name,
+            color: this._color,
+            event: this._event,
+            eventData: this._eventData,
+            dispatchDirection: this._dispatchDirection,
+            dispatchToComponent: this._dispatchToComponent,
+            extraAttributes: this._extraAttributes,
+            icon: this._icon,
+            iconPosition: this._iconPosition,
+            isOutlined: this._isOutlined,
+            isDisabled: this._isDisabled,
+            label: this._label,
+            shouldClose: this._shouldClose,
+            shouldOpenUrlInNewTab: this._shouldOpenUrlInNewTab,
+            size: this._size,
+            url: this._url,
+            view: this._view,
+        }
+    }
 }
 
 class ActionGroup {
     constructor(actions) {
-        this.actions(actions)
+        this._actions = actions.map((action) => action.grouped())
 
         return this
     }
 
     actions(actions) {
-        this.actions = actions.map((action) => action.grouped())
+        this._actions = actions.map((action) => action.grouped())
 
         return this
     }
 
     color(color) {
-        this.color = color
+        this._color = color
 
         return this
     }
 
     icon(icon) {
-        this.icon = icon
+        this._icon = icon
 
         return this
     }
 
     iconPosition(position) {
-        this.iconPosition = position
+        this._iconPosition = position
 
         return this
     }
 
     label(label) {
-        this.label = label
+        this._label = label
 
         return this
     }
 
     tooltip(tooltip) {
-        this.tooltip = tooltip
+        this._tooltip = tooltip
 
         return this
+    }
+
+    toJSON() {
+        return {
+            actions: this._actions,
+            color: this._color,
+            icon: this._icon,
+            iconPosition: this._iconPosition,
+            label: this._label,
+            tooltip: this._tooltip,
+        }
     }
 }
 
