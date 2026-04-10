@@ -820,6 +820,15 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
         return $modifications;
     }
 
+    protected function isToolbarButtonInObject(object $item, string $button): bool
+    {
+        if ($item instanceof ToolbarButtonGroup) {
+            return in_array($button, $item->getButtons());
+        }
+
+        return false;
+    }
+
     /**
      * @return array<string | array<string>>
      */

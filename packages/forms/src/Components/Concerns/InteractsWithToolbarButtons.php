@@ -196,7 +196,7 @@ trait InteractsWithToolbarButtons
                         continue;
                     }
 
-                    if ($this->hasToolbarButtonInArray($modified, $item) || in_array($item, $filteredGroup, true)) {
+                    if ($this->hasToolbarButtonInArray($modified, $item) || in_array($item, $filteredGroup)) {
                         continue;
                     }
 
@@ -226,25 +226,28 @@ trait InteractsWithToolbarButtons
     protected function hasToolbarButtonInArray(array $buttons, string $button): bool
     {
         foreach ($buttons as $item) {
-            if (is_object($item)) {
-                continue;
-            }
-
             if (is_array($item)) {
-                foreach ($item as $groupedItem) {
-                    if (is_string($groupedItem) && ($groupedItem === $button)) {
-                        return true;
-                    }
+                if ($this->hasToolbarButtonInArray($item, $button)) {
+                    return true;
                 }
 
                 continue;
             }
 
-            if ($item === $button) {
+            if (is_string($item) && ($item === $button)) {
+                return true;
+            }
+
+            if (is_object($item) && $this->isToolbarButtonInObject($item, $button)) {
                 return true;
             }
         }
 
+        return false;
+    }
+
+    protected function isToolbarButtonInObject(object $item, string $button): bool
+    {
         return false;
     }
 
