@@ -51,7 +51,9 @@ class NotificationsServiceProvider extends PackageServiceProvider
                 return;
             }
 
-            $component->dispatch('notificationsSent', notifications: $notifications);
+            session()->put('filament.notifications.claimed', $notifications);
+
+            $component->dispatch('notificationsSent');
         });
 
         Testable::mixin(new TestsNotifications);
