@@ -9,7 +9,10 @@ if (
     Chart.register(...window.filamentChartJsGlobalPlugins)
 }
 
-export default function chart({ cachedData, maxHeight, options, type }) {
+Chart.defaults.plugins.legend.labels.boxWidth = 12
+Chart.defaults.plugins.legend.position = 'bottom'
+
+export default function chart({ cachedData, options, type }) {
     return {
         userPointBackgroundColor: options?.pointBackgroundColor,
         userXGridColor: options?.scales?.x?.grid?.color,
@@ -18,33 +21,14 @@ export default function chart({ cachedData, maxHeight, options, type }) {
         userRadialTicksColor: options?.scales?.r?.ticks?.color,
 
         init() {
-            this.initChart()
+            this._initChart()
 
-            this.$wire.$on('updateChartData', ({ data }) => {
-                const chart = this.getChart()
-
-                if (!chart) {
-                    return
-                }
-
-                cachedData = data
-                chart.data = data
-                chart.update('resize')
-            })
+            this.$wire.$on('updateChartData', ({ data }) => this.updateChartData(data))
 
             Alpine.effect(() => {
                 Alpine.store('theme')
 
-                this.$nextTick(() => {
-                    const chart = this.getChart()
-
-                    if (!chart) {
-                        return
-                    }
-
-                    chart.destroy()
-                    this.initChart()
-                })
+                this.$nextTick(() => this.updateChartTheme())
             })
 
             window
@@ -54,34 +38,16 @@ export default function chart({ cachedData, maxHeight, options, type }) {
                         return
                     }
 
-                    this.$nextTick(() => {
-                        const chart = this.getChart()
-
-                        if (!chart) {
-                            return
-                        }
-
-                        chart.destroy()
-                        this.initChart()
-                    })
+                    this.$nextTick(() => this.updateChartTheme())
                 })
 
             this.resizeObserver = new ResizeObserver(
-                Alpine.debounce(() => {
-                    const chart = this.getChart()
-
-                    if (!chart) {
-                        return
-                    }
-
-                    chart.destroy()
-                    this.initChart()
-                }, 250),
+                Alpine.debounce(() => this.resizeChart(), 250)
             )
             this.resizeObserver.observe(this.$el)
         },
 
-        initChart(data = null) {
+        _initChart() {
             if (
                 !this.$refs.canvas ||
                 !this.$refs.backgroundColorElement ||
@@ -92,34 +58,18 @@ export default function chart({ cachedData, maxHeight, options, type }) {
                 return
             }
 
-            Chart.defaults.animation.duration = 0
-
-            Chart.defaults.backgroundColor = getComputedStyle(
-                this.$refs.backgroundColorElement,
-            ).color
-
-            const borderColor = getComputedStyle(
-                this.$refs.borderColorElement,
-            ).color
-
-            Chart.defaults.borderColor = borderColor
-
-            Chart.defaults.color = getComputedStyle(
-                this.$refs.textColorElement,
-            ).color
-
-            Chart.defaults.font.family = getComputedStyle(this.$el).fontFamily
-
-            Chart.defaults.plugins.legend.labels.boxWidth = 12
-            Chart.defaults.plugins.legend.position = 'bottom'
-
-            const gridColor = getComputedStyle(
-                this.$refs.gridColorElement,
-            ).color
+            const { backgroundColor, borderColor, textColor, gridColor } = this.getChartFallbackColors()
+            const fontFamily = getComputedStyle(this.$el).fontFamily
+            const hasMaxHeight = this.$refs.canvas.style.maxHeight !== ''
 
             options ??= {}
+            options.backgroundColor ??= backgroundColor
+            options.borderColor ??= borderColor
+            options.color ??= textColor
+            options.font ??= {}
+            options.font.family ??= fontFamily
             options.borderWidth ??= 2
-            options.maintainAspectRatio ??= !!maxHeight
+            options.maintainAspectRatio ??= hasMaxHeight
             options.pointBackgroundColor =
                 this.userPointBackgroundColor ?? borderColor
             options.pointHitRadius ??= 4
@@ -144,10 +94,6 @@ export default function chart({ cachedData, maxHeight, options, type }) {
             }
 
             if (type === 'polarArea') {
-                const textColor = getComputedStyle(
-                    this.$refs.textColorElement,
-                ).color
-
                 options.scales.r ??= {}
                 options.scales.r.grid ??= {}
                 options.scales.r.grid.color =
@@ -158,12 +104,44 @@ export default function chart({ cachedData, maxHeight, options, type }) {
                 options.scales.r.ticks.backdropColor ??= 'transparent'
             }
 
-            return new Chart(this.$refs.canvas, {
+            new Chart(this.$refs.canvas, {
                 type,
-                data: data ?? cachedData,
+                data: cachedData,
                 options,
                 plugins: window.filamentChartJsPlugins ?? [],
             })
+        },
+
+        updateChartData(newData) {
+            this.whenChart((chart) => {
+                cachedData = newData
+                chart.data = cachedData
+                chart.update('resize')
+            })
+        },
+
+        updateChartTheme() {
+            this.whenChart((chart) => {
+                chart.destroy()
+                this._initChart()
+            })
+        },
+
+        resizeChart() {
+            this.whenChart((chart) => {
+                chart.destroy()
+                this._initChart()
+            })
+        },
+
+        whenChart(callback) {
+            const chart = this.getChart()
+
+            if (!chart) {
+                return
+            }
+
+            callback(chart)
         },
 
         getChart() {
@@ -174,11 +152,17 @@ export default function chart({ cachedData, maxHeight, options, type }) {
             return Chart.getChart(this.$refs.canvas)
         },
 
-        destroy() {
-            if (this.resizeObserver) {
-                this.resizeObserver.disconnect()
+        getChartFallbackColors() {
+            return {
+                backgroundColor: getComputedStyle(this.$refs.backgroundColorElement).color,
+                borderColor: getComputedStyle(this.$refs.borderColorElement).color,
+                textColor: getComputedStyle(this.$refs.textColorElement).color,
+                gridColor: getComputedStyle(this.$refs.gridColorElement).color,
             }
+        },
 
+        destroy() {
+            this.resizeObserver?.disconnect()
             this.getChart()?.destroy()
         },
     }
