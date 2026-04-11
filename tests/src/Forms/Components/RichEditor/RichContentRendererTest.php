@@ -467,7 +467,7 @@ describe('merge tag output', function (): void {
             ->toBe('<p><span data-type="mergeTag" data-id="name">John</span></p>');
     });
 
-    it('strips `data-id` from the merge tag `<span>` via `toHtml()`', function (): void {
+    it('preserves `data-id` on the merge tag `<span>` via `toHtml()`', function (): void {
         $renderer = RichContentRenderer::make([
             'type' => 'doc',
             'content' => [
@@ -478,7 +478,7 @@ describe('merge tag output', function (): void {
         ])->mergeTags(['name' => 'John']);
 
         expect($renderer->toHtml())
-            ->toBe('<p><span data-type="mergeTag">John</span></p>');
+            ->toBe('<p><span data-type="mergeTag" data-id="name">John</span></p>');
     });
 
     it('renders only the text value via `toText()` for a string merge tag', function (): void {
@@ -554,7 +554,7 @@ describe('merge tag output', function (): void {
         ])->mergeTags(['name' => 'John']);
 
         expect($renderer->toHtml())
-            ->toBe('<p>Hello <span data-type="mergeTag">John</span>, welcome!</p>');
+            ->toBe('<p>Hello <span data-type="mergeTag" data-id="name">John</span>, welcome!</p>');
     });
 
     it('renders a string merge tag inline with surrounding text via `toText()`', function (): void {
@@ -708,7 +708,7 @@ describe('merge tag output', function (): void {
         ]);
 
         expect($renderer->toHtml())
-            ->toBe('<p><span data-type="mergeTag">Hello</span> <strong>Admin</strong></p>');
+            ->toBe('<p><span data-type="mergeTag" data-id="greeting">Hello</span> <strong>Admin</strong></p>');
     });
 
     it('renders mixed string and `Htmlable` merge tags inline via `toText()`', function (): void {
@@ -766,7 +766,7 @@ describe('merge tag output', function (): void {
         ])->mergeTags(['null_val' => null, 'empty_str' => '']);
 
         expect($renderer->toHtml())
-            ->toBe('<p>A<span data-type="mergeTag"></span>B<span data-type="mergeTag"></span>C<span data-type="mergeTag"></span>D</p>');
+            ->toBe('<p>A<span data-type="mergeTag" data-id="null_val"></span>B<span data-type="mergeTag" data-id="empty_str"></span>C<span data-type="mergeTag" data-id="missing"></span>D</p>');
     });
 
     it('renders `null`, empty string, and missing merge tags as empty inline content via `toText()`', function (): void {
@@ -813,7 +813,7 @@ describe('merge tag output', function (): void {
         ]);
 
         expect($renderer->toHtml())
-            ->toBe('<p><span data-type="mergeTag"></span></p>');
+            ->toBe('<p><span data-type="mergeTag" data-id="name"></span></p>');
     });
 
     it('renders an unresolved merge tag as empty text via `toText()`', function (): void {
@@ -866,7 +866,7 @@ describe('merge tag output', function (): void {
         ])->mergeTags(['name' => 'John', 'role' => new HtmlString('<em>admin</em>')]);
 
         expect($renderer->toHtml())
-            ->toBe('<p>Hello <span data-type="mergeTag">John</span></p><p>Your role is <em>admin</em>.</p>');
+            ->toBe('<p>Hello <span data-type="mergeTag" data-id="name">John</span></p><p>Your role is <em>admin</em>.</p>');
     });
 
     it('renders merge tags inline within each paragraph, with paragraph separators preserved via `toText()`', function (): void {
