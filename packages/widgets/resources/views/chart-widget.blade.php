@@ -8,6 +8,7 @@
     $filters = $this->getFilters();
     $isCollapsible = $this->isCollapsible();
     $type = $this->getType();
+    $maxHeight = $this->getMaxHeight();
 @endphp
 
 <x-filament-widgets::widget class="fi-wi-chart">
@@ -78,7 +79,6 @@
                 data-chart-type="{{ $type }}"
                 x-data="chart({
                             cachedData: @js($this->getCachedData()),
-                            maxHeight: @js($maxHeight = $this->getMaxHeight()),
                             options: @js($this->getOptions()),
                             type: @js($type),
                         })"
