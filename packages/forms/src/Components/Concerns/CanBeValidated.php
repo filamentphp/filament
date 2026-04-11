@@ -738,6 +738,10 @@ trait CanBeValidated
 
     public function allowHtmlValidationMessages(bool | Closure $condition = true): static
     {
+        // Security: Enabling HTML in validation messages means they are
+        // rendered with `{!! !!}`. If messages include user input
+        // (e.g. via custom rules or placeholders), XSS is possible.
+
         $this->areHtmlValidationMessagesAllowed = $condition;
 
         return $this;
@@ -1036,8 +1040,9 @@ trait CanBeValidated
             $state = parent::mutateStateForValidation($state);
         }
 
-        // Laravel's `in` validation rule expects state values to be scalar, so we need to convert any
-        // enum objects to their backed values before they are passed to the Laravel validator.
+        // Laravel's `in` validation rule expects state values to be
+        // scalar, so we need to convert any enum objects to their
+        // backed values before passing to the validator.
         if (is_array($state)) {
             foreach ($state as $key => $value) {
                 if ($value instanceof BackedEnum) {

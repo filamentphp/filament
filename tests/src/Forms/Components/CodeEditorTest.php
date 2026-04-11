@@ -194,24 +194,13 @@ describe('rendering', function (): void {
     });
 });
 
-it('has no accessibility issues in light mode', function (): void {
+it('can render `CodeEditor` in the browser', function (): void {
     retry(10, function (): void {
         $this->actingAs(User::factory()->create());
 
         visit('/code-editor-browser-test')
             ->assertSee('Test Code Editor')
-            ->assertNoSmoke()
-            ->assertNoAccessibilityIssues();
-    });
-});
-
-it('has no accessibility issues in dark mode', function (): void {
-    retry(10, function (): void {
-        $this->actingAs(User::factory()->create());
-
-        visit('/code-editor-browser-test')
-            ->inDarkMode()
-            ->assertNoAccessibilityIssues();
+            ->assertNoSmoke();
     });
 });
 

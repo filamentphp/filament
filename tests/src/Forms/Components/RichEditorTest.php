@@ -2,6 +2,7 @@
 
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\RichEditor\Plugins\Contracts\HasFileAttachmentProvider;
+use Filament\Forms\Components\RichEditor\RichContentCustomBlock;
 use Filament\Forms\Components\RichEditor\RichContentRenderer;
 use Filament\Schemas\Schema;
 use Filament\Tests\Fixtures\Forms\RichEditor\PluginWithFileAttachmentProvider;
@@ -1032,6 +1033,304 @@ describe('rendering', function (): void {
     });
 });
 
+describe('custom blocks', function (): void {
+    it('returns an empty array when no custom blocks are registered', function (): void {
+        $richEditor = Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([
+                RichEditor::make('content'),
+            ])
+            ->getComponents()[0];
+
+        expect($richEditor->getCustomBlocks())->toBe([]);
+    });
+
+    it('can register custom blocks using `customBlocks()`', function (): void {
+        $richEditor = Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([
+                RichEditor::make('content')
+                    ->customBlocks([
+                        RichEditorTestBlockA::class,
+                        RichEditorTestBlockB::class,
+                    ]),
+            ])
+            ->getComponents()[0];
+
+        expect($richEditor->getCustomBlocks())->toBe([
+            RichEditorTestBlockA::class,
+            RichEditorTestBlockB::class,
+        ]);
+    });
+
+    it('can register custom blocks using a `Closure`', function (): void {
+        $richEditor = Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([
+                RichEditor::make('content')
+                    ->customBlocks(static fn (): array => [
+                        RichEditorTestBlockA::class,
+                    ]),
+            ])
+            ->getComponents()[0];
+
+        expect($richEditor->getCustomBlocks())->toBe([
+            RichEditorTestBlockA::class,
+        ]);
+    });
+
+    it('flattens grouped blocks in `getCustomBlocks()`', function (): void {
+        $richEditor = Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([
+                RichEditor::make('content')
+                    ->customBlocks([
+                        RichEditorTestBlockA::class,
+                        'Group' => [
+                            RichEditorTestBlockB::class,
+                            RichEditorTestBlockC::class,
+                        ],
+                    ]),
+            ])
+            ->getComponents()[0];
+
+        expect($richEditor->getCustomBlocks())->toBe([
+            RichEditorTestBlockA::class,
+            RichEditorTestBlockB::class,
+            RichEditorTestBlockC::class,
+        ]);
+    });
+
+    it('returns a keyed array from `getCachedCustomBlocks()`', function (): void {
+        $richEditor = Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([
+                RichEditor::make('content')
+                    ->customBlocks([
+                        RichEditorTestBlockA::class,
+                        RichEditorTestBlockB::class,
+                    ]),
+            ])
+            ->getComponents()[0];
+
+        expect($richEditor->getCachedCustomBlocks())->toBe([
+            'block-a' => RichEditorTestBlockA::class,
+            'block-b' => RichEditorTestBlockB::class,
+        ]);
+    });
+
+    it('returns an empty array from `getCachedCustomBlocks()` when no blocks are registered', function (): void {
+        $richEditor = Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([
+                RichEditor::make('content'),
+            ])
+            ->getComponents()[0];
+
+        expect($richEditor->getCachedCustomBlocks())->toBeEmpty();
+    });
+
+    it('can retrieve a custom block by ID using `getCustomBlock()`', function (): void {
+        $richEditor = Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([
+                RichEditor::make('content')
+                    ->customBlocks([
+                        RichEditorTestBlockA::class,
+                        RichEditorTestBlockB::class,
+                    ]),
+            ])
+            ->getComponents()[0];
+
+        expect($richEditor->getCustomBlock('block-a'))->toBe(RichEditorTestBlockA::class);
+        expect($richEditor->getCustomBlock('block-b'))->toBe(RichEditorTestBlockB::class);
+    });
+
+    it('returns `null` from `getCustomBlock()` for an unknown ID', function (): void {
+        $richEditor = Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([
+                RichEditor::make('content')
+                    ->customBlocks([
+                        RichEditorTestBlockA::class,
+                    ]),
+            ])
+            ->getComponents()[0];
+
+        expect($richEditor->getCustomBlock('nonexistent'))->toBeNull();
+    });
+
+    it('includes `customBlocks` toolbar button when blocks are registered', function (): void {
+        $richEditor = Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([
+                RichEditor::make('content')
+                    ->customBlocks([
+                        RichEditorTestBlockA::class,
+                    ]),
+            ])
+            ->getComponents()[0];
+
+        $flatButtons = array_merge(...$richEditor->getToolbarButtons());
+
+        expect($flatButtons)->toContain('customBlocks');
+    });
+
+    it('does not include `customBlocks` toolbar button when no blocks are registered', function (): void {
+        $richEditor = Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([
+                RichEditor::make('content'),
+            ])
+            ->getComponents()[0];
+
+        $flatButtons = array_merge(...$richEditor->getToolbarButtons());
+
+        expect($flatButtons)->not->toContain('customBlocks');
+    });
+});
+
+describe('custom block grouping', function (): void {
+    it('returns all blocks in a single ungrouped collection when no groups are used', function (): void {
+        $richEditor = Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([
+                RichEditor::make('content')
+                    ->customBlocks([
+                        RichEditorTestBlockA::class,
+                        RichEditorTestBlockB::class,
+                    ]),
+            ])
+            ->getComponents()[0];
+
+        $grouped = $richEditor->getGroupedCustomBlocks();
+
+        expect($grouped)->toHaveCount(1);
+        expect($grouped->keys()->first())->toBe('');
+        expect($grouped->first()->all())->toBe([
+            RichEditorTestBlockA::class,
+            RichEditorTestBlockB::class,
+        ]);
+    });
+
+    it('places ungrouped blocks before grouped blocks', function (): void {
+        $richEditor = Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([
+                RichEditor::make('content')
+                    ->customBlocks([
+                        RichEditorTestBlockA::class,
+                        'Group' => [
+                            RichEditorTestBlockB::class,
+                        ],
+                    ]),
+            ])
+            ->getComponents()[0];
+
+        $grouped = $richEditor->getGroupedCustomBlocks();
+        $keys = $grouped->keys()->all();
+
+        expect($keys[0])->toBe('');
+        expect($keys[1])->toBe('Group');
+        expect($grouped['']->all())->toBe([RichEditorTestBlockA::class]);
+    });
+
+    it('groups blocks under string-keyed arrays', function (): void {
+        $richEditor = Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([
+                RichEditor::make('content')
+                    ->customBlocks([
+                        'Alpha' => [RichEditorTestBlockA::class],
+                        'Beta' => [RichEditorTestBlockB::class, RichEditorTestBlockC::class],
+                    ]),
+            ])
+            ->getComponents()[0];
+
+        $grouped = $richEditor->getGroupedCustomBlocks();
+
+        expect($grouped)->toHaveCount(2);
+        expect($grouped->has('Alpha'))->toBeTrue();
+        expect($grouped->has('Beta'))->toBeTrue();
+        expect($grouped['Beta']->all())->toBe([RichEditorTestBlockB::class, RichEditorTestBlockC::class]);
+    });
+
+    it('preserves group definition order', function (): void {
+        $richEditor = Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([
+                RichEditor::make('content')
+                    ->customBlocks([
+                        'Zebras' => [RichEditorTestBlockA::class],
+                        'Apples' => [RichEditorTestBlockB::class],
+                        'Middle' => [RichEditorTestBlockC::class],
+                    ]),
+            ])
+            ->getComponents()[0];
+
+        $grouped = $richEditor->getGroupedCustomBlocks();
+        $keys = $grouped->keys()->all();
+
+        expect($keys[0])->toBe('Zebras');
+        expect($keys[1])->toBe('Apples');
+        expect($keys[2])->toBe('Middle');
+    });
+
+    it('treats numeric-keyed nested arrays as ungrouped', function (): void {
+        $richEditor = Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([
+                RichEditor::make('content')
+                    ->customBlocks([
+                        [RichEditorTestBlockA::class, RichEditorTestBlockB::class],
+                        'Group' => [RichEditorTestBlockC::class],
+                    ]),
+            ])
+            ->getComponents()[0];
+
+        $grouped = $richEditor->getGroupedCustomBlocks();
+        $keys = $grouped->keys()->all();
+
+        expect($keys[0])->toBe('');
+        expect($keys[1])->toBe('Group');
+        expect($grouped['']->all())->toBe([RichEditorTestBlockA::class, RichEditorTestBlockB::class]);
+    });
+
+    it('collects all ungrouped blocks together', function (): void {
+        $richEditor = Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([
+                RichEditor::make('content')
+                    ->customBlocks([
+                        RichEditorTestBlockA::class,
+                        'Group' => [RichEditorTestBlockC::class],
+                        RichEditorTestBlockB::class,
+                    ]),
+            ])
+            ->getComponents()[0];
+
+        $grouped = $richEditor->getGroupedCustomBlocks();
+
+        expect($grouped['']->all())->toBe([
+            RichEditorTestBlockA::class,
+            RichEditorTestBlockB::class,
+        ]);
+    });
+
+    it('returns an empty collection when no blocks are registered', function (): void {
+        $richEditor = Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([
+                RichEditor::make('content'),
+            ])
+            ->getComponents()[0];
+
+        $grouped = $richEditor->getGroupedCustomBlocks();
+
+        expect($grouped)->toBeEmpty();
+    });
+});
+
 it('can render `RichEditor` in the browser', function (): void {
     retry(10, function (): void {
         $this->actingAs(User::factory()->create());
@@ -1342,5 +1641,46 @@ class RenderRichEditorWithPluginDisabledButtons extends Livewire
             RichEditor::make('content')
                 ->plugins([new TestRichContentPlugin(disabledButtons: ['bold', 'italic'])]),
         ])->statePath('data');
+    }
+}
+
+// Custom block test fixtures
+
+class RichEditorTestBlockA extends RichContentCustomBlock
+{
+    public static function getId(): string
+    {
+        return 'block-a';
+    }
+
+    public static function toHtml(array $config, array $data): ?string
+    {
+        return '<div>A</div>';
+    }
+}
+
+class RichEditorTestBlockB extends RichContentCustomBlock
+{
+    public static function getId(): string
+    {
+        return 'block-b';
+    }
+
+    public static function toHtml(array $config, array $data): ?string
+    {
+        return '<div>B</div>';
+    }
+}
+
+class RichEditorTestBlockC extends RichContentCustomBlock
+{
+    public static function getId(): string
+    {
+        return 'block-c';
+    }
+
+    public static function toHtml(array $config, array $data): ?string
+    {
+        return '<div>C</div>';
     }
 }

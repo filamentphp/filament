@@ -39,7 +39,7 @@ class RichContentAttribute implements Htmlable
     protected ?array $mentionProviders = null;
 
     /**
-     * @var ?array<class-string<RichContentCustomBlock> | array<string, mixed> | Closure>
+     * @var ?array<class-string<RichContentCustomBlock> | array<int | string, mixed> | Closure>
      */
     protected ?array $customBlocks = null;
 
@@ -229,7 +229,7 @@ class RichContentAttribute implements Htmlable
     }
 
     /**
-     * @param  ?array<class-string<RichContentCustomBlock> | array<string, mixed> | Closure>  $blocks
+     * @param  ?array<class-string<RichContentCustomBlock> | array<class-string<RichContentCustomBlock>> | array<string, mixed> | Closure>  $blocks
      */
     public function customBlocks(?array $blocks): static
     {
@@ -250,10 +250,28 @@ class RichContentAttribute implements Htmlable
         $blocks = [];
 
         foreach ($this->customBlocks as $key => $block) {
-            $blocks[] = is_string($key) ? $key : $block;
+            if (is_string($key) && is_a($key, RichContentCustomBlock::class, allow_string: true)) {
+                // Data association: `BlockClass::class => $data`
+                $blocks[] = $key;
+            } elseif (is_array($block)) {
+                // Group or ungrouped section: `'Label' => [...]` or `[...]`
+                foreach ($block as $innerKey => $innerValue) {
+                    $blocks[] = is_string($innerKey) ? $innerKey : $innerValue;
+                }
+            } else {
+                $blocks[] = $block;
+            }
         }
 
         return $blocks;
+    }
+
+    /**
+     * @return array<class-string<RichContentCustomBlock> | array<class-string<RichContentCustomBlock>>>
+     */
+    public function getCustomBlocksConfig(): array
+    {
+        return $this->customBlocks ?? [];
     }
 
     public function json(bool $condition = true): static
