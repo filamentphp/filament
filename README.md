@@ -77,8 +77,20 @@ composer install
 npm install
 cp .env.example .env
 php artisan key:generate
+touch database/database.sqlite
+# Update `.env` to use SQLite before migrating.
 php artisan migrate
+```
+
+Run the dev servers in separate terminals:
+
+```bash
+cd docs-assets/app
 npm run dev
+```
+
+```bash
+cd docs-assets/app
 php artisan serve
 ```
 
