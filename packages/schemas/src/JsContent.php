@@ -7,6 +7,10 @@ use Illuminate\Support\Js;
 
 class JsContent implements Htmlable
 {
+    // Security: This class evaluates its content as JavaScript via
+    // `eval()` in the browser. Only use with developer-defined
+    // expressions — never with user input.
+
     protected string $content;
 
     public function __construct(string $content)

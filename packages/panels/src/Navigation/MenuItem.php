@@ -80,6 +80,10 @@ class MenuItem extends Component
 
     public function url(string | Closure | null $url, bool | Closure | null $shouldOpenInNewTab = null): static
     {
+        // Security: If this URL is derived from user input, validate it
+        // to prevent XSS via `javascript:` protocol URLs rendered
+        // in `href` attributes.
+
         if ($shouldOpenInNewTab !== null) {
             $this->openUrlInNewTab($shouldOpenInNewTab);
         }

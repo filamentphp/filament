@@ -164,12 +164,17 @@ class AppAuthentication implements MultiFactorAuthenticationProvider
         return Collection::times($this->getRecoveryCodeCount(), fn (): string => Str::random(10) . '-' . Str::random(10))->all();
     }
 
-    public function verifyCode(string $code, ?string $secret = null): bool
+    public function verifyCode(string $code, ?string $secret = null, bool $shouldPreventCodeReuse = false): bool
     {
         /** @var HasAppAuthentication $user */
         $user = Filament::auth()->user();
 
         $secret = $secret ?? $this->getSecret($user);
+
+        if (! $shouldPreventCodeReuse) {
+            return $this->google2FA->verifyKey($secret, $code, $this->getCodeWindow());
+        }
+
         $cacheKey = 'filament.app_authentication_codes.' . md5($secret . $code);
 
         $timestamp = $this->google2FA->verifyKeyNewer($secret, $code, cache()->get($cacheKey), $this->getCodeWindow());
@@ -327,7 +332,7 @@ class AppAuthentication implements MultiFactorAuthenticationProvider
                 ->required(fn (Get $get): bool => (! $isRecoverable) || blank($get('recoveryCode')))
                 ->rule(function () use ($user): Closure {
                     return function (string $attribute, $value, Closure $fail) use ($user): void {
-                        if ($this->verifyCode($value, $this->getSecret($user))) {
+                        if ($this->verifyCode($value, $this->getSecret($user), shouldPreventCodeReuse: true)) {
                             return;
                         }
 

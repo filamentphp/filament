@@ -12,6 +12,11 @@ use LogicException;
 
 trait CanBeAuthorized
 {
+    // Security: Actions do not have automatic policy-based authorization.
+    // Authorization defaults to `null` (allowed for all users).
+    // You must explicitly use `authorize()`, `visible()`, or
+    // `hidden()` to restrict access to custom actions.
+
     protected mixed $authorization = null;
 
     protected string | Closure | null $authorizationMessage = null;

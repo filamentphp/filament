@@ -127,6 +127,11 @@ class ViewRecord extends Page
      */
     protected function mutateFormDataBeforeFill(array $data): array
     {
+        // Security: All non-`$hidden` model attributes are sent to the
+        // browser via Livewire. Override this to `unset()` sensitive
+        // attributes (API keys, etc.) that should not be exposed
+        // to client-side JavaScript.
+
         return $data;
     }
 

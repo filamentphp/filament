@@ -75,6 +75,11 @@ abstract class Resource
      */
     public static function getEloquentQuery(): Builder
     {
+        // Security: Override this method to scope queries to the current
+        // user's permissions. By default all records are returned
+        // (subject to tenant scoping if active). Failing to scope
+        // in multi-user apps can expose unauthorized records.
+
         $query = static::getModel()::query();
 
         if (! static::isScopedToTenant()) {

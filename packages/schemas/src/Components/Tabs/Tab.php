@@ -147,6 +147,11 @@ class Tab extends Component implements CanConcealComponents
 
     public function excludeQueryWhenResolvingRecord(bool | Closure $condition = true): static
     {
+        // Security: Do NOT use this on tabs that enforce authorization
+        // scopes (e.g. restricting records by tenant or user ownership).
+        // Excluding the query allows direct URL access to records
+        // that the tab's scope would otherwise prevent.
+
         $this->shouldExcludeQueryWhenResolvingRecord = $condition;
 
         return $this;

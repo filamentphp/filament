@@ -1706,6 +1706,26 @@ export default {
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
     },
+    'forms/fields/rich-editor/grouped-custom-blocks': {
+        url: 'forms/fields/rich-editor',
+        selector: '#richEditorGroupedCustomBlocks',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+        before: async (page) => {
+            // Scroll into view so JS initializes.
+            await page.evaluate(() => {
+                document.querySelector('#richEditorGroupedCustomBlocks').scrollIntoView()
+            })
+            await new Promise((resolve) => setTimeout(resolve, 1000))
+
+            // Click the custom blocks toolbar button to open the side panel.
+            await page.click('#richEditorGroupedCustomBlocks button[aria-label="Blocks"]')
+            await new Promise((resolve) => setTimeout(resolve, 500))
+        },
+    },
     'forms/fields/rich-editor/floating-toolbar': {
         url: 'forms/fields/rich-editor',
         selector: '#richEditorFloatingToolbar',

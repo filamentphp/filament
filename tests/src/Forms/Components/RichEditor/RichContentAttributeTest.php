@@ -1,6 +1,7 @@
 <?php
 
 use Filament\Forms\Components\RichEditor\RichContentAttribute;
+use Filament\Forms\Components\RichEditor\RichContentCustomBlock;
 use Filament\Forms\Components\RichEditor\TextColor;
 use Filament\Tests\Fixtures\Models\Post;
 use Filament\Tests\TestCase;
@@ -80,13 +81,92 @@ describe('`getCustomBlocks()` logic', function (): void {
         $post = Post::factory()->create();
         $attribute = RichContentAttribute::make($post, 'content')
             ->customBlocks([
-                'App\\Blocks\\CalloutBlock' => ['color' => 'blue'],
-                'App\\Blocks\\QuoteBlock' => ['style' => 'italic'],
+                AttributeTestBlockA::class => ['color' => 'blue'],
+                AttributeTestBlockB::class => ['style' => 'italic'],
             ]);
 
         $blocks = $attribute->getCustomBlocks();
 
-        expect($blocks)->toBe(['App\\Blocks\\CalloutBlock', 'App\\Blocks\\QuoteBlock']);
+        expect($blocks)->toBe([AttributeTestBlockA::class, AttributeTestBlockB::class]);
+    });
+
+    it('flattens grouped blocks into class names', function (): void {
+        $post = Post::factory()->create();
+        $attribute = RichContentAttribute::make($post, 'content')
+            ->customBlocks([
+                'App\\Blocks\\AlertBlock',
+                'Marketing' => [
+                    'App\\Blocks\\HeroBlock',
+                    'App\\Blocks\\BannerBlock',
+                ],
+            ]);
+
+        $blocks = $attribute->getCustomBlocks();
+
+        expect($blocks)->toBe([
+            'App\\Blocks\\AlertBlock',
+            'App\\Blocks\\HeroBlock',
+            'App\\Blocks\\BannerBlock',
+        ]);
+    });
+
+    it('handles mixed ungrouped data associations and groups', function (): void {
+        $post = Post::factory()->create();
+        $attribute = RichContentAttribute::make($post, 'content')
+            ->customBlocks([
+                AttributeTestBlockA::class => ['color' => 'red'],
+                'Marketing' => [
+                    AttributeTestBlockB::class,
+                ],
+            ]);
+
+        $blocks = $attribute->getCustomBlocks();
+
+        expect($blocks)->toBe([
+            AttributeTestBlockA::class,
+            AttributeTestBlockB::class,
+        ]);
+    });
+
+    it('flattens grouped blocks with data associations into class names', function (): void {
+        $post = Post::factory()->create();
+        $attribute = RichContentAttribute::make($post, 'content')
+            ->customBlocks([
+                'Marketing' => [
+                    AttributeTestBlockA::class => ['url' => '/'],
+                    AttributeTestBlockB::class,
+                ],
+            ]);
+
+        $blocks = $attribute->getCustomBlocks();
+
+        expect($blocks)->toBe([
+            AttributeTestBlockA::class,
+            AttributeTestBlockB::class,
+        ]);
+    });
+});
+
+describe('`getCustomBlocksConfig()` logic', function (): void {
+    it('returns an empty array when no custom blocks are set', function (): void {
+        $post = Post::factory()->create();
+        $attribute = RichContentAttribute::make($post, 'content');
+
+        expect($attribute->getCustomBlocksConfig())->toBe([]);
+    });
+
+    it('returns the raw blocks array as-is', function (): void {
+        $post = Post::factory()->create();
+        $blocks = [
+            'App\\Blocks\\AlertBlock',
+            'Marketing' => [
+                'App\\Blocks\\HeroBlock',
+            ],
+        ];
+        $attribute = RichContentAttribute::make($post, 'content')
+            ->customBlocks($blocks);
+
+        expect($attribute->getCustomBlocksConfig())->toBe($blocks);
     });
 });
 
@@ -217,3 +297,29 @@ describe('fluent API', function (): void {
         expect($attribute->customTextColors())->toBe($attribute);
     });
 });
+
+class AttributeTestBlockA extends RichContentCustomBlock
+{
+    public static function getId(): string
+    {
+        return 'attribute-block-a';
+    }
+
+    public static function toHtml(array $config, array $data): ?string
+    {
+        return '<div>A</div>';
+    }
+}
+
+class AttributeTestBlockB extends RichContentCustomBlock
+{
+    public static function getId(): string
+    {
+        return 'attribute-block-b';
+    }
+
+    public static function toHtml(array $config, array $data): ?string
+    {
+        return '<div>B</div>';
+    }
+}

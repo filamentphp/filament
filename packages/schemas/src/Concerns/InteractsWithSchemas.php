@@ -62,6 +62,10 @@ trait InteractsWithSchemas
      */
     public function callSchemaComponentMethod(string $componentKey, string $method, array $arguments = []): mixed
     {
+        // Security: This method is callable from the frontend and dispatches
+        // to `#[ExposedLivewireMethod]` methods on schema components.
+        // Only methods marked with that attribute are allowed.
+
         $component = $this->getSchemaComponent($componentKey);
 
         if (! $component) {
@@ -203,7 +207,8 @@ trait InteractsWithSchemas
                 return $this->cachedSchemas[$name] = $schema->key($name);
             }
 
-            // If null was explicitly passed as the schema, unset the cached schema.
+            // If null was explicitly passed as the schema,
+            // unset the cached schema.
             if (func_num_args() === 2) {
                 unset($this->cachedSchemas[$name]);
 

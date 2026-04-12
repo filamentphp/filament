@@ -2,9 +2,13 @@
 
 namespace App\Livewire\Forms\Fields;
 
+use App\RichContentBlocks\AlertBlock;
+use App\RichContentBlocks\BannerBlock;
 use App\RichContentBlocks\CallToActionBlock;
 use App\RichContentBlocks\HeroBlock;
+use App\RichContentBlocks\ImageGalleryBlock;
 use App\RichContentBlocks\TestimonialBlock;
+use App\RichContentBlocks\VideoEmbedBlock;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\RichEditor\MentionProvider;
 use Filament\Forms\Components\RichEditor\TextColor;
@@ -120,6 +124,28 @@ class RichEditorSchema
                             HeroBlock::class,
                             CallToActionBlock::class,
                             TestimonialBlock::class,
+                        ]),
+                ]),
+            Group::make()
+                ->id('richEditorGroupedCustomBlocks')
+                ->extraAttributes([
+                    'class' => 'p-16 max-w-5xl',
+                ])
+                ->schema([
+                    RichEditor::make('richEditorGroupedCustomBlocks')
+                        ->label('Content')
+                        ->customBlocks([
+                            AlertBlock::class,
+                            'Marketing' => [
+                                HeroBlock::class,
+                                CallToActionBlock::class,
+                                BannerBlock::class,
+                                TestimonialBlock::class,
+                            ],
+                            'Media' => [
+                                ImageGalleryBlock::class,
+                                VideoEmbedBlock::class,
+                            ],
                         ]),
                 ]),
             Group::make()

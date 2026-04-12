@@ -63,6 +63,10 @@ trait CanFormatState
 
     public function formatState(mixed $state): mixed
     {
+        // Security: Export values are written to CSV/XLSX as-is after
+        // formatting. Use `formatStateUsing()` to sanitize values that
+        // may trigger formula injection (`=`, `+`, `-`, `@`).
+
         $state = $this->evaluate($this->formatStateUsing ?? $state, [
             'state' => $state,
         ]);

@@ -362,7 +362,7 @@ When Filament outputs raw HTML from the database in components such as `TextColu
 If you're [storing content as JSON](#storing-content-as-json) instead of HTML, or your content requires processing to inject [private image URLs](#using-private-images-in-the-editor) or similar, you can use the [content renderer](#rendering-rich-content) to output HTML. This will automatically sanitize the HTML for you, so you don't need to worry about it.
 
 <Aside variant="danger">
-    Filament's built-in HTML sanitizer permits inline `style` attributes in order to support rich text formatting features such as font colors, text highlighting, and image sizing. This means that CSS properties like `background: url(...)` or `position: fixed` will not be stripped from sanitized HTML. If your content comes from untrusted users, you should consider implementing a more restrictive custom sanitizer. See the [security documentation](../advanced/security#html-sanitization) for details on how to customize the sanitizer.
+    Filament's built-in HTML sanitizer permits inline `style` attributes in order to support rich text formatting features such as font colors, text highlighting, and image sizing. This means that CSS properties like `background: url(...)` or `position: fixed` will not be stripped from sanitized HTML. If your content comes from untrusted users, you should consider restricting the default configuration. See the [security documentation](../advanced/security#customizing-the-sanitizer) for details on how to customize the sanitizer.
 </Aside>
 
 ## Uploading images to the editor
@@ -594,6 +594,50 @@ RichContentRenderer::make($record->content)
             'categoryUrl' => $record->category->getUrl(),
         ],
         CallToActionBlock::class,
+    ])
+    ->toHtml()
+```
+
+### Grouping custom blocks
+
+You can organize custom blocks into groups using string keys in the `customBlocks()` array. Blocks passed directly (without a string key) are ungrouped and appear first in the panel:
+
+```php
+use Filament\Forms\Components\RichEditor;
+
+RichEditor::make('content')
+    ->customBlocks([
+        AlertBlock::class,
+        DividerBlock::class,
+        'Marketing' => [
+            HeroBlock::class,
+            CallToActionBlock::class,
+            BannerBlock::class,
+        ],
+        'Media' => [
+            ImageGalleryBlock::class,
+            VideoEmbedBlock::class,
+        ],
+    ])
+```
+
+<AutoScreenshot name="forms/fields/rich-editor/grouped-custom-blocks" alt="Rich editor with grouped custom blocks panel open" version="4.x" />
+
+Groups are displayed in the order they are defined in the array, with sticky headings in the side panel.
+
+When rendering content with grouped blocks, you can pass the same grouped array structure to the `RichContentRenderer`. Groups are ignored during rendering — only the block classes are used:
+
+```php
+use Filament\Forms\Components\RichEditor\RichContentRenderer;
+
+RichContentRenderer::make($record->content)
+    ->customBlocks([
+        'Marketing' => [
+            HeroBlock::class => [
+                'categoryUrl' => $record->category->getUrl(),
+            ],
+            CallToActionBlock::class,
+        ],
     ])
     ->toHtml()
 ```

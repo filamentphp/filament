@@ -521,47 +521,47 @@
     }
 
     h1:where(:not(.fi-not-prose, .fi-not-prose *)) {
-        font-size: var(--text-xl);
-        line-height: calc(28 / 18);
+        font-size: var(--text-3xl);
+        line-height: calc(36 / 30);
         letter-spacing: -0.025em;
-        color: var(--prose-code-color);
-        font-weight: var(--font-weight-extrabold);
+        color: var(--prose-heading-color);
+        font-weight: var(--font-weight-bold);
     }
 
     h2:where(:not(.fi-not-prose, .fi-not-prose *)) {
-        font-size: var(--text-lg);
-        line-height: calc(28 / 18);
+        font-size: var(--text-2xl);
+        line-height: calc(32 / 24);
         letter-spacing: -0.025em;
-        color: var(--prose-code-color);
+        color: var(--prose-heading-color);
         font-weight: var(--font-weight-bold);
     }
 
     h3:where(:not(.fi-not-prose, .fi-not-prose *)) {
-        font-size: var(--text-base);
-        line-height: calc(28 / 18);
+        font-size: var(--text-xl);
+        line-height: calc(28 / 20);
         color: var(--prose-heading-color);
         font-weight: var(--font-weight-bold);
     }
 
     h4:where(:not(.fi-not-prose, .fi-not-prose *)) {
-        font-size: var(--text-sm);
-        line-height: calc(28 / 14);
+        font-size: var(--text-lg);
+        line-height: calc(28 / 18);
         color: var(--prose-heading-color);
         font-weight: var(--font-weight-bold);
     }
 
     h5:where(:not(.fi-not-prose, .fi-not-prose *)) {
-        font-size: var(--text-sm);
-        line-height: calc(28 / 14);
+        font-size: var(--text-base);
+        line-height: calc(24 / 16);
         color: var(--prose-heading-color);
-        font-weight: var(--font-weight-semibold);
+        font-weight: var(--font-weight-bold);
     }
 
     h6:where(:not(.fi-not-prose, .fi-not-prose *)) {
         font-size: var(--text-sm);
-        line-height: calc(28 / 14);
+        line-height: calc(20 / 14);
         color: var(--prose-heading-color);
-        font-weight: var(--font-weight-medium);
+        font-weight: var(--font-weight-bold);
     }
 
     :is(h2, h3, h4, h5, h6):where(:not(.fi-not-prose, .fi-not-prose *)) {

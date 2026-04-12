@@ -136,6 +136,9 @@ class DateTimePicker extends Field implements HasAffixActions
      */
     public function extraTriggerAttributes(array | Closure $attributes, bool $merge = false): static
     {
+        // Security: Attribute values are not escaped when rendered. Never
+        // pass unsanitized user input as attribute names or values.
+
         if ($merge) {
             $this->extraAttributes[] = $attributes;
         } else {

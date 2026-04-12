@@ -167,9 +167,12 @@ class PartialsComponentHook extends ComponentHook
         } elseif ($this->shouldRenderMountedActionOnly()) {
             $action = $this->component->getMountedAction();
 
-            $renderAndQueuePartials(fn (): array => [
-                "action-modals.{$action->getNestingIndex()}" => $action->renderModal(),
-            ]);
+            if ($action !== null) {
+                $renderAndQueuePartials(fn (): array => [
+                    "action-modals.{$action->getNestingIndex()}" => $action->renderModal(),
+                ]);
+            }
+
         }
 
         if ($this->shouldRenderMountedActionsOnly(whenActionMounted: $isLackingPartialRendersToCoverAllCallsAndUpdates)) {

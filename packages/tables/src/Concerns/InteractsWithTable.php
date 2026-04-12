@@ -157,7 +157,7 @@ trait InteractsWithTable
         }
 
         if ($this->getTable()->isPaginated()) {
-            $this->tableRecordsPerPage = $this->getDefaultTableRecordsPerPageSelectOption();
+            $this->tableRecordsPerPage ??= $this->getDefaultTableRecordsPerPageSelectOption();
         }
     }
 
