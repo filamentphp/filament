@@ -71,38 +71,38 @@
 }
 
 .fi-no {
-    &.fi-align-start,
-    &.fi-align-left {
+    &.fi-vertical-align-start {
         & .fi-no-notification {
             &.fi-transition-enter-start {
-                @apply -translate-x-12;
+                @apply -translate-y-12;
             }
         }
     }
 
-    &.fi-align-end,
-    &.fi-align-right {
-        & .fi-no-notification {
-            &.fi-transition-enter-start {
-                @apply translate-x-12;
+    &.fi-vertical-align-center {
+        &.fi-align-start,
+        &.fi-align-left {
+            & .fi-no-notification {
+                &.fi-transition-enter-start {
+                    @apply -translate-x-12;
+                }
+            }
+        }
+
+        &.fi-align-end,
+        &.fi-align-right {
+            & .fi-no-notification {
+                &.fi-transition-enter-start {
+                    @apply translate-x-12;
+                }
             }
         }
     }
 
-    &.fi-align-center {
-        &.fi-vertical-align-start {
-            & .fi-no-notification {
-                &.fi-transition-enter-start {
-                    @apply -translate-y-12;
-                }
-            }
-        }
-
-        &.fi-vertical-align-end {
-            & .fi-no-notification {
-                &.fi-transition-enter-start {
-                    @apply translate-y-12;
-                }
+    &.fi-vertical-align-end {
+        & .fi-no-notification {
+            &.fi-transition-enter-start {
+                @apply translate-y-12;
             }
         }
     }
