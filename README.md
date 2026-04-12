@@ -48,6 +48,40 @@ With a solid Laravel foundation and a polished UI, you can focus on what makes y
 
 Please see our [contributing guide](https://filamentphp.com/docs/5.x/introduction/contributing).
 
+### Local development quickstart
+
+If you want to work on Filament locally, install the monorepo dependencies first:
+
+```bash
+composer install
+npm install
+```
+
+You can run the test suite with:
+
+```bash
+composer test:sqlite
+```
+
+If your change affects frontend assets, rebuild them with:
+
+```bash
+npm run build
+```
+
+To test changes in a Laravel app inside this repository, you can use the demo app in [`docs-assets/app`](docs-assets/app):
+
+```bash
+cd docs-assets/app
+composer install
+npm install
+cp .env.example .env
+php artisan key:generate
+php artisan migrate
+npm run dev
+php artisan serve
+```
+
 ## Need Help?
 
 🐞 If you spot a bug, please [submit a detailed issue](https://github.com/filamentphp/filament/issues/new?template=bug_report.yml), and wait for assistance.
