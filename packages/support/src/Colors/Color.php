@@ -2,6 +2,8 @@
 
 namespace Filament\Support\Colors;
 
+use Illuminate\Support\Str;
+
 class Color
 {
     public const Slate = [
@@ -481,14 +483,14 @@ class Color
     public static function convertToHex(string $color): string
     {
         if (str_starts_with($color, '#')) {
-            return strtoupper($color);
+            return Str::lower($color);
         }
 
         $color = static::convertToRgb($color);
 
         [$red, $green, $blue] = sscanf($color, 'rgb(%d, %d, %d)');
 
-        return sprintf('#%02X%02X%02X', $red, $green, $blue);
+        return sprintf('#%02x%02x%02x', $red, $green, $blue);
     }
 
     public static function calculateContrastRatio(string $color1, string $color2): float
