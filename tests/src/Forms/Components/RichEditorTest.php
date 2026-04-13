@@ -432,6 +432,48 @@ describe('plugins', function (): void {
             ->toContain('bold');
     });
 
+    test('plugin implementing `HasToolbarButtons` does not duplicate toolbar buttons already returned by `toolbarButtons()`', function (): void {
+        $buttons = Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([
+                RichEditor::make('content')
+                    ->toolbarButtons([
+                        ['bold', 'highlight'],
+                        ['undo', 'redo'],
+                    ])
+                    ->plugins([new TestRichContentPlugin(enabledButtons: ['highlight'])]),
+            ])
+            ->getComponents()[0]
+            ->getToolbarButtons();
+
+        $flatButtons = array_merge(...$buttons);
+        $highlightButtons = array_values(array_filter($flatButtons, fn (mixed $button): bool => $button === 'highlight'));
+
+        expect($buttons)
+            ->toHaveCount(2)
+            ->and($buttons[0])->toEqual(['bold', 'highlight'])
+            ->and($buttons[1])->toEqual(['undo', 'redo'])
+            ->and($highlightButtons)->toHaveCount(1);
+    });
+
+    test('plugin implementing `HasToolbarButtons` does not duplicate toolbar buttons already enabled by user `enableToolbarButtons()`', function (): void {
+        $schema = Schema::make(Livewire::make())
+            ->statePath('data')
+            ->components([
+                RichEditor::make('content')
+                    ->plugins([new TestRichContentPlugin(enabledButtons: ['highlight'])]),
+            ]);
+
+        $richEditor = $schema->getComponents()[0];
+        $richEditor->enableToolbarButtons(['highlight']);
+
+        $flatButtons = array_merge(...$richEditor->getToolbarButtons());
+        $highlightButtons = array_values(array_filter($flatButtons, fn (mixed $button): bool => $button === 'highlight'));
+
+        expect($highlightButtons)
+            ->toHaveCount(1);
+    });
+
     test('plugin implementing `HasToolbarButtons` can disable toolbar buttons', function (): void {
         $richEditor = Schema::make(Livewire::make())
             ->statePath('data')

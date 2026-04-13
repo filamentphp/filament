@@ -67,37 +67,96 @@ When rendering HTML content via methods like `html()` or `markdown()` on compone
 
 ### Default sanitizer configuration
 
-Filament's default sanitizer configuration permits inline `style` attributes on all elements. This is necessary to support rich text formatting features from the rich editor, such as font colors, text highlighting, and image sizing. However, this means that CSS properties like `background: url(...)` (which can trigger external HTTP requests) or `position: fixed` (which can create phishing overlays) will not be stripped.
+Filament registers `HtmlSanitizerConfig` as a scoped binding in Laravel's service container with the following default configuration:
 
-If your application renders HTML content from untrusted users, you should consider replacing the default sanitizer with a more restrictive configuration.
+```php
+use Symfony\Component\HtmlSanitizer\HtmlSanitizerConfig;
+
+(new HtmlSanitizerConfig)
+    ->allowSafeElements()
+    ->allowRelativeLinks()
+    ->allowRelativeMedias()
+    ->allowAttribute('class', allowedElements: '*')
+    ->allowAttribute('data-color', allowedElements: '*')
+    ->allowAttribute('data-cols', allowedElements: '*')
+    ->allowAttribute('data-col-span', allowedElements: '*')
+    ->allowAttribute('data-from-breakpoint', allowedElements: '*')
+    ->allowAttribute('data-id', allowedElements: '*')
+    ->allowAttribute('data-type', allowedElements: '*')
+    ->allowAttribute('style', allowedElements: '*')
+    ->allowAttribute('width', allowedElements: 'img')
+    ->allowAttribute('height', allowedElements: 'img')
+    ->withMaxInputLength(500000)
+```
+
+The `data-*` attributes are used internally by Filament's rich editor for features such as text colors, grid layouts, merge tags, mentions, and custom blocks. The `style` attribute is necessary to support rich text formatting features such as font colors, text highlighting, and image sizing. However, this means that CSS properties like `background: url(...)` (which can trigger external HTTP requests) or `position: fixed` (which can create phishing overlays) will not be stripped.
+
+If your application renders HTML content from untrusted users, you should consider restricting the default configuration.
 
 ### Customizing the sanitizer
 
-Filament binds the sanitizer as `HtmlSanitizerInterface` in Laravel's service container. You can override it by rebinding this interface in a service provider:
+Since `HtmlSanitizerConfig` is bound in the service container, you can use `extend()` in a service provider to modify the default configuration without replacing it entirely.
+
+#### Adding allowed attributes
+
+To allow additional attributes through the sanitizer, extend the config:
 
 ```php
-use Symfony\Component\HtmlSanitizer\HtmlSanitizer;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerConfig;
-use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 
 public function register(): void
 {
-    $this->app->scoped(
-        HtmlSanitizerInterface::class,
-        fn (): HtmlSanitizer => new HtmlSanitizer(
-            (new HtmlSanitizerConfig)
-                ->allowSafeElements()
-                ->allowRelativeLinks()
-                ->allowRelativeMedias()
-                ->allowAttribute('class', allowedElements: '*')
-                ->allowAttribute('style', allowedElements: '*')
-                ->withMaxInputLength(500000),
-        ),
+    $this->app->extend(
+        HtmlSanitizerConfig::class,
+        fn (HtmlSanitizerConfig $config): HtmlSanitizerConfig => $config
+            ->allowAttribute('data-custom', allowedElements: '*'),
     );
 }
 ```
 
-You can restrict which CSS properties are allowed in `style` attributes, remove the `style` attribute allowance entirely, or make any other adjustments supported by Symfony's HtmlSanitizer. Refer to the [Symfony HtmlSanitizer documentation](https://symfony.com/doc/current/html_sanitizer.html) for the full list of configuration options.
+#### Restricting allowed attributes
+
+To remove an attribute that Filament allows by default, use `dropAttribute()`:
+
+```php
+use Symfony\Component\HtmlSanitizer\HtmlSanitizerConfig;
+
+public function register(): void
+{
+    $this->app->extend(
+        HtmlSanitizerConfig::class,
+        fn (HtmlSanitizerConfig $config): HtmlSanitizerConfig => $config
+            ->dropAttribute('style', '*'),
+    );
+}
+```
+
+<Aside variant="danger">
+    Removing attributes that Filament's rich editor depends on (such as `data-color`, `data-cols`, `data-id`, or `style`) may break rich text rendering. Only restrict attributes when you understand their impact on Filament's components.
+</Aside>
+
+#### Replacing the sanitizer configuration entirely
+
+If you need full control, you can rebind `HtmlSanitizerConfig` entirely in a service provider:
+
+```php
+use Symfony\Component\HtmlSanitizer\HtmlSanitizerConfig;
+
+public function register(): void
+{
+    $this->app->scoped(
+        HtmlSanitizerConfig::class,
+        fn (): HtmlSanitizerConfig => (new HtmlSanitizerConfig)
+            ->allowSafeElements()
+            ->allowRelativeLinks()
+            ->allowRelativeMedias()
+            ->allowAttribute('class', allowedElements: '*')
+            ->withMaxInputLength(500000),
+    );
+}
+```
+
+Refer to the [Symfony HtmlSanitizer documentation](https://symfony.com/doc/current/html_sanitizer.html) for the full list of configuration options.
 
 ### Sanitizing in Blade views
 
