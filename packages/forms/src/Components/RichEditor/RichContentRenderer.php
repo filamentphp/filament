@@ -281,6 +281,72 @@ class RichContentRenderer implements Htmlable
         });
     }
 
+    protected function flattenMergeTagsForText(Editor $editor): void
+    {
+        $editor->descendants(function (object &$node): void {
+            if (! isset($node->content) || ! is_array($node->content)) {
+                return;
+            }
+
+            $hasMergeTags = false;
+
+            foreach ($node->content as $child) {
+                if (in_array($child->type, ['mergeTag', 'rawHtmlMergeTag'])) {
+                    $hasMergeTags = true;
+
+                    break;
+                }
+            }
+
+            if (! $hasMergeTags) {
+                return;
+            }
+
+            $merged = [];
+
+            foreach ($node->content as $child) {
+                foreach ($this->resolveTextNodesFromMergeTag($child) as $textNode) {
+                    $last = end($merged);
+
+                    if ($last && $last->type === 'text' && $textNode->type === 'text') {
+                        $last->text .= $textNode->text;
+                    } else {
+                        $merged[] = $textNode;
+                    }
+                }
+            }
+
+            $node->content = $merged;
+        });
+    }
+
+    /**
+     * @return array<object>
+     */
+    protected function resolveTextNodesFromMergeTag(object $node): array
+    {
+        if ($node->type === 'mergeTag') {
+            return $node->content ?? [];
+        }
+
+        if ($node->type === 'rawHtmlMergeTag') {
+            $text = trim(preg_replace('/\s+/', ' ', strip_tags($node->html ?? '')));
+
+            if ($text === '') {
+                return [];
+            }
+
+            return [
+                (object) [
+                    'type' => 'text',
+                    'text' => $text,
+                ],
+            ];
+        }
+
+        return [$node];
+    }
+
     protected function processMentions(Editor $editor): void
     {
         if (blank($this->mentionProviders)) {
@@ -513,6 +579,7 @@ class RichContentRenderer implements Htmlable
         $editor = $this->getEditor();
 
         $this->processMergeTags($editor);
+        $this->flattenMergeTagsForText($editor);
 
         return $editor->getText();
     }

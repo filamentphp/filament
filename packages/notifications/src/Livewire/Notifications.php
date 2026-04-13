@@ -34,7 +34,11 @@ class Notifications extends Component
     #[On('notificationsSent')]
     public function pullNotificationsFromSession(): void
     {
-        foreach (session()->pull('filament.notifications') ?? [] as $notification) {
+        $notifications = session()->pull('filament.notifications.claimed')
+            ?? session()->pull('filament.notifications')
+            ?? [];
+
+        foreach ($notifications as $notification) {
             $notification = Notification::fromArray($notification);
 
             $this->pushNotification($notification);

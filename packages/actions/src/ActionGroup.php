@@ -355,7 +355,7 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
         }
 
         $static->color($data['color'] ?? null);
-        $static->dropdown($data['hasDropdown'] ?? false);
+        $static->dropdown($data['hasDropdown'] ?? true);
         $static->dropdownFlip($data['hasDropdownFlip'] ?? false);
         $static->dropdownTeleport($data['hasDropdownTeleport'] ?? false);
         $static->dropdownMaxHeight($data['dropdownMaxHeight'] ?? null);
@@ -367,7 +367,7 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
         $static->iconPosition($data['iconPosition'] ?? null);
         $static->iconSize($data['iconSize'] ?? null);
         $static->label($data['label'] ?? null);
-        $static->outlined($data['isOutlined'] ?? null);
+        $static->outlined($data['isOutlined'] ?? false);
         $static->tooltip($data['tooltip'] ?? null);
 
         return $static;
