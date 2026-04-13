@@ -245,12 +245,10 @@ if (! function_exists('Filament\Support\generate_search_column_expression')) {
     {
         $driverName = $databaseConnection->getDriverName();
 
-        // Support laravel table prefix with pgsql
-        $tablePrefix = $databaseConnection->getTablePrefix();
-        if ($driverName === 'pgsql' && filled($tablePrefix) && str_contains($column, '.')) {
-            $column = $tablePrefix . $column;
+        if ($driverName === 'pgsql' && str_contains($column, '.')) {
+            $column = $databaseConnection->getTablePrefix() . $column;
         }
-        
+
         $column = match ($driverName) {
             'pgsql' => (
                 str($column)->contains('->')
