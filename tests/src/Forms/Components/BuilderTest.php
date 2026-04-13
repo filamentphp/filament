@@ -278,6 +278,13 @@ it('can access correct block state from `extraItemActions()`', function (): void
     $undoBuilderFake();
 });
 
+it('can save a builder block containing a repeater and hidden field', function (): void {
+    livewire(TestComponentWithBuilderRepeaterAndHiddenField::class)
+        ->assertSuccessful()
+        ->call('save')
+        ->assertHasNoFormErrors();
+});
+
 class TestComponentWithActionInBuilder extends Livewire
 {
     public function mount(): void
@@ -339,6 +346,47 @@ class TestComponentWithExtraItemActionInBuilder extends Livewire
                     ]),
             ])
             ->statePath('data');
+    }
+}
+
+class TestComponentWithBuilderRepeaterAndHiddenField extends Livewire
+{
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->components([
+                Builder::make('builder')
+                    ->blocks([
+                        Builder\Block::make('services')
+                            ->schema([
+                                Repeater::make('items')
+                                    ->schema([
+                                        TextInput::make('service')
+                                            ->required(),
+                                    ]),
+                                TextInput::make('hidden')
+                                    ->visible(false),
+                            ]),
+                    ])
+                    ->default([
+                        [
+                            'type' => 'services',
+                            'data' => [
+                                'items' => [
+                                    [
+                                        'service' => 'Service 1',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ]),
+            ])
+            ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $this->form->getState();
     }
 }
 
