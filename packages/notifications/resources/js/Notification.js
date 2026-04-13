@@ -1,21 +1,17 @@
-/**
- * Setter methods use `_`-prefixed backing properties (e.g. `_id`) to avoid
- * JavaScript's method-shadowing bug where `this.id = value` would overwrite
- * the `id()` method itself with the value.
- */
 class Notification {
     constructor() {
         // `crypto.randomUUID()` requires a secure context (HTTPS); fall back to
         // `crypto.getRandomValues()` which works in all contexts including HTTP.
-        this._id =
+        this.id(
             crypto.randomUUID?.() ??
-            '10000000-1000-4000-8000-100000000000'.replace(/[018]/g, (c) =>
-                (
-                    +c ^
-                    (crypto.getRandomValues(new Uint8Array(1))[0] &
-                        (15 >> (+c / 4)))
-                ).toString(16),
-            )
+                '10000000-1000-4000-8000-100000000000'.replace(/[018]/g, (c) =>
+                    (
+                        +c ^
+                        (crypto.getRandomValues(new Uint8Array(1))[0] &
+                            (15 >> (+c / 4)))
+                    ).toString(16),
+                ),
+        )
 
         return this
     }
@@ -127,7 +123,7 @@ class Notification {
             id: this._id,
             title: this._title,
             body: this._body,
-            actions: this._actions,
+            actions: this._actions?.map((action) => action.toJSON()),
             status: this._status,
             color: this._color,
             icon: this._icon,
@@ -153,7 +149,7 @@ class Notification {
 
 class Action {
     constructor(name) {
-        this._name = name
+        this.name(name)
 
         return this
     }
@@ -358,7 +354,7 @@ class Action {
 
 class ActionGroup {
     constructor(actions) {
-        this._actions = actions.map((action) => action.grouped())
+        this.actions(actions)
 
         return this
     }
@@ -401,7 +397,7 @@ class ActionGroup {
 
     toJSON() {
         return {
-            actions: this._actions,
+            actions: this._actions?.map((action) => action.toJSON()),
             color: this._color,
             icon: this._icon,
             iconPosition: this._iconPosition,
