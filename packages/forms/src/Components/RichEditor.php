@@ -828,13 +828,37 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained
         return $modifications;
     }
 
-    protected function isToolbarButtonInObject(object $item, string $button): bool
+    protected function hasToolbarButtonInItem(object $item, string $button): bool
     {
         if ($item instanceof ToolbarButtonGroup) {
             return in_array($button, $item->getButtons());
         }
 
         return false;
+    }
+
+    /**
+     * @param  array<string>  $buttonsToDisable
+     */
+    protected function filterDisabledToolbarButtonsFromItem(object $item, array $buttonsToDisable): ?object
+    {
+        if (! ($item instanceof ToolbarButtonGroup)) {
+            return $item;
+        }
+
+        $buttons = array_values(array_filter(
+            $item->getButtons(),
+            static fn (string $button): bool => ! in_array($button, $buttonsToDisable),
+        ));
+
+        if (blank($buttons)) {
+            return null;
+        }
+
+        $item = clone $item;
+        $item->buttons($buttons);
+
+        return $item;
     }
 
     /**
