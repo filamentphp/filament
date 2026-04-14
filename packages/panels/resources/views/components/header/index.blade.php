@@ -19,6 +19,14 @@
             <x-filament::breadcrumbs :breadcrumbs="$breadcrumbs" />
         @endif
 
+        @php
+            $beforeHeading = \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_HEADER_HEADING_BEFORE, scopes: $this->getRenderHookScopes());
+        @endphp
+
+        @if (filled($beforeHeading))
+            {{ $beforeHeading }}
+        @endif
+
         @if (filled($heading))
             <h1 class="fi-header-heading">
                 {{ $heading }}
