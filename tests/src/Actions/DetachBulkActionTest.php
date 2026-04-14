@@ -89,3 +89,7 @@ it('only detaches selected records', function (): void {
         ]);
     }
 });
+
+it('returns `detach` from `getDefaultName()`', function (): void {
+    expect(DetachBulkAction::getDefaultName())->toBe('detach');
+});

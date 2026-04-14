@@ -45,108 +45,110 @@ it('can render page with a custom slug', function (): void {
     $this->get($url)->assertSuccessful();
 });
 
-it('can reset password', function (): void {
-    Event::fake();
+describe('resetting password', function (): void {
+    it('can reset password', function (): void {
+        Event::fake();
 
-    $this->assertGuest();
+        $this->assertGuest();
 
-    $userToResetPassword = User::factory()->create();
-    $token = Password::createToken($userToResetPassword);
+        $userToResetPassword = User::factory()->create();
+        $token = Password::createToken($userToResetPassword);
 
-    livewire(ResetPassword::class, [
-        'email' => $userToResetPassword->email,
-        'token' => $token,
-    ])
-        ->set('password', 'new-password')
-        ->set('passwordConfirmation', 'new-password')
-        ->call('resetPassword')
-        ->assertNotified(
-            Notification::make()
-                ->success()
-                ->title(__('passwords.reset'))
-        )
-        ->assertRedirect(Filament::getLoginUrl());
+        livewire(ResetPassword::class, [
+            'email' => $userToResetPassword->email,
+            'token' => $token,
+        ])
+            ->set('password', 'new-password')
+            ->set('passwordConfirmation', 'new-password')
+            ->call('resetPassword')
+            ->assertNotified(
+                Notification::make()
+                    ->success()
+                    ->title(__('passwords.reset'))
+            )
+            ->assertRedirect(Filament::getLoginUrl());
 
-    Event::assertDispatched(PasswordReset::class);
+        Event::assertDispatched(PasswordReset::class);
 
-    $this->assertCredentials([
-        'email' => $userToResetPassword->email,
-        'password' => 'new-password',
-    ]);
-});
+        $this->assertCredentials([
+            'email' => $userToResetPassword->email,
+            'password' => 'new-password',
+        ]);
+    });
 
-it('cannot reset password without panel access', function (): void {
-    Event::fake();
+    it('cannot reset password without panel access', function (): void {
+        Event::fake();
 
-    $this->assertGuest();
+        $this->assertGuest();
 
-    $userToResetPassword = User::factory()->create();
-    $token = Password::createToken($userToResetPassword);
+        $userToResetPassword = User::factory()->create();
+        $token = Password::createToken($userToResetPassword);
 
-    Filament::setCurrentPanel(Filament::getPanel('custom'));
+        Filament::setCurrentPanel(Filament::getPanel('custom'));
 
-    livewire(ResetPassword::class, [
-        'email' => $userToResetPassword->email,
-        'token' => $token,
-    ])
-        ->set('password', 'new-password')
-        ->set('passwordConfirmation', 'new-password')
-        ->call('resetPassword')
-        ->assertNotified(
-            Notification::make()
-                ->danger()
-                ->title(__('passwords.user'))
-        );
+        livewire(ResetPassword::class, [
+            'email' => $userToResetPassword->email,
+            'token' => $token,
+        ])
+            ->set('password', 'new-password')
+            ->set('passwordConfirmation', 'new-password')
+            ->call('resetPassword')
+            ->assertNotified(
+                Notification::make()
+                    ->danger()
+                    ->title(__('passwords.user'))
+            );
 
-    Event::assertNotDispatched(PasswordReset::class);
+        Event::assertNotDispatched(PasswordReset::class);
 
-    $this->assertCredentials([
-        'email' => $userToResetPassword->email,
-        'password' => 'password',
-    ]);
-});
+        $this->assertCredentials([
+            'email' => $userToResetPassword->email,
+            'password' => 'password',
+        ]);
+    });
 
-it('requires request signature', function (): void {
-    $userToResetPassword = User::factory()->make();
-    $token = Password::createToken($userToResetPassword);
+    it('requires request signature', function (): void {
+        $userToResetPassword = User::factory()->make();
+        $token = Password::createToken($userToResetPassword);
 
-    $this->get(route('filament.admin.auth.password-reset.reset', [
-        'email' => $userToResetPassword->getEmailForPasswordReset(),
-        'token' => $token,
-    ]))->assertForbidden();
-});
+        $this->get(route('filament.admin.auth.password-reset.reset', [
+            'email' => $userToResetPassword->getEmailForPasswordReset(),
+            'token' => $token,
+        ]))->assertForbidden();
+    });
 
-it('requires valid email and token', function (): void {
-    Event::fake();
+    it('requires valid email and token', function (): void {
+        Event::fake();
 
-    $this->assertGuest();
+        $this->assertGuest();
 
-    $userToResetPassword = User::factory()->create();
-    $token = Password::createToken($userToResetPassword);
+        $userToResetPassword = User::factory()->create();
+        $token = Password::createToken($userToResetPassword);
 
-    livewire(ResetPassword::class, [
-        'email' => $userToResetPassword->email,
-        'token' => Str::random(),
-    ])
-        ->set('password', 'new-password')
-        ->set('passwordConfirmation', 'new-password')
-        ->call('resetPassword')
-        ->assertNotified()
-        ->assertNoRedirect();
+        livewire(ResetPassword::class, [
+            'email' => $userToResetPassword->email,
+            'token' => Str::random(),
+        ])
+            ->set('password', 'new-password')
+            ->set('passwordConfirmation', 'new-password')
+            ->call('resetPassword')
+            ->assertNotified()
+            ->assertNoRedirect();
 
-    Event::assertNotDispatched(PasswordReset::class);
+        Event::assertNotDispatched(PasswordReset::class);
 
-    livewire(ResetPassword::class, [
-        'email' => fake()->email(),
-        'token' => $token,
-    ])
-        ->set('password', 'new-password')
-        ->set('passwordConfirmation', 'new-password')
-        ->call('resetPassword')
-        ->assertNotified()
-        ->assertNoRedirect();
+        livewire(ResetPassword::class, [
+            'email' => fake()->email(),
+            'token' => $token,
+        ])
+            ->set('password', 'new-password')
+            ->set('passwordConfirmation', 'new-password')
+            ->call('resetPassword')
+            ->assertNotified()
+            ->assertNoRedirect();
 
-    Event::assertNotDispatched(PasswordReset::class);
+        Event::assertNotDispatched(PasswordReset::class);
+    });
 });
 
 it('can throttle reset password attempts', function (): void {
@@ -194,26 +196,28 @@ it('can throttle reset password attempts', function (): void {
     ]);
 });
 
-it('can validate `password` is required', function (): void {
-    livewire(ResetPassword::class)
-        ->set('password', '')
-        ->call('resetPassword')
-        ->assertHasErrors(['password' => ['required']]);
-});
+describe('validation', function (): void {
+    it('can validate `password` is required', function (): void {
+        livewire(ResetPassword::class)
+            ->set('password', '')
+            ->call('resetPassword')
+            ->assertHasErrors(['password' => ['required']]);
+    });
 
-it('can validate `password` is confirmed', function (): void {
-    livewire(ResetPassword::class)
-        ->set('password', Str::random())
-        ->set('passwordConfirmation', Str::random())
-        ->call('resetPassword')
-        ->assertHasErrors(['password' => ['same']]);
-});
+    it('can validate `password` is confirmed', function (): void {
+        livewire(ResetPassword::class)
+            ->set('password', Str::random())
+            ->set('passwordConfirmation', Str::random())
+            ->call('resetPassword')
+            ->assertHasErrors(['password' => ['same']]);
+    });
 
-it('can validate `passwordConfirmation` is required', function (): void {
-    livewire(ResetPassword::class)
-        ->set('passwordConfirmation', '')
-        ->call('resetPassword')
-        ->assertHasErrors(['passwordConfirmation' => ['required']]);
+    it('can validate `passwordConfirmation` is required', function (): void {
+        livewire(ResetPassword::class)
+            ->set('passwordConfirmation', '')
+            ->call('resetPassword')
+            ->assertHasErrors(['passwordConfirmation' => ['required']]);
+    });
 });
 
 it('can throttle reset password attempts per email', function (): void {

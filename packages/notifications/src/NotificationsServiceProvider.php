@@ -45,9 +45,13 @@ class NotificationsServiceProvider extends PackageServiceProvider
                 return;
             }
 
-            if (count(session()->get('filament.notifications') ?? []) <= 0) {
+            $notifications = session()->pull('filament.notifications') ?? [];
+
+            if (count($notifications) <= 0) {
                 return;
             }
+
+            session()->put('filament.notifications.claimed', $notifications);
 
             $component->dispatch('notificationsSent');
         });

@@ -80,6 +80,11 @@ trait HasColumns
      */
     public function callTableColumnMethod(string $name, string $recordKey, string $method, array $arguments = []): mixed
     {
+        // Security: This method is callable from the frontend and dispatches
+        // to `#[ExposedLivewireMethod]` methods on table columns. It does
+        // not perform per-record policy checks. Inline editable columns
+        // called through here bypass Model Policies.
+
         $column = $this->getTable()->getColumn($name);
 
         if (! $column) {
