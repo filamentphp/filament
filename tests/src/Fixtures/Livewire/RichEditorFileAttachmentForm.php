@@ -11,6 +11,7 @@ use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
 use Filament\Tests\Fixtures\Models\MediaPostWithRichContent;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
@@ -79,12 +80,17 @@ class RichEditorFileAttachmentForm extends Component implements HasActions, HasS
         $content = ob_get_clean();
         imagedestroy($image);
 
-        Storage::disk('tmp-for-tests')->put('livewire-tmp/' . $id . '.jpg', $content);
+        $originalFileName = "{$id}.jpg";
+        $temporaryFileName = TemporaryUploadedFile::generateHashNameWithOriginalNameEmbedded(
+            UploadedFile::fake()->image($originalFileName),
+        );
+
+        Storage::disk('tmp-for-tests')->put("livewire-tmp/{$temporaryFileName}", $content);
 
         data_set(
             $this->componentFileAttachments,
-            'data.content.' . $id,
-            TemporaryUploadedFile::createFromLivewire($id . '.jpg'),
+            "data.content.{$id}",
+            TemporaryUploadedFile::createFromLivewire($temporaryFileName),
         );
     }
 
