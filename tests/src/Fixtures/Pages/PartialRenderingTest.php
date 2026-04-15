@@ -80,9 +80,7 @@ class PartialRenderingTest extends Page
                             )
                             ->live()
                             ->skipRenderAfterStateUpdated()
-                            ->afterStateUpdated(function (string $state) {
-                                $this->answer = "You answered: {$state}";
-                            })
+                            ->afterStateUpdated(fn (string $state) => $this->answer = "You answered: {$state}")
                             ->extraFieldWrapperAttributes(['class' => 'question']),
                     ]),
             ])
