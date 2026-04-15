@@ -89,4 +89,4 @@ describe('partial rendering', function (): void {
                 ->assertNoAccessibilityIssues();
         });
     });
-})->only();
+});
