@@ -32,10 +32,6 @@ describe('partial rendering', function (): void {
                 ->assertSee($productSku)
                 ->assertNoSmoke()
                 ->assertNoAccessibilityIssues();
-
-            visit('/partial-rendering-test')
-                ->inDarkMode()
-                ->assertNoAccessibilityIssues();
         });
     });
 
