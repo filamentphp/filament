@@ -54,8 +54,10 @@ trait HasBadge
     /**
      * @return string | array<string> | null
      */
-    public function getBadgeColor(): string | array | null
+    public function getBadgeColor(string | int | float | null $state = null): string | array | null
     {
-        return $this->evaluate($this->badgeColor);
+        return $this->evaluate($this->badgeColor, [
+            'state' => $state,
+        ]);
     }
 }

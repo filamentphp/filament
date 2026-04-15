@@ -633,8 +633,8 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
             attributes: (new ComponentAttributeBag)
                 ->merge($this->getExtraAttributes(), escape: false)
                 ->class(['fi-ac-btn-group']),
-            badge: $this->getBadge(),
-            badgeColor: $this->getBadgeColor(),
+            badge: $badgeState = $this->getBadge(),
+            badgeColor: $this->getBadgeColor($badgeState),
             color: $this->getColor(),
             icon: $this->getIcon(),
             iconPosition: $this->getIconPosition(),
@@ -655,8 +655,8 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
             attributes: (new ComponentAttributeBag)
                 ->merge($this->getExtraAttributes(), escape: false)
                 ->class(['fi-ac-grouped-group']),
-            badge: $this->getBadge(),
-            badgeColor: $this->getBadgeColor(),
+            badge: $badgeState = $this->getBadge(),
+            badgeColor: $this->getBadgeColor($badgeState),
             badgeTooltip: $this->getBadgeTooltip(),
             color: $this->getColor(),
             icon: $this->getIcon(),
@@ -673,8 +673,8 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
             attributes: (new ComponentAttributeBag)
                 ->merge($this->getExtraAttributes(), escape: false)
                 ->class(['fi-ac-icon-btn-group']),
-            badge: $this->getBadge(),
-            badgeColor: $this->getBadgeColor(),
+            badge: $badgeState = $this->getBadge(),
+            badgeColor: $this->getBadgeColor($badgeState),
             color: $this->getColor(),
             icon: $this->getIcon(),
             iconSize: $this->getIconSize(),
@@ -691,8 +691,8 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
             attributes: (new ComponentAttributeBag)
                 ->merge($this->getExtraAttributes(), escape: false)
                 ->class(['fi-ac-link-group']),
-            badge: $this->getBadge(),
-            badgeColor: $this->getBadgeColor(),
+            badge: $badgeState = $this->getBadge(),
+            badgeColor: $this->getBadgeColor($badgeState),
             color: $this->getColor(),
             icon: $this->getIcon(),
             iconPosition: $this->getIconPosition(),

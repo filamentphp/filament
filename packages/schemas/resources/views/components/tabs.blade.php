@@ -131,7 +131,7 @@
                 @php
                     $isTabBadgeDeferred = $tab->isBadgeDeferred();
                     $tabBadge = $isTabBadgeDeferred ? null : $tab->getBadge();
-                    $tabBadgeColor = $isTabBadgeDeferred ? null : $tab->getBadgeColor();
+                    $tabBadgeColor = $isTabBadgeDeferred ? null : $tab->getBadgeColor($tabBadge);
                     $tabBadgeIcon = $isTabBadgeDeferred ? null : $tab->getBadgeIcon();
                     $tabBadgeIconPosition = $isTabBadgeDeferred ? null : $tab->getBadgeIconPosition();
                     $tabBadgeTooltip = $isTabBadgeDeferred ? null : $tab->getBadgeTooltip();
@@ -173,7 +173,7 @@
                             @php
                                 $isTabBadgeDeferred = $tab->isBadgeDeferred();
                                 $tabBadge = $isTabBadgeDeferred ? null : $tab->getBadge();
-                                $tabBadgeColor = $isTabBadgeDeferred ? null : $tab->getBadgeColor();
+                                $tabBadgeColor = $isTabBadgeDeferred ? null : $tab->getBadgeColor($tabBadge);
                                 $tabBadgeTooltip = $isTabBadgeDeferred ? null : $tab->getBadgeTooltip();
                                 $tabExtraAttributeBag = $tab->getExtraAttributeBag();
                                 $tabKey = $tab->getKey(isAbsolute: false);
@@ -213,7 +213,7 @@
                             @php
                                 $isTabBadgeDeferred = $tab->isBadgeDeferred();
                                 $tabBadge = $isTabBadgeDeferred ? null : $tab->getBadge();
-                                $tabBadgeColor = $isTabBadgeDeferred ? null : $tab->getBadgeColor();
+                                $tabBadgeColor = $isTabBadgeDeferred ? null : $tab->getBadgeColor($tabBadge);
                                 $tabBadgeTooltip = $isTabBadgeDeferred ? null : $tab->getBadgeTooltip();
                                 $tabIcon = $tab->getIcon();
                                 $tabKey = $tab->getKey(isAbsolute: false);
@@ -343,7 +343,7 @@
                 @php
                     $isTabBadgeDeferred = $tab->isBadgeDeferred();
                     $tabBadge = $isTabBadgeDeferred ? null : $tab->getBadge();
-                    $tabBadgeColor = $isTabBadgeDeferred ? null : $tab->getBadgeColor();
+                    $tabBadgeColor = $isTabBadgeDeferred ? null : $tab->getBadgeColor($tabBadge);
                     $tabBadgeIcon = $isTabBadgeDeferred ? null : $tab->getBadgeIcon();
                     $tabBadgeIconPosition = $isTabBadgeDeferred ? null : $tab->getBadgeIconPosition();
                     $tabBadgeTooltip = $isTabBadgeDeferred ? null : $tab->getBadgeTooltip();

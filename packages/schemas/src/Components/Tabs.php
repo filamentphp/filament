@@ -236,7 +236,8 @@ class Tabs extends Component
                 continue;
             }
 
-            $badgeColor = $tab->getBadgeColor();
+            $badgeState = $tab->getBadge();
+            $badgeColor = $tab->getBadgeColor($badgeState);
 
             $badgeColorClasses = '';
             $badgeColorStyles = '';
@@ -256,7 +257,7 @@ class Tabs extends Component
             $badgeIconPosition = $tab->getBadgeIconPosition();
 
             $badges[strval($tabKey)] = [
-                'badge' => $tab->getBadge(),
+                'badge' => $badgeState,
                 'badgeColorClasses' => $badgeColorClasses,
                 'badgeColorStyles' => $badgeColorStyles,
                 'badgeIconHtml' => $badgeIconHtml,
