@@ -87,15 +87,17 @@
                         ->color(ChartWidgetComponent::class, $color)
                         ->class([
                             'fi-wi-chart-canvas-ctn',
-                            'fi-wi-chart-canvas-ctn-no-aspect-ratio' => filled($maxHeight),
+                            'fi-wi-chart-canvas-ctn-no-aspect-ratio' => $maxHeight,
                         ])
                 }}
             >
                 <canvas
                     x-ref="canvas"
-                    @if ($maxHeight)
-                        style="max-height: {{ $maxHeight }}"
-                    @endif
+                    @style([
+                        'width: 100%',
+                        'height: 100%; max-height: 100%' => !$maxHeight,
+                        "max-height: {$maxHeight}" => $maxHeight
+                    ])
                 ></canvas>
 
                 <span
