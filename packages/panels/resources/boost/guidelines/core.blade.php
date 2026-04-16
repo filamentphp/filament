@@ -30,7 +30,29 @@ TextInput::make('company_name')
     ->required()
     ->visible(fn (Get $get): bool => $get('type') === 'business'),
 
-</code-snippet>
+</code-snippet>code-snippet>
+@endverbatim
+
+Use `Get $get` and `Set $set` together to reactively mutate another field's value:
+
+@verbatim
+<code-snippet name="Reactive field mutation with Get and Set" lang="php">
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
+
+TextInput::make('title')
+    ->required()
+    ->live(onBlur: true)
+    ->afterStateUpdated(fn (Get $get, Set $set, ?string $state) => $set(
+        'slug',
+        str($state ?? '')->slug()->toString(),
+    )),
+
+TextInput::make('slug')
+    ->required(),
+
+</code-snippet>code-snippet>
 @endverbatim
 
 Use `state()` with a `Closure` to compute derived column values:
@@ -42,7 +64,27 @@ use Filament\Tables\Columns\TextColumn;
 TextColumn::make('full_name')
     ->state(fn (User $record): string => "{$record->first_name} {$record->last_name}"),
 
-</code-snippet>
+</code-snippet>code-snippet>
+@endverbatim
+
+Use `SelectFilter` for enum or relationship-based filtering, and `Filter` with a query closure for custom logic:
+
+@verbatim
+<code-snippet name="Table filters" lang="php">
+use Filament\Tables\Filters\Filter;
+use Filament\Tables\Filters\SelectFilter;
+use Illuminate\Database\Eloquent\Builder;
+
+SelectFilter::make('status')
+    ->options(UserStatus::class),
+
+SelectFilter::make('author')
+    ->relationship('author', 'name'),
+
+Filter::make('verified')
+    ->query(fn (Builder $query) => $query->whereNotNull('email_verified_at')),
+
+</code-snippet>code-snippet>
 @endverbatim
 
 Actions encapsulate a button with an optional modal form and logic:
@@ -60,7 +102,7 @@ Action::make('updateEmail')
     ])
     ->action(fn (array $data, User $record) => $record->update($data))
 
-</code-snippet>
+</code-snippet>code-snippet>
 @endverbatim
 
 ### Testing
@@ -77,7 +119,7 @@ livewire(ListUsers::class)
     ->assertCanSeeTableRecords($users->take(1))
     ->assertCanNotSeeTableRecords($users->skip(1));
 
-</code-snippet>
+</code-snippet>code-snippet>
 
 <code-snippet name="Create resource test" lang="php">
 use function Pest\Laravel\assertDatabaseHas;
@@ -97,7 +139,28 @@ assertDatabaseHas(User::class, [
     'email' => 'test@example.com',
 ]);
 
-</code-snippet>
+</code-snippet>code-snippet>
+
+<code-snippet name="Edit resource test" lang="php">
+use function Pest\Laravel\assertDatabaseHas;
+use function Pest\Livewire\livewire;
+
+livewire(EditUser::class, ['record' => $user->id])
+    ->fillForm([
+        'name' => 'Updated Name',
+        'email' => 'updated@example.com',
+    ])
+    ->call('save')
+    ->assertNotified()
+    ->assertHasNoFormErrors();
+
+assertDatabaseHas(User::class, [
+    'id' => $user->id,
+    'name' => 'Updated Name',
+    'email' => 'updated@example.com',
+]);
+
+</code-snippet>code-snippet>
 
 <code-snippet name="Testing validation" lang="php">
 use function Pest\Livewire\livewire;
@@ -114,7 +177,7 @@ livewire(CreateUser::class)
     ])
     ->assertNotNotified();
 
-</code-snippet>
+</code-snippet>code-snippet>
 
 <code-snippet name="Calling actions in pages" lang="php">
 use Filament\Actions\DeleteAction;
@@ -125,7 +188,7 @@ livewire(EditUser::class, ['record' => $user->id])
     ->assertNotified()
     ->assertRedirect();
 
-</code-snippet>
+</code-snippet>code-snippet>
 
 <code-snippet name="Calling actions in tables" lang="php">
 use Filament\Actions\Testing\TestAction;
@@ -137,7 +200,7 @@ livewire(ListUsers::class)
     ])
     ->assertNotified();
 
-</code-snippet>
+</code-snippet>code-snippet>
 @endverbatim
 
 ### Correct Namespaces
@@ -153,7 +216,8 @@ livewire(ListUsers::class)
 
 - **Never assume public file visibility.** File visibility is `private` by default. Always use `->visibility('public')` when public access is needed.
 - **Never assume full-width layout.** `Grid`, `Section`, and `Fieldset` do not span all columns by default. Explicitly set column spans when needed.
+- **Use `Select::make()->relationship()` for BelongsTo fields.** Never use a separate `BelongsToSelect` component — it does not exist in v4. The correct pattern is `Select::make('author_id')->relationship('author', 'name')`.
 - **Use correct property types when overriding Page, Resource, and Widget properties.** These properties have union types or changed modifiers that must be preserved:
-  - `$navigationIcon`: `protected static string | BackedEnum | null` (not `?string`)
-  - `$navigationGroup`: `protected static string | UnitEnum | null` (not `?string`)
-  - `$view`: `protected string` (not `protected static string`) on Page and Widget classes
+    - `$navigationIcon`: `protected static string | BackedEnum | null` (not `?string`)
+    - `$navigationGroup`: `protected static string | UnitEnum | null` (not `?string`)
+    - `$view`: `protected string` (not `protected static string`) on Page and Widget classes
